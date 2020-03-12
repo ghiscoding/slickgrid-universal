@@ -1,0 +1,20 @@
+
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../out-tsc/spec",
+    "baseUrl": "./",
+    "types": [
+      "cypress",
+      "jest",
+      "jest-extended",
+      "jquery",
+      "node"
+    ]
+  },
+  "include": [
+    "**/*.spec.ts",
+    "src/typings/**/*.ts",
+    "**/*.d.ts"
+  ]
+}

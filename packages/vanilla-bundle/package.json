@@ -1,0 +1,42 @@
+{
+  "name": "@slickgrid-universal/vanilla-bundle",
+  "version": "0.0.1",
+  "description": "Vanilla Slick Grid Bundle - Framework agnostic the output is to be used in vanilla JS/TS - Written in TypeScript and we also use WebPack to bundle everything into 1 JS file.",
+  "main": "dist/bundle/slickgrid-vanilla-bundle",
+  "directories": {
+    "src": "src"
+  },
+  "scripts": {
+    "test": "echo testing slickgrid-universal slickgrid-vanilla-bundle code",
+    "dev": "webpack --env.development",
+    "dev:watch": "webpack --env.development --watch",
+    "build": "webpack --env.production",
+    "prebuild": "npm-run-all delete:dist delete:zip",
+    "postbuild": "npm-run-all zip:dist",
+    "delete:dist": "cross-env rimraf dist",
+    "delete:zip": "cross-env rimraf dist-bundle-zip",
+    "zip:dist": "cross-env node compress.js --output-filename=slickgrid-vanilla-bundle --output-folder=\"dist-grid-bundle-zip/\""
+  },
+  "author": "Ghislain B.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=10.16.0",
+    "npm": ">=6.1.0"
+  },
+  "dependencies": {
+    "@slickgrid-universal/common": "0.0.1",
+    "slickgrid": "^2.4.19"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.3.33",
+    "@types/node": "^13.9.0",
+    "@types/webpack": "^4.41.7",
+    "archiver": "^3.1.1",
+    "cross-env": "^7.0.2",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^3.0.2",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.8.3",
+    "webpack": "^4.42.0"
+  }
+}

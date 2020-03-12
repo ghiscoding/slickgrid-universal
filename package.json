@@ -1,0 +1,31 @@
+{
+  "name": "slickgrid-universal",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "bootstrap": "lerna bootstrap --ci",
+    "build": "lerna run build --stream",
+    "rebuild": "npm run clean && npm run build",
+    "clean": "rimraf packages/*/dist dist",
+    "predev:watch": "lerna run dev",
+    "dev:watch": "lerna run dev:watch --parallel",
+    "dev:vanilla": "run-p dev:watch examples:dev:vanilla",
+    "test": "lerna run test --stream",
+    "test:watch": "lerna run test:watch --stream",
+    "diff": "lerna diff",
+    "updated": "lerna updated",
+    "clean:tsconfig-build-cache": "rimraf packages/*/dist/tsconfig.tsbuildinfo",
+    "examples:dev:vanilla": "lerna run dev:vanilla --parallel",
+    "new-version": "lerna version --conventional-commits --yes"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "lerna": "^3.20.2"
+  },
+  "engines": {
+    "node": ">=10.16.0",
+    "npm": ">=6.1.0"
+  }
+}

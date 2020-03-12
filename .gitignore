@@ -1,0 +1,60 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+/tmp
+/out-tsc
+/.ng_build
+.ng_build
+
+# dependencies
+**/node_modules
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.chrome
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+lerna-debug.log
+npm-debug.log
+testem.log
+/typings
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Distribution folder
+dist
+dist-demo
+dist-grid-bundle-zip
+
+# Tests Report & Coverage
+**/node_modules
+**/coverage
+**/jest-coverage
+**/mochawesome-report
+**/dist
+**/*.tgz
+**/junit.xml
+**/test-report.xml
+**/testresult.xml

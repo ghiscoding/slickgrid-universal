@@ -1,0 +1,34 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+/tmp
+/out-tsc
+/.ng_build
+.ng_build
+
+# dependencies
+/node_modules
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.chrome
+
+# Tests, Report & Coverage
+*.spec.ts
+/test
+**/node_modules
+**/coverage
+**/jest-coverage
+**/mochawesome-report
+**/dist
+**/*.tgz
+**/junit.xml
+**/test-report.xml
+**/testresult.xml
+
+# compressed distribution files
+dist-grid-bundle-zip
