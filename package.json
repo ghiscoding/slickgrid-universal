@@ -3,7 +3,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "bootstrap": "lerna bootstrap --ci",
+    "bootstrap": "lerna bootstrap --use-workspaces",
     "build": "lerna run build --stream",
     "rebuild": "npm run clean && npm run build",
     "clean": "rimraf packages/*/dist dist",
