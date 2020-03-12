@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/vanilla-bundle",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Vanilla Slick Grid Bundle - Framework agnostic the output is to be used in vanilla JS/TS - Written in TypeScript and we also use WebPack to bundle everything into 1 JS file.",
   "main": "dist/bundle/slickgrid-vanilla-bundle",
   "directories": {
@@ -24,7 +24,7 @@
     "npm": ">=6.1.0"
   },
   "dependencies": {
-    "@slickgrid-universal/common": "0.0.1",
+    "@slickgrid-universal/common": "^0.0.2",
     "slickgrid": "^2.4.19"
   },
   "devDependencies": {

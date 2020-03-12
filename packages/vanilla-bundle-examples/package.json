@@ -1,6 +1,6 @@
 {
   "name": "vanilla-bundle-examples",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "SlickGrid-Universal demo",
   "directories": {
     "lib": "lib"
@@ -17,8 +17,8 @@
   },
   "main": "src/slickgrid-universal/index",
   "dependencies": {
-    "@slickgrid-universal/common": "0.0.1",
-    "@slickgrid-universal/vanilla-bundle": "0.0.1",
+    "@slickgrid-universal/common": "^0.0.2",
+    "@slickgrid-universal/vanilla-bundle": "^0.0.2",
     "moment-mini": "^2.24.0"
   },
   "devDependencies": {

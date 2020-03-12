@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/common",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "SlickGrid-Universal Common Code",
   "main": "dist/es2020/index",
   "module": "dist/es2020/index",
