@@ -1,5 +1,6 @@
 /* plugin variables */
 @import './variables';
+@import './multiple-select';
 
 // ----------------------------------------------
 // Cell Menu Plugin (Action menu
@@ -467,6 +468,21 @@
   border: $multiselect-input-filter-border;
   background-color: transparent;
 
+  div {
+    &:before {
+      font-family: $icon-font-family;
+      font-size: $multiselect-icon-arrow-font-size;
+      content: $multiselect-icon-arrow-down;
+    }
+    &.open {
+      &:before {
+        font-family: $icon-font-family;
+        font-size: $multiselect-icon-arrow-font-size;
+        content: $multiselect-icon-arrow-up;
+      }
+    }
+  }
+
   span {
     font-size: $multiselect-input-filter-font-size;
     font-family: $multiselect-input-filter-font-family;
@@ -532,6 +548,7 @@
   .ms-select-all {
     border-bottom: $multiselect-select-all-border-bottom;
     label {
+      display: inline-block;
       font-weight: normal;
       padding: 5px 8px;
       color: $multiselect-select-all-text-color;
@@ -556,6 +573,15 @@
     &:hover {
       background-color: $multiselect-ok-button-bg-hover-color;
       color: $multiselect-ok-button-text-hover-color;
+    }
+  }
+  .ms-search {
+    &:before {
+      font-family: $icon-font-family;
+      font-size: $multiselect-icon-font-size;
+      content: $multiselect-icon-search;
+      right: $multiselect-icon-search-margin-right;
+      position: absolute;
     }
   }
 }
