@@ -1,12 +1,18 @@
 ## Slickgrid-Universal
 
-This is a monorepo project (using Lerna) that regroups a few packages under a single monorepo. The goal is to create a Common package that is framework agnostic and can be used by any Framework. There are also some packages, like backend services (OData, GraphQL) that now all user requires and are better handled in a monorepo structure. 
+This is a monorepo project (using Lerna) that regroups a few packages under a single repository. The goal is to create a Common package that is framework agnostic and can be used by any other Frameworks. There are also some packages, like backend services (OData, GraphQL) that now all user requires and are better handled in a monorepo structure. 
 
-If we resume why this monorepo exist
-1. removes lot of duplicate code that existed in both Angular-Slickgrid and Aurelia-Slickgrid (over 80% were the same code)
+### Why create this monorepo?
+You might be wondernig why was this monorepo created?
+1. removes lot of duplicate code that existed in both [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) (over 80% were the same code and that is not very DRY).
 2. removes any Services that not all user want (OData, GraphQL, ...)
 3. framework agnostic, we could add more frameworks in the future
    - anyone who wish to go that route, please contact me by opening an issue
+
+### Framework using this monorepo
+This a Work in Progress, eventually [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) will be rewritten to use this monorepo and have shared common code. 
+
+However, this project is built with a Vanilla Implementation (no associated to any framework) and that is what the UI will be tested with. The Vanilla bundle is also used in our SalesForce (with Lighning Web Component) hence the creation of this monorepo.
 
 The main packages structure is the following
 - `@slickgrid-universal/common` where are commonly used Services/Formatters/Editors/... are created
