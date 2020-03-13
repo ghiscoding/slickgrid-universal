@@ -1,3 +1,5 @@
+import 'multiple-select-adapted/src/multiple-select.js';
+
 // Public classes.
 export * from './global-grid-options';
 export * from './enums/index';

@@ -394,6 +394,12 @@ export interface GridOption {
    */
   sanitizeHtmlOptions?: any;
 
+  /**
+   * By default the lib will use DOMPurify to sanitize any Html,
+   * but you could optionally pass your own sanitizer function which will run instead of DOM Purify
+   */
+  sanitizer?: (dirtyHtml: string) => string;
+
   /** CSS class name used when cell is selected */
   selectedCellCssClass?: string;
 

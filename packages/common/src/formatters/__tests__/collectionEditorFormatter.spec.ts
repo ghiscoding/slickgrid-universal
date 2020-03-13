@@ -4,7 +4,7 @@ import { Editors } from '../../editors';
 
 jest.mock('flatpickr', () => { });
 
-xdescribe('the CollectionEditor Formatter', () => {
+describe('the CollectionEditor Formatter', () => {
   let columnDef: Column;
 
   beforeEach(() => {

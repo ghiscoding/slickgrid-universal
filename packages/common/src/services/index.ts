@@ -1,3 +1,4 @@
+export * from './collection.service';
 export * from './export-utilities';
 export * from './extension.service';
 export * from './grid.service';
