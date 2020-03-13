@@ -26,7 +26,7 @@ export class SliderEditor implements Editor {
 
   constructor(private args: EditorArguments) {
     if (!args) {
-      throw new Error('[SlickGrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
+      throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
     }
     this.grid = args.grid;
     this.init();

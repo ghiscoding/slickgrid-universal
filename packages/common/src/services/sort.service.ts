@@ -307,7 +307,7 @@ export class SortService {
    */
   updateSorting(sorters: CurrentSorter[], emitChangedEvent = true, triggerBackendQuery = true) {
     if (!this._gridOptions || !this._gridOptions.enableSorting) {
-      throw new Error('[SlickGrid-Universal] in order to use "updateSorting" method, you need to have Sortable Columns defined in your grid and "enableSorting" set in your Grid Options');
+      throw new Error('[Slickgrid-Universal] in order to use "updateSorting" method, you need to have Sortable Columns defined in your grid and "enableSorting" set in your Grid Options');
     }
 
     if (Array.isArray(sorters)) {

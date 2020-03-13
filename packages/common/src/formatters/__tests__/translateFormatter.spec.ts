@@ -25,7 +25,6 @@ describe('the Translate Formatter', () => {
 
   it('should return an empty string when no value is passed', async () => {
     await translateService.setLocale('fr');
-    jest.spyOn(translateService, 'translate').mockReturnValue('');
     gridStub.getOptions.mockReturnValueOnce({ i18n: translateService });
     const output = translateFormatter(1, 1, '', {} as Column, {}, gridStub);
     expect(translateService.getCurrentLocale()).toBe('fr');
@@ -34,7 +33,6 @@ describe('the Translate Formatter', () => {
 
   it('should return the translated value as string', async () => {
     await translateService.setLocale('fr');
-    jest.spyOn(translateService, 'translate').mockReturnValue('Bonjour');
     gridStub.getOptions.mockReturnValueOnce({ i18n: translateService });
     const output = translateFormatter(1, 1, 'HELLO', {} as Column, {}, gridStub);
     expect(output).toBe('Bonjour');
@@ -42,7 +40,6 @@ describe('the Translate Formatter', () => {
 
   it('should return the translated value when value passed is a string and i18n service is passed as a ColumnDef Params', async () => {
     await translateService.setLocale('fr');
-    jest.spyOn(translateService, 'translate').mockReturnValue('Bonjour');
     gridStub.getOptions.mockReturnValueOnce({});
     const output = translateFormatter(1, 1, 'HELLO', { params: { i18n: translateService } } as Column, {}, gridStub);
     expect(output).toBe('Bonjour');
@@ -50,7 +47,6 @@ describe('the Translate Formatter', () => {
 
   it('should return the translated value when value passed is a string and i18n service is passed as a ColumnDef Params without any Grid object', async () => {
     await translateService.setLocale('fr');
-    jest.spyOn(translateService, 'translate').mockReturnValue('Bonjour');
     const output = translateFormatter(1, 1, 'HELLO', { params: { i18n: translateService } } as Column, {});
     expect(output).toBe('Bonjour');
   });

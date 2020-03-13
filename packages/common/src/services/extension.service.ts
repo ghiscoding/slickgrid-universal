@@ -355,7 +355,7 @@ export class ExtensionService {
    */
   translateColumnHeaders(locale?: boolean | string, newColumnDefinitions?: Column[]) {
     if (this.sharedService && this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
-      throw new Error('[SlickGrid-Universal] requires "ngx-translate" to be installed and configured when the grid option "enableTranslate" is enabled.');
+      throw new Error('[Slickgrid-Universal] requires "ngx-translate" to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
 
     if (locale) {

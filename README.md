@@ -17,19 +17,25 @@ The main packages structure is the following
 ### Installation
 To get going with this monorepo, you will need to clone the repo and then follow the steps below
 
-##### Lerna Bootstrap
+1. Lerna Bootstrap
 Run it **only once**, this will install all dependencies and add necessary monorepo symlinks
 ```bash
 npm run bootstrap
 ```
-##### Run Vanilla Implementation
-You can a vanilla flavor implementation, vanilla means that it is not associated to any framework in other words it is plain TypeScript without being bound to any framework. The implementation is very similar to Angular and Aurelia, it could be used to implement other frameworks.
+
+2. Build
+To get started you must also run (also once) an initial build so that all necessary `dist` are created for all the packages to work together.
+```bash
+npm run build
+```
+
+3. Run Dev (Vanilla Implementation)
+There is a Vanilla flavor implementation in this monorepo, vanilla means that it is not associated to any framework in other words it is plain TypeScript without being bound to any framework. The implementation is very similar to Angular and Aurelia, it could be used to implement other frameworks. 
 
 Run the following command
 ```bash
-npm run dev:vanilla
+npm run dev:watch
 ```
-The other options are (`dev:angular`, `dev:aurelia`)
 
 ##### Run Unit Tests
 To run all packages Jest unit test, you can run this command

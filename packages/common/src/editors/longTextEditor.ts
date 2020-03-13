@@ -43,7 +43,7 @@ export class LongTextEditor implements Editor {
     this.grid = args.grid;
     this.gridOptions = args.grid && args.grid.getOptions() as GridOption;
     const options = this.gridOptions || this.args.column.params || {};
-    if (options && options.i18n instanceof TranslaterService) {
+    if (options && options.i18n) {
       this._translater = options.i18n;
     }
 

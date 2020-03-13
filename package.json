@@ -4,18 +4,17 @@
   "license": "MIT",
   "scripts": {
     "bootstrap": "lerna bootstrap --use-workspaces",
+    "bundle": "lerna run bundle --stream",
     "build": "lerna run build --stream",
     "rebuild": "npm run clean && npm run build",
     "clean": "rimraf packages/*/dist dist",
-    "predev:watch": "lerna run dev",
     "dev:watch": "lerna run dev:watch --parallel",
-    "dev:vanilla": "run-p dev:watch examples:dev:vanilla",
     "test": "lerna run test --stream",
     "test:watch": "lerna run test:watch --stream",
+    "test:common:watch": "cd packages/common && npm run test:watch",
     "diff": "lerna diff",
     "updated": "lerna updated",
     "clean:tsconfig-build-cache": "rimraf packages/*/dist/tsconfig.tsbuildinfo",
-    "examples:dev:vanilla": "lerna run dev:vanilla --parallel",
     "new-version": "lerna version --conventional-commits --yes"
   },
   "workspaces": [

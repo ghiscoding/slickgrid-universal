@@ -20,7 +20,7 @@ export class InputMaskFilter extends InputFilter {
    */
   init(args: FilterArguments) {
     if (!args) {
-      throw new Error('[SlickGrid-Universal] A filter must always have an "init()" with valid arguments.');
+      throw new Error('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
     }
     this.grid = args.grid;
     this.callback = args.callback;
@@ -35,7 +35,7 @@ export class InputMaskFilter extends InputFilter {
     }
 
     if (!this._inputMask) {
-      throw new Error(`[SlickGrid-Universal] The Filters.inputMask requires the mask to be passed in the filter params or the column definition params
+      throw new Error(`[Slickgrid-Universal] The Filters.inputMask requires the mask to be passed in the filter params or the column definition params
         for example:: this.columnDefinitions: [{ id: 'phone', field: 'phone', filter: { model: Filters.inputMask, params: { mask: '000-000-0000' }}}]`);
     }
 

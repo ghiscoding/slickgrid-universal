@@ -6,7 +6,7 @@
     "lib": "lib"
   },
   "scripts": {
-    "dev:vanilla": "webpack-dev-server --env.server --extractCss",
+    "dev:watch": "webpack-dev-server --env.server --extractCss",
     "test": "echo testing slickgrid-universal demo code"
   },
   "author": "Ghislain B.",

@@ -82,7 +82,7 @@ export class ExtensionUtility {
    */
   getPickerTitleOutputString(propName: string, pickerName: 'gridMenu' | 'columnPicker') {
     // if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
-    //   throw new Error('[SlickGrid-Universal] requires "ngx-translate" to be installed and configured when the grid option "enableTranslate" is enabled.');
+    //   throw new Error('[Slickgrid-Universal] requires "ngx-translate" to be installed and configured when the grid option "enableTranslate" is enabled.');
     // }
 
     let output = '';

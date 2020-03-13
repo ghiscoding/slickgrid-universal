@@ -1,5 +1,5 @@
-import { EventNamingStyle } from "./enums/eventNamingStyle.enum";
-import { GridOption } from "./interfaces/gridOption.interface";
+import { EventNamingStyle } from './enums/eventNamingStyle.enum';
+import { GridOption } from './interfaces/gridOption.interface';
 
 /**
  * Options that can be passed to the Bootstrap-Datetimepicker directly

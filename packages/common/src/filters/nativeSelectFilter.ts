@@ -56,7 +56,7 @@ export class NativeSelectFilter implements Filter {
    */
   init(args: FilterArguments) {
     if (!args) {
-      throw new Error('[SlickGrid-Universal] A filter must always have an "init()" with valid arguments.');
+      throw new Error('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
     }
     this.grid = args.grid;
     this.callback = args.callback;
@@ -64,7 +64,7 @@ export class NativeSelectFilter implements Filter {
     this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
 
     if (!this.grid || !this.columnDef || !this.columnFilter || !this.columnFilter.collection) {
-      throw new Error(`[SlickGrid-Universal] You need to pass a "collection" for the Native Select Filter to work correctly.`);
+      throw new Error(`[Slickgrid-Universal] You need to pass a "collection" for the Native Select Filter to work correctly.`);
     }
 
     if (this.columnFilter.enableTranslateLabel && !this.gridOptions.enableTranslate && (!this.translater || typeof this.translater.translate !== 'function')) {

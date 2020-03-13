@@ -1,0 +1,47 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Bundle Library",
+      "type": "shell",
+      "command": "yarn run bundle",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Jest Tests (Common package)",
+      "type": "shell",
+      "command": "yarn run test:common:watch",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Jest Tests with Coverage",
+      "type": "shell",
+      "command": "yarn start test.jest.coverage",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Jest Watch",
+      "type": "shell",
+      "command": "yarn start test.jest.watch",
+      "problemMatcher": []
+    },
+    {
+      "label": "Start Library Development",
+      "type": "shell",
+      "command": "yarn start:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "Prepare Release as Minor (0.x.0)",
+      "type": "shell",
+      "command": "yarn run release -- --release-as minor --infile ./doc/CHANGELOG.md",
+      "problemMatcher": []
+    },
+    {
+      "label": "Prepare Release as Patch (0.0.x)",
+      "type": "shell",
+      "command": "yarn run release -- --release-as patch --infile ./doc/CHANGELOG.md",
+      "problemMatcher": []
+    }
+  ]
+}

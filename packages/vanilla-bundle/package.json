@@ -10,9 +10,10 @@
     "test": "echo testing slickgrid-universal slickgrid-vanilla-bundle code",
     "dev": "webpack --env.development",
     "dev:watch": "webpack --env.development --watch",
-    "build": "webpack --env.production",
-    "prebuild": "npm-run-all delete:dist delete:zip",
-    "postbuild": "npm-run-all zip:dist",
+    "build": "webpack --env.development",
+    "bundle": "webpack --env.production",
+    "prebundle": "npm-run-all delete:dist delete:zip",
+    "postbundle": "npm-run-all zip:dist",
     "delete:dist": "cross-env rimraf dist",
     "delete:zip": "cross-env rimraf dist-bundle-zip",
     "zip:dist": "cross-env node compress.js --output-filename=slickgrid-vanilla-bundle --output-folder=\"dist-grid-bundle-zip/\""

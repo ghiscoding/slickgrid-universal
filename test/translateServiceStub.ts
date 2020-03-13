@@ -1,4 +1,4 @@
-import { TranslaterService } from '../src/services/translater.service';
+import { TranslaterService } from '../packages/common/src/services/translater.service';
 
 export class TranslateServiceStub implements TranslaterService {
   _locale = 'en';
@@ -6,7 +6,14 @@ export class TranslateServiceStub implements TranslaterService {
     return this._locale;
   }
   translate(translationKey: string): string {
-    return translationKey;
+    let output = translationKey;
+    switch (translationKey) {
+      case 'CANCEL': output = this._locale === 'en' ? 'Cancel' : 'Annuler'; break;
+      case 'HELLO': output = this._locale === 'en' ? 'Hello' : 'Bonjour'; break;
+      case 'SAVE': output = this._locale === 'en' ? 'Save' : 'Sauvegarder'; break;
+      case 'TRUE': output = this._locale === 'en' ? 'True' : 'Vrai'; break;
+    }
+    return output;
   }
   setLocale(locale: string) {
     return new Promise(resolve => resolve(this._locale = locale));
