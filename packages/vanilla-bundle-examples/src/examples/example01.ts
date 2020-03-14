@@ -1,4 +1,4 @@
-import { Aggregators, FieldType, Sorters, SortDirectionNumber, GroupTotalFormatters, Formatters } from '@slickgrid-universal/common';
+import { Aggregators, FieldType, Sorters, SortDirectionNumber, GroupTotalFormatters, Formatters, OperatorType } from '@slickgrid-universal/common';
 
 const actionFormatter = (row, cell, value, columnDef, dataContext) => {
   if (dataContext.priority === 3) { // option 3 is High
@@ -61,10 +61,23 @@ export class Example1 {
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
         editor: {
-          model: Slicker.Editors.text,
-          required: true,
-          alwaysSaveOnEnterKey: true,
+          model: Slicker.Editors.slider,
+          minValue: 0,
+          maxValue: 100,
+          // params: { hideSliderNumber: true },
         },
+        /*
+        editor: {
+          // default is 0 decimals, if no decimals is passed it will accept 0 or more decimals
+          // however if you pass the "decimalPlaces", it will validate with that maximum
+          model: Editors.float,
+          minValue: 0,
+          maxValue: 365,
+          // the default validation error message is in English but you can override it by using "errorMessage"
+          // errorMessage: this.i18n.tr('INVALID_FLOAT', { maxDecimal: 2 }),
+          params: { decimalPlaces: 2 },
+        },
+        */
         type: FieldType.number
       },
       {
@@ -78,18 +91,37 @@ export class Example1 {
         type: FieldType.number
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', sortable: true, type: 5,
-        editor: {
-          model: Slicker.Editors.slider,
-          minValue: 0,
-          maxValue: 100,
-          // params: { hideSliderNumber: true },
-        },
+        id: 'percentComplete', name: '% Complete', field: 'percentComplete', sortable: true,
         filterable: true,
+        type: FieldType.number,
+        editor: {
+          // We can also add HTML text to be rendered (any bad script will be sanitized) but we have to opt-in, else it will be sanitized
+          enableRenderHtml: true,
+          // collection: [{ value: '1', label: '1' }, { value: '2', label: '2' }, { value: '3', label: '3' }, { value: '4', label: '4' }, { value: '5', label: '5' }],
+          collection: Array.from(Array(101).keys()).map(k => ({ value: k, label: k, symbol: '<i class="mdi mdi-percent-outline" style="color:cadetblue"></i>' })),
+          customStructure: {
+            value: 'value',
+            label: 'label',
+            labelSuffix: 'symbol'
+          },
+          collectionSortBy: {
+            property: 'label',
+            sortDesc: true
+          },
+          collectionFilterBy: {
+            property: 'value',
+            value: 0,
+            operator: OperatorType.notEqual
+          },
+          editorOptions: {
+            filter: true // adds a filter on top of the multi-select dropdown
+          },
+          model: Slicker.Editors.multipleSelect,
+        },
       },
       { id: 'start', name: 'Start', field: 'start', sortable: true },
       { id: 'finish', name: 'Finish', field: 'finish', sortable: true },
-      { id: 'completed', name: 'Completed', field: 'completed', sortable: true, filterable: true, formatter: Slicker.Formatters.checkmark },
+      { id: 'completed', name: 'Completed', field: 'completed', sortable: true, filterable: true, formatter: Slicker.Formatters.checkmarkMaterial },
       {
         id: 'action', name: 'Action', field: 'action', width: 110, maxWidth: 200,
         excludeFromExport: true,

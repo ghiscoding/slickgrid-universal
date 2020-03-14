@@ -4,43 +4,25 @@
     {
       "label": "Bundle Library",
       "type": "shell",
-      "command": "yarn run bundle",
+      "command": "npm run bundle",
       "problemMatcher": []
     },
     {
       "label": "Run Jest Tests (Common package)",
       "type": "shell",
-      "command": "yarn run test:common:watch",
-      "problemMatcher": []
-    },
-    {
-      "label": "Run Jest Tests with Coverage",
-      "type": "shell",
-      "command": "yarn start test.jest.coverage",
-      "problemMatcher": []
-    },
-    {
-      "label": "Run Jest Watch",
-      "type": "shell",
-      "command": "yarn start test.jest.watch",
+      "command": "npm run test:common:watch",
       "problemMatcher": []
     },
     {
       "label": "Start Library Development",
       "type": "shell",
-      "command": "yarn start:dev",
+      "command": "npm run dev:watch",
       "problemMatcher": []
     },
     {
-      "label": "Prepare Release as Minor (0.x.0)",
+      "label": "Prepare New Release",
       "type": "shell",
-      "command": "yarn run release -- --release-as minor --infile ./doc/CHANGELOG.md",
-      "problemMatcher": []
-    },
-    {
-      "label": "Prepare Release as Patch (0.0.x)",
-      "type": "shell",
-      "command": "yarn run release -- --release-as patch --infile ./doc/CHANGELOG.md",
+      "command": "npm run new-version",
       "problemMatcher": []
     }
   ]

@@ -102,7 +102,7 @@ export class Example2 {
         }
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', sortable: true, type: 5,
+        id: 'percentComplete', name: '% Complete', field: 'percentComplete', sortable: true, type: FieldType.number,
         editor: {
           model: Slicker.Editors.slider,
           minValue: 0,
@@ -113,7 +113,7 @@ export class Example2 {
       },
       { id: 'start', name: 'Start', field: 'start', sortable: true },
       { id: 'finish', name: 'Finish', field: 'finish', sortable: true },
-      { id: 'completed', name: 'Completed', field: 'completed', sortable: true, filterable: true, formatter: Slicker.Formatters.checkmark },
+      { id: 'completed', name: 'Completed', field: 'completed', sortable: true, filterable: true, formatter: Slicker.Formatters.checkmarkMaterial },
       {
         id: 'action', name: 'Action', field: 'action', width: 110, maxWidth: 200,
         excludeFromExport: true,

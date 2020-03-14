@@ -22,6 +22,14 @@ describe('sorterUtilities', () => {
     expect(spy).toHaveBeenCalledWith(0, 4, SortDirectionNumber.asc);
   });
 
+  it('should call the Sorters.string when FieldType is a string (which is also the default)', () => {
+    const string1 = 'John';
+    const string2 = 'Jane';
+    const spy = jest.spyOn(Sorters, 'string');
+    sortByFieldType(FieldType.string, string1, string2, SortDirectionNumber.asc);
+    expect(spy).toHaveBeenCalledWith(string1, string2, SortDirectionNumber.asc);
+  });
+
   it('should call the Sorters.objectString when FieldType is objectString', () => {
     const object1 = { firstName: 'John', lastName: 'Z' };
     const object2 = { firstName: 'Jane', lastName: 'Doe' };

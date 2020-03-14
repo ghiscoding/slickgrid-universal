@@ -1,3 +1,4 @@
+const { ProvidePlugin } = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -51,6 +52,7 @@ module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, 
         issuer: [{ not: [{ test: /\.html$/i }] }],
         use: extractCss ? [{ loader: MiniCssExtractPlugin.loader }, 'css-loader'] : ['style-loader', ...cssRules]
       },
+      { test: /\.(png|gif|jpg|cur)$/i, loader: 'url-loader', options: { limit: 8192 } },
       { test: /\.scss$/, use: ['style-loader', 'css-loader', 'sass-loader'], issuer: /\.[tj]s$/i },
       { test: /\.scss$/, use: ['css-loader', 'sass-loader'], issuer: /\.html?$/i },
       { test: /\.html$/i, loader: 'html-loader' },
@@ -68,6 +70,12 @@ module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, 
   },
   devtool: production ? 'nosources-source-map' : 'cheap-module-eval-source-map',
   plugins: [
+    new ProvidePlugin({
+      '$': 'jquery',
+      'jQuery': 'jquery',
+      'window.jQuery': 'jquery',
+      'window.$': 'jquery',
+    }),
     ...when(!production, new HtmlWebpackPlugin({
       template: 'index.ejs',
       metadata: {
