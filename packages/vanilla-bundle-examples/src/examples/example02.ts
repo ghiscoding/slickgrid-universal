@@ -1,4 +1,5 @@
 import { Aggregators, FieldType, Sorters, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters } from '@slickgrid-universal/common';
+import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 
 const actionFormatter = (row, cell, value, columnDef, dataContext) => {
   if (dataContext.priority === 3) { // option 3 is High
@@ -16,9 +17,6 @@ const myCustomTitleValidator = (value, args) => {
   }
   return { valid: true, msg: '' };
 };
-
-// (window as any).Slicker = {};
-declare var Slicker: any;
 
 export class Example2 {
   gridClass;

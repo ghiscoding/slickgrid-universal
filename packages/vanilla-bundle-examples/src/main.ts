@@ -1,3 +1,5 @@
+import 'jquery';
+import 'jquery-ui-dist/jquery-ui';
 import './styles.scss';
 import { Renderer } from './renderer';
 import * as SlickerModule from '@slickgrid-universal/vanilla-bundle';

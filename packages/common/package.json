@@ -2,10 +2,8 @@
   "name": "@slickgrid-universal/common",
   "version": "0.0.2",
   "description": "SlickGrid-Universal Common Code",
-  "main": "dist/es2020/index",
-  "module": "dist/es2020/index",
-  "types": "dist/index.d.ts",
-  "typings": "dist/index.d.ts",
+  "main": "dist/es2020/index.js",
+  "typings": "dist/es2020/index.d.ts",
   "author": "Ghislain B.",
   "license": "MIT",
   "publishConfig": {

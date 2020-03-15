@@ -10,10 +10,13 @@
       "request": "launch",
       "breakOnLoad": false,
       "url": "http://localhost:8080",
-      "webRoot": "${workspaceRoot}/src",
+      "webRoot": "${workspaceRoot}",
       "userDataDir": "${workspaceRoot}/.chrome",
+      "sourceMaps": true,
+      "trace": true,
       "sourceMapPathOverrides": {
-        "webpack:///./src/*": "${webRoot}/*"
+        "webpack:///./*": "${webRoot}/*",
+        "webpack:///*": "${webRoot}/*"
       }
     },
     {

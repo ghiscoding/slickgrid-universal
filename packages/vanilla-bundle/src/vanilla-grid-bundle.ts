@@ -7,7 +7,9 @@ import 'slickgrid/plugins/slick.resizer';
 import {
   Column,
   ExtensionName,
+  EventNamingStyle,
   GridOption,
+  Metrics,
   SlickEventHandler,
   GlobalGridOptions,
 
@@ -41,17 +43,17 @@ declare var Slick: any;
 declare var $: any;
 
 export class VanillaGridBundle {
-  private _columnDefinitions;
+  private _columnDefinitions: Column[];
   private _gridOptions: GridOption;
-  private _dataset;
-  private _gridElm: HTMLDivElement;
-  private _gridContainerElm: HTMLDivElement;
+  private _dataset: any[];
+  private _gridElm: Element;
+  private _gridContainerElm: Element;
   private _eventHandler: SlickEventHandler = new Slick.EventHandler();
-  private _eventPubSubService;
+  private _eventPubSubService: EventPubSubService;
   private _slickgridInitialized = false;
-  dataView;
-  grid;
-  metrics;
+  dataView: any;
+  grid: any;
+  metrics: Metrics;
   customDataView = false;
   groupItemMetadataProvider: any;
 
@@ -79,8 +81,8 @@ export class VanillaGridBundle {
 
   gridWidthString = 'width: 800px';
   gridHeightString = 'height: 500px';
-  gridClass;
-  gridClassName;
+  gridClass: string;
+  gridClassName: string;
   gridOptions: GridOption;
 
   get columnDefinitions() {
@@ -101,10 +103,10 @@ export class VanillaGridBundle {
     // this.refreshGridData(dataset);
   }
 
-  constructor(gridContainerElm: HTMLDivElement, columnDefs: Column[], options: GridOption, dataset?: any[]) {
+  constructor(gridContainerElm: Element, columnDefs: Column[], options: GridOption, dataset?: any[]) {
     this._columnDefinitions = columnDefs;
     this._gridOptions = options;
-    this.dataset = dataset;
+    this.dataset = dataset || [];
 
     this.sharedService = new SharedService();
     this.sortService = new SortService();
@@ -164,7 +166,7 @@ export class VanillaGridBundle {
     }
   }
 
-  initialization(gridContainerElm: HTMLDivElement) {
+  initialization(gridContainerElm: Element) {
     // create the slickgrid container and add it to the user's grid container
     this._gridContainerElm = gridContainerElm;
     this._gridElm = document.createElement('div');
@@ -172,7 +174,7 @@ export class VanillaGridBundle {
     gridContainerElm.appendChild(this._gridElm);
 
     this._gridOptions = this.mergeGridOptions(this._gridOptions);
-    this._eventPubSubService.eventNamingStyle = this._gridOptions.eventNamingStyle;
+    this._eventPubSubService.eventNamingStyle = this._gridOptions && this._gridOptions.eventNamingStyle || EventNamingStyle.camelCase;
     this._eventHandler = new Slick.EventHandler();
     if (!this.customDataView) {
       if (this._gridOptions.draggableGrouping || this._gridOptions.enableGrouping) {
@@ -240,17 +242,17 @@ export class VanillaGridBundle {
     this._eventPubSubService.publish('onSlickerGridCreated', slickerElementInstance);
   }
 
-  mergeGridOptions(gridOptions) {
+  mergeGridOptions(gridOptions: GridOption) {
     return $.extend(true, {}, GlobalGridOptions, gridOptions)
   }
 
-  bindDifferentHooks(grid, gridOptions, dataView) {
+  bindDifferentHooks(grid: any, gridOptions: GridOption, dataView: any) {
     if (dataView && grid) {
       // expose all Slick Grid Events through dispatch
       for (const prop in grid) {
         if (grid.hasOwnProperty(prop) && prop.startsWith('on')) {
           this._eventHandler.subscribe(grid[prop], (event: Event, args: any) => {
-            const gridEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions.defaultSlickgridEventPrefix);
+            const gridEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions && this._gridOptions.defaultSlickgridEventPrefix || '');
             return this._eventPubSubService.dispatchCustomEvent(gridEventName, { eventData: event, args });
           });
         }
@@ -260,13 +262,13 @@ export class VanillaGridBundle {
       for (const prop in dataView) {
         if (dataView.hasOwnProperty(prop) && prop.startsWith('on')) {
           this._eventHandler.subscribe(dataView[prop], (event: Event, args: any) => {
-            const dataViewEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions.defaultSlickgridEventPrefix);
+            const dataViewEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions && this._gridOptions.defaultSlickgridEventPrefix || '');
             return this._eventPubSubService.dispatchCustomEvent(dataViewEventName, { eventData: event, args });
           });
         }
       }
 
-      this._eventHandler.subscribe(dataView.onRowCountChanged, (e, args) => {
+      this._eventHandler.subscribe(dataView.onRowCountChanged, (e: Event, args: { current: number }) => {
         grid.invalidate();
 
         this.metrics = {
@@ -281,7 +283,7 @@ export class VanillaGridBundle {
       // also don't use "invalidateRows" since it destroys the entire row and as bad user experience when updating a row
       // see commit: https://github.com/ghiscoding/slickgrid-universal/commit/bb62c0aa2314a5d61188ff005ccb564577f08805
       if (gridOptions && gridOptions.enableFiltering && !gridOptions.enableRowDetailView) {
-        this._eventHandler.subscribe(dataView.onRowsChanged, (e, args) => {
+        this._eventHandler.subscribe(dataView.onRowsChanged, (e: Event, args: { rows: number[] }) => {
           if (args && args.rows && Array.isArray(args.rows)) {
             args.rows.forEach((row) => grid.updateRow(row));
             grid.render();
@@ -296,7 +298,7 @@ export class VanillaGridBundle {
    * We will re-render the grid so that the new header and data shows up correctly.
    * If using i18n, we also need to trigger a re-translate of the column headers
    */
-  updateColumnDefinitionsList(newColumnDefinitions) {
+  updateColumnDefinitionsList(newColumnDefinitions: Column[]) {
     // map/swap the internal library Editor to the SlickGrid Editor factory
     // console.log('newColumnDefinitions', newColumnDefinitions)
     newColumnDefinitions = this.swapInternalEditorToSlickGridFactoryEditor(newColumnDefinitions);
@@ -317,8 +319,8 @@ export class VanillaGridBundle {
    * so in our lib we will swap "editor" and copy it into a new property called "internalColumnEditor"
    * then take back "editor.model" and make it the new "editor" so that SlickGrid Editor Factory still works
    */
-  swapInternalEditorToSlickGridFactoryEditor(columnDefinitions) {
-    return columnDefinitions.map((column) => {
+  swapInternalEditorToSlickGridFactoryEditor(columnDefinitions: Column[]) {
+    return columnDefinitions.map((column: Column) => {
       // on every Editor that have a "collectionAsync", resolve the data and assign it to the "collection" property
       // if (column.editor && column.editor.collectionAsync) {
       // this.loadEditorCollectionAsync(column);

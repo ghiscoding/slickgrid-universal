@@ -2,7 +2,8 @@
   "name": "@slickgrid-universal/vanilla-bundle",
   "version": "0.0.2",
   "description": "Vanilla Slick Grid Bundle - Framework agnostic the output is to be used in vanilla JS/TS - Written in TypeScript and we also use WebPack to bundle everything into 1 JS file.",
-  "main": "dist/bundle/slickgrid-vanilla-bundle",
+  "main": "dist/es2020/index.js",
+  "typings": "dist/es2020/index.d.ts",
   "directories": {
     "src": "src"
   },
@@ -11,11 +12,14 @@
     "dev": "webpack --env.development",
     "dev:watch": "webpack --env.development --watch",
     "build": "webpack --env.development",
-    "bundle": "webpack --env.production",
+    "bundle:commonjs": "tsc --project tsconfig.build.json --outDir dist/commonjs --module commonjs",
+    "bundle:es2020": "cross-env tsc --project tsconfig.build.json --outDir dist/es2020 --module es2015 --target es2020",
+    "bundle": "npm-run-all webpack:prod bundle:commonjs bundle:es2020",
     "prebundle": "npm-run-all delete:dist delete:zip",
     "postbundle": "npm-run-all zip:dist",
     "delete:dist": "cross-env rimraf dist",
     "delete:zip": "cross-env rimraf dist-bundle-zip",
+    "webpack:prod": "webpack --env.production",
     "zip:dist": "cross-env node compress.js --output-filename=slickgrid-vanilla-bundle --output-folder=\"dist-grid-bundle-zip/\""
   },
   "author": "Ghislain B.",
