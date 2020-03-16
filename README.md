@@ -53,11 +53,8 @@ npm run test:watch
 ```
 
 TODO
-- [x] Aggregators
-  - [x] Avg
-  - [x] Max
-  - [x] Min
-  - [x] Sum
+#### Implementation
+- [x] Aggregators (4)
 - [ ] Editors
   - [ ] Autocomplete
   - [ ] Checkbox
@@ -95,16 +92,8 @@ TODO
   - [ ] Row Detail
   - [x] Row Move
   - [x] Row Selection
-- [x] Grouping Formatters
-  - [x] Avg Total(s)
-  - [x] Max Total(s)
-  - [x] Min Total(s)
-  - [x] Sum Total(s)
-- [x] Sorters
-  - [x] Date
-  - [x] Numeric
-  - [x] Object String
-  - [x] String
+- [x] Grouping Formatters (12)
+- [x] Sorters (5)
 - [ ] Services
   - [x] Collection
   - [ ] Excel Export
@@ -120,3 +109,9 @@ TODO
   - [ ] Resizer
   - [x] Shared
   - [x] Sort
+
+#### Extra Todos
+- [ ] Add Multiple Example Demos with Vanilla implementation
+  - [ ] Add built demo as a GitHub Demo website
+- [ ] Add Cypress E2E tests
+- [ ] Add Jest Unit tests
