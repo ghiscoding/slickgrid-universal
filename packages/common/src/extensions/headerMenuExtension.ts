@@ -15,7 +15,7 @@ import {
   EmitterType,
   ExtensionName,
 } from '../enums/index';
-// import { FilterService } from '../services/filter.service';
+import { FilterService } from '../services/filter.service';
 import { SortService } from '../services/sort.service';
 import { SharedService } from '../services/shared.service';
 import { ExtensionUtility } from './extensionUtility';
@@ -32,7 +32,7 @@ export class HeaderMenuExtension implements Extension {
 
   constructor(
     private extensionUtility: ExtensionUtility,
-    // private filterService: FilterService,
+    private filterService: FilterService,
     private pubSubService: PubSubService,
     private sharedService: SharedService,
     private sortService: SortService,
@@ -280,9 +280,9 @@ export class HeaderMenuExtension implements Extension {
 
   /** Clear the Filter on the current column (if it's actually filtered) */
   private clearColumnFilter(event: Event, args: MenuCommandItemCallbackArgs) {
-    // if (args && args.column) {
-    //   this.filterService.clearFilterByColumnId(event, args.column.id);
-    // }
+    if (args && args.column) {
+      this.filterService.clearFilterByColumnId(event, args.column.id);
+    }
   }
 
   /** Clear the Sort on the current column (if it's actually sorted) */

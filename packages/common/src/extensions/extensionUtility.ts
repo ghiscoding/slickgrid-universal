@@ -81,9 +81,9 @@ export class ExtensionUtility {
    * 3- else if nothing is provided use text defined as constants
    */
   getPickerTitleOutputString(propName: string, pickerName: 'gridMenu' | 'columnPicker') {
-    // if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
-    //   throw new Error('[Slickgrid-Universal] requires "ngx-translate" to be installed and configured when the grid option "enableTranslate" is enabled.');
-    // }
+    if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
+      throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
+    }
 
     let output = '';
     const picker = this.sharedService.gridOptions && this.sharedService.gridOptions[pickerName] || {};
@@ -95,21 +95,21 @@ export class ExtensionUtility {
     const title = picker && picker[propName];
     const titleKey = picker && picker[`${propName}Key`];
 
-    if (titleKey /*&& this.translaterService && this.translaterService.currentLang && this.translaterService.translate*/) {
-      // output = this.translaterService.translate(titleKey || ' ');
+    if (titleKey && this.translaterService && this.translaterService.translate) {
+      output = this.translaterService.translate(titleKey || ' ');
     } else {
       switch (propName) {
         case 'customTitle':
-          output = title || locales && locales.TEXT_COMMANDS;
+          output = title || enableTranslate && this.translaterService && this.translaterService.getCurrentLocale && this.translaterService.translate && this.translaterService.translate('COMMANDS' || ' ') || locales && locales.TEXT_COMMANDS;
           break;
         case 'columnTitle':
-          output = title || locales && locales.TEXT_COLUMNS;
+          output = title || enableTranslate && this.translaterService && this.translaterService.getCurrentLocale && this.translaterService.translate && this.translaterService.translate('COLUMNS' || ' ') || locales && locales.TEXT_COLUMNS;
           break;
         case 'forceFitTitle':
-          output = title || locales && locales.TEXT_FORCE_FIT_COLUMNS;
+          output = title || enableTranslate && this.translaterService && this.translaterService.getCurrentLocale && this.translaterService.translate && this.translaterService.translate('FORCE_FIT_COLUMNS' || ' ') || locales && locales.TEXT_FORCE_FIT_COLUMNS;
           break;
         case 'syncResizeTitle':
-          output = title || locales && locales.TEXT_SYNCHRONOUS_RESIZE;
+          output = title || enableTranslate && this.translaterService && this.translaterService.getCurrentLocale && this.translaterService.translate && this.translaterService.translate('SYNCHRONOUS_RESIZE' || ' ') || locales && locales.TEXT_SYNCHRONOUS_RESIZE;
           break;
         default:
           output = title;

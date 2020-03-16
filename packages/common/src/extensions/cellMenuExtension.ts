@@ -13,6 +13,7 @@ import {
 } from '../interfaces/index';
 import { SharedService } from '../services/shared.service';
 import { ExtensionUtility } from './extensionUtility';
+import { TranslaterService } from '../services';
 
 // using external non-typed js libraries
 declare var Slick: any;
@@ -25,6 +26,7 @@ export class CellMenuExtension implements Extension {
   constructor(
     private extensionUtility: ExtensionUtility,
     private sharedService: SharedService,
+    private translaterService: TranslaterService,
   ) {
     this._eventHandler = new Slick.EventHandler();
   }
@@ -54,6 +56,10 @@ export class CellMenuExtension implements Extension {
    * @param columnDefinitions
    */
   register(): any {
+    if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
+      throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
+    }
+
     if (this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
       const cellMenu = this.sharedService.gridOptions.cellMenu;
       // get locales provided by user in main file or else use default English locales via the Constants
@@ -143,7 +149,6 @@ export class CellMenuExtension implements Extension {
   private resetMenuTranslations(columnDefinitions: Column[]) {
     const gridOptions = this.sharedService && this.sharedService.gridOptions;
 
-    /*
     if (gridOptions && gridOptions.enableTranslate) {
       columnDefinitions.forEach((columnDef: Column) => {
         if (columnDef && columnDef.cellMenu && (Array.isArray(columnDef.cellMenu.commandItems) || Array.isArray(columnDef.cellMenu.optionItems))) {
@@ -153,10 +158,10 @@ export class CellMenuExtension implements Extension {
 
           // translate their titles only if they have a titleKey defined
           if (columnDef.cellMenu.commandTitleKey) {
-            columnDef.cellMenu.commandTitle = this.translate && this.translate.currentLang && this.translate.instant && this.translate.instant(columnDef.cellMenu.commandTitleKey) || this._locales && this._locales.TEXT_COMMANDS || columnDef.cellMenu.commandTitle;
+            columnDef.cellMenu.commandTitle = this.translaterService && this.translaterService.getCurrentLocale && this.translaterService.translate && this.translaterService.translate(columnDef.cellMenu.commandTitleKey) || this._locales && this._locales.TEXT_COMMANDS || columnDef.cellMenu.commandTitle;
           }
           if (columnDef.cellMenu.optionTitleKey) {
-            columnDef.cellMenu.optionTitle = this.translate && this.translate.currentLang && this.translate.instant && this.translate.instant(columnDef.cellMenu.optionTitleKey) || columnDef.cellMenu.optionTitle;
+            columnDef.cellMenu.optionTitle = this.translaterService && this.translaterService.getCurrentLocale && this.translaterService.translate && this.translaterService.translate(columnDef.cellMenu.optionTitleKey) || columnDef.cellMenu.optionTitle;
           }
 
           // translate both command/option items (whichever is provided)
@@ -165,7 +170,6 @@ export class CellMenuExtension implements Extension {
         }
       });
     }
-    */
   }
 
   sortMenuItems(columnDefinitions: Column[]) {

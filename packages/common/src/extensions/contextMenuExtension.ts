@@ -68,7 +68,7 @@ export class ContextMenuExtension implements Extension {
    */
   register(): any {
     if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
-      throw new Error('[Slickgrid-Universal] requires "I18N" to be installed and configured when the grid option "enableTranslate" is enabled.');
+      throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
 
     if (this.sharedService && this.sharedService.grid && this.sharedService.gridOptions && this.sharedService.gridOptions.contextMenu) {
