@@ -1,40 +1,40 @@
 {
-    "extends": "../tsconfig-build.json",
-    "compileOnSave": false,
-    "compilerOptions": {
-        "rootDir": "src",
-        "declarationDir": "dist",
-        "outDir": "dist/esnext",
-        "target": "es2017",
-        "module": "es2015",
-        "sourceMap": true,
-        "lib": [
-            "esnext",
-            "dom"
-        ],
-        "types": [
-            "moment",
-            "jquery",
-            "node"
-        ],
-        "typeRoots": [
-            "node_modules/@types",
-            "src/typings"
-        ]
-    },
-    "exclude": [
-        "cypress",
-        "dist",
-        "node_modules",
-        "**/*.spec.ts"
+  "extends": "../tsconfig-build.json",
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": "src",
+    "declarationDir": "dist/es2020",
+    "outDir": "dist/es2020",
+    "target": "es2017",
+    "module": "es2015",
+    "sourceMap": true,
+    "lib": [
+      "es2020",
+      "dom"
     ],
-    "filesGlob": [
-        "./src/**/*.ts",
-        "./test/**/*.ts",
-        "./custom_typings/**/*.d.ts"
+    "types": [
+      "moment",
+      "jquery",
+      "node"
     ],
-    "include": [
-        "src/**/*.ts",
-        "src/typings/**/*.ts"
+    "typeRoots": [
+      "node_modules/@types",
+      "src/typings"
     ]
+  },
+  "exclude": [
+    "cypress",
+    "dist",
+    "node_modules",
+    "**/*.spec.ts"
+  ],
+  "filesGlob": [
+    "./src/**/*.ts",
+    "./test/**/*.ts",
+    "./custom_typings/**/*.d.ts"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "src/typings/**/*.ts"
+  ]
 }
