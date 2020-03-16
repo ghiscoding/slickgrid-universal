@@ -51,3 +51,72 @@ npm run test
 # or as a watch
 npm run test:watch
 ```
+
+TODO
+- [x] Aggregators
+  - [x] Avg
+  - [x] Max
+  - [x] Min
+  - [x] Sum
+- [ ] Editors
+  - [ ] Autocomplete
+  - [ ] Checkbox
+  - [ ] Date
+  - [x] Float
+  - [x] Integer
+  - [x] Long Text
+  - [ ] Multiple Select
+  - [ ] Single Select
+  - [x] Slider
+  - [x] Text
+- [ ] Filters
+  - [ ] Autocomplete
+  - [ ] Compound Date
+  - [ ] Compound Input(s)
+  - [ ] Compound Slider
+  - [ ] Date Range
+  - [x] Input(s)
+  - [ ] Multiple Select 
+  - [ ] Single Select 
+  - [x] Native Select 
+  - [ ] Slider
+  - [ ] Slider Range
+- [x] Formatters (31)
+- [ ] Extensions
+  - [x] AutoTooltip
+  - [x] Cell External Copy Manager
+  - [x] Cell Menu
+  - [x] Checkbox Selector
+  - [x] Context Menu
+  - [x] Draggable Grouping
+  - [x] Grid Menu
+  - [x] Header Button
+  - [x] Header Menu
+  - [ ] Row Detail
+  - [x] Row Move
+  - [x] Row Selection
+- [x] Grouping Formatters
+  - [x] Avg Total(s)
+  - [x] Max Total(s)
+  - [x] Min Total(s)
+  - [x] Sum Total(s)
+- [x] Sorters
+  - [x] Date
+  - [x] Numeric
+  - [x] Object String
+  - [x] String
+- [ ] Services
+  - [x] Collection
+  - [ ] Excel Export
+  - [ ] Export Text
+  - [x] Extension
+  - [x] Filter
+  - [ ] GraphQL
+  - [ ] OData
+  - [ ] Grid Event
+  - [ ] Grid State
+  - [x] Grouping & Col Span
+  - [ ] Pagination
+  - [ ] Resizer
+  - [x] Shared
+  - [x] Sort
