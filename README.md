@@ -1,6 +1,6 @@
 # Slickgrid-Universal
 
-This is a monorepo project (using Lerna) which regroups a few packages under a single repository. The goal is to create a Common package that is framework agnostic and can later be used by any Frameworks. It's also a good opportunity to decouple some other features that not all users need, this will also help in getting a smaller bundle, for example a lot of users don't need the backend services (OData, GraphQL) and are better handled in a monorepo structure. 
+This is a monorepo project (using Lerna) which regroups a few packages under a single repository. The goal is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). It's also a good opportunity to decouple some other features that not all users need, this will also help in getting a smaller bundle, for example not lot users require backend services (OData, GraphQL), which is why these are better handled in a monorepo structure. 
 
 ### Why create this monorepo?
 You might be wondering why was this monorepo created?
