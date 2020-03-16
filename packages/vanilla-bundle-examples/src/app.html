@@ -1,6 +1,18 @@
-<div class="container is-fluid">
+<div class="">
   <h3 class="title is-3 has-text-centered">Slickgrid-Universal - Vanilla Implementation Demo</h3>
-  <button class="button is-small" click.delegate="loadRoute('example01')">Example01</button>
-  <button class="button is-small" click.delegate="loadRoute('example02')">Example02</button>
-  <view-route></view-route>
+
+  <div class="columns">
+    <div class="column is-narrow">
+      <aside class="menu">
+        <p class="menu-label" style="padding-left: 5px">Examples</p>
+        <ul class="menu-list">
+          <li><a onclick.delegate="loadRoute('example01')">Example01</a></li>
+          <li><a onclick.delegate="loadRoute('example02')">Example02</a></li>
+        </ul>
+      </aside>
+    </div>
+    <div class="column">
+      <view-route></view-route>
+    </div>
+  </div>
 </div>

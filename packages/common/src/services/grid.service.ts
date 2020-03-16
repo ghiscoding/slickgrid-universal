@@ -8,9 +8,10 @@ import {
   OnEventArgs
 } from '../interfaces/index';
 import { ExtensionService } from './extension.service';
-// import { FilterService } from './filter.service';
+import { FilterService } from './filter.service';
 // import { GridStateService } from './gridState.service';
 import { PubSubService } from '../services/pubSub.service';
+import { SharedService } from './shared.service';
 import { SortService } from './sort.service';
 
 // using external non-typed js libraries
@@ -26,9 +27,10 @@ export class GridService {
 
   constructor(
     private extensionService: ExtensionService,
-    // private filterService: FilterService,
+    private filterService: FilterService,
     // private gridStateService: GridStateService,
     private pubSubService: PubSubService,
+    private sharedService: SharedService,
     private sortService: SortService
   ) { }
 
@@ -48,9 +50,22 @@ export class GridService {
     if (this.sortService && this.sortService.clearSorting) {
       this.sortService.clearSorting(false); // skip event trigger on this one
     }
-    // if (this.filterService && this.filterService.clearFilters) {
-    //   this.filterService.clearFilters();
-    // }
+    if (this.filterService && this.filterService.clearFilters) {
+      this.filterService.clearFilters();
+    }
+  }
+
+  /**
+   * Get all column set in the grid, that is all visible/hidden columns
+   * and also include any extra columns used by some plugins (like Row Selection, Row Detail, ...)
+   */
+  getAllColumnDefinitions() {
+    return this.sharedService.allColumns;
+  }
+
+  /** Get only visible column definitions and also include any extra columns by some plugins (like Row Selection, Row Detail, ...) */
+  getVisibleColumnDefinitions() {
+    return this.sharedService.visibleColumns;
   }
 
   /**
@@ -246,9 +261,9 @@ export class GridService {
       }
     }
 
-    // if (this.filterService && this.filterService.clearFilters) {
-    //   this.filterService.clearFilters();
-    // }
+    if (this.filterService && this.filterService.clearFilters) {
+      this.filterService.clearFilters();
+    }
     if (this.sortService && this.sortService.clearSorting) {
       this.sortService.clearSorting();
     }
@@ -416,10 +431,10 @@ export class GridService {
     }
 
     // when user has row selection enabled, we should clear any selection to avoid confusion after a delete
-    // const isSyncGridSelectionEnabled = this.gridStateService && this.gridStateService.needToPreserveRowSelection() || false;
-    // if (!isSyncGridSelectionEnabled && this._grid && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
-    //   this.setSelectedRows([]);
-    // }
+    const isSyncGridSelectionEnabled = /*this.gridStateService && this.gridStateService.needToPreserveRowSelection() ||*/ false;
+    if (!isSyncGridSelectionEnabled && this._grid && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
+      this.setSelectedRows([]);
+    }
 
     // delete the item from the dataView
     this._dataView.deleteItem(itemId);

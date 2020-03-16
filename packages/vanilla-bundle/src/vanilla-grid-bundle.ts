@@ -5,6 +5,7 @@ import 'slickgrid/slick.grid';
 import 'slickgrid/slick.dataview';
 import 'slickgrid/plugins/slick.resizer';
 import {
+  BackendServiceApi,
   Column,
   ExtensionName,
   EventNamingStyle,
@@ -29,10 +30,16 @@ import {
   RowSelectionExtension,
 
   // services
+  FilterService,
   GridService,
   ExtensionService,
   SharedService,
   SortService,
+  RowMoveManagerExtension,
+  FilterFactory,
+  CollectionService,
+  GroupingAndColspanService,
+  SlickgridConfig,
 } from '@slickgrid-universal/common';
 
 import { TranslateService } from './services/translate.service';
@@ -48,9 +55,12 @@ export class VanillaGridBundle {
   private _dataset: any[];
   private _gridElm: Element;
   private _gridContainerElm: Element;
+  private _hideHeaderRowAfterPageLoad = false;
+  private _isLocalGrid = true;
   private _eventHandler: SlickEventHandler = new Slick.EventHandler();
   private _eventPubSubService: EventPubSubService;
   private _slickgridInitialized = false;
+  backendServiceApi: BackendServiceApi | undefined;
   dataView: any;
   grid: any;
   metrics: Metrics;
@@ -70,11 +80,15 @@ export class VanillaGridBundle {
   groupItemMetaProviderExtension: GroupItemMetaProviderExtension;
   headerButtonExtension: HeaderButtonExtension;
   headerMenuExtension: HeaderMenuExtension;
+  rowMoveManagerExtension: RowMoveManagerExtension;
   rowSelectionExtension: RowSelectionExtension;
 
   // services
+  collectionService: CollectionService;
   extensionService: ExtensionService;
+  filterService: FilterService;
   gridService: GridService;
+  groupingAndColspanService: GroupingAndColspanService;
   sharedService: SharedService;
   sortService: SortService;
   translateService: TranslateService;
@@ -107,25 +121,31 @@ export class VanillaGridBundle {
     this._columnDefinitions = columnDefs;
     this._gridOptions = options;
     this.dataset = dataset || [];
-
-    this.sharedService = new SharedService();
-    this.sortService = new SortService();
-    this.translateService = new TranslateService();
     this._eventPubSubService = new EventPubSubService(gridContainerElm);
+
+    const slickgridConfig = new SlickgridConfig();
+    this.sharedService = new SharedService();
+    this.translateService = new TranslateService();
+    this.collectionService = new CollectionService(this.translateService);
+    const filterFactory = new FilterFactory(slickgridConfig, this.collectionService, this.translateService);
+    this.filterService = new FilterService(filterFactory, this._eventPubSubService, this.sharedService);
+    this.sortService = new SortService(this._eventPubSubService);
     this.extensionUtility = new ExtensionUtility(this.sharedService, this.translateService);
+    this.groupingAndColspanService = new GroupingAndColspanService(this.extensionUtility);
     this.autoTooltipExtension = new AutoTooltipExtension(this.extensionUtility, this.sharedService);
     this.cellExternalCopyManagerExtension = new CellExternalCopyManagerExtension(this.extensionUtility, this.sharedService);
-    this.cellMenuExtension = new CellMenuExtension(this.extensionUtility, this.sharedService);
+    this.cellMenuExtension = new CellMenuExtension(this.extensionUtility, this.sharedService, this.translateService);
     this.contextMenuExtension = new ContextMenuExtension(this.extensionUtility, this.sharedService, this.translateService);
     this.columnPickerExtension = new ColumnPickerExtension(this.extensionUtility, this.sharedService);
     this.checkboxExtension = new CheckboxSelectorExtension(this.extensionUtility, this.sharedService);
     this.draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this.sharedService);
-    this.gridMenuExtension = new GridMenuExtension(this.extensionUtility, this.sharedService, this.sortService);
+    this.gridMenuExtension = new GridMenuExtension(this.extensionUtility, this.filterService, this.sharedService, this.sortService, this.translateService);
     this.groupItemMetaProviderExtension = new GroupItemMetaProviderExtension(this.sharedService);
     this.headerButtonExtension = new HeaderButtonExtension(this.extensionUtility, this.sharedService);
-    this.headerMenuExtension = new HeaderMenuExtension(this.extensionUtility, this._eventPubSubService, this.sharedService, this.sortService, this.translateService);
+    this.headerMenuExtension = new HeaderMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.translateService);
+    this.rowMoveManagerExtension = new RowMoveManagerExtension(this.extensionUtility, this.sharedService);
     this.rowSelectionExtension = new RowSelectionExtension(this.extensionUtility, this.sharedService);
-    this.gridService = new GridService(this.extensionService, this._eventPubSubService, this.sortService)
+    this.gridService = new GridService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService)
     this.extensionService = new ExtensionService(
       this.autoTooltipExtension,
       this.cellExternalCopyManagerExtension,
@@ -138,6 +158,7 @@ export class VanillaGridBundle {
       this.groupItemMetaProviderExtension,
       this.headerButtonExtension,
       this.headerMenuExtension,
+      this.rowMoveManagerExtension,
       this.rowSelectionExtension,
       this.sharedService,
       this.translateService,
@@ -150,10 +171,10 @@ export class VanillaGridBundle {
     this.dataView = undefined;
     this.gridOptions = {};
     this.extensionService.dispose();
-    // this.filterService.dispose();
+    this.filterService.dispose();
     // this.gridEventService.dispose();
     // this.gridStateService.dispose();
-    // this.groupingAndColspanService.dispose();
+    this.groupingAndColspanService.dispose();
     // this.paginationService.dispose();
     // this.resizer.dispose();
     this.sortService.dispose();
@@ -174,6 +195,8 @@ export class VanillaGridBundle {
     gridContainerElm.appendChild(this._gridElm);
 
     this._gridOptions = this.mergeGridOptions(this._gridOptions);
+    this.backendServiceApi = this.gridOptions && this.gridOptions.backendServiceApi;
+    this._isLocalGrid = !this.backendServiceApi; // considered a local grid if it doesn't have a backend service set
     this._eventPubSubService.eventNamingStyle = this._gridOptions && this._gridOptions.eventNamingStyle || EventNamingStyle.camelCase;
     this._eventHandler = new Slick.EventHandler();
     if (!this.customDataView) {
@@ -196,13 +219,6 @@ export class VanillaGridBundle {
     this.sharedService.dataView = this.dataView;
     this.sharedService.grid = this.grid;
 
-    this.sortService.bindLocalOnSort(this.grid, this.dataView);
-
-    if (this._gridOptions.enableAutoResize) {
-      const resizer = new Slick.Plugins.Resizer(this._gridOptions.autoResize);
-      this.grid.registerPlugin(resizer);
-    }
-
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.grid, this._gridOptions, this.dataView);
     this._slickgridInitialized = true;
@@ -221,6 +237,17 @@ export class VanillaGridBundle {
     // bind & initialize the grid service
     this.gridService.init(this.grid, this.dataView);
 
+    if (this._gridOptions.enableAutoResize) {
+      const resizer = new Slick.Plugins.Resizer(this._gridOptions.autoResize);
+      this.grid.registerPlugin(resizer);
+    }
+
+    // user might want to hide the header row on page load but still have `enableFiltering: true`
+    // if that is the case, we need to hide the headerRow ONLY AFTER all filters got created & dataView exist
+    if (this._hideHeaderRowAfterPageLoad) {
+      this.showHeaderRow(false);
+    }
+
     const slickerElementInstance = {
       // Slick Grid & DataView objects
       dataView: this.dataView,
@@ -230,23 +257,65 @@ export class VanillaGridBundle {
       backendService: this.gridOptions && this.gridOptions.backendServiceApi && this.gridOptions.backendServiceApi.service,
       // excelExportService: this.excelExportService,
       // exportService: this.exportService,
-      // filterService: this.filterService,
+      filterService: this.filterService,
       // gridEventService: this.gridEventService,
       // gridStateService: this.gridStateService,
       gridService: this.gridService,
-      // groupingService: this.groupingAndColspanService,
+      groupingService: this.groupingAndColspanService,
       extensionService: this.extensionService,
       // paginationService: this.paginationService,
+      sortService: this.sortService,
     }
 
     this._eventPubSubService.publish('onSlickerGridCreated', slickerElementInstance);
   }
 
   mergeGridOptions(gridOptions: GridOption) {
-    return $.extend(true, {}, GlobalGridOptions, gridOptions)
+    const options = $.extend(true, {}, GlobalGridOptions, gridOptions);
+
+    // also make sure to show the header row if user have enabled filtering
+    this._hideHeaderRowAfterPageLoad = (options.showHeaderRow === false);
+    if (options.enableFiltering && !options.showHeaderRow) {
+      options.showHeaderRow = options.enableFiltering;
+    }
+
+    // when we use Pagination on Local Grid, it doesn't seem to work without enableFiltering
+    // so we'll enable the filtering but we'll keep the header row hidden
+    if (!options.enableFiltering && options.enablePagination && this._isLocalGrid) {
+      options.enableFiltering = true;
+      options.showHeaderRow = false;
+    }
+
+    return options;
   }
 
   bindDifferentHooks(grid: any, gridOptions: GridOption, dataView: any) {
+    // bind external filter (backend) when available or default onFilter (dataView)
+    if (gridOptions.enableFiltering && !this.customDataView) {
+      this.filterService.init(grid);
+
+      // if user entered some Filter "presets", we need to reflect them all in the DOM
+      // if (gridOptions.presets && Array.isArray(gridOptions.presets.filters) && gridOptions.presets.filters.length > 0) {
+      //   this.filterService.populateColumnFilterSearchTermPresets(gridOptions.presets.filters);
+      // }
+      // bind external filter (backend) unless specified to use the local one
+      if (gridOptions.backendServiceApi && !gridOptions.backendServiceApi.useLocalFiltering) {
+        this.filterService.bindBackendOnFilter(grid, dataView);
+      } else {
+        this.filterService.bindLocalOnFilter(grid, dataView);
+      }
+    }
+
+    // bind external sorting (backend) when available or default onSort (dataView)
+    if (gridOptions.enableSorting && !this.customDataView) {
+      // bind external sorting (backend) unless specified to use the local one
+      if (gridOptions.backendServiceApi && !gridOptions.backendServiceApi.useLocalSorting) {
+        this.sortService.bindBackendOnSort(grid, dataView);
+      } else {
+        this.sortService.bindLocalOnSort(grid, dataView);
+      }
+    }
+
     if (dataView && grid) {
       // expose all Slick Grid Events through dispatch
       for (const prop in grid) {
@@ -312,6 +381,16 @@ export class VanillaGridBundle {
       this.grid.autosizeColumns();
     }
   }
+
+  /**
+   * Show the filter row displayed on first row, we can optionally pass false to hide it.
+   * @param showing
+   */
+  showHeaderRow(showing = true) {
+    this.grid.setHeaderRowVisibility(showing);
+    return showing;
+  }
+
 
   /**
    * For convenience to the user, we provide the property "editor" as an Slickgrid-Universal editor complex object

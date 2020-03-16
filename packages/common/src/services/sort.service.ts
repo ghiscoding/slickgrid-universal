@@ -13,6 +13,7 @@ import {
   SortDirectionString,
 } from '../enums/index';
 import { executeBackendCallback, refreshBackendDataset } from './backend-utilities';
+import { PubSubService } from '../services/pubSub.service';
 import { getDescendantProperty } from './utilities';
 import { sortByFieldType } from '../sorters/sorterUtilities';
 
@@ -26,7 +27,7 @@ export class SortService {
   private _grid: any;
   private _isBackendGrid = false;
 
-  constructor() {
+  constructor(private pubSubService: PubSubService) {
     this._eventHandler = new Slick.EventHandler();
   }
 
@@ -131,7 +132,7 @@ export class SortService {
     this._currentLocalSorters = [];
 
     // emit an event when sorts are all cleared
-    // this.pluginEa.publish('sortService:sortCleared', true);
+    this.pubSubService.publish('onSortCleared', true);
   }
 
   /**
@@ -146,12 +147,12 @@ export class SortService {
       if (backendService && backendService.getCurrentSorters) {
         currentSorters = backendService.getCurrentSorters() as CurrentSorter[];
       }
-      // this.pluginEa.publish('sortService:sortChanged', currentSorters);
+      this.pubSubService.publish('onSortChanged', currentSorters);
     } else if (sender === EmitterType.local) {
       if (currentLocalSorters) {
         this._currentLocalSorters = currentLocalSorters;
       }
-      // this.pluginEa.publish('sortService:sortChanged', this.getCurrentLocalSorters());
+      this.pubSubService.publish('onSortChanged', this.getCurrentLocalSorters());
     }
   }
 

@@ -19,9 +19,9 @@ import {
   Locale,
   Pagination,
   // RowDetailView,
-  // RowMoveManager
+  RowMoveManager
 } from './index';
-import { EventNamingStyle, OperatorType, OperatorString, } from '../enums/index';
+import { EventNamingStyle, GridAutosizeColsMode, OperatorType, OperatorString, } from '../enums/index';
 import { TranslaterService } from '../services/translater.service';
 
 export interface GridOption {
@@ -57,6 +57,9 @@ export interface GridOption {
 
   /** Auto-resize options (bottom padding, minHeight, ...)  */
   autoResize?: AutoResizeOption;
+
+  /** defaults to None, Grid Autosize Columns Mode used when calling "autosizeColumns()" method */
+  gridAutosizeColsMode?: GridAutosizeColsMode;
 
   /** Auto-tooltip options (enableForCells, enableForHeaderCells, maxToolTipLength) */
   autoTooltipOptions?: {
@@ -327,7 +330,7 @@ export interface GridOption {
   i18n?: TranslaterService;
 
   /**
-   * When using custom Locales (that is when user is NOT using ngx-translate, this property does nothing when used with ngx-translate),
+   * When using custom Locales (that is when user is NOT using a Translate Service, this property does nothing when used with Translate Service),
    * This is useful so that every component of the lib knows the locale.
    * For example, not providing this will make the Date Filter/Editor use English by default even if we use different "locales",
    * so this basically helps certain elements know which locale is currently used.
@@ -380,7 +383,7 @@ export interface GridOption {
   rowHeight?: number;
 
   /** Row Move Manager Plugin options & events */
-  // rowMoveManager?: RowMoveManager;
+  rowMoveManager?: RowMoveManager;
 
   /** Row selection options */
   rowSelectionOptions?: {

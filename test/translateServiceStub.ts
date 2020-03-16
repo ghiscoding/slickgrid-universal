@@ -8,10 +8,45 @@ export class TranslateServiceStub implements TranslaterService {
   translate(translationKey: string): string {
     let output = translationKey;
     switch (translationKey) {
+      case 'ALL_SELECTED': output = this._locale === 'en' ? 'All Selected' : 'Tout sélectionnés'; break;
       case 'CANCEL': output = this._locale === 'en' ? 'Cancel' : 'Annuler'; break;
+      case 'CLEAR_ALL_GROUPING': output = this._locale === 'en' ? 'Clear all Grouping' : 'Supprimer tous les groupes'; break;
+      case 'CLEAR_ALL_FILTERS': output = this._locale === 'en' ? 'Clear all Filters' : 'Supprimer tous les filtres'; break;
+      case 'CLEAR_ALL_SORTING': output = this._locale === 'en' ? 'Clear all Sorting' : 'Supprimer tous les tris'; break;
+      case 'COLUMNS': output = this._locale === 'en' ? 'Columns' : 'Colonnes'; break;
+      case 'COMMANDS': output = this._locale === 'en' ? 'Commands' : 'Commandes'; break;
+      case 'COLLAPSE_ALL_GROUPS': output = this._locale === 'en' ? 'Collapse all Groups' : 'Réduire tous les groupes'; break;
+      case 'COPY': output = this._locale === 'en' ? 'Copy' : 'Copier'; break;
+      case 'EXPAND_ALL_GROUPS': output = this._locale === 'en' ? 'Expand all Groups' : 'Étendre tous les groupes'; break;
+      case 'EXPORT_TO_CSV': output = this._locale === 'en' ? 'Export in CSV format' : 'Exporter en format CSV'; break;
+      case 'EXPORT_TO_EXCEL': output = this._locale === 'en' ? 'Export to Excel' : 'Exporter vers Excel'; break;
+      case 'EXPORT_TO_TAB_DELIMITED': output = this._locale === 'en' ? 'Export in Text format (Tab delimited)' : 'Exporter en format texte (délimité par tabulation)'; break;
+      case 'EXPORT_TO_TEXT_FORMAT': output = this._locale === 'en' ? 'Export in Text format' : 'Exporter en format texte'; break;
+      case 'FEMALE': output = this._locale === 'en' ? 'Female' : 'Femme'; break;
+      case 'FORCE_FIT_COLUMNS': output = this._locale === 'en' ? 'Force fit columns' : 'Ajustement forcé des colonnes'; break;
       case 'HELLO': output = this._locale === 'en' ? 'Hello' : 'Bonjour'; break;
+      case 'HELP': output = this._locale === 'en' ? 'Help' : 'Aide'; break;
+      case 'HIDE_COLUMN': output = this._locale === 'en' ? 'Hide Column' : 'Cacher la colonne'; break;
+      case 'MALE': output = this._locale === 'en' ? 'Male' : 'Mâle'; break;
+      case 'OK': output = this._locale === 'en' ? 'OK' : 'Terminé'; break;
+      case 'OPTIONS_LIST': output = this._locale === 'en' ? 'Options List' : 'Liste d\'options'; break;
+      case 'OTHER': output = this._locale === 'en' ? 'Other' : 'Autre'; break;
+      case 'REFRESH_DATASET': output = this._locale === 'en' ? 'Refresh Dataset' : 'Rafraîchir les données'; break;
+      case 'REMOVE_FILTER': output = this._locale === 'en' ? 'Remove Filter' : 'Supprimer le filtre'; break;
+      case 'REMOVE_SORT': output = this._locale === 'en' ? 'Remove Sort' : 'Supprimer le tri'; break;
+      case 'SORT_ASCENDING': output = this._locale === 'en' ? 'Sort Ascending' : 'Trier par ordre croissant'; break;
+      case 'SORT_DESCENDING': output = this._locale === 'en' ? 'Sort Descending' : 'Trier par ordre décroissant'; break;
       case 'SAVE': output = this._locale === 'en' ? 'Save' : 'Sauvegarder'; break;
+      case 'SYNCHRONOUS_RESIZE': output = this._locale === 'en' ? 'Synchronous resize' : 'Redimension synchrone'; break;
+      case 'TITLE': output = this._locale === 'en' ? 'Title' : 'Titre'; break;
+      case 'TOGGLE_FILTER_ROW': output = this._locale === 'en' ? 'Toggle Filter Row' : 'Basculer la ligne des filtres'; break;
+      case 'TOGGLE_PRE_HEADER_ROW': output = this._locale === 'en' ? 'Toggle Pre-Header Row' : 'Basculer la ligne de pré-en-tête'; break;
       case 'TRUE': output = this._locale === 'en' ? 'True' : 'Vrai'; break;
+      case 'SALES_REP': output = this._locale === 'en' ? 'Sales Rep.' : 'Représentant des ventes'; break;
+      case 'FINANCE_MANAGER': output = this._locale === 'en' ? 'Finance Manager' : 'Responsable des finances'; break;
+      case 'HUMAN_RESOURCES': output = this._locale === 'en' ? 'Human Resources' : 'Ressources humaines'; break;
+      case 'IT_ADMIN': output = this._locale === 'en' ? 'IT Admin' : 'Administrateur IT'; break;
+      case 'DEVELOPER': output = this._locale === 'en' ? 'Developer' : 'Développeur'; break;
     }
     return output;
   }

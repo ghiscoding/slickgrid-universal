@@ -1,5 +1,4 @@
-import { FieldType } from '../enums/fieldType.enum';
-import { OperatorString } from '../enums/operatorString.type';
+import { FieldType, OperatorString, SearchTerm } from '../enums/index';
 
 export interface FilterConditionOption {
   dataKey?: string;
@@ -8,5 +7,5 @@ export interface FilterConditionOption {
   cellValueLastChar?: string;
   fieldType: FieldType;
   filterSearchType?: FieldType;
-  searchTerms?: string[] | number[];
+  searchTerms?: SearchTerm[] | undefined;
 }

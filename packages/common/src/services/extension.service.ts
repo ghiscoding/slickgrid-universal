@@ -18,7 +18,7 @@ import {
   HeaderButtonExtension,
   HeaderMenuExtension,
   // RowDetailViewExtension,
-  // RowMoveManagerExtension,
+  RowMoveManagerExtension,
   RowSelectionExtension,
 } from '../extensions/index';
 import { SharedService } from './shared.service';
@@ -41,7 +41,7 @@ export class ExtensionService {
     private headerButtonExtension: HeaderButtonExtension,
     private headerMenuExtension: HeaderMenuExtension,
     // private rowDetailViewExtension: RowDetailViewExtension,
-    // private rowMoveManagerExtension: RowMoveManagerExtension,
+    private rowMoveManagerExtension: RowMoveManagerExtension,
     private rowSelectionExtension: RowSelectionExtension,
     private sharedService: SharedService,
     private translaterService: TranslaterService,
@@ -229,13 +229,13 @@ export class ExtensionService {
       //   }
       // }
 
-      // // Row Move Manager Plugin
-      // if (this.sharedService.gridOptions.enableRowMoveManager) {
-      //   if (this.rowMoveManagerExtension && this.rowMoveManagerExtension.register) {
-      //     const instance = this.rowMoveManagerExtension.register();
-      //     this._extensionList.push({ name: ExtensionName.rowMoveManager, class: this.rowMoveManagerExtension, addon: instance, instance });
-      //   }
-      // }
+      // Row Move Manager Plugin
+      if (this.sharedService.gridOptions.enableRowMoveManager) {
+        if (this.rowMoveManagerExtension && this.rowMoveManagerExtension.register) {
+          const instance = this.rowMoveManagerExtension.register();
+          this._extensionList.push({ name: ExtensionName.rowMoveManager, class: this.rowMoveManagerExtension, addon: instance, instance });
+        }
+      }
 
       // manually register other plugins
       if (this.sharedService.gridOptions.registerPlugins !== undefined) {
@@ -355,10 +355,10 @@ export class ExtensionService {
    */
   translateColumnHeaders(locale?: boolean | string, newColumnDefinitions?: Column[]) {
     if (this.sharedService && this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
-      throw new Error('[Slickgrid-Universal] requires "ngx-translate" to be installed and configured when the grid option "enableTranslate" is enabled.');
+      throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
 
-    if (locale) {
+    if (locale && this.translaterService && this.translaterService.setLocale) {
       this.translaterService.setLocale(locale as string);
     }
 
@@ -371,7 +371,7 @@ export class ExtensionService {
     this.translateItems(this.sharedService.allColumns, 'nameKey', 'name');
 
     // re-render the column headers
-    this.renderColumnHeaders(columnDefinitions);
+    this.renderColumnHeaders(columnDefinitions, Array.isArray(newColumnDefinitions));
     this.gridMenuExtension.translateGridMenu();
   }
 
@@ -379,13 +379,13 @@ export class ExtensionService {
    * Render (or re-render) the column headers from column definitions.
    * calling setColumns() will trigger a grid re-render
    */
-  renderColumnHeaders(newColumnDefinitions?: Column[]) {
+  renderColumnHeaders(newColumnDefinitions?: Column[], forceColumnDefinitionsOverwrite = false) {
     let collection = newColumnDefinitions;
     if (!collection) {
       collection = this.sharedService.columnDefinitions;
     }
     if (Array.isArray(collection) && this.sharedService.grid && this.sharedService.grid.setColumns) {
-      if (collection.length > this.sharedService.allColumns.length) {
+      if (collection.length > this.sharedService.allColumns.length || forceColumnDefinitionsOverwrite) {
         this.sharedService.allColumns = collection;
       }
       this.sharedService.grid.setColumns(collection);

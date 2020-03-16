@@ -1,11 +1,12 @@
 import { VanillaGridBundle } from './vanilla-grid-bundle';
-import { Editors, Formatters, Enums } from '@slickgrid-universal/common';
+import { Editors, Filters, Formatters, Enums } from '@slickgrid-universal/common';
 
 const Slicker = {
   GridBundle: VanillaGridBundle,
   Editors: Editors,
-  Formatters: Formatters,
   Enums: Enums,
+  Filters: Filters,
+  Formatters: Formatters,
 };
 
 // expose the bundle on the global "window" object

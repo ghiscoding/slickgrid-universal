@@ -76,6 +76,7 @@ export * from './multipleSelectOption.interface';
 export * from './onEventArgs.interface';
 export * from './pagination.interface';
 export * from './paginationChangedArgs.interface';
+export * from './rowMoveManager.interface';
 export * from './selectedRange.interface';
 export * from './selectOption.interface';
 export * from './slickEvent.interface';

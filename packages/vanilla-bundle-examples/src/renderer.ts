@@ -36,7 +36,7 @@ export class Renderer {
 
     switch (eventType) {
       case 'delegate':
-        output = `on${eventName.toLowerCase()}="window.${this.className}.${callbackFn}"`;
+        output = `${eventName.toLowerCase()}="window.${this.className}.${callbackFn}"`;
         break;
     }
     return DOMPurify.sanitize(output || '');

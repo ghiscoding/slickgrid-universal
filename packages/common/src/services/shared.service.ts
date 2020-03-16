@@ -1,4 +1,4 @@
-import { Column, GridOption } from '../interfaces';
+import { Column, GridOption } from '../interfaces/index';
 
 export class SharedService {
   private _allColumns: Column[];

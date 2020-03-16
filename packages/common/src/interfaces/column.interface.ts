@@ -4,8 +4,8 @@ import { ColumnFilter } from './columnFilter.interface';
 import { EditorValidator } from './editorValidator.interface';
 import { FieldType } from '../enums/fieldType.enum';
 import { Formatter } from './formatter.interface';
-// import { Grouping } from './grouping.interface';
-// import { GroupTotalsFormatter } from './groupTotalsFormatter.interface';
+import { Grouping } from './grouping.interface';
+import { GroupTotalsFormatter } from './groupTotalsFormatter.interface';
 import { HeaderButtonItem } from './headerButtonItem.interface';
 import { MenuCommandItem } from './menuCommandItem.interface';
 import { OnEventArgs } from './onEventArgs.interface';
@@ -73,7 +73,7 @@ export interface Column {
    * Export with a Custom Group Total Formatter, useful when we want to use a different Formatter for the export.
    * For example, we might have a boolean field with "Formatters.checkmark" but we would like see a translated value for (True/False).
    */
-  // exportCustomGroupTotalsFormatter?: GroupTotalsFormatter;
+  exportCustomGroupTotalsFormatter?: GroupTotalsFormatter;
 
   /**
    * Defaults to false, which leads to Formatters being evaluated on export.
@@ -120,10 +120,10 @@ export interface Column {
   formatter?: Formatter;
 
   /** Grouping option used by a Draggable Grouping Column */
-  // grouping?: Grouping;
+  grouping?: Grouping;
 
   /** Group Totals Formatter function that can be used to add grouping totals in the grid */
-  // groupTotalsFormatter?: GroupTotalsFormatter;
+  groupTotalsFormatter?: GroupTotalsFormatter;
 
   /** Options that can be provided to the Header Menu Plugin */
   header?: {

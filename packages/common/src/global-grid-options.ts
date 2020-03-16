@@ -1,5 +1,6 @@
-import { EventNamingStyle } from './enums/eventNamingStyle.enum';
+import { EventNamingStyle, OperatorType, GridAutosizeColsMode } from './enums/index';
 import { GridOption } from './interfaces/gridOption.interface';
+import { Filters } from './filters';
 
 /**
  * Options that can be passed to the Bootstrap-Datetimepicker directly
@@ -68,22 +69,22 @@ export const GlobalGridOptions: GridOption = {
   //       ofKey: 'OF',
   //     }
   //   },
-  //   dataView: {
-  //     syncGridSelection: true, // when enabled, this will preserve the row selection even after filtering/sorting/grouping
-  //     syncGridSelectionWithBackendService: false, // but disable it when using backend services
-  //   },
+  dataView: {
+    syncGridSelection: true, // when enabled, this will preserve the row selection even after filtering/sorting/grouping
+    syncGridSelectionWithBackendService: false, // but disable it when using backend services
+  },
   datasetIdPropertyName: 'id',
-  // //   defaultFilter: Filters.input,
-  //   enableFilterTrimWhiteSpace: false, // do we want to trim white spaces on all Filters?
-  //   defaultFilterPlaceholder: '&#128269;',
-  // //   defaultFilterRangeOperator: OperatorType.rangeExclusive,
+  defaultFilter: Filters.input,
+  enableFilterTrimWhiteSpace: false, // do we want to trim white spaces on all Filters?
+  defaultFilterPlaceholder: '&#128269;',
+  defaultFilterRangeOperator: OperatorType.rangeExclusive,
   defaultColumnSortFieldId: 'id',
   defaultComponentEventPrefix: '',
   defaultSlickgridEventPrefix: '',
   editable: false,
-  //   enableAutoResize: true,
+  enableAutoResize: true,
   enableAutoSizeColumns: true,
-  //   enableCellNavigation: false,
+  enableCellNavigation: false,
   enableColumnPicker: true,
   enableColumnReorder: true,
   enableContextMenu: true,
@@ -91,10 +92,10 @@ export const GlobalGridOptions: GridOption = {
   //   enableExport: false, // CSV/Text with Tab Delimited
   enableGridMenu: true,
   enableHeaderMenu: true,
-  //   enableMouseHoverHighlightRow: true,
+  enableMouseHoverHighlightRow: true,
   enableSorting: true,
   enableTextSelectionOnCells: true,
-  //   explicitInitialization: true,
+  explicitInitialization: true,
   // //   excelExportOptions: {
   // //     addGroupIndentation: true,
   // //     exportWithFormatter: false,
@@ -116,7 +117,7 @@ export const GlobalGridOptions: GridOption = {
   // //     sanitizeDataExport: false,
   // //     useUtf8WithBom: true
   // //   },
-  // autosizeColsMode: 'NOA',
+  gridAutosizeColsMode: GridAutosizeColsMode.none,
   eventNamingStyle: EventNamingStyle.lowerCase,
   forceFitColumns: false,
   gridMenu: {
@@ -131,14 +132,14 @@ export const GlobalGridOptions: GridOption = {
     hideToggleFilterCommand: false,
     hideTogglePreHeaderCommand: false,
     iconCssClass: 'fa fa-bars mdi mdi-menu',
-    iconClearAllFiltersCommand: 'fa fa-filter text-danger',
+    iconClearAllFiltersCommand: 'fa fa-filter text-danger mdi mdi-filter-remove-outline',
     iconClearAllSortingCommand: 'fa fa-unsorted mdi mdi-swap-vertical text-danger',
     iconExportCsvCommand: 'fa fa-download mdi mdi-download',
     iconExportExcelCommand: 'fa fa-file-excel-o text-success',
     iconExportTextDelimitedCommand: 'fa fa-download mdi mdi-download',
     iconRefreshDatasetCommand: 'fa fa-refresh mdi mdi-sync',
-    iconToggleFilterCommand: 'fa fa-random',
-    iconTogglePreHeaderCommand: 'fa fa-random',
+    iconToggleFilterCommand: 'fa fa-random mdi mdi-flip-vertical',
+    iconTogglePreHeaderCommand: 'fa fa-random mdi mdi-flip-vertical',
     menuWidth: 16,
     resizeOnShowHeaderRow: true
   },
@@ -146,7 +147,7 @@ export const GlobalGridOptions: GridOption = {
     autoAlign: true,
     autoAlignOffset: 12,
     minWidth: 140,
-    iconClearFilterCommand: 'fa fa-filter mdi mdi-filter text-danger',
+    iconClearFilterCommand: 'fa fa-filter mdi mdi mdi-filter-remove-outline text-danger',
     iconClearSortCommand: 'fa fa-unsorted mdi mdi-swap-vertical',
     iconSortAscCommand: 'fa fa-sort-amount-asc mdi mdi-sort-ascending',
     iconSortDescCommand: 'fa fa-sort-amount-desc mdi mdi-sort-descending',
@@ -161,7 +162,7 @@ export const GlobalGridOptions: GridOption = {
   numberedMultiColumnSort: true,
   tristateMultiColumnSort: false,
   sortColNumberInSeparateSpan: true,
-  //   suppressActiveCellChangeOnEdit: true,
+  suppressActiveCellChangeOnEdit: true,
   //   pagination: {
   //     pageSizes: [10, 15, 20, 25, 30, 40, 50, 75, 100],
   //     pageSize: 25,
