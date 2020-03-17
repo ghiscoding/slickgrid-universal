@@ -1,5 +1,5 @@
 import { InputMaskFilter } from '../inputMaskFilter';
-import { GridOption, FilterArguments, Column } from '../../interfaces';
+import { GridOption, FilterArguments, Column } from '../../interfaces/index';
 import { Filters } from '..';
 
 const containerId = 'demo-container';

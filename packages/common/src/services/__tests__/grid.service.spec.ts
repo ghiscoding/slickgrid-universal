@@ -1,7 +1,7 @@
 import 'jest-extended';
 
 import { FilterService, GridService, ExtensionService, PubSubService, SharedService, SortService } from '../index';
-import { GridOption, CellArgs, Column, OnEventArgs } from '../../interfaces';
+import { GridOption, CellArgs, Column, OnEventArgs } from '../../interfaces/index';
 
 declare var Slick: any;
 

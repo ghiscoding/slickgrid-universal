@@ -64,6 +64,8 @@ export * from './headerButtonItem.interface';
 export * from './headerButtonOnCommandArgs.interface';
 export * from './headerMenu.interface';
 export * from './htmlElementPosition.interface';
+export * from './jQueryUiSliderOption.interface';
+export * from './jQueryUiSliderResponse.interface';
 export * from './locale.interface';
 export * from './menuCallbackArgs.interface';
 export * from './menuCommandItem.interface';

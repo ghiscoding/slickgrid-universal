@@ -1,4 +1,4 @@
-import { GridOption } from '../../interfaces';
+import { GridOption } from '../../interfaces/index';
 import main, { executeBackendProcessesCallback, onBackendError, refreshBackendDataset } from '../../services/backend-utilities';
 // import { GraphqlService } from '../../services/graphql.service';
 

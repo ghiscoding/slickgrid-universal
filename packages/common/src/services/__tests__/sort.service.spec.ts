@@ -1,4 +1,4 @@
-import { EmitterType, FieldType, } from '../../enums';
+import { EmitterType, FieldType, } from '../../enums/index';
 import {
   BackendService,
   Column,
@@ -7,7 +7,7 @@ import {
   GridOption,
   SlickEventHandler,
   SortChangedArgs,
-} from '../../interfaces';
+} from '../../interfaces/index';
 import { Sorters } from '../../sorters';
 import { SortService } from '../sort.service';
 import * as utilities from '../../services/backend-utilities';

@@ -1,4 +1,4 @@
-import { FieldType, OperatorType } from '../../enums';
+import { FieldType, OperatorType } from '../../enums/index';
 import {
   addToArrayWhenNotExists,
   addWhiteSpaces,

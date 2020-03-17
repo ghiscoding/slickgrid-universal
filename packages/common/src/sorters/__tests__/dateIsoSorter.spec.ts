@@ -1,5 +1,5 @@
 import { sortByFieldType } from '../sorterUtilities';
-import { FieldType, SortDirectionNumber } from '../../enums';
+import { FieldType, SortDirectionNumber } from '../../enums/index';
 
 describe('the Date ISO (without time) Sorter', () => {
   it('should return an array of US dates sorted ascending when only valid dates are provided', () => {

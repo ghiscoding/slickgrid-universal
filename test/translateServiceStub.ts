@@ -43,10 +43,12 @@ export class TranslateServiceStub implements TranslaterService {
       case 'TOGGLE_PRE_HEADER_ROW': output = this._locale === 'en' ? 'Toggle Pre-Header Row' : 'Basculer la ligne de pré-en-tête'; break;
       case 'TRUE': output = this._locale === 'en' ? 'True' : 'Vrai'; break;
       case 'SALES_REP': output = this._locale === 'en' ? 'Sales Rep.' : 'Représentant des ventes'; break;
+      case 'SELECT_ALL': output = this._locale === 'en' ? 'Select All' : 'Sélectionner tout'; break;
       case 'FINANCE_MANAGER': output = this._locale === 'en' ? 'Finance Manager' : 'Responsable des finances'; break;
       case 'HUMAN_RESOURCES': output = this._locale === 'en' ? 'Human Resources' : 'Ressources humaines'; break;
       case 'IT_ADMIN': output = this._locale === 'en' ? 'IT Admin' : 'Administrateur IT'; break;
       case 'DEVELOPER': output = this._locale === 'en' ? 'Developer' : 'Développeur'; break;
+      case 'X_OF_Y_SELECTED': output = this._locale === 'en' ? '# of % selected' : '# de % sélectionnés'; break;
     }
     return output;
   }

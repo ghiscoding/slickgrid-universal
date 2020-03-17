@@ -1,4 +1,4 @@
-import { SortDirectionNumber } from '../../enums';
+import { SortDirectionNumber } from '../../enums/index';
 import { stringSorter } from '../stringSorter';
 
 describe('the String Sorter', () => {

@@ -119,7 +119,14 @@ export class Example1 {
       },
       { id: 'start', name: 'Start', field: 'start', sortable: true },
       { id: 'finish', name: 'Finish', field: 'finish', sortable: true },
-      { id: 'completed', name: 'Completed', field: 'completed', sortable: true, filterable: true, formatter: Slicker.Formatters.checkmarkMaterial },
+      {
+        id: 'completed', name: 'Completed', field: 'completed', sortable: true, formatter: Slicker.Formatters.checkmarkMaterial,
+        filterable: true,
+        filter: {
+          model: Slicker.Filters.singleSelect,
+          collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
+        }
+      },
       {
         id: 'action', name: 'Action', field: 'action', width: 110, maxWidth: 200,
         excludeFromExport: true,

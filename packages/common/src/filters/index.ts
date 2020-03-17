@@ -9,12 +9,12 @@ import { InputFilter } from './inputFilter';
 import { InputMaskFilter } from './inputMaskFilter';
 import { InputNumberFilter } from './inputNumberFilter';
 import { InputPasswordFilter } from './inputPasswordFilter';
-// import { MultipleSelectFilter } from './multipleSelectFilter';
+import { MultipleSelectFilter } from './multipleSelectFilter';
 import { NativeSelectFilter } from './nativeSelectFilter';
 // import { DateRangeFilter } from './dateRangeFilter';
-// import { SingleSelectFilter } from './singleSelectFilter';
-// import { SliderFilter } from './sliderFilter';
-// import { SliderRangeFilter } from './sliderRangeFilter';
+import { SingleSelectFilter } from './singleSelectFilter';
+import { SliderFilter } from './sliderFilter';
+import { SliderRangeFilter } from './sliderRangeFilter';
 
 export const Filters = {
   /** AutoComplete Filter (using jQuery UI autocomplete feature) */
@@ -60,17 +60,17 @@ export const Filters = {
   inputText: InputFilter,
 
   /** Multiple Select filter, which uses 3rd party lib "multiple-select.js" */
-  // multipleSelect: MultipleSelectFilter,
+  multipleSelect: MultipleSelectFilter,
 
   /** Select filter, which uses native DOM element select */
   select: NativeSelectFilter,
 
   /** Single Select filter, which uses 3rd party lib "multiple-select.js" */
-  // singleSelect: SingleSelectFilter,
+  singleSelect: SingleSelectFilter,
 
   /** Slider Filter (only 1 value) */
-  // slider: SliderFilter,
+  slider: SliderFilter,
 
   /** Slider Range Filter, uses jQuery UI Range Slider (2 values, lowest/highest search range) */
-  // sliderRange: SliderRangeFilter,
+  sliderRange: SliderRangeFilter,
 };

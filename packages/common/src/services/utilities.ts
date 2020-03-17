@@ -3,6 +3,7 @@ const moment = moment_; // patch to fix rollup "moment has no default export" is
 
 import { FieldType, OperatorString, OperatorType } from '../enums/index';
 
+// using external non-typed js libraries
 declare var $: any;
 
 /**

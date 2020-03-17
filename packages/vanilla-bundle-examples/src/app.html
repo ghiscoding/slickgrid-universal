@@ -1,18 +1,46 @@
-<div class="">
-  <h3 class="title is-3 has-text-centered">Slickgrid-Universal - Vanilla Implementation Demo</h3>
+<nav class="navbar is-fixed-top is-success" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="https://github.com/ghiscoding/slickgrid-universal" target="_blank">
+      <span class="icon is-medium">
+        <i class="mdi mdi-github-circle mdi-24px"></i>
+      </span>
+      <span>
+        <h4 class="title is-4 has-text-white">Slickgrid-Universal</h4>
+      </span>
+    </a>
 
-  <div class="columns">
-    <div class="column is-narrow">
-      <aside class="menu">
-        <p class="menu-label" style="padding-left: 5px">Examples</p>
-        <ul class="menu-list">
-          <li><a onclick.delegate="loadRoute('example01')">Example01</a></li>
-          <li><a onclick.delegate="loadRoute('example02')">Example02</a></li>
-        </ul>
-      </aside>
-    </div>
-    <div class="column">
-      <view-route></view-route>
+    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
+      data-target="navbarBasicExample">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+
+  <div id="navbarBasicExample" class="navbar-menu">
+    <div class="navbar-start">
+      <a class="navbar-item" onclick.delegate="loadRoute('example01')">
+        Home
+      </a>
+
+      <a class="navbar-item" href="https://github.com/ghiscoding/slickgrid-universal" target="_blank">
+        Documentation
+      </a>
+
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          Examples
+        </a>
+
+        <div class="navbar-dropdown">
+          <a class="navbar-item" onclick.delegate="loadRoute('example01')">Example01</a>
+          <a class="navbar-item" onclick.delegate="loadRoute('example02')">Example02</a>
+        </div>
+      </div>
     </div>
   </div>
+</nav>
+
+<div class="container is-fluid" style="padding-top: 20px">
+  <view-route></view-route>
 </div>

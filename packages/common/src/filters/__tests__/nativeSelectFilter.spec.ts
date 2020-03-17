@@ -1,5 +1,5 @@
-import { FieldType, OperatorType } from '../../enums';
-import { Column, FilterArguments, GridOption } from '../../interfaces';
+import { FieldType, OperatorType } from '../../enums/index';
+import { Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { CollectionService } from './../../services/collection.service';
 import { Filters } from '..';
 import { NativeSelectFilter } from '../nativeSelectFilter';

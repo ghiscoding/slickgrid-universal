@@ -1,15 +1,15 @@
 # Slickgrid-Universal
 
-This is a monorepo project (using Lerna) which regroups a few packages under a single repository. The goal is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). It's also a good opportunity to decouple some other features that not all users need, this will also help in getting a smaller bundle, for example not lot users require backend services (OData, GraphQL), which is why these are better handled in a monorepo structure. 
+This is a monorepo project (using Lerna) which is regrouping a few packages under a single repository. The goal is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). It's also a good opportunity to decouple some other features that not all users need, this will also help in getting a smaller bundle. For example not lot users require backend services (OData, GraphQL), which is why these are better handled in a monorepo structure.
 
 ### Why create this monorepo?
 You might be wondering why was this monorepo created?
 1. it removes lot of duplicate code that existed in both [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) (over 80% were the same code and that is not very DRY).
-2. removes any Services that not all user need (OData, GraphQL, ...)
+2. removes any Services that not all user need/want (OData, GraphQL, Export to File, Export to Excel, ...)
 3. framework agnostic, it can be implemented in many more frameworks in the future
 
 ### Framework using this monorepo
-This a Work in Progress, eventually [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) will be rewritten to use this monorepo and have shared common code. 
+This is a Work in Progress, eventually [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) will be rewritten to use this monorepo which will simplify debugging/fixing common code. 
 
 However, this project is built with a Vanilla Implementation (no associated to any framework) and that is what the UI will be tested with. The Vanilla bundle is also used in our SalesForce (with Lighning Web Component) hence the creation of this monorepo.
 
@@ -52,7 +52,7 @@ npm run test
 npm run test:watch
 ```
 
-TODO
+## TODO
 #### Implementation
 - [x] Aggregators (4)
 - [ ] Editors
@@ -62,8 +62,8 @@ TODO
   - [x] Float
   - [x] Integer
   - [x] Long Text
-  - [ ] Multiple Select
-  - [ ] Single Select
+  - [x] Multiple Select
+  - [x] Single Select
   - [x] Slider
   - [x] Text
 - [ ] Filters
@@ -73,11 +73,11 @@ TODO
   - [ ] Compound Slider
   - [ ] Date Range
   - [x] Input(s)
-  - [ ] Multiple Select 
-  - [ ] Single Select 
+  - [x] Multiple Select 
+  - [x] Single Select 
   - [x] Native Select 
-  - [ ] Slider
-  - [ ] Slider Range
+  - [x] Slider
+  - [x] Slider Range
 - [x] Formatters (31)
 - [ ] Extensions
   - [x] AutoTooltip
@@ -96,12 +96,12 @@ TODO
 - [x] Sorters (5)
 - [ ] Services
   - [x] Collection
-  - [ ] Excel Export
-  - [ ] Export Text
+  - [ ] Excel Export (separate package)
+  - [ ] Export Text (separate package?!)
   - [x] Extension
   - [x] Filter
-  - [ ] GraphQL
-  - [ ] OData
+  - [ ] GraphQL (separate package)
+  - [ ] OData (separate package)
   - [ ] Grid Event
   - [ ] Grid State
   - [x] Grouping & Col Span
@@ -112,6 +112,9 @@ TODO
 
 #### Extra Todos
 - [ ] Add Multiple Example Demos with Vanilla implementation
-  - [ ] Add built demo as a GitHub Demo website
+  - [ ] Add GitHub Demo website
 - [ ] Add Cypress E2E tests
 - [ ] Add Jest Unit tests
+- [ ] Add CI/CD (CircleCI or GitHub Actions)
+- [x] VScode Chrome Debugger
+- [x] Jest Debugger

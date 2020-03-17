@@ -1,5 +1,5 @@
 import { SharedService } from '..';
-import { Column, CurrentPagination, GridOption } from '../../interfaces';
+import { Column, CurrentPagination, GridOption } from '../../interfaces/index';
 
 jest.mock('flatpickr', () => { });
 

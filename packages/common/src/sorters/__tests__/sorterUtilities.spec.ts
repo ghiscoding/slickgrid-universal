@@ -1,5 +1,5 @@
-import { Column } from '../../interfaces';
-import { FieldType, SortDirectionNumber } from '../../enums';
+import { Column } from '../../interfaces/index';
+import { FieldType, SortDirectionNumber } from '../../enums/index';
 import { sortByFieldType } from '../sorterUtilities';
 import { Sorters } from '..';
 

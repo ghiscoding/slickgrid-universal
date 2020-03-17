@@ -1,4 +1,4 @@
-import { Column, GridOption } from '../../interfaces';
+import { Column, GridOption } from '../../interfaces/index';
 import { minTotalsFormatter } from '../minTotalsFormatter';
 
 describe('minTotalsFormatter', () => {

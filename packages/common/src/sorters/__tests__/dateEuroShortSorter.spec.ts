@@ -1,5 +1,5 @@
 import { sortByFieldType } from '../sorterUtilities';
-import { FieldType, SortDirectionNumber } from '../../enums';
+import { FieldType, SortDirectionNumber } from '../../enums/index';
 
 describe('the Date Euro Short Sorter', () => {
   it('should return an array of dates sorted ascending when only valid dates are provided', () => {

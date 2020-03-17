@@ -1,5 +1,5 @@
-import { ExtensionName } from '../../enums';
-import { Column, ExtensionModel, GridOption, } from '../../interfaces';
+import { ExtensionName } from '../../enums/index';
+import { Column, ExtensionModel, GridOption, } from '../../interfaces/index';
 import {
   AutoTooltipExtension,
   CellExternalCopyManagerExtension,

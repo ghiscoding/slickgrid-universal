@@ -1,4 +1,4 @@
-import { Column, GridOption } from '../../interfaces';
+import { Column, GridOption } from '../../interfaces/index';
 import { sumTotalsFormatter } from '../sumTotalsFormatter';
 
 describe('sumTotalsFormatter', () => {

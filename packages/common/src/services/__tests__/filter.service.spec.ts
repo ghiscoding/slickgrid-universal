@@ -3,14 +3,14 @@ import 'multiple-select-adapted/src/multiple-select.js';
 
 import 'jest-extended';
 
-import { FieldType } from '../../enums';
+import { FieldType } from '../../enums/index';
 import {
   BackendService,
   Column,
   CurrentFilter,
   GridOption,
   SlickEventHandler,
-} from '../../interfaces';
+} from '../../interfaces/index';
 import { Filters } from '../../filters';
 import { FilterService } from '../filter.service';
 import { FilterFactory } from '../../filters/filterFactory';
