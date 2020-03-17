@@ -1,6 +1,6 @@
 import { Editors } from '../index';
 import { SliderEditor } from '../sliderEditor';
-import { Column, EditorArgs, EditorArguments, GridOption } from '../../interfaces';
+import { Column, EditorArgs, EditorArguments, GridOption } from '../../interfaces/index';
 
 const containerId = 'demo-container';
 

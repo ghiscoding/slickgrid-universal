@@ -1,7 +1,7 @@
 import { Editors } from '../index';
 import { TextEditor } from '../textEditor';
-import { KeyCode } from '../../enums';
-import { AutocompleteOption, Column, EditorArgs, EditorArguments, GridOption } from '../../interfaces';
+import { KeyCode } from '../../enums/index';
+import { AutocompleteOption, Column, EditorArgs, EditorArguments, GridOption } from '../../interfaces/index';
 
 const KEY_CHAR_A = 97;
 const containerId = 'demo-container';

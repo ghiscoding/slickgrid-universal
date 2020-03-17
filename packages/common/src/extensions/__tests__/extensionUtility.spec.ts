@@ -1,5 +1,5 @@
-import { ExtensionName } from '../../enums';
-import { GridOption } from '../../interfaces';
+import { ExtensionName } from '../../enums/index';
+import { GridOption } from '../../interfaces/index';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';

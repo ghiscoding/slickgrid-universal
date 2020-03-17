@@ -1,7 +1,7 @@
 import { HeaderButtonExtension } from '../headerButtonExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
-import { GridOption, HeaderButtonOnCommandArgs } from '../../interfaces';
+import { GridOption, HeaderButtonOnCommandArgs } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 declare var Slick: any;

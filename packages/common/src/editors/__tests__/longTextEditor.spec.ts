@@ -1,7 +1,7 @@
 import { Editors } from '../index';
 import { LongTextEditor } from '../longTextEditor';
-import { KeyCode } from '../../enums';
-import { AutocompleteOption, Column, EditorArgs, EditorArguments, GridOption } from '../../interfaces';
+import { KeyCode } from '../../enums/index';
+import { AutocompleteOption, Column, EditorArgs, EditorArguments, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const KEY_CHAR_A = 97;

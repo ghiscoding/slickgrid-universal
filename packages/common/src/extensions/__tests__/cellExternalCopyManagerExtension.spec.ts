@@ -1,4 +1,4 @@
-import { GridOption, EditCommand, Formatter, SelectedRange } from '../../interfaces';
+import { GridOption, EditCommand, Formatter, SelectedRange } from '../../interfaces/index';
 import { Formatters } from '../../formatters';
 import { CellExternalCopyManagerExtension } from '../cellExternalCopyManagerExtension';
 import { ExtensionUtility } from '../extensionUtility';

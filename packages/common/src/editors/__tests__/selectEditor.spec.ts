@@ -4,8 +4,8 @@ import 'multiple-select-adapted/src/multiple-select.js';
 import { Editors } from '../index';
 import { SelectEditor } from '../selectEditor';
 import { CollectionService } from './../../services/collection.service';
-import { FieldType, OperatorType } from '../../enums';
-import { AutocompleteOption, Column, EditorArgs, EditorArguments, GridOption, } from '../../interfaces';
+import { FieldType, OperatorType } from '../../enums/index';
+import { AutocompleteOption, Column, EditorArgs, EditorArguments, GridOption, } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const containerId = 'demo-container';

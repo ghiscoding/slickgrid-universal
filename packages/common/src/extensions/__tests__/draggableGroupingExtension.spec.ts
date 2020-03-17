@@ -1,4 +1,4 @@
-import { Grouping, GridOption } from '../../interfaces';
+import { Grouping, GridOption } from '../../interfaces/index';
 import { DraggableGroupingExtension } from '../draggableGroupingExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';

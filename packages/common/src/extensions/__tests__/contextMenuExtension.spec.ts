@@ -4,8 +4,8 @@ import { ContextMenuExtension } from '../contextMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { Formatters } from '../../formatters';
 import { SharedService } from '../../services/shared.service';
-import { DelimiterType, FileType, } from '../../enums';
-import { Column, GridOption, MenuCommandItem } from '../../interfaces';
+import { DelimiterType, FileType, } from '../../enums/index';
+import { Column, GridOption, MenuCommandItem } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 // import { ExcelExportService, ExportService } from '../../services';
 

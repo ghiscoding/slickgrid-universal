@@ -1,5 +1,5 @@
-import { DelimiterType, FileType } from '../../enums';
-import { Column, GridOption } from '../../interfaces';
+import { DelimiterType, FileType } from '../../enums/index';
+import { Column, GridOption } from '../../interfaces/index';
 import { GridMenuExtension } from '../gridMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';

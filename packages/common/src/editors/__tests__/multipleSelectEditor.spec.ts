@@ -4,7 +4,7 @@ import 'multiple-select-adapted/src/multiple-select.js';
 import { Editors } from '../index';
 import { MultipleSelectEditor } from '../multipleSelectEditor';
 import { CollectionService } from '../../services/collection.service';
-import { Column, EditorArguments, GridOption } from '../../interfaces';
+import { Column, EditorArguments, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const containerId = 'demo-container';
