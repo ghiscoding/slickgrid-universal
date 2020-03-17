@@ -3,8 +3,8 @@
   "compileOnSave": false,
   "compilerOptions": {
     "rootDir": "src",
-    "declarationDir": "dist/es2020",
-    "outDir": "dist/es2020",
+    "declarationDir": "dist/es2015",
+    "outDir": "dist/es2015",
     "target": "es2017",
     "module": "es2015",
     "sourceMap": true,

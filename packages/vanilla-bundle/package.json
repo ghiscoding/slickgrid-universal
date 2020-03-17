@@ -2,11 +2,13 @@
   "name": "@slickgrid-universal/vanilla-bundle",
   "version": "0.0.2",
   "description": "Vanilla Slick Grid Bundle - Framework agnostic the output is to be used in vanilla JS/TS - Written in TypeScript and we also use WebPack to bundle everything into 1 JS file.",
+  "browser": "src/index.ts",
   "main": "src/index.ts",
-  "typings": "dist/es2020/index.d.ts",
-  "directories": {
-    "src": "src"
-  },
+  "typings": "dist/es2015/index.d.ts",
+  "files": [
+    "src",
+    "dist"
+  ],
   "scripts": {
     "test": "echo testing slickgrid-universal slickgrid-vanilla-bundle code",
     "dev": "webpack --env.development",

@@ -2,13 +2,18 @@
   "name": "@slickgrid-universal/common",
   "version": "0.0.2",
   "description": "SlickGrid-Universal Common Code",
-  "main": "src/index.ts",
-  "typings": "dist/es2020/index.d.ts",
+  "browser": "src/index.ts",
+  "main": "dist/es2015/index.js",
+  "typings": "dist/es2015/index.d.ts",
   "author": "Ghislain B.",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "src",
+    "dist"
+  ],
   "scripts": {
     "build": "cross-env tsc --build",
     "build:watch": "cross-env tsc --incremental --watch",

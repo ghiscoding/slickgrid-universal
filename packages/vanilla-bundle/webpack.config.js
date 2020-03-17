@@ -9,7 +9,7 @@ const outDir = path.resolve(__dirname, 'dist');
 const srcDir = path.resolve(__dirname, 'src');
 const nodeModulesDir = path.resolve(__dirname, 'node_modules');
 
-module.exports = ({ production } = {}, { port, host } = {}) => ({
+module.exports = ({ production } = {}) => ({
   mode: production ? 'production' : 'development',
   entry: {
     app: [`${srcDir}/index.ts`],
@@ -17,11 +17,12 @@ module.exports = ({ production } = {}, { port, host } = {}) => ({
   stats: {
     warnings: false
   },
+  devtool: production ? 'nosources-source-map' : 'cheap-module-eval-source-map',
   output: {
     path: `${outDir}/bundle`,
     publicPath: baseUrl,
-    filename: production ? 'slickgrid-vanilla-bundle.js' : 'slickgrid-vanilla-bundle.js',
-    sourceMapFilename: production ? 'slickgrid-vanilla-bundle.map' : 'slickgrid-vanilla-bundle.map',
+    filename: 'slickgrid-vanilla-bundle.js',
+    sourceMapFilename: 'slickgrid-vanilla-bundle.map',
     libraryTarget: 'umd',
     library: 'MyLib',
     umdNamedDefine: true
@@ -29,6 +30,7 @@ module.exports = ({ production } = {}, { port, host } = {}) => ({
   resolve: {
     extensions: ['.ts', '.js'],
     modules: [srcDir, 'node_modules'],
+    mainFields: production ? ['module', 'main'] : ['browser', 'module'],
     alias: {
       moment$: 'moment/moment.js'
     }
@@ -38,5 +40,4 @@ module.exports = ({ production } = {}, { port, host } = {}) => ({
       { test: /\.ts?$/, use: 'ts-loader', exclude: nodeModulesDir, },
     ],
   },
-  devtool: production ? 'nosources-source-map' : 'cheap-module-eval-source-map',
 });
