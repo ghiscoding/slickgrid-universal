@@ -8,7 +8,7 @@ const when = (condition, config, negativeConfig) =>
 const path = require('path');
 
 // primary config:
-const title = 'Slicker Bundler';
+const title = 'Slickgrid-Universal Vanilla Implementation Examples';
 const baseUrl = '';
 const outDir = path.resolve(__dirname, 'dist');
 const srcDir = path.resolve(__dirname, 'src');
@@ -33,10 +33,11 @@ module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, 
     warnings: false
   },
   output: {
-    path: `${outDir}/bundle`,
+    path: outDir,
     publicPath: baseUrl,
-    filename: production ? '[name].bundle.js' : '[name].bundle.js',
-    sourceMapFilename: production ? '[name].bundle.map' : '[name].bundle.map',
+    filename: production ? '[name].[chunkhash].bundle.js' : '[name].[hash].bundle.js',
+    sourceMapFilename: production ? '[name].[chunkhash].bundle.map' : '[name].[hash].bundle.map',
+    chunkFilename: production ? '[name].[chunkhash].chunk.js' : '[name].[hash].chunk.js'
   },
   resolve: {
     extensions: ['.ts', '.js'],
@@ -89,8 +90,8 @@ module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, 
       // { from: 'assets', to: 'assets' }
     ])),
     ...when(extractCss, new MiniCssExtractPlugin({ // updated to match the naming conventions for the js files
-      filename: production ? '[name].bundle.css' : '[name].bundle.css',
-      chunkFilename: production ? '[name].bundle.css' : '[name].bundle.css'
+      filename: production ? '[name].[contenthash].bundle.css' : '[name].[hash].bundle.css',
+      chunkFilename: production ? '[name].[contenthash].chunk.css' : '[name].[hash].chunk.css'
     })),
   ]
 });

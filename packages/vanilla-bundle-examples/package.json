@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "description": "SlickGrid-Universal demo",
   "directories": {
-    "lib": "lib"
+    "src": "src"
   },
   "scripts": {
     "dev:watch": "webpack-dev-server --env.server --extractCss",

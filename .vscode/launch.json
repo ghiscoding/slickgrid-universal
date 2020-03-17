@@ -12,11 +12,11 @@
       "url": "http://localhost:8080",
       "webRoot": "${workspaceRoot}",
       "userDataDir": "${workspaceRoot}/.chrome",
-      "sourceMaps": true,
       "trace": true,
       "sourceMapPathOverrides": {
-        "webpack:///./*": "${webRoot}/*",
-        "webpack:///*": "${webRoot}/*"
+        "webpack:///../common/*": "${webRoot}/packages/common/*",
+        "webpack:///../vanilla-bundle/*": "${webRoot}/packages/vanilla-bundle/*",
+        "webpack:///./src/*": "${webRoot}/packages/vanilla-bundle-examples/src/*"
       }
     },
     {
