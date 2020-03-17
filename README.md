@@ -53,7 +53,7 @@ npm run test:watch
 ```
 
 ## TODO
-#### Implementation
+#### Code
 - [x] Aggregators (4)
 - [ ] Editors
   - [ ] Autocomplete
@@ -96,12 +96,12 @@ npm run test:watch
 - [x] Sorters (5)
 - [ ] Services
   - [x] Collection
-  - [ ] Excel Export (separate package)
-  - [ ] Export Text (separate package?!)
+  - [ ] Excel Export (**separate package**)
+  - [ ] Export Text (**separate package?!**)
   - [x] Extension
   - [x] Filter
-  - [ ] GraphQL (separate package)
-  - [ ] OData (separate package)
+  - [ ] GraphQL (**separate package**)
+  - [ ] OData (**separate package**)
   - [ ] Grid Event
   - [ ] Grid State
   - [x] Grouping & Col Span
@@ -110,11 +110,13 @@ npm run test:watch
   - [x] Shared
   - [x] Sort
 
-#### Extra Todos
+#### Other Todos
 - [ ] Add Multiple Example Demos with Vanilla implementation
   - [ ] Add GitHub Demo website
-- [ ] Add Cypress E2E tests
-- [ ] Add Jest Unit tests
+  - [ ] Add Cypress E2E tests
 - [ ] Add CI/CD (CircleCI or GitHub Actions)
+  - [ ] Add Jest Unit tests
+  - [ ] Build and run on every PR
+  - [ ] Add Code Coverage (codecov)
 - [x] VScode Chrome Debugger
 - [x] Jest Debugger
