@@ -1,4 +1,4 @@
-import { Aggregators, FieldType, Sorters, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters } from '@slickgrid-universal/common';
+import { Aggregators, FieldType, Sorters, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 
 const actionFormatter = (row, cell, value, columnDef, dataContext) => {
@@ -22,7 +22,7 @@ export class Example2 {
   gridClass;
   gridClassName;
   columnDefinitions;
-  gridOptions;
+  gridOptions: GridOption;
   dataset;
   dataviewObj: any;
   gridObj: any;

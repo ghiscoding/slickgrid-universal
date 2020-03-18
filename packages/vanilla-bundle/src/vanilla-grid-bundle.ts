@@ -40,6 +40,9 @@ import {
   CollectionService,
   GroupingAndColspanService,
   SlickgridConfig,
+
+  // utilities
+  getScrollBarWidth,
 } from '@slickgrid-universal/common';
 
 import { TranslateService } from './services/translate.service';
@@ -187,7 +190,7 @@ export class VanillaGridBundle {
     }
   }
 
-  initialization(gridContainerElm: Element) {
+  async initialization(gridContainerElm: Element) {
     // create the slickgrid container and add it to the user's grid container
     this._gridContainerElm = gridContainerElm;
     this._gridElm = document.createElement('div');
@@ -240,6 +243,8 @@ export class VanillaGridBundle {
     if (this._gridOptions.enableAutoResize) {
       const resizer = new Slick.Plugins.Resizer(this._gridOptions.autoResize);
       this.grid.registerPlugin(resizer);
+      await resizer.resizeGrid();
+      this.compensateHorizontalScroll(this.grid);
     }
 
     // user might want to hide the header row on page load but still have `enableFiltering: true`
@@ -359,6 +364,27 @@ export class VanillaGridBundle {
           }
         });
       }
+    }
+  }
+
+  /**
+   * For some reason this only seems to happen in Chrome and is sometime miscalculated by SlickGrid measureScrollbar() method
+   * When that happens we will compensate and resize the Grid Viewport to avoid seeing horizontal scrollbar
+   * Most of the time it happens, it's a tiny offset calculation of usually 3px (enough to show scrollbar)
+   * GitHub issue reference: https://github.com/6pac/SlickGrid/issues/275
+   */
+  compensateHorizontalScroll(grid: any) {
+    const scrollbarDimensions = grid && grid.getScrollbarDimensions();
+    const slickGridScrollbarWidth = scrollbarDimensions && scrollbarDimensions.width;
+    const calculatedScrollbarWidth = getScrollBarWidth();
+
+    // if scrollbar width is different from SlickGrid calculation to our custom calculation
+    // then resize the grid with the missing pixels to remove scroll (usually only 3px)
+    const containerNode = grid && grid.getContainerNode && grid.getContainerNode() || '';
+    if (slickGridScrollbarWidth < calculatedScrollbarWidth && containerNode && containerNode.clientWidth) {
+      const previousWidth = containerNode && containerNode.clientWidth || 0;
+      containerNode.style.width = `${previousWidth + (calculatedScrollbarWidth - slickGridScrollbarWidth)}px`;
+      grid.resizeCanvas();
     }
   }
 

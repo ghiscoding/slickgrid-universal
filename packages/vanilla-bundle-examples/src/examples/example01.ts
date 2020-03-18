@@ -1,4 +1,4 @@
-import { FieldType, GroupTotalFormatters, Formatters, OperatorType } from '@slickgrid-universal/common';
+import { FieldType, GroupTotalFormatters, Formatters, OperatorType, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 
 const actionFormatter = (row, cell, value, columnDef, dataContext) => {
@@ -22,7 +22,7 @@ export class Example1 {
   gridClass;
   gridClassName;
   columnDefinitions;
-  gridOptions;
+  gridOptions: GridOption;
   dataset;
   dataviewObj: any;
   gridObj: any;
