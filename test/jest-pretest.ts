@@ -1,7 +1,4 @@
-// import 'isomorphic-fetch';
 import 'jsdom-global/register';
-
-// import jQuery AFTER globalize() is the only way to get the test working
 import * as jQuery from 'jquery';
 
 (global as any).$ = (global as any).jQuery = jQuery;

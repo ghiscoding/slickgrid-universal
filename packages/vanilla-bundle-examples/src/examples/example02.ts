@@ -35,7 +35,7 @@ export class Example2 {
 
   attached() {
     const dataset = this.initializeGrid();
-    const gridContainerElm = document.querySelector(`.myGrid2`);
+    const gridContainerElm = document.querySelector(`.grid2`);
     const gridElm = document.querySelector(`.slickgrid-container`);
 
     // gridContainerElm.addEventListener('onclick', handleOnClick);
@@ -46,7 +46,6 @@ export class Example2 {
   }
 
   initializeGrid() {
-    this.gridClass = 'myGrid';
     this.columnDefinitions = [
       {
         id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,

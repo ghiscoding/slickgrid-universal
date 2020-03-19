@@ -144,7 +144,7 @@ describe('SelectFilter', () => {
     expect(filterElm.innerHTML).toBe(testValue);
   });
 
-  xit('should trigger multiple select change event and expect the callback to be called with the search terms we select from dropdown list', () => {
+  it('should trigger multiple select change event and expect the callback to be called with the search terms we select from dropdown list', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
     mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
@@ -155,8 +155,8 @@ describe('SelectFilter', () => {
     filterBtnElm.click();
 
     // we can use property "checked" or dispatch an event
-    // filterListElm[0].checked = true;
-    filterListElm[0].dispatchEvent(new CustomEvent('click'));
+    filterListElm[0].checked = true;
+    filterListElm[0].dispatchEvent(new Event('click'));
     filterOkElm.click();
 
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');

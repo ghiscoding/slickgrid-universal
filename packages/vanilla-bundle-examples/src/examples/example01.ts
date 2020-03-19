@@ -33,7 +33,7 @@ export class Example1 {
 
   attached() {
     const dataset = this.initializeGrid();
-    const gridContainerElm = document.querySelector(`.myGrid`);
+    const gridContainerElm = document.querySelector(`.grid1`);
     const gridElm = document.querySelector(`.slickgrid-container`);
 
     // gridContainerElm.addEventListener('onclick', handleOnClick);
@@ -44,7 +44,6 @@ export class Example1 {
   }
 
   initializeGrid() {
-    this.gridClass = 'myGrid';
     this.columnDefinitions = [
       {
         id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,
@@ -122,6 +121,9 @@ export class Example1 {
       {
         id: 'completed', name: 'Completed', field: 'completed', sortable: true, formatter: Slicker.Formatters.checkmarkMaterial,
         filterable: true,
+        editor: {
+          model: Slicker.Editors.checkbox,
+        },
         filter: {
           model: Slicker.Filters.singleSelect,
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],

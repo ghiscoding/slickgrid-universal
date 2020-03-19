@@ -33,7 +33,7 @@ module.exports = {
     'ts'
   ],
   modulePaths: [
-    '<rootDir>/src',
+    'src',
     '<rootDir>/node_modules'
   ],
   preset: 'ts-jest',

@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@types/jquery": "^3.3.33",
-    "@types/node": "^13.9.0",
+    "@types/node": "^13.9.2",
     "@types/webpack": "^4.41.7",
     "archiver": "^3.1.1",
     "cross-env": "^7.0.2",
