@@ -1,0 +1,26 @@
+.cell-title {
+  // font-weight: bold;
+}
+
+.cell-effort-driven {
+  text-align: center;
+}
+
+.toggle {
+  height: 20px;
+  width: 20px;
+  display: inline-block;
+
+  &.expand:before {
+    font-family: "Material Design Icons";
+    font-size: 20px;
+    content: "\F0142";
+  }
+
+  &.collapse:before {
+    font-family: "Material Design Icons";
+    font-size: 20px;
+    content: "\F0140";
+  }
+}
+
