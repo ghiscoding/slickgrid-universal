@@ -36,26 +36,13 @@ export class Example4 {
     this.dataViewObj.setFilter(this.myFilter.bind(this));
     this.dataset = this.mockDataset();
     this.slickgridLwc.dataset = this.dataset;
-
-    $("#txtSearch").keyup((e: any) => {
-      // Slick.GlobalEditorLock.cancelCurrentEdit();
-
-      // clear on Esc
-      if (e.which == 27) {
-        // this.value = "";
-      }
-
-      this.searchString = e.target.value;
-      this.dataViewObj.refresh();
-      console.log('search', this.searchString, this.dataViewObj)
-    })
   }
 
   initializeGrid() {
     this.columnDefinitions = [
       { id: "title", name: "Title", field: "title", width: 220, cssClass: "cell-title", filterable: true, formatter: this.taskNameFormatter.bind(this), editor: Slicker.Editors.text },
-      { id: "duration", name: "Duration", field: "duration", editor: Slicker.Editors.text },
-      { id: "%", name: "% Complete", field: "percentComplete", width: 80, resizable: false, formatter: Slicker.Formatters.percentCompleteBar, editor: Slicker.Editors.slider },
+      { id: "duration", name: "Duration", field: "duration", editor: Slicker.Editors.text, minWidth: 90 },
+      { id: "%", name: "% Complete", field: "percentComplete", width: 120, resizable: false, formatter: Slicker.Formatters.percentCompleteBar, editor: Slicker.Editors.slider },
       { id: "start", name: "Start", field: "start", minWidth: 60 },
       { id: "finish", name: "Finish", field: "finish", minWidth: 60 },
       {
@@ -71,10 +58,6 @@ export class Example4 {
       editable: true,
       autoResize: {
         container: '.demo-container',
-        rightPadding: 10,
-        bottomPadding: 20,
-        minHeight: 180,
-        minWidth: 300,
       },
       dataView: {
         inlineFilters: false
@@ -109,6 +92,11 @@ export class Example4 {
     this.slickgridLwc.dispose();
   }
 
+  searchTask(event: KeyboardEvent) {
+    this.searchString = (event.target as HTMLInputElement).value;
+    this.dataViewObj.refresh();
+  }
+
   taskNameFormatter(row, cell, value, columnDef, dataContext) {
     if (value == null || value == undefined || dataContext === undefined) { return ''; }
 
@@ -124,7 +112,7 @@ export class Example4 {
     } else {
       return `${spacer}<span class="toggle"></span>&nbsp;${value}`;
     }
-  };
+  }
 
   myFilter(item) {
     // if (item["percentComplete"] < percentCompleteThreshold) {

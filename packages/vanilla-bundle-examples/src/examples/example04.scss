@@ -11,16 +11,22 @@
   width: 20px;
   display: inline-block;
 
-  &.expand:before {
-    font-family: "Material Design Icons";
-    font-size: 20px;
-    content: "\F0142";
+  &.expand {
+    cursor: pointer;
+    &:before {
+      font-family: "Material Design Icons";
+      font-size: 20px;
+      content: "\F0142";
+    }
   }
 
-  &.collapse:before {
-    font-family: "Material Design Icons";
-    font-size: 20px;
-    content: "\F0140";
+  &.collapse{
+    cursor: pointer;
+    &:before {
+      font-family: "Material Design Icons";
+      font-size: 20px;
+      content: "\F0140";
+    }
   }
 }
 

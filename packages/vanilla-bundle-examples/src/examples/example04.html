@@ -1,14 +1,23 @@
 <h3 class="title is-4">Example 04 - Tree View</h3>
-<span style="margin-right: 10px">
-  <button onclick.delegate="addNewRow()" class="button is-small">Add New Item</button>
-</span>
-/
-<span style="margin-left: 10px">
-  <label>Search title including:</label>
-  <input type=text id="txtSearch">
-</span>
-
-<hr />
+<div class="columns">
+  <div class="column is-narrow">
+    <button onclick.delegate="addNewRow()" class="button is-small">Add New Item</button>
+  </div>
+  <div class="column is-6">
+    <div class="field is-horizontal">
+      <div class="field-label is-small">
+        <label class="label">Search Task</label>
+      </div>
+      <div class="field-body">
+        <div class="field">
+          <p class="control">
+            <input type="text" class="input is-small" onkeyup.delegate="searchTask(event)">
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="demo-container">
   <div class="grid3">
