@@ -282,7 +282,7 @@
 
   // The next few items are already defined in the slick-headermenu file and it should stay that way, *unless* you also replace the button image included there.
   bottom: 0;
-  right: 3px;
+  right: $header-menu-button-margin-right;
   top: 0;
   width: $header-menu-button-width;
 }
@@ -293,11 +293,18 @@
   content: $header-menu-button-icon;
 }
 
-.slick-header-column:hover {
+.slick-header-column {
+  // if user when to show header menu only while hovering, then the display var will be "none" else it could be "inline-block"
   .slick-header-menubutton {
-    display: inline-block;
+    display: $header-menu-display;
+  }
+  &:hover {
+    .slick-header-menubutton {
+      display: inline-block;
+    }
   }
 }
+
 .slick-header-menu {
   position: absolute;
   margin: 0;

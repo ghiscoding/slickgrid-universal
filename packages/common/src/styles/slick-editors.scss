@@ -3,6 +3,7 @@
 .slick-cell.active  {
 	input.editor-text {
     border: $text-editor-border;
+    border-radius: $text-editor-border-radius;
     background: $text-editor-background;
     padding-bottom: $text-editor-padding-bottom;
     padding-left: $text-editor-padding-left;

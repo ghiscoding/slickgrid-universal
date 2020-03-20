@@ -330,6 +330,7 @@ $header-menu-button-icon:                   "\f13a" !default;
 $header-menu-button-icon-font-size:         14px !default;
 $header-menu-button-icon-font-weight:       normal !default;
 $header-menu-button-padding:                0px !default;
+$header-menu-button-margin-right:           3px !default;
 $header-menu-border-radius:                 2px !default;
 $header-menu-button-width:                  14px !default;
 $header-menu-min-width:                     175px !default;
@@ -350,6 +351,7 @@ $header-menu-divider-height:                1px !default;
 $header-menu-divider-margin:                8px 3px !default;
 $header-menu-divider-color:                 #e7e7e7 !default;
 $header-menu-divider-width:                 95% !default;
+$header-menu-display:                       none !default; /* can be none or inline-block */
 
 /* Checkbox Selector / Row Selection */
 $checkbox-selector-color:                   $primary-color !default;
@@ -370,7 +372,8 @@ $large-editor-textarea-height:              80px !default;
 $large-editor-textarea-width:               250px !default;
 $large-editor-button-text-align:            right !default;
 $large-editor-footer-spacing:               2px !default;
-$text-editor-border:                        initial !default;
+$text-editor-border:                        1px solid #e2e2e2 !default;
+$text-editor-border-radius:                 4px !default;
 $text-editor-background:                    #ffffff !default;
 $text-editor-margin-bottom:                 2px !default;
 $text-editor-margin-left:                   -2px !default; /* negative number to cancel inside padding */
