@@ -1,4 +1,4 @@
-import { FieldType, GroupTotalFormatters, Formatters, OperatorType, GridOption } from '@slickgrid-universal/common';
+import { Editors, FieldType, GroupTotalFormatters, Formatters, OperatorType, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 
 const actionFormatter = (row, cell, value, columnDef, dataContext) => {
@@ -82,6 +82,10 @@ export class Example1 {
         width: 90,
         sortable: true,
         filterable: true,
+        editor: {
+          model: Editors.float,
+          params: { decimalPlaces: 2 }
+        },
         // filter: { model: Filters.compoundInput },
         formatter: Formatters.dollar,
         groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,

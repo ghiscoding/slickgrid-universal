@@ -8,7 +8,7 @@ const when = (condition, config, negativeConfig) =>
 const path = require('path');
 
 // primary config:
-const title = 'Slickgrid-Universal Vanilla Implementation Examples';
+const title = 'Slickgrid-Universal';
 const baseUrl = '';
 const outDir = path.resolve(__dirname, 'dist');
 const srcDir = path.resolve(__dirname, 'src');
