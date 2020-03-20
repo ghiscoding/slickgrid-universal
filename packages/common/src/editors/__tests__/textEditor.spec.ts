@@ -359,14 +359,13 @@ describe('TextEditor', () => {
         const spySave = jest.spyOn(editor, 'save');
         const editorElm = editor.editorDomElement;
 
-        editorElm.trigger('focusout');
-        editorElm[0].dispatchEvent(new (window.window as any).Event('focusout'));
+        editorElm.dispatchEvent(new (window.window as any).Event('focusout'));
 
         setTimeout(() => {
           expect(spyCommit).toHaveBeenCalled();
           expect(spySave).toHaveBeenCalled();
           done();
-        });
+        }, 0);
       });
     });
 

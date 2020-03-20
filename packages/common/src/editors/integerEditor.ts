@@ -1,16 +1,16 @@
-import { Constants } from '../constants';
-import { KeyCode } from '../enums/keyCode.enum';
-import { Column, ColumnEditor, Editor, EditorArguments, EditorValidator, EditorValidatorOutput } from '../interfaces/index';
+import { Constants } from './../constants';
+import { KeyCode } from '../enums/index';
+import { Column, ColumnEditor, Editor, EditorArguments, EditorValidator, EditorValidatorOutput } from './../interfaces/index';
 import { getDescendantProperty, setDeepValue } from '../services/utilities';
 
 /*
  * An example of a 'detached' editor.
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
-export class TextEditor implements Editor {
+export class IntegerEditor implements Editor {
   private _lastInputEvent: KeyboardEvent;
   private _input: HTMLInputElement;
-  originalValue: string;
+  originalValue: number | string;
 
   /** SlickGrid Grid object */
   grid: any;
@@ -39,7 +39,7 @@ export class TextEditor implements Editor {
   }
 
   get hasAutoCommitEdit() {
-    return this.grid.getOptions().autoCommitEdit;
+    return this.grid && this.grid.getOptions && this.grid.getOptions().autoCommitEdit;
   }
 
   /** Get the Validator function, can be passed in Editor property or Column Definition */
@@ -55,7 +55,7 @@ export class TextEditor implements Editor {
     this._input = document.createElement('input') as HTMLInputElement;
     this._input.className = `editor-text editor-${columnId}`;
     this._input.title = title;
-    this._input.type = 'text';
+    this._input.type = 'number';
     this._input.setAttribute('role', 'presentation');
     this._input.autocomplete = 'off';
     this._input.placeholder = placeholder;
@@ -92,14 +92,14 @@ export class TextEditor implements Editor {
     return this._input.value || '';
   }
 
-  setValue(value: string) {
-    this._input.value = value;
+  setValue(value: number | string) {
+    this._input.value = `${value}`;
   }
 
   applyValue(item: any, state: any) {
     const fieldName = this.columnDef && this.columnDef.field;
     if (fieldName !== undefined) {
-      const isComplexObject = fieldName && fieldName.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
+      const isComplexObject = fieldName.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
       // validate the value before applying it (if not valid we'll set an empty string)
       const validation = this.validate(state);
@@ -108,7 +108,7 @@ export class TextEditor implements Editor {
       // set the new value to the item datacontext
       if (isComplexObject) {
         setDeepValue(item, fieldName, newValue);
-      } else if (fieldName) {
+      } else {
         item[fieldName] = newValue;
       }
     }
@@ -126,14 +126,16 @@ export class TextEditor implements Editor {
   loadValue(item: any) {
     const fieldName = this.columnDef && this.columnDef.field;
 
-    // is the field a complex object, "address.streetNumber"
-    const isComplexObject = fieldName && fieldName.indexOf('.') > 0;
+    if (fieldName !== undefined) {
+      // is the field a complex object, "address.streetNumber"
+      const isComplexObject = fieldName.indexOf('.') > 0;
 
-    if (item && fieldName !== undefined && this.columnDef && (item.hasOwnProperty(fieldName) || isComplexObject)) {
-      const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : (item.hasOwnProperty(fieldName) && item[fieldName] || '');
-      this.originalValue = value;
-      this._input.value = this.originalValue;
-      this._input.select();
+      if (item && this.columnDef && (item.hasOwnProperty(fieldName) || isComplexObject)) {
+        const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
+        this.originalValue = (isNaN(value) || value === null || value === undefined) ? value : `${value}`;
+        this._input.value = `${this.originalValue}`;
+        this._input.select();
+      }
     }
   }
 
@@ -149,29 +151,62 @@ export class TextEditor implements Editor {
   }
 
   serializeValue() {
-    return this._input.value;
+    const elmValue = this._input.value;
+    if (elmValue === '' || isNaN(+elmValue)) {
+      return elmValue;
+    }
+    const output = isNaN(+elmValue) ? elmValue : parseInt(elmValue, 10);
+    return isNaN(+output) ? elmValue : output;
   }
 
   validate(inputValue?: any): EditorValidatorOutput {
-    const isRequired = this.columnEditor.required;
-    const elmValue = (inputValue !== undefined) ? inputValue : this._input && this._input.value;
+    const elmValue = (inputValue !== undefined) ? inputValue : this.getValue();
+    let intNumber = !isNaN(elmValue as number) ? parseInt(elmValue, 10) : null;
+    if (intNumber !== null && isNaN(intNumber)) {
+      intNumber = null;
+    }
     const errorMsg = this.columnEditor.errorMessage;
+    const isRequired = this.columnEditor.required;
+    const minValue = this.columnEditor.minValue;
+    const maxValue = this.columnEditor.maxValue;
+    const mapValidation = {
+      '{{minValue}}': minValue,
+      '{{maxValue}}': maxValue
+    };
+    let isValid = true;
+    let outputMsg = '';
 
     if (this.validator) {
       return this.validator(elmValue, this.args);
-    }
-
-    // by default the editor is almost always valid (except when it's required but not provided)
-    if (isRequired && elmValue === '') {
-      return {
-        valid: false,
-        msg: errorMsg || Constants.VALIDATION_REQUIRED_FIELD
-      };
+    } else if (isRequired && elmValue === '') {
+      isValid = false;
+      outputMsg = errorMsg || Constants.VALIDATION_REQUIRED_FIELD;
+    } else if (elmValue && (isNaN(elmValue as number) || !/^[+-]?\d+$/.test(elmValue))) {
+      isValid = false;
+      outputMsg = errorMsg || Constants.VALIDATION_EDITOR_VALID_INTEGER;
+    } else if (minValue !== undefined && maxValue !== undefined && intNumber !== null && (intNumber < minValue || intNumber > maxValue)) {
+      // MIN & MAX Values provided
+      // when decimal value is bigger than 0, we only accept the decimal values as that value set
+      // for example if we set decimalPlaces to 2, we will only accept numbers between 0 and 2 decimals
+      isValid = false;
+      outputMsg = errorMsg || Constants.VALIDATION_EDITOR_INTEGER_BETWEEN.replace(/{{minValue}}|{{maxValue}}/gi, (matched) => mapValidation[matched]);
+    } else if (minValue !== undefined && intNumber !== null && intNumber <= minValue) {
+      // MIN VALUE ONLY
+      // when decimal value is bigger than 0, we only accept the decimal values as that value set
+      // for example if we set decimalPlaces to 2, we will only accept numbers between 0 and 2 decimals
+      isValid = false;
+      outputMsg = errorMsg || Constants.VALIDATION_EDITOR_INTEGER_MIN.replace(/{{minValue}}/gi, (matched) => mapValidation[matched]);
+    } else if (maxValue !== undefined && intNumber !== null && intNumber >= maxValue) {
+      // MAX VALUE ONLY
+      // when decimal value is bigger than 0, we only accept the decimal values as that value set
+      // for example if we set decimalPlaces to 2, we will only accept numbers between 0 and 2 decimals
+      isValid = false;
+      outputMsg = errorMsg || Constants.VALIDATION_EDITOR_INTEGER_MAX.replace(/{{maxValue}}/gi, (matched) => mapValidation[matched]);
     }
 
     return {
-      valid: true,
-      msg: null
+      valid: isValid,
+      msg: outputMsg
     };
   }
 }

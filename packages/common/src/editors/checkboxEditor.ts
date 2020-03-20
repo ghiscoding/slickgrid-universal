@@ -59,7 +59,7 @@ export class CheckboxEditor implements Editor {
 
     // make the checkbox editor act like a regular checkbox that commit the value on click
     if (this.hasAutoCommitEdit) {
-      this._input.onclick = this.save.bind(this);
+      this._input.addEventListener('click', () => this.save());
     }
   }
 
@@ -72,14 +72,12 @@ export class CheckboxEditor implements Editor {
   }
 
   getValue() {
-    // return this._input.prop('checked');
     return this._input.checked;
   }
 
   setValue(val: boolean | string) {
     const isChecked = val ? true : false;
     this._input.checked = isChecked;
-    // this._input.prop('checked', isChecked);
   }
 
   applyValue(item: any, state: any) {

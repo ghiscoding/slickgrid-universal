@@ -153,7 +153,7 @@ describe('CheckboxEditor', () => {
       it('should return True when previous event is a click event', () => {
         gridOptionMock.autoCommitEdit = true;
         editor = new CheckboxEditor(editorArguments);
-        const saveSpy = jest.spyOn(editor, 'validate');
+        const saveSpy = jest.spyOn(editor, 'save');
         editor.loadValue({ id: 2, title: 'task 1', isActive: true });
 
         editor.editorDomElement.checked = false;

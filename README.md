@@ -66,7 +66,7 @@ npm run test:watch
   - [ ] Autocomplete
   - [x] Checkbox
   - [ ] Date
-  - [ ] Float
+  - [x] Float
   - [x] Integer
   - [x] Long Text
   - [x] Multiple Select

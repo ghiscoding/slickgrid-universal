@@ -1,8 +1,8 @@
 // import { AutoCompleteEditor } from './autoCompleteEditor';
 import { CheckboxEditor } from './checkboxEditor';
 // import { DateEditor } from './dateEditor';
-// import { FloatEditor } from './floatEditor';
-// import { IntegerEditor } from './integerEditor';
+import { FloatEditor } from './floatEditor';
+import { IntegerEditor } from './integerEditor';
 import { LongTextEditor } from './longTextEditor';
 import { MultipleSelectEditor } from './multipleSelectEditor';
 import { SingleSelectEditor } from './singleSelectEditor';
@@ -20,10 +20,10 @@ export const Editors = {
   // date: DateEditor,
 
   /** Float Number Editor */
-  // float: FloatEditor,
+  float: FloatEditor,
 
   /** Integer Editor */
-  // integer: IntegerEditor,
+  integer: IntegerEditor,
 
   /** Long Text Editor (uses a textarea) */
   longText: LongTextEditor,
