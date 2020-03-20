@@ -61,7 +61,7 @@ npm run test:watch
 
 ## TODO
 #### Code
-- [x] Aggregators (4)
+- [x] Aggregators (6)
 - [ ] Editors
   - [ ] Autocomplete
   - [x] Checkbox
@@ -118,6 +118,8 @@ npm run test:watch
   - [x] Sort
 
 #### Other Todos
+- [x] VScode Chrome Debugger
+- [x] Jest Debugger
 - [ ] Add Multiple Example Demos with Vanilla implementation
   - [ ] Add GitHub Demo website
   - [ ] Add Cypress E2E tests
@@ -125,5 +127,5 @@ npm run test:watch
   - [ ] Add Jest Unit tests
   - [ ] Build and run on every PR
   - [ ] Add Code Coverage (codecov)
-- [x] VScode Chrome Debugger
-- [x] Jest Debugger
+- [ ] Remove any Deprecated code
+  - [ ] Create a Migration Guide 

@@ -158,7 +158,7 @@ export class FilterService {
 
     this._eventHandler.subscribe(this._onSearchChange, (e: KeyboardEvent, args: any) => {
       const columnId = args.columnId;
-      if (columnId != null) {
+      if (columnId !== null) {
         dataView.refresh();
       }
 
@@ -226,7 +226,7 @@ export class FilterService {
       const queryResponse = backendApi.service.processOnFilterChanged(undefined, callbackArgs as FilterChangedArgs);
       if (queryResponse instanceof Promise && queryResponse.then) {
         // @deprecated, processOnFilterChanged in the future should be returned as a query string NOT as a Promise
-        console.warn(`[Aurelia-Slickgrid] please note that the "processOnFilterChanged" from your Backend Service, should now return a string instead of a Promise.
+        console.warn(`[Slickgrid-Universal] please note that the "processOnFilterChanged" from your Backend Service, should now return a string instead of a Promise.
           Returning a Promise will be deprecated in the future.`);
         queryResponse.then((query: string) => {
           const totalItems = this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems || 0;
@@ -248,6 +248,21 @@ export class FilterService {
   /** Local Grid Filter search */
   customLocalFilter(item: any, args: any) {
     const dataView = args && args.dataView;
+
+    // if (this._gridOptions.enableTreeView) {
+    //   const data = dataView.getItems();
+    //   if (item.parent !== null) {
+    //     let parent = data[item.parent];
+    //     while (parent) {
+    //       if (parent._collapsed) {
+    //         return false;
+    //       }
+    //       parent = data[parent.parent];
+    //     }
+    //   }
+    //   // return true;
+    // }
+
     for (const columnId of Object.keys(args.columnFilters)) {
       const columnFilter: ColumnFilter = args.columnFilters[columnId];
       let columnIndex = args.grid.getColumnIndex(columnId);
@@ -507,7 +522,7 @@ export class FilterService {
    */
   updateFilters(filters: CurrentFilter[], emitChangedEvent = true, triggerBackendQuery = true) {
     if (!this._filtersMetadata || this._filtersMetadata.length === 0 || !this._gridOptions || !this._gridOptions.enableFiltering) {
-      throw new Error('[Aurelia-Slickgrid] in order to use "updateFilters" method, you need to have Filterable Columns defined in your grid and "enableFiltering" set in your Grid Options');
+      throw new Error('[Slickgrid-Universal] in order to use "updateFilters" method, you need to have Filterable Columns defined in your grid and "enableFiltering" set in your Grid Options');
     }
 
     if (Array.isArray(filters)) {

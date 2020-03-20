@@ -26,7 +26,7 @@ describe('sumAggregator', () => {
     aggregator.storeResult(groupTotals);
 
     // assert
-    expect(0).toBe(groupTotals['sum'][fieldName]);
+    expect(groupTotals['sum'][fieldName]).toBe(0);
   });
 
   it('should return the sum value when the chosen field from the dataset contains only numbers', () => {
@@ -39,7 +39,7 @@ describe('sumAggregator', () => {
     aggregator.storeResult(groupTotals);
 
     const avg = (55 + 87 + 60 + (-2) + 15);
-    expect(avg).toBe(groupTotals.sum[fieldName]);
+    expect(groupTotals.sum[fieldName]).toBe(avg);
   });
 
   it('should return the sum valid number when dataset contains numbers provided as tring and other and invalid char', () => {
@@ -52,6 +52,6 @@ describe('sumAggregator', () => {
     aggregator.storeResult(groupTotals);
 
     const avg = 58 + 14 + 87;
-    expect(avg).toBe(groupTotals.sum[fieldName]);
+    expect(groupTotals.sum[fieldName]).toBe(avg);
   });
 });

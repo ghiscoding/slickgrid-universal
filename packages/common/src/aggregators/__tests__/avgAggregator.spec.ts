@@ -26,7 +26,7 @@ describe('avgAggregator', () => {
     aggregator.storeResult(groupTotals);
 
     // assert
-    expect(undefined).toBe(groupTotals['avg'][fieldName]);
+    expect(groupTotals['avg'][fieldName]).toBe(undefined);
   });
 
   it('should calculate an average when the chosen field from the dataset contains only numbers', () => {
@@ -39,7 +39,7 @@ describe('avgAggregator', () => {
     aggregator.storeResult(groupTotals);
 
     const avg = (55 + 87 + 60 + (-2) + 15) / 5;
-    expect(avg).toBe(groupTotals.avg[fieldName]);
+    expect(groupTotals.avg[fieldName]).toBe(avg);
   });
 
   it('should calculate an average with only the valid numbers when dataset contains numbers provided as tring and other and invalid char', () => {
@@ -52,6 +52,6 @@ describe('avgAggregator', () => {
     aggregator.storeResult(groupTotals);
 
     const avg = (58 + 14 + 87) / 3;
-    expect(avg).toBe(groupTotals.avg[fieldName]);
+    expect(groupTotals.avg[fieldName]).toBe(avg);
   });
 });

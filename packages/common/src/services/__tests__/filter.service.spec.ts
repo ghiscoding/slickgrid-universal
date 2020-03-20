@@ -481,7 +481,7 @@ describe('FilterService', () => {
           expect(service.getColumnFilters()).toEqual({});
           expect(spyFilterChange).not.toHaveBeenCalled();
           expect(spyEmitter).not.toHaveBeenCalled();
-          expect(consoleSpy).toHaveBeenCalledWith(expect.toInclude('[Aurelia-Slickgrid] please note that the "processOnFilterChanged" from your Backend Service, should now return a string instead of a Promise.'));
+          expect(consoleSpy).toHaveBeenCalledWith(expect.toInclude('[Slickgrid-Universal] please note that the "processOnFilterChanged" from your Backend Service, should now return a string instead of a Promise.'));
           done();
         });
       });
@@ -931,7 +931,7 @@ describe('FilterService', () => {
         service.bindLocalOnFilter(gridStub, dataViewStub);
         service.updateFilters([{ columnId: 'firstName', searchTerms: ['John'] }]);
       } catch (e) {
-        expect(e.toString()).toContain('[Aurelia-Slickgrid] in order to use "updateFilters" method, you need to have Filterable Columns defined in your grid');
+        expect(e.toString()).toContain('[Slickgrid-Universal] in order to use "updateFilters" method, you need to have Filterable Columns defined in your grid');
         done();
       }
     });

@@ -1,28 +1,28 @@
 import { Aggregator } from './../interfaces/aggregator.interface';
 
-export class SumAggregator implements Aggregator {
-  private _sum: number = 0;
+export class CloneAggregator implements Aggregator {
   private _field: number | string;
+  private _data: any;
 
   constructor(field: number | string) {
     this._field = field;
   }
 
-  init() {
-    this._sum = 0;
+  init(): void {
+    this._data = '';
   }
 
   accumulate(item: any) {
     const val = (item && item.hasOwnProperty(this._field)) ? item[this._field] : null;
-    if (val !== null && val !== '' && !isNaN(val)) {
-      this._sum += parseFloat(val);
+    if (val !== null && val !== '') {
+      this._data = val;
     }
   }
 
   storeResult(groupTotals: any) {
-    if (!groupTotals || groupTotals.sum === undefined) {
-      groupTotals.sum = {};
+    if (!groupTotals || groupTotals.clone === undefined) {
+      groupTotals.clone = {};
     }
-    groupTotals.sum[this._field] = this._sum;
+    groupTotals.clone[this._field] = this._data;
   }
 }

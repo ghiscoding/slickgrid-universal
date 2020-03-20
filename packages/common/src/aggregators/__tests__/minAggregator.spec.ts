@@ -26,7 +26,7 @@ describe('minAggregator', () => {
     aggregator.storeResult(groupTotals);
 
     // assert
-    expect(null).toBe(groupTotals['min'][fieldName]);
+    expect(groupTotals['min'][fieldName]).toBe(null);
   });
 
   it('should return the minimum value when the chosen field from the dataset contains only numbers', () => {
@@ -38,7 +38,7 @@ describe('minAggregator', () => {
     dataset.forEach((row) => aggregator.accumulate(row));
     aggregator.storeResult(groupTotals);
 
-    expect(-2).toBe(groupTotals.min[fieldName]);
+    expect(groupTotals.min[fieldName]).toBe(-2);
   });
 
   it('should return the minimum valid number when dataset contains numbers provided as tring and other and invalid char', () => {
@@ -50,6 +50,6 @@ describe('minAggregator', () => {
     dataset.forEach((row) => aggregator.accumulate(row));
     aggregator.storeResult(groupTotals);
 
-    expect(14).toBe(groupTotals.min[fieldName]);
+    expect(groupTotals.min[fieldName]).toBe(14);
   });
 });

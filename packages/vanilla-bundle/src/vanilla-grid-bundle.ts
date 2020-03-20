@@ -59,6 +59,7 @@ export class VanillaGridBundle {
   private _gridElm: Element;
   private _gridContainerElm: Element;
   private _hideHeaderRowAfterPageLoad = false;
+  private _isDatasetInitialized = false;
   private _isLocalGrid = true;
   private _eventHandler: SlickEventHandler = new Slick.EventHandler();
   private _eventPubSubService: EventPubSubService;
@@ -69,6 +70,7 @@ export class VanillaGridBundle {
   metrics: Metrics;
   customDataView = false;
   groupItemMetadataProvider: any;
+  resizerPlugin: any;
 
   // extensions
   extensionUtility: ExtensionUtility;
@@ -117,7 +119,7 @@ export class VanillaGridBundle {
   }
   set dataset(dataset) {
     this._dataset = dataset;
-    // this.refreshGridData(dataset);
+    this.refreshGridData(dataset);
   }
 
   constructor(gridContainerElm: Element, columnDefs: Column[], options: GridOption, dataset?: any[]) {
@@ -202,14 +204,15 @@ export class VanillaGridBundle {
     this._isLocalGrid = !this.backendServiceApi; // considered a local grid if it doesn't have a backend service set
     this._eventPubSubService.eventNamingStyle = this._gridOptions && this._gridOptions.eventNamingStyle || EventNamingStyle.camelCase;
     this._eventHandler = new Slick.EventHandler();
+    const dataviewInlineFilters = this._gridOptions?.dataView?.inlineFilters || false;
     if (!this.customDataView) {
       if (this._gridOptions.draggableGrouping || this._gridOptions.enableGrouping) {
         this.extensionUtility.loadExtensionDynamically(ExtensionName.groupItemMetaProvider);
         this.groupItemMetadataProvider = new Slick.Data.GroupItemMetadataProvider();
         this.sharedService.groupItemMetadataProvider = this.groupItemMetadataProvider;
-        this.dataView = new Slick.Data.DataView({ groupItemMetadataProvider: this.groupItemMetadataProvider });
+        this.dataView = new Slick.Data.DataView({ groupItemMetadataProvider: this.groupItemMetadataProvider, inlineFilters: dataviewInlineFilters });
       } else {
-        this.dataView = new Slick.Data.DataView();
+        this.dataView = new Slick.Data.DataView({ inlineFilters: dataviewInlineFilters });
       }
       this._eventPubSubService.publish('onDataviewCreated', this.dataView);
     }
@@ -240,10 +243,17 @@ export class VanillaGridBundle {
     // bind & initialize the grid service
     this.gridService.init(this.grid, this.dataView);
 
+    if (this._dataset.length > 0) {
+      // if (!this._isDatasetInitialized && (this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection)) {
+      //   this.loadRowSelectionPresetWhenExists();
+      // }
+      this._isDatasetInitialized = true;
+    }
+
     if (this._gridOptions.enableAutoResize) {
-      const resizer = new Slick.Plugins.Resizer(this._gridOptions.autoResize);
-      this.grid.registerPlugin(resizer);
-      await resizer.resizeGrid();
+      this.resizerPlugin = new Slick.Plugins.Resizer(this._gridOptions.autoResize);
+      this.grid.registerPlugin(this.resizerPlugin);
+      await this.resizerPlugin.resizeGrid();
       this.compensateHorizontalScroll(this.grid);
     }
 
@@ -385,6 +395,66 @@ export class VanillaGridBundle {
       const previousWidth = containerNode && containerNode.clientWidth || 0;
       containerNode.style.width = `${previousWidth + (calculatedScrollbarWidth - slickGridScrollbarWidth)}px`;
       grid.resizeCanvas();
+    }
+  }
+
+  /**
+ * When dataset changes, we need to refresh the entire grid UI & possibly resize it as well
+ * @param dataset
+ */
+  refreshGridData(dataset: any[], totalCount?: number) {
+    // local grid, check if we need to show the Pagination
+    // if so then also check if there's any presets and finally initialize the PaginationService
+    // a local grid with Pagination presets will potentially have a different total of items, we'll need to get it from the DataView and update our total
+    // if (this.gridOptions && this.gridOptions.enablePagination && this._isLocalGrid) {
+    //   this.showPagination = true;
+    //   this.loadLocalGridPagination(dataset);
+    // }
+
+    if (Array.isArray(dataset) && this.grid && this.dataView && typeof this.dataView.setItems === 'function') {
+      this.dataView.setItems(dataset, this._gridOptions.datasetIdPropertyName);
+      if (!this._gridOptions.backendServiceApi) {
+        this.dataView.reSort();
+      }
+
+      if (dataset.length > 0) {
+        // if (!this._isDatasetInitialized && this.gridOptions.enableCheckboxSelector) {
+        //   this.loadRowSelectionPresetWhenExists();
+        // }
+        this._isDatasetInitialized = true;
+      }
+
+      if (dataset) {
+        this.grid.invalidate();
+        this.grid.render();
+      }
+
+      // display the Pagination component only after calling this refresh data first, we call it here so that if we preset pagination page number it will be shown correctly
+      // this.showPagination = (this.gridOptions && (this.gridOptions.enablePagination || (this.gridOptions.backendServiceApi && this.gridOptions.enablePagination === undefined))) ? true : false;
+
+      // if (this.gridOptions && this.gridOptions.backendServiceApi && this.gridOptions.pagination && this.paginationOptions) {
+      //   const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this.gridOptions, this.paginationOptions);
+
+      //   // when we have a totalCount use it, else we'll take it from the pagination object
+      //   // only update the total items if it's different to avoid refreshing the UI
+      //   const totalRecords = (totalCount !== undefined) ? totalCount : (this.gridOptions && this.gridOptions.pagination && this.gridOptions.pagination.totalItems);
+      //   if (totalRecords !== undefined && totalRecords !== this.totalItems) {
+      //     this.totalItems = +totalRecords;
+      //   }
+      //   // initialize the Pagination Service with new pagination options (which might have presets)
+      //   if (!this._isPaginationInitialized) {
+      //     this.initializePaginationService(paginationOptions);
+      //   } else {
+      //     // update the pagination service with the new total
+      //     this.paginationService.totalItems = this.totalItems;
+      //   }
+      // }
+
+      // resize the grid inside a slight timeout, in case other DOM element changed prior to the resize (like a filter/pagination changed)
+      if (this.grid && this._gridOptions.enableAutoResize) {
+        const delay = this._gridOptions.autoResize && this._gridOptions.autoResize.delay;
+        this.resizerPlugin.resizeGrid(delay || 10);
+      }
     }
   }
 

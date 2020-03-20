@@ -26,7 +26,7 @@ describe('maxAggregator', () => {
     aggregator.storeResult(groupTotals);
 
     // assert
-    expect(null).toBe(groupTotals['max'][fieldName]);
+    expect(groupTotals['max'][fieldName]).toBe(null);
   });
 
   it('should return the maximum value when the chosen field from the dataset contains only numbers', () => {
@@ -38,7 +38,7 @@ describe('maxAggregator', () => {
     dataset.forEach((row) => aggregator.accumulate(row));
     aggregator.storeResult(groupTotals);
 
-    expect(87).toBe(groupTotals.max[fieldName]);
+    expect(groupTotals.max[fieldName]).toBe(87);
   });
 
   it('should return the maximum valid number when dataset contains numbers provided as tring and other and invalid char', () => {
@@ -50,6 +50,6 @@ describe('maxAggregator', () => {
     dataset.forEach((row) => aggregator.accumulate(row));
     aggregator.storeResult(groupTotals);
 
-    expect(897).toBe(groupTotals.max[fieldName]);
+    expect(groupTotals.max[fieldName]).toBe(897);
   });
 });
