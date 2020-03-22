@@ -12,10 +12,18 @@
   "author": "Ghislain B.",
   "license": "MIT",
   "engines": {
-    "node": ">=10.16.0",
-    "npm": ">=6.1.0"
+    "node": ">=12.13.1",
+    "npm": ">=6.12.1"
   },
   "main": "src/slickgrid-universal/index",
+  "browserslist": [
+    "last 2 version",
+    "> 1%",
+    "maintained node versions",
+    "not dead",
+    "OperaMini",
+    "IE 11"
+  ],
   "dependencies": {
     "@slickgrid-universal/common": "^0.0.2",
     "@slickgrid-universal/vanilla-bundle": "^0.0.2",
