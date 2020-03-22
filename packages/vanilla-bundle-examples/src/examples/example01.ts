@@ -1,4 +1,4 @@
-import { Editors, FieldType, GroupTotalFormatters, Formatters, OperatorType, GridOption } from '@slickgrid-universal/common';
+import { Column, Editors, FieldType, GroupTotalFormatters, Formatters, OperatorType, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 
 const actionFormatter = (row, cell, value, columnDef, dataContext) => {
@@ -21,7 +21,7 @@ const myCustomTitleValidator = (value, args) => {
 export class Example1 {
   gridClass;
   gridClassName;
-  columnDefinitions;
+  columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset;
   dataviewObj: any;

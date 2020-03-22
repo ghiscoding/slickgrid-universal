@@ -104,7 +104,7 @@ npm run test:watch
 - [ ] Services
   - [x] Collection
   - [ ] Excel Export (**separate package**)
-  - [ ] Export Text (**separate package?!**)
+  - [ ] Export Text (**separate package**)
   - [x] Extension
   - [x] Filter
   - [ ] GraphQL (**separate package**)
@@ -122,10 +122,10 @@ npm run test:watch
 - [x] Jest Debugger
 - [ ] Add Multiple Example Demos with Vanilla implementation
   - [ ] Add GitHub Demo website
-  - [ ] Add Cypress E2E tests
 - [ ] Add CI/CD (CircleCI or GitHub Actions)
   - [ ] Add Jest Unit tests
-  - [ ] Build and run on every PR
+  - [ ] Add Cypress E2E tests
   - [ ] Add Code Coverage (codecov)
+  - [ ] Build and run on every PR
 - [ ] Remove any Deprecated code
   - [ ] Create a Migration Guide 

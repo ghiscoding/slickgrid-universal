@@ -1,4 +1,4 @@
-import { GridOption } from '@slickgrid-universal/common';
+import { Column, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import './example04.scss';
 
@@ -6,9 +6,9 @@ export class Example4 {
   gridClass;
   gridClassName;
   _commandQueue = [];
-  columnDefinitions;
+  columnDefinitions: Column[];
   gridOptions: GridOption;
-  dataset;
+  dataset: any[];
   dataViewObj: any;
   gridObj: any;
   commandQueue = [];
@@ -40,29 +40,21 @@ export class Example4 {
 
   initializeGrid() {
     this.columnDefinitions = [
-      { id: "title", name: "Title", field: "title", width: 220, cssClass: "cell-title", filterable: true, formatter: this.taskNameFormatter.bind(this), editor: Slicker.Editors.text },
-      { id: "duration", name: "Duration", field: "duration", editor: Slicker.Editors.text, minWidth: 90 },
-      { id: "%", name: "% Complete", field: "percentComplete", width: 120, resizable: false, formatter: Slicker.Formatters.percentCompleteBar, editor: Slicker.Editors.slider },
-      { id: "start", name: "Start", field: "start", minWidth: 60 },
-      { id: "finish", name: "Finish", field: "finish", minWidth: 60 },
+      { id: 'title', name: 'Title', field: 'title', width: 220, cssClass: 'cell-title', filterable: true, formatter: this.taskNameFormatter.bind(this) },
+      { id: 'duration', name: 'Duration', field: 'duration', minWidth: 90 },
+      { id: '%', name: '% Complete', field: 'percentComplete', width: 120, resizable: false, formatter: Slicker.Formatters.percentCompleteBar },
+      { id: 'start', name: 'Start', field: 'start', minWidth: 60 },
+      { id: 'finish', name: 'Finish', field: 'finish', minWidth: 60 },
       {
-        id: "effort-driven", name: "Effort Driven", width: 80, minWidth: 20, maxWidth: 80, cssClass: "cell-effort-driven", field: "effortDriven",
-        formatter: Slicker.Formatters.checkmarkMaterial, editor: Slicker.Editors.checkbox, cannotTriggerInsert: true
+        id: 'effort-driven', name: 'Effort Driven', width: 80, minWidth: 20, maxWidth: 80, cssClass: 'cell-effort-driven', field: 'effortDriven',
+        formatter: Slicker.Formatters.checkmarkMaterial, cannotTriggerInsert: true
       }
     ];
 
     this.gridOptions = {
-      autoEdit: true, // true single click (false for double-click)
-      autoCommitEdit: true,
-      asyncEditorLoading: false,
-      editable: true,
       autoResize: {
         container: '.demo-container',
       },
-      dataView: {
-        inlineFilters: false
-      },
-      // enableFiltering: true,
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       // enableCellNavigation: true,
@@ -99,7 +91,7 @@ export class Example4 {
 
   taskNameFormatter(row, cell, value, columnDef, dataContext) {
     if (value == null || value == undefined || dataContext === undefined) { return ''; }
-
+    console.log('formatter collased', dataContext?._collapsed)
     value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const spacer = `<span style="display:inline-block;height:1px;width:${15 * dataContext["indent"]}px"></span>`;
     const idx = this.dataViewObj.getIdxById(dataContext.id);
@@ -109,9 +101,8 @@ export class Example4 {
       } else {
         return `${spacer}<span class="toggle collapse"></span>&nbsp;${value}`;
       }
-    } else {
-      return `${spacer}<span class="toggle"></span>&nbsp;${value}`;
     }
+    return `${spacer}<span class="toggle"></span>&nbsp;${value}`;
   }
 
   myFilter(item) {
@@ -119,17 +110,18 @@ export class Example4 {
     //   return false;
     // }
 
-    if (this.searchString != "" && item["title"].indexOf(this.searchString) == -1) {
+    if (this.searchString != '' && item['title'].indexOf(this.searchString) == -1) {
       return false;
     }
 
     if (item.parent != null) {
-      var parent = this.dataset[item.parent];
+      var parent = this.dataset.find(itm => itm.id === `id_${+(item.parent)}`);
       while (parent) {
-        if (parent._collapsed || /*(parent["percentComplete"] < percentCompleteThreshold) ||*/ (this.searchString != "" && parent["title"].indexOf(this.searchString) == -1)) {
+        if (parent._collapsed || /*(parent["percentComplete"] < percentCompleteThreshold) ||*/ (this.searchString != '' && parent['title'].indexOf(this.searchString) == -1)) {
           return false;
         }
-        parent = this.dataset[parent.parent];
+        var parentId = parent.parent !== null ? `id_${parent.parent}` : null;
+        parent = this.dataset.find(itm2 => itm2.id === parentId);
       }
     }
     return true;
@@ -220,10 +212,10 @@ export class Example4 {
 
     console.log(nextOutsideItemIdx, this.dataset[nextOutsideItemIdx])
     const newItem = {
-      id,
+      id: 'id_' + id,
       parent: parentItemFound.id.replace('id_', ''),
       indent: newIndent,
-      title: `Task${id}`,
+      title: `Task ${id}`,
       duration: '1 day',
       percentComplete: 0,
       start: '01/01/2009',
@@ -237,18 +229,11 @@ export class Example4 {
   handleOnClick(event: any) {
     const eventDetail = event?.detail;
     const args = event?.detail?.args;
-    console.log(eventDetail)
-    console.log('onclick', $(eventDetail.eventData.target), $(eventDetail.eventData).hasClass("toggle"))
-    if ($(eventDetail.eventData.target).hasClass("toggle")) {
-      var item = this.dataViewObj.getItem(args.row);
-      console.log(item)
-      if (item) {
-        if (!item._collapsed) {
-          item._collapsed = true;
-        } else {
-          item._collapsed = false;
-        }
 
+    if ($(eventDetail?.eventData?.target).hasClass('toggle')) {
+      var item = this.dataViewObj.getItem(args.row);
+      if (item) {
+        item._collapsed = !item._collapsed ? true : false;
         this.dataViewObj.updateItem(item.id, item);
       }
       event.stopImmediatePropagation();
@@ -316,15 +301,15 @@ export class Example4 {
         parent = null;
       }
 
-      d["id"] = "id_" + i;
-      d["indent"] = indent;
-      d["parent"] = parent;
-      d["title"] = "Task " + i;
-      d["duration"] = "5 days";
-      d["percentComplete"] = Math.round(Math.random() * 100);
-      d["start"] = "01/01/2009";
-      d["finish"] = "01/05/2009";
-      d["effortDriven"] = (i % 5 == 0);
+      d['id'] = 'id_' + i;
+      d['indent'] = indent;
+      d['parent'] = parent;
+      d['title'] = 'Task ' + i;
+      d['duration'] = '5 days';
+      d['percentComplete'] = Math.round(Math.random() * 100);
+      d['start'] = '01/01/2009';
+      d['finish'] = '01/05/2009';
+      d['effortDriven'] = (i % 5 == 0);
     }
     return data;
   }
