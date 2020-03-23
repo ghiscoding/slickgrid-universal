@@ -160,7 +160,7 @@ export class InputFilter implements Filter {
     // create the DOM element & add an ID and filter class
     const $filterElm = $(filterTemplate);
 
-    $filterElm.val(searchTerm);
+    $filterElm.val(searchTerm as string);
     $filterElm.data('columnId', fieldId);
 
     // if there's a search term, we will add the "filled" class for styling purposes

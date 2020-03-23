@@ -29,6 +29,9 @@ import { getDescendantProperty } from './utilities';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
 
+// using external non-typed js libraries
+declare const Slick: any;
+
 // timer for keeping track of user typing waits
 let timer: any;
 const DEFAULT_FILTER_TYPING_DEBOUNCE = 500;
