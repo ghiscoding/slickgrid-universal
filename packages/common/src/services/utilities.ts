@@ -747,7 +747,6 @@ export function toSnakeCase(inputStr: string): string {
 /**
  * Takes an input array and makes sure the array has unique values by removing duplicates
  * @param array input with possible duplicates
- * @param objectProperty optionally provide an object property to compare (example: 'id')
  * @return array output without duplicates
  */
 export function uniqueArray(arr: any[]): any[] {

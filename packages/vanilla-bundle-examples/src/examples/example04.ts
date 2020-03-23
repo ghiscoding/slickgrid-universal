@@ -2,6 +2,8 @@ import { Column, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import './example04.scss';
 
+declare var $: any;
+
 export class Example4 {
   gridClass;
   gridClassName;
@@ -36,6 +38,7 @@ export class Example4 {
     this.dataViewObj.setFilter(this.myFilter.bind(this));
     this.dataset = this.mockDataset();
     this.slickgridLwc.dataset = this.dataset;
+
   }
 
   initializeGrid() {
@@ -93,8 +96,9 @@ export class Example4 {
     if (value == null || value == undefined || dataContext === undefined) { return ''; }
     console.log('formatter collased', dataContext?._collapsed)
     value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    const spacer = `<span style="display:inline-block;height:1px;width:${15 * dataContext["indent"]}px"></span>`;
+    const spacer = `<span style="display:inline-block;height:1px;width:${15 * dataContext['indent']}px"></span>`;
     const idx = this.dataViewObj.getIdxById(dataContext.id);
+
     if (this.dataset[idx + 1] && this.dataset[idx + 1].indent > this.dataset[idx].indent) {
       if (dataContext._collapsed) {
         return `${spacer}<span class="toggle expand"></span>&nbsp;${value}`;
@@ -182,39 +186,38 @@ export class Example4 {
   }
 
   addNewRow() {
-    const id = (Math.round(Math.random() * 10000));
+    const id = this.dataset.length;
     const newIndent = 1;
 
 
     // find first parent object and add the new item as a child
     const childItemFound = this.dataset.find((item) => item.indent === newIndent);
     const parentItemFound = this.dataViewObj.getItemByIdx(childItemFound.parent);
-    const idx = this.dataViewObj.getIdxById(childItemFound.id);
-
-    console.log(childItemFound, parentItemFound)
-    const itemAfterLast = this.dataset.find((item) => item.indent === (newIndent + 1));
-    const itemAfterLastIdx = this.dataViewObj.getIdxById(itemAfterLast.id) - 1;
-    console.log('last item', itemAfterLast)
+    // const idx = this.dataViewObj.getIdxById(childItemFound.id);
+    // console.log(childItemFound, parentItemFound)
+    // const itemAfterLast = this.dataset.find((item) => item.indent === (newIndent + 1));
+    // const itemAfterLastIdx = this.dataViewObj.getIdxById(itemAfterLast.id) - 1;
+    // console.log('last item', itemAfterLast)
 
     // find the last item in the same indented group
-    let nextOutsideItemIdx;
-    for (let i = idx; i < this.dataset.length; i++) {
-      const loopItem = this.dataset[i];
-      // if (loopItem.parent !== parentItemFound.id) {
-      //   continue;
-      // }
-      if (loopItem.indent !== newIndent) {
+    // let nextOutsideItemIdx;
+    // for (let i = idx; i < this.dataset.length; i++) {
+    //   const loopItem = this.dataset[i];
+    //   // if (loopItem.parent !== parentItemFound.id) {
+    //   //   continue;
+    //   // }
+    //   if (loopItem.indent !== newIndent) {
 
-        nextOutsideItemIdx = i;
-        break;
-      }
-    }
+    //     nextOutsideItemIdx = i;
+    //     break;
+    //   }
+    // }
 
-    console.log(nextOutsideItemIdx, this.dataset[nextOutsideItemIdx])
+    // console.log(nextOutsideItemIdx, this.dataset[nextOutsideItemIdx])
     const newItem = {
       id: 'id_' + id,
-      parent: parentItemFound.id.replace('id_', ''),
       indent: newIndent,
+      parent: +(parentItemFound.id.replace('id_', '')),
       title: `Task ${id}`,
       duration: '1 day',
       percentComplete: 0,
@@ -222,8 +225,26 @@ export class Example4 {
       finish: '01/01/2009',
       effortDriven: false
     };
-    this.dataViewObj.insertItem(idx, newItem);
-    console.log('new item', newItem)
+    this.dataViewObj.addItem(newItem);
+    this.gridObj.navigateBottom();
+    this.dataset = this.dataViewObj.getItems();
+    console.log('new item', newItem, 'parent', parentItemFound)
+
+    // this.dataViewObj.sort(this.recursiveSort.bind(this));
+    const sortedData = this.recursiveSort(this.dataset);
+    this.gridObj.invalidate();
+    console.log('dataset', sortedData)
+    // this.dataViewObj.beginUpdate();
+    // this.dataViewObj.setItems(sortedData);
+    // this.dataViewObj.endUpdate();
+    // this.gridObj.render();
+    this.slickgridLwc.dataset = sortedData;
+    this.dataset = sortedData;
+    this.gridObj.invalidate();
+
+    // this.slickerGridInstance.sortService.updateSorting([
+    //   { columnId: 'indent', direction: 'ASC' },
+    // ]);
   }
 
   handleOnClick(event: any) {
@@ -275,6 +296,46 @@ export class Example4 {
     this.slickerGridInstance = event && event.detail;
     this.gridObj = this.slickerGridInstance && this.slickerGridInstance.slickGrid;
     this.dataViewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
+    // this.slickerGridInstance.sortService.updateSorting([
+    //   { columnId: 'indent', direction: 'ASC' },
+    // ]);
+  }
+
+  setSort(items) {
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].hasChildren) {
+        items[i].children.sort({ field: "FullName", dir: "desc" });
+        this.setSort(items[i].children.view());
+      }
+    }
+  }
+
+  recursiveSort(items) {
+    let tmpArray = [];
+    // items.sort((a, b) => a.indent - b.indent);
+
+    for (var i = 0; i < items.length; i++) {
+      const currentItem = items[i];
+      const previousIndent = currentItem.indent;
+      const nextItem = items[i + 1] || null;
+      if (items[i].parent === null) {
+        tmpArray.push(currentItem);
+      }
+      if (nextItem) {
+        const nextIndent = nextItem.indent;
+        const parent = nextItem.parent;
+        if (nextIndent > previousIndent) {
+          const children = items.filter(item => item.parent === parent);
+          children.sort((a, b) => a.id - b.id);
+          console.log('parent', parent, 'children', children)
+          if (children.length > 0 && !tmpArray.find(tmpItem => children[0].id === tmpItem.id)) {
+            tmpArray = [...tmpArray, ...children];
+          }
+          this.recursiveSort(children);
+        }
+      }
+    }
+    return tmpArray;
   }
 
   mockDataset() {
@@ -283,7 +344,7 @@ export class Example4 {
     const data = [];
 
     // prepare the data
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < 15; i++) {
       const d = (data[i] = {});
       let parent;
 
