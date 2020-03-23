@@ -18,7 +18,7 @@ import { getDescendantProperty } from './utilities';
 import { sortByFieldType } from '../sorters/sorterUtilities';
 
 // using external non-typed js libraries
-declare var Slick: any;
+declare const Slick: any;
 
 export class SortService {
   private _currentLocalSorters: CurrentSorter[] = [];

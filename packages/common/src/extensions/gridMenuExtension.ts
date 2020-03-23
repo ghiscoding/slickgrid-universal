@@ -24,8 +24,8 @@ import { TranslaterService } from '../services/translater.service';
 import { refreshBackendDataset } from '../services/backend-utilities';
 
 // using external non-typed js libraries
-declare var Slick: any;
-declare var $: any;
+declare const Slick: any;
+declare const $: any;
 
 export class GridMenuExtension implements Extension {
   private _addon: any;
@@ -234,7 +234,7 @@ export class GridMenuExtension implements Extension {
       }
 
       // show grid menu: refresh dataset
-      if (this.sharedService.gridOptions && this.sharedService.gridOptions.gridMenu && !this.sharedService.gridOptions.gridMenu.hideRefreshDatasetCommand /*&& backendApi*/) {
+      if (this.sharedService.gridOptions && this.sharedService.gridOptions.gridMenu && !this.sharedService.gridOptions.gridMenu.hideRefreshDatasetCommand /* && backendApi */) {
         const commandName = 'refresh-dataset';
         if (!originalCustomItems.find((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
           gridMenuCustomItems.push(

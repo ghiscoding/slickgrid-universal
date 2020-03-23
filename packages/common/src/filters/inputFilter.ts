@@ -8,9 +8,6 @@ import {
 } from '../interfaces/index';
 import { OperatorType, OperatorString, SearchTerm } from '../enums/index';
 
-// using external non-typed js libraries
-declare var $: any;
-
 export class InputFilter implements Filter {
   protected _clearFilterTriggered = false;
   protected _shouldTriggerQuery = true;

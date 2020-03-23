@@ -21,8 +21,8 @@ import { SharedService } from '../services/shared.service';
 import { TranslaterService } from '..';
 
 // using external non-typed js libraries
-declare var Slick: any;
-declare var $: any;
+declare const Slick: any;
+declare const $: any;
 
 export class ContextMenuExtension implements Extension {
   private _addon: any;

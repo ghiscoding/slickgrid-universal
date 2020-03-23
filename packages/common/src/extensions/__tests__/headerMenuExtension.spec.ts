@@ -5,7 +5,7 @@ import { Column, ColumnSort, GridOption } from '../../interfaces/index';
 import { FilterService, SortService, PubSubService } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
-declare var Slick: any;
+declare const Slick: any;
 jest.mock('flatpickr', () => { });
 
 const filterServiceStub = {

@@ -2,8 +2,6 @@ import { Column, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import './example04.scss';
 
-declare var $: any;
-
 export class Example4 {
   gridClass;
   gridClassName;
@@ -24,8 +22,8 @@ export class Example4 {
   attached() {
     this.initializeGrid();
     this.dataset = [];
-    const gridContainerElm = document.querySelector(`.grid3`);
-    const gridElm = document.querySelector(`.slickgrid-container`);
+    const gridContainerElm = document.querySelector('.grid3');
+    const gridElm = document.querySelector('.slickgrid-container');
 
     gridContainerElm.addEventListener('onclick', this.handleOnClick.bind(this));
     gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
@@ -93,7 +91,7 @@ export class Example4 {
   }
 
   taskNameFormatter(row, cell, value, columnDef, dataContext) {
-    if (value == null || value == undefined || dataContext === undefined) { return ''; }
+    if (value == null || value === undefined || dataContext === undefined) { return ''; }
     console.log('formatter collased', dataContext?._collapsed)
     value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const spacer = `<span style="display:inline-block;height:1px;width:${15 * dataContext['indent']}px"></span>`;
@@ -114,18 +112,20 @@ export class Example4 {
     //   return false;
     // }
 
-    if (this.searchString != '' && item['title'].indexOf(this.searchString) == -1) {
+    if (this.searchString !== '' && item['title'].indexOf(this.searchString) === -1) {
       return false;
     }
 
     if (item.parent != null) {
-      var parent = this.dataset.find(itm => itm.id === `id_${+(item.parent)}`);
+      let parent = this.dataset.find(itm => itm.id === `id_${+(item.parent)}`);
       while (parent) {
-        if (parent._collapsed || /*(parent["percentComplete"] < percentCompleteThreshold) ||*/ (this.searchString != '' && parent['title'].indexOf(this.searchString) == -1)) {
+        if (parent._collapsed || /* (parent["percentComplete"] < percentCompleteThreshold) || */ (this.searchString !== '' && parent['title'].indexOf(this.searchString) === -1)) {
           return false;
         }
-        var parentId = parent.parent !== null ? `id_${parent.parent}` : null;
-        parent = this.dataset.find(itm2 => itm2.id === parentId);
+        const parentId = parent.parent !== null ? `id_${parent.parent}` : null;
+        parent = this.dataset.find(function (itm2) {
+          return itm2.id === parentId
+        });
       }
     }
     return true;
@@ -137,12 +137,12 @@ export class Example4 {
 
   customAceGroupingFormatter(totals, columnDef) {
     const hasAce = totals.clone && totals.clone[columnDef.field];
-    return !hasAce ? '' : `<i class="mdi mdi-check checkmark-icon green" style="color: #4DCAA9; font-size: 20px" aria-hidden="true"></i>`;
+    return !hasAce ? '' : '<i class="mdi mdi-check checkmark-icon green" style="color: #4DCAA9; font-size: 20px" aria-hidden="true"></i>';
   }
 
   customCheckmarGroupingFormatter(totals, columnDef) {
-    const hasAce = totals.clone && totals.clone[columnDef.field];
-    return !hasAce ? '' : `<i class="mdi mdi-check checkmark-icon" style="font-size: 20px" aria-hidden="true"></i>`;
+    const hasCheckmark = totals.clone && totals.clone[columnDef.field];
+    return !hasCheckmark ? '' : '<i class="mdi mdi-check checkmark-icon" style="font-size: 20px" aria-hidden="true"></i>';
   }
 
   customQuantityGroupingFormatter(totals, columnDef) {
@@ -252,7 +252,7 @@ export class Example4 {
     const args = event?.detail?.args;
 
     if ($(eventDetail?.eventData?.target).hasClass('toggle')) {
-      var item = this.dataViewObj.getItem(args.row);
+      const item = this.dataViewObj.getItem(args.row);
       if (item) {
         item._collapsed = !item._collapsed ? true : false;
         this.dataViewObj.updateItem(item.id, item);
@@ -302,9 +302,9 @@ export class Example4 {
   }
 
   setSort(items) {
-    for (var i = 0; i < items.length; i++) {
+    for (let i = 0; i < items.length; i++) {
       if (items[i].hasChildren) {
-        items[i].children.sort({ field: "FullName", dir: "desc" });
+        items[i].children.sort({ field: 'FullName', dir: 'desc' });
         this.setSort(items[i].children.view());
       }
     }
@@ -314,7 +314,7 @@ export class Example4 {
     let tmpArray = [];
     // items.sort((a, b) => a.indent - b.indent);
 
-    for (var i = 0; i < items.length; i++) {
+    for (let i = 0; i < items.length; i++) {
       const currentItem = items[i];
       const previousIndent = currentItem.indent;
       const nextItem = items[i + 1] || null;
@@ -370,7 +370,7 @@ export class Example4 {
       d['percentComplete'] = Math.round(Math.random() * 100);
       d['start'] = '01/01/2009';
       d['finish'] = '01/05/2009';
-      d['effortDriven'] = (i % 5 == 0);
+      d['effortDriven'] = (i % 5 === 0);
     }
     return data;
   }

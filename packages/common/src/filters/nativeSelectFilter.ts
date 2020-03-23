@@ -9,9 +9,6 @@ import {
 import { OperatorType, OperatorString, SearchTerm } from '../enums/index';
 import { TranslaterService } from '../services/translater.service';
 
-// using external non-typed js libraries
-declare var $: any;
-
 export class NativeSelectFilter implements Filter {
   private _clearFilterTriggered = false;
   private _shouldTriggerQuery = true;

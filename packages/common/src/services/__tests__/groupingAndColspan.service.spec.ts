@@ -2,7 +2,7 @@ import { GroupingAndColspanService } from '../groupingAndColspan.service';
 import { GridOption, SlickEventHandler, Column } from '../../interfaces/index';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 
-declare var Slick: any;
+declare const Slick: any;
 const gridId = 'grid1';
 const gridUid = 'slickgrid_124343';
 const containerId = 'demo-container';

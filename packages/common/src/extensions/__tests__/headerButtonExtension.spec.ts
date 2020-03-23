@@ -4,7 +4,7 @@ import { SharedService } from '../../services/shared.service';
 import { GridOption, HeaderButtonOnCommandArgs } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
-declare var Slick: any;
+declare const Slick: any;
 
 const gridStub = {
   getOptions: jest.fn(),

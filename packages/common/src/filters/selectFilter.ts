@@ -19,9 +19,6 @@ import { CollectionService } from '../services/collection.service';
 import { getDescendantProperty, htmlEncode } from '../services/utilities';
 import { TranslaterService } from '../services';
 
-// using external non-typed js libraries
-declare var $: any;
-
 export class SelectFilter implements Filter {
   private _isMultipleSelect = true;
   private _locales: Locale;

@@ -13,7 +13,7 @@ import { SortService } from '../sort.service';
 import * as utilities from '../../services/backend-utilities';
 import { PubSubService } from '../pubSub.service';
 
-declare var Slick: any;
+declare const Slick: any;
 
 const mockRefreshBackendDataset = jest.fn();
 // @ts-ignore

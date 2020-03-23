@@ -49,8 +49,8 @@ import { TranslateService } from './services/translate.service';
 import { EventPubSubService } from './services/eventPubSub.service';
 
 // using external non-typed js libraries
-declare var Slick: any;
-declare var $: any;
+declare const Slick: any;
+declare const $: any;
 
 export class VanillaGridBundle {
   private _columnDefinitions: Column[];

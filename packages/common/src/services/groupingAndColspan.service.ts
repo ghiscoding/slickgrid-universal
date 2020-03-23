@@ -7,7 +7,7 @@ import { ExtensionUtility } from '../extensions/extensionUtility';
 
 // using external non-typed js libraries
 declare let $: any;
-declare var Slick: any;
+declare const Slick: any;
 
 export class GroupingAndColspanService {
   private _eventHandler: SlickEventHandler;

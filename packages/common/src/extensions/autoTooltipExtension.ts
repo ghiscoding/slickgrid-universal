@@ -4,7 +4,7 @@ import { Extension } from '../interfaces/index';
 import { ExtensionUtility } from './extensionUtility';
 
 // using external non-typed js libraries
-declare var Slick: any;
+declare const Slick: any;
 
 export class AutoTooltipExtension implements Extension {
   private _addon: any;

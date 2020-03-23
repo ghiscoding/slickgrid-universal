@@ -26,7 +26,7 @@ const mockRefreshBackendDataset = jest.fn();
 utilities.refreshBackendDataset = mockRefreshBackendDataset;
 
 jest.mock('flatpickr', () => { });
-declare var Slick: any;
+declare const Slick: any;
 const DOM_ELEMENT_ID = 'row-detail123';
 
 const gridOptionMock = {

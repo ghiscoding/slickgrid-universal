@@ -15,7 +15,7 @@ import { getDescendantProperty, getHtmlElementOffset, setDeepValue } from '../se
 import { TranslaterService } from '../services/translater.service';
 
 // using external non-typed js libraries
-declare var $: any;
+declare const $: any;
 
 /*
  * An example of a 'detached' editor.

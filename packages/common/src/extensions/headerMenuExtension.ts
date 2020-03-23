@@ -23,7 +23,7 @@ import { TranslaterService } from '../services/translater.service';
 import { PubSubService } from '../services/pubSub.service';
 
 // using external non-typed js libraries
-declare var Slick: any;
+declare const Slick: any;
 
 export class HeaderMenuExtension implements Extension {
   private _addon: any;

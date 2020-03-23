@@ -9,7 +9,7 @@ import { Column, GridOption, MenuCommandItem } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 // import { ExcelExportService, ExportService } from '../../services';
 
-declare var Slick: any;
+declare const Slick: any;
 
 // const excelExportServiceStub = {
 //   exportToExcel: jest.fn(),

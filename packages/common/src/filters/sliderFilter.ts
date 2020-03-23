@@ -7,9 +7,6 @@ import {
   FilterCallback,
 } from './../interfaces/index';
 
-// using external non-typed js libraries
-declare var $: any;
-
 const DEFAULT_MIN_VALUE = 0;
 const DEFAULT_MAX_VALUE = 100;
 const DEFAULT_STEP = 1;

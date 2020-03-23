@@ -5,7 +5,7 @@ import { ExtensionUtility } from './extensionUtility';
 import { SharedService } from '../services/shared.service';
 
 // using external non-typed js libraries
-declare var Slick: any;
+declare const Slick: any;
 
 export class RowSelectionExtension implements Extension {
   private _addon: any;

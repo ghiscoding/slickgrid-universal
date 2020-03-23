@@ -4,7 +4,7 @@ import { SharedService } from '../../services/shared.service';
 import { Column, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
-declare var Slick: any;
+declare const Slick: any;
 
 const dataViewStub = {
   refresh: jest.fn(),

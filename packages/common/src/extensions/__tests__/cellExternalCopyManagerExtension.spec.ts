@@ -5,7 +5,7 @@ import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
-declare var Slick: any;
+declare const Slick: any;
 jest.mock('flatpickr', () => { });
 
 const gridStub = {

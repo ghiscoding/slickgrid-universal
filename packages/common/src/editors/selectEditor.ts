@@ -20,7 +20,7 @@ import { CollectionService, findOrDefault, TranslaterService } from '../services
 import { charArraysEqual, getDescendantProperty, htmlEncode, setDeepValue } from '../services/utilities';
 
 // using external non-typed js libraries
-declare var $: any;
+declare const $: any;
 
 /**
  * Slickgrid editor class for multiple/single select lists

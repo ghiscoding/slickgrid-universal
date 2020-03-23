@@ -16,7 +16,7 @@ import { ExtensionUtility } from './extensionUtility';
 import { TranslaterService } from '../services';
 
 // using external non-typed js libraries
-declare var Slick: any;
+declare const Slick: any;
 
 export class CellMenuExtension implements Extension {
   private _addon: any;

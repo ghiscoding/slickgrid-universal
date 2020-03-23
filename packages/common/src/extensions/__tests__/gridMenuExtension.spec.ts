@@ -6,7 +6,7 @@ import { SharedService } from '../../services/shared.service';
 import { /*ExcelExportService, ExportService,*/ FilterService, SortService } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
-declare var Slick: any;
+declare const Slick: any;
 jest.mock('flatpickr', () => { });
 
 const gridId = 'grid1';
