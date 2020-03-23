@@ -11,6 +11,7 @@ export class App {
     { route: 'example02', name: 'example02', title: 'Example02', moduleId: './examples/example02' },
     { route: 'example03', name: 'example03', title: 'Example03', moduleId: './examples/example03' },
     { route: 'example04', name: 'example04', title: 'Example04', moduleId: './examples/example04' },
+    { route: 'example05', name: 'example05', title: 'Example05', moduleId: './examples/example05' },
   ]
 
   attached() {
@@ -25,6 +26,9 @@ export class App {
   loadRoute(routeName: string, changeBrowserState = true) {
     if (this.renderer && routeName) {
       const mapRoute = this.routing.find((map) => map.route === routeName);
+      if (!mapRoute) {
+        throw new Error('No Route found, make sure that you have an associated Route in your Routing before trying to use it');
+      }
       const viewModel = this.renderer.loadViewModel(require(`${mapRoute.moduleId}.ts`));
       this.renderer.loadView(require(`${mapRoute.moduleId}.html`));
       viewModel.attached();

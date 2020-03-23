@@ -98,6 +98,8 @@ npm run test:watch
   - [x] Header Menu
   - [ ] Row Detail
   - [x] Row Move
+    - [ ] the Column itself should be created by the extension instead of the user itself
+    - [ ] column index position (requires SlickGrid [PR #474](https://github.com/6pac/SlickGrid/pull/474))
   - [x] Row Selection
 - [x] Grouping Formatters (12)
 - [x] Sorters (5)

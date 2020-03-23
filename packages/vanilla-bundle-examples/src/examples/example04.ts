@@ -247,6 +247,18 @@ export class Example4 {
     // ]);
   }
 
+  collapseAll() {
+    this.dataset.forEach((item) => item._collapsed = true);
+    this.slickgridLwc.dataset = this.dataset;
+    this.gridObj.invalidate();
+  }
+
+  expandAll() {
+    this.dataset.forEach((item) => item._collapsed = false);
+    this.slickgridLwc.dataset = this.dataset;
+    this.gridObj.invalidate();
+  }
+
   handleOnClick(event: any) {
     const eventDetail = event?.detail;
     const args = event?.detail?.args;
@@ -344,7 +356,7 @@ export class Example4 {
     const data = [];
 
     // prepare the data
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 25; i++) {
       const d = (data[i] = {});
       let parent;
 
