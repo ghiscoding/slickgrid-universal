@@ -106,6 +106,17 @@
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
   }
+
+  .input-group-addon:not(:first-child):not(:last-child),
+  .input-group-btn:not(:first-child):not(:last-child),
+  .input-group .form-control:not(:first-child):not(:last-child) {
+    border-radius: 0;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 0px;
+  }
+
   *, :after, :before {
     box-sizing: border-box;
   }

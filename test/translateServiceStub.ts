@@ -16,7 +16,10 @@ export class TranslateServiceStub implements TranslaterService {
       case 'COLUMNS': output = this._locale === 'en' ? 'Columns' : 'Colonnes'; break;
       case 'COMMANDS': output = this._locale === 'en' ? 'Commands' : 'Commandes'; break;
       case 'COLLAPSE_ALL_GROUPS': output = this._locale === 'en' ? 'Collapse all Groups' : 'Réduire tous les groupes'; break;
+      case 'CONTAINS': output = this._locale === 'en' ? 'Contains' : 'Contient'; break;
       case 'COPY': output = this._locale === 'en' ? 'Copy' : 'Copier'; break;
+      case 'ENDS_WITH': output = this._locale === 'en' ? 'Ends With' : 'Se termine par'; break;
+      case 'EQUALS': output = this._locale === 'en' ? 'Equals' : 'Égale'; break;
       case 'EXPAND_ALL_GROUPS': output = this._locale === 'en' ? 'Expand all Groups' : 'Étendre tous les groupes'; break;
       case 'EXPORT_TO_CSV': output = this._locale === 'en' ? 'Export in CSV format' : 'Exporter en format CSV'; break;
       case 'EXPORT_TO_EXCEL': output = this._locale === 'en' ? 'Export to Excel' : 'Exporter vers Excel'; break;
@@ -37,6 +40,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'SORT_ASCENDING': output = this._locale === 'en' ? 'Sort Ascending' : 'Trier par ordre croissant'; break;
       case 'SORT_DESCENDING': output = this._locale === 'en' ? 'Sort Descending' : 'Trier par ordre décroissant'; break;
       case 'SAVE': output = this._locale === 'en' ? 'Save' : 'Sauvegarder'; break;
+      case 'STARTS_WITH': output = this._locale === 'en' ? 'Starts With' : 'Commence par'; break;
       case 'SYNCHRONOUS_RESIZE': output = this._locale === 'en' ? 'Synchronous resize' : 'Redimension synchrone'; break;
       case 'TITLE': output = this._locale === 'en' ? 'Title' : 'Titre'; break;
       case 'TOGGLE_FILTER_ROW': output = this._locale === 'en' ? 'Toggle Filter Row' : 'Basculer la ligne des filtres'; break;

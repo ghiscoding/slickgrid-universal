@@ -20,9 +20,13 @@
   z-index: 2000;
 	overflow: auto;
   resize: both;
+  width: auto;
+  padding-right: 24px; /* trick to cheat the width to include extra scrollbar width in addition to auto width */
 
   > .close {
     float: right;
+    position: absolute;
+    cursor: $column-picker-close-btn-cursor;
     width: $column-picker-close-btn-width;
     height: $column-picker-close-btn-height;
     margin: $column-picker-close-btn-margin;
@@ -30,6 +34,8 @@
     font-size: $column-picker-close-btn-font-size;
     background-color: $column-picker-close-btn-bg-color;
     border: $column-picker-close-btn-border;
+    right: $column-picker-close-btn-position-right;
+    top: $column-picker-close-btn-position-top;
 
     > span {
       opacity: $column-picker-close-btn-opacity;
@@ -73,6 +79,7 @@
   }
 
   li {
+    width: calc(100% + 24px - 6px); /* trick to cheat the width to include extra scrollbar width in addition to auto width */
     border: $column-picker-item-border;
     border-radius: $column-picker-item-border-radius;
     padding: $column-picker-item-padding;
@@ -138,16 +145,17 @@
   border-radius: $grid-menu-border-radius;
   padding: 6px;
   box-shadow: $grid-menu-box-shadow;
-  min-width: 200px;
+  min-width: $grid-menu-min-width;
   cursor: default;
   position:absolute;
   z-index: 2000;
 	overflow: auto;
-  resize: both;
+  width: max-content;
 
   > .close {
-    cursor: pointer;
     float: right;
+    position: absolute;
+    cursor: $grid-menu-close-btn-cursor;
     width: $grid-menu-close-btn-width;
     height: $grid-menu-close-btn-height;
     margin: $grid-menu-close-btn-margin;
@@ -155,6 +163,8 @@
     font-size: $grid-menu-close-btn-font-size;
     background-color: $grid-menu-close-btn-bg-color;
     border: $grid-menu-close-btn-border;
+    right: $grid-menu-close-btn-position-right;
+    top: $grid-menu-close-btn-position-top;
 
     > span {
       opacity: $grid-menu-close-btn-opacity;
@@ -275,6 +285,7 @@
   }
 
   li {
+    width: auto;
     border: $grid-menu-item-border;
     border-radius: $grid-menu-item-border-radius;
     padding: $grid-menu-item-padding;

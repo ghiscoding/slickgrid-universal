@@ -19,8 +19,6 @@ const myCustomTitleValidator = (value, args) => {
 };
 
 export class Example1 {
-  gridClass;
-  gridClassName;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset;
@@ -56,7 +54,11 @@ export class Example1 {
         filterable: true,
       },
       {
-        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
+        id: 'duration', name: 'Duration', field: 'duration', sortable: true,
+        filterable: true,
+        filter: {
+          model: Slicker.Filters.compoundSlider,
+        },
         editor: {
           model: Slicker.Editors.slider,
           minValue: 0,

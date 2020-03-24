@@ -76,8 +76,8 @@ npm run test:watch
 - [ ] Filters
   - [ ] Autocomplete
   - [ ] Compound Date
-  - [ ] Compound Input(s)
-  - [ ] Compound Slider
+  - [x] Compound Input(s)
+  - [x] Compound Slider
   - [ ] Date Range
   - [x] Input(s)
   - [x] Multiple Select 
