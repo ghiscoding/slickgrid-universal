@@ -25,7 +25,7 @@ export const GlobalGridOptions: GridOption = {
   columnPicker: {
     fadeSpeed: 0,
     hideForceFitButton: false,
-    hideSyncResizeButton: true
+    hideSyncResizeButton: true,
   },
   cellMenu: {
     autoAdjustDrop: true,

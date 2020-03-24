@@ -54,7 +54,10 @@ export class CheckboxEditor implements Editor {
     this._input.title = title;
     this._input.type = 'checkbox';
     this._input.value = 'true';
-    this.args.container.append(this._input);
+    const cellContainer = this.args?.container;
+    if (cellContainer && typeof cellContainer.appendChild === 'function') {
+      cellContainer.appendChild(this._input);
+    }
     this.focus();
 
     // make the checkbox editor act like a regular checkbox that commit the value on click
