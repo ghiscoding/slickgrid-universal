@@ -1,0 +1,53 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/slickgrid-universal
+    docker:
+      - image: circleci/node:12-browsers
+    steps:
+      - checkout
+      - restore_cache:
+          key: slickgrid-universal-build-{{ .Branch }}-{{ checksum "package.json" }}
+      - run: yarn install
+      - save_cache:
+          key: slickgrid-universal-build-{{ .Branch }}-{{ checksum "package.json" }}
+          paths:
+            - "node_modules"
+      - run:
+          name: Run Jest tests with JUnit as reporter
+          command: ./node_modules/.bin/jest --config test/jest.config.js --ci --runInBand --collectCoverage=true --reporters=default --reporters=jest-junit
+          environment:
+            JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
+      - run:
+          name: Upload Jest coverage to Codecov
+          command: bash <(curl -s https://codecov.io/bash) -t ${CODECOV_TOKEN}
+      - run:
+          name: Start Dev WebServer
+          command: npx nps webpack.server
+          background: true
+      # - restore_cache:
+      #     name: Restoring Cache for Cypress
+      #     keys:
+      #       - e2e-tests-{{ .Branch }}-{{ checksum "package.json" }}
+      # - run:
+      #     name: Installing Cypress dependencies with yarn
+      #     command: |
+      #       cd test/cypress
+      #       yarn install --frozen-lockfile
+      # - save_cache:
+      #     name: Saving Cache for Cypress
+      #     key: e2e-tests-{{ .Branch }}-{{ checksum "package.json" }}
+      #     paths:
+      #       - "test/cypress/node_modules"
+      # - run:
+      #     name: Running Cypress E2E tests with JUnit reporter
+      #     command: |
+      #       cd test/cypress
+      #       yarn cypress:ci:mochawesome
+      - store_test_results:
+          path: reports/junit
+      - store_artifacts:
+          path: reports/junit
+      - run:
+          name: Build Demo Site
+          command: NODE_ENV=production npx webpack --progress -p --env.production --env.extractCss
