@@ -3,9 +3,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
+[![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 <!-- [![npm version](https://badge.fury.io/js/slickgrid-universal.svg)](//npmjs.com/package/slickgrid-universal)
-[![NPM downloads](https://img.shields.io/npm/dy/slickgrid-universal.svg)](https://npmjs.org/package/slickgrid-universal)
-[![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal) -->
+[![NPM downloads](https://img.shields.io/npm/dy/slickgrid-universal.svg)](https://npmjs.org/package/slickgrid-universal) -->
 
 This is a monorepo project (using Lerna) which is regrouping a few packages under a single repository. The goal is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). It's also a good opportunity to decouple some other features that not all users need, this will also help in getting a smaller bundle. For example not lot users require backend services (OData, GraphQL), which is why these are better handled in a monorepo structure.
 
