@@ -36,6 +36,61 @@ export function addWhiteSpaces(nbSpaces: number): string {
 }
 
 /**
+ * Convert a hierarchical array (with children) into a flat array structure array (where the children are pushed as next indexed item in the array)
+ * @param flatArray array input
+ * @param outputArray array output (passed by reference)
+ * @param options you can provide the following options:: "parentPropName" (defaults to "parent"), "childPropName" (defaults to "children") and "identifierPropName" (defaults to "id")
+ */
+export function convertArrayFlatToHierarchical(flatArray: any[], options?: { parentPropName?: string; childPropName?: string; identifierPropName?: string; }): any[] {
+  const childPropName = options?.childPropName || 'children';
+  const parentPropName = options?.parentPropName || 'parent';
+  const identifierPropName = options?.identifierPropName || 'id';
+
+  const roots = []; // things without parent
+
+  // make them accessible by guid on this map
+  const all = {};
+
+  flatArray.forEach((item) => all[item[identifierPropName]] = item);
+
+  // connect childrens to its parent, and split roots apart
+  Object.keys(all).forEach((id) => {
+    const item = all[id];
+    if (item[parentPropName] === null) {
+      roots.push(item);
+    } else if (item[parentPropName] in all) {
+      const p = all[item[parentPropName]];
+      if (!(childPropName in p)) {
+        p[childPropName] = [];
+      }
+      p[childPropName].push(item);
+    }
+  });
+
+  return roots;
+}
+
+/**
+ * Convert a hierarchical array (with children) into a flat array structure array (where the children are pushed as next indexed item in the array)
+ * @param hierarchicalArray
+ * @param outputArray
+ * @param options you can provide "childPropName" (defaults to "children")
+ */
+export function convertArrayHierarchicalToFlat(hierarchicalArray: any[], outputArray: any[], options: { childPropName?: string; }) {
+  const childPropName = options?.childPropName || 'children';
+
+  for (const item of hierarchicalArray) {
+    if (item) {
+      outputArray.push(item);
+      if (Array.isArray(item[childPropName])) {
+        convertArrayHierarchicalToFlat(item[childPropName], outputArray, options);
+        delete item[childPropName]; // remove the children property
+      }
+    }
+  }
+}
+
+/**
  * HTML encode using jQuery with a <div>
  * Create a in-memory div, set it's inner text(which jQuery automatically encodes)
  * then grab the encoded contents back out.  The div never exists on the page.
@@ -165,20 +220,6 @@ export function formatNumber(input: number | string, minDecimal?: number, maxDec
     return `${symbolPrefix}${formattedValue}${symbolSuffix}`;
   }
 }
-
-/**
- * Loop through and dispose of all subscriptions when they are disposable
- * @param subscriptions
- * @return empty array
- */
-// export function disposeAllSubscriptions(subscriptions: Subscription[]) {
-//   subscriptions.forEach((subscription: Subscription) => {
-//     if (subscription && subscription.dispose) {
-//       subscription.dispose();
-//     }
-//   });
-//   return subscriptions = [];
-// }
 
 /** From a dot (.) notation path, find and return a property within an object given a path */
 export function getDescendantProperty(obj: any, path: string | undefined): any {

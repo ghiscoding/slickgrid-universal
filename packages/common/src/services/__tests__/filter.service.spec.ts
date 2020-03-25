@@ -385,7 +385,7 @@ describe('FilterService', () => {
         service: backendServiceStub,
         process: () => new Promise((resolve) => resolve(jest.fn())),
       };
-      // we must use 3 separate Filters because we aren't loading Aurelia and so our Filters are not transient (as defined in lib config)
+      // we must use 3 separate Filters because we aren't loading the Framework and so our Filters are not transient (as defined in lib config)
       mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true, filter: { model: Filters.input } } as Column;
       mockColumn2 = { id: 'lastName', field: 'lastName', filterable: true, filter: { model: Filters.inputText } } as Column;
       mockColumn3 = { id: 'age', field: 'age', filterable: true, filter: { model: Filters.inputNumber } } as Column;
@@ -488,7 +488,7 @@ describe('FilterService', () => {
     let mockColumn2: Column;
 
     beforeEach(() => {
-      // we must use 2 separate Filters because we aren't loading Aurelia and so our Filters are not transient (as defined in lib config)
+      // we must use 2 separate Filters because we aren't loading the Framework and so our Filters are not transient (as defined in lib config)
       gridOptionMock.backendServiceApi = undefined;
       mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true, filter: { model: Filters.input } } as Column;
       mockColumn2 = { id: 'lastName', field: 'lastName', filterable: true, filter: { model: Filters.inputText } } as Column;
