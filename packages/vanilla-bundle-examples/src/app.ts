@@ -1,26 +1,29 @@
 import { Renderer } from './renderer';
+import { AppRouting } from './app-routing';
+import { RouterConfig } from './interfaces';
+
 
 export class App {
-  defaultModelName = 'example01';
   documentTitle = 'Slickgrid-Universal';
-  stateBangChar = '/';
+  defaultRouteName: string;
+  stateBangChar: string;
   renderer: Renderer;
-
-  routing = [
-    { route: 'example01', name: 'example01', title: 'Example01', moduleId: './examples/example01' },
-    { route: 'example02', name: 'example02', title: 'Example02', moduleId: './examples/example02' },
-    { route: 'example03', name: 'example03', title: 'Example03', moduleId: './examples/example03' },
-    { route: 'example50', name: 'example50', title: 'Example50', moduleId: './examples/example50' },
-    { route: 'example51', name: 'example51', title: 'Example51', moduleId: './examples/example51' },
-  ];
+  appRouting: any;
+  routerConfig: RouterConfig = {
+    pushState: false,
+    routes: []
+  }
 
   constructor() {
+    this.appRouting = new AppRouting(this.routerConfig);
+    this.stateBangChar = this.routerConfig.pushState ? '/' : '#/';
+    this.defaultRouteName = this.routerConfig.routes.find((map) => map.redirect)?.redirect || '';
     this.navbarHamburgerToggle();
   }
 
   attached() {
     this.renderer = new Renderer(document.querySelector('view-route'));
-    const route = window.location.pathname.replace(this.stateBangChar, '') || this.defaultModelName;
+    const route = window.location.pathname.replace(this.stateBangChar, '') || this.defaultRouteName;
     this.loadRoute(route);
 
     // re-render on browser history navigation change
@@ -29,9 +32,10 @@ export class App {
 
   loadRoute(routeName: string, changeBrowserState = true) {
     if (this.renderer && routeName) {
-      const mapRoute = this.routing.find((map) => map.route === routeName);
-      if (!mapRoute) {
-        throw new Error('No Route found, make sure that you have an associated Route in your Routing before trying to use it');
+      const mapRoute = this.routerConfig.routes.find((map) => map.route === routeName);
+      if (!mapRoute && this.defaultRouteName !== '') {
+        this.loadRoute(this.defaultRouteName);
+        return;
       }
       const viewModel = this.renderer.loadViewModel(require(`${mapRoute.moduleId}.ts`));
       this.renderer.loadView(require(`${mapRoute.moduleId}.html`));
@@ -39,7 +43,7 @@ export class App {
 
       // change browser's history state & title
       if (changeBrowserState) {
-        window.history.pushState({}, routeName, `${window.location.origin}/${routeName}`);
+        window.history.pushState({}, routeName, `${window.location.origin}${this.stateBangChar}${routeName}`);
       }
       document.title = `${this.documentTitle} · ${mapRoute.name}`;
     }
