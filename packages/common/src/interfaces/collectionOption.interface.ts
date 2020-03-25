@@ -8,9 +8,6 @@ export interface CollectionOption {
    */
   addBlankEntry?: boolean;
 
-  /** @deprecated please use "collectionInsideObjectProperty" instead */
-  collectionInObjectProperty?: string;
-
   /**
    * When the collection is inside an object descendant property
    * we can optionally pass a dot (.) notation string to pull the collection from an object property.

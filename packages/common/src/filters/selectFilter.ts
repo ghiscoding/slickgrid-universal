@@ -233,8 +233,8 @@ export class SelectFilter implements Filter {
   }
 
   renderDomElement(collection: any[]) {
-    if (!Array.isArray(collection) && this.collectionOptions && (this.collectionOptions.collectionInsideObjectProperty || this.collectionOptions.collectionInObjectProperty)) {
-      const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty || this.collectionOptions.collectionInObjectProperty;
+    if (!Array.isArray(collection) && this.collectionOptions && (this.collectionOptions.collectionInsideObjectProperty)) {
+      const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty;
       collection = getDescendantProperty(collection, collectionInsideObjectProperty || '');
     }
     if (!Array.isArray(collection)) {

@@ -6,9 +6,9 @@ import {
   CurrentPagination,
   CurrentSorter,
   FilterChangedArgs,
+  MultiColumnSort,
   Pagination,
   PaginationChangedArgs,
-  SortChangedArgs,
 } from './index';
 
 export interface BackendService {
@@ -59,12 +59,11 @@ export interface BackendService {
   // -----------------
 
   /** Execute when any of the filters changed */
-  // @deprecated return string output only in the future and remove Promise type
-  processOnFilterChanged: (event: Event | KeyboardEvent | undefined, args: FilterChangedArgs) => string | Promise<string>;
+  processOnFilterChanged: (event: Event | KeyboardEvent | undefined, args: FilterChangedArgs) => string;
 
   /** Execute when the pagination changed */
   processOnPaginationChanged: (event: Event | undefined, args: PaginationChangedArgs) => string;
 
   /** Execute when any of the sorters changed */
-  processOnSortChanged: (event: Event | undefined, args: SortChangedArgs) => string;
+  processOnSortChanged: (event: Event | undefined, args: ColumnSort | MultiColumnSort) => string;
 }

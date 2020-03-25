@@ -223,19 +223,9 @@ export class FilterService {
     if (backendApi && triggerChange) {
       const callbackArgs = { clearFilterTriggered: true, shouldTriggerQuery: triggerChange, grid: this._grid, columnFilters: this._columnFilters };
       const queryResponse = backendApi.service.processOnFilterChanged(undefined, callbackArgs as FilterChangedArgs);
-      if (queryResponse instanceof Promise && queryResponse.then) {
-        // @deprecated, processOnFilterChanged in the future should be returned as a query string NOT as a Promise
-        console.warn(`[Slickgrid-Universal] please note that the "processOnFilterChanged" from your Backend Service, should now return a string instead of a Promise.
-          Returning a Promise will be deprecated in the future.`);
-        queryResponse.then((query: string) => {
-          const totalItems = this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems || 0;
-          executeBackendCallback(backendApi, query, callbackArgs, new Date(), totalItems, this.emitFilterChanged.bind(this));
-        });
-      } else {
-        const query = queryResponse as string;
-        const totalItems = this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems || 0;
-        executeBackendCallback(backendApi, query, callbackArgs, new Date(), totalItems, this.emitFilterChanged.bind(this));
-      }
+      const query = queryResponse as string;
+      const totalItems = this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems || 0;
+      executeBackendCallback(backendApi, query, callbackArgs, new Date(), totalItems, this.emitFilterChanged.bind(this));
     }
 
     // emit an event when filters are all cleared
@@ -452,16 +442,15 @@ export class FilterService {
     // query backend, except when it's called by a ClearFilters then we won't
     if (args && args.shouldTriggerQuery) {
       // call the service to get a query back
-      // @deprecated TODO: remove async/await on next major change, refer to processOnFilterChanged in BackendService interface (with @deprecated)
       if (debounceTypingDelay > 0) {
         clearTimeout(timer);
-        timer = setTimeout(async () => {
-          const query = await backendApi.service.processOnFilterChanged(event, args);
+        timer = setTimeout(() => {
+          const query = backendApi.service.processOnFilterChanged(event, args);
           const totalItems = this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems || 0;
           executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitFilterChanged.bind(this));
         }, debounceTypingDelay);
       } else {
-        const query = await backendApi.service.processOnFilterChanged(event, args);
+        const query = backendApi.service.processOnFilterChanged(event, args);
         const totalItems = this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems || 0;
         executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitFilterChanged.bind(this));
       }

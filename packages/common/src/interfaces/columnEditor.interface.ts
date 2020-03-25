@@ -50,13 +50,6 @@ export interface ColumnEditor {
    */
   editorOptions?: MultipleSelectOption | any;
 
-
-  /**
-   * @deprecated please use "editorOptions" property instead.
-   * DOM element extra options.
-   */
-  elementOptions?: any;
-
   /**
    * Defaults to false, when set it will render any HTML code instead of removing it (sanitized)
    * Only used so far in the MultipleSelect & SingleSelect Filters will support it

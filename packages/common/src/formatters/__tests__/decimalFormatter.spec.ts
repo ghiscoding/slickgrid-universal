@@ -51,10 +51,10 @@ describe('the Decimal Formatter', () => {
     expect(output).toBe('99.10');
   });
 
-  it('should display a number with dollar sign and use "minDecimalPlaces" (or the deprecated "decimalPlaces") params', () => {
+  it('should display a number with dollar sign and use "minDecimal" params', () => {
     const input = 12345678.1;
 
-    const output1 = decimalFormatter(1, 1, input, { params: { minDecimalPlaces: 2 } } as Column, {});
+    const output1 = decimalFormatter(1, 1, input, { params: { minDecimal: 2 } } as Column, {});
     const output2 = decimalFormatter(1, 1, input, { params: { decimalPlaces: 2 } } as Column, {});
     const output3 = decimalFormatter(1, 1, input, { params: { decimalPlaces: 2, thousandSeparator: ',' } } as Column, {});
     const output4 = decimalFormatter(1, 1, input, { params: { decimalPlaces: 2, decimalSeparator: ',', thousandSeparator: ' ' } } as Column, {});
@@ -63,20 +63,12 @@ describe('the Decimal Formatter', () => {
     expect(output2).toBe('12345678.10');
     expect(output3).toBe('12,345,678.10');
     expect(output4).toBe('12 345 678,10');
-    expect(consoleSpy).toHaveBeenCalledWith('[Slickgrid-Universal] please consider using "minDecimal" (instead of "minDecimalPlaces" or "decimalPlaces").');
   });
 
   it('should display a number with dollar sign and use "maxDecimal" params', () => {
     const input = 88.156789;
     const output = decimalFormatter(1, 1, input, { params: { maxDecimal: 3 } } as Column, {});
     expect(output).toBe(`88.157`);
-  });
-
-  it('should display a number with dollar sign and use "maxDecimalPlaces" params', () => {
-    const input = 88.156789;
-    const output = decimalFormatter(1, 1, input, { params: { maxDecimalPlaces: 3 } } as Column, {});
-    expect(output).toBe(`88.157`);
-    expect(consoleSpy).toHaveBeenCalledWith('[Slickgrid-Universal] please consider using "maxDecimal" (instead of "maxDecimalPlaces").');
   });
 
   it('should display a negative number with parentheses when "displayNegativeNumberWithParentheses" is enabled in the "params"', () => {

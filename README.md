@@ -8,7 +8,7 @@
 <!-- [![npm version](https://badge.fury.io/js/slickgrid-universal.svg)](//npmjs.com/package/slickgrid-universal)
 [![NPM downloads](https://img.shields.io/npm/dy/slickgrid-universal.svg)](https://npmjs.org/package/slickgrid-universal) -->
 
-This is a monorepo project (using Lerna) which is regrouping a few packages under a single repository. The goal is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). It's also a good opportunity to decouple some other features that not all users need, this will also help in getting a smaller bundle. For example not lot users require backend services (OData, GraphQL), which is why these are better handled in a monorepo structure.
+This is a monorepo project (using Lerna) which is regrouping a few packages under a single repository. The goal is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). It's also a good opportunity to decouple some other features/services that not every user require, this will also help in getting a smaller bundle size. For example, not many users require backend services (OData, GraphQL), which is why they are better handled in a monorepo structure.
 
 ### Why create this monorepo?
 You might be wondering why was this monorepo created?
@@ -22,9 +22,9 @@ This is a Work in Progress, eventually [Angular-Slickgrid](https://github.com/gh
 However, this project is built with a Vanilla Implementation (no associated to any framework) and that is what the UI will be tested with. The Vanilla bundle is also used in our SalesForce (with Lighning Web Component) hence the creation of this monorepo.
 
 The main packages structure is the following
-- `@slickgrid-universal/common` where are commonly used Services/Formatters/Editors/... are created
+- `@slickgrid-universal/common`: commonly used Formatters/Editors/Filters/Services/...
   - this can then be used by any Framework (Angular, Aurelia, Vanilla, ...)
-- `@slickgrid-universal/vanilla-bundle` is a vanilla implementation (no framework)
+- `@slickgrid-universal/vanilla-bundle`: a vanilla JS implementation (no framework)
 - `slickgrid-universal/vanilla-bundle-examples` standalone package for demo purposes and UI testing (not a public package)
 
 ### Installation
@@ -43,7 +43,7 @@ npm run build
 ```
 
 3. Run Dev (Vanilla Implementation)
-There is a Vanilla flavor implementation in this monorepo, vanilla means that it is not associated to any framework in other words it is plain TypeScript without being bound to any framework. The implementation is very similar to Angular and Aurelia, it could be used to implement other frameworks. 
+There is a Vanilla flavor implementation of this monorepo, vanilla means that it is not associated to any framework and so it is plain TypeScript without being bound to any framework. The implementation is very similar to Angular and Aurelia, it could be used as a guideline to implement it in other frameworks.
 
 ```bash
 npm run dev:watch
@@ -125,10 +125,10 @@ npm run test:watch
 - [x] Jest Debugger
 - [ ] Add Multiple Example Demos with Vanilla implementation
   - [ ] Add GitHub Demo website
-- [ ] Add CI/CD (CircleCI or GitHub Actions)
-  - [ ] Add Jest Unit tests
+- [x] Add CI/CD (CircleCI or GitHub Actions)
+  - [x] Add Jest Unit tests
   - [ ] Add Cypress E2E tests
-  - [ ] Add Code Coverage (codecov)
-  - [ ] Build and run on every PR
+  - [x] Add Code Coverage (codecov)
+  - [x] Build and run on every PR
 - [ ] Remove any Deprecated code
   - [ ] Create a Migration Guide 

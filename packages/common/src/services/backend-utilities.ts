@@ -24,8 +24,6 @@ main.executeBackendProcessesCallback = function exeBackendProcessesCallback(star
         itemCount: totalItems,
         totalItemCount: totalItems,
       };
-      // @deprecated
-      processResult.statistics = processResult.metrics;
     }
     backendApi.postProcess(processResult);
   }

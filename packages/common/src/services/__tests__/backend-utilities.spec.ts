@@ -54,14 +54,6 @@ describe('backend-utilities', () => {
           itemCount: 1,
           totalItemCount: 1
         },
-        // @deprecated, should be removed when Statistic is removed from the lib
-        statistics: {
-          startTime: now,
-          endTime: expect.any(Date),
-          executionTime: expect.any(Number),
-          itemCount: 1,
-          totalItemCount: 1
-        },
       };
       gridOptionMock.backendServiceApi.postProcess = jest.fn();
       gridOptionMock.pagination = { totalItems: 1, pageSizes: [10, 25], pageSize: 10 };

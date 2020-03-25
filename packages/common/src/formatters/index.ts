@@ -136,9 +136,8 @@ export const Formatters = {
 
   /**
    * Display the value as x decimals formatted, defaults to 2 decimals.
-   * You can pass "decimalPlaces" or "minDecimalPlaces" and/or "maxDecimalPlaces" to the "params" property.
-   * For example:: `{ formatter: Formatters.decimal, params: { decimalPlaces: 3 }}`
-   * The property "decimalPlaces" is an alias of "minDecimalPlaces"
+   * You can pass "minDecimal" and/or "maxDecimal" to the "params" property.
+   * For example:: `{ formatter: Formatters.decimal, params: { minDecimal: 2, maxDecimal: 4 }}`
    */
   decimal: decimalFormatter,
 

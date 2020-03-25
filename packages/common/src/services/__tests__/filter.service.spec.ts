@@ -464,28 +464,6 @@ describe('FilterService', () => {
         expect(spyEmitter).not.toHaveBeenCalled();
       });
 
-      it('should clear all the Filters when the query response is a Promise (will be deprecated in future)', (done) => {
-        gridOptionMock.backendServiceApi.service.processOnFilterChanged = () => Promise.resolve('filter query from Promise');
-        const spyClear = jest.spyOn(service.getFiltersMetadata()[0], 'clear');
-        const spyFilterChange = jest.spyOn(service, 'onBackendFilterChange');
-        const spyEmitter = jest.spyOn(service, 'emitFilterChanged');
-        const spyProcess = jest.spyOn(gridOptionMock.backendServiceApi, 'process');
-
-        const filterCountBefore = Object.keys(service.getColumnFilters()).length;
-        service.clearFilters();
-
-        setTimeout(() => {
-          expect(spyClear).toHaveBeenCalled();
-          expect(filterCountBefore).toBe(2);
-          expect(spyProcess).toHaveBeenCalledWith('filter query from Promise');
-          expect(service.getColumnFilters()).toEqual({});
-          expect(spyFilterChange).not.toHaveBeenCalled();
-          expect(spyEmitter).not.toHaveBeenCalled();
-          expect(consoleSpy).toHaveBeenCalledWith(expect.toInclude('[Slickgrid-Universal] please note that the "processOnFilterChanged" from your Backend Service, should now return a string instead of a Promise.'));
-          done();
-        });
-      });
-
       it('should execute the "onError" method when the Promise throws an error', (done) => {
         const errorExpected = 'promise error';
         gridOptionMock.backendServiceApi.process = () => Promise.reject(errorExpected);

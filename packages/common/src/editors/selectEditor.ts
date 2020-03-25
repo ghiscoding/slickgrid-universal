@@ -500,8 +500,8 @@ export class SelectEditor implements Editor {
   }
 
   protected renderDomElement(collection: any[]) {
-    if (!Array.isArray(collection) && this.collectionOptions && (this.collectionOptions.collectionInsideObjectProperty || this.collectionOptions.collectionInObjectProperty)) {
-      const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty || this.collectionOptions.collectionInObjectProperty;
+    if (!Array.isArray(collection) && this.collectionOptions && (this.collectionOptions.collectionInsideObjectProperty)) {
+      const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty;
       collection = getDescendantProperty(collection, collectionInsideObjectProperty);
     }
     if (!Array.isArray(collection)) {
@@ -613,9 +613,8 @@ export class SelectEditor implements Editor {
     this.defaultOptions.placeholder = placeholder || '';
 
     if (typeof this.$editorElm.multipleSelect === 'function') {
-      const elementOptions = (this.columnEditor) ? this.columnEditor.elementOptions : {};
       const editorOptions = (this.columnDef && this.columnDef.internalColumnEditor) ? this.columnDef.internalColumnEditor.editorOptions : {};
-      this.editorElmOptions = { ...this.defaultOptions, ...elementOptions, ...editorOptions };
+      this.editorElmOptions = { ...this.defaultOptions, ...editorOptions };
       this.$editorElm = this.$editorElm.multipleSelect(this.editorElmOptions);
       setTimeout(() => this.show());
     }

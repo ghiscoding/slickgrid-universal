@@ -5,8 +5,8 @@ import {
   ColumnSort,
   CurrentSorter,
   GridOption,
+  MultiColumnSort,
   SlickEventHandler,
-  SortChangedArgs,
 } from '../../interfaces/index';
 import { Sorters } from '../../sorters';
 import { SortService } from '../sort.service';
@@ -42,7 +42,7 @@ const backendServiceStub = {
   getCurrentPagination: jest.fn(),
   getCurrentSorters: jest.fn(),
   updateSorters: jest.fn(),
-  processOnSortChanged: (event: Event, args: SortChangedArgs) => 'backend query',
+  processOnSortChanged: (event: Event, args: ColumnSort | MultiColumnSort) => 'backend query',
 } as unknown as BackendService;
 
 const gridStub = {
