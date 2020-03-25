@@ -135,6 +135,7 @@ module.exports = {
     "prefer-const": "error",
     "prefer-object-spread": "error",
     "radix": "error",
+    "semi": [2, "always"],
     "space-in-parens": [
       "error"
     ],

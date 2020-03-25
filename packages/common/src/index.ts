@@ -15,6 +15,5 @@ export * from './formatters/index';
 export * from './grouping-formatters/index';
 export * from './sorters/index';
 
-import * as Enums from './enums/index';
-export { Enums }
+export * as Enums from './enums/index';
 export { SlickgridConfig } from './slickgrid-config';

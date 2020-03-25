@@ -64,7 +64,7 @@ npm run test:watch
 #### Code
 - [x] Aggregators (6)
 - [ ] Editors
-  - [ ] Autocomplete
+  - [x] Autocomplete
   - [x] Checkbox
   - [ ] Date
   - [x] Float
@@ -75,7 +75,7 @@ npm run test:watch
   - [x] Slider
   - [x] Text
 - [ ] Filters
-  - [ ] Autocomplete
+  - [x] Autocomplete
   - [ ] Compound Date
   - [x] Compound Input(s)
   - [x] Compound Slider
