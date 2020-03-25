@@ -1,10 +1,8 @@
 import { Column, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
-import './example04.scss';
+import './example03.scss';
 
 export class Example4 {
-  gridClass;
-  gridClassName;
   _commandQueue = [];
   columnDefinitions: Column[];
   gridOptions: GridOption;
@@ -22,7 +20,7 @@ export class Example4 {
   attached() {
     this.initializeGrid();
     this.dataset = [];
-    const gridContainerElm = document.querySelector('.grid3');
+    const gridContainerElm = document.querySelector('.grid4');
     const gridElm = document.querySelector('.slickgrid-container');
 
     gridContainerElm.addEventListener('onclick', this.handleOnClick.bind(this));
@@ -36,7 +34,6 @@ export class Example4 {
     this.dataViewObj.setFilter(this.myFilter.bind(this));
     this.dataset = this.mockDataset();
     this.slickgridLwc.dataset = this.dataset;
-
   }
 
   initializeGrid() {
@@ -58,20 +55,6 @@ export class Example4 {
       },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
-      // enableCellNavigation: true,
-      enableGrouping: true,
-      enableRowSelection: true,
-      // enableCheckboxSelector: true,
-      formatterOptions: {
-        minDecimal: 0,
-        maxDecimal: 2,
-        thousandSeparator: ','
-      },
-      rowSelectionOptions: {
-        selectActiveRow: false // False for Multiple Selections
-      },
-      sanitizer: (dirtyHtml) => (dirtyHtml.replace(/(\b)(on\S+)(\s*)=|javascript|(<\s*)(\/*)script/gi, '')),
-      enableSorting: true,
       headerRowHeight: 45,
       rowHeight: 45,
       editCommandHandler: (item, column, editCommand) => {
@@ -129,60 +112,6 @@ export class Example4 {
       }
     }
     return true;
-  }
-
-  customBlankFormatter() {
-    return '';
-  }
-
-  customAceGroupingFormatter(totals, columnDef) {
-    const hasAce = totals.clone && totals.clone[columnDef.field];
-    return !hasAce ? '' : '<i class="mdi mdi-check checkmark-icon green" style="color: #4DCAA9; font-size: 20px" aria-hidden="true"></i>';
-  }
-
-  customCheckmarGroupingFormatter(totals, columnDef) {
-    const hasCheckmark = totals.clone && totals.clone[columnDef.field];
-    return !hasCheckmark ? '' : '<i class="mdi mdi-check checkmark-icon" style="font-size: 20px" aria-hidden="true"></i>';
-  }
-
-  customQuantityGroupingFormatter(totals, columnDef) {
-    return totals.min && totals.min[columnDef.field] || '';
-  }
-
-  customLineTypeGroupingFormatter(totals, columnDef) {
-    const val = totals.clone && totals.clone[columnDef.field];
-    let output = '';
-    switch (val) {
-      case 'Profiled':
-        output = `<i class="mdi mdi-pencil" style="cursor: pointer; font-size: 20px" aria-hidden="true" onclick="alert('call update line modal window')"></i>`;
-        break;
-      case 'Selector':
-        output = `<i class="mdi mdi-cogs" style="cursor: pointer; font-size: 20px" aria-hidden="true" onclick="alert('validate selector')"></i>`;
-        break;
-      default:
-        output = '';
-        break;
-    }
-    return output;
-  }
-
-  customTranslationTypeGroupingFormatter(totals, columnDef) {
-    const val = totals.clone && totals.clone[columnDef.field];
-    let output = '';
-    switch (val) {
-      case 'Drawing':
-        output = `<i class="mdi mdi-file-send-outline" style="font-size: 20px" aria-hidden="true"></i>`;
-        break;
-      default:
-        output = '';
-        break;
-    }
-    return output;
-  }
-
-  customProductGroupingFormatter(totals, columnDef) {
-    const val = totals.clone && totals.clone['productGroup'];
-    return val ? `<b>${val}</b>` : '';
   }
 
   addNewRow() {

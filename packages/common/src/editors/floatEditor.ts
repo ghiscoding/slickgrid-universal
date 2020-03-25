@@ -63,7 +63,10 @@ export class FloatEditor implements Editor {
     this._input.placeholder = placeholder;
     this._input.title = title;
     this._input.step = this.getInputDecimalSteps();
-    this.args.container.append(this._input);
+    const cellContainer = this.args?.container;
+    if (cellContainer && typeof cellContainer.appendChild === 'function') {
+      cellContainer.appendChild(this._input);
+    }
 
     this._input.onkeydown = ((event: KeyboardEvent) => {
       this._lastInputEvent = event;

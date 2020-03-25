@@ -75,6 +75,7 @@ $row-mouse-hover-color:                 #ebfaef;
 $row-selected-color:                    #d4f6d7; /*rgba(0, 149, 48, 0.2);*/
 
 @import './roboto-font.scss';
+@import './slick-material';
 @import './slick-grid';
 @import './slick-controls';
 @import './slick-editors';
@@ -84,5 +85,46 @@ $row-selected-color:                    #d4f6d7; /*rgba(0, 149, 48, 0.2);*/
 @import './slick-footer';
 @import './slickgrid-examples';
 @import './slick-bootstrap';
-@import './slick-material';
 @import './bootstrap-jquery-ui-autocomplete';
+
+$link-color: #0099ff;
+
+.cell-effort-driven {
+  text-align: center;
+}
+
+.editable-field {
+  background-color: #d5e8e9 !important;
+}
+.fake-hyperlink {
+  cursor: pointer;
+  color: $link-color;
+  &:hover {
+      text-decoration: underline;
+  }
+}
+
+.toggle {
+  height: 20px;
+  width: 20px;
+  display: inline-block;
+
+  &.expand {
+    cursor: pointer;
+    &:before {
+      font-family: "Material Design Icons";
+      font-size: 20px;
+      content: "\F0142";
+    }
+  }
+
+  &.collapse{
+    cursor: pointer;
+    &:before {
+      font-family: "Material Design Icons";
+      font-size: 20px;
+      content: "\F0140";
+    }
+  }
+}
+

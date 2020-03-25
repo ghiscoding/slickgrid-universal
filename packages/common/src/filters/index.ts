@@ -1,10 +1,10 @@
 import { Column, Filter } from '../interfaces/index';
 // import { AutoCompleteFilter } from './autoCompleteFilter';
 // import { CompoundDateFilter } from './compoundDateFilter';
-// import { CompoundInputFilter } from './compoundInputFilter';
-// import { CompoundInputNumberFilter } from './compoundInputNumberFilter';
-// import { CompoundInputPasswordFilter } from './compoundInputPasswordFilter';
-// import { CompoundSliderFilter } from './compoundSliderFilter';
+import { CompoundInputFilter } from './compoundInputFilter';
+import { CompoundInputNumberFilter } from './compoundInputNumberFilter';
+import { CompoundInputPasswordFilter } from './compoundInputPasswordFilter';
+import { CompoundSliderFilter } from './compoundSliderFilter';
 import { InputFilter } from './inputFilter';
 import { InputMaskFilter } from './inputMaskFilter';
 import { InputNumberFilter } from './inputNumberFilter';
@@ -24,19 +24,19 @@ export const Filters = {
   // compoundDate: CompoundDateFilter,
 
   /** Alias to compoundInputText to Compound Input Filter (compound of Operator + Input Text) */
-  // compoundInput: CompoundInputFilter,
+  compoundInput: CompoundInputFilter,
 
   /** Compound Input Number Filter (compound of Operator + Input of type Number) */
-  // compoundInputNumber: CompoundInputNumberFilter,
+  compoundInputNumber: CompoundInputNumberFilter,
 
   /** Compound Input Password Filter (compound of Operator + Input of type Password, also note that only the text shown in the UI will be masked, filter query is still plain text) */
-  // compoundInputPassword: CompoundInputPasswordFilter,
+  compoundInputPassword: CompoundInputPasswordFilter,
 
   /** Compound Input Text Filter (compound of Operator + Input Text) */
-  // compoundInputText: CompoundInputFilter,
+  compoundInputText: CompoundInputFilter,
 
   /** Compound Slider Filter (compound of Operator + Slider) */
-  // compoundSlider: CompoundSliderFilter,
+  compoundSlider: CompoundSliderFilter,
 
   /** Range Date Filter (uses the Flactpickr Date picker with range option) */
   // dateRange: DateRangeFilter,

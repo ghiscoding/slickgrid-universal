@@ -5,8 +5,8 @@
     "rootDir": "src",
     "declarationDir": "dist/es2015",
     "outDir": "dist/es2015",
-    "target": "es2017",
-    "module": "es2015",
+    "target": "es2015",
+    "module": "esnext",
     "sourceMap": true,
     "lib": [
       "es2020",

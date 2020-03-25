@@ -60,7 +60,10 @@ export class TextEditor implements Editor {
     this._input.autocomplete = 'off';
     this._input.placeholder = placeholder;
     this._input.title = title;
-    this.args.container.append(this._input);
+    const cellContainer = this.args?.container;
+    if (cellContainer && typeof cellContainer.appendChild === 'function') {
+      cellContainer.appendChild(this._input);
+    }
 
     this._input.onkeydown = ((event: KeyboardEvent) => {
       this._lastInputEvent = event;
