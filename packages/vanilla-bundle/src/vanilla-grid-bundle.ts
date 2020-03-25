@@ -122,9 +122,9 @@ export class VanillaGridBundle {
     this.refreshGridData(dataset);
   }
 
-  constructor(gridContainerElm: Element, columnDefs: Column[], options: GridOption, dataset?: any[]) {
-    this._columnDefinitions = columnDefs;
-    this._gridOptions = options;
+  constructor(gridContainerElm: Element, columnDefs?: Column[], options?: GridOption, dataset?: any[]) {
+    this._columnDefinitions = columnDefs || [];
+    this._gridOptions = options || {};
     this.dataset = dataset || [];
     this._eventPubSubService = new EventPubSubService(gridContainerElm);
 
@@ -174,7 +174,7 @@ export class VanillaGridBundle {
 
   dispose() {
     this.dataView = undefined;
-    this.gridOptions = {};
+    this._gridOptions = {};
     this.extensionService.dispose();
     this.filterService.dispose();
     // this.gridEventService.dispose();
@@ -200,7 +200,7 @@ export class VanillaGridBundle {
     gridContainerElm.appendChild(this._gridElm);
 
     this._gridOptions = this.mergeGridOptions(this._gridOptions);
-    this.backendServiceApi = this.gridOptions && this.gridOptions.backendServiceApi;
+    this.backendServiceApi = this._gridOptions && this._gridOptions.backendServiceApi;
     this._isLocalGrid = !this.backendServiceApi; // considered a local grid if it doesn't have a backend service set
     this._eventPubSubService.eventNamingStyle = this._gridOptions && this._gridOptions.eventNamingStyle || EventNamingStyle.camelCase;
     this._eventHandler = new Slick.EventHandler();
@@ -244,7 +244,7 @@ export class VanillaGridBundle {
     this.gridService.init(this.grid, this.dataView);
 
     if (this._dataset.length > 0) {
-      // if (!this._isDatasetInitialized && (this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection)) {
+      // if (!this._isDatasetInitialized && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
       //   this.loadRowSelectionPresetWhenExists();
       // }
       this._isDatasetInitialized = true;
@@ -269,7 +269,7 @@ export class VanillaGridBundle {
       slickGrid: this.grid,
 
       // return all available Services (non-singleton)
-      backendService: this.gridOptions && this.gridOptions.backendServiceApi && this.gridOptions.backendServiceApi.service,
+      backendService: this._gridOptions && this._gridOptions.backendServiceApi && this._gridOptions.backendServiceApi.service,
       // excelExportService: this.excelExportService,
       // exportService: this.exportService,
       filterService: this.filterService,
@@ -280,7 +280,7 @@ export class VanillaGridBundle {
       extensionService: this.extensionService,
       // paginationService: this.paginationService,
       sortService: this.sortService,
-    }
+    };
 
     this._eventPubSubService.publish('onSlickerGridCreated', slickerElementInstance);
   }
@@ -406,7 +406,7 @@ export class VanillaGridBundle {
     // local grid, check if we need to show the Pagination
     // if so then also check if there's any presets and finally initialize the PaginationService
     // a local grid with Pagination presets will potentially have a different total of items, we'll need to get it from the DataView and update our total
-    // if (this.gridOptions && this.gridOptions.enablePagination && this._isLocalGrid) {
+    // if (this._gridOptions && this._gridOptions.enablePagination && this._isLocalGrid) {
     //   this.showPagination = true;
     //   this.loadLocalGridPagination(dataset);
     // }
@@ -418,7 +418,7 @@ export class VanillaGridBundle {
       }
 
       if (dataset.length > 0) {
-        // if (!this._isDatasetInitialized && this.gridOptions.enableCheckboxSelector) {
+        // if (!this._isDatasetInitialized && this._gridOptions.enableCheckboxSelector) {
         //   this.loadRowSelectionPresetWhenExists();
         // }
         this._isDatasetInitialized = true;
@@ -430,14 +430,14 @@ export class VanillaGridBundle {
       }
 
       // display the Pagination component only after calling this refresh data first, we call it here so that if we preset pagination page number it will be shown correctly
-      // this.showPagination = (this.gridOptions && (this.gridOptions.enablePagination || (this.gridOptions.backendServiceApi && this.gridOptions.enablePagination === undefined))) ? true : false;
+      // this.showPagination = (this._gridOptions && (this._gridOptions.enablePagination || (this._gridOptions.backendServiceApi && this._gridOptions.enablePagination === undefined))) ? true : false;
 
-      // if (this.gridOptions && this.gridOptions.backendServiceApi && this.gridOptions.pagination && this.paginationOptions) {
-      //   const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this.gridOptions, this.paginationOptions);
+      // if (this._gridOptions && this._gridOptions.backendServiceApi && this._gridOptions.pagination && this.paginationOptions) {
+      //   const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this._gridOptions, this.paginationOptions);
 
       //   // when we have a totalCount use it, else we'll take it from the pagination object
       //   // only update the total items if it's different to avoid refreshing the UI
-      //   const totalRecords = (totalCount !== undefined) ? totalCount : (this.gridOptions && this.gridOptions.pagination && this.gridOptions.pagination.totalItems);
+      //   const totalRecords = (totalCount !== undefined) ? totalCount : (this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems);
       //   if (totalRecords !== undefined && totalRecords !== this.totalItems) {
       //     this.totalItems = +totalRecords;
       //   }
@@ -465,7 +465,6 @@ export class VanillaGridBundle {
    */
   updateColumnDefinitionsList(newColumnDefinitions: Column[]) {
     // map/swap the internal library Editor to the SlickGrid Editor factory
-    // console.log('newColumnDefinitions', newColumnDefinitions)
     newColumnDefinitions = this.swapInternalEditorToSlickGridFactoryEditor(newColumnDefinitions);
     if (this._gridOptions.enableTranslate) {
       this.extensionService.translateColumnHeaders(false, newColumnDefinitions);

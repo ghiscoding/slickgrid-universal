@@ -19,8 +19,6 @@ const myCustomTitleValidator = (value, args) => {
 };
 
 export class Example2 {
-  gridClass;
-  gridClassName;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset;
@@ -38,7 +36,7 @@ export class Example2 {
     const gridContainerElm = document.querySelector(`.grid2`);
     const gridElm = document.querySelector(`.slickgrid-container`);
 
-    // gridContainerElm.addEventListener('onclick', handleOnClick);
+    gridContainerElm.addEventListener('onclick', this.handleOnClick.bind(this));
     gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
     gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
@@ -60,7 +58,7 @@ export class Example2 {
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
         editor: {
-          model: Slicker.Editors.text,
+          model: Slicker.Editors.integer,
           required: true,
           alwaysSaveOnEnterKey: true,
         },
