@@ -2,8 +2,9 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
-[![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
+[![CircleCI](https://circleci.com/gh/ghiscoding/slickgrid-universal/tree/master.svg?style=shield)](https://circleci.com/gh/ghiscoding/workflows/slickgrid-universal/tree/master)
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
+[![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
 <!-- [![npm version](https://badge.fury.io/js/slickgrid-universal.svg)](//npmjs.com/package/slickgrid-universal)
 [![NPM downloads](https://img.shields.io/npm/dy/slickgrid-universal.svg)](https://npmjs.org/package/slickgrid-universal) -->
 
