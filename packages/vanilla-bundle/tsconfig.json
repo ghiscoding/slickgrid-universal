@@ -8,6 +8,7 @@
     "target": "es2017",
     "module": "es2015",
     "sourceMap": true,
+    "noImplicitReturns": true,
     "lib": [
       "es2020",
       "dom"

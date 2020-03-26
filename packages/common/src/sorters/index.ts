@@ -4,6 +4,9 @@ import { stringSorter } from './stringSorter';
 import { getAssociatedDateSorter } from './dateUtilities';
 import { FieldType } from '../enums/fieldType.enum';
 
+// export the sorter utilities so they could be used by others
+export * from './sorterUtilities';
+
 export const Sorters = {
   /** Sorter method to sort values by Date object type (uses Moment.js ISO_8601 standard format, optionally include time) */
   date: getAssociatedDateSorter(FieldType.date),

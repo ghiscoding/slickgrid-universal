@@ -1,33 +1,26 @@
-import { Column, GridOption } from '@slickgrid-universal/common';
+import { convertArrayFlatToHierarchical, Column, FieldType, GridOption, sortFlatArrayByHierarchy } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import './example03.scss';
 
+const NB_ITEMS = 20;
+
 export class Example4 {
-  _commandQueue = [];
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
   dataViewObj: any;
   gridObj: any;
-  commandQueue = [];
   slickgridLwc;
   slickerGridInstance;
   durationOrderByCount = false;
-  draggableGroupingPlugin: any;
-  selectedGroupingFields: string[] = ['', '', ''];
   searchString = '';
 
   attached() {
     this.initializeGrid();
     this.dataset = [];
     const gridContainerElm = document.querySelector('.grid4');
-    const gridElm = document.querySelector('.slickgrid-container');
 
     gridContainerElm.addEventListener('onclick', this.handleOnClick.bind(this));
-    gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
-    gridContainerElm.addEventListener('onrowcountchanged', this.handleOnRowCountChanged.bind(this));
-    gridContainerElm.addEventListener('handleonrowschanged', this.handleOnRowsChanged.bind(this));
-    gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions);
     this.dataViewObj = this.slickgridLwc.dataView;
@@ -57,10 +50,6 @@ export class Example4 {
       enableAutoResize: true,
       headerRowHeight: 45,
       rowHeight: 45,
-      editCommandHandler: (item, column, editCommand) => {
-        this._commandQueue.push(editCommand);
-        editCommand.execute();
-      },
     };
   }
 
@@ -75,7 +64,6 @@ export class Example4 {
 
   taskNameFormatter(row, cell, value, columnDef, dataContext) {
     if (value == null || value === undefined || dataContext === undefined) { return ''; }
-    console.log('formatter collased', dataContext?._collapsed)
     value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const spacer = `<span style="display:inline-block;height:1px;width:${15 * dataContext['indent']}px"></span>`;
     const idx = this.dataViewObj.getIdxById(dataContext.id);
@@ -100,54 +88,37 @@ export class Example4 {
     }
 
     if (item.parent != null) {
-      let parent = this.dataset.find(itm => itm.id === `id_${+(item.parent)}`);
+      let parent = this.dataset.find(itm => itm.id === item.parent);
       while (parent) {
         if (parent._collapsed || /* (parent["percentComplete"] < percentCompleteThreshold) || */ (this.searchString !== '' && parent['title'].indexOf(this.searchString) === -1)) {
           return false;
         }
-        const parentId = parent.parent !== null ? `id_${parent.parent}` : null;
+        const parentId = parent.parent !== null ? parent.parent : null;
         parent = this.dataset.find(function (itm2) {
-          return itm2.id === parentId
+          return itm2.id === parentId;
         });
       }
     }
     return true;
   }
 
+  /**
+   * A simple method to add a new item inside the first group that we find.
+   * After adding the item, it will sort by parent/child recursively
+   */
   addNewRow() {
-    const id = this.dataset.length;
+    const newId = this.dataset.length;
     const newIndent = 1;
-
 
     // find first parent object and add the new item as a child
     const childItemFound = this.dataset.find((item) => item.indent === newIndent);
     const parentItemFound = this.dataViewObj.getItemByIdx(childItemFound.parent);
-    // const idx = this.dataViewObj.getIdxById(childItemFound.id);
-    // console.log(childItemFound, parentItemFound)
-    // const itemAfterLast = this.dataset.find((item) => item.indent === (newIndent + 1));
-    // const itemAfterLastIdx = this.dataViewObj.getIdxById(itemAfterLast.id) - 1;
-    // console.log('last item', itemAfterLast)
 
-    // find the last item in the same indented group
-    // let nextOutsideItemIdx;
-    // for (let i = idx; i < this.dataset.length; i++) {
-    //   const loopItem = this.dataset[i];
-    //   // if (loopItem.parent !== parentItemFound.id) {
-    //   //   continue;
-    //   // }
-    //   if (loopItem.indent !== newIndent) {
-
-    //     nextOutsideItemIdx = i;
-    //     break;
-    //   }
-    // }
-
-    // console.log(nextOutsideItemIdx, this.dataset[nextOutsideItemIdx])
     const newItem = {
-      id: 'id_' + id,
+      id: newId,
       indent: newIndent,
-      parent: +(parentItemFound.id.replace('id_', '')),
-      title: `Task ${id}`,
+      parent: parentItemFound.id,
+      title: `Task ${newId}`,
       duration: '1 day',
       percentComplete: 0,
       start: '01/01/2009',
@@ -157,23 +128,27 @@ export class Example4 {
     this.dataViewObj.addItem(newItem);
     this.gridObj.navigateBottom();
     this.dataset = this.dataViewObj.getItems();
-    console.log('new item', newItem, 'parent', parentItemFound)
+    console.log('new item', newItem, 'parent', parentItemFound);
+    console.warn(this.dataset)
+    const resultSortedFlatDataset = sortFlatArrayByHierarchy(
+      this.dataset,
+      {
+        parentPropName: 'parent',
+        childPropName: 'children',
+        direction: 'ASC',
+        identifierPropName: 'id',
+        sortByPropName: 'id',
+        sortPropFieldType: FieldType.number,
+      });
 
-    // this.dataViewObj.sort(this.recursiveSort.bind(this));
-    const sortedData = this.recursiveSort(this.dataset);
-    this.gridObj.invalidate();
-    console.log('dataset', sortedData)
-    // this.dataViewObj.beginUpdate();
-    // this.dataViewObj.setItems(sortedData);
-    // this.dataViewObj.endUpdate();
-    // this.gridObj.render();
-    this.slickgridLwc.dataset = sortedData;
-    this.dataset = sortedData;
+    // update dataset and re-render (invalidate) the grid
+    this.slickgridLwc.dataset = resultSortedFlatDataset;
+    this.dataset = resultSortedFlatDataset;
     this.gridObj.invalidate();
 
-    // this.slickerGridInstance.sortService.updateSorting([
-    //   { columnId: 'indent', direction: 'ASC' },
-    // ]);
+    // scroll to the new row
+    const rowIndex = this.dataViewObj.getIdxById(newItem.id);
+    this.gridObj.scrollRowIntoView(rowIndex, false);
   }
 
   collapseAll() {
@@ -188,95 +163,41 @@ export class Example4 {
     this.gridObj.invalidate();
   }
 
+  recreateDataset() {
+    const newDataset = this.mockDataset();
+    this.slickgridLwc.dataset = newDataset;
+    this.dataset = newDataset;
+    this.gridObj.invalidate();
+  }
+
   handleOnClick(event: any) {
     const eventDetail = event?.detail;
     const args = event?.detail?.args;
 
-    if ($(eventDetail?.eventData?.target).hasClass('toggle')) {
-      const item = this.dataViewObj.getItem(args.row);
-      if (item) {
-        item._collapsed = !item._collapsed ? true : false;
-        this.dataViewObj.updateItem(item.id, item);
+    if (eventDetail && args) {
+      const targetElm = eventDetail.eventData.target || {};
+      const hasToggleClass = targetElm.className.indexOf('toggle') >= 0 || false;
+      if (hasToggleClass) {
+        const item = this.dataViewObj.getItem(args.row);
+        if (item) {
+          item._collapsed = !item._collapsed ? true : false;
+          this.dataViewObj.updateItem(item.id, item);
+          this.gridObj.invalidate();
+        }
+        event.stopImmediatePropagation();
       }
-      event.stopImmediatePropagation();
     }
-  }
-
-  // wire up model events to drive the grid
-  handleOnRowCountChanged() {
-    console.log('handleOnRowCountChanged')
-    if (this.gridObj) {
-      this.gridObj.updateRowCount();
-      this.gridObj.render();
-    }
-  };
-
-  handleOnRowsChanged(event: any) {
-    console.log('handleOnRowsChanged')
-    const args = event?.detail?.args;
-    if (this.gridObj) {
-      this.gridObj.invalidateRows(args.rows);
-      this.gridObj.render();
-    }
-  };
-
-  handleValidationError(event) {
-    console.log('handleValidationError', event.detail);
-    const args = event.detail && event.detail.args;
-    if (args.validationResults) {
-      alert(args.validationResults.msg);
-    }
-  }
-
-  handleItemDeleted(event) {
-    const itemId = event && event.detail;
-    console.log('item deleted with id:', itemId);
   }
 
   handleOnSlickerGridCreated(event) {
     this.slickerGridInstance = event && event.detail;
     this.gridObj = this.slickerGridInstance && this.slickerGridInstance.slickGrid;
     this.dataViewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
-    // this.slickerGridInstance.sortService.updateSorting([
-    //   { columnId: 'indent', direction: 'ASC' },
-    // ]);
   }
 
-  setSort(items) {
-    for (let i = 0; i < items.length; i++) {
-      if (items[i].hasChildren) {
-        items[i].children.sort({ field: 'FullName', dir: 'desc' });
-        this.setSort(items[i].children.view());
-      }
-    }
-  }
-
-  recursiveSort(items) {
-    let tmpArray = [];
-    // items.sort((a, b) => a.indent - b.indent);
-
-    for (let i = 0; i < items.length; i++) {
-      const currentItem = items[i];
-      const previousIndent = currentItem.indent;
-      const nextItem = items[i + 1] || null;
-      if (items[i].parent === null) {
-        tmpArray.push(currentItem);
-      }
-      if (nextItem) {
-        const nextIndent = nextItem.indent;
-        const parent = nextItem.parent;
-        if (nextIndent > previousIndent) {
-          const children = items.filter(item => item.parent === parent);
-          children.sort((a, b) => a.id - b.id);
-          console.log('parent', parent, 'children', children)
-          if (children.length > 0 && !tmpArray.find(tmpItem => children[0].id === tmpItem.id)) {
-            tmpArray = [...tmpArray, ...children];
-          }
-          this.recursiveSort(children);
-        }
-      }
-    }
-    return tmpArray;
+  logExpandedStructure() {
+    const explodedArray = convertArrayFlatToHierarchical(this.dataset, { parentPropName: 'parent', childPropName: 'children' });
+    console.log('exploded array', explodedArray);
   }
 
   mockDataset() {
@@ -285,7 +206,7 @@ export class Example4 {
     const data = [];
 
     // prepare the data
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < NB_ITEMS; i++) {
       const d = (data[i] = {});
       let parent;
 
@@ -303,7 +224,7 @@ export class Example4 {
         parent = null;
       }
 
-      d['id'] = 'id_' + i;
+      d['id'] = i;
       d['indent'] = indent;
       d['parent'] = parent;
       d['title'] = 'Task ' + i;

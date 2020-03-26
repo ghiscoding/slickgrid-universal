@@ -3,7 +3,11 @@
   <div class="column is-narrow">
     <button onclick.delegate="addNewRow()" class="button is-small is-info">
       <span class="icon mdi mdi-plus"></span>
-      <span>Add New Item</span>
+      <span>Add New Item (in 1st group)</span>
+    </button>
+    <button onclick.delegate="recreateDataset()" class="button is-small">
+      <span class="icon mdi mdi-refresh-circle"></span>
+      <span>New Dataset</span>
     </button>
     <button onclick.delegate="collapseAll()" class="button is-small">
       <span class="icon mdi mdi-arrow-collapse"></span>
@@ -12,6 +16,9 @@
     <button onclick.delegate="expandAll()" class="button is-small">
       <span class="icon mdi mdi-arrow-expand"></span>
       <span>Expand All</span>
+    </button>
+    <button onclick.delegate="logExpandedStructure()" class="button is-small">
+      <span>Log Expanded Structure</span>
     </button>
   </div>
   <div class="column is-6">

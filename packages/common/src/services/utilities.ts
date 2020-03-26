@@ -56,7 +56,7 @@ export function convertArrayFlatToHierarchical(flatArray: any[], options?: { par
   // connect childrens to its parent, and split roots apart
   Object.keys(all).forEach((id) => {
     const item = all[id];
-    if (item[parentPropName] === null) {
+    if (item[parentPropName] === null || !item.hasOwnProperty(parentPropName)) {
       roots.push(item);
     } else if (item[parentPropName] in all) {
       const p = all[item[parentPropName]];
@@ -76,14 +76,26 @@ export function convertArrayFlatToHierarchical(flatArray: any[], options?: { par
  * @param outputArray
  * @param options you can provide "childPropName" (defaults to "children")
  */
-export function convertArrayHierarchicalToFlat(hierarchicalArray: any[], outputArray: any[], options: { childPropName?: string; }) {
+export function convertArrayHierarchicalToFlat(hierarchicalArray: any[], options?: { childPropName?: string; }): any[] {
+  const outputArray: any[] = [];
+  const inputArray = $.extend(true, [], hierarchicalArray); // make a deep copy of the input array to avoid modifying that array
+
+  convertArrayHierarchicalToFlatByReference(inputArray, outputArray, options);
+
+  // the output array is the one passed as reference
+  return outputArray;
+}
+
+export function convertArrayHierarchicalToFlatByReference(hierarchicalArray: any[], outputArray: any[], options?: { childPropName?: string; hasChildrenFlagPropName?: string; }) {
   const childPropName = options?.childPropName || 'children';
+  const hasChildrenFlagPropName = options?.hasChildrenFlagPropName || '__hasChildren';
 
   for (const item of hierarchicalArray) {
     if (item) {
       outputArray.push(item);
       if (Array.isArray(item[childPropName])) {
-        convertArrayHierarchicalToFlat(item[childPropName], outputArray, options);
+        convertArrayHierarchicalToFlatByReference(item[childPropName], outputArray, options);
+        item[hasChildrenFlagPropName] = true;
         delete item[childPropName]; // remove the children property
       }
     }

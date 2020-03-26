@@ -8,6 +8,7 @@
     "target": "es2015",
     "module": "esnext",
     "sourceMap": true,
+    "noImplicitReturns": true,
     "lib": [
       "es2020",
       "dom"
