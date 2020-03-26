@@ -46,7 +46,7 @@ export function convertArrayFlatToHierarchical(flatArray: any[], options?: { par
   const parentPropName = options?.parentPropName || 'parent';
   const identifierPropName = options?.identifierPropName || 'id';
 
-  const roots = []; // things without parent
+  const roots: any[] = []; // things without parent
 
   // make them accessible by guid on this map
   const all = {};
