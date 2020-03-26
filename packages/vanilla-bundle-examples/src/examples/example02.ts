@@ -1,4 +1,4 @@
-import { Aggregators, Column, FieldType, Sorters, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters, GridOption } from '@slickgrid-universal/common';
+import { Aggregators, Column, Editors, FieldType, Filters, Sorters, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 
 const actionFormatter = (row, cell, value, columnDef, dataContext) => {
@@ -32,7 +32,8 @@ export class Example2 {
   selectedGroupingFields: string[] = ['', '', ''];
 
   attached() {
-    const dataset = this.initializeGrid();
+    this.initializeGrid();
+    const dataset = this.loadData(500);
     const gridContainerElm = document.querySelector(`.grid2`);
     const gridElm = document.querySelector(`.slickgrid-container`);
 
@@ -48,17 +49,26 @@ export class Example2 {
       {
         id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,
         editor: {
-          model: Slicker.Editors.longText,
+          model: Editors.longText,
           required: true,
           alwaysSaveOnEnterKey: true,
           validator: myCustomTitleValidator, // use a custom validator
         },
         filterable: true,
+        grouping: {
+          getter: 'title',
+          formatter: (g) => `Title:  ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+          aggregators: [
+            new Aggregators.Sum('cost')
+          ],
+          aggregateCollapsed: false,
+          collapsed: false
+        }
       },
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
         editor: {
-          model: Slicker.Editors.integer,
+          model: Editors.integer,
           required: true,
           alwaysSaveOnEnterKey: true,
         },
@@ -99,22 +109,69 @@ export class Example2 {
       {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
         editor: {
-          model: Slicker.Editors.slider,
+          model: Editors.slider,
           minValue: 0,
           maxValue: 100,
           // params: { hideSliderNumber: true },
         },
         sortable: true, filterable: true,
-        filter: { model: Slicker.Filters.slider, operator: '>=' },
+        filter: { model: Filters.slider, operator: '>=' },
+        groupTotalsFormatter: GroupTotalFormatters.avgTotalsPercentage,
+        grouping: {
+          getter: 'percentComplete',
+          formatter: (g) => `% Complete:  ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+          aggregators: [
+            new Aggregators.Sum('cost')
+          ],
+          aggregateCollapsed: false,
+          collapsed: false
+        },
+        params: { groupFormatterPrefix: '<i>Avg</i>: ' },
       },
-      { id: 'start', name: 'Start', field: 'start', sortable: true },
-      { id: 'finish', name: 'Finish', field: 'finish', sortable: true },
       {
-        id: 'completed', name: 'Completed', field: 'completed', sortable: true, formatter: Slicker.Formatters.checkmarkMaterial,
+        id: 'start', name: 'Start', field: 'start', sortable: true,
+        formatter: Formatters.dateIso, type: FieldType.dateUtc, outputType: FieldType.dateIso,
+        grouping: {
+          getter: 'start',
+          formatter: (g) => `Start: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+          aggregators: [
+            new Aggregators.Sum('cost')
+          ],
+          aggregateCollapsed: false,
+          collapsed: false
+        }
+      },
+      {
+        id: 'finish', name: 'Finish', field: 'finish', sortable: true,
+        formatter: Formatters.dateIso, type: FieldType.dateUtc, outputType: FieldType.dateIso,
+        grouping: {
+          getter: 'finish',
+          formatter: (g) => `Finish: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          aggregators: [
+            new Aggregators.Sum('cost')
+          ],
+          aggregateCollapsed: false,
+          collapsed: false
+        }
+      },
+      {
+        id: 'effortDriven', name: 'Effort Driven', field: 'effortDriven',
+        width: 80, minWidth: 20, maxWidth: 100,
+        cssClass: 'cell-effort-driven',
+        sortable: true,
         filterable: true,
         filter: {
-          model: Slicker.Filters.singleSelect,
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
+          model: Filters.singleSelect
+        },
+        formatter: Formatters.checkmarkMaterial,
+        grouping: {
+          getter: 'effortDriven',
+          formatter: (g) => `Effort-Driven: ${g.value ? 'True' : 'False'} <span style="color:green">(${g.count} items)</span>`,
+          aggregators: [
+            new Aggregators.Sum('cost')
+          ],
+          collapsed: false
         }
       },
       {
@@ -237,26 +294,36 @@ export class Example2 {
         },
       },
     };
+  }
 
+  dispose() {
+    this.slickgridLwc.dispose();
+  }
+
+  loadData(count: number) {
     // mock data
     this.dataset = [];
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < count; i++) {
+      const randomYear = 2000 + Math.floor(Math.random() * 10);
+      const randomMonth = Math.floor(Math.random() * 11);
+      const randomDay = Math.floor((Math.random() * 29));
+      const randomPercent = Math.round(Math.random() * 100);
+
       this.dataset[i] = {
         id: i,
         title: 'Task ' + i,
         duration: Math.round(Math.random() * 100) + '',
         percentComplete: Math.round(Math.random() * 100),
-        start: '01/01/2009',
-        finish: '01/05/2009',
+        start: new Date(randomYear, randomMonth, randomDay),
+        finish: new Date(randomYear, (randomMonth + 1), randomDay),
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
         completed: (i % 5 === 0)
       };
     }
+    if (this.slickgridLwc) {
+      this.slickgridLwc.dataset = this.dataset;
+    }
     return this.dataset;
-  }
-
-  dispose() {
-    this.slickgridLwc.dispose();
   }
 
   clearGroupsAndSelects() {
@@ -282,6 +349,64 @@ export class Example2 {
 
   expandAllGroups() {
     this.dataviewObj.expandAllGroups();
+  }
+
+  groupByDuration() {
+    this.clearGrouping();
+    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
+      this.showPreHeader();
+      this.draggableGroupingPlugin.setDroppedGroups('duration');
+      this.gridObj.invalidate(); // invalidate all rows and re-render
+    }
+  }
+
+  groupByDurationOrderByCount(sortedByCount = false) {
+    this.durationOrderByCount = sortedByCount;
+    this.clearGrouping();
+    this.groupByDuration();
+
+    // you need to manually add the sort icon(s) in UI
+    const sortColumns = sortedByCount ? [] : [{ columnId: 'duration', sortAsc: true }];
+    this.gridObj.setSortColumns(sortColumns);
+    this.gridObj.invalidate(); // invalidate all rows and re-render
+  }
+
+  groupByDurationEffortDriven() {
+    this.clearGrouping();
+    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
+      this.showPreHeader();
+      this.draggableGroupingPlugin.setDroppedGroups(['duration', 'effortDriven']);
+      this.gridObj.invalidate(); // invalidate all rows and re-render
+
+      // you need to manually add the sort icon(s) in UI
+      const sortColumns = [{ columnId: 'duration', sortAsc: true }];
+      this.gridObj.setSortColumns(sortColumns);
+    }
+  }
+
+  groupByFieldName(fieldName, index) {
+    this.clearGrouping();
+    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
+      this.showPreHeader();
+
+      // get the field names from Group By select(s) dropdown, but filter out any empty fields
+      const groupedFields = this.selectedGroupingFields.filter((g) => g !== '');
+      if (groupedFields.length === 0) {
+        this.clearGrouping();
+      } else {
+        this.draggableGroupingPlugin.setDroppedGroups(groupedFields);
+      }
+      this.gridObj.invalidate(); // invalidate all rows and re-render
+    }
+  }
+
+  showPreHeader() {
+    this.gridObj.setPreHeaderPanelVisibility(true);
+  }
+
+  toggleDraggableGroupingRow() {
+    this.clearGroupsAndSelects();
+    this.gridObj.setPreHeaderPanelVisibility(!this.gridObj.getOptions().showPreHeaderPanel);
   }
 
   onGroupChanged(change: { caller?: string; groupColumns: Grouping[] }) {

@@ -105,15 +105,15 @@ $link-color: #0099ff;
 }
 
 .toggle {
-  height: 20px;
-  width: 20px;
+  height: 24px;
+  width: 24px;
   display: inline-block;
 
   &.expand {
     cursor: pointer;
     &:before {
       font-family: "Material Design Icons";
-      font-size: 20px;
+      font-size: 24px;
       content: "\F0142";
     }
   }
@@ -122,7 +122,7 @@ $link-color: #0099ff;
     cursor: pointer;
     &:before {
       font-family: "Material Design Icons";
-      font-size: 20px;
+      font-size: 24px;
       content: "\F0140";
     }
   }

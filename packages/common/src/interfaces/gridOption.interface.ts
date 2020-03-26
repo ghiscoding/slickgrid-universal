@@ -58,9 +58,6 @@ export interface GridOption {
   /** Auto-resize options (bottom padding, minHeight, ...)  */
   autoResize?: AutoResizeOption;
 
-  /** defaults to None, Grid Autosize Columns Mode used when calling "autosizeColumns()" method */
-  gridAutosizeColsMode?: GridAutosizeColsMode;
-
   /** Auto-tooltip options (enableForCells, enableForHeaderCells, maxToolTipLength) */
   autoTooltipOptions?: {
     /** are tooltip enabled for all cells? */
@@ -314,14 +311,23 @@ export interface GridOption {
   /** Defaults to false, which leads to have row with full width */
   fullWidthRows?: boolean;
 
+  /** defaults to None, Grid Autosize Columns Mode used when calling "autosizeColumns()" method */
+  gridAutosizeColsMode?: GridAutosizeColsMode;
+
   /** Grid DOM element container ID (used Slickgrid-Universal auto-resizer) */
   gridContainerId?: string;
+
+  /** When using a fixed grid height */
+  gridHeight?: number;
+
+  /** Grid DOM element ID */
+  gridId?: string;
 
   /** Grid Menu options (aka hamburger menu) */
   gridMenu?: GridMenu;
 
-  /** Grid DOM element ID */
-  gridId?: string;
+  /** When using a fixed grid width */
+  gridWidth?: number;
 
   /** Header row height in pixels (only type the number). Header row is where the filters are. */
   headerRowHeight?: number;

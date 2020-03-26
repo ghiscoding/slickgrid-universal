@@ -100,8 +100,6 @@ export class VanillaGridBundle {
   sortService: SortService;
   translateService: TranslateService;
 
-  gridWidthString = 'width: 800px';
-  gridHeightString = 'height: 500px';
   gridClass: string;
   gridClassName: string;
   gridOptions: GridOption;
@@ -153,7 +151,7 @@ export class VanillaGridBundle {
     this.headerMenuExtension = new HeaderMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.translateService);
     this.rowMoveManagerExtension = new RowMoveManagerExtension(this.extensionUtility, this.sharedService);
     this.rowSelectionExtension = new RowSelectionExtension(this.extensionUtility, this.sharedService);
-    this.gridService = new GridService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService)
+    this.gridService = new GridService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
     this.extensionService = new ExtensionService(
       this.autoTooltipExtension,
       this.cellExternalCopyManagerExtension,
@@ -253,12 +251,16 @@ export class VanillaGridBundle {
       this._isDatasetInitialized = true;
     }
 
+    const fixedGridDimensions = (this._gridOptions?.gridHeight || this._gridOptions?.gridWidth) ? { height: this._gridOptions?.gridHeight, width: this._gridOptions?.gridWidth } : null;
+    console.log(fixedGridDimensions, this._gridOptions)
+    this.resizerPlugin = new Slick.Plugins.Resizer(this._gridOptions.autoResize, fixedGridDimensions);
+    this.grid.registerPlugin(this.resizerPlugin);
     if (this._gridOptions.enableAutoResize) {
-      this.resizerPlugin = new Slick.Plugins.Resizer(this._gridOptions.autoResize);
-      this.grid.registerPlugin(this.resizerPlugin);
+      // this.resizerPlugin = new Slick.Plugins.Resizer(this._gridOptions.autoResize);
+      // this.grid.registerPlugin(this.resizerPlugin);
       await this.resizerPlugin.resizeGrid();
-      this.compensateHorizontalScroll(this.grid);
     }
+    this.compensateHorizontalScroll(this.grid);
 
     // user might want to hide the header row on page load but still have `enableFiltering: true`
     // if that is the case, we need to hide the headerRow ONLY AFTER all filters got created & dataView exist

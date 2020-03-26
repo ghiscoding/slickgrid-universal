@@ -160,7 +160,6 @@ export const GlobalGridOptions: GridOption = {
     hideClearSortCommand: false,
     hideSortCommands: false
   },
-  headerRowHeight: 30,
   multiColumnSort: true,
   numberedMultiColumnSort: true,
   tristateMultiColumnSort: false,
@@ -181,6 +180,7 @@ export const GlobalGridOptions: GridOption = {
   //     useSimpleViewportCalc: true,
   //     saveDetailViewOnScroll: false,
   //   },
-  rowHeight: 30,
+  headerRowHeight: 30,
+  rowHeight: 35,
   topPanelHeight: 30
 };
