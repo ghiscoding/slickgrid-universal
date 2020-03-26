@@ -159,10 +159,13 @@ export interface Column {
   /** Field Name translation key that can be used by the translate Service (i18n) to display the text for each column header title */
   nameKey?: string;
 
-  /** an event that can be used for triggering an action after a cell change */
+  /** an event that can be used for executing an action before the cell becomes editable (that event happens before the "onCellChange" event) */
+  onBeforeEditCell?: (e: KeyboardEvent | MouseEvent, args: OnEventArgs) => void;
+
+  /** an event that can be used for executing an action after a cell change */
   onCellChange?: (e: KeyboardEvent | MouseEvent, args: OnEventArgs) => void;
 
-  /** an event that can be used for triggering an action after a cell click */
+  /** an event that can be used for executing an action after a cell click */
   onCellClick?: (e: KeyboardEvent | MouseEvent, args: OnEventArgs) => void;
 
   /** column output type */

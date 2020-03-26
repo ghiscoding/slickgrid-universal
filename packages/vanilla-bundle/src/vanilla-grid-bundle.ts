@@ -31,6 +31,7 @@ import {
 
   // services
   FilterService,
+  GridEventService,
   GridService,
   ExtensionService,
   SharedService,
@@ -92,6 +93,7 @@ export class VanillaGridBundle {
   collectionService: CollectionService;
   extensionService: ExtensionService;
   filterService: FilterService;
+  gridEventService: GridEventService;
   gridService: GridService;
   groupingAndColspanService: GroupingAndColspanService;
   sharedService: SharedService;
@@ -128,6 +130,7 @@ export class VanillaGridBundle {
     this.dataset = dataset || [];
     this._eventPubSubService = new EventPubSubService(gridContainerElm);
 
+    this.gridEventService = new GridEventService();
     const slickgridConfig = new SlickgridConfig();
     this.sharedService = new SharedService();
     this.translateService = new TranslateService();
@@ -263,6 +266,11 @@ export class VanillaGridBundle {
       this.showHeaderRow(false);
     }
 
+    // on cell click, mainly used with the columnDef.action callback
+    this.gridEventService.bindOnBeforeEditCell(this.grid, this.dataView);
+    this.gridEventService.bindOnCellChange(this.grid, this.dataView);
+    this.gridEventService.bindOnClick(this.grid, this.dataView);
+
     const slickerElementInstance = {
       // Slick Grid & DataView objects
       dataView: this.dataView,
@@ -273,7 +281,7 @@ export class VanillaGridBundle {
       // excelExportService: this.excelExportService,
       // exportService: this.exportService,
       filterService: this.filterService,
-      // gridEventService: this.gridEventService,
+      gridEventService: this.gridEventService,
       // gridStateService: this.gridStateService,
       gridService: this.gridService,
       groupingService: this.groupingAndColspanService,

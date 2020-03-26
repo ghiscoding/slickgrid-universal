@@ -431,7 +431,7 @@ export class GridService {
     }
 
     // when user has row selection enabled, we should clear any selection to avoid confusion after a delete
-    const isSyncGridSelectionEnabled = /*this.gridStateService && this.gridStateService.needToPreserveRowSelection() ||*/ false;
+    const isSyncGridSelectionEnabled = /* this.gridStateService && this.gridStateService.needToPreserveRowSelection() || */ false;
     if (!isSyncGridSelectionEnabled && this._grid && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
       this.setSelectedRows([]);
     }

@@ -112,7 +112,7 @@ npm run test:watch
   - [x] Filter
   - [ ] GraphQL (**separate package**)
   - [ ] OData (**separate package**)
-  - [ ] Grid Event
+  - [x] Grid Event
   - [x] Grid Service (helper)
   - [ ] Grid State
   - [x] Grouping & Col Span
