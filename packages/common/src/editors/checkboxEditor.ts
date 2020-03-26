@@ -66,8 +66,12 @@ export class CheckboxEditor implements Editor {
     }
   }
 
-  destroy(): void {
-    this._input.remove();
+  destroy() {
+    const columnId = this.columnDef && this.columnDef.id;
+    const elm = document.querySelector(`editor-checkbox editor-${columnId}`);
+    if (elm) {
+      this._input.remove();
+    }
   }
 
   focus(): void {
