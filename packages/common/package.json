@@ -59,7 +59,7 @@
     "lodash.isequal": "^4.5.0",
     "moment-mini": "^2.24.0",
     "multiple-select-adapted": "^1.3.0",
-    "slickgrid": "^2.4.19"
+    "slickgrid": "^2.4.21"
   },
   "devDependencies": {
     "@types/dompurify": "^2.0.1",
