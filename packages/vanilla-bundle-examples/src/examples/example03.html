@@ -1,43 +1,43 @@
-<h3 class="title is-4">Example 03 - Tree View</h3>
-<div class="columns">
-  <div class="column is-narrow">
-    <button onclick.delegate="addNewRow()" class="button is-small is-info">
-      <span class="icon mdi mdi-plus"></span>
-      <span>Add New Item (in 1st group)</span>
+<h3 class="title is-4">Example 02 - Draggable Grouping</h3>
+
+<section>
+  <div class="row">
+    <button class="btn btn-default btn-xs" onclick.delegate="loadData(500)">
+      500 rows
     </button>
-    <button onclick.delegate="recreateDataset()" class="button is-small">
-      <span class="icon mdi mdi-refresh-circle"></span>
-      <span>New Dataset</span>
+    <button class="btn btn-default btn-xs" onclick.delegate="loadData(50000)">
+      50k rows
     </button>
-    <button onclick.delegate="collapseAll()" class="button is-small">
-      <span class="icon mdi mdi-arrow-collapse"></span>
-      <span>Collapse All</span>
+    <button class="btn btn-default btn-xs" onclick.delegate="clearGroupsAndSelects()">
+      <i class="mdi mdi-close"></i> Clear grouping
     </button>
-    <button onclick.delegate="expandAll()" class="button is-small">
-      <span class="icon mdi mdi-arrow-expand"></span>
-      <span>Expand All</span>
+    <button class="btn btn-default btn-xs" onclick.delegate="collapseAllGroups()">
+      <i class="mdi mdi-arrow-collapse"></i> Collapse all groups
     </button>
-    <button onclick.delegate="logExpandedStructure()" class="button is-small">
-      <span>Log Expanded Structure</span>
+    <button class="btn btn-default btn-xs" onclick.delegate="expandAllGroups()">
+      <i class="mdi mdi-arrow-expand"></i> Expand all groups
+    </button>
+    <button class="btn btn-default btn-xs" onclick.delegate="toggleDraggableGroupingRow()">
+      Toggle Draggable Grouping Row
     </button>
   </div>
-  <div class="column is-6">
-    <div class="field is-horizontal">
-      <div class="field-label is-small">
-        <label class="label">Search Task</label>
-      </div>
-      <div class="field-body">
-        <div class="field">
-          <p class="control">
-            <input type="text" class="input is-small" onkeyup.delegate="searchTask(event)">
-          </p>
-        </div>
-      </div>
-    </div>
+
+  <div class="row">
+    <button class="btn btn-default btn-xs" onclick.delegate="groupByDurationOrderByCount(false)">
+      Group by duration &amp; sort groups by value
+    </button>
+    <button class="btn btn-default btn-xs" onclick.delegate="groupByDurationOrderByCount(true)">
+      Group by duration &amp; sort groups by count
+    </button>
+    <button class="btn btn-default btn-xs" onclick.delegate="groupByDurationEffortDriven()">
+      Group by Duration then Effort-Driven
+    </button>
   </div>
-</div>
+</section>
+
+<br>
 
 <div class="demo-container">
-  <div class="grid4">
+  <div class="grid3">
   </div>
 </div>

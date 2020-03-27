@@ -1,22 +1,7 @@
 import { Aggregators, Column, Editors, FieldType, Filters, Sorters, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 
-const actionFormatter = (row, cell, value, columnDef, dataContext) => {
-  if (dataContext.priority === 3) { // option 3 is High
-    return `<div class="fake-hyperlink">Action <i class="mdi mdi-24px mdi-menu-down"></i></div>`;
-  }
-  return `<div class="disabled">Action <i class="mdi mdi-24px mdi-menu-down"></i></div>`;
-};
-
-// you can create custom validator to pass to an inline editor
-const myCustomTitleValidator = (value, args) => {
-  if (value == null || value === undefined || !value.length) {
-    return { valid: false, msg: 'This is a required field' };
-  } else if (!/^Task\s\d+$/.test(value)) {
-    return { valid: false, msg: 'Your title is invalid, it must start with "Task" followed by a number' };
-  }
-  return { valid: true, msg: '' };
-};
+const NB_ITEMS = 500;
 
 export class Example2 {
   columnDefinitions: Column[];
@@ -27,19 +12,12 @@ export class Example2 {
   commandQueue = [];
   slickgridLwc;
   slickerGridInstance;
-  durationOrderByCount = false;
-  draggableGroupingPlugin: any;
-  selectedGroupingFields: string[] = ['', '', ''];
 
   attached() {
     this.initializeGrid();
     const dataset = this.loadData(500);
     const gridContainerElm = document.querySelector(`.grid2`);
-    const gridElm = document.querySelector(`.slickgrid-container`);
 
-    gridContainerElm.addEventListener('onclick', this.handleOnClick.bind(this));
-    gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
-    gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, dataset);
   }
@@ -47,252 +25,110 @@ export class Example2 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,
-        editor: {
-          model: Editors.longText,
-          required: true,
-          alwaysSaveOnEnterKey: true,
-          validator: myCustomTitleValidator, // use a custom validator
-        },
+        id: 'sel', name: '#', field: 'num', width: 40,
+        excludeFromExport: true,
+        maxWidth: 70,
+        resizable: true,
         filterable: true,
-        grouping: {
-          getter: 'title',
-          formatter: (g) => `Title:  ${g.value}  <span style="color:green">(${g.count} items)</span>`,
-          aggregators: [
-            new Aggregators.Sum('cost')
-          ],
-          aggregateCollapsed: false,
-          collapsed: false
-        }
+        selectable: false,
+        focusable: false
       },
       {
-        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
-        editor: {
-          model: Editors.integer,
-          required: true,
-          alwaysSaveOnEnterKey: true,
-        },
+        id: 'title', name: 'Title', field: 'title',
+        width: 50,
+        minWidth: 50,
+        cssClass: 'cell-title',
+        filterable: true,
+        sortable: true
+      },
+      {
+        id: 'duration', name: 'Duration', field: 'duration',
+        minWidth: 50, width: 60,
+        filterable: true,
+        filter: { model: Filters.slider, operator: '>=' },
+        sortable: true,
         type: FieldType.number,
         groupTotalsFormatter: GroupTotalFormatters.sumTotals,
-        grouping: {
-          getter: 'duration',
-          formatter: (g) => `Duration: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
-          comparer: (a, b) => {
-            return this.durationOrderByCount ? (a.count - b.count) : Sorters.numeric(a.value, b.value, SortDirectionNumber.asc);
-          },
-          aggregators: [
-            new Aggregators.Sum('cost')
-          ],
-          aggregateCollapsed: false,
-          collapsed: false
-        }
+        params: { groupFormatterPrefix: 'Total: ' }
+      },
+      {
+        id: 'percentComplete', name: '% Complete', field: 'percentComplete',
+        minWidth: 70, width: 90,
+        formatter: Formatters.percentCompleteBar,
+        filterable: true,
+        filter: { model: Filters.compoundSlider },
+        sortable: true,
+        type: FieldType.number,
+        groupTotalsFormatter: GroupTotalFormatters.avgTotalsPercentage,
+        params: { groupFormatterPrefix: '<i>Avg</i>: ' }
+      },
+      {
+        id: 'start', name: 'Start', field: 'start',
+        minWidth: 60,
+        maxWidth: 130,
+        // filterable: true,
+        // filter: { model: Filters.compoundDate },
+        sortable: true,
+        type: FieldType.dateIso,
+        formatter: Formatters.dateIso,
+        exportWithFormatter: true
+      },
+      {
+        id: 'finish', name: 'Finish', field: 'finish',
+        minWidth: 60,
+        maxWidth: 130,
+        // filterable: true,
+        // filter: { model: Filters.compoundDate },
+        sortable: true,
+        type: FieldType.dateIso,
+        formatter: Formatters.dateIso,
+        exportWithFormatter: true
       },
       {
         id: 'cost', name: 'Cost', field: 'cost',
-        width: 90,
-        sortable: true,
+        minWidth: 70,
+        width: 80,
+        maxWidth: 120,
         filterable: true,
-        // filter: { model: Filters.compoundInput },
+        filter: { model: Filters.compoundInput },
+        type: FieldType.number,
+        sortable: true,
+        exportWithFormatter: true,
         formatter: Formatters.dollar,
         groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
-        type: FieldType.number,
-        grouping: {
-          getter: 'cost',
-          formatter: (g) => `Cost: ${g.value} <span style="color:green">(${g.count} items)</span>`,
-          aggregators: [
-            new Aggregators.Sum('cost')
-          ],
-          aggregateCollapsed: true,
-          collapsed: true
-        }
+        params: { groupFormatterPrefix: '<b>Total</b>: ' /*, groupFormatterSuffix: ' USD'*/ }
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
-        editor: {
-          model: Editors.slider,
-          minValue: 0,
-          maxValue: 100,
-          // params: { hideSliderNumber: true },
-        },
-        sortable: true, filterable: true,
-        filter: { model: Filters.slider, operator: '>=' },
-        groupTotalsFormatter: GroupTotalFormatters.avgTotalsPercentage,
-        grouping: {
-          getter: 'percentComplete',
-          formatter: (g) => `% Complete:  ${g.value}  <span style="color:green">(${g.count} items)</span>`,
-          aggregators: [
-            new Aggregators.Sum('cost')
-          ],
-          aggregateCollapsed: false,
-          collapsed: false
-        },
-        params: { groupFormatterPrefix: '<i>Avg</i>: ' },
-      },
-      {
-        id: 'start', name: 'Start', field: 'start', sortable: true,
-        formatter: Formatters.dateIso, type: FieldType.dateUtc, outputType: FieldType.dateIso,
-        grouping: {
-          getter: 'start',
-          formatter: (g) => `Start: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
-          aggregators: [
-            new Aggregators.Sum('cost')
-          ],
-          aggregateCollapsed: false,
-          collapsed: false
-        }
-      },
-      {
-        id: 'finish', name: 'Finish', field: 'finish', sortable: true,
-        formatter: Formatters.dateIso, type: FieldType.dateUtc, outputType: FieldType.dateIso,
-        grouping: {
-          getter: 'finish',
-          formatter: (g) => `Finish: ${g.value} <span style="color:green">(${g.count} items)</span>`,
-          aggregators: [
-            new Aggregators.Sum('cost')
-          ],
-          aggregateCollapsed: false,
-          collapsed: false
-        }
-      },
-      {
-        id: 'effortDriven', name: 'Effort Driven', field: 'effortDriven',
-        width: 80, minWidth: 20, maxWidth: 100,
+        id: 'effortDriven', name: 'Effort Driven',
+        minWidth: 30, width: 80, maxWidth: 90,
         cssClass: 'cell-effort-driven',
+        field: 'effortDriven',
+        formatter: Formatters.checkmark,
         sortable: true,
         filterable: true,
         filter: {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
           model: Filters.singleSelect
-        },
-        formatter: Formatters.checkmarkMaterial,
-        grouping: {
-          getter: 'effortDriven',
-          formatter: (g) => `Effort-Driven: ${g.value ? 'True' : 'False'} <span style="color:green">(${g.count} items)</span>`,
-          aggregators: [
-            new Aggregators.Sum('cost')
-          ],
-          collapsed: false
         }
-      },
-      {
-        id: 'action', name: 'Action', field: 'action', width: 110, maxWidth: 200,
-        excludeFromExport: true,
-        formatter: actionFormatter,
-        cellMenu: {
-          hideCloseButton: false,
-          width: 200,
-          // you can override the logic of when the menu is usable
-          // for example say that we want to show a menu only when then Priority is set to 'High'.
-          // Note that this ONLY overrides the usability itself NOT the text displayed in the cell,
-          // if you wish to change the cell text (or hide it)
-          // then you SHOULD use it in combination with a custom formatter (actionFormatter) and use the same logic in that formatter
-          // menuUsabilityOverride: (args) => {
-          //   return (args.dataContext.priority === 3); // option 3 is High
-          // },
-
-          commandTitle: 'Commands',
-          commandItems: [
-            // array of command item objects, you can also use the "positionOrder" that will be used to sort the items in the list
-            {
-              command: 'command2', title: 'Command 2', positionOrder: 62,
-              // you can use the "action" callback and/or use "onCallback" callback from the grid options, they both have the same arguments
-              action: (e, args) => {
-                console.log(args.dataContext, args.column);
-                // action callback.. do something
-              },
-              // only enable command when the task is not completed
-              itemUsabilityOverride: (args) => {
-                return !args.dataContext.completed;
-              }
-            },
-            { command: 'command1', title: 'Command 1', cssClass: 'orange', positionOrder: 61 },
-            {
-              command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'mdi mdi-close', cssClass: 'red', textCssClass: 'bold',
-              // only show command to 'Delete Row' when the task is not completed
-              itemVisibilityOverride: (args) => {
-                return !args.dataContext.completed;
-              }
-            },
-            // you can pass divider as a string or an object with a boolean (if sorting by position, then use the object)
-            // note you should use the "divider" string only when items array is already sorted and positionOrder are not specified
-            { divider: true, command: '', positionOrder: 63 },
-            // 'divider',
-
-            {
-              command: 'help',
-              title: 'Help',
-              iconCssClass: 'mdi mdi-help-circle',
-              positionOrder: 66,
-            },
-            { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67, }
-          ],
-          optionTitle: 'Change Complete Flag',
-          optionItems: [
-            { option: true, title: 'True', iconCssClass: 'mdi mdi-check-box-outline' },
-            { option: false, title: 'False', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
-          ]
-        }
-      },
+      }
     ];
 
     this.gridOptions = {
-      autoEdit: true, // true single click (false for double-click)
-      autoCommitEdit: true,
-      editable: true,
       autoResize: {
         container: '.demo-container',
         rightPadding: 10,
-        bottomPadding: 20,
-        minHeight: 180,
-        minWidth: 300,
       },
-      enableAutoSizeColumns: true,
-      enableAutoResize: true,
-      enableCellNavigation: true,
+      enableExcelExport: true,
       enableFiltering: true,
-      rowSelectionOptions: {
-        // True (Single Selection), False (Multiple Selections)
-        selectActiveRow: false
+      enableGrouping: true,
+      excelExportOptions: {
+        sanitizeDataExport: true
       },
-      createPreHeaderPanel: true,
-      showPreHeaderPanel: true,
-      preHeaderPanelHeight: 40,
-      enableDraggableGrouping: true,
-      draggableGrouping: {
-        dropPlaceHolderText: 'Drop a column header here to group by the column',
-        // groupIconCssClass: 'fa fa-outdent',
-        deleteIconCssClass: 'fa fa-times mdi mdi-close',
-        onGroupChanged: (e, args) => this.onGroupChanged(args),
-        onExtensionRegistered: (extension) => this.draggableGroupingPlugin = extension,
+      exportOptions: {
+        sanitizeDataExport: true
       },
-      enableCheckboxSelector: true,
-      enableRowSelection: true,
-      enableSorting: true,
-      alwaysShowVerticalScroll: false, // disable scroll since we don't want it to show on the left pinned columns
-      // frozenColumn: 2,
-      // frozenRow: 3,
       headerRowHeight: 50,
       rowHeight: 50,
-      editCommandHandler: (item, column, editCommand) => {
-        this.commandQueue.push(editCommand);
-        editCommand.execute();
-      },
-      // when using the cellMenu, you can change some of the default options and all use some of the callback methods
-      enableCellMenu: true,
-      cellMenu: {
-        // all the Cell Menu callback methods (except the action callback)
-        // are available under the grid options as shown below
-        onCommand: (e, args) => this.executeCommand(e, args),
-        onOptionSelected: (e, args) => {
-          // change "Completed" property with new option selected from the Cell Menu
-          const dataContext = args && args.dataContext;
-          if (dataContext && dataContext.hasOwnProperty('completed')) {
-            dataContext.completed = args.item.option;
-            this.slickgridLwc.gridService.updateItem(dataContext);
-          }
-        },
-      },
     };
   }
 
@@ -300,47 +136,33 @@ export class Example2 {
     this.slickgridLwc.dispose();
   }
 
-  loadData(count: number) {
-    // mock data
-    this.dataset = [];
-    for (let i = 0; i < count; i++) {
+  loadData(rowCount: number) {
+    // mock a dataset
+    const tmpArray = [];
+    for (let i = 0; i < rowCount; i++) {
       const randomYear = 2000 + Math.floor(Math.random() * 10);
       const randomMonth = Math.floor(Math.random() * 11);
       const randomDay = Math.floor((Math.random() * 29));
       const randomPercent = Math.round(Math.random() * 100);
 
-      this.dataset[i] = {
-        id: i,
+      tmpArray[i] = {
+        id: 'id_' + i,
+        num: i,
         title: 'Task ' + i,
         duration: Math.round(Math.random() * 100) + '',
-        percentComplete: Math.round(Math.random() * 100),
+        percentComplete: randomPercent,
+        percentCompleteNumber: randomPercent,
         start: new Date(randomYear, randomMonth, randomDay),
         finish: new Date(randomYear, (randomMonth + 1), randomDay),
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
-        completed: (i % 5 === 0)
+        effortDriven: (i % 5 === 0)
       };
     }
-    if (this.slickgridLwc) {
-      this.slickgridLwc.dataset = this.dataset;
-    }
-    return this.dataset;
-  }
-
-  clearGroupsAndSelects() {
-    this.clearGroupingSelects();
-    this.clearGrouping();
-  }
-
-  clearGroupingSelects() {
-    this.selectedGroupingFields.forEach((g, i) => this.selectedGroupingFields[i] = '');
-    this.selectedGroupingFields = [...this.selectedGroupingFields]; // force dirty checking
+    return tmpArray;
   }
 
   clearGrouping() {
-    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
-      this.draggableGroupingPlugin.clearDroppedGroups();
-    }
-    this.gridObj.invalidate(); // invalidate all rows and re-render
+    this.dataviewObj.setGrouping([]);
   }
 
   collapseAllGroups() {
@@ -352,91 +174,116 @@ export class Example2 {
   }
 
   groupByDuration() {
-    this.clearGrouping();
-    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
-      this.showPreHeader();
-      this.draggableGroupingPlugin.setDroppedGroups('duration');
-      this.gridObj.invalidate(); // invalidate all rows and re-render
-    }
-  }
-
-  groupByDurationOrderByCount(sortedByCount = false) {
-    this.durationOrderByCount = sortedByCount;
-    this.clearGrouping();
-    this.groupByDuration();
+    this.dataviewObj.setGrouping({
+      getter: 'duration',
+      formatter: (g) => `Duration:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
+      comparer: (a, b) => {
+        return Sorters.numeric(a.value, b.value, SortDirectionNumber.asc);
+      },
+      aggregators: [
+        new Aggregators.Avg('percentComplete'),
+        new Aggregators.Sum('cost')
+      ],
+      aggregateCollapsed: false,
+      lazyTotalsCalculation: true
+    } as Grouping);
 
     // you need to manually add the sort icon(s) in UI
-    const sortColumns = sortedByCount ? [] : [{ columnId: 'duration', sortAsc: true }];
-    this.gridObj.setSortColumns(sortColumns);
+    this.gridObj.setSortColumns([{ columnId: 'duration', sortAsc: true }]);
+    this.gridObj.invalidate(); // invalidate all rows and re-render
+  }
+
+  groupByDurationOrderByCount(aggregateCollapsed) {
+    this.gridObj.setSortColumns([]);
+    this.dataviewObj.setGrouping({
+      getter: 'duration',
+      formatter: (g) => `Duration:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
+      comparer: (a, b) => {
+        return a.count - b.count;
+      },
+      aggregators: [
+        new Aggregators.Avg('percentComplete'),
+        new Aggregators.Sum('cost')
+      ],
+      aggregateCollapsed,
+      lazyTotalsCalculation: true
+    } as Grouping);
     this.gridObj.invalidate(); // invalidate all rows and re-render
   }
 
   groupByDurationEffortDriven() {
-    this.clearGrouping();
-    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
-      this.showPreHeader();
-      this.draggableGroupingPlugin.setDroppedGroups(['duration', 'effortDriven']);
-      this.gridObj.invalidate(); // invalidate all rows and re-render
-
-      // you need to manually add the sort icon(s) in UI
-      const sortColumns = [{ columnId: 'duration', sortAsc: true }];
-      this.gridObj.setSortColumns(sortColumns);
-    }
-  }
-
-  groupByFieldName(fieldName, index) {
-    this.clearGrouping();
-    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
-      this.showPreHeader();
-
-      // get the field names from Group By select(s) dropdown, but filter out any empty fields
-      const groupedFields = this.selectedGroupingFields.filter((g) => g !== '');
-      if (groupedFields.length === 0) {
-        this.clearGrouping();
-      } else {
-        this.draggableGroupingPlugin.setDroppedGroups(groupedFields);
+    this.gridObj.setSortColumns([]);
+    this.dataviewObj.setGrouping([
+      {
+        getter: 'duration',
+        formatter: (g) => `Duration:  ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+        aggregators: [
+          new Aggregators.Sum('duration'),
+          new Aggregators.Sum('cost')
+        ],
+        aggregateCollapsed: true,
+        lazyTotalsCalculation: true
+      },
+      {
+        getter: 'effortDriven',
+        formatter: (g) => `Effort-Driven:  ${(g.value ? 'True' : 'False')} <span style="color:green">(${g.count} items)</span>`,
+        aggregators: [
+          new Aggregators.Avg('percentComplete'),
+          new Aggregators.Sum('cost')
+        ],
+        collapsed: true,
+        lazyTotalsCalculation: true
       }
-      this.gridObj.invalidate(); // invalidate all rows and re-render
-    }
+    ] as Grouping[]);
+
+    // you need to manually add the sort icon(s) in UI
+    const sortColumns = [{ columnId: 'duration', sortAsc: true }, { columnId: 'effortDriven', sortAsc: true }];
+    this.gridObj.setSortColumns(sortColumns);
+    this.gridObj.invalidate(); // invalidate all rows and re-render
   }
 
-  showPreHeader() {
-    this.gridObj.setPreHeaderPanelVisibility(true);
-  }
+  groupByDurationEffortDrivenPercent() {
+    this.gridObj.setSortColumns([]);
+    this.dataviewObj.setGrouping([
+      {
+        getter: 'duration',
+        formatter: (g) => `Duration:  ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+        aggregators: [
+          new Aggregators.Sum('duration'),
+          new Aggregators.Sum('cost')
+        ],
+        aggregateCollapsed: true,
+        lazyTotalsCalculation: true
+      },
+      {
+        getter: 'effortDriven',
+        formatter: (g) => `Effort-Driven:  ${(g.value ? 'True' : 'False')}  <span style="color:green">(${g.count} items)</span>`,
+        aggregators: [
+          new Aggregators.Sum('duration'),
+          new Aggregators.Sum('cost')
+        ],
+        lazyTotalsCalculation: true
+      },
+      {
+        getter: 'percentComplete',
+        formatter: (g) => `% Complete:  ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+        aggregators: [
+          new Aggregators.Avg('percentComplete')
+        ],
+        aggregateCollapsed: true,
+        collapsed: true,
+        lazyTotalsCalculation: true
+      }
+    ] as Grouping[]);
 
-  toggleDraggableGroupingRow() {
-    this.clearGroupsAndSelects();
-    this.gridObj.setPreHeaderPanelVisibility(!this.gridObj.getOptions().showPreHeaderPanel);
-  }
-
-  onGroupChanged(change: { caller?: string; groupColumns: Grouping[] }) {
-    const caller = change && change.caller || [];
-    const groups = change && change.groupColumns || [];
-
-    if (Array.isArray(this.selectedGroupingFields) && Array.isArray(groups) && groups.length > 0) {
-      // update all Group By select dropdown
-      this.selectedGroupingFields.forEach((g, i) => this.selectedGroupingFields[i] = groups[i] && groups[i].getter || '');
-      this.selectedGroupingFields = [...this.selectedGroupingFields]; // force dirty checking
-    } else if (groups.length === 0 && caller === 'remove-group') {
-      this.clearGroupingSelects();
-    }
-  }
-
-  handleOnClick(event) {
-    console.log('onClick', event.detail);
-  }
-
-  handleValidationError(event) {
-    console.log('handleValidationError', event.detail);
-    const args = event.detail && event.detail.args;
-    if (args.validationResults) {
-      alert(args.validationResults.msg);
-    }
-  }
-
-  handleItemDeleted(event) {
-    const itemId = event && event.detail;
-    console.log('item deleted with id:', itemId);
+    // you need to manually add the sort icon(s) in UI
+    const sortColumns = [
+      { columnId: 'duration', sortAsc: true },
+      { columnId: 'effortDriven', sortAsc: true },
+      { columnId: 'percentComplete', sortAsc: true }
+    ];
+    this.gridObj.setSortColumns(sortColumns);
+    this.gridObj.invalidate(); // invalidate all rows and re-render
   }
 
   handleOnSlickerGridCreated(event) {

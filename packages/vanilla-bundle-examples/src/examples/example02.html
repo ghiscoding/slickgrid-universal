@@ -1,4 +1,4 @@
-<h3 class="title is-4">Example 02 - Draggable Grouping</h3>
+<h3 class="title is-4">Example 02 - Grouping &amp; Aggregators</h3>
 
 <section>
   <div class="row">
@@ -8,7 +8,7 @@
     <button class="btn btn-default btn-xs" onclick.delegate="loadData(50000)">
       50k rows
     </button>
-    <button class="btn btn-default btn-xs" onclick.delegate="clearGroupsAndSelects()">
+    <button class="btn btn-default btn-xs" onclick.delegate="clearGrouping()">
       <i class="mdi mdi-close"></i> Clear grouping
     </button>
     <button class="btn btn-default btn-xs" onclick.delegate="collapseAllGroups()">
@@ -17,20 +17,23 @@
     <button class="btn btn-default btn-xs" onclick.delegate="expandAllGroups()">
       <i class="mdi mdi-arrow-expand"></i> Expand all groups
     </button>
-    <button class="btn btn-default btn-xs" onclick.delegate="toggleDraggableGroupingRow()">
-      Toggle Draggable Grouping Row
-    </button>
   </div>
 
   <div class="row">
+    <button class="btn btn-default btn-xs" onclick.delegate="groupByDuration()">
+      Group by Duration &amp; sort groups by value
+    </button>
     <button class="btn btn-default btn-xs" onclick.delegate="groupByDurationOrderByCount(false)">
-      Group by duration &amp; sort groups by value
+      Group by Duration &amp; sort groups by count
     </button>
     <button class="btn btn-default btn-xs" onclick.delegate="groupByDurationOrderByCount(true)">
-      Group by duration &amp; sort groups by count
+      Group by Duration &amp; sort groups by count, aggregate collapsed
     </button>
     <button class="btn btn-default btn-xs" onclick.delegate="groupByDurationEffortDriven()">
       Group by Duration then Effort-Driven
+    </button>
+    <button class="btn btn-default btn-xs" onclick.delegate="groupByDurationEffortDrivenPercent()">
+      Group by Duration then Effort-Driven then Percent.
     </button>
   </div>
 </section>

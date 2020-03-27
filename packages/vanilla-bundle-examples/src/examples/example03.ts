@@ -1,55 +1,297 @@
-import { convertArrayFlatToHierarchical, Column, FieldType, GridOption, sortFlatArrayByHierarchy } from '@slickgrid-universal/common';
+import { Aggregators, Column, Editors, FieldType, Filters, Sorters, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
-import './example03.scss';
 
-const NB_ITEMS = 20;
+const actionFormatter = (row, cell, value, columnDef, dataContext) => {
+  if (dataContext.priority === 3) { // option 3 is High
+    return `<div class="fake-hyperlink">Action <i class="mdi mdi-24px mdi-menu-down"></i></div>`;
+  }
+  return `<div class="disabled">Action <i class="mdi mdi-24px mdi-menu-down"></i></div>`;
+};
 
-export class Example4 {
+// you can create custom validator to pass to an inline editor
+const myCustomTitleValidator = (value, args) => {
+  if (value == null || value === undefined || !value.length) {
+    return { valid: false, msg: 'This is a required field' };
+  } else if (!/^Task\s\d+$/.test(value)) {
+    return { valid: false, msg: 'Your title is invalid, it must start with "Task" followed by a number' };
+  }
+  return { valid: true, msg: '' };
+};
+
+export class Example3 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
-  dataset: any[];
-  dataViewObj: any;
+  dataset;
+  dataviewObj: any;
   gridObj: any;
+  commandQueue = [];
   slickgridLwc;
   slickerGridInstance;
   durationOrderByCount = false;
-  searchString = '';
+  draggableGroupingPlugin: any;
+  selectedGroupingFields: string[] = ['', '', ''];
 
   attached() {
     this.initializeGrid();
-    this.dataset = [];
-    const gridContainerElm = document.querySelector('.grid4');
+    const dataset = this.loadData(500);
+    const gridContainerElm = document.querySelector(`.grid3`);
 
     gridContainerElm.addEventListener('onclick', this.handleOnClick.bind(this));
+    gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
+    gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions);
-    this.dataViewObj = this.slickgridLwc.dataView;
-    this.dataViewObj.setFilter(this.myFilter.bind(this));
-    this.dataset = this.mockDataset();
-    this.slickgridLwc.dataset = this.dataset;
+    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, dataset);
   }
 
   initializeGrid() {
     this.columnDefinitions = [
-      { id: 'title', name: 'Title', field: 'title', width: 220, cssClass: 'cell-title', filterable: true, formatter: this.taskNameFormatter.bind(this) },
-      { id: 'duration', name: 'Duration', field: 'duration', minWidth: 90 },
-      { id: '%', name: '% Complete', field: 'percentComplete', width: 120, resizable: false, formatter: Slicker.Formatters.percentCompleteBar },
-      { id: 'start', name: 'Start', field: 'start', minWidth: 60 },
-      { id: 'finish', name: 'Finish', field: 'finish', minWidth: 60 },
       {
-        id: 'effort-driven', name: 'Effort Driven', width: 80, minWidth: 20, maxWidth: 80, cssClass: 'cell-effort-driven', field: 'effortDriven',
-        formatter: Slicker.Formatters.checkmarkMaterial, cannotTriggerInsert: true
-      }
+        id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,
+        editor: {
+          model: Editors.longText,
+          required: true,
+          alwaysSaveOnEnterKey: true,
+          validator: myCustomTitleValidator, // use a custom validator
+        },
+        filterable: true,
+        grouping: {
+          getter: 'title',
+          formatter: (g) => `Title:  ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+          aggregators: [
+            new Aggregators.Sum('cost')
+          ],
+          aggregateCollapsed: false,
+          collapsed: false
+        }
+      },
+      {
+        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
+        editor: {
+          model: Editors.integer,
+          required: true,
+          alwaysSaveOnEnterKey: true,
+        },
+        type: FieldType.number,
+        groupTotalsFormatter: GroupTotalFormatters.sumTotals,
+        grouping: {
+          getter: 'duration',
+          formatter: (g) => `Duration: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+          comparer: (a, b) => {
+            return this.durationOrderByCount ? (a.count - b.count) : Sorters.numeric(a.value, b.value, SortDirectionNumber.asc);
+          },
+          aggregators: [
+            new Aggregators.Sum('cost')
+          ],
+          aggregateCollapsed: false,
+          collapsed: false
+        }
+      },
+      {
+        id: 'cost', name: 'Cost', field: 'cost',
+        width: 90,
+        sortable: true,
+        filterable: true,
+        // filter: { model: Filters.compoundInput },
+        formatter: Formatters.dollar,
+        groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
+        type: FieldType.number,
+        grouping: {
+          getter: 'cost',
+          formatter: (g) => `Cost: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          aggregators: [
+            new Aggregators.Sum('cost')
+          ],
+          aggregateCollapsed: true,
+          collapsed: true
+        }
+      },
+      {
+        id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
+        editor: {
+          model: Editors.slider,
+          minValue: 0,
+          maxValue: 100,
+          // params: { hideSliderNumber: true },
+        },
+        sortable: true, filterable: true,
+        filter: { model: Filters.slider, operator: '>=' },
+        groupTotalsFormatter: GroupTotalFormatters.avgTotalsPercentage,
+        grouping: {
+          getter: 'percentComplete',
+          formatter: (g) => `% Complete:  ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+          aggregators: [
+            new Aggregators.Sum('cost')
+          ],
+          aggregateCollapsed: false,
+          collapsed: false
+        },
+        params: { groupFormatterPrefix: '<i>Avg</i>: ' },
+      },
+      {
+        id: 'start', name: 'Start', field: 'start', sortable: true,
+        formatter: Formatters.dateIso, type: FieldType.dateUtc, outputType: FieldType.dateIso,
+        grouping: {
+          getter: 'start',
+          formatter: (g) => `Start: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+          aggregators: [
+            new Aggregators.Sum('cost')
+          ],
+          aggregateCollapsed: false,
+          collapsed: false
+        }
+      },
+      {
+        id: 'finish', name: 'Finish', field: 'finish', sortable: true,
+        formatter: Formatters.dateIso, type: FieldType.dateUtc, outputType: FieldType.dateIso,
+        grouping: {
+          getter: 'finish',
+          formatter: (g) => `Finish: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          aggregators: [
+            new Aggregators.Sum('cost')
+          ],
+          aggregateCollapsed: false,
+          collapsed: false
+        }
+      },
+      {
+        id: 'effortDriven', name: 'Effort Driven', field: 'effortDriven',
+        width: 80, minWidth: 20, maxWidth: 100,
+        cssClass: 'cell-effort-driven',
+        sortable: true,
+        filterable: true,
+        filter: {
+          collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
+          model: Filters.singleSelect
+        },
+        formatter: Formatters.checkmarkMaterial,
+        grouping: {
+          getter: 'effortDriven',
+          formatter: (g) => `Effort-Driven: ${g.value ? 'True' : 'False'} <span style="color:green">(${g.count} items)</span>`,
+          aggregators: [
+            new Aggregators.Sum('cost')
+          ],
+          collapsed: false
+        }
+      },
+      {
+        id: 'action', name: 'Action', field: 'action', width: 110, maxWidth: 200,
+        excludeFromExport: true,
+        formatter: actionFormatter,
+        cellMenu: {
+          hideCloseButton: false,
+          width: 200,
+          // you can override the logic of when the menu is usable
+          // for example say that we want to show a menu only when then Priority is set to 'High'.
+          // Note that this ONLY overrides the usability itself NOT the text displayed in the cell,
+          // if you wish to change the cell text (or hide it)
+          // then you SHOULD use it in combination with a custom formatter (actionFormatter) and use the same logic in that formatter
+          // menuUsabilityOverride: (args) => {
+          //   return (args.dataContext.priority === 3); // option 3 is High
+          // },
+
+          commandTitle: 'Commands',
+          commandItems: [
+            // array of command item objects, you can also use the "positionOrder" that will be used to sort the items in the list
+            {
+              command: 'command2', title: 'Command 2', positionOrder: 62,
+              // you can use the "action" callback and/or use "onCallback" callback from the grid options, they both have the same arguments
+              action: (e, args) => {
+                console.log(args.dataContext, args.column);
+                // action callback.. do something
+              },
+              // only enable command when the task is not completed
+              itemUsabilityOverride: (args) => {
+                return !args.dataContext.completed;
+              }
+            },
+            { command: 'command1', title: 'Command 1', cssClass: 'orange', positionOrder: 61 },
+            {
+              command: 'delete-row', title: 'Delete Row', positionOrder: 64,
+              iconCssClass: 'mdi mdi-close', cssClass: 'red', textCssClass: 'bold',
+              // only show command to 'Delete Row' when the task is not completed
+              itemVisibilityOverride: (args) => {
+                return !args.dataContext.completed;
+              }
+            },
+            // you can pass divider as a string or an object with a boolean (if sorting by position, then use the object)
+            // note you should use the "divider" string only when items array is already sorted and positionOrder are not specified
+            { divider: true, command: '', positionOrder: 63 },
+            // 'divider',
+
+            {
+              command: 'help',
+              title: 'Help',
+              iconCssClass: 'mdi mdi-help-circle',
+              positionOrder: 66,
+            },
+            { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67, }
+          ],
+          optionTitle: 'Change Complete Flag',
+          optionItems: [
+            { option: true, title: 'True', iconCssClass: 'mdi mdi-check-box-outline' },
+            { option: false, title: 'False', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
+          ]
+        }
+      },
     ];
 
     this.gridOptions = {
+      autoEdit: true, // true single click (false for double-click)
+      autoCommitEdit: true,
+      editable: true,
       autoResize: {
         container: '.demo-container',
+        rightPadding: 10,
+        bottomPadding: 20,
+        minHeight: 180,
+        minWidth: 300,
       },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
-      headerRowHeight: 45,
-      rowHeight: 45,
+      enableCellNavigation: true,
+      enableFiltering: true,
+      rowSelectionOptions: {
+        // True (Single Selection), False (Multiple Selections)
+        selectActiveRow: false
+      },
+      createPreHeaderPanel: true,
+      showPreHeaderPanel: true,
+      preHeaderPanelHeight: 40,
+      enableDraggableGrouping: true,
+      draggableGrouping: {
+        dropPlaceHolderText: 'Drop a column header here to group by the column',
+        // groupIconCssClass: 'fa fa-outdent',
+        deleteIconCssClass: 'fa fa-times mdi mdi-close',
+        onGroupChanged: (e, args) => this.onGroupChanged(args),
+        onExtensionRegistered: (extension) => this.draggableGroupingPlugin = extension,
+      },
+      enableCheckboxSelector: true,
+      enableRowSelection: true,
+      enableSorting: true,
+      alwaysShowVerticalScroll: false, // disable scroll since we don't want it to show on the left pinned columns
+      // frozenColumn: 2,
+      // frozenRow: 3,
+      headerRowHeight: 50,
+      rowHeight: 50,
+      editCommandHandler: (item, column, editCommand) => {
+        this.commandQueue.push(editCommand);
+        editCommand.execute();
+      },
+      // when using the cellMenu, you can change some of the default options and all use some of the callback methods
+      enableCellMenu: true,
+      cellMenu: {
+        // all the Cell Menu callback methods (except the action callback)
+        // are available under the grid options as shown below
+        onCommand: (e, args) => this.executeCommand(e, args),
+        onOptionSelected: (e, args) => {
+          // change "Completed" property with new option selected from the Cell Menu
+          const dataContext = args && args.dataContext;
+          if (dataContext && dataContext.hasOwnProperty('completed')) {
+            dataContext.completed = args.item.option;
+            this.slickgridLwc.gridService.updateItem(dataContext);
+          }
+        },
+      },
     };
   }
 
@@ -57,183 +299,172 @@ export class Example4 {
     this.slickgridLwc.dispose();
   }
 
-  searchTask(event: KeyboardEvent) {
-    this.searchString = (event.target as HTMLInputElement).value;
-    this.dataViewObj.refresh();
+  loadData(count: number) {
+    // mock data
+    const tmpArray = [];
+    for (let i = 0; i < count; i++) {
+      const randomYear = 2000 + Math.floor(Math.random() * 10);
+      const randomMonth = Math.floor(Math.random() * 11);
+      const randomDay = Math.floor((Math.random() * 29));
+      const randomPercent = Math.round(Math.random() * 100);
+
+      tmpArray[i] = {
+        id: i,
+        title: 'Task ' + i,
+        duration: Math.round(Math.random() * 100) + '',
+        percentComplete: Math.round(Math.random() * 100),
+        start: new Date(randomYear, randomMonth, randomDay),
+        finish: new Date(randomYear, (randomMonth + 1), randomDay),
+        cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
+        completed: (i % 5 === 0)
+      };
+    }
+    if (this.slickgridLwc) {
+      this.slickgridLwc.dataset = tmpArray;
+    }
+    return tmpArray;
   }
 
-  taskNameFormatter(row, cell, value, columnDef, dataContext) {
-    if (value == null || value === undefined || dataContext === undefined) { return ''; }
-    value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    const spacer = `<span style="display:inline-block;height:1px;width:${15 * dataContext['indent']}px"></span>`;
-    const idx = this.dataViewObj.getIdxById(dataContext.id);
+  clearGroupsAndSelects() {
+    this.clearGroupingSelects();
+    this.clearGrouping();
+  }
 
-    if (this.dataset[idx + 1] && this.dataset[idx + 1].indent > this.dataset[idx].indent) {
-      if (dataContext._collapsed) {
-        return `${spacer}<span class="toggle expand"></span>&nbsp;${value}`;
+  clearGroupingSelects() {
+    this.selectedGroupingFields.forEach((g, i) => this.selectedGroupingFields[i] = '');
+    this.selectedGroupingFields = [...this.selectedGroupingFields]; // force dirty checking
+  }
+
+  clearGrouping() {
+    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
+      this.draggableGroupingPlugin.clearDroppedGroups();
+    }
+    this.gridObj.invalidate(); // invalidate all rows and re-render
+  }
+
+  collapseAllGroups() {
+    this.dataviewObj.collapseAllGroups();
+  }
+
+  expandAllGroups() {
+    this.dataviewObj.expandAllGroups();
+  }
+
+  groupByDuration() {
+    this.clearGrouping();
+    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
+      this.showPreHeader();
+      this.draggableGroupingPlugin.setDroppedGroups('duration');
+      this.gridObj.invalidate(); // invalidate all rows and re-render
+    }
+  }
+
+  groupByDurationOrderByCount(sortedByCount = false) {
+    this.durationOrderByCount = sortedByCount;
+    this.clearGrouping();
+    this.groupByDuration();
+
+    // you need to manually add the sort icon(s) in UI
+    const sortColumns = sortedByCount ? [] : [{ columnId: 'duration', sortAsc: true }];
+    this.gridObj.setSortColumns(sortColumns);
+    this.gridObj.invalidate(); // invalidate all rows and re-render
+  }
+
+  groupByDurationEffortDriven() {
+    this.clearGrouping();
+    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
+      this.showPreHeader();
+      this.draggableGroupingPlugin.setDroppedGroups(['duration', 'effortDriven']);
+      this.gridObj.invalidate(); // invalidate all rows and re-render
+
+      // you need to manually add the sort icon(s) in UI
+      const sortColumns = [{ columnId: 'duration', sortAsc: true }];
+      this.gridObj.setSortColumns(sortColumns);
+    }
+  }
+
+  groupByFieldName(fieldName, index) {
+    this.clearGrouping();
+    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
+      this.showPreHeader();
+
+      // get the field names from Group By select(s) dropdown, but filter out any empty fields
+      const groupedFields = this.selectedGroupingFields.filter((g) => g !== '');
+      if (groupedFields.length === 0) {
+        this.clearGrouping();
       } else {
-        return `${spacer}<span class="toggle collapse"></span>&nbsp;${value}`;
+        this.draggableGroupingPlugin.setDroppedGroups(groupedFields);
       }
+      this.gridObj.invalidate(); // invalidate all rows and re-render
     }
-    return `${spacer}<span class="toggle"></span>&nbsp;${value}`;
   }
 
-  myFilter(item) {
-    // if (item["percentComplete"] < percentCompleteThreshold) {
-    //   return false;
-    // }
+  showPreHeader() {
+    this.gridObj.setPreHeaderPanelVisibility(true);
+  }
 
-    if (this.searchString !== '' && item['title'].indexOf(this.searchString) === -1) {
-      return false;
+  toggleDraggableGroupingRow() {
+    this.clearGroupsAndSelects();
+    this.gridObj.setPreHeaderPanelVisibility(!this.gridObj.getOptions().showPreHeaderPanel);
+  }
+
+  onGroupChanged(change: { caller?: string; groupColumns: Grouping[] }) {
+    const caller = change && change.caller || [];
+    const groups = change && change.groupColumns || [];
+
+    if (Array.isArray(this.selectedGroupingFields) && Array.isArray(groups) && groups.length > 0) {
+      // update all Group By select dropdown
+      this.selectedGroupingFields.forEach((g, i) => this.selectedGroupingFields[i] = groups[i] && groups[i].getter || '');
+      this.selectedGroupingFields = [...this.selectedGroupingFields]; // force dirty checking
+    } else if (groups.length === 0 && caller === 'remove-group') {
+      this.clearGroupingSelects();
     }
+  }
 
-    if (item.parent != null) {
-      let parent = this.dataset.find(itm => itm.id === item.parent);
-      while (parent) {
-        if (parent._collapsed || /* (parent["percentComplete"] < percentCompleteThreshold) || */ (this.searchString !== '' && parent['title'].indexOf(this.searchString) === -1)) {
-          return false;
-        }
-        const parentId = parent.parent !== null ? parent.parent : null;
-        parent = this.dataset.find(function (itm2) {
-          return itm2.id === parentId;
-        });
-      }
+  handleOnClick(event) {
+    console.log('onClick', event.detail);
+  }
+
+  handleValidationError(event) {
+    console.log('handleValidationError', event.detail);
+    const args = event.detail && event.detail.args;
+    if (args.validationResults) {
+      alert(args.validationResults.msg);
     }
-    return true;
   }
 
-  /**
-   * A simple method to add a new item inside the first group that we find.
-   * After adding the item, it will sort by parent/child recursively
-   */
-  addNewRow() {
-    const newId = this.dataset.length;
-    const newIndent = 1;
-
-    // find first parent object and add the new item as a child
-    const childItemFound = this.dataset.find((item) => item.indent === newIndent);
-    const parentItemFound = this.dataViewObj.getItemByIdx(childItemFound.parent);
-
-    const newItem = {
-      id: newId,
-      indent: newIndent,
-      parent: parentItemFound.id,
-      title: `Task ${newId}`,
-      duration: '1 day',
-      percentComplete: 0,
-      start: '01/01/2009',
-      finish: '01/01/2009',
-      effortDriven: false
-    };
-    this.dataViewObj.addItem(newItem);
-    this.gridObj.navigateBottom();
-    this.dataset = this.dataViewObj.getItems();
-    console.log('new item', newItem, 'parent', parentItemFound);
-    console.warn(this.dataset)
-    const resultSortedFlatDataset = sortFlatArrayByHierarchy(
-      this.dataset,
-      {
-        parentPropName: 'parent',
-        childPropName: 'children',
-        direction: 'ASC',
-        identifierPropName: 'id',
-        sortByPropName: 'id',
-        sortPropFieldType: FieldType.number,
-      });
-
-    // update dataset and re-render (invalidate) the grid
-    this.slickgridLwc.dataset = resultSortedFlatDataset;
-    this.dataset = resultSortedFlatDataset;
-    this.gridObj.invalidate();
-
-    // scroll to the new row
-    const rowIndex = this.dataViewObj.getIdxById(newItem.id);
-    this.gridObj.scrollRowIntoView(rowIndex, false);
-  }
-
-  collapseAll() {
-    this.dataset.forEach((item) => item._collapsed = true);
-    this.slickgridLwc.dataset = this.dataset;
-    this.gridObj.invalidate();
-  }
-
-  expandAll() {
-    this.dataset.forEach((item) => item._collapsed = false);
-    this.slickgridLwc.dataset = this.dataset;
-    this.gridObj.invalidate();
-  }
-
-  recreateDataset() {
-    const newDataset = this.mockDataset();
-    this.slickgridLwc.dataset = newDataset;
-    this.dataset = newDataset;
-    this.gridObj.invalidate();
-  }
-
-  handleOnClick(event: any) {
-    const eventDetail = event?.detail;
-    const args = event?.detail?.args;
-
-    if (eventDetail && args) {
-      const targetElm = eventDetail.eventData.target || {};
-      const hasToggleClass = targetElm.className.indexOf('toggle') >= 0 || false;
-      if (hasToggleClass) {
-        const item = this.dataViewObj.getItem(args.row);
-        if (item) {
-          item._collapsed = !item._collapsed ? true : false;
-          this.dataViewObj.updateItem(item.id, item);
-          this.gridObj.invalidate();
-        }
-        event.stopImmediatePropagation();
-      }
-    }
+  handleItemDeleted(event) {
+    const itemId = event && event.detail;
+    console.log('item deleted with id:', itemId);
   }
 
   handleOnSlickerGridCreated(event) {
     this.slickerGridInstance = event && event.detail;
     this.gridObj = this.slickerGridInstance && this.slickerGridInstance.slickGrid;
-    this.dataViewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
+    this.dataviewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
+    console.log('handleOnSlickerGridCreated', this.slickerGridInstance);
   }
 
-  logExpandedStructure() {
-    const explodedArray = convertArrayFlatToHierarchical(this.dataset, { parentPropName: 'parent', childPropName: 'children' });
-    console.log('exploded array', explodedArray);
-  }
+  executeCommand(e, args) {
+    const columnDef = args.column;
+    const command = args.command;
+    const dataContext = args.dataContext;
 
-  mockDataset() {
-    let indent = 0;
-    const parents = [];
-    const data = [];
-
-    // prepare the data
-    for (let i = 0; i < NB_ITEMS; i++) {
-      const d = (data[i] = {});
-      let parent;
-
-      if (Math.random() > 0.8 && i > 0) {
-        indent++;
-        parents.push(i - 1);
-      } else if (Math.random() < 0.3 && indent > 0) {
-        indent--;
-        parents.pop();
-      }
-
-      if (parents.length > 0) {
-        parent = parents[parents.length - 1];
-      } else {
-        parent = null;
-      }
-
-      d['id'] = i;
-      d['indent'] = indent;
-      d['parent'] = parent;
-      d['title'] = 'Task ' + i;
-      d['duration'] = '5 days';
-      d['percentComplete'] = Math.round(Math.random() * 100);
-      d['start'] = '01/01/2009';
-      d['finish'] = '01/05/2009';
-      d['effortDriven'] = (i % 5 === 0);
+    switch (command) {
+      case 'command1':
+        alert('Command 1');
+        break;
+      case 'command2':
+        alert('Command 2');
+        break;
+      case 'help':
+        alert('Please help!');
+        break;
+      case 'delete-row':
+        if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"`)) {
+          this.slickerGridInstance.gridService.deleteItemById(dataContext.id);
+        }
+        break;
     }
-    return data;
   }
 }

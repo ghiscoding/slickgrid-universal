@@ -25,6 +25,9 @@ export class Example4 {
   dataviewObj: any;
   gridObj: any;
   commandQueue = [];
+  frozenColumnCount = 2;
+  frozenRowCount = 3;
+  isFrozenBottom = false;
   slickgridLwc;
   slickerGridInstance;
   durationOrderByCount = false;
@@ -275,8 +278,9 @@ export class Example4 {
       enableRowSelection: true,
       enableSorting: true,
       alwaysShowVerticalScroll: false, // disable scroll since we don't want it to show on the left pinned columns
-      frozenColumn: 2,
-      frozenRow: 3,
+      frozenColumn: this.frozenColumnCount,
+      frozenRow: this.frozenRowCount,
+      // frozenBottom: true, // if you want to freeze the bottom instead of the top, you can enable this property
       headerRowHeight: 50,
       rowHeight: 50,
       editCommandHandler: (item, column, editCommand) => {
@@ -337,6 +341,34 @@ export class Example4 {
   handleItemDeleted(event) {
     const itemId = event && event.detail;
     console.log('item deleted with id:', itemId);
+  }
+
+  /** change dynamically, through slickgrid "setOptions()" the number of pinned columns */
+  changeFrozenColumnCount() {
+    if (this.gridObj && this.gridObj.setOptions) {
+      this.gridObj.setOptions({
+        frozenColumn: this.frozenColumnCount
+      });
+    }
+  }
+
+  /** change dynamically, through slickgrid "setOptions()" the number of pinned rows */
+  changeFrozenRowCount() {
+    if (this.gridObj && this.gridObj.setOptions) {
+      this.gridObj.setOptions({
+        frozenRow: this.frozenRowCount
+      });
+    }
+  }
+
+  /** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */
+  toggleFrozenBottomRows() {
+    if (this.gridObj && this.gridObj.setOptions) {
+      this.gridObj.setOptions({
+        frozenBottom: !this.isFrozenBottom
+      });
+      this.isFrozenBottom = !this.isFrozenBottom; // toggle the variable
+    }
   }
 
   handleOnSlickerGridCreated(event) {

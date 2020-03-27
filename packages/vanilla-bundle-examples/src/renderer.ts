@@ -21,7 +21,7 @@ export class Renderer {
       if (module.hasOwnProperty(this.className)) {
         this.viewModel = new module[this.className]();
         window[this.className] = this.viewModel;
-        return this.viewModel
+        return this.viewModel;
       }
     }
     return null;
