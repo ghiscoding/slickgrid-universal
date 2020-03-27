@@ -2,11 +2,10 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
+[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 [![CircleCI](https://circleci.com/gh/ghiscoding/slickgrid-universal/tree/master.svg?style=shield)](https://circleci.com/gh/ghiscoding/workflows/slickgrid-universal/tree/master)
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
-<!-- [![npm version](https://badge.fury.io/js/slickgrid-universal.svg)](//npmjs.com/package/slickgrid-universal)
-[![NPM downloads](https://img.shields.io/npm/dy/slickgrid-universal.svg)](https://npmjs.org/package/slickgrid-universal) -->
 
 This is a monorepo project (using Lerna) which is regrouping a few packages under a single repository. The goal is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). It's also a good opportunity to decouple some other features/services that not every user require, this will also help in getting a smaller bundle size. For example, not many users require backend services (OData, GraphQL), which is why they are better handled in a monorepo structure.
 
@@ -19,12 +18,12 @@ You might be wondering why was this monorepo created?
 ### Framework using this monorepo
 This is a Work in Progress, eventually [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) will be rewritten to use this monorepo which will simplify debugging/fixing common code. 
 
-However, this project is built with a Vanilla Implementation (no associated to any framework) and that is what the UI will be tested with. The Vanilla bundle is also used in our SalesForce (with Lighning Web Component) hence the creation of this monorepo.
+However note, that this project also has a Vanilla Implementation (not associated to any framework) and that is what the UI will be tested with. The Vanilla bundle is also used in our SalesForce (with Lighning Web Component) hence the creation of this monorepo.
 
 The main packages structure is the following
 - `@slickgrid-universal/common`: commonly used Formatters/Editors/Filters/Services/...
   - this can then be used by any Framework (Angular, Aurelia, Vanilla, ...)
-- `@slickgrid-universal/vanilla-bundle`: a vanilla JS implementation (no framework)
+- `@slickgrid-universal/vanilla-bundle`: a vanilla TypeScript/JavaScript implementation (no framework)
 - `slickgrid-universal/vanilla-bundle-examples` standalone package for demo purposes and UI testing (not a public package)
 
 ### Installation
