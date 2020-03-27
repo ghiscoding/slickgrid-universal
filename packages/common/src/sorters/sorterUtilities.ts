@@ -63,11 +63,11 @@ export function sortFlatArrayByHierarchy(flatArray: any[], options?: { sortPropF
   const inputArray: any[] = $.extend(true, [], flatArray); // make a deep copy of the input array to avoid modifying that array
 
   // step 1: convert array to a hierarchical structure so that we can sort it
-  const resultFlatArray = convertArrayFlatToHierarchical(inputArray, options);
+  const outputArrayRef = convertArrayFlatToHierarchical(inputArray, options);
 
   // step 2: sort the hierarchical array
-  sortHierarchicalArray(resultFlatArray, options);
-  const inputHierarchicalArray: any[] = $.extend(true, [], resultFlatArray); // make a deep copy of the input array to avoid modifying that array
+  sortHierarchicalArray(outputArrayRef, options);
+  const inputHierarchicalArray: any[] = $.extend(true, [], outputArrayRef); // make a deep copy of the input array to avoid modifying that array
 
   // step 3: re-convert the array back to a flat structure and return it
   const resultSortedFlatDataset = convertArrayHierarchicalToFlat(inputHierarchicalArray, options);

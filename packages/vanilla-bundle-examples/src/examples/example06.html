@@ -1,0 +1,43 @@
+<h3 class="title is-4">Example 03 - Tree View from Hierarchical Dataset</h3>
+<div class="columns">
+  <div class="column is-narrow">
+    <button onclick.delegate="addNewRow()" class="button is-small is-info">
+      <span class="icon mdi mdi-plus"></span>
+      <span>Add New Item (in 1st group)</span>
+    </button>
+    <button onclick.delegate="recreateDataset()" class="button is-small">
+      <span class="icon mdi mdi-refresh-circle"></span>
+      <span>New Dataset</span>
+    </button>
+    <button onclick.delegate="collapseAll()" class="button is-small">
+      <span class="icon mdi mdi-arrow-collapse"></span>
+      <span>Collapse All</span>
+    </button>
+    <button onclick.delegate="expandAll()" class="button is-small">
+      <span class="icon mdi mdi-arrow-expand"></span>
+      <span>Expand All</span>
+    </button>
+    <button onclick.delegate="logExpandedStructure()" class="button is-small">
+      <span>Log Expanded Structure</span>
+    </button>
+  </div>
+  <div class="column is-6">
+    <div class="field is-horizontal">
+      <div class="field-label is-small">
+        <label class="label">Search Task</label>
+      </div>
+      <div class="field-body">
+        <div class="field">
+          <p class="control">
+            <input type="text" class="input is-small" onkeyup.delegate="searchTask(event)">
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="demo-container">
+  <div class="grid5">
+  </div>
+</div>

@@ -243,7 +243,7 @@ export class FilterService {
     //   if (item.parent !== null) {
     //     let parent = data[item.parent];
     //     while (parent) {
-    //       if (parent._collapsed) {
+    //       if (parent.__collapsed) {
     //         return false;
     //       }
     //       parent = data[parent.parent];

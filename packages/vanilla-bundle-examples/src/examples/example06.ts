@@ -1,4 +1,4 @@
-import { convertArrayFlatToHierarchical, Column, FieldType, GridOption, sortFlatArrayByHierarchy } from '@slickgrid-universal/common';
+import { convertArrayFlatToHierarchical, Column, FieldType, GridOption, sortFlatArrayByHierarchy, convertArrayHierarchicalToFlat } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import './example05.scss';
 
@@ -25,13 +25,14 @@ export class Example5 {
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions);
     this.dataViewObj = this.slickgridLwc.dataView;
     this.dataViewObj.setFilter(this.myFilter.bind(this));
-    this.dataset = this.mockDataset();
+    // this.dataset = this.mockDataset();
+    this.dataset = convertArrayHierarchicalToFlat(this.mockDataset(), { childPropName: 'children' });
     this.slickgridLwc.dataset = this.dataset;
   }
 
   initializeGrid() {
     this.columnDefinitions = [
-      { id: 'title', name: 'Title', field: 'title', width: 220, cssClass: 'cell-title', filterable: true, formatter: this.taskNameFormatter.bind(this) },
+      { id: 'title', name: 'Title', field: 'title', width: 220, cssClass: 'cell-title', filterable: true, formatter: this.treeFormatter.bind(this) },
       { id: 'duration', name: 'Duration', field: 'duration', minWidth: 90 },
       { id: '%', name: '% Complete', field: 'percentComplete', width: 120, resizable: false, formatter: Slicker.Formatters.percentCompleteBar },
       { id: 'start', name: 'Start', field: 'start', minWidth: 60 },
@@ -62,20 +63,19 @@ export class Example5 {
     this.dataViewObj.refresh();
   }
 
-  taskNameFormatter(row, cell, value, columnDef, dataContext) {
+  treeFormatter(row, cell, value, columnDef, dataContext) {
     if (value == null || value === undefined || dataContext === undefined) { return ''; }
     value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    const spacer = `<span style="display:inline-block;height:1px;width:${15 * dataContext['__tr']}px"></span>`;
-    const idx = this.dataViewObj.getIdxById(dataContext.id);
+    const spacer = `<span style="display:inline-block;height:1px;width:${20 * dataContext['__treeLevel']}px"></span>`;
 
-    if (this.dataset[idx + 1] && this.dataset[idx + 1].__tr > this.dataset[idx].__tr) {
-      if (dataContext._collapsed) {
+    if (dataContext['__hasChildren']) {
+      if (dataContext.__collapsed) {
         return `${spacer}<span class="toggle expand"></span>&nbsp;${value}`;
       } else {
         return `${spacer}<span class="toggle collapse"></span>&nbsp;${value}`;
       }
     }
-    return `${spacer}<span class="toggle"></span>&nbsp;${value}`;
+    return `${spacer}<span class=""></span>&nbsp;${value}`;
   }
 
   myFilter(item) {
@@ -90,13 +90,11 @@ export class Example5 {
     if (item.parent != null) {
       let parent = this.dataset.find(itm => itm.id === item.parent);
       while (parent) {
-        if (parent._collapsed || /* (parent["percentComplete"] < percentCompleteThreshold) || */ (this.searchString !== '' && parent['title'].indexOf(this.searchString) === -1)) {
+        if (parent.__collapsed || /* (parent["percentComplete"] < percentCompleteThreshold) || */ (this.searchString !== '' && parent['title'].indexOf(this.searchString) === -1)) {
           return false;
         }
         const parentId = parent.parent !== null ? parent.parent : null;
-        parent = this.dataset.find(function (itm2) {
-          return itm2.id === parentId;
-        });
+        parent = this.dataset.find((itm2) => itm2.id === parentId);
       }
     }
     return true;
@@ -108,15 +106,14 @@ export class Example5 {
    */
   addNewRow() {
     const newId = this.dataset.length;
-    const new__tr = 1;
+    const newTreeLevel = 1;
 
     // find first parent object and add the new item as a child
-    const childItemFound = this.dataset.find((item) => item.__tr === new__tr);
+    const childItemFound = this.dataset.find((item) => item.__treeLevel === newTreeLevel);
     const parentItemFound = this.dataViewObj.getItemByIdx(childItemFound.parent);
 
     const newItem = {
       id: newId,
-      __tr: new__tr,
       parent: parentItemFound.id,
       title: `Task ${newId}`,
       duration: '1 day',
@@ -152,13 +149,13 @@ export class Example5 {
   }
 
   collapseAll() {
-    this.dataset.forEach((item) => item._collapsed = true);
+    this.dataset.forEach((item) => item.__collapsed = true);
     this.slickgridLwc.dataset = this.dataset;
     this.gridObj.invalidate();
   }
 
   expandAll() {
-    this.dataset.forEach((item) => item._collapsed = false);
+    this.dataset.forEach((item) => item.__collapsed = false);
     this.slickgridLwc.dataset = this.dataset;
     this.gridObj.invalidate();
   }
@@ -180,7 +177,7 @@ export class Example5 {
       if (hasToggleClass) {
         const item = this.dataViewObj.getItem(args.row);
         if (item) {
-          item._collapsed = !item._collapsed ? true : false;
+          item.__collapsed = !item.__collapsed ? true : false;
           this.dataViewObj.updateItem(item.id, item);
           this.gridObj.invalidate();
         }
@@ -200,8 +197,14 @@ export class Example5 {
     console.log('exploded array', explodedArray);
   }
 
+  logFlatStructure() {
+    const outputHierarchicalArray = convertArrayFlatToHierarchical(this.dataset, { parentPropName: 'parent', childPropName: 'children' });
+    const outputFlatArray = convertArrayHierarchicalToFlat(outputHierarchicalArray, { childPropName: 'children' });
+    console.log('flat array', outputFlatArray);
+  }
+
   mockDataset() {
-    let __tr = 0;
+    let indent = 0;
     const parents = [];
     const data = [];
 
@@ -211,10 +214,10 @@ export class Example5 {
       let parent;
 
       if (Math.random() > 0.8 && i > 0) {
-        __tr++;
+        indent++;
         parents.push(i - 1);
-      } else if (Math.random() < 0.3 && __tr > 0) {
-        __tr--;
+      } else if (Math.random() < 0.3 && indent > 0) {
+        indent--;
         parents.pop();
       }
 
@@ -225,7 +228,6 @@ export class Example5 {
       }
 
       d['id'] = i;
-      d['__tr'] = __tr;
       d['parent'] = parent;
       d['title'] = 'Task ' + i;
       d['duration'] = '5 days';
