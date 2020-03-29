@@ -1,4 +1,5 @@
 const { ProvidePlugin } = require('webpack');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -77,21 +78,23 @@ module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, 
       'window.jQuery': 'jquery',
       'window.$': 'jquery',
     }),
-    ...when(!production, new HtmlWebpackPlugin({
+    new HtmlWebpackPlugin({
       template: 'index.ejs',
       metadata: {
         // available in index.ejs //
         title, baseUrl
       }
-    })),
-    ...when(!production, new CopyWebpackPlugin([
+    }),
+    new CopyWebpackPlugin([
       // { from: 'static', to: outDir, ignore: ['.*'] }, // ignore dot (hidden) files
       { from: `${srcDir}/favicon.ico`, to: 'favicon.ico' },
       // { from: 'assets', to: 'assets' }
-    ])),
+    ]),
     ...when(extractCss, new MiniCssExtractPlugin({ // updated to match the naming conventions for the js files
       filename: production ? '[name].[contenthash].bundle.css' : '[name].[hash].bundle.css',
       chunkFilename: production ? '[name].[contenthash].chunk.css' : '[name].[hash].chunk.css'
     })),
+    // Note that the usage of following plugin cleans the webpack output directory before build.
+    new CleanWebpackPlugin(),
   ]
 });

@@ -123,8 +123,8 @@ npm run test:watch
 #### Other Todos
 - [x] VScode Chrome Debugger
 - [x] Jest Debugger
-- [ ] Add Multiple Example Demos with Vanilla implementation
-  - [ ] Add GitHub Demo website
+- [x] Add Multiple Example Demos with Vanilla implementation
+  - [x] Add GitHub Demo website
 - [x] Add CI/CD (CircleCI or GitHub Actions)
   - [x] Add Jest Unit tests
   - [ ] Add Cypress E2E tests

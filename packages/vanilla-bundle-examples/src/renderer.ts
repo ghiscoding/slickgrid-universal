@@ -1,5 +1,3 @@
-import * as DOMPurify from 'dompurify';
-
 export class Renderer {
   view: any;
   viewModel: any;
@@ -28,18 +26,18 @@ export class Renderer {
   }
 
   parseTemplate(viewTemplate: string) {
-    return viewTemplate.replace(/([a-z]*){1}.(delegate)="(.*)"/gi, this.parseEventBinding.bind(this));
+    return viewTemplate.replace(/([a-z]*){1}.(delegate)="?(.*?)(\))/gi, this.parseEventBinding.bind(this));
   }
 
-  parseEventBinding(match: string, eventName: string, eventType: string, callbackFn: Function) {
+  parseEventBinding(match: string, eventName: string, eventType: string, callbackFn: string, lastChar: string) {
     let output = '';
 
     switch (eventType) {
       case 'delegate':
-        output = `${eventName.toLowerCase()}="window.${this.className}.${callbackFn}"`;
+        output = `${eventName.toLowerCase()}="window.${this.className.trim()}.${callbackFn.trim()}${lastChar}"`;
         break;
     }
-    return DOMPurify.sanitize(output || '');
+    return (output || '');
   }
 
   render(html: string) {

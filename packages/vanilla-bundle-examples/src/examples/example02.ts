@@ -116,7 +116,6 @@ export class Example2 {
     this.gridOptions = {
       autoResize: {
         container: '.demo-container',
-        rightPadding: 10,
       },
       enableExcelExport: true,
       enableFiltering: true,

@@ -81,27 +81,29 @@ export function convertArrayHierarchicalToFlat(hierarchicalArray: any[], options
   const inputArray = $.extend(true, [], hierarchicalArray); // make a deep copy of the input array to avoid modifying that array
 
   convertArrayHierarchicalToFlatByOutputArrayReference(inputArray, outputArray, options, 0);
-  console.log(outputArray.map(itm => ({ __treeLevel: itm.__treeLevel, title: itm.title })));
+
   // the output array is the one passed as reference
   return outputArray;
 }
 
-export function convertArrayHierarchicalToFlatByOutputArrayReference(hierarchicalArray: any[], outputArray: any[], options?: { childPropName?: string; hasChildrenFlagPropName?: string; treeLevelPropName?: string; identifierPropName?: string; reevaluateTreeLevel?: boolean; }, treeLevel = 0) {
+export function convertArrayHierarchicalToFlatByOutputArrayReference(hierarchicalArray: any[], outputArray: any[], options?: { childPropName?: string; parentIdPropName?: string; hasChildrenFlagPropName?: string; treeLevelPropName?: string; identifierPropName?: string; reevaluateTreeLevel?: boolean; }, treeLevel = 0, parentId?: string) {
   const childPropName = options?.childPropName || 'children';
   const identifierPropName = options?.identifierPropName || 'id';
   const hasChildrenFlagPropName = options?.hasChildrenFlagPropName || '__hasChildren';
   const treeLevelPropName = options?.treeLevelPropName || '__treeLevel';
+  const parentIdPropName = options?.parentIdPropName || '__parentId';
 
   for (const item of hierarchicalArray) {
     if (item) {
       const itemExist = outputArray.find((itm: any) => itm[identifierPropName] === item[identifierPropName]);
       if (!itemExist) {
         item[treeLevelPropName] = treeLevel; // save tree level ref
+        item[parentIdPropName] = parentId || null;
         outputArray.push(item);
       }
       if (Array.isArray(item[childPropName])) {
         treeLevel++;
-        convertArrayHierarchicalToFlatByOutputArrayReference(item[childPropName], outputArray, options, treeLevel);
+        convertArrayHierarchicalToFlatByOutputArrayReference(item[childPropName], outputArray, options, treeLevel, item[identifierPropName]);
         treeLevel--;
         item[hasChildrenFlagPropName] = true;
         delete item[childPropName]; // remove the children property

@@ -241,10 +241,6 @@ export class Example3 {
       editable: true,
       autoResize: {
         container: '.demo-container',
-        rightPadding: 10,
-        bottomPadding: 20,
-        minHeight: 180,
-        minWidth: 300,
       },
       enableAutoSizeColumns: true,
       enableAutoResize: true,

@@ -1,4 +1,4 @@
-import { convertArrayFlatToHierarchical, Column, FieldType, GridOption, sortFlatArrayByHierarchy } from '@slickgrid-universal/common';
+import { convertArrayFlatToHierarchical, Column, FieldType, GridOption, sortFlatArrayByHierarchy, convertArrayHierarchicalToFlat } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import './example05.scss';
 
@@ -63,19 +63,19 @@ export class Example5 {
   }
 
   taskNameFormatter(row, cell, value, columnDef, dataContext) {
-    if (value == null || value === undefined || dataContext === undefined) { return ''; }
+    if (value === null || value === undefined || dataContext === undefined) { return ''; }
     value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const spacer = `<span style="display:inline-block;height:1px;width:${15 * dataContext['__tr']}px"></span>`;
     const idx = this.dataViewObj.getIdxById(dataContext.id);
 
     if (this.dataset[idx + 1] && this.dataset[idx + 1].__tr > this.dataset[idx].__tr) {
       if (dataContext._collapsed) {
-        return `${spacer}<span class="toggle expand"></span>&nbsp;${value}`;
+        return `${spacer}<span class="slick-group-toggle collapsed"></span>&nbsp;${value}`;
       } else {
-        return `${spacer}<span class="toggle collapse"></span>&nbsp;${value}`;
+        return `${spacer}<span class="slick-group-toggle expanded"></span>&nbsp;${value}`;
       }
     }
-    return `${spacer}<span class="toggle"></span>&nbsp;${value}`;
+    return `${spacer}<span class="slick-group-toggle"></span>&nbsp;${value}`;
   }
 
   myFilter(item) {
@@ -87,7 +87,7 @@ export class Example5 {
       return false;
     }
 
-    if (item.parent != null) {
+    if (item.parent !== null) {
       let parent = this.dataset.find(itm => itm.id === item.parent);
       while (parent) {
         if (parent._collapsed || /* (parent["percentComplete"] < percentCompleteThreshold) || */ (this.searchString !== '' && parent['title'].indexOf(this.searchString) === -1)) {
@@ -129,7 +129,7 @@ export class Example5 {
     this.gridObj.navigateBottom();
     this.dataset = this.dataViewObj.getItems();
     console.log('new item', newItem, 'parent', parentItemFound);
-    console.warn(this.dataset)
+    console.warn(this.dataset);
     const resultSortedFlatDataset = sortFlatArrayByHierarchy(
       this.dataset,
       {
@@ -198,6 +198,12 @@ export class Example5 {
   logExpandedStructure() {
     const explodedArray = convertArrayFlatToHierarchical(this.dataset, { parentPropName: 'parent', childPropName: 'children' });
     console.log('exploded array', explodedArray);
+  }
+
+  logFlatStructure() {
+    const outputHierarchicalArray = convertArrayFlatToHierarchical(this.dataset, { parentPropName: 'parent', childPropName: 'children' });
+    const outputFlatArray = convertArrayHierarchicalToFlat(outputHierarchicalArray, { childPropName: 'children' });
+    console.log('flat array', outputFlatArray, JSON.stringify(outputFlatArray, null, 2));
   }
 
   mockDataset() {

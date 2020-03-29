@@ -457,6 +457,12 @@ export interface GridOption {
   /** What is the top panel height in pixels (only type the number) */
   topPanelHeight?: number;
 
+  /** Tree View options */
+  treeViewOptions?: {
+    /** Column field property id associated to the tree view, in other words, which field in the dataaset is associated to the three column displayed */
+    fieldId: string;
+  }
+
   /** Defaults to false, when set to True will lead to multiple columns sorting without the need to hold or do shift-click to execute a multiple sort. */
   tristateMultiColumnSort?: boolean;
 

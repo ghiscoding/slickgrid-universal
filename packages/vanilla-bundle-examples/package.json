@@ -6,6 +6,7 @@
     "src": "src"
   },
   "scripts": {
+    "build:prod": "webpack --env.production --extractCss",
     "dev:watch": "webpack-dev-server --env.server --extractCss",
     "test": "echo testing slickgrid-universal demo code"
   },
@@ -26,6 +27,7 @@
   "dependencies": {
     "@slickgrid-universal/common": "^0.0.2",
     "@slickgrid-universal/vanilla-bundle": "^0.0.2",
+    "bulma": "^0.8.1",
     "moment-mini": "^2.24.0"
   },
   "devDependencies": {
@@ -33,6 +35,7 @@
     "@types/moment": "^2.13.0",
     "@types/node": "^12.12.32",
     "@types/webpack": "^4.41.8",
+    "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.4.2",
     "html-loader": "^1.0.0",

@@ -81,8 +81,7 @@ module.exports = {
     "constructor-super": "error",
     "dot-notation": "off",
     "eqeqeq": [
-      "error",
-      "smart"
+      "error"
     ],
     "guard-for-in": "error",
     "id-blacklist": "off",

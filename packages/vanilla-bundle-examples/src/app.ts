@@ -9,6 +9,7 @@ export class App {
   stateBangChar: string;
   renderer: Renderer;
   appRouting: any;
+  baseUrl = window.location.origin + window.location.pathname;
   routerConfig: RouterConfig = {
     pushState: false,
     routes: []
@@ -23,11 +24,19 @@ export class App {
 
   attached() {
     this.renderer = new Renderer(document.querySelector('view-route'));
-    const route = window.location.pathname.replace(this.stateBangChar, '') || this.defaultRouteName;
+    const location = window.location;
+    let route = this.routerConfig.pushState ? location.pathname.replace(this.stateBangChar, '') : location.hash.replace(this.stateBangChar, '');
+    if (!route || route === '/') {
+      route = this.defaultRouteName;
+    }
     this.loadRoute(route);
 
     // re-render on browser history navigation change
-    window.onpopstate = () => this.loadRoute(window.location.pathname.replace(this.stateBangChar, ''), false);
+    window.onpopstate = () => {
+      const location = window.location;
+      const prevRoute = this.routerConfig.pushState ? location.pathname.replace(this.stateBangChar, '') : location.hash.replace(this.stateBangChar, '');
+      this.loadRoute(prevRoute || this.defaultRouteName, false);
+    };
   }
 
   loadRoute(routeName: string, changeBrowserState = true) {
@@ -43,7 +52,7 @@ export class App {
 
       // change browser's history state & title
       if (changeBrowserState) {
-        window.history.pushState({}, routeName, `${window.location.origin}${this.stateBangChar}${routeName}`);
+        window.history.pushState({}, routeName, `${this.baseUrl}${this.stateBangChar}${routeName}`);
       }
       document.title = `${this.documentTitle} · ${mapRoute.name}`;
     }
