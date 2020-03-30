@@ -2,7 +2,7 @@ import { RouterConfig } from './interfaces';
 
 export class AppRouting {
   constructor(config: RouterConfig) {
-    config.pushState = true;
+    config.pushState = false;
     config.routes = [
       { route: 'example01', name: 'example01', title: 'Example01', moduleId: './examples/example01' },
       { route: 'example02', name: 'example02', title: 'Example02', moduleId: './examples/example02' },
