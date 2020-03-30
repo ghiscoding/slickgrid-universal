@@ -11,7 +11,8 @@ const path = require('path');
 // primary config:
 const title = 'Slickgrid-Universal';
 const baseUrl = '';
-const outDir = path.resolve(__dirname, 'dist');
+const outDirLocal = path.resolve(__dirname, 'dist');
+const outDirProd = path.resolve(__dirname, '../../docs');
 const srcDir = path.resolve(__dirname, 'src');
 const nodeModulesDir = path.resolve(__dirname, 'node_modules');
 const cssRules = [
@@ -34,7 +35,7 @@ module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, 
     warnings: false
   },
   output: {
-    path: outDir,
+    path: production ? outDirProd : outDirLocal,
     publicPath: baseUrl,
     filename: production ? '[name].[chunkhash].bundle.js' : '[name].[hash].bundle.js',
     sourceMapFilename: production ? '[name].[chunkhash].bundle.map' : '[name].[hash].bundle.map',
@@ -62,7 +63,7 @@ module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, 
     ],
   },
   devServer: {
-    contentBase: outDir,
+    contentBase: production ? outDirProd : outDirLocal,
     // serve index.html for all 404 (required for push-state)
     historyApiFallback: true,
     hot: hmr || platform.hmr,
