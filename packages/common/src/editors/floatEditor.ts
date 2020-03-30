@@ -86,9 +86,9 @@ export class FloatEditor implements Editor {
 
   destroy() {
     const columnId = this.columnDef && this.columnDef.id;
-    const elm = document.querySelector(`editor-text editor-${columnId}`);
+    const elm = document.querySelector(`.editor-text.editor-${columnId}`);
     if (elm) {
-      this._input.remove();
+      elm.removeEventListener('focusout', () => { });
     }
   }
 
