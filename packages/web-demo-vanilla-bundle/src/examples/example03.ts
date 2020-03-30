@@ -129,7 +129,8 @@ export class Example3 {
       },
       {
         id: 'start', name: 'Start', field: 'start', sortable: true,
-        formatter: Formatters.dateIso, type: FieldType.dateUtc, outputType: FieldType.dateIso,
+        formatter: Formatters.dateIso, type: FieldType.date, outputType: FieldType.dateIso,
+        editor: { model: Editors.date, },
         grouping: {
           getter: 'start',
           formatter: (g) => `Start: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
@@ -142,7 +143,8 @@ export class Example3 {
       },
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true,
-        formatter: Formatters.dateIso, type: FieldType.dateUtc, outputType: FieldType.dateIso,
+        editor: { model: Editors.date, },
+        formatter: Formatters.dateIso, type: FieldType.date, outputType: FieldType.dateIso,
         grouping: {
           getter: 'finish',
           formatter: (g) => `Finish: ${g.value} <span style="color:green">(${g.count} items)</span>`,

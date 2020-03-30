@@ -8,6 +8,7 @@
     "target": "es2015",
     "module": "esnext",
     "sourceMap": true,
+    "allowSyntheticDefaultImports": false,
     "noImplicitReturns": true,
     "lib": [
       "es2020",

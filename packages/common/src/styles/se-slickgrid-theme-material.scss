@@ -1,12 +1,17 @@
+/** internally SE material theme for work */
+@import './multiple-select';
+@import './roboto-font.scss';
+
 $font-family:                           Roboto, "Helvetica Neue", sans-serif;
 $font-size-base-value:                  14;
 $icon-font-family:                      "Material Design Icons";
 $icon-font-size:                        20px;
 $group-totals-formatter-color:          #666666;
 $cell-border-top:                       none;
+$header-background-color:               #F3F3F3;
 $header-border-bottom:                  1px solid #ccc;
 $header-font-size:                      12px;
-$header-font-weight:                    700;
+$header-font-weight:                    500;
 $header-text-color:                     rgba(0, 0, 0, 0.87);
 $cell-text-color:                       rgba(0, 0, 0, 0.87);
 $cell-font-weight:                      400;
@@ -73,7 +78,6 @@ $primary-color:                         #009530;
 $row-mouse-hover-color:                 #ebfaef;
 $row-selected-color:                    #d4f6d7; /*rgba(0, 149, 48, 0.2);*/
 
-@import './roboto-font';
 @import './slick-material';
 @import './slick-grid';
 @import './slick-controls';
@@ -85,3 +89,21 @@ $row-selected-color:                    #d4f6d7; /*rgba(0, 149, 48, 0.2);*/
 @import './slickgrid-examples';
 @import './slick-bootstrap';
 @import './bootstrap-jquery-ui-autocomplete';
+
+$link-color: #0099ff;
+
+.cell-effort-driven {
+  text-align: center;
+}
+
+.editable-field {
+  background-color: #d5e8e9 !important;
+}
+.fake-hyperlink {
+  cursor: pointer;
+  color: $link-color;
+  &:hover {
+      text-decoration: underline;
+  }
+}
+

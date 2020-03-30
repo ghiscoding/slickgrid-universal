@@ -41,9 +41,6 @@ import {
   CollectionService,
   GroupingAndColspanService,
   SlickgridConfig,
-
-  // utilities
-  getScrollBarWidth,
 } from '@slickgrid-universal/common';
 
 import { TranslateService } from './services/translate.service';

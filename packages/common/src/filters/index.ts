@@ -1,6 +1,6 @@
-import { Column, Filter } from '../interfaces/index';
+// import { Column, Filter } from '../interfaces/index';
 import { AutoCompleteFilter } from './autoCompleteFilter';
-// import { CompoundDateFilter } from './compoundDateFilter';
+import { CompoundDateFilter } from './compoundDateFilter';
 import { CompoundInputFilter } from './compoundInputFilter';
 import { CompoundInputNumberFilter } from './compoundInputNumberFilter';
 import { CompoundInputPasswordFilter } from './compoundInputPasswordFilter';
@@ -11,7 +11,7 @@ import { InputNumberFilter } from './inputNumberFilter';
 import { InputPasswordFilter } from './inputPasswordFilter';
 import { MultipleSelectFilter } from './multipleSelectFilter';
 import { NativeSelectFilter } from './nativeSelectFilter';
-// import { DateRangeFilter } from './dateRangeFilter';
+import { DateRangeFilter } from './dateRangeFilter';
 import { SingleSelectFilter } from './singleSelectFilter';
 import { SliderFilter } from './sliderFilter';
 import { SliderRangeFilter } from './sliderRangeFilter';
@@ -21,7 +21,7 @@ export const Filters = {
   autoComplete: AutoCompleteFilter,
 
   /** Compound Date Filter (compound of Operator + Date picker) */
-  // compoundDate: CompoundDateFilter,
+  compoundDate: CompoundDateFilter,
 
   /** Alias to compoundInputText to Compound Input Filter (compound of Operator + Input Text) */
   compoundInput: CompoundInputFilter,
@@ -39,7 +39,7 @@ export const Filters = {
   compoundSlider: CompoundSliderFilter,
 
   /** Range Date Filter (uses the Flactpickr Date picker with range option) */
-  // dateRange: DateRangeFilter,
+  dateRange: DateRangeFilter,
 
   /** Alias to inputText, input type text filter */
   input: InputFilter,

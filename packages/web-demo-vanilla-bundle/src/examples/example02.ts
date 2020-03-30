@@ -1,4 +1,4 @@
-import { Aggregators, Column, Editors, FieldType, Filters, Sorters, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters, GridOption } from '@slickgrid-universal/common';
+import { Aggregators, Column, FieldType, Filters, Sorters, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 
 const NB_ITEMS = 500;
@@ -66,8 +66,8 @@ export class Example2 {
         id: 'start', name: 'Start', field: 'start',
         minWidth: 60,
         maxWidth: 130,
-        // filterable: true,
-        // filter: { model: Filters.compoundDate },
+        filterable: true,
+        filter: { model: Filters.compoundDate },
         sortable: true,
         type: FieldType.dateIso,
         formatter: Formatters.dateIso,
@@ -77,8 +77,8 @@ export class Example2 {
         id: 'finish', name: 'Finish', field: 'finish',
         minWidth: 60,
         maxWidth: 130,
-        // filterable: true,
-        // filter: { model: Filters.compoundDate },
+        filterable: true,
+        filter: { model: Filters.compoundDate },
         sortable: true,
         type: FieldType.dateIso,
         formatter: Formatters.dateIso,
@@ -96,7 +96,7 @@ export class Example2 {
         exportWithFormatter: true,
         formatter: Formatters.dollar,
         groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
-        params: { groupFormatterPrefix: '<b>Total</b>: ' /*, groupFormatterSuffix: ' USD'*/ }
+        params: { groupFormatterPrefix: '<b>Total</b>: ' /* , groupFormatterSuffix: ' USD' */ }
       },
       {
         id: 'effortDriven', name: 'Effort Driven',

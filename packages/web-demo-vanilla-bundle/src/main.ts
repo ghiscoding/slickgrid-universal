@@ -1,7 +1,12 @@
+// import all CSS required by Slickgrid-Universal
+import 'bulma/css/bulma.css';
+import 'multiple-select-adapted/src/multiple-select.css';
+import 'flatpickr/dist/flatpickr.min.css';
+import './styles.scss';
+
+// import all other 3rd party libs required by Slickgrid-Universal
 import 'jquery';
 import 'jquery-ui-dist/jquery-ui';
-import 'bulma/css/bulma.css';
-import './styles.scss';
 import { Renderer } from './renderer';
 import * as SlickerModule from '@slickgrid-universal/vanilla-bundle';
 import { App } from './app';

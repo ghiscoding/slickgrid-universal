@@ -71,29 +71,8 @@ npm run test:watch
 ## TODO
 #### Code
 - [x] Aggregators (6)
-- [ ] Editors
-  - [x] Autocomplete
-  - [x] Checkbox
-  - [ ] Date
-  - [x] Float
-  - [x] Integer
-  - [x] Long Text
-  - [x] Multiple Select
-  - [x] Single Select
-  - [x] Slider
-  - [x] Text
-- [ ] Filters
-  - [x] Autocomplete
-  - [ ] Compound Date
-  - [x] Compound Input(s)
-  - [x] Compound Slider
-  - [ ] Date Range
-  - [x] Input(s)
-  - [x] Multiple Select 
-  - [x] Single Select 
-  - [x] Native Select 
-  - [x] Slider
-  - [x] Slider Range
+- [x] Editors (11)
+- [x] Filters (17)
 - [x] Formatters (31)
 - [ ] Extensions
   - [x] AutoTooltip
