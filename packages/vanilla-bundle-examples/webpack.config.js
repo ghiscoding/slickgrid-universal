@@ -10,7 +10,8 @@ const path = require('path');
 
 // primary config:
 const title = 'Slickgrid-Universal';
-const baseUrl = '';
+const baseUrlLocal = '';
+const baseUrlProd = '/slickgrid-universal';
 const outDirLocal = path.resolve(__dirname, 'dist');
 const outDirProd = path.resolve(__dirname, '../../docs');
 const srcDir = path.resolve(__dirname, 'src');
@@ -36,7 +37,7 @@ module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, 
   },
   output: {
     path: production ? outDirProd : outDirLocal,
-    publicPath: baseUrl,
+    publicPath: production ? baseUrlProd : baseUrlLocal,
     filename: production ? '[name].[chunkhash].bundle.js' : '[name].[hash].bundle.js',
     sourceMapFilename: production ? '[name].[chunkhash].bundle.map' : '[name].[hash].bundle.map',
     chunkFilename: production ? '[name].[chunkhash].chunk.js' : '[name].[hash].chunk.js'
@@ -83,7 +84,8 @@ module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, 
       template: 'index.ejs',
       metadata: {
         // available in index.ejs //
-        title, baseUrl
+        title,
+        baseUrl: production ? baseUrlProd : baseUrlLocal
       }
     }),
     new CopyWebpackPlugin([

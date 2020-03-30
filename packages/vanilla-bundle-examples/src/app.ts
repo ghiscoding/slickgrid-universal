@@ -9,7 +9,7 @@ export class App {
   stateBangChar: string;
   renderer: Renderer;
   appRouting: any;
-  baseUrl = window.location.origin + window.location.pathname;
+  baseUrl = window.location.origin + document.querySelector('base')?.getAttribute('href') || '';
   routerConfig: RouterConfig = {
     pushState: false,
     routes: []
@@ -52,6 +52,7 @@ export class App {
 
       // change browser's history state & title
       if (changeBrowserState) {
+        console.log(this.baseUrl, this.stateBangChar, routeName, `${this.baseUrl}${this.stateBangChar}${routeName}`)
         window.history.pushState({}, routeName, `${this.baseUrl}${this.stateBangChar}${routeName}`);
       }
       document.title = `${this.documentTitle} · ${mapRoute.name}`;
