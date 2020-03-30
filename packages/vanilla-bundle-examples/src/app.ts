@@ -9,7 +9,8 @@ export class App {
   stateBangChar: string;
   renderer: Renderer;
   appRouting: any;
-  baseUrl = window.location.origin + document.querySelector('base')?.getAttribute('href') || '';
+  // baseUrl = window.location.origin + document.querySelector('base')?.getAttribute('href') || '';
+  baseUrl = window.location.origin + window.location.pathname;
   routerConfig: RouterConfig = {
     pushState: false,
     routes: []
