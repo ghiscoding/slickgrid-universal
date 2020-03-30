@@ -12,7 +12,7 @@ module.exports = {
     'packages/**/*.ts',
     '!**/dist/**',
     '!src/assets/**',
-    '!packages/vanilla-bundle-examples/**',
+    '!packages/web-demo-vanilla-bundle/**',
     '!**/node_modules/**',
     '!**/test/**',
   ],

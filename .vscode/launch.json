@@ -16,7 +16,7 @@
       "sourceMapPathOverrides": {
         "webpack:///../common/*": "${webRoot}/packages/common/*",
         "webpack:///../vanilla-bundle/*": "${webRoot}/packages/vanilla-bundle/*",
-        "webpack:///./src/*": "${webRoot}/packages/vanilla-bundle-examples/src/*"
+        "webpack:///./src/*": "${webRoot}/packages/web-demo-vanilla-bundle/src/*"
       }
     },
     {
