@@ -112,6 +112,26 @@ export function convertArrayHierarchicalToFlatByOutputArrayReference(hierarchica
   }
 }
 
+export function findItemInHierarchicalStructure(hierarchicalArray: any, predicate: Function, childrenPropertyName: string): any {
+  if (!childrenPropertyName) {
+    throw new Error('findRecursive requires parameter "childrenPropertyName"');
+  }
+  const initialFind = hierarchicalArray.find(predicate);
+  const elementsWithChildren = hierarchicalArray.filter((x: any) => x.hasOwnProperty(childrenPropertyName) && x[childrenPropertyName]);
+  if (initialFind) {
+    return initialFind;
+  } else if (elementsWithChildren.length) {
+    const childElements = [];
+    elementsWithChildren.forEach((x: any) => {
+      if (x.hasOwnProperty(childrenPropertyName)) {
+        childElements.push(...x[childrenPropertyName]);
+      }
+    });
+    return findItemInHierarchicalStructure(childElements, predicate, childrenPropertyName);
+  }
+  return undefined;
+}
+
 /**
  * HTML encode using jQuery with a <div>
  * Create a in-memory div, set it's inner text(which jQuery automatically encodes)

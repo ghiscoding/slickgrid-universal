@@ -120,6 +120,9 @@ export class VanillaGridBundle {
   }
 
   constructor(gridContainerElm: Element, columnDefs?: Column[], options?: GridOption, dataset?: any[]) {
+    // make sure that the grid container has the "slickgrid-container" css class exist since we use it for slickgrid styling
+    gridContainerElm.classList.add('slickgrid-container');
+
     this._columnDefinitions = columnDefs || [];
     this._gridOptions = options || {};
     this.dataset = dataset || [];
@@ -193,9 +196,6 @@ export class VanillaGridBundle {
   async initialization(gridContainerElm: Element) {
     // create the slickgrid container and add it to the user's grid container
     this._gridContainerElm = gridContainerElm;
-    this._gridElm = document.createElement('div');
-    this._gridElm.className = 'slickgrid-container';
-    gridContainerElm.appendChild(this._gridElm);
 
     this._gridOptions = this.mergeGridOptions(this._gridOptions);
     this.backendServiceApi = this._gridOptions && this._gridOptions.backendServiceApi;
@@ -219,7 +219,7 @@ export class VanillaGridBundle {
     this.extensionService.createExtensionsBeforeGridCreation(this._columnDefinitions, this._gridOptions);
 
     this._columnDefinitions = this.swapInternalEditorToSlickGridFactoryEditor(this._columnDefinitions);
-    this.grid = new Slick.Grid(this._gridElm, this.dataView, this._columnDefinitions, this._gridOptions);
+    this.grid = new Slick.Grid(gridContainerElm, this.dataView, this._columnDefinitions, this._gridOptions);
     this.sharedService.dataView = this.dataView;
     this.sharedService.grid = this.grid;
 

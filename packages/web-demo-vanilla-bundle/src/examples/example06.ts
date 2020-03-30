@@ -1,4 +1,16 @@
-import { convertArrayFlatToHierarchical, Column, FieldType, Filters, GridOption, sortFlatArrayByHierarchy, convertArrayHierarchicalToFlat, Formatters, Formatter, sortHierarchicalArray } from '@slickgrid-universal/common';
+import {
+  convertArrayFlatToHierarchical,
+  Column,
+  FieldType,
+  Filters,
+  findItemInHierarchicalStructure,
+  GridOption,
+  sortFlatArrayByHierarchy,
+  convertArrayHierarchicalToFlat,
+  Formatters,
+  Formatter,
+  sortHierarchicalArray,
+} from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import './example06.scss';
 
@@ -23,7 +35,7 @@ export class Example6 {
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions);
     this.dataViewObj = this.slickgridLwc.dataView;
-    this.dataViewObj.setFilter(this.myFilter.bind(this));
+    this.dataViewObj.setFilter(this.myFilter.bind(this, this.dataViewObj));
     this.datasetHierarchical = sortHierarchicalArray(this.mockDataset(), { sortByPropName: 'file' });
     this.datasetFlat = convertArrayHierarchicalToFlat(this.datasetHierarchical, { childPropName: 'files' });
     this.slickgridLwc.dataset = this.datasetFlat;
@@ -104,42 +116,24 @@ export class Example6 {
     return prefix;
   }
 
-  myFilter(item: any) {
+  myFilter(dataView: any, item: any) {
+    const parentPropName = '__parentId';
     const treeAssociatedField = this.gridOptions.treeViewOptions?.fieldId;
     if (this.searchString !== '' && item[treeAssociatedField].indexOf(this.searchString) === -1) {
       return false;
     }
 
-    if (item.__parentId !== null) {
-      let parent = this.datasetFlat.find(itm => itm.id === item.__parentId);
+    if (item[parentPropName] !== null) {
+      let parent = dataView.getItemById(item[parentPropName]);
       while (parent) {
         if (parent.__collapsed || (this.searchString !== '' && parent[treeAssociatedField].indexOf(this.searchString) === -1)) {
           return false;
         }
-        const parentId = parent.__parentId !== null ? parent.__parentId : null;
-        parent = this.datasetFlat.find((itm2) => itm2.id === parentId);
+        const parentId = parent[parentPropName] !== null ? parent[parentPropName] : null;
+        parent = dataView.getItemById(parentId);
       }
     }
     return true;
-  }
-
-  findRecursive(array, predicate, childrenPropertyName) {
-    if (!childrenPropertyName) {
-      throw new Error('findRecursive requires parameter "childrenPropertyName"');
-    }
-    const initialFind = array.find(predicate);
-    const elementsWithChildren = array.filter(x => x[childrenPropertyName]);
-    if (initialFind) {
-      return initialFind;
-    } else if (elementsWithChildren.length) {
-      const childElements = [];
-      elementsWithChildren.forEach(x => {
-        childElements.push(...x[childrenPropertyName]);
-      });
-      return this.findRecursive(childElements, predicate, childrenPropertyName);
-    } else {
-      return undefined;
-    }
   }
 
   /**
@@ -150,7 +144,7 @@ export class Example6 {
     const newId = this.datasetFlat.length + 100;
 
     // find first parent object and add the new item as a child
-    const popItem = this.findRecursive(this.datasetHierarchical, x => x.file === 'pop', 'files');
+    const popItem = findItemInHierarchicalStructure(this.datasetHierarchical, x => x.file === 'pop', 'files');
 
     if (popItem && Array.isArray(popItem.files)) {
       popItem.files.push({

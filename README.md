@@ -120,4 +120,3 @@ npm run test:watch
   - [x] Build and run on every PR
 - [ ] Remove any Deprecated code
   - [ ] Create a Migration Guide 
-- [ ] Use latest version of SlickGrid and remove measureScrollbar compensation
