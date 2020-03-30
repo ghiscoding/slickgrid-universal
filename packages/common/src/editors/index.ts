@@ -1,6 +1,6 @@
 import { AutoCompleteEditor } from './autoCompleteEditor';
 import { CheckboxEditor } from './checkboxEditor';
-// import { DateEditor } from './dateEditor';
+import { DateEditor } from './dateEditor';
 import { FloatEditor } from './floatEditor';
 import { IntegerEditor } from './integerEditor';
 import { LongTextEditor } from './longTextEditor';
@@ -17,7 +17,7 @@ export const Editors = {
   checkbox: CheckboxEditor,
 
   /** Date Picker Editor (which uses 3rd party lib "flatpickr") */
-  // date: DateEditor,
+  date: DateEditor,
 
   /** Float Number Editor */
   float: FloatEditor,
