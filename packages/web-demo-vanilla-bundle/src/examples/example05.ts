@@ -293,7 +293,8 @@ export class Example5 {
 
   /**
    * Loop through the dataset and add all tree items data content (all the nodes under each branch) at the parent level including itself.
-   * This is to help in filtering the data afterward, we can simply filter the tree items array instead of having to through the tree on every filter
+   * This is to help in filtering the data afterward, we can simply filter the tree items array instead of having to through the tree on every filter.
+   * Portion of the code comes from this Stack Overflow answer https://stackoverflow.com/a/28094393/1212166
    * For example if we have
    * [
    *   { id: 1, title: 'Task 1'},
