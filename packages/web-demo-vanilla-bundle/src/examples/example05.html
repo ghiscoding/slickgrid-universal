@@ -5,9 +5,9 @@
       <span class="icon mdi mdi-plus"></span>
       <span>Add New Item (in 1st group)</span>
     </button>
-    <button onclick.delegate="recreateDataset()" class="button is-small">
-      <span class="icon mdi mdi-refresh-circle"></span>
-      <span>New Dataset</span>
+    <button onclick.delegate="toggleSort()" class="button is-small">
+      <span class="icon mdi mdi-sort"></span>
+      <span>Toggle Sort</span>
     </button>
     <button onclick.delegate="collapseAll()" class="button is-small">
       <span class="icon mdi mdi-arrow-collapse"></span>
@@ -30,10 +30,17 @@
         <label class="label">Search Task</label>
       </div>
       <div class="field-body">
-        <div class="field">
-          <p class="control">
-            <input type="text" class="input is-small" onkeyup.delegate="searchTask(event)">
-          </p>
+        <div class="field is-expanded">
+          <div class="field has-addons">
+            <p class="control is-expanded">
+              <input class="input search is-small" type="text" onkeyup.delegate="searchTask(event)">
+            </p>
+            <p class="control pointer" onclick.delegate="clearSearch()">
+              <a class="button is-static is-small">
+                <span class="mdi mdi-close-thick"></span>
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </div>

@@ -64,7 +64,7 @@ export class Example6 {
       rowHeight: 45,
       enableTreeView: true,
       treeViewOptions: {
-        fieldId: 'file',
+        associatedFieldId: 'file',
       }
     };
   }
@@ -118,7 +118,7 @@ export class Example6 {
 
   myFilter(dataView: any, item: any) {
     const parentPropName = '__parentId';
-    const treeAssociatedField = this.gridOptions.treeViewOptions?.fieldId;
+    const treeAssociatedField = this.gridOptions.treeViewOptions?.associatedFieldId;
     if (this.searchString !== '' && item[treeAssociatedField].indexOf(this.searchString) === -1) {
       return false;
     }

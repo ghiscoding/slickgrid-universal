@@ -45,13 +45,14 @@ export function convertArrayFlatToHierarchical(flatArray: any[], options?: { par
   const childPropName = options?.childPropName || 'children';
   const parentPropName = options?.parentPropName || 'parent';
   const identifierPropName = options?.identifierPropName || 'id';
+  const inputArray = $.extend(true, [], flatArray); // make a deep copy of the input array to avoid modifying that array
 
   const roots: any[] = []; // things without parent
 
   // make them accessible by guid on this map
   const all = {};
 
-  flatArray.forEach((item) => all[item[identifierPropName]] = item);
+  inputArray.forEach((item) => all[item[identifierPropName]] = item);
 
   // connect childrens to its parent, and split roots apart
   Object.keys(all).forEach((id) => {
@@ -76,7 +77,7 @@ export function convertArrayFlatToHierarchical(flatArray: any[], options?: { par
  * @param outputArray
  * @param options you can provide "childPropName" (defaults to "children")
  */
-export function convertArrayHierarchicalToFlat(hierarchicalArray: any[], options?: { childPropName?: string; identifierPropName?: string; reevaluateTreeLevel?: boolean; }): any[] {
+export function convertArrayHierarchicalToFlat(hierarchicalArray: any[], options?: { childPropName?: string; identifierPropName?: string; }): any[] {
   const outputArray: any[] = [];
   const inputArray = $.extend(true, [], hierarchicalArray); // make a deep copy of the input array to avoid modifying that array
 
@@ -86,7 +87,7 @@ export function convertArrayHierarchicalToFlat(hierarchicalArray: any[], options
   return outputArray;
 }
 
-export function convertArrayHierarchicalToFlatByOutputArrayReference(hierarchicalArray: any[], outputArray: any[], options?: { childPropName?: string; parentIdPropName?: string; hasChildrenFlagPropName?: string; treeLevelPropName?: string; identifierPropName?: string; reevaluateTreeLevel?: boolean; }, treeLevel = 0, parentId?: string) {
+export function convertArrayHierarchicalToFlatByOutputArrayReference(hierarchicalArray: any[], outputArray: any[], options?: { childPropName?: string; parentIdPropName?: string; hasChildrenFlagPropName?: string; treeLevelPropName?: string; identifierPropName?: string; }, treeLevel = 0, parentId?: string) {
   const childPropName = options?.childPropName || 'children';
   const identifierPropName = options?.identifierPropName || 'id';
   const hasChildrenFlagPropName = options?.hasChildrenFlagPropName || '__hasChildren';
@@ -110,6 +111,21 @@ export function convertArrayHierarchicalToFlatByOutputArrayReference(hierarchica
       }
     }
   }
+}
+
+export function dedupePrimitiveArray(inputArray: Array<number | string>) {
+  const seen = {};
+  const out = [];
+  const len = inputArray.length;
+  let j = 0;
+  for (let i = 0; i < len; i++) {
+    const item = inputArray[i];
+    if (seen[item] !== 1) {
+      seen[item] = 1;
+      out[j++] = item;
+    }
+  }
+  return out;
 }
 
 export function findItemInHierarchicalStructure(hierarchicalArray: any, predicate: Function, childrenPropertyName: string): any {
