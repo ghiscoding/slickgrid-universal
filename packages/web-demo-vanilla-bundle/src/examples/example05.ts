@@ -1,7 +1,7 @@
 import {
   Column,
-  convertArrayFlatToHierarchical,
-  convertArrayHierarchicalToFlat,
+  convertFlatArrayToHierarchicalView,
+  convertHierarchicalViewToFlatArray,
   dedupePrimitiveArray,
   FieldType,
   GridOption,
@@ -39,12 +39,13 @@ export class Example5 {
     this.dataViewObj.setFilter(this.treeFilter.bind(this, this.dataViewObj));
     this.dataset = this.mockDataset();
     this.slickgridLwc.dataset = this.dataset;
-    this.includeTreeItemsInDataset(this.dataset);
+    this.includeTreeItemsMappingInDataset(this.dataset);
+    // console.log(this.dataset);
   }
 
   initializeGrid() {
     this.columnDefinitions = [
-      { id: 'title', name: 'Title', field: 'title', width: 220, cssClass: 'cell-title', filterable: true, sortable: true, formatter: this.taskNameFormatter.bind(this) },
+      { id: 'title', name: 'Title', field: 'title', width: 220, cssClass: 'cell-title', filterable: true, sortable: true, formatter: this.treeFormatter.bind(this) },
       { id: 'duration', name: 'Duration', field: 'duration', minWidth: 90 },
       { id: '%', name: '% Complete', field: 'percentComplete', width: 120, resizable: false, formatter: Slicker.Formatters.percentCompleteBar },
       { id: 'start', name: 'Start', field: 'start', minWidth: 60 },
@@ -79,7 +80,7 @@ export class Example5 {
     this.dataViewObj.refresh();
   }
 
-  taskNameFormatter(row, cell, value, columnDef, dataContext) {
+  treeFormatter(row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: any) {
     if (value === null || value === undefined || dataContext === undefined) { return ''; }
     value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const spacer = `<span style="display:inline-block;height:1px;width:${15 * dataContext['__treeLevel']}px"></span>`;
@@ -243,13 +244,13 @@ export class Example5 {
   }
 
   logExpandedStructure() {
-    const explodedArray = convertArrayFlatToHierarchical(this.dataset, { parentPropName: 'parentId', childPropName: 'children' });
+    const explodedArray = convertFlatArrayToHierarchicalView(this.dataset, { parentPropName: 'parentId', childPropName: 'children' });
     console.log('exploded array', explodedArray);
   }
 
   logFlatStructure() {
-    const outputHierarchicalArray = convertArrayFlatToHierarchical(this.dataset, { parentPropName: 'parentId', childPropName: 'children' });
-    const outputFlatArray = convertArrayHierarchicalToFlat(outputHierarchicalArray, { childPropName: 'children' });
+    const outputHierarchicalArray = convertFlatArrayToHierarchicalView(this.dataset, { parentPropName: 'parentId', childPropName: 'children' });
+    const outputFlatArray = convertHierarchicalViewToFlatArray(outputHierarchicalArray, { childPropName: 'children' });
     // JSON.stringify(outputFlatArray, null, 2)
     console.log('flat array', outputFlatArray);
   }
@@ -312,7 +313,7 @@ export class Example5 {
    *
    * @param items
    */
-  includeTreeItemsInDataset(items: any[]) {
+  includeTreeItemsMappingInDataset(items: any[]) {
     const treeAssociatedField = this.gridOptions.treeViewOptions?.associatedFieldId;
     const parentPropName = 'parentId';
     const treeItemsPropName = '__treeItems';
@@ -323,15 +324,18 @@ export class Example5 {
     for (let i = 0; i < items.length; i++) {
       items[i][treeItemsPropName] = [items[i][treeAssociatedField]];
       let item = items[i];
+      let treeLevel = 0;
 
       if (item[parentPropName] !== null) {
         let parent = this.dataViewObj.getItemById(item[parentPropName]);
 
         while (parent) {
+          treeLevel++;
           parent[treeItemsPropName] = dedupePrimitiveArray(parent[treeItemsPropName].concat(item[treeItemsPropName]));
           item = parent;
           parent = this.dataViewObj.getItemById(item[parentPropName]);
         }
+        item['treeLevel'] = treeLevel;
       }
     }
   }

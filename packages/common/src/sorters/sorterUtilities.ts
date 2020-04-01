@@ -2,7 +2,7 @@ import { FieldType, SortDirectionNumber, SortDirection, SortDirectionString } fr
 import { Column } from '../interfaces/index';
 import { Sorters } from './index';
 import { getAssociatedDateSorter } from './dateUtilities';
-import { convertArrayHierarchicalToFlat, convertArrayFlatToHierarchical } from '../services/utilities';
+import { convertHierarchicalViewToFlatArray, convertFlatArrayToHierarchicalView } from '../services/utilities';
 
 export function sortByFieldType(fieldType: FieldType, value1: any, value2: any, sortDirection: number | SortDirectionNumber, sortColumn?: Column) {
   let sortResult = 0;
@@ -63,14 +63,14 @@ export function sortFlatArrayByHierarchy(flatArray: any[], options?: { sortPropF
   const inputArray: any[] = $.extend(true, [], flatArray); // make a deep copy of the input array to avoid modifying that array
 
   // step 1: convert array to a hierarchical structure so that we can sort it
-  const outputArrayRef = convertArrayFlatToHierarchical(inputArray, options);
+  const outputArrayRef = convertFlatArrayToHierarchicalView(inputArray, options);
 
   // step 2: sort the hierarchical array
   sortHierarchicalArray(outputArrayRef, options);
   const inputHierarchicalArray: any[] = $.extend(true, [], outputArrayRef); // make a deep copy of the input array to avoid modifying that array
 
   // step 3: re-convert the array back to a flat structure and return it
-  const resultSortedFlatDataset = convertArrayHierarchicalToFlat(inputHierarchicalArray, options);
+  const resultSortedFlatDataset = convertHierarchicalViewToFlatArray(inputHierarchicalArray, options);
 
   return resultSortedFlatDataset;
 }

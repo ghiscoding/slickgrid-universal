@@ -84,6 +84,7 @@ npm run test:watch
   - [x] Grid Menu
   - [x] Header Button
   - [x] Header Menu
+  - [ ] Resizer
   - [ ] Row Detail
   - [x] Row Move
     - [ ] the Column itself should be created by the extension instead of the user itself
@@ -104,9 +105,14 @@ npm run test:watch
   - [ ] Grid State
   - [x] Grouping & Col Span
   - [ ] Pagination
-  - [ ] Resizer
+  - [-] Resizer (moved to an Extension)
   - [x] Shared
   - [x] Sort
+- [ ] Others
+  - [ ] Custom Footer
+  - [ ] Dynamically Add Columns
+  - [ ] Grid Presets
+  - [ ] Pagination
 
 #### Other Todos
 - [x] VScode Chrome Debugger

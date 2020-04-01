@@ -36,12 +36,12 @@ export function addWhiteSpaces(nbSpaces: number): string {
 }
 
 /**
- * Convert a hierarchical array (with children) into a flat array structure array (where the children are pushed as next indexed item in the array)
+ * Convert a flat array (with "parentId" references) into a hierarchical dataset structure (where children are array(s) inside their parent objects)
  * @param flatArray array input
  * @param outputArray array output (passed by reference)
  * @param options you can provide the following options:: "parentPropName" (defaults to "parent"), "childPropName" (defaults to "children") and "identifierPropName" (defaults to "id")
  */
-export function convertArrayFlatToHierarchical(flatArray: any[], options?: { parentPropName?: string; childPropName?: string; identifierPropName?: string; }): any[] {
+export function convertFlatArrayToHierarchicalView(flatArray: any[], options?: { parentPropName?: string; childPropName?: string; identifierPropName?: string; }): any[] {
   const childPropName = options?.childPropName || 'children';
   const parentPropName = options?.parentPropName || 'parent';
   const identifierPropName = options?.identifierPropName || 'id';
@@ -77,17 +77,17 @@ export function convertArrayFlatToHierarchical(flatArray: any[], options?: { par
  * @param outputArray
  * @param options you can provide "childPropName" (defaults to "children")
  */
-export function convertArrayHierarchicalToFlat(hierarchicalArray: any[], options?: { childPropName?: string; identifierPropName?: string; }): any[] {
+export function convertHierarchicalViewToFlatArray(hierarchicalArray: any[], options?: { childPropName?: string; identifierPropName?: string; }): any[] {
   const outputArray: any[] = [];
   const inputArray = $.extend(true, [], hierarchicalArray); // make a deep copy of the input array to avoid modifying that array
 
-  convertArrayHierarchicalToFlatByOutputArrayReference(inputArray, outputArray, options, 0);
+  convertHierarchicalViewToFlatArrayByOutputArrayReference(inputArray, outputArray, options, 0);
 
   // the output array is the one passed as reference
   return outputArray;
 }
 
-export function convertArrayHierarchicalToFlatByOutputArrayReference(hierarchicalArray: any[], outputArray: any[], options?: { childPropName?: string; parentIdPropName?: string; hasChildrenFlagPropName?: string; treeLevelPropName?: string; identifierPropName?: string; }, treeLevel = 0, parentId?: string) {
+export function convertHierarchicalViewToFlatArrayByOutputArrayReference(hierarchicalArray: any[], outputArray: any[], options?: { childPropName?: string; parentIdPropName?: string; hasChildrenFlagPropName?: string; treeLevelPropName?: string; identifierPropName?: string; }, treeLevel = 0, parentId?: string) {
   const childPropName = options?.childPropName || 'children';
   const identifierPropName = options?.identifierPropName || 'id';
   const hasChildrenFlagPropName = options?.hasChildrenFlagPropName || '__hasChildren';
@@ -104,7 +104,7 @@ export function convertArrayHierarchicalToFlatByOutputArrayReference(hierarchica
       }
       if (Array.isArray(item[childPropName])) {
         treeLevel++;
-        convertArrayHierarchicalToFlatByOutputArrayReference(item[childPropName], outputArray, options, treeLevel, item[identifierPropName]);
+        convertHierarchicalViewToFlatArrayByOutputArrayReference(item[childPropName], outputArray, options, treeLevel, item[identifierPropName]);
         treeLevel--;
         item[hasChildrenFlagPropName] = true;
         delete item[childPropName]; // remove the children property
@@ -113,7 +113,11 @@ export function convertArrayHierarchicalToFlatByOutputArrayReference(hierarchica
   }
 }
 
-export function dedupePrimitiveArray(inputArray: Array<number | string>) {
+/**
+ * Dedupde any duplicate values from the input array, only accepts primitive types
+ * @param inputArray
+ */
+export function dedupePrimitiveArray(inputArray: Array<number | string>): Array<number | string> {
   const seen = {};
   const out = [];
   const len = inputArray.length;

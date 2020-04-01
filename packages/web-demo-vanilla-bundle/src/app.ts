@@ -53,7 +53,6 @@ export class App {
 
       // change browser's history state & title
       if (changeBrowserState) {
-        console.log(this.baseUrl, this.stateBangChar, routeName, `${this.baseUrl}${this.stateBangChar}${routeName}`)
         window.history.pushState({}, routeName, `${this.baseUrl}${this.stateBangChar}${routeName}`);
       }
       document.title = `${this.documentTitle} · ${mapRoute.name}`;
