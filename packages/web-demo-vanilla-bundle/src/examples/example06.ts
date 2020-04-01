@@ -1,14 +1,15 @@
 import {
-  convertFlatArrayToHierarchicalView,
   Column,
+  convertParentChildFlatArrayToHierarchicalView,
+  convertHierarchicalViewToFlatArray,
   FieldType,
   findItemInHierarchicalStructure,
   GridOption,
-  sortFlatArrayByHierarchy,
-  convertHierarchicalViewToFlatArray,
-  Formatters,
+  sortFlatArrayWithParentChildRef,
   Formatter,
+  Formatters,
   sortHierarchicalArray,
+  modifyDatasetToAddTreeItemsMapping,
 } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import './example06.scss';
@@ -34,15 +35,23 @@ export class Example6 {
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions);
     this.dataViewObj = this.slickgridLwc.dataView;
-    this.dataViewObj.setFilter(this.myFilter.bind(this, this.dataViewObj));
-    this.datasetHierarchical = sortHierarchicalArray(this.mockDataset(), { sortByPropName: 'file' });
+    // this.dataViewObj.setFilter(this.myFilter.bind(this, this.dataViewObj));
+    this.datasetHierarchical = sortHierarchicalArray(this.mockDataset(), { sortByFieldId: 'file' });
     this.datasetFlat = convertHierarchicalViewToFlatArray(this.datasetHierarchical, { childPropName: 'files' });
     this.slickgridLwc.dataset = this.datasetFlat;
+    modifyDatasetToAddTreeItemsMapping(this.slickgridLwc.dataset, this.columnDefinitions[0], this.dataViewObj);
   }
 
   initializeGrid() {
     this.columnDefinitions = [
-      { id: 'file', name: 'Files', field: 'file', filterable: true, sortable: true, type: FieldType.string, width: 150, formatter: this.treeFormatter },
+      {
+        id: 'file', name: 'Files', field: 'file',
+        type: FieldType.string, width: 150, formatter: this.treeFormatter,
+        filterable: true, sortable: true,
+        treeView: {
+          childrenPropName: 'files'
+        }
+      },
       {
         id: 'dateModified', name: 'Date Modified', field: 'dateModified', formatter: Formatters.dateIso, sortable: true, type: FieldType.date, minWidth: 90,
         // exportWithFormatter: true, filterable: true, filter: { model: Filters.compoundDate }
@@ -59,12 +68,9 @@ export class Example6 {
       },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
+      enableFiltering: true,
       headerRowHeight: 45,
       rowHeight: 45,
-      enableTreeView: true,
-      treeViewOptions: {
-        associatedFieldId: 'file',
-      }
     };
   }
 
@@ -152,7 +158,7 @@ export class Example6 {
         dateModified: new Date(),
         size: Math.round(Math.random() * 100),
       });
-      const sortedArray = sortHierarchicalArray(this.datasetHierarchical, { sortByPropName: 'file' });
+      const sortedArray = sortHierarchicalArray(this.datasetHierarchical, { sortByFieldId: 'file' });
       this.datasetFlat = convertHierarchicalViewToFlatArray(sortedArray, { childPropName: 'files' });
 
       // update dataset and re-render (invalidate) the grid
@@ -179,14 +185,14 @@ export class Example6 {
   resort(inputFlatArray?: any[]) {
     const datasetFlat = inputFlatArray || this.datasetFlat;
 
-    return sortFlatArrayByHierarchy(
+    return sortFlatArrayWithParentChildRef(
       datasetFlat,
       {
         parentPropName: '__parentId',
         childPropName: 'files',
         direction: 'ASC',
         identifierPropName: 'id',
-        sortByPropName: 'id',
+        sortByFieldId: 'id',
         sortPropFieldType: FieldType.number,
       });
   }
@@ -217,13 +223,13 @@ export class Example6 {
   }
 
   logExpandedStructure() {
-    const explodedArray = convertFlatArrayToHierarchicalView(this.datasetFlat, { parentPropName: '__parentId', childPropName: 'files' });
+    const explodedArray = convertParentChildFlatArrayToHierarchicalView(this.datasetFlat, { parentPropName: '__parentId', childPropName: 'files' });
     console.log('exploded array', explodedArray/* , JSON.stringify(explodedArray, null, 2) */);
 
   }
 
   logFlatStructure() {
-    const outputHierarchicalArray = convertFlatArrayToHierarchicalView(this.datasetFlat, { parentPropName: '__parentId', childPropName: 'files' });
+    const outputHierarchicalArray = convertParentChildFlatArrayToHierarchicalView(this.datasetFlat, { parentPropName: '__parentId', childPropName: 'files' });
     const outputFlatArray = convertHierarchicalViewToFlatArray(outputHierarchicalArray, { childPropName: 'files' });
     console.log('flat array', outputFlatArray/* , JSON.stringify(outputFlatArray, null, 2) */);
   }

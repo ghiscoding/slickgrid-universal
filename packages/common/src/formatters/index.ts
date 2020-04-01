@@ -28,6 +28,7 @@ import { percentCompleteFormatter } from './percentCompleteFormatter';
 import { percentSymbolFormatter } from './percentSymbolFormatter';
 import { progressBarFormatter } from './progressBarFormatter';
 import { translateFormatter } from './translateFormatter';
+import { treeFormatter } from './treeFormatter';
 import { translateBooleanFormatter } from './translateBooleanFormatter';
 import { uppercaseFormatter } from './uppercaseFormatter';
 import { yesNoFormatter } from './yesNoFormatter';
@@ -211,6 +212,9 @@ export const Formatters = {
 
   /** Takes a boolean value, cast it to upperCase string and finally translates it (i18n). */
   translateBoolean: translateBooleanFormatter,
+
+  /** Formatter that must be use with a Tree View column */
+  tree: treeFormatter,
 
   /** Takes a value and displays it all uppercase */
   uppercase: uppercaseFormatter,

@@ -79,6 +79,7 @@ module.exports = {
     "comma-dangle": "off",
     "complexity": "off",
     "constructor-super": "error",
+    "curly": "error",
     "dot-notation": "off",
     "eqeqeq": [
       "error"
@@ -111,7 +112,7 @@ module.exports = {
     "no-return-await": "error",
     "no-sequences": "error",
     "no-shadow": [
-      "off",
+      "error",
       {
         "hoist": "all"
       }

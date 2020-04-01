@@ -216,6 +216,23 @@ export interface Column {
   /** Custom Tooltip that can ben shown to the column */
   toolTip?: string;
 
+  /** Tree View options */
+  treeView?: {
+    childrenPropName?: string;
+    collapsedPropName?: string;
+    identifierPropName?: string;
+    parentPropName?: string;
+    levelPropName?: string;
+    itemMapPropName?: string;
+    hasChildrenFlagPropName?: string;
+
+    /**
+     * Defaults to 15px, margin to add from the left (calculated by the tree level multiplied by this number).
+     * For example if tree depth level is 2, the calculation will be (2 * 15 = 30), so the column will be displayed 30px from the left
+     */
+    indentMarginLeft?: number;
+  }
+
   /** What is the Field Type, this can be used in the Formatters/Editors/... */
   type?: FieldType;
 

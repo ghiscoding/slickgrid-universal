@@ -469,7 +469,7 @@ export interface GridOption {
     levelPropName?: string;
     itemMapPropName?: string;
     hasChildrenFlagPropName?: string;
-    sortByPropName?: string;
+    sortByFieldId?: string;
   }
 
   /** Defaults to false, when set to True will lead to multiple columns sorting without the need to hold or do shift-click to execute a multiple sort. */

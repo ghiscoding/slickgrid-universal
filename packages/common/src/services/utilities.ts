@@ -2,6 +2,7 @@ import * as moment_ from 'moment-mini';
 const moment = moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 import { FieldType, OperatorString, OperatorType } from '../enums/index';
+import { Column } from '../interfaces/index';
 
 /**
  * Add an item to an array only when the item does not exists, when the item is an object we will be using their "id" to compare
@@ -41,18 +42,19 @@ export function addWhiteSpaces(nbSpaces: number): string {
  * @param outputArray array output (passed by reference)
  * @param options you can provide the following options:: "parentPropName" (defaults to "parent"), "childPropName" (defaults to "children") and "identifierPropName" (defaults to "id")
  */
-export function convertFlatArrayToHierarchicalView(flatArray: any[], options?: { parentPropName?: string; childPropName?: string; identifierPropName?: string; }): any[] {
+export function convertParentChildFlatArrayToHierarchicalView(flatArray: any[], options?: { parentPropName?: string; childPropName?: string; identifierPropName?: string; }): any[] {
   const childPropName = options?.childPropName || 'children';
-  const parentPropName = options?.parentPropName || 'parent';
+  const parentPropName = options?.parentPropName || 'parentId';
   const identifierPropName = options?.identifierPropName || 'id';
-  const inputArray = $.extend(true, [], flatArray); // make a deep copy of the input array to avoid modifying that array
+  const hasChildrenFlagPropName = '__hasChildren';
+  const treeLevelPropName = '__treeLevel';
 
   const roots: any[] = []; // things without parent
 
   // make them accessible by guid on this map
   const all = {};
 
-  inputArray.forEach((item) => all[item[identifierPropName]] = item);
+  flatArray.forEach((item) => all[item[identifierPropName]] = item);
 
   // connect childrens to its parent, and split roots apart
   Object.keys(all).forEach((id) => {
@@ -66,6 +68,10 @@ export function convertFlatArrayToHierarchicalView(flatArray: any[], options?: {
       }
       p[childPropName].push(item);
     }
+
+    // delete any unnecessary properties that were possibly created in the flat array but shouldn't be part of the tree view
+    delete item[treeLevelPropName];
+    delete item[hasChildrenFlagPropName];
   });
 
   return roots;
@@ -79,14 +85,18 @@ export function convertFlatArrayToHierarchicalView(flatArray: any[], options?: {
  */
 export function convertHierarchicalViewToFlatArray(hierarchicalArray: any[], options?: { childPropName?: string; identifierPropName?: string; }): any[] {
   const outputArray: any[] = [];
-  const inputArray = $.extend(true, [], hierarchicalArray); // make a deep copy of the input array to avoid modifying that array
-
-  convertHierarchicalViewToFlatArrayByOutputArrayReference(inputArray, outputArray, options, 0);
+  convertHierarchicalViewToFlatArrayByOutputArrayReference(hierarchicalArray, outputArray, options, 0);
 
   // the output array is the one passed as reference
   return outputArray;
 }
 
+/**
+ * Convert a hierarchical array (with children) into a flat array structure array but using the array as the output (the array is the pointer reference)
+ * @param hierarchicalArray
+ * @param outputArray
+ * @param options you can provide "childPropName" (defaults to "children")
+ */
 export function convertHierarchicalViewToFlatArrayByOutputArrayReference(hierarchicalArray: any[], outputArray: any[], options?: { childPropName?: string; parentIdPropName?: string; hasChildrenFlagPropName?: string; treeLevelPropName?: string; identifierPropName?: string; }, treeLevel = 0, parentId?: string) {
   const childPropName = options?.childPropName || 'children';
   const identifierPropName = options?.identifierPropName || 'id';
@@ -132,6 +142,12 @@ export function dedupePrimitiveArray(inputArray: Array<number | string>): Array<
   return out;
 }
 
+/**
+ * Find an item from a hierarchical view structure (a parent that can have children array which themseleves can children and so on)
+ * @param hierarchicalArray
+ * @param predicate
+ * @param childrenPropertyName
+ */
 export function findItemInHierarchicalStructure(hierarchicalArray: any, predicate: Function, childrenPropertyName: string): any {
   if (!childrenPropertyName) {
     throw new Error('findRecursive requires parameter "childrenPropertyName"');
@@ -142,14 +158,55 @@ export function findItemInHierarchicalStructure(hierarchicalArray: any, predicat
     return initialFind;
   } else if (elementsWithChildren.length) {
     const childElements = [];
-    elementsWithChildren.forEach((x: any) => {
-      if (x.hasOwnProperty(childrenPropertyName)) {
-        childElements.push(...x[childrenPropertyName]);
+    elementsWithChildren.forEach((item: any) => {
+      if (item.hasOwnProperty(childrenPropertyName)) {
+        childElements.push(...item[childrenPropertyName]);
       }
     });
     return findItemInHierarchicalStructure(childElements, predicate, childrenPropertyName);
   }
   return undefined;
+}
+
+/**
+ * Loop through the dataset and add all tree items data content (all the nodes under each branch) at the parent level including itself.
+ * This is to help in filtering the data afterward, we can simply filter the tree items array instead of having to through the tree on every filter.
+ * Portion of the code comes from this Stack Overflow answer https://stackoverflow.com/a/28094393/1212166
+ * For example if we have
+ * [
+ *   { id: 1, title: 'Task 1'},
+ *   { id: 2, title: 'Task 2', parentId: 1 },
+ *   { id: 3, title: 'Task 3', parentId: 2 },
+ *   { id: 4, title: 'Task 4', parentId: 2 }
+ * ]
+ * The array will be modified as follow (and if we filter/search for say "4", then we know the result will be row 1, 2, 4 because each treeItems contain "4")
+ * [
+ *   { id: 1, title: 'Task 1', __treeItems: ['Task 1', 'Task 2', 'Task 3', 'Task 4']},
+ *   { id: 2, title: 'Task 2', parentId: 1, __treeItems: ['Task 2', 'Task 3', 'Task 4'] },
+ *   { id: 3, title: 'Task 3', parentId: 2, __treeItems: ['Task 3'] },
+ *   { id: 4, title: 'Task 4', parentId: 2, __treeItems: ['Task 4'] }
+ * ]
+ *
+ * @param items
+ */
+export function modifyDatasetToAddTreeItemsMapping(items: any[], treeViewColumn: Column, dataView: any) {
+  const parentPropName = treeViewColumn.treeView?.parentPropName || '__parentId';
+  const treeItemsPropName = treeViewColumn.treeView?.itemMapPropName || '__treeItems';
+
+  for (let i = 0; i < items.length; i++) {
+    items[i][treeItemsPropName] = [items[i][treeViewColumn.id]];
+    let item = items[i];
+
+    if (item[parentPropName] !== null) {
+      let parent = dataView.getItemById(item[parentPropName]);
+
+      while (parent) {
+        parent[treeItemsPropName] = dedupePrimitiveArray(parent[treeItemsPropName].concat(item[treeItemsPropName]));
+        item = parent;
+        parent = dataView.getItemById(item[parentPropName]);
+      }
+    }
+  }
 }
 
 /**

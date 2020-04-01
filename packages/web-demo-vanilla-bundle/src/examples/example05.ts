@@ -1,18 +1,20 @@
 import {
   Column,
-  convertFlatArrayToHierarchicalView,
+  convertParentChildFlatArrayToHierarchicalView,
   convertHierarchicalViewToFlatArray,
-  dedupePrimitiveArray,
   FieldType,
+  Filters,
+  Formatters,
   GridOption,
   SortDirection,
   SortDirectionString,
-  sortFlatArrayByHierarchy,
+  sortFlatArrayWithParentChildRef,
+  modifyDatasetToAddTreeItemsMapping,
 } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import './example05.scss';
 
-const NB_ITEMS = 4000;
+const NB_ITEMS = 200;
 
 
 export class Example5 {
@@ -36,23 +38,41 @@ export class Example5 {
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions);
     this.dataViewObj = this.slickgridLwc.dataView;
-    this.dataViewObj.setFilter(this.treeFilter.bind(this, this.dataViewObj));
+    this.gridObj = this.slickgridLwc.grid;
+    // this.dataViewObj.setFilter(this.treeFilter.bind(this, this.dataViewObj, this.gridObj));
     this.dataset = this.mockDataset();
     this.slickgridLwc.dataset = this.dataset;
-    this.includeTreeItemsMappingInDataset(this.dataset);
+    modifyDatasetToAddTreeItemsMapping(this.dataset, this.columnDefinitions[0], this.dataViewObj);
     // console.log(this.dataset);
   }
 
   initializeGrid() {
     this.columnDefinitions = [
-      { id: 'title', name: 'Title', field: 'title', width: 220, cssClass: 'cell-title', filterable: true, sortable: true, formatter: this.treeFormatter.bind(this) },
-      { id: 'duration', name: 'Duration', field: 'duration', minWidth: 90 },
-      { id: '%', name: '% Complete', field: 'percentComplete', width: 120, resizable: false, formatter: Slicker.Formatters.percentCompleteBar },
-      { id: 'start', name: 'Start', field: 'start', minWidth: 60 },
-      { id: 'finish', name: 'Finish', field: 'finish', minWidth: 60 },
+      {
+        id: 'title', name: 'Title', field: 'title', width: 220, cssClass: 'cell-title',
+        filterable: true, sortable: true,
+        formatter: Formatters.tree,
+        treeView: {
+          levelPropName: 'indent',
+          parentPropName: 'parentId'
+        }
+      },
+      { id: 'duration', name: 'Duration', field: 'duration', minWidth: 90, filterable: true },
+      {
+        id: '%', name: '% Complete', field: 'percentComplete', minWidth: 120, maxWidth: 200,
+        formatter: Slicker.Formatters.percentCompleteBar,
+        filterable: true, filter: { model: Filters.slider, operator: '>=' },
+      },
+      { id: 'start', name: 'Start', field: 'start', minWidth: 60, filterable: true },
+      { id: 'finish', name: 'Finish', field: 'finish', minWidth: 60, filterable: true },
       {
         id: 'effort-driven', name: 'Effort Driven', width: 80, minWidth: 20, maxWidth: 80, cssClass: 'cell-effort-driven', field: 'effortDriven',
-        formatter: Slicker.Formatters.checkmarkMaterial, cannotTriggerInsert: true
+        formatter: Formatters.checkmarkMaterial, cannotTriggerInsert: true,
+        filterable: true,
+        filter: {
+          collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
+          model: Filters.singleSelect
+        }
       }
     ];
 
@@ -62,7 +82,9 @@ export class Example5 {
       },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
+      enableFiltering: true,
       enableSorting: true,
+      enableTreeView: true,
       headerRowHeight: 45,
       rowHeight: 45,
       treeViewOptions: {
@@ -80,51 +102,6 @@ export class Example5 {
     this.dataViewObj.refresh();
   }
 
-  treeFormatter(row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: any) {
-    if (value === null || value === undefined || dataContext === undefined) { return ''; }
-    value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    const spacer = `<span style="display:inline-block;height:1px;width:${15 * dataContext['__treeLevel']}px"></span>`;
-    const idx = this.dataViewObj.getIdxById(dataContext.id);
-
-    if (this.dataset[idx + 1] && this.dataset[idx + 1].__treeLevel > this.dataset[idx].__treeLevel) {
-      if (dataContext.__collapsed) {
-        return `${spacer}<span class="slick-group-toggle collapsed"></span>&nbsp;${value}`;
-      } else {
-        return `${spacer}<span class="slick-group-toggle expanded"></span>&nbsp;${value}`;
-      }
-    }
-    return `${spacer}<span class="slick-group-toggle"></span>&nbsp;${value}`;
-  }
-
-  treeFilter(dataView: any, item: any) {
-    const treeAssociatedField = this.gridOptions.treeViewOptions?.associatedFieldId;
-    const parentPropName = 'parentId';
-    const columnFilters = { [treeAssociatedField]: this.searchString.toLowerCase() };
-    let filterCount = 0;
-
-    if (item[parentPropName] !== null) {
-      let parent = dataView.getItemById(item[parentPropName]);
-      while (parent) {
-        if (parent.__collapsed) {
-          return false;
-        }
-        parent = dataView.getItemById(parent[parentPropName]);
-      }
-    }
-
-    for (const columnId in columnFilters) {
-      if (columnId !== undefined && columnFilters[columnId] !== '') {
-        filterCount++;
-
-        if (item.__treeItems === undefined || !item.__treeItems.find((itm: string) => itm.endsWith(columnFilters[columnId]))) {
-          // if (item.__fullpath === undefined || item.__fullpath.indexOf(columnFilters[columnId]) === -1) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-
   /**
    * A simple method to add a new item inside the first group that we find.
    * After adding the item, it will sort by parent/child recursively
@@ -132,16 +109,17 @@ export class Example5 {
   addNewRow() {
     const newId = this.dataset.length;
     const parentPropName = 'parentId';
+    const treeLevelPropName = 'indent';
     const newTreeLevel = 1;
 
     // find first parent object and add the new item as a child
-    const childItemFound = this.dataset.find((item) => item.__treeLevel === newTreeLevel);
+    const childItemFound = this.dataset.find((item) => item[treeLevelPropName] === newTreeLevel);
     const parentItemFound = this.dataViewObj.getItemByIdx(childItemFound[parentPropName]);
 
     const newItem = {
       id: newId,
-      __treeLevel: newTreeLevel,
-      parent: parentItemFound.id,
+      indent: newTreeLevel,
+      parentId: parentItemFound.id,
       title: `Task ${newId}`,
       duration: '1 day',
       percentComplete: 0,
@@ -154,20 +132,21 @@ export class Example5 {
     this.dataset = this.dataViewObj.getItems();
     console.log('new item', newItem, 'parentId', parentItemFound);
     console.warn(this.dataset);
-    const resultSortedFlatDataset = sortFlatArrayByHierarchy(
+    const resultSortedFlatDataset = sortFlatArrayWithParentChildRef(
       this.dataset,
       {
         parentPropName: 'parentId',
         childPropName: 'children',
         direction: 'ASC',
         identifierPropName: 'id',
-        sortByPropName: 'id',
+        sortByFieldId: 'id',
         sortPropFieldType: FieldType.number,
       });
 
     // update dataset and re-render (invalidate) the grid
     this.slickgridLwc.dataset = resultSortedFlatDataset;
     this.dataset = resultSortedFlatDataset;
+    modifyDatasetToAddTreeItemsMapping(this.dataset, this.columnDefinitions[0], this.dataViewObj);
     this.gridObj.invalidate();
 
     // scroll to the new row
@@ -204,11 +183,11 @@ export class Example5 {
   resortTreeGrid(updatedDataset?: any[], direction?: SortDirection | SortDirectionString) {
     // resort the array taking the tree structure in consideration
     const dataset = updatedDataset || this.dataset;
-    const sortedOutputArray = sortFlatArrayByHierarchy(dataset, {
+    const sortedOutputArray = sortFlatArrayWithParentChildRef(dataset, {
       parentPropName: 'parentId',
       childPropName: 'children',
       direction: direction || 'ASC',
-      sortByPropName: 'id',
+      sortByFieldId: 'id',
       sortPropFieldType: FieldType.number,
     });
 
@@ -244,12 +223,12 @@ export class Example5 {
   }
 
   logExpandedStructure() {
-    const explodedArray = convertFlatArrayToHierarchicalView(this.dataset, { parentPropName: 'parentId', childPropName: 'children' });
+    const explodedArray = convertParentChildFlatArrayToHierarchicalView(this.dataset, { parentPropName: 'parentId', childPropName: 'children' });
     console.log('exploded array', explodedArray);
   }
 
   logFlatStructure() {
-    const outputHierarchicalArray = convertFlatArrayToHierarchicalView(this.dataset, { parentPropName: 'parentId', childPropName: 'children' });
+    const outputHierarchicalArray = convertParentChildFlatArrayToHierarchicalView(this.dataset, { parentPropName: 'parentId', childPropName: 'children' });
     const outputFlatArray = convertHierarchicalViewToFlatArray(outputHierarchicalArray, { childPropName: 'children' });
     // JSON.stringify(outputFlatArray, null, 2)
     console.log('flat array', outputFlatArray);
@@ -280,7 +259,7 @@ export class Example5 {
       }
 
       d['id'] = i;
-      d['__treeLevel'] = indent;
+      d['indent'] = indent;
       d['parentId'] = parentId;
       d['title'] = 'Task ' + i;
       d['duration'] = '5 days';
@@ -290,53 +269,5 @@ export class Example5 {
       d['effortDriven'] = (i % 5 === 0);
     }
     return data;
-  }
-
-  /**
-   * Loop through the dataset and add all tree items data content (all the nodes under each branch) at the parent level including itself.
-   * This is to help in filtering the data afterward, we can simply filter the tree items array instead of having to through the tree on every filter.
-   * Portion of the code comes from this Stack Overflow answer https://stackoverflow.com/a/28094393/1212166
-   * For example if we have
-   * [
-   *   { id: 1, title: 'Task 1'},
-   *   { id: 2, title: 'Task 2', parentId: 1 },
-   *   { id: 3, title: 'Task 3', parentId: 2 },
-   *   { id: 4, title: 'Task 4', parentId: 2 }
-   * ]
-   * The array will be modified as follow (and if we filter/search for say "4", then we know the result will be row 1, 2, 4 because each treeItems contain "4")
-   * [
-   *   { id: 1, title: 'Task 1', __treeItems: ['Task 1', 'Task 2', 'Task 3', 'Task 4']},
-   *   { id: 2, title: 'Task 2', parentId: 1, __treeItems: ['Task 2', 'Task 3', 'Task 4'] },
-   *   { id: 3, title: 'Task 3', parentId: 2, __treeItems: ['Task 3'] },
-   *   { id: 4, title: 'Task 4', parentId: 2, __treeItems: ['Task 4'] }
-   * ]
-   *
-   * @param items
-   */
-  includeTreeItemsMappingInDataset(items: any[]) {
-    const treeAssociatedField = this.gridOptions.treeViewOptions?.associatedFieldId;
-    const parentPropName = 'parentId';
-    const treeItemsPropName = '__treeItems';
-    if (!treeAssociatedField) {
-      throw new Error(`[Slickgrid-Universal] You must provide the Tree associated field id so the grid knows which column has the tree. For example, this.gridOptions: { treeViewOptions: { associatedFieldId: 'title' });`);
-    }
-
-    for (let i = 0; i < items.length; i++) {
-      items[i][treeItemsPropName] = [items[i][treeAssociatedField]];
-      let item = items[i];
-      let treeLevel = 0;
-
-      if (item[parentPropName] !== null) {
-        let parent = this.dataViewObj.getItemById(item[parentPropName]);
-
-        while (parent) {
-          treeLevel++;
-          parent[treeItemsPropName] = dedupePrimitiveArray(parent[treeItemsPropName].concat(item[treeItemsPropName]));
-          item = parent;
-          parent = this.dataViewObj.getItemById(item[parentPropName]);
-        }
-        item['treeLevel'] = treeLevel;
-      }
-    }
   }
 }
