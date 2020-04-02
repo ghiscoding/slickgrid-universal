@@ -38,7 +38,7 @@ The main packages structure is the following
 - `@slickgrid-universal/common`: commonly used Formatters/Editors/Filters/Services/...
   - this can then be used by any Framework (Angular, Aurelia, Vanilla, ...)
 - `@slickgrid-universal/vanilla-bundle`: a vanilla TypeScript/JavaScript implementation (no framework)
-  - 
+  - &amp;
 - Standalone Packages
   - `slickgrid-universal/web-demo-vanilla-bundle` standalone package for demo purposes and UI testing (not a public package)
 
