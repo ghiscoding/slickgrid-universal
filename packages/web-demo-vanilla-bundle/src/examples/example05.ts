@@ -26,7 +26,6 @@ export class Example5 {
   slickgridLwc;
   slickerGridInstance;
   durationOrderByCount = false;
-  searchString = '';
   sortDirection: SortDirectionString = 'ASC';
 
   attached() {
@@ -39,11 +38,14 @@ export class Example5 {
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions);
     this.dataViewObj = this.slickgridLwc.dataView;
     this.gridObj = this.slickgridLwc.grid;
-    // this.dataViewObj.setFilter(this.treeFilter.bind(this, this.dataViewObj, this.gridObj));
     this.dataset = this.mockDataset();
     this.slickgridLwc.dataset = this.dataset;
     modifyDatasetToAddTreeItemsMapping(this.dataset, this.columnDefinitions[0], this.dataViewObj);
     // console.log(this.dataset);
+  }
+
+  dispose() {
+    this.slickgridLwc.dispose();
   }
 
   initializeGrid() {
@@ -60,11 +62,21 @@ export class Example5 {
       { id: 'duration', name: 'Duration', field: 'duration', minWidth: 90, filterable: true },
       {
         id: '%', name: '% Complete', field: 'percentComplete', minWidth: 120, maxWidth: 200,
-        formatter: Slicker.Formatters.percentCompleteBar,
+        formatter: Slicker.Formatters.percentCompleteBar, type: FieldType.number,
         filterable: true, filter: { model: Filters.slider, operator: '>=' },
       },
-      { id: 'start', name: 'Start', field: 'start', minWidth: 60, filterable: true },
-      { id: 'finish', name: 'Finish', field: 'finish', minWidth: 60, filterable: true },
+      {
+        id: 'start', name: 'Start', field: 'start', minWidth: 60,
+        type: FieldType.dateIso, filterable: true, sortable: true,
+        filter: { model: Filters.compoundDate },
+        formatter: Formatters.dateIso,
+      },
+      {
+        id: 'finish', name: 'Finish', field: 'finish', minWidth: 60,
+        type: FieldType.dateIso, filterable: true, sortable: true,
+        filter: { model: Filters.compoundDate },
+        formatter: Formatters.dateIso,
+      },
       {
         id: 'effort-driven', name: 'Effort Driven', width: 80, minWidth: 20, maxWidth: 80, cssClass: 'cell-effort-driven', field: 'effortDriven',
         formatter: Formatters.checkmarkMaterial, cannotTriggerInsert: true,
@@ -84,22 +96,13 @@ export class Example5 {
       enableAutoResize: true,
       enableFiltering: true,
       enableSorting: true,
-      enableTreeView: true,
+      enableTreeView: true, // you must enable this flag for the filtering & sorting to work as expected
       headerRowHeight: 45,
       rowHeight: 45,
       treeViewOptions: {
         associatedFieldId: 'title'
       }
     };
-  }
-
-  dispose() {
-    this.slickgridLwc.dispose();
-  }
-
-  searchTask(event: KeyboardEvent) {
-    this.searchString = (event.target as HTMLInputElement)?.value || '';
-    this.dataViewObj.refresh();
   }
 
   /**
@@ -152,11 +155,6 @@ export class Example5 {
     // scroll to the new row
     const rowIndex = this.dataViewObj.getIdxById(newItem.id);
     this.gridObj.scrollRowIntoView(rowIndex, false);
-  }
-
-  clearSearch() {
-    this.searchTask(new KeyboardEvent('keyup', { code: 'a', bubbles: true, cancelable: true }));
-    document.querySelector<HTMLInputElement>('input.search').value = '';
   }
 
   collapseAll() {
@@ -241,6 +239,9 @@ export class Example5 {
 
     // prepare the data
     for (let i = 0; i < NB_ITEMS; i++) {
+      const randomYear = 2000 + Math.floor(Math.random() * 10);
+      const randomMonth = Math.floor(Math.random() * 11);
+      const randomDay = Math.floor((Math.random() * 29));
       const d = (data[i] = {});
       let parentId;
 
@@ -264,8 +265,8 @@ export class Example5 {
       d['title'] = 'Task ' + i;
       d['duration'] = '5 days';
       d['percentComplete'] = Math.round(Math.random() * 100);
-      d['start'] = '01/01/2009';
-      d['finish'] = '01/05/2009';
+      d['start'] = new Date(randomYear, randomMonth, randomDay);
+      d['finish'] = new Date(randomYear, (randomMonth + 1), randomDay);
       d['effortDriven'] = (i % 5 === 0);
     }
     return data;

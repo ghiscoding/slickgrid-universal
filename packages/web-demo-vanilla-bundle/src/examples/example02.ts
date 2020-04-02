@@ -22,6 +22,10 @@ export class Example2 {
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, dataset);
   }
 
+  dispose() {
+    this.slickgridLwc.dispose();
+  }
+
   initializeGrid() {
     this.columnDefinitions = [
       {
@@ -129,10 +133,6 @@ export class Example2 {
       headerRowHeight: 50,
       rowHeight: 50,
     };
-  }
-
-  dispose() {
-    this.slickgridLwc.dispose();
   }
 
   loadData(rowCount: number) {

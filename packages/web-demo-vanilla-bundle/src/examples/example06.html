@@ -31,10 +31,17 @@
         <label class="label">Search File</label>
       </div>
       <div class="field-body">
-        <div class="field">
-          <p class="control">
-            <input type="text" class="input is-small" onkeyup.delegate="searchFile(event)">
-          </p>
+        <div class="field is-expanded">
+          <div class="field has-addons">
+            <p class="control is-expanded">
+              <input type="text" class="input search is-small" onkeyup.delegate="searchFile(event)">
+            </p>
+            <p class="control pointer" onclick.delegate="clearSearch()">
+              <a class="button is-static is-small">
+                <span class="mdi mdi-close-thick"></span>
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </div>

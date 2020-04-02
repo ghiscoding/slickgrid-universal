@@ -6,10 +6,13 @@ import {
   findItemInHierarchicalStructure,
   GridOption,
   sortFlatArrayWithParentChildRef,
+  Filters,
   Formatter,
   Formatters,
   sortHierarchicalArray,
   modifyDatasetToAddTreeItemsMapping,
+  FilterCallbackArg,
+  OperatorType,
 } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import './example06.scss';
@@ -35,11 +38,14 @@ export class Example6 {
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions);
     this.dataViewObj = this.slickgridLwc.dataView;
-    // this.dataViewObj.setFilter(this.myFilter.bind(this, this.dataViewObj));
     this.datasetHierarchical = sortHierarchicalArray(this.mockDataset(), { sortByFieldId: 'file' });
     this.datasetFlat = convertHierarchicalViewToFlatArray(this.datasetHierarchical, { childPropName: 'files' });
     this.slickgridLwc.dataset = this.datasetFlat;
     modifyDatasetToAddTreeItemsMapping(this.slickgridLwc.dataset, this.columnDefinitions[0], this.dataViewObj);
+  }
+
+  dispose() {
+    this.slickgridLwc.dispose();
   }
 
   initializeGrid() {
@@ -53,12 +59,15 @@ export class Example6 {
         }
       },
       {
-        id: 'dateModified', name: 'Date Modified', field: 'dateModified', formatter: Formatters.dateIso, sortable: true, type: FieldType.date, minWidth: 90,
-        // exportWithFormatter: true, filterable: true, filter: { model: Filters.compoundDate }
+        id: 'dateModified', name: 'Date Modified', field: 'dateModified',
+        formatter: Formatters.dateIso, sortable: true, type: FieldType.date, minWidth: 90,
+        exportWithFormatter: true, filterable: true, filter: { model: Filters.compoundDate }
       },
       {
-        id: 'size', name: 'Size', field: 'size', sortable: true, minWidth: 90, formatter: (row, cell, value, columnDef, dataContext, grid) => isNaN(value) ? '' : `${value} MB`
-        //  exportWithFormatter: true, filterable: true, filter: { model: Filters.compoundDate }
+        id: 'size', name: 'Size', field: 'size', sortable: true, minWidth: 90,
+        type: FieldType.number, exportWithFormatter: true,
+        filterable: true, filter: { model: Filters.compoundInputNumber },
+        formatter: (row, cell, value) => isNaN(value) ? '' : `${value} MB`,
       },
     ];
 
@@ -69,18 +78,46 @@ export class Example6 {
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableFiltering: true,
+      enableTreeView: true, // you must enable this flag for the filtering & sorting to work as expected
       headerRowHeight: 45,
       rowHeight: 45,
     };
   }
 
-  dispose() {
-    this.slickgridLwc.dispose();
+  clearSearch() {
+    this.searchFile(new KeyboardEvent('keyup', { code: '', bubbles: true, cancelable: true }));
+    document.querySelector<HTMLInputElement>('input.search').value = '';
   }
 
   searchFile(event: KeyboardEvent) {
-    this.searchString = (event.target as HTMLInputElement).value;
-    this.dataViewObj.refresh();
+    this.searchString = (event.target as HTMLInputElement)?.value || '';
+    this.updateFilter();
+  }
+
+  updateFilter() {
+    const selectedColumn = this.columnDefinitions.find((col) => col.id === 'file');
+
+    if (selectedColumn) {
+      const fieldName = selectedColumn.id;
+      const filter = {};
+      const filterArg: FilterCallbackArg = {
+        columnDef: selectedColumn,
+        operator: OperatorType.contains,
+        searchTerms: [this.searchString || '']
+      };
+
+      if (this.searchString) {
+        // pass a columnFilter object as an object which it's property name must be a column field name (e.g.: 'duration': {...} )
+        filter[fieldName] = filterArg;
+      }
+
+      this.dataViewObj.setFilterArgs({
+        columnFilters: filter,
+        grid: this.gridObj,
+        dataView: this.dataViewObj,
+      });
+      this.dataViewObj.refresh();
+    }
   }
 
   treeFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
@@ -119,26 +156,6 @@ export class Example6 {
       prefix = '<i class="has-text-info mdi mdi-20px mdi-file-music-outline"></i>';
     }
     return prefix;
-  }
-
-  myFilter(dataView: any, item: any) {
-    const parentPropName = '__parentId';
-    const treeAssociatedField = this.gridOptions.treeViewOptions?.associatedFieldId;
-    if (this.searchString !== '' && item[treeAssociatedField].indexOf(this.searchString) === -1) {
-      return false;
-    }
-
-    if (item[parentPropName] !== null) {
-      let parent = dataView.getItemById(item[parentPropName]);
-      while (parent) {
-        if (parent.__collapsed || (this.searchString !== '' && parent[treeAssociatedField].indexOf(this.searchString) === -1)) {
-          return false;
-        }
-        const parentId = parent[parentPropName] !== null ? parent[parentPropName] : null;
-        parent = dataView.getItemById(parentId);
-      }
-    }
-    return true;
   }
 
   /**

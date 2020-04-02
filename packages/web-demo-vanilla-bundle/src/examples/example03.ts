@@ -10,7 +10,7 @@ const actionFormatter = (row, cell, value, columnDef, dataContext) => {
 
 // you can create custom validator to pass to an inline editor
 const myCustomTitleValidator = (value, args) => {
-  if (value == null || value === undefined || !value.length) {
+  if (value === null || value === undefined || !value.length) {
     return { valid: false, msg: 'This is a required field' };
   } else if (!/^Task\s\d+$/.test(value)) {
     return { valid: false, msg: 'Your title is invalid, it must start with "Task" followed by a number' };
@@ -41,6 +41,10 @@ export class Example3 {
     gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, dataset);
+  }
+
+  dispose() {
+    this.slickgridLwc.dispose();
   }
 
   initializeGrid() {
@@ -293,10 +297,6 @@ export class Example3 {
     };
   }
 
-  dispose() {
-    this.slickgridLwc.dispose();
-  }
-
   loadData(count: number) {
     // mock data
     const tmpArray = [];
@@ -304,7 +304,6 @@ export class Example3 {
       const randomYear = 2000 + Math.floor(Math.random() * 10);
       const randomMonth = Math.floor(Math.random() * 11);
       const randomDay = Math.floor((Math.random() * 29));
-      const randomPercent = Math.round(Math.random() * 100);
 
       tmpArray[i] = {
         id: i,

@@ -26,6 +26,11 @@ export class Example1 {
     this.slickgridLwc2 = new Slicker.GridBundle(gridContainerElm2, this.columnDefinitions2, this.gridOptions2, this.dataset2);
   }
 
+  dispose() {
+    this.slickgridLwc1.dispose();
+    this.slickgridLwc2.dispose();
+  }
+
   /* Define grid Options and Columns */
   defineGrids() {
     this.columnDefinitions1 = [
@@ -56,11 +61,6 @@ export class Example1 {
         },
       }
     };
-  }
-
-  dispose() {
-    this.slickgridLwc1.dispose();
-    this.slickgridLwc2.dispose();
   }
 
   mockData(count: number) {

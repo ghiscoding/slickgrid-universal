@@ -7,7 +7,12 @@
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
 
-This is a monorepo project (using Lerna) which is regrouping a few packages under a single repository. The goal is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). It's also a good opportunity to decouple some features/services that not every project require at all time, this will also help in getting a smaller bundle size. For example, not every project require backend services (OData, GraphQL), which is why they are better handled in a monorepo structure.
+This is a monorepo project (using Lerna) which is regrouping a few packages under a single repository. 
+The goal is to create a common repo that includes all Editors, Filters, Extensions and Services 
+that could be used by any Framework (it is framework agnostic). 
+It's also a good opportunity to decouple some features/services that not every project require at all time, 
+this will also help in getting a smaller bundle size. For example, not every project requires backend services (OData, GraphQL), 
+which is why they are better handled in a monorepo structure.
 
 ### Demo page
 The GitHub [demo page](https://ghiscoding.github.io/slickgrid-universal) uses the Material Design theme but you could also use `Bootstrap 3` and/or `Bootstrap 4` theme which is demoed in other frameworks. 
@@ -15,20 +20,25 @@ The GitHub [demo page](https://ghiscoding.github.io/slickgrid-universal) uses th
 
 ### Why create this monorepo?
 You might be wondering why was this monorepo created?
-1. it removes lot of duplicate code that existed in both [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) (over 80% were the same code and that is not very DRY).
+1. it removes a lot of duplicate code that existed in both 
+[Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) 
+(over 80% were the same code and that is not very DRY).
 2. removes any Services that not all user need/want (OData, GraphQL, Export to File, Export to Excel, ...)
 3. framework agnostic, it can be implemented in many more frameworks in the future
 
 ### Framework using this monorepo
-This is a Work in Progress, eventually [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) will be rewritten to use this monorepo which will simplify debugging/fixing common code. 
+This is a Work in Progress, the goal is to eventually to rewrite 
+[Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) 
+and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) to use this monorepo which will simplify debugging/fixing common code. 
 
-Note however that this project also has a Vanilla Implementation (not associated to any framework) and that what is used to the test the UI portion. The Vanilla bundle is also used in our SalesForce (with Lighning Web Component) hence the creation of this monorepo.
+Note however that this project also has a Vanilla Implementation (not associated with any framework) 
+and that what is used to the test the UI portion. The Vanilla bundle is also used in our SalesForce (with Lightning Web Component) hence the creation of this monorepo.
 
 The main packages structure is the following
 - `@slickgrid-universal/common`: commonly used Formatters/Editors/Filters/Services/...
   - this can then be used by any Framework (Angular, Aurelia, Vanilla, ...)
 - `@slickgrid-universal/vanilla-bundle`: a vanilla TypeScript/JavaScript implementation (no framework)
-- 
+  - 
 - Standalone Packages
   - `slickgrid-universal/web-demo-vanilla-bundle` standalone package for demo purposes and UI testing (not a public package)
 
@@ -44,14 +54,16 @@ npm run bootstrap
 
 2. Build
 
-To get started you must run (also once) an initial build so that all necessary `dist` are created for all the packages to work together.
+To get started you must run (also once) an initial build so that all necessary `dist` is created for all the packages to work together.
 ```bash
 npm run build
 ```
 
 3. Run Dev (Vanilla Implementation)
 
-There is a Vanilla flavor implementation of this monorepo, vanilla means that it is not associated to any framework and so it is plain TypeScript without being bound to any framework. The implementation is very similar to Angular and Aurelia, it could be used as a guideline to implement it in other frameworks.
+There is a Vanilla flavour implementation of this monorepo, vanilla means that it is not associated with any framework 
+and so it is plain TypeScript without being bound to any framework. The implementation is very similar to Angular and Aurelia, 
+it could be used as a guideline to implement it in other frameworks.
 
 ```bash
 npm run dev:watch
@@ -126,3 +138,5 @@ npm run test:watch
   - [x] Build and run on every PR
 - [ ] Remove any Deprecated code
   - [ ] Create a Migration Guide 
+- [ ] Add Typings for Grid & DataView objects
+- [ ] Add some bindings in the demo (e.g. pinned rows input)

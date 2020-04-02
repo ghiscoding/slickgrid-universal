@@ -169,10 +169,10 @@ export class CompoundInputFilter implements Filter {
     switch (type) {
       case FieldType.string:
         optionValues = [
-          { operator: '' as OperatorString, description: this.translaterService?.getCurrentLocale() && this.translaterService?.translate('CONTAINS') || this._locales?.TEXT_CONTAINS },
-          { operator: '=' as OperatorString, description: this.translaterService?.getCurrentLocale() && this.translaterService?.translate('EQUALS') || this._locales?.TEXT_EQUALS },
-          { operator: 'a*' as OperatorString, description: this.translaterService?.getCurrentLocale() && this.translaterService?.translate('STARTS_WITH') || this._locales?.TEXT_STARTS_WITH },
-          { operator: '*z' as OperatorString, description: this.translaterService?.getCurrentLocale() && this.translaterService?.translate('ENDS_WITH') || this._locales?.TEXT_ENDS_WITH },
+          { operator: '' as OperatorString, description: this.translaterService?.translate && this.translaterService?.translate('CONTAINS') || this._locales?.TEXT_CONTAINS },
+          { operator: '=' as OperatorString, description: this.translaterService?.translate && this.translaterService?.translate('EQUALS') || this._locales?.TEXT_EQUALS },
+          { operator: 'a*' as OperatorString, description: this.translaterService?.translate && this.translaterService?.translate('STARTS_WITH') || this._locales?.TEXT_STARTS_WITH },
+          { operator: '*z' as OperatorString, description: this.translaterService?.translate && this.translaterService?.translate('ENDS_WITH') || this._locales?.TEXT_ENDS_WITH },
         ];
         break;
       default:

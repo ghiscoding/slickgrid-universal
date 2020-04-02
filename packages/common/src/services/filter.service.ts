@@ -239,12 +239,13 @@ export class FilterService {
   /** Local Grid Filter search */
   customLocalFilter(item: any, args: any) {
     const dataView = args && args.dataView;
+    const isGridWithTreeView = this._gridOptions?.enableTreeView || false;
     const columnWithTreeView = this._columnDefinitions.find((columnDef: Column) => columnDef.treeView);
     let treeView;
 
     // when the column is a Tree View structure and the parent is collapsed, we won't go further and just continue with next row
     // so we always run this check even when there are no filter search, the reason is because the user might click on the expand/collapse
-    if (columnWithTreeView) {
+    if (isGridWithTreeView && columnWithTreeView) {
       treeView = columnWithTreeView.treeView;
       const collapsedPropName = treeView.collapsedPropName || '__collapsed';
       const parentPropName = treeView.parentPropName || '__parentId';
@@ -263,16 +264,22 @@ export class FilterService {
     for (const columnId of Object.keys(args.columnFilters)) {
       const columnFilter = args.columnFilters[columnId] as ColumnFilter;
       const conditionOptions = this.getFilterConditionOptionsOrBoolean(item, columnFilter, columnId, args.grid, dataView);
+      if (typeof conditionOptions === 'boolean') {
+        return conditionOptions;
+      }
 
-      if (columnWithTreeView) {
+      if (isGridWithTreeView && columnWithTreeView) {
         const treeItemsPropName = treeView?.itemMapPropName || '__treeItems';
-        if (treeView && item[treeItemsPropName] === undefined) {
+        if (item[treeItemsPropName] === undefined) {
           return false;
         }
         const defaultTreeColumnFilter = { columnId: columnWithTreeView.id, columnDef: columnWithTreeView, searchTerms: [''] } as ColumnFilter;
         const treeColumnFilter = (args.columnFilters[columnWithTreeView.id] || defaultTreeColumnFilter) as ColumnFilter;
         const treeConditionOptions = this.getFilterConditionOptionsOrBoolean(item, treeColumnFilter, columnWithTreeView.id, args.grid, dataView);
         const foundInAnyTreeLevel = item[treeItemsPropName].find((childItem: string) => FilterConditions.executeMappedCondition({ ...treeConditionOptions as FilterConditionOption, cellValue: childItem }));
+        if (typeof treeConditionOptions === 'boolean') {
+          return treeConditionOptions;
+        }
 
         if (columnWithTreeView.id === columnId) {
           // when the current column is the Tree View column, we can loop through the treeItems mapping and execute the search on these values and we're done
@@ -287,7 +294,9 @@ export class FilterService {
           // 2. also run the condition of the row with current column filter
           const hasChildren = Array.isArray(item[treeItemsPropName]) && item[treeItemsPropName].length > 1;
           const hasFoundItem = FilterConditions.executeMappedCondition(conditionOptions as FilterConditionOption);
-          console.log(foundInAnyTreeLevel, hasChildren, hasFoundItem)
+
+          console.log(foundInAnyTreeLevel, hasChildren, hasFoundItem);
+
           if (!foundInAnyTreeLevel || (!hasChildren && !hasFoundItem)) {
             return false;
           }
