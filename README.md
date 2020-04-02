@@ -15,18 +15,20 @@ this will also help in getting a smaller bundle size. For example, not every pro
 which is why they are better handled in a monorepo structure.
 
 ### Demo page
-The GitHub [demo page](https://ghiscoding.github.io/slickgrid-universal) uses the Material Design theme but you could also use `Bootstrap 3` and/or `Bootstrap 4` theme which is demoed in other frameworks. 
+The GitHub [demo page](https://ghiscoding.github.io/slickgrid-universal) uses the Material Design theme but you could also use Bootstrap theme which is demoed in other frameworks. 
 - [Web-Demo-Vanilla-Bundle](https://ghiscoding.github.io/slickgrid-universal) with Material Design theme
+- [Angular-Slickgrid](https://ghiscoding.github.io/Angular-Slickgrid/)
+- [Aurelia-Slickgrid](https://ghiscoding.github.io/aurelia-slickgrid/) 
 
 ### Why create this monorepo?
 You might be wondering why was this monorepo created?
 1. it removes a lot of duplicate code that existed in both 
 [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) 
 (over 80% were the same code and that is not very DRY).
-2. removes any Services that not all user need/want (OData, GraphQL, Export to File, Export to Excel, ...)
-3. framework agnostic, it can be implemented in many more frameworks in the future
+2. decouple some Services that should not be required at all time (OData, GraphQL, Export to File, Export to Excel, ...)
+3. framework agnostic, it could be implemented in many more frameworks in the future
 
-### Framework using this monorepo
+### Frameworks using this monorepo
 This is a Work in Progress, the goal is to eventually to rewrite 
 [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) 
 and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) to use this monorepo which will simplify debugging/fixing common code. 
@@ -38,8 +40,8 @@ The main packages structure is the following
 - `@slickgrid-universal/common`: commonly used Formatters/Editors/Filters/Services/...
   - this can then be used by any Framework (Angular, Aurelia, Vanilla, ...)
 - `@slickgrid-universal/vanilla-bundle`: a vanilla TypeScript/JavaScript implementation (no framework)
-  - &amp;
-- Standalone Packages
+  - |
+- Standalone Package
   - `slickgrid-universal/web-demo-vanilla-bundle` standalone package for demo purposes and UI testing (not a public package)
 
 ### Installation
@@ -70,8 +72,6 @@ npm run dev:watch
 ```
 
 ### Tests
-
-##### Unit Tests
 To run all packages Jest unit tests, you can run this command
 ```bash
 npm run test
