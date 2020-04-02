@@ -11,8 +11,9 @@ export const treeFormatter: Formatter = (row: number, cell: number, value: any, 
   if (dataView && dataView.getIdxById && dataView.getItemByIdx) {
     if (value === null || value === undefined || dataContext === undefined) { return ''; }
     value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const identifierPropName = dataView.getIdPropertyName() || 'id';
     const spacer = `<span style="display:inline-block;height:1px;width:${indentMarginLeft * dataContext[treeLevelPropName]}px"></span>`;
-    const idx = dataView.getIdxById(dataContext.id);
+    const idx = dataView.getIdxById(dataContext[identifierPropName]);
     const nextItemRow = dataView.getItemByIdx(idx + 1);
 
     if (nextItemRow && nextItemRow[treeLevelPropName] > dataContext[treeLevelPropName]) {

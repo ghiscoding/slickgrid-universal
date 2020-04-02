@@ -15,12 +15,13 @@ import {
 import { executeBackendCallback, refreshBackendDataset } from './backend-utilities';
 import { PubSubService } from '../services/pubSub.service';
 import { getDescendantProperty } from './utilities';
-import { sortByFieldType } from '../sorters/sorterUtilities';
+import { sortByFieldType, sortFlatArrayWithParentChildRef } from '../sorters/sorterUtilities';
 
 // using external non-typed js libraries
 declare const Slick: any;
 
 export class SortService {
+  private _columnWithTreeView: Column;
   private _currentLocalSorters: CurrentSorter[] = [];
   private _eventHandler: SlickEventHandler;
   private _dataView: any;
@@ -70,6 +71,16 @@ export class SortService {
     this._isBackendGrid = false;
     this._grid = grid;
     this._dataView = dataView;
+
+    if (this._gridOptions && this._gridOptions.enableTreeView) {
+      this._columnWithTreeView = this._columnDefinitions.find((col: Column) => col.treeView);
+      if (!this._columnWithTreeView || !this._columnWithTreeView.id) {
+        throw new Error('[Slickgrid-Universal] When enabling tree view, you must also provide the column definition "treeView" property with "childrenPropName" or "parentPropName" (depending if your array is hierarchical or flat) for the Tree View to work properly');
+      }
+      if (this._columnWithTreeView) {
+        this._grid.setSortColumns([{ columnId: this._columnWithTreeView.id, sortAsc: true }]);
+      }
+    }
 
     this._eventHandler.subscribe(grid.onSort, (e: any, args: any) => {
       // multiSort and singleSort are not exactly the same, but we want to structure it the same for the (for loop) after
@@ -248,9 +259,42 @@ export class SortService {
 
   /** When a Sort Changes on a Local grid (JSON dataset) */
   onLocalSortChanged(grid: any, dataView: any, sortColumns: ColumnSort[], forceReSort = false) {
+    const isTreeViewEnabled = this._gridOptions && this._gridOptions.enableTreeView || false;
+
     if (grid && dataView) {
-      if (forceReSort) {
+      if (forceReSort && !isTreeViewEnabled) {
         dataView.reSort();
+      }
+
+      if (isTreeViewEnabled) {
+        const treeViewOptions = this._columnWithTreeView.treeView;
+        const treeLevel = treeViewOptions.levelPropName || '__treeLevel';
+        // const columnDef = { ...this._columnWithTreeView, type: FieldType.number, queryFieldSorter: treeLevel };
+        // sortColumns = this._grid.getSortColumns();
+        // console.log(sortColumns[0].sortAsc)
+        // sortColumns.unshift({ multiColumnSort: true, columnId: treeLevel, sortAsc: true, sortCol: columnDef });
+        // this._grid.setSortColumns(sortColumns);
+        console.log(this._grid.getSortColumns())
+        const sortColIndex = sortColumns.findIndex((sortCol) => sortCol.columnId === this._columnWithTreeView.id);
+        if (sortColIndex >= 0) {
+          const dataset = this._dataView.getItems();
+          const sortedOutputArray = sortFlatArrayWithParentChildRef(dataset, {
+            parentPropName: 'parentId',
+            childPropName: 'children',
+            direction: sortColumns[sortColIndex].sortAsc ? 'ASC' : 'DESC',
+            sortByFieldId: 'id',
+            sortPropFieldType: FieldType.number,
+          });
+          // console.log(sortColumns.length, sortColIndex, sortColumns.splice(sortColIndex, 1))
+          sortColumns.splice(sortColIndex, 1);
+          this._dataView.setItems(sortedOutputArray, this._gridOptions.datasetIdPropertyName);
+        }
+        // this.sortComparer([{ multiColumnSort: true, columnId: treeLevel, sortAsc: columnSortObj.sortAsc, sortCol: columnDef }], dataRow1, dataRow2);
+        // const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef);
+        // if (sortResult !== SortDirectionNumber.neutral) {
+        //   return sortResult;
+        // }
+        // sortColumns.forEach((sortCol) => sortCol.multiColumnSort = true);
       }
 
       dataView.sort(this.sortComparer.bind(this, sortColumns));
@@ -265,9 +309,10 @@ export class SortService {
       for (let i = 0, l = sortColumns.length; i < l; i++) {
         const columnSortObj = sortColumns[i];
         if (columnSortObj && columnSortObj.sortCol) {
+          const columnDef = columnSortObj.sortCol;
           const sortDirection = columnSortObj.sortAsc ? SortDirectionNumber.asc : SortDirectionNumber.desc;
-          const sortField = columnSortObj.sortCol.queryFieldSorter || columnSortObj.sortCol.queryField || columnSortObj.sortCol.field;
-          const fieldType = columnSortObj.sortCol.type || FieldType.string;
+          const sortField = columnDef.queryFieldSorter || columnDef.queryField || columnDef.field;
+          const fieldType = columnDef.type || FieldType.string;
           let value1 = dataRow1[sortField];
           let value2 = dataRow2[sortField];
 
@@ -278,13 +323,13 @@ export class SortService {
           }
 
           // user could provide his own custom Sorter
-          if (columnSortObj.sortCol && columnSortObj.sortCol.sorter) {
-            const customSortResult = columnSortObj.sortCol.sorter(value1, value2, sortDirection, columnSortObj.sortCol);
+          if (columnDef.sorter) {
+            const customSortResult = columnDef.sorter(value1, value2, sortDirection, columnDef);
             if (customSortResult !== SortDirectionNumber.neutral) {
               return customSortResult;
             }
           } else {
-            const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnSortObj.sortCol);
+            const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef);
             if (sortResult !== SortDirectionNumber.neutral) {
               return sortResult;
             }

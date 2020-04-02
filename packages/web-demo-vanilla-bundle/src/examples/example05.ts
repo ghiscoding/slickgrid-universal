@@ -62,8 +62,8 @@ export class Example5 {
       { id: 'duration', name: 'Duration', field: 'duration', minWidth: 90, filterable: true },
       {
         id: '%', name: '% Complete', field: 'percentComplete', minWidth: 120, maxWidth: 200,
+        sortable: true, filterable: true, filter: { model: Filters.slider, operator: '>=' },
         formatter: Slicker.Formatters.percentCompleteBar, type: FieldType.number,
-        filterable: true, filter: { model: Filters.slider, operator: '>=' },
       },
       {
         id: 'start', name: 'Start', field: 'start', minWidth: 60,
@@ -99,9 +99,6 @@ export class Example5 {
       enableTreeView: true, // you must enable this flag for the filtering & sorting to work as expected
       headerRowHeight: 45,
       rowHeight: 45,
-      treeViewOptions: {
-        associatedFieldId: 'title'
-      }
     };
   }
 

@@ -15,11 +15,11 @@ export class Example2 {
 
   attached() {
     this.initializeGrid();
-    const dataset = this.loadData(500);
+    this.dataset = this.loadData(500);
     const gridContainerElm = document.querySelector(`.grid2`);
 
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, dataset);
+    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, this.dataset);
   }
 
   dispose() {
