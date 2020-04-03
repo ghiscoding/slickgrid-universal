@@ -41,6 +41,9 @@ $cell-odd-background-color:                 darken($grid-cell-color, 3%) !defaul
 $cell-odd-active-background-color:          darken($grid-cell-color, 5%) !default;
 $cell-padding:                              5px 7.5834px !default;
 
+/** 4x available slick-pane (top, bottom, left, right) */
+$slick-pane-top-border-top:                 none !default;
+
 /* row */
 $row-mouse-hover-color:                     #eff5fc !default;
 $row-selected-color:                        #dae8f1 !default;
@@ -87,7 +90,18 @@ $header-filter-row-border-top:              0 none !default;                    
 $header-filter-row-border-right:            0 none !default;
 $header-filter-row-border-bottom:           0 none !default;
 $header-filter-row-border-left:             0 none !default;
+$header-resizable-width:                    7px !default;
 $header-resizable-hover:                    1px solid #d0d0d0 !default;
+$header-resizable-hover-border-bottom:      0 none !default;
+$header-resizable-hover-border-left:        0 none !default;
+$header-resizable-hover-border-right:       $header-resizable-hover !default;
+$header-resizable-hover-border-top:         0 none !default;
+$header-resizable-hover-width:              $header-resizable-width !default;
+$header-resizable-hover-border-radius:      8px !default;
+$header-resizable-hover-right:              0 !default;
+$header-resizable-hover-height:             100% !default;
+$header-resizable-hover-top:                0 !default;
+$header-resizable-hover-opacity:            1 !default;
 $header-scroll-width-to-remove:             16px !default;                        // without this, the header (which doesn't have scrolling) will be wider than the data viewport
 
 /* Frozen pinned rows/columns */
@@ -232,6 +246,7 @@ $grid-menu-icon-font-size:                  $icon-font-size !default;
 $grid-menu-icon-line-height:                14px !default;
 $grid-menu-icon-margin-right:               4px !default;
 $grid-menu-icon-width:                      14px !default;
+$grid-menu-icon-top-margin:                 5px !default;
 $grid-menu-item-border:                     1px solid transparent !default;
 $grid-menu-item-border-radius:              0px !default;
 $grid-menu-item-disabled-color:             silver !default;

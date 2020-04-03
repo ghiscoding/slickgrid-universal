@@ -1,5 +1,6 @@
 import { Column, Formatters, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+import { ExampleGridOptions } from './example-grid-options';
 
 const NB_ITEMS = 995;
 
@@ -22,8 +23,8 @@ export class Example1 {
     this.dataset1 = this.mockData(NB_ITEMS);
     this.dataset2 = this.mockData(NB_ITEMS);
 
-    this.slickgridLwc1 = new Slicker.GridBundle(gridContainerElm1, this.columnDefinitions1, this.gridOptions1, this.dataset1);
-    this.slickgridLwc2 = new Slicker.GridBundle(gridContainerElm2, this.columnDefinitions2, this.gridOptions2, this.dataset2);
+    this.slickgridLwc1 = new Slicker.GridBundle(gridContainerElm1, this.columnDefinitions1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
+    this.slickgridLwc2 = new Slicker.GridBundle(gridContainerElm2, this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
   }
 
   dispose() {
@@ -43,7 +44,6 @@ export class Example1 {
     ];
     this.gridOptions1 = {
       enableAutoResize: false,
-      enableSorting: true,
       gridHeight: 225,
       gridWidth: 800,
     };

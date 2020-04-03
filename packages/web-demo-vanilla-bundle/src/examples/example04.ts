@@ -1,5 +1,6 @@
 import { AutocompleteOption, Column, Editors, FieldType, Filters, GroupTotalFormatters, Formatters, OperatorType, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+import { ExampleGridOptions } from './example-grid-options';
 
 const actionFormatter = (row, cell, value, columnDef, dataContext) => {
   if (dataContext.priority === 3) { // option 3 is High
@@ -41,7 +42,7 @@ export class Example4 {
     gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
     gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, dataset);
+    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
   }
 
   dispose() {
@@ -129,8 +130,18 @@ export class Example4 {
           model: Slicker.Editors.multipleSelect,
         },
       },
-      { id: 'start', name: 'Start', field: 'start', sortable: true },
-      { id: 'finish', name: 'Finish', field: 'finish', sortable: true },
+      {
+        id: 'start', name: 'Start', field: 'start', minWidth: 60,
+        type: FieldType.dateIso, filterable: true, sortable: true,
+        filter: { model: Filters.compoundDate },
+        formatter: Formatters.dateIso,
+      },
+      {
+        id: 'finish', name: 'Finish', field: 'finish', minWidth: 60,
+        type: FieldType.dateIso, filterable: true, sortable: true,
+        filter: { model: Filters.compoundDate },
+        formatter: Formatters.dateIso,
+      },
       {
         id: 'completed', name: 'Completed', field: 'completed', sortable: true, formatter: Slicker.Formatters.checkmarkMaterial,
         filterable: true,
@@ -276,13 +287,10 @@ export class Example4 {
       },
       enableCheckboxSelector: true,
       enableRowSelection: true,
-      enableSorting: true,
       alwaysShowVerticalScroll: false, // disable scroll since we don't want it to show on the left pinned columns
       frozenColumn: this.frozenColumnCount,
       frozenRow: this.frozenRowCount,
       // frozenBottom: true, // if you want to freeze the bottom instead of the top, you can enable this property
-      headerRowHeight: 50,
-      rowHeight: 50,
       editCommandHandler: (item, column, editCommand) => {
         this.commandQueue.push(editCommand);
         editCommand.execute();
@@ -307,13 +315,17 @@ export class Example4 {
     // mock data
     this.dataset = [];
     for (let i = 0; i < 500; i++) {
+      const randomYear = 2000 + Math.floor(Math.random() * 10);
+      const randomMonth = Math.floor(Math.random() * 11);
+      const randomDay = Math.floor((Math.random() * 29));
+
       this.dataset[i] = {
         id: i,
         title: 'Task ' + i,
         duration: Math.round(Math.random() * 100) + '',
         percentComplete: Math.round(Math.random() * 100),
-        start: '01/01/2009',
-        finish: '01/05/2009',
+        start: new Date(randomYear, randomMonth, randomDay),
+        finish: new Date(randomYear, (randomMonth + 1), randomDay),
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
         completed: (i % 5 === 0),
         cityOfOrigin: (i % 2) ? 'Vancouver, BC, Canada' : 'Boston, MA, United States',

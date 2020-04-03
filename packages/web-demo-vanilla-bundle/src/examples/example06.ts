@@ -16,6 +16,7 @@ import {
 } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import './example06.scss';
+import { ExampleGridOptions } from './example-grid-options';
 
 export class Example6 {
   columnDefinitions: Column[];
@@ -36,7 +37,7 @@ export class Example6 {
 
     gridContainerElm.addEventListener('onclick', this.handleOnClick.bind(this));
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions);
+    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions });
     this.dataViewObj = this.slickgridLwc.dataView;
     this.datasetHierarchical = sortHierarchicalArray(this.mockDataset(), { sortByFieldId: 'file' });
     this.datasetFlat = convertHierarchicalViewToFlatArray(this.datasetHierarchical, { childPropName: 'files' });
@@ -79,8 +80,6 @@ export class Example6 {
       enableAutoResize: true,
       enableFiltering: true,
       enableTreeView: true, // you must enable this flag for the filtering & sorting to work as expected
-      headerRowHeight: 45,
-      rowHeight: 45,
     };
   }
 

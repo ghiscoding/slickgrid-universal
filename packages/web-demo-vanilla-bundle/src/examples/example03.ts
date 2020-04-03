@@ -1,5 +1,6 @@
 import { Aggregators, Column, Editors, FieldType, Filters, Sorters, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+import { ExampleGridOptions } from './example-grid-options';
 
 const actionFormatter = (row, cell, value, columnDef, dataContext) => {
   if (dataContext.priority === 3) { // option 3 is High
@@ -40,7 +41,7 @@ export class Example3 {
     gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
     gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, dataset);
+    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
   }
 
   dispose() {
@@ -134,6 +135,7 @@ export class Example3 {
       {
         id: 'start', name: 'Start', field: 'start', sortable: true,
         formatter: Formatters.dateIso, type: FieldType.date, outputType: FieldType.dateIso,
+        filterable: true, filter: { model: Filters.compoundDate },
         editor: { model: Editors.date, },
         grouping: {
           getter: 'start',
@@ -149,6 +151,7 @@ export class Example3 {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true,
         editor: { model: Editors.date, },
         formatter: Formatters.dateIso, type: FieldType.date, outputType: FieldType.dateIso,
+        filterable: true, filter: { model: Filters.compoundDate },
         grouping: {
           getter: 'finish',
           formatter: (g) => `Finish: ${g.value} <span style="color:green">(${g.count} items)</span>`,
@@ -269,12 +272,7 @@ export class Example3 {
       },
       enableCheckboxSelector: true,
       enableRowSelection: true,
-      enableSorting: true,
       alwaysShowVerticalScroll: false, // disable scroll since we don't want it to show on the left pinned columns
-      // frozenColumn: 2,
-      // frozenRow: 3,
-      headerRowHeight: 50,
-      rowHeight: 50,
       editCommandHandler: (item, column, editCommand) => {
         this.commandQueue.push(editCommand);
         editCommand.execute();

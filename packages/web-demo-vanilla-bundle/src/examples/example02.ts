@@ -1,5 +1,6 @@
 import { Aggregators, Column, FieldType, Filters, Sorters, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+import { ExampleGridOptions } from './example-grid-options';
 
 const NB_ITEMS = 500;
 
@@ -19,7 +20,7 @@ export class Example2 {
     const gridContainerElm = document.querySelector(`.grid2`);
 
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, this.dataset);
+    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   dispose() {
@@ -130,8 +131,6 @@ export class Example2 {
       exportOptions: {
         sanitizeDataExport: true
       },
-      headerRowHeight: 50,
-      rowHeight: 50,
     };
   }
 

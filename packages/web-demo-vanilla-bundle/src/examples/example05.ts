@@ -13,6 +13,7 @@ import {
 } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import './example05.scss';
+import { ExampleGridOptions } from './example-grid-options';
 
 const NB_ITEMS = 200;
 
@@ -35,7 +36,7 @@ export class Example5 {
 
     gridContainerElm.addEventListener('onclick', this.handleOnClick.bind(this));
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions);
+    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions });
     this.dataViewObj = this.slickgridLwc.dataView;
     this.gridObj = this.slickgridLwc.grid;
     this.dataset = this.mockDataset();
@@ -95,10 +96,7 @@ export class Example5 {
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableFiltering: true,
-      enableSorting: true,
       enableTreeView: true, // you must enable this flag for the filtering & sorting to work as expected
-      headerRowHeight: 45,
-      rowHeight: 45,
     };
   }
 

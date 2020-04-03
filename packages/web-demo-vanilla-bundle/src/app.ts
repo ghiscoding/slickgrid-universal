@@ -34,8 +34,8 @@ export class App {
 
     // re-render on browser history navigation change
     window.onpopstate = () => {
-      const location = window.location;
-      const prevRoute = this.routerConfig.pushState ? location.pathname.replace(this.stateBangChar, '') : location.hash.replace(this.stateBangChar, '');
+      const winLoc = window.location;
+      const prevRoute = this.routerConfig.pushState ? winLoc.pathname.replace(this.stateBangChar, '') : winLoc.hash.replace(this.stateBangChar, '');
       this.loadRoute(prevRoute || this.defaultRouteName, false);
     };
   }

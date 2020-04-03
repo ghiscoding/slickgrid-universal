@@ -350,8 +350,16 @@
         z-index: 1;
       }
       .slick-resizable-handle:hover {
-        border-right: $header-resizable-hover;
-        right: 0;
+        border-bottom: $header-resizable-hover-border-bottom;
+        border-left: $header-resizable-hover-border-left;
+        border-right: $header-resizable-hover-border-right;
+        border-top: $header-resizable-hover-border-top;
+        width: $header-resizable-hover-width;
+        border-radius: $header-resizable-hover-border-radius;
+        right: $header-resizable-hover-right;
+        height: $header-resizable-hover-height;
+        top: $header-resizable-hover-top;
+        opacity: $header-resizable-hover-opacity;
       }
     }
   }
