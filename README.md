@@ -11,7 +11,7 @@ This is a monorepo project (using Lerna) which is regrouping a few packages unde
 The goal is to create a common repo that includes all Editors, Filters, Extensions and Services 
 that could be used by any Framework (it is framework agnostic). 
 It's also a good opportunity to decouple some features/services that not every project require at all time, 
-this will also help in getting a smaller bundle size. For example, not every project requires backend services (OData, GraphQL), 
+this will also help in getting smaller bundle size depending on which features (packages) are used. For example, not every project requires backend services (OData, GraphQL), 
 which is why they are better handled in a monorepo structure.
 
 ### Demo page
@@ -117,7 +117,8 @@ npm run test:watch
   - [ ] Grid State
   - [x] Grouping & Col Span
   - [ ] Pagination
-  - [-] Resizer (moved to an Extension)
+  - [ ] Resizer 
+    - moved the Service to an Extension
   - [x] Shared
   - [x] Sort
 - [ ] Others
@@ -125,6 +126,9 @@ npm run test:watch
   - [ ] Dynamically Add Columns
   - [ ] Grid Presets
   - [ ] Pagination
+  - [ ] Tree View
+    - [ ] Search Filter on any Column
+    - [ ] Sorting from any Column
 
 #### Other Todos
 - [x] VScode Chrome Debugger
