@@ -247,8 +247,8 @@ export class FilterService {
     // so we always run this check even when there are no filter search, the reason is because the user might click on the expand/collapse
     if (isGridWithTreeView && columnWithTreeView) {
       treeView = columnWithTreeView.treeView;
-      const collapsedPropName = treeView.collapsedPropName || '__collapsed';
-      const parentPropName = treeView.parentPropName || '__parentId';
+      const collapsedPropName = treeView?.collapsedPropName || '__collapsed';
+      const parentPropName = treeView?.parentPropName || '__parentId';
 
       if (item[parentPropName] !== null) {
         let parent = dataView.getItemById(item[parentPropName]);
@@ -394,7 +394,7 @@ export class FilterService {
     // when using localization (i18n), we should use the formatter output to search as the new cell value
     if (columnDef && columnDef.params && columnDef.params.useFormatterOuputToFilter) {
       const rowIndex = (dataView && typeof dataView.getIdxById === 'function') ? dataView.getIdxById(item.id) : 0;
-      cellValue = columnDef.formatter(rowIndex, columnIndex, cellValue, columnDef, item, this._grid);
+      cellValue = (columnDef && typeof columnDef.formatter === 'function') ? columnDef.formatter(rowIndex, columnIndex, cellValue, columnDef, item, this._grid) : '';
     }
 
     // make sure cell value is always a string

@@ -484,7 +484,7 @@ describe('SortService', () => {
         { sortCol: { id: 'age', field: 'age', type: FieldType.number }, sortAsc: true },
       ] as ColumnSort[];
 
-      dataset.sort((row1, row2) => service.sortComparer(mockSortedCols, row1, row2));
+      dataset.sort((row1, row2) => service.sortComparers(mockSortedCols, row1, row2));
 
       expect(dataset).toEqual([
         { firstName: 'Barbara', lastName: 'Smith', age: 1, address: { zip: 222222 } },
@@ -502,7 +502,7 @@ describe('SortService', () => {
         { sortCol: { id: 'firstName', field: 'firstName', width: 100 }, sortAsc: false },
       ] as ColumnSort[];
 
-      dataset.sort((row1, row2) => service.sortComparer(mockSortedCols, row1, row2));
+      dataset.sort((row1, row2) => service.sortComparers(mockSortedCols, row1, row2));
 
       expect(dataset).toEqual([
         { firstName: 'John', lastName: 'Doe', age: 22, address: { zip: 123456 } },
@@ -520,7 +520,7 @@ describe('SortService', () => {
         { sortCol: { id: 'random', field: 'random', queryFieldSorter: 'firstName' }, sortAsc: false },
       ] as ColumnSort[];
 
-      dataset.sort((row1, row2) => service.sortComparer(mockSortedCols, row1, row2));
+      dataset.sort((row1, row2) => service.sortComparers(mockSortedCols, row1, row2));
 
       expect(dataset).toEqual([
         { firstName: 'John', lastName: 'Doe', age: 22, address: { zip: 123456 } },
@@ -538,7 +538,7 @@ describe('SortService', () => {
         { sortCol: { id: 'firstName', field: 'firstName', width: 100 }, sortAsc: true },
       ] as ColumnSort[];
 
-      dataset.sort((row1, row2) => service.sortComparer(mockSortedCols, row1, row2));
+      dataset.sort((row1, row2) => service.sortComparers(mockSortedCols, row1, row2));
 
       expect(dataset).toEqual([
         { firstName: 'Jane', lastName: 'Doe', age: 27, address: { zip: 123456 } },
@@ -556,7 +556,7 @@ describe('SortService', () => {
         { sortCol: { id: 'firstName', field: 'firstName', width: 100 }, sortAsc: true },
       ] as ColumnSort[];
 
-      dataset.sort((row1, row2) => service.sortComparer(mockSortedCols, row1, row2));
+      dataset.sort((row1, row2) => service.sortComparers(mockSortedCols, row1, row2));
 
       expect(dataset).toEqual([
         { firstName: 'Jane', lastName: 'Doe', age: 27, address: { zip: 123456 } },

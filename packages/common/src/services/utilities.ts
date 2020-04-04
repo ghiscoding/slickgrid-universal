@@ -40,10 +40,10 @@ export function addWhiteSpaces(nbSpaces: number): string {
  * Convert a flat array (with "parentId" references) into a hierarchical dataset structure (where children are array(s) inside their parent objects)
  * @param flatArray array input
  * @param outputArray array output (passed by reference)
- * @param options you can provide the following options:: "parentPropName" (defaults to "parent"), "childPropName" (defaults to "children") and "identifierPropName" (defaults to "id")
+ * @param options you can provide the following options:: "parentPropName" (defaults to "parent"), "childrenPropName" (defaults to "children") and "identifierPropName" (defaults to "id")
  */
-export function convertParentChildFlatArrayToHierarchicalView(flatArray: any[], options?: { parentPropName?: string; childPropName?: string; identifierPropName?: string; }): any[] {
-  const childPropName = options?.childPropName || 'children';
+export function convertParentChildFlatArrayToHierarchicalView(flatArray: any[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; }): any[] {
+  const childrenPropName = options?.childrenPropName || 'children';
   const parentPropName = options?.parentPropName || 'parentId';
   const identifierPropName = options?.identifierPropName || 'id';
   const hasChildrenFlagPropName = '__hasChildren';
@@ -63,10 +63,10 @@ export function convertParentChildFlatArrayToHierarchicalView(flatArray: any[], 
       roots.push(item);
     } else if (item[parentPropName] in all) {
       const p = all[item[parentPropName]];
-      if (!(childPropName in p)) {
-        p[childPropName] = [];
+      if (!(childrenPropName in p)) {
+        p[childrenPropName] = [];
       }
-      p[childPropName].push(item);
+      p[childrenPropName].push(item);
     }
 
     // delete any unnecessary properties that were possibly created in the flat array but shouldn't be part of the tree view
@@ -81,9 +81,9 @@ export function convertParentChildFlatArrayToHierarchicalView(flatArray: any[], 
  * Convert a hierarchical array (with children) into a flat array structure array (where the children are pushed as next indexed item in the array)
  * @param hierarchicalArray
  * @param outputArray
- * @param options you can provide "childPropName" (defaults to "children")
+ * @param options you can provide "childrenPropName" (defaults to "children")
  */
-export function convertHierarchicalViewToFlatArray(hierarchicalArray: any[], options?: { childPropName?: string; identifierPropName?: string; }): any[] {
+export function convertHierarchicalViewToFlatArray(hierarchicalArray: any[], options?: { childrenPropName?: string; identifierPropName?: string; }): any[] {
   const outputArray: any[] = [];
   convertHierarchicalViewToFlatArrayByOutputArrayReference(hierarchicalArray, outputArray, options, 0);
 
@@ -95,10 +95,10 @@ export function convertHierarchicalViewToFlatArray(hierarchicalArray: any[], opt
  * Convert a hierarchical array (with children) into a flat array structure array but using the array as the output (the array is the pointer reference)
  * @param hierarchicalArray
  * @param outputArray
- * @param options you can provide "childPropName" (defaults to "children")
+ * @param options you can provide "childrenPropName" (defaults to "children")
  */
-export function convertHierarchicalViewToFlatArrayByOutputArrayReference(hierarchicalArray: any[], outputArray: any[], options?: { childPropName?: string; parentIdPropName?: string; hasChildrenFlagPropName?: string; treeLevelPropName?: string; identifierPropName?: string; }, treeLevel = 0, parentId?: string) {
-  const childPropName = options?.childPropName || 'children';
+export function convertHierarchicalViewToFlatArrayByOutputArrayReference(hierarchicalArray: any[], outputArray: any[], options?: { childrenPropName?: string; parentIdPropName?: string; hasChildrenFlagPropName?: string; treeLevelPropName?: string; identifierPropName?: string; }, treeLevel = 0, parentId?: string) {
+  const childrenPropName = options?.childrenPropName || 'children';
   const identifierPropName = options?.identifierPropName || 'id';
   const hasChildrenFlagPropName = options?.hasChildrenFlagPropName || '__hasChildren';
   const treeLevelPropName = options?.treeLevelPropName || '__treeLevel';
@@ -112,12 +112,12 @@ export function convertHierarchicalViewToFlatArrayByOutputArrayReference(hierarc
         item[parentIdPropName] = parentId || null;
         outputArray.push(item);
       }
-      if (Array.isArray(item[childPropName])) {
+      if (Array.isArray(item[childrenPropName])) {
         treeLevel++;
-        convertHierarchicalViewToFlatArrayByOutputArrayReference(item[childPropName], outputArray, options, treeLevel, item[identifierPropName]);
+        convertHierarchicalViewToFlatArrayByOutputArrayReference(item[childrenPropName], outputArray, options, treeLevel, item[identifierPropName]);
         treeLevel--;
         item[hasChildrenFlagPropName] = true;
-        delete item[childPropName]; // remove the children property
+        delete item[childrenPropName]; // remove the children property
       }
     }
   }
@@ -157,7 +157,7 @@ export function findItemInHierarchicalStructure(hierarchicalArray: any, predicat
   if (initialFind) {
     return initialFind;
   } else if (elementsWithChildren.length) {
-    const childElements = [];
+    const childElements: any[] = [];
     elementsWithChildren.forEach((item: any) => {
       if (item.hasOwnProperty(childrenPropertyName)) {
         childElements.push(...item[childrenPropertyName]);

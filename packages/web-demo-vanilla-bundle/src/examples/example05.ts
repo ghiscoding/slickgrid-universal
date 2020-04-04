@@ -134,7 +134,7 @@ export class Example5 {
       this.dataset,
       {
         parentPropName: 'parentId',
-        childPropName: 'children',
+        childrenPropName: 'children',
         direction: 'ASC',
         identifierPropName: 'id',
         sortByFieldId: 'id',
@@ -178,7 +178,7 @@ export class Example5 {
     const dataset = updatedDataset || this.dataset;
     const sortedOutputArray = sortFlatArrayWithParentChildRef(dataset, {
       parentPropName: 'parentId',
-      childPropName: 'children',
+      childrenPropName: 'children',
       direction: direction || 'ASC',
       sortByFieldId: 'id',
       sortPropFieldType: FieldType.number,
@@ -216,13 +216,13 @@ export class Example5 {
   }
 
   logExpandedStructure() {
-    const explodedArray = convertParentChildFlatArrayToHierarchicalView(this.dataset, { parentPropName: 'parentId', childPropName: 'children' });
+    const explodedArray = convertParentChildFlatArrayToHierarchicalView(this.dataset, { parentPropName: 'parentId', childrenPropName: 'children' });
     console.log('exploded array', explodedArray);
   }
 
   logFlatStructure() {
-    const outputHierarchicalArray = convertParentChildFlatArrayToHierarchicalView(this.dataset, { parentPropName: 'parentId', childPropName: 'children' });
-    const outputFlatArray = convertHierarchicalViewToFlatArray(outputHierarchicalArray, { childPropName: 'children' });
+    const outputHierarchicalArray = convertParentChildFlatArrayToHierarchicalView(this.dataset, { parentPropName: 'parentId', childrenPropName: 'children' });
+    const outputFlatArray = convertHierarchicalViewToFlatArray(outputHierarchicalArray, { childrenPropName: 'children' });
     // JSON.stringify(outputFlatArray, null, 2)
     console.log('flat array', outputFlatArray);
   }

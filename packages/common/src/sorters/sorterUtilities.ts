@@ -55,11 +55,11 @@ export function sortByFieldType(fieldType: FieldType, value1: any, value2: any, 
 
 /**
  * Take a flat array with Parent/Child references (child having parentId) and sort it by given parent/child properties
- * It will sort by a given "parentPropName" and "childPropName"
+ * It will sort by a given "parentPropName" and "childrenPropName"
  * @param flatArray
  * @param options
  */
-export function sortFlatArrayWithParentChildRef(flatArray: any[], options?: { sortPropFieldType?: FieldType; parentPropName?: string; childPropName?: string; identifierPropName?: string; direction?: SortDirection | SortDirectionString; sortByFieldId?: string; }): any[] {
+export function sortFlatArrayWithParentChildRef(flatArray: any[], options?: { sortPropFieldType?: FieldType; parentPropName?: string; childrenPropName?: string; identifierPropName?: string; direction?: SortDirection | SortDirectionString; sortByFieldId?: string; }): any[] {
   const inputArray: any[] = $.extend(true, [], flatArray); // make a deep copy of the input array to avoid modifying that array
 
   // step 1: convert array to a hierarchical structure so that we can sort it
@@ -77,23 +77,22 @@ export function sortFlatArrayWithParentChildRef(flatArray: any[], options?: { so
 
 /**
  * Sort a hierarchical array (an array that has children property, that could also have children, ...)
- * It will sort by a given "parentPropName" and "childPropName"
+ * It will sort by a given "parentPropName" and "childrenPropName"
  * @param hierarchicalArray
  * @param options
  */
-export function sortHierarchicalArray(hierarchicalArray: any[], options?: { sortPropFieldType?: FieldType; parentPropName?: string; childPropName?: string; identifierPropName?: string; direction?: SortDirection | SortDirectionString; sortByFieldId?: string; }): any[] {
-  const childPropName = options?.childPropName || 'children';
+export function sortHierarchicalArray(hierarchicalArray: any[], options?: { sortPropFieldType?: FieldType; parentPropName?: string; childrenPropName?: string; identifierPropName?: string; direction?: SortDirection | SortDirectionString; sortByFieldId?: string; }): any[] {
+  const childrenPropName = options?.childrenPropName || 'children';
   const sortByFieldId = options?.sortByFieldId || 'id';
-  const fieldType = options?.sortPropFieldType || FieldType.number;
-
+  const fieldType = options?.sortPropFieldType ?? FieldType.number;
   const sortAscending = ((options?.direction || 'ASC').toUpperCase() === SortDirection.ASC);
-  const sortingDirectionNumber = sortAscending ? 1 : -1;
+  const sortingDirectionNumber: SortDirectionNumber = sortAscending ? SortDirectionNumber.asc : SortDirectionNumber.desc;
 
   hierarchicalArray.sort((a: any, b: any) => sortByFieldType(fieldType, (a && a[sortByFieldId]), (b && b[sortByFieldId]), sortingDirectionNumber));
 
   for (const item of hierarchicalArray) {
-    if (item && Array.isArray(item[childPropName])) {
-      sortHierarchicalArray(item[childPropName], options);
+    if (item && Array.isArray(item[childrenPropName])) {
+      sortHierarchicalArray(item[childrenPropName], options);
     }
   }
 

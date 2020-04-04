@@ -13,6 +13,8 @@ import {
   modifyDatasetToAddTreeItemsMapping,
   FilterCallbackArg,
   OperatorType,
+  SortDirectionString,
+  SortDirection,
 } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import './example06.scss';
@@ -29,6 +31,7 @@ export class Example6 {
   slickerGridInstance;
   durationOrderByCount = false;
   searchString = '';
+  sortDirection: SortDirectionString = 'ASC';
 
   attached() {
     this.initializeGrid();
@@ -39,8 +42,9 @@ export class Example6 {
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions });
     this.dataViewObj = this.slickgridLwc.dataView;
-    this.datasetHierarchical = sortHierarchicalArray(this.mockDataset(), { sortByFieldId: 'file' });
-    this.datasetFlat = convertHierarchicalViewToFlatArray(this.datasetHierarchical, { childPropName: 'files' });
+    this.datasetHierarchical = sortHierarchicalArray(this.mockDataset(), { sortByFieldId: 'file', childrenPropName: 'files', sortPropFieldType: FieldType.string, direction: this.sortDirection });
+    // console.log('sorted', $.extend(true, [], this.datasetHierarchical));
+    this.datasetFlat = convertHierarchicalViewToFlatArray(this.datasetHierarchical, { childrenPropName: 'files' });
     this.slickgridLwc.dataset = this.datasetFlat;
     modifyDatasetToAddTreeItemsMapping(this.slickgridLwc.dataset, this.columnDefinitions[0], this.dataViewObj);
   }
@@ -56,7 +60,10 @@ export class Example6 {
         type: FieldType.string, width: 150, formatter: this.treeFormatter,
         filterable: true, sortable: true,
         treeView: {
-          childrenPropName: 'files'
+          parentPropName: '__parentId',
+          childrenPropName: 'files',
+          sortByFieldId: 'file',
+          sortPropFieldType: FieldType.string,
         }
       },
       {
@@ -120,6 +127,7 @@ export class Example6 {
   }
 
   treeFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
+    const treeLevelPropName = columnDef.treeView?.levelPropName || '__treeLevel';
     if (value === null || value === undefined || dataContext === undefined) {
       return '';
     }
@@ -129,17 +137,17 @@ export class Example6 {
     const prefix = this.getFileIcon(value);
 
     value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    const spacer = `<span style="display:inline-block;width:${(15 * dataContext['__treeLevel'])}px"></span>`;
+    const spacer = `<span style="display:inline-block;width:${(15 * dataContext[treeLevelPropName])}px"></span>`;
 
-    if (data[idx + 1] && data[idx + 1].__treeLevel > data[idx].__treeLevel) {
+    if (data[idx + 1] && data[idx + 1][treeLevelPropName] > data[idx][treeLevelPropName]) {
       const folderPrefix = `<i class="mdi mdi-20px mdi-folder-outline"></i>`;
       if (dataContext.__collapsed) {
-        return `${spacer} <span class="slick-group-toggle collapsed" level="${dataContext['__treeLevel']}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
+        return `${spacer} <span class="slick-group-toggle collapsed" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
       } else {
-        return `${spacer} <span class="slick-group-toggle expanded" level="${dataContext['__treeLevel']}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
+        return `${spacer} <span class="slick-group-toggle expanded" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
       }
     } else {
-      return `${spacer} <span class="slick-group-toggle" level="${dataContext['__treeLevel']}"></span>${prefix}&nbsp;${value}`;
+      return `${spacer} <span class="slick-group-toggle" level="${dataContext[treeLevelPropName]}"></span>${prefix}&nbsp;${value}`;
     }
   }
 
@@ -175,7 +183,7 @@ export class Example6 {
         size: Math.round(Math.random() * 100),
       });
       const sortedArray = sortHierarchicalArray(this.datasetHierarchical, { sortByFieldId: 'file' });
-      this.datasetFlat = convertHierarchicalViewToFlatArray(sortedArray, { childPropName: 'files' });
+      this.datasetFlat = convertHierarchicalViewToFlatArray(sortedArray, { childrenPropName: 'files' });
 
       // update dataset and re-render (invalidate) the grid
       this.slickgridLwc.dataset = this.datasetFlat;
@@ -198,19 +206,22 @@ export class Example6 {
     this.gridObj.invalidate();
   }
 
-  resort(inputFlatArray?: any[]) {
+  resortTreeGrid(inputFlatArray?: any[], direction?: SortDirection | SortDirectionString) {
     const datasetFlat = inputFlatArray || this.datasetFlat;
 
-    return sortFlatArrayWithParentChildRef(
-      datasetFlat,
-      {
-        parentPropName: '__parentId',
-        childPropName: 'files',
-        direction: 'ASC',
-        identifierPropName: 'id',
-        sortByFieldId: 'id',
-        sortPropFieldType: FieldType.number,
-      });
+    const sortedOutputArray = sortFlatArrayWithParentChildRef(datasetFlat, { ...this.columnDefinitions[0].treeView, direction: direction ?? 'ASC' });
+    this.gridObj.resetActiveCell();
+    this.datasetFlat = sortedOutputArray;
+    this.slickgridLwc.dataset = sortedOutputArray;
+    this.gridObj.invalidate();
+  }
+
+  toggleSort() {
+    this.sortDirection = this.sortDirection === 'ASC' ? 'DESC' : 'ASC';
+    this.resortTreeGrid(this.datasetFlat, this.sortDirection);
+    this.gridObj.setSortColumns([
+      { columnId: 'file', sortAsc: (this.sortDirection === 'ASC') },
+    ]);
   }
 
   handleOnClick(event: any) {
@@ -239,19 +250,20 @@ export class Example6 {
   }
 
   logExpandedStructure() {
-    const explodedArray = convertParentChildFlatArrayToHierarchicalView(this.datasetFlat, { parentPropName: '__parentId', childPropName: 'files' });
+    const explodedArray = convertParentChildFlatArrayToHierarchicalView(this.datasetFlat, { parentPropName: '__parentId', childrenPropName: 'files' });
     console.log('exploded array', explodedArray/* , JSON.stringify(explodedArray, null, 2) */);
 
   }
 
   logFlatStructure() {
-    const outputHierarchicalArray = convertParentChildFlatArrayToHierarchicalView(this.datasetFlat, { parentPropName: '__parentId', childPropName: 'files' });
-    const outputFlatArray = convertHierarchicalViewToFlatArray(outputHierarchicalArray, { childPropName: 'files' });
+    const outputHierarchicalArray = convertParentChildFlatArrayToHierarchicalView(this.datasetFlat, { parentPropName: '__parentId', childrenPropName: 'files' });
+    const outputFlatArray = convertHierarchicalViewToFlatArray(outputHierarchicalArray, { childrenPropName: 'files' });
     console.log('flat array', outputFlatArray/* , JSON.stringify(outputFlatArray, null, 2) */);
   }
 
   mockDataset() {
     return [
+      { id: 18, file: 'else.txt', dateModified: '2015-03-03T03:50:00', size: 90 },
       {
         id: 21, file: 'Documents', files: [
           { id: 2, file: 'txt', files: [{ id: 3, file: 'todo.txt', dateModified: '2015-05-12T14:50:00', size: 0.7, }] },
@@ -261,19 +273,18 @@ export class Example6 {
               { id: 6, file: 'internet-bill.pdf', dateModified: '2015-05-12T14:50:00', size: 1.4, },
             ]
           },
-          { id: 7, file: 'xls', files: [{ id: 8, file: 'compilation.xls', dateModified: '2014-10-02T14:50:00', size: 2.3, }] },
           { id: 9, file: 'misc', files: [{ id: 10, file: 'something.txt', dateModified: '2015-02-26T16:50:00', size: 0.4, }] },
+          { id: 7, file: 'xls', files: [{ id: 8, file: 'compilation.xls', dateModified: '2014-10-02T14:50:00', size: 2.3, }] },
         ]
       },
       {
         id: 11, file: 'Music', files: [{
           id: 12, file: 'mp3', files: [
-            { id: 14, file: 'pop', files: [{ id: 15, file: 'theme.mp3', dateModified: '2015-03-01T17:05:00', size: 85, }] },
             { id: 16, file: 'rock', files: [{ id: 17, file: 'soft.mp3', dateModified: '2015-05-13T13:50:00', size: 98, }] },
+            { id: 14, file: 'pop', files: [{ id: 15, file: 'theme.mp3', dateModified: '2015-03-01T17:05:00', size: 85, }] },
           ]
         }]
       },
-      { id: 18, file: 'else.txt', dateModified: '2015-03-03T03:50:00', size: 90 },
     ];
   }
 }

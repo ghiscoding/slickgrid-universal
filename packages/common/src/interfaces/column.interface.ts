@@ -225,6 +225,8 @@ export interface Column {
     levelPropName?: string;
     itemMapPropName?: string;
     hasChildrenFlagPropName?: string;
+    sortByFieldId?: string;
+    sortPropFieldType?: FieldType;
 
     /**
      * Defaults to 15px, margin to add from the left (calculated by the tree level multiplied by this number).
