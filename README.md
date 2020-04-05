@@ -99,8 +99,9 @@ npm run test:watch
   - [ ] Resizer
   - [ ] Row Detail
   - [x] Row Move
-    - [ ] the Column itself should be created by the extension instead of the user itself
-    - [ ] column index position (requires SlickGrid [PR #474](https://github.com/6pac/SlickGrid/pull/474))
+    - [x] the Column itself should be created by the extension instead of the user itself
+    - [x] column index position (requires SlickGrid [PR #474](https://github.com/6pac/SlickGrid/pull/474))
+    - [ ] move the methods `onBeforeMoveRow` and `onMoveRows` in the extension
   - [x] Row Selection
 - [x] Grouping Formatters (12)
 - [x] Sorters (5)

@@ -111,10 +111,10 @@ export class VanillaGridBundle {
     }
   }
 
-  get dataset() {
+  get dataset(): any[] {
     return this._dataset;
   }
-  set dataset(dataset) {
+  set dataset(dataset: any[]) {
     this._dataset = dataset;
     this.refreshGridData(dataset);
   }
@@ -234,6 +234,30 @@ export class VanillaGridBundle {
     this.dataView.beginUpdate();
     this.dataView.setItems(this.dataset, this._gridOptions.datasetIdPropertyName);
     this.dataView.endUpdate();
+
+    // if you don't want the items that are not visible (due to being filtered out or being on a different page)
+    // to stay selected, pass 'false' to the second arg
+    const selectionModel = this.grid && this.grid.getSelectionModel();
+    if (selectionModel && this._gridOptions && this._gridOptions.dataView && this._gridOptions.dataView.hasOwnProperty('syncGridSelection')) {
+      // if we are using a Backend Service, we will do an extra flag check, the reason is because it might have some unintended behaviors
+      // with the BackendServiceApi because technically the data in the page changes the DataView on every page change.
+      let preservedRowSelectionWithBackend = false;
+      if (this._gridOptions.backendServiceApi && this._gridOptions.dataView.hasOwnProperty('syncGridSelectionWithBackendService')) {
+        preservedRowSelectionWithBackend = this._gridOptions.dataView.syncGridSelectionWithBackendService as boolean;
+      }
+
+      const syncGridSelection = this._gridOptions.dataView.syncGridSelection;
+      if (typeof syncGridSelection === 'boolean') {
+        let preservedRowSelection = syncGridSelection;
+        if (!this._isLocalGrid) {
+          // when using BackendServiceApi, we'll be using the "syncGridSelectionWithBackendService" flag BUT "syncGridSelection" must also be set to True
+          preservedRowSelection = syncGridSelection && preservedRowSelectionWithBackend;
+        }
+        this.dataView.syncGridSelection(this.grid, preservedRowSelection);
+      } else if (typeof syncGridSelection === 'object') {
+        this.dataView.syncGridSelection(this.grid, syncGridSelection.preserveHidden, syncGridSelection.preserveHiddenOnSelectionChange);
+      }
+    }
 
     this.grid.invalidate();
     this.grid.render();

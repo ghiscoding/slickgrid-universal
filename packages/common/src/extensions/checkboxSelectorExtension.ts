@@ -18,8 +18,8 @@ export class CheckboxSelectorExtension implements Extension {
   }
 
   /**
-   * Create the plugin before the Grid creation, else it will behave oddly.
-   * Mostly because the column definitions might change after the grid creation
+   * Create the plugin before the Grid creation to avoid having odd behaviors.
+   * Mostly because the column definitions might change after the grid creation, so we want to make sure to add it before then
    */
   create(columnDefinitions: Column[], gridOptions: GridOption) {
     if (Array.isArray(columnDefinitions) && gridOptions) {

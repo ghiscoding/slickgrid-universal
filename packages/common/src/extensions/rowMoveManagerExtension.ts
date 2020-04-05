@@ -1,5 +1,5 @@
 import { ExtensionName } from '../enums/index';
-import { CellArgs, Extension, SlickEventHandler } from '../interfaces/index';
+import { CellArgs, Extension, SlickEventHandler, Column, GridOption } from '../interfaces/index';
 import { ExtensionUtility } from './extensionUtility';
 import { SharedService } from '../services/shared.service';
 
@@ -27,6 +27,38 @@ export class RowMoveManagerExtension implements Extension {
     }
   }
 
+  /**
+   * Create the plugin before the Grid creation to avoid having odd behaviors.
+   * Mostly because the column definitions might change after the grid creation, so we want to make sure to add it before then
+   */
+  create(columnDefinitions: Column[], gridOptions: GridOption) {
+    if (Array.isArray(columnDefinitions) && gridOptions) {
+      // dynamically import the SlickGrid plugin (addon) with RequireJS
+      this.extensionUtility.loadExtensionDynamically(ExtensionName.rowMoveManager);
+      if (!this._addon) {
+        this._addon = new Slick.RowMoveManager(gridOptions?.rowMoveManager || { cancelEditOnDrag: true });
+      }
+      const selectionColumn: Column = this._addon.getColumnDefinition();
+      if (typeof selectionColumn === 'object') {
+        selectionColumn.excludeFromExport = true;
+        selectionColumn.excludeFromColumnPicker = true;
+        selectionColumn.excludeFromGridMenu = true;
+        selectionColumn.excludeFromQuery = true;
+        selectionColumn.excludeFromHeaderMenu = true;
+
+        // column index position in the grid
+        const columnPosition = gridOptions?.rowMoveManager?.columnIndexPosition || 0;
+        if (columnPosition > 0) {
+          columnDefinitions.splice(columnPosition, 0, selectionColumn);
+        } else {
+          columnDefinitions.unshift(selectionColumn);
+        }
+      }
+      return this._addon;
+    }
+    return null;
+  }
+
   /** Get the instance of the SlickGrid addon (control or plugin). */
   getAddonInstance() {
     return this._addon;
@@ -44,7 +76,6 @@ export class RowMoveManagerExtension implements Extension {
         this.sharedService.grid.setSelectionModel(rowSelectionPlugin);
       }
 
-      this._addon = new Slick.RowMoveManager(this.sharedService.gridOptions.rowMoveManager || { cancelEditOnDrag: true });
       this.sharedService.grid.registerPlugin(this._addon);
 
       // hook all events
