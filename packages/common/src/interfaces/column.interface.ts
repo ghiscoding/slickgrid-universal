@@ -216,8 +216,8 @@ export interface Column {
   /** Custom Tooltip that can ben shown to the column */
   toolTip?: string;
 
-  /** Tree View options */
-  treeView?: {
+  /** Tree Data options */
+  treeData?: {
     childrenPropName?: string;
     collapsedPropName?: string;
     identifierPropName?: string;

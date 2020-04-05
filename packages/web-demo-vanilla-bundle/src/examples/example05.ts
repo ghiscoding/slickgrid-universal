@@ -55,7 +55,7 @@ export class Example5 {
         id: 'title', name: 'Title', field: 'title', width: 220, cssClass: 'cell-title',
         filterable: true, sortable: true,
         formatter: Formatters.tree,
-        treeView: {
+        treeData: {
           levelPropName: 'indent',
           parentPropName: 'parentId'
         }
@@ -96,7 +96,7 @@ export class Example5 {
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableFiltering: true,
-      enableTreeView: true, // you must enable this flag for the filtering & sorting to work as expected
+      enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
     };
   }
 
@@ -240,7 +240,8 @@ export class Example5 {
       const d = (data[i] = {});
       let parentId;
 
-      if (Math.random() > 0.8 && i > 0) {
+      // for implementing filtering/sorting, don't go over indent of 2
+      if (Math.random() > 0.8 && i > 0 && indent < 3) {
         indent++;
         parents.push(i - 1);
       } else if (Math.random() < 0.3 && indent > 0) {

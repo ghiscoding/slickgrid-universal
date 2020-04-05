@@ -69,7 +69,7 @@ export function convertParentChildFlatArrayToHierarchicalView(flatArray: any[], 
       p[childrenPropName].push(item);
     }
 
-    // delete any unnecessary properties that were possibly created in the flat array but shouldn't be part of the tree view
+    // delete any unnecessary properties that were possibly created in the flat array but shouldn't be part of the tree data
     delete item[treeLevelPropName];
     delete item[hasChildrenFlagPropName];
   });
@@ -189,12 +189,12 @@ export function findItemInHierarchicalStructure(hierarchicalArray: any, predicat
  *
  * @param items
  */
-export function modifyDatasetToAddTreeItemsMapping(items: any[], treeViewColumn: Column, dataView: any) {
-  const parentPropName = treeViewColumn.treeView?.parentPropName || '__parentId';
-  const treeItemsPropName = treeViewColumn.treeView?.itemMapPropName || '__treeItems';
+export function modifyDatasetToAddTreeItemsMapping(items: any[], treeDataColumn: Column, dataView: any) {
+  const parentPropName = treeDataColumn.treeData?.parentPropName || '__parentId';
+  const treeItemsPropName = treeDataColumn.treeData?.itemMapPropName || '__treeItems';
 
   for (let i = 0; i < items.length; i++) {
-    items[i][treeItemsPropName] = [items[i][treeViewColumn.id]];
+    items[i][treeItemsPropName] = [items[i][treeDataColumn.id]];
     let item = items[i];
 
     if (item[parentPropName] !== null) {

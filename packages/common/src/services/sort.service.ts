@@ -21,7 +21,7 @@ import { sortByFieldType, sortFlatArrayWithParentChildRef } from '../sorters/sor
 declare const Slick: any;
 
 export class SortService {
-  private _columnWithTreeView: Column | undefined;
+  private _columnWithTreeData: Column | undefined;
   private _currentLocalSorters: CurrentSorter[] = [];
   private _eventHandler: SlickEventHandler;
   private _dataView: any;
@@ -72,13 +72,13 @@ export class SortService {
     this._grid = grid;
     this._dataView = dataView;
 
-    if (this._gridOptions && this._gridOptions.enableTreeView && this._columnDefinitions) {
-      this._columnWithTreeView = this._columnDefinitions.find((col: Column) => col && col.treeView);
-      if (!this._columnWithTreeView || !this._columnWithTreeView.id) {
-        throw new Error('[Slickgrid-Universal] When enabling tree view, you must also provide the column definition "treeView" property with "childrenPropName" or "parentPropName" (depending if your array is hierarchical or flat) for the Tree View to work properly');
+    if (this._gridOptions && this._gridOptions.enableTreeData && this._columnDefinitions) {
+      this._columnWithTreeData = this._columnDefinitions.find((col: Column) => col && col.treeData);
+      if (!this._columnWithTreeData || !this._columnWithTreeData.id) {
+        throw new Error('[Slickgrid-Universal] When enabling tree data, you must also provide the column definition "treeData" property with "childrenPropName" or "parentPropName" (depending if your array is hierarchical or flat) for the Tree Data to work properly');
       }
-      if (this._columnWithTreeView) {
-        this._grid.setSortColumns([{ columnId: this._columnWithTreeView.id, sortAsc: true }]);
+      if (this._columnWithTreeData) {
+        this._grid.setSortColumns([{ columnId: this._columnWithTreeData.id, sortAsc: true }]);
       }
     }
 
@@ -259,32 +259,32 @@ export class SortService {
 
   /** When a Sort Changes on a Local grid (JSON dataset) */
   onLocalSortChanged(grid: any, dataView: any, sortColumns: ColumnSort[], forceReSort = false) {
-    const isTreeViewEnabled = this._gridOptions && this._gridOptions.enableTreeView || false;
+    const isTreeDataEnabled = this._gridOptions && this._gridOptions.enableTreeData || false;
 
     if (grid && dataView) {
-      if (forceReSort && !isTreeViewEnabled) {
+      if (forceReSort && !isTreeDataEnabled) {
         dataView.reSort();
       }
 
-      if (isTreeViewEnabled) {
-        const treeViewOptions = this._columnWithTreeView?.treeView;
-        const treeLevel = treeViewOptions?.levelPropName || '__treeLevel';
-        // const columnDef = { ...this._columnWithTreeView, type: FieldType.number, queryFieldSorter: treeLevel };
+      if (isTreeDataEnabled) {
+        const treeDataOptions = this._columnWithTreeData?.treeData;
+        const treeLevel = treeDataOptions?.levelPropName || '__treeLevel';
+        // const columnDef = { ...this._columnWithTreeData, type: FieldType.number, queryFieldSorter: treeLevel };
         // sortColumns = this._grid.getSortColumns();
         // console.log(sortColumns[0].sortAsc)
         // sortColumns.unshift({ multiColumnSort: true, columnId: treeLevel, sortAsc: true, sortCol: columnDef });
         // this._grid.setSortColumns(sortColumns);
         // console.log(this._grid.getSortColumns())
-        const sortColIndex = sortColumns.findIndex((sortCol) => sortCol.columnId === this._columnWithTreeView?.id);
+        const sortColIndex = sortColumns.findIndex((sortCol) => sortCol.columnId === this._columnWithTreeData?.id);
         if (sortColIndex >= 0) {
           const dataset = this._dataView.getItems();
           const sortedOutputArray = sortFlatArrayWithParentChildRef(dataset, {
-            parentPropName: treeViewOptions?.parentPropName || '__parentId',
-            childrenPropName: treeViewOptions?.childrenPropName || 'children',
+            parentPropName: treeDataOptions?.parentPropName || '__parentId',
+            childrenPropName: treeDataOptions?.childrenPropName || 'children',
             direction: sortColumns[sortColIndex].sortAsc ? 'ASC' : 'DESC',
             identifierPropName: this._dataView.getIdPropertyName() || 'id',
-            sortByFieldId: treeViewOptions?.sortByFieldId || 'id',
-            sortPropFieldType: treeViewOptions?.sortPropFieldType || FieldType.number,
+            sortByFieldId: treeDataOptions?.sortByFieldId || 'id',
+            sortPropFieldType: treeDataOptions?.sortPropFieldType || FieldType.number,
           });
           // console.log(sortColumns.length, sortColIndex, sortColumns.splice(sortColIndex, 1))
           sortColumns.splice(sortColIndex, 1);

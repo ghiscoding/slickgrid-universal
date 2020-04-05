@@ -127,7 +127,9 @@ npm run test:watch
   - [ ] Dynamically Add Columns
   - [ ] Grid Presets
   - [ ] Pagination
-  - [ ] Tree View
+  - [ ] Tree Data
+    - [x] add Grid Demo
+    - [x] add Collapse/Expand All into Context Menu
     - [ ] Search Filter on any Column
     - [ ] Sorting from any Column
 

@@ -263,8 +263,8 @@ export interface GridOption {
   /** Do we want to enable localization translation (i18n)? */
   enableTranslate?: boolean;
 
-  /** Do we want to enable Tree View grid? */
-  enableTreeView?: boolean;
+  /** Do we want to enable Tree Data grid? */
+  enableTreeData?: boolean;
 
   /**
    * Event naming style for the exposed SlickGrid & Component Events

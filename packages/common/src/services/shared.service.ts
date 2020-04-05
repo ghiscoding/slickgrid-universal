@@ -8,6 +8,7 @@ export class SharedService {
   private _gridOptions: GridOption;
   // private _currentPagination: CurrentPagination;
   private _visibleColumns: Column[];
+  private _hierarchicalDataset: any[];
 
   // --
   // public
@@ -80,5 +81,15 @@ export class SharedService {
   /** Setter for the Visible Columns in the grid */
   set visibleColumns(visibleColumns: Column[]) {
     this._visibleColumns = visibleColumns;
+  }
+
+  /** Getter for the Hierarchical Tree Data dataset when the feature is enabled */
+  get hierarchicalDataset(): Column[] {
+    return this._hierarchicalDataset;
+  }
+
+  /** Getter for the Hierarchical Tree Data dataset when the feature is enabled */
+  set hierarchicalDataset(hierarchicalDataset: Column[]) {
+    this._hierarchicalDataset = hierarchicalDataset;
   }
 }

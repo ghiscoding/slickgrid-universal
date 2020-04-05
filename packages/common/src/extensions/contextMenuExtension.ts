@@ -62,9 +62,6 @@ export class ContextMenuExtension implements Extension {
 
   /**
    * Create the Action Cell Menu and expose all the available hooks that user can subscribe (onCommand, onBeforeMenuShow, ...)
-   * @param grid
-   * @param dataView
-   * @param columnDefinitions
    */
   register(): any {
     if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
@@ -180,6 +177,7 @@ export class ContextMenuExtension implements Extension {
     const gridOptions = this.sharedService && this.sharedService.gridOptions || {};
     const contextMenu = gridOptions && gridOptions.contextMenu;
     const dataView = this.sharedService && this.sharedService.dataView;
+    const grid = this.sharedService && this.sharedService.grid;
 
     // show context menu: Copy (cell value)
     if (contextMenu && !contextMenu.hideCopyCellValueCommand) {
@@ -274,12 +272,18 @@ export class ContextMenuExtension implements Extension {
     }
 
     // -- Grouping Commands
-    if (gridOptions && (gridOptions.enableGrouping || gridOptions.enableDraggableGrouping)) {
+    if (gridOptions && (gridOptions.enableGrouping || gridOptions.enableDraggableGrouping || gridOptions.enableTreeData)) {
+      const columnDefinitions = this.sharedService.columnDefinitions || [];
+      let columnWithTreeData: Column;
+      if (gridOptions && gridOptions.enableTreeData && columnDefinitions) {
+        columnWithTreeData = columnDefinitions.find((col: Column) => col && col.treeData);
+      }
+
       // add a divider (separator) between the top sort commands and the other clear commands
       menuCustomItems.push({ divider: true, command: '', positionOrder: 54 });
 
-      // show context menu: Clear Grouping
-      if (gridOptions && contextMenu && !contextMenu.hideClearAllGrouping) {
+      // show context menu: Clear Grouping (except for Tree Data which shouldn't have this feature)
+      if (gridOptions && !gridOptions.enableTreeData && contextMenu && !contextMenu.hideClearAllGrouping) {
         const commandName = 'clear-grouping';
         if (!originalCustomItems.find((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === commandName)) {
           menuCustomItems.push(
@@ -311,8 +315,21 @@ export class ContextMenuExtension implements Extension {
               disabled: false,
               command: commandName,
               positionOrder: 56,
-              action: () => dataView.collapseAllGroups(),
+              action: () => {
+                if (gridOptions.enableTreeData) {
+                  const dataset: any[] = dataView.getItems() || [];
+                  const collapsedPropName = columnWithTreeData?.treeData?.collapsedPropName || '__collapsed';
+                  dataset.forEach((item: any) => item[collapsedPropName] = true);
+                  dataView.setItems(dataset);
+                  grid.invalidate();
+                } else {
+                  dataView.collapseAllGroups();
+                }
+              },
               itemUsabilityOverride: () => {
+                if (gridOptions.enableTreeData) {
+                  return true;
+                }
                 // only enable the command when there's an actually grouping in play
                 const groupingArray = dataView && dataView.getGrouping && dataView.getGrouping();
                 return Array.isArray(groupingArray) && groupingArray.length > 0;
@@ -333,8 +350,21 @@ export class ContextMenuExtension implements Extension {
               disabled: false,
               command: commandName,
               positionOrder: 57,
-              action: () => dataView.expandAllGroups(),
+              action: () => {
+                if (gridOptions.enableTreeData) {
+                  const dataset: any[] = dataView.getItems() || [];
+                  const collapsedPropName = columnWithTreeData?.treeData?.collapsedPropName || '__collapsed';
+                  dataset.forEach((item: any) => item[collapsedPropName] = false);
+                  dataView.setItems(dataset);
+                  grid.invalidate();
+                } else {
+                  dataView.expandAllGroups();
+                }
+              },
               itemUsabilityOverride: () => {
+                if (gridOptions.enableTreeData) {
+                  return true;
+                }
                 // only enable the command when there's an actually grouping in play
                 const groupingArray = dataView && dataView.getGrouping && dataView.getGrouping();
                 return Array.isArray(groupingArray) && groupingArray.length > 0;
