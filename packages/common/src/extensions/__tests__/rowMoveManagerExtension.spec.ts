@@ -1,9 +1,8 @@
-import { GridOption } from '../../interfaces/gridOption.interface';
 import { RowMoveManagerExtension } from '../rowMoveManagerExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { Column } from '../../interfaces/column.interface';
+import { Column, GridOption } from '../../interfaces/index';
 
 declare const Slick: any;
 
@@ -62,6 +61,11 @@ describe('rowMoveManagerExtension', () => {
     expect(output).toBeNull();
   });
 
+  it('should return null after calling "loadAddonWhenNotExists" method when either the column definitions or the grid options is missing', () => {
+    const output = extension.loadAddonWhenNotExists([] as Column[], null);
+    expect(output).toBeNull();
+  });
+
   it('should return null after calling "register" method when either the grid object or the grid options is missing', () => {
     const output = extension.register();
     expect(output).toBeNull();
@@ -83,21 +87,8 @@ describe('rowMoveManagerExtension', () => {
       jest.clearAllMocks();
     });
 
-    it('should create the addon', () => {
-      extension.create(columnsMock, gridOptionsMock);
-
-      expect(mockAddon).toHaveBeenCalledWith({
-        cancelEditOnDrag: true,
-        singleRowMove: true,
-        disableRowSelection: true,
-        onExtensionRegistered: expect.anything(),
-        onBeforeMoveRows: expect.anything(),
-        onMoveRows: expect.anything(),
-      });
-    });
-
     it('should add a reserved column for icons in 1st column index', () => {
-      const instance = extension.create(columnsMock, gridOptionsMock);
+      const instance = extension.loadAddonWhenNotExists(columnsMock, gridOptionsMock);
       const spy = jest.spyOn(instance, 'getColumnDefinition').mockReturnValue({ id: '_move', field: 'move' });
       extension.create(columnsMock, gridOptionsMock);
 
@@ -117,9 +108,42 @@ describe('rowMoveManagerExtension', () => {
       ]);
     });
 
+    it('should NOT add the move icon column if it already exist in the column definitions', () => {
+      columnsMock = [{
+        id: '_move', name: '', field: 'move', width: 40,
+        behavior: 'selectAndMove', selectable: false, resizable: false, cssClass: '',
+        formatter: (row, cell, value, columnDef, dataContext, grid) => ({ addClasses: 'cell-reorder dnd' })
+      }, ...columnsMock] as Column[];
+      const instance = extension.loadAddonWhenNotExists(columnsMock, gridOptionsMock);
+      const spy = jest.spyOn(instance, 'getColumnDefinition').mockReturnValue({ id: '_move', field: 'move' });
+      extension.create(columnsMock, gridOptionsMock);
+
+      expect(spy).toHaveBeenCalled();
+      expect(columnsMock).toEqual([
+        {
+          behavior: 'selectAndMove',
+          cssClass: '',
+          field: 'move',
+          formatter: expect.anything(),
+          id: '_move',
+          name: '',
+          resizable: false,
+          selectable: false,
+          width: 40,
+          excludeFromColumnPicker: true,
+          excludeFromExport: true,
+          excludeFromGridMenu: true,
+          excludeFromHeaderMenu: true,
+          excludeFromQuery: true,
+        },
+        { id: 'field1', field: 'field1', width: 100, cssClass: 'red' },
+        { id: 'field2', field: 'field2', width: 50 },
+      ]);
+    });
+
     it('should expect the column to be at a different column index position when "columnIndexPosition" is defined', () => {
       gridOptionsMock.rowMoveManager.columnIndexPosition = 2;
-      const instance = extension.create(columnsMock, gridOptionsMock);
+      const instance = extension.loadAddonWhenNotExists(columnsMock, gridOptionsMock);
       const spy = jest.spyOn(instance, 'getColumnDefinition').mockReturnValue({ id: '_move', field: 'move' });
       extension.create(columnsMock, gridOptionsMock);
 
@@ -154,7 +178,8 @@ describe('rowMoveManagerExtension', () => {
       const onRegisteredSpy = jest.spyOn(SharedService.prototype.gridOptions.rowMoveManager, 'onExtensionRegistered');
       const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'registerPlugin');
 
-      const instance = extension.create(columnsMock, gridOptionsMock);
+      const instance = extension.loadAddonWhenNotExists(columnsMock, gridOptionsMock);
+      extension.create(columnsMock, gridOptionsMock);
       extension.register();
       const addonInstance = extension.getAddonInstance();
 

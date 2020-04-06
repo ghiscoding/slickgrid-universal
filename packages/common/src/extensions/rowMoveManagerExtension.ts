@@ -33,26 +33,41 @@ export class RowMoveManagerExtension implements Extension {
    */
   create(columnDefinitions: Column[], gridOptions: GridOption) {
     if (Array.isArray(columnDefinitions) && gridOptions) {
+      this._addon = this.loadAddonWhenNotExists(columnDefinitions, gridOptions);
+      const newRowMoveColumn: Column = this._addon.getColumnDefinition();
+      const rowMoveColDef = Array.isArray(columnDefinitions) && columnDefinitions.find((col: Column) => col && col.behavior === 'selectAndMove');
+      const finalRowMoveColumn = rowMoveColDef ? rowMoveColDef : newRowMoveColumn;
+
+      // set some exclusion properties since we don't want this column to be part of the export neither the list of column in the pickers
+      if (typeof finalRowMoveColumn === 'object') {
+        finalRowMoveColumn.excludeFromExport = true;
+        finalRowMoveColumn.excludeFromColumnPicker = true;
+        finalRowMoveColumn.excludeFromGridMenu = true;
+        finalRowMoveColumn.excludeFromQuery = true;
+        finalRowMoveColumn.excludeFromHeaderMenu = true;
+      }
+
+      // only add the new column if it doesn't already exist
+      if (!rowMoveColDef) {
+        // column index position in the grid
+        const columnPosition = gridOptions?.rowMoveManager?.columnIndexPosition || 0;
+        if (columnPosition > 0) {
+          columnDefinitions.splice(columnPosition, 0, finalRowMoveColumn);
+        } else {
+          columnDefinitions.unshift(finalRowMoveColumn);
+        }
+      }
+      return this._addon;
+    }
+    return null;
+  }
+
+  loadAddonWhenNotExists(columnDefinitions: Column[], gridOptions: GridOption): any {
+    if (Array.isArray(columnDefinitions) && gridOptions) {
       // dynamically import the SlickGrid plugin (addon) with RequireJS
       this.extensionUtility.loadExtensionDynamically(ExtensionName.rowMoveManager);
       if (!this._addon) {
         this._addon = new Slick.RowMoveManager(gridOptions?.rowMoveManager || { cancelEditOnDrag: true });
-      }
-      const selectionColumn: Column = this._addon.getColumnDefinition();
-      if (typeof selectionColumn === 'object') {
-        selectionColumn.excludeFromExport = true;
-        selectionColumn.excludeFromColumnPicker = true;
-        selectionColumn.excludeFromGridMenu = true;
-        selectionColumn.excludeFromQuery = true;
-        selectionColumn.excludeFromHeaderMenu = true;
-
-        // column index position in the grid
-        const columnPosition = gridOptions?.rowMoveManager?.columnIndexPosition || 0;
-        if (columnPosition > 0) {
-          columnDefinitions.splice(columnPosition, 0, selectionColumn);
-        } else {
-          columnDefinitions.unshift(selectionColumn);
-        }
       }
       return this._addon;
     }

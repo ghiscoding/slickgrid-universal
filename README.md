@@ -98,10 +98,7 @@ npm run test:watch
   - [x] Header Menu
   - [ ] Resizer
   - [ ] Row Detail
-  - [x] Row Move
-    - [x] the Column itself should be created by the extension instead of the user itself
-    - [x] column index position (requires SlickGrid [PR #474](https://github.com/6pac/SlickGrid/pull/474))
-    - [ ] move the methods `onBeforeMoveRow` and `onMoveRows` in the extension
+  - [x] Row Move Manager
   - [x] Row Selection
 - [x] Grouping Formatters (12)
 - [x] Sorters (5)
@@ -143,7 +140,10 @@ npm run test:watch
   - [ ] Add Cypress E2E tests
   - [x] Add Code Coverage (codecov)
   - [x] Build and run on every PR
+- [x] Bundle Creation (vanilla bundle)
+  - [ ] Eventually add Unit Tests as a PreBundle task
 - [ ] Remove any Deprecated code
   - [ ] Create a Migration Guide 
 - [ ] Add Typings for Grid & DataView objects
 - [ ] Add some bindings in the demo (e.g. pinned rows input)
+- [ ] Can we change how SlickGrid Events are called and use same signature as SlickGrid instead of CustomEvent EventData signature?

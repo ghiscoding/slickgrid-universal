@@ -15,14 +15,13 @@ import {
 } from '../enums/index';
 import { ExtensionUtility } from './extensionUtility';
 import { exportWithFormatterWhenDefined } from '../services/export-utilities';
-// import { ExportService } from '../services/export.service';
-// import { ExcelExportService } from '../services/excelExport.service';
+import { ExportService } from '../services/export.service';
+import { ExcelExportService } from '../services/excelExport.service';
 import { SharedService } from '../services/shared.service';
 import { TranslaterService } from '..';
 
 // using external non-typed js libraries
 declare const Slick: any;
-declare const $: any;
 
 export class ContextMenuExtension implements Extension {
   private _addon: any;
@@ -30,8 +29,8 @@ export class ContextMenuExtension implements Extension {
   private _userOriginalContextMenu: ContextMenu;
 
   constructor(
-    // private excelExportService: ExcelExportService,
-    // private exportService: ExportService,
+    private excelExportService: ExcelExportService,
+    private exportService: ExportService,
     private extensionUtility: ExtensionUtility,
     private sharedService: SharedService,
     private translaterService: TranslaterService,
@@ -211,21 +210,21 @@ export class ContextMenuExtension implements Extension {
     if (gridOptions && gridOptions.enableExport && contextMenu && !contextMenu.hideExportCsvCommand) {
       const commandName = 'export-csv';
       if (!originalCustomItems.find((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === commandName)) {
-        // menuCustomItems.push(
-        //   {
-        //     iconCssClass: contextMenu.iconExportCsvCommand || 'fa fa-download',
-        //     title: this.extensionUtility.translateWhenEnabledAndServiceExist('EXPORT_TO_CSV', 'TEXT_EXPORT_TO_CSV'),
-        //     disabled: false,
-        //     command: commandName,
-        //     positionOrder: 51,
-        //     action: () => this.exportService.exportToFile({
-        //       delimiter: DelimiterType.comma,
-        //       filename: 'export',
-        //       format: FileType.csv,
-        //       useUtf8WithBom: true,
-        //     }),
-        //   }
-        // );
+        menuCustomItems.push(
+          {
+            iconCssClass: contextMenu.iconExportCsvCommand || 'fa fa-download',
+            title: this.extensionUtility.translateWhenEnabledAndServiceExist('EXPORT_TO_CSV', 'TEXT_EXPORT_TO_CSV'),
+            disabled: false,
+            command: commandName,
+            positionOrder: 51,
+            action: () => this.exportService.exportToFile({
+              delimiter: DelimiterType.comma,
+              filename: 'export',
+              format: FileType.csv,
+              useUtf8WithBom: true,
+            }),
+          }
+        );
       }
     }
 
@@ -233,19 +232,19 @@ export class ContextMenuExtension implements Extension {
     if (gridOptions && gridOptions.enableExcelExport && contextMenu && !contextMenu.hideExportExcelCommand) {
       const commandName = 'export-excel';
       if (!originalCustomItems.find((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === commandName)) {
-        // menuCustomItems.push(
-        //   {
-        //     iconCssClass: contextMenu.iconExportExcelCommand || 'fa fa-file-excel-o text-success',
-        //     title: this.extensionUtility.translateWhenEnabledAndServiceExist('EXPORT_TO_EXCEL', 'TEXT_EXPORT_TO_EXCEL'),
-        //     disabled: false,
-        //     command: commandName,
-        //     positionOrder: 52,
-        //     action: () => this.excelExportService.exportToExcel({
-        //       filename: 'export',
-        //       format: FileType.xlsx,
-        //     }),
-        //   }
-        // );
+        menuCustomItems.push(
+          {
+            iconCssClass: contextMenu.iconExportExcelCommand || 'fa fa-file-excel-o text-success',
+            title: this.extensionUtility.translateWhenEnabledAndServiceExist('EXPORT_TO_EXCEL', 'TEXT_EXPORT_TO_EXCEL'),
+            disabled: false,
+            command: commandName,
+            positionOrder: 52,
+            action: () => this.excelExportService.exportToExcel({
+              filename: 'export',
+              format: FileType.xlsx,
+            }),
+          }
+        );
       }
     }
 
@@ -253,34 +252,36 @@ export class ContextMenuExtension implements Extension {
     if (gridOptions && gridOptions.enableExport && contextMenu && !contextMenu.hideExportTextDelimitedCommand) {
       const commandName = 'export-text-delimited';
       if (!originalCustomItems.find((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === commandName)) {
-        // menuCustomItems.push(
-        //   {
-        //     iconCssClass: contextMenu.iconExportTextDelimitedCommand || 'fa fa-download',
-        //     title: this.extensionUtility.translateWhenEnabledAndServiceExist('EXPORT_TO_TAB_DELIMITED', 'TEXT_EXPORT_TO_TAB_DELIMITED'),
-        //     disabled: false,
-        //     command: commandName,
-        //     positionOrder: 53,
-        //     action: () => this.exportService.exportToFile({
-        //       delimiter: DelimiterType.tab,
-        //       filename: 'export',
-        //       format: FileType.txt,
-        //       useUtf8WithBom: true,
-        //     }),
-        //   }
-        // );
+        menuCustomItems.push(
+          {
+            iconCssClass: contextMenu.iconExportTextDelimitedCommand || 'fa fa-download',
+            title: this.extensionUtility.translateWhenEnabledAndServiceExist('EXPORT_TO_TAB_DELIMITED', 'TEXT_EXPORT_TO_TAB_DELIMITED'),
+            disabled: false,
+            command: commandName,
+            positionOrder: 53,
+            action: () => this.exportService.exportToFile({
+              delimiter: DelimiterType.tab,
+              filename: 'export',
+              format: FileType.txt,
+              useUtf8WithBom: true,
+            }),
+          }
+        );
       }
     }
 
     // -- Grouping Commands
     if (gridOptions && (gridOptions.enableGrouping || gridOptions.enableDraggableGrouping || gridOptions.enableTreeData)) {
       const columnDefinitions = this.sharedService.columnDefinitions || [];
-      let columnWithTreeData: Column;
+      let columnWithTreeData: Column | undefined;
       if (gridOptions && gridOptions.enableTreeData && columnDefinitions) {
         columnWithTreeData = columnDefinitions.find((col: Column) => col && col.treeData);
       }
 
       // add a divider (separator) between the top sort commands and the other clear commands
-      menuCustomItems.push({ divider: true, command: '', positionOrder: 54 });
+      if (contextMenu && !contextMenu.hideCopyCellValueCommand) {
+        menuCustomItems.push({ divider: true, command: '', positionOrder: 54 });
+      }
 
       // show context menu: Clear Grouping (except for Tree Data which shouldn't have this feature)
       if (gridOptions && !gridOptions.enableTreeData && contextMenu && !contextMenu.hideClearAllGrouping) {
@@ -399,16 +400,23 @@ export class ContextMenuExtension implements Extension {
 
         // create fake <div> to copy into clipboard & delete it from the DOM once we're done
         const range = document.createRange();
-        const tmpElem = $('<div>').css({ position: 'absolute', left: '-1000px', top: '-1000px' }).text(textToCopy);
-        $('body').append(tmpElem);
-        range.selectNodeContents(tmpElem.get(0));
-        const selection = window.getSelection();
-        if (selection && selection.addRange && selection.removeAllRanges) {
-          selection.removeAllRanges();
-          selection.addRange(range);
-          const success = document.execCommand('copy', false, textToCopy);
-          if (success) {
-            tmpElem.remove();
+        const tmpElem = document.createElement('div') as HTMLDivElement;
+        const body = document.querySelector('body') as HTMLElement;
+        if (tmpElem && body) {
+          tmpElem.style.position = 'absolute';
+          tmpElem.style.left = '-1000px';
+          tmpElem.style.top = '-1000px';
+          tmpElem.textContent = textToCopy;
+          body.appendChild(tmpElem);
+          range.selectNodeContents(tmpElem);
+          const selection = window.getSelection();
+          if (selection && selection.addRange && selection.removeAllRanges) {
+            selection.removeAllRanges();
+            selection.addRange(range);
+            const success = document.execCommand('copy', false, textToCopy);
+            if (success) {
+              tmpElem.remove();
+            }
           }
         }
       }
