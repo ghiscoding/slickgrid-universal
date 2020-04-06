@@ -149,7 +149,7 @@ export class VanillaGridBundle {
     this.collectionService = new CollectionService(this.translateService);
     const filterFactory = new FilterFactory(slickgridConfig, this.collectionService, this.translateService);
     this.filterService = new FilterService(filterFactory, this._eventPubSubService, this.sharedService);
-    this.sortService = new SortService(this._eventPubSubService);
+    this.sortService = new SortService(this.sharedService, this._eventPubSubService);
     this.extensionUtility = new ExtensionUtility(this.sharedService, this.translateService);
     this.groupingAndColspanService = new GroupingAndColspanService(this.extensionUtility);
     this.autoTooltipExtension = new AutoTooltipExtension(this.extensionUtility, this.sharedService);

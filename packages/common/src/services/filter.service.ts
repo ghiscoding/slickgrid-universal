@@ -329,49 +329,51 @@ export class FilterService {
       }
     }
 
-    for (const columnId of Object.keys(columnFilters)) {
-      const columnFilter = columnFilters[columnId] as ColumnFilter;
-      const conditionOptions = this.getFilterConditionOptionsOrBoolean(item, columnFilter, columnId, grid, dataView);
-      if (typeof conditionOptions === 'boolean') {
-        return conditionOptions;
-      }
+    if (typeof columnFilters === 'object') {
+      for (const columnId of Object.keys(columnFilters)) {
+        const columnFilter = columnFilters[columnId] as ColumnFilter;
+        const conditionOptions = this.getFilterConditionOptionsOrBoolean(item, columnFilter, columnId, grid, dataView);
+        if (typeof conditionOptions === 'boolean') {
+          return conditionOptions;
+        }
 
-      if (isGridWithTreeData && this._columnWithTreeData) {
-        const treeItemsPropName = treeDataOptions?.itemMapPropName || '__treeItems';
-        if (item[treeItemsPropName] === undefined) {
+        if (isGridWithTreeData && this._columnWithTreeData) {
+          const treeItemsPropName = treeDataOptions?.itemMapPropName || '__treeItems';
+          if (item[treeItemsPropName] === undefined) {
+            return false;
+          }
+          const defaultTreeColumnFilter = { columnId: this._columnWithTreeData.id, columnDef: this._columnWithTreeData, searchTerms: [''] } as ColumnFilter;
+          const treeColumnFilter = (columnFilters[this._columnWithTreeData.id] || defaultTreeColumnFilter) as ColumnFilter;
+          const treeConditionOptions = this.getFilterConditionOptionsOrBoolean(item, treeColumnFilter, this._columnWithTreeData.id, args.grid, dataView);
+          const foundInAnyTreeLevel = item[treeItemsPropName].find((childItem: string) => FilterConditions.executeMappedCondition({ ...treeConditionOptions as FilterConditionOption, cellValue: childItem }));
+          if (typeof treeConditionOptions === 'boolean') {
+            return treeConditionOptions;
+          }
+
+          if (this._columnWithTreeData.id === columnId) {
+            // when the current column is the Tree Data column, we can loop through the treeItems mapping and execute the search on these values and we're done
+            if (!foundInAnyTreeLevel) {
+              return false;
+            }
+          } else {
+            // when the current column is NOT the Tree Data column
+            // 1. we need to skip any row that has children
+            //   - we consider a row having children when its treeItems mapping has more than 1 item since every treeItems always include themselve in the array
+            //   - for example if we are on 2nd row (Task 2) and __treeItems: ['Task 2'], then it has no children, however this would mean it has children __treeItems: ['Task 2', 'Task 3']
+            // 2. also run the condition of the row with current column filter
+            const hasChildren = Array.isArray(item[treeItemsPropName]) && item[treeItemsPropName].length > 1;
+            const hasFoundItem = FilterConditions.executeMappedCondition(conditionOptions as FilterConditionOption);
+
+            console.log(item?.file, foundInAnyTreeLevel, columnFilters, hasChildren, hasFoundItem);
+
+            // "Task 3" true false
+            if ((!foundInAnyTreeLevel) || (!hasChildren && !hasFoundItem)) {
+              return false;
+            }
+          }
+        } else if (!FilterConditions.executeMappedCondition(conditionOptions as FilterConditionOption)) {
           return false;
         }
-        const defaultTreeColumnFilter = { columnId: this._columnWithTreeData.id, columnDef: this._columnWithTreeData, searchTerms: [''] } as ColumnFilter;
-        const treeColumnFilter = (columnFilters[this._columnWithTreeData.id] || defaultTreeColumnFilter) as ColumnFilter;
-        const treeConditionOptions = this.getFilterConditionOptionsOrBoolean(item, treeColumnFilter, this._columnWithTreeData.id, args.grid, dataView);
-        const foundInAnyTreeLevel = item[treeItemsPropName].find((childItem: string) => FilterConditions.executeMappedCondition({ ...treeConditionOptions as FilterConditionOption, cellValue: childItem }));
-        if (typeof treeConditionOptions === 'boolean') {
-          return treeConditionOptions;
-        }
-
-        if (this._columnWithTreeData.id === columnId) {
-          // when the current column is the Tree Data column, we can loop through the treeItems mapping and execute the search on these values and we're done
-          if (!foundInAnyTreeLevel) {
-            return false;
-          }
-        } else {
-          // when the current column is NOT the Tree Data column
-          // 1. we need to skip any row that has children
-          //   - we consider a row having children when its treeItems mapping has more than 1 item since every treeItems always include themselve in the array
-          //   - for example if we are on 2nd row (Task 2) and __treeItems: ['Task 2'], then it has no children, however this would mean it has children __treeItems: ['Task 2', 'Task 3']
-          // 2. also run the condition of the row with current column filter
-          const hasChildren = Array.isArray(item[treeItemsPropName]) && item[treeItemsPropName].length > 1;
-          const hasFoundItem = FilterConditions.executeMappedCondition(conditionOptions as FilterConditionOption);
-
-          console.log(item?.file, foundInAnyTreeLevel, columnFilters, hasChildren, hasFoundItem);
-
-          // "Task 3" true false
-          if ((!foundInAnyTreeLevel) || (!hasChildren && !hasFoundItem)) {
-            return false;
-          }
-        }
-      } else if (!FilterConditions.executeMappedCondition(conditionOptions as FilterConditionOption)) {
-        return false;
       }
     }
 

@@ -85,7 +85,7 @@ export function convertParentChildFlatArrayToHierarchicalView(flatArray: any[], 
  */
 export function convertHierarchicalViewToFlatArray(hierarchicalArray: any[], options?: { childrenPropName?: string; identifierPropName?: string; }): any[] {
   const outputArray: any[] = [];
-  convertHierarchicalViewToFlatArrayByOutputArrayReference(hierarchicalArray, outputArray, options, 0);
+  convertHierarchicalViewToFlatArrayByOutputArrayReference($.extend(true, [], hierarchicalArray), outputArray, options, 0);
 
   // the output array is the one passed as reference
   return outputArray;
@@ -104,20 +104,22 @@ export function convertHierarchicalViewToFlatArrayByOutputArrayReference(hierarc
   const treeLevelPropName = options?.treeLevelPropName || '__treeLevel';
   const parentIdPropName = options?.parentIdPropName || '__parentId';
 
-  for (const item of hierarchicalArray) {
-    if (item) {
-      const itemExist = outputArray.find((itm: any) => itm[identifierPropName] === item[identifierPropName]);
-      if (!itemExist) {
-        item[treeLevelPropName] = treeLevel; // save tree level ref
-        item[parentIdPropName] = parentId || null;
-        outputArray.push(item);
-      }
-      if (Array.isArray(item[childrenPropName])) {
-        treeLevel++;
-        convertHierarchicalViewToFlatArrayByOutputArrayReference(item[childrenPropName], outputArray, options, treeLevel, item[identifierPropName]);
-        treeLevel--;
-        item[hasChildrenFlagPropName] = true;
-        delete item[childrenPropName]; // remove the children property
+  if (Array.isArray(hierarchicalArray)) {
+    for (const item of hierarchicalArray) {
+      if (item) {
+        const itemExist = outputArray.find((itm: any) => itm[identifierPropName] === item[identifierPropName]);
+        if (!itemExist) {
+          item[treeLevelPropName] = treeLevel; // save tree level ref
+          item[parentIdPropName] = parentId || null;
+          outputArray.push(item);
+        }
+        if (Array.isArray(item[childrenPropName])) {
+          treeLevel++;
+          convertHierarchicalViewToFlatArrayByOutputArrayReference(item[childrenPropName], outputArray, options, treeLevel, item[identifierPropName]);
+          treeLevel--;
+          item[hasChildrenFlagPropName] = true;
+          delete item[childrenPropName]; // remove the children property
+        }
       }
     }
   }

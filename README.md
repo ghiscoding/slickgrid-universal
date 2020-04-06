@@ -127,6 +127,7 @@ npm run test:watch
   - [ ] Tree Data
     - [x] add Grid Demo
     - [x] add Collapse/Expand All into Context Menu
+    - [ ] Aggregators support might be nice as well
     - [ ] Search Filter on any Column
     - [ ] Sorting from any Column
 
