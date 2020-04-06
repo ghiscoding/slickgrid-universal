@@ -14,8 +14,8 @@ import {
   ExtensionName,
   FileType,
 } from '../enums/index';
-// import { ExcelExportService } from '../services/excelExport.service';
-// import { ExportService } from '../services/export.service';
+import { ExcelExportService } from '../services/excelExport.service';
+import { ExportService } from '../services/export.service';
 import { ExtensionUtility } from './extensionUtility';
 import { FilterService } from '../services/filter.service';
 import { SortService } from '../services/sort.service';
@@ -35,8 +35,8 @@ export class GridMenuExtension implements Extension {
   private _userOriginalGridMenu: GridMenu;
 
   constructor(
-    // private excelExportService: ExcelExportService,
-    // private exportService: ExportService,
+    private excelExportService: ExcelExportService,
+    private exportService: ExportService,
     private extensionUtility: ExtensionUtility,
     private filterService: FilterService,
     private sharedService: SharedService,
@@ -360,26 +360,26 @@ export class GridMenuExtension implements Extension {
           this.sharedService.dataView.refresh();
           break;
         case 'export-csv':
-          // this.exportService.exportToFile({
-          //   delimiter: DelimiterType.comma,
-          //   filename: 'export',
-          //   format: FileType.csv,
-          //   useUtf8WithBom: true,
-          // });
+          this.exportService.exportToFile({
+            delimiter: DelimiterType.comma,
+            filename: 'export',
+            format: FileType.csv,
+            useUtf8WithBom: true,
+          });
           break;
         case 'export-excel':
-          // this.excelExportService.exportToExcel({
-          //   filename: 'export',
-          //   format: FileType.xlsx,
-          // });
+          this.excelExportService.exportToExcel({
+            filename: 'export',
+            format: FileType.xlsx,
+          });
           break;
         case 'export-text-delimited':
-          // this.exportService.exportToFile({
-          //   delimiter: DelimiterType.tab,
-          //   filename: 'export',
-          //   format: FileType.txt,
-          //   useUtf8WithBom: true,
-          // });
+          this.exportService.exportToFile({
+            delimiter: DelimiterType.tab,
+            filename: 'export',
+            format: FileType.txt,
+            useUtf8WithBom: true,
+          });
           break;
         case 'toggle-filter':
           const showHeaderRow = this.sharedService && this.sharedService.gridOptions && this.sharedService.gridOptions.showHeaderRow || false;

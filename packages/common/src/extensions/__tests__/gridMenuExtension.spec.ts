@@ -3,7 +3,7 @@ import { Column, GridOption } from '../../interfaces/index';
 import { GridMenuExtension } from '../gridMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
-import { /*ExcelExportService, ExportService,*/ FilterService, SortService } from '../../services';
+import { ExcelExportService, ExportService, FilterService, SortService } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 declare const Slick: any;
@@ -13,13 +13,13 @@ const gridId = 'grid1';
 const gridUid = 'slickgrid_124343';
 const containerId = 'demo-container';
 
-// const excelExportServiceStub = {
-//   exportToExcel: jest.fn(),
-// } as unknown as ExcelExportService;
+const excelExportServiceStub = {
+  exportToExcel: jest.fn(),
+} as unknown as ExcelExportService;
 
-// const exportServiceStub = {
-//   exportToFile: jest.fn(),
-// } as unknown as ExportService;
+const exportServiceStub = {
+  exportToFile: jest.fn(),
+} as unknown as ExportService;
 
 const filterServiceStub = {
   clearFilters: jest.fn(),
@@ -120,7 +120,7 @@ describe('gridMenuExtension', () => {
       sharedService = new SharedService();
       translateService = new TranslateServiceStub();
       extensionUtility = new ExtensionUtility(sharedService, translateService);
-      extension = new GridMenuExtension(extensionUtility, filterServiceStub, sharedService, sortServiceStub, translateService);
+      extension = new GridMenuExtension(excelExportServiceStub, exportServiceStub, extensionUtility, filterServiceStub, sharedService, sortServiceStub, translateService);
       translateService.setLocale('fr');
     });
 
@@ -574,51 +574,51 @@ describe('gridMenuExtension', () => {
         expect(refreshSpy).toHaveBeenCalled();
       });
 
-      // it('should call "exportToExcel" set when the command triggered is "export-excel"', () => {
-      //   const excelExportSpy = jest.spyOn(excelExportServiceStub, 'exportToExcel');
-      //   const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
+      it('should call "exportToExcel" set when the command triggered is "export-excel"', () => {
+        const excelExportSpy = jest.spyOn(excelExportServiceStub, 'exportToExcel');
+        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
 
-      //   const instance = extension.register();
-      //   instance.onCommand.notify({ grid: gridStub, command: 'export-excel' }, new Slick.EventData(), gridStub);
+        const instance = extension.register();
+        instance.onCommand.notify({ grid: gridStub, command: 'export-excel' }, new Slick.EventData(), gridStub);
 
-      //   expect(onCommandSpy).toHaveBeenCalled();
-      //   expect(excelExportSpy).toHaveBeenCalledWith({
-      //     filename: 'export',
-      //     format: FileType.xlsx,
-      //   });
-      // });
+        expect(onCommandSpy).toHaveBeenCalled();
+        expect(excelExportSpy).toHaveBeenCalledWith({
+          filename: 'export',
+          format: FileType.xlsx,
+        });
+      });
 
-      // it('should call "exportToFile" with CSV set when the command triggered is "export-csv"', () => {
-      //   const exportSpy = jest.spyOn(exportServiceStub, 'exportToFile');
-      //   const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
+      it('should call "exportToFile" with CSV set when the command triggered is "export-csv"', () => {
+        const exportSpy = jest.spyOn(exportServiceStub, 'exportToFile');
+        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
 
-      //   const instance = extension.register();
-      //   instance.onCommand.notify({ grid: gridStub, command: 'export-csv' }, new Slick.EventData(), gridStub);
+        const instance = extension.register();
+        instance.onCommand.notify({ grid: gridStub, command: 'export-csv' }, new Slick.EventData(), gridStub);
 
-      //   expect(onCommandSpy).toHaveBeenCalled();
-      //   expect(exportSpy).toHaveBeenCalledWith({
-      //     delimiter: DelimiterType.comma,
-      //     filename: 'export',
-      //     format: FileType.csv,
-      //     useUtf8WithBom: true
-      //   });
-      // });
+        expect(onCommandSpy).toHaveBeenCalled();
+        expect(exportSpy).toHaveBeenCalledWith({
+          delimiter: DelimiterType.comma,
+          filename: 'export',
+          format: FileType.csv,
+          useUtf8WithBom: true
+        });
+      });
 
-      // it('should call "exportToFile" with CSV set when the command triggered is "export-text-delimited"', () => {
-      //   const exportSpy = jest.spyOn(exportServiceStub, 'exportToFile');
-      //   const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
+      it('should call "exportToFile" with CSV set when the command triggered is "export-text-delimited"', () => {
+        const exportSpy = jest.spyOn(exportServiceStub, 'exportToFile');
+        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
 
-      //   const instance = extension.register();
-      //   instance.onCommand.notify({ grid: gridStub, command: 'export-text-delimited' }, new Slick.EventData(), gridStub);
+        const instance = extension.register();
+        instance.onCommand.notify({ grid: gridStub, command: 'export-text-delimited' }, new Slick.EventData(), gridStub);
 
-      //   expect(onCommandSpy).toHaveBeenCalled();
-      //   expect(exportSpy).toHaveBeenCalledWith({
-      //     delimiter: DelimiterType.tab,
-      //     filename: 'export',
-      //     format: FileType.txt,
-      //     useUtf8WithBom: true
-      //   });
-      // });
+        expect(onCommandSpy).toHaveBeenCalled();
+        expect(exportSpy).toHaveBeenCalledWith({
+          delimiter: DelimiterType.tab,
+          filename: 'export',
+          format: FileType.txt,
+          useUtf8WithBom: true
+        });
+      });
 
       it('should call the grid "setHeaderRowVisibility" method when the command triggered is "toggle-filter"', () => {
         gridOptionsMock.showHeaderRow = false;
@@ -723,7 +723,7 @@ describe('gridMenuExtension', () => {
   describe('without Translate Service', () => {
     beforeEach(() => {
       translateService = null;
-      extension = new GridMenuExtension({} as ExtensionUtility, filterServiceStub, { gridOptions: { enableTranslate: true } } as SharedService, {} as SortService, translateService);
+      extension = new GridMenuExtension(excelExportServiceStub, exportServiceStub, {} as ExtensionUtility, filterServiceStub, { gridOptions: { enableTranslate: true } } as SharedService, {} as SortService, translateService);
     });
 
     it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {

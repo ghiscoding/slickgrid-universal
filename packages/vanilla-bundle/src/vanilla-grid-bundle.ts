@@ -43,6 +43,8 @@ import {
   SlickgridConfig,
 } from '@slickgrid-universal/common';
 
+import { ExportServicer } from './services/export.service';
+import { ExcelExportServicer } from './services/excelExport.service';
 import { TranslateService } from './services/translate.service';
 import { EventPubSubService } from './services/eventPubSub.service';
 
@@ -79,6 +81,8 @@ export class VanillaGridBundle {
   columnPickerExtension: ColumnPickerExtension;
   checkboxExtension: CheckboxSelectorExtension;
   draggableGroupingExtension: DraggableGroupingExtension;
+  excelExportServicer: ExcelExportServicer;
+  exportServicer: ExportServicer;
   gridMenuExtension: GridMenuExtension;
   groupItemMetaProviderExtension: GroupItemMetaProviderExtension;
   headerButtonExtension: HeaderButtonExtension;
@@ -119,6 +123,14 @@ export class VanillaGridBundle {
     this.refreshGridData(dataset);
   }
 
+  get datasetHierarchical(): any[] {
+    return this.sharedService.hierarchicalDataset;
+  }
+
+  set datasetHierarchical(hierarchicalDataset: any[]) {
+    this.sharedService.hierarchicalDataset = hierarchicalDataset;
+  }
+
   constructor(gridContainerElm: Element, columnDefs?: Column[], options?: GridOption, dataset?: any[]) {
     // make sure that the grid container has the "slickgrid-container" css class exist since we use it for slickgrid styling
     gridContainerElm.classList.add('slickgrid-container');
@@ -128,6 +140,8 @@ export class VanillaGridBundle {
     this.dataset = dataset || [];
     this._eventPubSubService = new EventPubSubService(gridContainerElm);
 
+    this.exportServicer = new ExportServicer();
+    this.excelExportServicer = new ExcelExportServicer();
     this.gridEventService = new GridEventService();
     const slickgridConfig = new SlickgridConfig();
     this.sharedService = new SharedService();
@@ -145,7 +159,7 @@ export class VanillaGridBundle {
     this.columnPickerExtension = new ColumnPickerExtension(this.extensionUtility, this.sharedService);
     this.checkboxExtension = new CheckboxSelectorExtension(this.extensionUtility, this.sharedService);
     this.draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this.sharedService);
-    this.gridMenuExtension = new GridMenuExtension(this.extensionUtility, this.filterService, this.sharedService, this.sortService, this.translateService);
+    this.gridMenuExtension = new GridMenuExtension(this.excelExportServicer, this.exportServicer, this.extensionUtility, this.filterService, this.sharedService, this.sortService, this.translateService);
     this.groupItemMetaProviderExtension = new GroupItemMetaProviderExtension(this.sharedService);
     this.headerButtonExtension = new HeaderButtonExtension(this.extensionUtility, this.sharedService);
     this.headerMenuExtension = new HeaderMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.translateService);

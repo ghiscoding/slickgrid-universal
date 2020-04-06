@@ -5,12 +5,15 @@ export const treeFormatter: Formatter = (row: number, cell: number, value: any, 
   const indentMarginLeft = columnDef.treeData?.indentMarginLeft || 15;
   const dataView = grid && grid.getData();
 
+  if (value === null || value === undefined || dataContext === undefined) {
+    return '';
+  }
+
   if (!dataContext.hasOwnProperty(treeLevelPropName)) {
     throw new Error('You must provide a valid Tree Data column, it seems that there are no tree level found in this row');
   }
 
   if (dataView && dataView.getIdxById && dataView.getItemByIdx) {
-    if (value === null || value === undefined || dataContext === undefined) { return ''; }
     value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const identifierPropName = dataView.getIdPropertyName() || 'id';
     const spacer = `<span style="display:inline-block; width:${indentMarginLeft * dataContext[treeLevelPropName]}px;"></span>`;
