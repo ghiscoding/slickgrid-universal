@@ -13,7 +13,7 @@ import {
   SortDirectionString,
 } from '../enums/index';
 import { executeBackendCallback, refreshBackendDataset } from './backend-utilities';
-import { getDescendantProperty, convertHierarchicalViewToFlatArray } from './utilities';
+import { getDescendantProperty, convertHierarchicalViewToFlatArray, convertParentChildFlatArrayToHierarchicalView } from './utilities';
 import { sortByFieldType } from '../sorters/sorterUtilities';
 import { PubSubService } from './pubSub.service';
 import { SharedService } from './shared.service';
@@ -73,13 +73,25 @@ export class SortService {
     this._grid = grid;
     this._dataView = dataView;
 
-    if (this._gridOptions && this._gridOptions.enableTreeData && this._columnDefinitions) {
+    if (this._gridOptions && this._gridOptions.enableTreeData && Array.isArray(this._columnDefinitions)) {
       this._columnWithTreeData = this._columnDefinitions.find((col: Column) => col && col.treeData);
-      if (!this._columnWithTreeData || !this._columnWithTreeData.id) {
-        throw new Error('[Slickgrid-Universal] When enabling tree data, you must also provide the column definition "treeData" property with "childrenPropName" or "parentPropName" (depending if your array is hierarchical or flat) for the Tree Data to work properly');
-      }
+
+      // when a Tree Data view is defined, we must sort the data so that the UI works correctly
       if (this._columnWithTreeData) {
-        this._grid.setSortColumns([{ columnId: this._columnWithTreeData.id, sortAsc: true }]);
+        // first presort it once by tree level
+        let sortTreeLevelColumn: ColumnSort = { columnId: this._columnWithTreeData.id, sortCol: this._columnWithTreeData, sortAsc: true };
+        const treeDataOptions = this._columnWithTreeData.treeData;
+
+        // user could provide a custom sort field id, if so get that column and sort by it
+        if (treeDataOptions && treeDataOptions.sortByFieldId) {
+          const sortColumn = this._columnDefinitions.find((col: Column) => col.id === treeDataOptions.sortByFieldId);
+          sortTreeLevelColumn = { columnId: treeDataOptions.sortByFieldId, sortCol: sortColumn, sortAsc: true } as ColumnSort;
+        }
+
+        setTimeout(() => {
+          this.onLocalSortChanged(this._grid, this._dataView, [sortTreeLevelColumn]);
+          this._grid.setSortColumns([sortTreeLevelColumn]);
+        }, 0);
       }
     }
 
@@ -268,24 +280,23 @@ export class SortService {
       }
 
       if (isTreeDataEnabled && Array.isArray(this.sharedService.hierarchicalDataset)) {
+        console.log('sort tree data')
         const hierarchicalDataset = this.sharedService.hierarchicalDataset;
         this.sortTreeData(hierarchicalDataset, sortColumns);
-        console.log(hierarchicalDataset)
         const sortedFlatArray = convertHierarchicalViewToFlatArray(hierarchicalDataset, this._columnWithTreeData?.treeData);
-        dataView.setItems(sortedFlatArray);
+        dataView.setItems(sortedFlatArray, this._gridOptions?.datasetIdPropertyName ?? 'id');
       } else {
         dataView.sort(this.sortComparers.bind(this, sortColumns));
       }
 
       grid.invalidate();
-      grid.render();
     }
   }
 
   sortComparers(sortColumns: ColumnSort[], dataRow1: any, dataRow2: any): number {
     if (Array.isArray(sortColumns)) {
-      for (let i = 0, l = sortColumns.length; i < l; i++) {
-        const result = this.sortComparer(sortColumns[i], dataRow1, dataRow2);
+      for (const sortColumn of sortColumns) {
+        const result = this.sortComparer(sortColumn, dataRow1, dataRow2);
         if (result !== undefined) {
           return result;
         }
@@ -331,28 +342,21 @@ export class SortService {
     const childrenPropName = treeDataOptions?.childrenPropName || 'children';
 
     if (Array.isArray(sortColumns)) {
-      for (let i = 0, l = sortColumns.length; i < l; i++) {
-        this.sortTreeChildren(hierarchicalArray, sortColumns[i]);
+      for (const sortColumn of sortColumns) {
+        this.sortTreeChild(hierarchicalArray, sortColumn);
       }
     }
-    return SortDirectionNumber.neutral;
   }
 
-  sortTreeChildren(hierarchicalArray: any[], sortColumn: ColumnSort) {
+  sortTreeChild(hierarchicalArray: any[], sortColumn: ColumnSort) {
     const treeDataOptions = this._columnWithTreeData?.treeData;
     // const sortByFieldId = treeDataOptions?.sortByFieldId || 'id';
     const childrenPropName = treeDataOptions?.childrenPropName || 'children';
-    hierarchicalArray.sort((a: any, b: any) => this.sortComparer(sortColumn, a, b));
-    // hierarchicalArray.sort((a: any, b: any) => {
-    //   const a1 = a.Engineered_Product_Name__c || (a.Product_Name__r && a.Product_Name__r.Name) || '';
-    //   const b1 = b.Engineered_Product_Name__c || (b.Product_Name__r && b.Product_Name__r.Name) || '';
-    //   console.log('sortByFieldId', a1, b1)
-    //   return this.sortComparer(sortColumn, a, b);
-    // });
+    hierarchicalArray.sort((a: any, b: any) => this.sortComparer(sortColumn, a, b) ?? SortDirectionNumber.neutral);
 
     for (const item of hierarchicalArray) {
       if (item && Array.isArray(item[childrenPropName])) {
-        this.sortTreeChildren(item[childrenPropName], sortColumn);
+        this.sortTreeChild(item[childrenPropName], sortColumn);
       }
     }
   }

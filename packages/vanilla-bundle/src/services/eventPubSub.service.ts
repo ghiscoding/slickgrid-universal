@@ -27,12 +27,12 @@ export class EventPubSubService implements PubSubService {
   }
 
   unsubscribeAll() {
-    for (let eventName of this._eventNames) {
+    for (const eventName of this._eventNames) {
       this.unsubscribe(eventName, () => { });
     }
   }
 
-  /** Dispatch of Custom Event, which by default will bubble & is cancelable */
+  /** Dispatch of Custom Event, which by default will bubble up & is cancelable */
   dispatchCustomEvent(eventName: string, data?: any, isBubbling: boolean = true, isCancelable: boolean = true) {
     const eventInit: CustomEventInit = { bubbles: isBubbling, cancelable: isCancelable };
     if (data) {

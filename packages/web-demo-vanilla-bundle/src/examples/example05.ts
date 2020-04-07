@@ -40,6 +40,7 @@ export class Example5 {
     this.dataViewObj = this.slickgridLwc.dataView;
     this.gridObj = this.slickgridLwc.grid;
     this.dataset = this.mockDataset();
+    this.slickgridLwc.datasetHierarchical = convertParentChildFlatArrayToHierarchicalView($.extend(true, [], this.dataset), { parentPropName: 'parentId', childrenPropName: 'children' });
     this.slickgridLwc.dataset = this.dataset;
     modifyDatasetToAddTreeItemsMapping(this.dataset, this.columnDefinitions[0], this.dataViewObj);
     // console.log(this.dataset);
@@ -54,6 +55,7 @@ export class Example5 {
       {
         id: 'title', name: 'Title', field: 'title', width: 220, cssClass: 'cell-title',
         filterable: true, sortable: true,
+        queryFieldSorter: 'id', type: FieldType.number,
         formatter: Formatters.tree,
         treeData: {
           levelPropName: 'indent',

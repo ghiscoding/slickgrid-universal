@@ -36,18 +36,19 @@ export class Example6 {
   attached() {
     this.initializeGrid();
     this.datasetFlat = [];
+    this.datasetHierarchical = this.mockDataset();
     const gridContainerElm = document.querySelector('.grid6');
 
     gridContainerElm.addEventListener('onclick', this.handleOnClick.bind(this));
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions });
+    // this.datasetFlat = convertHierarchicalViewToFlatArray($.extend(true, [], this.datasetHierarchical), { childrenPropName: 'files' });
+    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, null, this.datasetHierarchical);
     this.dataViewObj = this.slickgridLwc.dataView;
-    this.datasetHierarchical = sortHierarchicalArray(this.mockDataset(), { sortByFieldId: 'file', childrenPropName: 'files', sortPropFieldType: FieldType.string, direction: this.sortDirection });
-    // console.log('sorted', $.extend(true, [], this.datasetHierarchical));
-    this.datasetFlat = convertHierarchicalViewToFlatArray($.extend(true, [], this.datasetHierarchical), { childrenPropName: 'files' });
-    this.slickgridLwc.dataset = this.datasetFlat;
-    this.slickgridLwc.datasetHierarchical = this.datasetHierarchical;
-    modifyDatasetToAddTreeItemsMapping(this.slickgridLwc.dataset, this.columnDefinitions[0], this.dataViewObj);
+    // this.datasetHierarchical = sortHierarchicalArray(this.mockDataset(), { sortByFieldId: 'file', childrenPropName: 'files', sortPropFieldType: FieldType.string, direction: this.sortDirection });
+    // // console.log('sorted', $.extend(true, [], this.datasetHierarchical));
+    // this.slickgridLwc.dataset = this.datasetFlat;
+    // this.slickgridLwc.datasetHierarchical = this.datasetHierarchical;
+    // modifyDatasetToAddTreeItemsMapping(this.slickgridLwc.dataset, this.columnDefinitions[0], this.dataViewObj);
   }
 
   dispose() {
@@ -61,9 +62,9 @@ export class Example6 {
         type: FieldType.string, width: 150, formatter: this.treeFormatter,
         filterable: true, sortable: true,
         treeData: {
-          parentPropName: '__parentId',
+          // parentPropName: '__parentId',
           childrenPropName: 'files',
-          sortByFieldId: 'file',
+          // sortByFieldId: 'file',
           sortPropFieldType: FieldType.string,
         }
       },
@@ -134,7 +135,8 @@ export class Example6 {
     }
     const dataView = grid.getData();
     const data = dataView.getItems();
-    const idx = dataView.getIdxById(dataContext.id);
+    const identifierPropName = dataView.getIdPropertyName() || 'id';
+    const idx = dataView.getIdxById(dataContext[identifierPropName]);
     const prefix = this.getFileIcon(value);
 
     value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -264,7 +266,7 @@ export class Example6 {
 
   mockDataset() {
     return [
-      { id: 18, file: 'else.txt', dateModified: '2015-03-03T03:50:00.123Z', size: 90 },
+      { id: 18, file: 'something.txt', dateModified: '2015-03-03T03:50:00.123Z', size: 90 },
       {
         id: 21, file: 'Documents', files: [
           { id: 2, file: 'txt', files: [{ id: 3, file: 'todo.txt', dateModified: '2015-05-12T14:50:00.123Z', size: 0.7, }] },
@@ -272,6 +274,7 @@ export class Example6 {
             id: 4, file: 'pdf', files: [
               { id: 5, file: 'map.pdf', dateModified: '2015-05-21T10:22:00.123Z', size: 3.1, },
               { id: 6, file: 'internet-bill.pdf', dateModified: '2015-05-12T14:50:00.123Z', size: 1.4, },
+              { id: 22, file: 'phone-bill.pdf', dateModified: '2015-05-01T07:50:00.123Z', size: 1.4, },
             ]
           },
           { id: 9, file: 'misc', files: [{ id: 10, file: 'something.txt', dateModified: '2015-02-26T16:50:00.123Z', size: 0.4, }] },

@@ -318,10 +318,10 @@ export class ContextMenuExtension implements Extension {
               positionOrder: 56,
               action: () => {
                 if (gridOptions.enableTreeData) {
-                  const dataset: any[] = dataView.getItems() || [];
+                  const items: any[] = dataView.getItems() || [];
                   const collapsedPropName = columnWithTreeData?.treeData?.collapsedPropName || '__collapsed';
-                  dataset.forEach((item: any) => item[collapsedPropName] = true);
-                  dataView.setItems(dataset);
+                  items.forEach((item: any) => item[collapsedPropName] = true);
+                  dataView.setItems(items);
                   grid.invalidate();
                 } else {
                   dataView.collapseAllGroups();
@@ -353,10 +353,10 @@ export class ContextMenuExtension implements Extension {
               positionOrder: 57,
               action: () => {
                 if (gridOptions.enableTreeData) {
-                  const dataset: any[] = dataView.getItems() || [];
+                  const items: any[] = dataView.getItems() || [];
                   const collapsedPropName = columnWithTreeData?.treeData?.collapsedPropName || '__collapsed';
-                  dataset.forEach((item: any) => item[collapsedPropName] = false);
-                  dataView.setItems(dataset);
+                  items.forEach((item: any) => item[collapsedPropName] = false);
+                  dataView.setItems(items);
                   grid.invalidate();
                 } else {
                   dataView.expandAllGroups();

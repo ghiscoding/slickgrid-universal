@@ -7,9 +7,11 @@ export const stringSorter: Sorter = (value1: any, value2: any, sortDirection: nu
   }
   let position = 0;
 
-  if (value1 === null) {
+  if (value1 === value2) {
+    position = 0;
+  } else if (value1 === null || value1 === undefined) {
     position = -1;
-  } else if (value2 === null) {
+  } else if (value2 === null || value2 === undefined) {
     position = 1;
   } else if (value1 === value2) {
     position = 0;

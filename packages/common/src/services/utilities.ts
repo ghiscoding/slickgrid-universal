@@ -48,13 +48,14 @@ export function convertParentChildFlatArrayToHierarchicalView(flatArray: any[], 
   const identifierPropName = options?.identifierPropName || 'id';
   const hasChildrenFlagPropName = '__hasChildren';
   const treeLevelPropName = '__treeLevel';
+  const inputArray: any[] = $.extend(true, [], flatArray);
 
   const roots: any[] = []; // things without parent
 
   // make them accessible by guid on this map
   const all = {};
 
-  flatArray.forEach((item) => all[item[identifierPropName]] = item);
+  inputArray.forEach((item) => all[item[identifierPropName]] = item);
 
   // connect childrens to its parent, and split roots apart
   Object.keys(all).forEach((id) => {

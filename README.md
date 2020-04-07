@@ -148,3 +148,4 @@ npm run test:watch
 - [ ] Add Typings for Grid & DataView objects
 - [ ] Add some bindings in the demo (e.g. pinned rows input)
 - [ ] Can we change how SlickGrid Events are called and use same signature as SlickGrid instead of CustomEvent EventData signature?
+- [ ] Cannot copy text from cell since it's not selectable

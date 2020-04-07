@@ -17,6 +17,9 @@
 !.vscode/extensions.json
 .chrome
 
+# Demo page
+/docs
+
 # Tests, Report & Coverage
 *.spec.ts
 /test

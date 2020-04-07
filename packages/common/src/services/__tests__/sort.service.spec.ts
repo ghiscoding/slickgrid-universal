@@ -12,6 +12,7 @@ import { Sorters } from '../../sorters';
 import { SortService } from '../sort.service';
 import * as utilities from '../../services/backend-utilities';
 import { PubSubService } from '../pubSub.service';
+import { SharedService } from '../shared.service';
 
 declare const Slick: any;
 
@@ -65,11 +66,13 @@ const pubSubServiceStub = {
 } as PubSubService;
 
 describe('SortService', () => {
+  let sharedService: SharedService;
   let service: SortService;
   let slickgridEventHandler: SlickEventHandler;
 
   beforeEach(() => {
-    service = new SortService(pubSubServiceStub);
+    sharedService = new SharedService();
+    service = new SortService(sharedService, pubSubServiceStub);
     slickgridEventHandler = service.eventHandler;
   });
 

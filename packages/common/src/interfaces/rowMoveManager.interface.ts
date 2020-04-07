@@ -14,8 +14,8 @@ export interface RowMoveManager {
   /**  Defaults to False, do we want a single row move? Setting this to false means that 1 or more rows can be selected to move together.  */
   singleRowMove?: boolean;
 
-  /**  Width of the column */
-  width?: string;
+  /**  Width of the column in pixels (must be a number) */
+  width?: number;
 
 
   /** Defaults to 0, the column index position in the grid by default it will show as the first column (index 0) */

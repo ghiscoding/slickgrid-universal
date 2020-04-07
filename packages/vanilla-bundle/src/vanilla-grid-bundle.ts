@@ -41,6 +41,8 @@ import {
   CollectionService,
   GroupingAndColspanService,
   SlickgridConfig,
+
+  convertParentChildFlatArrayToHierarchicalView,
 } from '@slickgrid-universal/common';
 
 import { ExportServicer } from './services/export.service';
@@ -54,6 +56,7 @@ declare const $: any;
 
 export class VanillaGridBundle {
   private _columnDefinitions: Column[];
+  private _columnWithTreeData: Column | undefined;
   private _gridOptions: GridOption;
   private _dataset: any[];
   private _gridElm: Element;
@@ -131,7 +134,7 @@ export class VanillaGridBundle {
     this.sharedService.hierarchicalDataset = hierarchicalDataset;
   }
 
-  constructor(gridContainerElm: Element, columnDefs?: Column[], options?: GridOption, dataset?: any[]) {
+  constructor(gridContainerElm: Element, columnDefs?: Column[], options?: GridOption, dataset?: any[], hierarchicalDataset?: any[]) {
     // make sure that the grid container has the "slickgrid-container" css class exist since we use it for slickgrid styling
     gridContainerElm.classList.add('slickgrid-container');
 
@@ -184,6 +187,9 @@ export class VanillaGridBundle {
       this.translateService,
     );
 
+    if (hierarchicalDataset) {
+      this.sharedService.hierarchicalDataset = hierarchicalDataset;
+    }
     this.initialization(gridContainerElm);
   }
 
@@ -245,9 +251,23 @@ export class VanillaGridBundle {
     this.grid.init();
 
     // load the data in the DataView
-    this.dataView.beginUpdate();
     this.dataView.setItems(this.dataset, this._gridOptions.datasetIdPropertyName);
-    this.dataView.endUpdate();
+
+    if (this._gridOptions && this._gridOptions.enableTreeData) {
+      this._columnWithTreeData = this._columnDefinitions.find((col: Column) => col && col.treeData);
+      if (!this._columnWithTreeData || !this._columnWithTreeData.id) {
+        throw new Error('[Slickgrid-Universal] When enabling tree data, you must also provide the column definition "treeData" property with "childrenPropName" or "parentPropName" (depending if your array is hierarchical or flat) for the Tree Data to work properly');
+      }
+
+      // anytime the flat dataset changes, we need to update our hierarchical dataset
+      // this could be triggered by a DataView setItems or updateItem
+      this._eventHandler.subscribe(this.dataView.onRowsChanged, () => {
+        const items = this.dataView.getItems();
+        if (items.length > 0 && !this._isDatasetInitialized) {
+          this.sharedService.hierarchicalDataset = convertParentChildFlatArrayToHierarchicalView(items, this._columnWithTreeData?.treeData);
+        }
+      });
+    }
 
     // if you don't want the items that are not visible (due to being filtered out or being on a different page)
     // to stay selected, pass 'false' to the second arg
@@ -442,6 +462,11 @@ export class VanillaGridBundle {
         //   this.loadRowSelectionPresetWhenExists();
         // }
         this._isDatasetInitialized = true;
+
+        // also update the hierarchical dataset
+        if (dataset.length > 0 && this._columnWithTreeData) {
+          this.sharedService.hierarchicalDataset = convertParentChildFlatArrayToHierarchicalView(dataset, this._columnWithTreeData.treeData);
+        }
       }
 
       if (dataset) {
@@ -502,7 +527,7 @@ export class VanillaGridBundle {
    * @param showing
    */
   showHeaderRow(showing = true) {
-    this.grid.setHeaderRowVisibility(showing);
+    this.grid.setHeaderRowVisibility(showing, false);
     return showing;
   }
 
