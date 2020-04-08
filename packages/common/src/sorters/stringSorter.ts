@@ -13,8 +13,6 @@ export const stringSorter: Sorter = (value1: any, value2: any, sortDirection: nu
     position = -1;
   } else if (value2 === null || value2 === undefined) {
     position = 1;
-  } else if (value1 === value2) {
-    position = 0;
   } else if (sortDirection) {
     position = value1 < value2 ? -1 : 1;
   } else {

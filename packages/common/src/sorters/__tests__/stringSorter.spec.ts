@@ -30,14 +30,14 @@ describe('the String Sorter', () => {
     expect(inputArray).toEqual(['zebra', 'amazon', 'amazon', 'abc', 'John', 'Abe']);
   });
 
-  it('should return an array of different type of characters sorted ascending with latin characters sorted first, then symbol, then empty string, then null', () => {
+  it('should return an array of different type of characters sorted ascending with the sequence of null values, then empty string and finally latin characters', () => {
     const direction = SortDirectionNumber.asc;
     const inputArray = ['amazon', null, 'zebra', null, '', '@at', 'John', 'Abe', 'abc'];
     inputArray.sort((value1, value2) => stringSorter(value1, value2, direction));
     expect(inputArray).toEqual([null, null, '', '@at', 'Abe', 'John', 'abc', 'amazon', 'zebra']);
   });
 
-  it('should return an array of different type of characters sorted descending with latin characters sorted first, then symbol, then empty string, then null', () => {
+  it('should return an array of different type of characters sorted descending with the latin characters, then empty string and finally null values', () => {
     const direction = SortDirectionNumber.desc;
     const inputArray = ['amazon', null, 'zebra', '', null, '@at', 'John', 'Abe', 'abc'];
     inputArray.sort((value1, value2) => stringSorter(value1, value2, direction));
