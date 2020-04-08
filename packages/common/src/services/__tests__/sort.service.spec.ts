@@ -444,7 +444,7 @@ describe('SortService', () => {
       expect(spyResort).toHaveBeenCalled();
     });
 
-    it('should call a dataview sort then a grid invalidate & render', () => {
+    it('should call a dataview sort then a grid invalidate', () => {
       const mockSortedCols = [
         { sortCol: { id: 'lastName', field: 'lastName', width: 100 }, sortAsc: true },
         { sortCol: { id: 'firstName', field: 'firstName', width: 100 }, sortAsc: false },
@@ -452,14 +452,12 @@ describe('SortService', () => {
       const spyResort = jest.spyOn(dataViewStub, 'reSort');
       const spySort = jest.spyOn(dataViewStub, 'sort');
       const spyInvalidate = jest.spyOn(gridStub, 'invalidate');
-      const spyRender = jest.spyOn(gridStub, 'render');
 
       service.bindLocalOnSort(gridStub, dataViewStub);
       service.onLocalSortChanged(gridStub, dataViewStub, mockSortedCols);
 
       expect(spySort).toHaveBeenCalled();
       expect(spyInvalidate).toHaveBeenCalled();
-      expect(spyRender).toHaveBeenCalled();
       expect(spyResort).not.toHaveBeenCalled();
     });
   });
