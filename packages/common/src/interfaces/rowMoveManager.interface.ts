@@ -8,6 +8,13 @@ export interface RowMoveManager {
   /**  Column definition id(defaults to "_move") */
   columnId?: string;
 
+  /**
+ * Defaults to 0, the column index position in the grid by default it will show as the first column (index 0).
+ * Also note that the index position might vary if you use other extensions, after each extension is created,
+ * it will add an offset to take into consideration (1.CheckboxSelector, 2.RowDetail, 3.RowMove)
+ */
+  columnIndexPosition?: number;
+
   /**  Defaults to False, do we want to disable the row selection?  */
   disableRowSelection?: boolean;
 
@@ -16,10 +23,6 @@ export interface RowMoveManager {
 
   /**  Width of the column in pixels (must be a number) */
   width?: number;
-
-
-  /** Defaults to 0, the column index position in the grid by default it will show as the first column (index 0) */
-  columnIndexPosition?: number;
 
   /** Override the logic for showing (or not) the move icon (use case example: only every 2nd row is moveable) */
   usabilityOverride?: (row: number, dataContext: any, grid: any) => boolean;
