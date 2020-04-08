@@ -1,15 +1,16 @@
 import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { FieldType } from '../enums/fieldType.enum';
-import { Sorter } from '../interfaces/index';
+import { Column, Sorter } from '../interfaces/index';
 import * as moment_ from 'moment-mini';
 const moment = moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
-export function compareDates(value1: any, value2: any, sortDirection: number, format: string | moment_.MomentBuiltinFormat, strict?: boolean) {
+export function compareDates(value1: any, value2: any, sortDirection: number, sortColumn: Column, format: string | moment_.MomentBuiltinFormat, strict?: boolean) {
   let diff = 0;
+  const checkForUndefinedValues = sortColumn && sortColumn.valueCouldBeUndefined || false;
 
-  if (value1 === null || value1 === '' || !moment(value1, format, strict).isValid()) {
+  if (value1 === null || value1 === '' || (checkForUndefinedValues && value1 === undefined) || !moment(value1, format, strict).isValid()) {
     diff = -1;
-  } else if (value2 === null || value2 === '' || !moment(value2, format, strict).isValid()) {
+  } else if (value2 === null || value2 === '' || (checkForUndefinedValues && value2 === undefined) || !moment(value2, format, strict).isValid()) {
     diff = 1;
   } else {
     const date1 = moment(value1, format, strict);
@@ -24,10 +25,10 @@ export function compareDates(value1: any, value2: any, sortDirection: number, fo
 export function getAssociatedDateSorter(fieldType: FieldType): Sorter {
   const FORMAT = (fieldType === FieldType.date) ? moment.ISO_8601 : mapMomentDateFormatWithFieldType(fieldType);
 
-  return (value1: any, value2: any, sortDirection: number) => {
+  return (value1: any, value2: any, sortDirection: number, sortColumn: Column) => {
     if (FORMAT === moment.ISO_8601) {
-      return compareDates(value1, value2, sortDirection, FORMAT, false);
+      return compareDates(value1, value2, sortDirection, sortColumn, FORMAT, false);
     }
-    return compareDates(value1, value2, sortDirection, FORMAT, true);
+    return compareDates(value1, value2, sortDirection, sortColumn, FORMAT, true);
   };
 }

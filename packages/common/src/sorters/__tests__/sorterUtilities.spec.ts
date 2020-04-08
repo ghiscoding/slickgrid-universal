@@ -7,27 +7,27 @@ describe('sorterUtilities', () => {
   it('should call the Sorters.numeric when FieldType is number', () => {
     const spy = jest.spyOn(Sorters, 'numeric');
     sortByFieldType(FieldType.number, 0, 4, SortDirectionNumber.asc, { id: 'field1', field: 'field1' });
-    expect(spy).toHaveBeenCalledWith(0, 4, SortDirectionNumber.asc);
+    expect(spy).toHaveBeenCalledWith(0, 4, SortDirectionNumber.asc, { id: 'field1', field: 'field1' });
   });
 
   it('should call the Sorters.numeric when FieldType is integer', () => {
     const spy = jest.spyOn(Sorters, 'numeric');
     sortByFieldType(FieldType.integer, 0, 4, SortDirectionNumber.asc, { id: 'field1', field: 'field1' });
-    expect(spy).toHaveBeenCalledWith(0, 4, SortDirectionNumber.asc);
+    expect(spy).toHaveBeenCalledWith(0, 4, SortDirectionNumber.asc, { id: 'field1', field: 'field1' });
   });
 
   it('should call the Sorters.numeric when FieldType is float', () => {
     const spy = jest.spyOn(Sorters, 'numeric');
     sortByFieldType(FieldType.float, 0, 4, SortDirectionNumber.asc, { id: 'field1', field: 'field1' });
-    expect(spy).toHaveBeenCalledWith(0, 4, SortDirectionNumber.asc);
+    expect(spy).toHaveBeenCalledWith(0, 4, SortDirectionNumber.asc, { id: 'field1', field: 'field1' });
   });
 
   it('should call the Sorters.string when FieldType is a string (which is also the default)', () => {
     const string1 = 'John';
     const string2 = 'Jane';
     const spy = jest.spyOn(Sorters, 'string');
-    sortByFieldType(FieldType.string, string1, string2, SortDirectionNumber.asc);
-    expect(spy).toHaveBeenCalledWith(string1, string2, SortDirectionNumber.asc);
+    sortByFieldType(FieldType.string, string1, string2, SortDirectionNumber.asc, { id: 'field1', field: 'field1' });
+    expect(spy).toHaveBeenCalledWith(string1, string2, SortDirectionNumber.asc, { id: 'field1', field: 'field1' });
   });
 
   it('should call the Sorters.objectString when FieldType is objectString', () => {
