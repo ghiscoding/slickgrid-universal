@@ -250,8 +250,10 @@ export class VanillaGridBundle {
     // initialize the SlickGrid grid
     this.grid.init();
 
-    // load the data in the DataView
-    this.dataView.setItems(this.dataset, this._gridOptions.datasetIdPropertyName);
+    // load the data in the DataView (unless it's a hierarchical dataset, if so it will be loaded after the initial tree sort)
+    if (Array.isArray(this.dataset) && !this.datasetHierarchical) {
+      this.dataView.setItems(this.dataset, this._gridOptions.datasetIdPropertyName);
+    }
 
     if (this._gridOptions && this._gridOptions.enableTreeData) {
       this._columnWithTreeData = this._columnDefinitions.find((col: Column) => col && col.treeData);
@@ -294,7 +296,6 @@ export class VanillaGridBundle {
     }
 
     this.grid.invalidate();
-    this.grid.render();
 
     // bind & initialize the grid service
     this.gridService.init(this.grid, this.dataView);
@@ -471,7 +472,6 @@ export class VanillaGridBundle {
 
       if (dataset) {
         this.grid.invalidate();
-        this.grid.render();
       }
 
       // display the Pagination component only after calling this refresh data first, we call it here so that if we preset pagination page number it will be shown correctly

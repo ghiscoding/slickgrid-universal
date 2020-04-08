@@ -44,7 +44,7 @@ export function addWhiteSpaces(nbSpaces: number): string {
  */
 export function convertParentChildFlatArrayToHierarchicalView(flatArray: any[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; }): any[] {
   const childrenPropName = options?.childrenPropName || 'children';
-  const parentPropName = options?.parentPropName || 'parentId';
+  const parentPropName = options?.parentPropName || '__parentId';
   const identifierPropName = options?.identifierPropName || 'id';
   const hasChildrenFlagPropName = '__hasChildren';
   const treeLevelPropName = '__treeLevel';

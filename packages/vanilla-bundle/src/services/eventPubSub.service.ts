@@ -7,7 +7,7 @@ export class EventPubSubService implements PubSubService {
   eventNamingStyle = EventNamingStyle.camelCase;
 
   constructor(elementSource?: Element) {
-    // use the provided elemtn
+    // use the provided element
     // or create a "phantom DOM node" (a div element that is never rendered) to set up a custom event dispatching
     this._elementSource = elementSource || document.createElement('div');
   }

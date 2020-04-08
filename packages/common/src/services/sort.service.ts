@@ -73,27 +73,7 @@ export class SortService {
     this._grid = grid;
     this._dataView = dataView;
 
-    if (this._gridOptions && this._gridOptions.enableTreeData && Array.isArray(this._columnDefinitions)) {
-      this._columnWithTreeData = this._columnDefinitions.find((col: Column) => col && col.treeData);
-
-      // when a Tree Data view is defined, we must sort the data so that the UI works correctly
-      if (this._columnWithTreeData) {
-        // first presort it once by tree level
-        let sortTreeLevelColumn: ColumnSort = { columnId: this._columnWithTreeData.id, sortCol: this._columnWithTreeData, sortAsc: true };
-        const treeDataOptions = this._columnWithTreeData.treeData;
-
-        // user could provide a custom sort field id, if so get that column and sort by it
-        if (treeDataOptions && treeDataOptions.sortByFieldId) {
-          const sortColumn = this._columnDefinitions.find((col: Column) => col.id === treeDataOptions.sortByFieldId);
-          sortTreeLevelColumn = { columnId: treeDataOptions.sortByFieldId, sortCol: sortColumn, sortAsc: true } as ColumnSort;
-        }
-
-        setTimeout(() => {
-          this.onLocalSortChanged(this._grid, this._dataView, [sortTreeLevelColumn]);
-          this._grid.setSortColumns([sortTreeLevelColumn]);
-        }, 0);
-      }
-    }
+    this.processTreeDataInitialSort();
 
     this._eventHandler.subscribe(grid.onSort, (e: any, args: any) => {
       // multiSort and singleSort are not exactly the same, but we want to structure it the same for the (for loop) after
@@ -246,6 +226,26 @@ export class SortService {
     }
   }
 
+  processTreeDataInitialSort() {
+    if (this._gridOptions && this._gridOptions.enableTreeData && Array.isArray(this._columnDefinitions)) {
+      this._columnWithTreeData = this._columnDefinitions.find((col: Column) => col && col.treeData);
+    }
+
+    // when a Tree Data view is defined, we must sort the data so that the UI works correctly
+    if (this._columnWithTreeData) {
+      // first presort it once by tree level
+      let sortTreeLevelColumn: ColumnSort = { columnId: this._columnWithTreeData.id, sortCol: this._columnWithTreeData, sortAsc: true };
+      const treeDataOptions = this._columnWithTreeData.treeData;
+
+      // user could provide a custom sort field id, if so get that column and sort by it
+      if (treeDataOptions && treeDataOptions.sortByFieldId) {
+        const sortColumn = this._columnDefinitions.find((col: Column) => col.id === treeDataOptions.sortByFieldId);
+        sortTreeLevelColumn = { columnId: treeDataOptions.sortByFieldId, sortCol: sortColumn, sortAsc: true } as ColumnSort;
+      }
+      this.updateSorting([{ columnId: sortTreeLevelColumn.columnId, direction: 'ASC' }]);
+    }
+  }
+
   onBackendSortChanged(event: Event | undefined, args: { multiColumnSort?: boolean; grid: any; sortCols: ColumnSort[]; clearSortTriggered?: boolean }) {
     if (!args || !args.grid) {
       throw new Error('Something went wrong when trying to bind the "onBackendSortChanged(event, args)" function, it seems that "args" is not populated correctly');
@@ -280,7 +280,6 @@ export class SortService {
       }
 
       if (isTreeDataEnabled && Array.isArray(this.sharedService.hierarchicalDataset)) {
-        console.log('sort tree data')
         const hierarchicalDataset = this.sharedService.hierarchicalDataset;
         this.sortTreeData(hierarchicalDataset, sortColumns);
         const sortedFlatArray = convertHierarchicalViewToFlatArray(hierarchicalDataset, this._columnWithTreeData?.treeData);

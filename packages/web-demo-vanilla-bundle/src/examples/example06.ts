@@ -1,6 +1,5 @@
 import {
   Column,
-  convertParentChildFlatArrayToHierarchicalView,
   convertHierarchicalViewToFlatArray,
   FieldType,
   findItemInHierarchicalStructure,
@@ -41,14 +40,9 @@ export class Example6 {
 
     gridContainerElm.addEventListener('onclick', this.handleOnClick.bind(this));
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
-    // this.datasetFlat = convertHierarchicalViewToFlatArray($.extend(true, [], this.datasetHierarchical), { childrenPropName: 'files' });
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, null, this.datasetHierarchical);
     this.dataViewObj = this.slickgridLwc.dataView;
-    // this.datasetHierarchical = sortHierarchicalArray(this.mockDataset(), { sortByFieldId: 'file', childrenPropName: 'files', sortPropFieldType: FieldType.string, direction: this.sortDirection });
-    // // console.log('sorted', $.extend(true, [], this.datasetHierarchical));
-    // this.slickgridLwc.dataset = this.datasetFlat;
-    // this.slickgridLwc.datasetHierarchical = this.datasetHierarchical;
-    // modifyDatasetToAddTreeItemsMapping(this.slickgridLwc.dataset, this.columnDefinitions[0], this.dataViewObj);
+    modifyDatasetToAddTreeItemsMapping(this.dataViewObj.getItems(), this.columnDefinitions[0], this.dataViewObj);
   }
 
   dispose() {
@@ -253,15 +247,12 @@ export class Example6 {
   }
 
   logExpandedStructure() {
-    const explodedArray = convertParentChildFlatArrayToHierarchicalView(this.datasetFlat, { parentPropName: '__parentId', childrenPropName: 'files' });
-    console.log('exploded array', explodedArray/* , JSON.stringify(explodedArray, null, 2) */);
+    console.log('exploded array', this.slickgridLwc.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
 
   }
 
   logFlatStructure() {
-    const outputHierarchicalArray = convertParentChildFlatArrayToHierarchicalView(this.datasetFlat, { parentPropName: '__parentId', childrenPropName: 'files' });
-    const outputFlatArray = convertHierarchicalViewToFlatArray(outputHierarchicalArray, { childrenPropName: 'files' });
-    console.log('flat array', outputFlatArray/* , JSON.stringify(outputFlatArray, null, 2) */);
+    console.log('flat array', this.dataViewObj.getItems() /* , JSON.stringify(outputFlatArray, null, 2) */);
   }
 
   mockDataset() {
