@@ -248,57 +248,6 @@ export class FilterService {
     }
   }
 
-  // fixFilter(tree: any, searchTerms: any[]) {
-  //   let itemFound = false;
-  //   const treeDataOptions = this._columnWithTreeData.treeData;
-  //   const childrenPropName = treeDataOptions?.childrenPropName ?? '__children';
-  //   const searchString = searchTerms[0];
-  //   const foundIds = [];
-  //   console.log(childrenPropName, treeDataOptions)
-
-  //   tree.forEach((node) => {
-  //     console.log('node', node, node[childrenPropName])
-  //     if (node[childrenPropName] && node[childrenPropName].length > 0) {
-  //       itemFound = node['file'].includes(searchString);
-  //       if (!node['__collapsed'] && itemFound) {
-  //         foundIds.push(node['id']);
-  //       }
-  //       this.fixFilterInternal(node[childrenPropName], searchString, foundIds, itemFound);
-  //     }
-  //   });
-  //   console.warn(foundIds)
-  // }
-
-  // fixFilterInternal(nodes: any[], searchString, foundIds, itemFound) {
-  //   const treeDataOptions = this._columnWithTreeData.treeData;
-  //   const childrenPropName = treeDataOptions?.childrenPropName ?? '__children';
-
-  //   nodes.forEach((node) => {
-  //     console.log(node)
-  //     if (!itemFound) {
-  //       itemFound = node['file'].includes(searchString);
-  //       if (!node['__collapsed'] && itemFound) {
-  //         foundIds.push(node['id']);
-  //       }
-  //     }
-  //     // if (node.row.visible && !itemFound) {
-  //     //   // this.setParentsVisible(node);
-  //     //   itemFound = true;
-  //     // }
-
-  //     if (node[childrenPropName] && node[childrenPropName].length > 0) {
-  //       if (this.fixFilterInternal(node[childrenPropName], searchString, foundIds, itemFound)) {
-  //         itemFound = true;
-  //         if (!node['__collapsed'] && itemFound) {
-  //           foundIds.push(node['id']);
-  //         }
-  //       }
-  //     }
-  //   });
-
-  //   return itemFound;
-  // }
-
   /** Local Grid Filter search */
   customLocalFilter(item: any, args: any) {
     const dataView = args?.dataView;
@@ -363,10 +312,6 @@ export class FilterService {
             // 2. also run the condition of the row with current column filter
             const hasChildren = Array.isArray(item[treeItemsPropName]) && item[treeItemsPropName].length > 1;
             const hasFoundItem = FilterConditions.executeMappedCondition(conditionOptions as FilterConditionOption);
-
-            console.log(item?.file, foundInAnyTreeLevel, columnFilters, hasChildren, hasFoundItem);
-
-            // "Task 3" true false
             if ((!foundInAnyTreeLevel) || (!hasChildren && !hasFoundItem)) {
               return false;
             }
@@ -377,7 +322,7 @@ export class FilterService {
       }
     }
 
-    // if it reaches here, that means it's part of the row that was found to pass the filter(s)
+    // if it reaches here, that means the row is valid and passed all filter
     return true;
   }
 

@@ -13,7 +13,7 @@ import {
   SortDirectionString,
 } from '../enums/index';
 import { executeBackendCallback, refreshBackendDataset } from './backend-utilities';
-import { getDescendantProperty, convertHierarchicalViewToFlatArray, convertParentChildFlatArrayToHierarchicalView } from './utilities';
+import { getDescendantProperty, convertHierarchicalViewToFlatArray } from './utilities';
 import { sortByFieldType } from '../sorters/sorterUtilities';
 import { PubSubService } from './pubSub.service';
 import { SharedService } from './shared.service';
@@ -242,7 +242,7 @@ export class SortService {
         const sortColumn = this._columnDefinitions.find((col: Column) => col.id === treeDataOptions.sortByFieldId);
         sortTreeLevelColumn = { columnId: treeDataOptions.sortByFieldId, sortCol: sortColumn, sortAsc: true } as ColumnSort;
       }
-      this.updateSorting([{ columnId: sortTreeLevelColumn.columnId, direction: 'ASC' }]);
+      this.updateSorting([{ columnId: sortTreeLevelColumn.columnId || '', direction: SortDirection.asc }]);
     }
   }
 
@@ -282,7 +282,10 @@ export class SortService {
       if (isTreeDataEnabled && Array.isArray(this.sharedService.hierarchicalDataset)) {
         const hierarchicalDataset = this.sharedService.hierarchicalDataset;
         this.sortTreeData(hierarchicalDataset, sortColumns);
-        const sortedFlatArray = convertHierarchicalViewToFlatArray(hierarchicalDataset, this._columnWithTreeData?.treeData);
+        const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
+        const treeDataOpt = this._columnWithTreeData?.treeData ?? {};
+        const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName || dataViewIdIdentifier };
+        const sortedFlatArray = convertHierarchicalViewToFlatArray(hierarchicalDataset, treeDataOptions);
         dataView.setItems(sortedFlatArray, this._gridOptions?.datasetIdPropertyName ?? 'id');
       } else {
         dataView.sort(this.sortComparers.bind(this, sortColumns));

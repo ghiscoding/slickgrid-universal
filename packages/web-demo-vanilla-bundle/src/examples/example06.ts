@@ -42,6 +42,7 @@ export class Example6 {
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, null, this.datasetHierarchical);
     this.dataViewObj = this.slickgridLwc.dataView;
+    // this.dataViewObj.setFilter(this.myFilter.bind(this));
     modifyDatasetToAddTreeItemsMapping(this.dataViewObj.getItems(), this.columnDefinitions[0], this.dataViewObj);
   }
 
@@ -248,7 +249,6 @@ export class Example6 {
 
   logExpandedStructure() {
     console.log('exploded array', this.slickgridLwc.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
-
   }
 
   logFlatStructure() {

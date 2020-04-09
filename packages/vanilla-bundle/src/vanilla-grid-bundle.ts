@@ -132,6 +132,12 @@ export class VanillaGridBundle {
 
   set datasetHierarchical(hierarchicalDataset: any[]) {
     this.sharedService.hierarchicalDataset = hierarchicalDataset;
+
+    // when a hierarchical dataset is set afterward, we can reset the flat dataset and call a tree data sort that will overwrite the flat dataset
+    if (this.sortService && this.sortService.processTreeDataInitialSort) {
+      this.dataView.setItems([], this._gridOptions.datasetIdPropertyName);
+      this.sortService.processTreeDataInitialSort();
+    }
   }
 
   constructor(gridContainerElm: Element, columnDefs?: Column[], options?: GridOption, dataset?: any[], hierarchicalDataset?: any[]) {
@@ -266,7 +272,7 @@ export class VanillaGridBundle {
       this._eventHandler.subscribe(this.dataView.onRowsChanged, () => {
         const items = this.dataView.getItems();
         if (items.length > 0 && !this._isDatasetInitialized) {
-          this.sharedService.hierarchicalDataset = convertParentChildFlatArrayToHierarchicalView(items, this._columnWithTreeData?.treeData);
+          this.sharedService.hierarchicalDataset = this.convertParentChildToHierarchicalDataset(items);
         }
       });
     }
@@ -466,7 +472,7 @@ export class VanillaGridBundle {
 
         // also update the hierarchical dataset
         if (dataset.length > 0 && this._columnWithTreeData) {
-          this.sharedService.hierarchicalDataset = convertParentChildFlatArrayToHierarchicalView(dataset, this._columnWithTreeData.treeData);
+          this.sharedService.hierarchicalDataset = this.convertParentChildToHierarchicalDataset(dataset);
         }
       }
 
@@ -547,5 +553,12 @@ export class VanillaGridBundle {
 
       return { ...column, editor: column.editor && column.editor.model, internalColumnEditor: { ...column.editor } };
     });
+  }
+
+  private convertParentChildToHierarchicalDataset(hierarchicalArray: any[]): any[] {
+    const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
+    const treeDataOpt = this._columnWithTreeData?.treeData ?? {};
+    const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName || dataViewIdIdentifier };
+    return convertParentChildFlatArrayToHierarchicalView(hierarchicalArray, treeDataOptions);
   }
 }

@@ -84,7 +84,7 @@ export function convertParentChildFlatArrayToHierarchicalView(flatArray: any[], 
  * @param outputArray
  * @param options you can provide "childrenPropName" (defaults to "children")
  */
-export function convertHierarchicalViewToFlatArray(hierarchicalArray: any[], options?: { childrenPropName?: string; identifierPropName?: string; }): any[] {
+export function convertHierarchicalViewToFlatArray(hierarchicalArray: any[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; }): any[] {
   const outputArray: any[] = [];
   convertHierarchicalViewToFlatArrayByOutputArrayReference($.extend(true, [], hierarchicalArray), outputArray, options, 0);
 
@@ -98,12 +98,12 @@ export function convertHierarchicalViewToFlatArray(hierarchicalArray: any[], opt
  * @param outputArray
  * @param options you can provide "childrenPropName" (defaults to "children")
  */
-export function convertHierarchicalViewToFlatArrayByOutputArrayReference(hierarchicalArray: any[], outputArray: any[], options?: { childrenPropName?: string; parentIdPropName?: string; hasChildrenFlagPropName?: string; treeLevelPropName?: string; identifierPropName?: string; }, treeLevel = 0, parentId?: string) {
+export function convertHierarchicalViewToFlatArrayByOutputArrayReference(hierarchicalArray: any[], outputArray: any[], options?: { childrenPropName?: string; parentPropName?: string; hasChildrenFlagPropName?: string; treeLevelPropName?: string; identifierPropName?: string; }, treeLevel = 0, parentId?: string) {
   const childrenPropName = options?.childrenPropName || 'children';
   const identifierPropName = options?.identifierPropName || 'id';
   const hasChildrenFlagPropName = options?.hasChildrenFlagPropName || '__hasChildren';
   const treeLevelPropName = options?.treeLevelPropName || '__treeLevel';
-  const parentIdPropName = options?.parentIdPropName || '__parentId';
+  const parentPropName = options?.parentPropName || '__parentId';
 
   if (Array.isArray(hierarchicalArray)) {
     for (const item of hierarchicalArray) {
@@ -111,7 +111,7 @@ export function convertHierarchicalViewToFlatArrayByOutputArrayReference(hierarc
         const itemExist = outputArray.find((itm: any) => itm[identifierPropName] === item[identifierPropName]);
         if (!itemExist) {
           item[treeLevelPropName] = treeLevel; // save tree level ref
-          item[parentIdPropName] = parentId || null;
+          item[parentPropName] = parentId || null;
           outputArray.push(item);
         }
         if (Array.isArray(item[childrenPropName])) {
