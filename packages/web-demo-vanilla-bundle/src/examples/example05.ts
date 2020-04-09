@@ -5,12 +5,11 @@ import {
   Filters,
   Formatters,
   GridOption,
-  modifyDatasetToAddTreeItemsMapping,
   sortFlatArrayWithParentChildRef,
 } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
-import './example05.scss';
 import { ExampleGridOptions } from './example-grid-options';
+import './example05.scss';
 
 const NB_ITEMS = 200;
 
@@ -38,8 +37,6 @@ export class Example5 {
     this.dataset = this.mockDataset();
     this.slickgridLwc.datasetHierarchical = convertParentChildFlatArrayToHierarchicalView($.extend(true, [], this.dataset), { parentPropName: 'parentId', childrenPropName: 'children' });
     this.slickgridLwc.dataset = this.dataset;
-    modifyDatasetToAddTreeItemsMapping(this.dataset, this.columnDefinitions[0], this.dataViewObj);
-    // console.log(this.dataset);
   }
 
   dispose() {
@@ -51,7 +48,7 @@ export class Example5 {
       {
         id: 'title', name: 'Title', field: 'title', width: 220, cssClass: 'cell-title',
         filterable: true, sortable: true,
-        queryFieldSorter: 'id', type: FieldType.number,
+        queryFieldSorter: 'id', type: FieldType.string,
         formatter: Formatters.tree,
         treeData: {
           levelPropName: 'indent',
@@ -77,7 +74,7 @@ export class Example5 {
         formatter: Formatters.dateIso,
       },
       {
-        id: 'effort-driven', name: 'Effort Driven', width: 80, minWidth: 20, maxWidth: 80, cssClass: 'cell-effort-driven', field: 'effortDriven',
+        id: 'effortDriven', name: 'Effort Driven', width: 80, minWidth: 20, maxWidth: 80, cssClass: 'cell-effort-driven', field: 'effortDriven',
         formatter: Formatters.checkmarkMaterial, cannotTriggerInsert: true,
         filterable: true,
         filter: {
@@ -142,7 +139,6 @@ export class Example5 {
     // update dataset and re-render (invalidate) the grid
     this.slickgridLwc.dataset = resultSortedFlatDataset;
     this.dataset = resultSortedFlatDataset;
-    modifyDatasetToAddTreeItemsMapping(this.dataset, this.columnDefinitions[0], this.dataViewObj);
     this.gridObj.invalidate();
 
     // scroll to the new row

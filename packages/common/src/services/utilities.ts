@@ -172,47 +172,6 @@ export function findItemInHierarchicalStructure(hierarchicalArray: any, predicat
 }
 
 /**
- * Loop through the dataset and add all tree items data content (all the nodes under each branch) at the parent level including itself.
- * This is to help in filtering the data afterward, we can simply filter the tree items array instead of having to through the tree on every filter.
- * Portion of the code comes from this Stack Overflow answer https://stackoverflow.com/a/28094393/1212166
- * For example if we have
- * [
- *   { id: 1, title: 'Task 1'},
- *   { id: 2, title: 'Task 2', parentId: 1 },
- *   { id: 3, title: 'Task 3', parentId: 2 },
- *   { id: 4, title: 'Task 4', parentId: 2 }
- * ]
- * The array will be modified as follow (and if we filter/search for say "4", then we know the result will be row 1, 2, 4 because each treeItems contain "4")
- * [
- *   { id: 1, title: 'Task 1', __treeItems: ['Task 1', 'Task 2', 'Task 3', 'Task 4']},
- *   { id: 2, title: 'Task 2', parentId: 1, __treeItems: ['Task 2', 'Task 3', 'Task 4'] },
- *   { id: 3, title: 'Task 3', parentId: 2, __treeItems: ['Task 3'] },
- *   { id: 4, title: 'Task 4', parentId: 2, __treeItems: ['Task 4'] }
- * ]
- *
- * @param items
- */
-export function modifyDatasetToAddTreeItemsMapping(items: any[], treeDataColumn: Column, dataView: any) {
-  const parentPropName = treeDataColumn.treeData?.parentPropName || '__parentId';
-  const treeItemsPropName = treeDataColumn.treeData?.itemMapPropName || '__treeItems';
-
-  for (let i = 0; i < items.length; i++) {
-    items[i][treeItemsPropName] = [items[i][treeDataColumn.id]];
-    let item = items[i];
-
-    if (item[parentPropName] !== null) {
-      let parent = dataView.getItemById(item[parentPropName]);
-
-      while (parent) {
-        parent[treeItemsPropName] = dedupePrimitiveArray(parent[treeItemsPropName].concat(item[treeItemsPropName]));
-        item = parent;
-        parent = dataView.getItemById(item[parentPropName]);
-      }
-    }
-  }
-}
-
-/**
  * HTML encode using jQuery with a <div>
  * Create a in-memory div, set it's inner text(which jQuery automatically encodes)
  * then grab the encoded contents back out.  The div never exists on the page.

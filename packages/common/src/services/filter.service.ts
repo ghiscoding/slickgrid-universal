@@ -48,6 +48,7 @@ export class FilterService {
   private _dataView: any;
   private _grid: any;
   private _onSearchChange: SlickEvent;
+  private _tmpPreFilteredData: number[];
 
   constructor(private filterFactory: FilterFactory, private pubSubService: PubSubService, private sharedService: SharedService) {
     this._onSearchChange = new Slick.Event();
@@ -168,8 +169,17 @@ export class FilterService {
     dataView.setFilterArgs({ columnFilters: this._columnFilters, grid: this._grid, dataView });
     dataView.setFilter(this.customLocalFilter.bind(this));
 
+    // bind any search filter change (e.g. input filter keyup event)
     this._eventHandler.subscribe(this._onSearchChange, (e: KeyboardEvent, args: any) => {
-      // this.fixFilter(this.sharedService.hierarchicalDataset, args.searchTerms);
+      const isGridWithTreeData = this._gridOptions?.enableTreeData || false;
+
+      // When using Tree Data, we need to do it in 2 steps
+      // step 1. we need to prefilter (search) the data prior, the result will be an array of IDs which are the node(s) and their parent nodes when necessary.
+      // step 2. calling the DataView.refresh() is what triggers the final does the final filtering, with "customLocalFilter()" which will decide which rows should persist
+      if (isGridWithTreeData) {
+        this._tmpPreFilteredData = this.preFilterTreeData(this._dataView.getItems(), this._columnFilters);
+      }
+
       const columnId = args.columnId;
       if (columnId !== null) {
         dataView.refresh();
@@ -249,7 +259,7 @@ export class FilterService {
   }
 
   /** Local Grid Filter search */
-  customLocalFilter(item: any, args: any) {
+  customLocalFilter(item: any, args: any): boolean {
     const dataView = args?.dataView;
     const grid = args?.grid;
     const isGridWithTreeData = this._gridOptions?.enableTreeData || false;
@@ -262,62 +272,34 @@ export class FilterService {
       treeDataOptions = this._columnWithTreeData.treeData;
       const collapsedPropName = treeDataOptions?.collapsedPropName || '__collapsed';
       const parentPropName = treeDataOptions?.parentPropName || '__parentId';
-      // console.log('item', console.log(this.sharedService.hierarchicalDataset))
-      if (item.__treeLevel === 0 && item.__hasChildren) {
-        // this.filterChildItem(this.sharedService.hierarchicalDataset, treeDataOptions, true);
-      }
+      const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
 
       if (item[parentPropName] !== null) {
-        let parent = dataView.getItemById(item[parentPropName]);
+        let parent = this._dataView.getItemById(item[parentPropName]);
         while (parent) {
           if (parent[collapsedPropName]) {
-            return false;
+            return false; // don't display any row that have their parent collapsed
           }
-          parent = dataView.getItemById(parent[parentPropName]);
+          parent = this._dataView.getItemById(parent[parentPropName]);
         }
       }
-    }
 
-    if (typeof columnFilters === 'object') {
-      for (const columnId of Object.keys(columnFilters)) {
-        const columnFilter = columnFilters[columnId] as ColumnFilter;
-        const conditionOptions = this.getFilterConditionOptionsOrBoolean(item, columnFilter, columnId, grid, dataView);
-        if (typeof conditionOptions === 'boolean') {
-          return conditionOptions;
-        }
+      // filter out any row items that aren't part of our pre-processed "filterMyFiles()" result
+      if (Array.isArray(this._tmpPreFilteredData)) {
+        return this._tmpPreFilteredData.includes(item[dataViewIdIdentifier]); // return true when found, false otherwise
+      }
+    } else {
+      if (typeof columnFilters === 'object') {
+        for (const columnId of Object.keys(columnFilters)) {
+          const columnFilter = columnFilters[columnId] as ColumnFilter;
+          const conditionOptions = this.getFilterConditionOptionsOrBoolean(item, columnFilter, columnId, grid, dataView);
+          if (typeof conditionOptions === 'boolean') {
+            return conditionOptions;
+          }
 
-        if (isGridWithTreeData && this._columnWithTreeData) {
-          const treeItemsPropName = treeDataOptions?.itemMapPropName || '__treeItems';
-          if (item[treeItemsPropName] === undefined) {
+          if (!FilterConditions.executeMappedCondition(conditionOptions as FilterConditionOption)) {
             return false;
           }
-          const defaultTreeColumnFilter = { columnId: this._columnWithTreeData.id, columnDef: this._columnWithTreeData, searchTerms: [''] } as ColumnFilter;
-          const treeColumnFilter = (columnFilters[this._columnWithTreeData.id] || defaultTreeColumnFilter) as ColumnFilter;
-          const treeConditionOptions = this.getFilterConditionOptionsOrBoolean(item, treeColumnFilter, this._columnWithTreeData.id, args.grid, dataView);
-          const foundInAnyTreeLevel = item[treeItemsPropName].find((childItem: string) => FilterConditions.executeMappedCondition({ ...treeConditionOptions as FilterConditionOption, cellValue: childItem }));
-          if (typeof treeConditionOptions === 'boolean') {
-            return treeConditionOptions;
-          }
-
-          if (this._columnWithTreeData.id === columnId) {
-            // when the current column is the Tree Data column, we can loop through the treeItems mapping and execute the search on these values and we're done
-            if (!foundInAnyTreeLevel) {
-              return false;
-            }
-          } else {
-            // when the current column is NOT the Tree Data column
-            // 1. we need to skip any row that has children
-            //   - we consider a row having children when its treeItems mapping has more than 1 item since every treeItems always include themselve in the array
-            //   - for example if we are on 2nd row (Task 2) and __treeItems: ['Task 2'], then it has no children, however this would mean it has children __treeItems: ['Task 2', 'Task 3']
-            // 2. also run the condition of the row with current column filter
-            const hasChildren = Array.isArray(item[treeItemsPropName]) && item[treeItemsPropName].length > 1;
-            const hasFoundItem = FilterConditions.executeMappedCondition(conditionOptions as FilterConditionOption);
-            if ((!foundInAnyTreeLevel) || (!hasChildren && !hasFoundItem)) {
-              return false;
-            }
-          }
-        } else if (!FilterConditions.executeMappedCondition(conditionOptions as FilterConditionOption)) {
-          return false;
         }
       }
     }
@@ -428,6 +410,69 @@ export class FilterService {
       cellValueLastChar: lastValueChar,
       filterSearchType
     } as FilterConditionOption;
+  }
+
+  /**
+   * When using Tree Data, we need to prefilter (search) the data prior, the result will be an array of IDs which are the node(s) and their parent nodes when necessary.
+   * This will then be passed to the DataView setFilter(customLocalFilter), which will itself loop through the list of IDs and display/hide the row if found that array of IDs
+   * We do this in 2 steps so that we can still use the DataSet setFilter()
+   */
+  preFilterTreeData(inputArray: any[], columnFilters: ColumnFilters) {
+    const treeDataOptions = this._columnWithTreeData?.treeData;
+    const parentPropName = treeDataOptions?.parentPropName || '__parentId';
+    const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
+
+    const treeObj = {};
+    for (let i = 0; i < inputArray.length; i++) {
+      treeObj[inputArray[i][dataViewIdIdentifier]] = inputArray[i];
+      // as the filtered data is then used again as each subsequent letter
+      // we need to delete the .__used property, otherwise the logic below
+      // in the while loop (which checks for parents) doesn't work:
+      delete treeObj[inputArray[i][dataViewIdIdentifier]].__used;
+    }
+
+    const filteredChildrenAndParents = [];
+    for (let i = 0; i < inputArray.length; i++) {
+      const item = inputArray[i];
+      let matchFilter = true; // valid until it is proven to be invalid
+
+      // loop through all column filters and execute filter condition(s)
+      for (const columnId of Object.keys(columnFilters)) {
+        const columnFilter = columnFilters[columnId] as ColumnFilter;
+        const conditionOptionResult = this.getFilterConditionOptionsOrBoolean(item, columnFilter, columnId, this._grid, this._dataView);
+
+        if (item.hasOwnProperty(columnId)) {
+          const conditionResult = (typeof conditionOptionResult === 'boolean') ? conditionOptionResult : FilterConditions.executeMappedCondition(conditionOptionResult as FilterConditionOption);
+          if (conditionResult) {
+            // don't return true as need to check other keys in columnFilters
+          } else {
+            matchFilter = false;
+            continue;
+          }
+        } else {
+          matchFilter = false;
+          continue;
+        }
+      }
+
+      // build an array from the matched filters, anything valid from filter condition
+      // will be pushed to the filteredChildrenAndParents array
+      if (matchFilter) {
+        const len = filteredChildrenAndParents.length;
+        // add child (id):
+        filteredChildrenAndParents.splice(len, 0, item[dataViewIdIdentifier]);
+        let parent = treeObj[item[parentPropName]] || false;
+        while (parent) {
+          // only add parent (id) if not already added:
+          parent.__used || filteredChildrenAndParents.splice(len, 0, parent[dataViewIdIdentifier]);
+          // mark each parent as used to not use them again later:
+          treeObj[parent[dataViewIdIdentifier]].__used = true;
+          // try to find parent of the current parent, if exists:
+          parent = treeObj[parent[parentPropName]] || false;
+        }
+      }
+    }
+    return filteredChildrenAndParents;
   }
 
   getColumnFilters() {

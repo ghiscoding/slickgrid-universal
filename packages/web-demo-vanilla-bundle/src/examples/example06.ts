@@ -9,7 +9,6 @@ import {
   Formatter,
   Formatters,
   OperatorType,
-  modifyDatasetToAddTreeItemsMapping,
   sortHierarchicalArray,
 } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
@@ -38,8 +37,6 @@ export class Example6 {
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, null, this.datasetHierarchical);
     this.dataViewObj = this.slickgridLwc.dataView;
-    // this.dataViewObj.setFilter(this.myFilter.bind(this));
-    modifyDatasetToAddTreeItemsMapping(this.dataViewObj.getItems(), this.columnDefinitions[0], this.dataViewObj);
   }
 
   dispose() {
@@ -237,9 +234,10 @@ export class Example6 {
           { id: 2, file: 'txt', files: [{ id: 3, file: 'todo.txt', dateModified: '2015-05-12T14:50:00.123Z', size: 0.7, }] },
           {
             id: 4, file: 'pdf', files: [
+              { id: 22, file: "map2.pdf", dateModified: "2015-05-21", size: 2.9, },
               { id: 5, file: 'map.pdf', dateModified: '2015-05-21T10:22:00.123Z', size: 3.1, },
               { id: 6, file: 'internet-bill.pdf', dateModified: '2015-05-12T14:50:00.123Z', size: 1.4, },
-              { id: 22, file: 'phone-bill.pdf', dateModified: '2015-05-01T07:50:00.123Z', size: 1.4, },
+              { id: 23, file: 'phone-bill.pdf', dateModified: '2015-05-01T07:50:00.123Z', size: 1.4, },
             ]
           },
           { id: 9, file: 'misc', files: [{ id: 10, file: 'something.txt', dateModified: '2015-02-26T16:50:00.123Z', size: 0.4, }] },
