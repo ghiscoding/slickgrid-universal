@@ -234,7 +234,7 @@ export class Example6 {
           { id: 2, file: 'txt', files: [{ id: 3, file: 'todo.txt', dateModified: '2015-05-12T14:50:00.123Z', size: 0.7, }] },
           {
             id: 4, file: 'pdf', files: [
-              { id: 22, file: "map2.pdf", dateModified: "2015-05-21", size: 2.9, },
+              { id: 22, file: "map2.pdf", dateModified: "2015-07-21T08:22:00.123Z", size: 2.9, },
               { id: 5, file: 'map.pdf', dateModified: '2015-05-21T10:22:00.123Z', size: 3.1, },
               { id: 6, file: 'internet-bill.pdf', dateModified: '2015-05-12T14:50:00.123Z', size: 1.4, },
               { id: 23, file: 'phone-bill.pdf', dateModified: '2015-05-01T07:50:00.123Z', size: 1.4, },
