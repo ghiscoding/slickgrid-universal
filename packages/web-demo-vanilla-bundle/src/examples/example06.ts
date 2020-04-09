@@ -1,19 +1,16 @@
 import {
   Column,
   convertHierarchicalViewToFlatArray,
-  FieldType,
-  findItemInHierarchicalStructure,
   GridOption,
-  sortFlatArrayWithParentChildRef,
+  FieldType,
+  FilterCallbackArg,
   Filters,
+  findItemInHierarchicalStructure,
   Formatter,
   Formatters,
-  sortHierarchicalArray,
-  modifyDatasetToAddTreeItemsMapping,
-  FilterCallbackArg,
   OperatorType,
-  SortDirectionString,
-  SortDirection,
+  modifyDatasetToAddTreeItemsMapping,
+  sortHierarchicalArray,
 } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import './example06.scss';
@@ -30,7 +27,6 @@ export class Example6 {
   slickerGridInstance;
   durationOrderByCount = false;
   searchString = '';
-  sortDirection: SortDirectionString = 'ASC';
 
   attached() {
     this.initializeGrid();
@@ -193,33 +189,11 @@ export class Example6 {
   }
 
   collapseAll() {
-    this.datasetFlat.forEach((item) => item.__collapsed = true);
-    this.slickgridLwc.dataset = this.datasetFlat;
-    this.gridObj.invalidate();
+    this.slickgridLwc.extensionUtility.toggleTreeDataCollapse(true);
   }
 
   expandAll() {
-    this.datasetFlat.forEach((item) => item.__collapsed = false);
-    this.slickgridLwc.dataset = this.datasetFlat;
-    this.gridObj.invalidate();
-  }
-
-  resortTreeGrid(inputFlatArray?: any[], direction?: SortDirection | SortDirectionString) {
-    const datasetFlat = inputFlatArray || this.datasetFlat;
-
-    const sortedOutputArray = sortFlatArrayWithParentChildRef(datasetFlat, { ...this.columnDefinitions[0].treeData, direction: direction ?? 'ASC' });
-    this.gridObj.resetActiveCell();
-    this.datasetFlat = sortedOutputArray;
-    this.slickgridLwc.dataset = sortedOutputArray;
-    this.gridObj.invalidate();
-  }
-
-  toggleSort() {
-    this.sortDirection = this.sortDirection === 'ASC' ? 'DESC' : 'ASC';
-    this.resortTreeGrid(this.datasetFlat, this.sortDirection);
-    this.gridObj.setSortColumns([
-      { columnId: 'file', sortAsc: (this.sortDirection === 'ASC') },
-    ]);
+    this.slickgridLwc.extensionUtility.toggleTreeDataCollapse(false);
   }
 
   handleOnClick(event: any) {

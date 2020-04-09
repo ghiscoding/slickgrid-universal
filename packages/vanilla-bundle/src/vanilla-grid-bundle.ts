@@ -346,6 +346,7 @@ export class VanillaGridBundle {
       gridService: this.gridService,
       groupingService: this.groupingAndColspanService,
       extensionService: this.extensionService,
+      extensionUtility: this.extensionUtility,
       // paginationService: this.paginationService,
       sortService: this.sortService,
     };

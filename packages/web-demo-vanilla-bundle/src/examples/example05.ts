@@ -1,15 +1,12 @@
 import {
   Column,
   convertParentChildFlatArrayToHierarchicalView,
-  convertHierarchicalViewToFlatArray,
   FieldType,
   Filters,
   Formatters,
   GridOption,
-  SortDirection,
-  SortDirectionString,
-  sortFlatArrayWithParentChildRef,
   modifyDatasetToAddTreeItemsMapping,
+  sortFlatArrayWithParentChildRef,
 } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import './example05.scss';
@@ -27,7 +24,6 @@ export class Example5 {
   slickgridLwc;
   slickerGridInstance;
   durationOrderByCount = false;
-  sortDirection: SortDirectionString = 'ASC';
 
   attached() {
     this.initializeGrid();
@@ -155,41 +151,11 @@ export class Example5 {
   }
 
   collapseAll() {
-    this.dataset.forEach((item) => item.__collapsed = true);
-    this.slickgridLwc.dataset = this.dataset;
-    this.gridObj.invalidate();
+    this.slickgridLwc.extensionUtility.toggleTreeDataCollapse(true);
   }
 
   expandAll() {
-    this.dataset.forEach((item) => item.__collapsed = false);
-    this.slickgridLwc.dataset = this.dataset;
-    this.gridObj.invalidate();
-  }
-
-  toggleSort() {
-    this.sortDirection = this.sortDirection === 'ASC' ? 'DESC' : 'ASC';
-    this.resortTreeGrid(this.dataset, this.sortDirection);
-    this.gridObj.setSortColumns([
-      { columnId: 'title', sortAsc: this.sortDirection === 'ASC' },
-      // { columnId: 'product', sortAsc: this.sortDirection === 'ASC' },
-    ]);
-  }
-
-  resortTreeGrid(updatedDataset?: any[], direction?: SortDirection | SortDirectionString) {
-    // resort the array taking the tree structure in consideration
-    const dataset = updatedDataset || this.dataset;
-    const sortedOutputArray = sortFlatArrayWithParentChildRef(dataset, {
-      parentPropName: 'parentId',
-      childrenPropName: 'children',
-      direction: direction || 'ASC',
-      sortByFieldId: 'id',
-      sortPropFieldType: FieldType.number,
-    });
-
-    this.gridObj.resetActiveCell();
-    this.dataset = sortedOutputArray;
-    this.slickgridLwc.dataset = sortedOutputArray;
-    this.gridObj.invalidate();
+    this.slickgridLwc.extensionUtility.toggleTreeDataCollapse(false);
   }
 
   handleOnClick(event: any) {
@@ -218,15 +184,11 @@ export class Example5 {
   }
 
   logExpandedStructure() {
-    const explodedArray = convertParentChildFlatArrayToHierarchicalView(this.dataset, { parentPropName: 'parentId', childrenPropName: 'children' });
-    console.log('exploded array', explodedArray);
+    console.log('exploded array', this.slickgridLwc.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
   }
 
   logFlatStructure() {
-    const outputHierarchicalArray = convertParentChildFlatArrayToHierarchicalView(this.dataset, { parentPropName: 'parentId', childrenPropName: 'children' });
-    const outputFlatArray = convertHierarchicalViewToFlatArray(outputHierarchicalArray, { childrenPropName: 'children' });
-    // JSON.stringify(outputFlatArray, null, 2)
-    console.log('flat array', outputFlatArray);
+    console.log('flat array', this.dataViewObj.getItems() /* , JSON.stringify(outputFlatArray, null, 2) */);
   }
 
   mockDataset() {
