@@ -91,29 +91,7 @@ export class Example6 {
   }
 
   updateFilter() {
-    const selectedColumn = this.columnDefinitions.find((col) => col.id === 'file');
-
-    if (selectedColumn) {
-      const fieldName = selectedColumn.id;
-      const filter = {};
-      const filterArg: FilterCallbackArg = {
-        columnDef: selectedColumn,
-        operator: OperatorType.contains,
-        searchTerms: [this.searchString || '']
-      };
-
-      if (this.searchString) {
-        // pass a columnFilter object as an object which it's property name must be a column field name (e.g.: 'duration': {...} )
-        filter[fieldName] = filterArg;
-      }
-
-      this.dataViewObj.setFilterArgs({
-        columnFilters: filter,
-        grid: this.gridObj,
-        dataView: this.dataViewObj,
-      });
-      this.dataViewObj.refresh();
-    }
+    this.slickerGridInstance.filterService.updateFilters([{ columnId: 'file', searchTerms: [this.searchString] }], true, false, true);
   }
 
   treeFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
@@ -131,7 +109,7 @@ export class Example6 {
     const spacer = `<span style="display:inline-block; width:${(15 * dataContext[treeLevelPropName])}px;"></span>`;
 
     if (data[idx + 1] && data[idx + 1][treeLevelPropName] > data[idx][treeLevelPropName]) {
-      const folderPrefix = `<i class="mdi mdi-20px mdi-folder-outline"></i>`;
+      const folderPrefix = `<i class="mdi mdi-20px ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>`;
       if (dataContext.__collapsed) {
         return `${spacer} <span class="slick-group-toggle collapsed" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
       } else {
@@ -145,13 +123,13 @@ export class Example6 {
   getFileIcon(value: string) {
     let prefix = '';
     if (value.includes('.pdf')) {
-      prefix = '<i class="has-text-danger mdi mdi-20px mdi-file-pdf-outline"></i>';
+      prefix = '<i class="mdi mdi-20px mdi-file-pdf-outline"></i>';
     } else if (value.includes('.txt')) {
       prefix = '<i class="mdi mdi-20px mdi-file-document-outline"></i>';
     } else if (value.includes('.xls')) {
-      prefix = '<i class="has-text-success mdi mdi-20px mdi-file-excel-outline"></i>';
+      prefix = '<i class="mdi mdi-20px mdi-file-excel-outline"></i>';
     } else if (value.includes('.mp3')) {
-      prefix = '<i class="has-text-info mdi mdi-20px mdi-file-music-outline"></i>';
+      prefix = '<i class="mdi mdi-20px mdi-file-music-outline"></i>';
     }
     return prefix;
   }
@@ -161,7 +139,7 @@ export class Example6 {
    * After adding the item, it will sort by parent/child recursively
    */
   addNewFile() {
-    const newId = this.datasetFlat.length + 100;
+    const newId = this.dataViewObj.getLength() + 100;
 
     // find first parent object and add the new item as a child
     const popItem = findItemInHierarchicalStructure(this.datasetHierarchical, x => x.file === 'pop', 'files');
@@ -169,19 +147,17 @@ export class Example6 {
     if (popItem && Array.isArray(popItem.files)) {
       popItem.files.push({
         id: newId,
-        file: `pop${Math.round(Math.random() * 100)}.mp3`,
+        file: `pop${Math.round(Math.random() * 1000)}.mp3`,
         dateModified: new Date(),
         size: Math.round(Math.random() * 100),
       });
-      const sortedArray = sortHierarchicalArray(this.datasetHierarchical, { sortByFieldId: 'file' });
-      this.datasetFlat = convertHierarchicalViewToFlatArray(sortedArray, { childrenPropName: 'files' });
 
-      // update dataset and re-render (invalidate) the grid
-      this.slickgridLwc.dataset = this.datasetFlat;
-      this.gridObj.invalidate();
+      // overwrite hierarchical dataset which will also trigger a grid sort and rendering
+      this.slickgridLwc.datasetHierarchical = this.datasetHierarchical;
 
-      // scroll to bottom of the grid
-      this.gridObj.navigateBottom();
+      // scroll into the position where the item was added
+      const rowIndex = this.dataViewObj.getRowById(popItem.id);
+      this.gridObj.scrollRowIntoView(rowIndex + 3);
     }
   }
 
@@ -234,13 +210,13 @@ export class Example6 {
           { id: 2, file: 'txt', files: [{ id: 3, file: 'todo.txt', dateModified: '2015-05-12T14:50:00.123Z', size: 0.7, }] },
           {
             id: 4, file: 'pdf', files: [
-              { id: 22, file: "map2.pdf", dateModified: "2015-07-21T08:22:00.123Z", size: 2.9, },
+              { id: 22, file: 'map2.pdf', dateModified: '2015-07-21T08:22:00.123Z', size: 2.9, },
               { id: 5, file: 'map.pdf', dateModified: '2015-05-21T10:22:00.123Z', size: 3.1, },
               { id: 6, file: 'internet-bill.pdf', dateModified: '2015-05-12T14:50:00.123Z', size: 1.4, },
               { id: 23, file: 'phone-bill.pdf', dateModified: '2015-05-01T07:50:00.123Z', size: 1.4, },
             ]
           },
-          { id: 9, file: 'misc', files: [{ id: 10, file: 'something.txt', dateModified: '2015-02-26T16:50:00.123Z', size: 0.4, }] },
+          { id: 9, file: 'misc', files: [{ id: 10, file: 'todo.txt', dateModified: '2015-02-26T16:50:00.123Z', size: 0.4, }] },
           { id: 7, file: 'xls', files: [{ id: 8, file: 'compilation.xls', dateModified: '2014-10-02T14:50:00.123Z', size: 2.3, }] },
         ]
       },

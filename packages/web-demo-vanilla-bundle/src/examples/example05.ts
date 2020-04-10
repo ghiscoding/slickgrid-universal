@@ -57,7 +57,7 @@ export class Example5 {
       },
       { id: 'duration', name: 'Duration', field: 'duration', minWidth: 90, filterable: true },
       {
-        id: '%', name: '% Complete', field: 'percentComplete', minWidth: 120, maxWidth: 200,
+        id: 'percentComplete', name: '% Complete', field: 'percentComplete', minWidth: 120, maxWidth: 200,
         sortable: true, filterable: true, filter: { model: Filters.slider, operator: '>=' },
         formatter: Slicker.Formatters.percentCompleteBar, type: FieldType.number,
       },
