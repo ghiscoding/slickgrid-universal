@@ -2,7 +2,6 @@ import * as moment_ from 'moment-mini';
 const moment = moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 import { FieldType, OperatorString, OperatorType } from '../enums/index';
-import { Column } from '../interfaces/index';
 
 /**
  * Add an item to an array only when the item does not exists, when the item is an object we will be using their "id" to compare
@@ -841,14 +840,6 @@ export function getHtmlElementOffset(element: HTMLElement): { top: number; left:
     left = rect.left + window.pageXOffset;
   }
   return { top, left };
-}
-
-/** Get the browser's scrollbar width, this is different to each browser */
-export function getScrollBarWidth(): number {
-  const $outer = $('<div>').css({ visibility: 'hidden', width: 100, overflow: 'scroll' }).appendTo('body');
-  const widthWithScroll = $('<div>').css({ width: '100%' }).appendTo($outer).outerWidth() || 0;
-  $outer.remove();
-  return Math.ceil(100 - widthWithScroll);
 }
 
 /**

@@ -434,7 +434,7 @@ export class FilterService {
     const filteredChildrenAndParents = [];
     for (let i = 0; i < inputArray.length; i++) {
       const item = inputArray[i];
-      let matchFilter = true; // valid until it is proven to be invalid
+      let matchFilter = true; // valid until proven otherwise
 
       // loop through all column filters and execute filter condition(s)
       for (const columnId of Object.keys(columnFilters)) {

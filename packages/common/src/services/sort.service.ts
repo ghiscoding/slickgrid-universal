@@ -339,10 +339,6 @@ export class SortService {
   }
 
   sortTreeData(hierarchicalArray: any[], sortColumns: ColumnSort[]) {
-    const treeDataOptions = this._columnWithTreeData?.treeData;
-    const sortByFieldId = treeDataOptions?.sortByFieldId || 'id';
-    const childrenPropName = treeDataOptions?.childrenPropName || 'children';
-
     if (Array.isArray(sortColumns)) {
       for (const sortColumn of sortColumns) {
         this.sortTreeChild(hierarchicalArray, sortColumn);
@@ -352,7 +348,6 @@ export class SortService {
 
   sortTreeChild(hierarchicalArray: any[], sortColumn: ColumnSort) {
     const treeDataOptions = this._columnWithTreeData?.treeData;
-    // const sortByFieldId = treeDataOptions?.sortByFieldId || 'id';
     const childrenPropName = treeDataOptions?.childrenPropName || 'children';
     hierarchicalArray.sort((a: any, b: any) => this.sortComparer(sortColumn, a, b) ?? SortDirectionNumber.neutral);
 

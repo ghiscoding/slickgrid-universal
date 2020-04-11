@@ -556,10 +556,10 @@ export class VanillaGridBundle {
     });
   }
 
-  private convertParentChildToHierarchicalDataset(hierarchicalArray: any[]): any[] {
+  private convertParentChildToHierarchicalDataset(flatDataset: any[]): any[] {
     const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
     const treeDataOpt = this._columnWithTreeData?.treeData ?? {};
     const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName || dataViewIdIdentifier };
-    return convertParentChildFlatArrayToHierarchicalView(hierarchicalArray, treeDataOptions);
+    return convertParentChildFlatArrayToHierarchicalView(flatDataset, treeDataOptions);
   }
 }

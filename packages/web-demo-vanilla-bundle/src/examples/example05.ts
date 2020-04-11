@@ -1,11 +1,9 @@
 import {
   Column,
-  convertParentChildFlatArrayToHierarchicalView,
   FieldType,
   Filters,
   Formatters,
   GridOption,
-  sortFlatArrayWithParentChildRef,
 } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
@@ -35,7 +33,6 @@ export class Example5 {
     this.dataViewObj = this.slickgridLwc.dataView;
     this.gridObj = this.slickgridLwc.grid;
     this.dataset = this.mockDataset();
-    this.slickgridLwc.datasetHierarchical = convertParentChildFlatArrayToHierarchicalView($.extend(true, [], this.dataset), { parentPropName: 'parentId', childrenPropName: 'children' });
     this.slickgridLwc.dataset = this.dataset;
   }
 
@@ -116,29 +113,19 @@ export class Example5 {
       title: `Task ${newId}`,
       duration: '1 day',
       percentComplete: 0,
-      start: '01/01/2009',
-      finish: '01/01/2009',
+      start: new Date(),
+      finish: new Date(),
       effortDriven: false
     };
     this.dataViewObj.addItem(newItem);
-    this.gridObj.navigateBottom();
     this.dataset = this.dataViewObj.getItems();
-    console.log('new item', newItem, 'parentId', parentItemFound);
-    console.warn(this.dataset);
-    const resultSortedFlatDataset = sortFlatArrayWithParentChildRef(
-      this.dataset,
-      {
-        parentPropName: 'parentId',
-        childrenPropName: 'children',
-        direction: 'ASC',
-        identifierPropName: 'id',
-        sortByFieldId: 'id',
-        sortPropFieldType: FieldType.number,
-      });
+    this.slickgridLwc.dataset = this.dataset;
+
+    // force a resort
+    const titleColumn = this.columnDefinitions.find((col) => col.id === 'title');
+    this.slickerGridInstance.sortService.onLocalSortChanged(this.gridObj, this.dataViewObj, [{ columnId: 'title', sortCol: titleColumn, sortAsc: true }]);
 
     // update dataset and re-render (invalidate) the grid
-    this.slickgridLwc.dataset = resultSortedFlatDataset;
-    this.dataset = resultSortedFlatDataset;
     this.gridObj.invalidate();
 
     // scroll to the new row

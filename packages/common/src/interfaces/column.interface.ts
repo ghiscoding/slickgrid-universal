@@ -10,6 +10,7 @@ import { HeaderButtonItem } from './headerButtonItem.interface';
 import { MenuCommandItem } from './menuCommandItem.interface';
 import { OnEventArgs } from './onEventArgs.interface';
 import { Sorter } from './sorter.interface';
+import { TreeData } from './treeData.interface';
 
 export interface Column {
   /** async background post-rendering formatter */
@@ -217,23 +218,7 @@ export interface Column {
   toolTip?: string;
 
   /** Tree Data options */
-  treeData?: {
-    childrenPropName?: string;
-    collapsedPropName?: string;
-    identifierPropName?: string;
-    parentPropName?: string;
-    levelPropName?: string;
-    itemMapPropName?: string;
-    hasChildrenFlagPropName?: string;
-    sortByFieldId?: string;
-    sortPropFieldType?: FieldType;
-
-    /**
-     * Defaults to 15px, margin to add from the left (calculated by the tree level multiplied by this number).
-     * For example if tree depth level is 2, the calculation will be (2 * 15 = 30), so the column will be displayed 30px from the left
-     */
-    indentMarginLeft?: number;
-  }
+  treeData?: TreeData;
 
   /** What is the Field Type, this can be used in the Formatters/Editors/... */
   type?: FieldType;

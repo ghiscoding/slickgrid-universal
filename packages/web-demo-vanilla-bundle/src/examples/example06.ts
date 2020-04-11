@@ -1,15 +1,11 @@
 import {
   Column,
-  convertHierarchicalViewToFlatArray,
   GridOption,
   FieldType,
-  FilterCallbackArg,
   Filters,
   findItemInHierarchicalStructure,
   Formatter,
   Formatters,
-  OperatorType,
-  sortHierarchicalArray,
 } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import './example06.scss';
