@@ -95,7 +95,7 @@ export class Example2 {
         width: 80,
         maxWidth: 120,
         filterable: true,
-        filter: { model: Filters.compoundInput },
+        filter: { model: Filters.compoundInputNumber },
         type: FieldType.number,
         sortable: true,
         exportWithFormatter: true,
