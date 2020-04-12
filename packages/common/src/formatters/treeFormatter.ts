@@ -12,7 +12,7 @@ export const treeFormatter: Formatter = (row: number, cell: number, value: any, 
   }
 
   if (!dataContext.hasOwnProperty(treeLevelPropName)) {
-    throw new Error('You must provide a valid Tree Data column, it seems that there are no tree level found in this row');
+    throw new Error('You must provide valid "treeDataOptions" in your Grid Options and it seems that there are no tree level found in this row');
   }
 
   if (dataView && dataView.getIdxById && dataView.getItemByIdx) {
