@@ -138,19 +138,14 @@ export class ExtensionUtility {
   }
 
   toggleTreeDataCollapse(collapsing: boolean) {
-    const gridOptions = this.sharedService?.gridOptions;
-    const columnDefinitions = this.sharedService?.columnDefinitions;
-    const dataView = this.sharedService?.dataView;
     const grid = this.sharedService?.grid;
-
-    let columnWithTreeData: Column | undefined;
-    if (gridOptions && gridOptions.enableTreeData && Array.isArray(columnDefinitions)) {
-      columnWithTreeData = columnDefinitions.find((col: Column) => col && col.treeData);
-    }
+    const dataView = this.sharedService?.dataView;
+    const gridOptions = this.sharedService?.gridOptions;
+    const treeDataOptions = gridOptions?.treeDataOptions;
 
     if (gridOptions.enableTreeData) {
       const items: any[] = dataView.getItems() || [];
-      const collapsedPropName = columnWithTreeData?.treeData?.collapsedPropName || '__collapsed';
+      const collapsedPropName = treeDataOptions?.collapsedPropName || '__collapsed';
       items.forEach((item: any) => item[collapsedPropName] = collapsing);
       dataView.setItems(items);
       grid.invalidate();

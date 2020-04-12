@@ -3,7 +3,10 @@ import {
   addToArrayWhenNotExists,
   addWhiteSpaces,
   charArraysEqual,
+  convertParentChildArrayToHierarchicalView,
+  convertHierarchicalViewToParentChildArray,
   decimalFormatted,
+  findItemInHierarchicalStructure,
   findOrDefault,
   formatNumber,
   getDescendantProperty,
@@ -149,21 +152,96 @@ describe('Service/Utilies', () => {
     });
   });
 
-  // describe('disposeAllSubscriptions method', () => {
-  //   it('should return original array when array of subscriptions is empty', () => {
-  //     const output = disposeAllSubscriptions([]);
-  //     expect(output).toEqual([]);
-  //   });
+  describe('convertParentChildArrayToHierarchicalView method', () => {
+    it('should take a parent/child array and return a hierarchical array structure', () => {
+      const input = [
+        { id: 18, size: 90, dateModified: '2015-03-03', file: 'something.txt', parentId: null, },
+        { id: 11, file: 'Music', parentId: null, },
+        { id: 12, file: 'mp3', parentId: 11, },
+        { id: 16, file: 'rock', parentId: 12, },
+        { id: 17, dateModified: '2015-05-13', file: 'soft.mp3', size: 98, parentId: 16, },
+        { id: 14, file: 'pop', parentId: 12, },
+        { id: 15, dateModified: '2015-03-01', file: 'theme.mp3', size: 85, parentId: 14, },
+      ];
 
-  //   it('should return unique values when input array has duplicate objects', () => {
-  //     const subscriptions: Subscription[] = [];
-  //     const ea1 = new EventAggregator();
-  //     const ea2 = new EventAggregator();
-  //     subscriptions.push(ea1.subscribe('test', () => { }), ea2.subscribe('test', () => { }));
-  //     const output = disposeAllSubscriptions(subscriptions);
-  //     expect(output).toHaveLength(0);
-  //   });
-  // });
+      const output = convertParentChildArrayToHierarchicalView(input, { parentPropName: 'parentId', childrenPropName: 'files' });
+
+      expect(output).toEqual([
+        {
+          id: 11, file: 'Music', files: [{
+            id: 12, file: 'mp3', files: [
+              { id: 14, file: 'pop', files: [{ id: 15, file: 'theme.mp3', dateModified: '2015-03-01', size: 85, }] },
+              { id: 16, file: 'rock', files: [{ id: 17, file: 'soft.mp3', dateModified: '2015-05-13', size: 98, }] },
+            ]
+          }]
+        },
+        { id: 18, file: 'something.txt', dateModified: '2015-03-03', size: 90, },
+      ]);
+    });
+  });
+
+  describe('convertHierarchicalViewToParentChildArray method', () => {
+    let mockColumns;
+
+    beforeEach(() => {
+      mockColumns = [
+        { id: 18, file: 'something.txt', dateModified: '2015-03-03', size: 90 },
+        {
+          id: 11, file: 'Music', files: [{
+            id: 12, file: 'mp3', files: [
+              { id: 16, file: 'rock', files: [{ id: 17, file: 'soft.mp3', dateModified: '2015-05-13', size: 98, }] },
+              { id: 14, file: 'pop', files: [{ id: 15, file: 'theme.mp3', dateModified: '2015-03-01', size: 85, }] },
+            ]
+          }]
+        },
+      ];
+    });
+
+    it('should return a flat array from a hierarchical structure', () => {
+      const output = convertHierarchicalViewToParentChildArray(mockColumns, { childrenPropName: 'files' });
+      expect(output).toEqual([
+        { id: 18, size: 90, __treeLevel: 0, dateModified: '2015-03-03', file: 'something.txt', __parentId: null, },
+        { id: 11, __treeLevel: 0, file: 'Music', __parentId: null, __hasChildren: true, },
+        { id: 12, __treeLevel: 1, file: 'mp3', __parentId: 11, __hasChildren: true, },
+        { id: 16, __treeLevel: 2, file: 'rock', __parentId: 12, __hasChildren: true, },
+        { id: 17, __treeLevel: 3, dateModified: '2015-05-13', file: 'soft.mp3', size: 98, __parentId: 16, },
+        { id: 14, __treeLevel: 2, file: 'pop', __parentId: 12, __hasChildren: true, },
+        { id: 15, __treeLevel: 3, dateModified: '2015-03-01', file: 'theme.mp3', size: 85, __parentId: 14, },
+      ]);
+    });
+  });
+
+  describe('findItemInHierarchicalStructure method', () => {
+    let mockColumns;
+
+    beforeEach(() => {
+      mockColumns = [
+        { id: 18, file: 'something.txt', dateModified: '2015-03-03', size: 90 },
+        {
+          id: 11, file: 'Music', files: [{
+            id: 12, file: 'mp3', files: [
+              { id: 16, file: 'rock', files: [{ id: 17, file: 'soft.mp3', dateModified: '2015-05-13', size: 98, }] },
+              { id: 14, file: 'pop', files: [{ id: 15, file: 'theme.mp3', dateModified: '2015-03-01', size: 85, }] },
+            ]
+          }]
+        },
+      ];
+    });
+
+    it('should throw an error when the children property name argument is missing', () => {
+      expect(() => findItemInHierarchicalStructure(mockColumns, x => x.file === 'pop', '')).toThrowError('findRecursive requires parameter "childrenPropertyName"');
+    });
+
+    it('should find an item from a hierarchical array', () => {
+      const item = findItemInHierarchicalStructure(mockColumns, x => x.file === 'pop', 'files');
+      expect(item).toEqual({ id: 14, file: 'pop', files: [{ id: 15, file: 'theme.mp3', dateModified: '2015-03-01', size: 85, }] });
+    });
+
+    it('should return undefined when item is not found', () => {
+      const item = findItemInHierarchicalStructure(mockColumns, x => x.file === 'pop2', 'files');
+      expect(item).toEqual(undefined);
+    });
+  });
 
   describe('findOrDefault method', () => {
     it('should return original input when it is not an array provided', () => {

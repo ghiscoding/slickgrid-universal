@@ -272,12 +272,6 @@ export class ContextMenuExtension implements Extension {
 
     // -- Grouping Commands
     if (gridOptions && (gridOptions.enableGrouping || gridOptions.enableDraggableGrouping || gridOptions.enableTreeData)) {
-      const columnDefinitions = this.sharedService.columnDefinitions || [];
-      let columnWithTreeData: Column | undefined;
-      if (gridOptions && gridOptions.enableTreeData && columnDefinitions) {
-        columnWithTreeData = columnDefinitions.find((col: Column) => col && col.treeData);
-      }
-
       // add a divider (separator) between the top sort commands and the other clear commands
       if (contextMenu && !contextMenu.hideCopyCellValueCommand) {
         menuCustomItems.push({ divider: true, command: '', positionOrder: 54 });

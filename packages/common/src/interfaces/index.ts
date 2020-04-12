@@ -88,3 +88,4 @@ export * from './slickEventData.interface';
 export * from './slickEventHandler.interface';
 export * from './sortChangedArgs.interface';
 export * from './sorter.interface';
+export * from './treeDataOption.interface';

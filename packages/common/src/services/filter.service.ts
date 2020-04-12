@@ -39,7 +39,6 @@ let timer: any;
 const DEFAULT_FILTER_TYPING_DEBOUNCE = 500;
 
 export class FilterService {
-  private _columnWithTreeData: Column | undefined;
   private _eventHandler: SlickEventHandler;
   private _isFilterFirstRender = true;
   private _firstColumnIdRendered = '';
@@ -87,14 +86,8 @@ export class FilterService {
   init(grid: any): void {
     this._grid = grid;
 
-    if (this._gridOptions && this._gridOptions.enableTreeData && this._columnDefinitions) {
-      this._columnWithTreeData = this._columnDefinitions.find((col: Column) => col && col.treeData);
-      if (!this._columnWithTreeData || !this._columnWithTreeData.id) {
-        throw new Error('[Slickgrid-Universal] When enabling tree data, you must also provide the column definition "treeData" property with "childrenPropName" or "parentPropName" (depending if your array is hierarchical or flat) for the Tree Data to work properly');
-      }
-      if (this._columnWithTreeData) {
-        this._grid.setSortColumns([{ columnId: this._columnWithTreeData.id, sortAsc: true }]);
-      }
+    if (this._gridOptions && this._gridOptions.enableTreeData && this._gridOptions.treeDataOptions) {
+      this._grid.setSortColumns([{ columnId: this._gridOptions.treeDataOptions.columnId, sortAsc: true }]);
     }
   }
 
@@ -268,11 +261,11 @@ export class FilterService {
 
     // when the column is a Tree Data structure and the parent is collapsed, we won't go further and just continue with next row
     // so we always run this check even when there are no filter search, the reason is because the user might click on the expand/collapse
-    if (isGridWithTreeData && this._columnWithTreeData) {
-      treeDataOptions = this._columnWithTreeData.treeData;
-      const collapsedPropName = treeDataOptions?.collapsedPropName || '__collapsed';
-      const parentPropName = treeDataOptions?.parentPropName || '__parentId';
-      const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
+    if (isGridWithTreeData && this._gridOptions && this._gridOptions.treeDataOptions) {
+      treeDataOptions = this._gridOptions.treeDataOptions;
+      const collapsedPropName = treeDataOptions.collapsedPropName || '__collapsed';
+      const parentPropName = treeDataOptions.parentPropName || '__parentId';
+      const dataViewIdIdentifier = this._gridOptions.datasetIdPropertyName ?? 'id';
 
       if (item[parentPropName] !== null) {
         let parent = this._dataView.getItemById(item[parentPropName]);
@@ -418,7 +411,7 @@ export class FilterService {
    * We do this in 2 steps so that we can still use the DataSet setFilter()
    */
   preFilterTreeData(inputArray: any[], columnFilters: ColumnFilters) {
-    const treeDataOptions = this._columnWithTreeData?.treeData;
+    const treeDataOptions = this._gridOptions?.treeDataOptions;
     const parentPropName = treeDataOptions?.parentPropName || '__parentId';
     const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
 

@@ -1,6 +1,9 @@
 import { FieldType } from '../enums/fieldType.enum';
 
-export interface TreeData {
+export interface TreeDataOption {
+  /** Column Id of which column in the column definitions has the Tree Data, there can only be one with a Tree Data. */
+  columnId: string;
+
   /** Defaults to "children", object property name used to designate the Children array */
   childrenPropName?: string;
 

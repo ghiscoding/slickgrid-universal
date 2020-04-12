@@ -10,7 +10,6 @@ import { HeaderButtonItem } from './headerButtonItem.interface';
 import { MenuCommandItem } from './menuCommandItem.interface';
 import { OnEventArgs } from './onEventArgs.interface';
 import { Sorter } from './sorter.interface';
-import { TreeData } from './treeData.interface';
 
 export interface Column {
   /** async background post-rendering formatter */
@@ -216,9 +215,6 @@ export interface Column {
 
   /** Custom Tooltip that can ben shown to the column */
   toolTip?: string;
-
-  /** Tree Data options */
-  treeData?: TreeData;
 
   /** What is the Field Type, this can be used in the Formatters/Editors/... */
   type?: FieldType;

@@ -45,12 +45,6 @@ export class Example6 {
         id: 'file', name: 'Files', field: 'file',
         type: FieldType.string, width: 150, formatter: this.treeFormatter,
         filterable: true, sortable: true,
-        treeData: {
-          // parentPropName: '__parentId',
-          childrenPropName: 'files',
-          // sortByFieldId: 'file',
-          sortPropFieldType: FieldType.string,
-        }
       },
       {
         id: 'dateModified', name: 'Date Modified', field: 'dateModified',
@@ -73,6 +67,13 @@ export class Example6 {
       enableAutoResize: true,
       enableFiltering: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
+      treeDataOptions: {
+        columnId: 'file',
+        // parentPropName: '__parentId',
+        childrenPropName: 'files',
+        // sortByFieldId: 'file',
+        sortPropFieldType: FieldType.string,
+      }
     };
   }
 
@@ -91,7 +92,8 @@ export class Example6 {
   }
 
   treeFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
-    const treeLevelPropName = columnDef.treeData?.levelPropName || '__treeLevel';
+    const gridOptions = grid.getOptions() as GridOption;
+    const treeLevelPropName = gridOptions?.treeDataOptions?.levelPropName || '__treeLevel';
     if (value === null || value === undefined || dataContext === undefined) {
       return '';
     }

@@ -4,6 +4,7 @@ import {
   GridOption,
   CurrentSorter,
   SlickEventHandler,
+  TreeDataOption,
 } from '../interfaces/index';
 import {
   EmitterType,
@@ -13,7 +14,7 @@ import {
   SortDirectionString,
 } from '../enums/index';
 import { executeBackendCallback, refreshBackendDataset } from './backend-utilities';
-import { getDescendantProperty, convertHierarchicalViewToFlatArray } from './utilities';
+import { getDescendantProperty, convertHierarchicalViewToParentChildArray } from './utilities';
 import { sortByFieldType } from '../sorters/sorterUtilities';
 import { PubSubService } from './pubSub.service';
 import { SharedService } from './shared.service';
@@ -22,7 +23,6 @@ import { SharedService } from './shared.service';
 declare const Slick: any;
 
 export class SortService {
-  private _columnWithTreeData: Column | undefined;
   private _currentLocalSorters: CurrentSorter[] = [];
   private _eventHandler: SlickEventHandler;
   private _dataView: any;
@@ -227,15 +227,12 @@ export class SortService {
   }
 
   processTreeDataInitialSort() {
-    if (this._gridOptions && this._gridOptions.enableTreeData && Array.isArray(this._columnDefinitions)) {
-      this._columnWithTreeData = this._columnDefinitions.find((col: Column) => col && col.treeData);
-    }
-
     // when a Tree Data view is defined, we must sort the data so that the UI works correctly
-    if (this._columnWithTreeData) {
+    if (this._gridOptions && this._gridOptions.enableTreeData && this._gridOptions.treeDataOptions) {
       // first presort it once by tree level
-      let sortTreeLevelColumn: ColumnSort = { columnId: this._columnWithTreeData.id, sortCol: this._columnWithTreeData, sortAsc: true };
-      const treeDataOptions = this._columnWithTreeData.treeData;
+      const treeDataOptions = this._gridOptions.treeDataOptions;
+      const columnWithTreeData = this._columnDefinitions.find((col: Column) => col && col.id === treeDataOptions.columnId);
+      let sortTreeLevelColumn: ColumnSort = { columnId: treeDataOptions.columnId, sortCol: columnWithTreeData, sortAsc: true };
 
       // user could provide a custom sort field id, if so get that column and sort by it
       if (treeDataOptions && treeDataOptions.sortByFieldId) {
@@ -283,9 +280,9 @@ export class SortService {
         const hierarchicalDataset = this.sharedService.hierarchicalDataset;
         this.sortTreeData(hierarchicalDataset, sortColumns);
         const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
-        const treeDataOpt = this._columnWithTreeData?.treeData ?? {};
+        const treeDataOpt: TreeDataOption = this._gridOptions?.treeDataOptions ?? { columnId: '' };
         const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName || dataViewIdIdentifier };
-        const sortedFlatArray = convertHierarchicalViewToFlatArray(hierarchicalDataset, treeDataOptions);
+        const sortedFlatArray = convertHierarchicalViewToParentChildArray(hierarchicalDataset, treeDataOptions);
         dataView.setItems(sortedFlatArray, this._gridOptions?.datasetIdPropertyName ?? 'id');
       } else {
         dataView.sort(this.sortComparers.bind(this, sortColumns));
@@ -346,8 +343,9 @@ export class SortService {
     }
   }
 
+  /** Sort the Tree Children of a hierarchical dataset by recursion */
   sortTreeChild(hierarchicalArray: any[], sortColumn: ColumnSort) {
-    const treeDataOptions = this._columnWithTreeData?.treeData;
+    const treeDataOptions = this._gridOptions?.treeDataOptions;
     const childrenPropName = treeDataOptions?.childrenPropName || 'children';
     hierarchicalArray.sort((a: any, b: any) => this.sortComparer(sortColumn, a, b) ?? SortDirectionNumber.neutral);
 

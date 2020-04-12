@@ -19,7 +19,8 @@ import {
   Locale,
   Pagination,
   // RowDetailView,
-  RowMoveManager
+  RowMoveManager,
+  TreeDataOption,
 } from './index';
 import { EventNamingStyle, GridAutosizeColsMode, OperatorType, OperatorString, } from '../enums/index';
 import { TranslaterService } from '../services/translater.service';
@@ -456,6 +457,9 @@ export interface GridOption {
 
   /** What is the top panel height in pixels (only type the number) */
   topPanelHeight?: number;
+
+  /** Tree Data options to define how the tree data is structure */
+  treeDataOptions?: TreeDataOption;
 
   /** Defaults to false, when set to True will lead to multiple columns sorting without the need to hold or do shift-click to execute a multiple sort. */
   tristateMultiColumnSort?: boolean;

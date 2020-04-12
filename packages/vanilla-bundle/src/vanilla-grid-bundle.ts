@@ -9,10 +9,11 @@ import {
   Column,
   ExtensionName,
   EventNamingStyle,
+  GlobalGridOptions,
   GridOption,
   Metrics,
   SlickEventHandler,
-  GlobalGridOptions,
+  TreeDataOption,
 
   // extensions
   AutoTooltipExtension,
@@ -42,7 +43,7 @@ import {
   GroupingAndColspanService,
   SlickgridConfig,
 
-  convertParentChildFlatArrayToHierarchicalView,
+  convertParentChildArrayToHierarchicalView,
 } from '@slickgrid-universal/common';
 
 import { ExportServicer } from './services/export.service';
@@ -56,7 +57,6 @@ declare const $: any;
 
 export class VanillaGridBundle {
   private _columnDefinitions: Column[];
-  private _columnWithTreeData: Column | undefined;
   private _gridOptions: GridOption;
   private _dataset: any[];
   private _gridElm: Element;
@@ -262,9 +262,8 @@ export class VanillaGridBundle {
     }
 
     if (this._gridOptions && this._gridOptions.enableTreeData) {
-      this._columnWithTreeData = this._columnDefinitions.find((col: Column) => col && col.treeData);
-      if (!this._columnWithTreeData || !this._columnWithTreeData.id) {
-        throw new Error('[Slickgrid-Universal] When enabling tree data, you must also provide the column definition "treeData" property with "childrenPropName" or "parentPropName" (depending if your array is hierarchical or flat) for the Tree Data to work properly');
+      if (!this._gridOptions.treeDataOptions || !this._gridOptions.treeDataOptions.columnId) {
+        throw new Error('[Slickgrid-Universal] When enabling tree data, you must also provide the "treeDataOption" property in your Grid Options with "childrenPropName" or "parentPropName" (depending if your array is hierarchical or flat) for the Tree Data to work properly');
       }
 
       // anytime the flat dataset changes, we need to update our hierarchical dataset
@@ -272,7 +271,7 @@ export class VanillaGridBundle {
       this._eventHandler.subscribe(this.dataView.onRowsChanged, () => {
         const items = this.dataView.getItems();
         if (items.length > 0 && !this._isDatasetInitialized) {
-          this.sharedService.hierarchicalDataset = this.convertParentChildToHierarchicalDataset(items);
+          this.sharedService.hierarchicalDataset = this.TreeDataOption(items);
         }
       });
     }
@@ -472,8 +471,8 @@ export class VanillaGridBundle {
         this._isDatasetInitialized = true;
 
         // also update the hierarchical dataset
-        if (dataset.length > 0 && this._columnWithTreeData) {
-          this.sharedService.hierarchicalDataset = this.convertParentChildToHierarchicalDataset(dataset);
+        if (dataset.length > 0 && this._gridOptions.treeDataOptions) {
+          this.sharedService.hierarchicalDataset = this.TreeDataOption(dataset);
         }
       }
 
@@ -556,10 +555,10 @@ export class VanillaGridBundle {
     });
   }
 
-  private convertParentChildToHierarchicalDataset(flatDataset: any[]): any[] {
+  private TreeDataOption(flatDataset: any[]): any[] {
     const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
-    const treeDataOpt = this._columnWithTreeData?.treeData ?? {};
+    const treeDataOpt: TreeDataOption = this._gridOptions?.treeDataOptions ?? { columnId: '' };
     const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName || dataViewIdIdentifier };
-    return convertParentChildFlatArrayToHierarchicalView(flatDataset, treeDataOptions);
+    return convertParentChildArrayToHierarchicalView(flatDataset, treeDataOptions);
   }
 }

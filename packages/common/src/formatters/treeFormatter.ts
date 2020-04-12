@@ -1,9 +1,11 @@
-import { Column, Formatter } from './../interfaces/index';
+import { Column, Formatter, GridOption } from './../interfaces/index';
 
 export const treeFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: any) => {
-  const treeLevelPropName = columnDef.treeData?.levelPropName || '__treeLevel';
-  const indentMarginLeft = columnDef.treeData?.indentMarginLeft || 15;
   const dataView = grid && grid.getData();
+  const gridOptions = grid && grid.getOptions() as GridOption;
+  const treeDataOptions = gridOptions?.treeDataOptions;
+  const treeLevelPropName = treeDataOptions?.levelPropName || '__treeLevel';
+  const indentMarginLeft = treeDataOptions?.indentMarginLeft || 15;
 
   if (value === null || value === undefined || dataContext === undefined) {
     return '';

@@ -47,10 +47,6 @@ export class Example5 {
         filterable: true, sortable: true,
         queryFieldSorter: 'id', type: FieldType.string,
         formatter: Formatters.tree,
-        treeData: {
-          levelPropName: 'indent',
-          parentPropName: 'parentId'
-        }
       },
       { id: 'duration', name: 'Duration', field: 'duration', minWidth: 90, filterable: true },
       {
@@ -89,6 +85,11 @@ export class Example5 {
       enableAutoResize: true,
       enableFiltering: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
+      treeDataOptions: {
+        columnId: 'title',
+        levelPropName: 'indent',
+        parentPropName: 'parentId'
+      }
     };
   }
 
