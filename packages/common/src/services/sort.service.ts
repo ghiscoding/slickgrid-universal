@@ -232,14 +232,20 @@ export class SortService {
       // first presort it once by tree level
       const treeDataOptions = this._gridOptions.treeDataOptions;
       const columnWithTreeData = this._columnDefinitions.find((col: Column) => col && col.id === treeDataOptions.columnId);
-      let sortTreeLevelColumn: ColumnSort = { columnId: treeDataOptions.columnId, sortCol: columnWithTreeData, sortAsc: true };
+      if (columnWithTreeData) {
+        let sortTreeLevelColumn: ColumnSort = { columnId: treeDataOptions.columnId, sortCol: columnWithTreeData, sortAsc: true };
 
-      // user could provide a custom sort field id, if so get that column and sort by it
-      if (treeDataOptions && treeDataOptions.sortByFieldId) {
-        const sortColumn = this._columnDefinitions.find((col: Column) => col.id === treeDataOptions.sortByFieldId);
-        sortTreeLevelColumn = { columnId: treeDataOptions.sortByFieldId, sortCol: sortColumn, sortAsc: true } as ColumnSort;
+        // user could provide a custom sort field id, if so get that column and sort by it
+        if (treeDataOptions && treeDataOptions.sortByFieldId) {
+          const sortColumn = this._columnDefinitions.find((col: Column) => col.id === treeDataOptions.sortByFieldId);
+          sortTreeLevelColumn = { columnId: treeDataOptions.sortByFieldId, sortCol: sortColumn, sortAsc: true } as ColumnSort;
+        }
+
+        // when we have a valid column with Tree Data, we can sort by that column
+        if (sortTreeLevelColumn && sortTreeLevelColumn.columnId) {
+          this.updateSorting([{ columnId: sortTreeLevelColumn.columnId || '', direction: SortDirection.asc }]);
+        }
       }
-      this.updateSorting([{ columnId: sortTreeLevelColumn.columnId || '', direction: SortDirection.asc }]);
     }
   }
 

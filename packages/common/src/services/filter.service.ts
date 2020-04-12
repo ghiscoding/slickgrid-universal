@@ -424,7 +424,7 @@ export class FilterService {
       delete treeObj[inputArray[i][dataViewIdIdentifier]].__used;
     }
 
-    const filteredChildrenAndParents = [];
+    const filteredChildrenAndParents: any[] = [];
     for (let i = 0; i < inputArray.length; i++) {
       const item = inputArray[i];
       let matchFilter = true; // valid until proven otherwise
