@@ -271,7 +271,7 @@ export class VanillaGridBundle {
       this._eventHandler.subscribe(this.dataView.onRowsChanged, () => {
         const items = this.dataView.getItems();
         if (items.length > 0 && !this._isDatasetInitialized) {
-          this.sharedService.hierarchicalDataset = this.TreeDataOption(items);
+          this.sharedService.hierarchicalDataset = this.SortComparer(items);
         }
       });
     }
@@ -472,7 +472,7 @@ export class VanillaGridBundle {
 
         // also update the hierarchical dataset
         if (dataset.length > 0 && this._gridOptions.treeDataOptions) {
-          this.sharedService.hierarchicalDataset = this.TreeDataOption(dataset);
+          this.sharedService.hierarchicalDataset = this.SortComparer(dataset);
         }
       }
 
@@ -555,7 +555,7 @@ export class VanillaGridBundle {
     });
   }
 
-  private TreeDataOption(flatDataset: any[]): any[] {
+  private SortComparer(flatDataset: any[]): any[] {
     const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
     const treeDataOpt: TreeDataOption = this._gridOptions?.treeDataOptions ?? { columnId: '' };
     const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName || dataViewIdIdentifier };

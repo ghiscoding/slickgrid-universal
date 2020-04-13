@@ -1,5 +1,5 @@
 import { VanillaGridBundle } from './vanilla-grid-bundle';
-import { Aggregators, Editors, Enums, Filters, Formatters, GroupTotalFormatters, Sorters, Utilities } from '@slickgrid-universal/common';
+import { Aggregators, Editors, Enums, Filters, Formatters, GroupTotalFormatters, SortComparers, Utilities } from '@slickgrid-universal/common';
 
 const Slicker = {
   GridBundle: VanillaGridBundle,
@@ -9,7 +9,7 @@ const Slicker = {
   Filters,
   Formatters,
   GroupTotalFormatters,
-  Sorters,
+  SortComparers,
   Utilities,
 };
 

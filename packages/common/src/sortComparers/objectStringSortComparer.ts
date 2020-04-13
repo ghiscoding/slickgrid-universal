@@ -1,7 +1,7 @@
-import { Column, Sorter } from '../interfaces/index';
+import { Column, SortComparer } from '../interfaces/index';
 import { SortDirectionNumber } from '../enums/sortDirectionNumber.enum';
 
-export const objectStringSorter: Sorter = (value1: any, value2: any, sortDirection: number | SortDirectionNumber, sortColumn: Column) => {
+export const objectStringSortComparer: SortComparer = (value1: any, value2: any, sortDirection: number | SortDirectionNumber, sortColumn: Column) => {
   if (!sortColumn || !sortColumn.dataKey) {
     throw new Error('Sorting a "FieldType.object" requires you to provide the "dataKey" (object property name) of the object so that we can use it to sort correctly');
   }

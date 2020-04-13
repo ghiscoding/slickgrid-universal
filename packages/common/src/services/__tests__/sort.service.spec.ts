@@ -8,7 +8,7 @@ import {
   MultiColumnSort,
   SlickEventHandler,
 } from '../../interfaces/index';
-import { Sorters } from '../../sorters';
+import { SortComparers } from '../../sortComparers';
 import { SortService } from '../sort.service';
 import * as utilities from '../../services/backend-utilities';
 import { PubSubService } from '../pubSub.service';
@@ -553,7 +553,7 @@ describe('SortService', () => {
 
     it('should sort the data with a sorter that is a complex object (with a dataKey provided)', () => {
       const mockSortedCols = [
-        { sortCol: { id: 'address', field: 'address', dataKey: 'zip', sorter: Sorters.objectString, }, sortAsc: true },
+        { sortCol: { id: 'address', field: 'address', dataKey: 'zip', sortComparer: SortComparers.objectString, }, sortAsc: true },
         { sortCol: { id: 'firstName', field: 'firstName', width: 100 }, sortAsc: true },
       ] as ColumnSort[];
 

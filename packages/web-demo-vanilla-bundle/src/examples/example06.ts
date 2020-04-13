@@ -6,6 +6,8 @@ import {
   findItemInHierarchicalStructure,
   Formatter,
   Formatters,
+  SortDirectionNumber,
+  SortComparers,
 } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import './example06.scss';
@@ -69,10 +71,13 @@ export class Example6 {
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       treeDataOptions: {
         columnId: 'file',
-        // parentPropName: '__parentId',
         childrenPropName: 'files',
-        // sortByFieldId: 'file',
-        sortPropFieldType: FieldType.string,
+
+        // you can optionally sort by a different column and/or sort direction
+        // initialSort: {
+        //   columnId: 'file',
+        //   direction: 'DESC'
+        // }
       }
     };
   }

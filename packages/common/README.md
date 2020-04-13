@@ -13,5 +13,5 @@ Go to the root of the repo and follow the instruction provided in the main [READ
 - **Formatters** (date formats, decimal, dollars, percent, bold, checkmark, ...)
 - **Extensions** (SlickGrid 3rd party controls/plugins)
 - **Grouping** Formatters (min, max, avg, sum, ...)
-- **Sorters** (date, numeric, string, ...)
+- **SortComparers** (date, numeric, string, ...)
 - **Services** (filter, sort, grid state, ...)

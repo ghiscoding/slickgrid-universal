@@ -1,7 +1,7 @@
 import { SortDirectionNumber } from '../../enums/sortDirectionNumber.enum';
-import { objectStringSorter } from '../objectStringSorter';
+import { objectStringSortComparer } from '../objectStringSortComparer';
 
-describe('the Object w/String Sorter', () => {
+describe('the Object w/String SortComparer', () => {
   let collection = [];
 
   beforeEach(() => {
@@ -23,7 +23,7 @@ describe('the Object w/String Sorter', () => {
     const direction = SortDirectionNumber.asc;
     const columnDef = { id: 'users', field: 'users' };
 
-    expect(() => collection.sort((value1, value2) => objectStringSorter(value1, value2, direction, columnDef)))
+    expect(() => collection.sort((value1, value2) => objectStringSortComparer(value1, value2, direction, columnDef)))
       .toThrowError('Sorting a "FieldType.object" requires you to provide the "dataKey"');
   });
 
@@ -31,7 +31,7 @@ describe('the Object w/String Sorter', () => {
     const direction = null;
     const columnDef = { id: 'users', field: 'users', dataKey: 'firstName' };
 
-    collection.sort((value1, value2) => objectStringSorter(value1, value2, direction, columnDef));
+    collection.sort((value1, value2) => objectStringSortComparer(value1, value2, direction, columnDef));
 
     expect(collection).toEqual(collection);
   });
@@ -40,7 +40,7 @@ describe('the Object w/String Sorter', () => {
     const direction = SortDirectionNumber.asc;
     const columnDef = { id: 'users', field: 'users', dataKey: 'firstName' };
 
-    collection.sort((value1, value2) => objectStringSorter(value1, value2, direction, columnDef));
+    collection.sort((value1, value2) => objectStringSortComparer(value1, value2, direction, columnDef));
 
     expect(collection).toEqual([
       // entries with same firstName comes by order of entry in the array
@@ -57,7 +57,7 @@ describe('the Object w/String Sorter', () => {
     const direction = SortDirectionNumber.desc;
     const columnDef = { id: 'users', field: 'users', dataKey: 'firstName' };
 
-    collection.sort((value1, value2) => objectStringSorter(value1, value2, direction, columnDef));
+    collection.sort((value1, value2) => objectStringSortComparer(value1, value2, direction, columnDef));
 
     expect(collection).toEqual([
       // entries with same firstName comes by order of entry in the array
@@ -75,7 +75,7 @@ describe('the Object w/String Sorter', () => {
     const columnDef = { id: 'users', field: 'users', dataKey: 'lastName' };
     collection.push('a');
 
-    collection.sort((value1, value2) => objectStringSorter(value1, value2, direction, columnDef));
+    collection.sort((value1, value2) => objectStringSortComparer(value1, value2, direction, columnDef));
     expect(collection).toEqual([
       // entries with same LastName comes by order of entry in the array
       'a',
@@ -93,7 +93,7 @@ describe('the Object w/String Sorter', () => {
     const columnDef = { id: 'users', field: 'users', dataKey: 'lastName' };
     collection.unshift('e');
 
-    collection.sort((value1, value2) => objectStringSorter(value1, value2, direction, columnDef));
+    collection.sort((value1, value2) => objectStringSortComparer(value1, value2, direction, columnDef));
     expect(collection).toEqual([
       // entries with same LastName comes by order of entry in the array
       { firstName: 'John', lastName: 'Z' },

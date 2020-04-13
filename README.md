@@ -101,7 +101,7 @@ npm run test:watch
   - [x] Row Move Manager
   - [x] Row Selection
 - [x] Grouping Formatters (12)
-- [x] Sorters (5)
+- [x] SortComparers (5)
 - [ ] Services
   - [x] Collection
   - [ ] Excel Export (**separate package**)

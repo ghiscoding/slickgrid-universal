@@ -1,4 +1,4 @@
-import { sortByFieldType } from '../sorterUtilities';
+import { sortByFieldType } from '../sortUtilities';
 import { FieldType, SortDirectionNumber } from '../../enums/index';
 
 describe('the Date Euro Sorter', () => {

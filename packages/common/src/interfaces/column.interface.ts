@@ -9,7 +9,7 @@ import { GroupTotalsFormatter } from './groupTotalsFormatter.interface';
 import { HeaderButtonItem } from './headerButtonItem.interface';
 import { MenuCommandItem } from './menuCommandItem.interface';
 import { OnEventArgs } from './onEventArgs.interface';
-import { Sorter } from './sorter.interface';
+import { SortComparer } from './sorter.interface';
 
 export interface Column {
   /** async background post-rendering formatter */
@@ -30,11 +30,11 @@ export interface Column {
   /** Column group name translation key that can be used by the Translate Service (i18n) for grouping of column headers spanning accross multiple columns */
   columnGroupKey?: string;
 
-  /** CSS class to add to the column cell */
-  cssClass?: string;
-
   /** Column span in pixels or `*`, only input the number value */
   colspan?: number | '*';
+
+  /** CSS class to add to the column cell */
+  cssClass?: string;
 
   /** Data key, for example this could be used as a property key for complex object comparison (e.g. dataKey: 'id') */
   dataKey?: any;
@@ -210,8 +210,8 @@ export interface Column {
   /** Is the column sortable? Goes with grid option "enableSorting: true". */
   sortable?: boolean;
 
-  /** Custom Sorter function that can be provided to the column */
-  sorter?: Sorter;
+  /** Custom Sort Comparer function that can be provided to the column */
+  sortComparer?: SortComparer;
 
   /** Custom Tooltip that can ben shown to the column */
   toolTip?: string;

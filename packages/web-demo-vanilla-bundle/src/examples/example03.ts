@@ -1,4 +1,4 @@
-import { Aggregators, Column, Editors, FieldType, Filters, Sorters, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters, GridOption } from '@slickgrid-universal/common';
+import { Aggregators, Column, Editors, FieldType, Filters, GroupingGetterFunction, SortComparers, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 
@@ -30,7 +30,7 @@ export class Example3 {
   slickerGridInstance;
   durationOrderByCount = false;
   draggableGroupingPlugin: any;
-  selectedGroupingFields: string[] = ['', '', ''];
+  selectedGroupingFields: Array<string | GroupingGetterFunction> = ['', '', ''];
 
   attached() {
     this.initializeGrid();
@@ -82,7 +82,7 @@ export class Example3 {
           getter: 'duration',
           formatter: (g) => `Duration: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
           comparer: (a, b) => {
-            return this.durationOrderByCount ? (a.count - b.count) : Sorters.numeric(a.value, b.value, SortDirectionNumber.asc);
+            return this.durationOrderByCount ? (a.count - b.count) : SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc);
           },
           aggregators: [
             new Aggregators.Sum('cost')

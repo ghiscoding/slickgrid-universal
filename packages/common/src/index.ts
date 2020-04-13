@@ -13,13 +13,13 @@ export * from './filters/index';
 export * from './filters/filterFactory';
 export * from './formatters/index';
 export * from './grouping-formatters/index';
-export * from './sorters/index';
+export * from './sortComparers/index';
 
 import * as Enums from './enums/index';
 import * as ServiceUtilities from './services/utilities';
-import * as SorterUtilities from './sorters/sorterUtilities';
+import * as sortUtilities from './sortComparers/sortUtilities';
 
-const Utilities = { ...ServiceUtilities, ...SorterUtilities };
+const Utilities = { ...ServiceUtilities, ...sortUtilities };
 export { Enums };
 export { Utilities };
 export { SlickgridConfig } from './slickgrid-config';

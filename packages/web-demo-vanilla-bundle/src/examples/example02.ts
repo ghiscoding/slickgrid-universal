@@ -1,4 +1,4 @@
-import { Aggregators, Column, FieldType, Filters, Sorters, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters, GridOption } from '@slickgrid-universal/common';
+import { Aggregators, Column, FieldType, Filters, SortComparers, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 
@@ -175,9 +175,7 @@ export class Example2 {
     this.dataviewObj.setGrouping({
       getter: 'duration',
       formatter: (g) => `Duration:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
-      comparer: (a, b) => {
-        return Sorters.numeric(a.value, b.value, SortDirectionNumber.asc);
-      },
+      comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
       aggregators: [
         new Aggregators.Avg('percentComplete'),
         new Aggregators.Sum('cost')
@@ -196,9 +194,7 @@ export class Example2 {
     this.dataviewObj.setGrouping({
       getter: 'duration',
       formatter: (g) => `Duration:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
-      comparer: (a, b) => {
-        return a.count - b.count;
-      },
+      comparer: (a, b) => a.count - b.count,
       aggregators: [
         new Aggregators.Avg('percentComplete'),
         new Aggregators.Sum('cost')

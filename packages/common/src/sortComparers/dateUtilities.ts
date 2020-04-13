@@ -1,6 +1,6 @@
 import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { FieldType } from '../enums/fieldType.enum';
-import { Column, Sorter } from '../interfaces/index';
+import { Column, SortComparer } from '../interfaces/index';
 import * as moment_ from 'moment-mini';
 const moment = moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
@@ -21,8 +21,8 @@ export function compareDates(value1: any, value2: any, sortDirection: number, so
   return sortDirection * (diff === 0 ? 0 : (diff > 0 ? 1 : -1));
 }
 
-/** From a FieldType, return the associated date Sorter */
-export function getAssociatedDateSorter(fieldType: FieldType): Sorter {
+/** From a FieldType, return the associated Date SortComparer */
+export function getAssociatedDateSortComparer(fieldType: FieldType): SortComparer {
   const FORMAT = (fieldType === FieldType.date) ? moment.ISO_8601 : mapMomentDateFormatWithFieldType(fieldType);
 
   return (value1: any, value2: any, sortDirection: number, sortColumn: Column) => {

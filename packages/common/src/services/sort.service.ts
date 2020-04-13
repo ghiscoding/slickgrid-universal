@@ -15,7 +15,7 @@ import {
 } from '../enums/index';
 import { executeBackendCallback, refreshBackendDataset } from './backend-utilities';
 import { getDescendantProperty, convertHierarchicalViewToParentChildArray } from './utilities';
-import { sortByFieldType } from '../sorters/sorterUtilities';
+import { sortByFieldType } from '../sortComparers/sortUtilities';
 import { PubSubService } from './pubSub.service';
 import { SharedService } from './shared.service';
 
@@ -226,6 +226,7 @@ export class SortService {
     }
   }
 
+  /** Process the initial sort, typically it will sort ascending by the column that has the Tree Data unless user specifies a different initialSort */
   processTreeDataInitialSort() {
     // when a Tree Data view is defined, we must sort the data so that the UI works correctly
     if (this._gridOptions && this._gridOptions.enableTreeData && this._gridOptions.treeDataOptions) {
@@ -233,17 +234,20 @@ export class SortService {
       const treeDataOptions = this._gridOptions.treeDataOptions;
       const columnWithTreeData = this._columnDefinitions.find((col: Column) => col && col.id === treeDataOptions.columnId);
       if (columnWithTreeData) {
+        let sortDirection = SortDirection.ASC;
         let sortTreeLevelColumn: ColumnSort = { columnId: treeDataOptions.columnId, sortCol: columnWithTreeData, sortAsc: true };
 
         // user could provide a custom sort field id, if so get that column and sort by it
-        if (treeDataOptions && treeDataOptions.sortByFieldId) {
-          const sortColumn = this._columnDefinitions.find((col: Column) => col.id === treeDataOptions.sortByFieldId);
-          sortTreeLevelColumn = { columnId: treeDataOptions.sortByFieldId, sortCol: sortColumn, sortAsc: true } as ColumnSort;
+        if (treeDataOptions && treeDataOptions.initialSort && treeDataOptions.initialSort.columnId) {
+          const initialSortColumnId = treeDataOptions.initialSort.columnId;
+          const initialSortColumn = this._columnDefinitions.find((col: Column) => col.id === initialSortColumnId);
+          sortDirection = (treeDataOptions.initialSort.direction || SortDirection.ASC).toUpperCase() as SortDirection;
+          sortTreeLevelColumn = { columnId: initialSortColumnId, sortCol: initialSortColumn, sortAsc: (sortDirection === SortDirection.ASC) } as ColumnSort;
         }
 
         // when we have a valid column with Tree Data, we can sort by that column
         if (sortTreeLevelColumn && sortTreeLevelColumn.columnId) {
-          this.updateSorting([{ columnId: sortTreeLevelColumn.columnId || '', direction: SortDirection.asc }]);
+          this.updateSorting([{ columnId: sortTreeLevelColumn.columnId || '', direction: sortDirection }]);
         }
       }
     }
@@ -326,8 +330,8 @@ export class SortService {
       }
 
       // user could provide his own custom Sorter
-      if (columnDef.sorter) {
-        const customSortResult = columnDef.sorter(value1, value2, sortDirection, columnDef);
+      if (columnDef.sortComparer) {
+        const customSortResult = columnDef.sortComparer(value1, value2, sortDirection, columnDef);
         if (customSortResult !== SortDirectionNumber.neutral) {
           return customSortResult;
         }

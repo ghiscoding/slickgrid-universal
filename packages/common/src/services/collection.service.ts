@@ -6,7 +6,7 @@ import {
   SortDirectionNumber,
 } from './../enums/index';
 import { CollectionFilterBy, CollectionSortBy, Column } from './../interfaces/index';
-import { sortByFieldType } from '../sorters/sorterUtilities';
+import { sortByFieldType } from '../sortComparers/sortUtilities';
 import { uniqueArray } from './utilities';
 import { TranslaterService } from './translater.service';
 

@@ -1,7 +1,7 @@
-import { Column, Sorter } from '../interfaces/index';
+import { Column, SortComparer } from '../interfaces/index';
 import { SortDirectionNumber } from '../enums/sortDirectionNumber.enum';
 
-export const stringSorter: Sorter = (value1: any, value2: any, sortDirection: number | SortDirectionNumber, sortColumn?: Column) => {
+export const stringSortComparer: SortComparer = (value1: any, value2: any, sortDirection: number | SortDirectionNumber, sortColumn?: Column) => {
   if (sortDirection === undefined || sortDirection === null) {
     sortDirection = SortDirectionNumber.neutral;
   }
