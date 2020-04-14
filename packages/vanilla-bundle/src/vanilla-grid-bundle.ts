@@ -133,6 +133,10 @@ export class VanillaGridBundle {
   set datasetHierarchical(hierarchicalDataset: any[]) {
     this.sharedService.hierarchicalDataset = hierarchicalDataset;
 
+    if (this.filterService && this.filterService.clearFilters) {
+      this.filterService.clearFilters();
+    }
+
     // when a hierarchical dataset is set afterward, we can reset the flat dataset and call a tree data sort that will overwrite the flat dataset
     if (this.sortService && this.sortService.processTreeDataInitialSort) {
       this.dataView.setItems([], this._gridOptions.datasetIdPropertyName);
