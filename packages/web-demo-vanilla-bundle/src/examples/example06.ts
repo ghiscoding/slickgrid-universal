@@ -1,4 +1,5 @@
 import {
+  Aggregators,
   Column,
   GridOption,
   FieldType,
@@ -6,8 +7,6 @@ import {
   findItemInHierarchicalStructure,
   Formatter,
   Formatters,
-  SortDirectionNumber,
-  SortComparers,
 } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import './example06.scss';
@@ -72,7 +71,9 @@ export class Example6 {
       treeDataOptions: {
         columnId: 'file',
         childrenPropName: 'files',
-
+        aggregators: [
+          new Aggregators.Sum('size')
+        ],
         // you can optionally sort by a different column and/or sort direction
         // initialSort: {
         //   columnId: 'file',
@@ -207,27 +208,33 @@ export class Example6 {
 
   mockDataset() {
     return [
-      { id: 18, file: 'something.txt', dateModified: '2015-03-03T03:50:00.123Z', size: 90 },
+      // { id: 24, file: 'bucket-list.txt', dateModified: '2012-03-05T12:44:00.123Z', size: 0.5 },
+      // { id: 18, file: 'something.txt', dateModified: '2015-03-03T03:50:00.123Z', size: 90 },
+      // {
+      //   id: 21, file: 'documents', files: [
+      //     { id: 2, file: 'txt', files: [{ id: 3, file: 'todo.txt', dateModified: '2015-05-12T14:50:00.123Z', size: 0.7, }] },
+      //     {
+      //       id: 4, file: 'pdf', files: [
+      //         { id: 22, file: 'map2.pdf', dateModified: '2015-07-21T08:22:00.123Z', size: 2.9, },
+      //         { id: 5, file: 'map.pdf', dateModified: '2015-05-21T10:22:00.123Z', size: 3.1, },
+      //         { id: 6, file: 'internet-bill.pdf', dateModified: '2015-05-12T14:50:00.123Z', size: 1.4, },
+      //         { id: 23, file: 'phone-bill.pdf', dateModified: '2015-05-01T07:50:00.123Z', size: 1.4, },
+      //       ]
+      //     },
+      //     { id: 9, file: 'misc', files: [{ id: 10, file: 'todo.txt', dateModified: '2015-02-26T16:50:00.123Z', size: 0.4, }] },
+      //     { id: 7, file: 'xls', files: [{ id: 8, file: 'compilation.xls', dateModified: '2014-10-02T14:50:00.123Z', size: 2.3, }] },
+      //   ]
+      // },
       {
-        id: 21, file: 'Documents', files: [
-          { id: 2, file: 'txt', files: [{ id: 3, file: 'todo.txt', dateModified: '2015-05-12T14:50:00.123Z', size: 0.7, }] },
-          {
-            id: 4, file: 'pdf', files: [
-              { id: 22, file: 'map2.pdf', dateModified: '2015-07-21T08:22:00.123Z', size: 2.9, },
-              { id: 5, file: 'map.pdf', dateModified: '2015-05-21T10:22:00.123Z', size: 3.1, },
-              { id: 6, file: 'internet-bill.pdf', dateModified: '2015-05-12T14:50:00.123Z', size: 1.4, },
-              { id: 23, file: 'phone-bill.pdf', dateModified: '2015-05-01T07:50:00.123Z', size: 1.4, },
-            ]
-          },
-          { id: 9, file: 'misc', files: [{ id: 10, file: 'todo.txt', dateModified: '2015-02-26T16:50:00.123Z', size: 0.4, }] },
-          { id: 7, file: 'xls', files: [{ id: 8, file: 'compilation.xls', dateModified: '2014-10-02T14:50:00.123Z', size: 2.3, }] },
-        ]
-      },
-      {
-        id: 11, file: 'Music', files: [{
+        id: 11, file: 'music', files: [{
           id: 12, file: 'mp3', files: [
             { id: 16, file: 'rock', files: [{ id: 17, file: 'soft.mp3', dateModified: '2015-05-13T13:50:00Z', size: 98, }] },
-            { id: 14, file: 'pop', files: [{ id: 15, file: 'theme.mp3', dateModified: '2015-03-01T17:05:00Z', size: 85, }] },
+            {
+              id: 14, file: 'pop', files: [
+                { id: 15, file: 'theme.mp3', dateModified: '2015-03-01T17:05:00Z', size: 47, },
+                { id: 25, file: 'song.mp3', dateModified: '2016-10-04T06:33:44Z', size: 6.3, }
+              ]
+            },
           ]
         }]
       },

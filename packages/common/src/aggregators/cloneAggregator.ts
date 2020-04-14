@@ -3,9 +3,18 @@ import { Aggregator } from './../interfaces/aggregator.interface';
 export class CloneAggregator implements Aggregator {
   private _field: number | string;
   private _data: any;
+  private _type = 'clone';
 
   constructor(field: number | string) {
     this._field = field;
+  }
+
+  get field(): number | string {
+    return this._field;
+  }
+
+  get type(): string {
+    return this._type;
   }
 
   init(): void {

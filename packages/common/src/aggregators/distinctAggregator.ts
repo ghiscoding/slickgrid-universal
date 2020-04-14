@@ -3,9 +3,18 @@ import { Aggregator } from './../interfaces/aggregator.interface';
 export class DistinctAggregator implements Aggregator {
   private _field: number | string;
   private _distinctValues: any[];
+  private _type = 'distinct';
 
   constructor(field: number | string) {
     this._field = field;
+  }
+
+  get field(): number | string {
+    return this._field;
+  }
+
+  get type(): string {
+    return this._type;
   }
 
   init(): void {

@@ -3,9 +3,18 @@ import { Aggregator } from './../interfaces/aggregator.interface';
 export class SumAggregator implements Aggregator {
   private _sum: number = 0;
   private _field: number | string;
+  private _type = 'sum';
 
   constructor(field: number | string) {
     this._field = field;
+  }
+
+  get field(): number | string {
+    return this._field;
+  }
+
+  get type(): string {
+    return this._type;
   }
 
   init() {

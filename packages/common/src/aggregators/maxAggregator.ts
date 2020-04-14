@@ -3,9 +3,18 @@ import { Aggregator } from './../interfaces/aggregator.interface';
 export class MaxAggregator implements Aggregator {
   private _max: number | null;
   private _field: number | string;
+  private _type = 'max';
 
   constructor(field: number | string) {
     this._field = field;
+  }
+
+  get field(): number | string {
+    return this._field;
+  }
+
+  get type(): string {
+    return this._type;
   }
 
   init(): void {
@@ -15,7 +24,7 @@ export class MaxAggregator implements Aggregator {
   accumulate(item: any) {
     const val = (item && item.hasOwnProperty(this._field)) ? item[this._field] : null;
     if (val !== null && val !== '' && !isNaN(val)) {
-      if (this._max == null || val > this._max) {
+      if (this._max === null || val > this._max) {
         this._max = parseFloat(val);
       }
     }
