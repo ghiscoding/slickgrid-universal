@@ -39,6 +39,8 @@ describe('CloneAggregator', () => {
     dataset.forEach((row) => aggregator.accumulate(row));
     aggregator.storeResult(groupTotals);
 
+    expect(aggregator.field).toBe(fieldName);
+    expect(aggregator.type).toBe('clone');
     expect(groupTotals.clone[fieldName]).toBe(lastGroupName);
   });
 });

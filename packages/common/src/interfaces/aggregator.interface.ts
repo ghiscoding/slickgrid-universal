@@ -12,5 +12,5 @@ export interface Aggregator {
   accumulate: (item: any) => void;
 
   /** Method to store the result into the given group total argument provided */
-  storeResult?: (groupTotals: any) => void;
+  storeResult?: (groupTotals: any | undefined) => void;
 }

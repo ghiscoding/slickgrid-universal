@@ -38,6 +38,8 @@ describe('maxAggregator', () => {
     dataset.forEach((row) => aggregator.accumulate(row));
     aggregator.storeResult(groupTotals);
 
+    expect(aggregator.field).toBe(fieldName);
+    expect(aggregator.type).toBe('max');
     expect(groupTotals.max[fieldName]).toBe(87);
   });
 

@@ -38,6 +38,8 @@ describe('minAggregator', () => {
     dataset.forEach((row) => aggregator.accumulate(row));
     aggregator.storeResult(groupTotals);
 
+    expect(aggregator.field).toBe(fieldName);
+    expect(aggregator.type).toBe('min');
     expect(groupTotals.min[fieldName]).toBe(-2);
   });
 

@@ -40,6 +40,8 @@ describe('disctinctAggregator', () => {
     dataset.forEach((row) => aggregator.accumulate(row));
     aggregator.storeResult(groupTotals);
 
+    expect(aggregator.field).toBe(fieldName);
+    expect(aggregator.type).toBe('distinct');
     expect(groupTotals.distinct[fieldName]).toEqual([55, 87, 60, 52]);
   });
 

@@ -348,7 +348,7 @@ export class SortService {
   }
 
   sortTreeData(hierarchicalArray: any[], sortColumns: ColumnSort[]) {
-    const aggregators = this._gridOptions.treeDataOptions.aggregators;
+    const aggregators = this._gridOptions?.treeDataOptions?.aggregators;
     if (Array.isArray(sortColumns)) {
       for (const sortColumn of sortColumns) {
         const totals = this.sortTreeChild(hierarchicalArray, sortColumn, 0, aggregators, {});
@@ -359,7 +359,7 @@ export class SortService {
   }
 
   /** Sort the Tree Children of a hierarchical dataset by recursion */
-  sortTreeChild(hierarchicalArray: any[], sortColumn: ColumnSort, treeLevel: number, aggregators: Aggregator[], groupTotal: any) {
+  sortTreeChild(hierarchicalArray: any[], sortColumn: ColumnSort, treeLevel: number, aggregators: Aggregator[] | undefined, groupTotal: any) {
     const treeDataOptions = this._gridOptions?.treeDataOptions;
     const treeColumnId = treeDataOptions?.columnId || '';
     const childrenPropName = treeDataOptions?.childrenPropName || 'children';
@@ -393,11 +393,11 @@ export class SortService {
         // it will also take these aggregation result(s) and update each item field(s) with the new result
         if (Array.isArray(aggregators)) {
           for (const aggregator of aggregators) {
-            if (groupTotal) {
+            if (aggregator && aggregator.accumulate && aggregator.storeResult) {
               // console.log(groupTotal, item)
               aggregator.accumulate(item);
               aggregator.storeResult(groupTotal);
-              if (hasChildren && groupTotal.hasOwnProperty(aggregator.type) && groupTotal[aggregator.type].hasOwnProperty(aggregator.field)) {
+              if (hasChildren && aggregator.type && aggregator.field && groupTotal[aggregator.type] && groupTotal[aggregator.type].hasOwnProperty(aggregator.field)) {
                 console.log(treeLevel, groupTotal.level, previousLevel, groupTotal, item[aggregator.field], groupTotal.sum && groupTotal.sum.size, hasChildren)
                 // console.log(item[aggregator.field], groupTotal[aggregator.type][aggregator.field])
                 item[aggregator.field] = groupTotal[aggregator.type][aggregator.field];

@@ -26,6 +26,8 @@ describe('sumAggregator', () => {
     aggregator.storeResult(groupTotals);
 
     // assert
+    expect(aggregator.field).toBe(fieldName);
+    expect(aggregator.type).toBe('sum');
     expect(groupTotals['sum'][fieldName]).toBe(0);
   });
 
