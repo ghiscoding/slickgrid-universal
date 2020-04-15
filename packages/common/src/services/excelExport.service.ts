@@ -7,7 +7,7 @@ export abstract class ExcelExportService {
    * @param dataView
    */
   init(grid: any, dataView: any): void {
-    console.log('ExcelExportService the "init" method must be implemented');
+    throw new Error('ExcelExportService the "init" method must be implemented');
   }
 
   /**
@@ -15,7 +15,6 @@ export abstract class ExcelExportService {
    * @return {string} current locale
    */
   exportToExcel(options: ExcelExportOption): Promise<boolean> {
-    console.log('ExcelExportService the "exportToExcel" method must be implemented');
-    return new Promise((resolve) => resolve(true));
+    throw new Error('ExcelExportService the "exportToExcel" method must be implemented');
   }
 }

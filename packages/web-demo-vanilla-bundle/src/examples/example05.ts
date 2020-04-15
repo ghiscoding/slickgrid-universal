@@ -11,7 +11,6 @@ import './example05.scss';
 
 const NB_ITEMS = 200;
 
-
 export class Example5 {
   columnDefinitions: Column[];
   gridOptions: GridOption;

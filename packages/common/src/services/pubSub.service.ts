@@ -5,7 +5,7 @@ export abstract class PubSubService {
   * @param data The data to publish on the channel.
  */
   publish(eventName: string | any, data?: any): void {
-    console.log('PubSubService "publish" method must be implemented');
+    throw new Error('PubSubService "publish" method must be implemented');
   };
 
   /**
@@ -15,8 +15,7 @@ export abstract class PubSubService {
     * @return possibly a Subscription
     */
   subscribe(eventName: string | Function, callback: Function): any {
-    console.log('PubSubService "subscribe" method must be implemented');
-    return null;
+    throw new Error('PubSubService "subscribe" method must be implemented');
   };
 
   /**
@@ -25,6 +24,6 @@ export abstract class PubSubService {
     * @return possibly a Subscription
     */
   unsubscribe(eventName: string, callback: (event: CustomEventInit) => void): void {
-    console.log('PubSubService "unsubscribe" method must be implemented');
+    throw new Error('PubSubService "unsubscribe" method must be implemented');
   }
 }

@@ -7,7 +7,7 @@ export abstract class ExportService {
    * @param dataView
    */
   init(grid: any, dataView: any): void {
-    console.log('ExportService the "init" method must be implemented');
+    throw new Error('ExportService the "init" method must be implemented');
   }
 
   /**
@@ -15,7 +15,6 @@ export abstract class ExportService {
    * @return {string} current locale
    */
   exportToFile(options: ExportOption): Promise<boolean> {
-    console.log('ExportService the "exportToFile" method must be implemented');
-    return new Promise((resolve) => resolve(true));
+    throw new Error('ExportService the "exportToFile" method must be implemented');
   }
 }

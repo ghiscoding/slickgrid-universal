@@ -4,8 +4,7 @@ export abstract class TranslaterService {
    * @return {string} current locale
    */
   getCurrentLocale(): string {
-    console.log('TranslaterService "getCurrentLocale" method must be implemented');
-    return 'en';
+    throw new Error('TranslaterService "getCurrentLocale" method must be implemented');
   }
 
 
@@ -14,7 +13,7 @@ export abstract class TranslaterService {
    * @param locale
    */
   setLocale(locale: string): Promise<any> {
-    return new Promise((resolve) => resolve(locale));
+    throw new Error('TranslaterService "setLocale" method must be implemented');
   }
 
   /**
@@ -23,7 +22,6 @@ export abstract class TranslaterService {
    * @return {string} translated value
    */
   translate(translationKey: string): string {
-    console.log('TranslaterService "translate" method must be implemented');
-    return translationKey;
+    throw new Error('TranslaterService "translate" method must be implemented');
   }
 }
