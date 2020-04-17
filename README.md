@@ -85,6 +85,7 @@ npm run test:watch
 - [x] Aggregators (6)
 - [x] Editors (11)
 - [x] Filters (17)
+  - [ ] Add optional debounce filter delay to local grid
 - [x] Formatters (31)
 - [ ] Extensions
   - [x] AutoTooltip
@@ -112,9 +113,9 @@ npm run test:watch
   - [ ] OData (**separate package**)
   - [x] Grid Event
   - [x] Grid Service (helper)
-  - [ ] Grid State
+  - [x] Grid State
   - [x] Grouping & Col Span
-  - [ ] Pagination
+  - [x] Pagination
   - [ ] Resizer 
     - moved the Service to an Extension
   - [x] Shared

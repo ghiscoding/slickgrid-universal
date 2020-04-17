@@ -31,6 +31,7 @@ const pubSubServiceStub = {
   publish: jest.fn(),
   subscribe: jest.fn(),
   unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
 } as PubSubService;
 
 const sortServiceStub = {
@@ -69,7 +70,7 @@ const gridStub = {
 
 describe('Grid Service', () => {
   let service: GridService;
-  let sharedService = new SharedService();
+  const sharedService = new SharedService();
 
   jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true } as GridOption);
 

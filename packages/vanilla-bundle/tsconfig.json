@@ -9,6 +9,7 @@
     "module": "es2015",
     "sourceMap": true,
     "noImplicitReturns": true,
+    "moduleResolution": "node",
     "lib": [
       "es2020",
       "dom"

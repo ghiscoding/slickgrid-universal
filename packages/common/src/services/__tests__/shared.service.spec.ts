@@ -75,28 +75,28 @@ describe('Shared Service', () => {
     expect(columns).toEqual(mockColumns);
   });
 
-  // it('should call "currentPagination" GETTER and return the currentPagination object', () => {
-  //   const expectedResult = { pageNumber: 2, pageSize: 10 } as CurrentPagination;
-  //   const spy = jest.spyOn(service, 'currentPagination', 'get').mockReturnValue(expectedResult);
+  it('should call "currentPagination" GETTER and return the currentPagination object', () => {
+    const expectedResult = { pageNumber: 2, pageSize: 10 } as CurrentPagination;
+    const spy = jest.spyOn(service, 'currentPagination', 'get').mockReturnValue(expectedResult);
 
-  //   const output = service.currentPagination;
+    const output = service.currentPagination;
 
-  //   expect(spy).toHaveBeenCalled();
-  //   expect(output).toEqual(expectedResult);
-  // });
+    expect(spy).toHaveBeenCalled();
+    expect(output).toEqual(expectedResult);
+  });
 
-  // it('should call "currentPagination" SETTER and expect GETTER to return the same', () => {
-  //   const expectedResult = { pageNumber: 2, pageSize: 10 } as CurrentPagination;
-  //   const getSpy = jest.spyOn(service, 'currentPagination', 'get');
-  //   const setSpy = jest.spyOn(service, 'currentPagination', 'set');
+  it('should call "currentPagination" SETTER and expect GETTER to return the same', () => {
+    const expectedResult = { pageNumber: 2, pageSize: 10 } as CurrentPagination;
+    const getSpy = jest.spyOn(service, 'currentPagination', 'get');
+    const setSpy = jest.spyOn(service, 'currentPagination', 'set');
 
-  //   service.currentPagination = expectedResult;
-  //   const output = service.currentPagination;
+    service.currentPagination = expectedResult;
+    const output = service.currentPagination;
 
-  //   expect(getSpy).toHaveBeenCalled();
-  //   expect(setSpy).toHaveBeenCalled();
-  //   expect(output).toEqual(expectedResult);
-  // });
+    expect(getSpy).toHaveBeenCalled();
+    expect(setSpy).toHaveBeenCalled();
+    expect(output).toEqual(expectedResult);
+  });
 
   it('should call "dataView" GETTER and return a dataView', () => {
     const spy = jest.spyOn(service, 'dataView', 'get').mockReturnValue(dataviewStub);

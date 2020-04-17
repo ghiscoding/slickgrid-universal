@@ -1,3 +1,5 @@
+import { Subscription } from '../interfaces';
+
 export abstract class PubSubService {
   /**
  * Method to publish a message
@@ -14,7 +16,7 @@ export abstract class PubSubService {
     * @param callback The callback to be invoked when the specified message is published.
     * @return possibly a Subscription
     */
-  subscribe(eventName: string | Function, callback: Function): any {
+  subscribe(eventName: string | Function, callback: Function): Subscription {
     throw new Error('PubSubService "subscribe" method must be implemented');
   };
 
@@ -25,5 +27,10 @@ export abstract class PubSubService {
     */
   unsubscribe(eventName: string, callback: (event: CustomEventInit) => void): void {
     throw new Error('PubSubService "unsubscribe" method must be implemented');
+  }
+
+  /** Unsubscribes all subscriptions that currently exists */
+  unsubscribeAll(subscriptions?: Subscription[]): void {
+    throw new Error('PubSubService "unsubscribeAll" method must be implemented');
   }
 }

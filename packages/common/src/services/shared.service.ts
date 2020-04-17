@@ -1,4 +1,4 @@
-import { Column, GridOption } from '../interfaces/index';
+import { Column, GridOption, CurrentPagination } from '../interfaces/index';
 
 export class SharedService {
   private _allColumns: Column[];
@@ -6,7 +6,7 @@ export class SharedService {
   private _groupItemMetadataProvider: any;
   private _grid: any;
   private _gridOptions: GridOption;
-  // private _currentPagination: CurrentPagination;
+  private _currentPagination: CurrentPagination;
   private _visibleColumns: Column[];
   private _hierarchicalDataset: any[];
 
@@ -28,14 +28,14 @@ export class SharedService {
   }
 
   /** Getter for the Current Pagination (when Pagination is enabled) */
-  // get currentPagination(): CurrentPagination {
-  //   return this._currentPagination;
-  // }
+  get currentPagination(): CurrentPagination {
+    return this._currentPagination;
+  }
 
   /** Setter for the Current Pagination (when Pagination is enabled) */
-  // set currentPagination(currentPagination: CurrentPagination) {
-  //   this._currentPagination = currentPagination;
-  // }
+  set currentPagination(currentPagination: CurrentPagination) {
+    this._currentPagination = currentPagination;
+  }
 
   /** Getter for SlickGrid DataView object */
   get dataView(): any {

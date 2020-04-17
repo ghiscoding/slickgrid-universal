@@ -34,7 +34,9 @@ import {
   FilterService,
   GridEventService,
   GridService,
+  GridStateService,
   ExtensionService,
+  PaginationService,
   SharedService,
   SortService,
   RowMoveManagerExtension,
@@ -99,7 +101,9 @@ export class VanillaGridBundle {
   filterService: FilterService;
   gridEventService: GridEventService;
   gridService: GridService;
+  gridStateService: GridStateService;
   groupingAndColspanService: GroupingAndColspanService;
+  paginationService: PaginationService;
   sharedService: SharedService;
   sortService: SortService;
   translateService: TranslateService;
@@ -179,6 +183,8 @@ export class VanillaGridBundle {
     this.rowMoveManagerExtension = new RowMoveManagerExtension(this.extensionUtility, this.sharedService);
     this.rowSelectionExtension = new RowSelectionExtension(this.extensionUtility, this.sharedService);
     this.gridService = new GridService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
+    this.gridStateService = new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
+    this.paginationService = new PaginationService(this._eventPubSubService, this.sharedService);
     this.extensionService = new ExtensionService(
       this.autoTooltipExtension,
       this.cellExternalCopyManagerExtension,
@@ -308,6 +314,8 @@ export class VanillaGridBundle {
 
     // bind & initialize the grid service
     this.gridService.init(this.grid, this.dataView);
+    this.gridStateService.init(this.grid, this.dataView);
+    // this.paginationService.init(this.grid, this.dataView);
 
     if (this._dataset.length > 0) {
       // if (!this._isDatasetInitialized && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
@@ -345,12 +353,12 @@ export class VanillaGridBundle {
       // exportService: this.exportService,
       filterService: this.filterService,
       gridEventService: this.gridEventService,
-      // gridStateService: this.gridStateService,
+      gridStateService: this.gridStateService,
       gridService: this.gridService,
       groupingService: this.groupingAndColspanService,
       extensionService: this.extensionService,
       extensionUtility: this.extensionUtility,
-      // paginationService: this.paginationService,
+      paginationService: this.paginationService,
       sortService: this.sortService,
     };
 
