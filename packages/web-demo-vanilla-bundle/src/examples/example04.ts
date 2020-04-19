@@ -3,7 +3,7 @@ import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 
 const actionFormatter = (row, cell, value, columnDef, dataContext) => {
-  return `<div class="disabled">Action <i class="mdi mdi-24px mdi-menu-down"></i></div>`;
+  return `<div class="fake-hyperlink">Action <i class="mdi mdi-24px mdi-menu-down"></i></div>`;
 };
 
 // you can create custom validator to pass to an inline editor
