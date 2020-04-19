@@ -3,10 +3,7 @@ import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 
 const actionFormatter = (row, cell, value, columnDef, dataContext) => {
-  if (dataContext.priority === 3) { // option 3 is High
-    return `<div class="fake-hyperlink">Action <i class="mdi mdi-24px mdi-menu-down"></i></div>`;
-  }
-  return `<div class="disabled">Action <i class="mdi mdi-24px mdi-menu-down"></i></div>`;
+  return `<div class="fake-hyperlink">Action <i class="mdi mdi-24px mdi-menu-down"></i></div>`;
 };
 
 // you can create custom validator to pass to an inline editor
@@ -183,7 +180,7 @@ export class Example3 {
         }
       },
       {
-        id: 'action', name: 'Action', field: 'action', width: 110, maxWidth: 200,
+        id: 'action', name: 'Action', field: 'action', width: 100, maxWidth: 100,
         excludeFromExport: true,
         formatter: actionFormatter,
         cellMenu: {
