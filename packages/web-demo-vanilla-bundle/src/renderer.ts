@@ -39,7 +39,7 @@ export class Renderer {
   parseTemplate(viewTemplate: string) {
     return viewTemplate
       .replace(/([a-z]*){1}.(delegate)="?(.*?)(\))/gi, this.parseMethodBinding.bind(this))
-      .replace(/([a-z]*){1}.(bind)="?([^">]*)"?/gi, this.parsePropertyBinding.bind(this))
+      .replace(/([a-z]*){1}.(bind)="?([^">\s]*)"?/gi, this.parsePropertyBinding.bind(this))
       .replace(/\${(.*)}/gi, this.parseLogicExecution.bind(this));
   }
 
