@@ -131,6 +131,13 @@ export class Example2 {
       exportOptions: {
         sanitizeDataExport: true
       },
+      showCustomFooter: true, // display some metrics in the bottom custom footer
+      customFooterOptions: {
+        // optionally display some text on the left footer container
+        // leftFooterText: 'custom footer text',
+        hideTotalItemCount: false,
+        hideLastUpdateTimestamp: false
+      },
     };
   }
 

@@ -10,7 +10,6 @@
     "sourceMap": true,
     "allowSyntheticDefaultImports": false,
     "noImplicitReturns": true,
-    "moduleResolution": "node",
     "lib": [
       "es2020",
       "dom"

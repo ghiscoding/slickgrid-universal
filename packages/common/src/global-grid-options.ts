@@ -57,21 +57,21 @@ export const GlobalGridOptions: GridOption = {
     iconExportTextDelimitedCommand: 'fa fa-download mdi mdi-download',
     width: 200,
   },
-  //   customFooterOptions: {
-  //     dateFormat: 'yyyy-MM-dd hh:mm aaaaa\'m\'',
-  //     hideTotalItemCount: false,
-  //     hideLastUpdateTimestamp: true,
-  //     footerHeight: 20,
-  //     leftContainerClass: 'col-xs-12 col-sm-5',
-  //     rightContainerClass: 'col-xs-6 col-sm-7',
-  //     metricSeparator: '|',
-  //     metricTexts: {
-  //       items: 'items',
-  //       of: 'of',
-  //       itemsKey: 'ITEMS',
-  //       ofKey: 'OF',
-  //     }
-  //   },
+  customFooterOptions: {
+    dateFormat: 'YYYY-DD-MM h:mm:ss a',
+    hideTotalItemCount: false,
+    hideLastUpdateTimestamp: true,
+    footerHeight: 20,
+    leftContainerClass: 'col-xs-12 col-sm-5',
+    rightContainerClass: 'col-xs-6 col-sm-7',
+    metricSeparator: '|',
+    metricTexts: {
+      items: 'items',
+      of: 'of',
+      itemsKey: 'ITEMS',
+      ofKey: 'OF',
+    }
+  },
   dataView: {
     syncGridSelection: true, // when enabled, this will preserve the row selection even after filtering/sorting/grouping
     syncGridSelectionWithBackendService: false, // but disable it when using backend services

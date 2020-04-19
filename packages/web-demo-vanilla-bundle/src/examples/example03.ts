@@ -272,6 +272,10 @@ export class Example3 {
       },
       enableCheckboxSelector: true,
       enableRowSelection: true,
+      checkboxSelector: {
+        hideInFilterHeaderRow: false,
+        hideInColumnTitleRow: true,
+      },
       alwaysShowVerticalScroll: false, // disable scroll since we don't want it to show on the left pinned columns
       editCommandHandler: (item, column, editCommand) => {
         this.commandQueue.push(editCommand);

@@ -52,10 +52,12 @@ import { ExportServicer } from './services/export.service';
 import { ExcelExportServicer } from './services/excelExport.service';
 import { TranslateService } from './services/translate.service';
 import { EventPubSubService } from './services/eventPubSub.service';
+import { FooterService } from './services/footer.service';
 
 // using external non-typed js libraries
 declare const Slick: any;
 declare const $: any;
+const DATAGRID_FOOTER_HEIGHT = 20;
 
 export class VanillaGridBundle {
   private _columnDefinitions: Column[];
@@ -99,6 +101,7 @@ export class VanillaGridBundle {
   collectionService: CollectionService;
   extensionService: ExtensionService;
   filterService: FilterService;
+  footerService: FooterService;
   gridEventService: GridEventService;
   gridService: GridService;
   gridStateService: GridStateService;
@@ -164,6 +167,7 @@ export class VanillaGridBundle {
     this.sharedService = new SharedService();
     this.translateService = new TranslateService();
     this.collectionService = new CollectionService(this.translateService);
+    this.footerService = new FooterService(this.sharedService, this.translateService);
     const filterFactory = new FilterFactory(slickgridConfig, this.collectionService, this.translateService);
     this.filterService = new FilterService(filterFactory, this._eventPubSubService, this.sharedService);
     this.sortService = new SortService(this.sharedService, this._eventPubSubService);
@@ -324,8 +328,16 @@ export class VanillaGridBundle {
       this._isDatasetInitialized = true;
     }
 
+    // user could show a custom footer with the data metrics (dataset length and last updated timestamp)
+    const customFooterElm = this.footerService.optionallyShowCustomFooterWithMetrics(this.metrics);
+    if (customFooterElm) {
+      $(customFooterElm).appendTo($(this._gridContainerElm).parent());
+    }
+
     const fixedGridDimensions = (this._gridOptions?.gridHeight || this._gridOptions?.gridWidth) ? { height: this._gridOptions?.gridHeight, width: this._gridOptions?.gridWidth } : null;
-    this.resizerPlugin = new Slick.Plugins.Resizer(this._gridOptions.autoResize, fixedGridDimensions);
+    const autoResizeOptions = this._gridOptions?.autoResize || {};
+    autoResizeOptions.bottomPadding += this._gridOptions?.customFooterOptions?.footerHeight ?? DATAGRID_FOOTER_HEIGHT;
+    this.resizerPlugin = new Slick.Plugins.Resizer(autoResizeOptions, fixedGridDimensions);
     this.grid.registerPlugin(this.resizerPlugin);
     if (this._gridOptions.enableAutoResize) {
       await this.resizerPlugin.resizeGrid();
@@ -441,6 +453,16 @@ export class VanillaGridBundle {
           itemCount: args && args.current || 0,
           totalItemCount: Array.isArray(this.dataset) ? this.dataset.length : 0
         };
+        if (this.footerService.showCustomFooter) {
+          const itemCountElm = document.querySelector<HTMLSpanElement>('.item-count');
+          const totalCountElm = document.querySelector<HTMLSpanElement>('.total-count');
+          if (itemCountElm) {
+            itemCountElm.textContent = `${this.metrics.itemCount}`;
+          }
+          if (totalCountElm) {
+            totalCountElm.textContent = `${this.metrics.totalItemCount}`;
+          }
+        }
       });
 
       // without this, filtering data with local dataset will not always show correctly

@@ -6,6 +6,7 @@ import {
   Column,
   ColumnPicker,
   ContextMenu,
+  CustomFooterOption,
   DraggableGrouping,
   EditCommand,
   ExcelCopyBufferOption,
@@ -13,7 +14,7 @@ import {
   ExportOption,
   FormatterOption,
   GridMenu,
-  // GridState,
+  GridState,
   HeaderButton,
   HeaderMenu,
   Locale,
@@ -102,7 +103,7 @@ export interface GridOption {
   createPreHeaderPanel?: boolean;
 
   /** Custom Footer Options */
-  // customFooterOptions?: CustomFooterOption;
+  customFooterOptions?: CustomFooterOption;
 
   /** Data item column value extractor (getter) that can be used by the Excel like copy buffer plugin */
   dataItemColumnValueExtractor?: (item: any, columnDef: Column) => any;
@@ -381,7 +382,7 @@ export interface GridOption {
   preserveCopiedSelectionOnPaste?: boolean;
 
   /** Query presets before grid load (filters, sorters, pagination) */
-  // presets?: GridState;
+  presets?: GridState;
 
   /** Preselect certain rows by their row index ("enableCheckboxSelector" must be enabled) */
   preselectedRows?: number[];

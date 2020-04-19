@@ -1,26 +1,25 @@
 <h3 class="title is-3">Example 04 - Pinned (frozen) Columns/Rows</h3>
 
 <div class="row">
-  <!-- <span>
+  <span>
     <label for="">Pinned Rows: </label>
-    <input type="number" value.bind="frozenRowCount">
+    <input type="number" class="frozen-row-count" value.bind="frozenRowCount">
     <button class="btn btn-default btn-xs" onclick.delegate="changeFrozenRowCount()">
       Set
     </button>
   </span>
   <span style="margin-left: 10px">
     <label for="">Pinned Columns: </label>
-    <input type="number" value.bind="frozenColumnCount">
+    <input type="number" class="frozen-column-count" value.bind="frozenColumnCount">
     <button class="btn btn-default btn-xs" onclick.delegate="changeFrozenColumnCount()">
       Set
     </button>
-  </span> -->
+  </span>
   <span style="margin-left: 15px">
     <button class="button is-small" onclick.delegate="toggleFrozenBottomRows()">
       <span class="icon mdi mdi-flip-vertical"></span>
       <span>Toggle Pinned Rows</span>
     </button>
-    <!-- <span style="font-weight: bold;">: ${ isFrozenBottom ? 'Bottom' : 'Top' }</span> -->
   </span>
 </div>
 

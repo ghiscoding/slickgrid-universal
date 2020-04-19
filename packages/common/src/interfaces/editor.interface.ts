@@ -1,7 +1,7 @@
 import { EditorArguments } from './editorArguments.interface';
 import { EditorValidatorOutput } from './editorValidatorOutput.interface';
 
-/***
+/**
  * SlickGrid Editor interface, more info can be found on the SlickGrid repo
  * https://github.com/6pac/SlickGrid/wiki/Writing-custom-cell-editors
  */

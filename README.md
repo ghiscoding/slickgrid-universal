@@ -121,10 +121,10 @@ npm run test:watch
   - [x] Shared
   - [x] Sort
 - [ ] Others
-  - [ ] Custom Footer
+  - [x] Custom Footer
   - [ ] Dynamically Add Columns
   - [ ] Grid Presets
-  - [ ] Pagination
+  - [ ] Local Pagination
   - [ ] Tree Data
     - [x] add Grid Demo
     - [x] add Collapse/Expand All into Context Menu
@@ -147,6 +147,6 @@ npm run test:watch
 - [ ] Remove any Deprecated code
   - [ ] Create a Migration Guide 
 - [ ] Add Typings for Grid & DataView objects
-- [ ] Add some bindings in the demo (e.g. pinned rows input)
+- [x] Add simple input bindings in the demo (e.g. pinned rows input)
 - [ ] Can we change how SlickGrid Events are called and use same signature as SlickGrid instead of CustomEvent EventData signature?
 - [ ] Cannot copy text from cell since it's not selectable
