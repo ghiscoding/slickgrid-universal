@@ -335,8 +335,10 @@ export class VanillaGridBundle {
     }
 
     const fixedGridDimensions = (this._gridOptions?.gridHeight || this._gridOptions?.gridWidth) ? { height: this._gridOptions?.gridHeight, width: this._gridOptions?.gridWidth } : null;
-    const autoResizeOptions = this._gridOptions?.autoResize || {};
-    autoResizeOptions.bottomPadding += this._gridOptions?.customFooterOptions?.footerHeight ?? DATAGRID_FOOTER_HEIGHT;
+    const autoResizeOptions = this._gridOptions?.autoResize ?? { bottomPadding: 0 };
+    if (autoResizeOptions && autoResizeOptions.bottomPadding !== undefined) {
+      autoResizeOptions.bottomPadding += this._gridOptions?.customFooterOptions?.footerHeight ?? DATAGRID_FOOTER_HEIGHT;
+    }
     this.resizerPlugin = new Slick.Plugins.Resizer(autoResizeOptions, fixedGridDimensions);
     this.grid.registerPlugin(this.resizerPlugin);
     if (this._gridOptions.enableAutoResize) {

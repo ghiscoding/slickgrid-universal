@@ -79,16 +79,16 @@ export class FooterService {
 
       <!-- total count -->
       ${this.customFooterOptions.hideTotalItemCount ? '' : this.renderFooterTotalCount()}
-      ${this.customFooterOptions.metricTexts.items}
+      ${this.customFooterOptions.metricTexts?.items || ''}
     </div>`.trim();
   }
 
   renderFooterTotalCount(): string {
-    return `${this.customFooterOptions.metricTexts.of} <span class="total-count">${this.metrics.totalItemCount}</span>`;
+    return `${this.customFooterOptions.metricTexts?.of || ''} <span class="total-count">${this.metrics.totalItemCount}</span>`;
   }
 
   renderFooterLastUpdate(): string {
-    return `<span>${this.customFooterOptions.metricTexts.lastUpdate}</span>
+    return `<span>${this.customFooterOptions.metricTexts?.lastUpdate || ''}</span>
       <span class="last-update">${moment(this.metrics.endTime).format(this.customFooterOptions.dateFormat)}</span>
       <span class="separator">${this.customFooterOptions.metricSeparator}</span>`.trim();
   }

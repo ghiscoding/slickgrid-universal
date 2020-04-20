@@ -6,9 +6,9 @@ export class BindingService {
 
   constructor(binding: { variable: any; property?: string; }) {
     this._binding = binding;
-    this._property = binding.property;
+    this._property = binding.property || '';
     this.elementBindings = [];
-    if (binding.variable.hasOwnProperty(binding.property)) {
+    if (binding.property && binding.variable.hasOwnProperty(binding.property)) {
       this._value = binding.variable[binding.property];
     } else {
       this._value = binding.variable;
@@ -41,7 +41,7 @@ export class BindingService {
     const binding = {
       element,
       attribute,
-      event: null,
+      event: '',
     };
 
     if (element) {
