@@ -180,7 +180,7 @@ export const GlobalGridOptions: GridOption = {
   //     useSimpleViewportCalc: true,
   //     saveDetailViewOnScroll: false,
   //   },
-  headerRowHeight: 30,
+  headerRowHeight: 35,
   rowHeight: 35,
   topPanelHeight: 30
 };

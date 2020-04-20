@@ -94,7 +94,7 @@ $primary-color:                         #009530;
 $row-mouse-hover-color:                 #ebfaef;
 $row-selected-color:                    #d4f6d7; /*rgba(0, 149, 48, 0.2);*/
 
-@import './slick-material';
+@import './slick-without-bootstrap-min-styling';
 @import './slick-grid';
 @import './slick-controls';
 @import './slick-editors';

@@ -376,6 +376,7 @@
   background-position: center center;
   background-repeat: no-repeat;
   display: inline-block;
+  color: $header-menu-icon-font-color;
   font-size: $header-menu-icon-font-size;
   font-weight: $header-menu-icon-font-weight;
   line-height: $header-menu-icon-line-height;
@@ -442,7 +443,7 @@
   #filter-checkbox-selectall-container > input[type=checkbox] + label:before {
     cursor: pointer;
     content: $checkbox-selector-icon-unchecked;
-    color: $checkbox-selector-color;
+    color: $checkbox-selector-unchecked-color;
     display: inline-block;
     font-weight: $checkbox-selector-icon-font-weight;
     font-family: $icon-font-family;
@@ -458,6 +459,7 @@
   input[type=checkbox]:checked + label:before,
   #filter-checkbox-selectall-container > input[type=checkbox]:checked + label:before {
     content: $checkbox-selector-icon-checked;
+    color: $checkbox-selector-checked-color;
     opacity: 1; /* checked icon */
   }
 }
