@@ -15,9 +15,6 @@ const outDirLocal = path.resolve(__dirname, 'dist');
 const outDirProd = path.resolve(__dirname, '../../docs');
 const srcDir = path.resolve(__dirname, 'src');
 const nodeModulesDir = path.resolve(__dirname, 'node_modules');
-const cssRules = [
-  { loader: 'css-loader' },
-];
 const platform = {
   hmr: false,
   open: false,
@@ -53,7 +50,7 @@ module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, 
       {
         test: /\.css$/i,
         issuer: [{ not: [{ test: /\.html$/i }] }],
-        use: extractCss ? [{ loader: MiniCssExtractPlugin.loader }, 'css-loader'] : ['style-loader', ...cssRules]
+        use: extractCss ? [{ loader: MiniCssExtractPlugin.loader }, 'css-loader'] : ['style-loader', ...{ loader: 'css-loader' }]
       },
       { test: /\.scss$/, use: ['style-loader', 'css-loader', 'sass-loader'], issuer: /\.[tj]s$/i },
       { test: /\.scss$/, use: ['css-loader', 'sass-loader'], issuer: /\.html?$/i },

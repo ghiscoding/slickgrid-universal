@@ -1,4 +1,5 @@
-/** Salesforce Theme */
+/** Salesforce Theme (includes all external lib styling) */
+@import './flatpickr.min';
 @import './multiple-select';
 
 $primary-color:                         #006DCC;

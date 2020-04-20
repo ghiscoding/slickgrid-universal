@@ -1,4 +1,5 @@
-import * as flatpickr from 'flatpickr';
+import Flatpickr from 'flatpickr';
+import { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
 import * as moment_ from 'moment-mini';
 const moment = moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
@@ -120,7 +121,7 @@ export class DateEditor implements Editor {
 
       this._$input = $(`<input type="text" data-defaultDate="${this.defaultDate}" class="${inputCssClasses.replace(/\./g, ' ')}" placeholder="${placeholder}" title="${title}" />`);
       this._$input.appendTo(this.args.container);
-      this.flatInstance = (flatpickr && this._$input[0] && typeof this._$input[0].flatpickr === 'function') ? this._$input[0].flatpickr(pickerMergedOptions) : null;
+      this.flatInstance = (this._$input[0] && typeof this._$input[0].flatpickr === 'function') ? this._$input[0].flatpickr(pickerMergedOptions) : Flatpickr(this._$input, pickerMergedOptions as unknown as Partial<FlatpickrBaseOptions>);
 
       // when we're using an alternate input to display data, we'll consider this input as the one to do the focus later on
       // else just use the top one
@@ -174,7 +175,7 @@ export class DateEditor implements Editor {
 
       // validate the value before applying it (if not valid we'll set an empty string)
       const validation = this.validate(state);
-      const newValue = (validation && validation.valid) ? moment(state, outputFormat).toDate() : '';
+      const newValue = (validation && validation.valid) ? moment(state, outputFormat).format(outputFormat) : '';
 
       // set the new value to the item datacontext
       if (isComplexObject) {
@@ -188,8 +189,8 @@ export class DateEditor implements Editor {
   isValueChanged(): boolean {
     const elmValue = this._$input.val();
     const outputFormat = mapMomentDateFormatWithFieldType(this.columnDef && this.columnDef.type || FieldType.dateIso);
-    const elmDateStr = elmValue ? moment(elmValue).format(outputFormat) : '';
-    const orgDateStr = this.originalDate ? moment(this.originalDate).format(outputFormat) : '';
+    const elmDateStr = elmValue ? moment(elmValue, outputFormat).format(outputFormat) : '';
+    const orgDateStr = this.originalDate ? moment(this.originalDate, outputFormat).format(outputFormat) : '';
 
     return (!(elmDateStr === '' && orgDateStr === '')) && (elmDateStr !== orgDateStr);
   }
@@ -231,7 +232,7 @@ export class DateEditor implements Editor {
     }
 
     const outputFormat = mapMomentDateFormatWithFieldType((this.columnDef && this.columnDef.type) || FieldType.dateIso);
-    const value = moment(domValue).format(outputFormat);
+    const value = moment(domValue, outputFormat).format(outputFormat);
 
     return value;
   }
