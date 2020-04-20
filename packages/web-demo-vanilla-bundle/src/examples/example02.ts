@@ -134,7 +134,7 @@ export class Example2 {
       showCustomFooter: true, // display some metrics in the bottom custom footer
       customFooterOptions: {
         // optionally display some text on the left footer container
-        // leftFooterText: 'custom footer text',
+        leftFooterText: 'Made with <a href="https://github.com/ghiscoding/slickgrid-universal" target="_blank">Slickgrid-Universal</a>',
         hideTotalItemCount: false,
         hideLastUpdateTimestamp: false
       },
