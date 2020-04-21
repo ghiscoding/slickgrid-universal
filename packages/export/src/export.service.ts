@@ -20,8 +20,6 @@ import {
   TranslaterService,
 } from '@slickgrid-universal/common';
 
-const DEFAULT_AURELIA_EVENT_PREFIX = 'asg';
-
 export class ExportService {
   private _delimiter = ',';
   private _exportQuoteWrapper = '';

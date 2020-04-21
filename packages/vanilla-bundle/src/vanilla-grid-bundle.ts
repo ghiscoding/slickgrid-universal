@@ -49,7 +49,7 @@ import {
 } from '@slickgrid-universal/common';
 
 import { ExportService } from './services/export.service';
-import { ExcelExportServicer } from './services/excelExport.service';
+import { ExcelExportService } from './services/excelExport.service';
 import { TranslateService } from './services/translate.service';
 import { EventPubSubService } from './services/eventPubSub.service';
 import { FooterService } from './services/footer.service';
@@ -88,7 +88,7 @@ export class VanillaGridBundle {
   columnPickerExtension: ColumnPickerExtension;
   checkboxExtension: CheckboxSelectorExtension;
   draggableGroupingExtension: DraggableGroupingExtension;
-  excelExportServicer: ExcelExportServicer;
+  excelExportService: ExcelExportService;
   exportService: ExportService;
   gridMenuExtension: GridMenuExtension;
   groupItemMetaProviderExtension: GroupItemMetaProviderExtension;
@@ -165,7 +165,7 @@ export class VanillaGridBundle {
     this.sharedService = new SharedService();
     this.translateService = new TranslateService();
     this.exportService = new ExportService(this._eventPubSubService, this.translateService);
-    this.excelExportServicer = new ExcelExportServicer();
+    this.excelExportService = new ExcelExportService(this._eventPubSubService, this.translateService);
     this.collectionService = new CollectionService(this.translateService);
     this.footerService = new FooterService(this.sharedService, this.translateService);
     const filterFactory = new FilterFactory(slickgridConfig, this.collectionService, this.translateService);
@@ -176,11 +176,11 @@ export class VanillaGridBundle {
     this.autoTooltipExtension = new AutoTooltipExtension(this.extensionUtility, this.sharedService);
     this.cellExternalCopyManagerExtension = new CellExternalCopyManagerExtension(this.extensionUtility, this.sharedService);
     this.cellMenuExtension = new CellMenuExtension(this.extensionUtility, this.sharedService, this.translateService);
-    this.contextMenuExtension = new ContextMenuExtension(this.excelExportServicer, this.exportService, this.extensionUtility, this.sharedService, this.translateService);
+    this.contextMenuExtension = new ContextMenuExtension(this.excelExportService, this.exportService, this.extensionUtility, this.sharedService, this.translateService);
     this.columnPickerExtension = new ColumnPickerExtension(this.extensionUtility, this.sharedService);
     this.checkboxExtension = new CheckboxSelectorExtension(this.extensionUtility, this.sharedService);
     this.draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this.sharedService);
-    this.gridMenuExtension = new GridMenuExtension(this.excelExportServicer, this.exportService, this.extensionUtility, this.filterService, this.sharedService, this.sortService, this.translateService);
+    this.gridMenuExtension = new GridMenuExtension(this.excelExportService, this.exportService, this.extensionUtility, this.filterService, this.sharedService, this.sortService, this.translateService);
     this.groupItemMetaProviderExtension = new GroupItemMetaProviderExtension(this.sharedService);
     this.headerButtonExtension = new HeaderButtonExtension(this.extensionUtility, this.sharedService);
     this.headerMenuExtension = new HeaderMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.translateService);
@@ -319,6 +319,7 @@ export class VanillaGridBundle {
     // bind & initialize the grid service
     this.gridService.init(this.grid, this.dataView);
     this.gridStateService.init(this.grid, this.dataView);
+    this.excelExportService.init(this.grid, this.dataView);
     this.exportService.init(this.grid, this.dataView);
     // this.paginationService.init(this.grid, this.dataView);
 

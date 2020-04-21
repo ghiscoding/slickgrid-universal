@@ -77,6 +77,7 @@ const pubSubServiceStub = {
   publish: jest.fn(),
   subscribe: jest.fn(),
   unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
 } as PubSubService;
 
 describe('FilterService', () => {

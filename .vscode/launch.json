@@ -15,6 +15,8 @@
       "trace": true,
       "sourceMapPathOverrides": {
         "webpack:///../common/*": "${webRoot}/packages/common/*",
+        "webpack:///../excel-export/*": "${webRoot}/packages/excel-export/*",
+        "webpack:///../export/*": "${webRoot}/packages/export/*",
         "webpack:///../vanilla-bundle/*": "${webRoot}/packages/vanilla-bundle/*",
         "webpack:///./src/*": "${webRoot}/packages/web-demo-vanilla-bundle/src/*"
       }
