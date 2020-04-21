@@ -203,11 +203,11 @@ describe('DateEditor', () => {
         mockColumn.type = FieldType.dateTimeIsoAmPm;
         mockItemData = { id: 1, startDate: '2001-04-05T11:33:42.000Z', isActive: true };
 
-        const newDate = '2001-01-02T16:02:02.000+05:00';
+        const newDate = '2001-01-02T16:02:02';
         editor = new DateEditor(editorArguments);
         editor.applyValue(mockItemData, newDate);
 
-        expect(mockItemData).toEqual({ id: 1, startDate: moment(newDate, 'YYYY-MM-DD hh:mm:ss a').toDate(), isActive: true });
+        expect(mockItemData).toEqual({ id: 1, startDate: moment(newDate).format('YYYY-MM-DD hh:mm:ss a'), isActive: true });
       });
 
       it('should apply the value to the startDate property with a field having dot notation (complex object) that passes validation', () => {
@@ -216,11 +216,11 @@ describe('DateEditor', () => {
         mockColumn.field = 'employee.startDate';
         mockItemData = { id: 1, employee: { startDate: '2001-04-05T11:33:42.000Z' }, isActive: true };
 
-        const newDate = '2001-01-02T16:02:02.000+05:00';
+        const newDate = '2001-01-02T16:02:02';
         editor = new DateEditor(editorArguments);
         editor.applyValue(mockItemData, newDate);
 
-        expect(mockItemData).toEqual({ id: 1, employee: { startDate: moment(newDate, 'YYYY-MM-DD hh:mm:ss a').toDate() }, isActive: true });
+        expect(mockItemData).toEqual({ id: 1, employee: { startDate: moment(newDate).format('YYYY-MM-DD hh:mm:ss a') }, isActive: true });
       });
 
       it('should return item data with an empty string in its value when it fails the custom validation', () => {
