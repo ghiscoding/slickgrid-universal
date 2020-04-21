@@ -1,5 +1,4 @@
-import * as isequal_ from 'lodash.isequal';
-const isequal = isequal_; // patch to fix rollup to work
+import isequal from 'lodash.isequal';
 
 import {
   ExtensionName,

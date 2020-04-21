@@ -1,25 +1,16 @@
 {
   "compilerOptions": {
-    "module": "esnext",
+    "module": "es2020",
     "moduleResolution": "node",
     "target": "es2015",
     "lib": [
       "es2020",
       "dom"
     ],
-    "types": [
-      "moment",
-      "jest",
-      "jest-extended",
-      "jquery",
-      "node"
-    ],
     "typeRoots": [
       "../typings",
       "../../node_modules/@types"
     ],
-    "allowSyntheticDefaultImports": true,
-    "importHelpers": true,
     "outDir": "dist/amd",
     "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true,

@@ -26,6 +26,7 @@
   ],
   "dependencies": {
     "@slickgrid-universal/common": "^0.0.2",
+    "@slickgrid-universal/export": "^0.0.2",
     "@slickgrid-universal/vanilla-bundle": "^0.0.2",
     "bulma": "^0.8.2",
     "moment-mini": "^2.24.0"

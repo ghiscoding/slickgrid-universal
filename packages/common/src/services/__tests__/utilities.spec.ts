@@ -13,7 +13,6 @@ import {
   getHtmlElementOffset,
   htmlEncode,
   htmlEntityDecode,
-  htmlEntityEncode,
   mapMomentDateFormatWithFieldType,
   mapFlatpickrDateFormatWithFieldType,
   mapOperatorByFieldType,
@@ -91,18 +90,6 @@ describe('Service/Utilies', () => {
     it('should be able to decode unicode characters and also latin accents', () => {
       const result = htmlEntityDecode(`&#83;&#97;&#109;&#39;&#115;&#32;&#55357;&#56960;&#55358;&#56708;&#32;&#101;&#115;&#112;&#97;&#241;&#111;&#108;`);
       expect(result).toBe(`Sam's 🚀🦄 español`);
-    });
-  });
-
-  describe('htmlEntityEncode method', () => {
-    it('should be able to encode HTML entity of an HTML string', () => {
-      const result = htmlEntityEncode(`<div>a</div>`);
-      expect(result).toBe(`&#60;&#100;&#105;&#118;&#62;&#97;&#60;&#47;&#100;&#105;&#118;&#62;`);
-    });
-
-    it('should be able to encode unicode characters and also latin accents', () => {
-      const result = htmlEntityEncode(`Sam's 🚀🦄 español`);
-      expect(result).toBe(`&#83;&#97;&#109;&#39;&#115;&#32;&#55357;&#56960;&#55358;&#56708;&#32;&#101;&#115;&#112;&#97;&#241;&#111;&#108;`);
     });
   });
 

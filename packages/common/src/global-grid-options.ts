@@ -1,4 +1,4 @@
-import { EventNamingStyle, OperatorType, GridAutosizeColsMode } from './enums/index';
+import { DelimiterType, EventNamingStyle, FileType, GridAutosizeColsMode, OperatorType } from './enums/index';
 import { GridOption } from './interfaces/gridOption.interface';
 import { Filters } from './filters';
 
@@ -92,7 +92,7 @@ export const GlobalGridOptions: GridOption = {
   enableColumnReorder: true,
   enableContextMenu: true,
   //   enableExcelExport: true, // Excel Export is the new default,
-  //   enableExport: false, // CSV/Text with Tab Delimited
+  enableExport: true, // CSV/Text with Tab Delimited
   enableGridMenu: true,
   enableHeaderMenu: true,
   enableMouseHoverHighlightRow: true,
@@ -110,16 +110,16 @@ export const GlobalGridOptions: GridOption = {
   // //     groupingAggregatorRowText: '',
   // //     sanitizeDataExport: false,
   // //   },
-  // //   exportOptions: {
-  // //     delimiter: DelimiterType.comma,
-  // //     exportWithFormatter: false,
-  // //     filename: 'export',
-  // //     format: FileType.csv,
-  // //     groupingColumnHeaderTitle: 'Group By',
-  // //     groupingAggregatorRowText: '',
-  // //     sanitizeDataExport: false,
-  // //     useUtf8WithBom: true
-  // //   },
+  exportOptions: {
+    delimiter: DelimiterType.comma,
+    exportWithFormatter: false,
+    filename: 'export',
+    format: FileType.csv,
+    groupingColumnHeaderTitle: 'Group By',
+    groupingAggregatorRowText: '',
+    sanitizeDataExport: false,
+    useUtf8WithBom: true
+  },
   gridAutosizeColsMode: GridAutosizeColsMode.none,
   eventNamingStyle: EventNamingStyle.lowerCase,
   forceFitColumns: false,

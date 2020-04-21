@@ -9,7 +9,6 @@
     "module": "esnext",
     "sourceMap": true,
     "allowSyntheticDefaultImports": true,
-    "importHelpers": true,
     "noImplicitReturns": true,
     "lib": [
       "es2020",
@@ -17,7 +16,6 @@
     ],
     "types": [
       "moment",
-      "jquery",
       "node"
     ],
     "typeRoots": [

@@ -127,6 +127,59 @@ export function convertHierarchicalViewToParentChildArrayByReference(hierarchica
   }
 }
 
+/*!
+ * Create an immutable clone of an array or object
+ * (c) 2019 Chris Ferdinandi, MIT License, https://gomakethings.com
+ * @param  {Array|Object} obj The array or object to copy
+ * @return {Array|Object}     The clone of the array or object
+ */
+export function deepCopy(obj: any) {
+	/**
+	 * Create an immutable copy of an object
+	 * @return {Object}
+	 */
+  const cloneObj = () => {
+    // Create new object
+    const clone = {};
+
+    // Loop through each item in the original
+    // Recursively copy it's value and add to the clone
+    for (let key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        clone[key] = deepCopy(obj[key]);
+      }
+    }
+    return clone;
+  };
+
+	/**
+	 * Create an immutable copy of an array
+	 * @return {Array}
+	 */
+  const cloneArr = () => {
+    return obj.map((item: any) => {
+      return deepCopy(item);
+    });
+  };
+
+  /* Inits */
+
+  // Get object type
+  const type = Object.prototype.toString.call(obj).slice(8, -1).toLowerCase();
+
+  // If an object
+  if (type === 'object') {
+    return cloneObj();
+  }
+  // If an array
+  if (type === 'array') {
+    return cloneArr();
+  }
+
+  // Otherwise, return it as-is
+  return obj;
+}
+
 /**
  * Find an item from a hierarchical view structure (a parent that can have children array which themseleves can children and so on)
  * @param hierarchicalArray
@@ -178,19 +231,6 @@ export function htmlEntityDecode(input: string): string {
   return input.replace(/&#(\d+);/g, (match, dec) => {
     return String.fromCharCode(dec);
   });
-}
-
-/**
- * Decode text into html entity
- * @param string text: input text
- * @param string text: output text
- */
-export function htmlEntityEncode(input: any): string {
-  const buf = [];
-  for (let i = input.length - 1; i >= 0; i--) {
-    buf.unshift(['&#', input[i].charCodeAt(), ';'].join(''));
-  }
-  return buf.join('');
 }
 
 /**
@@ -864,7 +904,7 @@ export function uniqueObjectArray(arr: any[], propertyName = 'id'): any[] {
     const map = new Map();
 
     for (const item of arr) {
-      if (!map.has(item[propertyName])) {
+      if (item && !map.has(item[propertyName])) {
         map.set(item[propertyName], true);    // set any value to Map
         result.push({
           id: item[propertyName],

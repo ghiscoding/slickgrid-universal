@@ -39,7 +39,8 @@
     "IE 11"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.0.2"
+    "@slickgrid-universal/common": "^0.0.2",
+    "@slickgrid-universal/export": "^0.0.2"
   },
   "devDependencies": {
     "@types/webpack": "^4.41.12",
