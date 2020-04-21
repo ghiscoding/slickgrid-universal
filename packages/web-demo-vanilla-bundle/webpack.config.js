@@ -1,6 +1,7 @@
 const { ProvidePlugin } = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ensureArray = (config) => config && (Array.isArray(config) ? config : [config]) || [];
@@ -16,8 +17,8 @@ const outDirProd = path.resolve(__dirname, '../../docs');
 const srcDir = path.resolve(__dirname, 'src');
 const nodeModulesDir = path.resolve(__dirname, 'node_modules');
 const platform = {
-  hmr: false,
-  open: false,
+  hmr: true,
+  open: true,
   port: 8088,
   host: 'localhost',
   output: 'dist'
@@ -56,7 +57,7 @@ module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, 
       { test: /\.scss$/, use: ['css-loader', 'sass-loader'], issuer: /\.html?$/i },
       { test: /\.(png|gif|jpg|cur)$/i, loader: 'url-loader', options: { limit: 8192 } },
       { test: /\.html$/i, loader: 'html-loader' },
-      { test: /\.ts?$/, use: 'ts-loader', exclude: nodeModulesDir, },
+      { test: /\.ts?$/, use: [{ loader: 'ts-loader', options: { transpileOnly: true } }] }
     ],
   },
   devServer: {
@@ -66,7 +67,7 @@ module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, 
     hot: hmr || platform.hmr,
     port: port || platform.port,
     host: host || platform.host,
-    open: true,
+    open: platform.open,
   },
   devtool: production ? 'nosources-source-map' : 'cheap-module-eval-source-map',
   plugins: [
@@ -94,5 +95,6 @@ module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, 
     })),
     // Note that the usage of following plugin cleans the webpack output directory before build.
     new CleanWebpackPlugin(),
+    new ForkTsCheckerWebpackPlugin()
   ]
 });

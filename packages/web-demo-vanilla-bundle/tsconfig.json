@@ -7,6 +7,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",
+    "isolatedModules": true,
     "allowJs": true,
     "baseUrl": "src",
     "skipLibCheck": true,
