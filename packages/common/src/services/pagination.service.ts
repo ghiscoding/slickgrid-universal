@@ -1,4 +1,5 @@
-import isequal from 'lodash.isequal';
+import * as isequal_ from 'lodash.isequal';
+const isequal = isequal_; // patch to fix rollup to work
 
 import { BackendServiceApi, CurrentPagination, Pagination, ServicePagination, Subscription } from '../interfaces/index';
 import { executeBackendProcessesCallback, onBackendError } from './backend-utilities';

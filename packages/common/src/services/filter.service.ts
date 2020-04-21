@@ -1,4 +1,5 @@
-import isequal from 'lodash.isequal';
+import * as isequal_ from 'lodash.isequal';
+const isequal = isequal_; // patch to fix rollup to work
 
 import { FilterConditions } from './../filter-conditions/index';
 import { FilterFactory } from './../filters/filterFactory';
