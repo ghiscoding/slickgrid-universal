@@ -12,6 +12,8 @@
     "test": "lerna run test --stream",
     "test:watch": "lerna run test:watch --stream",
     "test:common:watch": "cd packages/common && npm run test:watch",
+    "test:excel-export:watch": "cd packages/excel-export && npm run test:watch",
+    "test:export:watch": "cd packages/export && npm run test:watch",
     "diff": "lerna diff",
     "updated": "lerna updated",
     "clean:tsconfig-build-cache": "rimraf packages/*/dist/tsconfig.tsbuildinfo",

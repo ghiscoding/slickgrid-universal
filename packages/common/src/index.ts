@@ -1,4 +1,4 @@
-import 'multiple-select-adapted/src/multiple-select.js';
+import 'multiple-select-adapted';
 
 // Public classes.
 export * from './constants';

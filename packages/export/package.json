@@ -3,8 +3,8 @@
   "version": "0.0.2",
   "description": "Export to File (CSV/Txt) Service.",
   "browser": "src/index.ts",
-  "main": "dist/es2020/index.js",
-  "typings": "dist/es2020/index.d.ts",
+  "main": "dist/es2015/index.js",
+  "typings": "dist/es2015/index.d.ts",
   "files": [
     "src",
     "dist"
@@ -15,10 +15,13 @@
     "dev": "run-s build sass:build sass:copy",
     "dev:watch": "run-p build:watch",
     "bundle:commonjs": "tsc --project tsconfig.build.json --outDir dist/commonjs --module commonjs",
+    "bundle:es2015": "cross-env tsc --project tsconfig.build.json --outDir dist/es2015 --module es2020 --target es2015",
     "bundle:es2020": "cross-env tsc --project tsconfig.build.json --outDir dist/es2020 --module es2015 --target es2020",
-    "bundle": "npm-run-all bundle:commonjs bundle:es2020",
+    "bundle": "npm-run-all bundle:commonjs bundle:es2015 bundle:es2020",
     "prebundle": "npm-run-all delete:dist",
-    "delete:dist": "cross-env rimraf dist"
+    "delete:dist": "cross-env rimraf dist",
+    "test": "node_modules/.bin/jest --runInBand --coverage --config ../../test/jest.config.js",
+    "test:watch": "node_modules/.bin/jest --config ../../test/jest.config.js --watch"
   },
   "author": "Ghislain B.",
   "license": "MIT",

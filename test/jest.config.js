@@ -44,6 +44,7 @@ module.exports = {
   },
   transformIgnorePatterns: [
     'node_modules/(?!@ngrx)',
+    '<rootDir>/node_modules/multiple-select-adapted/',
     '<rootDir>/node_modules/slickgrid/'
   ],
   testMatch: [
