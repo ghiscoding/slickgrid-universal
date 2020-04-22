@@ -45,7 +45,6 @@ Thumbs.db
 # Distribution folder
 dist
 dist-demo
-dist-grid-bundle-zip
 
 # Tests Report & Coverage
 **/node_modules
