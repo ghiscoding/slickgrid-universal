@@ -93,7 +93,6 @@ export * from './selectOption.interface';
 export * from './slickEvent.interface';
 export * from './slickEventData.interface';
 export * from './slickEventHandler.interface';
-export * from './sortChangedArgs.interface';
 export * from './sorter.interface';
 export * from './subscription.interface';
 export * from './treeDataOption.interface';

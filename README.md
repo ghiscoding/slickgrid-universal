@@ -120,7 +120,7 @@ npm run test:watch
     - moved the Service to an Extension
   - [x] Shared
   - [x] Sort
-- [ ] Others
+- [ ] Others / Vanilla Implementation
   - [x] Custom Footer
   - [ ] Dynamically Add Columns
   - [ ] Grid Presets
