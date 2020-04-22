@@ -5,6 +5,7 @@
   "scripts": {
     "bootstrap": "lerna bootstrap --use-workspaces",
     "bundle": "lerna run bundle --stream",
+    "prebuild": "cd packages/common && npm run build",
     "build": "lerna run build --stream",
     "rebuild": "npm run clean && npm run build",
     "clean": "rimraf packages/*/dist dist",
