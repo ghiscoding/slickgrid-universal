@@ -17,6 +17,7 @@
   ],
   "scripts": {
     "build": "cross-env tsc --build",
+    "postbuild": "npm-run-all bundle:commonjs",
     "build:watch": "cross-env tsc --incremental --watch",
     "dev": "run-s build sass:build sass:copy",
     "dev:watch": "run-p build:watch sass:watch",
