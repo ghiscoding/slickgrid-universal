@@ -77,7 +77,7 @@ export class ExportService {
 
     return new Promise((resolve, reject) => {
       this.pubSubService.publish(`onBeforeExportToFile`, true);
-      this._exportOptions = deepCopy({ ...this._gridOptions.exportOptions, options });
+      this._exportOptions = deepCopy({ ...this._gridOptions.exportOptions, ...options });
       this._delimiter = this._exportOptions.delimiterOverride || this._exportOptions.delimiter || '';
       this._fileFormat = this._exportOptions.format || FileType.csv;
 

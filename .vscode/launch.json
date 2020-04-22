@@ -24,7 +24,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Jest Current Spec File (Common Package)",
+      "name": "Jest Current Spec File",
       "program": "${workspaceFolder}/node_modules/.bin/jest",
       "args": [
         "--runInBand",

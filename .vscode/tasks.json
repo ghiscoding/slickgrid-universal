@@ -8,21 +8,9 @@
       "problemMatcher": []
     },
     {
-      "label": "Run Jest Tests (Common package)",
+      "label": "Run Jest Unit Tests",
       "type": "shell",
       "command": "npm run test:common:watch",
-      "problemMatcher": []
-    },
-    {
-      "label": "Run Jest Tests (Export package)",
-      "type": "shell",
-      "command": "npm run test:export:watch",
-      "problemMatcher": []
-    },
-    {
-      "label": "Run Jest Tests (Excel Export package)",
-      "type": "shell",
-      "command": "npm run test:excel-export:watch",
       "problemMatcher": []
     },
     {
