@@ -1,5 +1,5 @@
 // import 3rd party lib multiple-select for the tests
-import 'multiple-select-adapted/src/multiple-select.js';
+import 'multiple-select-adapted';
 
 import { FieldType, OperatorType } from '../../enums/index';
 import { Column, FilterArguments, GridOption, } from '../../interfaces/index';

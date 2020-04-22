@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/slickgrid-universal
     docker:
-      - image: circleci/node:12-browsers
+      - image: circleci/node:13-browsers
     steps:
       - checkout
       - restore_cache:
@@ -14,7 +14,7 @@ jobs:
           paths:
             - "node_modules"
       - run:
-          name: TSC Build
+          name: TypeScript Build (tsc)
           command: |
             yarn run build
       - run:

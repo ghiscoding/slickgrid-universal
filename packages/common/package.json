@@ -3,8 +3,9 @@
   "version": "0.0.2",
   "description": "SlickGrid-Universal Common Code",
   "browser": "src/index.ts",
-  "main": "dist/es2015/index.js",
-  "typings": "dist/es2015/index.d.ts",
+  "main": "dist/commonjs/index.js",
+  "typings": "dist/commonjs/index.d.ts",
+  "type": "module",
   "author": "Ghislain B.",
   "license": "MIT",
   "publishConfig": {

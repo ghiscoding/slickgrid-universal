@@ -91,7 +91,7 @@ export class ExcelExportService {
 
     return new Promise((resolve, reject) => {
       this.pubSubService.publish(`onBeforeExportToExcel`, true);
-      this._excelExportOptions = deepCopy({ ...this._gridOptions.excelExportOptions, options });
+      this._excelExportOptions = deepCopy({ ...this._gridOptions.excelExportOptions, ...options });
       this._fileFormat = this._excelExportOptions.format || FileType.xlsx;
 
       // prepare the Excel Workbook & Sheet
@@ -369,9 +369,9 @@ export class ExcelExportService {
     // loop through all the grid rows of data
     for (let rowNumber = 0; rowNumber < lineCount; rowNumber++) {
       const itemObj = this._dataView.getItem(rowNumber);
-      if (itemObj != null) {
+      if (itemObj !== null && itemObj !== undefined) {
         // Normal row (not grouped by anything) would have an ID which was predefined in the Grid Columns definition
-        if (itemObj[this.datasetIdName] != null) {
+        if (itemObj[this.datasetIdName] !== null && itemObj[this.datasetIdName] !== undefined) {
           // get regular row item data
           originalDaraArray.push(this.readRegularRowData(columns, rowNumber, itemObj));
         } else if (this._hasGroupedItems && itemObj.__groupTotals === undefined) {

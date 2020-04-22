@@ -3,8 +3,8 @@
   "version": "0.0.2",
   "description": "Export to File (CSV/Txt) Service.",
   "browser": "src/index.ts",
-  "main": "dist/es2015/index.js",
-  "typings": "dist/es2015/index.d.ts",
+  "main": "dist/commonjs/index.js",
+  "typings": "dist/commonjs/index.d.ts",
   "files": [
     "src",
     "dist"

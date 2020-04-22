@@ -1,5 +1,5 @@
 // import 3rd party lib multiple-select for the tests
-import 'multiple-select-adapted/src/multiple-select.js';
+import 'multiple-select-adapted';
 
 import { Filters } from '..';
 import { Column, FilterArguments, GridOption } from '../../interfaces/index';
@@ -27,7 +27,7 @@ const gridStub = {
 describe('SelectFilter', () => {
   let translateService: TranslateServiceStub;
   let divContainer: HTMLDivElement;
-  let filter: SingleSelectFilter;
+  let filter: MultipleSelectFilter;
   let filterArguments: FilterArguments;
   let spyGetHeaderRow;
   let mockColumn: Column;
@@ -66,7 +66,7 @@ describe('SelectFilter', () => {
   it('should be a multiple-select filter', () => {
     mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     filter = new MultipleSelectFilter(collectionService, translateService);
-    filter.init(filterArguments, true);
+    filter.init(filterArguments);
     const filterCount = divContainer.querySelectorAll('select.ms-filter.search-filter.filter-gender').length;
 
     expect(spyGetHeaderRow).toHaveBeenCalled();

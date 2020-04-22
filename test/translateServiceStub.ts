@@ -26,10 +26,13 @@ export class TranslateServiceStub implements TranslaterService {
       case 'EXPORT_TO_TAB_DELIMITED': output = this._locale === 'en' ? 'Export in Text format (Tab delimited)' : 'Exporter en format texte (délimité par tabulation)'; break;
       case 'EXPORT_TO_TEXT_FORMAT': output = this._locale === 'en' ? 'Export in Text format' : 'Exporter en format texte'; break;
       case 'FEMALE': output = this._locale === 'en' ? 'Female' : 'Femme'; break;
+      case 'FIRST_NAME': output = this._locale === 'en' ? 'First Name' : 'Prénom'; break;
       case 'FORCE_FIT_COLUMNS': output = this._locale === 'en' ? 'Force fit columns' : 'Ajustement forcé des colonnes'; break;
+      case 'GROUP_BY': output = this._locale === 'en' ? 'Grouped By' : 'Groupé par'; break;
       case 'HELLO': output = this._locale === 'en' ? 'Hello' : 'Bonjour'; break;
       case 'HELP': output = this._locale === 'en' ? 'Help' : 'Aide'; break;
       case 'HIDE_COLUMN': output = this._locale === 'en' ? 'Hide Column' : 'Cacher la colonne'; break;
+      case 'LAST_NAME': output = this._locale === 'en' ? 'Last Name' : 'Nom de famille'; break;
       case 'MALE': output = this._locale === 'en' ? 'Male' : 'Mâle'; break;
       case 'OK': output = this._locale === 'en' ? 'OK' : 'Terminé'; break;
       case 'OPTIONS_LIST': output = this._locale === 'en' ? 'Options List' : 'Liste d\'options'; break;

@@ -1,4 +1,4 @@
-import { ExcelExportService } from './excelExport.service';
+import moment = require('moment-mini');
 import {
   Column,
   ExcelExportOption,
@@ -13,12 +13,8 @@ import {
   SortComparers,
   PubSubService,
 } from '@slickgrid-universal/common';
-import moment = require('moment-mini');
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
-
-function removeMultipleSpaces(textS) {
-  return `${textS}`.replace(/  +/g, '');
-}
+import { ExcelExportService } from './excelExport.service';
 
 const pubSubServiceStub = {
   publish: jest.fn(),
@@ -35,7 +31,7 @@ const myUppercaseFormatter: Formatter = (row, cell, value, columnDef, dataContex
 const myUppercaseGroupTotalFormatter: GroupTotalsFormatter = (totals: any, columnDef: Column) => {
   const field = columnDef.field || '';
   const val = totals.sum && totals.sum[field];
-  if (val != null && !isNaN(+val)) {
+  if (val !== null && !isNaN(+val)) {
     return `Custom: ${val}`;
   }
   return '';
@@ -72,7 +68,6 @@ const gridStub = {
 };
 
 describe('ExcelExportService', () => {
-  let pubSubService: PubSubService;
   let service: ExcelExportService;
   let translateService: TranslateServiceStub;
   let mockColumns: Column[];
@@ -107,7 +102,7 @@ describe('ExcelExportService', () => {
     });
 
     it('should not have any output since there are no column definitions provided', async () => {
-      const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
       const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
       const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
@@ -117,8 +112,8 @@ describe('ExcelExportService', () => {
       const result = await service.exportToExcel(mockExportExcelOptions);
 
       expect(result).toBeTruthy();
-      expect(pluginEaSpy).toHaveBeenNthCalledWith(1, `onBeforeExportToExcel`, true);
-      expect(pluginEaSpy).toHaveBeenNthCalledWith(2, `onAfterExportToExcel`, optionExpectation);
+      expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onBeforeExportToExcel`, true);
+      expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
       expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
       expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, blob: new Blob(), data: [[]] });
     });
@@ -147,36 +142,36 @@ describe('ExcelExportService', () => {
       });
 
       it('should trigger an event before exporting the file', async () => {
-        const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, dataViewStub);
         const result = await service.exportToExcel(mockExportExcelOptions);
 
         expect(result).toBeTruthy();
-        expect(pluginEaSpy).toHaveBeenNthCalledWith(1, `onBeforeExportToExcel`, true);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onBeforeExportToExcel`, true);
       });
 
       it('should trigger an event after exporting the file', async () => {
-        const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, dataViewStub);
         const result = await service.exportToExcel(mockExportExcelOptions);
 
         expect(result).toBeTruthy();
-        expect(pluginEaSpy).toHaveBeenNthCalledWith(2, `onAfterExportToExcel`, expect.anything());
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, expect.anything());
 
       });
 
       it('should call "URL.createObjectURL" with a Blob and xlsx file when browser is not IE11 (basically any other browser) when exporting as xlsx', async () => {
         const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
-        const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
 
         service.init(gridStub, dataViewStub);
         const result = await service.exportToExcel(mockExportExcelOptions);
 
         expect(result).toBeTruthy();
-        expect(pluginEaSpy).toHaveBeenNthCalledWith(2, `onAfterExportToExcel`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
       });
 
@@ -184,14 +179,14 @@ describe('ExcelExportService', () => {
       it('should call "msSaveOrOpenBlob" with a Blob and xlsx file when browser is IE11 when exporting as xlsx', async () => {
         const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
         navigator.msSaveOrOpenBlob = jest.fn();
-        const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyMsSave = jest.spyOn(navigator, 'msSaveOrOpenBlob');
 
         service.init(gridStub, dataViewStub);
         const result = await service.exportToExcel(mockExportExcelOptions);
 
         expect(result).toBeTruthy();
-        expect(pluginEaSpy).toHaveBeenNthCalledWith(2, `onAfterExportToExcel`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyMsSave).toHaveBeenCalledWith(mockExcelBlob, 'export.xlsx');
       });
 
@@ -215,7 +210,7 @@ describe('ExcelExportService', () => {
         mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
@@ -224,7 +219,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, dataViewStub);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pluginEaSpy).toHaveBeenNthCalledWith(2, `onAfterExportToExcel`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
         expect(spyDownload).toHaveBeenCalledWith({
           ...optionExpectation, blob: new Blob(), data: [
@@ -244,7 +239,7 @@ describe('ExcelExportService', () => {
         mockCollection = [{ id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 1 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
@@ -253,7 +248,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, dataViewStub);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pluginEaSpy).toHaveBeenNthCalledWith(2, `onAfterExportToExcel`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
         expect(spyDownload).toHaveBeenCalledWith({
           ...optionExpectation, blob: new Blob(), data: [
@@ -273,7 +268,7 @@ describe('ExcelExportService', () => {
         mockCollection = [{ id: 2, userId: '3C2', firstName: 'Ava Luna', lastName: null, position: 'HUMAN_RESOURCES', order: 3 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
@@ -282,7 +277,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, dataViewStub);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pluginEaSpy).toHaveBeenNthCalledWith(2, `onAfterExportToExcel`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
         expect(spyDownload).toHaveBeenCalledWith({
           ...optionExpectation, blob: new Blob(), data: [
@@ -302,7 +297,7 @@ describe('ExcelExportService', () => {
         mockCollection = [{ id: 2, firstName: 'Ava', lastName: 'Luna', position: 'HUMAN_RESOURCES', order: 3 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
@@ -311,7 +306,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, dataViewStub);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pluginEaSpy).toHaveBeenNthCalledWith(2, `onAfterExportToExcel`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
         expect(spyDownload).toHaveBeenCalledWith({
           ...optionExpectation, blob: new Blob(), data: [
@@ -331,7 +326,7 @@ describe('ExcelExportService', () => {
         mockCollection = [{ id: 2, userId: '3C2', firstName: 'Ava', lastName: 'Luna', position: 'HUMAN_RESOURCES', order: 13 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
@@ -340,7 +335,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, dataViewStub);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pluginEaSpy).toHaveBeenNthCalledWith(2, `onAfterExportToExcel`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
         expect(spyDownload).toHaveBeenCalledWith({
           ...optionExpectation, blob: new Blob(), data: [
@@ -360,7 +355,7 @@ describe('ExcelExportService', () => {
         mockCollection = [{ id: 3, userId: undefined, firstName: '', lastName: 'Cash', position: 'SALES_REP', order: 3 },];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
@@ -369,7 +364,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, dataViewStub);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pluginEaSpy).toHaveBeenNthCalledWith(2, `onAfterExportToExcel`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
         expect(spyDownload).toHaveBeenCalledWith({
           ...optionExpectation, blob: new Blob(), data: [
@@ -390,7 +385,7 @@ describe('ExcelExportService', () => {
         mockCollection = [{ id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 1 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
@@ -399,7 +394,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, dataViewStub);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pluginEaSpy).toHaveBeenNthCalledWith(2, `onAfterExportToExcel`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
         expect(spyDownload).toHaveBeenCalledWith({
           ...optionExpectation, blob: new Blob(), data: [
@@ -420,7 +415,7 @@ describe('ExcelExportService', () => {
         mockCollection = [{ id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 1 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
@@ -429,7 +424,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, dataViewStub);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pluginEaSpy).toHaveBeenNthCalledWith(2, `onAfterExportToExcel`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
         expect(spyDownload).toHaveBeenCalledWith({
           ...optionExpectation, blob: new Blob(), data: [
@@ -470,7 +465,7 @@ describe('ExcelExportService', () => {
         mockCollection = [{ id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 1 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
@@ -479,7 +474,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, dataViewStub);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pluginEaSpy).toHaveBeenNthCalledWith(2, `onAfterExportToExcel`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
         expect(spyDownload).toHaveBeenCalledWith({
           ...optionExpectation, blob: new Blob(), data: [
@@ -526,7 +521,7 @@ describe('ExcelExportService', () => {
         ];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]).mockReturnValueOnce(mockCollection[1]);
-        const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
@@ -535,7 +530,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, dataViewStub);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pluginEaSpy).toHaveBeenNthCalledWith(2, `onAfterExportToExcel`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
         expect(spyDownload).toHaveBeenCalledWith({
           ...optionExpectation, blob: new Blob(), data: [
@@ -573,7 +568,7 @@ describe('ExcelExportService', () => {
         mockCollection = [{ id: 0, user: { firstName: 'John', lastName: 'Z' }, position: 'SALES_REP', order: 10 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
@@ -582,7 +577,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, dataViewStub);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pluginEaSpy).toHaveBeenNthCalledWith(2, `onAfterExportToExcel`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
         expect(spyDownload).toHaveBeenCalledWith({
           ...optionExpectation, blob: new Blob(), data: [
@@ -620,7 +615,7 @@ describe('ExcelExportService', () => {
         mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
@@ -629,7 +624,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, dataViewStub);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pluginEaSpy).toHaveBeenNthCalledWith(2, `onAfterExportToExcel`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
         expect(spyDownload).toHaveBeenCalledWith({
           ...optionExpectation, blob: new Blob(), data: [
@@ -711,7 +706,7 @@ describe('ExcelExportService', () => {
       });
 
       it(`should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
-        const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
@@ -720,7 +715,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, dataViewStub);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pluginEaSpy).toHaveBeenNthCalledWith(2, `onAfterExportToExcel`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
         expect(spyDownload).toHaveBeenCalledWith({
           ...optionExpectation, blob: new Blob(), data: [
@@ -805,7 +800,7 @@ describe('ExcelExportService', () => {
       });
 
       it(`should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
-        const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
@@ -814,7 +809,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, dataViewStub);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pluginEaSpy).toHaveBeenNthCalledWith(2, `onAfterExportToExcel`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
         expect(spyDownload).toHaveBeenCalledWith({
           ...optionExpectation, blob: new Blob(), data: [
@@ -945,7 +940,7 @@ describe('ExcelExportService', () => {
       });
 
       it(`should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
-        const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
@@ -954,7 +949,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, dataViewStub);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pluginEaSpy).toHaveBeenNthCalledWith(2, `onAfterExportToExcel`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
         expect(spyDownload).toHaveBeenCalledWith({
           ...optionExpectation, blob: new Blob(), data: [
@@ -982,7 +977,7 @@ describe('ExcelExportService', () => {
       and field should be exported as metadata when "exportWithFormatter" is false and the field type is number`, async () => {
         mockColumns[5].exportWithFormatter = false; // "order" field that is of type number will be exported as a number cell format metadata
         mockGridOptions.excelExportOptions.addGroupIndentation = false;
-        const pluginEaSpy = jest.spyOn(pubSubService, 'publish');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
@@ -991,7 +986,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, dataViewStub);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pluginEaSpy).toHaveBeenNthCalledWith(2, `onAfterExportToExcel`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
         expect(spyDownload).toHaveBeenCalledWith({
           ...optionExpectation, blob: new Blob(), data: [
@@ -1275,7 +1270,7 @@ describe('ExcelExportService', () => {
   describe('without I18N Service', () => {
     beforeEach(() => {
       translateService = null;
-      service = new ExcelExportService(pubSubService, translateService);
+      service = new ExcelExportService(pubSubServiceStub, translateService);
     });
 
     it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {
