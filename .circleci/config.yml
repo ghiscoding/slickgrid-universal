@@ -16,7 +16,7 @@ jobs:
       - run:
           name: TypeScript Build (tsc)
           command: |
-            yarn run build
+            yarn run prebuild && build
       - run:
           name: Run Jest tests with JUnit as reporter
           command: ./node_modules/.bin/jest --config test/jest.config.js --ci --runInBand --collectCoverage=true --reporters=default --reporters=jest-junit
