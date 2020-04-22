@@ -4,8 +4,8 @@
   "compilerOptions": {
     "baseUrl": "./",
     "rootDir": "src",
-    "declarationDir": "dist/es2015",
-    "outDir": "dist/es2015",
+    "declarationDir": "dist/commonjs",
+    "outDir": "dist/commonjs",
     "target": "es2015",
     "module": "esnext",
     "sourceMap": true,
