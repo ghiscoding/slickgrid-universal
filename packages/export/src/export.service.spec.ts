@@ -76,8 +76,8 @@ describe('ExportService', () => {
       // @ts-ignore
       navigator.__defineGetter__('appName', () => 'Netscape');
       navigator.msSaveOrOpenBlob = undefined;
-      mockCsvBlob = new Blob(['', ''], { type: `text/csv;charset=utf-8;` });
-      mockTxtBlob = new Blob(['\uFEFF', ''], { type: `text/plain;charset=utf-8;` });
+      mockCsvBlob = new Blob(['', ''], { type: `text/csv` });
+      mockTxtBlob = new Blob(['\uFEFF', ''], { type: `text/plain` });
 
       mockExportCsvOptions = {
         delimiter: DelimiterType.comma,
@@ -109,7 +109,7 @@ describe('ExportService', () => {
       const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
       const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
-      const optionExpectation = { filename: 'export.csv', format: 'csv', useUtf8WithBom: false };
+      const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
       const contentExpectation = '';
 
       service.init(gridStub, dataViewStub);
@@ -169,7 +169,7 @@ describe('ExportService', () => {
       });
 
       it('should call "URL.createObjectURL" with a Blob and CSV file when browser is not IE11 (basically any other browser) when exporting as CSV', (done) => {
-        const optionExpectation = { filename: 'export.csv', format: 'csv', useUtf8WithBom: false };
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
 
@@ -255,7 +255,7 @@ describe('ExportService', () => {
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
-        const optionExpectation = { filename: 'export.csv', format: 'csv', useUtf8WithBom: false };
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
         const contentExpectation =
           `"User Id","FirstName","LastName","Position","Order"
           ="1E06","John","Z","SALES_REP","<b>10</b>"`;
@@ -280,7 +280,7 @@ describe('ExportService', () => {
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
-        const optionExpectation = { filename: 'export.csv', format: 'csv', useUtf8WithBom: false };
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
         const contentExpectation =
           `"User Id";;"FirstName";;"LastName";;"Position";;"Order"
               ="1E06";;"John";;"Z";;"SALES_REP";;"<b>10</b>"`;
@@ -305,7 +305,7 @@ describe('ExportService', () => {
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
-        const optionExpectation = { filename: 'export.csv', format: 'csv', useUtf8WithBom: false };
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
         const contentExpectation =
           `"User Id","FirstName","LastName","Position","Order"
           ="1E06","John","Z","SALES_REP","<b>10</b>"`;
@@ -329,7 +329,7 @@ describe('ExportService', () => {
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
-        const optionExpectation = { filename: 'export.csv', format: 'csv', useUtf8WithBom: false };
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
         const contentExpectation =
           `"User Id","FirstName","LastName","Position","Order"
           ="2B02","Jane","DOE","FINANCE_MANAGER","<b>1</b>"`;
@@ -353,7 +353,7 @@ describe('ExportService', () => {
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
-        const optionExpectation = { filename: 'export.csv', format: 'csv', useUtf8WithBom: false };
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
         const contentExpectation =
           `"User Id","FirstName","LastName","Position","Order"
           ="3C2","Ava Luna","","HUMAN_RESOURCES","<b>3</b>"`;
@@ -377,7 +377,7 @@ describe('ExportService', () => {
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
-        const optionExpectation = { filename: 'export.csv', format: 'csv', useUtf8WithBom: false };
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
         const contentExpectation =
           `"User Id","FirstName","LastName","Position","Order"
           ="","Ava","LUNA","HUMAN_RESOURCES","<b>3</b>"`;
@@ -401,7 +401,7 @@ describe('ExportService', () => {
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
-        const optionExpectation = { filename: 'export.csv', format: 'csv', useUtf8WithBom: false };
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
         const contentExpectation =
           `"User Id","FirstName","LastName","Position","Order"
           ="3C2","Ava","LUNA","HUMAN_RESOURCES",""`;
@@ -425,7 +425,7 @@ describe('ExportService', () => {
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
-        const optionExpectation = { filename: 'export.csv', format: 'csv', useUtf8WithBom: false };
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
         const contentExpectation =
           `"User Id","FirstName","LastName","Position","Order"
           ="","","CASH","SALES_REP","<b>3</b>"`;
@@ -450,7 +450,7 @@ describe('ExportService', () => {
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
-        const optionExpectation = { filename: 'export.csv', format: 'csv', useUtf8WithBom: false };
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
         const contentExpectation =
           `"User Id","FirstName","LastName","Position","Order"
           ="2B02","Jane","DOE","FINANCE_MANAGER","1"`;
@@ -476,7 +476,7 @@ describe('ExportService', () => {
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
-        const optionExpectation = { filename: 'export.csv', format: 'csv', useUtf8WithBom: false };
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
         const contentExpectation =
           `"User Id","FirstName","LastName","Position","Order"
           ="2B02","Jane","DOE","FINANCE_MANAGER","<b>1</b>"`;
@@ -515,7 +515,7 @@ describe('ExportService', () => {
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
-        const optionExpectation = { filename: 'export.csv', format: 'csv', useUtf8WithBom: false };
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
         const contentExpectation =
           `"First Name","Last Name","Position"
               "John","Z","SALES_REP"`;
@@ -564,7 +564,7 @@ describe('ExportService', () => {
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
-        const optionExpectation = { filename: 'export.csv', format: 'csv', useUtf8WithBom: false };
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
         const contentExpectation =
           `"User Id","First Name","Last Name","Position","Order"
           ="1E06","John","Z","Sales Rep.","<b>10</b>"`;
@@ -649,7 +649,7 @@ describe('ExportService', () => {
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
-        const optionExpectation = { filename: 'export.csv', format: 'csv', useUtf8WithBom: false };
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
         const contentExpectation =
           `"Group By","User Id","FirstName","LastName","Position","Order"
           "Order: 20 (2 items)"
@@ -673,7 +673,7 @@ describe('ExportService', () => {
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
-        const optionExpectation = { filename: 'export.txt', format: 'txt', useUtf8WithBom: true };
+        const optionExpectation = { filename: 'export.txt', format: 'txt', mimeType: 'text/plain', useUtf8WithBom: true };
         const contentExpectation =
           `Group By;User Id;FirstName;LastName;Position;Order
           Order: 20 (2 items)
@@ -761,7 +761,7 @@ describe('ExportService', () => {
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
-        const optionExpectation = { filename: 'export.csv', format: 'csv', useUtf8WithBom: false };
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
         const contentExpectation =
           `"Grouped By","User Id","First Name","Last Name","Position","Order"
           "Order: 20 (2 items)"
@@ -785,7 +785,7 @@ describe('ExportService', () => {
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
-        const optionExpectation = { filename: 'export.txt', format: 'txt', useUtf8WithBom: true };
+        const optionExpectation = { filename: 'export.txt', format: 'txt', mimeType: 'text/plain', useUtf8WithBom: true };
         const contentExpectation =
           `Grouped By;User Id;First Name;Last Name;Position;Order
           Order: 20 (2 items)
@@ -911,7 +911,7 @@ describe('ExportService', () => {
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
-        const optionExpectation = { filename: 'export.csv', format: 'csv', useUtf8WithBom: false };
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
         const contentExpectation =
           `"Grouped By","User Id","First Name","Last Name","Position","Order"
           "Order: 20 (2 items)"
@@ -938,7 +938,7 @@ describe('ExportService', () => {
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
-        const optionExpectation = { filename: 'export.txt', format: 'txt', useUtf8WithBom: true };
+        const optionExpectation = { filename: 'export.txt', format: 'txt', mimeType: 'text/plain', useUtf8WithBom: true };
         const contentExpectation =
           `Grouped By;User Id;First Name;Last Name;Position;Order
           Order: 20 (2 items)

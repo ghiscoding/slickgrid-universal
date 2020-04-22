@@ -1,5 +1,7 @@
-import Flatpickr from 'flatpickr';
+import * as _flatpickr from 'flatpickr';
 import { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
+import { FlatpickrFn } from 'flatpickr/dist/types/instance';
+const flatpickr: FlatpickrFn = _flatpickr as any; // patch for rollup
 
 import {
   FieldType,
@@ -21,7 +23,6 @@ import { TranslaterService } from '../services/translater.service';
 
 // use Flatpickr from import or 'require', whichever works first
 declare function require(name: string): any;
-require('flatpickr');
 
 // using external non-typed js libraries
 declare const $: any;
@@ -218,7 +219,7 @@ export class CompoundDateFilter implements Filter {
       placeholder = this.columnFilter.placeholder;
     }
     const $filterInputElm: any = $(`<div class="flatpickr"><input type="text" class="form-control" data-input placeholder="${placeholder}"></div>`);
-    this.flatInstance = ($filterInputElm[0] && typeof $filterInputElm[0].flatpickr === 'function') ? $filterInputElm[0].flatpickr(this._flatpickrOptions) : Flatpickr($filterInputElm, this._flatpickrOptions as unknown as Partial<FlatpickrBaseOptions>);
+    this.flatInstance = (flatpickr && $filterInputElm[0] && typeof $filterInputElm[0].flatpickr === 'function') ? $filterInputElm[0].flatpickr(this._flatpickrOptions) : flatpickr($filterInputElm, this._flatpickrOptions as unknown as Partial<FlatpickrBaseOptions>);
     return $filterInputElm;
   }
 

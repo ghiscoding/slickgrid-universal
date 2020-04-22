@@ -23,6 +23,7 @@
     "delete:dist": "cross-env rimraf dist",
     "delete:zip": "cross-env rimraf dist-bundle-zip",
     "webpack:prod": "webpack --env.production",
+    "zip:dist:dev": "cross-env node compress.js --output-filename=slickgrid-vanilla-bundle-DEV --output-folder=\"dist-grid-bundle-zip/\"",
     "zip:dist": "cross-env node compress.js --output-filename=slickgrid-vanilla-bundle --output-folder=\"dist-grid-bundle-zip/\""
   },
   "author": "Ghislain B.",

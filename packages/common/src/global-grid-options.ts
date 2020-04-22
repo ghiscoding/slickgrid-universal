@@ -138,7 +138,7 @@ export const GlobalGridOptions: GridOption = {
     iconClearAllFiltersCommand: 'fa fa-filter text-danger mdi mdi-filter-remove-outline',
     iconClearAllSortingCommand: 'fa fa-unsorted mdi mdi-swap-vertical text-danger',
     iconExportCsvCommand: 'fa fa-download mdi mdi-download',
-    iconExportExcelCommand: 'fa fa-file-excel-o text-success has-text-success',
+    iconExportExcelCommand: 'fa fa-file-excel-o mdi mdi-file-excel-outline text-success has-text-success',
     iconExportTextDelimitedCommand: 'fa fa-download mdi mdi-download',
     iconRefreshDatasetCommand: 'fa fa-refresh mdi mdi-sync',
     iconToggleFilterCommand: 'fa fa-random mdi mdi-flip-vertical',

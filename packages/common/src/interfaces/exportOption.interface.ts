@@ -23,6 +23,9 @@ export interface ExportOption {
   /** The default text to display in 1st column of the File Export, which will identify that the current row is a Grouping Aggregator */
   groupingAggregatorRowText?: string;
 
+  /** Defaults to "text/plain", mime type to use when exporting the output file. */
+  mimeType?: string;
+
   /** Defaults to false, which leads to Sanitizing all data (striping out any HTML tags) when being evaluated on export. */
   sanitizeDataExport?: boolean;
 

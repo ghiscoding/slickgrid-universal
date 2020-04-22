@@ -1,6 +1,8 @@
-import Flatpickr from 'flatpickr';
-import { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
+import * as _flatpickr from 'flatpickr';
 import * as moment_ from 'moment-mini';
+import { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
+import { FlatpickrFn } from 'flatpickr/dist/types/instance';
+const flatpickr: FlatpickrFn = _flatpickr as any; // patch for rollup
 const moment = moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 import { Constants } from './../constants';
@@ -22,7 +24,6 @@ import { TranslaterService } from '../services/translater.service';
 declare const $: any;
 
 declare function require(name: string): any;
-require('flatpickr');
 
 /*
  * An example of a date picker editor using Flatpickr
@@ -121,7 +122,7 @@ export class DateEditor implements Editor {
 
       this._$input = $(`<input type="text" data-defaultDate="${this.defaultDate}" class="${inputCssClasses.replace(/\./g, ' ')}" placeholder="${placeholder}" title="${title}" />`);
       this._$input.appendTo(this.args.container);
-      this.flatInstance = (this._$input[0] && typeof this._$input[0].flatpickr === 'function') ? this._$input[0].flatpickr(pickerMergedOptions) : Flatpickr(this._$input, pickerMergedOptions as unknown as Partial<FlatpickrBaseOptions>);
+      this.flatInstance = (this._$input[0] && typeof this._$input[0].flatpickr === 'function') ? this._$input[0].flatpickr(pickerMergedOptions) : flatpickr(this._$input, pickerMergedOptions as unknown as Partial<FlatpickrBaseOptions>);
 
       // when we're using an alternate input to display data, we'll consider this input as the one to do the focus later on
       // else just use the top one

@@ -91,6 +91,7 @@ export class ExportService {
           const downloadOptions = {
             filename: `${this._exportOptions.filename}.${this._fileFormat}`,
             format: this._fileFormat || FileType.csv,
+            mimeType: this._exportOptions.mimeType || 'text/plain',
             useUtf8WithBom: (this._exportOptions && this._exportOptions.hasOwnProperty('useUtf8WithBom')) ? this._exportOptions.useUtf8WithBom : true
           };
 
@@ -111,14 +112,11 @@ export class ExportService {
    * All other browsers will use plain javascript on client side to produce a file download.
    * @param options
    */
-  startDownloadFile(options: { filename: string, content: string, format: FileType | string, useUtf8WithBom?: boolean }): void {
+  startDownloadFile(options: { filename: string, content: string, format: FileType | string, mimeType: string, useUtf8WithBom?: boolean }): void {
     // IE(6-10) don't support javascript download and our service doesn't support either so throw an error, we have to make a round trip to the Web Server for exporting
     if (navigator.appName === 'Microsoft Internet Explorer') {
       throw new Error('Microsoft Internet Explorer 6 to 10 do not support javascript export to CSV. Please upgrade your browser.');
     }
-
-    // set the correct MIME type
-    const mimeType = (options.format === FileType.csv) ? 'text/csv' : 'text/plain';
 
     // make sure no html entities exist in the data
     const csvContent = htmlEntityDecode(options.content);
@@ -136,7 +134,7 @@ export class ExportService {
 
     // create a Blob object for the download
     const blob = new Blob([options.useUtf8WithBom ? '\uFEFF' : '', outputData], {
-      type: `${mimeType};charset=utf-8;`
+      type: options.mimeType
     });
 
     // when using IE/Edge, then use different download call

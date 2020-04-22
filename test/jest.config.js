@@ -43,7 +43,7 @@ module.exports = {
     '^.+\\.ts$': 'ts-jest',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(@slickgrid-universal/common)/)',
+    'node_modules/(?!(@slickgrid-universal)/)',
     '<rootDir>/node_modules/slickgrid/'
   ],
   testMatch: [

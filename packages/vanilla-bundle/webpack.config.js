@@ -17,20 +17,21 @@ module.exports = ({ production } = {}) => ({
   stats: {
     warnings: false
   },
-  devtool: production ? 'nosources-source-map' : 'cheap-module-eval-source-map',
+  // devtool: production ? 'nosources-source-map' : 'cheap-source-map',
+  devtool: 'cheap-source-map',
   output: {
-    path: `${outDir}/bundle`,
+    path: production ? `${outDir}/bundle` : `${outDir}/bundle-dev`, // includes sourcemap
     publicPath: baseUrl,
     filename: 'slickgrid-vanilla-bundle.js',
     sourceMapFilename: 'slickgrid-vanilla-bundle.map',
     libraryTarget: 'umd',
-    library: 'MyLib',
+    library: 'Slickgrid-Universal',
     umdNamedDefine: true
   },
   resolve: {
     extensions: ['.ts', '.js'],
     modules: [srcDir, 'node_modules'],
-    mainFields: production ? ['module', 'main'] : ['browser', 'module'],
+    mainFields: production ? ['module', 'main'] : ['browser', 'module', 'main'],
     alias: {
       moment$: 'moment/moment.js'
     }
