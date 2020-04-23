@@ -39,8 +39,8 @@ and that what is used to the test the UI portion. The Vanilla bundle is also use
 The main packages structure is the following
 - `@slickgrid-universal/common`: commonly used Formatters/Editors/Filters/Services/...
   - this can then be used by any Framework (Angular, Aurelia, VanillaJS, ...)
-- `@slickgrid-universal/excel-export`: export to Excel Service
-- `@slickgrid-universal/export`: export to text file Service
+- `@slickgrid-universal/excel-export`: export to Excel (xls/xlsx)
+- `@slickgrid-universal/file-export`: export to text file (csv/txt)
 - `@slickgrid-universal/vanilla-bundle`: a vanilla TypeScript/JavaScript implementation (framework-less)
   - |
 - Standalone Package

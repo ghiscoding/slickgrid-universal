@@ -48,7 +48,7 @@ import {
   convertParentChildArrayToHierarchicalView,
 } from '@slickgrid-universal/common';
 
-import { ExportService } from './services/export.service';
+import { FileExportService } from './services/fileExport.service';
 import { ExcelExportService } from './services/excelExport.service';
 import { TranslateService } from './services/translate.service';
 import { EventPubSubService } from './services/eventPubSub.service';
@@ -89,7 +89,7 @@ export class VanillaGridBundle {
   checkboxExtension: CheckboxSelectorExtension;
   draggableGroupingExtension: DraggableGroupingExtension;
   excelExportService: ExcelExportService;
-  exportService: ExportService;
+  exportService: FileExportService;
   gridMenuExtension: GridMenuExtension;
   groupItemMetaProviderExtension: GroupItemMetaProviderExtension;
   headerButtonExtension: HeaderButtonExtension;
@@ -164,7 +164,7 @@ export class VanillaGridBundle {
     const slickgridConfig = new SlickgridConfig();
     this.sharedService = new SharedService();
     this.translateService = new TranslateService();
-    this.exportService = new ExportService(this._eventPubSubService, this.translateService);
+    this.exportService = new FileExportService(this._eventPubSubService, this.translateService);
     this.excelExportService = new ExcelExportService(this._eventPubSubService, this.translateService);
     this.collectionService = new CollectionService(this.translateService);
     this.footerService = new FooterService(this.sharedService, this.translateService);

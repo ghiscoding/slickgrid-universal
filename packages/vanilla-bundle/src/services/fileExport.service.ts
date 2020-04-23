@@ -1,9 +1,9 @@
 import { ExportOption } from '@slickgrid-universal/common';
-import { ExportService as UniversalExportService } from '@slickgrid-universal/export';
+import { FileExportService as UniversalExportService } from '@slickgrid-universal/file-export';
 import { EventPubSubService } from './eventPubSub.service';
 import { TranslateService } from './translate.service';
 
-export class ExportService extends UniversalExportService {
+export class FileExportService extends UniversalExportService {
   constructor(eventPubSubService: EventPubSubService, translateService: TranslateService) {
     super(eventPubSubService, translateService);
   }

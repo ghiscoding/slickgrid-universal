@@ -14,6 +14,7 @@
     "dev": "webpack --env.development",
     "dev:watch": "run-p build:watch",
     "build": "cross-env tsc --build",
+    "postbuild": "npm-run-all bundle:commonjs",
     "build:watch": "cross-env tsc --incremental --watch",
     "bundle:commonjs": "tsc --project tsconfig.build.json --outDir dist/commonjs --module commonjs",
     "bundle:es2020": "cross-env tsc --project tsconfig.build.json --outDir dist/es2020 --module es2015 --target es2020",
@@ -42,7 +43,7 @@
   "dependencies": {
     "@slickgrid-universal/common": "^0.0.2",
     "@slickgrid-universal/excel-export": "^0.0.2",
-    "@slickgrid-universal/export": "^0.0.2"
+    "@slickgrid-universal/file-export": "^0.0.2"
   },
   "devDependencies": {
     "@types/webpack": "^4.41.12",

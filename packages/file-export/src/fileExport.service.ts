@@ -20,7 +20,7 @@ import {
   TranslaterService,
 } from '@slickgrid-universal/common';
 
-export class ExportService {
+export class FileExportService {
   private _delimiter = ',';
   private _exportQuoteWrapper = '';
   private _exportOptions: ExportOption;

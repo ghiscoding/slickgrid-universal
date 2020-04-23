@@ -1,5 +1,5 @@
 ## Excel Export Service
-#### @slickgrid-universal/export
+#### @slickgrid-universal/file-export
 
 Simple Export to Excel Service that allows to exporting as ".xls" or ".xlsx".
 

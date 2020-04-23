@@ -1,5 +1,5 @@
 ## Export Service (text file) 
-#### @slickgrid-universal/export
+#### @slickgrid-universal/file-export
 
 Simple Export to File Service that allows to export as CSV or Text, user can also choose which separator to use (comma, colon, semicolon, ...). 
 

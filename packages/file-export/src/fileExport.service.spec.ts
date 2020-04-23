@@ -1,4 +1,4 @@
-import { ExportService } from './export.service';
+import { FileExportService } from './fileExport.service';
 import {
   Column,
   DelimiterType,
@@ -61,7 +61,7 @@ const gridStub = {
 };
 
 describe('ExportService', () => {
-  let service: ExportService;
+  let service: FileExportService;
   let translateService: TranslateServiceStub;
   let mockColumns: Column[];
   let mockExportCsvOptions;
@@ -92,7 +92,7 @@ describe('ExportService', () => {
         format: FileType.txt
       };
 
-      service = new ExportService(pubSubServiceStub, translateService);
+      service = new FileExportService(pubSubServiceStub, translateService);
     });
 
     afterEach(() => {
@@ -965,7 +965,7 @@ describe('ExportService', () => {
   describe('without I18N Service', () => {
     beforeEach(() => {
       translateService = null;
-      service = new ExportService(pubSubServiceStub, translateService);
+      service = new FileExportService(pubSubServiceStub, translateService);
     });
 
     it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {
