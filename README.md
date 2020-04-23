@@ -147,8 +147,7 @@ npm run test:watch
 - [x] Bundle Creation (vanilla bundle)
   - [ ] Eventually add Unit Tests as a PreBundle task
 - [ ] Remove any Deprecated code
-  - [ ] Create a Migration Guide 
+  - [ ] Create a [Migration Guide](https://github.com/ghiscoding/slickgrid-universal/wiki/Migration-for-Angular-Aurelia-Slickgrid) for Angular/Aurelia
 - [ ] Add Typings for Grid & DataView objects
 - [x] Add simple input bindings in the demo (e.g. pinned rows input)
-- [ ] Can we change how SlickGrid Events are called and use same signature as SlickGrid instead of CustomEvent EventData signature?
 - [ ] Cannot copy text from cell since it's not selectable

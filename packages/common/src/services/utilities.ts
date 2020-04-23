@@ -145,7 +145,7 @@ export function deepCopy(obj: any) {
     // Loop through each item in the original
     // Recursively copy it's value and add to the clone
     for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
         clone[key] = deepCopy(obj[key]);
       }
     }

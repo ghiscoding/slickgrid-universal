@@ -1,4 +1,5 @@
 import { Column, Formatter, GridOption } from './../interfaces/index';
+import { getDescendantProperty } from '../services/utilities';
 
 export const treeFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: any) => {
   const dataView = grid && grid.getData();
@@ -6,8 +7,17 @@ export const treeFormatter: Formatter = (row: number, cell: number, value: any, 
   const treeDataOptions = gridOptions?.treeDataOptions;
   const treeLevelPropName = treeDataOptions?.levelPropName || '__treeLevel';
   const indentMarginLeft = treeDataOptions?.indentMarginLeft || 15;
+  let outputValue = value;
 
-  if (value === null || value === undefined || dataContext === undefined) {
+  if (typeof columnDef.queryFieldNameGetterFn === 'function') {
+    const fieldName = columnDef.queryFieldNameGetterFn(dataContext);
+    if (fieldName && fieldName.indexOf('.') >= 0) {
+      outputValue = getDescendantProperty(dataContext, fieldName);
+    } else {
+      outputValue = dataContext.hasOwnProperty(fieldName) ? dataContext[fieldName] : value;
+    }
+  }
+  if (outputValue === null || outputValue === undefined || dataContext === undefined) {
     return '';
   }
 
@@ -16,7 +26,7 @@ export const treeFormatter: Formatter = (row: number, cell: number, value: any, 
   }
 
   if (dataView && dataView.getIdxById && dataView.getItemByIdx) {
-    value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    outputValue = outputValue.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const identifierPropName = dataView.getIdPropertyName() || 'id';
     const spacer = `<span style="display:inline-block; width:${indentMarginLeft * dataContext[treeLevelPropName]}px;"></span>`;
     const idx = dataView.getIdxById(dataContext[identifierPropName]);
@@ -24,12 +34,12 @@ export const treeFormatter: Formatter = (row: number, cell: number, value: any, 
 
     if (nextItemRow && nextItemRow[treeLevelPropName] > dataContext[treeLevelPropName]) {
       if (dataContext.__collapsed) {
-        return `${spacer}<span class="slick-group-toggle collapsed"></span>&nbsp;${value}`;
+        return `${spacer}<span class="slick-group-toggle collapsed"></span>&nbsp;${outputValue}`;
       } else {
-        return `${spacer}<span class="slick-group-toggle expanded"></span>&nbsp;${value}`;
+        return `${spacer}<span class="slick-group-toggle expanded"></span>&nbsp;${outputValue}`;
       }
     }
-    return `${spacer}<span class="slick-group-toggle"></span>&nbsp;${value}`;
+    return `${spacer}<span class="slick-group-toggle"></span>&nbsp;${outputValue}`;
   }
   return '';
 };

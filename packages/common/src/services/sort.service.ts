@@ -320,15 +320,25 @@ export class SortService {
     if (sortColumn && sortColumn.sortCol) {
       const columnDef = sortColumn.sortCol;
       const sortDirection = sortColumn.sortAsc ? SortDirectionNumber.asc : SortDirectionNumber.desc;
-      const sortField = querySortField || columnDef.queryFieldSorter || columnDef.queryField || columnDef.field;
+      let queryFieldName1 = querySortField || columnDef.queryFieldSorter || columnDef.queryField || columnDef.field;
+      let queryFieldName2 = queryFieldName1;
       const fieldType = columnDef.type || FieldType.string;
-      let value1 = dataRow1[sortField];
-      let value2 = dataRow2[sortField];
+
+      // if user provided a query field name getter callback, we need to get the name on each item independently
+      if (typeof columnDef.queryFieldNameGetterFn === 'function') {
+        queryFieldName1 = columnDef.queryFieldNameGetterFn(dataRow1);
+        queryFieldName2 = columnDef.queryFieldNameGetterFn(dataRow2);
+      }
+
+      let value1 = dataRow1[queryFieldName1];
+      let value2 = dataRow2[queryFieldName2];
 
       // when item is a complex object (dot "." notation), we need to filter the value contained in the object tree
-      if (sortField && sortField.indexOf('.') >= 0) {
-        value1 = getDescendantProperty(dataRow1, sortField);
-        value2 = getDescendantProperty(dataRow2, sortField);
+      if (queryFieldName1 && queryFieldName1.indexOf('.') >= 0) {
+        value1 = getDescendantProperty(dataRow1, queryFieldName1);
+      }
+      if (queryFieldName2 && queryFieldName2.indexOf('.') >= 0) {
+        value2 = getDescendantProperty(dataRow2, queryFieldName2);
       }
 
       // user could provide his own custom Sorter

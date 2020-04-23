@@ -334,14 +334,17 @@ export class FilterService {
     // }
 
     const dataKey = columnDef.dataKey;
-    const fieldName = columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || '';
+    let queryFieldName = columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || '';
+    if (typeof columnDef.queryFieldNameGetterFn === 'function') {
+      queryFieldName = columnDef.queryFieldNameGetterFn(item);
+    }
     const fieldType = columnDef.type || FieldType.string;
     const filterSearchType = (columnDef.filterSearchType) ? columnDef.filterSearchType : null;
-    let cellValue = item[fieldName];
+    let cellValue = item[queryFieldName];
 
     // when item is a complex object (dot "." notation), we need to filter the value contained in the object tree
-    if (fieldName && fieldName.indexOf('.') >= 0) {
-      cellValue = getDescendantProperty(item, fieldName);
+    if (queryFieldName && queryFieldName.indexOf('.') >= 0) {
+      cellValue = getDescendantProperty(item, queryFieldName);
     }
 
     // if we find searchTerms use them but make a deep copy so that we don't affect original array
@@ -442,7 +445,7 @@ export class FilterService {
         const columnFilter = columnFilters[columnId] as ColumnFilter;
         const conditionOptionResult = this.getFilterConditionOptionsOrBoolean(item, columnFilter, columnId, this._grid, this._dataView);
 
-        if (item.hasOwnProperty(columnId)) {
+        if (conditionOptionResult) {
           const conditionResult = (typeof conditionOptionResult === 'boolean') ? conditionOptionResult : FilterConditions.executeMappedCondition(conditionOptionResult as FilterConditionOption);
           if (conditionResult) {
             // don't return true as need to check other keys in columnFilters
