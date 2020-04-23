@@ -8,9 +8,15 @@
       "problemMatcher": []
     },
     {
-      "label": "Run Jest Unit Tests",
+      "label": "Run Jest Unit Tests (watch)",
       "type": "shell",
-      "command": "npm run test:common:watch",
+      "command": "npm run test:watch",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Jest Test Coverage",
+      "type": "shell",
+      "command": "npm run test",
       "problemMatcher": []
     },
     {

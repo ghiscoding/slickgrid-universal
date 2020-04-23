@@ -6,6 +6,7 @@ import {
   convertParentChildArrayToHierarchicalView,
   convertHierarchicalViewToParentChildArray,
   decimalFormatted,
+  deepCopy,
   findItemInHierarchicalStructure,
   findOrDefault,
   formatNumber,
@@ -328,6 +329,39 @@ describe('Service/Utilies', () => {
       const input = 1234567890.44566;
       const output = decimalFormatted(input, 2, 4, '.', ',');
       expect(output).toBe('1,234,567,890.4457');
+    });
+  });
+
+  describe('deepCopy method', () => {
+    it('should return original input when it is not an object neither an array', () => {
+      const msg = 'hello world';
+      const age = 20;
+
+      expect(deepCopy(msg)).toBe(msg);
+      expect(deepCopy(age)).toBe(age);
+    });
+
+    it('should do a deep copy of an object with properties having objects and changing object property should not affect original object', () => {
+      const obj1 = { firstName: 'John', lastName: 'Doe', address: { zip: 123456 } };
+      const obj2 = deepCopy(obj1);
+      obj2.address.zip = 789123;
+
+      expect(obj1.address.zip).toBe(123456);
+      expect(obj2.address.zip).toBe(789123);
+    });
+
+    it('should do a deep copy of an array of objects with properties having objects and changing object property should not affect original object', () => {
+      const obj1 = { firstName: 'John', lastName: 'Doe', address: { zip: 123456 } };
+      const obj2 = { firstName: 'Jane', lastName: 'Doe', address: { zip: 222222 } };
+      const arr1 = [obj1, obj2];
+      const arr2 = deepCopy(arr1);
+      arr2[0].address.zip = 888888;
+      arr2[1].address.zip = 999999;
+
+      expect(arr1[0].address.zip).toBe(123456);
+      expect(arr1[1].address.zip).toBe(222222);
+      expect(arr2[0].address.zip).toBe(888888);
+      expect(arr2[1].address.zip).toBe(999999);
     });
   });
 

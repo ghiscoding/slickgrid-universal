@@ -25,7 +25,7 @@
       "type": "node",
       "request": "launch",
       "name": "Jest Current Spec File",
-      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "program": "${workspaceFolder}/npx jest",
       "args": [
         "--runInBand",
         "${fileBasename}",

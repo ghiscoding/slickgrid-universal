@@ -127,14 +127,14 @@ export function convertHierarchicalViewToParentChildArrayByReference(hierarchica
   }
 }
 
-/*!
+/**
  * Create an immutable clone of an array or object
  * (c) 2019 Chris Ferdinandi, MIT License, https://gomakethings.com
  * @param  {Array|Object} obj The array or object to copy
  * @return {Array|Object}     The clone of the array or object
  */
 export function deepCopy(obj: any) {
-	/**
+  /**
 	 * Create an immutable copy of an object
 	 * @return {Object}
 	 */
@@ -144,7 +144,7 @@ export function deepCopy(obj: any) {
 
     // Loop through each item in the original
     // Recursively copy it's value and add to the clone
-    for (let key in obj) {
+    for (const key in obj) {
       if (obj.hasOwnProperty(key)) {
         clone[key] = deepCopy(obj[key]);
       }
@@ -152,18 +152,15 @@ export function deepCopy(obj: any) {
     return clone;
   };
 
-	/**
+  /**
 	 * Create an immutable copy of an array
 	 * @return {Array}
 	 */
   const cloneArr = () => {
-    return obj.map((item: any) => {
-      return deepCopy(item);
-    });
+    return obj.map((item: any) => deepCopy(item));
   };
 
-  /* Inits */
-
+  // -- init --//
   // Get object type
   const type = Object.prototype.toString.call(obj).slice(8, -1).toLowerCase();
 
@@ -175,7 +172,6 @@ export function deepCopy(obj: any) {
   if (type === 'array') {
     return cloneArr();
   }
-
   // Otherwise, return it as-is
   return obj;
 }

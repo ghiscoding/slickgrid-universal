@@ -9,15 +9,15 @@
     "rebuild": "npm run clean && npm run build",
     "clean": "rimraf packages/*/dist dist",
     "dev:watch": "lerna run dev:watch --parallel",
-    "test": "lerna run test --stream",
-    "test:watch": "lerna run test:watch --stream",
     "test:common:watch": "cd packages/common && npm run test:watch",
     "test:excel-export:watch": "cd packages/excel-export && npm run test:watch",
     "test:export:watch": "cd packages/export && npm run test:watch",
     "diff": "lerna diff",
     "updated": "lerna updated",
     "clean:tsconfig-build-cache": "rimraf packages/*/dist/tsconfig.tsbuildinfo",
-    "new-version": "lerna version --conventional-commits --yes"
+    "new-version": "lerna version --conventional-commits --yes",
+    "test": "npx jest --runInBand --coverage --config ./test/jest.config.js",
+    "test:watch": "npx jest --watch --config ./test/jest.config.js"
   },
   "workspaces": [
     "packages/*"

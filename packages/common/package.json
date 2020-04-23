@@ -48,9 +48,7 @@
     "presass:watch:salesforce": "cross-env npm run sass-build-task:scss-compile:salesforce",
     "sass:watch:salesforce": "cross-env npm run sass-build-task:scss-compile:salesforce -- -watch",
     "sass:watch": "run-p sass:watch:bootstrap sass:watch:material sass:watch:salesforce sass:copy:watch",
-    "sass:copy:watch": "nodemon --ext scss --watch src/styles/*.scss --exec \"npm run sass:copy\"",
-    "test": "node_modules/.bin/jest --runInBand --coverage --config ../../test/jest.config.js",
-    "test:watch": "node_modules/.bin/jest --config ../../test/jest.config.js --watch"
+    "sass:copy:watch": "nodemon --ext scss --watch src/styles/*.scss --exec \"npm run sass:copy\""
   },
   "browserslist": [
     "last 2 version",
