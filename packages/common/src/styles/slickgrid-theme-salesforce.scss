@@ -92,6 +92,7 @@ $multiselect-icon-search:               "\F0349";
 $multiselect-unchecked-opacity:         0.8;
 $row-move-plugin-cursor:                grab;
 $row-move-plugin-icon:                  "\F0278";
+$editor-focus-box-shadow:               0 0 3px $primary-color;
 $slider-editor-height:                  26px;
 $row-selected-color:                    darken($cell-odd-background-color, 7%);
 $row-mouse-hover-color:                 rgba(128, 183, 231, 0.1);

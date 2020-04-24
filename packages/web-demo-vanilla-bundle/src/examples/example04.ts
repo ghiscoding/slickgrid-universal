@@ -160,8 +160,8 @@ export class Example4 {
           placeholder: '&#128269; search city',
 
           // We can use the autocomplete through 3 ways "collection", "collectionAsync" or with your own autocomplete options
-          // use your own autocomplete options, instead of $.ajax, use Aurelia HttpClient or FetchClient
-          // here we use $.ajax just because I'm not sure how to configure Aurelia HttpClient with JSONP and CORS
+          // use your own autocomplete options, instead of $.ajax, use HttpClient or FetchClient
+          // here we use $.ajax just because I'm not sure how to configure HttpClient with JSONP and CORS
           editorOptions: {
             minLength: 3,
             forceUserInput: true,
@@ -186,8 +186,8 @@ export class Example4 {
           // We can use the autocomplete through 3 ways "collection", "collectionAsync" or with your own autocomplete options
           // collectionAsync: this.httpFetch.fetch(URL_COUNTRIES_COLLECTION),
 
-          // OR use your own autocomplete options, instead of $.ajax, use Aurelia HttpClient or FetchClient
-          // here we use $.ajax just because I'm not sure how to configure Aurelia HttpClient with JSONP and CORS
+          // OR use your own autocomplete options, instead of $.ajax, use HttpClient or FetchClient
+          // here we use $.ajax just because I'm not sure how to configure HttpClient with JSONP and CORS
           filterOptions: {
             minLength: 3,
             source: (request, response) => {

@@ -17,7 +17,7 @@ const outDirProd = path.resolve(__dirname, '../../docs');
 const srcDir = path.resolve(__dirname, 'src');
 const nodeModulesDir = path.resolve(__dirname, 'node_modules');
 const platform = {
-  hmr: true,
+  hmr: false,
   open: true,
   port: 8088,
   host: 'localhost',

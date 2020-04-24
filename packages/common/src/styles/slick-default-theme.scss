@@ -92,6 +92,13 @@
            outline: 0;
            transform: translate(0, -2px);
          }
+
+         input.compound-editor-text {
+           width: calc(50% - 5px);
+           height: 100%;
+           outline: 0;
+           transform: translate(0, -2px);
+         }
        }
      }
 

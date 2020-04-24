@@ -1,5 +1,6 @@
 import { AutoCompleteEditor } from './autoCompleteEditor';
 import { CheckboxEditor } from './checkboxEditor';
+import { CompoundInputEditor } from './compoundInputEditor';
 import { DateEditor } from './dateEditor';
 import { FloatEditor } from './floatEditor';
 import { IntegerEditor } from './integerEditor';
@@ -15,6 +16,9 @@ export const Editors = {
 
   /** Checkbox Editor (uses native checkbox DOM element) */
   checkbox: CheckboxEditor,
+
+  /** Checkbox Editor (uses native checkbox DOM element) */
+  compoundText: CompoundInputEditor,
 
   /** Date Picker Editor (which uses 3rd party lib "flatpickr") */
   date: DateEditor,

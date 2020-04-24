@@ -389,6 +389,10 @@ $checkbox-selector-opacity:                 0.15 !default;
 $checkbox-selector-opacity-hover:           0.35 !default;
 
 /* Editors */
+$editor-focus-border-color:                 lighten($primary-color, 10%);
+$editor-focus-box-shadow:                   inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(lighten($primary-color, 3%), .6);
+$date-editor-focus-border-color:            $editor-focus-border-color;
+$date-editor-focus-box-shadow:              $editor-focus-box-shadow;
 $large-editor-background-color:             #ffffff !default;
 $large-editor-border:                       2px solid gray !default;
 $large-editor-text-padding:                 5px !default;
@@ -408,9 +412,13 @@ $text-editor-padding-bottom:                0 !default;
 $text-editor-padding-left:                  2px !default;
 $text-editor-padding-right:                 0 !default;
 $text-editor-padding-top:                   0 !default;
+$text-editor-focus-border-color:            $editor-focus-border-color;
+$text-editor-focus-box-shadow:              $editor-focus-box-shadow;
 $slider-editor-height:                      24px !default;
 $slider-editor-runnable-track-padding:      0 6px !default;
 $slider-editor-number-padding:              4px 6px !default;
+$slider-editor-focus-border-color:          $editor-focus-border-color;
+$slider-editor-focus-box-shadow:            $editor-focus-box-shadow;
 
 /* Compound Filters */
 $compound-filter-bgcolor:                   #e4eacf !default;

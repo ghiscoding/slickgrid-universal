@@ -99,6 +99,7 @@ export class SliderEditor implements Editor {
         });
       }
     }
+    this.focus();
   }
 
   cancel() {
@@ -111,7 +112,7 @@ export class SliderEditor implements Editor {
   }
 
   focus() {
-    this._$editorElm.focus();
+    this._$input.focus();
   }
 
   getValue(): string {
