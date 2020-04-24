@@ -18,10 +18,11 @@ describe('the Uppercase Formatter', () => {
 
   beforeEach(() => {
     dataset = [
-      { id: 0, firstName: 'John', lastName: 'Smith', email: 'john.smith@movie.com', parentId: null, indent: 0 },
-      { id: 1, firstName: 'Jane', lastName: 'Doe', email: 'jane.doe@movie.com', parentId: 0, indent: 1 },
-      { id: 2, firstName: 'Bob', lastName: 'Cane', email: 'bob.cane@movie.com', parentId: 1, indent: 2, __collapsed: true },
-      { id: 2, firstName: 'Barbara', lastName: 'Cane', email: 'barbara.cane@movie.com', parentId: null, indent: 0, __collapsed: true },
+      { id: 0, firstName: 'John', lastName: 'Smith', fullName: 'John Smith', email: 'john.smith@movie.com', address: { zip: 123456 }, parentId: null, indent: 0 },
+      { id: 1, firstName: 'Jane', lastName: 'Doe', fullName: 'Jane Doe', email: 'jane.doe@movie.com', address: { zip: 222222 }, parentId: 0, indent: 1 },
+      { id: 2, firstName: 'Bob', lastName: 'Cane', fullName: 'Bob Cane', email: 'bob.cane@movie.com', address: { zip: 333333 }, parentId: 1, indent: 2, __collapsed: true },
+      { id: 3, firstName: 'Barbara', lastName: 'Cane', fullName: 'Barbara Cane', email: 'barbara.cane@movie.com', address: { zip: 444444 }, parentId: null, indent: 0, __collapsed: true },
+      { id: 4, firstName: 'Anonymous', lastName: 'Doe', fullName: 'Anonymous < Doe', email: 'anonymous.doe@anom.com', address: { zip: 556666 }, parentId: null, indent: 0, __collapsed: true },
     ];
     mockGridOptions = {
       treeDataOptions: { levelPropName: 'indent' }
@@ -97,5 +98,35 @@ describe('the Uppercase Formatter', () => {
 
     const output = treeFormatter(1, 1, dataset[3]['firstName'], {} as Column, dataset[3], gridStub);
     expect(output).toBe(`<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle collapsed"></span>&nbsp;Barbara`);
+  });
+
+  it('should execute "queryFieldNameGetterFn" callback to get field name to use when it is defined', () => {
+    jest.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
+    jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(1);
+    jest.spyOn(dataViewStub, 'getItemByIdx').mockReturnValue(dataset[1]);
+
+    const mockColumn = { id: 'firstName', field: 'firstName', queryFieldNameGetterFn: (dataContext) => 'fullName' } as Column;
+    const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[3], gridStub);
+    expect(output).toBe(`<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle collapsed"></span>&nbsp;Barbara Cane`);
+  });
+
+  it('should execute "queryFieldNameGetterFn" callback to get field name and also apply html encoding when output value includes a character that should be encoded', () => {
+    jest.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
+    jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(2);
+    jest.spyOn(dataViewStub, 'getItemByIdx').mockReturnValue(dataset[2]);
+
+    const mockColumn = { id: 'firstName', field: 'firstName', queryFieldNameGetterFn: (dataContext) => 'fullName' } as Column;
+    const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[4], gridStub);
+    expect(output).toBe(`<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle collapsed"></span>&nbsp;Anonymous &lt; Doe`);
+  });
+
+  it('should execute "queryFieldNameGetterFn" callback to get field name, which has (.) dot notation reprensenting complex object', () => {
+    jest.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
+    jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(1);
+    jest.spyOn(dataViewStub, 'getItemByIdx').mockReturnValue(dataset[1]);
+
+    const mockColumn = { id: 'zip', field: 'zip', queryFieldNameGetterFn: (dataContext) => 'address.zip' } as Column;
+    const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[3], gridStub);
+    expect(output).toBe(`<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle collapsed"></span>&nbsp;444444`);
   });
 });

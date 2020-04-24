@@ -1,5 +1,5 @@
 import { Column, Formatter, GridOption } from './../interfaces/index';
-import { getDescendantProperty } from '../services/utilities';
+import { getDescendantProperty, htmlEncode } from '../services/utilities';
 
 export const treeFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: any) => {
   const dataView = grid && grid.getData();
@@ -26,7 +26,9 @@ export const treeFormatter: Formatter = (row: number, cell: number, value: any, 
   }
 
   if (dataView && dataView.getIdxById && dataView.getItemByIdx) {
-    outputValue = outputValue.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    if (typeof outputValue === 'string') {
+      outputValue = htmlEncode(outputValue);
+    }
     const identifierPropName = dataView.getIdPropertyName() || 'id';
     const spacer = `<span style="display:inline-block; width:${indentMarginLeft * dataContext[treeLevelPropName]}px;"></span>`;
     const idx = dataView.getIdxById(dataContext[identifierPropName]);
