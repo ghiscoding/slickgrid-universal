@@ -76,7 +76,7 @@ export class GridStateService {
     this.subscribeToAllGridChanges(grid);
   }
 
-  /** Dispose of all the SlickGrid & Aurelia subscriptions */
+  /** Dispose of all the SlickGrid & PubSub subscriptions */
   dispose() {
     this._currentColumns = [];
     this._columns = [];

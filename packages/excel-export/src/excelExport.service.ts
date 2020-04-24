@@ -71,7 +71,7 @@ export class ExcelExportService {
     this._locales = this._gridOptions && this._gridOptions.locales || Constants.locales;
 
     if (this._gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
-      throw new Error('[Aurelia-Slickgrid] requires "I18N" to be installed and configured when the grid option "enableTranslate" is enabled.');
+      throw new Error('[Slickgrid-Universal] requires "I18N" to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
   }
 
@@ -86,7 +86,7 @@ export class ExcelExportService {
    */
   exportToExcel(options: ExcelExportOption): Promise<boolean> {
     if (!this._grid || !this._dataView) {
-      throw new Error('[Aurelia-Slickgrid] it seems that the SlickGrid & DataView objects are not initialized did you forget to enable the grid option flag "enableExcelExport"?');
+      throw new Error('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects are not initialized did you forget to enable the grid option flag "enableExcelExport"?');
     }
 
     return new Promise((resolve, reject) => {

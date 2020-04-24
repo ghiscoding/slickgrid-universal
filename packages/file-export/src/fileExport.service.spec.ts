@@ -142,7 +142,7 @@ describe('ExportService', () => {
           service.init(null, null);
           service.exportToFile(mockExportTxtOptions);
         } catch (e) {
-          expect(e.toString()).toContain('[Aurelia-Slickgrid] it seems that the SlickGrid & DataView objects are not initialized did you forget to enable the grid option flag "enableExport"?');
+          expect(e.toString()).toContain('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects are not initialized did you forget to enable the grid option flag "enableExport"?');
           done();
         }
       });
@@ -972,7 +972,7 @@ describe('ExportService', () => {
       const gridOptionsMock = { enableTranslate: true, enableGridMenu: true, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' } } as GridOption;
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
-      expect(() => service.init(gridStub, dataViewStub)).toThrowError('[Aurelia-Slickgrid] requires "I18N" to be installed and configured');
+      expect(() => service.init(gridStub, dataViewStub)).toThrowError('[Slickgrid-Universal] requires "I18N" to be installed and configured');
     });
   });
 });

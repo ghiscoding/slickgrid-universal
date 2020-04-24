@@ -18,12 +18,12 @@ which is why they are better handled in a monorepo structure.
 The GitHub [demo page](https://ghiscoding.github.io/slickgrid-universal) uses the Material Design theme but you could also use Bootstrap theme which is demoed in other frameworks. 
 - [Web-Demo-Vanilla-Bundle](https://ghiscoding.github.io/slickgrid-universal) with Material Design theme
 - [Angular-Slickgrid](https://ghiscoding.github.io/Angular-Slickgrid/)
-- [Aurelia-Slickgrid](https://ghiscoding.github.io/aurelia-slickgrid/) 
+- [Slickgrid-Universal](https://ghiscoding.github.io/aurelia-slickgrid/) 
 
 ### Why create this monorepo?
 You might be wondering why was this monorepo created?
 1. it removes a lot of duplicate code that existed in both 
-[Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) 
+[Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Slickgrid-Universal](https://github.com/ghiscoding/aurelia-slickgrid) 
 (over 80% were the same code and that is not very DRY).
 2. decouple some Services that should not be required at all time (OData, GraphQL, Export to File, Export to Excel, ...)
 3. framework agnostic, it could be implemented in many more frameworks in the future
@@ -31,7 +31,7 @@ You might be wondering why was this monorepo created?
 ### Frameworks using this monorepo
 This is a Work in Progress, the goal is to eventually to rewrite 
 [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) 
-and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) to use this monorepo which will simplify debugging/fixing common code. 
+and [Slickgrid-Universal](https://github.com/ghiscoding/aurelia-slickgrid) to use this monorepo which will simplify debugging/fixing common code. 
 
 Note however that this project also has a Vanilla Implementation (not associated with any framework) 
 and that what is used to the test the UI portion. The Vanilla bundle is also used in our SalesForce (with Lightning Web Component) hence the creation of this monorepo.
