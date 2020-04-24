@@ -4,6 +4,7 @@
   "description": "SlickGrid-Universal Common Code",
   "browser": "src/index.ts",
   "main": "dist/commonjs/index.js",
+  "module": "dist/es2015/index.js",
   "typings": "dist/commonjs/index.d.ts",
   "type": "module",
   "author": "Ghislain B.",
@@ -58,7 +59,7 @@
     "IE 11"
   ],
   "dependencies": {
-    "dompurify": "^2.0.9",
+    "dompurify": "^2.0.10",
     "flatpickr": "^4.6.3",
     "jquery": "^3.4.1",
     "jquery-ui-dist": "^1.12.1",
