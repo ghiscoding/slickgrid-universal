@@ -122,9 +122,8 @@
   }
 
   .form-control:focus{
-    // border-color: #66afe9;
-    border-color: lighten($primary-color, 10%);
     outline: 0;
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(lighten($primary-color, 3%), .6);
+    border-color: lighten($primary-color, 10%);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(lighten($primary-color, 3%), .3);
   }
 }

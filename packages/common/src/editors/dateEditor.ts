@@ -126,7 +126,8 @@ export class DateEditor implements Editor {
 
       // when we're using an alternate input to display data, we'll consider this input as the one to do the focus later on
       // else just use the top one
-      this._$inputWithData = (pickerMergedOptions && pickerMergedOptions.altInput) ? $(`.${pickerMergedOptions.altInputClass.replace(' ', '.')}`) : this._$input;
+      const altInputClass = (pickerMergedOptions && pickerMergedOptions.altInputClass) || '';
+      this._$inputWithData = (altInputClass !== '') ? $(`.${altInputClass.replace(' ', '.')}`) : this._$input;
     }
   }
 

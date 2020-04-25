@@ -27,7 +27,7 @@ export class AutoCompleteEditor implements Editor {
   private _currentValue: any;
   private _defaultTextValue: string;
   private _elementCollection: any[];
-  private _lastInputEvent: JQueryEventObject;
+  private _lastInputKeyEvent: JQueryEventObject;
 
   /** The JQuery DOM element */
   private _$editorElm: any;
@@ -158,8 +158,8 @@ export class AutoCompleteEditor implements Editor {
   }
 
   isValueChanged(): boolean {
-    const lastEvent = this._lastInputEvent && this._lastInputEvent.keyCode;
-    if (this.columnEditor && this.columnEditor.alwaysSaveOnEnterKey && lastEvent === KeyCode.ENTER) {
+    const lastKeyEvent = this._lastInputKeyEvent && this._lastInputKeyEvent.keyCode;
+    if (this.columnEditor && this.columnEditor.alwaysSaveOnEnterKey && lastKeyEvent === KeyCode.ENTER) {
       return true;
     }
     return (!(this._$editorElm.val() === '' && this._defaultTextValue === null)) && (this._$editorElm.val() !== this._defaultTextValue);
@@ -271,7 +271,7 @@ export class AutoCompleteEditor implements Editor {
     this._$editorElm = $(`<input type="text" role="presentation" autocomplete="off" class="autocomplete editor-text editor-${columnId}" placeholder="${placeholder}" title="${title}" />`)
       .appendTo(this.args.container)
       .on('keydown.nav', (event: JQueryEventObject) => {
-        this._lastInputEvent = event;
+        this._lastInputKeyEvent = event;
         if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT) {
           event.stopImmediatePropagation();
         }

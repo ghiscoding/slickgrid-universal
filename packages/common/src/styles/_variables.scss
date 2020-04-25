@@ -390,7 +390,7 @@ $checkbox-selector-opacity-hover:           0.35 !default;
 
 /* Editors */
 $editor-focus-border-color:                 lighten($primary-color, 10%);
-$editor-focus-box-shadow:                   inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(lighten($primary-color, 3%), .6);
+$editor-focus-box-shadow:                   inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(lighten($primary-color, 3%), .3);
 $date-editor-focus-border-color:            $editor-focus-border-color;
 $date-editor-focus-box-shadow:              $editor-focus-box-shadow;
 $large-editor-background-color:             #ffffff !default;

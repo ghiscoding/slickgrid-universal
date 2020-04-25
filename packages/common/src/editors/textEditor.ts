@@ -8,7 +8,7 @@ import { getDescendantProperty, setDeepValue } from '../services/utilities';
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
 export class TextEditor implements Editor {
-  private _lastInputEvent: KeyboardEvent;
+  private _lastInputKeyEvent: KeyboardEvent;
   private _input: HTMLInputElement;
   originalValue: string;
 
@@ -54,7 +54,6 @@ export class TextEditor implements Editor {
 
     this._input = document.createElement('input') as HTMLInputElement;
     this._input.className = `editor-text editor-${columnId}`;
-    this._input.title = title;
     this._input.type = 'text';
     this._input.setAttribute('role', 'presentation');
     this._input.autocomplete = 'off';
@@ -66,7 +65,7 @@ export class TextEditor implements Editor {
     }
 
     this._input.onkeydown = ((event: KeyboardEvent) => {
-      this._lastInputEvent = event;
+      this._lastInputKeyEvent = event;
       if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT) {
         event.stopImmediatePropagation();
       }
@@ -121,8 +120,8 @@ export class TextEditor implements Editor {
 
   isValueChanged(): boolean {
     const elmValue = this._input.value;
-    const lastEvent = this._lastInputEvent && this._lastInputEvent.keyCode;
-    if (this.columnEditor && this.columnEditor.alwaysSaveOnEnterKey && lastEvent === KeyCode.ENTER) {
+    const lastKeyEvent = this._lastInputKeyEvent && this._lastInputKeyEvent.keyCode;
+    if (this.columnEditor && this.columnEditor.alwaysSaveOnEnterKey && lastKeyEvent === KeyCode.ENTER) {
       return true;
     }
     return (!(elmValue === '' && this.originalValue === null)) && (elmValue !== this.originalValue);
