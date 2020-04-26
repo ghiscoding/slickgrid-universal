@@ -114,7 +114,7 @@ module.exports = {
     "no-shadow": [
       "error",
       {
-        "hoist": "all"
+        "hoist": "function"
       }
     ],
     "no-sparse-arrays": "error",

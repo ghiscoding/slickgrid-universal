@@ -8,29 +8,38 @@ import { BindingService } from '@slickgrid-universal/vanilla-bundle';
  *    2.1 you can add the "innerhtml.bind" but only if the variable is associated to an element that can trigger a value change on the variable
  */
 export class Renderer {
-  view: any;
-  viewModel: any;
-  className: string;
-  observers: BindingService[] = [];
+  private _className: string;
+  private _viewModel: any;
+  private _observers: BindingService[] = [];
 
   constructor(private viewTemplate: HTMLDivElement) {
     this.viewTemplate.innerHTML = `Loading`;
   }
 
+  get className(): string {
+    return this._className;
+  }
+
+  getModuleClassName(module: any): string {
+    let className = '';
+    const modules = typeof module === 'object' && Object.keys(module);
+    if (Array.isArray(modules) && modules.length > 0) {
+      className = modules[0];
+    }
+    return className;
+  }
+
   loadView(viewModule: any) {
     const bindedView = this.parseTemplate(viewModule);
-    const view = this.render(bindedView);
+    this.render(bindedView);
   }
 
   loadViewModel(module: any): any {
-    const modules = typeof module === 'object' && Object.keys(module);
-    if (Array.isArray(modules)) {
-      this.className = modules[0];
-      if (module.hasOwnProperty(this.className)) {
-        this.viewModel = new module[this.className]();
-        window[this.className] = this.viewModel;
-        return this.viewModel;
-      }
+    this._className = this.getModuleClassName(module);
+    this._viewModel = new module[this._className]();
+    if (this._className) {
+      window[this._className] = this._viewModel;
+      return this._viewModel;
     }
     return null;
   }
@@ -44,7 +53,7 @@ export class Renderer {
   }
 
   parseLogicExecution(match: string, code: string) {
-    return window[this.className][code];
+    return window[this._className][code];
   }
 
   parseMethodBinding(match: string, eventName: string, eventType: string, callbackFn: string, lastChar: string) {
@@ -52,7 +61,7 @@ export class Renderer {
 
     switch (eventType) {
       case 'delegate':
-        output = `${eventName.toLowerCase()}="window.${this.className.trim()}.${callbackFn.trim()}${lastChar}"`;
+        output = `${eventName.toLowerCase()}="window.${this._className.trim()}.${callbackFn.trim()}${lastChar}"`;
         break;
     }
     return (output || '');
@@ -71,10 +80,10 @@ export class Renderer {
       // before creating a new observer, first check if the variable already has an associated observer
       // if so then use it and add extra binding to it
       // else create a new observer
-      let observer = this.observers.find((bind) => bind.property === variableName);
+      let observer = this._observers.find((bind) => bind.property === variableName);
       if (!observer) {
-        observer = new BindingService({ variable: window[this.className], property: variableName });
-        this.observers.push(observer);
+        observer = new BindingService({ variable: window[this._className], property: variableName });
+        this._observers.push(observer);
       }
 
       switch (attribute) {

@@ -2,13 +2,13 @@ import { Renderer } from './renderer';
 import { AppRouting } from './app-routing';
 import { RouterConfig } from './interfaces';
 
-
 export class App {
   documentTitle = 'Slickgrid-Universal';
   defaultRouteName: string;
   stateBangChar: string;
   renderer: Renderer;
   appRouting: any;
+  viewModelObj = {};
   // baseUrl = window.location.origin + document.querySelector('base')?.getAttribute('href') || '';
   baseUrl = window.location.origin + window.location.pathname;
   routerConfig: RouterConfig = {
@@ -40,7 +40,20 @@ export class App {
     };
   }
 
+  disposeAll() {
+    for (const vmKey of Object.keys(this.viewModelObj)) {
+      const viewModel = this.viewModelObj[vmKey];
+      if (viewModel && viewModel.dispose) {
+        viewModel.dispose();
+        delete window[vmKey];
+        delete this.viewModelObj[vmKey];
+      }
+    }
+  }
+
   loadRoute(routeName: string, changeBrowserState = true) {
+    this.disposeAll(); // dispose all previous ViewModel before creating any new one
+
     if (this.renderer && routeName) {
       const mapRoute = this.routerConfig.routes.find((map) => map.route === routeName);
       if (!mapRoute && this.defaultRouteName !== '') {
@@ -48,8 +61,15 @@ export class App {
         return;
       }
       const viewModel = this.renderer.loadViewModel(require(`${mapRoute.moduleId}.ts`));
+      if (viewModel && viewModel.dispose) {
+        window.onunload = viewModel.dispose; // dispose when leaving SPA
+      }
+
       this.renderer.loadView(require(`${mapRoute.moduleId}.html`));
-      viewModel.attached();
+      if (viewModel && viewModel.attached && this.renderer.className) {
+        this.viewModelObj[this.renderer.className] = viewModel;
+        viewModel.attached();
+      }
 
       // change browser's history state & title
       if (changeBrowserState) {
