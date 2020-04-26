@@ -31,7 +31,9 @@ export class Example50 {
     gridContainerElm.addEventListener('onbeforeeditcell', this.verifyCellIsEditableBeforeEditing.bind(this));
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, []);
     this.dataViewObj = this.slickgridLwc.dataView;
-    this.slickgridLwc.datasetHierarchical = require('c://TEMP/quote1.json') || []; // work data only
+    try {
+      this.slickgridLwc.datasetHierarchical = require('c://TEMP/quote1.json'); // work data only
+    } catch (e) { }
   }
 
   initializeGrid() {
@@ -48,7 +50,6 @@ export class Example50 {
             rightValidator: (value, args) => true,
           },
           required: true,
-          alwaysSaveOnEnterKey: true,
         },
         formatter: this.authSellFormatter.bind(this)
       },

@@ -42,6 +42,9 @@ export interface ColumnEditor {
   /** A custom structure can be used instead of the default label/value pair. Commonly used with Select/Multi-Select Editor */
   customStructure?: CollectionCustomStructure;
 
+  /** number of decimal places, works only with Editors supporting it (input float, integer, range, slider) */
+  decimal?: number;
+
   /**
    * Options that could be provided to the Editor, example: { container: 'body', maxHeight: 250}
    *
@@ -95,14 +98,14 @@ export interface ColumnEditor {
   /** Editor Validator */
   validator?: EditorValidator;
 
-  /** Step value of the filter, works only with Filters supporting it (input text, number, float, range, slider) */
+  /** Step value of the filter, works only with Editors supporting it (input text, number, float, range, slider) */
   valueStep?: number | string;
 
   /**
    * Use "params" to pass any type of arguments to your Custom Editor
    * or regular Editor like the Editors.float
-   * for example, to pass the option collection to a select Filter we can type this:
-   * params: { decimalPlaces: 2 }
+   * for example, if we don't want the slider number we could write
+   * params: { hideSliderNumber: true }
    */
   params?: any;
 }

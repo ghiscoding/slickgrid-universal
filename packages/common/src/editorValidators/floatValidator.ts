@@ -14,7 +14,7 @@ interface FloatValidatorOptions {
 
 export function floatValidator(inputValue: any, options: FloatValidatorOptions): EditorValidatorOutput {
   const floatNumber = !isNaN(inputValue as number) ? parseFloat(inputValue) : null;
-  const decPlaces = options.decimal;
+  const decPlaces = options.decimal || 0;
   const isRequired = options.required;
   const minValue = options.minValue;
   const maxValue = options.maxValue;

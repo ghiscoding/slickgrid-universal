@@ -59,9 +59,7 @@ export class Example3 {
         grouping: {
           getter: 'title',
           formatter: (g) => `Title:  ${g.value}  <span style="color:green">(${g.count} items)</span>`,
-          aggregators: [
-            new Aggregators.Sum('cost')
-          ],
+          aggregators: [new Aggregators.Sum('cost')],
           aggregateCollapsed: false,
           collapsed: false
         }
@@ -69,8 +67,8 @@ export class Example3 {
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
         editor: {
-          model: Editors.integer,
-          required: true,
+          model: Editors.float,
+          // required: true,
           alwaysSaveOnEnterKey: true,
         },
         type: FieldType.number,
@@ -81,9 +79,7 @@ export class Example3 {
           comparer: (a, b) => {
             return this.durationOrderByCount ? (a.count - b.count) : SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc);
           },
-          aggregators: [
-            new Aggregators.Sum('cost')
-          ],
+          aggregators: [new Aggregators.Sum('cost')],
           aggregateCollapsed: false,
           collapsed: false
         }

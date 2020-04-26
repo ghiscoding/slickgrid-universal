@@ -1,10 +1,6 @@
-import { AutocompleteOption, Column, Editors, FieldType, Filters, GroupTotalFormatters, Formatters, OperatorType, GridOption } from '@slickgrid-universal/common';
+import { AutocompleteOption, Column, ColumnEditorComboInput, Editors, FieldType, Filters, Formatters, OperatorType, GridOption, ColumnEditor, Editor } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
-
-const actionFormatter = (row, cell, value, columnDef, dataContext) => {
-  return `<div class="fake-hyperlink">Action <i class="mdi mdi-24px mdi-menu-down"></i></div>`;
-};
 
 // you can create custom validator to pass to an inline editor
 const myCustomTitleValidator = (value, args) => {
@@ -28,7 +24,6 @@ export class Example4 {
   isFrozenBottom = false;
   slickgridLwc;
   slickerGridInstance;
-  durationOrderByCount = false;
 
   attached() {
     const dataset = this.initializeGrid();
@@ -43,6 +38,7 @@ export class Example4 {
   }
 
   dispose() {
+    console.log('dispose example4')
     this.slickgridLwc.dispose();
   }
 
@@ -51,52 +47,12 @@ export class Example4 {
       {
         id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,
         editor: {
-          model: Slicker.Editors.longText,
+          model: Editors.longText,
           required: true,
           alwaysSaveOnEnterKey: true,
           validator: myCustomTitleValidator, // use a custom validator
         },
         filterable: true,
-      },
-      {
-        id: 'duration', name: 'Duration', field: 'duration', sortable: true,
-        filterable: true,
-        filter: {
-          model: Slicker.Filters.compoundSlider,
-        },
-        editor: {
-          model: Slicker.Editors.slider,
-          minValue: 0,
-          maxValue: 100,
-          // params: { hideSliderNumber: true },
-        },
-        /*
-        editor: {
-          // default is 0 decimals, if no decimals is passed it will accept 0 or more decimals
-          // however if you pass the "decimalPlaces", it will validate with that maximum
-          model: Editors.float,
-          minValue: 0,
-          maxValue: 365,
-          // the default validation error message is in English but you can override it by using "errorMessage"
-          // errorMessage: this.i18n.tr('INVALID_FLOAT', { maxDecimal: 2 }),
-          params: { decimalPlaces: 2 },
-        },
-        */
-        type: FieldType.number
-      },
-      {
-        id: 'cost', name: 'Cost', field: 'cost',
-        width: 90,
-        sortable: true,
-        filterable: true,
-        editor: {
-          model: Editors.float,
-          params: { decimalPlaces: 2 }
-        },
-        // filter: { model: Filters.compoundInput },
-        formatter: Formatters.dollar,
-        groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
-        type: FieldType.number
       },
       {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete', sortable: true,
@@ -124,7 +80,7 @@ export class Example4 {
           editorOptions: {
             filter: true // adds a filter on top of the multi-select dropdown
           },
-          model: Slicker.Editors.multipleSelect,
+          model: Editors.multipleSelect,
         },
       },
       {
@@ -141,13 +97,58 @@ export class Example4 {
       },
       {
         id: 'completed', name: 'Completed', field: 'completed', sortable: true, formatter: Slicker.Formatters.checkmarkMaterial,
+        exportWithFormatter: false,
         filterable: true,
         editor: {
-          model: Slicker.Editors.checkbox,
+          model: Editors.checkbox,
         },
         filter: {
-          model: Slicker.Filters.singleSelect,
+          model: Filters.singleSelect,
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
+        }
+      },
+      {
+        id: 'cost', name: 'Cost | Duration', field: 'cost',
+        formatter: this.costDurationFormatter,
+        sortable: true,
+        // filterable: true,
+        filter: {
+          model: Filters.compoundSlider,
+        },
+        editor: {
+          model: Editors.comboInput,
+          // the ComboInputEditor MUST include the params object with (leftInput/rightInput)
+          // in each of these 2 properties, you can pass any regular properties of a column editor
+          // and they will be executed following the options defined in each
+          params: {
+            leftInput: {
+              field: 'cost',
+              type: 'float',
+              decimal: 2,
+              minValue: 0,
+              maxValue: 9999,
+              placeholder: '<100K',
+              errorMessage: 'Cost must be positive and below $100K.',
+            },
+            rightInput: {
+              field: 'duration',
+              type: 'float',
+              // decimal: 0,
+              minValue: 0,
+              maxValue: 100,
+              errorMessage: 'Duration must be between 0 and 100.',
+              // you can also optionally define a validator in 1 or both input
+              // validator: (value, args) => {
+              //   let isValid = true;
+              //   let errorMsg = '';
+              //   if (value < 0 || value > 120) {
+              //     isValid = false;
+              //     errorMsg = 'Duration MUST be between 0 and 120.';
+              //   }
+              //   return { valid: isValid, msg: errorMsg };
+              // }
+            },
+          } as ColumnEditorComboInput,
         }
       },
       {
@@ -208,7 +209,9 @@ export class Example4 {
       {
         id: 'action', name: 'Action', field: 'action', width: 100, maxWidth: 100,
         excludeFromExport: true,
-        formatter: actionFormatter,
+        formatter: () => {
+          return `<div class="fake-hyperlink">Action <i class="mdi mdi-24px mdi-menu-down"></i></div>`;
+        },
         cellMenu: {
           hideCloseButton: false,
           width: 200,
@@ -278,6 +281,11 @@ export class Example4 {
       enableAutoResize: true,
       enableCellNavigation: true,
       enableFiltering: true,
+      enableExport: true,
+      exportOptions: {
+        exportWithFormatter: true,
+        sanitizeDataExport: true
+      },
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false
@@ -323,12 +331,22 @@ export class Example4 {
         percentComplete: Math.round(Math.random() * 100),
         start: new Date(randomYear, randomMonth, randomDay),
         finish: new Date(randomYear, (randomMonth + 1), randomDay),
-        cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
+        cost: (i % 33 === 0) ? null : Math.random() * 1000,
         completed: (i % 5 === 0),
         cityOfOrigin: (i % 2) ? 'Vancouver, BC, Canada' : 'Boston, MA, United States',
       };
     }
     return this.dataset;
+  }
+
+  costDurationFormatter(row, cell, value, columnDef, dataContext) {
+    const costText = (dataContext.cost === null) ? 'n/a' : Slicker.Utilities.formatNumber(dataContext.cost, 0, 2, false, '$', '', '.', ',');
+    let durationText = '';
+    if (dataContext.duration >= 0) {
+      const durationValue = 0;
+      durationText = `${dataContext.duration} ${durationValue > 0 ? 'day' : 'days'}`;
+    }
+    return `<b>${costText}</b> | ${durationText}`;
   }
 
   handleOnClick(event) {
@@ -340,6 +358,7 @@ export class Example4 {
     const args = event.detail && event.detail.args;
     if (args.validationResults) {
       alert(args.validationResults.msg);
+      return false;
     }
   }
 
