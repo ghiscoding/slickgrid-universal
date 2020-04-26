@@ -2,6 +2,7 @@ import { Constants } from '../constants';
 import { KeyCode } from '../enums/keyCode.enum';
 import { Column, ColumnEditor, Editor, EditorArguments, EditorValidator, EditorValidatorOutput } from '../interfaces/index';
 import { getDescendantProperty, setDeepValue } from '../services/utilities';
+import { textValidator } from '../editorValidators/textValidator';
 
 /*
  * An example of a 'detached' editor.
@@ -157,25 +158,12 @@ export class TextEditor implements Editor {
   }
 
   validate(inputValue?: any): EditorValidatorOutput {
-    const isRequired = this.columnEditor.required;
     const elmValue = (inputValue !== undefined) ? inputValue : this._input && this._input.value;
-    const errorMsg = this.columnEditor.errorMessage;
-
-    if (this.validator) {
-      return this.validator(elmValue, this.args);
-    }
-
-    // by default the editor is almost always valid (except when it's required but not provided)
-    if (isRequired && elmValue === '') {
-      return {
-        valid: false,
-        msg: errorMsg || Constants.VALIDATION_REQUIRED_FIELD
-      };
-    }
-
-    return {
-      valid: true,
-      msg: null
-    };
+    return textValidator(elmValue, {
+      editorArgs: this.args,
+      errorMessage: this.columnEditor.errorMessage,
+      required: this.columnEditor.required,
+      validator: this.validator,
+    });
   }
 }
