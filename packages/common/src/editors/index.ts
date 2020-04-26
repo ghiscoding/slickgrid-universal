@@ -1,7 +1,7 @@
 import { AutoCompleteEditor } from './autoCompleteEditor';
 import { CheckboxEditor } from './checkboxEditor';
-import { ComboInputEditor } from './comboInputEditor';
 import { DateEditor } from './dateEditor';
+import { DualInputEditor } from './dualInputEditor';
 import { FloatEditor } from './floatEditor';
 import { IntegerEditor } from './integerEditor';
 import { LongTextEditor } from './longTextEditor';
@@ -17,11 +17,11 @@ export const Editors = {
   /** Checkbox Editor (uses native checkbox DOM element) */
   checkbox: CheckboxEditor,
 
-  /** Dual Input Float Editor */
-  comboInput: ComboInputEditor,
-
   /** Date Picker Editor (which uses 3rd party lib "flatpickr") */
   date: DateEditor,
+
+  /** Dual Input Editor, default input type is text but it could be (integer/float/number/password/text) */
+  dualInput: DualInputEditor,
 
   /** Float Number Editor */
   float: FloatEditor,

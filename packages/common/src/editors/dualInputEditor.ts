@@ -1,17 +1,27 @@
 import { KeyCode } from '../enums/keyCode.enum';
-import { Column, ColumnEditor, ColumnEditorComboInput, Editor, EditorArguments, EditorValidator, EditorValidatorOutput } from '../interfaces/index';
 import { getDescendantProperty, setDeepValue } from '../services/utilities';
-import { floatValidator } from '../editorValidators/floatValidator';
-import { textValidator, integerValidator } from '../editorValidators';
+import { floatValidator, integerValidator, textValidator } from '../editorValidators';
+import {
+  Column,
+  ColumnEditor,
+  ColumnEditorComboInput,
+  Editor,
+  EditorArguments,
+  EditorValidator,
+  EditorValidatorOutput,
+  SlickEventHandler
+} from '../interfaces/index';
+
+// using external non-typed js libraries
+declare const Slick: any;
 
 /*
  * An example of a 'detached' editor.
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
-export class ComboInputEditor implements Editor {
-  protected _inputType = 'number';
-  private _cellContainerClassName: string;
-  private _previousColumnItemIds: string;
+export class DualInputEditor implements Editor {
+  private _eventHandler: SlickEventHandler;
+  private _isValueSaveCalled = false;
   private _lastEventType: string | undefined;
   private _lastInputKeyEvent: KeyboardEvent;
   private _leftInput: HTMLInputElement;
@@ -30,6 +40,8 @@ export class ComboInputEditor implements Editor {
     }
     this.grid = args.grid;
     this.init();
+    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler.subscribe(this.grid.onValidationError, () => this._isValueSaveCalled = true);
   }
 
   /** Get Column Definition object */
@@ -51,19 +63,12 @@ export class ComboInputEditor implements Editor {
     return this.columnEditor.params || {};
   }
 
+  get eventHandler(): SlickEventHandler {
+    return this._eventHandler;
+  }
+
   get hasAutoCommitEdit() {
     return this.grid.getOptions().autoCommitEdit;
-  }
-
-
-  /** Getter of input type (text, number, password) */
-  get inputType() {
-    return this._inputType;
-  }
-
-  /** Setter of input type (text, number, password) */
-  set inputType(type: string) {
-    this._inputType = type;
   }
 
   /** Get the Validator function, can be passed in Editor property or Column Definition */
@@ -79,57 +84,35 @@ export class ComboInputEditor implements Editor {
     this._rightFieldName = this.editorParams.rightInput?.field;
     this._leftInput = this.createInput('leftInput');
     this._rightInput = this.createInput('rightInput');
-    const columnId = this.columnDef && this.columnDef.id;
-    const itemId = this.args?.item?.id || 0;
-    this._previousColumnItemIds = columnId + itemId;
 
     const containerElm = this.args?.container;
     if (containerElm && typeof containerElm.appendChild === 'function') {
-      this._cellContainerClassName = containerElm.className;
       containerElm.appendChild(this._leftInput);
       containerElm.appendChild(this._rightInput);
     }
 
     this._leftInput.onkeydown = this.handleKeyDown;
     this._rightInput.onkeydown = this.handleKeyDown;
-    // this._leftInput.oninput = this.restrictDecimalWhenProvided.bind(this, 'leftInput');
-    // this._rightInput.oninput = this.restrictDecimalWhenProvided.bind(this, 'rightInput');
 
     // the lib does not get the focus out event for some reason, so register it here
     if (this.hasAutoCommitEdit) {
-      // this._leftInput.addEventListener('focusout', this.handleFocusOut.bind(this));
-      // this._rightInput.addEventListener('focusout', this.handleFocusOut.bind(this));
-      // for the left input, we'll save if next element isn't a combo editor
-      this._leftInput.addEventListener('focusout', (event: any) => {
-        console.log('left focusout')
-        const nextTargetClass = event.relatedTarget?.className || '';
-        // const parentClass = this._cellContainerClassName.className || '';
-        const columnId = this.columnDef && this.columnDef.id;
-        const itemId = this.args?.item?.id || 0;
-        console.log(nextTargetClass, columnId, itemId)
-        const targetClassNames = event.relatedTarget?.className || '';
-        // if (this._previousColumnItemIds !== (columnId + itemId)) {
-        if (targetClassNames.indexOf('compound-editor') === -1 && this._lastEventType !== 'focusout') {
-          // if (nextTargetClass !== parentClass) {
-          console.log('calls save')
-          this.save();
-        }
-        this._lastEventType = event.type;
-        this._previousColumnItemIds = columnId + itemId;
-      });
-      this._rightInput.addEventListener('focusout', (event: any) => {
-        console.log('right focusout')
-        const nextTargetClass = event.relatedTarget?.parentNode?.className || '';
-        // const parentClass = this._cellContainerClassName.className || '';
-        console.log(nextTargetClass, columnId, itemId)
-        if (nextTargetClass !== this._cellContainerClassName) {
-          this.save();
-        }
-        this._lastEventType = event && event.type;
-      });
+      this._leftInput.addEventListener('focusout', (event: any) => this.handleFocusOut(event, 'leftInput'));
+      this._rightInput.addEventListener('focusout', (event: any) => this.handleFocusOut(event, 'rightInput'));
     }
 
-    setTimeout(() => this.focus(), 50);
+    setTimeout(() => this._leftInput.select(), 50);
+  }
+
+  handleFocusOut(event: any, position: 'leftInput' | 'rightInput') {
+    // when clicking outside the editable cell OR when focusing out of it
+    const targetClassNames = event.relatedTarget?.className || '';
+    if (targetClassNames.indexOf('compound-editor') === -1 && this._lastEventType !== 'focusout-right') {
+      if (position === 'rightInput' || (position === 'leftInput' && this._lastEventType !== 'focusout-left')) {
+        this.save();
+      }
+    }
+    const side = (position === 'leftInput') ? 'left' : 'right';
+    this._lastEventType = `${event?.type}-${side}`;
   }
 
   handleKeyDown(event: KeyboardEvent) {
@@ -139,41 +122,10 @@ export class ComboInputEditor implements Editor {
     }
   }
 
-  handleFocusOut(event: any) {
-    const nextTargetClass = event.relatedTarget?.className || '';
-    // const parentClass = this._cellContainerClassName.className || '';
-    const columnId = this.columnDef && this.columnDef.id;
-    const itemId = this.args?.item?.id || 0;
-    console.log(this._previousColumnItemIds, columnId, itemId, this.args, 'nextTargetClass::', nextTargetClass)
-    const targetClassNames = event.relatedTarget?.className || '';
-    if (this._previousColumnItemIds !== (columnId + itemId)) {
-      // if (this._previousColumnItemIds !== (columnId + itemId) || nextTargetClass.indexOf(`compound-editor-text editor-${columnId}`) === -1) {
-      // if (targetClassNames.indexOf('compound-editor') === -1 && this._lastEventType !== 'focusout') {
-      // if (nextTargetClass !== parentClass) {
-      this.save();
-    }
-    this._lastEventType = event.type;
-    this._previousColumnItemIds = columnId + itemId;
-  }
-
-  restrictDecimalWhenProvided(position: 'leftInput' | 'rightInput', event: KeyboardEvent & { target: HTMLInputElement }) {
-    const maxDecimal = this.getDecimalPlaces(position);
-    console.log(event.target.value)
-    if (maxDecimal >= 0 && event && event.target) {
-      const currentVal = event.target.value;
-      // const pattern = maxDecimal === 0 ? '^-?[0-9]+' : `^-?\\d+\\.?\\d{0,${maxDecimal}}`;
-      const pattern = maxDecimal === 0 ? '^-?\\d*$' : `^[1-9]\\d*(?:\\.\\d{0,${maxDecimal}})?$`;
-      const regex = new RegExp(pattern);
-      if (!regex.test(currentVal)) {
-        console.log('invalid', currentVal, currentVal.substring(0, currentVal.length - 1))
-        event.target.value = currentVal.substring(0, currentVal.length - 1);
-      } else {
-        console.log(currentVal, 'valid', maxDecimal, pattern, regex.test(currentVal))
-      }
-    }
-  }
-
   destroy() {
+    // unsubscribe all SlickGrid events
+    this._eventHandler.unsubscribeAll();
+
     const columnId = this.columnDef && this.columnDef.id;
     const elm = document.querySelector(`.compound-editor-text.editor-${columnId}`);
     if (elm) {
@@ -187,22 +139,27 @@ export class ComboInputEditor implements Editor {
     const columnId = this.columnDef && this.columnDef.id;
     const itemId = this.args?.item?.id || 0;
 
+    let fieldType = editorSideParams.type || 'text';
+    if (fieldType === 'float' || fieldType === 'integer') {
+      fieldType = 'number';
+    }
+
     const input = document.createElement('input') as HTMLInputElement;
     input.id = `item-${itemId}`;
     input.className = `compound-editor-text editor-${columnId} ${position.replace(/input/gi, '')}`;
-    input.type = editorSideParams?.type || 'text';
+    input.type = fieldType || 'text';
     input.setAttribute('role', 'presentation');
     input.autocomplete = 'off';
-    input.placeholder = editorSideParams?.placeholder || '';
-    input.title = editorSideParams?.title || '';
-    input.step = this.getInputDecimalSteps(position);
-
+    input.placeholder = editorSideParams.placeholder || '';
+    input.title = editorSideParams.title || '';
+    if (fieldType === 'number') {
+      input.step = this.getInputDecimalSteps(position);
+    }
     return input;
   }
 
-  focus(): void {
-    this._leftInput.focus();
-    this._leftInput.select();
+  focus() {
+    // do nothing since we have 2 inputs and we might focus on left/right depending on which is invalid or new
   }
 
   getValue(): string {
@@ -249,39 +206,43 @@ export class ComboInputEditor implements Editor {
   }
 
   loadValue(item: any) {
+    this.loadValueByPosition(item, 'leftInput');
+    this.loadValueByPosition(item, 'rightInput');
+    this._leftInput.select();
+  }
+
+  loadValueByPosition(item: any, position: 'leftInput' | 'rightInput') {
     // is the field a complex object, "address.streetNumber"
-    const isComplexObject = this._leftFieldName && this._leftFieldName.indexOf('.') > 0;
+    const fieldName = (position === 'leftInput') ? this._leftFieldName : this._rightFieldName;
+    const originalValuePosition = (position === 'leftInput') ? 'originalLeftValue' : 'originalRightValue';
+    const inputVarPosition = (position === 'leftInput') ? '_leftInput' : '_rightInput';
+    const isComplexObject = fieldName && fieldName.indexOf('.') > 0;
 
-    if (item && this._leftFieldName !== undefined && this.columnDef && (item.hasOwnProperty(this._leftFieldName) || isComplexObject)) {
-      const leftValue = (isComplexObject) ? getDescendantProperty(item, this._leftFieldName) : (item.hasOwnProperty(this._leftFieldName) && item[this._leftFieldName] || '');
-      this.originalLeftValue = leftValue;
-      const leftDecimal = this.getDecimalPlaces('leftInput');
-      if (leftDecimal !== null && (this.originalLeftValue || this.originalLeftValue === 0) && (+this.originalLeftValue).toFixed) {
-        this.originalLeftValue = (+this.originalLeftValue).toFixed(leftDecimal);
+    if (item && fieldName !== undefined && this.columnDef && (item.hasOwnProperty(fieldName) || isComplexObject)) {
+      const itemValue = (isComplexObject) ? getDescendantProperty(item, fieldName) : (item.hasOwnProperty(fieldName) && item[fieldName] || '');
+      this[originalValuePosition] = itemValue;
+      if (this.editorParams[position].type === 'float') {
+        const decimalPlaces = this.getDecimalPlaces(position);
+        if (decimalPlaces !== null && (this[originalValuePosition] || this[originalValuePosition] === 0) && (+this[originalValuePosition]).toFixed) {
+          this[originalValuePosition] = (+this[originalValuePosition]).toFixed(decimalPlaces);
+        }
       }
-      this._leftInput.value = `${this.originalLeftValue}`;
-      this._leftInput.select();
-    }
-
-    if (item && this._rightFieldName !== undefined && this.columnDef && (item.hasOwnProperty(this._rightFieldName) || isComplexObject)) {
-      const rightValue = (isComplexObject) ? getDescendantProperty(item, this._rightFieldName) : (item.hasOwnProperty(this._rightFieldName) && item[this._rightFieldName] || '');
-      this.originalRightValue = rightValue;
-      const rightDecimal = this.getDecimalPlaces('rightInput');
-      if (rightDecimal !== null && (this.originalRightValue || this.originalRightValue === 0) && (+this.originalRightValue).toFixed) {
-        this.originalRightValue = (+this.originalRightValue).toFixed(rightDecimal);
-      }
-      this._rightInput.value = `${this.originalRightValue}`;
+      this[inputVarPosition].value = `${this[originalValuePosition]}`;
     }
   }
 
   save() {
     const validation = this.validate();
     const isValid = (validation && validation.valid) || false;
+    const isChanged = this.isValueChanged();
 
-    if (this.hasAutoCommitEdit && isValid) {
-      this.grid.getEditorLock().commitCurrentEdit();
-    } else {
-      this.args.commitChanges();
+    if (!this._isValueSaveCalled) {
+      if (this.hasAutoCommitEdit && isValid) {
+        this.grid.getEditorLock().commitCurrentEdit();
+      } else {
+        this.args.commitChanges();
+      }
+      this._isValueSaveCalled = true;
     }
   }
 
@@ -339,9 +300,11 @@ export class ComboInputEditor implements Editor {
     const rightValidation = this.validateByPosition('rightInput');
 
     if (!leftValidation.valid) {
+      this._leftInput.select();
       return leftValidation;
     }
     if (!rightValidation.valid) {
+      this._rightInput.select();
       return rightValidation;
     }
     return { valid: true, msg: null };

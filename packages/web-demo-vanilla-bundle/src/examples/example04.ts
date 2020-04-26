@@ -1,4 +1,4 @@
-import { AutocompleteOption, Column, ColumnEditorComboInput, Editors, FieldType, Filters, Formatters, OperatorType, GridOption, ColumnEditor, Editor } from '@slickgrid-universal/common';
+import { AutocompleteOption, Column, ColumnEditorComboInput, Editors, FieldType, Filters, Formatters, OperatorType, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 
@@ -31,8 +31,8 @@ export class Example4 {
     const gridElm = document.querySelector(`.slickgrid-container`);
 
     // gridContainerElm.addEventListener('onclick', handleOnClick);
-    gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
-    gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
+    gridContainerElm.addEventListener('onvalidationerror', this.handleOnValidationError.bind(this));
+    gridContainerElm.addEventListener('onitemdeleted', this.handleOnItemDeleted.bind(this));
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
   }
@@ -116,8 +116,8 @@ export class Example4 {
           model: Filters.compoundSlider,
         },
         editor: {
-          model: Editors.comboInput,
-          // the ComboInputEditor MUST include the params object with (leftInput/rightInput)
+          model: Editors.dualInput,
+          // the DualInputEditor is of Type ColumnEditorComboInput and MUST include (leftInput/rightInput) in its params object
           // in each of these 2 properties, you can pass any regular properties of a column editor
           // and they will be executed following the options defined in each
           params: {
@@ -126,18 +126,19 @@ export class Example4 {
               type: 'float',
               decimal: 2,
               minValue: 0,
-              maxValue: 9999,
-              placeholder: '<100K',
-              errorMessage: 'Cost must be positive and below $100K.',
+              maxValue: 50000,
+              placeholder: '< 50K',
+              errorMessage: 'Cost must be positive and below $50K.',
             },
             rightInput: {
               field: 'duration',
-              type: 'float',
-              // decimal: 0,
+              type: 'float', // you could have 2 different input type as well
               minValue: 0,
               maxValue: 100,
+              title: 'make sure Duration is withing its range of 0 to 100',
               errorMessage: 'Duration must be between 0 and 100.',
-              // you can also optionally define a validator in 1 or both input
+
+              // You could also optionally define a custom validator in 1 or both inputs
               // validator: (value, args) => {
               //   let isValid = true;
               //   let errorMsg = '';
@@ -331,7 +332,7 @@ export class Example4 {
         percentComplete: Math.round(Math.random() * 100),
         start: new Date(randomYear, randomMonth, randomDay),
         finish: new Date(randomYear, (randomMonth + 1), randomDay),
-        cost: (i % 33 === 0) ? null : Math.random() * 1000,
+        cost: (i % 33 === 0) ? null : Math.random() * 10000,
         completed: (i % 5 === 0),
         cityOfOrigin: (i % 2) ? 'Vancouver, BC, Canada' : 'Boston, MA, United States',
       };
@@ -353,8 +354,8 @@ export class Example4 {
     console.log('onClick', event.detail);
   }
 
-  handleValidationError(event) {
-    console.log('handleValidationError', event.detail);
+  handleOnValidationError(event) {
+    console.log('handleOnValidationError', event.detail);
     const args = event.detail && event.detail.args;
     if (args.validationResults) {
       alert(args.validationResults.msg);
@@ -362,7 +363,7 @@ export class Example4 {
     }
   }
 
-  handleItemDeleted(event) {
+  handleOnItemDeleted(event) {
     const itemId = event && event.detail;
     console.log('item deleted with id:', itemId);
   }
