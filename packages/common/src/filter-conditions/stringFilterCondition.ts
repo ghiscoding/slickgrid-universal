@@ -1,6 +1,6 @@
+import { OperatorType } from '../enums/operatorType.enum';
 import { FilterCondition, FilterConditionOption } from '../interfaces/index';
 import { testFilterCondition } from './filterUtilities';
-import { OperatorType } from '../enums';
 
 export const stringFilterCondition: FilterCondition = (options: FilterConditionOption) => {
   // make sure the cell value is a string by casting it when possible

@@ -19,7 +19,7 @@ const nodeModulesDir = path.resolve(__dirname, 'node_modules');
 const platform = {
   hmr: false,
   open: true,
-  port: 8088,
+  port: 8888,
   host: 'localhost',
   output: 'dist'
 };

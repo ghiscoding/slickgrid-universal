@@ -1,5 +1,4 @@
 
-import { Column } from '../interfaces';
 import { Constants } from '../constants';
 import { ExtensionName } from '../enums/extensionName.enum';
 import { SharedService } from '../services/shared.service';

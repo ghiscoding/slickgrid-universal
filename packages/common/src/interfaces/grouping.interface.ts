@@ -1,7 +1,7 @@
 import { Aggregator } from './aggregator.interface';
 import { GroupingComparerItem } from './groupingComparerItem.interface';
 import { GroupingFormatterItem } from './groupingFormatterItem.interface';
-import { SortDirectionNumber } from '../enums';
+import { SortDirectionNumber } from '../enums/sortDirectionNumber.enum';
 
 export type GroupingGetterFunction = (value: any) => string;
 

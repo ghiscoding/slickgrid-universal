@@ -1,4 +1,4 @@
-import { Subscription } from '../interfaces';
+import { Subscription } from '../interfaces/index';
 
 export abstract class PubSubService {
   /**

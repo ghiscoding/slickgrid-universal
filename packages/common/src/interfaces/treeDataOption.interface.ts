@@ -1,7 +1,5 @@
-import { FieldType } from '../enums/fieldType.enum';
 import { Aggregator } from './aggregator.interface';
-import { SortComparer } from './sorter.interface';
-import { SortDirection, SortDirectionString } from '../enums';
+import { SortDirection, SortDirectionString } from '../enums/index';
 
 export interface TreeDataOption {
   /** Column Id of which column in the column definitions has the Tree Data, there can only be one with a Tree Data. */

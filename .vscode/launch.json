@@ -9,7 +9,7 @@
       "type": "chrome",
       "request": "launch",
       "breakOnLoad": false,
-      "url": "http://localhost:8088",
+      "url": "http://localhost:8888",
       "webRoot": "${workspaceRoot}",
       "userDataDir": "${workspaceRoot}/.chrome",
       "trace": true,
