@@ -466,12 +466,28 @@ describe('FloatEditor', () => {
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number that is greater than 10.2' });
       });
 
+      it('should return True when field is equal to the minValue defined', () => {
+        mockColumn.internalColumnEditor.minValue = 10.2;
+        editor = new FloatEditor(editorArguments);
+        const validation = editor.validate(10.2);
+
+        expect(validation).toEqual({ valid: true, msg: '' });
+      });
+
       it('should return False when field is greater than a maxValue defined', () => {
         mockColumn.internalColumnEditor.maxValue = 10.2;
         editor = new FloatEditor(editorArguments);
         const validation = editor.validate(10.22);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number that is lower than 10.2' });
+      });
+
+      it('should return True when field is equal to the maxValue defined', () => {
+        mockColumn.internalColumnEditor.maxValue = 10.2;
+        editor = new FloatEditor(editorArguments);
+        const validation = editor.validate(10.2);
+
+        expect(validation).toEqual({ valid: true, msg: '' });
       });
 
       it('should return False when field is not between minValue & maxValue defined', () => {
