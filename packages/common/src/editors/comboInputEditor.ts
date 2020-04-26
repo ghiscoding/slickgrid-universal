@@ -313,12 +313,12 @@ export class ComboInputEditor implements Editor {
     // returns the number of fixed decimal places or null
     const positionSide = position === 'leftInput' ? 'leftInput' : 'rightInput';
     const sideParams = this.editorParams[positionSide];
-    let rtn = sideParams?.decimal;
+    let rtn: number | undefined = sideParams?.decimal;
 
     if (rtn === undefined) {
-      rtn = defaultDecimalPlaces;
+      return defaultDecimalPlaces;
     }
-    return (!rtn && rtn !== 0 ? null : rtn);
+    return rtn;
   }
 
   getInputDecimalSteps(position: 'leftInput' | 'rightInput'): string {
