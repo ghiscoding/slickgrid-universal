@@ -207,6 +207,7 @@ export class FloatEditor implements Editor {
       decimal: this.getDecimalPlaces(),
       minValue: this.columnEditor.minValue,
       maxValue: this.columnEditor.maxValue,
+      operatorConditionalType: this.columnEditor.operatorConditionalType,
       required: this.columnEditor.required,
       validator: this.validator,
     });

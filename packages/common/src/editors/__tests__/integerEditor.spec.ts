@@ -452,6 +452,24 @@ describe('IntegerEditor', () => {
         expect(validation).toEqual({ valid: true, msg: '' });
       });
 
+      it('should return True when field is equal to the maxValue defined and "operatorType" is set to "inclusive"', () => {
+        mockColumn.internalColumnEditor.maxValue = 9;
+        mockColumn.internalColumnEditor.operatorConditionalType = 'inclusive';
+        editor = new IntegerEditor(editorArguments);
+        const validation = editor.validate(9);
+
+        expect(validation).toEqual({ valid: true, msg: '' });
+      });
+
+      it('should return False when field is equal to the maxValue defined but "operatorType" is set to "exclusive"', () => {
+        mockColumn.internalColumnEditor.maxValue = 9;
+        mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
+        editor = new IntegerEditor(editorArguments);
+        const validation = editor.validate(9);
+
+        expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number that is lower than 9' });
+      });
+
       it('should return False when field is not between minValue & maxValue defined', () => {
         mockColumn.internalColumnEditor.minValue = 10;
         mockColumn.internalColumnEditor.maxValue = 99;
@@ -459,6 +477,37 @@ describe('IntegerEditor', () => {
         const validation = editor.validate(345);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number between 10 and 99' });
+      });
+
+      it('should return True when field is is equal to maxValue defined when both min/max values are defined', () => {
+        mockColumn.internalColumnEditor.minValue = 10;
+        mockColumn.internalColumnEditor.maxValue = 89;
+        editor = new IntegerEditor(editorArguments);
+        const validation = editor.validate(89);
+
+        expect(validation).toEqual({ valid: true, msg: '' });
+      });
+
+      it('should return True when field is is equal to minValue defined when "operatorType" is set to "inclusive" and both min/max values are defined', () => {
+        mockColumn.internalColumnEditor.minValue = 10;
+        mockColumn.internalColumnEditor.maxValue = 89;
+        mockColumn.internalColumnEditor.operatorConditionalType = 'inclusive';
+        editor = new IntegerEditor(editorArguments);
+        const validation = editor.validate(10);
+
+        expect(validation).toEqual({ valid: true, msg: '' });
+      });
+
+      it('should return False when field is equal to maxValue but "operatorType" is set to "exclusive" when both min/max values are defined', () => {
+        mockColumn.internalColumnEditor.minValue = 10;
+        mockColumn.internalColumnEditor.maxValue = 89;
+        mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
+        editor = new IntegerEditor(editorArguments);
+        const validation1 = editor.validate(89);
+        const validation2 = editor.validate(10);
+
+        expect(validation1).toEqual({ valid: false, msg: 'Please enter a valid integer number between 10 and 89' });
+        expect(validation2).toEqual({ valid: false, msg: 'Please enter a valid integer number between 10 and 89' });
       });
 
       it('should return True when field is required and field is a valid input value', () => {

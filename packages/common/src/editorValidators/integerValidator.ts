@@ -7,6 +7,7 @@ interface IntegerValidatorOptions {
   errorMessage?: string;
   minValue?: string | number;
   maxValue?: string | number;
+  operatorConditionalType?: 'inclusive' | 'exclusive';
   required?: boolean;
   validator?: EditorValidator;
 }
@@ -20,6 +21,7 @@ export function integerValidator(inputValue: any, options: IntegerValidatorOptio
   const isRequired = options.required;
   const minValue = options.minValue;
   const maxValue = options.maxValue;
+  const operatorConditionalType = options.operatorConditionalType || 'inclusive';
   const mapValidation = {
     '{{minValue}}': minValue,
     '{{maxValue}}': maxValue
@@ -35,19 +37,19 @@ export function integerValidator(inputValue: any, options: IntegerValidatorOptio
   } else if (inputValue !== '' && ((isNaN(inputValue as number) || !/^[+-]?\d+$/.test(inputValue)))) {
     isValid = false;
     outputMsg = errorMsg || Constants.VALIDATION_EDITOR_VALID_INTEGER;
-  } else if (minValue !== undefined && maxValue !== undefined && intNumber !== null && (intNumber < minValue || intNumber > maxValue)) {
+  } else if (minValue !== undefined && maxValue !== undefined && intNumber !== null && ((operatorConditionalType === 'exclusive' && (intNumber <= minValue || intNumber >= maxValue)) || (operatorConditionalType === 'inclusive' && (intNumber < minValue || intNumber > maxValue)))) {
     // MIN & MAX Values provided
     // when decimal value is bigger than 0, we only accept the decimal values as that value set
     // for example if we set decimalPlaces to 2, we will only accept numbers between 0 and 2 decimals
     isValid = false;
     outputMsg = errorMsg || Constants.VALIDATION_EDITOR_INTEGER_BETWEEN.replace(/{{minValue}}|{{maxValue}}/gi, (matched) => mapValidation[matched]);
-  } else if (minValue !== undefined && intNumber !== null && intNumber < minValue) {
+  } else if (minValue !== undefined && intNumber !== null && ((operatorConditionalType === 'exclusive' && intNumber <= minValue)) || (operatorConditionalType === 'inclusive' && intNumber < minValue)) {
     // MIN VALUE ONLY
     // when decimal value is bigger than 0, we only accept the decimal values as that value set
     // for example if we set decimalPlaces to 2, we will only accept numbers between 0 and 2 decimals
     isValid = false;
     outputMsg = errorMsg || Constants.VALIDATION_EDITOR_INTEGER_MIN.replace(/{{minValue}}/gi, (matched) => mapValidation[matched]);
-  } else if (maxValue !== undefined && intNumber !== null && intNumber > maxValue) {
+  } else if (maxValue !== undefined && intNumber !== null && ((operatorConditionalType === 'exclusive' && intNumber >= maxValue)) || (operatorConditionalType === 'inclusive' && intNumber > maxValue)) {
     // MAX VALUE ONLY
     // when decimal value is bigger than 0, we only accept the decimal values as that value set
     // for example if we set decimalPlaces to 2, we will only accept numbers between 0 and 2 decimals

@@ -80,6 +80,9 @@ export interface ColumnEditor {
    */
   placeholder?: string;
 
+  /** Defaults to "inclusive", operator should be (inclusive or exclusive) when executing validation condition check against the minValue/maxValue. */
+  operatorConditionalType?: 'inclusive' | 'exclusive';
+
   /**
    * Title attribute that can be used in some Editors as tooltip (usually the "input" editors).
    *

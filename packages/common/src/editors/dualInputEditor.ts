@@ -328,12 +328,14 @@ export class DualInputEditor implements Editor {
           decimal: this.getDecimalPlaces(position),
           minValue: positionEditorParams.minValue,
           maxValue: positionEditorParams.maxValue,
+          operatorConditionalType: positionEditorParams.operatorConditionalType,
         });
       case 'integer':
         return integerValidator(currentVal, {
           ...baseValidatorOptions,
           minValue: positionEditorParams.minValue,
           maxValue: positionEditorParams.maxValue,
+          operatorConditionalType: positionEditorParams.operatorConditionalType,
         });
       case 'text':
       case 'password':

@@ -171,6 +171,7 @@ export class IntegerEditor implements Editor {
       errorMessage: this.columnEditor.errorMessage,
       minValue: this.columnEditor.minValue,
       maxValue: this.columnEditor.maxValue,
+      operatorConditionalType: this.columnEditor.operatorConditionalType,
       required: this.columnEditor.required,
       validator: this.validator,
     });

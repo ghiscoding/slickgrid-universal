@@ -490,6 +490,24 @@ describe('FloatEditor', () => {
         expect(validation).toEqual({ valid: true, msg: '' });
       });
 
+      it('should return True when field is equal to the maxValue defined and "operatorType" is set to "inclusive"', () => {
+        mockColumn.internalColumnEditor.maxValue = 10.2;
+        mockColumn.internalColumnEditor.operatorConditionalType = 'inclusive';
+        editor = new FloatEditor(editorArguments);
+        const validation = editor.validate(10.2);
+
+        expect(validation).toEqual({ valid: true, msg: '' });
+      });
+
+      it('should return False when field is equal to the maxValue defined but "operatorType" is set to "exclusive"', () => {
+        mockColumn.internalColumnEditor.maxValue = 10.2;
+        mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
+        editor = new FloatEditor(editorArguments);
+        const validation = editor.validate(10.2);
+
+        expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number that is lower than 10.2' });
+      });
+
       it('should return False when field is not between minValue & maxValue defined', () => {
         mockColumn.internalColumnEditor.minValue = 10.5;
         mockColumn.internalColumnEditor.maxValue = 99.5;
@@ -497,6 +515,37 @@ describe('FloatEditor', () => {
         const validation = editor.validate(99.6);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number between 10.5 and 99.5' });
+      });
+
+      it('should return True when field is is equal to maxValue defined when both min/max values are defined', () => {
+        mockColumn.internalColumnEditor.minValue = 10.5;
+        mockColumn.internalColumnEditor.maxValue = 99.5;
+        editor = new FloatEditor(editorArguments);
+        const validation = editor.validate(99.5);
+
+        expect(validation).toEqual({ valid: true, msg: '' });
+      });
+
+      it('should return True when field is is equal to minValue defined when "operatorType" is set to "inclusive" and both min/max values are defined', () => {
+        mockColumn.internalColumnEditor.minValue = 10.5;
+        mockColumn.internalColumnEditor.maxValue = 99.5;
+        mockColumn.internalColumnEditor.operatorConditionalType = 'inclusive';
+        editor = new FloatEditor(editorArguments);
+        const validation = editor.validate(10.5);
+
+        expect(validation).toEqual({ valid: true, msg: '' });
+      });
+
+      it('should return False when field is equal to maxValue but "operatorType" is set to "exclusive" when both min/max values are defined', () => {
+        mockColumn.internalColumnEditor.minValue = 10.5;
+        mockColumn.internalColumnEditor.maxValue = 99.5;
+        mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
+        editor = new FloatEditor(editorArguments);
+        const validation1 = editor.validate(99.5);
+        const validation2 = editor.validate(10.5);
+
+        expect(validation1).toEqual({ valid: false, msg: 'Please enter a valid number between 10.5 and 99.5' });
+        expect(validation2).toEqual({ valid: false, msg: 'Please enter a valid number between 10.5 and 99.5' });
       });
 
       it('should return False when field has more decimals than the "decimalPlaces" which is the maximum decimal allowed', () => {
