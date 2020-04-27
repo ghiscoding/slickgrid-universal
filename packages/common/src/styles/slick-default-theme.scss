@@ -83,8 +83,7 @@
          border: $cell-active-border;
 
          // We compensate for the all-around border (now 1px at top and left too!)
-         padding-top: 5px;
-         padding-left: 7px;
+         padding: $cell-padding;
 
          input.editor-text {
            width: 100%;

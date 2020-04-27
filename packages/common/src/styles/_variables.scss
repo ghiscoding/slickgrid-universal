@@ -39,7 +39,7 @@ $cell-border-left:                          1px transparent !default;
 $cell-even-background-color: 			          #ffffff !default;
 $cell-odd-background-color:                 darken($grid-cell-color, 3%) !default; // for striping every second row
 $cell-odd-active-background-color:          darken($grid-cell-color, 5%) !default;
-$cell-padding:                              5px 7.5834px !default;
+$cell-padding:                              5px 6px !default;
 
 /** 4x available slick-pane (top, bottom, left, right) */
 $slick-pane-top-border-top:                 none !default;
