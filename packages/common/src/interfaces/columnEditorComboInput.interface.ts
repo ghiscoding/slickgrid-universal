@@ -5,7 +5,7 @@ interface EditorComboInput extends Partial<ColumnEditor> {
   field: string;
 
   /** Editor Type */
-  type: 'integer' | 'float' | 'number' | 'password' | 'text';
+  type: 'integer' | 'float' | 'number' | 'password' | 'text' | 'readonly';
 }
 
 export interface ColumnEditorComboInput {

@@ -26,6 +26,10 @@
         &.right {
           margin-left: calc(#{$text-editor-margin-left + 9px});
         }
+
+        &[readonly] {
+          background-color: $text-editor-readonly-color;
+        }
       }
 
       .slider-editor-input {

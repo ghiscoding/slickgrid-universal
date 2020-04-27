@@ -152,6 +152,9 @@ export class DualInputEditor implements Editor {
     input.autocomplete = 'off';
     input.placeholder = editorSideParams.placeholder || '';
     input.title = editorSideParams.title || '';
+    if (fieldType === 'readonly') {
+      input.readOnly = true;
+    }
     if (fieldType === 'number') {
       input.step = this.getInputDecimalSteps(position);
     }
