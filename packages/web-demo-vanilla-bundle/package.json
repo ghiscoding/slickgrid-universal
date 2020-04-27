@@ -6,7 +6,7 @@
     "src": "src"
   },
   "scripts": {
-    "build:prod": "webpack --env.production --extractCss",
+    "build:demo": "webpack --env.production --extractCss",
     "dev:watch": "webpack-dev-server --env.server --extractCss",
     "test": "echo testing slickgrid-universal demo code"
   },
