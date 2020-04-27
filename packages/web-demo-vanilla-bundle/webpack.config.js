@@ -79,6 +79,7 @@ module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, 
     }),
     new HtmlWebpackPlugin({
       template: 'index.ejs',
+      favicon: `${srcDir}/favicon.ico`,
       metadata: {
         // available in index.ejs //
         title, baseUrl
