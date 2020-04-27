@@ -41,6 +41,8 @@ export class App {
   }
 
   disposeAll() {
+    this.renderer.dispose();
+
     for (const vmKey of Object.keys(this.viewModelObj)) {
       const viewModel = this.viewModelObj[vmKey];
       if (viewModel && viewModel.dispose) {

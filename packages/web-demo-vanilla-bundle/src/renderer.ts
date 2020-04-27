@@ -20,6 +20,10 @@ export class Renderer {
     return this._className;
   }
 
+  dispose() {
+    this._observers = [];
+  }
+
   getModuleClassName(module: any): string {
     let className = '';
     const modules = typeof module === 'object' && Object.keys(module);
