@@ -86,14 +86,14 @@
          padding: $cell-padding;
 
          input.editor-text {
-           width: 100%;
+           width: calc(100% + 2px); // add 2px to cancel out negative margin-left transform
            height: 100%;
            outline: 0;
            transform: translate(0, -2px);
          }
 
          input.compound-editor-text {
-           width: calc(50% - 5px);
+           width: calc(50% + 1px - 5px); // 1px (is 2px / 2) and 5px (is space between the 2 inputs)
            height: 100%;
            outline: 0;
            transform: translate(0, -2px);
