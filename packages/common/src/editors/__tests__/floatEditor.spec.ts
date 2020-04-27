@@ -406,13 +406,13 @@ describe('FloatEditor', () => {
       });
 
       it('should not call anything when the input value is not a valid float number', () => {
-        mockItemData = { id: 1, price: '.', isActive: true };
+        mockItemData = { id: 1, price: null, isActive: true };
         gridOptionMock.autoCommitEdit = true;
         const spy = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
         editor = new FloatEditor(editorArguments);
         editor.loadValue(mockItemData);
-        editor.setValue('.');
+        editor.setValue('-.');
         editor.save();
 
         expect(spy).not.toHaveBeenCalled();

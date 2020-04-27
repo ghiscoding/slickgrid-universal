@@ -428,12 +428,28 @@ describe('IntegerEditor', () => {
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number that is greater than 10' });
       });
 
+      it('should return True when field is equal to the minValue defined', () => {
+        mockColumn.internalColumnEditor.minValue = 9;
+        editor = new IntegerEditor(editorArguments);
+        const validation = editor.validate(9);
+
+        expect(validation).toEqual({ valid: true, msg: '' });
+      });
+
       it('should return False when field is greater than a maxValue defined', () => {
         mockColumn.internalColumnEditor.maxValue = 10;
         editor = new IntegerEditor(editorArguments);
         const validation = editor.validate(33);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number that is lower than 10' });
+      });
+
+      it('should return True when field is equal to the maxValue defined', () => {
+        mockColumn.internalColumnEditor.maxValue = 99;
+        editor = new IntegerEditor(editorArguments);
+        const validation = editor.validate(99);
+
+        expect(validation).toEqual({ valid: true, msg: '' });
       });
 
       it('should return False when field is not between minValue & maxValue defined', () => {

@@ -32,7 +32,7 @@ export function integerValidator(inputValue: any, options: IntegerValidatorOptio
   } else if (isRequired && inputValue === '') {
     isValid = false;
     outputMsg = errorMsg || Constants.VALIDATION_REQUIRED_FIELD;
-  } else if (inputValue && (isNaN(inputValue as number) || !/^[+-]?\d+$/.test(inputValue))) {
+  } else if (inputValue !== '' && ((isNaN(inputValue as number) || !/^[+-]?\d+$/.test(inputValue)))) {
     isValid = false;
     outputMsg = errorMsg || Constants.VALIDATION_EDITOR_VALID_INTEGER;
   } else if (minValue !== undefined && maxValue !== undefined && intNumber !== null && (intNumber < minValue || intNumber > maxValue)) {
@@ -41,13 +41,13 @@ export function integerValidator(inputValue: any, options: IntegerValidatorOptio
     // for example if we set decimalPlaces to 2, we will only accept numbers between 0 and 2 decimals
     isValid = false;
     outputMsg = errorMsg || Constants.VALIDATION_EDITOR_INTEGER_BETWEEN.replace(/{{minValue}}|{{maxValue}}/gi, (matched) => mapValidation[matched]);
-  } else if (minValue !== undefined && intNumber !== null && intNumber <= minValue) {
+  } else if (minValue !== undefined && intNumber !== null && intNumber < minValue) {
     // MIN VALUE ONLY
     // when decimal value is bigger than 0, we only accept the decimal values as that value set
     // for example if we set decimalPlaces to 2, we will only accept numbers between 0 and 2 decimals
     isValid = false;
     outputMsg = errorMsg || Constants.VALIDATION_EDITOR_INTEGER_MIN.replace(/{{minValue}}/gi, (matched) => mapValidation[matched]);
-  } else if (maxValue !== undefined && intNumber !== null && intNumber >= maxValue) {
+  } else if (maxValue !== undefined && intNumber !== null && intNumber > maxValue) {
     // MAX VALUE ONLY
     // when decimal value is bigger than 0, we only accept the decimal values as that value set
     // for example if we set decimalPlaces to 2, we will only accept numbers between 0 and 2 decimals
