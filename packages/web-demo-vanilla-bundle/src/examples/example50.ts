@@ -39,21 +39,6 @@ export class Example50 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'Auth_Sell_Ext_Price__c22', name: 'Auth Ext Sell Price | Multiplier', field: 'Auth_Sell_Ext_Price__c', minWidth: 150, filterable: true,
-        editor: {
-          model: Slicker.Editors.dualInput,
-          params: {
-            decimalPlaces: 2,
-            leftField: 'Auth_Sell_Ext_Price__c',
-            rightField: 'Authorized_Selling_Net_Multiplier__c',
-            leftValidator: (value, args) => true,
-            rightValidator: (value, args) => true,
-          },
-          required: true,
-        },
-        formatter: this.authSellFormatter.bind(this)
-      },
-      {
         id: 'Sort_Sequence_Number__c', name: 'Sort Seq', field: 'Sort_Sequence_Number__c', minWidth: 90,
         formatter: Slicker.Formatters.multiple, sortable: true, filterable: true, filter: { model: Slicker.Filters.compoundInputNumber }, type: Slicker.Enums.FieldType.number,
         params: {
@@ -134,16 +119,6 @@ export class Example50 {
         id: 'Auth_Sell_Ext_Price__c', name: 'Auth Ext Sell Price', field: 'Auth_Sell_Ext_Price__c', minWidth: 150, filterable: true,
         formatter: Slicker.Formatters.dollar,
       },
-      // {
-      //   id: 'Auth_Sell_Ext_Price__c22', name: 'Auth Ext Sell Price | Multiplier', field: 'Auth_Sell_Ext_Price__c', minWidth: 150, filterable: true,
-      //   editor: {
-      //     model: Slicker.Editors.compoundText,
-      //     params: { decimalPlaces: 2 },
-      //     required: true,
-      //     alwaysSaveOnEnterKey: true,
-      //   },
-      //   formatter: this.authSellFormatter.bind(this)
-      // },
       {
         id: 'Requested_Sell_Net_Multiplier__c', name: 'Req Sell Net Mult.', field: 'Requested_Sell_Net_Multiplier__c', minWidth: 150, filterable: true,
         formatter: Slicker.Formatters.decimal, params: { minDecimal: 4, maxDecimal: 4, }
