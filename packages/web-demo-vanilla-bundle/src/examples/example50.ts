@@ -41,7 +41,7 @@ export class Example50 {
       {
         id: 'Auth_Sell_Ext_Price__c22', name: 'Auth Ext Sell Price | Multiplier', field: 'Auth_Sell_Ext_Price__c', minWidth: 150, filterable: true,
         editor: {
-          model: Slicker.Editors.compoundText,
+          model: Slicker.Editors.dualInput,
           params: {
             decimalPlaces: 2,
             leftField: 'Auth_Sell_Ext_Price__c',
