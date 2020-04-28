@@ -2,9 +2,7 @@ import { DelimiterType, EventNamingStyle, FileType, GridAutosizeColsMode, Operat
 import { GridOption } from './interfaces/gridOption.interface';
 import { Filters } from './filters';
 
-/**
- * Options that can be passed to the Bootstrap-Datetimepicker directly
- */
+/** Global Grid Options Defaults */
 export const GlobalGridOptions: GridOption = {
   alwaysShowVerticalScroll: true,
   autoEdit: false,

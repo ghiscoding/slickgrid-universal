@@ -51,37 +51,40 @@ export class FloatEditor implements Editor {
   }
 
   init() {
-    const columnId = this.columnDef && this.columnDef.id;
-    const placeholder = this.columnEditor && this.columnEditor.placeholder || '';
-    const title = this.columnEditor && this.columnEditor.title || '';
+    if (this.columnDef && this.columnEditor && this.args) {
+      const columnId = this.columnDef.id;
+      const placeholder = this.columnEditor.placeholder || '';
+      const title = this.columnEditor.title || '';
+      const inputStep = (this.columnEditor.valueStep !== undefined) ? this.columnEditor.valueStep : this.getInputDecimalSteps();
 
-    this._input = document.createElement('input') as HTMLInputElement;
-    this._input.className = `editor-text editor-${columnId}`;
-    this._input.type = 'number';
-    this._input.setAttribute('role', 'presentation');
-    this._input.autocomplete = 'off';
-    this._input.placeholder = placeholder;
-    this._input.title = title;
-    this._input.step = this.getInputDecimalSteps();
-    const cellContainer = this.args?.container;
-    if (cellContainer && typeof cellContainer.appendChild === 'function') {
-      cellContainer.appendChild(this._input);
-    }
-
-    this._input.onkeydown = ((event: KeyboardEvent) => {
-      this._lastInputKeyEvent = event;
-      if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT) {
-        event.stopImmediatePropagation();
+      this._input = document.createElement('input') as HTMLInputElement;
+      this._input.className = `editor-text editor-${columnId}`;
+      this._input.type = 'number';
+      this._input.setAttribute('role', 'presentation');
+      this._input.autocomplete = 'off';
+      this._input.placeholder = placeholder;
+      this._input.title = title;
+      this._input.step = `${inputStep}`;
+      const cellContainer = this.args.container;
+      if (cellContainer && typeof cellContainer.appendChild === 'function') {
+        cellContainer.appendChild(this._input);
       }
-    });
 
-    // the lib does not get the focus out event for some reason
-    // so register it here
-    if (this.hasAutoCommitEdit) {
-      this._input.addEventListener('focusout', () => this.save());
+      this._input.onkeydown = ((event: KeyboardEvent) => {
+        this._lastInputKeyEvent = event;
+        if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT) {
+          event.stopImmediatePropagation();
+        }
+      });
+
+      // the lib does not get the focus out event for some reason
+      // so register it here
+      if (this.hasAutoCommitEdit) {
+        this._input.addEventListener('focusout', () => this.save());
+      }
+
+      setTimeout(() => this.focus(), 50);
     }
-
-    setTimeout(() => this.focus(), 50);
   }
 
   destroy() {
@@ -98,7 +101,7 @@ export class FloatEditor implements Editor {
 
   getDecimalPlaces(): number {
     // returns the number of fixed decimal places or null
-    let rtn = (this.columnEditor.params && this.columnEditor.params.hasOwnProperty('decimalPlaces')) ? this.columnEditor.params.decimalPlaces : undefined;
+    let rtn = this.columnEditor?.decimal ?? this.columnEditor?.params?.decimalPlaces ?? undefined;
 
     if (rtn === undefined) {
       rtn = defaultDecimalPlaces;

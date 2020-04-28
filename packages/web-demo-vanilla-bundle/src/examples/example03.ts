@@ -69,6 +69,8 @@ export class Example3 {
         editor: {
           model: Editors.float,
           // required: true,
+          decimal: 2,
+          valueStep: 1,
           alwaysSaveOnEnterKey: true,
         },
         type: FieldType.number,
