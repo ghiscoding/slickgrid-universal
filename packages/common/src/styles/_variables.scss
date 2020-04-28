@@ -153,7 +153,7 @@ $sort-indicator-number-width:               8px !default;
 $sort-indicator-number-left:                auto !default;
 $sort-indicator-number-right:               0px !default;
 $sort-indicator-number-top:                 (13px * $header-row-count) !default;
-$sort-indicator-hint-opacity:               0.6 !default;
+$sort-indicator-hint-opacity:               0.5 !default;
 
 /* Grouping Totals Formatter */
 $group-totals-formatter-color:              gray !default;
@@ -349,6 +349,7 @@ $header-menu-button-bg-color:               #ffffff !default;
 $header-menu-border:                        1px solid #BFBDBD !default;
 $header-menu-button-border:                 $header-menu-border !default;
 $header-menu-button-border-width:           0px !default;
+$header-menu-button-height:                 25px !default;
 $header-menu-button-icon:                   "\f13a" !default;
 $header-menu-button-icon-font-size:         14px !default;
 $header-menu-button-icon-font-weight:       normal !default;
