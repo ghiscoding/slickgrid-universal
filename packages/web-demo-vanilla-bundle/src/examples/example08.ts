@@ -45,6 +45,7 @@ export class Example08 {
       enableAutoResize: false,
       gridHeight: 275,
       gridWidth: 800,
+      enableExport: true,
       enableCellNavigation: true,
       enableColumnReorder: false,
       enableSorting: true,

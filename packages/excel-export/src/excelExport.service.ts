@@ -37,6 +37,7 @@ export class ExcelExportService {
   private _dataView: any;
   private _grid: any;
   private _locales: Locale;
+  private _groupedColumnHeaders: KeyTitlePair[];
   private _columnHeaders: KeyTitlePair[];
   private _groupedHeaders: KeyTitlePair[];
   private _hasGroupedItems = false;
@@ -254,7 +255,10 @@ export class ExcelExportService {
       columnHeaderStyleId = this._stylesheet.createFormat(columnHeaderStyle).id;
     }
 
-    // get all column headers (it might include a "Group by" title at A1 cell)
+    // get all Grouped Column Header Titles when defined (from pre-header row)
+    outputData.push(this.getColumnGroupedHeaderTitlesData(columns, { style: columnHeaderStyleId }));
+
+    // get all Column Header Titles (it might include a "Group by" title at A1 cell)
     // also style the headers, defaults to Bold but user could pass his own style
     outputData.push(this.getColumnHeaderData(columns, { style: columnHeaderStyleId }));
 
@@ -288,10 +292,34 @@ export class ExcelExportService {
     return columnStyles;
   }
 
+  /**
+   * Get all Grouped Header Titles and their keys, translate the title when required, and format them in Bold
+   * @param {Array<object>} columns of the grid
+   */
+  private getColumnGroupedHeaderTitlesData(columns: Column[], metadata: ExcelMetadata): Array<ExcelCellFormat> {
+    let outputGroupedHeaderTitles: Array<ExcelCellFormat> = [];
+
+    // get all Column Header Titles
+    this._groupedColumnHeaders = this.getColumnGroupedHeaderTitles(columns) || [];
+    if (this._groupedColumnHeaders && Array.isArray(this._groupedColumnHeaders) && this._groupedColumnHeaders.length > 0) {
+      // add the header row + add a new line at the end of the row
+      outputGroupedHeaderTitles = this._groupedColumnHeaders.map((header) => ({ value: header.title, metadata }));
+    }
+
+    // do we have a Group by title? If so, just add an empty string since the "Group By" text will be added on next row
+    const groupedHeaderTitle = this.getGroupColumnTitle();
+    if (groupedHeaderTitle) {
+      outputGroupedHeaderTitles.unshift({ value: '', metadata });
+    }
+
+    return outputGroupedHeaderTitles;
+  }
+
   /** Get all column headers and format them in Bold */
   private getColumnHeaderData(columns: Column[], metadata: ExcelMetadata): Array<ExcelCellFormat> {
     let outputHeaderTitles: Array<ExcelCellFormat> = [];
 
+    // get all Column Header Titles
     this._columnHeaders = this.getColumnHeaders(columns) || [];
     if (this._columnHeaders && Array.isArray(this._columnHeaders) && this._columnHeaders.length > 0) {
       // add the header row + add a new line at the end of the row
@@ -326,6 +354,38 @@ export class ExcelExportService {
       this._hasGroupedItems = false;
     }
     return null;
+  }
+
+  /**
+ * Get all Grouped Header Titles and their keys, translate the title when required.
+ * @param {Array<object>} columns of the grid
+ */
+  private getColumnGroupedHeaderTitles(columns: Column[]): KeyTitlePair[] {
+    if (!columns || !Array.isArray(columns) || columns.length === 0) {
+      return [];
+    }
+    const groupedColumnHeaders: KeyTitlePair[] = [];
+
+    // Populate the Grouped Column Header, pull the columnGroup(Key) defined
+    columns.forEach((columnDef) => {
+      let groupedHeaderTitle = '';
+      if ((columnDef.columnGroupKey || columnDef.columnGroupKey) && this._gridOptions.enableTranslate && this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLocale && this.translaterService.getCurrentLocale()) {
+        groupedHeaderTitle = this.translaterService.translate((columnDef.columnGroupKey || columnDef.columnGroupKey));
+      } else {
+        groupedHeaderTitle = columnDef.columnGroup || '';
+      }
+      const skippedField = columnDef.excludeFromExport || false;
+
+      // if column width is 0px, then we consider that field as a hidden field and should not be part of the export
+      if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
+        groupedColumnHeaders.push({
+          key: (columnDef.field || columnDef.id) as string,
+          title: groupedHeaderTitle || ''
+        });
+      }
+    });
+
+    return groupedColumnHeaders;
   }
 
   /**
