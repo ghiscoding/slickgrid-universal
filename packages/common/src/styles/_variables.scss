@@ -39,7 +39,9 @@ $cell-border-left:                          1px transparent !default;
 $cell-even-background-color: 			          #ffffff !default;
 $cell-odd-background-color:                 darken($grid-cell-color, 3%) !default; // for striping every second row
 $cell-odd-active-background-color:          darken($grid-cell-color, 5%) !default;
-$cell-padding:                              5px 6px !default;
+$cell-padding-top-bottom:                   5px !default;
+$cell-padding-right-left:                   6px !default;
+$cell-padding:                              $cell-padding-top-bottom $cell-padding-right-left !default;
 
 /** 4x available slick-pane (top, bottom, left, right) */
 $slick-pane-top-border-top:                 none !default;
@@ -61,6 +63,7 @@ $preheader-border-right-last-element:       none !default;
 $preheader-border-bottom:                   none !default;
 $preheader-border-top:                      none !default;
 $preheader-font-size:                       $font-size-base + 3px !default;
+$preheader-height:                          25px !default; /* full height is calculated with cell padding + borders (25px + 5px + 0px + 0px) = 30px must be set as preHeaderPanelHeight */
 
 /* header */
 $header-background-color:                   #ffffff !default;

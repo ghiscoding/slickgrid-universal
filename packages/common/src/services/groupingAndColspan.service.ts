@@ -37,8 +37,9 @@ export class GroupingAndColspanService {
    * @param grid
    * @param dataView
    */
-  init(grid: any, dataView: any) {
+  init(grid: any, resizerPlugin: any) {
     this._grid = grid;
+    const dataView = grid.getData && grid.getData();
 
     if (grid && this._gridOptions) {
       // When dealing with Pre-Header Grouping colspan, we need to re-create the pre-header in multiple occasions
@@ -47,7 +48,7 @@ export class GroupingAndColspanService {
         this._eventHandler.subscribe(grid.onSort, () => this.renderPreHeaderRowGroupingTitles());
         this._eventHandler.subscribe(grid.onColumnsResized, () => this.renderPreHeaderRowGroupingTitles());
         this._eventHandler.subscribe(grid.onColumnsReordered, () => this.renderPreHeaderRowGroupingTitles());
-        this._eventHandler.subscribe(grid.onGridAfterResize, () => this.renderPreHeaderRowGroupingTitles());
+        this._eventHandler.subscribe(resizerPlugin.onGridAfterResize, () => this.renderPreHeaderRowGroupingTitles());
         this._eventHandler.subscribe(dataView.onRowCountChanged, () => this.renderPreHeaderRowGroupingTitles());
 
         // also not sure why at this point, but it seems that I need to call the 1st create in a delayed execution

@@ -151,3 +151,4 @@ npm run test:watch
 - [ ] Add Typings for Grid & DataView objects
 - [x] Add simple input bindings in the demo (e.g. pinned rows input)
 - [ ] Cannot copy text from cell since it's not selectable
+- [ ] Remove all Service init 2nd argument (we can get DataView from the Grid object)

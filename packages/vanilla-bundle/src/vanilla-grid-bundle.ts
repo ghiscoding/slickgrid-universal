@@ -316,13 +316,6 @@ export class VanillaGridBundle {
 
     this.grid.invalidate();
 
-    // bind & initialize the grid service
-    this.gridService.init(this.grid, this.dataView);
-    this.gridStateService.init(this.grid, this.dataView);
-    this.excelExportService.init(this.grid, this.dataView);
-    this.exportService.init(this.grid, this.dataView);
-    // this.paginationService.init(this.grid, this.dataView);
-
     if (this._dataset.length > 0) {
       // if (!this._isDatasetInitialized && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
       //   this.loadRowSelectionPresetWhenExists();
@@ -357,6 +350,14 @@ export class VanillaGridBundle {
     this.gridEventService.bindOnBeforeEditCell(this.grid, this.dataView);
     this.gridEventService.bindOnCellChange(this.grid, this.dataView);
     this.gridEventService.bindOnClick(this.grid, this.dataView);
+
+    // bind & initialize the grid service
+    this.gridService.init(this.grid, this.dataView);
+    this.gridStateService.init(this.grid, this.dataView);
+    this.excelExportService.init(this.grid, this.dataView);
+    this.exportService.init(this.grid, this.dataView);
+    // this.paginationService.init(this.grid, this.dataView);
+    this.groupingAndColspanService.init(this.grid, this.resizerPlugin);
 
     const slickerElementInstance = {
       // Slick Grid & DataView objects
