@@ -357,7 +357,11 @@ export class VanillaGridBundle {
     this.excelExportService.init(this.grid, this.dataView);
     this.exportService.init(this.grid, this.dataView);
     // this.paginationService.init(this.grid, this.dataView);
-    this.groupingAndColspanService.init(this.grid, this.resizerPlugin);
+
+    // bind & initialize grouping and header grouping colspan service
+    if (this._gridOptions.createPreHeaderPanel && !this._gridOptions.enableDraggableGrouping) {
+      this.groupingAndColspanService.init(this.grid, this.resizerPlugin);
+    }
 
     const slickerElementInstance = {
       // Slick Grid & DataView objects
