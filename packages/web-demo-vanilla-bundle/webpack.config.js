@@ -56,6 +56,7 @@ module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, 
       { test: /\.scss$/, use: ['style-loader', 'css-loader', 'sass-loader'], issuer: /\.[tj]s$/i },
       { test: /\.scss$/, use: ['css-loader', 'sass-loader'], issuer: /\.html?$/i },
       { test: /\.(png|gif|jpg|cur)$/i, loader: 'url-loader', options: { limit: 8192 } },
+      { test: /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/, loader: 'file-loader' },
       { test: /\.html$/i, loader: 'html-loader' },
       { test: /\.ts?$/, use: [{ loader: 'ts-loader', options: { transpileOnly: true } }] }
     ],
