@@ -19,9 +19,16 @@ const dataViewStub = {
   reSort: jest.fn(),
 };
 
+const resizerPluginStub = {
+  init: jest.fn(),
+  destroy: jest.fn(),
+  onGridAfterResize: new Slick.Event(),
+};
+
 const gridStub = {
   autosizeColumns: jest.fn(),
   getColumnIndex: jest.fn(),
+  getData: () => dataViewStub,
   getOptions: () => gridOptionMock,
   getColumns: jest.fn(),
   getHeadersWidth: jest.fn(),
@@ -31,7 +38,6 @@ const gridStub = {
   getPreHeaderPanelRight: jest.fn(),
   getSortColumns: jest.fn(),
   invalidate: jest.fn(),
-  onGridAfterResize: new Slick.Event(),
   onColumnsReordered: new Slick.Event(),
   onColumnsResized: new Slick.Event(),
   onSort: new Slick.Event(),
@@ -92,7 +98,7 @@ describe('GroupingAndColspanService', () => {
   it('should not call the "renderPreHeaderRowGroupingTitles" when there are no grid options', () => {
     gridStub.getOptions = undefined;
     const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
-    service.init(gridStub, dataViewStub);
+    service.init(gridStub, resizerPluginStub);
     expect(spy).not.toHaveBeenCalled();
   });
 
@@ -115,7 +121,7 @@ describe('GroupingAndColspanService', () => {
       const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
       gridStub.getColumns = undefined;
 
-      service.init(gridStub, dataViewStub);
+      service.init(gridStub, resizerPluginStub);
       jest.runAllTimers(); // fast-forward timer
 
       expect(spy).toHaveBeenCalledTimes(1);
@@ -126,7 +132,7 @@ describe('GroupingAndColspanService', () => {
     it('should call the "renderPreHeaderRowGroupingTitles" after triggering a grid "onSort"', () => {
       const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
 
-      service.init(gridStub, dataViewStub);
+      service.init(gridStub, resizerPluginStub);
       gridStub.onSort.notify({ impactedColumns: mockColumns }, new Slick.EventData(), gridStub);
       jest.runAllTimers(); // fast-forward timer
 
@@ -138,7 +144,7 @@ describe('GroupingAndColspanService', () => {
     it('should call the "renderPreHeaderRowGroupingTitles" after triggering a grid "onColumnsResized"', () => {
       const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
 
-      service.init(gridStub, dataViewStub);
+      service.init(gridStub, resizerPluginStub);
       gridStub.onColumnsResized.notify({}, new Slick.EventData(), gridStub);
       jest.runAllTimers(); // fast-forward timer
 
@@ -150,7 +156,7 @@ describe('GroupingAndColspanService', () => {
     it('should call the "renderPreHeaderRowGroupingTitles" after triggering a grid "onColumnsReordered"', () => {
       const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
 
-      service.init(gridStub, dataViewStub);
+      service.init(gridStub, resizerPluginStub);
       gridStub.onColumnsReordered.notify({}, new Slick.EventData(), gridStub);
       jest.runAllTimers(); // fast-forward timer
 
@@ -162,7 +168,7 @@ describe('GroupingAndColspanService', () => {
     it('should call the "renderPreHeaderRowGroupingTitles" after triggering a dataView "onColumnsResized"', () => {
       const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
 
-      service.init(gridStub, dataViewStub);
+      service.init(gridStub, resizerPluginStub);
       dataViewStub.onRowCountChanged.notify({ previous: 1, current: 2, dataView: dataViewStub, callingOnRowsChanged: 1 }, new Slick.EventData(), gridStub);
       jest.runAllTimers(); // fast-forward timer
 
@@ -174,8 +180,8 @@ describe('GroupingAndColspanService', () => {
     it('should call the "renderPreHeaderRowGroupingTitles" after triggering a grid resize', () => {
       const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
 
-      service.init(gridStub, dataViewStub);
-      gridStub.onGridAfterResize.notify({}, new Slick.EventData(), gridStub);
+      service.init(gridStub, resizerPluginStub);
+      resizerPluginStub.onGridAfterResize.notify({}, new Slick.EventData(), gridStub);
       jest.runAllTimers(); // fast-forward timer
 
       expect(spy).toHaveBeenCalledTimes(2);
@@ -190,7 +196,7 @@ describe('GroupingAndColspanService', () => {
       const getColSpy = jest.spyOn(gridStub, 'getColumns');
       const setColSpy = jest.spyOn(gridStub, 'setColumns');
 
-      service.init(gridStub, dataViewStub);
+      service.init(gridStub, resizerPluginStub);
       service.translateGroupingAndColSpan();
 
       expect(getColSpy).toHaveBeenCalled();
@@ -203,7 +209,7 @@ describe('GroupingAndColspanService', () => {
       const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
       const divHeaderColumns = document.getElementsByClassName('slick-header-columns');
 
-      service.init(gridStub, dataViewStub);
+      service.init(gridStub, resizerPluginStub);
       jest.runAllTimers(); // fast-forward timer
 
       expect(spy).toHaveBeenCalledTimes(1);
@@ -221,7 +227,7 @@ describe('GroupingAndColspanService', () => {
       const preHeaderRightSpy = jest.spyOn(gridStub, 'getPreHeaderPanelRight');
       const divHeaderColumns = document.getElementsByClassName('slick-header-columns');
 
-      service.init(gridStub, dataViewStub);
+      service.init(gridStub, resizerPluginStub);
       jest.runAllTimers(); // fast-forward timer
 
       expect(preHeaderLeftSpy).toHaveBeenCalledTimes(1);

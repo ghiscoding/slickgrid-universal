@@ -34,8 +34,8 @@ export class GroupingAndColspanService {
 
   /**
    * Initialize the Service
-   * @param grid
-   * @param dataView
+   * @param {object} grid
+   * @param {object} resizerPlugin
    */
   init(grid: any, resizerPlugin: any) {
     this._grid = grid;
