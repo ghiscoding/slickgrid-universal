@@ -256,7 +256,9 @@ export class ExcelExportService {
     }
 
     // get all Grouped Column Header Titles when defined (from pre-header row)
-    outputData.push(this.getColumnGroupedHeaderTitlesData(columns, { style: columnHeaderStyleId }));
+    if (this._gridOptions.createPreHeaderPanel && this._gridOptions.showPreHeaderPanel) {
+      outputData.push(this.getColumnGroupedHeaderTitlesData(columns, { style: columnHeaderStyleId }));
+    }
 
     // get all Column Header Titles (it might include a "Group by" title at A1 cell)
     // also style the headers, defaults to Bold but user could pass his own style
