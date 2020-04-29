@@ -3,6 +3,7 @@ $link-color: #2cad56;
 
 /* make sure to add the @import the SlickGrid Bootstrap Theme AFTER the variables changes */
 @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss';
+// @import '@slickgrid-universal/common/dist/styles/sass/se-slickgrid-theme-material.scss';
 
 /* Material Design Icons */
 $mdi-font-path: "~@mdi/font/fonts";

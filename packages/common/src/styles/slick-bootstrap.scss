@@ -387,6 +387,8 @@
         border-left: $preheader-border-left;
         border-right: $preheader-border-right;
         font-size: $preheader-font-size;
+        justify-content: $preheader-grouped-title-justify;
+        display: $preheader-grouped-title-display;
       }
       .slick-header-column:first-child {
         border-left: $preheader-border-left-first-element;

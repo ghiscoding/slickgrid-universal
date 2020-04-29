@@ -3,7 +3,7 @@
 @import './multiple-select';
 
 $primary-color:                         #006DCC;
-$font-family:                           var(--lwc-fontFamily,'Salesforce Sans', Arial, sans-serif);
+$font-family:                           var(--lwc-fontFamily,'Salesforce Sans', 'SalesforceSans-Regular', Arial, sans-serif);
 $cell-active-border:                    1px solid #0070d2;
 $cell-border-top:                       none;
 $cell-font-weight:                      400;
@@ -17,7 +17,7 @@ $header-background-color:               #fafaf9;
 $header-border-bottom:                  1px solid #ccc;
 $header-font-size:                      13px;
 $header-font-weight:                    700;
-$header-text-color:                     rgba(0, 0, 0, 0.87);
+$header-text-color:                     #514f4d;
 $header-border-bottom:                  transparent;
 $header-filter-row-border-bottom:       1px solid #d0d0d0;
 $slick-pane-top-border-top:             1px solid #d0d0d0;
@@ -93,12 +93,13 @@ $multiselect-icon-search:               "\F0349";
 $multiselect-unchecked-opacity:         0.8;
 $preheader-border-right:                1px solid #e2e2e2;
 // $preheader-border-bottom:               1px solid #e2e2e2;
+$preheader-grouped-title-justify:       center;
 $row-move-plugin-cursor:                grab;
 $row-move-plugin-icon:                  "\F0278";
 $editor-focus-box-shadow:               0 0 3px $primary-color;
 $slider-editor-height:                  26px;
 $row-selected-color:                    darken($cell-odd-background-color, 7%);
-$row-mouse-hover-color:                 rgba(128, 183, 231, 0.1);
+$row-mouse-hover-color:                 darken($cell-odd-background-color, 3%); // rgba(128, 183, 231, 0.1);
 
 @import './slick-without-bootstrap-min-styling';
 @import './slick-default-theme';

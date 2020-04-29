@@ -2,6 +2,10 @@ import { Column, Formatters, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 
+// use any of the Styling Theme
+// import '../material-styles.scss';
+import '../salesforce-styles.scss';
+
 const NB_ITEMS = 995;
 
 export class Example1 {
@@ -46,6 +50,7 @@ export class Example1 {
       enableAutoResize: false,
       gridHeight: 225,
       gridWidth: 800,
+      rowHeight: 33,
     };
 
     // copy the same Grid Options and Column Definitions to 2nd grid

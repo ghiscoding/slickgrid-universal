@@ -1,6 +1,7 @@
 import { Aggregators, Column, Editors, FieldType, Filters, GroupingGetterFunction, SortComparers, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
+import '../salesforce-styles.scss';
 
 const actionFormatter = (row, cell, value, columnDef, dataContext) => {
   return `<div class="fake-hyperlink">Action <i class="mdi mdi-24px mdi-menu-down"></i></div>`;
@@ -167,6 +168,7 @@ export class Example3 {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
           model: Filters.singleSelect
         },
+        exportWithFormatter: false,
         formatter: Formatters.checkmarkMaterial,
         grouping: {
           getter: 'effortDriven',
@@ -249,6 +251,10 @@ export class Example3 {
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableCellNavigation: true,
+      enableExport: true,
+      exportOptions: {
+        exportWithFormatter: true
+      },
       enableFiltering: true,
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
@@ -257,6 +263,7 @@ export class Example3 {
       createPreHeaderPanel: true,
       showPreHeaderPanel: true,
       preHeaderPanelHeight: 40,
+      rowHeight: 35,
       enableDraggableGrouping: true,
       draggableGrouping: {
         dropPlaceHolderText: 'Drop a column header here to group by the column',
@@ -310,7 +317,7 @@ export class Example3 {
         start: new Date(randomYear, randomMonth, randomDay),
         finish: new Date(randomYear, (randomMonth + 1), randomDay),
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
-        completed: (i % 5 === 0)
+        effortDriven: (i % 5 === 0)
       };
     }
     if (this.slickgridLwc) {

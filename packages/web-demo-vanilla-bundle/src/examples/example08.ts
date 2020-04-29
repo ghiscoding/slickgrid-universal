@@ -5,6 +5,7 @@ import {
 } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
+import '../salesforce-styles.scss';
 
 export class Example08 {
   columnDefinitions1: Column[];
@@ -52,6 +53,7 @@ export class Example08 {
       createPreHeaderPanel: true,
       showPreHeaderPanel: true,
       preHeaderPanelHeight: 35,
+      rowHeight: 33,
       explicitInitialization: true,
       colspanCallback: this.renderDifferentColspan
     };
@@ -78,6 +80,7 @@ export class Example08 {
       preHeaderPanelHeight: 35,
       explicitInitialization: true,
       frozenColumn: 1,
+      rowHeight: 33,
     };
   }
 
