@@ -161,6 +161,7 @@ export class Example50 {
       },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
+      enableExport: true,
       enableCellNavigation: true,
       enableCheckboxSelector: true,
       enableFiltering: true,

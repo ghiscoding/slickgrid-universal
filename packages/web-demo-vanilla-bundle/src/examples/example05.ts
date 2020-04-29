@@ -82,6 +82,7 @@ export class Example5 {
       },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
+      enableExport: true,
       enableFiltering: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       treeDataOptions: {

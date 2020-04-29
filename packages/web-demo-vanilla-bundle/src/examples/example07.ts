@@ -43,6 +43,7 @@ export class Example7 {
         container: '.demo-container',
         rightPadding: 10
       },
+      enableExport: true,
       enableCellNavigation: true,
       enableCheckboxSelector: true,
       enableRowSelection: true,

@@ -123,7 +123,7 @@ export class Example2 {
       autoResize: {
         container: '.demo-container',
       },
-      enableExcelExport: true,
+      enableExport: true,
       enableFiltering: true,
       enableGrouping: true,
       excelExportOptions: {

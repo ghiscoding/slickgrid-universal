@@ -66,6 +66,7 @@ export class Example6 {
       },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
+      enableExport: true,
       enableFiltering: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       treeDataOptions: {
