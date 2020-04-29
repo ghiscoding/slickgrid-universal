@@ -104,3 +104,6 @@ $row-selected-color:                    #d4f6d7; /*rgba(0, 149, 48, 0.2);*/
 @import './slickgrid-examples';
 @import './slick-bootstrap';
 @import './bootstrap-jquery-ui-autocomplete';
+
+$link-color: $primary-color;
+@import './extra-styling.scss';

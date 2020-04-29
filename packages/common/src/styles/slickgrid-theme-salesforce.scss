@@ -79,7 +79,7 @@ $header-menu-button-icon-font-size:     26px;
 $header-menu-icon-font-size:            18px;
 $header-menu-icon-width:                18px;
 $header-menu-button-icon:               "\F0140";
-$header-menu-button-margin-right:       6px;
+$header-menu-button-margin-right:       8px;
 $header-menu-display:                   inline-block;
 $large-editor-border-radius:            6px;
 $multiselect-icon-arrow-down:           "\F035D";
@@ -94,6 +94,7 @@ $multiselect-unchecked-opacity:         0.8;
 $preheader-border-right:                1px solid #e2e2e2;
 // $preheader-border-bottom:               1px solid #e2e2e2;
 $preheader-grouped-title-justify:       center;
+$preheader-font-size:                   14px;
 $row-move-plugin-cursor:                grab;
 $row-move-plugin-icon:                  "\F0278";
 $editor-focus-box-shadow:               0 0 3px $primary-color;
@@ -114,19 +115,4 @@ $row-mouse-hover-color:                 darken($cell-odd-background-color, 3%); 
 @import './bootstrap-jquery-ui-autocomplete';
 
 $link-color: $primary-color;
-
-.cell-effort-driven {
-  text-align: center;
-}
-
-.editable-field {
-  background-color: #e3f0fb !important;
-}
-.fake-hyperlink {
-  cursor: pointer;
-  color: $link-color;
-  &:hover {
-      text-decoration: underline;
-  }
-}
-
+@import './extra-styling.scss';
