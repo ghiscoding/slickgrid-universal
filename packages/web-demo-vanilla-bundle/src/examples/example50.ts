@@ -1,6 +1,6 @@
 import { Column, GridOption, FormatterResultObject, OnEventArgs, SortDirectionString, Formatters } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
-import '../se-styles.scss';
+import '../salesforce-styles.scss';
 import './example50.scss';
 
 const ID_PROPERTY_NAME = 'Id';

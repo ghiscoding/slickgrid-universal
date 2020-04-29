@@ -49,6 +49,9 @@ export class TranslateServiceStub implements TranslaterService {
       case 'TOGGLE_FILTER_ROW': output = this._locale === 'en' ? 'Toggle Filter Row' : 'Basculer la ligne des filtres'; break;
       case 'TOGGLE_PRE_HEADER_ROW': output = this._locale === 'en' ? 'Toggle Pre-Header Row' : 'Basculer la ligne de pré-en-tête'; break;
       case 'TRUE': output = this._locale === 'en' ? 'True' : 'Vrai'; break;
+      case 'USER_PROFILE': output = this._locale === 'en' ? 'User Profile' : `Profile d'usager`; break;
+      case 'COMPANY_PROFILE': output = this._locale === 'en' ? 'Company Profile' : `Profile de compagnie`; break;
+      case 'SALES': output = this._locale === 'en' ? 'Sales' : 'Ventes'; break;
       case 'SALES_REP': output = this._locale === 'en' ? 'Sales Rep.' : 'Représentant des ventes'; break;
       case 'SELECT_ALL': output = this._locale === 'en' ? 'Select All' : 'Sélectionner tout'; break;
       case 'FINANCE_MANAGER': output = this._locale === 'en' ? 'Finance Manager' : 'Responsable des finances'; break;

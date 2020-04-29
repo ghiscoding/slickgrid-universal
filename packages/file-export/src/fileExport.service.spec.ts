@@ -960,6 +960,101 @@ describe('ExportService', () => {
         });
       });
     });
+
+    describe('Grouped Column Header Titles', () => {
+      let mockCollection: any[];
+
+      beforeEach(() => {
+        mockGridOptions.createPreHeaderPanel = true;
+        mockGridOptions.showPreHeaderPanel = true;
+        mockGridOptions.exportOptions = { delimiterOverride: '' };
+        mockColumns = [
+          { id: 'id', field: 'id', excludeFromExport: true },
+          { id: 'firstName', field: 'firstName', width: 100, formatter: myBoldHtmlFormatter, columnGroup: 'User Profile' },
+          { id: 'lastName', field: 'lastName', width: 100, columnGroup: 'User Profile', formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
+          { id: 'userId', field: 'userId', name: 'User Id', width: 100, exportCsvForceToKeepAsString: true, columnGroup: 'Company Profile' },
+          { id: 'position', field: 'position', width: 100, columnGroup: 'Company Profile' },
+          { id: 'order', field: 'order', width: 100, exportWithFormatter: true, columnGroup: 'Sales', formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] } },
+        ] as Column[];
+
+        jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        jest.spyOn(dataViewStub, 'getGrouping').mockReturnValue(null);
+      });
+
+      it('should export with grouped header titles showing up on first row', (done) => {
+        mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
+        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
+        const spyDownload = jest.spyOn(service, 'startDownloadFile');
+
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
+        const contentExpectation =
+          `"User Profile","User Profile","Company Profile","Company Profile","Sales"
+          "FirstName","LastName","User Id","Position","Order"
+          "John","Z",="1E06","SALES_REP","<b>10</b>"`;
+
+        service.init(gridStub, dataViewStub);
+        service.exportToFile(mockExportCsvOptions);
+
+        setTimeout(() => {
+          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToFile`, optionExpectation);
+          expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
+          done();
+        });
+      });
+
+      describe('with Translation', () => {
+        let mockCollection: any[];
+
+        beforeEach(() => {
+          mockGridOptions.enableTranslate = true;
+          mockGridOptions.i18n = translateService;
+
+          mockColumns = [
+            { id: 'id', field: 'id', excludeFromExport: true },
+            { id: 'firstName', nameKey: 'FIRST_NAME', width: 100, columnGroupKey: 'USER_PROFILE', formatter: myBoldHtmlFormatter },
+            { id: 'lastName', field: 'lastName', nameKey: 'LAST_NAME', width: 100, columnGroupKey: 'USER_PROFILE', formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
+            { id: 'userId', field: 'userId', name: 'User Id', width: 100, columnGroupKey: 'COMPANY_PROFILE', exportCsvForceToKeepAsString: true },
+            { id: 'position', field: 'position', name: 'Position', width: 100, columnGroupKey: 'COMPANY_PROFILE', formatter: Formatters.translate, exportWithFormatter: true },
+            { id: 'order', field: 'order', width: 100, exportWithFormatter: true, columnGroupKey: 'SALES', formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] } },
+          ] as Column[];
+          jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        });
+
+        afterEach(() => {
+          jest.clearAllMocks();
+        });
+
+        it(`should have the LastName header title translated when defined as a "headerKey" and "i18n" is set in grid option`, (done) => {
+          mockGridOptions.exportOptions.sanitizeDataExport = false;
+          mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
+          jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+          jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
+          const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+          const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
+          const spyDownload = jest.spyOn(service, 'startDownloadFile');
+
+          const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
+          const contentExpectation =
+            `"User Profile","User Profile","Company Profile","Company Profile","Sales"
+            "First Name","Last Name","User Id","Position","Order"
+            "John","Z",="1E06","Sales Rep.","<b>10</b>"`;
+
+          service.init(gridStub, dataViewStub);
+          service.exportToFile(mockExportCsvOptions);
+
+          setTimeout(() => {
+            expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToFile`, optionExpectation);
+            expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+            expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
+            done();
+          });
+        });
+      });
+    });
   });
 
   describe('without I18N Service', () => {
