@@ -28,9 +28,8 @@ export class FileExportService {
   private _lineCarriageReturn = '\n';
   private _dataView: any;
   private _grid: any;
-  private _groupedColumnHeaders: KeyTitlePair[];
-  private _columnHeaders: KeyTitlePair[];
-  private _groupedHeaders: KeyTitlePair[];
+  private _groupedColumnHeaders: Array<KeyTitlePair>;
+  private _columnHeaders: Array<KeyTitlePair>;
   private _hasGroupedItems = false;
   private _locales: Locale;
 
@@ -249,7 +248,7 @@ export class FileExportService {
    * Get all Grouped Header Titles and their keys, translate the title when required.
    * @param {Array<object>} columns of the grid
    */
-  private getColumnGroupedHeaderTitles(columns: Column[]): KeyTitlePair[] {
+  private getColumnGroupedHeaderTitles(columns: Column[]): Array<KeyTitlePair> {
     const groupedColumnHeaders: KeyTitlePair[] = [];
 
     if (columns && Array.isArray(columns)) {
@@ -272,7 +271,6 @@ export class FileExportService {
         }
       });
     }
-
     return groupedColumnHeaders;
   }
 
@@ -280,8 +278,8 @@ export class FileExportService {
    * Get all header titles and their keys, translate the title when required.
    * @param {Array<object>} columns of the grid
    */
-  private getColumnHeaders(columns: Column[]): KeyTitlePair[] {
-    const columnHeaders: KeyTitlePair[] = [];
+  private getColumnHeaders(columns: Column[]): Array<KeyTitlePair> {
+    const columnHeaders: Array<KeyTitlePair> = [];
 
     if (columns && Array.isArray(columns)) {
       // Populate the Column Header, pull the name defined
@@ -303,7 +301,6 @@ export class FileExportService {
         }
       });
     }
-
     return columnHeaders;
   }
 
