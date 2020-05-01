@@ -72,6 +72,7 @@ export class Example3 {
           // required: true,
           decimal: 2,
           valueStep: 1,
+          maxValue: 10000,
           alwaysSaveOnEnterKey: true,
         },
         type: FieldType.number,
@@ -132,7 +133,7 @@ export class Example3 {
         id: 'start', name: 'Start', field: 'start', sortable: true,
         formatter: Formatters.dateIso, type: FieldType.date, outputType: FieldType.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },
-        editor: { model: Editors.date, },
+        editor: { model: Editors.date, editorOptions: { minDate: 'today' }, },
         grouping: {
           getter: 'start',
           formatter: (g) => `Start: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
