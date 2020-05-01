@@ -111,12 +111,7 @@ module.exports = {
     "no-redeclare": "error",
     "no-return-await": "error",
     "no-sequences": "error",
-    "no-shadow": [
-      "error",
-      {
-        "hoist": "function"
-      }
-    ],
+    "no-shadow": ["error", { "builtinGlobals": false, "hoist": "functions", "allow": [] }],
     "no-sparse-arrays": "error",
     "no-template-curly-in-string": "error",
     "no-throw-literal": "error",
