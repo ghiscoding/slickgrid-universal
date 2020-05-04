@@ -150,14 +150,16 @@ export class DualInputEditor implements Editor {
     const input = document.createElement('input') as HTMLInputElement;
     input.id = `item-${itemId}`;
     input.className = `dual-editor-text editor-${columnId} ${position.replace(/input/gi, '')}`;
+    if (fieldType === 'readonly') {
+      // when the custom type is defined as readonly, we'll make a readonly text input
+      input.readOnly = true;
+      fieldType = 'text';
+    }
     input.type = fieldType || 'text';
     input.setAttribute('role', 'presentation');
     input.autocomplete = 'off';
     input.placeholder = editorSideParams.placeholder || '';
     input.title = editorSideParams.title || '';
-    if (fieldType === 'readonly') {
-      input.readOnly = true;
-    }
     if (fieldType === 'number') {
       input.step = this.getInputDecimalSteps(position);
     }
