@@ -723,14 +723,14 @@ export function setDeepValue(obj: any, path: string | string[], value: any) {
 
   if (path.length > 1) {
     const e = path.shift();
-    if (obj && e !== undefined && obj.hasOwnProperty(e)) {
+    if (obj && e !== undefined) {
       setDeepValue(
         obj[e] = Object.prototype.toString.call(obj[e]) === '[object Object]' ? obj[e] : {},
         path,
         value
       );
     }
-  } else if (obj && path[0] && obj.hasOwnProperty(path[0])) {
+  } else if (obj && path[0]) {
     obj[path[0]] = value;
   }
 }

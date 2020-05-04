@@ -3,7 +3,7 @@
 .slick-row {
   .slick-cell  {
     &.active {
-      input.compound-editor-text,
+      input.dual-editor-text,
       input.editor-text {
         border: $text-editor-border;
         border-radius: $text-editor-border-radius;

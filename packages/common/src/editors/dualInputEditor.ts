@@ -71,9 +71,8 @@ export class DualInputEditor implements Editor {
     return this.grid.getOptions().autoCommitEdit;
   }
 
-  /** Get the Validator function, can be passed in Editor property or Column Definition */
-  get validator(): EditorValidator | undefined {
-    return (this.columnEditor && this.columnEditor.validator) || (this.columnDef && this.columnDef.validator);
+  get isValueSaveCalled(): boolean {
+    return this._isValueSaveCalled;
   }
 
   init() {
@@ -91,8 +90,8 @@ export class DualInputEditor implements Editor {
       containerElm.appendChild(this._rightInput);
     }
 
-    this._leftInput.onkeydown = this.handleKeyDown;
-    this._rightInput.onkeydown = this.handleKeyDown;
+    this._leftInput.onkeydown = this.handleKeyDown.bind(this);
+    this._rightInput.onkeydown = this.handleKeyDown.bind(this);
 
     // the lib does not get the focus out event for some reason, so register it here
     if (this.hasAutoCommitEdit) {
@@ -106,7 +105,7 @@ export class DualInputEditor implements Editor {
   handleFocusOut(event: any, position: 'leftInput' | 'rightInput') {
     // when clicking outside the editable cell OR when focusing out of it
     const targetClassNames = event.relatedTarget?.className || '';
-    if (targetClassNames.indexOf('compound-editor') === -1 && this._lastEventType !== 'focusout-right') {
+    if (targetClassNames.indexOf('dual-editor') === -1 && this._lastEventType !== 'focusout-right') {
       if (position === 'rightInput' || (position === 'leftInput' && this._lastEventType !== 'focusout-left')) {
         this.save();
       }
@@ -127,10 +126,9 @@ export class DualInputEditor implements Editor {
     this._eventHandler.unsubscribeAll();
 
     const columnId = this.columnDef && this.columnDef.id;
-    const elm = document.querySelector(`.compound-editor-text.editor-${columnId}`);
-    if (elm) {
-      this._leftInput.removeEventListener('focusout', () => { });
-      this._rightInput.removeEventListener('focusout', () => { });
+    const elements = document.querySelectorAll(`.dual-editor-text.editor-${columnId}`);
+    if (elements.length > 0) {
+      elements.forEach((elm) => elm.removeEventListener('focusout', () => { }));
     }
   }
 
@@ -146,7 +144,7 @@ export class DualInputEditor implements Editor {
 
     const input = document.createElement('input') as HTMLInputElement;
     input.id = `item-${itemId}`;
-    input.className = `compound-editor-text editor-${columnId} ${position.replace(/input/gi, '')}`;
+    input.className = `dual-editor-text editor-${columnId} ${position.replace(/input/gi, '')}`;
     input.type = fieldType || 'text';
     input.setAttribute('role', 'presentation');
     input.autocomplete = 'off';
@@ -165,12 +163,18 @@ export class DualInputEditor implements Editor {
     // do nothing since we have 2 inputs and we might focus on left/right depending on which is invalid or new
   }
 
-  getValue(): string {
-    return this._leftInput.value || '';
+  getValue(): Array<number | string> {
+    return [
+      this._leftInput.value || '',
+      this._rightInput.value || ''
+    ];
   }
 
-  setValue(value: string) {
-    this._leftInput.value = value;
+  setValues(values: Array<number | string>) {
+    if (Array.isArray(values) && values.length === 2) {
+      this._leftInput.value = `${values[0]}`;
+      this._rightInput.value = `${values[1]}`;
+    }
   }
 
   applyValue(item: any, state: any) {
@@ -183,15 +187,23 @@ export class DualInputEditor implements Editor {
     if (fieldName !== undefined) {
       const isComplexObject = fieldName && fieldName.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
+      let fieldNameToUse = fieldName;
+      if (isComplexObject) {
+        const complexFieldNames = fieldName.split(/\.(.*)/);
+        fieldNameToUse = (complexFieldNames.length > 1 ? complexFieldNames[1] : complexFieldNames) as string;
+      }
+
       // validate the value before applying it (if not valid we'll set an empty string)
-      const validation = this.validate();
-      const newValue = (validation && validation.valid) ? state[fieldName] : '';
+      const stateValue = isComplexObject ? getDescendantProperty(state, fieldNameToUse) : state[fieldName];
+      const validation = this.validate({ position, inputValue: stateValue });
 
       // set the new value to the item datacontext
       if (isComplexObject) {
+        const newValueFromComplex = getDescendantProperty(state, fieldNameToUse);
+        const newValue = (validation && validation.valid) ? newValueFromComplex : '';
         setDeepValue(item, fieldName, newValue);
       } else if (fieldName) {
-        item[fieldName] = newValue;
+        item[fieldName] = (validation && validation.valid) ? state[fieldName] : '';
       }
     }
   }
@@ -199,8 +211,10 @@ export class DualInputEditor implements Editor {
   isValueChanged(): boolean {
     const leftElmValue = this._leftInput.value;
     const rightElmValue = this._rightInput.value;
+    const leftEditorParams = this.editorParams && this.editorParams.leftInput;
+    const rightEditorParams = this.editorParams && this.editorParams.rightInput;
     const lastKeyEvent = this._lastInputKeyEvent && this._lastInputKeyEvent.keyCode;
-    if (this.columnEditor && this.columnEditor.alwaysSaveOnEnterKey && lastKeyEvent === KeyCode.ENTER) {
+    if ((leftEditorParams && leftEditorParams.alwaysSaveOnEnterKey || rightEditorParams && rightEditorParams.alwaysSaveOnEnterKey) && lastKeyEvent === KeyCode.ENTER) {
       return true;
     }
     const leftResult = (!(leftElmValue === '' && this.originalLeftValue === null)) && (leftElmValue !== this.originalLeftValue);
@@ -222,7 +236,7 @@ export class DualInputEditor implements Editor {
     const isComplexObject = fieldName && fieldName.indexOf('.') > 0;
 
     if (item && fieldName !== undefined && this.columnDef && (item.hasOwnProperty(fieldName) || isComplexObject)) {
-      const itemValue = (isComplexObject) ? getDescendantProperty(item, fieldName) : (item.hasOwnProperty(fieldName) && item[fieldName] || '');
+      const itemValue = (isComplexObject) ? getDescendantProperty(item, fieldName) : (item.hasOwnProperty(fieldName) ? item[fieldName] : '');
       this[originalValuePosition] = itemValue;
       if (this.editorParams[position].type === 'float') {
         const decimalPlaces = this.getDecimalPlaces(position);
@@ -230,14 +244,15 @@ export class DualInputEditor implements Editor {
           this[originalValuePosition] = (+this[originalValuePosition]).toFixed(decimalPlaces);
         }
       }
-      this[inputVarPosition].value = `${this[originalValuePosition]}`;
+      if (this[inputVarPosition]) {
+        this[inputVarPosition].value = `${this[originalValuePosition]}`;
+      }
     }
   }
 
   save() {
     const validation = this.validate();
     const isValid = (validation && validation.valid) || false;
-    const isChanged = this.isValueChanged();
 
     if (!this._isValueSaveCalled) {
       if (this.hasAutoCommitEdit && isValid) {
@@ -250,10 +265,14 @@ export class DualInputEditor implements Editor {
   }
 
   serializeValue() {
-    return {
-      [this._leftFieldName]: this.serializeValueByPosition('leftInput'),
-      [this._rightFieldName]: this.serializeValueByPosition('rightInput')
-    };
+    const obj = {};
+    const leftValue = this.serializeValueByPosition('leftInput');
+    const rightValue = this.serializeValueByPosition('rightInput');
+
+    setDeepValue(obj, this._leftFieldName, leftValue);
+    setDeepValue(obj, this._rightFieldName, rightValue);
+
+    return obj;
   }
 
   serializeValueByPosition(position: 'leftInput' | 'rightInput') {
@@ -277,7 +296,7 @@ export class DualInputEditor implements Editor {
     // returns the number of fixed decimal places or null
     const positionSide = position === 'leftInput' ? 'leftInput' : 'rightInput';
     const sideParams = this.editorParams[positionSide];
-    let rtn: number | undefined = sideParams?.decimal;
+    const rtn: number | undefined = sideParams?.decimal;
 
     if (rtn === undefined) {
       return defaultDecimalPlaces;
@@ -298,25 +317,38 @@ export class DualInputEditor implements Editor {
     return '1';
   }
 
-  validate(): EditorValidatorOutput {
-    const leftValidation = this.validateByPosition('leftInput');
-    const rightValidation = this.validateByPosition('rightInput');
+  validate(inputValidation?: { position: 'leftInput' | 'rightInput', inputValue: any }): EditorValidatorOutput {
+    if (inputValidation) {
+      const posValidation = this.validateByPosition(inputValidation.position, inputValidation.inputValue);
+      if (!posValidation.valid) {
+        inputValidation.position === 'leftInput' ? this._leftInput.select() : this._rightInput.select();
+        return posValidation;
+      }
+    } else {
+      const leftValidation = this.validateByPosition('leftInput');
+      const rightValidation = this.validateByPosition('rightInput');
 
-    if (!leftValidation.valid) {
-      this._leftInput.select();
-      return leftValidation;
+      if (!leftValidation.valid) {
+        this._leftInput.select();
+        return leftValidation;
+      }
+      if (!rightValidation.valid) {
+        this._rightInput.select();
+        return rightValidation;
+      }
     }
-    if (!rightValidation.valid) {
-      this._rightInput.select();
-      return rightValidation;
-    }
-    return { valid: true, msg: null };
+    return { valid: true, msg: '' };
   }
 
-  validateByPosition(position: 'leftInput' | 'rightInput'): EditorValidatorOutput {
+  validateByPosition(position: 'leftInput' | 'rightInput', inputValue?: any): EditorValidatorOutput {
     const positionEditorParams = this.editorParams[position];
-    const input = position === 'leftInput' ? this._leftInput : this._rightInput;
-    const currentVal = input?.value;
+    let currentVal = '';
+    if (inputValue) {
+      currentVal = inputValue;
+    } else {
+      const input = position === 'leftInput' ? this._leftInput : this._rightInput;
+      currentVal = input && input.value;
+    }
     const baseValidatorOptions = {
       editorArgs: this.args,
       errorMessage: positionEditorParams.errorMessage,
