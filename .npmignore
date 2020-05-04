@@ -35,3 +35,4 @@
 
 # compressed distribution files
 dist-grid-bundle-zip
+**/*.zip
