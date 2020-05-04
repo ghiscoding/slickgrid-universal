@@ -328,8 +328,7 @@ export class Example4 {
       this.dataset[i] = {
         id: i,
         title: 'Task ' + i,
-        // duration: Math.round(Math.random() * 100) + '',
-        duration: null,
+        duration: i % 8 ? (Math.round(Math.random() * 100) + '') : null,
         percentComplete: Math.round(Math.random() * 100),
         start: new Date(randomYear, randomMonth, randomDay),
         finish: new Date(randomYear, (randomMonth + 1), randomDay),
@@ -343,7 +342,7 @@ export class Example4 {
 
   costDurationFormatter(row, cell, value, columnDef, dataContext) {
     const costText = (dataContext.cost === null) ? 'n/a' : Slicker.Utilities.formatNumber(dataContext.cost, 0, 2, false, '$', '', '.', ',');
-    let durationText = '';
+    let durationText = 'n/a';
     if (dataContext.duration !== null && dataContext.duration !== undefined && dataContext.duration >= 0) {
       durationText = `${dataContext.duration} ${dataContext.duration > 1 ? 'days' : 'day'}`;
     }
