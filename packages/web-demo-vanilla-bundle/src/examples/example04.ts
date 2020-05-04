@@ -1,4 +1,4 @@
-import { AutocompleteOption, Column, ColumnEditorComboInput, Editors, FieldType, Filters, Formatters, OperatorType, GridOption } from '@slickgrid-universal/common';
+import { AutocompleteOption, Column, ColumnEditorDualInput, Editors, FieldType, Filters, Formatters, OperatorType, GridOption } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 
@@ -38,7 +38,6 @@ export class Example4 {
   }
 
   dispose() {
-    console.log('dispose example4')
     this.slickgridLwc.dispose();
   }
 
@@ -109,7 +108,7 @@ export class Example4 {
       },
       {
         id: 'cost', name: 'Cost | Duration', field: 'cost',
-        formatter: this.costDurationFormatter,
+        formatter: this.costDurationFormatter.bind(this),
         sortable: true,
         // filterable: true,
         filter: {
@@ -117,7 +116,7 @@ export class Example4 {
         },
         editor: {
           model: Editors.dualInput,
-          // the DualInputEditor is of Type ColumnEditorComboInput and MUST include (leftInput/rightInput) in its params object
+          // the DualInputEditor is of Type ColumnEditorDualInput and MUST include (leftInput/rightInput) in its params object
           // in each of these 2 properties, you can pass any regular properties of a column editor
           // and they will be executed following the options defined in each
           params: {
@@ -138,18 +137,44 @@ export class Example4 {
               title: 'make sure Duration is withing its range of 0 to 100',
               errorMessage: 'Duration must be between 0 and 100.',
 
+              // Validator Option #1
               // You could also optionally define a custom validator in 1 or both inputs
-              // validator: (value, args) => {
-              //   let isValid = true;
-              //   let errorMsg = '';
-              //   if (value < 0 || value > 120) {
-              //     isValid = false;
-              //     errorMsg = 'Duration MUST be between 0 and 120.';
-              //   }
-              //   return { valid: isValid, msg: errorMsg };
-              // }
+              /*
+              validator: (value, args) => {
+                let isValid = true;
+                let errorMsg = '';
+                if (value < 0 || value > 120) {
+                  isValid = false;
+                  errorMsg = 'Duration MUST be between 0 and 120.';
+                }
+                return { valid: isValid, msg: errorMsg };
+              }
+              */
             },
-          } as ColumnEditorComboInput,
+          } as ColumnEditorDualInput,
+
+          // Validator Option #2 (shared Validator) - this is the last alternative, option #1 (independent Validators) is still the recommended way
+          // You can also optionally use a common Validator (if you do then you cannot use the leftInput/rightInput validators at same time)
+          // to compare both values at the same time.
+          /*
+          validator: (values, args) => {
+            let isValid = true;
+            let errorMsg = '';
+            if (values.cost < 0 || values.cost > 50000) {
+              isValid = false;
+              errorMsg = 'Cost MUST be between 0 and 50k.';
+            }
+            if (values.duration < 0 || values.duration > 120) {
+              isValid = false;
+              errorMsg = 'Duration MUST be between 0 and 120.';
+            }
+            if (values.cost < values.duration) {
+              isValid = false;
+              errorMsg = 'Cost can never be lower than its Duration.';
+            }
+            return { valid: isValid, msg: errorMsg };
+          }
+          */
         }
       },
       {
@@ -341,12 +366,16 @@ export class Example4 {
   }
 
   costDurationFormatter(row, cell, value, columnDef, dataContext) {
-    const costText = (dataContext.cost === null) ? 'n/a' : Slicker.Utilities.formatNumber(dataContext.cost, 0, 2, false, '$', '', '.', ',');
+    const costText = this.isNullUndefinedOrEmpty(dataContext.cost) ? 'n/a' : Slicker.Utilities.formatNumber(dataContext.cost, 0, 2, false, '$', '', '.', ',');
     let durationText = 'n/a';
-    if (dataContext.duration !== null && dataContext.duration !== undefined && dataContext.duration >= 0) {
+    if (!this.isNullUndefinedOrEmpty(dataContext.duration) && dataContext.duration >= 0) {
       durationText = `${dataContext.duration} ${dataContext.duration > 1 ? 'days' : 'day'}`;
     }
     return `<b>${costText}</b> | ${durationText}`;
+  }
+
+  isNullUndefinedOrEmpty(data: any) {
+    return (data === '' || data === null || data === undefined);
   }
 
   handleOnClick(event) {

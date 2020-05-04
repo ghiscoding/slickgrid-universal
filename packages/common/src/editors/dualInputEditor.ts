@@ -4,12 +4,12 @@ import { floatValidator, integerValidator, textValidator } from '../editorValida
 import {
   Column,
   ColumnEditor,
-  ColumnEditorComboInput,
+  ColumnEditorDualInput,
   Editor,
   EditorArguments,
   EditorValidator,
   EditorValidatorOutput,
-  SlickEventHandler
+  SlickEventHandler,
 } from '../interfaces/index';
 
 // using external non-typed js libraries
@@ -59,7 +59,7 @@ export class DualInputEditor implements Editor {
     return { leftInput: this._leftInput, rightInput: this._rightInput };
   }
 
-  get editorParams(): ColumnEditorComboInput {
+  get editorParams(): ColumnEditorDualInput {
     return this.columnEditor.params || {};
   }
 
@@ -73,6 +73,11 @@ export class DualInputEditor implements Editor {
 
   get isValueSaveCalled(): boolean {
     return this._isValueSaveCalled;
+  }
+
+  /** Get the Shared Validator function, can be passed in Editor property or Column Definition */
+  get validator(): EditorValidator | undefined {
+    return (this.columnEditor && this.columnEditor.validator) || (this.columnDef && this.columnDef.validator);
   }
 
   init() {
@@ -160,14 +165,21 @@ export class DualInputEditor implements Editor {
   }
 
   focus() {
-    // do nothing since we have 2 inputs and we might focus on left/right depending on which is invalid or new
+    // do nothing since we have 2 inputs and we might focus on left/right depending on which is invalid and/or new
   }
 
-  getValue(): Array<number | string> {
-    return [
-      this._leftInput.value || '',
-      this._rightInput.value || ''
-    ];
+  getValues(): { [fieldName: string]: string | number } {
+    const obj = {};
+    const leftInputValue = this._leftInput.value;
+    const rightInputValue = this._rightInput.value;
+    const isLeftInputTypeNumber = (this.editorParams.leftInput && (this.editorParams.leftInput.type === 'float' || this.editorParams.leftInput.type === 'integer'));
+    const isRightInputTypeNumber = (this.editorParams.rightInput && (this.editorParams.rightInput.type === 'float' || this.editorParams.rightInput.type === 'integer'));
+    const resultLeftValue = (leftInputValue !== '' && isLeftInputTypeNumber) ? +this._leftInput.value : (leftInputValue || '');
+    const resultRightValue = (rightInputValue !== '' && isRightInputTypeNumber) ? +this._rightInput.value : (rightInputValue || '');
+    setDeepValue(obj, this._leftFieldName, resultLeftValue);
+    setDeepValue(obj, this._rightFieldName, resultRightValue);
+
+    return obj;
   }
 
   setValues(values: Array<number | string>) {
@@ -342,18 +354,22 @@ export class DualInputEditor implements Editor {
 
   validateByPosition(position: 'leftInput' | 'rightInput', inputValue?: any): EditorValidatorOutput {
     const positionEditorParams = this.editorParams[position];
-    let currentVal = '';
+    let currentVal: any = '';
     if (inputValue) {
       currentVal = inputValue;
     } else {
       const input = position === 'leftInput' ? this._leftInput : this._rightInput;
       currentVal = input && input.value;
     }
+
+    // there are 2 ways of passing a Validator, 1-independent validator on each side, 2-shared validator
+    const commonValidator = this.validator;
+    currentVal = typeof commonValidator === 'function' ? this.getValues() : currentVal;
     const baseValidatorOptions = {
       editorArgs: this.args,
       errorMessage: positionEditorParams.errorMessage,
       required: positionEditorParams.required,
-      validator: positionEditorParams.validator,
+      validator: typeof commonValidator === 'function' ? commonValidator : positionEditorParams.validator,
     };
 
     switch (positionEditorParams.type) {

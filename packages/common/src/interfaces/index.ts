@@ -13,7 +13,7 @@ export * from './collectionOption.interface';
 export * from './collectionSortBy.interface';
 export * from './column.interface';
 export * from './columnEditor.interface';
-export * from './columnEditorComboInput.interface';
+export * from './columnEditorDualInput.interface';
 export * from './columnFilter.interface';
 export * from './columnFilters.interface';
 export * from './columnPicker.interface';

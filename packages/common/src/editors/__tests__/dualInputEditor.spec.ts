@@ -1,7 +1,7 @@
 import { Editors } from '../index';
 import { DualInputEditor } from '../dualInputEditor';
 import { KeyCode } from '../../enums/index';
-import { Column, EditorArgs, EditorArguments, GridOption, ColumnEditorComboInput } from '../../interfaces/index';
+import { Column, EditorArgs, EditorArguments, GridOption, ColumnEditorDualInput } from '../../interfaces/index';
 
 declare const Slick: any;
 const KEY_CHAR_0 = 48;
@@ -85,7 +85,7 @@ describe('DualInputEditor', () => {
 
   describe('with valid Editor instance', () => {
     beforeEach(() => {
-      const editorParams = { leftInput: { field: 'from', type: 'float' }, rightInput: { field: 'to', type: 'float' } } as ColumnEditorComboInput;
+      const editorParams = { leftInput: { field: 'from', type: 'float' }, rightInput: { field: 'to', type: 'float' } } as ColumnEditorDualInput;
       mockItemData = { id: 1, from: 1, to: 22, isActive: true };
       mockColumn = {
         id: 'range', field: 'range', editable: true, internalColumnEditor: { params: editorParams },
@@ -182,7 +182,7 @@ describe('DualInputEditor', () => {
       editor = new DualInputEditor(editorArguments);
       editor.setValues([12, 34]);
 
-      expect(editor.getValue()).toEqual(['12', '34']);
+      expect(editor.getValues()).toEqual({ from: 12, to: 34 });
     });
 
     it('should define an item datacontext containing a string as cell value and expect this value to be loaded in the editor when calling "loadValue"', () => {
@@ -191,7 +191,7 @@ describe('DualInputEditor', () => {
       const editorElm = editor.editorDomElement;
 
       expect(editorElm).toBeTruthy();
-      expect(editor.getValue()).toEqual(['1', '22']);
+      expect(editor.getValues()).toEqual({ from: 1, to: 22 });
     });
 
     it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Left Arrow key', () => {
@@ -338,6 +338,25 @@ describe('DualInputEditor', () => {
         editor.applyValue(mockItemData, { id: 1, range: '1-22', from: 4, to: 155 });
 
         expect(mockItemData).toEqual({ id: 1, range: '1-22', from: 4, to: '', isActive: true });
+      });
+
+      it('should return item data with an empty strings when the shared validator fails the custom validation', () => {
+        mockColumn.internalColumnEditor.validator = (values: any, args: EditorArgs) => {
+          if (values.from < 10 || values.to > 200) {
+            return { valid: false, msg: '"From" value must be over 10 and "To" value below 200.' };
+          }
+          return { valid: true, msg: '' };
+        };
+
+        mockItemData = { id: 1, range: '1-22', from: 22, to: 78, isActive: true };
+        editor = new DualInputEditor(editorArguments);
+        const validateSpy = jest.spyOn(editor, 'validate');
+
+        editor.setValues([4, 5]);
+        editor.applyValue(mockItemData, { id: 1, range: '1-22', from: 4, to: 5 });
+
+        expect(mockItemData).toEqual({ id: 1, range: '1-22', from: '', to: '', isActive: true });
+        expect(validateSpy).toHaveReturnedWith({ valid: false, msg: '"From" value must be over 10 and "To" value below 200.' });
       });
     });
 

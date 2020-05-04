@@ -1,6 +1,6 @@
 import { ColumnEditor } from './columnEditor.interface';
 
-interface EditorComboInput extends Partial<ColumnEditor> {
+export interface EditorDualInput extends Partial<ColumnEditor> {
   /** Associated Item Field */
   field: string;
 
@@ -8,7 +8,7 @@ interface EditorComboInput extends Partial<ColumnEditor> {
   type: 'integer' | 'float' | 'number' | 'password' | 'text' | 'readonly';
 }
 
-export interface ColumnEditorComboInput {
-  leftInput: EditorComboInput;
-  rightInput: EditorComboInput;
+export interface ColumnEditorDualInput {
+  leftInput: EditorDualInput;
+  rightInput: EditorDualInput;
 }
