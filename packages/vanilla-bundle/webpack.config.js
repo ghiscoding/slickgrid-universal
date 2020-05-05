@@ -2,6 +2,7 @@ const ensureArray = (config) => config && (Array.isArray(config) ? config : [con
 const when = (condition, config, negativeConfig) =>
   condition ? ensureArray(config) : ensureArray(negativeConfig);
 const path = require('path');
+const DtsBundleWebpack = require('dts-bundle-webpack');
 
 // primary config:
 const baseUrl = '';
@@ -41,4 +42,11 @@ module.exports = ({ production } = {}) => ({
       { test: /\.ts?$/, use: 'ts-loader', exclude: nodeModulesDir, },
     ],
   },
+  plugins: [
+    ...when(production, new DtsBundleWebpack({
+      name: 'slicker-bundle',
+      main: 'dist/commonjs/index.d.ts',
+      out: `${outDir}/bundle/index.d.ts`,
+    }))
+  ]
 });
