@@ -203,24 +203,24 @@ describe('DateEditor', () => {
         mockColumn.type = FieldType.dateTimeIsoAmPm;
         mockItemData = { id: 1, startDate: '2001-04-05T11:33:42.000Z', isActive: true };
 
-        const newDate = '2001-01-02T16:02:02';
+        const newDate = '2001-01-02T16:02:02.000+05:00';
         editor = new DateEditor(editorArguments);
         editor.applyValue(mockItemData, newDate);
 
-        expect(mockItemData).toEqual({ id: 1, startDate: moment(newDate).format('YYYY-MM-DD hh:mm:ss a'), isActive: true });
+        expect(mockItemData).toEqual({ id: 1, startDate: moment(newDate, 'YYYY-MM-DD hh:mm:ss a').toDate(), isActive: true });
       });
 
       it('should apply the value to the startDate property with a field having dot notation (complex object) that passes validation', () => {
         mockColumn.internalColumnEditor.validator = null;
         mockColumn.type = FieldType.dateTimeIsoAmPm;
         mockColumn.field = 'employee.startDate';
-        mockItemData = { id: 1, employee: { startDate: '2001-04-05T11:33:42.000Z' }, isActive: true };
+        mockItemData = { id: 1, employee: { startDate: new Date(Date.UTC(2001, 0, 2, 16, 2, 2, 0)) }, isActive: true };
 
-        const newDate = '2001-01-02T16:02:02';
+        const newDate = '2001-01-02T16:02:02.000+05:00';
         editor = new DateEditor(editorArguments);
         editor.applyValue(mockItemData, newDate);
 
-        expect(mockItemData).toEqual({ id: 1, employee: { startDate: moment(newDate).format('YYYY-MM-DD hh:mm:ss a') }, isActive: true });
+        expect(mockItemData).toEqual({ id: 1, employee: { startDate: moment(newDate, 'YYYY-MM-DD hh:mm:ss a').toDate() }, isActive: true });
       });
 
       it('should return item data with an empty string in its value when it fails the custom validation', () => {
@@ -326,6 +326,24 @@ describe('DateEditor', () => {
         editor.save();
 
         expect(spy).not.toHaveBeenCalled();
+      });
+
+      it('should not throw any error when date is invalid when lower than required "minDate" defined in the "editorOptions" and "autoCommitEdit" is enabled', () => {
+        // change to allow input value only for testing purposes & use the regular flatpickr input to test that one too
+        mockColumn.internalColumnEditor.editorOptions = { minDate: 'today', altInput: true };
+        mockItemData = { id: 1, startDate: '500-01-02T11:02:02.000Z', isActive: true };
+        gridOptionMock.autoCommitEdit = true;
+        gridOptionMock.autoEdit = true;
+        gridOptionMock.editable = true;
+
+        editor = new DateEditor(editorArguments);
+        editor.loadValue(mockItemData);
+        editor.flatInstance.toggle();
+        const editorInputElm = divContainer.querySelector<HTMLInputElement>('input.flatpickr');
+
+        expect(editor.pickerOptions).toBeTruthy();
+        expect(editorInputElm.value).toBe('');
+        expect(editor.serializeValue()).toBe('');
       });
     });
 

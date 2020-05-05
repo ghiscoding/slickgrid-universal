@@ -133,7 +133,7 @@ export class Example3 {
         id: 'start', name: 'Start', field: 'start', sortable: true,
         formatter: Formatters.dateIso, type: FieldType.date, outputType: FieldType.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },
-        editor: { model: Editors.date, editorOptions: { minDate: 'today' }, },
+        editor: { model: Editors.date },
         grouping: {
           getter: 'start',
           formatter: (g) => `Start: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
@@ -146,7 +146,7 @@ export class Example3 {
       },
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true,
-        editor: { model: Editors.date, },
+        editor: { model: Editors.date, editorOptions: { minDate: 'today' }, },
         formatter: Formatters.dateIso, type: FieldType.date, outputType: FieldType.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },
         grouping: {
@@ -307,8 +307,10 @@ export class Example3 {
     const tmpArray = [];
     for (let i = 0; i < count; i++) {
       const randomYear = 2000 + Math.floor(Math.random() * 10);
+      const randomFinishYear = (new Date().getFullYear() - 3) + Math.floor(Math.random() * 10); // use only years not lower than 3 years ago
       const randomMonth = Math.floor(Math.random() * 11);
       const randomDay = Math.floor((Math.random() * 29));
+      const randomFinish = new Date(randomFinishYear, (randomMonth + 1), randomDay);
 
       tmpArray[i] = {
         id: i,
@@ -316,7 +318,7 @@ export class Example3 {
         duration: Math.round(Math.random() * 100) + '',
         percentComplete: Math.round(Math.random() * 100),
         start: new Date(randomYear, randomMonth, randomDay),
-        finish: new Date(randomYear, (randomMonth + 1), randomDay),
+        finish: randomFinish < new Date() ? '' : randomFinish, // make sure the random date is earlier than today
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
         effortDriven: (i % 5 === 0)
       };
