@@ -53,6 +53,7 @@ import { ExcelExportService } from './services/excelExport.service';
 import { TranslateService } from './services/translate.service';
 import { EventPubSubService } from './services/eventPubSub.service';
 import { FooterService } from './services/footer.service';
+import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options';
 
 // using external non-typed js libraries
 declare const Slick: any;
@@ -129,8 +130,10 @@ export class VanillaGridBundle {
     return this._dataset;
   }
   set dataset(dataset: any[]) {
-    this._dataset = dataset;
-    this.refreshGridData(dataset);
+    const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions && this._gridOptions.enableDeepCopyDatasetOnPageLoad);
+    const data = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], dataset) : dataset) || [];
+    this._dataset = data;
+    this.refreshGridData(data);
   }
 
   get datasetHierarchical(): any[] {
@@ -156,8 +159,9 @@ export class VanillaGridBundle {
     gridContainerElm.classList.add('slickgrid-container');
 
     this._columnDefinitions = columnDefs || [];
-    this._gridOptions = options || {};
-    this.dataset = dataset || [];
+    this._gridOptions = this.mergeGridOptions(options || {});
+    const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions && this._gridOptions.enableDeepCopyDatasetOnPageLoad);
+    this.dataset = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], dataset) : dataset) || [];
     this._eventPubSubService = new EventPubSubService(gridContainerElm);
 
     this.gridEventService = new GridEventService();
@@ -208,7 +212,7 @@ export class VanillaGridBundle {
     );
 
     if (hierarchicalDataset) {
-      this.sharedService.hierarchicalDataset = hierarchicalDataset;
+      this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
     }
     this.initialization(gridContainerElm);
   }
@@ -387,7 +391,8 @@ export class VanillaGridBundle {
   }
 
   mergeGridOptions(gridOptions: GridOption) {
-    const options = $.extend(true, {}, GlobalGridOptions, gridOptions);
+    const extraOptions = gridOptions.useSalesforceDefaultGridOptions ? SalesforceGlobalGridOptions : {};
+    const options = $.extend(true, {}, GlobalGridOptions, extraOptions, gridOptions);
 
     // also make sure to show the header row if user have enabled filtering
     this._hideHeaderRowAfterPageLoad = (options.showHeaderRow === false);

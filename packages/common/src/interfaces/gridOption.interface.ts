@@ -208,6 +208,12 @@ export interface GridOption {
   /** Do we want to enable Context Menu? (mouse right+click) */
   enableContextMenu?: boolean;
 
+  /**
+   * Defaults to false, do we want to make a deep copy of the dataset before loading it into the grid?
+   * Useful with Salesforce to avoid proxy object error when trying to update a property of an item object by reference (which SlickGrid does a lot)
+   */
+  enableDeepCopyDatasetOnPageLoad?: boolean;
+
   /** Defaults to false, do we want to enable the Draggable Grouping Plugin? */
   enableDraggableGrouping?: boolean;
 
@@ -464,6 +470,9 @@ export interface GridOption {
 
   /** Defaults to false, when set to True will lead to multiple columns sorting without the need to hold or do shift-click to execute a multiple sort. */
   tristateMultiColumnSort?: boolean;
+
+  /** Defaults to false, do we want to use default Salesforce grid  */
+  useSalesforceDefaultGridOptions?: boolean;
 
   /** Defaults to null, which is the default Viewport CSS class name */
   viewportClass?: string;
