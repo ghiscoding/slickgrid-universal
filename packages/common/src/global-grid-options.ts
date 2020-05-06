@@ -174,7 +174,7 @@ export const GlobalGridOptions: GridOption = {
   //     cssClass: 'detail-view-toggle',
   //     panelRows: 1,
   //     keyPrefix: '__',
-  //     useRowClick: true,
+  //     useRowClick: false,
   //     useSimpleViewportCalc: true,
   //     saveDetailViewOnScroll: false,
   //   },
