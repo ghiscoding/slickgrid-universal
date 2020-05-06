@@ -72,6 +72,8 @@
 
       &:hover {
         background-color: $row-mouse-hover-color;
+        box-shadow: $row-mouse-hover-box-shadow;
+        z-index: $row-mouse-hover-z-index;
       }
       &.active {
         padding: $cell-padding;
@@ -153,6 +155,7 @@
       border-bottom: $cell-border-bottom;
       border-left: $cell-border-left;
       border-right: $cell-border-right;
+      box-shadow: $cell-box-shadow;
     }
 
     .even {

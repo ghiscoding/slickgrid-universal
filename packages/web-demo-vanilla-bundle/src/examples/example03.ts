@@ -263,8 +263,9 @@ export class Example3 {
       },
       createPreHeaderPanel: true,
       showPreHeaderPanel: true,
-      preHeaderPanelHeight: 40,
-      rowHeight: 35,
+      preHeaderPanelHeight: 35,
+      rowHeight: 33,
+      headerRowHeight: 35,
       enableDraggableGrouping: true,
       draggableGrouping: {
         dropPlaceHolderText: 'Drop a column header here to group by the column',

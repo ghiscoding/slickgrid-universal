@@ -348,6 +348,7 @@ export class VanillaGridBundle {
     // if that is the case, we need to hide the headerRow ONLY AFTER all filters got created & dataView exist
     if (this._hideHeaderRowAfterPageLoad) {
       this.showHeaderRow(false);
+      this.sharedService.hideHeaderRowAfterPageLoad = this._hideHeaderRowAfterPageLoad;
     }
 
     // on cell click, mainly used with the columnDef.action callback
@@ -405,6 +406,8 @@ export class VanillaGridBundle {
     if (!options.enableFiltering && options.enablePagination && this._isLocalGrid) {
       options.enableFiltering = true;
       options.showHeaderRow = false;
+      this._hideHeaderRowAfterPageLoad = true;
+      this.sharedService.hideHeaderRowAfterPageLoad = true;
     }
 
     return options;

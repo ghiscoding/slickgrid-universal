@@ -19,6 +19,6 @@ export const SalesforceGlobalGridOptions: GridOption = {
   },
   sanitizer: (dirtyHtml) => (dirtyHtml.replace(/(\b)(on\S+)(\s*)=|javascript|(<\s*)(\/*)script/gi, '')),
   headerRowHeight: 35,
-  rowHeight: 35,
+  rowHeight: 33,
   eventNamingStyle: EventNamingStyle.lowerCaseWithoutOnPrefix,
 };
