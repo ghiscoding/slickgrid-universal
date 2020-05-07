@@ -407,7 +407,9 @@ export class VanillaGridBundle {
       options.enableFiltering = true;
       options.showHeaderRow = false;
       this._hideHeaderRowAfterPageLoad = true;
-      this.sharedService.hideHeaderRowAfterPageLoad = true;
+      if (this.sharedService) {
+        this.sharedService.hideHeaderRowAfterPageLoad = true;
+      }
     }
 
     return options;
