@@ -17,6 +17,9 @@ export const SalesforceGlobalGridOptions: GridOption = {
     maxDecimal: 2,
     thousandSeparator: ','
   },
+  gridMenu: {
+    hideTogglePreHeaderCommand: true,
+  },
   sanitizer: (dirtyHtml) => (dirtyHtml.replace(/(\b)(on\S+)(\s*)=|javascript|(<\s*)(\/*)script/gi, '')),
   headerRowHeight: 35,
   rowHeight: 33,

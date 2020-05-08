@@ -120,6 +120,7 @@ $frozen-border-right:                           1px solid #a5a5a5 !default;
 $frozen-overflow-right:                         scroll !default;                      // typically we would like to always have the scroll displayed when using hamburger menu (top right)
 
 /* icon font is using Font-Awesome by default but could be changed to any other icon package like Glyphicons, ... */
+$icon-color:                                    #4a4a4a !default;
 $icon-font-family:                              "FontAwesome" !default;               // or Glyphicons Halflings */
 $icon-font-size:                                14px !default;
 $icon-group-color:                              $primary-color !default;
@@ -154,7 +155,7 @@ $autocomplete-z-index:	                        1000 !default;
 /* Sorting */
 $icon-sort-asc:                                 "\f0d8" !default;
 $icon-sort-desc:                                "\f0d7" !default;
-$icon-sort-color:                               rgb(76, 128, 190) !default;
+$icon-sort-color:                               $primary-color !default;
 $icon-sort-font-size:                           $icon-font-size !default;
 $icon-sort-width:                               $icon-font-size !default;
 $icon-sort-position-right:                      10px !default;

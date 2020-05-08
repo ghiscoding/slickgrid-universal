@@ -4,7 +4,7 @@ import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
 
 const actionFormatter = (row, cell, value, columnDef, dataContext) => {
-  return `<div class="fake-hyperlink">Action <i class="mdi mdi-24px mdi-menu-down"></i></div>`;
+  return `<div class="fake-hyperlink">Action <span class="font-12px">&#9660;</span></div>`;
 };
 
 // you can create custom validator to pass to an inline editor
@@ -228,7 +228,7 @@ export class Example3 {
             {
               command: 'help',
               title: 'Help',
-              iconCssClass: 'mdi mdi-help-circle',
+              iconCssClass: 'mdi mdi-help-circle-outline',
               positionOrder: 66,
             },
             { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67, }

@@ -6,8 +6,8 @@ $link-color: #2cad56;
 // @import '@slickgrid-universal/common/dist/styles/sass/se-slickgrid-theme-material.scss';
 
 /* Material Design Icons */
-$mdi-font-path: "~@mdi/font/fonts";
-@import "~@mdi/font/scss/materialdesignicons.scss";
+// $mdi-font-path: "~@mdi/font/fonts";
+// @import "~@mdi/font/scss/materialdesignicons.scss";
 
 .fake-hyperlink {
     cursor: pointer;
@@ -18,4 +18,11 @@ $mdi-font-path: "~@mdi/font/fonts";
 }
 .disabled {
     color: #ccc;
+}
+
+button {
+  .icon {
+    width: 14px;
+    padding-top: 4px;
+  }
 }
