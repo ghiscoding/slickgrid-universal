@@ -320,6 +320,8 @@
           font-family: $icon-font-family;
           font-size: $icon-sort-font-size;
           opacity: $sort-indicator-hint-opacity;
+          display: inline-block;
+          width: $icon-sort-width;
         }
       }
 
@@ -352,12 +354,15 @@
           font-family: $icon-font-family;
           font-size: $icon-sort-font-size;
           opacity: 1;
+          display: inline-block;
+          width: $icon-sort-width;
       }
       .slick-sort-indicator-desc:before {
-          content: $icon-sort-desc;
-          font-family: $icon-font-family;
-          font-size: $icon-sort-font-size;
-          opacity: 1;
+        content: $icon-sort-desc;
+        display: inline-block;
+        opacity: 1;
+        font-size: $icon-sort-font-size;
+        width: $icon-sort-width;
       }
       .slick-resizable-handle {
         width: 7px;

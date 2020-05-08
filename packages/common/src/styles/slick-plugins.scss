@@ -279,6 +279,7 @@
   border: $header-menu-button-border;
   border-width: $header-menu-button-border-width;
   padding: $header-menu-button-padding;
+  color: $header-menu-button-icon-color;
 
   // The next few items are already defined in the slick-headermenu file and it should stay that way, *unless* you also replace the button image included there.
   bottom: 0;
@@ -415,9 +416,11 @@
 // Row Move Manager Plugin
 // ----------------------------------------------
 .slick-cell.cell-reorder:before {
+  display: inline-block;
   font-family: $icon-font-family;
   font-size: $row-move-plugin-size;
   content: $row-move-plugin-icon;
+  width: $row-move-plugin-icon-width;
 }
 .slick-cell.cell-reorder {
   cursor: $row-move-plugin-cursor;
@@ -444,12 +447,18 @@
   #filter-checkbox-selectall-container > input[type=checkbox] + label:before {
     cursor: pointer;
     content: $checkbox-selector-icon-unchecked;
+    background-color: $checkbox-selector-icon-bg-color;
     color: $checkbox-selector-unchecked-color;
     display: inline-block;
     font-weight: $checkbox-selector-icon-font-weight;
     font-family: $icon-font-family;
     font-size: $checkbox-selector-size;
     opacity: $checkbox-selector-opacity; /* unchecked icon */
+    height: $checkbox-selector-icon-height;
+    width: $checkbox-selector-icon-width;
+    border: $checkbox-selector-icon-border;
+    border-radius: $checkbox-selector-icon-border-radius;
+    margin: $checkbox-selector-icon-margin;
   }
 
   input[type=checkbox] + label:hover:before,
@@ -462,6 +471,10 @@
     content: $checkbox-selector-icon-checked;
     color: $checkbox-selector-checked-color;
     opacity: 1; /* checked icon */
+    height: $checkbox-selector-icon-height;
+    width: $checkbox-selector-icon-width;
+    border-radius: $checkbox-selector-icon-border;
+    border-radius: $checkbox-selector-icon-border-radius;
   }
 }
 
@@ -481,13 +494,11 @@
     &:before {
       font-family: $icon-font-family;
       font-size: $multiselect-icon-arrow-font-size;
-      content: $multiselect-icon-arrow-down;
     }
     &.open {
       &:before {
         font-family: $icon-font-family;
         font-size: $multiselect-icon-arrow-font-size;
-        content: $multiselect-icon-arrow-up;
       }
     }
   }
@@ -517,27 +528,47 @@
 
     & + span:before {
       cursor: pointer;
-      color: $multiselect-icon-color;
+      color: $multiselect-icon-unchecked-color;
       content: $multiselect-icon-unchecked;
       display: inline-block;
       font-family: $icon-font-family;
       font-size: $multiselect-icon-font-size;
       font-weight: normal;
-      width: 20px;
+      height: $multiselect-icon-height;
+      width: $multiselect-icon-width;
+      border: $multiselect-icon-border;
+      border-radius: $multiselect-icon-border-radius;
+      margin: $multiselect-icon-margin;
       opacity: $multiselect-unchecked-opacity;
     }
 
     &:checked + span:before {
       content: $multiselect-icon-checked;
       opacity: 1;
+      height: $multiselect-icon-height;
+      width: $multiselect-icon-width;
+      border: $multiselect-icon-border;
+      border-radius: $multiselect-icon-border-radius;
+      margin: $multiselect-icon-margin;
     }
   }
   input[type="radio"] {
     & + span:before {
       content: $multiselect-icon-radio-unchecked;
+      height: $multiselect-icon-radio-height;
+      width: $multiselect-icon-radio-width;
+      border: $multiselect-icon-radio-border;
+      border-radius: $multiselect-icon-radio-border-radius;
+      margin: $multiselect-icon-radio-margin;
     }
     &:checked + span:before {
       content: $multiselect-icon-radio-checked;
+      color: $multiselect-icon-radio-color;
+      height: $multiselect-icon-radio-height;
+      width: $multiselect-icon-radio-width;
+      border: $multiselect-icon-radio-border;
+      border-radius: $multiselect-icon-radio-border-radius;
+      margin: $multiselect-icon-radio-margin;
     }
   }
   label {
@@ -588,7 +619,6 @@
     &:before {
       font-family: $icon-font-family;
       font-size: $multiselect-icon-font-size;
-      content: $multiselect-icon-search;
       right: $multiselect-icon-search-margin-right;
       position: absolute;
     }
