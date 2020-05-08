@@ -114,7 +114,6 @@ export class VanillaGridBundle {
 
   gridClass: string;
   gridClassName: string;
-  gridOptions: GridOption;
 
   get columnDefinitions() {
     return this._columnDefinitions;
@@ -151,6 +150,18 @@ export class VanillaGridBundle {
     if (this.sortService && this.sortService.processTreeDataInitialSort) {
       this.dataView.setItems([], this._gridOptions.datasetIdPropertyName);
       this.sortService.processTreeDataInitialSort();
+    }
+  }
+
+  get gridOptions(): GridOption {
+    return this._gridOptions;
+  }
+
+  set gridOptions(options: GridOption) {
+    const mergedOptions = this.mergeGridOptions(options);
+    if (this.sharedService && this.sharedService.gridOptions && this.grid && this.grid.setOptions) {
+      this.sharedService.gridOptions = mergedOptions;
+      this.grid.setOptions(mergedOptions);
     }
   }
 
