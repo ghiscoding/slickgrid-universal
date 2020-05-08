@@ -288,10 +288,12 @@
   width: $header-menu-button-width;
 }
 .slick-header-menubutton:before {
+  display: inline-block;
+  content: $header-menu-button-icon;
   font-family: $icon-font-family;
   font-size: $header-menu-button-icon-font-size;
   font-weight: $header-menu-button-icon-font-weight;
-  content: $header-menu-button-icon;
+  width: $header-menu-button-icon-width;
 }
 
 .slick-header-column {

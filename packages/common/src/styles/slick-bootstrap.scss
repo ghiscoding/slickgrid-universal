@@ -208,15 +208,19 @@
         cursor: pointer;
 
         &.expanded:before {
+          display: inline-block;
           content: $icon-group-expanded;
           font-family: $icon-font-family;
           font-size: $icon-group-font-size;
+          width: $icon-group-width;
         }
 
         &.collapsed:before {
+          display: inline-block;
           content: $icon-group-collapsed;
           font-family: $icon-font-family;
           font-size: $icon-group-font-size;
+          width: $icon-group-width;
         }
       }
     }
