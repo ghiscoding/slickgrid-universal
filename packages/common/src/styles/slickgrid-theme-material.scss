@@ -99,7 +99,6 @@ $multiselect-icon-radio-checked:        url('data:image/svg+xml,<svg xmlns="http
 $multiselect-icon-radio-unchecked:      url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($multiselect-icon-color)}" viewBox="0 0 24 24"><path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"></path></svg>') !default;
 $multiselect-unchecked-opacity:         0.8 !default;
 $preheader-border-right:                1px solid #e2e2e2 !default;
-// $preheader-border-bottom:               1px solid #e2e2e2 !default;
 $row-move-plugin-cursor:                grab !default;
 $row-move-plugin-icon-color:            $icon-color !default;
 $row-move-plugin-icon:                  url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($row-move-plugin-icon-color)}" viewBox="0 0 24 24"><path d="M10,13H22V11H10M10,19H22V17H10M10,7H22V5H10M6,7H8.5L5,3.5L1.5,7H4V17H1.5L5,20.5L8.5,17H6V7Z"></path></svg>') !default;

@@ -390,9 +390,10 @@
 
   /** Header Grouping **/
   .slick-preheader-panel.ui-state-default  {
+    border-bottom: $preheader-border-bottom;
+
     .slick-header-columns {
       border-top: $preheader-border-top;
-      border-bottom: $preheader-border-bottom;
 
       .slick-header-column {
         height: calc(#{$preheader-height} - #{$cell-padding-top-bottom});
