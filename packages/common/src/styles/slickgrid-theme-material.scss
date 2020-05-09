@@ -47,17 +47,19 @@ $checkbox-selector-icon-unchecked:      url('data:image/svg+xml,<svg xmlns="http
 $checkbox-selector-opacity:             1;
 $checkbox-selector-opacity-hover:       0.9;
 $cell-menu-icon-margin-right:           6px;
+$column-picker-checkbox-color:          $primary-color;
 $column-picker-checkbox-size:           $icon-width;
 $column-picker-checkbox-font-weight:    normal;
-$column-picker-checkbox-icon-checked:   url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($primary-color)}" viewBox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg>');
+$column-picker-checkbox-icon-checked:   url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($column-picker-checkbox-color)}" viewBox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg>');
 $column-picker-checkbox-icon-unchecked: $column-picker-checkbox-icon-checked;
 $column-picker-checkbox-width:          $icon-width;
 $column-picker-title-font-size:         18px;
 $context-menu-item-font-size:           16px;
 $context-menu-icon-font-size:           $icon-width;
 $icon-group-width:                      22px;
-$icon-group-collapsed:                  url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($dark-gray)}" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"></path></svg>');
-$icon-group-expanded:                   url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($dark-gray)}" viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"></path></svg>');
+$icon-group-color:                      $primary-color;
+$icon-group-collapsed:                  url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($icon-group-color)}" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"></path></svg>');
+$icon-group-expanded:                   url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($icon-group-color)}" viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"></path></svg>');
 $icon-group-font-weight:                normal;
 $icon-group-margin-right:               0;
 $draggable-group-drop-width:            100%;
@@ -78,8 +80,8 @@ $grid-menu-icon-top-margin:             8px;
 $grid-menu-title-font-size:             18px;
 $header-menu-button-icon-font-size:     24px;
 $header-menu-button-icon-width:         24px;
-$header-menu-button-icon-color:         #706e6b;
-$header-menu-button-icon:               $icon-group-expanded;
+$header-menu-button-icon-color:         $dark-gray;
+$header-menu-button-icon:               url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($header-menu-button-icon-color)}" viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"></path></svg>');
 $header-menu-button-margin-right:       8px;
 $header-menu-display:                   inline-block;
 $header-menu-icon-margin-right:         6px;
@@ -107,7 +109,6 @@ $pagination-icon-seek-first:            url('data:image/svg+xml,<svg xmlns="http
 $pagination-icon-seek-end:              url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($primary-color)}" viewBox="0 0 24 24"><path d="M5.59,7.41L7,6L13,12L7,18L5.59,16.59L10.17,12L5.59,7.41M11.59,7.41L13,6L19,12L13,18L11.59,16.59L16.17,12L11.59,7.41Z"></path></svg>');
 $pagination-icon-seek-next:             url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($primary-color)}" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"></path></svg>');
 $pagination-icon-seek-prev:             url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($primary-color)}" viewBox="0 0 24 24"> <path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"></path></svg>');
-
 
 @import './roboto-font';
 @import './slick-default-theme';
