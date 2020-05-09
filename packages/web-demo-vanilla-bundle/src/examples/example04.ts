@@ -236,7 +236,7 @@ export class Example4 {
         id: 'action', name: 'Action', field: 'action', width: 100, maxWidth: 100,
         excludeFromExport: true,
         formatter: () => {
-          return `<div class="fake-hyperlink">Action <i class="mdi mdi-24px mdi-menu-down"></i></div>`;
+          return `<div class="fake-hyperlink">Action <span class="font-12px">&#9660;</span></div>`;
         },
         cellMenu: {
           hideCloseButton: false,

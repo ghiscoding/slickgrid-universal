@@ -1,5 +1,4 @@
 import {
-  Aggregators,
   Column,
   GridOption,
   FieldType,
@@ -49,11 +48,11 @@ export class Example6 {
       },
       {
         id: 'dateModified', name: 'Date Modified', field: 'dateModified',
-        formatter: Formatters.dateIso, sortable: true, type: FieldType.dateUtc, outputType: FieldType.dateIso, minWidth: 90,
+        formatter: Formatters.dateIso, type: FieldType.dateUtc, outputType: FieldType.dateIso, minWidth: 90,
         exportWithFormatter: true, filterable: true, filter: { model: Filters.compoundDate }
       },
       {
-        id: 'size', name: 'Size', field: 'size', sortable: true, minWidth: 90,
+        id: 'size', name: 'Size', field: 'size', minWidth: 90,
         type: FieldType.number, exportWithFormatter: true,
         filterable: true, filter: { model: Filters.compoundInputNumber },
         formatter: (row, cell, value) => isNaN(value) ? '' : `${value} MB`,
@@ -69,12 +68,10 @@ export class Example6 {
       enableExport: true,
       enableFiltering: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
+      multiColumnSort: false,
       treeDataOptions: {
         columnId: 'file',
         childrenPropName: 'files',
-        aggregators: [
-          new Aggregators.Sum('size')
-        ],
         // you can optionally sort by a different column and/or sort direction
         // initialSort: {
         //   columnId: 'file',
@@ -114,7 +111,7 @@ export class Example6 {
     const spacer = `<span style="display:inline-block; width:${(15 * dataContext[treeLevelPropName])}px;"></span>`;
 
     if (data[idx + 1] && data[idx + 1][treeLevelPropName] > data[idx][treeLevelPropName]) {
-      const folderPrefix = `<i class="mdi mdi-20px ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>`;
+      const folderPrefix = `<i class="mdi icon ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>`;
       if (dataContext.__collapsed) {
         return `${spacer} <span class="slick-group-toggle collapsed" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
       } else {
@@ -128,13 +125,13 @@ export class Example6 {
   getFileIcon(value: string) {
     let prefix = '';
     if (value.includes('.pdf')) {
-      prefix = '<i class="mdi mdi-20px mdi-file-pdf-outline"></i>';
+      prefix = '<i class="mdi icon mdi-file-pdf-outline"></i>';
     } else if (value.includes('.txt')) {
-      prefix = '<i class="mdi mdi-20px mdi-file-document-outline"></i>';
+      prefix = '<i class="mdi icon mdi-file-document-outline"></i>';
     } else if (value.includes('.xls')) {
-      prefix = '<i class="mdi mdi-20px mdi-file-excel-outline"></i>';
+      prefix = '<i class="mdi icon mdi-file-excel-outline"></i>';
     } else if (value.includes('.mp3')) {
-      prefix = '<i class="mdi mdi-20px mdi-file-music-outline"></i>';
+      prefix = '<i class="mdi icon mdi-file-music-outline"></i>';
     }
     return prefix;
   }

@@ -17,7 +17,7 @@ export class Example2 {
 
   attached() {
     this.initializeGrid();
-    this.dataset = this.loadData(500);
+    this.dataset = this.loadData(NB_ITEMS);
     const gridContainerElm = document.querySelector(`.grid2`);
 
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));

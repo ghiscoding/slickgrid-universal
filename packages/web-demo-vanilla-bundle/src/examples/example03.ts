@@ -3,10 +3,6 @@ import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
 
-const actionFormatter = (row, cell, value, columnDef, dataContext) => {
-  return `<div class="fake-hyperlink">Action <span class="font-12px">&#9660;</span></div>`;
-};
-
 // you can create custom validator to pass to an inline editor
 const myCustomTitleValidator = (value, args) => {
   if (value === null || value === undefined || !value.length) {
@@ -183,7 +179,9 @@ export class Example3 {
       {
         id: 'action', name: 'Action', field: 'action', width: 100, maxWidth: 100,
         excludeFromExport: true,
-        formatter: actionFormatter,
+        formatter: () => {
+          return `<div class="fake-hyperlink">Action <span class="font-12px">&#9660;</span></div>`;
+        },
         cellMenu: {
           hideCloseButton: false,
           width: 200,
