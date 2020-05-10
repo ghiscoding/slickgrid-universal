@@ -173,7 +173,7 @@ export class FilterService {
 
       // When using Tree Data, we need to do it in 2 steps
       // step 1. we need to prefilter (search) the data prior, the result will be an array of IDs which are the node(s) and their parent nodes when necessary.
-      // step 2. calling the DataView.refresh() is what triggers the final does the final filtering, with "customLocalFilter()" which will decide which rows should persist
+      // step 2. calling the DataView.refresh() is what triggers the final filtering, with "customLocalFilter()" which will decide which rows should persist
       if (isGridWithTreeData) {
         this._tmpPreFilteredData = this.preFilterTreeData(this._dataView.getItems(), this._columnFilters);
       }
@@ -285,7 +285,7 @@ export class FilterService {
         }
       }
 
-      // filter out any row items that aren't part of our pre-processed "filterMyFiles()" result
+      // filter out any row items that aren't part of our pre-processed "preFilterTreeData()" result
       if (Array.isArray(this._tmpPreFilteredData)) {
         return this._tmpPreFilteredData.includes(item[dataViewIdIdentifier]); // return true when found, false otherwise
       }
@@ -427,52 +427,52 @@ export class FilterService {
     const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
 
     const treeObj = {};
-    for (let i = 0; i < inputArray.length; i++) {
-      treeObj[inputArray[i][dataViewIdIdentifier]] = inputArray[i];
-      // as the filtered data is then used again as each subsequent letter
-      // we need to delete the .__used property, otherwise the logic below
-      // in the while loop (which checks for parents) doesn't work:
-      delete treeObj[inputArray[i][dataViewIdIdentifier]].__used;
-    }
-
     const filteredChildrenAndParents: any[] = [];
-    for (let i = 0; i < inputArray.length; i++) {
-      const item = inputArray[i];
-      let matchFilter = true; // valid until proven otherwise
 
-      // loop through all column filters and execute filter condition(s)
-      for (const columnId of Object.keys(columnFilters)) {
-        const columnFilter = columnFilters[columnId] as ColumnFilter;
-        const conditionOptionResult = this.getFilterConditionOptionsOrBoolean(item, columnFilter, columnId, this._grid, this._dataView);
+    if (Array.isArray(inputArray)) {
+      for (let i = 0; i < inputArray.length; i++) {
+        treeObj[inputArray[i][dataViewIdIdentifier]] = inputArray[i];
+        // as the filtered data is then used again as each subsequent letter
+        // we need to delete the .__used property, otherwise the logic below
+        // in the while loop (which checks for parents) doesn't work:
+        delete treeObj[inputArray[i][dataViewIdIdentifier]].__used;
+      }
 
-        if (conditionOptionResult) {
-          const conditionResult = (typeof conditionOptionResult === 'boolean') ? conditionOptionResult : FilterConditions.executeMappedCondition(conditionOptionResult as FilterConditionOption);
-          if (conditionResult) {
-            // don't return true as need to check other keys in columnFilters
-          } else {
-            matchFilter = false;
-            continue;
+      for (let i = 0; i < inputArray.length; i++) {
+        const item = inputArray[i];
+        let matchFilter = true; // valid until proven otherwise
+
+        // loop through all column filters and execute filter condition(s)
+        for (const columnId of Object.keys(columnFilters)) {
+          const columnFilter = columnFilters[columnId] as ColumnFilter;
+          const conditionOptionResult = this.getFilterConditionOptionsOrBoolean(item, columnFilter, columnId, this._grid, this._dataView);
+
+          if (conditionOptionResult) {
+            const conditionResult = (typeof conditionOptionResult === 'boolean') ? conditionOptionResult : FilterConditions.executeMappedCondition(conditionOptionResult as FilterConditionOption);
+            if (conditionResult) {
+              // don't return true since we still need to check other keys in columnFilters
+              continue;
+            }
           }
-        } else {
           matchFilter = false;
           continue;
         }
-      }
 
-      // build an array from the matched filters, anything valid from filter condition
-      // will be pushed to the filteredChildrenAndParents array
-      if (matchFilter) {
-        const len = filteredChildrenAndParents.length;
-        // add child (id):
-        filteredChildrenAndParents.splice(len, 0, item[dataViewIdIdentifier]);
-        let parent = treeObj[item[parentPropName]] || false;
-        while (parent) {
-          // only add parent (id) if not already added:
-          parent.__used || filteredChildrenAndParents.splice(len, 0, parent[dataViewIdIdentifier]);
-          // mark each parent as used to not use them again later:
-          treeObj[parent[dataViewIdIdentifier]].__used = true;
-          // try to find parent of the current parent, if exists:
-          parent = treeObj[parent[parentPropName]] || false;
+        // build an array from the matched filters, anything valid from filter condition
+        // will be pushed to the filteredChildrenAndParents array
+        if (matchFilter) {
+          const len = filteredChildrenAndParents.length;
+          // add child (id):
+          filteredChildrenAndParents.splice(len, 0, item[dataViewIdIdentifier]);
+          let parent = treeObj[item[parentPropName]] || false;
+          while (parent) {
+            // only add parent (id) if not already added:
+            parent.__used || filteredChildrenAndParents.splice(len, 0, parent[dataViewIdIdentifier]);
+            // mark each parent as used to not use them again later:
+            treeObj[parent[dataViewIdIdentifier]].__used = true;
+            // try to find parent of the current parent, if exists:
+            parent = treeObj[parent[parentPropName]] || false;
+          }
         }
       }
     }
