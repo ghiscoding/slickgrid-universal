@@ -2,6 +2,7 @@ import { Aggregators, Column, FieldType, Filters, SortComparers, SortDirectionNu
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 import '../material-styles.scss';
+import './example02.scss';
 
 const NB_ITEMS = 500;
 

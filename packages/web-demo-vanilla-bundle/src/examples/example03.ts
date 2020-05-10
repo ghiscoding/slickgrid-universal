@@ -2,6 +2,7 @@ import { Aggregators, Column, Editors, FieldType, Filters, GroupingGetterFunctio
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
+import './example03.scss';
 
 // you can create custom validator to pass to an inline editor
 const myCustomTitleValidator = (value, args) => {

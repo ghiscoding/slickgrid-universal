@@ -1,3 +1,10 @@
+// You can change the SVG color using their associated SASS $icon-color-mdi-XYZ
+$icon-width-mdi-close: 14px;
+$icon-width-mdi-plus: 14px;
+$icon-width-mdi-arrow-collapse: 14px;
+$icon-width-mdi-arrow-expand: 14px;
+$icon-width-mdi-flip-vertical: 14px;
+
 /* make sure to add the @import the SlickGrid Material Theme AFTER the variables changes */
 // @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material-with-font.scss';
 @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss';
