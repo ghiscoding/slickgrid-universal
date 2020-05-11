@@ -53,6 +53,7 @@ import { ExcelExportService } from './services/excelExport.service';
 import { TranslateService } from './services/translate.service';
 import { EventPubSubService } from './services/eventPubSub.service';
 import { FooterService } from './services/footer.service';
+import { PaginationRenderer } from './pagination.renderer';
 import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options';
 
 // using external non-typed js libraries
@@ -112,6 +113,7 @@ export class VanillaGridBundle {
   sortService: SortService;
   translateService: TranslateService;
 
+  paginationRenderer: PaginationRenderer;
   gridClass: string;
   gridClassName: string;
 
@@ -343,6 +345,15 @@ export class VanillaGridBundle {
     if (customFooterElm) {
       $(customFooterElm).appendTo($(this._gridContainerElm).parent());
     }
+
+    // user could show pagination
+    // if (this._gridOptions.enablePagination) {
+    //   this.paginationRenderer = new PaginationRenderer();
+    //   const paginationElm = this.paginationRenderer.renderPagination();
+    //   if (paginationElm) {
+    //     $(paginationElm).appendTo($(this._gridContainerElm).parent());
+    //   }
+    // }
 
     const fixedGridDimensions = (this._gridOptions?.gridHeight || this._gridOptions?.gridWidth) ? { height: this._gridOptions?.gridHeight, width: this._gridOptions?.gridWidth } : null;
     const autoResizeOptions = this._gridOptions?.autoResize ?? { bottomPadding: 0 };

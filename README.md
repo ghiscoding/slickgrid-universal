@@ -44,7 +44,7 @@ and it is also used to test with the UI portion. The Vanilla bundle is also used
 - `@slickgrid-universal/odata`: OData querying (support Filter/Sort/Pagination) - COMING SOON
 - `@slickgrid-universal/vanilla-bundle`: a vanilla TypeScript/JavaScript implementation (framework-less)
   - &nbsp;
-- Standalone Package
+- **Standalone Package**
   - `slickgrid-universal/web-demo-vanilla-bundle` standalone package for demo purposes and UI testing (not a public package)
 
 ### Installation
