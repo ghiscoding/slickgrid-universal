@@ -24,4 +24,5 @@ export const SalesforceGlobalGridOptions: GridOption = {
   headerRowHeight: 35,
   rowHeight: 33,
   eventNamingStyle: EventNamingStyle.lowerCaseWithoutOnPrefix,
+  useSalesforceDefaultGridOptions: true,
 };

@@ -132,9 +132,9 @@ export class VanillaGridBundle {
   }
   set dataset(dataset: any[]) {
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions && this._gridOptions.enableDeepCopyDatasetOnPageLoad);
-    const data = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], dataset) : dataset) || [];
-    this._dataset = data;
-    this.refreshGridData(data);
+    const data = isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], dataset) : dataset;
+    this._dataset = data || [];
+    this.refreshGridData(this._dataset);
   }
 
   get datasetHierarchical(): any[] {
@@ -165,6 +165,7 @@ export class VanillaGridBundle {
       this.sharedService.gridOptions = mergedOptions;
       this.grid.setOptions(mergedOptions);
     }
+    this._gridOptions = mergedOptions;
   }
 
   constructor(gridContainerElm: Element, columnDefs?: Column[], options?: GridOption, dataset?: any[], hierarchicalDataset?: any[]) {
@@ -414,7 +415,7 @@ export class VanillaGridBundle {
   }
 
   mergeGridOptions(gridOptions: GridOption) {
-    const extraOptions = gridOptions.useSalesforceDefaultGridOptions ? SalesforceGlobalGridOptions : {};
+    const extraOptions = (gridOptions.useSalesforceDefaultGridOptions || (this._gridOptions && this._gridOptions.useSalesforceDefaultGridOptions)) ? SalesforceGlobalGridOptions : {};
     const options = $.extend(true, {}, GlobalGridOptions, extraOptions, gridOptions);
 
     // also make sure to show the header row if user have enabled filtering

@@ -71,8 +71,9 @@ const gridStub = {
 describe('Grid Service', () => {
   let service: GridService;
   const sharedService = new SharedService();
+  const mockGridOptions = { enableAutoResize: true } as GridOption;
 
-  jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true } as GridOption);
+  jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
 
   beforeEach(() => {
     service = new GridService(extensionServiceStub, filterServiceStub, pubSubServiceStub, sharedService, sortServiceStub);
@@ -410,7 +411,7 @@ describe('Grid Service', () => {
   });
 
   describe('addItem methods', () => {
-    afterEach(() => {
+    beforeEach(() => {
       jest.clearAllMocks();
     });
 
@@ -423,6 +424,36 @@ describe('Grid Service', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true } as GridOption);
       expect(() => service.addItem(null)).toThrowError('Adding an item requires the item to include an "id" property');
       expect(() => service.addItem({ user: 'John' })).toThrowError('Adding an item requires the item to include an "id" property');
+    });
+
+    it('should throw an error when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
+      expect(() => service.addItem(null)).toThrowError('Adding an item requires the item to include an "customId" property');
+      expect(() => service.addItem({ user: 'John' })).toThrowError('Adding an item requires the item to include an "customId" property');
+
+      // reset mock
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue({});
+    });
+
+    it('should expect the service to call the DataView "insertItem" when calling "addItem" with an item that has an Id defined by the "datasetIdPropertyName" property', () => {
+      mockGridOptions.datasetIdPropertyName = 'customId';
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+      const mockItem = { customId: 0, user: { firstName: 'John', lastName: 'Doe' } };
+
+      // datasetIdPropertyName: 'customId'
+      const addSpy = jest.spyOn(dataviewStub, 'insertItem');
+      const selectSpy = jest.spyOn(gridStub, 'setSelectedRows');
+      const scrollSpy = jest.spyOn(gridStub, 'scrollRowIntoView');
+      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+
+      service.addItem(mockItem);
+
+      expect(addSpy).toHaveBeenCalledTimes(1);
+      expect(addSpy).toHaveBeenCalledWith(0, mockItem);
+      expect(selectSpy).not.toHaveBeenCalled();
+      expect(scrollSpy).toHaveBeenCalledWith(0);
+      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
+      mockGridOptions.datasetIdPropertyName = null;
     });
 
     it('should expect the service to call the DataView "insertItem" when calling "addItem" with an item', () => {

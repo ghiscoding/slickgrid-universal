@@ -24,6 +24,7 @@
   ],
   "rules": {
     "@typescript-eslint/adjacent-overload-signatures": "error",
+    "@typescript-eslint/ban-ts-ignore": "off",
     "@typescript-eslint/array-type": "off",
     "@typescript-eslint/ban-types": "error",
     "@typescript-eslint/class-name-casing": "error",

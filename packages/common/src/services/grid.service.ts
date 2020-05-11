@@ -281,8 +281,9 @@ export class GridService {
     if (!this._grid || !this._gridOptions || !this._dataView) {
       throw new Error('We could not find SlickGrid Grid, DataView objects');
     }
-    if (!item || !item.hasOwnProperty('id')) {
-      throw new Error(`Adding an item requires the item to include an "id" property`);
+    const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
+    if (!item || !item.hasOwnProperty(idPropName)) {
+      throw new Error(`Adding an item requires the item to include an "${idPropName}" property`);
     }
 
     // insert position top/bottom, defaults to top
