@@ -1,6 +1,9 @@
-module.exports = {
+{
   "parser": "@typescript-eslint/parser",
-  root: true,
+  "extends": [
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "root": true,
   "env": {
     "browser": true,
     "node": true
@@ -59,15 +62,21 @@ module.exports = {
     "@typescript-eslint/prefer-for-of": "off",
     "@typescript-eslint/prefer-function-type": "error",
     "@typescript-eslint/prefer-namespace-keyword": "error",
-    "@typescript-eslint/space-before-function-paren": ["error", {
-      anonymous: "always",
-      named: "never",
-      asyncArrow: "always"
-    }],
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "always",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ],
     "@typescript-eslint/quotes": [
       2,
       "single",
-      { "allowTemplateLiterals": true }
+      {
+        "allowTemplateLiterals": true
+      }
     ],
     "@typescript-eslint/triple-slash-reference": "error",
     "@typescript-eslint/unified-signatures": "error",
@@ -111,7 +120,14 @@ module.exports = {
     "no-redeclare": "error",
     "no-return-await": "error",
     "no-sequences": "error",
-    "no-shadow": ["error", { "builtinGlobals": false, "hoist": "functions", "allow": [] }],
+    "no-shadow": [
+      "error",
+      {
+        "builtinGlobals": false,
+        "hoist": "functions",
+        "allow": []
+      }
+    ],
     "no-sparse-arrays": "error",
     "no-template-curly-in-string": "error",
     "no-throw-literal": "error",
@@ -130,7 +146,10 @@ module.exports = {
     "prefer-const": "error",
     "prefer-object-spread": "error",
     "radix": "error",
-    "semi": [2, "always"],
+    "semi": [
+      2,
+      "always"
+    ],
     "space-in-parens": [
       "error"
     ],
@@ -138,4 +157,4 @@ module.exports = {
     "use-isnan": "error",
     "valid-typeof": "off"
   }
-};
+}
