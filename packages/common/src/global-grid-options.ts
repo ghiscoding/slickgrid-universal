@@ -1,5 +1,5 @@
 import { DelimiterType, EventNamingStyle, FileType, GridAutosizeColsMode, OperatorType } from './enums/index';
-import { GridOption } from './interfaces/gridOption.interface';
+import { Column, GridOption } from './interfaces/index';
 import { Filters } from './filters';
 
 /** Global Grid Options Defaults */
@@ -51,7 +51,7 @@ export const GlobalGridOptions: GridOption = {
     iconClearGroupingCommand: 'fa fa-times mdi mdi-close',
     iconCopyCellValueCommand: 'fa fa-clone mdi mdi-content-copy',
     iconExportCsvCommand: 'fa fa-download mdi mdi-download',
-    iconExportExcelCommand: 'fa fa-file-excel-o text-success has-text-success',
+    iconExportExcelCommand: 'fa fa-file-excel-o mdi mdi-file-excel-outline text-success has-text-success',
     iconExportTextDelimitedCommand: 'fa fa-download mdi mdi-download',
     width: 200,
   },
@@ -142,7 +142,16 @@ export const GlobalGridOptions: GridOption = {
     iconToggleFilterCommand: 'fa fa-random mdi mdi-flip-vertical',
     iconTogglePreHeaderCommand: 'fa fa-random mdi mdi-flip-vertical',
     menuWidth: 16,
-    resizeOnShowHeaderRow: true
+    resizeOnShowHeaderRow: true,
+    useClickToRepositionMenu: false, // use icon location to reposition instead
+    headerColumnValueExtractor: (column: Column) => {
+      const headerGroup = column?.columnGroup || '';
+      if (headerGroup) {
+        // when using Column Header Grouping, we'll prefix the column group title
+        return headerGroup + ' - ' + column.name;
+      }
+      return column?.name ?? '';
+    }
   },
   headerMenu: {
     autoAlign: true,
