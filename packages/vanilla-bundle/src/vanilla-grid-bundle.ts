@@ -175,10 +175,10 @@ export class VanillaGridBundle {
     // make sure that the grid container has the "slickgrid-container" css class exist since we use it for slickgrid styling
     gridContainerElm.classList.add('slickgrid-container');
 
+    this._dataset = [];
     this._columnDefinitions = columnDefs || [];
     this._gridOptions = this.mergeGridOptions(options || {});
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions && this._gridOptions.enableDeepCopyDatasetOnPageLoad);
-    this.dataset = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], dataset) : dataset) || [];
     this._eventPubSubService = new EventPubSubService(gridContainerElm);
 
     this.gridEventService = new GridEventService();
@@ -233,6 +233,9 @@ export class VanillaGridBundle {
       this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
     }
     this.initialization(gridContainerElm);
+    if (!hierarchicalDataset) {
+      this.dataset = dataset || [];
+    }
     if (this.columnDefinitions.findIndex((col) => col.filterable) > -1) {
       this._isGridHavingFilters = true;
     }
@@ -652,8 +655,8 @@ export class VanillaGridBundle {
   }
 
   private treeDataSortComparer(flatDataset: any[]): any[] {
-    const dataViewIdIdentifier = this.gridOptions?.datasetIdPropertyName ?? 'id';
-    const treeDataOpt: TreeDataOption = this.gridOptions?.treeDataOptions ?? { columnId: '' };
+    const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
+    const treeDataOpt: TreeDataOption = this._gridOptions?.treeDataOptions ?? { columnId: '' };
     const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier };
     return convertParentChildArrayToHierarchicalView(flatDataset, treeDataOptions);
   }

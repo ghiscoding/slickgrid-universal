@@ -29,7 +29,6 @@ export class Example6 {
     this.datasetHierarchical = this.mockDataset();
     const gridContainerElm = document.querySelector('.grid6');
 
-    gridContainerElm.addEventListener('onclick', this.handleOnClick.bind(this));
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, null, this.datasetHierarchical);
     this.dataViewObj = this.slickgridLwc.dataView;
@@ -169,25 +168,6 @@ export class Example6 {
 
   expandAll() {
     this.slickerGridInstance.treeDataService.toggleTreeDataCollapse(false);
-  }
-
-  handleOnClick(event: any) {
-    const eventDetail = event?.detail;
-    const args = event?.detail?.args;
-
-    if (eventDetail && args) {
-      const targetElm = eventDetail.eventData.target || {};
-      const hasToggleClass = targetElm.className.indexOf('toggle') >= 0 || false;
-      if (hasToggleClass) {
-        const item = this.dataViewObj.getItem(args.row);
-        if (item) {
-          item.__collapsed = !item.__collapsed ? true : false;
-          this.dataViewObj.updateItem(item.id, item);
-          this.gridObj.invalidate();
-        }
-        event.stopImmediatePropagation();
-      }
-    }
   }
 
   handleOnSlickerGridCreated(event) {

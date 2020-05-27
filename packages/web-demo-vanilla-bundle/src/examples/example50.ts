@@ -495,22 +495,6 @@ export class Example50 {
         case 'Translation_Request_Type__c':
           console.log('translation');
           break;
-        case 'Product':
-        case 'Product_Name':
-          if (eventDetail && args) {
-            const targetElm = eventDetail.eventData.target || {};
-            const hasToggleClass = targetElm.className.indexOf('toggle') >= 0 || false;
-            if (hasToggleClass) {
-              const item = dataView.getItem(args.row);
-              if (item) {
-                item.__collapsed = !item.__collapsed ? true : false;
-                dataView.updateItem(item[ID_PROPERTY_NAME], item);
-                grid.invalidate();
-              }
-              event.stopImmediatePropagation();
-            }
-          }
-          break;
       }
     }
   }

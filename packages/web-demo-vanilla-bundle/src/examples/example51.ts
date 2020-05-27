@@ -463,6 +463,7 @@ export class Example51 {
   }
 
   handleOnClick(event: any) {
+    console.log('handle on cell click')
     const eventDetail = event && event.detail;
     const args = event && event.detail && event.detail.args;
     if (eventDetail && args) {
@@ -473,7 +474,7 @@ export class Example51 {
       const cell = this.gridObj.getCellFromEvent(eventDetail.eventData);
       const currentRow = cell && cell.row;
       const dataContext = this.gridObj.getDataItem(currentRow);
-      const treeLevelPropName = columnDef.treeData?.levelPropName || '__treeLevel';
+      const treeLevelPropName = 'indent';
 
       switch (field) {
         case 'Line_Type__c':
@@ -487,23 +488,6 @@ export class Example51 {
           break;
         case 'Translation_Request_Type__c':
           console.log('translation');
-          break;
-        case 'product':
-        case 'Product':
-        case 'Product_Name':
-          if (eventDetail && args) {
-            const targetElm = eventDetail.eventData.target || {};
-            const hasToggleClass = targetElm.className.indexOf('toggle') >= 0 || false;
-            if (hasToggleClass) {
-              const item = dataView.getItem(args.row);
-              if (item) {
-                item.__collapsed = !item.__collapsed ? true : false;
-                dataView.updateItem(item[ID_PROPERTY_NAME], item);
-                grid.invalidate();
-              }
-              event.stopImmediatePropagation();
-            }
-          }
           break;
       }
     }
