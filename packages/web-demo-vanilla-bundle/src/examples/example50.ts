@@ -462,25 +462,11 @@ export class Example50 {
   }
 
   collapseAll() {
-    const items = this.dataViewObj.getItems();
-    if (Array.isArray(items)) {
-      items.forEach((item) => item.__collapsed = true);
-      this.slickgridLwc.dataset = items;
-      if (this.gridObj) {
-        this.gridObj.invalidate();
-      }
-    }
+    this.slickerGridInstance.treeDataService.toggleTreeDataCollapse(true);
   }
 
   expandAll() {
-    const items = this.dataViewObj.getItems();
-    if (Array.isArray(items)) {
-      items.forEach((item) => item.__collapsed = false);
-      this.slickgridLwc.dataset = items;
-      if (this.gridObj) {
-        this.gridObj.invalidate();
-      }
-    }
+    this.slickerGridInstance.treeDataService.toggleTreeDataCollapse(false);
   }
 
   handleOnClick(event: any) {
@@ -549,11 +535,11 @@ export class Example50 {
   }
 
   logExpandedStructure() {
-    console.log('exploded array', this.slickgridLwc.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
+    console.log('exploded array', this.slickerGridInstance.treeDataService.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
   }
 
   logFlatStructure() {
-    console.log('flat array', this.dataViewObj.getItems() /* , JSON.stringify(outputFlatArray, null, 2) */);
+    console.log('flat array', this.slickerGridInstance.treeDataService.dataset /* , JSON.stringify(outputFlatArray, null, 2) */);
   }
 
   isItemEditable(dataContext: any, columnDef: Column): boolean {

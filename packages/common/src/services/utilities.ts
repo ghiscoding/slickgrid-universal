@@ -38,14 +38,14 @@ export function addWhiteSpaces(nbSpaces: number): string {
 
 /**
  * Convert a flat array (with "parentId" references) into a hierarchical dataset structure (where children are array(s) inside their parent objects)
- * @param flatArray array input
- * @param outputArray array output (passed by reference)
+ * @param flatArray input array (flat dataset)
  * @param options you can provide the following options:: "parentPropName" (defaults to "parent"), "childrenPropName" (defaults to "children") and "identifierPropName" (defaults to "id")
+ * @return roots - hierarchical data view array
  */
 export function convertParentChildArrayToHierarchicalView(flatArray: any[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; }): any[] {
-  const childrenPropName = options?.childrenPropName || 'children';
-  const parentPropName = options?.parentPropName || '__parentId';
-  const identifierPropName = options?.identifierPropName || 'id';
+  const childrenPropName = options?.childrenPropName ?? 'children';
+  const parentPropName = options?.parentPropName ?? '__parentId';
+  const identifierPropName = options?.identifierPropName ?? 'id';
   const hasChildrenFlagPropName = '__hasChildren';
   const treeLevelPropName = '__treeLevel';
   const inputArray: any[] = $.extend(true, [], flatArray);
@@ -82,9 +82,9 @@ export function convertParentChildArrayToHierarchicalView(flatArray: any[], opti
 
 /**
  * Convert a hierarchical array (with children) into a flat array structure array (where the children are pushed as next indexed item in the array)
- * @param hierarchicalArray
- * @param outputArray
- * @param options you can provide "childrenPropName" (defaults to "children")
+ * @param hierarchicalArray - input hierarchical array
+ * @param options - you can provide "childrenPropName" (defaults to "children")
+ * @return output - Parent/Child array
  */
 export function convertHierarchicalViewToParentChildArray(hierarchicalArray: any[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; }): any[] {
   const outputArray: any[] = [];
@@ -96,16 +96,18 @@ export function convertHierarchicalViewToParentChildArray(hierarchicalArray: any
 
 /**
  * Convert a hierarchical array (with children) into a flat array structure array but using the array as the output (the array is the pointer reference)
- * @param hierarchicalArray
- * @param outputArrayRef
- * @param options you can provide "childrenPropName" (defaults to "children")
+ * @param hierarchicalArray - input hierarchical array
+ * @param outputArrayRef - output array passed (and modified) by reference
+ * @param options - you can provide "childrenPropName" (defaults to "children")
+ * @param treeLevel - tree level number
+ * @param parentId - parent ID
  */
 export function convertHierarchicalViewToParentChildArrayByReference(hierarchicalArray: any[], outputArrayRef: any[], options?: { childrenPropName?: string; parentPropName?: string; hasChildrenFlagPropName?: string; treeLevelPropName?: string; identifierPropName?: string; }, treeLevel = 0, parentId?: string) {
-  const childrenPropName = options?.childrenPropName || 'children';
-  const identifierPropName = options?.identifierPropName || 'id';
-  const hasChildrenFlagPropName = options?.hasChildrenFlagPropName || '__hasChildren';
-  const treeLevelPropName = options?.treeLevelPropName || '__treeLevel';
-  const parentPropName = options?.parentPropName || '__parentId';
+  const childrenPropName = options?.childrenPropName ?? 'children';
+  const identifierPropName = options?.identifierPropName ?? 'id';
+  const hasChildrenFlagPropName = options?.hasChildrenFlagPropName ?? '__hasChildren';
+  const treeLevelPropName = options?.treeLevelPropName ?? '__treeLevel';
+  const parentPropName = options?.parentPropName ?? '__parentId';
 
   if (Array.isArray(hierarchicalArray)) {
     for (const item of hierarchicalArray) {
@@ -136,9 +138,9 @@ export function convertHierarchicalViewToParentChildArrayByReference(hierarchica
  */
 export function deepCopy(obj: any) {
   /**
-	 * Create an immutable copy of an object
-	 * @return {Object}
-	 */
+   * Create an immutable copy of an object
+   * @return {Object}
+   */
   const cloneObj = () => {
     // Create new object
     const clone = {};
@@ -154,9 +156,9 @@ export function deepCopy(obj: any) {
   };
 
   /**
-	 * Create an immutable copy of an array
-	 * @return {Array}
-	 */
+   * Create an immutable copy of an array
+   * @return {Array}
+   */
   const cloneArr = () => {
     return obj.map((item: any) => deepCopy(item));
   };
@@ -183,7 +185,7 @@ export function deepCopy(obj: any) {
  * @param predicate
  * @param childrenPropertyName
  */
-export function findItemInHierarchicalStructure(hierarchicalArray: any, predicate: Function, childrenPropertyName: string): any {
+export function findItemInHierarchicalStructure(hierarchicalArray: any, predicate: (item: any) => boolean, childrenPropertyName: string): any {
   if (!childrenPropertyName) {
     throw new Error('findRecursive requires parameter "childrenPropertyName"');
   }
@@ -819,7 +821,7 @@ export function toKebabCase(inputStr: string): string {
  * @param [orderMatters=false] flag if the order matters, if not arrays will be sorted before comparison
  * @return boolean true if equal, else false
  */
-export function charArraysEqual(a: any[], b: any[], orderMatters: boolean = false): boolean {
+export function charArraysEqual(a: any[], b: any[], orderMatters = false): boolean {
   if (!a || !b || !Array.isArray(a) || !Array.isArray(a)) {
     return false;
   }

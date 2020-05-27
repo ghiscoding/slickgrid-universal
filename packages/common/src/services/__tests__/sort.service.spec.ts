@@ -682,7 +682,6 @@ describe('SortService', () => {
   });
 
   describe('Tree Data View', () => {
-    let mockSortedCol: ColumnSort;
     const mockColumns = [
       { id: 'firstName', field: 'firstName' },
       { id: 'lastName', field: 'lastName' },
@@ -691,7 +690,6 @@ describe('SortService', () => {
 
     beforeEach(() => {
       gridOptionMock.enableSorting = true;
-      mockSortedCol = { sortCol: { id: 'lastName', field: 'lastName', width: 100 }, sortAsc: true, grid: gridStub };
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     });
 

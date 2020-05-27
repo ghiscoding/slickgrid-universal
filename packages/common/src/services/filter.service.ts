@@ -169,7 +169,7 @@ export class FilterService {
 
     // bind any search filter change (e.g. input filter keyup event)
     this._eventHandler.subscribe(this._onSearchChange, (e: KeyboardEvent, args: any) => {
-      const isGridWithTreeData = this._gridOptions?.enableTreeData || false;
+      const isGridWithTreeData = this._gridOptions?.enableTreeData ?? false;
 
       // When using Tree Data, we need to do it in 2 steps
       // step 1. we need to prefilter (search) the data prior, the result will be an array of IDs which are the node(s) and their parent nodes when necessary.
@@ -263,16 +263,16 @@ export class FilterService {
   customLocalFilter(item: any, args: any): boolean {
     const dataView = args?.dataView;
     const grid = args?.grid;
-    const isGridWithTreeData = this._gridOptions?.enableTreeData || false;
-    const columnFilters = args?.columnFilters || {};
+    const isGridWithTreeData = this._gridOptions?.enableTreeData ?? false;
+    const columnFilters = args?.columnFilters ?? {};
     let treeDataOptions;
 
     // when the column is a Tree Data structure and the parent is collapsed, we won't go further and just continue with next row
     // so we always run this check even when there are no filter search, the reason is because the user might click on the expand/collapse
     if (isGridWithTreeData && this._gridOptions && this._gridOptions.treeDataOptions) {
       treeDataOptions = this._gridOptions.treeDataOptions;
-      const collapsedPropName = treeDataOptions.collapsedPropName || '__collapsed';
-      const parentPropName = treeDataOptions.parentPropName || '__parentId';
+      const collapsedPropName = treeDataOptions.collapsedPropName ?? '__collapsed';
+      const parentPropName = treeDataOptions.parentPropName ?? '__parentId';
       const dataViewIdIdentifier = this._gridOptions.datasetIdPropertyName ?? 'id';
 
       if (item[parentPropName] !== null) {
@@ -423,7 +423,7 @@ export class FilterService {
    */
   preFilterTreeData(inputArray: any[], columnFilters: ColumnFilters) {
     const treeDataOptions = this._gridOptions?.treeDataOptions;
-    const parentPropName = treeDataOptions?.parentPropName || '__parentId';
+    const parentPropName = treeDataOptions?.parentPropName ?? '__parentId';
     const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
 
     const treeObj = {};

@@ -251,16 +251,8 @@ export class Example51 {
         onBeforeMoveRows: (e, args) => this.onBeforeMoveRow(e, args),
         onMoveRows: (e, args) => this.onMoveRows(e, args),
       },
-      rowSelectionOptions: {
-        selectActiveRow: false // False for Multiple Selections
-      },
       headerRowHeight: 45,
       rowHeight: 45,
-      editCommandHandler: (item, column, editCommand) => {
-        console.log(item, column, editCommand)
-        this.editQueue.push({ item, column, command: editCommand });
-        editCommand.execute();
-      },
     };
   }
 
@@ -287,7 +279,7 @@ export class Example51 {
   }
 
   authSellFormatter(row, cell, value, columnDef, dataContext) {
-    //Auth_Sell_Ext_Price__c, Requested_Sell_Net_Multiplier__c
+    // Auth_Sell_Ext_Price__c, Requested_Sell_Net_Multiplier__c
     let authSellPrice = '';
     if (dataContext.Auth_Sell_Ext_Price__c !== undefined) {
       authSellPrice = Slicker.Utilities.formatNumber(dataContext.Auth_Sell_Ext_Price__c, 0, 2, false, '$', '', '.', ',');
@@ -463,29 +455,14 @@ export class Example51 {
   }
 
   collapseAll() {
-    const items = this.dataViewObj.getItems();
-    if (Array.isArray(items)) {
-      items.forEach((item) => item.__collapsed = true);
-      this.slickgridLwc.dataset = items;
-      if (this.gridObj) {
-        this.gridObj.invalidate();
-      }
-    }
+    this.slickerGridInstance.treeDataService.toggleTreeDataCollapse(true);
   }
 
   expandAll() {
-    const items = this.dataViewObj.getItems();
-    if (Array.isArray(items)) {
-      items.forEach((item) => item.__collapsed = false);
-      this.slickgridLwc.dataset = items;
-      if (this.gridObj) {
-        this.gridObj.invalidate();
-      }
-    }
+    this.slickerGridInstance.treeDataService.toggleTreeDataCollapse(false);
   }
 
   handleOnClick(event: any) {
-    console.log('handleOnClick', event)
     const eventDetail = event && event.detail;
     const args = event && event.detail && event.detail.args;
     if (eventDetail && args) {
@@ -546,18 +523,18 @@ export class Example51 {
   }
 
   handleOnSlickerGridCreated(event) {
-    console.log('handleOnSlickerGridCreated')
+    console.log('handleOnSlickerGridCreated');
     this.slickerGridInstance = event && event.detail;
     this.gridObj = this.slickerGridInstance && this.slickerGridInstance.slickGrid;
     this.dataViewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
   }
 
   logExpandedStructure() {
-    console.log('exploded array', this.slickgridLwc.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
+    console.log('exploded array', this.slickerGridInstance.treeDataService.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
   }
 
   logFlatStructure() {
-    console.log('flat array', this.dataViewObj.getItems() /* , JSON.stringify(outputFlatArray, null, 2) */);
+    console.log('flat array', this.slickerGridInstance.treeDataService.dataset /* , JSON.stringify(outputFlatArray, null, 2) */);
   }
 
   isItemEditable(dataContext: any, columnDef: Column): boolean {

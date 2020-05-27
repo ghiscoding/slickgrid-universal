@@ -1,10 +1,11 @@
-import { FieldType, GridOption, OperatorType } from '../../enums/index';
+import { FieldType, OperatorType } from '../../enums/index';
+import { GridOption } from '../../interfaces/index';
 import {
   addToArrayWhenNotExists,
   addWhiteSpaces,
   charArraysEqual,
-  convertParentChildArrayToHierarchicalView,
   convertHierarchicalViewToParentChildArray,
+  convertParentChildArrayToHierarchicalView,
   decimalFormatted,
   deepCopy,
   findItemInHierarchicalStructure,

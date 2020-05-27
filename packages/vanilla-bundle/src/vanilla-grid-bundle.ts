@@ -31,19 +31,20 @@ import {
   RowSelectionExtension,
 
   // services
+  FilterFactory,
+  CollectionService,
+  ExtensionService,
   FilterService,
   GridEventService,
   GridService,
   GridStateService,
-  ExtensionService,
+  GroupingAndColspanService,
   PaginationService,
+  RowMoveManagerExtension,
   SharedService,
   SortService,
-  RowMoveManagerExtension,
-  FilterFactory,
-  CollectionService,
-  GroupingAndColspanService,
   SlickgridConfig,
+  TreeDataService,
 
   convertParentChildArrayToHierarchicalView,
 } from '@slickgrid-universal/common';
@@ -113,6 +114,7 @@ export class VanillaGridBundle {
   sharedService: SharedService;
   sortService: SortService;
   translateService: TranslateService;
+  treeDataService: TreeDataService;
 
   paginationRenderer: PaginationRenderer;
   gridClass: string;
@@ -190,12 +192,13 @@ export class VanillaGridBundle {
     const filterFactory = new FilterFactory(slickgridConfig, this.collectionService, this.translateService);
     this.filterService = new FilterService(filterFactory, this._eventPubSubService, this.sharedService);
     this.sortService = new SortService(this.sharedService, this._eventPubSubService);
+    this.treeDataService = new TreeDataService(this.sharedService);
     this.extensionUtility = new ExtensionUtility(this.sharedService, this.translateService);
     this.groupingAndColspanService = new GroupingAndColspanService(this.extensionUtility);
     this.autoTooltipExtension = new AutoTooltipExtension(this.extensionUtility, this.sharedService);
     this.cellExternalCopyManagerExtension = new CellExternalCopyManagerExtension(this.extensionUtility, this.sharedService);
     this.cellMenuExtension = new CellMenuExtension(this.extensionUtility, this.sharedService, this.translateService);
-    this.contextMenuExtension = new ContextMenuExtension(this.excelExportService, this.exportService, this.extensionUtility, this.sharedService, this.translateService);
+    this.contextMenuExtension = new ContextMenuExtension(this.excelExportService, this.exportService, this.extensionUtility, this.sharedService, this.translateService, this.treeDataService);
     this.columnPickerExtension = new ColumnPickerExtension(this.extensionUtility, this.sharedService);
     this.checkboxExtension = new CheckboxSelectorExtension(this.extensionUtility, this.sharedService);
     this.draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this.sharedService);
@@ -264,7 +267,7 @@ export class VanillaGridBundle {
     this._isLocalGrid = !this.backendServiceApi; // considered a local grid if it doesn't have a backend service set
     this._eventPubSubService.eventNamingStyle = this._gridOptions && this._gridOptions.eventNamingStyle || EventNamingStyle.camelCase;
     this._eventHandler = new Slick.EventHandler();
-    const dataviewInlineFilters = this._gridOptions?.dataView?.inlineFilters || false;
+    const dataviewInlineFilters = this._gridOptions?.dataView?.inlineFilters ?? false;
     if (!this.customDataView) {
       if (this._gridOptions.draggableGrouping || this._gridOptions.enableGrouping) {
         this.extensionUtility.loadExtensionDynamically(ExtensionName.groupItemMetaProvider);
@@ -307,7 +310,7 @@ export class VanillaGridBundle {
       this._eventHandler.subscribe(this.dataView.onRowsChanged, () => {
         const items = this.dataView.getItems();
         if (items.length > 0 && !this._isDatasetInitialized) {
-          this.sharedService.hierarchicalDataset = this.SortComparer(items);
+          this.sharedService.hierarchicalDataset = this.treeDataSortComparer(items);
         }
       });
     }
@@ -395,6 +398,11 @@ export class VanillaGridBundle {
       this.groupingAndColspanService.init(this.grid, this.resizerPlugin);
     }
 
+    // when using Tree Data View
+    if (this._gridOptions.enableTreeData) {
+      this.treeDataService.init(this.grid);
+    }
+
     const slickerElementInstance = {
       // Slick Grid & DataView objects
       dataView: this.dataView,
@@ -413,6 +421,7 @@ export class VanillaGridBundle {
       extensionUtility: this.extensionUtility,
       paginationService: this.paginationService,
       sortService: this.sortService,
+      treeDataService: this.treeDataService,
     };
 
     this._eventPubSubService.publish('onSlickerGridCreated', slickerElementInstance);
@@ -426,6 +435,13 @@ export class VanillaGridBundle {
     this._hideHeaderRowAfterPageLoad = (options.showHeaderRow === false);
     if (options.enableFiltering && !options.showHeaderRow) {
       options.showHeaderRow = options.enableFiltering;
+    }
+
+    // using jQuery extend to do a deep clone has an unwanted side on objects and pageSizes but ES6 spread has other worst side effects
+    // so we will just overwrite the pageSizes when needed, this is the only one causing issues so far.
+    // jQuery wrote this on their docs:: On a deep extend, Object and Array are extended, but object wrappers on primitive types such as String, Boolean, and Number are not.
+    if (gridOptions.enablePagination && gridOptions.pagination && Array.isArray(gridOptions.pagination.pageSizes)) {
+      options.pagination.pageSizes = gridOptions.pagination.pageSizes;
     }
 
     // when we use Pagination on Local Grid, it doesn't seem to work without enableFiltering
@@ -552,7 +568,7 @@ export class VanillaGridBundle {
 
         // also update the hierarchical dataset
         if (dataset.length > 0 && this._gridOptions.treeDataOptions) {
-          this.sharedService.hierarchicalDataset = this.SortComparer(dataset);
+          this.sharedService.hierarchicalDataset = this.treeDataSortComparer(dataset);
         }
       }
 
@@ -635,10 +651,10 @@ export class VanillaGridBundle {
     });
   }
 
-  private SortComparer(flatDataset: any[]): any[] {
-    const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
-    const treeDataOpt: TreeDataOption = this._gridOptions?.treeDataOptions ?? { columnId: '' };
-    const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName || dataViewIdIdentifier };
+  private treeDataSortComparer(flatDataset: any[]): any[] {
+    const dataViewIdIdentifier = this.gridOptions?.datasetIdPropertyName ?? 'id';
+    const treeDataOpt: TreeDataOption = this.gridOptions?.treeDataOptions ?? { columnId: '' };
+    const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier };
     return convertParentChildArrayToHierarchicalView(flatDataset, treeDataOptions);
   }
 }

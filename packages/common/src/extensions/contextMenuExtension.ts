@@ -19,6 +19,7 @@ import { ExportService } from '../services/export.service';
 import { ExcelExportService } from '../services/excelExport.service';
 import { SharedService } from '../services/shared.service';
 import { getTranslationPrefix } from '../services/utilities';
+import { TreeDataService } from '../services/treeData.service';
 import { TranslaterService } from '..';
 
 // using external non-typed js libraries
@@ -35,6 +36,7 @@ export class ContextMenuExtension implements Extension {
     private extensionUtility: ExtensionUtility,
     private sharedService: SharedService,
     private translaterService: TranslaterService,
+    private treeDataService: TreeDataService,
   ) {
     this._eventHandler = new Slick.EventHandler();
   }
@@ -313,7 +315,7 @@ export class ContextMenuExtension implements Extension {
               positionOrder: 56,
               action: () => {
                 if (gridOptions.enableTreeData) {
-                  this.extensionUtility.toggleTreeDataCollapse(true);
+                  this.treeDataService.toggleTreeDataCollapse(true);
                 } else {
                   dataView.collapseAllGroups();
                 }
@@ -344,7 +346,7 @@ export class ContextMenuExtension implements Extension {
               positionOrder: 57,
               action: () => {
                 if (gridOptions.enableTreeData) {
-                  this.extensionUtility.toggleTreeDataCollapse(false);
+                  this.treeDataService.toggleTreeDataCollapse(false);
                 } else {
                   dataView.expandAllGroups();
                 }

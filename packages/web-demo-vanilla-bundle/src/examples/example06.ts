@@ -164,11 +164,11 @@ export class Example6 {
   }
 
   collapseAll() {
-    this.slickgridLwc.extensionUtility.toggleTreeDataCollapse(true);
+    this.slickerGridInstance.treeDataService.toggleTreeDataCollapse(true);
   }
 
   expandAll() {
-    this.slickgridLwc.extensionUtility.toggleTreeDataCollapse(false);
+    this.slickerGridInstance.treeDataService.toggleTreeDataCollapse(false);
   }
 
   handleOnClick(event: any) {
@@ -197,11 +197,11 @@ export class Example6 {
   }
 
   logExpandedStructure() {
-    console.log('exploded array', this.slickgridLwc.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
+    console.log('exploded array', this.slickerGridInstance.treeDataService.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
   }
 
   logFlatStructure() {
-    console.log('flat array', this.dataViewObj.getItems() /* , JSON.stringify(outputFlatArray, null, 2) */);
+    console.log('flat array', this.slickerGridInstance.treeDataService.dataset /* , JSON.stringify(outputFlatArray, null, 2) */);
   }
 
   mockDataset() {

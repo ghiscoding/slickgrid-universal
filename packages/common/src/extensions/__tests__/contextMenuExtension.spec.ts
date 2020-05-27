@@ -7,7 +7,7 @@ import { SharedService } from '../../services/shared.service';
 import { DelimiterType, FileType } from '../../enums/index';
 import { Column, GridOption, MenuCommandItem } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { ExcelExportService, ExportService } from '../../services';
+import { ExcelExportService, ExportService, TreeDataService } from '../../services';
 
 declare const Slick: any;
 
@@ -36,12 +36,20 @@ const gridStub = {
   getOptions: jest.fn(),
   invalidate: jest.fn(),
   registerPlugin: jest.fn(),
+  onClick: new Slick.Event(),
   setColumns: jest.fn(),
   setActiveCell: jest.fn(),
   setHeaderRowVisibility: jest.fn(),
   setTopPanelVisibility: jest.fn(),
   setPreHeaderPanelVisibility: jest.fn(),
 };
+
+const treeDataServiceStub = {
+  init: jest.fn(),
+  dispose: jest.fn(),
+  handleOnCellClick: jest.fn(),
+  toggleTreeDataCollapse: jest.fn(),
+} as unknown as TreeDataService;
 
 const mockAddon = jest.fn().mockImplementation(() => ({
   init: jest.fn(),
@@ -116,7 +124,7 @@ describe('contextMenuExtension', () => {
       sharedService = new SharedService();
       translateService = new TranslateServiceStub();
       extensionUtility = new ExtensionUtility(sharedService, translateService);
-      extension = new ContextMenuExtension(excelExportServiceStub, exportServiceStub, extensionUtility, sharedService, translateService);
+      extension = new ContextMenuExtension(excelExportServiceStub, exportServiceStub, extensionUtility, sharedService, translateService, treeDataServiceStub);
       translateService.setLocale('fr');
     });
 
@@ -755,7 +763,7 @@ describe('contextMenuExtension', () => {
 
       it('should call "collapseAllGroups" from the DataView when Tree Data is enabled and the command triggered is "collapse-all-groups"', () => {
         jest.spyOn(SharedService.prototype.dataView, 'getItems').mockReturnValueOnce(columnsMock);
-        const dataSetItemsSpy = jest.spyOn(SharedService.prototype.dataView, 'setItems');
+        const treeDataSpy = jest.spyOn(treeDataServiceStub, 'toggleTreeDataCollapse');
         const copyGridOptionsMock = { ...gridOptionsMock, enableTreeData: true, contextMenu: { hideCollapseAllGroups: false } } as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
@@ -763,10 +771,7 @@ describe('contextMenuExtension', () => {
         const menuItemCommand = copyGridOptionsMock.contextMenu.commandItems.find((item: MenuCommandItem) => item.command === 'collapse-all-groups') as MenuCommandItem;
         menuItemCommand.action(new CustomEvent('change'), { command: 'collapse-all-groups', cell: 0, row: 0 } as any);
 
-        expect(dataSetItemsSpy).toHaveBeenCalledWith([
-          { __collapsed: true, field: 'field1', id: 'field1', nameKey: 'TITLE', width: 100 },
-          { __collapsed: true, field: 'field2', id: 'field2', width: 75 }
-        ]);
+        expect(treeDataSpy).toHaveBeenCalledWith(true);
       });
 
       it('should call "expandAllGroups" from the DataView when Grouping is enabled and the command triggered is "expand-all-groups"', () => {
@@ -782,8 +787,8 @@ describe('contextMenuExtension', () => {
       });
 
       it('should call "expandAllGroups" from the DataView when Tree Data is enabled and the command triggered is "expand-all-groups"', () => {
+        const treeDataSpy = jest.spyOn(treeDataServiceStub, 'toggleTreeDataCollapse');
         jest.spyOn(SharedService.prototype.dataView, 'getItems').mockReturnValueOnce(columnsMock);
-        const dataSetItemsSpy = jest.spyOn(SharedService.prototype.dataView, 'setItems');
         const copyGridOptionsMock = { ...gridOptionsMock, enableTreeData: true, contextMenu: { hideExpandAllGroups: false } } as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
@@ -791,10 +796,7 @@ describe('contextMenuExtension', () => {
         const menuItemCommand = copyGridOptionsMock.contextMenu.commandItems.find((item: MenuCommandItem) => item.command === 'expand-all-groups') as MenuCommandItem;
         menuItemCommand.action(new CustomEvent('change'), { command: 'expand-all-groups', cell: 0, row: 0 } as any);
 
-        expect(dataSetItemsSpy).toHaveBeenCalledWith([
-          { __collapsed: false, field: 'field1', id: 'field1', nameKey: 'TITLE', width: 100 },
-          { __collapsed: false, field: 'field2', id: 'field2', width: 75 }
-        ]);
+        expect(treeDataSpy).toHaveBeenCalledWith(false);
       });
 
       it('should expect "itemUsabilityOverride" callback on all the Grouping command to return False when there are NO Groups in the grid', () => {
@@ -959,7 +961,7 @@ describe('contextMenuExtension', () => {
     describe('without Translate Service', () => {
       beforeEach(() => {
         translateService = null;
-        extension = new ContextMenuExtension(excelExportServiceStub, exportServiceStub, {} as ExtensionUtility, { gridOptions: { enableTranslate: true } } as SharedService, translateService);
+        extension = new ContextMenuExtension(excelExportServiceStub, exportServiceStub, {} as ExtensionUtility, { gridOptions: { enableTranslate: true } } as SharedService, translateService, treeDataServiceStub);
       });
 
       it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {

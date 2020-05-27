@@ -4,8 +4,6 @@ import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
-declare const Slick: any;
-
 const mockAddon = jest.fn().mockImplementation(() => ({
   init: jest.fn(),
   destroy: jest.fn()
@@ -25,7 +23,7 @@ jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockAddon);
 jest.mock('slickgrid/plugins/slick.rowdetailview', () => mockAddon);
 jest.mock('slickgrid/plugins/slick.rowmovemanager', () => mockAddon);
 
-Slick = {
+const Slick = {
   AutoTooltips: mockAddon,
   DraggableGrouping: mockAddon,
   RowMoveManager: mockAddon,

@@ -279,19 +279,19 @@ export class SortService {
 
   /** When a Sort Changes on a Local grid (JSON dataset) */
   onLocalSortChanged(grid: any, dataView: any, sortColumns: ColumnSort[], forceReSort = false) {
-    const isTreeDataEnabled = this._gridOptions && this._gridOptions.enableTreeData || false;
+    const isTreeDataEnabled = this._gridOptions?.enableTreeData ?? false;
 
     if (grid && dataView) {
       if (forceReSort && !isTreeDataEnabled) {
         dataView.reSort();
       }
 
-      if (isTreeDataEnabled && Array.isArray(this.sharedService.hierarchicalDataset)) {
+      if (isTreeDataEnabled && this.sharedService && Array.isArray(this.sharedService.hierarchicalDataset)) {
         const hierarchicalDataset = this.sharedService.hierarchicalDataset;
         this.sortTreeData(hierarchicalDataset, sortColumns);
         const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
         const treeDataOpt: TreeDataOption = this._gridOptions?.treeDataOptions ?? { columnId: '' };
-        const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName || dataViewIdIdentifier };
+        const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier };
         const sortedFlatArray = convertHierarchicalViewToParentChildArray(hierarchicalDataset, treeDataOptions);
         dataView.setItems(sortedFlatArray, this._gridOptions?.datasetIdPropertyName ?? 'id');
       } else {
@@ -366,7 +366,7 @@ export class SortService {
   /** Sort the Tree Children of a hierarchical dataset by recursion */
   sortTreeChild(hierarchicalArray: any[], sortColumn: ColumnSort, treeLevel: number) {
     const treeDataOptions = this._gridOptions?.treeDataOptions;
-    const childrenPropName = treeDataOptions?.childrenPropName || 'children';
+    const childrenPropName = treeDataOptions?.childrenPropName ?? 'children';
     hierarchicalArray.sort((a: any, b: any) => this.sortComparer(sortColumn, a, b) ?? SortDirectionNumber.neutral);
 
     // when item has a child, we'll sort recursively

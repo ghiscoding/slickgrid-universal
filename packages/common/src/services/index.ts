@@ -13,4 +13,5 @@ export * from './pubSub.service';
 export * from './shared.service';
 export * from './sort.service';
 export * from './translater.service';
+export * from './treeData.service';
 export * from './utilities';
