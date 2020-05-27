@@ -86,11 +86,13 @@ module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, 
         title, baseUrl
       }
     }),
-    new CopyWebpackPlugin([
-      // { from: 'static', to: outDir, ignore: ['.*'] }, // ignore dot (hidden) files
-      { from: `${srcDir}/favicon.ico`, to: 'favicon.ico' },
-      // { from: 'assets', to: 'assets' }
-    ]),
+    new CopyWebpackPlugin({
+      patterns: [
+        // { from: 'static', to: outDir, ignore: ['.*'] }, // ignore dot (hidden) files
+        { from: `${srcDir}/favicon.ico`, to: 'favicon.ico' },
+        // { from: 'assets', to: 'assets' }
+      ]
+    }),
     ...when(extractCss, new MiniCssExtractPlugin({ // updated to match the naming conventions for the js files
       filename: production ? '[name].[contenthash].bundle.css' : '[name].[hash].bundle.css',
       chunkFilename: production ? '[name].[contenthash].chunk.css' : '[name].[hash].chunk.css'

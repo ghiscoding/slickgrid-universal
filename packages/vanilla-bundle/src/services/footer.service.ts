@@ -26,14 +26,14 @@ export class FooterService {
   optionallyShowCustomFooterWithMetrics(metrics: Metrics): any | null {
     if (this.gridOptions) {
       this.metrics = metrics;
-      if ((this.gridOptions.enableTranslate || this.gridOptions.i18n)) {
+      if (this.gridOptions.enableTranslate) {
         this.translateCustomFooterTexts();
       } else if (this.gridOptions.customFooterOptions) {
         const customFooterOptions = this.gridOptions.customFooterOptions;
         customFooterOptions.metricTexts = customFooterOptions.metricTexts || {};
-        customFooterOptions.metricTexts.lastUpdate = this.locales && this.locales.TEXT_LAST_UPDATE || 'TEXT_LAST_UPDATE';
-        customFooterOptions.metricTexts.items = this.locales && this.locales.TEXT_ITEMS || 'TEXT_ITEMS';
-        customFooterOptions.metricTexts.of = this.locales && this.locales.TEXT_OF || 'TEXT_OF';
+        customFooterOptions.metricTexts.lastUpdate = customFooterOptions.metricTexts.lastUpdate || this.locales && this.locales.TEXT_LAST_UPDATE || 'TEXT_LAST_UPDATE';
+        customFooterOptions.metricTexts.items = customFooterOptions.metricTexts.items || this.locales && this.locales.TEXT_ITEMS || 'TEXT_ITEMS';
+        customFooterOptions.metricTexts.of = customFooterOptions.metricTexts.of || this.locales && this.locales.TEXT_OF || 'TEXT_OF';
       }
 
       // we will display the custom footer only when there's no Pagination

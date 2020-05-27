@@ -65,22 +65,22 @@
     "lodash.isequal": "^4.5.0",
     "moment-mini": "^2.24.0",
     "multiple-select-adapted": "^1.3.0",
-    "slickgrid": "^2.4.22"
+    "slickgrid": "^2.4.24"
   },
   "devDependencies": {
-    "@types/dompurify": "^2.0.1",
+    "@types/dompurify": "^2.0.2",
     "@types/jquery": "^3.3.38",
     "@types/moment": "^2.13.0",
-    "autoprefixer": "^9.7.6",
+    "autoprefixer": "^9.8.0",
     "copyfiles": "^2.2.0",
     "cross-env": "^7.0.2",
     "mini-css-extract-plugin": "^0.9.0",
     "node-sass": "4.14.1",
-    "nodemon": "^2.0.3",
+    "nodemon": "^2.0.4",
     "npm-run-all": "^4.1.5",
     "postcss-cli": "^7.1.1",
     "rimraf": "^3.0.2",
-    "typescript": "^3.8.3"
+    "typescript": "^3.9.3"
   },
   "engines": {
     "node": ">=12.13.1",
