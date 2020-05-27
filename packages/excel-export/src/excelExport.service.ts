@@ -7,6 +7,7 @@ import {
   addWhiteSpaces,
   deepCopy,
   exportWithFormatterWhenDefined,
+  getTranslationPrefix,
   mapMomentDateFormatWithFieldType,
   sanitizeHtmlToText,
   titleCase,
@@ -368,7 +369,7 @@ export class ExcelExportService {
     // Group By text, it could be set in the export options or from translation or if nothing is found then use the English constant text
     let groupByColumnHeader = this._excelExportOptions.groupingColumnHeaderTitle;
     if (!groupByColumnHeader && this._gridOptions.enableTranslate && this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLocale && this.translaterService.getCurrentLocale()) {
-      groupByColumnHeader = this.translaterService.translate('GROUP_BY');
+      groupByColumnHeader = this.translaterService.translate(`${getTranslationPrefix(this._gridOptions)}GROUP_BY`);
     } else if (!groupByColumnHeader) {
       groupByColumnHeader = this._locales && this._locales.TEXT_GROUP_BY;
     }
