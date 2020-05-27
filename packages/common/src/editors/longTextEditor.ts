@@ -11,7 +11,7 @@ import {
   HtmlElementPosition,
   Locale,
 } from '../interfaces/index';
-import { getDescendantProperty, getHtmlElementOffset, setDeepValue } from '../services/utilities';
+import { getDescendantProperty, getHtmlElementOffset, getTranslationPrefix, setDeepValue } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 import { textValidator } from '../editorValidators/textValidator';
 
@@ -83,8 +83,9 @@ export class LongTextEditor implements Editor {
     let cancelText = '';
     let saveText = '';
     if (this._translater && this._translater.translate && this._translater.getCurrentLocale && this._translater.getCurrentLocale()) {
-      cancelText = this._translater.translate('CANCEL');
-      saveText = this._translater.translate('SAVE');
+      const translationPrefix = getTranslationPrefix(this.gridOptions);
+      cancelText = this._translater.translate(`${translationPrefix}CANCEL`);
+      saveText = this._translater.translate(`${translationPrefix}SAVE`);
     } else {
       cancelText = this._locales && this._locales.TEXT_CANCEL;
       saveText = this._locales && this._locales.TEXT_SAVE;

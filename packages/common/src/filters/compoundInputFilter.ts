@@ -9,7 +9,7 @@ import {
   GridOption,
   Locale,
 } from '../interfaces/index';
-import { mapOperatorToShorthandDesignation } from '../services/utilities';
+import { getTranslationPrefix, mapOperatorToShorthandDesignation } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 
 // using external non-typed js libraries
@@ -163,16 +163,17 @@ export class CompoundInputFilter implements Filter {
   }
 
   private getOptionValues(): { operator: OperatorString, description: string }[] {
+    const translationPrefix = getTranslationPrefix(this.gridOptions);
     const type = (this.columnDef.type && this.columnDef.type) ? this.columnDef.type : FieldType.string;
     let optionValues = [];
 
     switch (type) {
       case FieldType.string:
         optionValues = [
-          { operator: '' as OperatorString, description: this.translaterService?.translate && this.translaterService?.translate('CONTAINS') || this._locales?.TEXT_CONTAINS },
-          { operator: '=' as OperatorString, description: this.translaterService?.translate && this.translaterService?.translate('EQUALS') || this._locales?.TEXT_EQUALS },
-          { operator: 'a*' as OperatorString, description: this.translaterService?.translate && this.translaterService?.translate('STARTS_WITH') || this._locales?.TEXT_STARTS_WITH },
-          { operator: '*z' as OperatorString, description: this.translaterService?.translate && this.translaterService?.translate('ENDS_WITH') || this._locales?.TEXT_ENDS_WITH },
+          { operator: '' as OperatorString, description: this.translaterService?.translate && this.translaterService?.translate(`${translationPrefix}CONTAINS`) || this._locales?.TEXT_CONTAINS },
+          { operator: '=' as OperatorString, description: this.translaterService?.translate && this.translaterService?.translate(`${translationPrefix}EQUALS`) || this._locales?.TEXT_EQUALS },
+          { operator: 'a*' as OperatorString, description: this.translaterService?.translate && this.translaterService?.translate(`${translationPrefix}STARTS_WITH`) || this._locales?.TEXT_STARTS_WITH },
+          { operator: '*z' as OperatorString, description: this.translaterService?.translate && this.translaterService?.translate(`${translationPrefix}ENDS_WITH`) || this._locales?.TEXT_ENDS_WITH },
         ];
         break;
       default:

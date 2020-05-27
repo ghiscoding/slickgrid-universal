@@ -19,6 +19,8 @@ module.exports = {
   coverageDirectory: '<rootDir>/test/jest-coverage',
   coveragePathIgnorePatterns: [
     '\\.d\\.ts$',
+    'global-grid-options.ts',
+    'salesforce-global-grid-options.ts',
     '<rootDir>/node_modules/'
   ],
   coverageReporters: [

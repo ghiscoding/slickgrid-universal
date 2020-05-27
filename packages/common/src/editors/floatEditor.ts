@@ -1,4 +1,3 @@
-import { Constants } from '../constants';
 import { KeyCode } from '../enums/index';
 import { Column, ColumnEditor, Editor, EditorArguments, EditorValidator, EditorValidatorOutput } from '../interfaces/index';
 import { setDeepValue, getDescendantProperty } from '../services/utilities';

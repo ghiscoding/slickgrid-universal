@@ -69,6 +69,7 @@ export class VanillaGridBundle {
   private _gridContainerElm: Element;
   private _hideHeaderRowAfterPageLoad = false;
   private _isDatasetInitialized = false;
+  private _isGridHavingFilters = false;
   private _isLocalGrid = true;
   private _eventHandler: SlickEventHandler = new Slick.EventHandler();
   private _eventPubSubService: EventPubSubService;
@@ -229,6 +230,9 @@ export class VanillaGridBundle {
       this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
     }
     this.initialization(gridContainerElm);
+    if (this.columnDefinitions.findIndex((col) => col.filterable) > -1) {
+      this._isGridHavingFilters = true;
+    }
   }
 
   dispose() {

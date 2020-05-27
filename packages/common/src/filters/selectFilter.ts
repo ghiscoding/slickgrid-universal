@@ -16,7 +16,7 @@ import {
   SelectOption
 } from './../interfaces/index';
 import { CollectionService } from '../services/collection.service';
-import { getDescendantProperty, htmlEncode } from '../services/utilities';
+import { getDescendantProperty, getTranslationPrefix, htmlEncode } from '../services/utilities';
 import { TranslaterService } from '../services';
 
 export class SelectFilter implements Filter {
@@ -405,22 +405,23 @@ export class SelectFilter implements Filter {
       },
       // we will subscribe to the onClose event for triggering our callback
       // also add/remove "filled" class for styling purposes
-      onClose: () => this.onTriggerEvent(undefined)
+      onClose: () => this.onTriggerEvent()
     };
     if (this._isMultipleSelect) {
       options.single = false;
       options.okButton = true;
       options.addTitle = true; // show tooltip of all selected items while hovering the filter
-      options.countSelected = this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate('X_OF_Y_SELECTED') || this._locales && this._locales.TEXT_X_OF_Y_SELECTED;
-      options.allSelected = this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate('ALL_SELECTED') || this._locales && this._locales.TEXT_ALL_SELECTED;
-      options.okButtonText = this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate('OK') || this._locales && this._locales.TEXT_OK;
-      options.selectAllText = this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate('SELECT_ALL') || this._locales && this._locales.TEXT_SELECT_ALL;
+      const translationPrefix = getTranslationPrefix(this.gridOptions);
+      options.countSelected = this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(`${translationPrefix}X_OF_Y_SELECTED`) || this._locales && this._locales.TEXT_X_OF_Y_SELECTED;
+      options.allSelected = this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(`${translationPrefix}ALL_SELECTED`) || this._locales && this._locales.TEXT_ALL_SELECTED;
+      options.okButtonText = this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(`${translationPrefix}OK`) || this._locales && this._locales.TEXT_OK;
+      options.selectAllText = this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(`${translationPrefix}SELECT_ALL`) || this._locales && this._locales.TEXT_SELECT_ALL;
       options.selectAllDelimiter = ['', '']; // remove default square brackets of default text "[Select All]" => "Select All"
     }
     this.defaultOptions = options;
   }
 
-  private onTriggerEvent(e: Event | undefined) {
+  private onTriggerEvent() {
     const selectedItems = this.getValues();
 
     if (Array.isArray(selectedItems) && selectedItems.length > 1 || (selectedItems.length === 1 && selectedItems[0] !== '')) {

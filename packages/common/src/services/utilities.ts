@@ -1,7 +1,7 @@
 import * as moment_ from 'moment-mini';
 const moment = moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
-import { FieldType, OperatorString, OperatorType } from '../enums/index';
+import { FieldType, GridOption, OperatorString, OperatorType } from '../enums/index';
 
 /**
  * Add an item to an array only when the item does not exists, when the item is an object we will be using their "id" to compare
@@ -326,6 +326,14 @@ export function getDescendantProperty(obj: any, path: string | undefined): any {
     return obj;
   }
   return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+}
+
+/** Get I18N Translation Prefix, defaults to an empty string */
+export function getTranslationPrefix(gridOptions?: GridOption): string {
+  if (gridOptions && gridOptions.translationNamespace) {
+    return gridOptions.translationNamespace + (gridOptions.translationNamespaceSeparator || '');
+  }
+  return '';
 }
 
 /**

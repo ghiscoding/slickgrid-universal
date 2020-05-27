@@ -189,5 +189,6 @@ export const GlobalGridOptions: GridOption = {
   //   },
   headerRowHeight: 35,
   rowHeight: 35,
-  topPanelHeight: 30
+  topPanelHeight: 30,
+  translationNamespaceSeparator: ':',
 };
