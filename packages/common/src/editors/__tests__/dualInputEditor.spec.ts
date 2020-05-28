@@ -75,7 +75,7 @@ describe('DualInputEditor', () => {
     it('should throw an error when initialize the editor without the requires params leftInput/rightInput', (done) => {
       try {
         // @ts-ignore
-        editor = new DualInputEditor({});
+        editor = new DualInputEditor({ grid: gridStub });
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Please make sure that your Combo Input Editor has params defined with "leftInput" and "rightInput"`);
         done();
