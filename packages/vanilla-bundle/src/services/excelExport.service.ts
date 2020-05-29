@@ -8,8 +8,8 @@ export class ExcelExportService {
     // super(eventPubSubService, translateService);
   }
 
-  init(grid: any, dataView: any): void {
-    // super.init(grid, dataView);
+  init(grid: any): void {
+    // super.init(grid);
   }
 
   exportToExcel(options: ExcelExportOption): Promise<boolean> {

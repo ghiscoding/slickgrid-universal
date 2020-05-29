@@ -8,8 +8,8 @@ export class FileExportService extends UniversalExportService {
     super(eventPubSubService, translateService);
   }
 
-  init(grid: any, dataView: any): void {
-    super.init(grid, dataView);
+  init(grid: any): void {
+    super.init(grid);
   }
 
   exportToFile(options: ExportOption): Promise<boolean> {

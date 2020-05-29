@@ -62,9 +62,7 @@ export class ContextMenuExtension implements Extension {
     return this._addon;
   }
 
-  /**
-   * Create the Action Cell Menu and expose all the available hooks that user can subscribe (onCommand, onBeforeMenuShow, ...)
-   */
+  /** Register the 3rd party addon (plugin) */
   register(): any {
     if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');

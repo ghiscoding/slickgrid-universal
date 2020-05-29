@@ -1,6 +1,7 @@
 import {
   Column,
   ColumnSort,
+  DataView,
   GridOption,
   CurrentSorter,
   SlickEventHandler,
@@ -25,7 +26,7 @@ declare const Slick: any;
 export class SortService {
   private _currentLocalSorters: CurrentSorter[] = [];
   private _eventHandler: SlickEventHandler;
-  private _dataView: any;
+  private _dataView: DataView;
   private _grid: any;
   private _isBackendGrid = false;
 
@@ -53,7 +54,7 @@ export class SortService {
    * @param grid SlickGrid Grid object
    * @param dataView SlickGrid DataView object
    */
-  bindBackendOnSort(grid: any, dataView: any) {
+  bindBackendOnSort(grid: any, dataView: DataView) {
     this._isBackendGrid = true;
     this._grid = grid;
     this._dataView = dataView;
@@ -68,7 +69,7 @@ export class SortService {
    * @param gridOptions Grid Options object
    * @param dataView
    */
-  bindLocalOnSort(grid: any, dataView: any) {
+  bindLocalOnSort(grid: any, dataView: DataView) {
     this._isBackendGrid = false;
     this._grid = grid;
     this._dataView = dataView;
@@ -278,7 +279,7 @@ export class SortService {
   }
 
   /** When a Sort Changes on a Local grid (JSON dataset) */
-  onLocalSortChanged(grid: any, dataView: any, sortColumns: ColumnSort[], forceReSort = false) {
+  onLocalSortChanged(grid: any, dataView: DataView, sortColumns: ColumnSort[], forceReSort = false) {
     const isTreeDataEnabled = this._gridOptions?.enableTreeData ?? false;
 
     if (grid && dataView) {

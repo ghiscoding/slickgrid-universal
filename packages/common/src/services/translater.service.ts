@@ -7,7 +7,6 @@ export abstract class TranslaterService {
     throw new Error('TranslaterService "getCurrentLocale" method must be implemented');
   }
 
-
   /**
    * Method to set the locale to use in the App
    * @param locale

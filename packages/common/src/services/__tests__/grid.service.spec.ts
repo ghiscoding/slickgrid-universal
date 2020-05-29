@@ -53,6 +53,7 @@ const gridStub = {
   autosizeColumns: jest.fn(),
   insertItem: jest.fn(),
   invalidate: jest.fn(),
+  getData: () => dataviewStub,
   getDataItem: jest.fn(),
   getOptions: jest.fn(),
   getColumns: jest.fn(),
@@ -77,7 +78,7 @@ describe('Grid Service', () => {
 
   beforeEach(() => {
     service = new GridService(extensionServiceStub, filterServiceStub, pubSubServiceStub, sharedService, sortServiceStub);
-    service.init(gridStub, dataviewStub);
+    service.init(gridStub);
   });
 
   afterEach(() => {

@@ -49,6 +49,9 @@ export class Example1 {
     this.gridOptions1 = {
       enableAutoResize: false,
       enableExport: true,
+      exportOptions: {
+        exportWithFormatter: true
+      },
       gridHeight: 225,
       gridWidth: 800,
       rowHeight: 33,

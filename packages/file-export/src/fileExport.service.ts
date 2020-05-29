@@ -12,6 +12,7 @@ import {
   // interfaces
   Column,
   Constants,
+  DataView,
   ExportOption,
   FileType,
   GridOption,
@@ -27,7 +28,6 @@ export class FileExportService {
   private _exportOptions: ExportOption;
   private _fileFormat = FileType.csv;
   private _lineCarriageReturn = '\n';
-  private _dataView: any;
   private _grid: any;
   private _groupedColumnHeaders: Array<KeyTitlePair>;
   private _columnHeaders: Array<KeyTitlePair>;
@@ -36,8 +36,13 @@ export class FileExportService {
 
   constructor(private pubSubService: PubSubService, private translaterService: TranslaterService) { }
 
-  private get datasetIdName(): string {
+  private get _datasetIdPropName(): string {
     return this._gridOptions && this._gridOptions.datasetIdPropertyName || 'id';
+  }
+
+  /** Getter of SlickGrid DataView object */
+  get _dataView(): DataView {
+    return this._grid && this._grid.getData && this._grid.getData();
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
@@ -50,9 +55,8 @@ export class FileExportService {
    * @param grid
    * @param dataView
    */
-  init(grid: any, dataView: any): void {
+  init(grid: any): void {
     this._grid = grid;
-    this._dataView = dataView;
 
     // get locales provided by user in main file or else use default English locales via the Constants
     this._locales = this._gridOptions && this._gridOptions.locales || Constants.locales;
@@ -227,9 +231,9 @@ export class FileExportService {
     for (let rowNumber = 0; rowNumber < lineCount; rowNumber++) {
       const itemObj = this._dataView.getItem(rowNumber);
 
-      if (itemObj != null) {
+      if (itemObj !== null) {
         // Normal row (not grouped by anything) would have an ID which was predefined in the Grid Columns definition
-        if (itemObj[this.datasetIdName] != null) {
+        if (itemObj[this._datasetIdPropName] !== null) {
           // get regular row item data
           outputDataStrings.push(this.readRegularRowData(columns, rowNumber, itemObj));
         } else if (this._hasGroupedItems && itemObj.__groupTotals === undefined) {

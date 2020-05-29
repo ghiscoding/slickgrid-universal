@@ -1,6 +1,7 @@
 import {
   CellArgs,
   Column,
+  DataView,
   GridOption,
   GridServiceDeleteOption,
   GridServiceInsertOption,
@@ -23,7 +24,6 @@ const GridServiceUpdateOptionDefaults: GridServiceUpdateOption = { highlightRow:
 
 export class GridService {
   private _grid: any;
-  private _dataView: any;
 
   constructor(
     private extensionService: ExtensionService,
@@ -34,14 +34,18 @@ export class GridService {
     private sortService: SortService
   ) { }
 
+  /** Getter of SlickGrid DataView object */
+  get _dataView(): DataView {
+    return this._grid && this._grid.getData && this._grid.getData();
+  }
+
   /** Getter for the Grid Options pulled through the Grid Object */
   private get _gridOptions(): GridOption {
     return (this._grid && this._grid.getOptions) ? this._grid.getOptions() : {};
   }
 
-  init(grid: any, dataView: any): void {
+  init(grid: any): void {
     this._grid = grid;
-    this._dataView = dataView;
   }
 
   /** Clear all Filters & Sorts */

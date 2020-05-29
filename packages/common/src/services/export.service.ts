@@ -4,9 +4,8 @@ export abstract class ExportService {
   /**
    * Initialize the Export Service
    * @param grid
-   * @param dataView
    */
-  init(grid: any, dataView: any): void {
+  init(grid: any): void {
     throw new Error('ExportService the "init" method must be implemented');
   }
 

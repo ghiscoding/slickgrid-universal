@@ -1,4 +1,4 @@
-import { GridOption, SlickEventHandler } from '../interfaces/index';
+import { DataView, GridOption, SlickEventHandler } from '../interfaces/index';
 import { SharedService } from './shared.service';
 
 // using external non-typed js libraries
@@ -20,7 +20,7 @@ export class TreeDataService {
     return this.sharedService.hierarchicalDataset;
   }
 
-  get dataView(): any {
+  get dataView(): DataView {
     return this._grid && this._grid.getData && this._grid.getData();
   }
 

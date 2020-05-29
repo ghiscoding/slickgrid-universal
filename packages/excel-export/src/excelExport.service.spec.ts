@@ -62,6 +62,7 @@ const mockGridOptions = {
 
 const gridStub = {
   getColumnIndex: jest.fn(),
+  getData: () => dataViewStub,
   getOptions: () => mockGridOptions,
   getColumns: jest.fn(),
   getGrouping: jest.fn(),
@@ -108,7 +109,7 @@ describe('ExcelExportService', () => {
 
       const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
 
-      service.init(gridStub, dataViewStub);
+      service.init(gridStub);
       const result = await service.exportToExcel(mockExportExcelOptions);
 
       expect(result).toBeTruthy();
@@ -134,7 +135,7 @@ describe('ExcelExportService', () => {
 
       it('should throw an error when trying call exportToExcel" without a grid and/or dataview object initialized', async () => {
         try {
-          service.init(null, null);
+          service.init(null);
           await service.exportToExcel(mockExportExcelOptions);
         } catch (e) {
           expect(e.toString()).toContain('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects are not initialized did you forget to enable the grid option flag "enableExcelExport"?');
@@ -144,7 +145,7 @@ describe('ExcelExportService', () => {
       it('should trigger an event before exporting the file', async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         const result = await service.exportToExcel(mockExportExcelOptions);
 
         expect(result).toBeTruthy();
@@ -154,7 +155,7 @@ describe('ExcelExportService', () => {
       it('should trigger an event after exporting the file', async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         const result = await service.exportToExcel(mockExportExcelOptions);
 
         expect(result).toBeTruthy();
@@ -167,7 +168,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         const result = await service.exportToExcel(mockExportExcelOptions);
 
         expect(result).toBeTruthy();
@@ -182,7 +183,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyMsSave = jest.spyOn(navigator, 'msSaveOrOpenBlob');
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         const result = await service.exportToExcel(mockExportExcelOptions);
 
         expect(result).toBeTruthy();
@@ -195,7 +196,7 @@ describe('ExcelExportService', () => {
         navigator.__defineGetter__('appName', () => 'Microsoft Internet Explorer');
 
         try {
-          service.init(gridStub, dataViewStub);
+          service.init(gridStub);
           await service.exportToExcel(mockExportExcelOptions);
         } catch (e) {
           expect(e.toString()).toContain('Microsoft Internet Explorer 6 to 10 do not support javascript export to Excel.');
@@ -216,7 +217,7 @@ describe('ExcelExportService', () => {
 
         const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
@@ -245,7 +246,7 @@ describe('ExcelExportService', () => {
 
         const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
@@ -274,7 +275,7 @@ describe('ExcelExportService', () => {
 
         const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
@@ -303,7 +304,7 @@ describe('ExcelExportService', () => {
 
         const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
@@ -332,7 +333,7 @@ describe('ExcelExportService', () => {
 
         const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
@@ -361,7 +362,7 @@ describe('ExcelExportService', () => {
 
         const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
@@ -391,7 +392,7 @@ describe('ExcelExportService', () => {
 
         const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
@@ -421,7 +422,7 @@ describe('ExcelExportService', () => {
 
         const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
@@ -471,7 +472,7 @@ describe('ExcelExportService', () => {
 
         const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
@@ -527,7 +528,7 @@ describe('ExcelExportService', () => {
 
         const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
@@ -574,7 +575,7 @@ describe('ExcelExportService', () => {
 
         const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
@@ -621,7 +622,7 @@ describe('ExcelExportService', () => {
 
         const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
@@ -712,7 +713,7 @@ describe('ExcelExportService', () => {
 
         const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
@@ -806,7 +807,7 @@ describe('ExcelExportService', () => {
 
         const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
@@ -946,7 +947,7 @@ describe('ExcelExportService', () => {
 
         const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
@@ -983,7 +984,7 @@ describe('ExcelExportService', () => {
 
         const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
@@ -1016,7 +1017,7 @@ describe('ExcelExportService', () => {
         const input = new Date('2012-02-28 15:07:59');
         const expectedDate = '2012-02-28 15:07:59';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateTime);
 
@@ -1027,7 +1028,7 @@ describe('ExcelExportService', () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '2012-02-28 15:07:59';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateTimeIso);
 
@@ -1038,7 +1039,7 @@ describe('ExcelExportService', () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '2012-02-28 15:07';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateTimeShortIso);
 
@@ -1049,7 +1050,7 @@ describe('ExcelExportService', () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '2012-02-28 03:07:59 pm';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateTimeIsoAmPm);
 
@@ -1060,7 +1061,7 @@ describe('ExcelExportService', () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '2012-02-28 03:07:59 PM';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateTimeIsoAM_PM);
 
@@ -1071,7 +1072,7 @@ describe('ExcelExportService', () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '28/02/2012';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateEuro);
 
@@ -1082,7 +1083,7 @@ describe('ExcelExportService', () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '28/2/12';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateEuroShort);
 
@@ -1093,7 +1094,7 @@ describe('ExcelExportService', () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '28/02/2012 15:07:59';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateTimeEuro);
 
@@ -1104,7 +1105,7 @@ describe('ExcelExportService', () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '28/02/2012 15:07';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateTimeShortEuro);
 
@@ -1115,7 +1116,7 @@ describe('ExcelExportService', () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '28/02/2012 03:07:59 pm';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateTimeEuroAmPm);
 
@@ -1126,7 +1127,7 @@ describe('ExcelExportService', () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '28/02/2012 03:07:59 PM';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateTimeEuroAM_PM);
 
@@ -1137,7 +1138,7 @@ describe('ExcelExportService', () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '28/2/12 15:7:59';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateTimeEuroShort);
 
@@ -1148,7 +1149,7 @@ describe('ExcelExportService', () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '28/2/12 3:7:59 pm';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateTimeEuroShortAmPm);
 
@@ -1159,7 +1160,7 @@ describe('ExcelExportService', () => {
         const input = new Date('2012-02-28 15:07:59');
         const expectedDate = '02/28/2012';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateUs);
 
@@ -1170,7 +1171,7 @@ describe('ExcelExportService', () => {
         const input = new Date('2012-02-28 15:07:59');
         const expectedDate = '2/28/12';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateUsShort);
 
@@ -1181,7 +1182,7 @@ describe('ExcelExportService', () => {
         const input = new Date('2012-02-28 15:07:59');
         const expectedDate = '02/28/2012 15:07:59';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateTimeUs);
 
@@ -1192,7 +1193,7 @@ describe('ExcelExportService', () => {
         const input = new Date('2012-02-28 15:07:59');
         const expectedDate = '02/28/2012 15:07';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateTimeShortUs);
 
@@ -1203,7 +1204,7 @@ describe('ExcelExportService', () => {
         const input = new Date('2012-02-28 15:07:59');
         const expectedDate = '02/28/2012 03:07:59 pm';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateTimeUsAmPm);
 
@@ -1214,7 +1215,7 @@ describe('ExcelExportService', () => {
         const input = new Date('2012-02-28 15:07:59');
         const expectedDate = '02/28/2012 03:07:59 PM';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateTimeUsAM_PM);
 
@@ -1225,7 +1226,7 @@ describe('ExcelExportService', () => {
         const input = new Date('2012-02-28 15:07:59');
         const expectedDate = '2/28/12 15:7:59';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateTimeUsShort);
 
@@ -1236,7 +1237,7 @@ describe('ExcelExportService', () => {
         const input = new Date('2012-02-28 15:07:59');
         const expectedDate = '2/28/12 3:7:59 pm';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateTimeUsShortAmPm);
 
@@ -1247,7 +1248,7 @@ describe('ExcelExportService', () => {
         const input = moment('2013-05-23T17:55:00.325').utcOffset(420); // timezone that is +7 UTC hours
         const expectedDate = '2013-05-24T04:55:00.325+07:00';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.dateUtc);
 
@@ -1258,7 +1259,7 @@ describe('ExcelExportService', () => {
         const input = new Date(Date.UTC(2012, 1, 28, 23, 1, 52, 103));
         const expectedDate = '2012-02-28';
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
         const output = service.useCellFormatByFieldType(input, FieldType.date);
 
@@ -1296,7 +1297,7 @@ describe('ExcelExportService', () => {
 
         const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
@@ -1323,7 +1324,7 @@ describe('ExcelExportService', () => {
       });
 
       describe('with Translation', () => {
-        let mockCollection2: any[];
+        let mockTranslateCollection: any[];
 
         beforeEach(() => {
           mockGridOptions.enableTranslate = true;
@@ -1346,16 +1347,16 @@ describe('ExcelExportService', () => {
 
         it(`should have the LastName header title translated when defined as a "headerKey" and "i18n" is set in grid option`, async () => {
           mockGridOptions.excelExportOptions.sanitizeDataExport = false;
-          mockCollection2 = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
-          jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection2.length);
-          jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection2[0]);
+          mockTranslateCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
+          jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockTranslateCollection.length);
+          jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockTranslateCollection[0]);
           const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
           const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
           const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
           const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
 
-          service.init(gridStub, dataViewStub);
+          service.init(gridStub);
           await service.exportToExcel(mockExportExcelOptions);
 
           expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
@@ -1394,7 +1395,7 @@ describe('ExcelExportService', () => {
       const gridOptionsMock = { enableTranslate: true, enableGridMenu: true, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' } } as GridOption;
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
-      expect(() => service.init(gridStub, dataViewStub)).toThrowError('[Slickgrid-Universal] requires "I18N" to be installed and configured when the grid option "enableTranslate" is enabled.');
+      expect(() => service.init(gridStub)).toThrowError('[Slickgrid-Universal] requires "I18N" to be installed and configured when the grid option "enableTranslate" is enabled.');
     });
   });
 });

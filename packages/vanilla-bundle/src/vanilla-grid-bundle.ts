@@ -7,6 +7,7 @@ import 'slickgrid/plugins/slick.resizer';
 import {
   BackendServiceApi,
   Column,
+  DataView,
   ExtensionName,
   EventNamingStyle,
   GlobalGridOptions,
@@ -76,7 +77,7 @@ export class VanillaGridBundle {
   private _eventPubSubService: EventPubSubService;
   private _slickgridInitialized = false;
   backendServiceApi: BackendServiceApi | undefined;
-  dataView: any;
+  dataView: DataView;
   grid: any;
   metrics: Metrics;
   customDataView = false;
@@ -242,7 +243,6 @@ export class VanillaGridBundle {
   }
 
   dispose() {
-    this.dataView = undefined;
     this._gridOptions = {};
     this.extensionService.dispose();
     this.filterService.dispose();
@@ -389,21 +389,30 @@ export class VanillaGridBundle {
     this.gridEventService.bindOnCellChange(this.grid, this.dataView);
     this.gridEventService.bindOnClick(this.grid, this.dataView);
 
-    // bind & initialize the grid service
-    this.gridService.init(this.grid, this.dataView);
-    this.gridStateService.init(this.grid, this.dataView);
-    this.excelExportService.init(this.grid, this.dataView);
-    this.exportService.init(this.grid, this.dataView);
-    // this.paginationService.init(this.grid, this.dataView);
+    // get any possible Services that user want to register
+    const registeringServices: any[] = this._gridOptions.registerServices || [];
 
-    // bind & initialize grouping and header grouping colspan service
+    // push all other Services that we want to be registered
+    registeringServices.push(this.gridService, this.gridStateService, this.excelExportService, this.exportService, /* this.paginationService */);
+
+    // when using Grouping/DraggableGrouping/Colspan register its Service
     if (this._gridOptions.createPreHeaderPanel && !this._gridOptions.enableDraggableGrouping) {
-      this.groupingAndColspanService.init(this.grid, this.resizerPlugin);
+      registeringServices.push(this.groupingAndColspanService);
     }
 
-    // when using Tree Data View
+    // when using Tree Data View, register its Service
     if (this._gridOptions.enableTreeData) {
-      this.treeDataService.init(this.grid);
+      registeringServices.push(this.treeDataService);
+    }
+
+    // bind & initialize all Services that were tagged as enable
+    // register all services by executing their init method and providing them with the Grid object
+    if (Array.isArray(registeringServices)) {
+      for (const service of registeringServices) {
+        if (typeof service.init === 'function') {
+          service.init(this.grid);
+        }
+      }
     }
 
     const slickerElementInstance = {
@@ -461,7 +470,7 @@ export class VanillaGridBundle {
     return options;
   }
 
-  bindDifferentHooks(grid: any, gridOptions: GridOption, dataView: any) {
+  bindDifferentHooks(grid: any, gridOptions: GridOption, dataView: DataView) {
     // bind external filter (backend) when available or default onFilter (dataView)
     if (gridOptions.enableFiltering && !this.customDataView) {
       this.filterService.init(grid);

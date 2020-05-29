@@ -1,10 +1,10 @@
-import { Column, ElementPosition } from './index';
+import { Column, DataView, ElementPosition } from './index';
 
 export interface EditorArguments {
   column: Column;
   columnMetaData: any;
   container: HTMLDivElement;
-  dataView: any;
+  dataView: DataView;
   event: Event;
   grid: any;
   gridPosition: ElementPosition;

@@ -12,6 +12,7 @@ import {
   CurrentPagination,
   CurrentRowSelection,
   CurrentSorter,
+  DataView,
   GridOption,
   GridState,
   Subscription,
@@ -29,7 +30,6 @@ export class GridStateService {
   private _eventHandler = new Slick.EventHandler();
   private _columns: Column[] = [];
   private _currentColumns: CurrentColumn[] = [];
-  private _dataView: any;
   private _grid: any;
   private _subscriptions: Subscription[] = [];
   private _selectedRowDataContextIds: Array<number | string> | undefined = []; // used with row selection
@@ -43,6 +43,11 @@ export class GridStateService {
     private sharedService: SharedService,
     private sortService: SortService
   ) { }
+
+  /** Getter of SlickGrid DataView object */
+  get _dataView(): DataView {
+    return this._grid && this._grid.getData && this._grid.getData();
+  }
 
   /** Getter for the Grid Options pulled through the Grid Object */
   private get _gridOptions(): GridOption {
@@ -70,9 +75,8 @@ export class GridStateService {
    * Initialize the Service
    * @param grid
    */
-  init(grid: any, dataView: any): void {
+  init(grid: any): void {
     this._grid = grid;
-    this._dataView = dataView;
     this.subscribeToAllGridChanges(grid);
   }
 
