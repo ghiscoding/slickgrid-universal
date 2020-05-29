@@ -1,6 +1,5 @@
 import { TranslaterService } from '@slickgrid-universal/common';
 
-
 export class TranslateService implements TranslaterService {
   getCurrentLocale(): string {
     return 'en';

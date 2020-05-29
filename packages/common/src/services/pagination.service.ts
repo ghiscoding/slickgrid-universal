@@ -1,7 +1,7 @@
 import * as isequal_ from 'lodash.isequal';
 const isequal = isequal_; // patch to fix rollup to work
 
-import { BackendServiceApi, CurrentPagination, DataView, Pagination, ServicePagination, SlickGrid, Subscription } from '../interfaces/index';
+import { BackendServiceApi, CurrentPagination, DataView, Pagination, ServicePagination, SlickGrid, Subscription, SlickEventData } from '../interfaces/index';
 import { executeBackendProcessesCallback, onBackendError } from './backend-utilities';
 import { SharedService } from './shared.service';
 import { PubSubService } from './pubSub.service';
@@ -91,7 +91,7 @@ export class PaginationService {
     }
 
     if (this._isLocalGrid && this.dataView) {
-      this.dataView.onPagingInfoChanged.subscribe((e: Event, pagingInfo: { totalRows: number; pageNum: number; }) => {
+      this.dataView.onPagingInfoChanged.subscribe((_e: SlickEventData, pagingInfo: { totalRows: number; pageNum: number; }) => {
         if (this._totalItems !== pagingInfo.totalRows) {
           this._totalItems = pagingInfo.totalRows;
           this._paginationOptions.totalItems = this._totalItems;

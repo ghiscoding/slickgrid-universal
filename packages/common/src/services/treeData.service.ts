@@ -13,7 +13,7 @@ export class TreeDataService {
   }
 
   get dataset(): any[] {
-    return this.dataView && this.dataView.getItems && this.dataView.getItems();
+    return this.dataView?.getItems();
   }
 
   get datasetHierarchical(): any[] | undefined {
@@ -21,7 +21,7 @@ export class TreeDataService {
   }
 
   get dataView(): DataView {
-    return this._grid && this._grid.getData && this._grid.getData();
+    return this._grid?.getData();
   }
 
   /** Getter of the SlickGrid Event Handler */
@@ -30,12 +30,12 @@ export class TreeDataService {
   }
 
   get gridOptions(): GridOption {
-    return this._grid && this._grid.getOptions && this._grid.getOptions() || {};
+    return this._grid?.getOptions() || {};
   }
 
   dispose() {
     // unsubscribe all SlickGrid events
-    if (this._eventHandler && this._eventHandler.unsubscribeAll) {
+    if (this._eventHandler?.unsubscribeAll) {
       this._eventHandler.unsubscribeAll();
     }
   }

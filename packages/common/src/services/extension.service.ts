@@ -219,16 +219,18 @@ export class ExtensionService {
 
       // manually register other plugins
       if (this.sharedService.gridOptions.registerPlugins !== undefined) {
-        if (Array.isArray(this.sharedService.gridOptions.registerPlugins)) {
-          this.sharedService.gridOptions.registerPlugins.forEach((plugin) => {
-            const instance = this.sharedService.grid.registerPlugin(plugin);
-            this._extensionList.push({ name: ExtensionName.noname, class: null, instance });
+        const grid = this.sharedService.grid;
+        const gridOptions = this.sharedService.gridOptions;
+
+        if (Array.isArray(gridOptions.registerPlugins)) {
+          gridOptions.registerPlugins.forEach((plugin) => {
+            grid.registerPlugin(plugin);
+            this._extensionList.push({ name: ExtensionName.noname, class: null, instance: grid.getPluginByName(plugin.name) });
           });
         } else {
-          this.sharedService.grid.registerPlugin(this.sharedService.gridOptions.registerPlugins);
-          const plugin = this.sharedService.gridOptions.registerPlugins;
-          const instance = this.sharedService.grid.registerPlugin(plugin);
-          this._extensionList.push({ name: ExtensionName.noname, class: null, instance });
+          const plugin = gridOptions.registerPlugins;
+          grid.registerPlugin(plugin);
+          this._extensionList.push({ name: ExtensionName.noname, class: null, instance: grid.getPluginByName(plugin.name) });
         }
       }
     }

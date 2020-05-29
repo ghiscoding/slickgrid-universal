@@ -245,21 +245,19 @@ export class VanillaGridBundle {
 
   dispose() {
     this._gridOptions = {};
-    this.extensionService.dispose();
-    this.filterService.dispose();
-    // this.gridEventService.dispose();
-    // this.gridStateService.dispose();
-    this.groupingAndColspanService.dispose();
-    // this.paginationService.dispose();
-    // this.resizer.dispose();
-    this.sortService.dispose();
-    if (this._eventHandler && this._eventHandler.unsubscribeAll) {
-      this._eventHandler.unsubscribeAll();
-    }
-    this._eventPubSubService.unsubscribeAll();
-    if (this.grid && this.grid.destroy) {
-      this.grid.destroy();
-    }
+    this.extensionService?.dispose();
+    this.filterService?.dispose();
+    this.gridEventService?.dispose();
+    this.gridStateService?.dispose();
+    this.groupingAndColspanService?.dispose();
+    // this.paginationService?.dispose();
+    // this.resizer?.dispose();
+    this.sortService?.dispose();
+    this.treeDataService?.dispose();
+
+    this._eventHandler?.unsubscribeAll();
+    this._eventPubSubService?.unsubscribeAll();
+    this.grid?.destroy();
   }
 
   async initialization(gridContainerElm: Element) {

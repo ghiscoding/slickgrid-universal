@@ -1,6 +1,7 @@
 import moment = require('moment-mini');
 import {
   Column,
+  DataView,
   ExcelExportOption,
   FieldType,
   FileType,
@@ -53,7 +54,7 @@ const dataViewStub = {
   getItem: jest.fn(),
   getLength: jest.fn(),
   setGrouping: jest.fn(),
-};
+} as unknown as DataView;
 
 const mockGridOptions = {
   enableExcelExport: true,

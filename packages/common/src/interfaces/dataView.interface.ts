@@ -53,11 +53,11 @@ export interface DataView {
   // eslint-disable-next-line @typescript-eslint/ban-types
   fastSort: (field: string | Function, ascending: boolean) => void;
 
-  /** Get current Filter used:  by the DataView */
+  /** Get current Filter used by the DataView */
   getFilter: () => any;
 
   /** Get only the dataset filtered items */
-  getFilteredItems: () => any[];
+  getFilteredItems: <T = any>() => T[];
 
   /** Get current Grouping info */
   getGrouping: () => Grouping[];
@@ -69,13 +69,13 @@ export interface DataView {
   getIdPropertyName: () => string;
 
   /** Get all Dataset Items */
-  getItems: () => any[];
+  getItems: <T = any>() => T[];
 
   /** Get dataset item at specific index */
-  getItem: (index: number) => any;
+  getItem: <T = any>(index: number) => T;
 
   /** Get an item in the dataset by its Id */
-  getItemById: (id: string | number) => any;
+  getItemById: <T = any>(id: string | number) => T;
 
   /** Get an item in the dataset by its row index */
   getItemByIdx: (idx: number) => number;
@@ -102,10 +102,10 @@ export interface DataView {
   insertItem: (insertBefore: number, item: any) => void;
 
   /** From the items array provided, return the mapped rows */
-  mapItemsToRows: (items: any[]) => any[];
+  mapItemsToRows: (items: any[]) => number[];
 
   /** From the Ids array provided, return the mapped rows */
-  mapIdsToRows: (ids: Array<number | string>) => Array<number>;
+  mapIdsToRows: (ids: Array<number | string>) => number[];
 
   /** From the rows array provided, return the mapped Ids */
   mapRowsToIds: (rows: Array<number>) => Array<number | string>;

@@ -29,9 +29,9 @@ export class EventPubSubService implements PubSubService {
   unsubscribeAll(subscriptions?: Subscription[]) {
     if (Array.isArray(subscriptions)) {
       for (const subscription of subscriptions) {
-        if (subscription.dispose) {
+        if (subscription?.dispose) {
           subscription.dispose();
-        } else if (subscription.unsubscribe) {
+        } else if (subscription?.unsubscribe) {
           subscription.unsubscribe();
         }
       }
@@ -43,7 +43,7 @@ export class EventPubSubService implements PubSubService {
   }
 
   /** Dispatch of Custom Event, which by default will bubble up & is cancelable */
-  dispatchCustomEvent(eventName: string, data?: any, isBubbling: boolean = true, isCancelable: boolean = true) {
+  dispatchCustomEvent(eventName: string, data?: any, isBubbling = true, isCancelable = true) {
     const eventInit: CustomEventInit = { bubbles: isBubbling, cancelable: isCancelable };
     if (data) {
       eventInit.detail = data;

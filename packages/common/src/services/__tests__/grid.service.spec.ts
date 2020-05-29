@@ -1,7 +1,7 @@
 import 'jest-extended';
 
 import { FilterService, GridService, ExtensionService, PubSubService, SharedService, SortService } from '../index';
-import { GridOption, CellArgs, Column, OnEventArgs } from '../../interfaces/index';
+import { GridOption, CellArgs, Column, OnEventArgs, SlickGrid, DataView } from '../../interfaces/index';
 
 declare const Slick: any;
 
@@ -47,7 +47,7 @@ const dataviewStub = {
   insertItem: jest.fn(),
   reSort: jest.fn(),
   updateItem: jest.fn(),
-};
+} as unknown as DataView;
 
 const gridStub = {
   autosizeColumns: jest.fn(),
@@ -67,7 +67,7 @@ const gridStub = {
   setSelectedRows: jest.fn(),
   scrollRowIntoView: jest.fn(),
   updateRow: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 describe('Grid Service', () => {
   let service: GridService;
@@ -1139,7 +1139,7 @@ describe('Grid Service', () => {
 
       expect(invalidateSpy).toHaveBeenCalled();
       expect(renderSpy).toHaveBeenCalled();
-      expect(gridStub.invalidate).toHaveBeenCalledBefore(gridStub.render);
+      expect(gridStub.invalidate).toHaveBeenCalledBefore(gridStub.render as any);
     });
   });
 
