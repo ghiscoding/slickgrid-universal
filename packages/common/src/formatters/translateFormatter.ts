@@ -1,7 +1,7 @@
-import { Column, Formatter } from './../interfaces/index';
+import { Column, Formatter, SlickGrid } from './../interfaces/index';
 
 /** Takes a cell value and translates it (i18n). Requires an instance of the I18N Service:: `i18n: this.i18n` */
-export const translateFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: any) => {
+export const translateFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGrid) => {
   const gridOptions = (grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {};
   const i18n = gridOptions.i18n || (columnDef && columnDef.params && columnDef.params.i18n);
 

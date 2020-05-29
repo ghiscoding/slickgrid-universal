@@ -49,7 +49,6 @@ export class ExtensionService {
 
   /** Dispose of all the controls & plugins */
   dispose() {
-    this.sharedService.grid = null;
     this.sharedService.visibleColumns = [];
 
     // dispose of each control/plugin & reset the list

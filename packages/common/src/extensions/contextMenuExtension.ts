@@ -20,7 +20,7 @@ import { ExcelExportService } from '../services/excelExport.service';
 import { SharedService } from '../services/shared.service';
 import { getTranslationPrefix } from '../services/utilities';
 import { TreeDataService } from '../services/treeData.service';
-import { TranslaterService } from '..';
+import { TranslaterService, SlickGrid } from '..';
 
 // using external non-typed js libraries
 declare const Slick: any;
@@ -110,21 +110,21 @@ export class ContextMenuExtension implements Extension {
           });
         }
         if (contextMenu && typeof contextMenu.onBeforeMenuShow === 'function') {
-          this._eventHandler.subscribe(this._addon.onBeforeMenuShow, (event: Event, args: { cell: number; row: number; grid: any; }) => {
+          this._eventHandler.subscribe(this._addon.onBeforeMenuShow, (event: Event, args: { cell: number; row: number; grid: SlickGrid; }) => {
             if (contextMenu.onBeforeMenuShow) {
               contextMenu.onBeforeMenuShow(event, args);
             }
           });
         }
         if (contextMenu && typeof contextMenu.onBeforeMenuClose === 'function') {
-          this._eventHandler.subscribe(this._addon.onBeforeMenuClose, (event: Event, args: { cell: number; row: number; grid: any; menu: any; }) => {
+          this._eventHandler.subscribe(this._addon.onBeforeMenuClose, (event: Event, args: { cell: number; row: number; grid: SlickGrid; menu: any; }) => {
             if (contextMenu.onBeforeMenuClose) {
               contextMenu.onBeforeMenuClose(event, args);
             }
           });
         }
         if (contextMenu && typeof contextMenu.onAfterMenuShow === 'function') {
-          this._eventHandler.subscribe(this._addon.onAfterMenuShow, (event: Event, args: { cell: number; row: number; grid: any; }) => {
+          this._eventHandler.subscribe(this._addon.onAfterMenuShow, (event: Event, args: { cell: number; row: number; grid: SlickGrid; }) => {
             if (contextMenu.onAfterMenuShow) {
               contextMenu.onAfterMenuShow(event, args);
             }

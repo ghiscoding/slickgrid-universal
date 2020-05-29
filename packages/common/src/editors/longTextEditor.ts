@@ -10,6 +10,7 @@ import {
   GridOption,
   HtmlElementPosition,
   Locale,
+  SlickGrid,
 } from '../interfaces/index';
 import { getDescendantProperty, getHtmlElementOffset, getTranslationPrefix, setDeepValue } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
@@ -30,7 +31,7 @@ export class LongTextEditor implements Editor {
   defaultValue: any;
 
   /** SlickGrid Grid object */
-  grid: any;
+  grid: SlickGrid;
 
   /** Grid options */
   gridOptions: GridOption;

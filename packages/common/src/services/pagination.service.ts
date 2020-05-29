@@ -1,7 +1,7 @@
 import * as isequal_ from 'lodash.isequal';
 const isequal = isequal_; // patch to fix rollup to work
 
-import { BackendServiceApi, CurrentPagination, DataView, Pagination, ServicePagination, Subscription } from '../interfaces/index';
+import { BackendServiceApi, CurrentPagination, DataView, Pagination, ServicePagination, SlickGrid, Subscription } from '../interfaces/index';
 import { executeBackendProcessesCallback, onBackendError } from './backend-utilities';
 import { SharedService } from './shared.service';
 import { PubSubService } from './pubSub.service';
@@ -25,7 +25,7 @@ export class PaginationService {
   private _subscriptions: Subscription[] = [];
 
   /** SlickGrid Grid object */
-  grid: any;
+  grid: SlickGrid;
 
   /** Constructor */
   constructor(private pubSubService: PubSubService, private sharedService: SharedService) { }
@@ -78,7 +78,7 @@ export class PaginationService {
     }
   }
 
-  init(grid: any, paginationOptions: Pagination, backendServiceApi?: BackendServiceApi) {
+  init(grid: SlickGrid, paginationOptions: Pagination, backendServiceApi?: BackendServiceApi) {
     this._availablePageSizes = paginationOptions.pageSizes;
     this.grid = grid;
     this._backendServiceApi = backendServiceApi;

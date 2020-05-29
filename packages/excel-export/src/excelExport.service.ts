@@ -22,6 +22,7 @@ import {
   KeyTitlePair,
   Locale,
   PubSubService,
+  SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
 
@@ -36,7 +37,7 @@ import {
 
 export class ExcelExportService {
   private _fileFormat = FileType.xlsx;
-  private _grid: any;
+  private _grid: SlickGrid;
   private _locales: Locale;
   private _groupedColumnHeaders: Array<KeyTitlePair>;
   private _columnHeaders: Array<KeyTitlePair>;
@@ -69,7 +70,7 @@ export class ExcelExportService {
    * @param gridOptions
    * @param dataView
    */
-  init(grid: any): void {
+  init(grid: SlickGrid): void {
     this._grid = grid;
 
     // get locales provided by user in main file or else use default English locales via the Constants
@@ -459,7 +460,7 @@ export class ExcelExportService {
     // loop through all the grid rows of data
     for (let rowNumber = 0; rowNumber < lineCount; rowNumber++) {
       const itemObj = this._dataView.getItem(rowNumber);
-      if (itemObj !== null && itemObj !== undefined) {
+      if (itemObj) {
         // Normal row (not grouped by anything) would have an ID which was predefined in the Grid Columns definition
         if (itemObj[this._datasetIdPropName] !== null && itemObj[this._datasetIdPropName] !== undefined) {
           // get regular row item data

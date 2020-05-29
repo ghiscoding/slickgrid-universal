@@ -9,6 +9,7 @@ import {
   GridOption,
   GroupTotalsFormatter,
   GroupTotalFormatters,
+  SlickGrid,
   SortDirectionNumber,
   SortComparers,
   PubSubService,
@@ -26,8 +27,8 @@ const pubSubServiceStub = {
 // URL object is not supported in JSDOM, we can simply mock it
 (global as any).URL.createObjectURL = jest.fn();
 
-const myBoldHtmlFormatter: Formatter = (row, cell, value, columnDef, dataContext) => value !== null ? { text: `<b>${value}</b>` } : null;
-const myUppercaseFormatter: Formatter = (row, cell, value, columnDef, dataContext) => value ? { text: value.toUpperCase() } : null;
+const myBoldHtmlFormatter: Formatter = (row, cell, value) => value !== null ? { text: `<b>${value}</b>` } : null;
+const myUppercaseFormatter: Formatter = (row, cell, value) => value ? { text: value.toUpperCase() } : null;
 const myUppercaseGroupTotalFormatter: GroupTotalsFormatter = (totals: any, columnDef: Column) => {
   const field = columnDef.field || '';
   const val = totals.sum && totals.sum[field];
@@ -36,7 +37,7 @@ const myUppercaseGroupTotalFormatter: GroupTotalsFormatter = (totals: any, colum
   }
   return '';
 };
-const myCustomObjectFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: any) => {
+const myCustomObjectFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any) => {
   let textValue = value && value.hasOwnProperty('text') ? value.text : value;
   const toolTip = value && value.hasOwnProperty('toolTip') ? value.toolTip : '';
   const cssClasses = value && value.hasOwnProperty('addClasses') ? [value.addClasses] : [''];
@@ -66,7 +67,7 @@ const gridStub = {
   getOptions: () => mockGridOptions,
   getColumns: jest.fn(),
   getGrouping: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 describe('ExcelExportService', () => {
   let service: ExcelExportService;

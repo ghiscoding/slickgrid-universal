@@ -1,5 +1,5 @@
 import { KeyCode } from '../enums/index';
-import { Column, ColumnEditor, Editor, EditorArguments, EditorValidator, EditorValidatorOutput } from '../interfaces/index';
+import { Column, ColumnEditor, Editor, EditorArguments, EditorValidator, EditorValidatorOutput, SlickGrid } from '../interfaces/index';
 import { setDeepValue, getDescendantProperty } from '../services/utilities';
 import { floatValidator } from '../editorValidators/floatValidator';
 
@@ -15,7 +15,7 @@ export class FloatEditor implements Editor {
   originalValue: number | string;
 
   /** SlickGrid Grid object */
-  grid: any;
+  grid: SlickGrid;
 
   constructor(private args: EditorArguments) {
     if (!args) {

@@ -1,5 +1,5 @@
 import { FieldType } from '../enums/fieldType.enum';
-import { Column, Formatter, GridOption } from '../interfaces/index';
+import { Column, Formatter, GridOption, SlickGrid } from '../interfaces/index';
 import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 import * as moment_ from 'moment-mini';
 const moment = moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
@@ -10,7 +10,7 @@ const moment = moment_; // patch to fix rollup "moment has no default export" is
  * 2- Grid Options "formatterOptions"
  * 3- nothing found, return default value provided
  */
-export function getValueFromParamsOrFormatterOptions(optionName: string, columnDef: Column, grid: any, defaultValue?: any) {
+export function getValueFromParamsOrFormatterOptions(optionName: string, columnDef: Column, grid: SlickGrid, defaultValue?: any) {
   const gridOptions = ((grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {}) as GridOption;
   const params = columnDef && columnDef.params;
 
@@ -26,7 +26,7 @@ export function getValueFromParamsOrFormatterOptions(optionName: string, columnD
 export function getAssociatedDateFormatter(fieldType: FieldType, defaultSeparator: string): Formatter {
   const defaultDateFormat = mapMomentDateFormatWithFieldType(fieldType);
 
-  return (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: any) => {
+  return (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGrid) => {
     const gridOptions = ((grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {}) as GridOption;
     const customSeparator = gridOptions && gridOptions.formatterOptions && gridOptions.formatterOptions.dateSeparator || defaultSeparator;
 

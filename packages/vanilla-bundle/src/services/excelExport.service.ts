@@ -1,4 +1,4 @@
-import { ExcelExportOption } from '@slickgrid-universal/common';
+import { ExcelExportOption, SlickGrid } from '@slickgrid-universal/common';
 import { TranslateService } from './translate.service';
 import { EventPubSubService } from './eventPubSub.service';
 
@@ -8,7 +8,7 @@ export class ExcelExportService {
     // super(eventPubSubService, translateService);
   }
 
-  init(grid: any): void {
+  init(grid: SlickGrid): void {
     // super.init(grid);
   }
 

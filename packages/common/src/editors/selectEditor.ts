@@ -15,6 +15,7 @@ import {
   Locale,
   MultipleSelectOption,
   SelectOption,
+  SlickGrid,
 } from './../interfaces/index';
 import { CollectionService, findOrDefault, TranslaterService } from '../services/index';
 import { charArraysEqual, getDescendantProperty, getTranslationPrefix, htmlEncode, setDeepValue } from '../services/utilities';
@@ -76,7 +77,7 @@ export class SelectEditor implements Editor {
   protected _translaterService: TranslaterService;
 
   /** SlickGrid Grid object */
-  grid: any;
+  grid: SlickGrid;
 
   constructor(protected args: EditorArguments, protected isMultipleSelect: boolean) {
     if (!args) {

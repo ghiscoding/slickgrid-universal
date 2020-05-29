@@ -17,6 +17,7 @@ import {
   FilterCallback,
   FlatpickrOption,
   GridOption,
+  SlickGrid,
 } from '../interfaces/index';
 import { mapFlatpickrDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
@@ -38,7 +39,7 @@ export class CompoundDateFilter implements Filter {
   private _currentValue: string;
   private _operator: OperatorType | OperatorString;
   flatInstance: any;
-  grid: any;
+  grid: SlickGrid;
   searchTerms: SearchTerm[];
   columnDef: Column;
   callback: FilterCallback;

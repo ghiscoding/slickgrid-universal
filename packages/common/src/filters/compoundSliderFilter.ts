@@ -5,6 +5,7 @@ import {
   Filter,
   FilterArguments,
   FilterCallback,
+  SlickGrid,
 } from '../interfaces/index';
 import { mapOperatorToShorthandDesignation } from '../services/utilities';
 
@@ -19,14 +20,14 @@ export class CompoundSliderFilter implements Filter {
   private _clearFilterTriggered = false;
   private _currentValue: number;
   private _shouldTriggerQuery = true;
-  private _elementRangeInputId: string = '';
-  private _elementRangeOutputId: string = '';
+  private _elementRangeInputId = '';
+  private _elementRangeOutputId = '';
   private _operator: OperatorType | OperatorString;
   private $containerInputGroupElm: any;
   private $filterElm: any;
   private $filterInputElm: any;
   private $selectOperatorElm: any;
-  grid: any;
+  grid: SlickGrid;
   searchTerms: SearchTerm[];
   columnDef: Column;
   callback: FilterCallback;

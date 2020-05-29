@@ -1,10 +1,10 @@
-import { Column, CurrentPagination, DataView, GridOption } from '../interfaces/index';
+import { Column, CurrentPagination, DataView, GridOption, SlickGrid } from '../interfaces/index';
 
 export class SharedService {
   private _allColumns: Column[];
   private _dataView: DataView;
   private _groupItemMetadataProvider: any;
-  private _grid: any;
+  private _grid: SlickGrid;
   private _gridOptions: GridOption;
   private _currentPagination: CurrentPagination;
   private _visibleColumns: Column[];
@@ -48,11 +48,11 @@ export class SharedService {
   }
 
   /** Getter for SlickGrid Grid object */
-  get grid(): any {
+  get grid(): SlickGrid {
     return this._grid;
   }
   /** Setter for SlickGrid Grid object */
-  set grid(grid: any) {
+  set grid(grid: SlickGrid) {
     this._grid = grid;
   }
 

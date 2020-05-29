@@ -1,5 +1,5 @@
 import { Constants } from '../constants';
-import { Column, ColumnEditor, Editor, EditorArguments, EditorValidator, EditorValidatorOutput } from '../interfaces/index';
+import { Column, ColumnEditor, Editor, EditorArguments, EditorValidator, EditorValidatorOutput, SlickGrid } from '../interfaces/index';
 import { getDescendantProperty, setDeepValue } from '../services/utilities';
 import { sliderValidator } from '../editorValidators/sliderValidator';
 
@@ -15,8 +15,8 @@ const DEFAULT_STEP = 1;
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
 export class SliderEditor implements Editor {
-  private _elementRangeInputId: string = '';
-  private _elementRangeOutputId: string = '';
+  private _elementRangeInputId = '';
+  private _elementRangeOutputId = '';
   private _$editorElm: any;
   private _$input: any;
   $sliderNumber: any;
@@ -24,7 +24,7 @@ export class SliderEditor implements Editor {
   originalValue: any;
 
   /** SlickGrid Grid object */
-  grid: any;
+  grid: SlickGrid;
 
   constructor(private args: EditorArguments) {
     if (!args) {

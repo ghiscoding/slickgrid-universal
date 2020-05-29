@@ -19,6 +19,7 @@ import {
   KeyTitlePair,
   Locale,
   PubSubService,
+  SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
 
@@ -28,7 +29,7 @@ export class FileExportService {
   private _exportOptions: ExportOption;
   private _fileFormat = FileType.csv;
   private _lineCarriageReturn = '\n';
-  private _grid: any;
+  private _grid: SlickGrid;
   private _groupedColumnHeaders: Array<KeyTitlePair>;
   private _columnHeaders: Array<KeyTitlePair>;
   private _hasGroupedItems = false;
@@ -55,7 +56,7 @@ export class FileExportService {
    * @param grid
    * @param dataView
    */
-  init(grid: any): void {
+  init(grid: SlickGrid): void {
     this._grid = grid;
 
     // get locales provided by user in main file or else use default English locales via the Constants
@@ -231,9 +232,9 @@ export class FileExportService {
     for (let rowNumber = 0; rowNumber < lineCount; rowNumber++) {
       const itemObj = this._dataView.getItem(rowNumber);
 
-      if (itemObj !== null) {
+      if (itemObj) {
         // Normal row (not grouped by anything) would have an ID which was predefined in the Grid Columns definition
-        if (itemObj[this._datasetIdPropName] !== null) {
+        if (itemObj[this._datasetIdPropName] !== null && itemObj[this._datasetIdPropName] !== undefined) {
           // get regular row item data
           outputDataStrings.push(this.readRegularRowData(columns, rowNumber, itemObj));
         } else if (this._hasGroupedItems && itemObj.__groupTotals === undefined) {

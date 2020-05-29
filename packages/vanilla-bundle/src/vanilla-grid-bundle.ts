@@ -14,6 +14,7 @@ import {
   GridOption,
   Metrics,
   SlickEventHandler,
+  SlickGrid,
   TreeDataOption,
 
   // extensions
@@ -78,7 +79,7 @@ export class VanillaGridBundle {
   private _slickgridInitialized = false;
   backendServiceApi: BackendServiceApi | undefined;
   dataView: DataView;
-  grid: any;
+  grid: SlickGrid;
   metrics: Metrics;
   customDataView = false;
   groupItemMetadataProvider: any;
@@ -393,7 +394,7 @@ export class VanillaGridBundle {
     const registeringServices: any[] = this._gridOptions.registerServices || [];
 
     // push all other Services that we want to be registered
-    registeringServices.push(this.gridService, this.gridStateService, this.excelExportService, this.exportService, /* this.paginationService */);
+    registeringServices.push(this.gridService, this.gridStateService, this.excelExportService, this.exportService);
 
     // when using Grouping/DraggableGrouping/Colspan register its Service
     if (this._gridOptions.createPreHeaderPanel && !this._gridOptions.enableDraggableGrouping) {
@@ -414,6 +415,9 @@ export class VanillaGridBundle {
         }
       }
     }
+
+    // Pagination Service
+    // this.paginationService.init(this.grid)
 
     const slickerElementInstance = {
       // Slick Grid & DataView objects
@@ -470,7 +474,7 @@ export class VanillaGridBundle {
     return options;
   }
 
-  bindDifferentHooks(grid: any, gridOptions: GridOption, dataView: DataView) {
+  bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: DataView) {
     // bind external filter (backend) when available or default onFilter (dataView)
     if (gridOptions.enableFiltering && !this.customDataView) {
       this.filterService.init(grid);

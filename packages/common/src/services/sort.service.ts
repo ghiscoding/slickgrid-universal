@@ -6,6 +6,7 @@ import {
   CurrentSorter,
   SlickEventHandler,
   TreeDataOption,
+  SlickGrid,
 } from '../interfaces/index';
 import {
   EmitterType,
@@ -27,7 +28,7 @@ export class SortService {
   private _currentLocalSorters: CurrentSorter[] = [];
   private _eventHandler: SlickEventHandler;
   private _dataView: DataView;
-  private _grid: any;
+  private _grid: SlickGrid;
   private _isBackendGrid = false;
 
   constructor(private sharedService: SharedService, private pubSubService: PubSubService) {
@@ -54,7 +55,7 @@ export class SortService {
    * @param grid SlickGrid Grid object
    * @param dataView SlickGrid DataView object
    */
-  bindBackendOnSort(grid: any, dataView: DataView) {
+  bindBackendOnSort(grid: SlickGrid, dataView: DataView) {
     this._isBackendGrid = true;
     this._grid = grid;
     this._dataView = dataView;
@@ -69,7 +70,7 @@ export class SortService {
    * @param gridOptions Grid Options object
    * @param dataView
    */
-  bindLocalOnSort(grid: any, dataView: DataView) {
+  bindLocalOnSort(grid: SlickGrid, dataView: DataView) {
     this._isBackendGrid = false;
     this._grid = grid;
     this._dataView = dataView;
@@ -172,18 +173,20 @@ export class SortService {
    */
   getCurrentColumnSorts(excludedColumnId?: string) {
     // getSortColumns() only returns sortAsc & columnId, we want the entire column definition
-    const oldSortColumns = this._grid && this._grid.getSortColumns();
+    if (this._grid) {
+      const oldSortColumns = this._grid.getSortColumns();
 
-    // get the column definition but only keep column which are not equal to our current column
-    if (Array.isArray(oldSortColumns)) {
-      const sortedCols = oldSortColumns.reduce((cols: ColumnSort[], col: ColumnSort) => {
-        if (!excludedColumnId || col.columnId !== excludedColumnId) {
-          cols.push({ sortCol: this._columnDefinitions[this._grid.getColumnIndex(col.columnId)], sortAsc: col.sortAsc });
-        }
-        return cols;
-      }, []);
+      // get the column definition but only keep column which are not equal to our current column
+      if (Array.isArray(oldSortColumns)) {
+        const sortedCols = oldSortColumns.reduce((cols: ColumnSort[], col: ColumnSort) => {
+          if (col && (!excludedColumnId || col.columnId !== excludedColumnId)) {
+            cols.push({ sortCol: this._columnDefinitions[this._grid.getColumnIndex(col.columnId || '')], sortAsc: col.sortAsc });
+          }
+          return cols;
+        }, []);
 
-      return sortedCols;
+        return sortedCols;
+      }
     }
     return [];
   }
@@ -254,7 +257,7 @@ export class SortService {
     }
   }
 
-  onBackendSortChanged(event: Event | undefined, args: { multiColumnSort?: boolean; grid: any; sortCols: ColumnSort[]; clearSortTriggered?: boolean }) {
+  onBackendSortChanged(event: Event | undefined, args: { multiColumnSort?: boolean; grid: SlickGrid; sortCols: ColumnSort[]; clearSortTriggered?: boolean }) {
     if (!args || !args.grid) {
       throw new Error('Something went wrong when trying to bind the "onBackendSortChanged(event, args)" function, it seems that "args" is not populated correctly');
     }
@@ -279,7 +282,7 @@ export class SortService {
   }
 
   /** When a Sort Changes on a Local grid (JSON dataset) */
-  onLocalSortChanged(grid: any, dataView: DataView, sortColumns: ColumnSort[], forceReSort = false) {
+  onLocalSortChanged(grid: SlickGrid, dataView: DataView, sortColumns: ColumnSort[], forceReSort = false) {
     const isTreeDataEnabled = this._gridOptions?.enableTreeData ?? false;
 
     if (grid && dataView) {

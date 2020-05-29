@@ -3,6 +3,7 @@ import {
   DataView,
   GridOption,
   SlickEventHandler,
+  SlickGrid,
 } from './../interfaces/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 
@@ -12,7 +13,7 @@ declare const Slick: any;
 
 export class GroupingAndColspanService {
   private _eventHandler: SlickEventHandler;
-  private _grid: any;
+  private _grid: SlickGrid;
 
   constructor(private extensionUtility: ExtensionUtility) {
     this._eventHandler = new Slick.EventHandler();
@@ -43,7 +44,7 @@ export class GroupingAndColspanService {
    * @param {object} grid
    * @param {object} resizerPlugin
    */
-  init(grid: any) {
+  init(grid: SlickGrid) {
     this._grid = grid;
     const resizerPlugin = grid.getPluginByName('Resizer');
 

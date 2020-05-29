@@ -1,11 +1,11 @@
-import { DataView, GridOption, SlickEventHandler } from '../interfaces/index';
+import { DataView, GridOption, SlickEventHandler, SlickGrid } from '../interfaces/index';
 import { SharedService } from './shared.service';
 
 // using external non-typed js libraries
 declare const Slick: any;
 
 export class TreeDataService {
-  private _grid: any;
+  private _grid: SlickGrid;
   private _eventHandler: SlickEventHandler;
 
   constructor(private sharedService: SharedService) {
@@ -40,7 +40,7 @@ export class TreeDataService {
     }
   }
 
-  init(grid: any) {
+  init(grid: SlickGrid) {
     this._grid = grid;
 
     // subscribe to the SlickGrid event and call the backend execution

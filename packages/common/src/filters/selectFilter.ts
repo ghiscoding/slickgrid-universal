@@ -13,7 +13,8 @@ import {
   GridOption,
   Locale,
   MultipleSelectOption,
-  SelectOption
+  SelectOption,
+  SlickGrid
 } from './../interfaces/index';
 import { CollectionService } from '../services/collection.service';
 import { getDescendantProperty, getTranslationPrefix, htmlEncode } from '../services/utilities';
@@ -33,7 +34,7 @@ export class SelectFilter implements Filter {
   /** The JQuery DOM element */
   $filterElm: any;
 
-  grid: any;
+  grid: SlickGrid;
   searchTerms: SearchTerm[];
   columnDef: Column;
   callback: FilterCallback;

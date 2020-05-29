@@ -8,6 +8,7 @@ import {
   FilterCallback,
   GridOption,
   Locale,
+  SlickGrid,
 } from '../interfaces/index';
 import { getTranslationPrefix, mapOperatorToShorthandDesignation } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
@@ -24,7 +25,7 @@ export class CompoundInputFilter implements Filter {
   private $filterInputElm: any;
   private $selectOperatorElm: any;
   private _operator: OperatorType | OperatorString;
-  grid: any;
+  grid: SlickGrid;
   searchTerms: SearchTerm[];
   columnDef: Column;
   callback: FilterCallback;

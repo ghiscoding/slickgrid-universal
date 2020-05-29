@@ -4,6 +4,7 @@ import { PaginationService } from './../pagination.service';
 import { SharedService } from '../shared.service';
 import { Column, GridOption } from '../../interfaces/index';
 import * as utilities from '../backend-utilities';
+import { SlickGrid } from '../../../dist/commonjs';
 
 declare const Slick: any;
 
@@ -71,6 +72,7 @@ const mockGridOption = {
 const gridStub = {
   autosizeColumns: jest.fn(),
   getColumnIndex: jest.fn(),
+  getData: () => dataviewStub,
   getOptions: () => mockGridOption,
   getColumns: jest.fn(),
   setColumns: jest.fn(),
@@ -78,7 +80,7 @@ const gridStub = {
   onColumnsReordered: jest.fn(),
   onColumnsResized: jest.fn(),
   registerPlugin: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 describe('PaginationService', () => {
   let service: PaginationService;
@@ -104,7 +106,7 @@ describe('PaginationService', () => {
 
   it('should initialize the service and call "refreshPagination" and trigger "onPaginationChanged" event', () => {
     const refreshSpy = jest.spyOn(service, 'refreshPagination');
-    service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+    service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
 
     expect(service.paginationOptions).toEqual(mockGridOption.pagination);
     expect(refreshSpy).toHaveBeenCalled();
@@ -113,7 +115,7 @@ describe('PaginationService', () => {
 
   it('should initialize the service and be able to change the grid options by the SETTER and expect the GETTER to have updated options', () => {
     const mockGridOptionCopy = { ...mockGridOption, options: null };
-    service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+    service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
     service.paginationOptions = mockGridOption.pagination;
 
     expect(service.paginationOptions).toEqual(mockGridOption.pagination);
@@ -123,7 +125,7 @@ describe('PaginationService', () => {
   it('should initialize the service and be able to change the totalItems by the SETTER and not expect the "refreshPagination" method to be called within the SETTER before initialization', () => {
     const spy = jest.spyOn(service, 'refreshPagination');
     service.totalItems = 125;
-    service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+    service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
 
     expect(service.totalItems).toEqual(125);
     expect(service.getCurrentPageNumber()).toBe(2);
@@ -132,7 +134,7 @@ describe('PaginationService', () => {
 
   it('should be able to change the totalItems by the SETTER after the initialization and expect the "refreshPagination" method to be called', () => {
     const spy = jest.spyOn(service, 'refreshPagination');
-    service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+    service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
     service.totalItems = 125;
 
     expect(service.totalItems).toEqual(125);
@@ -143,24 +145,24 @@ describe('PaginationService', () => {
   describe('Getters and Setters', () => {
     it('should get the availablePageSizes and equal the one defined in the grid options pagination', () => {
       mockGridOption.pagination.pageSizes = [5, 10, 15, 20];
-      service.init(gridStub, dataviewStub, mockGridOption.pagination);
+      service.init(gridStub, mockGridOption.pagination);
       expect(service.availablePageSizes).toEqual(mockGridOption.pagination.pageSizes);
     });
 
     it('should get the itemsPerPage and equal the one defined in the grid options pagination', () => {
       mockGridOption.pagination.pageSize = 20;
-      service.init(gridStub, dataviewStub, mockGridOption.pagination);
+      service.init(gridStub, mockGridOption.pagination);
       expect(service.itemsPerPage).toEqual(mockGridOption.pagination.pageSize);
     });
 
     it('should get the pageCount and equal the one defined in the grid options pagination', () => {
-      service.init(gridStub, dataviewStub, mockGridOption.pagination);
+      service.init(gridStub, mockGridOption.pagination);
       expect(service.pageCount).toEqual(4); // since totalItems is 85 and our pageSize is 20/page
     });
 
     it('should get the pageNumber and equal the one defined in the grid options pagination', () => {
       mockGridOption.pagination.pageNumber = 3;
-      service.init(gridStub, dataviewStub, mockGridOption.pagination);
+      service.init(gridStub, mockGridOption.pagination);
       expect(service.pageNumber).toEqual(mockGridOption.pagination.pageNumber);
     });
   });
@@ -168,7 +170,7 @@ describe('PaginationService', () => {
   describe('changeItemPerPage method', () => {
     it('should be on page 0 when total items is 0', () => {
       mockGridOption.pagination.totalItems = 0;
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.changeItemPerPage(30);
 
       expect(service.getCurrentPageNumber()).toBe(0);
@@ -180,7 +182,7 @@ describe('PaginationService', () => {
       mockGridOption.pagination.pageNumber = 2;
       mockGridOption.pagination.totalItems = 51;
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.changeItemPerPage(50);
 
       expect(service.getCurrentPageNumber()).toBe(1);
@@ -192,7 +194,7 @@ describe('PaginationService', () => {
       mockGridOption.pagination.pageNumber = 2;
       mockGridOption.pagination.totalItems = 100;
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.changeItemPerPage(50);
 
       expect(service.getCurrentPageNumber()).toBe(1);
@@ -203,7 +205,7 @@ describe('PaginationService', () => {
   describe('goToFirstPage method', () => {
     it('should expect current page to be 1 and "processOnPageChanged" method to be called', () => {
       const spy = jest.spyOn(service, 'processOnPageChanged');
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.goToFirstPage();
 
       expect(service.dataFrom).toBe(1);
@@ -217,7 +219,7 @@ describe('PaginationService', () => {
     it('should call "goToLastPage" method and expect current page to be last page and "processOnPageChanged" method to be called', () => {
       const spy = jest.spyOn(service, 'processOnPageChanged');
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.goToLastPage();
 
       expect(service.dataFrom).toBe(76);
@@ -231,7 +233,7 @@ describe('PaginationService', () => {
     it('should expect page to increment by 1 and "processOnPageChanged" method to be called', () => {
       const spy = jest.spyOn(service, 'processOnPageChanged');
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.goToNextPage();
 
       expect(service.dataFrom).toBe(51);
@@ -243,7 +245,7 @@ describe('PaginationService', () => {
     it('should expect page to increment by 1 and "processOnPageChanged" method to be called', () => {
       const spy = jest.spyOn(service, 'processOnPageChanged');
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.goToNextPage();
 
       expect(service.dataFrom).toBe(51);
@@ -256,7 +258,7 @@ describe('PaginationService', () => {
       const spy = jest.spyOn(service, 'processOnPageChanged');
       mockGridOption.pagination.pageNumber = 4;
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.goToNextPage();
 
       expect(service.dataFrom).toBe(76);
@@ -270,7 +272,7 @@ describe('PaginationService', () => {
     it('should expect page to decrement by 1 and "processOnPageChanged" method to be called', () => {
       const spy = jest.spyOn(service, 'processOnPageChanged');
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.goToPreviousPage();
 
       expect(service.dataFrom).toBe(1);
@@ -283,7 +285,7 @@ describe('PaginationService', () => {
       const spy = jest.spyOn(service, 'processOnPageChanged');
       mockGridOption.pagination.pageNumber = 1;
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.goToPreviousPage();
 
       expect(service.dataFrom).toBe(1);
@@ -297,7 +299,7 @@ describe('PaginationService', () => {
     it('should expect page to decrement by 1 and "processOnPageChanged" method to be called', () => {
       const spy = jest.spyOn(service, 'processOnPageChanged');
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.goToPageNumber(4);
 
       expect(service.dataFrom).toBe(76);
@@ -309,7 +311,7 @@ describe('PaginationService', () => {
     it('should expect to go to page 1 when input number is below 1', () => {
       const spy = jest.spyOn(service, 'processOnPageChanged');
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.goToPageNumber(0);
 
       expect(service.dataFrom).toBe(1);
@@ -321,7 +323,7 @@ describe('PaginationService', () => {
     it('should expect to go to last page (4) when input number is bigger than the last page number', () => {
       const spy = jest.spyOn(service, 'processOnPageChanged');
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.goToPageNumber(10);
 
       expect(service.dataFrom).toBe(76);
@@ -334,7 +336,7 @@ describe('PaginationService', () => {
       const spy = jest.spyOn(service, 'processOnPageChanged');
       mockGridOption.pagination.pageNumber = 2;
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.goToPageNumber(2);
 
       expect(service.dataFrom).toBe(26);
@@ -364,7 +366,7 @@ describe('PaginationService', () => {
       const spy = jest.fn();
       mockGridOption.backendServiceApi.preProcess = spy;
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.processOnPageChanged(1);
 
       expect(spy).toHaveBeenCalled();
@@ -379,7 +381,7 @@ describe('PaginationService', () => {
       jest.spyOn(mockGridOption.backendServiceApi, 'process').mockReturnValue(promise);
 
       try {
-        service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+        service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
         await service.processOnPageChanged(1);
       } catch (e) {
         expect(mockBackendError).toHaveBeenCalledWith(mockError, mockGridOption.backendServiceApi);
@@ -395,7 +397,7 @@ describe('PaginationService', () => {
       const promise = new Promise((resolve) => setTimeout(() => resolve(processResult), 1));
       jest.spyOn(mockGridOption.backendServiceApi, 'process').mockReturnValue(promise);
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.processOnPageChanged(1);
 
       setTimeout(() => {
@@ -410,7 +412,7 @@ describe('PaginationService', () => {
       const setPagingSpy = jest.spyOn(dataviewStub, 'setPagingOptions');
 
       mockGridOption.backendServiceApi = null;
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.processOnPageChanged(1);
 
       expect(setPagingSpy).toHaveBeenCalledWith({ pageSize: 25, pageNum: 0 });
@@ -426,7 +428,7 @@ describe('PaginationService', () => {
       mockGridOption.pagination.pageNumber = 2;
       mockGridOption.pagination.totalItems = 0;
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.recalculateFromToIndexes();
 
       expect(service.dataFrom).toBe(0);
@@ -438,7 +440,7 @@ describe('PaginationService', () => {
       mockGridOption.pagination.pageNumber = 2;
       mockGridOption.pagination.totalItems = 85;
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.recalculateFromToIndexes();
 
       expect(service.dataFrom).toBe(26);
@@ -450,7 +452,7 @@ describe('PaginationService', () => {
       mockGridOption.pagination.pageNumber = 4;
       mockGridOption.pagination.totalItems = 85;
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.recalculateFromToIndexes();
 
       expect(service.dataFrom).toBe(76);
@@ -478,7 +480,7 @@ describe('PaginationService', () => {
       try {
         // @ts-ignore
         mockGridOption.backendServiceApi = {};
-        service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+        service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
         service.refreshPagination();
       } catch (e) {
         expect(e.toString()).toContain(`BackendServiceApi requires the following 2 properties "process" and "service" to be defined.`);
@@ -490,7 +492,7 @@ describe('PaginationService', () => {
       const resetSpy = jest.spyOn(service, 'resetPagination');
       const refreshSpy = jest.spyOn(service, 'refreshPagination');
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       fnCallbacks['onFilterCleared'](true);
 
       expect(resetSpy).toHaveBeenCalled();
@@ -502,7 +504,7 @@ describe('PaginationService', () => {
       const resetSpy = jest.spyOn(service, 'resetPagination');
       const refreshSpy = jest.spyOn(service, 'refreshPagination');
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       fnCallbacks['onFilterChanged']({ columnId: 'field1', operator: '=', searchTerms: [] });
 
       expect(pubSubSpy).toHaveBeenCalledWith('onPaginationChanged', {
@@ -516,7 +518,7 @@ describe('PaginationService', () => {
   describe('resetPagination method', () => {
     it('should call "refreshPagination" with 2 arguments True when calling the method', () => {
       const spy = jest.spyOn(service, 'refreshPagination');
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.resetPagination();
 
       expect(spy).toHaveBeenCalledWith(true, true);
@@ -524,7 +526,7 @@ describe('PaginationService', () => {
 
     it('should call "refreshPagination" with True and False arguments when calling the method with False being passed as input argument', () => {
       const spy = jest.spyOn(service, 'refreshPagination');
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.resetPagination(false);
 
       expect(spy).toHaveBeenCalledWith(true, false);
@@ -535,7 +537,7 @@ describe('PaginationService', () => {
       const setPagingSpy = jest.spyOn(dataviewStub, 'setPagingOptions');
 
       mockGridOption.backendServiceApi = null;
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, null);
+      service.init(gridStub, mockGridOption.pagination, null);
       service.resetPagination();
 
       expect(setPagingSpy).toHaveBeenCalledWith({ pageSize: 25, pageNum: 0 });
@@ -557,7 +559,7 @@ describe('PaginationService', () => {
       const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
       const recalculateSpy = jest.spyOn(service, 'recalculateFromToIndexes');
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       fnCallbacks['onItemAdded'](mockItems);
 
       expect(recalculateSpy).toHaveBeenCalledTimes(2);
@@ -573,7 +575,7 @@ describe('PaginationService', () => {
       const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
       const recalculateSpy = jest.spyOn(service, 'recalculateFromToIndexes');
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       fnCallbacks['onItemAdded'](mockItems);
 
       expect(recalculateSpy).toHaveBeenCalledTimes(2);
@@ -587,7 +589,7 @@ describe('PaginationService', () => {
     it('should call "processOnItemAddedOrRemoved" and expect not onPaginationChanged to be triggered and the (To) to remain the same when "onItemAdded" is triggered without any items', () => {
       const recalculateSpy = jest.spyOn(service, 'recalculateFromToIndexes');
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       fnCallbacks['onItemAdded'](null);
 
       expect(recalculateSpy).toHaveBeenCalledTimes(1);
@@ -600,7 +602,7 @@ describe('PaginationService', () => {
       const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
       const recalculateSpy = jest.spyOn(service, 'recalculateFromToIndexes');
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       fnCallbacks['onItemDeleted'](mockItems);
 
       // called 2x times by init() then by processOnItemAddedOrRemoved()
@@ -617,7 +619,7 @@ describe('PaginationService', () => {
       const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
       const recalculateSpy = jest.spyOn(service, 'recalculateFromToIndexes');
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       fnCallbacks['onItemDeleted'](mockItems);
 
       expect(recalculateSpy).toHaveBeenCalledTimes(2); // called 2x times by init() then by processOnItemAddedOrRemoved()
@@ -630,7 +632,7 @@ describe('PaginationService', () => {
       const recalculateSpy = jest.spyOn(service, 'recalculateFromToIndexes');
 
       // service.totalItems = 85;
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       fnCallbacks['onItemDeleted'](null);
 
       // called 1x time by init() only
@@ -644,7 +646,7 @@ describe('PaginationService', () => {
       mockGridOption.pagination.totalItems = 100;
       const mockItems = { name: 'John' };
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       fnCallbacks['onItemAdded'](mockItems);
       service.changeItemPerPage(200);
 
@@ -657,7 +659,7 @@ describe('PaginationService', () => {
       mockGridOption.pagination.totalItems = 99;
       const mockItems = { name: 'John' };
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       fnCallbacks['onItemAdded'](mockItems);
       service.changeItemPerPage(100);
 
@@ -679,7 +681,7 @@ describe('PaginationService', () => {
       const onPagingSpy = jest.spyOn(dataviewStub.onPagingInfoChanged, 'subscribe');
       const setRefreshSpy = jest.spyOn(dataviewStub, 'setRefreshHints');
       const setPagingSpy = jest.spyOn(dataviewStub, 'setPagingOptions');
-      service.init(gridStub, dataviewStub, mockGridOption.pagination);
+      service.init(gridStub, mockGridOption.pagination);
 
       setTimeout(() => {
         expect(service.paginationOptions).toEqual(mockGridOption.pagination);
@@ -698,7 +700,7 @@ describe('PaginationService', () => {
       const setRefreshSpy = jest.spyOn(dataviewStub, 'setRefreshHints');
       const setPagingSpy = jest.spyOn(dataviewStub, 'setPagingOptions');
       mockGridOption.pagination.pageNumber = 3;
-      service.init(gridStub, dataviewStub, mockGridOption.pagination);
+      service.init(gridStub, mockGridOption.pagination);
 
       setTimeout(() => {
         expect(service.paginationOptions).toEqual(mockGridOption.pagination);
@@ -715,7 +717,7 @@ describe('PaginationService', () => {
       const expectedNewTotal = 22;
       const mockSlickPagingInfo = { pageSize: 5, pageNum: 2, totalRows: expectedNewTotal, totalPages: 3, dataView: dataviewStub };
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination);
+      service.init(gridStub, mockGridOption.pagination);
       dataviewStub.onPagingInfoChanged.notify(mockSlickPagingInfo, new Slick.EventData(), dataviewStub);
 
       expect(service.totalItems).toBe(expectedNewTotal);
@@ -736,7 +738,7 @@ describe('PaginationService', () => {
         process: jest.fn(),
       };
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
       service.togglePaginationVisibility(false);
 
       expect(sharedService.gridOptions.enablePagination).toBeFalse();
@@ -749,7 +751,7 @@ describe('PaginationService', () => {
       const setPagingSpy = jest.spyOn(dataviewStub, 'setPagingOptions');
       mockGridOption.backendServiceApi = null;
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination);
+      service.init(gridStub, mockGridOption.pagination);
       service.togglePaginationVisibility(false);
 
       expect(sharedService.gridOptions.enablePagination).toBeFalse();
@@ -763,7 +765,7 @@ describe('PaginationService', () => {
       const gotoSpy = jest.spyOn(service, 'goToFirstPage');
       mockGridOption.backendServiceApi = null;
 
-      service.init(gridStub, dataviewStub, mockGridOption.pagination);
+      service.init(gridStub, mockGridOption.pagination);
       service.togglePaginationVisibility(true);
 
       expect(sharedService.gridOptions.enablePagination).toBeTrue();

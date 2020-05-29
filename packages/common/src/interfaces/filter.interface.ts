@@ -1,4 +1,4 @@
-import { Column, FilterArguments, FilterCallback, } from './index';
+import { Column, FilterArguments, FilterCallback, SlickGrid } from './index';
 import { OperatorType, OperatorString, SearchTerm, } from '../enums/index';
 
 // export type Filter = (searchTerms: string | number | string[] | number[], columnDef: Column, params?: any) => string;
@@ -12,7 +12,7 @@ export interface Filter {
   callback: FilterCallback;
 
   /** SlickGrid grid object */
-  grid: any;
+  grid: SlickGrid;
 
   /** Array of defined search terms to pre-load */
   searchTerms?: SearchTerm[];

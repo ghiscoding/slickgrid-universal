@@ -5,6 +5,7 @@ import {
   FilterArguments,
   FilterCallback,
   GridOption,
+  SlickGrid,
 } from '../interfaces/index';
 import { OperatorType, OperatorString, SearchTerm } from '../enums/index';
 import { TranslaterService } from '../services/translater.service';
@@ -14,7 +15,7 @@ export class NativeSelectFilter implements Filter {
   private _shouldTriggerQuery = true;
   private _currentValues: any | any[] = [];
   $filterElm: any;
-  grid: any;
+  grid: SlickGrid;
   searchTerms: SearchTerm[];
   columnDef: Column;
   callback: FilterCallback;
