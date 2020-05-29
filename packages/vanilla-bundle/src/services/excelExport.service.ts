@@ -1,15 +1,14 @@
-import { ExcelExportOption, SlickGrid } from '@slickgrid-universal/common';
+import { ExcelExportOption, SharedService, SlickGrid } from '@slickgrid-universal/common';
 import { TranslateService } from './translate.service';
-import { EventPubSubService } from './eventPubSub.service';
 
 
 export class ExcelExportService {
-  constructor(eventPubSubService: EventPubSubService) {
-    // super(eventPubSubService);
+  constructor() {
+    // super();
   }
 
-  init(grid: SlickGrid): void {
-    // super.init(grid);
+  init(grid: SlickGrid, sharedService: SharedService): void {
+    // super.init(grid, sharedService);
   }
 
   exportToExcel(options: ExcelExportOption): Promise<boolean> {

@@ -22,6 +22,7 @@ import {
   KeyTitlePair,
   Locale,
   PubSubService,
+  SharedService,
   SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
@@ -46,18 +47,19 @@ export class ExcelExportService {
   private _sheet: ExcelWorksheet;
   private _stylesheet: ExcelStylesheet;
   private _stylesheetFormats: any;
+  private _pubSubService: PubSubService;
   private _translaterService: TranslaterService | undefined;
   private _workbook: ExcelWorkbook;
 
-  constructor(private pubSubService: PubSubService) { }
+  constructor() { }
 
   private get _datasetIdPropName(): string {
-    return this._gridOptions && this._gridOptions.datasetIdPropertyName || 'id';
+    return this._gridOptions?.datasetIdPropertyName ?? 'id';
   }
 
   /** Getter of SlickGrid DataView object */
   get _dataView(): DataView {
-    return this._grid && this._grid.getData && this._grid.getData();
+    return this._grid?.getData();
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
@@ -68,11 +70,11 @@ export class ExcelExportService {
   /**
    * Initialize the Export Service
    * @param grid
-   * @param gridOptions
-   * @param dataView
+   * @param sharedService
    */
-  init(grid: SlickGrid): void {
+  init(grid: SlickGrid, sharedService: SharedService): void {
     this._grid = grid;
+    this._pubSubService = sharedService.internalPubSubService;
 
     // get locales provided by user in main file or else use default English locales via the Constants
     this._locales = this._gridOptions?.locales ?? Constants.locales;
@@ -98,7 +100,7 @@ export class ExcelExportService {
     }
 
     return new Promise((resolve, reject) => {
-      this.pubSubService.publish(`onBeforeExportToExcel`, true);
+      this._pubSubService.publish(`onBeforeExportToExcel`, true);
       this._excelExportOptions = deepCopy({ ...this._gridOptions.excelExportOptions, ...options });
       this._fileFormat = this._excelExportOptions.format || FileType.xlsx;
 
@@ -154,7 +156,7 @@ export class ExcelExportService {
 
           // start downloading but add the Blob property only on the start download not on the event itself
           this.startDownloadFile({ ...downloadOptions, blob: excelBlob, data: this._sheet.data });
-          this.pubSubService.publish(`onAfterExportToExcel`, downloadOptions);
+          this._pubSubService.publish(`onAfterExportToExcel`, downloadOptions);
           resolve(true);
         } catch (error) {
           reject(error);

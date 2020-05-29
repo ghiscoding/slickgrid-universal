@@ -1,12 +1,13 @@
-import { SharedService } from '..';
-import { Column, CurrentPagination, GridOption } from '../../interfaces/index';
+import { SharedService } from '../shared.service';
+import { PubSubService } from '../pubSub.service';
+import { Column, CurrentPagination, DataView, GridOption, SlickGrid } from '../../interfaces/index';
 
 jest.mock('flatpickr', () => { });
 
 const dataviewStub = {
   onRowCountChanged: jest.fn(),
   onRowsChanged: jest.fn(),
-};
+} as unknown as DataView;
 
 const gridStub = {
   autosizeColumns: jest.fn(),
@@ -17,7 +18,14 @@ const gridStub = {
   onColumnsReordered: jest.fn(),
   onColumnsResized: jest.fn(),
   registerPlugin: jest.fn(),
-};
+} as unknown as SlickGrid;
+
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as PubSubService;
 
 describe('Shared Service', () => {
   let mockColumns: Column[];
@@ -242,6 +250,11 @@ describe('Shared Service', () => {
   it('should call "hideHeaderRowAfterPageLoad" GETTER and expect a boolean value to be returned', () => {
     const flag = service.hideHeaderRowAfterPageLoad;
     expect(flag).toEqual(false);
+  });
+
+  it('should call "internalPubSubService" GETTER and SETTER expect same value to be returned', () => {
+    service.internalPubSubService = pubSubServiceStub;
+    expect(service.internalPubSubService).toEqual(pubSubServiceStub);
   });
 
   it('should call "hideHeaderRowAfterPageLoad" GETTER and SETTER expect same value to be returned', () => {

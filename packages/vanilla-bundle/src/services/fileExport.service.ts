@@ -1,14 +1,13 @@
-import { ExportOption, SlickGrid } from '@slickgrid-universal/common';
+import { ExportOption, SharedService, SlickGrid } from '@slickgrid-universal/common';
 import { FileExportService as UniversalExportService } from '@slickgrid-universal/file-export';
-import { EventPubSubService } from './eventPubSub.service';
 
 export class FileExportService extends UniversalExportService {
-  constructor(eventPubSubService: EventPubSubService) {
-    super(eventPubSubService);
+  constructor() {
+    super();
   }
 
-  init(grid: SlickGrid): void {
-    super.init(grid);
+  init(grid: SlickGrid, sharedService: SharedService): void {
+    super.init(grid, sharedService);
   }
 
   exportToFile(options: ExportOption): Promise<boolean> {

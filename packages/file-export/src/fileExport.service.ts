@@ -19,6 +19,7 @@ import {
   KeyTitlePair,
   Locale,
   PubSubService,
+  SharedService,
   SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
@@ -34,9 +35,10 @@ export class FileExportService {
   private _columnHeaders: Array<KeyTitlePair>;
   private _hasGroupedItems = false;
   private _locales: Locale;
+  private _pubSubService: PubSubService;
   private _translaterService: TranslaterService | undefined;
 
-  constructor(private pubSubService: PubSubService) { }
+  constructor() { }
 
   private get _datasetIdPropName(): string {
     return this._gridOptions && this._gridOptions.datasetIdPropertyName || 'id';
@@ -55,10 +57,11 @@ export class FileExportService {
   /**
    * Initialize the Service
    * @param grid
-   * @param dataView
+   * @param sharedService
    */
-  init(grid: SlickGrid): void {
+  init(grid: SlickGrid, sharedService: SharedService): void {
     this._grid = grid;
+    this._pubSubService = sharedService.internalPubSubService;
 
     // get locales provided by user in main file or else use default English locales via the Constants
     this._locales = this._gridOptions && this._gridOptions.locales || Constants.locales;
@@ -84,7 +87,7 @@ export class FileExportService {
     }
 
     return new Promise((resolve, reject) => {
-      this.pubSubService.publish(`onBeforeExportToFile`, true);
+      this._pubSubService.publish(`onBeforeExportToFile`, true);
       this._exportOptions = deepCopy({ ...this._gridOptions.exportOptions, ...options });
       this._delimiter = this._exportOptions.delimiterOverride || this._exportOptions.delimiter || '';
       this._fileFormat = this._exportOptions.format || FileType.csv;
@@ -105,7 +108,7 @@ export class FileExportService {
 
           // start downloading but add the content property only on the start download not on the event itself
           this.startDownloadFile({ ...downloadOptions, content: dataOutput }); // add content property
-          this.pubSubService.publish(`onAfterExportToFile`, downloadOptions);
+          this._pubSubService.publish(`onAfterExportToFile`, downloadOptions);
           resolve(true);
         } catch (error) {
           reject(error);

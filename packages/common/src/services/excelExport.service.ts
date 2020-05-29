@@ -1,11 +1,12 @@
 import { ExcelExportOption, SlickGrid } from '../interfaces/index';
+import { SharedService } from '../services/shared.service';
 
 export abstract class ExcelExportService {
   /**
    * Initialize the Export Service
    * @param grid
    */
-  init(grid: SlickGrid): void {
+  init(grid: SlickGrid, sharedService: SharedService): void {
     throw new Error('ExcelExportService the "init" method must be implemented');
   }
 

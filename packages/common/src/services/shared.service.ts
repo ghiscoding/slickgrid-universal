@@ -1,4 +1,5 @@
 import { Column, CurrentPagination, DataView, GridOption, SlickGrid } from '../interfaces/index';
+import { PubSubService } from '..';
 
 export class SharedService {
   private _allColumns: Column[];
@@ -10,6 +11,7 @@ export class SharedService {
   private _visibleColumns: Column[];
   private _hideHeaderRowAfterPageLoad = false;
   private _hierarchicalDataset: any[];
+  private _internalPubSubService: PubSubService;
 
   // --
   // public
@@ -82,6 +84,15 @@ export class SharedService {
   /** Setter for knowing if user want to hide header row after 1st page load */
   set hideHeaderRowAfterPageLoad(hideHeaderRowAfterPageLoad: boolean) {
     this._hideHeaderRowAfterPageLoad = hideHeaderRowAfterPageLoad;
+  }
+
+  /** Getter to know if user want to hide header row after 1st page load */
+  get internalPubSubService(): PubSubService {
+    return this._internalPubSubService;
+  }
+  /** Setter for knowing if user want to hide header row after 1st page load */
+  set internalPubSubService(internalPubSubService: PubSubService) {
+    this._internalPubSubService = internalPubSubService;
   }
 
   /** Getter for the Visible Columns in the grid */
