@@ -187,8 +187,8 @@ export class VanillaGridBundle {
     const slickgridConfig = new SlickgridConfig();
     this.sharedService = new SharedService();
     this.translateService = new TranslateService();
-    this.exportService = new FileExportService(this._eventPubSubService, this.translateService);
-    this.excelExportService = new ExcelExportService(this._eventPubSubService, this.translateService);
+    this.exportService = new FileExportService(this._eventPubSubService);
+    this.excelExportService = new ExcelExportService(this._eventPubSubService);
     this.collectionService = new CollectionService(this.translateService);
     this.footerService = new FooterService(this.sharedService, this.translateService);
     const filterFactory = new FilterFactory(slickgridConfig, this.collectionService, this.translateService);

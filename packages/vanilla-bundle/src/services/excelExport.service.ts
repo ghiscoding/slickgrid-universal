@@ -4,8 +4,8 @@ import { EventPubSubService } from './eventPubSub.service';
 
 
 export class ExcelExportService {
-  constructor(eventPubSubService: EventPubSubService, translateService: TranslateService) {
-    // super(eventPubSubService, translateService);
+  constructor(eventPubSubService: EventPubSubService) {
+    // super(eventPubSubService);
   }
 
   init(grid: SlickGrid): void {

@@ -74,6 +74,7 @@ describe('ExportService', () => {
   describe('with I18N Service', () => {
     beforeEach(() => {
       translateService = new TranslateServiceStub();
+      mockGridOptions.i18n = translateService;
 
       // @ts-ignore
       navigator.__defineGetter__('appName', () => 'Netscape');
@@ -94,7 +95,7 @@ describe('ExportService', () => {
         format: FileType.txt
       };
 
-      service = new FileExportService(pubSubServiceStub, translateService);
+      service = new FileExportService(pubSubServiceStub);
     });
 
     afterEach(() => {
@@ -1062,14 +1063,14 @@ describe('ExportService', () => {
   describe('without I18N Service', () => {
     beforeEach(() => {
       translateService = null;
-      service = new FileExportService(pubSubServiceStub, translateService);
+      service = new FileExportService(pubSubServiceStub);
     });
 
     it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {
-      const gridOptionsMock = { enableTranslate: true, enableGridMenu: true, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' } } as GridOption;
+      const gridOptionsMock = { enableTranslate: true, enableGridMenu: true, i18n: null, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' } } as GridOption;
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
-      expect(() => service.init(gridStub)).toThrowError('[Slickgrid-Universal] requires "I18N" to be installed and configured');
+      expect(() => service.init(gridStub)).toThrowError('[Slickgrid-Universal] requires a Translate Service to be passed in the "i18n" Grid Options when "enableTranslate" is enabled.');
     });
   });
 });

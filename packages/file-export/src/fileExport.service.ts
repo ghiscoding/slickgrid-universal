@@ -34,8 +34,9 @@ export class FileExportService {
   private _columnHeaders: Array<KeyTitlePair>;
   private _hasGroupedItems = false;
   private _locales: Locale;
+  private _translaterService: TranslaterService | undefined;
 
-  constructor(private pubSubService: PubSubService, private translaterService: TranslaterService) { }
+  constructor(private pubSubService: PubSubService) { }
 
   private get _datasetIdPropName(): string {
     return this._gridOptions && this._gridOptions.datasetIdPropertyName || 'id';
@@ -61,9 +62,10 @@ export class FileExportService {
 
     // get locales provided by user in main file or else use default English locales via the Constants
     this._locales = this._gridOptions && this._gridOptions.locales || Constants.locales;
+    this._translaterService = this._gridOptions?.i18n;
 
-    if (this._gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
-      throw new Error('[Slickgrid-Universal] requires "I18N" to be installed and configured when the grid option "enableTranslate" is enabled.');
+    if (this._gridOptions.enableTranslate && (!this._translaterService || !this._translaterService.translate)) {
+      throw new Error('[Slickgrid-Universal] requires a Translate Service to be passed in the "i18n" Grid Options when "enableTranslate" is enabled. (example: this.gridOptions = { enableTranslate: true, i18n: this.translaterService })');
     }
   }
 
@@ -175,8 +177,8 @@ export class FileExportService {
 
     // Group By text, it could be set in the export options or from translation or if nothing is found then use the English constant text
     let groupByColumnHeader = this._exportOptions.groupingColumnHeaderTitle;
-    if (!groupByColumnHeader && this._gridOptions.enableTranslate && this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLocale && this.translaterService.getCurrentLocale()) {
-      groupByColumnHeader = this.translaterService.translate(`${getTranslationPrefix(this._gridOptions)}GROUP_BY`);
+    if (!groupByColumnHeader && this._gridOptions.enableTranslate && this._translaterService && this._translaterService.translate && this._translaterService.getCurrentLocale && this._translaterService.getCurrentLocale()) {
+      groupByColumnHeader = this._translaterService.translate(`${getTranslationPrefix(this._gridOptions)}GROUP_BY`);
     } else if (!groupByColumnHeader) {
       groupByColumnHeader = this._locales && this._locales.TEXT_GROUP_BY;
     }
@@ -261,8 +263,8 @@ export class FileExportService {
       // Populate the Grouped Column Header, pull the columnGroup(Key) defined
       columns.forEach((columnDef) => {
         let groupedHeaderTitle = '';
-        if ((columnDef.columnGroupKey || columnDef.columnGroupKey) && this._gridOptions.enableTranslate && this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLocale && this.translaterService.getCurrentLocale()) {
-          groupedHeaderTitle = this.translaterService.translate((columnDef.columnGroupKey || columnDef.columnGroupKey));
+        if ((columnDef.columnGroupKey || columnDef.columnGroupKey) && this._gridOptions.enableTranslate && this._translaterService && this._translaterService.translate && this._translaterService.getCurrentLocale && this._translaterService.getCurrentLocale()) {
+          groupedHeaderTitle = this._translaterService.translate((columnDef.columnGroupKey || columnDef.columnGroupKey));
         } else {
           groupedHeaderTitle = columnDef.columnGroup || '';
         }
@@ -291,8 +293,8 @@ export class FileExportService {
       // Populate the Column Header, pull the name defined
       columns.forEach((columnDef) => {
         let headerTitle = '';
-        if ((columnDef.nameKey || columnDef.nameKey) && this._gridOptions.enableTranslate && this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLocale && this.translaterService.getCurrentLocale()) {
-          headerTitle = this.translaterService.translate((columnDef.nameKey || columnDef.nameKey));
+        if ((columnDef.nameKey || columnDef.nameKey) && this._gridOptions.enableTranslate && this._translaterService && this._translaterService.translate && this._translaterService.getCurrentLocale && this._translaterService.getCurrentLocale()) {
+          headerTitle = this._translaterService.translate((columnDef.nameKey || columnDef.nameKey));
         } else {
           headerTitle = columnDef.name || titleCase(columnDef.field);
         }
