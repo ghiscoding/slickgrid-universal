@@ -1,4 +1,5 @@
-import { Aggregators, Column, FieldType, Filters, SortComparers, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters, GridOption } from '@slickgrid-universal/common';
+import { Aggregators, Column, FieldType, Filters, SortComparers, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters, GridOption, FileType } from '@slickgrid-universal/common';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 import '../material-styles.scss';
@@ -15,6 +16,7 @@ export class Example2 {
   commandQueue = [];
   slickgridLwc;
   slickerGridInstance;
+  excelExportService = new ExcelExportService();
 
   attached() {
     this.initializeGrid();
@@ -22,6 +24,8 @@ export class Example2 {
     const gridContainerElm = document.querySelector(`.grid2`);
 
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
+    gridContainerElm.addEventListener('onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
+    gridContainerElm.addEventListener('onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
@@ -127,12 +131,14 @@ export class Example2 {
       enableExport: true,
       enableFiltering: true,
       enableGrouping: true,
-      excelExportOptions: {
-        sanitizeDataExport: true
-      },
       exportOptions: {
         sanitizeDataExport: true
       },
+      enableExcelExport: true,
+      excelExportOptions: {
+        sanitizeDataExport: true
+      },
+      registerExternalServices: [this.excelExportService],
       showCustomFooter: true, // display some metrics in the bottom custom footer
       customFooterOptions: {
         // optionally display some text on the left footer container
@@ -178,6 +184,10 @@ export class Example2 {
 
   expandAllGroups() {
     this.dataviewObj.expandAllGroups();
+  }
+
+  exportToExcel() {
+    this.excelExportService.exportToExcel({ filename: 'export', format: FileType.xlsx, });
   }
 
   groupByDuration() {

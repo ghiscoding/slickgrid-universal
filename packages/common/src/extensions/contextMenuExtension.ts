@@ -7,20 +7,15 @@ import {
   MenuCommandItemCallbackArgs,
   MenuOptionItemCallbackArgs,
   SlickEventHandler,
+  SlickGrid,
 } from '../interfaces/index';
-import {
-  DelimiterType,
-  ExtensionName,
-  FileType,
-} from '../enums/index';
+import { DelimiterType, ExtensionName, FileType, } from '../enums/index';
 import { ExtensionUtility } from './extensionUtility';
 import { exportWithFormatterWhenDefined } from '../services/export-utilities';
 import { ExportService } from '../services/export.service';
-import { ExcelExportService } from '../services/excelExport.service';
 import { SharedService } from '../services/shared.service';
 import { getTranslationPrefix } from '../services/utilities';
-import { TreeDataService } from '../services/treeData.service';
-import { TranslaterService, SlickGrid } from '..';
+import { ExcelExportService, TranslaterService, TreeDataService } from '../services/index';
 
 // using external non-typed js libraries
 declare const Slick: any;
@@ -31,7 +26,6 @@ export class ContextMenuExtension implements Extension {
   private _userOriginalContextMenu: ContextMenu;
 
   constructor(
-    private excelExportService: ExcelExportService,
     private exportService: ExportService,
     private extensionUtility: ExtensionUtility,
     private sharedService: SharedService,
@@ -240,10 +234,17 @@ export class ContextMenuExtension implements Extension {
             disabled: false,
             command: commandName,
             positionOrder: 52,
-            action: () => this.excelExportService.exportToExcel({
-              filename: 'export',
-              format: FileType.xlsx,
-            }),
+            action: () => {
+              const excelService: ExcelExportService = this.sharedService.externalRegisteredServices.find((service: any) => service.className === 'ExcelExportService');
+              if (excelService?.exportToExcel) {
+                excelService.exportToExcel({
+                  filename: 'export',
+                  format: FileType.xlsx,
+                });
+              } else {
+                throw new Error(`[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Context Menu. Example:: this.gridOptions = { enableExcelExport: true, registerExternalServices: [new ExcelExportService()] };`);
+              }
+            },
           }
         );
       }

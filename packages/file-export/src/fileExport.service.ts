@@ -14,6 +14,7 @@ import {
   Constants,
   DataView,
   ExportOption,
+  ExportService as BaseFileExportService,
   FileType,
   GridOption,
   KeyTitlePair,
@@ -24,7 +25,7 @@ import {
   TranslaterService,
 } from '@slickgrid-universal/common';
 
-export class FileExportService {
+export class FileExportService implements BaseFileExportService {
   private _delimiter = ',';
   private _exportQuoteWrapper = '';
   private _exportOptions: ExportOption;
@@ -37,6 +38,9 @@ export class FileExportService {
   private _locales: Locale;
   private _pubSubService: PubSubService;
   private _translaterService: TranslaterService | undefined;
+
+  /** ExcelExportService class name which is use to find service instance in the external registered services */
+  className = 'FileExportService';
 
   constructor() { }
 

@@ -397,7 +397,7 @@ export interface GridOption {
   registerPlugins?: any | any[];
 
   /** Register any external Services like the ExcelExportService, FileExportService, ... */
-  registerServices?: any[];
+  registerExternalServices?: any[];
 
   /** Row Detail View Plugin options & events (columnId, cssClass, toolTip, width) */
   // rowDetailView?: RowDetailView;

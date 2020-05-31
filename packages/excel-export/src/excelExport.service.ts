@@ -16,6 +16,7 @@ import {
   Column,
   Constants,
   DataView,
+  ExcelExportService as BaseExcelExportService,
   FileType,
   FieldType,
   GridOption,
@@ -36,7 +37,7 @@ import {
   ExcelWorksheet,
 } from './interfaces/index';
 
-export class ExcelExportService {
+export class ExcelExportService implements BaseExcelExportService {
   private _fileFormat = FileType.xlsx;
   private _grid: SlickGrid;
   private _locales: Locale;
@@ -50,6 +51,9 @@ export class ExcelExportService {
   private _pubSubService: PubSubService;
   private _translaterService: TranslaterService | undefined;
   private _workbook: ExcelWorkbook;
+
+  /** ExcelExportService class name which is use to find service instance in the external registered services */
+  className = 'ExcelExportService';
 
   constructor() { }
 

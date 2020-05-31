@@ -52,7 +52,6 @@ import {
 } from '@slickgrid-universal/common';
 
 import { FileExportService } from './services/fileExport.service';
-import { ExcelExportService } from './services/excelExport.service';
 import { TranslateService } from './services/translate.service';
 import { EventPubSubService } from './services/eventPubSub.service';
 import { FooterService } from './services/footer.service';
@@ -94,7 +93,6 @@ export class VanillaGridBundle {
   columnPickerExtension: ColumnPickerExtension;
   checkboxExtension: CheckboxSelectorExtension;
   draggableGroupingExtension: DraggableGroupingExtension;
-  excelExportService: ExcelExportService;
   fileExportService: FileExportService;
   gridMenuExtension: GridMenuExtension;
   groupItemMetaProviderExtension: GroupItemMetaProviderExtension;
@@ -187,7 +185,6 @@ export class VanillaGridBundle {
     const slickgridConfig = new SlickgridConfig();
     this.sharedService = new SharedService();
     this.translateService = new TranslateService();
-    this.excelExportService = new ExcelExportService();
     this.fileExportService = new FileExportService();
     this.collectionService = new CollectionService(this.translateService);
     this.footerService = new FooterService(this.sharedService, this.translateService);
@@ -200,11 +197,11 @@ export class VanillaGridBundle {
     this.autoTooltipExtension = new AutoTooltipExtension(this.extensionUtility, this.sharedService);
     this.cellExternalCopyManagerExtension = new CellExternalCopyManagerExtension(this.extensionUtility, this.sharedService);
     this.cellMenuExtension = new CellMenuExtension(this.extensionUtility, this.sharedService, this.translateService);
-    this.contextMenuExtension = new ContextMenuExtension(this.excelExportService, this.fileExportService, this.extensionUtility, this.sharedService, this.translateService, this.treeDataService);
+    this.contextMenuExtension = new ContextMenuExtension(this.fileExportService, this.extensionUtility, this.sharedService, this.translateService, this.treeDataService);
     this.columnPickerExtension = new ColumnPickerExtension(this.extensionUtility, this.sharedService);
     this.checkboxExtension = new CheckboxSelectorExtension(this.extensionUtility, this.sharedService);
     this.draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this.sharedService);
-    this.gridMenuExtension = new GridMenuExtension(this.excelExportService, this.fileExportService, this.extensionUtility, this.filterService, this.sharedService, this.sortService, this.translateService);
+    this.gridMenuExtension = new GridMenuExtension(this.fileExportService, this.extensionUtility, this.filterService, this.sharedService, this.sortService, this.translateService);
     this.groupItemMetaProviderExtension = new GroupItemMetaProviderExtension(this.sharedService);
     this.headerButtonExtension = new HeaderButtonExtension(this.extensionUtility, this.sharedService);
     this.headerMenuExtension = new HeaderMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.translateService);
@@ -390,10 +387,13 @@ export class VanillaGridBundle {
     this.gridEventService.bindOnClick(this.grid, this.dataView);
 
     // get any possible Services that user want to register
-    const registeringServices: any[] = this._gridOptions.registerServices || [];
+    const registeringServices: any[] = this._gridOptions.registerExternalServices || [];
+    if (Array.isArray(registeringServices)) {
+      this.sharedService.externalRegisteredServices = registeringServices;
+    }
 
     // push all other Services that we want to be registered
-    registeringServices.push(this.gridService, this.gridStateService, this.excelExportService, this.fileExportService);
+    registeringServices.push(this.gridService, this.gridStateService, this.fileExportService);
 
     // when using Grouping/DraggableGrouping/Colspan register its Service
     if (this._gridOptions.createPreHeaderPanel && !this._gridOptions.enableDraggableGrouping) {
@@ -424,9 +424,6 @@ export class VanillaGridBundle {
       slickGrid: this.grid,
 
       // return all available Services (non-singleton)
-      backendService: this._gridOptions && this._gridOptions.backendServiceApi && this._gridOptions.backendServiceApi.service,
-      // excelExportService: this.excelExportService,
-      // exportService: this.exportService,
       filterService: this.filterService,
       gridEventService: this.gridEventService,
       gridStateService: this.gridStateService,
@@ -557,9 +554,9 @@ export class VanillaGridBundle {
   }
 
   /**
- * When dataset changes, we need to refresh the entire grid UI & possibly resize it as well
- * @param dataset
- */
+   * When dataset changes, we need to refresh the entire grid UI & possibly resize it as well
+   * @param dataset
+   */
   refreshGridData(dataset: any[], totalCount?: number) {
     // local grid, check if we need to show the Pagination
     // if so then also check if there's any presets and finally initialize the PaginationService

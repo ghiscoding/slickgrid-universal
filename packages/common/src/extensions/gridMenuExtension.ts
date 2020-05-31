@@ -37,7 +37,6 @@ export class GridMenuExtension implements Extension {
   private _userOriginalGridMenu: GridMenu;
 
   constructor(
-    private excelExportService: ExcelExportService,
     private exportService: ExportService,
     private extensionUtility: ExtensionUtility,
     private filterService: FilterService,
@@ -372,10 +371,15 @@ export class GridMenuExtension implements Extension {
           });
           break;
         case 'export-excel':
-          this.excelExportService.exportToExcel({
-            filename: 'export',
-            format: FileType.xlsx,
-          });
+          const excelService: ExcelExportService = this.sharedService.externalRegisteredServices.find((service: any) => service.className === 'ExcelExportService');
+          if (excelService?.exportToExcel) {
+            excelService.exportToExcel({
+              filename: 'export',
+              format: FileType.xlsx,
+            });
+          } else {
+            throw new Error(`[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Grid Menu. Example:: this.gridOptions = { enableExcelExport: true, registerExternalServices: [new ExcelExportService()] };`);
+          }
           break;
         case 'export-text-delimited':
           this.exportService.exportToFile({
