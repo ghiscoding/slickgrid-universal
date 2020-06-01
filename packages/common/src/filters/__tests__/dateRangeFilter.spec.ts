@@ -1,7 +1,7 @@
 import 'jest-extended';
 
 import { FieldType } from '../../enums/index';
-import { Column, FilterArguments, GridOption } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { Filters } from '..';
 import { DateRangeFilter } from '../dateRangeFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
@@ -21,7 +21,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 describe('DateRangeFilter', () => {
   let divContainer: HTMLDivElement;

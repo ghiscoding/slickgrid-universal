@@ -1,7 +1,7 @@
 import { HeaderButtonExtension } from '../headerButtonExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
-import { GridOption, HeaderButtonOnCommandArgs } from '../../interfaces/index';
+import { GridOption, HeaderButtonOnCommandArgs, SlickGrid } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 declare const Slick: any;
@@ -9,7 +9,7 @@ declare const Slick: any;
 const gridStub = {
   getOptions: jest.fn(),
   registerPlugin: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 const mockAddon = jest.fn().mockImplementation(() => ({
   onCommand: new Slick.Event(),

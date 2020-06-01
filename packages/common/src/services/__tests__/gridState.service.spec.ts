@@ -16,8 +16,10 @@ import {
   CurrentFilter,
   Column,
   CurrentColumn,
+  DataView,
   GridStateChange,
   GridState,
+  SlickGrid,
 } from '../../interfaces/index';
 import { SharedService } from '../shared.service';
 
@@ -50,7 +52,7 @@ const dataViewStub = {
   mapRowsToIds: jest.fn(),
   onBeforePagingInfoChanged: new Slick.Event(),
   onPagingInfoChanged: new Slick.Event(),
-};
+} as unknown as DataView;
 
 const gridStub = {
   autosizeColumns: jest.fn(),
@@ -64,7 +66,7 @@ const gridStub = {
   onColumnsReordered: new Slick.Event(),
   onColumnsResized: new Slick.Event(),
   onSelectedRowsChanged: new Slick.Event(),
-};
+} as unknown as SlickGrid;
 
 const extensionServiceStub = {
   getExtensionByName: (name: string) => { }

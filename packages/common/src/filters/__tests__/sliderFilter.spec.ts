@@ -1,5 +1,5 @@
 import { Filters } from '..';
-import { GridOption, FilterArguments, Column } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { SliderFilter } from '../sliderFilter';
 
 const containerId = 'demo-container';
@@ -17,7 +17,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 describe('SliderFilter', () => {
   let divContainer: HTMLDivElement;

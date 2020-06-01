@@ -2,9 +2,8 @@ import 'jest-extended';
 
 import { PaginationService } from './../pagination.service';
 import { SharedService } from '../shared.service';
-import { Column, GridOption } from '../../interfaces/index';
+import { Column, DataView, GridOption, SlickGrid } from '../../interfaces/index';
 import * as utilities from '../backend-utilities';
-import { SlickGrid } from '../../../dist/commonjs';
 
 declare const Slick: any;
 
@@ -33,7 +32,7 @@ const dataviewStub = {
   onRowsChanged: new Slick.Event(),
   setPagingOptions: jest.fn(),
   setRefreshHints: jest.fn(),
-};
+} as unknown as DataView;
 
 const mockBackendService = {
   resetPaginationOptions: jest.fn(),

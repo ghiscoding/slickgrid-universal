@@ -2,7 +2,7 @@ import { RowMoveManagerExtension } from '../rowMoveManagerExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { Column, GridOption } from '../../interfaces/index';
+import { Column, GridOption, SlickGrid } from '../../interfaces/index';
 
 declare const Slick: any;
 
@@ -11,7 +11,7 @@ const gridStub = {
   getSelectionModel: jest.fn(),
   registerPlugin: jest.fn(),
   setSelectionModel: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 const mockAddon = jest.fn().mockImplementation(() => ({
   init: jest.fn(),

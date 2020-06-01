@@ -5,13 +5,14 @@ import { ExtensionUtility } from '../extensionUtility';
 import { Formatters } from '../../formatters';
 import { SharedService } from '../../services/shared.service';
 import { DelimiterType, FileType } from '../../enums/index';
-import { Column, GridOption, MenuCommandItem } from '../../interfaces/index';
+import { Column, DataView, GridOption, MenuCommandItem, SlickGrid } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { ExcelExportService, ExportService, TreeDataService } from '../../services';
 
 declare const Slick: any;
 
 const excelExportServiceStub = {
+  className: 'ExcelExportService',
   exportToExcel: jest.fn(),
 } as unknown as ExcelExportService;
 
@@ -27,7 +28,7 @@ const dataViewStub = {
   getGrouping: jest.fn(),
   setGrouping: jest.fn(),
   setItems: jest.fn(),
-};
+} as unknown as DataView;
 
 const gridStub = {
   autosizeColumns: jest.fn(),
@@ -42,7 +43,7 @@ const gridStub = {
   setHeaderRowVisibility: jest.fn(),
   setTopPanelVisibility: jest.fn(),
   setPreHeaderPanelVisibility: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 const treeDataServiceStub = {
   init: jest.fn(),
@@ -124,7 +125,7 @@ describe('contextMenuExtension', () => {
       sharedService = new SharedService();
       translateService = new TranslateServiceStub();
       extensionUtility = new ExtensionUtility(sharedService, translateService);
-      extension = new ContextMenuExtension(excelExportServiceStub, exportServiceStub, extensionUtility, sharedService, translateService, treeDataServiceStub);
+      extension = new ContextMenuExtension(exportServiceStub, extensionUtility, sharedService, translateService, treeDataServiceStub);
       translateService.setLocale('fr');
     });
 
@@ -692,6 +693,7 @@ describe('contextMenuExtension', () => {
         const excelExportSpy = jest.spyOn(excelExportServiceStub, 'exportToExcel');
         const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: true, enableExport: false, contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: false } } as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+        jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([excelExportServiceStub]);
         extension.register();
 
         const menuItemCommand = copyGridOptionsMock.contextMenu.commandItems.find((item: MenuCommandItem) => item.command === 'export-excel') as MenuCommandItem;
@@ -821,7 +823,7 @@ describe('contextMenuExtension', () => {
       it('should expect "itemUsabilityOverride" callback on all the Grouping command to return True when there are Groups defined in the grid', () => {
         const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideClearAllGrouping: false } } as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-        const dataviewSpy = jest.spyOn(SharedService.prototype.dataView, 'getGrouping').mockReturnValue([{ grouped: true }]);
+        const dataviewSpy = jest.spyOn(SharedService.prototype.dataView, 'getGrouping').mockReturnValue([{ collapsed: true }]);
         extension.register();
 
         const menuClearCommand = copyGridOptionsMock.contextMenu.commandItems.find((item: MenuCommandItem) => item.command === 'clear-grouping') as MenuCommandItem;
@@ -961,7 +963,7 @@ describe('contextMenuExtension', () => {
     describe('without Translate Service', () => {
       beforeEach(() => {
         translateService = null;
-        extension = new ContextMenuExtension(excelExportServiceStub, exportServiceStub, {} as ExtensionUtility, { gridOptions: { enableTranslate: true } } as SharedService, translateService, treeDataServiceStub);
+        extension = new ContextMenuExtension(exportServiceStub, {} as ExtensionUtility, { gridOptions: { enableTranslate: true } } as SharedService, translateService, treeDataServiceStub);
       });
 
       it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {

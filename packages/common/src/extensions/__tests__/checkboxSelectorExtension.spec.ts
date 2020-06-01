@@ -1,4 +1,4 @@
-import { Column, GridOption } from '../../interfaces/index';
+import { Column, GridOption, SlickGrid } from '../../interfaces/index';
 import { CheckboxSelectorExtension } from '../checkboxSelectorExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
@@ -11,7 +11,7 @@ const gridStub = {
   getSelectionModel: jest.fn(),
   registerPlugin: jest.fn(),
   setSelectionModel: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 const mockAddon = jest.fn().mockImplementation(() => ({
   init: jest.fn(),

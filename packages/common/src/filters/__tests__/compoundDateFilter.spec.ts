@@ -2,7 +2,7 @@ import 'jest-extended';
 
 import { Filters } from '..';
 import { FieldType, OperatorType } from '../../enums/index';
-import { Column, FilterArguments, GridOption } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { CompoundDateFilter } from '../compoundDateFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
@@ -21,7 +21,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 describe('CompoundDateFilter', () => {
   let divContainer: HTMLDivElement;

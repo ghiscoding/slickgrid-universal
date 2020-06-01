@@ -1,5 +1,5 @@
 import { DelimiterType, FileType } from '../../enums/index';
-import { Column, GridOption } from '../../interfaces/index';
+import { Column, DataView, GridOption, SlickGrid } from '../../interfaces/index';
 import { GridMenuExtension } from '../gridMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
@@ -14,6 +14,7 @@ const gridUid = 'slickgrid_124343';
 const containerId = 'demo-container';
 
 const excelExportServiceStub = {
+  className: 'ExcelExportService',
   exportToExcel: jest.fn(),
 } as unknown as ExcelExportService;
 
@@ -31,7 +32,7 @@ const sortServiceStub = {
 
 const dataViewStub = {
   refresh: jest.fn(),
-};
+} as unknown as DataView;
 
 const gridStub = {
   autosizeColumns: jest.fn(),
@@ -44,7 +45,7 @@ const gridStub = {
   setHeaderRowVisibility: jest.fn(),
   setTopPanelVisibility: jest.fn(),
   setPreHeaderPanelVisibility: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 const mockAddon = jest.fn().mockImplementation(() => ({
   init: jest.fn(),
@@ -120,7 +121,7 @@ describe('gridMenuExtension', () => {
       sharedService = new SharedService();
       translateService = new TranslateServiceStub();
       extensionUtility = new ExtensionUtility(sharedService, translateService);
-      extension = new GridMenuExtension(excelExportServiceStub, exportServiceStub, extensionUtility, filterServiceStub, sharedService, sortServiceStub, translateService);
+      extension = new GridMenuExtension(exportServiceStub, extensionUtility, filterServiceStub, sharedService, sortServiceStub, translateService);
       translateService.setLocale('fr');
     });
 
@@ -577,6 +578,7 @@ describe('gridMenuExtension', () => {
       it('should call "exportToExcel" set when the command triggered is "export-excel"', () => {
         const excelExportSpy = jest.spyOn(excelExportServiceStub, 'exportToExcel');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
+        jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([excelExportServiceStub]);
 
         const instance = extension.register();
         instance.onCommand.notify({ grid: gridStub, command: 'export-excel' }, new Slick.EventData(), gridStub);
@@ -723,7 +725,7 @@ describe('gridMenuExtension', () => {
   describe('without Translate Service', () => {
     beforeEach(() => {
       translateService = null;
-      extension = new GridMenuExtension(excelExportServiceStub, exportServiceStub, {} as ExtensionUtility, filterServiceStub, { gridOptions: { enableTranslate: true } } as SharedService, {} as SortService, translateService);
+      extension = new GridMenuExtension(exportServiceStub, {} as ExtensionUtility, filterServiceStub, { gridOptions: { enableTranslate: true } } as SharedService, {} as SortService, translateService);
     });
 
     it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {

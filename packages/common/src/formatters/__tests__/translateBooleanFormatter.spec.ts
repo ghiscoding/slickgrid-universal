@@ -1,4 +1,4 @@
-import { Column } from '../../interfaces/index';
+import { Column, SlickGrid } from '../../interfaces/index';
 import { translateBooleanFormatter } from '../translateBooleanFormatter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
@@ -8,7 +8,7 @@ describe('the Translate Boolean Formatter', () => {
   // stub some methods of the SlickGrid Grid instance
   const gridStub = {
     getOptions: jest.fn()
-  };
+  } as unknown as SlickGrid;
 
   beforeEach(() => {
     translateService = new TranslateServiceStub();
@@ -16,35 +16,35 @@ describe('the Translate Boolean Formatter', () => {
 
   it('should return an empty string when null value is passed', async () => {
     await translateService.setLocale('fr');
-    gridStub.getOptions.mockReturnValueOnce({ i18n: translateService });
+    (gridStub.getOptions as jest.Mock).mockReturnValueOnce({ i18n: translateService });
     const output = translateBooleanFormatter(1, 1, null, {} as Column, {}, gridStub);
     expect(output).toBe('');
   });
 
   it('should return an empty string when empty string value is passed', async () => {
     await translateService.setLocale('fr');
-    gridStub.getOptions.mockReturnValueOnce({ i18n: translateService });
+    (gridStub.getOptions as jest.Mock).mockReturnValueOnce({ i18n: translateService });
     const output = translateBooleanFormatter(1, 1, '', {} as Column, {}, gridStub);
     expect(output).toBe('');
   });
 
   it('should return the translated value when value passed is boolean', async () => {
     await translateService.setLocale('fr');
-    gridStub.getOptions.mockReturnValueOnce({ i18n: translateService });
+    (gridStub.getOptions as jest.Mock).mockReturnValueOnce({ i18n: translateService });
     const output = translateBooleanFormatter(1, 1, 'TRUE', {} as Column, {}, gridStub);
     expect(output).toBe('Vrai');
   });
 
   it('should return the translated value when value passed is a string', async () => {
     await translateService.setLocale('fr');
-    gridStub.getOptions.mockReturnValueOnce({ i18n: translateService });
+    (gridStub.getOptions as jest.Mock).mockReturnValueOnce({ i18n: translateService });
     const output = translateBooleanFormatter(1, 1, 'TRUE', {} as Column, {}, gridStub);
     expect(output).toBe('Vrai');
   });
 
   it('should return the translated value when value passed is a string and i18n service is passed as a ColumnDef Params', async () => {
     await translateService.setLocale('fr');
-    gridStub.getOptions.mockReturnValueOnce({});
+    (gridStub.getOptions as jest.Mock).mockReturnValueOnce({});
     const output = translateBooleanFormatter(1, 1, 'TRUE', { params: { i18n: translateService } } as Column, {}, gridStub);
     expect(output).toBe('Vrai');
   });
@@ -57,13 +57,13 @@ describe('the Translate Boolean Formatter', () => {
 
   it('should convert any type of value to string', async () => {
     await translateService.setLocale('fr');
-    gridStub.getOptions.mockReturnValueOnce({ i18n: translateService });
+    (gridStub.getOptions as jest.Mock).mockReturnValueOnce({ i18n: translateService });
     const output = translateBooleanFormatter(1, 1, 99, {} as Column, {}, gridStub);
     expect(output).toBe('99');
   });
 
   it('should throw an error when no Translate service is not provided to Column Definition and/or Grid Options', () => {
-    gridStub.getOptions.mockReturnValueOnce({});
+    (gridStub.getOptions as jest.Mock).mockReturnValueOnce({});
     expect(() => translateBooleanFormatter(1, 1, null, {} as Column, {}, gridStub)).toThrowError('formatter requires the Translate Service');
   });
 });

@@ -1,5 +1,5 @@
 import { OperatorType } from '../../enums/index';
-import { Column, FilterArguments, GridOption } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { Filters } from '../index';
 import { CompoundSliderFilter } from '../compoundSliderFilter';
 
@@ -18,7 +18,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 describe('CompoundSliderFilter', () => {
   let divContainer: HTMLDivElement;

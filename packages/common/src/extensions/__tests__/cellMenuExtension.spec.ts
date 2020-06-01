@@ -1,14 +1,14 @@
 import { CellMenuExtension } from '../cellMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
-import { Column, GridOption } from '../../interfaces/index';
+import { Column, DataView, GridOption, SlickGrid } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 declare const Slick: any;
 
 const dataViewStub = {
   refresh: jest.fn(),
-};
+} as unknown as DataView;
 
 const gridStub = {
   autosizeColumns: jest.fn(),
@@ -22,7 +22,7 @@ const gridStub = {
   setPreHeaderPanelVisibility: jest.fn(),
   setSortColumns: jest.fn(),
   onSort: new Slick.Event(),
-};
+} as unknown as SlickGrid;
 
 const mockAddon = jest.fn().mockImplementation(() => ({
   init: jest.fn(),
