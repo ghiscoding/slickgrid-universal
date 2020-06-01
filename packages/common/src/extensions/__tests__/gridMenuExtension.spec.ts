@@ -3,7 +3,7 @@ import { Column, DataView, GridOption, SlickGrid } from '../../interfaces/index'
 import { GridMenuExtension } from '../gridMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
-import { ExcelExportService, ExportService, FilterService, SortService } from '../../services';
+import { ExcelExportService, FileExportService, FilterService, SortService } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 declare const Slick: any;
@@ -19,8 +19,9 @@ const excelExportServiceStub = {
 } as unknown as ExcelExportService;
 
 const exportServiceStub = {
+  className: 'FileExportService',
   exportToFile: jest.fn(),
-} as unknown as ExportService;
+} as unknown as FileExportService;
 
 const filterServiceStub = {
   clearFilters: jest.fn(),
@@ -121,7 +122,7 @@ describe('gridMenuExtension', () => {
       sharedService = new SharedService();
       translateService = new TranslateServiceStub();
       extensionUtility = new ExtensionUtility(sharedService, translateService);
-      extension = new GridMenuExtension(exportServiceStub, extensionUtility, filterServiceStub, sharedService, sortServiceStub, translateService);
+      extension = new GridMenuExtension(extensionUtility, filterServiceStub, sharedService, sortServiceStub, translateService);
       translateService.setLocale('fr');
     });
 
@@ -593,6 +594,7 @@ describe('gridMenuExtension', () => {
       it('should call "exportToFile" with CSV set when the command triggered is "export-csv"', () => {
         const exportSpy = jest.spyOn(exportServiceStub, 'exportToFile');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
+        jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([exportServiceStub]);
 
         const instance = extension.register();
         instance.onCommand.notify({ grid: gridStub, command: 'export-csv' }, new Slick.EventData(), gridStub);
@@ -609,6 +611,7 @@ describe('gridMenuExtension', () => {
       it('should call "exportToFile" with CSV set when the command triggered is "export-text-delimited"', () => {
         const exportSpy = jest.spyOn(exportServiceStub, 'exportToFile');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
+        jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([exportServiceStub]);
 
         const instance = extension.register();
         instance.onCommand.notify({ grid: gridStub, command: 'export-text-delimited' }, new Slick.EventData(), gridStub);
@@ -725,7 +728,7 @@ describe('gridMenuExtension', () => {
   describe('without Translate Service', () => {
     beforeEach(() => {
       translateService = null;
-      extension = new GridMenuExtension(exportServiceStub, {} as ExtensionUtility, filterServiceStub, { gridOptions: { enableTranslate: true } } as SharedService, {} as SortService, translateService);
+      extension = new GridMenuExtension({} as ExtensionUtility, filterServiceStub, { gridOptions: { enableTranslate: true } } as SharedService, {} as SortService, translateService);
     });
 
     it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {

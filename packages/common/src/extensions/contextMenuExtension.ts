@@ -12,10 +12,9 @@ import {
 import { DelimiterType, ExtensionName, FileType, } from '../enums/index';
 import { ExtensionUtility } from './extensionUtility';
 import { exportWithFormatterWhenDefined } from '../services/export-utilities';
-import { ExportService } from '../services/export.service';
 import { SharedService } from '../services/shared.service';
 import { getTranslationPrefix } from '../services/utilities';
-import { ExcelExportService, TranslaterService, TreeDataService } from '../services/index';
+import { ExcelExportService, FileExportService, TranslaterService, TreeDataService } from '../services/index';
 
 // using external non-typed js libraries
 declare const Slick: any;
@@ -26,7 +25,6 @@ export class ContextMenuExtension implements Extension {
   private _userOriginalContextMenu: ContextMenu;
 
   constructor(
-    private exportService: ExportService,
     private extensionUtility: ExtensionUtility,
     private sharedService: SharedService,
     private translaterService: TranslaterService,
@@ -212,12 +210,19 @@ export class ContextMenuExtension implements Extension {
             disabled: false,
             command: commandName,
             positionOrder: 51,
-            action: () => this.exportService.exportToFile({
-              delimiter: DelimiterType.comma,
-              filename: 'export',
-              format: FileType.csv,
-              useUtf8WithBom: true,
-            }),
+            action: () => {
+              const excelService: FileExportService = this.sharedService.externalRegisteredServices.find((service: any) => service.className === 'FileExportService');
+              if (excelService?.exportToFile) {
+                excelService.exportToFile({
+                  delimiter: DelimiterType.comma,
+                  filename: 'export',
+                  format: FileType.csv,
+                  useUtf8WithBom: true,
+                });
+              } else {
+                throw new Error(`[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableExport: true, registerExternalServices: [new FileExportService()] };`);
+              }
+            },
           }
         );
       }
@@ -261,12 +266,19 @@ export class ContextMenuExtension implements Extension {
             disabled: false,
             command: commandName,
             positionOrder: 53,
-            action: () => this.exportService.exportToFile({
-              delimiter: DelimiterType.tab,
-              filename: 'export',
-              format: FileType.txt,
-              useUtf8WithBom: true,
-            }),
+            action: () => {
+              const excelService: FileExportService = this.sharedService.externalRegisteredServices.find((service: any) => service.className === 'FileExportService');
+              if (excelService?.exportToFile) {
+                excelService.exportToFile({
+                  delimiter: DelimiterType.tab,
+                  filename: 'export',
+                  format: FileType.txt,
+                  useUtf8WithBom: true,
+                });
+              } else {
+                throw new Error(`[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableExport: true, registerExternalServices: [new FileExportService()] };`);
+              }
+            },
           }
         );
       }

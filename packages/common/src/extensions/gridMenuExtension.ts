@@ -16,7 +16,7 @@ import {
   FileType,
 } from '../enums/index';
 import { ExcelExportService } from '../services/excelExport.service';
-import { ExportService } from '../services/export.service';
+import { FileExportService } from '../services/fileExport.service';
 import { ExtensionUtility } from './extensionUtility';
 import { FilterService } from '../services/filter.service';
 import { SortService } from '../services/sort.service';
@@ -37,7 +37,6 @@ export class GridMenuExtension implements Extension {
   private _userOriginalGridMenu: GridMenu;
 
   constructor(
-    private exportService: ExportService,
     private extensionUtility: ExtensionUtility,
     private filterService: FilterService,
     private sharedService: SharedService,
@@ -363,12 +362,17 @@ export class GridMenuExtension implements Extension {
           this.sharedService.dataView.refresh();
           break;
         case 'export-csv':
-          this.exportService.exportToFile({
-            delimiter: DelimiterType.comma,
-            filename: 'export',
-            format: FileType.csv,
-            useUtf8WithBom: true,
-          });
+          const exportCsvService: FileExportService = this.sharedService.externalRegisteredServices.find((service: any) => service.className === 'FileExportService');
+          if (exportCsvService?.exportToFile) {
+            exportCsvService.exportToFile({
+              delimiter: DelimiterType.comma,
+              filename: 'export',
+              format: FileType.csv,
+              useUtf8WithBom: true,
+            });
+          } else {
+            throw new Error(`[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableExport: true, registerExternalServices: [new FileExportService()] };`);
+          }
           break;
         case 'export-excel':
           const excelService: ExcelExportService = this.sharedService.externalRegisteredServices.find((service: any) => service.className === 'ExcelExportService');
@@ -382,12 +386,17 @@ export class GridMenuExtension implements Extension {
           }
           break;
         case 'export-text-delimited':
-          this.exportService.exportToFile({
-            delimiter: DelimiterType.tab,
-            filename: 'export',
-            format: FileType.txt,
-            useUtf8WithBom: true,
-          });
+          const exportTxtService: FileExportService = this.sharedService.externalRegisteredServices.find((service: any) => service.className === 'FileExportService');
+          if (exportTxtService?.exportToFile) {
+            exportTxtService.exportToFile({
+              delimiter: DelimiterType.tab,
+              filename: 'export',
+              format: FileType.txt,
+              useUtf8WithBom: true,
+            });
+          } else {
+            throw new Error(`[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableExport: true, registerExternalServices: [new FileExportService()] };`);
+          }
           break;
         case 'toggle-filter':
           const showHeaderRow = this.sharedService && this.sharedService.gridOptions && this.sharedService.gridOptions.showHeaderRow || false;

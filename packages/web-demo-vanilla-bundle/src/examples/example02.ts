@@ -1,6 +1,8 @@
 import { Aggregators, Column, FieldType, Filters, SortComparers, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters, GridOption, FileType } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { FileExportService } from '@slickgrid-universal/file-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+
 import { ExampleGridOptions } from './example-grid-options';
 import '../material-styles.scss';
 import './example02.scss';
@@ -138,7 +140,7 @@ export class Example2 {
       excelExportOptions: {
         sanitizeDataExport: true
       },
-      registerExternalServices: [this.excelExportService],
+      registerExternalServices: [this.excelExportService, new FileExportService()],
       showCustomFooter: true, // display some metrics in the bottom custom footer
       customFooterOptions: {
         // optionally display some text on the left footer container

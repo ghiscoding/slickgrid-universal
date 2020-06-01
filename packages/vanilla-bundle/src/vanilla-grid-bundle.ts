@@ -93,7 +93,6 @@ export class VanillaGridBundle {
   columnPickerExtension: ColumnPickerExtension;
   checkboxExtension: CheckboxSelectorExtension;
   draggableGroupingExtension: DraggableGroupingExtension;
-  fileExportService: FileExportService;
   gridMenuExtension: GridMenuExtension;
   groupItemMetaProviderExtension: GroupItemMetaProviderExtension;
   headerButtonExtension: HeaderButtonExtension;
@@ -185,7 +184,6 @@ export class VanillaGridBundle {
     const slickgridConfig = new SlickgridConfig();
     this.sharedService = new SharedService();
     this.translateService = new TranslateService();
-    this.fileExportService = new FileExportService();
     this.collectionService = new CollectionService(this.translateService);
     this.footerService = new FooterService(this.sharedService, this.translateService);
     const filterFactory = new FilterFactory(slickgridConfig, this.collectionService, this.translateService);
@@ -197,11 +195,11 @@ export class VanillaGridBundle {
     this.autoTooltipExtension = new AutoTooltipExtension(this.extensionUtility, this.sharedService);
     this.cellExternalCopyManagerExtension = new CellExternalCopyManagerExtension(this.extensionUtility, this.sharedService);
     this.cellMenuExtension = new CellMenuExtension(this.extensionUtility, this.sharedService, this.translateService);
-    this.contextMenuExtension = new ContextMenuExtension(this.fileExportService, this.extensionUtility, this.sharedService, this.translateService, this.treeDataService);
+    this.contextMenuExtension = new ContextMenuExtension(this.extensionUtility, this.sharedService, this.translateService, this.treeDataService);
     this.columnPickerExtension = new ColumnPickerExtension(this.extensionUtility, this.sharedService);
     this.checkboxExtension = new CheckboxSelectorExtension(this.extensionUtility, this.sharedService);
     this.draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this.sharedService);
-    this.gridMenuExtension = new GridMenuExtension(this.fileExportService, this.extensionUtility, this.filterService, this.sharedService, this.sortService, this.translateService);
+    this.gridMenuExtension = new GridMenuExtension(this.extensionUtility, this.filterService, this.sharedService, this.sortService, this.translateService);
     this.groupItemMetaProviderExtension = new GroupItemMetaProviderExtension(this.sharedService);
     this.headerButtonExtension = new HeaderButtonExtension(this.extensionUtility, this.sharedService);
     this.headerMenuExtension = new HeaderMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.translateService);
@@ -388,12 +386,20 @@ export class VanillaGridBundle {
 
     // get any possible Services that user want to register
     const registeringServices: any[] = this._gridOptions.registerExternalServices || [];
+
+    // when using Salesforce, we want the Export to CSV always enabled without registering it
+    if (this._gridOptions.useSalesforceDefaultGridOptions) {
+      const fileExportService = new FileExportService();
+      registeringServices.push(fileExportService);
+    }
+
+    // at this point, we consider all the registered services as external services, anything else registered afterward aren't external
     if (Array.isArray(registeringServices)) {
       this.sharedService.externalRegisteredServices = registeringServices;
     }
 
     // push all other Services that we want to be registered
-    registeringServices.push(this.gridService, this.gridStateService, this.fileExportService);
+    registeringServices.push(this.gridService, this.gridStateService);
 
     // when using Grouping/DraggableGrouping/Colspan register its Service
     if (this._gridOptions.createPreHeaderPanel && !this._gridOptions.enableDraggableGrouping) {

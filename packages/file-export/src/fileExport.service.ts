@@ -14,7 +14,7 @@ import {
   Constants,
   DataView,
   ExportOption,
-  ExportService as BaseFileExportService,
+  FileExportService as BaseFileExportService,
   FileType,
   GridOption,
   KeyTitlePair,

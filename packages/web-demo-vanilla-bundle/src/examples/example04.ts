@@ -1,5 +1,7 @@
 import { AutocompleteOption, Column, ColumnEditorDualInput, Editors, FieldType, Filters, Formatters, OperatorType, GridOption } from '@slickgrid-universal/common';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+
 import { ExampleGridOptions } from './example-grid-options';
 
 // you can create custom validator to pass to an inline editor
@@ -307,11 +309,12 @@ export class Example4 {
       enableAutoResize: true,
       enableCellNavigation: true,
       enableFiltering: true,
-      enableExport: true,
-      exportOptions: {
+      enableExcelExport: true,
+      excelExportOptions: {
         exportWithFormatter: true,
         sanitizeDataExport: true
       },
+      registerExternalServices: [new ExcelExportService()],
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false

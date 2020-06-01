@@ -1,5 +1,7 @@
 import { Column, GridOption, FormatterResultObject, OnEventArgs, SortDirectionString, Formatters } from '@slickgrid-universal/common';
+import { FileExportService } from '@slickgrid-universal/file-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+
 import '../salesforce-styles.scss';
 import './example50.scss';
 
@@ -162,6 +164,10 @@ export class Example50 {
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableExport: true,
+      exportOptions: {
+        exportWithFormatter: true,
+      },
+      registerExternalServices: [new FileExportService()],
       enableCellNavigation: true,
       enableCheckboxSelector: true,
       enableFiltering: true,
