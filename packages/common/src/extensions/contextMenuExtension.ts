@@ -211,7 +211,8 @@ export class ContextMenuExtension implements Extension {
             command: commandName,
             positionOrder: 51,
             action: () => {
-              const excelService: FileExportService = this.sharedService.externalRegisteredServices.find((service: any) => service.className === 'FileExportService');
+              const registedServices = this.sharedService?.externalRegisteredServices || [];
+              const excelService: FileExportService = registedServices.find((service: any) => service.className === 'FileExportService');
               if (excelService?.exportToFile) {
                 excelService.exportToFile({
                   delimiter: DelimiterType.comma,
@@ -240,7 +241,8 @@ export class ContextMenuExtension implements Extension {
             command: commandName,
             positionOrder: 52,
             action: () => {
-              const excelService: ExcelExportService = this.sharedService.externalRegisteredServices.find((service: any) => service.className === 'ExcelExportService');
+              const registedServices = this.sharedService?.externalRegisteredServices || [];
+              const excelService: ExcelExportService = registedServices.find((service: any) => service.className === 'ExcelExportService');
               if (excelService?.exportToExcel) {
                 excelService.exportToExcel({
                   filename: 'export',
@@ -267,7 +269,8 @@ export class ContextMenuExtension implements Extension {
             command: commandName,
             positionOrder: 53,
             action: () => {
-              const excelService: FileExportService = this.sharedService.externalRegisteredServices.find((service: any) => service.className === 'FileExportService');
+              const registedServices = this.sharedService?.externalRegisteredServices || [];
+              const excelService: FileExportService = registedServices.find((service: any) => service.className === 'FileExportService');
               if (excelService?.exportToFile) {
                 excelService.exportToFile({
                   delimiter: DelimiterType.tab,

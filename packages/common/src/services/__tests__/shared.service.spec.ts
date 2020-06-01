@@ -1,6 +1,7 @@
 import { SharedService } from '../shared.service';
 import { PubSubService } from '../pubSub.service';
 import { Column, CurrentPagination, DataView, GridOption, SlickGrid } from '../../interfaces/index';
+import { ExcelExportService } from '../excelExport.service';
 
 jest.mock('flatpickr', () => { });
 
@@ -252,13 +253,38 @@ describe('Shared Service', () => {
     expect(flag).toEqual(false);
   });
 
+  it('should call "hideHeaderRowAfterPageLoad" GETTER and SETTER expect same value to be returned', () => {
+    service.hideHeaderRowAfterPageLoad = true;
+    expect(service.hideHeaderRowAfterPageLoad).toEqual(true);
+  });
+
   it('should call "internalPubSubService" GETTER and SETTER expect same value to be returned', () => {
     service.internalPubSubService = pubSubServiceStub;
     expect(service.internalPubSubService).toEqual(pubSubServiceStub);
   });
 
-  it('should call "hideHeaderRowAfterPageLoad" GETTER and SETTER expect same value to be returned', () => {
-    service.hideHeaderRowAfterPageLoad = true;
-    expect(service.hideHeaderRowAfterPageLoad).toEqual(true);
+  it('should call "externalRegisteredServices" GETTER and return all columns', () => {
+    // @ts-ignore
+    const mockRegisteredServices = [new ExcelExportService()];
+    const spy = jest.spyOn(service, 'externalRegisteredServices', 'get').mockReturnValue(mockRegisteredServices);
+
+    const columns = service.externalRegisteredServices;
+
+    expect(spy).toHaveBeenCalled();
+    expect(columns).toEqual(mockRegisteredServices);
+  });
+
+  it('should call "externalRegisteredServices" SETTER and expect GETTER to return the same', () => {
+    // @ts-ignore
+    const mockRegisteredServices = [new ExcelExportService()];
+    const getSpy = jest.spyOn(service, 'externalRegisteredServices', 'get');
+    const setSpy = jest.spyOn(service, 'externalRegisteredServices', 'set');
+
+    service.externalRegisteredServices = mockRegisteredServices;
+    const columns = service.externalRegisteredServices;
+
+    expect(getSpy).toHaveBeenCalled();
+    expect(setSpy).toHaveBeenCalled();
+    expect(columns).toEqual(mockRegisteredServices);
   });
 });

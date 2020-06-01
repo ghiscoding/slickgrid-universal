@@ -351,6 +351,8 @@ export class GridMenuExtension implements Extension {
    * @param GridMenuItem args
    */
   private executeGridMenuInternalCustomCommands(e: Event, args: GridMenuItem) {
+    const registedServices = this.sharedService?.externalRegisteredServices || [];
+
     if (args && args.command) {
       switch (args.command) {
         case 'clear-filter':
@@ -362,7 +364,7 @@ export class GridMenuExtension implements Extension {
           this.sharedService.dataView.refresh();
           break;
         case 'export-csv':
-          const exportCsvService: FileExportService = this.sharedService.externalRegisteredServices.find((service: any) => service.className === 'FileExportService');
+          const exportCsvService: FileExportService = registedServices.find((service: any) => service.className === 'FileExportService');
           if (exportCsvService?.exportToFile) {
             exportCsvService.exportToFile({
               delimiter: DelimiterType.comma,
@@ -375,7 +377,7 @@ export class GridMenuExtension implements Extension {
           }
           break;
         case 'export-excel':
-          const excelService: ExcelExportService = this.sharedService.externalRegisteredServices.find((service: any) => service.className === 'ExcelExportService');
+          const excelService: ExcelExportService = registedServices.find((service: any) => service.className === 'ExcelExportService');
           if (excelService?.exportToExcel) {
             excelService.exportToExcel({
               filename: 'export',
@@ -386,7 +388,7 @@ export class GridMenuExtension implements Extension {
           }
           break;
         case 'export-text-delimited':
-          const exportTxtService: FileExportService = this.sharedService.externalRegisteredServices.find((service: any) => service.className === 'FileExportService');
+          const exportTxtService: FileExportService = registedServices.find((service: any) => service.className === 'FileExportService');
           if (exportTxtService?.exportToFile) {
             exportTxtService.exportToFile({
               delimiter: DelimiterType.tab,

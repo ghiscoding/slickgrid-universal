@@ -690,6 +690,39 @@ describe('contextMenuExtension', () => {
         expect(isCommandUsable).toBe(false);
       });
 
+      it('should call "exportToExcel" and expect an error thrown when ExcelExportService is not registered prior to calling the method', () => {
+        const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: true, enableExport: false, contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: false } } as GridOption;
+        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+        jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([]);
+        extension.register();
+
+        const menuItemCommand = copyGridOptionsMock.contextMenu.commandItems.find((item: MenuCommandItem) => item.command === 'export-excel') as MenuCommandItem;
+        expect(() => menuItemCommand.action(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any))
+          .toThrow('[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Context Menu.');
+      });
+
+      it('should call "exportToFile" with CSV and expect an error thrown when FileExportService is not registered prior to calling the method', () => {
+        const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: false, enableExport: true, contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: false, hideExportExcelCommand: true } } as GridOption;
+        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+        jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([]);
+        extension.register();
+
+        const menuItemCommand = copyGridOptionsMock.contextMenu.commandItems.find((item: MenuCommandItem) => item.command === 'export-csv') as MenuCommandItem;
+        expect(() => menuItemCommand.action(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any))
+          .toThrow('[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Context Menu.');
+      });
+
+      it('should call "exportToFile" with Text Delimited and expect an error thrown when FileExportService is not registered prior to calling the method', () => {
+        const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: false, enableExport: true, contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: false, hideExportExcelCommand: true } } as GridOption;
+        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+        extension.register();
+
+        const menuItemCommand = copyGridOptionsMock.contextMenu.commandItems.find((item: MenuCommandItem) => item.command === 'export-text-delimited') as MenuCommandItem;
+        expect(() => menuItemCommand.action(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any))
+          .toThrow('[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Context Menu.');
+      });
+
+
       it('should call "exportToExcel" when the command triggered is "export-excel"', () => {
         const excelExportSpy = jest.spyOn(excelExportServiceStub, 'exportToExcel');
         const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: true, enableExport: false, contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: false } } as GridOption;
@@ -724,7 +757,7 @@ describe('contextMenuExtension', () => {
         });
       });
 
-      it('should call "exportToFile" with CSV set when the command triggered is "export-text-delimited"', () => {
+      it('should call "exportToFile" with Text Delimited set when the command triggered is "export-text-delimited"', () => {
         const exportSpy = jest.spyOn(exportServiceStub, 'exportToFile');
         const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: false, enableExport: true, contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: false, hideExportExcelCommand: true } } as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);

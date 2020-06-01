@@ -576,6 +576,39 @@ describe('gridMenuExtension', () => {
         expect(refreshSpy).toHaveBeenCalled();
       });
 
+      it('should call "exportToExcel" and expect an error thrown when ExcelExportService is not registered prior to calling the method', (done) => {
+        try {
+          jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([]);
+          const instance = extension.register();
+          instance.onCommand.notify({ grid: gridStub, command: 'export-excel' }, new Slick.EventData(), gridStub);
+        } catch (e) {
+          expect(e.message).toContain('[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Grid Menu.');
+          done();
+        }
+      });
+
+      it('should call "exportToFile" with CSV and expect an error thrown when FileExportService is not registered prior to calling the method', (done) => {
+        try {
+          jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([]);
+          const instance = extension.register();
+          instance.onCommand.notify({ grid: gridStub, command: 'export-csv' }, new Slick.EventData(), gridStub);
+        } catch (e) {
+          expect(e.message).toContain('[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Grid Menu.');
+          done();
+        }
+      });
+
+      it('should call "exportToFile" with Text Delimited and expect an error thrown when FileExportService is not registered prior to calling the method', (done) => {
+        try {
+          const instance = extension.register();
+          instance.onCommand.notify({ grid: gridStub, command: 'export-text-delimited' }, new Slick.EventData(), gridStub);
+        } catch (e) {
+          expect(e.message).toContain('[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Grid Menu.');
+          done();
+        }
+      });
+
+
       it('should call "exportToExcel" set when the command triggered is "export-excel"', () => {
         const excelExportSpy = jest.spyOn(excelExportServiceStub, 'exportToExcel');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
@@ -608,7 +641,7 @@ describe('gridMenuExtension', () => {
         });
       });
 
-      it('should call "exportToFile" with CSV set when the command triggered is "export-text-delimited"', () => {
+      it('should call "exportToFile" with Text Delimited set when the command triggered is "export-text-delimited"', () => {
         const exportSpy = jest.spyOn(exportServiceStub, 'exportToFile');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
         jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([exportServiceStub]);
