@@ -4,9 +4,11 @@ import {
   Column,
   ColumnSort,
   CurrentSorter,
+  DataView,
   GridOption,
   MultiColumnSort,
   SlickEventHandler,
+  SlickGrid,
 } from '../../interfaces/index';
 import { SortComparers } from '../../sortComparers';
 import { SortService } from '../sort.service';
@@ -35,7 +37,7 @@ const dataViewStub = {
   sort: jest.fn(),
   reSort: jest.fn(),
   setItems: jest.fn(),
-};
+} as unknown as DataView;
 
 const backendServiceStub = {
   buildQuery: jest.fn(),
@@ -58,7 +60,7 @@ const gridStub = {
   onSort: new Slick.Event(),
   render: jest.fn(),
   setSortColumns: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 const pubSubServiceStub = {
   publish: jest.fn(),

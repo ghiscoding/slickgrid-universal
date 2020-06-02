@@ -1,5 +1,7 @@
 import { Column, GridOption, FormatterResultObject, OnEventArgs, SortDirectionString, Formatters } from '@slickgrid-universal/common';
+import { FileExportService } from '@slickgrid-universal/file-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+
 import '../salesforce-styles.scss';
 import './example50.scss';
 
@@ -162,6 +164,10 @@ export class Example50 {
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableExport: true,
+      exportOptions: {
+        exportWithFormatter: true,
+      },
+      registerExternalServices: [new FileExportService()],
       enableCellNavigation: true,
       enableCheckboxSelector: true,
       enableFiltering: true,
@@ -242,7 +248,7 @@ export class Example50 {
   }
 
   authSellFormatter(row, cell, value, columnDef, dataContext) {
-    //Auth_Sell_Ext_Price__c, Requested_Sell_Net_Multiplier__c
+    // Auth_Sell_Ext_Price__c, Requested_Sell_Net_Multiplier__c
     let authSellPrice = '';
     if (dataContext.Auth_Sell_Ext_Price__c !== undefined) {
       authSellPrice = Slicker.Utilities.formatNumber(dataContext.Auth_Sell_Ext_Price__c, 0, 2, false, '$', '', '.', ',');
@@ -287,7 +293,7 @@ export class Example50 {
     return output;
   }
 
-  fakeHyperlinkFormatter(row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: any) {
+  fakeHyperlinkFormatter(row: number, cell: number, value: any) {
     return value ? `<span class="fake-hyperlink">${value}</span>` : '';
   }
 
@@ -366,7 +372,7 @@ export class Example50 {
     return true;
   }
 
-  customEditableInputFormatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: any) => {
+  customEditableInputFormatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any) => {
     const isEditableLine = this.isItemEditable(dataContext, columnDef);
     value = (value === null || value === undefined) ? '' : value;
 

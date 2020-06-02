@@ -1,4 +1,4 @@
-import { GridOption, EditCommand, Formatter, SelectedRange } from '../../interfaces/index';
+import { GridOption, EditCommand, Formatter, SelectedRange, SlickGrid } from '../../interfaces/index';
 import { Formatters } from '../../formatters';
 import { CellExternalCopyManagerExtension } from '../cellExternalCopyManagerExtension';
 import { ExtensionUtility } from '../extensionUtility';
@@ -13,7 +13,7 @@ const gridStub = {
   getOptions: jest.fn(),
   registerPlugin: jest.fn(),
   setSelectionModel: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 const addonStub = {
   init: jest.fn(),
@@ -36,7 +36,7 @@ Slick.CellSelectionModel = mockSelectionModel;
 
 describe('cellExternalCopyManagerExtension', () => {
   let queueCallback: EditCommand;
-  const mockEventCallback = (e, args: { ranges: SelectedRange[] }) => { };
+  const mockEventCallback = () => { };
   const mockSelectRange = [{ fromCell: 1, fromRow: 1, toCell: 1, toRow: 1 }] as SelectedRange[];
   const mockSelectRangeEvent = { ranges: mockSelectRange };
 

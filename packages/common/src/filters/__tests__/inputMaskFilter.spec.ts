@@ -1,5 +1,5 @@
 import { InputMaskFilter } from '../inputMaskFilter';
-import { GridOption, FilterArguments, Column } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { Filters } from '..';
 
 const containerId = 'demo-container';
@@ -16,7 +16,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 describe('InputMaskFilter', () => {
   let divContainer: HTMLDivElement;

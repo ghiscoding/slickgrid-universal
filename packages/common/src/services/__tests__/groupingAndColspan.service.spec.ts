@@ -1,5 +1,5 @@
 import { GroupingAndColspanService } from '../groupingAndColspan.service';
-import { GridOption, SlickEventHandler, Column } from '../../interfaces/index';
+import { Column, DataView, GridOption, SlickEventHandler, SlickGrid } from '../../interfaces/index';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 
 declare const Slick: any;
@@ -17,7 +17,7 @@ const dataViewStub = {
   sort: jest.fn(),
   onRowCountChanged: new Slick.Event(),
   reSort: jest.fn(),
-};
+} as unknown as DataView;
 
 const resizerPluginStub = {
   init: jest.fn(),
@@ -33,6 +33,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeadersWidth: jest.fn(),
   getHeaderColumnWidthDiff: jest.fn(),
+  getPluginByName: jest.fn(),
   getPreHeaderPanel: jest.fn(),
   getPreHeaderPanelLeft: jest.fn(),
   getPreHeaderPanelRight: jest.fn(),
@@ -44,7 +45,7 @@ const gridStub = {
   render: jest.fn(),
   setColumns: jest.fn(),
   setSortColumns: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 const mockExtensionUtility = {
   loadExtensionDynamically: jest.fn(),
@@ -98,7 +99,7 @@ describe('GroupingAndColspanService', () => {
   it('should not call the "renderPreHeaderRowGroupingTitles" when there are no grid options', () => {
     gridStub.getOptions = undefined;
     const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
-    service.init(gridStub, resizerPluginStub);
+    service.init(gridStub);
     expect(spy).not.toHaveBeenCalled();
   });
 
@@ -113,15 +114,16 @@ describe('GroupingAndColspanService', () => {
         { id: 'start', name: 'Start', field: 'start' },
       ];
       gridStub.getColumns = jest.fn();
+      jest.spyOn(gridStub, 'getPluginByName').mockReturnValue(resizerPluginStub);
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      jest.spyOn(gridStub, 'getPreHeaderPanel').mockReturnValue(`<div style="width: 2815px; left: -1000px;" class="slick-header-columns"></div>`);
+      jest.spyOn(gridStub, 'getPreHeaderPanel').mockReturnValue(`<div style="width: 2815px; left: -1000px;" class="slick-header-columns"></div>` as unknown as HTMLElement);
     });
 
     it('should call the "renderPreHeaderRowGroupingTitles" on initial load even when there are no column definitions', () => {
       const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
       gridStub.getColumns = undefined;
 
-      service.init(gridStub, resizerPluginStub);
+      service.init(gridStub);
       jest.runAllTimers(); // fast-forward timer
 
       expect(spy).toHaveBeenCalledTimes(1);
@@ -132,7 +134,7 @@ describe('GroupingAndColspanService', () => {
     it('should call the "renderPreHeaderRowGroupingTitles" after triggering a grid "onSort"', () => {
       const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
 
-      service.init(gridStub, resizerPluginStub);
+      service.init(gridStub);
       gridStub.onSort.notify({ impactedColumns: mockColumns }, new Slick.EventData(), gridStub);
       jest.runAllTimers(); // fast-forward timer
 
@@ -144,7 +146,7 @@ describe('GroupingAndColspanService', () => {
     it('should call the "renderPreHeaderRowGroupingTitles" after triggering a grid "onColumnsResized"', () => {
       const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
 
-      service.init(gridStub, resizerPluginStub);
+      service.init(gridStub);
       gridStub.onColumnsResized.notify({}, new Slick.EventData(), gridStub);
       jest.runAllTimers(); // fast-forward timer
 
@@ -156,7 +158,7 @@ describe('GroupingAndColspanService', () => {
     it('should call the "renderPreHeaderRowGroupingTitles" after triggering a grid "onColumnsReordered"', () => {
       const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
 
-      service.init(gridStub, resizerPluginStub);
+      service.init(gridStub);
       gridStub.onColumnsReordered.notify({}, new Slick.EventData(), gridStub);
       jest.runAllTimers(); // fast-forward timer
 
@@ -168,7 +170,7 @@ describe('GroupingAndColspanService', () => {
     it('should call the "renderPreHeaderRowGroupingTitles" after triggering a dataView "onColumnsResized"', () => {
       const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
 
-      service.init(gridStub, resizerPluginStub);
+      service.init(gridStub);
       dataViewStub.onRowCountChanged.notify({ previous: 1, current: 2, dataView: dataViewStub, callingOnRowsChanged: 1 }, new Slick.EventData(), gridStub);
       jest.runAllTimers(); // fast-forward timer
 
@@ -180,7 +182,7 @@ describe('GroupingAndColspanService', () => {
     it('should call the "renderPreHeaderRowGroupingTitles" after triggering a grid resize', () => {
       const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
 
-      service.init(gridStub, resizerPluginStub);
+      service.init(gridStub);
       resizerPluginStub.onGridAfterResize.notify({}, new Slick.EventData(), gridStub);
       jest.runAllTimers(); // fast-forward timer
 
@@ -196,7 +198,7 @@ describe('GroupingAndColspanService', () => {
       const getColSpy = jest.spyOn(gridStub, 'getColumns');
       const setColSpy = jest.spyOn(gridStub, 'setColumns');
 
-      service.init(gridStub, resizerPluginStub);
+      service.init(gridStub);
       service.translateGroupingAndColSpan();
 
       expect(getColSpy).toHaveBeenCalled();
@@ -209,7 +211,7 @@ describe('GroupingAndColspanService', () => {
       const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
       const divHeaderColumns = document.getElementsByClassName('slick-header-columns');
 
-      service.init(gridStub, resizerPluginStub);
+      service.init(gridStub);
       jest.runAllTimers(); // fast-forward timer
 
       expect(spy).toHaveBeenCalledTimes(1);
@@ -227,7 +229,7 @@ describe('GroupingAndColspanService', () => {
       const preHeaderRightSpy = jest.spyOn(gridStub, 'getPreHeaderPanelRight');
       const divHeaderColumns = document.getElementsByClassName('slick-header-columns');
 
-      service.init(gridStub, resizerPluginStub);
+      service.init(gridStub);
       jest.runAllTimers(); // fast-forward timer
 
       expect(preHeaderLeftSpy).toHaveBeenCalledTimes(1);

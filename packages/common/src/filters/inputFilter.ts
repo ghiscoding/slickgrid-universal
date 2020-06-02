@@ -5,6 +5,7 @@ import {
   FilterArguments,
   FilterCallback,
   GridOption,
+  SlickGrid,
 } from '../interfaces/index';
 import { OperatorType, OperatorString, SearchTerm } from '../enums/index';
 
@@ -13,7 +14,7 @@ export class InputFilter implements Filter {
   protected _shouldTriggerQuery = true;
   protected _inputType = 'text';
   protected $filterElm: any;
-  grid: any;
+  grid: SlickGrid;
   searchTerms: SearchTerm[];
   columnDef: Column;
   callback: FilterCallback;

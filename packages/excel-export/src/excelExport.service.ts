@@ -15,12 +15,16 @@ import {
   // interfaces
   Column,
   Constants,
+  DataView,
+  ExcelExportService as BaseExcelExportService,
   FileType,
   FieldType,
   GridOption,
   KeyTitlePair,
   Locale,
   PubSubService,
+  SharedService,
+  SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
 
@@ -33,10 +37,9 @@ import {
   ExcelWorksheet,
 } from './interfaces/index';
 
-export class ExcelExportService {
+export class ExcelExportService implements BaseExcelExportService {
   private _fileFormat = FileType.xlsx;
-  private _dataView: any;
-  private _grid: any;
+  private _grid: SlickGrid;
   private _locales: Locale;
   private _groupedColumnHeaders: Array<KeyTitlePair>;
   private _columnHeaders: Array<KeyTitlePair>;
@@ -45,12 +48,22 @@ export class ExcelExportService {
   private _sheet: ExcelWorksheet;
   private _stylesheet: ExcelStylesheet;
   private _stylesheetFormats: any;
+  private _pubSubService: PubSubService;
+  private _translaterService: TranslaterService | undefined;
   private _workbook: ExcelWorkbook;
 
-  constructor(private pubSubService: PubSubService, private translaterService: TranslaterService) { }
+  /** ExcelExportService class name which is use to find service instance in the external registered services */
+  className = 'ExcelExportService';
 
-  private get datasetIdName(): string {
-    return this._gridOptions && this._gridOptions.datasetIdPropertyName || 'id';
+  constructor() { }
+
+  private get _datasetIdPropName(): string {
+    return this._gridOptions?.datasetIdPropertyName ?? 'id';
+  }
+
+  /** Getter of SlickGrid DataView object */
+  get _dataView(): DataView {
+    return this._grid?.getData();
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
@@ -61,18 +74,18 @@ export class ExcelExportService {
   /**
    * Initialize the Export Service
    * @param grid
-   * @param gridOptions
-   * @param dataView
+   * @param sharedService
    */
-  init(grid: any, dataView: any): void {
+  init(grid: SlickGrid, sharedService: SharedService): void {
     this._grid = grid;
-    this._dataView = dataView;
+    this._pubSubService = sharedService.internalPubSubService;
 
     // get locales provided by user in main file or else use default English locales via the Constants
-    this._locales = this._gridOptions && this._gridOptions.locales || Constants.locales;
+    this._locales = this._gridOptions?.locales ?? Constants.locales;
+    this._translaterService = this._gridOptions?.i18n;
 
-    if (this._gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
-      throw new Error('[Slickgrid-Universal] requires "I18N" to be installed and configured when the grid option "enableTranslate" is enabled.');
+    if (this._gridOptions.enableTranslate && (!this._translaterService || !this._translaterService.translate)) {
+      throw new Error('[Slickgrid-Universal] requires a Translate Service to be passed in the "i18n" Grid Options when "enableTranslate" is enabled. (example: this.gridOptions = { enableTranslate: true, i18n: this.translaterService })');
     }
   }
 
@@ -91,7 +104,7 @@ export class ExcelExportService {
     }
 
     return new Promise((resolve, reject) => {
-      this.pubSubService.publish(`onBeforeExportToExcel`, true);
+      this._pubSubService.publish(`onBeforeExportToExcel`, true);
       this._excelExportOptions = deepCopy({ ...this._gridOptions.excelExportOptions, ...options });
       this._fileFormat = this._excelExportOptions.format || FileType.xlsx;
 
@@ -147,7 +160,7 @@ export class ExcelExportService {
 
           // start downloading but add the Blob property only on the start download not on the event itself
           this.startDownloadFile({ ...downloadOptions, blob: excelBlob, data: this._sheet.data });
-          this.pubSubService.publish(`onAfterExportToExcel`, downloadOptions);
+          this._pubSubService.publish(`onAfterExportToExcel`, downloadOptions);
           resolve(true);
         } catch (error) {
           reject(error);
@@ -368,8 +381,8 @@ export class ExcelExportService {
   private getGroupColumnTitle(): string | null {
     // Group By text, it could be set in the export options or from translation or if nothing is found then use the English constant text
     let groupByColumnHeader = this._excelExportOptions.groupingColumnHeaderTitle;
-    if (!groupByColumnHeader && this._gridOptions.enableTranslate && this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLocale && this.translaterService.getCurrentLocale()) {
-      groupByColumnHeader = this.translaterService.translate(`${getTranslationPrefix(this._gridOptions)}GROUP_BY`);
+    if (!groupByColumnHeader && this._gridOptions.enableTranslate && this._translaterService?.translate) {
+      groupByColumnHeader = this._translaterService.translate(`${getTranslationPrefix(this._gridOptions)}GROUP_BY`);
     } else if (!groupByColumnHeader) {
       groupByColumnHeader = this._locales && this._locales.TEXT_GROUP_BY;
     }
@@ -397,8 +410,8 @@ export class ExcelExportService {
       // Populate the Grouped Column Header, pull the columnGroup(Key) defined
       columns.forEach((columnDef) => {
         let groupedHeaderTitle = '';
-        if ((columnDef.columnGroupKey || columnDef.columnGroupKey) && this._gridOptions.enableTranslate && this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLocale && this.translaterService.getCurrentLocale()) {
-          groupedHeaderTitle = this.translaterService.translate((columnDef.columnGroupKey || columnDef.columnGroupKey));
+        if ((columnDef.columnGroupKey || columnDef.columnGroupKey) && this._gridOptions.enableTranslate && this._translaterService?.translate) {
+          groupedHeaderTitle = this._translaterService.translate((columnDef.columnGroupKey || columnDef.columnGroupKey));
         } else {
           groupedHeaderTitle = columnDef.columnGroup || '';
         }
@@ -427,8 +440,8 @@ export class ExcelExportService {
       // Populate the Column Header, pull the name defined
       columns.forEach((columnDef) => {
         let headerTitle = '';
-        if ((columnDef.nameKey || columnDef.nameKey) && this._gridOptions.enableTranslate && this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLocale && this.translaterService.getCurrentLocale()) {
-          headerTitle = this.translaterService.translate((columnDef.nameKey || columnDef.nameKey));
+        if ((columnDef.nameKey || columnDef.nameKey) && this._gridOptions.enableTranslate && this._translaterService?.translate) {
+          headerTitle = this._translaterService.translate((columnDef.nameKey || columnDef.nameKey));
         } else {
           headerTitle = columnDef.name || titleCase(columnDef.field);
         }
@@ -455,9 +468,9 @@ export class ExcelExportService {
     // loop through all the grid rows of data
     for (let rowNumber = 0; rowNumber < lineCount; rowNumber++) {
       const itemObj = this._dataView.getItem(rowNumber);
-      if (itemObj !== null && itemObj !== undefined) {
+      if (itemObj) {
         // Normal row (not grouped by anything) would have an ID which was predefined in the Grid Columns definition
-        if (itemObj[this.datasetIdName] !== null && itemObj[this.datasetIdName] !== undefined) {
+        if (itemObj[this._datasetIdPropName] !== null && itemObj[this._datasetIdPropName] !== undefined) {
           // get regular row item data
           originalDaraArray.push(this.readRegularRowData(columns, rowNumber, itemObj));
         } else if (this._hasGroupedItems && itemObj.__groupTotals === undefined) {

@@ -16,8 +16,10 @@ import {
   CurrentFilter,
   Column,
   CurrentColumn,
+  DataView,
   GridStateChange,
   GridState,
+  SlickGrid,
 } from '../../interfaces/index';
 import { SharedService } from '../shared.service';
 
@@ -50,10 +52,11 @@ const dataViewStub = {
   mapRowsToIds: jest.fn(),
   onBeforePagingInfoChanged: new Slick.Event(),
   onPagingInfoChanged: new Slick.Event(),
-};
+} as unknown as DataView;
 
 const gridStub = {
   autosizeColumns: jest.fn(),
+  getData: () => dataViewStub,
   getScrollbarDimensions: jest.fn(),
   getOptions: () => gridOptionMock,
   getColumns: jest.fn(),
@@ -63,7 +66,7 @@ const gridStub = {
   onColumnsReordered: new Slick.Event(),
   onColumnsResized: new Slick.Event(),
   onSelectedRowsChanged: new Slick.Event(),
-};
+} as unknown as SlickGrid;
 
 const extensionServiceStub = {
   getExtensionByName: (name: string) => { }
@@ -82,7 +85,7 @@ describe('GridStateService', () => {
   beforeEach(() => {
     sharedService = new SharedService();
     service = new GridStateService(extensionServiceStub, filterServiceStub, mockPubSub, sharedService, sortServiceStub);
-    service.init(gridStub, dataViewStub);
+    service.init(gridStub);
     jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(true);
   });
 
@@ -109,7 +112,7 @@ describe('GridStateService', () => {
       const gridStateSpy = jest.spyOn(service, 'subscribeToAllGridChanges');
       const pubSubSpy = jest.spyOn(mockPubSub, 'subscribe');
 
-      service.init(gridStub, dataViewStub);
+      service.init(gridStub);
       jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(true);
 
       expect(gridStateSpy).toHaveBeenCalled();
@@ -155,7 +158,7 @@ describe('GridStateService', () => {
         const gridStateSpy = jest.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
         const extensionSpy = jest.spyOn(extensionServiceStub, 'getExtensionByName').mockReturnValue(extensionMock);
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(true);
         slickgridEvent.notify({ columns: columnsMock }, new Slick.EventData(), gridStub);
 
@@ -179,7 +182,7 @@ describe('GridStateService', () => {
         const gridColumnResizeSpy = jest.spyOn(gridStub.onColumnsResized, 'subscribe');
         const gridStateSpy = jest.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(true);
         gridStub.onColumnsReordered.notify({ impactedColumns: columnsMock }, new Slick.EventData(), gridStub);
         service.resetColumns();
@@ -386,7 +389,7 @@ describe('GridStateService', () => {
         jest.spyOn(service, 'getCurrentFilters').mockReturnValue(filterMock);
         jest.spyOn(service, 'getCurrentSorters').mockReturnValue(sorterMock);
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         service.selectedRowDataContextIds = mockRowIds;
         gridStub.onSelectedRowsChanged.notify({ rows: mockRowIndexes, previousSelectedRows: [] });
 
@@ -433,7 +436,7 @@ describe('GridStateService', () => {
         const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
         const mapRowsSpy = jest.spyOn(dataViewStub, 'mapRowsToIds').mockReturnValue(mockRowIds);
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         service.selectedRowDataContextIds = mockRowIds;
 
         // the regular event flow is 1.onBeforePagingInfoChanged, 2.onPagingInfoChanged then 3.onSelectedRowsChanged
@@ -468,7 +471,7 @@ describe('GridStateService', () => {
         jest.spyOn(service, 'getCurrentPagination').mockReturnValue(paginationMock);
         const setSelectSpy = jest.spyOn(gridStub, 'setSelectedRows');
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         service.selectedRowDataContextIds = mockRowIds;
 
         // this comparison which has different arrays, will trigger the expectation we're looking for
@@ -502,7 +505,7 @@ describe('GridStateService', () => {
         const mapRowsSpy = jest.spyOn(dataViewStub, 'mapRowsToIds').mockReturnValue(mockRowIds);
         const setSelectSpy = jest.spyOn(gridStub, 'setSelectedRows');
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         service.selectedRowDataContextIds = mockRowIds;
 
         // this comparison which has different arrays, will trigger the expectation we're looking for
@@ -544,7 +547,7 @@ describe('GridStateService', () => {
         jest.spyOn(service, 'getCurrentPagination').mockReturnValue(paginationMock);
         const mapRowsSpy = jest.spyOn(dataViewStub, 'mapRowsToIds').mockReturnValue(mockNewDataIds);
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         service.selectedRowDataContextIds = mockPreviousDataIds;
 
         // the regular event flow is 1.onBeforePagingInfoChanged, 2.onPagingInfoChanged then 3.onSelectedRowsChanged
@@ -571,7 +574,7 @@ describe('GridStateService', () => {
         jest.spyOn(service, 'getCurrentPagination').mockReturnValue(paginationMock);
         const mapRowsSpy = jest.spyOn(dataViewStub, 'mapRowsToIds').mockReturnValue([555]); // remove [555], will remain [333, 777]
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         service.selectedRowDataContextIds = mockPreviousDataIds;
 
         // the regular event flow is 1.onBeforePagingInfoChanged, 2.onPagingInfoChanged then 3.onSelectedRowsChanged
@@ -608,7 +611,7 @@ describe('GridStateService', () => {
         jest.spyOn(service, 'getCurrentPagination').mockReturnValue(paginationMock);
         const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
 
-        service.init(gridStub, dataViewStub);
+        service.init(gridStub);
         service.selectedRowDataContextIds = mockRowIds;
 
         fnCallbacks['onFilterChanged'](filterMock);

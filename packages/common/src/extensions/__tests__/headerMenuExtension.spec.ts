@@ -1,7 +1,7 @@
 import { HeaderMenuExtension } from '../headerMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
-import { Column, ColumnSort, GridOption } from '../../interfaces/index';
+import { Column, ColumnSort, DataView, GridOption, SlickGrid } from '../../interfaces/index';
 import { FilterService, SortService, PubSubService } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
@@ -16,6 +16,7 @@ const pubSubServiceStub = {
   publish: jest.fn(),
   subscribe: jest.fn(),
   unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
 } as PubSubService;
 
 const sortServiceStub = {
@@ -28,7 +29,7 @@ const sortServiceStub = {
 
 const dataViewStub = {
   refresh: jest.fn(),
-};
+} as unknown as DataView;
 
 const gridStub = {
   autosizeColumns: jest.fn(),
@@ -42,7 +43,7 @@ const gridStub = {
   setPreHeaderPanelVisibility: jest.fn(),
   setSortColumns: jest.fn(),
   onSort: new Slick.Event(),
-};
+} as unknown as SlickGrid;
 
 const mockAddon = jest.fn().mockImplementation(() => ({
   init: jest.fn(),

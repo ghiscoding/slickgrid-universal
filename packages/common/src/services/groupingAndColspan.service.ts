@@ -1,7 +1,9 @@
 import {
   Column,
+  DataView,
   GridOption,
   SlickEventHandler,
+  SlickGrid,
 } from './../interfaces/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 
@@ -11,10 +13,15 @@ declare const Slick: any;
 
 export class GroupingAndColspanService {
   private _eventHandler: SlickEventHandler;
-  private _grid: any;
+  private _grid: SlickGrid;
 
   constructor(private extensionUtility: ExtensionUtility) {
     this._eventHandler = new Slick.EventHandler();
+  }
+
+  /** Getter of SlickGrid DataView object */
+  get _dataView(): DataView {
+    return this._grid && this._grid.getData && this._grid.getData();
   }
 
   /** Getter of the SlickGrid Event Handler */
@@ -37,9 +44,9 @@ export class GroupingAndColspanService {
    * @param {object} grid
    * @param {object} resizerPlugin
    */
-  init(grid: any, resizerPlugin: any) {
+  init(grid: SlickGrid) {
     this._grid = grid;
-    const dataView = grid.getData && grid.getData();
+    const resizerPlugin = grid.getPluginByName('Resizer');
 
     if (grid && this._gridOptions) {
       // When dealing with Pre-Header Grouping colspan, we need to re-create the pre-header in multiple occasions
@@ -48,8 +55,10 @@ export class GroupingAndColspanService {
         this._eventHandler.subscribe(grid.onSort, () => this.renderPreHeaderRowGroupingTitles());
         this._eventHandler.subscribe(grid.onColumnsResized, () => this.renderPreHeaderRowGroupingTitles());
         this._eventHandler.subscribe(grid.onColumnsReordered, () => this.renderPreHeaderRowGroupingTitles());
-        this._eventHandler.subscribe(resizerPlugin.onGridAfterResize, () => this.renderPreHeaderRowGroupingTitles());
-        this._eventHandler.subscribe(dataView.onRowCountChanged, () => this.renderPreHeaderRowGroupingTitles());
+        this._eventHandler.subscribe(this._dataView.onRowCountChanged, () => this.renderPreHeaderRowGroupingTitles());
+        if (resizerPlugin && resizerPlugin.onGridAfterResize) {
+          this._eventHandler.subscribe(resizerPlugin.onGridAfterResize, () => this.renderPreHeaderRowGroupingTitles());
+        }
 
         // also not sure why at this point, but it seems that I need to call the 1st create in a delayed execution
         // probably some kind of timing issues and delaying it until the grid is fully ready does help

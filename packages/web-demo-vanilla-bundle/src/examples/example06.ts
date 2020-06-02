@@ -7,7 +7,9 @@ import {
   Formatter,
   Formatters,
 } from '@slickgrid-universal/common';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+
 import './example06.scss';
 import { ExampleGridOptions } from './example-grid-options';
 
@@ -64,7 +66,12 @@ export class Example6 {
       },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
-      enableExport: true,
+      enableExcelExport: true,
+      excelExportOptions: {
+        exportWithFormatter: true,
+        sanitizeDataExport: true
+      },
+      registerExternalServices: [new ExcelExportService()],
       enableFiltering: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       multiColumnSort: false,

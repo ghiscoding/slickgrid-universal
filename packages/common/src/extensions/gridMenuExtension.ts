@@ -8,6 +8,7 @@ import {
   Locale,
   MenuCommandItemCallbackArgs,
   SlickEventHandler,
+  SlickGrid,
 } from '../interfaces/index';
 import {
   DelimiterType,
@@ -15,7 +16,7 @@ import {
   FileType,
 } from '../enums/index';
 import { ExcelExportService } from '../services/excelExport.service';
-import { ExportService } from '../services/export.service';
+import { FileExportService } from '../services/fileExport.service';
 import { ExtensionUtility } from './extensionUtility';
 import { FilterService } from '../services/filter.service';
 import { SortService } from '../services/sort.service';
@@ -36,8 +37,6 @@ export class GridMenuExtension implements Extension {
   private _userOriginalGridMenu: GridMenu;
 
   constructor(
-    private excelExportService: ExcelExportService,
-    private exportService: ExportService,
     private extensionUtility: ExtensionUtility,
     private filterService: FilterService,
     private sharedService: SharedService,
@@ -67,7 +66,7 @@ export class GridMenuExtension implements Extension {
     return this._addon;
   }
 
-  /** Create the Header Menu and expose all the available hooks that user can subscribe (onCommand, onBeforeMenuShow, ...) */
+  /** Register the 3rd party addon (plugin) */
   register(): any {
     if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
@@ -99,20 +98,20 @@ export class GridMenuExtension implements Extension {
           this.sharedService.gridOptions.gridMenu.onExtensionRegistered(this._addon);
         }
         if (this.sharedService.gridOptions.gridMenu && typeof this.sharedService.gridOptions.gridMenu.onBeforeMenuShow === 'function') {
-          this._eventHandler.subscribe(this._addon.onBeforeMenuShow, (e: any, args: { grid: any; menu: any; columns: Column[] }) => {
+          this._eventHandler.subscribe(this._addon.onBeforeMenuShow, (e: any, args: { grid: SlickGrid; menu: any; columns: Column[] }) => {
             if (this.sharedService.gridOptions.gridMenu && this.sharedService.gridOptions.gridMenu.onBeforeMenuShow) {
               this.sharedService.gridOptions.gridMenu.onBeforeMenuShow(e, args);
             }
           });
         }
         if (this.sharedService.gridOptions.gridMenu && typeof this.sharedService.gridOptions.gridMenu.onAfterMenuShow === 'function') {
-          this._eventHandler.subscribe(this._addon.onAfterMenuShow, (e: any, args: { grid: any; menu: any; columns: Column[] }) => {
+          this._eventHandler.subscribe(this._addon.onAfterMenuShow, (e: any, args: { grid: SlickGrid; menu: any; columns: Column[] }) => {
             if (this.sharedService.gridOptions.gridMenu && this.sharedService.gridOptions.gridMenu.onAfterMenuShow) {
               this.sharedService.gridOptions.gridMenu.onAfterMenuShow(e, args);
             }
           });
         }
-        this._eventHandler.subscribe(this._addon.onColumnsChanged, (e: any, args: { grid: any; allColumns: Column[]; columns: Column[]; }) => {
+        this._eventHandler.subscribe(this._addon.onColumnsChanged, (e: any, args: { grid: SlickGrid; allColumns: Column[]; columns: Column[]; }) => {
           this._areVisibleColumnDifferent = true;
           if (this.sharedService.gridOptions.gridMenu && typeof this.sharedService.gridOptions.gridMenu.onColumnsChanged === 'function') {
             this.sharedService.gridOptions.gridMenu.onColumnsChanged(e, args);
@@ -127,7 +126,7 @@ export class GridMenuExtension implements Extension {
             this.sharedService.gridOptions.gridMenu.onCommand(e, args);
           }
         });
-        this._eventHandler.subscribe(this._addon.onMenuClose, (e: any, args: { grid: any; menu: any; allColumns: Column[], visibleColumns: Column[] }) => {
+        this._eventHandler.subscribe(this._addon.onMenuClose, (e: any, args: { grid: SlickGrid; menu: any; allColumns: Column[], visibleColumns: Column[] }) => {
           if (this.sharedService.gridOptions.gridMenu && typeof this.sharedService.gridOptions.gridMenu.onMenuClose === 'function') {
             this.sharedService.gridOptions.gridMenu.onMenuClose(e, args);
           }
@@ -352,6 +351,8 @@ export class GridMenuExtension implements Extension {
    * @param GridMenuItem args
    */
   private executeGridMenuInternalCustomCommands(e: Event, args: GridMenuItem) {
+    const registedServices = this.sharedService?.externalRegisteredServices || [];
+
     if (args && args.command) {
       switch (args.command) {
         case 'clear-filter':
@@ -363,26 +364,41 @@ export class GridMenuExtension implements Extension {
           this.sharedService.dataView.refresh();
           break;
         case 'export-csv':
-          this.exportService.exportToFile({
-            delimiter: DelimiterType.comma,
-            filename: 'export',
-            format: FileType.csv,
-            useUtf8WithBom: true,
-          });
+          const exportCsvService: FileExportService = registedServices.find((service: any) => service.className === 'FileExportService');
+          if (exportCsvService?.exportToFile) {
+            exportCsvService.exportToFile({
+              delimiter: DelimiterType.comma,
+              filename: 'export',
+              format: FileType.csv,
+              useUtf8WithBom: true,
+            });
+          } else {
+            throw new Error(`[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableExport: true, registerExternalServices: [new FileExportService()] };`);
+          }
           break;
         case 'export-excel':
-          this.excelExportService.exportToExcel({
-            filename: 'export',
-            format: FileType.xlsx,
-          });
+          const excelService: ExcelExportService = registedServices.find((service: any) => service.className === 'ExcelExportService');
+          if (excelService?.exportToExcel) {
+            excelService.exportToExcel({
+              filename: 'export',
+              format: FileType.xlsx,
+            });
+          } else {
+            throw new Error(`[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Grid Menu. Example:: this.gridOptions = { enableExcelExport: true, registerExternalServices: [new ExcelExportService()] };`);
+          }
           break;
         case 'export-text-delimited':
-          this.exportService.exportToFile({
-            delimiter: DelimiterType.tab,
-            filename: 'export',
-            format: FileType.txt,
-            useUtf8WithBom: true,
-          });
+          const exportTxtService: FileExportService = registedServices.find((service: any) => service.className === 'FileExportService');
+          if (exportTxtService?.exportToFile) {
+            exportTxtService.exportToFile({
+              delimiter: DelimiterType.tab,
+              filename: 'export',
+              format: FileType.txt,
+              useUtf8WithBom: true,
+            });
+          } else {
+            throw new Error(`[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableExport: true, registerExternalServices: [new FileExportService()] };`);
+          }
           break;
         case 'toggle-filter':
           const showHeaderRow = this.sharedService && this.sharedService.gridOptions && this.sharedService.gridOptions.showHeaderRow || false;

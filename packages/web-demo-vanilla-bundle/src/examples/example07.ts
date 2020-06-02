@@ -3,7 +3,9 @@ import {
   GridOption,
   Formatters,
 } from '@slickgrid-universal/common';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+
 import { ExampleGridOptions } from './example-grid-options';
 
 export class Example7 {
@@ -43,7 +45,12 @@ export class Example7 {
         container: '.demo-container',
         rightPadding: 10
       },
-      enableExport: true,
+      enableExcelExport: true,
+      excelExportOptions: {
+        exportWithFormatter: true,
+        sanitizeDataExport: true
+      },
+      registerExternalServices: [new ExcelExportService()],
       enableCellNavigation: true,
       enableCheckboxSelector: true,
       enableRowSelection: true,

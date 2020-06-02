@@ -1,5 +1,7 @@
 import { Aggregators, Column, Editors, FieldType, Filters, GroupingGetterFunction, SortComparers, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters, GridOption } from '@slickgrid-universal/common';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
 import './example03.scss';
@@ -251,10 +253,11 @@ export class Example3 {
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableCellNavigation: true,
-      enableExport: true,
-      exportOptions: {
+      enableExcelExport: true,
+      excelExportOptions: {
         exportWithFormatter: true
       },
+      registerExternalServices: [new ExcelExportService()],
       enableFiltering: true,
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)

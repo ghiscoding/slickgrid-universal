@@ -2,7 +2,7 @@
 import 'multiple-select-adapted';
 
 import { Filters } from '..';
-import { Column, FilterArguments, GridOption } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { CollectionService } from './../../services/collection.service';
 import { MultipleSelectFilter } from '../multipleSelectFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
@@ -22,7 +22,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 describe('SelectFilter', () => {
   let translateService: TranslateServiceStub;

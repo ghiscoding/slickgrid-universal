@@ -16,6 +16,7 @@ import {
   FilterCallback,
   FlatpickrOption,
   GridOption,
+  SlickGrid,
 } from '../interfaces/index';
 import { mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
@@ -36,7 +37,7 @@ export class DateRangeFilter implements Filter {
   private $filterElm: any;
   private $filterInputElm: any;
   flatInstance: any;
-  grid: any;
+  grid: SlickGrid;
   searchTerms: SearchTerm[];
   columnDef: Column;
   callback: FilterCallback;

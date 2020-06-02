@@ -1,16 +1,16 @@
 import { getAssociatedDateFormatter, getValueFromParamsOrFormatterOptions } from '../formatterUtilities';
 import { FieldType } from '../../enums/index';
-import { Column, GridOption } from '../../interfaces/index';
+import { Column, GridOption, SlickGrid } from '../../interfaces/index';
 
 describe('formatterUtilities', () => {
   const gridStub = {
     getOptions: jest.fn()
-  };
+  } as unknown as SlickGrid;
 
   describe('getValueFromParamsOrGridOptions method', () => {
     it('should return options found in the Grid Option when not found in Column Definition "params" property', () => {
       const gridOptions = { formatterOptions: { minDecimal: 2 } } as GridOption;
-      const gridSpy = gridStub.getOptions.mockReturnValue(gridOptions);
+      const gridSpy = (gridStub.getOptions as jest.Mock).mockReturnValue(gridOptions);
 
       const output = getValueFromParamsOrFormatterOptions('minDecimal', {} as Column, gridStub, -1);
 
@@ -20,7 +20,7 @@ describe('formatterUtilities', () => {
 
     it('should return options found in the Column Definition "params" even if exist in the Grid Option as well', () => {
       const gridOptions = { formatterOptions: { minDecimal: 2 } } as GridOption;
-      const gridSpy = gridStub.getOptions.mockReturnValue(gridOptions);
+      const gridSpy = (gridStub.getOptions as jest.Mock).mockReturnValue(gridOptions);
 
       const output = getValueFromParamsOrFormatterOptions('minDecimal', { params: { minDecimal: 3 } } as Column, gridStub, -1);
 
@@ -30,7 +30,7 @@ describe('formatterUtilities', () => {
 
     it('should return default value when not found in "params" (columnDef) neither the "formatterOptions" (gridOption)', () => {
       const defaultValue = 5;
-      const output = getValueFromParamsOrFormatterOptions('minDecimal', { field: 'column1' } as Column, {}, defaultValue);
+      const output = getValueFromParamsOrFormatterOptions('minDecimal', { field: 'column1' } as Column, {} as unknown as SlickGrid, defaultValue);
       expect(output).toBe(defaultValue);
     });
   });
@@ -55,7 +55,7 @@ describe('formatterUtilities', () => {
     it('should return a formatted Date with a different separator when changing setting the "dateSeparator" in "formatterOptions"', () => {
       const formatterFn = getAssociatedDateFormatter(FieldType.dateIso, '-');
       const gridOptions = { formatterOptions: { dateSeparator: '.' } } as GridOption;
-      const gridSpy = gridStub.getOptions.mockReturnValue(gridOptions);
+      const gridSpy = (gridStub.getOptions as jest.Mock).mockReturnValue(gridOptions);
 
       const output = formatterFn(1, 1, '2002-01-01T00:01:01', { type: FieldType.dateIso } as Column, {}, gridStub);
 

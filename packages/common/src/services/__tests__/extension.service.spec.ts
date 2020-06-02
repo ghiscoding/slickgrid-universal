@@ -1,5 +1,5 @@
 import { ExtensionName } from '../../enums/index';
-import { Column, ExtensionModel, GridOption, } from '../../interfaces/index';
+import { Column, ExtensionModel, GridOption, SlickGrid } from '../../interfaces/index';
 import {
   AutoTooltipExtension,
   CellExternalCopyManagerExtension,
@@ -25,12 +25,13 @@ const gridStub = {
   autosizeColumns: jest.fn(),
   getColumnIndex: jest.fn(),
   getOptions: jest.fn(),
+  getPluginByName: jest.fn(),
   getColumns: jest.fn(),
   setColumns: jest.fn(),
   onColumnsReordered: jest.fn(),
   onColumnsResized: jest.fn(),
   registerPlugin: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 const extensionStub = {
   create: jest.fn(),
@@ -170,6 +171,10 @@ describe('ExtensionService', () => {
 
     describe('bindDifferentExtensions method', () => {
       const instanceMock = { onColumnsChanged: jest.fn() };
+
+      beforeEach(() => {
+        jest.clearAllMocks();
+      });
 
       it('should return undefined when calling "getExtensionByName" method without anything set yet', () => {
         service.bindDifferentExtensions();
@@ -405,7 +410,8 @@ describe('ExtensionService', () => {
         const gridOptionsMock = { registerPlugins: [pluginMock] } as GridOption;
         const gridSpy = jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
         const optionSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-        const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'registerPlugin').mockReturnValue(instanceMock);
+        const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'registerPlugin');
+        jest.spyOn(SharedService.prototype.grid, 'getPluginByName').mockReturnValue(instanceMock);
 
         service.bindDifferentExtensions();
         const output = service.getExtensionByName(ExtensionName.noname);
@@ -422,7 +428,8 @@ describe('ExtensionService', () => {
         const gridOptionsMock = { registerPlugins: pluginMock } as GridOption;
         const gridSpy = jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
         const optionSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-        const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'registerPlugin').mockReturnValue(instanceMock);
+        const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'registerPlugin');
+        jest.spyOn(SharedService.prototype.grid, 'getPluginByName').mockReturnValue(instanceMock);
 
         service.bindDifferentExtensions();
         const output = service.getExtensionByName(ExtensionName.noname);

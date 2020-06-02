@@ -1,4 +1,4 @@
-import { Grouping, GridOption } from '../../interfaces/index';
+import { Grouping, GridOption, SlickGrid } from '../../interfaces/index';
 import { DraggableGroupingExtension } from '../draggableGroupingExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
@@ -9,7 +9,7 @@ declare const Slick: any;
 const gridStub = {
   getOptions: jest.fn(),
   registerPlugin: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 const mockAddon = jest.fn().mockImplementation(() => ({
   init: jest.fn(),

@@ -1,4 +1,4 @@
-import { Column, GridOption, FormatterResultObject, OnEventArgs, SortDirectionString, Formatters } from '@slickgrid-universal/common';
+import { Column, GridOption, FormatterResultObject, OnEventArgs, SortDirectionString } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import '../salesforce-styles.scss';
 import './example51.scss';
@@ -324,7 +324,7 @@ export class Example51 {
     return output;
   }
 
-  fakeHyperlinkFormatter(row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: any) {
+  fakeHyperlinkFormatter(row: number, cell: number, value: any) {
     return value ? `<span class="fake-hyperlink">${value}</span>` : '';
   }
 
@@ -359,7 +359,7 @@ export class Example51 {
     return output;
   }
 
-  customEditableInputFormatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: any) => {
+  customEditableInputFormatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any) => {
     const isEditableLine = this.isItemEditable(dataContext, columnDef);
     value = (value === null || value === undefined) ? '' : value;
 
@@ -468,7 +468,6 @@ export class Example51 {
     const args = event && event.detail && event.detail.args;
     if (eventDetail && args) {
       const grid = args.grid;
-      const dataView = grid.getData();
       const columnDef = grid && grid.getColumns()[args.cell];
       const field = columnDef && columnDef.field || '';
       const cell = this.gridObj.getCellFromEvent(eventDetail.eventData);

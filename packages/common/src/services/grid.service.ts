@@ -1,11 +1,13 @@
 import {
   CellArgs,
   Column,
+  DataView,
   GridOption,
   GridServiceDeleteOption,
   GridServiceInsertOption,
   GridServiceUpdateOption,
-  OnEventArgs
+  OnEventArgs,
+  SlickGrid,
 } from '../interfaces/index';
 import { ExtensionService } from './extension.service';
 import { FilterService } from './filter.service';
@@ -22,8 +24,7 @@ const GridServiceInsertOptionDefaults: GridServiceInsertOption = { highlightRow:
 const GridServiceUpdateOptionDefaults: GridServiceUpdateOption = { highlightRow: true, selectRow: false, scrollRowIntoView: false, triggerEvent: true };
 
 export class GridService {
-  private _grid: any;
-  private _dataView: any;
+  private _grid: SlickGrid;
 
   constructor(
     private extensionService: ExtensionService,
@@ -34,14 +35,18 @@ export class GridService {
     private sortService: SortService
   ) { }
 
+  /** Getter of SlickGrid DataView object */
+  get _dataView(): DataView {
+    return this._grid && this._grid.getData && this._grid.getData();
+  }
+
   /** Getter for the Grid Options pulled through the Grid Object */
   private get _gridOptions(): GridOption {
     return (this._grid && this._grid.getOptions) ? this._grid.getOptions() : {};
   }
 
-  init(grid: any, dataView: any): void {
+  init(grid: SlickGrid): void {
     this._grid = grid;
-    this._dataView = dataView;
   }
 
   /** Clear all Filters & Sorts */

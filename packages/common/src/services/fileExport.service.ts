@@ -1,12 +1,15 @@
-import { ExportOption } from '../interfaces/index';
+import { ExportOption, SlickGrid } from '../interfaces/index';
+import { SharedService } from './shared.service';
 
-export abstract class ExportService {
+export abstract class FileExportService {
+  /** ExcelExportService class name which is use to find service instance in the external registered services */
+  className: string;
+
   /**
    * Initialize the Export Service
    * @param grid
-   * @param dataView
    */
-  init(grid: any, dataView: any): void {
+  init(grid: SlickGrid, sharedService: SharedService): void {
     throw new Error('ExportService the "init" method must be implemented');
   }
 

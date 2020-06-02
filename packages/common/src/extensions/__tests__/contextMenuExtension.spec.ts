@@ -5,19 +5,21 @@ import { ExtensionUtility } from '../extensionUtility';
 import { Formatters } from '../../formatters';
 import { SharedService } from '../../services/shared.service';
 import { DelimiterType, FileType } from '../../enums/index';
-import { Column, GridOption, MenuCommandItem } from '../../interfaces/index';
+import { Column, DataView, GridOption, MenuCommandItem, SlickGrid } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { ExcelExportService, ExportService, TreeDataService } from '../../services';
+import { ExcelExportService, FileExportService, TreeDataService } from '../../services';
 
 declare const Slick: any;
 
 const excelExportServiceStub = {
+  className: 'ExcelExportService',
   exportToExcel: jest.fn(),
 } as unknown as ExcelExportService;
 
 const exportServiceStub = {
+  className: 'FileExportService',
   exportToFile: jest.fn(),
-} as unknown as ExportService;
+} as unknown as FileExportService;
 
 const dataViewStub = {
   collapseAllGroups: jest.fn(),
@@ -27,7 +29,7 @@ const dataViewStub = {
   getGrouping: jest.fn(),
   setGrouping: jest.fn(),
   setItems: jest.fn(),
-};
+} as unknown as DataView;
 
 const gridStub = {
   autosizeColumns: jest.fn(),
@@ -42,7 +44,7 @@ const gridStub = {
   setHeaderRowVisibility: jest.fn(),
   setTopPanelVisibility: jest.fn(),
   setPreHeaderPanelVisibility: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 const treeDataServiceStub = {
   init: jest.fn(),
@@ -124,7 +126,7 @@ describe('contextMenuExtension', () => {
       sharedService = new SharedService();
       translateService = new TranslateServiceStub();
       extensionUtility = new ExtensionUtility(sharedService, translateService);
-      extension = new ContextMenuExtension(excelExportServiceStub, exportServiceStub, extensionUtility, sharedService, translateService, treeDataServiceStub);
+      extension = new ContextMenuExtension(extensionUtility, sharedService, translateService, treeDataServiceStub);
       translateService.setLocale('fr');
     });
 
@@ -688,10 +690,44 @@ describe('contextMenuExtension', () => {
         expect(isCommandUsable).toBe(false);
       });
 
+      it('should call "exportToExcel" and expect an error thrown when ExcelExportService is not registered prior to calling the method', () => {
+        const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: true, enableExport: false, contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: false } } as GridOption;
+        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+        jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([]);
+        extension.register();
+
+        const menuItemCommand = copyGridOptionsMock.contextMenu.commandItems.find((item: MenuCommandItem) => item.command === 'export-excel') as MenuCommandItem;
+        expect(() => menuItemCommand.action(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any))
+          .toThrow('[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Context Menu.');
+      });
+
+      it('should call "exportToFile" with CSV and expect an error thrown when FileExportService is not registered prior to calling the method', () => {
+        const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: false, enableExport: true, contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: false, hideExportExcelCommand: true } } as GridOption;
+        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+        jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([]);
+        extension.register();
+
+        const menuItemCommand = copyGridOptionsMock.contextMenu.commandItems.find((item: MenuCommandItem) => item.command === 'export-csv') as MenuCommandItem;
+        expect(() => menuItemCommand.action(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any))
+          .toThrow('[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Context Menu.');
+      });
+
+      it('should call "exportToFile" with Text Delimited and expect an error thrown when FileExportService is not registered prior to calling the method', () => {
+        const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: false, enableExport: true, contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: false, hideExportExcelCommand: true } } as GridOption;
+        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+        extension.register();
+
+        const menuItemCommand = copyGridOptionsMock.contextMenu.commandItems.find((item: MenuCommandItem) => item.command === 'export-text-delimited') as MenuCommandItem;
+        expect(() => menuItemCommand.action(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any))
+          .toThrow('[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Context Menu.');
+      });
+
+
       it('should call "exportToExcel" when the command triggered is "export-excel"', () => {
         const excelExportSpy = jest.spyOn(excelExportServiceStub, 'exportToExcel');
         const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: true, enableExport: false, contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: false } } as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+        jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([excelExportServiceStub]);
         extension.register();
 
         const menuItemCommand = copyGridOptionsMock.contextMenu.commandItems.find((item: MenuCommandItem) => item.command === 'export-excel') as MenuCommandItem;
@@ -707,6 +743,7 @@ describe('contextMenuExtension', () => {
         const exportSpy = jest.spyOn(exportServiceStub, 'exportToFile');
         const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: false, enableExport: true, contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: false, hideExportExcelCommand: true } } as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+        jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([exportServiceStub]);
         extension.register();
 
         const menuItemCommand = copyGridOptionsMock.contextMenu.commandItems.find((item: MenuCommandItem) => item.command === 'export-csv') as MenuCommandItem;
@@ -720,10 +757,11 @@ describe('contextMenuExtension', () => {
         });
       });
 
-      it('should call "exportToFile" with CSV set when the command triggered is "export-text-delimited"', () => {
+      it('should call "exportToFile" with Text Delimited set when the command triggered is "export-text-delimited"', () => {
         const exportSpy = jest.spyOn(exportServiceStub, 'exportToFile');
         const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: false, enableExport: true, contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: false, hideExportExcelCommand: true } } as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+        jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([exportServiceStub]);
         extension.register();
 
         const menuItemCommand = copyGridOptionsMock.contextMenu.commandItems.find((item: MenuCommandItem) => item.command === 'export-text-delimited') as MenuCommandItem;
@@ -821,7 +859,7 @@ describe('contextMenuExtension', () => {
       it('should expect "itemUsabilityOverride" callback on all the Grouping command to return True when there are Groups defined in the grid', () => {
         const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideClearAllGrouping: false } } as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-        const dataviewSpy = jest.spyOn(SharedService.prototype.dataView, 'getGrouping').mockReturnValue([{ grouped: true }]);
+        const dataviewSpy = jest.spyOn(SharedService.prototype.dataView, 'getGrouping').mockReturnValue([{ collapsed: true }]);
         extension.register();
 
         const menuClearCommand = copyGridOptionsMock.contextMenu.commandItems.find((item: MenuCommandItem) => item.command === 'clear-grouping') as MenuCommandItem;
@@ -961,7 +999,7 @@ describe('contextMenuExtension', () => {
     describe('without Translate Service', () => {
       beforeEach(() => {
         translateService = null;
-        extension = new ContextMenuExtension(excelExportServiceStub, exportServiceStub, {} as ExtensionUtility, { gridOptions: { enableTranslate: true } } as SharedService, translateService, treeDataServiceStub);
+        extension = new ContextMenuExtension({} as ExtensionUtility, { gridOptions: { enableTranslate: true } } as SharedService, translateService, treeDataServiceStub);
       });
 
       it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {

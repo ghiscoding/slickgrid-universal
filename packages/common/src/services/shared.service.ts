@@ -1,15 +1,18 @@
-import { Column, GridOption, CurrentPagination } from '../interfaces/index';
+import { Column, CurrentPagination, DataView, GridOption, SlickGrid } from '../interfaces/index';
+import { PubSubService } from '..';
 
 export class SharedService {
   private _allColumns: Column[];
-  private _dataView: any;
+  private _dataView: DataView;
   private _groupItemMetadataProvider: any;
-  private _grid: any;
+  private _grid: SlickGrid;
   private _gridOptions: GridOption;
   private _currentPagination: CurrentPagination;
   private _visibleColumns: Column[];
   private _hideHeaderRowAfterPageLoad = false;
   private _hierarchicalDataset: any[];
+  private _internalPubSubService: PubSubService;
+  private _externalRegisteredServices: any[];
 
   // --
   // public
@@ -39,20 +42,20 @@ export class SharedService {
   }
 
   /** Getter for SlickGrid DataView object */
-  get dataView(): any {
+  get dataView(): DataView {
     return this._dataView;
   }
   /** Setter for SlickGrid DataView object */
-  set dataView(dataView: any) {
+  set dataView(dataView: DataView) {
     this._dataView = dataView;
   }
 
   /** Getter for SlickGrid Grid object */
-  get grid(): any {
+  get grid(): SlickGrid {
     return this._grid;
   }
   /** Setter for SlickGrid Grid object */
-  set grid(grid: any) {
+  set grid(grid: SlickGrid) {
     this._grid = grid;
   }
 
@@ -82,6 +85,24 @@ export class SharedService {
   /** Setter for knowing if user want to hide header row after 1st page load */
   set hideHeaderRowAfterPageLoad(hideHeaderRowAfterPageLoad: boolean) {
     this._hideHeaderRowAfterPageLoad = hideHeaderRowAfterPageLoad;
+  }
+
+  /** Getter to know if user want to hide header row after 1st page load */
+  get internalPubSubService(): PubSubService {
+    return this._internalPubSubService;
+  }
+  /** Setter for knowing if user want to hide header row after 1st page load */
+  set internalPubSubService(internalPubSubService: PubSubService) {
+    this._internalPubSubService = internalPubSubService;
+  }
+
+  /** Getter to know if user want to hide header row after 1st page load */
+  get externalRegisteredServices(): any[] {
+    return this._externalRegisteredServices;
+  }
+  /** Setter for knowing if user want to hide header row after 1st page load */
+  set externalRegisteredServices(externalRegisteredServices: any[]) {
+    this._externalRegisteredServices = externalRegisteredServices;
   }
 
   /** Getter for the Visible Columns in the grid */

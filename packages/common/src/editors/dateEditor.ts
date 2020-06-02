@@ -16,6 +16,7 @@ import {
   EditorValidatorOutput,
   FlatpickrOption,
   GridOption,
+  SlickGrid,
 } from './../interfaces/index';
 import { mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, setDeepValue, getDescendantProperty } from './../services/utilities';
 import { TranslaterService } from '../services/translater.service';
@@ -39,7 +40,7 @@ export class DateEditor implements Editor {
   originalDate: string;
 
   /** SlickGrid Grid object */
-  grid: any;
+  grid: SlickGrid;
 
   /** Grid options */
   gridOptions: GridOption;

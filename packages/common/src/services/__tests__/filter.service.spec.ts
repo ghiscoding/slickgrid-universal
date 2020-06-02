@@ -8,8 +8,10 @@ import {
   BackendService,
   Column,
   CurrentFilter,
+  DataView,
   GridOption,
   SlickEventHandler,
+  SlickGrid,
 } from '../../interfaces/index';
 import { Filters } from '../../filters';
 import { FilterService } from '../filter.service';
@@ -49,7 +51,7 @@ const dataViewStub = {
   setFilter: jest.fn(),
   setFilterArgs: jest.fn(),
   sort: jest.fn(),
-};
+} as unknown as DataView;
 
 const backendServiceStub = {
   buildQuery: jest.fn(),
@@ -73,7 +75,7 @@ const gridStub = {
   onHeaderRowCellRendered: new Slick.Event(),
   render: jest.fn(),
   setSortColumns: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 const pubSubServiceStub = {
   publish: jest.fn(),

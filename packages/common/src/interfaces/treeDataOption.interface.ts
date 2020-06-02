@@ -15,7 +15,7 @@ export interface TreeDataOption {
 
     /** Direction of the initial Sort (ASC/DESC) */
     direction: SortDirection | SortDirectionString;
-  }
+  };
 
   /** Defaults to "children", object property name used to designate the Children array */
   childrenPropName?: string;

@@ -7,20 +7,14 @@ import {
   MenuCommandItemCallbackArgs,
   MenuOptionItemCallbackArgs,
   SlickEventHandler,
+  SlickGrid,
 } from '../interfaces/index';
-import {
-  DelimiterType,
-  ExtensionName,
-  FileType,
-} from '../enums/index';
+import { DelimiterType, ExtensionName, FileType, } from '../enums/index';
 import { ExtensionUtility } from './extensionUtility';
 import { exportWithFormatterWhenDefined } from '../services/export-utilities';
-import { ExportService } from '../services/export.service';
-import { ExcelExportService } from '../services/excelExport.service';
 import { SharedService } from '../services/shared.service';
 import { getTranslationPrefix } from '../services/utilities';
-import { TreeDataService } from '../services/treeData.service';
-import { TranslaterService } from '..';
+import { ExcelExportService, FileExportService, TranslaterService, TreeDataService } from '../services/index';
 
 // using external non-typed js libraries
 declare const Slick: any;
@@ -31,8 +25,6 @@ export class ContextMenuExtension implements Extension {
   private _userOriginalContextMenu: ContextMenu;
 
   constructor(
-    private excelExportService: ExcelExportService,
-    private exportService: ExportService,
     private extensionUtility: ExtensionUtility,
     private sharedService: SharedService,
     private translaterService: TranslaterService,
@@ -62,9 +54,7 @@ export class ContextMenuExtension implements Extension {
     return this._addon;
   }
 
-  /**
-   * Create the Action Cell Menu and expose all the available hooks that user can subscribe (onCommand, onBeforeMenuShow, ...)
-   */
+  /** Register the 3rd party addon (plugin) */
   register(): any {
     if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
@@ -112,21 +102,21 @@ export class ContextMenuExtension implements Extension {
           });
         }
         if (contextMenu && typeof contextMenu.onBeforeMenuShow === 'function') {
-          this._eventHandler.subscribe(this._addon.onBeforeMenuShow, (event: Event, args: { cell: number; row: number; grid: any; }) => {
+          this._eventHandler.subscribe(this._addon.onBeforeMenuShow, (event: Event, args: { cell: number; row: number; grid: SlickGrid; }) => {
             if (contextMenu.onBeforeMenuShow) {
               contextMenu.onBeforeMenuShow(event, args);
             }
           });
         }
         if (contextMenu && typeof contextMenu.onBeforeMenuClose === 'function') {
-          this._eventHandler.subscribe(this._addon.onBeforeMenuClose, (event: Event, args: { cell: number; row: number; grid: any; menu: any; }) => {
+          this._eventHandler.subscribe(this._addon.onBeforeMenuClose, (event: Event, args: { cell: number; row: number; grid: SlickGrid; menu: any; }) => {
             if (contextMenu.onBeforeMenuClose) {
               contextMenu.onBeforeMenuClose(event, args);
             }
           });
         }
         if (contextMenu && typeof contextMenu.onAfterMenuShow === 'function') {
-          this._eventHandler.subscribe(this._addon.onAfterMenuShow, (event: Event, args: { cell: number; row: number; grid: any; }) => {
+          this._eventHandler.subscribe(this._addon.onAfterMenuShow, (event: Event, args: { cell: number; row: number; grid: SlickGrid; }) => {
             if (contextMenu.onAfterMenuShow) {
               contextMenu.onAfterMenuShow(event, args);
             }
@@ -220,12 +210,20 @@ export class ContextMenuExtension implements Extension {
             disabled: false,
             command: commandName,
             positionOrder: 51,
-            action: () => this.exportService.exportToFile({
-              delimiter: DelimiterType.comma,
-              filename: 'export',
-              format: FileType.csv,
-              useUtf8WithBom: true,
-            }),
+            action: () => {
+              const registedServices = this.sharedService?.externalRegisteredServices || [];
+              const excelService: FileExportService = registedServices.find((service: any) => service.className === 'FileExportService');
+              if (excelService?.exportToFile) {
+                excelService.exportToFile({
+                  delimiter: DelimiterType.comma,
+                  filename: 'export',
+                  format: FileType.csv,
+                  useUtf8WithBom: true,
+                });
+              } else {
+                throw new Error(`[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableExport: true, registerExternalServices: [new FileExportService()] };`);
+              }
+            },
           }
         );
       }
@@ -242,10 +240,18 @@ export class ContextMenuExtension implements Extension {
             disabled: false,
             command: commandName,
             positionOrder: 52,
-            action: () => this.excelExportService.exportToExcel({
-              filename: 'export',
-              format: FileType.xlsx,
-            }),
+            action: () => {
+              const registedServices = this.sharedService?.externalRegisteredServices || [];
+              const excelService: ExcelExportService = registedServices.find((service: any) => service.className === 'ExcelExportService');
+              if (excelService?.exportToExcel) {
+                excelService.exportToExcel({
+                  filename: 'export',
+                  format: FileType.xlsx,
+                });
+              } else {
+                throw new Error(`[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Context Menu. Example:: this.gridOptions = { enableExcelExport: true, registerExternalServices: [new ExcelExportService()] };`);
+              }
+            },
           }
         );
       }
@@ -262,12 +268,20 @@ export class ContextMenuExtension implements Extension {
             disabled: false,
             command: commandName,
             positionOrder: 53,
-            action: () => this.exportService.exportToFile({
-              delimiter: DelimiterType.tab,
-              filename: 'export',
-              format: FileType.txt,
-              useUtf8WithBom: true,
-            }),
+            action: () => {
+              const registedServices = this.sharedService?.externalRegisteredServices || [];
+              const excelService: FileExportService = registedServices.find((service: any) => service.className === 'FileExportService');
+              if (excelService?.exportToFile) {
+                excelService.exportToFile({
+                  delimiter: DelimiterType.tab,
+                  filename: 'export',
+                  format: FileType.txt,
+                  useUtf8WithBom: true,
+                });
+              } else {
+                throw new Error(`[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableExport: true, registerExternalServices: [new FileExportService()] };`);
+              }
+            },
           }
         );
       }

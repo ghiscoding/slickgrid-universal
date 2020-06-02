@@ -16,6 +16,7 @@ import {
   ColumnFilter,
   ColumnFilters,
   CurrentFilter,
+  DataView,
   Filter,
   FilterArguments,
   FilterCallbackArg,
@@ -24,6 +25,7 @@ import {
   GridOption,
   SlickEvent,
   SlickEventHandler,
+  SlickGrid,
 } from './../interfaces/index';
 import { executeBackendCallback, refreshBackendDataset } from './backend-utilities';
 import { getDescendantProperty } from './utilities';
@@ -43,8 +45,8 @@ export class FilterService {
   private _firstColumnIdRendered = '';
   private _filtersMetadata: any[] = [];
   private _columnFilters: ColumnFilters = {};
-  private _dataView: any;
-  private _grid: any;
+  private _dataView: DataView;
+  private _grid: SlickGrid;
   private _onSearchChange: SlickEvent;
   private _tmpPreFilteredData: number[];
 
@@ -82,7 +84,7 @@ export class FilterService {
    * Initialize the Service
    * @param grid
    */
-  init(grid: any): void {
+  init(grid: SlickGrid): void {
     this._grid = grid;
 
     if (this._gridOptions && this._gridOptions.enableTreeData && this._gridOptions.treeDataOptions) {
@@ -133,7 +135,7 @@ export class FilterService {
    * Bind a backend filter hook to the grid
    * @param grid SlickGrid Grid object
    */
-  bindBackendOnFilter(grid: any, dataView: any) {
+  bindBackendOnFilter(grid: SlickGrid, dataView: DataView) {
     this._dataView = dataView;
     this._filtersMetadata = [];
 
@@ -160,7 +162,7 @@ export class FilterService {
    * @param gridOptions Grid Options object
    * @param dataView
    */
-  bindLocalOnFilter(grid: any, dataView: any) {
+  bindLocalOnFilter(grid: SlickGrid, dataView: DataView) {
     this._filtersMetadata = [];
     this._dataView = dataView;
 
@@ -309,7 +311,7 @@ export class FilterService {
     return true;
   }
 
-  getFilterConditionOptionsOrBoolean(item: any, columnFilter: ColumnFilter, columnId: string | number, grid: any, dataView: any): FilterConditionOption | boolean {
+  getFilterConditionOptionsOrBoolean(item: any, columnFilter: ColumnFilter, columnId: string | number, grid: SlickGrid, dataView: DataView): FilterConditionOption | boolean {
     let columnIndex = grid.getColumnIndex(columnId) as number;
     let columnDef = grid.getColumns()[columnIndex] as Column;
 
@@ -678,7 +680,7 @@ export class FilterService {
   // -------------------
 
   /** Add all created filters (from their template) to the header row section area */
-  private addFilterTemplateToHeaderRow(args: { column: Column; grid: any; node: HTMLElement }, isFilterFirstRender = true) {
+  private addFilterTemplateToHeaderRow(args: { column: Column; grid: SlickGrid; node: HTMLElement }, isFilterFirstRender = true) {
     const columnDef = args.column;
     const columnId = columnDef && columnDef.id || '';
 

@@ -1,5 +1,5 @@
 import { Constants } from './../constants';
-import { Column, ColumnEditor, Editor, EditorArguments, EditorValidator, EditorValidatorOutput } from './../interfaces/index';
+import { Column, ColumnEditor, Editor, EditorArguments, EditorValidator, EditorValidatorOutput, SlickGrid } from './../interfaces/index';
 import { getDescendantProperty, setDeepValue } from '../services/utilities';
 
 /*
@@ -11,7 +11,7 @@ export class CheckboxEditor implements Editor {
   originalValue: boolean;
 
   /** SlickGrid Grid object */
-  grid: any;
+  grid: SlickGrid;
 
   constructor(private args: EditorArguments) {
     if (!args) {

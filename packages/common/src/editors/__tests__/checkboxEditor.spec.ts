@@ -1,6 +1,6 @@
 import { Editors } from '../index';
 import { CheckboxEditor } from '../checkboxEditor';
-import { AutocompleteOption, Column, EditorArgs, EditorArguments, GridOption } from '../../interfaces/index';
+import { AutocompleteOption, Column, DataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
 
 const KEY_CHAR_SPACE = 32;
 const containerId = 'demo-container';
@@ -10,7 +10,7 @@ const template = `<div id="${containerId}"></div>`;
 
 const dataViewStub = {
   refresh: jest.fn(),
-};
+} as unknown as DataView;
 
 const gridOptionMock = {
   autoCommitEdit: false,
@@ -27,7 +27,7 @@ const gridStub = {
   getEditorLock: () => getEditorLockMock,
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 describe('CheckboxEditor', () => {
   let divContainer: HTMLDivElement;

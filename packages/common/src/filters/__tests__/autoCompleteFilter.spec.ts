@@ -1,7 +1,7 @@
 import { Filters } from '../index';
 import { AutoCompleteFilter } from '../autoCompleteFilter';
 import { FieldType, OperatorType } from '../../enums/index';
-import { AutocompleteOption, Column, FilterArguments, GridOption, } from '../../interfaces/index';
+import { AutocompleteOption, Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { CollectionService } from '../../services/collection.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
@@ -20,7 +20,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 describe('AutoCompleteFilter', () => {
   let translaterService: TranslateServiceStub;

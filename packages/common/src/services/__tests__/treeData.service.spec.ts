@@ -1,4 +1,4 @@
-import { Column, GridOption, SlickEventHandler } from '../../interfaces/index';
+import { Column, DataView, GridOption, SlickEventHandler, SlickGrid } from '../../interfaces/index';
 import { SharedService } from '../shared.service';
 import { TreeDataService } from '../treeData.service';
 
@@ -19,7 +19,7 @@ const dataViewStub = {
   reSort: jest.fn(),
   setItems: jest.fn(),
   updateItem: jest.fn(),
-};
+} as unknown as DataView;
 
 const gridStub = {
   autosizeColumns: jest.fn(),
@@ -33,7 +33,7 @@ const gridStub = {
   onClick: new Slick.Event(),
   render: jest.fn(),
   setSortColumns: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 describe('SortService', () => {
   let service: TreeDataService;

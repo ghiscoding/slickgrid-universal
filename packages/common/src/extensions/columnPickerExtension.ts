@@ -1,5 +1,5 @@
 import { ExtensionName } from '../enums/extensionName.enum';
-import { Extension, SlickEventHandler } from '../interfaces/index';
+import { Extension, SlickEventHandler, SlickGrid, Column } from '../interfaces/index';
 import { ExtensionUtility } from './extensionUtility';
 import { SharedService } from '../services/shared.service';
 
@@ -31,6 +31,7 @@ export class ColumnPickerExtension implements Extension {
     return this._addon;
   }
 
+  /** Register the 3rd party addon (plugin) */
   register(): any {
     if (this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
       // dynamically import the SlickGrid plugin (addon) with RequireJS
@@ -51,7 +52,7 @@ export class ColumnPickerExtension implements Extension {
         if (this.sharedService.gridOptions.columnPicker.onExtensionRegistered) {
           this.sharedService.gridOptions.columnPicker.onExtensionRegistered(this._addon);
         }
-        this._eventHandler.subscribe(this._addon.onColumnsChanged, (e: any, args: { columns: any, grid: any }) => {
+        this._eventHandler.subscribe(this._addon.onColumnsChanged, (e: any, args: { columns: Column[], grid: SlickGrid }) => {
           if (this.sharedService.gridOptions.columnPicker && typeof this.sharedService.gridOptions.columnPicker.onColumnsChanged === 'function') {
             this.sharedService.gridOptions.columnPicker.onColumnsChanged(e, args);
           }

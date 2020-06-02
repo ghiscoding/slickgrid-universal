@@ -1,4 +1,4 @@
-import { GridOption } from '../../interfaces/gridOption.interface';
+import { GridOption, SlickGrid } from '../../interfaces/index';
 import { RowSelectionExtension } from '../rowSelectionExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
@@ -10,7 +10,7 @@ const gridStub = {
   getOptions: jest.fn(),
   registerPlugin: jest.fn(),
   setSelectionModel: jest.fn(),
-};
+} as unknown as SlickGrid;
 
 const mockAddon = jest.fn().mockImplementation(() => ({
   constructor: jest.fn(),

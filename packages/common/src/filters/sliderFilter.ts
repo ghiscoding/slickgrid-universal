@@ -5,6 +5,7 @@ import {
   Filter,
   FilterArguments,
   FilterCallback,
+  SlickGrid,
 } from './../interfaces/index';
 
 const DEFAULT_MIN_VALUE = 0;
@@ -15,10 +16,10 @@ export class SliderFilter implements Filter {
   private _clearFilterTriggered = false;
   private _currentValue: number;
   private _shouldTriggerQuery = true;
-  private _elementRangeInputId: string = '';
-  private _elementRangeOutputId: string = '';
+  private _elementRangeInputId = '';
+  private _elementRangeOutputId = '';
   private $filterElm: any;
-  grid: any;
+  grid: SlickGrid;
   searchTerms: SearchTerm[];
   columnDef: Column;
   callback: FilterCallback;

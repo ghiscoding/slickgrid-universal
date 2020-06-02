@@ -1,11 +1,11 @@
-import { GridOption, SlickEventHandler } from '../interfaces/index';
+import { DataView, GridOption, SlickEventHandler, SlickGrid } from '../interfaces/index';
 import { SharedService } from './shared.service';
 
 // using external non-typed js libraries
 declare const Slick: any;
 
 export class TreeDataService {
-  private _grid: any;
+  private _grid: SlickGrid;
   private _eventHandler: SlickEventHandler;
 
   constructor(private sharedService: SharedService) {
@@ -13,15 +13,15 @@ export class TreeDataService {
   }
 
   get dataset(): any[] {
-    return this.dataView && this.dataView.getItems && this.dataView.getItems();
+    return this.dataView?.getItems();
   }
 
   get datasetHierarchical(): any[] | undefined {
     return this.sharedService.hierarchicalDataset;
   }
 
-  get dataView(): any {
-    return this._grid && this._grid.getData && this._grid.getData();
+  get dataView(): DataView {
+    return this._grid?.getData();
   }
 
   /** Getter of the SlickGrid Event Handler */
@@ -30,17 +30,17 @@ export class TreeDataService {
   }
 
   get gridOptions(): GridOption {
-    return this._grid && this._grid.getOptions && this._grid.getOptions() || {};
+    return this._grid?.getOptions() || {};
   }
 
   dispose() {
     // unsubscribe all SlickGrid events
-    if (this._eventHandler && this._eventHandler.unsubscribeAll) {
+    if (this._eventHandler?.unsubscribeAll) {
       this._eventHandler.unsubscribeAll();
     }
   }
 
-  init(grid: any) {
+  init(grid: SlickGrid) {
     this._grid = grid;
 
     // subscribe to the SlickGrid event and call the backend execution

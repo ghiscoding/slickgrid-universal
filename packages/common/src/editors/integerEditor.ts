@@ -1,6 +1,6 @@
 import { Constants } from './../constants';
 import { KeyCode } from '../enums/index';
-import { Column, ColumnEditor, Editor, EditorArguments, EditorValidator, EditorValidatorOutput } from './../interfaces/index';
+import { Column, ColumnEditor, Editor, EditorArguments, EditorValidator, EditorValidatorOutput, SlickGrid } from './../interfaces/index';
 import { getDescendantProperty, setDeepValue } from '../services/utilities';
 import { integerValidator } from '../editorValidators/integerValidator';
 
@@ -14,7 +14,7 @@ export class IntegerEditor implements Editor {
   originalValue: number | string;
 
   /** SlickGrid Grid object */
-  grid: any;
+  grid: SlickGrid;
 
   constructor(private args: EditorArguments) {
     if (!args) {

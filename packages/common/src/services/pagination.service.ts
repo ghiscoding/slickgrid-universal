@@ -1,7 +1,7 @@
 import * as isequal_ from 'lodash.isequal';
 const isequal = isequal_; // patch to fix rollup to work
 
-import { BackendServiceApi, CurrentPagination, Pagination, ServicePagination, Subscription } from '../interfaces/index';
+import { BackendServiceApi, CurrentPagination, DataView, Pagination, ServicePagination, SlickGrid, Subscription, SlickEventData } from '../interfaces/index';
 import { executeBackendProcessesCallback, onBackendError } from './backend-utilities';
 import { SharedService } from './shared.service';
 import { PubSubService } from './pubSub.service';
@@ -24,11 +24,16 @@ export class PaginationService {
   private _paginationOptions: Pagination;
   private _subscriptions: Subscription[] = [];
 
-  dataView: any;
-  grid: any;
+  /** SlickGrid Grid object */
+  grid: SlickGrid;
 
   /** Constructor */
   constructor(private pubSubService: PubSubService, private sharedService: SharedService) { }
+
+  /** Getter of SlickGrid DataView object */
+  get dataView(): DataView {
+    return this.grid && this.grid.getData && this.grid.getData();
+  }
 
   set paginationOptions(paginationOptions: Pagination) {
     this._paginationOptions = paginationOptions;
@@ -73,9 +78,8 @@ export class PaginationService {
     }
   }
 
-  init(grid: any, dataView: any, paginationOptions: Pagination, backendServiceApi?: BackendServiceApi) {
+  init(grid: SlickGrid, paginationOptions: Pagination, backendServiceApi?: BackendServiceApi) {
     this._availablePageSizes = paginationOptions.pageSizes;
-    this.dataView = dataView;
     this.grid = grid;
     this._backendServiceApi = backendServiceApi;
     this._paginationOptions = paginationOptions;
@@ -87,7 +91,7 @@ export class PaginationService {
     }
 
     if (this._isLocalGrid && this.dataView) {
-      this.dataView.onPagingInfoChanged.subscribe((e: Event, pagingInfo: { totalRows: number; pageNum: number; }) => {
+      this.dataView.onPagingInfoChanged.subscribe((_e: SlickEventData, pagingInfo: { totalRows: number; pageNum: number; }) => {
         if (this._totalItems !== pagingInfo.totalRows) {
           this._totalItems = pagingInfo.totalRows;
           this._paginationOptions.totalItems = this._totalItems;
@@ -208,7 +212,7 @@ export class PaginationService {
     }
   }
 
-  refreshPagination(isPageNumberReset: boolean = false, triggerChangedEvent = true) {
+  refreshPagination(isPageNumberReset = false, triggerChangedEvent = true) {
     const previousPagination = { ...this.getCurrentPagination() };
 
     if (this._paginationOptions) {

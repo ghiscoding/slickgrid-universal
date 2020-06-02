@@ -3,7 +3,9 @@ import {
   GridOption,
   FieldType,
 } from '@slickgrid-universal/common';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
 
@@ -46,7 +48,12 @@ export class Example08 {
       enableAutoResize: false,
       gridHeight: 275,
       gridWidth: 800,
-      enableExport: true,
+      enableExcelExport: true,
+      excelExportOptions: {
+        exportWithFormatter: true,
+        sanitizeDataExport: true
+      },
+      registerExternalServices: [new ExcelExportService()],
       enableCellNavigation: true,
       enableColumnReorder: false,
       enableSorting: true,

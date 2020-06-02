@@ -79,6 +79,7 @@ export class RowMoveManagerExtension implements Extension {
     return this._addon;
   }
 
+  /** Register the 3rd party addon (plugin) */
   register(rowSelectionPlugin?: any): any {
     if (this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
       // dynamically import the SlickGrid plugin (addon) with RequireJS

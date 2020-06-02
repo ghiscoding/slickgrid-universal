@@ -1,12 +1,14 @@
-import { SharedService } from '..';
-import { Column, CurrentPagination, GridOption } from '../../interfaces/index';
+import { SharedService } from '../shared.service';
+import { PubSubService } from '../pubSub.service';
+import { Column, CurrentPagination, DataView, GridOption, SlickGrid } from '../../interfaces/index';
+import { ExcelExportService } from '../excelExport.service';
 
 jest.mock('flatpickr', () => { });
 
 const dataviewStub = {
   onRowCountChanged: jest.fn(),
   onRowsChanged: jest.fn(),
-};
+} as unknown as DataView;
 
 const gridStub = {
   autosizeColumns: jest.fn(),
@@ -17,7 +19,14 @@ const gridStub = {
   onColumnsReordered: jest.fn(),
   onColumnsResized: jest.fn(),
   registerPlugin: jest.fn(),
-};
+} as unknown as SlickGrid;
+
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as PubSubService;
 
 describe('Shared Service', () => {
   let mockColumns: Column[];
@@ -247,5 +256,35 @@ describe('Shared Service', () => {
   it('should call "hideHeaderRowAfterPageLoad" GETTER and SETTER expect same value to be returned', () => {
     service.hideHeaderRowAfterPageLoad = true;
     expect(service.hideHeaderRowAfterPageLoad).toEqual(true);
+  });
+
+  it('should call "internalPubSubService" GETTER and SETTER expect same value to be returned', () => {
+    service.internalPubSubService = pubSubServiceStub;
+    expect(service.internalPubSubService).toEqual(pubSubServiceStub);
+  });
+
+  it('should call "externalRegisteredServices" GETTER and return all columns', () => {
+    // @ts-ignore
+    const mockRegisteredServices = [new ExcelExportService()];
+    const spy = jest.spyOn(service, 'externalRegisteredServices', 'get').mockReturnValue(mockRegisteredServices);
+
+    const columns = service.externalRegisteredServices;
+
+    expect(spy).toHaveBeenCalled();
+    expect(columns).toEqual(mockRegisteredServices);
+  });
+
+  it('should call "externalRegisteredServices" SETTER and expect GETTER to return the same', () => {
+    // @ts-ignore
+    const mockRegisteredServices = [new ExcelExportService()];
+    const getSpy = jest.spyOn(service, 'externalRegisteredServices', 'get');
+    const setSpy = jest.spyOn(service, 'externalRegisteredServices', 'set');
+
+    service.externalRegisteredServices = mockRegisteredServices;
+    const columns = service.externalRegisteredServices;
+
+    expect(getSpy).toHaveBeenCalled();
+    expect(setSpy).toHaveBeenCalled();
+    expect(columns).toEqual(mockRegisteredServices);
   });
 });

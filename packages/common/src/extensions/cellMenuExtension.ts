@@ -10,6 +10,7 @@ import {
   MenuOptionItem,
   Locale,
   SlickEventHandler,
+  SlickGrid,
 } from '../interfaces/index';
 import { SharedService } from '../services/shared.service';
 import { ExtensionUtility } from './extensionUtility';
@@ -49,12 +50,7 @@ export class CellMenuExtension implements Extension {
     return this._addon;
   }
 
-  /**
-   * Create the Action Cell Menu and expose all the available hooks that user can subscribe (onCommand, onBeforeMenuShow, ...)
-   * @param grid
-   * @param dataView
-   * @param columnDefinitions
-   */
+  /** Register the 3rd party addon (plugin) */
   register(): any {
     if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
@@ -100,21 +96,21 @@ export class CellMenuExtension implements Extension {
           });
         }
         if (cellMenu && typeof cellMenu.onBeforeMenuShow === 'function') {
-          this._eventHandler.subscribe(this._addon.onBeforeMenuShow, (event: Event, args: { cell: number; row: number; grid: any; }) => {
+          this._eventHandler.subscribe(this._addon.onBeforeMenuShow, (event: Event, args: { cell: number; row: number; grid: SlickGrid; }) => {
             if (cellMenu.onBeforeMenuShow) {
               cellMenu.onBeforeMenuShow(event, args);
             }
           });
         }
         if (cellMenu && typeof cellMenu.onBeforeMenuClose === 'function') {
-          this._eventHandler.subscribe(this._addon.onBeforeMenuClose, (event: Event, args: { cell: number; row: number; grid: any; menu: any; }) => {
+          this._eventHandler.subscribe(this._addon.onBeforeMenuClose, (event: Event, args: { cell: number; row: number; grid: SlickGrid; menu: any; }) => {
             if (cellMenu.onBeforeMenuClose) {
               cellMenu.onBeforeMenuClose(event, args);
             }
           });
         }
         if (cellMenu && typeof cellMenu.onAfterMenuShow === 'function') {
-          this._eventHandler.subscribe(this._addon.onAfterMenuShow, (event: Event, args: { cell: number; row: number; grid: any; }) => {
+          this._eventHandler.subscribe(this._addon.onAfterMenuShow, (event: Event, args: { cell: number; row: number; grid: SlickGrid; }) => {
             if (cellMenu.onAfterMenuShow) {
               cellMenu.onAfterMenuShow(event, args);
             }

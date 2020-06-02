@@ -10,6 +10,7 @@ import {
   MenuCommandItemCallbackArgs,
   Locale,
   SlickEventHandler,
+  SlickGrid,
 } from '../interfaces/index';
 import {
   EmitterType,
@@ -60,12 +61,7 @@ export class HeaderMenuExtension implements Extension {
     return this._addon;
   }
 
-  /**
-   * Create the Header Menu and expose all the available hooks that user can subscribe (onCommand, onBeforeMenuShow, ...)
-   * @param grid
-   * @param dataView
-   * @param columnDefinitions
-   */
+  /** Register the 3rd party addon (plugin) */
   register(): any {
     if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
@@ -97,14 +93,14 @@ export class HeaderMenuExtension implements Extension {
           }
         });
         if (this.sharedService.gridOptions.headerMenu && typeof this.sharedService.gridOptions.headerMenu.onBeforeMenuShow === 'function') {
-          this._eventHandler.subscribe(this._addon.onBeforeMenuShow, (event: Event, args: { grid: any; column: Column; menu: any; }) => {
+          this._eventHandler.subscribe(this._addon.onBeforeMenuShow, (event: Event, args: { grid: SlickGrid; column: Column; menu: any; }) => {
             if (this.sharedService.gridOptions.headerMenu && this.sharedService.gridOptions.headerMenu.onBeforeMenuShow) {
               this.sharedService.gridOptions.headerMenu.onBeforeMenuShow(event, args);
             }
           });
         }
         if (this.sharedService.gridOptions.headerMenu && typeof this.sharedService.gridOptions.headerMenu.onAfterMenuShow === 'function') {
-          this._eventHandler.subscribe(this._addon.onAfterMenuShow, (event: Event, args: { grid: any; column: Column; menu: any; }) => {
+          this._eventHandler.subscribe(this._addon.onAfterMenuShow, (event: Event, args: { grid: SlickGrid; column: Column; menu: any; }) => {
             if (this.sharedService.gridOptions.headerMenu && this.sharedService.gridOptions.headerMenu.onAfterMenuShow) {
               this.sharedService.gridOptions.headerMenu.onAfterMenuShow(event, args);
             }
