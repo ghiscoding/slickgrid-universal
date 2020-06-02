@@ -1,11 +1,13 @@
 import {
   Column,
+  DataView,
   GridOption,
   FieldType,
   Filters,
   findItemInHierarchicalStructure,
   Formatter,
   Formatters,
+  SlickGrid,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
@@ -18,8 +20,8 @@ export class Example6 {
   gridOptions: GridOption;
   datasetFlat: any[];
   datasetHierarchical = [];
-  dataViewObj: any;
-  gridObj: any;
+  dataViewObj: DataView;
+  gridObj: SlickGrid;
   slickgridLwc;
   slickerGridInstance;
   durationOrderByCount = false;

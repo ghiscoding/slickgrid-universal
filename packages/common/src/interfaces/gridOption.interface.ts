@@ -70,6 +70,9 @@ export interface GridOption {
 
     /** what is the maximum tooltip length in pixels (only type the number) */
     maxToolTipLength: number;
+
+    /** Allow preventing custom tooltips from being overwritten by auto tooltips */
+    replaceExisting?: boolean;
   };
 
   /** Backend Service API definition (GraphQL/OData Services) */

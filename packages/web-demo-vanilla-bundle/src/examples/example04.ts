@@ -1,4 +1,4 @@
-import { AutocompleteOption, Column, ColumnEditorDualInput, Editors, FieldType, Filters, Formatters, OperatorType, GridOption } from '@slickgrid-universal/common';
+import { AutocompleteOption, Column, ColumnEditorDualInput, DataView, Editors, FieldType, Filters, Formatters, GridOption, OperatorType, SlickGrid } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 
@@ -18,8 +18,8 @@ export class Example4 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset;
-  dataviewObj: any;
-  gridObj: any;
+  dataViewObj: DataView;
+  gridObj: SlickGrid;
   commandQueue = [];
   frozenColumnCount = 2;
   frozenRowCount = 3;
@@ -30,7 +30,6 @@ export class Example4 {
   attached() {
     const dataset = this.initializeGrid();
     const gridContainerElm = document.querySelector(`.grid4`);
-    const gridElm = document.querySelector(`.slickgrid-container`);
 
     // gridContainerElm.addEventListener('onclick', handleOnClick);
     gridContainerElm.addEventListener('onvalidationerror', this.handleOnValidationError.bind(this));
@@ -430,7 +429,7 @@ export class Example4 {
   handleOnSlickerGridCreated(event) {
     this.slickerGridInstance = event && event.detail;
     this.gridObj = this.slickerGridInstance && this.slickerGridInstance.slickGrid;
-    this.dataviewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
+    this.dataViewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
     console.log('handleOnSlickerGridCreated', this.slickerGridInstance);
   }
 

@@ -1,7 +1,9 @@
 import {
   Column,
+  DataView,
   GridOption,
   Formatters,
+  SlickGrid,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
@@ -12,8 +14,8 @@ export class Example7 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset;
-  dataviewObj: any;
-  gridObj: any;
+  dataViewObj: DataView;
+  gridObj: SlickGrid;
   slickgridLwc;
   slickerGridInstance;
 
@@ -137,7 +139,7 @@ export class Example7 {
   handleOnSlickerGridCreated(event) {
     this.slickerGridInstance = event && event.detail;
     this.gridObj = this.slickerGridInstance && this.slickerGridInstance.slickGrid;
-    this.dataviewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
+    this.dataViewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
     console.log('handleOnSlickerGridCreated', this.slickerGridInstance);
   }
 

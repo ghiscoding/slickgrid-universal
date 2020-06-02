@@ -1,9 +1,11 @@
 import {
   Column,
+  DataView,
   FieldType,
   Filters,
   Formatters,
   GridOption,
+  SlickGrid,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
@@ -17,8 +19,8 @@ export class Example5 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
-  dataViewObj: any;
-  gridObj: any;
+  dataViewObj: DataView;
+  gridObj: SlickGrid;
   slickgridLwc;
   slickerGridInstance;
   durationOrderByCount = false;

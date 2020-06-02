@@ -1,4 +1,4 @@
-import { Aggregators, Column, Editors, FieldType, Filters, GroupingGetterFunction, SortComparers, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters, GridOption } from '@slickgrid-universal/common';
+import { Aggregators, Column, DataView, Editors, FieldType, Filters, Formatters, GridOption, Grouping, GroupingGetterFunction, GroupTotalFormatters, SlickGrid, SortComparers, SortDirectionNumber } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 
@@ -20,8 +20,8 @@ export class Example3 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset;
-  dataviewObj: any;
-  gridObj: any;
+  dataViewObj: DataView;
+  gridObj: SlickGrid;
   commandQueue = [];
   slickgridLwc;
   slickerGridInstance;
@@ -350,11 +350,11 @@ export class Example3 {
   }
 
   collapseAllGroups() {
-    this.dataviewObj.collapseAllGroups();
+    this.dataViewObj.collapseAllGroups();
   }
 
   expandAllGroups() {
-    this.dataviewObj.expandAllGroups();
+    this.dataViewObj.expandAllGroups();
   }
 
   groupByDuration() {
@@ -448,7 +448,7 @@ export class Example3 {
   handleOnSlickerGridCreated(event) {
     this.slickerGridInstance = event && event.detail;
     this.gridObj = this.slickerGridInstance && this.slickerGridInstance.slickGrid;
-    this.dataviewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
+    this.dataViewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
     console.log('handleOnSlickerGridCreated', this.slickerGridInstance);
   }
 

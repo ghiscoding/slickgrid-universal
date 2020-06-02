@@ -1,4 +1,4 @@
-import { Column, GridOption, FormatterResultObject, OnEventArgs, SortDirectionString } from '@slickgrid-universal/common';
+import { Column, DataView, FormatterResultObject, GridOption, OnEventArgs, SlickGrid, SortDirectionString } from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import '../salesforce-styles.scss';
 import './example51.scss';
@@ -74,8 +74,8 @@ export class Example51 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
-  dataViewObj: any;
-  gridObj: any;
+  dataViewObj: DataView;
+  gridObj: SlickGrid;
   slickgridLwc;
   slickerGridInstance;
   durationOrderByCount = false;
@@ -463,7 +463,7 @@ export class Example51 {
   }
 
   handleOnClick(event: any) {
-    console.log('handle on cell click')
+    console.log('handle on cell click');
     const eventDetail = event && event.detail;
     const args = event && event.detail && event.detail.args;
     if (eventDetail && args) {

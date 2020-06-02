@@ -1,4 +1,4 @@
-import { Aggregators, Column, FieldType, Filters, SortComparers, SortDirectionNumber, Grouping, GroupTotalFormatters, Formatters, GridOption, FileType } from '@slickgrid-universal/common';
+import { Aggregators, Column, DataView, FieldType, Filters, FileType, Formatters, GridOption, Grouping, GroupTotalFormatters, SlickGrid, SortComparers, SortDirectionNumber } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { FileExportService } from '@slickgrid-universal/file-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
@@ -13,8 +13,8 @@ export class Example2 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset;
-  dataviewObj: any;
-  gridObj: any;
+  dataViewObj: DataView;
+  gridObj: SlickGrid;
   commandQueue = [];
   slickgridLwc;
   slickerGridInstance;
@@ -177,15 +177,15 @@ export class Example2 {
   }
 
   clearGrouping() {
-    this.dataviewObj.setGrouping([]);
+    this.dataViewObj.setGrouping([]);
   }
 
   collapseAllGroups() {
-    this.dataviewObj.collapseAllGroups();
+    this.dataViewObj.collapseAllGroups();
   }
 
   expandAllGroups() {
-    this.dataviewObj.expandAllGroups();
+    this.dataViewObj.expandAllGroups();
   }
 
   exportToExcel() {
@@ -193,7 +193,7 @@ export class Example2 {
   }
 
   groupByDuration() {
-    this.dataviewObj.setGrouping({
+    this.dataViewObj.setGrouping({
       getter: 'duration',
       formatter: (g) => `Duration:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
       comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
@@ -212,7 +212,7 @@ export class Example2 {
 
   groupByDurationOrderByCount(aggregateCollapsed) {
     this.gridObj.setSortColumns([]);
-    this.dataviewObj.setGrouping({
+    this.dataViewObj.setGrouping({
       getter: 'duration',
       formatter: (g) => `Duration:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
       comparer: (a, b) => a.count - b.count,
@@ -228,7 +228,7 @@ export class Example2 {
 
   groupByDurationEffortDriven() {
     this.gridObj.setSortColumns([]);
-    this.dataviewObj.setGrouping([
+    this.dataViewObj.setGrouping([
       {
         getter: 'duration',
         formatter: (g) => `Duration:  ${g.value}  <span style="color:green">(${g.count} items)</span>`,
@@ -259,7 +259,7 @@ export class Example2 {
 
   groupByDurationEffortDrivenPercent() {
     this.gridObj.setSortColumns([]);
-    this.dataviewObj.setGrouping([
+    this.dataViewObj.setGrouping([
       {
         getter: 'duration',
         formatter: (g) => `Duration:  ${g.value}  <span style="color:green">(${g.count} items)</span>`,
@@ -304,7 +304,7 @@ export class Example2 {
   handleOnSlickerGridCreated(event) {
     this.slickerGridInstance = event && event.detail;
     this.gridObj = this.slickerGridInstance && this.slickerGridInstance.slickGrid;
-    this.dataviewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
+    this.dataViewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
     console.log('handleOnSlickerGridCreated', this.slickerGridInstance);
   }
 

@@ -1,11 +1,11 @@
 import { GridOption } from './gridOption.interface';
 import { Column } from './column.interface';
+import { ColumnSort } from './columnSort.interface';
 import { Editor } from './editor.interface';
 import { ElementPosition } from './elementPosition.interface';
+import { FormatterResultObject } from './formatterResultObject.interface';
 import { PagingInfo } from './pagingInfo.interface';
 import { SlickEvent } from './slickEvent.interface';
-import { FormatterResultObject } from './formatterResultObject.interface';
-import { ColumnSort } from './columnSort.interface';
 
 export interface SlickGrid {
   /**
@@ -26,10 +26,10 @@ export interface SlickGrid {
   addCellCssStyles(key: string, hash: any): void;
 
   /** Apply a Formatter Result to a Cell DOM Node */
-  applyFormatResultToCellNode: (formatterResult?: FormatterResultObject, cellNode?: HTMLElement, suppressRemove?: boolean) => void;
+  applyFormatResultToCellNode(formatterResult?: FormatterResultObject, cellNode?: HTMLElement, suppressRemove?: boolean): void;
 
   /** Proportionally resize a specific column by its name, index or Id */
-  autosizeColumn: (columnOrIndexOrId: string | number, isInit: boolean) => void;
+  autosizeColumn(columnOrIndexOrId: string | number, isInit: boolean): void;
 
   /** Proportionately resizes all columns to fill available horizontal space. This does not take the cell contents into consideration. */
   autosizeColumns(): void;
@@ -69,7 +69,7 @@ export interface SlickGrid {
   focus(): void;
 
   /** Get the canvas DOM element */
-  getActiveCanvasNode: () => HTMLElement;
+  getActiveCanvasNode(): HTMLElement;
 
   /**
    * Returns an object representing the coordinates of the currently active cell:
@@ -88,16 +88,16 @@ export interface SlickGrid {
   getActiveCellPosition(): ElementPosition;
 
   /** Get the active Viewport DOM node element */
-  getActiveViewportNode: () => HTMLElement;
+  getActiveViewportNode(): HTMLElement;
 
   /** Get the canvas DOM element */
-  getCanvases: () => HTMLElement;
+  getCanvases(): HTMLElement;
 
   /** Get Grid Canvas Node DOM Element */
   getCanvasNode(): HTMLCanvasElement;
 
   /** Get the grid canvas width */
-  getCanvasWidth: () => number;
+  getCanvasWidth(): number;
 
   /**
    * Accepts a key name, returns the group of CSS styles defined under that name. See setCellCssStyles for more info.
@@ -145,7 +145,7 @@ export interface SlickGrid {
   getColumns(): Column[];
 
   /** Get Grid Canvas Node DOM Element */
-  getContainerNode: () => HTMLElement;
+  getContainerNode(): HTMLElement;
 
   /** Returns an array of every data object, unless you're using DataView in which case it returns a DataView object. */
   getData(): any;
@@ -166,25 +166,25 @@ export interface SlickGrid {
   getEditController(): { commitCurrentEdit(): boolean; cancelCurrentEdit(): boolean; };
 
   /** Get the Footer DOM element */
-  getFooterRow: () => HTMLElement;
+  getFooterRow(): HTMLElement;
 
   /** Get the Footer Row Column DOM element */
-  getFooterRowColumn: (columnIdOrIdx: string | number) => HTMLElement;
+  getFooterRowColumn(columnIdOrIdx: string | number): HTMLElement;
 
   /** Get frozen (pinned) row offset */
-  getFrozenRowOffset: (row: number) => number;
+  getFrozenRowOffset(row: number): number;
 
   /** Get the Grid Position */
   getGridPosition(): ElementPosition;
 
   /** Get the Header DOM element */
-  getHeader: (columnDef: Column) => HTMLElement;
+  getHeader(columnDef: Column): HTMLElement;
 
   /** Get a specific Header Column DOM element */
-  getHeaderColumn: (columnIdOrIdx: string | number) => HTMLElement;
+  getHeaderColumn(columnIdOrIdx: string | number): HTMLElement;
 
   /** Get Header Column Width Difference in pixel */
-  getHeaderColumnWidthDiff: () => number;
+  getHeaderColumnWidthDiff(): number;
 
   /** Get the Header Row DOM element */
   getHeaderRow(): HTMLElement;
@@ -193,28 +193,28 @@ export interface SlickGrid {
   getHeaderRowColumn(columnId: string | number): HTMLElement;
 
   /** Get the headers width in pixel */
-  getHeadersWidth: () => number;
+  getHeadersWidth(): number;
 
   /** Returns an object containing all of the Grid options set on the grid. See a list of Grid Options here.  */
   getOptions(): GridOption;
 
   /** Get a Plugin (addon) by its name */
-  getPluginByName: (name: string) => any;
+  getPluginByName(name: string): any;
 
   /** Get the Pre-Header Panel DOM node element */
-  getPreHeaderPanel: () => HTMLElement;
+  getPreHeaderPanel(): HTMLElement;
 
   /** Get the Pre-Header Panel Left DOM node element */
-  getPreHeaderPanelLeft: () => HTMLElement;
+  getPreHeaderPanelLeft(): HTMLElement;
 
   /** Get the Pre-Header Panel Right DOM node element */
-  getPreHeaderPanelRight: () => HTMLElement;
+  getPreHeaderPanelRight(): HTMLElement;
 
   /** Get rendered range */
   getRenderedRange(viewportTop: number, viewportLeft: number): { top: number; bottom: number; leftPx: number; rightPx: number; };
 
   /** Get scrollbar dimensions */
-  getScrollbarDimensions: () => { height: number; width: number; };
+  getScrollbarDimensions(): { height: number; width: number; };
 
   /** Returns an array of row indices corresponding to the currently selected rows. */
   getSelectedRows(): number[];
@@ -229,13 +229,13 @@ export interface SlickGrid {
   getTopPanel(): HTMLElement;
 
   /** Get grid unique identifier */
-  getUID: () => string;
+  getUID(): string;
 
   /** Get Viewport position */
   getViewport(viewportTop?: number, viewportLeft?: number): { top: number; bottom: number; leftPx: number; rightPx: number; };
 
   /** Get the Viewport DOM node element */
-  getViewportNode: () => HTMLElement;
+  getViewportNode(): HTMLElement;
 
   /**
    * Accepts a row integer and a cell integer, scrolling the view to the row where row is its row index, and cell is its cell index. Optionally accepts a forceEdit boolean which, if true, will attempt to initiate the edit dialogue for the field in the specified cell.
@@ -253,7 +253,7 @@ export interface SlickGrid {
   invalidate(): void;
 
   /** Invalidate all rows */
-  invalidateAllRows: () => void;
+  invalidateAllRows(): void;
 
   /** Invalidate a specific row number */
   invalidateRow(row: number): void;
@@ -262,7 +262,7 @@ export interface SlickGrid {
   invalidateRows(rows: number[]): void;
 
   /** Navigate to the bottom of the grid */
-  navigateBottom: () => void;
+  navigateBottom(): void;
 
   /** Switches the active cell one row down skipping unselectable cells. Returns a boolean saying whether it was able to complete or not. */
   navigateDown(): boolean;
@@ -274,10 +274,10 @@ export interface SlickGrid {
   navigateNext(): boolean;
 
   /** Navigate (scroll) by a page up */
-  navigatePageUp: () => void;
+  navigatePageUp(): void;
 
   /** Navigate (scroll) by a page down */
-  navigatePageDown: () => void;
+  navigatePageDown(): void;
 
   /**  Tabs over active cell to the previous selectable cell. Returns a boolean saying whether it was able to complete or not. */
   navigatePrev(): boolean;
@@ -286,13 +286,13 @@ export interface SlickGrid {
   navigateRight(): boolean;
 
   /** Navigate to the start row in the grid */
-  navigateRowStart: () => boolean;
+  navigateRowStart(): boolean;
 
   /** Navigate to the end row in the grid */
-  navigateRowEnd: () => boolean;
+  navigateRowEnd(): boolean;
 
   /** Navigate to the top of the grid */
-  navigateTop: () => void;
+  navigateTop(): void;
 
   /** Switches the active cell one row up skipping unselectable cells. Returns a boolean saying whether it was able to complete or not. */
   navigateUp(): boolean;
@@ -319,7 +319,7 @@ export interface SlickGrid {
   scrollCellIntoView(row: number, cell: number, doPaging: boolean): void;
 
   /** Scroll to a specific column and show it into the viewport */
-  scrollColumnIntoView: (cell: number) => void;
+  scrollColumnIntoView(cell: number): void;
 
   /** Scroll to a specific row and make it into the view */
   scrollRowIntoView(row: number, doPaging?: boolean): void;
@@ -328,20 +328,23 @@ export interface SlickGrid {
   scrollRowToTop(row: number): void;
 
   /** Scroll to an Y position in the grid */
-  scrollTo: (yPos: number) => void;
+  scrollTo(yPos: number): void;
 
   /** Sets an active canvas node */
-  setActiveCanvasNode: (element: HTMLElement) => void;
+  setActiveCanvasNode(element: HTMLElement): void;
 
   /**
    * Sets an active cell.
    * @param row A row index.
    * @param cell A column index.
+   * @param optionEditMode Option Edit Mode is Auto-Edit?
+   * @param preClickModeOn Pre-Click Mode is Enabled?
+   * @param suppressActiveCellChangedEvent Are we suppressing Active Cell Changed Event (defaults to false)
    */
-  setActiveCell(row: number, cell: number): void;
+  setActiveCell(row: number, cell: number, optionEditMode?: boolean, preClickModeOn?: boolean, suppressActiveCellChangedEvent?: boolean): void;
 
   /** Sets an active viewport node */
-  setActiveViewportNode: (element: HTMLElement) => void;
+  setActiveViewportNode(element: HTMLElement): void;
 
   /**
    * Sets CSS classes to specific grid cells by calling removeCellCssStyles(key) followed by addCellCssStyles(key, hash). key is name for this set of styles so you can reference it later - to modify it or remove it, for example. hash is a per-row-index, per-column-name nested hash of CSS classes to apply.
@@ -354,7 +357,7 @@ export interface SlickGrid {
   setCellCssStyles(key: string, hash: any): void;
 
   /** Set the Column Header Visibility and optionally enable/disable animation (enabled by default) */
-  setColumnHeaderVisibility: (visible: boolean, animate?: boolean) => void;
+  setColumnHeaderVisibility(visible: boolean, animate?: boolean): void;
 
   /**
    * Sets grid columns. Column headers will be recreated and all rendered rows will be removed. To rerender the grid (if necessary), call render().
@@ -370,7 +373,7 @@ export interface SlickGrid {
   setData(newData: any | any[], scrollToTop: boolean): void;
 
   /** Set the Footer Visibility and optionally enable/disable animation (enabled by default) */
-  setFooterRowVisibility: (visible: boolean, animate?: boolean) => void;
+  setFooterRowVisibility(visible: boolean, animate?: boolean): void;
 
   /** Set the Header Row Visibility and optionally enable/disable animation (enabled by default) */
   setHeaderRowVisibility(visible: boolean, animate?: boolean): void;
@@ -382,7 +385,7 @@ export interface SlickGrid {
   setOptions(options: GridOption): void;
 
   /** Set the Pre-Header Visibility and optionally enable/disable animation (enabled by default) */
-  setPreHeaderPanelVisibility: (visible: boolean, animate?: boolean) => void;
+  setPreHeaderPanelVisibility(visible: boolean, animate?: boolean): void;
 
   /**
    * Accepts an array of row indices and applies the current selectedCellCssClass to the cells in the row, respecting whether cells have been flagged as selectable.
@@ -427,7 +430,7 @@ export interface SlickGrid {
   updateColumnHeader(columnId: string | number, title?: string, toolTip?: string): void;
 
   /** Update paging information status from the View */
-  updatePagingStatusFromView: (pagingInfo: PagingInfo) => void;
+  updatePagingStatusFromView(pagingInfo: PagingInfo): void;
 
   /** Update a specific row by its row index */
   updateRow(row: number): void;
@@ -445,6 +448,7 @@ export interface SlickGrid {
   onAutosizeColumns: SlickEvent;
   onBeforeAppendCell: SlickEvent;
   onBeforeCellEditorDestroy: SlickEvent;
+  onBeforeColumnsResize: SlickEvent;
   onBeforeDestroy: SlickEvent;
   onBeforeEditCell: SlickEvent;
   onBeforeHeaderCellDestroy: SlickEvent;
