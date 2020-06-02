@@ -152,7 +152,6 @@ npm run test:watch
   - [ ] Create a [Migration Guide](https://github.com/ghiscoding/slickgrid-universal/wiki/Migration-for-Angular-Aurelia-Slickgrid) for Angular/Aurelia
 - [x] Add simple input bindings in the demo (e.g. pinned rows input)
 - [x] Add possibility to use SVG instead of Font Family
-  - [ ] Remove any reference to previous Font after testing it all
-- [ ] Add Typings for Grid & DataView objects
+- [x] Add Typings for Grid & DataView objects
 - [ ] Cannot copy text from cell since it's not selectable
-- [ ] Remove all Service init 2nd argument (we can get DataView from the Grid object)
+- [ ] Remove all Services init method 2nd argument (we can get DataView from the Grid object)

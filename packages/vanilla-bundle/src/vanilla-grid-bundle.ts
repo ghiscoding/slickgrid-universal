@@ -388,7 +388,7 @@ export class VanillaGridBundle {
     const registeringServices: any[] = this._gridOptions.registerExternalServices || [];
 
     // when using Salesforce, we want the Export to CSV always enabled without registering it
-    if (this._gridOptions.useSalesforceDefaultGridOptions) {
+    if (this._gridOptions.enableExport && this._gridOptions.useSalesforceDefaultGridOptions) {
       const fileExportService = new FileExportService();
       registeringServices.push(fileExportService);
     }
