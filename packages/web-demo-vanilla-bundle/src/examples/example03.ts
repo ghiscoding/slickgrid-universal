@@ -16,6 +16,12 @@ const myCustomTitleValidator = (value, args) => {
   return { valid: true, msg: '' };
 };
 
+const customEditableInputFormatter = (row, cell, value, columnDef, dataContext, grid) => {
+  const isEditableLine = grid && grid.getOptions && grid.getOptions() && columnDef.editor;
+  value = (value === null || value === undefined) ? '' : value;
+  return isEditableLine ? { text: value, addClasses: 'editable-field', toolTip: 'Click to Edit' } : value;
+};
+
 export class Example3 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
@@ -49,6 +55,7 @@ export class Example3 {
     this.columnDefinitions = [
       {
         id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,
+        formatter: customEditableInputFormatter,
         editor: {
           model: Editors.longText,
           required: true,
@@ -66,6 +73,7 @@ export class Example3 {
       },
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
+        formatter: customEditableInputFormatter,
         editor: {
           model: Editors.float,
           // required: true,
@@ -93,7 +101,8 @@ export class Example3 {
         sortable: true,
         filterable: true,
         // filter: { model: Filters.compoundInput },
-        formatter: Formatters.dollar,
+        // formatter: Formatters.dollar,
+        formatter: Formatters.multiple, params: { formatters: [Formatters.dollar, customEditableInputFormatter,] },
         groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
         type: FieldType.number,
         grouping: {
@@ -108,6 +117,7 @@ export class Example3 {
       },
       {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
+        formatter: customEditableInputFormatter,
         editor: {
           model: Editors.slider,
           minValue: 0,
@@ -130,8 +140,10 @@ export class Example3 {
       },
       {
         id: 'start', name: 'Start', field: 'start', sortable: true,
-        formatter: Formatters.dateIso, type: FieldType.date, outputType: FieldType.dateIso,
+        // formatter: Formatters.dateIso,
+        type: FieldType.date, outputType: FieldType.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },
+        formatter: Formatters.multiple, params: { formatters: [Formatters.dateIso, customEditableInputFormatter,] },
         editor: { model: Editors.date },
         grouping: {
           getter: 'start',
@@ -146,7 +158,9 @@ export class Example3 {
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true,
         editor: { model: Editors.date, editorOptions: { minDate: 'today' }, },
-        formatter: Formatters.dateIso, type: FieldType.date, outputType: FieldType.dateIso,
+        // formatter: Formatters.dateIso,
+        type: FieldType.date, outputType: FieldType.dateIso,
+        formatter: Formatters.multiple, params: { formatters: [Formatters.dateIso, customEditableInputFormatter,] },
         filterable: true, filter: { model: Filters.compoundDate },
         grouping: {
           getter: 'finish',
