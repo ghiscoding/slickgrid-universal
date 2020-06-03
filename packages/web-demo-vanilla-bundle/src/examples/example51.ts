@@ -70,7 +70,7 @@ const translationTypeFormatter = (row, cell, value, columnDef, dataContext) => {
 };
 
 export class Example51 {
-  _commandQueue = [];
+  editQueue = [];
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
@@ -106,6 +106,7 @@ export class Example51 {
         id: 'sortSequence', name: 'Sort Seq', field: 'sortSequence', minWidth: 60, maxWidth: 60,
         formatter: Slicker.Formatters.multiple, sortable: true,
         filterable: true, filter: { model: Slicker.Filters.compoundInputNumber }, type: Slicker.Enums.FieldType.number,
+        // queryFieldNameGetterFn: (dataContext) => dataContext.Sort_Sequence_Number__c ? 'Sort_Sequence_Number__c' : 'Sort_Sequence_Number__c',
         params: {
           formatters: [sortSequenceFormatter, this.customEditableInputFormatter.bind(this)]
         },
@@ -143,7 +144,6 @@ export class Example51 {
       { id: 'Line_Item_Number__c', name: 'Item Num.', field: 'Line_Item_Number__c', minWidth: 80, maxWidth: 80, formatter: fakeHyperlinkFormatter, filterable: true },
       {
         id: 'product', name: 'Product', field: 'product', cssClass: 'cell-title', sortable: true, minWidth: 250, width: 300,
-        // queryFieldNameGetterFn: (dataContext) => dataContext.Engineered_Product_Name__c ? 'Engineered_Product_Name__c' : 'Product_Name__r.Name',
         filterable: true, formatter: Slicker.Formatters.tree,
       },
       { id: 'ERF_Product_Description__c', name: 'Description', field: 'ERF_Product_Description__c', minWidth: 150, filterable: true },
@@ -182,6 +182,8 @@ export class Example51 {
     ];
 
     this.gridOptions = {
+      // useSalesforceDefaultGridOptions: true,
+      datasetIdPropertyName: 'id',
       autoEdit: true, // true single click (false for double-click)
       autoCommitEdit: true,
       editable: true,
@@ -253,6 +255,12 @@ export class Example51 {
       },
       headerRowHeight: 45,
       rowHeight: 45,
+      // eventNamingStyle: 'lowerCaseWithoutOnPrefix',
+      editCommandHandler: (item, column, editCommand) => {
+        console.log(item, column, editCommand)
+        this.editQueue.push({ item, column, command: editCommand });
+        editCommand.execute();
+      },
     };
   }
 
@@ -370,7 +378,7 @@ export class Example51 {
     if (args && args.columnDef && args.dataContext) {
       const field = args.columnDef.field;
       const item = args.dataContext;
-      const lastEdit = this._commandQueue.pop();
+      const lastEdit = this.editQueue.pop();
       const oldValue = lastEdit && lastEdit.prevSerializedValue;
       const newValue = item[field];
       const alwaysSaveOnEnterKey = args.columnDef.internalColumnEditor && args.columnDef.internalColumnEditor.alwaysSaveOnEnterKey || false;
