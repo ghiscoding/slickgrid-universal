@@ -321,6 +321,7 @@ export class Example3 {
   }
 
   changeGridToReadOnly() {
+    // change a single grid options to make the grid non-editable (readonly)
     this.slickgridLwc.gridOptions = { editable: false };
     this.gridOptions = this.slickgridLwc.gridOptions;
   }
