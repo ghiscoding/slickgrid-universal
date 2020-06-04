@@ -2,6 +2,7 @@ import { GridOption } from './gridOption.interface';
 import { Column } from './column.interface';
 import { ColumnSort } from './columnSort.interface';
 import { Editor } from './editor.interface';
+import { EditorValidatorOutput } from './editorValidatorOutput.interface';
 import { ElementPosition } from './elementPosition.interface';
 import { FormatterResultObject } from './formatterResultObject.interface';
 import { PagingInfo } from './pagingInfo.interface';
@@ -457,7 +458,7 @@ export interface SlickGrid {
   onCellChange: SlickEvent;
   onCellCssStylesChanged: SlickEvent;
   onClick: SlickEvent;
-  onColumnsDrag: SlickEvent;
+  onColumnsDrag: SlickEvent<{ triggeredByColumn: string; resizeHandle: HTMLElement }>;
   onColumnsReordered: SlickEvent;
   onColumnsResized: SlickEvent;
   onContextMenu: SlickEvent;
@@ -478,10 +479,19 @@ export interface SlickGrid {
   onKeyDown: SlickEvent;
   onMouseEnter: SlickEvent;
   onMouseLeave: SlickEvent;
-  onValidationError: SlickEvent;
-  onViewportChanged: SlickEvent;
-  onRendered: SlickEvent;
-  onSelectedRowsChanged: SlickEvent;
-  onScroll: SlickEvent;
+  onValidationError: SlickEvent<OnValidationErrorArgs>;
+  onViewportChanged: SlickEvent<SlickGridEventData>;
+  onRendered: SlickEvent<OnRenderedArgs>;
+  onSelectedRowsChanged: SlickEvent<OnSelectedRowsChangedArgs>;
+  onScroll: SlickEvent<OnScrollEventArgs>;
   onSort: SlickEvent;
+  // onSort: SlickEvent<OnSingleSortEventArgs | OnMultiSortEventArgs>;
 }
+
+export interface SlickGridEventData { grid: SlickGrid; }
+export interface OnValidationErrorArgs extends SlickGridEventData { editor: Editor; cellNode: HTMLElement; validationResults: EditorValidatorOutput; row: number; cell: number; column: Column; }
+export interface OnRenderedArgs extends SlickGridEventData { startRow: number; endRow: number; }
+export interface OnSelectedRowsChangedArgs extends SlickGridEventData { rows: number[], previousSelectedRows: number[] }
+export interface OnScrollEventArgs extends SlickGridEventData { scrollLeft: number; scrollTop: number; }
+export interface OnSingleSortEventArgs extends SlickGridEventData { multiColumnSort: false; columnId: string | number; sortCol: Column; sortAsc: boolean; }
+export interface OnMultiSortEventArgs extends SlickGridEventData { multiColumnSort: true; sortCols: Array<{ sortCol: Column; sortAsc: boolean; }> }
