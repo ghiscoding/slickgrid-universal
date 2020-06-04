@@ -17,7 +17,8 @@ const myCustomTitleValidator = (value, args) => {
 };
 
 const customEditableInputFormatter = (row, cell, value, columnDef, dataContext, grid) => {
-  const isEditableLine = grid && grid.getOptions && grid.getOptions() && columnDef.editor;
+  const gridOptions = grid && grid.getOptions && grid.getOptions()
+  const isEditableLine = gridOptions.editable && columnDef.editor;
   value = (value === null || value === undefined) ? '' : value;
   return isEditableLine ? { text: value, addClasses: 'editable-field', toolTip: 'Click to Edit' } : value;
 };
@@ -37,14 +38,14 @@ export class Example3 {
 
   attached() {
     this.initializeGrid();
-    const dataset = this.loadData(500);
+    this.dataset = this.loadData(500);
     const gridContainerElm = document.querySelector(`.grid3`);
 
     gridContainerElm.addEventListener('onclick', this.handleOnClick.bind(this));
     gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
     gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
+    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   dispose() {
@@ -317,6 +318,11 @@ export class Example3 {
         },
       },
     };
+  }
+
+  changeGridToReadOnly() {
+    this.slickgridLwc.gridOptions = { editable: false };
+    this.gridOptions = this.slickgridLwc.gridOptions;
   }
 
   loadData(count: number) {

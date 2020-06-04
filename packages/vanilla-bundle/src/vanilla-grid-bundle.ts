@@ -162,8 +162,16 @@ export class VanillaGridBundle {
   }
 
   set gridOptions(options: GridOption) {
-    const mergedOptions = this.mergeGridOptions(options);
-    if (this.sharedService && this.sharedService.gridOptions && this.grid && this.grid.setOptions) {
+    let mergedOptions: GridOption;
+
+    // if we already have grid options, when grid was already initialized, we'll merge with those options
+    // else we'll merge with global grid options
+    if (this.grid && this.grid.getOptions) {
+      mergedOptions = $.extend(true, {}, this.grid.getOptions(), options);
+    } else {
+      mergedOptions = this.mergeGridOptions(options);
+    }
+    if (this.sharedService?.gridOptions && this.grid && this.grid.setOptions) {
       this.sharedService.gridOptions = mergedOptions;
       this.grid.setOptions(mergedOptions);
     }
