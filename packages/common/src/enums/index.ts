@@ -1,3 +1,4 @@
+export * from './caseType.enum';
 export * from './delimiterType.enum';
 export * from './emitterType.enum';
 export * from './eventNamingStyle.enum';

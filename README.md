@@ -40,8 +40,8 @@ and it is also used to test with the UI portion. The Vanilla bundle is also used
   - this can then be used by any Framework (Angular, Aurelia, VanillaJS, ...)
 - `@slickgrid-universal/excel-export`: export to Excel (xls/xlsx)
 - `@slickgrid-universal/file-export`: export to text file (csv/txt)
-- `@slickgrid-universal/graphql`: GraphQL querying (support Filter/Sort/Pagination) - COMING SOON
-- `@slickgrid-universal/odata`: OData querying (support Filter/Sort/Pagination) - COMING SOON
+- `@slickgrid-universal/graphql`: GraphQL querying (support Filter/Sort/Pagination with a GraphQL backend Server)
+- `@slickgrid-universal/odata`: OData querying (support Filter/Sort/Pagination with an OData backend Server)
 - `@slickgrid-universal/vanilla-bundle`: a vanilla TypeScript/JavaScript implementation (framework-less)
   - &nbsp;
 - **Standalone Package**
@@ -112,8 +112,8 @@ npm run test:watch
   - [x] Export Text (**separate package**)
   - [x] Extension
   - [x] Filter
-  - [ ] GraphQL (**separate package**)
-  - [ ] OData (**separate package**)
+  - [x] GraphQL (**separate package**)
+  - [x] OData (**separate package**)
   - [x] Grid Event
   - [x] Grid Service (helper)
   - [x] Grid State

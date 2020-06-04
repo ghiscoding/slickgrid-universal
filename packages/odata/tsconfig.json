@@ -1,0 +1,41 @@
+{
+  "extends": "../tsconfig-build.json",
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": "src",
+    "declarationDir": "dist/commonjs",
+    "outDir": "dist/commonjs",
+    "target": "es2015",
+    "module": "esnext",
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitReturns": true,
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    "types": [
+      "moment",
+      "node"
+    ],
+    "typeRoots": [
+      "node_modules/@types",
+      "src/typings"
+    ]
+  },
+  "exclude": [
+    "cypress",
+    "dist",
+    "node_modules",
+    "**/*.spec.ts"
+  ],
+  "filesGlob": [
+    "./src/**/*.ts",
+    "./test/**/*.ts",
+    "./custom_typings/**/*.d.ts"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "src/typings/**/*.ts"
+  ]
+}
