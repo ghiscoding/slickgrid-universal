@@ -1,19 +1,22 @@
-import { CellMenu } from './cellMenu.interface';
-import { ColumnEditor } from './columnEditor.interface';
-import { ColumnFilter } from './columnFilter.interface';
-import { EditorValidator } from './editorValidator.interface';
+import {
+  CellMenu,
+  ColumnEditor,
+  ColumnFilter,
+  Editor,
+  EditorValidator,
+  Formatter,
+  Grouping,
+  GroupTotalsFormatter,
+  HeaderButtonItem,
+  MenuCommandItem,
+  OnEventArgs,
+  SortComparer,
+} from './index';
 import { FieldType } from '../enums/fieldType.enum';
-import { Formatter } from './formatter.interface';
-import { Grouping } from './grouping.interface';
-import { GroupTotalsFormatter } from './groupTotalsFormatter.interface';
-import { HeaderButtonItem } from './headerButtonItem.interface';
-import { MenuCommandItem } from './menuCommandItem.interface';
-import { OnEventArgs } from './onEventArgs.interface';
-import { SortComparer } from './sorter.interface';
 
-export interface Column {
+export interface Column<T = any> {
   /** async background post-rendering formatter */
-  asyncPostRender?: (domCellNode: any, row: number, dataContext: any, columnDef: Column) => void;
+  asyncPostRender?: (domCellNode: any, row: number, dataContext: T, columnDef: Column) => void;
 
   /** Row Move Behavior, used by the Row Move Manager Plugin */
   behavior?: string;
@@ -37,13 +40,13 @@ export interface Column {
   cssClass?: string;
 
   /** Data key, for example this could be used as a property key for complex object comparison (e.g. dataKey: 'id') */
-  dataKey?: any;
+  dataKey?: string;
 
   /** Do we want default sort to be ascending? True by default */
   defaultSortAsc?: boolean;
 
   /** Any inline editor function that implements Editor for the cell value or ColumnEditor */
-  editor?: any | ColumnEditor;
+  editor?: ColumnEditor | Editor;
 
   /** Default to false, which leads to exclude the column title from the Column Picker. */
   excludeFromColumnPicker?: boolean;
@@ -67,7 +70,7 @@ export interface Column {
    * Export with a Custom Formatter, useful when we want to use a different Formatter for the export.
    * For example, we might have a boolean field with "Formatters.checkmark" but we would like see a translated value for (True/False).
    */
-  exportCustomFormatter?: Formatter;
+  exportCustomFormatter?: Formatter<T>;
 
   /**
    * Export with a Custom Group Total Formatter, useful when we want to use a different Formatter for the export.
@@ -116,8 +119,8 @@ export interface Column {
   /** are we allowed to focus on the column? */
   focusable?: boolean;
 
-  /** Formatter function that can be used to change and format certain column(s) in the grid */
-  formatter?: Formatter;
+  /** Formatter function is to format, or visually change, the data shown in the grid (UI) in a different way without affecting the source. */
+  formatter?: Formatter<T>;
 
   /** Grouping option used by a Draggable Grouping Column */
   grouping?: Grouping;
@@ -144,8 +147,8 @@ export interface Column {
    */
   internalColumnEditor?: ColumnEditor;
 
-  /** Label key, for example this could be used as a property key for complex object label display (e.g. dataKey: 'name') */
-  labelKey?: any;
+  /** Label key, for example this could be used as a property key for complex object label display (e.g. labelKey: 'name') */
+  labelKey?: string;
 
   /** Maximum Width of the column in pixels (number only). */
   maxWidth?: number;
@@ -187,10 +190,10 @@ export interface Column {
    * When you do not know at hand the name of the Field to use for querying,
    * the lib will run your callback to find out which Field name you want to use by the logic you defined.
    * Useful when you only know the Field name by executing a certain logic in order to get the Field name to query from.
-   * @param {string} item data context
+   * @param {Object} dataContext - item data object
    * @return {string} name of the Field that will end up being used to query
    */
-  queryFieldNameGetterFn?: (dataContext: any) => string;
+  queryFieldNameGetterFn?: (dataContext: T) => string;
 
   /**
    * Similar to "queryField" but only used when Filtering (please note that it has higher precendence over "queryField").

@@ -1,9 +1,9 @@
-import { Column, Formatter, GridOption, SlickGrid } from './../interfaces/index';
+import { Column, DataView, Formatter, SlickGrid } from './../interfaces/index';
 import { getDescendantProperty, htmlEncode } from '../services/utilities';
 
 export const treeFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGrid) => {
-  const dataView = grid && grid.getData();
-  const gridOptions = grid && grid.getOptions() as GridOption;
+  const dataView = grid?.getData<DataView>();
+  const gridOptions = grid?.getOptions();
   const treeDataOptions = gridOptions?.treeDataOptions;
   const treeLevelPropName = treeDataOptions?.levelPropName || '__treeLevel';
   const indentMarginLeft = treeDataOptions?.indentMarginLeft || 15;
@@ -32,7 +32,7 @@ export const treeFormatter: Formatter = (row: number, cell: number, value: any, 
     const identifierPropName = dataView.getIdPropertyName() || 'id';
     const spacer = `<span style="display:inline-block; width:${indentMarginLeft * dataContext[treeLevelPropName]}px;"></span>`;
     const idx = dataView.getIdxById(dataContext[identifierPropName]);
-    const nextItemRow = dataView.getItemByIdx(idx + 1);
+    const nextItemRow = dataView.getItemByIdx((idx || 0) + 1);
 
     if (nextItemRow && nextItemRow[treeLevelPropName] > dataContext[treeLevelPropName]) {
       if (dataContext.__collapsed) {

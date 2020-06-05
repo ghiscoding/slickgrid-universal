@@ -37,12 +37,12 @@ export class GridService {
 
   /** Getter of SlickGrid DataView object */
   get _dataView(): DataView {
-    return this._grid && this._grid.getData && this._grid.getData();
+    return (this._grid?.getData && this._grid.getData()) as DataView;
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
   private get _gridOptions(): GridOption {
-    return (this._grid && this._grid.getOptions) ? this._grid.getOptions() : {};
+    return (this._grid?.getOptions) ? this._grid.getOptions() : {};
   }
 
   init(grid: SlickGrid): void {
@@ -69,7 +69,7 @@ export class GridService {
   }
 
   /** Get only visible column definitions and also include any extra columns by some plugins (like Row Selection, Row Detail, ...) */
-  getVisibleColumnDefinitions() {
+  getVisibleColumnDefinitions(): Column[] {
     return this.sharedService.visibleColumns;
   }
 
@@ -97,11 +97,11 @@ export class GridService {
   }
 
   /** Get data item by it's row index number */
-  getDataItemByRowNumber(rowNumber: number) {
+  getDataItemByRowNumber<T = any>(rowNumber: number): T {
     if (!this._grid || typeof this._grid.getDataItem !== 'function') {
       throw new Error(`We could not find SlickGrid Grid object or it's "getDataItem" method`);
     }
-    return this._grid.getDataItem(rowNumber);
+    return this._grid.getDataItem<T>(rowNumber);
   }
 
   /** Chain the item Metadata with our implementation of Metadata at given row index */
@@ -128,6 +128,50 @@ export class GridService {
 
       return meta;
     };
+  }
+
+  /** Get the Data Item from a grid row index */
+  getDataItemByRowIndex<T = any>(index: number): T {
+    if (!this._grid || typeof this._grid.getDataItem !== 'function') {
+      throw new Error('We could not find SlickGrid Grid object and/or "getDataItem" method');
+    }
+
+    return this._grid.getDataItem(index);
+  }
+
+  /** Get the Data Item from an array of grid row indexes */
+  getDataItemByRowIndexes<T = any>(indexes: number[]): T[] {
+    if (!this._grid || typeof this._grid.getDataItem !== 'function') {
+      throw new Error('We could not find SlickGrid Grid object and/or "getDataItem" method');
+    }
+
+    const dataItems: T[] = [];
+
+    if (Array.isArray(indexes)) {
+      indexes.forEach((idx) => {
+        dataItems.push(this._grid.getDataItem(idx));
+      });
+    }
+
+    return dataItems;
+  }
+
+  /** Get the currently selected row indexes */
+  getSelectedRows(): number[] {
+    if (!this._grid || typeof this._grid.getSelectedRows !== 'function') {
+      throw new Error('We could not find SlickGrid Grid object and/or "getSelectedRows" method');
+    }
+    return this._grid.getSelectedRows();
+  }
+
+  /** Get the currently selected rows item data */
+  getSelectedRowsDataItem<T = any>(): T[] {
+    if (!this._grid || typeof this._grid.getSelectedRows !== 'function') {
+      throw new Error('We could not find SlickGrid Grid object and/or "getSelectedRows" method');
+    }
+
+    const selectedRowIndexes = this._grid.getSelectedRows();
+    return this.getDataItemByRowIndexes<T>(selectedRowIndexes);
   }
 
   /**
@@ -180,50 +224,6 @@ export class GridService {
         }
       }, fadeDelay + fadeOutDelay);
     }
-  }
-
-  /** Get the Data Item from a grid row index */
-  getDataItemByRowIndex(index: number): any {
-    if (!this._grid || typeof this._grid.getDataItem !== 'function') {
-      throw new Error('We could not find SlickGrid Grid object and/or "getDataItem" method');
-    }
-
-    return this._grid.getDataItem(index);
-  }
-
-  /** Get the Data Item from an array of grid row indexes */
-  getDataItemByRowIndexes(indexes: number[]): any[] {
-    if (!this._grid || typeof this._grid.getDataItem !== 'function') {
-      throw new Error('We could not find SlickGrid Grid object and/or "getDataItem" method');
-    }
-
-    const dataItems: any[] = [];
-
-    if (Array.isArray(indexes)) {
-      indexes.forEach((idx) => {
-        dataItems.push(this._grid.getDataItem(idx));
-      });
-    }
-
-    return dataItems;
-  }
-
-  /** Get the currently selected row indexes */
-  getSelectedRows(): number[] {
-    if (!this._grid || typeof this._grid.getSelectedRows !== 'function') {
-      throw new Error('We could not find SlickGrid Grid object and/or "getSelectedRows" method');
-    }
-    return this._grid.getSelectedRows();
-  }
-
-  /** Get the currently selected rows item data */
-  getSelectedRowsDataItem(): any[] {
-    if (!this._grid || typeof this._grid.getSelectedRows !== 'function') {
-      throw new Error('We could not find SlickGrid Grid object and/or "getSelectedRows" method');
-    }
-
-    const selectedRowIndexes = this._grid.getSelectedRows();
-    return this.getDataItemByRowIndexes(selectedRowIndexes);
   }
 
   /** Select the selected row by a row index */
@@ -282,14 +282,14 @@ export class GridService {
    * @param options: provide the possibility to do certain actions after or during the upsert (highlightRow, resortGrid, selectRow, triggerEvent)
    * @return rowIndex: typically index 0 when adding to position "top" or a different number when adding to the "bottom"
    */
-  addItem(item: any, options?: GridServiceInsertOption): number {
+  addItem<T = any>(item: T, options?: GridServiceInsertOption): number | undefined {
     options = { ...GridServiceInsertOptionDefaults, ...options };
 
     if (!this._grid || !this._gridOptions || !this._dataView) {
       throw new Error('We could not find SlickGrid Grid, DataView objects');
     }
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
-    if (!item || !item.hasOwnProperty(idPropName)) {
+    if (!item || !(idPropName in item)) {
       throw new Error(`Adding an item requires the item to include an "${idPropName}" property`);
     }
 
@@ -302,7 +302,8 @@ export class GridService {
     }
 
     // row number in the grid, by default it will be on first row (top is the default)
-    let rowNumber = 0;
+    let rowNumber: number | undefined = 0;
+    const itemId = item && item[idPropName] || '';
 
     // do we want the item to be sorted in the grid, when set to False it will insert on first row (defaults to false)
     if (options.resortGrid) {
@@ -310,20 +311,20 @@ export class GridService {
 
       // find the row number in the grid and if user wanted to see highlighted row
       // we need to do it here after resort and get each row number because it possibly changes after the sort
-      rowNumber = this._dataView.getRowById(item[idPropName]);
+      rowNumber = this._dataView.getRowById(itemId);
     } else {
       // scroll to row index 0 when inserting on top else scroll to the bottom where it got inserted
-      rowNumber = (options && options.position === 'bottom') ? this._dataView.getRowById(item[idPropName]) : 0;
-      this._grid.scrollRowIntoView(rowNumber);
+      rowNumber = (options && options.position === 'bottom') ? this._dataView.getRowById(itemId) : 0;
+      this._grid.scrollRowIntoView(rowNumber || 0);
     }
 
     // if highlight is enabled, we'll highlight the row we just added
-    if (options.highlightRow) {
+    if (options.highlightRow && rowNumber !== undefined) {
       this.highlightRow(rowNumber);
     }
 
     // if row selection (checkbox selector) is enabled, we'll select the row in the grid
-    if (options.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
+    if (rowNumber !== undefined && options.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
       this.setSelectedRow(rowNumber);
     }
 
@@ -340,16 +341,16 @@ export class GridService {
    * @param item object arrays, which must contain unique "id" property and any other suitable properties
    * @param options: provide the possibility to do certain actions after or during the upsert (highlightRow, resortGrid, selectRow, triggerEvent)
    */
-  addItems(items: any | any[], options?: GridServiceInsertOption): number[] {
+  addItems<T = any>(items: T | T[], options?: GridServiceInsertOption): number[] {
     options = { ...GridServiceInsertOptionDefaults, ...options };
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
     const rowNumbers: number[] = [];
 
     // loop through all items to add
     if (!Array.isArray(items)) {
-      return [this.addItem(items, options)];
+      return [this.addItem<T>(items, options) || 0];
     } else {
-      items.forEach((item: any) => this.addItem(item, { ...options, highlightRow: false, resortGrid: false, triggerEvent: false, selectRow: false }));
+      items.forEach((item: T) => this.addItem(item, { ...options, highlightRow: false, resortGrid: false, triggerEvent: false, selectRow: false }));
     }
 
     // do we want the item to be sorted in the grid, when set to False it will insert on first row (defaults to false)
@@ -362,7 +363,7 @@ export class GridService {
 
     // get row numbers of all new inserted items
     // we need to do it after resort and get each row number because it possibly changed after the sort
-    items.forEach((item: any) => rowNumbers.push(this._dataView.getRowById(item[idPropName])));
+    items.forEach((item: T) => rowNumbers.push(this._dataView.getRowById(item[idPropName]) as number));
 
     // if user wanted to see highlighted row
     if (options.highlightRow) {
@@ -388,11 +389,11 @@ export class GridService {
    * @param options: provide the possibility to do certain actions after or during the upsert (triggerEvent)
    * @return item id deleted
    */
-  deleteItem(item: any, options?: GridServiceDeleteOption): number | string {
+  deleteItem<T = any>(item: T, options?: GridServiceDeleteOption): number | string {
     options = { ...GridServiceDeleteOptionDefaults, ...options };
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
 
-    if (!item || !item.hasOwnProperty(idPropName)) {
+    if (!item || !(idPropName in item)) {
       throw new Error(`Deleting an item requires the item to include an "${idPropName}" property`);
     }
     return this.deleteItemById(item[idPropName], options);
@@ -404,21 +405,21 @@ export class GridService {
    * @param options: provide the possibility to do certain actions after or during the upsert (triggerEvent)
    * @return item id deleted
    */
-  deleteItems(items: any | any[], options?: GridServiceDeleteOption): number[] | string[] {
+  deleteItems<T = any>(items: T | T[], options?: GridServiceDeleteOption): number[] | string[] {
     options = { ...GridServiceDeleteOptionDefaults, ...options };
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
 
     // when it's not an array, we can call directly the single item delete
     if (!Array.isArray(items)) {
-      this.deleteItem(items, options);
+      this.deleteItem<T>(items, options);
       return [items[idPropName]];
     }
     const itemIds: string[] = [];
-    items.forEach((item: any) => {
+    items.forEach((item: T) => {
       if (item && item[idPropName] !== undefined) {
         itemIds.push(item[idPropName]);
       }
-      this.deleteItem(item, { ...options, triggerEvent: false });
+      this.deleteItem<T>(item, { ...options, triggerEvent: false });
     });
 
     // do we want to trigger an event after deleting the item
@@ -488,10 +489,10 @@ export class GridService {
    * @param options: provide the possibility to do certain actions after or during the upsert (highlightRow, selectRow, triggerEvent)
    * @return grid row index
    */
-  updateItem(item: any, options?: GridServiceUpdateOption): number {
+  updateItem<T = any>(item: T, options?: GridServiceUpdateOption): number {
     options = { ...GridServiceUpdateOptionDefaults, ...options };
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
-    const itemId = (!item || !item.hasOwnProperty(idPropName)) ? undefined : item[idPropName];
+    const itemId = (!item || !(idPropName in item)) ? undefined : item[idPropName];
 
     if (itemId === undefined) {
       throw new Error(`Calling Update of an item requires the item to include an "${idPropName}" property`);
@@ -506,17 +507,17 @@ export class GridService {
    * @param options: provide the possibility to do certain actions after or during the upsert (highlightRow, selectRow, triggerEvent)
    * @return grid row indexes
    */
-  updateItems(items: any | any[], options?: GridServiceUpdateOption): number[] {
+  updateItems<T = any>(items: T | T[], options?: GridServiceUpdateOption): number[] {
     options = { ...GridServiceUpdateOptionDefaults, ...options };
 
     // when it's not an array, we can call directly the single item update
     if (!Array.isArray(items)) {
-      return [this.updateItem(items, options)];
+      return [this.updateItem<T>(items, options)];
     }
 
     const gridRowNumbers: number[] = [];
-    items.forEach((item: any) => {
-      gridRowNumbers.push(this.updateItem(item, { ...options, highlightRow: false, selectRow: false, triggerEvent: false }));
+    items.forEach((item: T) => {
+      gridRowNumbers.push(this.updateItem<T>(item, { ...options, highlightRow: false, selectRow: false, triggerEvent: false }));
     });
 
     // only highlight at the end, all at once
@@ -545,7 +546,7 @@ export class GridService {
    * @param options: provide the possibility to do certain actions after or during the upsert (highlightRow, selectRow, triggerEvent)
    * @return grid row number
    */
-  updateItemById(itemId: number | string, item: any, options?: GridServiceUpdateOption): number {
+  updateItemById<T = any>(itemId: number | string, item: T, options?: GridServiceUpdateOption): number {
     options = { ...GridServiceUpdateOptionDefaults, ...options };
     if (itemId === undefined) {
       throw new Error(`Cannot update a row without a valid "id"`);
@@ -558,7 +559,7 @@ export class GridService {
 
     if (this._dataView.getIdxById(itemId) !== undefined) {
       // Update the item itself inside the dataView
-      this._dataView.updateItem(itemId, item);
+      this._dataView.updateItem<T>(itemId, item);
       this._grid.updateRow(rowNumber);
 
       // do we want to scroll to the row so that it shows in the Viewport (UI)
@@ -589,16 +590,16 @@ export class GridService {
    * @param item object which must contain a unique "id" property and any other suitable properties
    * @param options: provide the possibility to do certain actions after or during the upsert (highlightRow, resortGrid, selectRow, triggerEvent)
    */
-  upsertItem(item: any, options?: GridServiceInsertOption): { added: number | undefined, updated: number | undefined } {
+  upsertItem<T = any>(item: T, options?: GridServiceInsertOption): { added: number | undefined, updated: number | undefined } {
     options = { ...GridServiceInsertOptionDefaults, ...options };
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
-    const itemId = (!item || !item.hasOwnProperty(idPropName)) ? undefined : item[idPropName];
+    const itemId = (!item || !(idPropName in item)) ? undefined : item[idPropName];
 
     if (itemId === undefined) {
       throw new Error(`Calling Upsert of an item requires the item to include an "${idPropName}" property`);
     }
 
-    return this.upsertItemById(itemId, item, options);
+    return this.upsertItemById<T>(itemId, item, options);
   }
 
   /**
@@ -607,15 +608,15 @@ export class GridService {
    * @param options: provide the possibility to do certain actions after or during the upsert (highlightRow, resortGrid, selectRow, triggerEvent)
    * @return row numbers in the grid
    */
-  upsertItems(items: any | any[], options?: GridServiceInsertOption): { added: number | undefined, updated: number | undefined }[] {
+  upsertItems<T = any>(items: T | T[], options?: GridServiceInsertOption): { added: number | undefined, updated: number | undefined }[] {
     options = { ...GridServiceInsertOptionDefaults, ...options };
     // when it's not an array, we can call directly the single item update
     if (!Array.isArray(items)) {
-      return [this.upsertItem(items, options)];
+      return [this.upsertItem<T>(items, options)];
     }
     const upsertedRows: { added: number | undefined, updated: number | undefined }[] = [];
-    items.forEach((item: any) => {
-      upsertedRows.push(this.upsertItem(item, { ...options, highlightRow: false, resortGrid: false, selectRow: false, triggerEvent: false }));
+    items.forEach((item: T) => {
+      upsertedRows.push(this.upsertItem<T>(item, { ...options, highlightRow: false, resortGrid: false, selectRow: false, triggerEvent: false }));
     });
 
     const rowNumbers = upsertedRows.map((upsertRow) => upsertRow.added !== undefined ? upsertRow.added : upsertRow.updated) as number[];
@@ -653,7 +654,7 @@ export class GridService {
    * @param options: provide the possibility to do certain actions after or during the upsert (highlightRow, resortGrid, selectRow, triggerEvent)
    * @return grid row number in the grid
    */
-  upsertItemById(itemId: number | string, item: any, options?: GridServiceInsertOption): { added: number | undefined, updated: number | undefined } {
+  upsertItemById<T = any>(itemId: number | string, item: T, options?: GridServiceInsertOption): { added: number | undefined, updated: number | undefined } {
     let isItemAdded = false;
     options = { ...GridServiceInsertOptionDefaults, ...options };
     if (itemId === undefined) {
@@ -663,10 +664,10 @@ export class GridService {
     let rowNumberAdded: number | undefined;
     let rowNumberUpdated: number | undefined;
     if (this._dataView.getRowById(itemId) === undefined) {
-      rowNumberAdded = this.addItem(item, options);
+      rowNumberAdded = this.addItem<T>(item, options);
       isItemAdded = true;
     } else {
-      rowNumberUpdated = this.updateItem(item, { highlightRow: options.highlightRow, selectRow: options.selectRow, triggerEvent: options.triggerEvent });
+      rowNumberUpdated = this.updateItem<T>(item, { highlightRow: options.highlightRow, selectRow: options.selectRow, triggerEvent: options.triggerEvent });
       isItemAdded = false;
     }
 

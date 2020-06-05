@@ -47,12 +47,12 @@ export class GridStateService {
 
   /** Getter of SlickGrid DataView object */
   get _dataView(): DataView {
-    return this._grid && this._grid.getData && this._grid.getData();
+    return (this._grid?.getData && this._grid.getData()) as DataView;
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
   private get _gridOptions(): GridOption {
-    return (this._grid && this._grid.getOptions) ? this._grid.getOptions() : {};
+    return (this._grid?.getOptions) ? this._grid.getOptions() : {};
   }
 
   private get datasetIdPropName(): string {

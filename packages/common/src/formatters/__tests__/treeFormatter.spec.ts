@@ -105,7 +105,7 @@ describe('the Uppercase Formatter', () => {
     jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(1);
     jest.spyOn(dataViewStub, 'getItemByIdx').mockReturnValue(dataset[1]);
 
-    const mockColumn = { id: 'firstName', field: 'firstName', queryFieldNameGetterFn: (dataContext) => 'fullName' } as Column;
+    const mockColumn = { id: 'firstName', field: 'firstName', queryFieldNameGetterFn: () => 'fullName' } as Column;
     const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[3], gridStub);
     expect(output).toBe(`<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle collapsed"></span>&nbsp;Barbara Cane`);
   });
@@ -115,7 +115,7 @@ describe('the Uppercase Formatter', () => {
     jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(2);
     jest.spyOn(dataViewStub, 'getItemByIdx').mockReturnValue(dataset[2]);
 
-    const mockColumn = { id: 'firstName', field: 'firstName', queryFieldNameGetterFn: (dataContext) => 'fullName' } as Column;
+    const mockColumn = { id: 'firstName', field: 'firstName', queryFieldNameGetterFn: () => 'fullName' } as Column;
     const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[4], gridStub);
     expect(output).toBe(`<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle collapsed"></span>&nbsp;Anonymous &lt; Doe`);
   });
@@ -125,7 +125,7 @@ describe('the Uppercase Formatter', () => {
     jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(1);
     jest.spyOn(dataViewStub, 'getItemByIdx').mockReturnValue(dataset[1]);
 
-    const mockColumn = { id: 'zip', field: 'zip', queryFieldNameGetterFn: (dataContext) => 'address.zip' } as Column;
+    const mockColumn = { id: 'zip', field: 'zip', queryFieldNameGetterFn: () => 'address.zip' } as Column;
     const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[3], gridStub);
     expect(output).toBe(`<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle collapsed"></span>&nbsp;444444`);
   });

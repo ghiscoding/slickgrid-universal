@@ -7,6 +7,7 @@ import 'slickgrid/plugins/slick.resizer';
 import {
   BackendServiceApi,
   Column,
+  ColumnEditor,
   DataView,
   ExtensionName,
   EventNamingStyle,
@@ -664,8 +665,9 @@ export class VanillaGridBundle {
       // if (column.editor && column.editor.collectionAsync) {
       // this.loadEditorCollectionAsync(column);
       // }
+      const columnEditor = column.editor as ColumnEditor;
 
-      return { ...column, editor: column.editor && column.editor.model, internalColumnEditor: { ...column.editor } };
+      return { ...column, editor: columnEditor?.model, internalColumnEditor: { ...columnEditor } };
     });
   }
 

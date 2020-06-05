@@ -31,6 +31,7 @@ export * from './editCommand.interface';
 export * from './editor.interface';
 export * from './editorArgs.interface';
 export * from './editorArguments.interface';
+export * from './editorLock.interface';
 export * from './editorValidator.interface';
 export * from './editorValidatorOutput.interface';
 export * from './editUndoRedoBuffer.interface';

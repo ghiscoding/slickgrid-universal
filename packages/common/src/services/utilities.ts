@@ -10,9 +10,9 @@ import { GridOption } from '../interfaces/index';
  * @param inputItem
  * @param itemIdPropName
  */
-export function addToArrayWhenNotExists(inputArray: any[], inputItem: any, itemIdPropName = 'id') {
+export function addToArrayWhenNotExists<T = any>(inputArray: T[], inputItem: T, itemIdPropName = 'id') {
   let arrayRowIndex = -1;
-  if (typeof inputItem === 'object' && inputItem.hasOwnProperty(itemIdPropName)) {
+  if (typeof inputItem === 'object' && itemIdPropName in inputItem) {
     arrayRowIndex = inputArray.findIndex((item) => item[itemIdPropName] === inputItem[itemIdPropName]);
   } else {
     arrayRowIndex = inputArray.findIndex((item) => item === inputItem);
@@ -43,15 +43,15 @@ export function addWhiteSpaces(nbSpaces: number): string {
  * @param options you can provide the following options:: "parentPropName" (defaults to "parent"), "childrenPropName" (defaults to "children") and "identifierPropName" (defaults to "id")
  * @return roots - hierarchical data view array
  */
-export function convertParentChildArrayToHierarchicalView(flatArray: any[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; }): any[] {
+export function convertParentChildArrayToHierarchicalView<T = any>(flatArray: T[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; }): T[] {
   const childrenPropName = options?.childrenPropName ?? 'children';
   const parentPropName = options?.parentPropName ?? '__parentId';
   const identifierPropName = options?.identifierPropName ?? 'id';
   const hasChildrenFlagPropName = '__hasChildren';
   const treeLevelPropName = '__treeLevel';
-  const inputArray: any[] = $.extend(true, [], flatArray);
+  const inputArray: T[] = $.extend(true, [], flatArray);
 
-  const roots: any[] = []; // things without parent
+  const roots: T[] = []; // things without parent
 
   // make them accessible by guid on this map
   const all = {};
@@ -87,8 +87,8 @@ export function convertParentChildArrayToHierarchicalView(flatArray: any[], opti
  * @param options - you can provide "childrenPropName" (defaults to "children")
  * @return output - Parent/Child array
  */
-export function convertHierarchicalViewToParentChildArray(hierarchicalArray: any[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; }): any[] {
-  const outputArray: any[] = [];
+export function convertHierarchicalViewToParentChildArray<T = any>(hierarchicalArray: T[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; }): T[] {
+  const outputArray: T[] = [];
   convertHierarchicalViewToParentChildArrayByReference($.extend(true, [], hierarchicalArray), outputArray, options, 0);
 
   // the output array is the one passed as reference
@@ -103,7 +103,7 @@ export function convertHierarchicalViewToParentChildArray(hierarchicalArray: any
  * @param treeLevel - tree level number
  * @param parentId - parent ID
  */
-export function convertHierarchicalViewToParentChildArrayByReference(hierarchicalArray: any[], outputArrayRef: any[], options?: { childrenPropName?: string; parentPropName?: string; hasChildrenFlagPropName?: string; treeLevelPropName?: string; identifierPropName?: string; }, treeLevel = 0, parentId?: string) {
+export function convertHierarchicalViewToParentChildArrayByReference<T = any>(hierarchicalArray: T[], outputArrayRef: T[], options?: { childrenPropName?: string; parentPropName?: string; hasChildrenFlagPropName?: string; treeLevelPropName?: string; identifierPropName?: string; }, treeLevel = 0, parentId?: string) {
   const childrenPropName = options?.childrenPropName ?? 'children';
   const identifierPropName = options?.identifierPropName ?? 'id';
   const hasChildrenFlagPropName = options?.hasChildrenFlagPropName ?? '__hasChildren';
@@ -113,7 +113,7 @@ export function convertHierarchicalViewToParentChildArrayByReference(hierarchica
   if (Array.isArray(hierarchicalArray)) {
     for (const item of hierarchicalArray) {
       if (item) {
-        const itemExist = outputArrayRef.find((itm: any) => itm[identifierPropName] === item[identifierPropName]);
+        const itemExist = outputArrayRef.find((itm: T) => itm[identifierPropName] === item[identifierPropName]);
         if (!itemExist) {
           item[treeLevelPropName] = treeLevel; // save tree level ref
           item[parentPropName] = parentId || null;
@@ -186,22 +186,22 @@ export function deepCopy(obj: any) {
  * @param predicate
  * @param childrenPropertyName
  */
-export function findItemInHierarchicalStructure(hierarchicalArray: any, predicate: (item: any) => boolean, childrenPropertyName: string): any {
+export function findItemInHierarchicalStructure<T = any>(hierarchicalArray: T[], predicate: (item: T) => boolean, childrenPropertyName: string): T | undefined {
   if (!childrenPropertyName) {
     throw new Error('findRecursive requires parameter "childrenPropertyName"');
   }
   const initialFind = hierarchicalArray.find(predicate);
-  const elementsWithChildren = hierarchicalArray.filter((x: any) => x.hasOwnProperty(childrenPropertyName) && x[childrenPropertyName]);
+  const elementsWithChildren = hierarchicalArray.filter((x: T) => childrenPropertyName in x && x[childrenPropertyName]);
   if (initialFind) {
     return initialFind;
   } else if (elementsWithChildren.length) {
-    const childElements: any[] = [];
-    elementsWithChildren.forEach((item: any) => {
-      if (item.hasOwnProperty(childrenPropertyName)) {
+    const childElements: T[] = [];
+    elementsWithChildren.forEach((item: T) => {
+      if (childrenPropertyName in item) {
         childElements.push(...item[childrenPropertyName]);
       }
     });
-    return findItemInHierarchicalStructure(childElements, predicate, childrenPropertyName);
+    return findItemInHierarchicalStructure<T>(childElements, predicate, childrenPropertyName);
   }
   return undefined;
 }
@@ -325,7 +325,7 @@ export function formatNumber(input: number | string, minDecimal?: number, maxDec
 }
 
 /** From a dot (.) notation path, find and return a property within an object given a path */
-export function getDescendantProperty(obj: any, path: string | undefined): any {
+export function getDescendantProperty<T = any>(obj: T, path: string | undefined): any {
   if (!obj || !path) {
     return obj;
   }
@@ -728,7 +728,7 @@ export function sanitizeHtmlToText(htmlString: string): string {
 }
 
 /** Set the object value of deeper node from a given dot (.) notation path (e.g.: "user.firstName") */
-export function setDeepValue(obj: any, path: string | string[], value: any) {
+export function setDeepValue<T = any>(obj: T, path: string | string[], value: any) {
   if (typeof path === 'string') {
     path = path.split('.');
   }
@@ -822,7 +822,7 @@ export function toKebabCase(inputStr: string): string {
  * @param [orderMatters=false] flag if the order matters, if not arrays will be sorted before comparison
  * @return boolean true if equal, else false
  */
-export function charArraysEqual(a: any[], b: any[], orderMatters = false): boolean {
+export function charArraysEqual<T = any>(a: T[], b: T[], orderMatters = false): boolean {
   if (!a || !b || !Array.isArray(a) || !Array.isArray(a)) {
     return false;
   }
@@ -853,7 +853,7 @@ export function charArraysEqual(a: any[], b: any[], orderMatters = false): boole
  * @param any [defaultVal={}] the default value to return
  * @return object the found object or default value
  */
-export function findOrDefault(array: any[], logic: (item: any) => boolean, defaultVal = {}): any {
+export function findOrDefault<T = any>(array: T[], logic: (item: T) => boolean, defaultVal = {}): any {
   if (Array.isArray(array)) {
     return array.find(logic) || defaultVal;
   }
@@ -890,9 +890,9 @@ export function toSnakeCase(inputStr: string): string {
  * @param array input with possible duplicates
  * @return array output without duplicates
  */
-export function uniqueArray(arr: any[]): any[] {
+export function uniqueArray<T = any>(arr: T[]): T[] {
   if (Array.isArray(arr) && arr.length > 0) {
-    return arr.filter((item: any, index: number) => {
+    return arr.filter((item: T, index: number) => {
       return arr.indexOf(item) >= index;
     });
   }

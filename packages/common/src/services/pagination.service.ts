@@ -32,7 +32,7 @@ export class PaginationService {
 
   /** Getter of SlickGrid DataView object */
   get dataView(): DataView {
-    return this.grid && this.grid.getData && this.grid.getData();
+    return (this.grid?.getData && this.grid.getData()) as DataView;
   }
 
   set paginationOptions(paginationOptions: Pagination) {

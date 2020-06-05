@@ -63,7 +63,7 @@ export class ExcelExportService implements BaseExcelExportService {
 
   /** Getter of SlickGrid DataView object */
   get _dataView(): DataView {
-    return this._grid?.getData();
+    return (this._grid?.getData()) as DataView;
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */

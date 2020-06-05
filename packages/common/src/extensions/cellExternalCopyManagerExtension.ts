@@ -1,5 +1,6 @@
 import {
   Column,
+  DataView,
   EditCommand,
   EditUndoRedoBuffer,
   ExcelCopyBufferOption,
@@ -167,10 +168,7 @@ export class CellExternalCopyManagerExtension implements Extension {
       includeHeaderWhenCopying: false,
       newRowCreator: (count: number) => {
         for (let i = 0; i < count; i++) {
-          const item = {
-            id: 'newRow_' + newRowIds++
-          };
-          this.sharedService.grid.getData().addItem(item);
+          this.sharedService.grid.getData<DataView>().addItem({ id: `newRow_${newRowIds++}` });
         }
       }
     };

@@ -20,8 +20,9 @@ export class TreeDataService {
     return this.sharedService.hierarchicalDataset;
   }
 
+  /** Getter of SlickGrid DataView object */
   get dataView(): DataView {
-    return this._grid?.getData();
+    return (this._grid?.getData && this._grid.getData()) as DataView;
   }
 
   /** Getter of the SlickGrid Event Handler */

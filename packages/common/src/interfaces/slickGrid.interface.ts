@@ -1,15 +1,17 @@
 import {
-  GridOption,
   Column,
+  ColumnSort,
+  DataView,
   Editor,
+  EditorLock,
   EditorValidatorOutput,
   ElementPosition,
   FormatterResultObject,
+  GridOption,
   MultiColumnSort,
   PagingInfo,
-  SlickEvent,
   SingleColumnSort,
-  ColumnSort
+  SlickEvent,
 } from './index';
 
 export interface SlickGrid {
@@ -153,19 +155,19 @@ export interface SlickGrid {
   getContainerNode(): HTMLElement;
 
   /** Returns an array of every data object, unless you're using DataView in which case it returns a DataView object. */
-  getData(): any;
+  getData<T = DataView>(): T;
 
   /**
    * Returns the databinding item at a given position.
    * @param index Item index.
    */
-  getDataItem(index: number): any;
+  getDataItem<T = any>(index: number): T;
 
   /** Returns the size of the databinding source. */
   getDataLength(): number;
 
   /** Get Editor lock */
-  getEditorLock(): any;
+  getEditorLock(): EditorLock;
 
   /** Get Editor Controller */
   getEditController(): { commitCurrentEdit(): boolean; cancelCurrentEdit(): boolean; };

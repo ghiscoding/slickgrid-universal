@@ -399,7 +399,7 @@ export class FilterService {
     if (columnDef && columnDef.params && columnDef.params.useFormatterOuputToFilter) {
       const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
       const rowIndex = (dataView && typeof dataView.getIdxById === 'function') ? dataView.getIdxById(item[idPropName]) : 0;
-      cellValue = (columnDef && typeof columnDef.formatter === 'function') ? columnDef.formatter(rowIndex, columnIndex, cellValue, columnDef, item, this._grid) : '';
+      cellValue = (columnDef && typeof columnDef.formatter === 'function') ? columnDef.formatter(rowIndex || 0, columnIndex, cellValue, columnDef, item, this._grid) : '';
     }
 
     // make sure cell value is always a string
