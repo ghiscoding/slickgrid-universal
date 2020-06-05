@@ -154,4 +154,5 @@ npm run test:watch
 - [x] Add possibility to use SVG instead of Font Family
 - [x] Add Typings for Grid & DataView objects
 - [ ] Cannot copy text from cell since it's not selectable
-- [ ] Remove all Services init method 2nd argument (we can get DataView from the Grid object)
+- [ ] Remove all Services init method 2nd argument (we can get DataView directly from the Grid object)
+- [ ] Add build (bundle) step in CircleCI build
