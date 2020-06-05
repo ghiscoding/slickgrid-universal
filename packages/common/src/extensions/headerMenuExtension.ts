@@ -1,7 +1,6 @@
 import { Constants } from '../constants';
 import {
   Column,
-  ColumnSort,
   CurrentSorter,
   Extension,
   GridOption,
@@ -9,6 +8,7 @@ import {
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
   Locale,
+  SingleColumnSort,
   SlickEventHandler,
   SlickGrid,
 } from '../interfaces/index';
@@ -291,8 +291,8 @@ export class HeaderMenuExtension implements Extension {
   private clearColumnSort(e: Event, args: MenuCommandItemCallbackArgs) {
     if (args && args.column && this.sharedService) {
       // get previously sorted columns
-      const allSortedCols: ColumnSort[] = this.sortService.getCurrentColumnSorts();
-      const sortedColsWithoutCurrent: ColumnSort[] = this.sortService.getCurrentColumnSorts(args.column.id + '');
+      const allSortedCols = this.sortService.getCurrentColumnSorts();
+      const sortedColsWithoutCurrent = this.sortService.getCurrentColumnSorts(args.column.id + '');
 
       if (Array.isArray(allSortedCols) && Array.isArray(sortedColsWithoutCurrent) && allSortedCols.length !== sortedColsWithoutCurrent.length) {
         if (this.sharedService.gridOptions.backendServiceApi) {
@@ -307,11 +307,10 @@ export class HeaderMenuExtension implements Extension {
         }
 
         // update the this.sharedService.gridObj sortColumns array which will at the same add the visual sort icon(s) on the UI
-        const updatedSortColumns: ColumnSort[] = sortedColsWithoutCurrent.map((col) => {
+        const updatedSortColumns = sortedColsWithoutCurrent.map((col) => {
           return {
             columnId: col && col.sortCol && col.sortCol.id,
             sortAsc: col && col.sortAsc,
-            sortCol: col && col.sortCol,
           };
         });
         this.sharedService.grid.setSortColumns(updatedSortColumns); // add sort icon in UI
@@ -351,7 +350,7 @@ export class HeaderMenuExtension implements Extension {
     if (args && args.column) {
       // get previously sorted columns
       const columnDef = args.column;
-      const sortedColsWithoutCurrent: ColumnSort[] = this.sortService.getCurrentColumnSorts(columnDef.id + '');
+      const sortedColsWithoutCurrent = this.sortService.getCurrentColumnSorts(columnDef.id + '');
 
       let emitterType: EmitterType = EmitterType.local;
 
@@ -371,11 +370,10 @@ export class HeaderMenuExtension implements Extension {
       }
 
       // update the this.sharedService.gridObj sortColumns array which will at the same add the visual sort icon(s) on the UI
-      const newSortColumns: ColumnSort[] = sortedColsWithoutCurrent.map((col) => {
+      const newSortColumns = sortedColsWithoutCurrent.map((col) => {
         return {
           columnId: col && col.sortCol && col.sortCol.id,
           sortAsc: col && col.sortAsc,
-          sortCol: col && col.sortCol,
         };
       });
 

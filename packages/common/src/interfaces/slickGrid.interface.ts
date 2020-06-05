@@ -1,12 +1,16 @@
-import { GridOption } from './gridOption.interface';
-import { Column } from './column.interface';
-import { ColumnSort } from './columnSort.interface';
-import { Editor } from './editor.interface';
-import { EditorValidatorOutput } from './editorValidatorOutput.interface';
-import { ElementPosition } from './elementPosition.interface';
-import { FormatterResultObject } from './formatterResultObject.interface';
-import { PagingInfo } from './pagingInfo.interface';
-import { SlickEvent } from './slickEvent.interface';
+import {
+  GridOption,
+  Column,
+  Editor,
+  EditorValidatorOutput,
+  ElementPosition,
+  FormatterResultObject,
+  MultiColumnSort,
+  PagingInfo,
+  SlickEvent,
+  SingleColumnSort,
+  ColumnSort
+} from './index';
 
 export interface SlickGrid {
   /**
@@ -224,7 +228,7 @@ export interface SlickGrid {
   getSelectionModel(): any;
 
   /** Get sorted columns **/
-  getSortColumns(): ColumnSort[];
+  getSortColumns(): Array<SingleColumnSort | MultiColumnSort>;
 
   /** Get Top Panel DOM element */
   getTopPanel(): HTMLElement;
@@ -411,7 +415,7 @@ export interface SlickGrid {
    * Accepts an array of objects in the form [ { columnId: [string], sortAsc: [boolean] }, ... ]. When called, this will apply a sort glyph in either ascending or descending form to the header of each column specified in the array. Note that this does not actually sort the column. It only adds the sort glyph to the header
    * @param cols
    */
-  setSortColumns(cols: ColumnSort[]): void;
+  setSortColumns(cols: Array<{ columnId: string | number; sortAsc: boolean; }>): void;
 
   /** Set the Top Panel Visibility and optionally enable/disable animation (enabled by default) */
   setTopPanelVisibility(visible: boolean, animate?: boolean): void;
@@ -443,55 +447,84 @@ export interface SlickGrid {
   // Available Slick Grid Events
   // -----------------------------
 
-  onActiveCellChanged: SlickEvent;
-  onActiveCellPositionChanged: SlickEvent;
-  onAddNewRow: SlickEvent;
-  onAutosizeColumns: SlickEvent;
-  onBeforeAppendCell: SlickEvent;
-  onBeforeCellEditorDestroy: SlickEvent;
-  onBeforeColumnsResize: SlickEvent;
-  onBeforeDestroy: SlickEvent;
-  onBeforeEditCell: SlickEvent;
-  onBeforeHeaderCellDestroy: SlickEvent;
-  onBeforeHeaderRowCellDestroy: SlickEvent;
-  onBeforeFooterRowCellDestroy: SlickEvent;
-  onCellChange: SlickEvent;
-  onCellCssStylesChanged: SlickEvent;
-  onClick: SlickEvent;
-  onColumnsDrag: SlickEvent<{ triggeredByColumn: string; resizeHandle: HTMLElement }>;
-  onColumnsReordered: SlickEvent;
-  onColumnsResized: SlickEvent;
-  onContextMenu: SlickEvent;
-  onDrag: SlickEvent;
-  onDragEnd: SlickEvent;
-  onDragInit: SlickEvent;
-  onDragStart: SlickEvent;
-  onDblClick: SlickEvent;
-  onFooterContextMenu: SlickEvent;
-  onFooterRowCellRendered: SlickEvent;
-  onHeaderCellRendered: SlickEvent;
-  onFooterClick: SlickEvent;
-  onHeaderClick: SlickEvent;
-  onHeaderContextMenu: SlickEvent;
-  onHeaderMouseEnter: SlickEvent;
-  onHeaderMouseLeave: SlickEvent;
-  onHeaderRowCellRendered: SlickEvent;
-  onKeyDown: SlickEvent;
-  onMouseEnter: SlickEvent;
-  onMouseLeave: SlickEvent;
-  onValidationError: SlickEvent<OnValidationErrorArgs>;
+  onActiveCellChanged: SlickEvent<OnActiveCellChangedEventArgs>;
+  onActiveCellPositionChanged: SlickEvent<SlickGridEventData>;
+  onAddNewRow: SlickEvent<OnAddNewRowEventArgs>;
+  onAutosizeColumns: SlickEvent<OnAutosizeColumnsEventArgs>;
+  onBeforeAppendCell: SlickEvent<OnBeforeAppendCellEventArgs>;
+  onBeforeCellEditorDestroy: SlickEvent<OnBeforeCellEditorDestroyEventArgs>;
+  onBeforeColumnsResize: SlickEvent<OnBeforeColumnsResizeEventArgs>;
+  onBeforeDestroy: SlickEvent<SlickGridEventData>;
+  onBeforeEditCell: SlickEvent<OnBeforeEditCellEventArgs>;
+  onBeforeHeaderCellDestroy: SlickEvent<OnBeforeHeaderCellDestroyEventArgs>;
+  onBeforeHeaderRowCellDestroy: SlickEvent<OnBeforeHeaderRowCellDestroyEventArgs>;
+  onBeforeFooterRowCellDestroy: SlickEvent<OnBeforeFooterRowCellDestroyEventArgs>;
+  onCellChange: SlickEvent<OnCellChangeEventArgs>;
+  onCellCssStylesChanged: SlickEvent<OnCellCssStylesChangedEventArgs>;
+  onClick: SlickEvent<OnClickEventArgs>;
+  onColumnsDrag: SlickEvent<OnColumnsDragEventArgs>;
+  onColumnsReordered: SlickEvent<OnColumnsReorderedEventArgs>;
+  onColumnsResized: SlickEvent<OnColumnsResizedEventArgs>;
+  onContextMenu: SlickEvent<SlickGridEventData>;
+  onDrag: SlickEvent<OnDragEventArgs>;
+  onDragEnd: SlickEvent<OnDragEventArgs>;
+  onDragInit: SlickEvent<OnDragEventArgs>;
+  onDragStart: SlickEvent<OnDragEventArgs>;
+  onDblClick: SlickEvent<OnDblClickEventArgs>;
+  onFooterContextMenu: SlickEvent<OnFooterContextMenuEventArgs>;
+  onFooterRowCellRendered: SlickEvent<OnFooterRowCellRenderedEventArgs>;
+  onHeaderCellRendered: SlickEvent<OnHeaderCellRenderedEventArgs>;
+  onFooterClick: SlickEvent<OnFooterClickEventArgs>;
+  onHeaderClick: SlickEvent<OnHeaderClickEventArgs>;
+  onHeaderContextMenu: SlickEvent<OnHeaderContextMenuEventArgs>;
+  onHeaderMouseEnter: SlickEvent<OnHeaderMouseEventArgs>;
+  onHeaderMouseLeave: SlickEvent<OnHeaderMouseEventArgs>;
+  onHeaderRowCellRendered: SlickEvent<OnHeaderRowCellRenderedEventArgs>;
+  onKeyDown: SlickEvent<OnKeyDownEventArgs>;
+  onMouseEnter: SlickEvent<SlickGridEventData>;
+  onMouseLeave: SlickEvent<SlickGridEventData>;
+  onValidationError: SlickEvent<OnValidationErrorEventArgs>;
   onViewportChanged: SlickEvent<SlickGridEventData>;
-  onRendered: SlickEvent<OnRenderedArgs>;
-  onSelectedRowsChanged: SlickEvent<OnSelectedRowsChangedArgs>;
+  onRendered: SlickEvent<OnRenderedEventArgs>;
+  onSelectedRowsChanged: SlickEvent<OnSelectedRowsChangedEventArgs>;
   onScroll: SlickEvent<OnScrollEventArgs>;
-  onSort: SlickEvent;
-  // onSort: SlickEvent<OnSingleSortEventArgs | OnMultiSortEventArgs>;
+  onSort: SlickEvent<SingleColumnSort | MultiColumnSort | ColumnSort | ColumnSort[]>;
 }
 
 export interface SlickGridEventData { grid: SlickGrid; }
-export interface OnValidationErrorArgs extends SlickGridEventData { editor: Editor; cellNode: HTMLElement; validationResults: EditorValidatorOutput; row: number; cell: number; column: Column; }
-export interface OnRenderedArgs extends SlickGridEventData { startRow: number; endRow: number; }
-export interface OnSelectedRowsChangedArgs extends SlickGridEventData { rows: number[], previousSelectedRows: number[] }
+export interface OnActiveCellChangedEventArgs extends SlickGridEventData { cell: number; row: number; }
+export interface OnAddNewRowEventArgs extends SlickGridEventData { item: any; column: Column; }
+export interface OnAutosizeColumnsEventArgs extends SlickGridEventData { columns: Column[]; }
+export interface OnBeforeAppendCellEventArgs extends SlickGridEventData { row: number; cell: number; value: any; dataContext: any; }
+export interface OnBeforeCellEditorDestroyEventArgs extends SlickGridEventData { editor: Editor; }
+export interface OnBeforeColumnsResizeEventArgs extends SlickGridEventData { triggeredByColumn: string; }
+export interface OnBeforeEditCellEventArgs extends SlickGridEventData { row: number; cell: number; item: any; column: Column; }
+export interface OnBeforeHeaderCellDestroyEventArgs extends SlickGridEventData { node: HTMLElement; column: Column; }
+export interface OnBeforeHeaderRowCellDestroyEventArgs extends SlickGridEventData { node: HTMLElement; column: Column; }
+export interface OnBeforeFooterRowCellDestroyEventArgs extends SlickGridEventData { node: HTMLElement; column: Column; }
+export interface OnCellChangeEventArgs extends SlickGridEventData { row: number; cell: number; item: any; }
+export interface OnCellCssStylesChangedEventArgs extends SlickGridEventData { key: string; hash: string; }
+export interface OnColumnsDragEventArgs extends SlickGridEventData { triggeredByColumn: string; resizeHandle: HTMLElement; }
+export interface OnColumnsReorderedEventArgs extends SlickGridEventData { impactedColumns: Column[]; }
+export interface OnColumnsResizedEventArgs extends SlickGridEventData { triggeredByColumn: string; }
+export interface OnClickEventArgs extends SlickGridEventData { row: number; cell: number; }
+export interface OnDblClickEventArgs extends SlickGridEventData { row: number; cell: number; }
+export interface OnFooterContextMenuEventArgs extends SlickGridEventData { column: Column; }
+export interface OnFooterRowCellRenderedEventArgs extends SlickGridEventData { node: HTMLElement; column: Column; }
+export interface OnHeaderCellRenderedEventArgs extends SlickGridEventData { node: HTMLElement; column: Column; }
+export interface OnFooterClickEventArgs extends SlickGridEventData { column: Column; }
+export interface OnHeaderClickEventArgs extends SlickGridEventData { column: Column; }
+export interface OnHeaderContextMenuEventArgs extends SlickGridEventData { column: Column; }
+export interface OnHeaderMouseEventArgs extends SlickGridEventData { column: Column; }
+export interface OnHeaderRowCellRenderedEventArgs extends SlickGridEventData { node: HTMLElement; column: Column; }
+export interface OnKeyDownEventArgs extends SlickGridEventData { row: number; cell: number; }
+export interface OnValidationErrorEventArgs extends SlickGridEventData { editor: Editor; cellNode: HTMLElement; validationResults: EditorValidatorOutput; row: number; cell: number; column: Column; }
+export interface OnRenderedEventArgs extends SlickGridEventData { startRow: number; endRow: number; }
+export interface OnSelectedRowsChangedEventArgs extends SlickGridEventData { rows: number[], previousSelectedRows: number[] }
 export interface OnScrollEventArgs extends SlickGridEventData { scrollLeft: number; scrollTop: number; }
-export interface OnSingleSortEventArgs extends SlickGridEventData { multiColumnSort: false; columnId: string | number; sortCol: Column; sortAsc: boolean; }
-export interface OnMultiSortEventArgs extends SlickGridEventData { multiColumnSort: true; sortCols: Array<{ sortCol: Column; sortAsc: boolean; }> }
+export interface OnDragEventArgs extends SlickGridEventData {
+  count: number; deltaX: number; deltaY: number; offsetX: number; offsetY: number; originalX: number; originalY: number;
+  available: HTMLElement | HTMLElement[]; drag: HTMLElement; drop: HTMLElement | HTMLElement[]; helper: HTMLElement;
+  proxy: HTMLElement; target: HTMLElement; mode: string;
+  row: number; rows: number[]; startX: number; startY: number;
+}

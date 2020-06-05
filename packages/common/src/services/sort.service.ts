@@ -4,9 +4,11 @@ import {
   DataView,
   GridOption,
   CurrentSorter,
+  MultiColumnSort,
+  SingleColumnSort,
   SlickEventHandler,
-  TreeDataOption,
   SlickGrid,
+  TreeDataOption,
 } from '../interfaces/index';
 import {
   EmitterType,
@@ -80,12 +82,12 @@ export class SortService {
     this._eventHandler.subscribe(grid.onSort, (e: any, args: any) => {
       // multiSort and singleSort are not exactly the same, but we want to structure it the same for the (for loop) after
       // also to avoid having to rewrite the for loop in the sort, we will make the singleSort an array of 1 object
-      const sortColumns = (args.multiColumnSort) ? args.sortCols : new Array({ sortAsc: args.sortAsc, sortCol: args.sortCol });
+      const sortColumns: Array<SingleColumnSort> = (args.multiColumnSort) ? args.sortCols : new Array({ sortAsc: args.sortAsc, sortCol: args.sortCol });
 
       // keep current sorters
       this._currentLocalSorters = []; // reset current local sorters
       if (Array.isArray(sortColumns)) {
-        sortColumns.forEach((sortColumn: { sortCol: Column, sortAsc: number }) => {
+        sortColumns.forEach((sortColumn: SingleColumnSort) => {
           if (sortColumn.sortCol) {
             this._currentLocalSorters.push({
               columnId: sortColumn.sortCol.id,
@@ -118,12 +120,12 @@ export class SortService {
       // however for a local grid, we need to pass a sort column and so we will sort by the 1st column
       if (triggerQueryEvent) {
         if (this._isBackendGrid) {
-          this.onBackendSortChanged(undefined, { grid: this._grid, sortCols: [], clearSortTriggered: true });
+          this.onBackendSortChanged(undefined, { grid: this._grid, multiColumnSort: true, sortCols: [], clearSortTriggered: true });
         } else {
           if (this._columnDefinitions && Array.isArray(this._columnDefinitions) && this._columnDefinitions.length > 0) {
             const sortColFieldId = this._gridOptions && this._gridOptions.defaultColumnSortFieldId || 'id';
             const sortCol = { id: sortColFieldId, field: sortColFieldId } as Column;
-            this.onLocalSortChanged(this._grid, this._dataView, new Array({ sortAsc: true, sortCol, clearSortTriggered: true }));
+            this.onLocalSortChanged(this._grid, this._dataView, new Array({ columnId: sortCol.id, sortAsc: true, sortCol, clearSortTriggered: true }));
           }
         }
       } else if (this._isBackendGrid) {
@@ -171,16 +173,16 @@ export class SortService {
    * If a column is passed as an argument, that will be exclusion so we won't add this column to our output array since it is already in the array.
    * The usage of this method is that we want to know the sort prior to calling the next sorting command
    */
-  getCurrentColumnSorts(excludedColumnId?: string) {
+  getCurrentColumnSorts(excludedColumnId?: string): ColumnSort[] {
     // getSortColumns() only returns sortAsc & columnId, we want the entire column definition
     if (this._grid) {
       const oldSortColumns = this._grid.getSortColumns();
 
       // get the column definition but only keep column which are not equal to our current column
       if (Array.isArray(oldSortColumns)) {
-        const sortedCols = oldSortColumns.reduce((cols: ColumnSort[], col: ColumnSort) => {
+        const sortedCols = oldSortColumns.reduce((cols: ColumnSort[], col: SingleColumnSort) => {
           if (col && (!excludedColumnId || col.columnId !== excludedColumnId)) {
-            cols.push({ sortCol: this._columnDefinitions[this._grid.getColumnIndex(col.columnId || '')], sortAsc: col.sortAsc });
+            cols.push({ columnId: col.columnId || '', sortCol: this._columnDefinitions[this._grid.getColumnIndex(col.columnId || '')], sortAsc: col.sortAsc });
           }
           return cols;
         }, []);
@@ -216,7 +218,7 @@ export class SortService {
 
       if (sortCols.length > 0) {
         this.onLocalSortChanged(this._grid, this._dataView, sortCols);
-        this._grid.setSortColumns(sortCols); // use this to add sort icon(s) in UI
+        this._grid.setSortColumns(sortCols.map(s => ({ columnId: s.columnId, sortAsc: s.sortAsc }))); // use this to add sort icon(s) in UI
       }
 
     }
@@ -257,7 +259,7 @@ export class SortService {
     }
   }
 
-  onBackendSortChanged(event: Event | undefined, args: { multiColumnSort?: boolean; grid: SlickGrid; sortCols: ColumnSort[]; clearSortTriggered?: boolean }) {
+  onBackendSortChanged(event: Event | undefined, args: MultiColumnSort & { clearSortTriggered?: boolean }) {
     if (!args || !args.grid) {
       throw new Error('Something went wrong when trying to bind the "onBackendSortChanged(event, args)" function, it seems that "args" is not populated correctly');
     }
@@ -282,7 +284,7 @@ export class SortService {
   }
 
   /** When a Sort Changes on a Local grid (JSON dataset) */
-  onLocalSortChanged(grid: SlickGrid, dataView: DataView, sortColumns: ColumnSort[], forceReSort = false) {
+  onLocalSortChanged(grid: SlickGrid, dataView: DataView, sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, forceReSort = false) {
     const isTreeDataEnabled = this._gridOptions?.enableTreeData ?? false;
 
     if (grid && dataView) {
@@ -359,7 +361,7 @@ export class SortService {
     return undefined;
   }
 
-  sortTreeData(hierarchicalArray: any[], sortColumns: ColumnSort[]) {
+  sortTreeData(hierarchicalArray: any[], sortColumns: Array<ColumnSort>) {
     if (Array.isArray(sortColumns)) {
       for (const sortColumn of sortColumns) {
         this.sortTreeChild(hierarchicalArray, sortColumn, 0);
