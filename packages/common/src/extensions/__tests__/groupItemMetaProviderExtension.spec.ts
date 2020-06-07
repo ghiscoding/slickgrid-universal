@@ -55,7 +55,7 @@ describe('groupItemMetaProviderExtension', () => {
 
       const instance = extension.register();
 
-      expect(pluginSpy).toHaveBeenCalledWith({});
+      expect(pluginSpy).toHaveBeenCalledWith(undefined);
       expect(pluginSpy).toHaveBeenCalledWith(instance);
     });
 

@@ -1,8 +1,8 @@
-import { Extension } from '../interfaces/index';
+import { Extension, SlickGroupItemMetadataProvider } from '../interfaces/index';
 import { SharedService } from '../services/shared.service';
 
 export class GroupItemMetaProviderExtension implements Extension {
-  private _addon: any;
+  private _addon: SlickGroupItemMetadataProvider;
 
   constructor(private sharedService: SharedService) { }
 
@@ -20,7 +20,7 @@ export class GroupItemMetaProviderExtension implements Extension {
   /** register the group item metadata provider to add expand/collapse group handlers */
   register(): any {
     if (this.sharedService && this.sharedService.grid) {
-      this._addon = this.sharedService.groupItemMetadataProvider || {};
+      this._addon = this.sharedService.groupItemMetadataProvider;
       this.sharedService.grid.registerPlugin(this._addon);
       return this._addon;
     }

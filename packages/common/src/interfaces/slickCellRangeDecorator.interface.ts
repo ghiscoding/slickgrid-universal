@@ -1,7 +1,7 @@
 import { SlickGrid } from './slickGrid.interface';
 import { CellRange } from './cellRange.interface';
 
-export interface CellRangeDecorator {
+export interface SlickCellRangeDecorator {
   pluginName: 'CellRangeDecorator'
 
   /** Constructor of the CellRangeDecorator 3rd party plugin, it can optionally receive options */

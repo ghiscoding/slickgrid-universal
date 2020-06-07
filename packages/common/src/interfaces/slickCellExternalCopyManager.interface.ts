@@ -4,16 +4,16 @@ import { SlickEventData } from './slickEventData.interface';
 import { SlickEvent } from './slickEvent.interface';
 import { SlickGrid } from './slickGrid.interface';
 
-export interface CellExternalCopyManager<T = any> {
+export interface SlickCellExternalCopyManager<T = any> {
   pluginName: 'CellExternalCopyManager';
 
-  /** Constructor of the CellExternalCopyManager 3rd party plugin, it can optionally receive options */
+  /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor: (options: ExcelCopyBufferOption<T>) => void;
 
-  /** Initialize the CellExternalCopyManager 3rd party plugin */
+  /** Initialize the SlickGrid 3rd party plugin */
   init(grid: SlickGrid): void;
 
-  /** Destroy (dispose) the CellExternalCopyManager 3rd party plugin */
+  /** Destroy (dispose) the SlickGrid 3rd party plugin */
   destroy(): void;
 
   /** Clear the copy selection */

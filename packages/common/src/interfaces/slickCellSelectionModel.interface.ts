@@ -1,7 +1,7 @@
 import { CellRange } from './cellRange.interface';
 import { SlickEvent } from './slickEvent.interface';
 
-export interface CellSelectionModel {
+export interface SlickCellSelectionModel {
   /** initialize the selection model */
   init(args: any): void;
 

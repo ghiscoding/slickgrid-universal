@@ -16,6 +16,7 @@ import {
   Metrics,
   SlickEventHandler,
   SlickGrid,
+  SlickGroupItemMetadataProvider,
   SlickNamespace,
   TreeDataOption,
 
@@ -82,7 +83,7 @@ export class VanillaGridBundle {
   grid: SlickGrid;
   metrics: Metrics;
   customDataView = false;
-  groupItemMetadataProvider: any;
+  groupItemMetadataProvider: SlickGroupItemMetadataProvider;
   resizerPlugin: any;
 
   // extensions

@@ -1,15 +1,15 @@
 import { AutoTooltipOption } from './autoTooltipOption.interface';
 import { SlickGrid } from './slickGrid.interface';
 
-export interface AutoTooltips {
+export interface SlickAutoTooltips {
   pluginName: 'AutoTooltips';
 
-  /** Constructor of the AutoTooltipOption 3rd party plugin, it can optionally receive options */
+  /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor: (options: AutoTooltipOption) => void;
 
-  /** Initialize the AutoTooltips 3rd party plugin */
+  /** Initialize the SlickGrid 3rd party plugin */
   init(grid: SlickGrid): void;
 
-  /** Destroy (dispose) the AutoTooltips 3rd party plugin */
+  /** Destroy (dispose) the SlickGrid 3rd party plugin */
   destroy(): void;
 }

@@ -1,13 +1,13 @@
-import { CellRangeDecorator, SlickGrid } from './index';
+import { SlickCellRangeDecorator, SlickGrid } from './index';
 import { CellRange } from './cellRange.interface';
 import { SlickEvent } from './slickEvent.interface';
 import { SlickEventData } from './slickEventData.interface';
 
-export interface CellRangeSelector {
+export interface SlickCellRangeSelector {
   pluginName: 'CellRangeSelector'
 
   /** Constructor of the CellRangeSelector 3rd party plugin, it can optionally receive options */
-  constructor: (options?: { cellDecorator?: CellRangeDecorator; selectionCss?: { [cssRule: string]: string | number | boolean; } }) => void;
+  constructor: (options?: { cellDecorator?: SlickCellRangeDecorator; selectionCss?: { [cssRule: string]: string | number | boolean; } }) => void;
 
   /** Initialize the CellRangeSelector 3rd party plugin */
   init(grid: SlickGrid): void;
@@ -16,7 +16,7 @@ export interface CellRangeSelector {
   destroy(): void;
 
   /** Get cell range decorator object */
-  getCellDecorator(): CellRangeDecorator;
+  getCellDecorator(): SlickCellRangeDecorator;
 
   /** Get current cell range */
   getCurrentRange(): CellRange;

@@ -1,5 +1,5 @@
 import {
-  CellSelectionModel,
+  SlickCellSelectionModel,
   Column,
   ColumnSort,
   DataView,
@@ -229,7 +229,7 @@ export interface SlickGrid {
 
   // TODO: add RowSelectionModel when interface is ready
   /** Returns the current SelectionModel. See here for more information about SelectionModels.*/
-  getSelectionModel(): CellSelectionModel;
+  getSelectionModel(): SlickCellSelectionModel;
 
   /** Get sorted columns **/
   getSortColumns(): Array<SingleColumnSort | MultiColumnSort>;
@@ -407,7 +407,7 @@ export interface SlickGrid {
    * Unregisters a current selection model and registers a new one. See the definition of SelectionModel for more information.
    * @selectionModel A SelectionModel.
    */
-  setSelectionModel(selectionModel: CellSelectionModel): void;		// todo: don't know the type of the event data type
+  setSelectionModel(selectionModel: SlickCellSelectionModel): void;		// todo: don't know the type of the event data type
 
   /**
    * Accepts a columnId string and an ascending boolean. Applies a sort glyph in either ascending or descending form to the header of the column. Note that this does not actually sort the column. It only adds the sort glyph to the header.

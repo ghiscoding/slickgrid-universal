@@ -1,11 +1,11 @@
 import {
   AutoResizeOption,
-  AutoTooltips,
+  SlickAutoTooltips,
   AutoTooltipOption,
-  CellExternalCopyManager,
-  CellRangeDecorator,
-  CellRangeSelector,
-  CellSelectionModel,
+  SlickCellExternalCopyManager,
+  SlickCellRangeDecorator,
+  SlickCellRangeSelector,
+  SlickCellSelectionModel,
   Column,
   DataView,
   ExcelCopyBufferOption,
@@ -15,6 +15,7 @@ import {
   SlickEventHandler,
   SlickGrid,
   SlickRange,
+  SlickGroupItemMetadataProvider,
 } from './index';
 import { SlickEventData } from './slickEventData.interface';
 
@@ -30,10 +31,18 @@ export interface SlickNamespace {
 
   Data: {
     /** Slick DataView which has built-in data manipulation methods. Relies on the data item having an "id" property uniquely identifying it. */
-    DataView: new (options?: { groupItemMetadataProvider?: any; inlineFilters?: boolean; }) => DataView;
+    DataView: new (options?: { groupItemMetadataProvider?: SlickGroupItemMetadataProvider; inlineFilters?: boolean; }) => DataView;
 
-    /** Group Item Metadata Provider used by the Grouping/DraggableGrouping features */
-    GroupItemMetadataProvider: any;
+    /**
+     * Provides item metadata for group (Slick.Group) and totals (Slick.Totals) rows produced by the DataView.
+     * This metadata overrides the default behavior and formatting of those rows so that they appear and function
+     * correctly when processed by the grid.
+     *
+     * This class also acts as a grid plugin providing event handlers to expand & collapse groups.
+     * If "grid.registerPlugin(...)" is not called, expand & collapse will not work.
+     *
+     */
+    GroupItemMetadataProvider: new () => SlickGroupItemMetadataProvider;
   };
 
   /** Slick Grid is a data grid library and this class is the core of the library */
@@ -62,29 +71,25 @@ export interface SlickNamespace {
   /** A structure containing a range of cells. */
   Range: new () => SlickRange;
 
-  // --
-  // Slick Utilities
-  // --------------------------
-
-  /** Displays an overlay on top of a given cell range. */
-  CellRangeDecorator: new () => CellRangeDecorator;
-
-  /** CellRangeSelector is a utility to select a range of cell, this is useful with for example when we use the cell external copy manager (excel like) */
-  CellRangeSelector: new () => CellRangeSelector;
-
-  /** CellSelectionModel is a utility to select a range of cell, this is useful with for example when we use the cell external copy manager (excel like) */
-  CellSelectionModel: new () => CellSelectionModel;
-
 
   // --
   // Slick Controls/Plugins (addons)
-  // --------------------------
+  // -------------------------------
 
-  /** AutoTooltipOption is a 3rd party plugin (addon) to show/hide tooltips when columns are too narrow to fit content. */
-  AutoTooltips: new (options?: AutoTooltipOption) => AutoTooltips;
+  /** AutoTooltips is a 3rd party plugin (addon) to show/hide tooltips when columns are too narrow to fit content. */
+  AutoTooltips: new (options?: AutoTooltipOption) => SlickAutoTooltips;
 
   /** Cell External Copy Manager is a 3rd party plugin (addon) which is an Excel like copy cell range addon */
-  CellExternalCopyManager: new (options?: ExcelCopyBufferOption) => CellExternalCopyManager;
+  CellExternalCopyManager: new (options?: ExcelCopyBufferOption) => SlickCellExternalCopyManager;
+
+  /** Displays an overlay on top of a given cell range. */
+  CellRangeDecorator: new () => SlickCellRangeDecorator;
+
+  /** CellRangeSelector is a utility to select a range of cell, this is useful with for example when we use the cell external copy manager (excel like) */
+  CellRangeSelector: new () => SlickCellRangeSelector;
+
+  /** CellSelectionModel is a utility to select a range of cell, this is useful with for example when we use the cell external copy manager (excel like) */
+  CellSelectionModel: new () => SlickCellSelectionModel;
 
   // some of them are under the Plugins namespace
   Plugins: {

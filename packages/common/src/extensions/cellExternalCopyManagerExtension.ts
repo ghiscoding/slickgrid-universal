@@ -1,6 +1,6 @@
 import {
-  CellExternalCopyManager,
-  CellSelectionModel,
+  SlickCellExternalCopyManager,
+  SlickCellSelectionModel,
   Column,
   DataView,
   EditCommand,
@@ -22,7 +22,7 @@ import { SharedService } from '../services/shared.service';
 declare const Slick: SlickNamespace;
 
 export class CellExternalCopyManagerExtension implements Extension {
-  private _addon: CellExternalCopyManager;
+  private _addon: SlickCellExternalCopyManager;
   private _addonOptions: ExcelCopyBufferOption;
   private _eventHandler: SlickEventHandler;
   private _commandQueue: EditCommand[];
@@ -58,12 +58,12 @@ export class CellExternalCopyManagerExtension implements Extension {
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
-  getAddonInstance(): CellExternalCopyManager {
+  getAddonInstance(): SlickCellExternalCopyManager {
     return this._addon;
   }
 
   /** Register the 3rd party addon (plugin) */
-  register(): CellExternalCopyManager | null {
+  register(): SlickCellExternalCopyManager | null {
     if (this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
       // dynamically import the SlickGrid plugin (addon) with RequireJS
       this.extensionUtility.loadExtensionDynamically(ExtensionName.cellExternalCopyManager);
@@ -72,7 +72,7 @@ export class CellExternalCopyManagerExtension implements Extension {
       this.hookUndoShortcutKey();
 
       this._addonOptions = { ...this.getDefaultOptions(), ...this.sharedService.gridOptions.excelCopyBufferOptions } as ExcelCopyBufferOption;
-      this.sharedService.grid.setSelectionModel(new Slick.CellSelectionModel() as CellSelectionModel);
+      this.sharedService.grid.setSelectionModel(new Slick.CellSelectionModel() as SlickCellSelectionModel);
       this._addon = new Slick.CellExternalCopyManager(this._addonOptions);
       this.sharedService.grid.registerPlugin(this._addon);
 
