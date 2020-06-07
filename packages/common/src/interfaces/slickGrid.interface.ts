@@ -2,7 +2,7 @@ import {
   SlickCellSelectionModel,
   Column,
   ColumnSort,
-  DataView,
+  SlickDataView,
   Editor,
   SlickEditorLock,
   EditorValidatorOutput,
@@ -156,7 +156,7 @@ export interface SlickGrid {
   getContainerNode(): HTMLElement;
 
   /** Returns an array of every data object, unless you're using DataView in which case it returns a DataView object. */
-  getData<T = DataView>(): T;
+  getData<T = SlickDataView>(): T;
 
   /**
    * Returns the databinding item at a given position.
@@ -227,7 +227,6 @@ export interface SlickGrid {
   /** Returns an array of row indices corresponding to the currently selected rows. */
   getSelectedRows(): number[];
 
-  // TODO: add RowSelectionModel when interface is ready
   /** Returns the current SelectionModel. See here for more information about SelectionModels.*/
   getSelectionModel(): SlickCellSelectionModel;
 
@@ -402,7 +401,6 @@ export interface SlickGrid {
    */
   setSelectedRows(rowsArray: number[]): void;
 
-  // TODO add RowSelectionModel when interface is ready
   /**
    * Unregisters a current selection model and registers a new one. See the definition of SelectionModel for more information.
    * @selectionModel A SelectionModel.

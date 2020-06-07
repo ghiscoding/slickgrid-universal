@@ -5,7 +5,7 @@ import { ExtensionUtility } from '../extensionUtility';
 import { Formatters } from '../../formatters';
 import { SharedService } from '../../services/shared.service';
 import { DelimiterType, FileType } from '../../enums/index';
-import { Column, DataView, GridOption, MenuCommandItem, SlickGrid } from '../../interfaces/index';
+import { Column, SlickDataView, GridOption, MenuCommandItem, SlickGrid } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { ExcelExportService, FileExportService, TreeDataService } from '../../services';
 
@@ -29,7 +29,7 @@ const dataViewStub = {
   getGrouping: jest.fn(),
   setGrouping: jest.fn(),
   setItems: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const gridStub = {
   autosizeColumns: jest.fn(),

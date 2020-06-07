@@ -1,7 +1,7 @@
 import { HeaderMenuExtension } from '../headerMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
-import { Column, ColumnSort, DataView, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, ColumnSort, SlickDataView, GridOption, SlickGrid } from '../../interfaces/index';
 import { FilterService, SortService, PubSubService } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
@@ -29,7 +29,7 @@ const sortServiceStub = {
 
 const dataViewStub = {
   refresh: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const gridStub = {
   autosizeColumns: jest.fn(),

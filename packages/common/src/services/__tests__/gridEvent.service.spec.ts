@@ -1,5 +1,5 @@
 import { GridEventService } from '../gridEvent.service';
-import { Column, DataView, SlickGrid } from '../../interfaces/index';
+import { Column, SlickDataView, SlickGrid } from '../../interfaces/index';
 
 declare const Slick: any;
 
@@ -7,7 +7,7 @@ const dataViewStub = {
   refresh: jest.fn(),
   sort: jest.fn(),
   reSort: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const gridStub = {
   getColumnIndex: jest.fn(),

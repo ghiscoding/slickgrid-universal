@@ -1,9 +1,9 @@
-import { Column, CurrentPagination, DataView, GridOption, SlickGrid, SlickGroupItemMetadataProvider } from '../interfaces/index';
+import { Column, CurrentPagination, SlickDataView, GridOption, SlickGrid, SlickGroupItemMetadataProvider } from '../interfaces/index';
 import { PubSubService } from '..';
 
 export class SharedService {
   private _allColumns: Column[];
-  private _dataView: DataView;
+  private _dataView: SlickDataView;
   private _groupItemMetadataProvider: SlickGroupItemMetadataProvider;
   private _grid: SlickGrid;
   private _gridOptions: GridOption;
@@ -42,11 +42,11 @@ export class SharedService {
   }
 
   /** Getter for SlickGrid DataView object */
-  get dataView(): DataView {
+  get dataView(): SlickDataView {
     return this._dataView;
   }
   /** Setter for SlickGrid DataView object */
-  set dataView(dataView: DataView) {
+  set dataView(dataView: SlickDataView) {
     this._dataView = dataView;
   }
 

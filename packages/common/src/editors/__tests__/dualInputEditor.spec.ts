@@ -1,7 +1,7 @@
 import { Editors } from '../index';
 import { DualInputEditor } from '../dualInputEditor';
 import { KeyCode } from '../../enums/index';
-import { Column, ColumnEditorDualInput, DataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, ColumnEditorDualInput, SlickDataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
 
 declare const Slick: any;
 const KEY_CHAR_0 = 48;
@@ -12,7 +12,7 @@ const template = `<div id="${containerId}"></div>`;
 
 const dataViewStub = {
   refresh: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const gridOptionMock = {
   autoCommitEdit: false,

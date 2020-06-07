@@ -1,7 +1,6 @@
 import moment = require('moment-mini');
 import {
   Column,
-  DataView,
   ExcelExportOption,
   FieldType,
   FileType,
@@ -11,6 +10,7 @@ import {
   GroupTotalsFormatter,
   GroupTotalFormatters,
   SharedService,
+  SlickDataView,
   SlickGrid,
   SortDirectionNumber,
   SortComparers,
@@ -55,7 +55,7 @@ const dataViewStub = {
   getItem: jest.fn(),
   getLength: jest.fn(),
   setGrouping: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const mockGridOptions = {
   enableExcelExport: true,

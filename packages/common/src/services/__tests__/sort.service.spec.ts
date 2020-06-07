@@ -4,7 +4,7 @@ import {
   Column,
   ColumnSort,
   CurrentSorter,
-  DataView,
+  SlickDataView,
   GridOption,
   MultiColumnSort,
   SlickEventHandler,
@@ -38,7 +38,7 @@ const dataViewStub = {
   sort: jest.fn(),
   reSort: jest.fn(),
   setItems: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const backendServiceStub = {
   buildQuery: jest.fn(),

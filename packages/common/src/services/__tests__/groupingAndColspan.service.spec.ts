@@ -1,5 +1,5 @@
 import { GroupingAndColspanService } from '../groupingAndColspan.service';
-import { Column, DataView, GridOption, SlickEventHandler, SlickGrid } from '../../interfaces/index';
+import { Column, SlickDataView, GridOption, SlickEventHandler, SlickGrid } from '../../interfaces/index';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 
 declare const Slick: any;
@@ -17,7 +17,7 @@ const dataViewStub = {
   sort: jest.fn(),
   onRowCountChanged: new Slick.Event(),
   reSort: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const resizerPluginStub = {
   init: jest.fn(),

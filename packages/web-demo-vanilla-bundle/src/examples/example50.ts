@@ -1,4 +1,13 @@
-import { Column, DataView, FormatterResultObject, Formatters, GridOption, OnEventArgs, SlickGrid, SortDirectionString } from '@slickgrid-universal/common';
+import {
+  Column,
+  FormatterResultObject,
+  Formatters,
+  GridOption,
+  OnEventArgs,
+  SlickDataView,
+  SlickGrid,
+  SortDirectionString
+} from '@slickgrid-universal/common';
 import { FileExportService } from '@slickgrid-universal/file-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 
@@ -12,7 +21,7 @@ export class Example50 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
-  dataViewObj: DataView;
+  dataViewObj: SlickDataView;
   gridObj: SlickGrid;
   slickgridLwc;
   slickerGridInstance;

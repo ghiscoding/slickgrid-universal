@@ -1,5 +1,5 @@
 import { DelimiterType, FileType } from '../../enums/index';
-import { Column, DataView, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, SlickDataView, GridOption, SlickGrid } from '../../interfaces/index';
 import { GridMenuExtension } from '../gridMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
@@ -33,7 +33,7 @@ const sortServiceStub = {
 
 const dataViewStub = {
   refresh: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const gridStub = {
   autosizeColumns: jest.fn(),

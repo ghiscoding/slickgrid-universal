@@ -2,7 +2,7 @@ import {
   SlickCellExternalCopyManager,
   SlickCellSelectionModel,
   Column,
-  DataView,
+  SlickDataView,
   EditCommand,
   EditUndoRedoBuffer,
   ExcelCopyBufferOption,
@@ -179,7 +179,7 @@ export class CellExternalCopyManagerExtension implements Extension {
       includeHeaderWhenCopying: false,
       newRowCreator: (count: number) => {
         for (let i = 0; i < count; i++) {
-          this.sharedService.grid.getData<DataView>().addItem({ id: `newRow_${newRowIds++}` });
+          this.sharedService.grid.getData<SlickDataView>().addItem({ id: `newRow_${newRowIds++}` });
         }
       }
     };

@@ -16,7 +16,7 @@ import {
   CurrentFilter,
   Column,
   CurrentColumn,
-  DataView,
+  SlickDataView,
   GridStateChange,
   GridState,
   SlickGrid,
@@ -52,7 +52,7 @@ const dataViewStub = {
   mapRowsToIds: jest.fn(),
   onBeforePagingInfoChanged: new Slick.Event(),
   onPagingInfoChanged: new Slick.Event(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const gridStub = {
   autosizeColumns: jest.fn(),

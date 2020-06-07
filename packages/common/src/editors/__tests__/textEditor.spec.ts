@@ -1,7 +1,7 @@
 import { Editors } from '../index';
 import { TextEditor } from '../textEditor';
 import { KeyCode } from '../../enums/index';
-import { AutocompleteOption, Column, DataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { AutocompleteOption, Column, SlickDataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
 
 const KEY_CHAR_A = 97;
 const containerId = 'demo-container';
@@ -11,7 +11,7 @@ const template = `<div id="${containerId}"></div>`;
 
 const dataViewStub = {
   refresh: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const gridOptionMock = {
   autoCommitEdit: false,

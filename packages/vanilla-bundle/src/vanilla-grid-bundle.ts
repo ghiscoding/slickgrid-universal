@@ -8,12 +8,12 @@ import {
   BackendServiceApi,
   Column,
   ColumnEditor,
-  DataView,
   ExtensionName,
   EventNamingStyle,
   GlobalGridOptions,
   GridOption,
   Metrics,
+  SlickDataView,
   SlickEventHandler,
   SlickGrid,
   SlickGroupItemMetadataProvider,
@@ -79,7 +79,7 @@ export class VanillaGridBundle {
   private _eventPubSubService: EventPubSubService;
   private _slickgridInitialized = false;
   backendServiceApi: BackendServiceApi | undefined;
-  dataView: DataView;
+  dataView: SlickDataView;
   grid: SlickGrid;
   metrics: Metrics;
   customDataView = false;
@@ -486,7 +486,7 @@ export class VanillaGridBundle {
     return options;
   }
 
-  bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: DataView) {
+  bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: SlickDataView) {
     // bind external filter (backend) when available or default onFilter (dataView)
     if (gridOptions.enableFiltering && !this.customDataView) {
       this.filterService.init(grid);

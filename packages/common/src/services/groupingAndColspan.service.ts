@@ -1,6 +1,6 @@
 import {
   Column,
-  DataView,
+  SlickDataView,
   GridOption,
   SlickEventHandler,
   SlickGrid,
@@ -20,8 +20,8 @@ export class GroupingAndColspanService {
   }
 
   /** Getter of SlickGrid DataView object */
-  get _dataView(): DataView {
-    return (this._grid?.getData && this._grid.getData()) as DataView;
+  get _dataView(): SlickDataView {
+    return (this._grid?.getData && this._grid.getData()) as SlickDataView;
   }
 
   /** Getter of the SlickGrid Event Handler */

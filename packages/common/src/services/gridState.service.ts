@@ -12,7 +12,7 @@ import {
   CurrentPagination,
   CurrentRowSelection,
   CurrentSorter,
-  DataView,
+  SlickDataView,
   GridOption,
   GridState,
   SlickGrid,
@@ -46,8 +46,8 @@ export class GridStateService {
   ) { }
 
   /** Getter of SlickGrid DataView object */
-  get _dataView(): DataView {
-    return (this._grid?.getData && this._grid.getData()) as DataView;
+  get _dataView(): SlickDataView {
+    return (this._grid?.getData && this._grid.getData()) as SlickDataView;
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */

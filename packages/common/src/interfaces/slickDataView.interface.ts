@@ -3,7 +3,7 @@ import { PagingInfo } from './pagingInfo.interface';
 import { SlickEvent } from './slickEvent.interface';
 import { SlickGrid } from './slickGrid.interface';
 
-export interface DataView {
+export interface SlickDataView {
   // --
   // Available Methods
 
@@ -206,7 +206,7 @@ export interface DataView {
 
 export interface OnGroupExpandedEventArgs { level: number; groupingKey: string | number; }
 export interface OnGroupCollapsedEventArgs { level: number; groupingKey: string | number; }
-export interface OnRowCountChangedEventArgs { previous: number; current: number; dataView: DataView; callingOnRowsChanged: boolean; }
-export interface OnRowsChangedEventArgs { rows: number[]; dataView: DataView; calledOnRowCountChanged: boolean; }
-export interface OnRowsOrCountChangedEventArgs { rowsDiff: number[]; previousRowCount: number; currentRowCount: number; rowCountChanged: boolean; rowsChanged: boolean; dataView: DataView; }
+export interface OnRowCountChangedEventArgs { previous: number; current: number; dataView: SlickDataView; callingOnRowsChanged: boolean; }
+export interface OnRowsChangedEventArgs { rows: number[]; dataView: SlickDataView; calledOnRowCountChanged: boolean; }
+export interface OnRowsOrCountChangedEventArgs { rowsDiff: number[]; previousRowCount: number; currentRowCount: number; rowCountChanged: boolean; rowsChanged: boolean; dataView: SlickDataView; }
 export interface OnSetItemsCalledEventArgs { idProperty: string; }

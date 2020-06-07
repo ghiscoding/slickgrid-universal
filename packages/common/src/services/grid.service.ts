@@ -1,7 +1,7 @@
 import {
   CellArgs,
   Column,
-  DataView,
+  SlickDataView,
   GridOption,
   GridServiceDeleteOption,
   GridServiceInsertOption,
@@ -36,8 +36,8 @@ export class GridService {
   ) { }
 
   /** Getter of SlickGrid DataView object */
-  get _dataView(): DataView {
-    return (this._grid?.getData && this._grid.getData()) as DataView;
+  get _dataView(): SlickDataView {
+    return (this._grid?.getData && this._grid.getData()) as SlickDataView;
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */

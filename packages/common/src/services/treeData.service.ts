@@ -1,4 +1,4 @@
-import { DataView, GridOption, SlickEventHandler, SlickGrid } from '../interfaces/index';
+import { SlickDataView, GridOption, SlickEventHandler, SlickGrid } from '../interfaces/index';
 import { SharedService } from './shared.service';
 
 // using external non-typed js libraries
@@ -21,8 +21,8 @@ export class TreeDataService {
   }
 
   /** Getter of SlickGrid DataView object */
-  get dataView(): DataView {
-    return (this._grid?.getData && this._grid.getData()) as DataView;
+  get dataView(): SlickDataView {
+    return (this._grid?.getData && this._grid.getData()) as SlickDataView;
   }
 
   /** Getter of the SlickGrid Event Handler */

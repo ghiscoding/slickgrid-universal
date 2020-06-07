@@ -8,7 +8,7 @@ import {
   BackendService,
   Column,
   CurrentFilter,
-  DataView,
+  SlickDataView,
   GridOption,
   SlickEventHandler,
   SlickGrid,
@@ -51,7 +51,7 @@ const dataViewStub = {
   setFilter: jest.fn(),
   setFilterArgs: jest.fn(),
   sort: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const backendServiceStub = {
   buildQuery: jest.fn(),

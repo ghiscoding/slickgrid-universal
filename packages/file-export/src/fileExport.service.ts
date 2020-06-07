@@ -12,7 +12,6 @@ import {
   // interfaces
   Column,
   Constants,
-  DataView,
   ExportOption,
   FileExportService as BaseFileExportService,
   FileType,
@@ -21,6 +20,7 @@ import {
   Locale,
   PubSubService,
   SharedService,
+  SlickDataView,
   SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
@@ -49,8 +49,8 @@ export class FileExportService implements BaseFileExportService {
   }
 
   /** Getter of SlickGrid DataView object */
-  get _dataView(): DataView {
-    return (this._grid?.getData && this._grid.getData()) as DataView;
+  get _dataView(): SlickDataView {
+    return (this._grid?.getData && this._grid.getData()) as SlickDataView;
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */

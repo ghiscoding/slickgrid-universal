@@ -1,4 +1,19 @@
-import { Aggregators, Column, DataView, Editors, FieldType, Filters, Formatter, Formatters, GridOption, Grouping, GroupingGetterFunction, GroupTotalFormatters, SlickGrid, SortComparers, SortDirectionNumber } from '@slickgrid-universal/common';
+import {
+  Aggregators,
+  Column,
+  Editors,
+  FieldType,
+  Filters,
+  Formatters,
+  GridOption,
+  Grouping,
+  GroupingGetterFunction,
+  GroupTotalFormatters,
+  SlickDataView,
+  SlickGrid,
+  SortComparers,
+  SortDirectionNumber,
+} from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 
@@ -37,7 +52,7 @@ export class Example3 {
   columnDefinitions: Column<ReportItem>[];
   gridOptions: GridOption;
   dataset;
-  dataViewObj: DataView;
+  dataViewObj: SlickDataView;
   gridObj: SlickGrid;
   commandQueue = [];
   slickgridLwc;

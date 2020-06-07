@@ -1,11 +1,11 @@
-import { Column, DataView, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, SlickDataView, GridOption, SlickGrid } from '../../interfaces/index';
 import { treeFormatter } from '../treeFormatter';
 
 const dataViewStub = {
   getIdxById: jest.fn(),
   getItemByIdx: jest.fn(),
   getIdPropertyName: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const gridStub = {
   getData: jest.fn(),

@@ -1,7 +1,7 @@
 import {
   Column,
   ColumnSort,
-  DataView,
+  SlickDataView,
   GridOption,
   CurrentSorter,
   MultiColumnSort,
@@ -29,7 +29,7 @@ declare const Slick: any;
 export class SortService {
   private _currentLocalSorters: CurrentSorter[] = [];
   private _eventHandler: SlickEventHandler;
-  private _dataView: DataView;
+  private _dataView: SlickDataView;
   private _grid: SlickGrid;
   private _isBackendGrid = false;
 
@@ -57,7 +57,7 @@ export class SortService {
    * @param grid SlickGrid Grid object
    * @param dataView SlickGrid DataView object
    */
-  bindBackendOnSort(grid: SlickGrid, dataView: DataView) {
+  bindBackendOnSort(grid: SlickGrid, dataView: SlickDataView) {
     this._isBackendGrid = true;
     this._grid = grid;
     this._dataView = dataView;
@@ -72,7 +72,7 @@ export class SortService {
    * @param gridOptions Grid Options object
    * @param dataView
    */
-  bindLocalOnSort(grid: SlickGrid, dataView: DataView) {
+  bindLocalOnSort(grid: SlickGrid, dataView: SlickDataView) {
     this._isBackendGrid = false;
     this._grid = grid;
     this._dataView = dataView;
@@ -284,7 +284,7 @@ export class SortService {
   }
 
   /** When a Sort Changes on a Local grid (JSON dataset) */
-  onLocalSortChanged(grid: SlickGrid, dataView: DataView, sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, forceReSort = false) {
+  onLocalSortChanged(grid: SlickGrid, dataView: SlickDataView, sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, forceReSort = false) {
     const isTreeDataEnabled = this._gridOptions?.enableTreeData ?? false;
 
     if (grid && dataView) {

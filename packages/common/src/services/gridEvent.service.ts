@@ -1,7 +1,7 @@
 import {
   CellArgs,
   Column,
-  DataView,
+  SlickDataView,
   GridOption,
   OnEventArgs,
   SlickEventHandler,
@@ -24,7 +24,7 @@ export class GridEventService {
   }
 
   /* OnCellChange Event */
-  bindOnBeforeEditCell(grid: SlickGrid, dataView: DataView) {
+  bindOnBeforeEditCell(grid: SlickGrid, dataView: SlickDataView) {
     // subscribe to this Slickgrid event of onBeforeEditCell
     this._eventHandler.subscribe(grid.onBeforeEditCell, (e: SlickEventData, args: CellArgs) => {
       if (!e || !args || !grid || args.cell === undefined || !grid.getColumns || !grid.getDataItem) {
@@ -51,7 +51,7 @@ export class GridEventService {
   }
 
   /* OnCellChange Event */
-  bindOnCellChange(grid: SlickGrid, dataView: DataView) {
+  bindOnCellChange(grid: SlickGrid, dataView: SlickDataView) {
     // subscribe to this Slickgrid event of onCellChange
     this._eventHandler.subscribe(grid.onCellChange, (e: SlickEventData, args: CellArgs) => {
       if (!e || !args || !grid || args.cell === undefined || !grid.getColumns || !grid.getDataItem) {
@@ -78,7 +78,7 @@ export class GridEventService {
   }
 
   /* OnClick Event */
-  bindOnClick(grid: SlickGrid, dataView: DataView) {
+  bindOnClick(grid: SlickGrid, dataView: SlickDataView) {
     this._eventHandler.subscribe(grid.onClick, (e: SlickEventData, args: CellArgs) => {
       if (!e || !args || !grid || args.cell === undefined || !grid.getColumns || !grid.getDataItem) {
         return;

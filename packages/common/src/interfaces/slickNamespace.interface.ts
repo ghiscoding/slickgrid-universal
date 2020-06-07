@@ -1,23 +1,23 @@
 import {
   AutoResizeOption,
-  SlickAutoTooltips,
   AutoTooltipOption,
+  Column,
+  ExcelCopyBufferOption,
+  GridOption,
+  SlickAutoTooltips,
   SlickCellExternalCopyManager,
   SlickCellRangeDecorator,
   SlickCellRangeSelector,
   SlickCellSelectionModel,
-  Column,
-  DataView,
-  ExcelCopyBufferOption,
-  GridOption,
+  SlickDataView,
   SlickEditorLock,
   SlickEvent,
+  SlickEventData,
   SlickEventHandler,
   SlickGrid,
-  SlickRange,
   SlickGroupItemMetadataProvider,
+  SlickRange,
 } from './index';
-import { SlickEventData } from './slickEventData.interface';
 
 /**
  * Slick Grid class interface of the entire library and it's multiple controls/plugins.
@@ -31,7 +31,7 @@ export interface SlickNamespace {
 
   Data: {
     /** Slick DataView which has built-in data manipulation methods. Relies on the data item having an "id" property uniquely identifying it. */
-    DataView: new (options?: { groupItemMetadataProvider?: SlickGroupItemMetadataProvider; inlineFilters?: boolean; }) => DataView;
+    DataView: new (options?: { groupItemMetadataProvider?: SlickGroupItemMetadataProvider; inlineFilters?: boolean; }) => SlickDataView;
 
     /**
      * Provides item metadata for group (Slick.Group) and totals (Slick.Totals) rows produced by the DataView.
@@ -46,7 +46,7 @@ export interface SlickNamespace {
   };
 
   /** Slick Grid is a data grid library and this class is the core of the library */
-  Grid: new (gridContainer: Element, data: DataView | Array<any>, columnDefinitions: Column[], gridOptions: GridOption) => SlickGrid;
+  Grid: new (gridContainer: Element, data: SlickDataView | Array<any>, columnDefinitions: Column[], gridOptions: GridOption) => SlickGrid;
 
 
   // --
