@@ -10,6 +10,7 @@ import {
   HeaderButtonItem,
   MenuCommandItem,
   OnEventArgs,
+  SlickEventData,
   SortComparer,
 } from './index';
 import { FieldType } from '../enums/fieldType.enum';
@@ -163,13 +164,13 @@ export interface Column<T = any> {
   nameKey?: string;
 
   /** an event that can be used for executing an action before the cell becomes editable (that event happens before the "onCellChange" event) */
-  onBeforeEditCell?: (e: KeyboardEvent | MouseEvent, args: OnEventArgs) => void;
+  onBeforeEditCell?: (e: SlickEventData, args: OnEventArgs) => void;
 
   /** an event that can be used for executing an action after a cell change */
-  onCellChange?: (e: KeyboardEvent | MouseEvent, args: OnEventArgs) => void;
+  onCellChange?: (e: SlickEventData, args: OnEventArgs) => void;
 
   /** an event that can be used for executing an action after a cell click */
-  onCellClick?: (e: KeyboardEvent | MouseEvent, args: OnEventArgs) => void;
+  onCellClick?: (e: SlickEventData, args: OnEventArgs) => void;
 
   /** column output type */
   outputType?: FieldType;

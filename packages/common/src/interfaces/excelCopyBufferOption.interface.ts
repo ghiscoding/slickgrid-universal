@@ -1,7 +1,9 @@
 import { Column } from './column.interface';
+import { FormatterResultObject } from './formatterResultObject.interface';
 import { SelectedRange } from './selectedRange.interface';
+import { SlickEventData } from './slickEventData.interface';
 
-export interface ExcelCopyBufferOption {
+export interface ExcelCopyBufferOption<T = any> {
   /** defaults to "copied", sets the css className used for copied cells. */
   copiedCellStyle?: string;
 
@@ -9,10 +11,10 @@ export interface ExcelCopyBufferOption {
   copiedCellStyleLayerKey?: string;
 
   /** option to specify a custom column value extractor function */
-  dataItemColumnValueExtractor?: (item: any, columnDef: Column) => any;
+  dataItemColumnValueExtractor?: (item: any, columnDef: Column<T>) => string | FormatterResultObject | null;
 
   /** option to specify a custom column value setter function */
-  dataItemColumnValueSetter?: (item: any, columnDef: Column, value: any) => any;
+  dataItemColumnValueSetter?: (item: any, columnDef: Column<T>, value: any) => string | FormatterResultObject | null;
 
   /** option to specify a custom handler for paste actions */
   clipboardCommandHandler?: (editCommand: any) => void;
@@ -24,19 +26,19 @@ export interface ExcelCopyBufferOption {
   bodyElement?: HTMLElement;
 
   /** optional handler to run when copy action initializes */
-  onCopyInit?: any;
+  onCopyInit?: () => void;
 
   /** optional handler to run when copy action is complete */
-  onCopySuccess?: any;
+  onCopySuccess?: (rowCount: number) => void;
 
   /** function to add rows to table if paste overflows bottom of table, if this function is not provided new rows will be ignored. */
-  newRowCreator?: (count: number) => void;
+  newRowCreator?: (rows: number | number[]) => void;
 
   /** suppresses paste */
   readOnlyMode?: boolean;
 
   /** option to specify a custom column header value extractor function */
-  headerColumnValueExtractor?: (columnDef: Column) => any;
+  headerColumnValueExtractor?: (columnDef: Column<T>) => any;
 
   // --
   // Events
@@ -46,11 +48,11 @@ export interface ExcelCopyBufferOption {
   onExtensionRegistered?: (plugin: any) => void;
 
   /** Fired when a copy cell is triggered */
-  onCopyCells?: (e: Event, args: { ranges: SelectedRange[] }) => void;
+  onCopyCells?: (e: SlickEventData, args: { ranges: SelectedRange[] }) => void;
 
   /** Fired when the command to copy the cells is cancelled */
-  onCopyCancelled?: (e: Event, args: { ranges: SelectedRange[] }) => void;
+  onCopyCancelled?: (e: SlickEventData, args: { ranges: SelectedRange[] }) => void;
 
   /** Fired when the user paste cells to the grid */
-  onPasteCells?: (e: Event, args: { ranges: SelectedRange[] }) => void;
+  onPasteCells?: (e: SlickEventData, args: { ranges: SelectedRange[] }) => void;
 }

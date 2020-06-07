@@ -16,6 +16,7 @@ import {
   Metrics,
   SlickEventHandler,
   SlickGrid,
+  SlickNamespace,
   TreeDataOption,
 
   // extensions
@@ -60,7 +61,7 @@ import { PaginationRenderer } from './pagination.renderer';
 import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options';
 
 // using external non-typed js libraries
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 declare const $: any;
 const DATAGRID_FOOTER_HEIGHT = 20;
 
@@ -68,7 +69,6 @@ export class VanillaGridBundle {
   private _columnDefinitions: Column[];
   private _gridOptions: GridOption;
   private _dataset: any[];
-  private _gridElm: Element;
   private _gridContainerElm: Element;
   private _hideHeaderRowAfterPageLoad = false;
   private _isDatasetInitialized = false;
@@ -362,7 +362,7 @@ export class VanillaGridBundle {
     //   }
     // }
 
-    const fixedGridDimensions = (this._gridOptions?.gridHeight || this._gridOptions?.gridWidth) ? { height: this._gridOptions?.gridHeight, width: this._gridOptions?.gridWidth } : null;
+    const fixedGridDimensions = (this._gridOptions?.gridHeight || this._gridOptions?.gridWidth) ? { height: this._gridOptions?.gridHeight, width: this._gridOptions?.gridWidth } : undefined;
     const autoResizeOptions = this._gridOptions?.autoResize ?? { bottomPadding: 0 };
     if (autoResizeOptions && autoResizeOptions.bottomPadding !== undefined) {
       autoResizeOptions.bottomPadding += this._gridOptions?.customFooterOptions?.footerHeight ?? DATAGRID_FOOTER_HEIGHT;

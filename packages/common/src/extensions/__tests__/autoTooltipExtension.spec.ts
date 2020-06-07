@@ -52,7 +52,7 @@ describe('autoTooltipExtension', () => {
 
       expect(instance).toBeTruthy();
       expect(instance).toEqual(addonInstance);
-      expect(mockAddon).toHaveBeenCalledWith({});
+      expect(mockAddon).toHaveBeenCalledWith(undefined);
       expect(pluginSpy).toHaveBeenCalledWith(instance);
     });
 

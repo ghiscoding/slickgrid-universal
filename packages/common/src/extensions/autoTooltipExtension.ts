@@ -1,13 +1,13 @@
 import { SharedService } from '../services/shared.service';
 import { ExtensionName } from '../enums/index';
-import { Extension } from '../interfaces/index';
+import { AutoTooltips, Extension, SlickNamespace } from '../interfaces/index';
 import { ExtensionUtility } from './extensionUtility';
 
-// using external non-typed js libraries
-declare const Slick: any;
+// using external SlickGrid JS libraries
+declare const Slick: SlickNamespace;
 
 export class AutoTooltipExtension implements Extension {
-  private _addon: any;
+  private _addon: AutoTooltips;
 
   constructor(private extensionUtility: ExtensionUtility, private sharedService: SharedService) { }
 
@@ -28,7 +28,7 @@ export class AutoTooltipExtension implements Extension {
       // dynamically import the SlickGrid plugin (addon) with RequireJS
       this.extensionUtility.loadExtensionDynamically(ExtensionName.autoTooltip);
 
-      const options = this.sharedService.gridOptions.autoTooltipOptions || {};
+      const options = this.sharedService.gridOptions.autoTooltipOptions;
       this._addon = new Slick.AutoTooltips(options);
       this.sharedService.grid.registerPlugin(this._addon);
 

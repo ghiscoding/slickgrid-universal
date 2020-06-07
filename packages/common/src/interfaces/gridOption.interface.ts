@@ -1,5 +1,6 @@
 import {
   AutoResizeOption,
+  AutoTooltipOption,
   BackendServiceApi,
   CellMenu,
   CheckboxSelector,
@@ -61,19 +62,7 @@ export interface GridOption {
   autoResize?: AutoResizeOption;
 
   /** Auto-tooltip options (enableForCells, enableForHeaderCells, maxToolTipLength) */
-  autoTooltipOptions?: {
-    /** are tooltip enabled for all cells? */
-    enableForCells: boolean;
-
-    /** are tooltip enabled for column headers */
-    enableForHeaderCells: boolean;
-
-    /** what is the maximum tooltip length in pixels (only type the number) */
-    maxToolTipLength: number;
-
-    /** Allow preventing custom tooltips from being overwritten by auto tooltips */
-    replaceExisting?: boolean;
-  };
+  autoTooltipOptions?: AutoTooltipOption;
 
   /** Backend Service API definition (GraphQL/OData Services) */
   backendServiceApi?: BackendServiceApi;
