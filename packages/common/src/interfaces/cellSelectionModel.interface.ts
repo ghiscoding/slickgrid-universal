@@ -1,5 +1,5 @@
+import { CellRange } from './cellRange.interface';
 import { SlickEvent } from './slickEvent.interface';
-import { SelectedRange } from './selectedRange.interface';
 
 export interface CellSelectionModel {
   /** initialize the selection model */
@@ -9,14 +9,14 @@ export interface CellSelectionModel {
   destroy(): void;
 
   /** Set a new selected ranges */
-  getSelectedRanges(): SelectedRange[];
+  getSelectedRanges(): CellRange[];
 
   /** Set a new selected ranges */
-  setSelectedRanges(ranges: SelectedRange[]): void;
+  setSelectedRanges(ranges: CellRange[]): void;
 
   // --
   // Events
 
   /** triggered when selected ranges changes */
-  onSelectedRangesChanged: SlickEvent<{ ranges: SelectedRange[] }>;
+  onSelectedRangesChanged: SlickEvent<{ ranges: CellRange[] }>;
 }

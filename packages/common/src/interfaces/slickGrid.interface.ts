@@ -4,7 +4,7 @@ import {
   ColumnSort,
   DataView,
   Editor,
-  EditorLock,
+  SlickEditorLock,
   EditorValidatorOutput,
   ElementPosition,
   FormatterResultObject,
@@ -168,7 +168,7 @@ export interface SlickGrid {
   getDataLength(): number;
 
   /** Get Editor lock */
-  getEditorLock(): EditorLock;
+  getEditorLock(): SlickEditorLock;
 
   /** Get Editor Controller */
   getEditController(): { commitCurrentEdit(): boolean; cancelCurrentEdit(): boolean; };

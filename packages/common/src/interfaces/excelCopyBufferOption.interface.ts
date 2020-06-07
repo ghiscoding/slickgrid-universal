@@ -1,6 +1,6 @@
 import { Column } from './column.interface';
+import { CellRange } from './cellRange.interface';
 import { FormatterResultObject } from './formatterResultObject.interface';
-import { SelectedRange } from './selectedRange.interface';
 import { SlickEventData } from './slickEventData.interface';
 
 export interface ExcelCopyBufferOption<T = any> {
@@ -48,11 +48,11 @@ export interface ExcelCopyBufferOption<T = any> {
   onExtensionRegistered?: (plugin: any) => void;
 
   /** Fired when a copy cell is triggered */
-  onCopyCells?: (e: SlickEventData, args: { ranges: SelectedRange[] }) => void;
+  onCopyCells?: (e: SlickEventData, args: { ranges: CellRange[] }) => void;
 
   /** Fired when the command to copy the cells is cancelled */
-  onCopyCancelled?: (e: SlickEventData, args: { ranges: SelectedRange[] }) => void;
+  onCopyCancelled?: (e: SlickEventData, args: { ranges: CellRange[] }) => void;
 
   /** Fired when the user paste cells to the grid */
-  onPasteCells?: (e: SlickEventData, args: { ranges: SelectedRange[] }) => void;
+  onPasteCells?: (e: SlickEventData, args: { ranges: CellRange[] }) => void;
 }

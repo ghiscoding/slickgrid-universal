@@ -46,14 +46,14 @@
     "@slickgrid-universal/file-export": "^0.0.2"
   },
   "devDependencies": {
-    "@types/webpack": "^4.41.13",
+    "@types/webpack": "^4.41.17",
     "archiver": "^4.0.1",
     "cross-env": "^7.0.2",
     "dts-bundle-webpack": "^1.0.2",
     "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.2",
-    "ts-loader": "^7.0.4",
-    "typescript": "^3.9.2",
+    "ts-loader": "^7.0.5",
+    "typescript": "^3.9.5",
     "webpack": "^4.43.0"
   }
 }

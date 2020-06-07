@@ -8,7 +8,7 @@ import { Editor } from './editor.interface';
   * @class EditorLock
   * @constructor
   */
-export interface EditorLock {
+export interface SlickEditorLock {
 
   /**
    * Returns true if a specified edit controller is active (has the edit lock).

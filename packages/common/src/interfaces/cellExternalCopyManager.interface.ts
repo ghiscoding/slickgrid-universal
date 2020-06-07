@@ -1,5 +1,5 @@
+import { CellRange } from './cellRange.interface';
 import { ExcelCopyBufferOption } from './excelCopyBufferOption.interface';
-import { SelectedRange } from './selectedRange.interface';
 import { SlickEventData } from './slickEventData.interface';
 import { SlickEvent } from './slickEvent.interface';
 import { SlickGrid } from './slickGrid.interface';
@@ -29,11 +29,11 @@ export interface CellExternalCopyManager<T = any> {
   // Events
 
   /** Triggered after we copy a range of cells selection */
-  onCopyCells: SlickEvent<{ ranges: SelectedRange[] }>;
+  onCopyCells: SlickEvent<{ ranges: CellRange[] }>;
 
   /** Triggered after we cancelled a copy range of cells selection */
-  onCopyCancelled: SlickEvent<{ ranges: SelectedRange[] }>;
+  onCopyCancelled: SlickEvent<{ ranges: CellRange[] }>;
 
   /** Triggered after we paster a range of cells selection */
-  onPasteCells: SlickEvent<{ ranges: SelectedRange[] }>;
+  onPasteCells: SlickEvent<{ ranges: CellRange[] }>;
 }
