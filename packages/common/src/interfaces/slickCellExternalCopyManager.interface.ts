@@ -1,8 +1,10 @@
-import { CellRange } from './cellRange.interface';
-import { ExcelCopyBufferOption } from './excelCopyBufferOption.interface';
-import { SlickEventData } from './slickEventData.interface';
-import { SlickEvent } from './slickEvent.interface';
-import { SlickGrid } from './slickGrid.interface';
+import {
+  CellRange,
+  ExcelCopyBufferOption,
+  SlickEvent,
+  SlickEventData,
+  SlickGrid
+} from './index';
 
 export interface SlickCellExternalCopyManager<T = any> {
   pluginName: 'CellExternalCopyManager';

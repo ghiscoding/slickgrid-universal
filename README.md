@@ -153,5 +153,7 @@ npm run test:watch
 - [x] Add simple input bindings in the demo (e.g. pinned rows input)
 - [x] Add possibility to use SVG instead of Font Family
 - [x] Add Typings for Grid & DataView objects
+  - [ ] Add full Typings to all SlickGrid classes & plugins
+  - [ ] replace all `const Slick: any` to `const Slick: SlickNamespace`
 - [ ] Cannot copy text from cell since it's not selectable
 - [ ] Remove all Services init method 2nd argument (we can get DataView from the Grid object)

@@ -1,11 +1,13 @@
 import {
   AutoResizeOption,
   AutoTooltipOption,
+  CellMenuOption,
   Column,
   ExcelCopyBufferOption,
   GridOption,
   SlickAutoTooltips,
   SlickCellExternalCopyManager,
+  SlickCellMenu,
   SlickCellRangeDecorator,
   SlickCellRangeSelector,
   SlickCellSelectionModel,
@@ -93,6 +95,9 @@ export interface SlickNamespace {
 
   // some of them are under the Plugins namespace
   Plugins: {
+    /** A plugin to add Menu on a Cell click (click on the cell that has the cellMenu object defined) */
+    CellMenu: new (options?: CellMenuOption) => SlickCellMenu;
+
     /** Resizer is a 3rd party plugin (addon) that can be used to auto-resize a grid and/or resize it with fixed dimensions. */
     Resizer: new (autoResizeOptions?: AutoResizeOption, fixedGridDimensions?: { height?: number; width?: number; }) => any;
   };

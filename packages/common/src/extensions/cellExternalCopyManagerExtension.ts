@@ -58,7 +58,7 @@ export class CellExternalCopyManagerExtension implements Extension {
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
-  getAddonInstance(): SlickCellExternalCopyManager {
+  getAddonInstance(): SlickCellExternalCopyManager | null {
     return this._addon;
   }
 
