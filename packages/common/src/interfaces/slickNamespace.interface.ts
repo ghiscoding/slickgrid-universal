@@ -2,15 +2,18 @@ import {
   AutoResizeOption,
   AutoTooltipOption,
   CellMenuOption,
+  CheckboxSelectorOption,
   Column,
   ExcelCopyBufferOption,
   GridOption,
+  RowSelectionModelOption,
   SlickAutoTooltips,
   SlickCellExternalCopyManager,
   SlickCellMenu,
   SlickCellRangeDecorator,
   SlickCellRangeSelector,
   SlickCellSelectionModel,
+  SlickCheckboxSelectColumn,
   SlickDataView,
   SlickEditorLock,
   SlickEvent,
@@ -19,6 +22,7 @@ import {
   SlickGrid,
   SlickGroupItemMetadataProvider,
   SlickRange,
+  SlickRowSelectionModel,
 } from './index';
 
 /**
@@ -87,11 +91,19 @@ export interface SlickNamespace {
   /** Displays an overlay on top of a given cell range. */
   CellRangeDecorator: new () => SlickCellRangeDecorator;
 
-  /** CellRangeSelector is a utility to select a range of cell, this is useful with for example when we use the cell external copy manager (excel like) */
+  /** CellRangeSelector is a utility to select a range of cells, this is useful with for example when we use the cell external copy manager (excel like) */
   CellRangeSelector: new () => SlickCellRangeSelector;
 
-  /** CellSelectionModel is a utility to select a range of cell, this is useful with for example when we use the cell external copy manager (excel like) */
+  /** CellSelectionModel is a utility to select a range of cells, this is useful with for example when we use the cell external copy manager (excel like) */
   CellSelectionModel: new () => SlickCellSelectionModel;
+
+  /** A plugin to select row(s) via checkboxes typically shown as the 1st column in the grid. */
+  CheckboxSelectColumn: new (options?: CheckboxSelectorOption) => SlickCheckboxSelectColumn;
+
+  /** RowSelectionModel is a utility to select a range of rows, this is used by at least the CheckboxSelectColumn plugin */
+  RowSelectionModel: new (options?: RowSelectionModelOption) => SlickRowSelectionModel;
+
+  RowMoveManager: any; // TODO replace
 
   // some of them are under the Plugins namespace
   Plugins: {

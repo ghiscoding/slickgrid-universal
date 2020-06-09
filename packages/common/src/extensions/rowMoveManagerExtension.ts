@@ -1,10 +1,10 @@
 import { ExtensionName } from '../enums/index';
-import { CellArgs, Extension, SlickEventHandler, Column, GridOption } from '../interfaces/index';
+import { CellArgs, Column, Extension, GridOption, SlickEventHandler, SlickNamespace, SlickRowSelectionModel } from '../interfaces/index';
 import { ExtensionUtility } from './extensionUtility';
 import { SharedService } from '../services/shared.service';
 
 // using external non-typed js libraries
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 export class RowMoveManagerExtension implements Extension {
   private _addon: any;
@@ -31,7 +31,7 @@ export class RowMoveManagerExtension implements Extension {
    * Create the plugin before the Grid creation to avoid having odd behaviors.
    * Mostly because the column definitions might change after the grid creation, so we want to make sure to add it before then
    */
-  create(columnDefinitions: Column[], gridOptions: GridOption) {
+  create(columnDefinitions: Column[], gridOptions: GridOption): any | null {
     if (Array.isArray(columnDefinitions) && gridOptions) {
       this._addon = this.loadAddonWhenNotExists(columnDefinitions, gridOptions);
       const newRowMoveColumn: Column = this._addon.getColumnDefinition();
@@ -75,12 +75,12 @@ export class RowMoveManagerExtension implements Extension {
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
-  getAddonInstance() {
+  getAddonInstance(): any | null {
     return this._addon;
   }
 
   /** Register the 3rd party addon (plugin) */
-  register(rowSelectionPlugin?: any): any {
+  register(rowSelectionPlugin?: SlickRowSelectionModel): any | null {
     if (this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
       // dynamically import the SlickGrid plugin (addon) with RequireJS
       this.extensionUtility.loadExtensionDynamically(ExtensionName.rowMoveManager);
@@ -88,7 +88,7 @@ export class RowMoveManagerExtension implements Extension {
       // this also requires the Row Selection Model to be registered as well
       if (!rowSelectionPlugin || !this.sharedService.grid.getSelectionModel()) {
         this.extensionUtility.loadExtensionDynamically(ExtensionName.rowSelection);
-        rowSelectionPlugin = new Slick.RowSelectionModel(this.sharedService.gridOptions.rowSelectionOptions || {});
+        rowSelectionPlugin = new Slick.RowSelectionModel(this.sharedService.gridOptions.rowSelectionOptions);
         this.sharedService.grid.setSelectionModel(rowSelectionPlugin);
       }
 

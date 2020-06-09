@@ -6,7 +6,7 @@ export interface ExtensionModel {
   name: ExtensionName;
 
   /** Instance of the Addon (3rd party SlickGrid Control or Plugin) */
-  instance: any;
+  instance: any; // TODO replace by keyof {allSlick plugins list}
 
   /** Extension Service (in Slickgrid-Universal) */
   class: Extension | null;

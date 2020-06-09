@@ -47,7 +47,7 @@ export interface Column<T = any> {
   defaultSortAsc?: boolean;
 
   /** Any inline editor function that implements Editor for the cell value or ColumnEditor */
-  editor?: ColumnEditor | Editor;
+  editor?: ColumnEditor | any;
 
   /** Default to false, which leads to exclude the column title from the Column Picker. */
   excludeFromColumnPicker?: boolean;

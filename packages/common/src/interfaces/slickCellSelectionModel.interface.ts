@@ -2,13 +2,15 @@ import { CellRange } from './cellRange.interface';
 import { SlickEvent } from './slickEvent.interface';
 
 export interface SlickCellSelectionModel {
+  pluginName: 'CellSelectionModel',
+
   /** initialize the selection model */
   init(args: any): void;
 
   /** destroy the selection model */
   destroy(): void;
 
-  /** Set a new selected ranges */
+  /** Get selected ranges */
   getSelectedRanges(): CellRange[];
 
   /** Set a new selected ranges */

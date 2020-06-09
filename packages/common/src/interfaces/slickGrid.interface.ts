@@ -1,10 +1,7 @@
 import {
-  SlickCellSelectionModel,
   Column,
   ColumnSort,
-  SlickDataView,
   Editor,
-  SlickEditorLock,
   EditorValidatorOutput,
   ElementPosition,
   FormatterResultObject,
@@ -12,7 +9,11 @@ import {
   MultiColumnSort,
   PagingInfo,
   SingleColumnSort,
+  SlickCellSelectionModel,
+  SlickDataView,
+  SlickEditorLock,
   SlickEvent,
+  SlickRowSelectionModel,
 } from './index';
 
 export interface SlickGrid {
@@ -207,7 +208,7 @@ export interface SlickGrid {
   getOptions(): GridOption;
 
   /** Get a Plugin (addon) by its name */
-  getPluginByName(name: string): any;
+  getPluginByName(name: string): any; // TODO replace by key {plugin list}
 
   /** Get the Pre-Header Panel DOM node element */
   getPreHeaderPanel(): HTMLElement;
@@ -228,7 +229,7 @@ export interface SlickGrid {
   getSelectedRows(): number[];
 
   /** Returns the current SelectionModel. See here for more information about SelectionModels.*/
-  getSelectionModel(): SlickCellSelectionModel;
+  getSelectionModel(): SlickCellSelectionModel | SlickRowSelectionModel;
 
   /** Get sorted columns **/
   getSortColumns(): Array<SingleColumnSort | MultiColumnSort>;
@@ -405,7 +406,7 @@ export interface SlickGrid {
    * Unregisters a current selection model and registers a new one. See the definition of SelectionModel for more information.
    * @selectionModel A SelectionModel.
    */
-  setSelectionModel(selectionModel: SlickCellSelectionModel): void;		// todo: don't know the type of the event data type
+  setSelectionModel(selectionModel: SlickCellSelectionModel | SlickRowSelectionModel): void;		// todo: don't know the type of the event data type
 
   /**
    * Accepts a columnId string and an ascending boolean. Applies a sort glyph in either ascending or descending form to the header of the column. Note that this does not actually sort the column. It only adds the sort glyph to the header.

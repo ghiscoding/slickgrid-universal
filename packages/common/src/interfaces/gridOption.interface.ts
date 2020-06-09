@@ -3,7 +3,7 @@ import {
   AutoTooltipOption,
   BackendServiceApi,
   CellMenu,
-  CheckboxSelector,
+  CheckboxSelectorOption,
   Column,
   ColumnPicker,
   ContextMenu,
@@ -22,6 +22,7 @@ import {
   Pagination,
   // RowDetailView,
   RowMoveManager,
+  RowSelectionModelOption,
   TreeDataOption,
 } from './index';
 import { EventNamingStyle, GridAutosizeColsMode, OperatorType, OperatorString, } from '../enums/index';
@@ -77,7 +78,7 @@ export interface GridOption {
   cellMenu?: CellMenu;
 
   /** Checkbox Select Plugin options (columnId, cssClass, toolTip, width) */
-  checkboxSelector?: CheckboxSelector;
+  checkboxSelector?: CheckboxSelectorOption;
 
   /** Column Picker Plugin options (columnTitle, forceFitTitle, syncResizeTitle) */
   columnPicker?: ColumnPicker;
@@ -401,10 +402,7 @@ export interface GridOption {
   rowMoveManager?: RowMoveManager;
 
   /** Row selection options */
-  rowSelectionOptions?: {
-    /** do we want to select the active row? */
-    selectActiveRow: boolean;
-  };
+  rowSelectionOptions?: RowSelectionModelOption;
 
   /**
    * Optionally pass some options to the 3rd party lib "cure53/DOMPurify" used in some Filters.

@@ -146,7 +146,7 @@ export class ExtensionService {
       // Checkbox Selector Plugin
       if (this.sharedService.gridOptions.enableCheckboxSelector && this.checkboxSelectorExtension && this.checkboxSelectorExtension.register) {
         const rowSelectionExtension = this.getExtensionByName(ExtensionName.rowSelection);
-        this.checkboxSelectorExtension.register(rowSelectionExtension);
+        this.checkboxSelectorExtension.register(rowSelectionExtension?.instance);
         const createdExtension = this.getCreatedExtensionByName(ExtensionName.checkboxSelector); // get the instance from when it was really created earlier
         const instance = createdExtension && createdExtension.instance;
         this._extensionList.push({ name: ExtensionName.checkboxSelector, class: this.checkboxSelectorExtension, instance });
@@ -201,7 +201,7 @@ export class ExtensionService {
       // if (this.sharedService.gridOptions.enableRowDetailView) {
       //   if (this.rowDetailViewExtension && this.rowDetailViewExtension.register) {
       //     const rowSelectionExtension = this.getExtensionByName(ExtensionName.rowSelection);
-      //     this.rowDetailViewExtension.register(rowSelectionExtension);
+      //     this.rowDetailViewExtension.register(rowSelectionExtension?.instance);
       //     const createdExtension = this.getCreatedExtensionByName(ExtensionName.rowDetailView); // get the plugin from when it was really created earlier
       //     const instance = createdExtension && createdExtension.instance;
       //     this._extensionList.push({ name: ExtensionName.rowDetailView, class: this.rowDetailViewExtension, instance });
@@ -211,7 +211,7 @@ export class ExtensionService {
       // Row Move Manager Plugin
       if (this.sharedService.gridOptions.enableRowMoveManager && this.rowMoveManagerExtension && this.rowMoveManagerExtension.register) {
         const rowSelectionExtension = this.getExtensionByName(ExtensionName.rowSelection);
-        this.rowMoveManagerExtension.register(rowSelectionExtension);
+        this.rowMoveManagerExtension.register(rowSelectionExtension?.instance);
         const createdExtension = this.getCreatedExtensionByName(ExtensionName.rowMoveManager); // get the instance from when it was really created earlier
         const instance = createdExtension && createdExtension.instance;
         this._extensionList.push({ name: ExtensionName.rowMoveManager, class: this.rowMoveManagerExtension, instance });
