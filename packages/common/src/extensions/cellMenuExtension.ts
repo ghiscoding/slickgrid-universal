@@ -78,44 +78,44 @@ export class CellMenuExtension implements Extension {
 
       // hook all events
       if (this.sharedService.grid && this.sharedService.gridOptions.cellMenu) {
-        if (this.sharedService.gridOptions.cellMenu.onExtensionRegistered) {
+        if (this._addon && this.sharedService.gridOptions.cellMenu.onExtensionRegistered) {
           this.sharedService.gridOptions.cellMenu.onExtensionRegistered(this._addon);
         }
         if (cellMenu && typeof cellMenu.onCommand === 'function') {
-          const onCommand = this._addon.onCommand;
-          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCommand>>).subscribe(onCommand, (event, args) => {
+          const onCommandHandler = this._addon.onCommand;
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCommandHandler>>).subscribe(onCommandHandler, (event, args) => {
             if (cellMenu.onCommand) {
               cellMenu.onCommand(event, args);
             }
           });
         }
         if (cellMenu && typeof cellMenu.onOptionSelected === 'function') {
-          const onOptionSelected = this._addon.onOptionSelected;
-          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onOptionSelected>>).subscribe(onOptionSelected, (event, args) => {
+          const onOptionSelectedHandler = this._addon.onOptionSelected;
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onOptionSelectedHandler>>).subscribe(onOptionSelectedHandler, (event, args) => {
             if (cellMenu.onOptionSelected) {
               cellMenu.onOptionSelected(event, args);
             }
           });
         }
         if (cellMenu && typeof cellMenu.onBeforeMenuShow === 'function') {
-          const onBeforeMenuShow = this._addon.onBeforeMenuShow;
-          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMenuShow>>).subscribe(onBeforeMenuShow, (event, args) => {
+          const onBeforeMenuShowHandler = this._addon.onBeforeMenuShow;
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMenuShowHandler>>).subscribe(onBeforeMenuShowHandler, (event, args) => {
             if (cellMenu.onBeforeMenuShow) {
               cellMenu.onBeforeMenuShow(event, args);
             }
           });
         }
         if (cellMenu && typeof cellMenu.onBeforeMenuClose === 'function') {
-          const onBeforeMenuClose = this._addon.onBeforeMenuClose;
-          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMenuClose>>).subscribe(onBeforeMenuClose, (event, args) => {
+          const onBeforeMenuCloseHandler = this._addon.onBeforeMenuClose;
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMenuCloseHandler>>).subscribe(onBeforeMenuCloseHandler, (event, args) => {
             if (cellMenu.onBeforeMenuClose) {
               cellMenu.onBeforeMenuClose(event, args);
             }
           });
         }
         if (cellMenu && typeof cellMenu.onAfterMenuShow === 'function') {
-          const onAfterMenuShow = this._addon.onAfterMenuShow;
-          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onAfterMenuShow>>).subscribe(onAfterMenuShow, (event, args) => {
+          const onAfterMenuShowHandler = this._addon.onAfterMenuShow;
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onAfterMenuShowHandler>>).subscribe(onAfterMenuShowHandler, (event, args) => {
             if (cellMenu.onAfterMenuShow) {
               cellMenu.onAfterMenuShow(event, args);
             }

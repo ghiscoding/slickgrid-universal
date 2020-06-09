@@ -78,12 +78,12 @@ export class CellExternalCopyManagerExtension implements Extension {
 
       // hook to all possible events
       if (this.sharedService.grid && this.sharedService.gridOptions.excelCopyBufferOptions) {
-        if (this.sharedService.gridOptions.excelCopyBufferOptions.onExtensionRegistered) {
+        if (this._addon && this.sharedService.gridOptions.excelCopyBufferOptions.onExtensionRegistered) {
           this.sharedService.gridOptions.excelCopyBufferOptions.onExtensionRegistered(this._addon);
         }
 
         const onCopyCellsHandler = this._addon.onCopyCells;
-        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCopyCellsHandler>>).subscribe(this._addon.onCopyCells, (e, args) => {
+        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCopyCellsHandler>>).subscribe(onCopyCellsHandler, (e, args) => {
           if (this.sharedService.gridOptions.excelCopyBufferOptions && typeof this.sharedService.gridOptions.excelCopyBufferOptions.onCopyCells === 'function') {
             this.sharedService.gridOptions.excelCopyBufferOptions.onCopyCells(e, args);
           }

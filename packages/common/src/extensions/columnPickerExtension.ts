@@ -49,7 +49,7 @@ export class ColumnPickerExtension implements Extension {
       this._addon = new Slick.Controls.ColumnPicker(this.sharedService.allColumns, this.sharedService.grid, this.sharedService.gridOptions);
 
       if (this.sharedService.grid && this.sharedService.gridOptions.enableColumnPicker) {
-        if (this.sharedService.gridOptions.columnPicker.onExtensionRegistered) {
+        if (this._addon && this.sharedService.gridOptions.columnPicker.onExtensionRegistered) {
           this.sharedService.gridOptions.columnPicker.onExtensionRegistered(this._addon);
         }
         this._eventHandler.subscribe(this._addon.onColumnsChanged, (e: any, args: { columns: Column[], grid: SlickGrid }) => {

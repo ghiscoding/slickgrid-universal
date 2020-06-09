@@ -5,6 +5,7 @@ import {
   CheckboxSelectorOption,
   Column,
   ContextMenuOption,
+  DraggableGroupingOption,
   ExcelCopyBufferOption,
   GridOption,
   RowSelectionModelOption,
@@ -17,6 +18,7 @@ import {
   SlickCheckboxSelectColumn,
   SlickContextMenu,
   SlickDataView,
+  SlickDraggableGrouping,
   SlickEditorLock,
   SlickEvent,
   SlickEventData,
@@ -101,6 +103,9 @@ export interface SlickNamespace {
 
   /** A plugin to select row(s) via checkboxes typically shown as the 1st column in the grid. */
   CheckboxSelectColumn: new (options?: CheckboxSelectorOption) => SlickCheckboxSelectColumn;
+
+  /** This plugin provides the Draggable Grouping feature */
+  DraggableGrouping: new (options?: DraggableGroupingOption) => SlickDraggableGrouping;
 
   /** RowSelectionModel is a utility to select a range of rows, this is used by at least the CheckboxSelectColumn plugin */
   RowSelectionModel: new (options?: RowSelectionModelOption) => SlickRowSelectionModel;

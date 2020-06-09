@@ -85,44 +85,44 @@ export class ContextMenuExtension implements Extension {
 
       // hook all events
       if (this.sharedService.grid && contextMenu) {
-        if (contextMenu.onExtensionRegistered) {
+        if (this._addon && contextMenu.onExtensionRegistered) {
           contextMenu.onExtensionRegistered(this._addon);
         }
         if (contextMenu && typeof contextMenu.onCommand === 'function') {
-          const onCommand = this._addon.onCommand;
-          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCommand>>).subscribe(onCommand, (event, args) => {
+          const onCommandHandler = this._addon.onCommand;
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCommandHandler>>).subscribe(onCommandHandler, (event, args) => {
             if (contextMenu.onCommand) {
               contextMenu.onCommand(event, args);
             }
           });
         }
         if (contextMenu && typeof contextMenu.onOptionSelected === 'function') {
-          const onOptionSelected = this._addon.onOptionSelected;
-          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onOptionSelected>>).subscribe(onOptionSelected, (event, args) => {
+          const onOptionSelectedHandler = this._addon.onOptionSelected;
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onOptionSelectedHandler>>).subscribe(onOptionSelectedHandler, (event, args) => {
             if (contextMenu.onOptionSelected) {
               contextMenu.onOptionSelected(event, args);
             }
           });
         }
         if (contextMenu && typeof contextMenu.onBeforeMenuShow === 'function') {
-          const onBeforeMenuShow = this._addon.onBeforeMenuShow;
-          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMenuShow>>).subscribe(onBeforeMenuShow, (event, args) => {
+          const onBeforeMenuShowHandler = this._addon.onBeforeMenuShow;
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMenuShowHandler>>).subscribe(onBeforeMenuShowHandler, (event, args) => {
             if (contextMenu.onBeforeMenuShow) {
               contextMenu.onBeforeMenuShow(event, args);
             }
           });
         }
         if (contextMenu && typeof contextMenu.onBeforeMenuClose === 'function') {
-          const onBeforeMenuClose = this._addon.onBeforeMenuClose;
-          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMenuClose>>).subscribe(onBeforeMenuClose, (event, args) => {
+          const onBeforeMenuCloseHandler = this._addon.onBeforeMenuClose;
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMenuCloseHandler>>).subscribe(onBeforeMenuCloseHandler, (event, args) => {
             if (contextMenu.onBeforeMenuClose) {
               contextMenu.onBeforeMenuClose(event, args);
             }
           });
         }
         if (contextMenu && typeof contextMenu.onAfterMenuShow === 'function') {
-          const onAfterMenuShow = this._addon.onAfterMenuShow;
-          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onAfterMenuShow>>).subscribe(onAfterMenuShow, (event, args) => {
+          const onAfterMenuShowHandler = this._addon.onAfterMenuShow;
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onAfterMenuShowHandler>>).subscribe(onAfterMenuShowHandler, (event, args) => {
             if (contextMenu.onAfterMenuShow) {
               contextMenu.onAfterMenuShow(event, args);
             }
