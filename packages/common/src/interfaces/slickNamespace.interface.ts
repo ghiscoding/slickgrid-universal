@@ -4,6 +4,7 @@ import {
   CellMenuOption,
   CheckboxSelectorOption,
   Column,
+  ColumnPickerOption,
   ContextMenuOption,
   DraggableGroupingOption,
   ExcelCopyBufferOption,
@@ -18,6 +19,7 @@ import {
   SlickCellRangeSelector,
   SlickCellSelectionModel,
   SlickCheckboxSelectColumn,
+  SlickColumnPicker,
   SlickContextMenu,
   SlickDataView,
   SlickDraggableGrouping,
@@ -26,6 +28,7 @@ import {
   SlickEventData,
   SlickEventHandler,
   SlickGrid,
+  SlickGridMenu,
   SlickGroupItemMetadataProvider,
   SlickHeaderButtons,
   SlickHeaderMenu,
@@ -114,9 +117,19 @@ export interface SlickNamespace {
   /** RowSelectionModel is a utility to select a range of rows, this is used by at least the CheckboxSelectColumn plugin */
   RowSelectionModel: new (options?: RowSelectionModelOption) => SlickRowSelectionModel;
 
+  /** A plugin that allows to move some rows with drag & drop */
   RowMoveManager: any; // TODO replace
 
-  // some of them are under the Plugins namespace
+  // all of the controls are under the Controls namespace
+  Controls: {
+    /** A control to add a Column Picker (right+click on any column header to reveal the column picker) */
+    ColumnPicker: new (columns: Column[], grid: SlickGrid, options?: ColumnPickerOption) => SlickColumnPicker;
+
+    /** A control to add a Grid Menu (hambuger menu on top-right of the grid) */
+    GridMenu: new (columns: Column[], grid: SlickGrid, options?: GridOption) => SlickGridMenu;
+  },
+
+  // some of the plugins are under the Plugins namespace
   Plugins: {
     /** A plugin to add Menu on a Cell click (click on the cell that has the cellMenu object defined) */
     CellMenu: new (options?: CellMenuOption) => SlickCellMenu;
@@ -130,7 +143,10 @@ export interface SlickNamespace {
     /** A plugin to add drop-down menus to column headers. */
     HeaderMenu: new (options?: HeaderMenuOption) => SlickHeaderMenu;
 
+    /** A plugin to add row detail panel */
+    RowDetailView: any; // TODO replace by interface
+
     /** Resizer is a 3rd party plugin (addon) that can be used to auto-resize a grid and/or resize it with fixed dimensions. */
-    Resizer: new (autoResizeOptions?: AutoResizeOption, fixedGridDimensions?: { height?: number; width?: number; }) => any;
+    Resizer: new (autoResizeOptions?: AutoResizeOption, fixedGridDimensions?: { height?: number; width?: number; }) => any; // TODO replace by interface
   };
 }

@@ -1,14 +1,14 @@
 import { ExtensionName } from '../enums/extensionName.enum';
-import { Extension, SlickEventHandler, SlickGrid, Column } from '../interfaces/index';
+import { Extension, GetSlickEventType, SlickColumnPicker, SlickEventHandler, SlickNamespace } from '../interfaces/index';
 import { ExtensionUtility } from './extensionUtility';
 import { SharedService } from '../services/shared.service';
 
 // using external non-typed js libraries
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 export class ColumnPickerExtension implements Extension {
   private _eventHandler: SlickEventHandler;
-  private _addon: any;
+  private _addon: SlickColumnPicker | null;
 
   constructor(private extensionUtility: ExtensionUtility, private sharedService: SharedService) {
     this._eventHandler = new Slick.EventHandler();
@@ -27,12 +27,12 @@ export class ColumnPickerExtension implements Extension {
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
-  getAddonInstance() {
+  getAddonInstance(): SlickColumnPicker | null {
     return this._addon;
   }
 
   /** Register the 3rd party addon (plugin) */
-  register(): any {
+  register(): SlickColumnPicker | null {
     if (this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
       // dynamically import the SlickGrid plugin (addon) with RequireJS
       this.extensionUtility.loadExtensionDynamically(ExtensionName.columnPicker);
@@ -46,13 +46,14 @@ export class ColumnPickerExtension implements Extension {
       this.sharedService.gridOptions.columnPicker.columnTitle = this.sharedService.gridOptions.columnPicker.columnTitle || columnTitle;
       this.sharedService.gridOptions.columnPicker.forceFitTitle = this.sharedService.gridOptions.columnPicker.forceFitTitle || forceFitTitle;
       this.sharedService.gridOptions.columnPicker.syncResizeTitle = this.sharedService.gridOptions.columnPicker.syncResizeTitle || syncResizeTitle;
-      this._addon = new Slick.Controls.ColumnPicker(this.sharedService.allColumns, this.sharedService.grid, this.sharedService.gridOptions);
+      this._addon = new Slick.Controls.ColumnPicker(this.sharedService.allColumns, this.sharedService.grid, this.sharedService.gridOptions.columnPicker);
 
       if (this.sharedService.grid && this.sharedService.gridOptions.enableColumnPicker) {
         if (this._addon && this.sharedService.gridOptions.columnPicker.onExtensionRegistered) {
           this.sharedService.gridOptions.columnPicker.onExtensionRegistered(this._addon);
         }
-        this._eventHandler.subscribe(this._addon.onColumnsChanged, (e: any, args: { columns: Column[], grid: SlickGrid }) => {
+        const onColumnsChangedHandler = this._addon.onColumnsChanged;
+        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onColumnsChangedHandler>>).subscribe(onColumnsChangedHandler, (e, args) => {
           if (this.sharedService.gridOptions.columnPicker && typeof this.sharedService.gridOptions.columnPicker.onColumnsChanged === 'function') {
             this.sharedService.gridOptions.columnPicker.onColumnsChanged(e, args);
           }
@@ -81,7 +82,7 @@ export class ColumnPickerExtension implements Extension {
       this.extensionUtility.translateItems(this.sharedService.allColumns, 'nameKey', 'name');
 
       // update the Titles of each sections (command, customTitle, ...)
-      if (this._addon && this._addon.updateAllTitles) {
+      if (this._addon?.updateAllTitles && this.sharedService?.gridOptions?.columnPicker) {
         this._addon.updateAllTitles(this.sharedService.gridOptions.columnPicker);
       }
     }

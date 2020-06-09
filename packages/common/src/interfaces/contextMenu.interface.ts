@@ -3,6 +3,7 @@ import {
   MenuCommandItemCallbackArgs,
   MenuOptionItemCallbackArgs,
   SlickContextMenu,
+  SlickEventData,
   SlickGrid,
 } from './index';
 
@@ -14,17 +15,17 @@ export interface ContextMenu extends ContextMenuOption {
   onExtensionRegistered?: (plugin: SlickContextMenu) => void;
 
   /** SlickGrid Event fired After the menu is shown. */
-  onAfterMenuShow?: (e: Event, args: { cell: number; row: number; grid: SlickGrid; }) => void;
+  onAfterMenuShow?: (e: SlickEventData, args: { cell: number; row: number; grid: SlickGrid; }) => void;
 
   /** SlickGrid Event fired Before the menu is shown. */
-  onBeforeMenuShow?: (e: Event, args: { cell: number; row: number; grid: SlickGrid; }) => void;
+  onBeforeMenuShow?: (e: SlickEventData, args: { cell: number; row: number; grid: SlickGrid; }) => void;
 
   /** SlickGrid Event fired when the menu is closing. */
-  onBeforeMenuClose?: (e: Event, args: { cell: number; row: number; grid: SlickGrid; menu: HTMLElement; }) => void;
+  onBeforeMenuClose?: (e: SlickEventData, args: { cell: number; row: number; grid: SlickGrid; menu: HTMLElement; }) => void;
 
   /** SlickGrid Event fired on menu option clicked from the Command items list */
-  onCommand?: (e: Event, args: MenuCommandItemCallbackArgs) => void;
+  onCommand?: (e: SlickEventData, args: MenuCommandItemCallbackArgs) => void;
 
   /** SlickGrid Event fired on menu option selected from the Option items list. */
-  onOptionSelected?: (e: Event, args: MenuOptionItemCallbackArgs) => void;
+  onOptionSelected?: (e: SlickEventData, args: MenuOptionItemCallbackArgs) => void;
 }
