@@ -75,6 +75,7 @@ const template =
 
 describe('gridMenuExtension', () => {
   const columnsMock: Column[] = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
+  let divElement: HTMLDivElement;
   let extensionUtility: ExtensionUtility;
   let translateService: TranslateServiceStub;
   let extension: GridMenuExtension;
@@ -116,6 +117,7 @@ describe('gridMenuExtension', () => {
   describe('with I18N Service', () => {
     beforeEach(() => {
       const div = document.createElement('div');
+      divElement = document.createElement('div');
       div.innerHTML = template;
       document.body.appendChild(div);
 
@@ -166,14 +168,14 @@ describe('gridMenuExtension', () => {
         const visibleColsSpy = jest.spyOn(SharedService.prototype, 'visibleColumns', 'set');
 
         const instance = extension.register();
-        instance.onColumnsChanged.notify({ columns: columnsMock.slice(0, 1), grid: gridStub }, new Slick.EventData(), gridStub);
+        instance.onColumnsChanged.notify({ allColumns: columnsMock, columns: columnsMock.slice(0, 1), grid: gridStub }, new Slick.EventData(), gridStub);
 
         expect(handlerSpy).toHaveBeenCalledTimes(5);
         expect(handlerSpy).toHaveBeenCalledWith(
           { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
           expect.anything()
         );
-        expect(onColumnSpy).toHaveBeenCalledWith(expect.anything(), { columns: columnsMock.slice(0, 1), grid: gridStub });
+        expect(onColumnSpy).toHaveBeenCalledWith(expect.anything(), { allColumns: columnsMock, columns: columnsMock.slice(0, 1), grid: gridStub });
         expect(onAfterSpy).not.toHaveBeenCalled();
         expect(onBeforeSpy).not.toHaveBeenCalled();
         expect(onCloseSpy).not.toHaveBeenCalled();
@@ -192,14 +194,14 @@ describe('gridMenuExtension', () => {
         const visibleColsSpy = jest.spyOn(SharedService.prototype, 'visibleColumns', 'set');
 
         const instance = extension.register();
-        instance.onColumnsChanged.notify({ columns: columnsMock, grid: gridStub }, new Slick.EventData(), gridStub);
+        instance.onColumnsChanged.notify({ allColumns: columnsMock, columns: columnsMock, grid: gridStub }, new Slick.EventData(), gridStub);
 
         expect(handlerSpy).toHaveBeenCalledTimes(5);
         expect(handlerSpy).toHaveBeenCalledWith(
           { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
           expect.anything()
         );
-        expect(onColumnSpy).toHaveBeenCalledWith(expect.anything(), { columns: columnsMock, grid: gridStub });
+        expect(onColumnSpy).toHaveBeenCalledWith(expect.anything(), { allColumns: columnsMock, columns: columnsMock, grid: gridStub });
         expect(onAfterSpy).not.toHaveBeenCalled();
         expect(onBeforeSpy).not.toHaveBeenCalled();
         expect(onCloseSpy).not.toHaveBeenCalled();
@@ -216,14 +218,14 @@ describe('gridMenuExtension', () => {
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
 
         const instance = extension.register();
-        instance.onBeforeMenuShow.notify({ grid: gridStub, menu: {} }, new Slick.EventData(), gridStub);
+        instance.onBeforeMenuShow.notify({ columns: [], grid: gridStub, menu: divElement }, new Slick.EventData(), gridStub);
 
         expect(handlerSpy).toHaveBeenCalledTimes(5);
         expect(handlerSpy).toHaveBeenCalledWith(
           { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
           expect.anything()
         );
-        expect(onBeforeSpy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, menu: {} });
+        expect(onBeforeSpy).toHaveBeenCalledWith(expect.anything(), { columns: [], grid: gridStub, menu: divElement });
         expect(onAfterSpy).not.toHaveBeenCalled();
         expect(onColumnSpy).not.toHaveBeenCalled();
         expect(onCloseSpy).not.toHaveBeenCalled();
@@ -239,14 +241,14 @@ describe('gridMenuExtension', () => {
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
 
         const instance = extension.register();
-        instance.onMenuClose.notify({ grid: gridStub, menu: {} }, new Slick.EventData(), gridStub);
+        instance.onMenuClose.notify({ allColumns: [], visibleColumns: [], grid: gridStub, menu: divElement }, new Slick.EventData(), gridStub);
 
         expect(handlerSpy).toHaveBeenCalledTimes(5);
         expect(handlerSpy).toHaveBeenCalledWith(
           { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
           expect.anything()
         );
-        expect(onCloseSpy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, menu: {} });
+        expect(onCloseSpy).toHaveBeenCalledWith(expect.anything(), { allColumns: [], visibleColumns: [], grid: gridStub, menu: divElement });
         expect(onAfterSpy).not.toHaveBeenCalled();
         expect(onColumnSpy).not.toHaveBeenCalled();
         expect(onBeforeSpy).not.toHaveBeenCalled();
@@ -262,14 +264,14 @@ describe('gridMenuExtension', () => {
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
 
         const instance = extension.register();
-        instance.onCommand.notify({ grid: gridStub, command: 'help' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ item: { command: 'help' }, column: {} as Column, grid: gridStub, command: 'help' }, new Slick.EventData(), gridStub);
 
         expect(handlerSpy).toHaveBeenCalledTimes(5);
         expect(handlerSpy).toHaveBeenCalledWith(
           { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
           expect.anything()
         );
-        expect(onCommandSpy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, command: 'help' });
+        expect(onCommandSpy).toHaveBeenCalledWith(expect.anything(), { item: { command: 'help' }, column: {}, grid: gridStub, command: 'help' });
         expect(onAfterSpy).not.toHaveBeenCalled();
         expect(onColumnSpy).not.toHaveBeenCalled();
         expect(onBeforeSpy).not.toHaveBeenCalled();
@@ -285,14 +287,14 @@ describe('gridMenuExtension', () => {
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
 
         const instance = extension.register();
-        instance.onAfterMenuShow.notify({ grid: gridStub, menu: {} }, new Slick.EventData(), gridStub);
+        instance.onAfterMenuShow.notify({ columns: [], grid: gridStub, menu: divElement }, new Slick.EventData(), gridStub);
 
         expect(handlerSpy).toHaveBeenCalledTimes(5);
         expect(handlerSpy).toHaveBeenCalledWith(
           { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
           expect.anything()
         );
-        expect(onAfterSpy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, menu: {} });
+        expect(onAfterSpy).toHaveBeenCalledWith(expect.anything(), { columns: [], grid: gridStub, menu: divElement });
         expect(onBeforeSpy).not.toHaveBeenCalled();
         expect(onColumnSpy).not.toHaveBeenCalled();
         expect(onCloseSpy).not.toHaveBeenCalled();
@@ -306,8 +308,8 @@ describe('gridMenuExtension', () => {
         const autoSizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
 
         const instance = extension.register();
-        instance.onColumnsChanged.notify(columnsMock.slice(0, 1), new Slick.EventData(), gridStub);
-        instance.onMenuClose.notify({ grid: gridStub, menu: {} }, new Slick.EventData(), gridStub);
+        instance.onColumnsChanged.notify({ grid: gridStub, allColumns: columnsMock, columns: columnsMock.slice(0, 1) }, new Slick.EventData(), gridStub);
+        instance.onMenuClose.notify({ allColumns: columnsMock, visibleColumns: columnsMock, grid: gridStub, menu: divElement }, new Slick.EventData(), gridStub);
 
         expect(handlerSpy).toHaveBeenCalled();
         expect(onCloseSpy).toHaveBeenCalled();
@@ -556,7 +558,7 @@ describe('gridMenuExtension', () => {
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
 
         const instance = extension.register();
-        instance.onCommand.notify({ grid: gridStub, command: 'clear-filter' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ item: { command: 'clear-filter' }, column: {} as Column, grid: gridStub, command: 'clear-filter' }, new Slick.EventData(), gridStub);
 
         expect(onCommandSpy).toHaveBeenCalled();
         expect(filterSpy).toHaveBeenCalled();
@@ -569,7 +571,7 @@ describe('gridMenuExtension', () => {
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
 
         const instance = extension.register();
-        instance.onCommand.notify({ grid: gridStub, command: 'clear-sorting' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ item: { command: 'clear-sorting' }, column: {} as Column, grid: gridStub, command: 'clear-sorting' }, new Slick.EventData(), gridStub);
 
         expect(onCommandSpy).toHaveBeenCalled();
         expect(sortSpy).toHaveBeenCalled();
@@ -580,7 +582,7 @@ describe('gridMenuExtension', () => {
         try {
           jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([]);
           const instance = extension.register();
-          instance.onCommand.notify({ grid: gridStub, command: 'export-excel' }, new Slick.EventData(), gridStub);
+          instance.onCommand.notify({ item: { command: 'export-excel' }, column: {} as Column, grid: gridStub, command: 'export-excel' }, new Slick.EventData(), gridStub);
         } catch (e) {
           expect(e.message).toContain('[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Grid Menu.');
           done();
@@ -591,7 +593,7 @@ describe('gridMenuExtension', () => {
         try {
           jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([]);
           const instance = extension.register();
-          instance.onCommand.notify({ grid: gridStub, command: 'export-csv' }, new Slick.EventData(), gridStub);
+          instance.onCommand.notify({ item: { command: 'export-csv' }, column: {} as Column, grid: gridStub, command: 'export-csv' }, new Slick.EventData(), gridStub);
         } catch (e) {
           expect(e.message).toContain('[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Grid Menu.');
           done();
@@ -601,7 +603,7 @@ describe('gridMenuExtension', () => {
       it('should call "exportToFile" with Text Delimited and expect an error thrown when FileExportService is not registered prior to calling the method', (done) => {
         try {
           const instance = extension.register();
-          instance.onCommand.notify({ grid: gridStub, command: 'export-text-delimited' }, new Slick.EventData(), gridStub);
+          instance.onCommand.notify({ item: { command: 'export-text-delimited' }, column: {} as Column, grid: gridStub, command: 'export-text-delimited' }, new Slick.EventData(), gridStub);
         } catch (e) {
           expect(e.message).toContain('[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Grid Menu.');
           done();
@@ -615,7 +617,7 @@ describe('gridMenuExtension', () => {
         jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([excelExportServiceStub]);
 
         const instance = extension.register();
-        instance.onCommand.notify({ grid: gridStub, command: 'export-excel' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ item: { command: 'export-excel' }, column: {} as Column, grid: gridStub, command: 'export-excel' }, new Slick.EventData(), gridStub);
 
         expect(onCommandSpy).toHaveBeenCalled();
         expect(excelExportSpy).toHaveBeenCalledWith({
@@ -630,7 +632,7 @@ describe('gridMenuExtension', () => {
         jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([exportServiceStub]);
 
         const instance = extension.register();
-        instance.onCommand.notify({ grid: gridStub, command: 'export-csv' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ item: { command: 'export-csv' }, column: {} as Column, grid: gridStub, command: 'export-csv' }, new Slick.EventData(), gridStub);
 
         expect(onCommandSpy).toHaveBeenCalled();
         expect(exportSpy).toHaveBeenCalledWith({
@@ -647,7 +649,7 @@ describe('gridMenuExtension', () => {
         jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([exportServiceStub]);
 
         const instance = extension.register();
-        instance.onCommand.notify({ grid: gridStub, command: 'export-text-delimited' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ item: { command: 'export-text-delimited' }, column: {} as Column, grid: gridStub, command: 'export-text-delimited' }, new Slick.EventData(), gridStub);
 
         expect(onCommandSpy).toHaveBeenCalled();
         expect(exportSpy).toHaveBeenCalledWith({
@@ -664,13 +666,13 @@ describe('gridMenuExtension', () => {
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
 
         const instance = extension.register();
-        instance.onCommand.notify({ grid: gridStub, command: 'toggle-filter' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ item: { command: 'toggle-filter' }, column: {} as Column, grid: gridStub, command: 'toggle-filter' }, new Slick.EventData(), gridStub);
 
         expect(onCommandSpy).toHaveBeenCalled();
         expect(gridSpy).toHaveBeenCalledWith(true);
 
         gridOptionsMock.showHeaderRow = true;
-        instance.onCommand.notify({ grid: gridStub, command: 'toggle-filter' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ item: { command: 'toggle-filter' }, column: {} as Column, grid: gridStub, command: 'toggle-filter' }, new Slick.EventData(), gridStub);
 
         expect(onCommandSpy).toHaveBeenCalled();
         expect(gridSpy).toHaveBeenCalledWith(false);
@@ -682,13 +684,13 @@ describe('gridMenuExtension', () => {
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
 
         const instance = extension.register();
-        instance.onCommand.notify({ grid: gridStub, command: 'toggle-toppanel' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ item: { command: 'toggle-toppanel' }, column: {} as Column, grid: gridStub, command: 'toggle-toppanel' }, new Slick.EventData(), gridStub);
 
         expect(onCommandSpy).toHaveBeenCalled();
         expect(gridSpy).toHaveBeenCalledWith(true);
 
         gridOptionsMock.showTopPanel = true;
-        instance.onCommand.notify({ grid: gridStub, command: 'toggle-toppanel' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ item: { command: 'toggle-toppanel' }, column: {} as Column, grid: gridStub, command: 'toggle-toppanel' }, new Slick.EventData(), gridStub);
 
         expect(onCommandSpy).toHaveBeenCalled();
         expect(gridSpy).toHaveBeenCalledWith(false);
@@ -700,13 +702,13 @@ describe('gridMenuExtension', () => {
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
 
         const instance = extension.register();
-        instance.onCommand.notify({ grid: gridStub, command: 'toggle-preheader' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ item: { command: 'toggle-preheader' }, column: {} as Column, grid: gridStub, command: 'toggle-preheader' }, new Slick.EventData(), gridStub);
 
         expect(onCommandSpy).toHaveBeenCalled();
         expect(gridSpy).toHaveBeenCalledWith(true);
 
         gridOptionsMock.showPreHeaderPanel = true;
-        instance.onCommand.notify({ grid: gridStub, command: 'toggle-preheader' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ item: { command: 'toggle-preheader' }, column: {} as Column, grid: gridStub, command: 'toggle-preheader' }, new Slick.EventData(), gridStub);
 
         expect(onCommandSpy).toHaveBeenCalled();
         expect(gridSpy).toHaveBeenCalledWith(false);
@@ -717,7 +719,7 @@ describe('gridMenuExtension', () => {
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
 
         const instance = extension.register();
-        instance.onCommand.notify({ grid: gridStub, command: 'refresh-dataset' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ item: { command: 'refresh-dataset' }, column: {} as Column, grid: gridStub, command: 'refresh-dataset' }, new Slick.EventData(), gridStub);
 
         expect(onCommandSpy).toHaveBeenCalled();
         expect(refreshSpy).toHaveBeenCalled();

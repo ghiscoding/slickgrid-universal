@@ -10,5 +10,5 @@ export interface MenuCommandItem extends MenuItem {
   // action/override callbacks
 
   /** Optionally define a callback function that gets executed when item is chosen (and/or use the onCommand event) */
-  action?: (event: SlickEventData, callbackArgs: MenuCommandItemCallbackArgs) => void;
+  action?: (event: SlickEventData | Event, callbackArgs: MenuCommandItemCallbackArgs) => void;
 }

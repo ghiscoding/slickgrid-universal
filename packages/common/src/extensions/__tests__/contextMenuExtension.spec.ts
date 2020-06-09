@@ -269,14 +269,14 @@ describe('contextMenuExtension', () => {
         const onOptionSpy = jest.spyOn(SharedService.prototype.gridOptions.contextMenu, 'onOptionSelected');
 
         const instance = extension.register();
-        instance.onCommand.notify({ grid: gridStub, command: 'help' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ item: { command: 'help' }, column: {} as Column, grid: gridStub, command: 'help' }, new Slick.EventData(), gridStub);
 
         expect(handlerSpy).toHaveBeenCalledTimes(5);
         expect(handlerSpy).toHaveBeenCalledWith(
           { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
           expect.anything()
         );
-        expect(onCommandSpy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, command: 'help' });
+        expect(onCommandSpy).toHaveBeenCalledWith(expect.anything(), { item: { command: 'help' }, column: {}, grid: gridStub, command: 'help' });
         expect(onOptionSpy).not.toHaveBeenCalled();
         expect(onb4CloseSpy).not.toHaveBeenCalled();
         expect(onb4ShowSpy).not.toHaveBeenCalled();
@@ -292,14 +292,14 @@ describe('contextMenuExtension', () => {
         const onOptionSpy = jest.spyOn(SharedService.prototype.gridOptions.contextMenu, 'onOptionSelected');
 
         const instance = extension.register();
-        instance.onOptionSelected.notify({ grid: gridStub, command: 'help' }, new Slick.EventData(), gridStub);
+        instance.onOptionSelected.notify({ item: { option: 'help' }, column: {} as Column, grid: gridStub, option: 'help' }, new Slick.EventData(), gridStub);
 
         expect(handlerSpy).toHaveBeenCalledTimes(5);
         expect(handlerSpy).toHaveBeenCalledWith(
           { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
           expect.anything()
         );
-        expect(onOptionSpy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, command: 'help' });
+        expect(onOptionSpy).toHaveBeenCalledWith(expect.anything(), { item: { option: 'help' }, column: {}, grid: gridStub, option: 'help' });
         expect(onCommandSpy).not.toHaveBeenCalled();
         expect(onb4CloseSpy).not.toHaveBeenCalled();
         expect(onb4ShowSpy).not.toHaveBeenCalled();
