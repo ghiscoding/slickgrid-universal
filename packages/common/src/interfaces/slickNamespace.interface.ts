@@ -4,6 +4,7 @@ import {
   CellMenuOption,
   CheckboxSelectorOption,
   Column,
+  ContextMenuOption,
   ExcelCopyBufferOption,
   GridOption,
   RowSelectionModelOption,
@@ -14,6 +15,7 @@ import {
   SlickCellRangeSelector,
   SlickCellSelectionModel,
   SlickCheckboxSelectColumn,
+  SlickContextMenu,
   SlickDataView,
   SlickEditorLock,
   SlickEvent,
@@ -109,6 +111,9 @@ export interface SlickNamespace {
   Plugins: {
     /** A plugin to add Menu on a Cell click (click on the cell that has the cellMenu object defined) */
     CellMenu: new (options?: CellMenuOption) => SlickCellMenu;
+
+    /** A plugin to add Context Menu (mouse right+click), it subscribes to the slickgrid cell "onContextMenu" event. */
+    ContextMenu: new (options?: ContextMenuOption) => SlickContextMenu;
 
     /** Resizer is a 3rd party plugin (addon) that can be used to auto-resize a grid and/or resize it with fixed dimensions. */
     Resizer: new (autoResizeOptions?: AutoResizeOption, fixedGridDimensions?: { height?: number; width?: number; }) => any;

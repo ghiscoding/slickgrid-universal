@@ -7,7 +7,7 @@ import { SharedService } from '../services/shared.service';
 declare const Slick: SlickNamespace;
 
 export class CheckboxSelectorExtension implements Extension {
-  private _addon: SlickCheckboxSelectColumn;
+  private _addon: SlickCheckboxSelectColumn | null;
 
   constructor(private extensionUtility: ExtensionUtility, private sharedService: SharedService) { }
 
@@ -70,7 +70,7 @@ export class CheckboxSelectorExtension implements Extension {
       // user might want to pre-select some rows
       // the setTimeout is because of timing issue with styling (row selection happen but rows aren't highlighted properly)
       if (this.sharedService.gridOptions.preselectedRows && rowSelectionPlugin && this.sharedService.grid.getSelectionModel()) {
-        setTimeout(() => this._addon.selectRows(this.sharedService.gridOptions.preselectedRows || []));
+        setTimeout(() => this._addon?.selectRows(this.sharedService.gridOptions.preselectedRows || []));
       }
 
       return rowSelectionPlugin;

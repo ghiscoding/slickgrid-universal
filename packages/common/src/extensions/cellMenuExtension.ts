@@ -20,7 +20,7 @@ import { TranslaterService } from '../services';
 declare const Slick: SlickNamespace;
 
 export class CellMenuExtension implements Extension {
-  private _addon: SlickCellMenu;
+  private _addon: SlickCellMenu | null;
   private _eventHandler: SlickEventHandler;
   private _locales: Locale;
 
@@ -83,7 +83,7 @@ export class CellMenuExtension implements Extension {
         }
         if (cellMenu && typeof cellMenu.onCommand === 'function') {
           const onCommand = this._addon.onCommand;
-          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCommand>>).subscribe(this._addon.onCommand, (event, args) => {
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCommand>>).subscribe(onCommand, (event, args) => {
             if (cellMenu.onCommand) {
               cellMenu.onCommand(event, args);
             }
@@ -91,7 +91,7 @@ export class CellMenuExtension implements Extension {
         }
         if (cellMenu && typeof cellMenu.onOptionSelected === 'function') {
           const onOptionSelected = this._addon.onOptionSelected;
-          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onOptionSelected>>).subscribe(this._addon.onOptionSelected, (event, args) => {
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onOptionSelected>>).subscribe(onOptionSelected, (event, args) => {
             if (cellMenu.onOptionSelected) {
               cellMenu.onOptionSelected(event, args);
             }
@@ -99,7 +99,7 @@ export class CellMenuExtension implements Extension {
         }
         if (cellMenu && typeof cellMenu.onBeforeMenuShow === 'function') {
           const onBeforeMenuShow = this._addon.onBeforeMenuShow;
-          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMenuShow>>).subscribe(this._addon.onBeforeMenuShow, (event, args) => {
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMenuShow>>).subscribe(onBeforeMenuShow, (event, args) => {
             if (cellMenu.onBeforeMenuShow) {
               cellMenu.onBeforeMenuShow(event, args);
             }
@@ -107,7 +107,7 @@ export class CellMenuExtension implements Extension {
         }
         if (cellMenu && typeof cellMenu.onBeforeMenuClose === 'function') {
           const onBeforeMenuClose = this._addon.onBeforeMenuClose;
-          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMenuClose>>).subscribe(this._addon.onBeforeMenuClose, (event, args) => {
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMenuClose>>).subscribe(onBeforeMenuClose, (event, args) => {
             if (cellMenu.onBeforeMenuClose) {
               cellMenu.onBeforeMenuClose(event, args);
             }
@@ -115,7 +115,7 @@ export class CellMenuExtension implements Extension {
         }
         if (cellMenu && typeof cellMenu.onAfterMenuShow === 'function') {
           const onAfterMenuShow = this._addon.onAfterMenuShow;
-          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onAfterMenuShow>>).subscribe(this._addon.onAfterMenuShow, (event, args) => {
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onAfterMenuShow>>).subscribe(onAfterMenuShow, (event, args) => {
             if (cellMenu.onAfterMenuShow) {
               cellMenu.onAfterMenuShow(event, args);
             }

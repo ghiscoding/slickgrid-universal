@@ -8,7 +8,7 @@ import { SharedService } from '../services/shared.service';
 declare const Slick: any;
 
 export class RowSelectionExtension implements Extension {
-  private _addon: SlickRowSelectionModel;
+  private _addon: SlickRowSelectionModel | null;
 
   constructor(private extensionUtility: ExtensionUtility, private sharedService: SharedService) { }
 
@@ -30,7 +30,9 @@ export class RowSelectionExtension implements Extension {
       this.extensionUtility.loadExtensionDynamically(ExtensionName.rowSelection);
 
       this._addon = new Slick.RowSelectionModel(this.sharedService.gridOptions.rowSelectionOptions);
-      this.sharedService.grid.setSelectionModel(this._addon);
+      if (this._addon) {
+        this.sharedService.grid.setSelectionModel(this._addon);
+      }
       return this._addon;
     }
     return null;

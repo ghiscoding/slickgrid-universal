@@ -7,7 +7,7 @@ import { ExtensionUtility } from './extensionUtility';
 declare const Slick: SlickNamespace;
 
 export class AutoTooltipExtension implements Extension {
-  private _addon: SlickAutoTooltips;
+  private _addon: SlickAutoTooltips | null;
 
   constructor(private extensionUtility: ExtensionUtility, private sharedService: SharedService) { }
 

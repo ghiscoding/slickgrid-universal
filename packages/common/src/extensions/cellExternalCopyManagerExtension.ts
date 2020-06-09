@@ -22,7 +22,7 @@ import { SharedService } from '../services/shared.service';
 declare const Slick: SlickNamespace;
 
 export class CellExternalCopyManagerExtension implements Extension {
-  private _addon: SlickCellExternalCopyManager;
+  private _addon: SlickCellExternalCopyManager | null;
   private _addonOptions: ExcelCopyBufferOption;
   private _eventHandler: SlickEventHandler;
   private _commandQueue: EditCommand[];
