@@ -8,6 +8,7 @@ import {
   GridServiceUpdateOption,
   OnEventArgs,
   SlickGrid,
+  SlickNamespace,
 } from '../interfaces/index';
 import { ExtensionService } from './extension.service';
 import { FilterService } from './filter.service';
@@ -17,7 +18,7 @@ import { SharedService } from './shared.service';
 import { SortService } from './sort.service';
 
 // using external non-typed js libraries
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 let highlightTimerEnd: any;
 const GridServiceDeleteOptionDefaults: GridServiceDeleteOption = { triggerEvent: true };
 const GridServiceInsertOptionDefaults: GridServiceInsertOption = { highlightRow: true, position: 'top', resortGrid: false, selectRow: false, triggerEvent: true };

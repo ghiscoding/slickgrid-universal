@@ -190,7 +190,7 @@ describe('SortService', () => {
       const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
       const spyCurrentSort = jest.spyOn(service, 'getCurrentLocalSorters');
       const spyOnLocalSort = jest.spyOn(service, 'onLocalSortChanged');
-      const mockSortedCol = { sortCol: { id: 'lastName', field: 'lastName', width: 100 }, sortAsc: true } as ColumnSort;
+      const mockSortedCol = { columnId: 'lastName', sortCol: { id: 'lastName', field: 'lastName', width: 100 }, sortAsc: true } as ColumnSort;
 
       service.bindLocalOnSort(gridStub, dataViewStub);
       gridStub.onSort.notify(mockSortedCol, new Slick.EventData(), gridStub);

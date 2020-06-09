@@ -1,11 +1,11 @@
 
 import { ExtensionName } from '../enums/extensionName.enum';
-import { Extension, SlickRowSelectionModel } from '../interfaces/index';
+import { Extension, SlickRowSelectionModel, SlickNamespace } from '../interfaces/index';
 import { ExtensionUtility } from './extensionUtility';
 import { SharedService } from '../services/shared.service';
 
 // using external non-typed js libraries
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 export class RowSelectionExtension implements Extension {
   private _addon: SlickRowSelectionModel | null;

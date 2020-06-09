@@ -1,8 +1,8 @@
-import { SlickDataView, GridOption, SlickEventHandler, SlickGrid } from '../interfaces/index';
+import { SlickDataView, GridOption, SlickEventHandler, SlickGrid, SlickNamespace, GetSlickEventType, OnClickEventArgs, SlickEventData } from '../interfaces/index';
 import { SharedService } from './shared.service';
 
 // using external non-typed js libraries
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 export class TreeDataService {
   private _grid: SlickGrid;
@@ -45,12 +45,15 @@ export class TreeDataService {
     this._grid = grid;
 
     // subscribe to the SlickGrid event and call the backend execution
-    this._eventHandler.subscribe(grid.onClick, this.handleOnCellClick.bind(this));
+    const onClickHandler = grid.onClick;
+    if (onClickHandler) {
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onClickHandler>>).subscribe(onClickHandler, this.handleOnCellClick.bind(this));
+    }
   }
 
-  handleOnCellClick(event: any, args: any) {
+  handleOnCellClick(event: SlickEventData, args: OnClickEventArgs) {
     if (event && args) {
-      const targetElm = event.target || {};
+      const targetElm: any = event.target || {};
       const treeDataOptions = this.gridOptions.treeDataOptions;
       const collapsedPropName = treeDataOptions && treeDataOptions.collapsedPropName || '__collapsed';
       const idPropName = this.gridOptions.datasetIdPropertyName ?? 'id';

@@ -3,8 +3,8 @@ import { SlickGrid } from './slickGrid.interface';
 
 export interface SingleColumnSort extends ColumnSort {
   /** SlickGrid grid object */
-  grid: SlickGrid;
+  grid?: SlickGrid;
 
   /** is it a multi-column sort? */
-  multiColumnSort: false;
+  multiColumnSort?: false;
 }

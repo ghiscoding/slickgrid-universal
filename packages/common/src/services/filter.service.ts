@@ -22,11 +22,13 @@ import {
   FilterCallbackArg,
   FilterChangedArgs,
   FilterConditionOption,
+  GetSlickEventType,
   GridOption,
   SlickEvent,
   SlickEventData,
   SlickEventHandler,
   SlickGrid,
+  SlickNamespace,
 } from './../interfaces/index';
 import { executeBackendCallback, refreshBackendDataset } from './backend-utilities';
 import { getDescendantProperty } from './utilities';
@@ -34,7 +36,7 @@ import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
 
 // using external non-typed js libraries
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 // timer for keeping track of user typing waits
 let timer: any;
@@ -43,7 +45,7 @@ const DEFAULT_FILTER_TYPING_DEBOUNCE = 500;
 export class FilterService {
   private _eventHandler: SlickEventHandler;
   private _isFilterFirstRender = true;
-  private _firstColumnIdRendered = '';
+  private _firstColumnIdRendered: string | number = '';
   private _filtersMetadata: any[] = [];
   private _columnFilters: ColumnFilters = {};
   private _dataView: SlickDataView;
@@ -141,7 +143,8 @@ export class FilterService {
     this._filtersMetadata = [];
 
     // subscribe to SlickGrid onHeaderRowCellRendered event to create filter template
-    this._eventHandler.subscribe(grid.onHeaderRowCellRendered, (e: SlickEventData, args: any) => {
+    const onHeaderRowCellRenderedHandler = grid.onHeaderRowCellRendered;
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onHeaderRowCellRenderedHandler>>).subscribe(onHeaderRowCellRenderedHandler, (e, args) => {
       // firstColumnIdRendered is null at first, so if it changes to being filled and equal, then we would know that it was already rendered
       // this is to avoid rendering the filter twice (only the Select Filter for now), rendering it again also clears the filter which has unwanted side effect
       if (args.column.id === this._firstColumnIdRendered) {
@@ -154,7 +157,8 @@ export class FilterService {
     });
 
     // subscribe to the SlickGrid event and call the backend execution
-    this._eventHandler.subscribe(this._onSearchChange, this.onBackendFilterChange.bind(this));
+    const onSearchChangeHandler = this._onSearchChange;
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSearchChangeHandler>>).subscribe(onSearchChangeHandler, this.onBackendFilterChange.bind(this));
   }
 
   /**
@@ -171,7 +175,8 @@ export class FilterService {
     dataView.setFilter(this.customLocalFilter.bind(this));
 
     // bind any search filter change (e.g. input filter keyup event)
-    this._eventHandler.subscribe(this._onSearchChange, (e: SlickEventData, args: any) => {
+    const onSearchChangeHandler = this._onSearchChange;
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSearchChangeHandler>>).subscribe(this._onSearchChange, (e, args) => {
       const isGridWithTreeData = this._gridOptions?.enableTreeData ?? false;
 
       // When using Tree Data, we need to do it in 2 steps
@@ -193,7 +198,8 @@ export class FilterService {
     });
 
     // subscribe to SlickGrid onHeaderRowCellRendered event to create filter template
-    this._eventHandler.subscribe(grid.onHeaderRowCellRendered, (e: SlickEventData, args: any) => {
+    const onHeaderRowCellRenderedHandler = grid.onHeaderRowCellRendered;
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onHeaderRowCellRenderedHandler>>).subscribe(onHeaderRowCellRenderedHandler, (e: SlickEventData, args: any) => {
       this.addFilterTemplateToHeaderRow(args);
     });
   }

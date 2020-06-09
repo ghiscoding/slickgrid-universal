@@ -9,6 +9,9 @@ import {
   SlickEventHandler,
   SlickGrid,
   TreeDataOption,
+  SlickNamespace,
+  GetSlickEventType,
+  SlickEventData,
 } from '../interfaces/index';
 import {
   EmitterType,
@@ -24,7 +27,7 @@ import { PubSubService } from './pubSub.service';
 import { SharedService } from './shared.service';
 
 // using external non-typed js libraries
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 export class SortService {
   private _currentLocalSorters: CurrentSorter[] = [];
@@ -63,7 +66,8 @@ export class SortService {
     this._dataView = dataView;
 
     // subscribe to the SlickGrid event and call the backend execution
-    this._eventHandler.subscribe(grid.onSort, this.onBackendSortChanged.bind(this));
+    const onSortHandler = grid.onSort;
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSortHandler>>).subscribe(onSortHandler, this.onBackendSortChanged.bind(this));
   }
 
   /**
@@ -79,10 +83,11 @@ export class SortService {
 
     this.processTreeDataInitialSort();
 
-    this._eventHandler.subscribe(grid.onSort, (e: any, args: any) => {
+    const onSortHandler = grid.onSort;
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSortHandler>>).subscribe(onSortHandler, (e: SlickEventData, args: SingleColumnSort | MultiColumnSort) => {
       // multiSort and singleSort are not exactly the same, but we want to structure it the same for the (for loop) after
       // also to avoid having to rewrite the for loop in the sort, we will make the singleSort an array of 1 object
-      const sortColumns: Array<SingleColumnSort> = (args.multiColumnSort) ? args.sortCols : new Array({ sortAsc: args.sortAsc, sortCol: args.sortCol });
+      const sortColumns: Array<SingleColumnSort> = (args.multiColumnSort) ? args.sortCols : new Array({ columnId: (args as SingleColumnSort).sortCol.id, sortAsc: (args as SingleColumnSort).sortAsc, sortCol: (args as SingleColumnSort).sortCol });
 
       // keep current sorters
       this._currentLocalSorters = []; // reset current local sorters

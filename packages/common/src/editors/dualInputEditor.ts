@@ -9,13 +9,15 @@ import {
   EditorArguments,
   EditorValidator,
   EditorValidatorOutput,
+  GetSlickEventType,
   GridOption,
   SlickEventHandler,
   SlickGrid,
+  SlickNamespace,
 } from '../interfaces/index';
 
 // using external non-typed js libraries
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 /*
  * An example of a 'detached' editor.
@@ -47,7 +49,9 @@ export class DualInputEditor implements Editor {
     this.gridOptions = (this.grid.getOptions() || {}) as GridOption;
     this.init();
     this._eventHandler = new Slick.EventHandler();
-    this._eventHandler.subscribe(this.grid.onValidationError, () => this._isValueSaveCalled = true);
+
+    const onValidationErrorHandler = this.grid.onValidationError;
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onValidationErrorHandler>>).subscribe(onValidationErrorHandler, () => this._isValueSaveCalled = true);
   }
 
   /** Get Column Definition object */

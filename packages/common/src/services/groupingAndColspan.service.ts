@@ -4,12 +4,13 @@ import {
   GridOption,
   SlickEventHandler,
   SlickGrid,
+  SlickNamespace,
 } from './../interfaces/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 
 // using external non-typed js libraries
 declare let $: any;
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 export class GroupingAndColspanService {
   private _eventHandler: SlickEventHandler;

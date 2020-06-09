@@ -7,10 +7,12 @@ import {
   SlickEventHandler,
   SlickEventData,
   SlickGrid,
+  SlickNamespace,
+  GetSlickEventType,
 } from './../interfaces/index';
 
 // using external non-typed js libraries
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 export class GridEventService {
   private _eventHandler: SlickEventHandler;
@@ -26,7 +28,8 @@ export class GridEventService {
   /* OnCellChange Event */
   bindOnBeforeEditCell(grid: SlickGrid, dataView: SlickDataView) {
     // subscribe to this Slickgrid event of onBeforeEditCell
-    this._eventHandler.subscribe(grid.onBeforeEditCell, (e: SlickEventData, args: CellArgs) => {
+    const onBeforeEditCellHandler = grid.onBeforeEditCell;
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeEditCellHandler>>).subscribe(onBeforeEditCellHandler, (e, args) => {
       if (!e || !args || !grid || args.cell === undefined || !grid.getColumns || !grid.getDataItem) {
         return;
       }
@@ -53,7 +56,8 @@ export class GridEventService {
   /* OnCellChange Event */
   bindOnCellChange(grid: SlickGrid, dataView: SlickDataView) {
     // subscribe to this Slickgrid event of onCellChange
-    this._eventHandler.subscribe(grid.onCellChange, (e: SlickEventData, args: CellArgs) => {
+    const onCellChangeHandler = grid.onCellChange;
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCellChangeHandler>>).subscribe(onCellChangeHandler, (e, args) => {
       if (!e || !args || !grid || args.cell === undefined || !grid.getColumns || !grid.getDataItem) {
         return;
       }
@@ -79,7 +83,8 @@ export class GridEventService {
 
   /* OnClick Event */
   bindOnClick(grid: SlickGrid, dataView: SlickDataView) {
-    this._eventHandler.subscribe(grid.onClick, (e: SlickEventData, args: CellArgs) => {
+    const onClickHandler = grid.onClick;
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onClickHandler>>).subscribe(onClickHandler, (e, args) => {
       if (!e || !args || !grid || args.cell === undefined || !grid.getColumns || !grid.getDataItem) {
         return;
       }
