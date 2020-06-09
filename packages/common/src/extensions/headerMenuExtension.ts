@@ -3,14 +3,15 @@ import {
   Column,
   CurrentSorter,
   Extension,
+  GetSlickEventType,
   GridOption,
   HeaderMenu,
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
   Locale,
-  SingleColumnSort,
   SlickEventHandler,
-  SlickGrid,
+  SlickHeaderMenu,
+  SlickNamespace,
 } from '../interfaces/index';
 import {
   EmitterType,
@@ -25,10 +26,10 @@ import { TranslaterService } from '../services/translater.service';
 import { PubSubService } from '../services/pubSub.service';
 
 // using external non-typed js libraries
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 export class HeaderMenuExtension implements Extension {
-  private _addon: any;
+  private _addon: SlickHeaderMenu | null;
   private _eventHandler: SlickEventHandler;
   private _locales: Locale;
 
@@ -57,12 +58,12 @@ export class HeaderMenuExtension implements Extension {
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
-  getAddonInstance() {
+  getAddonInstance(): SlickHeaderMenu | null {
     return this._addon;
   }
 
   /** Register the 3rd party addon (plugin) */
-  register(): any {
+  register(): SlickHeaderMenu | null {
     if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
@@ -82,29 +83,41 @@ export class HeaderMenuExtension implements Extension {
       this.sharedService.grid.registerPlugin(this._addon);
 
       // hook all events
-      if (this.sharedService.grid && this.sharedService.gridOptions.headerMenu) {
+      if (this._addon && this.sharedService.grid && this.sharedService.gridOptions.headerMenu) {
         if (this.sharedService.gridOptions.headerMenu.onExtensionRegistered) {
           this.sharedService.gridOptions.headerMenu.onExtensionRegistered(this._addon);
         }
-        this._eventHandler.subscribe(this._addon.onCommand, (event: Event, args: MenuCommandItemCallbackArgs) => {
-          this.executeHeaderMenuInternalCommands(event, args);
-          if (this.sharedService.gridOptions.headerMenu && typeof this.sharedService.gridOptions.headerMenu.onCommand === 'function') {
-            this.sharedService.gridOptions.headerMenu.onCommand(event, args);
-          }
-        });
-        if (this.sharedService.gridOptions.headerMenu && typeof this.sharedService.gridOptions.headerMenu.onBeforeMenuShow === 'function') {
-          this._eventHandler.subscribe(this._addon.onBeforeMenuShow, (event: Event, args: { grid: SlickGrid; column: Column; menu: any; }) => {
-            if (this.sharedService.gridOptions.headerMenu && this.sharedService.gridOptions.headerMenu.onBeforeMenuShow) {
-              this.sharedService.gridOptions.headerMenu.onBeforeMenuShow(event, args);
+
+        const onCommandHandler = this._addon.onCommand;
+        if (onCommandHandler) {
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCommandHandler>>).subscribe(onCommandHandler, (event, args) => {
+            this.executeHeaderMenuInternalCommands(event, args);
+            if (this.sharedService.gridOptions.headerMenu && typeof this.sharedService.gridOptions.headerMenu.onCommand === 'function') {
+              this.sharedService.gridOptions.headerMenu.onCommand(event, args);
             }
           });
         }
+
+        if (this.sharedService.gridOptions.headerMenu && typeof this.sharedService.gridOptions.headerMenu.onBeforeMenuShow === 'function') {
+          const onBeforeMenuShowHandler = this._addon.onBeforeMenuShow;
+          if (onBeforeMenuShowHandler) {
+            (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMenuShowHandler>>).subscribe(onBeforeMenuShowHandler, (event, args) => {
+              if (this.sharedService.gridOptions.headerMenu && this.sharedService.gridOptions.headerMenu.onBeforeMenuShow) {
+                this.sharedService.gridOptions.headerMenu.onBeforeMenuShow(event, args);
+              }
+            });
+          }
+        }
+
         if (this.sharedService.gridOptions.headerMenu && typeof this.sharedService.gridOptions.headerMenu.onAfterMenuShow === 'function') {
-          this._eventHandler.subscribe(this._addon.onAfterMenuShow, (event: Event, args: { grid: SlickGrid; column: Column; menu: any; }) => {
-            if (this.sharedService.gridOptions.headerMenu && this.sharedService.gridOptions.headerMenu.onAfterMenuShow) {
-              this.sharedService.gridOptions.headerMenu.onAfterMenuShow(event, args);
-            }
-          });
+          const onAfterMenuShowHandler = this._addon.onAfterMenuShow;
+          if (onAfterMenuShowHandler) {
+            (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onAfterMenuShowHandler>>).subscribe(onAfterMenuShowHandler, (event, args) => {
+              if (this.sharedService.gridOptions.headerMenu && this.sharedService.gridOptions.headerMenu.onAfterMenuShow) {
+                this.sharedService.gridOptions.headerMenu.onAfterMenuShow(event, args);
+              }
+            });
+          }
         }
       }
       return this._addon;

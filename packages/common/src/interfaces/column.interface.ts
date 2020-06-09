@@ -2,7 +2,6 @@ import {
   CellMenu,
   ColumnEditor,
   ColumnFilter,
-  Editor,
   EditorValidator,
   Formatter,
   Grouping,

@@ -8,6 +8,8 @@ import {
   DraggableGroupingOption,
   ExcelCopyBufferOption,
   GridOption,
+  HeaderButtonOption,
+  HeaderMenuOption,
   RowSelectionModelOption,
   SlickAutoTooltips,
   SlickCellExternalCopyManager,
@@ -25,6 +27,8 @@ import {
   SlickEventHandler,
   SlickGrid,
   SlickGroupItemMetadataProvider,
+  SlickHeaderButtons,
+  SlickHeaderMenu,
   SlickRange,
   SlickRowSelectionModel,
 } from './index';
@@ -119,6 +123,12 @@ export interface SlickNamespace {
 
     /** A plugin to add Context Menu (mouse right+click), it subscribes to the slickgrid cell "onContextMenu" event. */
     ContextMenu: new (options?: ContextMenuOption) => SlickContextMenu;
+
+    /** A plugin to add custom buttons to column headers. */
+    HeaderButtons: new (options?: HeaderButtonOption) => SlickHeaderButtons;
+
+    /** A plugin to add drop-down menus to column headers. */
+    HeaderMenu: new (options?: HeaderMenuOption) => SlickHeaderMenu;
 
     /** Resizer is a 3rd party plugin (addon) that can be used to auto-resize a grid and/or resize it with fixed dimensions. */
     Resizer: new (autoResizeOptions?: AutoResizeOption, fixedGridDimensions?: { height?: number; width?: number; }) => any;

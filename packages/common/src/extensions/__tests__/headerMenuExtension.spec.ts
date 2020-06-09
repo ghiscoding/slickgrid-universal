@@ -65,6 +65,7 @@ describe('headerMenuExtension', () => {
   let extension: HeaderMenuExtension;
   let sharedService: SharedService;
   let translateService: TranslateServiceStub;
+  let divElement: HTMLDivElement;
 
   const gridOptionsMock = {
     enableAutoSizeColumns: true,
@@ -98,6 +99,7 @@ describe('headerMenuExtension', () => {
 
   describe('with I18N Service', () => {
     beforeEach(() => {
+      divElement = document.createElement('div');
       sharedService = new SharedService();
       translateService = new TranslateServiceStub();
       extensionUtility = new ExtensionUtility(sharedService, translateService);
@@ -157,14 +159,14 @@ describe('headerMenuExtension', () => {
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
 
         const instance = extension.register();
-        instance.onBeforeMenuShow.notify({ grid: gridStub, menu: {} }, new Slick.EventData(), gridStub);
+        instance.onBeforeMenuShow.notify({ grid: gridStub, column: {} as Column, menu: divElement }, new Slick.EventData(), gridStub);
 
         expect(handlerSpy).toHaveBeenCalledTimes(3);
         expect(handlerSpy).toHaveBeenCalledWith(
           { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
           expect.anything()
         );
-        expect(onBeforeSpy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, menu: {} });
+        expect(onBeforeSpy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, column: {}, menu: divElement });
         expect(onCommandSpy).not.toHaveBeenCalled();
         expect(onAfterSpy).not.toHaveBeenCalled();
       });
@@ -176,14 +178,14 @@ describe('headerMenuExtension', () => {
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
 
         const instance = extension.register();
-        instance.onAfterMenuShow.notify({ grid: gridStub, menu: {} }, new Slick.EventData(), gridStub);
+        instance.onAfterMenuShow.notify({ grid: gridStub, column: {} as Column, menu: divElement }, new Slick.EventData(), gridStub);
 
         expect(handlerSpy).toHaveBeenCalledTimes(3);
         expect(handlerSpy).toHaveBeenCalledWith(
           { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
           expect.anything()
         );
-        expect(onAfterSpy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, menu: {} });
+        expect(onAfterSpy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, column: {}, menu: divElement });
         expect(onBeforeSpy).not.toHaveBeenCalled();
         expect(onCommandSpy).not.toHaveBeenCalled();
       });
@@ -195,14 +197,14 @@ describe('headerMenuExtension', () => {
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
 
         const instance = extension.register();
-        instance.onCommand.notify({ grid: gridStub, command: 'help' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ grid: gridStub, command: 'help', item: { command: 'help' }, column: {} as Column }, new Slick.EventData(), gridStub);
 
         expect(handlerSpy).toHaveBeenCalledTimes(3);
         expect(handlerSpy).toHaveBeenCalledWith(
           { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
           expect.anything()
         );
-        expect(onCommandSpy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, command: 'help' });
+        expect(onCommandSpy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, command: 'help', item: { command: 'help' }, column: {} });
         expect(onBeforeSpy).not.toHaveBeenCalled();
         expect(onAfterSpy).not.toHaveBeenCalled();
       });
@@ -354,7 +356,7 @@ describe('headerMenuExtension', () => {
         const autosizeSpy = jest.spyOn(SharedService.prototype.grid, 'autosizeColumns');
 
         const instance = extension.register();
-        instance.onCommand.notify({ column: columnsMock[0], grid: gridStub, command: 'hide' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ column: columnsMock[0], grid: gridStub, command: 'hide', item: { command: 'hide' } }, new Slick.EventData(), gridStub);
 
         expect(onCommandSpy).toHaveBeenCalled();
         expect(autosizeSpy).toHaveBeenCalled();
@@ -365,7 +367,7 @@ describe('headerMenuExtension', () => {
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
 
         const instance = extension.register();
-        instance.onCommand.notify({ column: columnsMock[0], grid: gridStub, command: 'clear-filter' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ column: columnsMock[0], grid: gridStub, command: 'clear-filter', item: { command: 'clear-filter' } }, new Slick.EventData(), gridStub);
 
         expect(onCommandSpy).toHaveBeenCalled();
         expect(filterSpy).toHaveBeenCalledWith(expect.anything(), columnsMock[0].id);
@@ -379,7 +381,7 @@ describe('headerMenuExtension', () => {
         const setSortSpy = jest.spyOn(SharedService.prototype.grid, 'setSortColumns');
 
         const instance = extension.register();
-        instance.onCommand.notify({ column: columnsMock[0], grid: gridStub, command: 'clear-sort' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ column: columnsMock[0], grid: gridStub, command: 'clear-sort', item: { command: 'clear-sort' } }, new Slick.EventData(), gridStub);
 
         expect(previousSortSpy).toHaveBeenCalled();
         expect(backendSortSpy).toHaveBeenCalledWith(expect.anything(), { multiColumnSort: true, sortCols: [mockSortedCols[1]], grid: gridStub });
@@ -397,7 +399,7 @@ describe('headerMenuExtension', () => {
         const setSortSpy = jest.spyOn(SharedService.prototype.grid, 'setSortColumns');
 
         const instance = extension.register();
-        instance.onCommand.notify({ column: columnsMock[0], grid: gridStub, command: 'clear-sort' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ column: columnsMock[0], grid: gridStub, command: 'clear-sort', item: { command: 'clear-sort' } }, new Slick.EventData(), gridStub);
 
         expect(previousSortSpy).toHaveBeenCalled();
         expect(localSortSpy).toHaveBeenCalledWith(gridStub, dataViewStub, [mockSortedCols[1]], true);
@@ -417,7 +419,7 @@ describe('headerMenuExtension', () => {
         const gridSortSpy = jest.spyOn(gridStub.onSort, 'notify');
 
         const instance = extension.register();
-        instance.onCommand.notify({ column: columnsMock[0], grid: gridStub, command: 'clear-sort' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ column: columnsMock[0], grid: gridStub, command: 'clear-sort', item: { command: 'clear-sort' } }, new Slick.EventData(), gridStub);
 
         expect(previousSortSpy).toHaveBeenCalled();
         expect(onCommandSpy).toHaveBeenCalled();
@@ -435,7 +437,7 @@ describe('headerMenuExtension', () => {
         const setSortSpy = jest.spyOn(SharedService.prototype.grid, 'setSortColumns');
 
         const instance = extension.register();
-        instance.onCommand.notify({ column: mockSortedCols[1].sortCol, grid: gridStub, command: 'sort-asc' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ column: mockSortedCols[1].sortCol, grid: gridStub, command: 'sort-asc', item: { command: 'sort-asc' } }, new Slick.EventData(), gridStub);
 
         expect(previousSortSpy).toHaveBeenCalled();
         expect(backendSortSpy).toHaveBeenCalledWith(expect.anything(), { multiColumnSort: true, sortCols: mockSortedOuput, grid: gridStub });
@@ -453,7 +455,7 @@ describe('headerMenuExtension', () => {
         const setSortSpy = jest.spyOn(SharedService.prototype.grid, 'setSortColumns');
 
         const instance = extension.register();
-        instance.onCommand.notify({ column: mockSortedCols[1].sortCol, grid: gridStub, command: 'sort-desc' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ column: mockSortedCols[1].sortCol, grid: gridStub, command: 'sort-desc', item: { command: 'sort-desc' } }, new Slick.EventData(), gridStub);
 
         expect(previousSortSpy).toHaveBeenCalled();
         expect(backendSortSpy).toHaveBeenCalledWith(expect.anything(), { multiColumnSort: true, sortCols: mockSortedOuput, grid: gridStub });
@@ -473,7 +475,7 @@ describe('headerMenuExtension', () => {
         const setSortSpy = jest.spyOn(SharedService.prototype.grid, 'setSortColumns');
 
         const instance = extension.register();
-        instance.onCommand.notify({ column: mockSortedCols[1].sortCol, grid: gridStub, command: 'sort-desc' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ column: mockSortedCols[1].sortCol, grid: gridStub, command: 'sort-desc', item: { command: 'sort-desc' } }, new Slick.EventData(), gridStub);
 
         expect(previousSortSpy).toHaveBeenCalled();
         expect(localSortSpy).toHaveBeenCalledWith(gridStub, dataViewStub, mockSortedOuput);
@@ -493,7 +495,7 @@ describe('headerMenuExtension', () => {
         const gridSortSpy = jest.spyOn(gridStub.onSort, 'notify');
 
         const instance = extension.register();
-        instance.onCommand.notify({ column: mockSortedCols[1].sortCol, grid: gridStub, command: 'sort-desc' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ column: mockSortedCols[1].sortCol, grid: gridStub, command: 'sort-desc', item: { command: 'sort-desc' } }, new Slick.EventData(), gridStub);
 
         expect(previousSortSpy).toHaveBeenCalled();
         expect(gridSortSpy).toHaveBeenCalledWith(mockSortedOuput);

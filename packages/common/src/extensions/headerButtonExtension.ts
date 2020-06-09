@@ -1,14 +1,14 @@
 import { ExtensionName } from '../enums/index';
-import { Extension, HeaderButtonOnCommandArgs, SlickEventHandler } from '../interfaces/index';
+import { Extension, GetSlickEventType, SlickEventHandler, SlickNamespace, SlickHeaderButtons } from '../interfaces/index';
 import { ExtensionUtility } from './extensionUtility';
 import { SharedService } from '../services/shared.service';
 
 // using external non-typed js libraries
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 export class HeaderButtonExtension implements Extension {
   private _eventHandler: SlickEventHandler;
-  private _addon: any;
+  private _addon: SlickHeaderButtons | null;
 
   constructor(private extensionUtility: ExtensionUtility, private sharedService: SharedService) {
     this._eventHandler = new Slick.EventHandler();
@@ -28,29 +28,33 @@ export class HeaderButtonExtension implements Extension {
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
-  getAddonInstance() {
+  getAddonInstance(): SlickHeaderButtons | null {
     return this._addon;
   }
 
   /** Register the 3rd party addon (plugin) */
-  register(): any {
+  register(): SlickHeaderButtons | null {
     if (this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
       // dynamically import the SlickGrid plugin (addon) with RequireJS
       this.extensionUtility.loadExtensionDynamically(ExtensionName.headerButton);
 
-      this._addon = new Slick.Plugins.HeaderButtons(this.sharedService.gridOptions.headerButton || {});
+      this._addon = new Slick.Plugins.HeaderButtons(this.sharedService.gridOptions.headerButton);
       this.sharedService.grid.registerPlugin(this._addon);
 
       // hook all events
-      if (this.sharedService.grid && this.sharedService.gridOptions.headerButton) {
+      if (this._addon && this.sharedService.grid && this.sharedService.gridOptions.headerButton) {
         if (this.sharedService.gridOptions.headerButton.onExtensionRegistered) {
           this.sharedService.gridOptions.headerButton.onExtensionRegistered(this._addon);
         }
-        this._eventHandler.subscribe(this._addon.onCommand, (e: any, args: HeaderButtonOnCommandArgs) => {
-          if (this.sharedService.gridOptions.headerButton && typeof this.sharedService.gridOptions.headerButton.onCommand === 'function') {
-            this.sharedService.gridOptions.headerButton.onCommand(e, args);
-          }
-        });
+
+        const onCommandHandler = this._addon.onCommand;
+        if (onCommandHandler) {
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCommandHandler>>).subscribe(onCommandHandler, (e, args) => {
+            if (this.sharedService.gridOptions.headerButton && typeof this.sharedService.gridOptions.headerButton.onCommand === 'function') {
+              this.sharedService.gridOptions.headerButton.onCommand(e, args);
+            }
+          });
+        }
       }
       return this._addon;
     }
