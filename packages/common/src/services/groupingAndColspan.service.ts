@@ -1,15 +1,17 @@
 import {
   Column,
-  DataView,
+  SlickDataView,
   GridOption,
   SlickEventHandler,
   SlickGrid,
+  SlickNamespace,
+  SlickResizer,
 } from './../interfaces/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 
 // using external non-typed js libraries
 declare let $: any;
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 export class GroupingAndColspanService {
   private _eventHandler: SlickEventHandler;
@@ -20,8 +22,8 @@ export class GroupingAndColspanService {
   }
 
   /** Getter of SlickGrid DataView object */
-  get _dataView(): DataView {
-    return this._grid && this._grid.getData && this._grid.getData();
+  get _dataView(): SlickDataView {
+    return (this._grid?.getData && this._grid.getData()) as SlickDataView;
   }
 
   /** Getter of the SlickGrid Event Handler */
@@ -31,7 +33,7 @@ export class GroupingAndColspanService {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   private get _gridOptions(): GridOption {
-    return (this._grid && this._grid.getOptions) ? this._grid.getOptions() : {};
+    return (this._grid?.getOptions) ? this._grid.getOptions() : {};
   }
 
   /** Getter for the Column Definitions pulled through the Grid Object */
@@ -46,7 +48,7 @@ export class GroupingAndColspanService {
    */
   init(grid: SlickGrid) {
     this._grid = grid;
-    const resizerPlugin = grid.getPluginByName('Resizer');
+    const resizerPlugin = grid.getPluginByName<SlickResizer>('Resizer');
 
     if (grid && this._gridOptions) {
       // When dealing with Pre-Header Grouping colspan, we need to re-create the pre-header in multiple occasions

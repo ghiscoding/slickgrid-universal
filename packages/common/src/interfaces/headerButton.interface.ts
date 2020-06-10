@@ -1,16 +1,20 @@
 import { HeaderButtonOnCommandArgs } from './headerButtonOnCommandArgs.interface';
+import { SlickEventData } from './slickEventData.interface';
+import { SlickHeaderButtons } from './slickHeaderButtons.interface';
 
-export interface HeaderButton {
-  /** an extra CSS class to add to the menu button */
-  buttonCssClass?: string;
-
+export interface HeaderButton extends HeaderButtonOption {
   // --
   // Events
   // ------------
 
   /** Fired after extension (plugin) is registered by SlickGrid */
-  onExtensionRegistered?: (plugin: any) => void;
+  onExtensionRegistered?: (plugin: SlickHeaderButtons) => void;
 
   /** Fired when a command is clicked */
-  onCommand?: (e: Event, args: HeaderButtonOnCommandArgs) => void;
+  onCommand?: (e: SlickEventData, args: HeaderButtonOnCommandArgs) => void;
+}
+
+export interface HeaderButtonOption {
+  /** an extra CSS class to add to the menu button */
+  buttonCssClass?: string;
 }

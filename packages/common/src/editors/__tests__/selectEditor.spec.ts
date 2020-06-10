@@ -5,7 +5,7 @@ import { Editors } from '../index';
 import { SelectEditor } from '../selectEditor';
 import { CollectionService } from './../../services/collection.service';
 import { FieldType, OperatorType } from '../../enums/index';
-import { AutocompleteOption, Column, DataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { AutocompleteOption, Column, SlickDataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const containerId = 'demo-container';
@@ -15,7 +15,7 @@ const template = `<div id="${containerId}"></div>`;
 
 const dataViewStub = {
   refresh: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const gridOptionMock = {
   autoCommitEdit: false,

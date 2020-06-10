@@ -1,7 +1,18 @@
-import { CellArgs, Column, DataView, GridOption, OnEventArgs, SlickEventHandler, SlickGrid } from './../interfaces/index';
+import {
+  CellArgs,
+  Column,
+  SlickDataView,
+  GridOption,
+  OnEventArgs,
+  SlickEventHandler,
+  SlickEventData,
+  SlickGrid,
+  SlickNamespace,
+  GetSlickEventType,
+} from './../interfaces/index';
 
 // using external non-typed js libraries
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 export class GridEventService {
   private _eventHandler: SlickEventHandler;
@@ -15,9 +26,10 @@ export class GridEventService {
   }
 
   /* OnCellChange Event */
-  bindOnBeforeEditCell(grid: SlickGrid, dataView: DataView) {
+  bindOnBeforeEditCell(grid: SlickGrid, dataView: SlickDataView) {
     // subscribe to this Slickgrid event of onBeforeEditCell
-    this._eventHandler.subscribe(grid.onBeforeEditCell, (e: KeyboardEvent | MouseEvent, args: CellArgs) => {
+    const onBeforeEditCellHandler = grid.onBeforeEditCell;
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeEditCellHandler>>).subscribe(onBeforeEditCellHandler, (e, args) => {
       if (!e || !args || !grid || args.cell === undefined || !grid.getColumns || !grid.getDataItem) {
         return;
       }
@@ -42,9 +54,10 @@ export class GridEventService {
   }
 
   /* OnCellChange Event */
-  bindOnCellChange(grid: SlickGrid, dataView: DataView) {
+  bindOnCellChange(grid: SlickGrid, dataView: SlickDataView) {
     // subscribe to this Slickgrid event of onCellChange
-    this._eventHandler.subscribe(grid.onCellChange, (e: KeyboardEvent | MouseEvent, args: CellArgs) => {
+    const onCellChangeHandler = grid.onCellChange;
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCellChangeHandler>>).subscribe(onCellChangeHandler, (e, args) => {
       if (!e || !args || !grid || args.cell === undefined || !grid.getColumns || !grid.getDataItem) {
         return;
       }
@@ -69,8 +82,9 @@ export class GridEventService {
   }
 
   /* OnClick Event */
-  bindOnClick(grid: SlickGrid, dataView: DataView) {
-    this._eventHandler.subscribe(grid.onClick, (e: KeyboardEvent | MouseEvent, args: CellArgs) => {
+  bindOnClick(grid: SlickGrid, dataView: SlickDataView) {
+    const onClickHandler = grid.onClick;
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onClickHandler>>).subscribe(onClickHandler, (e, args) => {
       if (!e || !args || !grid || args.cell === undefined || !grid.getColumns || !grid.getDataItem) {
         return;
       }

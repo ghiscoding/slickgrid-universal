@@ -1,11 +1,12 @@
 import { ColumnSort } from './columnSort.interface';
+import { SlickGrid } from './slickGrid.interface';
 
 export interface MultiColumnSort {
   /** SlickGrid grid object */
-  grid?: any;
+  grid: SlickGrid;
 
-  /** Defaults to false, is it a multi-column sort? */
-  multiColumnSort?: boolean;
+  /** is it a multi-column sort? */
+  multiColumnSort: true;
 
   /** Array of Columns to be sorted */
   sortCols: ColumnSort[];

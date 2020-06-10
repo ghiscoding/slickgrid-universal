@@ -1,4 +1,12 @@
-import { Column, DataView, FormatterResultObject, GridOption, OnEventArgs, SlickGrid, SortDirectionString } from '@slickgrid-universal/common';
+import {
+  Column,
+  FormatterResultObject,
+  GridOption,
+  OnEventArgs,
+  SlickDataView,
+  SlickGrid,
+  SortDirectionString
+} from '@slickgrid-universal/common';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import '../salesforce-styles.scss';
 import './example51.scss';

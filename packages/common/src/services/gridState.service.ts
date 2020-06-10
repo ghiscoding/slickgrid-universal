@@ -12,11 +12,14 @@ import {
   CurrentPagination,
   CurrentRowSelection,
   CurrentSorter,
-  DataView,
+  SlickDataView,
   GridOption,
   GridState,
   SlickGrid,
   Subscription,
+  SlickNamespace,
+  GetSlickEventType,
+  SlickEventHandler,
 } from '../interfaces/index';
 import { ExtensionService } from './extension.service';
 import { FilterService } from './filter.service';
@@ -25,7 +28,7 @@ import { SortService } from './sort.service';
 import { PubSubService } from './pubSub.service';
 
 // using external non-typed js libraries
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 export class GridStateService {
   private _eventHandler = new Slick.EventHandler();
@@ -46,13 +49,13 @@ export class GridStateService {
   ) { }
 
   /** Getter of SlickGrid DataView object */
-  get _dataView(): DataView {
-    return this._grid && this._grid.getData && this._grid.getData();
+  get _dataView(): SlickDataView {
+    return (this._grid?.getData && this._grid.getData()) as SlickDataView;
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
   private get _gridOptions(): GridOption {
-    return (this._grid && this._grid.getOptions) ? this._grid.getOptions() : {};
+    return (this._grid?.getOptions) ? this._grid.getOptions() : {};
   }
 
   private get datasetIdPropName(): string {
@@ -379,7 +382,7 @@ export class GridStateService {
     const slickEvent = extension && extension.instance && extension.instance[eventName];
 
     if (slickEvent && typeof slickEvent.subscribe === 'function') {
-      this._eventHandler.subscribe(slickEvent, (e: Event, args: any) => {
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof slickEvent>>).subscribe(slickEvent, (e, args) => {
         const columns: Column[] = args && args.columns;
         const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(columns);
         this.pubSubService.publish('onGridStateChanged', { change: { newValues: currentColumns, type: GridStateType.columns }, gridState: this.getCurrentGridState() });
@@ -396,7 +399,7 @@ export class GridStateService {
     const slickGridEvent = grid && grid[eventName];
 
     if (slickGridEvent && typeof slickGridEvent.subscribe === 'function') {
-      this._eventHandler.subscribe(slickGridEvent, () => {
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof slickGridEvent>>).subscribe(slickGridEvent, () => {
         const columns: Column[] = grid.getColumns();
         const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(columns);
         this.pubSubService.publish('onGridStateChanged', { change: { newValues: currentColumns, type: GridStateType.columns }, gridState: this.getCurrentGridState() });
@@ -415,11 +418,13 @@ export class GridStateService {
    */
   private bindSlickGridRowSelectionToGridStateChange() {
     if (this._grid && this._gridOptions && this._dataView) {
-      this._eventHandler.subscribe(this._dataView.onBeforePagingInfoChanged, () => {
+      const onBeforePagingInfoChangedHandler = this._dataView.onBeforePagingInfoChanged;
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforePagingInfoChangedHandler>>).subscribe(onBeforePagingInfoChangedHandler, () => {
         this._wasRecheckedAfterPageChange = false; // reset the page check flag, to skip deletions on page change (used in code below)
       });
 
-      this._eventHandler.subscribe(this._dataView.onPagingInfoChanged, () => {
+      const onPagingInfoChangedHandler = this._dataView.onPagingInfoChanged;
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onPagingInfoChangedHandler>>).subscribe(onPagingInfoChangedHandler, () => {
         // when user changes page, the selected row indexes might not show up
         // we can check to make sure it is but it has to be in a delay so it happens after the first "onSelectedRowsChanged" is triggered
         setTimeout(() => {
@@ -431,7 +436,8 @@ export class GridStateService {
         });
       });
 
-      this._eventHandler.subscribe(this._grid.onSelectedRowsChanged, (e: Event, args: { rows: any[]; previousSelectedRows: any[]; }) => {
+      const onSelectedRowsChangedHandler = this._grid.onSelectedRowsChanged;
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSelectedRowsChangedHandler>>).subscribe(onSelectedRowsChangedHandler, (e, args) => {
         if (Array.isArray(args.rows) && Array.isArray(args.previousSelectedRows)) {
           const newSelectedRows = args.rows as number[];
           const prevSelectedRows = args.previousSelectedRows as number[];

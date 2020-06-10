@@ -1,13 +1,13 @@
 import { GridEventService } from '../gridEvent.service';
-import { Column, DataView, SlickGrid } from '../../interfaces/index';
+import { Column, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 const dataViewStub = {
   refresh: jest.fn(),
   sort: jest.fn(),
   reSort: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const gridStub = {
   getColumnIndex: jest.fn(),
@@ -56,7 +56,7 @@ describe('GridEventService', () => {
       const spyGetCols = jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn]);
 
       service.bindOnBeforeEditCell(gridStub, dataViewStub);
-      gridStub.onBeforeEditCell.notify({ cell: undefined, row: undefined }, new Slick.EventData(), gridStub);
+      gridStub.onBeforeEditCell.notify({ cell: undefined, row: undefined, grid: gridStub, column: {} as Column, item: {} }, new Slick.EventData(), gridStub);
 
       expect(spyGetCols).not.toHaveBeenCalled();
     });
@@ -67,7 +67,7 @@ describe('GridEventService', () => {
       const spyOnChange = jest.spyOn(mockColumn, 'onBeforeEditCell');
 
       service.bindOnBeforeEditCell(gridStub, dataViewStub);
-      gridStub.onBeforeEditCell.notify({ cell: 0, row: 0 }, new Slick.EventData(), gridStub);
+      gridStub.onBeforeEditCell.notify({ cell: 0, row: 0, grid: gridStub, column: {} as Column, item: {} }, new Slick.EventData(), gridStub);
 
       expect(spyGetCols).toHaveBeenCalled();
       expect(spyGetData).toHaveBeenCalled();
@@ -104,7 +104,7 @@ describe('GridEventService', () => {
       const spyGetCols = jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn]);
 
       service.bindOnCellChange(gridStub, dataViewStub);
-      gridStub.onCellChange.notify({ cell: undefined, row: undefined }, new Slick.EventData(), gridStub);
+      gridStub.onCellChange.notify({ cell: undefined, row: undefined, grid: gridStub, item: {} }, new Slick.EventData(), gridStub);
 
       expect(spyGetCols).not.toHaveBeenCalled();
     });
@@ -115,7 +115,7 @@ describe('GridEventService', () => {
       const spyOnChange = jest.spyOn(mockColumn, 'onCellChange');
 
       service.bindOnCellChange(gridStub, dataViewStub);
-      gridStub.onCellChange.notify({ cell: 0, row: 0 }, new Slick.EventData(), gridStub);
+      gridStub.onCellChange.notify({ cell: 0, row: 0, grid: gridStub, item: {} }, new Slick.EventData(), gridStub);
 
       expect(spyGetCols).toHaveBeenCalled();
       expect(spyGetData).toHaveBeenCalled();
@@ -152,7 +152,7 @@ describe('GridEventService', () => {
       const spyGetCols = jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn]);
 
       service.bindOnClick(gridStub, dataViewStub);
-      gridStub.onClick.notify({ cell: undefined, row: undefined }, new Slick.EventData(), gridStub);
+      gridStub.onClick.notify({ cell: undefined, row: undefined, grid: gridStub, }, new Slick.EventData(), gridStub);
 
       expect(spyGetCols).not.toHaveBeenCalled();
     });
@@ -164,7 +164,7 @@ describe('GridEventService', () => {
       const spyOnChange = jest.spyOn(mockColumn, 'onCellClick');
 
       service.bindOnClick(gridStub, dataViewStub);
-      gridStub.onClick.notify({ cell: 0, row: 0 }, new Slick.EventData(), gridStub);
+      gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, new Slick.EventData(), gridStub);
 
       expect(spyGetCols).toHaveBeenCalled();
       expect(spyGetData).toHaveBeenCalled();
@@ -187,7 +187,7 @@ describe('GridEventService', () => {
       const spyOnChange = jest.spyOn(mockColumn, 'onCellClick');
 
       service.bindOnClick(gridStub, dataViewStub);
-      gridStub.onClick.notify({ cell: 0, row: 0 }, new Slick.EventData(), gridStub);
+      gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, new Slick.EventData(), gridStub);
 
       expect(spyActive).toHaveBeenCalled();
       expect(spyGetCols).toHaveBeenCalled();
@@ -211,7 +211,7 @@ describe('GridEventService', () => {
       const spyOnChange = jest.spyOn(mockColumn, 'onCellClick');
 
       service.bindOnClick(gridStub, dataViewStub);
-      gridStub.onClick.notify({ cell: 0, row: 0 }, new Slick.EventData(), gridStub);
+      gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, new Slick.EventData(), gridStub);
 
       expect(spyActive).toHaveBeenCalled();
       expect(spyGetCols).toHaveBeenCalled();

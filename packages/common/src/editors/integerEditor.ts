@@ -89,7 +89,7 @@ export class IntegerEditor implements Editor {
     const columnId = this.columnDef && this.columnDef.id;
     const elm = document.querySelector(`.editor-text.editor-${columnId}`);
     if (elm) {
-      elm.removeEventListener('focusout', () => { });
+      elm.removeEventListener('focusout', this.save);
     }
   }
 

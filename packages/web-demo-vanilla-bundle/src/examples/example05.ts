@@ -1,10 +1,10 @@
 import {
   Column,
-  DataView,
   FieldType,
   Filters,
   Formatters,
   GridOption,
+  SlickDataView,
   SlickGrid,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
@@ -19,7 +19,7 @@ export class Example5 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
-  dataViewObj: DataView;
+  dataViewObj: SlickDataView;
   gridObj: SlickGrid;
   slickgridLwc;
   slickerGridInstance;

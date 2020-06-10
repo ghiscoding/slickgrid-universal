@@ -10,6 +10,9 @@ describe('Testing library entry point', () => {
   });
 
   it('should have Global Grid Options defined', () => {
+    expect(entry.Enums).toBeTruthy();
     expect(entry.GlobalGridOptions).toBeTruthy();
+    expect(entry.SlickgridConfig).toBeTruthy();
+    expect(entry.Utilities).toBeTruthy();
   });
 });

@@ -1,10 +1,10 @@
-import { GridOption, SlickGrid } from '../../interfaces/index';
+import { GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { AutoTooltipExtension } from '../autoTooltipExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 const gridStub = {
   getOptions: jest.fn(),
@@ -52,7 +52,7 @@ describe('autoTooltipExtension', () => {
 
       expect(instance).toBeTruthy();
       expect(instance).toEqual(addonInstance);
-      expect(mockAddon).toHaveBeenCalledWith({});
+      expect(mockAddon).toHaveBeenCalledWith(undefined);
       expect(pluginSpy).toHaveBeenCalledWith(instance);
     });
 

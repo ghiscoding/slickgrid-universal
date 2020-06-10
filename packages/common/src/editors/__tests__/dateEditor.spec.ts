@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import { Editors } from '../index';
 import { DateEditor } from '../dateEditor';
 import { FieldType } from '../../enums/index';
-import { Column, DataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, SlickDataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const containerId = 'demo-container';
@@ -13,7 +13,7 @@ const template = `<div id="${containerId}"></div>`;
 
 const dataViewStub = {
   refresh: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const gridOptionMock = {
   autoCommitEdit: false,

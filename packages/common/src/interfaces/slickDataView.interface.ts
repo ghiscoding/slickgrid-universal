@@ -3,7 +3,7 @@ import { PagingInfo } from './pagingInfo.interface';
 import { SlickEvent } from './slickEvent.interface';
 import { SlickGrid } from './slickGrid.interface';
 
-export interface DataView {
+export interface SlickDataView {
   // --
   // Available Methods
 
@@ -63,7 +63,7 @@ export interface DataView {
   getGrouping(): Grouping[];
 
   /** Get current Grouping groups */
-  getGroups(): any[];
+  getGroups<T = any>(): T[];
 
   /** Get the DataView Id property name to use (defaults to "Id" but could be customized to something else when instantiating the DataView) */
   getIdPropertyName(): string;
@@ -81,7 +81,7 @@ export interface DataView {
   getItemByIdx: <T = any>(idx: number) => T;
 
   /** Get row index in the dataset by its Id */
-  getIdxById(id: string | number): number;
+  getIdxById(id: string | number): number | undefined;
 
   /** Get item metadata at specific index */
   getItemMetadata(index: number): any;
@@ -93,10 +93,10 @@ export interface DataView {
   getPagingInfo(): PagingInfo;
 
   /** Get row number of an item in the dataset */
-  getRowByItem(item: any): number;
+  getRowByItem(item: any): number | undefined;
 
   /** Get row number of an item in the dataset by its Id */
-  getRowById(id: string | number): number;
+  getRowById(id: string | number): number | undefined;
 
   /** Insert an item to the dataset before a specific index */
   insertItem(insertBefore: number, item: any): void;
@@ -145,7 +145,7 @@ export interface DataView {
   sortedUpdateItem(id: string | number, item: number): void;
 
   /** Get the sorted index of the item to search */
-  sortedIndex(searchItem: any): number;
+  sortedIndex(searchItem: any): number | undefined;
 
   /**
    * Wires the grid and the DataView together to keep row selection tied to item ids.
@@ -173,33 +173,40 @@ export interface DataView {
   updateIdxById(startingIndex: number): void;
 
   /** Update an item in the dataset by its Id */
-  updateItem(id: string | number, item: any): void;
+  updateItem<T = any>(id: string | number, item: T): void;
 
   // ---------------------------
   // Available DataView Events
   // ---------------------------
 
-  /** Event triggered when "setItems" function is called */
-  onSetItemsCalled: SlickEvent;
-
-  /** Event triggered when the dataset row count changes */
-  onRowCountChanged: SlickEvent;
-
-  /** Event triggered when any of the row got changed */
-  onRowsChanged: SlickEvent;
-
-  /** Event triggered when the  dataset row count changes OR any of the row got changed */
-  onRowsOrCountChanged: SlickEvent;
-
   /** Event triggered when before Paging Info got changed */
-  onBeforePagingInfoChanged: SlickEvent;
-
-  /** Event triggered while Paging Info is getting changed */
-  onPagingInfoChanged: SlickEvent;
+  onBeforePagingInfoChanged: SlickEvent<PagingInfo>;
 
   /** Event triggered while Grouping is Expanding */
-  onGroupExpanded: SlickEvent;
+  onGroupExpanded: SlickEvent<OnGroupExpandedEventArgs>;
 
   /** Event triggered while Grouping is Collapsing */
-  onGroupCollapsed: SlickEvent;
+  onGroupCollapsed: SlickEvent<OnGroupCollapsedEventArgs>;
+
+  /** Event triggered while Paging Info is getting changed */
+  onPagingInfoChanged: SlickEvent<PagingInfo>;
+
+  /** Event triggered when the dataset row count changes */
+  onRowCountChanged: SlickEvent<OnRowCountChangedEventArgs>;
+
+  /** Event triggered when any of the row got changed */
+  onRowsChanged: SlickEvent<OnRowsChangedEventArgs>;
+
+  /** Event triggered when the  dataset row count changes OR any of the row got changed */
+  onRowsOrCountChanged: SlickEvent<OnRowsOrCountChangedEventArgs>;
+
+  /** Event triggered when "setItems" function is called */
+  onSetItemsCalled: SlickEvent<OnSetItemsCalledEventArgs>;
 }
+
+export interface OnGroupExpandedEventArgs { level: number; groupingKey: string | number; }
+export interface OnGroupCollapsedEventArgs { level: number; groupingKey: string | number; }
+export interface OnRowCountChangedEventArgs { previous: number; current: number; dataView: SlickDataView; callingOnRowsChanged: boolean; }
+export interface OnRowsChangedEventArgs { rows: number[]; dataView: SlickDataView; calledOnRowCountChanged: boolean; }
+export interface OnRowsOrCountChangedEventArgs { rowsDiff: number[]; previousRowCount: number; currentRowCount: number; rowCountChanged: boolean; rowsChanged: boolean; dataView: SlickDataView; }
+export interface OnSetItemsCalledEventArgs { idProperty: string; }

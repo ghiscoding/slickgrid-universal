@@ -1,6 +1,6 @@
 import { SlickGrid } from './slickGrid.interface';
 
-export interface CheckboxSelector {
+export interface CheckboxSelectorOption {
   /** Defaults to "_checkbox_selector", you can provide a different column id used as the column header id */
   columnId?: string;
 

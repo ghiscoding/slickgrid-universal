@@ -8,10 +8,11 @@ import {
   BackendService,
   Column,
   CurrentFilter,
-  DataView,
+  SlickDataView,
   GridOption,
   SlickEventHandler,
   SlickGrid,
+  SlickNamespace,
 } from '../../interfaces/index';
 import { Filters } from '../../filters';
 import { FilterService } from '../filter.service';
@@ -28,7 +29,7 @@ const mockRefreshBackendDataset = jest.fn();
 utilities.refreshBackendDataset = mockRefreshBackendDataset;
 
 jest.mock('flatpickr', () => { });
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 const DOM_ELEMENT_ID = 'row-detail123';
 
 const gridOptionMock = {
@@ -51,7 +52,7 @@ const dataViewStub = {
   setFilter: jest.fn(),
   setFilterArgs: jest.fn(),
   sort: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const backendServiceStub = {
   buildQuery: jest.fn(),

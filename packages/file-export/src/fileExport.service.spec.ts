@@ -1,7 +1,6 @@
 import { FileExportService } from './fileExport.service';
 import {
   Column,
-  DataView,
   DelimiterType,
   FieldType,
   FileType,
@@ -11,6 +10,7 @@ import {
   GroupTotalFormatters,
   PubSubService,
   SharedService,
+  SlickDataView,
   SlickGrid,
   SortComparers,
   SortDirectionNumber,
@@ -49,7 +49,7 @@ const dataViewStub = {
   getItem: jest.fn(),
   getLength: jest.fn(),
   setGrouping: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const mockGridOptions = {
   enablePagination: true,

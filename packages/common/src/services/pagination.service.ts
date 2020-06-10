@@ -1,13 +1,10 @@
 import * as isequal_ from 'lodash.isequal';
 const isequal = isequal_; // patch to fix rollup to work
 
-import { BackendServiceApi, CurrentPagination, DataView, Pagination, ServicePagination, SlickGrid, Subscription, SlickEventData } from '../interfaces/index';
+import { BackendServiceApi, CurrentPagination, SlickDataView, Pagination, ServicePagination, SlickGrid, Subscription, SlickEventData, SlickNamespace } from '../interfaces/index';
 import { executeBackendProcessesCallback, onBackendError } from './backend-utilities';
 import { SharedService } from './shared.service';
 import { PubSubService } from './pubSub.service';
-
-// using external non-typed js libraries
-declare const Slick: any;
 
 export class PaginationService {
   private _initialized = false;
@@ -20,7 +17,6 @@ export class PaginationService {
   private _pageNumber = 1;
   private _totalItems = 0;
   private _availablePageSizes: number[];
-  private _eventHandler = new Slick.EventHandler();
   private _paginationOptions: Pagination;
   private _subscriptions: Subscription[] = [];
 
@@ -31,8 +27,8 @@ export class PaginationService {
   constructor(private pubSubService: PubSubService, private sharedService: SharedService) { }
 
   /** Getter of SlickGrid DataView object */
-  get dataView(): DataView {
-    return this.grid && this.grid.getData && this.grid.getData();
+  get dataView(): SlickDataView {
+    return (this.grid?.getData && this.grid.getData()) as SlickDataView;
   }
 
   set paginationOptions(paginationOptions: Pagination) {
@@ -123,9 +119,6 @@ export class PaginationService {
 
   dispose() {
     this._initialized = false;
-
-    // unsubscribe all SlickGrid events
-    this._eventHandler.unsubscribeAll();
 
     // also unsubscribe all Subscriptions
     this.pubSubService.unsubscribeAll(this._subscriptions);

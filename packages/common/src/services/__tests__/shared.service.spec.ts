@@ -1,6 +1,6 @@
 import { SharedService } from '../shared.service';
 import { PubSubService } from '../pubSub.service';
-import { Column, CurrentPagination, DataView, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, CurrentPagination, SlickDataView, GridOption, SlickGrid } from '../../interfaces/index';
 import { ExcelExportService } from '../excelExport.service';
 
 jest.mock('flatpickr', () => { });
@@ -8,7 +8,7 @@ jest.mock('flatpickr', () => { });
 const dataviewStub = {
   onRowCountChanged: jest.fn(),
   onRowsChanged: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const gridStub = {
   autosizeColumns: jest.fn(),

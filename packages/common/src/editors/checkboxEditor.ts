@@ -70,7 +70,7 @@ export class CheckboxEditor implements Editor {
     const columnId = this.columnDef && this.columnDef.id;
     const elm = document.querySelector(`.editor-checkbox.editor-${columnId}`);
     if (elm) {
-      elm.removeEventListener('click', () => { });
+      elm.removeEventListener('click', this.save);
     }
   }
 

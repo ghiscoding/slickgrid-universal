@@ -1,10 +1,10 @@
 import { HeaderButtonExtension } from '../headerButtonExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
-import { GridOption, HeaderButtonOnCommandArgs, SlickGrid } from '../../interfaces/index';
+import { GridOption, HeaderButtonOnCommandArgs, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 const gridStub = {
   getOptions: jest.fn(),
@@ -18,6 +18,7 @@ const mockAddon = jest.fn().mockImplementation(() => ({
 }));
 
 jest.mock('slickgrid/plugins/slick.headerbuttons', () => mockAddon);
+// @ts-ignore
 Slick.Plugins = {
   HeaderButtons: mockAddon
 };

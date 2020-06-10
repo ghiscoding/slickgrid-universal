@@ -1,10 +1,10 @@
-import { Column, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, GridOption, SlickGrid, SlickRowSelectionModel, SlickNamespace } from '../../interfaces/index';
 import { CheckboxSelectorExtension } from '../checkboxSelectorExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 const gridStub = {
   getOptions: jest.fn(),
@@ -21,9 +21,16 @@ const mockAddon = jest.fn().mockImplementation(() => ({
 }));
 
 const mockSelectionModel = jest.fn().mockImplementation(() => ({
+  pluginName: 'RowSelectionModel',
+  constructor: jest.fn(),
   init: jest.fn(),
-  destroy: jest.fn()
-}));
+  destroy: jest.fn(),
+  getSelectedRanges: jest.fn(),
+  setSelectedRanges: jest.fn(),
+  getSelectedRows: jest.fn(),
+  setSelectedRows: jest.fn(),
+  onSelectedRangesChanged: new Slick.Event(),
+} as SlickRowSelectionModel));
 
 jest.mock('slickgrid/plugins/slick.checkboxselectcolumn', () => mockAddon);
 Slick.CheckboxSelectColumn = mockAddon;
@@ -79,8 +86,8 @@ describe('checkboxSelectorExtension', () => {
       expect(instance).toBeTruthy();
       expect(instance).toEqual(addonInstance);
       expect(selectionModel).not.toBeNull();
-      expect(mockAddon).toHaveBeenCalledWith({});
-      expect(mockSelectionModel).toHaveBeenCalledWith({});
+      expect(mockAddon).toHaveBeenCalledWith(undefined);
+      expect(mockSelectionModel).toHaveBeenCalledWith(undefined);
       expect(pluginSpy).toHaveBeenCalledWith(instance);
     });
 
@@ -94,9 +101,9 @@ describe('checkboxSelectorExtension', () => {
 
       expect(selectionModel).not.toBeNull();
       expect(selectionModel2).not.toBeNull();
-      expect(mockAddon).toHaveBeenCalledWith({});
+      expect(mockAddon).toHaveBeenCalledWith(undefined);
       expect(selectionSpy).toHaveBeenCalled();
-      expect(mockSelectionModel).toHaveBeenCalledWith({});
+      expect(mockSelectionModel).toHaveBeenCalledWith(undefined);
       expect(pluginSpy).toHaveBeenCalledWith(instance);
     });
 
@@ -162,16 +169,17 @@ describe('checkboxSelectorExtension', () => {
       const selectionModelOptions = { ...gridOptionsMock, preselectedRows: [0], rowSelectionOptions: { selectActiveRow: true } };
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(selectionModelOptions);
       const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'registerPlugin');
-      const selectionSpy = jest.spyOn(SharedService.prototype.grid, 'getSelectionModel').mockReturnValue(true);
+      // @ts-ignore
+      const selectionSpy = jest.spyOn(SharedService.prototype.grid, 'getSelectionModel').mockReturnValue(mockSelectionModel);
 
       const instance = extension.create(columnsMock, gridOptionsMock);
       const rowSpy = jest.spyOn(instance, 'selectRows');
       const selectionModel = extension.register();
 
       expect(selectionModel).not.toBeNull();
-      expect(mockAddon).toHaveBeenCalledWith({});
+      expect(mockAddon).toHaveBeenCalledWith(undefined);
       expect(selectionSpy).toHaveBeenCalled();
-      expect(mockSelectionModel).toHaveBeenCalledWith({});
+      expect(mockSelectionModel).toHaveBeenCalledWith(undefined);
       expect(pluginSpy).toHaveBeenCalledWith(instance);
       setTimeout(() => {
         expect(rowSpy).toHaveBeenCalledWith(selectionModelOptions.preselectedRows);

@@ -2,9 +2,9 @@ import { RowMoveManagerExtension } from '../rowMoveManagerExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { Column, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 const gridStub = {
   getOptions: jest.fn(),
@@ -226,14 +226,14 @@ describe('rowMoveManagerExtension', () => {
 
       const instance = extension.create(columnsMock, gridOptionsMock);
       extension.register();
-      instance.onBeforeMoveRows.notify({ insertBefore: 3, rows: [1] }, new Slick.EventData(), gridStub);
+      instance.onBeforeMoveRows.notify({ insertBefore: 3, rows: [1], grid: gridStub }, new Slick.EventData(), gridStub);
 
       expect(handlerSpy).toHaveBeenCalledTimes(2);
       expect(handlerSpy).toHaveBeenCalledWith(
         { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
         expect.anything()
       );
-      expect(onBeforeSpy).toHaveBeenCalledWith(expect.anything(), { insertBefore: 3, rows: [1] });
+      expect(onBeforeSpy).toHaveBeenCalledWith(expect.anything(), { insertBefore: 3, rows: [1], grid: gridStub });
       expect(onMoveSpy).not.toHaveBeenCalled();
     });
 
@@ -244,14 +244,14 @@ describe('rowMoveManagerExtension', () => {
 
       const instance = extension.create(columnsMock, gridOptionsMock);
       extension.register();
-      instance.onMoveRows.notify({ insertBefore: 3, rows: [1] }, new Slick.EventData(), gridStub);
+      instance.onMoveRows.notify({ insertBefore: 3, rows: [1], grid: gridStub }, new Slick.EventData(), gridStub);
 
       expect(handlerSpy).toHaveBeenCalledTimes(2);
       expect(handlerSpy).toHaveBeenCalledWith(
         { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
         expect.anything()
       );
-      expect(onMoveSpy).toHaveBeenCalledWith(expect.anything(), { insertBefore: 3, rows: [1] });
+      expect(onMoveSpy).toHaveBeenCalledWith(expect.anything(), { insertBefore: 3, rows: [1], grid: gridStub });
       expect(onBeforeSpy).not.toHaveBeenCalled();
     });
   });

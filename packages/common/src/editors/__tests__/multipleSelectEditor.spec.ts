@@ -4,7 +4,7 @@ import 'multiple-select-adapted';
 import { Editors } from '../index';
 import { MultipleSelectEditor } from '../multipleSelectEditor';
 import { CollectionService } from '../../services/collection.service';
-import { Column, DataView, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, SlickDataView, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const containerId = 'demo-container';
@@ -14,7 +14,7 @@ const template = `<div id="${containerId}"></div>`;
 
 const dataViewStub = {
   refresh: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const gridOptionMock = {
   autoCommitEdit: false,

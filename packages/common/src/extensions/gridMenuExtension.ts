@@ -1,14 +1,15 @@
 import { Constants } from '../constants';
 import {
-  Column,
   Extension,
+  GetSlickEventType,
   GridOption,
   GridMenu,
   GridMenuItem,
   Locale,
-  MenuCommandItemCallbackArgs,
+  SlickEventData,
   SlickEventHandler,
-  SlickGrid,
+  SlickGridMenu,
+  SlickNamespace,
 } from '../interfaces/index';
 import {
   DelimiterType,
@@ -26,11 +27,11 @@ import { refreshBackendDataset } from '../services/backend-utilities';
 import { getTranslationPrefix } from '../services/utilities';
 
 // using external non-typed js libraries
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 declare const $: any;
 
 export class GridMenuExtension implements Extension {
-  private _addon: any;
+  private _addon: SlickGridMenu | null;
   private _areVisibleColumnDifferent = false;
   private _eventHandler: SlickEventHandler;
   private _locales: Locale;
@@ -62,12 +63,12 @@ export class GridMenuExtension implements Extension {
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
-  getAddonInstance() {
+  getAddonInstance(): SlickGridMenu | null {
     return this._addon;
   }
 
   /** Register the 3rd party addon (plugin) */
-  register(): any {
+  register(): SlickGridMenu | null {
     if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
@@ -97,52 +98,71 @@ export class GridMenuExtension implements Extension {
         if (this.sharedService.gridOptions.gridMenu.onExtensionRegistered) {
           this.sharedService.gridOptions.gridMenu.onExtensionRegistered(this._addon);
         }
-        if (this.sharedService.gridOptions.gridMenu && typeof this.sharedService.gridOptions.gridMenu.onBeforeMenuShow === 'function') {
-          this._eventHandler.subscribe(this._addon.onBeforeMenuShow, (e: any, args: { grid: SlickGrid; menu: any; columns: Column[] }) => {
-            if (this.sharedService.gridOptions.gridMenu && this.sharedService.gridOptions.gridMenu.onBeforeMenuShow) {
-              this.sharedService.gridOptions.gridMenu.onBeforeMenuShow(e, args);
-            }
-          });
-        }
-        if (this.sharedService.gridOptions.gridMenu && typeof this.sharedService.gridOptions.gridMenu.onAfterMenuShow === 'function') {
-          this._eventHandler.subscribe(this._addon.onAfterMenuShow, (e: any, args: { grid: SlickGrid; menu: any; columns: Column[] }) => {
-            if (this.sharedService.gridOptions.gridMenu && this.sharedService.gridOptions.gridMenu.onAfterMenuShow) {
-              this.sharedService.gridOptions.gridMenu.onAfterMenuShow(e, args);
-            }
-          });
-        }
-        this._eventHandler.subscribe(this._addon.onColumnsChanged, (e: any, args: { grid: SlickGrid; allColumns: Column[]; columns: Column[]; }) => {
-          this._areVisibleColumnDifferent = true;
-          if (this.sharedService.gridOptions.gridMenu && typeof this.sharedService.gridOptions.gridMenu.onColumnsChanged === 'function') {
-            this.sharedService.gridOptions.gridMenu.onColumnsChanged(e, args);
-          }
-          if (args && Array.isArray(args.columns) && args.columns.length > this.sharedService.visibleColumns.length) {
-            this.sharedService.visibleColumns = args.columns;
-          }
-        });
-        this._eventHandler.subscribe(this._addon.onCommand, (e: any, args: MenuCommandItemCallbackArgs) => {
-          this.executeGridMenuInternalCustomCommands(e, args);
-          if (this.sharedService.gridOptions.gridMenu && typeof this.sharedService.gridOptions.gridMenu.onCommand === 'function') {
-            this.sharedService.gridOptions.gridMenu.onCommand(e, args);
-          }
-        });
-        this._eventHandler.subscribe(this._addon.onMenuClose, (e: any, args: { grid: SlickGrid; menu: any; allColumns: Column[], visibleColumns: Column[] }) => {
-          if (this.sharedService.gridOptions.gridMenu && typeof this.sharedService.gridOptions.gridMenu.onMenuClose === 'function') {
-            this.sharedService.gridOptions.gridMenu.onMenuClose(e, args);
-          }
 
-          // we also want to resize the columns if the user decided to hide certain column(s)
-          if (this.sharedService.grid && typeof this.sharedService.grid.autosizeColumns === 'function') {
-            // make sure that the grid still exist (by looking if the Grid UID is found in the DOM tree)
-            const gridUid = this.sharedService.grid.getUID();
-            if (this._areVisibleColumnDifferent && gridUid && $(`.${gridUid}`).length > 0) {
-              if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableAutoSizeColumns) {
-                this.sharedService.grid.autosizeColumns();
+        if (this.sharedService.gridOptions.gridMenu && typeof this.sharedService.gridOptions.gridMenu.onBeforeMenuShow === 'function') {
+          const onBeforeMenuShowHandler = this._addon.onBeforeMenuShow;
+          if (onBeforeMenuShowHandler) {
+            (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMenuShowHandler>>).subscribe(onBeforeMenuShowHandler, (e, args) => {
+              if (this.sharedService.gridOptions.gridMenu && this.sharedService.gridOptions.gridMenu.onBeforeMenuShow) {
+                this.sharedService.gridOptions.gridMenu.onBeforeMenuShow(e, args);
               }
-              this._areVisibleColumnDifferent = false;
-            }
+            });
           }
-        });
+        }
+
+        if (this.sharedService.gridOptions.gridMenu && typeof this.sharedService.gridOptions.gridMenu.onAfterMenuShow === 'function') {
+          const onAfterMenuShowHandler = this._addon.onAfterMenuShow;
+          if (onAfterMenuShowHandler) {
+            (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onAfterMenuShowHandler>>).subscribe(onAfterMenuShowHandler, (e, args) => {
+              if (this.sharedService.gridOptions.gridMenu && this.sharedService.gridOptions.gridMenu.onAfterMenuShow) {
+                this.sharedService.gridOptions.gridMenu.onAfterMenuShow(e, args);
+              }
+            });
+          }
+        }
+
+        const onColumnsChangedHandler = this._addon.onColumnsChanged;
+        if (onColumnsChangedHandler) {
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onColumnsChangedHandler>>).subscribe(onColumnsChangedHandler, (e, args) => {
+            this._areVisibleColumnDifferent = true;
+            if (this.sharedService.gridOptions.gridMenu && typeof this.sharedService.gridOptions.gridMenu.onColumnsChanged === 'function') {
+              this.sharedService.gridOptions.gridMenu.onColumnsChanged(e, args);
+            }
+            if (args && Array.isArray(args.columns) && args.columns.length > this.sharedService.visibleColumns.length) {
+              this.sharedService.visibleColumns = args.columns;
+            }
+          });
+        }
+
+        const onCommandHandler = this._addon.onCommand;
+        if (onCommandHandler) {
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCommandHandler>>).subscribe(onCommandHandler, (e, args) => {
+            this.executeGridMenuInternalCustomCommands(e, args);
+            if (this.sharedService.gridOptions.gridMenu && typeof this.sharedService.gridOptions.gridMenu.onCommand === 'function') {
+              this.sharedService.gridOptions.gridMenu.onCommand(e, args);
+            }
+          });
+        }
+        const onMenuCloseHandler = this._addon.onMenuClose;
+        if (onMenuCloseHandler) {
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onMenuCloseHandler>>).subscribe(onMenuCloseHandler, (e, args) => {
+            if (this.sharedService.gridOptions.gridMenu && typeof this.sharedService.gridOptions.gridMenu.onMenuClose === 'function') {
+              this.sharedService.gridOptions.gridMenu.onMenuClose(e, args);
+            }
+
+            // we also want to resize the columns if the user decided to hide certain column(s)
+            if (this.sharedService.grid && typeof this.sharedService.grid.autosizeColumns === 'function') {
+              // make sure that the grid still exist (by looking if the Grid UID is found in the DOM tree)
+              const gridUid = this.sharedService.grid.getUID();
+              if (this._areVisibleColumnDifferent && gridUid && $(`.${gridUid}`).length > 0) {
+                if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableAutoSizeColumns) {
+                  this.sharedService.grid.autosizeColumns();
+                }
+                this._areVisibleColumnDifferent = false;
+              }
+            }
+          });
+        }
       }
       return this._addon;
     }
@@ -158,8 +178,10 @@ export class GridMenuExtension implements Extension {
     refreshBackendDataset(this.sharedService.gridOptions);
   }
 
-  showGridMenu(e: Event) {
-    this._addon.showGridMenu(e);
+  showGridMenu(e: SlickEventData) {
+    if (this._addon) {
+      this._addon.showGridMenu(e);
+    }
   }
 
   /** Translate the Grid Menu titles and column picker */

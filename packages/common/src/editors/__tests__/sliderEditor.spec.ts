@@ -1,6 +1,6 @@
 import { Editors } from '../index';
 import { SliderEditor } from '../sliderEditor';
-import { Column, DataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, SlickDataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
 
 const containerId = 'demo-container';
 
@@ -9,7 +9,7 @@ const template = `<div id="${containerId}"></div>`;
 
 const dataViewStub = {
   refresh: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const gridOptionMock = {
   autoCommitEdit: false,
