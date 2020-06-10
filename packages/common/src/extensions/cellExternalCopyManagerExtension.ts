@@ -74,7 +74,9 @@ export class CellExternalCopyManagerExtension implements Extension {
       this._addonOptions = { ...this.getDefaultOptions(), ...this.sharedService.gridOptions.excelCopyBufferOptions } as ExcelCopyBufferOption;
       this.sharedService.grid.setSelectionModel(new Slick.CellSelectionModel() as SlickCellSelectionModel);
       this._addon = new Slick.CellExternalCopyManager(this._addonOptions);
-      this.sharedService.grid.registerPlugin(this._addon);
+      if (this._addon) {
+        this.sharedService.grid.registerPlugin<SlickCellExternalCopyManager>(this._addon);
+      }
 
       // hook to all possible events
       if (this.sharedService.grid && this.sharedService.gridOptions.excelCopyBufferOptions) {

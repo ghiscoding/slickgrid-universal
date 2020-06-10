@@ -1,9 +1,10 @@
 import { FormatterResultObject } from './formatterResultObject.interface';
+import { SlickCheckboxSelectColumn } from './slickCheckboxSelectColumn.interface';
 
 export interface GroupItemMetadataProviderOption {
   checkboxSelect: boolean;
   checkboxSelectCssClass: string;
-  checkboxSelectPlugin: any; // TODO replace by SlickCheckboxSelect plugin
+  checkboxSelectPlugin: SlickCheckboxSelectColumn;
   groupCssClass: string;
   groupTitleCssClass: string;
   totalsCssClass: string;

@@ -80,7 +80,9 @@ export class HeaderMenuExtension implements Extension {
         this.sharedService.gridOptions.headerMenu = this.addHeaderMenuCustomCommands(this.sharedService.gridOptions, this.sharedService.columnDefinitions);
       }
       this._addon = new Slick.Plugins.HeaderMenu(this.sharedService.gridOptions.headerMenu);
-      this.sharedService.grid.registerPlugin(this._addon);
+      if (this._addon) {
+        this.sharedService.grid.registerPlugin<SlickHeaderMenu>(this._addon);
+      }
 
       // hook all events
       if (this._addon && this.sharedService.grid && this.sharedService.gridOptions.headerMenu) {

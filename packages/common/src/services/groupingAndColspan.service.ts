@@ -5,6 +5,7 @@ import {
   SlickEventHandler,
   SlickGrid,
   SlickNamespace,
+  SlickResizer,
 } from './../interfaces/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 
@@ -47,7 +48,7 @@ export class GroupingAndColspanService {
    */
   init(grid: SlickGrid) {
     this._grid = grid;
-    const resizerPlugin = grid.getPluginByName('Resizer');
+    const resizerPlugin = grid.getPluginByName<SlickResizer>('Resizer');
 
     if (grid && this._gridOptions) {
       // When dealing with Pre-Header Grouping colspan, we need to re-create the pre-header in multiple occasions

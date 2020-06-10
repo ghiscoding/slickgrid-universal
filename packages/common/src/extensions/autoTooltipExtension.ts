@@ -30,7 +30,9 @@ export class AutoTooltipExtension implements Extension {
 
       const options = this.sharedService.gridOptions.autoTooltipOptions;
       this._addon = new Slick.AutoTooltips(options);
-      this.sharedService.grid.registerPlugin(this._addon);
+      if (this._addon) {
+        this.sharedService.grid.registerPlugin<SlickAutoTooltips>(this._addon);
+      }
 
       return this._addon;
     }

@@ -1,6 +1,7 @@
 import {
   DraggableGroupingOption,
   Grouping,
+  GroupingGetterFunction,
   SlickEvent,
   SlickGrid,
 } from './index';
@@ -25,7 +26,7 @@ export interface SlickDraggableGrouping {
   getSetupColumnReorder?: () => void;
 
   /** provide option to set default grouping on loading */
-  setDroppedGroups?: (groupingInfo: Grouping[]) => void;
+  setDroppedGroups?: (groupingInfo: Array<string | GroupingGetterFunction> | string) => void;
 
   // --
   // Events

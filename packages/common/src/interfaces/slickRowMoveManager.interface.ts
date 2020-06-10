@@ -5,17 +5,17 @@ import {
   SlickGrid,
 } from './index';
 
-/** A plugin that allows to move some rows with drag & drop */
+/** A plugin that allows to move/reorganize some rows with drag & drop */
 export interface SlickRowMoveManager {
   pluginName: 'RowMoveManager',
 
   /** Constructor of the 3rd party plugin, user can optionally pass some options to the plugin */
   constructor: (options?: RowMoveManagerOption) => void;
 
-  /** initialize the selection model */
+  /** initialize the 3rd party plugin */
   init(grid: SlickGrid): void;
 
-  /** destroy the selection model */
+  /** destroy the 3rd party plugin */
   destroy(): void;
 
   /** Getter of the grid Column Definition for the checkbox selector column */

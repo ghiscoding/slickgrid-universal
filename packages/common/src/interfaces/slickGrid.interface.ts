@@ -1,3 +1,4 @@
+import { SlickPluginList } from '../enums';
 import {
   Column,
   ColumnSort,
@@ -208,7 +209,7 @@ export interface SlickGrid {
   getOptions(): GridOption;
 
   /** Get a Plugin (addon) by its name */
-  getPluginByName(name: string): any; // TODO replace by key {plugin list}
+  getPluginByName<T = keyof SlickPluginList>(name: string): T;
 
   /** Get the Pre-Header Panel DOM node element */
   getPreHeaderPanel(): HTMLElement;
@@ -310,7 +311,7 @@ export interface SlickGrid {
   render(): void;
 
   /** Register an external Plugin (addon) */
-  registerPlugin(plugin: any): void;
+  registerPlugin<T = SlickPluginList>(plugin: T): void;
 
   /**
    * Removes an "overlay" of CSS classes from cell DOM elements. See setCellCssStyles for more.
@@ -379,7 +380,7 @@ export interface SlickGrid {
    * @param newData New databinding source using a regular JavaScript array.. or a custom object exposing getItem(index) and getLength() functions.
    * @param scrollToTop If true, the grid will reset the vertical scroll position to the top of the grid.
    */
-  setData(newData: any | any[], scrollToTop: boolean): void;
+  setData<T = any>(newData: T | T[], scrollToTop: boolean): void;
 
   /** Set the Footer Visibility and optionally enable/disable animation (enabled by default) */
   setFooterRowVisibility(visible: boolean, animate?: boolean): void;
@@ -406,7 +407,7 @@ export interface SlickGrid {
    * Unregisters a current selection model and registers a new one. See the definition of SelectionModel for more information.
    * @selectionModel A SelectionModel.
    */
-  setSelectionModel(selectionModel: SlickCellSelectionModel | SlickRowSelectionModel): void;		// todo: don't know the type of the event data type
+  setSelectionModel(selectionModel: SlickCellSelectionModel | SlickRowSelectionModel): void;
 
   /**
    * Accepts a columnId string and an ascending boolean. Applies a sort glyph in either ascending or descending form to the header of the column. Note that this does not actually sort the column. It only adds the sort glyph to the header.
@@ -425,7 +426,7 @@ export interface SlickGrid {
   setTopPanelVisibility(visible: boolean, animate?: boolean): void;
 
   /** Unregister an external Plugin (addon) */
-  unregisterPlugin(plugin: any): void;
+  unregisterPlugin(plugin: SlickPluginList): void;
 
   /** Update a specific cell by its row and column index */
   updateCell(row: number, cell: number): void;

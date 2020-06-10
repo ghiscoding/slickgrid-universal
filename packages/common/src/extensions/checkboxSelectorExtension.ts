@@ -56,9 +56,9 @@ export class CheckboxSelectorExtension implements Extension {
 
   /** Register the 3rd party addon (plugin) */
   register(rowSelectionPlugin?: SlickRowSelectionModel): SlickRowSelectionModel | null {
-    if (this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
+    if (this._addon && this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
       // the plugin has to be created BEFORE the grid (else it behaves oddly), but we can only watch grid events AFTER the grid is created
-      this.sharedService.grid.registerPlugin(this._addon);
+      this.sharedService.grid.registerPlugin<SlickCheckboxSelectColumn>(this._addon);
 
       // this also requires the Row Selection Model to be registered as well
       if (!rowSelectionPlugin || !this.sharedService.grid.getSelectionModel()) {

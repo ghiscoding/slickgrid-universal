@@ -34,6 +34,7 @@ import {
   HeaderMenuExtension,
   HeaderButtonExtension,
   RowSelectionExtension,
+  SlickResizer,
 
   // services
   FilterFactory,
@@ -85,7 +86,7 @@ export class VanillaGridBundle {
   metrics: Metrics;
   customDataView = false;
   groupItemMetadataProvider: SlickGroupItemMetadataProvider;
-  resizerPlugin: any;
+  resizerPlugin: SlickResizer;
 
   // extensions
   extensionUtility: ExtensionUtility;
@@ -379,7 +380,7 @@ export class VanillaGridBundle {
       autoResizeOptions.bottomPadding += this._gridOptions?.customFooterOptions?.footerHeight ?? DATAGRID_FOOTER_HEIGHT;
     }
     this.resizerPlugin = new Slick.Plugins.Resizer(autoResizeOptions, fixedGridDimensions);
-    this.grid.registerPlugin(this.resizerPlugin);
+    this.grid.registerPlugin<SlickResizer>(this.resizerPlugin);
     if (this._gridOptions.enableAutoResize) {
       await this.resizerPlugin.resizeGrid();
     }

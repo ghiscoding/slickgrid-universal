@@ -10,6 +10,7 @@ import {
   GroupingGetterFunction,
   GroupTotalFormatters,
   SlickDataView,
+  SlickDraggableGrouping,
   SlickGrid,
   SortComparers,
   SortDirectionNumber,
@@ -32,7 +33,7 @@ const myCustomTitleValidator = (value, args) => {
 };
 
 const customEditableInputFormatter = (row, cell, value, columnDef, dataContext, grid) => {
-  const gridOptions = grid && grid.getOptions && grid.getOptions()
+  const gridOptions = grid && grid.getOptions && grid.getOptions();
   const isEditableLine = gridOptions.editable && columnDef.editor;
   value = (value === null || value === undefined) ? '' : value;
   return isEditableLine ? { text: value, addClasses: 'editable-field', toolTip: 'Click to Edit' } : value;
@@ -58,7 +59,7 @@ export class Example3 {
   slickgridLwc;
   slickerGridInstance;
   durationOrderByCount = false;
-  draggableGroupingPlugin: any;
+  draggableGroupingPlugin: SlickDraggableGrouping;
   selectedGroupingFields: Array<string | GroupingGetterFunction> = ['', '', ''];
 
   attached() {

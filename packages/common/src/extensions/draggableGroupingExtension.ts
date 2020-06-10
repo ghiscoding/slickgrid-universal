@@ -51,8 +51,8 @@ export class DraggableGroupingExtension implements Extension {
 
   /** Register the 3rd party addon (plugin) */
   register(): SlickDraggableGrouping | null {
-    if (this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
-      this.sharedService.grid.registerPlugin(this._addon);
+    if (this._addon && this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
+      this.sharedService.grid.registerPlugin<SlickDraggableGrouping>(this._addon);
 
       // Events
       if (this.sharedService.grid && this.sharedService.gridOptions.draggableGrouping) {

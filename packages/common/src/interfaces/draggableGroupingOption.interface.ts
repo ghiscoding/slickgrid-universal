@@ -1,4 +1,4 @@
-import { Grouping } from './grouping.interface';
+import { GroupingGetterFunction } from './grouping.interface';
 
 export interface DraggableGroupingOption {
   /** an extra CSS class to add to the delete button (default undefined), if deleteIconCssClass && deleteIconImage undefined then slick-groupby-remove-image class will be added */
@@ -20,7 +20,7 @@ export interface DraggableGroupingOption {
   // Methods
   // ---------
   /** provide option to set default grouping on loading */
-  setDroppedGroups?: (groupingInfo: Grouping[]) => void;
+  setDroppedGroups?: (groupingInfo: Array<string | GroupingGetterFunction> | string) => void;
 
   /** provide option to clear grouping */
   clearDroppedGroups?: () => void;

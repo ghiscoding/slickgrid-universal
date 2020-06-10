@@ -316,7 +316,7 @@ export class DualInputEditor implements Editor {
   }
 
   getDecimalPlaces(position: 'leftInput' | 'rightInput'): number {
-    const defaultDecimalPlaces = 0; // TODO move into a constant
+    const defaultDecimalPlaces = 0;
 
     // returns the number of fixed decimal places or null
     const positionSide = position === 'leftInput' ? 'leftInput' : 'rightInput';

@@ -39,7 +39,9 @@ export class HeaderButtonExtension implements Extension {
       this.extensionUtility.loadExtensionDynamically(ExtensionName.headerButton);
 
       this._addon = new Slick.Plugins.HeaderButtons(this.sharedService.gridOptions.headerButton);
-      this.sharedService.grid.registerPlugin(this._addon);
+      if (this._addon) {
+        this.sharedService.grid.registerPlugin<SlickHeaderButtons>(this._addon);
+      }
 
       // hook all events
       if (this._addon && this.sharedService.grid && this.sharedService.gridOptions.headerButton) {

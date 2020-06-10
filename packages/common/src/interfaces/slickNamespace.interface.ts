@@ -1,5 +1,4 @@
 import {
-  AutoResizeOption,
   AutoTooltipOption,
   CellMenuOption,
   CheckboxSelectorOption,
@@ -9,8 +8,11 @@ import {
   DraggableGroupingOption,
   ExcelCopyBufferOption,
   GridOption,
+  GridSize,
   HeaderButtonOption,
   HeaderMenuOption,
+  ResizerOption,
+  RowDetailViewOption,
   RowMoveManagerOption,
   RowSelectionModelOption,
   SlickAutoTooltips,
@@ -34,6 +36,8 @@ import {
   SlickHeaderButtons,
   SlickHeaderMenu,
   SlickRange,
+  SlickResizer,
+  SlickRowDetailView,
   SlickRowMoveManager,
   SlickRowSelectionModel,
 } from './index';
@@ -119,8 +123,8 @@ export interface SlickNamespace {
   /** RowSelectionModel is a utility to select a range of rows, this is used by at least the CheckboxSelectColumn plugin */
   RowSelectionModel: new (options?: RowSelectionModelOption) => SlickRowSelectionModel;
 
-  /** A plugin that allows to move some rows with drag & drop */
-  RowMoveManager: new (options?: RowMoveManagerOption) => SlickRowMoveManager; // TODO replace
+  /** A plugin that allows to move/reorganize some rows with drag & drop */
+  RowMoveManager: new (options?: RowMoveManagerOption) => SlickRowMoveManager;
 
   // all of the controls are under the Controls namespace
   Controls: {
@@ -146,9 +150,9 @@ export interface SlickNamespace {
     HeaderMenu: new (options?: HeaderMenuOption) => SlickHeaderMenu;
 
     /** A plugin to add row detail panel */
-    RowDetailView: any; // TODO replace by interface
+    RowDetailView: new (options?: RowDetailViewOption) => SlickRowDetailView;
 
     /** Resizer is a 3rd party plugin (addon) that can be used to auto-resize a grid and/or resize it with fixed dimensions. */
-    Resizer: new (autoResizeOptions?: AutoResizeOption, fixedGridDimensions?: { height?: number; width?: number; }) => any; // TODO replace by interface
+    Resizer: new (options?: ResizerOption, fixedGridDimensions?: GridSize) => SlickResizer;
   };
 }

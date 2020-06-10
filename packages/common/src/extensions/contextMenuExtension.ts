@@ -76,7 +76,9 @@ export class ContextMenuExtension implements Extension {
       this.extensionUtility.sortItems(contextMenu.optionItems || [], 'positionOrder');
 
       this._addon = new Slick.Plugins.ContextMenu(contextMenu);
-      this.sharedService.grid.registerPlugin(this._addon);
+      if (this._addon) {
+        this.sharedService.grid.registerPlugin<SlickContextMenu>(this._addon);
+      }
 
       // translate the item keys when necessary
       if (this.sharedService.gridOptions.enableTranslate) {

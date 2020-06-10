@@ -50,16 +50,6 @@ describe('groupItemMetaProviderExtension', () => {
       expect(pluginSpy).toHaveBeenCalledWith(instance);
     });
 
-    it('should register the addon with empty object when "groupItemMetadataProvider" is null', () => {
-      const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'registerPlugin');
-      sharedService.groupItemMetadataProvider = undefined;
-
-      const instance = extension.register();
-
-      expect(pluginSpy).toHaveBeenCalledWith(undefined);
-      expect(pluginSpy).toHaveBeenCalledWith(instance);
-    });
-
     it('should dispose of the addon', () => {
       const instance = extension.register();
       const destroySpy = jest.spyOn(instance, 'destroy');

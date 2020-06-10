@@ -74,7 +74,9 @@ export class CellMenuExtension implements Extension {
       this.sortMenuItems(this.sharedService.allColumns);
 
       this._addon = new Slick.Plugins.CellMenu(this.sharedService.gridOptions.cellMenu);
-      this.sharedService.grid.registerPlugin(this._addon);
+      if (this._addon) {
+        this.sharedService.grid.registerPlugin<SlickCellMenu>(this._addon);
+      }
 
       // hook all events
       if (this.sharedService.grid && this.sharedService.gridOptions.cellMenu) {
