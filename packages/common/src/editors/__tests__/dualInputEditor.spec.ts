@@ -1,9 +1,9 @@
 import { Editors } from '../index';
 import { DualInputEditor } from '../dualInputEditor';
 import { KeyCode } from '../../enums/index';
-import { Column, ColumnEditorDualInput, SlickDataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, ColumnEditorDualInput, SlickDataView, EditorArgs, EditorArguments, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 const KEY_CHAR_0 = 48;
 const containerId = 'demo-container';
 
@@ -580,7 +580,7 @@ describe('DualInputEditor', () => {
 
         expect(editor.eventHandler).toBeTruthy();
         expect(editor.isValueSaveCalled).toBe(false);
-        gridStub.onValidationError.notify({ row: 0, cell: 0, validationResults: { valid: false, msg: 'Field is required' } });
+        gridStub.onValidationError.notify({ row: 0, cell: 0, validationResults: { valid: false, msg: 'Field is required' }, grid: gridStub, column: {} as Column, editor, cellNode: document.createElement('div') });
         expect(editor.isValueSaveCalled).toBe(true);
       });
 
