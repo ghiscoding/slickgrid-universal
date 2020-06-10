@@ -11,6 +11,7 @@ import {
   GridOption,
   HeaderButtonOption,
   HeaderMenuOption,
+  RowMoveManagerOption,
   RowSelectionModelOption,
   SlickAutoTooltips,
   SlickCellExternalCopyManager,
@@ -33,6 +34,7 @@ import {
   SlickHeaderButtons,
   SlickHeaderMenu,
   SlickRange,
+  SlickRowMoveManager,
   SlickRowSelectionModel,
 } from './index';
 
@@ -118,7 +120,7 @@ export interface SlickNamespace {
   RowSelectionModel: new (options?: RowSelectionModelOption) => SlickRowSelectionModel;
 
   /** A plugin that allows to move some rows with drag & drop */
-  RowMoveManager: any; // TODO replace
+  RowMoveManager: new (options?: RowMoveManagerOption) => SlickRowMoveManager; // TODO replace
 
   // all of the controls are under the Controls namespace
   Controls: {

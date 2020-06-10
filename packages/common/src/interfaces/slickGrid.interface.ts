@@ -522,7 +522,7 @@ export interface OnHeaderContextMenuEventArgs extends SlickGridEventData { colum
 export interface OnHeaderMouseEventArgs extends SlickGridEventData { column: Column; }
 export interface OnHeaderRowCellRenderedEventArgs extends SlickGridEventData { node: HTMLElement; column: Column; }
 export interface OnKeyDownEventArgs extends SlickGridEventData { row: number; cell: number; }
-export interface OnValidationErrorEventArgs extends SlickGridEventData { editor: Editor; cellNode: HTMLElement; validationResults: EditorValidatorOutput; row: number; cell: number; column: Column; }
+export interface OnValidationErrorEventArgs extends SlickGridEventData { row: number; cell: number; validationResults: EditorValidatorOutput; column: Column; editor: Editor; cellNode: HTMLElement; }
 export interface OnRenderedEventArgs extends SlickGridEventData { startRow: number; endRow: number; }
 export interface OnSelectedRowsChangedEventArgs extends SlickGridEventData { rows: number[], previousSelectedRows: number[] }
 export interface OnScrollEventArgs extends SlickGridEventData { scrollLeft: number; scrollTop: number; }
