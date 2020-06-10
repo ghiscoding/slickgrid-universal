@@ -244,23 +244,6 @@ export class ExtensionService {
           this._extensionList.push({ name: ExtensionName.rowMoveManager, class: this.rowMoveManagerExtension, instance });
         }
       }
-
-      // manually register other plugins
-      if (this.sharedService.gridOptions.registerPlugins !== undefined) {
-        const grid = this.sharedService.grid;
-        const gridOptions = this.sharedService.gridOptions;
-
-        if (Array.isArray(gridOptions.registerPlugins)) {
-          gridOptions.registerPlugins.forEach((plugin) => {
-            grid.registerPlugin(plugin);
-            this._extensionList.push({ name: ExtensionName.noname, class: null, instance: grid.getPluginByName(plugin.name) });
-          });
-        } else {
-          const plugin = gridOptions.registerPlugins;
-          grid.registerPlugin(plugin);
-          this._extensionList.push({ name: ExtensionName.noname, class: null, instance: grid.getPluginByName(plugin.name) });
-        }
-      }
     }
   }
 

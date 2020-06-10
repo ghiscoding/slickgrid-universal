@@ -386,9 +386,6 @@ export interface GridOption {
   /** Preselect certain rows by their row index ("enableCheckboxSelector" must be enabled) */
   preselectedRows?: number[];
 
-  /** Register 1 or more Slick Plugins */
-  registerPlugins?: any | any[];
-
   /** Register any external Services like the ExcelExportService, FileExportService, ... */
   registerExternalServices?: any[];
 
