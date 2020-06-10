@@ -1,11 +1,11 @@
-import { CellRange, EditCommand, Formatter, GridOption, SlickGrid, } from '../../interfaces/index';
+import { CellRange, EditCommand, Formatter, GridOption, SlickGrid, SlickNamespace, } from '../../interfaces/index';
 import { Formatters } from '../../formatters';
 import { CellExternalCopyManagerExtension } from '../cellExternalCopyManagerExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 jest.mock('flatpickr', () => { });
 
 const gridStub = {

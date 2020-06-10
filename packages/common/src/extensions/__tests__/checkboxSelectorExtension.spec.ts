@@ -1,10 +1,10 @@
-import { Column, GridOption, SlickGrid, SlickRowSelectionModel } from '../../interfaces/index';
+import { Column, GridOption, SlickGrid, SlickRowSelectionModel, SlickNamespace } from '../../interfaces/index';
 import { CheckboxSelectorExtension } from '../checkboxSelectorExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 const gridStub = {
   getOptions: jest.fn(),

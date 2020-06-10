@@ -5,11 +5,11 @@ import { ExtensionUtility } from '../extensionUtility';
 import { Formatters } from '../../formatters';
 import { SharedService } from '../../services/shared.service';
 import { DelimiterType, FileType } from '../../enums/index';
-import { Column, SlickDataView, GridOption, MenuCommandItem, SlickGrid } from '../../interfaces/index';
+import { Column, SlickDataView, GridOption, MenuCommandItem, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { ExcelExportService, FileExportService, TreeDataService } from '../../services';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 const excelExportServiceStub = {
   className: 'ExcelExportService',
@@ -67,6 +67,7 @@ const mockAddon = jest.fn().mockImplementation(() => ({
 }));
 
 jest.mock('slickgrid/plugins/slick.contextmenu', () => mockAddon);
+// @ts-ignore
 Slick.Plugins = {
   ContextMenu: mockAddon
 };

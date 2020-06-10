@@ -2,10 +2,10 @@ import 'jest-extended';
 
 import { PaginationService } from './../pagination.service';
 import { SharedService } from '../shared.service';
-import { Column, SlickDataView, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, SlickDataView, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import * as utilities from '../backend-utilities';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 const fnCallbacks = {};
 const mockPubSub = {

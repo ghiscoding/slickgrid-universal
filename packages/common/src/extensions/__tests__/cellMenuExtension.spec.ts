@@ -1,10 +1,10 @@
 import { CellMenuExtension } from '../cellMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
-import { Column, SlickDataView, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, SlickDataView, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 const dataViewStub = {
   refresh: jest.fn(),
@@ -36,6 +36,7 @@ const mockAddon = jest.fn().mockImplementation(() => ({
 }));
 
 jest.mock('slickgrid/plugins/slick.cellmenu', () => mockAddon);
+// @ts-ignore
 Slick.Plugins = {
   CellMenu: mockAddon
 };

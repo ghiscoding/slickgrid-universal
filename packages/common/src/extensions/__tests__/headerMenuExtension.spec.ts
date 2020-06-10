@@ -1,11 +1,11 @@
 import { HeaderMenuExtension } from '../headerMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
-import { Column, ColumnSort, SlickDataView, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, ColumnSort, SlickDataView, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { FilterService, SortService, PubSubService } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 jest.mock('flatpickr', () => { });
 
 const filterServiceStub = {
@@ -55,6 +55,7 @@ const mockAddon = jest.fn().mockImplementation(() => ({
 }));
 
 jest.mock('slickgrid/plugins/slick.headermenu', () => mockAddon);
+// @ts-ignore
 Slick.Plugins = {
   HeaderMenu: mockAddon
 };

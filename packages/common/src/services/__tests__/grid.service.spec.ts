@@ -1,9 +1,9 @@
 import 'jest-extended';
 
 import { FilterService, GridService, ExtensionService, PubSubService, SharedService, SortService } from '../index';
-import { GridOption, CellArgs, Column, OnEventArgs, SlickGrid, SlickDataView } from '../../interfaces/index';
+import { GridOption, CellArgs, Column, OnEventArgs, SlickGrid, SlickDataView, SlickNamespace } from '../../interfaces/index';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 const mockSelectionModel = jest.fn().mockImplementation(() => ({
   init: jest.fn(),

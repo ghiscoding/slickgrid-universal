@@ -1,10 +1,10 @@
-import { Column, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { ColumnPickerExtension } from '../columnPickerExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 const gridStub = {
   getOptions: jest.fn(),
@@ -19,6 +19,7 @@ const mockAddon = jest.fn().mockImplementation(() => ({
 }));
 
 jest.mock('slickgrid/controls/slick.columnpicker', () => mockAddon);
+// @ts-ignore
 Slick.Controls = {
   ColumnPicker: mockAddon
 };

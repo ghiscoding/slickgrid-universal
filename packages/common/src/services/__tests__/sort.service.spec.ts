@@ -10,6 +10,7 @@ import {
   SlickEventHandler,
   SlickGrid,
   SingleColumnSort,
+  SlickNamespace,
 } from '../../interfaces/index';
 import { SortComparers } from '../../sortComparers';
 import { SortService } from '../sort.service';
@@ -17,7 +18,7 @@ import * as utilities from '../../services/backend-utilities';
 import { PubSubService } from '../pubSub.service';
 import { SharedService } from '../shared.service';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 const mockRefreshBackendDataset = jest.fn();
 // @ts-ignore

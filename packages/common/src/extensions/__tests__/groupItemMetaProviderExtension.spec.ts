@@ -1,8 +1,9 @@
 import { GroupItemMetaProviderExtension } from '../groupItemMetaProviderExtension';
 import { SharedService } from '../../services/shared.service';
 import { SlickGrid } from '../../interfaces/slickGrid.interface';
+import { SlickNamespace } from '../../interfaces';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 const gridStub = {
   getOptions: jest.fn(),

@@ -1,12 +1,12 @@
 import { DelimiterType, FileType } from '../../enums/index';
-import { Column, SlickDataView, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, SlickDataView, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { GridMenuExtension } from '../gridMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { ExcelExportService, FileExportService, FilterService, SortService } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 jest.mock('flatpickr', () => { });
 
 const gridId = 'grid1';
@@ -61,6 +61,7 @@ const mockAddon = jest.fn().mockImplementation(() => ({
 }));
 
 jest.mock('slickgrid/controls/slick.gridmenu', () => mockAddon);
+// @ts-ignore
 Slick.Controls = {
   GridMenu: mockAddon
 };

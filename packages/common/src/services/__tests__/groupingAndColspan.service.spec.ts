@@ -1,8 +1,8 @@
 import { GroupingAndColspanService } from '../groupingAndColspan.service';
-import { Column, SlickDataView, GridOption, SlickEventHandler, SlickGrid } from '../../interfaces/index';
+import { Column, SlickDataView, GridOption, SlickEventHandler, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 const gridId = 'grid1';
 const gridUid = 'slickgrid_124343';
 const containerId = 'demo-container';
@@ -135,7 +135,7 @@ describe('GroupingAndColspanService', () => {
       const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
 
       service.init(gridStub);
-      gridStub.onSort.notify({ impactedColumns: mockColumns }, new Slick.EventData(), gridStub);
+      gridStub.onSort.notify({ columnId: 'lastName', sortAsc: true, sortCol: mockColumns[0] }, new Slick.EventData(), gridStub);
       jest.runAllTimers(); // fast-forward timer
 
       expect(spy).toHaveBeenCalledTimes(2);
@@ -147,7 +147,7 @@ describe('GroupingAndColspanService', () => {
       const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
 
       service.init(gridStub);
-      gridStub.onColumnsResized.notify({}, new Slick.EventData(), gridStub);
+      gridStub.onColumnsResized.notify({ triggeredByColumn: 'lastName', grid: gridStub }, new Slick.EventData(), gridStub);
       jest.runAllTimers(); // fast-forward timer
 
       expect(spy).toHaveBeenCalledTimes(2);
@@ -159,7 +159,7 @@ describe('GroupingAndColspanService', () => {
       const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
 
       service.init(gridStub);
-      gridStub.onColumnsReordered.notify({}, new Slick.EventData(), gridStub);
+      gridStub.onColumnsReordered.notify({ impactedColumns: [], grid: gridStub }, new Slick.EventData(), gridStub);
       jest.runAllTimers(); // fast-forward timer
 
       expect(spy).toHaveBeenCalledTimes(2);
@@ -171,7 +171,7 @@ describe('GroupingAndColspanService', () => {
       const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
 
       service.init(gridStub);
-      dataViewStub.onRowCountChanged.notify({ previous: 1, current: 2, dataView: dataViewStub, callingOnRowsChanged: 1 }, new Slick.EventData(), gridStub);
+      dataViewStub.onRowCountChanged.notify({ previous: 1, current: 2, dataView: dataViewStub, callingOnRowsChanged: false }, new Slick.EventData(), gridStub);
       jest.runAllTimers(); // fast-forward timer
 
       expect(spy).toHaveBeenCalledTimes(2);
