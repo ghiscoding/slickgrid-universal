@@ -1,10 +1,10 @@
-import { Grouping, GridOption, SlickGrid } from '../../interfaces/index';
+import { Grouping, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { DraggableGroupingExtension } from '../draggableGroupingExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 const gridStub = {
   getOptions: jest.fn(),

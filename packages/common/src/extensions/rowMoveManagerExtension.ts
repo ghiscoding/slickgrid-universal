@@ -1,13 +1,22 @@
 import { ExtensionName } from '../enums/index';
-import { CellArgs, Extension, SlickEventHandler, Column, GridOption } from '../interfaces/index';
+import {
+  Column,
+  Extension,
+  GetSlickEventType,
+  GridOption,
+  SlickEventHandler,
+  SlickNamespace,
+  SlickRowMoveManager,
+  SlickRowSelectionModel,
+} from '../interfaces/index';
 import { ExtensionUtility } from './extensionUtility';
 import { SharedService } from '../services/shared.service';
 
 // using external non-typed js libraries
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 export class RowMoveManagerExtension implements Extension {
-  private _addon: any;
+  private _addon: SlickRowMoveManager | null;
   private _eventHandler: SlickEventHandler;
 
   constructor(private extensionUtility: ExtensionUtility, private sharedService: SharedService) {
@@ -31,10 +40,10 @@ export class RowMoveManagerExtension implements Extension {
    * Create the plugin before the Grid creation to avoid having odd behaviors.
    * Mostly because the column definitions might change after the grid creation, so we want to make sure to add it before then
    */
-  create(columnDefinitions: Column[], gridOptions: GridOption) {
+  create(columnDefinitions: Column[], gridOptions: GridOption): SlickRowMoveManager | null {
     if (Array.isArray(columnDefinitions) && gridOptions) {
       this._addon = this.loadAddonWhenNotExists(columnDefinitions, gridOptions);
-      const newRowMoveColumn: Column = this._addon.getColumnDefinition();
+      const newRowMoveColumn: Column | undefined = this._addon?.getColumnDefinition();
       const rowMoveColDef = Array.isArray(columnDefinitions) && columnDefinitions.find((col: Column) => col && col.behavior === 'selectAndMove');
       const finalRowMoveColumn = rowMoveColDef ? rowMoveColDef : newRowMoveColumn;
 
@@ -48,7 +57,7 @@ export class RowMoveManagerExtension implements Extension {
       }
 
       // only add the new column if it doesn't already exist
-      if (!rowMoveColDef) {
+      if (!rowMoveColDef && finalRowMoveColumn) {
         // column index position in the grid
         const columnPosition = gridOptions?.rowMoveManager?.columnIndexPosition || 0;
         if (columnPosition > 0) {
@@ -62,7 +71,7 @@ export class RowMoveManagerExtension implements Extension {
     return null;
   }
 
-  loadAddonWhenNotExists(columnDefinitions: Column[], gridOptions: GridOption): any {
+  loadAddonWhenNotExists(columnDefinitions: Column[], gridOptions: GridOption): SlickRowMoveManager | null {
     if (Array.isArray(columnDefinitions) && gridOptions) {
       // dynamically import the SlickGrid plugin (addon) with RequireJS
       this.extensionUtility.loadExtensionDynamically(ExtensionName.rowMoveManager);
@@ -75,40 +84,48 @@ export class RowMoveManagerExtension implements Extension {
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
-  getAddonInstance() {
+  getAddonInstance(): SlickRowMoveManager | null {
     return this._addon;
   }
 
   /** Register the 3rd party addon (plugin) */
-  register(rowSelectionPlugin?: any): any {
-    if (this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
+  register(rowSelectionPlugin?: SlickRowSelectionModel): SlickRowMoveManager | null {
+    if (this._addon && this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
       // dynamically import the SlickGrid plugin (addon) with RequireJS
       this.extensionUtility.loadExtensionDynamically(ExtensionName.rowMoveManager);
 
       // this also requires the Row Selection Model to be registered as well
       if (!rowSelectionPlugin || !this.sharedService.grid.getSelectionModel()) {
         this.extensionUtility.loadExtensionDynamically(ExtensionName.rowSelection);
-        rowSelectionPlugin = new Slick.RowSelectionModel(this.sharedService.gridOptions.rowSelectionOptions || {});
+        rowSelectionPlugin = new Slick.RowSelectionModel(this.sharedService.gridOptions.rowSelectionOptions);
         this.sharedService.grid.setSelectionModel(rowSelectionPlugin);
       }
 
-      this.sharedService.grid.registerPlugin(this._addon);
+      this.sharedService.grid.registerPlugin<SlickRowMoveManager>(this._addon);
 
       // hook all events
-      if (this.sharedService.grid && this.sharedService.gridOptions.rowMoveManager) {
+      if (this._addon && this.sharedService.grid && this.sharedService.gridOptions.rowMoveManager) {
         if (this.sharedService.gridOptions.rowMoveManager.onExtensionRegistered) {
           this.sharedService.gridOptions.rowMoveManager.onExtensionRegistered(this._addon);
         }
-        this._eventHandler.subscribe(this._addon.onBeforeMoveRows, (e: any, args: CellArgs) => {
-          if (this.sharedService.gridOptions.rowMoveManager && typeof this.sharedService.gridOptions.rowMoveManager.onBeforeMoveRows === 'function') {
-            this.sharedService.gridOptions.rowMoveManager.onBeforeMoveRows(e, args);
-          }
-        });
-        this._eventHandler.subscribe(this._addon.onMoveRows, (e: any, args: CellArgs) => {
-          if (this.sharedService.gridOptions.rowMoveManager && typeof this.sharedService.gridOptions.rowMoveManager.onMoveRows === 'function') {
-            this.sharedService.gridOptions.rowMoveManager.onMoveRows(e, args);
-          }
-        });
+
+        const onBeforeMoveRowsHandler = this._addon.onBeforeMoveRows;
+        if (onBeforeMoveRowsHandler) {
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMoveRowsHandler>>).subscribe(onBeforeMoveRowsHandler, (e, args) => {
+            if (this.sharedService.gridOptions.rowMoveManager && typeof this.sharedService.gridOptions.rowMoveManager.onBeforeMoveRows === 'function') {
+              this.sharedService.gridOptions.rowMoveManager.onBeforeMoveRows(e, args);
+            }
+          });
+        }
+
+        const onMoveRowsHandler = this._addon.onMoveRows;
+        if (onMoveRowsHandler) {
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onMoveRowsHandler>>).subscribe(onMoveRowsHandler, (e, args) => {
+            if (this.sharedService.gridOptions.rowMoveManager && typeof this.sharedService.gridOptions.rowMoveManager.onMoveRows === 'function') {
+              this.sharedService.gridOptions.rowMoveManager.onMoveRows(e, args);
+            }
+          });
+        }
       }
       return this._addon;
     }

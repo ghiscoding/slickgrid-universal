@@ -1,7 +1,7 @@
 import { Column } from './column.interface';
 import { SlickGrid } from './slickGrid.interface';
 
-export interface MenuCallbackArgs {
+export interface MenuCallbackArgs<T = any> {
   /** Cell or column index */
   cell?: number;
 
@@ -12,8 +12,8 @@ export interface MenuCallbackArgs {
   grid: SlickGrid;
 
   /** Cell Column definition */
-  column: Column;
+  column: Column<T>;
 
   /** Cell Data Context(data object) */
-  dataContext?: any;
+  dataContext?: T;
 }

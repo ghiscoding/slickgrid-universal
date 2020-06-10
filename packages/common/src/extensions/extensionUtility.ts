@@ -140,7 +140,7 @@ export class ExtensionUtility {
   }
 
   /** Translate the an array of items from an input key and assign to the output key */
-  translateItems(items: any[], inputKey: string, outputKey: string) {
+  translateItems<T = any>(items: T[], inputKey: string, outputKey: string) {
     if (Array.isArray(items)) {
       for (const item of items) {
         if (item[inputKey]) {

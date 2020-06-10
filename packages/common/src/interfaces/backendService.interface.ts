@@ -1,7 +1,6 @@
 import {
   BackendServiceOption,
   ColumnFilters,
-  ColumnSort,
   CurrentFilter,
   CurrentPagination,
   CurrentSorter,
@@ -9,6 +8,7 @@ import {
   MultiColumnSort,
   Pagination,
   PaginationChangedArgs,
+  SingleColumnSort,
 } from './index';
 
 export interface BackendService {
@@ -49,7 +49,7 @@ export interface BackendService {
   updatePagination?: (newPage: number, pageSize: number) => void;
 
   /** Update the Sorters options with a set of new options */
-  updateSorters?: (sortColumns?: ColumnSort[], presetSorters?: CurrentSorter[]) => void;
+  updateSorters?: (sortColumns?: Array<SingleColumnSort>, presetSorters?: CurrentSorter[]) => void;
 
   /** Update the backend service options */
   updateOptions: (serviceOptions?: Partial<BackendServiceOption>) => void;
@@ -65,5 +65,5 @@ export interface BackendService {
   processOnPaginationChanged: (event: Event | undefined, args: PaginationChangedArgs) => string;
 
   /** Execute when any of the sorters changed */
-  processOnSortChanged: (event: Event | undefined, args: ColumnSort | MultiColumnSort) => string;
+  processOnSortChanged: (event: Event | undefined, args: SingleColumnSort | MultiColumnSort) => string;
 }

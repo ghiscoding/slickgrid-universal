@@ -20,6 +20,7 @@ import {
   OperatorType,
   Pagination,
   PaginationChangedArgs,
+  SingleColumnSort,
   SortDirection,
   SortDirectionString,
 } from '@slickgrid-universal/common';
@@ -351,8 +352,8 @@ export class GraphqlService implements BackendService {
    *    }
    *  }
    */
-  processOnSortChanged(event: Event, args: ColumnSort | MultiColumnSort): string {
-    const sortColumns = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ sortCol: (args as ColumnSort).sortCol, sortAsc: (args as ColumnSort).sortAsc });
+  processOnSortChanged(event: Event, args: SingleColumnSort | MultiColumnSort): string {
+    const sortColumns = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ columnId: (args as ColumnSort).sortCol.id, sortCol: (args as ColumnSort).sortCol, sortAsc: (args as ColumnSort).sortAsc });
 
     // loop through all columns to inspect sorters & set the query
     this.updateSorters(sortColumns);

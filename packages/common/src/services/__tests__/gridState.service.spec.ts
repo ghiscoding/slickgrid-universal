@@ -16,14 +16,16 @@ import {
   CurrentFilter,
   Column,
   CurrentColumn,
-  DataView,
+  SlickDataView,
   GridStateChange,
   GridState,
   SlickGrid,
+  SlickNamespace,
+  SlickRowSelectionModel,
 } from '../../interfaces/index';
 import { SharedService } from '../shared.service';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 const fnCallbacks = {};
 const mockPubSub = {
@@ -52,7 +54,7 @@ const dataViewStub = {
   mapRowsToIds: jest.fn(),
   onBeforePagingInfoChanged: new Slick.Event(),
   onPagingInfoChanged: new Slick.Event(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const gridStub = {
   autosizeColumns: jest.fn(),
@@ -78,6 +80,18 @@ const filterServiceStub = {
 const sortServiceStub = {
 } as SortService;
 
+const rowSelectionModelStub = {
+  pluginName: 'RowSelectionModel',
+  constructor: jest.fn(),
+  init: jest.fn(),
+  destroy: jest.fn(),
+  getSelectedRanges: jest.fn(),
+  setSelectedRanges: jest.fn(),
+  getSelectedRows: jest.fn(),
+  setSelectedRows: jest.fn(),
+  onSelectedRangesChanged: new Slick.Event(),
+} as SlickRowSelectionModel;
+
 describe('GridStateService', () => {
   let service: GridStateService;
   let sharedService: SharedService;
@@ -86,7 +100,7 @@ describe('GridStateService', () => {
     sharedService = new SharedService();
     service = new GridStateService(extensionServiceStub, filterServiceStub, mockPubSub, sharedService, sortServiceStub);
     service.init(gridStub);
-    jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(true);
+    jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
   });
 
   afterEach(() => {
@@ -113,7 +127,7 @@ describe('GridStateService', () => {
       const pubSubSpy = jest.spyOn(mockPubSub, 'subscribe');
 
       service.init(gridStub);
-      jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(true);
+      jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
 
       expect(gridStateSpy).toHaveBeenCalled();
       expect(pubSubSpy).toHaveBeenCalledTimes(5);
@@ -159,7 +173,7 @@ describe('GridStateService', () => {
         const extensionSpy = jest.spyOn(extensionServiceStub, 'getExtensionByName').mockReturnValue(extensionMock);
 
         service.init(gridStub);
-        jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(true);
+        jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
         slickgridEvent.notify({ columns: columnsMock }, new Slick.EventData(), gridStub);
 
         expect(gridStateSpy).toHaveBeenCalled();
@@ -183,8 +197,8 @@ describe('GridStateService', () => {
         const gridStateSpy = jest.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
 
         service.init(gridStub);
-        jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(true);
-        gridStub.onColumnsReordered.notify({ impactedColumns: columnsMock }, new Slick.EventData(), gridStub);
+        jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
+        gridStub.onColumnsReordered.notify({ impactedColumns: columnsMock, grid: gridStub }, new Slick.EventData(), gridStub);
         service.resetColumns();
 
         expect(gridColumnSpy).toHaveBeenCalled();
@@ -391,7 +405,7 @@ describe('GridStateService', () => {
 
         service.init(gridStub);
         service.selectedRowDataContextIds = mockRowIds;
-        gridStub.onSelectedRowsChanged.notify({ rows: mockRowIndexes, previousSelectedRows: [] });
+        gridStub.onSelectedRowsChanged.notify({ rows: mockRowIndexes, previousSelectedRows: [], grid: gridStub });
 
         setTimeout(() => {
           expect(mapRowsSpy).toHaveBeenCalled();
@@ -442,7 +456,7 @@ describe('GridStateService', () => {
         // the regular event flow is 1.onBeforePagingInfoChanged, 2.onPagingInfoChanged then 3.onSelectedRowsChanged
         dataViewStub.onBeforePagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: 0 });
         dataViewStub.onPagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: (paginationMock.pageNumber - 1) });
-        gridStub.onSelectedRowsChanged.notify({ rows: mockRowIndexes, previousSelectedRows: mockPreviousRowIndexes });
+        gridStub.onSelectedRowsChanged.notify({ rows: mockRowIndexes, previousSelectedRows: mockPreviousRowIndexes, grid: gridStub });
 
         setTimeout(() => {
           expect(mapRowsSpy).toHaveBeenCalled();
@@ -515,7 +529,7 @@ describe('GridStateService', () => {
         // the regular event flow is 1.onBeforePagingInfoChanged, 2.onPagingInfoChanged then 3.onSelectedRowsChanged
         dataViewStub.onBeforePagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: 0 });
         // dataViewStub.onPagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: (paginationMock.pageNumber - 1) });
-        gridStub.onSelectedRowsChanged.notify({ rows: mockRowIndexes, previousSelectedRows: mockPreviousRowIndexes });
+        gridStub.onSelectedRowsChanged.notify({ rows: mockRowIndexes, previousSelectedRows: mockPreviousRowIndexes, grid: gridStub });
 
         setTimeout(() => {
           expect(mapRowsSpy).toHaveBeenCalled();
@@ -553,7 +567,7 @@ describe('GridStateService', () => {
         // the regular event flow is 1.onBeforePagingInfoChanged, 2.onPagingInfoChanged then 3.onSelectedRowsChanged
         dataViewStub.onBeforePagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: 0 });
         dataViewStub.onPagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: (paginationMock.pageNumber - 1) });
-        gridStub.onSelectedRowsChanged.notify({ rows: mockNewRowIndexes, previousSelectedRows: mockPreviousRowIndexes });
+        gridStub.onSelectedRowsChanged.notify({ rows: mockNewRowIndexes, previousSelectedRows: mockPreviousRowIndexes, grid: gridStub });
 
         setTimeout(() => {
           expect(mapRowsSpy).toHaveBeenCalled();
@@ -580,8 +594,8 @@ describe('GridStateService', () => {
         // the regular event flow is 1.onBeforePagingInfoChanged, 2.onPagingInfoChanged then 3.onSelectedRowsChanged
         dataViewStub.onBeforePagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: 0 });
         dataViewStub.onPagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: (paginationMock.pageNumber - 1) });
-        gridStub.onSelectedRowsChanged.notify({ rows: mockNewRowIndexes, previousSelectedRows: mockPreviousRowIndexes });
-        gridStub.onSelectedRowsChanged.notify({ rows: mockNewRowIndexes, previousSelectedRows: mockPreviousRowIndexes });
+        gridStub.onSelectedRowsChanged.notify({ rows: mockNewRowIndexes, previousSelectedRows: mockPreviousRowIndexes, grid: gridStub });
+        gridStub.onSelectedRowsChanged.notify({ rows: mockNewRowIndexes, previousSelectedRows: mockPreviousRowIndexes, grid: gridStub });
 
         setTimeout(() => {
           expect(mapRowsSpy).toHaveBeenCalled();

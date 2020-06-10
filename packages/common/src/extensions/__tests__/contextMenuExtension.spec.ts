@@ -5,11 +5,11 @@ import { ExtensionUtility } from '../extensionUtility';
 import { Formatters } from '../../formatters';
 import { SharedService } from '../../services/shared.service';
 import { DelimiterType, FileType } from '../../enums/index';
-import { Column, DataView, GridOption, MenuCommandItem, SlickGrid } from '../../interfaces/index';
+import { Column, SlickDataView, GridOption, MenuCommandItem, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { ExcelExportService, FileExportService, TreeDataService } from '../../services';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 const excelExportServiceStub = {
   className: 'ExcelExportService',
@@ -29,7 +29,7 @@ const dataViewStub = {
   getGrouping: jest.fn(),
   setGrouping: jest.fn(),
   setItems: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const gridStub = {
   autosizeColumns: jest.fn(),
@@ -67,6 +67,7 @@ const mockAddon = jest.fn().mockImplementation(() => ({
 }));
 
 jest.mock('slickgrid/plugins/slick.contextmenu', () => mockAddon);
+// @ts-ignore
 Slick.Plugins = {
   ContextMenu: mockAddon
 };
@@ -269,14 +270,14 @@ describe('contextMenuExtension', () => {
         const onOptionSpy = jest.spyOn(SharedService.prototype.gridOptions.contextMenu, 'onOptionSelected');
 
         const instance = extension.register();
-        instance.onCommand.notify({ grid: gridStub, command: 'help' }, new Slick.EventData(), gridStub);
+        instance.onCommand.notify({ item: { command: 'help' }, column: {} as Column, grid: gridStub, command: 'help' }, new Slick.EventData(), gridStub);
 
         expect(handlerSpy).toHaveBeenCalledTimes(5);
         expect(handlerSpy).toHaveBeenCalledWith(
           { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
           expect.anything()
         );
-        expect(onCommandSpy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, command: 'help' });
+        expect(onCommandSpy).toHaveBeenCalledWith(expect.anything(), { item: { command: 'help' }, column: {}, grid: gridStub, command: 'help' });
         expect(onOptionSpy).not.toHaveBeenCalled();
         expect(onb4CloseSpy).not.toHaveBeenCalled();
         expect(onb4ShowSpy).not.toHaveBeenCalled();
@@ -292,14 +293,14 @@ describe('contextMenuExtension', () => {
         const onOptionSpy = jest.spyOn(SharedService.prototype.gridOptions.contextMenu, 'onOptionSelected');
 
         const instance = extension.register();
-        instance.onOptionSelected.notify({ grid: gridStub, command: 'help' }, new Slick.EventData(), gridStub);
+        instance.onOptionSelected.notify({ item: { option: 'help' }, column: {} as Column, grid: gridStub, option: 'help' }, new Slick.EventData(), gridStub);
 
         expect(handlerSpy).toHaveBeenCalledTimes(5);
         expect(handlerSpy).toHaveBeenCalledWith(
           { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
           expect.anything()
         );
-        expect(onOptionSpy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, command: 'help' });
+        expect(onOptionSpy).toHaveBeenCalledWith(expect.anything(), { item: { option: 'help' }, column: {}, grid: gridStub, option: 'help' });
         expect(onCommandSpy).not.toHaveBeenCalled();
         expect(onb4CloseSpy).not.toHaveBeenCalled();
         expect(onb4ShowSpy).not.toHaveBeenCalled();

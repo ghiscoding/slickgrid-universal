@@ -1,8 +1,9 @@
 import { GroupItemMetaProviderExtension } from '../groupItemMetaProviderExtension';
 import { SharedService } from '../../services/shared.service';
 import { SlickGrid } from '../../interfaces/slickGrid.interface';
+import { SlickNamespace } from '../../interfaces';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 const gridStub = {
   getOptions: jest.fn(),
@@ -46,16 +47,6 @@ describe('groupItemMetaProviderExtension', () => {
       expect(instance).toBeTruthy();
       expect(instance).toEqual(addonInstance);
       expect(sharedService.groupItemMetadataProvider).toEqual(instance);
-      expect(pluginSpy).toHaveBeenCalledWith(instance);
-    });
-
-    it('should register the addon with empty object when "groupItemMetadataProvider" is null', () => {
-      const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'registerPlugin');
-      sharedService.groupItemMetadataProvider = undefined;
-
-      const instance = extension.register();
-
-      expect(pluginSpy).toHaveBeenCalledWith({});
       expect(pluginSpy).toHaveBeenCalledWith(instance);
     });
 

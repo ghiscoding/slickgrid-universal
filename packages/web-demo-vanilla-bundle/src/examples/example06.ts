@@ -1,12 +1,12 @@
 import {
   Column,
-  DataView,
   GridOption,
   FieldType,
   Filters,
   findItemInHierarchicalStructure,
   Formatter,
   Formatters,
+  SlickDataView,
   SlickGrid,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
@@ -20,7 +20,7 @@ export class Example6 {
   gridOptions: GridOption;
   datasetFlat: any[];
   datasetHierarchical = [];
-  dataViewObj: DataView;
+  dataViewObj: SlickDataView;
   gridObj: SlickGrid;
   slickgridLwc;
   slickerGridInstance;
@@ -109,7 +109,7 @@ export class Example6 {
     if (value === null || value === undefined || dataContext === undefined) {
       return '';
     }
-    const dataView = grid.getData();
+    const dataView = grid.getData() as DataView;
     const data = dataView.getItems();
     const identifierPropName = dataView.getIdPropertyName() || 'id';
     const idx = dataView.getIdxById(dataContext[identifierPropName]);

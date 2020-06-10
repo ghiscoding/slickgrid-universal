@@ -4,11 +4,13 @@ import {
   Column,
   ColumnSort,
   CurrentSorter,
-  DataView,
+  SlickDataView,
   GridOption,
   MultiColumnSort,
   SlickEventHandler,
   SlickGrid,
+  SingleColumnSort,
+  SlickNamespace,
 } from '../../interfaces/index';
 import { SortComparers } from '../../sortComparers';
 import { SortService } from '../sort.service';
@@ -16,7 +18,7 @@ import * as utilities from '../../services/backend-utilities';
 import { PubSubService } from '../pubSub.service';
 import { SharedService } from '../shared.service';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 const mockRefreshBackendDataset = jest.fn();
 // @ts-ignore
@@ -37,7 +39,7 @@ const dataViewStub = {
   sort: jest.fn(),
   reSort: jest.fn(),
   setItems: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const backendServiceStub = {
   buildQuery: jest.fn(),
@@ -97,11 +99,11 @@ describe('SortService', () => {
   });
 
   describe('clearSorting method', () => {
-    let mockSortedCol: ColumnSort;
+    let mockSortedCol: SingleColumnSort;
     const mockColumns = [{ id: 'lastName', field: 'lastName' }, { id: 'firstName', field: 'firstName' }] as Column[];
 
     beforeEach(() => {
-      mockSortedCol = { sortCol: { id: 'lastName', field: 'lastName', width: 100 }, sortAsc: true, grid: gridStub };
+      mockSortedCol = { multiColumnSort: false, columnId: 'lastName', sortCol: { id: 'lastName', field: 'lastName', width: 100 }, sortAsc: true, grid: gridStub };
       gridOptionMock.backendServiceApi = {
         service: backendServiceStub,
         process: () => new Promise((resolve) => resolve(jest.fn()))
@@ -189,7 +191,7 @@ describe('SortService', () => {
       const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
       const spyCurrentSort = jest.spyOn(service, 'getCurrentLocalSorters');
       const spyOnLocalSort = jest.spyOn(service, 'onLocalSortChanged');
-      const mockSortedCol = { sortCol: { id: 'lastName', field: 'lastName', width: 100 }, sortAsc: true } as ColumnSort;
+      const mockSortedCol = { columnId: 'lastName', sortCol: { id: 'lastName', field: 'lastName', width: 100 }, sortAsc: true } as ColumnSort;
 
       service.bindLocalOnSort(gridStub, dataViewStub);
       gridStub.onSort.notify(mockSortedCol, new Slick.EventData(), gridStub);
@@ -204,8 +206,8 @@ describe('SortService', () => {
       const spyCurrentSort = jest.spyOn(service, 'getCurrentLocalSorters');
       const spyOnLocalSort = jest.spyOn(service, 'onLocalSortChanged');
       const mockSortedCols: ColumnSort[] = [
-        { sortAsc: true, sortCol: { id: 'lastName', field: 'lastName', width: 100 } },
-        { sortAsc: false, sortCol: { id: 'firstName', field: 'firstName', width: 75 } }
+        { columnId: 'lastName', sortAsc: true, sortCol: { id: 'lastName', field: 'lastName', width: 100 } },
+        { columnId: 'firstName', sortAsc: false, sortCol: { id: 'firstName', field: 'firstName', width: 75 } }
       ];
 
       service.bindLocalOnSort(gridStub, dataViewStub);
@@ -237,7 +239,7 @@ describe('SortService', () => {
       const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
       const spyBackendCurrentSort = jest.spyOn(gridOptionMock.backendServiceApi.service, 'getCurrentSorters').mockReturnValue([expectedSortCol]);
       const spyBackendProcessSort = jest.spyOn(gridOptionMock.backendServiceApi.service, 'processOnSortChanged').mockReturnValue('backend query');
-      const mockSortedCol = { sortCol: mockColumn, sortAsc: true, grid: gridStub } as ColumnSort;
+      const mockSortedCol = { columnId: mockColumn.id, sortCol: mockColumn, sortAsc: true, grid: gridStub } as ColumnSort;
 
       service.bindBackendOnSort(gridStub, dataViewStub);
       gridStub.onSort.notify(mockSortedCol, new Slick.EventData(), gridStub);
@@ -254,8 +256,8 @@ describe('SortService', () => {
       const spyBackendCurrentSort = jest.spyOn(gridOptionMock.backendServiceApi.service, 'getCurrentSorters').mockReturnValue(expectedSortCols);
       const spyBackendProcessSort = jest.spyOn(gridOptionMock.backendServiceApi.service, 'processOnSortChanged').mockReturnValue('backend query');
       const mockSortedCols: ColumnSort[] = [
-        { sortAsc: true, sortCol: { id: 'lastName', field: 'lastName', width: 100 } },
-        { sortAsc: false, sortCol: { id: 'firstName', field: 'firstName', width: 75 } }
+        { columnId: 'lastName', sortAsc: true, sortCol: { id: 'lastName', field: 'lastName', width: 100 } },
+        { columnId: 'firstName', sortAsc: false, sortCol: { id: 'firstName', field: 'firstName', width: 75 } }
       ];
 
       service.bindBackendOnSort(gridStub, dataViewStub);
@@ -303,20 +305,20 @@ describe('SortService', () => {
     it('should throw an error when backend service is missing', () => {
       gridOptionMock.backendServiceApi.service = undefined;
       service.bindBackendOnSort(gridStub, dataViewStub);
-      expect(() => service.onBackendSortChanged(undefined, { grid: gridStub, sortCols: [] })).toThrowError('BackendServiceApi requires at least a "process" function and a "service" defined');
+      expect(() => service.onBackendSortChanged(undefined, { multiColumnSort: true, grid: gridStub, sortCols: [] })).toThrowError('BackendServiceApi requires at least a "process" function and a "service" defined');
     });
 
     it('should throw an error when backend "process" method is missing', () => {
       gridOptionMock.backendServiceApi.process = undefined;
       service.bindBackendOnSort(gridStub, dataViewStub);
-      expect(() => service.onBackendSortChanged(undefined, { grid: gridStub, sortCols: [] })).toThrowError('BackendServiceApi requires at least a "process" function and a "service" defined');
+      expect(() => service.onBackendSortChanged(undefined, { multiColumnSort: true, grid: gridStub, sortCols: [] })).toThrowError('BackendServiceApi requires at least a "process" function and a "service" defined');
     });
 
     it('should use an empty grid option object when grid "getOptions" method is not available', () => {
       gridStub.getOptions = undefined;
 
       service.bindBackendOnSort(gridStub, dataViewStub);
-      expect(() => service.onBackendSortChanged(undefined, { grid: gridStub, sortCols: [] })).toThrowError('BackendServiceApi requires at least a "process" function and a "service" defined');
+      expect(() => service.onBackendSortChanged(undefined, { multiColumnSort: true, grid: gridStub, sortCols: [] })).toThrowError('BackendServiceApi requires at least a "process" function and a "service" defined');
     });
 
     it('should execute the "onError" method when the Promise throws an error', (done) => {
@@ -342,7 +344,7 @@ describe('SortService', () => {
     const mockColumns = [{ id: 'firstName', field: 'firstName' }, { id: 'lastName', field: 'lastName' }] as Column[];
 
     beforeEach(() => {
-      mockSortedCol = { sortCol: { id: 'lastName', field: 'lastName', width: 100 }, sortAsc: true, grid: gridStub };
+      mockSortedCol = { columnId: 'lastName', sortCol: { id: 'lastName', field: 'lastName', width: 100 }, sortAsc: true };
       gridStub.getColumns = jest.fn();
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     });
@@ -365,25 +367,27 @@ describe('SortService', () => {
     });
 
     it('should return all current column sorts with their "sortCol" property', () => {
-      const mockSortCols = [{ columnId: 'firstName', sortAsc: true }];
+      const mockSortCols = [{ multiColumnSort: false, columnId: 'firstName', sortAsc: true, grid: gridStub }];
+      // @ts-ignore
       jest.spyOn(gridStub, 'getSortColumns').mockReturnValue(mockSortCols);
       jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(0);
 
       service.bindLocalOnSort(gridStub, dataViewStub);
       const columnSorts = service.getCurrentColumnSorts();
 
-      expect(columnSorts).toEqual([{ sortCol: { id: 'firstName', field: 'firstName' }, sortAsc: true }]);
+      expect(columnSorts).toEqual([{ columnId: 'firstName', sortCol: { id: 'firstName', field: 'firstName' }, sortAsc: true }]);
     });
 
     it('should return the second sorted column without the first column since it was an exclusion', () => {
       const mockSortCols = [{ columnId: 'firstName', sortAsc: true }, { columnId: 'lastName', sortAsc: false }];
+      // @ts-ignore
       jest.spyOn(gridStub, 'getSortColumns').mockReturnValue(mockSortCols);
       jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
 
       service.bindLocalOnSort(gridStub, dataViewStub);
       const columnSorts = service.getCurrentColumnSorts('firstName');
 
-      expect(columnSorts).toEqual([{ sortCol: { id: 'lastName', field: 'lastName' }, sortAsc: false }]);
+      expect(columnSorts).toEqual([{ columnId: 'lastName', sortCol: { id: 'lastName', field: 'lastName' }, sortAsc: false }]);
     });
   });
 
@@ -708,8 +712,8 @@ describe('SortService', () => {
       const spyOnLocalSort = jest.spyOn(service, 'onLocalSortChanged');
       const spyUpdateSorting = jest.spyOn(service, 'updateSorting');
       const mockSortedCols: ColumnSort[] = [
-        { sortAsc: true, sortCol: { id: 'lastName', field: 'lastName', width: 100 } },
-        { sortAsc: false, sortCol: { id: 'file', field: 'file', width: 75 } }
+        { columnId: 'lastName', sortAsc: true, sortCol: { id: 'lastName', field: 'lastName', width: 100 } },
+        { columnId: 'file', sortAsc: false, sortCol: { id: 'file', field: 'file', width: 75 } }
       ];
 
       service.bindLocalOnSort(gridStub, dataViewStub);
@@ -733,8 +737,8 @@ describe('SortService', () => {
       const spyOnLocalSort = jest.spyOn(service, 'onLocalSortChanged');
       const spyUpdateSorting = jest.spyOn(service, 'updateSorting');
       const mockSortedCols: ColumnSort[] = [
-        { sortAsc: true, sortCol: { id: 'lastName', field: 'lastName', width: 100 } },
-        { sortAsc: false, sortCol: { id: 'file', field: 'file', width: 75 } }
+        { columnId: 'lastName', sortAsc: true, sortCol: { id: 'lastName', field: 'lastName', width: 100 } },
+        { columnId: 'file', sortAsc: false, sortCol: { id: 'file', field: 'file', width: 75 } }
       ];
 
       service.bindLocalOnSort(gridStub, dataViewStub);
@@ -833,7 +837,7 @@ describe('SortService', () => {
         const spyCurrentSort = jest.spyOn(service, 'getCurrentLocalSorters');
         const spyOnLocalSort = jest.spyOn(service, 'onLocalSortChanged');
         const spyUpdateSorting = jest.spyOn(service, 'updateSorting');
-        const mockSortedCols: ColumnSort[] = [{ sortAsc: false, sortCol: { id: 'file', field: 'file' } }];
+        const mockSortedCols: ColumnSort[] = [{ columnId: 'file', sortAsc: false, sortCol: { id: 'file', field: 'file' } }];
 
         service.bindLocalOnSort(gridStub, dataViewStub);
         gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new Slick.EventData(), gridStub);

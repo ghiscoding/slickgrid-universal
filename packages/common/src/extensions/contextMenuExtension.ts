@@ -2,12 +2,13 @@ import {
   Column,
   ContextMenu,
   Extension,
+  GetSlickEventType,
   MenuCallbackArgs,
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
-  MenuOptionItemCallbackArgs,
+  SlickContextMenu,
   SlickEventHandler,
-  SlickGrid,
+  SlickNamespace,
 } from '../interfaces/index';
 import { DelimiterType, ExtensionName, FileType, } from '../enums/index';
 import { ExtensionUtility } from './extensionUtility';
@@ -17,10 +18,10 @@ import { getTranslationPrefix } from '../services/utilities';
 import { ExcelExportService, FileExportService, TranslaterService, TreeDataService } from '../services/index';
 
 // using external non-typed js libraries
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 export class ContextMenuExtension implements Extension {
-  private _addon: any;
+  private _addon: SlickContextMenu | null;
   private _eventHandler: SlickEventHandler;
   private _userOriginalContextMenu: ContextMenu;
 
@@ -50,12 +51,12 @@ export class ContextMenuExtension implements Extension {
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
-  getAddonInstance() {
+  getAddonInstance(): SlickContextMenu | null {
     return this._addon;
   }
 
   /** Register the 3rd party addon (plugin) */
-  register(): any {
+  register(): SlickContextMenu | null {
     if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
@@ -75,7 +76,9 @@ export class ContextMenuExtension implements Extension {
       this.extensionUtility.sortItems(contextMenu.optionItems || [], 'positionOrder');
 
       this._addon = new Slick.Plugins.ContextMenu(contextMenu);
-      this.sharedService.grid.registerPlugin(this._addon);
+      if (this._addon) {
+        this.sharedService.grid.registerPlugin<SlickContextMenu>(this._addon);
+      }
 
       // translate the item keys when necessary
       if (this.sharedService.gridOptions.enableTranslate) {
@@ -84,39 +87,44 @@ export class ContextMenuExtension implements Extension {
 
       // hook all events
       if (this.sharedService.grid && contextMenu) {
-        if (contextMenu.onExtensionRegistered) {
+        if (this._addon && contextMenu.onExtensionRegistered) {
           contextMenu.onExtensionRegistered(this._addon);
         }
         if (contextMenu && typeof contextMenu.onCommand === 'function') {
-          this._eventHandler.subscribe(this._addon.onCommand, (event: Event, args: MenuCommandItemCallbackArgs) => {
+          const onCommandHandler = this._addon.onCommand;
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCommandHandler>>).subscribe(onCommandHandler, (event, args) => {
             if (contextMenu.onCommand) {
               contextMenu.onCommand(event, args);
             }
           });
         }
         if (contextMenu && typeof contextMenu.onOptionSelected === 'function') {
-          this._eventHandler.subscribe(this._addon.onOptionSelected, (event: Event, args: MenuOptionItemCallbackArgs) => {
+          const onOptionSelectedHandler = this._addon.onOptionSelected;
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onOptionSelectedHandler>>).subscribe(onOptionSelectedHandler, (event, args) => {
             if (contextMenu.onOptionSelected) {
               contextMenu.onOptionSelected(event, args);
             }
           });
         }
         if (contextMenu && typeof contextMenu.onBeforeMenuShow === 'function') {
-          this._eventHandler.subscribe(this._addon.onBeforeMenuShow, (event: Event, args: { cell: number; row: number; grid: SlickGrid; }) => {
+          const onBeforeMenuShowHandler = this._addon.onBeforeMenuShow;
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMenuShowHandler>>).subscribe(onBeforeMenuShowHandler, (event, args) => {
             if (contextMenu.onBeforeMenuShow) {
               contextMenu.onBeforeMenuShow(event, args);
             }
           });
         }
         if (contextMenu && typeof contextMenu.onBeforeMenuClose === 'function') {
-          this._eventHandler.subscribe(this._addon.onBeforeMenuClose, (event: Event, args: { cell: number; row: number; grid: SlickGrid; menu: any; }) => {
+          const onBeforeMenuCloseHandler = this._addon.onBeforeMenuClose;
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMenuCloseHandler>>).subscribe(onBeforeMenuCloseHandler, (event, args) => {
             if (contextMenu.onBeforeMenuClose) {
               contextMenu.onBeforeMenuClose(event, args);
             }
           });
         }
         if (contextMenu && typeof contextMenu.onAfterMenuShow === 'function') {
-          this._eventHandler.subscribe(this._addon.onAfterMenuShow, (event: Event, args: { cell: number; row: number; grid: SlickGrid; }) => {
+          const onAfterMenuShowHandler = this._addon.onAfterMenuShow;
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onAfterMenuShowHandler>>).subscribe(onAfterMenuShowHandler, (event, args) => {
             if (contextMenu.onAfterMenuShow) {
               contextMenu.onAfterMenuShow(event, args);
             }
@@ -128,7 +136,7 @@ export class ContextMenuExtension implements Extension {
     return null;
   }
 
-  /** Translate the Cell Menu titles, we need to loop through all column definition to re-translate them */
+  /** Translate the Context Menu titles, we need to loop through all column definition to re-translate them */
   translateContextMenu() {
     if (this.sharedService && this.sharedService.gridOptions && this.sharedService.gridOptions.contextMenu) {
       const contextMenu = this.sharedService.gridOptions.contextMenu;

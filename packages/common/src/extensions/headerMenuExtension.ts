@@ -1,16 +1,17 @@
 import { Constants } from '../constants';
 import {
   Column,
-  ColumnSort,
   CurrentSorter,
   Extension,
+  GetSlickEventType,
   GridOption,
   HeaderMenu,
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
   Locale,
   SlickEventHandler,
-  SlickGrid,
+  SlickHeaderMenu,
+  SlickNamespace,
 } from '../interfaces/index';
 import {
   EmitterType,
@@ -25,10 +26,10 @@ import { TranslaterService } from '../services/translater.service';
 import { PubSubService } from '../services/pubSub.service';
 
 // using external non-typed js libraries
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 export class HeaderMenuExtension implements Extension {
-  private _addon: any;
+  private _addon: SlickHeaderMenu | null;
   private _eventHandler: SlickEventHandler;
   private _locales: Locale;
 
@@ -57,12 +58,12 @@ export class HeaderMenuExtension implements Extension {
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
-  getAddonInstance() {
+  getAddonInstance(): SlickHeaderMenu | null {
     return this._addon;
   }
 
   /** Register the 3rd party addon (plugin) */
-  register(): any {
+  register(): SlickHeaderMenu | null {
     if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
@@ -79,32 +80,46 @@ export class HeaderMenuExtension implements Extension {
         this.sharedService.gridOptions.headerMenu = this.addHeaderMenuCustomCommands(this.sharedService.gridOptions, this.sharedService.columnDefinitions);
       }
       this._addon = new Slick.Plugins.HeaderMenu(this.sharedService.gridOptions.headerMenu);
-      this.sharedService.grid.registerPlugin(this._addon);
+      if (this._addon) {
+        this.sharedService.grid.registerPlugin<SlickHeaderMenu>(this._addon);
+      }
 
       // hook all events
-      if (this.sharedService.grid && this.sharedService.gridOptions.headerMenu) {
+      if (this._addon && this.sharedService.grid && this.sharedService.gridOptions.headerMenu) {
         if (this.sharedService.gridOptions.headerMenu.onExtensionRegistered) {
           this.sharedService.gridOptions.headerMenu.onExtensionRegistered(this._addon);
         }
-        this._eventHandler.subscribe(this._addon.onCommand, (event: Event, args: MenuCommandItemCallbackArgs) => {
-          this.executeHeaderMenuInternalCommands(event, args);
-          if (this.sharedService.gridOptions.headerMenu && typeof this.sharedService.gridOptions.headerMenu.onCommand === 'function') {
-            this.sharedService.gridOptions.headerMenu.onCommand(event, args);
-          }
-        });
-        if (this.sharedService.gridOptions.headerMenu && typeof this.sharedService.gridOptions.headerMenu.onBeforeMenuShow === 'function') {
-          this._eventHandler.subscribe(this._addon.onBeforeMenuShow, (event: Event, args: { grid: SlickGrid; column: Column; menu: any; }) => {
-            if (this.sharedService.gridOptions.headerMenu && this.sharedService.gridOptions.headerMenu.onBeforeMenuShow) {
-              this.sharedService.gridOptions.headerMenu.onBeforeMenuShow(event, args);
+
+        const onCommandHandler = this._addon.onCommand;
+        if (onCommandHandler) {
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCommandHandler>>).subscribe(onCommandHandler, (event, args) => {
+            this.executeHeaderMenuInternalCommands(event, args);
+            if (this.sharedService.gridOptions.headerMenu && typeof this.sharedService.gridOptions.headerMenu.onCommand === 'function') {
+              this.sharedService.gridOptions.headerMenu.onCommand(event, args);
             }
           });
         }
+
+        if (this.sharedService.gridOptions.headerMenu && typeof this.sharedService.gridOptions.headerMenu.onBeforeMenuShow === 'function') {
+          const onBeforeMenuShowHandler = this._addon.onBeforeMenuShow;
+          if (onBeforeMenuShowHandler) {
+            (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMenuShowHandler>>).subscribe(onBeforeMenuShowHandler, (event, args) => {
+              if (this.sharedService.gridOptions.headerMenu && this.sharedService.gridOptions.headerMenu.onBeforeMenuShow) {
+                this.sharedService.gridOptions.headerMenu.onBeforeMenuShow(event, args);
+              }
+            });
+          }
+        }
+
         if (this.sharedService.gridOptions.headerMenu && typeof this.sharedService.gridOptions.headerMenu.onAfterMenuShow === 'function') {
-          this._eventHandler.subscribe(this._addon.onAfterMenuShow, (event: Event, args: { grid: SlickGrid; column: Column; menu: any; }) => {
-            if (this.sharedService.gridOptions.headerMenu && this.sharedService.gridOptions.headerMenu.onAfterMenuShow) {
-              this.sharedService.gridOptions.headerMenu.onAfterMenuShow(event, args);
-            }
-          });
+          const onAfterMenuShowHandler = this._addon.onAfterMenuShow;
+          if (onAfterMenuShowHandler) {
+            (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onAfterMenuShowHandler>>).subscribe(onAfterMenuShowHandler, (event, args) => {
+              if (this.sharedService.gridOptions.headerMenu && this.sharedService.gridOptions.headerMenu.onAfterMenuShow) {
+                this.sharedService.gridOptions.headerMenu.onAfterMenuShow(event, args);
+              }
+            });
+          }
         }
       }
       return this._addon;
@@ -291,8 +306,8 @@ export class HeaderMenuExtension implements Extension {
   private clearColumnSort(e: Event, args: MenuCommandItemCallbackArgs) {
     if (args && args.column && this.sharedService) {
       // get previously sorted columns
-      const allSortedCols: ColumnSort[] = this.sortService.getCurrentColumnSorts();
-      const sortedColsWithoutCurrent: ColumnSort[] = this.sortService.getCurrentColumnSorts(args.column.id + '');
+      const allSortedCols = this.sortService.getCurrentColumnSorts();
+      const sortedColsWithoutCurrent = this.sortService.getCurrentColumnSorts(args.column.id + '');
 
       if (Array.isArray(allSortedCols) && Array.isArray(sortedColsWithoutCurrent) && allSortedCols.length !== sortedColsWithoutCurrent.length) {
         if (this.sharedService.gridOptions.backendServiceApi) {
@@ -307,11 +322,10 @@ export class HeaderMenuExtension implements Extension {
         }
 
         // update the this.sharedService.gridObj sortColumns array which will at the same add the visual sort icon(s) on the UI
-        const updatedSortColumns: ColumnSort[] = sortedColsWithoutCurrent.map((col) => {
+        const updatedSortColumns = sortedColsWithoutCurrent.map((col) => {
           return {
             columnId: col && col.sortCol && col.sortCol.id,
             sortAsc: col && col.sortAsc,
-            sortCol: col && col.sortCol,
           };
         });
         this.sharedService.grid.setSortColumns(updatedSortColumns); // add sort icon in UI
@@ -351,7 +365,7 @@ export class HeaderMenuExtension implements Extension {
     if (args && args.column) {
       // get previously sorted columns
       const columnDef = args.column;
-      const sortedColsWithoutCurrent: ColumnSort[] = this.sortService.getCurrentColumnSorts(columnDef.id + '');
+      const sortedColsWithoutCurrent = this.sortService.getCurrentColumnSorts(columnDef.id + '');
 
       let emitterType: EmitterType = EmitterType.local;
 
@@ -371,11 +385,10 @@ export class HeaderMenuExtension implements Extension {
       }
 
       // update the this.sharedService.gridObj sortColumns array which will at the same add the visual sort icon(s) on the UI
-      const newSortColumns: ColumnSort[] = sortedColsWithoutCurrent.map((col) => {
+      const newSortColumns = sortedColsWithoutCurrent.map((col) => {
         return {
           columnId: col && col.sortCol && col.sortCol.id,
           sortAsc: col && col.sortAsc,
-          sortCol: col && col.sortCol,
         };
       });
 

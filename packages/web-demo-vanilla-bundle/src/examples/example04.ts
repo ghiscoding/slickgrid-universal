@@ -1,4 +1,16 @@
-import { AutocompleteOption, Column, ColumnEditorDualInput, DataView, Editors, FieldType, Filters, Formatters, GridOption, OperatorType, SlickGrid } from '@slickgrid-universal/common';
+import {
+  AutocompleteOption,
+  Column,
+  ColumnEditorDualInput,
+  Editors,
+  FieldType,
+  Filters,
+  Formatters,
+  GridOption,
+  OperatorType,
+  SlickDataView,
+  SlickGrid
+} from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 
@@ -18,7 +30,7 @@ export class Example4 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset;
-  dataViewObj: DataView;
+  dataViewObj: SlickDataView;
   gridObj: SlickGrid;
   commandQueue = [];
   frozenColumnCount = 2;

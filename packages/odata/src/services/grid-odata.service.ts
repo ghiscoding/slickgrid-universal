@@ -24,7 +24,8 @@ import {
   SortDirectionString,
   OperatorType,
   OperatorString,
-  SearchTerm
+  SearchTerm,
+  SingleColumnSort,
 } from '@slickgrid-universal/common';
 import { OdataQueryBuilderService } from './odataQueryBuilder.service';
 import { OdataOption, OdataSortingOption } from '../interfaces/index';
@@ -217,8 +218,8 @@ export class GridOdataService implements BackendService {
   /*
    * SORTING
    */
-  processOnSortChanged(event: Event, args: ColumnSort | MultiColumnSort) {
-    const sortColumns = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ sortCol: (args as ColumnSort).sortCol, sortAsc: (args as ColumnSort).sortAsc });
+  processOnSortChanged(event: Event, args: SingleColumnSort | MultiColumnSort) {
+    const sortColumns = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ columnId: (args as ColumnSort).sortCol.id, sortCol: (args as ColumnSort).sortCol, sortAsc: (args as ColumnSort).sortAsc });
 
     // loop through all columns to inspect sorters & set the query
     this.updateSorters(sortColumns);

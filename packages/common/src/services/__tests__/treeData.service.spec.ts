@@ -1,8 +1,8 @@
-import { Column, DataView, GridOption, SlickEventHandler, SlickGrid } from '../../interfaces/index';
+import { Column, SlickDataView, GridOption, SlickEventHandler, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { SharedService } from '../shared.service';
 import { TreeDataService } from '../treeData.service';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 const gridOptionsMock = {
   enableTreeData: true,
@@ -19,7 +19,7 @@ const dataViewStub = {
   reSort: jest.fn(),
   setItems: jest.fn(),
   updateItem: jest.fn(),
-} as unknown as DataView;
+} as unknown as SlickDataView;
 
 const gridStub = {
   autosizeColumns: jest.fn(),
@@ -96,8 +96,8 @@ describe('SortService', () => {
 
       service.init(gridStub);
       const eventData = new Slick.EventData();
-      eventData.target = div;
-      gridStub.onClick.notify({ cell: undefined, row: undefined }, eventData, gridStub);
+      Object.defineProperty(eventData, 'target', { writable: true, value: div });
+      gridStub.onClick.notify({ cell: undefined, row: undefined, grid: gridStub }, eventData, gridStub);
 
       expect(spyGetCols).not.toHaveBeenCalled();
     });
@@ -111,8 +111,8 @@ describe('SortService', () => {
       service.init(gridStub);
       const eventData = new Slick.EventData();
       div.className = 'toggle';
-      eventData.target = div;
-      gridStub.onClick.notify({ cell: 0, row: 0 }, eventData, gridStub);
+      Object.defineProperty(eventData, 'target', { writable: true, value: div });
+      gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
 
       expect(spyGetItem).toHaveBeenCalled();
       expect(spyInvalidate).toHaveBeenCalled();
@@ -129,8 +129,8 @@ describe('SortService', () => {
       service.init(gridStub);
       const eventData = new Slick.EventData();
       div.className = 'toggle';
-      eventData.target = div;
-      gridStub.onClick.notify({ cell: 0, row: 0 }, eventData, gridStub);
+      Object.defineProperty(eventData, 'target', { writable: true, value: div });
+      gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
 
       expect(spyGetItem).toHaveBeenCalled();
       expect(spyInvalidate).toHaveBeenCalled();
@@ -147,8 +147,8 @@ describe('SortService', () => {
       service.init(gridStub);
       const eventData = new Slick.EventData();
       div.className = 'toggle';
-      eventData.target = div;
-      gridStub.onClick.notify({ cell: 0, row: 0 }, eventData, gridStub);
+      Object.defineProperty(eventData, 'target', { writable: true, value: div });
+      gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
 
       expect(spyGetItem).toHaveBeenCalled();
       expect(spyInvalidate).toHaveBeenCalled();

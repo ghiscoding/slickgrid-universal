@@ -1,13 +1,13 @@
 import { SharedService } from '../services/shared.service';
 import { ExtensionName } from '../enums/index';
-import { Extension } from '../interfaces/index';
+import { SlickAutoTooltips, Extension, SlickNamespace } from '../interfaces/index';
 import { ExtensionUtility } from './extensionUtility';
 
-// using external non-typed js libraries
-declare const Slick: any;
+// using external SlickGrid JS libraries
+declare const Slick: SlickNamespace;
 
 export class AutoTooltipExtension implements Extension {
-  private _addon: any;
+  private _addon: SlickAutoTooltips | null;
 
   constructor(private extensionUtility: ExtensionUtility, private sharedService: SharedService) { }
 
@@ -18,19 +18,21 @@ export class AutoTooltipExtension implements Extension {
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
-  getAddonInstance() {
+  getAddonInstance(): SlickAutoTooltips | null {
     return this._addon;
   }
 
   /** Register the 3rd party addon (plugin) */
-  register(): any {
+  register(): SlickAutoTooltips | null {
     if (this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
       // dynamically import the SlickGrid plugin (addon) with RequireJS
       this.extensionUtility.loadExtensionDynamically(ExtensionName.autoTooltip);
 
-      const options = this.sharedService.gridOptions.autoTooltipOptions || {};
+      const options = this.sharedService.gridOptions.autoTooltipOptions;
       this._addon = new Slick.AutoTooltips(options);
-      this.sharedService.grid.registerPlugin(this._addon);
+      if (this._addon) {
+        this.sharedService.grid.registerPlugin<SlickAutoTooltips>(this._addon);
+      }
 
       return this._addon;
     }

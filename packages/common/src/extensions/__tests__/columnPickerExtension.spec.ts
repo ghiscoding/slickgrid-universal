@@ -1,10 +1,10 @@
-import { Column, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { ColumnPickerExtension } from '../columnPickerExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 
 const gridStub = {
   getOptions: jest.fn(),
@@ -19,6 +19,7 @@ const mockAddon = jest.fn().mockImplementation(() => ({
 }));
 
 jest.mock('slickgrid/controls/slick.columnpicker', () => mockAddon);
+// @ts-ignore
 Slick.Controls = {
   ColumnPicker: mockAddon
 };
@@ -71,7 +72,7 @@ describe('columnPickerExtension', () => {
       expect(instance).toBeTruthy();
       expect(instance).toEqual(addonInstance);
       expect(onRegisteredSpy).toHaveBeenCalledWith(instance);
-      expect(mockAddon).toHaveBeenCalledWith(columnsMock, gridStub, gridOptionsMock);
+      expect(mockAddon).toHaveBeenCalledWith(columnsMock, gridStub, gridOptionsMock.columnPicker);
     });
 
     it('should call internal event handler subscribe and expect the "onColumnSpy" option to be called when addon notify is called', () => {
@@ -80,14 +81,14 @@ describe('columnPickerExtension', () => {
       const visibleColsSpy = jest.spyOn(SharedService.prototype, 'visibleColumns', 'set');
 
       const instance = extension.register();
-      instance.onColumnsChanged.notify({ columns: columnsMock.slice(0, 1), grid: gridStub }, new Slick.EventData(), gridStub);
+      instance.onColumnsChanged.notify({ allColumns: columnsMock, columns: columnsMock.slice(0, 1), grid: gridStub }, new Slick.EventData(), gridStub);
 
       expect(handlerSpy).toHaveBeenCalledTimes(1);
       expect(handlerSpy).toHaveBeenCalledWith(
         { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
         expect.anything()
       );
-      expect(onColumnSpy).toHaveBeenCalledWith(expect.anything(), { columns: columnsMock.slice(0, 1), grid: gridStub });
+      expect(onColumnSpy).toHaveBeenCalledWith(expect.anything(), { allColumns: columnsMock, columns: columnsMock.slice(0, 1), grid: gridStub });
       expect(visibleColsSpy).not.toHaveBeenCalled();
     });
 
@@ -98,14 +99,14 @@ describe('columnPickerExtension', () => {
       const visibleColsSpy = jest.spyOn(SharedService.prototype, 'visibleColumns', 'set');
 
       const instance = extension.register();
-      instance.onColumnsChanged.notify({ columns: columnsMock, grid: gridStub }, new Slick.EventData(), gridStub);
+      instance.onColumnsChanged.notify({ allColumns: columnsMock, columns: columnsMock, grid: gridStub }, new Slick.EventData(), gridStub);
 
       expect(handlerSpy).toHaveBeenCalledTimes(1);
       expect(handlerSpy).toHaveBeenCalledWith(
         { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
         expect.anything()
       );
-      expect(onColumnSpy).toHaveBeenCalledWith(expect.anything(), { columns: columnsMock, grid: gridStub });
+      expect(onColumnSpy).toHaveBeenCalledWith(expect.anything(), { allColumns: columnsMock, columns: columnsMock, grid: gridStub });
       expect(visibleColsSpy).toHaveBeenCalledWith(columnsMock);
     });
 

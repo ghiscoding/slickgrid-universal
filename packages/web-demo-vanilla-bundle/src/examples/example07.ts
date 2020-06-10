@@ -1,8 +1,8 @@
 import {
   Column,
-  DataView,
   GridOption,
   Formatters,
+  SlickDataView,
   SlickGrid,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
@@ -14,7 +14,7 @@ export class Example7 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset;
-  dataViewObj: DataView;
+  dataViewObj: SlickDataView;
   gridObj: SlickGrid;
   slickgridLwc;
   slickerGridInstance;

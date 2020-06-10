@@ -1,4 +1,20 @@
-import { Aggregators, Column, DataView, Editors, FieldType, Filters, Formatters, GridOption, Grouping, GroupingGetterFunction, GroupTotalFormatters, SlickGrid, SortComparers, SortDirectionNumber } from '@slickgrid-universal/common';
+import {
+  Aggregators,
+  Column,
+  Editors,
+  FieldType,
+  Filters,
+  Formatters,
+  GridOption,
+  Grouping,
+  GroupingGetterFunction,
+  GroupTotalFormatters,
+  SlickDataView,
+  SlickDraggableGrouping,
+  SlickGrid,
+  SortComparers,
+  SortDirectionNumber,
+} from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 
@@ -17,23 +33,33 @@ const myCustomTitleValidator = (value, args) => {
 };
 
 const customEditableInputFormatter = (row, cell, value, columnDef, dataContext, grid) => {
-  const gridOptions = grid && grid.getOptions && grid.getOptions()
+  const gridOptions = grid && grid.getOptions && grid.getOptions();
   const isEditableLine = gridOptions.editable && columnDef.editor;
   value = (value === null || value === undefined) ? '' : value;
   return isEditableLine ? { text: value, addClasses: 'editable-field', toolTip: 'Click to Edit' } : value;
 };
 
+interface ReportItem {
+  title: string;
+  duration: number;
+  cost: number;
+  percentComplete: number;
+  start: Date;
+  finish: Date;
+  effortDriven: boolean;
+}
+
 export class Example3 {
-  columnDefinitions: Column[];
+  columnDefinitions: Column<ReportItem>[];
   gridOptions: GridOption;
   dataset;
-  dataViewObj: DataView;
+  dataViewObj: SlickDataView;
   gridObj: SlickGrid;
   commandQueue = [];
   slickgridLwc;
   slickerGridInstance;
   durationOrderByCount = false;
-  draggableGroupingPlugin: any;
+  draggableGroupingPlugin: SlickDraggableGrouping;
   selectedGroupingFields: Array<string | GroupingGetterFunction> = ['', '', ''];
 
   attached() {
@@ -66,7 +92,7 @@ export class Example3 {
         filterable: true,
         grouping: {
           getter: 'title',
-          formatter: (g) => `Title:  ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Title: ${g.value} <span style="color:green">(${g.count} items)</span>`,
           aggregators: [new Aggregators.Sum('cost')],
           aggregateCollapsed: false,
           collapsed: false
@@ -87,7 +113,7 @@ export class Example3 {
         groupTotalsFormatter: GroupTotalFormatters.sumTotals,
         grouping: {
           getter: 'duration',
-          formatter: (g) => `Duration: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
           comparer: (a, b) => {
             return this.durationOrderByCount ? (a.count - b.count) : SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc);
           },
@@ -130,7 +156,7 @@ export class Example3 {
         groupTotalsFormatter: GroupTotalFormatters.avgTotalsPercentage,
         grouping: {
           getter: 'percentComplete',
-          formatter: (g) => `% Complete:  ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `% Complete:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('cost')
           ],
@@ -148,7 +174,7 @@ export class Example3 {
         editor: { model: Editors.date },
         grouping: {
           getter: 'start',
-          formatter: (g) => `Start: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Start: ${g.value} <span style="color:green">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('cost')
           ],

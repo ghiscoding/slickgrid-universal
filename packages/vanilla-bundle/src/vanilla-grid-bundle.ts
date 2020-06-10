@@ -7,14 +7,17 @@ import 'slickgrid/plugins/slick.resizer';
 import {
   BackendServiceApi,
   Column,
-  DataView,
+  ColumnEditor,
   ExtensionName,
   EventNamingStyle,
   GlobalGridOptions,
   GridOption,
   Metrics,
+  SlickDataView,
   SlickEventHandler,
   SlickGrid,
+  SlickGroupItemMetadataProvider,
+  SlickNamespace,
   TreeDataOption,
 
   // extensions
@@ -31,6 +34,7 @@ import {
   HeaderMenuExtension,
   HeaderButtonExtension,
   RowSelectionExtension,
+  SlickResizer,
 
   // services
   FilterFactory,
@@ -49,6 +53,7 @@ import {
   TreeDataService,
 
   convertParentChildArrayToHierarchicalView,
+  GetSlickEventType,
 } from '@slickgrid-universal/common';
 
 import { FileExportService } from './services/fileExport.service';
@@ -59,7 +64,7 @@ import { PaginationRenderer } from './pagination.renderer';
 import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options';
 
 // using external non-typed js libraries
-declare const Slick: any;
+declare const Slick: SlickNamespace;
 declare const $: any;
 const DATAGRID_FOOTER_HEIGHT = 20;
 
@@ -67,7 +72,6 @@ export class VanillaGridBundle {
   private _columnDefinitions: Column[];
   private _gridOptions: GridOption;
   private _dataset: any[];
-  private _gridElm: Element;
   private _gridContainerElm: Element;
   private _hideHeaderRowAfterPageLoad = false;
   private _isDatasetInitialized = false;
@@ -77,12 +81,12 @@ export class VanillaGridBundle {
   private _eventPubSubService: EventPubSubService;
   private _slickgridInitialized = false;
   backendServiceApi: BackendServiceApi | undefined;
-  dataView: DataView;
+  dataView: SlickDataView;
   grid: SlickGrid;
   metrics: Metrics;
   customDataView = false;
-  groupItemMetadataProvider: any;
-  resizerPlugin: any;
+  groupItemMetadataProvider: SlickGroupItemMetadataProvider;
+  resizerPlugin: SlickResizer;
 
   // extensions
   extensionUtility: ExtensionUtility;
@@ -313,7 +317,8 @@ export class VanillaGridBundle {
 
       // anytime the flat dataset changes, we need to update our hierarchical dataset
       // this could be triggered by a DataView setItems or updateItem
-      this._eventHandler.subscribe(this.dataView.onRowsChanged, () => {
+      const onRowsChangedHandler = this.dataView.onRowsChanged;
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowsChangedHandler>>).subscribe(onRowsChangedHandler, () => {
         const items = this.dataView.getItems();
         if (items.length > 0 && !this._isDatasetInitialized) {
           this.sharedService.hierarchicalDataset = this.treeDataSortComparer(items);
@@ -369,13 +374,13 @@ export class VanillaGridBundle {
     //   }
     // }
 
-    const fixedGridDimensions = (this._gridOptions?.gridHeight || this._gridOptions?.gridWidth) ? { height: this._gridOptions?.gridHeight, width: this._gridOptions?.gridWidth } : null;
+    const fixedGridDimensions = (this._gridOptions?.gridHeight || this._gridOptions?.gridWidth) ? { height: this._gridOptions?.gridHeight, width: this._gridOptions?.gridWidth } : undefined;
     const autoResizeOptions = this._gridOptions?.autoResize ?? { bottomPadding: 0 };
     if (autoResizeOptions && autoResizeOptions.bottomPadding !== undefined) {
       autoResizeOptions.bottomPadding += this._gridOptions?.customFooterOptions?.footerHeight ?? DATAGRID_FOOTER_HEIGHT;
     }
     this.resizerPlugin = new Slick.Plugins.Resizer(autoResizeOptions, fixedGridDimensions);
-    this.grid.registerPlugin(this.resizerPlugin);
+    this.grid.registerPlugin<SlickResizer>(this.resizerPlugin);
     if (this._gridOptions.enableAutoResize) {
       await this.resizerPlugin.resizeGrid();
     }
@@ -484,7 +489,7 @@ export class VanillaGridBundle {
     return options;
   }
 
-  bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: DataView) {
+  bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: SlickDataView) {
     // bind external filter (backend) when available or default onFilter (dataView)
     if (gridOptions.enableFiltering && !this.customDataView) {
       this.filterService.init(grid);
@@ -515,7 +520,8 @@ export class VanillaGridBundle {
       // expose all Slick Grid Events through dispatch
       for (const prop in grid) {
         if (grid.hasOwnProperty(prop) && prop.startsWith('on')) {
-          this._eventHandler.subscribe(grid[prop], (event: Event, args: any) => {
+          const gridEventHandler = grid[prop];
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof gridEventHandler>>).subscribe(gridEventHandler, (event, args) => {
             const gridEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions && this._gridOptions.defaultSlickgridEventPrefix || '');
             return this._eventPubSubService.dispatchCustomEvent(gridEventName, { eventData: event, args });
           });
@@ -525,14 +531,16 @@ export class VanillaGridBundle {
       // expose all Slick DataView Events through dispatch
       for (const prop in dataView) {
         if (dataView.hasOwnProperty(prop) && prop.startsWith('on')) {
-          this._eventHandler.subscribe(dataView[prop], (event: Event, args: any) => {
+          const dataViewEventHandler = dataView[prop];
+          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof dataViewEventHandler>>).subscribe(dataViewEventHandler, (event, args) => {
             const dataViewEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions && this._gridOptions.defaultSlickgridEventPrefix || '');
             return this._eventPubSubService.dispatchCustomEvent(dataViewEventName, { eventData: event, args });
           });
         }
       }
 
-      this._eventHandler.subscribe(dataView.onRowCountChanged, (e: Event, args: { current: number }) => {
+      const onRowCountChangedHandler = dataView.onRowCountChanged;
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowCountChangedHandler>>).subscribe(onRowCountChangedHandler, (e, args) => {
         grid.invalidate();
 
         this.metrics = {
@@ -557,7 +565,8 @@ export class VanillaGridBundle {
       // also don't use "invalidateRows" since it destroys the entire row and as bad user experience when updating a row
       // see commit: https://github.com/ghiscoding/slickgrid-universal/commit/bb62c0aa2314a5d61188ff005ccb564577f08805
       if (gridOptions && gridOptions.enableFiltering && !gridOptions.enableRowDetailView) {
-        this._eventHandler.subscribe(dataView.onRowsChanged, (e: Event, args: { rows: number[] }) => {
+        const onRowsChangedHandler = dataView.onRowsChanged;
+        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowsChangedHandler>>).subscribe(onRowsChangedHandler, (e, args) => {
           if (args && args.rows && Array.isArray(args.rows)) {
             args.rows.forEach((row) => grid.updateRow(row));
             grid.render();
@@ -672,8 +681,9 @@ export class VanillaGridBundle {
       // if (column.editor && column.editor.collectionAsync) {
       // this.loadEditorCollectionAsync(column);
       // }
+      const columnEditor = column.editor as ColumnEditor;
 
-      return { ...column, editor: column.editor && column.editor.model, internalColumnEditor: { ...column.editor } };
+      return { ...column, editor: columnEditor?.model, internalColumnEditor: { ...columnEditor } };
     });
   }
 

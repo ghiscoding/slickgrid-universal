@@ -1,8 +1,9 @@
 import {
   AutoResizeOption,
+  AutoTooltipOption,
   BackendServiceApi,
   CellMenu,
-  CheckboxSelector,
+  CheckboxSelectorOption,
   Column,
   ColumnPicker,
   ContextMenu,
@@ -21,6 +22,7 @@ import {
   Pagination,
   // RowDetailView,
   RowMoveManager,
+  RowSelectionModelOption,
   TreeDataOption,
 } from './index';
 import { EventNamingStyle, GridAutosizeColsMode, OperatorType, OperatorString, } from '../enums/index';
@@ -61,19 +63,7 @@ export interface GridOption {
   autoResize?: AutoResizeOption;
 
   /** Auto-tooltip options (enableForCells, enableForHeaderCells, maxToolTipLength) */
-  autoTooltipOptions?: {
-    /** are tooltip enabled for all cells? */
-    enableForCells: boolean;
-
-    /** are tooltip enabled for column headers */
-    enableForHeaderCells: boolean;
-
-    /** what is the maximum tooltip length in pixels (only type the number) */
-    maxToolTipLength: number;
-
-    /** Allow preventing custom tooltips from being overwritten by auto tooltips */
-    replaceExisting?: boolean;
-  };
+  autoTooltipOptions?: AutoTooltipOption;
 
   /** Backend Service API definition (GraphQL/OData Services) */
   backendServiceApi?: BackendServiceApi;
@@ -88,7 +78,7 @@ export interface GridOption {
   cellMenu?: CellMenu;
 
   /** Checkbox Select Plugin options (columnId, cssClass, toolTip, width) */
-  checkboxSelector?: CheckboxSelector;
+  checkboxSelector?: CheckboxSelectorOption;
 
   /** Column Picker Plugin options (columnTitle, forceFitTitle, syncResizeTitle) */
   columnPicker?: ColumnPicker;
@@ -396,9 +386,6 @@ export interface GridOption {
   /** Preselect certain rows by their row index ("enableCheckboxSelector" must be enabled) */
   preselectedRows?: number[];
 
-  /** Register 1 or more Slick Plugins */
-  registerPlugins?: any | any[];
-
   /** Register any external Services like the ExcelExportService, FileExportService, ... */
   registerExternalServices?: any[];
 
@@ -412,10 +399,7 @@ export interface GridOption {
   rowMoveManager?: RowMoveManager;
 
   /** Row selection options */
-  rowSelectionOptions?: {
-    /** do we want to select the active row? */
-    selectActiveRow: boolean;
-  };
+  rowSelectionOptions?: RowSelectionModelOption;
 
   /**
    * Optionally pass some options to the 3rd party lib "cure53/DOMPurify" used in some Filters.
