@@ -5,11 +5,12 @@ import {
   Editors,
   FieldType,
   Filters,
+  Formatter,
   Formatters,
   GridOption,
   OperatorType,
   SlickDataView,
-  SlickGrid
+  SlickGrid,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
@@ -26,8 +27,24 @@ const myCustomTitleValidator = (value, args) => {
   return { valid: true, msg: '' };
 };
 
+interface ReportItem {
+  title: string;
+  duration: number;
+  cost: number;
+  percentComplete: number;
+  start: Date;
+  finish: Date;
+  effortDriven: boolean;
+}
+
+const customEditableInputFormatter: Formatter = <T>(row: number, cell: number, value: any, columnDef: Column, item: T) => {
+  // I want the `item` to be of Type ReportItem but it shows as Type any
+  // item.title
+  return value;
+};
+
 export class Example4 {
-  columnDefinitions: Column[];
+  columnDefinitions: Column<ReportItem>[];
   gridOptions: GridOption;
   dataset;
   dataViewObj: SlickDataView;
@@ -64,6 +81,7 @@ export class Example4 {
           alwaysSaveOnEnterKey: true,
           validator: myCustomTitleValidator, // use a custom validator
         },
+        formatter: customEditableInputFormatter,
         filterable: true,
       },
       {
@@ -355,6 +373,12 @@ export class Example4 {
           }
         },
       },
+      gridMenu: {
+        hideClearFrozenColumnsCommand: false
+      },
+      headerMenu: {
+        hideFreezeColumnsCommand: false
+      }
     };
 
     // mock data
