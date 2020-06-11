@@ -3,7 +3,7 @@ import { Column, SlickDataView, GridOption, SlickGrid, SlickNamespace } from '..
 import { GridMenuExtension } from '../gridMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
-import { ExcelExportService, FileExportService, FilterService, SortService } from '../../services';
+import { ExcelExportService, FileExportService, FilterService, SortService, PubSubService } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 declare const Slick: SlickNamespace;
@@ -98,6 +98,7 @@ describe('gridMenuExtension', () => {
     gridMenu: {
       customItems: [],
       hideClearAllFiltersCommand: false,
+      hideClearFrozenColumnsCommand: true,
       hideForceFitButton: false,
       hideSyncResizeButton: true,
       onExtensionRegistered: jest.fn(),
@@ -351,7 +352,7 @@ describe('gridMenuExtension', () => {
       });
 
       it('should have only 1 menu "clear-filter" when all other menus are defined as hidden & when "enableFilering" is set', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, gridMenu: { hideToggleFilterCommand: true, hideRefreshDatasetCommand: true } } as unknown as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, gridMenu: { hideClearFrozenColumnsCommand: true, hideToggleFilterCommand: true, hideRefreshDatasetCommand: true } } as unknown as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
         extension.register(); // calling 2x register to make sure it doesn't duplicate commands
@@ -361,7 +362,7 @@ describe('gridMenuExtension', () => {
       });
 
       it('should have only 1 menu "toggle-filter" when all other menus are defined as hidden & when "enableFilering" is set', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, gridMenu: { hideClearAllFiltersCommand: true, hideRefreshDatasetCommand: true } } as unknown as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, gridMenu: { hideClearFrozenColumnsCommand: true, hideClearAllFiltersCommand: true, hideRefreshDatasetCommand: true } } as unknown as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
         extension.register(); // calling 2x register to make sure it doesn't duplicate commands
@@ -371,7 +372,7 @@ describe('gridMenuExtension', () => {
       });
 
       it('should have only 1 menu "refresh-dataset" when all other menus are defined as hidden & when "enableFilering" is set', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, gridMenu: { hideClearAllFiltersCommand: true, hideToggleFilterCommand: true } } as unknown as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, gridMenu: { hideClearFrozenColumnsCommand: true, hideClearAllFiltersCommand: true, hideToggleFilterCommand: true } } as unknown as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
         extension.register(); // calling 2x register to make sure it doesn't duplicate commands
@@ -391,7 +392,7 @@ describe('gridMenuExtension', () => {
       });
 
       it('should not have the "toggle-preheader" menu command when "showPreHeaderPanel" and "hideTogglePreHeaderCommand" are set', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, showPreHeaderPanel: true, gridMenu: { hideTogglePreHeaderCommand: true } } as unknown as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, showPreHeaderPanel: true, gridMenu: { hideClearFrozenColumnsCommand: true, hideTogglePreHeaderCommand: true } } as unknown as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
         expect(SharedService.prototype.gridOptions.gridMenu.customItems).toEqual([]);
@@ -408,14 +409,14 @@ describe('gridMenuExtension', () => {
       });
 
       it('should not have the "clear-sorting" menu command when "enableSorting" and "hideClearAllSortingCommand" are set', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableSorting: true, gridMenu: { hideClearAllSortingCommand: true } } as unknown as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableSorting: true, gridMenu: { hideClearFrozenColumnsCommand: true, hideClearAllSortingCommand: true } } as unknown as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
         expect(SharedService.prototype.gridOptions.gridMenu.customItems).toEqual([]);
       });
 
       it('should have the "export-csv" menu command when "enableExport" is set', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableExport: true, gridMenu: { hideExportExcelCommand: true, hideExportTextDelimitedCommand: true } } as unknown as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableExport: true, gridMenu: { hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportTextDelimitedCommand: true } } as unknown as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
         extension.register(); // calling 2x register to make sure it doesn't duplicate commands
@@ -425,14 +426,14 @@ describe('gridMenuExtension', () => {
       });
 
       it('should not have the "export-csv" menu command when "enableExport" and "hideExportCsvCommand" are set', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableExport: true, gridMenu: { hideExportExcelCommand: true, hideExportCsvCommand: true, hideExportTextDelimitedCommand: true } } as unknown as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableExport: true, gridMenu: { hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportCsvCommand: true, hideExportTextDelimitedCommand: true } } as unknown as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
         expect(SharedService.prototype.gridOptions.gridMenu.customItems).toEqual([]);
       });
 
       it('should have the "export-excel" menu command when "enableExport" is set', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: true, enableExport: false, gridMenu: { hideExportCsvCommand: true, hideExportExcelCommand: false } } as unknown as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: true, enableExport: false, gridMenu: { hideClearFrozenColumnsCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: false } } as unknown as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
         extension.register(); // calling 2x register to make sure it doesn't duplicate commands
@@ -442,7 +443,7 @@ describe('gridMenuExtension', () => {
       });
 
       it('should have the "export-text-delimited" menu command when "enableExport" is set', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableExport: true, gridMenu: { hideExportCsvCommand: true, hideExportExcelCommand: true } } as unknown as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableExport: true, gridMenu: { hideClearFrozenColumnsCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: true } } as unknown as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
         extension.register(); // calling 2x register to make sure it doesn't duplicate commands
@@ -452,7 +453,7 @@ describe('gridMenuExtension', () => {
       });
 
       it('should not have the "export-text-delimited" menu command when "enableExport" and "hideExportCsvCommand" are set', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableExport: true, gridMenu: { hideExportExcelCommand: true, hideExportCsvCommand: true, hideExportTextDelimitedCommand: true } } as unknown as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableExport: true, gridMenu: { hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportCsvCommand: true, hideExportTextDelimitedCommand: true } } as unknown as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
         expect(SharedService.prototype.gridOptions.gridMenu.customItems).toEqual([]);
@@ -474,6 +475,7 @@ describe('gridMenuExtension', () => {
           enableExport: true,
           gridMenu: {
             customItems: customItemsMock,
+            hideClearFrozenColumnsCommand: true,
             hideExportCsvCommand: false,
             hideExportExcelCommand: false,
             hideExportTextDelimitedCommand: true,

@@ -37,9 +37,9 @@ interface ReportItem {
   effortDriven: boolean;
 }
 
-const customEditableInputFormatter: Formatter = <T>(row: number, cell: number, value: any, columnDef: Column, item: T) => {
+const customEditableInputFormatter: <T>() => Formatter<T> = () => <T>(row: number, cell: number, value: any, columnDef: Column, item: T) => {
   // I want the `item` to be of Type ReportItem but it shows as Type any
-  // item.title
+  // item
   return value;
 };
 
@@ -81,7 +81,7 @@ export class Example4 {
           alwaysSaveOnEnterKey: true,
           validator: myCustomTitleValidator, // use a custom validator
         },
-        formatter: customEditableInputFormatter,
+        formatter: customEditableInputFormatter(),
         filterable: true,
       },
       {

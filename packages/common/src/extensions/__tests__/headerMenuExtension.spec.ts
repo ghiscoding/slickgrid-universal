@@ -82,6 +82,7 @@ describe('headerMenuExtension', () => {
       postProcess: jest.fn(),
     },
     headerMenu: {
+      hideFreezeColumnsCommand: true,
       hideForceFitButton: false,
       hideSyncResizeButton: true,
       onExtensionRegistered: jest.fn(),
@@ -139,6 +140,7 @@ describe('headerMenuExtension', () => {
         expect(mockAddon).toHaveBeenCalledWith({
           autoAlignOffset: 12,
           minWidth: 140,
+          hideFreezeColumnsCommand: true,
           hideColumnHideCommand: false,
           hideForceFitButton: false,
           hideSyncResizeButton: true,
@@ -232,7 +234,7 @@ describe('headerMenuExtension', () => {
       });
 
       it('should have the command "hide-column" in the header menu list', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, headerMenu: { hideColumnHideCommand: false } } as unknown as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: false } } as unknown as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
 
@@ -243,7 +245,7 @@ describe('headerMenuExtension', () => {
       });
 
       it('should expect all menu related to Sorting when "enableSorting" is set', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableSorting: true, headerMenu: { hideColumnHideCommand: true } } as unknown as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableSorting: true, headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true } } as unknown as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
 
         extension.register();
@@ -277,7 +279,7 @@ describe('headerMenuExtension', () => {
       });
 
       it('should expect all menu related to Filtering when "enableFiltering" is set', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, headerMenu: { hideColumnHideCommand: true } } as unknown as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true } } as unknown as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
 
         extension.register();

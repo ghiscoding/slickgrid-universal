@@ -88,6 +88,12 @@ export class Example08 {
       explicitInitialization: true,
       frozenColumn: 1,
       rowHeight: 33,
+      gridMenu: {
+        hideClearFrozenColumnsCommand: false
+      },
+      headerMenu: {
+        hideFreezeColumnsCommand: false
+      }
     };
   }
 

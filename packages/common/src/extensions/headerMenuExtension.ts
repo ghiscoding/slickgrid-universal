@@ -374,11 +374,10 @@ export class HeaderMenuExtension implements Extension {
           const columnPosition = visibleColumns.findIndex((col) => col.id === args.column.id);
           this.sharedService.grid.setOptions({ frozenColumn: columnPosition });
 
-          // to freeze columns, we need to take only the visible columns and we also need to use setColumns()
+          // to freeze columns, we need to take only the visible columns and we also need to use setColumns() when some of them are hidden
           // to make sure that we only use the visible columns, not doing this would show back some of the hidden columns
           if (Array.isArray(visibleColumns) && Array.isArray(this.sharedService.allColumns) && visibleColumns.length !== this.sharedService.allColumns.length) {
             this.sharedService.grid.setColumns(visibleColumns);
-            this.pubSubService.publish('onHeaderMenuColumnsChanged', { columns: visibleColumns });
           }
           break;
         case 'sort-asc':
