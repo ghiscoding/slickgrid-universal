@@ -3,7 +3,7 @@ import { Column, SlickDataView, GridOption, SlickGrid, SlickNamespace } from '..
 import { GridMenuExtension } from '../gridMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
-import { ExcelExportService, FileExportService, FilterService, SortService, PubSubService } from '../../services';
+import { ExcelExportService, FileExportService, FilterService, SortService } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 declare const Slick: SlickNamespace;
@@ -46,9 +46,10 @@ const gridStub = {
   setHeaderRowVisibility: jest.fn(),
   setTopPanelVisibility: jest.fn(),
   setPreHeaderPanelVisibility: jest.fn(),
+  setOptions: jest.fn(),
 } as unknown as SlickGrid;
 
-const mockAddon = jest.fn().mockImplementation(() => ({
+const mockGridMenuAddon = {
   init: jest.fn(),
   destroy: jest.fn(),
   showGridMenu: jest.fn(),
@@ -58,7 +59,8 @@ const mockAddon = jest.fn().mockImplementation(() => ({
   onAfterMenuShow: new Slick.Event(),
   onBeforeMenuShow: new Slick.Event(),
   onMenuClose: new Slick.Event(),
-}));
+};
+const mockAddon = jest.fn().mockImplementation(() => mockGridMenuAddon);
 
 jest.mock('slickgrid/controls/slick.gridmenu', () => mockAddon);
 // @ts-ignore
@@ -339,6 +341,16 @@ describe('gridMenuExtension', () => {
         expect(SharedService.prototype.gridOptions.gridMenu.customItems).toEqual([]);
       });
 
+      it('should expect menu related to "Clear Frozen Columns"', () => {
+        const copyGridOptionsMock = { ...gridOptionsMock, gridMenu: { hideClearFrozenColumnsCommand: false, } } as unknown as GridOption;
+        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+        extension.register();
+        extension.register(); // calling 2x register to make sure it doesn't duplicate commands
+        expect(SharedService.prototype.gridOptions.gridMenu.customItems).toEqual([
+          { iconCssClass: 'fa fa-times', title: 'Libérer les colonnes gelées', disabled: false, command: 'clear-frozen-columns', positionOrder: 49 },
+        ]);
+      });
+
       it('should expect all menu related to Filter when "enableFilering" is set', () => {
         const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, } as unknown as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
@@ -555,6 +567,21 @@ describe('gridMenuExtension', () => {
     });
 
     describe('executeGridMenuInternalCustomCommands method', () => {
+      it('should call "clearFrozenColumns" when the command triggered is "clear-frozen-columns"', () => {
+        const setOptionsSpy = jest.spyOn(gridStub, 'setOptions');
+        const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
+        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
+        jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
+        jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
+
+        const instance = extension.register();
+        instance.onCommand.notify({ item: { command: 'clear-frozen-columns' }, column: {} as Column, grid: gridStub, command: 'clear-frozen-columns' }, new Slick.EventData(), gridStub);
+
+        expect(onCommandSpy).toHaveBeenCalled();
+        expect(setColumnsSpy).toHaveBeenCalled();
+        expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: -1 });
+      });
+
       it('should call "clearFilters" and dataview refresh when the command triggered is "clear-filter"', () => {
         const filterSpy = jest.spyOn(filterServiceStub, 'clearFilters');
         const refreshSpy = jest.spyOn(SharedService.prototype.dataView, 'refresh');

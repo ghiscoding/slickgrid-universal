@@ -373,12 +373,8 @@ export class Example4 {
           }
         },
       },
-      gridMenu: {
-        hideClearFrozenColumnsCommand: false
-      },
-      headerMenu: {
-        hideFreezeColumnsCommand: false
-      }
+      gridMenu: { hideClearFrozenColumnsCommand: false },
+      headerMenu: { hideFreezeColumnsCommand: false }
     };
 
     // mock data

@@ -62,7 +62,9 @@ export class Example08 {
       preHeaderPanelHeight: 26,
       rowHeight: 33,
       explicitInitialization: true,
-      colspanCallback: this.renderDifferentColspan
+      colspanCallback: this.renderDifferentColspan,
+      gridMenu: { hideClearFrozenColumnsCommand: false },
+      headerMenu: { hideFreezeColumnsCommand: false }
     };
   }
 
@@ -88,12 +90,8 @@ export class Example08 {
       explicitInitialization: true,
       frozenColumn: 1,
       rowHeight: 33,
-      gridMenu: {
-        hideClearFrozenColumnsCommand: false
-      },
-      headerMenu: {
-        hideFreezeColumnsCommand: false
-      }
+      gridMenu: { hideClearFrozenColumnsCommand: false },
+      headerMenu: { hideFreezeColumnsCommand: false }
     };
   }
 

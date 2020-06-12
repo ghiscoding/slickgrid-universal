@@ -6,6 +6,8 @@ import { Column, SlickDataView, EditorArgs, EditorArguments, GridOption, SlickGr
 const KEY_CHAR_0 = 48;
 const containerId = 'demo-container';
 
+jest.useFakeTimers();
+
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
 
@@ -89,16 +91,14 @@ describe('FloatEditor', () => {
       expect(editorCount).toBe(1);
     });
 
-    it('should initialize the editor and focus on the element after a small delay', (done) => {
+    it('should initialize the editor and focus on the element after a small delay', () => {
       const spy = jest.spyOn(editor, 'focus');
       editor = new FloatEditor(editorArguments);
       const editorCount = divContainer.querySelectorAll('input.editor-text.editor-price').length;
+      jest.runAllTimers(); // fast-forward timer
 
-      setTimeout(() => {
-        expect(editorCount).toBe(1);
-        expect(spy).toHaveBeenCalled();
-        done();
-      }, 51);
+      expect(editorCount).toBe(1);
+      expect(spy).toHaveBeenCalled();
     });
 
     it('should have a placeholder when defined in its column definition', () => {
@@ -418,7 +418,7 @@ describe('FloatEditor', () => {
         expect(spy).not.toHaveBeenCalled();
       });
 
-      it('should call "getEditorLock" and "save" methods when "hasAutoCommitEdit" is enabled and the event "focusout" is triggered', (done) => {
+      it('should call "getEditorLock" and "save" methods when "hasAutoCommitEdit" is enabled and the event "focusout" is triggered', () => {
         mockItemData = { id: 1, price: 32, isActive: true };
         gridOptionMock.autoCommitEdit = true;
         const spyGetEditor = jest.spyOn(gridStub, 'getEditorLock');
@@ -431,13 +431,11 @@ describe('FloatEditor', () => {
         const editorElm = editor.editorDomElement;
 
         editorElm.dispatchEvent(new (window.window as any).Event('focusout'));
+        jest.runAllTimers(); // fast-forward timer
 
-        setTimeout(() => {
-          expect(spyGetEditor).toHaveBeenCalled();
-          expect(spyCommit).toHaveBeenCalled();
-          expect(spySave).toHaveBeenCalled();
-          done();
-        }, 0);
+        expect(spyGetEditor).toHaveBeenCalled();
+        expect(spyCommit).toHaveBeenCalled();
+        expect(spySave).toHaveBeenCalled();
       });
     });
 

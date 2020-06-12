@@ -6,6 +6,8 @@ import { Column, SlickDataView, EditorArgs, EditorArguments, GridOption, SlickGr
 const KEY_CHAR_0 = 48;
 const containerId = 'demo-container';
 
+jest.useFakeTimers();
+
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
 
@@ -89,16 +91,15 @@ describe('IntegerEditor', () => {
       expect(editorCount).toBe(1);
     });
 
-    it('should initialize the editor and focus on the element after a small delay', (done) => {
+    it('should initialize the editor and focus on the element after a small delay', () => {
       const spy = jest.spyOn(editor, 'focus');
       editor = new IntegerEditor(editorArguments);
       const editorCount = divContainer.querySelectorAll('input.editor-text.editor-price').length;
 
-      setTimeout(() => {
-        expect(editorCount).toBe(1);
-        expect(spy).toHaveBeenCalled();
-        done();
-      }, 51);
+      jest.runAllTimers(); // fast-forward timer
+
+      expect(editorCount).toBe(1);
+      expect(spy).toHaveBeenCalled();
     });
 
     it('should have a placeholder when defined in its column definition', () => {
@@ -382,7 +383,7 @@ describe('IntegerEditor', () => {
         expect(spy).not.toHaveBeenCalled();
       });
 
-      it('should call "getEditorLock" and "save" methods when "hasAutoCommitEdit" is enabled and the event "focusout" is triggered', (done) => {
+      it('should call "getEditorLock" and "save" methods when "hasAutoCommitEdit" is enabled and the event "focusout" is triggered', () => {
         mockItemData = { id: 1, price: 32, isActive: true };
         gridOptionMock.autoCommitEdit = true;
         const spyCommit = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
@@ -395,11 +396,10 @@ describe('IntegerEditor', () => {
 
         editorElm.dispatchEvent(new (window.window as any).Event('focusout'));
 
-        setTimeout(() => {
-          expect(spyCommit).toHaveBeenCalled();
-          expect(spySave).toHaveBeenCalled();
-          done();
-        });
+        jest.runAllTimers(); // fast-forward timer
+
+        expect(spyCommit).toHaveBeenCalled();
+        expect(spySave).toHaveBeenCalled();
       });
     });
 

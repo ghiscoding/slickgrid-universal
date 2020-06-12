@@ -13,6 +13,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'CLEAR_ALL_GROUPING': output = this._locale === 'en' ? 'Clear all Grouping' : 'Supprimer tous les groupes'; break;
       case 'CLEAR_ALL_FILTERS': output = this._locale === 'en' ? 'Clear all Filters' : 'Supprimer tous les filtres'; break;
       case 'CLEAR_ALL_SORTING': output = this._locale === 'en' ? 'Clear all Sorting' : 'Supprimer tous les tris'; break;
+      case 'CLEAR_FROZEN_COLUMNS': output = this._locale === 'en' ? 'Clear Frozen Columns' : 'Libérer les colonnes gelées'; break;
       case 'COLUMNS': output = this._locale === 'en' ? 'Columns' : 'Colonnes'; break;
       case 'COMMANDS': output = this._locale === 'en' ? 'Commands' : 'Commandes'; break;
       case 'COLLAPSE_ALL_GROUPS': output = this._locale === 'en' ? 'Collapse all Groups' : 'Réduire tous les groupes'; break;
@@ -28,6 +29,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'FEMALE': output = this._locale === 'en' ? 'Female' : 'Femme'; break;
       case 'FIRST_NAME': output = this._locale === 'en' ? 'First Name' : 'Prénom'; break;
       case 'FORCE_FIT_COLUMNS': output = this._locale === 'en' ? 'Force fit columns' : 'Ajustement forcé des colonnes'; break;
+      case 'FREEZE_COLUMNS': output = this._locale === 'en' ? 'Freeze Columns' : 'Geler les colonnes'; break;
       case 'GROUP_BY': output = this._locale === 'en' ? 'Grouped By' : 'Groupé par'; break;
       case 'HELLO': output = this._locale === 'en' ? 'Hello' : 'Bonjour'; break;
       case 'HELP': output = this._locale === 'en' ? 'Help' : 'Aide'; break;

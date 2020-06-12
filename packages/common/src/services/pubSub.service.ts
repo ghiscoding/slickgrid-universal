@@ -28,7 +28,7 @@ export abstract class PubSubService {
     * @return possibly a Subscription
     */
   subscribeEvent?<T = any>(eventName: string | Function, callback: (event: CustomEventInit<T>) => void): Subscription | any {
-    throw new Error('PubSubService "subscribe" method must be implemented');
+    throw new Error('PubSubService "subscribeEvent" method must be implemented');
   }
 
   /**
