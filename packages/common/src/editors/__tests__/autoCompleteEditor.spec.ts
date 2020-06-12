@@ -6,6 +6,8 @@ import { AutocompleteOption, Column, SlickDataView, EditorArgs, EditorArguments,
 const KEY_CHAR_A = 97;
 const containerId = 'demo-container';
 
+jest.useFakeTimers();
+
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
 
@@ -417,7 +419,7 @@ describe('AutoCompleteEditor', () => {
         expect(spySetValue).toHaveBeenCalledWith('female');
       });
 
-      it('should expect "setValue" and "autoCommitEdit" to have been called with a string when item provided is a string', (done) => {
+      it('should expect "setValue" and "autoCommitEdit" to have been called with a string when item provided is a string', () => {
         const spyCommitEdit = jest.spyOn(gridStub, 'getEditorLock');
         gridOptionMock.autoCommitEdit = true;
         mockColumn.internalColumnEditor.collection = ['male', 'female'];
@@ -432,13 +434,11 @@ describe('AutoCompleteEditor', () => {
         // const editorElm = editor.editorDomElement;
         // editorElm.on('autocompleteselect', (event, ui) => console.log(ui));
         // editorElm[0].dispatchEvent(new (window.window as any).CustomEvent('autocompleteselect', { detail: { item: 'female' }, bubbles: true, cancelable: true }));
+        jest.runAllTimers(); // fast-forward timer
 
-        setTimeout(() => {
-          expect(output).toBe(false);
-          expect(spyCommitEdit).toHaveBeenCalled();
-          expect(spySetValue).toHaveBeenCalledWith('female');
-          done();
-        });
+        expect(output).toBe(false);
+        expect(spyCommitEdit).toHaveBeenCalled();
+        expect(spySetValue).toHaveBeenCalledWith('female');
       });
 
       it('should expect "setValue" and "autoCommitEdit" to have been called with the string label when item provided is an object', () => {
@@ -469,7 +469,7 @@ describe('AutoCompleteEditor', () => {
         expect(spy).toHaveBeenCalledWith(event, { item: 'fem' });
       });
 
-      it('should initialize the editor with editorOptions and expect the "onSelect" method to be called when the callback method is triggered', (done) => {
+      it('should initialize the editor with editorOptions and expect the "onSelect" method to be called when the callback method is triggered', () => {
         gridOptionMock.autoCommitEdit = true;
         mockColumn.internalColumnEditor.collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
         mockColumn.internalColumnEditor.editorOptions = { minLength: 3 } as AutocompleteOption;
@@ -480,12 +480,10 @@ describe('AutoCompleteEditor', () => {
         const onSelectSpy = jest.spyOn(editor, 'onSelect');
         const focusSpy = jest.spyOn(editor, 'focus');
         editor.autoCompleteOptions.select(event, { item: 'fem' });
+        jest.runAllTimers(); // fast-forward timer
 
         expect(onSelectSpy).toHaveBeenCalledWith(event, { item: 'fem' });
-        setTimeout(() => {
-          expect(focusSpy).toHaveBeenCalled();
-          done();
-        }, 52);
+        expect(focusSpy).toHaveBeenCalled();
       });
     });
   });

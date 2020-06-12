@@ -4,6 +4,8 @@ import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
+jest.useFakeTimers();
+
 declare const Slick: SlickNamespace;
 
 const gridStub = {
@@ -165,7 +167,7 @@ describe('checkboxSelectorExtension', () => {
       ]);
     });
 
-    it('should be able to pre-select rows', (done) => {
+    it('should be able to pre-select rows', () => {
       const selectionModelOptions = { ...gridOptionsMock, preselectedRows: [0], rowSelectionOptions: { selectActiveRow: true } };
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(selectionModelOptions);
       const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'registerPlugin');
@@ -176,15 +178,14 @@ describe('checkboxSelectorExtension', () => {
       const rowSpy = jest.spyOn(instance, 'selectRows');
       const selectionModel = extension.register();
 
+      jest.runAllTimers(); // fast-forward timer
+
       expect(selectionModel).not.toBeNull();
       expect(mockAddon).toHaveBeenCalledWith(undefined);
       expect(selectionSpy).toHaveBeenCalled();
       expect(mockSelectionModel).toHaveBeenCalledWith(undefined);
       expect(pluginSpy).toHaveBeenCalledWith(instance);
-      setTimeout(() => {
-        expect(rowSpy).toHaveBeenCalledWith(selectionModelOptions.preselectedRows);
-        done();
-      }, 0);
+      expect(rowSpy).toHaveBeenCalledWith(selectionModelOptions.preselectedRows);
     });
   });
 });

@@ -124,6 +124,7 @@ export const GlobalGridOptions: GridOption = {
   gridMenu: {
     hideClearAllFiltersCommand: false,
     hideClearAllSortingCommand: false,
+    hideClearFrozenColumnsCommand: true, // opt-in command
     hideExportCsvCommand: false,
     hideExportExcelCommand: false,
     hideExportTextDelimitedCommand: true,
@@ -135,6 +136,7 @@ export const GlobalGridOptions: GridOption = {
     iconCssClass: 'fa fa-bars mdi mdi-menu',
     iconClearAllFiltersCommand: 'fa fa-filter text-danger mdi mdi-filter-remove-outline',
     iconClearAllSortingCommand: 'fa fa-unsorted mdi mdi-swap-vertical text-danger',
+    iconClearFrozenColumnsCommand: 'fa fa-times mdi mdi-pin-off-outline',
     iconExportCsvCommand: 'fa fa-download mdi mdi-download',
     iconExportExcelCommand: 'fa fa-file-excel-o mdi mdi-file-excel-outline text-success has-text-success',
     iconExportTextDelimitedCommand: 'fa fa-download mdi mdi-download',
@@ -159,12 +161,14 @@ export const GlobalGridOptions: GridOption = {
     minWidth: 140,
     iconClearFilterCommand: 'fa fa-filter mdi mdi mdi-filter-remove-outline text-danger',
     iconClearSortCommand: 'fa fa-unsorted mdi mdi-swap-vertical',
+    iconFreezeColumns: 'fa fa-thumb-tack mdi mdi-pin-outline',
     iconSortAscCommand: 'fa fa-sort-amount-asc mdi mdi-sort-ascending',
     iconSortDescCommand: 'fa fa-sort-amount-desc mdi mdi-flip-v mdi-sort-descending',
     iconColumnHideCommand: 'fa fa-times mdi mdi-close',
     hideColumnHideCommand: false,
     hideClearFilterCommand: false,
     hideClearSortCommand: false,
+    hideFreezeColumnsCommand: true, // opt-in command
     hideSortCommands: false
   },
   multiColumnSort: true,

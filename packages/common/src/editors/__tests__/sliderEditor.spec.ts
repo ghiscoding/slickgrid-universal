@@ -2,8 +2,9 @@ import { Editors } from '../index';
 import { SliderEditor } from '../sliderEditor';
 import { Column, SlickDataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
 
-const containerId = 'demo-container';
+jest.useFakeTimers();
 
+const containerId = 'demo-container';
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
 
@@ -278,7 +279,7 @@ describe('SliderEditor', () => {
       });
 
       it('should return item data with an empty string in its value when it fails the custom validation', () => {
-        mockColumn.internalColumnEditor.validator = (value: any, args: EditorArgs) => {
+        mockColumn.internalColumnEditor.validator = (value: any) => {
           if (+value < 10) {
             return { valid: false, msg: 'Value must be over 10.' };
           }
@@ -400,7 +401,7 @@ describe('SliderEditor', () => {
         expect(spy).not.toHaveBeenCalled();
       });
 
-      it('should call "getEditorLock" and "save" methods when "hasAutoCommitEdit" is enabled and the event "focusout" is triggered', (done) => {
+      it('should call "getEditorLock" and "save" methods when "hasAutoCommitEdit" is enabled and the event "focusout" is triggered', () => {
         mockItemData = { id: 1, price: 32, isActive: true };
         gridOptionMock.autoCommitEdit = true;
         const spyCommit = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
@@ -413,12 +414,10 @@ describe('SliderEditor', () => {
 
         editorElm.trigger('mouseup');
         editorElm[0].dispatchEvent(new (window.window as any).Event('mouseup'));
+        jest.runAllTimers(); // fast-forward timer
 
-        setTimeout(() => {
-          expect(spyCommit).toHaveBeenCalled();
-          expect(spySave).toHaveBeenCalled();
-          done();
-        }, 0);
+        expect(spyCommit).toHaveBeenCalled();
+        expect(spySave).toHaveBeenCalled();
       });
     });
 

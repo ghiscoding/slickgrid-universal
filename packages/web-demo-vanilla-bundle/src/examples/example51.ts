@@ -82,7 +82,7 @@ export class Example51 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
-  dataViewObj: DataView;
+  dataViewObj: SlickDataView;
   gridObj: SlickGrid;
   slickgridLwc;
   slickerGridInstance;

@@ -3,6 +3,8 @@ import { TextEditor } from '../textEditor';
 import { KeyCode } from '../../enums/index';
 import { AutocompleteOption, Column, SlickDataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
 
+jest.useFakeTimers();
+
 const KEY_CHAR_A = 97;
 const containerId = 'demo-container';
 
@@ -89,16 +91,15 @@ describe('TextEditor', () => {
       expect(editorCount).toBe(1);
     });
 
-    it('should initialize the editor and focus on the element after a small delay', (done) => {
+    it('should initialize the editor and focus on the element after a small delay', () => {
       const spy = jest.spyOn(editor, 'focus');
       editor = new TextEditor(editorArguments);
       const editorCount = divContainer.querySelectorAll('input.editor-text.editor-title').length;
 
-      setTimeout(() => {
-        expect(editorCount).toBe(1);
-        expect(spy).toHaveBeenCalled();
-        done();
-      }, 51);
+      jest.runAllTimers(); // fast-forward timer
+
+      expect(editorCount).toBe(1);
+      expect(spy).toHaveBeenCalled();
     });
 
     it('should initialize the editor even when user define his own editor options', () => {
@@ -348,7 +349,7 @@ describe('TextEditor', () => {
         expect(spy).not.toHaveBeenCalled();
       });
 
-      it('should call "getEditorLock" and "save" methods when "hasAutoCommitEdit" is enabled and the event "focusout" is triggered', (done) => {
+      it('should call "getEditorLock" and "save" methods when "hasAutoCommitEdit" is enabled and the event "focusout" is triggered', () => {
         mockItemData = { id: 1, title: 'task', isActive: true };
         gridOptionMock.autoCommitEdit = true;
         const spyCommit = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
@@ -360,12 +361,10 @@ describe('TextEditor', () => {
         const editorElm = editor.editorDomElement;
 
         editorElm.dispatchEvent(new (window.window as any).Event('focusout'));
+        jest.runAllTimers(); // fast-forward timer
 
-        setTimeout(() => {
-          expect(spyCommit).toHaveBeenCalled();
-          expect(spySave).toHaveBeenCalled();
-          done();
-        }, 0);
+        expect(spyCommit).toHaveBeenCalled();
+        expect(spySave).toHaveBeenCalled();
       });
     });
 

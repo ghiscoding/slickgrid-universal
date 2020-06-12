@@ -9,6 +9,10 @@ describe('PubSub Service', () => {
     expect(() => PubSubService.prototype.subscribe('event1', () => { })).toThrow('PubSubService "subscribe" method must be implemented');
   });
 
+  it('should display a not implemented when calling "subscribeEvent" method', () => {
+    expect(() => PubSubService.prototype.subscribeEvent('event1', () => { })).toThrow('PubSubService "subscribeEvent" method must be implemented');
+  });
+
   it('should display a not implemented when calling "unsubscribe" method', () => {
     expect(() => PubSubService.prototype.unsubscribe('event1', () => { })).toThrow('PubSubService "unsubscribe" method must be implemented');
   });
