@@ -51,9 +51,13 @@ import {
   SortService,
   SlickgridConfig,
   TreeDataService,
+  executeBackendProcessesCallback,
+  onBackendError,
+  // refreshBackendDataset,
 
   convertParentChildArrayToHierarchicalView,
   GetSlickEventType,
+  BackendServiceOption,
 } from '@slickgrid-universal/common';
 
 import { FileExportService } from './services/fileExport.service';
@@ -85,6 +89,7 @@ export class VanillaGridBundle {
   grid: SlickGrid;
   metrics: Metrics;
   customDataView = false;
+  paginationOptions: any;
   groupItemMetadataProvider: SlickGroupItemMetadataProvider;
   resizerPlugin: SlickResizer;
 
@@ -278,6 +283,9 @@ export class VanillaGridBundle {
     this.sharedService.internalPubSubService = this._eventPubSubService;
     this._eventHandler = new Slick.EventHandler();
     const dataviewInlineFilters = this._gridOptions?.dataView?.inlineFilters ?? false;
+
+    this.createBackendApiInternalPostProcessCallback(this._gridOptions);
+
     if (!this.customDataView) {
       if (this._gridOptions.draggableGrouping || this._gridOptions.enableGrouping) {
         this.extensionUtility.loadExtensionDynamically(ExtensionName.groupItemMetaProvider);
@@ -424,6 +432,12 @@ export class VanillaGridBundle {
       registeringServices.push(this.treeDataService);
     }
 
+    // bind the Backend Service API callback functions only after the grid is initialized
+    // because the preProcess() and onInit() might get triggered
+    if (this.gridOptions && this.gridOptions.backendServiceApi) {
+      this.bindBackendCallbackFunctions(this.gridOptions);
+    }
+
     // bind & initialize all Services that were tagged as enable
     // register all services by executing their init method and providing them with the Grid object
     if (Array.isArray(registeringServices)) {
@@ -442,7 +456,11 @@ export class VanillaGridBundle {
       dataView: this.dataView,
       slickGrid: this.grid,
 
+      // public methods
+      dispose: this.dispose.bind(this),
+
       // return all available Services (non-singleton)
+      backendService: this.gridOptions && this.gridOptions.backendServiceApi && this.gridOptions.backendServiceApi.service,
       filterService: this.filterService,
       gridEventService: this.gridEventService,
       gridStateService: this.gridStateService,
@@ -489,6 +507,31 @@ export class VanillaGridBundle {
     return options;
   }
 
+  /**
+   * Define our internal Post Process callback, it will execute internally after we get back result from the Process backend call
+   * For now, this is GraphQL Service ONLY feature and it will basically
+   * refresh the Dataset & Pagination without having the user to create his own PostProcess every time
+   */
+  createBackendApiInternalPostProcessCallback(gridOptions: GridOption) {
+    const backendApi = gridOptions && gridOptions.backendServiceApi;
+    if (backendApi && backendApi.service) {
+      const backendApiService = backendApi.service;
+
+      // internalPostProcess only works (for now) with a GraphQL Service, so make sure it is of that type
+      if (/* backendApiService instanceof GraphqlService || */ typeof backendApiService.getDatasetName === 'function') {
+        backendApi.internalPostProcess = (processResult: any) => {
+          this._dataset = [];
+          const datasetName = (backendApi && backendApiService && typeof backendApiService.getDatasetName === 'function') ? backendApiService.getDatasetName() : '';
+          if (processResult && processResult.data && processResult.data[datasetName]) {
+            this._dataset = processResult.data[datasetName].hasOwnProperty('nodes') ? (processResult as any).data[datasetName].nodes : (processResult as any).data[datasetName];
+            const totalCount = processResult.data[datasetName].hasOwnProperty('totalCount') ? (processResult as any).data[datasetName].totalCount : (processResult as any).data[datasetName].length;
+            this.refreshGridData(this._dataset, totalCount || 0);
+          }
+        };
+      }
+    }
+  }
+
   bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: SlickDataView) {
     // bind external filter (backend) when available or default onFilter (dataView)
     if (gridOptions.enableFiltering && !this.customDataView) {
@@ -513,6 +556,15 @@ export class VanillaGridBundle {
         this.sortService.bindBackendOnSort(grid, dataView);
       } else {
         this.sortService.bindLocalOnSort(grid, dataView);
+      }
+    }
+
+    // if user set an onInit Backend, we'll run it right away (and if so, we also need to run preProcess, internalPostProcess & postProcess)
+    if (gridOptions.backendServiceApi) {
+      const backendApi = gridOptions.backendServiceApi;
+
+      if (backendApi && backendApi.service && backendApi.service.init) {
+        backendApi.service.init(backendApi.options, gridOptions.pagination, this.grid);
       }
     }
 
@@ -576,6 +628,62 @@ export class VanillaGridBundle {
     }
   }
 
+  bindBackendCallbackFunctions(gridOptions: GridOption) {
+    const backendApi = gridOptions.backendServiceApi;
+    const backendApiService = backendApi && backendApi.service;
+    const serviceOptions: BackendServiceOption = backendApiService && backendApiService.options || {};
+    const isExecuteCommandOnInit = (!serviceOptions) ? false : ((serviceOptions && serviceOptions.hasOwnProperty('executeProcessCommandOnInit')) ? serviceOptions['executeProcessCommandOnInit'] : true);
+
+    if (backendApiService) {
+      // update backend filters (if need be) BEFORE the query runs (via the onInit command a few lines below)
+      // if user entered some any "presets", we need to reflect them all in the grid
+      if (gridOptions && gridOptions.presets) {
+        // Filters "presets"
+        if (backendApiService.updateFilters && Array.isArray(gridOptions.presets.filters) && gridOptions.presets.filters.length > 0) {
+          backendApiService.updateFilters(gridOptions.presets.filters, true);
+        }
+        // Sorters "presets"
+        if (backendApiService.updateSorters && Array.isArray(gridOptions.presets.sorters) && gridOptions.presets.sorters.length > 0) {
+          backendApiService.updateSorters(undefined, gridOptions.presets.sorters);
+        }
+        // Pagination "presets"
+        if (backendApiService.updatePagination && gridOptions.presets.pagination) {
+          const { pageNumber, pageSize } = gridOptions.presets.pagination;
+          backendApiService.updatePagination(pageNumber, pageSize);
+        }
+      } else {
+        const columnFilters = this.filterService.getColumnFilters();
+        if (columnFilters && backendApiService.updateFilters) {
+          backendApiService.updateFilters(columnFilters, false);
+        }
+      }
+
+      // execute onInit command when necessary
+      if (backendApi && backendApiService && (backendApi.onInit || isExecuteCommandOnInit)) {
+        const query = (typeof backendApiService.buildQuery === 'function') ? backendApiService.buildQuery() : '';
+        const process = (isExecuteCommandOnInit) ? (backendApi.process && backendApi.process(query) || null) : (backendApi.onInit && backendApi.onInit(query) || null);
+
+        // wrap this inside a setTimeout to avoid timing issue since the gridOptions needs to be ready before running this onInit
+        setTimeout(() => {
+          // keep start time & end timestamps & return it after process execution
+          const startTime = new Date();
+
+          // run any pre-process, if defined, for example a spinner
+          if (backendApi.preProcess) {
+            backendApi.preProcess();
+          }
+
+          // the processes can be a Promise (like Http)
+          if (process instanceof Promise && process.then) {
+            const totalItems = this.gridOptions && this.gridOptions.pagination && this.gridOptions.pagination.totalItems || 0;
+            process.then((processResult: any) => executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems))
+              .catch((error) => onBackendError(error, backendApi));
+          }
+        });
+      }
+    }
+  }
+
   /**
    * When dataset changes, we need to refresh the entire grid UI & possibly resize it as well
    * @param dataset
@@ -614,23 +722,23 @@ export class VanillaGridBundle {
       // display the Pagination component only after calling this refresh data first, we call it here so that if we preset pagination page number it will be shown correctly
       // this.showPagination = (this._gridOptions && (this._gridOptions.enablePagination || (this._gridOptions.backendServiceApi && this._gridOptions.enablePagination === undefined))) ? true : false;
 
-      // if (this._gridOptions && this._gridOptions.backendServiceApi && this._gridOptions.pagination && this.paginationOptions) {
-      //   const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this._gridOptions, this.paginationOptions);
+      if (this._gridOptions && this._gridOptions.backendServiceApi && this._gridOptions.pagination && this.paginationOptions) {
+        // const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this._gridOptions, this.paginationOptions);
 
-      //   // when we have a totalCount use it, else we'll take it from the pagination object
-      //   // only update the total items if it's different to avoid refreshing the UI
-      //   const totalRecords = (totalCount !== undefined) ? totalCount : (this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems);
-      //   if (totalRecords !== undefined && totalRecords !== this.totalItems) {
-      //     this.totalItems = +totalRecords;
-      //   }
-      //   // initialize the Pagination Service with new pagination options (which might have presets)
-      //   if (!this._isPaginationInitialized) {
-      //     this.initializePaginationService(paginationOptions);
-      //   } else {
-      //     // update the pagination service with the new total
-      //     this.paginationService.totalItems = this.totalItems;
-      //   }
-      // }
+        //   // when we have a totalCount use it, else we'll take it from the pagination object
+        //   // only update the total items if it's different to avoid refreshing the UI
+        //   const totalRecords = (totalCount !== undefined) ? totalCount : (this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems);
+        //   if (totalRecords !== undefined && totalRecords !== this.totalItems) {
+        //     this.totalItems = +totalRecords;
+        //   }
+        //   // initialize the Pagination Service with new pagination options (which might have presets)
+        //   if (!this._isPaginationInitialized) {
+        //     this.initializePaginationService(paginationOptions);
+        //   } else {
+        //     // update the pagination service with the new total
+        //     this.paginationService.totalItems = this.totalItems;
+        //   }
+      }
 
       // resize the grid inside a slight timeout, in case other DOM element changed prior to the resize (like a filter/pagination changed)
       if (this.grid && this._gridOptions.enableAutoResize) {

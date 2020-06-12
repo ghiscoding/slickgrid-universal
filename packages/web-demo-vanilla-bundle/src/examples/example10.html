@@ -1,0 +1,47 @@
+<div class="demo-container">
+  <h3 class="title is-3">
+    Example 10 - Grid with Backend GraphQL Service
+  </h3>
+
+  <div class="row">
+    <div class="col-sm-5">
+      <div class="row col-md-12">
+        <button class="button is-small" data-test="clear-filters-sorting"
+                onclick.delegate="clearAllFiltersAndSorts()" title="Clear all Filters & Sorts">
+          <i class="fa fa-filter text-danger"></i>
+          Clear all Filter & Sorts
+        </button>
+        <button class="button is-small" data-test="set-dynamic-filter"
+                onclick.delegate="setFiltersDynamically()">
+          Set Filters Dynamically
+        </button>
+        <button class="button is-small" data-test="set-dynamic-sorting"
+                onclick.delegate="setSortingDynamically()">
+          Set Sorting Dynamically
+        </button>
+      </div>
+
+      <br />
+
+      <div class="row col-md-12" style="margin-bottom: 5px">
+        <label>Programmatically go to first/last page:</label>
+        <button class="button is-small" data-test="goto-first-page" onclick.delegate="goToFirstPage()">
+          <i class="fa fa-caret-left fa-lg"></i>&lt;
+        </button>
+        <button class="button is-small" data-test="goto-last-page" onclick.delegate="goToLastPage()">
+          <i class="fa fa-caret-right fa-lg"></i>&gt;
+        </button>
+      </div>
+    </div>
+    <div class="col-sm-7">
+      <div class="alert alert-info" data-test="alert-graphql-query">
+        <strong>GraphQL Query:</strong> <span data-test="graphql-query-result" innerhtml.bind="graphqlQuery"></span>
+      </div>
+    </div>
+  </div>
+
+  <hr />
+
+  <div class="grid10">
+  </div>
+</div>

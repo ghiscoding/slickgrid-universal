@@ -92,12 +92,15 @@ export class Renderer {
 
       switch (attribute) {
         case 'innerhtml':
+        case 'innerHTML':
           observer.bind(elm, 'innerHTML');
+          // observer.bind(elm, 'innerHTML', 'change');
           break;
         case 'innertext':
           observer.bind(elm, 'innerText');
           break;
         case 'value':
+          // add 2 possible events (change/keyup) on a value binding
           observer.bind(elm, attribute, 'change').bind(elm, attribute, 'keyup');
           break;
         case 'checked':
