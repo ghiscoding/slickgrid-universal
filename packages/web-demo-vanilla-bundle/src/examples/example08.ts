@@ -63,8 +63,6 @@ export class Example08 {
       rowHeight: 33,
       explicitInitialization: true,
       colspanCallback: this.renderDifferentColspan,
-      gridMenu: { hideClearFrozenColumnsCommand: false },
-      headerMenu: { hideFreezeColumnsCommand: false }
     };
   }
 
@@ -116,7 +114,7 @@ export class Example08 {
   /**
    * A callback to render different row column span
    * Your callback will always have the "item" argument which you can use to decide on the colspan
-   * Your return must always be in the form of:: return { columns: {}}
+   * Your return object must always be in the form of:: { columns: { [columnName]: { colspan: number|'*' } }}
    */
   renderDifferentColspan(item: any) {
     if (item.id % 2 === 1) {

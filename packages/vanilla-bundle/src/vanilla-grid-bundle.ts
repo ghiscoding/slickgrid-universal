@@ -575,6 +575,17 @@ export class VanillaGridBundle {
         });
       }
     }
+
+    // does the user have a colspan callback?
+    if (gridOptions?.colspanCallback && dataView?.getItem && dataView?.getItemMetadata) {
+      dataView.getItemMetadata = (rowNumber: number) => {
+        let callbackResult = null;
+        if (gridOptions.colspanCallback && gridOptions.colspanCallback) {
+          callbackResult = gridOptions.colspanCallback(dataView.getItem(rowNumber));
+        }
+        return callbackResult;
+      };
+    }
   }
 
   /**
