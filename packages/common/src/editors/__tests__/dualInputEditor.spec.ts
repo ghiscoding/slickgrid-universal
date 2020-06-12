@@ -7,6 +7,8 @@ declare const Slick: SlickNamespace;
 const KEY_CHAR_0 = 48;
 const containerId = 'demo-container';
 
+jest.useFakeTimers();
+
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
 
@@ -528,7 +530,7 @@ describe('DualInputEditor', () => {
       //   expect(spy).not.toHaveBeenCalled();
       // });
 
-      it('should call "getEditorLock" and "save" methods when "hasAutoCommitEdit" is enabled and the left input event "focusout" is triggered', (done) => {
+      it('should call "getEditorLock" and "save" methods when "hasAutoCommitEdit" is enabled and the left input event "focusout" is triggered', () => {
         mockItemData = { id: 1, range: '3-32', from: 3, to: 32, isActive: true };
         gridOptionMock.autoCommitEdit = true;
         const spyGetEditor = jest.spyOn(gridStub, 'getEditorLock');
@@ -541,16 +543,14 @@ describe('DualInputEditor', () => {
         const editorLeftElm = editor.editorDomElement.leftInput;
 
         editorLeftElm.dispatchEvent(new (window.window as any).Event('focusout'));
+        jest.runAllTimers(); // fast-forward timer
 
-        setTimeout(() => {
-          expect(spyGetEditor).toHaveBeenCalled();
-          expect(spyCommit).toHaveBeenCalled();
-          expect(spySave).toHaveBeenCalled();
-          done();
-        }, 0);
+        expect(spyGetEditor).toHaveBeenCalled();
+        expect(spyCommit).toHaveBeenCalled();
+        expect(spySave).toHaveBeenCalled();
       });
 
-      it('should call "getEditorLock" and "save" methods when "hasAutoCommitEdit" is enabled and the right input event "focusout" is triggered', (done) => {
+      it('should call "getEditorLock" and "save" methods when "hasAutoCommitEdit" is enabled and the right input event "focusout" is triggered', () => {
         mockItemData = { id: 1, range: '3-32', from: 3, to: 32, isActive: true };
         gridOptionMock.autoCommitEdit = true;
         const spyGetEditor = jest.spyOn(gridStub, 'getEditorLock');
@@ -563,13 +563,11 @@ describe('DualInputEditor', () => {
         const editorRightElm = editor.editorDomElement.rightInput;
 
         editorRightElm.dispatchEvent(new (window.window as any).Event('focusout'));
+        jest.runAllTimers(); // fast-forward timer
 
-        setTimeout(() => {
-          expect(spyGetEditor).toHaveBeenCalled();
-          expect(spyCommit).toHaveBeenCalled();
-          expect(spySave).toHaveBeenCalled();
-          done();
-        }, 0);
+        expect(spyGetEditor).toHaveBeenCalled();
+        expect(spyCommit).toHaveBeenCalled();
+        expect(spySave).toHaveBeenCalled();
       });
     });
 

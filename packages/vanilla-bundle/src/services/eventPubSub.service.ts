@@ -12,18 +12,28 @@ export class EventPubSubService implements PubSubService {
     this._elementSource = elementSource || document.createElement('div');
   }
 
-  publish(eventName: string, data?: any) {
-    const dispatchedEventName = this.getEventNameByNamingConvention(eventName, '');
-    this.dispatchCustomEvent(dispatchedEventName, data, true, false);
-    this._eventNames.push(dispatchedEventName);
+  publish<T = any>(eventName: string, data?: T) {
+    const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
+    this.dispatchCustomEvent<T>(eventNameByConvention, data, true, false);
+    this._eventNames.push(eventNameByConvention);
   }
 
-  subscribe(eventName: string, callback: (event: CustomEventInit) => void): any {
-    this._elementSource.addEventListener(eventName, callback);
+  subscribe<T = any>(eventName: string, callback: (data: T) => void): any {
+    const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
+
+    // the event listener will return the data in the "event.detail", so we need to return its content to the final callback
+    // basically we substitute the "data" with "event.detail" so that the user ends up with only the "data" result
+    this._elementSource.addEventListener(eventNameByConvention, (event: CustomEventInit<T>) => callback.call(null, event.detail));
+  }
+
+  subscribeEvent<T = any>(eventName: string, callback: (event: CustomEventInit<T>) => void): any | void {
+    const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
+    this._elementSource.addEventListener(eventNameByConvention, callback);
   }
 
   unsubscribe(eventName: string, callback: (event: CustomEventInit) => void) {
-    this._elementSource.removeEventListener(eventName, callback);
+    const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
+    this._elementSource.removeEventListener(eventNameByConvention, callback);
   }
 
   unsubscribeAll(subscriptions?: Subscription[]) {
@@ -43,14 +53,15 @@ export class EventPubSubService implements PubSubService {
   }
 
   /** Dispatch of Custom Event, which by default will bubble up & is cancelable */
-  dispatchCustomEvent(eventName: string, data?: any, isBubbling = true, isCancelable = true) {
-    const eventInit: CustomEventInit = { bubbles: isBubbling, cancelable: isCancelable };
+  dispatchCustomEvent<T = any>(eventName: string, data?: T, isBubbling = true, isCancelable = true) {
+    const eventInit: CustomEventInit<T> = { bubbles: isBubbling, cancelable: isCancelable };
     if (data) {
       eventInit.detail = data;
     }
-    return this._elementSource.dispatchEvent(new CustomEvent(eventName, eventInit));
+    return this._elementSource.dispatchEvent(new CustomEvent<T>(eventName, eventInit));
   }
 
+  /** Get the event name by the convention defined, it could be: all lower case, camelCase, PascalCase or kebab-case */
   getEventNameByNamingConvention(inputEventName: string, eventNamePrefix: string) {
     let outputEventName = '';
 

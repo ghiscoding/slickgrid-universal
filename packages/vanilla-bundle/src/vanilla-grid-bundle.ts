@@ -196,6 +196,7 @@ export class VanillaGridBundle {
     this._gridOptions = this.mergeGridOptions(options || {});
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions && this._gridOptions.enableDeepCopyDatasetOnPageLoad);
     this._eventPubSubService = new EventPubSubService(gridContainerElm);
+    this._eventPubSubService.eventNamingStyle = this._gridOptions && this._gridOptions.eventNamingStyle || EventNamingStyle.camelCase;
 
     this.gridEventService = new GridEventService();
     const slickgridConfig = new SlickgridConfig();
@@ -625,6 +626,17 @@ export class VanillaGridBundle {
           }
         });
       }
+    }
+
+    // does the user have a colspan callback?
+    if (gridOptions?.colspanCallback && dataView?.getItem && dataView?.getItemMetadata) {
+      dataView.getItemMetadata = (rowNumber: number) => {
+        let callbackResult = null;
+        if (gridOptions.colspanCallback && gridOptions.colspanCallback) {
+          callbackResult = gridOptions.colspanCallback(dataView.getItem(rowNumber));
+        }
+        return callbackResult;
+      };
     }
   }
 

@@ -9,6 +9,8 @@ import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const containerId = 'demo-container';
 
+jest.useFakeTimers();
+
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
 
@@ -83,18 +85,16 @@ describe('MultipleSelectEditor', () => {
       editor.destroy();
     });
 
-    it('should initialize the editor', (done) => {
+    it('should initialize the editor', () => {
       mockColumn.internalColumnEditor.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
       gridOptionMock.i18n = translateService;
       editor = new MultipleSelectEditor(editorArguments);
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;
       const spy = jest.spyOn(editor, 'show');
+      jest.runAllTimers(); // fast-forward timer
 
-      setTimeout(() => {
-        expect(spy).toHaveBeenCalled();
-        expect(editorCount).toBe(1);
-        done();
-      });
+      expect(spy).toHaveBeenCalled();
+      expect(editorCount).toBe(1);
     });
 
     it('should call "setValue" with a single string and expect the string to be returned as an array when calling "getValue"', () => {

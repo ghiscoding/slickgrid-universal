@@ -8,6 +8,8 @@ import { Filters } from '..';
 import { SelectFilter } from '../selectFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
+jest.useFakeTimers();
+
 const containerId = 'demo-container';
 
 // define a <div> container to simulate the grid container
@@ -425,7 +427,7 @@ describe('SelectFilter', () => {
     expect(filterListElm[2].textContent).toBe('female');
   });
 
-  // it('should create the multi-select filter with a value/label pair collectionAsync that is inside an object when "collectionInsideObjectProperty" is defined with a dot notation', (done) => {
+  // it('should create the multi-select filter with a value/label pair collectionAsync that is inside an object when "collectionInsideObjectProperty" is defined with a dot notation', () => {
   //   const mockDataResponse = { deep: { myCollection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }] } };
   //   mockColumn.filter = {
   //     collectionAsync: new Promise((resolve) => setTimeout(() => resolve(mockDataResponse), 1)),
@@ -434,8 +436,8 @@ describe('SelectFilter', () => {
   //   };
 
   //   filter.init(filterArguments);
+  //    jest.runAllTimers(); // fast-forward timer
 
-  //   setTimeout(() => {
   //     const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
   //     const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
   //     filterBtnElm.click();
@@ -444,19 +446,17 @@ describe('SelectFilter', () => {
   //     expect(filterListElm[0].textContent).toBe('other');
   //     expect(filterListElm[1].textContent).toBe('male');
   //     expect(filterListElm[2].textContent).toBe('female');
-  //     done();
-  //   }, 2);
   // });
 
-  // it('should create the multi-select filter with a default search term when using "collectionAsync" as a Promise', (done) => {
+  // it('should create the multi-select filter with a default search term when using "collectionAsync" as a Promise', () => {
   //   const spyCallback = jest.spyOn(filterArguments, 'callback');
   //   const mockCollection = ['male', 'female'];
   //   mockColumn.filter.collectionAsync = new Promise((resolve) => setTimeout(() => resolve(mockCollection), 0));
 
   //   filterArguments.searchTerms = ['female'];
   //   filter.init(filterArguments);
+  // jest.runAllTimers(); // fast-forward timer
 
-  //   setTimeout(() => {
   //     const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
   //     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
   //     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
@@ -468,19 +468,17 @@ describe('SelectFilter', () => {
   //     expect(filterFilledElms.length).toBe(1);
   //     expect(filterListElm[1].checked).toBe(true);
   //     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'IN', searchTerms: ['female'], shouldTriggerQuery: true });
-  //     done();
-  //   }, 2);
   // });
 
-  // it('should create the multi-select filter with a default search term when using "collectionAsync" as a Promise with content to simulate http-client', (done) => {
+  // it('should create the multi-select filter with a default search term when using "collectionAsync" as a Promise with content to simulate http-client', () => {
   //   const spyCallback = jest.spyOn(filterArguments, 'callback');
   //   const mockCollection = ['male', 'female'];
   //   mockColumn.filter.collectionAsync = new Promise((resolve) => setTimeout(() => resolve({ content: mockCollection }), 0));
 
   //   filterArguments.searchTerms = ['female'];
   //   filter.init(filterArguments);
+  // jest.runAllTimers(); // fast-forward timer
 
-  //   setTimeout(() => {
   //     const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
   //     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
   //     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
@@ -492,8 +490,6 @@ describe('SelectFilter', () => {
   //     expect(filterFilledElms.length).toBe(1);
   //     expect(filterListElm[1].checked).toBe(true);
   //     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'IN', searchTerms: ['female'], shouldTriggerQuery: true });
-  //     done();
-  //   }, 2);
   // });
 
   it('should create the multi-select filter with a default search term and have the HTML rendered when "enableRenderHtml" is set', () => {
@@ -584,7 +580,7 @@ describe('SelectFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
   });
 
-  it('should work with English locale when locale is changed', (done) => {
+  it('should work with English locale when locale is changed', () => {
     translateService.setLocale('en');
     gridOptionMock.enableTranslate = true;
     mockColumn.filter = {
@@ -599,27 +595,25 @@ describe('SelectFilter', () => {
 
     filterArguments.searchTerms = ['male', 'female'];
     filter.init(filterArguments);
+    jest.runAllTimers(); // fast-forward timer
 
-    setTimeout(() => {
-      const filterSelectAllElm = divContainer.querySelector<HTMLSpanElement>('.filter-gender .ms-select-all label span');
-      const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
-      const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
-      const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
-      const filterParentElm = divContainer.querySelector<HTMLButtonElement>(`.ms-parent.ms-filter.search-filter.filter-gender button`);
-      filterBtnElm.click();
+    const filterSelectAllElm = divContainer.querySelector<HTMLSpanElement>('.filter-gender .ms-select-all label span');
+    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
+    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    const filterParentElm = divContainer.querySelector<HTMLButtonElement>(`.ms-parent.ms-filter.search-filter.filter-gender button`);
+    filterBtnElm.click();
 
-      expect(filterListElm.length).toBe(3);
-      expect(filterListElm[0].textContent).toBe('Other');
-      expect(filterListElm[1].textContent).toBe('Male');
-      expect(filterListElm[2].textContent).toBe('Female');
-      expect(filterOkElm.textContent).toBe('OK');
-      expect(filterSelectAllElm.textContent).toBe('Select All');
-      expect(filterParentElm.textContent).toBe('2 of 3 selected');
-      done();
-    }, 0);
+    expect(filterListElm.length).toBe(3);
+    expect(filterListElm[0].textContent).toBe('Other');
+    expect(filterListElm[1].textContent).toBe('Male');
+    expect(filterListElm[2].textContent).toBe('Female');
+    expect(filterOkElm.textContent).toBe('OK');
+    expect(filterSelectAllElm.textContent).toBe('Select All');
+    expect(filterParentElm.textContent).toBe('2 of 3 selected');
   });
 
-  it('should work with French locale when locale is changed', (done) => {
+  it('should work with French locale when locale is changed', () => {
     translateService.setLocale('fr');
     gridOptionMock.enableTranslate = true;
     mockColumn.filter = {
@@ -634,26 +628,25 @@ describe('SelectFilter', () => {
 
     filterArguments.searchTerms = ['male', 'female'];
     filter.init(filterArguments);
-    setTimeout(() => {
-      const filterSelectAllElm = divContainer.querySelector<HTMLSpanElement>('.filter-gender .ms-select-all label span');
-      const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
-      const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
-      const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
-      const filterParentElm = divContainer.querySelector<HTMLButtonElement>(`.ms-parent.ms-filter.search-filter.filter-gender button`);
-      filterBtnElm.click();
+    jest.runAllTimers(); // fast-forward timer
 
-      expect(filterListElm.length).toBe(3);
-      expect(filterListElm[0].textContent).toBe('Autre');
-      expect(filterListElm[1].textContent).toBe('Mâle');
-      expect(filterListElm[2].textContent).toBe('Femme');
-      expect(filterOkElm.textContent).toBe('Terminé');
-      expect(filterSelectAllElm.textContent).toBe('Sélectionner tout');
-      expect(filterParentElm.textContent).toBe('2 de 3 sélectionnés');
-      done();
-    }, 0);
+    const filterSelectAllElm = divContainer.querySelector<HTMLSpanElement>('.filter-gender .ms-select-all label span');
+    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
+    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    const filterParentElm = divContainer.querySelector<HTMLButtonElement>(`.ms-parent.ms-filter.search-filter.filter-gender button`);
+    filterBtnElm.click();
+
+    expect(filterListElm.length).toBe(3);
+    expect(filterListElm[0].textContent).toBe('Autre');
+    expect(filterListElm[1].textContent).toBe('Mâle');
+    expect(filterListElm[2].textContent).toBe('Femme');
+    expect(filterOkElm.textContent).toBe('Terminé');
+    expect(filterSelectAllElm.textContent).toBe('Sélectionner tout');
+    expect(filterParentElm.textContent).toBe('2 de 3 sélectionnés');
   });
 
-  // it('should trigger a re-render of the DOM element when collection is replaced by new collection', async (done) => {
+  // it('should trigger a re-render of the DOM element when collection is replaced by new collection', async () => {
   //   const renderSpy = jest.spyOn(filter, 'renderDomElement');
   //   const newCollection = [{ value: 'val1', label: 'label1' }, { value: 'val2', label: 'label2' }];
   //   const mockDataResponse = [{ value: 'female', label: 'Female' }, { value: 'male', label: 'Male' }];
@@ -666,15 +659,13 @@ describe('SelectFilter', () => {
 
   //   await filter.init(filterArguments);
   //   mockColumn.filter.collection = newCollection;
+  // jest.runAllTimers(); // fast-forward timer
 
-  //   setTimeout(() => {
   //     expect(renderSpy).toHaveBeenCalledTimes(2);
   //     expect(renderSpy).toHaveBeenCalledWith(newCollection);
-  //     done();
-  //   }, 35);
   // });
 
-  // it('should trigger a re-render of the DOM element when collection changes', async (done) => {
+  // it('should trigger a re-render of the DOM element when collection changes', async () => {
   //   const renderSpy = jest.spyOn(filter, 'renderDomElement');
   //   const mockDataResponse = [{ value: 'female', label: 'Female' }, { value: 'male', label: 'Male' }];
 
@@ -686,11 +677,9 @@ describe('SelectFilter', () => {
 
   //   await filter.init(filterArguments);
   //   mockColumn.filter.collection.push({ value: 'other', label: 'other' });
+  // jest.runAllTimers(); // fast-forward timer
 
-  //   setTimeout(() => {
   //     expect(renderSpy).toHaveBeenCalledTimes(2);
   //     expect(renderSpy).toHaveBeenCalledWith(mockColumn.filter.collection);
-  //     done();
-  //   }, 35);
   // });
 });

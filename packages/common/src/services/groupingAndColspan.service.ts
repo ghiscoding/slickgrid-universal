@@ -1,6 +1,7 @@
 import {
   Column,
   SlickDataView,
+  GetSlickEventType,
   GridOption,
   SlickEventHandler,
   SlickGrid,
@@ -58,12 +59,20 @@ export class GroupingAndColspanService {
         this._eventHandler.subscribe(grid.onColumnsResized, () => this.renderPreHeaderRowGroupingTitles());
         this._eventHandler.subscribe(grid.onColumnsReordered, () => this.renderPreHeaderRowGroupingTitles());
         this._eventHandler.subscribe(this._dataView.onRowCountChanged, () => this.renderPreHeaderRowGroupingTitles());
-        if (resizerPlugin && resizerPlugin.onGridAfterResize) {
+        if (resizerPlugin?.onGridAfterResize) {
           this._eventHandler.subscribe(resizerPlugin.onGridAfterResize, () => this.renderPreHeaderRowGroupingTitles());
         }
 
+        const onSetOptionsHandler = grid.onSetOptions;
+        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSetOptionsHandler>>).subscribe(onSetOptionsHandler, (_e, args) => {
+          // when user changes frozen columns dynamically (e.g. from header menu), we need to re-render the pre-header of the grouping titles
+          if (args?.optionsBefore?.frozenColumn !== args?.optionsAfter?.frozenColumn) {
+            setTimeout(() => this.renderPreHeaderRowGroupingTitles(), 0);
+          }
+        });
+
         // also not sure why at this point, but it seems that I need to call the 1st create in a delayed execution
-        // probably some kind of timing issues and delaying it until the grid is fully ready does help
+        // probably some kind of timing issues and delaying it until the grid is fully ready fixes this problem
         setTimeout(() => this.renderPreHeaderRowGroupingTitles(), 75);
       }
     }
@@ -83,7 +92,7 @@ export class GroupingAndColspanService {
 
       // Add column groups to right panel
       $preHeaderPanel = $(this._grid.getPreHeaderPanelRight());
-      this.renderHeaderGroups($preHeaderPanel, this._gridOptions.frozenColumn + 1, this._columnDefinitions.length);
+      this.renderHeaderGroups($preHeaderPanel, this._gridOptions?.frozenColumn + 1, this._columnDefinitions.length);
     } else {
       // regular grid (not a frozen grid)
       const $preHeaderPanel = $(this._grid.getPreHeaderPanel());

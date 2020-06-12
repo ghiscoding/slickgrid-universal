@@ -41,9 +41,11 @@ const gridStub = {
   invalidate: jest.fn(),
   onColumnsReordered: new Slick.Event(),
   onColumnsResized: new Slick.Event(),
+  onSetOptions: new Slick.Event(),
   onSort: new Slick.Event(),
   render: jest.fn(),
   setColumns: jest.fn(),
+  setOptions: jest.fn(),
   setSortColumns: jest.fn(),
 } as unknown as SlickGrid;
 
@@ -238,6 +240,22 @@ describe('GroupingAndColspanService', () => {
       expect(headerGroupSpy).toHaveBeenNthCalledWith(2, expect.anything(), (frozenColumns + 1), mockColumns.length);
       expect(setTimeout).toHaveBeenCalledTimes(1);
       expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 75);
+      expect(divHeaderColumns.length).toBeGreaterThan(2);
+      expect(divHeaderColumns[0].outerHTML).toEqual(`<div style="width: 2815px; left: -1000px;" class="slick-header-columns">All your colums div here</div>`);
+    });
+
+    it('should render the pre-header row grouping title after changing "frozenColumn" with grid "setOptions"', () => {
+      const divHeaderColumns = document.getElementsByClassName('slick-header-columns');
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
+
+      service.init(gridStub);
+      gridStub.onSetOptions.notify({ grid: gridStub, optionsBefore: { frozenColumn: -1 }, optionsAfter: { frozenColumn: 1 } }, new Slick.EventData(), gridStub);
+      jest.runAllTimers(); // fast-forward timer
+
+      expect(spy).toHaveBeenCalledTimes(2);
+      expect(setTimeout).toHaveBeenCalledTimes(2);
+      expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 0);
       expect(divHeaderColumns.length).toBeGreaterThan(2);
       expect(divHeaderColumns[0].outerHTML).toEqual(`<div style="width: 2815px; left: -1000px;" class="slick-header-columns">All your colums div here</div>`);
     });

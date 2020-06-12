@@ -16,8 +16,14 @@ export interface SlickGridMenu {
   /** Initialize the SlickGrid 3rd party control */
   init(grid: SlickGrid): void;
 
-  /** Destroy (dispose) the SlickGrid 3rd party control */
+  /** Destroy (dispose) the SlickGrid 3rd party control, deletes the DOM element & unsubsribes all events */
   destroy(): void;
+
+  /** Delete the menu DOM element but without unsubscribing any events */
+  deleteMenu(): void;
+
+  /** Delete and then Recreate the Grid Menu (for example when we switch from regular to a frozen grid) */
+  recreateGridMenu(): void;
 
   /** Get all columns (includes visible and hidden columns) */
   getAllColumns(): Column[];

@@ -492,6 +492,7 @@ export interface SlickGrid {
   onViewportChanged: SlickEvent<SlickGridEventData>;
   onRendered: SlickEvent<OnRenderedEventArgs>;
   onSelectedRowsChanged: SlickEvent<OnSelectedRowsChangedEventArgs>;
+  onSetOptions: SlickEvent<OnSetOptionsEventArgs>;
   onScroll: SlickEvent<OnScrollEventArgs>;
   onSort: SlickEvent<SingleColumnSort | MultiColumnSort | ColumnSort | ColumnSort[]>;
 }
@@ -526,6 +527,8 @@ export interface OnKeyDownEventArgs extends SlickGridEventData { row: number; ce
 export interface OnValidationErrorEventArgs extends SlickGridEventData { row: number; cell: number; validationResults: EditorValidatorOutput; column: Column; editor: Editor; cellNode: HTMLElement; }
 export interface OnRenderedEventArgs extends SlickGridEventData { startRow: number; endRow: number; }
 export interface OnSelectedRowsChangedEventArgs extends SlickGridEventData { rows: number[], previousSelectedRows: number[] }
+export interface OnSetOptionsEventArgs extends SlickGridEventData { optionsBefore: GridOption, optionsAfter: GridOption }
+
 export interface OnScrollEventArgs extends SlickGridEventData { scrollLeft: number; scrollTop: number; }
 export interface OnDragEventArgs extends SlickGridEventData {
   count: number; deltaX: number; deltaY: number; offsetX: number; offsetY: number; originalX: number; originalY: number;

@@ -3,6 +3,8 @@ import { Filters } from '..';
 import { NativeSelectFilter } from '../nativeSelectFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
+jest.useFakeTimers();
+
 const containerId = 'demo-container';
 
 // define a <div> container to simulate the grid container
@@ -358,7 +360,7 @@ describe('NativeSelectFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
   });
 
-  it('should work with English locale when locale is changed', (done) => {
+  it('should work with English locale when locale is changed', () => {
     translateService.setLocale('en');
     gridOptionMock.enableTranslate = true;
     mockColumn.filter = {
@@ -373,19 +375,17 @@ describe('NativeSelectFilter', () => {
 
     filterArguments.searchTerms = ['male', 'female'];
     filter.init(filterArguments);
+    jest.runAllTimers(); // fast-forward timer
 
-    setTimeout(() => {
-      const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`select.search-filter.filter-gender option`);
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`select.search-filter.filter-gender option`);
 
-      expect(filterListElm.length).toBe(3);
-      expect(filterListElm[0].textContent).toBe('Other');
-      expect(filterListElm[1].textContent).toBe('Male');
-      expect(filterListElm[2].textContent).toBe('Female');
-      done();
-    });
+    expect(filterListElm.length).toBe(3);
+    expect(filterListElm[0].textContent).toBe('Other');
+    expect(filterListElm[1].textContent).toBe('Male');
+    expect(filterListElm[2].textContent).toBe('Female');
   });
 
-  it('should work with French locale when locale is changed', (done) => {
+  it('should work with French locale when locale is changed', () => {
     translateService.setLocale('fr');
     gridOptionMock.enableTranslate = true;
     mockColumn.filter = {
@@ -400,14 +400,12 @@ describe('NativeSelectFilter', () => {
 
     filterArguments.searchTerms = ['male', 'female'];
     filter.init(filterArguments);
-    setTimeout(() => {
-      const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`select.search-filter.filter-gender option`);
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`select.search-filter.filter-gender option`);
+    jest.runAllTimers(); // fast-forward timer
 
-      expect(filterListElm.length).toBe(3);
-      expect(filterListElm[0].textContent).toBe('Autre');
-      expect(filterListElm[1].textContent).toBe('Mâle');
-      expect(filterListElm[2].textContent).toBe('Femme');
-      done();
-    });
+    expect(filterListElm.length).toBe(3);
+    expect(filterListElm[0].textContent).toBe('Autre');
+    expect(filterListElm[1].textContent).toBe('Mâle');
+    expect(filterListElm[2].textContent).toBe('Femme');
   });
 });
