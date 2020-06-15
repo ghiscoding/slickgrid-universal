@@ -130,7 +130,6 @@ export class Example09 {
     // once pagination totalItems is filled, we can update the dataset
     this.slickgridLwc.dataset = data['items'];
     this.odataQuery = data['query'];
-    document.querySelector('#odata-query').innerHTML = this.odataQuery;
   }
 
   getCustomerApiCall(query) {

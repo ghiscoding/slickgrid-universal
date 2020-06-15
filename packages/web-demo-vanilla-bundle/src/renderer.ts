@@ -94,9 +94,9 @@ export class Renderer {
         case 'innerhtml':
         case 'innerHTML':
           observer.bind(elm, 'innerHTML');
-          // observer.bind(elm, 'innerHTML', 'change');
           break;
         case 'innertext':
+        case 'innerText':
           observer.bind(elm, 'innerText');
           break;
         case 'value':

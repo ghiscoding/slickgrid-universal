@@ -1,8 +1,14 @@
+/**
+ * Create 2 way Bindings for any variable that are primitive or object types, when it's an object type it will watch for property changes
+ * The following 2 articles helped in building this service:
+ *   1- https://blog.jeremylikness.com/blog/client-side-javascript-databinding-without-a-framework/
+ *   2- https://www.wintellect.com/data-binding-pure-javascript/
+ */
 export class BindingService {
   _value: any = null;
   _binding: any;
   _property: string;
-  elementBindings: any[];
+  elementBindings: any[] = [];
 
   constructor(binding: { variable: any; property?: string; }) {
     this._binding = binding;
@@ -13,6 +19,11 @@ export class BindingService {
     } else {
       this._value = binding.variable;
     }
+
+    Object.defineProperty(binding.variable, binding.property, {
+      get: this.valueGetter.bind(this),
+      set: this.valueSetter.bind(this)
+    });
   }
 
   get property() {
@@ -25,9 +36,10 @@ export class BindingService {
 
   valueSetter(val: any) {
     this._value = val;
-    for (let i = 0; i < this.elementBindings.length; i++) {
-      const binding = this.elementBindings[i];
-      binding.element[binding.attribute] = val;
+    if (Array.isArray(this.elementBindings)) {
+      for (const binding of this.elementBindings) {
+        binding.element[binding.attribute] = val;
+      }
     }
   }
 
