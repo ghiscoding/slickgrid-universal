@@ -26,6 +26,7 @@ import {
   OperatorString,
   SearchTerm,
   SingleColumnSort,
+  SlickGrid,
 } from '@slickgrid-universal/common';
 import { OdataQueryBuilderService } from './odataQueryBuilder.service';
 import { OdataOption, OdataSortingOption } from '../interfaces/index';
@@ -38,7 +39,7 @@ export class GridOdataService implements BackendService {
   private _currentPagination: CurrentPagination | null;
   private _currentSorters: CurrentSorter[] = [];
   private _columnDefinitions: Column[];
-  private _grid: any;
+  private _grid: SlickGrid;
   private _odataService: OdataQueryBuilderService;
   options: Partial<OdataOption>;
   pagination: Pagination | undefined;
@@ -60,14 +61,14 @@ export class GridOdataService implements BackendService {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   private get _gridOptions(): GridOption {
-    return (this._grid && this._grid.getOptions) ? this._grid.getOptions() : {};
+    return (this._grid?.getOptions) ? this._grid.getOptions() : {};
   }
 
   constructor() {
     this._odataService = new OdataQueryBuilderService();
   }
 
-  init(serviceOptions: Partial<OdataOption>, pagination?: Pagination, grid?: any): void {
+  init(serviceOptions: Partial<OdataOption>, pagination?: Pagination, grid?: SlickGrid): void {
     this._grid = grid;
     const mergedOptions = { ...this.defaultOptions, ...serviceOptions };
 

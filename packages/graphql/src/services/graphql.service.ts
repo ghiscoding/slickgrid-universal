@@ -21,6 +21,7 @@ import {
   Pagination,
   PaginationChangedArgs,
   SingleColumnSort,
+  SlickGrid,
   SortDirection,
   SortDirectionString,
 } from '@slickgrid-universal/common';
@@ -43,7 +44,7 @@ export class GraphqlService implements BackendService {
   private _currentPagination: CurrentPagination | null;
   private _currentSorters: CurrentSorter[] = [];
   private _columnDefinitions: Column[];
-  private _grid: any;
+  private _grid: SlickGrid;
   private _datasetIdPropName = 'id';
   options: GraphqlServiceOption;
   pagination: Pagination | undefined;
@@ -59,11 +60,11 @@ export class GraphqlService implements BackendService {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   private get _gridOptions(): GridOption {
-    return (this._grid && this._grid.getOptions) ? this._grid.getOptions() : {};
+    return (this._grid?.getOptions) ? this._grid.getOptions() : {};
   }
 
   /** Initialization of the service, which acts as a constructor */
-  init(serviceOptions?: GraphqlServiceOption, pagination?: Pagination, grid?: any): void {
+  init(serviceOptions?: GraphqlServiceOption, pagination?: Pagination, grid?: SlickGrid): void {
     this._grid = grid;
     this.options = serviceOptions || { datasetName: '' };
     this.pagination = pagination;
@@ -519,7 +520,7 @@ export class GraphqlService implements BackendService {
 
       // set the sort icons, but also make sure to filter out null values (that happens when columnDef is not found)
       if (Array.isArray(tmpSorterArray)) {
-        this._grid.setSortColumns(tmpSorterArray.filter((sorter) => sorter));
+        this._grid.setSortColumns(tmpSorterArray.filter(sorter => sorter));
       }
     } else if (sortColumns && !presetSorters) {
       // build the orderBy array, it could be multisort, example
