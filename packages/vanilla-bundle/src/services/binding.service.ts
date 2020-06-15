@@ -1,5 +1,18 @@
 import * as DOMPurify from 'dompurify';
 
+interface Binding {
+  variable: any;
+  property: string;
+}
+
+interface ElementBinding {
+  element: Element | null;
+  attribute: string;
+  event: string;
+  callback?: (val: any) => any;
+}
+
+
 /**
  * Create 2 way Bindings for any variable that are primitive or object types, when it's an object type it will watch for property changes
  * The following 2 articles helped in building this service:
@@ -8,11 +21,11 @@ import * as DOMPurify from 'dompurify';
  */
 export class BindingService {
   _value: any = null;
-  _binding: any;
+  _binding: Binding;
   _property: string;
   elementBindings: any[] = [];
 
-  constructor(binding: { variable: any; property: string; }) {
+  constructor(binding: Binding) {
     this._binding = binding;
     this._property = binding.property || '';
     this.elementBindings = [];
@@ -52,7 +65,7 @@ export class BindingService {
    *    2.1- we could also provide an extra callback method to execute when the event is triggered
    */
   bind(element: Element | null, attribute: string, eventName?: string, callback?: (val: any) => any) {
-    const binding = {
+    const binding: ElementBinding = {
       element,
       attribute,
       event: '',

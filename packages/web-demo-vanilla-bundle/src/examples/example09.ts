@@ -17,7 +17,8 @@ export class Example09 {
   odataVersion = 2;
   odataQuery = '';
   processing = false;
-  status = { text: '', class: '' };
+  status = '';
+  statusClass = 'is-success';
 
   attached() {
     this.initializeGrid();
@@ -109,9 +110,8 @@ export class Example09 {
 
   displaySpinner(isProcessing) {
     this.processing = isProcessing;
-    this.status = (isProcessing)
-      ? { text: 'processing...', class: 'alert alert-danger' }
-      : { text: 'done', class: 'alert alert-success' };
+    this.status = (isProcessing) ? 'loading...' : 'done!!!';
+    this.statusClass = (isProcessing) ? 'notification is-light is-warning' : 'notification is-light is-success';
   }
 
   getCustomerCallback(data) {

@@ -23,6 +23,10 @@
     <button class="button is-small" data-test="goto-last-page" onclick.delegate="goToLastPage()">
       <i class="fa fa-caret-right fa-lg"></i>&gt;
     </button>
+
+    <span style="margin-left: 20px" class.bind="statusClass" data-test="spinner">
+      <strong>Status:</strong> <span innerhtml.bind="status"></span>
+    </span>
   </span>
 </div>
 

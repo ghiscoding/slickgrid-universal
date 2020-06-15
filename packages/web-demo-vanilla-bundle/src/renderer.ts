@@ -98,6 +98,12 @@ export class Renderer {
         case 'innerText':
           observer.bind(elm, 'innerText');
           break;
+        case 'class':
+          observer.bind(elm, 'className');
+          break;
+        case 'style':
+          observer.bind(elm, 'style');
+          break;
         case 'value':
           // add 2 possible events (change/keyup) on a value binding
           observer.bind(elm, attribute, 'change').bind(elm, attribute, 'keyup');

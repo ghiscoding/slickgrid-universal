@@ -32,7 +32,8 @@ export class Example10 {
   graphqlQuery = '...';
   processing = false;
   selectedLanguage: string;
-  status = { text: '', class: '' };
+  status = '';
+  statusClass = 'is-success';
 
   dispose() {
     this.slickgridLwc.dispose();
@@ -183,9 +184,8 @@ export class Example10 {
 
   displaySpinner(isProcessing) {
     this.processing = isProcessing;
-    this.status = (isProcessing)
-      ? { text: 'processing...', class: 'alert alert-danger' }
-      : { text: 'done', class: 'alert alert-success' };
+    this.status = (isProcessing) ? 'loading...' : 'done!!!';
+    this.statusClass = (isProcessing) ? 'notification is-light is-warning' : 'notification is-light is-success';
   }
 
   handleOnSlickerGridCreated(event) {
