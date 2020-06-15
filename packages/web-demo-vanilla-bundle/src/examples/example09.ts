@@ -8,7 +8,6 @@ const defaultPageSize = 20;
 export class Example09 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
-  dataset = [];
   metrics: Metrics;
   gridObj: SlickGrid;
   slickgridLwc;
@@ -27,7 +26,7 @@ export class Example09 {
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     // gridContainerElm.addEventListener('onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
     // gridContainerElm.addEventListener('onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, []);
   }
 
   dispose() {
@@ -129,8 +128,9 @@ export class Example09 {
     }
 
     // once pagination totalItems is filled, we can update the dataset
-    this.dataset = data['items'];
+    this.slickgridLwc.dataset = data['items'];
     this.odataQuery = data['query'];
+    document.querySelector('#odata-query').innerHTML = this.odataQuery;
   }
 
   getCustomerApiCall(query) {

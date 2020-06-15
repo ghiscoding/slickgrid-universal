@@ -113,7 +113,6 @@ export class Example10 {
       gridWidth: 1000,
       enableFiltering: true,
       enableCellNavigation: true,
-      enableTranslate: true,
       createPreHeaderPanel: true,
       showPreHeaderPanel: true,
       preHeaderPanelHeight: 28,
@@ -217,7 +216,7 @@ export class Example10 {
     return new Promise<GraphqlPaginatedResult>(resolve => {
       setTimeout(() => {
         this.graphqlQuery = this.slickerGridInstance.backendService.buildQuery();
-        console.log('graphqlQuery', this.graphqlQuery)
+        document.querySelector('#graphql-query').innerHTML = this.graphqlQuery;
         resolve(mockedResult);
       }, 150);
     });
