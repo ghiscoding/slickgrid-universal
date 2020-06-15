@@ -3,6 +3,11 @@
 </h3>
 
 <div class="row">
+  <button class="button is-small" data-test="clear-filters-sorting"
+          onclick.delegate="clearAllFiltersAndSorts()" title="Clear all Filters & Sorts">
+    <i class="fa fa-filter text-danger"></i>
+    Clear all Filter & Sorts
+  </button>
   <button class="button is-small" data-test="set-dynamic-filter" onclick.delegate="setFiltersDynamically()">
     Set Filters Dynamically
   </button>
@@ -24,8 +29,8 @@
 <br />
 
 <div class="notification is-info is-light" data-test="alert-odata-query">
-  <strong>OData Query:</strong> <span data-test="odata-query-result"
-        innerhtml.bind="odataQuery"></span>
+  <strong>OData Query:</strong>
+  <span data-test="odata-query-result" innerhtml.bind="odataQuery"></span>
 </div>
 
 <hr />

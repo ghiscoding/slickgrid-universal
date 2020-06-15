@@ -255,6 +255,13 @@ export class Example09 {
     });
   }
 
+  clearAllFiltersAndSorts() {
+    if (this.slickerGridInstance && this.slickerGridInstance.gridService) {
+      this.slickerGridInstance.gridService.clearAllFiltersAndSorts();
+    }
+  }
+
+
   // goToFirstPage() {
   //   this.slickerGridInstance.paginationService.goToFirstPage();
   // }
@@ -269,19 +276,19 @@ export class Example09 {
     console.log('Client sample, Grid State changed:: ', gridStateChanges.change);
   }
 
-  // setFiltersDynamically() {
-  //   // we can Set Filters Dynamically (or different filters) afterward through the FilterService
-  //   this.slickerGridInstance.filterService.updateFilters([
-  //     // { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
-  //     { columnId: 'name', searchTerms: ['A'], operator: 'a*' },
-  //   ]);
-  // }
+  setFiltersDynamically() {
+    // we can Set Filters Dynamically (or different filters) afterward through the FilterService
+    this.slickerGridInstance.filterService.updateFilters([
+      // { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
+      { columnId: 'name', searchTerms: ['A'], operator: 'a*' },
+    ]);
+  }
 
-  // setSortingDynamically() {
-  //   this.slickerGridInstance.sortService.updateSorting([
-  //     { columnId: 'name', direction: 'DESC' },
-  //   ]);
-  // }
+  setSortingDynamically() {
+    this.slickerGridInstance.sortService.updateSorting([
+      { columnId: 'name', direction: 'DESC' },
+    ]);
+  }
 
   // THE FOLLOWING METHODS ARE ONLY FOR DEMO PURPOSES DO NOT USE THIS CODE
   // ---

@@ -43,7 +43,8 @@
   "dependencies": {
     "@slickgrid-universal/common": "^0.0.2",
     "@slickgrid-universal/excel-export": "^0.0.2",
-    "@slickgrid-universal/file-export": "^0.0.2"
+    "@slickgrid-universal/file-export": "^0.0.2",
+    "dompurify": "^2.0.11"
   },
   "devDependencies": {
     "@types/webpack": "^4.41.17",

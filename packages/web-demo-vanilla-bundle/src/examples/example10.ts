@@ -175,11 +175,11 @@ export class Example10 {
     };
   }
 
-  // clearAllFiltersAndSorts() {
-  //   if (this.slickerGridInstance && this.slickerGridInstance.gridService) {
-  //     this.slickerGridInstance.gridService.clearAllFiltersAndSorts();
-  //   }
-  // }
+  clearAllFiltersAndSorts() {
+    if (this.slickerGridInstance && this.slickerGridInstance.gridService) {
+      this.slickerGridInstance.gridService.clearAllFiltersAndSorts();
+    }
+  }
 
   displaySpinner(isProcessing) {
     this.processing = isProcessing;
@@ -259,10 +259,4 @@ export class Example10 {
       { columnId: 'company', direction: 'ASC' },
     ]);
   }
-
-  // async switchLanguage() {
-  //   const nextLanguage = (this.selectedLanguage === 'en') ? 'fr' : 'en';
-  //   await this.i18n.setLocale(nextLanguage);
-  //   this.selectedLanguage = nextLanguage;
-  // }
 }

@@ -1,3 +1,5 @@
+import * as DOMPurify from 'dompurify';
+
 /**
  * Create 2 way Bindings for any variable that are primitive or object types, when it's an object type it will watch for property changes
  * The following 2 articles helped in building this service:
@@ -10,14 +12,14 @@ export class BindingService {
   _property: string;
   elementBindings: any[] = [];
 
-  constructor(binding: { variable: any; property?: string; }) {
+  constructor(binding: { variable: any; property: string; }) {
     this._binding = binding;
     this._property = binding.property || '';
     this.elementBindings = [];
     if (binding.property && binding.variable.hasOwnProperty(binding.property)) {
-      this._value = binding.variable[binding.property];
+      this._value = DOMPurify.sanitize(binding.variable[binding.property], {});
     } else {
-      this._value = binding.variable;
+      this._value = DOMPurify.sanitize(binding.variable, {});
     }
 
     Object.defineProperty(binding.variable, binding.property, {
@@ -35,10 +37,10 @@ export class BindingService {
   }
 
   valueSetter(val: any) {
-    this._value = val;
+    this._value = DOMPurify.sanitize(val, {});
     if (Array.isArray(this.elementBindings)) {
       for (const binding of this.elementBindings) {
-        binding.element[binding.attribute] = val;
+        binding.element[binding.attribute] = DOMPurify.sanitize(val, {});
       }
     }
   }
@@ -73,7 +75,7 @@ export class BindingService {
         binding.event = eventName;
       }
       this.elementBindings.push(binding);
-      element[attribute] = this._value ?? null;
+      element[attribute] = DOMPurify.sanitize(this._value, {}) ?? null;
     }
     return this;
   }

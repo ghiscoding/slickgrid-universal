@@ -82,8 +82,7 @@ export class Renderer {
       const attribute = domAttribute.toLowerCase();
 
       // before creating a new observer, first check if the variable already has an associated observer
-      // if so then use it and add extra binding to it
-      // else create a new observer
+      // if we can't find an observer then we'll create a new one for it
       let observer = this._observers.find((bind) => bind.property === variableName);
       if (!observer) {
         observer = new BindingService({ variable: window[this._className], property: variableName });
