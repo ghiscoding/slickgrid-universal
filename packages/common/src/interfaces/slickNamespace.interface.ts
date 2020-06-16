@@ -129,7 +129,7 @@ export interface SlickNamespace {
   // all of the controls are under the Controls namespace
   Controls: {
     /** A control to add a Column Picker (right+click on any column header to reveal the column picker) */
-    ColumnPicker: new (columns: Column[], grid: SlickGrid, options?: ColumnPickerOption) => SlickColumnPicker;
+    ColumnPicker: new (columns: Column[], grid: SlickGrid, options?: GridOption) => SlickColumnPicker;
 
     /** A control to add a Grid Menu (hambuger menu on top-right of the grid) */
     GridMenu: new (columns: Column[], grid: SlickGrid, options?: GridOption) => SlickGridMenu;
