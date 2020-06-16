@@ -58,7 +58,7 @@ export class Example4 {
 
   attached() {
     const dataset = this.initializeGrid();
-    const gridContainerElm = document.querySelector(`.grid4`);
+    const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid4`);
 
     // gridContainerElm.addEventListener('onclick', handleOnClick);
     gridContainerElm.addEventListener('onvalidationerror', this.handleOnValidationError.bind(this));

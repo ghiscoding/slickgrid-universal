@@ -22,7 +22,7 @@ export class Example7 {
   attached() {
     this.initializeGrid();
     this.dataset = this.loadData(500);
-    const gridContainerElm = document.querySelector(`.grid7`);
+    const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid7`);
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }

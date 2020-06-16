@@ -42,7 +42,7 @@ export class Example10 {
 
   attached() {
     this.initializeGrid();
-    const gridContainerElm = document.querySelector(`.grid10`);
+    const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid10`);
 
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     // gridContainerElm.addEventListener('onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
@@ -82,7 +82,7 @@ export class Example10 {
       },
       {
         id: 'billingAddressStreet', field: 'billing.address.street', name: 'Street',
-        width: 60, filterable: true, sortable: true, columnGroup: 'Billing Address',
+        width: 60, filterable: true, sortable: true, columnGroup: 'Billing Information',
       },
       {
         id: 'billingAddressZip', field: 'billing.address.zip', name: 'Zip', width: 60,
@@ -221,22 +221,22 @@ export class Example10 {
     });
   }
 
-  // goToFirstPage() {
-  //   this.slickerGridInstance.paginationService.goToFirstPage();
-  // }
+  goToFirstPage() {
+    this.slickerGridInstance.paginationService.goToFirstPage();
+  }
 
-  // goToLastPage() {
-  //   this.slickerGridInstance.paginationService.goToLastPage();
-  // }
+  goToLastPage() {
+    this.slickerGridInstance.paginationService.goToLastPage();
+  }
 
   /** Dispatched event of a Grid State Changed event */
   gridStateChanged(gridStateChanges: GridStateChange) {
     console.log('GraphQL sample, Grid State changed:: ', gridStateChanges);
   }
 
-  // saveCurrentGridState() {
-  //   console.log('GraphQL current grid state', this.slickerGridInstance.gridStateService.getCurrentGridState());
-  // }
+  saveCurrentGridState() {
+    console.log('GraphQL current grid state', this.slickerGridInstance.gridStateService.getCurrentGridState());
+  }
 
   setFiltersDynamically() {
     const presetLowestDay = moment().add(-2, 'days').format('YYYY-MM-DD');

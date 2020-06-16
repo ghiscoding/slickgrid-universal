@@ -22,7 +22,7 @@ export class Example09 {
 
   attached() {
     this.initializeGrid();
-    const gridContainerElm = document.querySelector(`.grid9`);
+    const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid9`);
 
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     // gridContainerElm.addEventListener('onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
@@ -261,14 +261,13 @@ export class Example09 {
     }
   }
 
+  goToFirstPage() {
+    this.slickerGridInstance.paginationService.goToFirstPage();
+  }
 
-  // goToFirstPage() {
-  //   this.slickerGridInstance.paginationService.goToFirstPage();
-  // }
-
-  // goToLastPage() {
-  //   this.slickerGridInstance.paginationService.goToLastPage();
-  // }
+  goToLastPage() {
+    this.slickerGridInstance.paginationService.goToLastPage();
+  }
 
   /** Dispatched event of a Grid State Changed event */
   gridStateChanged(gridStateChanges: GridStateChange) {

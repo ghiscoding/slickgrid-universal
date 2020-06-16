@@ -20,8 +20,8 @@ export class Example1 {
 
   attached() {
     this.defineGrids();
-    const gridContainerElm1 = document.querySelector(`.grid1`);
-    const gridContainerElm2 = document.querySelector(`.grid2`);
+    const gridContainerElm1 = document.querySelector<HTMLDivElement>(`.grid1`);
+    const gridContainerElm2 = document.querySelector<HTMLDivElement>(`.grid2`);
 
     // mock some data (different in each dataset)
     this.dataset1 = this.mockData(NB_ITEMS);

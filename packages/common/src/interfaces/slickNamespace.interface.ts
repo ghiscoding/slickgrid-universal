@@ -69,7 +69,7 @@ export interface SlickNamespace {
   };
 
   /** Slick Grid is a data grid library and this class is the core of the library */
-  Grid: new (gridContainer: Element, data: SlickDataView | Array<any>, columnDefinitions: Column[], gridOptions: GridOption) => SlickGrid;
+  Grid: new (gridContainer: HTMLElement, data: SlickDataView | Array<any>, columnDefinitions: Column[], gridOptions: GridOption) => SlickGrid;
 
 
   // --

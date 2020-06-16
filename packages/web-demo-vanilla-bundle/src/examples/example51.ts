@@ -94,7 +94,7 @@ export class Example51 {
   attached() {
     this.initializeGrid();
     this.dataset = [];
-    const gridContainerElm = document.querySelector(`.grid51`);
+    const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid51`);
 
     gridContainerElm.addEventListener('onclick', this.handleOnClick.bind(this));
     gridContainerElm.addEventListener('oncellchange', this.handleOnCellChange.bind(this));
@@ -265,7 +265,6 @@ export class Example51 {
       rowHeight: 45,
       // eventNamingStyle: 'lowerCaseWithoutOnPrefix',
       editCommandHandler: (item, column, editCommand) => {
-        console.log(item, column, editCommand)
         this.editQueue.push({ item, column, command: editCommand });
         editCommand.execute();
       },

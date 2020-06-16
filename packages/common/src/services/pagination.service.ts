@@ -27,7 +27,7 @@ export class PaginationService {
   constructor(private pubSubService: PubSubService, private sharedService: SharedService) { }
 
   /** Getter of SlickGrid DataView object */
-  get dataView(): SlickDataView {
+  get dataView(): SlickDataView | undefined {
     return (this.grid?.getData && this.grid.getData()) as SlickDataView;
   }
 
@@ -95,8 +95,10 @@ export class PaginationService {
         }
       });
       setTimeout(() => {
-        this.dataView.setRefreshHints({ isFilterUnchanged: true });
-        this.dataView.setPagingOptions({ pageSize: this.paginationOptions.pageSize, pageNum: (this._pageNumber - 1) }); // dataView page starts at 0 instead of 1
+        if (this.dataView) {
+          this.dataView.setRefreshHints({ isFilterUnchanged: true });
+          this.dataView.setPagingOptions({ pageSize: this.paginationOptions.pageSize, pageNum: (this._pageNumber - 1) }); // dataView page starts at 0 instead of 1
+        }
       });
     }
 
@@ -254,7 +256,7 @@ export class PaginationService {
 
   /** Reset the Pagination to first page and recalculate necessary numbers */
   resetPagination(triggerChangedEvent = true) {
-    if (this._isLocalGrid) {
+    if (this._isLocalGrid && this.dataView) {
       // on a local grid we also need to reset the DataView paging to 1st page
       this.dataView.setPagingOptions({ pageSize: this._itemsPerPage, pageNum: 0 });
     }
@@ -281,7 +283,7 @@ export class PaginationService {
 
       // when using a local grid, we can reset the DataView pagination by changing its page size
       // page size of 0 would show all, hence cancel the pagination
-      if (this._isLocalGrid) {
+      if (this._isLocalGrid && this.dataView) {
         const pageSize = visible ? this._itemsPerPage : 0;
         this.dataView.setPagingOptions({ pageSize, pageNum: 0 });
       }
@@ -292,7 +294,7 @@ export class PaginationService {
     return new Promise((resolve, reject) => {
       this.recalculateFromToIndexes();
 
-      if (this._isLocalGrid) {
+      if (this._isLocalGrid && this.dataView) {
         this.dataView.setPagingOptions({ pageSize: this._itemsPerPage, pageNum: (pageNumber - 1) }); // dataView page starts at 0 instead of 1
         this.pubSubService.publish(`onPaginationChanged`, this.getFullPagination());
       } else {

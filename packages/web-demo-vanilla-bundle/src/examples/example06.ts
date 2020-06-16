@@ -31,7 +31,7 @@ export class Example6 {
     this.initializeGrid();
     this.datasetFlat = [];
     this.datasetHierarchical = this.mockDataset();
-    const gridContainerElm = document.querySelector('.grid6');
+    const gridContainerElm = document.querySelector<HTMLDivElement>('.grid6');
 
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, null, this.datasetHierarchical);
@@ -109,7 +109,7 @@ export class Example6 {
     if (value === null || value === undefined || dataContext === undefined) {
       return '';
     }
-    const dataView = grid.getData() as DataView;
+    const dataView = grid.getData() as SlickDataView;
     const data = dataView.getItems();
     const identifierPropName = dataView.getIdPropertyName() || 'id';
     const idx = dataView.getIdxById(dataContext[identifierPropName]);
