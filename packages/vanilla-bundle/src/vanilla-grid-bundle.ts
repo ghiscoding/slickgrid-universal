@@ -75,6 +75,7 @@ export class VanillaGridBundle {
   private _gridContainerElm: Element;
   private _hideHeaderRowAfterPageLoad = false;
   private _isDatasetInitialized = false;
+  private _isGridInitialized = false;
   private _isGridHavingFilters = false;
   private _isLocalGrid = true;
   private _eventHandler: SlickEventHandler = new Slick.EventHandler();
@@ -457,6 +458,7 @@ export class VanillaGridBundle {
     };
 
     this._eventPubSubService.publish('onSlickerGridCreated', slickerElementInstance);
+    this._isGridInitialized = true;
   }
 
   mergeGridOptions(gridOptions: GridOption) {
@@ -677,6 +679,9 @@ export class VanillaGridBundle {
    */
   showHeaderRow(showing = true) {
     this.grid.setHeaderRowVisibility(showing, false);
+    if (showing === true && this._isGridInitialized) {
+      this.grid.setColumns(this.columnDefinitions);
+    }
     return showing;
   }
 
