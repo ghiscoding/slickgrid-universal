@@ -388,7 +388,7 @@ export class GridMenuExtension implements Extension {
    * @param event
    * @param GridMenuItem args
    */
-  private executeGridMenuInternalCustomCommands(e: Event, args: GridMenuItem) {
+  private executeGridMenuInternalCustomCommands(_e: Event, args: GridMenuItem) {
     const registedServices = this.sharedService?.externalRegisteredServices || [];
 
     if (args && args.command) {

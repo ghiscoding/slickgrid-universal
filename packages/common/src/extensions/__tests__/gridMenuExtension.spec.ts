@@ -567,6 +567,12 @@ describe('gridMenuExtension', () => {
     });
 
     describe('executeGridMenuInternalCustomCommands method', () => {
+      afterEach(() => {
+        jest.clearAllMocks();
+        extension.eventHandler.unsubscribeAll();
+        mockGridMenuAddon.onCommand = new Slick.Event();
+      });
+
       it('should call "clearFrozenColumns" when the command triggered is "clear-frozen-columns"', () => {
         const setOptionsSpy = jest.spyOn(gridStub, 'setOptions');
         const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
@@ -640,7 +646,6 @@ describe('gridMenuExtension', () => {
         }
       });
 
-
       it('should call "exportToExcel" set when the command triggered is "export-excel"', () => {
         const excelExportSpy = jest.spyOn(excelExportServiceStub, 'exportToExcel');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
@@ -692,9 +697,9 @@ describe('gridMenuExtension', () => {
 
       it('should call the grid "setHeaderRowVisibility" method when the command triggered is "toggle-filter"', () => {
         gridOptionsMock.showHeaderRow = false;
-        const gridSpy = jest.spyOn(SharedService.prototype.grid, 'setHeaderRowVisibility');
+        const gridSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
-        const setColumnSpy = jest.spyOn(SharedService.prototype.grid, 'setColumns');
+        const setColumnSpy = jest.spyOn(gridStub, 'setColumns');
 
         const instance = extension.register();
         instance.onCommand.notify({ item: { command: 'toggle-filter' }, column: {} as Column, grid: gridStub, command: 'toggle-filter' }, new Slick.EventData(), gridStub);
