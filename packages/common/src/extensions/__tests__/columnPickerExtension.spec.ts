@@ -72,7 +72,7 @@ describe('columnPickerExtension', () => {
       expect(instance).toBeTruthy();
       expect(instance).toEqual(addonInstance);
       expect(onRegisteredSpy).toHaveBeenCalledWith(instance);
-      expect(mockAddon).toHaveBeenCalledWith(columnsMock, gridStub, gridOptionsMock.columnPicker);
+      expect(mockAddon).toHaveBeenCalledWith(columnsMock, gridStub, gridOptionsMock);
     });
 
     it('should call internal event handler subscribe and expect the "onColumnSpy" option to be called when addon notify is called', () => {
