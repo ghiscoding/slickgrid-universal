@@ -3,7 +3,6 @@ import {
   CellMenuOption,
   CheckboxSelectorOption,
   Column,
-  ColumnPickerOption,
   ContextMenuOption,
   DraggableGroupingOption,
   ExcelCopyBufferOption,

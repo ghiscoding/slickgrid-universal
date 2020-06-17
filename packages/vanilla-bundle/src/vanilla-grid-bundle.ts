@@ -205,7 +205,6 @@ export class VanillaGridBundle {
     this.sortService = new SortService(this.sharedService, this._eventPubSubService);
     this.treeDataService = new TreeDataService(this.sharedService);
     this.extensionUtility = new ExtensionUtility(this.sharedService, this.translateService);
-    this.groupingAndColspanService = new GroupingAndColspanService(this.extensionUtility);
     this.autoTooltipExtension = new AutoTooltipExtension(this.extensionUtility, this.sharedService);
     this.cellExternalCopyManagerExtension = new CellExternalCopyManagerExtension(this.extensionUtility, this.sharedService);
     this.cellMenuExtension = new CellMenuExtension(this.extensionUtility, this.sharedService, this.translateService);
@@ -239,6 +238,7 @@ export class VanillaGridBundle {
       this.sharedService,
       this.translateService,
     );
+    this.groupingAndColspanService = new GroupingAndColspanService(this.extensionUtility, this.extensionService);
 
     if (hierarchicalDataset) {
       this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
