@@ -394,13 +394,10 @@ export class VanillaGridBundle {
 
     // TODO - Pagination
     // user could show pagination
-    // if (this._gridOptions.enablePagination) {
-    //   this.paginationRenderer = new PaginationRenderer();
-    //   const paginationElm = this.paginationRenderer.renderPagination();
-    //   if (paginationElm) {
-    //     $(paginationElm).appendTo(this._gridParentContainerElm);
-    //   }
-    // }
+    if (this._gridOptions.enablePagination) {
+      this.paginationRenderer = new PaginationRenderer(this.paginationService, this.sharedService);
+      this.paginationRenderer.renderPagination(this._gridParentContainerElm);
+    }
 
     const fixedGridDimensions = (this._gridOptions?.gridHeight || this._gridOptions?.gridWidth) ? { height: this._gridOptions?.gridHeight, width: this._gridOptions?.gridWidth } : undefined;
     const autoResizeOptions = this._gridOptions?.autoResize ?? { bottomPadding: 0 };

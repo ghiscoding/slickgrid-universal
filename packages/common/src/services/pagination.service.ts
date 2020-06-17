@@ -163,6 +163,7 @@ export class PaginationService {
 
   goToFirstPage(event?: any): Promise<any> {
     this._pageNumber = 1;
+    console.log('PaginationService goToFirstPage: ', this._pageNumber)
     return this.processOnPageChanged(this._pageNumber, event);
   }
 

@@ -56,11 +56,11 @@ export class Renderer {
       .replace(/\${(.*)}/gi, this.parseLogicExecution.bind(this));
   }
 
-  parseLogicExecution(match: string, code: string) {
+  parseLogicExecution(_match: string, code: string) {
     return window[this._className][code];
   }
 
-  parseMethodBinding(match: string, eventName: string, eventType: string, callbackFn: string, lastChar: string) {
+  parseMethodBinding(_match: string, eventName: string, eventType: string, callbackFn: string, lastChar: string) {
     let output = '';
 
     switch (eventType) {
