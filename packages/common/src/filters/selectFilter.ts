@@ -273,7 +273,7 @@ export class SelectFilter implements Filter {
     let options = '';
     const columnId = this.columnDef && this.columnDef.id;
     const separatorBetweenLabels = this.collectionOptions && this.collectionOptions.separatorBetweenTextLabels || '';
-    const isEnableTranslate = this.gridOptions && this.gridOptions.enableTranslate;
+    const isTranslateEnabled = this.gridOptions && this.gridOptions.enableTranslate;
     const isRenderHtmlEnabled = this.columnFilter && this.columnFilter.enableRenderHtml || false;
     const sanitizedOptions = this.gridOptions && this.gridOptions.sanitizeHtmlOptions || {};
 
@@ -298,16 +298,16 @@ export class SelectFilter implements Filter {
           }
           const labelKey = (option.labelKey || option[this.labelName]) as string;
           const selected = (searchTerms.findIndex((term) => term === option[this.valueName]) >= 0) ? 'selected' : '';
-          const labelText = ((option.labelKey || this.enableTranslateLabel) && labelKey && isEnableTranslate) ? (this.translaterService?.getCurrentLocale && this.translaterService?.getCurrentLocale() && this.translaterService.translate(labelKey) || '') : labelKey;
+          const labelText = ((option.labelKey || this.enableTranslateLabel) && labelKey && isTranslateEnabled) ? (this.translaterService?.getCurrentLocale && this.translaterService?.getCurrentLocale() && this.translaterService.translate(labelKey) || '') : labelKey;
           let prefixText = option[this.labelPrefixName] || '';
           let suffixText = option[this.labelSuffixName] || '';
           let optionLabel = option.hasOwnProperty(this.optionLabel) ? option[this.optionLabel] : '';
           optionLabel = optionLabel.toString().replace(/\"/g, '\''); // replace double quotes by single quotes to avoid interfering with regular html
 
           // also translate prefix/suffix if enableTranslateLabel is true and text is a string
-          prefixText = (this.enableTranslateLabel && isEnableTranslate && prefixText && typeof prefixText === 'string') ? this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(prefixText || ' ') : prefixText;
-          suffixText = (this.enableTranslateLabel && isEnableTranslate && suffixText && typeof suffixText === 'string') ? this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(suffixText || ' ') : suffixText;
-          optionLabel = (this.enableTranslateLabel && isEnableTranslate && optionLabel && typeof optionLabel === 'string') ? this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(optionLabel || ' ') : optionLabel;
+          prefixText = (this.enableTranslateLabel && isTranslateEnabled && prefixText && typeof prefixText === 'string') ? this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(prefixText || ' ') : prefixText;
+          suffixText = (this.enableTranslateLabel && isTranslateEnabled && suffixText && typeof suffixText === 'string') ? this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(suffixText || ' ') : suffixText;
+          optionLabel = (this.enableTranslateLabel && isTranslateEnabled && optionLabel && typeof optionLabel === 'string') ? this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(optionLabel || ' ') : optionLabel;
           // add to a temp array for joining purpose and filter out empty text
           const tmpOptionArray = [prefixText, (typeof labelText === 'string' || typeof labelText === 'number') ? labelText.toString() : labelText, suffixText].filter((text) => text);
           let optionText = tmpOptionArray.join(separatorBetweenLabels);
@@ -390,6 +390,8 @@ export class SelectFilter implements Filter {
   }
 
   protected initMultipleSelectTemplate() {
+    const isTranslateEnabled = this.gridOptions && this.gridOptions.enableTranslate;
+
     // default options used by this Filter, user can overwrite any of these by passing "otions"
     const options: MultipleSelectOption = {
       autoAdjustDropHeight: true,
@@ -408,15 +410,16 @@ export class SelectFilter implements Filter {
       // also add/remove "filled" class for styling purposes
       onClose: () => this.onTriggerEvent()
     };
+
     if (this._isMultipleSelect) {
       options.single = false;
       options.okButton = true;
       options.addTitle = true; // show tooltip of all selected items while hovering the filter
       const translationPrefix = getTranslationPrefix(this.gridOptions);
-      options.countSelected = this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(`${translationPrefix}X_OF_Y_SELECTED`) || this._locales && this._locales.TEXT_X_OF_Y_SELECTED;
-      options.allSelected = this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(`${translationPrefix}ALL_SELECTED`) || this._locales && this._locales.TEXT_ALL_SELECTED;
-      options.okButtonText = this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(`${translationPrefix}OK`) || this._locales && this._locales.TEXT_OK;
-      options.selectAllText = this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(`${translationPrefix}SELECT_ALL`) || this._locales && this._locales.TEXT_SELECT_ALL;
+      options.countSelected = (isTranslateEnabled && this.translaterService?.translate) ? this.translaterService.translate(`${translationPrefix}X_OF_Y_SELECTED`) : this._locales && this._locales.TEXT_X_OF_Y_SELECTED;
+      options.allSelected = (isTranslateEnabled && this.translaterService?.translate) ? this.translaterService.translate(`${translationPrefix}ALL_SELECTED`) : this._locales && this._locales.TEXT_ALL_SELECTED;
+      options.okButtonText = (isTranslateEnabled && this.translaterService?.translate) ? this.translaterService.translate(`${translationPrefix}OK`) : this._locales && this._locales.TEXT_OK;
+      options.selectAllText = (isTranslateEnabled && this.translaterService?.translate) ? this.translaterService.translate(`${translationPrefix}SELECT_ALL`) : this._locales && this._locales.TEXT_SELECT_ALL;
       options.selectAllDelimiter = ['', '']; // remove default square brackets of default text "[Select All]" => "Select All"
     }
     this.defaultOptions = options;

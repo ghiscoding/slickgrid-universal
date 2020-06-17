@@ -152,7 +152,8 @@ export class ExcelExportService implements BaseExcelExportService {
 
           // using ExcelBuilder.Builder.createFile with WebPack but ExcelBuilder.createFile with RequireJS/SystemJS
           const createFileFn = ExcelBuilder.Builder && ExcelBuilder.Builder.createFile ? ExcelBuilder.Builder.createFile : ExcelBuilder.createFile;
-          const excelBlob = await createFileFn(this._workbook, { type: 'blob' });
+          const mimeType = this._fileFormat === FileType.xls ? 'application/vnd.ms-excel' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet ';
+          const excelBlob = await createFileFn(this._workbook, { type: 'blob', mimeType });
           const downloadOptions = {
             filename: `${this._excelExportOptions.filename}.${this._fileFormat}`,
             format: this._fileFormat

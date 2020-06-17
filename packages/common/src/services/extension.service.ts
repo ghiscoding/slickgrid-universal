@@ -3,8 +3,8 @@ import 'slickgrid/plugins/slick.cellrangedecorator';
 import 'slickgrid/plugins/slick.cellrangeselector';
 import 'slickgrid/plugins/slick.cellselectionmodel';
 
-import { Column, ExtensionModel, GridOption, SlickRowSelectionModel, SlickColumnPicker, SlickGridMenu, } from '../interfaces/index';
-import { ExtensionName } from '../enums/extensionName.enum';
+import { Column, Extension, ExtensionModel, GridOption, SlickRowSelectionModel, } from '../interfaces/index';
+import { ExtensionName, SlickControlList, SlickPluginList } from '../enums/index';
 import {
   AutoTooltipExtension,
   CellExternalCopyManagerExtension,
@@ -26,7 +26,7 @@ import { TranslaterService } from './translater.service';
 
 export class ExtensionService {
   private _extensionCreatedList: any[] = [];
-  private _extensionList: ExtensionModel[] = [];
+  private _extensionList: ExtensionModel<any, any>[] = [];
 
   constructor(
     private autoTooltipExtension: AutoTooltipExtension,
@@ -71,7 +71,7 @@ export class ExtensionService {
   }
 
   /** Get all Extensions */
-  getAllExtensions(): ExtensionModel[] {
+  getAllExtensions(): ExtensionModel<any, any>[] {
     return this._extensionList;
   }
 
@@ -79,11 +79,11 @@ export class ExtensionService {
    * Get an Extension by it's name
    *  @param name
    */
-  getExtensionByName(name: ExtensionName): ExtensionModel | undefined {
+  getExtensionByName<P extends (SlickControlList | SlickPluginList) = any, E extends Extension = Extension>(name: ExtensionName): ExtensionModel<P, E> | undefined {
     if (!Array.isArray(this._extensionList) || this._extensionList.length === 0) {
       return undefined;
     }
-    return this._extensionList.find((p) => p.name === name);
+    return this._extensionList.find(ext => ext.name === name);
   }
 
   /**
@@ -425,7 +425,7 @@ export class ExtensionService {
    * Get an Extension that was created by calling its "create" method (there are only 3 extensions which uses this method)
    *  @param name
    */
-  private getCreatedExtensionByName(name: ExtensionName): ExtensionModel | undefined {
+  private getCreatedExtensionByName<P extends (SlickControlList | SlickPluginList) = any, E extends Extension = any>(name: ExtensionName): ExtensionModel<P, E> | undefined {
     return Array.isArray(this._extensionCreatedList) && this._extensionCreatedList.find((p) => p.name === name);
   }
 

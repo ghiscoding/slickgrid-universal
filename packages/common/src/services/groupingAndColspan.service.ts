@@ -7,8 +7,12 @@ import {
   SlickGrid,
   SlickNamespace,
   SlickResizer,
+  SlickColumnPicker,
+  SlickGridMenu,
 } from './../interfaces/index';
+import { ExtensionName } from '../enums/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
+import { ExtensionService } from '../services/extension.service';
 
 // using external non-typed js libraries
 declare let $: any;
@@ -18,7 +22,7 @@ export class GroupingAndColspanService {
   private _eventHandler: SlickEventHandler;
   private _grid: SlickGrid;
 
-  constructor(private extensionUtility: ExtensionUtility) {
+  constructor(private extensionUtility: ExtensionUtility, private extensionService: ExtensionService) {
     this._eventHandler = new Slick.EventHandler();
   }
 
@@ -49,7 +53,6 @@ export class GroupingAndColspanService {
    */
   init(grid: SlickGrid) {
     this._grid = grid;
-    const resizerPlugin = grid.getPluginByName<SlickResizer>('Resizer');
 
     if (grid && this._gridOptions) {
       // When dealing with Pre-Header Grouping colspan, we need to re-create the pre-header in multiple occasions
@@ -59,10 +62,25 @@ export class GroupingAndColspanService {
         this._eventHandler.subscribe(grid.onColumnsResized, () => this.renderPreHeaderRowGroupingTitles());
         this._eventHandler.subscribe(grid.onColumnsReordered, () => this.renderPreHeaderRowGroupingTitles());
         this._eventHandler.subscribe(this._dataView.onRowCountChanged, () => this.renderPreHeaderRowGroupingTitles());
+
+        // for both picker (columnPicker/gridMenu) we also need to re-create after hiding/showing columns
+        const columnPickerExtension = this.extensionService.getExtensionByName<SlickColumnPicker>(ExtensionName.columnPicker);
+        if (columnPickerExtension?.instance?.onColumnsChanged) {
+          this._eventHandler.subscribe(columnPickerExtension.instance.onColumnsChanged, () => this.renderPreHeaderRowGroupingTitles());
+        }
+
+        const gridMenuExtension = this.extensionService.getExtensionByName<SlickGridMenu>(ExtensionName.gridMenu);
+        if (gridMenuExtension?.instance?.onColumnsChanged) {
+          this._eventHandler.subscribe(gridMenuExtension.instance.onColumnsChanged, () => this.renderPreHeaderRowGroupingTitles());
+        }
+
+        // we also need to re-create after a grid resize
+        const resizerPlugin = grid.getPluginByName<SlickResizer>('Resizer');
         if (resizerPlugin?.onGridAfterResize) {
           this._eventHandler.subscribe(resizerPlugin.onGridAfterResize, () => this.renderPreHeaderRowGroupingTitles());
         }
 
+        // and finally we need to re-create after user calls the Grid "setOptions" when changing from regular to frozen grid (and vice versa)
         const onSetOptionsHandler = grid.onSetOptions;
         (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSetOptionsHandler>>).subscribe(onSetOptionsHandler, (_e, args) => {
           // when user changes frozen columns dynamically (e.g. from header menu), we need to re-render the pre-header of the grouping titles

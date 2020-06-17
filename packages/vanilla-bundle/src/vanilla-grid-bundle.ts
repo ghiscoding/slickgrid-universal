@@ -84,6 +84,7 @@ export class VanillaGridBundle {
   private _gridParentContainerElm: HTMLElement;
   private _hideHeaderRowAfterPageLoad = false;
   private _isDatasetInitialized = false;
+  private _isGridInitialized = false;
   private _isGridHavingFilters = false;
   private _isLocalGrid = true;
   private _isPaginationInitialized = false;
@@ -226,7 +227,6 @@ export class VanillaGridBundle {
     this.sortService = new SortService(this.sharedService, this._eventPubSubService);
     this.treeDataService = new TreeDataService(this.sharedService);
     this.extensionUtility = new ExtensionUtility(this.sharedService, this.translateService);
-    this.groupingAndColspanService = new GroupingAndColspanService(this.extensionUtility);
     this.autoTooltipExtension = new AutoTooltipExtension(this.extensionUtility, this.sharedService);
     this.cellExternalCopyManagerExtension = new CellExternalCopyManagerExtension(this.extensionUtility, this.sharedService);
     this.cellMenuExtension = new CellMenuExtension(this.extensionUtility, this.sharedService, this.translateService);
@@ -260,6 +260,7 @@ export class VanillaGridBundle {
       this.sharedService,
       this.translateService,
     );
+    this.groupingAndColspanService = new GroupingAndColspanService(this.extensionUtility, this.extensionService);
 
     if (hierarchicalDataset) {
       this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
@@ -502,6 +503,7 @@ export class VanillaGridBundle {
     };
 
     this._eventPubSubService.publish('onSlickerGridCreated', slickerElementInstance);
+    this._isGridInitialized = true;
   }
 
   mergeGridOptions(gridOptions: GridOption) {
@@ -860,6 +862,9 @@ export class VanillaGridBundle {
    */
   showHeaderRow(showing = true) {
     this.grid.setHeaderRowVisibility(showing, false);
+    if (showing === true && this._isGridInitialized) {
+      this.grid.setColumns(this.columnDefinitions);
+    }
     return showing;
   }
 
