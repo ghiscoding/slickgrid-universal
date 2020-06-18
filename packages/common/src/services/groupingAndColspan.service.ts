@@ -69,9 +69,10 @@ export class GroupingAndColspanService {
           this._eventHandler.subscribe(columnPickerExtension.instance.onColumnsChanged, () => this.renderPreHeaderRowGroupingTitles());
         }
 
-        const gridMenuExtension = this.extensionService.getExtensionByName<SlickGridMenu>(ExtensionName.gridMenu);
-        if (gridMenuExtension?.instance?.onColumnsChanged) {
+        const gridMenuExtension = this.extensionService.getExtensionByName(ExtensionName.gridMenu);
+        if (gridMenuExtension && gridMenuExtension.instance && gridMenuExtension.instance.onColumnsChanged && gridMenuExtension.instance.onMenuClose) {
           this._eventHandler.subscribe(gridMenuExtension.instance.onColumnsChanged, () => this.renderPreHeaderRowGroupingTitles());
+          this._eventHandler.subscribe(gridMenuExtension.instance.onMenuClose, () => this.renderPreHeaderRowGroupingTitles());
         }
 
         // we also need to re-create after a grid resize
