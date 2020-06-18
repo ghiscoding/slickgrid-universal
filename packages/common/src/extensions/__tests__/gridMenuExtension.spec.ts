@@ -71,7 +71,7 @@ Slick.Controls = {
 // define a <div> container to simulate the grid container
 const template =
   `<div id="${containerId}" style="height: 800px; width: 600px;">
-    <div id="slickGridContainer-${gridId}" class="gridPane" style="width: 100%;">
+    <div id="slickGridContainer-${gridId}" class="grid-pane" style="width: 100%;">
     <div id="${gridId}" class="${gridUid}" style="width: 100%"></div>
     </div>
   </div>`;

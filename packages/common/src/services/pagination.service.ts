@@ -68,7 +68,6 @@ export class PaginationService {
 
   set totalItems(totalItems: number) {
     this._totalItems = totalItems;
-
     if (this._initialized) {
       this.refreshPagination();
     }
@@ -115,7 +114,7 @@ export class PaginationService {
       this._subscriptions.push(this.pubSubService.subscribe(`onItemDeleted`, (items: any | any[]) => this.processOnItemAddedOrRemoved(items, false)));
     }
 
-    this.refreshPagination(false, false);
+    this.refreshPagination(false, false, true);
     this._initialized = true;
   }
 
@@ -154,34 +153,32 @@ export class PaginationService {
     return this._itemsPerPage;
   }
 
-  changeItemPerPage(itemsPerPage: number, event?: any): Promise<any> {
+  changeItemPerPage(itemsPerPage: number, event?: any): Promise<ServicePagination> {
     this._pageNumber = 1;
     this._pageCount = Math.ceil(this._totalItems / itemsPerPage);
     this._itemsPerPage = itemsPerPage;
     return this.processOnPageChanged(this._pageNumber, event);
   }
 
-  goToFirstPage(event?: any): Promise<any> {
+  goToFirstPage(event?: any): Promise<ServicePagination> {
     this._pageNumber = 1;
-    console.log('PaginationService goToFirstPage: ', this._pageNumber)
     return this.processOnPageChanged(this._pageNumber, event);
   }
 
-  goToLastPage(event?: any): Promise<any> {
+  goToLastPage(event?: any): Promise<ServicePagination> {
     this._pageNumber = this._pageCount || 1;
     return this.processOnPageChanged(this._pageNumber || 1, event);
   }
 
-  goToNextPage(event?: any): Promise<any> {
+  goToNextPage(event?: any): Promise<boolean | ServicePagination> {
     if (this._pageNumber < this._pageCount) {
       this._pageNumber++;
       return this.processOnPageChanged(this._pageNumber, event);
-    } else {
-      return new Promise(resolve => resolve(false));
     }
+    return new Promise(resolve => resolve(false));
   }
 
-  goToPageNumber(pageNumber: number, event?: any): Promise<any> {
+  goToPageNumber(pageNumber: number, event?: any): Promise<boolean | ServicePagination> {
     const previousPageNumber = this._pageNumber;
 
     if (pageNumber < 1) {
@@ -194,21 +191,19 @@ export class PaginationService {
 
     if (this._pageNumber !== previousPageNumber) {
       return this.processOnPageChanged(this._pageNumber, event);
-    } else {
-      return new Promise(resolve => resolve(false));
     }
+    return new Promise(resolve => resolve(false));
   }
 
-  goToPreviousPage(event?: any): Promise<any> {
+  goToPreviousPage(event?: any): Promise<boolean | ServicePagination> {
     if (this._pageNumber > 1) {
       this._pageNumber--;
       return this.processOnPageChanged(this._pageNumber, event);
-    } else {
-      return new Promise(resolve => resolve(false));
     }
+    return new Promise(resolve => resolve(false));
   }
 
-  refreshPagination(isPageNumberReset = false, triggerChangedEvent = true) {
+  refreshPagination(isPageNumberReset = false, triggerChangedEvent = true, triggerInitializedEvent = false) {
     const previousPagination = { ...this.getCurrentPagination() };
 
     if (this._paginationOptions) {
@@ -252,6 +247,10 @@ export class PaginationService {
     if (triggerChangedEvent && !isequal(previousPagination, currentPagination)) {
       this.pubSubService.publish(`onPaginationChanged`, this.getFullPagination());
     }
+    if (triggerInitializedEvent && !isequal(previousPagination, currentPagination)) {
+      this.pubSubService.publish(`onPaginationPresetsInitialized`, this.getFullPagination());
+    }
+
     this.sharedService.currentPagination = this.getCurrentPagination();
   }
 
@@ -291,13 +290,14 @@ export class PaginationService {
     }
   }
 
-  processOnPageChanged(pageNumber: number, event?: Event | undefined): Promise<any> {
+  processOnPageChanged(pageNumber: number, event?: Event | undefined): Promise<ServicePagination> {
     return new Promise((resolve, reject) => {
       this.recalculateFromToIndexes();
 
       if (this._isLocalGrid && this.dataView) {
         this.dataView.setPagingOptions({ pageSize: this._itemsPerPage, pageNum: (pageNumber - 1) }); // dataView page starts at 0 instead of 1
         this.pubSubService.publish(`onPaginationChanged`, this.getFullPagination());
+        resolve(this.getFullPagination());
       } else {
         const itemsPerPage = +this._itemsPerPage;
 
@@ -325,8 +325,8 @@ export class PaginationService {
                 reject(process);
               });
           }
+          this.pubSubService.publish(`onPaginationChanged`, this.getFullPagination());
         }
-        this.pubSubService.publish(`onPaginationChanged`, this.getFullPagination());
       }
     });
   }

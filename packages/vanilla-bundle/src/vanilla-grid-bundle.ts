@@ -96,7 +96,7 @@ export class VanillaGridBundle {
   grid: SlickGrid;
   metrics: Metrics;
   customDataView = false;
-  paginationOptions: Pagination;
+  paginationOptions: Pagination | undefined;
   paginationData: {
     gridOptions: GridOption;
     paginationService: PaginationService;
@@ -203,7 +203,7 @@ export class VanillaGridBundle {
 
   constructor(gridParentContainerElm: HTMLElement, columnDefs?: Column[], options?: GridOption, dataset?: any[], hierarchicalDataset?: any[]) {
     // make sure that the grid container has the "slickgrid-container" css class exist since we use it for slickgrid styling
-    gridParentContainerElm.classList.add('gridPane');
+    gridParentContainerElm.classList.add('grid-pane');
     this._gridParentContainerElm = gridParentContainerElm as HTMLDivElement;
     this._gridContainerElm = document.createElement('div') as HTMLDivElement;
     this._gridContainerElm.classList.add('slickgrid-container');
@@ -266,7 +266,7 @@ export class VanillaGridBundle {
       this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
     }
     this.initialization(this._gridContainerElm);
-    if (!hierarchicalDataset) {
+    if (!hierarchicalDataset && !this.gridOptions.backendServiceApi) {
       this.dataset = dataset || [];
     }
     if (this.columnDefinitions.findIndex((col) => col.filterable) > -1) {
@@ -302,6 +302,7 @@ export class VanillaGridBundle {
     this.sharedService.internalPubSubService = this._eventPubSubService;
     this._eventHandler = new Slick.EventHandler();
     const dataviewInlineFilters = this._gridOptions?.dataView?.inlineFilters ?? false;
+    this.paginationOptions = this.gridOptions?.pagination;
 
     this.createBackendApiInternalPostProcessCallback(this._gridOptions);
 
@@ -395,7 +396,7 @@ export class VanillaGridBundle {
     // TODO - Pagination
     // user could show pagination
     if (this._gridOptions.enablePagination) {
-      this.paginationRenderer = new PaginationRenderer(this.paginationService, this.sharedService);
+      this.paginationRenderer = new PaginationRenderer(this.paginationService, this._eventPubSubService, this.sharedService);
       this.paginationRenderer.renderPagination(this._gridParentContainerElm);
     }
 

@@ -3,43 +3,36 @@
     <div class="slick-pagination-nav">
       <nav aria-label="Page navigation">
         <ul class="pagination">
-          <li class="page-item">
-            <button class="page-link icon-seek-first href="" aria-label=" First"
-                    click.delegate="changeToFirstPage($event)">
-            </button>
+          <li class="page-item seek-first">
+            <a aria-label="First" class="page-link icon-seek-first">
+            </a>
           </li>
-          <li class="page-item disabled">
-            <button class="page-link icon-seek-prev href="" aria-label=" Previous"
-                    click.delegate="changeToPreviousPage($event)">
-            </button>
+          <li class="page-item seek-prev">
+            <a class="page-link icon-seek-prev fa fa-angle-left" aria-label="Previous">
+            </a>
           </li>
         </ul>
       </nav>
 
       <div class="slick-page-number">
         <span>Page</span>
-        <input type="text" class="form-control" data-test="page-number-input" value="1" size="1"
-               readonly.bind="totalItems === 0" change.delegate="changeToCurrentPage($event)">
-        <span>of</span>
-        <span data-test="page-count"> 199</span>
+        <input type="text" class="form-control page-number" data-test="page-number-input" value="1" size="1">
+        <span>of</span> <span class="page-count" data-test="page-count">0</span>
       </div>
 
       <nav aria-label="Page navigation">
         <ul class="pagination">
-          <li class="page-item">
-            <button class="page-link icon-seek-next href="" aria-label=" Next"
-                    click.delegate="changeToNextPage($event)">
-            </button>
+          <li class="page-item seek-next">
+            <a class="page-link icon-seek-next text-center fa fa-lg fa-angle-right" aria-label="Next"></a>
           </li>
-          <li class="page-item">
-            <button class="page-link icon-seek-end href="" aria-label=" Last" click.delegate="changeToLastPage($event)">
-            </button>
+          <li class="page-item seek-end">
+            <a class="page-link icon-seek-end fa fa-lg fa-angle-double-right" aria-label="Last"></a>
           </li>
         </ul>
       </nav>
     </div>
     <span class="slick-pagination-settings">
-      <select id="items-per-page-label" value="5">
+      <select id="items-per-page-label" class="items-per-page" value="5">
         <option model.bind="pageSize" value="5">5</option>
         <option model.bind="pageSize" value="10">10</option>
         <option model.bind="pageSize" value="15">15</option>
