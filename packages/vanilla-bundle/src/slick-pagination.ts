@@ -106,7 +106,7 @@ export class SlickPaginationComponent {
   /** Render and fill the Page Sizes <select> element */
   renderPageSizes() {
     const selectElm = document.querySelector<HTMLSelectElement>(`.${this.gridUid} .items-per-page`);
-    if (Array.isArray(this.availablePageSizes)) {
+    if (selectElm && Array.isArray(this.availablePageSizes)) {
       for (const option of this.availablePageSizes) {
         const opt = document.createElement('option');
         opt.value = `${option}`;

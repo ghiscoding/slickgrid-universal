@@ -204,10 +204,14 @@ export class VanillaGridBundle {
   get paginationOptions(): Pagination | undefined {
     return this._paginationOptions;
   }
-  set paginationOptions(options: Pagination) {
-    this._paginationOptions = { ...this._paginationOptions, ...options };
+  set paginationOptions(options: Pagination | undefined) {
+    if (this._paginationOptions) {
+      this._paginationOptions = { ...this._paginationOptions, ...options };
+    } else {
+      this._paginationOptions = options;
+    }
     this.gridOptions.pagination = options;
-    this.paginationService.updateTotalItems(options.totalItems);
+    this.paginationService.updateTotalItems(options?.totalItems || 0);
   }
 
   constructor(gridParentContainerElm: HTMLElement, columnDefs?: Column[], options?: GridOption, dataset?: any[], hierarchicalDataset?: any[]) {
