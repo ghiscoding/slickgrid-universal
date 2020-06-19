@@ -5,36 +5,35 @@ import { EventPubSubService } from './services';
 export class PaginationRenderer {
   private _observers: BindingService[] = [];
   private _paginationElement: JQuery<HTMLElement>; // TODO change this to vanilla JS
-  private _pageCountElm: HTMLSpanElement | null;
-  private _pageNumberInputElm: HTMLInputElement | null;
-  private _firstPageBtnElm: HTMLLinkElement | null;
-  private _lastPageBtnElm: HTMLLinkElement | null;
-  private _nextPageBtnElm: HTMLLinkElement | null;
-  private _prevPageBtnElm: HTMLLinkElement | null;
-  private _liFirstPageElm: HTMLUListElement | null;
-  private _liLastPageElm: HTMLUListElement | null;
-  private _liPrevPageElm: HTMLUListElement | null;
-  private _liNextPageElm: HTMLUListElement | null;
-  private _itemsPerPageSelectElm: HTMLSelectElement | null;
+  currentPagination: ServicePagination;
+  firstButtonClasses = '';
+  lastButtonClasses = '';
+  prevButtonClasses = '';
+  nextButtonClasses = '';
 
   constructor(private paginationService: PaginationService, private pubSubService: EventPubSubService, private sharedService: SharedService) {
-
+    this.currentPagination = this.paginationService.getFullPagination();
     this.pubSubService.subscribe('onPaginationChanged', (paginationChanges: ServicePagination) => {
       console.log('onPaginationChanged', paginationChanges);
-      this.pageCount = paginationChanges.pageCount;
-      this.pageNumber = paginationChanges.pageNumber;
+      for (const key of Object.keys(paginationChanges)) {
+        this.currentPagination[key] = paginationChanges[key];
+      }
+      // this.currentPagination.pageCount = paginationChanges.pageCount || 0;
+      // this.currentPagination.pageNumber = paginationChanges.pageNumber || 0;
+      // this.currentPagination.pageSize = paginationChanges.pageSize || 0;
       this.updatePageButtonsUsability();
     });
 
     // if there's any initial Pagination Presets, let's update the Pagination
     this.pubSubService.subscribe('onPaginationPresetsInitialized', (paginationPresets: ServicePagination) => {
       console.log('onPaginationPresetsInitialized', paginationPresets);
-      this.pageCount = paginationPresets.pageCount;
-      this.pageNumber = paginationPresets.pageNumber;
-      // this.itemsPerPage = paginationPresets.pageSize;
-      if (this._itemsPerPageSelectElm) {
-        this._itemsPerPageSelectElm.value = `${paginationPresets.pageSize}`;
+      for (const key of Object.keys(paginationPresets)) {
+        this.currentPagination[key] = paginationPresets[key];
       }
+      // this.currentPagination.pageCount = paginationPresets.pageCount || 0;
+      // this.currentPagination.pageNumber = paginationPresets.pageNumber || 0;
+      // this.currentPagination.pageSize = paginationPresets.pageSize;
+
       this.updatePageButtonsUsability();
     });
   }
@@ -61,19 +60,12 @@ export class PaginationRenderer {
   get pageCount(): number {
     return this.paginationService.pageCount;
   }
-  set pageCount(count: number) {
-    if (this._pageCountElm) {
-      this._pageCountElm.textContent = `${count}`;
-    }
-  }
 
   get pageNumber(): number {
     return this.paginationService.pageNumber;
   }
   set pageNumber(page: number) {
-    if (this._pageNumberInputElm) {
-      this._pageNumberInputElm.value = `${page}`;
-    }
+    // the setter has to be declared but we won't use it, instead we will use the "changeToCurrentPage()" to only update the value after ENTER keydown event
   }
 
   get grid(): SlickGrid {
@@ -88,10 +80,17 @@ export class PaginationRenderer {
     return this.paginationService.totalItems;
   }
 
+  get isLeftPaginationEnabled(): boolean {
+    return this.pageNumber === 1 || this.totalItems === 0;
+  }
+
+  get isRightPaginationEnabled(): boolean {
+    return this.pageNumber === this.pageCount || this.totalItems === 0;
+  }
+
   dispose() {
     this._observers = [];
     this.paginationService.dispose();
-    // const firstPageElm = document.querySelector<HTMLButtonElement>('.icon-seek-first');
     // firstPageElm.removeEventListener('click', (event: MouseEvent) => console.log('clicked first page', event));
   }
 
@@ -99,101 +98,99 @@ export class PaginationRenderer {
     const paginationTemplate = require('./slick-pagination.html');
 
     if (paginationTemplate) {
+      // gridParentContainerElm.append()
       this._paginationElement = $(paginationTemplate);
       this._paginationElement.addClass([this.gridUid, 'pager']);
       this._paginationElement.appendTo(gridParentContainerElm);
     }
 
     this.addBindings();
+    this.addEventListeners();
     this.updatePageButtonsUsability();
   }
 
   addBindings() {
-    this._pageCountElm = document.querySelector<HTMLSpanElement>(`.${this.gridUid} .page-count`);
-    this._firstPageBtnElm = document.querySelector<HTMLLinkElement>(`.${this.gridUid} .icon-seek-first`);
-    this._lastPageBtnElm = document.querySelector<HTMLLinkElement>(`.${this.gridUid} .icon-seek-end`);
-    this._nextPageBtnElm = document.querySelector<HTMLLinkElement>(`.${this.gridUid} .icon-seek-next`);
-    this._prevPageBtnElm = document.querySelector<HTMLLinkElement>(`.${this.gridUid} .icon-seek-prev`);
-    this._liFirstPageElm = document.querySelector<HTMLUListElement>(`.${this.gridUid} li.page-item.seek-first`);
-    this._liLastPageElm = document.querySelector<HTMLUListElement>(`.${this.gridUid} li.page-item.seek-end`);
-    this._liPrevPageElm = document.querySelector<HTMLUListElement>(`.${this.gridUid} li.page-item.seek-prev`);
-    this._liNextPageElm = document.querySelector<HTMLUListElement>(`.${this.gridUid} li.page-item.seek-next`);
-    this._pageNumberInputElm = document.querySelector<HTMLInputElement>(`.${this.gridUid} input.page-number`);
-    this._itemsPerPageSelectElm = document.querySelector<HTMLSelectElement>(`.${this.gridUid} select.items-per-page`);
-    if (this._firstPageBtnElm?.addEventListener) {
-      this._firstPageBtnElm.addEventListener('click', this.changeToFirstPage.bind(this));
-      this._firstPageBtnElm.disabled = true;
-    }
-    if (this._prevPageBtnElm?.addEventListener) {
-      this._prevPageBtnElm.addEventListener('click', this.changeToPreviousPage.bind(this));
-    }
-    if (this._nextPageBtnElm?.addEventListener) {
-      this._nextPageBtnElm.addEventListener('click', this.changeToNextPage.bind(this));
-    }
-    if (this._lastPageBtnElm?.addEventListener) {
-      this._lastPageBtnElm.addEventListener('click', this.changeToLastPage.bind(this));
-    }
-    // let observer = this._observers.find((bind) => bind.property === variableName);
-    // if (!observer) {
-    //   observer = new BindingService({ variable: window[this._className], property: variableName });
-    //   this._observers.push(observer);
-    // }
-    // const observer = new BindingService({ variable: this.paginationService, property: 'pageNumber' });
-    // this._observers.push(observer);
+    // element bindings
+    this.addElementBinding(this, 'firstButtonClasses', 'li.page-item.seek-first', 'className');
+    this.addElementBinding(this, 'prevButtonClasses', 'li.page-item.seek-prev', 'className');
+    this.addElementBinding(this, 'lastButtonClasses', 'li.page-item.seek-end', 'className');
+    this.addElementBinding(this, 'nextButtonClasses', 'li.page-item.seek-next', 'className');
+    this.addElementBinding(this.currentPagination, 'dataFrom', 'span.item-from', 'textContent');
+    this.addElementBinding(this.currentPagination, 'dataTo', 'span.item-to', 'textContent');
+    this.addElementBinding(this.currentPagination, 'totalItems', 'span.total-items', 'textContent');
+    this.addElementBinding(this.currentPagination, 'pageCount', 'span.page-count', 'textContent');
+    this.addElementBinding(this.currentPagination, 'pageNumber', 'input.page-number', 'value', 'change', this.changeToCurrentPage.bind(this));
+    this.addElementBinding(this.currentPagination, 'pageSize', 'select.items-per-page', 'value');
+  }
+
+  addEventListeners() {
+    // element event listeners
+    this.bindEventHandler('.icon-seek-first', 'click', this.changeToFirstPage.bind(this));
+    this.bindEventHandler('.icon-seek-end', 'click', this.changeToLastPage.bind(this));
+    this.bindEventHandler('.icon-seek-next', 'click', this.changeToNextPage.bind(this));
+    this.bindEventHandler('.icon-seek-prev', 'click', this.changeToPreviousPage.bind(this));
+    this.bindEventHandler('select.items-per-page', 'change', (event: & { target: any }) => this.itemsPerPage = +(event?.target?.value ?? 0));
   }
 
   changeToFirstPage(event: MouseEvent) {
-    if (this._firstPageBtnElm && !this._firstPageBtnElm.disabled) {
-      console.log('clicked first page');
+    if (!this.isLeftPaginationEnabled) {
       this.paginationService.goToFirstPage(event);
     }
   }
 
   changeToLastPage(event: any) {
-    if (this._lastPageBtnElm && !this._lastPageBtnElm.disabled) {
-      console.log('clicked last page');
+    if (!this.isRightPaginationEnabled) {
       this.paginationService.goToLastPage(event);
     }
   }
 
   changeToNextPage(event: any) {
-    if (this._nextPageBtnElm && !this._nextPageBtnElm.disabled) {
-      console.log('clicked next page');
+    if (!this.isRightPaginationEnabled) {
       this.paginationService.goToNextPage(event);
     }
   }
 
   changeToPreviousPage(event: any) {
-    if (this._prevPageBtnElm && !this._prevPageBtnElm.disabled) {
-      console.log('clicked previous page');
+    if (!this.isLeftPaginationEnabled) {
       this.paginationService.goToPreviousPage(event);
     }
   }
 
-  changeToCurrentPage(event: any) {
-    let pageNumber = 1;
-    if (event && event.target && event.target.value) {
-      pageNumber = +(event.target.value);
-    }
-    this.paginationService.goToPageNumber(pageNumber, event);
+  changeToCurrentPage(pageNumber: number) {
+    this.paginationService.goToPageNumber(+pageNumber);
   }
 
-  updatePageButtonsUsability() {
-    if (this._liFirstPageElm) {
-      this._liFirstPageElm.className = (this.pageNumber === 1 || this.totalItems === 0) ? 'page-item seek-first disabled' : 'page-item seek-first';
-      this._firstPageBtnElm.disabled = (this.pageNumber === 1 || this.totalItems === 0);
+  private updatePageButtonsUsability() {
+    this.firstButtonClasses = this.isLeftPaginationEnabled ? 'page-item seek-first disabled' : 'page-item seek-first';
+    this.prevButtonClasses = this.isLeftPaginationEnabled ? 'page-item seek-prev disabled' : 'page-item seek-prev';
+    this.lastButtonClasses = this.isRightPaginationEnabled ? 'page-item seek-end disabled' : 'page-item seek-end';
+    this.nextButtonClasses = this.isRightPaginationEnabled ? 'page-item seek-next disabled' : 'page-item seek-next';
+  }
+
+  addElementBinding(variable: any, property: string, selector: string, attribute: string, events?: string | string[], callback?: (val: any) => any) {
+    const elm = document.querySelector<HTMLSpanElement>(`.${this.gridUid} ${selector}`);
+    if (elm) {
+      // before creating a new observer, first check if the variable already has an associated observer
+      // if we can't find an observer then we'll create a new one for it
+      let observer = this._observers.find((bind) => bind.property === variable);
+      if (!observer) {
+        observer = new BindingService({ variable, property });
+        if (Array.isArray(events)) {
+          for (const eventName of events) {
+            observer.bind(elm, attribute, eventName, callback);
+          }
+        } else {
+          observer.bind(elm, attribute, events, callback);
+        }
+        this._observers.push(observer);
+      }
     }
-    if (this._liPrevPageElm) {
-      this._liPrevPageElm.className = (this.pageNumber === 1 || this.totalItems === 0) ? 'page-item seek-prev disabled' : 'page-item seek-prev';
-      this._prevPageBtnElm.disabled = (this.pageNumber === 1 || this.totalItems === 0);
-    }
-    if (this._liLastPageElm) {
-      this._liLastPageElm.className = (this.pageNumber === this.pageCount || this.totalItems === 0) ? 'page-item seek-end disabled' : 'page-item seek-end';
-      this._lastPageBtnElm.disabled = (this.pageNumber === this.pageCount || this.totalItems === 0);
-    }
-    if (this._liNextPageElm) {
-      this._liNextPageElm.className = (this.pageNumber === this.pageCount || this.totalItems === 0) ? 'page-item seek-next disabled' : 'page-item seek-next';
-      this._nextPageBtnElm.disabled = (this.pageNumber === this.pageCount || this.totalItems === 0);
+  }
+
+  bindEventHandler(selector: string, eventName: string, callback?: (event: Event) => void) {
+    const elm = document.querySelector<HTMLSpanElement>(`.${this.gridUid} ${selector}`);
+    if (elm?.addEventListener) {
+      elm.addEventListener(eventName, callback);
     }
   }
 }

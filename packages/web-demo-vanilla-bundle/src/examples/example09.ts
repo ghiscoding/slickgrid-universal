@@ -122,8 +122,7 @@ export class Example09 {
       countPropName = (this.odataVersion === 4) ? '@odata.count' : 'odata.count';
     }
     this.gridOptions.pagination.totalItems = data[countPropName];
-    console.log('totalItems', this.gridOptions.pagination.totalItems)
-    this.slickgridLwc.gridOptions = { ...{}, ...this.gridOptions };
+    this.slickgridLwc.gridOptions = { ...this.gridOptions };
     if (this.metrics) {
       this.metrics.totalItemCount = data[countPropName];
     }

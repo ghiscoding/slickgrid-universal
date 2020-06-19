@@ -29,10 +29,10 @@ export class BindingService {
     this._binding = binding;
     this._property = binding.property || '';
     this.elementBindings = [];
-    if (binding.property && binding.variable.hasOwnProperty(binding.property)) {
-      this._value = DOMPurify.sanitize(binding.variable[binding.property], {});
+    if (binding.property && (binding.variable.hasOwnProperty(binding.property) || binding.property in binding.variable)) {
+      this._value = typeof binding.variable[binding.property] === 'string' ? DOMPurify.sanitize(binding.variable[binding.property], {}) : binding.variable[binding.property];
     } else {
-      this._value = DOMPurify.sanitize(binding.variable, {});
+      this._value = typeof binding.variable === 'string' ? DOMPurify.sanitize(binding.variable, {}) : binding.variable;
     }
 
     Object.defineProperty(binding.variable, binding.property, {
@@ -50,10 +50,10 @@ export class BindingService {
   }
 
   valueSetter(val: any) {
-    this._value = DOMPurify.sanitize(val, {});
+    this._value = typeof val === 'string' ? DOMPurify.sanitize(val, {}) : val;
     if (Array.isArray(this.elementBindings)) {
       for (const binding of this.elementBindings) {
-        binding.element[binding.attribute] = DOMPurify.sanitize(val, {});
+        binding.element[binding.attribute] = typeof val === 'string' ? DOMPurify.sanitize(val, {}) : val;
       }
     }
   }
@@ -88,7 +88,7 @@ export class BindingService {
         binding.event = eventName;
       }
       this.elementBindings.push(binding);
-      element[attribute] = DOMPurify.sanitize(this._value, {}) ?? null;
+      element[attribute] = typeof this._value === 'string' ? DOMPurify.sanitize(this._value, {}) : this._value;
     }
     return this;
   }
