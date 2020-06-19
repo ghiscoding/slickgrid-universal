@@ -1,4 +1,4 @@
-import { Column, GridOption, Metrics, FieldType, Filters, OperatorType, GridStateChange, SlickGrid } from '@slickgrid-universal/common';
+import { Column, GridOption, Metrics, FieldType, Filters, OperatorType, GridStateChange, SlickGrid, PaginationService } from '@slickgrid-universal/common';
 import { GridOdataService, OdataServiceApi, OdataOption } from '@slickgrid-universal/odata';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
@@ -83,7 +83,8 @@ export class Example09 {
       presets: {
         // you can also type operator as string, e.g.: operator: 'EQ'
         filters: [
-          { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
+          // { columnId: 'name', searchTerms: ['w'], operator: OperatorType.startsWith },
+          { columnId: 'gender', searchTerms: ['female'], operator: OperatorType.equal },
         ],
         sorters: [
           // direction can be written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
@@ -121,8 +122,6 @@ export class Example09 {
     if (this.isCountEnabled) {
       countPropName = (this.odataVersion === 4) ? '@odata.count' : 'odata.count';
     }
-    this.gridOptions.pagination.totalItems = data[countPropName];
-    this.slickgridLwc.gridOptions = { ...this.gridOptions };
     if (this.metrics) {
       this.metrics.totalItemCount = data[countPropName];
     }
@@ -130,6 +129,7 @@ export class Example09 {
     // once pagination totalItems is filled, we can update the dataset
     this.slickgridLwc.dataset = data['items'];
     this.odataQuery = data['query'];
+    this.slickgridLwc.paginationOptions = { totalItems: data[countPropName] };
   }
 
   getCustomerApiCall(query) {

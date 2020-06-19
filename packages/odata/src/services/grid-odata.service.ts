@@ -277,7 +277,7 @@ export class GridOdataService implements BackendService {
         const matches = fieldSearchValue.match(/^([<>!=\*]{0,2})(.*[^<>!=\*])([\*]?)$/); // group 1: Operator, 2: searchValue, 3: last char is '*' (meaning starts with, ex.: abc*)
         let operator = columnFilter.operator || ((matches) ? matches[1] : '');
         let searchValue = (!!matches) ? matches[2] : '';
-        const lastValueChar = (!!matches) ? matches[3] : (operator === '*z' ? '*' : '');
+        const lastValueChar = (!!matches) ? matches[3] : (operator === '*z' || operator === OperatorType.endsWith) ? '*' : '';
         const bypassOdataQuery = columnFilter.bypassBackendQuery || false;
 
         // no need to query if search value is empty
@@ -354,9 +354,9 @@ export class GridOdataService implements BackendService {
                 searchBy = `(${searchBy})`;
               }
             }
-          } else if (operator === '*' || operator === 'a*' || operator === '*z' || lastValueChar === '*') {
+          } else if (operator === '*' || operator === 'a*' || operator === '*z' || lastValueChar === '*' || operator === OperatorType.startsWith || operator === OperatorType.endsWith) {
             // first/last character is a '*' will be a startsWith or endsWith
-            searchBy = (operator === '*' || operator === '*z') ? `endswith(${fieldName}, '${searchValue}')` : `startswith(${fieldName}, '${searchValue}')`;
+            searchBy = (operator === '*' || operator === '*z' || operator === OperatorType.endsWith) ? `endswith(${fieldName}, '${searchValue}')` : `startswith(${fieldName}, '${searchValue}')`;
           } else if (fieldType === FieldType.string) {
             // string field needs to be in single quotes
             if (operator === '' || operator === OperatorType.contains || operator === OperatorType.notContains) {

@@ -308,13 +308,13 @@ describe('GridOdataService', () => {
     });
 
     it('should return a query with a new filter when previous filters exists', () => {
-      const expectation = `$top=10&$filter=(Gender eq 'female' and FirstName eq 'John')`;
+      const expectation = `$top=10&$filter=(Gender eq 'female' and endswith(FirstName, 'John'))`;
       const querySpy = jest.spyOn(service.odataService, 'buildQuery');
       const resetSpy = jest.spyOn(service, 'resetPaginationOptions');
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnName = { id: 'firstName', field: 'firstName' } as Column;
       const mockColumnFilter = { columnDef: mockColumn, columnId: 'gender', operator: 'EQ', searchTerms: ['female'] } as ColumnFilter;
-      const mockColumnFilterName = { columnDef: mockColumnName, columnId: 'firstName', operator: 'StartsWith', searchTerms: ['John'] } as ColumnFilter;
+      const mockColumnFilterName = { columnDef: mockColumnName, columnId: 'firstName', operator: 'EndsWith', searchTerms: ['John'] } as ColumnFilter;
       const mockFilterChangedArgs = {
         columnDef: mockColumn,
         columnId: 'gender',
@@ -334,7 +334,7 @@ describe('GridOdataService', () => {
       expect(resetSpy).toHaveBeenCalled();
       expect(currentFilters).toEqual([
         { columnId: 'gender', operator: 'EQ', searchTerms: ['female'] },
-        { columnId: 'firstName', operator: 'StartsWith', searchTerms: ['John'] }
+        { columnId: 'firstName', operator: 'EndsWith', searchTerms: ['John'] }
       ]);
     });
 
@@ -370,7 +370,7 @@ describe('GridOdataService', () => {
       });
 
       it('should return a query with a new filter when previous filters exists when "enablePagination" is set to False', () => {
-        const expectation = `$filter=(Gender eq 'female' and FirstName eq 'John')`;
+        const expectation = `$filter=(Gender eq 'female' and startswith(FirstName, 'John'))`;
         const querySpy = jest.spyOn(service.odataService, 'buildQuery');
         const resetSpy = jest.spyOn(service, 'resetPaginationOptions');
         const mockColumn = { id: 'gender', field: 'gender' } as Column;

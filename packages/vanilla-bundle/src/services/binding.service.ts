@@ -94,9 +94,9 @@ export class BindingService {
   }
 
   /** Unbind (remove) an event from an element */
-  unbind(element: Element | null, eventName: string, callback: () => void) {
+  unbind(element: Element | null, eventName: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions) {
     if (element) {
-      element.removeEventListener(eventName, callback);
+      element.removeEventListener(eventName, listener, options);
     }
   }
 }

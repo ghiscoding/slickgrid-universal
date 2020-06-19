@@ -280,7 +280,8 @@ export class CompoundDateFilter implements Filter {
     this.$filterInputElm.data('columnId', columnId);
 
     if (this.operator) {
-      this.$selectOperatorElm.val(this.operator);
+      const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);
+      this.$selectOperatorElm.val(operatorShorthand);
     }
 
     // if there's a search term, we will add the "filled" class for styling purposes

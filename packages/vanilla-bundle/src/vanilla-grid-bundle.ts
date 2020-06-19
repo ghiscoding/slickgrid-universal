@@ -67,7 +67,7 @@ import { FileExportService } from './services/fileExport.service';
 import { TranslateService } from './services/translate.service';
 import { EventPubSubService } from './services/eventPubSub.service';
 import { FooterService } from './services/footer.service';
-import { PaginationRenderer } from './pagination.renderer';
+import { SlickPaginationComponent } from './slick-pagination';
 import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options';
 
 // using external non-typed js libraries
@@ -90,13 +90,13 @@ export class VanillaGridBundle {
   private _isPaginationInitialized = false;
   private _eventHandler: SlickEventHandler = new Slick.EventHandler();
   private _eventPubSubService: EventPubSubService;
+  private _paginationOptions: Pagination | undefined;
   private _slickgridInitialized = false;
   backendServiceApi: BackendServiceApi | undefined;
   dataView: SlickDataView;
   grid: SlickGrid;
   metrics: Metrics;
   customDataView = false;
-  paginationOptions: Pagination | undefined;
   paginationData: {
     gridOptions: GridOption;
     paginationService: PaginationService;
@@ -138,7 +138,7 @@ export class VanillaGridBundle {
   translateService: TranslateService;
   treeDataService: TreeDataService;
 
-  paginationRenderer: PaginationRenderer;
+  slickPagination: SlickPaginationComponent;
   gridClass: string;
   gridClassName: string;
 
@@ -199,6 +199,15 @@ export class VanillaGridBundle {
       this.grid.setOptions(mergedOptions);
     }
     this._gridOptions = mergedOptions;
+  }
+
+  get paginationOptions(): Pagination | undefined {
+    return this._paginationOptions;
+  }
+  set paginationOptions(options: Pagination) {
+    this._paginationOptions = { ...this._paginationOptions, ...options };
+    this.gridOptions.pagination = options;
+    this.paginationService.updateTotalItems(options.totalItems);
   }
 
   constructor(gridParentContainerElm: HTMLElement, columnDefs?: Column[], options?: GridOption, dataset?: any[], hierarchicalDataset?: any[]) {
@@ -302,7 +311,7 @@ export class VanillaGridBundle {
     this.sharedService.internalPubSubService = this._eventPubSubService;
     this._eventHandler = new Slick.EventHandler();
     const dataviewInlineFilters = this._gridOptions?.dataView?.inlineFilters ?? false;
-    this.paginationOptions = this.gridOptions?.pagination;
+    this._paginationOptions = this.gridOptions?.pagination;
 
     this.createBackendApiInternalPostProcessCallback(this._gridOptions);
 
@@ -391,13 +400,6 @@ export class VanillaGridBundle {
     const customFooterElm = this.footerService.optionallyShowCustomFooterWithMetrics(this.metrics);
     if (customFooterElm) {
       $(customFooterElm).appendTo(this._gridParentContainerElm);
-    }
-
-    // TODO - Pagination
-    // user could show pagination
-    if (this._gridOptions.enablePagination) {
-      this.paginationRenderer = new PaginationRenderer(this.paginationService, this._eventPubSubService, this.sharedService);
-      this.paginationRenderer.renderPagination(this._gridParentContainerElm);
     }
 
     const fixedGridDimensions = (this._gridOptions?.gridHeight || this._gridOptions?.gridWidth) ? { height: this._gridOptions?.gridHeight, width: this._gridOptions?.gridWidth } : undefined;
@@ -809,8 +811,8 @@ export class VanillaGridBundle {
       // display the Pagination component only after calling this refresh data first, we call it here so that if we preset pagination page number it will be shown correctly
       this.showPagination = (this._gridOptions && (this._gridOptions.enablePagination || (this._gridOptions.backendServiceApi && this._gridOptions.enablePagination === undefined))) ? true : false;
 
-      if (this._gridOptions && this._gridOptions.backendServiceApi && this._gridOptions.pagination && this.paginationOptions) {
-        const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this._gridOptions, this.paginationOptions);
+      if (this._gridOptions && this._gridOptions.backendServiceApi && this._gridOptions.pagination && this._paginationOptions) {
+        const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this._gridOptions, this._paginationOptions);
 
         // when we have a totalCount use it, else we'll take it from the pagination object
         // only update the total items if it's different to avoid refreshing the UI
@@ -823,7 +825,7 @@ export class VanillaGridBundle {
           this.initializePaginationService(paginationOptions);
         } else {
           // update the pagination service with the new total
-          this.paginationService.totalItems = this.totalItems;
+          this.paginationService.updateTotalItems(this.totalItems);
         }
       }
 
@@ -914,6 +916,13 @@ export class VanillaGridBundle {
           }
         })
       );
+
+      // also initialize (render) the pagination component
+      if (this._gridOptions.enablePagination) {
+        this.slickPagination = new SlickPaginationComponent(this.paginationService, this._eventPubSubService, this.sharedService);
+        this.slickPagination.renderPagination(this._gridParentContainerElm);
+      }
+
       this._isPaginationInitialized = true;
     }
   }
@@ -924,16 +933,16 @@ export class VanillaGridBundle {
    * a local grid with Pagination presets will potentially have a different total of items, we'll need to get it from the DataView and update our total
    */
   private loadLocalGridPagination(dataset?: any[]) {
-    if (this.gridOptions && this.paginationOptions) {
+    if (this.gridOptions && this._paginationOptions) {
       this.totalItems = Array.isArray(dataset) ? dataset.length : 0;
-      if (this.paginationOptions && this.dataView && this.dataView.getPagingInfo) {
+      if (this._paginationOptions && this.dataView && this.dataView.getPagingInfo) {
         const slickPagingInfo = this.dataView.getPagingInfo();
-        if (slickPagingInfo && slickPagingInfo.hasOwnProperty('totalRows') && this.paginationOptions.totalItems !== slickPagingInfo.totalRows) {
+        if (slickPagingInfo && slickPagingInfo.hasOwnProperty('totalRows') && this._paginationOptions.totalItems !== slickPagingInfo.totalRows) {
           this.totalItems = slickPagingInfo?.totalRows || 0;
         }
       }
-      this.paginationOptions.totalItems = this.totalItems;
-      const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this.gridOptions, this.paginationOptions);
+      this._paginationOptions.totalItems = this.totalItems;
+      const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this.gridOptions, this._paginationOptions);
       this.initializePaginationService(paginationOptions);
     }
   }

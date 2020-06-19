@@ -88,9 +88,7 @@ export class PaginationService {
     if (this._isLocalGrid && this.dataView) {
       this.dataView.onPagingInfoChanged.subscribe((_e: SlickEventData, pagingInfo: { totalRows: number; pageNum: number; }) => {
         if (this._totalItems !== pagingInfo.totalRows) {
-          this._totalItems = pagingInfo.totalRows;
-          this._paginationOptions.totalItems = this._totalItems;
-          this.refreshPagination(false, false);
+          this.updateTotalItems(pagingInfo.totalRows);
         }
       });
       setTimeout(() => {
@@ -204,7 +202,7 @@ export class PaginationService {
   }
 
   refreshPagination(isPageNumberReset = false, triggerChangedEvent = true, triggerInitializedEvent = false) {
-    const previousPagination = { ...this.getCurrentPagination() };
+    const previousPagination = { ...this.getFullPagination() };
 
     if (this._paginationOptions) {
       const pagination = this._paginationOptions;
@@ -241,17 +239,15 @@ export class PaginationService {
       this.recalculateFromToIndexes();
     }
     this._pageCount = Math.ceil(this._totalItems / this._itemsPerPage);
-    const currentPagination = this.getCurrentPagination();
-    this.sharedService.currentPagination = currentPagination;
+    this.sharedService.currentPagination = this.getCurrentPagination();
+    this.pubSubService.publish(`onPaginationRefreshed`, this.getFullPagination());
 
-    if (triggerChangedEvent && !isequal(previousPagination, currentPagination)) {
+    if (triggerChangedEvent && !isequal(previousPagination, this.getFullPagination())) {
       this.pubSubService.publish(`onPaginationChanged`, this.getFullPagination());
     }
-    if (triggerInitializedEvent && !isequal(previousPagination, currentPagination)) {
+    if (triggerInitializedEvent && !isequal(previousPagination, this.getFullPagination())) {
       this.pubSubService.publish(`onPaginationPresetsInitialized`, this.getFullPagination());
     }
-
-    this.sharedService.currentPagination = this.getCurrentPagination();
   }
 
   /** Reset the Pagination to first page and recalculate necessary numbers */
@@ -297,6 +293,7 @@ export class PaginationService {
       if (this._isLocalGrid && this.dataView) {
         this.dataView.setPagingOptions({ pageSize: this._itemsPerPage, pageNum: (pageNumber - 1) }); // dataView page starts at 0 instead of 1
         this.pubSubService.publish(`onPaginationChanged`, this.getFullPagination());
+        this.pubSubService.publish(`onPaginationRefreshed`, this.getFullPagination());
         resolve(this.getFullPagination());
       } else {
         const itemsPerPage = +this._itemsPerPage;
@@ -325,6 +322,7 @@ export class PaginationService {
                 reject(process);
               });
           }
+          this.pubSubService.publish(`onPaginationRefreshed`, this.getFullPagination());
           this.pubSubService.publish(`onPaginationChanged`, this.getFullPagination());
         }
       }
@@ -352,6 +350,14 @@ export class PaginationService {
       this._dataTo = this._totalItems;
     } else if (this._totalItems < this._itemsPerPage) {
       this._dataTo = this._totalItems;
+    }
+  }
+
+  updateTotalItems(totalItems: number, triggerChangedEvent = false) {
+    this._totalItems = totalItems;
+    if (this._paginationOptions) {
+      this._paginationOptions.totalItems = totalItems;
+      this.refreshPagination(false, triggerChangedEvent);
     }
   }
 
