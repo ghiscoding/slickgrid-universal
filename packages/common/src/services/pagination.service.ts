@@ -212,7 +212,7 @@ export class PaginationService {
         if (this._isLocalGrid) {
           this._itemsPerPage = pagination.pageSize;
         } else {
-          this._itemsPerPage = +((this._backendServiceApi && this._backendServiceApi.options && this._backendServiceApi.options.paginationOptions && this._backendServiceApi.options.paginationOptions.first) ? this._backendServiceApi.options.paginationOptions.first : pagination.pageSize);
+          this._itemsPerPage = +((this._backendServiceApi?.options?.paginationOptions?.first) ? this._backendServiceApi.options.paginationOptions.first : pagination.pageSize);
         }
       }
 
@@ -240,11 +240,17 @@ export class PaginationService {
     }
     this._pageCount = Math.ceil(this._totalItems / this._itemsPerPage);
     this.sharedService.currentPagination = this.getCurrentPagination();
+
+    // publish the refresh event on anytime the pagination is refreshed or re-rendered (run every time)
+    // useful when binding a slick-pagination View
     this.pubSubService.publish(`onPaginationRefreshed`, this.getFullPagination());
 
+    // publish a pagination change only when flag requires it (triggered by page or pageSize change, dataset length change by a filter or others)
     if (triggerChangedEvent && !isequal(previousPagination, this.getFullPagination())) {
       this.pubSubService.publish(`onPaginationChanged`, this.getFullPagination());
     }
+
+    // publish on the first pagination initialization (called by the "init()" method on first load)
     if (triggerInitializedEvent && !isequal(previousPagination, this.getFullPagination())) {
       this.pubSubService.publish(`onPaginationPresetsInitialized`, this.getFullPagination());
     }
@@ -267,7 +273,7 @@ export class PaginationService {
    * Basically this method WILL NOT WORK to show the Pagination if it was not there from the start.
    */
   togglePaginationVisibility(visible?: boolean) {
-    if (this.grid && this.sharedService && this.sharedService.gridOptions) {
+    if (this.grid && this.sharedService?.gridOptions) {
       const isVisible = visible !== undefined ? visible : !this.sharedService.gridOptions.enablePagination;
       this.sharedService.gridOptions.enablePagination = isVisible;
       this.pubSubService.publish(`onPaginationVisibilityChanged`, { visible: isVisible });
@@ -376,7 +382,7 @@ export class PaginationService {
     if (items !== null) {
       const previousDataTo = this._dataTo;
       const itemCount = Array.isArray(items) ? items.length : 1;
-      const itemCountWithDirection = isItemAdded ? +itemCount : -itemCount;
+      const itemCountWithDirection = isItemAdded ? +(itemCount) : -(itemCount);
 
       // refresh the total count in the pagination and in the UI
       this._totalItems += itemCountWithDirection;

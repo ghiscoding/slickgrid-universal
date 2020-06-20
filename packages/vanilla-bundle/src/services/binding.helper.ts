@@ -5,7 +5,7 @@ export class BindingHelper {
   private _querySelectorPrefix = '';
 
   get querySelectorPrefix(): string {
-    return this._querySelectorPrefix;
+    return this._querySelectorPrefix || '';
   }
   set querySelectorPrefix(prefix: string) {
     this._querySelectorPrefix = prefix;
@@ -20,8 +20,7 @@ export class BindingHelper {
   }
 
   addElementBinding(variable: any, property: string, selector: string, attribute: string, events?: string | string[], callback?: (val: any) => void) {
-    const querySelector = this.querySelectorPrefix ? `${this.querySelectorPrefix} ${selector}` : selector;
-    const elm = document.querySelector<HTMLSpanElement>(querySelector);
+    const elm = document.querySelector<HTMLSpanElement>(`${this.querySelectorPrefix}${selector}`);
     if (elm) {
       // before creating a new observer, first check if the variable already has an associated observer
       // if we can't find an observer then we'll create a new one for it
@@ -41,8 +40,7 @@ export class BindingHelper {
   }
 
   bindEventHandler(selector: string, eventName: string, callback: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions) {
-    const querySelector = this.querySelectorPrefix ? `${this.querySelectorPrefix} ${selector}` : selector;
-    const elm = document.querySelector<HTMLElement>(querySelector);
+    const elm = document.querySelector<HTMLElement>(`${this.querySelectorPrefix}${selector}`);
     if (elm?.addEventListener) {
       elm.addEventListener(eventName, callback, options);
     }

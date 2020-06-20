@@ -7,32 +7,32 @@
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
 
-This is a monorepo project (using Lerna) which is regrouping a few packages under a single repository. 
-The goal is to create a common repo that includes all Editors, Filters, Extensions and Services 
-that could be used by any Framework (it is framework agnostic). 
-It's also a good opportunity to decouple some features/services that not every project require at all time, 
-this will also help in getting smaller bundle size depending on which features (packages) are used. For example, not every project requires backend services (OData, GraphQL), 
+This is a monorepo project (using Lerna) which is regrouping a few packages under a single repository.
+The goal is to create a common repo that includes all Editors, Filters, Extensions and Services
+that could be used by any Framework (it is framework agnostic).
+It's also a good opportunity to decouple some features/services that not every project require at all time,
+this will also help in getting smaller bundle size depending on which features (packages) are used. For example, not every project requires backend services (OData, GraphQL),
 which is why they are better handled with a monorepo structure.
 
 ### Demo page
-The GitHub [demo page](https://ghiscoding.github.io/slickgrid-universal) uses 2 different themes (Material Design / Salesforce) but you could also use Bootstrap theme which is demoed in other frameworks. 
+The GitHub [demo page](https://ghiscoding.github.io/slickgrid-universal) uses 2 different themes (Material Design / Salesforce) but you could also use Bootstrap theme which is demoed in other frameworks.
 - [Web-Demo-Vanilla-Bundle](https://ghiscoding.github.io/slickgrid-universal) with Material Design theme & Salesforce theme
 - [Angular-Slickgrid](https://ghiscoding.github.io/Angular-Slickgrid/)
-- [Slickgrid-Universal](https://ghiscoding.github.io/aurelia-slickgrid/) 
+- [Aurelia-Slickgrid](https://ghiscoding.github.io/aurelia-slickgrid/)
 
 ### Why create this monorepo?
 You might be wondering why was this monorepo created? Here are a few of the reasons:
-1. it removes a lot of duplicate code that exist in both 
-[Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Slickgrid-Universal](https://github.com/ghiscoding/aurelia-slickgrid) 
+1. it removes a lot of duplicate code that exist in both
+[Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid)
 (these libs have over 80% of code in common and that is not very DRY).
 2. decouple some Services that should not be required at all time (OData, GraphQL, Export to File, Export to Excel, ...)
 3. framework agnostic, it could be implemented in many more frameworks in the future (interested in adding other frameworks? please contact me...)
 
 ### Frameworks using this monorepo
-This is a Work in Progress, the goal is to eventually to rewrite [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) 
-and [Slickgrid-Universal](https://github.com/ghiscoding/aurelia-slickgrid) to use this monorepo which will simplify debugging/fixing common code. 
+This is a Work in Progress, the goal is to eventually to rewrite [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid)
+and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) to use this monorepo which will simplify debugging/fixing common code.
 
-Note however that this project also has a Vanilla Implementation (not associated to any framework) 
+Note however that this project also has a Vanilla Implementation (not associated to any framework)
 and it is also used to test with the UI portion. The Vanilla bundle is also used in our SalesForce (with Lightning Web Component) hence the creation of this monorepo.
 
 #### The main packages structure is the following
@@ -66,8 +66,8 @@ npm run build
 
 3. Run Dev (Vanilla Implementation)
 
-There is a Vanilla flavour implementation of this monorepo, vanilla means that it is not associated to any framework 
-and is written in plain TypeScript without being bound to any framework. The implementation is very similar to Angular and Aurelia. 
+There is a Vanilla flavour implementation of this monorepo, vanilla means that it is not associated to any framework
+and is written in plain TypeScript without being bound to any framework. The implementation is very similar to Angular and Aurelia.
 It could be used as a guideline to implement it in with other frameworks.
 
 ```bash
@@ -88,7 +88,7 @@ npm run test:watch
 - [x] Aggregators (6)
 - [x] Editors (11)
 - [x] Filters (17)
-  - [ ] Add optional debounce filter delay to local grid
+  - [ ] Add optional debounce filter delay on local grid
 - [x] Formatters (31)
 - [ ] Extensions
   - [x] AutoTooltip
@@ -119,7 +119,7 @@ npm run test:watch
   - [x] Grid State
   - [x] Grouping & Col Span
   - [x] Pagination
-  - [ ] Resizer 
+  - [ ] Resizer
     - moved the Service to an Extension
   - [x] Shared
   - [x] Sort
@@ -154,6 +154,6 @@ npm run test:watch
 - [x] Add possibility to use SVG instead of Font Family
 - [x] Add Typings (interfaces) for Slick Grid & DataView objects
   - [x] Add interfaces to all SlickGrid core lib classes & plugins (basically add Types to everything)
-- [ ] Cannot copy text from cell since it's not selectable
+- [ ] Cannot copy text from cell is not working in SF
 - [ ] Remove all Services init method 2nd argument (we can get DataView directly from the Grid object)
 - [ ] Add build (bundle) step in CircleCI build

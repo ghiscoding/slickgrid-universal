@@ -13,7 +13,7 @@ export class SlickPaginationComponent {
 
   constructor(private paginationService: PaginationService, private pubSubService: EventPubSubService, private sharedService: SharedService) {
     this._bindingHelper = new BindingHelper();
-    this._bindingHelper.querySelectorPrefix = `.${this.gridUid}`;
+    this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
 
     this.currentPagination = this.paginationService.getFullPagination();
 
