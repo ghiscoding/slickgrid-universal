@@ -39,7 +39,7 @@ export class GridOdataService implements BackendService {
   private _currentPagination: CurrentPagination | null;
   private _currentSorters: CurrentSorter[] = [];
   private _columnDefinitions: Column[];
-  private _grid: SlickGrid;
+  private _grid: SlickGrid | undefined;
   private _odataService: OdataQueryBuilderService;
   options: Partial<OdataOption>;
   pagination: Pagination | undefined;
@@ -447,10 +447,10 @@ export class GridOdataService implements BackendService {
           };
         }
         return null;
-      });
+      }) as { columnId: string | number; sortAsc: boolean; }[] | null;
 
       // set the sort icons, but also make sure to filter out null values (that happens when columnDef is not found)
-      if (Array.isArray(tmpSorterArray)) {
+      if (Array.isArray(tmpSorterArray) && this._grid) {
         this._grid.setSortColumns(tmpSorterArray);
       }
     } else if (sortColumns && !presetSorters) {

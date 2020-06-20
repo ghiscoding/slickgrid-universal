@@ -44,9 +44,9 @@ export class GraphqlService implements BackendService {
   private _currentPagination: CurrentPagination | null;
   private _currentSorters: CurrentSorter[] = [];
   private _columnDefinitions: Column[];
-  private _grid: SlickGrid;
+  private _grid: SlickGrid | undefined;
   private _datasetIdPropName = 'id';
-  options: GraphqlServiceOption;
+  options: GraphqlServiceOption | undefined;
   pagination: Pagination | undefined;
   defaultPaginationOptions: GraphqlPaginationOption | GraphqlCursorPaginationOption = {
     first: DEFAULT_ITEMS_PER_PAGE,
@@ -64,7 +64,7 @@ export class GraphqlService implements BackendService {
   }
 
   /** Initialization of the service, which acts as a constructor */
-  init(serviceOptions?: GraphqlServiceOption, pagination?: Pagination, grid?: SlickGrid): void {
+  init(serviceOptions: GraphqlServiceOption, pagination?: Pagination, grid?: SlickGrid): void {
     this._grid = grid;
     this.options = serviceOptions || { datasetName: '' };
     this.pagination = pagination;
@@ -221,12 +221,12 @@ export class GraphqlService implements BackendService {
    */
   getInitPaginationOptions(): GraphqlDatasetFilter {
     const paginationFirst = this.pagination ? this.pagination.pageSize : DEFAULT_ITEMS_PER_PAGE;
-    return (this.options.isWithCursor) ? { first: paginationFirst } : { first: paginationFirst, offset: 0 };
+    return (this.options?.isWithCursor) ? { first: paginationFirst } : { first: paginationFirst, offset: 0 };
   }
 
   /** Get the GraphQL dataset name */
   getDatasetName(): string {
-    return this.options.datasetName || '';
+    return this.options?.datasetName || '';
   }
 
   /** Get the Filters that are currently used by the grid */
@@ -276,7 +276,7 @@ export class GraphqlService implements BackendService {
   }
 
   updateOptions(serviceOptions?: Partial<GraphqlServiceOption>) {
-    this.options = { ...this.options, ...serviceOptions };
+    this.options = { ...this.options, ...serviceOptions } as GraphqlServiceOption;
   }
 
   /*
@@ -516,11 +516,11 @@ export class GraphqlService implements BackendService {
           };
         }
         return null;
-      });
+      }) as { columnId: string | number; sortAsc: boolean; }[] | null;
 
       // set the sort icons, but also make sure to filter out null values (that happens when columnDef is not found)
-      if (Array.isArray(tmpSorterArray)) {
-        this._grid.setSortColumns(tmpSorterArray.filter(sorter => sorter));
+      if (Array.isArray(tmpSorterArray) && this._grid) {
+        this._grid.setSortColumns(tmpSorterArray.filter(sorter => sorter) || []);
       }
     } else if (sortColumns && !presetSorters) {
       // build the orderBy array, it could be multisort, example
