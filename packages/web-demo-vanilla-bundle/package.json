@@ -11,6 +11,7 @@
     "cypress": "node ../../node_modules/cypress/bin/cypress open",
     "cypress:ci:mochawesome": "node cypress-mochawesome.js",
     "cypress:ci:xml": "cypress run --reporter junit --reporter-options output=testresult.xml",
+    "serve": "http-server ../../docs -p 8888 -a localhost",
     "test": "echo testing slickgrid-universal demo code"
   },
   "author": "Ghislain B.",
@@ -47,6 +48,7 @@
     "fork-ts-checker-webpack-plugin": "^4.1.6",
     "html-loader": "^1.1.0",
     "html-webpack-plugin": "^4.3.0",
+    "http-server": "^0.12.3",
     "json-loader": "^0.5.7",
     "mini-css-extract-plugin": "^0.9.0",
     "mocha": "^5.2.0",

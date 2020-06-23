@@ -56,3 +56,4 @@ dist-demo
 **/junit.xml
 **/test-report.xml
 **/testresult.xml
+**/test-results.xml

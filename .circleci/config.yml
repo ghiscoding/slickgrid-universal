@@ -27,10 +27,15 @@ jobs:
           name: Upload Jest coverage to Codecov
           command: bash <(curl -s https://codecov.io/bash)
       - run:
-          name: Start Dev WebServer
+          name: Web Prod Build
           command: |
-          cd packages/web-demo-vanilla-bundle
-          npx nps webpack.server
+            cd packages/web-demo-vanilla-bundle
+            npm run build:demo
+      - run:
+          name: Run Web Server
+          command: |
+            cd packages/web-demo-vanilla-bundle
+            npm run serve
           background: true
       - run:
           name: Running Cypress E2E tests with JUnit reporter
