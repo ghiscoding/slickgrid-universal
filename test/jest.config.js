@@ -54,7 +54,7 @@ module.exports = {
   ],
   testEnvironment: 'node',
   testPathIgnorePatterns: [
-    '<rootDir>/packages/web-demo-vanilla-bundle/cypress/',
+    '<rootDir>/test/cypress/',
     '<rootDir>/node_modules/',
   ],
 };
