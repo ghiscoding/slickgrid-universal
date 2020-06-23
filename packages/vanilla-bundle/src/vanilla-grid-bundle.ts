@@ -923,7 +923,7 @@ export class VanillaGridBundle {
 
       // also initialize (render) the pagination component
       if (this._gridOptions.enablePagination) {
-        this.slickPagination = new SlickPaginationComponent(this.paginationService, this._eventPubSubService, this.sharedService);
+        this.slickPagination = new SlickPaginationComponent(this.paginationService, this._eventPubSubService, this.sharedService, this.translateService);
         this.slickPagination.renderPagination(this._gridParentContainerElm);
       }
 

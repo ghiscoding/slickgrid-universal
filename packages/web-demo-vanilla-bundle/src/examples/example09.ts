@@ -31,7 +31,7 @@ export class Example09 {
   }
 
   dispose() {
-    this.slickgridLwc.dispose();
+    this.slickgridLwc?.dispose();
   }
 
   handleOnSlickerGridCreated(event) {
@@ -78,7 +78,6 @@ export class Example09 {
       pagination: {
         pageSizes: [10, 20, 50, 100, 500],
         pageSize: defaultPageSize,
-        totalItems: 0
       },
       presets: {
         // you can also type operator as string, e.g.: operator: 'EQ'
@@ -127,9 +126,9 @@ export class Example09 {
     }
 
     // once pagination totalItems is filled, we can update the dataset
+    this.slickgridLwc.paginationOptions = { totalItems: data[countPropName] };
     this.slickgridLwc.dataset = data['items'];
     this.odataQuery = data['query'];
-    this.slickgridLwc.paginationOptions = { totalItems: data[countPropName] };
   }
 
   getCustomerApiCall(query) {
@@ -144,7 +143,7 @@ export class Example09 {
    */
   getCustomerDataApiMock(query) {
     // the mock is returning a Promise, just like a WebAPI typically does
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const queryParams = query.toLowerCase().split('&');
       let top: number;
       let skip = 0;
