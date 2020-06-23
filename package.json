@@ -18,6 +18,7 @@
     "updated": "lerna updated",
     "clean:tsconfig-build-cache": "rimraf packages/*/dist/tsconfig.tsbuildinfo",
     "new-version": "lerna version --conventional-commits --yes",
+    "serve": "http-server ../../docs -p 8888 -a localhost",
     "test": "npx jest --runInBand --coverage --config ./test/jest.config.js",
     "test:watch": "npx jest --watch --config ./test/jest.config.js"
   },
@@ -43,6 +44,7 @@
     "eslint": "^7.2.0",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-prefer-arrow": "^1.2.1",
+    "http-server": "^0.12.3",
     "jest": "^26.0.1",
     "jest-cli": "^26.0.1",
     "jest-environment-jsdom": "^26.0.1",
