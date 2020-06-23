@@ -50,11 +50,11 @@ module.exports = {
   ],
   testMatch: [
     '**/__tests__/**/*.+(ts|js)',
-    '**/+(*.)+(spec|test).ts'
+    '**/+(*.)+(spec|test).+(ts|js)'
   ],
   testEnvironment: 'node',
   testPathIgnorePatterns: [
-    '<rootDir>/test/cypress/',
+    '<rootDir>/packages/web-demo-vanilla-bundle/cypress/',
     '<rootDir>/node_modules/',
   ],
 };
