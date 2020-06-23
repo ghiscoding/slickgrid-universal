@@ -10,6 +10,7 @@
     "rebuild": "npm run clean && npm run build",
     "clean": "rimraf packages/*/dist dist",
     "cypress": "lerna run cypress",
+    "cypress:ci": "cypress run --config-file test/cypress.json --reporter mochawesome",
     "cypress:ci:mochawesome": "lerna run cypress:ci:mochawesome --stream",
     "cypress:ci:xml": "lerna run cypress:ci:xml --stream",
     "dev:watch": "lerna run dev:watch --parallel",
@@ -20,9 +21,19 @@
     "test": "npx jest --runInBand --coverage --config ./test/jest.config.js",
     "test:watch": "npx jest --watch --config ./test/jest.config.js"
   },
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/mochawesome",
+      "**/mochawesome/**",
+      "**/mocha",
+      "**/mocha/**",
+      "**/cypress",
+      "**/cypress/**"
+    ]
+  },
   "devDependencies": {
     "@types/jest": "^25.2.3",
     "@types/node": "^14.0.11",

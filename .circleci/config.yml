@@ -28,14 +28,12 @@ jobs:
           command: bash <(curl -s https://codecov.io/bash)
       - run:
           name: Run Web Server
-          command: |
-            cd packages/web-demo-vanilla-bundle
-            npm run serve
+          command: npm run serve
           background: true
       - run:
-          name: Running Cypress E2E tests with JUnit reporter
+          name: Running Cypress E2E tests with JUnit XML reporter
           command: |
-            yarn run cypress:ci:xml
+            yarn run cypress:ci
       - run:
-          name: Full Bundle for all Bundler types
+          name: Execute Full Bundle for all Bundler types
           command: yarn run bundle
