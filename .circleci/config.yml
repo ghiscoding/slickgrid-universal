@@ -29,8 +29,8 @@ jobs:
       - run:
           name: Start Dev WebServer
           command: |
-            yarn run clean
-            yarn run dev:watch
+          cd packages/web-demo-vanilla-bundle
+          npx nps webpack.server
           background: true
       - run:
           name: Running Cypress E2E tests with JUnit reporter
