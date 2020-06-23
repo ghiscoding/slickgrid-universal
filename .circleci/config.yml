@@ -28,12 +28,14 @@ jobs:
           command: bash <(curl -s https://codecov.io/bash)
       - run:
           name: Start Dev WebServer
-          command: npm run dev:watch
+          command: |
+            yarn run clean
+            yarn run dev:watch
           background: true
       - run:
           name: Running Cypress E2E tests with JUnit reporter
           command: |
-            yarn run cypress:ci:mochawesome
+            yarn run cypress:ci:xml
       - run:
           name: Full Bundle for all Bundler types
           command: yarn run bundle

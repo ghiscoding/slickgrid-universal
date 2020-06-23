@@ -10,7 +10,7 @@
     "dev:watch": "webpack-dev-server --env.server --extractCss",
     "cypress": "node ../../node_modules/cypress/bin/cypress open",
     "cypress:ci:mochawesome": "node cypress-mochawesome.js",
-    "cypress:ci:xml": "node node_modules/cypress/bin/cypress run --reporter xunit --reporter-options output=testresult.xml",
+    "cypress:ci:xml": "cypress run --reporter xunit --reporter-options output=testresult.xml",
     "test": "echo testing slickgrid-universal demo code"
   },
   "author": "Ghislain B.",
