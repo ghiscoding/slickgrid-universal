@@ -19,12 +19,6 @@ jobs:
           name: TypeScript Build (tsc)
           command: yarn run build
       - run:
-          name: Web Prod Build
-          command: |
-            npm run bootstrap
-            cd packages/web-demo-vanilla-bundle
-            npm run build:demo
-      - run:
           name: Run Jest tests with JUnit as reporter
           command: ./node_modules/.bin/jest --config test/jest.config.js --ci --runInBand --collectCoverage=true --reporters=default --reporters=jest-junit
           environment:
@@ -32,7 +26,6 @@ jobs:
       - run:
           name: Upload Jest coverage to Codecov
           command: bash <(curl -s https://codecov.io/bash)
-
       - run:
           name: Run Web Server
           command: |
