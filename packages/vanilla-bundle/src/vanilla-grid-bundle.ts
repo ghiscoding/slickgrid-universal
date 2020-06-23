@@ -761,6 +761,7 @@ export class VanillaGridBundle {
    * Also if we use Row Selection or the Checkbox Selector, we need to reset any selection
    */
   paginationChanged(pagination: ServicePagination) {
+    // console.log('pagination changed', pagination)
     const isSyncGridSelectionEnabled = this.gridStateService && this.gridStateService.needToPreserveRowSelection() || false;
     if (!isSyncGridSelectionEnabled && (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector)) {
       this.grid.setSelectedRows([]);
@@ -771,7 +772,7 @@ export class VanillaGridBundle {
         this.sharedService.currentPagination = { pageNumber, pageSize };
       }
     }
-    this._eventPubSubService.publish('gridStateService:changed', {
+    this._eventPubSubService.publish('onGridStateChanged', {
       change: { newValues: { pageNumber, pageSize }, type: GridStateType.pagination },
       gridState: this.gridStateService.getCurrentGridState()
     });

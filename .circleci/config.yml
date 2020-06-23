@@ -27,5 +27,9 @@ jobs:
           name: Upload Jest coverage to Codecov
           command: bash <(curl -s https://codecov.io/bash)
       - run:
+          name: Running Cypress E2E tests with JUnit reporter
+          command: |
+            yarn run cypress:ci:mochawesome
+      - run:
           name: Full Bundle for all Bundler types
           command: yarn run bundle

@@ -40,6 +40,10 @@ export class SlickPaginationComponent {
         this.currentPagination[key] = paginationChanges[key];
       }
       this.updatePageButtonsUsability();
+      const pageFromToElm = document.querySelector<HTMLSpanElement>(`.${this.gridUid} span.page-info-from-to`);
+      if (pageFromToElm?.style) {
+        pageFromToElm.style.display = (this.currentPagination.totalItems === 0) ? 'none' : '';
+      }
     });
   }
 

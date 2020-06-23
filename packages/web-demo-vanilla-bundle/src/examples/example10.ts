@@ -65,7 +65,7 @@ export class Example10 {
         id: 'gender', field: 'gender', name: 'Gender', filterable: true, sortable: true, width: 60, columnGroup: 'Customer Information',
         filter: {
           model: Filters.singleSelect,
-          collection: [{ value: '', label: '' }, { value: 'male', label: 'male', }, { value: 'female', label: 'female', }]
+          collection: [{ value: '', label: '' }, { value: 'male', label: 'Male', }, { value: 'female', label: 'Female', }]
         }
       },
       {
@@ -111,7 +111,7 @@ export class Example10 {
     this.gridOptions = {
       enableAutoResize: false,
       gridHeight: 275,
-      gridWidth: 1000,
+      gridWidth: 900,
       enableFiltering: true,
       enableCellNavigation: true,
       createPreHeaderPanel: true,

@@ -25,6 +25,7 @@ export class Example09 {
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid9`);
 
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
+    gridContainerElm.addEventListener('ongridstatechanged', this.gridStateChanged.bind(this));
     // gridContainerElm.addEventListener('onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
     // gridContainerElm.addEventListener('onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, []);
@@ -83,7 +84,7 @@ export class Example09 {
         // you can also type operator as string, e.g.: operator: 'EQ'
         filters: [
           // { columnId: 'name', searchTerms: ['w'], operator: OperatorType.startsWith },
-          { columnId: 'gender', searchTerms: ['female'], operator: OperatorType.equal },
+          { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
         ],
         sorters: [
           // direction can be written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
@@ -269,9 +270,12 @@ export class Example09 {
   }
 
   /** Dispatched event of a Grid State Changed event */
-  gridStateChanged(gridStateChanges: GridStateChange) {
-    // console.log('Client sample, Grid State changed:: ', gridStateChanges);
-    console.log('Client sample, Grid State changed:: ', gridStateChanges.change);
+  gridStateChanged(event) {
+    if (event?.detail) {
+      const gridStateChanges: GridStateChange = event.detail;
+      // console.log('Client sample, Grid State changed:: ', gridStateChanges);
+      console.log('Client sample, Grid State changed:: ', gridStateChanges.change);
+    }
   }
 
   setFiltersDynamically() {
@@ -296,7 +300,7 @@ export class Example09 {
     const odataService = this.gridOptions.backendServiceApi.service;
     odataService.updateOptions({ enableCount: this.isCountEnabled } as OdataOption);
     odataService.clearFilters();
-    // this.slickerGridInstance.filterService.clearFilters();
+    this.slickerGridInstance.filterService.clearFilters();
     return true;
   }
 
@@ -305,7 +309,7 @@ export class Example09 {
     const odataService = this.gridOptions.backendServiceApi.service;
     odataService.updateOptions({ version: this.odataVersion } as OdataOption);
     odataService.clearFilters();
-    // this.slickerGridInstance.filterService.clearFilters();
+    this.slickerGridInstance.filterService.clearFilters();
     return true;
   }
 }

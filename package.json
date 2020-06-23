@@ -9,6 +9,8 @@
     "build:demo": "lerna run build:demo --stream",
     "rebuild": "npm run clean && npm run build",
     "clean": "rimraf packages/*/dist dist",
+    "cypress": "lerna run cypress",
+    "cypress:ci:mochawesome": "lerna run cypress:ci:mochawesome",
     "dev:watch": "lerna run dev:watch --parallel",
     "diff": "lerna diff",
     "updated": "lerna updated",

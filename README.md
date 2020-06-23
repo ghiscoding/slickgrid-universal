@@ -127,7 +127,7 @@ npm run test:watch
   - [x] Custom Footer
   - [ ] Dynamically Add Columns
   - [ ] Grid Presets
-  - [ ] Local Pagination
+  - [ ] Local Pagination (test with Presets as well)
   - [ ] Tree Data
     - [x] add Grid Demo
     - [x] add Collapse/Expand All into Context Menu
@@ -147,8 +147,8 @@ npm run test:watch
   - [x] Add Code Coverage (codecov)
   - [x] Build and run on every PR
 - [x] Bundle Creation (vanilla bundle)
-  - [ ] Eventually add Unit Tests as a PreBundle task
-- [ ] Remove any Deprecated code
+  - [ ] Eventually add Unit Tests as a Pre-Bundle task
+- [x] Remove any Deprecated code
   - [ ] Create a [Migration Guide](https://github.com/ghiscoding/slickgrid-universal/wiki/Migration-for-Angular-Aurelia-Slickgrid) for Angular/Aurelia
 - [x] Add simple input bindings in the demo (e.g. pinned rows input)
 - [x] Add possibility to use SVG instead of Font Family
@@ -156,4 +156,4 @@ npm run test:watch
   - [x] Add interfaces to all SlickGrid core lib classes & plugins (basically add Types to everything)
 - [ ] Cannot copy text from cell is not working in SF
 - [ ] Remove all Services init method 2nd argument (we can get DataView directly from the Grid object)
-- [ ] Add build (bundle) step in CircleCI build
+- [x] Add build (bundle) step in CircleCI build
