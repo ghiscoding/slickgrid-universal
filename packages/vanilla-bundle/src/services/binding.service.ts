@@ -29,7 +29,7 @@ export class BindingService {
     this._binding = binding;
     this._property = binding.property || '';
     this.elementBindings = [];
-    if (binding.property && (binding.variable.hasOwnProperty(binding.property) || binding.property in binding.variable)) {
+    if (binding.property && binding.variable && (binding.variable.hasOwnProperty(binding.property) || binding.property in binding.variable)) {
       this._value = typeof binding.variable[binding.property] === 'string' ? DOMPurify.sanitize(binding.variable[binding.property], {}) : binding.variable[binding.property];
     } else {
       this._value = typeof binding.variable === 'string' ? DOMPurify.sanitize(binding.variable, {}) : binding.variable;

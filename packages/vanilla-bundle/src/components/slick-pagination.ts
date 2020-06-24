@@ -1,12 +1,24 @@
-import { BindingHelper } from './services/binding.helper';
-import { PaginationService, SharedService, SlickGrid, ServicePagination, Locale, TranslaterService, getTranslationPrefix, GridOption, Constants } from '@slickgrid-universal/common';
-import { EventPubSubService } from './services';
+import {
+  Constants,
+  getTranslationPrefix,
+  GridOption,
+  Locale,
+  PaginationService,
+  SharedService,
+  SlickGrid,
+  ServicePagination,
+  TranslaterService,
+  Subscription,
+  PubSubService,
+} from '@slickgrid-universal/common';
+import { BindingHelper } from '../services/binding.helper';
 
 export class SlickPaginationComponent {
   private _bindingHelper: BindingHelper;
   private _paginationElement: HTMLDivElement;
   private _enableTranslate = false;
   private _locales: Locale;
+  private _subscriptions: Subscription[] = [];
   currentPagination: ServicePagination;
   firstButtonClasses = '';
   lastButtonClasses = '';
@@ -19,7 +31,7 @@ export class SlickPaginationComponent {
   textOf = 'of';
   textPage = 'Page';
 
-  constructor(private paginationService: PaginationService, private pubSubService: EventPubSubService, private sharedService: SharedService, private translaterService?: TranslaterService) {
+  constructor(private paginationService: PaginationService, private pubSubService: PubSubService, private sharedService: SharedService, private translaterService?: TranslaterService) {
     this._bindingHelper = new BindingHelper();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
 
@@ -32,19 +44,26 @@ export class SlickPaginationComponent {
     }
     this.translatePaginationTexts(this._locales);
 
+    if (this._enableTranslate && this.pubSubService && this.pubSubService.subscribe) {
+      this._subscriptions.push(
+        this.pubSubService.subscribe('onLocaleChanged', () => this.translatePaginationTexts(this._locales))
+      );
+    }
+
     // Anytime the pagination is initialized or has changes,
     // we'll copy the data into a local object so that we can add binding to this local object
-
-    this.pubSubService.subscribe('onPaginationRefreshed', (paginationChanges: ServicePagination) => {
-      for (const key of Object.keys(paginationChanges)) {
-        this.currentPagination[key] = paginationChanges[key];
-      }
-      this.updatePageButtonsUsability();
-      const pageFromToElm = document.querySelector<HTMLSpanElement>(`.${this.gridUid} span.page-info-from-to`);
-      if (pageFromToElm?.style) {
-        pageFromToElm.style.display = (this.currentPagination.totalItems === 0) ? 'none' : '';
-      }
-    });
+    this._subscriptions.push(
+      this.pubSubService.subscribe('onPaginationRefreshed', (paginationChanges: ServicePagination) => {
+        for (const key of Object.keys(paginationChanges)) {
+          this.currentPagination[key] = paginationChanges[key];
+        }
+        this.updatePageButtonsUsability();
+        const pageFromToElm = document.querySelector<HTMLSpanElement>(`.${this.gridUid} span.page-info-from-to`);
+        if (pageFromToElm?.style) {
+          pageFromToElm.style.display = (this.currentPagination.totalItems === 0) ? 'none' : '';
+        }
+      })
+    );
   }
 
   get availablePageSizes(): number[] {
@@ -93,11 +112,11 @@ export class SlickPaginationComponent {
     return this.paginationService.totalItems;
   }
 
-  get isLeftPaginationEnabled(): boolean {
+  get isLeftPaginationDisabled(): boolean {
     return this.pageNumber === 1 || this.totalItems === 0;
   }
 
-  get isRightPaginationEnabled(): boolean {
+  get isRightPaginationDisabled(): boolean {
     return this.pageNumber === this.pageCount || this.totalItems === 0;
   }
 
@@ -105,6 +124,9 @@ export class SlickPaginationComponent {
     this.paginationService.dispose();
     this._bindingHelper.dispose();
     this._paginationElement.remove();
+
+    // also dispose of all Subscriptions
+    this.pubSubService.unsubscribeAll(this._subscriptions);
   }
 
   renderPagination(gridParentContainerElm: HTMLElement) {
@@ -169,25 +191,25 @@ export class SlickPaginationComponent {
   }
 
   changeToFirstPage(event: MouseEvent) {
-    if (!this.isLeftPaginationEnabled) {
+    if (!this.isLeftPaginationDisabled) {
       this.paginationService.goToFirstPage(event);
     }
   }
 
   changeToLastPage(event: MouseEvent) {
-    if (!this.isRightPaginationEnabled) {
+    if (!this.isRightPaginationDisabled) {
       this.paginationService.goToLastPage(event);
     }
   }
 
   changeToNextPage(event: MouseEvent) {
-    if (!this.isRightPaginationEnabled) {
+    if (!this.isRightPaginationDisabled) {
       this.paginationService.goToNextPage(event);
     }
   }
 
   changeToPreviousPage(event: MouseEvent) {
-    if (!this.isLeftPaginationEnabled) {
+    if (!this.isLeftPaginationDisabled) {
       this.paginationService.goToPreviousPage(event);
     }
   }
@@ -201,10 +223,10 @@ export class SlickPaginationComponent {
   // --------------------
 
   private updatePageButtonsUsability() {
-    this.firstButtonClasses = this.isLeftPaginationEnabled ? 'page-item seek-first disabled' : 'page-item seek-first';
-    this.prevButtonClasses = this.isLeftPaginationEnabled ? 'page-item seek-prev disabled' : 'page-item seek-prev';
-    this.lastButtonClasses = this.isRightPaginationEnabled ? 'page-item seek-end disabled' : 'page-item seek-end';
-    this.nextButtonClasses = this.isRightPaginationEnabled ? 'page-item seek-next disabled' : 'page-item seek-next';
+    this.firstButtonClasses = this.isLeftPaginationDisabled ? 'page-item seek-first disabled' : 'page-item seek-first';
+    this.prevButtonClasses = this.isLeftPaginationDisabled ? 'page-item seek-prev disabled' : 'page-item seek-prev';
+    this.lastButtonClasses = this.isRightPaginationDisabled ? 'page-item seek-end disabled' : 'page-item seek-end';
+    this.nextButtonClasses = this.isRightPaginationDisabled ? 'page-item seek-next disabled' : 'page-item seek-next';
   }
 
   /** Translate all the texts shown in the UI, use ngx-translate service when available or custom locales when service is null */

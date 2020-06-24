@@ -26,6 +26,12 @@ jobs:
       - run:
           name: Upload Jest coverage to Codecov
           command: bash <(curl -s https://codecov.io/bash)
+      # - run:
+      #     name: Install Symlink Dependencies and Prod Build
+      #     command: |
+      #       cd packages/web-demo-vanilla-bundle
+      #       yarn install --focus
+      #       yarn run build:demo
       - run:
           name: Run Web Server
           command: npm run serve

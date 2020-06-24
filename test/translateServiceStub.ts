@@ -36,9 +36,13 @@ export class TranslateServiceStub implements TranslaterService {
       case 'HIDE_COLUMN': output = this._locale === 'en' ? 'Hide Column' : 'Cacher la colonne'; break;
       case 'LAST_NAME': output = this._locale === 'en' ? 'Last Name' : 'Nom de famille'; break;
       case 'MALE': output = this._locale === 'en' ? 'Male' : 'Mâle'; break;
+      case 'ITEMS': output = this._locale === 'en' ? 'items' : 'éléments'; break;
+      case 'ITEMS_PER_PAGE': output = this._locale === 'en' ? 'items per page' : 'éléments par page'; break;
+      case 'OF': output = this._locale === 'en' ? 'of' : 'de'; break;
       case 'OK': output = this._locale === 'en' ? 'OK' : 'Terminé'; break;
       case 'OPTIONS_LIST': output = this._locale === 'en' ? 'Options List' : 'Liste d\'options'; break;
       case 'OTHER': output = this._locale === 'en' ? 'Other' : 'Autre'; break;
+      case 'PAGE': output = this._locale === 'en' ? 'Page' : 'Page'; break;
       case 'REFRESH_DATASET': output = this._locale === 'en' ? 'Refresh Dataset' : 'Rafraîchir les données'; break;
       case 'REMOVE_FILTER': output = this._locale === 'en' ? 'Remove Filter' : 'Supprimer le filtre'; break;
       case 'REMOVE_SORT': output = this._locale === 'en' ? 'Remove Sort' : 'Supprimer le tri'; break;

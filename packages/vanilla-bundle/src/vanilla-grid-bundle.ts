@@ -67,7 +67,7 @@ import { FileExportService } from './services/fileExport.service';
 import { TranslateService } from './services/translate.service';
 import { EventPubSubService } from './services/eventPubSub.service';
 import { FooterService } from './services/footer.service';
-import { SlickPaginationComponent } from './slick-pagination';
+import { SlickPaginationComponent } from './components/slick-pagination';
 import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options';
 
 // using external non-typed js libraries
@@ -85,7 +85,6 @@ export class VanillaGridBundle {
   private _hideHeaderRowAfterPageLoad = false;
   private _isDatasetInitialized = false;
   private _isGridInitialized = false;
-  private _isGridHavingFilters = false;
   private _isLocalGrid = true;
   private _isPaginationInitialized = false;
   private _eventHandler: SlickEventHandler = new Slick.EventHandler();
@@ -281,9 +280,6 @@ export class VanillaGridBundle {
     this.initialization(this._gridContainerElm);
     if (!hierarchicalDataset && !this.gridOptions.backendServiceApi) {
       this.dataset = dataset || [];
-    }
-    if (this.columnDefinitions.findIndex((col) => col.filterable) > -1) {
-      this._isGridHavingFilters = true;
     }
   }
 

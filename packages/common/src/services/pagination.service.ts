@@ -1,7 +1,7 @@
 import * as isequal_ from 'lodash.isequal';
 const isequal = isequal_; // patch to fix rollup to work
 
-import { BackendServiceApi, CurrentPagination, SlickDataView, Pagination, ServicePagination, SlickGrid, Subscription, SlickEventData, SlickNamespace } from '../interfaces/index';
+import { BackendServiceApi, CurrentPagination, Pagination, ServicePagination, SlickDataView, SlickEventData, SlickGrid, Subscription } from '../interfaces/index';
 import { executeBackendProcessesCallback, onBackendError } from './backend-utilities';
 import { SharedService } from './shared.service';
 import { PubSubService } from './pubSub.service';
