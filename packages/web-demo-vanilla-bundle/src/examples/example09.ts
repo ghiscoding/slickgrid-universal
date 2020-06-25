@@ -32,7 +32,9 @@ export class Example09 {
   }
 
   dispose() {
-    this.slickgridLwc?.dispose();
+    if (this.slickgridLwc) {
+      this.slickgridLwc.dispose();
+    }
   }
 
   handleOnSlickerGridCreated(event) {
@@ -262,11 +264,11 @@ export class Example09 {
   }
 
   goToFirstPage() {
-    this.slickerGridInstance.paginationService.goToFirstPage();
+    this.slickerGridInstance?.paginationService?.goToFirstPage();
   }
 
   goToLastPage() {
-    this.slickerGridInstance.paginationService.goToLastPage();
+    this.slickerGridInstance?.paginationService?.goToLastPage();
   }
 
   /** Dispatched event of a Grid State Changed event */

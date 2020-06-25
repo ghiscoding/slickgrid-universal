@@ -24,7 +24,7 @@ describe('Example 10 - GraphQL Grid', () => {
 
   it('should have GraphQL query with defined Grid Presets', () => {
     cy.get('.search-filter.filter-name select')
-      .should('not.have.value')
+      .should('not.have.value');
 
     cy.get('.search-filter.filter-name')
       .find('input')
