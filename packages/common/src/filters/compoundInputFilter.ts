@@ -13,9 +13,6 @@ import {
 import { getTranslationPrefix, mapOperatorToShorthandDesignation } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 
-// using external non-typed js libraries
-declare const $: any;
-
 export class CompoundInputFilter implements Filter {
   private _clearFilterTriggered = false;
   private _shouldTriggerQuery = true;

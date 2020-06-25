@@ -22,12 +22,6 @@ import {
 import { mapFlatpickrDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 
-// use Flatpickr from import or 'require', whichever works first
-declare function require(name: string): any;
-
-// using external non-typed js libraries
-declare const $: any;
-
 export class CompoundDateFilter implements Filter {
   private _clearFilterTriggered = false;
   private _currentDate: Date | undefined;

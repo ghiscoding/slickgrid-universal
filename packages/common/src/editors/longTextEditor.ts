@@ -16,9 +16,6 @@ import { getDescendantProperty, getHtmlElementOffset, getTranslationPrefix, setD
 import { TranslaterService } from '../services/translater.service';
 import { textValidator } from '../editorValidators/textValidator';
 
-// using external non-typed js libraries
-declare const $: any;
-
 /*
  * An example of a 'detached' editor.
  * The UI is added onto document BODY and .position(), .show() and .hide() are implemented.

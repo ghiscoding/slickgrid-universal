@@ -9,9 +9,6 @@ import {
 } from '../interfaces/index';
 import { mapOperatorToShorthandDesignation } from '../services/utilities';
 
-// using external non-typed js libraries
-declare const $: any;
-
 const DEFAULT_MIN_VALUE = 0;
 const DEFAULT_MAX_VALUE = 100;
 const DEFAULT_STEP = 1;

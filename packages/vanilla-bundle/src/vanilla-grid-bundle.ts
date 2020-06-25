@@ -72,7 +72,6 @@ import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
-declare const $: any;
 const DATAGRID_FOOTER_HEIGHT = 20;
 const DATAGRID_PAGINATION_HEIGHT = 35;
 
@@ -519,7 +518,7 @@ export class VanillaGridBundle {
     // using jQuery extend to do a deep clone has an unwanted side on objects and pageSizes but ES6 spread has other worst side effects
     // so we will just overwrite the pageSizes when needed, this is the only one causing issues so far.
     // jQuery wrote this on their docs:: On a deep extend, Object and Array are extended, but object wrappers on primitive types such as String, Boolean, and Number are not.
-    if (gridOptions.enablePagination && gridOptions.pagination && Array.isArray(gridOptions.pagination.pageSizes)) {
+    if (options?.pagination && gridOptions.enablePagination && gridOptions.pagination && Array.isArray(gridOptions.pagination.pageSizes)) {
       options.pagination.pageSizes = gridOptions.pagination.pageSizes;
     }
 
@@ -649,6 +648,8 @@ export class VanillaGridBundle {
           itemCount: args && args.current || 0,
           totalItemCount: Array.isArray(this.dataset) ? this.dataset.length : 0
         };
+
+        // if custom footer is enabled, then we'll update its metrics
         if (this.footerService.showCustomFooter) {
           const itemCountElm = document.querySelector<HTMLSpanElement>('.item-count');
           const totalCountElm = document.querySelector<HTMLSpanElement>('.total-count');
@@ -663,10 +664,9 @@ export class VanillaGridBundle {
 
       // without this, filtering data with local dataset will not always show correctly
       // also don't use "invalidateRows" since it destroys the entire row and as bad user experience when updating a row
-      // see commit: https://github.com/ghiscoding/slickgrid-universal/commit/bb62c0aa2314a5d61188ff005ccb564577f08805
       if (gridOptions && gridOptions.enableFiltering && !gridOptions.enableRowDetailView) {
         const onRowsChangedHandler = dataView.onRowsChanged;
-        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowsChangedHandler>>).subscribe(onRowsChangedHandler, (e, args) => {
+        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowsChangedHandler>>).subscribe(onRowsChangedHandler, (_e, args) => {
           if (args && args.rows && Array.isArray(args.rows)) {
             args.rows.forEach((row) => grid.updateRow(row));
             grid.render();
