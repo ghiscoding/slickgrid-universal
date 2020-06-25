@@ -26,12 +26,12 @@ jobs:
       - run:
           name: Upload Jest coverage to Codecov
           command: bash <(curl -s https://codecov.io/bash)
-      # - run:
-      #     name: Install Symlink Dependencies and Prod Build
-      #     command: |
-      #       cd packages/web-demo-vanilla-bundle
-      #       yarn install --focus
-      #       yarn run build:demo
+      - run:
+          name: Build Full Bundle (all Bundler types)
+          command: yarn run bundle
+      - run:
+          name: Website Prod Build
+          command: yarn run build:demo
       - run:
           name: Run Web Server
           command: npm run serve
@@ -40,6 +40,4 @@ jobs:
           name: Running Cypress E2E tests with JUnit XML reporter
           command: |
             yarn run cypress:ci
-      - run:
-          name: Execute Full Bundle for all Bundler types
-          command: yarn run bundle
+
