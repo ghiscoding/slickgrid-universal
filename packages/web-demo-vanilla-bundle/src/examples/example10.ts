@@ -215,7 +215,7 @@ export class Example10 {
 
     return new Promise<GraphqlPaginatedResult>(resolve => {
       setTimeout(() => {
-        this.graphqlQuery = this.slickerGridInstance.backendService.buildQuery();
+        this.graphqlQuery = this.gridOptions.backendServiceApi.service.buildQuery();
         resolve(mockedResult);
       }, 150);
     });
