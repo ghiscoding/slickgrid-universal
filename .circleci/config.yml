@@ -2,29 +2,12 @@ version: 2
 experimental:
   pipelines: true
 jobs:
-  commands:
-      create_concatenated_package_lock:
-      description: "Concatenate all package-lock.json files recognized by lerna.js into single file. File is used as checksum source for part of caching key."
-  parameters:
-    filename:
-      type: string
-  steps:
-    - run:
-        name: Combine package-lock.json files to single file
-        command: npx lerna list -p -a | awk -F packages '{printf "\"packages%s/package-lock.json\" ", $2}' | xargs cat > << parameters.filename >>
   build:
     working_directory: ~/slickgrid-universal
     docker:
       - image: circleci/node:13-browsers
     steps:
       - checkout
-      - create_concatenated_package_lock:
-        filename: combined-package-lock.txt
-  ## Use combined-package-lock.text in cache key
-      - restore_cache:
-        keys:
-          - v3-deps-{{ checksum "package-lock.json" }}-{{ checksum "combined-package-lock.txt" }}
-          - v3-deps
       - restore_cache:
           key: slickgrid-universal-build-{{ .Branch }}-{{ checksum "package.json" }}
       - run: yarn install
@@ -35,9 +18,9 @@ jobs:
       - run:
           name: TypeScript Build (tsc)
           command: yarn run build
-      - run:
-          name: Build Full Bundle (all Bundler types)
-          command: yarn run bundle
+      # - run:
+      #     name: Build Full Bundle (all Bundler types)
+      #     command: yarn run bundle
       - run:
           name: Website Prod Build
           command: yarn run build:demo
