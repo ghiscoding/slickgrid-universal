@@ -218,7 +218,7 @@ export class VanillaGridBundle {
     this._gridParentContainerElm = gridParentContainerElm as HTMLDivElement;
     this._gridContainerElm = document.createElement('div') as HTMLDivElement;
     this._gridContainerElm.classList.add('slickgrid-container');
-    gridParentContainerElm.append(this._gridContainerElm);
+    gridParentContainerElm.appendChild(this._gridContainerElm);
 
     this._dataset = [];
     this._columnDefinitions = columnDefs || [];
