@@ -19,8 +19,14 @@ jobs:
           name: TypeScript Build (tsc)
           command: yarn run build
       - run:
+          name: Build Full Bundle (all Bundler types)
+          command: yarn run bundle
+      - run:
+          name: Website Prod Build
+          command: yarn run build:demo
+      - run:
           name: Run Web Server
-          command:  npm run dev:watch
+          command: npm run serve
           background: true
       - run:
           name: Running Cypress E2E tests with JUnit XML reporter
