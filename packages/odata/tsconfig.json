@@ -6,9 +6,8 @@
     "declarationDir": "dist/commonjs",
     "outDir": "dist/commonjs",
     "target": "es2015",
-    "module": "esnext",
+    "module": "commonjs",
     "sourceMap": true,
-    "allowSyntheticDefaultImports": true,
     "noImplicitReturns": true,
     "lib": [
       "es2020",
@@ -16,6 +15,7 @@
     ],
     "types": [
       "moment",
+      "jquery",
       "node"
     ],
     "typeRoots": [

@@ -65,6 +65,14 @@ export class Example1 {
           pageSizes: [5, 10, 15, 20, 25, 50, 75, 100],
           pageSize: 5
         },
+        presets: {
+          pagination: {
+            pageNumber: 2,
+            pageSize: 20
+          },
+          sorters: [{ columnId: '%', direction: 'DESC' }, { columnId: 'title', direction: 'ASC' }],
+          filters: [{ columnId: 'title', searchTerms: ['2'] }]
+        }
       }
     };
   }

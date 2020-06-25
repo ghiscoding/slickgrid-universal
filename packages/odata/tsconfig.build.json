@@ -1,11 +1,18 @@
 {
   "compilerOptions": {
-    "module": "es2020",
+    "module": "esnext",
     "moduleResolution": "node",
     "target": "es2015",
     "lib": [
       "es2020",
       "dom"
+    ],
+    "types": [
+      "moment",
+      "jest",
+      "jest-extended",
+      "jquery",
+      "node"
     ],
     "typeRoots": [
       "../typings",

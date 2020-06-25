@@ -125,9 +125,12 @@ npm run test:watch
   - [x] Sort
 - [ ] Others / Vanilla Implementation
   - [x] Custom Footer
+    - [ ] add unit tests (possibly rewrite component in vanilla JS)
+  - [x] Backend Services + Pagination
+  - [x] Local Pagination
+  - [x] Grid Presets
   - [ ] Dynamically Add Columns
-  - [ ] Grid Presets
-  - [ ] Local Pagination (test with Presets as well)
+  - [ ] Translations Support
   - [ ] Tree Data
     - [x] add Grid Demo
     - [x] add Collapse/Expand All into Context Menu
@@ -142,10 +145,11 @@ npm run test:watch
 - [x] Add Multiple Example Demos with Vanilla implementation
   - [x] Add GitHub Demo website
 - [x] Add CI/CD (CircleCI or GitHub Actions)
-  - [x] Add Jest Unit tests
   - [ ] Add Cypress E2E tests
-  - [x] Add Code Coverage (codecov)
+  - [x] Add Jest Unit tests
+  - [x] Add Jest Code Coverage (codecov)
   - [x] Build and run on every PR
+  - [x] Add full bundler (all types) build step in CircleCI build
 - [x] Bundle Creation (vanilla bundle)
   - [ ] Eventually add Unit Tests as a Pre-Bundle task
 - [x] Remove any Deprecated code
@@ -154,6 +158,5 @@ npm run test:watch
 - [x] Add possibility to use SVG instead of Font Family
 - [x] Add Typings (interfaces) for Slick Grid & DataView objects
   - [x] Add interfaces to all SlickGrid core lib classes & plugins (basically add Types to everything)
-- [ ] Cannot copy text from cell is not working in SF
+- [ ] Copy text from cell doesn't work in SF
 - [ ] Remove all Services init method 2nd argument (we can get DataView directly from the Grid object)
-- [x] Add build (bundle) step in CircleCI build
