@@ -34,9 +34,7 @@ jobs:
       #     command: yarn run build:demo
       - run:
           name: Run Web Server
-          command: |
-            cd packages/web-demo-vanilla-bundle
-            yarn run dev:watch
+          command:  npm run dev:watch
           background: true
       # - run:
       #     name: Run Web Server
