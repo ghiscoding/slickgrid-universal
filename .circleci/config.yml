@@ -8,22 +8,25 @@ jobs:
       - image: circleci/node:13-browsers
     steps:
       - checkout
+      - run:
+          name: Generate lock file
+          command: yarn generate-lock-entry >> yarn.lock
       - restore_cache:
-          key: slickgrid-universal-build-{{ .Branch }}-{{ checksum "package.json" }}
+          key: dependencies-cache-{{ checksum "yarn.lock" }}
       - run: yarn install
-      - save_cache:
-          key: slickgrid-universal-build-{{ .Branch }}-{{ checksum "package.json" }}
-          paths:
-            - "node_modules"
       - run:
           name: TypeScript Build (tsc)
           command: yarn run build
-      # - run:
-      #     name: Build Full Bundle (all Bundler types)
-      #     command: yarn run bundle
-      # - run:
-      #     name: Website Prod Build
-      #     command: yarn run build:demo
+      - run:
+          name: Build Full Bundle (all Bundler types)
+          command: yarn run bundle
+      - run:
+          name: Website Prod Build
+          command: yarn run build:demo
+      - save_cache:
+          key: dependencies-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - "node_modules"
       - run:
           name: Run Web Server
           command: npm run serve
@@ -40,9 +43,9 @@ jobs:
       - run:
           name: Upload Jest coverage to Codecov
           command: bash <(curl -s https://codecov.io/bash)
-      - run:
-          name: Build Full Bundle (all Bundler types)
-          command: yarn run bundle
+      # - run:
+      #     name: Build Full Bundle (all Bundler types)
+      #     command: yarn run bundle
       # - run:
       #     name: Website Prod Build
       #     command: yarn run build:demo
