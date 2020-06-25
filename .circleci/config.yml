@@ -32,11 +32,15 @@ jobs:
       - run:
           name: Website Prod Build
           command: yarn run build:demo
+      # - run:
+      #     name: Run Web Server
+      #     command: |
+      #       cd packages/web-demo-vanilla-bundle
+      #       yarn run dev:watch
+      #     background: true
       - run:
           name: Run Web Server
-          command: |
-            cd packages/web-demo-vanilla-bundle
-            yarn run dev:watch
+          command: npm run serve
           background: true
       - run:
           name: Running Cypress E2E tests with JUnit XML reporter

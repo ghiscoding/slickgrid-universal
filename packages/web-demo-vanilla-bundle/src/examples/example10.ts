@@ -189,6 +189,7 @@ export class Example10 {
   }
 
   handleOnSlickerGridCreated(event) {
+    console.log('handleOnSlickerGridCreated', event, event && event.detail);
     this.slickerGridInstance = event && event.detail;
     this.gridObj = this.slickerGridInstance && this.slickerGridInstance.slickGrid;
   }
