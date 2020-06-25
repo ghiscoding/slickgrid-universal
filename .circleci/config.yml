@@ -21,9 +21,9 @@ jobs:
       # - run:
       #     name: Build Full Bundle (all Bundler types)
       #     command: yarn run bundle
-      - run:
-          name: Website Prod Build
-          command: yarn run build:demo
+      # - run:
+      #     name: Website Prod Build
+      #     command: yarn run build:demo
       - run:
           name: Run Web Server
           command: npm run serve
@@ -40,9 +40,9 @@ jobs:
       - run:
           name: Upload Jest coverage to Codecov
           command: bash <(curl -s https://codecov.io/bash)
-      # - run:
-      #     name: Build Full Bundle (all Bundler types)
-      #     command: yarn run bundle
+      - run:
+          name: Build Full Bundle (all Bundler types)
+          command: yarn run bundle
       # - run:
       #     name: Website Prod Build
       #     command: yarn run build:demo
