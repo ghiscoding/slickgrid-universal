@@ -107,6 +107,40 @@ export class SortService {
     });
   }
 
+  clearSortByColumnId(event: Event | undefined, columnId: string | number) {
+    // get previously sorted columns
+    const allSortedCols: ColumnSort[] = this.getCurrentColumnSorts();
+    const sortedColsWithoutCurrent: ColumnSort[] = this.getCurrentColumnSorts(`${columnId}`);
+
+    if (Array.isArray(allSortedCols) && Array.isArray(sortedColsWithoutCurrent) && allSortedCols.length !== sortedColsWithoutCurrent.length) {
+      if (this._gridOptions.backendServiceApi) {
+        this.onBackendSortChanged(event, { multiColumnSort: true, sortCols: sortedColsWithoutCurrent, grid: this._grid });
+      } else if (this._dataView) {
+        this.onLocalSortChanged(this._grid, this._dataView, sortedColsWithoutCurrent, true, true);
+      } else {
+        // when using customDataView, we will simply send it as a onSort event with notify
+        const isMultiSort = this._gridOptions && this._gridOptions.multiColumnSort || false;
+        const sortOutput = isMultiSort ? sortedColsWithoutCurrent : sortedColsWithoutCurrent[0];
+        this._grid.onSort.notify(sortOutput);
+      }
+
+      // update the grid sortColumns array which will at the same add the visual sort icon(s) on the UI
+      const updatedSortColumns: ColumnSort[] = sortedColsWithoutCurrent.map((col) => {
+        return {
+          columnId: col && col.sortCol && col.sortCol.id,
+          sortAsc: col && col.sortAsc,
+          sortCol: col && col.sortCol,
+        };
+      });
+      this._grid.setSortColumns(updatedSortColumns); // add sort icon in UI
+    }
+
+    // when there's no more sorting, we re-sort by the default sort field, user can customize it "defaultColumnSortFieldId", defaults to "id"
+    if (Array.isArray(sortedColsWithoutCurrent) && sortedColsWithoutCurrent.length === 0) {
+      this.sortLocalGridByDefaultSortFieldId();
+    }
+  }
+
   /**
    * Clear Sorting
    * - 1st, remove the SlickGrid sort icons (this setSortColumns function call really does only that)
@@ -128,9 +162,7 @@ export class SortService {
           this.onBackendSortChanged(undefined, { grid: this._grid, multiColumnSort: true, sortCols: [], clearSortTriggered: true });
         } else {
           if (this._columnDefinitions && Array.isArray(this._columnDefinitions) && this._columnDefinitions.length > 0) {
-            const sortColFieldId = this._gridOptions && this._gridOptions.defaultColumnSortFieldId || 'id';
-            const sortCol = { id: sortColFieldId, field: sortColFieldId } as Column;
-            this.onLocalSortChanged(this._grid, this._dataView, new Array({ columnId: sortCol.id, sortAsc: true, sortCol, clearSortTriggered: true }));
+            this.sortLocalGridByDefaultSortFieldId();
           }
         }
       } else if (this._isBackendGrid) {
@@ -264,7 +296,7 @@ export class SortService {
     }
   }
 
-  onBackendSortChanged(event: Event | undefined, args: MultiColumnSort & { clearSortTriggered?: boolean }) {
+  onBackendSortChanged(event: Event | undefined, args: MultiColumnSort & { clearSortTriggered?: boolean; }) {
     if (!args || !args.grid) {
       throw new Error('Something went wrong when trying to bind the "onBackendSortChanged(event, args)" function, it seems that "args" is not populated correctly');
     }
@@ -289,7 +321,7 @@ export class SortService {
   }
 
   /** When a Sort Changes on a Local grid (JSON dataset) */
-  onLocalSortChanged(grid: SlickGrid, dataView: SlickDataView, sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, forceReSort = false) {
+  onLocalSortChanged(grid: SlickGrid, dataView: SlickDataView, sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, forceReSort = false, emitSortChanged = false) {
     const isTreeDataEnabled = this._gridOptions?.enableTreeData ?? false;
 
     if (grid && dataView) {
@@ -310,7 +342,23 @@ export class SortService {
       }
 
       grid.invalidate();
+
+      if (emitSortChanged) {
+        this.emitSortChanged(EmitterType.local, sortColumns.map(col => {
+          return {
+            columnId: col.sortCol && col.sortCol.id || 'id',
+            direction: col.sortAsc ? SortDirection.ASC : SortDirection.DESC
+          };
+        }));
+      }
     }
+  }
+
+  /** Call a local grid sort by its default sort field id (user can customize default field by configuring "defaultColumnSortFieldId" in the grid options, defaults to "id") */
+  sortLocalGridByDefaultSortFieldId() {
+    const sortColFieldId = this._gridOptions && this._gridOptions.defaultColumnSortFieldId || this._gridOptions.datasetIdPropertyName || 'id';
+    const sortCol = { id: sortColFieldId, field: sortColFieldId } as Column;
+    this.onLocalSortChanged(this._grid, this._dataView, new Array({ columnId: sortCol.id, sortAsc: true, sortCol, clearSortTriggered: true }));
   }
 
   sortComparers(sortColumns: ColumnSort[], dataRow1: any, dataRow2: any): number {

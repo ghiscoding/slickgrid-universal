@@ -323,33 +323,9 @@ export class HeaderMenuExtension implements Extension {
   }
 
   /** Clear the Sort on the current column (if it's actually sorted) */
-  private clearColumnSort(e: Event, args: MenuCommandItemCallbackArgs) {
+  private clearColumnSort(event: Event, args: MenuCommandItemCallbackArgs) {
     if (args && args.column && this.sharedService) {
-      // get previously sorted columns
-      const allSortedCols = this.sortService.getCurrentColumnSorts();
-      const sortedColsWithoutCurrent = this.sortService.getCurrentColumnSorts(args.column.id + '');
-
-      if (Array.isArray(allSortedCols) && Array.isArray(sortedColsWithoutCurrent) && allSortedCols.length !== sortedColsWithoutCurrent.length) {
-        if (this.sharedService.gridOptions.backendServiceApi) {
-          this.sortService.onBackendSortChanged(e, { multiColumnSort: true, sortCols: sortedColsWithoutCurrent, grid: this.sharedService.grid });
-        } else if (this.sharedService.dataView) {
-          this.sortService.onLocalSortChanged(this.sharedService.grid, this.sharedService.dataView, sortedColsWithoutCurrent, true);
-        } else {
-          // when using customDataView, we will simply send it as a onSort event with notify
-          const isMultiSort = this.sharedService && this.sharedService.gridOptions && this.sharedService.gridOptions.multiColumnSort || false;
-          const sortOutput = isMultiSort ? sortedColsWithoutCurrent : sortedColsWithoutCurrent[0];
-          args.grid.onSort.notify(sortOutput);
-        }
-
-        // update the this.sharedService.gridObj sortColumns array which will at the same add the visual sort icon(s) on the UI
-        const updatedSortColumns = sortedColsWithoutCurrent.map((col) => {
-          return {
-            columnId: col && col.sortCol && col.sortCol.id,
-            sortAsc: col && col.sortAsc,
-          };
-        });
-        this.sharedService.grid.setSortColumns(updatedSortColumns); // add sort icon in UI
-      }
+      this.sortService.clearSortByColumnId(event, args.column.id);
     }
   }
 
