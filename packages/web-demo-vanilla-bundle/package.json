@@ -8,9 +8,6 @@
   "scripts": {
     "build:demo": "webpack --env.production --extractCss",
     "dev:watch": "webpack-dev-server --env.server --extractCss",
-    "cypress": "node ../../node_modules/cypress/bin/cypress open",
-    "cypress:ci:mochawesome": "node cypress-mochawesome.js",
-    "cypress:ci:xml": "cypress run --reporter junit --reporter-options output=testresult.xml",
     "test": "echo testing slickgrid-universal demo code"
   },
   "author": "Ghislain B.",
