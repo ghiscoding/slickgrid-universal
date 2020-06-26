@@ -52,7 +52,9 @@ import {
   SlickgridConfig,
   TreeDataService,
 
+  // utilities
   convertParentChildArrayToHierarchicalView,
+  getHtmlElementOffset,
   GetSlickEventType,
 } from '@slickgrid-universal/common';
 
@@ -80,6 +82,8 @@ export class VanillaGridBundle {
   private _eventHandler: SlickEventHandler = new Slick.EventHandler();
   private _eventPubSubService: EventPubSubService;
   private _slickgridInitialized = false;
+  private _intervalId: NodeJS.Timeout;
+  private _intervalExecutionCounter = 0;
   backendServiceApi: BackendServiceApi | undefined;
   dataView: SlickDataView;
   grid: SlickGrid;
@@ -381,6 +385,7 @@ export class VanillaGridBundle {
     this.grid.registerPlugin<SlickResizer>(this.resizerPlugin);
     if (this._gridOptions.enableAutoResize) {
       await this.resizerPlugin.resizeGrid();
+      this.resizeGridWhenStylingIsBroken();
     }
 
     // user might want to hide the header row on page load but still have `enableFiltering: true`
@@ -449,6 +454,7 @@ export class VanillaGridBundle {
       extensionService: this.extensionService,
       extensionUtility: this.extensionUtility,
       paginationService: this.paginationService,
+      resizerService: this.resizerPlugin,
       sortService: this.sortService,
       treeDataService: this.treeDataService,
     };
@@ -698,6 +704,49 @@ export class VanillaGridBundle {
 
       return { ...column, editor: columnEditor?.model, internalColumnEditor: { ...columnEditor } };
     });
+  }
+
+  /**
+   * Patch for SalesForce, some issues arise when having a grid inside a Tab and user clicks in a different Tab without waiting for the grid to be rendered
+   * in ideal world, we would simply call a resize when user comes back to the Tab with the grid (tab focused) but this is an extra step and we might not always have this event available.
+   * The grid seems broken, the header titles seems to be showing up behind the grid data and the rendering seems broken.
+   * Why it happens? Because SlickGrid can resize problem when the DOM element is hidden and that happens when user doesn't wait for the grid to be fully rendered and go in a different Tab.
+   *
+   * So the patch is to call a grid resize if the following 2 conditions are met
+   *   1- header row is Y coordinate 0 (happens when user is not in current Tab)
+   *   2- header titles are lower than the viewport of dataset (this can happen when user change Tab and DOM is not shown),
+   * for these cases we'll resize until it's no longer true or until we reach a max time limit (30min)
+   */
+  private resizeGridWhenStylingIsBroken() {
+    const headerElm = document.querySelector<HTMLDivElement>('.slick-header');
+    const viewportElm = document.querySelector<HTMLDivElement>('.slick-viewport');
+    if (headerElm && viewportElm) {
+      this._intervalId = setInterval(() => {
+        const headerTitleRowHeight = 44; // this one is set by SASS/CSS so let's hard code it
+        const headerPos = getHtmlElementOffset(headerElm);
+        let headerOffsetTop = headerPos?.top ?? 0;
+        if (this.gridOptions && this.gridOptions.enableFiltering && this.gridOptions.headerRowHeight) {
+          headerOffsetTop += this.gridOptions.headerRowHeight; // filter row height
+        }
+        if (this.gridOptions && this.gridOptions.createPreHeaderPanel && this.gridOptions.showPreHeaderPanel && this.gridOptions.preHeaderPanelHeight) {
+          headerOffsetTop += this.gridOptions.preHeaderPanelHeight; // header grouping titles row height
+        }
+        headerOffsetTop += headerTitleRowHeight; // header title row height
+
+        const viewportPos = getHtmlElementOffset(viewportElm);
+        const viewportOffsetTop = viewportPos?.top ?? 0;
+
+        // if header row is Y coordinate 0 (happens when user is not in current Tab) or when header titles are lower than the viewport of dataset (this can happen when user change Tab and DOM is not shown)
+        // for these cases we'll resize until it's no longer true or until we reach a max time limit (30min)
+        const isResizeRequired = (headerPos?.top === 0 || (headerOffsetTop - viewportOffsetTop) > 40) ? true : false;
+
+        if (isResizeRequired) {
+          this.resizerPlugin.resizeGrid();
+        } else if (!isResizeRequired || (this._intervalExecutionCounter++ > (4 * 60 * 30))) { // interval is 250ms, so 4x is 1sec, so (4 * 60 * 30) shoud be 30min
+          clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 30min
+        }
+      }, 250);
+    }
   }
 
   private treeDataSortComparer(flatDataset: any[]): any[] {

@@ -109,7 +109,7 @@ export class Example6 {
     if (value === null || value === undefined || dataContext === undefined) {
       return '';
     }
-    const dataView = grid.getData() as DataView;
+    const dataView = grid.getData() as SlickDataView;
     const data = dataView.getItems();
     const identifierPropName = dataView.getIdPropertyName() || 'id';
     const idx = dataView.getIdxById(dataContext[identifierPropName]);
