@@ -8,6 +8,7 @@ module.exports = {
       stringifyContentPathRegex: '\\.html$'
     },
   },
+  globalSetup: '<rootDir>/test/jest-global-setup.js',
   collectCoverage: false,
   collectCoverageFrom: [
     'packages/**/*.ts',
