@@ -68,6 +68,7 @@ export class Example3 {
     const gridContainerElm = document.querySelector(`.grid3`);
 
     gridContainerElm.addEventListener('onclick', this.handleOnClick.bind(this));
+    gridContainerElm.addEventListener('oncellchange', this.handleOnCellChange.bind(this));
     gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
     gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
@@ -372,6 +373,10 @@ export class Example3 {
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
         effortDriven: (i % 5 === 0)
       };
+
+      // if (i % 8) {
+      //   delete tmpArray[i].duration; // test with undefined properties
+      // }
     }
     if (this.slickgridLwc) {
       this.slickgridLwc.dataset = tmpArray;
@@ -477,6 +482,10 @@ export class Example3 {
 
   handleOnClick(event) {
     console.log('onClick', event.detail);
+  }
+
+  handleOnCellChange(event) {
+    console.log('onCellChanged', event.detail);
   }
 
   handleValidationError(event) {
