@@ -9,10 +9,10 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: slickgrid-universal-build-{{ .Branch }}-{{ checksum "package.json" }}
+          key: slickgrid-universal-build-{{ .Branch }}-{{ checksum "yarn.lock" }}
       - run: yarn install
       - save_cache:
-          key: slickgrid-universal-build-{{ .Branch }}-{{ checksum "package.json" }}
+          key: slickgrid-universal-build-{{ .Branch }}-{{ checksum "yarn.lock" }}
           paths:
             - "node_modules"
       - run:
