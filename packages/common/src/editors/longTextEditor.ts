@@ -160,7 +160,8 @@ export class LongTextEditor implements Editor {
   }
 
   isValueChanged(): boolean {
-    return (!(this._$textarea.val() === '' && this.defaultValue === null)) && (this._$textarea.val() !== this.defaultValue);
+    const elmValue = this._$textarea.val();
+    return (!(elmValue === '' && (this.defaultValue === null || this.defaultValue === undefined))) && (elmValue !== this.defaultValue);
   }
 
   loadValue(item: any) {

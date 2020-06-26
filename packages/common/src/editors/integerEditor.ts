@@ -129,7 +129,7 @@ export class IntegerEditor implements Editor {
     if (this.columnEditor && this.columnEditor.alwaysSaveOnEnterKey && lastKeyEvent === KeyCode.ENTER) {
       return true;
     }
-    return (!(elmValue === '' && this.originalValue === null)) && (elmValue !== this.originalValue);
+    return (!(elmValue === '' && (this.originalValue === null || this.originalValue === undefined))) && (elmValue !== this.originalValue);
   }
 
   loadValue(item: any) {
