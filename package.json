@@ -36,7 +36,6 @@
     "jsdom": "^16.2.2",
     "jsdom-global": "^3.0.2",
     "lerna": "^3.22.0",
-    "moment-timezone": "^0.5.31",
     "ts-jest": "^26.1.0",
     "typescript": "^3.9.5"
   },

@@ -7,6 +7,7 @@ module.exports = {
       tsConfig: '<rootDir>/test/tsconfig.spec.json'
     },
   },
+  globalSetup: '<rootDir>/test/jest-global-setup.js',
   collectCoverage: false,
   collectCoverageFrom: [
     'packages/**/*.ts',
