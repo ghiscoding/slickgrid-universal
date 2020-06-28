@@ -9,7 +9,7 @@ interface ElementBinding {
   element: Element | null;
   attribute: string;
   event: string;
-  listener?: (val: any) => any;
+  listener: (val: any) => any;
 }
 
 
@@ -53,7 +53,9 @@ export class BindingService {
     this._value = typeof val === 'string' ? DOMPurify.sanitize(val, {}) : val;
     if (Array.isArray(this.elementBindings)) {
       for (const binding of this.elementBindings) {
-        binding.element[binding.attribute] = typeof val === 'string' ? DOMPurify.sanitize(val, {}) : val;
+        if (binding?.element && binding?.attribute) {
+          binding.element[binding.attribute] = typeof val === 'string' ? DOMPurify.sanitize(val, {}) : val;
+        }
       }
     }
   }
@@ -65,7 +67,7 @@ export class BindingService {
    *    2.1- we could also provide an extra callback method to execute when the event gets triggered
    */
   bind(element: Element | null, attribute: string, eventName?: string, callback?: (val: any) => any) {
-    const binding: ElementBinding = { element, attribute, event: '' };
+    const binding: ElementBinding = { element, attribute, event: '', listener: () => { } };
 
     if (element) {
       if (eventName) {
