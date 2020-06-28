@@ -9,7 +9,7 @@ interface ElementBinding {
   element: Element | null;
   attribute: string;
   event: string;
-  callback?: (val: any) => any;
+  listener?: (val: any) => any;
 }
 
 
@@ -23,7 +23,7 @@ export class BindingService {
   _value: any = null;
   _binding: Binding;
   _property: string;
-  elementBindings: any[] = [];
+  elementBindings: ElementBinding[] = [];
 
   constructor(binding: Binding) {
     this._binding = binding;
@@ -61,26 +61,21 @@ export class BindingService {
   /**
    * Add binding to an element by an object attribute and optionally on an event, we can do it in couple ways
    * 1- if there's no event provided, it will simply replace the DOM elemnt (by an attribute), for example an innerHTML
-   * 2- when an event is provided, we will replace the DOM elemnt (by an attribute) every time an event is triggered
-   *    2.1- we could also provide an extra callback method to execute when the event is triggered
+   * 2- when an event is provided, we will replace the DOM element (by an attribute) every time an event is triggered
+   *    2.1- we could also provide an extra callback method to execute when the event gets triggered
    */
   bind(element: Element | null, attribute: string, eventName?: string, callback?: (val: any) => any) {
-    const binding: ElementBinding = {
-      element,
-      attribute,
-      event: '',
-    };
+    const binding: ElementBinding = { element, attribute, event: '' };
 
     if (element) {
       if (eventName) {
         element.addEventListener(eventName, () => {
           const elmValue = element[attribute];
           this.valueSetter(elmValue);
-          if (this._binding.variable.hasOwnProperty(this._binding.property)) {
+          if (this._binding.variable.hasOwnProperty(this._binding.property) || this._binding.property in this._binding.variable) {
             this._binding.variable[this._binding.property] = this.valueGetter();
-          } else {
-            this._binding.variable = this.valueGetter();
           }
+
           if (typeof callback === 'function') {
             return callback(this.valueGetter());
           }

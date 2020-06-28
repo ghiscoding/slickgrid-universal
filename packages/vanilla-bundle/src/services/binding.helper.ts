@@ -14,13 +14,15 @@ export class BindingHelper {
   constructor() { }
 
   dispose() {
-    // for(const observer of this._observers) {
-    //   observer.unbind()
-    // }
+    for (const observer of this._observers) {
+      for (const binding of observer.elementBindings) {
+        observer.unbind(binding.element, binding.event, binding.listener);
+      }
+    }
   }
 
   addElementBinding(variable: any, property: string, selector: string, attribute: string, events?: string | string[], callback?: (val: any) => void) {
-    const elements = document.querySelectorAll<HTMLSpanElement>(`${this.querySelectorPrefix}${selector}`);
+    const elements = document.querySelectorAll<HTMLElement>(`${this.querySelectorPrefix}${selector}`);
 
     elements.forEach((elm) => {
       if (elm) {

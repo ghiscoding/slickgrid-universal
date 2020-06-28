@@ -6,6 +6,9 @@
   "main": "dist/commonjs/index.js",
   "module": "dist/es2015/index.js",
   "typings": "dist/commonjs/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "src",
     "dist"
