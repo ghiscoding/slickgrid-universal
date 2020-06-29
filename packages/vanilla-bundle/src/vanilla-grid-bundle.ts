@@ -186,6 +186,10 @@ export class VanillaGridBundle {
     this._gridOptions = mergedOptions;
   }
 
+  get gridUid(): string {
+    return this.grid?.getUID() ?? '';
+  }
+
   constructor(gridContainerElm: Element, columnDefs?: Column[], options?: GridOption, dataset?: any[], hierarchicalDataset?: any[]) {
     // make sure that the grid container has the "slickgrid-container" css class exist since we use it for slickgrid styling
     gridContainerElm.classList.add('slickgrid-container');
@@ -718,8 +722,9 @@ export class VanillaGridBundle {
    * for these cases we'll resize until it's no longer true or until we reach a max time limit (30min)
    */
   private resizeGridWhenStylingIsBroken() {
-    const headerElm = document.querySelector<HTMLDivElement>('.slick-header');
-    const viewportElm = document.querySelector<HTMLDivElement>('.slick-viewport');
+    const headerElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-header`);
+    const viewportElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-viewport`);
+
     if (headerElm && viewportElm) {
       this._intervalId = setInterval(() => {
         const headerTitleRowHeight = 44; // this one is set by SASS/CSS so let's hard code it
@@ -740,7 +745,7 @@ export class VanillaGridBundle {
         // for these cases we'll resize until it's no longer true or until we reach a max time limit (30min)
         const isResizeRequired = (headerPos?.top === 0 || (headerOffsetTop - viewportOffsetTop) > 40) ? true : false;
 
-        if (isResizeRequired) {
+        if (isResizeRequired && this.resizerPlugin?.resizeGrid) {
           this.resizerPlugin.resizeGrid();
         } else if (!isResizeRequired || (this._intervalExecutionCounter++ > (4 * 60 * 30))) { // interval is 250ms, so 4x is 1sec, so (4 * 60 * 30) shoud be 30min
           clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 30min
