@@ -7,7 +7,7 @@
     "declarationDir": "dist/commonjs",
     "outDir": "dist/commonjs",
     "target": "es2015",
-    "module": "esnext",
+    "module": "commonjs",
     "sourceMap": true,
     "allowSyntheticDefaultImports": true,
     "noImplicitReturns": true,

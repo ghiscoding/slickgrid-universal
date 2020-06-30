@@ -9,9 +9,6 @@ import {
 } from '../interfaces/index';
 import { mapOperatorToShorthandDesignation } from '../services/utilities';
 
-// using external non-typed js libraries
-declare const $: any;
-
 const DEFAULT_MIN_VALUE = 0;
 const DEFAULT_MAX_VALUE = 100;
 const DEFAULT_STEP = 1;
@@ -254,7 +251,8 @@ export class CompoundSliderFilter implements Filter {
     this.$filterInputElm.data('columnId', columnId);
 
     if (this.operator) {
-      this.$selectOperatorElm.val(this.operator);
+      const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);
+      this.$selectOperatorElm.val(operatorShorthand);
     }
 
     // if there's a search term, we will add the "filled" class for styling purposes

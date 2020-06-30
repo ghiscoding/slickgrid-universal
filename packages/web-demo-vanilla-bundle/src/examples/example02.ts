@@ -23,7 +23,7 @@ export class Example2 {
   attached() {
     this.initializeGrid();
     this.dataset = this.loadData(NB_ITEMS);
-    const gridContainerElm = document.querySelector(`.grid2`);
+    const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid2`);
 
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     gridContainerElm.addEventListener('onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));

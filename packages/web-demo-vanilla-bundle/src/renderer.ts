@@ -56,11 +56,11 @@ export class Renderer {
       .replace(/\${(.*)}/gi, this.parseLogicExecution.bind(this));
   }
 
-  parseLogicExecution(match: string, code: string) {
+  parseLogicExecution(_match: string, code: string) {
     return window[this._className][code];
   }
 
-  parseMethodBinding(match: string, eventName: string, eventType: string, callbackFn: string, lastChar: string) {
+  parseMethodBinding(_match: string, eventName: string, eventType: string, callbackFn: string, lastChar: string) {
     let output = '';
 
     switch (eventType) {
@@ -82,8 +82,7 @@ export class Renderer {
       const attribute = domAttribute.toLowerCase();
 
       // before creating a new observer, first check if the variable already has an associated observer
-      // if so then use it and add extra binding to it
-      // else create a new observer
+      // if we can't find an observer then we'll create a new one for it
       let observer = this._observers.find((bind) => bind.property === variableName);
       if (!observer) {
         observer = new BindingService({ variable: window[this._className], property: variableName });
@@ -91,13 +90,26 @@ export class Renderer {
       }
 
       switch (attribute) {
+        case 'class':
+          observer.bind(elm, 'className');
+          break;
         case 'innerhtml':
+        case 'innerHTML':
           observer.bind(elm, 'innerHTML');
           break;
         case 'innertext':
+        case 'innerText':
           observer.bind(elm, 'innerText');
           break;
+        case 'style':
+          observer.bind(elm, 'style');
+          break;
+        case 'textcontent':
+        case 'textContent':
+          observer.bind(elm, 'textContent');
+          break;
         case 'value':
+          // add 2 possible events (change/keyup) on a value binding
           observer.bind(elm, attribute, 'change').bind(elm, attribute, 'keyup');
           break;
         case 'checked':

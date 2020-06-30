@@ -5,8 +5,6 @@ import { SharedService } from '../services/shared.service';
 import { TranslaterService } from '../services';
 import { getTranslationPrefix } from '../services/utilities';
 
-declare function require(name: string): any;
-
 export class ExtensionUtility {
   constructor(private sharedService: SharedService, private translaterService: TranslaterService) { }
 

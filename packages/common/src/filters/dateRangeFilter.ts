@@ -21,12 +21,6 @@ import {
 import { mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 
-// using external non-typed js libraries
-declare const $: any;
-
-declare function require(name: string): any;
-declare function require(name: string[], loadedFile: any): any;
-
 export class DateRangeFilter implements Filter {
   private _clearFilterTriggered = false;
   private _currentValue: string;

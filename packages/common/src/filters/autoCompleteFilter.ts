@@ -18,9 +18,6 @@ import {
 import { CollectionService } from '../services/collection.service';
 import { getDescendantProperty } from '../services/utilities';
 
-// using external non-typed js libraries
-declare const $: any;
-
 export class AutoCompleteFilter implements Filter {
   private _autoCompleteOptions: AutocompleteOption;
   private _clearFilterTriggered = false;

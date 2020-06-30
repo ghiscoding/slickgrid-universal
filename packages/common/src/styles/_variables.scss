@@ -572,6 +572,8 @@ $multiselect-ok-button-text-align:              center !default;
 
 /* pagination variables */
 $pagination-button-hover-color:                 #E6E6E6 !default;
+$pagination-button-border-radius:               4px !default;
+$pagination-button-padding:                     6px 12px !default;
 $pagination-border-color:                       #ddd !default;
 $pagination-count-margin-left:                  2px !default;
 $pagination-icon-color:                         $primary-color !default;
@@ -589,6 +591,7 @@ $pagination-border-top:                         0 none !default;
 $pagination-border-right:                       0 none !default;
 $pagination-border-bottom:                      0 none !default;
 $pagination-border-left:                        0 none !default;
+$pagination-page-input-border-radius:           4px !default;
 $pagination-page-input-bgcolor:                 #fafbed !default;
 $pagination-page-input-height:                  26px !default;
 $pagination-page-input-width:                   50px !default;

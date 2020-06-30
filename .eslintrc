@@ -155,7 +155,15 @@
     "space-in-parens": [
       "error"
     ],
-    "spaced-comment": "error",
+    "spaced-comment": [
+      "error",
+      "always",
+      {
+        "markers": [
+          "/"
+        ]
+      }
+    ],
     "use-isnan": "error",
     "valid-typeof": "off"
   }

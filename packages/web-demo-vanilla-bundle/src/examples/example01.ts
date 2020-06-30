@@ -20,8 +20,8 @@ export class Example1 {
 
   attached() {
     this.defineGrids();
-    const gridContainerElm1 = document.querySelector(`.grid1`);
-    const gridContainerElm2 = document.querySelector(`.grid2`);
+    const gridContainerElm1 = document.querySelector<HTMLDivElement>(`.grid1`);
+    const gridContainerElm2 = document.querySelector<HTMLDivElement>(`.grid2`);
 
     // mock some data (different in each dataset)
     this.dataset1 = this.mockData(NB_ITEMS);
@@ -39,12 +39,12 @@ export class Example1 {
   /* Define grid Options and Columns */
   defineGrids() {
     this.columnDefinitions1 = [
-      { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100 },
-      { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, minWidth: 100 },
-      { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100 },
-      { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso },
-      { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso },
-      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', sortable: true, minWidth: 100 }
+      { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100, filterable: true },
+      { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, minWidth: 100, filterable: true },
+      { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100, filterable: true },
+      { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso, filterable: true },
+      { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso, filterable: true },
+      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', sortable: true, minWidth: 100, filterable: true }
     ];
     this.gridOptions1 = {
       enableAutoResize: false,
@@ -60,10 +60,19 @@ export class Example1 {
       ...this.gridOptions1,
       ...{
         enablePagination: true,
+        enableFiltering: true,
         pagination: {
           pageSizes: [5, 10, 15, 20, 25, 50, 75, 100],
           pageSize: 5
         },
+        presets: {
+          pagination: {
+            pageNumber: 2,
+            pageSize: 20
+          },
+          sorters: [{ columnId: '%', direction: 'DESC' }, { columnId: 'title', direction: 'ASC' }],
+          filters: [{ columnId: 'title', searchTerms: ['2'] }]
+        }
       }
     };
   }

@@ -1,10 +1,23 @@
 import { EventNamingStyle, PubSubService, Subscription, titleCase, toKebabCase } from '@slickgrid-universal/common';
 
+interface PubSubEvent {
+  name: string;
+  listener: (event: CustomEventInit) => void;
+}
+
 export class EventPubSubService implements PubSubService {
   private _elementSource: Element;
-  private _eventNames: string[] = [];
+  private _subscribedEvents: PubSubEvent[] = [];
 
   eventNamingStyle = EventNamingStyle.camelCase;
+
+  get subscribedEvents(): PubSubEvent[] {
+    return this._subscribedEvents;
+  }
+
+  get subscribedEventNames(): string[] {
+    return this._subscribedEvents.map((pubSubEvent) => pubSubEvent.name);
+  }
 
   constructor(elementSource?: Element) {
     // use the provided element
@@ -15,7 +28,6 @@ export class EventPubSubService implements PubSubService {
   publish<T = any>(eventName: string, data?: T) {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
     this.dispatchCustomEvent<T>(eventNameByConvention, data, true, false);
-    this._eventNames.push(eventNameByConvention);
   }
 
   subscribe<T = any>(eventName: string, callback: (data: T) => void): any {
@@ -24,16 +36,18 @@ export class EventPubSubService implements PubSubService {
     // the event listener will return the data in the "event.detail", so we need to return its content to the final callback
     // basically we substitute the "data" with "event.detail" so that the user ends up with only the "data" result
     this._elementSource.addEventListener(eventNameByConvention, (event: CustomEventInit<T>) => callback.call(null, event.detail));
+    this._subscribedEvents.push({ name: eventNameByConvention, listener: callback });
   }
 
-  subscribeEvent<T = any>(eventName: string, callback: (event: CustomEventInit<T>) => void): any | void {
+  subscribeEvent<T = any>(eventName: string, listener: (event: CustomEventInit<T>) => void): any | void {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
-    this._elementSource.addEventListener(eventNameByConvention, callback);
+    this._elementSource.addEventListener(eventNameByConvention, listener);
+    this._subscribedEvents.push({ name: eventNameByConvention, listener });
   }
 
-  unsubscribe(eventName: string, callback: (event: CustomEventInit) => void) {
+  unsubscribe(eventName: string, listener: (event: CustomEventInit) => void) {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
-    this._elementSource.removeEventListener(eventNameByConvention, callback);
+    this._elementSource.removeEventListener(eventNameByConvention, listener);
   }
 
   unsubscribeAll(subscriptions?: Subscription[]) {
@@ -46,8 +60,8 @@ export class EventPubSubService implements PubSubService {
         }
       }
     } else {
-      for (const eventName of this._eventNames) {
-        this.unsubscribe(eventName, () => { });
+      for (const pubSubEvent of this._subscribedEvents) {
+        this.unsubscribe(pubSubEvent.name, pubSubEvent.listener);
       }
     }
   }

@@ -1,5 +1,3 @@
-import { Column } from './column.interface';
-
 export interface BackendServiceOption {
   /** What are the pagination options? ex.: (first, last, offset) */
   paginationOptions?: any;
