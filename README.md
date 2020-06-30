@@ -129,6 +129,7 @@ npm run test:watch
   - [x] Backend Services + Pagination
   - [x] Local Pagination
   - [x] Grid Presets
+    - [ ] Preset Row Selections
   - [ ] Dynamically Add Columns
   - [ ] Translations Support
   - [ ] Tree Data

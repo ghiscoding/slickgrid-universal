@@ -57,7 +57,7 @@ export const GlobalGridOptions: GridOption = {
     width: 200,
   },
   customFooterOptions: {
-    dateFormat: 'YYYY-DD-MM h:mm:ss a',
+    dateFormat: 'YYYY-MM-DD - h:mm:ssa',
     hideTotalItemCount: false,
     hideLastUpdateTimestamp: true,
     footerHeight: 20,

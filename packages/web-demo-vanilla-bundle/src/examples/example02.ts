@@ -145,6 +145,7 @@ export class Example2 {
       customFooterOptions: {
         // optionally display some text on the left footer container
         leftFooterText: 'Grid created with <a href="https://github.com/ghiscoding/slickgrid-universal" target="_blank">Slickgrid-Universal</a>',
+        hideMetrics: false,
         hideTotalItemCount: false,
         hideLastUpdateTimestamp: false
       },
