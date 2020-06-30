@@ -170,11 +170,11 @@ export const GlobalGridOptions: GridOption = {
   tristateMultiColumnSort: false,
   sortColNumberInSeparateSpan: true,
   suppressActiveCellChangeOnEdit: true,
-  //   pagination: {
-  //     pageSizes: [10, 15, 20, 25, 30, 40, 50, 75, 100],
-  //     pageSize: 25,
-  //     totalItems: 0
-  //   },
+  pagination: {
+    pageSizes: [10, 15, 20, 25, 30, 40, 50, 75, 100],
+    pageSize: 25,
+    totalItems: 0
+  },
   //   // @ts-ignore
   //   // technically speaking the Row Detail requires the process & viewComponent but we'll ignore it just to set certain options
   //   rowDetailView: {

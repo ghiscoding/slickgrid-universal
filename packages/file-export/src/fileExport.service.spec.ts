@@ -2,6 +2,7 @@ import { FileExportService } from './fileExport.service';
 import {
   Column,
   DelimiterType,
+  ExportOption,
   FieldType,
   FileType,
   Formatter,
@@ -69,7 +70,7 @@ describe('ExportService', () => {
   let sharedService: SharedService;
   let translateService: TranslateServiceStub;
   let mockColumns: Column[];
-  let mockExportCsvOptions;
+  let mockExportCsvOptions: ExportOption;
   let mockExportTxtOptions;
   let mockCsvBlob: Blob;
   let mockTxtBlob: Blob;

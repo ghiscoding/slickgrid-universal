@@ -8,14 +8,12 @@ import {
   SlickNamespace,
   SlickResizer,
   SlickColumnPicker,
-  SlickGridMenu,
 } from './../interfaces/index';
 import { ExtensionName } from '../enums/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { ExtensionService } from '../services/extension.service';
 
 // using external non-typed js libraries
-declare let $: any;
 declare const Slick: SlickNamespace;
 
 export class GroupingAndColspanService {

@@ -28,8 +28,8 @@ export class Example08 {
     // populate the dataset once the grid is ready
     this.dataset1 = this.loadData(500);
     this.dataset2 = this.loadData(500);
-    const gridContainerElm1 = document.querySelector(`.grid1`);
-    const gridContainerElm2 = document.querySelector(`.grid2`);
+    const gridContainerElm1 = document.querySelector<HTMLDivElement>(`.grid1`);
+    const gridContainerElm2 = document.querySelector<HTMLDivElement>(`.grid2`);
     this.slickgridLwc1 = new Slicker.GridBundle(gridContainerElm1, this.columnDefinitions1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
     this.slickgridLwc2 = new Slicker.GridBundle(gridContainerElm2, this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
   }

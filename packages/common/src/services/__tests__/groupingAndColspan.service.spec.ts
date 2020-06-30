@@ -65,7 +65,7 @@ jest.useFakeTimers();
 // define a <div> container to simulate the grid container
 const template =
   `<div id="${containerId}" style="height: 800px; width: 600px; overflow: hidden; display: block;">
-    <div id="slickGridContainer-${gridId}" class="gridPane" style="width: 100%;">
+    <div id="slickGridContainer-${gridId}" class="grid-pane" style="width: 100%;">
       <div id="${gridId}" class="${gridUid}" style="width: 100%">
       <div class="slick-pane slick-pane-header slick-pane-left" tabindex="0" style="width: 100%;">
         <div class="slick-preheader-panel ui-state-default slick-header" style="overflow:hidden;position:relative;">

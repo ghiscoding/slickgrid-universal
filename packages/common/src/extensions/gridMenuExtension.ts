@@ -26,9 +26,8 @@ import { TranslaterService } from '../services/translater.service';
 import { refreshBackendDataset } from '../services/backend-utilities';
 import { getTranslationPrefix } from '../services/utilities';
 
-// using external non-typed js libraries
+// using external js libraries
 declare const Slick: SlickNamespace;
-declare const $: any;
 
 export class GridMenuExtension implements Extension {
   private _addon: SlickGridMenu | null;

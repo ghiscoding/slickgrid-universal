@@ -118,6 +118,9 @@ $pagination-icon-seek-first-width:      $icon-width !default;
 $pagination-icon-seek-prev-width:       $icon-width !default;
 $pagination-icon-seek-next-width:       $icon-width !default;
 $pagination-icon-seek-end-width:        $icon-width !default;
+$pagination-button-padding:             6px 9px !default;
+$pagination-button-border-radius:       2px !default;
+$pagination-page-input-border-radius:   3px !default;
 
 @import './roboto-font';
 @import './slick-default-theme';

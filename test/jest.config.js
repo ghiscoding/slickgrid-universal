@@ -4,7 +4,8 @@ module.exports = {
     'ts-jest': {
       diagnostics: false,
       isolatedModules: true,
-      tsConfig: '<rootDir>/test/tsconfig.spec.json'
+      tsConfig: '<rootDir>/test/tsconfig.spec.json',
+      stringifyContentPathRegex: '\\.html$'
     },
   },
   globalSetup: '<rootDir>/test/jest-global-setup.js',
@@ -43,7 +44,7 @@ module.exports = {
   setupFiles: ['<rootDir>/test/jest-pretest.ts'],
   setupFilesAfterEnv: ['jest-extended', '<rootDir>/test/jest-global-mocks.ts'],
   transform: {
-    '^.+\\.ts$': 'ts-jest',
+    '^.+\\.(ts|html)$': 'ts-jest'
   },
   transformIgnorePatterns: [
     'node_modules/(?!(@slickgrid-universal)/)',

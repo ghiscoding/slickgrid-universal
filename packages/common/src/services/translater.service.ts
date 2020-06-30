@@ -11,7 +11,7 @@ export abstract class TranslaterService {
    * Method to set the locale to use in the App
    * @param locale
    */
-  setLocale(locale: string): Promise<any> {
+  setLocale(locale: string): Promise<any> | any {
     throw new Error('TranslaterService "setLocale" method must be implemented');
   }
 

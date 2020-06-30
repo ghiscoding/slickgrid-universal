@@ -37,10 +37,8 @@ interface ReportItem {
   effortDriven: boolean;
 }
 
-const customEditableInputFormatter: <T>() => Formatter<T> = () => <T>(row: number, cell: number, value: any, columnDef: Column, item: T) => {
-  // I want the `item` to be of Type ReportItem but it shows as Type any
-  // item
-  return value;
+const customEditableInputFormatter = (row: number, cell: number, value: any, columnDef: Column, item: ReportItem) => {
+  return item.title;
 };
 
 export class Example4 {
@@ -58,7 +56,7 @@ export class Example4 {
 
   attached() {
     const dataset = this.initializeGrid();
-    const gridContainerElm = document.querySelector(`.grid4`);
+    const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid4`);
 
     // gridContainerElm.addEventListener('onclick', handleOnClick);
     gridContainerElm.addEventListener('onvalidationerror', this.handleOnValidationError.bind(this));
@@ -81,7 +79,7 @@ export class Example4 {
           alwaysSaveOnEnterKey: true,
           validator: myCustomTitleValidator, // use a custom validator
         },
-        formatter: customEditableInputFormatter(),
+        formatter: customEditableInputFormatter,
         filterable: true,
       },
       {

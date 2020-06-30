@@ -36,7 +36,6 @@ npm-debug.log
 testem.log
 /typings
 yarn-error.log
-yarn.lock
 
 # System Files
 .DS_Store
@@ -56,3 +55,4 @@ dist-demo
 **/junit.xml
 **/test-report.xml
 **/testresult.xml
+**/test-results.xml

@@ -22,12 +22,6 @@ import {
 import { mapFlatpickrDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 
-// use Flatpickr from import or 'require', whichever works first
-declare function require(name: string): any;
-
-// using external non-typed js libraries
-declare const $: any;
-
 export class CompoundDateFilter implements Filter {
   private _clearFilterTriggered = false;
   private _currentDate: Date | undefined;
@@ -280,7 +274,8 @@ export class CompoundDateFilter implements Filter {
     this.$filterInputElm.data('columnId', columnId);
 
     if (this.operator) {
-      this.$selectOperatorElm.val(this.operator);
+      const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);
+      this.$selectOperatorElm.val(operatorShorthand);
     }
 
     // if there's a search term, we will add the "filled" class for styling purposes

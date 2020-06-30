@@ -19,6 +19,14 @@ import {
   SlickGroupItemMetadataProvider,
   SlickNamespace,
   TreeDataOption,
+  executeBackendProcessesCallback,
+  GridStateType,
+  BackendServiceOption,
+  onBackendError,
+  refreshBackendDataset,
+  Pagination,
+  Subscription,
+  ServicePagination,
 
   // extensions
   AutoTooltipExtension,
@@ -62,25 +70,28 @@ import { FileExportService } from './services/fileExport.service';
 import { TranslateService } from './services/translate.service';
 import { EventPubSubService } from './services/eventPubSub.service';
 import { FooterService } from './services/footer.service';
-import { PaginationRenderer } from './pagination.renderer';
+import { SlickPaginationComponent } from './components/slick-pagination';
 import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
-declare const $: any;
 const DATAGRID_FOOTER_HEIGHT = 20;
+const DATAGRID_PAGINATION_HEIGHT = 35;
 
 export class VanillaGridBundle {
   private _columnDefinitions: Column[];
   private _gridOptions: GridOption;
   private _dataset: any[];
-  private _gridContainerElm: Element;
+  private _gridContainerElm: HTMLElement;
+  private _gridParentContainerElm: HTMLElement;
   private _hideHeaderRowAfterPageLoad = false;
   private _isDatasetInitialized = false;
   private _isGridInitialized = false;
   private _isLocalGrid = true;
+  private _isPaginationInitialized = false;
   private _eventHandler: SlickEventHandler = new Slick.EventHandler();
   private _eventPubSubService: EventPubSubService;
+  private _paginationOptions: Pagination | undefined;
   private _slickgridInitialized = false;
   private _intervalId: NodeJS.Timeout;
   private _intervalExecutionCounter = 0;
@@ -89,8 +100,15 @@ export class VanillaGridBundle {
   grid: SlickGrid;
   metrics: Metrics;
   customDataView = false;
+  paginationData: {
+    gridOptions: GridOption;
+    paginationService: PaginationService;
+  };
+  totalItems = 0;
   groupItemMetadataProvider: SlickGroupItemMetadataProvider;
   resizerPlugin: SlickResizer;
+  subscriptions: Subscription[] = [];
+  showPagination = false;
 
   // extensions
   extensionUtility: ExtensionUtility;
@@ -123,7 +141,7 @@ export class VanillaGridBundle {
   translateService: TranslateService;
   treeDataService: TreeDataService;
 
-  paginationRenderer: PaginationRenderer;
+  slickPagination: SlickPaginationComponent;
   gridClass: string;
   gridClassName: string;
 
@@ -186,19 +204,36 @@ export class VanillaGridBundle {
     this._gridOptions = mergedOptions;
   }
 
+  get paginationOptions(): Pagination | undefined {
+    return this._paginationOptions;
+  }
+  set paginationOptions(options: Pagination | undefined) {
+    if (this._paginationOptions) {
+      this._paginationOptions = { ...this._paginationOptions, ...options };
+    } else {
+      this._paginationOptions = options;
+    }
+    this.gridOptions.pagination = options;
+    this.paginationService.updateTotalItems(options?.totalItems || 0);
+  }
+
   get gridUid(): string {
     return this.grid?.getUID() ?? '';
   }
 
-  constructor(gridContainerElm: Element, columnDefs?: Column[], options?: GridOption, dataset?: any[], hierarchicalDataset?: any[]) {
+  constructor(gridParentContainerElm: HTMLElement, columnDefs?: Column[], options?: GridOption, dataset?: any[], hierarchicalDataset?: any[]) {
     // make sure that the grid container has the "slickgrid-container" css class exist since we use it for slickgrid styling
-    gridContainerElm.classList.add('slickgrid-container');
+    gridParentContainerElm.classList.add('grid-pane');
+    this._gridParentContainerElm = gridParentContainerElm as HTMLDivElement;
+    this._gridContainerElm = document.createElement('div') as HTMLDivElement;
+    this._gridContainerElm.classList.add('slickgrid-container');
+    gridParentContainerElm.appendChild(this._gridContainerElm);
 
     this._dataset = [];
     this._columnDefinitions = columnDefs || [];
     this._gridOptions = this.mergeGridOptions(options || {});
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions && this._gridOptions.enableDeepCopyDatasetOnPageLoad);
-    this._eventPubSubService = new EventPubSubService(gridContainerElm);
+    this._eventPubSubService = new EventPubSubService(gridParentContainerElm);
     this._eventPubSubService.eventNamingStyle = this._gridOptions && this._gridOptions.eventNamingStyle || EventNamingStyle.camelCase;
 
     this.gridEventService = new GridEventService();
@@ -250,8 +285,8 @@ export class VanillaGridBundle {
     if (hierarchicalDataset) {
       this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
     }
-    this.initialization(gridContainerElm);
-    if (!hierarchicalDataset) {
+    this.initialization(this._gridContainerElm);
+    if (!hierarchicalDataset && !this.gridOptions.backendServiceApi) {
       this.dataset = dataset || [];
     }
   }
@@ -273,7 +308,7 @@ export class VanillaGridBundle {
     this.grid?.destroy();
   }
 
-  async initialization(gridContainerElm: Element) {
+  async initialization(gridContainerElm: HTMLElement) {
     // create the slickgrid container and add it to the user's grid container
     this._gridContainerElm = gridContainerElm;
 
@@ -284,6 +319,10 @@ export class VanillaGridBundle {
     this.sharedService.internalPubSubService = this._eventPubSubService;
     this._eventHandler = new Slick.EventHandler();
     const dataviewInlineFilters = this._gridOptions?.dataView?.inlineFilters ?? false;
+    this._paginationOptions = this.gridOptions?.pagination;
+
+    this.createBackendApiInternalPostProcessCallback(this._gridOptions);
+
     if (!this.customDataView) {
       if (this._gridOptions.draggableGrouping || this._gridOptions.enableGrouping) {
         this.extensionUtility.loadExtensionDynamically(ExtensionName.groupItemMetaProvider);
@@ -368,22 +407,19 @@ export class VanillaGridBundle {
     // user could show a custom footer with the data metrics (dataset length and last updated timestamp)
     const customFooterElm = this.footerService.optionallyShowCustomFooterWithMetrics(this.metrics);
     if (customFooterElm) {
-      $(customFooterElm).appendTo($(this._gridContainerElm).parent());
+      $(customFooterElm).appendTo(this._gridParentContainerElm);
     }
-
-    // user could show pagination
-    // if (this._gridOptions.enablePagination) {
-    //   this.paginationRenderer = new PaginationRenderer();
-    //   const paginationElm = this.paginationRenderer.renderPagination();
-    //   if (paginationElm) {
-    //     $(paginationElm).appendTo($(this._gridContainerElm).parent());
-    //   }
-    // }
 
     const fixedGridDimensions = (this._gridOptions?.gridHeight || this._gridOptions?.gridWidth) ? { height: this._gridOptions?.gridHeight, width: this._gridOptions?.gridWidth } : undefined;
     const autoResizeOptions = this._gridOptions?.autoResize ?? { bottomPadding: 0 };
     if (autoResizeOptions && autoResizeOptions.bottomPadding !== undefined) {
       autoResizeOptions.bottomPadding += this._gridOptions?.customFooterOptions?.footerHeight ?? DATAGRID_FOOTER_HEIGHT;
+    }
+    if (autoResizeOptions && autoResizeOptions.bottomPadding !== undefined && this._gridOptions.enablePagination) {
+      autoResizeOptions.bottomPadding += DATAGRID_PAGINATION_HEIGHT;
+    }
+    if (fixedGridDimensions?.width && this._gridParentContainerElm?.style) {
+      this._gridParentContainerElm.style.width = `${fixedGridDimensions.width}px`;
     }
     this.resizerPlugin = new Slick.Plugins.Resizer(autoResizeOptions, fixedGridDimensions);
     this.grid.registerPlugin<SlickResizer>(this.resizerPlugin);
@@ -431,6 +467,12 @@ export class VanillaGridBundle {
       registeringServices.push(this.treeDataService);
     }
 
+    // bind the Backend Service API callback functions only after the grid is initialized
+    // because the preProcess() and onInit() might get triggered
+    if (this.gridOptions && this.gridOptions.backendServiceApi) {
+      this.bindBackendCallbackFunctions(this.gridOptions);
+    }
+
     // bind & initialize all Services that were tagged as enable
     // register all services by executing their init method and providing them with the Grid object
     if (Array.isArray(registeringServices)) {
@@ -441,15 +483,22 @@ export class VanillaGridBundle {
       }
     }
 
-    // Pagination Service
-    // this.paginationService.init(this.grid)
+    // after the DataView is created & updated execute some processes & dispatch some events
+    if (!this.customDataView) {
+      this.executeAfterDataviewCreated(this.gridOptions);
+    }
 
+    // TODO - add interface
     const slickerElementInstance = {
       // Slick Grid & DataView objects
       dataView: this.dataView,
       slickGrid: this.grid,
 
+      // public methods
+      dispose: this.dispose.bind(this),
+
       // return all available Services (non-singleton)
+      backendService: this.gridOptions && this.gridOptions.backendServiceApi && this.gridOptions.backendServiceApi.service,
       filterService: this.filterService,
       gridEventService: this.gridEventService,
       gridStateService: this.gridStateService,
@@ -480,7 +529,7 @@ export class VanillaGridBundle {
     // using jQuery extend to do a deep clone has an unwanted side on objects and pageSizes but ES6 spread has other worst side effects
     // so we will just overwrite the pageSizes when needed, this is the only one causing issues so far.
     // jQuery wrote this on their docs:: On a deep extend, Object and Array are extended, but object wrappers on primitive types such as String, Boolean, and Number are not.
-    if (gridOptions.enablePagination && gridOptions.pagination && Array.isArray(gridOptions.pagination.pageSizes)) {
+    if (options?.pagination && gridOptions.enablePagination && gridOptions.pagination && Array.isArray(gridOptions.pagination.pageSizes)) {
       options.pagination.pageSizes = gridOptions.pagination.pageSizes;
     }
 
@@ -498,20 +547,63 @@ export class VanillaGridBundle {
     return options;
   }
 
+  /**
+   * Define our internal Post Process callback, it will execute internally after we get back result from the Process backend call
+   * For now, this is GraphQL Service ONLY feature and it will basically
+   * refresh the Dataset & Pagination without having the user to create his own PostProcess every time
+   */
+  createBackendApiInternalPostProcessCallback(gridOptions: GridOption) {
+    const backendApi = gridOptions && gridOptions.backendServiceApi;
+    if (backendApi && backendApi.service) {
+      const backendApiService = backendApi.service;
+
+      // internalPostProcess only works (for now) with a GraphQL Service, so make sure it is of that type
+      if (/* backendApiService instanceof GraphqlService || */ typeof backendApiService.getDatasetName === 'function') {
+        backendApi.internalPostProcess = (processResult: any) => {
+          this._dataset = [];
+          const datasetName = (backendApi && backendApiService && typeof backendApiService.getDatasetName === 'function') ? backendApiService.getDatasetName() : '';
+          if (processResult && processResult.data && processResult.data[datasetName]) {
+            this._dataset = processResult.data[datasetName].hasOwnProperty('nodes') ? (processResult as any).data[datasetName].nodes : (processResult as any).data[datasetName];
+            const totalCount = processResult.data[datasetName].hasOwnProperty('totalCount') ? (processResult as any).data[datasetName].totalCount : (processResult as any).data[datasetName].length;
+            this.refreshGridData(this._dataset, totalCount || 0);
+          }
+        };
+      }
+    }
+  }
+
   bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: SlickDataView) {
     // bind external filter (backend) when available or default onFilter (dataView)
     if (gridOptions.enableFiltering && !this.customDataView) {
       this.filterService.init(grid);
 
       // if user entered some Filter "presets", we need to reflect them all in the DOM
-      // if (gridOptions.presets && Array.isArray(gridOptions.presets.filters) && gridOptions.presets.filters.length > 0) {
-      //   this.filterService.populateColumnFilterSearchTermPresets(gridOptions.presets.filters);
-      // }
+      if (gridOptions.presets && Array.isArray(gridOptions.presets.filters) && gridOptions.presets.filters.length > 0) {
+        this.filterService.populateColumnFilterSearchTermPresets(gridOptions.presets.filters);
+      }
+
       // bind external filter (backend) unless specified to use the local one
       if (gridOptions.backendServiceApi && !gridOptions.backendServiceApi.useLocalFiltering) {
         this.filterService.bindBackendOnFilter(grid, dataView);
       } else {
         this.filterService.bindLocalOnFilter(grid, dataView);
+      }
+    }
+
+    // if user entered some Columns "presets", we need to reflect them all in the grid
+    if (gridOptions.presets && Array.isArray(gridOptions.presets.columns) && gridOptions.presets.columns.length > 0) {
+      const gridColumns: Column[] = this.gridStateService.getAssociatedGridColumns(grid, gridOptions.presets.columns);
+      if (gridColumns && Array.isArray(gridColumns) && gridColumns.length > 0) {
+        // make sure that the checkbox selector is also visible if it is enabled
+        if (gridOptions.enableCheckboxSelector) {
+          const checkboxColumn = (Array.isArray(this._columnDefinitions) && this._columnDefinitions.length > 0) ? this._columnDefinitions[0] : null;
+          if (checkboxColumn && checkboxColumn.id === '_checkbox_selector' && gridColumns[0].id !== '_checkbox_selector') {
+            gridColumns.unshift(checkboxColumn);
+          }
+        }
+
+        // finally set the new presets columns (including checkbox selector if need be)
+        grid.setColumns(gridColumns);
       }
     }
 
@@ -522,6 +614,15 @@ export class VanillaGridBundle {
         this.sortService.bindBackendOnSort(grid, dataView);
       } else {
         this.sortService.bindLocalOnSort(grid, dataView);
+      }
+    }
+
+    // if user set an onInit Backend, we'll run it right away (and if so, we also need to run preProcess, internalPostProcess & postProcess)
+    if (gridOptions.backendServiceApi) {
+      const backendApi = gridOptions.backendServiceApi;
+
+      if (backendApi && backendApi.service && backendApi.service.init) {
+        backendApi.service.init(backendApi.options, gridOptions.pagination, this.grid);
       }
     }
 
@@ -558,6 +659,8 @@ export class VanillaGridBundle {
           itemCount: args && args.current || 0,
           totalItemCount: Array.isArray(this.dataset) ? this.dataset.length : 0
         };
+
+        // if custom footer is enabled, then we'll update its metrics
         if (this.footerService.showCustomFooter) {
           const itemCountElm = document.querySelector<HTMLSpanElement>('.item-count');
           const totalCountElm = document.querySelector<HTMLSpanElement>('.total-count');
@@ -572,10 +675,9 @@ export class VanillaGridBundle {
 
       // without this, filtering data with local dataset will not always show correctly
       // also don't use "invalidateRows" since it destroys the entire row and as bad user experience when updating a row
-      // see commit: https://github.com/ghiscoding/slickgrid-universal/commit/bb62c0aa2314a5d61188ff005ccb564577f08805
       if (gridOptions && gridOptions.enableFiltering && !gridOptions.enableRowDetailView) {
         const onRowsChangedHandler = dataView.onRowsChanged;
-        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowsChangedHandler>>).subscribe(onRowsChangedHandler, (e, args) => {
+        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowsChangedHandler>>).subscribe(onRowsChangedHandler, (_e, args) => {
           if (args && args.rows && Array.isArray(args.rows)) {
             args.rows.forEach((row) => grid.updateRow(row));
             grid.render();
@@ -596,6 +698,93 @@ export class VanillaGridBundle {
     }
   }
 
+  bindBackendCallbackFunctions(gridOptions: GridOption) {
+    const backendApi = gridOptions.backendServiceApi;
+    const backendApiService = backendApi && backendApi.service;
+    const serviceOptions: BackendServiceOption = backendApiService && backendApiService.options || {};
+    const isExecuteCommandOnInit = (!serviceOptions) ? false : ((serviceOptions && serviceOptions.hasOwnProperty('executeProcessCommandOnInit')) ? serviceOptions['executeProcessCommandOnInit'] : true);
+
+    if (backendApiService) {
+      // update backend filters (if need be) BEFORE the query runs (via the onInit command a few lines below)
+      // if user entered some any "presets", we need to reflect them all in the grid
+      if (gridOptions && gridOptions.presets) {
+        // Filters "presets"
+        if (backendApiService.updateFilters && Array.isArray(gridOptions.presets.filters) && gridOptions.presets.filters.length > 0) {
+          backendApiService.updateFilters(gridOptions.presets.filters, true);
+        }
+        // Sorters "presets"
+        if (backendApiService.updateSorters && Array.isArray(gridOptions.presets.sorters) && gridOptions.presets.sorters.length > 0) {
+          backendApiService.updateSorters(undefined, gridOptions.presets.sorters);
+        }
+        // Pagination "presets"
+        if (backendApiService.updatePagination && gridOptions.presets.pagination) {
+          const { pageNumber, pageSize } = gridOptions.presets.pagination;
+          backendApiService.updatePagination(pageNumber, pageSize);
+        }
+      } else {
+        const columnFilters = this.filterService.getColumnFilters();
+        if (columnFilters && backendApiService.updateFilters) {
+          backendApiService.updateFilters(columnFilters, false);
+        }
+      }
+
+      // execute onInit command when necessary
+      if (backendApi && backendApiService && (backendApi.onInit || isExecuteCommandOnInit)) {
+        const query = (typeof backendApiService.buildQuery === 'function') ? backendApiService.buildQuery() : '';
+        const process = (isExecuteCommandOnInit) ? (backendApi.process && backendApi.process(query) || null) : (backendApi.onInit && backendApi.onInit(query) || null);
+
+        // wrap this inside a setTimeout to avoid timing issue since the gridOptions needs to be ready before running this onInit
+        setTimeout(() => {
+          // keep start time & end timestamps & return it after process execution
+          const startTime = new Date();
+
+          // run any pre-process, if defined, for example a spinner
+          if (backendApi.preProcess) {
+            backendApi.preProcess();
+          }
+
+          // the processes can be a Promise (like Http)
+          if (process instanceof Promise && process.then) {
+            const totalItems = this.gridOptions && this.gridOptions.pagination && this.gridOptions.pagination.totalItems || 0;
+            process.then((processResult: any) => executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems))
+              .catch((error) => onBackendError(error, backendApi));
+          }
+        });
+      }
+    }
+  }
+
+  executeAfterDataviewCreated(gridOptions: GridOption) {
+    // if user entered some Sort "presets", we need to reflect them all in the DOM
+    if (gridOptions.enableSorting) {
+      if (gridOptions.presets && Array.isArray(gridOptions.presets.sorters) && gridOptions.presets.sorters.length > 0) {
+        this.sortService.loadGridSorters(gridOptions.presets.sorters);
+      }
+    }
+  }
+
+  /**
+   * On a Pagination changed, we will trigger a Grid State changed with the new pagination info
+   * Also if we use Row Selection or the Checkbox Selector, we need to reset any selection
+   */
+  paginationChanged(pagination: ServicePagination) {
+    // console.log('pagination changed', pagination)
+    const isSyncGridSelectionEnabled = this.gridStateService && this.gridStateService.needToPreserveRowSelection() || false;
+    if (!isSyncGridSelectionEnabled && (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector)) {
+      this.grid.setSelectedRows([]);
+    }
+    const { pageNumber, pageSize } = pagination;
+    if (this.sharedService) {
+      if (pageSize !== undefined && pageNumber !== undefined) {
+        this.sharedService.currentPagination = { pageNumber, pageSize };
+      }
+    }
+    this._eventPubSubService.publish('onGridStateChanged', {
+      change: { newValues: { pageNumber, pageSize }, type: GridStateType.pagination },
+      gridState: this.gridStateService.getCurrentGridState()
+    });
+  }
+
   /**
    * When dataset changes, we need to refresh the entire grid UI & possibly resize it as well
    * @param dataset
@@ -604,10 +793,10 @@ export class VanillaGridBundle {
     // local grid, check if we need to show the Pagination
     // if so then also check if there's any presets and finally initialize the PaginationService
     // a local grid with Pagination presets will potentially have a different total of items, we'll need to get it from the DataView and update our total
-    // if (this._gridOptions && this._gridOptions.enablePagination && this._isLocalGrid) {
-    //   this.showPagination = true;
-    //   this.loadLocalGridPagination(dataset);
-    // }
+    if (this._gridOptions && this._gridOptions.enablePagination && this._isLocalGrid) {
+      this.showPagination = true;
+      this.loadLocalGridPagination(dataset);
+    }
 
     if (Array.isArray(dataset) && this.grid && this.dataView && typeof this.dataView.setItems === 'function') {
       this.dataView.setItems(dataset, this._gridOptions.datasetIdPropertyName);
@@ -632,25 +821,25 @@ export class VanillaGridBundle {
       }
 
       // display the Pagination component only after calling this refresh data first, we call it here so that if we preset pagination page number it will be shown correctly
-      // this.showPagination = (this._gridOptions && (this._gridOptions.enablePagination || (this._gridOptions.backendServiceApi && this._gridOptions.enablePagination === undefined))) ? true : false;
+      this.showPagination = (this._gridOptions && (this._gridOptions.enablePagination || (this._gridOptions.backendServiceApi && this._gridOptions.enablePagination === undefined))) ? true : false;
 
-      // if (this._gridOptions && this._gridOptions.backendServiceApi && this._gridOptions.pagination && this.paginationOptions) {
-      //   const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this._gridOptions, this.paginationOptions);
+      if (this._gridOptions && this._gridOptions.backendServiceApi && this._gridOptions.pagination && this._paginationOptions) {
+        const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this._gridOptions, this._paginationOptions);
 
-      //   // when we have a totalCount use it, else we'll take it from the pagination object
-      //   // only update the total items if it's different to avoid refreshing the UI
-      //   const totalRecords = (totalCount !== undefined) ? totalCount : (this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems);
-      //   if (totalRecords !== undefined && totalRecords !== this.totalItems) {
-      //     this.totalItems = +totalRecords;
-      //   }
-      //   // initialize the Pagination Service with new pagination options (which might have presets)
-      //   if (!this._isPaginationInitialized) {
-      //     this.initializePaginationService(paginationOptions);
-      //   } else {
-      //     // update the pagination service with the new total
-      //     this.paginationService.totalItems = this.totalItems;
-      //   }
-      // }
+        // when we have a totalCount use it, else we'll take it from the pagination object
+        // only update the total items if it's different to avoid refreshing the UI
+        const totalRecords = (totalCount !== undefined) ? totalCount : (this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems);
+        if (totalRecords !== undefined && totalRecords !== this.totalItems) {
+          this.totalItems = +totalRecords;
+        }
+        // initialize the Pagination Service with new pagination options (which might have presets)
+        if (!this._isPaginationInitialized) {
+          this.initializePaginationService(paginationOptions);
+        } else {
+          // update the pagination service with the new total
+          this.paginationService.updateTotalItems(this.totalItems);
+        }
+      }
 
       // resize the grid inside a slight timeout, in case other DOM element changed prior to the resize (like a filter/pagination changed)
       if (this.grid && this._gridOptions.enableAutoResize) {
@@ -691,6 +880,17 @@ export class VanillaGridBundle {
     return showing;
   }
 
+  /**
+   * Check if there's any Pagination Presets defined in the Grid Options,
+   * if there are then load them in the paginationOptions object
+   */
+  setPaginationOptionsWhenPresetDefined(gridOptions: GridOption, paginationOptions: Pagination): Pagination {
+    if (gridOptions.presets && gridOptions.presets.pagination && gridOptions.pagination) {
+      paginationOptions.pageSize = gridOptions.presets.pagination.pageSize;
+      paginationOptions.pageNumber = gridOptions.presets.pagination.pageNumber;
+    }
+    return paginationOptions;
+  }
 
   /**
    * For convenience to the user, we provide the property "editor" as an Slickgrid-Universal editor complex object
@@ -708,6 +908,86 @@ export class VanillaGridBundle {
 
       return { ...column, editor: columnEditor?.model, internalColumnEditor: { ...columnEditor } };
     });
+  }
+
+  /** Initialize the Pagination Service once */
+  private initializePaginationService(paginationOptions: Pagination) {
+    if (this.gridOptions) {
+      this.paginationData = {
+        gridOptions: this.gridOptions,
+        paginationService: this.paginationService,
+      };
+      this.paginationService.totalItems = this.totalItems;
+      this.paginationService.init(this.grid, paginationOptions, this.backendServiceApi);
+      this.subscriptions.push(
+        this._eventPubSubService.subscribe('onPaginationChanged', (paginationChanges: ServicePagination) => this.paginationChanged(paginationChanges)),
+        this._eventPubSubService.subscribe('onPaginationVisibilityChanged', (visibility: { visible: boolean }) => {
+          this.showPagination = visibility && visibility.visible || false;
+          if (this.gridOptions && this.gridOptions.backendServiceApi) {
+            refreshBackendDataset();
+          }
+        })
+      );
+
+      // also initialize (render) the pagination component
+      if (this._gridOptions.enablePagination) {
+        this.slickPagination = new SlickPaginationComponent(this.paginationService, this._eventPubSubService, this.sharedService, this.translateService);
+        this.slickPagination.renderPagination(this._gridParentContainerElm);
+      }
+
+      this._isPaginationInitialized = true;
+    }
+  }
+
+  /**
+   * local grid, check if we need to show the Pagination
+   * if so then also check if there's any presets and finally initialize the PaginationService
+   * a local grid with Pagination presets will potentially have a different total of items, we'll need to get it from the DataView and update our total
+   */
+  private loadLocalGridPagination(dataset?: any[]) {
+    if (this.gridOptions && this._paginationOptions) {
+      this.totalItems = Array.isArray(dataset) ? dataset.length : 0;
+      if (this._paginationOptions && this.dataView && this.dataView.getPagingInfo) {
+        const slickPagingInfo = this.dataView.getPagingInfo();
+        if (slickPagingInfo && slickPagingInfo.hasOwnProperty('totalRows') && this._paginationOptions.totalItems !== slickPagingInfo.totalRows) {
+          this.totalItems = slickPagingInfo?.totalRows || 0;
+        }
+      }
+      this._paginationOptions.totalItems = this.totalItems;
+      const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this.gridOptions, this._paginationOptions);
+      this.initializePaginationService(paginationOptions);
+    }
+  }
+
+  /** Load any Row Selections into the DataView that were presets by the user */
+  private loadRowSelectionPresetWhenExists() {
+    // if user entered some Row Selections "presets"
+    const presets = this.gridOptions && this.gridOptions.presets;
+    const selectionModel = this.grid && this.grid.getSelectionModel();
+    const enableRowSelection = this.gridOptions && (this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection);
+    if (enableRowSelection && selectionModel && presets && presets.rowSelection && (Array.isArray(presets.rowSelection.gridRowIndexes) || Array.isArray(presets.rowSelection.dataContextIds))) {
+      let dataContextIds = presets.rowSelection.dataContextIds;
+      let gridRowIndexes = presets.rowSelection.gridRowIndexes;
+
+      // maps the IDs to the Grid Rows and vice versa, the "dataContextIds" has precedence over the other
+      if (Array.isArray(dataContextIds) && dataContextIds.length > 0) {
+        gridRowIndexes = this.dataView.mapIdsToRows(dataContextIds) || [];
+      } else if (Array.isArray(gridRowIndexes) && gridRowIndexes.length > 0) {
+        dataContextIds = this.dataView.mapRowsToIds(gridRowIndexes) || [];
+      }
+      this.gridStateService.selectedRowDataContextIds = dataContextIds;
+
+      // change the selected rows except UNLESS it's a Local Grid with Pagination
+      // local Pagination uses the DataView and that also trigger a change/refresh
+      // and we don't want to trigger 2 Grid State changes just 1
+      if ((this._isLocalGrid && !this.gridOptions.enablePagination) || !this._isLocalGrid) {
+        setTimeout(() => {
+          if (this.grid && Array.isArray(gridRowIndexes)) {
+            this.grid.setSelectedRows(gridRowIndexes);
+          }
+        });
+      }
+    }
   }
 
   /**

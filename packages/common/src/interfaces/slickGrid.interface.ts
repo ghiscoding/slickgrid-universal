@@ -390,9 +390,10 @@ export interface SlickGrid {
 
   /**
    * Extends grid options with a given hash. If an there is an active edit, the grid will attempt to commit the changes and only continue if the attempt succeeds.
-   * @options An object with configuration options.
+   * @params options An object with configuration options.
+   * @params do we want to supress the grid re-rendering? (defaults to false)
    */
-  setOptions(options: GridOption): void;
+  setOptions(options: GridOption, suppressRender?: boolean): void;
 
   /** Set the Pre-Header Visibility and optionally enable/disable animation (enabled by default) */
   setPreHeaderPanelVisibility(visible: boolean, animate?: boolean): void;

@@ -33,7 +33,7 @@ export class Example50 {
   attached() {
     this.initializeGrid();
     this.dataset = [];
-    const gridContainerElm = document.querySelector(`.grid50`);
+    const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid50`);
 
     gridContainerElm.addEventListener('onclick', this.handleOnClick.bind(this));
     gridContainerElm.addEventListener('oncellchange', this.handleOnCellChange.bind(this));

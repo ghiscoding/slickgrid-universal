@@ -1,0 +1,43 @@
+{
+  "name": "@slickgrid-universal/graphql",
+  "version": "0.0.2",
+  "description": "GraphQL Service to sync a grid with a GraphQL backend server",
+  "browser": "src/index.ts",
+  "main": "dist/commonjs/index.js",
+  "module": "dist/es2015/index.js",
+  "typings": "dist/commonjs/index.d.ts",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "build": "cross-env tsc --build",
+    "build:watch": "cross-env tsc --incremental --watch",
+    "dev": "run-s build sass:build sass:copy",
+    "dev:watch": "run-p build:watch",
+    "bundle": "npm-run-all bundle:commonjs bundle:es2015 bundle:es2020",
+    "bundle:commonjs": "tsc --project tsconfig.build.json --outDir dist/commonjs --module commonjs",
+    "bundle:es2015": "cross-env tsc --project tsconfig.build.json --outDir dist/es2015 --module es2020 --target es2015",
+    "bundle:es2020": "cross-env tsc --project tsconfig.build.json --outDir dist/es2020 --module es2015 --target es2020",
+    "prebundle": "npm-run-all delete:dist",
+    "delete:dist": "cross-env rimraf dist"
+  },
+  "author": "Ghislain B.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.13.1",
+    "npm": ">=6.12.1"
+  },
+  "browserslist": [
+    "last 2 version",
+    "> 1%",
+    "maintained node versions",
+    "not dead"
+  ],
+  "dependencies": {
+    "@slickgrid-universal/common": "^0.0.2"
+  },
+  "devDependencies": {
+    "moment-mini": "^2.24.0"
+  }
+}

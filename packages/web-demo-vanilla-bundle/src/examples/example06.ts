@@ -31,7 +31,7 @@ export class Example6 {
     this.initializeGrid();
     this.datasetFlat = [];
     this.datasetHierarchical = this.mockDataset();
-    const gridContainerElm = document.querySelector('.grid6');
+    const gridContainerElm = document.querySelector<HTMLDivElement>('.grid6');
 
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, null, this.datasetHierarchical);

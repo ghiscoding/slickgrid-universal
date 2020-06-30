@@ -7,32 +7,32 @@
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
 
-This is a monorepo project (using Lerna) which is regrouping a few packages under a single repository. 
-The goal is to create a common repo that includes all Editors, Filters, Extensions and Services 
-that could be used by any Framework (it is framework agnostic). 
-It's also a good opportunity to decouple some features/services that not every project require at all time, 
-this will also help in getting smaller bundle size depending on which features (packages) are used. For example, not every project requires backend services (OData, GraphQL), 
+This is a monorepo project (using Lerna) which is regrouping a few packages under a single repository.
+The goal is to create a common repo that includes all Editors, Filters, Extensions and Services
+that could be used by any Framework (it is framework agnostic).
+It's also a good opportunity to decouple some features/services that not every project require at all time,
+this will also help in getting smaller bundle size depending on which features (packages) are used. For example, not every project requires backend services (OData, GraphQL),
 which is why they are better handled with a monorepo structure.
 
 ### Demo page
-The GitHub [demo page](https://ghiscoding.github.io/slickgrid-universal) uses 2 different themes (Material Design / Salesforce) but you could also use Bootstrap theme which is demoed in other frameworks. 
+The GitHub [demo page](https://ghiscoding.github.io/slickgrid-universal) uses 2 different themes (Material Design / Salesforce) but you could also use Bootstrap theme which is demoed in other frameworks.
 - [Web-Demo-Vanilla-Bundle](https://ghiscoding.github.io/slickgrid-universal) with Material Design theme & Salesforce theme
 - [Angular-Slickgrid](https://ghiscoding.github.io/Angular-Slickgrid/)
-- [Slickgrid-Universal](https://ghiscoding.github.io/aurelia-slickgrid/) 
+- [Aurelia-Slickgrid](https://ghiscoding.github.io/aurelia-slickgrid/)
 
 ### Why create this monorepo?
 You might be wondering why was this monorepo created? Here are a few of the reasons:
-1. it removes a lot of duplicate code that exist in both 
-[Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Slickgrid-Universal](https://github.com/ghiscoding/aurelia-slickgrid) 
+1. it removes a lot of duplicate code that exist in both
+[Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid)
 (these libs have over 80% of code in common and that is not very DRY).
 2. decouple some Services that should not be required at all time (OData, GraphQL, Export to File, Export to Excel, ...)
 3. framework agnostic, it could be implemented in many more frameworks in the future (interested in adding other frameworks? please contact me...)
 
 ### Frameworks using this monorepo
-This is a Work in Progress, the goal is to eventually to rewrite [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) 
-and [Slickgrid-Universal](https://github.com/ghiscoding/aurelia-slickgrid) to use this monorepo which will simplify debugging/fixing common code. 
+This is a Work in Progress, the goal is to eventually to rewrite [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid)
+and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) to use this monorepo which will simplify debugging/fixing common code.
 
-Note however that this project also has a Vanilla Implementation (not associated to any framework) 
+Note however that this project also has a Vanilla Implementation (not associated to any framework)
 and it is also used to test with the UI portion. The Vanilla bundle is also used in our SalesForce (with Lightning Web Component) hence the creation of this monorepo.
 
 #### The main packages structure is the following
@@ -40,8 +40,8 @@ and it is also used to test with the UI portion. The Vanilla bundle is also used
   - this can then be used by any Framework (Angular, Aurelia, VanillaJS, ...)
 - `@slickgrid-universal/excel-export`: export to Excel (xls/xlsx)
 - `@slickgrid-universal/file-export`: export to text file (csv/txt)
-- `@slickgrid-universal/graphql`: GraphQL querying (support Filter/Sort/Pagination) - COMING SOON
-- `@slickgrid-universal/odata`: OData querying (support Filter/Sort/Pagination) - COMING SOON
+- `@slickgrid-universal/graphql`: GraphQL querying (support Filter/Sort/Pagination with a GraphQL backend Server)
+- `@slickgrid-universal/odata`: OData querying (support Filter/Sort/Pagination with an OData backend Server)
 - `@slickgrid-universal/vanilla-bundle`: a vanilla TypeScript/JavaScript implementation (framework-less)
   - &nbsp;
 - **Standalone Package**
@@ -66,8 +66,8 @@ npm run build
 
 3. Run Dev (Vanilla Implementation)
 
-There is a Vanilla flavour implementation of this monorepo, vanilla means that it is not associated to any framework 
-and is written in plain TypeScript without being bound to any framework. The implementation is very similar to Angular and Aurelia. 
+There is a Vanilla flavour implementation of this monorepo, vanilla means that it is not associated to any framework
+and is written in plain TypeScript without being bound to any framework. The implementation is very similar to Angular and Aurelia.
 It could be used as a guideline to implement it in with other frameworks.
 
 ```bash
@@ -88,7 +88,7 @@ npm run test:watch
 - [x] Aggregators (6)
 - [x] Editors (11)
 - [x] Filters (17)
-  - [ ] Add optional debounce filter delay to local grid
+  - [ ] Add optional debounce filter delay on local grid
 - [x] Formatters (31)
 - [ ] Extensions
   - [x] AutoTooltip
@@ -112,22 +112,25 @@ npm run test:watch
   - [x] Export Text (**separate package**)
   - [x] Extension
   - [x] Filter
-  - [ ] GraphQL (**separate package**)
-  - [ ] OData (**separate package**)
+  - [x] GraphQL (**separate package**)
+  - [x] OData (**separate package**)
   - [x] Grid Event
   - [x] Grid Service (helper)
   - [x] Grid State
   - [x] Grouping & Col Span
   - [x] Pagination
-  - [ ] Resizer 
+  - [ ] Resizer
     - moved the Service to an Extension
   - [x] Shared
   - [x] Sort
 - [ ] Others / Vanilla Implementation
   - [x] Custom Footer
+    - [ ] add unit tests (possibly rewrite component in vanilla JS)
+  - [x] Backend Services + Pagination
+  - [x] Local Pagination
+  - [x] Grid Presets
   - [ ] Dynamically Add Columns
-  - [ ] Grid Presets
-  - [ ] Local Pagination
+  - [ ] Translations Support
   - [ ] Tree Data
     - [x] add Grid Demo
     - [x] add Collapse/Expand All into Context Menu
@@ -142,17 +145,18 @@ npm run test:watch
 - [x] Add Multiple Example Demos with Vanilla implementation
   - [x] Add GitHub Demo website
 - [x] Add CI/CD (CircleCI or GitHub Actions)
-  - [x] Add Jest Unit tests
   - [ ] Add Cypress E2E tests
-  - [x] Add Code Coverage (codecov)
+  - [x] Add Jest Unit tests
+  - [x] Add Jest Code Coverage (codecov)
   - [x] Build and run on every PR
+  - [x] Add full bundler (all types) build step in CircleCI build
 - [x] Bundle Creation (vanilla bundle)
-  - [ ] Eventually add Unit Tests as a PreBundle task
-- [ ] Remove any Deprecated code
+  - [ ] Eventually add Unit Tests as a Pre-Bundle task
+- [x] Remove any Deprecated code
   - [ ] Create a [Migration Guide](https://github.com/ghiscoding/slickgrid-universal/wiki/Migration-for-Angular-Aurelia-Slickgrid) for Angular/Aurelia
 - [x] Add simple input bindings in the demo (e.g. pinned rows input)
 - [x] Add possibility to use SVG instead of Font Family
 - [x] Add Typings (interfaces) for Slick Grid & DataView objects
   - [x] Add interfaces to all SlickGrid core lib classes & plugins (basically add Types to everything)
-- [ ] Cannot copy text from cell since it's not selectable
-- [ ] Remove all Services init method 2nd argument (we can get DataView from the Grid object)
+- [ ] Copy text from cell doesn't work in SF
+- [ ] Remove all Services init method 2nd argument (we can get DataView directly from the Grid object)

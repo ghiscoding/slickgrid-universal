@@ -39,6 +39,7 @@ module.exports = ({ production } = {}) => ({
   },
   module: {
     rules: [
+      { test: /\.html$/i, loader: 'html-loader' },
       { test: /\.ts?$/, use: 'ts-loader', exclude: nodeModulesDir, },
     ],
   },

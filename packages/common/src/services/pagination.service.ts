@@ -1,7 +1,7 @@
 import * as isequal_ from 'lodash.isequal';
 const isequal = isequal_; // patch to fix rollup to work
 
-import { BackendServiceApi, CurrentPagination, SlickDataView, Pagination, ServicePagination, SlickGrid, Subscription, SlickEventData, SlickNamespace } from '../interfaces/index';
+import { BackendServiceApi, CurrentPagination, Pagination, ServicePagination, SlickDataView, SlickEventData, SlickGrid, Subscription } from '../interfaces/index';
 import { executeBackendProcessesCallback, onBackendError } from './backend-utilities';
 import { SharedService } from './shared.service';
 import { PubSubService } from './pubSub.service';
@@ -27,7 +27,7 @@ export class PaginationService {
   constructor(private pubSubService: PubSubService, private sharedService: SharedService) { }
 
   /** Getter of SlickGrid DataView object */
-  get dataView(): SlickDataView {
+  get dataView(): SlickDataView | undefined {
     return (this.grid?.getData && this.grid.getData()) as SlickDataView;
   }
 
@@ -68,7 +68,6 @@ export class PaginationService {
 
   set totalItems(totalItems: number) {
     this._totalItems = totalItems;
-
     if (this._initialized) {
       this.refreshPagination();
     }
@@ -89,14 +88,14 @@ export class PaginationService {
     if (this._isLocalGrid && this.dataView) {
       this.dataView.onPagingInfoChanged.subscribe((_e: SlickEventData, pagingInfo: { totalRows: number; pageNum: number; }) => {
         if (this._totalItems !== pagingInfo.totalRows) {
-          this._totalItems = pagingInfo.totalRows;
-          this._paginationOptions.totalItems = this._totalItems;
-          this.refreshPagination(false, false);
+          this.updateTotalItems(pagingInfo.totalRows);
         }
       });
       setTimeout(() => {
-        this.dataView.setRefreshHints({ isFilterUnchanged: true });
-        this.dataView.setPagingOptions({ pageSize: this.paginationOptions.pageSize, pageNum: (this._pageNumber - 1) }); // dataView page starts at 0 instead of 1
+        if (this.dataView) {
+          this.dataView.setRefreshHints({ isFilterUnchanged: true });
+          this.dataView.setPagingOptions({ pageSize: this.paginationOptions.pageSize, pageNum: (this._pageNumber - 1) }); // dataView page starts at 0 instead of 1
+        }
       });
     }
 
@@ -113,7 +112,7 @@ export class PaginationService {
       this._subscriptions.push(this.pubSubService.subscribe(`onItemDeleted`, (items: any | any[]) => this.processOnItemAddedOrRemoved(items, false)));
     }
 
-    this.refreshPagination(false, false);
+    this.refreshPagination(false, false, true);
     this._initialized = true;
   }
 
@@ -152,33 +151,32 @@ export class PaginationService {
     return this._itemsPerPage;
   }
 
-  changeItemPerPage(itemsPerPage: number, event?: any): Promise<any> {
+  changeItemPerPage(itemsPerPage: number, event?: any): Promise<ServicePagination> {
     this._pageNumber = 1;
     this._pageCount = Math.ceil(this._totalItems / itemsPerPage);
     this._itemsPerPage = itemsPerPage;
     return this.processOnPageChanged(this._pageNumber, event);
   }
 
-  goToFirstPage(event?: any): Promise<any> {
+  goToFirstPage(event?: any): Promise<ServicePagination> {
     this._pageNumber = 1;
     return this.processOnPageChanged(this._pageNumber, event);
   }
 
-  goToLastPage(event?: any): Promise<any> {
+  goToLastPage(event?: any): Promise<ServicePagination> {
     this._pageNumber = this._pageCount || 1;
     return this.processOnPageChanged(this._pageNumber || 1, event);
   }
 
-  goToNextPage(event?: any): Promise<any> {
+  goToNextPage(event?: any): Promise<boolean | ServicePagination> {
     if (this._pageNumber < this._pageCount) {
       this._pageNumber++;
       return this.processOnPageChanged(this._pageNumber, event);
-    } else {
-      return new Promise(resolve => resolve(false));
     }
+    return new Promise(resolve => resolve(false));
   }
 
-  goToPageNumber(pageNumber: number, event?: any): Promise<any> {
+  goToPageNumber(pageNumber: number, event?: any): Promise<boolean | ServicePagination> {
     const previousPageNumber = this._pageNumber;
 
     if (pageNumber < 1) {
@@ -191,22 +189,20 @@ export class PaginationService {
 
     if (this._pageNumber !== previousPageNumber) {
       return this.processOnPageChanged(this._pageNumber, event);
-    } else {
-      return new Promise(resolve => resolve(false));
     }
+    return new Promise(resolve => resolve(false));
   }
 
-  goToPreviousPage(event?: any): Promise<any> {
+  goToPreviousPage(event?: any): Promise<boolean | ServicePagination> {
     if (this._pageNumber > 1) {
       this._pageNumber--;
       return this.processOnPageChanged(this._pageNumber, event);
-    } else {
-      return new Promise(resolve => resolve(false));
     }
+    return new Promise(resolve => resolve(false));
   }
 
-  refreshPagination(isPageNumberReset = false, triggerChangedEvent = true) {
-    const previousPagination = { ...this.getCurrentPagination() };
+  refreshPagination(isPageNumberReset = false, triggerChangedEvent = true, triggerInitializedEvent = false) {
+    const previousPagination = { ...this.getFullPagination() };
 
     if (this._paginationOptions) {
       const pagination = this._paginationOptions;
@@ -216,7 +212,7 @@ export class PaginationService {
         if (this._isLocalGrid) {
           this._itemsPerPage = pagination.pageSize;
         } else {
-          this._itemsPerPage = +((this._backendServiceApi && this._backendServiceApi.options && this._backendServiceApi.options.paginationOptions && this._backendServiceApi.options.paginationOptions.first) ? this._backendServiceApi.options.paginationOptions.first : pagination.pageSize);
+          this._itemsPerPage = +((this._backendServiceApi?.options?.paginationOptions?.first) ? this._backendServiceApi.options.paginationOptions.first : pagination.pageSize);
         }
       }
 
@@ -243,18 +239,26 @@ export class PaginationService {
       this.recalculateFromToIndexes();
     }
     this._pageCount = Math.ceil(this._totalItems / this._itemsPerPage);
-    const currentPagination = this.getCurrentPagination();
-    this.sharedService.currentPagination = currentPagination;
+    this.sharedService.currentPagination = this.getCurrentPagination();
 
-    if (triggerChangedEvent && !isequal(previousPagination, currentPagination)) {
+    // publish the refresh event on anytime the pagination is refreshed or re-rendered (run every time)
+    // useful when binding a slick-pagination View
+    this.pubSubService.publish(`onPaginationRefreshed`, this.getFullPagination());
+
+    // publish a pagination change only when flag requires it (triggered by page or pageSize change, dataset length change by a filter or others)
+    if (triggerChangedEvent && !isequal(previousPagination, this.getFullPagination())) {
       this.pubSubService.publish(`onPaginationChanged`, this.getFullPagination());
     }
-    this.sharedService.currentPagination = this.getCurrentPagination();
+
+    // publish on the first pagination initialization (called by the "init()" method on first load)
+    if (triggerInitializedEvent && !isequal(previousPagination, this.getFullPagination())) {
+      this.pubSubService.publish(`onPaginationPresetsInitialized`, this.getFullPagination());
+    }
   }
 
   /** Reset the Pagination to first page and recalculate necessary numbers */
   resetPagination(triggerChangedEvent = true) {
-    if (this._isLocalGrid) {
+    if (this._isLocalGrid && this.dataView) {
       // on a local grid we also need to reset the DataView paging to 1st page
       this.dataView.setPagingOptions({ pageSize: this._itemsPerPage, pageNum: 0 });
     }
@@ -269,7 +273,7 @@ export class PaginationService {
    * Basically this method WILL NOT WORK to show the Pagination if it was not there from the start.
    */
   togglePaginationVisibility(visible?: boolean) {
-    if (this.grid && this.sharedService && this.sharedService.gridOptions) {
+    if (this.grid && this.sharedService?.gridOptions) {
       const isVisible = visible !== undefined ? visible : !this.sharedService.gridOptions.enablePagination;
       this.sharedService.gridOptions.enablePagination = isVisible;
       this.pubSubService.publish(`onPaginationVisibilityChanged`, { visible: isVisible });
@@ -281,20 +285,22 @@ export class PaginationService {
 
       // when using a local grid, we can reset the DataView pagination by changing its page size
       // page size of 0 would show all, hence cancel the pagination
-      if (this._isLocalGrid) {
+      if (this._isLocalGrid && this.dataView) {
         const pageSize = visible ? this._itemsPerPage : 0;
         this.dataView.setPagingOptions({ pageSize, pageNum: 0 });
       }
     }
   }
 
-  processOnPageChanged(pageNumber: number, event?: Event | undefined): Promise<any> {
+  processOnPageChanged(pageNumber: number, event?: Event | undefined): Promise<ServicePagination> {
     return new Promise((resolve, reject) => {
       this.recalculateFromToIndexes();
 
-      if (this._isLocalGrid) {
+      if (this._isLocalGrid && this.dataView) {
         this.dataView.setPagingOptions({ pageSize: this._itemsPerPage, pageNum: (pageNumber - 1) }); // dataView page starts at 0 instead of 1
         this.pubSubService.publish(`onPaginationChanged`, this.getFullPagination());
+        this.pubSubService.publish(`onPaginationRefreshed`, this.getFullPagination());
+        resolve(this.getFullPagination());
       } else {
         const itemsPerPage = +this._itemsPerPage;
 
@@ -322,8 +328,9 @@ export class PaginationService {
                 reject(process);
               });
           }
+          this.pubSubService.publish(`onPaginationRefreshed`, this.getFullPagination());
+          this.pubSubService.publish(`onPaginationChanged`, this.getFullPagination());
         }
-        this.pubSubService.publish(`onPaginationChanged`, this.getFullPagination());
       }
     });
   }
@@ -352,6 +359,14 @@ export class PaginationService {
     }
   }
 
+  updateTotalItems(totalItems: number, triggerChangedEvent = false) {
+    this._totalItems = totalItems;
+    if (this._paginationOptions) {
+      this._paginationOptions.totalItems = totalItems;
+      this.refreshPagination(false, triggerChangedEvent);
+    }
+  }
+
   // --
   // private functions
   // --------------------
@@ -367,7 +382,7 @@ export class PaginationService {
     if (items !== null) {
       const previousDataTo = this._dataTo;
       const itemCount = Array.isArray(items) ? items.length : 1;
-      const itemCountWithDirection = isItemAdded ? +itemCount : -itemCount;
+      const itemCountWithDirection = isItemAdded ? +(itemCount) : -(itemCount);
 
       // refresh the total count in the pagination and in the UI
       this._totalItems += itemCountWithDirection;

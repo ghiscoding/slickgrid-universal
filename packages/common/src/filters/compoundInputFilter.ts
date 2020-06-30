@@ -13,9 +13,6 @@ import {
 import { getTranslationPrefix, mapOperatorToShorthandDesignation } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 
-// using external non-typed js libraries
-declare const $: any;
-
 export class CompoundInputFilter implements Filter {
   private _clearFilterTriggered = false;
   private _shouldTriggerQuery = true;
@@ -227,7 +224,8 @@ export class CompoundInputFilter implements Filter {
     this.$filterInputElm.data('columnId', columnId);
 
     if (this.operator) {
-      this.$selectOperatorElm.val(this.operator);
+      const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);
+      this.$selectOperatorElm.val(operatorShorthand);
     }
 
     // if there's a search term, we will add the "filled" class for styling purposes

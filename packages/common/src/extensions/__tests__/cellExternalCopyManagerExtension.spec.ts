@@ -27,14 +27,13 @@ const mockSelectionModel = jest.fn().mockImplementation(() => ({
   init: jest.fn(),
   destroy: jest.fn()
 }));
-
-jest.mock('slickgrid/plugins/slick.cellexternalcopymanager', () => mockAddon);
 Slick.CellExternalCopyManager = mockAddon;
-
-jest.mock('slickgrid/plugins/slick.cellselectionmodel', () => mockSelectionModel);
 Slick.CellSelectionModel = mockSelectionModel;
 
 describe('cellExternalCopyManagerExtension', () => {
+  jest.mock('slickgrid/plugins/slick.cellexternalcopymanager', () => mockAddon);
+  jest.mock('slickgrid/plugins/slick.cellselectionmodel', () => mockSelectionModel);
+
   let queueCallback: EditCommand;
   const mockEventCallback = () => { };
   const mockSelectRange = [{ fromCell: 1, fromRow: 1, toCell: 1, toRow: 1 }] as CellRange[];

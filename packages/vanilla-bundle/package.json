@@ -6,6 +6,9 @@
   "main": "dist/commonjs/index.js",
   "module": "dist/es2015/index.js",
   "typings": "dist/commonjs/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "src",
     "dist"
@@ -17,9 +20,9 @@
     "build": "cross-env tsc --build",
     "postbuild": "npm-run-all bundle:commonjs",
     "build:watch": "cross-env tsc --incremental --watch",
+    "bundle": "npm-run-all bundle:commonjs bundle:es2020 webpack:prod",
     "bundle:commonjs": "tsc --project tsconfig.build.json --outDir dist/commonjs --module commonjs",
     "bundle:es2020": "cross-env tsc --project tsconfig.build.json --outDir dist/es2020 --module es2015 --target es2020",
-    "bundle": "npm-run-all bundle:commonjs bundle:es2020 webpack:prod",
     "prebundle": "npm-run-all delete:dist delete:zip",
     "postbundle": "npm-run-all zip:dist",
     "delete:dist": "cross-env rimraf dist",
@@ -43,13 +46,15 @@
   "dependencies": {
     "@slickgrid-universal/common": "^0.0.2",
     "@slickgrid-universal/excel-export": "^0.0.2",
-    "@slickgrid-universal/file-export": "^0.0.2"
+    "@slickgrid-universal/file-export": "^0.0.2",
+    "dompurify": "^2.0.11"
   },
   "devDependencies": {
     "@types/webpack": "^4.41.17",
     "archiver": "^4.0.1",
     "cross-env": "^7.0.2",
     "dts-bundle-webpack": "^1.0.2",
+    "html-loader": "^1.1.0",
     "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.2",
     "ts-loader": "^7.0.5",

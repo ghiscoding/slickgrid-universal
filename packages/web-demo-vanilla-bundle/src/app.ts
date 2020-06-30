@@ -1,5 +1,5 @@
-import { Renderer } from './renderer';
 import { AppRouting } from './app-routing';
+import { Renderer } from './renderer';
 import { RouterConfig } from './interfaces';
 
 export class App {

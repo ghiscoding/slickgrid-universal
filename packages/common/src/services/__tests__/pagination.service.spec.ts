@@ -113,7 +113,6 @@ describe('PaginationService', () => {
   });
 
   it('should initialize the service and be able to change the grid options by the SETTER and expect the GETTER to have updated options', () => {
-    const mockGridOptionCopy = { ...mockGridOption, options: null };
     service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
     service.paginationOptions = mockGridOption.pagination;
 
@@ -128,7 +127,7 @@ describe('PaginationService', () => {
 
     expect(service.totalItems).toEqual(125);
     expect(service.getCurrentPageNumber()).toBe(2);
-    expect(spy).toHaveBeenCalledWith(false, false);
+    expect(spy).toHaveBeenCalledWith(false, false, true);
   });
 
   it('should be able to change the totalItems by the SETTER after the initialization and expect the "refreshPagination" method to be called', () => {
@@ -731,7 +730,7 @@ describe('PaginationService', () => {
     it('should trigger "onShowPaginationChanged" without calling the DataView when using Backend Services', () => {
       const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
       const setPagingSpy = jest.spyOn(dataviewStub, 'setPagingOptions');
-
+      const expectedPagination = { dataFrom: 26, dataTo: 50, pageCount: 4, pageNumber: 2, pageSize: 25, pageSizes: [5, 10, 15, 20,], totalItems: 85, };
       mockGridOption.backendServiceApi = {
         service: mockBackendService,
         process: jest.fn(),
@@ -741,7 +740,9 @@ describe('PaginationService', () => {
       service.togglePaginationVisibility(false);
 
       expect(sharedService.gridOptions.enablePagination).toBeFalse();
-      expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onPaginationVisibilityChanged`, { visible: false });
+      expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onPaginationRefreshed`, expectedPagination);
+      expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onPaginationPresetsInitialized`, expectedPagination);
+      expect(pubSubSpy).toHaveBeenNthCalledWith(3, `onPaginationVisibilityChanged`, { visible: false });
       expect(setPagingSpy).not.toHaveBeenCalled();
     });
 
@@ -754,7 +755,7 @@ describe('PaginationService', () => {
       service.togglePaginationVisibility(false);
 
       expect(sharedService.gridOptions.enablePagination).toBeFalse();
-      expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onPaginationVisibilityChanged`, { visible: false });
+      expect(pubSubSpy).toHaveBeenNthCalledWith(3, `onPaginationVisibilityChanged`, { visible: false });
       expect(setPagingSpy).toHaveBeenCalledWith({ pageSize: 0, pageNum: 0 });
     });
 
@@ -769,7 +770,7 @@ describe('PaginationService', () => {
 
       expect(sharedService.gridOptions.enablePagination).toBeTrue();
       expect(gotoSpy).toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onPaginationVisibilityChanged`, { visible: true });
+      expect(pubSubSpy).toHaveBeenNthCalledWith(3, `onPaginationVisibilityChanged`, { visible: true });
       expect(setPagingSpy).toHaveBeenCalledWith({ pageSize: mockGridOption.pagination.pageSize, pageNum: 0 });
     });
   });
