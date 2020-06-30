@@ -38,7 +38,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.0.2",
+    "@slickgrid-universal/common": "*",
     "excel-builder-webpacker": "^1.0.6",
     "moment-mini": "^2.24.0"
   },

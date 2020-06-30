@@ -24,23 +24,23 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.0.2",
-    "@slickgrid-universal/excel-export": "^0.0.2",
-    "@slickgrid-universal/file-export": "^0.0.2",
-    "@slickgrid-universal/vanilla-bundle": "^0.0.2",
-    "bulma": "^0.8.2",
+    "@slickgrid-universal/common": "*",
+    "@slickgrid-universal/excel-export": "*",
+    "@slickgrid-universal/file-export": "*",
+    "@slickgrid-universal/vanilla-bundle": "*",
+    "bulma": "^0.9.0",
     "moment-mini": "^2.24.0"
   },
   "devDependencies": {
-    "@types/jquery": "^3.3.38",
+    "@types/jquery": "^3.5.0",
     "@types/moment": "^2.13.0",
-    "@types/node": "^14.0.11",
-    "@types/webpack": "^4.41.17",
+    "@types/node": "^14.0.14",
+    "@types/webpack": "^4.41.18",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^6.0.2",
-    "css-loader": "^3.5.3",
+    "css-loader": "^3.6.0",
     "file-loader": "^6.0.0",
-    "fork-ts-checker-webpack-plugin": "^4.1.6",
+    "fork-ts-checker-webpack-plugin": "^5.0.5",
     "html-loader": "^1.1.0",
     "html-webpack-plugin": "^4.3.0",
     "json-loader": "^0.5.7",
@@ -53,7 +53,7 @@
     "typescript": "^3.9.5",
     "url-loader": "^4.1.0",
     "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11",
+    "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"
   }
 }

@@ -44,13 +44,13 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.0.2",
-    "@slickgrid-universal/excel-export": "^0.0.2",
-    "@slickgrid-universal/file-export": "^0.0.2",
-    "dompurify": "^2.0.11"
+    "@slickgrid-universal/common": "*",
+    "@slickgrid-universal/excel-export": "*",
+    "@slickgrid-universal/file-export": "*",
+    "dompurify": "^2.0.12"
   },
   "devDependencies": {
-    "@types/webpack": "^4.41.17",
+    "@types/webpack": "^4.41.18",
     "archiver": "^4.0.1",
     "cross-env": "^7.0.2",
     "dts-bundle-webpack": "^1.0.2",

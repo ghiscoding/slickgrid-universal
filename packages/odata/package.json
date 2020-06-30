@@ -38,6 +38,6 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.0.2"
+    "@slickgrid-universal/common": "*"
   }
 }
