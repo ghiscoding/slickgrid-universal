@@ -11,6 +11,9 @@ $icon-width-mdi-arrow-expand: 14px;
 @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss';
 // @import '@slickgrid-universal/common/dist/styles/sass/se-slickgrid-theme-material.scss';
 
+/** or SalesForce Theme */
+// @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss';
+
 @import './bulma.scss';
 
 .fake-hyperlink {

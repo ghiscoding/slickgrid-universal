@@ -10,7 +10,7 @@ describe('Example 09 - OData Grid', () => {
 
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseExampleUrl')}/example09`);
-    cy.get('h3').should('contain', 'Example 09 - Grid with Backend OData Service');
+    cy.get('h3').should('contain', 'Example 09 - Grid with OData Backend Service');
   });
 
   describe('when "enableCount" is set', () => {

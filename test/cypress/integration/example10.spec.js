@@ -11,7 +11,7 @@ const presetHighestDay = moment().add(20, 'days').format('YYYY-MM-DD');
 describe('Example 10 - GraphQL Grid', () => {
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseExampleUrl')}/example10`);
-    cy.get('h3').should('contain', 'Example 10 - Grid with Backend GraphQL Service');
+    cy.get('h3').should('contain', 'Example 10 - Grid with GraphQL Backend Service');
   });
 
   it('should have a grid of size 900 by 275px', () => {
