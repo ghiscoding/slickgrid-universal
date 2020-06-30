@@ -26,7 +26,7 @@ jobs:
       #     command: yarn run build:demo
       - run:
           name: Run Web Server
-          command: npm run serve
+          command: npm run serve:demo
           background: true
       - run:
           name: Running Cypress E2E tests with JUnit XML reporter
