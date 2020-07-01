@@ -44,12 +44,28 @@ export class BindingHelper {
     });
   }
 
+  /** From a DOM element selector, which could be zero or multiple elements, add an event listener   */
   bindEventHandler(selector: string, eventName: string, callback: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions) {
     const elements = document.querySelectorAll<HTMLElement>(`${this.querySelectorPrefix}${selector}`);
 
-    elements.forEach((elm) => {
+    elements.forEach(elm => {
       if (elm?.addEventListener) {
         elm.addEventListener(eventName, callback, options);
+      }
+    });
+  }
+
+  /**
+   * From a DOM element selector, which could be zero or multiple elements, set the value on a given attribute name
+   * For example ('div.hello', 'textContent', 'world') => would set the textContent equal to 'world' on a div element having the class 'hello'
+   */
+  setElementAttributeValue(selector: string, attribute: string, value: any) {
+    const elements = document.querySelectorAll<HTMLElement>(`${this.querySelectorPrefix}${selector}`);
+
+    elements.forEach(elm => {
+      elm.textContent = '';
+      if (elm && attribute in elm) {
+        elm[attribute] = value;
       }
     });
   }

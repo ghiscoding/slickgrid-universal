@@ -140,8 +140,8 @@ export class VanillaGridBundle {
   translateService: TranslateService;
   treeDataService: TreeDataService;
 
-  slickFooter: SlickFooterComponent;
-  slickPagination: SlickPaginationComponent;
+  slickFooter: SlickFooterComponent | undefined;
+  slickPagination: SlickPaginationComponent | undefined;
   gridClass: string;
   gridClassName: string;
 
@@ -404,8 +404,10 @@ export class VanillaGridBundle {
     }
 
     // user could show a custom footer with the data metrics (dataset length and last updated timestamp)
-    this.slickFooter = new SlickFooterComponent(this.sharedService, this.translateService);
-    this.slickFooter.optionallyShowCustomFooterWithMetrics(this._gridParentContainerElm);
+    if (!this.gridOptions.enablePagination && this.gridOptions.showCustomFooter && this.gridOptions.customFooterOptions) {
+      this.slickFooter = new SlickFooterComponent(this.grid, this.gridOptions.customFooterOptions, this.translateService);
+      this.slickFooter.renderFooter(this._gridParentContainerElm);
+    }
 
     const fixedGridDimensions = (this._gridOptions?.gridHeight || this._gridOptions?.gridWidth) ? { height: this._gridOptions?.gridHeight, width: this._gridOptions?.gridWidth } : undefined;
     const autoResizeOptions = this._gridOptions?.autoResize ?? { bottomPadding: 0 };
@@ -658,7 +660,9 @@ export class VanillaGridBundle {
         };
 
         // if custom footer is enabled, then we'll update its metrics
-        this.slickFooter.metrics = this.metrics;
+        if (this.slickFooter) {
+          this.slickFooter.metrics = this.metrics;
+        }
       });
 
       // without this, filtering data with local dataset will not always show correctly

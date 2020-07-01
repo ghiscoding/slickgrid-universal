@@ -8,7 +8,6 @@ import {
   GridOption,
   Locale,
   Metrics,
-  SharedService,
   SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
@@ -18,98 +17,80 @@ export class SlickFooterComponent {
   private _bindingHelper: BindingHelper;
   private _domPurifyOptions: any = {};
   private _footerElement: HTMLDivElement;
-  private _customFooterOptions: CustomFooterOption;
-  private _metrics: Metrics = {
-    // TODO might want to replace this approach
-    startTime: undefined,
-    endTime: undefined,
-    itemCount: 0,
-    totalItemCount: undefined
-  };
-  showCustomFooter = false;
-
-  get grid(): SlickGrid {
-    return this.sharedService.grid;
-  }
 
   get gridUid(): string {
     return this.grid?.getUID() ?? '';
   }
 
+  /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return this.sharedService?.gridOptions || {};
+    return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
   }
 
   get locales(): Locale {
     // get locales provided by user in main file or else use default English locales via the Constants
-    return this.sharedService.gridOptions && this.sharedService.gridOptions.locales || Constants.locales;
+    return this.gridOptions.locales || Constants.locales;
   }
 
   set metrics(metrics: Metrics) {
-    this._metrics.startTime = metrics.startTime;
-    this._metrics.endTime = metrics.endTime;
-    this._metrics.itemCount = metrics.itemCount;
-    this._metrics.totalItemCount = metrics.totalItemCount;
+    this.renderMetrics(metrics);
   }
 
-  constructor(private sharedService: SharedService, private translaterService?: TranslaterService) {
+  constructor(private grid: SlickGrid, private customFooterOptions: CustomFooterOption, private translaterService?: TranslaterService) {
     this._bindingHelper = new BindingHelper();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
   }
 
-  /** Add some DOM Element bindings */
-  addBindings() {
-    // TODO replace by binding setter instead of bindings
-    this._bindingHelper.addElementBinding(this._metrics, 'itemCount', 'span.item-count', 'textContent');
-    this._bindingHelper.addElementBinding(this._metrics, 'totalItemCount', 'span.total-count', 'textContent');
-    this._bindingHelper.addElementBinding(this._metrics, 'endTime', 'span.last-update', 'textContent');
+  dispose() {
+    this._bindingHelper.dispose();
+    this._footerElement?.remove();
   }
 
   /**
    * We could optionally display a custom footer below the grid to show some metrics (last update, item count with/without filters)
    * It's an opt-in, user has to enable "showCustomFooter" and it cannot be used when there's already a Pagination since they display the same kind of info
    */
-  optionallyShowCustomFooterWithMetrics(gridParentContainerElm: HTMLElement): boolean {
-    if (this.gridOptions) {
-      if (this.gridOptions.enableTranslate) {
-        this.translateCustomFooterTexts();
-      } else if (this.gridOptions.customFooterOptions) {
-        const customFooterOptions = this.gridOptions.customFooterOptions;
-        customFooterOptions.metricTexts = customFooterOptions.metricTexts || {};
-        customFooterOptions.metricTexts.lastUpdate = customFooterOptions.metricTexts.lastUpdate || this.locales && this.locales.TEXT_LAST_UPDATE || 'TEXT_LAST_UPDATE';
-        customFooterOptions.metricTexts.items = customFooterOptions.metricTexts.items || this.locales && this.locales.TEXT_ITEMS || 'TEXT_ITEMS';
-        customFooterOptions.metricTexts.of = customFooterOptions.metricTexts.of || this.locales && this.locales.TEXT_OF || 'TEXT_OF';
-      }
-
-      // we will display the custom footer only when there's no Pagination
-      if (!this.gridOptions.enablePagination && this.gridOptions?.showCustomFooter) {
-        this.showCustomFooter = this.gridOptions?.showCustomFooter ?? false;
-        this._customFooterOptions = this.gridOptions.customFooterOptions || {};
-        this.renderFooter(gridParentContainerElm);
-        this.addBindings();
-        return true;
-      }
+  renderFooter(gridParentContainerElm: HTMLElement) {
+    if (this.gridOptions.enableTranslate) {
+      this.translateCustomFooterTexts();
+    } else {
+      this.customFooterOptions.metricTexts = this.customFooterOptions.metricTexts || {};
+      this.customFooterOptions.metricTexts.lastUpdate = this.customFooterOptions.metricTexts.lastUpdate || this.locales && this.locales.TEXT_LAST_UPDATE || 'TEXT_LAST_UPDATE';
+      this.customFooterOptions.metricTexts.items = this.customFooterOptions.metricTexts.items || this.locales && this.locales.TEXT_ITEMS || 'TEXT_ITEMS';
+      this.customFooterOptions.metricTexts.of = this.customFooterOptions.metricTexts.of || this.locales && this.locales.TEXT_OF || 'TEXT_OF';
     }
 
-    this.showCustomFooter = false;
-    return false;
+    // we create and the custom footer in the DOM but only when there's no Pagination
+    this.createFooterContainer(gridParentContainerElm);
   }
 
-  renderFooter(gridParentContainerElm: HTMLElement) {
+  /** Render element attribute values */
+  renderMetrics(metrics: Metrics) {
+    this._bindingHelper.setElementAttributeValue('span.item-count', 'textContent', metrics.itemCount);
+    this._bindingHelper.setElementAttributeValue('span.total-count', 'textContent', metrics.totalItemCount);
+    this._bindingHelper.setElementAttributeValue('span.last-update', 'textContent', moment(metrics.endTime).format(this.customFooterOptions.dateFormat));
+  }
+
+  // --
+  // private functions
+  // --------------------
+
+  /** Create the Footer Container */
+  private createFooterContainer(gridParentContainerElm: HTMLElement) {
     const footerElm = document.createElement('div');
     footerElm.className = `slick-custom-footer row ${this.gridUid}`;
     footerElm.style.width = '100%';
-    footerElm.style.height = `${this._customFooterOptions.footerHeight || 20}px`;
+    footerElm.style.height = `${this.customFooterOptions.footerHeight || 20}px`;
 
     const leftFooterElm = document.createElement('div');
-    leftFooterElm.className = `left-footer ${this._customFooterOptions.leftContainerClass}`;
-    leftFooterElm.innerHTML = DOMPurify.sanitize(this._customFooterOptions.leftFooterText || '', this._domPurifyOptions).toString();
+    leftFooterElm.className = `left-footer ${this.customFooterOptions.leftContainerClass}`;
+    leftFooterElm.innerHTML = DOMPurify.sanitize(this.customFooterOptions.leftFooterText || '', this._domPurifyOptions).toString();
 
     const metricsElm = document.createElement('div');
     metricsElm.className = 'metrics';
 
-    if (!this._customFooterOptions?.hideMetrics) {
-      const rightFooterElm = this.renderFooterRightContainer();
+    if (!this.customFooterOptions.hideMetrics) {
+      const rightFooterElm = this.createFooterRightContainer();
       if (rightFooterElm) {
         metricsElm.appendChild(rightFooterElm);
       }
@@ -121,19 +102,19 @@ export class SlickFooterComponent {
 
     if (gridParentContainerElm?.append && this._footerElement) {
       gridParentContainerElm.append(this._footerElement);
-      this.addBindings();
     }
   }
 
-  renderFooterRightContainer(): HTMLDivElement {
+  /** Create the Right Section Footer */
+  private createFooterRightContainer(): HTMLDivElement {
     const rightFooterElm = document.createElement('div');
-    rightFooterElm.className = `right-footer metrics ${this._customFooterOptions.rightContainerClass}`;
+    rightFooterElm.className = `right-footer metrics ${this.customFooterOptions.rightContainerClass || ''}`;
 
     const lastUpdateElm = document.createElement('span');
     lastUpdateElm.className = 'timestamp';
 
-    if (!this._customFooterOptions.hideLastUpdateTimestamp) {
-      const footerLastUpdateElm = this.renderFooterLastUpdate();
+    if (!this.customFooterOptions.hideLastUpdateTimestamp) {
+      const footerLastUpdateElm = this.createFooterLastUpdate();
       if (footerLastUpdateElm) {
         lastUpdateElm.appendChild(footerLastUpdateElm);
       }
@@ -148,9 +129,9 @@ export class SlickFooterComponent {
     rightFooterElm.appendChild(itemCountElm);
 
     // total count element (unless hidden)
-    if (!this._customFooterOptions.hideTotalItemCount) {
+    if (!this.customFooterOptions.hideTotalItemCount) {
       const textOfElm = document.createElement('span');
-      textOfElm.textContent = ` ${this._customFooterOptions?.metricTexts?.of ?? ''} `;
+      textOfElm.textContent = ` ${this.customFooterOptions.metricTexts?.of ?? ''} `;
       rightFooterElm.appendChild(textOfElm);
 
       const totalCountElm = document.createElement('span');
@@ -161,20 +142,21 @@ export class SlickFooterComponent {
     }
 
     const textItemsElm = document.createElement('span');
-    textItemsElm.textContent = ` ${this._customFooterOptions?.metricTexts?.items ?? ''} `;
+    textItemsElm.textContent = ` ${this.customFooterOptions.metricTexts?.items ?? ''} `;
     rightFooterElm.appendChild(textItemsElm);
 
     return rightFooterElm;
   }
 
-  renderFooterLastUpdate(): HTMLSpanElement {
+  /** Create the Right Section Last Update Timestamp */
+  private createFooterLastUpdate(): HTMLSpanElement {
     const lastUpdateElm = document.createElement('span');
     lastUpdateElm.className = 'last-update';
-    lastUpdateElm.textContent = moment(this.metrics?.endTime).format(this._customFooterOptions.dateFormat);
+    lastUpdateElm.textContent = moment(this.metrics?.endTime).format(this.customFooterOptions.dateFormat);
 
     const separatorElm = document.createElement('span');
     separatorElm.className = 'separator';
-    separatorElm.textContent = ` ${this._customFooterOptions.metricSeparator} `;
+    separatorElm.textContent = ` ${this.customFooterOptions.metricSeparator || ''} `;
 
     const lastUpdateContainerElm = document.createElement('span');
     lastUpdateContainerElm.appendChild(lastUpdateElm);
@@ -183,19 +165,14 @@ export class SlickFooterComponent {
     return lastUpdateContainerElm;
   }
 
-  // --
-  // private functions
-  // --------------------
-
   /** Translate all Custom Footer Texts (footer with metrics) */
   private translateCustomFooterTexts() {
-    if (this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLocale && this.translaterService.getCurrentLocale()) {
-      const customFooterOptions = this.gridOptions?.customFooterOptions || {};
-      customFooterOptions.metricTexts = customFooterOptions.metricTexts || {};
-      for (const propName of Object.keys(customFooterOptions.metricTexts)) {
+    if (this.translaterService?.translate) {
+      this.customFooterOptions.metricTexts = this.customFooterOptions.metricTexts || {};
+      for (const propName of Object.keys(this.customFooterOptions.metricTexts)) {
         if (propName.lastIndexOf('Key') > 0) {
           const propNameWithoutKey = propName.substring(0, propName.lastIndexOf('Key'));
-          customFooterOptions.metricTexts[propNameWithoutKey] = this.translaterService.translate(customFooterOptions.metricTexts[propName] || ' ');
+          this.customFooterOptions.metricTexts[propNameWithoutKey] = this.translaterService.translate(this.customFooterOptions.metricTexts[propName] || ' ');
         }
       }
     }

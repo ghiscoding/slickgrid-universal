@@ -101,4 +101,25 @@ describe('Binding Helper', () => {
     expect(helper.querySelectorPrefix).toBe('.grid123');
     expect(mockCallback).toHaveBeenCalled();
   });
+
+  it('set an element attribute with new value defined', () => {
+    const elm = document.createElement('span');
+    elm.className = 'something';
+    div.appendChild(elm);
+
+    helper.setElementAttributeValue('.something', 'textContent', 'Hello World');
+
+    expect(elm.textContent).toBe('Hello World');
+  });
+
+  it('set an element attribute with new value defined with a prefix also defined', () => {
+    const elm = document.createElement('span');
+    elm.className = 'prefixer something';
+    div.appendChild(elm);
+
+    helper.querySelectorPrefix = '.prefixer';
+    helper.setElementAttributeValue('.something', 'textContent', 'Hello World');
+
+    expect(elm.textContent).toBe('Hello World');
+  });
 });
