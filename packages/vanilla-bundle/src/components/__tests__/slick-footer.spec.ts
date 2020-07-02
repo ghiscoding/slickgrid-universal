@@ -29,7 +29,6 @@ describe('Slick-Footer Component', () => {
     translateService = new TranslateServiceStub();
     mockTimestamp = new Date('2019-05-03T00:00:01');
 
-
     mockGridOptions.customFooterOptions = {
       dateFormat: 'YYYY-MM-DD h:mm:ssa',
       metricSeparator: '|',
@@ -67,6 +66,7 @@ describe('Slick-Footer Component', () => {
       const leftFooterElm = document.querySelector<HTMLSpanElement>('div.slick-custom-footer.slickgrid_123456 > div.left-footer');
       const rightFooterElm = document.querySelector<HTMLSpanElement>('div.slick-custom-footer.slickgrid_123456 > div.metrics');
 
+      expect(translateService.getCurrentLocale()).toBe('en');
       expect(footerContainerElm).toBeTruthy();
       expect(leftFooterElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
@@ -155,6 +155,52 @@ describe('Slick-Footer Component', () => {
         `<div class="right-footer metrics ">
           <span class="timestamp"></span>
           <span class="item-count">7</span><span> some items </span>
+        </div>`));
+    });
+
+    it('should create a the Slick-Footer component in the DOM and expect to use default English locale when none of the metricsText are defined', () => {
+      mockGridOptions.customFooterOptions.metricTexts = { items: '', lastUpdate: '', of: '' };
+
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions, translateService);
+      component.renderFooter(div);
+      component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
+
+      const footerContainerElm = document.querySelector<HTMLDivElement>('div.slick-custom-footer.slickgrid_123456');
+      const leftFooterElm = document.querySelector<HTMLSpanElement>('div.slick-custom-footer.slickgrid_123456 > div.left-footer');
+      const rightFooterElm = document.querySelector<HTMLSpanElement>('div.slick-custom-footer.slickgrid_123456 > div.metrics');
+
+      expect(footerContainerElm).toBeTruthy();
+      expect(leftFooterElm).toBeTruthy();
+      expect(rightFooterElm).toBeTruthy();
+      expect(leftFooterElm.innerHTML).toBe('');
+      expect(rightFooterElm.innerHTML).toBe(removeExtraSpaces(
+        `<div class="right-footer metrics ">
+          <span class="timestamp"><span><span class="last-update">2019-05-03 12:00:01am</span><span class="separator"> | </span></span></span>
+          <span class="item-count">7</span><span> of </span><span class="total-count">99</span><span> items </span>
+        </div>`));
+    });
+
+    it('should create a the Slick-Footer component in the DOM and use different locale when enableTranslate is enabled', () => {
+      mockGridOptions.customFooterOptions.metricTexts = { itemsKey: 'ITEMS', lastUpdateKey: 'LAST_UPDATE', ofKey: 'OF' };
+      mockGridOptions.enableTranslate = true;
+      translateService.setLocale('fr');
+
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions, translateService);
+      component.renderFooter(div);
+      component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
+
+      const footerContainerElm = document.querySelector<HTMLDivElement>('div.slick-custom-footer.slickgrid_123456');
+      const leftFooterElm = document.querySelector<HTMLSpanElement>('div.slick-custom-footer.slickgrid_123456 > div.left-footer');
+      const rightFooterElm = document.querySelector<HTMLSpanElement>('div.slick-custom-footer.slickgrid_123456 > div.metrics');
+
+      expect(footerContainerElm).toBeTruthy();
+      expect(leftFooterElm).toBeTruthy();
+      expect(rightFooterElm).toBeTruthy();
+      expect(leftFooterElm.innerHTML).toBe('');
+      expect(rightFooterElm.innerHTML).toBe(removeExtraSpaces(
+        `<div class="right-footer metrics ">
+          <span class="timestamp"><span><span class="last-update">2019-05-03 12:00:01am</span><span class="separator"> | </span></span></span>
+          <span class="item-count">7</span><span> de </span><span class="total-count">99</span><span> éléments </span>
         </div>`));
     });
   });

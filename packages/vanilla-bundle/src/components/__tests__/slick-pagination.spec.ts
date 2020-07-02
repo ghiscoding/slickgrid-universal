@@ -222,7 +222,7 @@ describe('Slick-Pagination Component', () => {
 });
 
 describe('with different i18n locale', () => {
-  let component: any;
+  let component: SlickPaginationComponent;
   let div: HTMLDivElement;
   let eventPubSubService: EventPubSubService;
   let sharedService: SharedService;
