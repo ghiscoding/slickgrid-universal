@@ -113,7 +113,7 @@ export class Example09 {
 
   displaySpinner(isProcessing) {
     this.processing = isProcessing;
-    this.status = (isProcessing) ? 'loading...' : 'done!!!';
+    this.status = (isProcessing) ? 'loading...' : 'finished!!';
     this.statusClass = (isProcessing) ? 'notification is-light is-warning' : 'notification is-light is-success';
   }
 
