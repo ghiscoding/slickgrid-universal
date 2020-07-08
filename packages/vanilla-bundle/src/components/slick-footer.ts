@@ -67,7 +67,7 @@ export class SlickFooterComponent {
   /** Render element attribute values */
   renderMetrics(metrics: Metrics) {
     // get translated text & last timestamp
-    const lastUpdateText = this.customFooterOptions.metricTexts.lastUpdate;
+    const lastUpdateText = this.customFooterOptions?.metricTexts?.lastUpdate ?? '';
     const lastUpdateTimestamp = moment(metrics.endTime).format(this.customFooterOptions.dateFormat);
     this._bindingHelper.setElementAttributeValue('span.last-update', 'textContent', `${lastUpdateText} ${lastUpdateTimestamp}`);
     this._bindingHelper.setElementAttributeValue('span.item-count', 'textContent', metrics.itemCount);
@@ -154,7 +154,7 @@ export class SlickFooterComponent {
   /** Create the Right Section Last Update Timestamp */
   private createFooterLastUpdate(): HTMLSpanElement {
     // get translated text & last timestamp
-    const lastUpdateText = this.customFooterOptions.metricTexts.lastUpdate;
+    const lastUpdateText = this.customFooterOptions?.metricTexts?.lastUpdate ?? '';
     const lastUpdateTimestamp = moment(this.metrics?.endTime).format(this.customFooterOptions.dateFormat);
 
     const lastUpdateElm = document.createElement('span');
