@@ -7,7 +7,7 @@ GraphQL Service to sync a grid with an GraphQL backend server, the service will 
 No external dependency
 
 ### Installation
-Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation), you can see a demo by looking at the [GitHub Demo](https://ghiscoding.github.io/slickgrid-universal) page.
+Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation), you can see a demo by looking at the [GitHub Demo](https://ghiscoding.github.io/slickgrid-universal/#/example10) page.
 
 ### Usage
 Simply use pass the Service into the `backendServiceApi` Grid Option.

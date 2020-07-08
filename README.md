@@ -35,17 +35,19 @@ and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) to use 
 Note however that this project also has a Vanilla Implementation (not associated to any framework)
 and it is also used to test with the UI portion. The Vanilla bundle is also used in our SalesForce (with Lightning Web Component) hence the creation of this monorepo.
 
-#### The main packages structure is the following
-- `@slickgrid-universal/common`: commonly used Formatters/Editors/Filters/Services/...
-  - this can then be used by any Framework (Angular, Aurelia, VanillaJS, ...)
-- `@slickgrid-universal/excel-export`: export to Excel (xls/xlsx)
-- `@slickgrid-universal/file-export`: export to text file (csv/txt)
-- `@slickgrid-universal/graphql`: GraphQL querying (support Filter/Sort/Pagination with a GraphQL backend Server)
-- `@slickgrid-universal/odata`: OData querying (support Filter/Sort/Pagination with an OData backend Server)
-- `@slickgrid-universal/vanilla-bundle`: a vanilla TypeScript/JavaScript implementation (framework-less)
-  - &nbsp;
-- **Standalone Package**
-  - `slickgrid-universal/web-demo-vanilla-bundle` standalone package for demo purposes and UI testing (not a public package)
+### Available Packages
+
+| Package Name | Description | Publish |
+| --------| ----------- | ------------- |
+| [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common) | commonly used Formatters/Editors/Filters/Services/... | public |
+| [@slickgrid-universal/excel-export](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/excel-export) | export to Excel (xls/xlsx) | public |
+| [@slickgrid-universal/file-export](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/file-export) | export to text file (csv/txt) | public |
+| [@slickgrid-universal/graphql](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/graphql) | GraphQL querying (support Filter/Sort/Pagination with a GraphQL backend Server) | public |
+| [@slickgrid-universal/odata](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/odata) | OData querying (support Filter/Sort/Pagination with an OData backend Server) | public |
+| [@slickgrid-universal/vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) | a vanilla TypeScript/JavaScript implementation | public |
+|  |  |  |
+| [slickgrid-universal/web-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/web-demo-vanilla-bundle) | standalone package for demo purposes and UI testing (therefore not a public package) | private |
+
 
 ### Installation
 To get going with this monorepo, you will need to clone the repo and then follow the steps below
