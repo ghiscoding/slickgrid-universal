@@ -32,8 +32,8 @@ export class Example1 {
   }
 
   dispose() {
-    this.slickgridLwc1.dispose();
-    this.slickgridLwc2.dispose();
+    this.slickgridLwc1?.dispose();
+    this.slickgridLwc2?.dispose();
   }
 
   /* Define grid Options and Columns */

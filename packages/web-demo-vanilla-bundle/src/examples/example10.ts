@@ -37,7 +37,7 @@ export class Example10 {
 
   dispose() {
     if (this.slickgridLwc) {
-      this.slickgridLwc.dispose();
+      this.slickgridLwc?.dispose();
     }
     //   this.saveCurrentGridState();
   }

@@ -32,7 +32,7 @@ export class Example2 {
   }
 
   dispose() {
-    this.slickgridLwc.dispose();
+    this.slickgridLwc?.dispose();
   }
 
   initializeGrid() {

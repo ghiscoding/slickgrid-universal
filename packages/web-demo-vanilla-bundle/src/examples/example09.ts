@@ -33,7 +33,7 @@ export class Example09 {
 
   dispose() {
     if (this.slickgridLwc) {
-      this.slickgridLwc.dispose();
+      this.slickgridLwc?.dispose();
     }
   }
 
