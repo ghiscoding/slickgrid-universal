@@ -30,7 +30,7 @@ describe('Slick-Footer Component', () => {
     mockTimestamp = new Date('2019-05-03T00:00:01');
 
     mockGridOptions.customFooterOptions = {
-      dateFormat: 'YYYY-MM-DD h:mm:ssa',
+      dateFormat: 'YYYY-MM-DD, h:mm:ssa',
       metricSeparator: '|',
       metricTexts: {
         items: 'some items',
@@ -106,7 +106,7 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm.innerHTML).toBe('');
       expect(rightFooterElm.innerHTML).toBe(removeExtraSpaces(
         `<div class="right-footer metrics ">
-          <span class="timestamp"><span><span class="last-update">2019-05-03 12:00:01am</span><span class="separator"> | </span></span></span>
+          <span class="timestamp"><span><span class="last-update">some last update 2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
           <span class="item-count">7</span><span> some of </span><span class="total-count">99</span><span> some items </span>
         </div>`));
     });
@@ -175,7 +175,7 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm.innerHTML).toBe('');
       expect(rightFooterElm.innerHTML).toBe(removeExtraSpaces(
         `<div class="right-footer metrics ">
-          <span class="timestamp"><span><span class="last-update">2019-05-03 12:00:01am</span><span class="separator"> | </span></span></span>
+          <span class="timestamp"><span><span class="last-update">Last Update 2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
           <span class="item-count">7</span><span> of </span><span class="total-count">99</span><span> items </span>
         </div>`));
     });
@@ -199,7 +199,7 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm.innerHTML).toBe('');
       expect(rightFooterElm.innerHTML).toBe(removeExtraSpaces(
         `<div class="right-footer metrics ">
-          <span class="timestamp"><span><span class="last-update">2019-05-03 12:00:01am</span><span class="separator"> | </span></span></span>
+          <span class="timestamp"><span><span class="last-update">Dernière mise à jour 2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
           <span class="item-count">7</span><span> de </span><span class="total-count">99</span><span> éléments </span>
         </div>`));
     });
