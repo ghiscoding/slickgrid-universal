@@ -1,4 +1,4 @@
-export interface SlickEventData extends Event {
+export interface SlickEventData extends KeyboardEvent, MouseEvent, Event {
   /** Stops event from propagating up the DOM tree. */
   stopPropagation: () => void;
 
