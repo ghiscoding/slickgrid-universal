@@ -15,7 +15,7 @@
     "diff": "lerna diff",
     "updated": "lerna updated",
     "clean:tsconfig-build-cache": "rimraf packages/*/dist/tsconfig.tsbuildinfo",
-    "new-version": "lerna version --conventional-commits --yes",
+    "new-version": "lerna version --conventional-commits",
     "serve:demo": "http-server ./docs -p 8888 -a localhost",
     "test": "npx jest --runInBand --coverage --config ./test/jest.config.js",
     "test:watch": "npx jest --watch --config ./test/jest.config.js"
