@@ -748,7 +748,7 @@ export class FilterService {
    * Callback method that is called and executed by the individual Filter (DOM element),
    * for example when user type in a word to search (which uses InputFilter), this Filter will execute the callback from a keyup event.
    */
-  private callbackSearchEvent(event: SlickEventData, args: FilterCallbackArg) {
+  private callbackSearchEvent(event: SlickEventData | null, args: FilterCallbackArg) {
     if (args) {
       const searchTerm = ((event && event.target) ? (event.target as HTMLInputElement).value : undefined);
       const searchTerms = (args.searchTerms && Array.isArray(args.searchTerms)) ? args.searchTerms : (searchTerm ? [searchTerm] : undefined);
