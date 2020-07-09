@@ -296,9 +296,10 @@ describe('FilterService', () => {
       mockArgs = { grid: gridStub, column: mockColumn, node: document.getElementById(DOM_ELEMENT_ID) };
     });
 
-    it('should execute the callback normally when a keyup event is triggered and searchTerms are defined', () => {
+    it('should execute the search callback normally when a keyup event is triggered and searchTerms are defined', () => {
       const expectationColumnFilter = { columnDef: mockColumn, columnId: 'firstName', operator: 'EQ', searchTerms: ['John'] };
       const spySearchChange = jest.spyOn(service.onSearchChange, 'notify');
+      const spyEmit = jest.spyOn(service, 'emitFilterChanged');
 
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub, dataViewStub);
@@ -316,6 +317,7 @@ describe('FilterService', () => {
         searchTerms: ['John'],
         grid: gridStub
       }, expect.anything());
+      expect(spyEmit).toHaveBeenCalledWith('local');
     });
 
     it('should execute the callback normally when a keyup event is triggered and the searchTerm comes from this event.target', () => {
@@ -473,7 +475,7 @@ describe('FilterService', () => {
       it('should execute the "onError" method when the Promise throws an error', (done) => {
         const errorExpected = 'promise error';
         gridOptionMock.backendServiceApi.process = () => Promise.reject(errorExpected);
-        gridOptionMock.backendServiceApi.onError = (e) => jest.fn();
+        gridOptionMock.backendServiceApi.onError = () => jest.fn();
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyOnError = jest.spyOn(gridOptionMock.backendServiceApi, 'onError');
         jest.spyOn(gridOptionMock.backendServiceApi, 'process');
@@ -839,8 +841,9 @@ describe('FilterService', () => {
       expect(spy).toHaveBeenCalled();
     });
 
-    it('should execute "processOnFilterChanged" method when "shouldTriggerQuery" is set to True and "debounceTypingDelay" is bigger than 0', (done) => {
-      gridOptionMock.backendServiceApi.filterTypingDebounce = 1;
+    it('should execute "processOnFilterChanged" method when "shouldTriggerQuery" is set to True and "debounceTypingDelay" is bigger than 0', () => {
+      jest.useFakeTimers();
+      gridOptionMock.backendServiceApi.filterTypingDebounce = 50;
       const spy = jest.spyOn(gridOptionMock.backendServiceApi.service, 'processOnFilterChanged').mockReturnValue('backend query');
 
       service.init(gridStub);
@@ -850,10 +853,13 @@ describe('FilterService', () => {
       // @ts-ignore
       service.onBackendFilterChange(mockEvent, { grid: gridStub, shouldTriggerQuery: true });
 
-      setTimeout(() => {
-        expect(spy).toHaveBeenCalled();
-        done();
-      }, 1);
+      expect(spy).not.toHaveBeenCalled();
+
+      jest.runTimersToTime(49);
+      expect(spy).not.toHaveBeenCalled();
+
+      jest.runTimersToTime(50);
+      expect(spy).toHaveBeenCalled();
     });
   });
 
