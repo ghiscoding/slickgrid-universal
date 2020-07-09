@@ -42,8 +42,8 @@ export class Example1 {
       { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100, filterable: true },
       { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, minWidth: 100, filterable: true },
       { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100, filterable: true },
-      { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso, filterable: true },
-      { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso, filterable: true },
+      { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso, exportWithFormatter: true, filterable: true },
+      { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso, exportWithFormatter: true, filterable: true },
       { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', sortable: true, minWidth: 100, filterable: true }
     ];
     this.gridOptions1 = {

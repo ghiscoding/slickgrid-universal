@@ -109,23 +109,7 @@ npm run test:watch
   - [x] Row Selection
 - [x] Grouping Formatters (12)
 - [x] SortComparers (5)
-- [ ] Services
-  - [x] Collection
-  - [x] Excel Export (**separate package**)
-  - [x] Export Text (**separate package**)
-  - [x] Extension
-  - [x] Filter
-  - [x] GraphQL (**separate package**)
-  - [x] OData (**separate package**)
-  - [x] Grid Event
-  - [x] Grid Service (helper)
-  - [x] Grid State
-  - [x] Grouping & Col Span
-  - [x] Pagination
-  - [ ] Resizer
-    - moved the Service to an Extension
-  - [x] Shared
-  - [x] Sort
+- [x] Services (14)
 - [ ] Others / Vanilla Implementation
   - [x] Custom Footer
   - [x] Backend Services + Pagination
@@ -161,5 +145,5 @@ npm run test:watch
 - [x] Add possibility to use SVG instead of Font Family
 - [x] Add Typings (interfaces) for Slick Grid & DataView objects
   - [x] Add interfaces to all SlickGrid core lib classes & plugins (basically add Types to everything)
-- [ ] Copy text from cell doesn't work in SF
+- [x] Copy text from cell doesn't work in SF
 - [ ] Remove all Services init method 2nd argument (we can get DataView directly from the Grid object)
