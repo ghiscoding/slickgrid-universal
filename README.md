@@ -149,7 +149,7 @@ npm run test:watch
 - [x] Add Multiple Example Demos with Vanilla implementation
   - [x] Add GitHub Demo website
 - [x] Add CI/CD (CircleCI or GitHub Actions)
-  - [ ] Add Cypress E2E tests
+  - [x] Add Cypress E2E tests
   - [x] Add Jest Unit tests
   - [x] Add Jest Code Coverage (codecov)
   - [x] Build and run on every PR
