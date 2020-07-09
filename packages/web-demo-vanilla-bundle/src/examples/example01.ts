@@ -59,6 +59,7 @@ export class Example1 {
     this.gridOptions2 = {
       ...this.gridOptions1,
       ...{
+        gridHeight: 255,
         enablePagination: true,
         enableFiltering: true,
         pagination: {
@@ -68,9 +69,12 @@ export class Example1 {
         presets: {
           pagination: {
             pageNumber: 2,
-            pageSize: 20
+            pageSize: 5
           },
-          sorters: [{ columnId: '%', direction: 'DESC' }, { columnId: 'title', direction: 'ASC' }],
+          sorters: [
+            // { columnId: '%', direction: 'DESC' },
+            { columnId: 'title', direction: 'ASC' }
+          ],
           filters: [{ columnId: 'title', searchTerms: ['2'] }]
         }
       }

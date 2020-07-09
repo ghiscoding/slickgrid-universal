@@ -14,6 +14,7 @@ export class Example08 {
   columnDefinitions2: Column[];
   gridOptions1: GridOption;
   gridOptions2: GridOption;
+  slickerGrid2Instance: any;
   dataset1 = [];
   dataset2 = [];
   slickgridLwc1;
@@ -30,6 +31,7 @@ export class Example08 {
     this.dataset2 = this.loadData(500);
     const gridContainerElm1 = document.querySelector<HTMLDivElement>(`.grid1`);
     const gridContainerElm2 = document.querySelector<HTMLDivElement>(`.grid2`);
+    gridContainerElm2.addEventListener('onslickergridcreated', this.handleOnSlickerGrid2Created.bind(this));
     this.slickgridLwc1 = new Slicker.GridBundle(gridContainerElm1, this.columnDefinitions1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
     this.slickgridLwc2 = new Slicker.GridBundle(gridContainerElm2, this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
   }
@@ -68,6 +70,7 @@ export class Example08 {
 
   definedGrid2() {
     this.columnDefinitions2 = [
+      { id: 'sel', name: '#', field: 'num', behavior: 'select', cssClass: 'cell-selection', width: 40, resizable: false, selectable: false },
       { id: 'title', name: 'Title', field: 'title', minWidth: 120, sortable: true, columnGroup: 'Common Factor' },
       { id: 'duration', name: 'Duration', field: 'duration', minWidth: 120, columnGroup: 'Common Factor' },
       { id: 'start', name: 'Start', field: 'start', minWidth: 145, columnGroup: 'Period' },
@@ -86,7 +89,7 @@ export class Example08 {
       showPreHeaderPanel: true,
       preHeaderPanelHeight: 35,
       explicitInitialization: true,
-      frozenColumn: 1,
+      frozenColumn: 2,
       rowHeight: 33,
       gridMenu: { hideClearFrozenColumnsCommand: false },
       headerMenu: { hideFreezeColumnsCommand: false }
@@ -109,6 +112,16 @@ export class Example08 {
       };
     }
     return mockDataset;
+  }
+
+  handleOnSlickerGrid2Created(event) {
+    this.slickerGrid2Instance = event && event.detail;
+    // console.log('handleOnSlickerGridCreated', this.slickerGrid2Instance);
+  }
+
+  setFrozenColumns2(frozenCols: number) {
+    this.slickerGrid2Instance.slickGrid.setOptions({ frozenColumn: frozenCols, alwaysShowVerticalScroll: false });
+    this.gridOptions2 = this.slickerGrid2Instance.slickGrid.getOptions();
   }
 
   /**

@@ -5,7 +5,6 @@ import {
   Editors,
   FieldType,
   Filters,
-  Formatter,
   Formatters,
   GridOption,
   OperatorType,
@@ -378,17 +377,13 @@ export class Example4 {
     // mock data
     this.dataset = [];
     for (let i = 0; i < 500; i++) {
-      const randomYear = 2000 + Math.floor(Math.random() * 10);
-      const randomMonth = Math.floor(Math.random() * 11);
-      const randomDay = Math.floor((Math.random() * 29));
-
       this.dataset[i] = {
         id: i,
         title: 'Task ' + i,
         duration: i % 8 ? (Math.round(Math.random() * 100) + '') : null,
         percentComplete: Math.round(Math.random() * 100),
-        start: new Date(randomYear, randomMonth, randomDay),
-        finish: new Date(randomYear, (randomMonth + 1), randomDay),
+        start: new Date(2009, 0, 1),
+        finish: new Date(2009, 4, 5),
         cost: (i % 33 === 0) ? null : Math.random() * 10000,
         completed: (i % 5 === 0),
         cityOfOrigin: (i % 2) ? 'Vancouver, BC, Canada' : 'Boston, MA, United States',
@@ -444,6 +439,11 @@ export class Example4 {
         frozenRow: this.frozenRowCount
       });
     }
+  }
+
+  setFrozenColumns(frozenCols: number) {
+    this.slickerGridInstance.slickGrid.setOptions({ frozenColumn: frozenCols, alwaysShowVerticalScroll: false });
+    this.gridOptions = this.slickerGridInstance.slickGrid.getOptions();
   }
 
   /** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */

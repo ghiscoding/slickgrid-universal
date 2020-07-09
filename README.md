@@ -127,7 +127,6 @@ npm run test:watch
   - [x] Sort
 - [ ] Others / Vanilla Implementation
   - [x] Custom Footer
-    - [ ] add unit tests (possibly rewrite component in vanilla JS)
   - [x] Backend Services + Pagination
   - [x] Local Pagination
   - [x] Grid Presets
