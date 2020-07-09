@@ -8,9 +8,6 @@ export const SalesforceGlobalGridOptions: GridOption = {
   exportOptions: {
     exportWithFormatter: true
   },
-  contextMenu: {
-    hideCopyCellValueCommand: true
-  },
   enableCellNavigation: true,
   formatterOptions: {
     minDecimal: 0,

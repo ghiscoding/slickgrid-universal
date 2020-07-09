@@ -190,7 +190,7 @@ export class ContextMenuExtension implements Extension {
             disabled: false,
             command: commandName,
             positionOrder: 50,
-            action: (e: Event, args: MenuCommandItemCallbackArgs) => {
+            action: (_e: Event, args: MenuCommandItemCallbackArgs) => {
               this.copyToClipboard(args);
             },
             itemUsabilityOverride: (args: MenuCallbackArgs) => {
@@ -409,25 +409,18 @@ export class ContextMenuExtension implements Extension {
         const exportOptions = gridOptions && (gridOptions.excelExportOptions || gridOptions.exportOptions);
         const textToCopy = exportWithFormatterWhenDefined(row, cell, dataContext, column, grid, exportOptions);
 
-        // create fake <div> to copy into clipboard & delete it from the DOM once we're done
-        const range = document.createRange();
-        const tmpElem = document.createElement('div') as HTMLDivElement;
-        const body = document.querySelector('body') as HTMLElement;
-        if (tmpElem && body) {
+        // create fake <textarea> (positioned outside of the screen) to copy into clipboard & delete it from the DOM once we're done
+        const tmpElem = document.createElement('textarea') as HTMLTextAreaElement;
+        if (tmpElem && document.body) {
           tmpElem.style.position = 'absolute';
           tmpElem.style.left = '-1000px';
           tmpElem.style.top = '-1000px';
-          tmpElem.textContent = textToCopy;
-          body.appendChild(tmpElem);
-          range.selectNodeContents(tmpElem);
-          const selection = window.getSelection();
-          if (selection && selection.addRange && selection.removeAllRanges) {
-            selection.removeAllRanges();
-            selection.addRange(range);
-            const success = document.execCommand('copy', false, textToCopy);
-            if (success) {
-              tmpElem.remove();
-            }
+          tmpElem.value = textToCopy;
+          document.body.appendChild(tmpElem);
+          tmpElem.select();
+          const success = document.execCommand('copy', false, textToCopy);
+          if (success) {
+            tmpElem.remove();
           }
         }
       }
