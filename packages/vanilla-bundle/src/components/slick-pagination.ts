@@ -231,7 +231,7 @@ export class SlickPaginationComponent {
 
   /** Translate all the texts shown in the UI, use ngx-translate service when available or custom locales when service is null */
   private translatePaginationTexts(locales: Locale) {
-    if (this._enableTranslate && this.translaterService?.translate && this.translaterService.getCurrentLocale) {
+    if (this._enableTranslate && this.translaterService?.translate) {
       const translationPrefix = getTranslationPrefix(this.gridOptions);
       this.textItemsPerPage = this.translaterService.translate(`${translationPrefix}ITEMS_PER_PAGE`);
       this.textItems = this.translaterService.translate(`${translationPrefix}ITEMS`);

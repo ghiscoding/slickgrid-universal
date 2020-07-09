@@ -1,10 +1,10 @@
-## Vanilla Bundle 
+## Vanilla Bundle
 #### @slickgrid-universal/common
 
-This package is regrouping the most common features or pieces that could be used by any other Framework (it is framework agnostic). It includes all Editors, Filters, Extensions and Services as can be seen below. 
+This package is regrouping the most common features or pieces that could be used by any other Framework (it is framework agnostic). It includes all Editors, Filters, Extensions and Services as can be seen below.
 
 ### Installation
-Go to the root of the repo and follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation)
+Go to the root of the repo and follow the instructions provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation)
 
 ### What is included?
 - **Aggregators** (min, max, avg, sum, ...)

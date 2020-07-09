@@ -81,9 +81,11 @@ describe('Slick-Pagination Component', () => {
     });
 
     it('should make sure Slick-Pagination is defined', () => {
+      const paginationElm = document.querySelector<HTMLSelectElement>('div.pager.slickgrid_123456');
+
       expect(component).toBeTruthy();
-      // expect(paginationTemplate).toBeTruthy();
       expect(component.constructor).toBeDefined();
+      expect(paginationElm).toBeTruthy();
     });
 
     it('should create a the Slick-Pagination component in the DOM', () => {
@@ -220,12 +222,12 @@ describe('Slick-Pagination Component', () => {
 });
 
 describe('with different i18n locale', () => {
-  let component: any;
+  let component: SlickPaginationComponent;
   let div: HTMLDivElement;
   let eventPubSubService: EventPubSubService;
   let sharedService: SharedService;
   let translateService: TranslateServiceStub;
-  const mockFullPagination = {
+  const mockFullPagination2 = {
     pageCount: 19,
     pageNumber: 2,
     pageSize: 5,
@@ -239,7 +241,7 @@ describe('with different i18n locale', () => {
     mockGridOptions.enableTranslate = true;
     jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
     jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
-    jest.spyOn(paginationServiceStub, 'getFullPagination').mockReturnValue(mockFullPagination);
+    jest.spyOn(paginationServiceStub, 'getFullPagination').mockReturnValue(mockFullPagination2);
     div = document.createElement('div');
     document.body.appendChild(div);
     sharedService = new SharedService();

@@ -35,6 +35,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'HELP': output = this._locale === 'en' ? 'Help' : 'Aide'; break;
       case 'HIDE_COLUMN': output = this._locale === 'en' ? 'Hide Column' : 'Cacher la colonne'; break;
       case 'LAST_NAME': output = this._locale === 'en' ? 'Last Name' : 'Nom de famille'; break;
+      case 'LAST_UPDATE': output = this._locale === 'en' ? 'Last Update' : 'Dernière mise à jour'; break;
       case 'MALE': output = this._locale === 'en' ? 'Male' : 'Mâle'; break;
       case 'ITEMS': output = this._locale === 'en' ? 'items' : 'éléments'; break;
       case 'ITEMS_PER_PAGE': output = this._locale === 'en' ? 'items per page' : 'éléments par page'; break;

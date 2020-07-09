@@ -285,7 +285,7 @@ export class Example51 {
   }
 
   dispose() {
-    this.slickgridLwc.dispose();
+    this.slickgridLwc?.dispose();
   }
 
   searchItem(event: KeyboardEvent) {

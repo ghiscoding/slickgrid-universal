@@ -16,6 +16,15 @@
     </button>
   </span>
   <span style="margin-left: 15px">
+    <button class="button is-small" onclick.delegate="setFrozenColumns(-1)"
+            data-test="remove-frozen-column-button">
+      <span class="icon mdi mdi-close"></span>
+      <span>Remove Frozen Columns</span>
+    </button>
+    <button class="button is-small" onclick.delegate="setFrozenColumns(2)" data-test="set-3frozen-columns">
+      <span class="icon mdi mdi-pin-outline"></span>
+      <span>Set 3 Frozen Columns</span>
+    </button>
     <button class="button is-small" onclick.delegate="toggleFrozenBottomRows()">
       <span class="icon mdi mdi-flip-vertical"></span>
       <span>Toggle Pinned Rows</span>

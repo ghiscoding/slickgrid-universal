@@ -76,7 +76,7 @@ export class Example3 {
   }
 
   dispose() {
-    this.slickgridLwc.dispose();
+    this.slickgridLwc?.dispose();
   }
 
   initializeGrid() {

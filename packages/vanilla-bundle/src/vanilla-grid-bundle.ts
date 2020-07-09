@@ -69,7 +69,7 @@ import {
 import { FileExportService } from './services/fileExport.service';
 import { TranslateService } from './services/translate.service';
 import { EventPubSubService } from './services/eventPubSub.service';
-import { FooterService } from './services/footer.service';
+import { SlickFooterComponent } from './components/slick-footer';
 import { SlickPaginationComponent } from './components/slick-pagination';
 import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options';
 
@@ -130,7 +130,6 @@ export class VanillaGridBundle {
   collectionService: CollectionService;
   extensionService: ExtensionService;
   filterService: FilterService;
-  footerService: FooterService;
   gridEventService: GridEventService;
   gridService: GridService;
   gridStateService: GridStateService;
@@ -141,7 +140,8 @@ export class VanillaGridBundle {
   translateService: TranslateService;
   treeDataService: TreeDataService;
 
-  slickPagination: SlickPaginationComponent;
+  slickFooter: SlickFooterComponent | undefined;
+  slickPagination: SlickPaginationComponent | undefined;
   gridClass: string;
   gridClassName: string;
 
@@ -241,7 +241,6 @@ export class VanillaGridBundle {
     this.sharedService = new SharedService();
     this.translateService = new TranslateService();
     this.collectionService = new CollectionService(this.translateService);
-    this.footerService = new FooterService(this.sharedService, this.translateService);
     const filterFactory = new FilterFactory(slickgridConfig, this.collectionService, this.translateService);
     this.filterService = new FilterService(filterFactory, this._eventPubSubService, this.sharedService);
     this.sortService = new SortService(this.sharedService, this._eventPubSubService);
@@ -405,9 +404,9 @@ export class VanillaGridBundle {
     }
 
     // user could show a custom footer with the data metrics (dataset length and last updated timestamp)
-    const customFooterElm = this.footerService.optionallyShowCustomFooterWithMetrics(this.metrics);
-    if (customFooterElm) {
-      $(customFooterElm).appendTo(this._gridParentContainerElm);
+    if (!this.gridOptions.enablePagination && this.gridOptions.showCustomFooter && this.gridOptions.customFooterOptions) {
+      this.slickFooter = new SlickFooterComponent(this.grid, this.gridOptions.customFooterOptions, this.translateService);
+      this.slickFooter.renderFooter(this._gridParentContainerElm);
     }
 
     const fixedGridDimensions = (this._gridOptions?.gridHeight || this._gridOptions?.gridWidth) ? { height: this._gridOptions?.gridHeight, width: this._gridOptions?.gridWidth } : undefined;
@@ -661,15 +660,8 @@ export class VanillaGridBundle {
         };
 
         // if custom footer is enabled, then we'll update its metrics
-        if (this.footerService.showCustomFooter) {
-          const itemCountElm = document.querySelector<HTMLSpanElement>('.item-count');
-          const totalCountElm = document.querySelector<HTMLSpanElement>('.total-count');
-          if (itemCountElm) {
-            itemCountElm.textContent = `${this.metrics.itemCount}`;
-          }
-          if (totalCountElm) {
-            totalCountElm.textContent = `${this.metrics.totalItemCount}`;
-          }
+        if (this.slickFooter) {
+          this.slickFooter.metrics = this.metrics;
         }
       });
 

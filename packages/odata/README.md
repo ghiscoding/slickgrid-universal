@@ -7,7 +7,7 @@ OData Service to sync a grid with an OData backend server, the service will cons
 No external dependency
 
 ### Installation
-Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation), you can see a demo by looking at the [GitHub Demo](https://ghiscoding.github.io/slickgrid-universal) page.
+Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation), you can see a demo by looking at the [GitHub Demo](https://ghiscoding.github.io/slickgrid-universal/#/example09) page.
 
 ### Usage
 In order to use the Service, you will need to register it in your grid options via the `registerExternalServices` as shown below.

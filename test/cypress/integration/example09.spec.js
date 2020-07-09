@@ -19,7 +19,7 @@ describe('Example 09 - OData Grid', () => {
       cy.get('[data-test=alert-odata-query]').should('contain', 'OData Query');
 
       // wait for the query to finish
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]')
         .should(($span) => {
@@ -31,7 +31,7 @@ describe('Example 09 - OData Grid', () => {
       cy.get('.icon-seek-next').click();
 
       // wait for the query to finish
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=page-number-input]')
         .invoke('val')
@@ -65,7 +65,7 @@ describe('Example 09 - OData Grid', () => {
 
       // wait for the query to start and finish
       cy.get('[data-test=status]').should('contain', 'loading...');
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=page-number-input]')
         .invoke('val')
@@ -98,7 +98,7 @@ describe('Example 09 - OData Grid', () => {
       cy.get('.icon-seek-end').click();
 
       // wait for the query to finish
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=page-number-input]')
         .invoke('val')
@@ -132,7 +132,7 @@ describe('Example 09 - OData Grid', () => {
         .click();
 
       // wait for the query to finish
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=page-number-input]')
         .invoke('val')
@@ -166,7 +166,7 @@ describe('Example 09 - OData Grid', () => {
         .click();
 
       // wait for the query to finish
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=page-number-input]')
         .invoke('val')
@@ -209,7 +209,7 @@ describe('Example 09 - OData Grid', () => {
         .click();
 
       // wait for the query to finish
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=page-number-input]')
         .invoke('val')
@@ -252,7 +252,7 @@ describe('Example 09 - OData Grid', () => {
         .click();
 
       // wait for the query to finish
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]')
         .should(($span) => {
@@ -271,7 +271,7 @@ describe('Example 09 - OData Grid', () => {
         .type('John');
 
       // wait for the query to finish
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]')
         .should(($span) => {
@@ -292,7 +292,7 @@ describe('Example 09 - OData Grid', () => {
         .type('John');
 
       // wait for the query to finish
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]')
         .should(($span) => {
@@ -317,7 +317,7 @@ describe('Example 09 - OData Grid', () => {
         .then(text => expect(text).to.eq('A'));
 
       // wait for the query to finish
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]')
         .should(($span) => {
@@ -349,7 +349,7 @@ describe('Example 09 - OData Grid', () => {
       cy.get('[data-test=enable-count]').click();
 
       // wait for the query to finish
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]')
         .should(($span) => {
@@ -361,7 +361,7 @@ describe('Example 09 - OData Grid', () => {
       cy.get('.icon-seek-next').click();
 
       // wait for the query to finish
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]')
         .should(($span) => {
@@ -374,7 +374,7 @@ describe('Example 09 - OData Grid', () => {
 
       // wait for the query to start and finish
       cy.get('[data-test=status]').should('contain', 'loading...');
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]')
         .should(($span) => {
@@ -386,7 +386,7 @@ describe('Example 09 - OData Grid', () => {
       cy.get('.icon-seek-end').click();
 
       // wait for the query to finish
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]')
         .should(($span) => {
@@ -405,7 +405,7 @@ describe('Example 09 - OData Grid', () => {
         .should('be.visible');
 
       // wait for the query to finish
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]')
         .should(($span) => {
@@ -426,7 +426,7 @@ describe('Example 09 - OData Grid', () => {
         .click();
 
       // wait for the query to finish
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]')
         .should(($span) => {
@@ -447,7 +447,7 @@ describe('Example 09 - OData Grid', () => {
         .then(text => expect(text).to.eq('A'));
 
       // wait for the query to finish
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]')
         .should(($span) => {
@@ -468,7 +468,7 @@ describe('Example 09 - OData Grid', () => {
         .type('John');
 
       // wait for the query to finish
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]')
         .should(($span) => {
@@ -489,7 +489,7 @@ describe('Example 09 - OData Grid', () => {
         .type('John');
 
       // wait for the query to finish
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=odata-query-result]')
         .should(($span) => {
@@ -515,7 +515,7 @@ describe('Example 09 - OData Grid', () => {
         });
 
       // wait for the query to finish
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
     });
 
     it('should display page 0 of 0 but hide pagination from/to numbers when filtered data "xy" returns an empty dataset', () => {
@@ -552,7 +552,7 @@ describe('Example 09 - OData Grid', () => {
         });
 
       // wait for the query to finish
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.window().then((win) => {
         // expect(win.console.log).to.have.callCount(2);
@@ -589,13 +589,13 @@ describe('Example 09 - OData Grid', () => {
 
       // wait for the query to finish
       cy.get('[data-test=status]').should('contain', 'loading');
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
 
       cy.get('[data-test=set-dynamic-sorting]')
         .click();
 
       cy.get('[data-test=status]').should('contain', 'loading');
-      cy.get('[data-test=status]').should('contain', 'done');
+      cy.get('[data-test=status]').should('contain', 'finished');
     });
 
     it('should expect the grid to be sorted by "Name" descending', () => {

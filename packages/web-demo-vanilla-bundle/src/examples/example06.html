@@ -35,9 +35,10 @@
         <div class="field is-expanded">
           <div class="field has-addons">
             <p class="control is-expanded">
-              <input type="text" class="input search is-small" onkeyup.delegate="searchFile(event)">
+              <input type="text" class="input search is-small" data-test="search-string"
+                     onkeyup.delegate="searchFile(event)">
             </p>
-            <p class="control pointer" onclick.delegate="clearSearch()">
+            <p class="control pointer" onclick.delegate="clearSearch()" data-test="clear-search-string">
               <a class="button is-static is-small">
                 <span class="icon mdi mdi-close-thick" style="margin-top: 2px"></span>
               </a>

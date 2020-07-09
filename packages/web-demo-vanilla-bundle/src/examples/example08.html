@@ -9,7 +9,22 @@
 
   <hr />
 
-  <h4 class="title is-4">Grid 2 <small>(with Header Grouping &amp; Frozen/Pinned Columns)</small></h4>
+  <div class="title is-4">
+    Grid 2
+    <small>(with Header Grouping &amp; Frozen/Pinned Columns)</small>
+
+    <span style="margin-left: 10px">
+      <button class="button is-small" onclick.delegate="setFrozenColumns2(-1)"
+              data-test="remove-frozen-column-button">
+        <span class="icon mdi mdi-close" style="margin-top: 2px"></span>
+        <span>Remove Frozen Columns</span>
+      </button>
+      <button class="button is-small" onclick.delegate="setFrozenColumns2(2)" data-test="set-3frozen-columns">
+        <span class="icon mdi mdi-pin-outline"></span>
+        <span>Set 3 Frozen Columns</span>
+      </button>
+    </span>
+  </div>
   <div class="grid2">
   </div>
 </div>

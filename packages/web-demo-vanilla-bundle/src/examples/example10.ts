@@ -37,7 +37,7 @@ export class Example10 {
 
   dispose() {
     if (this.slickgridLwc) {
-      this.slickgridLwc.dispose();
+      this.slickgridLwc?.dispose();
     }
     //   this.saveCurrentGridState();
   }
@@ -186,7 +186,7 @@ export class Example10 {
 
   displaySpinner(isProcessing) {
     this.processing = isProcessing;
-    this.status = (isProcessing) ? 'loading...' : 'done!!!';
+    this.status = (isProcessing) ? 'loading...' : 'finished!!';
     this.statusClass = (isProcessing) ? 'notification is-light is-warning' : 'notification is-light is-success';
   }
 
