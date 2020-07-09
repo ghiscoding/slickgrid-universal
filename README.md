@@ -92,7 +92,6 @@ npm run test:watch
 - [x] Aggregators (6)
 - [x] Editors (11)
 - [x] Filters (17)
-  - [ ] Add optional debounce filter delay on local grid
 - [x] Formatters (31)
 - [ ] Extensions
   - [x] AutoTooltip
