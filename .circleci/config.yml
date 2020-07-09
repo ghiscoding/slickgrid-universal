@@ -15,18 +15,18 @@ jobs:
           key: slickgrid-universal-build-{{ .Branch }}-{{ checksum "yarn.lock" }}
           paths:
             - "node_modules"
+      # - run:
+      #     name: TypeScript Build (tsc)
+      #     command: yarn run build
       - run:
-          name: TypeScript Build (tsc)
-          command: yarn run build
-      # - run:
-      #     name: Build Full Bundle (all Bundler types)
-      #     command: yarn run bundle
-      # - run:
-      #     name: Website Prod Build
-      #     command: yarn run build:demo
+          name: Build Full Bundle (all Bundler types)
+          command: yarn run bundle
+      - run:
+          name: Website Prod Build
+          command: yarn run build:demo
       - run:
           name: Run Web Server
-          command: npm run serve:demo
+          command: yarn run serve:demo
           background: true
       - run:
           name: Running Cypress E2E tests with JUnit XML reporter
@@ -40,19 +40,19 @@ jobs:
       - run:
           name: Upload Jest coverage to Codecov
           command: bash <(curl -s https://codecov.io/bash)
-      - run:
-          name: Build Full Bundle (all Bundler types)
-          command: yarn run bundle
+      # - run:
+      #     name: Build Full Bundle (all Bundler types)
+      #     command: yarn run bundle
       # - run:
       #     name: Website Prod Build
       #     command: yarn run build:demo
       # - run:
       #     name: Run Web Server
-      #     command:  npm run dev:watch
+      #     command:  yarn run dev:watch
       #     background: true
       # - run:
       #     name: Run Web Server
-      #     command: npm run serve:demo
+      #     command: yarn run serve:demo
       #     background: true
       # - run:
       #     name: Running Cypress E2E tests with JUnit XML reporter
