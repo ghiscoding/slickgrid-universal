@@ -31,7 +31,7 @@ import {
   SlickNamespace,
 } from './../interfaces/index';
 import { executeBackendCallback, refreshBackendDataset } from './backend-utilities';
-import { getDescendantProperty } from './utilities';
+import { debounce, getDescendantProperty } from './utilities';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
 
@@ -39,8 +39,18 @@ import { SharedService } from './shared.service';
 declare const Slick: SlickNamespace;
 
 // timer for keeping track of user typing waits
-let timer: any;
-const DEFAULT_FILTER_TYPING_DEBOUNCE = 500;
+const DEFAULT_BACKEND_FILTER_TYPING_DEBOUNCE = 500;
+
+interface OnSearchChangeEvent {
+  clearFilterTriggered?: boolean;
+  shouldTriggerQuery?: boolean;
+  columnId: string | number;
+  columnDef: Column;
+  columnFilters: ColumnFilters;
+  operator: OperatorType | OperatorString | undefined;
+  searchTerms: any[] | undefined;
+  grid: SlickGrid;
+}
 
 export class FilterService {
   private _eventHandler: SlickEventHandler;
@@ -50,7 +60,7 @@ export class FilterService {
   private _columnFilters: ColumnFilters = {};
   private _dataView: SlickDataView;
   private _grid: SlickGrid;
-  private _onSearchChange: SlickEvent;
+  private _onSearchChange: SlickEvent<OnSearchChangeEvent>;
   private _tmpPreFilteredData: number[];
 
   constructor(private filterFactory: FilterFactory, private pubSubService: PubSubService, private sharedService: SharedService) {
@@ -176,7 +186,7 @@ export class FilterService {
 
     // bind any search filter change (e.g. input filter keyup event)
     const onSearchChangeHandler = this._onSearchChange;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSearchChangeHandler>>).subscribe(this._onSearchChange, (e, args) => {
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSearchChangeHandler>>).subscribe(this._onSearchChange, (_e, args) => {
       const isGridWithTreeData = this._gridOptions?.enableTreeData ?? false;
 
       // When using Tree Data, we need to do it in 2 steps
@@ -562,19 +572,18 @@ export class FilterService {
     const eventType = event && event.type;
     const eventKeyCode = event && event.keyCode;
     if (!isTriggeredByClearFilter && eventKeyCode !== KeyCode.ENTER && (eventType === 'input' || eventType === 'keyup' || eventType === 'keydown')) {
-      debounceTypingDelay = backendApi.hasOwnProperty('filterTypingDebounce') ? backendApi.filterTypingDebounce as number : DEFAULT_FILTER_TYPING_DEBOUNCE;
+      debounceTypingDelay = backendApi?.filterTypingDebounce ?? DEFAULT_BACKEND_FILTER_TYPING_DEBOUNCE;
     }
 
     // query backend, except when it's called by a ClearFilters then we won't
     if (args && args.shouldTriggerQuery) {
       // call the service to get a query back
       if (debounceTypingDelay > 0) {
-        clearTimeout(timer);
-        timer = setTimeout(() => {
+        debounce(() => {
           const query = backendApi.service.processOnFilterChanged(event, args);
           const totalItems = this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems || 0;
           executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitFilterChanged.bind(this));
-        }, debounceTypingDelay);
+        }, debounceTypingDelay)();
       } else {
         const query = backendApi.service.processOnFilterChanged(event, args);
         const totalItems = this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems || 0;
@@ -739,7 +748,7 @@ export class FilterService {
    * Callback method that is called and executed by the individual Filter (DOM element),
    * for example when user type in a word to search (which uses InputFilter), this Filter will execute the callback from a keyup event.
    */
-  private callbackSearchEvent(event: any, args: FilterCallbackArg) {
+  private callbackSearchEvent(event: SlickEventData, args: FilterCallbackArg) {
     if (args) {
       const searchTerm = ((event && event.target) ? (event.target as HTMLInputElement).value : undefined);
       const searchTerms = (args.searchTerms && Array.isArray(args.searchTerms)) ? args.searchTerms : (searchTerm ? [searchTerm] : undefined);
