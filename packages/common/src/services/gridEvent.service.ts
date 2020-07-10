@@ -1,11 +1,9 @@
 import {
-  CellArgs,
   Column,
   SlickDataView,
   GridOption,
   OnEventArgs,
   SlickEventHandler,
-  SlickEventData,
   SlickGrid,
   SlickNamespace,
   GetSlickEventType,
@@ -26,7 +24,9 @@ export class GridEventService {
   }
 
   /* OnCellChange Event */
-  bindOnBeforeEditCell(grid: SlickGrid, dataView: SlickDataView) {
+  bindOnBeforeEditCell(grid: SlickGrid) {
+    const dataView = grid?.getData && grid.getData() as SlickDataView;
+
     // subscribe to this Slickgrid event of onBeforeEditCell
     const onBeforeEditCellHandler = grid.onBeforeEditCell;
     (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeEditCellHandler>>).subscribe(onBeforeEditCellHandler, (e, args) => {
@@ -54,7 +54,9 @@ export class GridEventService {
   }
 
   /* OnCellChange Event */
-  bindOnCellChange(grid: SlickGrid, dataView: SlickDataView) {
+  bindOnCellChange(grid: SlickGrid) {
+    const dataView = grid?.getData && grid.getData() as SlickDataView;
+
     // subscribe to this Slickgrid event of onCellChange
     const onCellChangeHandler = grid.onCellChange;
     (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCellChangeHandler>>).subscribe(onCellChangeHandler, (e, args) => {
@@ -82,7 +84,9 @@ export class GridEventService {
   }
 
   /* OnClick Event */
-  bindOnClick(grid: SlickGrid, dataView: SlickDataView) {
+  bindOnClick(grid: SlickGrid) {
+    const dataView = grid?.getData && grid.getData() as SlickDataView;
+
     const onClickHandler = grid.onClick;
     (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onClickHandler>>).subscribe(onClickHandler, (e, args) => {
       if (!e || !args || !grid || args.cell === undefined || !grid.getColumns || !grid.getDataItem) {

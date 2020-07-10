@@ -47,11 +47,15 @@ and it is also used to test with the UI portion. The Vanilla bundle is also used
 | [@slickgrid-universal/graphql](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/graphql) | GraphQL querying (support Filter/Sort/Pagination with a GraphQL backend Server) | public |
 | [@slickgrid-universal/odata](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/odata) | OData querying (support Filter/Sort/Pagination with an OData backend Server) | public |
 | [@slickgrid-universal/vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) | a vanilla TypeScript/JavaScript implementation | public |
-|  |  |  |
-| [slickgrid-universal/web-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/web-demo-vanilla-bundle) | standalone package for demo purposes and UI testing (therefore not a public package) | private |
+
+### Available Demos
+
+| Package Name | Description | 
+| --------| ----------- | ------------- |
+| [slickgrid-universal/web-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/web-demo-vanilla-bundle) | standalone package for demo purposes and UI testing (therefore not a public package). Written in plain TypeScript. | 
 
 
-### Installation
+## Installation
 To get going with this monorepo, you will need to clone the repo and then follow the steps below
 
 1. Lerna Bootstrap
@@ -87,7 +91,7 @@ npm run test
 npm run test:watch
 ```
 
-## TODO
+## TODOs
 #### Code
 - [x] Aggregators (6)
 - [x] Editors (11)
@@ -116,6 +120,7 @@ npm run test:watch
   - [x] Local Pagination
   - [x] Grid Presets
     - [ ] Preset Row Selections
+    - [ ] Doesn't work in SF because of cacheable queries
     - [ ] Preset Filters not working with Tree Data View 
   - [ ] Dynamically Add Columns
   - [ ] Translations Support
@@ -147,4 +152,4 @@ npm run test:watch
 - [x] Add Typings (interfaces) for Slick Grid & DataView objects
   - [x] Add interfaces to all SlickGrid core lib classes & plugins (basically add Types to everything)
 - [x] Copy text from cell doesn't work in SF
-- [ ] Remove all Services init method 2nd argument (we can get DataView directly from the Grid object)
+- [x] Remove all Services init method 2nd argument (we can get DataView directly from the Grid object)

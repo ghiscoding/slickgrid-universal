@@ -148,8 +148,8 @@ export class FilterService {
    * Bind a backend filter hook to the grid
    * @param grid SlickGrid Grid object
    */
-  bindBackendOnFilter(grid: SlickGrid, dataView: SlickDataView) {
-    this._dataView = dataView;
+  bindBackendOnFilter(grid: SlickGrid) {
+    this._dataView = grid?.getData && grid.getData() as SlickDataView;
     this._filtersMetadata = [];
 
     // subscribe to SlickGrid onHeaderRowCellRendered event to create filter template
@@ -177,12 +177,12 @@ export class FilterService {
    * @param gridOptions Grid Options object
    * @param dataView
    */
-  bindLocalOnFilter(grid: SlickGrid, dataView: SlickDataView) {
+  bindLocalOnFilter(grid: SlickGrid) {
     this._filtersMetadata = [];
-    this._dataView = dataView;
+    this._dataView = grid?.getData && grid.getData() as SlickDataView;
 
-    dataView.setFilterArgs({ columnFilters: this._columnFilters, grid: this._grid, dataView });
-    dataView.setFilter(this.customLocalFilter.bind(this));
+    this._dataView.setFilterArgs({ columnFilters: this._columnFilters, grid: this._grid, dataView: this._dataView });
+    this._dataView.setFilter(this.customLocalFilter.bind(this));
 
     // bind any search filter change (e.g. input filter keyup event)
     const onSearchChangeHandler = this._onSearchChange;
@@ -198,7 +198,7 @@ export class FilterService {
 
       const columnId = args.columnId;
       if (columnId !== null) {
-        dataView.refresh();
+        this._dataView.refresh();
       }
 
       // emit an onFilterChanged event when it's not called by a clear filter
@@ -280,7 +280,6 @@ export class FilterService {
 
   /** Local Grid Filter search */
   customLocalFilter(item: any, args: any): boolean {
-    const dataView = args?.dataView;
     const grid = args?.grid;
     const isGridWithTreeData = this._gridOptions?.enableTreeData ?? false;
     const columnFilters = args?.columnFilters ?? {};
@@ -312,7 +311,7 @@ export class FilterService {
       if (typeof columnFilters === 'object') {
         for (const columnId of Object.keys(columnFilters)) {
           const columnFilter = columnFilters[columnId] as ColumnFilter;
-          const conditionOptions = this.getFilterConditionOptionsOrBoolean(item, columnFilter, columnId, grid, dataView);
+          const conditionOptions = this.getFilterConditionOptionsOrBoolean(item, columnFilter, columnId, grid);
           if (typeof conditionOptions === 'boolean') {
             return conditionOptions;
           }
@@ -328,9 +327,10 @@ export class FilterService {
     return true;
   }
 
-  getFilterConditionOptionsOrBoolean(item: any, columnFilter: ColumnFilter, columnId: string | number, grid: SlickGrid, dataView: SlickDataView): FilterConditionOption | boolean {
+  getFilterConditionOptionsOrBoolean(item: any, columnFilter: ColumnFilter, columnId: string | number, grid: SlickGrid): FilterConditionOption | boolean {
     let columnIndex = grid.getColumnIndex(columnId) as number;
     let columnDef = grid.getColumns()[columnIndex] as Column;
+    const dataView = grid.getData() as SlickDataView;
 
     // it might be a hidden column, if so it won't be part of the getColumns (because it we hide a column via setColumns)
     // when that happens we can try to get the column definition from all defined columns
@@ -465,7 +465,7 @@ export class FilterService {
         // loop through all column filters and execute filter condition(s)
         for (const columnId of Object.keys(columnFilters)) {
           const columnFilter = columnFilters[columnId] as ColumnFilter;
-          const conditionOptionResult = this.getFilterConditionOptionsOrBoolean(item, columnFilter, columnId, this._grid, this._dataView);
+          const conditionOptionResult = this.getFilterConditionOptionsOrBoolean(item, columnFilter, columnId, this._grid);
 
           if (conditionOptionResult) {
             const conditionResult = (typeof conditionOptionResult === 'boolean') ? conditionOptionResult : FilterConditions.executeMappedCondition(conditionOptionResult as FilterConditionOption);

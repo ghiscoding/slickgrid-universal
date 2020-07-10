@@ -435,9 +435,9 @@ export class VanillaGridBundle {
     }
 
     // on cell click, mainly used with the columnDef.action callback
-    this.gridEventService.bindOnBeforeEditCell(this.grid, this.dataView);
-    this.gridEventService.bindOnCellChange(this.grid, this.dataView);
-    this.gridEventService.bindOnClick(this.grid, this.dataView);
+    this.gridEventService.bindOnBeforeEditCell(this.grid);
+    this.gridEventService.bindOnCellChange(this.grid);
+    this.gridEventService.bindOnClick(this.grid);
 
     // get any possible Services that user want to register
     const registeringServices: any[] = this._gridOptions.registerExternalServices || [];
@@ -583,9 +583,9 @@ export class VanillaGridBundle {
 
       // bind external filter (backend) unless specified to use the local one
       if (gridOptions.backendServiceApi && !gridOptions.backendServiceApi.useLocalFiltering) {
-        this.filterService.bindBackendOnFilter(grid, dataView);
+        this.filterService.bindBackendOnFilter(grid);
       } else {
-        this.filterService.bindLocalOnFilter(grid, dataView);
+        this.filterService.bindLocalOnFilter(grid);
       }
     }
 
@@ -610,9 +610,9 @@ export class VanillaGridBundle {
     if (gridOptions.enableSorting && !this.customDataView) {
       // bind external sorting (backend) unless specified to use the local one
       if (gridOptions.backendServiceApi && !gridOptions.backendServiceApi.useLocalSorting) {
-        this.sortService.bindBackendOnSort(grid, dataView);
+        this.sortService.bindBackendOnSort(grid);
       } else {
-        this.sortService.bindLocalOnSort(grid, dataView);
+        this.sortService.bindLocalOnSort(grid);
       }
     }
 
