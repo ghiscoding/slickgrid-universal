@@ -1,5 +1,3 @@
-import * as DOMPurify from 'dompurify';
-
 import { Constants } from '../constants';
 import { FieldType } from './../enums/index';
 import {
@@ -18,7 +16,7 @@ import {
   SlickGrid,
 } from './../interfaces/index';
 import { CollectionService, findOrDefault, TranslaterService } from '../services/index';
-import { charArraysEqual, getDescendantProperty, getTranslationPrefix, htmlEncode, setDeepValue } from '../services/utilities';
+import { charArraysEqual, getDescendantProperty, getTranslationPrefix, htmlEncode, sanitizeTextByAvailableSanitizer, setDeepValue } from '../services/utilities';
 
 /**
  * Slickgrid editor class for multiple/single select lists
@@ -569,12 +567,7 @@ export class SelectEditor implements Editor {
         if (isRenderHtmlEnabled) {
           // sanitize any unauthorized html tags like script and others
           // for the remaining allowed tags we'll permit all attributes
-          let sanitizedText = '';
-          if (this.gridOptions && typeof this.gridOptions.sanitizer === 'function') {
-            sanitizedText = this.gridOptions.sanitizer(optionText);
-          } else {
-            sanitizedText = (DOMPurify.sanitize(optionText, sanitizedOptions) || '').toString();
-          }
+          const sanitizedText = sanitizeTextByAvailableSanitizer(this.gridOptions, optionText, sanitizedOptions);
           optionText = htmlEncode(sanitizedText);
         }
 

@@ -1,5 +1,3 @@
-import * as DOMPurify from 'dompurify';
-
 import { Constants } from '../constants';
 import { OperatorString, OperatorType, SearchTerm, } from '../enums/index';
 import {
@@ -17,7 +15,7 @@ import {
   SlickGrid
 } from './../interfaces/index';
 import { CollectionService } from '../services/collection.service';
-import { getDescendantProperty, getTranslationPrefix, htmlEncode } from '../services/utilities';
+import { getDescendantProperty, getTranslationPrefix, htmlEncode, sanitizeTextByAvailableSanitizer } from '../services/utilities';
 import { TranslaterService } from '../services';
 
 export class SelectFilter implements Filter {
@@ -317,7 +315,7 @@ export class SelectFilter implements Filter {
           if (isRenderHtmlEnabled) {
             // sanitize any unauthorized html tags like script and others
             // for the remaining allowed tags we'll permit all attributes
-            const sanitizedText = (DOMPurify.sanitize(optionText, sanitizedOptions) || '').toString();
+            const sanitizedText = sanitizeTextByAvailableSanitizer(this.gridOptions, optionText, sanitizedOptions);
             optionText = htmlEncode(sanitizedText);
           }
 

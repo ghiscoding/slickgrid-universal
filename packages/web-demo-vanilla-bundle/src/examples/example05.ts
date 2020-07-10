@@ -92,12 +92,20 @@ export class Example5 {
       },
       registerExternalServices: [new ExcelExportService()],
       enableFiltering: true,
+      showCustomFooter: true, // display some metrics in the bottom custom footer
+      customFooterOptions: {
+        // optionally display some text on the left footer container
+        leftFooterText: 'Grid created with <a href="https://github.com/ghiscoding/slickgrid-universal" target="_blank">Slickgrid-Universal</a>',
+      },
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       treeDataOptions: {
         columnId: 'title',
         levelPropName: 'indent',
         parentPropName: 'parentId'
-      }
+      },
+      // presets: {
+      //   filters: [{ columnId: 'percentComplete', searchTerms: ['50'], operator: '>=' }]
+      // }
     };
   }
 
