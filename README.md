@@ -119,7 +119,7 @@ npm run test:watch
   - [x] Backend Services + Pagination
   - [x] Local Pagination
   - [x] Grid Presets
-    - [ ] Preset Row Selections
+    - [x] Preset Row Selections
     - [ ] Doesn't work in SF because of cacheable queries
     - [ ] Preset Filters not working with Tree Data View 
   - [ ] Dynamically Add Columns
@@ -146,7 +146,7 @@ npm run test:watch
 - [x] Bundle Creation (vanilla bundle)
   - [ ] Eventually add Unit Tests as a Pre-Bundle task
 - [x] Remove any Deprecated code
-  - [ ] Create a [Migration Guide](https://github.com/ghiscoding/slickgrid-universal/wiki/Migration-for-Angular-Aurelia-Slickgrid) for Angular/Aurelia
+  - [ ] Create and Update the [Migration Guide](https://github.com/ghiscoding/slickgrid-universal/wiki/Migration-for-Angular-Aurelia-Slickgrid) for Angular/Aurelia
 - [x] Add simple input bindings in the demo (e.g. pinned rows input)
 - [x] Add possibility to use SVG instead of Font Family
 - [x] Add Typings (interfaces) for Slick Grid & DataView objects

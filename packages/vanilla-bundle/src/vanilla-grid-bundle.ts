@@ -397,9 +397,9 @@ export class VanillaGridBundle {
     this.grid.invalidate();
 
     if (this._dataset.length > 0) {
-      // if (!this._isDatasetInitialized && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
-      //   this.loadRowSelectionPresetWhenExists();
-      // }
+      if (!this._isDatasetInitialized && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
+        this.loadRowSelectionPresetWhenExists();
+      }
       this._isDatasetInitialized = true;
     }
 
@@ -797,9 +797,9 @@ export class VanillaGridBundle {
       }
 
       if (dataset.length > 0) {
-        // if (!this._isDatasetInitialized && this._gridOptions.enableCheckboxSelector) {
-        //   this.loadRowSelectionPresetWhenExists();
-        // }
+        if (!this._isDatasetInitialized && this._gridOptions.enableCheckboxSelector) {
+          this.loadRowSelectionPresetWhenExists();
+        }
         this._isDatasetInitialized = true;
 
         // also update the hierarchical dataset

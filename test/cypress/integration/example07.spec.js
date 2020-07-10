@@ -23,6 +23,30 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
+  it('should have 4 rows pre-selected by the grid presets', () => {
+    cy.get('[style="top:0px"] > .slick-cell:nth(2)').should('contain', 'Task 0');
+    cy.get('[style="top:45px"] > .slick-cell:nth(2)').should('contain', 'Task 1');
+    cy.get('[style="top:90px"] > .slick-cell:nth(2)').should('contain', 'Task 2');
+    cy.get('[style="top:135px"] > .slick-cell:nth(2)').should('contain', 'Task 3');
+    cy.get('[style="top:180px"] > .slick-cell:nth(2)').should('contain', 'Task 4');
+    cy.get('[style="top:225px"] > .slick-cell:nth(2)').should('contain', 'Task 5');
+
+    // Task 4 and 3 should be selected
+    cy.get('input[type="checkbox"]:checked').should('have.length', 4);
+    cy.get('[style="top:90px"] > .slick-cell:nth(1) input[type="checkbox"]:checked').should('have.length', 1);
+    cy.get('[style="top:135px"] > .slick-cell:nth(1) input[type="checkbox"]:checked').should('have.length', 1);
+    cy.get('[style="top:270px"] > .slick-cell:nth(1) input[type="checkbox"]:checked').should('have.length', 1);
+    cy.get('[style="top:315px"] > .slick-cell:nth(1) input[type="checkbox"]:checked').should('have.length', 1);
+  });
+
+  it('should uncheck all rows', () => {
+    // click twice to check then uncheck all
+    cy.get('.slick-column-name > input[type=checkbox]')
+      .click({ force: true });
+    cy.get('.slick-column-name > input[type=checkbox]')
+      .click({ force: true });
+  });
+
   it('should drag opened Row Detail to another position in the grid', () => {
     cy.get('[style="top:45px"] > .slick-cell.cell-reorder').as('moveIconTask1');
     cy.get('[style="top:135px"] > .slick-cell.cell-reorder').as('moveIconTask3');

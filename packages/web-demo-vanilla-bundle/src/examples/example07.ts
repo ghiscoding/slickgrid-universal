@@ -75,6 +75,15 @@ export class Example7 {
         // you can also override the usability of the rows, for example make every 2nd row the only moveable rows,
         // usabilityOverride: (row, dataContext, grid) => dataContext.id % 2 === 1
       },
+      presets: {
+        // you can presets row selection here as well, you can choose 1 of the following 2 ways of setting the selection
+        // by their index position in the grid (UI) or by the object IDs, the default is "dataContextIds" and if provided it will use it and disregard "gridRowIndexes"
+        // the RECOMMENDED is to use "dataContextIds" since that will always work even with Pagination, while "gridRowIndexes" is only good for 1 page
+        rowSelection: {
+          // gridRowIndexes: [2],       // the row position of what you see on the screen (UI)
+          dataContextIds: [2, 3, 6, 7]  // (recommended) select by your data object IDs
+        }
+      },
     };
   }
 
