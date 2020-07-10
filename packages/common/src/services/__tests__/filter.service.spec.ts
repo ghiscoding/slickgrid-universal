@@ -68,6 +68,7 @@ const gridStub = {
   getColumnIndex: jest.fn(),
   getOptions: () => gridOptionMock,
   getColumns: jest.fn(),
+  getData: () => dataViewStub,
   getHeaderRowColumn: jest.fn(),
   getSortColumns: jest.fn(),
   invalidate: jest.fn(),
@@ -142,7 +143,7 @@ describe('FilterService', () => {
       };
 
       service.init(gridStub);
-      service.bindBackendOnFilter(gridStub, dataViewStub);
+      service.bindBackendOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
       const columnFilters = service.getColumnFilters();
       const filterMetadataArray = service.getFiltersMetadata();
@@ -163,7 +164,7 @@ describe('FilterService', () => {
       const mockArgs = { grid: gridStub, column: mockColumn, node: document.getElementById(DOM_ELEMENT_ID), };
 
       service.init(gridStub);
-      service.bindBackendOnFilter(gridStub, dataViewStub);
+      service.bindBackendOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
       const columnFilters = service.getColumnFilters();
@@ -201,7 +202,7 @@ describe('FilterService', () => {
       const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
       service.init(gridStub);
-      service.bindBackendOnFilter(gridStub, dataViewStub);
+      service.bindBackendOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockHeaderArgs, new Slick.EventData(), gridStub);
       service.onSearchChange.notify(mockSearchArgs, new Slick.EventData(), gridStub);
 
@@ -227,7 +228,7 @@ describe('FilterService', () => {
       };
 
       service.init(gridStub);
-      service.bindLocalOnFilter(gridStub, dataViewStub);
+      service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
       const columnFilters = service.getColumnFilters();
       const filterMetadataArray = service.getFiltersMetadata();
@@ -251,7 +252,7 @@ describe('FilterService', () => {
       };
 
       service.init(gridStub);
-      service.bindLocalOnFilter(gridStub, dataViewStub);
+      service.bindLocalOnFilter(gridStub);
       service.onSearchChange.notify(mockArgs, new Slick.EventData(), gridStub);
 
       expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, []);
@@ -277,7 +278,7 @@ describe('FilterService', () => {
       };
 
       service.init(gridStub);
-      service.bindLocalOnFilter(gridStub, dataViewStub);
+      service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockHeaderArgs, new Slick.EventData(), gridStub);
       service.onSearchChange.notify(mockSearchArgs, new Slick.EventData(), gridStub);
 
@@ -302,7 +303,7 @@ describe('FilterService', () => {
       const spyEmit = jest.spyOn(service, 'emitFilterChanged');
 
       service.init(gridStub);
-      service.bindLocalOnFilter(gridStub, dataViewStub);
+      service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
       service.getFiltersMetadata()[0].callback(new CustomEvent(`keyup`), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['John'], shouldTriggerQuery: true });
 
@@ -325,7 +326,7 @@ describe('FilterService', () => {
       const spySearchChange = jest.spyOn(service.onSearchChange, 'notify');
 
       service.init(gridStub);
-      service.bindLocalOnFilter(gridStub, dataViewStub);
+      service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
 
       const mockEvent = new CustomEvent(`keyup`);
@@ -347,7 +348,7 @@ describe('FilterService', () => {
 
     it('should delete the column filters entry (from column filter object) when searchTerms is empty', () => {
       service.init(gridStub);
-      service.bindLocalOnFilter(gridStub, dataViewStub);
+      service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
       service.getFiltersMetadata()[0].callback(new CustomEvent(`keyup`), { columnDef: mockColumn, operator: 'EQ', searchTerms: [''], shouldTriggerQuery: true });
 
@@ -356,7 +357,7 @@ describe('FilterService', () => {
 
     it('should delete the column filters entry (from column filter object) when searchTerms is empty array and even when triggered event is undefined', () => {
       service.init(gridStub);
-      service.bindLocalOnFilter(gridStub, dataViewStub);
+      service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
       service.getFiltersMetadata()[0].callback(undefined, { columnDef: mockColumn, operator: 'EQ', searchTerms: [], shouldTriggerQuery: true });
 
@@ -365,7 +366,7 @@ describe('FilterService', () => {
 
     it('should delete the column filters entry (from column filter object) when searchTerms & operator are undefined or not provided', () => {
       service.init(gridStub);
-      service.bindLocalOnFilter(gridStub, dataViewStub);
+      service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
       service.getFiltersMetadata()[0].callback(undefined, { columnDef: mockColumn, shouldTriggerQuery: true });
 
@@ -374,7 +375,7 @@ describe('FilterService', () => {
 
     it('should have an column filters object when callback is called with an undefined column definition', () => {
       service.init(gridStub);
-      service.bindLocalOnFilter(gridStub, dataViewStub);
+      service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
       service.getFiltersMetadata()[0].callback(undefined, { columnDef: undefined, operator: 'EQ', searchTerms: ['John'], shouldTriggerQuery: true });
 
@@ -403,7 +404,7 @@ describe('FilterService', () => {
       const mockArgs3 = { grid: gridStub, column: mockColumn3, node: document.getElementById(DOM_ELEMENT_ID) };
 
       service.init(gridStub);
-      service.bindBackendOnFilter(gridStub, dataViewStub);
+      service.bindBackendOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs1, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs2, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs3, new Slick.EventData(), gridStub);
@@ -504,7 +505,7 @@ describe('FilterService', () => {
       const mockArgs2 = { grid: gridStub, column: mockColumn2, node: document.getElementById(DOM_ELEMENT_ID) };
 
       service.init(gridStub);
-      service.bindLocalOnFilter(gridStub, dataViewStub);
+      service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs1, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs2, new Slick.EventData(), gridStub);
       service.getFiltersMetadata()[0].callback(new CustomEvent(`keyup`), { columnDef: mockColumn1, operator: 'EQ', searchTerms: ['John'], shouldTriggerQuery: true });
@@ -965,7 +966,7 @@ describe('FilterService', () => {
       try {
         gridOptionMock.enableFiltering = false;
         service.init(gridStub);
-        service.bindLocalOnFilter(gridStub, dataViewStub);
+        service.bindLocalOnFilter(gridStub);
         service.updateFilters([{ columnId: 'firstName', searchTerms: ['John'] }]);
       } catch (e) {
         expect(e.toString()).toContain('[Slickgrid-Universal] in order to use "updateFilters" method, you need to have Filterable Columns defined in your grid');
@@ -978,7 +979,7 @@ describe('FilterService', () => {
       const emitSpy = jest.spyOn(service, 'emitFilterChanged');
 
       service.init(gridStub);
-      service.bindLocalOnFilter(gridStub, dataViewStub);
+      service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs1, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs2, new Slick.EventData(), gridStub);
       service.updateFilters(mockNewFilters);
@@ -996,7 +997,7 @@ describe('FilterService', () => {
       const emitSpy = jest.spyOn(service, 'emitFilterChanged');
 
       service.init(gridStub);
-      service.bindLocalOnFilter(gridStub, dataViewStub);
+      service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs1, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs2, new Slick.EventData(), gridStub);
       service.updateFilters(mockNewFilters, false);
@@ -1021,7 +1022,7 @@ describe('FilterService', () => {
       const backendProcessSpy = jest.spyOn(backendServiceStub, 'processOnFilterChanged');
 
       service.init(gridStub);
-      service.bindBackendOnFilter(gridStub, dataViewStub);
+      service.bindBackendOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs1, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs2, new Slick.EventData(), gridStub);
       service.updateFilters(mockNewFilters);
@@ -1050,7 +1051,7 @@ describe('FilterService', () => {
       const backendProcessSpy = jest.spyOn(backendServiceStub, 'processOnFilterChanged');
 
       service.init(gridStub);
-      service.bindBackendOnFilter(gridStub, dataViewStub);
+      service.bindBackendOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs1, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs2, new Slick.EventData(), gridStub);
       service.updateFilters(mockNewFilters, false, false);
@@ -1101,7 +1102,7 @@ describe('FilterService', () => {
       };
 
       service.init(gridStub);
-      service.bindLocalOnFilter(gridStub, dataViewStub);
+      service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
       const columnFilters = service.getColumnFilters();
       const filterMetadataArray = service.getFiltersMetadata();
@@ -1159,7 +1160,7 @@ describe('FilterService', () => {
         const mockItem1 = { __parentId: 4, id: 5, file: 'map.pdf', dateModified: '2015-05-21T10:22:00.123Z', size: 3.1 };
 
         service.init(gridStub);
-        service.bindLocalOnFilter(gridStub, dataViewStub);
+        service.bindLocalOnFilter(gridStub);
         gridStub.onHeaderRowCellRendered.notify(mockArgs1, new Slick.EventData(), gridStub);
         gridStub.onHeaderRowCellRendered.notify(mockArgs2, new Slick.EventData(), gridStub);
 
@@ -1183,7 +1184,7 @@ describe('FilterService', () => {
         const mockItem1 = { __parentId: 4, id: 5, file: 'map.pdf', dateModified: '2015-05-21T10:22:00.123Z', size: 3.1 };
 
         service.init(gridStub);
-        service.bindLocalOnFilter(gridStub, dataViewStub);
+        service.bindLocalOnFilter(gridStub);
         gridStub.onHeaderRowCellRendered.notify(mockArgs1, new Slick.EventData(), gridStub);
         gridStub.onHeaderRowCellRendered.notify(mockArgs2, new Slick.EventData(), gridStub);
 
@@ -1207,7 +1208,7 @@ describe('FilterService', () => {
         const mockItem1 = { __parentId: 4, id: 5, file: 'unknown.pdf', dateModified: '2015-05-21T10:22:00.123Z', size: 3.1 };
 
         service.init(gridStub);
-        service.bindLocalOnFilter(gridStub, dataViewStub);
+        service.bindLocalOnFilter(gridStub);
         gridStub.onHeaderRowCellRendered.notify(mockArgs1, new Slick.EventData(), gridStub);
         gridStub.onHeaderRowCellRendered.notify(mockArgs2, new Slick.EventData(), gridStub);
 
