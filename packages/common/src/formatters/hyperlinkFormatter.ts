@@ -1,6 +1,5 @@
-import * as DOMPurify from 'dompurify';
-
-import { Column, Formatter } from './../interfaces/index';
+import { Column, Formatter, SlickGrid } from './../interfaces/index';
+import { sanitizeTextByAvailableSanitizer } from '../services/utilities';
 
 /**
  * Takes an hyperlink cell value and transforms it into a real hyperlink, given that the value starts with 1 of these (http|ftp|https).
@@ -12,14 +11,15 @@ import { Column, Formatter } from './../interfaces/index';
  * You can also optionally provide the hyperlink URL by using the generic params "hyperlinkUrl" in the column definition
  * For example: { id: 'link', field: 'link', params: {  hyperlinkText: 'Company Website', hyperlinkUrl: 'http://www.somewhere.com' } } will display "<a href="http://www.somewhere.com">Company Website</a>"
  */
-export const hyperlinkFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any) => {
+export const hyperlinkFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGrid) => {
   const columnParams = columnDef && columnDef.params || {};
+  const gridOptions = (grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {};
 
   let displayedText = columnParams.hyperlinkText ? columnParams.hyperlinkText : value;
-  displayedText = DOMPurify.sanitize(displayedText || '');
+  displayedText = sanitizeTextByAvailableSanitizer(gridOptions, displayedText);
 
   let outputLink = columnParams.hyperlinkUrl ? columnParams.hyperlinkUrl : value;
-  outputLink = DOMPurify.sanitize(outputLink || '');
+  outputLink = sanitizeTextByAvailableSanitizer(gridOptions, outputLink);
 
   const matchUrl = outputLink.match(/^(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:\/~\+#]*[\w\-\@?^=%&amp;\/~\+#])?/i);
 

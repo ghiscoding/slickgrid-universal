@@ -22,7 +22,7 @@ export const SalesforceGlobalGridOptions: GridOption = {
   headerMenu: {
     hideFreezeColumnsCommand: false,
   },
-  sanitizer: (dirtyHtml) => (dirtyHtml.replace(/(\b)(on\S+)(\s*)=|javascript|(<\s*)(\/*)script/gi, '')),
+  sanitizer: (dirtyHtml) => (dirtyHtml.replace(/(\b)(on\S+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script([<>]*)/gi, '')),
   headerRowHeight: 35,
   rowHeight: 33,
   eventNamingStyle: EventNamingStyle.lowerCaseWithoutOnPrefix,

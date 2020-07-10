@@ -116,6 +116,7 @@ npm run test:watch
   - [x] Local Pagination
   - [x] Grid Presets
     - [ ] Preset Row Selections
+    - [ ] Preset Filters not working with Tree Data View 
   - [ ] Dynamically Add Columns
   - [ ] Translations Support
   - [ ] Tree Data

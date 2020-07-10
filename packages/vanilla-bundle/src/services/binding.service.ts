@@ -1,17 +1,19 @@
-import * as DOMPurify from 'dompurify';
+import * as DOMPurify_ from 'dompurify';
+const DOMPurify = DOMPurify_; // patch to fix rollup to work
 
 interface Binding {
   variable: any;
   property: string;
 }
 
-interface ElementBinding {
+export interface ElementBinding {
   element: Element | null;
   attribute: string;
+}
+export interface ElementBindingWithListener extends ElementBinding {
   event: string;
   listener: (val: any) => any;
 }
-
 
 /**
  * Create 2 way Bindings for any variable that are primitive or object types, when it's an object type it will watch for property changes
@@ -23,7 +25,7 @@ export class BindingService {
   _value: any = null;
   _binding: Binding;
   _property: string;
-  elementBindings: ElementBinding[] = [];
+  elementBindings: Array<ElementBinding | ElementBindingWithListener> = [];
 
   constructor(binding: Binding) {
     this._binding = binding;
@@ -67,11 +69,11 @@ export class BindingService {
    *    2.1- we could also provide an extra callback method to execute when the event gets triggered
    */
   bind(element: Element | null, attribute: string, eventName?: string, callback?: (val: any) => any) {
-    const binding: ElementBinding = { element, attribute, event: '', listener: () => { } };
+    const binding: ElementBinding | ElementBindingWithListener = { element, attribute };
 
     if (element) {
       if (eventName) {
-        element.addEventListener(eventName, () => {
+        const listener = () => {
           const elmValue = element[attribute];
           this.valueSetter(elmValue);
           if (this._binding.variable.hasOwnProperty(this._binding.property) || this._binding.property in this._binding.variable) {
@@ -81,8 +83,11 @@ export class BindingService {
           if (typeof callback === 'function') {
             return callback(this.valueGetter());
           }
-        });
-        binding.event = eventName;
+        };
+
+        (binding as ElementBindingWithListener).event = eventName;
+        (binding as ElementBindingWithListener).listener = listener;
+        element.addEventListener(eventName, listener);
       }
       this.elementBindings.push(binding);
       element[attribute] = typeof this._value === 'string' ? DOMPurify.sanitize(this._value, {}) : this._value;

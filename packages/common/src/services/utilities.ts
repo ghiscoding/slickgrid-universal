@@ -1,4 +1,6 @@
+import * as DOMPurify_ from 'dompurify';
 import * as moment_ from 'moment-mini';
+const DOMPurify = DOMPurify_; // patch to fix rollup to work
 const moment = moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 import { FieldType, OperatorString, OperatorType } from '../enums/index';
@@ -741,6 +743,24 @@ export function sanitizeHtmlToText(htmlString: string): string {
   const temp = document.createElement('div');
   temp.innerHTML = htmlString;
   return temp.textContent || temp.innerText || '';
+}
+
+/**
+ * Sanitize possible dirty html string (remove any potential XSS code like scripts and others), we will use 2 possible sanitizer
+ * 1. optional sanitizer method defined in the grid options
+ * 2. DOMPurify sanitizer (defaults)
+ * @param gridOptions: grid options
+ * @param dirtyHtml: dirty html string
+ * @param domPurifyOptions: optional DOMPurify options when using that sanitizer
+ */
+export function sanitizeTextByAvailableSanitizer(gridOptions: GridOption, dirtyHtml: string, domPurifyOptions?: DOMPurify.Config & { RETURN_TRUSTED_TYPE: true; }): string {
+  let sanitizedText = '';
+  if (gridOptions && typeof gridOptions.sanitizer === 'function') {
+    sanitizedText = gridOptions.sanitizer(dirtyHtml || '');
+  } else {
+    sanitizedText = (DOMPurify.sanitize(dirtyHtml || '', domPurifyOptions || {}) || '').toString();
+  }
+  return sanitizedText;
 }
 
 /** Set the object value of deeper node from a given dot (.) notation path (e.g.: "user.firstName") */

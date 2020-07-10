@@ -1,4 +1,3 @@
-import * as DOMPurify from 'dompurify';
 import * as moment_ from 'moment-mini';
 const moment = moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
@@ -10,6 +9,7 @@ import {
   Metrics,
   SlickGrid,
   TranslaterService,
+  sanitizeTextByAvailableSanitizer,
 } from '@slickgrid-universal/common';
 import { BindingHelper } from '../services/binding.helper';
 
@@ -87,7 +87,7 @@ export class SlickFooterComponent {
 
     const leftFooterElm = document.createElement('div');
     leftFooterElm.className = `left-footer ${this.customFooterOptions.leftContainerClass}`;
-    leftFooterElm.innerHTML = DOMPurify.sanitize(this.customFooterOptions.leftFooterText || '', this._domPurifyOptions).toString();
+    leftFooterElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, this.customFooterOptions.leftFooterText || '');
 
     const metricsElm = document.createElement('div');
     metricsElm.className = 'metrics';
@@ -103,8 +103,8 @@ export class SlickFooterComponent {
     footerElm.appendChild(metricsElm);
     this._footerElement = footerElm;
 
-    if (gridParentContainerElm?.append && this._footerElement) {
-      gridParentContainerElm.append(this._footerElement);
+    if (gridParentContainerElm?.appendChild && this._footerElement) {
+      gridParentContainerElm.appendChild(this._footerElement);
     }
   }
 
