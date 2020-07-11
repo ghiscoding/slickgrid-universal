@@ -37,16 +37,16 @@ and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) to use 
 Note however that this project also has a Vanilla Implementation (not associated to any framework)
 and it is also used to test with the UI portion. The Vanilla bundle is also used in our SalesForce (with Lightning Web Component) hence the creation of this monorepo.
 
-### Available Packages
+### Available Public Packages
 
-| Package Name | Description | Publish |
-| --------| ----------- | ------------- |
-| [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common) | commonly used Formatters/Editors/Filters/Services/... | public |
-| [@slickgrid-universal/excel-export](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/excel-export) | Export to Excel Service (xls/xlsx) | public |
-| [@slickgrid-universal/file-export](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/file-export) | Export to Text File Service (csv/txt) | public |
-| [@slickgrid-universal/graphql](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/graphql) | GraphQL Query Service (support Filter/Sort/Pagination with a GraphQL backend Server) | public |
-| [@slickgrid-universal/odata](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/odata) | OData Query Service (support Filter/Sort/Pagination with an OData backend Server) | public |
-| [@slickgrid-universal/vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) | a vanilla TypeScript/JavaScript implementation | public |
+| Package Name | Description |
+| --------| ----------- | 
+| [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common) | commonly used Formatters/Editors/Filters/Services/... | 
+| [@slickgrid-universal/excel-export](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/excel-export) | Export to Excel Service (xls/xlsx) | 
+| [@slickgrid-universal/file-export](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/file-export) | Export to Text File Service (csv/txt) | 
+| [@slickgrid-universal/graphql](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/graphql) | GraphQL Query Service (support Filter/Sort/Pagination with a GraphQL backend Server) | 
+| [@slickgrid-universal/odata](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/odata) | OData Query Service (support Filter/Sort/Pagination with an OData backend Server) | 
+| [@slickgrid-universal/vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) | a vanilla TypeScript/JavaScript implementation |
 
 ### Available Demos
 
