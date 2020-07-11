@@ -51,7 +51,7 @@ and it is also used to test with the UI portion. The Vanilla bundle is also used
 ### Available Demos
 
 | Package Name | Description | 
-| --------| ----------- | ------------- |
+| --------| ----------- | 
 | [slickgrid-universal/web-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/web-demo-vanilla-bundle) | standalone package for demo purposes and UI testing (therefore not a public package). Written in plain TypeScript. | 
 
 
