@@ -120,8 +120,8 @@ npm run test:watch
   - [x] Local Pagination
   - [x] Grid Presets
     - [x] Preset Row Selections
-    - [ ] Doesn't work in SF because of cacheable queries
-    - [ ] Preset Filters not working with Tree Data View 
+    - [x] Should work even after initializing the dataset later (SF)
+    - [x] Preset Filters not working with Tree Data View 
   - [ ] Dynamically Add Columns
   - [ ] Translations Support
   - [ ] Tree Data

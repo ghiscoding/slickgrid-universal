@@ -29,6 +29,10 @@ export class Example1 {
 
     this.slickgridLwc1 = new Slicker.GridBundle(gridContainerElm1, this.columnDefinitions1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
     this.slickgridLwc2 = new Slicker.GridBundle(gridContainerElm2, this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
+
+    // setTimeout(() => {
+    //   this.slickgridLwc2.dataset = this.dataset2;
+    // }, 1000);
   }
 
   dispose() {

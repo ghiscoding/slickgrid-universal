@@ -58,7 +58,6 @@ export class FilterService {
   private _firstColumnIdRendered: string | number = '';
   private _filtersMetadata: any[] = [];
   private _columnFilters: ColumnFilters = {};
-  private _dataView: SlickDataView;
   private _grid: SlickGrid;
   private _onSearchChange: SlickEvent<OnSearchChangeEvent>;
   private _tmpPreFilteredData: number[];
@@ -91,6 +90,11 @@ export class FilterService {
   /** Getter for the Column Definitions pulled through the Grid Object */
   private get _columnDefinitions(): Column[] {
     return (this._grid && this._grid.getColumns) ? this._grid.getColumns() : [];
+  }
+
+  /** Getter of SlickGrid DataView object */
+  private get _dataView(): SlickDataView {
+    return (this._grid?.getData && this._grid.getData()) as SlickDataView;
   }
 
   /**
@@ -149,7 +153,6 @@ export class FilterService {
    * @param grid SlickGrid Grid object
    */
   bindBackendOnFilter(grid: SlickGrid) {
-    this._dataView = grid?.getData && grid.getData() as SlickDataView;
     this._filtersMetadata = [];
 
     // subscribe to SlickGrid onHeaderRowCellRendered event to create filter template
@@ -179,8 +182,6 @@ export class FilterService {
    */
   bindLocalOnFilter(grid: SlickGrid) {
     this._filtersMetadata = [];
-    this._dataView = grid?.getData && grid.getData() as SlickDataView;
-
     this._dataView.setFilterArgs({ columnFilters: this._columnFilters, grid: this._grid, dataView: this._dataView });
     this._dataView.setFilter(this.customLocalFilter.bind(this));
 
@@ -608,17 +609,30 @@ export class FilterService {
         }
 
         // from each presets, we will find the associated columnDef and apply the preset searchTerms & operator if there is
-        const columnPreset = filters.find((presetFilter: CurrentFilter) => {
-          return presetFilter.columnId === columnDef.id;
-        });
+        const columnPreset = filters.find((presetFilter: CurrentFilter) => presetFilter.columnId === columnDef.id);
         if (columnPreset && columnPreset.searchTerms && Array.isArray(columnPreset.searchTerms)) {
           columnDef.filter = columnDef.filter || {};
           columnDef.filter.operator = columnPreset.operator || columnDef.filter.operator || '';
           columnDef.filter.searchTerms = columnPreset.searchTerms;
         }
       });
+
+      // when we have a Filter Presets on a Tree Data View grid, we need to call the pre-filtering of tree data
+      this.refreshTreeDataFilters();
     }
     return this._columnDefinitions;
+  }
+
+  /**
+   * when we have a Filter Presets on a Tree Data View grid, we need to call the pre-filtering of tree data
+   * we need to do this because Tree Data is the only type of grid that requires a pre-filter (preFilterTreeData) to be executed before the final filtering
+   * @param filters
+   */
+  refreshTreeDataFilters() {
+    if (this._dataView && this._gridOptions?.enableTreeData) {
+      this._tmpPreFilteredData = this.preFilterTreeData(this._dataView.getItems(), this._columnFilters);
+      this._dataView.refresh(); // and finally this refresh() is what triggers a DataView filtering check
+    }
   }
 
   /**
