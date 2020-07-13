@@ -24,6 +24,7 @@ import { maskFormatter } from './maskFormatter';
 import { multipleFormatter } from './multipleFormatter';
 import { percentFormatter } from './percentFormatter';
 import { percentCompleteBarFormatter } from './percentCompleteBarFormatter';
+import { percentCompleteBarWithTextFormatter } from './percentCompleteBarWithTextFormatter';
 import { percentCompleteFormatter } from './percentCompleteFormatter';
 import { percentSymbolFormatter } from './percentSymbolFormatter';
 import { progressBarFormatter } from './progressBarFormatter';
@@ -198,8 +199,11 @@ export const Formatters = {
   /** Takes a cell value number (between 0.0-100) and displays a red (<50) or green (>=50) bar */
   percentComplete: percentCompleteFormatter,
 
-  /** Takes a cell value number (between 0-100) and displays Bootstrap "percent-complete-bar" a red (<30), silver (>30 & <70) or green (>=70) bar */
+  /** Takes a cell value number (between 0-100) and displays a SlickGrid custom "percent-complete-bar" a red (<30), silver (>30 & <70) or green (>=70) bar */
   percentCompleteBar: percentCompleteBarFormatter,
+
+  /** Takes a cell value number (between 0-100) and displays SlickGrid custom "percent-complete-bar" with Text a red (<30), silver (>30 & <70) or green (>=70) bar */
+  percentCompleteBarWithText: percentCompleteBarWithTextFormatter,
 
   /** Takes a cell value number (between 0-100) and add the "%" after the number */
   percentSymbol: percentSymbolFormatter,

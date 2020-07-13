@@ -14,7 +14,7 @@ export const percentCompleteFormatter: Formatter = (row: number, cell: number, v
     const colorStyle = (value < 50) ? 'red' : 'green';
     const formattedNumber = formatNumber(value, minDecimal, maxDecimal, displayNegativeNumberWithParentheses, '', '%', decimalSeparator, thousandSeparator);
     const outputFormattedValue = value > 100 ? '100%' : formattedNumber;
-    return `<span style='color:${colorStyle}'>${outputFormattedValue}</span>`;
+    return `<span style="color:${colorStyle}">${outputFormattedValue}</span>`;
   }
   return value;
 };
