@@ -397,9 +397,10 @@ export class VanillaGridBundle {
     this.grid.invalidate();
 
     if (this._dataset.length > 0) {
-      // if (!this._isDatasetInitialized && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
-      //   this.loadRowSelectionPresetWhenExists();
-      // }
+      if (!this._isDatasetInitialized && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
+        this.loadRowSelectionPresetWhenExists();
+      }
+      this.loadPresetsWhenDatasetInitialized();
       this._isDatasetInitialized = true;
     }
 
@@ -575,34 +576,13 @@ export class VanillaGridBundle {
     // bind external filter (backend) when available or default onFilter (dataView)
     if (gridOptions.enableFiltering && !this.customDataView) {
       this.filterService.init(grid);
-
-      // if user entered some Filter "presets", we need to reflect them all in the DOM
-      if (gridOptions.presets && Array.isArray(gridOptions.presets.filters) && gridOptions.presets.filters.length > 0) {
-        this.filterService.populateColumnFilterSearchTermPresets(gridOptions.presets.filters);
-      }
+      this.loadPresetsWhenDatasetInitialized();
 
       // bind external filter (backend) unless specified to use the local one
       if (gridOptions.backendServiceApi && !gridOptions.backendServiceApi.useLocalFiltering) {
         this.filterService.bindBackendOnFilter(grid);
       } else {
         this.filterService.bindLocalOnFilter(grid);
-      }
-    }
-
-    // if user entered some Columns "presets", we need to reflect them all in the grid
-    if (gridOptions.presets && Array.isArray(gridOptions.presets.columns) && gridOptions.presets.columns.length > 0) {
-      const gridColumns: Column[] = this.gridStateService.getAssociatedGridColumns(grid, gridOptions.presets.columns);
-      if (gridColumns && Array.isArray(gridColumns) && gridColumns.length > 0) {
-        // make sure that the checkbox selector is also visible if it is enabled
-        if (gridOptions.enableCheckboxSelector) {
-          const checkboxColumn = (Array.isArray(this._columnDefinitions) && this._columnDefinitions.length > 0) ? this._columnDefinitions[0] : null;
-          if (checkboxColumn && checkboxColumn.id === '_checkbox_selector' && gridColumns[0].id !== '_checkbox_selector') {
-            gridColumns.unshift(checkboxColumn);
-          }
-        }
-
-        // finally set the new presets columns (including checkbox selector if need be)
-        grid.setColumns(gridColumns);
       }
     }
 
@@ -760,7 +740,6 @@ export class VanillaGridBundle {
    * Also if we use Row Selection or the Checkbox Selector, we need to reset any selection
    */
   paginationChanged(pagination: ServicePagination) {
-    // console.log('pagination changed', pagination)
     const isSyncGridSelectionEnabled = this.gridStateService && this.gridStateService.needToPreserveRowSelection() || false;
     if (!isSyncGridSelectionEnabled && (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector)) {
       this.grid.setSelectedRows([]);
@@ -797,9 +776,10 @@ export class VanillaGridBundle {
       }
 
       if (dataset.length > 0) {
-        // if (!this._isDatasetInitialized && this._gridOptions.enableCheckboxSelector) {
-        //   this.loadRowSelectionPresetWhenExists();
-        // }
+        if (!this._isDatasetInitialized && this._gridOptions.enableCheckboxSelector) {
+          this.loadRowSelectionPresetWhenExists();
+        }
+        this.loadPresetsWhenDatasetInitialized();
         this._isDatasetInitialized = true;
 
         // also update the hierarchical dataset
@@ -922,12 +902,38 @@ export class VanillaGridBundle {
       );
 
       // also initialize (render) the pagination component
-      if (this._gridOptions.enablePagination) {
+      if (this._gridOptions.enablePagination && !this._isPaginationInitialized) {
         this.slickPagination = new SlickPaginationComponent(this.paginationService, this._eventPubSubService, this.sharedService, this.translateService);
         this.slickPagination.renderPagination(this._gridParentContainerElm);
       }
 
       this._isPaginationInitialized = true;
+    }
+  }
+
+  private loadPresetsWhenDatasetInitialized() {
+    if (this.gridOptions && !this.customDataView) {
+      // if user entered some Filter "presets", we need to reflect them all in the DOM
+      if (this.gridOptions.presets && Array.isArray(this.gridOptions.presets.filters) && this.gridOptions.presets.filters.length > 0) {
+        this.filterService.populateColumnFilterSearchTermPresets(this.gridOptions.presets.filters);
+      }
+
+      // if user entered some Columns "presets", we need to reflect them all in the grid
+      if (this.gridOptions.presets && Array.isArray(this.gridOptions.presets.columns) && this.gridOptions.presets.columns.length > 0) {
+        const gridColumns: Column[] = this.gridStateService.getAssociatedGridColumns(this.grid, this.gridOptions.presets.columns);
+        if (gridColumns && Array.isArray(gridColumns) && gridColumns.length > 0) {
+          // make sure that the checkbox selector is also visible if it is enabled
+          if (this.gridOptions.enableCheckboxSelector) {
+            const checkboxColumn = (Array.isArray(this._columnDefinitions) && this._columnDefinitions.length > 0) ? this._columnDefinitions[0] : null;
+            if (checkboxColumn && checkboxColumn.id === '_checkbox_selector' && gridColumns[0].id !== '_checkbox_selector') {
+              gridColumns.unshift(checkboxColumn);
+            }
+          }
+
+          // finally set the new presets columns (including checkbox selector if need be)
+          this.grid.setColumns(gridColumns);
+        }
+      }
     }
   }
 

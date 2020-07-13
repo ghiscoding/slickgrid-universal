@@ -53,8 +53,8 @@ export class Example5 {
       { id: 'duration', name: 'Duration', field: 'duration', minWidth: 90, filterable: true },
       {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete', minWidth: 120, maxWidth: 200,
-        sortable: true, filterable: true, filter: { model: Filters.slider, operator: '>=' },
-        formatter: Slicker.Formatters.percentCompleteBar, type: FieldType.number,
+        sortable: true, filterable: true, filter: { model: Filters.compoundSlider, operator: '>=' },
+        formatter: Formatters.percentCompleteBarWithText, type: FieldType.number,
       },
       {
         id: 'start', name: 'Start', field: 'start', minWidth: 60,
@@ -103,9 +103,9 @@ export class Example5 {
         levelPropName: 'indent',
         parentPropName: 'parentId'
       },
-      // presets: {
-      //   filters: [{ columnId: 'percentComplete', searchTerms: ['50'], operator: '>=' }]
-      // }
+      presets: {
+        filters: [{ columnId: 'percentComplete', searchTerms: [25], operator: '>=' }]
+      }
     };
   }
 

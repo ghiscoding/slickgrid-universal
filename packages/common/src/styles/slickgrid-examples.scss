@@ -99,6 +99,20 @@
   background-color: transparent;
 }
 
+.percent-complete-bar-with-text {
+  display: inline-block;
+  height: 20px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  background-color: transparent;
+  line-height: 20px;
+  min-width: 25px;
+  text-align: center;
+  top: 2px;
+  color: #ffffff;
+}
+
 /* Slick.Editors.Text, Slick.Editors.Date */
 .ui-datepicker-trigger {
   margin-top: 2px;

@@ -940,6 +940,32 @@ describe('FilterService', () => {
         { id: 'gender', field: 'gender', filter: { operator: '', searchTerms: ['male'] } },
       ]);
     });
+
+    it('should pre-filter the tree dataset when the grid is a Tree Data View', () => {
+      const spyRefresh = jest.spyOn(dataViewStub, 'refresh');
+      const spyPreFilter = jest.spyOn(service, 'preFilterTreeData');
+      const spyGetCols = jest.spyOn(gridStub, 'getColumns').mockReturnValue([
+        { id: 'name', field: 'name', filter: { model: Filters.input, operator: 'EQ' } },
+        { id: 'gender', field: 'gender' },
+        { id: 'size', field: 'size', filter: { model: Filters.input, operator: '>=' } }
+      ]);
+      gridOptionMock.enableTreeData = true;
+      gridOptionMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files' };
+      gridOptionMock.presets = {
+        filters: [{ columnId: 'size', searchTerms: [20], operator: '>=' }]
+      };
+      service.init(gridStub);
+      const output = service.populateColumnFilterSearchTermPresets(gridOptionMock.presets.filters);
+
+      expect(spyGetCols).toHaveBeenCalled();
+      expect(spyRefresh).toHaveBeenCalled();
+      expect(spyPreFilter).toHaveBeenCalled();
+      expect(output).toEqual([
+        { id: 'name', field: 'name', filter: { model: Filters.input, operator: 'EQ' } },
+        { id: 'gender', field: 'gender', },
+        { id: 'size', field: 'size', filter: { model: Filters.input, operator: '>=', searchTerms: [20] } },
+      ]);
+    });
   });
 
   describe('updateFilters method', () => {
@@ -1084,6 +1110,7 @@ describe('FilterService', () => {
     beforeEach(() => {
       gridOptionMock.enableTreeData = true;
       gridOptionMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files' };
+      jest.clearAllMocks();
     });
 
     it('should expect "setSortColumns" to have been called after init', () => {

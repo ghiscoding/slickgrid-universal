@@ -1,6 +1,6 @@
 import { Column, Formatter } from './../interfaces/index';
 
-export const percentCompleteBarFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any): string => {
+export const percentCompleteBarWithTextFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any): string => {
   const isNumber = (value === null || value === undefined || value === '') ? false : !isNaN(+value);
   if (!isNumber) {
     return '';
@@ -20,5 +20,5 @@ export const percentCompleteBarFormatter: Formatter = (row: number, cell: number
     color = 'green';
   }
 
-  return `<span class="percent-complete-bar" title="${inputNumber}%" style="background:${color}; width:${inputNumber}%"></span>`;
+  return `<div class="percent-complete-bar-with-text" title="${inputNumber}%" style="background:${color}; width:${inputNumber}%">${inputNumber}%</div>`;
 };
