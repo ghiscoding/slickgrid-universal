@@ -1,6 +1,7 @@
 /// <reference types="Cypress" />
 
 describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
+  const GRID_ROW_HEIGHT = 45;
   const fullTitles = ['', '', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Completed'];
 
   beforeEach(() => {
@@ -24,19 +25,19 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should have 4 rows pre-selected by the grid presets', () => {
-    cy.get('[style="top:0px"] > .slick-cell:nth(2)').should('contain', 'Task 0');
-    cy.get('[style="top:45px"] > .slick-cell:nth(2)').should('contain', 'Task 1');
-    cy.get('[style="top:90px"] > .slick-cell:nth(2)').should('contain', 'Task 2');
-    cy.get('[style="top:135px"] > .slick-cell:nth(2)').should('contain', 'Task 3');
-    cy.get('[style="top:180px"] > .slick-cell:nth(2)').should('contain', 'Task 4');
-    cy.get('[style="top:225px"] > .slick-cell:nth(2)').should('contain', 'Task 5');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(2)`).should('contain', 'Task 1');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(2)`).should('contain', 'Task 2');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(2)`).should('contain', 'Task 3');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(2)`).should('contain', 'Task 4');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 5}px"] > .slick-cell:nth(2)`).should('contain', 'Task 5');
 
     // Task 4 and 3 should be selected
     cy.get('input[type="checkbox"]:checked').should('have.length', 4);
-    cy.get('[style="top:90px"] > .slick-cell:nth(1) input[type="checkbox"]:checked').should('have.length', 1);
-    cy.get('[style="top:135px"] > .slick-cell:nth(1) input[type="checkbox"]:checked').should('have.length', 1);
-    cy.get('[style="top:270px"] > .slick-cell:nth(1) input[type="checkbox"]:checked').should('have.length', 1);
-    cy.get('[style="top:315px"] > .slick-cell:nth(1) input[type="checkbox"]:checked').should('have.length', 1);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should('have.length', 1);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should('have.length', 1);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 6}px"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should('have.length', 1);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 7}px"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should('have.length', 1);
   });
 
   it('should uncheck all rows', () => {
@@ -69,22 +70,22 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     cy.get('.slick-viewport-top.slick-viewport-left')
       .scrollTo('top');
 
-    cy.get('[style="top:0px"] > .slick-cell:nth(2)').should('contain', 'Task 0');
-    cy.get('[style="top:45px"] > .slick-cell:nth(2)').should('contain', 'Task 1');
-    cy.get('[style="top:90px"] > .slick-cell:nth(2)').should('contain', 'Task 3');
-    cy.get('[style="top:135px"] > .slick-cell:nth(2)').should('contain', 'Task 2');
-    cy.get('[style="top:180px"] > .slick-cell:nth(2)').should('contain', 'Task 4');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(2)`).should('contain', 'Task 1');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(2)`).should('contain', 'Task 3');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(2)`).should('contain', 'Task 2');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(2)`).should('contain', 'Task 4');
 
     cy.get('input[type="checkbox"]:checked')
       .should('have.length', 0);
   });
 
   it('should select 2 rows (Task 3,4), then move row and expect the 2 rows to still be selected without any others', () => {
-    cy.get('[style="top:90px"] > .slick-cell:nth(1)').click();
-    cy.get('[style="top:180px"] > .slick-cell:nth(1)').click();
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(1)`).click();
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(1)`).click();
 
-    cy.get('[style="top:90px"] > .slick-cell.cell-reorder').as('moveIconTask3');
-    cy.get('[style="top:225px"] > .slick-cell.cell-reorder').as('moveIconTask5');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell.cell-reorder`).as('moveIconTask3');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 5}px"] > .slick-cell.cell-reorder`).as('moveIconTask5');
 
     cy.get('@moveIconTask3').should('have.length', 1);
 
@@ -99,16 +100,16 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     cy.get('.slick-viewport-top.slick-viewport-left')
       .scrollTo('top');
 
-    cy.get('[style="top:0px"] > .slick-cell:nth(2)').should('contain', 'Task 0');
-    cy.get('[style="top:45px"] > .slick-cell:nth(2)').should('contain', 'Task 1');
-    cy.get('[style="top:90px"] > .slick-cell:nth(2)').should('contain', 'Task 2');
-    cy.get('[style="top:135px"] > .slick-cell:nth(2)').should('contain', 'Task 4');
-    cy.get('[style="top:180px"] > .slick-cell:nth(2)').should('contain', 'Task 5');
-    cy.get('[style="top:225px"] > .slick-cell:nth(2)').should('contain', 'Task 3');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(2)`).should('contain', 'Task 1');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(2)`).should('contain', 'Task 2');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(2)`).should('contain', 'Task 4');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(2)`).should('contain', 'Task 5');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 5}px"] > .slick-cell:nth(2)`).should('contain', 'Task 3');
 
     // Task 4 and 3 should be selected
     cy.get('input[type="checkbox"]:checked').should('have.length', 2);
-    cy.get('[style="top:135px"] > .slick-cell:nth(1) input[type="checkbox"]:checked').should('have.length', 1);
-    cy.get('[style="top:225px"] > .slick-cell:nth(1) input[type="checkbox"]:checked').should('have.length', 1);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should('have.length', 1);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 5}px"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should('have.length', 1);
   });
 });
