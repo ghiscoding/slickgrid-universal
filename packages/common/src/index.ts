@@ -17,10 +17,11 @@ export * from './grouping-formatters/index';
 export * from './sortComparers/index';
 
 import * as Enums from './enums/index';
+import * as BackendUtilities from './services/backend-utilities';
 import * as ServiceUtilities from './services/utilities';
-import * as sortUtilities from './sortComparers/sortUtilities';
+import * as SortUtilities from './sortComparers/sortUtilities';
 
-const Utilities = { ...ServiceUtilities, ...sortUtilities };
+const Utilities = { ...BackendUtilities, ...ServiceUtilities, ...SortUtilities };
 export { Enums };
 export { Utilities };
 export { SlickgridConfig } from './slickgrid-config';

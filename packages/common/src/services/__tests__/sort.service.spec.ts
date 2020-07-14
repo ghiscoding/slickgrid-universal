@@ -56,7 +56,7 @@ const gridStub = {
   getColumnIndex: jest.fn(),
   getOptions: () => gridOptionMock,
   getColumns: jest.fn(),
-  getData: () => dataViewStub,
+  getData: () => dataViewStub as SlickDataView,
   getSortColumns: jest.fn(),
   invalidate: jest.fn(),
   onLocalSortChanged: jest.fn(),
@@ -170,7 +170,7 @@ describe('SortService', () => {
       const setSortSpy = jest.spyOn(gridStub, 'setSortColumns');
       const gridSortSpy = jest.spyOn(gridStub.onSort, 'notify');
 
-      sharedService.dataView = null; // fake a custom dataview by removing the dataView in shared
+      gridStub.getData = () => null; // fake a custom dataview by removing the dataView in shared
       const mockMouseEvent = new Event('mouseup');
       service.bindLocalOnSort(gridStub);
       service.clearSortByColumnId(mockMouseEvent, 'firstName');
@@ -178,6 +178,8 @@ describe('SortService', () => {
       expect(previousSortSpy).toHaveBeenCalled();
       expect(setSortSpy).toHaveBeenCalled();
       expect(gridSortSpy).toHaveBeenCalledWith(mockSortedCols[1]);
+      // @ts-ignore
+      gridStub.getData = () => dataViewStub as SlickDataView; // put back regular dataview mock
     });
 
     it('should expect Sort Service to call "onLocalSortChanged" with empty array then also "sortLocalGridByDefaultSortFieldId" when there is no more columns left to sort', () => {

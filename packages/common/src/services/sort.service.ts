@@ -115,7 +115,7 @@ export class SortService {
     if (Array.isArray(allSortedCols) && Array.isArray(sortedColsWithoutCurrent) && allSortedCols.length !== sortedColsWithoutCurrent.length) {
       if (this._gridOptions.backendServiceApi) {
         this.onBackendSortChanged(event, { multiColumnSort: true, sortCols: sortedColsWithoutCurrent, grid: this._grid });
-      } else if (this.sharedService.dataView) {
+      } else if (this._dataView) {
         this.onLocalSortChanged(this._grid, sortedColsWithoutCurrent, true, true);
       } else {
         // when using customDataView, we will simply send it as a onSort event with notify

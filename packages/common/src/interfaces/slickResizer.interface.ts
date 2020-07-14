@@ -49,7 +49,7 @@ export interface SlickResizer {
    * @param {object} event that triggered the resize, defaults to null
    * @return If the browser supports it, we can return a Promise that would resolve with the new dimensions
    */
-  resizeGrid(delay?: number, newSizes?: GridSize, event?: SlickEventData): void;
+  resizeGrid(delay?: number, newSizes?: GridSize, event?: SlickEventData): Promise<GridSize>;
 
   // --
   // Events
