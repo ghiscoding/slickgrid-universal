@@ -1128,7 +1128,7 @@ export class SlickVanillaGridBundle {
    * for these cases we'll resize until it's no longer true or until we reach a max time limit (30min)
    */
   private resizeGridWhenStylingIsBrokenUntilCorrected() {
-    const INTERVAL_MAX_MIN_RETRIES = 60;
+    const INTERVAL_MAX_MIN_RETRIES = 30;
     const headerElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-header`);
     const viewportElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-viewport`);
 
@@ -1149,13 +1149,13 @@ export class SlickVanillaGridBundle {
         const viewportOffsetTop = viewportPos?.top ?? 0;
 
         // if header row is Y coordinate 0 (happens when user is not in current Tab) or when header titles are lower than the viewport of dataset (this can happen when user change Tab and DOM is not shown)
-        // for these cases we'll resize until it's no longer true or until we reach a max time limit (60min)
+        // for these cases we'll resize until it's no longer true or until we reach a max time limit (30min)
         const isResizeRequired = (headerPos?.top === 0 || (headerOffsetTop - viewportOffsetTop) > 40) ? true : false;
 
         if (isResizeRequired && this.resizerPlugin?.resizeGrid) {
           this.resizerPlugin.resizeGrid();
-        } else if (!isResizeRequired || (this._intervalExecutionCounter++ > (4 * 60 * INTERVAL_MAX_MIN_RETRIES))) { // interval is 250ms, so 4x is 1sec, so (4 * 60 * intervalMaxTimeInMin) shoud be 30min
-          clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 60min
+        } else if (/* !isResizeRequired || */ (this._intervalExecutionCounter++ > (4 * 30 * INTERVAL_MAX_MIN_RETRIES))) { // interval is 250ms, so 4x is 1sec, so (4 * 30 * intervalMaxTimeInMin) shoud be 30min
+          clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 30min
         }
       }, 250);
     }
@@ -1184,8 +1184,6 @@ export class SlickVanillaGridBundle {
 
   /** translate all columns (including hidden columns) */
   private translateColumnHeaderTitleKeys() {
-    // eventually deprecate the "headerKey" and use only the "nameKey"
-    this.extensionUtility.translateItems(this.sharedService.allColumns, 'headerKey', 'name');
     this.extensionUtility.translateItems(this.sharedService.allColumns, 'nameKey', 'name');
   }
 
