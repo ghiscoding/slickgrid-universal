@@ -312,7 +312,7 @@ describe('Grid Service', () => {
       expect(updateSpy).toHaveBeenCalledTimes(1);
       expect(getRowIdSpy).toHaveBeenCalledWith(0);
       expect(getRowIndexSpy).toHaveBeenCalledWith(0);
-      expect(updateSpy).toHaveBeenCalledWith(mockItem.id, mockItem, { highlightRow: true, selectRow: false, scrollRowIntoView: false, triggerEvent: true });
+      expect(updateSpy).toHaveBeenCalledWith(mockItem.id, mockItem, { highlightRow: false, selectRow: false, scrollRowIntoView: false, triggerEvent: true });
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
     });
 
@@ -327,7 +327,7 @@ describe('Grid Service', () => {
 
       expect(getRowIdSpy).toHaveBeenCalledWith(0);
       expect(getRowIndexSpy).toHaveBeenCalledWith(0);
-      expect(serviceHighlightSpy).toHaveBeenCalledWith(0);
+      expect(serviceHighlightSpy).not.toHaveBeenCalled();
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
     });
 
@@ -346,7 +346,7 @@ describe('Grid Service', () => {
       expect(serviceUpdateSpy).toHaveBeenCalledTimes(2);
       expect(serviceUpdateSpy).toHaveBeenNthCalledWith(1, mockItems[0].id, mockItems[0], { highlightRow: false, selectRow: false, scrollRowIntoView: false, triggerEvent: false });
       expect(serviceUpdateSpy).toHaveBeenNthCalledWith(2, mockItems[1].id, mockItems[1], { highlightRow: false, selectRow: false, scrollRowIntoView: false, triggerEvent: false });
-      expect(serviceHighlightSpy).toHaveBeenCalledWith([0, 1]);
+      expect(serviceHighlightSpy).not.toHaveBeenCalled();
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItems);
     });
 
@@ -418,7 +418,7 @@ describe('Grid Service', () => {
       expect(updateSpy).toHaveBeenCalledTimes(1);
       expect(getRowIdSpy).toHaveBeenCalledWith(0);
       expect(getRowIndexSpy).toHaveBeenCalledWith(0);
-      expect(updateSpy).toHaveBeenCalledWith(mockItem.customId, mockItem, { highlightRow: true, selectRow: false, scrollRowIntoView: false, triggerEvent: true });
+      expect(updateSpy).toHaveBeenCalledWith(mockItem.customId, mockItem, { highlightRow: false, selectRow: false, scrollRowIntoView: false, triggerEvent: true });
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
 
       delete mockGridOptions.datasetIdPropertyName;

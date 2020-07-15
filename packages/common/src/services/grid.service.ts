@@ -22,7 +22,7 @@ declare const Slick: SlickNamespace;
 let highlightTimerEnd: any;
 const GridServiceDeleteOptionDefaults: GridServiceDeleteOption = { triggerEvent: true };
 const GridServiceInsertOptionDefaults: GridServiceInsertOption = { highlightRow: true, position: 'top', resortGrid: false, selectRow: false, triggerEvent: true };
-const GridServiceUpdateOptionDefaults: GridServiceUpdateOption = { highlightRow: true, selectRow: false, scrollRowIntoView: false, triggerEvent: true };
+const GridServiceUpdateOptionDefaults: GridServiceUpdateOption = { highlightRow: false, selectRow: false, scrollRowIntoView: false, triggerEvent: true };
 
 export class GridService {
   private _grid: SlickGrid;
