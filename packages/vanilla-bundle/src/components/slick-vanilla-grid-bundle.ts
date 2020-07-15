@@ -215,6 +215,13 @@ export class SlickVanillaGridBundle {
     this.paginationService.updateTotalItems(options?.totalItems || 0);
   }
 
+  get isDatasetInitialized(): boolean {
+    return this._isDatasetInitialized;
+  }
+  set isDatasetInitialized(isInitialized: boolean) {
+    this._isDatasetInitialized = isInitialized;
+  }
+
   get gridUid(): string {
     return this.grid?.getUID() ?? '';
   }
@@ -597,13 +604,13 @@ export class SlickVanillaGridBundle {
     // using jQuery extend to do a deep clone has an unwanted side on objects and pageSizes but ES6 spread has other worst side effects
     // so we will just overwrite the pageSizes when needed, this is the only one causing issues so far.
     // jQuery wrote this on their docs:: On a deep extend, Object and Array are extended, but object wrappers on primitive types such as String, Boolean, and Number are not.
-    if (options?.pagination && gridOptions.enablePagination && gridOptions.pagination && Array.isArray(gridOptions.pagination.pageSizes)) {
+    if (options?.pagination && (gridOptions.enablePagination || gridOptions.backendServiceApi) && gridOptions.pagination && Array.isArray(gridOptions.pagination.pageSizes)) {
       options.pagination.pageSizes = gridOptions.pagination.pageSizes;
     }
 
     // when we use Pagination on Local Grid, it doesn't seem to work without enableFiltering
     // so we'll enable the filtering but we'll keep the header row hidden
-    if (!options.enableFiltering && options.enablePagination && this._isLocalGrid) {
+    if (options && !options.enableFiltering && options.enablePagination && this._isLocalGrid) {
       options.enableFiltering = true;
       options.showHeaderRow = false;
       this._hideHeaderRowAfterPageLoad = true;
@@ -818,7 +825,8 @@ export class SlickVanillaGridBundle {
           // the processes can be a Promise (like Http)
           if (process instanceof Promise && process.then) {
             const totalItems = this.gridOptions && this.gridOptions.pagination && this.gridOptions.pagination.totalItems || 0;
-            process.then((processResult: any) => executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems))
+            process
+              .then((processResult: any) => executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems))
               .catch((error) => onBackendError(error, backendApi));
           }
         });
@@ -1014,7 +1022,7 @@ export class SlickVanillaGridBundle {
       this.subscriptions.push(
         this._eventPubSubService.subscribe('onPaginationChanged', (paginationChanges: ServicePagination) => this.paginationChanged(paginationChanges)),
         this._eventPubSubService.subscribe('onPaginationVisibilityChanged', (visibility: { visible: boolean }) => {
-          this.showPagination = visibility && visibility.visible || false;
+          this.showPagination = visibility?.visible ?? false;
           if (this.gridOptions && this.gridOptions.backendServiceApi) {
             refreshBackendDataset();
           }

@@ -15,7 +15,6 @@ import { BindingHelper } from '../services/binding.helper';
 
 export class SlickFooterComponent {
   private _bindingHelper: BindingHelper;
-  private _domPurifyOptions: any = {};
   private _footerElement: HTMLDivElement;
 
   get gridUid(): string {

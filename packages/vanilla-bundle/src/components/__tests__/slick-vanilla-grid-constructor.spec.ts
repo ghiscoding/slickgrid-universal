@@ -23,12 +23,12 @@ import {
   PaginationService,
   ServicePagination,
   SharedService,
+  SlickGrid,
   SortService,
   TreeDataService,
-  Utilities,
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
-// import * as utilities from '@slickgrid-universal/common/src/services/backend-utilities';
+import * as utilities from '@slickgrid-universal/common/dist/commonjs/services/backend-utilities';
 
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle';
@@ -37,19 +37,19 @@ import { TranslateService } from '../../services';
 
 const mockExecuteBackendProcess = jest.fn();
 const mockRefreshBackendDataset = jest.fn();
-Utilities.executeBackendProcessesCallback = mockExecuteBackendProcess;
-Utilities.refreshBackendDataset = mockRefreshBackendDataset;
-
 const mockBackendError = jest.fn();
-Utilities.onBackendError = mockBackendError;
+
+// @ts-ignore
+utilities.executeBackendProcessesCallback = mockExecuteBackendProcess;
+
+// @ts-ignore
+utilities.refreshBackendDataset = mockRefreshBackendDataset;
+
+// @ts-ignore
+utilities.onBackendError = mockBackendError;
 
 declare const Slick: any;
 jest.mock('flatpickr', () => { });
-
-const excelExportServiceStub = {
-  init: jest.fn(),
-  dispose: jest.fn(),
-} as unknown as ExcelExportService;
 
 const fileExportServiceStub = {
   init: jest.fn(),
@@ -366,6 +366,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('dataset changed', () => {
       beforeEach(() => {
         jest.clearAllMocks();
+        sharedService.grid = mockGrid as unknown as SlickGrid;
       });
 
       it('should expect "autosizeColumns" being called when "autoFitColumnsOnFirstLoad" is set and we are on first page load', () => {
@@ -517,6 +518,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       afterEach(() => {
         component.dispose();
         jest.clearAllMocks();
+        sharedService.grid = mockGrid as unknown as SlickGrid;
       });
 
       it('should call the onDataviewCreated emitter', () => {
@@ -888,7 +890,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(refreshSpy).toHaveBeenCalledWith(mockData);
       });
 
-      xit('should execute the process method on initialization when "executeProcessCommandOnInit" is set as a backend service options with Pagination enabled', (done) => {
+      it('should execute the process method on initialization when "executeProcessCommandOnInit" is set as a backend service options with Pagination enabled', (done) => {
         const now = new Date();
         const query = `query { users (first:20,offset:0) { totalCount, nodes { id,name,gender,company } } }`;
         const processResult = {
@@ -910,7 +912,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         }, 5);
       });
 
-      xit('should execute the process method on initialization when "executeProcessCommandOnInit" is set as a backend service options without Pagination (when disabled)', (done) => {
+      it('should execute the process method on initialization when "executeProcessCommandOnInit" is set as a backend service options without Pagination (when disabled)', (done) => {
         const now = new Date();
         const query = `query { users { id,name,gender,company } }`;
         const processResult = {
@@ -932,10 +934,10 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         }, 5);
       });
 
-      xit('should throw an error when the process method on initialization when "executeProcessCommandOnInit" is set as a backend service options', (done) => {
+      it('should throw an error when the process method on initialization when "executeProcessCommandOnInit" is set as a backend service options', (done) => {
         const mockError = { error: '404' };
         const query = `query { users (first:20,offset:0) { totalCount, nodes { id,name,gender,company } } }`;
-        const promise = new Promise((resolve, reject) => setTimeout(() => reject(mockError), 1));
+        const promise = new Promise((_resolve, reject) => setTimeout(() => reject(mockError), 1));
         const processSpy = jest.spyOn(component.gridOptions.backendServiceApi, 'process').mockReturnValue(promise);
         jest.spyOn(component.gridOptions.backendServiceApi.service, 'buildQuery').mockReturnValue(query);
 
@@ -945,7 +947,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(processSpy).toHaveBeenCalled();
 
         promise.catch((e) => {
-          expect(e).toBe(mockError);
+          expect(e).toEqual(mockError);
           done();
         });
       });
@@ -1074,7 +1076,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(setColSpy).toHaveBeenCalledWith(mockCols);
       });
 
-      xit('should execute backend service "init" method when set', () => {
+      it('should execute backend service "init" method when set', () => {
         const mockPagination = { pageNumber: 1, pageSizes: [10, 25, 50], pageSize: 10, totalItems: 100 };
         const mockGraphqlOptions = { datasetName: 'users', extraQueryArguments: [{ field: 'userId', value: 123 }] } as GraphqlServiceOption;
         const bindBackendSpy = jest.spyOn(sortServiceStub, 'bindBackendOnSort');
@@ -1082,6 +1084,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const initSpy = jest.spyOn(mockGraphqlService2, 'init');
 
         component.gridOptions = {
+          // enablePagination: true,
           enableSorting: true,
           backendServiceApi: {
             service: mockGraphqlService2,
@@ -1249,7 +1252,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         jest.clearAllMocks();
       });
 
-      xit('should call trigger a gridStage change event when pagination change is triggered', () => {
+      it('should call trigger a gridStage change event when pagination change is triggered', () => {
         const mockPagination = { pageNumber: 2, pageSize: 20 } as Pagination;
         const pluginEaSpy = jest.spyOn(eventPubSubService, 'publish');
         jest.spyOn(gridStateServiceStub, 'getCurrentGridState').mockReturnValue({ columns: [], pagination: mockPagination } as GridState);
@@ -1257,13 +1260,13 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer);
         component.paginationChanged(mockPagination);
 
-        expect(pluginEaSpy).toHaveBeenCalledWith('onGridStateServiceChanged', {
+        expect(pluginEaSpy).toHaveBeenCalledWith('onGridStateChanged', {
           change: { newValues: mockPagination, type: GridStateType.pagination },
           gridState: { columns: [], pagination: mockPagination }
         });
       });
 
-      xit('should call trigger a gridStage change event when "onPaginationChanged" from the Pagination Service is triggered', () => {
+      it('should call trigger a gridStage change event when "onPaginationChanged" from the Pagination Service is triggered', () => {
         const mockPagination = { pageNumber: 2, pageSize: 20 } as CurrentPagination;
         const mockServicePagination = {
           ...mockPagination,
@@ -1278,15 +1281,15 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions.enablePagination = true;
         component.initialization(divContainer);
         component.refreshGridData([{ firstName: 'John', lastName: 'Doe' }]);
-        eventPubSubService.publish('paginationService:onPaginationChanged', mockServicePagination);
+        eventPubSubService.publish('onPaginationChanged', mockServicePagination);
 
-        expect(pluginEaSpy).toHaveBeenCalledWith('gridStateService:changed', {
+        expect(pluginEaSpy).toHaveBeenCalledWith('onGridStateChanged', {
           change: { newValues: mockPagination, type: GridStateType.pagination },
           gridState: { columns: [], pagination: mockPagination }
         });
       });
 
-      xit('should call trigger a gridStage change and reset selected rows when pagination change is triggered and "enableRowSelection" is set', () => {
+      it('should call trigger a gridStage change and reset selected rows when pagination change is triggered and "enableRowSelection" is set', () => {
         const mockPagination = { pageNumber: 2, pageSize: 20 } as Pagination;
         const pluginEaSpy = jest.spyOn(eventPubSubService, 'publish');
         const setRowSpy = jest.spyOn(mockGrid, 'setSelectedRows');
@@ -1297,13 +1300,13 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.paginationChanged(mockPagination);
 
         expect(setRowSpy).toHaveBeenCalledWith([]);
-        expect(pluginEaSpy).toHaveBeenCalledWith('gridStateService:changed', {
+        expect(pluginEaSpy).toHaveBeenCalledWith('onGridStateChanged', {
           change: { newValues: mockPagination, type: GridStateType.pagination },
           gridState: { columns: [], pagination: mockPagination }
         });
       });
 
-      xit('should call trigger a gridStage change and reset selected rows when pagination change is triggered and "enableCheckboxSelector" is set', () => {
+      it('should call trigger a gridStage change and reset selected rows when pagination change is triggered and "enableCheckboxSelector" is set', () => {
         const mockPagination = { pageNumber: 2, pageSize: 20 } as Pagination;
         const pluginEaSpy = jest.spyOn(eventPubSubService, 'publish');
         const setRowSpy = jest.spyOn(mockGrid, 'setSelectedRows');
@@ -1314,7 +1317,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.paginationChanged(mockPagination);
 
         expect(setRowSpy).toHaveBeenCalledWith([]);
-        expect(pluginEaSpy).toHaveBeenCalledWith('gridStateService:changed', {
+        expect(pluginEaSpy).toHaveBeenCalledWith('onGridStateChanged', {
           change: { newValues: mockPagination, type: GridStateType.pagination },
           gridState: { columns: [], pagination: mockPagination }
         });
@@ -1322,11 +1325,13 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     });
 
     describe('Custom Footer', () => {
-      xit('should have a Custom Footer when "showCustomFooter" is enabled and there are no Pagination used', (done) => {
+      it('should have a Custom Footer when "showCustomFooter" is enabled and there are no Pagination used', (done) => {
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
+        const mockGridOptions = { enableTranslate: true, showCustomFooter: true, };
+        jest.spyOn(mockGrid, 'getOptions').mockReturnValue(mockGridOptions);
 
-        component.gridOptions.enableTranslate = true;
-        component.gridOptions.showCustomFooter = true;
+        translateService.setLocale('fr');
+        component.gridOptions = mockGridOptions;
         component.initialization(divContainer);
         component.columnDefinitions = mockColDefs;
 
@@ -1334,7 +1339,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           expect(component.columnDefinitions).toEqual(mockColDefs);
           expect(component.gridOptions.showCustomFooter).toBeTrue();
           expect(component.gridOptions.customFooterOptions).toEqual({
-            dateFormat: 'YYYY-DD-MM h:mm:ss a',
+            dateFormat: 'YYYY-MM-DD, hh:mm a',
             hideLastUpdateTimestamp: true,
             hideTotalItemCount: false,
             footerHeight: 20,
@@ -1352,7 +1357,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         });
       });
 
-      xit('should have a Custom Footer and custom texts when "showCustomFooter" is enabled with different metricTexts defined', (done) => {
+      it('should have a Custom Footer and custom texts when "showCustomFooter" is enabled with different metricTexts defined', (done) => {
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
 
         component.gridOptions.enableTranslate = false;
@@ -1371,7 +1376,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           expect(component.columnDefinitions).toEqual(mockColDefs);
           expect(component.gridOptions.showCustomFooter).toBeTrue();
           expect(component.gridOptions.customFooterOptions).toEqual({
-            dateFormat: 'YYYY-DD-MM h:mm:ss a',
+            dateFormat: 'YYYY-MM-DD, hh:mm a',
             hideLastUpdateTimestamp: true,
             hideTotalItemCount: false,
             footerHeight: 20,
@@ -1390,7 +1395,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         });
       });
 
-      xit('should NOT have a Custom Footer when "showCustomFooter" is enabled WITH Pagination in use', (done) => {
+      it('should NOT have a Custom Footer when "showCustomFooter" is enabled WITH Pagination in use', (done) => {
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
 
         component.gridOptions.enablePagination = true;
@@ -1400,7 +1405,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         setTimeout(() => {
           expect(component.columnDefinitions).toEqual(mockColDefs);
-          expect(component.gridOptions.showCustomFooter).toBeFalse();
+          expect(component.slickFooter).toBeUndefined();
           done();
         });
       });
@@ -1409,6 +1414,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('loadRowSelectionPresetWhenExists method', () => {
       beforeEach(() => {
         jest.clearAllMocks();
+        sharedService.grid = mockGrid as unknown as SlickGrid;
       });
 
       it('should call the "mapIdsToRows" from the DataView then "setSelectedRows" from the Grid when there are row selection presets with "dataContextIds" array set', (done) => {
@@ -1431,7 +1437,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         });
       });
 
-      xit('should call the "setSelectedRows" from the Grid when there are row selection presets with "dataContextIds" array set', (done) => {
+      it('should call the "setSelectedRows" from the Grid when there are row selection presets with "dataContextIds" array set', (done) => {
         const selectedGridRows = [22];
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
         const selectRowSpy = jest.spyOn(mockGrid, 'setSelectedRows');
@@ -1440,6 +1446,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions.enableRowSelection = true;
         component.gridOptions.presets = { rowSelection: { gridRowIndexes: selectedGridRows } };
         component.dataset = mockData;
+        component.isDatasetInitialized = false; // it won't call the preset unless we reset this flag
         component.initialization(divContainer);
 
         setTimeout(() => {
@@ -1448,17 +1455,20 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         });
       });
 
-      xit('should NOT call the "setSelectedRows" when the Grid has Local Pagination and there are row selection presets with "dataContextIds" array set', (done) => {
+      it('should NOT call the "setSelectedRows" when the Grid has Local Pagination and there are row selection presets with "dataContextIds" array set', (done) => {
         const selectedGridRows = [22];
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
         const selectRowSpy = jest.spyOn(mockGrid, 'setSelectedRows');
         jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true);
 
-        component.gridOptions.enableRowSelection = true;
-        component.gridOptions.enablePagination = true;
-        component.gridOptions.backendServiceApi = null;
-        component.gridOptions.presets = { rowSelection: { dataContextIds: selectedGridRows } };
+        component.gridOptions = {
+          enableRowSelection: true,
+          enablePagination: true,
+          backendServiceApi: null,
+          presets: { rowSelection: { dataContextIds: selectedGridRows } }
+        };
         component.dataset = mockData;
+        component.isDatasetInitialized = false; // it won't call the preset unless we reset this flag
         component.initialization(divContainer);
 
         setTimeout(() => {
@@ -1471,9 +1481,10 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('onPaginationVisibilityChanged event', () => {
       beforeEach(() => {
         jest.clearAllMocks();
+        sharedService.grid = mockGrid as unknown as SlickGrid;
       });
 
-      xit('should change "showPagination" flag when "onPaginationVisibilityChanged" from the Pagination Service is triggered', (done) => {
+      it('should change "showPagination" flag when "onPaginationVisibilityChanged" from the Pagination Service is triggered', (done) => {
         component.gridOptions.enablePagination = true;
         component.gridOptions.backendServiceApi = null;
 
@@ -1487,7 +1498,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         });
       });
 
-      xit('should call the backend service API to refresh the dataset', (done) => {
+      it('should call the backend service API to refresh the dataset', (done) => {
         component.gridOptions.enablePagination = true;
         component.gridOptions.backendServiceApi = {
           service: mockGraphqlService,
@@ -1507,19 +1518,19 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     });
 
     describe('Tree Data View', () => {
-      xit('should throw an error when enableTreeData is enabled without passing a "columnId"', (done) => {
+      it('should throw an error when enableTreeData is enabled without passing a "columnId"', (done) => {
         try {
           component.gridOptions = { enableTreeData: true, treeDataOptions: {} } as GridOption;
           component.initialization(divContainer);
 
         } catch (e) {
-          expect(e.toString()).toContain('[SlickGrid-Universal] When enabling tree data, you must also provide the "treeDataOption" property in your Grid Options with "childrenPropName" or "parentPropName"');
+          expect(e.toString()).toContain('[Slickgrid-Universal] When enabling tree data, you must also provide the "treeDataOption" property in your Grid Options with "childrenPropName" or "parentPropName"');
           component.dispose();
           done();
         }
       });
 
-      xit('should change flat dataset and expect  being called with other methods', () => {
+      it('should change flat dataset and expect  being called with other methods', () => {
         const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', parentId: 0 }];
         const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }] }];
         const hierarchicalSpy = jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'set');
@@ -1531,7 +1542,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(hierarchicalSpy).toHaveBeenCalledWith(mockHierarchical);
       });
 
-      xit('should change hierarchical dataset and expect processTreeDataInitialSort being called with other methods', () => {
+      it('should change hierarchical dataset and expect processTreeDataInitialSort being called with other methods', () => {
         const mockHierarchical = [{ file: 'documents', files: [{ file: 'vacation.txt' }] }];
         const hierarchicalSpy = jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'set');
         const clearFilterSpy = jest.spyOn(filterServiceStub, 'clearFilters');

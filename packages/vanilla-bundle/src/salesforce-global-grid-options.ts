@@ -23,6 +23,12 @@ export const SalesforceGlobalGridOptions: GridOption = {
     hideFreezeColumnsCommand: false,
   },
   sanitizer: (dirtyHtml) => (dirtyHtml.replace(/(\b)(on\S+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script([<>]*)/gi, '')),
+  showCustomFooter: true,
+  customFooterOptions: {
+    hideMetrics: false,
+    hideTotalItemCount: false,
+    hideLastUpdateTimestamp: true,
+  },
   headerRowHeight: 35,
   rowHeight: 33,
   eventNamingStyle: EventNamingStyle.lowerCaseWithoutOnPrefix,
