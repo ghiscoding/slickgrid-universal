@@ -1,10 +1,12 @@
 import { TranslaterService } from '../packages/common/src/services/translater.service';
 
 export class TranslateServiceStub implements TranslaterService {
-  _locale = 'en';
+  private _locale = 'en';
+
   getCurrentLocale(): string {
     return this._locale;
   }
+
   translate(translationKey: string): string {
     let output = translationKey;
     switch (translationKey) {
@@ -69,6 +71,7 @@ export class TranslateServiceStub implements TranslaterService {
     }
     return output;
   }
+
   setLocale(locale: string) {
     return new Promise(resolve => resolve(this._locale = locale));
   }

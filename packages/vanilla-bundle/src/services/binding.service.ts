@@ -37,10 +37,12 @@ export class BindingService {
       this._value = typeof binding.variable === 'string' ? DOMPurify.sanitize(binding.variable, {}) : binding.variable;
     }
 
-    Object.defineProperty(binding.variable, binding.property, {
-      get: this.valueGetter.bind(this),
-      set: this.valueSetter.bind(this)
-    });
+    if (typeof binding.variable === 'object') {
+      Object.defineProperty(binding.variable, binding.property, {
+        get: this.valueGetter.bind(this),
+        set: this.valueSetter.bind(this)
+      });
+    }
   }
 
   get property() {

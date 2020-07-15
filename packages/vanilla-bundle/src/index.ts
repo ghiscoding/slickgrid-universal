@@ -1,9 +1,9 @@
-import { VanillaGridBundle } from './vanilla-grid-bundle';
+import { SlickVanillaGridBundle } from './components/slick-vanilla-grid-bundle';
 import { Aggregators, Editors, Enums, Filters, Formatters, GroupTotalFormatters, SortComparers, Utilities } from '@slickgrid-universal/common';
 import { BindingService } from './services/index';
 
 const Slicker = {
-  GridBundle: VanillaGridBundle,
+  GridBundle: SlickVanillaGridBundle,
   Aggregators,
   BindingService,
   Editors,

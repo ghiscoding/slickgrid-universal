@@ -66,19 +66,19 @@ import {
   GetSlickEventType,
 } from '@slickgrid-universal/common';
 
-import { FileExportService } from './services/fileExport.service';
-import { TranslateService } from './services/translate.service';
-import { EventPubSubService } from './services/eventPubSub.service';
-import { SlickFooterComponent } from './components/slick-footer';
-import { SlickPaginationComponent } from './components/slick-pagination';
-import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options';
+import { FileExportService } from '../services/fileExport.service';
+import { TranslateService } from '../services/translate.service';
+import { EventPubSubService } from '../services/eventPubSub.service';
+import { SlickFooterComponent } from './slick-footer';
+import { SlickPaginationComponent } from './slick-pagination';
+import { SalesforceGlobalGridOptions } from '../salesforce-global-grid-options';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
 const DATAGRID_FOOTER_HEIGHT = 20;
 const DATAGRID_PAGINATION_HEIGHT = 35;
 
-export class VanillaGridBundle {
+export class SlickVanillaGridBundle {
   private _columnDefinitions: Column[];
   private _gridOptions: GridOption;
   private _dataset: any[];
@@ -112,19 +112,6 @@ export class VanillaGridBundle {
 
   // extensions
   extensionUtility: ExtensionUtility;
-  autoTooltipExtension: AutoTooltipExtension;
-  cellExternalCopyManagerExtension: CellExternalCopyManagerExtension;
-  cellMenuExtension: CellMenuExtension;
-  contextMenuExtension: ContextMenuExtension;
-  columnPickerExtension: ColumnPickerExtension;
-  checkboxExtension: CheckboxSelectorExtension;
-  draggableGroupingExtension: DraggableGroupingExtension;
-  gridMenuExtension: GridMenuExtension;
-  groupItemMetaProviderExtension: GroupItemMetaProviderExtension;
-  headerButtonExtension: HeaderButtonExtension;
-  headerMenuExtension: HeaderMenuExtension;
-  rowMoveManagerExtension: RowMoveManagerExtension;
-  rowSelectionExtension: RowSelectionExtension;
 
   // services
   collectionService: CollectionService;
@@ -145,6 +132,10 @@ export class VanillaGridBundle {
   gridClass: string;
   gridClassName: string;
 
+  get eventHandler(): SlickEventHandler {
+    return this._eventHandler;
+  }
+
   get columnDefinitions() {
     return this._columnDefinitions;
   }
@@ -158,11 +149,18 @@ export class VanillaGridBundle {
   get dataset(): any[] {
     return this._dataset;
   }
-  set dataset(dataset: any[]) {
+  set dataset(newDataset: any[]) {
+    const prevDatasetLn = Array.isArray(this._dataset) ? this._dataset.length : 0;
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions && this._gridOptions.enableDeepCopyDatasetOnPageLoad);
-    const data = isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], dataset) : dataset;
+    const data = isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], newDataset) : newDataset;
     this._dataset = data || [];
     this.refreshGridData(this._dataset);
+
+    // expand/autofit columns on first page load
+    // we can assume that if the prevDataset was empty then we are on first load
+    if (this.gridOptions.autoFitColumnsOnFirstLoad && prevDatasetLn === 0) {
+      this.grid.autosizeColumns();
+    }
   }
 
   get datasetHierarchical(): any[] {
@@ -217,6 +215,13 @@ export class VanillaGridBundle {
     this.paginationService.updateTotalItems(options?.totalItems || 0);
   }
 
+  get isDatasetInitialized(): boolean {
+    return this._isDatasetInitialized;
+  }
+  set isDatasetInitialized(isInitialized: boolean) {
+    this._isDatasetInitialized = isInitialized;
+  }
+
   get gridUid(): string {
     return this.grid?.getUID() ?? '';
   }
@@ -233,53 +238,9 @@ export class VanillaGridBundle {
     this._columnDefinitions = columnDefs || [];
     this._gridOptions = this.mergeGridOptions(options || {});
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions && this._gridOptions.enableDeepCopyDatasetOnPageLoad);
-    this._eventPubSubService = new EventPubSubService(gridParentContainerElm);
-    this._eventPubSubService.eventNamingStyle = this._gridOptions && this._gridOptions.eventNamingStyle || EventNamingStyle.camelCase;
 
-    this.gridEventService = new GridEventService();
-    const slickgridConfig = new SlickgridConfig();
-    this.sharedService = new SharedService();
-    this.translateService = new TranslateService();
-    this.collectionService = new CollectionService(this.translateService);
-    const filterFactory = new FilterFactory(slickgridConfig, this.collectionService, this.translateService);
-    this.filterService = new FilterService(filterFactory, this._eventPubSubService, this.sharedService);
-    this.sortService = new SortService(this.sharedService, this._eventPubSubService);
-    this.treeDataService = new TreeDataService(this.sharedService);
-    this.extensionUtility = new ExtensionUtility(this.sharedService, this.translateService);
-    this.autoTooltipExtension = new AutoTooltipExtension(this.extensionUtility, this.sharedService);
-    this.cellExternalCopyManagerExtension = new CellExternalCopyManagerExtension(this.extensionUtility, this.sharedService);
-    this.cellMenuExtension = new CellMenuExtension(this.extensionUtility, this.sharedService, this.translateService);
-    this.contextMenuExtension = new ContextMenuExtension(this.extensionUtility, this.sharedService, this.translateService, this.treeDataService);
-    this.columnPickerExtension = new ColumnPickerExtension(this.extensionUtility, this.sharedService);
-    this.checkboxExtension = new CheckboxSelectorExtension(this.extensionUtility, this.sharedService);
-    this.draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this.sharedService);
-    this.gridMenuExtension = new GridMenuExtension(this.extensionUtility, this.filterService, this.sharedService, this.sortService, this.translateService);
-    this.groupItemMetaProviderExtension = new GroupItemMetaProviderExtension(this.sharedService);
-    this.headerButtonExtension = new HeaderButtonExtension(this.extensionUtility, this.sharedService);
-    this.headerMenuExtension = new HeaderMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.translateService);
-    this.rowMoveManagerExtension = new RowMoveManagerExtension(this.extensionUtility, this.sharedService);
-    this.rowSelectionExtension = new RowSelectionExtension(this.extensionUtility, this.sharedService);
-    this.gridService = new GridService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
-    this.gridStateService = new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
-    this.paginationService = new PaginationService(this._eventPubSubService, this.sharedService);
-    this.extensionService = new ExtensionService(
-      this.autoTooltipExtension,
-      this.cellExternalCopyManagerExtension,
-      this.cellMenuExtension,
-      this.checkboxExtension,
-      this.columnPickerExtension,
-      this.contextMenuExtension,
-      this.draggableGroupingExtension,
-      this.gridMenuExtension,
-      this.groupItemMetaProviderExtension,
-      this.headerButtonExtension,
-      this.headerMenuExtension,
-      this.rowMoveManagerExtension,
-      this.rowSelectionExtension,
-      this.sharedService,
-      this.translateService,
-    );
-    this.groupingAndColspanService = new GroupingAndColspanService(this.extensionUtility, this.extensionService);
+    // initialize and assign all Service Dependencies
+    this.constructorDependenciesInit(gridParentContainerElm);
 
     if (hierarchicalDataset) {
       this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
@@ -290,26 +251,128 @@ export class VanillaGridBundle {
     }
   }
 
-  dispose() {
+  constructorDependenciesInit(gridParentContainerElm: HTMLElement) {
+    this._eventPubSubService = new EventPubSubService(gridParentContainerElm);
+    this._eventPubSubService.eventNamingStyle = this._gridOptions && this._gridOptions.eventNamingStyle || EventNamingStyle.camelCase;
+
+    this.gridEventService = new GridEventService();
+    const slickgridConfig = new SlickgridConfig();
+    this.sharedService = new SharedService();
+    this.translateService = new TranslateService();
+    this.collectionService = new CollectionService(this.translateService);
+    this.extensionUtility = new ExtensionUtility(this.sharedService, this.translateService);
+    const filterFactory = new FilterFactory(slickgridConfig, this.collectionService, this.translateService);
+    this.filterService = new FilterService(filterFactory, this._eventPubSubService, this.sharedService);
+    this.sortService = new SortService(this.sharedService, this._eventPubSubService);
+    this.treeDataService = new TreeDataService(this.sharedService);
+    this.gridService = new GridService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
+    this.gridStateService = new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
+    this.paginationService = new PaginationService(this._eventPubSubService, this.sharedService);
+
+    // extensions
+    const autoTooltipExtension = new AutoTooltipExtension(this.extensionUtility, this.sharedService);
+    const cellExternalCopyManagerExtension = new CellExternalCopyManagerExtension(this.extensionUtility, this.sharedService);
+    const cellMenuExtension = new CellMenuExtension(this.extensionUtility, this.sharedService, this.translateService);
+    const contextMenuExtension = new ContextMenuExtension(this.extensionUtility, this.sharedService, this.translateService, this.treeDataService);
+    const columnPickerExtension = new ColumnPickerExtension(this.extensionUtility, this.sharedService);
+    const checkboxExtension = new CheckboxSelectorExtension(this.extensionUtility, this.sharedService);
+    const draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this.sharedService);
+    const gridMenuExtension = new GridMenuExtension(this.extensionUtility, this.filterService, this.sharedService, this.sortService, this.translateService);
+    const groupItemMetaProviderExtension = new GroupItemMetaProviderExtension(this.sharedService);
+    const headerButtonExtension = new HeaderButtonExtension(this.extensionUtility, this.sharedService);
+    const headerMenuExtension = new HeaderMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.translateService);
+    const rowMoveManagerExtension = new RowMoveManagerExtension(this.extensionUtility, this.sharedService);
+    const rowSelectionExtension = new RowSelectionExtension(this.extensionUtility, this.sharedService);
+
+    this.extensionService = new ExtensionService(
+      autoTooltipExtension,
+      cellExternalCopyManagerExtension,
+      cellMenuExtension,
+      checkboxExtension,
+      columnPickerExtension,
+      contextMenuExtension,
+      draggableGroupingExtension,
+      gridMenuExtension,
+      groupItemMetaProviderExtension,
+      headerButtonExtension,
+      headerMenuExtension,
+      rowMoveManagerExtension,
+      rowSelectionExtension,
+      this.sharedService,
+      this.translateService,
+    );
+    this.groupingAndColspanService = new GroupingAndColspanService(this.extensionUtility, this.extensionService);
+  }
+
+  constructorDependenciesAssignment(
+    collectionService: CollectionService,
+    eventPubSubService: EventPubSubService,
+    extensionService: ExtensionService,
+    extensionUtility: ExtensionUtility,
+    filterService: FilterService,
+    gridEventService: GridEventService,
+    gridService: GridService,
+    gridStateService: GridStateService,
+    groupingAndColspanService: GroupingAndColspanService,
+    paginationService: PaginationService,
+    sharedService: SharedService,
+    sortService: SortService,
+    translateService: TranslateService,
+    treeDataService: TreeDataService,
+  ) {
+    this._eventPubSubService = eventPubSubService;
+    this._eventPubSubService.eventNamingStyle = this._gridOptions && this._gridOptions.eventNamingStyle || EventNamingStyle.camelCase;
+
+    this.collectionService = collectionService;
+    this.extensionService = extensionService;
+    this.extensionUtility = extensionUtility;
+    this.filterService = filterService;
+    this.gridEventService = gridEventService;
+    this.gridService = gridService;
+    this.gridStateService = gridStateService;
+    this.groupingAndColspanService = groupingAndColspanService;
+    this.paginationService = paginationService;
+    this.sharedService = sharedService;
+    this.sortService = sortService;
+    this.translateService = translateService;
+    this.treeDataService = treeDataService;
+  }
+
+  destroyGridContainerElm() {
+    const gridContainerId = this.gridOptions && this.gridOptions.gridContainerId || 'grid1';
+    $(gridContainerId).empty();
+  }
+
+  /** Dispose of the Component */
+  dispose(shouldEmptyDomElementContainer = false) {
+    this._eventPubSubService.publish('onBeforeGridDestroy', this.grid);
+    this._eventHandler?.unsubscribeAll();
+    this.grid?.destroy();
     this._gridOptions = {};
+    this._eventPubSubService.publish('onAfterGridDestroyed', true);
+
+    // we could optionally also empty the content of the grid container DOM element
+    if (shouldEmptyDomElementContainer) {
+      this.destroyGridContainerElm();
+    }
+
     this.extensionService?.dispose();
     this.filterService?.dispose();
     this.gridEventService?.dispose();
     this.gridStateService?.dispose();
     this.groupingAndColspanService?.dispose();
-    // this.paginationService?.dispose();
+    this.paginationService?.dispose();
     // this.resizer?.dispose();
     this.sortService?.dispose();
     this.treeDataService?.dispose();
 
-    this._eventHandler?.unsubscribeAll();
     this._eventPubSubService?.unsubscribeAll();
-    this.grid?.destroy();
   }
 
-  async initialization(gridContainerElm: HTMLElement) {
+  initialization(gridContainerElm: HTMLElement) {
     // create the slickgrid container and add it to the user's grid container
     this._gridContainerElm = gridContainerElm;
+    this._eventPubSubService.publish('onBeforeGridCreate', true);
 
     this._gridOptions = this.mergeGridOptions(this._gridOptions);
     this.backendServiceApi = this._gridOptions && this._gridOptions.backendServiceApi;
@@ -323,7 +386,7 @@ export class VanillaGridBundle {
     this.createBackendApiInternalPostProcessCallback(this._gridOptions);
 
     if (!this.customDataView) {
-      if (this._gridOptions.draggableGrouping || this._gridOptions.enableGrouping) {
+      if (this.gridOptions.draggableGrouping || this.gridOptions.enableGrouping) {
         this.extensionUtility.loadExtensionDynamically(ExtensionName.groupItemMetaProvider);
         this.groupItemMetadataProvider = new Slick.Data.GroupItemMetadataProvider();
         this.sharedService.groupItemMetadataProvider = this.groupItemMetadataProvider;
@@ -423,9 +486,10 @@ export class VanillaGridBundle {
     }
     this.resizerPlugin = new Slick.Plugins.Resizer(autoResizeOptions, fixedGridDimensions);
     this.grid.registerPlugin<SlickResizer>(this.resizerPlugin);
-    if (this._gridOptions.enableAutoResize) {
-      await this.resizerPlugin.resizeGrid();
-      this.resizeGridWhenStylingIsBroken();
+    if (this.gridOptions.enableAutoResize) {
+      this.resizerPlugin.resizeGrid()
+        .then(() => this.resizeGridWhenStylingIsBrokenUntilCorrected())
+        .catch((error: any) => console.log('Error:', error));
     }
 
     // user might want to hide the header row on page load but still have `enableFiltering: true`
@@ -441,10 +505,10 @@ export class VanillaGridBundle {
     this.gridEventService.bindOnClick(this.grid);
 
     // get any possible Services that user want to register
-    const registeringServices: any[] = this._gridOptions.registerExternalServices || [];
+    const registeringServices: any[] = this.gridOptions.registerExternalServices || [];
 
     // when using Salesforce, we want the Export to CSV always enabled without registering it
-    if (this._gridOptions.enableExport && this._gridOptions.useSalesforceDefaultGridOptions) {
+    if (this.gridOptions.enableExport && this.gridOptions.useSalesforceDefaultGridOptions) {
       const fileExportService = new FileExportService();
       registeringServices.push(fileExportService);
     }
@@ -458,13 +522,18 @@ export class VanillaGridBundle {
     registeringServices.push(this.gridService, this.gridStateService);
 
     // when using Grouping/DraggableGrouping/Colspan register its Service
-    if (this._gridOptions.createPreHeaderPanel && !this._gridOptions.enableDraggableGrouping) {
+    if (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping) {
       registeringServices.push(this.groupingAndColspanService);
     }
 
-    // when using Tree Data View, register its Service
-    if (this._gridOptions.enableTreeData) {
+    if (this.gridOptions.enableTreeData) {
+      // when using Tree Data View, register its Service
       registeringServices.push(this.treeDataService);
+    }
+
+    // when user enables translation, we need to translate Headers on first pass & subsequently in the bindDifferentHooks
+    if (this.gridOptions.enableTranslate) {
+      this.extensionService.translateColumnHeaders();
     }
 
     // bind the Backend Service API callback functions only after the grid is initialized
@@ -483,10 +552,16 @@ export class VanillaGridBundle {
       }
     }
 
+    // publish & dispatch certain events
+    this._eventPubSubService.publish('onGridCreated', this.grid);
+
     // after the DataView is created & updated execute some processes & dispatch some events
     if (!this.customDataView) {
       this.executeAfterDataviewCreated(this.gridOptions);
     }
+
+    // bind resize ONLY after the dataView is ready
+    this.bindResizeHook(this.grid, this.gridOptions);
 
     // TODO - add interface
     const slickerElementInstance = {
@@ -529,13 +604,13 @@ export class VanillaGridBundle {
     // using jQuery extend to do a deep clone has an unwanted side on objects and pageSizes but ES6 spread has other worst side effects
     // so we will just overwrite the pageSizes when needed, this is the only one causing issues so far.
     // jQuery wrote this on their docs:: On a deep extend, Object and Array are extended, but object wrappers on primitive types such as String, Boolean, and Number are not.
-    if (options?.pagination && gridOptions.enablePagination && gridOptions.pagination && Array.isArray(gridOptions.pagination.pageSizes)) {
+    if (options?.pagination && (gridOptions.enablePagination || gridOptions.backendServiceApi) && gridOptions.pagination && Array.isArray(gridOptions.pagination.pageSizes)) {
       options.pagination.pageSizes = gridOptions.pagination.pageSizes;
     }
 
     // when we use Pagination on Local Grid, it doesn't seem to work without enableFiltering
     // so we'll enable the filtering but we'll keep the header row hidden
-    if (!options.enableFiltering && options.enablePagination && this._isLocalGrid) {
+    if (options && !options.enableFiltering && options.enablePagination && this._isLocalGrid) {
       options.enableFiltering = true;
       options.showHeaderRow = false;
       this._hideHeaderRowAfterPageLoad = true;
@@ -573,28 +648,60 @@ export class VanillaGridBundle {
   }
 
   bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: SlickDataView) {
-    // bind external filter (backend) when available or default onFilter (dataView)
-    if (gridOptions.enableFiltering && !this.customDataView) {
-      this.filterService.init(grid);
+    // translate some of them on first load, then on each language change
+    if (gridOptions.enableTranslate) {
+      this.translateColumnHeaderTitleKeys();
+      this.translateColumnGroupKeys();
+      this.translateCustomFooterTexts();
+    }
+
+    // on locale change, we have to manually translate the Headers, GridMenu
+    this.subscriptions.push(
+      this._eventPubSubService.subscribe('onLocaleChanged', () => {
+        if (gridOptions.enableTranslate) {
+          this.extensionService.translateCellMenu();
+          this.extensionService.translateColumnHeaders();
+          this.extensionService.translateColumnPicker();
+          this.extensionService.translateContextMenu();
+          this.extensionService.translateGridMenu();
+          this.extensionService.translateHeaderMenu();
+          this.translateCustomFooterTexts();
+          this.translateColumnHeaderTitleKeys();
+          this.translateColumnGroupKeys();
+          if (gridOptions.createPreHeaderPanel && !gridOptions.enableDraggableGrouping) {
+            this.groupingAndColspanService.translateGroupingAndColSpan();
+          }
+        }
+      })
+    );
+
+    if (!this.customDataView) {
+      // bind external filter (backend) when available or default onFilter (dataView)
+      if (gridOptions.enableFiltering) {
+        this.filterService.init(grid);
+
+        // bind external filter (backend) unless specified to use the local one
+        if (gridOptions.backendServiceApi && !gridOptions.backendServiceApi.useLocalFiltering) {
+          this.filterService.bindBackendOnFilter(grid);
+        } else {
+          this.filterService.bindLocalOnFilter(grid);
+        }
+      }
+
+      // bind external sorting (backend) when available or default onSort (dataView)
+      if (gridOptions.enableSorting) {
+        // bind external sorting (backend) unless specified to use the local one
+        if (gridOptions.backendServiceApi && !gridOptions.backendServiceApi.useLocalSorting) {
+          this.sortService.bindBackendOnSort(grid);
+        } else {
+          this.sortService.bindLocalOnSort(grid);
+        }
+      }
+
+      // load any presets if any (after dataset is initialized)
       this.loadPresetsWhenDatasetInitialized();
-
-      // bind external filter (backend) unless specified to use the local one
-      if (gridOptions.backendServiceApi && !gridOptions.backendServiceApi.useLocalFiltering) {
-        this.filterService.bindBackendOnFilter(grid);
-      } else {
-        this.filterService.bindLocalOnFilter(grid);
-      }
     }
 
-    // bind external sorting (backend) when available or default onSort (dataView)
-    if (gridOptions.enableSorting && !this.customDataView) {
-      // bind external sorting (backend) unless specified to use the local one
-      if (gridOptions.backendServiceApi && !gridOptions.backendServiceApi.useLocalSorting) {
-        this.sortService.bindBackendOnSort(grid);
-      } else {
-        this.sortService.bindLocalOnSort(grid);
-      }
-    }
 
     // if user set an onInit Backend, we'll run it right away (and if so, we also need to run preProcess, internalPostProcess & postProcess)
     if (gridOptions.backendServiceApi) {
@@ -718,10 +825,31 @@ export class VanillaGridBundle {
           // the processes can be a Promise (like Http)
           if (process instanceof Promise && process.then) {
             const totalItems = this.gridOptions && this.gridOptions.pagination && this.gridOptions.pagination.totalItems || 0;
-            process.then((processResult: any) => executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems))
+            process
+              .then((processResult: any) => executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems))
               .catch((error) => onBackendError(error, backendApi));
           }
         });
+      }
+    }
+  }
+
+  bindResizeHook(grid: SlickGrid, options: GridOption) {
+    // expand/autofit columns on first page load
+    if (grid && options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && typeof grid.autosizeColumns === 'function') {
+      this.grid.autosizeColumns();
+    }
+
+    // auto-resize grid on browser resize
+    if (options.gridHeight || options.gridWidth) {
+      this.resizerPlugin.resizeGrid(0, { height: options.gridHeight, width: options.gridWidth });
+    } else {
+      this.resizerPlugin.resizeGrid();
+    }
+    if (grid && options && options.enableAutoResize) {
+      // this.resizerPlugin.bindAutoResizeDataGrid({ height: options.gridHeight, width: options.gridWidth });
+      if (options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && typeof grid.autosizeColumns === 'function') {
+        grid.autosizeColumns();
       }
     }
   }
@@ -832,7 +960,7 @@ export class VanillaGridBundle {
     if (this._gridOptions.enableTranslate) {
       this.extensionService.translateColumnHeaders(false, newColumnDefinitions);
     } else {
-      this.extensionService.renderColumnHeaders(newColumnDefinitions);
+      this.extensionService.renderColumnHeaders(newColumnDefinitions, true);
     }
 
     if (this._gridOptions && this._gridOptions.enableAutoSizeColumns) {
@@ -894,7 +1022,7 @@ export class VanillaGridBundle {
       this.subscriptions.push(
         this._eventPubSubService.subscribe('onPaginationChanged', (paginationChanges: ServicePagination) => this.paginationChanged(paginationChanges)),
         this._eventPubSubService.subscribe('onPaginationVisibilityChanged', (visibility: { visible: boolean }) => {
-          this.showPagination = visibility && visibility.visible || false;
+          this.showPagination = visibility?.visible ?? false;
           if (this.gridOptions && this.gridOptions.backendServiceApi) {
             refreshBackendDataset();
           }
@@ -999,7 +1127,8 @@ export class VanillaGridBundle {
    *   2- header titles are lower than the viewport of dataset (this can happen when user change Tab and DOM is not shown),
    * for these cases we'll resize until it's no longer true or until we reach a max time limit (30min)
    */
-  private resizeGridWhenStylingIsBroken() {
+  private resizeGridWhenStylingIsBrokenUntilCorrected() {
+    const INTERVAL_MAX_MIN_RETRIES = 60;
     const headerElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-header`);
     const viewportElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-viewport`);
 
@@ -1020,13 +1149,13 @@ export class VanillaGridBundle {
         const viewportOffsetTop = viewportPos?.top ?? 0;
 
         // if header row is Y coordinate 0 (happens when user is not in current Tab) or when header titles are lower than the viewport of dataset (this can happen when user change Tab and DOM is not shown)
-        // for these cases we'll resize until it's no longer true or until we reach a max time limit (30min)
+        // for these cases we'll resize until it's no longer true or until we reach a max time limit (60min)
         const isResizeRequired = (headerPos?.top === 0 || (headerOffsetTop - viewportOffsetTop) > 40) ? true : false;
 
         if (isResizeRequired && this.resizerPlugin?.resizeGrid) {
           this.resizerPlugin.resizeGrid();
-        } else if (!isResizeRequired || (this._intervalExecutionCounter++ > (4 * 60 * 30))) { // interval is 250ms, so 4x is 1sec, so (4 * 60 * 30) shoud be 30min
-          clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 30min
+        } else if (!isResizeRequired || (this._intervalExecutionCounter++ > (4 * 60 * INTERVAL_MAX_MIN_RETRIES))) { // interval is 250ms, so 4x is 1sec, so (4 * 60 * intervalMaxTimeInMin) shoud be 30min
+          clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 60min
         }
       }, 250);
     }
@@ -1037,5 +1166,31 @@ export class VanillaGridBundle {
     const treeDataOpt: TreeDataOption = this._gridOptions?.treeDataOptions ?? { columnId: '' };
     const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier };
     return convertParentChildArrayToHierarchicalView(flatDataset, treeDataOptions);
+  }
+
+  /** Translate all Custom Footer Texts (footer with metrics) */
+  private translateCustomFooterTexts() {
+    if (this.translateService?.translate) {
+      const customFooterOptions = this.gridOptions && this.gridOptions.customFooterOptions || {};
+      customFooterOptions.metricTexts = customFooterOptions.metricTexts || {};
+      for (const propName of Object.keys(customFooterOptions.metricTexts)) {
+        if (propName.lastIndexOf('Key') > 0) {
+          const propNameWithoutKey = propName.substring(0, propName.lastIndexOf('Key'));
+          customFooterOptions.metricTexts[propNameWithoutKey] = this.translateService.translate(customFooterOptions.metricTexts[propName] || ' ');
+        }
+      }
+    }
+  }
+
+  /** translate all columns (including hidden columns) */
+  private translateColumnHeaderTitleKeys() {
+    // eventually deprecate the "headerKey" and use only the "nameKey"
+    this.extensionUtility.translateItems(this.sharedService.allColumns, 'headerKey', 'name');
+    this.extensionUtility.translateItems(this.sharedService.allColumns, 'nameKey', 'name');
+  }
+
+  /** translate all column groups (including hidden columns) */
+  private translateColumnGroupKeys() {
+    this.extensionUtility.translateItems(this.sharedService.allColumns, 'columnGroupKey', 'columnGroup');
   }
 }
