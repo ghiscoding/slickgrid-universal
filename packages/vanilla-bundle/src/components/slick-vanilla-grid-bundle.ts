@@ -75,7 +75,7 @@ import { SalesforceGlobalGridOptions } from '../salesforce-global-grid-options';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
-const DATAGRID_FOOTER_HEIGHT = 20;
+const DATAGRID_FOOTER_HEIGHT = 25;
 const DATAGRID_PAGINATION_HEIGHT = 35;
 
 export class SlickVanillaGridBundle {
@@ -840,7 +840,7 @@ export class SlickVanillaGridBundle {
       this.grid.autosizeColumns();
     }
 
-    // auto-resize grid on browser resize
+    // auto-resize grid on browser resize (optionally provide grid height or width)
     if (options.gridHeight || options.gridWidth) {
       this.resizerPlugin.resizeGrid(0, { height: options.gridHeight, width: options.gridWidth });
     } else {
@@ -1154,7 +1154,7 @@ export class SlickVanillaGridBundle {
 
         if (isResizeRequired && this.resizerPlugin?.resizeGrid) {
           this.resizerPlugin.resizeGrid();
-        } else if (/* !isResizeRequired || */ (this._intervalExecutionCounter++ > (4 * 60 * INTERVAL_MAX_MIN_RETRIES))) { // interval is 250ms, so 4x is 1sec, so (4 * 60 * intervalMaxTimeInMin) shoud be 70min
+        } else if ((!isResizeRequired && !this.gridOptions.useSalesforceDefaultGridOptions) || (this._intervalExecutionCounter++ > (4 * 60 * INTERVAL_MAX_MIN_RETRIES))) { // interval is 250ms, so 4x is 1sec, so (4 * 60 * intervalMaxTimeInMin) shoud be 70min
           clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 70min
         }
       }, 250);

@@ -123,8 +123,10 @@ npm run test:watch
     - [x] Should work even after initializing the dataset later (SF)
     - [x] Preset Filters not working with Tree Data View 
   - [x] Dynamically Add Columns
-  - [ ] Translations Support
   - [x] Tree Data
+  - [ ] Translations Support
+  - [ ] add missing `collectionAsync` for Editors (maybe Filter too?)
+  - [ ] Grid Service should use SlickGrid transactions `beginUpdate`, `endUpdate` for performance when possible
 
 #### Other Todos
 - [x] VScode Chrome Debugger
@@ -147,3 +149,4 @@ npm run test:watch
   - [x] Add interfaces to all SlickGrid core lib classes & plugins (basically add Types to everything)
 - [x] Copy cell text (context menu) doesn't work in SF
 - [x] Remove all Services init method 2nd argument (we can get DataView directly from the Grid object)
+- [ ] Search for any left "todo" in the entire solution
