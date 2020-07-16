@@ -190,12 +190,12 @@ export class SlickVanillaGridBundle {
 
     // if we already have grid options, when grid was already initialized, we'll merge with those options
     // else we'll merge with global grid options
-    if (this.grid && this.grid.getOptions) {
+    if (this.grid?.getOptions) {
       mergedOptions = $.extend(true, {}, this.grid.getOptions(), options);
     } else {
       mergedOptions = this.mergeGridOptions(options);
     }
-    if (this.sharedService?.gridOptions && this.grid && this.grid.setOptions) {
+    if (this.sharedService?.gridOptions && this.grid?.setOptions) {
       this.sharedService.gridOptions = mergedOptions;
       this.grid.setOptions(mergedOptions);
     }
@@ -1125,10 +1125,10 @@ export class SlickVanillaGridBundle {
    * So the patch is to call a grid resize if the following 2 conditions are met
    *   1- header row is Y coordinate 0 (happens when user is not in current Tab)
    *   2- header titles are lower than the viewport of dataset (this can happen when user change Tab and DOM is not shown),
-   * for these cases we'll resize until it's no longer true or until we reach a max time limit (30min)
+   * for these cases we'll resize until it's no longer true or until we reach a max time limit (70min)
    */
   private resizeGridWhenStylingIsBrokenUntilCorrected() {
-    const INTERVAL_MAX_MIN_RETRIES = 60;
+    const INTERVAL_MAX_MIN_RETRIES = 70;
     const headerElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-header`);
     const viewportElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-viewport`);
 
@@ -1149,13 +1149,13 @@ export class SlickVanillaGridBundle {
         const viewportOffsetTop = viewportPos?.top ?? 0;
 
         // if header row is Y coordinate 0 (happens when user is not in current Tab) or when header titles are lower than the viewport of dataset (this can happen when user change Tab and DOM is not shown)
-        // for these cases we'll resize until it's no longer true or until we reach a max time limit (60min)
+        // for these cases we'll resize until it's no longer true or until we reach a max time limit (70min)
         const isResizeRequired = (headerPos?.top === 0 || (headerOffsetTop - viewportOffsetTop) > 40) ? true : false;
 
         if (isResizeRequired && this.resizerPlugin?.resizeGrid) {
           this.resizerPlugin.resizeGrid();
-        } else if (!isResizeRequired || (this._intervalExecutionCounter++ > (4 * 60 * INTERVAL_MAX_MIN_RETRIES))) { // interval is 250ms, so 4x is 1sec, so (4 * 60 * intervalMaxTimeInMin) shoud be 30min
-          clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 60min
+        } else if (/* !isResizeRequired || */ (this._intervalExecutionCounter++ > (4 * 60 * INTERVAL_MAX_MIN_RETRIES))) { // interval is 250ms, so 4x is 1sec, so (4 * 60 * intervalMaxTimeInMin) shoud be 70min
+          clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 70min
         }
       }, 250);
     }
@@ -1184,8 +1184,6 @@ export class SlickVanillaGridBundle {
 
   /** translate all columns (including hidden columns) */
   private translateColumnHeaderTitleKeys() {
-    // eventually deprecate the "headerKey" and use only the "nameKey"
-    this.extensionUtility.translateItems(this.sharedService.allColumns, 'headerKey', 'name');
     this.extensionUtility.translateItems(this.sharedService.allColumns, 'nameKey', 'name');
   }
 

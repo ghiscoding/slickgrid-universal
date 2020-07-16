@@ -112,4 +112,91 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should('have.length', 1);
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 5}px"] > .slick-cell:nth(1) input[type="checkbox"]:checked`).should('have.length', 1);
   });
+
+  it('should be able to change all values of 3rd row', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(2)`).should('contain', 'Task 2').click();
+
+    cy.get('.editor-title > textarea')
+      .type('Task 2222');
+
+    cy.get('.editor-title .btn-save')
+      .click();
+
+    // change duration
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(3)`).should('contain', 'day').click();
+    cy.get('.editor-duration').type('2222').type('{enter}');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(3)`).should('contain', '2222 days');
+
+    // change % complete
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).click();
+    cy.get('.slider-editor input[type=range]').as('range')
+      .invoke('val', 25)
+      .trigger('change')
+      .type('{enter}');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).should('contain', '25');
+
+    // change Finish date
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(6)`).should('contain', '2009-01-05').click();
+    cy.get('.flatpickr-day:nth(25)').click('bottom', { force: true });
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(6)`).should('contain', '2009-01-22');
+
+    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left')
+      .scrollTo('top');
+  });
+
+  it('should dynamically add 2x new "Title" columns', () => {
+    const updatedTitles = ['', '', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Title', 'Title'];
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(8)`).should('not.exist');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('not.exist');
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
+      .should('contain', 'Task 0')
+      .should('have.length', 1);
+
+    cy.get('[data-test=add-title-column]')
+      .click()
+      .click();
+
+    cy.get('.grid7')
+      .find('.slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(updatedTitles[index]));
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(8)`).should('contain', 'Task 0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('contain', 'Task 0');
+  });
+
+  it('should be able to change value of 1st row "Title" column and expect same value set in all 3 "Title" columns', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 0').click();
+
+    cy.get('.editor-title > textarea')
+      .type('Task 0000');
+
+    cy.get('.editor-title .btn-save')
+      .click();
+
+    // change duration
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).should('contain', 'day').click();
+    cy.get('.editor-duration').type('0000').type('{enter}');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).should('contain', '0000 day');
+
+    // change % complete
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).click();
+    cy.get('.slider-editor input[type=range]').as('range')
+      .invoke('val', 50)
+      .trigger('change')
+      .type('{enter}');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).should('contain', '50');
+
+    // change Finish date
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).should('contain', '2009-01-05').click();
+    cy.get('.flatpickr-day:nth(25)').click('bottom', { force: true });
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).should('contain', '2009-01-22');
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(8)`).should('contain', 'Task 0000');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('contain', 'Task 0000');
+  });
 });

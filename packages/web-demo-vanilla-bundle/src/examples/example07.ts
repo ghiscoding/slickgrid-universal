@@ -1,9 +1,11 @@
 import {
   Column,
+  Editors,
   GridOption,
   Formatters,
   SlickDataView,
   SlickGrid,
+  FieldType,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
@@ -18,6 +20,7 @@ export class Example7 {
   gridObj: SlickGrid;
   slickgridLwc;
   slickerGridInstance;
+  duplicateTitleHeaderCount = 1;
 
   attached() {
     this.initializeGrid();
@@ -33,12 +36,24 @@ export class Example7 {
 
   initializeGrid() {
     this.columnDefinitions = [
-      { id: 'title', name: 'Title', field: 'title' },
-      { id: 'duration', name: 'Duration', field: 'duration', sortable: true },
-      { id: '%', name: '% Complete', field: 'percentComplete', sortable: true },
-      { id: 'start', name: 'Start', field: 'start' },
-      { id: 'finish', name: 'Finish', field: 'finish' },
-      { id: 'effort-driven', name: 'Completed', field: 'effortDriven', formatter: Formatters.checkmarkMaterial }
+      {
+        id: 'title', name: 'Title', field: 'title', editor: { model: Editors.longText, required: true, alwaysSaveOnEnterKey: true, },
+      },
+      {
+        id: 'duration', name: 'Duration', field: 'duration', sortable: true,
+        editor: { model: Editors.text, alwaysSaveOnEnterKey: true, },
+        formatter: (row: number, cell: number, value: any) => value > 1 ? `${value} days` : `${value} day`,
+      },
+      { id: 'percentComplete', name: '% Complete', field: 'percentComplete', sortable: true, editor: { model: Editors.slider, minValue: 0, maxValue: 100, }, },
+      {
+        id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso,
+        editor: { model: Editors.date }, type: FieldType.dateIso, outputType: FieldType.dateIso,
+      },
+      {
+        id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso,
+        editor: { model: Editors.date }, type: FieldType.dateIso, outputType: FieldType.dateIso,
+      },
+      { id: 'effort-driven', name: 'Completed', field: 'effortDriven', formatter: Formatters.checkmarkMaterial, editor: { model: Editors.checkbox } }
     ];
 
     this.gridOptions = {
@@ -47,6 +62,9 @@ export class Example7 {
         container: '.demo-container',
         rightPadding: 10
       },
+      autoEdit: true,
+      autoCommitEdit: true,
+      editable: true,
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: true,
@@ -94,10 +112,10 @@ export class Example7 {
       mockDataset[i] = {
         id: i,
         title: 'Task ' + i,
-        duration: Math.round(Math.random() * 25) + ' days',
+        duration: Math.round(Math.random() * 25),
         percentComplete: Math.round(Math.random() * 100),
-        start: '01/01/2009',
-        finish: '01/05/2009',
+        start: '2009-01-01',
+        finish: '2009-01-05',
         effortDriven: (i % 5 === 0)
       };
     }
@@ -152,4 +170,51 @@ export class Example7 {
     console.log('handleOnSlickerGridCreated', this.slickerGridInstance);
   }
 
+  dynamicallyAddTitleHeader() {
+    const newCol = {
+      id: `title${this.duplicateTitleHeaderCount++}`,
+      name: 'Title',
+      field: 'title',
+      editor: {
+        model: Editors.text,
+        required: true,
+        // validator: myCustomTitleValidator, // use a custom validator
+      },
+      sortable: true, minWidth: 100, filterable: true, params: { useFormatterOuputToFilter: true }
+    };
+
+    // you can dynamically add your column to your column definitions
+    // and then use the spread operator [...cols] OR slice to force the framework to review the changes
+    this.columnDefinitions.push(newCol);
+    this.slickgridLwc.columnDefinitions = this.columnDefinitions.slice(); // or use spread operator [...cols]
+
+    // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
+    // you MUST use "getAllColumnDefinitions()" from the GridService, using this will be ALL columns including the 1st column that is created internally
+    // for example if you use the Checkbox Selector (row selection), you MUST use the code below
+    /*
+    const allColumns = this.slickerGridInstance.gridService.getAllColumnDefinitions();
+    allColumns.push(newCol);
+    this.slickgridLwc.columnDefinitions = [...allColumns]; // (or use slice) reassign to column definitions for framework to do dirty checking
+    */
+  }
+
+  dynamicallyRemoveLastColumn() {
+    this.columnDefinitions.pop();
+    this.slickgridLwc.columnDefinitions = this.columnDefinitions.slice();
+
+    // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
+    // you MUST use the code below, first you must reassign the Editor facade (from the internalColumnEditor back to the editor)
+    // in other words, SlickGrid is not using the same as Slickgrid-Universal uses (editor with a "model" and other properties are a facade, SlickGrid only uses what is inside the model)
+    /*
+    const allColumns = this.slickerGridInstance.gridService.getAllColumnDefinitions();
+    const allOriginalColumns = allColumns.map((column) => {
+      column.editor = column.internalColumnEditor;
+      return column;
+    });
+    // remove your column the full set of columns
+    // and use slice or spread [...] to trigger a dirty change
+    allOriginalColumns.pop();
+    this.columnDefinitions = allOriginalColumns.slice();
+    */
+  }
 }

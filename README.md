@@ -122,15 +122,9 @@ npm run test:watch
     - [x] Preset Row Selections
     - [x] Should work even after initializing the dataset later (SF)
     - [x] Preset Filters not working with Tree Data View 
-  - [ ] Dynamically Add Columns
+  - [x] Dynamically Add Columns
   - [ ] Translations Support
-  - [ ] Tree Data
-    - [x] add Grid Demo
-    - [x] add Collapse/Expand All into Context Menu
-    - [x] Search Filter on any Column
-    - [x] Sorting from any Column
-    - [ ] Aggregators support might be nice as well
-    - [ ] Multi-Column Sorting
+  - [x] Tree Data
 
 #### Other Todos
 - [x] VScode Chrome Debugger
