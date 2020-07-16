@@ -42,8 +42,9 @@ export class Example7 {
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true,
         editor: { model: Editors.text, alwaysSaveOnEnterKey: true, },
+        formatter: (row: number, cell: number, value: any) => value > 1 ? `${value} days` : `${value} day`,
       },
-      { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, editor: { model: Editors.slider, minValue: 0, maxValue: 100, }, },
+      { id: 'percentComplete', name: '% Complete', field: 'percentComplete', sortable: true, editor: { model: Editors.slider, minValue: 0, maxValue: 100, }, },
       {
         id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso,
         editor: { model: Editors.date }, type: FieldType.dateIso, outputType: FieldType.dateIso,
@@ -62,6 +63,7 @@ export class Example7 {
         rightPadding: 10
       },
       autoEdit: true,
+      autoCommitEdit: true,
       editable: true,
       enableExcelExport: true,
       excelExportOptions: {
@@ -110,7 +112,7 @@ export class Example7 {
       mockDataset[i] = {
         id: i,
         title: 'Task ' + i,
-        duration: Math.round(Math.random() * 25) + ' days',
+        duration: Math.round(Math.random() * 25),
         percentComplete: Math.round(Math.random() * 100),
         start: '2009-01-01',
         finish: '2009-01-05',
