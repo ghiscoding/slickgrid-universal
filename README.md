@@ -126,7 +126,7 @@ npm run test:watch
   - [x] Tree Data
   - [ ] Translations Support
   - [ ] add missing `collectionAsync` for Editors (maybe Filter too?)
-  - [ ] Grid Service should use SlickGrid transactions `beginUpdate`, `endUpdate` for performance when possible
+  - [x] Grid Service should use SlickGrid transactions `beginUpdate`, `endUpdate` for performance reason whenever possible
 
 #### Other Todos
 - [x] VScode Chrome Debugger
