@@ -6,7 +6,6 @@ import {
   CurrentPagination,
   CurrentSorter,
   Editors,
-  ExcelExportService,
   ExtensionService,
   ExtensionUtility,
   Filters,
@@ -647,6 +646,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       afterEach(() => {
         jest.clearAllMocks();
         component.dispose();
+        sharedService.grid = mockGrid as unknown as SlickGrid;
       });
 
       it('should call "showHeaderRow" method with false when its flag is disabled', () => {
@@ -714,6 +714,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           enablePagination: true,
           presets: { pagination: { pageSize: 2, pageNumber: expectedPageNumber } }
         };
+        component.paginationOptions = undefined;
         component.paginationOptions = { pageSize: 2, pageNumber: 2, pageSizes: [2, 10, 25, 50], totalItems: 100 };
 
         component.initialization(divContainer);
@@ -1450,6 +1451,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer);
 
         setTimeout(() => {
+          expect(component.isDatasetInitialized).toBe(true);
           expect(selectRowSpy).toHaveBeenCalledWith(selectedGridRows);
           done();
         });
@@ -1472,6 +1474,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer);
 
         setTimeout(() => {
+          expect(component.isDatasetInitialized).toBe(true);
           expect(selectRowSpy).not.toHaveBeenCalled();
           done();
         }, 2);

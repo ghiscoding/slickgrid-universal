@@ -5,6 +5,7 @@ import {
   Formatters,
   SlickDataView,
   SlickGrid,
+  FieldType,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
@@ -40,11 +41,17 @@ export class Example7 {
       },
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true,
-        editor: { model: Editors.float, decimal: 2, valueStep: 1, maxValue: 10000, alwaysSaveOnEnterKey: true, },
+        editor: { model: Editors.text, alwaysSaveOnEnterKey: true, },
       },
       { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, editor: { model: Editors.slider, minValue: 0, maxValue: 100, }, },
-      { id: 'start', name: 'Start', field: 'start', editor: { model: Editors.date }, },
-      { id: 'finish', name: 'Finish', field: 'finish', editor: { model: Editors.date }, },
+      {
+        id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso,
+        editor: { model: Editors.date }, type: FieldType.dateIso, outputType: FieldType.dateIso,
+      },
+      {
+        id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso,
+        editor: { model: Editors.date }, type: FieldType.dateIso, outputType: FieldType.dateIso,
+      },
       { id: 'effort-driven', name: 'Completed', field: 'effortDriven', formatter: Formatters.checkmarkMaterial, editor: { model: Editors.checkbox } }
     ];
 
@@ -105,8 +112,8 @@ export class Example7 {
         title: 'Task ' + i,
         duration: Math.round(Math.random() * 25) + ' days',
         percentComplete: Math.round(Math.random() * 100),
-        start: '01/01/2009',
-        finish: '01/05/2009',
+        start: '2009-01-01',
+        finish: '2009-01-05',
         effortDriven: (i % 5 === 0)
       };
     }

@@ -190,12 +190,12 @@ export class SlickVanillaGridBundle {
 
     // if we already have grid options, when grid was already initialized, we'll merge with those options
     // else we'll merge with global grid options
-    if (this.grid && this.grid.getOptions) {
+    if (this.grid?.getOptions) {
       mergedOptions = $.extend(true, {}, this.grid.getOptions(), options);
     } else {
       mergedOptions = this.mergeGridOptions(options);
     }
-    if (this.sharedService?.gridOptions && this.grid && this.grid.setOptions) {
+    if (this.sharedService?.gridOptions && this.grid?.setOptions) {
       this.sharedService.gridOptions = mergedOptions;
       this.grid.setOptions(mergedOptions);
     }
