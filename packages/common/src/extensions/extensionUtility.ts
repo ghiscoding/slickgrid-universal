@@ -22,7 +22,7 @@ export class ExtensionUtility {
    * This will basically only load the extension when user enables the feature
    * @param extensionName
    */
-  loadExtensionDynamically(extensionName: ExtensionName): any {
+  loadExtensionDynamically(extensionName: ExtensionName) {
     try {
       switch (extensionName) {
         case ExtensionName.autoTooltip:

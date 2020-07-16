@@ -1343,7 +1343,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
             dateFormat: 'YYYY-MM-DD, hh:mm a',
             hideLastUpdateTimestamp: true,
             hideTotalItemCount: false,
-            footerHeight: 20,
+            footerHeight: 25,
             leftContainerClass: 'col-xs-12 col-sm-5',
             metricSeparator: '|',
             metricTexts: {
@@ -1380,7 +1380,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
             dateFormat: 'YYYY-MM-DD, hh:mm a',
             hideLastUpdateTimestamp: true,
             hideTotalItemCount: false,
-            footerHeight: 20,
+            footerHeight: 25,
             leftContainerClass: 'col-xs-12 col-sm-5',
             metricSeparator: '|',
             metricTexts: {
