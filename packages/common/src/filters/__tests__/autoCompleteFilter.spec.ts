@@ -3,6 +3,7 @@ import { AutoCompleteFilter } from '../autoCompleteFilter';
 import { FieldType, OperatorType } from '../../enums/index';
 import { AutocompleteOption, Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { CollectionService } from '../../services/collection.service';
+import { HttpStub } from '../../../../../test/httpClientStub';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const containerId = 'demo-container';
@@ -30,6 +31,7 @@ describe('AutoCompleteFilter', () => {
   let spyGetHeaderRow;
   let mockColumn: Column;
   let collectionService: CollectionService;
+  const http = new HttpStub();
 
   beforeEach(() => {
     translaterService = new TranslateServiceStub();
@@ -69,7 +71,7 @@ describe('AutoCompleteFilter', () => {
       mockColumn.filter.collection = undefined;
       filter.init(filterArguments);
     } catch (e) {
-      expect(e.toString()).toContain(`[Slickgrid-Universal] You need to pass a "collection" for the AutoComplete Filter to work correctly.`);
+      expect(e.toString()).toContain(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the AutoComplete Filter to work correctly.`);
       done();
     }
   });
@@ -83,6 +85,14 @@ describe('AutoCompleteFilter', () => {
       expect(e.toString()).toContain(`The "collection" passed to the Autocomplete Filter is not a valid array.`);
       done();
     }
+  });
+
+  it('should throw an error when "collectionAsync" Promise does not return a valid array', (done) => {
+    mockColumn.filter.collectionAsync = new Promise(resolve => resolve({ hello: 'world' }));
+    filter.init(filterArguments).catch((e) => {
+      expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the AutoComplete Filter, the collection is not a valid array.`);
+      done();
+    });
   });
 
   it('should initialize the filter', () => {
@@ -241,6 +251,84 @@ describe('AutoCompleteFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
   });
 
+  it('should create the filter with a default search term when using "collectionAsync" as a Promise', (done) => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const mockCollection = ['male', 'female'];
+    mockColumn.filter.collectionAsync = new Promise((resolve) => setTimeout(() => resolve(mockCollection)));
+
+    filterArguments.searchTerms = ['female'];
+    filter.init(filterArguments);
+
+    setTimeout(() => {
+      const filterElm = divContainer.querySelector<HTMLInputElement>('input.filter-gender');
+      const autocompleteUlElms = document.body.querySelectorAll<HTMLUListElement>('ul.ui-autocomplete');
+      filter.setValues('male');
+
+      filterElm.focus();
+      filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
+      const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
+
+      expect(autocompleteUlElms.length).toBe(1);
+      expect(filterFilledElms.length).toBe(1);
+      expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['male'], shouldTriggerQuery: true });
+      done();
+    });
+  });
+
+  it('should create the filter with a default search term when using "collectionAsync" as a Promise with content to simulate http-client', (done) => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const mockCollection = ['male', 'female'];
+    mockColumn.filter.collectionAsync = new Promise((resolve) => setTimeout(() => resolve({ content: mockCollection })));
+
+    filterArguments.searchTerms = ['female'];
+    filter.init(filterArguments);
+
+    setTimeout(() => {
+      const filterElm = divContainer.querySelector<HTMLInputElement>('input.filter-gender');
+      const autocompleteUlElms = document.body.querySelectorAll<HTMLUListElement>('ul.ui-autocomplete');
+      filter.setValues('male');
+
+      filterElm.focus();
+      filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
+      const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
+
+      expect(autocompleteUlElms.length).toBe(1);
+      expect(filterFilledElms.length).toBe(1);
+      expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['male'], shouldTriggerQuery: true });
+      done();
+    });
+  });
+
+  it('should create the filter with a default search term when using "collectionAsync" is a Fetch Promise', (done) => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const mockCollection = ['male', 'female'];
+
+    http.status = 200;
+    http.object = mockCollection;
+    http.returnKey = 'date';
+    http.returnValue = '6/24/1984';
+    http.responseHeaders = { accept: 'json' };
+    mockColumn.filter.collectionAsync = http.fetch('/api', { method: 'GET' });
+
+    filterArguments.searchTerms = ['female'];
+    filter.init(filterArguments);
+
+    setTimeout(() => {
+      const filterElm = divContainer.querySelector<HTMLInputElement>('input.filter-gender');
+      const autocompleteUlElms = document.body.querySelectorAll<HTMLUListElement>('ul.ui-autocomplete');
+      filter.setValues('male');
+
+      filterElm.focus();
+      filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
+      const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
+
+      expect(autocompleteUlElms.length).toBe(1);
+      expect(filterFilledElms.length).toBe(1);
+      expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['male'], shouldTriggerQuery: true });
+      done();
+    });
+  });
+
   it('should create the filter and filter the string collection when "collectionFilterBy" is set', () => {
     mockColumn.filter = {
       collection: ['other', 'male', 'female'],
@@ -305,6 +393,27 @@ describe('AutoCompleteFilter', () => {
     expect(filterCollection[0]).toEqual({ value: 'other', description: 'other' });
     expect(filterCollection[1]).toEqual({ value: 'male', description: 'male' });
     expect(filterCollection[2]).toEqual({ value: 'female', description: 'female' });
+  });
+
+  it('should create the filter with a value/label pair collectionAsync that is inside an object when "collectionInsideObjectProperty" is defined with a dot notation', (done) => {
+    const mockCollection = { deep: { myCollection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }] } };
+    mockColumn.filter = {
+      collectionAsync: new Promise((resolve) => setTimeout(() => resolve(mockCollection), 1)),
+      collectionOptions: { collectionInsideObjectProperty: 'deep.myCollection' },
+      customStructure: { value: 'value', label: 'description', },
+    };
+
+    filter.init(filterArguments);
+
+    setTimeout(() => {
+      const filterCollection = filter.collection;
+
+      expect(filterCollection.length).toBe(3);
+      expect(filterCollection[0]).toEqual({ value: 'other', description: 'other' });
+      expect(filterCollection[1]).toEqual({ value: 'male', description: 'male' });
+      expect(filterCollection[2]).toEqual({ value: 'female', description: 'female' });
+      done();
+    }, 2);
   });
 
   it('should create the filter and sort the string collection when "collectionSortBy" is set', () => {

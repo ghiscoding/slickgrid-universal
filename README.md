@@ -125,7 +125,9 @@ npm run test:watch
   - [x] Dynamically Add Columns
   - [x] Tree Data
   - [ ] Translations Support
-  - [ ] add missing `collectionAsync` for Editors (maybe Filter too?)
+  - [x] add missing `collectionAsync` for Editors
+  - [ ] add missing `collectionAsync` for Filters
+    - [ ] requires updating each Filters supporting `collectionAsync` (autoCompleteFilter, selectFilter)
   - [x] Grid Service should use SlickGrid transactions `beginUpdate`, `endUpdate` for performance reason whenever possible
 
 #### Other Todos
