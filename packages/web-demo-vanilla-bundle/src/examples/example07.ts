@@ -55,7 +55,20 @@ export class Example7 {
         id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso,
         editor: { model: Editors.date }, type: FieldType.dateIso, saveOutputType: FieldType.dateUtc,
       },
-      { id: 'effort-driven', name: 'Completed', field: 'effortDriven', formatter: Formatters.checkmarkMaterial, editor: { model: Editors.checkbox } }
+      {
+        id: 'effort-driven', name: 'Completed', field: 'effortDriven', formatter: Formatters.checkmarkMaterial,
+        editor: {
+          model: Editors.singleSelect,
+
+          // pass a regular collection array with value/label pairs
+          // collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
+
+          // Select Editor can also support collection that are async, it could be a Promise (shown below) or Fetch result
+          collectionAsync: new Promise<any>(resolve => setTimeout(() => {
+            resolve([{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }]);
+          }, 250)),
+        },
+      }
     ];
 
     this.gridOptions = {

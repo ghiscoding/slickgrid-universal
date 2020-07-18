@@ -152,3 +152,4 @@ npm run test:watch
 - [x] Copy cell text (context menu) doesn't work in SF
 - [x] Remove all Services init method 2nd argument (we can get DataView directly from the Grid object)
 - [ ] Search for any left "todo" in the entire solution
+- [ ] Move Demo site into `examples` instead of `packages` if possible

@@ -121,9 +121,11 @@ export class Example2 {
         filterable: true,
         filter: {
           model: Filters.singleSelect,
+
+          // pass a regular collection array with value/label pairs
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
 
-          // Select Filters also support collection that are async, it could be a Promise (shown below) or Fetch result
+          // Select Filters can also support collection that are async, it could be a Promise (shown below) or Fetch result
           // collectionAsync: new Promise<any>(resolve => setTimeout(() => {
           //   resolve([{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }]);
           // }, 250)),
