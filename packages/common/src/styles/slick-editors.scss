@@ -24,7 +24,7 @@
         }
 
         &.right {
-          margin-left: calc(#{$text-editor-margin-left + 9px});
+          margin-left: calc(#{$text-editor-margin-left} + 9px);
         }
 
         &[readonly] {
