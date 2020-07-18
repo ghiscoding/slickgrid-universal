@@ -2,6 +2,8 @@ import { GridOption, EventNamingStyle } from '@slickgrid-universal/common';
 
 /** Global Grid Options Defaults for Salesforce */
 export const SalesforceGlobalGridOptions: GridOption = {
+  autoEdit: true, // true single click (false for double-click)
+  autoCommitEdit: true,
   datasetIdPropertyName: 'Id',
   enableExport: true,
   enableDeepCopyDatasetOnPageLoad: true,

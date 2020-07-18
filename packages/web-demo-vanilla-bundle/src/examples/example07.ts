@@ -26,6 +26,8 @@ export class Example7 {
     this.initializeGrid();
     this.dataset = this.loadData(500);
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid7`);
+    gridContainerElm.addEventListener('oncellchange', this.handleOnCellChange.bind(this));
+    gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
@@ -47,11 +49,11 @@ export class Example7 {
       { id: 'percentComplete', name: '% Complete', field: 'percentComplete', sortable: true, editor: { model: Editors.slider, minValue: 0, maxValue: 100, }, },
       {
         id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso,
-        editor: { model: Editors.date }, type: FieldType.dateIso, outputType: FieldType.dateIso,
+        editor: { model: Editors.date }, type: FieldType.date,/* outputType: FieldType.dateUs, */ saveOutputType: FieldType.dateUtc,
       },
       {
         id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso,
-        editor: { model: Editors.date }, type: FieldType.dateIso, outputType: FieldType.dateIso,
+        editor: { model: Editors.date }, type: FieldType.dateIso, saveOutputType: FieldType.dateUtc,
       },
       { id: 'effort-driven', name: 'Completed', field: 'effortDriven', formatter: Formatters.checkmarkMaterial, editor: { model: Editors.checkbox } }
     ];
@@ -114,8 +116,8 @@ export class Example7 {
         title: 'Task ' + i,
         duration: Math.round(Math.random() * 25),
         percentComplete: Math.round(Math.random() * 100),
-        start: '2009-01-01',
-        finish: '2009-01-05',
+        start: new Date(2009, 0, 1),
+        finish: new Date(2009, 0, 5),
         effortDriven: (i % 5 === 0)
       };
     }
@@ -162,6 +164,17 @@ export class Example7 {
     this.slickgridLwc.dataset = this.dataset; // update dataset and re-render the grid
   }
 
+  handleOnCellChange(event) {
+    console.log('onCellChanged', event.detail, event.detail.args.item.start);
+  }
+
+  handleValidationError(event) {
+    console.log('handleValidationError', event.detail);
+    const args = event.detail && event.detail.args;
+    if (args.validationResults) {
+      alert(args.validationResults.msg);
+    }
+  }
 
   handleOnSlickerGridCreated(event) {
     this.slickerGridInstance = event && event.detail;
