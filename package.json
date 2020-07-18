@@ -22,6 +22,7 @@
   },
   "workspaces": {
     "packages": [
+      "examples/*",
       "packages/*"
     ],
     "nohoist": [

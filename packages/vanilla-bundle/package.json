@@ -47,7 +47,8 @@
     "@slickgrid-universal/common": "*",
     "@slickgrid-universal/excel-export": "*",
     "@slickgrid-universal/file-export": "*",
-    "dompurify": "^2.0.12"
+    "dompurify": "^2.0.12",
+    "isomorphic-fetch": "^2.2.1"
   },
   "devDependencies": {
     "@types/webpack": "^4.41.21",

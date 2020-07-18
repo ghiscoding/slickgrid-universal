@@ -992,24 +992,6 @@ export class SlickVanillaGridBundle {
     return paginationOptions;
   }
 
-  /**
-   * For convenience to the user, we provide the property "editor" as an Slickgrid-Universal editor complex object
-   * however "editor" is used internally by SlickGrid for it's own Editor Factory
-   * so in our lib we will swap "editor" and copy it into a new property called "internalColumnEditor"
-   * then take back "editor.model" and make it the new "editor" so that SlickGrid Editor Factory still works
-   */
-  swapInternalEditorToSlickGridFactoryEditor(columnDefinitions: Column[]) {
-    return columnDefinitions.map((column: Column) => {
-      // on every Editor that have a "collectionAsync", resolve the data and assign it to the "collection" property
-      // if (column.editor && column.editor.collectionAsync) {
-      // this.loadEditorCollectionAsync(column);
-      // }
-      const columnEditor = column.editor as ColumnEditor;
-
-      return { ...column, editor: columnEditor?.model, internalColumnEditor: { ...columnEditor } };
-    });
-  }
-
   /** Initialize the Pagination Service once */
   private initializePaginationService(paginationOptions: Pagination) {
     if (this.gridOptions) {
@@ -1039,6 +1021,31 @@ export class SlickVanillaGridBundle {
     }
   }
 
+  /** Load the Editor Collection asynchronously and replace the "collection" property when Promise resolves */
+  private loadEditorCollectionAsync(column: Column) {
+    const collectionAsync = column && column.editor && (column.editor as ColumnEditor).collectionAsync;
+    if (collectionAsync) {
+      // wait for the "collectionAsync", once resolved we will save it into the "collection"
+      // the collectionAsync can be of 3 types HttpClient, HttpFetch or a Promise
+      collectionAsync.then((response: any | any[]) => {
+        if (Array.isArray(response)) {
+          this.updateEditorCollection(column, response); // from Promise
+        } else if (response instanceof Response && typeof response.json === 'function') {
+          if (response.bodyUsed) {
+            console.warn(`[SlickGrid-Universal] The response body passed to collectionAsync was already read.`
+              + `Either pass the dataset from the Response or clone the response first using response.clone()`);
+          } else {
+            // from Fetch
+            (response as Response).json().then(data => this.updateEditorCollection(column, data));
+          }
+        } else if (response && response['content']) {
+          this.updateEditorCollection(column, response['content']); // from http-client
+        }
+      });
+    }
+  }
+
+  /** Load any possible Grid Presets (columns, filters) */
   private loadPresetsWhenDatasetInitialized() {
     if (this.gridOptions && !this.customDataView) {
       // if user entered some Filter "presets", we need to reflect them all in the DOM
@@ -1161,6 +1168,24 @@ export class SlickVanillaGridBundle {
     }
   }
 
+  /**
+   * For convenience to the user, we provide the property "editor" as an Slickgrid-Universal editor complex object
+   * however "editor" is used internally by SlickGrid for it's own Editor Factory
+   * so in our lib we will swap "editor" and copy it into a new property called "internalColumnEditor"
+   * then take back "editor.model" and make it the new "editor" so that SlickGrid Editor Factory still works
+   */
+  private swapInternalEditorToSlickGridFactoryEditor(columnDefinitions: Column[]) {
+    return columnDefinitions.map((column: Column) => {
+      // on every Editor that have a "collectionAsync", resolve the data and assign it to the "collection" property
+      if (column.editor?.collectionAsync) {
+        this.loadEditorCollectionAsync(column);
+      }
+      const columnEditor = column.editor as ColumnEditor;
+
+      return { ...column, editor: columnEditor?.model, internalColumnEditor: { ...columnEditor } };
+    });
+  }
+
   private treeDataSortComparer(flatDataset: any[]): any[] {
     const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
     const treeDataOpt: TreeDataOption = this._gridOptions?.treeDataOptions ?? { columnId: '' };
@@ -1190,5 +1215,23 @@ export class SlickVanillaGridBundle {
   /** translate all column groups (including hidden columns) */
   private translateColumnGroupKeys() {
     this.extensionUtility.translateItems(this.sharedService.allColumns, 'columnGroupKey', 'columnGroup');
+  }
+
+  /**
+   * Update the "internalColumnEditor.collection" property.
+   * Since this is called after the async call resolves, the pointer will not be the same as the "column" argument passed.
+   * Once we found the new pointer, we will reassign the "editor" and "collection" to the "internalColumnEditor" so it has newest collection
+   */
+  private updateEditorCollection<T = any>(column: Column<T>, newCollection: T[]) {
+    (column.editor as ColumnEditor).collection = newCollection;
+
+    // find the new column reference pointer & reassign the new editor to the internalColumnEditor
+    const columns = this.grid.getColumns();
+    if (Array.isArray(columns)) {
+      const columnRef = columns.find((col: Column) => col.id === column.id);
+      if (columnRef) {
+        columnRef.internalColumnEditor = column.editor as ColumnEditor;
+      }
+    }
   }
 }

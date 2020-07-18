@@ -111,8 +111,8 @@ export class AutoCompleteFilter implements Filter {
     this.columnDef = args.columnDef;
     this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
 
-    if (!this.grid || !this.columnDef || !this.columnFilter || (!this.columnFilter.collection && !this.columnFilter.filterOptions)) {
-      throw new Error(`[Slickgrid-Universal] You need to pass a "collection" for the AutoComplete Filter to work correctly. Also each option should include a value/label pair (or value/labelKey when using Locale). For example:: { filter: model: Filters.autoComplete, collection: [{ value: true, label: 'True' }, { value: false, label: 'False'}] }`);
+    if (!this.grid || !this.columnDef || !this.columnFilter || (!this.columnFilter.collection && !this.columnFilter.collectionAsync && !this.columnFilter.filterOptions)) {
+      throw new Error(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the AutoComplete Filter to work correctly. Also each option should include a value/label pair (or value/labelKey when using Locale). For example:: { filter: model: Filters.autoComplete, collection: [{ value: true, label: 'True' }, { value: false, label: 'False'}] }`);
     }
 
     this.enableTranslateLabel = this.columnFilter && this.columnFilter.enableTranslateLabel || false;
@@ -123,6 +123,17 @@ export class AutoCompleteFilter implements Filter {
     const newCollection = this.columnFilter.collection || [];
     this._collection = newCollection;
     this.renderDomElement(newCollection);
+
+    return new Promise(resolve => {
+      const collectionAsync = this.columnFilter.collectionAsync;
+      if (collectionAsync && !this.columnFilter.collection) {
+        // only read the collectionAsync once (on the 1st load),
+        // we do this because Http Fetch will throw an error saying body was already read and is streaming is locked
+        resolve(this.renderOptionsAsync(collectionAsync));
+      } else {
+        resolve(newCollection);
+      }
+    });
   }
 
   /**
@@ -197,7 +208,7 @@ export class AutoCompleteFilter implements Filter {
   }
 
   renderDomElement(collection: any[]) {
-    if (!Array.isArray(collection) && this.collectionOptions && (this.collectionOptions.collectionInsideObjectProperty)) {
+    if (!Array.isArray(collection) && this.collectionOptions?.collectionInsideObjectProperty) {
       const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty;
       collection = getDescendantProperty(collection, collectionInsideObjectProperty || '');
     }
@@ -333,5 +344,41 @@ export class AutoCompleteFilter implements Filter {
       this._shouldTriggerQuery = true;
     }
     return false;
+  }
+
+  protected async renderOptionsAsync(collectionAsync: Promise<any | any[]>): Promise<any[]> {
+    let awaitedCollection: any = null;
+
+    if (collectionAsync) {
+      // wait for the "collectionAsync", once resolved we will save it into the "collection"
+      const response: any | any[] = await collectionAsync;
+
+      if (Array.isArray(response)) {
+        awaitedCollection = response; // from Promise
+      } else if (response instanceof Response && typeof response['json'] === 'function') {
+        awaitedCollection = await response['json'](); // from Fetch
+      } else if (response && response['content']) {
+        awaitedCollection = response['content']; // from http-client
+      }
+
+      if (!Array.isArray(awaitedCollection) && this.collectionOptions?.collectionInsideObjectProperty) {
+        const collection = awaitedCollection || response;
+        const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty;
+        awaitedCollection = getDescendantProperty(collection, collectionInsideObjectProperty || '');
+      }
+
+      if (!Array.isArray(awaitedCollection)) {
+        throw new Error('Something went wrong while trying to pull the collection from the "collectionAsync" call in the AutoComplete Filter, the collection is not a valid array.');
+      }
+
+      // copy over the array received from the async call to the "collection" as the new collection to use
+      // this has to be BEFORE the `collectionObserver().subscribe` to avoid going into an infinite loop
+      this.columnFilter.collection = awaitedCollection;
+
+      // recreate Multiple Select after getting async collection
+      this.renderDomElement(awaitedCollection);
+    }
+
+    return awaitedCollection;
   }
 }

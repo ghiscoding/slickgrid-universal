@@ -29,10 +29,11 @@ import {
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import * as utilities from '@slickgrid-universal/common/dist/commonjs/services/backend-utilities';
 
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle';
 import { EventPubSubService } from '../../services/eventPubSub.service';
 import { TranslateService } from '../../services';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { HttpStub } from '../../../../../test/httpClientStub';
 
 const mockExecuteBackendProcess = jest.fn();
 const mockRefreshBackendDataset = jest.fn();
@@ -263,6 +264,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
   let sharedService: SharedService;
   let eventPubSubService: EventPubSubService;
   let translateService: TranslateServiceStub;
+  const http = new HttpStub();
 
   const template = `
   <div class="demo-container">
@@ -395,87 +397,86 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
     });
 
-    // describe('with editors', () => {
-    //   it('should be able to load async editors with a regular Promise', (done) => {
-    //     const mockCollection = ['male', 'female'];
-    //     const promise = new Promise((resolve) => resolve(mockCollection));
-    //     const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: promise } }] as Column[];
-    //     const getColSpy = jest.spyOn(mockGrid, 'getColumns').mockReturnValue(mockColDefs);
+    describe('with editors', () => {
+      it('should be able to load async editors with a regular Promise', (done) => {
+        const mockCollection = ['male', 'female'];
+        const promise = new Promise(resolve => resolve(mockCollection));
+        const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: promise } }] as Column[];
+        const getColSpy = jest.spyOn(mockGrid, 'getColumns').mockReturnValue(mockColDefs);
 
-    //     component.columnDefinitions = mockColDefs;
-    //     component.initialization(divContainer);
+        component.columnDefinitions = mockColDefs;
+        // component.initialization(divContainer);
 
-    //     setTimeout(() => {
-    //       expect(getColSpy).toHaveBeenCalled();
-    //       expect(component.columnDefinitions[0].editor.collection).toEqual(mockCollection);
-    //       expect(component.columnDefinitions[0].internalColumnEditor.collection).toEqual(mockCollection);
-    //       expect(component.columnDefinitions[0].internalColumnEditor.model).toEqual(Editors.text);
-    //       done();
-    //     });
-    //   });
+        setTimeout(() => {
+          expect(getColSpy).toHaveBeenCalled();
+          expect(component.columnDefinitions[0].editor).toBeTruthy();
+          expect(component.columnDefinitions[0].editor.collection).toEqual(mockCollection);
+          expect(component.columnDefinitions[0].internalColumnEditor.collection).toEqual(mockCollection);
+          expect(component.columnDefinitions[0].internalColumnEditor.model).toEqual(Editors.text);
+          done();
+        });
+      });
 
-    //   it('should be able to load async editors with as a Promise with content to simulate http-client', (done) => {
-    //     const mockCollection = ['male', 'female'];
-    //     const promise = new Promise((resolve) => resolve({ content: mockCollection }));
-    //     const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: promise } }] as Column[];
-    //     const getColSpy = jest.spyOn(mockGrid, 'getColumns').mockReturnValue(mockColDefs);
+      it('should be able to load async editors with as a Promise with content to simulate http-client', (done) => {
+        const mockCollection = ['male', 'female'];
+        const promise = new Promise(resolve => resolve({ content: mockCollection }));
+        const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: promise } }] as Column[];
+        const getColSpy = jest.spyOn(mockGrid, 'getColumns').mockReturnValue(mockColDefs);
 
-    //     component.columnDefinitions = mockColDefs;
-    //     component.initialization(divContainer);
+        component.columnDefinitions = mockColDefs;
 
-    //     setTimeout(() => {
-    //       expect(getColSpy).toHaveBeenCalled();
-    //       expect(component.columnDefinitions[0].editor.collection).toEqual(mockCollection);
-    //       expect(component.columnDefinitions[0].internalColumnEditor.collection).toEqual(mockCollection);
-    //       expect(component.columnDefinitions[0].internalColumnEditor.model).toEqual(Editors.text);
-    //       done();
-    //     });
-    //   });
+        setTimeout(() => {
+          expect(getColSpy).toHaveBeenCalled();
+          expect(component.columnDefinitions[0].editor.collection).toEqual(mockCollection);
+          expect(component.columnDefinitions[0].internalColumnEditor.collection).toEqual(mockCollection);
+          expect(component.columnDefinitions[0].internalColumnEditor.model).toEqual(Editors.text);
+          done();
+        });
+      });
 
-    //   it('should be able to load async editors with a Fetch Promise', (done) => {
-    //     const mockCollection = ['male', 'female'];
-    //     http.status = 200;
-    //     http.object = mockCollection;
-    //     http.returnKey = 'date';
-    //     http.returnValue = '6/24/1984';
-    //     http.responseHeaders = { accept: 'json' };
-    //     const collectionAsync = http.fetch('/api', { method: 'GET' });
-    //     const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync } }] as Column[];
-    //     const getColSpy = jest.spyOn(mockGrid, 'getColumns').mockReturnValue(mockColDefs);
+      it('should be able to load async editors with a Fetch Promise', (done) => {
+        const mockCollection = ['male', 'female'];
+        http.status = 200;
+        http.object = mockCollection;
+        http.returnKey = 'date';
+        http.returnValue = '6/24/1984';
+        http.responseHeaders = { accept: 'json' };
+        const collectionAsync = http.fetch('/api', { method: 'GET' });
+        const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync } }] as Column[];
+        const getColSpy = jest.spyOn(mockGrid, 'getColumns').mockReturnValue(mockColDefs);
 
-    //     component.columnDefinitions = mockColDefs;
-    //     component.initialization(divContainer);
+        component.columnDefinitions = mockColDefs;
 
-    //     setTimeout(() => {
-    //       expect(getColSpy).toHaveBeenCalled();
-    //       expect(component.columnDefinitions[0].editor.collection).toEqual(mockCollection);
-    //       expect(component.columnDefinitions[0].internalColumnEditor.collection).toEqual(mockCollection);
-    //       expect(component.columnDefinitions[0].internalColumnEditor.model).toEqual(Editors.text);
-    //       done();
-    //     });
-    //   });
+        setTimeout(() => {
+          expect(getColSpy).toHaveBeenCalled();
+          expect(component.columnDefinitions[0].editor.collection).toEqual(mockCollection);
+          expect(component.columnDefinitions[0].internalColumnEditor.collection).toEqual(mockCollection);
+          expect(component.columnDefinitions[0].internalColumnEditor.model).toEqual(Editors.text);
+          done();
+        });
+      });
 
-    //   it('should throw an error when Fetch Promise response bodyUsed is true', (done) => {
-    //     const consoleSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
-    //     const mockCollection = ['male', 'female'];
-    //     http.status = 200;
-    //     http.object = mockCollection;
-    //     http.returnKey = 'date';
-    //     http.returnValue = '6/24/1984';
-    //     http.responseHeaders = { accept: 'json' };
-    //     const collectionAsync = http.fetch('invalid-url', { method: 'GET' });
-    //     const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync } }] as Column[];
-    //     jest.spyOn(mockGrid, 'getColumns').mockReturnValue(mockColDefs);
-    //     component.columnDefinitions = mockColDefs;
+      it('should throw an error when Fetch Promise response bodyUsed is true', (done) => {
+        const consoleSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
+        const mockCollection = ['male', 'female'];
+        http.status = 200;
+        http.object = mockCollection;
+        http.returnKey = 'date';
+        http.returnValue = '6/24/1984';
+        http.responseHeaders = { accept: 'json' };
+        const collectionAsync = http.fetch('invalid-url', { method: 'GET' });
+        const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync } }] as Column[];
+        jest.spyOn(mockGrid, 'getColumns').mockReturnValue(mockColDefs);
+        component.columnDefinitions = mockColDefs;
 
-    //     component.initialization(divContainer);
+        component.initialization(divContainer);
 
-    //     setTimeout(() => {
-    //       expect(consoleSpy).toHaveBeenCalledWith(expect.toInclude('[SlickGrid-Universal] The response body passed to collectionAsync was already read.'));
-    //       done();
-    //     });
-    //   });
-    // });
+        setTimeout(() => {
+          expect(consoleSpy).toHaveBeenCalledWith(expect.toInclude('[SlickGrid-Universal] The response body passed to collectionAsync was already read.'));
+          done();
+        });
+      });
+    });
 
     describe('use grouping', () => {
       it('should load groupItemMetaProvider to the DataView when using "draggableGrouping" feature', () => {
@@ -898,7 +899,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           data: { users: { nodes: [] }, pageInfo: { hasNextPage: true }, totalCount: 0 },
           metrics: { startTime: now, endTime: now, executionTime: 0, totalItemCount: 0 }
         };
-        const promise = new Promise((resolve) => setTimeout(() => resolve(processResult), 1));
+        const promise = new Promise(resolve => setTimeout(() => resolve(processResult), 1));
         const processSpy = jest.spyOn(component.gridOptions.backendServiceApi, 'process').mockReturnValue(promise);
         jest.spyOn(component.gridOptions.backendServiceApi.service, 'buildQuery').mockReturnValue(query);
 
@@ -920,7 +921,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           data: { users: [] },
           metrics: { startTime: now, endTime: now, executionTime: 0, totalItemCount: 0 }
         };
-        const promise = new Promise((resolve) => setTimeout(() => resolve(processResult), 1));
+        const promise = new Promise(resolve => setTimeout(() => resolve(processResult), 1));
         const processSpy = jest.spyOn(component.gridOptions.backendServiceApi, 'process').mockReturnValue(promise);
         jest.spyOn(component.gridOptions.backendServiceApi.service, 'buildQuery').mockReturnValue(query);
 
@@ -1091,7 +1092,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
             service: mockGraphqlService2,
             options: mockGraphqlOptions,
             preProcess: () => jest.fn(),
-            process: () => new Promise((resolve) => resolve({ data: { users: { nodes: [], totalCount: 100 } } })),
+            process: () => new Promise(resolve => resolve({ data: { users: { nodes: [], totalCount: 100 } } })),
           } as GraphqlServiceApi,
           pagination: mockPagination,
         } as GridOption;
@@ -1109,7 +1110,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           backendServiceApi: {
             service: mockGraphqlService,
             preProcess: () => jest.fn(),
-            process: () => new Promise((resolve) => resolve('process resolved')),
+            process: () => new Promise(resolve => resolve('process resolved')),
           }
         } as GridOption;
         component.initialization(divContainer);
@@ -1126,7 +1127,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
             service: mockGraphqlService,
             useLocalSorting: true,
             preProcess: () => jest.fn(),
-            process: () => new Promise((resolve) => resolve('process resolved')),
+            process: () => new Promise(resolve => resolve('process resolved')),
           }
         } as GridOption;
         component.initialization(divContainer);
@@ -1156,7 +1157,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
             service: mockGraphqlService,
             useLocalFiltering: true,
             preProcess: () => jest.fn(),
-            process: () => new Promise((resolve) => resolve('process resolved')),
+            process: () => new Promise(resolve => resolve('process resolved')),
           }
         } as GridOption;
         component.initialization(divContainer);
@@ -1174,7 +1175,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           backendServiceApi: {
             service: mockGraphqlService,
             preProcess: () => jest.fn(),
-            process: () => new Promise((resolve) => resolve('process resolved')),
+            process: () => new Promise(resolve => resolve('process resolved')),
           }
         } as GridOption;
         component.initialization(divContainer);

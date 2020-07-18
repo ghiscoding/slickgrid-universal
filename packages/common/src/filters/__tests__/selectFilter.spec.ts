@@ -6,6 +6,7 @@ import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces
 import { CollectionService } from '../../services/collection.service';
 import { Filters } from '..';
 import { SelectFilter } from '../selectFilter';
+import { HttpStub } from '../../../../../test/httpClientStub';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 jest.useFakeTimers();
@@ -35,6 +36,7 @@ describe('SelectFilter', () => {
   let spyGetHeaderRow;
   let mockColumn: Column;
   let collectionService: CollectionService;
+  const http = new HttpStub();
 
   beforeEach(() => {
     translateService = new TranslateServiceStub();
@@ -75,7 +77,7 @@ describe('SelectFilter', () => {
     try {
       filter.init(filterArguments);
     } catch (e) {
-      expect(e.message).toContain(`[Slickgrid-Universal] You need to pass a "collection" for the MultipleSelect/SingleSelect Filter to work correctly.`);
+      expect(e.message).toContain(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the MultipleSelect/SingleSelect Filter to work correctly.`);
       done();
     }
   });
@@ -427,71 +429,6 @@ describe('SelectFilter', () => {
     expect(filterListElm[2].textContent).toBe('female');
   });
 
-  // it('should create the multi-select filter with a value/label pair collectionAsync that is inside an object when "collectionInsideObjectProperty" is defined with a dot notation', () => {
-  //   const mockDataResponse = { deep: { myCollection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }] } };
-  //   mockColumn.filter = {
-  //     collectionAsync: new Promise((resolve) => setTimeout(() => resolve(mockDataResponse), 1)),
-  //     collectionOptions: { collectionInsideObjectProperty: 'deep.myCollection' },
-  //     customStructure: { value: 'value', label: 'description', },
-  //   };
-
-  //   filter.init(filterArguments);
-  //    jest.runAllTimers(); // fast-forward timer
-
-  //     const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
-  //     const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
-  //     filterBtnElm.click();
-
-  //     expect(filterListElm.length).toBe(3);
-  //     expect(filterListElm[0].textContent).toBe('other');
-  //     expect(filterListElm[1].textContent).toBe('male');
-  //     expect(filterListElm[2].textContent).toBe('female');
-  // });
-
-  // it('should create the multi-select filter with a default search term when using "collectionAsync" as a Promise', () => {
-  //   const spyCallback = jest.spyOn(filterArguments, 'callback');
-  //   const mockCollection = ['male', 'female'];
-  //   mockColumn.filter.collectionAsync = new Promise((resolve) => setTimeout(() => resolve(mockCollection), 0));
-
-  //   filterArguments.searchTerms = ['female'];
-  //   filter.init(filterArguments);
-  // jest.runAllTimers(); // fast-forward timer
-
-  //     const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
-  //     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
-  //     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-  //     const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
-  //     filterBtnElm.click();
-  //     filterOkElm.click();
-
-  //     expect(filterListElm.length).toBe(2);
-  //     expect(filterFilledElms.length).toBe(1);
-  //     expect(filterListElm[1].checked).toBe(true);
-  //     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'IN', searchTerms: ['female'], shouldTriggerQuery: true });
-  // });
-
-  // it('should create the multi-select filter with a default search term when using "collectionAsync" as a Promise with content to simulate http-client', () => {
-  //   const spyCallback = jest.spyOn(filterArguments, 'callback');
-  //   const mockCollection = ['male', 'female'];
-  //   mockColumn.filter.collectionAsync = new Promise((resolve) => setTimeout(() => resolve({ content: mockCollection }), 0));
-
-  //   filterArguments.searchTerms = ['female'];
-  //   filter.init(filterArguments);
-  // jest.runAllTimers(); // fast-forward timer
-
-  //     const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
-  //     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
-  //     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-  //     const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
-  //     filterBtnElm.click();
-  //     filterOkElm.click();
-
-  //     expect(filterListElm.length).toBe(2);
-  //     expect(filterFilledElms.length).toBe(1);
-  //     expect(filterListElm[1].checked).toBe(true);
-  //     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'IN', searchTerms: ['female'], shouldTriggerQuery: true });
-  // });
-
   it('should create the multi-select filter with a default search term and have the HTML rendered when "enableRenderHtml" is set', () => {
     mockColumn.filter = {
       enableRenderHtml: true,
@@ -646,40 +583,106 @@ describe('SelectFilter', () => {
     expect(filterParentElm.textContent).toBe('2 de 3 sélectionnés');
   });
 
-  // it('should trigger a re-render of the DOM element when collection is replaced by new collection', async () => {
-  //   const renderSpy = jest.spyOn(filter, 'renderDomElement');
-  //   const newCollection = [{ value: 'val1', label: 'label1' }, { value: 'val2', label: 'label2' }];
-  //   const mockDataResponse = [{ value: 'female', label: 'Female' }, { value: 'male', label: 'Male' }];
+  it('should create the multi-select filter with a default search term when using "collectionAsync" as a Promise', async () => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const mockCollection = ['male', 'female'];
+    mockColumn.filter.collection = undefined;
+    mockColumn.filter.collectionAsync = Promise.resolve(mockCollection);
 
-  //   mockColumn.filter = {
-  //     collection: [],
-  //     collectionAsync: new Promise((resolve) => resolve(mockDataResponse)),
-  //     enableCollectionWatch: true,
-  //   };
+    filterArguments.searchTerms = ['female'];
+    await filter.init(filterArguments);
 
-  //   await filter.init(filterArguments);
-  //   mockColumn.filter.collection = newCollection;
-  // jest.runAllTimers(); // fast-forward timer
+    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+    const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
+    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    filterBtnElm.click();
+    filterOkElm.click();
 
-  //     expect(renderSpy).toHaveBeenCalledTimes(2);
-  //     expect(renderSpy).toHaveBeenCalledWith(newCollection);
-  // });
+    expect(filterListElm.length).toBe(2);
+    expect(filterFilledElms.length).toBe(1);
+    expect(filterListElm[1].checked).toBe(true);
+    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'IN', searchTerms: ['female'], shouldTriggerQuery: true });
+  });
 
-  // it('should trigger a re-render of the DOM element when collection changes', async () => {
-  //   const renderSpy = jest.spyOn(filter, 'renderDomElement');
-  //   const mockDataResponse = [{ value: 'female', label: 'Female' }, { value: 'male', label: 'Male' }];
+  it('should create the multi-select filter with a default search term when using "collectionAsync" as a Promise with content to simulate http-client', async () => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const mockCollection = ['male', 'female'];
+    mockColumn.filter.collection = undefined;
+    mockColumn.filter.collectionAsync = Promise.resolve({ content: mockCollection });
 
-  //   mockColumn.filter = {
-  //     collection: [],
-  //     collectionAsync: new Promise((resolve) => resolve(mockDataResponse)),
-  //     enableCollectionWatch: true,
-  //   };
+    filterArguments.searchTerms = ['female'];
+    await filter.init(filterArguments);
 
-  //   await filter.init(filterArguments);
-  //   mockColumn.filter.collection.push({ value: 'other', label: 'other' });
-  // jest.runAllTimers(); // fast-forward timer
+    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+    const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
+    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    filterBtnElm.click();
+    filterOkElm.click();
 
-  //     expect(renderSpy).toHaveBeenCalledTimes(2);
-  //     expect(renderSpy).toHaveBeenCalledWith(mockColumn.filter.collection);
-  // });
+    expect(filterListElm.length).toBe(2);
+    expect(filterFilledElms.length).toBe(1);
+    expect(filterListElm[1].checked).toBe(true);
+    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'IN', searchTerms: ['female'], shouldTriggerQuery: true });
+  });
+
+  it('should create the multi-select filter with a default search term when using "collectionAsync" is a Fetch Promise', async () => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const mockCollection = ['male', 'female'];
+
+    http.status = 200;
+    http.object = mockCollection;
+    http.returnKey = 'date';
+    http.returnValue = '6/24/1984';
+    http.responseHeaders = { accept: 'json' };
+    mockColumn.filter.collectionAsync = http.fetch('/api', { method: 'GET' });
+
+    filterArguments.searchTerms = ['female'];
+    await filter.init(filterArguments);
+
+    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+    const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
+    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    filterBtnElm.click();
+    filterOkElm.click();
+
+    expect(filterListElm.length).toBe(2);
+    expect(filterFilledElms.length).toBe(1);
+    expect(filterListElm[1].checked).toBe(true);
+    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'IN', searchTerms: ['female'], shouldTriggerQuery: true });
+  });
+
+  it('should create the multi-select filter with a value/label pair collectionAsync that is inside an object when "collectionInsideObjectProperty" is defined with a dot notation', async () => {
+    const mockDataResponse = { deep: { myCollection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }] } };
+    mockColumn.filter = {
+      collectionAsync: Promise.resolve(mockDataResponse),
+      collectionOptions: { collectionInsideObjectProperty: 'deep.myCollection' },
+      customStructure: { value: 'value', label: 'description', },
+    };
+
+    await filter.init(filterArguments);
+
+    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
+    filterBtnElm.click();
+
+    expect(filterListElm.length).toBe(3);
+    expect(filterListElm[0].textContent).toBe('other');
+    expect(filterListElm[1].textContent).toBe('male');
+    expect(filterListElm[2].textContent).toBe('female');
+  });
+
+  it('should throw an error when "collectionAsync" Promise does not return a valid array', async (done) => {
+    const promise = Promise.resolve({ hello: 'world' });
+    mockColumn.filter.collectionAsync = promise;
+
+    try {
+      await filter.init(filterArguments);
+    } catch (e) {
+      expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Select Filter, the collection is not a valid array.`);
+      done();
+    }
+  });
 });
