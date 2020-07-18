@@ -88,7 +88,7 @@ describe('AutoCompleteFilter', () => {
   });
 
   it('should throw an error when "collectionAsync" Promise does not return a valid array', (done) => {
-    mockColumn.filter.collectionAsync = new Promise(resolve => resolve({ hello: 'world' }));
+    mockColumn.filter.collectionAsync = Promise.resolve({ hello: 'world' });
     filter.init(filterArguments).catch((e) => {
       expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the AutoComplete Filter, the collection is not a valid array.`);
       done();
@@ -254,7 +254,7 @@ describe('AutoCompleteFilter', () => {
   it('should create the filter with a default search term when using "collectionAsync" as a Promise', (done) => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
     const mockCollection = ['male', 'female'];
-    mockColumn.filter.collectionAsync = new Promise((resolve) => setTimeout(() => resolve(mockCollection)));
+    mockColumn.filter.collectionAsync = Promise.resolve(mockCollection);
 
     filterArguments.searchTerms = ['female'];
     filter.init(filterArguments);
@@ -278,7 +278,7 @@ describe('AutoCompleteFilter', () => {
   it('should create the filter with a default search term when using "collectionAsync" as a Promise with content to simulate http-client', (done) => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
     const mockCollection = ['male', 'female'];
-    mockColumn.filter.collectionAsync = new Promise((resolve) => setTimeout(() => resolve({ content: mockCollection })));
+    mockColumn.filter.collectionAsync = Promise.resolve({ content: mockCollection });
 
     filterArguments.searchTerms = ['female'];
     filter.init(filterArguments);
@@ -398,7 +398,7 @@ describe('AutoCompleteFilter', () => {
   it('should create the filter with a value/label pair collectionAsync that is inside an object when "collectionInsideObjectProperty" is defined with a dot notation', (done) => {
     const mockCollection = { deep: { myCollection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }] } };
     mockColumn.filter = {
-      collectionAsync: new Promise((resolve) => setTimeout(() => resolve(mockCollection), 1)),
+      collectionAsync: Promise.resolve(mockCollection),
       collectionOptions: { collectionInsideObjectProperty: 'deep.myCollection' },
       customStructure: { value: 'value', label: 'description', },
     };

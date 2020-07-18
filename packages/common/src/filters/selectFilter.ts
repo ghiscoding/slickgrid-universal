@@ -152,7 +152,6 @@ export class SelectFilter implements Filter {
       } else {
         resolve(newCollection);
       }
-
     });
   }
 
