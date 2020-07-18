@@ -6,6 +6,7 @@ import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces
 import { CollectionService } from '../../services/collection.service';
 import { Filters } from '..';
 import { SelectFilter } from '../selectFilter';
+import { HttpStub } from '../../../../../test/httpClientStub';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 jest.useFakeTimers();
@@ -35,6 +36,7 @@ describe('SelectFilter', () => {
   let spyGetHeaderRow;
   let mockColumn: Column;
   let collectionService: CollectionService;
+  const http = new HttpStub();
 
   beforeEach(() => {
     translateService = new TranslateServiceStub();
@@ -608,6 +610,33 @@ describe('SelectFilter', () => {
     const mockCollection = ['male', 'female'];
     mockColumn.filter.collection = undefined;
     mockColumn.filter.collectionAsync = Promise.resolve({ content: mockCollection });
+
+    filterArguments.searchTerms = ['female'];
+    await filter.init(filterArguments);
+
+    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+    const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
+    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    filterBtnElm.click();
+    filterOkElm.click();
+
+    expect(filterListElm.length).toBe(2);
+    expect(filterFilledElms.length).toBe(1);
+    expect(filterListElm[1].checked).toBe(true);
+    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'IN', searchTerms: ['female'], shouldTriggerQuery: true });
+  });
+
+  it('should create the multi-select filter with a default search term when using "collectionAsync" is a Fetch Promise', async () => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const mockCollection = ['male', 'female'];
+
+    http.status = 200;
+    http.object = mockCollection;
+    http.returnKey = 'date';
+    http.returnValue = '6/24/1984';
+    http.responseHeaders = { accept: 'json' };
+    mockColumn.filter.collectionAsync = http.fetch('/api', { method: 'GET' });
 
     filterArguments.searchTerms = ['female'];
     await filter.init(filterArguments);
