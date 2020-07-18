@@ -109,9 +109,7 @@ export class DateEditor implements Editor {
         dateFormat: inputFormat,
         closeOnSelect: false,
         locale: (currentLocale !== 'en') ? this.loadFlatpickrLocale(currentLocale) : 'en',
-        onChange: () => {
-          this.save();
-        },
+        onChange: () => this.save(),
         errorHandler: () => {
           // do nothing, Flatpickr is a little too sensitive and will throw an error when provided date is lower than minDate so just disregard the error completely
         }
