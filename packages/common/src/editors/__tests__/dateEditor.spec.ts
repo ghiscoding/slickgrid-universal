@@ -195,6 +195,20 @@ describe('DateEditor', () => {
 
         expect(editor.isValueChanged()).toBe(false);
       });
+
+      it('should return False when input date is invalid', () => {
+        mockItemData = { id: 1, startDate: '1900-02-32', isActive: true };
+        mockColumn.type = FieldType.dateUs;
+        mockColumn.internalColumnEditor.editorOptions = { allowInput: true }; // change to allow input value only for testing purposes
+
+        editor = new DateEditor(editorArguments);
+        editor.loadValue(mockItemData);
+        const editorInputElm = divContainer.querySelector<HTMLInputElement>('input.flatpickr-alt-input');
+        editorInputElm.value = '1900-02-32';
+        editorInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
+
+        expect(editor.isValueChanged()).toBe(false);
+      });
     });
 
     describe('applyValue method', () => {
