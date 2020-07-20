@@ -201,7 +201,8 @@ export class DateEditor implements Editor {
       return false;
     }
 
-    return (!(elmDateStr === '' && orgDateStr === '')) && (elmDateStr !== orgDateStr);
+    const isChanged = (!(elmDateStr === '' && orgDateStr === '')) && (elmDateStr !== orgDateStr);
+    return isChanged;
   }
 
   loadValue(item: any) {
@@ -224,12 +225,12 @@ export class DateEditor implements Editor {
   save() {
     // autocommit will not focus the next editor
     const validation = this.validate();
-    if (validation && validation.valid && this.isValueChanged()) {
-      if (this.hasAutoCommitEdit) {
-        this.grid.getEditorLock().commitCurrentEdit();
-      } else {
-        this.args.commitChanges();
-      }
+    const isValid = (validation && validation.valid) || false;
+
+    if (this.hasAutoCommitEdit && isValid) {
+      this.grid.getEditorLock().commitCurrentEdit();
+    } else {
+      this.args.commitChanges();
     }
   }
 
