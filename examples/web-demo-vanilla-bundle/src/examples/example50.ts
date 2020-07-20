@@ -167,9 +167,6 @@ export class Example50 {
       autoResize: {
         container: '.demo-container',
       },
-      contextMenu: {
-        hideCopyCellValueCommand: true
-      },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableExport: true,
