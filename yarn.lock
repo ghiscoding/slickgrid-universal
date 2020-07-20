@@ -8566,10 +8566,10 @@ multimatch@^3.0.0:
     arrify "^1.0.1"
     minimatch "^3.0.4"
 
-multiple-select-adapted@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/multiple-select-adapted/-/multiple-select-adapted-1.3.0.tgz#a2bdd40b4dc6fb8715bacafd11af94e2e3e1d23d"
-  integrity sha512-QCYiH/cazH4fOXCtf/uakXAsT2eHQi3BRfqEHIT3C9F/njQJCFrf9+UuQkiEqbyjZFey+km1+eFdQzReqkezkg==
+multiple-select-modified@^1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/multiple-select-modified/-/multiple-select-modified-1.3.2.tgz#96767ef2baaa0475fb3b9f7387004661270e074f"
+  integrity sha512-84vE54Fd7qo+p5WM5LTQ+/T+C7c/ZoP/WubobuRFaEBh3yYqiVdwT/VNypK6HzSM4zWMhYZPqvNlAQOgY7bxpA==
   dependencies:
     jquery "^3.4.1"
 

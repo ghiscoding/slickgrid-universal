@@ -1,5 +1,5 @@
 // import 3rd party lib multiple-select for the tests
-import 'multiple-select-adapted';
+import 'multiple-select-modified';
 
 import { Editors } from '../index';
 import { SelectEditor } from '../selectEditor';

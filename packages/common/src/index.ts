@@ -1,4 +1,4 @@
-import 'multiple-select-adapted';
+import 'multiple-select-modified';
 
 // Public classes.
 export * from './constants';
