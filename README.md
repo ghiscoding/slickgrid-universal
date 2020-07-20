@@ -18,7 +18,7 @@ which is why they are better handled with a monorepo structure.
 
 ### Demo page
 The GitHub [demo page](https://ghiscoding.github.io/slickgrid-universal) uses 2 different themes (Material Design / Salesforce) but you could also use Bootstrap theme which is demoed in other frameworks.
-- [Web-Demo-Vanilla-Bundle](https://ghiscoding.github.io/slickgrid-universal) with Material Design theme & Salesforce theme
+- [Webpack-Demo-Vanilla-Bundle](https://ghiscoding.github.io/slickgrid-universal) with Material Design theme & Salesforce theme
 - [Angular-Slickgrid](https://ghiscoding.github.io/Angular-Slickgrid/)
 - [Aurelia-Slickgrid](https://ghiscoding.github.io/aurelia-slickgrid/)
 
@@ -52,7 +52,7 @@ and it is also used to test with the UI portion. The Vanilla bundle is also used
 
 | Package Name | Description | 
 | --------| ----------- | 
-| [slickgrid-universal/web-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/web-demo-vanilla-bundle) | standalone package written in plain TypeScript for demo & UI testing. | 
+| [slickgrid-universal/webpack-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle) | standalone package written in plain TypeScript for demo & UI testing. | 
 
 
 ## Installation
