@@ -1,0 +1,10 @@
+// You can change the SVG color using their associated SASS $icon-color-mdi-XYZ
+$icon-width-mdi-close: 14px;
+$icon-width-mdi-plus: 14px;
+$icon-width-mdi-arrow-collapse: 14px;
+$icon-width-mdi-arrow-expand: 14px;
+$icon-width-mdi-flip-vertical: 14px;
+
+/* make sure to add the @import the SlickGrid Bootstrap Theme AFTER the variables changes */
+@import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss';
+@import url(https://db.onlinewebfonts.com/c/0fadaa21fcac88ceee0bb8da992c221b?family=SalesforceSans-Regular);

@@ -1,0 +1,35 @@
+<h3 class="title is-3">
+  Example 05 - Tree Data
+  <span class="subtitle">(from a flat dataset with <code>parentId</code> references)</span>
+</h3>
+<h6 class="title is-6 italic">
+  NOTE: The grid will automatically sort Ascending with the column that has the Tree Data, you could add a
+  "sortByFieldId" in your column "treeData" option if you wish to sort on a different column
+</h6>
+<div class="columns">
+  <div class="column is-narrow">
+    <button onclick.delegate="addNewRow()" class="button is-small is-info">
+      <span class="icon mdi mdi-plus"></span>
+      <span>Add New Item (in 1st group)</span>
+    </button>
+    <button onclick.delegate="collapseAll()" data-test="collapse-all" class="button is-small">
+      <span class="icon mdi mdi-arrow-collapse"></span>
+      <span>Collapse All</span>
+    </button>
+    <button onclick.delegate="expandAll()" data-test="expand-all" class="button is-small">
+      <span class="icon mdi mdi-arrow-expand"></span>
+      <span>Expand All</span>
+    </button>
+    <button onclick.delegate="logFlatStructure()" class="button is-small">
+      <span>Log Flag Structure</span>
+    </button>
+    <button onclick.delegate="logExpandedStructure()" class="button is-small">
+      <span>Log Expanded Structure</span>
+    </button>
+  </div>
+</div>
+
+<div class="demo-container">
+  <div class="grid5">
+  </div>
+</div>

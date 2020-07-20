@@ -14,7 +14,7 @@ module.exports = {
     'packages/**/*.ts',
     '!**/dist/**',
     '!src/assets/**',
-    '!packages/web-demo-vanilla-bundle/**',
+    '!examples/web-demo-vanilla-bundle/**',
     '!**/node_modules/**',
     '!**/test/**',
   ],

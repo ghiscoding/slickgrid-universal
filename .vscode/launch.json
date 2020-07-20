@@ -18,7 +18,7 @@
         "webpack:///../excel-export/*": "${webRoot}/packages/excel-export/*",
         "webpack:///../file-export/*": "${webRoot}/packages/file-export/*",
         "webpack:///../vanilla-bundle/*": "${webRoot}/packages/vanilla-bundle/*",
-        "webpack:///./src/*": "${webRoot}/packages/web-demo-vanilla-bundle/src/*"
+        "webpack:///./src/*": "${webRoot}/examples/web-demo-vanilla-bundle/src/*"
       }
     },
     {

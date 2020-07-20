@@ -1,0 +1,17 @@
+$link-color: #0099ff;
+
+.cell-effort-driven {
+  text-align: center;
+}
+
+.editable-field {
+  background-color: #d5e8e9 !important;
+}
+.fake-hyperlink {
+  cursor: pointer;
+  color: $link-color;
+  &:hover {
+      text-decoration: underline;
+  }
+}
+

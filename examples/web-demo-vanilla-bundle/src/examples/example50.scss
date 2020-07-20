@@ -1,0 +1,41 @@
+$link-color: #0099ff;
+
+.cell-effort-driven {
+  text-align: center;
+}
+
+.editable-field {
+  background-color: #d5e8e9 !important;
+}
+.fake-hyperlink {
+  cursor: pointer;
+  color: $link-color;
+  &:hover {
+      text-decoration: underline;
+  }
+}
+
+.toggle {
+  height: 24px;
+  width: 24px;
+  display: inline-block;
+
+  &.expand {
+    cursor: pointer;
+    &:before {
+      font-family: "Material Design Icons";
+      font-size: 24px;
+      content: "\F0142";
+    }
+  }
+
+  &.collapse{
+    cursor: pointer;
+    &:before {
+      font-family: "Material Design Icons";
+      font-size: 24px;
+      content: "\F0140";
+    }
+  }
+}
+
