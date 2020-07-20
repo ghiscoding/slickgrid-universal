@@ -14,7 +14,7 @@ import { DelimiterType, ExtensionName, FileType, } from '../enums/index';
 import { ExtensionUtility } from './extensionUtility';
 import { exportWithFormatterWhenDefined } from '../services/export-utilities';
 import { SharedService } from '../services/shared.service';
-import { getTranslationPrefix } from '../services/utilities';
+import { getDescendantProperty, getTranslationPrefix } from '../services/utilities';
 import { ExcelExportService, FileExportService, TranslaterService, TreeDataService } from '../services/index';
 
 // using external non-typed js libraries
@@ -197,7 +197,12 @@ export class ContextMenuExtension implements Extension {
               // make sure there's an item to copy before enabling this command
               const columnDef = args && args.column as Column;
               const dataContext = args && args.dataContext;
-              if (columnDef && dataContext.hasOwnProperty(columnDef.field)) {
+              if (typeof columnDef.queryFieldNameGetterFn === 'function') {
+                const cellValue = this.getCellValueFromQueryFieldGetter(columnDef, dataContext);
+                if (cellValue !== '' && cellValue !== undefined) {
+                  return true;
+                }
+              } else if (columnDef && dataContext.hasOwnProperty(columnDef.field)) {
                 return dataContext[columnDef.field] !== '' && dataContext[columnDef.field] !== null && dataContext[columnDef.field] !== undefined;
               }
               return false;
@@ -403,11 +408,15 @@ export class ContextMenuExtension implements Extension {
         const gridOptions = this.sharedService && this.sharedService.gridOptions || {};
         const cell = args && args.cell || 0;
         const row = args && args.row || 0;
-        const column = args && args.column;
+        const columnDef = args && args.column;
         const dataContext = args && args.dataContext;
         const grid = this.sharedService && this.sharedService.grid;
         const exportOptions = gridOptions && (gridOptions.excelExportOptions || gridOptions.exportOptions);
-        const textToCopy = exportWithFormatterWhenDefined(row, cell, dataContext, column, grid, exportOptions);
+        let textToCopy = exportWithFormatterWhenDefined(row, cell, dataContext, columnDef, grid, exportOptions);
+
+        if (typeof columnDef.queryFieldNameGetterFn === 'function') {
+          textToCopy = this.getCellValueFromQueryFieldGetter(columnDef, dataContext);
+        }
 
         // create fake <textarea> (positioned outside of the screen) to copy into clipboard & delete it from the DOM once we're done
         const tmpElem = document.createElement('textarea') as HTMLTextAreaElement;
@@ -425,5 +434,28 @@ export class ContextMenuExtension implements Extension {
         }
       }
     } catch (e) { }
+  }
+
+  /**
+   * When a queryFieldNameGetterFn is defined, then get the value from that getter callback function
+   * @param columnDef
+   * @param dataContext
+   * @return cellValue
+   */
+  private getCellValueFromQueryFieldGetter(columnDef: Column, dataContext: any): string {
+    let cellValue = '';
+
+    if (typeof columnDef.queryFieldNameGetterFn === 'function') {
+      const queryFieldName = columnDef.queryFieldNameGetterFn(dataContext);
+
+      // get the cell value from the item or when it's a dot notation then exploded the item and get the final value
+      if (queryFieldName && queryFieldName.indexOf('.') >= 0) {
+        cellValue = getDescendantProperty(dataContext, queryFieldName);
+      } else {
+        cellValue = dataContext[queryFieldName];
+      }
+    }
+
+    return cellValue;
   }
 }
