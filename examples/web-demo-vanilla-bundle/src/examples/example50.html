@@ -1,0 +1,38 @@
+<h3 class="title is-3">Example 50 - SE Tree View</h3>
+<div class="columns">
+  <div class="column is-narrow">
+    <button onclick.delegate="collapseAll()" class="button is-small">
+      <span class="icon mdi mdi-arrow-collapse"></span>
+      <span>Collapse All</span>
+    </button>
+    <button onclick.delegate="expandAll()" class="button is-small">
+      <span class="icon mdi mdi-arrow-expand"></span>
+      <span>Expand All</span>
+    </button>
+    <button onclick.delegate="logExpandedStructure()" class="button is-small">
+      <span>Log Expanded Structure</span>
+    </button>
+    <button onclick.delegate="logFlatStructure()" class="button is-small">
+      <span>Log Flat Structure</span>
+    </button>
+  </div>
+  <div class="column is-6">
+    <div class="field is-horizontal">
+      <div class="field-label is-small">
+        <label class="label">Search Item</label>
+      </div>
+      <div class="field-body">
+        <div class="field">
+          <p class="control">
+            <input type="text" class="input is-small" onkeyup.delegate="searchItem(event)">
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="demo-container">
+  <div class="grid50">
+  </div>
+</div>

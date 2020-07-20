@@ -1,0 +1,35 @@
+$primary-color:#009530;
+$link-color: #2cad56;
+
+// You can change the SVG color using their associated SASS $icon-color-mdi-XYZ
+$icon-width-mdi-close: 14px;
+$icon-width-mdi-plus: 14px;
+$icon-width-mdi-arrow-collapse: 14px;
+$icon-width-mdi-arrow-expand: 14px;
+
+/* make sure to add the @import the SlickGrid Bootstrap Theme AFTER the variables changes */
+@import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss';
+// @import '@slickgrid-universal/common/dist/styles/sass/se-slickgrid-theme-material.scss';
+
+/** or SalesForce Theme */
+// @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss';
+
+@import './bulma.scss';
+
+.fake-hyperlink {
+    cursor: pointer;
+    color: $link-color;
+    &:hover {
+      text-decoration: underline;
+    }
+}
+.disabled {
+    color: #ccc;
+}
+
+button {
+  .icon {
+    width: 14px;
+    padding-top: 4px;
+  }
+}

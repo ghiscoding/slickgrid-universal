@@ -52,7 +52,7 @@ and it is also used to test with the UI portion. The Vanilla bundle is also used
 
 | Package Name | Description | 
 | --------| ----------- | 
-| [slickgrid-universal/web-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/web-demo-vanilla-bundle) | standalone package written in plain TypeScript for demo & UI testing. | 
+| [slickgrid-universal/web-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/web-demo-vanilla-bundle) | standalone package written in plain TypeScript for demo & UI testing. | 
 
 
 ## Installation
@@ -124,11 +124,9 @@ npm run test:watch
     - [x] Preset Filters not working with Tree Data View 
   - [x] Dynamically Add Columns
   - [x] Tree Data
-  - [ ] Translations Support
-  - [x] add missing `collectionAsync` for Editors
-  - [x] add missing `collectionAsync` for Filters
-    - [x] requires updating each Filters supporting `collectionAsync` (autoCompleteFilter, selectFilter)
+  - [x] add missing `collectionAsync` for Editors, Filters (autoCompleteFilter, selectFilter)
   - [x] Grid Service should use SlickGrid transactions `beginUpdate`, `endUpdate` for performance reason whenever possible
+  - [ ] Translations Support
 
 #### Other Todos
 - [x] VScode Chrome Debugger
@@ -152,4 +150,3 @@ npm run test:watch
 - [x] Copy cell text (context menu) doesn't work in SF
 - [x] Remove all Services init method 2nd argument (we can get DataView directly from the Grid object)
 - [ ] Search for any left "todo" in the entire solution
-- [ ] Move Demo site into `examples` instead of `packages` if possible

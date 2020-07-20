@@ -1,0 +1,72 @@
+<nav class="navbar is-fixed-top is-success" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="//github.com/ghiscoding/slickgrid-universal">
+      <span class="icon is-medium">
+        <i class="mdi mdi-github mdi-24px"></i>
+      </span>
+      <span>
+        <h4 class="title is-4 has-text-white">Slickgrid-Universal</h4>
+      </span>
+      <span style="position: relative; top: 5px; margin-left: 5px;">
+        <iframe src="//ghbtns.com/github-btn.html?user=ghiscoding&repo=slickgrid-universal&type=star&count=true"
+                allowtransparency="true" scrolling="no" frameborder="0" width="170px" height="20px"></iframe>
+      </span>
+    </a>
+
+    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
+       data-target="navbarBasicExample">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+
+  <div id="navbarBasicExample" class="navbar-menu">
+    <div class="navbar-start">
+      <a class="navbar-item" onclick.delegate="loadRoute('example01')">
+        Home
+      </a>
+
+      <a class="navbar-item" href="//github.com/ghiscoding/slickgrid-universal/wiki" target="_blank">
+        Documentation
+      </a>
+
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          Examples
+        </a>
+
+        <div class="navbar-dropdown">
+          <a class="navbar-item" onclick.delegate="loadRoute('example01')">Example01 - Basic Grids</a>
+          <a class="navbar-item" onclick.delegate="loadRoute('example02')">Example02 - Grouping &amp; Aggregators</a>
+          <a class="navbar-item" onclick.delegate="loadRoute('example03')">Example03 - Draggable Grouping</a>
+          <a class="navbar-item" onclick.delegate="loadRoute('example04')">Example04 - Pinned (frozen) Columns/Rows</a>
+          <a class="navbar-item" onclick.delegate="loadRoute('example05')">
+            Example05 - Tree Data with Parent/Child refs
+          </a>
+          <a class="navbar-item" onclick.delegate="loadRoute('example06')">
+            Example06 - Tree Data from Hierarchical View Dataset
+          </a>
+          <a class="navbar-item" onclick.delegate="loadRoute('example07')">Example07 - Row Move &amp; Row Selections</a>
+          <a class="navbar-item" onclick.delegate="loadRoute('example08')">
+            Example08 - Column Span &amp; Header Grouping
+          </a>
+          <a class="navbar-item" onclick.delegate="loadRoute('example09')">
+            Example09 - Grid with OData Backend Service
+          </a>
+          <a class="navbar-item" onclick.delegate="loadRoute('example10')">
+            Example10 - Grid with GraphQL Backend Service
+          </a>
+          <!--
+          <hr class="navbar-divider">
+          <a class="navbar-item" onclick.delegate="loadRoute('example50')">Example50 - SE Tree Data</a>
+          <a class="navbar-item" onclick.delegate="loadRoute('example51')">Example51 - SE Tree Data</a> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container is-fluid" style="padding-top: 20px">
+  <view-route></view-route>
+</div>

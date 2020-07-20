@@ -1,0 +1,56 @@
+<h3 class="title is-3">Example 06 - Tree Data
+  <span class="subtitle">(from a Hierarchical Dataset)</span>
+</h3>
+<h6 class="title is-6 italic">
+  NOTE: The grid will automatically sort Ascending with the column that has the Tree Data, you could add a
+  "sortByFieldId" in your column "treeData" option if you wish to sort on a different column
+</h6>
+<div class="columns">
+  <div class="column is-narrow">
+    <button onclick.delegate="addNewFile()" class="button is-small is-info">
+      <span class="icon mdi mdi-plus"></span>
+      <span>Add New Pop Song</span>
+    </button>
+    <button onclick.delegate="collapseAll()" class="button is-small">
+      <span class="icon mdi mdi-arrow-collapse"></span>
+      <span>Collapse All</span>
+    </button>
+    <button onclick.delegate="expandAll()" class="button is-small">
+      <span class="icon mdi mdi-arrow-expand"></span>
+      <span>Expand All</span>
+    </button>
+    <button onclick.delegate="logFlatStructure()" class="button is-small">
+      <span>Log Flag Structure</span>
+    </button>
+    <button onclick.delegate="logExpandedStructure()" class="button is-small">
+      <span>Log Expanded Structure</span>
+    </button>
+  </div>
+  <div class="column is-6">
+    <div class="field is-horizontal">
+      <div class="field-label is-small">
+        <label class="label">Search File</label>
+      </div>
+      <div class="field-body">
+        <div class="field is-expanded">
+          <div class="field has-addons">
+            <p class="control is-expanded">
+              <input type="text" class="input search is-small" data-test="search-string"
+                     onkeyup.delegate="searchFile(event)">
+            </p>
+            <p class="control pointer" onclick.delegate="clearSearch()" data-test="clear-search-string">
+              <a class="button is-static is-small">
+                <span class="icon mdi mdi-close-thick" style="margin-top: 2px"></span>
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="demo-container">
+  <div class="grid6">
+  </div>
+</div>
