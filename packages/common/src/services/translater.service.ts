@@ -3,16 +3,16 @@ export abstract class TranslaterService {
    * Method to return the current locale used by the App
    * @return {string} current locale
    */
-  getCurrentLocale(): string {
-    throw new Error('TranslaterService "getCurrentLocale" method must be implemented');
+  getCurrentLanguage(): string {
+    throw new Error('TranslaterService "getCurrentLanguage" method must be implemented');
   }
 
   /**
    * Method to set the locale to use in the App
    * @param locale
    */
-  setLocale(locale: string): Promise<any> | any {
-    throw new Error('TranslaterService "setLocale" method must be implemented');
+  use(locale: string): Promise<any> | any {
+    throw new Error('TranslaterService "use" method must be implemented');
   }
 
   /**

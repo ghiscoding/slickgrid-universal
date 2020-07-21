@@ -11,7 +11,7 @@ import { uniqueArray } from './utilities';
 import { TranslaterService } from './translater.service';
 
 export class CollectionService<T = any> {
-  constructor(private translaterService: TranslaterService) { }
+  constructor(private translaterService?: TranslaterService) { }
 
   /**
    * Filter 1 or more items from a collection
@@ -115,8 +115,8 @@ export class CollectionService<T = any> {
               const sortDirection = sortBy.sortDesc ? SortDirectionNumber.desc : SortDirectionNumber.asc;
               const objectProperty = sortBy.property;
               const fieldType = sortBy.fieldType || FieldType.string;
-              const value1 = (enableTranslateLabel) ? this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(dataRow1[objectProperty] || ' ') : dataRow1[objectProperty];
-              const value2 = (enableTranslateLabel) ? this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(dataRow2[objectProperty] || ' ') : dataRow2[objectProperty];
+              const value1 = (enableTranslateLabel) ? this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLanguage && this.translaterService.getCurrentLanguage() && this.translaterService.translate(dataRow1[objectProperty] || ' ') : dataRow1[objectProperty];
+              const value2 = (enableTranslateLabel) ? this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLanguage && this.translaterService.getCurrentLanguage() && this.translaterService.translate(dataRow2[objectProperty] || ' ') : dataRow2[objectProperty];
 
               const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef);
               if (sortResult !== SortDirectionNumber.neutral) {
@@ -134,8 +134,8 @@ export class CollectionService<T = any> {
         const fieldType = sortByOptions.fieldType || FieldType.string;
 
         sortedCollection = collection.sort((dataRow1: T, dataRow2: T) => {
-          const value1 = (enableTranslateLabel) ? this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(dataRow1[objectProperty] || ' ') : dataRow1[objectProperty];
-          const value2 = (enableTranslateLabel) ? this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(dataRow2[objectProperty] || ' ') : dataRow2[objectProperty];
+          const value1 = (enableTranslateLabel) ? this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLanguage && this.translaterService.getCurrentLanguage() && this.translaterService.translate(dataRow1[objectProperty] || ' ') : dataRow1[objectProperty];
+          const value2 = (enableTranslateLabel) ? this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLanguage && this.translaterService.getCurrentLanguage() && this.translaterService.translate(dataRow2[objectProperty] || ' ') : dataRow2[objectProperty];
           const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef);
           if (sortResult !== SortDirectionNumber.neutral) {
             return sortResult;
@@ -147,8 +147,8 @@ export class CollectionService<T = any> {
         const fieldType = sortByOptions.fieldType || FieldType.string;
 
         sortedCollection = collection.sort((dataRow1: any, dataRow2: any) => {
-          const value1 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(dataRow1 || ' ') : dataRow1;
-          const value2 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(dataRow2 || ' ') : dataRow2;
+          const value1 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.getCurrentLanguage && this.translaterService.getCurrentLanguage() && this.translaterService.translate(dataRow1 || ' ') : dataRow1;
+          const value2 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.getCurrentLanguage && this.translaterService.getCurrentLanguage() && this.translaterService.translate(dataRow2 || ' ') : dataRow2;
           const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef);
           if (sortResult !== SortDirectionNumber.neutral) {
             return sortResult;

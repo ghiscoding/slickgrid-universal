@@ -1,12 +1,12 @@
 import { TranslaterService } from '../translater.service';
 
 describe('Export Service', () => {
-  it('should display a not implemented when calling "getCurrentLocale" method', () => {
-    expect(() => TranslaterService.prototype.getCurrentLocale()).toThrow('TranslaterService "getCurrentLocale" method must be implemented');
+  it('should display a not implemented when calling "getCurrentLanguage" method', () => {
+    expect(() => TranslaterService.prototype.getCurrentLanguage()).toThrow('TranslaterService "getCurrentLanguage" method must be implemented');
   });
 
-  it('should display a not implemented when calling "setLocale" method', () => {
-    expect(() => TranslaterService.prototype.setLocale('fr')).toThrow('TranslaterService "setLocale" method must be implemented');
+  it('should display a not implemented when calling "use" method', () => {
+    expect(() => TranslaterService.prototype.use('fr')).toThrow('TranslaterService "use" method must be implemented');
   });
 
   it('should display a not implemented when calling "translate" method', () => {

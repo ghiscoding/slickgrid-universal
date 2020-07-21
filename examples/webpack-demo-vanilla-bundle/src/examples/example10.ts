@@ -15,6 +15,7 @@ import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, } from '@sli
 import { Slicker } from '@slickgrid-universal/vanilla-bundle';
 import * as moment from 'moment-mini';
 import { ExampleGridOptions } from './example-grid-options';
+import { TranslateService } from '../translate.service';
 
 const defaultPageSize = 20;
 const GRAPHQL_QUERY_DATASET_NAME = 'users';
@@ -32,8 +33,19 @@ export class Example10 {
   graphqlQuery = '...';
   processing = false;
   selectedLanguage: string;
+  selectedLanguageFile: string;
   status = '';
   statusClass = 'is-success';
+  translateService: TranslateService;
+
+  constructor() {
+    // get the Translate Service from the window object,
+    // it might be better with proper Dependency Injection but this project doesn't have any at this point
+    this.translateService = (<any>window).TranslateService;
+    this.selectedLanguage = this.translateService.getCurrentLanguage();
+    this.selectedLanguageFile = `${this.selectedLanguage}.json`;
+    console.log('TranslateService', this.translateService.translate('ALL_SELECTED'));
+  }
 
   dispose() {
     if (this.slickgridLwc) {
@@ -55,7 +67,7 @@ export class Example10 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'name', field: 'name', name: 'Name', width: 60, columnGroup: 'Customer Information',
+        id: 'name', field: 'name', nameKey: 'NAME', width: 60, columnGroupKey: 'CUSTOMER_INFORMATION',
         type: FieldType.string,
         sortable: true,
         filterable: true,
@@ -64,14 +76,14 @@ export class Example10 {
         }
       },
       {
-        id: 'gender', field: 'gender', name: 'Gender', filterable: true, sortable: true, width: 60, columnGroup: 'Customer Information',
+        id: 'gender', field: 'gender', nameKey: 'GENDER', filterable: true, sortable: true, width: 60, columnGroupKey: 'CUSTOMER_INFORMATION',
         filter: {
           model: Filters.singleSelect,
           collection: [{ value: '', label: '' }, { value: 'male', label: 'Male', }, { value: 'female', label: 'Female', }]
         }
       },
       {
-        id: 'company', field: 'company', name: 'Company', width: 60, columnGroup: 'Customer Information',
+        id: 'company', field: 'company', nameKey: 'COMPANY', width: 60, columnGroupKey: 'CUSTOMER_INFORMATION',
         sortable: true,
         filterable: true,
         filter: {
@@ -83,13 +95,13 @@ export class Example10 {
         }
       },
       {
-        id: 'billingAddressStreet', field: 'billing.address.street', name: 'Street',
-        width: 60, filterable: true, sortable: true, columnGroup: 'Billing Information',
+        id: 'billingAddressStreet', field: 'billing.address.street', nameKey: 'BILLING.ADDRESS.STREET',
+        width: 60, filterable: true, sortable: true, columnGroupKey: 'BILLING.INFORMATION',
       },
       {
-        id: 'billingAddressZip', field: 'billing.address.zip', name: 'Zip', width: 60,
+        id: 'billingAddressZip', field: 'billing.address.zip', nameKey: 'BILLING.ADDRESS.ZIP', width: 60,
         type: FieldType.number,
-        columnGroup: 'Billing Information',
+        columnGroupKey: 'BILLING.INFORMATION',
         filterable: true, sortable: true,
         filter: {
           model: Filters.compoundInput
@@ -98,7 +110,7 @@ export class Example10 {
       },
       {
         id: 'finish', field: 'finish', name: 'Date', formatter: Formatters.dateIso, sortable: true, minWidth: 90, width: 120, exportWithFormatter: true,
-        columnGroup: 'Billing Information',
+        columnGroupKey: 'BILLING.INFORMATION',
         type: FieldType.date,
         filterable: true,
         filter: {
@@ -111,6 +123,8 @@ export class Example10 {
     const presetHighestDay = moment().add(20, 'days').format('YYYY-MM-DD');
 
     this.gridOptions = {
+      enableTranslate: true,
+      i18n: this.translateService, // pass the TranslateService instance to the grid
       enableAutoResize: false,
       gridHeight: 275,
       gridWidth: 900,
@@ -260,5 +274,13 @@ export class Example10 {
       { columnId: 'billingAddressZip', direction: 'DESC' },
       { columnId: 'company', direction: 'ASC' },
     ]);
+  }
+
+  async switchLanguage() {
+    const nextLanguage = (this.selectedLanguage === 'en') ? 'fr' : 'en';
+    await this.translateService.use(nextLanguage);
+    this.slickgridLwc.useDifferentLocale(nextLanguage); // TODO is it possible to remove this and only use Service events?
+    this.selectedLanguage = nextLanguage;
+    this.selectedLanguageFile = `${this.selectedLanguage}.json`;
   }
 }

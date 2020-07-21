@@ -58,6 +58,7 @@ import {
   SharedService,
   SortService,
   SlickgridConfig,
+  TranslaterService,
   TreeDataService,
 
   // utilities
@@ -67,7 +68,6 @@ import {
 } from '@slickgrid-universal/common';
 
 import { FileExportService } from '../services/fileExport.service';
-import { TranslateService } from '../services/translate.service';
 import { EventPubSubService } from '../services/eventPubSub.service';
 import { SlickFooterComponent } from './slick-footer';
 import { SlickPaginationComponent } from './slick-pagination';
@@ -124,7 +124,7 @@ export class SlickVanillaGridBundle {
   paginationService: PaginationService;
   sharedService: SharedService;
   sortService: SortService;
-  translateService: TranslateService;
+  translaterService: TranslaterService | undefined;
   treeDataService: TreeDataService;
 
   slickFooter: SlickFooterComponent | undefined;
@@ -239,6 +239,9 @@ export class SlickVanillaGridBundle {
     this._gridOptions = this.mergeGridOptions(options || {});
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions && this._gridOptions.enableDeepCopyDatasetOnPageLoad);
 
+    // if user is providing a Translate Service, it has to be passed under the "i18n" grid option
+    this.translaterService = this._gridOptions.i18n;
+
     // initialize and assign all Service Dependencies
     this.constructorDependenciesInit(gridParentContainerElm);
 
@@ -258,10 +261,9 @@ export class SlickVanillaGridBundle {
     this.gridEventService = new GridEventService();
     const slickgridConfig = new SlickgridConfig();
     this.sharedService = new SharedService();
-    this.translateService = new TranslateService();
-    this.collectionService = new CollectionService(this.translateService);
-    this.extensionUtility = new ExtensionUtility(this.sharedService, this.translateService);
-    const filterFactory = new FilterFactory(slickgridConfig, this.collectionService, this.translateService);
+    this.collectionService = new CollectionService(this.translaterService);
+    this.extensionUtility = new ExtensionUtility(this.sharedService, this.translaterService);
+    const filterFactory = new FilterFactory(slickgridConfig, this.collectionService, this.translaterService);
     this.filterService = new FilterService(filterFactory, this._eventPubSubService, this.sharedService);
     this.sortService = new SortService(this.sharedService, this._eventPubSubService);
     this.treeDataService = new TreeDataService(this.sharedService);
@@ -272,15 +274,15 @@ export class SlickVanillaGridBundle {
     // extensions
     const autoTooltipExtension = new AutoTooltipExtension(this.extensionUtility, this.sharedService);
     const cellExternalCopyManagerExtension = new CellExternalCopyManagerExtension(this.extensionUtility, this.sharedService);
-    const cellMenuExtension = new CellMenuExtension(this.extensionUtility, this.sharedService, this.translateService);
-    const contextMenuExtension = new ContextMenuExtension(this.extensionUtility, this.sharedService, this.translateService, this.treeDataService);
+    const cellMenuExtension = new CellMenuExtension(this.extensionUtility, this.sharedService, this.translaterService);
+    const contextMenuExtension = new ContextMenuExtension(this.extensionUtility, this.sharedService, this.treeDataService, this.translaterService);
     const columnPickerExtension = new ColumnPickerExtension(this.extensionUtility, this.sharedService);
     const checkboxExtension = new CheckboxSelectorExtension(this.extensionUtility, this.sharedService);
     const draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this.sharedService);
-    const gridMenuExtension = new GridMenuExtension(this.extensionUtility, this.filterService, this.sharedService, this.sortService, this.translateService);
+    const gridMenuExtension = new GridMenuExtension(this.extensionUtility, this.filterService, this.sharedService, this.sortService, this.translaterService);
     const groupItemMetaProviderExtension = new GroupItemMetaProviderExtension(this.sharedService);
     const headerButtonExtension = new HeaderButtonExtension(this.extensionUtility, this.sharedService);
-    const headerMenuExtension = new HeaderMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.translateService);
+    const headerMenuExtension = new HeaderMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.translaterService);
     const rowMoveManagerExtension = new RowMoveManagerExtension(this.extensionUtility, this.sharedService);
     const rowSelectionExtension = new RowSelectionExtension(this.extensionUtility, this.sharedService);
 
@@ -299,7 +301,7 @@ export class SlickVanillaGridBundle {
       rowMoveManagerExtension,
       rowSelectionExtension,
       this.sharedService,
-      this.translateService,
+      this.translaterService,
     );
     this.groupingAndColspanService = new GroupingAndColspanService(this.extensionUtility, this.extensionService);
   }
@@ -317,8 +319,8 @@ export class SlickVanillaGridBundle {
     paginationService: PaginationService,
     sharedService: SharedService,
     sortService: SortService,
-    translateService: TranslateService,
     treeDataService: TreeDataService,
+    translateService?: TranslaterService,
   ) {
     this._eventPubSubService = eventPubSubService;
     this._eventPubSubService.eventNamingStyle = this._gridOptions && this._gridOptions.eventNamingStyle || EventNamingStyle.camelCase;
@@ -334,7 +336,7 @@ export class SlickVanillaGridBundle {
     this.paginationService = paginationService;
     this.sharedService = sharedService;
     this.sortService = sortService;
-    this.translateService = translateService;
+    this.translaterService = translateService;
     this.treeDataService = treeDataService;
   }
 
@@ -469,7 +471,7 @@ export class SlickVanillaGridBundle {
 
     // user could show a custom footer with the data metrics (dataset length and last updated timestamp)
     if (!this.gridOptions.enablePagination && this.gridOptions.showCustomFooter && this.gridOptions.customFooterOptions) {
-      this.slickFooter = new SlickFooterComponent(this.grid, this.gridOptions.customFooterOptions, this.translateService);
+      this.slickFooter = new SlickFooterComponent(this.grid, this.gridOptions.customFooterOptions, this.translaterService);
       this.slickFooter.renderFooter(this._gridParentContainerElm);
     }
 
@@ -992,6 +994,10 @@ export class SlickVanillaGridBundle {
     return paginationOptions;
   }
 
+  useDifferentLocale(language: string) {
+    this._eventPubSubService.publish('onLocaleChanged', { language });
+  }
+
   /** Initialize the Pagination Service once */
   private initializePaginationService(paginationOptions: Pagination) {
     if (this.gridOptions) {
@@ -1013,7 +1019,7 @@ export class SlickVanillaGridBundle {
 
       // also initialize (render) the pagination component
       if (this._gridOptions.enablePagination && !this._isPaginationInitialized) {
-        this.slickPagination = new SlickPaginationComponent(this.paginationService, this._eventPubSubService, this.sharedService, this.translateService);
+        this.slickPagination = new SlickPaginationComponent(this.paginationService, this._eventPubSubService, this.sharedService, this.translaterService);
         this.slickPagination.renderPagination(this._gridParentContainerElm);
       }
 
@@ -1195,13 +1201,13 @@ export class SlickVanillaGridBundle {
 
   /** Translate all Custom Footer Texts (footer with metrics) */
   private translateCustomFooterTexts() {
-    if (this.translateService?.translate) {
+    if (this.translaterService?.translate) {
       const customFooterOptions = this.gridOptions && this.gridOptions.customFooterOptions || {};
       customFooterOptions.metricTexts = customFooterOptions.metricTexts || {};
       for (const propName of Object.keys(customFooterOptions.metricTexts)) {
         if (propName.lastIndexOf('Key') > 0) {
           const propNameWithoutKey = propName.substring(0, propName.lastIndexOf('Key'));
-          customFooterOptions.metricTexts[propNameWithoutKey] = this.translateService.translate(customFooterOptions.metricTexts[propName] || ' ');
+          customFooterOptions.metricTexts[propNameWithoutKey] = this.translaterService.translate(customFooterOptions.metricTexts[propName] || ' ');
         }
       }
     }

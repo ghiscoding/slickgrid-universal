@@ -47,7 +47,7 @@ describe('columnPickerExtension', () => {
     translateService = new TranslateServiceStub();
     extensionUtility = new ExtensionUtility(sharedService, translateService);
     extension = new ColumnPickerExtension(extensionUtility, sharedService);
-    translateService.setLocale('fr');
+    translateService.use('fr');
   });
 
   it('should return null when either the grid object or the grid options is missing', () => {

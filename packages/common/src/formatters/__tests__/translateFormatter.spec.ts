@@ -16,43 +16,43 @@ describe('the Translate Formatter', () => {
   });
 
   it('should return an empty string when null value is passed', async () => {
-    await translateService.setLocale('fr');
+    await translateService.use('fr');
     (gridStub.getOptions as jest.Mock).mockReturnValueOnce({ i18n: translateService });
     const output = translateFormatter(1, 1, null, {} as Column, {}, gridStub);
-    expect(translateService.getCurrentLocale()).toBe('fr');
+    expect(translateService.getCurrentLanguage()).toBe('fr');
     expect(output).toBe('');
   });
 
   it('should return an empty string when no value is passed', async () => {
-    await translateService.setLocale('fr');
+    await translateService.use('fr');
     (gridStub.getOptions as jest.Mock).mockReturnValueOnce({ i18n: translateService });
     const output = translateFormatter(1, 1, '', {} as Column, {}, gridStub);
-    expect(translateService.getCurrentLocale()).toBe('fr');
+    expect(translateService.getCurrentLanguage()).toBe('fr');
     expect(output).toBe('');
   });
 
   it('should return the translated value as string', async () => {
-    await translateService.setLocale('fr');
+    await translateService.use('fr');
     (gridStub.getOptions as jest.Mock).mockReturnValueOnce({ i18n: translateService });
     const output = translateFormatter(1, 1, 'HELLO', {} as Column, {}, gridStub);
     expect(output).toBe('Bonjour');
   });
 
   it('should return the translated value when value passed is a string and i18n service is passed as a ColumnDef Params', async () => {
-    await translateService.setLocale('fr');
+    await translateService.use('fr');
     (gridStub.getOptions as jest.Mock).mockReturnValueOnce({});
     const output = translateFormatter(1, 1, 'HELLO', { params: { i18n: translateService } } as Column, {}, gridStub);
     expect(output).toBe('Bonjour');
   });
 
   it('should return the translated value when value passed is a string and i18n service is passed as a ColumnDef Params without any Grid object', async () => {
-    await translateService.setLocale('fr');
+    await translateService.use('fr');
     const output = translateFormatter(1, 1, 'HELLO', { params: { i18n: translateService } } as Column, {});
     expect(output).toBe('Bonjour');
   });
 
   it('should convert any type of value to string', async () => {
-    await translateService.setLocale('fr');
+    await translateService.use('fr');
     (gridStub.getOptions as jest.Mock).mockReturnValueOnce({ i18n: translateService });
     const output = translateFormatter(1, 1, 99, {} as Column, {}, gridStub);
     expect(output).toBe('99');

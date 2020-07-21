@@ -308,16 +308,16 @@ export class SelectFilter implements Filter {
           }
           const labelKey = (option.labelKey || option[this.labelName]) as string;
           const selected = (searchTerms.findIndex((term) => term === option[this.valueName]) >= 0) ? 'selected' : '';
-          const labelText = ((option.labelKey || this.enableTranslateLabel) && labelKey && isTranslateEnabled) ? (this.translaterService?.getCurrentLocale && this.translaterService?.getCurrentLocale() && this.translaterService.translate(labelKey) || '') : labelKey;
+          const labelText = ((option.labelKey || this.enableTranslateLabel) && labelKey && isTranslateEnabled) ? (this.translaterService?.getCurrentLanguage && this.translaterService?.getCurrentLanguage() && this.translaterService.translate(labelKey) || '') : labelKey;
           let prefixText = option[this.labelPrefixName] || '';
           let suffixText = option[this.labelSuffixName] || '';
           let optionLabel = option.hasOwnProperty(this.optionLabel) ? option[this.optionLabel] : '';
           optionLabel = optionLabel.toString().replace(/\"/g, '\''); // replace double quotes by single quotes to avoid interfering with regular html
 
           // also translate prefix/suffix if enableTranslateLabel is true and text is a string
-          prefixText = (this.enableTranslateLabel && isTranslateEnabled && prefixText && typeof prefixText === 'string') ? this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(prefixText || ' ') : prefixText;
-          suffixText = (this.enableTranslateLabel && isTranslateEnabled && suffixText && typeof suffixText === 'string') ? this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(suffixText || ' ') : suffixText;
-          optionLabel = (this.enableTranslateLabel && isTranslateEnabled && optionLabel && typeof optionLabel === 'string') ? this.translaterService?.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(optionLabel || ' ') : optionLabel;
+          prefixText = (this.enableTranslateLabel && isTranslateEnabled && prefixText && typeof prefixText === 'string') ? this.translaterService?.getCurrentLanguage && this.translaterService.getCurrentLanguage() && this.translaterService.translate(prefixText || ' ') : prefixText;
+          suffixText = (this.enableTranslateLabel && isTranslateEnabled && suffixText && typeof suffixText === 'string') ? this.translaterService?.getCurrentLanguage && this.translaterService.getCurrentLanguage() && this.translaterService.translate(suffixText || ' ') : suffixText;
+          optionLabel = (this.enableTranslateLabel && isTranslateEnabled && optionLabel && typeof optionLabel === 'string') ? this.translaterService?.getCurrentLanguage && this.translaterService.getCurrentLanguage() && this.translaterService.translate(optionLabel || ' ') : optionLabel;
           // add to a temp array for joining purpose and filter out empty text
           const tmpOptionArray = [prefixText, (typeof labelText === 'string' || typeof labelText === 'number') ? labelText.toString() : labelText, suffixText].filter((text) => text);
           let optionText = tmpOptionArray.join(separatorBetweenLabels);

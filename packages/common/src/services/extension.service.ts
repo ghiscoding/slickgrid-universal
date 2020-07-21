@@ -44,7 +44,7 @@ export class ExtensionService {
     private rowMoveManagerExtension: RowMoveManagerExtension,
     private rowSelectionExtension: RowSelectionExtension,
     private sharedService: SharedService,
-    private translaterService: TranslaterService,
+    private translaterService?: TranslaterService,
   ) { }
 
   /** Dispose of all the controls & plugins */
@@ -363,8 +363,8 @@ export class ExtensionService {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
 
-    if (locale && this.translaterService && this.translaterService.setLocale) {
-      this.translaterService.setLocale(locale as string);
+    if (locale && this.translaterService?.use) {
+      this.translaterService.use(locale as string);
     }
 
     let columnDefinitions = newColumnDefinitions;
@@ -438,7 +438,7 @@ export class ExtensionService {
     if (Array.isArray(items)) {
       for (const item of items) {
         if (item[inputKey]) {
-          item[outputKey] = this.translaterService && this.translaterService.getCurrentLocale && this.translaterService.translate(item[inputKey]);
+          item[outputKey] = this.translaterService?.translate(item[inputKey]);
         }
       }
     }

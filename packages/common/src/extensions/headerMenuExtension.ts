@@ -39,7 +39,7 @@ export class HeaderMenuExtension implements Extension {
     private pubSubService: PubSubService,
     private sharedService: SharedService,
     private sortService: SortService,
-    private translaterService: TranslaterService,
+    private translaterService?: TranslaterService,
   ) {
     this._eventHandler = new Slick.EventHandler();
   }
@@ -155,7 +155,7 @@ export class HeaderMenuExtension implements Extension {
             if (columnHeaderMenuItems.filter((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'freeze-columns').length === 0) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconFreezeColumns || 'fa fa-thumb-tack',
-                title: options.enableTranslate ? this.translaterService.translate(`${translationPrefix}FREEZE_COLUMNS`) : this._locales && this._locales.TEXT_FREEZE_COLUMNS,
+                title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}FREEZE_COLUMNS`, 'TEXT_FREEZE_COLUMNS'),
                 command: 'freeze-columns',
                 positionOrder: 48
               });
@@ -172,7 +172,7 @@ export class HeaderMenuExtension implements Extension {
             if (columnHeaderMenuItems.filter((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'sort-asc').length === 0) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconSortAscCommand || 'fa fa-sort-asc',
-                title: options.enableTranslate ? this.translaterService.translate(`${translationPrefix}SORT_ASCENDING`) : this._locales && this._locales.TEXT_SORT_ASCENDING,
+                title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}SORT_ASCENDING`, 'TEXT_SORT_ASCENDING'),
                 command: 'sort-asc',
                 positionOrder: 50
               });
@@ -180,7 +180,7 @@ export class HeaderMenuExtension implements Extension {
             if (columnHeaderMenuItems.filter((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'sort-desc').length === 0) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconSortDescCommand || 'fa fa-sort-desc',
-                title: options.enableTranslate ? this.translaterService.translate(`${translationPrefix}SORT_DESCENDING`) : this._locales && this._locales.TEXT_SORT_DESCENDING,
+                title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}SORT_DESCENDING`, 'TEXT_SORT_DESCENDING'),
                 command: 'sort-desc',
                 positionOrder: 51
               });
@@ -194,7 +194,7 @@ export class HeaderMenuExtension implements Extension {
             if (!headerMenuOptions.hideClearSortCommand && columnHeaderMenuItems.filter((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'clear-sort').length === 0) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconClearSortCommand || 'fa fa-unsorted',
-                title: options.enableTranslate ? this.translaterService.translate(`${translationPrefix}REMOVE_SORT`) : this._locales && this._locales.TEXT_REMOVE_SORT,
+                title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}REMOVE_SORT`, 'TEXT_REMOVE_SORT'),
                 command: 'clear-sort',
                 positionOrder: 54
               });
@@ -206,7 +206,7 @@ export class HeaderMenuExtension implements Extension {
             if (!headerMenuOptions.hideClearFilterCommand && columnHeaderMenuItems.filter((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'clear-filter').length === 0) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconClearFilterCommand || 'fa fa-filter',
-                title: options.enableTranslate ? this.translaterService.translate(`${translationPrefix}REMOVE_FILTER`) : this._locales && this._locales.TEXT_REMOVE_FILTER,
+                title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}REMOVE_FILTER`, 'TEXT_REMOVE_FILTER'),
                 command: 'clear-filter',
                 positionOrder: 53
               });
@@ -217,7 +217,7 @@ export class HeaderMenuExtension implements Extension {
           if (headerMenuOptions && !headerMenuOptions.hideColumnHideCommand && columnHeaderMenuItems.filter((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'hide').length === 0) {
             columnHeaderMenuItems.push({
               iconCssClass: headerMenuOptions.iconColumnHideCommand || 'fa fa-times',
-              title: options.enableTranslate ? this.translaterService.translate(`${translationPrefix}HIDE_COLUMN`) : this._locales && this._locales.TEXT_HIDE_COLUMN,
+              title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}HIDE_COLUMN`, 'TEXT_HIDE_COLUMN'),
               command: 'hide',
               positionOrder: 55
             });
@@ -281,22 +281,22 @@ export class HeaderMenuExtension implements Extension {
             if (item.hasOwnProperty('command')) {
               switch (item.command) {
                 case 'clear-filter':
-                  item.title = this.translaterService.translate(`${translationPrefix}REMOVE_FILTER`) || this._locales && this._locales.TEXT_REMOVE_FILTER;
+                  item.title = this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}REMOVE_FILTER`, 'TEXT_REMOVE_FILTER');
                   break;
                 case 'clear-sort':
-                  item.title = this.translaterService.translate(`${translationPrefix}REMOVE_SORT`) || this._locales && this._locales.TEXT_REMOVE_SORT;
+                  item.title = this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}REMOVE_SORT`, 'TEXT_REMOVE_SORT');
                   break;
                 case 'freeze-columns':
-                  item.title = this.translaterService.translate(`${translationPrefix}FREEZE_COLUMNS`) || this._locales && this._locales.TEXT_FREEZE_COLUMNS;
+                  item.title = this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}FREEZE_COLUMNS`, 'TEXT_FREEZE_COLUMNS');
                   break;
                 case 'sort-asc':
-                  item.title = this.translaterService.translate(`${translationPrefix}SORT_ASCENDING`) || this._locales && this._locales.TEXT_SORT_ASCENDING;
+                  item.title = this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}SORT_ASCENDING`, 'TEXT_SORT_ASCENDING');
                   break;
                 case 'sort-desc':
-                  item.title = this.translaterService.translate(`${translationPrefix}SORT_DESCENDING`) || this._locales && this._locales.TEXT_SORT_DESCENDING;
+                  item.title = this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}SORT_DESCENDING`, 'TEXT_SORT_DESCENDING');
                   break;
                 case 'hide':
-                  item.title = this.translaterService.translate(`${translationPrefix}HIDE_COLUMN`) || this._locales && this._locales.TEXT_HIDE_COLUMN;
+                  item.title = this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}HIDE_COLUMN`, 'TEXT_HIDE_COLUMN');
                   break;
               }
             }

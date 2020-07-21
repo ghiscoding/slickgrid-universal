@@ -25,13 +25,13 @@ import {
   SlickGrid,
   SortService,
   TreeDataService,
+  TranslaterService,
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import * as utilities from '@slickgrid-universal/common/dist/commonjs/services/backend-utilities';
 
 import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle';
 import { EventPubSubService } from '../../services/eventPubSub.service';
-import { TranslateService } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { HttpStub } from '../../../../../test/httpClientStub';
 
@@ -302,8 +302,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       paginationServiceStub,
       sharedService,
       sortServiceStub,
-      translateService as unknown as TranslateService,
       treeDataServiceStub,
+      translateService as unknown as TranslaterService,
     );
   });
 
@@ -1332,7 +1332,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockGridOptions = { enableTranslate: true, showCustomFooter: true, };
         jest.spyOn(mockGrid, 'getOptions').mockReturnValue(mockGridOptions);
 
-        translateService.setLocale('fr');
+        translateService.use('fr');
         component.gridOptions = mockGridOptions;
         component.initialization(divContainer);
         component.columnDefinitions = mockColDefs;

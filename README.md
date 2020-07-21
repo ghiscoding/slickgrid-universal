@@ -58,21 +58,27 @@ and it is also used to test with the UI portion. The Vanilla bundle is also used
 ## Installation
 To get going with this monorepo, you will need to clone the repo and then follow the steps below
 
-1. Lerna Bootstrap
+1. Install npm packages with Yarn
+This lib uses Yarn workspaces and so you need to use Yarn to install packages
+```bash
+yarn install
+```
+
+2. Lerna Bootstrap
 
 Run it **only once**, this will install all dependencies and add necessary monorepo symlinks
 ```bash
 npm run bootstrap
 ```
 
-2. Build
+3. Build
 
 To get started you must run (also once) an initial TS build so that all necessary `dist` are created for all the packages to work together.
 ```bash
 npm run build
 ```
 
-3. Run Dev (Vanilla Implementation)
+4. Run Dev (Vanilla Implementation)
 
 There is a Vanilla flavour implementation of this monorepo, vanilla means that it is not associated to any framework
 and is written in plain TypeScript without being bound to any framework. The implementation is very similar to Angular and Aurelia.
@@ -114,7 +120,7 @@ npm run test:watch
 - [x] Grouping Formatters (12)
 - [x] SortComparers (5)
 - [x] Services (14)
-- [ ] Others / Vanilla Implementation
+- [x] Others / Vanilla Implementation
   - [x] Custom Footer
   - [x] Backend Services + Pagination
   - [x] Local Pagination
@@ -126,7 +132,7 @@ npm run test:watch
   - [x] Tree Data
   - [x] add missing `collectionAsync` for Editors, Filters (autoCompleteFilter, selectFilter)
   - [x] Grid Service should use SlickGrid transactions `beginUpdate`, `endUpdate` for performance reason whenever possible
-  - [ ] Translations Support
+  - [x] Translations Support
 
 #### Other Todos
 - [x] VScode Chrome Debugger

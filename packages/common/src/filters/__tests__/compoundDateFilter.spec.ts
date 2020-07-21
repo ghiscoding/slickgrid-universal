@@ -204,7 +204,7 @@ describe('CompoundDateFilter', () => {
   });
 
   it('should work with different locale when locale is changed', () => {
-    translateService.setLocale('fr-CA'); // will be trimmed to "fr"
+    translateService.use('fr-CA'); // will be trimmed to "fr"
     filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
     mockColumn.filter.operator = '<=';
     const spyCallback = jest.spyOn(filterArguments, 'callback');
@@ -230,7 +230,7 @@ describe('CompoundDateFilter', () => {
   });
 
   it('should throw an error and use English locale when user tries to load an unsupported Flatpickr locale', () => {
-    translateService.setLocale('zx');
+    translateService.use('zx');
     const consoleSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
 
     filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];

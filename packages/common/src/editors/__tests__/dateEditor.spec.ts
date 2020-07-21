@@ -397,7 +397,7 @@ describe('DateEditor', () => {
       it('should display text in new locale', (done) => {
         gridOptionMock.i18n = translateService;
 
-        translateService.setLocale('fr-CA'); // will be trimmed to "fr"
+        translateService.use('fr-CA'); // will be trimmed to "fr"
         editor = new DateEditor(editorArguments);
 
         const spy = jest.spyOn(editor.flatInstance, 'open');

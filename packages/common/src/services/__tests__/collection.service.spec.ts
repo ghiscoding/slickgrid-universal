@@ -186,7 +186,7 @@ describe('CollectionService', () => {
         });
 
         it('should return a collection sorted by multiple sortBy entities and their translated value', () => {
-          translateService.setLocale('fr');
+          translateService.use('fr');
           const columnDef = { id: 'users', field: 'users', dataKey: 'lastName' } as Column;
           const sortBy = [
             { property: 'firstName', sortDesc: false, fieldType: FieldType.string },
@@ -209,7 +209,7 @@ describe('CollectionService', () => {
         });
 
         it('should return a collection sorted by a single sortBy entity and their translated value', () => {
-          translateService.setLocale('en');
+          translateService.use('en');
           const columnDef = { id: 'users', field: 'users' } as Column;
           const sortBy = { property: 'position', sortDesc: false } as CollectionSortBy; // fieldType is string by default
 
@@ -287,7 +287,7 @@ describe('CollectionService', () => {
 
       describe('sortCollection method', () => {
         it('should return a collection of numbers sorted', () => {
-          translateService.setLocale('en');
+          translateService.use('en');
           const columnDef = { id: 'count', field: 'count', fieldType: FieldType.number } as Column;
 
           const result1 = service.sortCollection(columnDef, [0, -11, 3, 99999, -200], { sortDesc: false } as CollectionSortBy);
@@ -298,7 +298,7 @@ describe('CollectionService', () => {
         });
 
         it('should return a collection of translation values sorted', () => {
-          translateService.setLocale('en');
+          translateService.use('en');
           const roleCollection = ['SALES_REP', 'DEVELOPER', 'SALES_REP', null, 'HUMAN_RESOURCES', 'FINANCE_MANAGER', 'UNKNOWN'];
           const columnDef = { id: 'count', field: 'count', fieldType: FieldType.string } as Column;
 

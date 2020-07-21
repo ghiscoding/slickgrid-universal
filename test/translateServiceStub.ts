@@ -3,7 +3,7 @@ import { TranslaterService } from '../packages/common/src/services/translater.se
 export class TranslateServiceStub implements TranslaterService {
   private _locale = 'en';
 
-  getCurrentLocale(): string {
+  getCurrentLanguage(): string {
     return this._locale;
   }
 
@@ -72,7 +72,7 @@ export class TranslateServiceStub implements TranslaterService {
     return output;
   }
 
-  setLocale(locale: string) {
+  use(locale: string) {
     return new Promise(resolve => resolve(this._locale = locale));
   }
 }

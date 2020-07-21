@@ -91,7 +91,7 @@ describe('CellMenuExtension', () => {
       translateService = new TranslateServiceStub();
       extensionUtility = new ExtensionUtility(sharedService, translateService);
       extension = new CellMenuExtension(extensionUtility, sharedService, translateService);
-      translateService.setLocale('fr');
+      translateService.use('fr');
     });
 
     afterEach(() => {
@@ -285,7 +285,7 @@ describe('CellMenuExtension', () => {
         }];
         jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
 
-        translateService.setLocale('en');
+        translateService.use('en');
         extension.translateCellMenu();
 
         expect(mockColumns).toEqual([{
@@ -322,7 +322,7 @@ describe('CellMenuExtension', () => {
         }];
         jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
 
-        translateService.setLocale('en');
+        translateService.use('en');
         extension.translateCellMenu();
 
         expect(mockColumns).toEqual([{

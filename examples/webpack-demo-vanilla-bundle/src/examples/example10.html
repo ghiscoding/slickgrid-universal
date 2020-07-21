@@ -22,15 +22,29 @@
       Set Sorting Dynamically
     </button>
 
-    <span style="margin-left: 20px"></span>
-    <label>Programmatically go to first/last page:</label>
-    <button class="button is-small" data-test="goto-first-page" onclick.delegate="goToFirstPage()">
-      <i class="fa fa-caret-left fa-lg"></i>&lt;
-    </button>
-    <button class="button is-small" data-test="goto-last-page" onclick.delegate="goToLastPage()">
-      <i class="fa fa-caret-right fa-lg"></i>&gt;
-    </button>
-    </span>
+    <br />
+
+    <div class="row col-md-12">
+      <span>
+        <label>Programmatically go to first/last page:</label>
+        <button class="button is-small" data-test="goto-first-page" onclick.delegate="goToFirstPage()">
+          <i class="fa fa-caret-left fa-lg"></i>&lt;
+        </button>
+        <button class="button is-small" data-test="goto-last-page" onclick.delegate="goToLastPage()">
+          <i class="fa fa-caret-right fa-lg"></i>&gt;
+        </button>
+      </span>
+
+      <span style="margin-left: 20px">
+        <button class="button is-small" onclick.delegate="switchLanguage()" data-test="language-button">
+          Switch Language
+        </button>
+        <b>Locale:</b>
+        <span style="font-style: italic" data-test="selected-locale" innerhtml.bind="selectedLanguageFile">
+        </span>
+      </span>
+    </div>
+
   </div>
 
   <br />

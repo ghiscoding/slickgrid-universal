@@ -55,7 +55,7 @@ describe('extensionUtility', () => {
       sharedService = new SharedService();
       translateService = new TranslateServiceStub();
       utility = new ExtensionUtility(sharedService, translateService);
-      await translateService.setLocale('fr');
+      await translateService.use('fr');
     });
 
     describe('arrayRemoveItemByIndex method', () => {

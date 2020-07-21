@@ -9,7 +9,7 @@ export class FilterFactory {
    */
   private _options: any;
 
-  constructor(private config: SlickgridConfig, private collectionService: CollectionService, private translaterService: TranslaterService) {
+  constructor(private config: SlickgridConfig, private collectionService: CollectionService, private translaterService?: TranslaterService) {
     this._options = this.config.options;
   }
 

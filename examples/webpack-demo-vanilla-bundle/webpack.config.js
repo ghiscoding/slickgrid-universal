@@ -90,7 +90,7 @@ module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, 
       patterns: [
         // { from: 'static', to: outDir, ignore: ['.*'] }, // ignore dot (hidden) files
         { from: `${srcDir}/favicon.ico`, to: 'favicon.ico' },
-        // { from: 'assets', to: 'assets' }
+        { from: 'assets', to: 'assets' }
       ]
     }),
     ...when(extractCss, new MiniCssExtractPlugin({ // updated to match the naming conventions for the js files
