@@ -53,14 +53,14 @@ export class GroupingAndColspanService {
     this._grid = grid;
 
     if (grid && this._gridOptions) {
-      // if we use Translation, then translate on initialization
-      if (this._gridOptions.enableTranslate && this._gridOptions.createPreHeaderPanel && !this._gridOptions.enableDraggableGrouping) {
-        this.translateGroupingAndColSpan();
-      }
-
       // When dealing with Pre-Header Grouping colspan, we need to re-create the pre-header in multiple occasions
       // for all these events, we have to trigger a re-create
       if (this._gridOptions.createPreHeaderPanel) {
+        // if we use Translation, then we need to translate the first time
+        if (this._gridOptions.enableTranslate) {
+          this.translateGroupingAndColSpan();
+        }
+
         this._eventHandler.subscribe(grid.onSort, () => this.renderPreHeaderRowGroupingTitles());
         this._eventHandler.subscribe(grid.onColumnsResized, () => this.renderPreHeaderRowGroupingTitles());
         this._eventHandler.subscribe(grid.onColumnsReordered, () => this.renderPreHeaderRowGroupingTitles());
