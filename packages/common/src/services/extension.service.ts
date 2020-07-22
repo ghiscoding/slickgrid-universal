@@ -277,7 +277,7 @@ export class ExtensionService {
     //   }
     // }
     if (options.enableDraggableGrouping) {
-      if (!this.getCreatedExtensionByName(ExtensionName.rowDetailView)) {
+      if (!this.getCreatedExtensionByName(ExtensionName.draggableGrouping)) {
         const draggableInstance = this.draggableGroupingExtension.create(options);
         options.enableColumnReorder = draggableInstance?.getSetupColumnReorder !== undefined;
         if (draggableInstance) {
