@@ -10,8 +10,9 @@ const gridUid = 'slickgrid_124343';
 const containerId = 'demo-container';
 
 const gridOptionMock = {
-  enablePagination: true,
   createPreHeaderPanel: true,
+  enablePagination: true,
+  enableTranslate: false,
 } as GridOption;
 
 const dataViewStub = {
@@ -91,6 +92,7 @@ describe('GroupingAndColspanService', () => {
   afterEach(() => {
     jest.clearAllMocks();
     service.dispose();
+    gridOptionMock.enableTranslate = false;
     gridStub.getOptions = () => gridOptionMock;
   });
 
@@ -209,7 +211,7 @@ describe('GroupingAndColspanService', () => {
       const slickEvent2 = new Slick.Event();
       const instanceMock = { onColumnsChanged: slickEvent1, onMenuClose: slickEvent2 };
       const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
-      const extensionMock = { name: ExtensionName.columnPicker, addon: instanceMock, instance: instanceMock as SlickColumnPicker, class: null };
+      const extensionMock = { name: ExtensionName.columnPicker, addon: instanceMock, instance: instanceMock as unknown as SlickColumnPicker, class: null };
       jest.spyOn(extensionServiceStub, 'getExtensionByName').mockReturnValue(extensionMock);
 
       service.init(gridStub);
@@ -270,7 +272,7 @@ describe('GroupingAndColspanService', () => {
       expect(getColSpy).toHaveBeenCalled();
       expect(setColSpy).toHaveBeenCalled();
       expect(translateSpy).toHaveBeenCalled();
-      expect(renderSpy).toHaveBeenCalled();
+      expect(renderSpy).toHaveBeenCalledTimes(2); // 1x by the init, 1x by translateGroupingAndColSpan
     });
 
     it('should render the pre-header row grouping title DOM element', () => {
