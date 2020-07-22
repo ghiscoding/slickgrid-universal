@@ -80,7 +80,6 @@ export class TranslateService implements TranslaterService {
   }
 
   private publishLanguageChangeEvent(newLanguage: string) {
-    console.log('publishLanguageChangeEvent', this._pubSubServices)
     for (const pubSub of this._pubSubServices) {
       pubSub.publish(this.eventName, { language: newLanguage });
     }

@@ -65,14 +65,38 @@ export class BindingService {
   }
 
   /**
-   * Add binding to an element by an object attribute and optionally on an event, we can do it in couple ways
+   * Add binding to 1 or more DOM Element by an object attribute and optionally on an event, we can do it in couple ways
    * 1- if there's no event provided, it will simply replace the DOM elemnt (by an attribute), for example an innerHTML
    * 2- when an event is provided, we will replace the DOM element (by an attribute) every time an event is triggered
    *    2.1- we could also provide an extra callback method to execute when the event gets triggered
    */
-  bind(element: Element | null, attribute: string, eventName?: string, callback?: (val: any) => any) {
-    const binding: ElementBinding | ElementBindingWithListener = { element, attribute };
+  bind(elements: Element | NodeListOf<HTMLElement> | null, attribute: string, eventName?: string, callback?: (val: any) => any) {
+    if ((elements as NodeListOf<HTMLElement>).forEach) {
+      // multiple DOM elements coming from a querySelectorAll() call
+      (elements as NodeListOf<HTMLElement>).forEach(elm => this.bindSingleElement(elm, attribute, eventName, callback));
+    } else if (elements) {
+      // single DOM element coming from a querySelector() call
+      this.bindSingleElement(elements as Element, attribute, eventName, callback);
+    }
 
+    return this;
+  }
+
+  /** Unbind (remove) an event from an element */
+  unbind(element: Element | null, eventName: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions) {
+    if (element) {
+      element.removeEventListener(eventName, listener, options);
+    }
+  }
+
+  /**
+   * Add binding to a single element by an object attribute and optionally on an event, we can do it in couple ways
+   * 1- if there's no event provided, it will simply replace the DOM elemnt (by an attribute), for example an innerHTML
+   * 2- when an event is provided, we will replace the DOM element (by an attribute) every time an event is triggered
+   *    2.1- we could also provide an extra callback method to execute when the event gets triggered
+   */
+  private bindSingleElement(element: Element | null, attribute: string, eventName?: string, callback?: (val: any) => any) {
+    const binding: ElementBinding | ElementBindingWithListener = { element, attribute };
     if (element) {
       if (eventName) {
         const listener = () => {
@@ -93,14 +117,6 @@ export class BindingService {
       }
       this.elementBindings.push(binding);
       element[attribute] = typeof this._value === 'string' ? this.sanitizeText(this._value) : this._value;
-    }
-    return this;
-  }
-
-  /** Unbind (remove) an event from an element */
-  unbind(element: Element | null, eventName: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions) {
-    if (element) {
-      element.removeEventListener(eventName, listener, options);
     }
   }
 
