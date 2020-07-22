@@ -32,9 +32,9 @@ export class BindingService {
     this._property = binding.property || '';
     this.elementBindings = [];
     if (binding.property && binding.variable && (binding.variable.hasOwnProperty(binding.property) || binding.property in binding.variable)) {
-      this._value = typeof binding.variable[binding.property] === 'string' ? DOMPurify.sanitize(binding.variable[binding.property], {}) : binding.variable[binding.property];
+      this._value = typeof binding.variable[binding.property] === 'string' ? this.sanitizeText(binding.variable[binding.property]) : binding.variable[binding.property];
     } else {
-      this._value = typeof binding.variable === 'string' ? DOMPurify.sanitize(binding.variable, {}) : binding.variable;
+      this._value = typeof binding.variable === 'string' ? this.sanitizeText(binding.variable) : binding.variable;
     }
 
     if (typeof binding.variable === 'object') {
@@ -54,11 +54,11 @@ export class BindingService {
   }
 
   valueSetter(val: any) {
-    this._value = typeof val === 'string' ? DOMPurify.sanitize(val, {}) : val;
+    this._value = typeof val === 'string' ? this.sanitizeText(val) : val;
     if (Array.isArray(this.elementBindings)) {
       for (const binding of this.elementBindings) {
         if (binding?.element && binding?.attribute) {
-          binding.element[binding.attribute] = typeof val === 'string' ? DOMPurify.sanitize(val, {}) : val;
+          binding.element[binding.attribute] = typeof val === 'string' ? this.sanitizeText(val) : val;
         }
       }
     }
@@ -92,7 +92,7 @@ export class BindingService {
         element.addEventListener(eventName, listener);
       }
       this.elementBindings.push(binding);
-      element[attribute] = typeof this._value === 'string' ? DOMPurify.sanitize(this._value, {}) : this._value;
+      element[attribute] = typeof this._value === 'string' ? this.sanitizeText(this._value) : this._value;
     }
     return this;
   }
@@ -102,5 +102,12 @@ export class BindingService {
     if (element) {
       element.removeEventListener(eventName, listener, options);
     }
+  }
+
+  private sanitizeText(dirtyText: string): string {
+    if (DOMPurify?.sanitize) {
+      return DOMPurify.sanitize(dirtyText);
+    }
+    return dirtyText;
   }
 }

@@ -138,8 +138,8 @@ export class SlickPaginationComponent {
       this._paginationElement = temp.firstChild as HTMLDivElement;
       this._paginationElement.classList.add(this.gridUid, 'pager');
 
-      if (gridParentContainerElm?.append && this._paginationElement) {
-        gridParentContainerElm.append(this._paginationElement);
+      if (gridParentContainerElm?.appendChild && this._paginationElement) {
+        gridParentContainerElm.appendChild(this._paginationElement);
         this.renderPageSizes();
         this.addBindings();
         this.addEventListeners();
