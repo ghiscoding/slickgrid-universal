@@ -53,6 +53,7 @@
 
     .pagination {
       margin: 0;
+      display: inline-flex;
 
       .page-link {
         font-size: ($font-size-base - 1px);
