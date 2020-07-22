@@ -29,6 +29,7 @@ You might be wondering why was this monorepo created? Here are a few of the reas
 (these libs have over 80% of code in common and that is not very DRY).
 2. decouple some Services that should not be required at all time (OData, GraphQL, Export to File, Export to Excel, ...)
 3. framework agnostic, it could be implemented in many more frameworks in the future (interested in adding other frameworks? please contact me...)
+   - you can use it in plain TypeScript or JavaScript (ES6), the later is what we use in Salesforce
 
 ### Frameworks using this monorepo
 This is a Work in Progress, the goal is to eventually to rewrite [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid)
@@ -59,7 +60,7 @@ and it is also used to test with the UI portion. The Vanilla bundle is also used
 To get going with this monorepo, you will need to clone the repo and then follow the steps below
 
 1. Install npm packages with Yarn
-This lib uses Yarn workspaces and so you need to use Yarn to install packages
+This lib uses Yarn Workspaces and so you need to use Yarn to install all packages
 ```bash
 yarn install
 ```
@@ -157,3 +158,4 @@ yarn run test:watch
 - [x] Remove all Services init method 2nd argument (we can get DataView directly from the Grid object)
 - [ ] Check why `DOM Purify` doesn't work in SF
 - [ ] Search for any left "todo" in the entire solution
+- [ ] The Pagination/Footer width is a little off sometime compare to the width of the grid container
