@@ -28,6 +28,7 @@ describe('Binding Helper', () => {
     const mockEvent = new CustomEvent('change', { bubbles: true, detail: { target: { value: 'Jane' } } });
     elm.dispatchEvent(mockEvent);
 
+    expect(helper.observers.length).toBe(1);
     expect(helper.querySelectorPrefix).toBe('');
     expect(mockObj.name).toBe('Jane');
     expect(mockCallback).toHaveBeenCalled();
@@ -81,8 +82,10 @@ describe('Binding Helper', () => {
     helper.addElementBinding(mockObj, 'age', 'span.custom', 'textContent');
     mockObj.age = 30;
 
+    expect(helper.observers.length).toBe(1);
+    expect(helper.observers[0].elementBindings.length).toBe(2);
     expect(helper.querySelectorPrefix).toBe('.grid ');
-    // expect(elm1.textContent).toBe('30'); // not sure why this doesn't work in unit test, however it works in real life, so we'll leave at that
+    expect(elm1.textContent).toBe('30');
     expect(elm2.textContent).toBe('30');
     expect(document.querySelectorAll('.grid span.custom').length).toBe(2);
   });

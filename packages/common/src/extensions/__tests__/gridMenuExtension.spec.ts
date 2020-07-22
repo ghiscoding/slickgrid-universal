@@ -129,7 +129,7 @@ describe('gridMenuExtension', () => {
       translateService = new TranslateServiceStub();
       extensionUtility = new ExtensionUtility(sharedService, translateService);
       extension = new GridMenuExtension(extensionUtility, filterServiceStub, sharedService, sortServiceStub, translateService);
-      translateService.setLocale('fr');
+      translateService.use('fr');
     });
 
     afterEach(() => {

@@ -44,7 +44,7 @@ describe('LongTextEditor', () => {
 
   beforeEach(() => {
     translateService = new TranslateServiceStub();
-    translateService.setLocale('fr');
+    translateService.use('fr');
 
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;

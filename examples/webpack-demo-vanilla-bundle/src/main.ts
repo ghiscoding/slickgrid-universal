@@ -9,14 +9,28 @@ import 'jquery-ui-dist/jquery-ui';
 import { Renderer } from './renderer';
 import * as SlickerModule from '@slickgrid-universal/vanilla-bundle';
 import { App } from './app';
+import { TranslateService } from 'translate.service';
 
 class Main {
   app: App;
   constructor(private renderer: Renderer) { }
 
-  loadApp() {
+  async loadApp() {
     this.app = this.renderer.loadViewModel(require('./app.ts'));
     this.renderer.loadView(require('./app.html'));
+
+    const translate = new TranslateService();
+    translate.setup({
+      loadPath: 'assets/i18n/{{lang}}.json',
+      lang: 'en'
+    });
+    await translate.use('en');
+
+    // it might be better to use proper Dependency Injection
+    // but for now let's use the window object to save keep a reference to our instantiated service
+    (<any>window).TranslateService = translate;
+
+    // finally attached (render) the app
     this.app.attached();
   }
 }
@@ -31,4 +45,3 @@ main.loadApp();
 // Yes, there are other ways but this gets the job done for this demo.
 (<any>window).main = main;
 (<any>window).Slicker = SlickerModule && SlickerModule.Slicker || SlickerModule;
-

@@ -28,8 +28,8 @@ export class ContextMenuExtension implements Extension {
   constructor(
     private extensionUtility: ExtensionUtility,
     private sharedService: SharedService,
-    private translaterService: TranslaterService,
     private treeDataService: TreeDataService,
+    private translaterService?: TranslaterService,
   ) {
     this._eventHandler = new Slick.EventHandler();
   }
@@ -143,11 +143,11 @@ export class ContextMenuExtension implements Extension {
       const menuOptions: Partial<ContextMenu> = {};
 
       if (contextMenu.commandTitleKey) {
-        contextMenu.commandTitle = this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(contextMenu.commandTitleKey) || contextMenu.commandTitle;
+        contextMenu.commandTitle = this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLanguage && this.translaterService.getCurrentLanguage() && this.translaterService.translate(contextMenu.commandTitleKey) || contextMenu.commandTitle;
         menuOptions.commandTitle = contextMenu.commandTitle;
       }
       if (contextMenu.optionTitleKey) {
-        contextMenu.optionTitle = this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLocale && this.translaterService.getCurrentLocale() && this.translaterService.translate(contextMenu.optionTitleKey) || contextMenu.optionTitle;
+        contextMenu.optionTitle = this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLanguage && this.translaterService.getCurrentLanguage() && this.translaterService.translate(contextMenu.optionTitleKey) || contextMenu.optionTitle;
         menuOptions.optionTitle = contextMenu.optionTitle;
       }
       const originalCommandItems = this._userOriginalContextMenu && Array.isArray(this._userOriginalContextMenu.commandItems) ? this._userOriginalContextMenu.commandItems : [];

@@ -27,7 +27,7 @@ export class CellMenuExtension implements Extension {
   constructor(
     private extensionUtility: ExtensionUtility,
     private sharedService: SharedService,
-    private translaterService: TranslaterService,
+    private translaterService?: TranslaterService,
   ) {
     this._eventHandler = new Slick.EventHandler();
   }
@@ -161,10 +161,10 @@ export class CellMenuExtension implements Extension {
 
           // translate their titles only if they have a titleKey defined
           if (columnDef.cellMenu.commandTitleKey) {
-            columnDef.cellMenu.commandTitle = this.translaterService && this.translaterService.getCurrentLocale && this.translaterService.translate && this.translaterService.translate(columnDef.cellMenu.commandTitleKey) || this._locales && this._locales.TEXT_COMMANDS || columnDef.cellMenu.commandTitle;
+            columnDef.cellMenu.commandTitle = this.translaterService && this.translaterService.getCurrentLanguage && this.translaterService.translate && this.translaterService.translate(columnDef.cellMenu.commandTitleKey) || this._locales && this._locales.TEXT_COMMANDS || columnDef.cellMenu.commandTitle;
           }
           if (columnDef.cellMenu.optionTitleKey) {
-            columnDef.cellMenu.optionTitle = this.translaterService && this.translaterService.getCurrentLocale && this.translaterService.translate && this.translaterService.translate(columnDef.cellMenu.optionTitleKey) || columnDef.cellMenu.optionTitle;
+            columnDef.cellMenu.optionTitle = this.translaterService && this.translaterService.getCurrentLanguage && this.translaterService.translate && this.translaterService.translate(columnDef.cellMenu.optionTitleKey) || columnDef.cellMenu.optionTitle;
           }
 
           // translate both command/option items (whichever is provided)

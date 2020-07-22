@@ -1,9 +1,12 @@
-import { TranslaterService } from '../packages/common/src/services/translater.service';
+import { PubSubService, TranslaterService } from '../packages/common';
 
 export class TranslateServiceStub implements TranslaterService {
+  eventName = 'onLanguageChange';
   private _locale = 'en';
 
-  getCurrentLocale(): string {
+  addPubSubMessaging(pubSubService: PubSubService) { }
+
+  getCurrentLanguage(): string {
     return this._locale;
   }
 
@@ -72,7 +75,7 @@ export class TranslateServiceStub implements TranslaterService {
     return output;
   }
 
-  setLocale(locale: string) {
+  use(locale: string) {
     return new Promise(resolve => resolve(this._locale = locale));
   }
 }

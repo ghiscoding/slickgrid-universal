@@ -352,7 +352,7 @@ describe('GraphqlService', () => {
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
-      gridOptionMock.i18n = { getCurrentLocale: () => 'fr-CA' } as TranslaterService;
+      gridOptionMock.i18n = { getCurrentLanguage: () => 'fr-CA' } as TranslaterService;
       service.init({ datasetName: 'users', addLocaleIntoQuery: true }, paginationOptions, gridStub);
       const query = service.buildQuery();
 

@@ -107,7 +107,7 @@ describe('SelectFilter', () => {
   });
 
   it('should work with English locale when locale is changed', () => {
-    translateService.setLocale('en');
+    translateService.use('en');
     gridOptionMock.enableTranslate = true;
     mockColumn.filter = {
       enableTranslateLabel: true,
@@ -138,7 +138,7 @@ describe('SelectFilter', () => {
   });
 
   it('should work with French locale when locale is changed', () => {
-    translateService.setLocale('fr');
+    translateService.use('fr');
     gridOptionMock.enableTranslate = true;
     mockColumn.filter = {
       enableTranslateLabel: true,

@@ -6,7 +6,7 @@ import { TranslaterService } from '../services';
 import { getTranslationPrefix } from '../services/utilities';
 
 export class ExtensionUtility {
-  constructor(private sharedService: SharedService, private translaterService: TranslaterService) { }
+  constructor(private sharedService: SharedService, private translaterService?: TranslaterService) { }
 
   /**
    * Remove a column from the grid by it's index in the grid
@@ -96,21 +96,21 @@ export class ExtensionUtility {
     const gridOptions = this.sharedService.gridOptions;
     const translationPrefix = getTranslationPrefix(gridOptions);
 
-    if (titleKey && this.translaterService && this.translaterService.translate) {
+    if (titleKey && this.translaterService?.translate) {
       output = this.translaterService.translate(titleKey || ' ');
     } else {
       switch (propName) {
         case 'customTitle':
-          output = title || enableTranslate && this.translaterService?.getCurrentLocale && this.translaterService?.translate(`${translationPrefix}COMMANDS` || ' ') || locales?.TEXT_COMMANDS;
+          output = title || enableTranslate && this.translaterService?.getCurrentLanguage && this.translaterService?.translate(`${translationPrefix}COMMANDS` || ' ') || locales?.TEXT_COMMANDS;
           break;
         case 'columnTitle':
-          output = title || enableTranslate && this.translaterService?.getCurrentLocale && this.translaterService?.translate(`${translationPrefix}COLUMNS` || ' ') || locales?.TEXT_COLUMNS;
+          output = title || enableTranslate && this.translaterService?.getCurrentLanguage && this.translaterService?.translate(`${translationPrefix}COLUMNS` || ' ') || locales?.TEXT_COLUMNS;
           break;
         case 'forceFitTitle':
-          output = title || enableTranslate && this.translaterService?.getCurrentLocale && this.translaterService?.translate(`${translationPrefix}FORCE_FIT_COLUMNS` || ' ') || locales?.TEXT_FORCE_FIT_COLUMNS;
+          output = title || enableTranslate && this.translaterService?.getCurrentLanguage && this.translaterService?.translate(`${translationPrefix}FORCE_FIT_COLUMNS` || ' ') || locales?.TEXT_FORCE_FIT_COLUMNS;
           break;
         case 'syncResizeTitle':
-          output = title || enableTranslate && this.translaterService?.getCurrentLocale && this.translaterService?.translate(`${translationPrefix}SYNCHRONOUS_RESIZE` || ' ') || locales?.TEXT_SYNCHRONOUS_RESIZE;
+          output = title || enableTranslate && this.translaterService?.getCurrentLanguage && this.translaterService?.translate(`${translationPrefix}SYNCHRONOUS_RESIZE` || ' ') || locales?.TEXT_SYNCHRONOUS_RESIZE;
           break;
         default:
           output = title;
@@ -142,7 +142,7 @@ export class ExtensionUtility {
     if (Array.isArray(items)) {
       for (const item of items) {
         if (item[inputKey]) {
-          item[outputKey] = this.translaterService && this.translaterService.getCurrentLocale && this.translaterService.translate && this.translaterService.translate(item[inputKey]);
+          item[outputKey] = this.translaterService && this.translaterService.getCurrentLanguage && this.translaterService.translate && this.translaterService.translate(item[inputKey]);
         }
       }
     }
@@ -160,7 +160,7 @@ export class ExtensionUtility {
     // get locales provided by user in main file or else use default English locales via the Constants
     const locales = gridOptions && gridOptions.locales || Constants.locales;
 
-    if (gridOptions.enableTranslate && this.translaterService && this.translaterService.getCurrentLocale && this.translaterService.translate) {
+    if (gridOptions.enableTranslate && this.translaterService && this.translaterService.getCurrentLanguage && this.translaterService.translate) {
       text = this.translaterService.translate(translationKey || ' ');
     } else if (locales && locales.hasOwnProperty(localeKey)) {
       text = locales[localeKey];

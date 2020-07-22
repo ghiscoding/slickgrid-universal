@@ -25,13 +25,13 @@ import {
   SlickGrid,
   SortService,
   TreeDataService,
+  TranslaterService,
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import * as utilities from '@slickgrid-universal/common/dist/commonjs/services/backend-utilities';
 
 import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle';
 import { EventPubSubService } from '../../services/eventPubSub.service';
-import { TranslateService } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { HttpStub } from '../../../../../test/httpClientStub';
 
@@ -302,8 +302,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       paginationServiceStub,
       sharedService,
       sortServiceStub,
-      translateService as unknown as TranslateService,
       treeDataServiceStub,
+      translateService as unknown as TranslaterService,
     );
   });
 
@@ -331,17 +331,26 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
   });
 
   describe('initialization method', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
     describe('columns definitions changed', () => {
       it('should expect "translateColumnHeaders" being called when "enableTranslate" is set', () => {
         const translateSpy = jest.spyOn(extensionServiceStub, 'translateColumnHeaders');
         const autosizeSpy = jest.spyOn(mockGrid, 'autosizeColumns');
         const updateSpy = jest.spyOn(component, 'updateColumnDefinitionsList');
+        const eventSpy = jest.spyOn(eventPubSubService, 'publish');
+        const addPubSubSpy = jest.spyOn(component.translaterService, 'addPubSubMessaging');
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
 
         component.columnDefinitions = mockColDefs;
         component.gridOptions = { enableTranslate: true };
         component.initialization(divContainer);
 
+        expect(component.translaterService).toBeTruthy();
+        expect(addPubSubSpy).toHaveBeenCalled();
+        expect(eventSpy).toHaveBeenCalledTimes(4);
         expect(translateSpy).toHaveBeenCalled();
         expect(autosizeSpy).toHaveBeenCalled();
         expect(updateSpy).toHaveBeenCalledWith(mockColDefs);
@@ -352,13 +361,18 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const autosizeSpy = jest.spyOn(mockGrid, 'autosizeColumns');
         const updateSpy = jest.spyOn(component, 'updateColumnDefinitionsList');
         const renderSpy = jest.spyOn(extensionServiceStub, 'renderColumnHeaders');
+        const eventSpy = jest.spyOn(eventPubSubService, 'publish');
+        const addPubSubSpy = jest.spyOn(component.translaterService, 'addPubSubMessaging');
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
 
         component.columnDefinitions = mockColDefs;
+        component.gridOptions = { enableTranslate: false };
         component.initialization(divContainer);
 
-        expect(translateSpy).toHaveBeenCalled();
+        expect(translateSpy).not.toHaveBeenCalled();
         expect(autosizeSpy).toHaveBeenCalled();
+        expect(addPubSubSpy).not.toHaveBeenCalled();
+        expect(eventSpy).toHaveBeenCalledTimes(4);
         expect(updateSpy).toHaveBeenCalledWith(mockColDefs);
         expect(renderSpy).toHaveBeenCalledWith(mockColDefs, true);
       });
@@ -977,7 +991,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions = { enableTranslate: true, createPreHeaderPanel: false, enableDraggableGrouping: false } as GridOption;
         component.initialization(divContainer);
 
-        eventPubSubService.publish('onLocaleChanged', {});
+        eventPubSubService.publish('onLanguageChange', { language: 'fr' });
 
         setTimeout(() => {
           expect(setHeaderRowSpy).not.toHaveBeenCalled();
@@ -1005,7 +1019,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions = { enableTranslate: true, createPreHeaderPanel: true, enableDraggableGrouping: false } as GridOption;
         component.initialization(divContainer);
 
-        eventPubSubService.publish('onLocaleChanged', {});
+        eventPubSubService.publish('onLanguageChange', {});
 
         setTimeout(() => {
           expect(transGroupingColSpanSpy).toHaveBeenCalled();
@@ -1025,7 +1039,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions = { enableTranslate: true, createPreHeaderPanel: true, enableDraggableGrouping: false } as GridOption;
         component.initialization(divContainer);
 
-        eventPubSubService.publish('onLocaleChanged', {});
+        eventPubSubService.publish('onLanguageChange', {});
 
         setTimeout(() => {
           expect(groupColSpanSpy).toHaveBeenCalled();
@@ -1332,7 +1346,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockGridOptions = { enableTranslate: true, showCustomFooter: true, };
         jest.spyOn(mockGrid, 'getOptions').mockReturnValue(mockGridOptions);
 
-        translateService.setLocale('fr');
+        translateService.use('fr');
         component.gridOptions = mockGridOptions;
         component.initialization(divContainer);
         component.columnDefinitions = mockColDefs;

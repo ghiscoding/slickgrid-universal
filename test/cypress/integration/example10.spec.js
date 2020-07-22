@@ -365,7 +365,7 @@ describe('Example 10 - GraphQL Grid', () => {
     });
   });
 
-  xdescribe('Translate by Language', () => {
+  describe('Translate by Language', () => {
     it('should Clear all Filters & Sorts', () => {
       cy.contains('Clear all Filter & Sorts').click();
 
@@ -374,7 +374,7 @@ describe('Example 10 - GraphQL Grid', () => {
     });
 
     it('should have English Column Titles in the grid after switching locale', () => {
-      const expectedColumnTitles = ['Name', 'Gender', 'Company', 'Zip', 'Street', 'Date'];
+      const expectedColumnTitles = ['Name', 'Gender', 'Company', 'Billing Address Zip', 'Billing Address Street', 'Date'];
 
       cy.get('.grid10')
         .find('.slick-header-left .slick-header-columns')

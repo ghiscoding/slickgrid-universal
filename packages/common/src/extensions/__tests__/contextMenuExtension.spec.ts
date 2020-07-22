@@ -127,8 +127,8 @@ describe('contextMenuExtension', () => {
       sharedService = new SharedService();
       translateService = new TranslateServiceStub();
       extensionUtility = new ExtensionUtility(sharedService, translateService);
-      extension = new ContextMenuExtension(extensionUtility, sharedService, translateService, treeDataServiceStub);
-      translateService.setLocale('fr');
+      extension = new ContextMenuExtension(extensionUtility, sharedService, treeDataServiceStub, translateService);
+      translateService.use('fr');
     });
 
     afterEach(() => {
@@ -1021,7 +1021,7 @@ describe('contextMenuExtension', () => {
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
 
-        translateService.setLocale('en');
+        translateService.use('en');
         extension.translateContextMenu();
 
         expect(copyGridOptionsMock.contextMenu).toEqual({
@@ -1061,7 +1061,7 @@ describe('contextMenuExtension', () => {
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
 
-        translateService.setLocale('en');
+        translateService.use('en');
         extension.translateContextMenu();
 
         expect(copyGridOptionsMock.contextMenu).toEqual({
@@ -1086,7 +1086,7 @@ describe('contextMenuExtension', () => {
     describe('without Translate Service', () => {
       beforeEach(() => {
         translateService = null;
-        extension = new ContextMenuExtension({} as ExtensionUtility, { gridOptions: { enableTranslate: true } } as SharedService, translateService, treeDataServiceStub);
+        extension = new ContextMenuExtension({} as ExtensionUtility, { gridOptions: { enableTranslate: true } } as SharedService, treeDataServiceStub, translateService, treeDataServiceStub);
       });
 
       it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {

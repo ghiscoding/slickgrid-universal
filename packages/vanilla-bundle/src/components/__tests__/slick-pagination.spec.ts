@@ -93,7 +93,7 @@ describe('Slick-Pagination Component', () => {
       const pageInfoTotalItems = document.querySelector('.page-info-total-items');
       const itemsPerPage = document.querySelector<HTMLSelectElement>('.items-per-page');
 
-      expect(translateService.getCurrentLocale()).toBe('en');
+      expect(translateService.getCurrentLanguage()).toBe('en');
       expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe('<span data-test="item-from" class="item-from">10</span>-<span data-test="item-to" class="item-to">15</span><span class="text-of">of</span>');
       expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe('<span data-test="total-items" class="total-items">95</span><span class="text-items">items</span>');
       expect(itemsPerPage.selectedOptions[0].value).toBe('5');
@@ -253,13 +253,13 @@ describe('with different i18n locale', () => {
   });
 
   it('should create a the Slick-Pagination component in the DOM and expect different locale when changed', (done) => {
-    translateService.setLocale('fr');
-    eventPubSubService.publish('onLocaleChanged', 'fr');
+    translateService.use('fr');
+    eventPubSubService.publish('onLanguageChange', 'fr');
 
     setTimeout(() => {
       const pageInfoFromTo = document.querySelector('.page-info-from-to');
       const pageInfoTotalItems = document.querySelector('.page-info-total-items');
-      expect(translateService.getCurrentLocale()).toBe('fr');
+      expect(translateService.getCurrentLanguage()).toBe('fr');
       expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe(`<span data-test="item-from" class="item-from">10</span>-<span data-test="item-to" class="item-to">15</span><span class="text-of">de</span>`);
       expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe(`<span data-test="total-items" class="total-items">95</span><span class="text-items">éléments</span>`);
       done();

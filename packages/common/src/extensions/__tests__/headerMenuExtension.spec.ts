@@ -108,7 +108,7 @@ describe('headerMenuExtension', () => {
       translateService = new TranslateServiceStub();
       extensionUtility = new ExtensionUtility(sharedService, translateService);
       extension = new HeaderMenuExtension(extensionUtility, filterServiceStub, pubSubServiceStub, sharedService, sortServiceStub, translateService);
-      translateService.setLocale('fr');
+      translateService.use('fr');
     });
 
     afterEach(() => {
@@ -359,7 +359,7 @@ describe('headerMenuExtension', () => {
         }];
         jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(mockColumns);
 
-        translateService.setLocale('en');
+        translateService.use('en');
         extension.translateHeaderMenu();
 
         expect(mockColumns).toEqual([{

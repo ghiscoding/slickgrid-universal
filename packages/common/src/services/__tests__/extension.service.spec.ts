@@ -72,7 +72,7 @@ describe('ExtensionService', () => {
     beforeEach(() => {
       sharedService = new SharedService();
       translateService = new TranslateServiceStub();
-      translateService.setLocale('fr');
+      translateService.use('fr');
 
       service = new ExtensionService(
         // extensions

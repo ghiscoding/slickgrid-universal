@@ -41,7 +41,7 @@ export class GridMenuExtension implements Extension {
     private filterService: FilterService,
     private sharedService: SharedService,
     private sortService: SortService,
-    private translaterService: TranslaterService,
+    private translaterService?: TranslaterService,
   ) {
     this._eventHandler = new Slick.EventHandler();
   }
@@ -230,7 +230,7 @@ export class GridMenuExtension implements Extension {
         gridMenuCustomItems.push(
           {
             iconCssClass: this.sharedService.gridOptions.gridMenu.iconClearFrozenColumnsCommand || 'fa fa-times',
-            title: this.sharedService.gridOptions.enableTranslate ? this.translaterService.translate(`${translationPrefix}CLEAR_FROZEN_COLUMNS`) : this._locales && this._locales.TEXT_CLEAR_FROZEN_COLUMNS,
+            title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}CLEAR_FROZEN_COLUMNS`, 'TEXT_CLEAR_FROZEN_COLUMNS'),
             disabled: false,
             command: commandName,
             positionOrder: 49
@@ -247,7 +247,7 @@ export class GridMenuExtension implements Extension {
           gridMenuCustomItems.push(
             {
               iconCssClass: this.sharedService.gridOptions.gridMenu.iconClearAllFiltersCommand || 'fa fa-filter text-danger',
-              title: this.sharedService.gridOptions.enableTranslate ? this.translaterService.translate(`${translationPrefix}CLEAR_ALL_FILTERS`) : this._locales && this._locales.TEXT_CLEAR_ALL_FILTERS,
+              title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}CLEAR_ALL_FILTERS`, 'TEXT_CLEAR_ALL_FILTERS'),
               disabled: false,
               command: commandName,
               positionOrder: 50
@@ -263,7 +263,7 @@ export class GridMenuExtension implements Extension {
           gridMenuCustomItems.push(
             {
               iconCssClass: this.sharedService.gridOptions.gridMenu.iconToggleFilterCommand || 'fa fa-random',
-              title: this.sharedService.gridOptions.enableTranslate ? this.translaterService.translate(`${translationPrefix}TOGGLE_FILTER_ROW`) : this._locales && this._locales.TEXT_TOGGLE_FILTER_ROW,
+              title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}TOGGLE_FILTER_ROW`, 'TEXT_TOGGLE_FILTER_ROW'),
               disabled: false,
               command: commandName,
               positionOrder: 52
@@ -279,7 +279,7 @@ export class GridMenuExtension implements Extension {
           gridMenuCustomItems.push(
             {
               iconCssClass: this.sharedService.gridOptions.gridMenu.iconRefreshDatasetCommand || 'fa fa-refresh',
-              title: this.sharedService.gridOptions.enableTranslate ? this.translaterService.translate(`${translationPrefix}REFRESH_DATASET`) : this._locales && this._locales.TEXT_REFRESH_DATASET,
+              title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}REFRESH_DATASET`, 'TEXT_REFRESH_DATASET'),
               disabled: false,
               command: commandName,
               positionOrder: 56
@@ -297,7 +297,7 @@ export class GridMenuExtension implements Extension {
           gridMenuCustomItems.push(
             {
               iconCssClass: this.sharedService.gridOptions.gridMenu.iconTogglePreHeaderCommand || 'fa fa-random',
-              title: this.sharedService.gridOptions.enableTranslate ? this.translaterService.translate(`${translationPrefix}TOGGLE_PRE_HEADER_ROW`) : this._locales && this._locales.TEXT_TOGGLE_PRE_HEADER_ROW,
+              title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}TOGGLE_PRE_HEADER_ROW`, 'TEXT_TOGGLE_PRE_HEADER_ROW'),
               disabled: false,
               command: commandName,
               positionOrder: 52
@@ -315,7 +315,7 @@ export class GridMenuExtension implements Extension {
           gridMenuCustomItems.push(
             {
               iconCssClass: this.sharedService.gridOptions.gridMenu.iconClearAllSortingCommand || 'fa fa-unsorted text-danger',
-              title: this.sharedService.gridOptions.enableTranslate ? this.translaterService.translate(`${translationPrefix}CLEAR_ALL_SORTING`) : this._locales && this._locales.TEXT_CLEAR_ALL_SORTING,
+              title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}CLEAR_ALL_SORTING`, 'TEXT_CLEAR_ALL_SORTING'),
               disabled: false,
               command: commandName,
               positionOrder: 51
@@ -332,7 +332,7 @@ export class GridMenuExtension implements Extension {
         gridMenuCustomItems.push(
           {
             iconCssClass: this.sharedService.gridOptions.gridMenu.iconExportCsvCommand || 'fa fa-download',
-            title: this.sharedService.gridOptions.enableTranslate ? this.translaterService.translate(`${translationPrefix}EXPORT_TO_CSV`) : this._locales && this._locales.TEXT_EXPORT_TO_CSV,
+            title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}EXPORT_TO_CSV`, 'TEXT_EXPORT_TO_CSV'),
             disabled: false,
             command: commandName,
             positionOrder: 53
@@ -348,7 +348,7 @@ export class GridMenuExtension implements Extension {
         gridMenuCustomItems.push(
           {
             iconCssClass: this.sharedService.gridOptions.gridMenu.iconExportExcelCommand || 'fa fa-file-excel-o text-success',
-            title: this.sharedService.gridOptions.enableTranslate ? this.translaterService.translate(`${translationPrefix}EXPORT_TO_EXCEL`) : this._locales && this._locales.TEXT_EXPORT_TO_EXCEL,
+            title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}EXPORT_TO_EXCEL`, 'TEXT_EXPORT_TO_EXCEL'),
             disabled: false,
             command: commandName,
             positionOrder: 54
@@ -364,7 +364,7 @@ export class GridMenuExtension implements Extension {
         gridMenuCustomItems.push(
           {
             iconCssClass: this.sharedService.gridOptions.gridMenu.iconExportTextDelimitedCommand || 'fa fa-download',
-            title: this.sharedService.gridOptions.enableTranslate ? this.translaterService.translate(`${translationPrefix}EXPORT_TO_TAB_DELIMITED`) : this._locales && this._locales.TEXT_EXPORT_TO_TAB_DELIMITED,
+            title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}EXPORT_TO_TAB_DELIMITED`, 'TEXT_EXPORT_TO_TAB_DELIMITED'),
             disabled: false,
             command: commandName,
             positionOrder: 55

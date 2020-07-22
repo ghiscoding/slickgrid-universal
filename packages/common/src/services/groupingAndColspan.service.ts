@@ -56,6 +56,11 @@ export class GroupingAndColspanService {
       // When dealing with Pre-Header Grouping colspan, we need to re-create the pre-header in multiple occasions
       // for all these events, we have to trigger a re-create
       if (this._gridOptions.createPreHeaderPanel) {
+        // if we use Translation, then we need to translate the first time
+        if (this._gridOptions.enableTranslate) {
+          this.translateGroupingAndColSpan();
+        }
+
         this._eventHandler.subscribe(grid.onSort, () => this.renderPreHeaderRowGroupingTitles());
         this._eventHandler.subscribe(grid.onColumnsResized, () => this.renderPreHeaderRowGroupingTitles());
         this._eventHandler.subscribe(grid.onColumnsReordered, () => this.renderPreHeaderRowGroupingTitles());

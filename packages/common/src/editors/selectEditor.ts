@@ -114,7 +114,7 @@ export class SelectEditor implements Editor {
       libOptions.okButton = true;
       libOptions.selectAllDelimiter = ['', ''];
 
-      if (this._translaterService && this._translaterService.translate && this._translaterService.getCurrentLocale && this._translaterService.getCurrentLocale()) {
+      if (this._translaterService && this._translaterService.translate && this._translaterService.getCurrentLanguage && this._translaterService.getCurrentLanguage()) {
         const translationPrefix = getTranslationPrefix(this.gridOptions);
         libOptions.countSelected = this._translaterService.translate(`${translationPrefix}X_OF_Y_SELECTED`);
         libOptions.allSelected = this._translaterService.translate(`${translationPrefix}ALL_SELECTED`);
