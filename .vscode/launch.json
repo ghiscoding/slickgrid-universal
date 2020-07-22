@@ -14,10 +14,6 @@
       "userDataDir": "${workspaceRoot}/.chrome",
       "trace": true,
       "sourceMapPathOverrides": {
-        "webpack:///../common/*": "${webRoot}/packages/common/*",
-        "webpack:///../excel-export/*": "${webRoot}/packages/excel-export/*",
-        "webpack:///../file-export/*": "${webRoot}/packages/file-export/*",
-        "webpack:///../vanilla-bundle/*": "${webRoot}/packages/vanilla-bundle/*",
         "webpack:///../../packages/common/*": "${webRoot}/packages/common/*",
         "webpack:///../../packages/excel-export/*": "${webRoot}/packages/excel-export/*",
         "webpack:///../../packages/file-export/*": "${webRoot}/packages/file-export/*",
