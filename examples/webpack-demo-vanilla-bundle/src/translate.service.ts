@@ -1,4 +1,4 @@
-import { TranslaterService, getDescendantProperty } from '@slickgrid-universal/common';
+import { getDescendantProperty, PubSubService, TranslaterService, TranslateServiceEventName } from '@slickgrid-universal/common';
 import * as fetch from 'isomorphic-fetch';
 import * as e6p from 'es6-promise';
 
@@ -12,12 +12,23 @@ interface TranslateOptions {
 }
 
 export class TranslateService implements TranslaterService {
+  eventName = 'onLanguageChange' as TranslateServiceEventName;
   private _currentLanguage = 'en';
   private _locales: { [language: string]: Locales } = {};
+  private _pubSubServices: PubSubService[] = [];
   private _options;
 
   constructor() {
     (e6p as any).polyfill();
+  }
+
+  /**
+   * Add an optional Pub/Sub Messaging Service,
+   * when defined the Translate Service will call the publish method with "onLanguageChanged" event name whenever the "use()" method is called
+   * @param {PubSubService} pubSub
+   */
+  addPubSubMessaging(pubSubService: PubSubService) {
+    this._pubSubServices.push(pubSubService);
   }
 
   getCurrentLanguage(): string {
@@ -41,16 +52,20 @@ export class TranslateService implements TranslaterService {
     });
   }
 
-  use(language: string): Promise<Locales> {
-    this._currentLanguage = language;
+  async use(newLang: string): Promise<Locales> {
+    this._currentLanguage = newLang;
 
     // if it's already loaded in the cache, then resolve the locale set, else fetch it
-    if (this._locales?.hasOwnProperty(language)) {
-      return Promise.resolve(this._locales[language]);
+    if (this._locales?.hasOwnProperty(newLang)) {
+      this.publishLanguageChangeEvent(newLang);
+      return Promise.resolve(this._locales[newLang]);
     }
 
-    const path = this._options.loadPath.replace(/{{lang}}/gi, language);
-    return this.fetchLocales(path, language);
+    const path = this._options.loadPath.replace(/{{lang}}/gi, newLang);
+    const localeSet = await this.fetchLocales(path, newLang);
+    this.publishLanguageChangeEvent(newLang);
+
+    return localeSet;
   }
 
   setup(options: TranslateOptions) {
@@ -62,5 +77,12 @@ export class TranslateService implements TranslaterService {
       return getDescendantProperty(this._locales[this._currentLanguage], translationKey);
     }
     return translationKey;
+  }
+
+  private publishLanguageChangeEvent(newLanguage: string) {
+    console.log('publishLanguageChangeEvent', this._pubSubServices)
+    for (const pubSub of this._pubSubServices) {
+      pubSub.publish(this.eventName, { language: newLanguage });
+    }
   }
 }

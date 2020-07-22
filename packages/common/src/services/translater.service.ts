@@ -1,18 +1,25 @@
+import { PubSubService } from './pubSub.service';
+
+export type TranslateServiceEventName = 'onLanguageChanged';
+
 export abstract class TranslaterService {
+  eventName: TranslateServiceEventName;
+
   /**
-   * Method to return the current locale used by the App
-   * @return {string} current locale
+   * Add an optional Pub/Sub Messaging Service,
+   * when defined the Translate Service will call the publish method with "onLanguageChanged" event name whenever the "use()" method is called
+   * @param {PubSubService} pubSub
    */
-  getCurrentLanguage(): string {
-    throw new Error('TranslaterService "getCurrentLanguage" method must be implemented');
+  addPubSubMessaging?(pubSubService: PubSubService) {
+    throw new Error('TranslaterService "addPubSubMessaging" method must be implemented');
   }
 
   /**
-   * Method to set the locale to use in the App
-   * @param locale
+   * Method to return the current language used by the App
+   * @return {string} current language
    */
-  use(locale: string): Promise<any> | any {
-    throw new Error('TranslaterService "use" method must be implemented');
+  getCurrentLanguage(): string {
+    throw new Error('TranslaterService "getCurrentLanguage" method must be implemented');
   }
 
   /**
@@ -22,5 +29,14 @@ export abstract class TranslaterService {
    */
   translate(translationKey: string): string {
     throw new Error('TranslaterService "translate" method must be implemented');
+  }
+
+  /**
+   * Method to set the language to use in the App and Translate Service
+   * @param {string} language
+   * @return {object} output - returns a Promise with the locale set (typically a JSON object)
+   */
+  use(language: string): Promise<any> | any {
+    throw new Error('TranslaterService "use" method must be implemented');
   }
 }

@@ -650,6 +650,12 @@ export class SlickVanillaGridBundle {
   }
 
   bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: SlickDataView) {
+    // if user is providing a Translate Service, we need to add our PubSub Service (but only after creating all dependencies)
+    // so that we can later subscribe to the "onLanguageChange" event and translate any texts whenever that get triggered
+    if (gridOptions.enableTranslate && this.translaterService?.addPubSubMessaging) {
+      this.translaterService.addPubSubMessaging(this._eventPubSubService);
+    }
+
     // translate some of them on first load, then on each language change
     if (gridOptions.enableTranslate) {
       this.translateColumnHeaderTitleKeys();
@@ -659,7 +665,7 @@ export class SlickVanillaGridBundle {
 
     // on locale change, we have to manually translate the Headers, GridMenu
     this.subscriptions.push(
-      this._eventPubSubService.subscribe('onLocaleChanged', () => {
+      this._eventPubSubService.subscribe('onLanguageChange', () => {
         if (gridOptions.enableTranslate) {
           this.extensionService.translateCellMenu();
           this.extensionService.translateColumnHeaders();
@@ -992,10 +998,6 @@ export class SlickVanillaGridBundle {
       paginationOptions.pageNumber = gridOptions.presets.pagination.pageNumber;
     }
     return paginationOptions;
-  }
-
-  useDifferentLocale(language: string) {
-    this._eventPubSubService.publish('onLocaleChanged', { language });
   }
 
   /** Initialize the Pagination Service once */

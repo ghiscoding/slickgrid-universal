@@ -279,7 +279,6 @@ export class Example10 {
   async switchLanguage() {
     const nextLanguage = (this.selectedLanguage === 'en') ? 'fr' : 'en';
     await this.translateService.use(nextLanguage);
-    this.slickgridLwc.useDifferentLocale(nextLanguage); // TODO is it possible to remove this and only use Service events?
     this.selectedLanguage = nextLanguage;
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;
   }

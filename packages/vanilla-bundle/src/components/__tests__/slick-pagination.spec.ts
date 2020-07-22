@@ -254,7 +254,7 @@ describe('with different i18n locale', () => {
 
   it('should create a the Slick-Pagination component in the DOM and expect different locale when changed', (done) => {
     translateService.use('fr');
-    eventPubSubService.publish('onLocaleChanged', 'fr');
+    eventPubSubService.publish('onLanguageChange', 'fr');
 
     setTimeout(() => {
       const pageInfoFromTo = document.querySelector('.page-info-from-to');

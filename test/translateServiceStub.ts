@@ -1,7 +1,10 @@
-import { TranslaterService } from '../packages/common/src/services/translater.service';
+import { PubSubService, TranslaterService } from '../packages/common';
 
 export class TranslateServiceStub implements TranslaterService {
+  eventName = 'onLanguageChange';
   private _locale = 'en';
+
+  addPubSubMessaging(pubSubService: PubSubService) { }
 
   getCurrentLanguage(): string {
     return this._locale;
