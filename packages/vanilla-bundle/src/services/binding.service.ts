@@ -105,9 +105,6 @@ export class BindingService {
   }
 
   private sanitizeText(dirtyText: string): string {
-    if (DOMPurify?.sanitize) {
-      return DOMPurify.sanitize(dirtyText);
-    }
-    return dirtyText;
+    return (DOMPurify?.sanitize) ? DOMPurify.sanitize(dirtyText, {}) : dirtyText;
   }
 }
