@@ -40,19 +40,19 @@ and it is also used to test with the UI portion. The Vanilla bundle is also used
 ### Available Public Packages
 
 | Package Name | Description |
-| --------| ----------- | 
-| [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common) | commonly used Formatters/Editors/Filters/Services/... | 
-| [@slickgrid-universal/excel-export](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/excel-export) | Export to Excel Service (xls/xlsx) | 
-| [@slickgrid-universal/file-export](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/file-export) | Export to Text File Service (csv/txt) | 
-| [@slickgrid-universal/graphql](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/graphql) | GraphQL Query Service (support Filter/Sort/Pagination) | 
-| [@slickgrid-universal/odata](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/odata) | OData Query Service (support Filter/Sort/Pagination) | 
+| --------| ----------- |
+| [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common) | commonly used Formatters/Editors/Filters/Services/... |
+| [@slickgrid-universal/excel-export](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/excel-export) | Export to Excel Service (xls/xlsx) |
+| [@slickgrid-universal/file-export](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/file-export) | Export to Text File Service (csv/txt) |
+| [@slickgrid-universal/graphql](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/graphql) | GraphQL Query Service (support Filter/Sort/Pagination) |
+| [@slickgrid-universal/odata](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/odata) | OData Query Service (support Filter/Sort/Pagination) |
 | [@slickgrid-universal/vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) | a vanilla TypeScript/JavaScript implementation |
 
 ### Available Demos
 
-| Package Name | Description | 
-| --------| ----------- | 
-| [slickgrid-universal/webpack-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle) | standalone package written in plain TypeScript for demo & UI testing. | 
+| Package Name | Description |
+| --------| ----------- |
+| [slickgrid-universal/webpack-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle) | standalone package written in plain TypeScript for demo & UI testing. |
 
 
 ## Installation
@@ -68,14 +68,14 @@ yarn install
 
 Run it **only once**, this will install all dependencies and add necessary monorepo symlinks
 ```bash
-npm run bootstrap
+yarn run bootstrap
 ```
 
 3. Build
 
 To get started you must run (also once) an initial TS build so that all necessary `dist` are created for all the packages to work together.
 ```bash
-npm run build
+yarn run build
 ```
 
 4. Run Dev (Vanilla Implementation)
@@ -85,16 +85,16 @@ and is written in plain TypeScript without being bound to any framework. The imp
 It could be used as a guideline to implement it with other frameworks.
 
 ```bash
-npm run dev:watch
+yarn run dev:watch
 ```
 
 ### Tests
 To run all packages Jest unit tests, you can run this command
 ```bash
-npm run test
+yarn run test
 
 # or as a watch
-npm run test:watch
+yarn run test:watch
 ```
 
 ## TODOs
@@ -127,7 +127,7 @@ npm run test:watch
   - [x] Grid Presets
     - [x] Preset Row Selections
     - [x] Should work even after initializing the dataset later (SF)
-    - [x] Preset Filters not working with Tree Data View 
+    - [x] Preset Filters not working with Tree Data View
   - [x] Dynamically Add Columns
   - [x] Tree Data
   - [x] add missing `collectionAsync` for Editors, Filters (autoCompleteFilter, selectFilter)
