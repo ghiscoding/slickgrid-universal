@@ -159,3 +159,4 @@ yarn run test:watch
 - [ ] Check why `DOM Purify` doesn't work in SF
 - [ ] Search for any left "todo" in the entire solution
 - [ ] The Pagination/Footer width is a little off sometime compare to the width of the grid container
+- [ ] Check why we need to click twice on a Date Editor to get date picker to open when the date is initially empty
