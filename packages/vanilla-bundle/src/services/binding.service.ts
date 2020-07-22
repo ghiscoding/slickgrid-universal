@@ -71,7 +71,7 @@ export class BindingService {
    *    2.1- we could also provide an extra callback method to execute when the event gets triggered
    */
   bind(elements: Element | NodeListOf<HTMLElement> | null, attribute: string, eventName?: string, callback?: (val: any) => any) {
-    if ((elements as NodeListOf<HTMLElement>).forEach) {
+    if (elements && (elements as NodeListOf<HTMLElement>).forEach) {
       // multiple DOM elements coming from a querySelectorAll() call
       (elements as NodeListOf<HTMLElement>).forEach(elm => this.bindSingleElement(elm, attribute, eventName, callback));
     } else if (elements) {

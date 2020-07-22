@@ -41,9 +41,9 @@ export class BindingHelper {
     // add event(s) binding
     // when having multiple events, we'll loop through through them and add a binding for each
     if (Array.isArray(events)) {
-      events.forEach(eventName => observer.bind(elements, attribute, eventName, callback));
+      events.forEach(eventName => observer?.bind(elements, attribute, eventName, callback));
     } else {
-      observer.bind(elements, attribute, events, callback);
+      observer?.bind(elements, attribute, events, callback);
     }
 
     this._observers.push(observer);

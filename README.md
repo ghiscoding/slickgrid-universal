@@ -155,4 +155,5 @@ yarn run test:watch
   - [x] Add interfaces to all SlickGrid core lib classes & plugins (basically add Types to everything)
 - [x] Copy cell text (context menu) doesn't work in SF
 - [x] Remove all Services init method 2nd argument (we can get DataView directly from the Grid object)
+- [ ] Check why `DOM Purify` doesn't work in SF
 - [ ] Search for any left "todo" in the entire solution
