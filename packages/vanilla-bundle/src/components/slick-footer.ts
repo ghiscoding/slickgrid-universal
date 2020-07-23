@@ -16,7 +16,7 @@ import { BindingHelper } from '../services/binding.helper';
 export class SlickFooterComponent {
   private _bindingHelper: BindingHelper;
   private _footerElement: HTMLDivElement;
-  private _width = '100%';
+  private _defaultCssText = '100%';
 
   get gridUid(): string {
     return this.grid?.getUID() ?? '';
@@ -32,8 +32,8 @@ export class SlickFooterComponent {
     return this.gridOptions.locales || Constants.locales;
   }
 
-  get width() {
-    return this._width;
+  get cssText() {
+    return this._defaultCssText;
   }
 
   set metrics(metrics: Metrics) {
@@ -86,12 +86,12 @@ export class SlickFooterComponent {
   private createFooterContainer(gridParentContainerElm: HTMLElement) {
     // when user adds an extra right padding on the auto-resize, we need to deduct it from our footer width
     if (this.gridOptions.autoResize?.rightPadding) {
-      this._width = `width: calc(100% - ${this.gridOptions.autoResize.rightPadding}px);`;
+      this._defaultCssText = `width: calc(100% - ${this.gridOptions.autoResize.rightPadding}px);`;
     }
 
     const footerElm = document.createElement('div');
     footerElm.className = `slick-custom-footer row ${this.gridUid}`;
-    footerElm.style.cssText = this._width;
+    footerElm.style.cssText = this.customFooterOptions?.cssText ?? this._defaultCssText;
     footerElm.style.height = `${this.customFooterOptions.footerHeight || 20}px`;
 
     const leftFooterElm = document.createElement('div');

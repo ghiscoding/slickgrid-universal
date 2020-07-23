@@ -62,7 +62,7 @@ describe('Slick-Footer Component', () => {
       mockGridOptions.autoResize = { rightPadding: 15 };
       component.renderFooter(div);
 
-      expect(component.width).toBe('width: calc(100% - 15px);');
+      expect(component.cssText).toBe('width: calc(100% - 15px);');
     });
 
     it('should create a the Slick-Footer component in the DOM', () => {

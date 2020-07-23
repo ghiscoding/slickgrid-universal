@@ -93,7 +93,7 @@ describe('Slick-Pagination Component', () => {
       mockGridOptions.autoResize = { rightPadding: 15 };
       component.renderPagination(div);
 
-      expect(component.width).toBe('width: calc(100% - 15px);');
+      expect(component.cssText).toBe('width: calc(100% - 15px);');
     });
 
     it('should create a the Slick-Pagination component in the DOM', () => {

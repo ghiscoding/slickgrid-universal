@@ -1,4 +1,14 @@
 export interface CustomFooterOption {
+  /**
+   * Defaults to "width: calc(100% - ${gridOptions.autoResize.rightPadding}px)", CSS width of the Custom Footer element.
+   * The width is calculated by taking in consideration "autoResize.rightPadding" that might optionally be provided in the grid options
+   *
+   * IMPORTANT NOTE:
+   * This property is already used by the "width" calculation, which is the default CSS styling (width: calc(100% - {rightPadding})),
+   * If you want to use it for something else than the width then make sure to also include the width calculation inside that text styling
+   */
+  cssText?: string;
+
   /** Optionally pass some text to be displayed on the left side (in the "left-footer" css class) */
   leftFooterText?: string;
 
@@ -8,8 +18,8 @@ export interface CustomFooterOption {
   /** Date format used when showing the "Last Update" timestamp in the metrics section. */
   dateFormat?: string;
 
-  /** Defaults to 25, height of the Custom Footer in pixels (this is required and is used by the auto-resizer) */
-  footerHeight?: number;
+  /** Defaults to 25, height of the Custom Footer in pixels, it could be a number (25) or a string ("25px") but it has to be in pixels. It will be used by the auto-resizer calculations. */
+  footerHeight?: number | string;
 
   /** Defaults to false, do we want to hide the last update timestamp (endTime)? */
   hideLastUpdateTimestamp?: boolean;

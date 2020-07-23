@@ -484,7 +484,8 @@ export class SlickVanillaGridBundle {
     const fixedGridDimensions = (this._gridOptions?.gridHeight || this._gridOptions?.gridWidth) ? { height: this._gridOptions?.gridHeight, width: this._gridOptions?.gridWidth } : undefined;
     const autoResizeOptions = this._gridOptions?.autoResize ?? { bottomPadding: 0 };
     if (autoResizeOptions && autoResizeOptions.bottomPadding !== undefined) {
-      autoResizeOptions.bottomPadding += this._gridOptions?.customFooterOptions?.footerHeight ?? DATAGRID_FOOTER_HEIGHT;
+      const footerHeight: string | number = this._gridOptions?.customFooterOptions?.footerHeight ?? DATAGRID_FOOTER_HEIGHT;
+      autoResizeOptions.bottomPadding += parseInt(`${footerHeight}`, 10);
     }
     if (autoResizeOptions && autoResizeOptions.bottomPadding !== undefined && this._gridOptions.enablePagination) {
       autoResizeOptions.bottomPadding += DATAGRID_PAGINATION_HEIGHT;
