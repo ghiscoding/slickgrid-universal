@@ -34,6 +34,7 @@ module.exports = ({ production } = {}) => ({
     modules: [srcDir, 'node_modules'],
     mainFields: production ? ['module', 'main'] : ['browser', 'module', 'main'],
     alias: {
+      dompurify: 'dompurify/dist/purify.es.js',
       moment$: 'moment/moment.js'
     }
   },

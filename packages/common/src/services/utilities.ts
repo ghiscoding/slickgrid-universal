@@ -754,12 +754,13 @@ export function sanitizeHtmlToText(htmlString: string): string {
  * @param domPurifyOptions: optional DOMPurify options when using that sanitizer
  */
 export function sanitizeTextByAvailableSanitizer(gridOptions: GridOption, dirtyHtml: string, domPurifyOptions?: DOMPurify.Config & { RETURN_TRUSTED_TYPE: true; }): string {
-  let sanitizedText = '';
+  let sanitizedText = dirtyHtml;
   if (gridOptions && typeof gridOptions.sanitizer === 'function') {
     sanitizedText = gridOptions.sanitizer(dirtyHtml || '');
-  } else {
+  } else if (typeof DOMPurify.sanitize === 'function') {
     sanitizedText = (DOMPurify.sanitize(dirtyHtml || '', domPurifyOptions || {}) || '').toString();
   }
+
   return sanitizedText;
 }
 
