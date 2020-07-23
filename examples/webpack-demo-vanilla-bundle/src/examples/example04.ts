@@ -12,7 +12,7 @@ import {
   SlickGrid,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
 
@@ -43,15 +43,14 @@ const customEditableInputFormatter = (row: number, cell: number, value: any, col
 export class Example4 {
   columnDefinitions: Column<ReportItem>[];
   gridOptions: GridOption;
-  dataset;
+  dataset: any[];
   dataViewObj: SlickDataView;
   gridObj: SlickGrid;
   commandQueue = [];
   frozenColumnCount = 2;
   frozenRowCount = 3;
   isFrozenBottom = false;
-  slickgridLwc;
-  slickerGridInstance;
+  sgb: SlickVanillaGridBundle;
 
   attached() {
     const dataset = this.initializeGrid();
@@ -60,12 +59,11 @@ export class Example4 {
     // gridContainerElm.addEventListener('onclick', handleOnClick);
     gridContainerElm.addEventListener('onvalidationerror', this.handleOnValidationError.bind(this));
     gridContainerElm.addEventListener('onitemdeleted', this.handleOnItemDeleted.bind(this));
-    gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
   }
 
   dispose() {
-    this.slickgridLwc?.dispose();
+    this.sgb?.dispose();
   }
 
   initializeGrid() {
@@ -366,7 +364,7 @@ export class Example4 {
           const dataContext = args && args.dataContext;
           if (dataContext && dataContext.hasOwnProperty('completed')) {
             dataContext.completed = args.item.option;
-            this.slickgridLwc.gridService.updateItem(dataContext);
+            this.sgb.gridService.updateItem(dataContext);
           }
         },
       },
@@ -442,8 +440,8 @@ export class Example4 {
   }
 
   setFrozenColumns(frozenCols: number) {
-    this.slickerGridInstance.slickGrid.setOptions({ frozenColumn: frozenCols, alwaysShowVerticalScroll: false });
-    this.gridOptions = this.slickerGridInstance.slickGrid.getOptions();
+    this.sgb.slickGrid.setOptions({ frozenColumn: frozenCols, alwaysShowVerticalScroll: false });
+    this.gridOptions = this.sgb.slickGrid.getOptions();
   }
 
   /** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */
@@ -454,13 +452,6 @@ export class Example4 {
       });
       this.isFrozenBottom = !this.isFrozenBottom; // toggle the variable
     }
-  }
-
-  handleOnSlickerGridCreated(event) {
-    this.slickerGridInstance = event && event.detail;
-    this.gridObj = this.slickerGridInstance && this.slickerGridInstance.slickGrid;
-    this.dataViewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
-    console.log('handleOnSlickerGridCreated', this.slickerGridInstance);
   }
 
   executeCommand(e, args) {
@@ -480,7 +471,7 @@ export class Example4 {
         break;
       case 'delete-row':
         if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"`)) {
-          this.slickerGridInstance.gridService.deleteItemById(dataContext.id);
+          this.sgb.gridService.deleteItemById(dataContext.id);
         }
         break;
     }

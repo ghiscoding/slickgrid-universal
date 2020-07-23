@@ -22,3 +22,4 @@ if (typeof window !== 'undefined') {
 
 export { BindingService };
 export { Slicker };
+export { SlickVanillaGridBundle }; // just to export the interface

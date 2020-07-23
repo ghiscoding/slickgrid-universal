@@ -12,11 +12,12 @@ import {
   SlickDataView,
   SlickDraggableGrouping,
   SlickGrid,
+  SlickerGridInstance,
   SortComparers,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
@@ -52,12 +53,12 @@ interface ReportItem {
 export class Example3 {
   columnDefinitions: Column<ReportItem>[];
   gridOptions: GridOption;
-  dataset;
+  dataset: any[];
   dataViewObj: SlickDataView;
   gridObj: SlickGrid;
   commandQueue = [];
-  slickgridLwc;
-  slickerGridInstance;
+  sgb: SlickVanillaGridBundle;
+  slickerGridInstance: SlickerGridInstance;
   durationOrderByCount = false;
   draggableGroupingPlugin: SlickDraggableGrouping;
   selectedGroupingFields: Array<string | GroupingGetterFunction> = ['', '', ''];
@@ -72,11 +73,11 @@ export class Example3 {
     gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
     gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   dispose() {
-    this.slickgridLwc?.dispose();
+    this.sgb?.dispose();
   }
 
   initializeGrid() {
@@ -340,7 +341,7 @@ export class Example3 {
           const dataContext = args && args.dataContext;
           if (dataContext && dataContext.hasOwnProperty('completed')) {
             dataContext.completed = args.item.option;
-            this.slickgridLwc.gridService.updateItem(dataContext);
+            this.sgb.gridService.updateItem(dataContext);
           }
         },
       },
@@ -349,8 +350,8 @@ export class Example3 {
 
   changeGridToReadOnly() {
     // change a single grid options to make the grid non-editable (readonly)
-    this.slickgridLwc.gridOptions = { editable: false };
-    this.gridOptions = this.slickgridLwc.gridOptions;
+    this.sgb.gridOptions = { editable: false };
+    this.gridOptions = this.sgb.gridOptions;
   }
 
   loadData(count: number) {
@@ -378,8 +379,8 @@ export class Example3 {
       //   delete tmpArray[i].duration; // test with undefined properties
       // }
     }
-    if (this.slickgridLwc) {
-      this.slickgridLwc.dataset = tmpArray;
+    if (this.sgb) {
+      this.sgb.dataset = tmpArray;
     }
     return tmpArray;
   }

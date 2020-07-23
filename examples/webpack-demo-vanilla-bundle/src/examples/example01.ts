@@ -1,5 +1,5 @@
 import { Column, Formatters, GridOption } from '@slickgrid-universal/common';
-import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 
 // use any of the Styling Theme
@@ -15,8 +15,8 @@ export class Example1 {
   columnDefinitions2: Column[];
   dataset1: any[];
   dataset2: any[];
-  slickgridLwc1;
-  slickgridLwc2;
+  sgb1: SlickVanillaGridBundle;
+  sgb2: SlickVanillaGridBundle;
 
   attached() {
     this.defineGrids();
@@ -27,8 +27,8 @@ export class Example1 {
     this.dataset1 = this.mockData(NB_ITEMS);
     this.dataset2 = this.mockData(NB_ITEMS);
 
-    this.slickgridLwc1 = new Slicker.GridBundle(gridContainerElm1, this.columnDefinitions1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
-    this.slickgridLwc2 = new Slicker.GridBundle(gridContainerElm2, this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
+    this.sgb1 = new Slicker.GridBundle(gridContainerElm1, this.columnDefinitions1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
+    this.sgb2 = new Slicker.GridBundle(gridContainerElm2, this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
 
     // setTimeout(() => {
     //   this.slickgridLwc2.dataset = this.dataset2;
@@ -36,8 +36,8 @@ export class Example1 {
   }
 
   dispose() {
-    this.slickgridLwc1?.dispose();
-    this.slickgridLwc2?.dispose();
+    this.sgb1?.dispose();
+    this.sgb2?.dispose();
   }
 
   /* Define grid Options and Columns */

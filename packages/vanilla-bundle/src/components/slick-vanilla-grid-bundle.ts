@@ -25,8 +25,9 @@ import {
   onBackendError,
   refreshBackendDataset,
   Pagination,
-  Subscription,
+  SlickerGridInstance,
   ServicePagination,
+  Subscription,
 
   // extensions
   AutoTooltipExtension,
@@ -95,9 +96,10 @@ export class SlickVanillaGridBundle {
   private _slickgridInitialized = false;
   private _intervalId: NodeJS.Timeout;
   private _intervalExecutionCounter = 0;
+  private _slickerGridInstances: SlickerGridInstance | undefined;
   backendServiceApi: BackendServiceApi | undefined;
   dataView: SlickDataView;
-  grid: SlickGrid;
+  slickGrid: SlickGrid;
   metrics: Metrics;
   customDataView = false;
   paginationData: {
@@ -106,7 +108,7 @@ export class SlickVanillaGridBundle {
   };
   totalItems = 0;
   groupItemMetadataProvider: SlickGroupItemMetadataProvider;
-  resizerPlugin: SlickResizer;
+  resizerService: SlickResizer;
   subscriptions: Subscription[] = [];
   showPagination = false;
 
@@ -120,7 +122,7 @@ export class SlickVanillaGridBundle {
   gridEventService: GridEventService;
   gridService: GridService;
   gridStateService: GridStateService;
-  groupingAndColspanService: GroupingAndColspanService;
+  groupingService: GroupingAndColspanService;
   paginationService: PaginationService;
   sharedService: SharedService;
   sortService: SortService;
@@ -159,7 +161,7 @@ export class SlickVanillaGridBundle {
     // expand/autofit columns on first page load
     // we can assume that if the prevDataset was empty then we are on first load
     if (this.gridOptions.autoFitColumnsOnFirstLoad && prevDatasetLn === 0) {
-      this.grid.autosizeColumns();
+      this.slickGrid.autosizeColumns();
     }
   }
 
@@ -190,14 +192,14 @@ export class SlickVanillaGridBundle {
 
     // if we already have grid options, when grid was already initialized, we'll merge with those options
     // else we'll merge with global grid options
-    if (this.grid?.getOptions) {
-      mergedOptions = $.extend(true, {}, this.grid.getOptions(), options);
+    if (this.slickGrid?.getOptions) {
+      mergedOptions = $.extend(true, {}, this.slickGrid.getOptions(), options);
     } else {
       mergedOptions = this.mergeGridOptions(options);
     }
-    if (this.sharedService?.gridOptions && this.grid?.setOptions) {
+    if (this.sharedService?.gridOptions && this.slickGrid?.setOptions) {
       this.sharedService.gridOptions = mergedOptions;
-      this.grid.setOptions(mergedOptions);
+      this.slickGrid.setOptions(mergedOptions);
     }
     this._gridOptions = mergedOptions;
   }
@@ -223,7 +225,11 @@ export class SlickVanillaGridBundle {
   }
 
   get gridUid(): string {
-    return this.grid?.getUID() ?? '';
+    return this.slickGrid?.getUID() ?? '';
+  }
+
+  get instances(): SlickerGridInstance | undefined {
+    return this._slickerGridInstances;
   }
 
   constructor(gridParentContainerElm: HTMLElement, columnDefs?: Column[], options?: GridOption, dataset?: any[], hierarchicalDataset?: any[]) {
@@ -303,7 +309,7 @@ export class SlickVanillaGridBundle {
       this.sharedService,
       this.translaterService,
     );
-    this.groupingAndColspanService = new GroupingAndColspanService(this.extensionUtility, this.extensionService);
+    this.groupingService = new GroupingAndColspanService(this.extensionUtility, this.extensionService);
   }
 
   constructorDependenciesAssignment(
@@ -332,7 +338,7 @@ export class SlickVanillaGridBundle {
     this.gridEventService = gridEventService;
     this.gridService = gridService;
     this.gridStateService = gridStateService;
-    this.groupingAndColspanService = groupingAndColspanService;
+    this.groupingService = groupingAndColspanService;
     this.paginationService = paginationService;
     this.sharedService = sharedService;
     this.sortService = sortService;
@@ -347,9 +353,9 @@ export class SlickVanillaGridBundle {
 
   /** Dispose of the Component */
   dispose(shouldEmptyDomElementContainer = false) {
-    this._eventPubSubService.publish('onBeforeGridDestroy', this.grid);
+    this._eventPubSubService.publish('onBeforeGridDestroy', this.slickGrid);
     this._eventHandler?.unsubscribeAll();
-    this.grid?.destroy();
+    this.slickGrid?.destroy();
     this._gridOptions = {};
     this._eventPubSubService.publish('onAfterGridDestroyed', true);
 
@@ -362,7 +368,7 @@ export class SlickVanillaGridBundle {
     this.filterService?.dispose();
     this.gridEventService?.dispose();
     this.gridStateService?.dispose();
-    this.groupingAndColspanService?.dispose();
+    this.groupingService?.dispose();
     this.paginationService?.dispose();
     // this.resizer?.dispose();
     this.sortService?.dispose();
@@ -403,16 +409,16 @@ export class SlickVanillaGridBundle {
     this.extensionService.createExtensionsBeforeGridCreation(this._columnDefinitions, this._gridOptions);
 
     this._columnDefinitions = this.swapInternalEditorToSlickGridFactoryEditor(this._columnDefinitions);
-    this.grid = new Slick.Grid(gridContainerElm, this.dataView, this._columnDefinitions, this._gridOptions);
+    this.slickGrid = new Slick.Grid(gridContainerElm, this.dataView, this._columnDefinitions, this._gridOptions);
     this.sharedService.dataView = this.dataView;
-    this.sharedService.grid = this.grid;
+    this.sharedService.grid = this.slickGrid;
 
     this.extensionService.bindDifferentExtensions();
-    this.bindDifferentHooks(this.grid, this._gridOptions, this.dataView);
+    this.bindDifferentHooks(this.slickGrid, this._gridOptions, this.dataView);
     this._slickgridInitialized = true;
 
     // initialize the SlickGrid grid
-    this.grid.init();
+    this.slickGrid.init();
 
     // load the data in the DataView (unless it's a hierarchical dataset, if so it will be loaded after the initial tree sort)
     if (Array.isArray(this.dataset) && !this.datasetHierarchical) {
@@ -437,7 +443,7 @@ export class SlickVanillaGridBundle {
 
     // if you don't want the items that are not visible (due to being filtered out or being on a different page)
     // to stay selected, pass 'false' to the second arg
-    const selectionModel = this.grid && this.grid.getSelectionModel();
+    const selectionModel = this.slickGrid && this.slickGrid.getSelectionModel();
     if (selectionModel && this._gridOptions && this._gridOptions.dataView && this._gridOptions.dataView.hasOwnProperty('syncGridSelection')) {
       // if we are using a Backend Service, we will do an extra flag check, the reason is because it might have some unintended behaviors
       // with the BackendServiceApi because technically the data in the page changes the DataView on every page change.
@@ -453,13 +459,13 @@ export class SlickVanillaGridBundle {
           // when using BackendServiceApi, we'll be using the "syncGridSelectionWithBackendService" flag BUT "syncGridSelection" must also be set to True
           preservedRowSelection = syncGridSelection && preservedRowSelectionWithBackend;
         }
-        this.dataView.syncGridSelection(this.grid, preservedRowSelection);
+        this.dataView.syncGridSelection(this.slickGrid, preservedRowSelection);
       } else if (typeof syncGridSelection === 'object') {
-        this.dataView.syncGridSelection(this.grid, syncGridSelection.preserveHidden, syncGridSelection.preserveHiddenOnSelectionChange);
+        this.dataView.syncGridSelection(this.slickGrid, syncGridSelection.preserveHidden, syncGridSelection.preserveHiddenOnSelectionChange);
       }
     }
 
-    this.grid.invalidate();
+    this.slickGrid.invalidate();
 
     if (this._dataset.length > 0) {
       if (!this._isDatasetInitialized && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
@@ -471,7 +477,7 @@ export class SlickVanillaGridBundle {
 
     // user could show a custom footer with the data metrics (dataset length and last updated timestamp)
     if (!this.gridOptions.enablePagination && this.gridOptions.showCustomFooter && this.gridOptions.customFooterOptions) {
-      this.slickFooter = new SlickFooterComponent(this.grid, this.gridOptions.customFooterOptions, this.translaterService);
+      this.slickFooter = new SlickFooterComponent(this.slickGrid, this.gridOptions.customFooterOptions, this.translaterService);
       this.slickFooter.renderFooter(this._gridParentContainerElm);
     }
 
@@ -486,10 +492,10 @@ export class SlickVanillaGridBundle {
     if (fixedGridDimensions?.width && this._gridParentContainerElm?.style) {
       this._gridParentContainerElm.style.width = `${fixedGridDimensions.width}px`;
     }
-    this.resizerPlugin = new Slick.Plugins.Resizer(autoResizeOptions, fixedGridDimensions);
-    this.grid.registerPlugin<SlickResizer>(this.resizerPlugin);
+    this.resizerService = new Slick.Plugins.Resizer(autoResizeOptions, fixedGridDimensions);
+    this.slickGrid.registerPlugin<SlickResizer>(this.resizerService);
     if (this.gridOptions.enableAutoResize) {
-      this.resizerPlugin.resizeGrid()
+      this.resizerService.resizeGrid()
         .then(() => this.resizeGridWhenStylingIsBrokenUntilCorrected())
         .catch((error: any) => console.log('Error:', error));
     }
@@ -502,9 +508,9 @@ export class SlickVanillaGridBundle {
     }
 
     // on cell click, mainly used with the columnDef.action callback
-    this.gridEventService.bindOnBeforeEditCell(this.grid);
-    this.gridEventService.bindOnCellChange(this.grid);
-    this.gridEventService.bindOnClick(this.grid);
+    this.gridEventService.bindOnBeforeEditCell(this.slickGrid);
+    this.gridEventService.bindOnCellChange(this.slickGrid);
+    this.gridEventService.bindOnClick(this.slickGrid);
 
     // get any possible Services that user want to register
     const registeringServices: any[] = this.gridOptions.registerExternalServices || [];
@@ -525,7 +531,7 @@ export class SlickVanillaGridBundle {
 
     // when using Grouping/DraggableGrouping/Colspan register its Service
     if (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping) {
-      registeringServices.push(this.groupingAndColspanService);
+      registeringServices.push(this.groupingService);
     }
 
     if (this.gridOptions.enableTreeData) {
@@ -549,13 +555,13 @@ export class SlickVanillaGridBundle {
     if (Array.isArray(registeringServices)) {
       for (const service of registeringServices) {
         if (typeof service.init === 'function') {
-          service.init(this.grid, this.sharedService);
+          service.init(this.slickGrid, this.sharedService);
         }
       }
     }
 
     // publish & dispatch certain events
-    this._eventPubSubService.publish('onGridCreated', this.grid);
+    this._eventPubSubService.publish('onGridCreated', this.slickGrid);
 
     // after the DataView is created & updated execute some processes & dispatch some events
     if (!this.customDataView) {
@@ -563,13 +569,13 @@ export class SlickVanillaGridBundle {
     }
 
     // bind resize ONLY after the dataView is ready
-    this.bindResizeHook(this.grid, this.gridOptions);
+    this.bindResizeHook(this.slickGrid, this.gridOptions);
 
-    // TODO - add interface
-    const slickerElementInstance = {
+    // once the grid is created, we'll return its instance (we do this to return Transient Services from DI)
+    this._slickerGridInstances = {
       // Slick Grid & DataView objects
       dataView: this.dataView,
-      slickGrid: this.grid,
+      slickGrid: this.slickGrid,
 
       // public methods
       dispose: this.dispose.bind(this),
@@ -580,16 +586,16 @@ export class SlickVanillaGridBundle {
       gridEventService: this.gridEventService,
       gridStateService: this.gridStateService,
       gridService: this.gridService,
-      groupingService: this.groupingAndColspanService,
+      groupingService: this.groupingService,
       extensionService: this.extensionService,
       extensionUtility: this.extensionUtility,
       paginationService: this.paginationService,
-      resizerService: this.resizerPlugin,
+      resizerService: this.resizerService,
       sortService: this.sortService,
       treeDataService: this.treeDataService,
     };
 
-    this._eventPubSubService.publish('onSlickerGridCreated', slickerElementInstance);
+    this._eventPubSubService.publish('onSlickerGridCreated', this._slickerGridInstances);
     this._isGridInitialized = true;
   }
 
@@ -677,7 +683,7 @@ export class SlickVanillaGridBundle {
           this.translateColumnHeaderTitleKeys();
           this.translateColumnGroupKeys();
           if (gridOptions.createPreHeaderPanel && !gridOptions.enableDraggableGrouping) {
-            this.groupingAndColspanService.translateGroupingAndColSpan();
+            this.groupingService.translateGroupingAndColSpan();
           }
         }
       })
@@ -716,7 +722,7 @@ export class SlickVanillaGridBundle {
       const backendApi = gridOptions.backendServiceApi;
 
       if (backendApi && backendApi.service && backendApi.service.init) {
-        backendApi.service.init(backendApi.options, gridOptions.pagination, this.grid);
+        backendApi.service.init(backendApi.options, gridOptions.pagination, this.slickGrid);
       }
     }
 
@@ -845,14 +851,14 @@ export class SlickVanillaGridBundle {
   bindResizeHook(grid: SlickGrid, options: GridOption) {
     // expand/autofit columns on first page load
     if (grid && options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && typeof grid.autosizeColumns === 'function') {
-      this.grid.autosizeColumns();
+      this.slickGrid.autosizeColumns();
     }
 
     // auto-resize grid on browser resize (optionally provide grid height or width)
     if (options.gridHeight || options.gridWidth) {
-      this.resizerPlugin.resizeGrid(0, { height: options.gridHeight, width: options.gridWidth });
+      this.resizerService.resizeGrid(0, { height: options.gridHeight, width: options.gridWidth });
     } else {
-      this.resizerPlugin.resizeGrid();
+      this.resizerService.resizeGrid();
     }
     if (grid && options && options.enableAutoResize) {
       // this.resizerPlugin.bindAutoResizeDataGrid({ height: options.gridHeight, width: options.gridWidth });
@@ -878,7 +884,7 @@ export class SlickVanillaGridBundle {
   paginationChanged(pagination: ServicePagination) {
     const isSyncGridSelectionEnabled = this.gridStateService && this.gridStateService.needToPreserveRowSelection() || false;
     if (!isSyncGridSelectionEnabled && (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector)) {
-      this.grid.setSelectedRows([]);
+      this.slickGrid.setSelectedRows([]);
     }
     const { pageNumber, pageSize } = pagination;
     if (this.sharedService) {
@@ -905,7 +911,7 @@ export class SlickVanillaGridBundle {
       this.loadLocalGridPagination(dataset);
     }
 
-    if (Array.isArray(dataset) && this.grid && this.dataView && typeof this.dataView.setItems === 'function') {
+    if (Array.isArray(dataset) && this.slickGrid && this.dataView && typeof this.dataView.setItems === 'function') {
       this.dataView.setItems(dataset, this._gridOptions.datasetIdPropertyName);
       if (!this._gridOptions.backendServiceApi) {
         this.dataView.reSort();
@@ -925,7 +931,7 @@ export class SlickVanillaGridBundle {
       }
 
       if (dataset) {
-        this.grid.invalidate();
+        this.slickGrid.invalidate();
       }
 
       // display the Pagination component only after calling this refresh data first, we call it here so that if we preset pagination page number it will be shown correctly
@@ -950,9 +956,9 @@ export class SlickVanillaGridBundle {
       }
 
       // resize the grid inside a slight timeout, in case other DOM element changed prior to the resize (like a filter/pagination changed)
-      if (this.grid && this._gridOptions.enableAutoResize) {
+      if (this.slickGrid && this._gridOptions.enableAutoResize) {
         const delay = this._gridOptions.autoResize && this._gridOptions.autoResize.delay;
-        this.resizerPlugin.resizeGrid(delay || 10);
+        this.resizerService.resizeGrid(delay || 10);
       }
     }
   }
@@ -972,7 +978,7 @@ export class SlickVanillaGridBundle {
     }
 
     if (this._gridOptions && this._gridOptions.enableAutoSizeColumns) {
-      this.grid.autosizeColumns();
+      this.slickGrid.autosizeColumns();
     }
   }
 
@@ -981,9 +987,9 @@ export class SlickVanillaGridBundle {
    * @param showing
    */
   showHeaderRow(showing = true) {
-    this.grid.setHeaderRowVisibility(showing, false);
+    this.slickGrid.setHeaderRowVisibility(showing, false);
     if (showing === true && this._isGridInitialized) {
-      this.grid.setColumns(this.columnDefinitions);
+      this.slickGrid.setColumns(this.columnDefinitions);
     }
     return showing;
   }
@@ -1008,7 +1014,7 @@ export class SlickVanillaGridBundle {
         paginationService: this.paginationService,
       };
       this.paginationService.totalItems = this.totalItems;
-      this.paginationService.init(this.grid, paginationOptions, this.backendServiceApi);
+      this.paginationService.init(this.slickGrid, paginationOptions, this.backendServiceApi);
       this.subscriptions.push(
         this._eventPubSubService.subscribe('onPaginationChanged', (paginationChanges: ServicePagination) => this.paginationChanged(paginationChanges)),
         this._eventPubSubService.subscribe('onPaginationVisibilityChanged', (visibility: { visible: boolean }) => {
@@ -1063,7 +1069,7 @@ export class SlickVanillaGridBundle {
 
       // if user entered some Columns "presets", we need to reflect them all in the grid
       if (this.gridOptions.presets && Array.isArray(this.gridOptions.presets.columns) && this.gridOptions.presets.columns.length > 0) {
-        const gridColumns: Column[] = this.gridStateService.getAssociatedGridColumns(this.grid, this.gridOptions.presets.columns);
+        const gridColumns: Column[] = this.gridStateService.getAssociatedGridColumns(this.slickGrid, this.gridOptions.presets.columns);
         if (gridColumns && Array.isArray(gridColumns) && gridColumns.length > 0) {
           // make sure that the checkbox selector is also visible if it is enabled
           if (this.gridOptions.enableCheckboxSelector) {
@@ -1074,7 +1080,7 @@ export class SlickVanillaGridBundle {
           }
 
           // finally set the new presets columns (including checkbox selector if need be)
-          this.grid.setColumns(gridColumns);
+          this.slickGrid.setColumns(gridColumns);
         }
       }
     }
@@ -1104,7 +1110,7 @@ export class SlickVanillaGridBundle {
   private loadRowSelectionPresetWhenExists() {
     // if user entered some Row Selections "presets"
     const presets = this.gridOptions && this.gridOptions.presets;
-    const selectionModel = this.grid && this.grid.getSelectionModel();
+    const selectionModel = this.slickGrid && this.slickGrid.getSelectionModel();
     const enableRowSelection = this.gridOptions && (this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection);
     if (enableRowSelection && selectionModel && presets && presets.rowSelection && (Array.isArray(presets.rowSelection.gridRowIndexes) || Array.isArray(presets.rowSelection.dataContextIds))) {
       let dataContextIds = presets.rowSelection.dataContextIds;
@@ -1123,8 +1129,8 @@ export class SlickVanillaGridBundle {
       // and we don't want to trigger 2 Grid State changes just 1
       if ((this._isLocalGrid && !this.gridOptions.enablePagination) || !this._isLocalGrid) {
         setTimeout(() => {
-          if (this.grid && Array.isArray(gridRowIndexes)) {
-            this.grid.setSelectedRows(gridRowIndexes);
+          if (this.slickGrid && Array.isArray(gridRowIndexes)) {
+            this.slickGrid.setSelectedRows(gridRowIndexes);
           }
         });
       }
@@ -1167,8 +1173,8 @@ export class SlickVanillaGridBundle {
         // for these cases we'll resize until it's no longer true or until we reach a max time limit (70min)
         const isResizeRequired = (headerPos?.top === 0 || (headerOffsetTop - viewportOffsetTop) > 40) ? true : false;
 
-        if (isResizeRequired && this.resizerPlugin?.resizeGrid) {
-          this.resizerPlugin.resizeGrid();
+        if (isResizeRequired && this.resizerService?.resizeGrid) {
+          this.resizerService.resizeGrid();
         } else if ((!isResizeRequired && !this.gridOptions.useSalesforceDefaultGridOptions) || (this._intervalExecutionCounter++ > (4 * 60 * INTERVAL_MAX_MIN_RETRIES))) { // interval is 250ms, so 4x is 1sec, so (4 * 60 * intervalMaxTimeInMin) shoud be 70min
           clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 70min
         }
@@ -1234,7 +1240,7 @@ export class SlickVanillaGridBundle {
     (column.editor as ColumnEditor).collection = newCollection;
 
     // find the new column reference pointer & reassign the new editor to the internalColumnEditor
-    const columns = this.grid.getColumns();
+    const columns = this.slickGrid.getColumns();
     if (Array.isArray(columns)) {
       const columnRef = columns.find((col: Column) => col.id === column.id);
       if (columnRef) {

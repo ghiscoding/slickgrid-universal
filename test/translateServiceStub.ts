@@ -1,7 +1,7 @@
-import { PubSubService, TranslaterService } from '../packages/common';
+import { PubSubService, TranslaterService, TranslateServiceEventName } from '../packages/common';
 
 export class TranslateServiceStub implements TranslaterService {
-  eventName = 'onLanguageChange';
+  eventName = 'onLanguageChange' as TranslateServiceEventName;
   private _locale = 'en';
 
   addPubSubMessaging(pubSubService: PubSubService) { }
