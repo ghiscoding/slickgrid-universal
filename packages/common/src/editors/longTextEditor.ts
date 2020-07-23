@@ -144,7 +144,7 @@ export class LongTextEditor implements Editor {
   applyValue(item: any, state: any) {
     const fieldName = this.columnDef && this.columnDef.field;
     if (fieldName !== undefined) {
-      const isComplexObject = fieldName.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
+      const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
       // validate the value before applying it (if not valid we'll set an empty string)
       const validation = this.validate(state);
@@ -167,17 +167,15 @@ export class LongTextEditor implements Editor {
   loadValue(item: any) {
     const fieldName = this.columnDef && this.columnDef.field;
 
-    if (fieldName !== undefined) {
+    if (item && fieldName !== undefined) {
       // is the field a complex object, "address.streetNumber"
-      const isComplexObject = fieldName.indexOf('.') > 0;
+      const isComplexObject = fieldName?.indexOf('.') > 0;
+      const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
 
-      if (item && fieldName !== undefined) {
-        const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
-        this.defaultValue = value;
-        this._$textarea.val(this.defaultValue);
-        this._$textarea[0].defaultValue = this.defaultValue;
-        this._$textarea.select();
-      }
+      this.defaultValue = value;
+      this._$textarea.val(this.defaultValue);
+      this._$textarea[0].defaultValue = this.defaultValue;
+      this._$textarea.select();
     }
   }
 

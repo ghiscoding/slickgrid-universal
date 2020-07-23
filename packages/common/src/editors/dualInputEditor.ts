@@ -210,7 +210,7 @@ export class DualInputEditor implements Editor {
   applyValueByPosition(item: any, state: any, position: 'leftInput' | 'rightInput') {
     const fieldName = position === 'leftInput' ? this._leftFieldName : this._rightFieldName;
     if (fieldName !== undefined) {
-      const isComplexObject = fieldName && fieldName.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
+      const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
       let fieldNameToUse = fieldName;
       if (isComplexObject) {
@@ -258,10 +258,11 @@ export class DualInputEditor implements Editor {
     const fieldName = (position === 'leftInput') ? this._leftFieldName : this._rightFieldName;
     const originalValuePosition = (position === 'leftInput') ? 'originalLeftValue' : 'originalRightValue';
     const inputVarPosition = (position === 'leftInput') ? '_leftInput' : '_rightInput';
-    const isComplexObject = fieldName && fieldName.indexOf('.') > 0;
 
     if (item && fieldName !== undefined) {
+      const isComplexObject = fieldName?.indexOf('.') > 0;
       const itemValue = (isComplexObject) ? getDescendantProperty(item, fieldName) : (item.hasOwnProperty(fieldName) ? item[fieldName] : '');
+
       this[originalValuePosition] = itemValue;
       if (this.editorParams[position].type === 'float') {
         const decimalPlaces = this.getDecimalPlaces(position);

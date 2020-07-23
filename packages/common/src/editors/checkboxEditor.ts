@@ -90,7 +90,7 @@ export class CheckboxEditor implements Editor {
   applyValue(item: any, state: any) {
     const fieldName = this.columnDef && this.columnDef.field;
     if (fieldName !== undefined) {
-      const isComplexObject = fieldName.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
+      const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
       // validate the value before applying it (if not valid we'll set an empty string)
       const validation = this.validate(state);
@@ -112,18 +112,16 @@ export class CheckboxEditor implements Editor {
   loadValue(item: any) {
     const fieldName = this.columnDef && this.columnDef.field;
 
-    if (fieldName !== undefined) {
+    if (item && fieldName !== undefined) {
       // is the field a complex object, "address.streetNumber"
-      const isComplexObject = fieldName.indexOf('.') > 0;
+      const isComplexObject = fieldName?.indexOf('.') > 0;
+      const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
 
-      if (item && fieldName !== undefined) {
-        const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
-        this.originalValue = value;
-        if (this.originalValue) {
-          this._input.checked = true;
-        } else {
-          this._input.checked = false;
-        }
+      this.originalValue = value;
+      if (this.originalValue) {
+        this._input.checked = true;
+      } else {
+        this._input.checked = false;
       }
     }
   }

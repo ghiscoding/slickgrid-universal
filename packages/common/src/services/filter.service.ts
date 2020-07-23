@@ -363,7 +363,7 @@ export class FilterService {
     let cellValue = item[queryFieldName];
 
     // when item is a complex object (dot "." notation), we need to filter the value contained in the object tree
-    if (queryFieldName && queryFieldName.indexOf('.') >= 0) {
+    if (queryFieldName?.indexOf('.') >= 0) {
       cellValue = getDescendantProperty(item, queryFieldName);
     }
 

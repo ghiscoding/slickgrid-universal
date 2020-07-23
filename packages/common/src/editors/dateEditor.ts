@@ -176,7 +176,7 @@ export class DateEditor implements Editor {
     if (fieldName !== undefined) {
       const outputTypeFormat = mapMomentDateFormatWithFieldType((this.columnDef && (this.columnDef.outputType || this.columnDef.type)) || FieldType.dateUtc);
       const saveTypeFormat = mapMomentDateFormatWithFieldType((this.columnDef && (this.columnDef.saveOutputType || this.columnDef.outputType || this.columnDef.type)) || FieldType.dateUtc);
-      const isComplexObject = fieldName.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
+      const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
       // validate the value before applying it (if not valid we'll set an empty string)
       const validation = this.validate(state);
@@ -208,17 +208,15 @@ export class DateEditor implements Editor {
   loadValue(item: any) {
     const fieldName = this.columnDef && this.columnDef.field;
 
-    if (fieldName !== undefined) {
+    if (item && fieldName !== undefined) {
       // is the field a complex object, "address.streetNumber"
-      const isComplexObject = fieldName.indexOf('.') > 0;
+      const isComplexObject = fieldName?.indexOf('.') > 0;
+      const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
 
-      if (item && fieldName !== undefined) {
-        const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
-        this.originalDate = value;
-        this.flatInstance.setDate(value);
-        this.show();
-        this.focus();
-      }
+      this.originalDate = value;
+      this.flatInstance.setDate(value);
+      this.show();
+      this.focus();
     }
   }
 

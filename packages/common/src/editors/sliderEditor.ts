@@ -121,7 +121,7 @@ export class SliderEditor implements Editor {
   applyValue(item: any, state: any) {
     const fieldName = this.columnDef && this.columnDef.field;
     if (fieldName !== undefined) {
-      const isComplexObject = fieldName.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
+      const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
       const validation = this.validate(state);
       const newValue = (validation && validation.valid) ? state : '';
@@ -143,11 +143,12 @@ export class SliderEditor implements Editor {
   loadValue(item: any) {
     const fieldName = this.columnDef && this.columnDef.field;
 
-    // is the field a complex object, "address.streetNumber"
-    const isComplexObject = fieldName && fieldName.indexOf('.') > 0;
 
     if (item && fieldName !== undefined) {
+      // is the field a complex object, "address.streetNumber"
+      const isComplexObject = fieldName?.indexOf('.') > 0;
       let value = (isComplexObject) ? getDescendantProperty(item, fieldName) : (item.hasOwnProperty(fieldName) && item[fieldName]);
+
       if (value === '' || value === null || value === undefined) {
         value = this.defaultValue; // load default value when item doesn't have any value
       }

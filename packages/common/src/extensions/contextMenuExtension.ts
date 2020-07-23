@@ -449,7 +449,7 @@ export class ContextMenuExtension implements Extension {
       const queryFieldName = columnDef.queryFieldNameGetterFn(dataContext);
 
       // get the cell value from the item or when it's a dot notation then exploded the item and get the final value
-      if (queryFieldName && queryFieldName.indexOf('.') >= 0) {
+      if (queryFieldName?.indexOf('.') >= 0) {
         cellValue = getDescendantProperty(dataContext, queryFieldName);
       } else {
         cellValue = dataContext[queryFieldName];

@@ -11,7 +11,7 @@ export const treeFormatter: Formatter = (row: number, cell: number, value: any, 
 
   if (typeof columnDef.queryFieldNameGetterFn === 'function') {
     const fieldName = columnDef.queryFieldNameGetterFn(dataContext);
-    if (fieldName && fieldName.indexOf('.') >= 0) {
+    if (fieldName?.indexOf('.') >= 0) {
       outputValue = getDescendantProperty(dataContext, fieldName);
     } else {
       outputValue = dataContext.hasOwnProperty(fieldName) ? dataContext[fieldName] : value;
