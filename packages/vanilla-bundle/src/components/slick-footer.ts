@@ -124,7 +124,7 @@ export class SlickFooterComponent {
 
     const itemCountElm = document.createElement('span');
     itemCountElm.className = 'item-count';
-    itemCountElm.textContent = `${this.metrics?.itemCount ?? ''}`;
+    itemCountElm.textContent = `${this.metrics?.itemCount ?? '0'}`;
 
     // last update elements
     rightFooterElm.appendChild(lastUpdateElm);
@@ -133,18 +133,18 @@ export class SlickFooterComponent {
     // total count element (unless hidden)
     if (!this.customFooterOptions.hideTotalItemCount) {
       const textOfElm = document.createElement('span');
-      textOfElm.textContent = ` ${this.customFooterOptions.metricTexts?.of ?? ''} `;
+      textOfElm.textContent = ` ${this.customFooterOptions.metricTexts?.of ?? 'of'} `;
       rightFooterElm.appendChild(textOfElm);
 
       const totalCountElm = document.createElement('span');
       totalCountElm.className = 'total-count';
-      totalCountElm.textContent = `${this.metrics?.totalItemCount ?? ''} items`;
+      totalCountElm.textContent = `${this.metrics?.totalItemCount ?? '0'}`;
 
       rightFooterElm.appendChild(totalCountElm);
     }
 
     const textItemsElm = document.createElement('span');
-    textItemsElm.textContent = ` ${this.customFooterOptions.metricTexts?.items ?? ''} `;
+    textItemsElm.textContent = ` ${this.customFooterOptions.metricTexts?.items ?? 'items'} `;
     rightFooterElm.appendChild(textItemsElm);
 
     return rightFooterElm;
@@ -153,7 +153,7 @@ export class SlickFooterComponent {
   /** Create the Right Section Last Update Timestamp */
   private createFooterLastUpdate(): HTMLSpanElement {
     // get translated text & last timestamp
-    const lastUpdateText = this.customFooterOptions?.metricTexts?.lastUpdate ?? '';
+    const lastUpdateText = this.customFooterOptions?.metricTexts?.lastUpdate ?? 'Last Update';
     const lastUpdateTimestamp = moment(this.metrics?.endTime).format(this.customFooterOptions.dateFormat);
 
     const lastUpdateElm = document.createElement('span');
