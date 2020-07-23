@@ -63,6 +63,7 @@ describe('Slick-Pagination Component', () => {
   beforeEach(() => {
     jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
     jest.spyOn(paginationServiceStub, 'getFullPagination').mockReturnValue(mockFullPagination);
+    jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
     div = document.createElement('div');
     document.body.appendChild(div);
     sharedService = new SharedService();
@@ -86,6 +87,13 @@ describe('Slick-Pagination Component', () => {
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(paginationElm).toBeTruthy();
+    });
+
+    it('should deduct auto-resize right padding width when provided in the Grid Options', () => {
+      mockGridOptions.autoResize = { rightPadding: 15 };
+      component.renderPagination(div);
+
+      expect(component.width).toBe('width: calc(100% - 15px);');
     });
 
     it('should create a the Slick-Pagination component in the DOM', () => {

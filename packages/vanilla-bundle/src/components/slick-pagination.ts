@@ -19,6 +19,7 @@ export class SlickPaginationComponent {
   private _enableTranslate = false;
   private _locales: Locale;
   private _subscriptions: Subscription[] = [];
+  private _width = '100%';
   currentPagination: ServicePagination;
   firstButtonClasses = '';
   lastButtonClasses = '';
@@ -120,6 +121,10 @@ export class SlickPaginationComponent {
     return this.pageNumber === this.pageCount || this.totalItems === 0;
   }
 
+  get width() {
+    return this._width;
+  }
+
   dispose() {
     this.paginationService.dispose();
     this._bindingHelper.dispose();
@@ -133,10 +138,16 @@ export class SlickPaginationComponent {
     const paginationTemplate = require('./slick-pagination.html');
 
     if (paginationTemplate) {
+      // when user adds an extra right padding on the auto-resize, we need to deduct it from our pagination width
+      if (this.gridOptions.autoResize?.rightPadding) {
+        this._width = `width: calc(100% - ${this.gridOptions.autoResize.rightPadding}px);`;
+      }
+
       const temp = document.createElement('div');
       temp.innerHTML = paginationTemplate;
       this._paginationElement = temp.firstChild as HTMLDivElement;
       this._paginationElement.classList.add(this.gridUid, 'pager');
+      this._paginationElement.style.cssText = this._width;
 
       if (gridParentContainerElm?.appendChild && this._paginationElement) {
         gridParentContainerElm.appendChild(this._paginationElement);
