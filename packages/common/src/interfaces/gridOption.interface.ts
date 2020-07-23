@@ -368,7 +368,7 @@ export interface GridOption {
   /** Defaults to true, which will display numbers indicating column sort precedence are displayed in the columns when multiple columns selected */
   numberedMultiColumnSort?: boolean;
 
-  /** Pagination options, these are currently used ONLY with a Backend Service API (GraphQL/OData Services) */
+  /** Pagination options (pageSize, pageSizes, pageNumber, totalItems) */
   pagination?: Pagination;
 
   /** if you want to pass custom paramaters to your Formatter/Editor or anything else */

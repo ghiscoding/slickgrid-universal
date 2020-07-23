@@ -119,6 +119,7 @@ export * from './slickContextMenu.interface';
 export * from './slickDataView.interface';
 export * from './slickDraggableGrouping.interface';
 export * from './slickEditorLock.interface';
+export * from './slickerGridInstance.interface';
 export * from './slickEvent.interface';
 export * from './slickEventData.interface';
 export * from './slickGrid.interface';

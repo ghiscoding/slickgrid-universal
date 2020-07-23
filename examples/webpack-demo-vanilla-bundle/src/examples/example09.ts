@@ -1,6 +1,6 @@
 import { Column, GridOption, Metrics, FieldType, Filters, OperatorType, GridStateChange, SlickGrid, PaginationService } from '@slickgrid-universal/common';
 import { GridOdataService, OdataServiceApi, OdataOption } from '@slickgrid-universal/odata';
-import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 
 const defaultPageSize = 20;
@@ -9,9 +9,7 @@ export class Example09 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   metrics: Metrics;
-  gridObj: SlickGrid;
-  slickgridLwc;
-  slickerGridInstance;
+  sgb: SlickVanillaGridBundle;
 
   isCountEnabled = true;
   odataVersion = 2;
@@ -24,22 +22,16 @@ export class Example09 {
     this.initializeGrid();
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid9`);
 
-    gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     gridContainerElm.addEventListener('ongridstatechanged', this.gridStateChanged.bind(this));
     // gridContainerElm.addEventListener('onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
     // gridContainerElm.addEventListener('onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, []);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, []);
   }
 
   dispose() {
-    if (this.slickgridLwc) {
-      this.slickgridLwc?.dispose();
+    if (this.sgb) {
+      this.sgb?.dispose();
     }
-  }
-
-  handleOnSlickerGridCreated(event) {
-    this.slickerGridInstance = event && event.detail;
-    this.gridObj = this.slickerGridInstance && this.slickerGridInstance.slickGrid;
   }
 
   initializeGrid() {
@@ -129,8 +121,8 @@ export class Example09 {
     }
 
     // once pagination totalItems is filled, we can update the dataset
-    this.slickgridLwc.paginationOptions = { totalItems: data[countPropName] };
-    this.slickgridLwc.dataset = data['items'];
+    this.sgb.paginationOptions.totalItems = data[countPropName];
+    this.sgb.dataset = data['items'];
     this.odataQuery = data['query'];
   }
 
@@ -258,17 +250,17 @@ export class Example09 {
   }
 
   clearAllFiltersAndSorts() {
-    if (this.slickerGridInstance && this.slickerGridInstance.gridService) {
-      this.slickerGridInstance.gridService.clearAllFiltersAndSorts();
+    if (this.sgb?.gridService) {
+      this.sgb.gridService.clearAllFiltersAndSorts();
     }
   }
 
   goToFirstPage() {
-    this.slickerGridInstance?.paginationService?.goToFirstPage();
+    this.sgb?.paginationService?.goToFirstPage();
   }
 
   goToLastPage() {
-    this.slickerGridInstance?.paginationService?.goToLastPage();
+    this.sgb?.paginationService?.goToLastPage();
   }
 
   /** Dispatched event of a Grid State Changed event */
@@ -282,14 +274,14 @@ export class Example09 {
 
   setFiltersDynamically() {
     // we can Set Filters Dynamically (or different filters) afterward through the FilterService
-    this.slickerGridInstance.filterService.updateFilters([
+    this.sgb?.filterService.updateFilters([
       // { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
       { columnId: 'name', searchTerms: ['A'], operator: 'a*' },
     ]);
   }
 
   setSortingDynamically() {
-    this.slickerGridInstance.sortService.updateSorting([
+    this.sgb?.sortService.updateSorting([
       { columnId: 'name', direction: 'DESC' },
     ]);
   }
@@ -302,7 +294,7 @@ export class Example09 {
     const odataService = this.gridOptions.backendServiceApi.service;
     odataService.updateOptions({ enableCount: this.isCountEnabled } as OdataOption);
     odataService.clearFilters();
-    this.slickerGridInstance.filterService.clearFilters();
+    this.sgb?.filterService.clearFilters();
     return true;
   }
 
@@ -311,7 +303,7 @@ export class Example09 {
     const odataService = this.gridOptions.backendServiceApi.service;
     odataService.updateOptions({ version: this.odataVersion } as OdataOption);
     odataService.clearFilters();
-    this.slickerGridInstance.filterService.clearFilters();
+    this.sgb?.filterService.clearFilters();
     return true;
   }
 }

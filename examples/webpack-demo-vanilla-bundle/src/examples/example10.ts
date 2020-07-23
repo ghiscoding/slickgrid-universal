@@ -12,7 +12,7 @@ import {
   SlickGrid,
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, } from '@slickgrid-universal/graphql';
-import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import * as moment from 'moment-mini';
 import { ExampleGridOptions } from './example-grid-options';
 import { TranslateService } from '../translate.service';
@@ -25,9 +25,7 @@ export class Example10 {
   gridOptions: GridOption;
   dataset = [];
   metrics: Metrics;
-  gridObj: SlickGrid;
-  slickgridLwc;
-  slickerGridInstance;
+  sgb: SlickVanillaGridBundle;
 
   isWithCursor = false;
   graphqlQuery = '...';
@@ -48,8 +46,8 @@ export class Example10 {
   }
 
   dispose() {
-    if (this.slickgridLwc) {
-      this.slickgridLwc?.dispose();
+    if (this.sgb) {
+      this.sgb?.dispose();
     }
     //   this.saveCurrentGridState();
   }
@@ -58,10 +56,9 @@ export class Example10 {
     this.initializeGrid();
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid10`);
 
-    gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     // gridContainerElm.addEventListener('onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
     // gridContainerElm.addEventListener('onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   initializeGrid() {
@@ -193,8 +190,8 @@ export class Example10 {
   }
 
   clearAllFiltersAndSorts() {
-    if (this.slickerGridInstance && this.slickerGridInstance.gridService) {
-      this.slickerGridInstance.gridService.clearAllFiltersAndSorts();
+    if (this.sgb?.gridService) {
+      this.sgb.gridService.clearAllFiltersAndSorts();
     }
   }
 
@@ -202,11 +199,6 @@ export class Example10 {
     this.processing = isProcessing;
     this.status = (isProcessing) ? 'loading...' : 'finished!!';
     this.statusClass = (isProcessing) ? 'notification is-light is-warning' : 'notification is-light is-success';
-  }
-
-  handleOnSlickerGridCreated(event) {
-    this.slickerGridInstance = event && event.detail;
-    this.gridObj = this.slickerGridInstance && this.slickerGridInstance.slickGrid;
   }
 
   /**
@@ -238,11 +230,11 @@ export class Example10 {
   }
 
   goToFirstPage() {
-    this.slickerGridInstance?.paginationService?.goToFirstPage();
+    this.sgb?.paginationService?.goToFirstPage();
   }
 
   goToLastPage() {
-    this.slickerGridInstance?.paginationService?.goToLastPage();
+    this.sgb?.paginationService?.goToLastPage();
   }
 
   /** Dispatched event of a Grid State Changed event */
@@ -251,7 +243,7 @@ export class Example10 {
   }
 
   saveCurrentGridState() {
-    console.log('GraphQL current grid state', this.slickerGridInstance.gridStateService.getCurrentGridState());
+    console.log('GraphQL current grid state', this.sgb?.gridStateService.getCurrentGridState());
   }
 
   setFiltersDynamically() {
@@ -259,7 +251,7 @@ export class Example10 {
     const presetHighestDay = moment().add(20, 'days').format('YYYY-MM-DD');
 
     // we can Set Filters Dynamically (or different filters) afterward through the FilterService
-    this.slickgridLwc.filterService.updateFilters([
+    this.sgb.filterService.updateFilters([
       { columnId: 'gender', searchTerms: ['female'], operator: OperatorType.equal },
       { columnId: 'name', searchTerms: ['Jane'], operator: OperatorType.startsWith },
       { columnId: 'company', searchTerms: ['acme'], operator: 'IN' },
@@ -269,7 +261,7 @@ export class Example10 {
   }
 
   setSortingDynamically() {
-    this.slickgridLwc.sortService.updateSorting([
+    this.sgb.sortService.updateSorting([
       // orders matter, whichever is first in array will be the first sorted column
       { columnId: 'billingAddressZip', direction: 'DESC' },
       { columnId: 'company', direction: 'ASC' },

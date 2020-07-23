@@ -10,7 +10,7 @@ import {
   SlickGrid,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import './example06.scss';
 import { ExampleGridOptions } from './example-grid-options';
@@ -20,10 +20,7 @@ export class Example6 {
   gridOptions: GridOption;
   datasetFlat: any[];
   datasetHierarchical = [];
-  dataViewObj: SlickDataView;
-  gridObj: SlickGrid;
-  slickgridLwc;
-  slickerGridInstance;
+  sgb: SlickVanillaGridBundle;
   durationOrderByCount = false;
   searchString = '';
 
@@ -32,14 +29,11 @@ export class Example6 {
     this.datasetFlat = [];
     this.datasetHierarchical = this.mockDataset();
     const gridContainerElm = document.querySelector<HTMLDivElement>('.grid6');
-
-    gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, null, this.datasetHierarchical);
-    this.dataViewObj = this.slickgridLwc.dataView;
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, null, this.datasetHierarchical);
   }
 
   dispose() {
-    this.slickgridLwc?.dispose();
+    this.sgb?.dispose();
   }
 
   initializeGrid() {
@@ -100,7 +94,7 @@ export class Example6 {
   }
 
   updateFilter() {
-    this.slickerGridInstance.filterService.updateFilters([{ columnId: 'file', searchTerms: [this.searchString] }], true, false, true);
+    this.sgb.filterService.updateFilters([{ columnId: 'file', searchTerms: [this.searchString] }], true, false, true);
   }
 
   treeFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
@@ -149,7 +143,7 @@ export class Example6 {
    * After adding the item, it will sort by parent/child recursively
    */
   addNewFile() {
-    const newId = this.dataViewObj.getLength() + 100;
+    const newId = this.sgb.dataView.getLength() + 100;
 
     // find first parent object and add the new item as a child
     const popItem = findItemInHierarchicalStructure(this.datasetHierarchical, x => x.file === 'pop', 'files');
@@ -163,34 +157,28 @@ export class Example6 {
       });
 
       // overwrite hierarchical dataset which will also trigger a grid sort and rendering
-      this.slickgridLwc.datasetHierarchical = this.datasetHierarchical;
+      this.sgb.datasetHierarchical = this.datasetHierarchical;
 
       // scroll into the position where the item was added
-      const rowIndex = this.dataViewObj.getRowById(popItem.id);
-      this.gridObj.scrollRowIntoView(rowIndex + 3);
+      const rowIndex = this.sgb.dataView.getRowById(popItem.id);
+      this.sgb.slickGrid.scrollRowIntoView(rowIndex + 3);
     }
   }
 
   collapseAll() {
-    this.slickerGridInstance.treeDataService.toggleTreeDataCollapse(true);
+    this.sgb.treeDataService.toggleTreeDataCollapse(true);
   }
 
   expandAll() {
-    this.slickerGridInstance.treeDataService.toggleTreeDataCollapse(false);
-  }
-
-  handleOnSlickerGridCreated(event) {
-    this.slickerGridInstance = event && event.detail;
-    this.gridObj = this.slickerGridInstance && this.slickerGridInstance.slickGrid;
-    this.dataViewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
+    this.sgb.treeDataService.toggleTreeDataCollapse(false);
   }
 
   logExpandedStructure() {
-    console.log('exploded array', this.slickerGridInstance.treeDataService.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
+    console.log('exploded array', this.sgb.treeDataService.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
   }
 
   logFlatStructure() {
-    console.log('flat array', this.slickerGridInstance.treeDataService.dataset /* , JSON.stringify(outputFlatArray, null, 2) */);
+    console.log('flat array', this.sgb.treeDataService.dataset /* , JSON.stringify(outputFlatArray, null, 2) */);
   }
 
   mockDataset() {

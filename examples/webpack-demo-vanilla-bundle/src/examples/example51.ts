@@ -3,11 +3,9 @@ import {
   FormatterResultObject,
   GridOption,
   OnEventArgs,
-  SlickDataView,
-  SlickGrid,
   SortDirectionString
 } from '@slickgrid-universal/common';
-import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import '../salesforce-styles.scss';
 import './example51.scss';
 
@@ -82,10 +80,7 @@ export class Example51 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
-  dataViewObj: SlickDataView;
-  gridObj: SlickGrid;
-  slickgridLwc;
-  slickerGridInstance;
+  sgb: SlickVanillaGridBundle;
   durationOrderByCount = false;
   searchString = '';
   sortDirection: SortDirectionString = 'ASC';
@@ -99,12 +94,10 @@ export class Example51 {
     gridContainerElm.addEventListener('onclick', this.handleOnClick.bind(this));
     gridContainerElm.addEventListener('oncellchange', this.handleOnCellChange.bind(this));
     gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
-    gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     gridContainerElm.addEventListener('onbeforeeditcell', this.verifyCellIsEditableBeforeEditing.bind(this));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, []);
-    this.dataViewObj = this.slickgridLwc.dataView;
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, []);
     try {
-      this.slickgridLwc.dataset = require('c://TEMP/quote2.json'); // work data only
+      this.sgb.dataset = require('c://TEMP/quote2.json'); // work data only
     } catch (e) { }
   }
 
@@ -137,7 +130,7 @@ export class Example51 {
               targetRowItem['sortSequence'] = this.sortSequenceBeforeEdit;
               dataView.updateItem(targetRowItem['id'], targetRowItem);
               grid.invalidate();
-              this.slickgridLwc.sortService.updateSorting([{ columnId: 'sortSequence', direction: 'ASC' }]);
+              this.sgb.sortService.updateSorting([{ columnId: 'sortSequence', direction: 'ASC' }]);
             }
           }
         }
@@ -285,12 +278,12 @@ export class Example51 {
   }
 
   dispose() {
-    this.slickgridLwc?.dispose();
+    this.sgb?.dispose();
   }
 
   searchItem(event: KeyboardEvent) {
     this.searchString = (event.target as HTMLInputElement).value;
-    this.dataViewObj.refresh();
+    this.sgb?.dataView.refresh();
   }
 
   authSellFormatter(row, cell, value, columnDef, dataContext) {
@@ -449,8 +442,8 @@ export class Example51 {
         }
       }
       const updatedDataset = left.concat(extractedRows.concat(right));
-      this.slickgridLwc.dataset = updatedDataset;
-      this.slickgridLwc.sortService.updateSorting([{ columnId: 'Sort_Sequence_Number__c', direction: 'ASC' }]);
+      this.sgb.dataset = updatedDataset;
+      this.sgb.sortService.updateSorting([{ columnId: 'Sort_Sequence_Number__c', direction: 'ASC' }]);
     }
   }
 
@@ -470,11 +463,11 @@ export class Example51 {
   }
 
   collapseAll() {
-    this.slickerGridInstance.treeDataService.toggleTreeDataCollapse(true);
+    this.sgb?.treeDataService.toggleTreeDataCollapse(true);
   }
 
   expandAll() {
-    this.slickerGridInstance.treeDataService.toggleTreeDataCollapse(false);
+    this.sgb?.treeDataService.toggleTreeDataCollapse(false);
   }
 
   handleOnClick(event: any) {
@@ -485,9 +478,9 @@ export class Example51 {
       const grid = args.grid;
       const columnDef = grid && grid.getColumns()[args.cell];
       const field = columnDef && columnDef.field || '';
-      const cell = this.gridObj.getCellFromEvent(eventDetail.eventData);
+      const cell = this.sgb?.slickGrid.getCellFromEvent(eventDetail.eventData);
       const currentRow = cell && cell.row;
-      const dataContext = this.gridObj.getDataItem(currentRow);
+      const dataContext = this.sgb?.slickGrid.getDataItem(currentRow);
       const treeLevelPropName = 'indent';
 
       switch (field) {
@@ -520,19 +513,12 @@ export class Example51 {
     }
   }
 
-  handleOnSlickerGridCreated(event) {
-    console.log('handleOnSlickerGridCreated');
-    this.slickerGridInstance = event && event.detail;
-    this.gridObj = this.slickerGridInstance && this.slickerGridInstance.slickGrid;
-    this.dataViewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
-  }
-
   logExpandedStructure() {
-    console.log('exploded array', this.slickerGridInstance.treeDataService.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
+    console.log('exploded array', this.sgb?.treeDataService.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
   }
 
   logFlatStructure() {
-    console.log('flat array', this.slickerGridInstance.treeDataService.dataset /* , JSON.stringify(outputFlatArray, null, 2) */);
+    console.log('flat array', this.sgb?.treeDataService.dataset /* , JSON.stringify(outputFlatArray, null, 2) */);
   }
 
   isItemEditable(dataContext: any, columnDef: Column): boolean {

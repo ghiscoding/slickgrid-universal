@@ -3,23 +3,18 @@ import {
   Editors,
   GridOption,
   Formatters,
-  SlickDataView,
-  SlickGrid,
   FieldType,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
 
 export class Example7 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
-  dataset;
-  dataViewObj: SlickDataView;
-  gridObj: SlickGrid;
-  slickgridLwc;
-  slickerGridInstance;
+  dataset: any[];
+  sgb: SlickVanillaGridBundle;
   duplicateTitleHeaderCount = 1;
 
   attached() {
@@ -28,12 +23,11 @@ export class Example7 {
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid7`);
     gridContainerElm.addEventListener('oncellchange', this.handleOnCellChange.bind(this));
     gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
-    gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   dispose() {
-    this.slickgridLwc?.dispose();
+    this.sgb?.dispose();
   }
 
   initializeGrid() {
@@ -173,8 +167,8 @@ export class Example7 {
       selectedRows.push(left.length + i);
     }
 
-    this.gridObj.resetActiveCell();
-    this.slickgridLwc.dataset = this.dataset; // update dataset and re-render the grid
+    this.sgb.slickGrid.resetActiveCell();
+    this.sgb.dataset = this.dataset; // update dataset and re-render the grid
   }
 
   handleOnCellChange(event) {
@@ -187,13 +181,6 @@ export class Example7 {
     if (args.validationResults) {
       alert(args.validationResults.msg);
     }
-  }
-
-  handleOnSlickerGridCreated(event) {
-    this.slickerGridInstance = event && event.detail;
-    this.gridObj = this.slickerGridInstance && this.slickerGridInstance.slickGrid;
-    this.dataViewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
-    console.log('handleOnSlickerGridCreated', this.slickerGridInstance);
   }
 
   dynamicallyAddTitleHeader() {
@@ -212,7 +199,7 @@ export class Example7 {
     // you can dynamically add your column to your column definitions
     // and then use the spread operator [...cols] OR slice to force the framework to review the changes
     this.columnDefinitions.push(newCol);
-    this.slickgridLwc.columnDefinitions = this.columnDefinitions.slice(); // or use spread operator [...cols]
+    this.sgb.columnDefinitions = this.columnDefinitions.slice(); // or use spread operator [...cols]
 
     // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
     // you MUST use "getAllColumnDefinitions()" from the GridService, using this will be ALL columns including the 1st column that is created internally
@@ -226,7 +213,7 @@ export class Example7 {
 
   dynamicallyRemoveLastColumn() {
     this.columnDefinitions.pop();
-    this.slickgridLwc.columnDefinitions = this.columnDefinitions.slice();
+    this.sgb.columnDefinitions = this.columnDefinitions.slice();
 
     // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
     // you MUST use the code below, first you must reassign the Editor facade (from the internalColumnEditor back to the editor)

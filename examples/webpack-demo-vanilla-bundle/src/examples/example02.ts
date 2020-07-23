@@ -1,7 +1,22 @@
-import { Aggregators, Column, FieldType, Filters, FileType, Formatters, GridOption, Grouping, GroupTotalFormatters, SlickDataView, SlickGrid, SortComparers, SortDirectionNumber } from '@slickgrid-universal/common';
+import {
+  Aggregators,
+  Column,
+  FieldType,
+  Filters,
+  FileType,
+  Formatters,
+  GridOption,
+  Grouping,
+  GroupTotalFormatters,
+  SlickDataView,
+  SlickGrid,
+  SlickerGridInstance,
+  SortComparers,
+  SortDirectionNumber
+} from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { FileExportService } from '@slickgrid-universal/file-export';
-import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
 import '../material-styles.scss';
@@ -12,27 +27,33 @@ const NB_ITEMS = 500;
 export class Example2 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
-  dataset;
-  dataViewObj: SlickDataView;
-  gridObj: SlickGrid;
+  dataset: any[];
   commandQueue = [];
-  slickgridLwc;
-  slickerGridInstance;
+  sgb: SlickVanillaGridBundle;
   excelExportService = new ExcelExportService();
+
+  get dataViewObj(): SlickDataView {
+    return this.sgb?.dataView;
+  }
+  get gridObj(): SlickGrid {
+    return this.sgb?.slickGrid;
+  }
+  get slickerGridInstance(): SlickerGridInstance {
+    return this.sgb?.instances;
+  }
 
   attached() {
     this.initializeGrid();
     this.dataset = this.loadData(NB_ITEMS);
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid2`);
 
-    gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     gridContainerElm.addEventListener('onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
     gridContainerElm.addEventListener('onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   dispose() {
-    this.slickgridLwc?.dispose();
+    this.sgb?.dispose();
   }
 
   initializeGrid() {
@@ -136,6 +157,7 @@ export class Example2 {
     this.gridOptions = {
       autoResize: {
         container: '.demo-container',
+        rightPadding: 10
       },
       enableExport: true,
       enableFiltering: true,
@@ -214,7 +236,7 @@ export class Example2 {
     } as Grouping);
 
     // you need to manually add the sort icon(s) in UI
-    this.gridObj.setSortColumns([{ columnId: 'duration', sortAsc: true }]);
+    this.sgb.instances.slickGrid.setSortColumns([{ columnId: 'duration', sortAsc: true }]);
     this.gridObj.invalidate(); // invalidate all rows and re-render
   }
 
@@ -307,35 +329,5 @@ export class Example2 {
     ];
     this.gridObj.setSortColumns(sortColumns);
     this.gridObj.invalidate(); // invalidate all rows and re-render
-  }
-
-  handleOnSlickerGridCreated(event) {
-    this.slickerGridInstance = event && event.detail;
-    this.gridObj = this.slickerGridInstance && this.slickerGridInstance.slickGrid;
-    this.dataViewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
-    console.log('handleOnSlickerGridCreated', this.slickerGridInstance);
-  }
-
-  executeCommand(e, args) {
-    const columnDef = args.column;
-    const command = args.command;
-    const dataContext = args.dataContext;
-
-    switch (command) {
-      case 'command1':
-        alert('Command 1');
-        break;
-      case 'command2':
-        alert('Command 2');
-        break;
-      case 'help':
-        alert('Please help!');
-        break;
-      case 'delete-row':
-        if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"`)) {
-          this.slickerGridInstance.gridService.deleteItemById(dataContext.id);
-        }
-        break;
-    }
   }
 }

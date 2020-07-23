@@ -8,7 +8,7 @@ import {
   SlickGrid,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
 import './example05.scss';
@@ -19,10 +19,7 @@ export class Example5 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
-  dataViewObj: SlickDataView;
-  gridObj: SlickGrid;
-  slickgridLwc;
-  slickerGridInstance;
+  sgb: SlickVanillaGridBundle;
   durationOrderByCount = false;
 
   attached() {
@@ -30,16 +27,13 @@ export class Example5 {
     this.dataset = [];
     const gridContainerElm = document.querySelector<HTMLDivElement>('.grid5');
 
-    gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions });
-    this.dataViewObj = this.slickgridLwc.dataView;
-    this.gridObj = this.slickgridLwc.grid;
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions });
     this.dataset = this.mockDataset();
-    this.slickgridLwc.dataset = this.dataset;
+    this.sgb.dataset = this.dataset;
   }
 
   dispose() {
-    this.slickgridLwc?.dispose();
+    this.sgb?.dispose();
   }
 
   initializeGrid() {
@@ -121,7 +115,7 @@ export class Example5 {
 
     // find first parent object and add the new item as a child
     const childItemFound = this.dataset.find((item) => item[treeLevelPropName] === newTreeLevel);
-    const parentItemFound = this.dataViewObj.getItemByIdx(childItemFound[parentPropName]);
+    const parentItemFound = this.sgb.dataView.getItemByIdx(childItemFound[parentPropName]);
 
     const newItem = {
       id: newId,
@@ -134,42 +128,36 @@ export class Example5 {
       finish: new Date(),
       effortDriven: false
     };
-    this.dataViewObj.addItem(newItem);
-    this.dataset = this.dataViewObj.getItems();
-    this.slickgridLwc.dataset = this.dataset;
+    this.sgb.dataView.addItem(newItem);
+    this.dataset = this.sgb.dataView.getItems();
+    this.sgb.dataset = this.dataset;
 
     // force a resort
     const titleColumn = this.columnDefinitions.find((col) => col.id === 'title');
-    this.slickerGridInstance.sortService.onLocalSortChanged(this.gridObj, this.dataViewObj, [{ columnId: 'title', sortCol: titleColumn, sortAsc: true }]);
+    this.sgb.sortService.onLocalSortChanged(this.sgb.slickGrid, [{ columnId: 'title', sortCol: titleColumn, sortAsc: true }]);
 
     // update dataset and re-render (invalidate) the grid
-    this.gridObj.invalidate();
+    this.sgb.slickGrid.invalidate();
 
     // scroll to the new row
-    const rowIndex = this.dataViewObj.getIdxById(newItem.id);
-    this.gridObj.scrollRowIntoView(rowIndex, false);
+    const rowIndex = this.sgb.dataView.getIdxById(newItem.id);
+    this.sgb.slickGrid.scrollRowIntoView(rowIndex, false);
   }
 
   collapseAll() {
-    this.slickerGridInstance.treeDataService.toggleTreeDataCollapse(true);
+    this.sgb.treeDataService.toggleTreeDataCollapse(true);
   }
 
   expandAll() {
-    this.slickerGridInstance.treeDataService.toggleTreeDataCollapse(false);
-  }
-
-  handleOnSlickerGridCreated(event) {
-    this.slickerGridInstance = event && event.detail;
-    this.gridObj = this.slickerGridInstance && this.slickerGridInstance.slickGrid;
-    this.dataViewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
+    this.sgb.treeDataService.toggleTreeDataCollapse(false);
   }
 
   logExpandedStructure() {
-    console.log('exploded array', this.slickerGridInstance.treeDataService.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
+    console.log('exploded array', this.sgb.treeDataService.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
   }
 
   logFlatStructure() {
-    console.log('flat array', this.slickerGridInstance.treeDataService.dataset /* , JSON.stringify(outputFlatArray, null, 2) */);
+    console.log('flat array', this.sgb.treeDataService.dataset /* , JSON.stringify(outputFlatArray, null, 2) */);
   }
 
   mockDataset() {
