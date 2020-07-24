@@ -4,7 +4,7 @@
 
 <div class="row">
   <button class="button is-small" data-test="clear-filters-sorting"
-          onclick.delegate="clearAllFiltersAndSorts()" title="Clear all Filters & Sorts">
+    onclick.delegate="clearAllFiltersAndSorts()" title="Clear all Filters & Sorts">
     <span>Clear all Filter &amp; Sorts</span>
     Clear all Filter & Sorts
   </button>
@@ -34,17 +34,17 @@
     <span data-test="radioVersion">
       <label class="radio-inline control-label" for="radio2">
         <input type="radio" name="inlineRadioOptions" data-test="version2" id="radio2" checked value.bind="odataVersion"
-               onclick.delegate="setOdataVersion(2)"> 2
+          onclick.delegate="setOdataVersion(2)"> 2
       </label>
       <label class="radio-inline control-label" for="radio4">
         <input type="radio" name="inlineRadioOptions" data-test="version4" id="radio4" value.bind="odataVersion"
-               onclick.delegate="setOdataVersion(4)"> 4
+          onclick.delegate="setOdataVersion(4)"> 4
       </label>
     </span>
   </span>
   <label class="checkbox-inline control-label" for="enableCount" style="margin-left: 20px">
     <input type="checkbox" id="enableCount" data-test="enable-count" checked.bind="isCountEnabled"
-           onclick.delegate="changeCountEnableFlag()">
+      onclick.delegate="changeCountEnableFlag()">
     <span style="font-weight: bold">Enable Count</span> (add to OData query)
   </label>
 </div>
@@ -63,7 +63,5 @@
   </div>
 </div>
 
-<div class="demo-container">
-  <div class="grid9">
-  </div>
+<div class="grid9">
 </div>

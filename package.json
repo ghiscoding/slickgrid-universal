@@ -30,6 +30,8 @@
       "**/mochawesome/**",
       "**/mocha",
       "**/mocha/**",
+      "**/jest",
+      "**/jest/**",
       "**/cypress",
       "**/cypress/**"
     ]

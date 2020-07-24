@@ -48,6 +48,8 @@ utilities.refreshBackendDataset = mockRefreshBackendDataset;
 // @ts-ignore
 utilities.onBackendError = mockBackendError;
 
+const DATAGRID_FOOTER_HEIGHT = 25;
+const DATAGRID_PAGINATION_HEIGHT = 35;
 declare const Slick: any;
 jest.mock('flatpickr', () => { });
 
@@ -225,6 +227,7 @@ const mockGrid = {
   getColumns: jest.fn(),
   getEditorLock: () => mockGetEditorLock,
   getUID: () => 'slickgrid_12345',
+  getContainerNode: jest.fn(),
   getOptions: jest.fn(),
   getSelectionModel: jest.fn(),
   getScrollbarDimensions: jest.fn(),
@@ -233,6 +236,7 @@ const mockGrid = {
   resizeCanvas: jest.fn(),
   setColumns: jest.fn(),
   setHeaderRowVisibility: jest.fn(),
+  setOptions: jest.fn(),
   setSelectedRows: jest.fn(),
   onRendered: jest.fn(),
   onScroll: jest.fn(),
@@ -242,9 +246,10 @@ const mockGrid = {
 const mockSlickCoreImplementation = jest.fn().mockImplementation(() => mockSlickCore);
 const mockDataViewImplementation = jest.fn().mockImplementation(() => mockDataView);
 const mockGroupItemMetaProviderImplementation = jest.fn().mockImplementation(() => mockGroupItemMetaProvider);
-const mockResizerImplementation = jest.fn().mockImplementation(() => mockResizerExtension);
 const mockGridImplementation = jest.fn().mockImplementation(() => mockGrid);
 const mockDraggableGroupingImplementation = jest.fn().mockImplementation(() => mockDraggableGroupingExtension);
+const mockResizerImplementation = jest.fn().mockImplementation(() => mockResizerExtension);
+
 
 describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () => {
   jest.mock('slickgrid/slick.core', () => mockSlickCoreImplementation);
@@ -255,6 +260,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
   Slick.EventHandler = mockSlickCoreImplementation;
   Slick.Data = { DataView: mockDataViewImplementation, GroupItemMetadataProvider: mockGroupItemMetaProviderImplementation };
   Slick.DraggableGrouping = mockDraggableGroupingImplementation;
+  // Slick.Plugins = { Resizer: mockResizerImplementation };
 
   let component: SlickVanillaGridBundle;
   let divContainer: HTMLDivElement;
@@ -282,7 +288,17 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     divContainer.appendChild(cellDiv);
     document.body.appendChild(divContainer);
     columnDefinitions = [{ id: 'name', field: 'name' }];
-    gridOptions = { enableExcelExport: false, dataView: null } as GridOption;
+    gridOptions = {
+      enableExcelExport: false,
+      dataView: null,
+      autoResize: {
+        bottomPadding: 45,
+        calculateAvailableSizeBy: 'window',
+        minHeight: 180,
+        minWidth: 300,
+        rightPadding: 0,
+      },
+    } as GridOption;
     sharedService = new SharedService();
     translateService = new TranslateServiceStub();
     eventPubSubService = new EventPubSubService(divContainer);
@@ -311,7 +327,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
   });
 
   afterEach(() => {
-    component.dispose();
+    component?.dispose();
   });
 
   it('should make sure SlickVanillaGridBundle is defined', () => {
@@ -412,6 +428,98 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(autosizeSpy).not.toHaveBeenCalled();
         expect(refreshSpy).toHaveBeenCalledWith(mockData);
       });
+    });
+
+    describe('options changed', () => {
+      beforeEach(() => {
+        jest.clearAllMocks();
+        sharedService.grid = mockGrid as unknown as SlickGrid;
+        sharedService.gridOptions = gridOptions;
+      });
+
+      afterEach(() => {
+        mockGrid.getOptions = jest.fn();
+        jest.spyOn(mockGrid, 'getOptions').mockReturnValue(gridOptions);
+      });
+
+      it('should merge grid options with global options when slickgrid "getOptions" does not exist yet', () => {
+        mockGrid.getOptions = null;
+        const setOptionSpy = jest.spyOn(mockGrid, 'setOptions');
+        const sharedOptionSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'set');
+        const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
+
+        component.gridOptions = { autoCommitEdit: false, autoResize: null };
+        component.initialization(divContainer);
+        component.dataset = mockData;
+
+        expect(component.gridOptions.autoCommitEdit).toEqual(false);
+        // expect(component.gridOptions.autoResize.bottomPadding).toEqual(50 + DATAGRID_FOOTER_HEIGHT); // calculated by the lib
+        expect(setOptionSpy).toBeCalledWith(component.gridOptions);
+        expect(sharedOptionSpy).toBeCalledWith(component.gridOptions);
+      });
+
+      it('should merge grid options with global options and expect bottom padding to be calculated', () => {
+        mockGrid.getOptions = null;
+        const setOptionSpy = jest.spyOn(mockGrid, 'setOptions');
+        const sharedOptionSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'set');
+        const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
+
+        component.gridOptions = { autoCommitEdit: false, autoResize: null };
+        component.initialization(divContainer);
+        component.dataset = mockData;
+
+        expect(component.gridOptions.autoCommitEdit).toEqual(false);
+        expect(setOptionSpy).toBeCalledWith(component.gridOptions);
+        expect(sharedOptionSpy).toBeCalledWith(component.gridOptions);
+      });
+
+      it('should merge paginationOptions when some already exist', () => {
+        const mockPagination = { pageSize: 2, pageSizes: [] };
+        const paginationSrvSpy = jest.spyOn(paginationServiceStub, 'updateTotalItems');
+
+        component.paginationOptions = mockPagination;
+
+        expect(component.paginationOptions).toEqual({ ...mockPagination, totalItems: 0 });
+        expect(paginationSrvSpy).toHaveBeenCalledWith(0);
+      });
+
+      it('should set brand new paginationOptions when none previously exist', () => {
+        const mockPagination = { pageSize: 2, pageSizes: [], totalItems: 1 };
+        const paginationSrvSpy = jest.spyOn(paginationServiceStub, 'updateTotalItems');
+
+        component.paginationOptions = undefined;
+        component.paginationOptions = mockPagination;
+
+        expect(component.paginationOptions).toEqual(mockPagination);
+        expect(paginationSrvSpy).toHaveBeenCalledWith(1);
+      });
+    });
+
+    describe('resizer', () => {
+      beforeEach(() => {
+        jest.clearAllMocks();
+        sharedService.grid = mockGrid as unknown as SlickGrid;
+        sharedService.gridOptions = gridOptions;
+      });
+
+      it('should expect autoResize bottom padding to be added to default pagination padding', () => {
+        component.gridOptions = { autoCommitEdit: false, autoResize: { bottomPadding: 50 } };
+        component.initialization(divContainer);
+
+        expect(component.gridOptions.autoResize.bottomPadding).toEqual(50 + DATAGRID_FOOTER_HEIGHT); // calculated by the lib
+      });
+
+      // it('should set a fixed width when provided in the grid options', () => {
+      //   const fixedWidth = 255;
+      //   const resizerSpy = jest.spyOn(mockResizerExtension, 'resizeGrid');
+      //   jest.spyOn(mockGrid, 'getContainerNode').mockReturnValue(divContainer);
+
+      //   component.gridOptions = { autoCommitEdit: false, autoResize: { bottomPadding: 50 }, gridWidth: fixedWidth };
+      //   component.initialization(divContainer);
+
+      //   expect(divContainer.style.width).toEqual(`${fixedWidth}px`);
+      //   // expect(resizerSpy).toHaveBeenCalled();
+      // });
     });
 
     describe('with editors', () => {

@@ -208,7 +208,7 @@ export class SlickVanillaGridBundle {
     return this._paginationOptions;
   }
   set paginationOptions(options: Pagination | undefined) {
-    if (this._paginationOptions) {
+    if (options && this._paginationOptions) {
       this._paginationOptions = { ...this._paginationOptions, ...options };
     } else {
       this._paginationOptions = options;
@@ -455,7 +455,8 @@ export class SlickVanillaGridBundle {
     if (fixedGridDimensions?.width && this._gridParentContainerElm?.style) {
       this._gridParentContainerElm.style.width = `${fixedGridDimensions.width}px`;
     }
-    this.resizerService = new Slick.Plugins.Resizer(autoResizeOptions, fixedGridDimensions);
+
+    this.resizerService = new Slick.Plugins.Resizer({ ...autoResizeOptions, gridContainer: this._gridParentContainerElm }, fixedGridDimensions);
     this.slickGrid.registerPlugin<SlickResizer>(this.resizerService);
     if (this.gridOptions.enableAutoResize) {
       this.resizerService.resizeGrid()
@@ -558,7 +559,7 @@ export class SlickVanillaGridBundle {
       treeDataService: this.treeDataService,
     };
 
-    this._eventPubSubService.publish('onSlickerGridCreated', this._slickerGridInstances);
+    this._eventPubSubService.publish('onSlickerGridCreated', this.instances);
     this._isGridInitialized = true;
   }
 

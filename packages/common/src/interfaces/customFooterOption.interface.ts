@@ -1,14 +1,4 @@
 export interface CustomFooterOption {
-  /**
-   * Defaults to "width: calc(100% - ${gridOptions.autoResize.rightPadding}px)", CSS width of the Custom Footer element.
-   * The width is calculated by taking in consideration "autoResize.rightPadding" that might optionally be provided in the grid options
-   *
-   * IMPORTANT NOTE:
-   * This property is already used by the "width" calculation, which is the default CSS styling (width: calc(100% - {rightPadding})),
-   * If you want to use it for something else than the width then make sure to also include the width calculation inside that text styling
-   */
-  cssText?: string;
-
   /** Optionally pass some text to be displayed on the left side (in the "left-footer" css class) */
   leftFooterText?: string;
 
