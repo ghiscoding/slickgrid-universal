@@ -89,13 +89,6 @@ describe('Slick-Pagination Component', () => {
       expect(paginationElm).toBeTruthy();
     });
 
-    it('should deduct auto-resize right padding width when provided in the Grid Options', () => {
-      mockGridOptions.autoResize = { rightPadding: 15 };
-      component.renderPagination(div);
-
-      expect(component.cssText).toBe('width: calc(100% - 15px);');
-    });
-
     it('should create a the Slick-Pagination component in the DOM', () => {
       const pageInfoFromTo = document.querySelector('.page-info-from-to');
       const pageInfoTotalItems = document.querySelector('.page-info-total-items');

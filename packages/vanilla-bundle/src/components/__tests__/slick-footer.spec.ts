@@ -58,13 +58,6 @@ describe('Slick-Footer Component', () => {
       expect(footerContainerElm).toBeTruthy();
     });
 
-    it('should deduct auto-resize right padding width when provided in the Grid Options', () => {
-      mockGridOptions.autoResize = { rightPadding: 15 };
-      component.renderFooter(div);
-
-      expect(component.cssText).toBe('width: calc(100% - 15px);');
-    });
-
     it('should create a the Slick-Footer component in the DOM', () => {
       component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions, translateService);
       component.renderFooter(div);

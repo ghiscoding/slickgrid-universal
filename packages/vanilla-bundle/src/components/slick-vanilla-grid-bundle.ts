@@ -455,6 +455,11 @@ export class SlickVanillaGridBundle {
     if (fixedGridDimensions?.width && this._gridParentContainerElm?.style) {
       this._gridParentContainerElm.style.width = `${fixedGridDimensions.width}px`;
     }
+
+    // add the gridContainer element selector so that it's also resized at the same time as the page container
+    const gridContainerSelector = this._gridParentContainerElm.id || `.${Array.from(this._gridParentContainerElm.classList).join('.')}`;
+    autoResizeOptions.gridContainer = gridContainerSelector;
+
     this.resizerService = new Slick.Plugins.Resizer(autoResizeOptions, fixedGridDimensions);
     this.slickGrid.registerPlugin<SlickResizer>(this.resizerService);
     if (this.gridOptions.enableAutoResize) {
