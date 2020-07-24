@@ -5,14 +5,16 @@ export interface ResizerOption {
   /** bottom padding of the grid in pixels */
   bottomPadding?: number;
 
-  /** Page Container selector, for example '.page-container' or '#page-container' */
+  /** Page Container selector, for example '.page-container' or '#page-container', basically what element in the page will be used to calculate the available space */
   container?: string;
 
   /**
-   * Grid Container selector, for example '.myGrid' or '#myGrid', typically contain the grid and/or a footer/pagination inside the same grid container
-   * Optional but if it's provided then it will also be resized at the same size as the grid (useful when adding a custom footer/pagination)
+   * Grid Container selector, for example '.myGrid' or '#myGrid', this is provided by the lib internally.
+   *
+   * Optional but when provided it will be resized with same size as the grid (typically a container holding the grid and extra custom footer/pagination)
+   * This is useful when you want the footer/pagination to be exactly the same width as the grid (this lib takes care of it internally)
    */
-  gridContainer?: string;
+  gridContainer?: string | HTMLElement;
 
   /** maximum height (pixels) of the grid */
   maxHeight?: number;
