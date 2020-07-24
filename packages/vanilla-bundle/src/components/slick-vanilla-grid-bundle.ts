@@ -208,7 +208,7 @@ export class SlickVanillaGridBundle {
     return this._paginationOptions;
   }
   set paginationOptions(options: Pagination | undefined) {
-    if (this._paginationOptions) {
+    if (options && this._paginationOptions) {
       this._paginationOptions = { ...this._paginationOptions, ...options };
     } else {
       this._paginationOptions = options;
@@ -559,7 +559,7 @@ export class SlickVanillaGridBundle {
       treeDataService: this.treeDataService,
     };
 
-    this._eventPubSubService.publish('onSlickerGridCreated', this._slickerGridInstances);
+    this._eventPubSubService.publish('onSlickerGridCreated', this.instances);
     this._isGridInitialized = true;
   }
 
