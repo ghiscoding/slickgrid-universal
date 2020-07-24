@@ -30,7 +30,7 @@ import {
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import * as utilities from '@slickgrid-universal/common/dist/commonjs/services/backend-utilities';
 
-import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle';
+import { SlickVanillaGridBundle, SlickVanillaGridBundleInitializer } from '../slick-vanilla-grid-bundle';
 import { EventPubSubService } from '../../services/eventPubSub.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { HttpStub } from '../../../../../test/httpClientStub';
@@ -288,8 +288,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     eventPubSubService = new EventPubSubService(divContainer);
     jest.spyOn(mockGrid, 'getOptions').mockReturnValue(gridOptions);
 
-    component = new SlickVanillaGridBundle(divContainer, columnDefinitions, gridOptions, [], null);
-    component.constructorDependenciesAssignment(
+    component = new SlickVanillaGridBundleInitializer(
       collectionServiceStub,
       eventPubSubService,
       extensionServiceStub,
@@ -304,6 +303,10 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       sortServiceStub,
       treeDataServiceStub,
       translateService as unknown as TranslaterService,
+      divContainer,
+      columnDefinitions,
+      gridOptions,
+      [],
     );
   });
 

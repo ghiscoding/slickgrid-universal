@@ -80,6 +80,7 @@ const DATAGRID_FOOTER_HEIGHT = 25;
 const DATAGRID_PAGINATION_HEIGHT = 35;
 
 export class SlickVanillaGridBundle {
+  protected _eventPubSubService: EventPubSubService;
   private _columnDefinitions: Column[];
   private _gridOptions: GridOption;
   private _dataset: any[];
@@ -91,7 +92,6 @@ export class SlickVanillaGridBundle {
   private _isLocalGrid = true;
   private _isPaginationInitialized = false;
   private _eventHandler: SlickEventHandler = new Slick.EventHandler();
-  private _eventPubSubService: EventPubSubService;
   private _paginationOptions: Pagination | undefined;
   private _slickgridInitialized = false;
   private _intervalId: NodeJS.Timeout;
@@ -249,18 +249,6 @@ export class SlickVanillaGridBundle {
     this.translaterService = this._gridOptions.i18n;
 
     // initialize and assign all Service Dependencies
-    this.constructorDependenciesInit(gridParentContainerElm);
-
-    if (hierarchicalDataset) {
-      this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
-    }
-    this.initialization(this._gridContainerElm);
-    if (!hierarchicalDataset && !this.gridOptions.backendServiceApi) {
-      this.dataset = dataset || [];
-    }
-  }
-
-  constructorDependenciesInit(gridParentContainerElm: HTMLElement) {
     this._eventPubSubService = new EventPubSubService(gridParentContainerElm);
     this._eventPubSubService.eventNamingStyle = this._gridOptions && this._gridOptions.eventNamingStyle || EventNamingStyle.camelCase;
 
@@ -310,40 +298,14 @@ export class SlickVanillaGridBundle {
       this.translaterService,
     );
     this.groupingService = new GroupingAndColspanService(this.extensionUtility, this.extensionService);
-  }
 
-  constructorDependenciesAssignment(
-    collectionService: CollectionService,
-    eventPubSubService: EventPubSubService,
-    extensionService: ExtensionService,
-    extensionUtility: ExtensionUtility,
-    filterService: FilterService,
-    gridEventService: GridEventService,
-    gridService: GridService,
-    gridStateService: GridStateService,
-    groupingAndColspanService: GroupingAndColspanService,
-    paginationService: PaginationService,
-    sharedService: SharedService,
-    sortService: SortService,
-    treeDataService: TreeDataService,
-    translateService?: TranslaterService,
-  ) {
-    this._eventPubSubService = eventPubSubService;
-    this._eventPubSubService.eventNamingStyle = this._gridOptions && this._gridOptions.eventNamingStyle || EventNamingStyle.camelCase;
-
-    this.collectionService = collectionService;
-    this.extensionService = extensionService;
-    this.extensionUtility = extensionUtility;
-    this.filterService = filterService;
-    this.gridEventService = gridEventService;
-    this.gridService = gridService;
-    this.gridStateService = gridStateService;
-    this.groupingService = groupingAndColspanService;
-    this.paginationService = paginationService;
-    this.sharedService = sharedService;
-    this.sortService = sortService;
-    this.translaterService = translateService;
-    this.treeDataService = treeDataService;
+    if (hierarchicalDataset) {
+      this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
+    }
+    this.initialization(this._gridContainerElm);
+    if (!hierarchicalDataset && !this.gridOptions.backendServiceApi) {
+      this.dataset = dataset || [];
+    }
   }
 
   destroyGridContainerElm() {
@@ -1248,5 +1210,46 @@ export class SlickVanillaGridBundle {
         columnRef.internalColumnEditor = column.editor as ColumnEditor;
       }
     }
+  }
+}
+
+/** This class is only for unit testing purposes */
+export class SlickVanillaGridBundleInitializer extends SlickVanillaGridBundle {
+  constructor(
+    collectionService: CollectionService,
+    eventPubSubService: EventPubSubService,
+    extensionService: ExtensionService,
+    extensionUtility: ExtensionUtility,
+    filterService: FilterService,
+    gridEventService: GridEventService,
+    gridService: GridService,
+    gridStateService: GridStateService,
+    groupingAndColspanService: GroupingAndColspanService,
+    paginationService: PaginationService,
+    sharedService: SharedService,
+    sortService: SortService,
+    treeDataService: TreeDataService,
+    translateService: TranslaterService,
+    gridParentContainerElm: HTMLElement,
+    columnDefs?: Column[],
+    options?: GridOption,
+    dataset?: any[],
+    hierarchicalDataset?: any[],
+  ) {
+    super(gridParentContainerElm, columnDefs, options, dataset, hierarchicalDataset);
+    this.collectionService = collectionService;
+    this._eventPubSubService = eventPubSubService;
+    this.extensionService = extensionService;
+    this.extensionUtility = extensionUtility;
+    this.filterService = filterService;
+    this.gridEventService = gridEventService;
+    this.gridService = gridService;
+    this.gridStateService = gridStateService;
+    this.groupingService = groupingAndColspanService;
+    this.paginationService = paginationService;
+    this.sharedService = sharedService;
+    this.sortService = sortService;
+    this.treeDataService = treeDataService;
+    this.translaterService = translateService;
   }
 }

@@ -1,4 +1,4 @@
-import { PubSubService, TranslaterService, TranslateServiceEventName } from '../packages/common';
+import { PubSubService, TranslaterService, TranslateServiceEventName } from '@slickgrid-universal/common';
 
 export class TranslateServiceStub implements TranslaterService {
   eventName = 'onLanguageChange' as TranslateServiceEventName;
