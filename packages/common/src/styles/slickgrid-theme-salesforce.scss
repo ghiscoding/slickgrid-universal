@@ -63,6 +63,8 @@ $checkbox-selector-icon-unchecked:      url('data:image/svg+xml,<svg xmlns="http
 $checkbox-selector-opacity:             1 !default;
 $checkbox-selector-opacity-hover:       0.9 !default;
 $cell-menu-icon-margin-right:           6px !default;
+$cell-menu-close-btn-height:            14px !default;
+$cell-menu-close-btn-margin:            -8px 1px 1px 1px !default;
 $column-picker-checkbox-color:          $primary-color !default;
 $column-picker-checkbox-size:           $icon-width !default;
 $column-picker-checkbox-font-weight:    normal !default;
@@ -129,7 +131,7 @@ $editor-focus-box-shadow:               0 0 3px $primary-color !default;
 $slider-editor-height:                  24px !default;
 $slider-filter-thumb-color:             #3C97DD !default;
 $slider-filter-runnable-track-bgcolor:  #ECEBEA !default;
-$row-selected-color:                    darken($cell-odd-background-color, 1%) !default;
+$row-selected-color:                    darken($cell-odd-background-color, 2%) !default;
 $row-mouse-hover-color:                 $cell-odd-background-color !default;
 $row-mouse-hover-box-shadow:            0 0 0 2px #dddbda !default;
 $detail-view-icon-collapse-color:       $primary-color !default;
@@ -172,16 +174,20 @@ $editable-field-hover-icon-margin-right: 2px !default;
 $editable-field-hover-icon-margin-top: 8px !default;
 $editable-field-hover-icon-width: 14px !default;
 
-.editable-field {
-  background-color: $editable-field-bg-color !important;
-  &:hover:after {
-    content: $editable-field-hover-icon;
-    position: absolute;
-    top: $editable-field-hover-icon-margin-top;
-    right: $editable-field-hover-icon-margin-right;
-    width: $editable-field-hover-icon-width;
-  }
-  &.active:hover:after {
-    content: none;
+.grid-canvas {
+  .slick-row, .slick-row.odd {
+    .slick-cell.editable-field, .slick-cell.selected.editable-field {
+      background-color: $editable-field-bg-color;
+      &:hover:after {
+        content: $editable-field-hover-icon;
+        position: absolute;
+        top: $editable-field-hover-icon-margin-top;
+        right: $editable-field-hover-icon-margin-right;
+        width: $editable-field-hover-icon-width;
+      }
+      &.active:hover:after {
+        content: none;
+      }
+    }
   }
 }

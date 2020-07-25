@@ -12,6 +12,7 @@ import {
   SlickDataView,
   SlickDraggableGrouping,
   SlickGrid,
+  SlickNamespace,
   SlickerGridInstance,
   SortComparers,
   SortDirectionNumber,
@@ -23,22 +24,8 @@ import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
 import './example03.scss';
 
-// you can create custom validator to pass to an inline editor
-const myCustomTitleValidator = (value, args) => {
-  if (value === null || value === undefined || !value.length) {
-    return { valid: false, msg: 'This is a required field' };
-  } else if (!/^Task\s\d+$/.test(value)) {
-    return { valid: false, msg: 'Your title is invalid, it must start with "Task" followed by a number' };
-  }
-  return { valid: true, msg: '' };
-};
-
-const customEditableInputFormatter = (row, cell, value, columnDef, dataContext, grid) => {
-  const gridOptions = grid && grid.getOptions && grid.getOptions();
-  const isEditableLine = gridOptions.editable && columnDef.editor;
-  value = (value === null || value === undefined) ? '' : value;
-  return isEditableLine ? { text: value, addClasses: 'editable-field', toolTip: 'Click to Edit' } : value;
-};
+// using external SlickGrid JS libraries
+declare const Slick: SlickNamespace;
 
 interface ReportItem {
   title: string;
@@ -56,7 +43,7 @@ export class Example3 {
   dataset: any[];
   dataViewObj: SlickDataView;
   gridObj: SlickGrid;
-  commandQueue = [];
+  editCommandQueue = [];
   sgb: SlickVanillaGridBundle;
   slickerGridInstance: SlickerGridInstance;
   durationOrderByCount = false;
@@ -84,12 +71,10 @@ export class Example3 {
     this.columnDefinitions = [
       {
         id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,
-        formatter: customEditableInputFormatter,
         editor: {
           model: Editors.longText,
           required: true,
           alwaysSaveOnEnterKey: true,
-          validator: myCustomTitleValidator, // use a custom validator
         },
         filterable: true,
         grouping: {
@@ -102,7 +87,6 @@ export class Example3 {
       },
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
-        formatter: customEditableInputFormatter,
         editor: {
           model: Editors.float,
           // required: true,
@@ -131,7 +115,7 @@ export class Example3 {
         filterable: true,
         // filter: { model: Filters.compoundInput },
         // formatter: Formatters.dollar,
-        formatter: Formatters.multiple, params: { formatters: [Formatters.dollar, customEditableInputFormatter,] },
+        formatter: Formatters.dollar,
         groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
         type: FieldType.number,
         grouping: {
@@ -146,7 +130,6 @@ export class Example3 {
       },
       {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
-        formatter: customEditableInputFormatter,
         editor: {
           model: Editors.slider,
           minValue: 0,
@@ -172,7 +155,7 @@ export class Example3 {
         // formatter: Formatters.dateIso,
         type: FieldType.date, outputType: FieldType.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },
-        formatter: Formatters.multiple, params: { formatters: [Formatters.dateIso, customEditableInputFormatter,] },
+        formatter: Formatters.dateIso,
         editor: { model: Editors.date },
         grouping: {
           getter: 'start',
@@ -189,7 +172,7 @@ export class Example3 {
         editor: { model: Editors.date, editorOptions: { minDate: 'today' }, },
         // formatter: Formatters.dateIso,
         type: FieldType.date, outputType: FieldType.dateIso,
-        formatter: Formatters.multiple, params: { formatters: [Formatters.dateIso, customEditableInputFormatter,] },
+        formatter: Formatters.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },
         grouping: {
           getter: 'finish',
@@ -325,9 +308,8 @@ export class Example3 {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,
       },
-      alwaysShowVerticalScroll: false, // disable scroll since we don't want it to show on the left pinned columns
       editCommandHandler: (item, column, editCommand) => {
-        this.commandQueue.push(editCommand);
+        this.editCommandQueue.push(editCommand);
         editCommand.execute();
       },
       // when using the cellMenu, you can change some of the default options and all use some of the callback methods
@@ -346,12 +328,6 @@ export class Example3 {
         },
       },
     };
-  }
-
-  changeGridToReadOnly() {
-    // change a single grid options to make the grid non-editable (readonly)
-    this.sgb.gridOptions = { editable: false };
-    this.gridOptions = this.sgb.gridOptions;
   }
 
   loadData(count: number) {
@@ -529,6 +505,14 @@ export class Example3 {
           this.slickerGridInstance.gridService.deleteItemById(dataContext.id);
         }
         break;
+    }
+  }
+
+  undo() {
+    const command = this.editCommandQueue.pop();
+    if (command && Slick.GlobalEditorLock.cancelCurrentEdit()) {
+      command.undo();
+      this.gridObj.gotoCell(command.row, command.cell, false);
     }
   }
 }

@@ -1,0 +1,33 @@
+<h3 class="title is-3">
+  Example 11 - Queued Editing
+  <span class="subtitle">(with Salesforce Theme)</span>
+</h3>
+
+<section>
+  <div class="row">
+    <button class="button is-small" onclick.delegate="toggleGridEditReadonly()">
+      <span class="icon mdi mdi-table-edit"></span>
+      <span>Toggle Edit/Readonly Grid</span>
+    </button>
+    <button class="button is-small" onclick.delegate="undoLastEdit()">
+      <span class="icon mdi mdi-undo"></span>
+      <span>Undo Last Edit</span>
+    </button>
+    <button class="button is-small" onclick.delegate="undoLastEdit(true)">
+      <span class="icon mdi mdi-undo"></span>
+      <span>Undo Last Edit &amp; Open Editor</span>
+    </button>
+    <button class="button is-small" onclick.delegate="undoAllEdits()">
+      <span class="icon mdi mdi-history"></span>
+      <span>Undo All Edits</span>
+    </button>
+    <button class="button is-small is-info" onclick.delegate="saveAll()">
+      <span>Save All</span>
+    </button>
+  </div>
+</section>
+
+<br>
+
+<div class="grid3">
+</div>
