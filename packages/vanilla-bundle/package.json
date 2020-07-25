@@ -9,10 +9,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "files": [
-    "src",
-    "dist"
-  ],
+  "directories": {
+    "src": "src"
+  },
   "scripts": {
     "test": "echo testing slickgrid-universal slickgrid-vanilla-bundle code",
     "dev": "webpack --env.development",
