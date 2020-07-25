@@ -20,11 +20,11 @@ Thanks for filing a Feature Request! However, before you submit, please read the
 
 ### Your Environment
 <!--- Include as many relevant details as possible about the library versions -->
-| Software             | Version(s) |
-| -------------------- | ---------- |
+| Software               | Version(s) |
+| --------------------- | ---------- |
 | Slickgrid-Universal  | x.y        |
-| TypeScript           | x.y        |
-| Package Name         | x.y        |
+| TypeScript               | x.y        |
+| Package Name        | x.y        |
 
 ### Describe the Bug
 <!-- REQUIRED - could you explain a bit what the Bug is -->

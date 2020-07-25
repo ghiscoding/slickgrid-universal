@@ -159,3 +159,5 @@ yarn run test:watch
 - [x] The Pagination/Footer width is a little off sometime compare to the width of the grid container
 - [ ] See if we can make all vanilla-grid-bundle services as readonly
 - [ ] Check why `DOM Purify` doesn't work in SF
+- [ ] Move resizer code into Service 
+- [ ] See if we can get all the `instances` as `readonly` class members
