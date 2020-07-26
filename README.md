@@ -114,7 +114,7 @@ yarn run test:watch
   - [x] Grid Menu
   - [x] Header Button
   - [x] Header Menu
-  - [ ] Resizer
+  - [x] Resizer
   - [ ] Row Detail
   - [x] Row Move Manager
   - [x] Row Selection
@@ -157,7 +157,5 @@ yarn run test:watch
 - [x] Copy cell text (context menu) doesn't work in SF
 - [x] Remove all Services init method 2nd argument (we can get DataView directly from the Grid object)
 - [x] The Pagination/Footer width is a little off sometime compare to the width of the grid container
-- [ ] See if we can make all vanilla-grid-bundle services as readonly
 - [ ] Check why `DOM Purify` doesn't work in SF
-- [ ] Move resizer code into Service 
-- [ ] See if we can get all the `instances` as `readonly` class members
+- [ ] See if we can get all the vanilla-grid-bundle `instances` as `readonly` class members

@@ -9,7 +9,6 @@ import {
   ExtensionService,
   ExtensionUtility,
   Filters,
-  FileExportService,
   FilterService,
   GridEventService,
   GridOption,
@@ -34,6 +33,8 @@ import { SlickVanillaGridBundle, SlickVanillaGridBundleInitializer } from '../sl
 import { EventPubSubService } from '../../services/eventPubSub.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { HttpStub } from '../../../../../test/httpClientStub';
+import { FileExportService } from '../../services/fileExport.service';
+jest.mock('../../services/fileExport.service');
 
 const mockExecuteBackendProcess = jest.fn();
 const mockRefreshBackendDataset = jest.fn();
@@ -50,11 +51,6 @@ utilities.onBackendError = mockBackendError;
 
 declare const Slick: any;
 jest.mock('flatpickr', () => { });
-
-const fileExportServiceStub = {
-  init: jest.fn(),
-  dispose: jest.fn(),
-} as unknown as FileExportService;
 
 const extensionServiceStub = {
   bindDifferentExtensions: jest.fn(),
@@ -181,6 +177,7 @@ const mockDataView = {
   mapRowsToIds: jest.fn(),
   onSetItemsCalled: jest.fn(),
   onRowsChanged: new Slick.Event(),
+  onRowCountChanged: new Slick.Event(),
   reSort: jest.fn(),
   setItems: jest.fn(),
   syncGridSelection: jest.fn(),
@@ -704,24 +701,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         expect(syncSpy).toHaveBeenCalledWith(component.slickGrid, false);
       });
-
-      it('should bind local filter when "enableFiltering" is set', () => {
-        const bindLocalSpy = jest.spyOn(filterServiceStub, 'bindLocalOnFilter');
-
-        component.gridOptions = { enableFiltering: true } as GridOption;
-        component.initialization(divContainer);
-
-        expect(bindLocalSpy).toHaveBeenCalledWith(mockGrid);
-      });
-
-      it('should bind local sort when "enableSorting" is set', () => {
-        const bindLocalSpy = jest.spyOn(sortServiceStub, 'bindLocalOnSort');
-
-        component.gridOptions = { enableSorting: true } as GridOption;
-        component.initialization(divContainer);
-
-        expect(bindLocalSpy).toHaveBeenCalledWith(mockGrid);
-      });
     });
 
     describe('flag checks', () => {
@@ -767,14 +746,13 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(spy).toHaveBeenCalled();
       });
 
-      xit('should initialize ExportService when "enableExport" is set when using Salesforce', () => {
-        // might need to mock implementation
-        const spy = jest.spyOn(fileExportServiceStub, 'init');
-
+      it('should initialize ExportService when "enableExport" is set when using Salesforce', () => {
         component.gridOptions = { enableExport: true, useSalesforceDefaultGridOptions: true } as GridOption;
         component.initialization(divContainer);
 
-        expect(spy).toHaveBeenCalled();
+        expect(FileExportService).toHaveBeenCalled();
+        expect(component.registeredServices.length).toBe(3); // FileExportService, GridService, GridStateService
+        expect(component.registeredServices[0] instanceof FileExportService).toBeTrue();
       });
 
       it('should destroy customElement and its DOM element when requested', () => {
@@ -784,6 +762,24 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.dispose(true);
 
         expect(spy).toHaveBeenCalledWith();
+      });
+
+      it('should bind local filter when "enableFiltering" is set', () => {
+        const bindLocalSpy = jest.spyOn(filterServiceStub, 'bindLocalOnFilter');
+
+        component.gridOptions = { enableFiltering: true } as GridOption;
+        component.initialization(divContainer);
+
+        expect(bindLocalSpy).toHaveBeenCalledWith(mockGrid);
+      });
+
+      it('should bind local sort when "enableSorting" is set', () => {
+        const bindLocalSpy = jest.spyOn(sortServiceStub, 'bindLocalOnSort');
+
+        component.gridOptions = { enableSorting: true } as GridOption;
+        component.initialization(divContainer);
+
+        expect(bindLocalSpy).toHaveBeenCalledWith(mockGrid);
       });
 
       it('should refresh a local grid and change pagination options pagination when a preset for it is defined in grid options', (done) => {

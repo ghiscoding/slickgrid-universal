@@ -90,6 +90,7 @@ export class SlickVanillaGridBundle {
   private _isPaginationInitialized = false;
   private _eventHandler: SlickEventHandler = new Slick.EventHandler();
   private _paginationOptions: Pagination | undefined;
+  private _registeredServices: any[] = [];
   private _slickgridInitialized = false;
   private _slickerGridInstances: SlickerGridInstance | undefined;
   backendServiceApi: BackendServiceApi | undefined;
@@ -221,6 +222,10 @@ export class SlickVanillaGridBundle {
 
   get instances(): SlickerGridInstance | undefined {
     return this._slickerGridInstances;
+  }
+
+  get registeredServices(): any[] {
+    return this._registeredServices;
   }
 
   constructor(gridParentContainerElm: HTMLElement, columnDefs?: Column[], options?: GridOption, dataset?: any[], hierarchicalDataset?: any[]) {
@@ -451,30 +456,30 @@ export class SlickVanillaGridBundle {
     this.gridEventService.bindOnClick(this.slickGrid);
 
     // get any possible Services that user want to register
-    const registeringServices: any[] = this.gridOptions.registerExternalServices || [];
+    this._registeredServices = this.gridOptions.registerExternalServices || [];
 
     // when using Salesforce, we want the Export to CSV always enabled without registering it
     if (this.gridOptions.enableExport && this.gridOptions.useSalesforceDefaultGridOptions) {
       const fileExportService = new FileExportService();
-      registeringServices.push(fileExportService);
+      this._registeredServices.push(fileExportService);
     }
 
     // at this point, we consider all the registered services as external services, anything else registered afterward aren't external
-    if (Array.isArray(registeringServices)) {
-      this.sharedService.externalRegisteredServices = registeringServices;
+    if (Array.isArray(this._registeredServices)) {
+      this.sharedService.externalRegisteredServices = this._registeredServices;
     }
 
     // push all other Services that we want to be registered
-    registeringServices.push(this.gridService, this.gridStateService);
+    this._registeredServices.push(this.gridService, this.gridStateService);
 
     // when using Grouping/DraggableGrouping/Colspan register its Service
     if (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping) {
-      registeringServices.push(this.groupingService);
+      this._registeredServices.push(this.groupingService);
     }
 
     if (this.gridOptions.enableTreeData) {
       // when using Tree Data View, register its Service
-      registeringServices.push(this.treeDataService);
+      this._registeredServices.push(this.treeDataService);
     }
 
     // when user enables translation, we need to translate Headers on first pass & subsequently in the bindDifferentHooks
@@ -490,8 +495,8 @@ export class SlickVanillaGridBundle {
 
     // bind & initialize all Services that were tagged as enable
     // register all services by executing their init method and providing them with the Grid object
-    if (Array.isArray(registeringServices)) {
-      for (const service of registeringServices) {
+    if (Array.isArray(this._registeredServices)) {
+      for (const service of this._registeredServices) {
         if (typeof service.init === 'function') {
           service.init(this.slickGrid, this.sharedService);
         }
