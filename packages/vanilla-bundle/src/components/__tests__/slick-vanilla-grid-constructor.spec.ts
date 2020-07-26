@@ -48,8 +48,6 @@ utilities.refreshBackendDataset = mockRefreshBackendDataset;
 // @ts-ignore
 utilities.onBackendError = mockBackendError;
 
-const DATAGRID_FOOTER_HEIGHT = 25;
-const DATAGRID_PAGINATION_HEIGHT = 35;
 declare const Slick: any;
 jest.mock('flatpickr', () => { });
 
@@ -194,18 +192,6 @@ const mockDraggableGroupingExtension = {
   destroy: jest.fn(),
 };
 
-const mockResizerExtension = {
-  constructor: jest.fn(),
-  init: jest.fn(),
-  destroy: jest.fn(),
-  bindAutoResizeDataGrid: jest.fn(),
-  getLastResizeDimensions: jest.fn(),
-  pauseResizer: jest.fn(),
-  resizeGrid: jest.fn(),
-  onGridAfterResize: new Slick.Event(),
-  onGridBeforeResize: new Slick.Event(),
-};
-
 const mockSlickCore = {
   handlers: [],
   subscribe: jest.fn(),
@@ -248,19 +234,16 @@ const mockDataViewImplementation = jest.fn().mockImplementation(() => mockDataVi
 const mockGroupItemMetaProviderImplementation = jest.fn().mockImplementation(() => mockGroupItemMetaProvider);
 const mockGridImplementation = jest.fn().mockImplementation(() => mockGrid);
 const mockDraggableGroupingImplementation = jest.fn().mockImplementation(() => mockDraggableGroupingExtension);
-const mockResizerImplementation = jest.fn().mockImplementation(() => mockResizerExtension);
 
 
 describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () => {
   jest.mock('slickgrid/slick.core', () => mockSlickCoreImplementation);
   jest.mock('slickgrid/slick.grid', () => mockGridImplementation);
   jest.mock('slickgrid/plugins/slick.draggablegrouping', () => mockDraggableGroupingImplementation);
-  jest.mock('slickgrid/plugins/slick.resizer', () => mockResizerImplementation);
   Slick.Grid = mockGridImplementation;
   Slick.EventHandler = mockSlickCoreImplementation;
   Slick.Data = { DataView: mockDataViewImplementation, GroupItemMetadataProvider: mockGroupItemMetaProviderImplementation };
   Slick.DraggableGrouping = mockDraggableGroupingImplementation;
-  // Slick.Plugins = { Resizer: mockResizerImplementation };
 
   let component: SlickVanillaGridBundle;
   let divContainer: HTMLDivElement;
@@ -493,33 +476,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(component.paginationOptions).toEqual(mockPagination);
         expect(paginationSrvSpy).toHaveBeenCalledWith(1);
       });
-    });
-
-    describe('resizer', () => {
-      beforeEach(() => {
-        jest.clearAllMocks();
-        sharedService.grid = mockGrid as unknown as SlickGrid;
-        sharedService.gridOptions = gridOptions;
-      });
-
-      it('should expect autoResize bottom padding to be added to default pagination padding', () => {
-        component.gridOptions = { autoCommitEdit: false, autoResize: { bottomPadding: 50 } };
-        component.initialization(divContainer);
-
-        expect(component.gridOptions.autoResize.bottomPadding).toEqual(50 + DATAGRID_FOOTER_HEIGHT); // calculated by the lib
-      });
-
-      // it('should set a fixed width when provided in the grid options', () => {
-      //   const fixedWidth = 255;
-      //   const resizerSpy = jest.spyOn(mockResizerExtension, 'resizeGrid');
-      //   jest.spyOn(mockGrid, 'getContainerNode').mockReturnValue(divContainer);
-
-      //   component.gridOptions = { autoCommitEdit: false, autoResize: { bottomPadding: 50 }, gridWidth: fixedWidth };
-      //   component.initialization(divContainer);
-
-      //   expect(divContainer.style.width).toEqual(`${fixedWidth}px`);
-      //   // expect(resizerSpy).toHaveBeenCalled();
-      // });
     });
 
     describe('with editors', () => {

@@ -15,7 +15,7 @@ import {
   SlickRowDetailView,
   SlickRowMoveManager,
   SlickRowSelectionModel,
-} from '../interfaces';
+} from '../interfaces/index';
 
 export type SlickPluginList =
   SlickAutoTooltips |

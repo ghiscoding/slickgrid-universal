@@ -8,11 +8,10 @@ import {
   SlickDataView,
   SlickGrid,
   SlickNamespace,
-  SlickerGridInstance,
   Formatter,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
@@ -69,6 +68,7 @@ export class Example3 {
     this.dataset = this.loadData(500);
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid3`);
 
+    gridContainerElm.addEventListener('ongridafterresize', (e) => console.log(e));
     gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
     gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
