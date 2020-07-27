@@ -159,3 +159,4 @@ yarn run test:watch
 - [x] The Pagination/Footer width is a little off sometime compare to the width of the grid container
 - [ ] Check why `DOM Purify` doesn't work in SF
 - [ ] See if we can get all the vanilla-grid-bundle `instances` as `readonly` class members
+- [ ] Draggable Grouping pre-header (dragging) is not working as intended

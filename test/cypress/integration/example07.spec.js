@@ -4,13 +4,6 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
   const GRID_ROW_HEIGHT = 45;
   const fullTitles = ['', '', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Completed'];
 
-  beforeEach(() => {
-    // create a console.log spy for later use
-    cy.window().then((win) => {
-      cy.spy(win.console, 'log');
-    });
-  });
-
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseExampleUrl')}/example07`);
     cy.get('h3').should('contain', 'Example 07 - Row Move & Row Selections');

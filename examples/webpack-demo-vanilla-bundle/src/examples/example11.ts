@@ -5,8 +5,6 @@ import {
   Filters,
   Formatters,
   GridOption,
-  SlickDataView,
-  SlickGrid,
   SlickNamespace,
   Formatter,
 } from '@slickgrid-universal/common';
@@ -15,7 +13,7 @@ import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid
 
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
-import './example03.scss';
+import './example11.scss';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -24,7 +22,7 @@ declare const Slick: SlickNamespace;
 const myCustomTitleValidator = (value, args) => {
   if (value === null || value === undefined || !value.length) {
     return { valid: false, msg: 'This is a required field' };
-  } else if (!/^Task\s\d+$/.test(value)) {
+  } else if (!/^task\s\d+$/i.test(value)) {
     return { valid: false, msg: 'Your title is invalid, it must start with "Task" followed by a number' };
   }
   return { valid: true, msg: '' };
@@ -40,38 +38,27 @@ const customEditableInputFormatter = (row, cell, value, columnDef, dataContext, 
   return isEditableLine ? { text: value, addClasses: cssClass, toolTip: 'Click to Edit' } : value;
 };
 
-interface ReportItem {
-  title: string;
-  duration: number;
-  cost: number;
-  percentComplete: number;
-  start: Date;
-  finish: Date;
-  effortDriven: boolean;
-}
-
 export class Example3 {
-  columnDefinitions: Column<ReportItem>[];
+  columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
-  dataViewObj: SlickDataView;
-  gridObj: SlickGrid;
   isGridEditable = true;
   editQueue = [];
   editedItems = {};
   sgb: SlickVanillaGridBundle;
-  slickerGridInstance: SlickerGridInstance;
   durationOrderByCount = false;
+
+  get slickerGridInstance(): SlickerGridInstance {
+    return this.sgb?.instances;
+  }
 
   attached() {
     this.initializeGrid();
     this.dataset = this.loadData(500);
-    const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid3`);
+    const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid11`);
 
-    gridContainerElm.addEventListener('ongridafterresize', (e) => console.log(e));
     gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
     gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
-    gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
@@ -90,6 +77,7 @@ export class Example3 {
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
         editor: { model: Editors.float, decimal: 2, valueStep: 1, maxValue: 10000, alwaysSaveOnEnterKey: true, },
+        formatter: (row, cell, value) => value > 1 ? `${value} days` : `${value} day`,
         params: { unsaved: false },
         type: FieldType.number,
       },
@@ -123,7 +111,7 @@ export class Example3 {
         filterable: true, filter: { model: Filters.compoundDate },
       },
       {
-        id: 'effortDriven', name: 'Effort Driven', field: 'effortDriven', width: 80, minWidth: 20, maxWidth: 100,
+        id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 20, maxWidth: 100,
         sortable: true, filterable: true,
         editor: { model: Editors.checkbox },
         filter: {
@@ -245,20 +233,21 @@ export class Example3 {
       const randomMonth = Math.floor(Math.random() * 11);
       const randomDay = Math.floor((Math.random() * 29));
       const randomFinish = new Date(randomFinishYear, (randomMonth + 1), randomDay);
+      const randomPercentComplete = Math.floor(Math.random() * 100) + 15; // make it over 15 for E2E testing purposes
 
       tmpArray[i] = {
         id: i,
         title: 'Task ' + i,
-        duration: Math.round(Math.random() * 100) + '',
-        percentComplete: Math.round(Math.random() * 100),
+        duration: Math.floor(Math.random() * 100) + 10,
+        percentComplete: randomPercentComplete > 100 ? 100 : randomPercentComplete,
         start: new Date(randomYear, randomMonth, randomDay),
-        finish: randomFinish < new Date() ? '' : randomFinish, // make sure the random date is earlier than today
+        finish: (randomFinish < new Date() || i < 3) ? '' : randomFinish, // make sure the random date is earlier than today and it's index is bigger than 3
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
-        effortDriven: (i % 5 === 0)
+        completed: (i % 5 === 0)
       };
 
-      if (i % 8) {
-        delete tmpArray[i].finish; // test with undefined properties
+      if (!(i % 8)) {
+        delete tmpArray[i].finish; // also test with undefined properties
       }
     }
     if (this.sgb) {
@@ -278,13 +267,6 @@ export class Example3 {
   handleItemDeleted(event) {
     const itemId = event && event.detail;
     console.log('item deleted with id:', itemId);
-  }
-
-  handleOnSlickerGridCreated(event) {
-    this.slickerGridInstance = event && event.detail;
-    this.gridObj = this.slickerGridInstance && this.slickerGridInstance.slickGrid;
-    this.dataViewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
-    console.log('handleOnSlickerGridCreated', this.slickerGridInstance);
   }
 
   executeCellMenuCommand(e, args) {
@@ -330,8 +312,16 @@ export class Example3 {
   }
 
   saveAll() {
+    // Edit Queue (array increases every time a cell is changed, regardless of item object)
     console.log(this.editQueue);
+
+    // Edit Items only keeps the merged data (an object with row index as the row properties)
+    // if you change 2 different cells on 2 different cells then this editedItems will only contain 1 property
+    // example: editedItems = { 0: { title: task 0, duration: 50, ... }}
+    // ...means that row index 0 got changed and the final merged object is { title: task 0, duration: 50, ... }
     console.log(this.editedItems);
+
+    // since we saved, we can now remove all the unsaved color styling and reset our array/object
     this.removeAllUnsavedStylingFromCell();
     this.editQueue = [];
     this.editedItems = {};
@@ -370,7 +360,7 @@ export class Example3 {
 
       // optionally open the last cell editor associated
       if (showLastEditor) {
-        this.gridObj.gotoCell(lastEditCommand.row, lastEditCommand.cell, false);
+        this.sgb?.slickGrid.gotoCell(lastEditCommand.row, lastEditCommand.cell, false);
       }
     }
   }
