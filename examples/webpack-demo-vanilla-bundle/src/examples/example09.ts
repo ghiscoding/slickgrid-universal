@@ -1,4 +1,4 @@
-import { Column, GridOption, Metrics, FieldType, Filters, OperatorType, GridStateChange, SlickGrid, PaginationService } from '@slickgrid-universal/common';
+import { Column, FieldType, Filters, GridOption, GridStateChange, Metrics, OperatorType, } from '@slickgrid-universal/common';
 import { GridOdataService, OdataServiceApi, OdataOption } from '@slickgrid-universal/odata';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';

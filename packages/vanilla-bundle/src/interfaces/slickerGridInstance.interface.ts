@@ -1,16 +1,20 @@
-import { BackendService, SlickDataView, SlickGrid, SlickResizer, } from './index';
-import { ExtensionUtility } from '../extensions';
 import {
+  BackendService,
   ExtensionService,
+  ExtensionUtility,
   FilterService,
-  GridService,
   GridEventService,
+  GridService,
   GridStateService,
   GroupingAndColspanService,
   PaginationService,
+  SlickDataView,
+  SlickGrid,
   SortService,
-  TreeDataService
-} from '../services';
+  TreeDataService,
+} from '@slickgrid-universal/common';
+import { ResizerService } from '../services/resizer.service';
+
 
 export interface SlickerGridInstance {
   /** Slick DataView object */
@@ -56,7 +60,7 @@ export interface SlickerGridInstance {
   paginationService: PaginationService;
 
   /** Resizer Service (including auto-resize) */
-  resizerService: SlickResizer;
+  resizerService: ResizerService;
 
   /** Sort Service */
   sortService: SortService;

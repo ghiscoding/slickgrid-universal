@@ -36,7 +36,7 @@ export class DraggableGroupingExtension implements Extension {
       // dynamically import the SlickGrid plugin (addon) with RequireJS
       this.extensionUtility.loadExtensionDynamically(ExtensionName.draggableGrouping);
 
-      if (!this._addon && gridOptions) {
+      if (!this._addon) {
         this._addon = new Slick.DraggableGrouping(gridOptions.draggableGrouping);
       }
       return this._addon;

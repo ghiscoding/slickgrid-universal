@@ -9,10 +9,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "files": [
-    "src",
-    "dist"
-  ],
+  "directories": {
+    "src": "src"
+  },
   "scripts": {
     "test": "echo testing slickgrid-universal slickgrid-vanilla-bundle code",
     "dev": "webpack --env.development",
@@ -53,13 +52,13 @@
   },
   "devDependencies": {
     "@types/webpack": "^4.41.21",
-    "archiver": "^4.0.2",
+    "archiver": "^5.0.0",
     "cross-env": "^7.0.2",
     "dts-bundle-webpack": "^1.0.2",
     "html-loader": "^1.1.0",
     "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.2",
     "ts-loader": "^8.0.1",
-    "webpack": "^4.43.0"
+    "webpack": "^4.44.0"
   }
 }

@@ -1,5 +1,5 @@
 import { ExtensionName } from '../../enums/index';
-import { Column, ExtensionModel, GridOption, SlickGrid, SlickColumnPicker } from '../../interfaces/index';
+import { Column, ExtensionModel, GridOption, SlickGrid, SlickHeaderMenu } from '../../interfaces/index';
 import {
   AutoTooltipExtension,
   CellExternalCopyManagerExtension,
@@ -18,7 +18,6 @@ import {
 } from '../../extensions';
 import { ExtensionService, SharedService } from '..';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { SlickHeaderMenu } from '../../../dist/es2015/interfaces';
 
 jest.mock('flatpickr', () => { });
 

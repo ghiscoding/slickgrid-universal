@@ -1,7 +1,7 @@
 import { GroupItemMetaProviderExtension } from '../groupItemMetaProviderExtension';
 import { SharedService } from '../../services/shared.service';
 import { SlickGrid } from '../../interfaces/slickGrid.interface';
-import { SlickNamespace } from '../../interfaces';
+import { SlickNamespace } from '../../interfaces/index';
 
 declare const Slick: SlickNamespace;
 

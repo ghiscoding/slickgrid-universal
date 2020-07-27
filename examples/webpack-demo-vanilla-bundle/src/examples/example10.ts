@@ -9,7 +9,6 @@ import {
   MultipleSelectOption,
   OperatorType,
   SortDirection,
-  SlickGrid,
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, } from '@slickgrid-universal/graphql';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';

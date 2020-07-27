@@ -10,13 +10,12 @@ import {
   GroupTotalFormatters,
   SlickDataView,
   SlickGrid,
-  SlickerGridInstance,
   SortComparers,
   SortDirectionNumber
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { FileExportService } from '@slickgrid-universal/file-export';
-import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
 import '../material-styles.scss';

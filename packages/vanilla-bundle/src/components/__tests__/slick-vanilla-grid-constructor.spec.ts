@@ -9,7 +9,6 @@ import {
   ExtensionService,
   ExtensionUtility,
   Filters,
-  FileExportService,
   FilterService,
   GridEventService,
   GridOption,
@@ -34,6 +33,8 @@ import { SlickVanillaGridBundle, SlickVanillaGridBundleInitializer } from '../sl
 import { EventPubSubService } from '../../services/eventPubSub.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { HttpStub } from '../../../../../test/httpClientStub';
+import { FileExportService } from '../../services/fileExport.service';
+jest.mock('../../services/fileExport.service');
 
 const mockExecuteBackendProcess = jest.fn();
 const mockRefreshBackendDataset = jest.fn();
@@ -48,15 +49,8 @@ utilities.refreshBackendDataset = mockRefreshBackendDataset;
 // @ts-ignore
 utilities.onBackendError = mockBackendError;
 
-const DATAGRID_FOOTER_HEIGHT = 25;
-const DATAGRID_PAGINATION_HEIGHT = 35;
 declare const Slick: any;
 jest.mock('flatpickr', () => { });
-
-const fileExportServiceStub = {
-  init: jest.fn(),
-  dispose: jest.fn(),
-} as unknown as FileExportService;
 
 const extensionServiceStub = {
   bindDifferentExtensions: jest.fn(),
@@ -183,6 +177,7 @@ const mockDataView = {
   mapRowsToIds: jest.fn(),
   onSetItemsCalled: jest.fn(),
   onRowsChanged: new Slick.Event(),
+  onRowCountChanged: new Slick.Event(),
   reSort: jest.fn(),
   setItems: jest.fn(),
   syncGridSelection: jest.fn(),
@@ -192,18 +187,6 @@ const mockDraggableGroupingExtension = {
   constructor: jest.fn(),
   init: jest.fn(),
   destroy: jest.fn(),
-};
-
-const mockResizerExtension = {
-  constructor: jest.fn(),
-  init: jest.fn(),
-  destroy: jest.fn(),
-  bindAutoResizeDataGrid: jest.fn(),
-  getLastResizeDimensions: jest.fn(),
-  pauseResizer: jest.fn(),
-  resizeGrid: jest.fn(),
-  onGridAfterResize: new Slick.Event(),
-  onGridBeforeResize: new Slick.Event(),
 };
 
 const mockSlickCore = {
@@ -248,19 +231,16 @@ const mockDataViewImplementation = jest.fn().mockImplementation(() => mockDataVi
 const mockGroupItemMetaProviderImplementation = jest.fn().mockImplementation(() => mockGroupItemMetaProvider);
 const mockGridImplementation = jest.fn().mockImplementation(() => mockGrid);
 const mockDraggableGroupingImplementation = jest.fn().mockImplementation(() => mockDraggableGroupingExtension);
-const mockResizerImplementation = jest.fn().mockImplementation(() => mockResizerExtension);
 
 
 describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () => {
   jest.mock('slickgrid/slick.core', () => mockSlickCoreImplementation);
   jest.mock('slickgrid/slick.grid', () => mockGridImplementation);
   jest.mock('slickgrid/plugins/slick.draggablegrouping', () => mockDraggableGroupingImplementation);
-  jest.mock('slickgrid/plugins/slick.resizer', () => mockResizerImplementation);
   Slick.Grid = mockGridImplementation;
   Slick.EventHandler = mockSlickCoreImplementation;
   Slick.Data = { DataView: mockDataViewImplementation, GroupItemMetadataProvider: mockGroupItemMetaProviderImplementation };
   Slick.DraggableGrouping = mockDraggableGroupingImplementation;
-  // Slick.Plugins = { Resizer: mockResizerImplementation };
 
   let component: SlickVanillaGridBundle;
   let divContainer: HTMLDivElement;
@@ -495,33 +475,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
     });
 
-    describe('resizer', () => {
-      beforeEach(() => {
-        jest.clearAllMocks();
-        sharedService.grid = mockGrid as unknown as SlickGrid;
-        sharedService.gridOptions = gridOptions;
-      });
-
-      it('should expect autoResize bottom padding to be added to default pagination padding', () => {
-        component.gridOptions = { autoCommitEdit: false, autoResize: { bottomPadding: 50 } };
-        component.initialization(divContainer);
-
-        expect(component.gridOptions.autoResize.bottomPadding).toEqual(50 + DATAGRID_FOOTER_HEIGHT); // calculated by the lib
-      });
-
-      // it('should set a fixed width when provided in the grid options', () => {
-      //   const fixedWidth = 255;
-      //   const resizerSpy = jest.spyOn(mockResizerExtension, 'resizeGrid');
-      //   jest.spyOn(mockGrid, 'getContainerNode').mockReturnValue(divContainer);
-
-      //   component.gridOptions = { autoCommitEdit: false, autoResize: { bottomPadding: 50 }, gridWidth: fixedWidth };
-      //   component.initialization(divContainer);
-
-      //   expect(divContainer.style.width).toEqual(`${fixedWidth}px`);
-      //   // expect(resizerSpy).toHaveBeenCalled();
-      // });
-    });
-
     describe('with editors', () => {
       it('should be able to load async editors with a regular Promise', (done) => {
         const mockCollection = ['male', 'female'];
@@ -748,24 +701,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         expect(syncSpy).toHaveBeenCalledWith(component.slickGrid, false);
       });
-
-      it('should bind local filter when "enableFiltering" is set', () => {
-        const bindLocalSpy = jest.spyOn(filterServiceStub, 'bindLocalOnFilter');
-
-        component.gridOptions = { enableFiltering: true } as GridOption;
-        component.initialization(divContainer);
-
-        expect(bindLocalSpy).toHaveBeenCalledWith(mockGrid);
-      });
-
-      it('should bind local sort when "enableSorting" is set', () => {
-        const bindLocalSpy = jest.spyOn(sortServiceStub, 'bindLocalOnSort');
-
-        component.gridOptions = { enableSorting: true } as GridOption;
-        component.initialization(divContainer);
-
-        expect(bindLocalSpy).toHaveBeenCalledWith(mockGrid);
-      });
     });
 
     describe('flag checks', () => {
@@ -811,14 +746,13 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(spy).toHaveBeenCalled();
       });
 
-      xit('should initialize ExportService when "enableExport" is set when using Salesforce', () => {
-        // might need to mock implementation
-        const spy = jest.spyOn(fileExportServiceStub, 'init');
-
+      it('should initialize ExportService when "enableExport" is set when using Salesforce', () => {
         component.gridOptions = { enableExport: true, useSalesforceDefaultGridOptions: true } as GridOption;
         component.initialization(divContainer);
 
-        expect(spy).toHaveBeenCalled();
+        expect(FileExportService).toHaveBeenCalled();
+        expect(component.registeredServices.length).toBe(3); // FileExportService, GridService, GridStateService
+        expect(component.registeredServices[0] instanceof FileExportService).toBeTrue();
       });
 
       it('should destroy customElement and its DOM element when requested', () => {
@@ -828,6 +762,24 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.dispose(true);
 
         expect(spy).toHaveBeenCalledWith();
+      });
+
+      it('should bind local filter when "enableFiltering" is set', () => {
+        const bindLocalSpy = jest.spyOn(filterServiceStub, 'bindLocalOnFilter');
+
+        component.gridOptions = { enableFiltering: true } as GridOption;
+        component.initialization(divContainer);
+
+        expect(bindLocalSpy).toHaveBeenCalledWith(mockGrid);
+      });
+
+      it('should bind local sort when "enableSorting" is set', () => {
+        const bindLocalSpy = jest.spyOn(sortServiceStub, 'bindLocalOnSort');
+
+        component.gridOptions = { enableSorting: true } as GridOption;
+        component.initialization(divContainer);
+
+        expect(bindLocalSpy).toHaveBeenCalledWith(mockGrid);
       });
 
       it('should refresh a local grid and change pagination options pagination when a preset for it is defined in grid options', (done) => {

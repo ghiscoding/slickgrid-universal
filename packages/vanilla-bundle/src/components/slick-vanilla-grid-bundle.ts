@@ -25,7 +25,6 @@ import {
   onBackendError,
   refreshBackendDataset,
   Pagination,
-  SlickerGridInstance,
   ServicePagination,
   Subscription,
 
@@ -43,7 +42,6 @@ import {
   HeaderMenuExtension,
   HeaderButtonExtension,
   RowSelectionExtension,
-  SlickResizer,
 
   // services
   FilterFactory,
@@ -64,20 +62,19 @@ import {
 
   // utilities
   convertParentChildArrayToHierarchicalView,
-  getHtmlElementOffset,
   GetSlickEventType,
 } from '@slickgrid-universal/common';
 
-import { FileExportService } from '../services/fileExport.service';
 import { EventPubSubService } from '../services/eventPubSub.service';
+import { FileExportService } from '../services/fileExport.service';
+import { ResizerService } from '../services/resizer.service';
+import { SalesforceGlobalGridOptions } from '../salesforce-global-grid-options';
 import { SlickFooterComponent } from './slick-footer';
 import { SlickPaginationComponent } from './slick-pagination';
-import { SalesforceGlobalGridOptions } from '../salesforce-global-grid-options';
+import { SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
-const DATAGRID_FOOTER_HEIGHT = 25;
-const DATAGRID_PAGINATION_HEIGHT = 35;
 
 export class SlickVanillaGridBundle {
   protected _eventPubSubService: EventPubSubService;
@@ -93,9 +90,8 @@ export class SlickVanillaGridBundle {
   private _isPaginationInitialized = false;
   private _eventHandler: SlickEventHandler = new Slick.EventHandler();
   private _paginationOptions: Pagination | undefined;
+  private _registeredServices: any[] = [];
   private _slickgridInitialized = false;
-  private _intervalId: NodeJS.Timeout;
-  private _intervalExecutionCounter = 0;
   private _slickerGridInstances: SlickerGridInstance | undefined;
   backendServiceApi: BackendServiceApi | undefined;
   dataView: SlickDataView;
@@ -108,7 +104,7 @@ export class SlickVanillaGridBundle {
   };
   totalItems = 0;
   groupItemMetadataProvider: SlickGroupItemMetadataProvider;
-  resizerService: SlickResizer;
+  resizerService: ResizerService;
   subscriptions: Subscription[] = [];
   showPagination = false;
 
@@ -224,12 +220,12 @@ export class SlickVanillaGridBundle {
     this._isDatasetInitialized = isInitialized;
   }
 
-  get gridUid(): string {
-    return this.slickGrid?.getUID() ?? '';
-  }
-
   get instances(): SlickerGridInstance | undefined {
     return this._slickerGridInstances;
+  }
+
+  get registeredServices(): any[] {
+    return this._registeredServices;
   }
 
   constructor(gridParentContainerElm: HTMLElement, columnDefs?: Column[], options?: GridOption, dataset?: any[], hierarchicalDataset?: any[]) {
@@ -332,7 +328,7 @@ export class SlickVanillaGridBundle {
     this.gridStateService?.dispose();
     this.groupingService?.dispose();
     this.paginationService?.dispose();
-    // this.resizer?.dispose();
+    this.resizerService?.dispose();
     this.sortService?.dispose();
     this.treeDataService?.dispose();
 
@@ -443,26 +439,9 @@ export class SlickVanillaGridBundle {
       this.slickFooter.renderFooter(this._gridParentContainerElm);
     }
 
-    const fixedGridDimensions = (this._gridOptions?.gridHeight || this._gridOptions?.gridWidth) ? { height: this._gridOptions?.gridHeight, width: this._gridOptions?.gridWidth } : undefined;
-    const autoResizeOptions = this._gridOptions?.autoResize ?? { bottomPadding: 0 };
-    if (autoResizeOptions && autoResizeOptions.bottomPadding !== undefined) {
-      const footerHeight: string | number = this._gridOptions?.customFooterOptions?.footerHeight ?? DATAGRID_FOOTER_HEIGHT;
-      autoResizeOptions.bottomPadding += parseInt(`${footerHeight}`, 10);
-    }
-    if (autoResizeOptions && autoResizeOptions.bottomPadding !== undefined && this._gridOptions.enablePagination) {
-      autoResizeOptions.bottomPadding += DATAGRID_PAGINATION_HEIGHT;
-    }
-    if (fixedGridDimensions?.width && this._gridParentContainerElm?.style) {
-      this._gridParentContainerElm.style.width = `${fixedGridDimensions.width}px`;
-    }
-
-    this.resizerService = new Slick.Plugins.Resizer({ ...autoResizeOptions, gridContainer: this._gridParentContainerElm }, fixedGridDimensions);
-    this.slickGrid.registerPlugin<SlickResizer>(this.resizerService);
-    if (this.gridOptions.enableAutoResize) {
-      this.resizerService.resizeGrid()
-        .then(() => this.resizeGridWhenStylingIsBrokenUntilCorrected())
-        .catch((error: any) => console.log('Error:', error));
-    }
+    // load the resizer service
+    this.resizerService = new ResizerService(this._eventPubSubService);
+    this.resizerService.init(this.slickGrid, this._gridParentContainerElm);
 
     // user might want to hide the header row on page load but still have `enableFiltering: true`
     // if that is the case, we need to hide the headerRow ONLY AFTER all filters got created & dataView exist
@@ -477,30 +456,30 @@ export class SlickVanillaGridBundle {
     this.gridEventService.bindOnClick(this.slickGrid);
 
     // get any possible Services that user want to register
-    const registeringServices: any[] = this.gridOptions.registerExternalServices || [];
+    this._registeredServices = this.gridOptions.registerExternalServices || [];
 
     // when using Salesforce, we want the Export to CSV always enabled without registering it
     if (this.gridOptions.enableExport && this.gridOptions.useSalesforceDefaultGridOptions) {
       const fileExportService = new FileExportService();
-      registeringServices.push(fileExportService);
+      this._registeredServices.push(fileExportService);
     }
 
     // at this point, we consider all the registered services as external services, anything else registered afterward aren't external
-    if (Array.isArray(registeringServices)) {
-      this.sharedService.externalRegisteredServices = registeringServices;
+    if (Array.isArray(this._registeredServices)) {
+      this.sharedService.externalRegisteredServices = this._registeredServices;
     }
 
     // push all other Services that we want to be registered
-    registeringServices.push(this.gridService, this.gridStateService);
+    this._registeredServices.push(this.gridService, this.gridStateService);
 
     // when using Grouping/DraggableGrouping/Colspan register its Service
     if (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping) {
-      registeringServices.push(this.groupingService);
+      this._registeredServices.push(this.groupingService);
     }
 
     if (this.gridOptions.enableTreeData) {
       // when using Tree Data View, register its Service
-      registeringServices.push(this.treeDataService);
+      this._registeredServices.push(this.treeDataService);
     }
 
     // when user enables translation, we need to translate Headers on first pass & subsequently in the bindDifferentHooks
@@ -516,8 +495,8 @@ export class SlickVanillaGridBundle {
 
     // bind & initialize all Services that were tagged as enable
     // register all services by executing their init method and providing them with the Grid object
-    if (Array.isArray(registeringServices)) {
-      for (const service of registeringServices) {
+    if (Array.isArray(this._registeredServices)) {
+      for (const service of this._registeredServices) {
         if (typeof service.init === 'function') {
           service.init(this.slickGrid, this.sharedService);
         }
@@ -1098,51 +1077,6 @@ export class SlickVanillaGridBundle {
           }
         });
       }
-    }
-  }
-
-  /**
-   * Patch for SalesForce, some issues arise when having a grid inside a Tab and user clicks in a different Tab without waiting for the grid to be rendered
-   * in ideal world, we would simply call a resize when user comes back to the Tab with the grid (tab focused) but this is an extra step and we might not always have this event available.
-   * The grid seems broken, the header titles seems to be showing up behind the grid data and the rendering seems broken.
-   * Why it happens? Because SlickGrid can resize problem when the DOM element is hidden and that happens when user doesn't wait for the grid to be fully rendered and go in a different Tab.
-   *
-   * So the patch is to call a grid resize if the following 2 conditions are met
-   *   1- header row is Y coordinate 0 (happens when user is not in current Tab)
-   *   2- header titles are lower than the viewport of dataset (this can happen when user change Tab and DOM is not shown),
-   * for these cases we'll resize until it's no longer true or until we reach a max time limit (70min)
-   */
-  private resizeGridWhenStylingIsBrokenUntilCorrected() {
-    const INTERVAL_MAX_MIN_RETRIES = 70;
-    const headerElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-header`);
-    const viewportElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-viewport`);
-
-    if (headerElm && viewportElm) {
-      this._intervalId = setInterval(() => {
-        const headerTitleRowHeight = 44; // this one is set by SASS/CSS so let's hard code it
-        const headerPos = getHtmlElementOffset(headerElm);
-        let headerOffsetTop = headerPos?.top ?? 0;
-        if (this.gridOptions && this.gridOptions.enableFiltering && this.gridOptions.headerRowHeight) {
-          headerOffsetTop += this.gridOptions.headerRowHeight; // filter row height
-        }
-        if (this.gridOptions && this.gridOptions.createPreHeaderPanel && this.gridOptions.showPreHeaderPanel && this.gridOptions.preHeaderPanelHeight) {
-          headerOffsetTop += this.gridOptions.preHeaderPanelHeight; // header grouping titles row height
-        }
-        headerOffsetTop += headerTitleRowHeight; // header title row height
-
-        const viewportPos = getHtmlElementOffset(viewportElm);
-        const viewportOffsetTop = viewportPos?.top ?? 0;
-
-        // if header row is Y coordinate 0 (happens when user is not in current Tab) or when header titles are lower than the viewport of dataset (this can happen when user change Tab and DOM is not shown)
-        // for these cases we'll resize until it's no longer true or until we reach a max time limit (70min)
-        const isResizeRequired = (headerPos?.top === 0 || (headerOffsetTop - viewportOffsetTop) > 40) ? true : false;
-
-        if (isResizeRequired && this.resizerService?.resizeGrid) {
-          this.resizerService.resizeGrid();
-        } else if ((!isResizeRequired && !this.gridOptions.useSalesforceDefaultGridOptions) || (this._intervalExecutionCounter++ > (4 * 60 * INTERVAL_MAX_MIN_RETRIES))) { // interval is 250ms, so 4x is 1sec, so (4 * 60 * intervalMaxTimeInMin) shoud be 70min
-          clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 70min
-        }
-      }, 250);
     }
   }
 
