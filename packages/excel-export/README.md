@@ -1,3 +1,6 @@
+[![npm](https://img.shields.io/npm/v/@slickgrid-universal/excel-export.svg?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/excel-export)
+[![npm](https://img.shields.io/npm/dy/@slickgrid-universal/excel-export?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/excel-export)
+
 ## Excel Export Service
 #### @slickgrid-universal/excel-export
 

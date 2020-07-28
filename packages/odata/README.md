@@ -1,3 +1,6 @@
+[![npm](https://img.shields.io/npm/v/@slickgrid-universal/odata.svg?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/odata)
+[![npm](https://img.shields.io/npm/dy/@slickgrid-universal/odata?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/odata)
+
 ## Grid OData Service
 #### @slickgrid-universal/odata
 

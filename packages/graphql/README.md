@@ -1,3 +1,6 @@
+[![npm](https://img.shields.io/npm/v/@slickgrid-universal/graphql.svg?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/graphql)
+[![npm](https://img.shields.io/npm/dy/@slickgrid-universal/graphql?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/graphql)
+
 ## GraphQL Service
 #### @slickgrid-universal/graphql
 

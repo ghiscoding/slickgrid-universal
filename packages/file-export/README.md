@@ -1,3 +1,6 @@
+[![npm](https://img.shields.io/npm/v/@slickgrid-universal/file-export.svg?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/file-export)
+[![npm](https://img.shields.io/npm/dy/@slickgrid-universal/file-export?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/file-export)
+
 ## Export Service (text file) 
 #### @slickgrid-universal/file-export
 

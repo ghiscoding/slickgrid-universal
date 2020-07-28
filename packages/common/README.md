@@ -1,3 +1,6 @@
+[![npm](https://img.shields.io/npm/v/@slickgrid-universal/common.svg?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/common)
+[![npm](https://img.shields.io/npm/dy/@slickgrid-universal/common?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/common)
+
 ## Common Filters/Editors/Extensions/Services
 #### @slickgrid-universal/common
 

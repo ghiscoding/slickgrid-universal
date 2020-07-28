@@ -1,3 +1,6 @@
+[![npm](https://img.shields.io/npm/v/@slickgrid-universal/vanilla-bundle.svg?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/vanilla-bundle)
+[![npm](https://img.shields.io/npm/dy/@slickgrid-universal/vanilla-bundle?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/vanilla-bundle)
+
 ## Vanilla Bundle
 #### @slickgrid-universal/vanilla-bundle
 
