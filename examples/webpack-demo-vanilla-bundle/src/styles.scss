@@ -2,6 +2,8 @@ $primary-color:#009530;
 $link-color: #2cad56;
 
 // You can change the SVG color using their associated SASS $icon-color-mdi-XYZ
+$icon-color: #363636;
+$icon-color-mdi-close: $icon-color;
 $icon-width-mdi-close: 14px;
 $icon-width-mdi-plus: 14px;
 $icon-width-mdi-arrow-collapse: 14px;

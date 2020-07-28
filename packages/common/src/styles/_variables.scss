@@ -624,7 +624,7 @@ $footer-font-size:                              $font-size-base !default;
 $footer-font-style:                             italic !default;
 $footer-font-weight:                            normal !default;
 $footer-height:                                 30px !default; // if you modify this height, you also have to modify the footerHeight in the customFooterOptions
-$footer-padding:                                5px !default;
+$footer-padding:                                5px 0 !default;
 $footer-text-color:                             #808080 !default;
 $footer-left-float:                             left !default;
 $footer-left-font-style:                        italic !default;
