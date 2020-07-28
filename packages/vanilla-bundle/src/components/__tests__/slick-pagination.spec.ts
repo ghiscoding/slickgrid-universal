@@ -61,7 +61,7 @@ describe('Slick-Pagination Component', () => {
   let translateService: TranslateServiceStub;
 
   beforeEach(() => {
-    jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+    jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
     jest.spyOn(paginationServiceStub, 'getFullPagination').mockReturnValue(mockFullPagination);
     jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
     div = document.createElement('div');
@@ -241,7 +241,7 @@ describe('with different i18n locale', () => {
   beforeEach(() => {
     mockGridOptions.enableTranslate = true;
     jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
-    jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+    jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
     jest.spyOn(paginationServiceStub, 'getFullPagination').mockReturnValue(mockFullPagination2);
     div = document.createElement('div');
     document.body.appendChild(div);

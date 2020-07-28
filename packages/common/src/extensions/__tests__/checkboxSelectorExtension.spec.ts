@@ -74,12 +74,12 @@ describe('checkboxSelectorExtension', () => {
         { id: 'field2', field: 'field2', width: 50 }
       ];
       columnSelectionMock = { id: '_checkbox_selector', field: 'sel' };
-      jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     });
 
     it('should register the addon', () => {
-      const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'registerPlugin');
+      const pluginSpy = jest.spyOn(SharedService.prototype.slickGrid, 'registerPlugin');
 
       const instance = extension.create(columnsMock, gridOptionsMock);
       const selectionModel = extension.register();
@@ -94,8 +94,8 @@ describe('checkboxSelectorExtension', () => {
     });
 
     it('should register the addon with the registered plugin provided as argument', () => {
-      const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'registerPlugin');
-      const selectionSpy = jest.spyOn(SharedService.prototype.grid, 'getSelectionModel');
+      const pluginSpy = jest.spyOn(SharedService.prototype.slickGrid, 'registerPlugin');
+      const selectionSpy = jest.spyOn(SharedService.prototype.slickGrid, 'getSelectionModel');
 
       const instance = extension.create(columnsMock, gridOptionsMock);
       const selectionModel = extension.register();
@@ -170,9 +170,9 @@ describe('checkboxSelectorExtension', () => {
     it('should be able to pre-select rows', () => {
       const selectionModelOptions = { ...gridOptionsMock, preselectedRows: [0], rowSelectionOptions: { selectActiveRow: true } };
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(selectionModelOptions);
-      const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'registerPlugin');
+      const pluginSpy = jest.spyOn(SharedService.prototype.slickGrid, 'registerPlugin');
       // @ts-ignore
-      const selectionSpy = jest.spyOn(SharedService.prototype.grid, 'getSelectionModel').mockReturnValue(mockSelectionModel);
+      const selectionSpy = jest.spyOn(SharedService.prototype.slickGrid, 'getSelectionModel').mockReturnValue(mockSelectionModel);
 
       const instance = extension.create(columnsMock, gridOptionsMock);
       const rowSpy = jest.spyOn(instance, 'selectRows');

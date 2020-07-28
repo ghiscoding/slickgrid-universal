@@ -157,6 +157,7 @@ yarn run test:watch
 - [x] Copy cell text (context menu) doesn't work in SF
 - [x] Remove all Services init method 2nd argument (we can get DataView directly from the Grid object)
 - [x] The Pagination/Footer width is a little off sometime compare to the width of the grid container
-- [ ] Check why `DOM Purify` doesn't work in SF
+- [ ] See if we can get `DOM Purify` to work in SF, else keep the custom sanitizer
 - [ ] See if we can get all the vanilla-grid-bundle `instances` as `readonly` class members
-- [ ] Draggable Grouping pre-header (dragging) is not working as intended
+- [ ] See if we can add the number of chars typed in `Editors.longText`
+- [ ] Resizer Service doesn't seem to count the `bottomPadding` with Custom Footer in the calculation

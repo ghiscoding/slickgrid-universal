@@ -5,6 +5,7 @@ import {
   SlickEvent,
   SlickGrid,
 } from './index';
+import { ColumnReorderFunction } from '../enums/columnReorderFunction.type';
 
 /** This plugin provides the Draggable Grouping feature */
 export interface SlickDraggableGrouping {
@@ -23,7 +24,7 @@ export interface SlickDraggableGrouping {
   clearDroppedGroups?: () => void;
 
   /** its function to setup draggable feature agains Header Column, should be passed on grid option. Also possible to pass custom function */
-  getSetupColumnReorder?: () => void;
+  getSetupColumnReorder?: ColumnReorderFunction;
 
   /** provide option to set default grouping on loading */
   setDroppedGroups?: (groupingInfo: Array<string | GroupingGetterFunction> | string) => void;

@@ -19,10 +19,10 @@ export class GroupItemMetaProviderExtension implements Extension {
 
   /** register the group item metadata provider to add expand/collapse group handlers */
   register(): SlickGroupItemMetadataProvider | null {
-    if (this.sharedService && this.sharedService.grid) {
+    if (this.sharedService && this.sharedService.slickGrid) {
       this._addon = this.sharedService.groupItemMetadataProvider;
       if (this._addon) {
-        this.sharedService.grid.registerPlugin<SlickGroupItemMetadataProvider>(this._addon);
+        this.sharedService.slickGrid.registerPlugin<SlickGroupItemMetadataProvider>(this._addon);
       }
       return this._addon;
     }

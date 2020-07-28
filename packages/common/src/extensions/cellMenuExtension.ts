@@ -56,7 +56,7 @@ export class CellMenuExtension implements Extension {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
 
-    if (this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
+    if (this.sharedService && this.sharedService.slickGrid && this.sharedService.gridOptions) {
       const cellMenu = this.sharedService.gridOptions.cellMenu;
       // get locales provided by user in main file or else use default English locales via the Constants
       this._locales = this.sharedService.gridOptions && this.sharedService.gridOptions.locales || Constants.locales;
@@ -75,11 +75,11 @@ export class CellMenuExtension implements Extension {
 
       this._addon = new Slick.Plugins.CellMenu(this.sharedService.gridOptions.cellMenu);
       if (this._addon) {
-        this.sharedService.grid.registerPlugin<SlickCellMenu>(this._addon);
+        this.sharedService.slickGrid.registerPlugin<SlickCellMenu>(this._addon);
       }
 
       // hook all events
-      if (this.sharedService.grid && this.sharedService.gridOptions.cellMenu) {
+      if (this.sharedService.slickGrid && this.sharedService.gridOptions.cellMenu) {
         if (this._addon && this.sharedService.gridOptions.cellMenu.onExtensionRegistered) {
           this.sharedService.gridOptions.cellMenu.onExtensionRegistered(this._addon);
         }

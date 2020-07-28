@@ -32,10 +32,7 @@ const customEditableInputFormatter = (row, cell, value, columnDef, dataContext, 
   const gridOptions = grid && grid.getOptions && grid.getOptions();
   const isEditableLine = gridOptions.editable && columnDef.editor;
   value = (value === null || value === undefined) ? '' : value;
-  // const isUnsavedField = dataContext.__unsaved && dataContext.__unsaved[columnDef.field] || false;
-  const isUnsavedField = false;
-  const cssClass = isUnsavedField ? 'unsaved-editable-field' : 'editable-field';
-  return isEditableLine ? { text: value, addClasses: cssClass, toolTip: 'Click to Edit' } : value;
+  return isEditableLine ? { text: value, addClasses: 'editable-field', toolTip: 'Click to Edit' } : value;
 };
 
 export class Example3 {
@@ -46,7 +43,6 @@ export class Example3 {
   editQueue = [];
   editedItems = {};
   sgb: SlickVanillaGridBundle;
-  durationOrderByCount = false;
 
   get slickerGridInstance(): SlickerGridInstance {
     return this.sgb?.instances;
@@ -186,11 +182,9 @@ export class Example3 {
         hideInColumnTitleRow: true,
       },
       editCommandHandler: (item, column, editCommand) => {
-        // keep in an array only the ones that changed, also add an extra "__unsaved" property that we can use for styling these cells
         if (editCommand.prevSerializedValue !== editCommand.serializedValue) {
           this.editQueue.push({ item, column, editCommand });
           this.editedItems[editCommand.row] = item; // keep items by their row indexes, if the row got edited twice then we'll keep only the last change
-          // item.__unsaved = { ...item.__unsaved, [column.field]: true };
           this.sgb.slickGrid.invalidate();
           editCommand.execute();
 
@@ -217,11 +211,13 @@ export class Example3 {
   }
 
   toggleGridEditReadonly() {
-    // change a single grid options to make the grid non-editable (readonly)
+    // first need undo all edits
+    this.undoAllEdits();
+
+    // then change a single grid options to make the grid non-editable (readonly)
     this.isGridEditable = !this.isGridEditable;
     this.sgb.gridOptions = { editable: this.isGridEditable };
     this.gridOptions = this.sgb.gridOptions;
-    this.removeAllUnsavedStylingFromCell();
   }
 
   loadData(count: number) {
@@ -320,6 +316,7 @@ export class Example3 {
     // example: editedItems = { 0: { title: task 0, duration: 50, ... }}
     // ...means that row index 0 got changed and the final merged object is { title: task 0, duration: 50, ... }
     console.log(this.editedItems);
+    // console.log(`We changed ${Object.keys(this.editedItems).length} rows`);
 
     // since we saved, we can now remove all the unsaved color styling and reset our array/object
     this.removeAllUnsavedStylingFromCell();
@@ -329,11 +326,6 @@ export class Example3 {
 
   removeUnsavedStylingFromCell(item: any, column: Column, row: number) {
     // remove unsaved css class from that cell
-    const fieldId = column.field;
-    if (item.__unsaved) {
-      delete item.__unsaved[fieldId];
-    }
-
     this.sgb.slickGrid.removeCellCssStyles(`unsaved_highlight_${[column.field]}${row}`);
   }
 

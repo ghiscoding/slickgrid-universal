@@ -25,13 +25,13 @@ export class RowSelectionExtension implements Extension {
 
   /** Register the 3rd party addon (plugin) */
   register(): SlickRowSelectionModel | null {
-    if (this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
+    if (this.sharedService && this.sharedService.slickGrid && this.sharedService.gridOptions) {
       // dynamically import the SlickGrid plugin (addon) with RequireJS
       this.extensionUtility.loadExtensionDynamically(ExtensionName.rowSelection);
 
       this._addon = new Slick.RowSelectionModel(this.sharedService.gridOptions.rowSelectionOptions);
       if (this._addon) {
-        this.sharedService.grid.setSelectionModel(this._addon);
+        this.sharedService.slickGrid.setSelectionModel(this._addon);
       }
       return this._addon;
     }

@@ -116,15 +116,13 @@ describe('ExtensionService', () => {
     });
 
     it('should return "autosizeColumns" from the SharedService Grid object when "autoResizeColumns" method is called', () => {
-      const spy = jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+      const spy = jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
       service.autoResizeColumns();
       expect(spy).toHaveBeenCalled();
     });
 
-    it('should return empty array when "getAllExtensions" method is called', () => {
-      const spy = jest.spyOn(service, 'getAllExtensions');
-      service.getAllExtensions();
-      expect(spy).toHaveReturnedWith([]);
+    it('should return empty object when "extensionlList" GETTER is called', () => {
+      expect(service.extensionList).toEqual({});
     });
 
     describe('getSlickgridAddonInstance method', () => {
@@ -447,7 +445,7 @@ describe('ExtensionService', () => {
     it('should call hideColumn and expect "visibleColumns" to be updated accordingly', () => {
       const columnsMock = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
       const updatedColumnsMock = [{ id: 'field1', width: 100 }, { id: 'field3', field: 'field3' }] as Column[];
-      jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
       jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
       const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
@@ -568,7 +566,7 @@ describe('ExtensionService', () => {
 
       it('should call "setColumns" on the Shared Service with the Shared "columnDefinitions" when no arguments is provided', () => {
         const columnsMock = [{ id: 'field1', field: 'field1', nameKey: 'HELLO' }] as Column[];
-        jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+        jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
         const colSpy = jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
         const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
 
@@ -583,7 +581,7 @@ describe('ExtensionService', () => {
           { id: 'field1', field: 'field1', nameKey: 'HELLO' },
           { id: 'field2', field: 'field2', nameKey: 'WORLD' }
         ] as Column[];
-        jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+        jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
         const allColsSpy = jest.spyOn(SharedService.prototype, 'allColumns', 'set');
         const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
 
@@ -598,7 +596,7 @@ describe('ExtensionService', () => {
         const columnsMock = [
           { id: 'field1', field: 'field1', nameKey: 'HELLO' }
         ] as Column[];
-        jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+        jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
         const spyAllCols = jest.spyOn(SharedService.prototype, 'allColumns', 'set');
         const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
 
@@ -618,7 +616,7 @@ describe('ExtensionService', () => {
           { id: 'field2', field: 'field2', nameKey: 'WORLD' }
         ] as Column[];
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-        jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+        jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
         const spyGetExt = jest.spyOn(service, 'getExtensionByName').mockReturnValue(extensionMock);
         const spyCpDispose = jest.spyOn(extensionColumnPickerStub, 'dispose');
         const spyCpRegister = jest.spyOn(extensionColumnPickerStub, 'register');
@@ -644,7 +642,7 @@ describe('ExtensionService', () => {
         ] as Column[];
 
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-        jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+        jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
         const spyGetExt = jest.spyOn(service, 'getExtensionByName').mockReturnValue(extensionMock);
         const spyGmDispose = jest.spyOn(extensionGridMenuStub, 'dispose');
         const spyGmRegister = jest.spyOn(extensionGridMenuStub, 'register').mockReturnValue(instanceMock);

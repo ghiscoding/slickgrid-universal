@@ -23,7 +23,7 @@
     "bundle:es2020": "cross-env tsc --project tsconfig.build.json --outDir dist/es2020 --module es2015 --target es2020",
     "bundle": "npm-run-all bundle:commonjs bundle:es2015 bundle:es2020",
     "prebundle": "npm-run-all delete:dist",
-    "delete:dist": "cross-env rimraf dist"
+    "delete:dist": "cross-env rimraf --maxBusyTries=10 dist"
   },
   "author": "Ghislain B.",
   "license": "MIT",

@@ -24,8 +24,8 @@
     "bundle:es2020": "cross-env tsc --project tsconfig.build.json --outDir dist/es2020 --module es2015 --target es2020",
     "prebundle": "npm-run-all delete:dist delete:zip",
     "postbundle": "npm-run-all zip:dist",
-    "delete:dist": "cross-env rimraf dist",
-    "delete:zip": "cross-env rimraf dist-bundle-zip",
+    "delete:dist": "cross-env rimraf --maxBusyTries=10 dist",
+    "delete:zip": "cross-env rimraf --maxBusyTries=10 dist-bundle-zip",
     "webpack:prod": "webpack --env.production",
     "zip:dist:dev": "cross-env node compress.js --output-filename=slickgrid-vanilla-bundle-DEV --output-folder=\"dist-grid-bundle-zip/\"",
     "zip:dist": "cross-env node compress.js --output-filename=slickgrid-vanilla-bundle --output-folder=\"dist-grid-bundle-zip/\""

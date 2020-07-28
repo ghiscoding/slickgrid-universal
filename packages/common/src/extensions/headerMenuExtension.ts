@@ -68,7 +68,7 @@ export class HeaderMenuExtension implements Extension {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
 
-    if (this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
+    if (this.sharedService && this.sharedService.slickGrid && this.sharedService.gridOptions) {
       // get locales provided by user in main file or else use default English locales via the Constants
       this._locales = this.sharedService.gridOptions && this.sharedService.gridOptions.locales || Constants.locales;
 
@@ -81,11 +81,11 @@ export class HeaderMenuExtension implements Extension {
       }
       this._addon = new Slick.Plugins.HeaderMenu(this.sharedService.gridOptions.headerMenu);
       if (this._addon) {
-        this.sharedService.grid.registerPlugin<SlickHeaderMenu>(this._addon);
+        this.sharedService.slickGrid.registerPlugin<SlickHeaderMenu>(this._addon);
       }
 
       // hook all events
-      if (this._addon && this.sharedService.grid && this.sharedService.gridOptions.headerMenu) {
+      if (this._addon && this.sharedService.slickGrid && this.sharedService.gridOptions.headerMenu) {
         if (this.sharedService.gridOptions.headerMenu.onExtensionRegistered) {
           this.sharedService.gridOptions.headerMenu.onExtensionRegistered(this._addon);
         }
@@ -235,12 +235,12 @@ export class HeaderMenuExtension implements Extension {
 
   /** Hide a column from the grid */
   hideColumn(column: Column) {
-    if (this.sharedService.grid && this.sharedService.grid.getColumns && this.sharedService.grid.setColumns && this.sharedService.grid.getColumnIndex) {
-      const columnIndex = this.sharedService.grid.getColumnIndex(column.id);
-      const currentColumns = this.sharedService.grid.getColumns();
+    if (this.sharedService.slickGrid && this.sharedService.slickGrid.getColumns && this.sharedService.slickGrid.setColumns && this.sharedService.slickGrid.getColumnIndex) {
+      const columnIndex = this.sharedService.slickGrid.getColumnIndex(column.id);
+      const currentColumns = this.sharedService.slickGrid.getColumns();
       const visibleColumns = this.extensionUtility.arrayRemoveItemByIndex<Column>(currentColumns, columnIndex);
       this.sharedService.visibleColumns = visibleColumns;
-      this.sharedService.grid.setColumns(visibleColumns);
+      this.sharedService.slickGrid.setColumns(visibleColumns);
       this.pubSubService.publish('onHeaderMenuColumnsChanged', { columns: visibleColumns });
     }
   }
@@ -336,7 +336,7 @@ export class HeaderMenuExtension implements Extension {
         case 'hide':
           this.hideColumn(args.column);
           if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableAutoSizeColumns) {
-            this.sharedService.grid.autosizeColumns();
+            this.sharedService.slickGrid.autosizeColumns();
           }
           break;
         case 'clear-filter':
@@ -348,12 +348,12 @@ export class HeaderMenuExtension implements Extension {
         case 'freeze-columns':
           const visibleColumns = [...this.sharedService.visibleColumns];
           const columnPosition = visibleColumns.findIndex((col) => col.id === args.column.id);
-          this.sharedService.grid.setOptions({ frozenColumn: columnPosition, alwaysShowVerticalScroll: false });
+          this.sharedService.slickGrid.setOptions({ frozenColumn: columnPosition, alwaysShowVerticalScroll: false });
 
           // to freeze columns, we need to take only the visible columns and we also need to use setColumns() when some of them are hidden
           // to make sure that we only use the visible columns, not doing this would show back some of the hidden columns
           if (Array.isArray(visibleColumns) && Array.isArray(this.sharedService.allColumns) && visibleColumns.length !== this.sharedService.allColumns.length) {
-            this.sharedService.grid.setColumns(visibleColumns);
+            this.sharedService.slickGrid.setColumns(visibleColumns);
           }
           break;
         case 'sort-asc':
@@ -379,10 +379,10 @@ export class HeaderMenuExtension implements Extension {
       // add to the column array, the column sorted by the header menu
       sortedColsWithoutCurrent.push({ columnId: columnDef.id, sortCol: columnDef, sortAsc: isSortingAsc });
       if (this.sharedService.gridOptions.backendServiceApi) {
-        this.sortService.onBackendSortChanged(event, { multiColumnSort: true, sortCols: sortedColsWithoutCurrent, grid: this.sharedService.grid });
+        this.sortService.onBackendSortChanged(event, { multiColumnSort: true, sortCols: sortedColsWithoutCurrent, grid: this.sharedService.slickGrid });
         emitterType = EmitterType.remote;
       } else if (this.sharedService.dataView) {
-        this.sortService.onLocalSortChanged(this.sharedService.grid, sortedColsWithoutCurrent);
+        this.sortService.onLocalSortChanged(this.sharedService.slickGrid, sortedColsWithoutCurrent);
         emitterType = EmitterType.local;
       } else {
         // when using customDataView, we will simply send it as a onSort event with notify
@@ -400,7 +400,7 @@ export class HeaderMenuExtension implements Extension {
       });
 
       // add sort icon in UI
-      this.sharedService.grid.setSortColumns(newSortColumns);
+      this.sharedService.slickGrid.setSortColumns(newSortColumns);
 
       // if we have an emitter type set, we will emit a sort changed
       // for the Grid State Service to see the change.

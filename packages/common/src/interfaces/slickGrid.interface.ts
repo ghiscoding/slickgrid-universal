@@ -1,4 +1,4 @@
-import { SlickPluginList } from '../enums';
+import { SlickPluginList } from '../enums/index';
 import {
   Column,
   ColumnSort,

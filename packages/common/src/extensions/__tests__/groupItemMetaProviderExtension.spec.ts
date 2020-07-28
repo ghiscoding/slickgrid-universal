@@ -35,11 +35,11 @@ describe('groupItemMetaProviderExtension', () => {
 
   describe('registered addon', () => {
     beforeEach(() => {
-      jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
     });
 
     it('should register the addon', () => {
-      const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'registerPlugin');
+      const pluginSpy = jest.spyOn(SharedService.prototype.slickGrid, 'registerPlugin');
 
       const instance = extension.register();
       const addonInstance = extension.getAddonInstance();

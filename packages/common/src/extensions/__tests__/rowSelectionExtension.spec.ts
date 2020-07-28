@@ -42,12 +42,12 @@ describe('rowSelectionExtension', () => {
 
   describe('registered addon', () => {
     beforeEach(() => {
-      jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     });
 
     it('should register the addon', () => {
-      const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'setSelectionModel');
+      const pluginSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setSelectionModel');
 
       const instance = extension.register();
       const addonInstance = extension.getAddonInstance();

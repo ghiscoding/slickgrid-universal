@@ -144,7 +144,7 @@ describe('gridMenuExtension', () => {
     describe('registered addon', () => {
       beforeEach(() => {
         jest.spyOn(SharedService.prototype, 'dataView', 'get').mockReturnValue(dataViewStub);
-        jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+        jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
         jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
         jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
@@ -499,7 +499,7 @@ describe('gridMenuExtension', () => {
         } as unknown as GridOption;
 
         jest.spyOn(SharedService.prototype, 'dataView', 'get').mockReturnValue(dataViewStub);
-        jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+        jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
         jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
         jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock);
@@ -718,7 +718,7 @@ describe('gridMenuExtension', () => {
 
       it('should call the grid "setTopPanelVisibility" method when the command triggered is "toggle-toppanel"', () => {
         gridOptionsMock.showTopPanel = false;
-        const gridSpy = jest.spyOn(SharedService.prototype.grid, 'setTopPanelVisibility');
+        const gridSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setTopPanelVisibility');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
 
         const instance = extension.register();
@@ -736,7 +736,7 @@ describe('gridMenuExtension', () => {
 
       it('should call the grid "setPreHeaderPanelVisibility" method when the command triggered is "toggle-preheader"', () => {
         gridOptionsMock.showPreHeaderPanel = false;
-        const gridSpy = jest.spyOn(SharedService.prototype.grid, 'setPreHeaderPanelVisibility');
+        const gridSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setPreHeaderPanelVisibility');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
 
         const instance = extension.register();

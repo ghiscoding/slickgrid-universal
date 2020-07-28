@@ -106,7 +106,7 @@ describe('CellMenuExtension', () => {
     describe('registered addon', () => {
       beforeEach(() => {
         jest.spyOn(SharedService.prototype, 'dataView', 'get').mockReturnValue(dataViewStub);
-        jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+        jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
         jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
         jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock);
@@ -114,7 +114,7 @@ describe('CellMenuExtension', () => {
       });
 
       it('should register the addon', () => {
-        const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'registerPlugin');
+        const pluginSpy = jest.spyOn(SharedService.prototype.slickGrid, 'registerPlugin');
         const onRegisteredSpy = jest.spyOn(SharedService.prototype.gridOptions.cellMenu, 'onExtensionRegistered');
 
         const instance = extension.register();

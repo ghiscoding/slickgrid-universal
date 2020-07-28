@@ -97,7 +97,7 @@ export class SlickPaginationComponent {
   }
 
   get grid(): SlickGrid {
-    return this.sharedService.grid;
+    return this.sharedService.slickGrid;
   }
 
   get gridOptions(): GridOption {

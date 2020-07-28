@@ -55,13 +55,13 @@ describe('draggableGroupingExtension', () => {
 
   describe('registered addon', () => {
     beforeEach(() => {
-      jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     });
 
     it('should register the addon', () => {
       const onRegisteredSpy = jest.spyOn(SharedService.prototype.gridOptions.draggableGrouping, 'onExtensionRegistered');
-      const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'registerPlugin');
+      const pluginSpy = jest.spyOn(SharedService.prototype.slickGrid, 'registerPlugin');
 
       const instance = extension.create(gridOptionsMock);
       const addon = extension.register();

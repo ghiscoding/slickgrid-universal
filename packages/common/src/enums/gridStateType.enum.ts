@@ -4,4 +4,4 @@ export enum GridStateType {
   pagination = 'pagination',
   rowSelection = 'rowSelection',
   sorter = 'sorter',
-};
+}

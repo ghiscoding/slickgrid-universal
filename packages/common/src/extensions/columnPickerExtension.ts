@@ -33,7 +33,7 @@ export class ColumnPickerExtension implements Extension {
 
   /** Register the 3rd party addon (plugin) */
   register(): SlickColumnPicker | null {
-    if (this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
+    if (this.sharedService && this.sharedService.slickGrid && this.sharedService.gridOptions) {
       // dynamically import the SlickGrid plugin (addon) with RequireJS
       this.extensionUtility.loadExtensionDynamically(ExtensionName.columnPicker);
 
@@ -46,9 +46,9 @@ export class ColumnPickerExtension implements Extension {
       this.sharedService.gridOptions.columnPicker.columnTitle = this.sharedService.gridOptions.columnPicker.columnTitle || columnTitle;
       this.sharedService.gridOptions.columnPicker.forceFitTitle = this.sharedService.gridOptions.columnPicker.forceFitTitle || forceFitTitle;
       this.sharedService.gridOptions.columnPicker.syncResizeTitle = this.sharedService.gridOptions.columnPicker.syncResizeTitle || syncResizeTitle;
-      this._addon = new Slick.Controls.ColumnPicker(this.sharedService.allColumns, this.sharedService.grid, this.sharedService.gridOptions);
+      this._addon = new Slick.Controls.ColumnPicker(this.sharedService.allColumns, this.sharedService.slickGrid, this.sharedService.gridOptions);
 
-      if (this.sharedService.grid && this.sharedService.gridOptions.enableColumnPicker) {
+      if (this.sharedService.slickGrid && this.sharedService.gridOptions.enableColumnPicker) {
         if (this._addon && this.sharedService.gridOptions.columnPicker.onExtensionRegistered) {
           this.sharedService.gridOptions.columnPicker.onExtensionRegistered(this._addon);
         }
@@ -69,7 +69,7 @@ export class ColumnPickerExtension implements Extension {
 
   /** Translate the Column Picker headers and also the last 2 checkboxes */
   translateColumnPicker() {
-    if (this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
+    if (this.sharedService && this.sharedService.slickGrid && this.sharedService.gridOptions) {
       // update the properties by pointers, that is the only way to get Column Picker Control to see the new values
       if (this.sharedService.gridOptions.columnPicker) {
         this.emptyColumnPickerTitles();
