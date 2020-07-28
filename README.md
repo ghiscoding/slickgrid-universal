@@ -160,3 +160,4 @@ yarn run test:watch
 - [x] See if we can add the number of chars (text counter) typed in `Editors.longText`
 - [ ] See if we can get `DOM Purify` to work in SF, else keep the custom sanitizer
 - [ ] See if we can get all the vanilla-grid-bundle `instances` as `readonly` class members
+- [ ] change `Filters` and `Editors` to default index export but move the previous export into the vanilla grid bundle 
