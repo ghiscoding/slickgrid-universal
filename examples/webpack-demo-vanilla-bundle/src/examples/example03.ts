@@ -74,6 +74,8 @@ export class Example3 {
           model: Editors.longText,
           required: true,
           alwaysSaveOnEnterKey: true,
+          minLength: 5,
+          maxLength: 255,
         },
         filterable: true,
         grouping: {
