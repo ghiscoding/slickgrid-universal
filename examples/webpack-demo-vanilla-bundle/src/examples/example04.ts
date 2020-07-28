@@ -13,8 +13,8 @@ import {
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
 import { ExampleGridOptions } from './example-grid-options';
+import './example02.scss';
 
 // you can create custom validator to pass to an inline editor
 const myCustomTitleValidator = (value, args) => {

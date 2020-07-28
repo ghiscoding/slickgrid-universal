@@ -15,6 +15,7 @@ import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bu
 import * as moment from 'moment-mini';
 import { ExampleGridOptions } from './example-grid-options';
 import { TranslateService } from '../translate.service';
+import './example10.scss';
 
 const defaultPageSize = 20;
 const GRAPHQL_QUERY_DATASET_NAME = 'users';
