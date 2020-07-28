@@ -1,4 +1,4 @@
-## Vanilla Bundle
+## Common Filters/Editors/Extensions/Services
 #### @slickgrid-universal/common
 
 This package is regrouping the most common features or pieces that could be used by any other Framework (it is framework agnostic). It includes all Editors, Filters, Extensions and Services as can be seen below.
