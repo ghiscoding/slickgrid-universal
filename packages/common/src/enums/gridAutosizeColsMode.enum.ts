@@ -5,4 +5,4 @@ export enum GridAutosizeColsMode {
   ignoreViewport = 'IGV',
   fitColsToViewport = 'FCV',
   fitViewportToCols = 'FVC'
-};
+}

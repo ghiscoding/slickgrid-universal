@@ -1,3 +1,4 @@
+import { ColumnReorderFunction } from '../enums/columnReorderFunction.type';
 import { GroupingGetterFunction } from './grouping.interface';
 
 export interface DraggableGroupingOption {
@@ -26,5 +27,5 @@ export interface DraggableGroupingOption {
   clearDroppedGroups?: () => void;
 
   /** its function to setup draggable feature agains Header Column, should be passed on grid option. Also possible to pass custom function */
-  getSetupColumnReorder?: () => void;
+  getSetupColumnReorder?: ColumnReorderFunction;
 }

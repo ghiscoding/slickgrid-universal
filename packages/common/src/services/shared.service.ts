@@ -51,11 +51,11 @@ export class SharedService {
   }
 
   /** Getter for SlickGrid Grid object */
-  get grid(): SlickGrid {
+  get slickGrid(): SlickGrid {
     return this._grid;
   }
   /** Setter for SlickGrid Grid object */
-  set grid(grid: SlickGrid) {
+  set slickGrid(grid: SlickGrid) {
     this._grid = grid;
   }
 

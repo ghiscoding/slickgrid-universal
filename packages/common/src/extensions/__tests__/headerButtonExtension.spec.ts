@@ -66,7 +66,7 @@ describe('headerButtonExtension', () => {
     });
 
     it('should register the addon', () => {
-      const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'registerPlugin');
+      const pluginSpy = jest.spyOn(SharedService.prototype.slickGrid, 'registerPlugin');
 
       const instance = extension.register();
       const addonInstance = extension.getAddonInstance();

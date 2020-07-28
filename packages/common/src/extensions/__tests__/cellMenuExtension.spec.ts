@@ -114,7 +114,7 @@ describe('CellMenuExtension', () => {
       });
 
       it('should register the addon', () => {
-        const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'registerPlugin');
+        const pluginSpy = jest.spyOn(SharedService.prototype.slickGrid, 'registerPlugin');
         const onRegisteredSpy = jest.spyOn(SharedService.prototype.gridOptions.cellMenu, 'onExtensionRegistered');
 
         const instance = extension.register();

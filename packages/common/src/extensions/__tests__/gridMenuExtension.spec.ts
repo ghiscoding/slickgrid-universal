@@ -718,7 +718,7 @@ describe('gridMenuExtension', () => {
 
       it('should call the grid "setTopPanelVisibility" method when the command triggered is "toggle-toppanel"', () => {
         gridOptionsMock.showTopPanel = false;
-        const gridSpy = jest.spyOn(SharedService.prototype.grid, 'setTopPanelVisibility');
+        const gridSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setTopPanelVisibility');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
 
         const instance = extension.register();
@@ -736,7 +736,7 @@ describe('gridMenuExtension', () => {
 
       it('should call the grid "setPreHeaderPanelVisibility" method when the command triggered is "toggle-preheader"', () => {
         gridOptionsMock.showPreHeaderPanel = false;
-        const gridSpy = jest.spyOn(SharedService.prototype.grid, 'setPreHeaderPanelVisibility');
+        const gridSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setPreHeaderPanelVisibility');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu, 'onCommand');
 
         const instance = extension.register();

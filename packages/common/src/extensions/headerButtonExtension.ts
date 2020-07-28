@@ -34,17 +34,17 @@ export class HeaderButtonExtension implements Extension {
 
   /** Register the 3rd party addon (plugin) */
   register(): SlickHeaderButtons | null {
-    if (this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
+    if (this.sharedService && this.sharedService.slickGrid && this.sharedService.gridOptions) {
       // dynamically import the SlickGrid plugin (addon) with RequireJS
       this.extensionUtility.loadExtensionDynamically(ExtensionName.headerButton);
 
       this._addon = new Slick.Plugins.HeaderButtons(this.sharedService.gridOptions.headerButton);
       if (this._addon) {
-        this.sharedService.grid.registerPlugin<SlickHeaderButtons>(this._addon);
+        this.sharedService.slickGrid.registerPlugin<SlickHeaderButtons>(this._addon);
       }
 
       // hook all events
-      if (this._addon && this.sharedService.grid && this.sharedService.gridOptions.headerButton) {
+      if (this._addon && this.sharedService.slickGrid && this.sharedService.gridOptions.headerButton) {
         if (this.sharedService.gridOptions.headerButton.onExtensionRegistered) {
           this.sharedService.gridOptions.headerButton.onExtensionRegistered(this._addon);
         }

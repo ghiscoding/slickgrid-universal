@@ -90,10 +90,10 @@ export class GridMenuExtension implements Extension {
       this.extensionUtility.translateItems(this.sharedService.gridOptions.gridMenu.customItems, 'titleKey', 'title');
       this.extensionUtility.sortItems(this.sharedService.gridOptions.gridMenu.customItems, 'positionOrder');
 
-      this._addon = new Slick.Controls.GridMenu(this.sharedService.allColumns, this.sharedService.grid, this.sharedService.gridOptions);
+      this._addon = new Slick.Controls.GridMenu(this.sharedService.allColumns, this.sharedService.slickGrid, this.sharedService.gridOptions);
 
       // hook all events
-      if (this.sharedService.grid && this.sharedService.gridOptions.gridMenu) {
+      if (this.sharedService.slickGrid && this.sharedService.gridOptions.gridMenu) {
         if (this.sharedService.gridOptions.gridMenu.onExtensionRegistered) {
           this.sharedService.gridOptions.gridMenu.onExtensionRegistered(this._addon);
         }
@@ -150,12 +150,12 @@ export class GridMenuExtension implements Extension {
             }
 
             // we also want to resize the columns if the user decided to hide certain column(s)
-            if (this.sharedService.grid && typeof this.sharedService.grid.autosizeColumns === 'function') {
+            if (this.sharedService.slickGrid && typeof this.sharedService.slickGrid.autosizeColumns === 'function') {
               // make sure that the grid still exist (by looking if the Grid UID is found in the DOM tree)
-              const gridUid = this.sharedService.grid.getUID();
+              const gridUid = this.sharedService.slickGrid.getUID();
               if (this._areVisibleColumnDifferent && gridUid && $(`.${gridUid}`).length > 0) {
                 if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableAutoSizeColumns) {
-                  this.sharedService.grid.autosizeColumns();
+                  this.sharedService.slickGrid.autosizeColumns();
                 }
                 this._areVisibleColumnDifferent = false;
               }
@@ -394,9 +394,9 @@ export class GridMenuExtension implements Extension {
       switch (args.command) {
         case 'clear-frozen-columns':
           const visibleColumns = [...this.sharedService.visibleColumns];
-          this.sharedService.grid.setOptions({ frozenColumn: -1 });
+          this.sharedService.slickGrid.setOptions({ frozenColumn: -1 });
           if (Array.isArray(visibleColumns) && Array.isArray(this.sharedService.allColumns) && visibleColumns.length !== this.sharedService.allColumns.length) {
-            this.sharedService.grid.setColumns(visibleColumns);
+            this.sharedService.slickGrid.setColumns(visibleColumns);
           }
           break;
         case 'clear-filter':
@@ -447,20 +447,20 @@ export class GridMenuExtension implements Extension {
         case 'toggle-filter':
           let showHeaderRow = this.sharedService && this.sharedService.gridOptions && this.sharedService.gridOptions.showHeaderRow || false;
           showHeaderRow = !showHeaderRow; // inverse show header flag
-          this.sharedService.grid.setHeaderRowVisibility(showHeaderRow);
+          this.sharedService.slickGrid.setHeaderRowVisibility(showHeaderRow);
 
           // when displaying header row, we'll call "setColumns" which in terms will recreate the header row filters
           if (showHeaderRow === true) {
-            this.sharedService.grid.setColumns(this.sharedService.columnDefinitions);
+            this.sharedService.slickGrid.setColumns(this.sharedService.columnDefinitions);
           }
           break;
         case 'toggle-toppanel':
           const showTopPanel = this.sharedService && this.sharedService.gridOptions && this.sharedService.gridOptions.showTopPanel || false;
-          this.sharedService.grid.setTopPanelVisibility(!showTopPanel);
+          this.sharedService.slickGrid.setTopPanelVisibility(!showTopPanel);
           break;
         case 'toggle-preheader':
           const showPreHeaderPanel = this.sharedService && this.sharedService.gridOptions && this.sharedService.gridOptions.showPreHeaderPanel || false;
-          this.sharedService.grid.setPreHeaderPanelVisibility(!showPreHeaderPanel);
+          this.sharedService.slickGrid.setPreHeaderPanelVisibility(!showPreHeaderPanel);
           break;
         case 'refresh-dataset':
           this.refreshBackendDataset();

@@ -47,7 +47,7 @@ describe('rowSelectionExtension', () => {
     });
 
     it('should register the addon', () => {
-      const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'setSelectionModel');
+      const pluginSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setSelectionModel');
 
       const instance = extension.register();
       const addonInstance = extension.getAddonInstance();

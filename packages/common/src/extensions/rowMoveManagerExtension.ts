@@ -90,21 +90,21 @@ export class RowMoveManagerExtension implements Extension {
 
   /** Register the 3rd party addon (plugin) */
   register(rowSelectionPlugin?: SlickRowSelectionModel): SlickRowMoveManager | null {
-    if (this._addon && this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
+    if (this._addon && this.sharedService && this.sharedService.slickGrid && this.sharedService.gridOptions) {
       // dynamically import the SlickGrid plugin (addon) with RequireJS
       this.extensionUtility.loadExtensionDynamically(ExtensionName.rowMoveManager);
 
       // this also requires the Row Selection Model to be registered as well
-      if (!rowSelectionPlugin || !this.sharedService.grid.getSelectionModel()) {
+      if (!rowSelectionPlugin || !this.sharedService.slickGrid.getSelectionModel()) {
         this.extensionUtility.loadExtensionDynamically(ExtensionName.rowSelection);
         rowSelectionPlugin = new Slick.RowSelectionModel(this.sharedService.gridOptions.rowSelectionOptions);
-        this.sharedService.grid.setSelectionModel(rowSelectionPlugin);
+        this.sharedService.slickGrid.setSelectionModel(rowSelectionPlugin);
       }
 
-      this.sharedService.grid.registerPlugin<SlickRowMoveManager>(this._addon);
+      this.sharedService.slickGrid.registerPlugin<SlickRowMoveManager>(this._addon);
 
       // hook all events
-      if (this._addon && this.sharedService.grid && this.sharedService.gridOptions.rowMoveManager) {
+      if (this._addon && this.sharedService.slickGrid && this.sharedService.gridOptions.rowMoveManager) {
         if (this.sharedService.gridOptions.rowMoveManager.onExtensionRegistered) {
           this.sharedService.gridOptions.rowMoveManager.onExtensionRegistered(this._addon);
         }

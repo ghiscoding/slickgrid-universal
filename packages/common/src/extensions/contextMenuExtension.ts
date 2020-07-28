@@ -61,7 +61,7 @@ export class ContextMenuExtension implements Extension {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
 
-    if (this.sharedService && this.sharedService.grid && this.sharedService.gridOptions && this.sharedService.gridOptions.contextMenu) {
+    if (this.sharedService && this.sharedService.slickGrid && this.sharedService.gridOptions && this.sharedService.gridOptions.contextMenu) {
       const contextMenu = this.sharedService.gridOptions.contextMenu;
       // keep original user context menu, useful when switching locale to translate
       this._userOriginalContextMenu = { ...contextMenu };
@@ -77,7 +77,7 @@ export class ContextMenuExtension implements Extension {
 
       this._addon = new Slick.Plugins.ContextMenu(contextMenu);
       if (this._addon) {
-        this.sharedService.grid.registerPlugin<SlickContextMenu>(this._addon);
+        this.sharedService.slickGrid.registerPlugin<SlickContextMenu>(this._addon);
       }
 
       // translate the item keys when necessary
@@ -86,7 +86,7 @@ export class ContextMenuExtension implements Extension {
       }
 
       // hook all events
-      if (this.sharedService.grid && contextMenu) {
+      if (this.sharedService.slickGrid && contextMenu) {
         if (this._addon && contextMenu.onExtensionRegistered) {
           contextMenu.onExtensionRegistered(this._addon);
         }
@@ -410,7 +410,7 @@ export class ContextMenuExtension implements Extension {
         const row = args && args.row || 0;
         const columnDef = args && args.column;
         const dataContext = args && args.dataContext;
-        const grid = this.sharedService && this.sharedService.grid;
+        const grid = this.sharedService && this.sharedService.slickGrid;
         const exportOptions = gridOptions && (gridOptions.excelExportOptions || gridOptions.exportOptions);
         let textToCopy = exportWithFormatterWhenDefined(row, cell, dataContext, columnDef, grid, exportOptions);
 

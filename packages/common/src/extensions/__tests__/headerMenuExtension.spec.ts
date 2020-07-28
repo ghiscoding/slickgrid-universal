@@ -131,7 +131,7 @@ describe('headerMenuExtension', () => {
       });
 
       it('should register the addon', () => {
-        const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'registerPlugin');
+        const pluginSpy = jest.spyOn(SharedService.prototype.slickGrid, 'registerPlugin');
         const onRegisteredSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onExtensionRegistered');
 
         const instance = extension.register();
@@ -411,7 +411,7 @@ describe('headerMenuExtension', () => {
 
       it('should trigger the command "hide" and expect the grid "autosizeColumns" method being called', () => {
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
-        const autosizeSpy = jest.spyOn(SharedService.prototype.grid, 'autosizeColumns');
+        const autosizeSpy = jest.spyOn(SharedService.prototype.slickGrid, 'autosizeColumns');
 
         const instance = extension.register();
         instance.onCommand.notify({ column: columnsMock[0], grid: gridStub, command: 'hide', item: { command: 'hide' } }, new Slick.EventData(), gridStub);
@@ -449,7 +449,7 @@ describe('headerMenuExtension', () => {
         const previousSortSpy = jest.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
         const backendSortSpy = jest.spyOn(sortServiceStub, 'onBackendSortChanged');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
-        const setSortSpy = jest.spyOn(SharedService.prototype.grid, 'setSortColumns');
+        const setSortSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setSortColumns');
 
         const instance = extension.register();
         instance.onCommand.notify({ column: mockSortedCols[1].sortCol, grid: gridStub, command: 'sort-asc', item: { command: 'sort-asc' } }, new Slick.EventData(), gridStub);
@@ -467,7 +467,7 @@ describe('headerMenuExtension', () => {
         const previousSortSpy = jest.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
         const backendSortSpy = jest.spyOn(sortServiceStub, 'onBackendSortChanged');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
-        const setSortSpy = jest.spyOn(SharedService.prototype.grid, 'setSortColumns');
+        const setSortSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setSortColumns');
 
         const instance = extension.register();
         instance.onCommand.notify({ column: mockSortedCols[1].sortCol, grid: gridStub, command: 'sort-desc', item: { command: 'sort-desc' } }, new Slick.EventData(), gridStub);
@@ -487,7 +487,7 @@ describe('headerMenuExtension', () => {
         const previousSortSpy = jest.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
         const localSortSpy = jest.spyOn(sortServiceStub, 'onLocalSortChanged');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
-        const setSortSpy = jest.spyOn(SharedService.prototype.grid, 'setSortColumns');
+        const setSortSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setSortColumns');
 
         const instance = extension.register();
         instance.onCommand.notify({ column: mockSortedCols[1].sortCol, grid: gridStub, command: 'sort-desc', item: { command: 'sort-desc' } }, new Slick.EventData(), gridStub);
@@ -506,7 +506,7 @@ describe('headerMenuExtension', () => {
         const mockSortedOuput: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } }];
         const previousSortSpy = jest.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
-        const setSortSpy = jest.spyOn(SharedService.prototype.grid, 'setSortColumns');
+        const setSortSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setSortColumns');
         const gridSortSpy = jest.spyOn(gridStub.onSort, 'notify');
 
         const instance = extension.register();

@@ -176,7 +176,7 @@ describe('rowMoveManagerExtension', () => {
 
     it('should register the addon', () => {
       const onRegisteredSpy = jest.spyOn(SharedService.prototype.gridOptions.rowMoveManager, 'onExtensionRegistered');
-      const pluginSpy = jest.spyOn(SharedService.prototype.grid, 'registerPlugin');
+      const pluginSpy = jest.spyOn(SharedService.prototype.slickGrid, 'registerPlugin');
 
       const instance = extension.loadAddonWhenNotExists(columnsMock, gridOptionsMock);
       extension.create(columnsMock, gridOptionsMock);

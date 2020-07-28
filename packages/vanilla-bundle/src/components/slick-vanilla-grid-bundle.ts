@@ -8,6 +8,7 @@ import {
   BackendServiceApi,
   Column,
   ColumnEditor,
+  ExtensionList,
   ExtensionName,
   EventNamingStyle,
   GlobalGridOptions,
@@ -89,6 +90,7 @@ export class SlickVanillaGridBundle {
   private _isLocalGrid = true;
   private _isPaginationInitialized = false;
   private _eventHandler: SlickEventHandler = new Slick.EventHandler();
+  private _extensions: ExtensionList<any, any> | undefined;
   private _paginationOptions: Pagination | undefined;
   private _registeredServices: any[] = [];
   private _slickgridInitialized = false;
@@ -222,6 +224,10 @@ export class SlickVanillaGridBundle {
 
   get instances(): SlickerGridInstance | undefined {
     return this._slickerGridInstances;
+  }
+
+  get extensions(): ExtensionList<any, any> | undefined {
+    return this._extensions;
   }
 
   get registeredServices(): any[] {
@@ -369,7 +375,7 @@ export class SlickVanillaGridBundle {
     this._columnDefinitions = this.swapInternalEditorToSlickGridFactoryEditor(this._columnDefinitions);
     this.slickGrid = new Slick.Grid(gridContainerElm, this.dataView, this._columnDefinitions, this._gridOptions);
     this.sharedService.dataView = this.dataView;
-    this.sharedService.grid = this.slickGrid;
+    this.sharedService.slickGrid = this.slickGrid;
 
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.slickGrid, this._gridOptions, this.dataView);
@@ -538,6 +544,10 @@ export class SlickVanillaGridBundle {
       treeDataService: this.treeDataService,
     };
 
+    // addons (SlickGrid extra plugins/controls)
+    this._extensions = this.extensionService?.extensionList;
+
+    // all instances (SlickGrid, DataView & all Services)
     this._eventPubSubService.publish('onSlickerGridCreated', this.instances);
     this._isGridInitialized = true;
   }

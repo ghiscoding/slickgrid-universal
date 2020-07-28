@@ -64,7 +64,7 @@ export class CellExternalCopyManagerExtension implements Extension {
 
   /** Register the 3rd party addon (plugin) */
   register(): SlickCellExternalCopyManager | null {
-    if (this.sharedService && this.sharedService.grid && this.sharedService.gridOptions) {
+    if (this.sharedService && this.sharedService.slickGrid && this.sharedService.gridOptions) {
       // dynamically import the SlickGrid plugin (addon) with RequireJS
       this.extensionUtility.loadExtensionDynamically(ExtensionName.cellExternalCopyManager);
 
@@ -72,14 +72,14 @@ export class CellExternalCopyManagerExtension implements Extension {
       this.hookUndoShortcutKey();
 
       this._addonOptions = { ...this.getDefaultOptions(), ...this.sharedService.gridOptions.excelCopyBufferOptions } as ExcelCopyBufferOption;
-      this.sharedService.grid.setSelectionModel(new Slick.CellSelectionModel() as SlickCellSelectionModel);
+      this.sharedService.slickGrid.setSelectionModel(new Slick.CellSelectionModel() as SlickCellSelectionModel);
       this._addon = new Slick.CellExternalCopyManager(this._addonOptions);
       if (this._addon) {
-        this.sharedService.grid.registerPlugin<SlickCellExternalCopyManager>(this._addon);
+        this.sharedService.slickGrid.registerPlugin<SlickCellExternalCopyManager>(this._addon);
       }
 
       // hook to all possible events
-      if (this.sharedService.grid && this.sharedService.gridOptions.excelCopyBufferOptions) {
+      if (this.sharedService.slickGrid && this.sharedService.gridOptions.excelCopyBufferOptions) {
         if (this._addon && this.sharedService.gridOptions.excelCopyBufferOptions.onExtensionRegistered) {
           this.sharedService.gridOptions.excelCopyBufferOptions.onExtensionRegistered(this._addon);
         }
@@ -158,7 +158,7 @@ export class CellExternalCopyManagerExtension implements Extension {
         if (!this.sharedService.gridOptions.editable || !columnDef.editor) {
           const isEvaluatingFormatter = (columnDef.exportWithFormatter !== undefined) ? columnDef.exportWithFormatter : (this.sharedService.gridOptions.exportOptions && this.sharedService.gridOptions.exportOptions.exportWithFormatter);
           if (columnDef.formatter && isEvaluatingFormatter) {
-            const formattedOutput = columnDef.formatter(0, 0, item[columnDef.field], columnDef, item, this.sharedService.grid);
+            const formattedOutput = columnDef.formatter(0, 0, item[columnDef.field], columnDef, item, this.sharedService.slickGrid);
             if (columnDef.sanitizeDataExport || (this.sharedService.gridOptions.exportOptions && this.sharedService.gridOptions.exportOptions.sanitizeDataExport)) {
               let outputString = formattedOutput as string;
               if (formattedOutput && typeof formattedOutput === 'object' && formattedOutput.hasOwnProperty('text')) {
@@ -181,7 +181,7 @@ export class CellExternalCopyManagerExtension implements Extension {
       includeHeaderWhenCopying: false,
       newRowCreator: (count: number) => {
         for (let i = 0; i < count; i++) {
-          this.sharedService.grid.getData<SlickDataView>().addItem({ id: `newRow_${newRowIds++}` });
+          this.sharedService.slickGrid.getData<SlickDataView>().addItem({ id: `newRow_${newRowIds++}` });
         }
       }
     };

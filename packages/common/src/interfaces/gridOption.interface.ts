@@ -25,7 +25,7 @@ import {
   RowSelectionModelOption,
   TreeDataOption,
 } from './index';
-import { EventNamingStyle, GridAutosizeColsMode, OperatorType, OperatorString, } from '../enums/index';
+import { ColumnReorderFunction, EventNamingStyle, GridAutosizeColsMode, OperatorType, OperatorString, } from '../enums/index';
 import { TranslaterService } from '../services/translater.service';
 
 export interface GridOption {
@@ -196,7 +196,7 @@ export interface GridOption {
   enableColumnPicker?: boolean;
 
   /** Defaults to true, which permits the user to move an entire column from a position to another. */
-  enableColumnReorder?: boolean;
+  enableColumnReorder?: boolean | ColumnReorderFunction;
 
   /** Do we want to enable Context Menu? (mouse right+click) */
   enableContextMenu?: boolean;

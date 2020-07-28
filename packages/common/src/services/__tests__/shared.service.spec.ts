@@ -77,7 +77,7 @@ describe('Shared Service', () => {
   it('should call "columnDefinitions" GETTER and expect columns array returned', () => {
     const columnSpy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
 
-    service.grid = gridStub;
+    service.slickGrid = gridStub;
     const columns = service.columnDefinitions;
 
     expect(columnSpy).toHaveBeenCalled();
@@ -131,7 +131,7 @@ describe('Shared Service', () => {
   it('should call "grid" GETTER and return the grid object', () => {
     const spy = jest.spyOn(service, 'grid', 'get').mockReturnValue(gridStub);
 
-    const output = service.grid;
+    const output = service.slickGrid;
 
     expect(spy).toHaveBeenCalled();
     expect(output).toEqual(gridStub);
@@ -141,8 +141,8 @@ describe('Shared Service', () => {
     const getSpy = jest.spyOn(service, 'grid', 'get');
     const setSpy = jest.spyOn(service, 'grid', 'set');
 
-    service.grid = gridStub;
-    const output = service.grid;
+    service.slickGrid = gridStub;
+    const output = service.slickGrid;
 
     expect(getSpy).toHaveBeenCalled();
     expect(setSpy).toHaveBeenCalled();
@@ -166,7 +166,7 @@ describe('Shared Service', () => {
   it('should call "gridOptions" GETTER and expect options array returned', () => {
     const spy = jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
 
-    service.grid = gridStub;
+    service.slickGrid = gridStub;
     const options = service.gridOptions;
 
     expect(spy).toHaveBeenCalled();

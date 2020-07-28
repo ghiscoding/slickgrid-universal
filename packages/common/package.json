@@ -29,7 +29,7 @@
     "bundle:commonjs": "tsc --project tsconfig.build.json --outDir dist/commonjs --module commonjs",
     "bundle:es2015": "cross-env tsc --project tsconfig.build.json --outDir dist/es2015 --module es2020 --target es2015",
     "bundle:es2020": "cross-env tsc --project tsconfig.build.json --outDir dist/es2020 --module es2020 --target es2020",
-    "delete:dist": "cross-env rimraf dist",
+    "delete:dist": "cross-env rimraf --maxBusyTries=10 dist",
     "sass-build-task:scss-compile:bootstrap": "node-sass src/styles/slickgrid-theme-bootstrap.scss -o dist/styles/css --output-style compressed",
     "postsass-build-task:scss-compile:bootstrap": "postcss --use autoprefixer --output dist/styles/css/slickgrid-theme-bootstrap.css dist/styles/css/slickgrid-theme-bootstrap.css --output-style compressed",
     "sass-build-task:scss-compile:material": "node-sass src/styles/slickgrid-theme-material.scss -o dist/styles/css --output-style compressed",
