@@ -208,16 +208,23 @@ describe('LongTextEditor', () => {
     });
 
     describe('isValueChanged method', () => {
-      it('should return True when previously dispatched keyboard event is a new char "a"', () => {
-        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
+      it('should return True when previously dispatched keyboard event is a new char "a" and it should also update the text counter accordingly', () => {
+        const eventKeyDown = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
+        const eventKeyUp = new (window.window as any).KeyboardEvent('keyup', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
+        mockColumn.internalColumnEditor.maxLength = 255;
 
         editor = new LongTextEditor(editorArguments);
         editor.setValue('z');
         const editorElm = document.body.querySelector<HTMLTextAreaElement>('.editor-title textarea');
+        const currentTextLengthElm = document.body.querySelector<HTMLDivElement>('.editor-footer .text-length');
+        const maxTextLengthElm = document.body.querySelector<HTMLDivElement>('.editor-footer .max-length');
 
         editor.focus();
-        editorElm.dispatchEvent(event);
+        editorElm.dispatchEvent(eventKeyDown);
+        editorElm.dispatchEvent(eventKeyUp);
 
+        expect(currentTextLengthElm.textContent).toBe('1');
+        expect(maxTextLengthElm.textContent).toBe('255');
         expect(editor.isValueChanged()).toBe(true);
       });
 
