@@ -6,6 +6,7 @@ import {
   CurrentPagination,
   CurrentSorter,
   Editors,
+  ExtensionList,
   ExtensionService,
   ExtensionUtility,
   Filters,
@@ -21,6 +22,8 @@ import {
   PaginationService,
   ServicePagination,
   SharedService,
+  SlickDraggableGrouping,
+  SlickPluginList,
   SlickGrid,
   SortService,
   TreeDataService,
@@ -64,6 +67,7 @@ const extensionServiceStub = {
   translateGridMenu: jest.fn(),
   translateHeaderMenu: jest.fn(),
 } as unknown as ExtensionService;
+Object.defineProperty(extensionServiceStub, 'extensionList', { get: jest.fn(() => { }), set: jest.fn(), configurable: true });
 
 const mockExtensionUtility = {
   loadExtensionDynamically: jest.fn(),
@@ -318,11 +322,13 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     const pubSubSpy = jest.spyOn(eventPubSubService, 'publish');
 
     component.initialization(divContainer);
+    const instances = component.instances;
+
     expect(pubSubSpy).toHaveBeenCalled();
     expect(pubSubSpy).toHaveBeenNthCalledWith(1, 'onBeforeGridCreate', true);
     expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onDataviewCreated', expect.any(Object));
     expect(pubSubSpy).toHaveBeenNthCalledWith(3, 'onGridCreated', expect.any(Object));
-    expect(pubSubSpy).toHaveBeenNthCalledWith(4, 'onSlickerGridCreated', expect.any(Object));
+    expect(pubSubSpy).toHaveBeenNthCalledWith(4, 'onSlickerGridCreated', instances);
 
     component.dispose();
     expect(pubSubSpy).toHaveBeenNthCalledWith(5, 'onBeforeGridDestroy', expect.any(Object));
@@ -562,10 +568,13 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const dataviewSpy = jest.spyOn(mockDataViewImplementation.prototype, 'constructor');
         const groupMetaSpy = jest.spyOn(mockGroupItemMetaProviderImplementation.prototype, 'constructor');
         const sharedMetaSpy = jest.spyOn(SharedService.prototype, 'groupItemMetadataProvider', 'set');
+        jest.spyOn(extensionServiceStub, 'extensionList', 'get').mockReturnValue({ draggableGrouping: { pluginName: 'DraggableGrouping' } } as unknown as ExtensionList<any, any>);
 
         component.gridOptions = { draggableGrouping: {} };
         component.initialization(divContainer);
+        const extensions = component.extensions;
 
+        expect(Object.keys(extensions).length).toBe(1);
         expect(extensionSpy).toHaveBeenCalledWith('groupItemMetaProvider');
         expect(dataviewSpy).toHaveBeenCalledWith({ inlineFilters: false, groupItemMetadataProvider: expect.anything() });
         expect(groupMetaSpy).toHaveBeenCalledWith();
