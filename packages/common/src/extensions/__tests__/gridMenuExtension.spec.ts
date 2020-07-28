@@ -144,7 +144,7 @@ describe('gridMenuExtension', () => {
     describe('registered addon', () => {
       beforeEach(() => {
         jest.spyOn(SharedService.prototype, 'dataView', 'get').mockReturnValue(dataViewStub);
-        jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+        jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
         jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
         jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
@@ -499,7 +499,7 @@ describe('gridMenuExtension', () => {
         } as unknown as GridOption;
 
         jest.spyOn(SharedService.prototype, 'dataView', 'get').mockReturnValue(dataViewStub);
-        jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+        jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
         jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
         jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock);

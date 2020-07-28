@@ -380,7 +380,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('dataset changed', () => {
       beforeEach(() => {
         jest.clearAllMocks();
-        sharedService.grid = mockGrid as unknown as SlickGrid;
+        sharedService.slickGrid = mockGrid as unknown as SlickGrid;
       });
 
       it('should expect "autosizeColumns" being called when "autoFitColumnsOnFirstLoad" is set and we are on first page load', () => {
@@ -413,7 +413,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('options changed', () => {
       beforeEach(() => {
         jest.clearAllMocks();
-        sharedService.grid = mockGrid as unknown as SlickGrid;
+        sharedService.slickGrid = mockGrid as unknown as SlickGrid;
         sharedService.gridOptions = gridOptions;
       });
 
@@ -596,7 +596,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       afterEach(() => {
         component.dispose();
         jest.clearAllMocks();
-        sharedService.grid = mockGrid as unknown as SlickGrid;
+        sharedService.slickGrid = mockGrid as unknown as SlickGrid;
       });
 
       it('should call the onDataviewCreated emitter', () => {
@@ -707,7 +707,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       afterEach(() => {
         jest.clearAllMocks();
         component.dispose();
-        sharedService.grid = mockGrid as unknown as SlickGrid;
+        sharedService.slickGrid = mockGrid as unknown as SlickGrid;
       });
 
       it('should call "showHeaderRow" method with false when its flag is disabled', () => {
@@ -1493,7 +1493,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('loadRowSelectionPresetWhenExists method', () => {
       beforeEach(() => {
         jest.clearAllMocks();
-        sharedService.grid = mockGrid as unknown as SlickGrid;
+        sharedService.slickGrid = mockGrid as unknown as SlickGrid;
       });
 
       it('should call the "mapIdsToRows" from the DataView then "setSelectedRows" from the Grid when there are row selection presets with "dataContextIds" array set', (done) => {
@@ -1562,7 +1562,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('onPaginationVisibilityChanged event', () => {
       beforeEach(() => {
         jest.clearAllMocks();
-        sharedService.grid = mockGrid as unknown as SlickGrid;
+        sharedService.slickGrid = mockGrid as unknown as SlickGrid;
       });
 
       it('should change "showPagination" flag when "onPaginationVisibilityChanged" from the Pagination Service is triggered', (done) => {

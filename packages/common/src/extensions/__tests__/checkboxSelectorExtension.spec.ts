@@ -74,7 +74,7 @@ describe('checkboxSelectorExtension', () => {
         { id: 'field2', field: 'field2', width: 50 }
       ];
       columnSelectionMock = { id: '_checkbox_selector', field: 'sel' };
-      jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     });
 

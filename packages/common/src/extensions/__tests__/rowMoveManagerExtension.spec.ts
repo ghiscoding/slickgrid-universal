@@ -79,7 +79,7 @@ describe('rowMoveManagerExtension', () => {
         { id: 'field1', field: 'field1', width: 100, cssClass: 'red' },
         { id: 'field2', field: 'field2', width: 50 }
       ];
-      jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     });
 
@@ -169,7 +169,7 @@ describe('rowMoveManagerExtension', () => {
 
     beforeEach(() => {
       columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }];
-      jest.spyOn(SharedService.prototype, 'grid', 'get').mockReturnValue(gridStub);
+      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       jest.clearAllMocks();
     });

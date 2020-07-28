@@ -1,6 +1,6 @@
 import { SharedService } from '../shared.service';
 import { PubSubService } from '../pubSub.service';
-import { Column, CurrentPagination, SlickDataView, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, CurrentPagination, SlickDataView, GridOption, SlickGrid, SlickGroupItemMetadataProvider } from '../../interfaces/index';
 import { ExcelExportService } from '../excelExport.service';
 
 jest.mock('flatpickr', () => { });
@@ -129,7 +129,7 @@ describe('Shared Service', () => {
   });
 
   it('should call "grid" GETTER and return the grid object', () => {
-    const spy = jest.spyOn(service, 'grid', 'get').mockReturnValue(gridStub);
+    const spy = jest.spyOn(service, 'slickGrid', 'get').mockReturnValue(gridStub);
 
     const output = service.slickGrid;
 
@@ -138,8 +138,8 @@ describe('Shared Service', () => {
   });
 
   it('should call "grid" SETTER and expect GETTER to return the same', () => {
-    const getSpy = jest.spyOn(service, 'grid', 'get');
-    const setSpy = jest.spyOn(service, 'grid', 'set');
+    const getSpy = jest.spyOn(service, 'slickGrid', 'get');
+    const setSpy = jest.spyOn(service, 'slickGrid', 'set');
 
     service.slickGrid = gridStub;
     const output = service.slickGrid;
@@ -186,7 +186,7 @@ describe('Shared Service', () => {
   });
 
   it('should call "groupItemMetadataProvider" GETTER and return metadata', () => {
-    const spy = jest.spyOn(service, 'groupItemMetadataProvider', 'get').mockReturnValue(mockColumns);
+    const spy = jest.spyOn(service, 'groupItemMetadataProvider', 'get').mockReturnValue(mockColumns as unknown as SlickGroupItemMetadataProvider);
 
     const output = service.groupItemMetadataProvider;
 
@@ -198,7 +198,7 @@ describe('Shared Service', () => {
     const getSpy = jest.spyOn(service, 'groupItemMetadataProvider', 'get');
     const setSpy = jest.spyOn(service, 'groupItemMetadataProvider', 'set');
 
-    service.groupItemMetadataProvider = mockColumns;
+    service.groupItemMetadataProvider = mockColumns as unknown as SlickGroupItemMetadataProvider;
     const output = service.groupItemMetadataProvider;
 
     expect(getSpy).toHaveBeenCalled();
