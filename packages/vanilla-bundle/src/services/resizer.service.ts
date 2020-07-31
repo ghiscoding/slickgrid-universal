@@ -170,7 +170,6 @@ export class ResizerService {
 
         // user could choose to manually stop the looped of auto resize fix
         if (this._isStopResizeIntervalRequested) {
-          // clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 70min
           isResizeRequired = false;
         }
 

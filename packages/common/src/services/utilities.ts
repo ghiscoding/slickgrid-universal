@@ -198,8 +198,11 @@ export function deepCopy(objectOrArray: any) {
   return objectOrArray;
 }
 
-/** Empty a DOM element by removing all of its DOM element children leaving with an empty element (basically an empty shell) */
-export function emptyElement(element?: HTMLElement) {
+/**
+ * Empty a DOM element by removing all of its DOM element children leaving with an empty element (basically an empty shell)
+ * @return {object} element - updated element
+ */
+export function emptyElement<T extends HTMLElement = HTMLElement>(element?: T): T | undefined {
   if (element?.firstChild) {
     while (element.firstChild) {
       if (element.lastChild) {
@@ -207,6 +210,7 @@ export function emptyElement(element?: HTMLElement) {
       }
     }
   }
+  return element;
 }
 
 /**

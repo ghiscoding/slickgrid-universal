@@ -12,7 +12,7 @@ export class Renderer {
   private _viewModel: any;
   private _observers: BindingService[] = [];
 
-  constructor(private viewTemplate: HTMLDivElement) {
+  constructor(private viewTemplate: HTMLElement) {
     this.viewTemplate.innerHTML = `Loading`;
   }
 
