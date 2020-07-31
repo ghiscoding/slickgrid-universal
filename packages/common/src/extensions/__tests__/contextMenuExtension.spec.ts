@@ -1109,7 +1109,7 @@ describe('contextMenuExtension', () => {
     describe('without Translate Service', () => {
       beforeEach(() => {
         translateService = null;
-        extension = new ContextMenuExtension({} as ExtensionUtility, { gridOptions: { enableTranslate: true } } as SharedService, treeDataServiceStub, translateService, treeDataServiceStub);
+        extension = new ContextMenuExtension({} as ExtensionUtility, { gridOptions: { enableTranslate: true } } as SharedService, treeDataServiceStub, translateService);
       });
 
       it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {
