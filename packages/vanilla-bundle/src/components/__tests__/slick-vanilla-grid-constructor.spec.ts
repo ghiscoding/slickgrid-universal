@@ -256,14 +256,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
   let translateService: TranslateServiceStub;
   const http = new HttpStub();
 
-  const template = `
-  <div class="demo-container">
-    <div class="grid1 grid-pane">
-      <div class="slickgrid-container slickgrid_12345">
-        <div class="slick-pane slick-pane-header slick-pane-left" style="width: 100%;"></div>
-      </div>
-    </div>
-  </div>`;
+  const template = `<div class="demo-container"><div class="grid1"></div></div>`;
 
   beforeEach(() => {
     divContainer = document.createElement('div');

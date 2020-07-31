@@ -3,15 +3,19 @@ import {
   Editors,
   FieldType,
   Filters,
+  Formatter,
   Formatters,
   GridOption,
   SlickNamespace,
-  Formatter,
+
+  // utilities
+  deepCopy,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
+import { loadComponent } from 'examples/utilities';
 import '../salesforce-styles.scss';
 import './example11.scss';
 
@@ -35,14 +39,15 @@ const customEditableInputFormatter = (row, cell, value, columnDef, dataContext, 
   return isEditableLine ? { text: value, addClasses: 'editable-field', toolTip: 'Click to Edit' } : value;
 };
 
-export class Example3 {
+export class Example11 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
-  dataset: any[];
+  dataset: any[] = [];
   isGridEditable = true;
   editQueue = [];
   editedItems = {};
   sgb: SlickVanillaGridBundle;
+  gridContainerElm: HTMLDivElement;
 
   get slickerGridInstance(): SlickerGridInstance {
     return this.sgb?.instances;
@@ -51,11 +56,13 @@ export class Example3 {
   attached() {
     this.initializeGrid();
     this.dataset = this.loadData(500);
-    const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid11`);
+    this.gridContainerElm = document.querySelector<HTMLDivElement>(`.grid11`);
 
-    gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
-    gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+
+    // bind any of the grid events
+    this.gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
+    this.gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
   }
 
   dispose() {
@@ -68,29 +75,32 @@ export class Example3 {
         id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,
         editor: { model: Editors.text, required: true, alwaysSaveOnEnterKey: true, validator: myCustomTitleValidator, },
         filterable: true,
-        formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold] },
+        formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold], massUpdate: true },
       },
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
         editor: { model: Editors.float, decimal: 2, valueStep: 1, maxValue: 10000, alwaysSaveOnEnterKey: true, },
-        formatter: (row, cell, value) => value > 1 ? `${value} days` : `${value} day`,
-        params: { unsaved: false },
+        formatter: (row, cell, value) => {
+          if (value === null || value === undefined) {
+            return '';
+          }
+          return value > 1 ? `${value} days` : `${value} day`;
+        },
+        params: { massUpdate: true },
         type: FieldType.number,
       },
       {
-        id: 'cost', name: 'Cost', field: 'cost',
-        width: 90,
-        sortable: true,
-        filterable: true,
+        id: 'cost', name: 'Cost', field: 'cost', width: 90,
+        sortable: true, filterable: true, type: FieldType.number,
         filter: { model: Filters.compoundInputNumber },
         formatter: Formatters.dollar,
-        type: FieldType.number,
       },
       {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
         editor: { model: Editors.slider, minValue: 0, maxValue: 100, },
         sortable: true, filterable: true,
         filter: { model: Filters.slider, operator: '>=' },
+        params: { massUpdate: true },
       },
       {
         id: 'start', name: 'Start', field: 'start', sortable: true,
@@ -98,6 +108,7 @@ export class Example3 {
         type: FieldType.date, outputType: FieldType.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },
         editor: { model: Editors.date },
+        params: { massUpdate: true },
       },
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true,
@@ -105,6 +116,7 @@ export class Example3 {
         formatter: Formatters.dateIso,
         type: FieldType.date, outputType: FieldType.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },
+        params: { massUpdate: true },
       },
       {
         id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 20, maxWidth: 100,
@@ -120,9 +132,7 @@ export class Example3 {
       {
         id: 'action', name: 'Action', field: 'action', width: 100, maxWidth: 100,
         excludeFromExport: true,
-        formatter: () => {
-          return `<div class="fake-hyperlink">Action <span class="font-12px">&#9660;</span></div>`;
-        },
+        formatter: () => `<div class="fake-hyperlink">Action <span class="font-12px">&#9660;</span></div>`,
         cellMenu: {
           hideCloseButton: false,
           width: 200,
@@ -197,7 +207,7 @@ export class Example3 {
       cellMenu: {
         // all the Cell Menu callback methods (except the action callback)
         // are available under the grid options as shown below
-        onCommand: (e, args) => this.executeCellMenuCommand(e, args),
+        onCommand: (e, args) => this.executeCommand(e, args),
         onOptionSelected: (e, args) => {
           // change "Completed" property with new option selected from the Cell Menu
           const dataContext = args && args.dataContext;
@@ -207,17 +217,29 @@ export class Example3 {
           }
         },
       },
+      enableContextMenu: true,
+      contextMenu: {
+        commandItems: [
+          {
+            command: 'modal',
+            title: 'Mass Update',
+            iconCssClass: 'mdi mdi-table-edit',
+          },
+        ],
+        onCommand: (e, args) => this.executeCommand(e, args)
+      },
+      gridMenu: {
+        customItems: [
+          {
+            command: 'modal',
+            title: 'Mass Update',
+            iconCssClass: 'mdi mdi-table-edit',
+            positionOrder: 66,
+          },
+        ],
+        onCommand: (e, args) => this.executeCommand(e, args)
+      }
     };
-  }
-
-  toggleGridEditReadonly() {
-    // first need undo all edits
-    this.undoAllEdits();
-
-    // then change a single grid options to make the grid non-editable (readonly)
-    this.isGridEditable = !this.isGridEditable;
-    this.sgb.gridOptions = { editable: this.isGridEditable };
-    this.gridOptions = this.sgb.gridOptions;
   }
 
   loadData(count: number) {
@@ -246,9 +268,6 @@ export class Example3 {
         delete tmpArray[i].finish; // also test with undefined properties
       }
     }
-    if (this.sgb) {
-      this.sgb.dataset = tmpArray;
-    }
     return tmpArray;
   }
 
@@ -258,6 +277,7 @@ export class Example3 {
     if (args.validationResults) {
       alert(args.validationResults.msg);
     }
+    return false;
   }
 
   handleItemDeleted(event) {
@@ -265,7 +285,7 @@ export class Example3 {
     console.log('item deleted with id:', itemId);
   }
 
-  executeCellMenuCommand(e, args) {
+  async executeCommand(e, args) {
     const command = args.command;
     const dataContext = args.dataContext;
 
@@ -278,13 +298,29 @@ export class Example3 {
           this.slickerGridInstance.gridService.deleteItemById(dataContext.id);
         }
         break;
+      case 'modal':
+        const selectedRowIndexes = this.sgb.slickGrid.getSelectedRows() || [];
+        let confirmed = true;
+
+        if (selectedRowIndexes.length === 0) {
+          confirmed = await confirm(`Since no rows were selected, we'll assume you want to do a mass update on every row. \n\nOK to continue \nCancel to return to the grid`);
+        }
+
+        if (confirmed) {
+          const modalContainerElm = document.querySelector<HTMLDivElement>('.modal-container');
+          const columnDefinitionsClone = deepCopy(this.columnDefinitions);
+          const massUpdateColumnDefinitions = columnDefinitionsClone?.filter((col: Column) => col.params?.massUpdate === true) || [];
+          const selectedItems = this.sgb.gridService.getSelectedRowsDataItem();
+          const selectedIds = selectedItems.map(selectedItem => selectedItem.id);
+          loadComponent(modalContainerElm, './example11-modal', { columnDefinitions: massUpdateColumnDefinitions, selectedIds, remoteCallback: this.remoteCallbackFn.bind(this) });
+        }
     }
   }
 
   /**
    * Instead of manually adding a Custom Formatter on every column definition that is editable, let's do it in an automated way
    * We'll loop through all column definitions and add a Formatter (blue background) when necessary
-   * However note that if there's already a Formatter on that column definition, we need to turn it into a Formatters.multiple
+   * Note however that if there's already a Formatter on that column definition, we need to turn it into a Formatters.multiple
    */
   autoAddCustomEditorFormatter(columnDefinitions: Column[], customFormatter: Formatter) {
     if (Array.isArray(columnDefinitions)) {
@@ -307,21 +343,48 @@ export class Example3 {
     }
   }
 
-  saveAll() {
-    // Edit Queue (array increases every time a cell is changed, regardless of item object)
-    console.log(this.editQueue);
+  remoteCallbackFn(massUpdateItem: any, selectedIds: string[]) {
+    const fields = [];
+    for (const key in massUpdateItem) {
+      if (massUpdateItem.hasOwnProperty(key)) {
+        fields.push({ fieldName: key, value: massUpdateItem[key] });
+      }
+    }
+    console.log('Remote Callback', massUpdateItem, fields);
 
-    // Edit Items only keeps the merged data (an object with row index as the row properties)
-    // if you change 2 different cells on 2 different cells then this editedItems will only contain 1 property
-    // example: editedItems = { 0: { title: task 0, duration: 50, ... }}
-    // ...means that row index 0 got changed and the final merged object is { title: task 0, duration: 50, ... }
-    console.log(this.editedItems);
-    // console.log(`We changed ${Object.keys(this.editedItems).length} rows`);
+    if (Array.isArray(selectedIds) && selectedIds.length > 0) {
+      // update only the selected rows
+      const updatedItems = [];
+      for (const itemId of selectedIds) {
+        const dataContext = this.sgb.dataView.getItemById(itemId);
+        for (const itemProp in massUpdateItem) {
+          if (massUpdateItem.hasOwnProperty(itemProp)) {
+            const newValue = massUpdateItem[itemProp];
+            dataContext[itemProp] = newValue;
+          }
+        }
+        updatedItems.push(dataContext);
+      }
+      this.sgb.gridService.updateItems(updatedItems);
+    } else {
+      // update every rows (full mass update)
+      for (const itemProp in massUpdateItem) {
+        if (massUpdateItem.hasOwnProperty(itemProp)) {
+          this.dataset.forEach(item => item[itemProp] = massUpdateItem[itemProp]);
+        }
+      }
+      this.sgb.dataset = this.dataset;
+    }
+  }
 
-    // since we saved, we can now remove all the unsaved color styling and reset our array/object
-    this.removeAllUnsavedStylingFromCell();
-    this.editQueue = [];
-    this.editedItems = {};
+  toggleGridEditReadonly() {
+    // first need undo all edits
+    this.undoAllEdits();
+
+    // then change a single grid options to make the grid non-editable (readonly)
+    this.isGridEditable = !this.isGridEditable;
+    this.sgb.gridOptions = { editable: this.isGridEditable };
+    this.gridOptions = this.sgb.gridOptions;
   }
 
   removeUnsavedStylingFromCell(item: any, column: Column, row: number) {
@@ -337,6 +400,23 @@ export class Example3 {
         this.removeUnsavedStylingFromCell(lastEdit.item, lastEdit.column, lastEditCommand.row);
       }
     }
+  }
+
+  saveAll() {
+    // Edit Queue (array increases every time a cell is changed, regardless of item object)
+    console.log(this.editQueue);
+
+    // Edit Items only keeps the merged data (an object with row index as the row properties)
+    // if you change 2 different cells on 2 different cells then this editedItems will only contain 1 property
+    // example: editedItems = { 0: { title: task 0, duration: 50, ... }}
+    // ...means that row index 0 got changed and the final merged object is { title: task 0, duration: 50, ... }
+    console.log(this.editedItems);
+    // console.log(`We changed ${Object.keys(this.editedItems).length} rows`);
+
+    // since we saved, we can now remove all the unsaved color styling and reset our array/object
+    this.removeAllUnsavedStylingFromCell();
+    this.editQueue = [];
+    this.editedItems = {};
   }
 
   undoLastEdit(showLastEditor = false) {

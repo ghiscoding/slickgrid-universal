@@ -1,23 +1,10 @@
-import {
-  GridOption,
-  PubSubService,
-  SlickGrid,
-  SlickNamespace,
-} from '@slickgrid-universal/common';
+import { GridOption, PubSubService, SlickGrid, SlickNamespace, } from '@slickgrid-universal/common';
 import { ResizerService } from '../resizer.service';
-import * as utilities from '@slickgrid-universal/common/dist/commonjs/services/utilities';
-
-const mockGetHtmlElementOffset = jest.fn();
-// @ts-ignore
-// utilities.getHtmlElementOffset = mockGetHtmlElementOffset;
 
 declare const Slick: SlickNamespace;
 const DATAGRID_FOOTER_HEIGHT = 25;
 const DATAGRID_PAGINATION_HEIGHT = 35;
 const GRID_UID = 'slickgrid_12345';
-
-jest.mock('flatpickr', () => { });
-// jest.useFakeTimers();
 
 const mockResizerImplementation = {
   init: jest.fn(),
@@ -84,7 +71,12 @@ describe('Resizer Service', () => {
       enableAutoResize: true,
       autoResize: {
         container: '.grid1'
-      }
+      },
+      enableFiltering: true,
+      headerRowHeight: 30,
+      createPreHeaderPanel: true,
+      showPreHeaderPanel: true,
+      preHeaderPanelHeight: 20,
     } as GridOption;
     jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
   });
@@ -211,22 +203,28 @@ describe('Resizer Service', () => {
       expect(divContainer.style.width).toEqual(`${fixedWidth}px`);
     });
 
-    // it('should try to resize grid when its UI is deemed broken and expect "resizeGridWhenStylingIsBrokenUntilCorrected" to be called on interval', () => {
-    //   const promise = new Promise((resolve, reject) => setTimeout(() => resolve({ height: 150, width: 350 }), 1));
-    //   const resizeSpy = jest.spyOn(mockResizerImplementation, 'resizeGrid').mockReturnValue(promise);
-    //   service.init(gridStub, divContainer);
-    //   // jest.spyOn(mockGetHtmlElementOffset, 'getHtmlElementOffset').mockReturnValue({ top: 20, left: 0 });
-    //   // @ts-ignore
-    //   jest.spyOn(divHeaderElm, 'getBoundingClientRect').mockReturnValue({ top: 10, left: 25 });
-    //   divHeaderElm.style.top = '10px';
-    //   divHeaderElm.style.left = '25px';
+    it('should try to resize grid when its UI is deemed broken and expect "resizeGridWhenStylingIsBrokenUntilCorrected" to be called on interval', (done) => {
+      const promise = new Promise(resolve => setTimeout(() => resolve({ height: 150, width: 350 }), 1));
+      const resizeSpy = jest.spyOn(mockResizerImplementation, 'resizeGrid').mockReturnValue(promise);
 
-    //   // jest.runAllTimers(); // fast-forward timer
+      service.init(gridStub, divContainer);
+      service.intervalRetryDelay = 2;
 
-    //   expect(divContainer.outerHTML).toBeTruthy();
-    //   expect(resizeSpy).toHaveBeenCalledTimes(3);
-    //   // expect(mockGetHtmlElementOffset).toHaveBeenCalledWith(divHeaderElm);
-    // });
+      jest.spyOn(divHeaderElm, 'getBoundingClientRect').mockReturnValue({ top: 30, left: 25 } as unknown as DOMRect);
+      divHeaderElm.style.top = '30px';
+      divHeaderElm.style.left = '25px';
+
+      expect(divContainer.outerHTML).toBeTruthy();
+      expect(resizeSpy).toHaveBeenCalledTimes(2);
+
+      setTimeout(() => {
+        service.requestStopOfAutoFixResizeGrid();
+
+        expect(divContainer.outerHTML).toBeTruthy();
+        expect(resizeSpy).toHaveBeenCalled();
+        done();
+      }, 10);
+    });
 
     it('should try to resize grid when its UI is deemed broken but expect an error shown in the console when "resizeGrid" throws an error', (done) => {
       const consoleSpy = jest.spyOn(global.console, 'log').mockReturnValue();

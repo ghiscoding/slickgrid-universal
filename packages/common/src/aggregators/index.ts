@@ -1,5 +1,6 @@
 import { AvgAggregator } from './avgAggregator';
 import { CloneAggregator } from './cloneAggregator';
+import { CountAggregator } from './countAggregator';
 import { DistinctAggregator } from './distinctAggregator';
 import { MinAggregator } from './minAggregator';
 import { MaxAggregator } from './maxAggregator';
@@ -12,6 +13,9 @@ export const Aggregators = {
 
   /** Clone Aggregator will simply clone (copy) over the last defined value of a given group */
   Clone: CloneAggregator,
+
+  /** Count Aggregator will count the number of rows in the group */
+  Count: CountAggregator,
 
   /** Distinct Aggregator will return an array of distinct values found inside the given group */
   Distinct: DistinctAggregator,

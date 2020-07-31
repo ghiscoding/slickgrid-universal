@@ -1,7 +1,7 @@
 import { Aggregator } from './../interfaces/aggregator.interface';
 
 export class AvgAggregator implements Aggregator {
-  private _nonNullCount: number = 0;
+  private _nonNullCount = 0;
   private _sum: number;
   private _field: number | string;
   private _type = 'avg';
@@ -32,11 +32,11 @@ export class AvgAggregator implements Aggregator {
   }
 
   storeResult(groupTotals: any) {
-    if (!groupTotals || groupTotals.avg === undefined) {
-      groupTotals.avg = {};
+    if (!groupTotals || groupTotals[this._type] === undefined) {
+      groupTotals[this._type] = {};
     }
     if (this._nonNullCount !== 0) {
-      groupTotals.avg[this._field] = this._sum / this._nonNullCount;
+      groupTotals[this._type][this._field] = this._sum / this._nonNullCount;
     }
   }
 }

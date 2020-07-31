@@ -9,7 +9,7 @@ export interface Aggregator {
   init: () => void;
 
   /** Mathod to accumulate the result with different logic depending on each aggregator type */
-  accumulate: (item: any) => void;
+  accumulate?: (item: any) => void;
 
   /** Method to store the result into the given group total argument provided */
   storeResult?: (groupTotals: any | undefined) => void;
