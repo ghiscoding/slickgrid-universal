@@ -221,6 +221,9 @@ export class SlickVanillaGridBundle {
   set isDatasetInitialized(isInitialized: boolean) {
     this._isDatasetInitialized = isInitialized;
   }
+  get isGridInitialized(): boolean {
+    return this._isGridInitialized;
+  }
 
   get instances(): SlickerGridInstance | undefined {
     return this._slickerGridInstances;
@@ -266,6 +269,7 @@ export class SlickVanillaGridBundle {
     this.extensionUtility = new ExtensionUtility(this.sharedService, this.translaterService);
     const filterFactory = new FilterFactory(slickgridConfig, this.collectionService, this.translaterService);
     this.filterService = new FilterService(filterFactory, this._eventPubSubService, this.sharedService);
+    this.resizerService = new ResizerService(this._eventPubSubService);
     this.sortService = new SortService(this.sharedService, this._eventPubSubService);
     this.treeDataService = new TreeDataService(this.sharedService);
     this.gridService = new GridService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
@@ -436,7 +440,7 @@ export class SlickVanillaGridBundle {
 
     this.slickGrid.invalidate();
 
-    if (this._dataset.length > 0) {
+    if (Array.isArray(this._dataset) && this._dataset.length > 0) {
       if (!this._isDatasetInitialized && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
         this.loadRowSelectionPresetWhenExists();
       }
@@ -451,7 +455,6 @@ export class SlickVanillaGridBundle {
     }
 
     // load the resizer service
-    this.resizerService = new ResizerService(this._eventPubSubService);
     this.resizerService.init(this.slickGrid, this._gridParentContainerElm);
 
     // user might want to hide the header row on page load but still have `enableFiltering: true`
@@ -1102,7 +1105,9 @@ export class SlickVanillaGridBundle {
    * then take back "editor.model" and make it the new "editor" so that SlickGrid Editor Factory still works
    */
   private swapInternalEditorToSlickGridFactoryEditor(columnDefinitions: Column[]) {
-    return columnDefinitions.map((column: Column) => {
+    const columns = Array.isArray(columnDefinitions) ? columnDefinitions : [];
+
+    return columns.map((column: Column) => {
       // on every Editor that have a "collectionAsync", resolve the data and assign it to the "collection" property
       if (column.editor?.collectionAsync) {
         this.loadEditorCollectionAsync(column);
@@ -1176,6 +1181,7 @@ export class SlickVanillaGridBundleInitializer extends SlickVanillaGridBundle {
     gridStateService: GridStateService,
     groupingAndColspanService: GroupingAndColspanService,
     paginationService: PaginationService,
+    resizerService: ResizerService,
     sharedService: SharedService,
     sortService: SortService,
     treeDataService: TreeDataService,
@@ -1197,6 +1203,7 @@ export class SlickVanillaGridBundleInitializer extends SlickVanillaGridBundle {
     this.gridStateService = gridStateService;
     this.groupingService = groupingAndColspanService;
     this.paginationService = paginationService;
+    this.resizerService = resizerService;
     this.sharedService = sharedService;
     this.sortService = sortService;
     this.treeDataService = treeDataService;

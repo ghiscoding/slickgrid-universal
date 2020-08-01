@@ -35,6 +35,7 @@ import { EventPubSubService } from '../../services/eventPubSub.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { HttpStub } from '../../../../../test/httpClientStub';
 import { FileExportService } from '../../services/fileExport.service';
+import { ResizerService } from '../../services';
 jest.mock('../../services/fileExport.service');
 
 const mockExecuteBackendProcess = jest.fn();
@@ -133,6 +134,12 @@ const paginationServiceStub = {
   getFullPagination: jest.fn(),
   updateTotalItems: jest.fn(),
 } as unknown as PaginationService;
+
+const resizerServiceStub = {
+  dispose: jest.fn(),
+  init: jest.fn(),
+  resizeGrid: jest.fn(),
+} as unknown as ResizerService;
 
 Object.defineProperty(paginationServiceStub, 'totalItems', {
   get: jest.fn(() => 0),
@@ -300,6 +307,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       gridStateServiceStub,
       groupingAndColspanServiceStub,
       paginationServiceStub,
+      resizerServiceStub,
       sharedService,
       sortServiceStub,
       treeDataServiceStub,
@@ -317,6 +325,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
   it('should make sure SlickVanillaGridBundle is defined', () => {
     expect(component).toBeTruthy();
+    expect(component.isGridInitialized).toBeTruthy();
   });
 
   it('should create a grid and expect multiple Event Aggregator being called', () => {
@@ -339,6 +348,35 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
   describe('initialization method', () => {
     afterEach(() => {
       jest.clearAllMocks();
+    });
+
+    it('should initialize the grid with a fixed height when provided in the grid options', () => {
+      const fixedHeight = 100;
+      const resizerSpy = jest.spyOn(resizerServiceStub, 'resizeGrid');
+
+      component.gridOptions = { gridHeight: fixedHeight };
+      component.initialization(divContainer);
+
+      expect(resizerSpy).toHaveBeenCalledWith(0, { height: fixedHeight, width: undefined });
+    });
+
+    it('should initialize the grid with a fixed width when provided in the grid options', () => {
+      const fixedWidth = 255;
+      const resizerSpy = jest.spyOn(resizerServiceStub, 'resizeGrid');
+
+      component.gridOptions = { gridWidth: fixedWidth };
+      component.initialization(divContainer);
+
+      expect(resizerSpy).toHaveBeenCalledWith(0, { height: undefined, width: fixedWidth });
+    });
+
+    it('should initialize the grid with autoResize enabled and without height/width then expect a "gridResize" to be called for auto-resizing', () => {
+      const resizerSpy = jest.spyOn(resizerServiceStub, 'resizeGrid');
+
+      component.gridOptions = { enableAutoResize: true };
+      component.initialization(divContainer);
+
+      expect(resizerSpy).toHaveBeenCalledWith();
     });
 
     describe('columns definitions changed', () => {
@@ -1727,6 +1765,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
       gridStateServiceStub,
       groupingAndColspanServiceStub,
       paginationServiceStub,
+      resizerServiceStub,
       sharedService,
       sortServiceStub,
       treeDataServiceStub,
@@ -1749,5 +1788,69 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
 
     expect(hierarchicalSpy).toHaveBeenCalledWith(mockHierarchical);
     expect(setItemsSpy).toHaveBeenCalledWith([], 'id');
+  });
+});
+
+describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with a Slickgrid Container that already exist', () => {
+  jest.mock('slickgrid/slick.core', () => mockSlickCoreImplementation);
+  jest.mock('slickgrid/slick.grid', () => mockGridImplementation);
+  jest.mock('slickgrid/plugins/slick.draggablegrouping', () => mockDraggableGroupingImplementation);
+  Slick.Grid = mockGridImplementation;
+  Slick.EventHandler = mockSlickCoreImplementation;
+  Slick.Data = { DataView: mockDataViewImplementation, GroupItemMetadataProvider: mockGroupItemMetaProviderImplementation };
+  Slick.DraggableGrouping = mockDraggableGroupingImplementation;
+
+  let component: SlickVanillaGridBundle;
+  let divContainer: HTMLDivElement;
+  let cellDiv: HTMLDivElement;
+  let columnDefinitions: Column[];
+  let gridOptions: GridOption;
+  let sharedService: SharedService;
+  let eventPubSubService: EventPubSubService;
+  let translateService: TranslateServiceStub;
+  let dataset = [];
+
+  beforeEach(() => {
+    divContainer = document.createElement('div');
+    cellDiv = document.createElement('div');
+    divContainer.innerHTML = `<div class="demo-container"><div class="grid1"><div class="slickgrid-container"></div></div></div>`;
+    divContainer.appendChild(cellDiv);
+    document.body.appendChild(divContainer);
+
+    dataset = [];
+    columnDefinitions = [{ id: 'name', field: 'name' }];
+    gridOptions = {} as GridOption;
+    sharedService = new SharedService();
+    translateService = new TranslateServiceStub();
+    eventPubSubService = new EventPubSubService(divContainer);
+    jest.spyOn(mockGrid, 'getOptions').mockReturnValue(gridOptions);
+    dataset = [];
+
+    component = new SlickVanillaGridBundleInitializer(
+      collectionServiceStub,
+      eventPubSubService,
+      extensionServiceStub,
+      mockExtensionUtility,
+      filterServiceStub,
+      gridEventServiceStub,
+      gridServiceStub,
+      gridStateServiceStub,
+      groupingAndColspanServiceStub,
+      paginationServiceStub,
+      resizerServiceStub,
+      sharedService,
+      sortServiceStub,
+      treeDataServiceStub,
+      translateService as unknown as TranslaterService,
+      divContainer,
+      columnDefinitions,
+      gridOptions,
+      dataset,
+    );
+  });
+
+  it('should not initialize the grid when there is already a grid that exist, we will not create a second grid', () => {
+    expect(component.isGridInitialized).toBeFalse();
+    expect(component.isDatasetInitialized).toBeFalse();
   });
 });
