@@ -22,8 +22,6 @@ import {
   PaginationService,
   ServicePagination,
   SharedService,
-  SlickDraggableGrouping,
-  SlickPluginList,
   SlickGrid,
   SortService,
   TreeDataService,
@@ -193,8 +191,15 @@ const mockDraggableGroupingExtension = {
   destroy: jest.fn(),
 };
 
+const mockEventPubSub = {
+  notify: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+};
+
 const mockSlickCore = {
   handlers: [],
+  notify: jest.fn(),
   subscribe: jest.fn(),
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
@@ -225,6 +230,8 @@ const mockGrid = {
   setHeaderRowVisibility: jest.fn(),
   setOptions: jest.fn(),
   setSelectedRows: jest.fn(),
+  onClick: mockEventPubSub,
+  onClicked: mockEventPubSub,
   onRendered: jest.fn(),
   onScroll: jest.fn(),
   onDataviewCreated: new Slick.Event(),
@@ -235,7 +242,7 @@ const mockDataViewImplementation = jest.fn().mockImplementation(() => mockDataVi
 const mockGroupItemMetaProviderImplementation = jest.fn().mockImplementation(() => mockGroupItemMetaProvider);
 const mockGridImplementation = jest.fn().mockImplementation(() => mockGrid);
 const mockDraggableGroupingImplementation = jest.fn().mockImplementation(() => mockDraggableGroupingExtension);
-
+const template = `<div class="demo-container"><div class="grid1"></div></div>`;
 
 describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () => {
   jest.mock('slickgrid/slick.core', () => mockSlickCoreImplementation);
@@ -255,17 +262,10 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
   let eventPubSubService: EventPubSubService;
   let translateService: TranslateServiceStub;
   const http = new HttpStub();
-
-  const template = `
-  <div class="demo-container">
-    <div class="grid1 grid-pane">
-      <div class="slickgrid-container slickgrid_12345">
-        <div class="slick-pane slick-pane-header slick-pane-left" style="width: 100%;"></div>
-      </div>
-    </div>
-  </div>`;
+  let dataset = [];
 
   beforeEach(() => {
+    dataset = [];
     divContainer = document.createElement('div');
     cellDiv = document.createElement('div');
     divContainer.innerHTML = template;
@@ -287,6 +287,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     translateService = new TranslateServiceStub();
     eventPubSubService = new EventPubSubService(divContainer);
     jest.spyOn(mockGrid, 'getOptions').mockReturnValue(gridOptions);
+    dataset = [];
 
     component = new SlickVanillaGridBundleInitializer(
       collectionServiceStub,
@@ -306,7 +307,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       divContainer,
       columnDefinitions,
       gridOptions,
-      [],
+      dataset,
     );
   });
 
@@ -1307,6 +1308,21 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
     });
 
+    // describe('Pub/Sub Events', () => {
+    //   afterEach(() => {
+    //     mockGrid.onClicked = null;
+    //   });
+
+    //   it('should call "dispatchCustomEvent" when event gets trigger', () => {
+    //     const dispatchSpy = jest.spyOn(eventPubSubService, 'dispatchCustomEvent');
+    //     const callback = jest.fn();
+    //     component.eventHandler.subscribe(mockEventPubSub, callback);
+    //     mockGrid.onClicked.notify({});
+    //     callback(new CustomEvent('onDblClick'), {});
+    //     expect(dispatchSpy).toHaveBeenCalled();
+    //   });
+    // });
+
     describe('setHeaderRowVisibility grid method', () => {
       beforeEach(() => {
         jest.clearAllMocks();
@@ -1620,7 +1636,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         }
       });
 
-      it('should change flat dataset and expect  being called with other methods', () => {
+      it('should change flat dataset and expect being called with other methods', () => {
         const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', parentId: 0 }];
         const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }] }];
         const hierarchicalSpy = jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'set');
@@ -1649,5 +1665,89 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(setItemsSpy).toHaveBeenCalledWith([], 'id');
       });
     });
+  });
+});
+
+describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with a Hierarchical Dataset', () => {
+  jest.mock('slickgrid/slick.core', () => mockSlickCoreImplementation);
+  jest.mock('slickgrid/slick.grid', () => mockGridImplementation);
+  jest.mock('slickgrid/plugins/slick.draggablegrouping', () => mockDraggableGroupingImplementation);
+  Slick.Grid = mockGridImplementation;
+  Slick.EventHandler = mockSlickCoreImplementation;
+  Slick.Data = { DataView: mockDataViewImplementation, GroupItemMetadataProvider: mockGroupItemMetaProviderImplementation };
+  Slick.DraggableGrouping = mockDraggableGroupingImplementation;
+
+  let component: SlickVanillaGridBundle;
+  let divContainer: HTMLDivElement;
+  let cellDiv: HTMLDivElement;
+  let columnDefinitions: Column[];
+  let gridOptions: GridOption;
+  let sharedService: SharedService;
+  let eventPubSubService: EventPubSubService;
+  let translateService: TranslateServiceStub;
+  let dataset = [];
+  let hierarchicalDataset = null;
+  let hierarchicalSpy;
+  let setItemsSpy;
+
+  beforeEach(() => {
+    dataset = [];
+    divContainer = document.createElement('div');
+    cellDiv = document.createElement('div');
+    divContainer.innerHTML = template;
+    divContainer.appendChild(cellDiv);
+    document.body.appendChild(divContainer);
+    columnDefinitions = [{ id: 'name', field: 'name' }];
+    gridOptions = {
+      enableExcelExport: false,
+      dataView: null,
+      autoResize: {
+        bottomPadding: 45,
+        calculateAvailableSizeBy: 'window',
+        minHeight: 180,
+        minWidth: 300,
+        rightPadding: 0,
+      },
+    } as GridOption;
+    sharedService = new SharedService();
+    translateService = new TranslateServiceStub();
+    eventPubSubService = new EventPubSubService(divContainer);
+    jest.spyOn(mockGrid, 'getOptions').mockReturnValue(gridOptions);
+    dataset = [];
+    hierarchicalDataset = [{ file: 'documents', files: [{ file: 'vacation.txt' }] }];
+
+    component = new SlickVanillaGridBundleInitializer(
+      collectionServiceStub,
+      eventPubSubService,
+      extensionServiceStub,
+      mockExtensionUtility,
+      filterServiceStub,
+      gridEventServiceStub,
+      gridServiceStub,
+      gridStateServiceStub,
+      groupingAndColspanServiceStub,
+      paginationServiceStub,
+      sharedService,
+      sortServiceStub,
+      treeDataServiceStub,
+      translateService as unknown as TranslaterService,
+      divContainer,
+      columnDefinitions,
+      gridOptions,
+      dataset,
+      hierarchicalDataset,
+    );
+    hierarchicalSpy = jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'set');
+    setItemsSpy = jest.spyOn(mockDataView, 'setItems');
+  });
+
+  it('should provide hierarchical dataset by the constructor and expect processTreeDataInitialSort being called with other methods', () => {
+    const mockHierarchical = [{ file: 'documents', files: [{ file: 'vacation.txt' }] }];
+
+    component.gridOptions = { enableTreeData: true, treeDataOptions: { columnId: 'file' } } as GridOption;
+    component.initialization(divContainer);
+
+    expect(hierarchicalSpy).toHaveBeenCalledWith(mockHierarchical);
+    expect(setItemsSpy).toHaveBeenCalledWith([], 'id');
   });
 });
