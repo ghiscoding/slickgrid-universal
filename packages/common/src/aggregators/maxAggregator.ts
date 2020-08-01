@@ -31,9 +31,9 @@ export class MaxAggregator implements Aggregator {
   }
 
   storeResult(groupTotals: any) {
-    if (!groupTotals || groupTotals.max === undefined) {
-      groupTotals.max = {};
+    if (!groupTotals || groupTotals[this._type] === undefined) {
+      groupTotals[this._type] = {};
     }
-    groupTotals.max[this._field] = this._max;
+    groupTotals[this._type][this._field] = this._max;
   }
 }

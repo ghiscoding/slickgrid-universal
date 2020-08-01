@@ -9,6 +9,7 @@ import {
   decimalFormatted,
   debounce,
   deepCopy,
+  emptyElement,
   findItemInHierarchicalStructure,
   findOrDefault,
   formatNumber,
@@ -391,6 +392,18 @@ describe('Service/Utilies', () => {
       expect(arr1[1].address.zip).toBe(222222);
       expect(arr2[0].address.zip).toBe(888888);
       expect(arr2[1].address.zip).toBe(999999);
+    });
+  });
+
+  describe('emptyElement method', () => {
+    const div = document.createElement('div');
+    div.innerHTML = `<ul><li>Item 1</li><li>Item 2</li></ul>`;
+    document.body.appendChild(div);
+
+    it('should empty the DOM element', () => {
+      expect(div.outerHTML).toBe('<div><ul><li>Item 1</li><li>Item 2</li></ul></div>');
+      emptyElement(div);
+      expect(div.outerHTML).toBe('<div></div>');
     });
   });
 

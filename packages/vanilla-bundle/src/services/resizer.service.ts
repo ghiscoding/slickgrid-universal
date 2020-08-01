@@ -15,8 +15,8 @@ import {
 declare const Slick: SlickNamespace;
 const DATAGRID_FOOTER_HEIGHT = 25;
 const DATAGRID_PAGINATION_HEIGHT = 35;
-const INTERVAL_MAX_RETRIES = 70;
-const INTERVAL_RETRY_DELAY = 250;
+const DEFAULT_INTERVAL_MAX_RETRIES = 70;
+const DEFAULT_INTERVAL_RETRY_DELAY = 250;
 
 export class ResizerService {
   private _grid: SlickGrid;
@@ -24,6 +24,8 @@ export class ResizerService {
   private _eventHandler: SlickEventHandler;
   private _intervalId: NodeJS.Timeout;
   private _intervalExecutionCounter = 0;
+  private _intervalRetryDelay = DEFAULT_INTERVAL_RETRY_DELAY;
+  private _isStopResizeIntervalRequested = false;
 
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
@@ -37,6 +39,13 @@ export class ResizerService {
   /** Getter for the grid uid */
   get gridUid(): string {
     return this._grid?.getUID() ?? '';
+  }
+
+  get intervalRetryDelay(): number {
+    return this._intervalRetryDelay;
+  }
+  set intervalRetryDelay(delay: number) {
+    this._intervalRetryDelay = delay;
   }
 
   constructor(private eventPubSubService: PubSubService) {
@@ -73,7 +82,7 @@ export class ResizerService {
     if (this.gridOptions.enableAutoResize && this._addon?.resizeGrid() instanceof Promise) {
       this._addon.resizeGrid()
         .then(() => this.resizeGridWhenStylingIsBrokenUntilCorrected())
-        .catch((error: any) => console.log('Error:', error));
+        .catch((rejection: any) => console.log('Error:', rejection));
     }
 
     // Events
@@ -107,6 +116,10 @@ export class ResizerService {
    */
   pauseResizer(isResizePaused: boolean) {
     this._addon.pauseResizer(isResizePaused);
+  }
+
+  requestStopOfAutoFixResizeGrid(isStopRequired = true) {
+    this._isStopResizeIntervalRequested = isStopRequired;
   }
 
   /**
@@ -153,14 +166,19 @@ export class ResizerService {
 
         // if header row is Y coordinate 0 (happens when user is not in current Tab) or when header titles are lower than the viewport of dataset (this can happen when user change Tab and DOM is not shown)
         // for these cases we'll resize until it's no longer true or until we reach a max time limit (70min)
-        const isResizeRequired = (headerPos?.top === 0 || (headerOffsetTop - viewportOffsetTop) > 40) ? true : false;
+        let isResizeRequired = (headerPos?.top === 0 || (headerOffsetTop - viewportOffsetTop) > 40) ? true : false;
+
+        // user could choose to manually stop the looped of auto resize fix
+        if (this._isStopResizeIntervalRequested) {
+          isResizeRequired = false;
+        }
 
         if (isResizeRequired && this._addon?.resizeGrid) {
           this._addon.resizeGrid();
-        } else if ((!isResizeRequired && !this.gridOptions.useSalesforceDefaultGridOptions) || (this._intervalExecutionCounter++ > (4 * 60 * INTERVAL_MAX_RETRIES))) { // interval is 250ms, so 4x is 1sec, so (4 * 60 * intervalMaxTimeInMin) shoud be 70min
+        } else if ((!isResizeRequired && !this.gridOptions.useSalesforceDefaultGridOptions) || (this._intervalExecutionCounter++ > (4 * 60 * DEFAULT_INTERVAL_MAX_RETRIES))) { // interval is 250ms, so 4x is 1sec, so (4 * 60 * intervalMaxTimeInMin) shoud be 70min
           clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 70min
         }
-      }, INTERVAL_RETRY_DELAY);
+      }, this.intervalRetryDelay);
     }
   }
 }

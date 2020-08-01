@@ -29,9 +29,9 @@ export class CloneAggregator implements Aggregator {
   }
 
   storeResult(groupTotals: any) {
-    if (!groupTotals || groupTotals.clone === undefined) {
-      groupTotals.clone = {};
+    if (!groupTotals || groupTotals[this._type] === undefined) {
+      groupTotals[this._type] = {};
     }
-    groupTotals.clone[this._field] = this._data;
+    groupTotals[this._type][this._field] = this._data;
   }
 }

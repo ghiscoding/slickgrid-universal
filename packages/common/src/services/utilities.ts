@@ -152,10 +152,10 @@ export function debounce<F extends ((...args: any[]) => any | void)>(func: F, wa
 /**
  * Create an immutable clone of an array or object
  * (c) 2019 Chris Ferdinandi, MIT License, https://gomakethings.com
- * @param  {Array|Object} obj The array or object to copy
+ * @param  {Array|Object} objectOrArray The array or object to copy
  * @return {Array|Object}     The clone of the array or object
  */
-export function deepCopy(obj: any) {
+export function deepCopy(objectOrArray: any) {
   /**
    * Create an immutable copy of an object
    * @return {Object}
@@ -166,9 +166,9 @@ export function deepCopy(obj: any) {
 
     // Loop through each item in the original
     // Recursively copy it's value and add to the clone
-    for (const key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        clone[key] = deepCopy(obj[key]);
+    for (const key in objectOrArray) {
+      if (Object.prototype.hasOwnProperty.call(objectOrArray, key)) {
+        clone[key] = deepCopy(objectOrArray[key]);
       }
     }
     return clone;
@@ -179,12 +179,12 @@ export function deepCopy(obj: any) {
    * @return {Array}
    */
   const cloneArr = () => {
-    return obj.map((item: any) => deepCopy(item));
+    return objectOrArray.map((item: any) => deepCopy(item));
   };
 
   // -- init --//
   // Get object type
-  const type = Object.prototype.toString.call(obj).slice(8, -1).toLowerCase();
+  const type = Object.prototype.toString.call(objectOrArray).slice(8, -1).toLowerCase();
 
   // If an object
   if (type === 'object') {
@@ -195,7 +195,22 @@ export function deepCopy(obj: any) {
     return cloneArr();
   }
   // Otherwise, return it as-is
-  return obj;
+  return objectOrArray;
+}
+
+/**
+ * Empty a DOM element by removing all of its DOM element children leaving with an empty element (basically an empty shell)
+ * @return {object} element - updated element
+ */
+export function emptyElement<T extends HTMLElement = HTMLElement>(element?: T): T | undefined {
+  if (element?.firstChild) {
+    while (element.firstChild) {
+      if (element.lastChild) {
+        element.removeChild(element.lastChild);
+      }
+    }
+  }
+  return element;
 }
 
 /**

@@ -1,4 +1,5 @@
 /// <reference types="Cypress" />
+import { changeTimezone, zeroPadding } from './utilities';
 
 describe('Example 11 - Queued Editing', () => {
   const GRID_ROW_HEIGHT = 33;
@@ -103,8 +104,9 @@ describe('Example 11 - Queued Editing', () => {
       .scrollTo('top');
   });
 
-  it('should be able to change "Finish" values of row row indexes 0-2', () => {
-    const today = new Date();
+  it('should be able to change "Finish" values of row indexes 0-2', () => {
+    const today = changeTimezone(new Date(), 'America/New_York');
+
     const currentDate = today.getDate();
     let currentMonth = today.getMonth() + 1; // month is zero based, let's add 1 to it
     if (currentMonth < 10) {
@@ -115,17 +117,17 @@ describe('Example 11 - Queued Editing', () => {
     // change Finish date to today's date
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).should('contain', '').click(); // this date should also always be initially empty
     cy.get(`.flatpickr-day.today:visible`).click('bottom', { force: true });
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).should('contain', `${currentYear}-${currentMonth}-${currentDate}`)
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).should('contain', `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`)
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(6)`).click();
     cy.get(`.flatpickr-day.today:visible`).click('bottom', { force: true });
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(6)`).should('contain', `${currentYear}-${currentMonth}-${currentDate}`)
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(6)`).should('contain', `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`)
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(6)`).click();
     cy.get(`.flatpickr-day.today:visible`).click('bottom', { force: true });
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(6)`).should('contain', `${currentYear}-${currentMonth}-${currentDate}`)
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(6)`).should('contain', `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`)
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
     cy.get('.unsaved-editable-field')

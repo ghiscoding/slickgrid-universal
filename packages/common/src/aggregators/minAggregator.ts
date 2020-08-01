@@ -31,9 +31,9 @@ export class MinAggregator implements Aggregator {
   }
 
   storeResult(groupTotals: any) {
-    if (!groupTotals || groupTotals.min === undefined) {
-      groupTotals.min = {};
+    if (!groupTotals || groupTotals[this._type] === undefined) {
+      groupTotals[this._type] = {};
     }
-    groupTotals.min[this._field] = this._min;
+    groupTotals[this._type][this._field] = this._min;
   }
 }

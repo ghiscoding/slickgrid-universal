@@ -1,7 +1,7 @@
 import { Aggregator } from './../interfaces/aggregator.interface';
 
 export class SumAggregator implements Aggregator {
-  private _sum: number = 0;
+  private _sum = 0;
   private _field: number | string;
   private _type = 'sum';
 
@@ -29,9 +29,9 @@ export class SumAggregator implements Aggregator {
   }
 
   storeResult(groupTotals: any) {
-    if (!groupTotals || groupTotals.sum === undefined) {
-      groupTotals.sum = {};
+    if (!groupTotals || groupTotals[this._type] === undefined) {
+      groupTotals[this._type] = {};
     }
-    groupTotals.sum[this._field] = this._sum;
+    groupTotals[this._type][this._field] = this._sum;
   }
 }
