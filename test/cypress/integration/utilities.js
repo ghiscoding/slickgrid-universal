@@ -11,3 +11,8 @@ export function changeTimezone(date, tz) {
   // so 12:00 in Toronto is 17:00 UTC
   return new Date(date.getTime() + diff);
 };
+
+export function zeroPadding(input) {
+  let number = parseInt(input, 10);
+  return number < 10 ? `0${number}` : number;
+}
