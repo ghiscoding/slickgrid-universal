@@ -1,4 +1,5 @@
 /// <reference types="Cypress" />
+import { changeTimezone } from './utilities';
 
 describe('Example 11 - Queued Editing', () => {
   const GRID_ROW_HEIGHT = 33;
@@ -103,8 +104,9 @@ describe('Example 11 - Queued Editing', () => {
       .scrollTo('top');
   });
 
-  it('should be able to change "Finish" values of row row indexes 0-2', () => {
-    const today = new Date();
+  it('should be able to change "Finish" values of row indexes 0-2', () => {
+    const today = changeTimezone(new Date(), 'America/New_York');
+
     const currentDate = today.getDate();
     let currentMonth = today.getMonth() + 1; // month is zero based, let's add 1 to it
     if (currentMonth < 10) {
