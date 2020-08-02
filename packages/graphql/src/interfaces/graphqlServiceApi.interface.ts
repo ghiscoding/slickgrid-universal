@@ -22,7 +22,7 @@ export interface GraphqlServiceApi extends BackendServiceApi {
   postProcess?: (response: GraphqlResult | GraphqlPaginatedResult) => void;
 
   /**
-   * INTERNAL USAGE ONLY by Aurelia-Slickgrid
+   * INTERNAL USAGE ONLY by Slickgrid-Universal
    * This internal process will be run just before postProcess and is meant to refresh the Dataset & Pagination after a GraphQL call
    */
   internalPostProcess?: (result: GraphqlResult | GraphqlPaginatedResult) => void;
