@@ -89,7 +89,7 @@ export class SlickVanillaGridBundle {
   private _isGridInitialized = false;
   private _isLocalGrid = true;
   private _isPaginationInitialized = false;
-  private _eventHandler: SlickEventHandler = new Slick.EventHandler();
+  private _eventHandler: SlickEventHandler;
   private _extensions: ExtensionList<any, any> | undefined;
   private _paginationOptions: Pagination | undefined;
   private _registeredServices: any[] = [];
@@ -313,7 +313,8 @@ export class SlickVanillaGridBundle {
     if (hierarchicalDataset) {
       this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
     }
-    this.initialization(this._gridContainerElm);
+    const eventHandler = new Slick.EventHandler();
+    this.initialization(this._gridContainerElm, eventHandler);
     if (!hierarchicalDataset && !this.gridOptions.backendServiceApi) {
       this.dataset = dataset || [];
     }
@@ -350,17 +351,17 @@ export class SlickVanillaGridBundle {
     this._eventPubSubService?.unsubscribeAll();
   }
 
-  initialization(gridContainerElm: HTMLElement) {
+  initialization(gridContainerElm: HTMLElement, eventHandler: SlickEventHandler) {
     // create the slickgrid container and add it to the user's grid container
     this._gridContainerElm = gridContainerElm;
     this._eventPubSubService.publish('onBeforeGridCreate', true);
 
+    this._eventHandler = eventHandler;
     this._gridOptions = this.mergeGridOptions(this._gridOptions);
     this.backendServiceApi = this._gridOptions && this._gridOptions.backendServiceApi;
     this._isLocalGrid = !this.backendServiceApi; // considered a local grid if it doesn't have a backend service set
     this._eventPubSubService.eventNamingStyle = this._gridOptions && this._gridOptions.eventNamingStyle || EventNamingStyle.camelCase;
     this.sharedService.internalPubSubService = this._eventPubSubService;
-    this._eventHandler = new Slick.EventHandler();
     const dataviewInlineFilters = this._gridOptions?.dataView?.inlineFilters ?? false;
     this._paginationOptions = this.gridOptions?.pagination;
 
@@ -727,7 +728,7 @@ export class SlickVanillaGridBundle {
         }
       });
 
-      // without this, filtering data with local dataset will not always show correctly
+      // when filtering data with local dataset, we need to update each row else it will not always show correctly in the UI
       // also don't use "invalidateRows" since it destroys the entire row and as bad user experience when updating a row
       if (gridOptions && gridOptions.enableFiltering && !gridOptions.enableRowDetailView) {
         const onRowsChangedHandler = dataView.onRowsChanged;
