@@ -105,7 +105,9 @@ describe('Example 11 - Queued Editing', () => {
   });
 
   it('should be able to change "Finish" values of row indexes 0-2', () => {
-    const today = changeTimezone(new Date(), 'America/New_York');
+    const now = new Date();
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const today = changeTimezone(now, tz);
 
     const currentDate = today.getDate();
     let currentMonth = today.getMonth() + 1; // month is zero based, let's add 1 to it
