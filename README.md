@@ -161,4 +161,4 @@ yarn run test:watch
 - [ ] See if we can get `DOM Purify` to work in SF, else keep the custom sanitizer
 - [ ] See if we can get all the vanilla-grid-bundle `instances` as `readonly` class members
 - [ ] change `Filters` and `Editors` to default index export but move the previous export into the vanilla grid bundle 
-- [ ] See if we can add missing DataView flag mentioned in an SO question for hiding group total row 
+- [ ] Should also check lib to work with new jQuery `3.5.1` version
