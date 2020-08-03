@@ -8,6 +8,7 @@ import {
   BackendServiceApi,
   Column,
   ColumnEditor,
+  DataViewOption,
   ExtensionList,
   ExtensionName,
   EventNamingStyle,
@@ -362,20 +363,22 @@ export class SlickVanillaGridBundle {
     this._isLocalGrid = !this.backendServiceApi; // considered a local grid if it doesn't have a backend service set
     this._eventPubSubService.eventNamingStyle = this._gridOptions && this._gridOptions.eventNamingStyle || EventNamingStyle.camelCase;
     this.sharedService.internalPubSubService = this._eventPubSubService;
-    const dataviewInlineFilters = this._gridOptions?.dataView?.inlineFilters ?? false;
+    this._eventHandler = new Slick.EventHandler();
     this._paginationOptions = this.gridOptions?.pagination;
 
     this.createBackendApiInternalPostProcessCallback(this._gridOptions);
 
     if (!this.customDataView) {
+      const dataviewInlineFilters = this._gridOptions?.dataView?.inlineFilters ?? false;
+      let dataViewOptions: DataViewOption = { inlineFilters: dataviewInlineFilters };
+
       if (this.gridOptions.draggableGrouping || this.gridOptions.enableGrouping) {
         this.extensionUtility.loadExtensionDynamically(ExtensionName.groupItemMetaProvider);
         this.groupItemMetadataProvider = new Slick.Data.GroupItemMetadataProvider();
         this.sharedService.groupItemMetadataProvider = this.groupItemMetadataProvider;
-        this.dataView = new Slick.Data.DataView({ groupItemMetadataProvider: this.groupItemMetadataProvider, inlineFilters: dataviewInlineFilters });
-      } else {
-        this.dataView = new Slick.Data.DataView({ inlineFilters: dataviewInlineFilters });
+        dataViewOptions = { ...dataViewOptions, groupItemMetadataProvider: this.groupItemMetadataProvider };
       }
+      this.dataView = new Slick.Data.DataView(dataViewOptions);
       this._eventPubSubService.publish('onDataviewCreated', this.dataView);
     }
     this.sharedService.allColumns = this._columnDefinitions;

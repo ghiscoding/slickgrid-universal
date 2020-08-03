@@ -8,6 +8,7 @@ import {
   ColumnPicker,
   ContextMenu,
   CustomFooterOption,
+  DataViewOption,
   DraggableGrouping,
   EditCommand,
   ExcelCopyBufferOption,
@@ -108,10 +109,7 @@ export interface GridOption {
   datasetIdPropertyName?: string;
 
   /** Some of the SlickGrid DataView options */
-  dataView?: {
-    /** defaults to false, use with great care as this will break built-in filters */
-    inlineFilters?: boolean;
-
+  dataView?: DataViewOption & {
     /**
      * Defaults to true, when using row selection,
      * if you don't want the items that are not visible (due to being filtered out or being on a different page) to stay selected,

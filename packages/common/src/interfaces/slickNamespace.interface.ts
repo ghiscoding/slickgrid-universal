@@ -4,6 +4,7 @@ import {
   CheckboxSelectorOption,
   Column,
   ContextMenuOption,
+  DataViewOption,
   DraggableGroupingOption,
   ExcelCopyBufferOption,
   GridOption,
@@ -53,7 +54,7 @@ export interface SlickNamespace {
 
   Data: {
     /** Slick DataView which has built-in data manipulation methods. Relies on the data item having an "id" property uniquely identifying it. */
-    DataView: new (options?: { groupItemMetadataProvider?: SlickGroupItemMetadataProvider; inlineFilters?: boolean; }) => SlickDataView;
+    DataView: new (options?: DataViewOption) => SlickDataView;
 
     /**
      * Provides item metadata for group (Slick.Group) and totals (Slick.Totals) rows produced by the DataView.
