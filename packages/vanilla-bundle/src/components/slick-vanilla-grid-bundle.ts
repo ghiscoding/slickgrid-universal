@@ -363,7 +363,6 @@ export class SlickVanillaGridBundle {
     this._isLocalGrid = !this.backendServiceApi; // considered a local grid if it doesn't have a backend service set
     this._eventPubSubService.eventNamingStyle = this._gridOptions && this._gridOptions.eventNamingStyle || EventNamingStyle.camelCase;
     this.sharedService.internalPubSubService = this._eventPubSubService;
-    this._eventHandler = new Slick.EventHandler();
     this._paginationOptions = this.gridOptions?.pagination;
 
     this.createBackendApiInternalPostProcessCallback(this._gridOptions);
