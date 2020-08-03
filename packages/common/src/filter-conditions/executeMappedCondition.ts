@@ -113,4 +113,4 @@ function executeAssociatedDateCondition(options: FilterConditionOption): boolean
     return (resultCondition1 && resultCondition2);
   }
   return testFilterCondition(options.operator || '==', parseInt(dateCell.format('X'), 10), parseInt(dateSearch1.format('X'), 10));
-};
+}

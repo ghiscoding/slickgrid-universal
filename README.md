@@ -159,6 +159,7 @@ yarn run test:watch
 - [x] The Pagination/Footer width is a little off sometime compare to the width of the grid container
 - [x] See if we can add the number of chars (text counter) typed in `Editors.longText`
 - [x] Upgrade to latest jQuery version `3.5.1`
+- [x] Change `Editors`, `Filters`, ... `index` file to regular barel export and use instead `editors.index`, ...
+  - [x] Also add all  `Editors`, `Filters`, ... to the Vanilla Grid Bundle
 - [ ] See if we can get `DOM Purify` to work in SF, else keep the custom sanitizer
 - [ ] See if we can get all the vanilla-grid-bundle `instances` as `readonly` class members
-- [ ] change `Filters` and `Editors` to default index export but move the previous export into the vanilla grid bundle 
