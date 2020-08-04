@@ -78,6 +78,10 @@ To get started you must run (also once) an initial TS build so that all necessar
 ```bash
 yarn run build
 ```
+Every subsequent occurence should be called with the `rebuild` task which is nearly the same as `build`, the only diffence is that it will empty every `dist` folders prior to running the `build` command.
+```bash
+yarn run rebuild
+```
 
 4. Run Dev (Vanilla Implementation)
 
@@ -147,9 +151,9 @@ yarn run test:watch
   - [x] Build and run on every PR
   - [x] Add full bundler (all types) build step in CircleCI build
 - [x] Bundle Creation (vanilla bundle)
-  - [ ] Eventually add Unit Tests as a Pre-Bundle task
+  - [x] Eventually add Unit Tests as a Pre-Bundle task
 - [x] Remove any Deprecated code
-  - [ ] Create and Update the [Migration Guide](https://github.com/ghiscoding/slickgrid-universal/wiki/Migration-for-Angular-Aurelia-Slickgrid) for Angular/Aurelia
+  - [x] Create and Update the [Migration Guide](https://github.com/ghiscoding/slickgrid-universal/wiki/Migration-for-Angular-Aurelia-Slickgrid) for Angular/Aurelia
 - [x] Add simple input bindings in the demo (e.g. pinned rows input)
 - [x] Add possibility to use SVG instead of Font Family
 - [x] Add Typings (interfaces) for Slick Grid & DataView objects
@@ -159,7 +163,8 @@ yarn run test:watch
 - [x] The Pagination/Footer width is a little off sometime compare to the width of the grid container
 - [x] See if we can add the number of chars (text counter) typed in `Editors.longText`
 - [x] Upgrade to latest jQuery version `3.5.1`
-- [x] Change `Editors`, `Filters`, ... `index` file to regular barel export and use instead `editors.index`, ...
+- [x] Change `index` file of `Editors`, `Filters`, ... to regular barel export and rename previous files to `editors.index`, ...
   - [x] Also add all  `Editors`, `Filters`, ... to the Vanilla Grid Bundle
 - [ ] See if we can get `DOM Purify` to work in SF, else keep the custom sanitizer
 - [ ] See if we can get all the vanilla-grid-bundle `instances` as `readonly` class members
+- [ ] See if adding `lerna-changelog` make sense
