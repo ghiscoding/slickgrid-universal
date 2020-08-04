@@ -8,6 +8,7 @@ import {
   BackendServiceApi,
   Column,
   ColumnEditor,
+  DataViewOption,
   ExtensionList,
   ExtensionName,
   EventNamingStyle,
@@ -89,7 +90,7 @@ export class SlickVanillaGridBundle {
   private _isGridInitialized = false;
   private _isLocalGrid = true;
   private _isPaginationInitialized = false;
-  private _eventHandler: SlickEventHandler = new Slick.EventHandler();
+  private _eventHandler: SlickEventHandler;
   private _extensions: ExtensionList<any, any> | undefined;
   private _paginationOptions: Pagination | undefined;
   private _registeredServices: any[] = [];
@@ -221,6 +222,9 @@ export class SlickVanillaGridBundle {
   set isDatasetInitialized(isInitialized: boolean) {
     this._isDatasetInitialized = isInitialized;
   }
+  get isGridInitialized(): boolean {
+    return this._isGridInitialized;
+  }
 
   get instances(): SlickerGridInstance | undefined {
     return this._slickerGridInstances;
@@ -266,6 +270,7 @@ export class SlickVanillaGridBundle {
     this.extensionUtility = new ExtensionUtility(this.sharedService, this.translaterService);
     const filterFactory = new FilterFactory(slickgridConfig, this.translaterService, this.collectionService);
     this.filterService = new FilterService(filterFactory, this._eventPubSubService, this.sharedService);
+    this.resizerService = new ResizerService(this._eventPubSubService);
     this.sortService = new SortService(this.sharedService, this._eventPubSubService);
     this.treeDataService = new TreeDataService(this.sharedService);
     this.gridService = new GridService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
@@ -309,7 +314,8 @@ export class SlickVanillaGridBundle {
     if (hierarchicalDataset) {
       this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
     }
-    this.initialization(this._gridContainerElm);
+    const eventHandler = new Slick.EventHandler();
+    this.initialization(this._gridContainerElm, eventHandler);
     if (!hierarchicalDataset && !this.gridOptions.backendServiceApi) {
       this.dataset = dataset || [];
     }
@@ -346,31 +352,32 @@ export class SlickVanillaGridBundle {
     this._eventPubSubService?.unsubscribeAll();
   }
 
-  initialization(gridContainerElm: HTMLElement) {
+  initialization(gridContainerElm: HTMLElement, eventHandler: SlickEventHandler) {
     // create the slickgrid container and add it to the user's grid container
     this._gridContainerElm = gridContainerElm;
     this._eventPubSubService.publish('onBeforeGridCreate', true);
 
+    this._eventHandler = eventHandler;
     this._gridOptions = this.mergeGridOptions(this._gridOptions);
     this.backendServiceApi = this._gridOptions && this._gridOptions.backendServiceApi;
     this._isLocalGrid = !this.backendServiceApi; // considered a local grid if it doesn't have a backend service set
     this._eventPubSubService.eventNamingStyle = this._gridOptions && this._gridOptions.eventNamingStyle || EventNamingStyle.camelCase;
     this.sharedService.internalPubSubService = this._eventPubSubService;
-    this._eventHandler = new Slick.EventHandler();
-    const dataviewInlineFilters = this._gridOptions?.dataView?.inlineFilters ?? false;
     this._paginationOptions = this.gridOptions?.pagination;
 
     this.createBackendApiInternalPostProcessCallback(this._gridOptions);
 
     if (!this.customDataView) {
+      const dataviewInlineFilters = this._gridOptions?.dataView?.inlineFilters ?? false;
+      let dataViewOptions: DataViewOption = { inlineFilters: dataviewInlineFilters };
+
       if (this.gridOptions.draggableGrouping || this.gridOptions.enableGrouping) {
         this.extensionUtility.loadExtensionDynamically(ExtensionName.groupItemMetaProvider);
         this.groupItemMetadataProvider = new Slick.Data.GroupItemMetadataProvider();
         this.sharedService.groupItemMetadataProvider = this.groupItemMetadataProvider;
-        this.dataView = new Slick.Data.DataView({ groupItemMetadataProvider: this.groupItemMetadataProvider, inlineFilters: dataviewInlineFilters });
-      } else {
-        this.dataView = new Slick.Data.DataView({ inlineFilters: dataviewInlineFilters });
+        dataViewOptions = { ...dataViewOptions, groupItemMetadataProvider: this.groupItemMetadataProvider };
       }
+      this.dataView = new Slick.Data.DataView(dataViewOptions);
       this._eventPubSubService.publish('onDataviewCreated', this.dataView);
     }
 
@@ -443,7 +450,7 @@ export class SlickVanillaGridBundle {
 
     this.slickGrid.invalidate();
 
-    if (this._dataset.length > 0) {
+    if (Array.isArray(this._dataset) && this._dataset.length > 0) {
       if (!this._isDatasetInitialized && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
         this.loadRowSelectionPresetWhenExists();
       }
@@ -458,7 +465,6 @@ export class SlickVanillaGridBundle {
     }
 
     // load the resizer service
-    this.resizerService = new ResizerService(this._eventPubSubService);
     this.resizerService.init(this.slickGrid, this._gridParentContainerElm);
 
     // user might want to hide the header row on page load but still have `enableFiltering: true`
@@ -731,7 +737,7 @@ export class SlickVanillaGridBundle {
         }
       });
 
-      // without this, filtering data with local dataset will not always show correctly
+      // when filtering data with local dataset, we need to update each row else it will not always show correctly in the UI
       // also don't use "invalidateRows" since it destroys the entire row and as bad user experience when updating a row
       if (gridOptions && gridOptions.enableFiltering && !gridOptions.enableRowDetailView) {
         const onRowsChangedHandler = dataView.onRowsChanged;
@@ -1110,7 +1116,9 @@ export class SlickVanillaGridBundle {
    * then take back "editor.model" and make it the new "editor" so that SlickGrid Editor Factory still works
    */
   private swapInternalEditorToSlickGridFactoryEditor(columnDefinitions: Column[]) {
-    return columnDefinitions.map((column: Column) => {
+    const columns = Array.isArray(columnDefinitions) ? columnDefinitions : [];
+
+    return columns.map((column: Column) => {
       // on every Editor that have a "collectionAsync", resolve the data and assign it to the "collection" property
       if (column.editor?.collectionAsync) {
         this.loadEditorCollectionAsync(column);
@@ -1186,6 +1194,7 @@ export class SlickVanillaGridBundleInitializer extends SlickVanillaGridBundle {
     gridStateService: GridStateService,
     groupingAndColspanService: GroupingAndColspanService,
     paginationService: PaginationService,
+    resizerService: ResizerService,
     sharedService: SharedService,
     sortService: SortService,
     treeDataService: TreeDataService,
@@ -1207,6 +1216,7 @@ export class SlickVanillaGridBundleInitializer extends SlickVanillaGridBundle {
     this.gridStateService = gridStateService;
     this.groupingService = groupingAndColspanService;
     this.paginationService = paginationService;
+    this.resizerService = resizerService;
     this.sharedService = sharedService;
     this.sortService = sortService;
     this.treeDataService = treeDataService;
