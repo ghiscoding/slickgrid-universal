@@ -936,6 +936,7 @@ export class SlickVanillaGridBundle {
   updateColumnDefinitionsList(newColumnDefinitions: Column[]) {
     // map/swap the internal library Editor to the SlickGrid Editor factory
     newColumnDefinitions = this.swapInternalEditorToSlickGridFactoryEditor(newColumnDefinitions);
+
     if (this._gridOptions.enableTranslate) {
       this.extensionService.translateColumnHeaders(false, newColumnDefinitions);
     } else {
@@ -1114,7 +1115,9 @@ export class SlickVanillaGridBundle {
       if (column.editor?.collectionAsync) {
         this.loadEditorCollectionAsync(column);
       }
-      const columnEditor = column.editor as ColumnEditor;
+
+      // if there's already an internalColumnEditor we'll use it, else it would be inside the editor
+      const columnEditor = column.internalColumnEditor || column.editor as ColumnEditor;
 
       return { ...column, editor: columnEditor?.model, internalColumnEditor: { ...columnEditor } };
     });

@@ -198,16 +198,16 @@ export class Example7 {
 
     // you can dynamically add your column to your column definitions
     // and then use the spread operator [...cols] OR slice to force the framework to review the changes
-    this.columnDefinitions.push(newCol);
-    this.sgb.columnDefinitions = this.columnDefinitions.slice(); // or use spread operator [...cols]
+    this.sgb.columnDefinitions.push(newCol);
+    this.sgb.columnDefinitions = this.sgb.columnDefinitions.slice(); // or use spread operator [...cols]
 
     // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
     // you MUST use "getAllColumnDefinitions()" from the GridService, using this will be ALL columns including the 1st column that is created internally
     // for example if you use the Checkbox Selector (row selection), you MUST use the code below
     /*
-    const allColumns = this.slickerGridInstance.gridService.getAllColumnDefinitions();
-    allColumns.push(newCol);
-    this.slickgridLwc.columnDefinitions = [...allColumns]; // (or use slice) reassign to column definitions for framework to do dirty checking
+      const allColumns = this.sgb.gridService.getAllColumnDefinitions();
+      allColumns.push(newCol);
+      this.sgb.columnDefinitions = [...allColumns]; // (or use slice) reassign to column definitions for framework to do dirty checking
     */
   }
 

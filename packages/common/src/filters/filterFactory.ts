@@ -18,12 +18,12 @@ export class FilterFactory {
     let filter: Filter | undefined;
 
     if (columnFilter && columnFilter.model) {
-      filter = typeof columnFilter.model === 'function' ? new columnFilter.model(this.collectionService, this.translaterService) : columnFilter.model;
+      filter = typeof columnFilter.model === 'function' ? new columnFilter.model(this.translaterService, this.collectionService) : columnFilter.model;
     }
 
     // fallback to the default filter
     if (!filter && this._options.defaultFilter) {
-      filter = new this._options.defaultFilter(this.collectionService, this.translaterService);
+      filter = new this._options.defaultFilter(this.translaterService, this.collectionService);
     }
 
     return filter;
