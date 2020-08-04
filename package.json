@@ -5,6 +5,10 @@
   "scripts": {
     "bootstrap": "lerna bootstrap --use-workspaces",
     "bundle": "lerna run bundle --stream",
+    "prebundle:zip": "npm run bundle",
+    "bundle:zip": "lerna run bundle:zip --stream",
+    "prebundle:with-tests": "npm run bundle",
+    "bundle:with-tests": "npm run test",
     "build": "lerna run build --stream",
     "build:demo": "lerna run build:demo --stream",
     "rebuild": "run-s clean build",
