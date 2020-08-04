@@ -93,9 +93,7 @@ export class DateRangeFilter implements Filter {
 
     // step 3, subscribe to the keyup event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    this.$filterInputElm.keyup((e: any) => {
-      this.onTriggerEvent(e);
-    });
+    this.$filterInputElm.keyup((e: Event) => this.onTriggerEvent(e));
 
   }
 
@@ -198,7 +196,7 @@ export class DateRangeFilter implements Filter {
       wrap: true,
       closeOnSelect: true,
       locale: (currentLocale !== 'en') ? this.loadFlatpickrLocale(currentLocale) : 'en',
-      onChange: (selectedDates: Date[] | Date, dateStr: string, instance: any) => {
+      onChange: (selectedDates: Date[] | Date, _dateStr: string, _instance: any) => {
         if (Array.isArray(selectedDates)) {
           this._currentDates = selectedDates;
           const outFormat = mapMomentDateFormatWithFieldType(this.columnDef.outputType || this.columnDef.type || FieldType.dateIso);
