@@ -97,12 +97,8 @@ export class CompoundDateFilter implements Filter {
 
     // step 3, subscribe to the keyup event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    this.$filterInputElm.keyup((e: any) => {
-      this.onTriggerEvent(e);
-    });
-    this.$selectOperatorElm.change((e: any) => {
-      this.onTriggerEvent(e);
-    });
+    this.$filterInputElm.keyup((event: Event) => this.onTriggerEvent(event));
+    this.$selectOperatorElm.change((event: Event) => this.onTriggerEvent(event));
   }
 
   /**

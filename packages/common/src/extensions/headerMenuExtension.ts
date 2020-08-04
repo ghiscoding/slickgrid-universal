@@ -31,7 +31,6 @@ declare const Slick: SlickNamespace;
 export class HeaderMenuExtension implements Extension {
   private _addon: SlickHeaderMenu | null;
   private _eventHandler: SlickEventHandler;
-  private _locales: Locale;
 
   constructor(
     private extensionUtility: ExtensionUtility,
@@ -69,9 +68,6 @@ export class HeaderMenuExtension implements Extension {
     }
 
     if (this.sharedService && this.sharedService.slickGrid && this.sharedService.gridOptions) {
-      // get locales provided by user in main file or else use default English locales via the Constants
-      this._locales = this.sharedService.gridOptions && this.sharedService.gridOptions.locales || Constants.locales;
-
       // dynamically import the SlickGrid plugin (addon) with RequireJS
       this.extensionUtility.loadExtensionDynamically(ExtensionName.headerMenu);
 

@@ -373,11 +373,18 @@ export class SlickVanillaGridBundle {
       }
       this._eventPubSubService.publish('onDataviewCreated', this.dataView);
     }
+
+    // for convenience to the user, we provide the property "editor" as an Angular-Slickgrid editor complex object
+    // however "editor" is used internally by SlickGrid for it's own Editor Factory
+    // so in our lib we will swap "editor" and copy it into a new property called "internalColumnEditor"
+    // then take back "editor.model" and make it the new "editor" so that SlickGrid Editor Factory still works
+    this._columnDefinitions = this.swapInternalEditorToSlickGridFactoryEditor(this._columnDefinitions);
+
+    // save reference for all columns before they optionally become hidden/visible
     this.sharedService.allColumns = this._columnDefinitions;
     this.sharedService.visibleColumns = this._columnDefinitions;
     this.extensionService.createExtensionsBeforeGridCreation(this._columnDefinitions, this._gridOptions);
 
-    this._columnDefinitions = this.swapInternalEditorToSlickGridFactoryEditor(this._columnDefinitions);
     this.slickGrid = new Slick.Grid(gridContainerElm, this.dataView, this._columnDefinitions, this._gridOptions);
     this.sharedService.dataView = this.dataView;
     this.sharedService.slickGrid = this.slickGrid;
