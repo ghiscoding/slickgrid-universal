@@ -31,7 +31,7 @@ describe('Example 01 - Basic Grids', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
-  it('should hover over the Title column of 1st grid and click on "Sort Descending" command', () => {
+  it('should hover over the "Title" column header menu of 1st grid and click on "Sort Descending" command', () => {
     cy.get('.grid1')
       .find('.slick-header-column')
       .first()

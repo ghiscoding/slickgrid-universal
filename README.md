@@ -77,9 +77,8 @@ yarn run bootstrap
 To get started you must run (also once) an initial TS build so that all necessary `dist` are created for all the packages to work together.
 ```bash
 yarn run build
-```
-Every subsequent occurence should be called with the `rebuild` task which is nearly the same as `build`, the only diffence is that it will empty every `dist` folders prior to running the `build` command.
-```bash
+
+# every subsequent occurence should be called with the `rebuild` which will empty every `dist` folders
 yarn run rebuild
 ```
 
@@ -108,20 +107,9 @@ yarn run test:watch
 - [x] Editors (11)
 - [x] Filters (17)
 - [x] Formatters (31)
-- [ ] Extensions
-  - [x] AutoTooltip
-  - [x] Cell External Copy Manager
-  - [x] Cell Menu
-  - [x] Checkbox Selector
-  - [x] Context Menu
-  - [x] Draggable Grouping
-  - [x] Grid Menu
-  - [x] Header Button
-  - [x] Header Menu
-  - [x] Resizer
+- [ ] Extensions (12/13)
   - [ ] Row Detail
-  - [x] Row Move Manager
-  - [x] Row Selection
+  - [x] ...all other Extensions
 - [x] Grouping Formatters (12)
 - [x] SortComparers (5)
 - [x] Services (14)
