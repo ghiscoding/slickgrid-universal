@@ -264,7 +264,7 @@ export class SlickVanillaGridBundle {
     this.sharedService = new SharedService();
     this.collectionService = new CollectionService(this.translaterService);
     this.extensionUtility = new ExtensionUtility(this.sharedService, this.translaterService);
-    const filterFactory = new FilterFactory(slickgridConfig, this.collectionService, this.translaterService);
+    const filterFactory = new FilterFactory(slickgridConfig, this.translaterService, this.collectionService);
     this.filterService = new FilterService(filterFactory, this._eventPubSubService, this.sharedService);
     this.sortService = new SortService(this.sharedService, this._eventPubSubService);
     this.treeDataService = new TreeDataService(this.sharedService);
