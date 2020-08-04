@@ -60,7 +60,7 @@ describe('SelectFilter', () => {
       callback: jest.fn()
     };
 
-    filter = new SelectFilter(collectionServiceStub, translateService);
+    filter = new SelectFilter(translateService, collectionServiceStub);
   });
 
   afterEach(() => {

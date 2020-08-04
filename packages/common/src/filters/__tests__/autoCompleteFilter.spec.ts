@@ -54,7 +54,7 @@ describe('AutoCompleteFilter', () => {
       callback: jest.fn()
     };
 
-    filter = new AutoCompleteFilter(collectionService);
+    filter = new AutoCompleteFilter(translaterService, collectionService);
   });
 
   afterEach(() => {
