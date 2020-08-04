@@ -60,7 +60,7 @@ describe('SelectFilter', () => {
       callback: jest.fn()
     };
 
-    filter = new SelectFilter(collectionService, translateService);
+    filter = new SelectFilter(translateService, collectionService);
   });
 
   afterEach(() => {
@@ -108,7 +108,7 @@ describe('SelectFilter', () => {
       translateService = undefined;
       mockColumn.filter.enableTranslateLabel = true;
       mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-      filter = new SelectFilter(collectionService, translateService);
+      filter = new SelectFilter(translateService, collectionService);
       filter.init(filterArguments);
     } catch (e) {
       expect(e.toString()).toContain(`[select-filter] The Translate Service is required for the Select Filter to work correctly when "enableTranslateLabel" is set.`);
@@ -127,7 +127,7 @@ describe('SelectFilter', () => {
 
   it('should be a multiple-select filter by default when it is not specified in the constructor', () => {
     mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-    filter = new SelectFilter(collectionService, translateService);
+    filter = new SelectFilter(translateService, collectionService);
     filter.init(filterArguments);
     const filterCount = divContainer.querySelectorAll('select.ms-filter.search-filter.filter-gender').length;
 

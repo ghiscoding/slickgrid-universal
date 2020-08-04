@@ -268,7 +268,7 @@ export class SlickVanillaGridBundle {
     this.sharedService = new SharedService();
     this.collectionService = new CollectionService(this.translaterService);
     this.extensionUtility = new ExtensionUtility(this.sharedService, this.translaterService);
-    const filterFactory = new FilterFactory(slickgridConfig, this.collectionService, this.translaterService);
+    const filterFactory = new FilterFactory(slickgridConfig, this.translaterService, this.collectionService);
     this.filterService = new FilterService(filterFactory, this._eventPubSubService, this.sharedService);
     this.resizerService = new ResizerService(this._eventPubSubService);
     this.sortService = new SortService(this.sharedService, this._eventPubSubService);
@@ -380,11 +380,18 @@ export class SlickVanillaGridBundle {
       this.dataView = new Slick.Data.DataView(dataViewOptions);
       this._eventPubSubService.publish('onDataviewCreated', this.dataView);
     }
+
+    // for convenience to the user, we provide the property "editor" as an Angular-Slickgrid editor complex object
+    // however "editor" is used internally by SlickGrid for it's own Editor Factory
+    // so in our lib we will swap "editor" and copy it into a new property called "internalColumnEditor"
+    // then take back "editor.model" and make it the new "editor" so that SlickGrid Editor Factory still works
+    this._columnDefinitions = this.swapInternalEditorToSlickGridFactoryEditor(this._columnDefinitions);
+
+    // save reference for all columns before they optionally become hidden/visible
     this.sharedService.allColumns = this._columnDefinitions;
     this.sharedService.visibleColumns = this._columnDefinitions;
     this.extensionService.createExtensionsBeforeGridCreation(this._columnDefinitions, this._gridOptions);
 
-    this._columnDefinitions = this.swapInternalEditorToSlickGridFactoryEditor(this._columnDefinitions);
     this.slickGrid = new Slick.Grid(gridContainerElm, this.dataView, this._columnDefinitions, this._gridOptions);
     this.sharedService.dataView = this.dataView;
     this.sharedService.slickGrid = this.slickGrid;
@@ -935,6 +942,7 @@ export class SlickVanillaGridBundle {
   updateColumnDefinitionsList(newColumnDefinitions: Column[]) {
     // map/swap the internal library Editor to the SlickGrid Editor factory
     newColumnDefinitions = this.swapInternalEditorToSlickGridFactoryEditor(newColumnDefinitions);
+
     if (this._gridOptions.enableTranslate) {
       this.extensionService.translateColumnHeaders(false, newColumnDefinitions);
     } else {
@@ -1115,7 +1123,9 @@ export class SlickVanillaGridBundle {
       if (column.editor?.collectionAsync) {
         this.loadEditorCollectionAsync(column);
       }
-      const columnEditor = column.editor as ColumnEditor;
+
+      // if there's already an internalColumnEditor we'll use it, else it would be inside the editor
+      const columnEditor = column.internalColumnEditor || column.editor as ColumnEditor;
 
       return { ...column, editor: columnEditor?.model, internalColumnEditor: { ...columnEditor } };
     });

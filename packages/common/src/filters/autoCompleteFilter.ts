@@ -17,6 +17,7 @@ import {
 } from './../interfaces/index';
 import { CollectionService } from '../services/collection.service';
 import { getDescendantProperty } from '../services/utilities';
+import { TranslaterService } from '../services/translater.service';
 
 export class AutoCompleteFilter implements Filter {
   private _autoCompleteOptions: AutocompleteOption;
@@ -50,7 +51,7 @@ export class AutoCompleteFilter implements Filter {
   /**
    * Initialize the Filter
    */
-  constructor(protected collectionService: CollectionService) { }
+  constructor(protected translaterService: TranslaterService, protected collectionService: CollectionService) { }
 
   /** Getter for the Autocomplete Option */
   get autoCompleteOptions(): Partial<AutocompleteOption> {

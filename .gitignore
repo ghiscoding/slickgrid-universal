@@ -56,3 +56,4 @@ dist-demo
 **/test-report.xml
 **/testresult.xml
 **/test-results.xml
+test/cypress/screenshots
