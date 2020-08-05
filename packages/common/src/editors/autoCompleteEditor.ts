@@ -173,7 +173,7 @@ export class AutoCompleteEditor implements Editor {
       const data = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
 
       this._currentValue = data;
-      this._defaultTextValue = typeof data === 'string' ? data : data[this.labelName];
+      this._defaultTextValue = typeof data === 'string' ? data : (data?.[this.labelName] ?? '');
       this._$editorElm.val(this._defaultTextValue);
       this._$editorElm.select();
     }
@@ -263,6 +263,9 @@ export class AutoCompleteEditor implements Editor {
           event.stopImmediatePropagation();
         }
       });
+
+    // add a <span> in order to add spinner styling
+    $(`<span></span>`).appendTo(this.args.container);
 
     // user might pass his own autocomplete options
     const autoCompleteOptions: AutocompleteOption = this.columnEditor.editorOptions;

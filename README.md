@@ -38,6 +38,9 @@ and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) to use 
 Note however that this project also has a Vanilla Implementation (not associated to any framework)
 and it is also used to test with the UI portion. The Vanilla bundle is also used in our SalesForce (with Lightning Web Component) hence the creation of this monorepo.
 
+### Fully Tested with [Jest](https://jestjs.io/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
+Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about 10,000 lines of code (+2,700 unit tests) that are now fully tested with [Jest](https://jestjs.io/). There are also over 300 Cypress E2E tests to cover most UI functionalities.
+
 ### Available Public Packages
 
 | Package Name | Version | Description |
