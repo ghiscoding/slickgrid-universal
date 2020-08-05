@@ -29,9 +29,13 @@ export class Example11Modal {
       if (bindings.columnDefinitions) {
         this.columnDefinitions = bindings.columnDefinitions;
         this.gridContainerElm = document.querySelector<HTMLDivElement>(`.modal-grid`);
+        this.gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
+
         const dataset = [this.createEmptyItem(bindings.columnDefinitions)];
         this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
-        this.gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
+
+        // force editor to open (top-left)
+        setTimeout(() => this.sgb.slickGrid.gotoCell(0, 0, true), 50);
       }
       this.remoteCallbackFn = bindings.remoteCallback;
       this.selectedIds = bindings.selectedIds || [];
