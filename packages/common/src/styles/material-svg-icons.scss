@@ -101,13 +101,6 @@ $icon-width-mdi-table-refresh: $icon-width !default;
 $icon-width-mdi-undo: $icon-width !default;
 
 .mdi {
-  &.mdi-flip-h {
-    transform: scaleX(-1);
-  }
-  &.mdi-flip-v {
-    transform: scaleY(-1);
-  }
-
   &.mdi-arrow-collapse:before {
     width: $icon-width-mdi-arrow-collapse;
     display: inline-block;
