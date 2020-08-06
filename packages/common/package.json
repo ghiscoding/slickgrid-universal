@@ -66,8 +66,8 @@
     "slickgrid": "^2.4.27"
   },
   "devDependencies": {
-    "@types/dompurify": "^2.0.2",
-    "@types/jquery": "^3.5.0",
+    "@types/dompurify": "^2.0.3",
+    "@types/jquery": "^3.5.1",
     "@types/moment": "^2.13.0",
     "autoprefixer": "^9.8.6",
     "copyfiles": "^2.3.0",
