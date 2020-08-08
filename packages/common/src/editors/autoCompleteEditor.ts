@@ -229,9 +229,10 @@ export class AutoCompleteEditor implements Editor {
     }
 
     // if user provided a custom structure, we will serialize the value returned from the object with custom structure
-    if (this.customStructure && this._currentValue && this._currentValue.hasOwnProperty(this.valueName)) {
+    if (this.customStructure && this._currentValue && this._currentValue.hasOwnProperty(this.valueName) && (this.columnDef?.type !== FieldType.object && this.columnEditor?.type !== FieldType.object)) {
       return this._currentValue[this.valueName];
     } else if (this._currentValue && this._currentValue.value !== undefined) {
+      // when object has a "value" property and its column is set as an Object type, we'll return an object with optional custom structure
       if (this.columnDef?.type === FieldType.object || this.columnEditor?.type === FieldType.object) {
         return {
           [this.labelName]: this._currentValue.label,
@@ -240,6 +241,8 @@ export class AutoCompleteEditor implements Editor {
       }
       return this._currentValue.value;
     }
+    // if it falls here it might be that the user provided its own custom item with something else than the regular label/value pair
+    // at this point it's only available when user provide a custom template for the autocomplete renderItem callback
     return this._currentValue;
   }
 
@@ -262,14 +265,14 @@ export class AutoCompleteEditor implements Editor {
 
   // this function should be PRIVATE but for unit tests purposes we'll make it public until a better solution is found
   // a better solution would be to get the autocomplete DOM element to work with selection but I couldn't find how to do that in Jest
-  onSelect(event: Event, ui: any): boolean {
+  onSelect(_event: Event, ui: any): boolean {
     if (ui && ui.item) {
       const item = ui && ui.item;
       this._currentValue = item;
       const hasCustomRenderitemCallback = this.columnEditor?.callbacks?.hasOwnProperty('_renderItem');
-      const itemLabel = typeof item === 'string' ? item : (hasCustomRenderitemCallback ? item[this.labelName] : item.label);
+      // const itemLabel = typeof item === 'string' ? item : (hasCustomRenderitemCallback ? item[this.labelName] : item.label);
       const itemValue = typeof item === 'string' ? item : (hasCustomRenderitemCallback ? item[this.valueName] : item.value);
-      this.setValue(itemLabel);
+      this.setValue(itemValue);
 
       if (this.hasAutoCommitEdit) {
         // do not use args.commitChanges() as this sets the focus to the next row.

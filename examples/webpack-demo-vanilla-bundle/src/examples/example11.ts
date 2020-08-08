@@ -137,6 +137,11 @@ export class Example11 {
         filterable: true,
         minWidth: 100,
         exportWithFormatter: true,
+        dataKey: 'id',
+        labelKey: 'itemName',
+        formatter: Formatters.complexObject,
+        type: FieldType.object,
+        sortComparer: SortComparers.objectString,
         editor: {
           model: Editors.autoComplete,
           alwaysSaveOnEnterKey: true,
@@ -152,18 +157,17 @@ export class Example11 {
             },
             source: (request, response) => {
               // const items = require('c://TEMP/items.json');
-              const items = this.mockItems();
-              const itemsFound = items.filter(item => item.itemName.toLowerCase().includes(request.term.toLowerCase()));
-              response(itemsFound);
+              const products = this.mockProducts();
+              response(products.filter(product => product.itemName.toLowerCase().includes(request.term.toLowerCase())));
             },
           } as AutocompleteOption,
           callbacks: {
             // callback on the jQuery UI AutoComplete on the instance, example from https://jqueryui.com/autocomplete/#custom-data
-            _renderItem: (ul, item) => {
+            _renderItem: (ul: HTMLElement, item: any) => {
               const template = `<div class="autocomplete-container-list">
                   <div class="autocomplete-left">
                     <!--<img src="http://i.stack.imgur.com/pC1Tv.jpg" width="50" />-->
-                    <span class="mdi ${this.getRandomIcon()} mdi-26px"></span>
+                    <span class="mdi ${item.icon} mdi-26px"></span>
                   </div>
                   <div>
                     <span class="autocomplete-top-left">
@@ -347,6 +351,7 @@ export class Example11 {
     // mock data
     const tmpArray = [];
     for (let i = 0; i < count; i++) {
+      const randomItemId = Math.floor(Math.random() * this.mockProducts().length);
       const randomYear = 2000 + Math.floor(Math.random() * 10);
       const randomFinishYear = (new Date().getFullYear() - 3) + Math.floor(Math.random() * 10); // use only years not lower than 3 years ago
       const randomMonth = Math.floor(Math.random() * 11);
@@ -363,7 +368,8 @@ export class Example11 {
         finish: (randomFinish < new Date() || i < 3) ? '' : randomFinish, // make sure the random date is earlier than today and it's index is bigger than 3
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
         completed: (i % 5 === 0),
-        countryOfOrigin: (i % 2) ? { code: 'CA', name: 'Canada' } : null,
+        product: { id: this.mockProducts()[randomItemId]?.id, itemName: this.mockProducts()[randomItemId]?.itemName, },
+        countryOfOrigin: (i % 2) ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' },
       };
 
       if (!(i % 8)) {
@@ -553,94 +559,94 @@ export class Example11 {
     this.editQueue = [];
   }
 
-  mockItems() {
+  mockProducts() {
     return [
       {
-        id: 1,
+        id: 0,
         itemName: 'Sleek Metal Computer',
         itemNameTranslated: 'some fantastic sleek metal computer description',
         listPrice: 2100.23,
         itemTypeName: 'I',
         image: 'http://i.stack.imgur.com/pC1Tv.jpg',
-        icon: `mdi ${this.getRandomIcon()}`,
+        icon: `mdi ${this.getRandomIcon(0)}`,
       },
       {
-        id: 2,
+        id: 1,
         itemName: 'Tasty Granite Table',
         itemNameTranslated: 'an extremely huge and heavy table',
         listPrice: 3200.12,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/Fnm7j6h.jpg',
-        icon: `mdi ${this.getRandomIcon()}`,
+        icon: `mdi ${this.getRandomIcon(1)}`,
       },
       {
-        id: 3,
+        id: 2,
         itemName: 'Awesome Wooden Mouse',
         itemNameTranslated: 'super old mouse',
         listPrice: 15.00,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/RaVJuLr.jpg',
-        icon: `mdi ${this.getRandomIcon()}`,
+        icon: `mdi ${this.getRandomIcon(2)}`,
       },
       {
-        id: 4,
+        id: 3,
         itemName: 'Gorgeous Fresh Shirt',
         itemNameTranslated: 'what a gorgeous shirt seriously',
         listPrice: 25.76,
         itemTypeName: 'I',
         image: 'http://i.stack.imgur.com/pC1Tv.jpg',
-        icon: `mdi ${this.getRandomIcon()}`,
+        icon: `mdi ${this.getRandomIcon(3)}`,
       },
       {
-        id: 5,
+        id: 4,
         itemName: 'Refined Cotton Table',
         itemNameTranslated: 'super light table that will fall apart amazingly fast',
         listPrice: 13.35,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/Fnm7j6h.jpg',
-        icon: `mdi ${this.getRandomIcon()}`,
+        icon: `mdi ${this.getRandomIcon(4)}`,
       },
       {
-        id: 6,
+        id: 5,
         itemName: 'Intelligent Wooden Pizza',
         itemNameTranslated: 'wood not included',
         listPrice: 23.33,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/RaVJuLr.jpg',
-        icon: `mdi ${this.getRandomIcon()}`,
+        icon: `mdi ${this.getRandomIcon(5)}`,
       },
       {
-        id: 7,
+        id: 6,
         itemName: 'Licensed Cotton Chips',
         itemNameTranslated: 'not sure what that is',
         listPrice: 71.21,
         itemTypeName: 'I',
         image: 'http://i.stack.imgur.com/pC1Tv.jpg',
-        icon: `mdi ${this.getRandomIcon()}`,
+        icon: `mdi ${this.getRandomIcon(6)}`,
       },
       {
-        id: 8,
+        id: 7,
         itemName: 'Ergonomic Rubber Soap',
         itemNameTranslated: `so good you'll want to use it every night`,
         listPrice: 2.43,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/Fnm7j6h.jpg',
-        icon: `mdi ${this.getRandomIcon()}`,
+        icon: `mdi ${this.getRandomIcon(7)}`,
       },
       {
-        id: 9,
+        id: 8,
         itemName: 'Handcrafted Steel Car',
         itemNameTranslated: `aka tesla truck`,
         listPrice: 31288.39,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/RaVJuLr.jpg',
-        icon: `mdi ${this.getRandomIcon()}`,
+        icon: `mdi ${this.getRandomIcon(8)}`,
       },
     ];
   }
 
   /** List of icons that are supported in this lib Material Design Icons */
-  getRandomIcon() {
+  getRandomIcon(iconIndex?: number) {
     const icons = [
       'mdi-arrow-collapse',
       'mdi-arrow-expand',
@@ -695,6 +701,6 @@ export class Example11 {
       'mdi-undo',
     ];
     const randomNumber = Math.floor((Math.random() * icons.length - 1));
-    return icons[randomNumber];
+    return icons[iconIndex ?? randomNumber];
   }
 }
