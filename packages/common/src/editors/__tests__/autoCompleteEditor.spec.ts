@@ -102,6 +102,7 @@ describe('AutoCompleteEditor', () => {
       const editorCount = divContainer.querySelectorAll('input.editor-text.editor-gender').length;
       const autocompleteUlElms = document.body.querySelectorAll<HTMLUListElement>('ul.ui-autocomplete');
 
+      expect(editor.instance).toBeTruthy();
       expect(autocompleteUlElms.length).toBe(1);
       expect(editorCount).toBe(1);
     });
@@ -196,7 +197,7 @@ describe('AutoCompleteEditor', () => {
       editorElm.focus();
       editorElm.dispatchEvent(event);
 
-      expect(editor.elementCollection).toEqual([{ value: 'male', label: 'Male' }, { value: 'female', label: 'Female' }]);
+      expect(editor.elementCollection).toEqual([{ value: 'male', label: 'Male', labelPrefix: '', labelSuffix: '' }, { value: 'female', label: 'Female', labelPrefix: '', labelSuffix: '' }]);
     });
 
     it('should return True when calling "isValueChanged()" method with previously dispatched keyboard event being char "a"', () => {
@@ -330,7 +331,7 @@ describe('AutoCompleteEditor', () => {
         editor.setValue('F');
         const output = editor.serializeValue();
 
-        expect(output).toBe('Male');
+        expect(output).toBe('male');
       });
     });
 
@@ -344,7 +345,7 @@ describe('AutoCompleteEditor', () => {
         editor.loadValue(mockItemData);
         const output = editor.serializeValue();
 
-        expect(output).toBe('Female');
+        expect(output).toBe('female');
       });
 
       it('should return an object output when calling "serializeValue" with its column definition set to "FieldType.object"', () => {

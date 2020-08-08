@@ -378,7 +378,7 @@ export function getTranslationPrefix(gridOptions?: GridOption): string {
  * refer to moment.js for the format standard used: https://momentjs.com/docs/#/parsing/string-format/
  * @param fieldType
  */
-export function mapMomentDateFormatWithFieldType(fieldType: FieldType): string {
+export function mapMomentDateFormatWithFieldType(fieldType: typeof FieldType[keyof typeof FieldType]): string {
   let map: string;
   switch (fieldType) {
     case FieldType.dateTime:
@@ -462,7 +462,7 @@ export function mapMomentDateFormatWithFieldType(fieldType: FieldType): string {
  * also note that they seem very similar to PHP format (except for am/pm): http://php.net/manual/en/function.date.php
  * @param fieldType
  */
-export function mapFlatpickrDateFormatWithFieldType(fieldType: FieldType): string {
+export function mapFlatpickrDateFormatWithFieldType(fieldType: typeof FieldType[keyof typeof FieldType]): string {
   /*
     d: Day of the month, 2 digits with leading zeros	01 to 31
     D: A textual representation of a day	Mon through Sun
@@ -683,12 +683,15 @@ export function mapOperatorToShorthandDesignation(operator: OperatorType | Opera
  * @param operator
  * @returns string map
  */
-export function mapOperatorByFieldType(fieldType: FieldType | string): OperatorType {
+export function mapOperatorByFieldType(fieldType: typeof FieldType[keyof typeof FieldType]): OperatorType {
   let map: OperatorType;
 
   switch (fieldType) {
-    case FieldType.string:
     case FieldType.unknown:
+    case FieldType.string:
+    case FieldType.text:
+    case FieldType.password:
+    case FieldType.readonly:
       map = OperatorType.contains;
       break;
     case FieldType.float:

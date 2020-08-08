@@ -57,6 +57,9 @@ export const executeMappedCondition: FilterCondition = (options: FilterCondition
     case FieldType.object:
       return objectFilterCondition(options);
     case FieldType.string:
+    case FieldType.text:
+    case FieldType.password:
+    case FieldType.readonly:
     default:
       return stringFilterCondition(options);
   }

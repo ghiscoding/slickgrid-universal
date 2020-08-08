@@ -101,6 +101,7 @@ describe('AutoCompleteFilter', () => {
     const filterCount = divContainer.querySelectorAll('input.search-filter.filter-gender').length;
     const autocompleteUlElms = document.body.querySelectorAll<HTMLUListElement>('ul.ui-autocomplete');
 
+    expect(filter.instance).toBeTruthy();
     expect(autocompleteUlElms.length).toBe(1);
     expect(spyGetHeaderRow).toHaveBeenCalled();
     expect(filterCount).toBe(1);

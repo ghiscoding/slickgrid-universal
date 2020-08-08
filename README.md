@@ -159,3 +159,9 @@ yarn run test:watch
 - [ ] See if we can get `DOM Purify` to work in SF, else keep the custom sanitizer
 - [ ] See if we can get all the vanilla-grid-bundle `instances` as `readonly` class members
 - [ ] See if adding `lerna-changelog` make sense
+- [ ] Mutiple-Select is not showing caret icon to represent a dropdown in SF 
+- [ ] AutoComplete Editor/Filter Extra Features
+  - [x] should support instance callbacks
+  - [ ] should support `enableRenderHtml` (same as Select Filter)
+  - [ ] try to copy SF lookup component look & feel
+    - [SF Lookup](https://www.lightningdesignsystem.com/components/lookups/#site-main-content)

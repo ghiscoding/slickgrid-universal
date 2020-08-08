@@ -1,4 +1,5 @@
 import {
+  AutocompleteOption,
   Column,
   Editors,
   FieldType,
@@ -7,9 +8,11 @@ import {
   Formatters,
   GridOption,
   SlickNamespace,
+  SortComparers,
 
   // utilities
   deepCopy,
+  formatNumber,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -121,13 +124,111 @@ export class Example11 {
       {
         id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 20, maxWidth: 100,
         sortable: true, filterable: true,
-        editor: { model: Editors.checkbox },
+        editor: { model: Editors.singleSelect, collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }], },
         filter: {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
           model: Filters.singleSelect
         },
         exportWithFormatter: false,
         formatter: Formatters.checkmarkMaterial,
+      },
+      {
+        id: 'product', name: 'Product', field: 'product',
+        filterable: true,
+        minWidth: 100,
+        exportWithFormatter: true,
+        editor: {
+          model: Editors.autoComplete,
+          alwaysSaveOnEnterKey: true,
+          customStructure: {
+            label: 'itemName',
+            value: 'id'
+          },
+          editorOptions: {
+            openSearchListOnFocus: true,
+            minLength: 1,
+            classes: {
+              'ui-autocomplete': 'autocomplete-items',
+            },
+            source: (request, response) => {
+              // const items = require('c://TEMP/items.json');
+              const items = this.mockItems();
+              const itemsFound = items.filter(item => item.itemName.toLowerCase().includes(request.term.toLowerCase()));
+              response(itemsFound);
+            },
+          } as AutocompleteOption,
+          callbacks: {
+            // callback on the jQuery UI AutoComplete on the instance, example from https://jqueryui.com/autocomplete/#custom-data
+            _renderItem: (ul, item) => {
+              const template = `<div class="autocomplete-container-list">
+                  <div class="autocomplete-left">
+                    <!--<img src="http://i.stack.imgur.com/pC1Tv.jpg" width="50" />-->
+                    <span class="mdi ${this.getRandomIcon()} mdi-26px"></span>
+                  </div>
+                  <div>
+                    <span class="autocomplete-top-left">
+                      <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
+                      ${item.itemName}
+                    </span>
+                    <span class="autocomplete-top-right">${formatNumber(item.listPrice, 2, 2, false, '$')}</span>
+                  <div>
+                </div>
+                <div>
+                  <span class="autocomplete-bottom-left">${item.itemNameTranslated}</span>
+                  <span class="autocomplete-bottom-right">Type: <b>${item.itemTypeName === 'I' ? 'Item' : item.itemTypeName === 'C' ? 'PdCat' : 'Cat'}</b></span>
+                </div>`;
+
+              return $('<li></li>')
+                .append(template)
+                .appendTo(ul);
+            },
+          },
+        },
+        filter: {
+          model: Filters.autoComplete,
+          // placeholder: '&#128269; search city',
+
+          // We can use the autocomplete through 3 ways "collection", "collectionAsync" or with your own autocomplete options
+          // collectionAsync: this.http.get(URL_COUNTRIES_COLLECTION),
+          enableRenderHtml: true,
+          filterOptions: {
+            openSearchListOnFocus: true, // display the list on focus of the autocomplete (without the need to type anything)
+          },
+          collection: [
+            { value: '', label: '' },
+            { value: true, label: 'True', labelPrefix: `<i class="mdi mdi-plus"></i> ` },
+            { value: false, label: 'False', labelPrefix: `<i class="mdi mdi-minus"></i> ` }
+          ],
+        }
+      },
+      {
+        id: 'countryOfOrigin', name: 'Country of Origin', field: 'countryOfOrigin',
+        formatter: Formatters.complexObject,
+        exportWithFormatter: true,
+        dataKey: 'code',
+        labelKey: 'name',
+        type: FieldType.object,
+        sortComparer: SortComparers.objectString,
+        filterable: true,
+        sortable: true,
+        minWidth: 100,
+        editor: {
+          model: Editors.autoComplete,
+          alwaysSaveOnEnterKey: true,
+          editorOptions: {
+            minLength: 1,
+            source: (request, response) => {
+              const countries: any[] = require('./data/countries.json');
+              const foundCountries = countries.filter((country) => country.name.toLowerCase().includes(request.term.toLowerCase()));
+              response(foundCountries.map(item => ({ label: item.name, value: item.code, })));
+            },
+          },
+        },
+        filter: {
+          model: Filters.inputText,
+          type: 'string',
+          queryField: 'countryOfOrigin.name',
+        }
       },
       {
         id: 'action', name: 'Action', field: 'action', width: 100, maxWidth: 100,
@@ -261,7 +362,8 @@ export class Example11 {
         start: new Date(randomYear, randomMonth, randomDay),
         finish: (randomFinish < new Date() || i < 3) ? '' : randomFinish, // make sure the random date is earlier than today and it's index is bigger than 3
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
-        completed: (i % 5 === 0)
+        completed: (i % 5 === 0),
+        countryOfOrigin: (i % 2) ? { code: 'CA', name: 'Canada' } : null,
       };
 
       if (!(i % 8)) {
@@ -449,5 +551,150 @@ export class Example11 {
     }
     this.sgb.slickGrid.invalidate(); // re-render the grid only after every cells got rolled back
     this.editQueue = [];
+  }
+
+  mockItems() {
+    return [
+      {
+        id: 1,
+        itemName: 'Sleek Metal Computer',
+        itemNameTranslated: 'some fantastic sleek metal computer description',
+        listPrice: 2100.23,
+        itemTypeName: 'I',
+        image: 'http://i.stack.imgur.com/pC1Tv.jpg',
+        icon: `mdi ${this.getRandomIcon()}`,
+      },
+      {
+        id: 2,
+        itemName: 'Tasty Granite Table',
+        itemNameTranslated: 'an extremely huge and heavy table',
+        listPrice: 3200.12,
+        itemTypeName: 'I',
+        image: 'https://i.imgur.com/Fnm7j6h.jpg',
+        icon: `mdi ${this.getRandomIcon()}`,
+      },
+      {
+        id: 3,
+        itemName: 'Awesome Wooden Mouse',
+        itemNameTranslated: 'super old mouse',
+        listPrice: 15.00,
+        itemTypeName: 'I',
+        image: 'https://i.imgur.com/RaVJuLr.jpg',
+        icon: `mdi ${this.getRandomIcon()}`,
+      },
+      {
+        id: 4,
+        itemName: 'Gorgeous Fresh Shirt',
+        itemNameTranslated: 'what a gorgeous shirt seriously',
+        listPrice: 25.76,
+        itemTypeName: 'I',
+        image: 'http://i.stack.imgur.com/pC1Tv.jpg',
+        icon: `mdi ${this.getRandomIcon()}`,
+      },
+      {
+        id: 5,
+        itemName: 'Refined Cotton Table',
+        itemNameTranslated: 'super light table that will fall apart amazingly fast',
+        listPrice: 13.35,
+        itemTypeName: 'I',
+        image: 'https://i.imgur.com/Fnm7j6h.jpg',
+        icon: `mdi ${this.getRandomIcon()}`,
+      },
+      {
+        id: 6,
+        itemName: 'Intelligent Wooden Pizza',
+        itemNameTranslated: 'wood not included',
+        listPrice: 23.33,
+        itemTypeName: 'I',
+        image: 'https://i.imgur.com/RaVJuLr.jpg',
+        icon: `mdi ${this.getRandomIcon()}`,
+      },
+      {
+        id: 7,
+        itemName: 'Licensed Cotton Chips',
+        itemNameTranslated: 'not sure what that is',
+        listPrice: 71.21,
+        itemTypeName: 'I',
+        image: 'http://i.stack.imgur.com/pC1Tv.jpg',
+        icon: `mdi ${this.getRandomIcon()}`,
+      },
+      {
+        id: 8,
+        itemName: 'Ergonomic Rubber Soap',
+        itemNameTranslated: `so good you'll want to use it every night`,
+        listPrice: 2.43,
+        itemTypeName: 'I',
+        image: 'https://i.imgur.com/Fnm7j6h.jpg',
+        icon: `mdi ${this.getRandomIcon()}`,
+      },
+      {
+        id: 9,
+        itemName: 'Handcrafted Steel Car',
+        itemNameTranslated: `aka tesla truck`,
+        listPrice: 31288.39,
+        itemTypeName: 'I',
+        image: 'https://i.imgur.com/RaVJuLr.jpg',
+        icon: `mdi ${this.getRandomIcon()}`,
+      },
+    ];
+  }
+
+  /** List of icons that are supported in this lib Material Design Icons */
+  getRandomIcon() {
+    const icons = [
+      'mdi-arrow-collapse',
+      'mdi-arrow-expand',
+      'mdi-cancel',
+      'mdi-check',
+      'mdi-checkbox-blank-outline',
+      'mdi-check-box-outline',
+      'mdi-checkbox-marked',
+      'mdi-close',
+      'mdi-close-circle',
+      'mdi-close-circle-outline',
+      'mdi-close-thick',
+      'mdi-content-copy',
+      'mdi-database-refresh',
+      'mdi-download',
+      'mdi-file-document-outline',
+      'mdi-file-excel-outline',
+      'mdi-file-music-outline',
+      'mdi-file-pdf-outline',
+      'mdi-filter-remove-outline',
+      'mdi-flip-vertical',
+      'mdi-folder',
+      'mdi-folder-open',
+      'mdi-help-circle',
+      'mdi-help-circle-outline',
+      'mdi-history',
+      'mdi-information',
+      'mdi-information-outline',
+      'mdi-link',
+      'mdi-link-variant',
+      'mdi-menu',
+      'mdi-microsoft-excel',
+      'mdi-minus',
+      'mdi-page-first',
+      'mdi-page-last',
+      'mdi-paperclip',
+      'mdi-pin-off-outline',
+      'mdi-pin-outline',
+      'mdi-playlist-plus',
+      'mdi-playlist-remove',
+      'mdi-plus',
+      'mdi-redo',
+      'mdi-refresh',
+      'mdi-shape-square-plus',
+      'mdi-sort-ascending',
+      'mdi-sort-descending',
+      'mdi-swap-horizontal',
+      'mdi-swap-vertical',
+      'mdi-sync',
+      'mdi-table-edit',
+      'mdi-table-refresh',
+      'mdi-undo',
+    ];
+    const randomNumber = Math.floor((Math.random() * icons.length - 1));
+    return icons[randomNumber];
   }
 }

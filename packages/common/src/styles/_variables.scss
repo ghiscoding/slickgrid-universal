@@ -154,7 +154,10 @@ $autocomplete-loading-icon-vertical-align:      inherit !default;
 $autocomplete-max-height:	                      25vh !default;
 $autocomplete-min-height:	                      75px !default;
 $autocomplete-min-width:	                      50px !default;
+$autocomplete-overflow-x:	                      hidden !default;
+$autocomplete-overflow-y:	                      auto !default;
 $autocomplete-text-color:	                      #333333 !default;
+$autocomplete-text-overflow:	                  ellipsis !default;
 $autocomplete-text-padding:	                    3px 15px !default;
 $autocomplete-z-index:	                        1000 !default;
 

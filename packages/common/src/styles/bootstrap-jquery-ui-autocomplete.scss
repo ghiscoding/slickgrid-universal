@@ -21,11 +21,12 @@
   max-height: $autocomplete-max-height;
   min-height: $autocomplete-min-height;
   min-width: $autocomplete-min-width;
-  overflow-y: auto;
+  overflow-y: $autocomplete-overflow-y;
+  overflow-x: $autocomplete-overflow-x;
+  text-overflow: $autocomplete-text-overflow;
 
   li {
     div {
-      clear: both;
       display: block;
       color: $autocomplete-text-color;
       padding: $autocomplete-text-padding;

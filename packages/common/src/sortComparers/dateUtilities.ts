@@ -22,7 +22,7 @@ export function compareDates(value1: any, value2: any, sortDirection: number, so
 }
 
 /** From a FieldType, return the associated Date SortComparer */
-export function getAssociatedDateSortComparer(fieldType: FieldType): SortComparer {
+export function getAssociatedDateSortComparer(fieldType: typeof FieldType[keyof typeof FieldType]): SortComparer {
   const FORMAT = (fieldType === FieldType.date) ? moment.ISO_8601 : mapMomentDateFormatWithFieldType(fieldType);
 
   return (value1: any, value2: any, sortDirection: number, sortColumn: Column) => {

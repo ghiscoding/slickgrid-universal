@@ -4,7 +4,7 @@ import { SearchTerm } from '../enums/searchTerm.type';
 export interface CurrentFilter {
   /**
    * Column Id that must be defined as a Column in the Columns Definition (using the "field" property).
-   * However, please note that it will still check if there's a "queryField" and/or "queryFieldFilter" defined and use if exists
+   * However, please note that it will still check if there's a "queryField" defined and use if exists
    */
   columnId: string;
 

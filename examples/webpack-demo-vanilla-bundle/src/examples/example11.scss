@@ -1,5 +1,82 @@
 $control-height: 2.4em;
+$autocomplete-max-height: 250px;
 
 @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss';
 @import 'bulma/bulma';
 
+/* SASS variables */
+$brand-primary: rgb(0, 10, 36);
+$item-added-text-color: lighten(#31B0D5, 10%);
+$item-added-bg-color: lighten($item-added-text-color, 10%);
+$bottom-left-text-color: #686868;
+$bottom-right-text-color: #686868;
+$top-right-text-color: #0179d4;
+$autocomplete-font-size: 12px;
+
+/* autocomplete custom styling */
+.ui-autocomplete.autocomplete-items {
+  width: 385px;
+}
+.ui-autocomplete li div.autocomplete-container-list {
+  width: 370px;
+  padding: 3px 10px;
+
+  div {
+    margin: 0;
+    padding: 0;
+    line-height: 16px;
+  }
+
+  .autocomplete-left {
+    float: left;
+    height: 34px;
+    width: 34px;
+    padding-right: 5px;
+  }
+
+  .autocomplete-left > img {
+    height: 34px;
+    margin-top: 0px;
+    background-color: #ffffff;
+    background-clip: content-box;
+  }
+
+  .autocomplete-bottom-left {
+    font-size: #{$autocomplete-font-size - 1px};
+    font-style: italic;
+    color: $bottom-left-text-color;
+    /*margin-left: 30px;*/
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
+  }
+
+  .autocomplete-bottom-right {
+    // margin-right: 12px;
+    float: right;
+    font-size: #{$autocomplete-font-size - 1px};
+    font-style: italic;
+    color: $bottom-right-text-color;
+    /*margin-left: 30px;*/
+    text-overflow: ellipsis;
+  }
+
+  .autocomplete-top-left {
+    font-weight: bold;
+    font-size: $autocomplete-font-size;
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: darken($brand-primary, 15%);
+    padding-left: 1px;
+  }
+
+  .autocomplete-top-right {
+    // margin-right: 12px;
+    float: right;
+    font-style: italic;
+    font-size: #{$autocomplete-font-size - 1px};
+    font-weight: bold;
+    color: $top-right-text-color;
+  }
+}

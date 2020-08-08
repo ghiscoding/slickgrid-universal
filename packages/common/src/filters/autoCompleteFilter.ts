@@ -1,4 +1,5 @@
 import {
+  FieldType,
   OperatorType,
   OperatorString,
   SearchTerm,
@@ -16,7 +17,7 @@ import {
   SlickGrid,
 } from './../interfaces/index';
 import { CollectionService } from '../services/collection.service';
-import { getDescendantProperty } from '../services/utilities';
+import { getDescendantProperty, sanitizeTextByAvailableSanitizer } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 
 export class AutoCompleteFilter implements Filter {
@@ -39,6 +40,12 @@ export class AutoCompleteFilter implements Filter {
 
   /** The property name for labels in the collection */
   labelName: string;
+
+  /** The property name for a prefix that can be added to the labels in the collection */
+  labelPrefixName: string;
+
+  /** The property name for a suffix that can be added to the labels in the collection */
+  labelSuffixName: string;
 
   /** The property name for values in the collection */
   optionLabel: string;
@@ -70,12 +77,23 @@ export class AutoCompleteFilter implements Filter {
 
   /** Getter for the Filter Operator */
   get columnFilter(): ColumnFilter {
-    return this.columnDef && this.columnDef.filter || {};
+    return this.columnDef?.filter || {};
+  }
+
+  get filterOptions(): AutocompleteOption {
+    return this.columnFilter?.filterOptions || {};
   }
 
   /** Getter for the Custom Structure if exist */
   get customStructure(): CollectionCustomStructure | undefined {
-    return this.columnDef && this.columnDef.filter && this.columnDef.filter.customStructure;
+    let customStructure = this.columnFilter?.customStructure;
+    if (!customStructure && (this.columnDef?.type === FieldType.object || this.columnFilter?.type === FieldType.object) && this.columnDef?.dataKey && this.columnDef?.labelKey) {
+      customStructure = {
+        label: this.columnDef.labelKey,
+        value: this.columnDef.dataKey,
+      };
+    }
+    return customStructure;
   }
 
   /** Getter to know what would be the default operator when none is specified */
@@ -86,6 +104,11 @@ export class AutoCompleteFilter implements Filter {
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
     return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
+  }
+
+  /** jQuery UI AutoComplete instance */
+  get instance(): any {
+    return this.$filterElm.autocomplete('instance');
   }
 
   /** Getter of the Operator to use when doing the filter comparing */
@@ -119,6 +142,8 @@ export class AutoCompleteFilter implements Filter {
     this.enableTranslateLabel = this.columnFilter && this.columnFilter.enableTranslateLabel || false;
     this.labelName = this.customStructure && this.customStructure.label || 'label';
     this.valueName = this.customStructure && this.customStructure.value || 'value';
+    this.labelPrefixName = this.customStructure && this.customStructure.labelPrefix || 'labelPrefix';
+    this.labelSuffixName = this.customStructure && this.customStructure.labelSuffix || 'labelSuffix';
 
     // always render the DOM element
     const newCollection = this.columnFilter.collection || [];
@@ -285,18 +310,18 @@ export class AutoCompleteFilter implements Filter {
 
     // user might provide his own custom structure
     // jQuery UI autocomplete requires a label/value pair, so we must remap them when user provide different ones
-    if (Array.isArray(collection) && this.customStructure) {
+    if (Array.isArray(collection)) {
       collection = collection.map((item) => {
-        return { label: item[this.labelName], value: item[this.valueName] };
+        return { label: item[this.labelName], value: item[this.valueName], labelPrefix: item[this.labelPrefixName] || '', labelSuffix: item[this.labelSuffixName] || '' };
       });
     }
 
     // user might pass his own autocomplete options
-    const autoCompleteOptions: AutocompleteOption = this.columnFilter.filterOptions;
+    const autoCompleteOptions = this.filterOptions;
 
     // when user passes it's own autocomplete options
     // we still need to provide our own "select" callback implementation
-    if (autoCompleteOptions) {
+    if (autoCompleteOptions?.source) {
       autoCompleteOptions.select = (event: Event, ui: any) => this.onSelect(event, ui);
       this._autoCompleteOptions = { ...autoCompleteOptions };
       $filterElm.autocomplete(autoCompleteOptions);
@@ -306,8 +331,16 @@ export class AutoCompleteFilter implements Filter {
         source: collection,
         select: (event: Event, ui: any) => this.onSelect(event, ui),
       };
-      this._autoCompleteOptions = { ...definedOptions, ...(this.columnFilter.filterOptions as AutocompleteOption) };
+      this._autoCompleteOptions = { ...definedOptions, ...this.filterOptions };
       $filterElm.autocomplete(this._autoCompleteOptions);
+
+      // we'll use our own renderer so that it works with label prefix/suffix and also with html rendering when enabled
+      $filterElm.autocomplete('instance')._renderItem = this.renderItem.bind(this);
+    }
+
+    // we could optionally trigger a search when clicking on the AutoComplete
+    if (this.filterOptions.openSearchListOnFocus) {
+      $filterElm.click(() => $filterElm.autocomplete('search', $filterElm.val()));
     }
 
     $filterElm.val(searchTermInput);
@@ -339,8 +372,10 @@ export class AutoCompleteFilter implements Filter {
   // a better solution would be to get the autocomplete DOM element to work with selection but I couldn't find how to do that in Jest
   onSelect(event: Event, ui: any): boolean {
     if (ui && ui.item) {
-      const itemLabel = typeof ui.item === 'string' ? ui.item : ui.item.label;
-      const itemValue = typeof ui.item === 'string' ? ui.item : ui.item.value;
+      const item = ui.item;
+      const hasCustomRenderitemCallback = this.columnFilter?.callbacks?.hasOwnProperty('_renderItem');
+      const itemLabel = typeof item === 'string' ? item : (hasCustomRenderitemCallback ? item[this.labelName] : item.label);
+      const itemValue = typeof item === 'string' ? item : (hasCustomRenderitemCallback ? item[this.valueName] : item.value);
       this.setValues(itemLabel);
       itemValue === '' ? this.$filterElm.removeClass('filled') : this.$filterElm.addClass('filled');
       this.callback(event, { columnDef: this.columnDef, operator: this.operator, searchTerms: [itemValue], shouldTriggerQuery: this._shouldTriggerQuery });
@@ -350,6 +385,24 @@ export class AutoCompleteFilter implements Filter {
       this._shouldTriggerQuery = true;
     }
     return false;
+  }
+
+  protected renderItem(ul: any, item: any) {
+    const isRenderHtmlEnabled = this.columnFilter?.enableRenderHtml ?? false;
+    const prefixText = item.labelPrefix || '';
+    const labelText = item.label || '';
+    const suffixText = item.labelSuffix || '';
+    const finalText = prefixText + labelText + suffixText;
+
+    // sanitize any unauthorized html tags like script and others
+    // for the remaining allowed tags we'll permit all attributes
+    const sanitizedText = sanitizeTextByAvailableSanitizer(this.gridOptions, finalText) || '';
+
+    const $liDiv = $('<div></div>')[isRenderHtmlEnabled ? 'html' : 'text'](sanitizedText);
+    return $('<li></li>')
+      .data('item.autocomplete', item)
+      .append($liDiv)
+      .appendTo(ul);
   }
 
   protected async renderOptionsAsync(collectionAsync: Promise<any | any[]>): Promise<any[]> {

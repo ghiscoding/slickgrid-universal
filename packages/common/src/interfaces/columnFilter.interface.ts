@@ -1,4 +1,4 @@
-import { OperatorString, OperatorType, } from '../enums/index';
+import { FieldType, OperatorString, OperatorType, } from '../enums/index';
 import {
   CollectionCustomStructure,
   CollectionFilterBy,
@@ -13,6 +13,15 @@ import { SearchTerm } from '../enums/searchTerm.type';
 export interface ColumnFilter {
   /** Do we want to bypass the Backend Query? Commonly used with an OData Backend Service, if we want to filter without calling the regular OData query. */
   bypassBackendQuery?: boolean;
+
+  /**
+   * Some Filter could support callbacks from their jQuery instance (for now only AutoComplete supports this), for example:
+   * filter: { model:{ Filters.autoComplete }, callbacks: { _renderItem: (ul, item) => { ... } }}
+   *
+   * will be interpreted as $(#element).autocomplete("instance")._renderItem = (ul, item) => { ... }
+   * from jQuery UI doc: https://jqueryui.com/autocomplete/#custom-data
+   */
+  callbacks?: any;
 
   /** Column ID */
   columnId?: string;
@@ -60,16 +69,8 @@ export interface ColumnFilter {
   customStructure?: CollectionCustomStructure;
 
   /**
-   * Options that could be provided to the Filter, example: { container: 'body', maxHeight: 250}
-   *
-   * Please note that if you use options that have existed model interfaces, you should cast with "as X",
-   * for example { filterOptions: {maxHeight: 250} as MultipleSelectOption }
-   */
-  filterOptions?: MultipleSelectOption | any;
-
-  /**
-   * Defaults to false, when set it will render any HTML code instead of removing it
-   * So far only used in the MultipleSelect & SingleSelect Filters will support it
+   * Defaults to false, when set it will render any HTML code instead of removing it (sanitized)
+   * Currently only supported by the following Editors: AutoComplete, MultipleSelect & SingleSelect
    */
   enableRenderHtml?: boolean;
 
@@ -78,6 +79,14 @@ export interface ColumnFilter {
 
   /** Do we want the Filter to handle translation (localization)? */
   enableTranslateLabel?: boolean;
+
+  /**
+   * Options that could be provided to the Filter, example: { container: 'body', maxHeight: 250}
+   *
+   * Please note that if you use options that have existed model interfaces, you should cast with "as X",
+   * for example { filterOptions: {maxHeight: 250} as MultipleSelectOption }
+   */
+  filterOptions?: MultipleSelectOption | any;
 
   /**
    * Use "params" to pass any type of arguments to your Custom Filter
@@ -91,6 +100,15 @@ export interface ColumnFilter {
    * Note that this will override the default placeholder configured in the global config
    */
   placeholder?: string;
+
+  /**
+   * Useful when you want to display a certain field to the UI, but you want to use another field to query when Filtering/Sorting.
+   * Please note that it has higher precendence over the "field" property.
+   */
+  queryField?: string;
+
+  /** What is the Field Type that can be used by the Filter (as precedence over the "type" set the column definition) */
+  type?: typeof FieldType[keyof typeof FieldType];
 
   /** Step value of the filter, works only with Filters supporting it (input text, number, float, range, slider) */
   valueStep?: number | string;

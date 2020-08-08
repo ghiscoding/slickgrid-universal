@@ -5,7 +5,7 @@ describe('Example 11 - Queued Editing', () => {
   const GRID_ROW_HEIGHT = 33;
   const EDITABLE_CELL_RGB_COLOR = 'rgb(227, 240, 251)';
   const UNSAVED_RGB_COLOR = 'rgb(251, 253, 209)';
-  const fullTitles = ['', 'Title', 'Duration', 'Cost', '% Complete', 'Start', 'Finish', 'Completed', 'Action'];
+  const fullTitles = ['', 'Title', 'Duration', 'Cost', '% Complete', 'Start', 'Finish', 'Completed', 'Product', 'Country of Origin', 'Action'];
 
   beforeEach(() => {
     // create a console.log spy for later use

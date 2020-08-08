@@ -23,7 +23,7 @@ export function getValueFromParamsOrFormatterOptions(optionName: string, columnD
 }
 
 /** From a FieldType, return the associated date Formatter */
-export function getAssociatedDateFormatter(fieldType: FieldType, defaultSeparator: string): Formatter {
+export function getAssociatedDateFormatter(fieldType: typeof FieldType[keyof typeof FieldType], defaultSeparator: string): Formatter {
   const defaultDateFormat = mapMomentDateFormatWithFieldType(fieldType);
 
   return (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGrid) => {
