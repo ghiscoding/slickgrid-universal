@@ -145,59 +145,36 @@ export class Example11 {
         editor: {
           model: Editors.autoComplete,
           alwaysSaveOnEnterKey: true,
-          customStructure: {
-            label: 'itemName',
-            value: 'id'
-          },
+
+          // example with a Remote API call
           editorOptions: {
             openSearchListOnFocus: true,
             minLength: 1,
-            classes: {
-              'ui-autocomplete': 'autocomplete-items',
-            },
             source: (request, response) => {
               // const items = require('c://TEMP/items.json');
               const products = this.mockProducts();
               response(products.filter(product => product.itemName.toLowerCase().includes(request.term.toLowerCase())));
             },
-          } as AutocompleteOption,
-          callbacks: {
-            // callback on the jQuery UI AutoComplete on the instance, example from https://jqueryui.com/autocomplete/#custom-data
-            _renderItem: (ul: HTMLElement, item: any) => {
-              const template = `<div class="autocomplete-container-list">
-                  <div class="autocomplete-left">
-                    <!--<img src="http://i.stack.imgur.com/pC1Tv.jpg" width="50" />-->
-                    <span class="mdi ${item.icon} mdi-26px"></span>
-                  </div>
-                  <div>
-                    <span class="autocomplete-top-left">
-                      <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
-                      ${item.itemName}
-                    </span>
-                    <span class="autocomplete-top-right">${formatNumber(item.listPrice, 2, 2, false, '$')}</span>
-                  <div>
-                </div>
-                <div>
-                  <span class="autocomplete-bottom-left">${item.itemNameTranslated}</span>
-                  <span class="autocomplete-bottom-right">Type: <b>${item.itemTypeName === 'I' ? 'Item' : item.itemTypeName === 'C' ? 'PdCat' : 'Cat'}</b></span>
-                </div>`;
+            renderItem: {
+              // layout: 'twoRows',
+              // templateCallback: (item: any) => this.renderItemCallbackWith2Rows(item),
 
-              return $('<li></li>')
-                .append(template)
-                .appendTo(ul);
+              layout: 'fourCorners',
+              templateCallback: (item: any) => this.renderItemCallbackWith4Corners(item),
             },
-          },
+          } as AutocompleteOption,
         },
         filter: {
           model: Filters.autoComplete,
           // placeholder: '&#128269; search city',
+          type: FieldType.string,
 
-          // We can use the autocomplete through 3 ways "collection", "collectionAsync" or with your own autocomplete options
-          // collectionAsync: this.http.get(URL_COUNTRIES_COLLECTION),
-          enableRenderHtml: true,
+          // example with a fixed Collection (or collectionAsync)
           filterOptions: {
             openSearchListOnFocus: true, // display the list on focus of the autocomplete (without the need to type anything)
           },
+          enableRenderHtml: true, // this flag only works with a fixed Collection
+          // collectionAsync: this.http.get(URL_COUNTRIES_COLLECTION),
           collection: [
             { value: '', label: '' },
             { value: true, label: 'True', labelPrefix: `<i class="mdi mdi-plus"></i> ` },
@@ -702,5 +679,43 @@ export class Example11 {
     ];
     const randomNumber = Math.floor((Math.random() * icons.length - 1));
     return icons[iconIndex ?? randomNumber];
+  }
+
+  renderItemCallbackWith2Rows(item: any): string {
+    return `<div class="autocomplete-container-list">
+      <div class="autocomplete-left">
+        <!--<img src="http://i.stack.imgur.com/pC1Tv.jpg" width="50" />-->
+        <span class="mdi ${item.icon} mdi-26px"></span>
+      </div>
+      <div>
+        <span class="autocomplete-top-left">
+          <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
+          ${item.itemName}
+        </span>
+      <div>
+    </div>
+    <div>
+      <div class="autocomplete-bottom-left">${item.itemNameTranslated}</div>
+    </div>`
+  }
+
+  renderItemCallbackWith4Corners(item: any): string {
+    return `<div class="autocomplete-container-list">
+          <div class="autocomplete-left">
+            <!--<img src="http://i.stack.imgur.com/pC1Tv.jpg" width="50" />-->
+            <span class="mdi ${item.icon} mdi-26px"></span>
+          </div>
+          <div>
+            <span class="autocomplete-top-left">
+              <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
+              ${item.itemName}
+            </span>
+            <span class="autocomplete-top-right">${formatNumber(item.listPrice, 2, 2, false, '$')}</span>
+          <div>
+        </div>
+        <div>
+          <div class="autocomplete-bottom-left">${item.itemNameTranslated}</div>
+          <span class="autocomplete-bottom-right">Type: <b>${item.itemTypeName === 'I' ? 'Item' : item.itemTypeName === 'C' ? 'PdCat' : 'Cat'}</b></span>
+        </div>`;
   }
 }

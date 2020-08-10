@@ -17,7 +17,7 @@ import {
   SlickGrid,
 } from './../interfaces/index';
 import { CollectionService } from '../services/collection.service';
-import { getDescendantProperty, sanitizeTextByAvailableSanitizer } from '../services/utilities';
+import { getDescendantProperty, sanitizeTextByAvailableSanitizer, toKebabCase } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 
 export class AutoCompleteFilter implements Filter {
@@ -80,6 +80,11 @@ export class AutoCompleteFilter implements Filter {
     return this.columnDef?.filter || {};
   }
 
+  /** Get the Editor DOM Element */
+  get filterDomElement(): any {
+    return this.$filterElm;
+  }
+
   get filterOptions(): AutocompleteOption {
     return this.columnFilter?.filterOptions || {};
   }
@@ -87,7 +92,8 @@ export class AutoCompleteFilter implements Filter {
   /** Getter for the Custom Structure if exist */
   get customStructure(): CollectionCustomStructure | undefined {
     let customStructure = this.columnFilter?.customStructure;
-    if (!customStructure && (this.columnDef?.type === FieldType.object || this.columnFilter?.type === FieldType.object) && this.columnDef?.dataKey && this.columnDef?.labelKey) {
+    const columnType = this.columnFilter?.type ?? this.columnDef?.type;
+    if (!customStructure && (columnType === FieldType.object && this.columnDef?.dataKey && this.columnDef?.labelKey)) {
       customStructure = {
         label: this.columnDef.labelKey,
         value: this.columnDef.dataKey,
@@ -258,7 +264,7 @@ export class AutoCompleteFilter implements Filter {
     // step 2, create the DOM Element of the filter & pre-load search term
     // also subscribe to the onSelect event
     this._collection = newCollection;
-    this.$filterElm = this.createDomElement(filterTemplate, newCollection, searchTerm);
+    this.createDomElement(filterTemplate, newCollection, searchTerm);
 
     // step 3, subscribe to the keyup event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
@@ -305,7 +311,7 @@ export class AutoCompleteFilter implements Filter {
     $($headerElm).empty();
 
     // create the DOM element & add an ID and filter class
-    const $filterElm = $(filterTemplate) as any;
+    this.$filterElm = $(filterTemplate) as any;
     const searchTermInput = searchTerm as string;
 
     // user might provide his own custom structure
@@ -324,7 +330,21 @@ export class AutoCompleteFilter implements Filter {
     if (autoCompleteOptions?.source) {
       autoCompleteOptions.select = (event: Event, ui: any) => this.onSelect(event, ui);
       this._autoCompleteOptions = { ...autoCompleteOptions };
-      $filterElm.autocomplete(autoCompleteOptions);
+
+      // when renderItem is defined, we need to add our custom style CSS class
+      if (this._autoCompleteOptions.renderItem) {
+        this._autoCompleteOptions.classes = {
+          'ui-autocomplete': `autocomplete-custom-${toKebabCase(this._autoCompleteOptions.renderItem.layout)}`
+        };
+      }
+
+      // create the jQueryUI AutoComplete
+      this.$filterElm.autocomplete(this._autoCompleteOptions);
+
+      // when "renderItem" is defined, we need to call the user's custom renderItem template callback
+      if (this._autoCompleteOptions.renderItem) {
+        this.$filterElm.autocomplete('instance')._renderItem = this.renderCustomItem.bind(this);
+      }
     } else {
       const definedOptions: AutocompleteOption = {
         minLength: 0,
@@ -332,36 +352,45 @@ export class AutoCompleteFilter implements Filter {
         select: (event: Event, ui: any) => this.onSelect(event, ui),
       };
       this._autoCompleteOptions = { ...definedOptions, ...this.filterOptions };
-      $filterElm.autocomplete(this._autoCompleteOptions);
+      this.$filterElm.autocomplete(this._autoCompleteOptions);
 
       // we'll use our own renderer so that it works with label prefix/suffix and also with html rendering when enabled
-      $filterElm.autocomplete('instance')._renderItem = this.renderItem.bind(this);
+      this.$filterElm.autocomplete('instance')._renderItem = this.renderCollectionItem.bind(this);
     }
 
-    // we could optionally trigger a search when clicking on the AutoComplete
-    if (this.filterOptions.openSearchListOnFocus) {
-      $filterElm.click(() => $filterElm.autocomplete('search', $filterElm.val()));
-    }
-
-    $filterElm.val(searchTermInput);
-    $filterElm.data('columnId', columnId);
+    this.$filterElm.val(searchTermInput);
+    this.$filterElm.data('columnId', columnId);
 
     // if there's a search term, we will add the "filled" class for styling purposes
     if (searchTerm) {
-      $filterElm.addClass('filled');
+      this.$filterElm.addClass('filled');
     }
 
     // append the new DOM element to the header row
-    if ($filterElm && typeof $filterElm.appendTo === 'function') {
+    if (this.$filterElm && typeof this.$filterElm.appendTo === 'function') {
       const $container = $(`<div class="autocomplete-container"></div>`);
       $container.appendTo($headerElm);
-      $filterElm.appendTo($container);
+      this.$filterElm.appendTo($container);
 
       // add a <span> in order to add spinner styling
       $(`<span></span>`).appendTo($container);
     }
 
-    return $filterElm;
+    // we could optionally trigger a search when clicking on the AutoComplete
+    if (this.filterOptions.openSearchListOnFocus) {
+      this.$filterElm.click(() => this.$filterElm.autocomplete('search', this.$filterElm.val()));
+    }
+
+    // user might override any of the jQueryUI callback methods
+    if (this.columnFilter.callbacks) {
+      for (const callback of Object.keys(this.columnFilter.callbacks)) {
+        if (typeof this.columnFilter.callbacks[callback] === 'function') {
+          this.$filterElm.autocomplete('instance')[callback] = this.columnFilter.callbacks[callback];
+        }
+      }
+    }
+
+    return this.$filterElm;
   }
 
   //
@@ -387,7 +416,20 @@ export class AutoCompleteFilter implements Filter {
     return false;
   }
 
-  protected renderItem(ul: any, item: any) {
+  protected renderCustomItem(ul: HTMLElement, item: any) {
+    const templateString = this._autoCompleteOptions?.renderItem?.templateCallback(item) ?? '';
+
+    // sanitize any unauthorized html tags like script and others
+    // for the remaining allowed tags we'll permit all attributes
+    const sanitizedTemplateText = sanitizeTextByAvailableSanitizer(this.gridOptions, templateString) || '';
+
+    return $('<li></li>')
+      .data('item.autocomplete', item)
+      .append(sanitizedTemplateText)
+      .appendTo(ul);
+  }
+
+  protected renderCollectionItem(ul: any, item: any) {
     const isRenderHtmlEnabled = this.columnFilter?.enableRenderHtml ?? false;
     const prefixText = item.labelPrefix || '';
     const labelText = item.label || '';

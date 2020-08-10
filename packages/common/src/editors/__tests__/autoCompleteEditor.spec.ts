@@ -323,7 +323,7 @@ describe('AutoCompleteEditor', () => {
       });
 
       it('should return loaded value when "forceUserInput" is enabled and loaded value length is lower than minLength defined when calling "serializeValue"', () => {
-        mockColumn.internalColumnEditor.editorOptions = { forceUserInput: true, };
+        mockColumn.internalColumnEditor.editorOptions = { forceUserInput: true, } as AutocompleteOption;
         mockItemData = { id: 123, gender: { value: 'male', label: 'Male' }, isActive: true };
 
         editor = new AutoCompleteEditor(editorArguments);
@@ -332,6 +332,43 @@ describe('AutoCompleteEditor', () => {
         const output = editor.serializeValue();
 
         expect(output).toBe('male');
+      });
+    });
+
+    describe('openSearchListOnFocus flag', () => {
+      it('should open the search list by calling the AutoComplete "search" event with an empty string when there are no search term provided', () => {
+        mockColumn.internalColumnEditor.collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
+        mockColumn.internalColumnEditor.editorOptions = { openSearchListOnFocus: true, } as AutocompleteOption;
+
+        const event = new (window.window as any).KeyboardEvent('click', { keyCode: KeyCode.LEFT, bubbles: true, cancelable: true });
+
+        editor = new AutoCompleteEditor(editorArguments);
+        const autoCompleteSpy = jest.spyOn(editor.editorDomElement, 'autocomplete');
+
+        const editorElm = divContainer.querySelector<HTMLInputElement>('input.editor-gender');
+        editorElm.focus();
+        editorElm.dispatchEvent(event);
+
+        expect(autoCompleteSpy).toHaveBeenCalledWith('search', '');
+      });
+
+      it('should open the search list by calling the AutoComplete "search" event with the same search term string that was provided', () => {
+        mockColumn.internalColumnEditor.collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
+        mockColumn.internalColumnEditor.editorOptions = { openSearchListOnFocus: true, } as AutocompleteOption;
+        mockItemData = { id: 123, gender: { value: 'f', label: 'Female' }, isActive: true };
+
+        const event = new (window.window as any).KeyboardEvent('click', { keyCode: KeyCode.LEFT, bubbles: true, cancelable: true });
+
+        editor = new AutoCompleteEditor(editorArguments);
+        const autoCompleteSpy = jest.spyOn(editor.editorDomElement, 'autocomplete');
+        editor.loadValue(mockItemData);
+        editor.setValue('Female');
+
+        const editorElm = divContainer.querySelector<HTMLInputElement>('input.editor-gender');
+        editorElm.focus();
+        editorElm.dispatchEvent(event);
+
+        expect(autoCompleteSpy).toHaveBeenCalledWith('search', 'Female');
       });
     });
 
@@ -348,7 +385,7 @@ describe('AutoCompleteEditor', () => {
         expect(output).toBe('female');
       });
 
-      it('should return an object output when calling "serializeValue" with its column definition set to "FieldType.object"', () => {
+      it('should return an object output when calling "serializeValue" with its column definition set to "FieldType.object" with default label/value', () => {
         mockColumn.type = FieldType.object;
         mockColumn.internalColumnEditor.collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
         mockItemData = { id: 123, gender: { value: 'f', label: 'Female' }, isActive: true };
@@ -358,6 +395,20 @@ describe('AutoCompleteEditor', () => {
         const output = editor.serializeValue();
 
         expect(output).toEqual({ value: 'f', label: 'Female' });
+      });
+
+      it('should return an object output when calling "serializeValue" with its column definition set to "FieldType.object" with custom dataKey/labelKey pair', () => {
+        mockColumn.type = FieldType.object;
+        mockColumn.internalColumnEditor.collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
+        mockColumn.dataKey = 'id';
+        mockColumn.labelKey = 'name';
+        mockItemData = { id: 123, gender: { value: 'f', label: 'Female' }, isActive: true };
+
+        editor = new AutoCompleteEditor(editorArguments);
+        editor.loadValue(mockItemData);
+        const output = editor.serializeValue();
+
+        expect(output).toEqual({ id: 'f', name: 'Female' });
       });
     });
 
@@ -576,6 +627,18 @@ describe('AutoCompleteEditor', () => {
         expect(spySetValue).toHaveBeenCalledWith('f');
       });
 
+      it('should expect the "onSelect" method to be called when the callback method is triggered when user provide his own filterOptions', () => {
+        gridOptionMock.autoCommitEdit = true;
+        mockColumn.internalColumnEditor.editorOptions = { source: [], minLength: 3 } as AutocompleteOption;
+
+        const event = new CustomEvent('change');
+        editor = new AutoCompleteEditor(editorArguments);
+        const spy = jest.spyOn(editor, 'onSelect');
+        editor.autoCompleteOptions.select(event, { item: 'fem' });
+
+        expect(spy).toHaveBeenCalledWith(event, { item: 'fem' });
+      });
+
       it('should expect the "onSelect" method to be called when the callback method is triggered', () => {
         gridOptionMock.autoCommitEdit = true;
         mockColumn.internalColumnEditor.collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
@@ -604,6 +667,61 @@ describe('AutoCompleteEditor', () => {
 
         expect(onSelectSpy).toHaveBeenCalledWith(event, { item: 'fem' });
         expect(focusSpy).toHaveBeenCalled();
+      });
+    });
+
+    describe('renderItem callback method', () => {
+      it('should be able to override any jQuery UI callback method', () => {
+        const mockCallback = (ul: HTMLElement, item: any) => {
+          return $('<li></li>')
+            .data('item.autocomplete', item)
+            .append(`<div>Hello World`)
+            .appendTo(ul);
+        };
+        mockColumn.internalColumnEditor = {
+          editorOptions: {
+            source: [],
+            classes: { 'ui-autocomplete': 'autocomplete-custom-four-corners' },
+          } as AutocompleteOption,
+          callbacks: { _renderItem: mockCallback },
+        };
+
+        editor = new AutoCompleteEditor(editorArguments);
+
+        expect(editor.instance).toBeTruthy();
+        expect(editor.instance._renderItem).toEqual(mockCallback);
+      });
+
+      it('should provide "renderItem" in the "filterOptions" and expect the jQueryUI "_renderItem" to be overriden', () => {
+        const mockTemplateString = `<div>Hello World</div>`;
+        const mockTemplateCallback = (item) => mockTemplateString;
+        mockColumn.internalColumnEditor = {
+          editorOptions: {
+            source: [],
+            renderItem: {
+              layout: 'fourCorners',
+              templateCallback: mockTemplateCallback
+            },
+          } as AutocompleteOption,
+        };
+        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.LEFT, bubbles: true, cancelable: true });
+        editor = new AutoCompleteEditor(editorArguments);
+        const editorElm = divContainer.querySelector<HTMLInputElement>('input.editor-gender');
+        const autoCompleteSpy = jest.spyOn(editor.editorDomElement, 'autocomplete');
+        editorElm.focus();
+        editorElm.dispatchEvent(event);
+
+        expect(editor.editorDomElement).toBeTruthy();
+        expect(editor.instance).toBeTruthy();
+        expect(editor.autoCompleteOptions).toEqual(expect.objectContaining({ classes: { 'ui-autocomplete': 'autocomplete-custom-four-corners' } }));
+        expect(autoCompleteSpy).toHaveBeenCalledWith('instance');
+        expect(editor.instance._renderItem).toEqual(expect.any(Function));
+
+        const ulElm = document.createElement('ul');
+        editor.instance._renderItem(ulElm, { name: 'John' });
+
+        const liElm = ulElm.querySelector<HTMLLIElement>('li');
+        expect(liElm.innerHTML).toBe(mockTemplateString);
       });
     });
   });

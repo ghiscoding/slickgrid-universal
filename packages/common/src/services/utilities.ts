@@ -822,8 +822,8 @@ export function thousandSeparatorFormatted(inputValue: string | number | null, s
 }
 
 /**
- * Title case (or capitalize) first char of a string
- * Optionall title case the complete sentence (upper case first char of each word while changing everything else to lower case)
+ * Title case (or capitalize) first char of a string, for example "hello world" will become "Hello world"
+ * Change the string to be title case on the complete sentence (upper case first char of each word while changing everything else to lower case)
  * @param inputStr
  * @returns string
  */
@@ -840,7 +840,7 @@ export function titleCase(inputStr: string, caseEveryWords = false): string {
 }
 
 /**
- * Converts a string to camel case (camelCase)
+ * Converts a string to camel case (camelCase), for example "hello-world" (or "hellow world") will become "helloWorld"
  * @param inputStr the string to convert
  * @return the string in camel case
  */
@@ -859,7 +859,7 @@ export function toCamelCase(inputStr: string): string {
 }
 
 /**
- * Converts a string to kebab (hypen) case
+ * Converts a string to kebab (hypen) case, for example "helloWorld" will become "hello-world"
  * @param str the string to convert
  * @return the string in kebab case
  */

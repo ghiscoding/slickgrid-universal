@@ -16,7 +16,8 @@ import {
   findOrDefault,
   getDescendantProperty,
   sanitizeTextByAvailableSanitizer,
-  setDeepValue
+  setDeepValue,
+  toKebabCase
 } from '../services/utilities';
 
 // minimum length of chars to type before starting to start querying
@@ -89,7 +90,8 @@ export class AutoCompleteEditor implements Editor {
   /** Getter for the Custom Structure if exist */
   get customStructure(): CollectionCustomStructure | undefined {
     let customStructure = this.columnEditor?.customStructure;
-    if (!customStructure && (this.columnDef?.type === FieldType.object || this.columnEditor?.type === FieldType.object) && this.columnDef?.dataKey && this.columnDef?.labelKey) {
+    const columnType = this.columnEditor?.type ?? this.columnDef?.type;
+    if (!customStructure && (columnType === FieldType.object && this.columnDef?.dataKey && this.columnDef?.labelKey)) {
       customStructure = {
         label: this.columnDef.labelKey,
         value: this.columnDef.dataKey,
@@ -285,7 +287,20 @@ export class AutoCompleteEditor implements Editor {
     return false;
   }
 
-  protected renderItem(ul: any, item: any) {
+  protected renderCustomItem(ul: HTMLElement, item: any) {
+    const templateString = this._autoCompleteOptions?.renderItem?.templateCallback(item) ?? '';
+
+    // sanitize any unauthorized html tags like script and others
+    // for the remaining allowed tags we'll permit all attributes
+    const sanitizedTemplateText = sanitizeTextByAvailableSanitizer(this.gridOptions, templateString) || '';
+
+    return $('<li></li>')
+      .data('item.autocomplete', item)
+      .append(sanitizedTemplateText)
+      .appendTo(ul);
+  }
+
+  protected renderCollectionItem(ul: HTMLElement, item: any) {
     const isRenderHtmlEnabled = this.columnEditor?.enableRenderHtml ?? false;
     const prefixText = item.labelPrefix || '';
     const labelText = item.label || '';
@@ -345,7 +360,20 @@ export class AutoCompleteEditor implements Editor {
     if (autoCompleteOptions?.source) {
       autoCompleteOptions.select = (event: Event, ui: any) => this.onSelect(event, ui);
       this._autoCompleteOptions = { ...autoCompleteOptions };
-      this._$editorElm.autocomplete(autoCompleteOptions);
+
+      // when "renderItem" is defined, we need to add our custom style CSS class
+      if (this._autoCompleteOptions.renderItem) {
+        this._autoCompleteOptions.classes = {
+          'ui-autocomplete': `autocomplete-custom-${toKebabCase(this._autoCompleteOptions.renderItem.layout)}`
+        };
+      }
+      // create the jQueryUI AutoComplete
+      this._$editorElm.autocomplete(this._autoCompleteOptions);
+
+      // when "renderItem" is defined, we need to call the user's custom renderItem template callback
+      if (this._autoCompleteOptions.renderItem) {
+        this._$editorElm.autocomplete('instance')._renderItem = this.renderCustomItem.bind(this);
+      }
     } else {
       const definedOptions: AutocompleteOption = {
         source: finalCollection,
@@ -356,7 +384,7 @@ export class AutoCompleteEditor implements Editor {
       this._$editorElm.autocomplete(this._autoCompleteOptions);
 
       // we'll use our own renderer so that it works with label prefix/suffix and also with html rendering when enabled
-      this._$editorElm.autocomplete('instance')._renderItem = this.renderItem.bind(this);
+      this._$editorElm.autocomplete('instance')._renderItem = this.renderCollectionItem.bind(this);
     }
 
     // in case the user wants to save even an empty value,
@@ -374,6 +402,7 @@ export class AutoCompleteEditor implements Editor {
       this._$editorElm.click(() => this._$editorElm.autocomplete('search', this._$editorElm.val()));
     }
 
+    // user might override any of the jQueryUI callback methods
     if (this.columnEditor.callbacks) {
       for (const callback of Object.keys(this.columnEditor.callbacks)) {
         if (typeof this.columnEditor.callbacks[callback] === 'function') {

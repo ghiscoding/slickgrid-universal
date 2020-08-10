@@ -1,5 +1,13 @@
 export type JQueryAjaxFn = (request: any, response: any) => void;
 
+export interface AutoCompleteRenderItemDefinition {
+  /** which custom Layout to use? We created 2 custom styled layouts "twoRows" and "fourCorners", both layouts also support an optional icon on the left. */
+  layout: 'twoRows' | 'fourCorners';
+
+  /** templateCallback must be a callback function returning the renderItem template string that is used to dislay each row of the AutoComplete result */
+  templateCallback: (item: any) => string;
+}
+
 export interface AutocompleteOption {
   /**
    * The classes option is used to map structural class names to theme-related class names that you define
@@ -29,6 +37,14 @@ export interface AutocompleteOption {
 
   /** defaults to false, will open the search list (should really only be used with a defined collection list) */
   openSearchListOnFocus?: boolean;
+
+  /**
+   * renderItem option is to simply provide a Template and decide which custom Layout to use
+   *
+   * Note that this "renderItem" is just a shortcut and can be done with the following code:
+   * editor: { editorOptions: { classes: { 'ui-autocomplete': 'autocomplete-custom-2rows',  }, callbacks: { _renderItem: (ul: HTMLElement, item: any) => this.renderItemCallbackWith2Rows(ul, item) }}
+   */
+  renderItem?: AutoCompleteRenderItemDefinition;
 
   // --
   // Events / Methods
