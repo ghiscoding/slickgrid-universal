@@ -8,10 +8,17 @@ import {
   EditorArguments,
   EditorValidator,
   EditorValidatorOutput,
+  GridOption,
   SlickGrid,
 } from './../interfaces/index';
-import { findOrDefault, getDescendantProperty, setDeepValue } from '../services/utilities';
 import { textValidator } from '../editorValidators/textValidator';
+import {
+  findOrDefault,
+  getDescendantProperty,
+  sanitizeTextByAvailableSanitizer,
+  setDeepValue,
+  toKebabCase
+} from '../services/utilities';
 
 // minimum length of chars to type before starting to start querying
 const MIN_LENGTH = 3;
@@ -35,6 +42,12 @@ export class AutoCompleteEditor implements Editor {
 
   /** The property name for labels in the collection */
   labelName: string;
+
+  /** The property name for a prefix that can be added to the labels in the collection */
+  labelPrefixName: string;
+
+  /** The property name for a suffix that can be added to the labels in the collection */
+  labelSuffixName: string;
 
   /** The property name for values in the collection */
   valueName: string;
@@ -71,16 +84,34 @@ export class AutoCompleteEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef && this.columnDef.internalColumnEditor || {};
+    return this.columnDef?.internalColumnEditor || {};
   }
 
   /** Getter for the Custom Structure if exist */
   get customStructure(): CollectionCustomStructure | undefined {
-    return this.columnEditor && this.columnEditor.customStructure;
+    let customStructure = this.columnEditor?.customStructure;
+    const columnType = this.columnEditor?.type ?? this.columnDef?.type;
+    if (!customStructure && (columnType === FieldType.object && this.columnDef?.dataKey && this.columnDef?.labelKey)) {
+      customStructure = {
+        label: this.columnDef.labelKey,
+        value: this.columnDef.dataKey,
+      };
+    }
+    return customStructure;
   }
 
-  get editorOptions() {
-    return this.columnEditor && this.columnEditor.editorOptions || {};
+  get editorOptions(): AutocompleteOption {
+    return this.columnEditor?.editorOptions || {};
+  }
+
+  /** Getter for the Grid Options pulled through the Grid Object */
+  get gridOptions(): GridOption {
+    return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
+  }
+
+  /** jQuery UI AutoComplete instance */
+  get instance(): any {
+    return this._$editorElm.autocomplete('instance');
   }
 
   get hasAutoCommitEdit() {
@@ -100,6 +131,8 @@ export class AutoCompleteEditor implements Editor {
   init() {
     this.labelName = this.customStructure && this.customStructure.label || 'label';
     this.valueName = this.customStructure && this.customStructure.value || 'value';
+    this.labelPrefixName = this.customStructure && this.customStructure.labelPrefix || 'labelPrefix';
+    this.labelSuffixName = this.customStructure && this.customStructure.labelSuffix || 'labelSuffix';
 
     // always render the DOM element, even if user passed a "collectionAsync",
     const newCollection = this.columnEditor.collection || [];
@@ -193,21 +226,25 @@ export class AutoCompleteEditor implements Editor {
   serializeValue(): any {
     // if you want to add the autocomplete functionality but want the user to be able to input a new option
     if (this.editorOptions.forceUserInput) {
-      const minLength = this.editorOptions && this.editorOptions.hasOwnProperty('minLength') ? this.editorOptions.minLength : MIN_LENGTH;
+      const minLength = this.editorOptions?.minLength ?? MIN_LENGTH;
       this._currentValue = this._$editorElm.val().length > minLength ? this._$editorElm.val() : this._currentValue;
     }
+
     // if user provided a custom structure, we will serialize the value returned from the object with custom structure
-    if (this.customStructure && this._currentValue && this._currentValue.hasOwnProperty(this.labelName)) {
-      return this._currentValue[this.labelName];
-    } else if (this._currentValue && this._currentValue.label) {
-      if (this.columnDef && this.columnDef.type === FieldType.object) {
+    if (this.customStructure && this._currentValue && this._currentValue.hasOwnProperty(this.valueName) && (this.columnDef?.type !== FieldType.object && this.columnEditor?.type !== FieldType.object)) {
+      return this._currentValue[this.valueName];
+    } else if (this._currentValue && this._currentValue.value !== undefined) {
+      // when object has a "value" property and its column is set as an Object type, we'll return an object with optional custom structure
+      if (this.columnDef?.type === FieldType.object || this.columnEditor?.type === FieldType.object) {
         return {
           [this.labelName]: this._currentValue.label,
           [this.valueName]: this._currentValue.value
         };
       }
-      return this._currentValue.label;
+      return this._currentValue.value;
     }
+    // if it falls here it might be that the user provided its own custom item with something else than the regular label/value pair
+    // at this point it's only available when user provide a custom template for the autocomplete renderItem callback
     return this._currentValue;
   }
 
@@ -230,11 +267,14 @@ export class AutoCompleteEditor implements Editor {
 
   // this function should be PRIVATE but for unit tests purposes we'll make it public until a better solution is found
   // a better solution would be to get the autocomplete DOM element to work with selection but I couldn't find how to do that in Jest
-  onSelect(event: Event, ui: any): boolean {
+  onSelect(_event: Event, ui: any): boolean {
     if (ui && ui.item) {
-      this._currentValue = ui && ui.item;
-      const itemLabel = typeof ui.item === 'string' ? ui.item : ui.item.label;
-      this.setValue(itemLabel);
+      const item = ui && ui.item;
+      this._currentValue = item;
+      const hasCustomRenderitemCallback = this.columnEditor?.callbacks?.hasOwnProperty('_renderItem');
+      // const itemLabel = typeof item === 'string' ? item : (hasCustomRenderitemCallback ? item[this.labelName] : item.label);
+      const itemValue = typeof item === 'string' ? item : (hasCustomRenderitemCallback ? item[this.valueName] : item.value);
+      this.setValue(itemValue);
 
       if (this.hasAutoCommitEdit) {
         // do not use args.commitChanges() as this sets the focus to the next row.
@@ -247,13 +287,44 @@ export class AutoCompleteEditor implements Editor {
     return false;
   }
 
+  protected renderCustomItem(ul: HTMLElement, item: any) {
+    const templateString = this._autoCompleteOptions?.renderItem?.templateCallback(item) ?? '';
+
+    // sanitize any unauthorized html tags like script and others
+    // for the remaining allowed tags we'll permit all attributes
+    const sanitizedTemplateText = sanitizeTextByAvailableSanitizer(this.gridOptions, templateString) || '';
+
+    return $('<li></li>')
+      .data('item.autocomplete', item)
+      .append(sanitizedTemplateText)
+      .appendTo(ul);
+  }
+
+  protected renderCollectionItem(ul: HTMLElement, item: any) {
+    const isRenderHtmlEnabled = this.columnEditor?.enableRenderHtml ?? false;
+    const prefixText = item.labelPrefix || '';
+    const labelText = item.label || '';
+    const suffixText = item.labelSuffix || '';
+    const finalText = prefixText + labelText + suffixText;
+
+    // sanitize any unauthorized html tags like script and others
+    // for the remaining allowed tags we'll permit all attributes
+    const sanitizedText = sanitizeTextByAvailableSanitizer(this.gridOptions, finalText) || '';
+
+    const $liDiv = $('<div></div>')[isRenderHtmlEnabled ? 'html' : 'text'](sanitizedText);
+    return $('<li></li>')
+      .data('item.autocomplete', item)
+      .append($liDiv)
+      .appendTo(ul);
+  }
+
   private renderDomElement(collection: any[]) {
     if (!Array.isArray(collection)) {
       throw new Error('The "collection" passed to the Autocomplete Editor is not a valid array.');
     }
-    const columnId = this.columnDef && this.columnDef.id;
-    const placeholder = this.columnEditor && this.columnEditor.placeholder || '';
-    const title = this.columnEditor && this.columnEditor.title || '';
+    const columnId = this.columnDef?.id ?? '';
+    const placeholder = this.columnEditor?.placeholder ?? '';
+    const title = this.columnEditor?.title ?? '';
 
     this._$editorElm = $(`<input type="text" role="presentation" autocomplete="off" class="autocomplete editor-text editor-${columnId}" placeholder="${placeholder}" title="${title}" />`)
       .appendTo(this.args.container)
@@ -275,9 +346,9 @@ export class AutoCompleteEditor implements Editor {
 
     // user might provide his own custom structure
     // jQuery UI autocomplete requires a label/value pair, so we must remap them when user provide different ones
-    if (Array.isArray(finalCollection) && this.customStructure) {
+    if (Array.isArray(finalCollection)) {
       finalCollection = finalCollection.map((item) => {
-        return { label: item[this.labelName], value: item[this.valueName] };
+        return { label: item[this.labelName], value: item[this.valueName], labelPrefix: item[this.labelPrefixName] || '', labelSuffix: item[this.labelSuffixName] || '' };
       });
     }
 
@@ -286,10 +357,23 @@ export class AutoCompleteEditor implements Editor {
 
     // when user passes it's own autocomplete options
     // we still need to provide our own "select" callback implementation
-    if (autoCompleteOptions) {
+    if (autoCompleteOptions?.source) {
       autoCompleteOptions.select = (event: Event, ui: any) => this.onSelect(event, ui);
       this._autoCompleteOptions = { ...autoCompleteOptions };
-      this._$editorElm.autocomplete(autoCompleteOptions);
+
+      // when "renderItem" is defined, we need to add our custom style CSS class
+      if (this._autoCompleteOptions.renderItem) {
+        this._autoCompleteOptions.classes = {
+          'ui-autocomplete': `autocomplete-custom-${toKebabCase(this._autoCompleteOptions.renderItem.layout)}`
+        };
+      }
+      // create the jQueryUI AutoComplete
+      this._$editorElm.autocomplete(this._autoCompleteOptions);
+
+      // when "renderItem" is defined, we need to call the user's custom renderItem template callback
+      if (this._autoCompleteOptions.renderItem) {
+        this._$editorElm.autocomplete('instance')._renderItem = this.renderCustomItem.bind(this);
+      }
     } else {
       const definedOptions: AutocompleteOption = {
         source: finalCollection,
@@ -298,6 +382,33 @@ export class AutoCompleteEditor implements Editor {
       };
       this._autoCompleteOptions = { ...definedOptions, ...(this.columnEditor.editorOptions as AutocompleteOption) };
       this._$editorElm.autocomplete(this._autoCompleteOptions);
+
+      // we'll use our own renderer so that it works with label prefix/suffix and also with html rendering when enabled
+      this._$editorElm.autocomplete('instance')._renderItem = this.renderCollectionItem.bind(this);
+    }
+
+    // in case the user wants to save even an empty value,
+    // we need to subscribe to the onKeyDown event for that use case and clear the current value
+    if (this.columnEditor.alwaysSaveOnEnterKey) {
+      this._$editorElm.keydown((event: KeyboardEvent) => {
+        if (event.keyCode === KeyCode.ENTER) {
+          this._currentValue = null;
+        }
+      });
+    }
+
+    // we could optionally trigger a search when clicking on the AutoComplete
+    if (this.editorOptions.openSearchListOnFocus) {
+      this._$editorElm.click(() => this._$editorElm.autocomplete('search', this._$editorElm.val()));
+    }
+
+    // user might override any of the jQueryUI callback methods
+    if (this.columnEditor.callbacks) {
+      for (const callback of Object.keys(this.columnEditor.callbacks)) {
+        if (typeof this.columnEditor.callbacks[callback] === 'function') {
+          this.instance[callback] = this.columnEditor.callbacks[callback];
+        }
+      }
     }
 
     setTimeout(() => this.focus(), 50);

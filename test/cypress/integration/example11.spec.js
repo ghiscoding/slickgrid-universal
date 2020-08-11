@@ -1,11 +1,11 @@
 /// <reference types="Cypress" />
 import { changeTimezone, zeroPadding } from './utilities';
 
-describe('Example 11 - Queued Editing', () => {
+describe('Example 11 - Batch Editing', () => {
   const GRID_ROW_HEIGHT = 33;
   const EDITABLE_CELL_RGB_COLOR = 'rgb(227, 240, 251)';
   const UNSAVED_RGB_COLOR = 'rgb(251, 253, 209)';
-  const fullTitles = ['', 'Title', 'Duration', 'Cost', '% Complete', 'Start', 'Finish', 'Completed', 'Action'];
+  const fullTitles = ['', 'Title', 'Duration', 'Cost', '% Complete', 'Start', 'Finish', 'Completed', 'Product', 'Country of Origin', 'Action'];
 
   beforeEach(() => {
     // create a console.log spy for later use
@@ -16,7 +16,7 @@ describe('Example 11 - Queued Editing', () => {
 
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseExampleUrl')}/example11`);
-    cy.get('h3').should('contain', 'Example 11 - Queued Editing');
+    cy.get('h3').should('contain', 'Example 11 - Batch Editing');
   });
 
 

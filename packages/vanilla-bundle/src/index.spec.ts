@@ -19,5 +19,13 @@ describe('Testing library entry point', () => {
     expect(typeof entry.Slicker.SortComparers).toBe('object');
     expect(typeof entry.Slicker.Utilities).toBe('object');
     expect(typeof entry.SlickVanillaGridBundle).toBe('function');
+    expect(typeof entry.Aggregators).toBe('object');
+    expect(typeof entry.Editors).toBe('object');
+    expect(typeof entry.Enums).toBe('object');
+    expect(typeof entry.Filters).toBe('object');
+    expect(typeof entry.Formatters).toBe('object');
+    expect(typeof entry.GroupTotalFormatters).toBe('object');
+    expect(typeof entry.SortComparers).toBe('object');
+    expect(typeof entry.Utilities).toBe('object');
   });
 });

@@ -3,7 +3,7 @@ import { Column } from '../interfaces/index';
 import { SortComparers } from './index';
 import { getAssociatedDateSortComparer } from './dateUtilities';
 
-export function sortByFieldType(fieldType: FieldType, value1: any, value2: any, sortDirection: number | SortDirectionNumber, sortColumn?: Column) {
+export function sortByFieldType(fieldType: typeof FieldType[keyof typeof FieldType], value1: any, value2: any, sortDirection: number | SortDirectionNumber, sortColumn?: Column) {
   let sortResult = 0;
 
   switch (fieldType) {
@@ -44,6 +44,9 @@ export function sortByFieldType(fieldType: FieldType, value1: any, value2: any, 
       sortResult = SortComparers.objectString(value1, value2, sortDirection, sortColumn);
       break;
     case FieldType.string:
+    case FieldType.text:
+    case FieldType.password:
+    case FieldType.readonly:
     default:
       sortResult = SortComparers.string(value1, value2, sortDirection, sortColumn);
       break;
