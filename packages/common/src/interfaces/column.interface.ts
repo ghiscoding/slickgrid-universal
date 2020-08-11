@@ -114,7 +114,7 @@ export interface Column<T = any> {
   filterable?: boolean;
 
   /** Extra option to filter more easily. For example, a "UTC Date" field can use a search format of US Format like ">02/28/2017" */
-  filterSearchType?: FieldType;
+  filterSearchType?: typeof FieldType[keyof typeof FieldType];
 
   /** are we allowed to focus on the column? */
   focusable?: boolean;
@@ -175,13 +175,13 @@ export interface Column<T = any> {
    * Column output type (e.g. Date Picker, the output format that we will see in the picker)
    * NOTE: this is only currently used by the Editors/Filters with a Date Picker
    */
-  outputType?: FieldType;
+  outputType?: typeof FieldType[keyof typeof FieldType];
 
   /**
    * Column Editor save format type (e.g. which date format to use when saving after choosing a date from the Date Editor picker)
    * NOTE: this is only currently used by the Date Editor (date picker)
    */
-  saveOutputType?: FieldType;
+  saveOutputType?: typeof FieldType[keyof typeof FieldType];
 
   /** if you want to pass custom paramaters to your Formatter/Editor or anything else */
   params?: any | any[];
@@ -237,8 +237,8 @@ export interface Column<T = any> {
   /** Custom Tooltip that can ben shown to the column */
   toolTip?: string;
 
-  /** What is the Field Type, this can be used in the Formatters/Editors/... */
-  type?: FieldType;
+  /** What is the Field Type, this can be used in the Formatters/Editors/Filters/... */
+  type?: typeof FieldType[keyof typeof FieldType];
 
   /** Defaults to false, when set to True will lead to the column being unselected in the UI */
   unselectable?: boolean;

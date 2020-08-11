@@ -208,7 +208,7 @@ export class ExcelExportService implements BaseExcelExportService {
   }
 
   /** use different Excel Stylesheet Format as per the Field Type */
-  useCellFormatByFieldType(data: string | Date | moment_.Moment, fieldType: FieldType): ExcelCellFormat | string {
+  useCellFormatByFieldType(data: string | Date | moment_.Moment, fieldType: typeof FieldType[keyof typeof FieldType]): ExcelCellFormat | string {
     let outputData: ExcelCellFormat | string | Date | moment_.Moment = data;
     switch (fieldType) {
       case FieldType.dateTime:

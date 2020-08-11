@@ -5,7 +5,7 @@ export interface FilterConditionOption {
   operator: OperatorString;
   cellValue: any;
   cellValueLastChar?: string;
-  fieldType: FieldType;
-  filterSearchType?: FieldType;
+  fieldType: typeof FieldType[keyof typeof FieldType];
+  filterSearchType?: typeof FieldType[keyof typeof FieldType];
   searchTerms?: SearchTerm[] | undefined;
 }
