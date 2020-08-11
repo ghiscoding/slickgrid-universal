@@ -157,10 +157,9 @@ yarn run test:watch
 - [x] Change `index` file of `Editors`, `Filters`, ... to regular barel export and rename previous files to `editors.index`, ...
   - [x] Also add all  `Editors`, `Filters`, ... to the Vanilla Grid Bundle
 - [x] AutoComplete Editor/Filter Extra Features
-  - [x] should support instance callbacks
   - [x] should support `enableRenderHtml` (same as Select Filter)
-  - [x] try to copy SF lookup component look & feel
-    - [SF Lookup](https://www.lightningdesignsystem.com/components/lookups/#site-main-content)
+  - [x] should support instance callbacks (`_renderItem`)
+  - [x] try to copy SF lookup component look & feel ([SF Lookup](https://www.lightningdesignsystem.com/components/lookups/#site-main-content))
 - [ ] See if we can get `DOM Purify` to work in SF, else keep the custom sanitizer
 - [ ] See if we can get all the vanilla-grid-bundle `instances` as `readonly` class members
 - [ ] See if adding `lerna-changelog` make sense
