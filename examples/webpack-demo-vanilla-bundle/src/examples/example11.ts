@@ -165,21 +165,10 @@ export class Example11 {
           } as AutocompleteOption,
         },
         filter: {
-          model: Filters.autoComplete,
+          model: Filters.inputText,
           // placeholder: '&#128269; search city',
           type: FieldType.string,
-
-          // example with a fixed Collection (or collectionAsync)
-          filterOptions: {
-            openSearchListOnFocus: true, // display the list on focus of the autocomplete (without the need to type anything)
-          },
-          enableRenderHtml: true, // this flag only works with a fixed Collection
-          // collectionAsync: this.http.get(URL_COUNTRIES_COLLECTION),
-          collection: [
-            { value: '', label: '' },
-            { value: true, label: 'True', labelPrefix: `<i class="mdi mdi-plus"></i> ` },
-            { value: false, label: 'False', labelPrefix: `<i class="mdi mdi-minus"></i> ` }
-          ],
+          queryField: 'product.itemName',
         }
       },
       {
