@@ -142,6 +142,7 @@ export class Example11 {
         formatter: Formatters.complexObject,
         type: FieldType.object,
         sortComparer: SortComparers.objectString,
+        params: { massUpdate: true },
         editor: {
           model: Editors.autoComplete,
           alwaysSaveOnEnterKey: true,
@@ -182,6 +183,7 @@ export class Example11 {
         filterable: true,
         sortable: true,
         minWidth: 100,
+        params: { massUpdate: true },
         editor: {
           model: Editors.autoComplete,
           alwaysSaveOnEnterKey: true,
@@ -373,21 +375,14 @@ export class Example11 {
         }
         break;
       case 'modal':
-        const selectedRowIndexes = this.sgb.slickGrid.getSelectedRows() || [];
-        let confirmed = true;
-
-        if (selectedRowIndexes.length === 0) {
-          confirmed = await confirm(`Since no rows were selected, we'll assume you want to do a mass update on every row. \n\nOK to continue \nCancel to return to the grid`);
-        }
-
-        if (confirmed) {
-          const modalContainerElm = document.querySelector<HTMLDivElement>('.modal-container');
-          const columnDefinitionsClone = deepCopy(this.columnDefinitions);
-          const massUpdateColumnDefinitions = columnDefinitionsClone?.filter((col: Column) => col.params?.massUpdate === true) || [];
-          const selectedItems = this.sgb.gridService.getSelectedRowsDataItem();
-          const selectedIds = selectedItems.map(selectedItem => selectedItem.id);
-          loadComponent(modalContainerElm, './example11-modal', { columnDefinitions: massUpdateColumnDefinitions, selectedIds, remoteCallback: this.remoteCallbackFn.bind(this) });
-        }
+        this.sgb.slickGrid.getSelectedRows() || [];
+        const modalContainerElm = document.querySelector<HTMLDivElement>('.modal-container');
+        const columnDefinitionsClone = deepCopy(this.columnDefinitions);
+        const massUpdateColumnDefinitions = columnDefinitionsClone?.filter((col: Column) => col.params?.massUpdate === true) || [];
+        const selectedItems = this.sgb.gridService.getSelectedRowsDataItem();
+        const selectedIds = selectedItems.map(selectedItem => selectedItem.id);
+        loadComponent(modalContainerElm, './example11-modal', { columnDefinitions: massUpdateColumnDefinitions, selectedIds, remoteCallback: this.remoteCallbackFn.bind(this) });
+        break;
     }
   }
 
@@ -417,37 +412,39 @@ export class Example11 {
     }
   }
 
-  remoteCallbackFn(massUpdateItem: any, selectedIds: string[]) {
+  remoteCallbackFn(args: { item: any, selectedIds: string[], updateType: 'selection' | 'mass' }) {
     const fields = [];
-    for (const key in massUpdateItem) {
-      if (massUpdateItem.hasOwnProperty(key)) {
-        fields.push({ fieldName: key, value: massUpdateItem[key] });
+    for (const key in args.item) {
+      if (args.item.hasOwnProperty(key)) {
+        fields.push({ fieldName: key, value: args.item[key] });
       }
     }
-    console.log('Remote Callback', massUpdateItem, fields);
+    console.log('Remote Callback', args, fields);
 
-    if (Array.isArray(selectedIds) && selectedIds.length > 0) {
+    if (args.updateType === 'selection' && Array.isArray(args.selectedIds) && args.selectedIds.length > 0) {
       // update only the selected rows
       const updatedItems = [];
-      for (const itemId of selectedIds) {
+      for (const itemId of args.selectedIds) {
         const dataContext = this.sgb.dataView.getItemById(itemId);
-        for (const itemProp in massUpdateItem) {
-          if (massUpdateItem.hasOwnProperty(itemProp)) {
-            const newValue = massUpdateItem[itemProp];
+        for (const itemProp in args.item) {
+          if (args.item.hasOwnProperty(itemProp)) {
+            const newValue = args.item[itemProp];
             dataContext[itemProp] = newValue;
           }
         }
         updatedItems.push(dataContext);
       }
       this.sgb.gridService.updateItems(updatedItems);
-    } else {
+    } else if (args.updateType === 'mass') {
       // update every rows (full mass update)
-      for (const itemProp in massUpdateItem) {
-        if (massUpdateItem.hasOwnProperty(itemProp)) {
-          this.dataset.forEach(item => item[itemProp] = massUpdateItem[itemProp]);
+      for (const itemProp in args.item) {
+        if (args.item.hasOwnProperty(itemProp)) {
+          this.dataset.forEach(item => item[itemProp] = args.item[itemProp]);
         }
       }
       this.sgb.dataset = this.dataset;
+    } else {
+      alert('There was nothing to update, have you selected any rows?');
     }
   }
 

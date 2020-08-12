@@ -109,7 +109,7 @@ export class Example11Modal {
     }
   }
 
-  saveMassUpdate() {
+  saveMassUpdate(updateType: 'selection' | 'mass') {
     this.handleOnModalClose();
     const editedItem = this.sgb.dataView.getItemByIdx(0);
 
@@ -122,7 +122,7 @@ export class Example11Modal {
       }
 
       // finally execute the remote callback
-      this.remoteCallbackFn(editedItem, this.selectedIds);
+      this.remoteCallbackFn({ item: editedItem, selectedIds: this.selectedIds, updateType });
     }
   }
 

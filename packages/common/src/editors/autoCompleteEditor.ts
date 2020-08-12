@@ -267,13 +267,16 @@ export class AutoCompleteEditor implements Editor {
 
   // this function should be PRIVATE but for unit tests purposes we'll make it public until a better solution is found
   // a better solution would be to get the autocomplete DOM element to work with selection but I couldn't find how to do that in Jest
-  onSelect(_event: Event, ui: any): boolean {
+  onSelect(_event: Event, ui: { item: any; }) {
     if (ui && ui.item) {
       const item = ui && ui.item;
       this._currentValue = item;
-      const hasCustomRenderitemCallback = this.columnEditor?.callbacks?.hasOwnProperty('_renderItem');
-      // const itemLabel = typeof item === 'string' ? item : (hasCustomRenderitemCallback ? item[this.labelName] : item.label);
-      const itemValue = typeof item === 'string' ? item : (hasCustomRenderitemCallback ? item[this.valueName] : item.value);
+
+      // when the user defines a "renderItem" (or "_renderItem") template, then we assume the user defines his own custom structure of label/value pair
+      // otherwise we know that jQueryUI always require a label/value pair, we can pull them directly
+      const hasCustomRenderItemCallback = this.columnEditor?.callbacks?.hasOwnProperty('_renderItem') ?? this.columnEditor?.editorOptions?.renderItem ?? false;
+
+      const itemValue = typeof item === 'string' ? item : (hasCustomRenderItemCallback ? item[this.valueName] : item.value);
       this.setValue(itemValue);
 
       if (this.hasAutoCommitEdit) {
@@ -358,7 +361,7 @@ export class AutoCompleteEditor implements Editor {
     // when user passes it's own autocomplete options
     // we still need to provide our own "select" callback implementation
     if (autoCompleteOptions?.source) {
-      autoCompleteOptions.select = (event: Event, ui: any) => this.onSelect(event, ui);
+      autoCompleteOptions.select = (event: Event, ui: { item: any; }) => this.onSelect(event, ui);
       this._autoCompleteOptions = { ...autoCompleteOptions };
 
       // when "renderItem" is defined, we need to add our custom style CSS class
@@ -378,7 +381,7 @@ export class AutoCompleteEditor implements Editor {
       const definedOptions: AutocompleteOption = {
         source: finalCollection,
         minLength: 0,
-        select: (event: Event, ui: any) => this.onSelect(event, ui),
+        select: (event: Event, ui: { item: any; }) => this.onSelect(event, ui),
       };
       this._autoCompleteOptions = { ...definedOptions, ...(this.columnEditor.editorOptions as AutocompleteOption) };
       this._$editorElm.autocomplete(this._autoCompleteOptions);

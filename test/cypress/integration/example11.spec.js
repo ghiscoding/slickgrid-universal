@@ -3,7 +3,7 @@ import { changeTimezone, zeroPadding } from './utilities';
 
 describe('Example 11 - Batch Editing', () => {
   const GRID_ROW_HEIGHT = 33;
-  const EDITABLE_CELL_RGB_COLOR = 'rgb(227, 240, 251)';
+  const EDITABLE_CELL_RGB_COLOR = 'rgba(227, 240, 251, 0.57)';
   const UNSAVED_RGB_COLOR = 'rgb(251, 253, 209)';
   const fullTitles = ['', 'Title', 'Duration', 'Cost', '% Complete', 'Start', 'Finish', 'Completed', 'Product', 'Country of Origin', 'Action'];
 
