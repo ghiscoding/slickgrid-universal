@@ -3,6 +3,7 @@ $icon-color-mdi-alert-circle: $icon-color !default;
 $icon-color-mdi-alert-octagon: $icon-color !default;
 $icon-color-mdi-arrow-collapse: $icon-color !default;
 $icon-color-mdi-arrow-expand: $icon-color !default;
+$icon-color-mdi-call-split: $icon-color !default;
 $icon-color-mdi-cancel: $icon-color !default;
 $icon-color-mdi-cash-check: $icon-color !default;
 $icon-color-mdi-cash-remove: $icon-color !default;
@@ -64,6 +65,7 @@ $icon-width-mdi-alert-circle: $icon-width !default;
 $icon-width-mdi-alert-octagon: $icon-width !default;
 $icon-width-mdi-arrow-collapse: $icon-width !default;
 $icon-width-mdi-arrow-expand: $icon-width !default;
+$icon-width-mdi-call-split: $icon-width !default;
 $icon-width-mdi-cancel: $icon-width !default;
 $icon-width-mdi-cash-check: $icon-width !default;
 $icon-width-mdi-cash-remove: $icon-width !default;
@@ -140,6 +142,11 @@ $icon-width-mdi-undo: $icon-width !default;
     width: $icon-width-mdi-arrow-expand;
     display: inline-block;
     content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($icon-color-mdi-arrow-expand)}" viewBox="0 0 24 24"><path d="M10,21V19H6.41L10.91,14.5L9.5,13.09L5,17.59V14H3V21H10M14.5,10.91L19,6.41V10H21V3H14V5H17.59L13.09,9.5L14.5,10.91Z"></path></svg>');
+  }
+  &.mdi-call-split:before {
+    width: $icon-width-mdi-call-split;
+    display: inline-block;
+    content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($icon-color-mdi-call-split)}" viewBox="0 0 24 24"><path d="M14,4L16.29,6.29L13.41,9.17L14.83,10.59L17.71,7.71L20,10V4M10,4H4V10L6.29,7.71L11,12.41V20H13V11.59L7.71,6.29"></path></svg>');
   }
   &.mdi-cancel:before {
     width: $icon-width-mdi-cancel;

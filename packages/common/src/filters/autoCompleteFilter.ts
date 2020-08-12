@@ -328,7 +328,7 @@ export class AutoCompleteFilter implements Filter {
     // when user passes it's own autocomplete options
     // we still need to provide our own "select" callback implementation
     if (autoCompleteOptions?.source) {
-      autoCompleteOptions.select = (event: Event, ui: any) => this.onSelect(event, ui);
+      autoCompleteOptions.select = (event: Event, ui: { item: any; }) => this.onSelect(event, ui);
       this._autoCompleteOptions = { ...autoCompleteOptions };
 
       // when renderItem is defined, we need to add our custom style CSS class
@@ -349,7 +349,7 @@ export class AutoCompleteFilter implements Filter {
       const definedOptions: AutocompleteOption = {
         minLength: 0,
         source: collection,
-        select: (event: Event, ui: any) => this.onSelect(event, ui),
+        select: (event: Event, ui: { item: any; }) => this.onSelect(event, ui),
       };
       this._autoCompleteOptions = { ...definedOptions, ...this.filterOptions };
       this.$filterElm.autocomplete(this._autoCompleteOptions);
@@ -399,12 +399,16 @@ export class AutoCompleteFilter implements Filter {
 
   // this function should be PRIVATE but for unit tests purposes we'll make it public until a better solution is found
   // a better solution would be to get the autocomplete DOM element to work with selection but I couldn't find how to do that in Jest
-  onSelect(event: Event, ui: any): boolean {
+  onSelect(event: Event, ui: { item: any; }) {
     if (ui && ui.item) {
       const item = ui.item;
-      const hasCustomRenderitemCallback = this.columnFilter?.callbacks?.hasOwnProperty('_renderItem');
-      const itemLabel = typeof item === 'string' ? item : (hasCustomRenderitemCallback ? item[this.labelName] : item.label);
-      const itemValue = typeof item === 'string' ? item : (hasCustomRenderitemCallback ? item[this.valueName] : item.value);
+
+      // when the user defines a "renderItem" (or "_renderItem") template, then we assume the user defines his own custom structure of label/value pair
+      // otherwise we know that jQueryUI always require a label/value pair, we can pull them directly
+      const hasCustomRenderItemCallback = this.columnFilter?.callbacks?.hasOwnProperty('_renderItem') ?? this.columnFilter?.filterOptions?.renderItem ?? false;
+
+      const itemLabel = typeof item === 'string' ? item : (hasCustomRenderItemCallback ? item[this.labelName] : item.label);
+      const itemValue = typeof item === 'string' ? item : (hasCustomRenderItemCallback ? item[this.valueName] : item.value);
       this.setValues(itemLabel);
       itemValue === '' ? this.$filterElm.removeClass('filled') : this.$filterElm.addClass('filled');
       this.callback(event, { columnDef: this.columnDef, operator: this.operator, searchTerms: [itemValue], shouldTriggerQuery: this._shouldTriggerQuery });

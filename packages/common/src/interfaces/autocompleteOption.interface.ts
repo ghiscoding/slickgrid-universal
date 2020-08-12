@@ -51,11 +51,11 @@ export interface AutocompleteOption {
   // -----------------
 
   /** Triggered when the input value becomes in focus */
-  focus?: (e: Event, ui: any) => boolean;
+  focus?: (e: Event, ui: { item: any; }) => boolean;
 
   /** Triggered when user enters a search value */
-  search?: (e: Event, ui: any) => boolean;
+  search?: (e: Event, ui: { item: any; }) => boolean;
 
   /** Triggered when a value is selected from the autocomplete list */
-  select?: (e: Event, ui: any) => boolean;
+  select?: (e: Event, ui: { item: any; }) => boolean;
 }
