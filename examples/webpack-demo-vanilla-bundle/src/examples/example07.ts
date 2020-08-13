@@ -55,11 +55,11 @@ export class Example7 {
           model: Editors.singleSelect,
 
           // pass a regular collection array with value/label pairs
-          // collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
+          // collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }],
 
           // Select Editor can also support collection that are async, it could be a Promise (shown below) or Fetch result
           collectionAsync: new Promise<any>(resolve => setTimeout(() => {
-            resolve([{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }]);
+            resolve([{ value: true, label: 'True' }, { value: false, label: 'False' }]);
           }, 250)),
         },
       }
