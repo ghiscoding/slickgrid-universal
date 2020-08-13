@@ -17,7 +17,7 @@ export interface SlickEditorLock {
    * @param editController {EditController}
    * @return {Boolean}
    */
-  isActive(editController: Editor): boolean;
+  isActive(editController?: Editor): boolean;
 
   /**
   * Sets the specified edit controller as the active edit controller (acquire edit lock).
