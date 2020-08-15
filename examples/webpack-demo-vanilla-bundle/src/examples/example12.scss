@@ -1,0 +1,119 @@
+$control-height: 2.4em;
+$autocomplete-max-height: 250px;
+
+@import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss';
+@import 'bulma/bulma';
+
+$modal-header-height: 50px;
+$modal-header-bg-color: #ffffff;
+$modal-footer-height: 50px;
+$modal-footer-bg-color: #f9f9f9;
+
+.editor-modal {
+  font-family: var(--lwc-fontFamily,'Salesforce Sans', 'SalesforceSans-Regular', Arial, sans-serif);
+  z-index: 9000;
+  display: inline-block;
+  border: 1px solid #b8b8b8;
+  margin: 8px;
+  background: #ffffff;
+  box-shadow: 0 0 3px #ccc;
+  position: absolute;
+  top: 10px;
+  left: 150px;
+  width: 400px;
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translate(-50%);
+
+  .btn {
+    margin-right: 5px;
+    height: 28px;
+    border-radius: 2px;
+  }
+
+  .close {
+    float: right;
+    position: absolute;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    margin: 1px;
+    padding: 0px;
+    font-size: 18px;
+    background-color: #ffffff;
+    border: 0px solid #9c9c9c;
+    right: 10px;
+    top: 8px;
+    color: #7d7d7d;
+    font-weight: 500;
+  }
+  .modal-title {
+    font-size: 18px;
+    font-weight: normal;
+  }
+
+  .modal-body {
+    padding: 8px;
+    max-height: calc(100vh - #{$modal-header-height} - #{$modal-footer-height} - 20px);
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .modal-header {
+    // display: flex;
+    // align-items: flex-start;
+    justify-content: space-between;
+    padding: 8px;
+    max-height: $modal-header-height;
+    border-bottom: 1px solid #c9c9c9;
+    background-color: $modal-header-bg-color;
+  }
+
+  .modal-footer {
+    margin-top: 5px;
+    border-top: 1px solid #c9c9c9;
+    max-height: $modal-footer-height;
+    text-align: right;
+    // display: flex;
+    // flex-wrap: wrap;
+    // align-items: center;
+    // justify-content: flex-end;
+    padding: 8px;
+    background-color: $modal-footer-bg-color;
+  }
+}
+
+
+.item-details-label {
+  margin-left: 10px;
+  margin-top: 15px;
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.item-details-editor-container {
+  height: 28px;
+  border: 0;
+  // background: white;
+  display: block;
+  line-height: 20px;
+  margin: 10px;
+  margin-top: 4px;
+  padding: 0;
+  box-sizing: border-box;
+
+  .input-group {
+    position: relative;
+    display: table;
+    border-collapse: separate;
+    height: 100%;
+    input {
+      height: 100%;
+    }
+  }
+  .flatpickr-input.form-control, .flatpickr-alt-input[readonly] {
+    background-color: $flatpickr-bgcolor !important;
+  }
+}
