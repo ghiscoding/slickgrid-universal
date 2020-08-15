@@ -711,20 +711,20 @@ export class Example12 {
         }
       }
 
-      const $modal = $(`<div class="editor-modal"></div>`);
-      const $modalHeader = $(`<div class="modal-header"><div class="modal-title">Composite Editor</div>
+      const $modal = $(`<div class="slick-editor-modal"></div>`);
+      const $modalHeader = $(`<div class="slick-editor-modal-header"><div class="slick-editor-modal-title">Composite Editor</div>
         <button type="button" class="close mdi mdi-close" data-action="cancel" aria-label="Close">
         </button></div>`);
-      const $modalBody = $(`<div class="modal-body grid-pane"></div>`);
+      const $modalBody = $(`<div class="slick-editor-modal-body"></div>`);
 
       for (const column of columnDefinitions) {
         if (column.editor) {
-          const $templateItem = $(`<div class="item-details-label">${column.name}</div>
-            <div class="item-details-editor-container slick-cell" data-editorid="${column.id}"></div>`);
+          const $templateItem = $(`<div class="slick-editor-detail-label">${column.name}</div>
+            <div class="slick-editor-detail-container slick-cell" data-editorid="${column.id}"></div>`);
           $templateItem.appendTo($modalBody);
         }
       }
-      const $modalFooter = $(`<div class="modal-footer">
+      const $modalFooter = $(`<div class="slick-editor-modal-footer">
           <button data-action="cancel" class="btn btn-save btn-default">Cancel</button>
           <button data-action="save" class="btn btn-cancel btn-primary">Save</button>
         </div>`);
