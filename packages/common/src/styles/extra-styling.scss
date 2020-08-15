@@ -1,11 +1,27 @@
+@import './sass-utilities';
+
 $editable-field-bg-color: #e3f0fb !default;
+$font-size-count: 50;
+$unsaved-editable-field-color: #fbfdd1;
+
+/* icon colors */
+// we'll use the same color set as text-colors defined in Bootstrap 4 (ref: https://getbootstrap.com/docs/4.5/utilities/colors/)
+// we also use the "recolor" @mixin to add CSS "filter" color on top of SVG icons
+.icon-primary { @include recolor($primary-color, 0.9); }
+.icon-secondary { @include recolor(#6c757d, 0.9); }
+.icon-success { @include recolor(#28a745, 0.9); }
+.icon-danger { @include recolor(#dc3545, 0.9); }
+.icon-warning { @include recolor(#ffc107, 0.9); }
+.icon-warning-dark { @include recolor(#f0ad4e, 0.9); }
+.icon-info { @include recolor(#17a2b8, 0.9); }
+.icon-light { @include recolor(#f8f9fa, 0.9); }
+.icon-dark { @include recolor(#343a40, 0.9); }
+.icon-body { @include recolor(#212529, 0.9); }
+.icon-muted { @include recolor(#6c757d, 0.9); }
+.icon-white { @include recolor(#ffffff, 0.9); }
 
 .pointer {
   cursor: pointer;
-}
-
-.cell-effort-driven {
-  text-align: center;
 }
 
 .grid-canvas {
@@ -20,7 +36,7 @@ $editable-field-bg-color: #e3f0fb !default;
   background-color: $editable-field-bg-color
 }
 .unsaved-editable-field {
-  background-color: #fbfdd1 !important;
+  background-color: $unsaved-editable-field-color !important;
 }
 
 .fake-hyperlink {
@@ -43,45 +59,27 @@ $editable-field-bg-color: #e3f0fb !default;
   }
 }
 
-.font-10px {
-  font-size: 10px;
+// font-5px equals a font-size of 5px, from 5px to 50px
+@for $i from 5 through $font-size-count {
+  .font-#{$i}px { font-size: #{$i}px; }
 }
-.font-12px {
-  font-size: 12px;
+
+/* Text and Alignment Utilities */
+.text-center { text-align: center; }
+.text-left   { text-align: left;   }
+.text-right  { text-align: right;  }
+.text-uppercase { text-transform: uppercase;  }
+.text-underline { text-decoration: underline; }
+
+.vertical-align-bottom {
+  display: inline-block;
+  vertical-align: bottom;
 }
-.font-14px {
-  font-size: 14px;
+.vertical-align-middle {
+  display: inline-block;
+  vertical-align: middle;
 }
-.font-16px {
-  font-size: 16px;
-}
-.font-18px {
-  font-size: 18px;
-}
-.font-20px {
-  font-size: 20px;
-}
-.font-22px {
-  font-size: 22px;
-}
-.font-24px {
-  font-size: 24px;
-}
-.font-26px {
-  font-size: 26px;
-}
-.font-28px {
-  font-size: 28px;
-}
-.font-30px {
-  font-size: 30px;
-}
-.font-32px {
-  font-size: 32px;
-}
-.font-34px {
-  font-size: 34px;
-}
-.font-36px {
-  font-size: 36px;
+.vertical-align-top {
+  display: inline-block;
+  vertical-align: top;
 }
