@@ -299,7 +299,7 @@ export class Example3 {
       draggableGrouping: {
         dropPlaceHolderText: 'Drop a column header here to group by the column',
         // groupIconCssClass: 'fa fa-outdent',
-        deleteIconCssClass: 'mdi mdi-close icon-danger',
+        deleteIconCssClass: 'mdi mdi-close color-danger',
         onGroupChanged: (e, args) => this.onGroupChanged(args),
         onExtensionRegistered: (extension) => this.draggableGroupingPlugin = extension,
       },

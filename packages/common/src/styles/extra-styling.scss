@@ -1,28 +1,9 @@
-@import './sass-utilities';
-
 $editable-field-bg-color: #e3f0fb !default;
+$unsaved-editable-field-color: #fbfdd1 !default;
 $font-size-count: 50;
-$unsaved-editable-field-color: #fbfdd1;
 
-/* icon colors */
-// we'll use the same color set as text-colors defined in Bootstrap 4 (ref: https://getbootstrap.com/docs/4.5/utilities/colors/)
-// we also use the "recolor" @mixin to add CSS "filter" color on top of SVG icons
-.icon-primary { @include recolor($primary-color, 0.9); }
-.icon-secondary { @include recolor(#6c757d, 0.9); }
-.icon-success { @include recolor(#28a745, 0.9); }
-.icon-danger { @include recolor(#dc3545, 0.9); }
-.icon-warning { @include recolor(#ffc107, 0.9); }
-.icon-warning-dark { @include recolor(#f0ad4e, 0.9); }
-.icon-info { @include recolor(#17a2b8, 0.9); }
-.icon-light { @include recolor(#f8f9fa, 0.9); }
-.icon-dark { @include recolor(#343a40, 0.9); }
-.icon-body { @include recolor(#212529, 0.9); }
-.icon-muted { @include recolor(#6c757d, 0.9); }
-.icon-white { @include recolor(#ffffff, 0.9); }
-
-.pointer {
-  cursor: pointer;
-}
+.pointer { cursor: pointer; }
+.bold { font-weight: bold; }
 
 .grid-canvas {
   .slick-row, .slick-row.odd {
