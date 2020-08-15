@@ -107,7 +107,7 @@ export class DateEditor implements Editor {
         altInput: true,
         altFormat: outputFormat,
         dateFormat: inputFormat,
-        closeOnSelect: false,
+        closeOnSelect: true,
         locale: (currentLocale !== 'en') ? this.loadFlatpickrLocale(currentLocale) : 'en',
         onChange: () => this.save(),
         errorHandler: () => {
@@ -215,8 +215,11 @@ export class DateEditor implements Editor {
 
       this.originalDate = value;
       this.flatInstance.setDate(value);
-      this.show();
-      this.focus();
+
+      if (!this.args.isCompositeEditor) {
+        this.show();
+        this.focus();
+      }
     }
   }
 

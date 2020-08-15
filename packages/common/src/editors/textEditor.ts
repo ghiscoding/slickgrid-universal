@@ -64,6 +64,7 @@ export class TextEditor implements Editor {
       cellContainer.appendChild(this._input);
     }
 
+    this._input.onfocus = () => this._input.select();
     this._input.onkeydown = ((event: KeyboardEvent) => {
       this._lastInputKeyEvent = event;
       if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT) {

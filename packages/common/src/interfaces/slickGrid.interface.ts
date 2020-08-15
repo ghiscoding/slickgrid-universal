@@ -89,7 +89,7 @@ export interface SlickGrid {
    * 	  cell: activeCell
    * 	}
    */
-  getActiveCell(): number;
+  getActiveCell(): { row: number; cell: number; };
 
   /** Returns the DOM element containing the currently active cell. If no cell is active, null is returned. */
   getActiveCellNode(): HTMLElement;

@@ -117,6 +117,9 @@ export interface SlickNamespace {
   /** A plugin to select row(s) via checkboxes typically shown as the 1st column in the grid. */
   CheckboxSelectColumn: new (options?: CheckboxSelectorOption) => SlickCheckboxSelectColumn;
 
+  /** A composite SlickGrid editor factory. Generates an editor that is composed of multiple editors for given columns. */
+  CompositeEditor: new (options?: { validationFailedMsg: string; show: () => void; hide: () => void; position: () => void; destroy: () => void; }) => any;
+
   /** This plugin provides the Draggable Grouping feature */
   DraggableGrouping: new (options?: DraggableGroupingOption) => SlickDraggableGrouping;
 

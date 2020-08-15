@@ -1,0 +1,44 @@
+<h3 class="title is-3">
+  Example12 - Composite Editor Modal
+  <span class="subtitle has-text-grey-dark">(with Salesforce Theme)</span>
+</h3>
+
+<section>
+  <div class="row">
+    <button class="button is-small" onclick.delegate="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
+      <span class="icon mdi mdi-table-edit"></span>
+      <span>Toggle Edit/Readonly Grid</span>
+    </button>
+    <button class="button is-small" onclick.delegate="undoLastEdit()" data-test="undo-last-edit-btn">
+      <span class="icon mdi mdi-undo"></span>
+      <span>Undo Last Edit</span>
+    </button>
+    <button class="button is-small" onclick.delegate="undoLastEdit(true)" data-test="undo-open-editor-btn">
+      <span class="icon mdi mdi-undo"></span>
+      <span>Undo Last Edit &amp; Open Editor</span>
+    </button>
+    <button class="button is-small" onclick.delegate="undoAllEdits()" data-test="undo-all-edits-btn">
+      <span class="icon mdi mdi-history"></span>
+      <span>Undo All Edits</span>
+    </button>
+    <button class="button is-small is-info" onclick.delegate="saveAll()" data-test="save-all-btn"
+            title="Check your console log for the result">
+      <span>Save All</span>
+    </button>
+
+    <span style="margin-left: 10px">
+      <button class="button is-small" onclick.delegate="openDetails()" data-test="open-details-btn"
+              title="Check your console log for the result">
+        <span>Open Item Edit for active row</span>
+      </button>
+    </span>
+  </div>
+</section>
+
+<div class="modal-container">
+</div>
+
+<br>
+
+<div class="grid12">
+</div>

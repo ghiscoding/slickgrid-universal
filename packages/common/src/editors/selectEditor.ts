@@ -607,7 +607,9 @@ export class SelectEditor implements Editor {
       const editorOptions = (this.columnDef && this.columnDef.internalColumnEditor) ? this.columnDef.internalColumnEditor.editorOptions : {};
       this.editorElmOptions = { ...this.defaultOptions, ...editorOptions };
       this.$editorElm = this.$editorElm.multipleSelect(this.editorElmOptions);
-      setTimeout(() => this.show());
+      if (!this.args.isCompositeEditor) {
+        setTimeout(() => this.show());
+      }
     }
   }
 
