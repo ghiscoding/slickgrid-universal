@@ -20,6 +20,10 @@ $color-dark: #343a40 !default;
 $color-body: #212529 !default;
 $color-muted: #6c757d !default;
 $color-white: #ffffff !default;
+$color-alt-default: #1e87f0 !default;
+$color-alt-warning: #faa05a !default;
+$color-alt-danger: #f0506e !default;
+$color-alt-success: #32d296 !default;
 
 .color-primary { @include recolor($color-primary, 1); }
 .color-secondary { @include recolor($color-secondary, 1); }
@@ -32,6 +36,10 @@ $color-white: #ffffff !default;
 .color-body { @include recolor($color-body, 1); }
 .color-muted { @include recolor($color-muted, 1); }
 .color-white { @include recolor($color-white, 1); }
+.color-alt-default { @include recolor($color-alt-default, 1); }
+.color-alt-warning { @include recolor($color-alt-warning, 1); }
+.color-alt-danger { @include recolor($color-alt-danger, 1); }
+.color-alt-success { @include recolor($color-alt-success, 1); }
 .color-primary-light { @include recolor(lighten($color-primary, $color-lighten-percentage), 1); }
 .color-primary-dark { @include recolor(darken($color-primary, $color-darken-percentage), 1); }
 .color-secondary-light { @include recolor(lighten($color-secondary, $color-lighten-percentage), 1); }
@@ -48,3 +56,11 @@ $color-white: #ffffff !default;
 .color-body-dark { @include recolor(darken($color-body, $color-darken-percentage), 1); }
 .color-muted-light { @include recolor(lighten($color-muted, $color-lighten-percentage), 1); }
 .color-muted-dark { @include recolor(darken($color-muted, $color-darken-percentage), 1); }
+.color-alt-warning-light { @include recolor(lighten($color-alt-warning, $color-lighten-percentage), 1); }
+.color-alt-warning-dark { @include recolor(darken($color-alt-warning, $color-darken-percentage), 1); }
+.color-alt-default-light { @include recolor(lighten($color-alt-default, $color-lighten-percentage), 1); }
+.color-alt-default-dark { @include recolor(darken($color-alt-default, $color-darken-percentage), 1); }
+.color-alt-danger-light { @include recolor(lighten($color-alt-danger, $color-lighten-percentage), 1); }
+.color-alt-danger-dark { @include recolor(darken($color-alt-danger, $color-darken-percentage), 1); }
+.color-alt-success-light { @include recolor(lighten($color-alt-success, $color-lighten-percentage), 1); }
+.color-alt-success-dark { @include recolor(darken($color-alt-success, $color-darken-percentage), 1); }
