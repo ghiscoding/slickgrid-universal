@@ -57,7 +57,7 @@
   ],
   "dependencies": {
     "dompurify": "^2.0.12",
-    "flatpickr": "4.6.3",
+    "flatpickr": "4.6.6",
     "jquery": "^3.5.1",
     "jquery-ui-dist": "^1.12.1",
     "lodash.isequal": "^4.5.0",
