@@ -52,7 +52,7 @@
     "eslint-plugin-prefer-arrow": "^1.2.2",
     "http-server": "^0.12.3",
     "jest": "^26.2.2",
-    "jest-cli": "^26.2.2",
+    "jest-cli": "^26.4.0",
     "jest-environment-jsdom": "^26.3.0",
     "jest-extended": "^0.11.5",
     "jest-junit": "^11.1.0",
