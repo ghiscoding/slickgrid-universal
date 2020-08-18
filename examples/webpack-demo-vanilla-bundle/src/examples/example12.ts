@@ -275,7 +275,7 @@ export class Example12 {
         prevSerializedValues.forEach((val, index) => {
           const prevSerializedValue = prevSerializedValues[index];
           const serializedValue = serializedValues[index];
-          console.log(prevSerializedValue, serializedValue)
+
           if (prevSerializedValue !== serializedValue) {
             const finalColumn = Array.isArray(editCommand.prevSerializedValue) ? editorColumns[index] : column;
             this.editedItems[editCommand.row] = item; // keep items by their row indexes, if the row got edited twice then we'll keep only the last change
@@ -762,20 +762,10 @@ export class Example12 {
       $modal.find('[data-action=cancel]').on('click', () => this.modalEditorCancel());
 
       const containers = columnDefinitions.map(col => $modal.get(0).querySelector<HTMLDivElement>(`[data-editorid=${col.id}]`));
-      // for (const $container of containers) {
-      //   if ($container) {
-      //     console.log('we do')
-      //     $container.onblur = () => {
-      //       console.log('blur')
-      //       compositeEditor.validate();
-      //     };
-      //   }
-      // }
 
       // @ts-ignore
       const compositeEditor = new Slick.CompositeEditor(columnDefinitions, containers, { destroy: () => $modal.remove() });
       this.sgb.slickGrid.editActiveCell(compositeEditor);
-      // console.log(compositeEditor.toString())
 
       $modal.on('keydown', (e: any) => {
         if (e.which === KeyCode.ESCAPE) {
