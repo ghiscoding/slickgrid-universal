@@ -92,14 +92,16 @@ export class LongTextEditor implements Editor {
       saveText = this._locales && this._locales.TEXT_SAVE;
     }
 
+    const isCompositeEditor = this.args.isCompositeEditor;
     const columnId = this.columnDef?.id;
     const placeholder = this.columnEditor?.placeholder || '';
     const title = this.columnEditor?.title || '';
     const maxLength = this.columnEditor?.maxLength || DEFAULT_MAX_LENGTH;
-    const textAreaRows = this.columnEditor?.params?.textAreaRows || 6;
+    const textAreaRows = isCompositeEditor ? 3 : (this.columnEditor?.params?.textAreaRows || 6);
 
-    const $container = $('body');
+    const $container = isCompositeEditor ? this.args.container : $('body');
     this._$wrapper = $(`<div class="slick-large-editor-text editor-${columnId}" />`).appendTo($container);
+    this._$wrapper.css({ position: (isCompositeEditor ? 'relative' : 'absolute') });
     this._$textarea = $(`<textarea hidefocus rows="${textAreaRows}" placeholder="${placeholder}" title="${title}">`).appendTo(this._$wrapper);
 
     const editorFooterElm = $(`<div class="editor-footer"/>`);
@@ -108,20 +110,24 @@ export class LongTextEditor implements Editor {
     const textMaxLengthElm = $(`<span>/</span><span class="max-length">${maxLength}</span>`);
     this._$currentLengthElm.appendTo(countContainerElm);
     textMaxLengthElm.appendTo(countContainerElm);
-
-    const cancelBtnElm = $(`<button class="btn btn-cancel btn-default btn-xs">${cancelText}</button>`);
-    const saveBtnElm = $(`<button class="btn btn-save btn-primary btn-xs">${saveText}</button>`);
     countContainerElm.appendTo(editorFooterElm);
-    cancelBtnElm.appendTo(editorFooterElm);
-    saveBtnElm.appendTo(editorFooterElm);
+
+    if (!isCompositeEditor) {
+      const cancelBtnElm = $(`<button class="btn btn-cancel btn-default btn-xs">${cancelText}</button>`);
+      const saveBtnElm = $(`<button class="btn btn-save btn-primary btn-xs">${saveText}</button>`);
+      cancelBtnElm.appendTo(editorFooterElm);
+      saveBtnElm.appendTo(editorFooterElm);
+    }
     editorFooterElm.appendTo(this._$wrapper);
 
-    this._$wrapper.find('.btn-save').on('click', () => this.save());
-    this._$wrapper.find('.btn-cancel').on('click', () => this.cancel());
     this._$textarea.on('keydown', this.handleKeyDown.bind(this));
     this._$textarea.on('keyup', this.handleKeyUp.bind(this));
 
-    this.position(this.args && this.args.position);
+    if (!isCompositeEditor) {
+      this.position(this.args && this.args.position);
+      this._$wrapper.find('.btn-save').on('click', () => this.save());
+      this._$wrapper.find('.btn-cancel').on('click', () => this.cancel());
+    }
     this._$textarea.focus().select();
   }
 
@@ -240,20 +246,23 @@ export class LongTextEditor implements Editor {
 
   private handleKeyDown(event: KeyboardEvent) {
     const keyCode = event.keyCode || event.code;
-    if (keyCode === KeyCode.ENTER && event.ctrlKey) {
-      this.save();
-    } else if (keyCode === KeyCode.ESCAPE) {
-      event.preventDefault();
-      this.cancel();
-    } else if (keyCode === KeyCode.TAB && event.shiftKey) {
-      event.preventDefault();
-      if (this.args && this.grid) {
-        this.grid.navigatePrev();
-      }
-    } else if (keyCode === KeyCode.TAB) {
-      event.preventDefault();
-      if (this.args && this.grid) {
-        this.grid.navigateNext();
+
+    if (!this.args.isCompositeEditor) {
+      if (keyCode === KeyCode.ENTER && event.ctrlKey) {
+        this.save();
+      } else if (keyCode === KeyCode.ESCAPE) {
+        event.preventDefault();
+        this.cancel();
+      } else if (keyCode === KeyCode.TAB && event.shiftKey) {
+        event.preventDefault();
+        if (this.args && this.grid) {
+          this.grid.navigatePrev();
+        }
+      } else if (keyCode === KeyCode.TAB) {
+        event.preventDefault();
+        if (this.args && this.grid) {
+          this.grid.navigateNext();
+        }
       }
     }
   }

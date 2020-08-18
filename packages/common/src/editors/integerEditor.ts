@@ -82,7 +82,9 @@ export class IntegerEditor implements Editor {
         this._input.addEventListener('focusout', () => this.save());
       }
 
-      setTimeout(() => this.focus(), 50);
+      if (!this.args.isCompositeEditor) {
+        setTimeout(() => this.focus(), 50);
+      }
     }
   }
 

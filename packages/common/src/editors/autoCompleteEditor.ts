@@ -415,6 +415,9 @@ export class AutoCompleteEditor implements Editor {
     }
 
     this._$editorElm.on('focus', () => this._$editorElm.select());
-    setTimeout(() => this.focus(), 50);
+
+    if (!this.args.isCompositeEditor) {
+      setTimeout(() => this.focus(), 50);
+    }
   }
 }

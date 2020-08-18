@@ -77,13 +77,13 @@ export class Example12 {
     this.columnDefinitions = [
       {
         id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,
-        editor: { model: Editors.text, required: true, alwaysSaveOnEnterKey: true, validator: myCustomTitleValidator, },
+        editor: { model: Editors.longText, required: true, alwaysSaveOnEnterKey: true, validator: myCustomTitleValidator, },
         filterable: true,
         formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold], massUpdate: true },
       },
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
-        editor: { model: Editors.float, decimal: 2, valueStep: 1, maxValue: 10000, alwaysSaveOnEnterKey: true, },
+        editor: { model: Editors.float, decimal: 2, valueStep: 1, minValue: 0, maxValue: 10000, alwaysSaveOnEnterKey: true, required: true },
         formatter: (row, cell, value) => {
           if (value === null || value === undefined) {
             return '';
@@ -266,15 +266,32 @@ export class Example12 {
         hideInColumnTitleRow: true,
       },
       editCommandHandler: (item, column, editCommand) => {
-        if (editCommand.prevSerializedValue !== editCommand.serializedValue) {
-          this.editQueue.push({ item, column, editCommand });
-          this.editedItems[editCommand.row] = item; // keep items by their row indexes, if the row got edited twice then we'll keep only the last change
-          this.sgb.slickGrid.invalidate();
-          editCommand.execute();
+        // composite editors values are saved as array, so let's convert to array in any case and we'll loop through these values
+        const prevSerializedValues = Array.isArray(editCommand.prevSerializedValue) ? editCommand.prevSerializedValue : [editCommand.prevSerializedValue];
+        const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
+        const editorColumns = this.columnDefinitions.filter((col) => col.editor !== undefined);
 
-          const hash = { [editCommand.row]: { [column.field]: 'unsaved-editable-field' } };
-          this.sgb.slickGrid.setCellCssStyles(`unsaved_highlight_${[column.field]}${editCommand.row}`, hash);
-        }
+        const modifiedColumns = [];
+        prevSerializedValues.forEach((val, index) => {
+          const prevSerializedValue = prevSerializedValues[index];
+          const serializedValue = serializedValues[index];
+          console.log(prevSerializedValue, serializedValue)
+          if (prevSerializedValue !== serializedValue) {
+            const finalColumn = Array.isArray(editCommand.prevSerializedValue) ? editorColumns[index] : column;
+            this.editedItems[editCommand.row] = item; // keep items by their row indexes, if the row got edited twice then we'll keep only the last change
+            this.sgb.slickGrid.invalidate();
+            editCommand.execute();
+
+            const hash = { [editCommand.row]: { [finalColumn.field]: 'unsaved-editable-field' } };
+            this.sgb.slickGrid.setCellCssStyles(`unsaved_highlight_${[finalColumn.field]}${editCommand.row}`, hash);
+            modifiedColumns.push(finalColumn);
+          }
+        });
+
+        // queued editor only keeps 1 item object even when it's a composite editor,
+        // so we'll push only 1 change at the end but with all columns modified
+        // this way we can undo the entire row change (for example if user changes 3 field in the editor modal, then doing a undo last change will undo all 3 in 1 shot)
+        this.editQueue.push({ item, columns: modifiedColumns, editCommand });
       },
       // when using the cellMenu, you can change some of the default options and all use some of the callback methods
       enableCellMenu: true,
@@ -339,7 +356,7 @@ export class Example12 {
             errorMsg += `${columnName.toUpperCase()}: ${error.msg}`;
           }
         }
-        alert(errorMsg);
+        console.log(errorMsg);
       }
     } else {
       alert(args.validationResults.msg);
@@ -448,7 +465,9 @@ export class Example12 {
       const lastEditCommand = lastEdit?.editCommand;
       if (lastEditCommand) {
         // remove unsaved css class from that cell
-        this.removeUnsavedStylingFromCell(lastEdit.item, lastEdit.column, lastEditCommand.row);
+        for (const lastEditColumn of lastEdit.columns) {
+          this.removeUnsavedStylingFromCell(lastEdit.item, lastEditColumn, lastEditCommand.row);
+        }
       }
     }
   }
@@ -477,7 +496,9 @@ export class Example12 {
       lastEditCommand.undo();
 
       // remove unsaved css class from that cell
-      this.removeUnsavedStylingFromCell(lastEdit.item, lastEdit.column, lastEditCommand.row);
+      for (const lastEditColumn of lastEdit.columns) {
+        this.removeUnsavedStylingFromCell(lastEdit.item, lastEditColumn, lastEditCommand.row);
+      }
       this.sgb.slickGrid.invalidate();
 
 
@@ -495,7 +516,9 @@ export class Example12 {
         lastEditCommand.undo();
 
         // remove unsaved css class from that cell
-        this.removeUnsavedStylingFromCell(lastEdit.item, lastEdit.column, lastEditCommand.row);
+        for (const lastEditColumn of lastEdit.columns) {
+          this.removeUnsavedStylingFromCell(lastEdit.item, lastEditColumn, lastEditCommand.row);
+        }
       }
     }
     this.sgb.slickGrid.invalidate(); // re-render the grid only after every cells got rolled back
@@ -707,7 +730,7 @@ export class Example12 {
           alert('We could not find any Editor in your Column Definition');
           return;
         } else {
-          this.sgb.slickGrid.setActiveCell(activeCell.row, columnIndexWithEditor);
+          this.sgb.slickGrid.setActiveCell(activeCell.row, columnIndexWithEditor, false);
         }
       }
 
@@ -720,7 +743,8 @@ export class Example12 {
       for (const column of columnDefinitions) {
         if (column.editor) {
           const $templateItem = $(`<div class="slick-editor-detail-label">${column.name}</div>
-            <div class="slick-editor-detail-container slick-cell" data-editorid="${column.id}"></div>`);
+            <div class="slick-editor-detail-container slick-cell" data-editorid="${column.id}"></div>
+            <div class="slick-editor-detail-validation editor-${column.id}"></div>`);
           $templateItem.appendTo($modalBody);
         }
       }
@@ -734,28 +758,59 @@ export class Example12 {
       $modalFooter.appendTo($modal);
       $modal.appendTo('body');
 
-      $modal.on('keydown', (e: any) => {
-        if (e.which === KeyCode.ENTER) {
-          this.sgb.slickGrid.getEditController().commitCurrentEdit();
-          e.stopPropagation();
-          e.preventDefault();
-        } else if (e.which === KeyCode.ESCAPE) {
-          this.sgb.slickGrid.getEditController().cancelCurrentEdit();
-          e.stopPropagation();
-          e.preventDefault();
-        }
-      });
+      $modal.find('[data-action=save]').on('click', () => this.modalEditorSave());
+      $modal.find('[data-action=cancel]').on('click', () => this.modalEditorCancel());
 
-      $modal.find('[data-action=save]').on('click', () => this.sgb.slickGrid.getEditController().commitCurrentEdit());
-      $modal.find('[data-action=cancel]').on('click', () => this.sgb.slickGrid.getEditController().cancelCurrentEdit());
-
-      const containers = columnDefinitions.map(col => $modal.get(0).querySelector(`[data-editorid=${col.id}]`));
+      const containers = columnDefinitions.map(col => $modal.get(0).querySelector<HTMLDivElement>(`[data-editorid=${col.id}]`));
+      // for (const $container of containers) {
+      //   if ($container) {
+      //     console.log('we do')
+      //     $container.onblur = () => {
+      //       console.log('blur')
+      //       compositeEditor.validate();
+      //     };
+      //   }
+      // }
 
       // @ts-ignore
       const compositeEditor = new Slick.CompositeEditor(columnDefinitions, containers, { destroy: () => $modal.remove() });
       this.sgb.slickGrid.editActiveCell(compositeEditor);
-      // this.sgb.gridOptions = { autoCommitEdit: true };
-      // this.sgb.gridOptions = { autoCommitEdit: false };
+      // console.log(compositeEditor.toString())
+
+      $modal.on('keydown', (e: any) => {
+        if (e.which === KeyCode.ESCAPE) {
+          this.modalEditorCancel();
+          e.stopPropagation();
+          e.preventDefault();
+        }
+        if (e.which === KeyCode.TAB) {
+          this.modalValidateCurrentEditor();
+        }
+        // if (e.which === KeyCode.ENTER) {
+        //   this.sgb.slickGrid.getEditController().commitCurrentEdit();
+        //   e.stopPropagation();
+        //   e.preventDefault();
+        // }
+      });
+      $modal.on('focusout', () => this.modalValidateCurrentEditor());
+      $modal.on('blur', () => this.modalValidateCurrentEditor());
+      // this.gridContainerElm.addEventListener('onbeforecelleditordestroy', (event: any) => {
+      //   console.log('onBeforeCellEditorDestroy', event);
+      //   return false;
+      // });
     }
+  }
+
+  modalEditorCancel() {
+    this.sgb.slickGrid.getEditController().cancelCurrentEdit();
+  }
+
+  modalEditorSave() {
+    this.sgb.slickGrid.getEditController().commitCurrentEdit();
+  }
+
+  modalValidateCurrentEditor() {
+    const currentEditor = this.sgb.slickGrid.getCellEditor();
+    currentEditor.validate();
   }
 }

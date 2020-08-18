@@ -219,6 +219,8 @@ export class DateEditor implements Editor {
       if (!this.args.isCompositeEditor) {
         this.show();
         this.focus();
+      } else {
+        setTimeout(() => this.hide());
       }
     }
   }
