@@ -48,6 +48,7 @@ export class CheckboxEditor implements Editor {
   init(): void {
     const columnId = this.columnDef && this.columnDef.id;
     const title = this.columnEditor && this.columnEditor.title || '';
+    const isCompositeEditor = this.args.isCompositeEditor;
 
     this._input = document.createElement('input') as HTMLInputElement;
     this._input.className = `editor-checkbox editor-${columnId}`;
@@ -61,7 +62,7 @@ export class CheckboxEditor implements Editor {
     this.focus();
 
     // make the checkbox editor act like a regular checkbox that commit the value on click
-    if (this.hasAutoCommitEdit) {
+    if (this.hasAutoCommitEdit && !isCompositeEditor) {
       this._input.addEventListener('click', () => this.save());
     }
   }

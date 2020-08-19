@@ -196,6 +196,12 @@ export interface GridOption {
   /** Defaults to true, which permits the user to move an entire column from a position to another. */
   enableColumnReorder?: boolean | ColumnReorderFunction;
 
+  /**
+   * Defaults to false, do we want to use a Composite Editor Modal?
+   * Composite Editor is providing a modal window to edit an entire row, it reuses every column definition editor/validators and displays them in a convenient single form.
+   */
+  enableCompositeEditor?: boolean;
+
   /** Do we want to enable Context Menu? (mouse right+click) */
   enableContextMenu?: boolean;
 

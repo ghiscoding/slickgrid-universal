@@ -1,7 +1,8 @@
-import 'slickgrid/slick.compositeeditor.js';
 import {
   AutocompleteOption,
   Column,
+  CompositeEditorExtension,
+  CompositeEditorService,
   Editors,
   FieldType,
   Filters,
@@ -13,7 +14,6 @@ import {
 
   // utilities
   formatNumber,
-  KeyCode,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -240,7 +240,7 @@ export class Example12 {
       enableCellNavigation: true,
       asyncEditorLoading: false,
       autoEdit: true,
-      autoCommitEdit: false,
+      autoCommitEdit: true,
       autoResize: {
         container: '.demo-container',
       },
@@ -265,6 +265,7 @@ export class Example12 {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,
       },
+      enableCompositeEditor: true,
       editCommandHandler: (item, column, editCommand) => {
         // composite editors values are saved as array, so let's convert to array in any case and we'll loop through these values
         const prevSerializedValues = Array.isArray(editCommand.prevSerializedValue) ? editCommand.prevSerializedValue : [editCommand.prevSerializedValue];
@@ -348,7 +349,7 @@ export class Example12 {
     const args = event.detail && event.detail.args;
     if (args.validationResults) {
       let errorMsg = args.validationResults.msg || '';
-      if (args.editor && (args.editor instanceof Slick.CompositeEditor)) {
+      if (args.editor && (args.editor instanceof CompositeEditorExtension)) {
         if (args.validationResults.errors) {
           errorMsg += '\n';
           for (const error of args.validationResults.errors) {
@@ -709,98 +710,6 @@ export class Example12 {
   }
 
   openDetails() {
-    const activeCell = this.sgb.slickGrid.getActiveCell();
-    if (this.sgb.slickGrid.getEditorLock().isActive() && !this.sgb.slickGrid.getEditorLock().commitCurrentEdit()) {
-      return;
-    }
-
-    if (!activeCell) {
-      alert('No records selected for edit operation');
-    } else {
-      const columnDefinitions = this.sgb.slickGrid.getColumns();
-      let columnIndexWithEditor = activeCell.cell || 0;
-
-      // make sure that current active cell has an editor
-      // if it doesn't have an Editor, we'll find the available cell with an editor
-      // then we'll change the active cell to that position so that we can call the editActiveCell() on it
-      const hasEditor = columnDefinitions[columnIndexWithEditor].editor;
-      if (!hasEditor) {
-        columnIndexWithEditor = columnDefinitions.findIndex(col => col.editor);
-        if (columnIndexWithEditor === -1) {
-          alert('We could not find any Editor in your Column Definition');
-          return;
-        } else {
-          this.sgb.slickGrid.setActiveCell(activeCell.row, columnIndexWithEditor, false);
-        }
-      }
-
-      const $modal = $(`<div class="slick-editor-modal"></div>`);
-      const $modalHeader = $(`<div class="slick-editor-modal-header"><div class="slick-editor-modal-title">Composite Editor</div>
-        <button type="button" class="close mdi mdi-close" data-action="cancel" aria-label="Close">
-        </button></div>`);
-      const $modalBody = $(`<div class="slick-editor-modal-body"></div>`);
-
-      for (const column of columnDefinitions) {
-        if (column.editor) {
-          const $templateItem = $(`<div class="slick-editor-detail-label">${column.name}</div>
-            <div class="slick-editor-detail-container slick-cell" data-editorid="${column.id}"></div>
-            <div class="slick-editor-detail-validation editor-${column.id}"></div>`);
-          $templateItem.appendTo($modalBody);
-        }
-      }
-      const $modalFooter = $(`<div class="slick-editor-modal-footer">
-          <button data-action="cancel" class="btn btn-save btn-default">Cancel</button>
-          <button data-action="save" class="btn btn-cancel btn-primary">Save</button>
-        </div>`);
-
-      $modalHeader.appendTo($modal);
-      $modalBody.appendTo($modal);
-      $modalFooter.appendTo($modal);
-      $modal.appendTo('body');
-
-      $modal.find('[data-action=save]').on('click', () => this.modalEditorSave());
-      $modal.find('[data-action=cancel]').on('click', () => this.modalEditorCancel());
-
-      const containers = columnDefinitions.map(col => $modal.get(0).querySelector<HTMLDivElement>(`[data-editorid=${col.id}]`));
-
-      // @ts-ignore
-      const compositeEditor = new Slick.CompositeEditor(columnDefinitions, containers, { destroy: () => $modal.remove() });
-      this.sgb.slickGrid.editActiveCell(compositeEditor);
-
-      $modal.on('keydown', (e: any) => {
-        if (e.which === KeyCode.ESCAPE) {
-          this.modalEditorCancel();
-          e.stopPropagation();
-          e.preventDefault();
-        }
-        if (e.which === KeyCode.TAB) {
-          this.modalValidateCurrentEditor();
-        }
-        // if (e.which === KeyCode.ENTER) {
-        //   this.sgb.slickGrid.getEditController().commitCurrentEdit();
-        //   e.stopPropagation();
-        //   e.preventDefault();
-        // }
-      });
-      $modal.on('focusout', () => this.modalValidateCurrentEditor());
-      $modal.on('blur', () => this.modalValidateCurrentEditor());
-      // this.gridContainerElm.addEventListener('onbeforecelleditordestroy', (event: any) => {
-      //   console.log('onBeforeCellEditorDestroy', event);
-      //   return false;
-      // });
-    }
-  }
-
-  modalEditorCancel() {
-    this.sgb.slickGrid.getEditController().cancelCurrentEdit();
-  }
-
-  modalEditorSave() {
-    this.sgb.slickGrid.getEditController().commitCurrentEdit();
-  }
-
-  modalValidateCurrentEditor() {
-    const currentEditor = this.sgb.slickGrid.getCellEditor();
-    currentEditor.validate();
+    this.sgb.compositeEditorService?.openDetails();
   }
 }

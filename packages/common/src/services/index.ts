@@ -1,5 +1,6 @@
 export * from './backend-utilities';
 export * from './collection.service';
+export * from './compositeEditor.service';
 export * from './excelExport.service';
 export * from './export-utilities';
 export * from './extension.service';

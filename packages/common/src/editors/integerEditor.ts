@@ -54,6 +54,7 @@ export class IntegerEditor implements Editor {
       const placeholder = this.columnEditor.placeholder || '';
       const title = this.columnEditor.title || '';
       const inputStep = (this.columnEditor.valueStep !== undefined) ? this.columnEditor.valueStep : '1';
+      const isCompositeEditor = this.args.isCompositeEditor;
 
       this._input = document.createElement('input') as HTMLInputElement;
       this._input.className = `editor-text editor-${columnId}`;
@@ -78,11 +79,11 @@ export class IntegerEditor implements Editor {
 
       // the lib does not get the focus out event for some reason
       // so register it here
-      if (this.hasAutoCommitEdit) {
+      if (this.hasAutoCommitEdit && !isCompositeEditor) {
         this._input.addEventListener('focusout', () => this.save());
       }
 
-      if (!this.args.isCompositeEditor) {
+      if (!isCompositeEditor) {
         setTimeout(() => this.focus(), 50);
       }
     }

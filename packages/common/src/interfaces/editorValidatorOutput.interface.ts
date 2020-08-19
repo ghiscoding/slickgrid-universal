@@ -1,4 +1,4 @@
-import { Editor } from './editor.interface';
+import { CompositeEditorError } from './compositeEditorError.interface';
 
 export interface EditorValidatorOutput {
   /** Did the validation pass? */
@@ -8,10 +8,5 @@ export interface EditorValidatorOutput {
   msg?: string | null;
 
   /** Errors property is populated only when using a Composite Editor */
-  errors?: {
-    container: HTMLElement;
-    editor: Editor;
-    index: number;
-    msg: string;
-  }[];
+  errors?: CompositeEditorError[];
 }

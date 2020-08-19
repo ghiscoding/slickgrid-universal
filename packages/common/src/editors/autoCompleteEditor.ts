@@ -271,20 +271,17 @@ export class AutoCompleteEditor implements Editor {
     if (ui && ui.item) {
       const item = ui && ui.item;
       this._currentValue = item;
+      const isCompositeEditor = this.args.isCompositeEditor;
 
       // when the user defines a "renderItem" (or "_renderItem") template, then we assume the user defines his own custom structure of label/value pair
       // otherwise we know that jQueryUI always require a label/value pair, we can pull them directly
       const hasCustomRenderItemCallback = this.columnEditor?.callbacks?.hasOwnProperty('_renderItem') ?? this.columnEditor?.editorOptions?.renderItem ?? false;
 
-      const itemValue = typeof item === 'string' ? item : (hasCustomRenderItemCallback ? item[this.valueName] : item.value);
-      this.setValue(itemValue);
+      const itemLabel = typeof item === 'string' ? item : (hasCustomRenderItemCallback ? item[this.labelName] : item.label);
+      this.setValue(itemLabel);
 
-      if (this.hasAutoCommitEdit) {
-        // do not use args.commitChanges() as this sets the focus to the next row.
-        const validation = this.validate();
-        if (validation && validation.valid) {
-          this.grid.getEditorLock().commitCurrentEdit();
-        }
+      if (!isCompositeEditor) {
+        this.save();
       }
     }
     return false;

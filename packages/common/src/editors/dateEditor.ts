@@ -90,6 +90,7 @@ export class DateEditor implements Editor {
 
   init(): void {
     if (this.args && this.columnDef) {
+      const isCompositeEditor = this.args.isCompositeEditor;
       const columnId = this.columnDef && this.columnDef.id;
       const placeholder = this.columnEditor && this.columnEditor.placeholder || '';
       const title = this.columnEditor && this.columnEditor.title || '';
@@ -109,7 +110,11 @@ export class DateEditor implements Editor {
         dateFormat: inputFormat,
         closeOnSelect: true,
         locale: (currentLocale !== 'en') ? this.loadFlatpickrLocale(currentLocale) : 'en',
-        onChange: () => this.save(),
+        onChange: () => {
+          if (!isCompositeEditor) {
+            this.save();
+          }
+        },
         errorHandler: () => {
           // do nothing, Flatpickr is a little too sensitive and will throw an error when provided date is lower than minDate so just disregard the error completely
         }
@@ -207,6 +212,7 @@ export class DateEditor implements Editor {
 
   loadValue(item: any) {
     const fieldName = this.columnDef && this.columnDef.field;
+    const isCompositeEditor = this.args.isCompositeEditor;
 
     if (item && fieldName !== undefined) {
       // is the field a complex object, "address.streetNumber"
@@ -216,7 +222,7 @@ export class DateEditor implements Editor {
       this.originalDate = value;
       this.flatInstance.setDate(value);
 
-      if (!this.args.isCompositeEditor) {
+      if (!isCompositeEditor) {
         this.show();
         this.focus();
       } else {

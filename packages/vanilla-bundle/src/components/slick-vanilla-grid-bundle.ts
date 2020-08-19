@@ -46,9 +46,10 @@ import {
   RowSelectionExtension,
 
   // services
-  FilterFactory,
+  CompositeEditorService,
   CollectionService,
   ExtensionService,
+  FilterFactory,
   FilterService,
   GridEventService,
   GridService,
@@ -116,6 +117,7 @@ export class SlickVanillaGridBundle {
 
   // services
   collectionService: CollectionService;
+  compositeEditorService: CompositeEditorService;
   extensionService: ExtensionService;
   filterService: FilterService;
   gridEventService: GridEventService;
@@ -266,6 +268,7 @@ export class SlickVanillaGridBundle {
     this.gridEventService = new GridEventService();
     const slickgridConfig = new SlickgridConfig();
     this.sharedService = new SharedService();
+    this.compositeEditorService = new CompositeEditorService();
     this.collectionService = new CollectionService(this.translaterService);
     this.extensionUtility = new ExtensionUtility(this.sharedService, this.translaterService);
     const filterFactory = new FilterFactory(slickgridConfig, this.translaterService, this.collectionService);
@@ -339,6 +342,7 @@ export class SlickVanillaGridBundle {
       this.destroyGridContainerElm();
     }
 
+    this.compositeEditorService?.dispose();
     this.extensionService?.dispose();
     this.filterService?.dispose();
     this.gridEventService?.dispose();
@@ -501,8 +505,13 @@ export class SlickVanillaGridBundle {
       this._registeredServices.push(this.groupingService);
     }
 
+    // when using Tree Data View, register its Service
+    if (this.gridOptions.enableCompositeEditor) {
+      this._registeredServices.push(this.compositeEditorService);
+    }
+
+    // when using Tree Data View, register its Service
     if (this.gridOptions.enableTreeData) {
-      // when using Tree Data View, register its Service
       this._registeredServices.push(this.treeDataService);
     }
 

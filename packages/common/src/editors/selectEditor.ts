@@ -90,6 +90,7 @@ export class SelectEditor implements Editor {
     // provide the name attribute to the DOM element which will be needed to auto-adjust drop position (dropup / dropdown)
     const columnId = this.columnDef && this.columnDef.id;
     this.elementName = `editor-${columnId}`;
+    const isCompositeEditor = this.args.isCompositeEditor;
 
     const libOptions: MultipleSelectOption = {
       autoAdjustDropHeight: true,
@@ -105,7 +106,11 @@ export class SelectEditor implements Editor {
         const isRenderHtmlEnabled = this.columnEditor && this.columnEditor.enableRenderHtml || false;
         return isRenderHtmlEnabled ? $elm.text() : $elm.html();
       },
-      onClose: () => this.save(),
+      onClose: () => {
+        if (!isCompositeEditor) {
+          this.save();
+        }
+      },
     };
 
     if (isMultipleSelect) {

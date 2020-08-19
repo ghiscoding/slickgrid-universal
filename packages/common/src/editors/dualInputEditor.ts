@@ -120,7 +120,9 @@ export class DualInputEditor implements Editor {
   handleFocusOut(event: any, position: 'leftInput' | 'rightInput') {
     // when clicking outside the editable cell OR when focusing out of it
     const targetClassNames = event.relatedTarget?.className || '';
-    if (targetClassNames.indexOf('dual-editor') === -1 && this._lastEventType !== 'focusout-right') {
+    const isCompositeEditor = this.args.isCompositeEditor;
+
+    if (!isCompositeEditor && (targetClassNames.indexOf('dual-editor') === -1 && this._lastEventType !== 'focusout-right')) {
       if (position === 'rightInput' || (position === 'leftInput' && this._lastEventType !== 'focusout-left')) {
         this.save();
       }

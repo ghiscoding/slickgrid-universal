@@ -67,6 +67,7 @@ export class SliderEditor implements Editor {
       const itemId = this.args && this.args.item && this.args.item.id;
       this._elementRangeInputId = `rangeInput_${this.columnDef.field}_${itemId}`;
       this._elementRangeOutputId = `rangeOutput_${this.columnDef.field}_${itemId}`;
+      const isCompositeEditor = this.args.isCompositeEditor;
 
       // create HTML string template
       const editorTemplate = this.buildTemplateHtmlString();
@@ -76,9 +77,11 @@ export class SliderEditor implements Editor {
       this.focus();
 
       // watch on change event
-      this._$editorElm
-        .appendTo(container)
-        .on('mouseup', () => this.save());
+      this._$editorElm.appendTo(container);
+
+      if (!isCompositeEditor) {
+        this._$editorElm.on('mouseup', () => this.save());
+      }
 
       // if user chose to display the slider number on the right side, then update it every time it changes
       // we need to use both "input" and "change" event to be all cross-browser
