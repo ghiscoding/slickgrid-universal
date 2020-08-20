@@ -783,9 +783,10 @@ input.flatpickr.form-control {
       cursor: pointer;
       display: inline-flex;
       color: $draggable-group-delete-color;
+      font-size: $draggable-group-delete-font-size;
       padding-left: $draggable-group-delete-padding-left;
       padding-right: $draggable-group-delete-padding-right;
-      font-size: $draggable-group-delete-font-size;
+      vertical-align: $draggable-group-delete-vertical-align;
       &:hover {
         color: $draggable-group-delete-hover-color;
       }
