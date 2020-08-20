@@ -46,7 +46,6 @@ import {
   RowSelectionExtension,
 
   // services
-  CompositeEditorService,
   CollectionService,
   ExtensionService,
   FilterFactory,
@@ -72,9 +71,10 @@ import { EventPubSubService } from '../services/eventPubSub.service';
 import { FileExportService } from '../services/fileExport.service';
 import { ResizerService } from '../services/resizer.service';
 import { SalesforceGlobalGridOptions } from '../salesforce-global-grid-options';
-import { SlickFooterComponent } from './slick-footer';
-import { SlickPaginationComponent } from './slick-pagination';
+import { SlickFooterComponent } from './slick-footer.component';
+import { SlickPaginationComponent } from './slick-pagination.component';
 import { SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
+import { SlickCompositeEditorComponent } from './slick-composite-editor.component';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -117,7 +117,6 @@ export class SlickVanillaGridBundle {
 
   // services
   collectionService: CollectionService;
-  compositeEditorService: CompositeEditorService;
   extensionService: ExtensionService;
   filterService: FilterService;
   gridEventService: GridEventService;
@@ -130,6 +129,7 @@ export class SlickVanillaGridBundle {
   translaterService: TranslaterService | undefined;
   treeDataService: TreeDataService;
 
+  slickCompositeEditor: SlickCompositeEditorComponent | undefined;
   slickFooter: SlickFooterComponent | undefined;
   slickPagination: SlickPaginationComponent | undefined;
   gridClass: string;
@@ -268,7 +268,6 @@ export class SlickVanillaGridBundle {
     this.gridEventService = new GridEventService();
     const slickgridConfig = new SlickgridConfig();
     this.sharedService = new SharedService();
-    this.compositeEditorService = new CompositeEditorService();
     this.collectionService = new CollectionService(this.translaterService);
     this.extensionUtility = new ExtensionUtility(this.sharedService, this.translaterService);
     const filterFactory = new FilterFactory(slickgridConfig, this.translaterService, this.collectionService);
@@ -342,7 +341,7 @@ export class SlickVanillaGridBundle {
       this.destroyGridContainerElm();
     }
 
-    this.compositeEditorService?.dispose();
+    // dispose the Services
     this.extensionService?.dispose();
     this.filterService?.dispose();
     this.gridEventService?.dispose();
@@ -352,6 +351,11 @@ export class SlickVanillaGridBundle {
     this.resizerService?.dispose();
     this.sortService?.dispose();
     this.treeDataService?.dispose();
+
+    // dispose the Components
+    this.slickCompositeEditor?.dispose();
+    this.slickFooter?.dispose();
+    this.slickPagination?.dispose();
 
     this._eventPubSubService?.unsubscribeAll();
   }
@@ -506,11 +510,6 @@ export class SlickVanillaGridBundle {
     }
 
     // when using Tree Data View, register its Service
-    if (this.gridOptions.enableCompositeEditor) {
-      this._registeredServices.push(this.compositeEditorService);
-    }
-
-    // when using Tree Data View, register its Service
     if (this.gridOptions.enableTreeData) {
       this._registeredServices.push(this.treeDataService);
     }
@@ -518,6 +517,11 @@ export class SlickVanillaGridBundle {
     // when user enables translation, we need to translate Headers on first pass & subsequently in the bindDifferentHooks
     if (this.gridOptions.enableTranslate) {
       this.extensionService.translateColumnHeaders();
+    }
+
+    // also initialize (render) the pagination component
+    if (this._gridOptions.enableCompositeEditor) {
+      this.slickCompositeEditor = new SlickCompositeEditorComponent(this.slickGrid);
     }
 
     // bind the Backend Service API callback functions only after the grid is initialized
@@ -1194,7 +1198,6 @@ export class SlickVanillaGridBundle {
 export class SlickVanillaGridBundleInitializer extends SlickVanillaGridBundle {
   constructor(
     collectionService: CollectionService,
-    compositeEditorService: CompositeEditorService,
     eventPubSubService: EventPubSubService,
     extensionService: ExtensionService,
     extensionUtility: ExtensionUtility,
@@ -1217,7 +1220,6 @@ export class SlickVanillaGridBundleInitializer extends SlickVanillaGridBundle {
   ) {
     super(gridParentContainerElm, columnDefs, options, dataset, hierarchicalDataset);
     this.collectionService = collectionService;
-    this.compositeEditorService = compositeEditorService;
     this._eventPubSubService = eventPubSubService;
     this.extensionService = extensionService;
     this.extensionUtility = extensionUtility;

@@ -20,7 +20,7 @@ export interface CellMenuOption {
   /** Array of Command Items (title, command, disabled, ...) */
   commandItems?: Array<MenuCommandItem | 'divider'>;
 
-  /** Defaults to "Commands" which is the title that shows up over the commands list */
+  /** Optional command title that shows up over the commands list, it will be hidden when nothing is provided */
   commandTitle?: string;
 
   /** Same as "commandTitle", except that it's a translation key which can be used on page load and/or when switching locale */
@@ -47,7 +47,7 @@ export interface CellMenuOption {
   /** Array of Option Items (title, option, disabled, ...) */
   optionItems?: Array<MenuOptionItem | 'divider'>;
 
-  /** Title of the Option section */
+  /** Optional Title of the Option section, it will be hidden when nothing is provided */
   optionTitle?: string;
 
   /** Same as "optionTitle", except that it's a translation key which can be used on page load and/or when switching locale */

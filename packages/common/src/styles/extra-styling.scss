@@ -1,4 +1,3 @@
-$editable-field-bg-color: #e3f0fb !default;
 $unsaved-editable-field-color: #fbfdd1 !default;
 $font-size-count: 50;
 $padding-max-count: 30;
@@ -50,6 +49,10 @@ $padding-max-count: 30;
 // font-5px up to font-50px
 @for $i from 5 through $font-size-count {
   .font-#{$i}px { font-size: #{$i}px; }
+}
+
+.margin-auto {
+  margin: auto;
 }
 
 /* Text and Alignment Utilities */

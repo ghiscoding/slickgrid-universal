@@ -2,7 +2,6 @@ import 'jest-extended';
 import {
   Column,
   CollectionService,
-  CompositeEditorService,
   CurrentFilter,
   CurrentPagination,
   CurrentSorter,
@@ -39,6 +38,7 @@ import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { HttpStub } from '../../../../../test/httpClientStub';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../../test/mockSlickEvent';
 import { ResizerService } from '../../services/resizer.service';
+import { SlickCompositeEditorComponent } from '../slick-composite-editor.component';
 jest.mock('../../services/fileExport.service');
 
 const mockExecuteBackendProcess = jest.fn();
@@ -105,7 +105,7 @@ const compositeEditorServiceStub = {
   handleCancelClicked: jest.fn(),
   handleSaveClicked: jest.fn(),
   validateCurrentEditor: jest.fn(),
-} as unknown as CompositeEditorService;
+} as unknown as SlickCompositeEditorComponent;
 
 const filterServiceStub = {
   clearFilters: jest.fn(),
@@ -311,7 +311,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
     component = new SlickVanillaGridBundleInitializer(
       collectionServiceStub,
-      compositeEditorServiceStub,
       eventPubSubService,
       extensionServiceStub,
       mockExtensionUtility,
@@ -818,12 +817,12 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(spy).toHaveBeenCalled();
       });
 
-      it('should initialize CompositeEditorService when "enableCompositeEditor" is set', () => {
+      it('should initialize SlickCompositeEditorComponent when "enableCompositeEditor" is set', () => {
         component.gridOptions = { enableCompositeEditor: true } as GridOption;
         component.initialization(divContainer, slickEventHandler);
 
-        expect(component.registeredServices.length).toBe(3); // GridService, GridStateService, CompositeEditorService
-        expect(component.registeredServices[2]).toEqual(compositeEditorServiceStub);
+        // expect(SlickCompositeEditorComponent).toHaveBeenCalled();
+        expect(component.slickCompositeEditor instanceof SlickCompositeEditorComponent).toBeTrue();
       });
 
       it('should initialize ExportService when "enableExport" is set when using Salesforce', () => {
@@ -1820,7 +1819,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
 
     component = new SlickVanillaGridBundleInitializer(
       collectionServiceStub,
-      compositeEditorServiceStub,
       eventPubSubService,
       extensionServiceStub,
       mockExtensionUtility,
@@ -1893,7 +1891,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
 
     component = new SlickVanillaGridBundleInitializer(
       collectionServiceStub,
-      compositeEditorServiceStub,
       eventPubSubService,
       extensionServiceStub,
       mockExtensionUtility,

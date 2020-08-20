@@ -1,14 +1,13 @@
-import { SlickGrid } from '../interfaces/slickGrid.interface';
-import { CompositeEditorExtension } from '../extensions/compositeEditorExtension';
-import { Editor } from '../interfaces/editor.interface';
-import { getDescendantProperty } from './utilities';
+import { Editor, CompositeEditorExtension, getDescendantProperty, SlickGrid } from '@slickgrid-universal/common';
 
-export class CompositeEditorService {
-  private _grid: SlickGrid;
+export class SlickCompositeEditorComponent {
   private _modalElm: HTMLDivElement;
 
-  init(grid: SlickGrid) {
-    this._grid = grid;
+  get gridUid(): string {
+    return this.grid?.getUID() ?? '';
+  }
+
+  constructor(private grid: SlickGrid) {
   }
 
   dispose() {
@@ -18,35 +17,34 @@ export class CompositeEditorService {
   }
 
   openDetails(headerTitle = 'Details') {
-    const activeCell = this._grid.getActiveCell();
-    if (!this._grid || (this._grid.getEditorLock().isActive() && !this._grid.getEditorLock().commitCurrentEdit())) {
+    const activeCell = this.grid.getActiveCell();
+    if (!this.grid || (this.grid.getEditorLock().isActive() && !this.grid.getEditorLock().commitCurrentEdit())) {
       return;
     }
 
     if (!activeCell) {
-      alert('No records selected for edit operation');
+      throw new Error('No records selected for edit operation');
     } else {
-      const columnDefinitions = this._grid.getColumns();
+      const columnDefinitions = this.grid.getColumns();
       let columnIndexWithEditor = activeCell.cell || 0;
-      const dataContext = this._grid.getDataItem(activeCell.row);
+      const dataContext = this.grid.getDataItem(activeCell.row);
       const parsedHeaderTitle = headerTitle.replace(/\#{(.*?)}/g, (_match, group) => getDescendantProperty(dataContext, group));
 
       // make sure that current active cell has an editor
-      // if it doesn't have an Editor, we'll find the available cell with an editor
+      // if current active cell doesn't have an Editor, we'll find the next available cell with an editor (from left to right starting at index 0)
       // then we'll change the active cell to that position so that we can call the editActiveCell() on it
       const hasEditor = columnDefinitions[columnIndexWithEditor].editor;
       if (!hasEditor) {
         columnIndexWithEditor = columnDefinitions.findIndex(col => col.editor);
         if (columnIndexWithEditor === -1) {
-          alert('We could not find any Editor in your Column Definition');
-          return;
+          throw new Error('We could not find any Editor in your Column Definition');
         } else {
-          this._grid.setActiveCell(activeCell.row, columnIndexWithEditor, false);
+          this.grid.setActiveCell(activeCell.row, columnIndexWithEditor, false);
         }
       }
 
       this._modalElm = document.createElement('div');
-      this._modalElm.className = 'slick-editor-modal';
+      this._modalElm.className = `slick-editor-modal ${this.gridUid}`;
 
       const modalHeaderTitleElm = document.createElement('div');
       modalHeaderTitleElm.className = 'slick-editor-modal-title';
@@ -113,7 +111,7 @@ export class CompositeEditorService {
 
       const containers = columnDefinitions.map(col => modalBodyElm.querySelector<HTMLDivElement>(`[data-editor-id=${col.id}]`)) || [];
       const compositeEditor = new CompositeEditorExtension(columnDefinitions, containers, { destroy: this.dispose.bind(this) });
-      this._grid.editActiveCell(compositeEditor.editor as unknown as Editor);
+      this.grid.editActiveCell(compositeEditor.editor as unknown as Editor);
 
       // add event handlers
       modalCloseButtonElm.addEventListener('click', this.handleCancelClicked.bind(this));
@@ -134,15 +132,15 @@ export class CompositeEditorService {
   }
 
   handleCancelClicked() {
-    this._grid.getEditController().cancelCurrentEdit();
+    this.grid.getEditController().cancelCurrentEdit();
   }
 
   handleSaveClicked() {
-    this._grid.getEditController().commitCurrentEdit();
+    this.grid.getEditController().commitCurrentEdit();
   }
 
   validateCurrentEditor() {
-    const currentEditor = this._grid.getCellEditor();
+    const currentEditor = this.grid.getCellEditor();
     currentEditor.validate();
   }
 }

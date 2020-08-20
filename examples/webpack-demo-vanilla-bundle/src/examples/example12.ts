@@ -205,7 +205,7 @@ export class Example12 {
       {
         id: 'action', name: 'Action', field: 'action', width: 60, maxWidth: 60,
         excludeFromExport: true,
-        formatter: () => `<div class="text-center button-style padding-1px" style="margin-top: -1px"><span class="mdi mdi-chevron-down mdi-22px"></span></div>`,
+        formatter: () => `<div class="button-style margin-auto" style="margin-top: -1px; width: 35px;"><span class="mdi mdi-chevron-down mdi-22px"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           width: 200,
@@ -713,6 +713,6 @@ export class Example12 {
   openEditorDetails(openDelay = 0) {
     // open the editor modal and we can also provide a header title with optional parsing pulled from the dataContext, via template #{}
     // for example #{title} => display the item title, or even complex object works #{product.itemName} => display item product name
-    setTimeout(() => this.sgb.compositeEditorService?.openDetails('Editing - #{title} (#{product.itemName})'), openDelay);
+    setTimeout(() => this.sgb.slickCompositeEditor?.openDetails('Editing - #{title} (#{product.itemName})'), openDelay);
   }
 }

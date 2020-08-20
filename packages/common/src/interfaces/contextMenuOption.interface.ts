@@ -23,7 +23,7 @@ export interface ContextMenuOption {
   /** Defaults to undefined, which column to show the Commands list, when not defined the context menu will be shown over all columns */
   commandShownOverColumnIds?: string[];
 
-  /** Defaults to "Commands" which is the title that shows up over the commands list */
+  /** Optional command title that shows up over the commands list, it will be hidden when nothing is provided */
   commandTitle?: string;
 
   /** Same as "commandTitle", except that it's a translation key which can be used on page load and/or when switching locale */
@@ -95,7 +95,7 @@ export interface ContextMenuOption {
   /** Defaults to undefined, which column to show the Options list, when not defined the context menu will be shown over all columns */
   optionShownOverColumnIds?: string[];
 
-  /** Title of the Option section */
+  /** Optional Title of the Option section, it will be hidden when nothing is provided */
   optionTitle?: string;
 
   /** Same as "optionTitle", except that it's a translation key which can be used on page load and/or when switching locale */

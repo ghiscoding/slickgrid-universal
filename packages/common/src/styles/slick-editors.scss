@@ -146,11 +146,14 @@
     min-height: $editor-modal-body-min-height;
     max-height: $editor-modal-body-max-height;
     overflow: $editor-modal-body-overflow;
+    .slick-cell {
+      height: inherit;
+    }
   }
 
   .slick-editor-modal-header {
     padding: $editor-modal-header-padding;
-    max-height: $editor-modal-header-height;
+    height: $editor-modal-header-height;
     border-bottom: $editor-modal-header-border-bottom;
     background-color: $editor-modal-header-bg-color;
   }
@@ -190,7 +193,7 @@
       position: relative;
       height: $editor-modal-input-editor-height;
       input {
-        height: 100%;
+        height: $editor-modal-input-editor-height;
       }
     }
     .slick-large-editor-text {
