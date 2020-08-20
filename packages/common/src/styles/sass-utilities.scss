@@ -38,7 +38,7 @@
     height: $height;
     width: $width;
     display: $display;
-    vertical-align: middle;
+    vertical-align: bottom;
     content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{$fill}" viewBox="0 0 24 24">\
         <path d="#{$path-drawing}"></path>\
       </svg>');

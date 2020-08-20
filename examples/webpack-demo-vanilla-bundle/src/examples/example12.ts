@@ -2,7 +2,6 @@ import {
   AutocompleteOption,
   Column,
   CompositeEditorExtension,
-  CompositeEditorService,
   Editors,
   FieldType,
   Filters,
@@ -40,6 +39,7 @@ const customEditableInputFormatter = (row, cell, value, columnDef, dataContext, 
   const isEditableLine = gridOptions.editable && columnDef.editor;
   value = (value === null || value === undefined) ? '' : value;
   return isEditableLine ? { text: value, addClasses: 'editable-field', toolTip: 'Click to Edit' } : value;
+  // return isEditableLine ? `<div class="editing-field" title="Click to Edit">${value}</div>` : value;
 };
 
 export class Example12 {
@@ -67,6 +67,7 @@ export class Example12 {
     // bind any of the grid events
     this.gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
     this.gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
+    this.gridContainerElm.addEventListener('ondblclick', () => this.openEditorDetails(50));
   }
 
   dispose() {
@@ -202,9 +203,9 @@ export class Example12 {
         }
       },
       {
-        id: 'action', name: 'Action', field: 'action', width: 100, maxWidth: 100,
+        id: 'action', name: 'Action', field: 'action', width: 60, maxWidth: 60,
         excludeFromExport: true,
-        formatter: () => `<div class="fake-hyperlink">Action <span class="font-12px">&#9660;</span></div>`,
+        formatter: () => `<div class="text-center button-style padding-1px" style="margin-top: -1px"><span class="mdi mdi-chevron-down mdi-22px"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           width: 200,
@@ -257,7 +258,7 @@ export class Example12 {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: true
       },
-      rowHeight: 33,
+      rowHeight: 34,
       headerRowHeight: 35,
       enableCheckboxSelector: true,
       enableRowSelection: true,
@@ -709,7 +710,9 @@ export class Example12 {
         </div>`;
   }
 
-  openDetails() {
-    this.sgb.compositeEditorService?.openDetails();
+  openEditorDetails(openDelay = 0) {
+    // open the editor modal and we can also provide a header title with optional parsing pulled from the dataContext, via template #{}
+    // for example #{title} => display the item title, or even complex object works #{product.itemName} => display item product name
+    setTimeout(() => this.sgb.compositeEditorService?.openDetails('Editing - #{title} (#{product.itemName})'), openDelay);
   }
 }

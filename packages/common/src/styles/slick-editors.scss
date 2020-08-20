@@ -83,6 +83,9 @@
     float: left;
     font-size: $large-editor-count-font-size;
     margin-top: $large-editor-count-margin-top;
+    .separator {
+      margin: $large-editor-count-separator-margin;
+    }
   }
 }
 
@@ -104,7 +107,11 @@
   .btn {
     margin: $editor-modal-footer-button-margin;
     height: $editor-modal-footer-button-height;
+    border: $editor-modal-footer-button-border;
     border-radius: $editor-modal-footer-button-radius;
+    &:hover {
+      border-color: $editor-modal-footer-button-border-hover;
+    }
   }
 
   .close {
@@ -127,6 +134,11 @@
   .slick-editor-modal-title {
     font-size: $editor-modal-title-font-size;
     font-weight: $editor-modal-title-font-weight;
+    color: $editor-modal-title-font-color;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    width: calc(100% - #{$editor-modal-close-button-width} - #{$editor-modal-close-button-right});
+    white-space: nowrap;
   }
 
   .slick-editor-modal-body {
@@ -172,7 +184,7 @@
       height: $editor-modal-input-editor-height;
       margin: $editor-modal-input-editor-margin;
       border: $editor-modal-input-editor-border;
-      padding-left: $editor-modal-input-editor-padding;
+      padding: $editor-modal-input-editor-padding;
     }
     .input-group {
       position: relative;
@@ -190,10 +202,12 @@
         height: 100%;
       }
       .editor-footer {
+        height: $editor-modal-large-editor-footer-height;
+        line-height: $editor-modal-large-editor-footer-line-height;
+        color: $editor-modal-large-editor-count-color;
         .counter {
-          margin: $editor-modal-large-editor-counter-margin;
-          right: $editor-modal-large-editor-counter-right;
-          position: $editor-modal-large-editor-counter-position;
+          font-size: $editor-modal-large-editor-count-font-size;
+          margin: $editor-modal-large-editor-count-margin;
         }
       }
     }

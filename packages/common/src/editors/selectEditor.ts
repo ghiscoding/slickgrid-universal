@@ -307,7 +307,7 @@ export class SelectEditor implements Editor {
   }
 
   show() {
-    if (this.$editorElm && typeof this.$editorElm.multipleSelect === 'function') {
+    if (!this.args.isCompositeEditor && this.$editorElm && typeof this.$editorElm.multipleSelect === 'function') {
       this.$editorElm.multipleSelect('open');
     }
   }

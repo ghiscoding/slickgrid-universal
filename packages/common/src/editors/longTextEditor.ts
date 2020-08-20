@@ -107,7 +107,7 @@ export class LongTextEditor implements Editor {
     const editorFooterElm = $(`<div class="editor-footer"/>`);
     const countContainerElm = $(`<span class="counter"/>`);
     this._$currentLengthElm = $(`<span class="text-length">0</span>`);
-    const textMaxLengthElm = $(`<span>/</span><span class="max-length">${maxLength}</span>`);
+    const textMaxLengthElm = $(`<span class="separator">/</span><span class="max-length">${maxLength}</span>`);
     this._$currentLengthElm.appendTo(countContainerElm);
     textMaxLengthElm.appendTo(countContainerElm);
     countContainerElm.appendTo(editorFooterElm);

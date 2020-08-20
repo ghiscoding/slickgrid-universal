@@ -1,28 +1,25 @@
 import { SlickGrid } from '../interfaces/slickGrid.interface';
 import { CompositeEditorExtension } from '../extensions/compositeEditorExtension';
 import { Editor } from '../interfaces/editor.interface';
+import { getDescendantProperty } from './utilities';
 
 export class CompositeEditorService {
-  private _$modal: JQuery<HTMLDivElement>;
-  private _modalElm: HTMLDivElement;
   private _grid: SlickGrid;
+  private _modalElm: HTMLDivElement;
 
   init(grid: SlickGrid) {
     this._grid = grid;
   }
 
   dispose() {
-    if (typeof this._$modal?.remove === 'function') {
-      this._$modal.remove();
-    }
     if (typeof this._modalElm?.remove === 'function') {
       this._modalElm.remove();
     }
   }
 
-  openDetails() {
+  openDetails(headerTitle = 'Details') {
     const activeCell = this._grid.getActiveCell();
-    if (this._grid.getEditorLock().isActive() && !this._grid.getEditorLock().commitCurrentEdit()) {
+    if (!this._grid || (this._grid.getEditorLock().isActive() && !this._grid.getEditorLock().commitCurrentEdit())) {
       return;
     }
 
@@ -31,6 +28,8 @@ export class CompositeEditorService {
     } else {
       const columnDefinitions = this._grid.getColumns();
       let columnIndexWithEditor = activeCell.cell || 0;
+      const dataContext = this._grid.getDataItem(activeCell.row);
+      const parsedHeaderTitle = headerTitle.replace(/\#{(.*?)}/g, (_match, group) => getDescendantProperty(dataContext, group));
 
       // make sure that current active cell has an editor
       // if it doesn't have an Editor, we'll find the available cell with an editor
@@ -51,7 +50,7 @@ export class CompositeEditorService {
 
       const modalHeaderTitleElm = document.createElement('div');
       modalHeaderTitleElm.className = 'slick-editor-modal-title';
-      modalHeaderTitleElm.textContent = 'Composite Editor';
+      modalHeaderTitleElm.textContent = parsedHeaderTitle;
 
       const modalCloseButtonElm = document.createElement('button');
       modalCloseButtonElm.type = 'button';
@@ -113,13 +112,13 @@ export class CompositeEditorService {
       document.body.appendChild(this._modalElm);
 
       const containers = columnDefinitions.map(col => modalBodyElm.querySelector<HTMLDivElement>(`[data-editor-id=${col.id}]`)) || [];
-      const compositeEditor = new CompositeEditorExtension(columnDefinitions, containers, { destroy: () => this.dispose() });
+      const compositeEditor = new CompositeEditorExtension(columnDefinitions, containers, { destroy: this.dispose.bind(this) });
       this._grid.editActiveCell(compositeEditor.editor as unknown as Editor);
 
       // add event handlers
-      modalCloseButtonElm.addEventListener('click', () => this.handleCancelClicked());
-      modalCancelButtonElm.addEventListener('click', () => this.handleCancelClicked());
-      modalSaveButtonElm.addEventListener('click', () => this.handleSaveClicked());
+      modalCloseButtonElm.addEventListener('click', this.handleCancelClicked.bind(this));
+      modalCancelButtonElm.addEventListener('click', this.handleCancelClicked.bind(this));
+      modalSaveButtonElm.addEventListener('click', this.handleSaveClicked.bind(this));
       this._modalElm.addEventListener('keydown', (event: KeyboardEvent) => {
         if (event.code === 'Escape') {
           this.handleCancelClicked();
@@ -129,8 +128,8 @@ export class CompositeEditorService {
           this.validateCurrentEditor();
         }
       });
-      this._modalElm.addEventListener('focusout', () => this.validateCurrentEditor());
-      this._modalElm.addEventListener('blur', () => this.validateCurrentEditor());
+      this._modalElm.addEventListener('focusout', this.validateCurrentEditor.bind(this));
+      this._modalElm.addEventListener('blur', this.validateCurrentEditor.bind(this));
     }
   }
 

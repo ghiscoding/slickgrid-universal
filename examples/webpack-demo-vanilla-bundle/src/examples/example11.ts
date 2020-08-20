@@ -130,6 +130,7 @@ export class Example11 {
           model: Filters.singleSelect
         },
         exportWithFormatter: false,
+        params: { massUpdate: true },
         formatter: Formatters.checkmarkMaterial,
       },
       {

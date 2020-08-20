@@ -1194,6 +1194,7 @@ export class SlickVanillaGridBundle {
 export class SlickVanillaGridBundleInitializer extends SlickVanillaGridBundle {
   constructor(
     collectionService: CollectionService,
+    compositeEditorService: CompositeEditorService,
     eventPubSubService: EventPubSubService,
     extensionService: ExtensionService,
     extensionUtility: ExtensionUtility,
@@ -1216,6 +1217,7 @@ export class SlickVanillaGridBundleInitializer extends SlickVanillaGridBundle {
   ) {
     super(gridParentContainerElm, columnDefs, options, dataset, hierarchicalDataset);
     this.collectionService = collectionService;
+    this.compositeEditorService = compositeEditorService;
     this._eventPubSubService = eventPubSubService;
     this.extensionService = extensionService;
     this.extensionUtility = extensionUtility;

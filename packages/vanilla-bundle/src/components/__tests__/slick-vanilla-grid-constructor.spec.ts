@@ -2,6 +2,7 @@ import 'jest-extended';
 import {
   Column,
   CollectionService,
+  CompositeEditorService,
   CurrentFilter,
   CurrentPagination,
   CurrentSorter,
@@ -96,6 +97,15 @@ const collectionServiceStub = {
   singleFilterCollection: jest.fn(),
   sortCollection: jest.fn(),
 } as unknown as CollectionService;
+
+const compositeEditorServiceStub = {
+  init: jest.fn(),
+  dispose: jest.fn(),
+  openDetails: jest.fn(),
+  handleCancelClicked: jest.fn(),
+  handleSaveClicked: jest.fn(),
+  validateCurrentEditor: jest.fn(),
+} as unknown as CompositeEditorService;
 
 const filterServiceStub = {
   clearFilters: jest.fn(),
@@ -301,6 +311,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
     component = new SlickVanillaGridBundleInitializer(
       collectionServiceStub,
+      compositeEditorServiceStub,
       eventPubSubService,
       extensionServiceStub,
       mockExtensionUtility,
@@ -805,6 +816,14 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
 
         expect(spy).toHaveBeenCalled();
+      });
+
+      it('should initialize CompositeEditorService when "enableCompositeEditor" is set', () => {
+        component.gridOptions = { enableCompositeEditor: true } as GridOption;
+        component.initialization(divContainer, slickEventHandler);
+
+        expect(component.registeredServices.length).toBe(3); // GridService, GridStateService, CompositeEditorService
+        expect(component.registeredServices[2]).toEqual(compositeEditorServiceStub);
       });
 
       it('should initialize ExportService when "enableExport" is set when using Salesforce', () => {
@@ -1801,6 +1820,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
 
     component = new SlickVanillaGridBundleInitializer(
       collectionServiceStub,
+      compositeEditorServiceStub,
       eventPubSubService,
       extensionServiceStub,
       mockExtensionUtility,
@@ -1873,6 +1893,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
 
     component = new SlickVanillaGridBundleInitializer(
       collectionServiceStub,
+      compositeEditorServiceStub,
       eventPubSubService,
       extensionServiceStub,
       mockExtensionUtility,
