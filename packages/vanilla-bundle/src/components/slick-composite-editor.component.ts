@@ -3,12 +3,7 @@ import { Editor, CompositeEditorExtension, getDescendantProperty, SlickGrid } fr
 export class SlickCompositeEditorComponent {
   private _modalElm: HTMLDivElement;
 
-  get gridUid(): string {
-    return this.grid?.getUID() ?? '';
-  }
-
-  constructor(private grid: SlickGrid) {
-  }
+  constructor(private grid: SlickGrid) { }
 
   dispose() {
     if (typeof this._modalElm?.remove === 'function') {
@@ -18,11 +13,16 @@ export class SlickCompositeEditorComponent {
 
   openDetails(headerTitle = 'Details') {
     const activeCell = this.grid.getActiveCell();
+    const gridOptions = this.grid.getOptions();
+    const gridUid = this.grid.getUID() || '';
+
     if (!this.grid || (this.grid.getEditorLock().isActive() && !this.grid.getEditorLock().commitCurrentEdit())) {
       return;
     }
 
-    if (!activeCell) {
+    if (!gridOptions.enableCellNavigation) {
+      throw new Error('Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.');
+    } else if (!activeCell) {
       throw new Error('No records selected for edit operation');
     } else {
       const columnDefinitions = this.grid.getColumns();
@@ -44,7 +44,7 @@ export class SlickCompositeEditorComponent {
       }
 
       this._modalElm = document.createElement('div');
-      this._modalElm.className = `slick-editor-modal ${this.gridUid}`;
+      this._modalElm.className = `slick-editor-modal ${gridUid}`;
 
       const modalHeaderTitleElm = document.createElement('div');
       modalHeaderTitleElm.className = 'slick-editor-modal-title';

@@ -204,7 +204,7 @@ export class Example11 {
         }
       },
       {
-        id: 'action', name: 'Action', field: 'action', width: 100, maxWidth: 100,
+        id: 'action', name: 'Action', field: 'action', width: 75, maxWidth: 75,
         excludeFromExport: true,
         formatter: () => `<div class="fake-hyperlink">Action <span class="font-12px">&#9660;</span></div>`,
         cellMenu: {
@@ -683,7 +683,7 @@ export class Example11 {
     </div>
     <div>
       <div class="autocomplete-bottom-left">${item.itemNameTranslated}</div>
-    </div>`
+    </div>`;
   }
 
   renderItemCallbackWith4Corners(item: any): string {

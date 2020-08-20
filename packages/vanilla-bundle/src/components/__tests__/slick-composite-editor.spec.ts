@@ -4,10 +4,8 @@ import { SlickCompositeEditorComponent } from '../slick-composite-editor.compone
 declare const Slick: SlickNamespace;
 
 const gridOptionsMock = {
-  enableTreeData: true,
-  treeDataOptions: {
-    columnId: 'file'
-  }
+  enableCellNavigation: true,
+  enableCompositeEditor: true,
 } as GridOption;
 
 const dataViewStub = {
@@ -33,7 +31,7 @@ const gridStub = {
   getDataItem: jest.fn(),
   editActiveCell: jest.fn(),
   getEditorLock: () => getEditorLockMock,
-  getOptions: () => gridOptionsMock,
+  getOptions: jest.fn(),
   getUID: () => 'slickgrid_123456',
   getColumns: jest.fn(),
   getSortColumns: jest.fn(),
@@ -65,12 +63,23 @@ describe('CompositeEditorService', () => {
       jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);
       jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ row: 0, cell: 0 });
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
     });
 
     afterEach(() => {
       // clear all the spyOn mocks to not influence next test
       jest.clearAllMocks();
       component.dispose();
+      gridOptionsMock.enableCellNavigation = true;
+    });
+
+    it('should throw an error when the Grid Option flag "enableCellNavigation" is not enabled', () => {
+      const newGridOptions = { ...gridOptionsMock, enableCellNavigation: false };
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+
+      component = new SlickCompositeEditorComponent(gridStub);
+
+      expect(() => component.openDetails()).toThrowError('Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.');
     });
 
     it('should throw an error when there are no rows or active cell selected', () => {

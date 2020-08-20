@@ -203,9 +203,9 @@ export class Example12 {
         }
       },
       {
-        id: 'action', name: 'Action', field: 'action', width: 60, maxWidth: 60,
+        id: 'action', name: 'Action', field: 'action', width: 70, maxWidth: 70,
         excludeFromExport: true,
-        formatter: () => `<div class="button-style margin-auto" style="margin-top: -1px; width: 35px;"><span class="mdi mdi-chevron-down mdi-22px"></span></div>`,
+        formatter: () => `<div class="button-style margin-auto" style="margin-top: -1px; width: 35px;"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           width: 200,
@@ -262,6 +262,7 @@ export class Example12 {
       headerRowHeight: 35,
       enableCheckboxSelector: true,
       enableRowSelection: true,
+      multiSelect: false,
       checkboxSelector: {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,
