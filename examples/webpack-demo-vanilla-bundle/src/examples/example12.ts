@@ -258,7 +258,7 @@ export class Example12 {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: true
       },
-      rowHeight: 34,
+      rowHeight: 33,
       headerRowHeight: 35,
       enableCheckboxSelector: true,
       enableRowSelection: true,
