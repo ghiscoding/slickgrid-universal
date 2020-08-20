@@ -1,6 +1,16 @@
-@import './slickgrid-theme-material.bare';
+@import './variables-theme-material';
 @import './roboto-font';
+@import './slick-default-theme';
 @import './slick-without-bootstrap-min-styling';
+@import './slick-grid';
+@import './slick-controls';
+@import './slick-editors';
+@import './slick-plugins';
+@import './slick-pagination';
+@import './slick-footer';
+@import './slickgrid-examples';
+@import './slick-bootstrap';
+@import './ui-autocomplete';
 @import './material-svg-icons';
 @import './material-svg-utilities';
 

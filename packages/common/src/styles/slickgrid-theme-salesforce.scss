@@ -1,6 +1,20 @@
 /** Salesforce Theme (includes all external lib styling) */
-@import './slickgrid-theme-salesforce.bare';
+@import './flatpickr.min';
+@import './multiple-select';
+@import './sass-utilities';
+
+@import './variables-theme-salesforce';
 @import './slick-without-bootstrap-min-styling';
+@import './slick-default-theme';
+@import './slick-grid';
+@import './slick-controls';
+@import './slick-editors';
+@import './slick-plugins';
+@import './slick-pagination';
+@import './slick-footer';
+@import './slickgrid-examples';
+@import './slick-bootstrap';
+@import './ui-autocomplete';
 @import './material-svg-icons';
 @import './material-svg-utilities';
 
