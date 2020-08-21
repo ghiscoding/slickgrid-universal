@@ -223,6 +223,7 @@ export class Example12 {
               command: 'help',
               title: 'Help',
               iconCssClass: 'mdi mdi-help-circle-outline color-info',
+              textCssClass: 'color-info-dark',
               positionOrder: 66,
             },
             'divider',

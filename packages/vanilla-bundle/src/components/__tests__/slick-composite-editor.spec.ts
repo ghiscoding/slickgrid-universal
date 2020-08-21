@@ -23,12 +23,19 @@ const getEditorLockMock = {
   isActive: jest.fn(),
 };
 
+const getEditControllerMock = {
+  cancelCurrentEdit: jest.fn(),
+  commitCurrentEdit: jest.fn(),
+};
+
 const gridStub = {
   autosizeColumns: jest.fn(),
   getColumnIndex: jest.fn(),
   getActiveCell: jest.fn(),
+  getCellEditor: jest.fn(),
   getData: jest.fn(),
   getDataItem: jest.fn(),
+  getEditController: () => getEditControllerMock,
   editActiveCell: jest.fn(),
   getEditorLock: () => getEditorLockMock,
   getOptions: jest.fn(),
@@ -158,17 +165,116 @@ describe('CompositeEditorService', () => {
       component = new SlickCompositeEditorComponent(gridStub);
       component.openDetails();
 
-      const compositeContainerElm1 = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
+      const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
-      expect(compositeContainerElm1).toBeTruthy();
+      expect(compositeContainerElm).toBeTruthy();
 
       component.dispose();
 
       const compositeContainerElm2 = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
       expect(compositeContainerElm2).toBeFalsy();
     });
-  });
 
+    it('should pass a Header Title that has to be parsed from the dataContext object', () => {
+      const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+
+      component = new SlickCompositeEditorComponent(gridStub);
+      component.openDetails('Editing (#{id}) - #{product.name}');
+
+      const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
+      const compositeTitleElm = compositeContainerElm.querySelector<HTMLSelectElement>('.slick-editor-modal-title');
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+
+      component.dispose();
+
+      const compositeContainerElm2 = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
+      expect(compositeContainerElm2).toBeFalsy();
+      expect(compositeTitleElm.textContent).toBe('Editing (222) - Product ABC');
+    });
+
+    it('should execute "cancelCurrentEdit" when the "Esc" key is typed', () => {
+      const getEditSpy = jest.spyOn(gridStub, 'getEditController');
+      const cancelSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+
+      component = new SlickCompositeEditorComponent(gridStub);
+      component.openDetails();
+
+      const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
+      compositeContainerElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
+        code: 'Escape',
+        bubbles: true
+      }));
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+      expect(getEditSpy).toHaveBeenCalled();
+      expect(cancelSpy).toHaveBeenCalled();
+    });
+
+    it('should execute "validate" on current Editor when the "Tab" key is typed', () => {
+      const currentEditorMock = { validate: jest.fn() };
+      const getEditCellSpy = jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+      const validateSpy = jest.spyOn(currentEditorMock, 'validate');
+
+      component = new SlickCompositeEditorComponent(gridStub);
+      component.openDetails();
+
+      const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
+      compositeContainerElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
+        code: 'Tab',
+        bubbles: true
+      }));
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+      expect(getEditCellSpy).toHaveBeenCalled();
+      expect(validateSpy).toHaveBeenCalled();
+    });
+
+    it('should execute "cancelCurrentEdit" when the "Cancel" button is clicked', () => {
+      const getEditSpy = jest.spyOn(gridStub, 'getEditController');
+      const cancelSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+
+      component = new SlickCompositeEditorComponent(gridStub);
+      component.openDetails();
+
+      const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
+      const compositeFooterCancelBtnElm = compositeContainerElm.querySelector<HTMLSelectElement>('.btn-cancel');
+      compositeFooterCancelBtnElm.click();
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+      expect(compositeFooterCancelBtnElm).toBeTruthy();
+      expect(getEditSpy).toHaveBeenCalled();
+      expect(cancelSpy).toHaveBeenCalled();
+    });
+
+    it('should execute "commitCurrentEdit" when the "Save" button is clicked', () => {
+      const getEditSpy = jest.spyOn(gridStub, 'getEditController');
+      const saveSpy = jest.spyOn(gridStub.getEditController(), 'commitCurrentEdit');
+
+      component = new SlickCompositeEditorComponent(gridStub);
+      component.openDetails();
+
+      const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
+      const compositeFooterSaveBtnElm = compositeContainerElm.querySelector<HTMLSelectElement>('.btn-save');
+      compositeFooterSaveBtnElm.click();
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+      expect(compositeFooterSaveBtnElm).toBeTruthy();
+      expect(getEditSpy).toHaveBeenCalled();
+      expect(saveSpy).toHaveBeenCalled();
+    });
+  });
 });

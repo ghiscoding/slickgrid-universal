@@ -223,7 +223,7 @@ describe('Resizer Service', () => {
         expect(divContainer.outerHTML).toBeTruthy();
         expect(resizeSpy).toHaveBeenCalled();
         done();
-      }, 10);
+      }, 15);
     });
 
     it('should try to resize grid when its UI is deemed broken but expect an error shown in the console when "resizeGrid" throws an error', (done) => {

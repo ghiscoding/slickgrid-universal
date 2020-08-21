@@ -28,6 +28,9 @@ export class SlickCompositeEditorComponent {
       const columnDefinitions = this.grid.getColumns();
       let columnIndexWithEditor = activeCell.cell || 0;
       const dataContext = this.grid.getDataItem(activeCell.row);
+
+      // open the editor modal and we can also provide a header title with optional parsing pulled from the dataContext, via template #{}
+      // for example #{title} => display the item title, or even complex object works #{product.name} => display item product name
       const parsedHeaderTitle = headerTitle.replace(/\#{(.*?)}/g, (_match, group) => getDescendantProperty(dataContext, group));
 
       // make sure that current active cell has an editor
@@ -69,14 +72,14 @@ export class SlickCompositeEditorComponent {
 
       const modalCancelButtonElm = document.createElement('button');
       modalCancelButtonElm.type = 'button';
-      modalCancelButtonElm.className = 'btn btn-save btn-default';
+      modalCancelButtonElm.className = 'btn btn-cancel btn-default';
       modalCancelButtonElm.dataset.action = 'cancel';
       modalCancelButtonElm.dataset.ariaLabel = 'Cancel';
       modalCancelButtonElm.textContent = 'Cancel';
 
       const modalSaveButtonElm = document.createElement('button');
       modalSaveButtonElm.type = 'button';
-      modalSaveButtonElm.className = 'btn btn-cancel btn-primary';
+      modalSaveButtonElm.className = 'btn btn-save btn-primary';
       modalSaveButtonElm.dataset.action = 'save';
       modalSaveButtonElm.dataset.ariaLabel = 'Save';
       modalSaveButtonElm.textContent = 'Save';
@@ -114,12 +117,12 @@ export class SlickCompositeEditorComponent {
       this.grid.editActiveCell(compositeEditor.editor as unknown as Editor);
 
       // add event handlers
-      modalCloseButtonElm.addEventListener('click', this.handleCancelClicked.bind(this));
-      modalCancelButtonElm.addEventListener('click', this.handleCancelClicked.bind(this));
-      modalSaveButtonElm.addEventListener('click', this.handleSaveClicked.bind(this));
+      modalCloseButtonElm.addEventListener('click', this.cancelEditing.bind(this));
+      modalCancelButtonElm.addEventListener('click', this.cancelEditing.bind(this));
+      modalSaveButtonElm.addEventListener('click', this.commitEditing.bind(this));
       this._modalElm.addEventListener('keydown', (event: KeyboardEvent) => {
         if (event.code === 'Escape') {
-          this.handleCancelClicked();
+          this.cancelEditing();
           event.stopPropagation();
           event.preventDefault();
         } else if (event.code === 'Tab') {
@@ -131,11 +134,11 @@ export class SlickCompositeEditorComponent {
     }
   }
 
-  handleCancelClicked() {
+  cancelEditing() {
     this.grid.getEditController().cancelCurrentEdit();
   }
 
-  handleSaveClicked() {
+  commitEditing() {
     this.grid.getEditController().commitCurrentEdit();
   }
 
