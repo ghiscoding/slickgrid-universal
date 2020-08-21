@@ -63,6 +63,7 @@
     margin: 0;
     width: $cell-menu-item-width;
     height: $cell-menu-item-height;
+    vertical-align: middle;
 
     &:hover {
       border: $cell-menu-item-hover-border;

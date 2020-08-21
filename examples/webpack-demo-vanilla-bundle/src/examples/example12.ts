@@ -205,7 +205,7 @@ export class Example12 {
       {
         id: 'action', name: 'Action', field: 'action', width: 70, maxWidth: 70,
         excludeFromExport: true,
-        formatter: () => `<div class="button-style margin-auto" style="margin-top: -1px; width: 35px;"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
+        formatter: () => `<div class="button-style margin-auto" style="width: 35px;"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           width: 200,
@@ -213,7 +213,7 @@ export class Example12 {
           commandItems: [
             {
               command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'mdi mdi-close', cssClass: 'red', textCssClass: 'bold',
+              iconCssClass: 'mdi mdi-close color-danger', cssClass: 'red', textCssClass: 'bold',
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
                 return !args.dataContext.completed;
@@ -222,7 +222,7 @@ export class Example12 {
             {
               command: 'help',
               title: 'Help',
-              iconCssClass: 'mdi mdi-help-circle-outline',
+              iconCssClass: 'mdi mdi-help-circle-outline color-info',
               positionOrder: 66,
             },
             'divider',
