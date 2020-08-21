@@ -56,11 +56,11 @@
     right: 0;
     width: 20px;
     height: 25px;
-    /* background: url("multiple-select.png") left top no-repeat; */
+    background: url("multiple-select.png") left top no-repeat;
 }
 
 .ms-choice > div.open {
-  /* background: url('multiple-select.png') right top no-repeat; */
+  background: url('multiple-select.png') right top no-repeat;
 }
 
 .ms-drop {
@@ -120,13 +120,13 @@
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
-    /* background: #fff url('multiple-select.png') no-repeat 100% -22px; */
-    /* background: url('multiple-select.png') no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, white), color-stop(0.99, #eeeeee)); */
-    /* background: url('multiple-select.png') no-repeat 100% -22px, -webkit-linear-gradient(center bottom, white 85%, #eeeeee 99%); */
-    /* background: url('multiple-select.png') no-repeat 100% -22px, -moz-linear-gradient(center bottom, white 85%, #eeeeee 99%); */
-    /* background: url('multiple-select.png') no-repeat 100% -22px, -o-linear-gradient(bottom, white 85%, #eeeeee 99%); */
-    /* background: url('multiple-select.png') no-repeat 100% -22px, -ms-linear-gradient(top, #ffffff 85%, #eeeeee 99%); */
-    /* background: url('multiple-select.png') no-repeat 100% -22px, linear-gradient(to top, #ffffff 85%, #eeeeee 99%); */
+    background: #fff url('multiple-select.png') no-repeat 100% -22px;
+    background: url('multiple-select.png') no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, white), color-stop(0.99, #eeeeee));
+    background: url('multiple-select.png') no-repeat 100% -22px, -webkit-linear-gradient(center bottom, white 85%, #eeeeee 99%);
+    background: url('multiple-select.png') no-repeat 100% -22px, -moz-linear-gradient(center bottom, white 85%, #eeeeee 99%);
+    background: url('multiple-select.png') no-repeat 100% -22px, -o-linear-gradient(bottom, white 85%, #eeeeee 99%);
+    background: url('multiple-select.png') no-repeat 100% -22px, -ms-linear-gradient(top, #ffffff 85%, #eeeeee 99%);
+    background: url('multiple-select.png') no-repeat 100% -22px, linear-gradient(to top, #ffffff 85%, #eeeeee 99%);
 }
 
 .ms-search, .ms-search input {
