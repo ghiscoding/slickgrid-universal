@@ -52,7 +52,7 @@ export class SlickCompositeEditorComponent {
 
       const modalCloseButtonElm = document.createElement('button');
       modalCloseButtonElm.type = 'button';
-      modalCloseButtonElm.className = 'close mdi mdi-close';
+      modalCloseButtonElm.className = 'close mdi mdi-close mdi-20px';
       modalCloseButtonElm.dataset.action = 'cancel';
       modalCloseButtonElm.dataset.ariaLabel = 'Close';
 
