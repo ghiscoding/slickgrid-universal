@@ -273,6 +273,25 @@ describe('CompositeEditorService', () => {
       expect(cancelSpy).toHaveBeenCalled();
     });
 
+    it('should execute "cancelCurrentEdit" when the "Close" button is clicked even with option "closeOutside" is enabled', () => {
+      const getEditSpy = jest.spyOn(gridStub, 'getEditController');
+      const closeSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+
+      component = new SlickCompositeEditorComponent(gridStub);
+      component.openDetails('Some Details', { closeOutside: true });
+
+      const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
+      const compositeFooterCloseBtnElm = compositeContainerElm.querySelector<HTMLSelectElement>('.close');
+      compositeFooterCloseBtnElm.click();
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+      expect(compositeFooterCloseBtnElm).toBeTruthy();
+      expect(getEditSpy).toHaveBeenCalled();
+      expect(closeSpy).toHaveBeenCalled();
+    });
+
     it('should execute "commitCurrentEdit" when the "Save" button is clicked', () => {
       const getEditSpy = jest.spyOn(gridStub, 'getEditController');
       const saveSpy = jest.spyOn(gridStub.getEditController(), 'commitCurrentEdit');

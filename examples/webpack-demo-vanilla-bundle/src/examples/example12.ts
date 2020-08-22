@@ -67,6 +67,7 @@ export class Example12 {
     // bind any of the grid events
     this.gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
     this.gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
+    this.gridContainerElm.addEventListener('onbeforeeditcell', this.handleOnBeforeEditCell.bind(this));
     this.gridContainerElm.addEventListener('ondblclick', () => this.openEditorDetails(50));
   }
 
@@ -365,6 +366,24 @@ export class Example12 {
   handleItemDeleted(event) {
     const itemId = event && event.detail;
     console.log('item deleted with id:', itemId);
+  }
+
+  handleOnBeforeEditCell(event) {
+    const eventData = event?.detail?.eventData;
+    const args = event?.detail?.args;
+
+    if (args && args.column && args.item) {
+      console.log('handleOnBeforeEditCell', args);
+      if (!this.isItemEditable(args.item, args.column)) {
+        event.preventDefault();
+        eventData.stopImmediatePropagation();
+        return false;
+      }
+    }
+  }
+
+  isItemEditable(item, column) {
+    return true;
   }
 
   /**
@@ -694,6 +713,6 @@ export class Example12 {
     // open the editor modal and we can also provide a header title with optional parsing pulled from the dataContext, via template #{}
     // for example #{title} => display the item title, or even complex object works #{product.itemName} => display item product name
     const modalTitle = 'Editing - #{title}'; // 'Editing - #{title} (#{product.itemName})'
-    setTimeout(() => this.sgb.slickCompositeEditor?.openDetails(modalTitle), openDelay);
+    setTimeout(() => this.sgb.slickCompositeEditor?.openDetails(modalTitle, { closeOutside: true }), openDelay);
   }
 }

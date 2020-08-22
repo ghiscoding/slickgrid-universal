@@ -11,12 +11,16 @@ import {
   HtmlElementPosition,
   Locale,
   SlickGrid,
+  SlickNamespace,
 } from '../interfaces/index';
 import { getDescendantProperty, getHtmlElementOffset, getTranslationPrefix, setDeepValue } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 import { textValidator } from '../editorValidators/textValidator';
 
 const DEFAULT_MAX_LENGTH = 500;
+
+// using external non-typed js libraries
+declare const Slick: SlickNamespace;
 
 /*
  * An example of a 'detached' editor.
@@ -122,6 +126,12 @@ export class LongTextEditor implements Editor {
 
     this._$textarea.on('keydown', this.handleKeyDown.bind(this));
     this._$textarea.on('keyup', this.handleKeyUp.bind(this));
+    this._$textarea.on('focus', (event: Event) => {
+      this.grid.onBeforeEditCell.notify(
+        { ...this.grid.getActiveCell(), item: this.args.item, column: this.args.column, grid: this.grid, },
+        { ...new Slick.EventData(), ...event }
+      );
+    });
 
     if (!isCompositeEditor) {
       this.position(this.args && this.args.position);

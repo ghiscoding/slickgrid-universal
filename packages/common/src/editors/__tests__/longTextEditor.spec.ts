@@ -1,11 +1,12 @@
 import { Editors } from '../index';
 import { LongTextEditor } from '../longTextEditor';
 import { KeyCode } from '../../enums/index';
-import { AutocompleteOption, Column, SlickDataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { AutocompleteOption, Column, SlickDataView, EditorArgs, EditorArguments, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const KEY_CHAR_A = 97;
 const containerId = 'demo-container';
+declare const Slick: SlickNamespace;
 
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
@@ -26,12 +27,14 @@ const getEditorLockMock = {
 
 const gridStub = {
   getOptions: () => gridOptionMock,
+  getActiveCell: jest.fn(),
   getColumns: jest.fn(),
   getEditorLock: () => getEditorLockMock,
   getHeaderRowColumn: jest.fn(),
   navigateNext: jest.fn(),
   navigatePrev: jest.fn(),
   render: jest.fn(),
+  onBeforeEditCell: new Slick.Event(),
 } as unknown as SlickGrid;
 
 describe('LongTextEditor', () => {

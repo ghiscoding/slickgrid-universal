@@ -16,7 +16,7 @@ export class SlickCompositeEditorComponent {
     }
   }
 
-  openDetails(headerTitle = 'Details') {
+  openDetails(headerTitle = 'Details', options?: { closeOutside: boolean; }) {
     const activeCell = this.grid.getActiveCell();
     const gridOptions = this.grid.getOptions();
     const gridUid = this.grid.getUID() || '';
@@ -63,9 +63,13 @@ export class SlickCompositeEditorComponent {
 
       const modalCloseButtonElm = document.createElement('button');
       modalCloseButtonElm.type = 'button';
-      modalCloseButtonElm.className = 'close mdi mdi-close mdi-20px';
+      modalCloseButtonElm.className = 'close mdi mdi-close mdi-22px';
       modalCloseButtonElm.dataset.action = 'cancel';
       modalCloseButtonElm.dataset.ariaLabel = 'Close';
+      if (options?.closeOutside) {
+        modalHeaderTitleElm.classList.add('outside');
+        modalCloseButtonElm.classList.add('outside', 'color-light');
+      }
 
       const modalHeaderElm = document.createElement('div');
       modalHeaderElm.className = 'slick-editor-modal-header';

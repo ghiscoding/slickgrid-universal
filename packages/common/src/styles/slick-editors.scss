@@ -146,6 +146,10 @@
       width: $editor-modal-close-button-width;
       right: $editor-modal-close-button-right;
       top: $editor-modal-close-button-top;
+      &.outside {
+        right: $editor-modal-close-button-outside-right;
+        top: $editor-modal-close-button-outside-top;
+      }
     }
 
     .slick-editor-modal-title {
@@ -156,6 +160,9 @@
       text-overflow: ellipsis;
       width: calc(100% - #{$editor-modal-close-button-width} - #{$editor-modal-close-button-right});
       white-space: nowrap;
+      &.outside {
+        width: 100%;
+      }
     }
 
     .slick-editor-modal-body {
