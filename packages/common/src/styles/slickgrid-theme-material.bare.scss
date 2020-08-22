@@ -1,11 +1,15 @@
+/*!
+ * SlickGrid custom styling for Material (https://github.com/ghiscoding/slickgrid-universal)
+ * Licensed under MIT (https://github.com/ghiscoding/slickgrid-universal/blob/master/LICENSE)
+ * @author: Ghislain B. (ghiscoding)
+ *//*!
+
+// This is a bare version of "slickgrid-theme-material.scss",
+// Few files were removed and aren't included in this styling theme (while they are in original theme)
+// - (colors, extra-styling, material-svg-icons, material-svg-utilities, slick-without-bootstrap-min-styling)
+
+/** SlickGrid Material Theme */
 @import './sass-utilities';
-
-/**
- * This is a bare version of "slickgrid-theme-material.scss",
- * Few files were removed and aren't included in this styling theme (while they are in original theme)
- * - (colors, extra-styling, material-svg-icons, material-svg-utilities, slick-without-bootstrap-min-styling)
- */
-
 @import './variables-theme-material';
 @import './slick-default-theme';
 @import './slick-grid';

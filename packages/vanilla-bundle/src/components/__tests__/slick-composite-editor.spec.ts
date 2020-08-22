@@ -177,6 +177,21 @@ describe('CompositeEditorService', () => {
       expect(compositeContainerElm2).toBeFalsy();
     });
 
+    it('should be dispose the component when clicking in the backdrop outside the modal window', () => {
+      component = new SlickCompositeEditorComponent(gridStub);
+      component.openDetails();
+
+      const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+      compositeContainerElm.click();
+
+      const compositeContainerElm2 = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
+      expect(compositeContainerElm2).toBeFalsy();
+    });
+
     it('should pass a Header Title that has to be parsed from the dataContext object', () => {
       const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
       jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);

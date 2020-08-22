@@ -4,7 +4,7 @@
 // we'll use the same color set as text-colors defined in Bootstrap 4 (ref: https://getbootstrap.com/docs/4.5/utilities/colors/)
 // we also use the "recolor" @mixin to add CSS "filter" color on top of SVG icons
 
-// NOTE: remember that we are using CSS "filter" and that is NOT the same as a using color/background-color, it behaves differently
+// NOTE: remember that we are using CSS "filter" and that is NOT the same as a using regular color/background-color, it behaves differently
 
 $color-lighten-percentage: 6% !default;
 $color-darken-percentage: 6% !default;
@@ -24,6 +24,13 @@ $color-alt-default: #1e87f0 !default;
 $color-alt-warning: #faa05a !default;
 $color-alt-danger: #f0506e !default;
 $color-alt-success: #32d296 !default;
+$color-se-primary: #3dcd58 !default;
+$color-se-link: #42b4e6 !default;
+$color-se-link-dark: #337ab7 !default;
+$color-se-danger: #b10043 !default;
+$color-se-secondary: #9fa0a4 !default;
+$color-se-warning: #e47f00 !default;
+$color-se-warning-light: #ffd100 !default;
 
 .color-primary { @include recolor($color-primary, 1); }
 .color-secondary { @include recolor($color-secondary, 1); }
@@ -40,6 +47,14 @@ $color-alt-success: #32d296 !default;
 .color-alt-warning { @include recolor($color-alt-warning, 1); }
 .color-alt-danger { @include recolor($color-alt-danger, 1); }
 .color-alt-success { @include recolor($color-alt-success, 1); }
+.color-se-primary { @include recolor($color-se-primary, 1); }
+.color-se-link { @include recolor($color-se-link, 1); }
+.color-se-link-dark { @include recolor($color-se-link-dark, 1); }
+.color-se-danger { @include recolor($color-se-danger, 1); }
+.color-se-secondary { @include recolor($color-se-secondary, 1); }
+.color-se-warning { @include recolor($color-se-warning, 1); }
+.color-se-warning-light { @include recolor($color-se-warning-light, 1); }
+
 .color-primary-light { @include recolor(lighten($color-primary, $color-lighten-percentage), 1); }
 .color-primary-dark { @include recolor(darken($color-primary, $color-darken-percentage), 1); }
 .color-secondary-light { @include recolor(lighten($color-secondary, $color-lighten-percentage), 1); }

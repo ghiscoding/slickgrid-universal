@@ -1,11 +1,8 @@
-/*!
- * SlickGrid custom styling for Bootstrap (https://github.com/ghiscoding/slickgrid-universal)
+/*
+ * SlickGrid-Universal theming variables, used by all Themes
+ * Lib Website (https://github.com/ghiscoding/slickgrid-universal)
  * Licensed under MIT (https://github.com/ghiscoding/slickgrid-universal/blob/master/LICENSE)
- * @author: Ghislain B. (ghiscoding)
- *//*!
-
-/* SlickGrid Bootstrap variables */
-/* Used by slick-bootstrap.scss */
+ */
 $border-color:                                  #dddddd !default;
 $font-size-base-value:                          14 !default;
 $font-size-base:          			                $font-size-base-value + 0px !default;
@@ -245,7 +242,10 @@ $column-picker-checkbox-opacity:                0.15 !default;
 $column-picker-checkbox-opacity-hover:          0.35 !default;
 $column-picker-checkbox-width:                  13px !default;
 $column-picker-close-btn-bg-color:              #ffffff !default;
+$column-picker-close-btn-color:                 #c3c3c3 !default;
+$column-picker-close-btn-color-hover:           darken($column-picker-close-btn-color, 25%) !default;
 $column-picker-close-btn-cursor:                pointer !default;
+$column-picker-close-btn-font-family:           $font-family !default;
 $column-picker-close-btn-font-size:             21px !default;
 $column-picker-close-btn-border:                0px solid #9c9c9c !default;
 $column-picker-close-btn-height:                21px !default;
@@ -305,7 +305,10 @@ $grid-menu-checkbox-width:                      13px !default;
 $grid-menu-close-btn-cursor:                    pointer !default;
 $grid-menu-close-btn-bg-color:                  #ffffff !default;
 $grid-menu-close-btn-border:                    0px solid #9c9c9c !default;
-$grid-menu-close-btn-font-size:                 21px !default;
+$grid-menu-close-btn-color:                     $column-picker-close-btn-color !default;
+$grid-menu-close-btn-color-hover:               $column-picker-close-btn-color-hover !default;
+$grid-menu-close-btn-font-family:               $column-picker-close-btn-font-family !default;
+$grid-menu-close-btn-font-size:                 $column-picker-close-btn-font-size !default;
 $grid-menu-close-btn-height:                    21px !default;
 $grid-menu-close-btn-width:                     15px !default;
 $grid-menu-close-btn-margin:                    1px !default;
@@ -346,7 +349,10 @@ $cell-menu-border:                              1px solid #BFBDBD !default;
 $cell-menu-border-radius:                       2px !default;
 $cell-menu-close-btn-bg-color:                  #ffffff !default;
 $cell-menu-close-btn-border:                    0px solid #9c9c9c !default;
-$cell-menu-close-btn-font-size:                 21px !default;
+$cell-menu-close-btn-color:                     $column-picker-close-btn-color !default;
+$cell-menu-close-btn-color-hover:               $column-picker-close-btn-color-hover !default;
+$cell-menu-close-btn-font-family:               $column-picker-close-btn-font-family !default;
+$cell-menu-close-btn-font-size:                 $column-picker-close-btn-font-size !default;
 $cell-menu-close-btn-height:                    21px !default;
 $cell-menu-close-btn-width:                     15px !default;
 $cell-menu-close-btn-margin:                    1px !default;
@@ -384,6 +390,10 @@ $context-menu-border:                           1px solid #BFBDBD !default;
 $context-menu-border-radius:                    2px !default;
 $context-menu-close-btn-bg-color:               #ffffff !default;
 $context-menu-close-btn-border:                 0px solid #9c9c9c !default;
+$context-menu-close-btn-color:                  $column-picker-close-btn-color !default;
+$context-menu-close-btn-color-hover:            $column-picker-close-btn-color-hover !default;
+$context-menu-close-btn-font-family:            $column-picker-close-btn-font-family !default;
+$context-menu-close-btn-font-size:              $column-picker-close-btn-font-size !default;
 $context-menu-close-btn-height:                 21px !default;
 $context-menu-close-btn-width:                  15px !default;
 $context-menu-close-btn-margin:                 1px !default;
@@ -510,15 +520,19 @@ $slider-editor-focus-border-color:              $editor-focus-border-color !defa
 $slider-editor-focus-box-shadow:                $editor-focus-box-shadow !default;
 
 /* Slick Composite Editor Modal */
-$editor-modal-container-z-index:                9000 !default;
+$editor-modal-backdrop-transition-background:   rgba(0, 0, 0, 0.6) !default;
+$editor-modal-backdrop-transition-start:        opacity .15s linear !default;
+$editor-modal-backdrop-transition-end:          .3s linear !default;
 $editor-modal-container-border:                 1px solid #b8b8b8 !default;
-$editor-modal-container-margin:                 8px !default;
-$editor-modal-container-bg-color:              #ffffff !default;
+$editor-modal-container-bg-color:               #ffffff !default;
+$editor-modal-container-radius:                 2px !default;
 $editor-modal-container-box-shadow:             0 0 3px #a7a7a7 !default;
+$editor-modal-container-margin:                 8px !default;
 $editor-modal-container-width:                  400px !default;
 $editor-modal-container-top:                    20px !default;
 $editor-modal-container-left:                   50% !default;
 $editor-modal-container-transform:              translate(-50%) !default;
+$editor-modal-container-z-index:                1010 !default;
 $editor-modal-header-bg-color:                  #ffffff !default;
 $editor-modal-header-padding:                   12px 8px !default;
 $editor-modal-header-border-bottom:             1px solid #d2d2d2 !default;
@@ -537,7 +551,7 @@ $editor-modal-header-height:                    52px !default;
 $editor-modal-footer-height:                    50px !default;
 $editor-modal-body-margin-bottom:               5px !default;
 $editor-modal-body-min-height:                  250px !default;
-$editor-modal-body-max-height:                  calc(100vh - #{$editor-modal-header-height} - #{$editor-modal-footer-height} - 30px) !default;
+$editor-modal-body-max-height:                  calc(100vh - #{$editor-modal-header-height} - #{$editor-modal-footer-height} - 35px) !default;
 $editor-modal-body-padding:                     6px 8px 22px 8px !default;
 $editor-modal-body-overflow:                    hidden auto !default;
 $editor-modal-footer-bg-color:                  #f9f9f9 !default;

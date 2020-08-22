@@ -1,3 +1,4 @@
+// import 'slickgrid/slick.compositeeditor.js';
 import { Editor, CompositeEditorExtension, getDescendantProperty, SlickGrid } from '@slickgrid-universal/common';
 
 export class SlickCompositeEditorComponent {
@@ -8,6 +9,10 @@ export class SlickCompositeEditorComponent {
   dispose() {
     if (typeof this._modalElm?.remove === 'function') {
       this._modalElm.remove();
+
+      // remove the body backdrop click listener, every other listeners will be dropped automatically since we destroy the component
+      document.body.classList.remove('slick-modal-open');
+      document.body.removeEventListener('click', this.handleBodyClicked);
     }
   }
 
@@ -49,6 +54,9 @@ export class SlickCompositeEditorComponent {
       this._modalElm = document.createElement('div');
       this._modalElm.className = `slick-editor-modal ${gridUid}`;
 
+      const modalContentElm = document.createElement('div');
+      modalContentElm.className = 'slick-editor-modal-content';
+
       const modalHeaderTitleElm = document.createElement('div');
       modalHeaderTitleElm.className = 'slick-editor-modal-title';
       modalHeaderTitleElm.textContent = parsedHeaderTitle;
@@ -87,9 +95,10 @@ export class SlickCompositeEditorComponent {
       modalFooterElm.appendChild(modalCancelButtonElm);
       modalFooterElm.appendChild(modalSaveButtonElm);
 
-      this._modalElm.appendChild(modalHeaderElm);
-      this._modalElm.appendChild(modalBodyElm);
-      this._modalElm.appendChild(modalFooterElm);
+      modalContentElm.appendChild(modalHeaderElm);
+      modalContentElm.appendChild(modalBodyElm);
+      modalContentElm.appendChild(modalFooterElm);
+      this._modalElm.appendChild(modalContentElm);
 
       for (const column of columnDefinitions) {
         if (column.editor) {
@@ -111,24 +120,22 @@ export class SlickCompositeEditorComponent {
       }
 
       document.body.appendChild(this._modalElm);
+      document.body.classList.add('slick-modal-open'); // add backdrop to body
+      document.body.addEventListener('click', this.handleBodyClicked.bind(this));
 
       const containers = columnDefinitions.map(col => modalBodyElm.querySelector<HTMLDivElement>(`[data-editor-id=${col.id}]`)) || [];
       const compositeEditor = new CompositeEditorExtension(columnDefinitions, containers, { destroy: this.dispose.bind(this) });
-      this.grid.editActiveCell(compositeEditor.editor as unknown as Editor);
+      this.grid.editActiveCell((compositeEditor.editor) as unknown as Editor);
+
+      // @ts-ignore
+      // const compositeEditor = new Slick.CompositeEditor(columnDefinitions, containers, { destroy: this.dispose.bind(this) });
+      // this.grid.editActiveCell(compositeEditor);
 
       // add event handlers
       modalCloseButtonElm.addEventListener('click', this.cancelEditing.bind(this));
       modalCancelButtonElm.addEventListener('click', this.cancelEditing.bind(this));
       modalSaveButtonElm.addEventListener('click', this.commitEditing.bind(this));
-      this._modalElm.addEventListener('keydown', (event: KeyboardEvent) => {
-        if (event.code === 'Escape') {
-          this.cancelEditing();
-          event.stopPropagation();
-          event.preventDefault();
-        } else if (event.code === 'Tab') {
-          this.validateCurrentEditor();
-        }
-      });
+      this._modalElm.addEventListener('keydown', this.handleKeyDown.bind(this));
       this._modalElm.addEventListener('focusout', this.validateCurrentEditor.bind(this));
       this._modalElm.addEventListener('blur', this.validateCurrentEditor.bind(this));
     }
@@ -145,5 +152,25 @@ export class SlickCompositeEditorComponent {
   validateCurrentEditor() {
     const currentEditor = this.grid.getCellEditor();
     currentEditor.validate();
+  }
+
+  // --
+  // private methods
+  // ----------------
+
+  private handleBodyClicked(event: Event) {
+    if ((event.target as HTMLElement).classList.contains('slick-editor-modal')) {
+      this.dispose();
+    }
+  }
+
+  private handleKeyDown(event: KeyboardEvent) {
+    if (event.code === 'Escape') {
+      this.cancelEditing();
+      event.stopPropagation();
+      event.preventDefault();
+    } else if (event.code === 'Tab') {
+      this.validateCurrentEditor();
+    }
   }
 }

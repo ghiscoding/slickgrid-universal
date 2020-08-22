@@ -1,10 +1,6 @@
 $primary-color:#009530;
 $link-color: #2cad56;
 
-// You can change the SVG color using their associated SASS $icon-color-mdi-XYZ
-$icon-color: #363636;
-$icon-color-mdi-close: $icon-color;
-
 /* make sure to add the @import the SlickGrid Bootstrap Theme AFTER the variables changes */
 @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss';
 // @import '@slickgrid-universal/common/dist/styles/sass/se-slickgrid-theme-material.scss';

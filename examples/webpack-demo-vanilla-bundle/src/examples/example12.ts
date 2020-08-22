@@ -217,6 +217,12 @@ export class Example12 {
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
                 return !args.dataContext.completed;
+              },
+              action: (event, args) => {
+                const dataContext = args.dataContext;
+                if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"`)) {
+                  this.slickerGridInstance.gridService.deleteItemById(dataContext.id);
+                }
               }
             },
             {
@@ -225,6 +231,7 @@ export class Example12 {
               iconCssClass: 'mdi mdi-help-circle-outline color-info',
               textCssClass: 'color-info-dark',
               positionOrder: 66,
+              action: () => alert('Please Help!'),
             },
             'divider',
             { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67, }
@@ -299,19 +306,6 @@ export class Example12 {
       },
       // when using the cellMenu, you can change some of the default options and all use some of the callback methods
       enableCellMenu: true,
-      cellMenu: {
-        // all the Cell Menu callback methods (except the action callback)
-        // are available under the grid options as shown below
-        onCommand: (e, args) => this.executeCommand(e, args),
-        onOptionSelected: (e, args) => {
-          // change "Completed" property with new option selected from the Cell Menu
-          const dataContext = args && args.dataContext;
-          if (dataContext && dataContext.hasOwnProperty('completed')) {
-            dataContext.completed = args.item.option;
-            this.sgb.gridService.updateItem(dataContext);
-          }
-        },
-      },
     };
   }
 
@@ -371,22 +365,6 @@ export class Example12 {
   handleItemDeleted(event) {
     const itemId = event && event.detail;
     console.log('item deleted with id:', itemId);
-  }
-
-  async executeCommand(e, args) {
-    const command = args.command;
-    const dataContext = args.dataContext;
-
-    switch (command) {
-      case 'help':
-        alert('Please help!');
-        break;
-      case 'delete-row':
-        if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"`)) {
-          this.slickerGridInstance.gridService.deleteItemById(dataContext.id);
-        }
-        break;
-    }
   }
 
   /**
@@ -715,6 +693,7 @@ export class Example12 {
   openEditorDetails(openDelay = 0) {
     // open the editor modal and we can also provide a header title with optional parsing pulled from the dataContext, via template #{}
     // for example #{title} => display the item title, or even complex object works #{product.itemName} => display item product name
-    setTimeout(() => this.sgb.slickCompositeEditor?.openDetails('Editing - #{title} (#{product.itemName})'), openDelay);
+    const modalTitle = 'Editing - #{title}'; // 'Editing - #{title} (#{product.itemName})'
+    setTimeout(() => this.sgb.slickCompositeEditor?.openDetails(modalTitle), openDelay);
   }
 }

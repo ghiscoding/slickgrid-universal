@@ -214,17 +214,25 @@ export class Example11 {
           commandItems: [
             {
               command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'mdi mdi-close', cssClass: 'red', textCssClass: 'bold',
+              iconCssClass: 'mdi mdi-close color-danger', cssClass: 'red', textCssClass: 'bold',
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
                 return !args.dataContext.completed;
+              },
+              action: (event, args) => {
+                const dataContext = args.dataContext;
+                if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"`)) {
+                  this.slickerGridInstance.gridService.deleteItemById(dataContext.id);
+                }
               }
             },
             {
               command: 'help',
               title: 'Help',
-              iconCssClass: 'mdi mdi-help-circle-outline',
+              iconCssClass: 'mdi mdi-help-circle-outline color-info',
+              textCssClass: 'color-info-dark',
               positionOrder: 66,
+              action: () => alert('Please Help!'),
             },
             'divider',
             { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67, }
@@ -278,19 +286,6 @@ export class Example11 {
       },
       // when using the cellMenu, you can change some of the default options and all use some of the callback methods
       enableCellMenu: true,
-      cellMenu: {
-        // all the Cell Menu callback methods (except the action callback)
-        // are available under the grid options as shown below
-        onCommand: (e, args) => this.executeCommand(e, args),
-        onOptionSelected: (e, args) => {
-          // change "Completed" property with new option selected from the Cell Menu
-          const dataContext = args && args.dataContext;
-          if (dataContext && dataContext.hasOwnProperty('completed')) {
-            dataContext.completed = args.item.option;
-            this.sgb.gridService.updateItem(dataContext);
-          }
-        },
-      },
       enableContextMenu: true,
       contextMenu: {
         commandItems: [
