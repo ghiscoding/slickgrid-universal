@@ -59,7 +59,6 @@ $column-picker-checkbox-font-weight:        normal !default;
 $column-picker-checkbox-icon-checked:       url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($column-picker-checkbox-color)}" viewBox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg>') !default;
 $column-picker-checkbox-icon-unchecked:     $column-picker-checkbox-icon-checked !default;
 $column-picker-checkbox-width:              $icon-width !default;
-$column-picker-close-btn-font-family:       Arial, sans-serif !default;
 $column-picker-close-btn-font-size:         23px !default;
 $column-picker-title-font-size:             18px !default;
 $cell-menu-close-btn-margin:                -4px 1px 1px 1px !default;

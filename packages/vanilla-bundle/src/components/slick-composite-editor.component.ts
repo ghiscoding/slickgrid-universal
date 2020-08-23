@@ -63,12 +63,13 @@ export class SlickCompositeEditorComponent {
 
       const modalCloseButtonElm = document.createElement('button');
       modalCloseButtonElm.type = 'button';
-      modalCloseButtonElm.className = 'close mdi mdi-close mdi-22px';
-      modalCloseButtonElm.dataset.action = 'cancel';
+      modalCloseButtonElm.textContent = '×';
+      modalCloseButtonElm.className = 'close';
+      modalCloseButtonElm.dataset.action = 'close';
       modalCloseButtonElm.dataset.ariaLabel = 'Close';
       if (options?.closeOutside) {
         modalHeaderTitleElm.classList.add('outside');
-        modalCloseButtonElm.classList.add('outside', 'color-light');
+        modalCloseButtonElm.classList.add('outside');
       }
 
       const modalHeaderElm = document.createElement('div');

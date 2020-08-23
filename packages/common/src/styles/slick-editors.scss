@@ -121,6 +121,12 @@
     transition: $editor-modal-backdrop-transition-end;
     transition-property: opacity,transform;
 
+    @media only screen and (max-width: 768px) {
+      width: 100%;
+      margin: 0;
+      top: 0;
+    }
+
     .btn {
       margin: $editor-modal-footer-button-margin;
       height: $editor-modal-footer-button-height;
@@ -135,20 +141,32 @@
       cursor: pointer;
       position: absolute;
       float: right;
-      background-color: $editor-modal-close-button-bg-color;
-      border: $editor-modal-close-button-border;
-      color: $editor-modal-close-button-color;
-      font-size: $editor-modal-close-button-font-size;
-      font-weight: $editor-modal-close-button-font-weight;
-      height: $editor-modal-close-button-height;
-      margin: $editor-modal-close-button-margin;
-      padding: $editor-modal-close-button-padding;
-      width: $editor-modal-close-button-width;
-      right: $editor-modal-close-button-right;
-      top: $editor-modal-close-button-top;
+      line-height: 0;
+      background-color: $editor-modal-close-btn-bg-color;
+      border: $editor-modal-close-btn-border;
+      color: $editor-modal-close-btn-color;
+      font-family: $editor-modal-close-btn-font-family;
+      font-size: $editor-modal-close-btn-font-size;
+      font-weight: $editor-modal-close-btn-font-weight;
+      height: $editor-modal-close-btn-height;
+      margin: $editor-modal-close-btn-margin;
+      padding: $editor-modal-close-btn-padding;
+      width: $editor-modal-close-btn-width;
+      right: $editor-modal-close-btn-right;
+      top: $editor-modal-close-btn-top;
+      &:hover {
+        color: $editor-modal-close-btn-color-hover;
+      }
       &.outside {
-        right: $editor-modal-close-button-outside-right;
-        top: $editor-modal-close-button-outside-top;
+        @media only screen and (min-width: 769px) {
+          color: $editor-modal-close-btn-outside-color;
+          &:hover {
+            color: $editor-modal-close-btn-outside-color-hover;
+          }
+          font-size: $editor-modal-close-btn-outside-font-size;
+          right: $editor-modal-close-btn-outside-right;
+          top: $editor-modal-close-btn-outside-top;
+        }
       }
     }
 
@@ -158,7 +176,7 @@
       color: $editor-modal-title-font-color;
       overflow-x: hidden;
       text-overflow: ellipsis;
-      width: calc(100% - #{$editor-modal-close-button-width} - #{$editor-modal-close-button-right});
+      width: calc(100% - #{$editor-modal-close-btn-width} - #{$editor-modal-close-btn-right});
       white-space: nowrap;
       &.outside {
         width: 100%;
