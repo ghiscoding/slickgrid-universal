@@ -68,6 +68,7 @@ export class Example12 {
     this.gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
     this.gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
     this.gridContainerElm.addEventListener('onbeforeeditcell', this.handleOnBeforeEditCell.bind(this));
+    this.gridContainerElm.addEventListener('oncellchange', this.handleOnCellChange.bind(this));
     this.gridContainerElm.addEventListener('ondblclick', () => this.openEditorDetails(50));
   }
 
@@ -380,6 +381,10 @@ export class Example12 {
         return false;
       }
     }
+  }
+
+  handleOnCellChange(event, args) {
+    console.log('handleOnCellChange', event, args)
   }
 
   isItemEditable(item, column) {

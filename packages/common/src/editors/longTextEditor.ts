@@ -126,14 +126,19 @@ export class LongTextEditor implements Editor {
 
     this._$textarea.on('keydown', this.handleKeyDown.bind(this));
     this._$textarea.on('keyup', this.handleKeyUp.bind(this));
-    this._$textarea.on('focus', (event: Event) => {
-      this.grid.onBeforeEditCell.notify(
-        { ...this.grid.getActiveCell(), item: this.args.item, column: this.args.column, grid: this.grid, },
-        { ...new Slick.EventData(), ...event }
-      );
-    });
 
-    if (!isCompositeEditor) {
+    if (isCompositeEditor) {
+      const activeCell = this.grid.getActiveCell();
+      const item = this.args.item;
+      const column = this.args.column;
+      const grid = this.grid;
+
+      this._$textarea.on('focus', (event: Event) => grid.onBeforeEditCell.notify({ ...activeCell, item, column, grid, }, { ...new Slick.EventData(), ...event }));
+      this._$textarea.on('change', (event: Event) => {
+        this.applyValue(item, this.serializeValue());
+        grid.onCellChange.notify({ ...activeCell, item, grid, }, { ...new Slick.EventData(), ...event })
+      });
+    } else {
       this.position(this.args && this.args.position);
       this._$wrapper.find('.btn-save').on('click', () => this.save());
       this._$wrapper.find('.btn-cancel').on('click', () => this.cancel());
