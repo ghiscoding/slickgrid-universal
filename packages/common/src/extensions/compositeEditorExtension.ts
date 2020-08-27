@@ -3,7 +3,7 @@ import {
   CompositeEditorError,
   CompositeEditorOption,
   Editor,
-  EditorValidatorOutput,
+  EditorValidationResult,
   HtmlElementPosition,
 } from '../interfaces/index';
 
@@ -13,11 +13,13 @@ import {
  */
 export class CompositeEditorExtension implements Editor {
   defaultOptions: CompositeEditorOption = {
+    modalType: 'edit', // available type (create, edit, mass)
     validationFailedMsg: 'Some of the fields have failed validation',
     show: undefined,
     hide: undefined,
     position: undefined,
-    destroy: undefined
+    destroy: undefined,
+    formValues: {},
   };
 
   firstInvalidEditor: Editor | null;
@@ -54,7 +56,7 @@ export class CompositeEditorExtension implements Editor {
   serializeValue() { }
   applyValue(item: any, state: any) { }
   loadValue(item: any) { }
-  validate(): EditorValidatorOutput { return { valid: true, msg: '' }; }
+  validate(): EditorValidationResult { return { valid: true, msg: '' }; }
   hide() { }
   show() { }
   position(parentPosition: HtmlElementPosition) { }
@@ -72,7 +74,7 @@ export class CompositeEditorExtension implements Editor {
           newArgs.position = this.getContainerBox(idx);
           newArgs.commitChanges = () => { };
           newArgs.cancelChanges = () => { };
-          newArgs.isCompositeEditor = true;
+          newArgs.compositeEditorOptions = this.options;
 
           editors.push(new (columnDef.editor)(newArgs));
         }
@@ -135,7 +137,7 @@ export class CompositeEditorExtension implements Editor {
       }
     };
 
-    this.validate = (): EditorValidatorOutput => {
+    this.validate = (): EditorValidationResult => {
       let validationResults;
 
       const errors: CompositeEditorError[] = [];
@@ -145,7 +147,7 @@ export class CompositeEditorExtension implements Editor {
       editors.forEach((editor, index) => {
         const columnDef: Column = (editor as any)?.args?.column;
         if (columnDef) {
-          const $validationElm = $('.slick-editor-detail-validation.editor-' + columnDef.id);
+          const $validationElm = $('.item-details-validation.editor-' + columnDef.id);
           validationResults = editor.validate();
 
           if (!validationResults.valid) {

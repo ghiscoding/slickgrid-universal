@@ -1,6 +1,9 @@
 import { Constants } from './../constants';
-import { Column, ColumnEditor, Editor, EditorArguments, EditorValidator, EditorValidatorOutput, SlickGrid } from './../interfaces/index';
+import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, SlickGrid, SlickNamespace } from './../interfaces/index';
 import { getDescendantProperty, setDeepValue } from '../services/utilities';
+
+// using external non-typed js libraries
+declare const Slick: SlickNamespace;
 
 /*
  * An example of a 'detached' editor.
@@ -48,22 +51,36 @@ export class CheckboxEditor implements Editor {
   init(): void {
     const columnId = this.columnDef && this.columnDef.id;
     const title = this.columnEditor && this.columnEditor.title || '';
-    const isCompositeEditor = this.args.isCompositeEditor;
+    const compositeEditorOptions = this.args.compositeEditorOptions;
 
-    this._input = document.createElement('input') as HTMLInputElement;
+    const checkboxContainerElm = document.createElement('div');
+    checkboxContainerElm.className = `checkbox-editor-container editor-${columnId}`;
+
+    this._input = document.createElement('input');
     this._input.className = `editor-checkbox editor-${columnId}`;
     this._input.title = title;
     this._input.type = 'checkbox';
     this._input.value = 'true';
+
     const cellContainer = this.args?.container;
     if (cellContainer && typeof cellContainer.appendChild === 'function') {
-      cellContainer.appendChild(this._input);
+      if (compositeEditorOptions) {
+        checkboxContainerElm.appendChild(this._input);
+        cellContainer.appendChild(checkboxContainerElm);
+      } else {
+        cellContainer.appendChild(this._input);
+      }
     }
-    this.focus();
 
     // make the checkbox editor act like a regular checkbox that commit the value on click
-    if (this.hasAutoCommitEdit && !isCompositeEditor) {
+    if (this.hasAutoCommitEdit && !compositeEditorOptions) {
       this._input.addEventListener('click', () => this.save());
+    }
+
+    if (compositeEditorOptions) {
+      this._input.addEventListener('change', (event: KeyboardEvent) => this.handleChangeOnCompositeEditor(event, compositeEditorOptions));
+    } else {
+      this.focus();
     }
   }
 
@@ -94,7 +111,7 @@ export class CheckboxEditor implements Editor {
       const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
       // validate the value before applying it (if not valid we'll set an empty string)
-      const validation = this.validate(state);
+      const validation = this.validate(null, state);
       const newValue = (validation && validation.valid) ? state : '';
 
       // set the new value to the item datacontext
@@ -138,8 +155,8 @@ export class CheckboxEditor implements Editor {
     return this._input.checked;
   }
 
-  validate(inputValue?: any): EditorValidatorOutput {
-    const isRequired = this.columnEditor.required;
+  validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
+    const isRequired = this.args?.compositeEditorOptions ? false : this.columnEditor.required;
     const isChecked = (inputValue !== undefined) ? inputValue : this._input.checked;
     const errorMsg = this.columnEditor.errorMessage;
 
@@ -159,5 +176,23 @@ export class CheckboxEditor implements Editor {
       valid: true,
       msg: null
     };
+  }
+
+  // --
+  // private functions
+  // ------------------
+
+  private handleChangeOnCompositeEditor(event: Event, compositeEditorOptions: CompositeEditorOption) {
+    const activeCell = this.grid.getActiveCell();
+    const column = this.args.column;
+    const item = this.args.item;
+    const grid = this.grid;
+
+    // when valid, we'll also apply the new value to the dataContext item object
+    if (this.validate().valid) {
+      this.applyValue(this.args.item, this.serializeValue());
+    }
+    this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
   }
 }

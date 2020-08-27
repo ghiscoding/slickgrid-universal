@@ -1,4 +1,4 @@
-import { Column, SlickDataView, ElementPosition, SlickGrid } from './index';
+import { Column, CompositeEditorOption, ElementPosition, SlickDataView, SlickGrid } from './index';
 
 export interface EditorArguments {
   /** Column Definition */
@@ -29,7 +29,7 @@ export interface EditorArguments {
   position: ElementPosition;
 
   /** When it's a Composite Editor (that is when it's an Editor created by the Composite Editor Modal window) */
-  isCompositeEditor?: boolean;
+  compositeEditorOptions?: CompositeEditorOption;
 
   // methods
 

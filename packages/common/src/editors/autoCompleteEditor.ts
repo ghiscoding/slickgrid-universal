@@ -4,12 +4,14 @@ import {
   CollectionCustomStructure,
   Column,
   ColumnEditor,
+  CompositeEditorOption,
   Editor,
   EditorArguments,
   EditorValidator,
-  EditorValidatorOutput,
+  EditorValidationResult,
   GridOption,
   SlickGrid,
+  SlickNamespace,
 } from './../interfaces/index';
 import { textValidator } from '../editorValidators/textValidator';
 import {
@@ -22,6 +24,9 @@ import {
 
 // minimum length of chars to type before starting to start querying
 const MIN_LENGTH = 3;
+
+// using external non-typed js libraries
+declare const Slick: SlickNamespace;
 
 /*
  * An example of a 'detached' editor.
@@ -176,7 +181,7 @@ export class AutoCompleteEditor implements Editor {
       const isComplexObject = fieldName?.indexOf('.') > 0;
 
       // validate the value before applying it (if not valid we'll set an empty string)
-      const validation = this.validate(newValue);
+      const validation = this.validate(null, newValue);
       newValue = (validation && validation.valid) ? newValue : '';
 
       // set the new value to the item datacontext
@@ -248,7 +253,7 @@ export class AutoCompleteEditor implements Editor {
     return this._currentValue;
   }
 
-  validate(inputValue?: any): EditorValidatorOutput {
+  validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
     const val = (inputValue !== undefined) ? inputValue : this._$editorElm && this._$editorElm.val && this._$editorElm.val();
     return textValidator(val, {
       editorArgs: this.args,
@@ -256,7 +261,7 @@ export class AutoCompleteEditor implements Editor {
       minLength: this.columnEditor.minLength,
       maxLength: this.columnEditor.maxLength,
       operatorConditionalType: this.columnEditor.operatorConditionalType,
-      required: this.columnEditor.required,
+      required: this.args?.compositeEditorOptions ? false : this.columnEditor.required,
       validator: this.validator,
     });
   }
@@ -265,22 +270,38 @@ export class AutoCompleteEditor implements Editor {
   // private functions
   // ------------------
 
+  private handleChangeOnCompositeEditor(event: Event, compositeEditorOptions: CompositeEditorOption) {
+    const activeCell = this.grid.getActiveCell();
+    const column = this.args.column;
+    const item = this.args.item;
+    const grid = this.grid;
+
+    // when valid, we'll also apply the new value to the dataContext item object
+    if (this.validate().valid) {
+      this.applyValue(this.args.item, this.serializeValue());
+    }
+    this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
+  }
+
   // this function should be PRIVATE but for unit tests purposes we'll make it public until a better solution is found
   // a better solution would be to get the autocomplete DOM element to work with selection but I couldn't find how to do that in Jest
-  onSelect(_event: Event, ui: { item: any; }) {
+  onSelect(event: Event, ui: { item: any; }) {
     if (ui && ui.item) {
-      const item = ui && ui.item;
-      this._currentValue = item;
-      const isCompositeEditor = this.args.isCompositeEditor;
+      const selectedItem = ui && ui.item;
+      this._currentValue = selectedItem;
+      const compositeEditorOptions = this.args.compositeEditorOptions;
 
       // when the user defines a "renderItem" (or "_renderItem") template, then we assume the user defines his own custom structure of label/value pair
       // otherwise we know that jQueryUI always require a label/value pair, we can pull them directly
       const hasCustomRenderItemCallback = this.columnEditor?.callbacks?.hasOwnProperty('_renderItem') ?? this.columnEditor?.editorOptions?.renderItem ?? false;
 
-      const itemLabel = typeof item === 'string' ? item : (hasCustomRenderItemCallback ? item[this.labelName] : item.label);
+      const itemLabel = typeof selectedItem === 'string' ? selectedItem : (hasCustomRenderItemCallback ? selectedItem[this.labelName] : selectedItem.label);
       this.setValue(itemLabel);
 
-      if (!isCompositeEditor) {
+      if (compositeEditorOptions) {
+        this.handleChangeOnCompositeEditor(event, compositeEditorOptions);
+      } else {
         this.save();
       }
     }
@@ -413,7 +434,7 @@ export class AutoCompleteEditor implements Editor {
 
     this._$editorElm.on('focus', () => this._$editorElm.select());
 
-    if (!this.args.isCompositeEditor) {
+    if (!this.args.compositeEditorOptions) {
       setTimeout(() => this.focus(), 50);
     }
   }

@@ -1,6 +1,6 @@
 import { CompositeEditorError } from './compositeEditorError.interface';
 
-export interface EditorValidatorOutput {
+export interface EditorValidationResult {
   /** Did the validation pass? */
   valid: boolean;
 

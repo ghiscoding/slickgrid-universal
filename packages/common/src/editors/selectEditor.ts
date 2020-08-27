@@ -5,18 +5,23 @@ import {
   CollectionOption,
   Column,
   ColumnEditor,
+  CompositeEditorOption,
   Editor,
   EditorArguments,
   EditorValidator,
-  EditorValidatorOutput,
+  EditorValidationResult,
   GridOption,
   Locale,
   MultipleSelectOption,
   SelectOption,
   SlickGrid,
+  SlickNamespace,
 } from './../interfaces/index';
 import { CollectionService, findOrDefault, TranslaterService } from '../services/index';
 import { charArraysEqual, getDescendantProperty, getTranslationPrefix, htmlEncode, sanitizeTextByAvailableSanitizer, setDeepValue } from '../services/utilities';
+
+// using external non-typed js libraries
+declare const Slick: SlickNamespace;
 
 /**
  * Slickgrid editor class for multiple/single select lists
@@ -90,7 +95,7 @@ export class SelectEditor implements Editor {
     // provide the name attribute to the DOM element which will be needed to auto-adjust drop position (dropup / dropdown)
     const columnId = this.columnDef && this.columnDef.id;
     this.elementName = `editor-${columnId}`;
-    const isCompositeEditor = this.args.isCompositeEditor;
+    const compositeEditorOptions = this.args.compositeEditorOptions;
 
     const libOptions: MultipleSelectOption = {
       autoAdjustDropHeight: true,
@@ -107,7 +112,9 @@ export class SelectEditor implements Editor {
         return isRenderHtmlEnabled ? $elm.text() : $elm.html();
       },
       onClose: () => {
-        if (!isCompositeEditor) {
+        if (compositeEditorOptions) {
+          this.handleChangeOnCompositeEditor(compositeEditorOptions);
+        } else {
           this.save();
         }
       },
@@ -307,7 +314,7 @@ export class SelectEditor implements Editor {
   }
 
   show() {
-    if (!this.args.isCompositeEditor && this.$editorElm && typeof this.$editorElm.multipleSelect === 'function') {
+    if (!this.args.compositeEditorOptions && this.$editorElm && typeof this.$editorElm.multipleSelect === 'function') {
       this.$editorElm.multipleSelect('open');
     }
   }
@@ -333,7 +340,7 @@ export class SelectEditor implements Editor {
       const isComplexObject = fieldName !== undefined && fieldName?.indexOf('.') > 0;
 
       // validate the value before applying it (if not valid we'll set an empty string)
-      const validation = this.validate(newValue);
+      const validation = this.validate(null, newValue);
       newValue = (validation && validation.valid) ? newValue : '';
 
       // set the new value to the item datacontext
@@ -412,7 +419,7 @@ export class SelectEditor implements Editor {
     // autocommit will not focus the next editor
     const validation = this.validate();
     if (validation && validation.valid && this.isValueChanged()) {
-      if (!this._destroying && this.hasAutoCommitEdit && !this.args.isCompositeEditor) {
+      if (!this._destroying && this.hasAutoCommitEdit && !this.args.compositeEditorOptions) {
         // do not use args.commitChanges() as this sets the focus to the next row.
         // also the select list will stay shown when clicking off the grid
         this.grid.getEditorLock().commitCurrentEdit();
@@ -439,8 +446,8 @@ export class SelectEditor implements Editor {
     return this.$editorElm.val() !== this.originalValue;
   }
 
-  validate(inputValue?: any): EditorValidatorOutput {
-    const isRequired = this.columnEditor && this.columnEditor.required;
+  validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
+    const isRequired = this.args?.compositeEditorOptions ? false : this.columnEditor?.required;
     const elmValue = (inputValue !== undefined) ? inputValue : this.$editorElm && this.$editorElm.val && this.$editorElm.val();
     const errorMsg = this.columnEditor && this.columnEditor.errorMessage;
 
@@ -614,10 +621,24 @@ export class SelectEditor implements Editor {
       const editorOptions = (this.columnDef && this.columnDef.internalColumnEditor) ? this.columnDef.internalColumnEditor.editorOptions : {};
       this.editorElmOptions = { ...this.defaultOptions, ...editorOptions };
       this.$editorElm = this.$editorElm.multipleSelect(this.editorElmOptions);
-      if (!this.args.isCompositeEditor) {
+      if (!this.args.compositeEditorOptions) {
         setTimeout(() => this.show());
       }
     }
+  }
+
+  protected handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption) {
+    const activeCell = this.grid.getActiveCell();
+    const column = this.args.column;
+    const item = this.args.item;
+    const grid = this.grid;
+
+    // when valid, we'll also apply the new value to the dataContext item object
+    if (this.validate().valid) {
+      this.applyValue(this.args.item, this.serializeValue());
+    }
+    this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, new Slick.EventData());
   }
 
   // refresh the jquery object because the selected checkboxes were already set

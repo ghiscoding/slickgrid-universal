@@ -1,9 +1,12 @@
 import { KeyCode } from '../enums/index';
-import { Column, ColumnEditor, Editor, EditorArguments, EditorValidator, EditorValidatorOutput, SlickGrid } from '../interfaces/index';
+import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, SlickGrid, SlickNamespace } from '../interfaces/index';
 import { setDeepValue, getDescendantProperty } from '../services/utilities';
 import { floatValidator } from '../editorValidators/floatValidator';
 
 const defaultDecimalPlaces = 0;
+
+// using external non-typed js libraries
+declare const Slick: SlickNamespace;
 
 /*
  * An example of a 'detached' editor.
@@ -55,7 +58,7 @@ export class FloatEditor implements Editor {
       const placeholder = this.columnEditor.placeholder || '';
       const title = this.columnEditor.title || '';
       const inputStep = (this.columnEditor.valueStep !== undefined) ? this.columnEditor.valueStep : this.getInputDecimalSteps();
-      const isCompositeEditor = this.args.isCompositeEditor;
+      const compositeEditorOptions = this.args.compositeEditorOptions;
 
       this._input = document.createElement('input') as HTMLInputElement;
       this._input.className = `editor-text editor-${columnId}`;
@@ -80,11 +83,13 @@ export class FloatEditor implements Editor {
 
       // the lib does not get the focus out event for some reason
       // so register it here
-      if (this.hasAutoCommitEdit && !isCompositeEditor) {
+      if (this.hasAutoCommitEdit && !compositeEditorOptions) {
         this._input.addEventListener('focusout', () => this.save());
       }
 
-      if (!isCompositeEditor) {
+      if (compositeEditorOptions) {
+        this._input.addEventListener('change', (event: KeyboardEvent) => this.handleChangeOnCompositeEditor(event, compositeEditorOptions));
+      } else {
         setTimeout(() => this.focus(), 50);
       }
     }
@@ -138,7 +143,7 @@ export class FloatEditor implements Editor {
     if (fieldName !== undefined) {
       const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
-      const validation = this.validate(state);
+      const validation = this.validate(null, state);
       const newValue = (validation && validation.valid) ? state : '';
 
       // set the new value to the item datacontext
@@ -206,7 +211,7 @@ export class FloatEditor implements Editor {
     return rtn;
   }
 
-  validate(inputValue?: any): EditorValidatorOutput {
+  validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
     const elmValue = (inputValue !== undefined) ? inputValue : this._input && this._input.value;
     return floatValidator(elmValue, {
       editorArgs: this.args,
@@ -215,8 +220,26 @@ export class FloatEditor implements Editor {
       minValue: this.columnEditor.minValue,
       maxValue: this.columnEditor.maxValue,
       operatorConditionalType: this.columnEditor.operatorConditionalType,
-      required: this.columnEditor.required,
+      required: this.args?.compositeEditorOptions ? false : this.columnEditor.required,
       validator: this.validator,
     });
+  }
+
+  // --
+  // private functions
+  // ------------------
+
+  private handleChangeOnCompositeEditor(event: Event, compositeEditorOptions: CompositeEditorOption) {
+    const activeCell = this.grid.getActiveCell();
+    const column = this.args.column;
+    const item = this.args.item;
+    const grid = this.grid;
+
+    // when valid, we'll also apply the new value to the dataContext item object
+    if (this.validate().valid) {
+      this.applyValue(this.args.item, this.serializeValue());
+    }
+    this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
   }
 }

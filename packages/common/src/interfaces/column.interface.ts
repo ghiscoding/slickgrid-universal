@@ -150,6 +150,12 @@ export interface Column<T = any> {
   /** Label key, for example this could be used as a property key for complex object label display (e.g. labelKey: 'name') */
   labelKey?: string;
 
+  /**
+   * This flag can be used with a Composite Editor Modal for a "mass-update" or "mass-selection" change,
+   * the modal form is being built dynamically by looping through all the column definition and it adds only the fields with the "massChange" enabled.
+   */
+  massChange?: boolean;
+
   /** Maximum Width of the column in pixels (number only). */
   maxWidth?: number;
 

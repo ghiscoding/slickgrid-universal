@@ -3,7 +3,7 @@ import {
   Column,
   ColumnSort,
   Editor,
-  EditorValidatorOutput,
+  EditorValidationResult,
   ElementPosition,
   FormatterResultObject,
   GridOption,
@@ -345,13 +345,21 @@ export interface SlickGrid {
 
   /**
    * Sets an active cell.
-   * @param row A row index.
-   * @param cell A column index.
-   * @param optionEditMode Option Edit Mode is Auto-Edit?
-   * @param preClickModeOn Pre-Click Mode is Enabled?
-   * @param suppressActiveCellChangedEvent Are we suppressing Active Cell Changed Event (defaults to false)
+   * @param {number} row - A row index.
+   * @param {number} cell - A column index.
+   * @param {boolean} optionEditMode Option Edit Mode is Auto-Edit?
+   * @param {boolean} preClickModeOn Pre-Click Mode is Enabled?
+   * @param {boolean} suppressActiveCellChangedEvent Are we suppressing Active Cell Changed Event (defaults to false)
    */
   setActiveCell(row: number, cell: number, optionEditMode?: boolean, preClickModeOn?: boolean, suppressActiveCellChangedEvent?: boolean): void;
+
+  /**
+   * Sets an active cell.
+   * @param {number} row - A row index.
+   * @param {number} cell - A column index.
+   * @param {boolean} suppressScrollIntoView - optionally suppress the ScrollIntoView that happens by default (defaults to false)
+   */
+  setActiveRow(row: number, cell?: number, suppressScrollIntoView?: boolean): void;
 
   /** Sets an active viewport node */
   setActiveViewportNode(element: HTMLElement): void;
@@ -471,6 +479,7 @@ export interface SlickGrid {
   onColumnsDrag: SlickEvent<OnColumnsDragEventArgs>;
   onColumnsReordered: SlickEvent<OnColumnsReorderedEventArgs>;
   onColumnsResized: SlickEvent<OnColumnsResizedEventArgs>;
+  onCompositeEditorChange: SlickEvent<OnCompositeEditorChangeEventArgs>;
   onContextMenu: SlickEvent<SlickGridEventData>;
   onDrag: SlickEvent<OnDragEventArgs>;
   onDragEnd: SlickEvent<OnDragEventArgs>;
@@ -514,6 +523,7 @@ export interface OnCellCssStylesChangedEventArgs extends SlickGridEventData { ke
 export interface OnColumnsDragEventArgs extends SlickGridEventData { triggeredByColumn: string; resizeHandle: HTMLElement; }
 export interface OnColumnsReorderedEventArgs extends SlickGridEventData { impactedColumns: Column[]; }
 export interface OnColumnsResizedEventArgs extends SlickGridEventData { triggeredByColumn: string; }
+export interface OnCompositeEditorChangeEventArgs extends SlickGridEventData { row: number; cell: number; item: any; column: Column; formValues: any; }
 export interface OnClickEventArgs extends SlickGridEventData { row: number; cell: number; }
 export interface OnDblClickEventArgs extends SlickGridEventData { row: number; cell: number; }
 export interface OnFooterContextMenuEventArgs extends SlickGridEventData { column: Column; }
@@ -525,7 +535,7 @@ export interface OnHeaderContextMenuEventArgs extends SlickGridEventData { colum
 export interface OnHeaderMouseEventArgs extends SlickGridEventData { column: Column; }
 export interface OnHeaderRowCellRenderedEventArgs extends SlickGridEventData { node: HTMLElement; column: Column; }
 export interface OnKeyDownEventArgs extends SlickGridEventData { row: number; cell: number; }
-export interface OnValidationErrorEventArgs extends SlickGridEventData { row: number; cell: number; validationResults: EditorValidatorOutput; column: Column; editor: Editor; cellNode: HTMLElement; }
+export interface OnValidationErrorEventArgs extends SlickGridEventData { row: number; cell: number; validationResults: EditorValidationResult; column: Column; editor: Editor; cellNode: HTMLElement; }
 export interface OnRenderedEventArgs extends SlickGridEventData { startRow: number; endRow: number; }
 export interface OnSelectedRowsChangedEventArgs extends SlickGridEventData { rows: number[], previousSelectedRows: number[] }
 export interface OnSetOptionsEventArgs extends SlickGridEventData { optionsBefore: GridOption, optionsAfter: GridOption }

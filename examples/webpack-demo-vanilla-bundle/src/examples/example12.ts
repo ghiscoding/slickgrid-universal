@@ -1,6 +1,7 @@
 import {
   AutocompleteOption,
   Column,
+  CompositeEditorModalType,
   CompositeEditorExtension,
   Editors,
   FieldType,
@@ -26,9 +27,10 @@ declare const Slick: SlickNamespace;
 
 // you can create custom validator to pass to an inline editor
 const myCustomTitleValidator = (value, args) => {
-  if (value === null || value === undefined || !value.length) {
+  if ((value === null || value === undefined || !value.length) && (args.compositeEditorOptions && args.compositeEditorOptions.modalType === 'create' || args.compositeEditorOptions.modalType === 'edit')) {
+    // we will only check if the field is supplied when it's an inline editing OR a composite editor of type create/edit
     return { valid: false, msg: 'This is a required field' };
-  } else if (!/^task\s\d+$/i.test(value)) {
+  } else if (!/^(task\s\d+)*$/i.test(value)) {
     return { valid: false, msg: 'Your title is invalid, it must start with "Task" followed by a number' };
   }
   return { valid: true, msg: '' };
@@ -69,7 +71,7 @@ export class Example12 {
     this.gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
     this.gridContainerElm.addEventListener('onbeforeeditcell', this.handleOnBeforeEditCell.bind(this));
     this.gridContainerElm.addEventListener('oncellchange', this.handleOnCellChange.bind(this));
-    this.gridContainerElm.addEventListener('ondblclick', () => this.openEditorDetails(50));
+    this.gridContainerElm.addEventListener('ondblclick', () => this.openCompositeModal('edit', 50));
   }
 
   dispose() {
@@ -81,8 +83,8 @@ export class Example12 {
       {
         id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,
         editor: { model: Editors.longText, required: true, alwaysSaveOnEnterKey: true, validator: myCustomTitleValidator, },
-        filterable: true,
-        formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold], massUpdate: true },
+        filterable: true, massChange: true,
+        formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold] },
       },
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
@@ -93,7 +95,7 @@ export class Example12 {
           }
           return value > 1 ? `${value} days` : `${value} day`;
         },
-        params: { massUpdate: true },
+        massChange: true,
         type: FieldType.number,
       },
       {
@@ -107,7 +109,7 @@ export class Example12 {
         editor: { model: Editors.slider, minValue: 0, maxValue: 100, },
         sortable: true, filterable: true,
         filter: { model: Filters.slider, operator: '>=' },
-        params: { massUpdate: true },
+        massChange: true,
       },
       {
         id: 'start', name: 'Start', field: 'start', sortable: true,
@@ -115,26 +117,38 @@ export class Example12 {
         type: FieldType.date, outputType: FieldType.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },
         editor: { model: Editors.date },
-        params: { massUpdate: true },
-      },
-      {
-        id: 'finish', name: 'Finish', field: 'finish', sortable: true,
-        editor: { model: Editors.date, editorOptions: { minDate: 'today' }, },
-        formatter: Formatters.dateIso,
-        type: FieldType.date, outputType: FieldType.dateIso,
-        filterable: true, filter: { model: Filters.compoundDate },
-        params: { massUpdate: true },
+        massChange: true,
       },
       {
         id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 20, maxWidth: 100,
         sortable: true, filterable: true,
-        editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }], },
+        editor: { model: Editors.checkbox },
+        // editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }], },
         filter: {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
           model: Filters.singleSelect
         },
         exportWithFormatter: false,
+        massChange: true,
         formatter: Formatters.checkmarkMaterial,
+      },
+      {
+        id: 'finish', name: 'Finish', field: 'finish', sortable: true,
+        formatter: Formatters.dateIso,
+        type: FieldType.date, outputType: FieldType.dateIso,
+        filterable: true, filter: { model: Filters.compoundDate },
+        massChange: true,
+        editor: {
+          model: Editors.date,
+          editorOptions: { minDate: 'today' },
+          validator: (value, args) => {
+            const dataContext = args && args.item;
+            if (dataContext && (dataContext.completed && !value)) {
+              return { valid: false, msg: 'You must provide a "Finish" date when "Completed" is checked' };
+            }
+            return { valid: true, msg: '' };
+          }
+        },
       },
       {
         id: 'product', name: 'Product', field: 'product',
@@ -146,6 +160,7 @@ export class Example12 {
         formatter: Formatters.complexObject,
         type: FieldType.object,
         sortComparer: SortComparers.objectString,
+        massChange: true,
         editor: {
           model: Editors.autoComplete,
           alwaysSaveOnEnterKey: true,
@@ -186,6 +201,7 @@ export class Example12 {
         filterable: true,
         sortable: true,
         minWidth: 100,
+        massChange: true,
         editor: {
           model: Editors.autoComplete,
           alwaysSaveOnEnterKey: true,
@@ -247,7 +263,7 @@ export class Example12 {
 
     this.gridOptions = {
       editable: true,
-      enableAddRow: true,
+      enableAddRow: true, // <-- this flag is required to work with these modal types (create/mass-update/mass-selection)
       enableCellNavigation: true,
       asyncEditorLoading: false,
       autoEdit: true,
@@ -266,7 +282,7 @@ export class Example12 {
       enableFiltering: true,
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
-        selectActiveRow: true
+        selectActiveRow: false
       },
       rowHeight: 33,
       headerRowHeight: 35,
@@ -374,7 +390,7 @@ export class Example12 {
     const args = event?.detail?.args;
 
     if (args && args.column && args.item) {
-      console.log('handleOnBeforeEditCell', args);
+      // console.log('handleOnBeforeEditCell', args);
       if (!this.isItemEditable(args.item, args.column)) {
         event.preventDefault();
         eventData.stopImmediatePropagation();
@@ -384,7 +400,7 @@ export class Example12 {
   }
 
   handleOnCellChange(event, args) {
-    console.log('handleOnCellChange', event, args)
+    console.log('handleOnCellChange', event, args);
   }
 
   isItemEditable(item, column) {
@@ -714,10 +730,26 @@ export class Example12 {
         </div>`;
   }
 
-  openEditorDetails(openDelay = 0) {
+  openCompositeModal(modalType: CompositeEditorModalType, openDelay = 0) {
     // open the editor modal and we can also provide a header title with optional parsing pulled from the dataContext, via template #{}
     // for example #{title} => display the item title, or even complex object works #{product.itemName} => display item product name
-    const modalTitle = 'Editing - #{title}'; // 'Editing - #{title} (#{product.itemName})'
-    setTimeout(() => this.sgb.slickCompositeEditor?.openDetails(modalTitle, { closeOutside: true }), openDelay);
+
+    let modalTitle = '';
+    switch (modalType) {
+      case 'create':
+        modalTitle = 'Inserting New Task';
+        break;
+      case 'edit':
+        modalTitle = 'Editing - #{title}'; // 'Editing - #{title} (#{product.itemName})'
+        break;
+      case 'mass-update':
+        modalTitle = 'Mass Update (all rows)';
+        break;
+      case 'mass-selection':
+        modalTitle = 'Update on Current Selection';
+        break;
+    }
+
+    setTimeout(() => this.sgb.slickCompositeEditor?.openDetails({ headerTitle: modalTitle, closeOutside: true, modalType }), openDelay);
   }
 }

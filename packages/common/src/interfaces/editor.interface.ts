@@ -1,5 +1,5 @@
 import { EditorArguments } from './editorArguments.interface';
-import { EditorValidatorOutput } from './editorValidatorOutput.interface';
+import { EditorValidationResult } from './editorValidationResult.interface';
 
 /**
  * SlickGrid Editor interface, more info can be found on the SlickGrid repo
@@ -67,8 +67,9 @@ export interface Editor {
   isValueChanged: () => boolean;
 
   /**
-   * Validate user input and return the result along with the validation message, if any
-   * if the input is valid, return {valid:true,msg:null}
+   * Validate user input and return the result along with the validation message.
+   * if the input is valid then the validation result output would be returning { valid:true, msg:null }
+   * The first argument "targetElm" is ONLY used internally by the Composite Editor in most cases you want to make this null or undefined
    */
-  validate: () => EditorValidatorOutput;
+  validate: (targetElm?: HTMLElement | JQuery<HTMLElement> | null, options?: any) => EditorValidationResult;
 }

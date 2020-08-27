@@ -1,5 +1,5 @@
 import { Constants } from '../constants';
-import { EditorValidatorOutput } from '../interfaces/editorValidatorOutput.interface';
+import { EditorValidationResult } from '../interfaces/editorValidationResult.interface';
 import { EditorValidator } from '../interfaces/editorValidator.interface';
 
 interface SliderValidatorOptions {
@@ -11,7 +11,7 @@ interface SliderValidatorOptions {
   validator?: EditorValidator;
 }
 
-export function sliderValidator(inputValue: any, options: SliderValidatorOptions): EditorValidatorOutput {
+export function sliderValidator(inputValue: any, options: SliderValidatorOptions): EditorValidationResult {
   const isRequired = options.required;
   const minValue = options.minValue;
   const maxValue = options.maxValue;

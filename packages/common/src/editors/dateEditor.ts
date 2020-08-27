@@ -13,13 +13,17 @@ import {
   Editor,
   EditorArguments,
   EditorValidator,
-  EditorValidatorOutput,
+  EditorValidationResult,
   FlatpickrOption,
   GridOption,
   SlickGrid,
+  SlickNamespace,
 } from './../interfaces/index';
 import { mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, setDeepValue, getDescendantProperty } from './../services/utilities';
 import { TranslaterService } from '../services/translater.service';
+
+// using external non-typed js libraries
+declare const Slick: SlickNamespace;
 
 /*
  * An example of a date picker editor using Flatpickr
@@ -90,7 +94,6 @@ export class DateEditor implements Editor {
 
   init(): void {
     if (this.args && this.columnDef) {
-      const isCompositeEditor = this.args.isCompositeEditor;
       const columnId = this.columnDef && this.columnDef.id;
       const placeholder = this.columnEditor && this.columnEditor.placeholder || '';
       const title = this.columnEditor && this.columnEditor.title || '';
@@ -110,11 +113,7 @@ export class DateEditor implements Editor {
         dateFormat: inputFormat,
         closeOnSelect: true,
         locale: (currentLocale !== 'en') ? this.loadFlatpickrLocale(currentLocale) : 'en',
-        onChange: () => {
-          if (!isCompositeEditor) {
-            this.save();
-          }
-        },
+        onChange: () => this.handleOnDateChange(),
         errorHandler: () => {
           // do nothing, Flatpickr is a little too sensitive and will throw an error when provided date is lower than minDate so just disregard the error completely
         }
@@ -163,7 +162,8 @@ export class DateEditor implements Editor {
   }
 
   show() {
-    if (this.flatInstance && typeof this.flatInstance.open === 'function') {
+    const isCompositeEditor = !!this.args?.compositeEditorOptions;
+    if (!isCompositeEditor && this.flatInstance && typeof this.flatInstance.open === 'function') {
       this.flatInstance.open();
     }
   }
@@ -184,7 +184,7 @@ export class DateEditor implements Editor {
       const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
       // validate the value before applying it (if not valid we'll set an empty string)
-      const validation = this.validate(state);
+      const validation = this.validate(null, state);
       const newValue = (state && validation && validation.valid) ? moment(state, outputTypeFormat).format(saveTypeFormat) : '';
 
       // set the new value to the item datacontext
@@ -212,7 +212,7 @@ export class DateEditor implements Editor {
 
   loadValue(item: any) {
     const fieldName = this.columnDef && this.columnDef.field;
-    const isCompositeEditor = this.args.isCompositeEditor;
+    const compositeEditorOptions = this.args.compositeEditorOptions;
 
     if (item && fieldName !== undefined) {
       // is the field a complex object, "address.streetNumber"
@@ -222,11 +222,9 @@ export class DateEditor implements Editor {
       this.originalDate = value;
       this.flatInstance.setDate(value);
 
-      if (!isCompositeEditor) {
+      if (!compositeEditorOptions) {
         this.show();
         this.focus();
-      } else {
-        setTimeout(() => this.hide());
       }
     }
   }
@@ -257,8 +255,8 @@ export class DateEditor implements Editor {
     return value;
   }
 
-  validate(inputValue?: any): EditorValidatorOutput {
-    const isRequired = this.columnEditor.required;
+  validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
+    const isRequired = this.args?.compositeEditorOptions ? false : this.columnEditor.required;
     const elmValue = (inputValue !== undefined) ? inputValue : this._$input && this._$input.val && this._$input.val();
     const errorMsg = this.columnEditor.errorMessage;
 
@@ -283,6 +281,28 @@ export class DateEditor implements Editor {
   //
   // private functions
   // ------------------
+
+  private handleOnDateChange() {
+    if (this.args) {
+      const compositeEditorOptions = this.args.compositeEditorOptions;
+
+      if (compositeEditorOptions) {
+        const activeCell = this.grid.getActiveCell();
+        const column = this.args.column;
+        const item = this.args.item;
+        const grid = this.grid;
+
+        // when valid, we'll also apply the new value to the dataContext item object
+        if (this.validate().valid) {
+          this.applyValue(this.args.item, this.serializeValue());
+        }
+        this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+        grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, new Slick.EventData());
+      } else {
+        this.save();
+      }
+    }
+  }
 
   /** Load a different set of locales for Flatpickr to be localized */
   private loadFlatpickrLocale(language: string) {

@@ -14,7 +14,7 @@
     margin-bottom: $text-editor-margin-bottom;
     margin-right: $text-editor-margin-right;
     margin-top: $text-editor-margin-top;
-    width: calc(100% + 2px);
+    width: 100%;
     transform: translate(0, -2px);
     outline: 0;
     height: 100%;
@@ -203,23 +203,40 @@
     .slick-editor-modal-footer {
       background-color: $editor-modal-footer-bg-color;
       border-top: $editor-modal-footer-border-top;
-      max-height: $editor-modal-footer-height;
+      min-height: $editor-modal-footer-height;
       padding: $editor-modal-footer-padding;
-      text-align: right;
+      line-height: $editor-modal-footer-line-height;
+
+      .footer-buttons {
+        float: right;
+        text-align: right;
+        width: 65%;
+      }
+      .selection-counter {
+        float: left;
+        text-align: left;
+        width: 35%;
+        font-size: $editor-modal-footer-total-counter-font-size;
+        color: $editor-modal-footer-total-counter-color;
+      }
     }
 
-    .slick-editor-detail-label {
+    .item-details-label {
       display: block;
       margin: $editor-modal-detail-label-margin;
       font-size: $editor-modal-detail-label-font-size;
       font-style: $editor-modal-detail-label-font-style;
       font-weight: $editor-modal-detail-label-font-weight;
+      &.invalid {
+        color: $editor-modal-detail-label-color-invalid;
+      }
     }
 
-    .slick-editor-detail-container {
+    .item-details-editor-container {
       display: block;
       box-sizing: border-box;
       border: $editor-modal-detail-container-border;
+      border-radius: $editor-modal-detail-container-border-radius;
       line-height: $editor-modal-detail-container-line-height;
       margin: $editor-modal-detail-container-margin;
       padding: $editor-modal-detail-container-padding;
@@ -229,6 +246,10 @@
         margin: $editor-modal-input-editor-margin;
         border: $editor-modal-input-editor-border;
         padding: $editor-modal-input-editor-padding;
+        &:focus {
+          border-color: $text-editor-focus-border-color;
+          box-shadow: $text-editor-focus-box-shadow;
+        }
       }
       .input-group {
         position: relative;
@@ -239,8 +260,12 @@
       }
       .slick-large-editor-text {
         border: $editor-modal-large-editor-border;
+        border-radius: $editor-modal-large-editor-border-radius;
         padding: $editor-modal-large-editor-padding;
-
+        &:focus-within {
+          border-color: $text-editor-focus-border-color;
+          box-shadow: $text-editor-focus-box-shadow;
+        }
         textarea {
           width: 100%;
           height: 100%;
@@ -254,14 +279,38 @@
             margin: $editor-modal-large-editor-count-margin;
           }
         }
+        &.invalid {
+          border: $editor-modal-detail-container-border-invalid;
+        }
       }
 
+      .checkbox-editor-container {
+        padding: $editor-modal-checkbox-editor-padding;
+        border: $editor-modal-checkbox-editor-border;
+        border-radius: $editor-modal-checkbox-editor-border-radius;
+        height: $editor-modal-input-editor-height;
+        input {
+          height: inherit;
+        }
+      }
       .flatpickr-input.form-control, .flatpickr-alt-input[readonly] {
         background-color: $flatpickr-bgcolor;
       }
+
+      &.modified {
+        input, .slick-large-editor-text, .ms-choice, .checkbox-editor-container {
+          border: $editor-modal-detail-container-border-modified;
+          border-width: $editor-modal-detail-container-border-width-modified;
+        }
+      }
+      &.invalid {
+        input, .slick-large-editor-text {
+          border: $editor-modal-detail-container-border-invalid;
+        }
+      }
     }
 
-    .slick-editor-detail-validation {
+    .item-details-validation {
       display: none;
       color: $editor-modal-validation-color;
       font-size: $editor-modal-validation-font-size;

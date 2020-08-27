@@ -1,10 +1,13 @@
-import { Column, ColumnEditor, Editor, EditorArguments, EditorValidator, EditorValidatorOutput, SlickGrid } from '../interfaces/index';
+import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, SlickGrid, SlickNamespace } from '../interfaces/index';
 import { getDescendantProperty, setDeepValue } from '../services/utilities';
 import { sliderValidator } from '../editorValidators/sliderValidator';
 
 const DEFAULT_MIN_VALUE = 0;
 const DEFAULT_MAX_VALUE = 100;
 const DEFAULT_STEP = 1;
+
+// using external non-typed js libraries
+declare const Slick: SlickNamespace;
 
 /*
  * An example of a 'detached' editor.
@@ -67,21 +70,28 @@ export class SliderEditor implements Editor {
       const itemId = this.args && this.args.item && this.args.item.id;
       this._elementRangeInputId = `rangeInput_${this.columnDef.field}_${itemId}`;
       this._elementRangeOutputId = `rangeOutput_${this.columnDef.field}_${itemId}`;
-      const isCompositeEditor = this.args.isCompositeEditor;
+      const compositeEditorOptions = this.args.compositeEditorOptions;
 
       // create HTML string template
       const editorTemplate = this.buildTemplateHtmlString();
       this._$editorElm = $(editorTemplate);
       this._$input = this._$editorElm.children('input');
       this.$sliderNumber = this._$editorElm.children('div.input-group-addon.input-group-append').children();
-      this.focus();
+
+      if (!compositeEditorOptions) {
+        this.focus();
+      }
 
       // watch on change event
       this._$editorElm.appendTo(container);
 
-      if (!isCompositeEditor) {
-        this._$editorElm.on('mouseup', () => this.save());
-      }
+      this._$editorElm.on('mouseup touchend', (event: Event) => {
+        if (compositeEditorOptions) {
+          this.handleChangeOnCompositeEditor(event, compositeEditorOptions);
+        } else {
+          this.save();
+        }
+      });
 
       // if user chose to display the slider number on the right side, then update it every time it changes
       // we need to use both "input" and "change" event to be all cross-browser
@@ -97,7 +107,6 @@ export class SliderEditor implements Editor {
         });
       }
     }
-    this.focus();
   }
 
   cancel() {
@@ -106,7 +115,7 @@ export class SliderEditor implements Editor {
   }
 
   destroy() {
-    this._$editorElm.off('input change mouseup').remove();
+    this._$editorElm.off('input change mouseup touchend').remove();
   }
 
   focus() {
@@ -126,7 +135,7 @@ export class SliderEditor implements Editor {
     if (fieldName !== undefined) {
       const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
-      const validation = this.validate(state);
+      const validation = this.validate(undefined, state);
       const newValue = (validation && validation.valid) ? state : '';
 
       // set the new value to the item datacontext
@@ -177,14 +186,14 @@ export class SliderEditor implements Editor {
     return elmValue !== '' ? parseInt(elmValue, 10) : this.originalValue;
   }
 
-  validate(inputValue?: any): EditorValidatorOutput {
+  validate(_targetElm?: undefined, inputValue?: any): EditorValidationResult {
     const elmValue = (inputValue !== undefined) ? inputValue : this._$input && this._$input.val && this._$input.val();
     return sliderValidator(elmValue, {
       editorArgs: this.args,
       errorMessage: this.columnEditor.errorMessage,
       minValue: this.columnEditor.minValue,
       maxValue: this.columnEditor.maxValue,
-      required: this.columnEditor.required,
+      required: this.args?.compositeEditorOptions ? false : this.columnEditor.required,
       validator: this.validator,
     });
   }
@@ -223,5 +232,19 @@ export class SliderEditor implements Editor {
           class="form-control slider-editor-input editor-${fieldId} range ${this._elementRangeInputId}" />
         <div class="input-group-addon input-group-append slider-value"><span class="input-group-text ${this._elementRangeOutputId}">${defaultValue}</span></div>
       </div>`;
+  }
+
+  private handleChangeOnCompositeEditor(event: Event, compositeEditorOptions: CompositeEditorOption) {
+    const activeCell = this.grid.getActiveCell();
+    const column = this.args.column;
+    const item = this.args.item;
+    const grid = this.grid;
+
+    // when valid, we'll also apply the new value to the dataContext item object
+    if (this.validate().valid) {
+      this.applyValue(this.args.item, this.serializeValue());
+    }
+    this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
   }
 }

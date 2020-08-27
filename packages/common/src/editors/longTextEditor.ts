@@ -3,10 +3,11 @@ import { KeyCode } from '../enums/keyCode.enum';
 import {
   Column,
   ColumnEditor,
+  CompositeEditorOption,
   Editor,
   EditorArguments,
   EditorValidator,
-  EditorValidatorOutput,
+  EditorValidationResult,
   GridOption,
   HtmlElementPosition,
   Locale,
@@ -96,16 +97,16 @@ export class LongTextEditor implements Editor {
       saveText = this._locales && this._locales.TEXT_SAVE;
     }
 
-    const isCompositeEditor = this.args.isCompositeEditor;
+    const compositeEditorOptions = this.args.compositeEditorOptions;
     const columnId = this.columnDef?.id;
     const placeholder = this.columnEditor?.placeholder || '';
     const title = this.columnEditor?.title || '';
     const maxLength = this.columnEditor?.maxLength || DEFAULT_MAX_LENGTH;
-    const textAreaRows = isCompositeEditor ? 3 : (this.columnEditor?.params?.textAreaRows || 6);
+    const textAreaRows = compositeEditorOptions ? 3 : (this.columnEditor?.params?.textAreaRows || 6);
 
-    const $container = isCompositeEditor ? this.args.container : $('body');
+    const $container = compositeEditorOptions ? this.args.container : $('body');
     this._$wrapper = $(`<div class="slick-large-editor-text editor-${columnId}" />`).appendTo($container);
-    this._$wrapper.css({ position: (isCompositeEditor ? 'relative' : 'absolute') });
+    this._$wrapper.css({ position: (compositeEditorOptions ? 'relative' : 'absolute') });
     this._$textarea = $(`<textarea hidefocus rows="${textAreaRows}" placeholder="${placeholder}" title="${title}">`).appendTo(this._$wrapper);
 
     const editorFooterElm = $(`<div class="editor-footer"/>`);
@@ -116,7 +117,7 @@ export class LongTextEditor implements Editor {
     textMaxLengthElm.appendTo(countContainerElm);
     countContainerElm.appendTo(editorFooterElm);
 
-    if (!isCompositeEditor) {
+    if (!compositeEditorOptions) {
       const cancelBtnElm = $(`<button class="btn btn-cancel btn-default btn-xs">${cancelText}</button>`);
       const saveBtnElm = $(`<button class="btn btn-save btn-primary btn-xs">${saveText}</button>`);
       cancelBtnElm.appendTo(editorFooterElm);
@@ -127,23 +128,14 @@ export class LongTextEditor implements Editor {
     this._$textarea.on('keydown', this.handleKeyDown.bind(this));
     this._$textarea.on('keyup', this.handleKeyUp.bind(this));
 
-    if (isCompositeEditor) {
-      const activeCell = this.grid.getActiveCell();
-      const item = this.args.item;
-      const column = this.args.column;
-      const grid = this.grid;
-
-      this._$textarea.on('focus', (event: Event) => grid.onBeforeEditCell.notify({ ...activeCell, item, column, grid, }, { ...new Slick.EventData(), ...event }));
-      this._$textarea.on('change', (event: Event) => {
-        this.applyValue(item, this.serializeValue());
-        grid.onCellChange.notify({ ...activeCell, item, grid, }, { ...new Slick.EventData(), ...event })
-      });
+    if (compositeEditorOptions) {
+      this._$textarea.on('change', (event: KeyboardEvent) => this.handleChangeOnCompositeEditor(event, compositeEditorOptions));
     } else {
       this.position(this.args && this.args.position);
       this._$wrapper.find('.btn-save').on('click', () => this.save());
       this._$wrapper.find('.btn-cancel').on('click', () => this.cancel());
+      this._$textarea.focus().select();
     }
-    this._$textarea.focus().select();
   }
 
   cancel() {
@@ -168,7 +160,7 @@ export class LongTextEditor implements Editor {
   }
 
   focus() {
-    this._$textarea.focus();
+    this._$textarea.focus().select();
   }
 
   getValue(): string {
@@ -186,7 +178,7 @@ export class LongTextEditor implements Editor {
       const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
       // validate the value before applying it (if not valid we'll set an empty string)
-      const validation = this.validate(state);
+      const validation = this.validate(null, state);
       const newValue = (validation && validation.valid) ? state : '';
 
       // set the new value to the item datacontext
@@ -242,7 +234,7 @@ export class LongTextEditor implements Editor {
     return this._$textarea.val();
   }
 
-  validate(inputValue?: any): EditorValidatorOutput {
+  validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
     const elmValue = (inputValue !== undefined) ? inputValue : this._$textarea && this._$textarea.val && this._$textarea.val();
     return textValidator(elmValue, {
       editorArgs: this.args,
@@ -250,7 +242,7 @@ export class LongTextEditor implements Editor {
       minLength: this.columnEditor.minLength,
       maxLength: this.columnEditor.maxLength,
       operatorConditionalType: this.columnEditor.operatorConditionalType,
-      required: this.columnEditor.required,
+      required: this.args?.compositeEditorOptions ? false : this.columnEditor.required,
       validator: this.validator,
     });
   }
@@ -262,7 +254,7 @@ export class LongTextEditor implements Editor {
   private handleKeyDown(event: KeyboardEvent) {
     const keyCode = event.keyCode || event.code;
 
-    if (!this.args.isCompositeEditor) {
+    if (!this.args.compositeEditorOptions) {
       if (keyCode === KeyCode.ENTER && event.ctrlKey) {
         this.save();
       } else if (keyCode === KeyCode.ESCAPE) {
@@ -286,5 +278,19 @@ export class LongTextEditor implements Editor {
   private handleKeyUp(event: KeyboardEvent & { target: HTMLTextAreaElement }) {
     const textLength = event.target.value.length;
     this._$currentLengthElm.text(textLength);
+  }
+
+  private handleChangeOnCompositeEditor(event: Event, compositeEditorOptions: CompositeEditorOption) {
+    const activeCell = this.grid.getActiveCell();
+    const column = this.args.column;
+    const item = this.args.item;
+    const grid = this.grid;
+
+    // when valid, we'll also apply the new value to the dataContext item object
+    if (this.validate().valid) {
+      this.applyValue(this.args.item, this.serializeValue());
+    }
+    this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
   }
 }

@@ -1,3 +1,3 @@
-import { EditorArgs, EditorValidatorOutput } from './index';
+import { EditorArgs, EditorValidationResult } from './index';
 
-export type EditorValidator = (value: any, args?: EditorArgs) => EditorValidatorOutput;
+export type EditorValidator = (value: any, args?: EditorArgs) => EditorValidationResult;

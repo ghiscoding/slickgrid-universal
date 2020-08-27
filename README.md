@@ -163,5 +163,4 @@ yarn run test:watch
 - [ ] See if we can get `DOM Purify` to work in SF, else keep the custom sanitizer
 - [ ] See if we can get all the vanilla-grid-bundle `instances` as `readonly` class members
 - [ ] See if adding `lerna-changelog` make sense
-- [ ] Mutiple-Select is not showing caret icon to represent a dropdown in SF 
 - [ ] Check if Date Picker works correctly with new latest version of `Flatpickr`

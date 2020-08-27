@@ -1,5 +1,5 @@
-import { EditorValidatorOutput } from './editorValidatorOutput.interface';
+import { EditorValidationResult } from './editorValidationResult.interface';
 
 export interface OnValidationErrorResult {
-  validationResults: EditorValidatorOutput;
+  validationResults: EditorValidationResult;
 }

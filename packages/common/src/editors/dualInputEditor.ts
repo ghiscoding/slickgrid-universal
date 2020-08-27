@@ -5,10 +5,11 @@ import {
   Column,
   ColumnEditor,
   ColumnEditorDualInput,
+  CompositeEditorOption,
   Editor,
   EditorArguments,
   EditorValidator,
-  EditorValidatorOutput,
+  EditorValidationResult,
   GetSlickEventType,
   GridOption,
   SlickEventHandler,
@@ -114,15 +115,20 @@ export class DualInputEditor implements Editor {
       this._rightInput.addEventListener('focusout', (event: any) => this.handleFocusOut(event, 'rightInput'));
     }
 
-    setTimeout(() => this._leftInput.select(), 50);
+    const compositeEditorOptions = this.args?.compositeEditorOptions;
+    if (compositeEditorOptions) {
+      this._leftInput.addEventListener('change', (event: KeyboardEvent) => this.handleChangeOnCompositeEditor(event, compositeEditorOptions));
+    } else {
+      setTimeout(() => this._leftInput.select(), 50);
+    }
   }
 
   handleFocusOut(event: any, position: 'leftInput' | 'rightInput') {
     // when clicking outside the editable cell OR when focusing out of it
     const targetClassNames = event.relatedTarget?.className || '';
-    const isCompositeEditor = this.args.isCompositeEditor;
+    const compositeEditorOptions = this.args.compositeEditorOptions;
 
-    if (!isCompositeEditor && (targetClassNames.indexOf('dual-editor') === -1 && this._lastEventType !== 'focusout-right')) {
+    if (!compositeEditorOptions && (targetClassNames.indexOf('dual-editor') === -1 && this._lastEventType !== 'focusout-right')) {
       if (position === 'rightInput' || (position === 'leftInput' && this._lastEventType !== 'focusout-left')) {
         this.save();
       }
@@ -222,7 +228,7 @@ export class DualInputEditor implements Editor {
 
       // validate the value before applying it (if not valid we'll set an empty string)
       const stateValue = isComplexObject ? getDescendantProperty(state, fieldNameToUse) : state[fieldName];
-      const validation = this.validate({ position, inputValue: stateValue });
+      const validation = this.validate(null, { position, inputValue: stateValue });
 
       // set the new value to the item datacontext
       if (isComplexObject) {
@@ -345,7 +351,7 @@ export class DualInputEditor implements Editor {
     return '1';
   }
 
-  validate(inputValidation?: { position: 'leftInput' | 'rightInput', inputValue: any }): EditorValidatorOutput {
+  validate(_targetElm?: null, inputValidation?: { position: 'leftInput' | 'rightInput', inputValue: any }): EditorValidationResult {
     if (inputValidation) {
       const posValidation = this.validateByPosition(inputValidation.position, inputValidation.inputValue);
       if (!posValidation.valid) {
@@ -368,7 +374,7 @@ export class DualInputEditor implements Editor {
     return { valid: true, msg: '' };
   }
 
-  validateByPosition(position: 'leftInput' | 'rightInput', inputValue?: any): EditorValidatorOutput {
+  validateByPosition(position: 'leftInput' | 'rightInput', inputValue?: any): EditorValidationResult {
     const positionEditorParams = this.editorParams[position];
     let currentVal: any = '';
     if (inputValue) {
@@ -384,7 +390,7 @@ export class DualInputEditor implements Editor {
     const baseValidatorOptions = {
       editorArgs: this.args,
       errorMessage: positionEditorParams.errorMessage,
-      required: positionEditorParams.required,
+      required: this.args?.compositeEditorOptions ? false : positionEditorParams.required,
       validator: typeof commonValidator === 'function' ? commonValidator : positionEditorParams.validator,
     };
 
@@ -409,5 +415,19 @@ export class DualInputEditor implements Editor {
       default:
         return textValidator(currentVal, baseValidatorOptions);
     }
+  }
+
+  private handleChangeOnCompositeEditor(event: Event, compositeEditorOptions: CompositeEditorOption) {
+    const activeCell = this.grid.getActiveCell();
+    const column = this.args.column;
+    const item = this.args.item;
+    const grid = this.grid;
+
+    // when valid, we'll also apply the new value to the dataContext item object
+    if (this.validate().valid) {
+      this.applyValue(this.args.item, this.serializeValue());
+    }
+    this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
   }
 }
