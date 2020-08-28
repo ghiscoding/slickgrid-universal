@@ -75,6 +75,12 @@ export interface ColumnEditor {
   /** Error message to display when validation fails */
   errorMessage?: string;
 
+  /**
+   * This flag can be used with a Composite Editor Modal for a "mass-update" or "mass-selection" change,
+   * the modal form is being built dynamically by looping through all the column definition and it adds only the fields with the "massUpdate" enabled.
+   */
+  massUpdate?: boolean;
+
   /** Maximum length of the text value, works only with Editors supporting it (autoComplete, text, longText) */
   maxLength?: number;
 

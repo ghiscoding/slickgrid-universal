@@ -521,7 +521,7 @@ export class SlickVanillaGridBundle {
 
     // also initialize (render) the pagination component
     if (this._gridOptions.enableCompositeEditor) {
-      this.slickCompositeEditor = new SlickCompositeEditorComponent(this.slickGrid);
+      this.slickCompositeEditor = new SlickCompositeEditorComponent(this.slickGrid, this.gridService);
     }
 
     // bind the Backend Service API callback functions only after the grid is initialized

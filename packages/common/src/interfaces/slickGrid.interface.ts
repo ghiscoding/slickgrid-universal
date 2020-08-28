@@ -173,7 +173,13 @@ export interface SlickGrid {
   getEditorLock(): SlickEditorLock;
 
   /** Get Editor Controller */
-  getEditController(): { commitCurrentEdit(): boolean; cancelCurrentEdit(): boolean; };
+  getEditController(): {
+    /** Commit Current Editor command */
+    commitCurrentEdit(): boolean;
+
+    /** Cancel Current Editor command */
+    cancelCurrentEdit(): boolean;
+  };
 
   /** Get the Footer DOM element */
   getFooterRow(): HTMLElement;

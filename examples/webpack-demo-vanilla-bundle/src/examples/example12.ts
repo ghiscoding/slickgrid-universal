@@ -40,8 +40,9 @@ const customEditableInputFormatter = (row, cell, value, columnDef, dataContext, 
   const gridOptions = grid && grid.getOptions && grid.getOptions();
   const isEditableLine = gridOptions.editable && columnDef.editor;
   value = (value === null || value === undefined) ? '' : value;
-  return isEditableLine ? { text: value, addClasses: 'editable-field', toolTip: 'Click to Edit' } : value;
-  // return isEditableLine ? `<div class="editing-field" title="Click to Edit">${value}</div>` : value;
+  // return isEditableLine ? { text: value, addClasses: 'editable-field', toolTip: 'Click to Edit' } : value;
+  return isEditableLine ? `<div class="editing-field">${value}</div>` : value;
+  // return isEditableLine ? { text: value, addClasses: 'editing-field', toolTip: 'Click to Edit' } : value;
 };
 
 export class Example12 {
@@ -64,7 +65,7 @@ export class Example12 {
     this.gridContainerElm = document.querySelector<HTMLDivElement>(`.grid12`);
 
     this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
-    this.sgb.slickGrid.setActiveCell(0, 0);
+    // this.sgb.slickGrid.setActiveCell(0, 0);
 
     // bind any of the grid events
     this.gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
@@ -82,21 +83,20 @@ export class Example12 {
     this.columnDefinitions = [
       {
         id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,
-        editor: { model: Editors.longText, required: true, alwaysSaveOnEnterKey: true, validator: myCustomTitleValidator, },
-        filterable: true, massChange: true,
+        filterable: true,
         formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold] },
+        editor: { model: Editors.longText, massUpdate: false, required: true, alwaysSaveOnEnterKey: true, validator: myCustomTitleValidator, },
       },
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
-        editor: { model: Editors.float, decimal: 2, valueStep: 1, minValue: 0, maxValue: 10000, alwaysSaveOnEnterKey: true, required: true },
+        type: FieldType.number,
         formatter: (row, cell, value) => {
           if (value === null || value === undefined) {
             return '';
           }
           return value > 1 ? `${value} days` : `${value} day`;
         },
-        massChange: true,
-        type: FieldType.number,
+        editor: { model: Editors.float, massUpdate: true, decimal: 2, valueStep: 1, minValue: 0, maxValue: 10000, alwaysSaveOnEnterKey: true, required: true },
       },
       {
         id: 'cost', name: 'Cost', field: 'cost', width: 90,
@@ -106,41 +106,39 @@ export class Example12 {
       },
       {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
-        editor: { model: Editors.slider, minValue: 0, maxValue: 100, },
         sortable: true, filterable: true,
         filter: { model: Filters.slider, operator: '>=' },
-        massChange: true,
+        editor: { model: Editors.slider, massUpdate: true, minValue: 0, maxValue: 100, },
       },
       {
         id: 'start', name: 'Start', field: 'start', sortable: true,
         formatter: Formatters.dateIso,
         type: FieldType.date, outputType: FieldType.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },
-        editor: { model: Editors.date },
-        massChange: true,
+        editor: { model: Editors.date, massUpdate: true, },
       },
       {
         id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 20, maxWidth: 100,
         sortable: true, filterable: true,
-        editor: { model: Editors.checkbox },
-        // editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }], },
+        formatter: Formatters.multiple,
+        params: { formatters: [Formatters.checkmarkMaterial, (row, cell, value) => `<center>${value}</center>`] },
+        exportWithFormatter: false,
         filter: {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
           model: Filters.singleSelect
         },
-        exportWithFormatter: false,
-        massChange: true,
-        formatter: Formatters.checkmarkMaterial,
+        editor: { model: Editors.checkbox, massUpdate: true, },
+        // editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }], },
       },
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true,
         formatter: Formatters.dateIso,
         type: FieldType.date, outputType: FieldType.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },
-        massChange: true,
         editor: {
           model: Editors.date,
           editorOptions: { minDate: 'today' },
+          massUpdate: true,
           validator: (value, args) => {
             const dataContext = args && args.item;
             if (dataContext && (dataContext.completed && !value)) {
@@ -160,10 +158,10 @@ export class Example12 {
         formatter: Formatters.complexObject,
         type: FieldType.object,
         sortComparer: SortComparers.objectString,
-        massChange: true,
         editor: {
           model: Editors.autoComplete,
           alwaysSaveOnEnterKey: true,
+          massUpdate: true,
 
           // example with a Remote API call
           editorOptions: {
@@ -201,10 +199,10 @@ export class Example12 {
         filterable: true,
         sortable: true,
         minWidth: 100,
-        massChange: true,
         editor: {
           model: Editors.autoComplete,
           alwaysSaveOnEnterKey: true,
+          massUpdate: true,
           editorOptions: {
             minLength: 1,
             source: (request, response) => {
@@ -262,6 +260,8 @@ export class Example12 {
     this.autoAddCustomEditorFormatter(this.columnDefinitions, customEditableInputFormatter);
 
     this.gridOptions = {
+      useSalesforceDefaultGridOptions: true,
+      datasetIdPropertyName: 'id',
       editable: true,
       enableAddRow: true, // <-- this flag is required to work with these modal types (create/mass-update/mass-selection)
       enableCellNavigation: true,
@@ -274,6 +274,7 @@ export class Example12 {
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       showCustomFooter: true,
+      // enablePagination: true,
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: true
@@ -430,40 +431,6 @@ export class Example12 {
           }
         }
       }
-    }
-  }
-
-  remoteCallbackFn(massUpdateItem: any, selectedIds: string[]) {
-    const fields = [];
-    for (const key in massUpdateItem) {
-      if (massUpdateItem.hasOwnProperty(key)) {
-        fields.push({ fieldName: key, value: massUpdateItem[key] });
-      }
-    }
-    console.log('Remote Callback', massUpdateItem, fields);
-
-    if (Array.isArray(selectedIds) && selectedIds.length > 0) {
-      // update only the selected rows
-      const updatedItems = [];
-      for (const itemId of selectedIds) {
-        const dataContext = this.sgb.dataView.getItemById(itemId);
-        for (const itemProp in massUpdateItem) {
-          if (massUpdateItem.hasOwnProperty(itemProp)) {
-            const newValue = massUpdateItem[itemProp];
-            dataContext[itemProp] = newValue;
-          }
-        }
-        updatedItems.push(dataContext);
-      }
-      this.sgb.gridService.updateItems(updatedItems);
-    } else {
-      // update every rows (full mass update)
-      for (const itemProp in massUpdateItem) {
-        if (massUpdateItem.hasOwnProperty(itemProp)) {
-          this.dataset.forEach(item => item[itemProp] = massUpdateItem[itemProp]);
-        }
-      }
-      this.sgb.dataset = this.dataset;
     }
   }
 
@@ -740,7 +707,7 @@ export class Example12 {
         modalTitle = 'Inserting New Task';
         break;
       case 'edit':
-        modalTitle = 'Editing - #{title}'; // 'Editing - #{title} (#{product.itemName})'
+        modalTitle = 'Editing - #{title} (<span class="color-muted">id:</span> <span class="color-primary">#{id}</span>)'; // 'Editing - #{title} (#{product.itemName})'
         break;
       case 'mass-update':
         modalTitle = 'Mass Update (all rows)';
@@ -750,6 +717,13 @@ export class Example12 {
         break;
     }
 
-    setTimeout(() => this.sgb.slickCompositeEditor?.openDetails({ headerTitle: modalTitle, closeOutside: true, modalType }), openDelay);
+    setTimeout(() => this.sgb.slickCompositeEditor?.openDetails({
+      headerTitle: modalTitle,
+      closeOutside: true,
+      modalType,
+      onError: (msg) => alert(msg),
+    }), openDelay);
+    // this.sgb.slickCompositeEditor.applyChanges();
+    // this.sgb.slickCompositeEditor.undoLastMassChange();
   }
 }

@@ -76,20 +76,19 @@ export class Example11 {
     this.columnDefinitions = [
       {
         id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,
-        editor: { model: Editors.text, required: true, alwaysSaveOnEnterKey: true, validator: myCustomTitleValidator, },
+        editor: { model: Editors.text, massUpdate: true, required: true, alwaysSaveOnEnterKey: true, validator: myCustomTitleValidator, },
         filterable: true,
-        formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold], massUpdate: true },
+        formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold] },
       },
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
-        editor: { model: Editors.float, decimal: 2, valueStep: 1, maxValue: 10000, alwaysSaveOnEnterKey: true, },
+        editor: { model: Editors.float, massUpdate: true, decimal: 2, valueStep: 1, maxValue: 10000, alwaysSaveOnEnterKey: true, },
         formatter: (row, cell, value) => {
           if (value === null || value === undefined) {
             return '';
           }
           return value > 1 ? `${value} days` : `${value} day`;
         },
-        params: { massUpdate: true },
         type: FieldType.number,
       },
       {
@@ -100,37 +99,33 @@ export class Example11 {
       },
       {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
-        editor: { model: Editors.slider, minValue: 0, maxValue: 100, },
+        editor: { model: Editors.slider, massUpdate: true, minValue: 0, maxValue: 100, },
         sortable: true, filterable: true,
         filter: { model: Filters.slider, operator: '>=' },
-        params: { massUpdate: true },
       },
       {
         id: 'start', name: 'Start', field: 'start', sortable: true,
         formatter: Formatters.dateIso,
         type: FieldType.date, outputType: FieldType.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },
-        editor: { model: Editors.date },
-        params: { massUpdate: true },
+        editor: { model: Editors.date, massUpdate: true },
       },
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true,
-        editor: { model: Editors.date, editorOptions: { minDate: 'today' }, },
+        editor: { model: Editors.date, massUpdate: true, editorOptions: { minDate: 'today' }, },
         formatter: Formatters.dateIso,
         type: FieldType.date, outputType: FieldType.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },
-        params: { massUpdate: true },
       },
       {
         id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 20, maxWidth: 100,
         sortable: true, filterable: true,
-        editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }], },
+        editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }], massUpdate: true },
         filter: {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
           model: Filters.singleSelect
         },
         exportWithFormatter: false,
-        params: { massUpdate: true },
         formatter: Formatters.checkmarkMaterial,
       },
       {
@@ -143,11 +138,10 @@ export class Example11 {
         formatter: Formatters.complexObject,
         type: FieldType.object,
         sortComparer: SortComparers.objectString,
-        params: { massUpdate: true },
         editor: {
           model: Editors.autoComplete,
           alwaysSaveOnEnterKey: true,
-
+          massUpdate: true,
           // example with a Remote API call
           editorOptions: {
             openSearchListOnFocus: true,
@@ -184,10 +178,10 @@ export class Example11 {
         filterable: true,
         sortable: true,
         minWidth: 100,
-        params: { massUpdate: true },
         editor: {
           model: Editors.autoComplete,
           alwaysSaveOnEnterKey: true,
+          massUpdate: true,
           editorOptions: {
             minLength: 1,
             source: (request, response) => {
@@ -374,7 +368,7 @@ export class Example11 {
         this.sgb.slickGrid.getSelectedRows() || [];
         const modalContainerElm = document.querySelector<HTMLDivElement>('.modal-container');
         const columnDefinitionsClone = deepCopy(this.columnDefinitions);
-        const massUpdateColumnDefinitions = columnDefinitionsClone?.filter((col: Column) => col.params?.massUpdate === true) || [];
+        const massUpdateColumnDefinitions = columnDefinitionsClone?.filter((col: Column) => col.editor?.massUpdate || col.internalColumnEditor?.massUpdate) || [];
         const selectedItems = this.sgb.gridService.getSelectedRowsDataItem();
         const selectedIds = selectedItems.map(selectedItem => selectedItem.id);
         loadComponent(modalContainerElm, './example11-modal', { columnDefinitions: massUpdateColumnDefinitions, selectedIds, remoteCallback: this.remoteCallbackFn.bind(this) });
