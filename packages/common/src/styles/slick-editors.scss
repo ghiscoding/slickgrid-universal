@@ -173,8 +173,10 @@
     .slick-editor-modal-title {
       font-size: $editor-modal-title-font-size;
       font-weight: $editor-modal-title-font-weight;
+      line-height: $editor-modal-title-line-height;
       color: $editor-modal-title-font-color;
       overflow-x: hidden;
+      text-align: $editor-modal-title-text-align;
       text-overflow: ellipsis;
       width: calc(100% - #{$editor-modal-close-btn-width} - #{$editor-modal-close-btn-right});
       white-space: nowrap;

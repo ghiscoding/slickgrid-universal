@@ -472,6 +472,15 @@
 .slick-headerrow-column,
 .slick-column-name,
 .slick-cell-checkboxsel {
+  text-align: center;
+  #filter-checkbox-selectall-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    // line-height: 0;
+  }
+
   input[type=checkbox],
   #filter-checkbox-selectall-container > input[type=checkbox] {
     display:none;  /* to hide the checkbox itself */
@@ -479,8 +488,7 @@
 
   input[type=checkbox],
   #filter-checkbox-selectall-container > input[type=checkbox] + label {
-    margin-left: 4px;
-    margin-top: 3px;
+    margin: 0;
   }
 
   input[type=checkbox] + label:before,
@@ -529,6 +537,7 @@
 .ms-choice {
   border: $multiselect-input-filter-border;
   background-color: transparent;
+  font-size: $header-font-size;
 
   div {
     &:before {
@@ -549,7 +558,7 @@
   }
   .placeholder {
     font-family: $multiselect-placeholder-font-family;
-    font-size: ($multiselect-input-filter-font-size + 2px);
+    font-size: $header-font-size;
   }
 }
 .ms-filter.search-filter {

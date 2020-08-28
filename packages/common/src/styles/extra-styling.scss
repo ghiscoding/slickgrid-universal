@@ -1,3 +1,4 @@
+$button-border-color: #ababab !default;
 $unsaved-editable-field-color: #fbfdd1 !default;
 $font-size-count: 50;
 $padding-max-count: 30;
@@ -20,12 +21,12 @@ $padding-max-count: 30;
 .button-style {
   cursor: pointer;
   background-color: white;
-  border: 1px solid #dbdbdb;
+  border: 1px solid #{$button-border-color};
   border-radius: 2px;
   justify-content: center;
   text-align: center;
   &:hover {
-    border-color: #b5b5b5;
+    border-color: darken($button-border-color, 10%);
   }
 }
 
