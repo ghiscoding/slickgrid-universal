@@ -31,6 +31,9 @@ interface CompositeEditorOpenDetailOption {
    */
   headerTitle: string;
 
+  /** When backdrop is set to "static", the modal will not close when clicking outside it. Default is undefined, which mean clicking outside the modal will close it */
+  backdrop?: 'static' | null;
+
   /** Do we have the close button outside or inside the modal? Defaults to false (inside) */
   closeOutside?: boolean;
 
@@ -50,7 +53,7 @@ interface CompositeEditorOpenDetailOption {
 export class SlickCompositeEditorComponent {
   private _eventHandler: SlickEventHandler;
   private _modalElm: HTMLDivElement;
-  private _modalType: CompositeEditorModalType;
+  private _options: CompositeEditorOpenDetailOption;
   private _lastCompositeEditor: { item: any; formValues: any; };
   private _lastActiveRowNumber: number;
 
@@ -96,7 +99,8 @@ export class SlickCompositeEditorComponent {
         return;
       }
 
-      this._modalType = options.modalType || 'edit';
+      this._options = options;
+      const modalType = options?.modalType ?? 'edit';
       const activeCell = this.grid.getActiveCell();
       const activeRow = activeCell && activeCell.row || 0;
       const gridUid = this.grid.getUID() || '';
@@ -105,11 +109,11 @@ export class SlickCompositeEditorComponent {
         options.onError('Your grid must be editable in order to use the Composite Editor Modal', 'error');
       } else if (!this.gridOptions.enableCellNavigation) {
         options.onError('Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.', 'error');
-      } else if (!activeCell && options.modalType === 'edit') {
+      } else if (!activeCell && modalType === 'edit') {
         options.onError('No records selected for edit operation', 'warning');
       } else {
         const dataContext = this.grid.getDataItem(activeRow);
-        const isWithMassChange = (options.modalType === 'mass-update' || options.modalType === 'mass-selection');
+        const isWithMassChange = (modalType === 'mass-update' || modalType === 'mass-selection');
         const columnDefinitions = this.grid.getColumns();
         const selectedRowsIndexes = this.grid.getSelectedRows();
         const datasetLength = this.dataViewLength;
@@ -117,13 +121,13 @@ export class SlickCompositeEditorComponent {
 
         // focus on a first cell with an Editor (unless current cell already has an Editor then do nothing)
         // also when it's a "Create" modal, we'll scroll to the end of the grid
-        const rowIndex = options.modalType === 'create' ? this.dataViewLength : activeRow;
+        const rowIndex = modalType === 'create' ? this.dataViewLength : activeRow;
         this.focusOnFirstCellWithEditor(columnDefinitions, rowIndex, isWithMassChange);
 
-        if (options.modalType === 'edit' && !dataContext) {
+        if (modalType === 'edit' && !dataContext) {
           options.onError('Current row is not editable', 'warning');
           return;
-        } else if (options.modalType === 'mass-selection') {
+        } else if (modalType === 'mass-selection') {
           if (selectedRowsIndexes.length < 1) {
             options.onError('You must select some rows before trying to apply new value(s)', 'warning');
             return;
@@ -183,7 +187,7 @@ export class SlickCompositeEditorComponent {
         modalCancelButtonElm.textContent = 'Cancel';
 
         let leftFooterText = '';
-        switch (options.modalType) {
+        switch (modalType) {
           case 'mass-update':
             leftFooterText = `all ${datasetLength} items`;
             break;
@@ -195,18 +199,18 @@ export class SlickCompositeEditorComponent {
         selectionCounterElm.className = 'selection-counter';
         selectionCounterElm.textContent = leftFooterText;
 
-        const saveButtonText = (options.modalType === 'create' || options.modalType === 'edit') ? 'Save' : (options.modalType === 'mass-update') ? 'Mass Update' : 'Apply to Selection';
+        const saveButtonText = (modalType === 'create' || modalType === 'edit') ? 'Save' : (modalType === 'mass-update') ? 'Mass Update' : 'Apply to Selection';
         const modalSaveButtonElm = document.createElement('button');
         modalSaveButtonElm.type = 'button';
         modalSaveButtonElm.className = 'btn btn-save btn-primary btn-sm';
-        modalSaveButtonElm.dataset.action = (options.modalType === 'create' || options.modalType === 'edit') ? 'save' : options.modalType;
+        modalSaveButtonElm.dataset.action = (modalType === 'create' || modalType === 'edit') ? 'save' : modalType;
         modalSaveButtonElm.dataset.ariaLabel = saveButtonText;
         modalSaveButtonElm.textContent = saveButtonText;
 
         const footerContainerElm = document.createElement('div');
         footerContainerElm.className = 'footer-buttons';
 
-        if (options.modalType === 'mass-update' || options.modalType === 'mass-selection') {
+        if (modalType === 'mass-update' || modalType === 'mass-selection') {
           modalFooterElm.appendChild(selectionCounterElm);
         }
         footerContainerElm.appendChild(modalCancelButtonElm);
@@ -246,7 +250,7 @@ export class SlickCompositeEditorComponent {
         // this.grid.editActiveCell((compositeEditor.editor) as unknown as Editor);
 
         // @ts-ignore
-        const compositeEditor = new Slick.CompositeEditor(modalColumns, containers, { destroy: this.disposeComponent.bind(this), modalType: options.modalType });
+        const compositeEditor = new Slick.CompositeEditor(modalColumns, containers, { destroy: this.disposeComponent.bind(this), modalType });
         this.grid.editActiveCell(compositeEditor);
 
         const onCompositeEditorChangeHandler = this.grid.onCompositeEditorChange;
@@ -301,7 +305,7 @@ export class SlickCompositeEditorComponent {
   }
 
   handleSaveClicked() {
-    switch (this._modalType) {
+    switch (this._options?.modalType) {
       case 'mass-update':
         this.handleSaveMassUpdate();
         break;
@@ -385,7 +389,9 @@ export class SlickCompositeEditorComponent {
 
   private handleBodyClicked(event: Event) {
     if ((event.target as HTMLElement)?.classList?.contains('slick-editor-modal')) {
-      this.dispose();
+      if (this._options?.backdrop !== 'static') {
+        this.dispose();
+      }
     }
   }
 

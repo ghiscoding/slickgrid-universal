@@ -720,10 +720,11 @@ export class Example12 {
     setTimeout(() => this.sgb.slickCompositeEditor?.openDetails({
       headerTitle: modalTitle,
       closeOutside: true,
+      backdrop: 'static',
       modalType,
       onError: (msg) => alert(msg),
     }), openDelay);
-    // this.sgb.slickCompositeEditor.applyChanges();
+    // this.sgb.slickCompositeEditor.applyChanges(formValues, modalType);
     // this.sgb.slickCompositeEditor.undoLastMassChange();
   }
 }
