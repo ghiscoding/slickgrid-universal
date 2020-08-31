@@ -344,9 +344,9 @@ describe('CheckboxEditor', () => {
         const expectation = { valid: false, msg: 'Field is required' };
         mockColumn.internalColumnEditor.required = true;
         editor = new CheckboxEditor(editorArguments);
-        const validation1 = editor.validate('');
-        const validation2 = editor.validate(null);
-        const validation3 = editor.validate(false);
+        const validation1 = editor.validate(null, '');
+        const validation2 = editor.validate(null, null);
+        const validation3 = editor.validate(null, false);
 
         expect(validation1).toEqual(expectation);
         expect(validation2).toEqual(expectation);
@@ -356,7 +356,7 @@ describe('CheckboxEditor', () => {
       it('should return True when field is required and input is provided with True', () => {
         mockColumn.internalColumnEditor.required = true;
         editor = new CheckboxEditor(editorArguments);
-        const validation = editor.validate(true);
+        const validation = editor.validate(null, true);
 
         expect(validation).toEqual({ valid: true, msg: null });
       });
@@ -364,7 +364,7 @@ describe('CheckboxEditor', () => {
       it('should return True when field is required and input is provided with any text', () => {
         mockColumn.internalColumnEditor.required = true;
         editor = new CheckboxEditor(editorArguments);
-        const validation = editor.validate('text');
+        const validation = editor.validate(null, 'text');
 
         expect(validation).toEqual({ valid: true, msg: null });
       });

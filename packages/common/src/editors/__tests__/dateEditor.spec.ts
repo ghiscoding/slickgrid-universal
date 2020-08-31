@@ -379,7 +379,7 @@ describe('DateEditor', () => {
       it('should return False when field is required and field is empty', () => {
         mockColumn.internalColumnEditor.required = true;
         editor = new DateEditor(editorArguments);
-        const validation = editor.validate('');
+        const validation = editor.validate(null, '');
 
         expect(validation).toEqual({ valid: false, msg: 'Field is required' });
       });
@@ -387,7 +387,7 @@ describe('DateEditor', () => {
       it('should return True when field is required and input is a valid input value', () => {
         mockColumn.internalColumnEditor.required = true;
         editor = new DateEditor(editorArguments);
-        const validation = editor.validate('text');
+        const validation = editor.validate(null, 'text');
 
         expect(validation).toEqual({ valid: true, msg: null });
       });

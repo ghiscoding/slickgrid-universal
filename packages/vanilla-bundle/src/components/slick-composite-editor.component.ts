@@ -22,6 +22,7 @@ import {
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
 
+const DEFAULT_ON_ERROR = (msg: string) => console.log(msg);
 
 interface CompositeEditorOpenDetailOption {
   /**
@@ -47,8 +48,11 @@ interface CompositeEditorOpenDetailOption {
   /** Composite Editor modal type (create, edit, mass-update, mass-selection) */
   modalType?: CompositeEditorModalType;
 
+  /** Defaults to false, when using split view the modal window will become double the size and the form will show up in 2 columns (left/right) when possible (on mobile it will remain 1 column) */
+  useSplitView?: boolean;
+
   /** onError callback allows user to override what the system does when an error (error message & type) is thrown, defaults to console.log */
-  onError: (errorMsg: string, errorType: 'error' | 'info' | 'warning') => void;
+  onError?: (errorMsg: string, errorType: 'error' | 'info' | 'warning') => void;
 }
 
 export class SlickCompositeEditorComponent {
@@ -94,27 +98,30 @@ export class SlickCompositeEditorComponent {
       document.body.classList.remove('slick-modal-open');
       document.body.removeEventListener('click', this.handleBodyClicked);
     }
-
   }
 
-  openDetails(options: CompositeEditorOpenDetailOption = { headerTitle: 'Details', modalType: 'edit', onError: (msg) => console.log(msg) }) {
+  openDetails(options: CompositeEditorOpenDetailOption) {
+    const onError = options?.onError ?? DEFAULT_ON_ERROR;
+
     try {
       if (!this.grid || (this.grid.getEditorLock().isActive() && !this.grid.getEditorLock().commitCurrentEdit())) {
         return;
       }
 
       this._options = options;
+      const closeOutside = options?.closeOutside ?? true;
       const modalType = options?.modalType ?? 'edit';
       const activeCell = this.grid.getActiveCell();
+      const activeColIndex = activeCell && activeCell.cell || 0;
       const activeRow = activeCell && activeCell.row || 0;
       const gridUid = this.grid.getUID() || '';
 
       if (!this.gridOptions.editable) {
-        options.onError('Your grid must be editable in order to use the Composite Editor Modal', 'error');
+        onError('Your grid must be editable in order to use the Composite Editor Modal', 'error');
       } else if (!this.gridOptions.enableCellNavigation) {
-        options.onError('Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.', 'error');
+        onError('Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.', 'error');
       } else if (!activeCell && modalType === 'edit') {
-        options.onError('No records selected for edit operation', 'warning');
+        onError('No records selected for edit operation', 'warning');
       } else {
         const dataContext = this.grid.getDataItem(activeRow);
         const isWithMassChange = (modalType === 'mass-update' || modalType === 'mass-selection');
@@ -126,14 +133,14 @@ export class SlickCompositeEditorComponent {
         // focus on a first cell with an Editor (unless current cell already has an Editor then do nothing)
         // also when it's a "Create" modal, we'll scroll to the end of the grid
         const rowIndex = modalType === 'create' ? this.dataViewLength : activeRow;
-        this.focusOnFirstCellWithEditor(columnDefinitions, rowIndex, isWithMassChange);
+        this.focusOnFirstCellWithEditor(columnDefinitions, activeColIndex, rowIndex, isWithMassChange);
 
         if (modalType === 'edit' && !dataContext) {
-          options.onError('Current row is not editable', 'warning');
+          onError('Current row is not editable', 'warning');
           return;
         } else if (modalType === 'mass-selection') {
           if (selectedRowsIndexes.length < 1) {
-            options.onError('You must select some rows before trying to apply new value(s)', 'warning');
+            onError('You must select some rows before trying to apply new value(s)', 'warning');
             return;
           }
         }
@@ -156,6 +163,9 @@ export class SlickCompositeEditorComponent {
 
         const modalContentElm = document.createElement('div');
         modalContentElm.className = 'slick-editor-modal-content';
+        if (options.useSplitView) {
+          modalContentElm.classList.add('split-view');
+        }
 
         const modalHeaderTitleElm = document.createElement('div');
         modalHeaderTitleElm.className = 'slick-editor-modal-title';
@@ -167,7 +177,7 @@ export class SlickCompositeEditorComponent {
         modalCloseButtonElm.className = 'close';
         modalCloseButtonElm.dataset.action = 'close';
         modalCloseButtonElm.dataset.ariaLabel = 'Close';
-        if (options?.closeOutside) {
+        if (closeOutside) {
           modalHeaderTitleElm?.classList?.add('outside');
           modalCloseButtonElm?.classList?.add('outside');
         }
@@ -228,6 +238,12 @@ export class SlickCompositeEditorComponent {
 
         for (const columnDef of modalColumns) {
           if (columnDef.editor) {
+            const itemContainer = document.createElement('div');
+            itemContainer.className = `item-details-container editor-${columnDef.id}`;
+            if (options.useSplitView) {
+              itemContainer.classList.add('slick-col-6');
+            }
+
             const templateItemLabelElm = document.createElement('div');
             templateItemLabelElm.className = `item-details-label editor-${columnDef.id}`;
             templateItemLabelElm.textContent = this.getColumnLabel(columnDef) || 'n/a';
@@ -239,9 +255,10 @@ export class SlickCompositeEditorComponent {
             const templateItemValidationElm = document.createElement('div');
             templateItemValidationElm.className = `item-details-validation editor-${columnDef.id}`;
 
-            modalBodyElm.appendChild(templateItemLabelElm);
-            modalBodyElm.appendChild(templateItemEditorElm);
-            modalBodyElm.appendChild(templateItemValidationElm);
+            itemContainer.appendChild(templateItemLabelElm);
+            itemContainer.appendChild(templateItemEditorElm);
+            itemContainer.appendChild(templateItemValidationElm);
+            modalBodyElm.appendChild(itemContainer);
           }
         }
 
@@ -254,7 +271,7 @@ export class SlickCompositeEditorComponent {
         // this.grid.editActiveCell((compositeEditor.editor) as unknown as Editor);
 
         // @ts-ignore
-        const compositeEditor = new Slick.CompositeEditor(modalColumns, containers, { destroy: this.disposeComponent.bind(this), modalType });
+        const compositeEditor = new Slick.CompositeEditor(modalColumns, containers, { destroy: this.disposeComponent.bind(this), modalType, validationMsgPrefix: '* ' });
         this.grid.editActiveCell(compositeEditor);
 
         const onCompositeEditorChangeHandler = this.grid.onCompositeEditorChange;
@@ -298,7 +315,7 @@ export class SlickCompositeEditorComponent {
       }
     } catch (error) {
       this.dispose();
-      options.onError(error, 'error');
+      onError(error, 'error');
     }
   }
 
@@ -434,10 +451,11 @@ export class SlickCompositeEditorComponent {
 
   // For the Composite Editor to work, the current active cell must have an Editor (because it calls editActiveCell() and that only works with a cell with an Editor)
   // so if current active cell doesn't have an Editor, we'll find the first column with an Editor and focus on it (from left to right starting at index 0)
-  private focusOnFirstCellWithEditor(columns: Column[], rowIndex: number, isWithMassChange: boolean) {
-    let columnIndexWithEditor = 0;
+  private focusOnFirstCellWithEditor(columns: Column[], columnIndex: number, rowIndex: number, isWithMassChange: boolean) {
+    let columnIndexWithEditor = columnIndex;
+    const onError = this._options?.onError ?? DEFAULT_ON_ERROR;
 
-    const hasEditor = columns[columnIndexWithEditor].editor;
+    const hasEditor = columns[columnIndex].editor;
     if (!hasEditor) {
       if (isWithMassChange) {
         columnIndexWithEditor = columns.findIndex(col => col.internalColumnEditor?.massUpdate);
@@ -445,7 +463,7 @@ export class SlickCompositeEditorComponent {
         columnIndexWithEditor = columns.findIndex(col => col.editor);
       }
       if (columnIndexWithEditor === -1) {
-        throw new Error('We could not find any Editor in your Column Definition');
+        onError('We could not find any Editor in your Column Definition', 'error');
       } else {
         this.grid.setActiveCell(rowIndex, columnIndexWithEditor, false);
         if (isWithMassChange) {

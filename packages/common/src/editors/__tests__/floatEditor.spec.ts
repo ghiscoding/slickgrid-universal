@@ -444,7 +444,7 @@ describe('FloatEditor', () => {
       it('should return False when field is required and field is empty', () => {
         mockColumn.internalColumnEditor.required = true;
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate('');
+        const validation = editor.validate(null, '');
 
         expect(validation).toEqual({ valid: false, msg: 'Field is required' });
       });
@@ -452,7 +452,7 @@ describe('FloatEditor', () => {
       it('should return False when field is not a valid float number', () => {
         mockColumn.internalColumnEditor.required = true;
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate('abc');
+        const validation = editor.validate(null, 'abc');
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number' });
       });
@@ -460,7 +460,7 @@ describe('FloatEditor', () => {
       it('should return False when field is lower than a minValue defined', () => {
         mockColumn.internalColumnEditor.minValue = 10.2;
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(10);
+        const validation = editor.validate(null, 10);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number that is greater than or equal to 10.2' });
       });
@@ -469,7 +469,7 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.minValue = 10.2;
         mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(10);
+        const validation = editor.validate(null, 10);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number that is greater than 10.2' });
       });
@@ -477,7 +477,7 @@ describe('FloatEditor', () => {
       it('should return True when field is equal to the minValue defined', () => {
         mockColumn.internalColumnEditor.minValue = 10.2;
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(10.2);
+        const validation = editor.validate(null, 10.2);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -485,7 +485,7 @@ describe('FloatEditor', () => {
       it('should return False when field is greater than a maxValue defined', () => {
         mockColumn.internalColumnEditor.maxValue = 10.2;
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(10.22);
+        const validation = editor.validate(null, 10.22);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number that is lower than or equal to 10.2' });
       });
@@ -494,7 +494,7 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.maxValue = 10.2;
         mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(10.22);
+        const validation = editor.validate(null, 10.22);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number that is lower than 10.2' });
       });
@@ -502,7 +502,7 @@ describe('FloatEditor', () => {
       it('should return True when field is equal to the maxValue defined', () => {
         mockColumn.internalColumnEditor.maxValue = 10.2;
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(10.2);
+        const validation = editor.validate(null, 10.2);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -511,7 +511,7 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.maxValue = 10.2;
         mockColumn.internalColumnEditor.operatorConditionalType = 'inclusive';
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(10.2);
+        const validation = editor.validate(null, 10.2);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -520,7 +520,7 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.maxValue = 10.2;
         mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(10.2);
+        const validation = editor.validate(null, 10.2);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number that is lower than 10.2' });
       });
@@ -529,7 +529,7 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.minValue = 10.5;
         mockColumn.internalColumnEditor.maxValue = 99.5;
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(99.6);
+        const validation = editor.validate(null, 99.6);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number between 10.5 and 99.5' });
       });
@@ -538,7 +538,7 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.minValue = 10.5;
         mockColumn.internalColumnEditor.maxValue = 99.5;
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(99.5);
+        const validation = editor.validate(null, 99.5);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -548,7 +548,7 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.maxValue = 99.5;
         mockColumn.internalColumnEditor.operatorConditionalType = 'inclusive';
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(10.5);
+        const validation = editor.validate(null, 10.5);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -558,8 +558,8 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.maxValue = 99.5;
         mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
         editor = new FloatEditor(editorArguments);
-        const validation1 = editor.validate(99.5);
-        const validation2 = editor.validate(10.5);
+        const validation1 = editor.validate(null, 99.5);
+        const validation2 = editor.validate(null, 10.5);
 
         expect(validation1).toEqual({ valid: false, msg: 'Please enter a valid number between 10.5 and 99.5' });
         expect(validation2).toEqual({ valid: false, msg: 'Please enter a valid number between 10.5 and 99.5' });
@@ -569,7 +569,7 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.params = { decimalPlaces: 2 };
 
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(99.6433);
+        const validation = editor.validate(null, 99.6433);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number with a maximum of 2 decimals' });
       });
@@ -578,7 +578,7 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.params = { decimalPlaces: 2 };
 
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(99.6);
+        const validation = editor.validate(null, 99.6);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -587,7 +587,7 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.params = { decimalPlaces: 2 };
 
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(99.65);
+        const validation = editor.validate(null, 99.65);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -595,7 +595,7 @@ describe('FloatEditor', () => {
       it('should return True when field is required and field is a valid input value', () => {
         mockColumn.internalColumnEditor.required = true;
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(2.5);
+        const validation = editor.validate(null, 2.5);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -603,7 +603,7 @@ describe('FloatEditor', () => {
       it('should return True when field is required and field is a valid decimal value without 0 suffix', () => {
         mockColumn.internalColumnEditor.required = true;
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate('.5');
+        const validation = editor.validate(null, '.5');
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });

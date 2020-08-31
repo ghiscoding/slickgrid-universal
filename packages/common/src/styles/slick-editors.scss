@@ -1,5 +1,30 @@
 @import './variables';
 
+/* Response Design for desktop: */
+.slick-col-1 {width: 8.33%;}
+.slick-col-2 {width: 16.66%;}
+.slick-col-3 {width: 25%;}
+.slick-col-4 {width: 33.33%;}
+.slick-col-5 {width: 41.66%;}
+.slick-col-6 {width: 50%;}
+.slick-col-7 {width: 58.33%;}
+.slick-col-8 {width: 66.66%;}
+.slick-col-9 {width: 75%;}
+.slick-col-10 {width: 83.33%;}
+.slick-col-11 {width: 91.66%;}
+.slick-col-12 {width: 100%;}
+
+/* Response Design for mobile phones: */
+@media only screen and (max-width: 768px) {
+  [class*="slick-col-"] {
+    width: 100%;
+  }
+}
+[class*="slick-col-"] {
+  float: left;
+  // padding: 15px;
+}
+
 .slick-cell  {
   input.dual-editor-text,
   input.editor-text {
@@ -121,6 +146,12 @@
     transition: $editor-modal-backdrop-transition-end;
     transition-property: opacity,transform;
 
+    @media only screen and (min-width : 768px) {
+      &.split-view {
+        width: calc(#{$editor-modal-container-width} * 2);
+      }
+    }
+
     @media only screen and (max-width: 768px) {
       width: 100%;
       margin: 0;
@@ -212,12 +243,12 @@
       .footer-buttons {
         float: right;
         text-align: right;
-        width: 65%;
+        width: 60%;
       }
       .selection-counter {
         float: left;
         text-align: left;
-        width: 35%;
+        width: 40%;
         font-size: $editor-modal-footer-total-counter-font-size;
         color: $editor-modal-footer-total-counter-color;
       }
@@ -313,13 +344,13 @@
     }
 
     .item-details-validation {
-      display: none;
       color: $editor-modal-validation-color;
       font-size: $editor-modal-validation-font-size;
       font-style: $editor-modal-validation-font-style;
       font-weight: $editor-modal-validation-font-weight;
       line-height: $editor-modal-validation-line-height;
       margin-left: $editor-modal-validation-margin-left;
+      min-height: $editor-modal-validation-min-height;
     }
   }
 }

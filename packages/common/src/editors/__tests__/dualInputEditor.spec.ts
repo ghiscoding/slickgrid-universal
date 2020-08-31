@@ -586,7 +586,7 @@ describe('DualInputEditor', () => {
       it('should return False when field is required and field is empty', () => {
         mockColumn.internalColumnEditor.params.leftInput.required = true;
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'leftInput', inputValue: '' });
+        const validation = editor.validate(null, { position: 'leftInput', inputValue: '' });
 
         expect(validation).toEqual({ valid: false, msg: 'Field is required' });
       });
@@ -595,7 +595,7 @@ describe('DualInputEditor', () => {
         mockColumn.internalColumnEditor.params.leftInput.required = true;
         editor = new DualInputEditor(editorArguments);
         editor.setValues(['', 3]);
-        const validation = editor.validate();
+        const validation = editor.validate(null);
 
         expect(validation).toEqual({ valid: false, msg: 'Field is required' });
       });
@@ -604,7 +604,7 @@ describe('DualInputEditor', () => {
         mockColumn.internalColumnEditor.params.rightInput.required = true;
         editor = new DualInputEditor(editorArguments);
         editor.setValues([2, '']);
-        const validation = editor.validate();
+        const validation = editor.validate(null);
 
         expect(validation).toEqual({ valid: false, msg: 'Field is required' });
       });
@@ -612,7 +612,7 @@ describe('DualInputEditor', () => {
       it('should return False when editor is float but its field is not a valid float number', () => {
         mockColumn.internalColumnEditor.params.rightInput.required = true;
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'rightInput', inputValue: 'abc' });
+        const validation = editor.validate(null, { position: 'rightInput', inputValue: 'abc' });
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number' });
       });
@@ -621,7 +621,7 @@ describe('DualInputEditor', () => {
         mockColumn.internalColumnEditor.params.rightInput.type = 'integer';
         mockColumn.internalColumnEditor.params.rightInput.required = true;
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'rightInput', inputValue: 'abc' });
+        const validation = editor.validate(null, { position: 'rightInput', inputValue: 'abc' });
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number' });
       });
@@ -630,7 +630,7 @@ describe('DualInputEditor', () => {
         mockColumn.internalColumnEditor.params.rightInput.type = 'text';
         mockColumn.internalColumnEditor.params.rightInput.required = true;
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'rightInput', inputValue: '' });
+        const validation = editor.validate(null, { position: 'rightInput', inputValue: '' });
 
         expect(validation).toEqual({ valid: false, msg: 'Field is required' });
       });
@@ -639,7 +639,7 @@ describe('DualInputEditor', () => {
         mockColumn.internalColumnEditor.params.rightInput.type = 'password';
         mockColumn.internalColumnEditor.params.rightInput.required = true;
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'rightInput', inputValue: '' });
+        const validation = editor.validate(null, { position: 'rightInput', inputValue: '' });
 
         expect(validation).toEqual({ valid: false, msg: 'Field is required' });
       });
@@ -647,7 +647,7 @@ describe('DualInputEditor', () => {
       it('should return False when field is lower than a minValue defined', () => {
         mockColumn.internalColumnEditor.params.leftInput.minValue = 10.2;
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'leftInput', inputValue: 10 });
+        const validation = editor.validate(null, { position: 'leftInput', inputValue: 10 });
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number that is greater than or equal to 10.2' });
       });
@@ -656,7 +656,7 @@ describe('DualInputEditor', () => {
         mockColumn.internalColumnEditor.params.leftInput.minValue = 10.2;
         mockColumn.internalColumnEditor.params.leftInput.operatorConditionalType = 'exclusive';
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'leftInput', inputValue: 10 });
+        const validation = editor.validate(null, { position: 'leftInput', inputValue: 10 });
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number that is greater than 10.2' });
       });
@@ -664,7 +664,7 @@ describe('DualInputEditor', () => {
       it('should return True when field is equal to the minValue defined', () => {
         mockColumn.internalColumnEditor.params.rightInput.minValue = 10.2;
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'rightInput', inputValue: 10.2 });
+        const validation = editor.validate(null, { position: 'rightInput', inputValue: 10.2 });
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -672,7 +672,7 @@ describe('DualInputEditor', () => {
       it('should return False when field is greater than a maxValue defined', () => {
         mockColumn.internalColumnEditor.params.leftInput.maxValue = 10.2;
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'leftInput', inputValue: 10.22 });
+        const validation = editor.validate(null, { position: 'leftInput', inputValue: 10.22 });
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number that is lower than or equal to 10.2' });
       });
@@ -681,7 +681,7 @@ describe('DualInputEditor', () => {
         mockColumn.internalColumnEditor.params.leftInput.maxValue = 10.2;
         mockColumn.internalColumnEditor.params.leftInput.operatorConditionalType = 'exclusive';
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'leftInput', inputValue: 10.22 });
+        const validation = editor.validate(null, { position: 'leftInput', inputValue: 10.22 });
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number that is lower than 10.2' });
       });
@@ -690,7 +690,7 @@ describe('DualInputEditor', () => {
         mockColumn.internalColumnEditor.params.rightInput.type = 'float';
         mockColumn.internalColumnEditor.params.rightInput.maxValue = 10.2;
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'rightInput', inputValue: 10.2 });
+        const validation = editor.validate(null, { position: 'rightInput', inputValue: 10.2 });
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -700,7 +700,7 @@ describe('DualInputEditor', () => {
         mockColumn.internalColumnEditor.params.leftInput.maxValue = 10.2;
         mockColumn.internalColumnEditor.params.leftInput.operatorConditionalType = 'inclusive';
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'leftInput', inputValue: 10.2 });
+        const validation = editor.validate(null, { position: 'leftInput', inputValue: 10.2 });
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -710,7 +710,7 @@ describe('DualInputEditor', () => {
         mockColumn.internalColumnEditor.params.leftInput.maxValue = 11;
         mockColumn.internalColumnEditor.params.leftInput.operatorConditionalType = 'inclusive';
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'leftInput', inputValue: 11 });
+        const validation = editor.validate(null, { position: 'leftInput', inputValue: 11 });
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -720,7 +720,7 @@ describe('DualInputEditor', () => {
         mockColumn.internalColumnEditor.params.rightInput.maxValue = 10.2;
         mockColumn.internalColumnEditor.params.rightInput.operatorConditionalType = 'exclusive';
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'rightInput', inputValue: 10.2 });
+        const validation = editor.validate(null, { position: 'rightInput', inputValue: 10.2 });
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number that is lower than 10.2' });
       });
@@ -730,7 +730,7 @@ describe('DualInputEditor', () => {
         mockColumn.internalColumnEditor.params.rightInput.maxValue = 11;
         mockColumn.internalColumnEditor.params.rightInput.operatorConditionalType = 'exclusive';
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'rightInput', inputValue: 11 });
+        const validation = editor.validate(null, { position: 'rightInput', inputValue: 11 });
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number that is lower than 11' });
       });
@@ -739,7 +739,7 @@ describe('DualInputEditor', () => {
         mockColumn.internalColumnEditor.params.leftInput.minValue = 10.5;
         mockColumn.internalColumnEditor.params.leftInput.maxValue = 99.5;
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'leftInput', inputValue: 99.6 });
+        const validation = editor.validate(null, { position: 'leftInput', inputValue: 99.6 });
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number between 10.5 and 99.5' });
       });
@@ -749,7 +749,7 @@ describe('DualInputEditor', () => {
         mockColumn.internalColumnEditor.params.leftInput.minValue = 11;
         mockColumn.internalColumnEditor.params.leftInput.maxValue = 99;
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'leftInput', inputValue: 100 });
+        const validation = editor.validate(null, { position: 'leftInput', inputValue: 100 });
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number between 11 and 99' });
       });
@@ -758,7 +758,7 @@ describe('DualInputEditor', () => {
         mockColumn.internalColumnEditor.params.rightInput.minValue = 10.5;
         mockColumn.internalColumnEditor.params.rightInput.maxValue = 99.5;
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'rightInput', inputValue: 99.5 });
+        const validation = editor.validate(null, { position: 'rightInput', inputValue: 99.5 });
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -768,7 +768,7 @@ describe('DualInputEditor', () => {
         mockColumn.internalColumnEditor.params.leftInput.maxValue = 99.5;
         mockColumn.internalColumnEditor.params.leftInput.operatorConditionalType = 'inclusive';
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'leftInput', inputValue: 10.5 });
+        const validation = editor.validate(null, { position: 'leftInput', inputValue: 10.5 });
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -778,8 +778,8 @@ describe('DualInputEditor', () => {
         mockColumn.internalColumnEditor.params.rightInput.maxValue = 99.5;
         mockColumn.internalColumnEditor.params.rightInput.operatorConditionalType = 'exclusive';
         editor = new DualInputEditor(editorArguments);
-        const validation1 = editor.validate({ position: 'rightInput', inputValue: 99.5 });
-        const validation2 = editor.validate({ position: 'rightInput', inputValue: 10.5 });
+        const validation1 = editor.validate(null, { position: 'rightInput', inputValue: 99.5 });
+        const validation2 = editor.validate(null, { position: 'rightInput', inputValue: 10.5 });
 
         expect(validation1).toEqual({ valid: false, msg: 'Please enter a valid number between 10.5 and 99.5' });
         expect(validation2).toEqual({ valid: false, msg: 'Please enter a valid number between 10.5 and 99.5' });
@@ -789,7 +789,7 @@ describe('DualInputEditor', () => {
         mockColumn.internalColumnEditor.params.leftInput.decimal = 2;
 
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'leftInput', inputValue: 99.6433 });
+        const validation = editor.validate(null, { position: 'leftInput', inputValue: 99.6433 });
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number with a maximum of 2 decimals' });
       });
@@ -798,7 +798,7 @@ describe('DualInputEditor', () => {
         mockColumn.internalColumnEditor.params.rightInput.decimal = 2;
 
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'rightInput', inputValue: 99.6 });
+        const validation = editor.validate(null, { position: 'rightInput', inputValue: 99.6 });
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -807,7 +807,7 @@ describe('DualInputEditor', () => {
         mockColumn.internalColumnEditor.params.leftInput.decimal = 2;
 
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'leftInput', inputValue: 99.65 });
+        const validation = editor.validate(null, { position: 'leftInput', inputValue: 99.65 });
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -815,7 +815,7 @@ describe('DualInputEditor', () => {
       it('should return True when field is required and field is a valid input value', () => {
         mockColumn.internalColumnEditor.params.rightInput.required = true;
         editor = new DualInputEditor(editorArguments);
-        const validation = editor.validate({ position: 'leftInput', inputValue: 2.5 });
+        const validation = editor.validate(null, { position: 'leftInput', inputValue: 2.5 });
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });

@@ -62,6 +62,10 @@ $editable-field-hover-icon-width: 14px !default;
       border-radius: 3px;
       background-color: #ffffff;
       cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
       &:before {
         content: "";
         display: table;

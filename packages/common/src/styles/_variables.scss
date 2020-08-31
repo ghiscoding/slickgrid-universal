@@ -581,7 +581,7 @@ $editor-modal-detail-container-border-invalid:  1px solid #ff1d1d !default;
 $editor-modal-detail-container-border-modified: 1px solid orange !default;
 $editor-modal-detail-container-border-width-modified: 1px 4px 1px 1px !default;
 $editor-modal-detail-label-color-invalid:       #ff1d1d !default;
-$editor-modal-detail-label-margin:              11px 0 0 10px !default;
+$editor-modal-detail-label-margin:              2px 0 0 10px !default;
 $editor-modal-detail-label-font-size:           13px !default;
 $editor-modal-detail-label-font-style:          normal !default;
 $editor-modal-detail-label-font-weight:         bold !default;
@@ -610,10 +610,11 @@ $editor-modal-title-line-height:                30px !default;
 $editor-modal-title-text-align:                 left !default;
 $editor-modal-validation-color:                 $editor-modal-detail-label-color-invalid !default;
 $editor-modal-validation-font-size:             12px !default;
-$editor-modal-validation-font-style:            none !default;
+$editor-modal-validation-font-style:            italic !default;
 $editor-modal-validation-font-weight:           normal !default;
 $editor-modal-validation-line-height:           16px !default;
-$editor-modal-validation-margin-left:           12px !default;
+$editor-modal-validation-margin-left:           2px !default;
+$editor-modal-validation-min-height:            16px !default;
 
 /* Compound Filters */
 $compound-filter-bgcolor:                       #e4eacf !default;

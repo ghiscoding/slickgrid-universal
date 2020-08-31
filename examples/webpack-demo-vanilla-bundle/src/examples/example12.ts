@@ -121,7 +121,7 @@ export class Example12 {
         id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 20, maxWidth: 100,
         sortable: true, filterable: true, columnGroup: 'Period',
         formatter: Formatters.multiple,
-        params: { formatters: [Formatters.checkmarkMaterial, (row, cell, value) => `<center>${value}</center>`] },
+        params: { formatters: [Formatters.center, Formatters.checkmarkMaterial] },
         exportWithFormatter: false,
         filter: {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
@@ -142,7 +142,7 @@ export class Example12 {
           validator: (value, args) => {
             const dataContext = args && args.item;
             if (dataContext && (dataContext.completed && !value)) {
-              return { valid: false, msg: 'You must provide a "Finish" date when "Completed" is checked' };
+              return { valid: false, msg: 'You must provide a "Finish" date when "Completed" is checked.' };
             }
             return { valid: true, msg: '' };
           }
@@ -722,9 +722,10 @@ export class Example12 {
 
     setTimeout(() => this.sgb.slickCompositeEditor?.openDetails({
       headerTitle: modalTitle,
-      closeOutside: true,
+      // closeOutside: true,
       backdrop: 'static',
       modalType,
+      useSplitView: true,
       onError: (msg) => alert(msg),
     }), openDelay);
     // this.sgb.slickCompositeEditor.applyChanges(formValues, modalType);

@@ -408,7 +408,7 @@ describe('IntegerEditor', () => {
       it('should return False when field is required and field is empty', () => {
         mockColumn.internalColumnEditor.required = true;
         editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate('');
+        const validation = editor.validate(null, '');
 
         expect(validation).toEqual({ valid: false, msg: 'Field is required' });
       });
@@ -416,7 +416,7 @@ describe('IntegerEditor', () => {
       it('should return False when field is not a valid integer', () => {
         mockColumn.internalColumnEditor.required = true;
         editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate('.2');
+        const validation = editor.validate(null, '.2');
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number' });
       });
@@ -424,7 +424,7 @@ describe('IntegerEditor', () => {
       it('should return False when field is lower than a minValue defined', () => {
         mockColumn.internalColumnEditor.minValue = 10;
         editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(3);
+        const validation = editor.validate(null, 3);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number that is greater than or equal to 10' });
       });
@@ -433,7 +433,7 @@ describe('IntegerEditor', () => {
         mockColumn.internalColumnEditor.minValue = 10;
         mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
         editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(3);
+        const validation = editor.validate(null, 3);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number that is greater than 10' });
       });
@@ -441,7 +441,7 @@ describe('IntegerEditor', () => {
       it('should return True when field is equal to the minValue defined', () => {
         mockColumn.internalColumnEditor.minValue = 9;
         editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(9);
+        const validation = editor.validate(null, 9);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -449,7 +449,7 @@ describe('IntegerEditor', () => {
       it('should return False when field is greater than a maxValue defined', () => {
         mockColumn.internalColumnEditor.maxValue = 10;
         editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(33);
+        const validation = editor.validate(null, 33);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number that is lower than or equal to 10' });
       });
@@ -458,7 +458,7 @@ describe('IntegerEditor', () => {
         mockColumn.internalColumnEditor.maxValue = 10;
         mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
         editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(33);
+        const validation = editor.validate(null, 33);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number that is lower than 10' });
       });
@@ -466,7 +466,7 @@ describe('IntegerEditor', () => {
       it('should return True when field is equal to the maxValue defined', () => {
         mockColumn.internalColumnEditor.maxValue = 99;
         editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(99);
+        const validation = editor.validate(null, 99);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -475,7 +475,7 @@ describe('IntegerEditor', () => {
         mockColumn.internalColumnEditor.maxValue = 9;
         mockColumn.internalColumnEditor.operatorConditionalType = 'inclusive';
         editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(9);
+        const validation = editor.validate(null, 9);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -484,7 +484,7 @@ describe('IntegerEditor', () => {
         mockColumn.internalColumnEditor.maxValue = 9;
         mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
         editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(9);
+        const validation = editor.validate(null, 9);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number that is lower than 9' });
       });
@@ -493,7 +493,7 @@ describe('IntegerEditor', () => {
         mockColumn.internalColumnEditor.minValue = 10;
         mockColumn.internalColumnEditor.maxValue = 99;
         editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(345);
+        const validation = editor.validate(null, 345);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number between 10 and 99' });
       });
@@ -502,7 +502,7 @@ describe('IntegerEditor', () => {
         mockColumn.internalColumnEditor.minValue = 10;
         mockColumn.internalColumnEditor.maxValue = 89;
         editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(89);
+        const validation = editor.validate(null, 89);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -512,7 +512,7 @@ describe('IntegerEditor', () => {
         mockColumn.internalColumnEditor.maxValue = 89;
         mockColumn.internalColumnEditor.operatorConditionalType = 'inclusive';
         editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(10);
+        const validation = editor.validate(null, 10);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -522,8 +522,8 @@ describe('IntegerEditor', () => {
         mockColumn.internalColumnEditor.maxValue = 89;
         mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
         editor = new IntegerEditor(editorArguments);
-        const validation1 = editor.validate(89);
-        const validation2 = editor.validate(10);
+        const validation1 = editor.validate(null, 89);
+        const validation2 = editor.validate(null, 10);
 
         expect(validation1).toEqual({ valid: false, msg: 'Please enter a valid integer number between 10 and 89' });
         expect(validation2).toEqual({ valid: false, msg: 'Please enter a valid integer number between 10 and 89' });
@@ -532,7 +532,7 @@ describe('IntegerEditor', () => {
       it('should return True when field is required and field is a valid input value', () => {
         mockColumn.internalColumnEditor.required = true;
         editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(2);
+        const validation = editor.validate(null, 2);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });

@@ -425,7 +425,7 @@ describe('SliderEditor', () => {
       it('should return False when field is required and field is empty', () => {
         mockColumn.internalColumnEditor.required = true;
         editor = new SliderEditor(editorArguments);
-        const validation = editor.validate('');
+        const validation = editor.validate(null, '');
 
         expect(validation).toEqual({ valid: false, msg: 'Field is required' });
       });
@@ -434,7 +434,7 @@ describe('SliderEditor', () => {
         mockColumn.internalColumnEditor.minValue = 10;
         mockColumn.internalColumnEditor.maxValue = 99;
         editor = new SliderEditor(editorArguments);
-        const validation = editor.validate(100);
+        const validation = editor.validate(null, 100);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number between 10 and 99' });
       });
