@@ -81,6 +81,9 @@ export interface GridOption {
   /** Checkbox Select Plugin options (columnId, cssClass, toolTip, width) */
   checkboxSelector?: CheckboxSelectorOption;
 
+  /** Defaults to " - ", separator between the column group label and the column label. */
+  columnGroupSeparator?: string;
+
   /** Column Picker Plugin options (columnTitle, forceFitTitle, syncResizeTitle) */
   columnPicker?: ColumnPicker;
 

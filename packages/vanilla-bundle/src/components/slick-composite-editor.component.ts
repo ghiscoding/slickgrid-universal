@@ -16,6 +16,7 @@ import {
   SlickGrid,
   SlickNamespace,
   SlickDataView,
+  TranslaterService,
 } from '@slickgrid-universal/common';
 
 // using external non-typed js libraries
@@ -73,8 +74,11 @@ export class SlickCompositeEditorComponent {
     return this.grid.getOptions();
   }
 
-  constructor(private grid: SlickGrid, private gridService: GridService) {
+  constructor(private grid: SlickGrid, private gridService: GridService, private translaterService?: TranslaterService) {
     this._eventHandler = new Slick.EventHandler();
+    if (this.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
+      throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
+    }
   }
 
   dispose() {
@@ -134,7 +138,7 @@ export class SlickCompositeEditorComponent {
           }
         }
 
-        let modalColumns = [];
+        let modalColumns: Column[] = [];
         if (isWithMassChange) {
           // when using Mass Update, we only care about the columns that have the "massUpdate: true", we disregard anything else
           modalColumns = columnDefinitions.filter(col => col.internalColumnEditor?.massUpdate);
@@ -222,18 +226,18 @@ export class SlickCompositeEditorComponent {
         modalContentElm.appendChild(modalFooterElm);
         this._modalElm.appendChild(modalContentElm);
 
-        for (const column of modalColumns) {
-          if (column.editor) {
+        for (const columnDef of modalColumns) {
+          if (columnDef.editor) {
             const templateItemLabelElm = document.createElement('div');
-            templateItemLabelElm.className = `item-details-label editor-${column.id}`;
-            templateItemLabelElm.textContent = column.name || 'n/a';
+            templateItemLabelElm.className = `item-details-label editor-${columnDef.id}`;
+            templateItemLabelElm.textContent = this.getColumnLabel(columnDef) || 'n/a';
 
             const templateItemEditorElm = document.createElement('div');
             templateItemEditorElm.className = 'item-details-editor-container slick-cell';
-            templateItemEditorElm.dataset.editorid = `${column.id}`;
+            templateItemEditorElm.dataset.editorid = `${columnDef.id}`;
 
             const templateItemValidationElm = document.createElement('div');
-            templateItemValidationElm.className = `item-details-validation editor-${column.id}`;
+            templateItemValidationElm.className = `item-details-validation editor-${columnDef.id}`;
 
             modalBodyElm.appendChild(templateItemLabelElm);
             modalBodyElm.appendChild(templateItemEditorElm);
@@ -386,6 +390,29 @@ export class SlickCompositeEditorComponent {
   // --
   // private methods
   // ----------------
+
+  /**
+   * Get the column label, the label might have an optional "columnGroup" (or "columnGroupKey" which need to be translated)
+   * @param {object} columnDef - column definition
+   * @returns {string} label - column label
+   */
+  private getColumnLabel(columnDef: Column): string {
+    const columnGroupSeparator = this.gridOptions.columnGroupSeparator || ' - ';
+    let columnName = columnDef.name || '';
+    let columnGroup = columnDef.columnGroup || '';
+
+    if (this.gridOptions.enableTranslate && this.translaterService) {
+      if (columnDef.nameKey) {
+        columnName = this.translaterService.translate(columnDef.nameKey);
+      }
+      if (columnDef.columnGroupKey && this.translaterService?.translate) {
+        columnGroup = this.translaterService.translate(columnDef.columnGroupKey);
+      }
+    }
+
+    const columnLabel = columnGroup ? `${columnGroup}${columnGroupSeparator}${columnName}` : columnName;
+    return columnLabel || '';
+  }
 
   private handleBodyClicked(event: Event) {
     if ((event.target as HTMLElement)?.classList?.contains('slick-editor-modal')) {

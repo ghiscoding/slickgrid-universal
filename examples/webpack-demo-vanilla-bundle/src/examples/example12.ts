@@ -83,13 +83,13 @@ export class Example12 {
     this.columnDefinitions = [
       {
         id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,
-        filterable: true,
+        filterable: true, columnGroup: 'Common Factor',
         formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold] },
         editor: { model: Editors.longText, massUpdate: false, required: true, alwaysSaveOnEnterKey: true, validator: myCustomTitleValidator, },
       },
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
-        type: FieldType.number,
+        type: FieldType.number, columnGroup: 'Common Factor',
         formatter: (row, cell, value) => {
           if (value === null || value === undefined) {
             return '';
@@ -100,26 +100,26 @@ export class Example12 {
       },
       {
         id: 'cost', name: 'Cost', field: 'cost', width: 90,
-        sortable: true, filterable: true, type: FieldType.number,
+        sortable: true, filterable: true, type: FieldType.number, columnGroup: 'Analysis',
         filter: { model: Filters.compoundInputNumber },
         formatter: Formatters.dollar,
       },
       {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
-        sortable: true, filterable: true,
+        sortable: true, filterable: true, columnGroup: 'Analysis',
         filter: { model: Filters.slider, operator: '>=' },
         editor: { model: Editors.slider, massUpdate: true, minValue: 0, maxValue: 100, },
       },
       {
         id: 'start', name: 'Start', field: 'start', sortable: true,
-        formatter: Formatters.dateIso,
+        formatter: Formatters.dateIso, columnGroup: 'Period',
         type: FieldType.date, outputType: FieldType.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },
         editor: { model: Editors.date, massUpdate: true, },
       },
       {
         id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 20, maxWidth: 100,
-        sortable: true, filterable: true,
+        sortable: true, filterable: true, columnGroup: 'Period',
         formatter: Formatters.multiple,
         params: { formatters: [Formatters.checkmarkMaterial, (row, cell, value) => `<center>${value}</center>`] },
         exportWithFormatter: false,
@@ -132,7 +132,7 @@ export class Example12 {
       },
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true,
-        formatter: Formatters.dateIso,
+        formatter: Formatters.dateIso, columnGroup: 'Period',
         type: FieldType.date, outputType: FieldType.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },
         editor: {
@@ -150,7 +150,7 @@ export class Example12 {
       },
       {
         id: 'product', name: 'Product', field: 'product',
-        filterable: true,
+        filterable: true, columnGroup: 'Item',
         minWidth: 100,
         exportWithFormatter: true,
         dataKey: 'id',
@@ -190,7 +190,7 @@ export class Example12 {
       },
       {
         id: 'countryOfOrigin', name: 'Country of Origin', field: 'countryOfOrigin',
-        formatter: Formatters.complexObject,
+        formatter: Formatters.complexObject, columnGroup: 'Item',
         exportWithFormatter: true,
         dataKey: 'code',
         labelKey: 'name',
@@ -285,6 +285,9 @@ export class Example12 {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false
       },
+      createPreHeaderPanel: true,
+      showPreHeaderPanel: true,
+      preHeaderPanelHeight: 28,
       rowHeight: 33,
       headerRowHeight: 35,
       enableCheckboxSelector: true,

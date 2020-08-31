@@ -270,8 +270,8 @@ export class FileExportService implements BaseFileExportService {
       // Populate the Grouped Column Header, pull the columnGroup(Key) defined
       columns.forEach((columnDef) => {
         let groupedHeaderTitle = '';
-        if ((columnDef.columnGroupKey || columnDef.columnGroupKey) && this._gridOptions.enableTranslate && this._translaterService && this._translaterService.translate && this._translaterService.getCurrentLanguage && this._translaterService.getCurrentLanguage()) {
-          groupedHeaderTitle = this._translaterService.translate((columnDef.columnGroupKey || columnDef.columnGroupKey));
+        if (columnDef.columnGroupKey && this._gridOptions.enableTranslate && this._translaterService && this._translaterService.translate && this._translaterService.getCurrentLanguage && this._translaterService.getCurrentLanguage()) {
+          groupedHeaderTitle = this._translaterService.translate(columnDef.columnGroupKey);
         } else {
           groupedHeaderTitle = columnDef.columnGroup || '';
         }

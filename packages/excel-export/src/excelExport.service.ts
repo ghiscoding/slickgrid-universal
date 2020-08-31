@@ -411,8 +411,8 @@ export class ExcelExportService implements BaseExcelExportService {
       // Populate the Grouped Column Header, pull the columnGroup(Key) defined
       columns.forEach((columnDef) => {
         let groupedHeaderTitle = '';
-        if ((columnDef.columnGroupKey || columnDef.columnGroupKey) && this._gridOptions.enableTranslate && this._translaterService?.translate) {
-          groupedHeaderTitle = this._translaterService.translate((columnDef.columnGroupKey || columnDef.columnGroupKey));
+        if (columnDef.columnGroupKey && this._gridOptions.enableTranslate && this._translaterService?.translate) {
+          groupedHeaderTitle = this._translaterService.translate(columnDef.columnGroupKey);
         } else {
           groupedHeaderTitle = columnDef.columnGroup || '';
         }

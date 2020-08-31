@@ -1,5 +1,6 @@
 import { Column } from './column.interface';
 import { GridMenuItem } from './gridMenuItem.interface';
+import { GridOption } from './gridOption.interface';
 import { MenuCallbackArgs } from './menuCallbackArgs.interface';
 
 export interface GridMenuOption {
@@ -121,7 +122,7 @@ export interface GridMenuOption {
   // action/override callbacks
 
   /** Callback method to override the column name output used by the ColumnPicker/GridMenu. */
-  headerColumnValueExtractor?: (column: Column) => string;
+  headerColumnValueExtractor?: (column: Column, gridOptions?: GridOption) => string;
 
   /** Callback method that user can override the default behavior of enabling/disabling an item from the list. */
   menuUsabilityOverride?: (args: MenuCallbackArgs) => boolean;

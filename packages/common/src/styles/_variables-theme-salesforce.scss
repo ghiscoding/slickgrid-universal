@@ -146,7 +146,7 @@ $row-move-plugin-icon-width:                18px !default;
 $row-move-plugin-icon:                      url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($row-move-plugin-icon-color)}" viewBox="0 0 24 24"><path d="M10,13H22V11H10M10,19H22V17H10M10,7H22V5H10M6,7H8.5L5,3.5L1.5,7H4V17H1.5L5,20.5L8.5,17H6V7Z"></path></svg>') !default;
 $editor-focus-box-shadow:                   0 0 3px $primary-color !default;
 $editor-modal-container-radius:             var(--lwc-borderRadiusMedium, 0.25rem) !default;
-$editor-modal-close-btn-color:              #ffffff !default;
+$editor-modal-close-btn-outside-color:      #ffffff !default;
 $editor-modal-close-btn-outside-font-size:  36px !default;
 $editor-modal-close-btn-outside-right:      -7px !default;
 $editor-modal-close-btn-outside-top:        -32px !default;

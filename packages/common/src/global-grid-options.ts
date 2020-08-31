@@ -20,6 +20,7 @@ export const GlobalGridOptions: GridOption = {
     cssClass: 'slick-cell-checkboxsel',
     width: 42
   },
+  columnGroupSeparator: ' - ',
   columnPicker: {
     fadeSpeed: 0,
     hideForceFitButton: false,
@@ -196,10 +197,11 @@ export const GlobalGridOptions: GridOption = {
  * when using Column Header Grouping, we'll prefix the column group title
  * else we'll simply return the column name title
  */
-function pickerHeaderColumnValueExtractor(column: Column) {
+function pickerHeaderColumnValueExtractor(column: Column, gridOptions?: GridOption) {
   const headerGroup = column?.columnGroup || '';
+  const columnGroupSeparator = gridOptions?.columnGroupSeparator ?? ' - ';
   if (headerGroup) {
-    return headerGroup + ' - ' + column.name;
+    return headerGroup + columnGroupSeparator + column.name;
   }
   return column?.name ?? '';
 }
