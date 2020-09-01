@@ -100,7 +100,7 @@ export class SlickCompositeEditorComponent {
     }
   }
 
-  openDetails(options: CompositeEditorOpenDetailOption) {
+  async openDetails(options: CompositeEditorOpenDetailOption): Promise<null | void> {
     const onError = options?.onError ?? DEFAULT_ON_ERROR;
 
     try {
@@ -118,10 +118,13 @@ export class SlickCompositeEditorComponent {
 
       if (!this.gridOptions.editable) {
         onError('Your grid must be editable in order to use the Composite Editor Modal', 'error');
+        return;
       } else if (!this.gridOptions.enableCellNavigation) {
         onError('Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.', 'error');
+        return;
       } else if (!activeCell && modalType === 'edit') {
         onError('No records selected for edit operation', 'warning');
+        return;
       } else {
         const dataContext = this.grid.getDataItem(activeRow);
         const isWithMassChange = (modalType === 'mass-update' || modalType === 'mass-selection');
@@ -133,7 +136,10 @@ export class SlickCompositeEditorComponent {
         // focus on a first cell with an Editor (unless current cell already has an Editor then do nothing)
         // also when it's a "Create" modal, we'll scroll to the end of the grid
         const rowIndex = modalType === 'create' ? this.dataViewLength : activeRow;
-        this.focusOnFirstCellWithEditor(columnDefinitions, activeColIndex, rowIndex, isWithMassChange);
+        const hasFoundEditor = await this.focusOnFirstCellWithEditor(columnDefinitions, dataContext, activeColIndex, rowIndex, isWithMassChange);
+        if (!hasFoundEditor) {
+          return;
+        }
 
         if (modalType === 'edit' && !dataContext) {
           onError('Current row is not editable', 'warning');
@@ -401,7 +407,9 @@ export class SlickCompositeEditorComponent {
 
   validateCurrentEditor() {
     const currentEditor = this.grid.getCellEditor();
-    currentEditor.validate();
+    if (currentEditor?.validate) {
+      currentEditor.validate();
+    }
   }
 
   // --
@@ -451,19 +459,16 @@ export class SlickCompositeEditorComponent {
 
   // For the Composite Editor to work, the current active cell must have an Editor (because it calls editActiveCell() and that only works with a cell with an Editor)
   // so if current active cell doesn't have an Editor, we'll find the first column with an Editor and focus on it (from left to right starting at index 0)
-  private focusOnFirstCellWithEditor(columns: Column[], columnIndex: number, rowIndex: number, isWithMassChange: boolean) {
+  private async focusOnFirstCellWithEditor(columns: Column[], dataContext: any, columnIndex: number, rowIndex: number, isWithMassChange: boolean): Promise<boolean> {
     let columnIndexWithEditor = columnIndex;
-    const onError = this._options?.onError ?? DEFAULT_ON_ERROR;
+    const cellEditor = columns[columnIndex].editor;
 
-    const hasEditor = columns[columnIndex].editor;
-    if (!hasEditor) {
-      if (isWithMassChange) {
-        columnIndexWithEditor = columns.findIndex(col => col.internalColumnEditor?.massUpdate);
-      } else {
-        columnIndexWithEditor = columns.findIndex(col => col.editor);
-      }
+    if (!cellEditor || !this.getActiveCellEditor(rowIndex, columnIndex)) {
+      columnIndexWithEditor = await this.findNextAvailableEditorColumnIndex(columns, dataContext, rowIndex, isWithMassChange);
       if (columnIndexWithEditor === -1) {
+        const onError = this._options?.onError ?? DEFAULT_ON_ERROR;
         onError('We could not find any Editor in your Column Definition', 'error');
+        return false;
       } else {
         this.grid.setActiveCell(rowIndex, columnIndexWithEditor, false);
         if (isWithMassChange) {
@@ -473,6 +478,30 @@ export class SlickCompositeEditorComponent {
         }
       }
     }
+    return true;
+  }
+
+  private async findNextAvailableEditorColumnIndex(columns: Column[], dataContext: any, rowIndex: number, isWithMassUpdate: boolean): Promise<number> {
+    let columnIndexWithEditor = -1;
+
+    for (let colIndex = 0; colIndex < columns.length; colIndex++) {
+      const col = columns[colIndex];
+      if (col.editor && (!isWithMassUpdate || (isWithMassUpdate && col.internalColumnEditor?.massUpdate))) {
+        // we can check that the cell is really editable by checking the onBeforeEditCell event not returning false (returning undefined, null also mean it is editable)
+        const isCellEditable = await this.grid.onBeforeEditCell.notify({ row: rowIndex, cell: colIndex, item: dataContext, column: col, grid: this.grid });
+        this.grid.setActiveCell(rowIndex, colIndex, false);
+        if (isCellEditable !== false) {
+          columnIndexWithEditor = colIndex;
+          break;
+        }
+      }
+    }
+    return columnIndexWithEditor;
+  }
+
+  private getActiveCellEditor(row: number, cell: number): Editor | null {
+    this.grid.setActiveCell(row, cell, false);
+    return this.grid.getCellEditor();
   }
 
   private validateCompositeEditors(targetElm?: HTMLElement): EditorValidationResult {

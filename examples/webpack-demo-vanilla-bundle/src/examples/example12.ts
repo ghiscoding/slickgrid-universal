@@ -4,6 +4,7 @@ import {
   CompositeEditorModalType,
   CompositeEditorExtension,
   Editors,
+  EventNamingStyle,
   FieldType,
   Filters,
   Formatter,
@@ -36,9 +37,30 @@ const myCustomTitleValidator = (value, args) => {
   return { valid: true, msg: '' };
 };
 
-const customEditableInputFormatter = (row, cell, value, columnDef, dataContext, grid) => {
+/**
+ * Check if the current item (cell) is editable or not
+ * @param {*} dataContext - item data context object
+ * @param {*} columnDef - column definition
+ * @param {*} grid - slickgrid grid object
+ * @returns {boolean} isEditable
+ */
+function checkItemIsEditable(dataContext, columnDef, grid) {
+  let isEditable = true;
   const gridOptions = grid && grid.getOptions && grid.getOptions();
-  const isEditableLine = gridOptions.editable && columnDef.editor;
+  const gridParams = gridOptions && gridOptions.params || {};
+
+  if (dataContext && columnDef && gridOptions && gridOptions.editable) {
+    switch (columnDef.id) {
+      case 'finish':
+        isEditable = !!dataContext.completed;
+        break;
+    }
+  }
+  return isEditable;
+}
+
+const customEditableInputFormatter = (row, cell, value, columnDef, dataContext, grid) => {
+  const isEditableLine = checkItemIsEditable(dataContext, columnDef, grid);
   value = (value === null || value === undefined) ? '' : value;
   // return isEditableLine ? { text: value, addClasses: 'editable-field', toolTip: 'Click to Edit' } : value;
   return isEditableLine ? `<div class="editing-field">${value}</div>` : value;
@@ -72,6 +94,7 @@ export class Example12 {
     this.gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
     this.gridContainerElm.addEventListener('onbeforeeditcell', this.handleOnBeforeEditCell.bind(this));
     this.gridContainerElm.addEventListener('oncellchange', this.handleOnCellChange.bind(this));
+    this.gridContainerElm.addEventListener('onclick', () => this.handleOnCellClicked.bind(this));
     this.gridContainerElm.addEventListener('ondblclick', () => this.openCompositeModal('edit', 50));
   }
 
@@ -121,7 +144,7 @@ export class Example12 {
         id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 20, maxWidth: 100,
         sortable: true, filterable: true, columnGroup: 'Period',
         formatter: Formatters.multiple,
-        params: { formatters: [Formatters.center, Formatters.checkmarkMaterial] },
+        params: { formatters: [Formatters.checkmarkMaterial, Formatters.center] },
         exportWithFormatter: false,
         filter: {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
@@ -262,6 +285,7 @@ export class Example12 {
     this.gridOptions = {
       useSalesforceDefaultGridOptions: true,
       datasetIdPropertyName: 'id',
+      eventNamingStyle: EventNamingStyle.lowerCase,
       editable: true,
       enableAddRow: true, // <-- this flag is required to work with these modal types (create/mass-update/mass-selection)
       enableCellNavigation: true,
@@ -337,7 +361,7 @@ export class Example12 {
     for (let i = 0; i < count; i++) {
       const randomItemId = Math.floor(Math.random() * this.mockProducts().length);
       const randomYear = 2000 + Math.floor(Math.random() * 10);
-      const randomFinishYear = (new Date().getFullYear() - 3) + Math.floor(Math.random() * 10); // use only years not lower than 3 years ago
+      const randomFinishYear = (new Date().getFullYear()) + Math.floor(Math.random() * 10); // use only years not lower than 3 years ago
       const randomMonth = Math.floor(Math.random() * 11);
       const randomDay = Math.floor((Math.random() * 29));
       const randomFinish = new Date(randomFinishYear, (randomMonth + 1), randomDay);
@@ -349,9 +373,9 @@ export class Example12 {
         duration: Math.floor(Math.random() * 100) + 10,
         percentComplete: randomPercentComplete > 100 ? 100 : randomPercentComplete,
         start: new Date(randomYear, randomMonth, randomDay),
-        finish: (randomFinish < new Date() || i < 3) ? '' : randomFinish, // make sure the random date is earlier than today and it's index is bigger than 3
+        finish: (i % 3 !== 0 || (randomFinish < new Date() || i < 3)) ? '' : randomFinish, // make sure the random date is earlier than today and it's index is bigger than 3
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
-        completed: (i % 5 === 0),
+        completed: (i % 3 === 0),
         product: { id: this.mockProducts()[randomItemId]?.id, itemName: this.mockProducts()[randomItemId]?.itemName, },
         countryOfOrigin: (i % 2) ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' },
       };
@@ -390,25 +414,32 @@ export class Example12 {
   }
 
   handleOnBeforeEditCell(event) {
-    const eventData = event?.detail?.eventData;
-    const args = event?.detail?.args;
+    const eventData = event.detail.eventData;
+    const args = event && event.detail && event.detail.args;
+    const { column, item, grid } = args;
 
-    if (args && args.column && args.item) {
-      // console.log('handleOnBeforeEditCell', args);
-      if (!this.isItemEditable(args.item, args.column)) {
+    if (column && item) {
+      if (!checkItemIsEditable(item, column, grid)) {
         event.preventDefault();
         eventData.stopImmediatePropagation();
-        return false;
       }
+    }
+    return false;
+  }
+
+  handleOnCellChange(event) {
+    const args = event && event.detail && event.detail.args;
+    const dataContext = args && args.item;
+
+    // when the field "completed" changes to false, we also need to blank out the "finish" date
+    if (dataContext && !dataContext.completed) {
+      dataContext.finish = null;
+      this.sgb.gridService.updateItem(dataContext);
     }
   }
 
-  handleOnCellChange(event, args) {
-    console.log('handleOnCellChange', event, args);
-  }
-
-  isItemEditable(item, column) {
-    return true;
+  handleOnCellClicked(event) {
+    console.log(event)
   }
 
   /**

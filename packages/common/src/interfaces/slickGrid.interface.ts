@@ -63,9 +63,11 @@ export interface SlickGrid {
 
   /**
    * Attempts to switch the active cell into edit mode. Will throw an error if the cell is set to be not editable. Uses the specified editor, otherwise defaults to any default editor for that given cell.
-   * @param editor A SlickGrid editor (see examples in slick.editors.js).
+   * @param {object} editor A SlickGrid editor (see examples in slick.editors.js).
+   * @param {boolean} preClickModeOn Pre-Click Mode is Enabled?
+   * @param {object} event
    */
-  editActiveCell(editor: Editor): void;
+  editActiveCell(editor: Editor, preClickModeOn?: boolean, event?: Event): void;
 
   /**
    * Flashes the cell twice by toggling the CSS class 4 times.
@@ -162,9 +164,9 @@ export interface SlickGrid {
 
   /**
    * Returns the databinding item at a given position.
-   * @param index Item index.
+   * @param index Item row index.
    */
-  getDataItem<T = any>(index: number): T;
+  getDataItem<T = any>(rowIndex: number): T;
 
   /** Returns the size of the databinding source. */
   getDataLength(): number;
