@@ -1,6 +1,6 @@
 import { KeyCode } from '../enums/index';
-import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, SlickGrid, SlickNamespace } from './../interfaces/index';
-import { getDescendantProperty, setDeepValue } from '../services/utilities';
+import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption, SlickGrid, SlickNamespace, } from './../interfaces/index';
+import { debounce, getDescendantProperty, setDeepValue } from '../services/utilities';
 import { integerValidator } from '../editorValidators/integerValidator';
 
 // using external non-typed js libraries
@@ -19,11 +19,15 @@ export class IntegerEditor implements Editor {
   /** SlickGrid Grid object */
   grid: SlickGrid;
 
+  /** Grid options */
+  gridOptions: GridOption;
+
   constructor(private args: EditorArguments) {
     if (!args) {
       throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
     }
     this.grid = args.grid;
+    this.gridOptions = args.grid && args.grid.getOptions() as GridOption;
     this.init();
   }
 
@@ -87,7 +91,10 @@ export class IntegerEditor implements Editor {
       }
 
       if (compositeEditorOptions) {
-        this._input.addEventListener('change', (event: KeyboardEvent) => this.handleChangeOnCompositeEditor(event, compositeEditorOptions));
+        this._input.addEventListener('keyup', (event: KeyboardEvent) => {
+          const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
+          debounce(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay)();
+        });
       } else {
         setTimeout(() => this.focus(), 50);
       }

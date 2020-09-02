@@ -14,7 +14,7 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
-import { getDescendantProperty, getHtmlElementOffset, getTranslationPrefix, setDeepValue } from '../services/utilities';
+import { debounce, getDescendantProperty, getHtmlElementOffset, getTranslationPrefix, setDeepValue, } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 import { textValidator } from '../editorValidators/textValidator';
 
@@ -129,9 +129,7 @@ export class LongTextEditor implements Editor {
     this._$textarea.on('keydown', this.handleKeyDown.bind(this));
     this._$textarea.on('keyup', this.handleKeyUp.bind(this));
 
-    if (compositeEditorOptions) {
-      this._$textarea.on('change', (event: KeyboardEvent) => this.handleChangeOnCompositeEditor(event, compositeEditorOptions));
-    } else {
+    if (!compositeEditorOptions) {
       this.position(this.args && this.args.position);
       this._$wrapper.find('.btn-save').on('click', () => this.save());
       this._$wrapper.find('.btn-cancel').on('click', () => this.cancel());
@@ -322,8 +320,14 @@ export class LongTextEditor implements Editor {
 
   /** On every keyup event, we'll update the current text length counter */
   private handleKeyUp(event: KeyboardEvent & { target: HTMLTextAreaElement }) {
+    const compositeEditorOptions = this.args.compositeEditorOptions;
     const textLength = event.target.value.length;
     this._$currentLengthElm.text(textLength);
+
+    if (compositeEditorOptions) {
+      const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
+      debounce(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay)();
+    }
   }
 
   private handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption) {

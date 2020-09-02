@@ -85,6 +85,7 @@ export const GlobalGridOptions: GridOption = {
   defaultComponentEventPrefix: '',
   defaultSlickgridEventPrefix: '',
   editable: false,
+  editorTypingDebounce: 450,
   enableAutoResize: true,
   enableAutoSizeColumns: true,
   enableCellNavigation: false,

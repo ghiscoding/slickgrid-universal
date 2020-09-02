@@ -5,7 +5,7 @@ export const SalesforceGlobalGridOptions: GridOption = {
   autoEdit: true, // true single click (false for double-click)
   autoCommitEdit: true,
   datasetIdPropertyName: 'Id',
-  defaultFilterPlaceholder: '', // '&#xE16E;', // '&#128269;'
+  defaultFilterPlaceholder: '',
   enableExport: true,
   enableDeepCopyDatasetOnPageLoad: true,
   exportOptions: {

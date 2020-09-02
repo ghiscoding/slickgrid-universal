@@ -163,6 +163,9 @@ export interface GridOption {
   /** a global singleton editor lock. */
   editorLock?: any;
 
+  /** Default to 450ms and only applies to Composite Editor, how long to wait until we start validating the editor changes on Editor that support it (integer, float, text, longText). */
+  editorTypingDebounce?: number;
+
   /** Do we want to emulate paging when we are scrolling? */
   emulatePagingWhenScrolling?: boolean;
 
