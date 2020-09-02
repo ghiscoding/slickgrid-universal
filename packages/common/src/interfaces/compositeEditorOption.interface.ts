@@ -5,7 +5,10 @@ export interface CompositeEditorOption {
   modalType: CompositeEditorModalType;
 
   /** Failed Message text to display as a global validation error when there's any invalid field(s) */
-  validationFailedMsg: string;
+  validationFailedMsg?: string;
+
+  /** Add an optional prefix to each validation message (only the ones shown in the modal form, not the ones in the "errors") */
+  validationMsgPrefix?: string;
 
   /** Show method that could be overridden */
   show?: () => void;

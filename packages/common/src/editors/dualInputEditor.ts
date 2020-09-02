@@ -26,6 +26,7 @@ declare const Slick: SlickNamespace;
  */
 export class DualInputEditor implements Editor {
   private _eventHandler: SlickEventHandler;
+  private _isDisabled = false;
   private _isValueSaveCalled = false;
   private _lastEventType: string | undefined;
   private _lastInputKeyEvent: KeyboardEvent;
@@ -33,8 +34,8 @@ export class DualInputEditor implements Editor {
   private _rightInput: HTMLInputElement;
   private _leftFieldName: string;
   private _rightFieldName: string;
-  originalLeftValue: string | number;
-  originalRightValue: string | number;
+  private _originalLeftValue: string | number;
+  private _originalRightValue: string | number;
 
   /** SlickGrid Grid object */
   grid: SlickGrid;
@@ -185,8 +186,40 @@ export class DualInputEditor implements Editor {
     return input;
   }
 
+  disable(isDisabled = true) {
+    const prevIsDisabled = this._isDisabled;
+    this._isDisabled = isDisabled;
+
+    if (this._leftInput && this._rightInput) {
+      if (isDisabled) {
+        this._leftInput.setAttribute('disabled', 'disabled');
+        this._rightInput.setAttribute('disabled', 'disabled');
+
+        // clear the checkbox when it's newly disabled
+        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+          this._originalLeftValue = '';
+          this._originalRightValue = '';
+          this._leftInput.value = '';
+          this._rightInput.value = '';
+          this.handleChangeOnCompositeEditor(null, this.args?.compositeEditorOptions);
+        }
+      } else {
+        this._leftInput.removeAttribute('disabled');
+        this._rightInput.removeAttribute('disabled');
+      }
+    }
+  }
+
   focus() {
     // do nothing since we have 2 inputs and we might focus on left/right depending on which is invalid and/or new
+  }
+
+  show() {
+    const isCompositeEditor = !!this.args?.compositeEditorOptions;
+    if (isCompositeEditor) {
+      // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
+      this.applyInputUsabilityState();
+    }
   }
 
   getValues(): { [fieldName: string]: string | number } {
@@ -250,8 +283,8 @@ export class DualInputEditor implements Editor {
     if ((leftEditorParams && leftEditorParams.alwaysSaveOnEnterKey || rightEditorParams && rightEditorParams.alwaysSaveOnEnterKey) && lastKeyEvent === KeyCode.ENTER) {
       return true;
     }
-    const leftResult = (!(leftElmValue === '' && (this.originalLeftValue === null || this.originalLeftValue === undefined))) && (leftElmValue !== this.originalLeftValue);
-    const rightResult = (!(rightElmValue === '' && (this.originalRightValue === null || this.originalRightValue === undefined))) && (rightElmValue !== this.originalRightValue);
+    const leftResult = (!(leftElmValue === '' && (this._originalLeftValue === null || this._originalLeftValue === undefined))) && (leftElmValue !== this._originalLeftValue);
+    const rightResult = (!(rightElmValue === '' && (this._originalRightValue === null || this._originalRightValue === undefined))) && (rightElmValue !== this._originalRightValue);
     return leftResult || rightResult;
   }
 
@@ -264,7 +297,7 @@ export class DualInputEditor implements Editor {
   loadValueByPosition(item: any, position: 'leftInput' | 'rightInput') {
     // is the field a complex object, "address.streetNumber"
     const fieldName = (position === 'leftInput') ? this._leftFieldName : this._rightFieldName;
-    const originalValuePosition = (position === 'leftInput') ? 'originalLeftValue' : 'originalRightValue';
+    const originalValuePosition = (position === 'leftInput') ? '_originalLeftValue' : '_originalRightValue';
     const inputVarPosition = (position === 'leftInput') ? '_leftInput' : '_rightInput';
 
     if (item && fieldName !== undefined) {
@@ -352,6 +385,16 @@ export class DualInputEditor implements Editor {
   }
 
   validate(_targetElm?: null, inputValidation?: { position: 'leftInput' | 'rightInput', inputValue: any }): EditorValidationResult {
+    // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
+    if (this.args.compositeEditorOptions) {
+      this.applyInputUsabilityState();
+    }
+
+    // when field is disabled, we can assume it's valid
+    if (this._isDisabled) {
+      return { valid: true, msg: '' };
+    }
+
     if (inputValidation) {
       const posValidation = this.validateByPosition(inputValidation.position, inputValidation.inputValue);
       if (!posValidation.valid) {
@@ -417,9 +460,17 @@ export class DualInputEditor implements Editor {
     }
   }
 
-  private handleChangeOnCompositeEditor(event: Event, compositeEditorOptions: CompositeEditorOption) {
+  /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
+  private applyInputUsabilityState() {
+    const activeCell = this.grid.getActiveCell();
+    const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
+    this.disable(isCellEditable === false);
+  }
+
+  private handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption) {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
+    const columnId = this.columnDef?.id ?? '';
     const item = this.args.item;
     const grid = this.grid;
 
@@ -428,6 +479,9 @@ export class DualInputEditor implements Editor {
       this.applyValue(this.args.item, this.serializeValue());
     }
     this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+    if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+      delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
+    }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
   }
 }

@@ -11,7 +11,9 @@ declare const Slick: SlickNamespace;
  */
 export class CheckboxEditor implements Editor {
   private _input: HTMLInputElement;
-  originalValue: boolean;
+  private _checkboxContainerElm: HTMLDivElement;
+  private _isDisabled = false;
+  private _originalValue?: boolean | string;
 
   /** SlickGrid Grid object */
   grid: SlickGrid;
@@ -53,8 +55,8 @@ export class CheckboxEditor implements Editor {
     const title = this.columnEditor && this.columnEditor.title || '';
     const compositeEditorOptions = this.args.compositeEditorOptions;
 
-    const checkboxContainerElm = document.createElement('div');
-    checkboxContainerElm.className = `checkbox-editor-container editor-${columnId}`;
+    this._checkboxContainerElm = document.createElement('div');
+    this._checkboxContainerElm.className = `checkbox-editor-container editor-${columnId}`;
 
     this._input = document.createElement('input');
     this._input.className = `editor-checkbox editor-${columnId}`;
@@ -65,8 +67,8 @@ export class CheckboxEditor implements Editor {
     const cellContainer = this.args?.container;
     if (cellContainer && typeof cellContainer.appendChild === 'function') {
       if (compositeEditorOptions) {
-        checkboxContainerElm.appendChild(this._input);
-        cellContainer.appendChild(checkboxContainerElm);
+        this._checkboxContainerElm.appendChild(this._input);
+        cellContainer.appendChild(this._checkboxContainerElm);
       } else {
         cellContainer.appendChild(this._input);
       }
@@ -92,8 +94,38 @@ export class CheckboxEditor implements Editor {
     }
   }
 
+  disable(isDisabled = true) {
+    const prevIsDisabled = this._isDisabled;
+    this._isDisabled = isDisabled;
+
+    if (this._input) {
+      if (isDisabled) {
+        this._input.setAttribute('disabled', 'disabled');
+        this._checkboxContainerElm.classList.add('disabled');
+
+        // clear the checkbox when it's newly disabled
+        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+          this._input.checked = false;
+          this._originalValue = undefined;
+          this.handleChangeOnCompositeEditor(null, this.args.compositeEditorOptions);
+        }
+      } else {
+        this._input.removeAttribute('disabled');
+        this._checkboxContainerElm.classList.remove('disabled');
+      }
+    }
+  }
+
   focus(): void {
     this._input.focus();
+  }
+
+  show() {
+    const isCompositeEditor = !!this.args?.compositeEditorOptions;
+    if (isCompositeEditor) {
+      // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
+      this.applyInputUsabilityState();
+    }
   }
 
   getValue() {
@@ -124,7 +156,7 @@ export class CheckboxEditor implements Editor {
   }
 
   isValueChanged(): boolean {
-    return (this.serializeValue() !== this.originalValue);
+    return (this.serializeValue() !== this._originalValue);
   }
 
   loadValue(item: any) {
@@ -135,8 +167,8 @@ export class CheckboxEditor implements Editor {
       const isComplexObject = fieldName?.indexOf('.') > 0;
       const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
 
-      this.originalValue = value;
-      if (this.originalValue) {
+      this._originalValue = value;
+      if (this._originalValue) {
         this._input.checked = true;
       } else {
         this._input.checked = false;
@@ -160,6 +192,16 @@ export class CheckboxEditor implements Editor {
     const isChecked = (inputValue !== undefined) ? inputValue : this._input.checked;
     const errorMsg = this.columnEditor.errorMessage;
 
+    // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
+    if (this.args.compositeEditorOptions) {
+      this.applyInputUsabilityState();
+    }
+
+    // when field is disabled, we can assume it's valid
+    if (this._isDisabled) {
+      return { valid: true, msg: '' };
+    }
+
     if (this.validator) {
       return this.validator(isChecked, this.args);
     }
@@ -182,9 +224,17 @@ export class CheckboxEditor implements Editor {
   // private functions
   // ------------------
 
-  private handleChangeOnCompositeEditor(event: Event, compositeEditorOptions: CompositeEditorOption) {
+  /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
+  private applyInputUsabilityState() {
+    const activeCell = this.grid.getActiveCell();
+    const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
+    this.disable(isCellEditable === false);
+  }
+
+  private handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption) {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
+    const columnId = this.columnDef?.id ?? '';
     const item = this.args.item;
     const grid = this.grid;
 
@@ -193,6 +243,9 @@ export class CheckboxEditor implements Editor {
       this.applyValue(this.args.item, this.serializeValue());
     }
     this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+    if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+      delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
+    }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
   }
 }

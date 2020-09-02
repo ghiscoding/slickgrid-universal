@@ -53,6 +53,7 @@ const gridStub = {
   invalidate: jest.fn(),
   onLocalSortChanged: jest.fn(),
   onAddNewRow: new Slick.Event(),
+  onBeforeEditCell: new Slick.Event(),
   onClick: new Slick.Event(),
   onCompositeEditorChange: new Slick.Event(),
   render: jest.fn(),
@@ -152,7 +153,7 @@ describe('CompositeEditorService', () => {
       jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(false);
 
       component = new SlickCompositeEditorComponent(gridStub, gridServiceStub);
-      component.openDetails();
+      component.openDetails({ headerTitle: 'Details' });
 
       const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
 
@@ -166,7 +167,7 @@ describe('CompositeEditorService', () => {
       jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
 
       component = new SlickCompositeEditorComponent(gridStub, gridServiceStub);
-      component.openDetails();
+      component.openDetails({ headerTitle: 'Details' });
 
       const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
       const compositeHeaderElm = compositeContainerElm.querySelector<HTMLSelectElement>('.slick-editor-modal-header');
@@ -195,10 +196,10 @@ describe('CompositeEditorService', () => {
       const setActiveSpy = jest.spyOn(gridStub, 'setActiveCell');
 
       component = new SlickCompositeEditorComponent(gridStub, gridServiceStub);
-      component.openDetails();
+      component.openDetails({ headerTitle: 'Details' });
       const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
 
-      expect(setActiveSpy).toHaveBeenCalledTimes(1);
+      expect(setActiveSpy).toHaveBeenCalledTimes(2);
       expect(setActiveSpy).toHaveBeenCalledWith(4, 0, false);
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -210,7 +211,7 @@ describe('CompositeEditorService', () => {
       jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
 
       component = new SlickCompositeEditorComponent(gridStub, gridServiceStub);
-      component.openDetails();
+      component.openDetails({ headerTitle: 'Details' });
       const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
 
       expect(component).toBeTruthy();
@@ -223,12 +224,12 @@ describe('CompositeEditorService', () => {
       expect(compositeContainerElm2).toBeFalsy();
     });
 
-    it('should dispose the component when clicking in the backdrop outside the modal window', () => {
+    it('should dispose the component when clicking in the backdrop outside the modal window when using the options "backdrop: null"', () => {
       const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
       jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
 
       component = new SlickCompositeEditorComponent(gridStub, gridServiceStub);
-      component.openDetails();
+      component.openDetails({ headerTitle: 'Details', backdrop: null });
       const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
 
       expect(component).toBeTruthy();
@@ -266,7 +267,7 @@ describe('CompositeEditorService', () => {
       const cancelSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
 
       component = new SlickCompositeEditorComponent(gridStub, gridServiceStub);
-      component.openDetails();
+      component.openDetails({ headerTitle: 'Details' });
 
       const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
       compositeContainerElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
@@ -287,7 +288,7 @@ describe('CompositeEditorService', () => {
       const validateSpy = jest.spyOn(currentEditorMock, 'validate');
 
       component = new SlickCompositeEditorComponent(gridStub, gridServiceStub);
-      component.openDetails();
+      component.openDetails({ headerTitle: 'Details' });
 
       const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
       compositeContainerElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
@@ -307,7 +308,7 @@ describe('CompositeEditorService', () => {
       const cancelSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
 
       component = new SlickCompositeEditorComponent(gridStub, gridServiceStub);
-      component.openDetails();
+      component.openDetails({ headerTitle: 'Details' });
 
       const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
       const compositeFooterCancelBtnElm = compositeContainerElm.querySelector<HTMLSelectElement>('.btn-cancel');
@@ -345,7 +346,7 @@ describe('CompositeEditorService', () => {
       const saveSpy = jest.spyOn(gridStub.getEditController(), 'commitCurrentEdit');
 
       component = new SlickCompositeEditorComponent(gridStub, gridServiceStub);
-      component.openDetails();
+      component.openDetails({ headerTitle: 'Details' });
 
       const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
       const compositeFooterSaveBtnElm = compositeContainerElm.querySelector<HTMLSelectElement>('.btn-save');

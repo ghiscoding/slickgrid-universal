@@ -118,6 +118,7 @@ export * from './slickCellRangeSelector.interface';
 export * from './slickCellSelectionModel.interface';
 export * from './slickColumnPicker.interface';
 export * from './slickCheckboxSelectColumn.interface';
+export * from './slickCompositeEditor.interface';
 export * from './slickContextMenu.interface';
 export * from './slickDataView.interface';
 export * from './slickDraggableGrouping.interface';

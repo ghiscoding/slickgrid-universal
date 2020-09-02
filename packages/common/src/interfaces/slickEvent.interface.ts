@@ -11,7 +11,7 @@ export interface SlickEvent<T = any> {
    *      The scope ("this") within which the handler will be executed.
    *      If not specified, the scope will be set to the Event instance.
    */
-  notify: (args: T, eventData?: SlickEventData, scope?: any) => Promise<any>;
+  notify: (args: T, eventData?: SlickEventData, scope?: any) => any;
 
   /**
    * Adds an event handler to be called when the event is fired.

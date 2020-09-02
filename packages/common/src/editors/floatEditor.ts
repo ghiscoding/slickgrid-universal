@@ -14,8 +14,9 @@ declare const Slick: SlickNamespace;
  */
 export class FloatEditor implements Editor {
   private _input: HTMLInputElement;
+  private _isDisabled = false;
   private _lastInputKeyEvent: KeyboardEvent;
-  originalValue: number | string;
+  private _originalValue: number | string;
 
   /** SlickGrid Grid object */
   grid: SlickGrid;
@@ -103,8 +104,36 @@ export class FloatEditor implements Editor {
     }
   }
 
+  disable(isDisabled = true) {
+    const prevIsDisabled = this._isDisabled;
+    this._isDisabled = isDisabled;
+
+    if (this._input) {
+      if (isDisabled) {
+        this._input.setAttribute('disabled', 'disabled');
+
+        // clear the checkbox when it's newly disabled
+        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+          this._originalValue = '';
+          this._input.value = '';
+          this.handleChangeOnCompositeEditor(null, this.args.compositeEditorOptions);
+        }
+      } else {
+        this._input.removeAttribute('disabled');
+      }
+    }
+  }
+
   focus(): void {
     this._input.focus();
+  }
+
+  show() {
+    const isCompositeEditor = !!this.args?.compositeEditorOptions;
+    if (isCompositeEditor) {
+      // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
+      this.applyInputUsabilityState();
+    }
   }
 
   getDecimalPlaces(): number {
@@ -161,7 +190,7 @@ export class FloatEditor implements Editor {
     if (this.columnEditor && this.columnEditor.alwaysSaveOnEnterKey && lastKeyEvent === KeyCode.ENTER) {
       return true;
     }
-    return (!(elmValue === '' && (this.originalValue === null || this.originalValue === undefined))) && (elmValue !== this.originalValue);
+    return (!(elmValue === '' && (this._originalValue === null || this._originalValue === undefined))) && (elmValue !== this._originalValue);
   }
 
   loadValue(item: any) {
@@ -174,12 +203,12 @@ export class FloatEditor implements Editor {
         const isComplexObject = fieldName?.indexOf('.') > 0;
         const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
 
-        this.originalValue = value;
+        this._originalValue = value;
         const decPlaces = this.getDecimalPlaces();
-        if (decPlaces !== null && (this.originalValue || this.originalValue === 0) && (+this.originalValue).toFixed) {
-          this.originalValue = (+this.originalValue).toFixed(decPlaces);
+        if (decPlaces !== null && (this._originalValue || this._originalValue === 0) && (+this._originalValue).toFixed) {
+          this._originalValue = (+this._originalValue).toFixed(decPlaces);
         }
-        this._input.value = `${this.originalValue}`;
+        this._input.value = `${this._originalValue}`;
         this._input.select();
       }
     }
@@ -212,6 +241,16 @@ export class FloatEditor implements Editor {
   }
 
   validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
+    // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
+    if (this.args.compositeEditorOptions) {
+      this.applyInputUsabilityState();
+    }
+
+    // when field is disabled, we can assume it's valid
+    if (this._isDisabled) {
+      return { valid: true, msg: '' };
+    }
+
     const elmValue = (inputValue !== undefined) ? inputValue : this._input && this._input.value;
     return floatValidator(elmValue, {
       editorArgs: this.args,
@@ -229,9 +268,17 @@ export class FloatEditor implements Editor {
   // private functions
   // ------------------
 
-  private handleChangeOnCompositeEditor(event: Event, compositeEditorOptions: CompositeEditorOption) {
+  /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
+  private applyInputUsabilityState() {
+    const activeCell = this.grid.getActiveCell();
+    const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
+    this.disable(isCellEditable === false);
+  }
+
+  private handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption) {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
+    const columnId = this.columnDef?.id ?? '';
     const item = this.args.item;
     const grid = this.grid;
 
@@ -240,6 +287,9 @@ export class FloatEditor implements Editor {
       this.applyValue(this.args.item, this.serializeValue());
     }
     this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+    if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+      delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
+    }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
   }
 }

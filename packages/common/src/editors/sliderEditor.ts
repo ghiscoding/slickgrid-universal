@@ -14,12 +14,13 @@ declare const Slick: SlickNamespace;
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
 export class SliderEditor implements Editor {
+  private _defaultValue: any;
   private _elementRangeInputId = '';
   private _elementRangeOutputId = '';
+  private _isDisabled = false;
   private _$editorElm: any;
   private _$input: any;
   $sliderNumber: any;
-  defaultValue: any;
   originalValue: any;
 
   /** SlickGrid Grid object */
@@ -118,8 +119,38 @@ export class SliderEditor implements Editor {
     this._$editorElm.off('input change mouseup touchend').remove();
   }
 
+  disable(isDisabled = true) {
+    const prevIsDisabled = this._isDisabled;
+    this._isDisabled = isDisabled;
+
+    if (this._$input) {
+      if (isDisabled) {
+        this._$input.attr('disabled', 'disabled');
+
+        // clear the checkbox when it's newly disabled
+        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+          this._defaultValue = '';
+          this._$editorElm.children('input').val(0);
+          this._$editorElm.children('div.input-group-addon.input-group-append').children().html(0);
+          this._$editorElm.val(0);
+          this.handleChangeOnCompositeEditor(null, this.args.compositeEditorOptions);
+        }
+      } else {
+        this._$input.removeAttr('disabled');
+      }
+    }
+  }
+
   focus() {
     this._$input.focus();
+  }
+
+  show() {
+    const isCompositeEditor = !!this.args?.compositeEditorOptions;
+    if (isCompositeEditor) {
+      // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
+      this.applyInputUsabilityState();
+    }
   }
 
   getValue(): string {
@@ -162,7 +193,7 @@ export class SliderEditor implements Editor {
       let value = (isComplexObject) ? getDescendantProperty(item, fieldName) : (item.hasOwnProperty(fieldName) && item[fieldName]);
 
       if (value === '' || value === null || value === undefined) {
-        value = this.defaultValue; // load default value when item doesn't have any value
+        value = this._defaultValue; // load default value when item doesn't have any value
       }
       this.originalValue = +value;
       this._$input.val(value);
@@ -187,6 +218,16 @@ export class SliderEditor implements Editor {
   }
 
   validate(_targetElm?: undefined, inputValue?: any): EditorValidationResult {
+    // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
+    if (this.args.compositeEditorOptions) {
+      this.applyInputUsabilityState();
+    }
+
+    // when field is disabled, we can assume it's valid
+    if (this._isDisabled) {
+      return { valid: true, msg: '' };
+    }
+
     const elmValue = (inputValue !== undefined) ? inputValue : this._$input && this._$input.val && this._$input.val();
     return sliderValidator(elmValue, {
       editorArgs: this.args,
@@ -212,7 +253,7 @@ export class SliderEditor implements Editor {
     const maxValue = this.columnEditor.hasOwnProperty('maxValue') ? this.columnEditor.maxValue : DEFAULT_MAX_VALUE;
     const defaultValue = this.editorParams.hasOwnProperty('sliderStartValue') ? this.editorParams.sliderStartValue : minValue;
     const step = this.columnEditor.hasOwnProperty('valueStep') ? this.columnEditor.valueStep : DEFAULT_STEP;
-    this.defaultValue = defaultValue;
+    this._defaultValue = defaultValue;
 
     if (this.editorParams.hideSliderNumber) {
       return `
@@ -234,9 +275,17 @@ export class SliderEditor implements Editor {
       </div>`;
   }
 
-  private handleChangeOnCompositeEditor(event: Event, compositeEditorOptions: CompositeEditorOption) {
+  /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
+  private applyInputUsabilityState() {
+    const activeCell = this.grid.getActiveCell();
+    const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
+    this.disable(isCellEditable === false);
+  }
+
+  private handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption) {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
+    const columnId = this.columnDef?.id ?? '';
     const item = this.args.item;
     const grid = this.grid;
 
@@ -245,6 +294,9 @@ export class SliderEditor implements Editor {
       this.applyValue(this.args.item, this.serializeValue());
     }
     this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+    if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+      delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
+    }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
   }
 }

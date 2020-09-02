@@ -29,11 +29,12 @@ declare const Slick: SlickNamespace;
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
 export class LongTextEditor implements Editor {
+  private _isDisabled = false;
   private _locales: Locale;
   private _$textarea: any;
   private _$currentLengthElm: any;
   private _$wrapper: any;
-  defaultValue: any;
+  private _defaultTextValue: any;
 
   /** SlickGrid Grid object */
   grid: SlickGrid;
@@ -139,7 +140,7 @@ export class LongTextEditor implements Editor {
   }
 
   cancel() {
-    const value = this.defaultValue || '';
+    const value = this._defaultTextValue || '';
     this._$textarea.val(value);
     this._$currentLengthElm.text(value.length);
     if (this.args && this.args.cancelChanges) {
@@ -152,11 +153,39 @@ export class LongTextEditor implements Editor {
   }
 
   show() {
-    this._$wrapper.show();
+    const isCompositeEditor = !!this.args?.compositeEditorOptions;
+    if (!isCompositeEditor) {
+      this._$wrapper.show();
+    } else {
+      // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
+      this.applyInputUsabilityState();
+    }
   }
 
   destroy() {
     this._$wrapper.remove();
+  }
+
+  disable(isDisabled = true) {
+    const prevIsDisabled = this._isDisabled;
+    this._isDisabled = isDisabled;
+
+    if (this._$textarea) {
+      if (isDisabled) {
+        this._$textarea.attr('disabled', 'disabled');
+        this._$wrapper.addClass('disabled');
+
+        // clear the checkbox when it's newly disabled
+        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+          this._defaultTextValue = '';
+          this._$textarea.val('');
+          this.handleChangeOnCompositeEditor(null, this.args.compositeEditorOptions);
+        }
+      } else {
+        this._$textarea.removeAttr('disabled');
+        this._$wrapper.removeClass('disabled');
+      }
+    }
   }
 
   focus() {
@@ -192,7 +221,7 @@ export class LongTextEditor implements Editor {
 
   isValueChanged(): boolean {
     const elmValue = this._$textarea.val();
-    return (!(elmValue === '' && (this.defaultValue === null || this.defaultValue === undefined))) && (elmValue !== this.defaultValue);
+    return (!(elmValue === '' && (this._defaultTextValue === null || this._defaultTextValue === undefined))) && (elmValue !== this._defaultTextValue);
   }
 
   loadValue(item: any) {
@@ -203,10 +232,10 @@ export class LongTextEditor implements Editor {
       const isComplexObject = fieldName?.indexOf('.') > 0;
       const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
 
-      this.defaultValue = value || '';
-      this._$textarea.val(this.defaultValue);
-      this._$currentLengthElm.text(this.defaultValue.length);
-      this._$textarea[0].defaultValue = this.defaultValue;
+      this._defaultTextValue = value || '';
+      this._$textarea.val(this._defaultTextValue);
+      this._$currentLengthElm.text(this._defaultTextValue.length);
+      this._$textarea[0].defaultValue = this._defaultTextValue;
       this._$textarea.select();
     }
   }
@@ -235,6 +264,16 @@ export class LongTextEditor implements Editor {
   }
 
   validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
+    // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
+    if (this.args.compositeEditorOptions) {
+      this.applyInputUsabilityState();
+    }
+
+    // when field is disabled, we can assume it's valid
+    if (this._isDisabled) {
+      return { valid: true, msg: '' };
+    }
+
     const elmValue = (inputValue !== undefined) ? inputValue : this._$textarea && this._$textarea.val && this._$textarea.val();
     return textValidator(elmValue, {
       editorArgs: this.args,
@@ -250,6 +289,13 @@ export class LongTextEditor implements Editor {
   // --
   // private functions
   // ------------------
+
+  /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
+  private applyInputUsabilityState() {
+    const activeCell = this.grid.getActiveCell();
+    const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
+    this.disable(isCellEditable === false);
+  }
 
   private handleKeyDown(event: KeyboardEvent) {
     const keyCode = event.keyCode || event.code;
@@ -280,9 +326,10 @@ export class LongTextEditor implements Editor {
     this._$currentLengthElm.text(textLength);
   }
 
-  private handleChangeOnCompositeEditor(event: Event, compositeEditorOptions: CompositeEditorOption) {
+  private handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption) {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
+    const columnId = this.columnDef?.id ?? '';
     const item = this.args.item;
     const grid = this.grid;
 
@@ -291,6 +338,9 @@ export class LongTextEditor implements Editor {
       this.applyValue(this.args.item, this.serializeValue());
     }
     this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+    if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+      delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
+    }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
   }
 }

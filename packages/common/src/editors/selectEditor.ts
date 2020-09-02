@@ -40,7 +40,7 @@ export class SelectEditor implements Editor {
   defaultOptions: MultipleSelectOption;
 
   /** The original item values that are set at the beginning */
-  originalValue: any[];
+  originalValue: any | any[];
 
   /** The property name for labels in the collection */
   labelName: string;
@@ -69,6 +69,8 @@ export class SelectEditor implements Editor {
   // flag to signal that the editor is destroying itself, helps prevent
   // commit changes from being called twice and erroring
   protected _destroying = false;
+
+  protected _isDisabled = false;
 
   /** Collection Service */
   protected _collectionService: CollectionService;
@@ -314,8 +316,13 @@ export class SelectEditor implements Editor {
   }
 
   show() {
-    if (!this.args.compositeEditorOptions && this.$editorElm && typeof this.$editorElm.multipleSelect === 'function') {
+    const isCompositeEditor = !!this.args?.compositeEditorOptions;
+
+    if (!isCompositeEditor && this.$editorElm && typeof this.$editorElm.multipleSelect === 'function') {
       this.$editorElm.multipleSelect('open');
+    } else if (isCompositeEditor) {
+      // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
+      this.applyInputUsabilityState();
     }
   }
 
@@ -433,6 +440,26 @@ export class SelectEditor implements Editor {
     return (this.isMultipleSelect) ? this.currentValues : this.currentValue;
   }
 
+  disable(isDisabled = true) {
+    const prevIsDisabled = this._isDisabled;
+    this._isDisabled = isDisabled;
+
+    if (this.$editorElm) {
+      if (isDisabled) {
+        this.$editorElm.multipleSelect('disable');
+
+        // clear the checkbox when it's newly disabled
+        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+          this.originalValue = this.isMultipleSelect ? [''] : '';
+          this.$editorElm.multipleSelect('setSelects', []);
+          this.handleChangeOnCompositeEditor(this.args.compositeEditorOptions);
+        }
+      } else {
+        this.$editorElm.multipleSelect('enable');
+      }
+    }
+  }
+
   focus() {
     if (this.$editorElm && this.$editorElm.multipleSelect) {
       this.$editorElm.multipleSelect('focus');
@@ -450,6 +477,16 @@ export class SelectEditor implements Editor {
     const isRequired = this.args?.compositeEditorOptions ? false : this.columnEditor?.required;
     const elmValue = (inputValue !== undefined) ? inputValue : this.$editorElm && this.$editorElm.val && this.$editorElm.val();
     const errorMsg = this.columnEditor && this.columnEditor.errorMessage;
+
+    // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
+    if (this.args.compositeEditorOptions) {
+      this.applyInputUsabilityState();
+    }
+
+    // when field is disabled, we can assume it's valid
+    if (this._isDisabled) {
+      return { valid: true, msg: '' };
+    }
 
     if (this.validator) {
       const value = (inputValue !== undefined) ? inputValue : (this.isMultipleSelect ? this.currentValues : this.currentValue);
@@ -473,6 +510,13 @@ export class SelectEditor implements Editor {
   //
   // protected functions
   // ------------------
+
+  /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
+  protected applyInputUsabilityState() {
+    const activeCell = this.grid.getActiveCell();
+    const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
+    this.disable(isCellEditable === false);
+  }
 
   /**
    * user might want to filter certain items of the collection
@@ -630,6 +674,7 @@ export class SelectEditor implements Editor {
   protected handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption) {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
+    const columnId = this.columnDef?.id ?? '';
     const item = this.args.item;
     const grid = this.grid;
 
@@ -638,6 +683,9 @@ export class SelectEditor implements Editor {
       this.applyValue(this.args.item, this.serializeValue());
     }
     this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+    if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+      delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
+    }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, new Slick.EventData());
   }
 

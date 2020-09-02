@@ -1,9 +1,9 @@
-import * as moment from 'moment';
+import * as moment from 'moment-mini';
 
 import { Editors } from '../index';
 import { DateEditor } from '../dateEditor';
 import { FieldType } from '../../enums/index';
-import { Column, SlickDataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, SlickDataView, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const containerId = 'demo-container';

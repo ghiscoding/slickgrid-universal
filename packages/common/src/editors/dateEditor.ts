@@ -32,11 +32,12 @@ declare const Slick: SlickNamespace;
 export class DateEditor implements Editor {
   private _$inputWithData: any;
   private _$input: any;
+  private _isDisabled = false;
+  private _originalDate: string;
   private _pickerMergedOptions: FlatpickrOption;
 
   flatInstance: any;
   defaultDate: string;
-  originalDate: string;
 
   /** SlickGrid Grid object */
   grid: SlickGrid;
@@ -148,6 +149,26 @@ export class DateEditor implements Editor {
     }
   }
 
+  disable(isDisabled = true) {
+    const prevIsDisabled = this._isDisabled;
+    this._isDisabled = isDisabled;
+
+    if (this.flatInstance?._input) {
+      if (isDisabled) {
+        this.flatInstance._input.setAttribute('disabled', 'disabled');
+
+        // clear the checkbox when it's newly disabled
+        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+          this._originalDate = '';
+          this.flatInstance.setDate('');
+          this.flatInstance.clear();
+        }
+      } else {
+        this.flatInstance._input.removeAttribute('disabled', 'disabled');
+      }
+    }
+  }
+
   focus() {
     this._$input.focus();
     if (this._$inputWithData && typeof this._$inputWithData.focus === 'function') {
@@ -165,6 +186,9 @@ export class DateEditor implements Editor {
     const isCompositeEditor = !!this.args?.compositeEditorOptions;
     if (!isCompositeEditor && this.flatInstance && typeof this.flatInstance.open === 'function') {
       this.flatInstance.open();
+    } else if (isCompositeEditor) {
+      // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
+      this.applyInputUsabilityState();
     }
   }
 
@@ -201,7 +225,7 @@ export class DateEditor implements Editor {
     const inputFormat = mapMomentDateFormatWithFieldType(this.columnEditor.type || this.columnDef?.type || FieldType.dateIso);
     const outputTypeFormat = mapMomentDateFormatWithFieldType((this.columnDef && (this.columnDef.outputType || this.columnEditor.type || this.columnDef.type)) || FieldType.dateUtc);
     const elmDateStr = elmValue ? moment(elmValue, inputFormat, false).format(outputTypeFormat) : '';
-    const orgDateStr = this.originalDate ? moment(this.originalDate, inputFormat, false).format(outputTypeFormat) : '';
+    const orgDateStr = this._originalDate ? moment(this._originalDate, inputFormat, false).format(outputTypeFormat) : '';
     if (elmDateStr === 'Invalid date' || orgDateStr === 'Invalid date') {
       return false;
     }
@@ -219,7 +243,7 @@ export class DateEditor implements Editor {
       const isComplexObject = fieldName?.indexOf('.') > 0;
       const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
 
-      this.originalDate = value;
+      this._originalDate = value;
       this.flatInstance.setDate(value);
 
       if (!compositeEditorOptions) {
@@ -260,6 +284,16 @@ export class DateEditor implements Editor {
     const elmValue = (inputValue !== undefined) ? inputValue : this._$input && this._$input.val && this._$input.val();
     const errorMsg = this.columnEditor.errorMessage;
 
+    // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
+    if (this.args.compositeEditorOptions) {
+      this.applyInputUsabilityState();
+    }
+
+    // when field is disabled, we can assume it's valid
+    if (this._isDisabled) {
+      return { valid: true, msg: '' };
+    }
+
     if (this.validator) {
       return this.validator(elmValue, this.args);
     }
@@ -282,6 +316,13 @@ export class DateEditor implements Editor {
   // private functions
   // ------------------
 
+  /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
+  private applyInputUsabilityState() {
+    const activeCell = this.grid.getActiveCell();
+    const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
+    this.disable(isCellEditable === false);
+  }
+
   private handleOnDateChange() {
     if (this.args) {
       const compositeEditorOptions = this.args.compositeEditorOptions;
@@ -289,6 +330,7 @@ export class DateEditor implements Editor {
       if (compositeEditorOptions) {
         const activeCell = this.grid.getActiveCell();
         const column = this.args.column;
+        const columnId = this.columnDef?.id ?? '';
         const item = this.args.item;
         const grid = this.grid;
 
@@ -297,6 +339,9 @@ export class DateEditor implements Editor {
           this.applyValue(this.args.item, this.serializeValue());
         }
         this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+        if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+          delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
+        }
         grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, new Slick.EventData());
       } else {
         this.save();

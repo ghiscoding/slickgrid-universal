@@ -16,6 +16,7 @@ import {
   SlickEvent,
   SlickRowSelectionModel,
 } from './index';
+import { SlickCompositeEditor } from './slickCompositeEditor.interface';
 
 export interface SlickGrid {
   /**
@@ -67,7 +68,7 @@ export interface SlickGrid {
    * @param {boolean} preClickModeOn Pre-Click Mode is Enabled?
    * @param {object} event
    */
-  editActiveCell(editor: Editor, preClickModeOn?: boolean, event?: Event): void;
+  editActiveCell(editor: Editor | SlickCompositeEditor, preClickModeOn?: boolean, event?: Event): void;
 
   /**
    * Flashes the cell twice by toggling the CSS class 4 times.

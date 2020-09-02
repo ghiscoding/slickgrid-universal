@@ -9,6 +9,9 @@ export interface Editor {
   /** Initialize the Editor */
   init: (args?: EditorArguments) => void;
 
+  /** Disable the Editor input */
+  disable?: () => void;
+
   /** Saves the Editor value */
   save?: () => void;
 

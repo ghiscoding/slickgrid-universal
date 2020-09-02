@@ -37,6 +37,7 @@ export class AutoCompleteEditor implements Editor {
   private _currentValue: any;
   private _defaultTextValue: string;
   private _elementCollection: any[];
+  private _isDisabled = false;
   private _lastInputKeyEvent: JQueryEventObject;
 
   /** The JQuery DOM element */
@@ -148,8 +149,36 @@ export class AutoCompleteEditor implements Editor {
     this._$editorElm.off('keydown.nav').remove();
   }
 
+  disable(isDisabled = true) {
+    const prevIsDisabled = this._isDisabled;
+    this._isDisabled = isDisabled;
+
+    if (this._$editorElm) {
+      if (isDisabled) {
+        this._$editorElm.attr('disabled', 'disabled');
+
+        // clear the checkbox when it's newly disabled
+        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+          this._defaultTextValue = '';
+          this._$editorElm.val('');
+          this.handleChangeOnCompositeEditor(null, this.args.compositeEditorOptions);
+        }
+      } else {
+        this._$editorElm.removeAttr('disabled');
+      }
+    }
+  }
+
   focus() {
     this._$editorElm.focus().select();
+  }
+
+  show() {
+    const isCompositeEditor = !!this.args?.compositeEditorOptions;
+    if (isCompositeEditor) {
+      // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
+      this.applyInputUsabilityState();
+    }
   }
 
   getValue() {
@@ -254,6 +283,16 @@ export class AutoCompleteEditor implements Editor {
   }
 
   validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
+    // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
+    if (this.args.compositeEditorOptions) {
+      this.applyInputUsabilityState();
+    }
+
+    // when field is disabled, we can assume it's valid
+    if (this._isDisabled) {
+      return { valid: true, msg: '' };
+    }
+
     const val = (inputValue !== undefined) ? inputValue : this._$editorElm && this._$editorElm.val && this._$editorElm.val();
     return textValidator(val, {
       editorArgs: this.args,
@@ -270,9 +309,17 @@ export class AutoCompleteEditor implements Editor {
   // private functions
   // ------------------
 
-  private handleChangeOnCompositeEditor(event: Event, compositeEditorOptions: CompositeEditorOption) {
+  /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
+  protected applyInputUsabilityState() {
+    const activeCell = this.grid.getActiveCell();
+    const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
+    this.disable(isCellEditable === false);
+  }
+
+  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption) {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
+    const columnId = this.columnDef?.id ?? '';
     const item = this.args.item;
     const grid = this.grid;
 
@@ -281,6 +328,9 @@ export class AutoCompleteEditor implements Editor {
       this.applyValue(this.args.item, this.serializeValue());
     }
     this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+    if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+      delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
+    }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
   }
 
@@ -339,7 +389,7 @@ export class AutoCompleteEditor implements Editor {
       .appendTo(ul);
   }
 
-  private renderDomElement(collection: any[]) {
+  protected renderDomElement(collection: any[]) {
     if (!Array.isArray(collection)) {
       throw new Error('The "collection" passed to the Autocomplete Editor is not a valid array.');
     }

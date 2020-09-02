@@ -1,29 +1,5 @@
 @import './variables';
-
-/* Response Design for desktop: */
-.slick-col-1 {width: 8.33%;}
-.slick-col-2 {width: 16.66%;}
-.slick-col-3 {width: 25%;}
-.slick-col-4 {width: 33.33%;}
-.slick-col-5 {width: 41.66%;}
-.slick-col-6 {width: 50%;}
-.slick-col-7 {width: 58.33%;}
-.slick-col-8 {width: 66.66%;}
-.slick-col-9 {width: 75%;}
-.slick-col-10 {width: 83.33%;}
-.slick-col-11 {width: 91.66%;}
-.slick-col-12 {width: 100%;}
-
-/* Response Design for mobile phones: */
-@media only screen and (max-width: 768px) {
-  [class*="slick-col-"] {
-    width: 100%;
-  }
-}
-[class*="slick-col-"] {
-  float: left;
-  // padding: 15px;
-}
+@import './slick.layout';
 
 .slick-cell  {
   input.dual-editor-text,
@@ -150,10 +126,20 @@
       &.split-view {
         width: calc(#{$editor-modal-container-width} * 2);
       }
+      &.triple-split-view {
+        width: calc(#{$editor-modal-container-width} * 3);
+      }
+    }
+
+    /** we'll triple the width only a large screen */
+    @media only screen and (max-width : 1200px) {
+      &.triple-split-view {
+        width: calc(#{$editor-modal-container-width} * 2);
+      }
     }
 
     @media only screen and (max-width: 768px) {
-      width: 100%;
+      width: 100% !important;
       margin: 0;
       top: 0;
     }
@@ -221,6 +207,9 @@
       min-height: $editor-modal-body-min-height;
       max-height: $editor-modal-body-max-height;
       overflow: $editor-modal-body-overflow;
+      display: flex;
+      flex-wrap: wrap;
+
       .slick-cell {
         height: inherit;
       }
@@ -283,6 +272,9 @@
           border-color: $text-editor-focus-border-color;
           box-shadow: $text-editor-focus-box-shadow;
         }
+        &:disabled {
+          background-color: $editor-input-disabled-color;
+        }
       }
       .input-group {
         position: relative;
@@ -302,6 +294,9 @@
         textarea {
           width: 100%;
           height: 100%;
+          &:disabled {
+            background-color: $editor-input-disabled-color;
+          }
         }
         .editor-footer {
           height: $editor-modal-large-editor-footer-height;
@@ -312,11 +307,19 @@
             margin: $editor-modal-large-editor-count-margin;
           }
         }
+
         &.invalid {
           border: $editor-modal-detail-container-border-invalid;
         }
+        &:disabled, &.disabled {
+          background-color: $editor-input-disabled-color;
+        }
       }
-
+      .ms-choice {
+        &:disabled {
+          background-color: $editor-input-disabled-color;
+        }
+      }
       .checkbox-editor-container {
         padding: $editor-modal-checkbox-editor-padding;
         border: $editor-modal-checkbox-editor-border;
@@ -325,9 +328,16 @@
         input {
           height: inherit;
         }
+        &.disabled {
+          background-color: $editor-input-disabled-color;
+        }
       }
       .flatpickr-input.form-control, .flatpickr-alt-input[readonly] {
         background-color: $flatpickr-bgcolor;
+        &:disabled {
+          background-color: $editor-input-disabled-color;
+          cursor: initial;
+        }
       }
 
       &.modified {
@@ -340,6 +350,9 @@
         input, .slick-large-editor-text {
           border: $editor-modal-detail-container-border-invalid;
         }
+      }
+      &.disabled {
+        background-color: $editor-input-disabled-color;
       }
     }
 

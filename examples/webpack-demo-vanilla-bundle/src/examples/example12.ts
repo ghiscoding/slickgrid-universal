@@ -2,7 +2,6 @@ import {
   AutocompleteOption,
   Column,
   CompositeEditorModalType,
-  CompositeEditorExtension,
   Editors,
   EventNamingStyle,
   FieldType,
@@ -52,8 +51,16 @@ function checkItemIsEditable(dataContext, columnDef, grid) {
   if (dataContext && columnDef && gridOptions && gridOptions.editable) {
     switch (columnDef.id) {
       case 'finish':
+        // case 'percentComplete':
         isEditable = !!dataContext.completed;
         break;
+      // case 'completed':
+      // case 'duration':
+      // case 'title':
+      // case 'product':
+      // case 'countryOfOrigin':
+      // isEditable = dataContext.percentComplete < 50;
+      // break;
     }
   }
   return isEditable;
@@ -151,7 +158,7 @@ export class Example12 {
           model: Filters.singleSelect
         },
         editor: { model: Editors.checkbox, massUpdate: true, },
-        // editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }], },
+        // editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'Yes' }, { value: false, label: 'No' }], },
       },
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true,
@@ -299,6 +306,10 @@ export class Example12 {
       enableAutoResize: true,
       showCustomFooter: true,
       // enablePagination: true,
+      // pagination: {
+      //   pageSize: 0,
+      //   pageSizes: [10, 200, 500]
+      // },
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: true
@@ -392,7 +403,7 @@ export class Example12 {
     const args = event.detail && event.detail.args;
     if (args.validationResults) {
       let errorMsg = args.validationResults.msg || '';
-      if (args.editor && (args.editor instanceof CompositeEditorExtension)) {
+      if (args.editor && (args.editor instanceof Slick.CompositeEditor)) {
         if (args.validationResults.errors) {
           errorMsg += '\n';
           for (const error of args.validationResults.errors) {
@@ -439,7 +450,7 @@ export class Example12 {
   }
 
   handleOnCellClicked(event) {
-    console.log(event)
+    console.log(event);
   }
 
   /**
@@ -754,9 +765,9 @@ export class Example12 {
     setTimeout(() => this.sgb.slickCompositeEditor?.openDetails({
       headerTitle: modalTitle,
       // closeOutside: true,
-      backdrop: 'static',
+      // backdrop: null,
       modalType,
-      useSplitView: true,
+      viewColumnLayout: 3,
       onError: (msg) => alert(msg),
     }), openDelay);
     // this.sgb.slickCompositeEditor.applyChanges(formValues, modalType);

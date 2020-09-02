@@ -3,7 +3,6 @@ import 'slickgrid/slick.compositeeditor.js';
 import {
   Editor,
   Column,
-  CompositeEditorExtension,
   CompositeEditorModalType,
   EditorValidationResult,
   getDescendantProperty,
@@ -48,8 +47,11 @@ interface CompositeEditorOpenDetailOption {
   /** Composite Editor modal type (create, edit, mass-update, mass-selection) */
   modalType?: CompositeEditorModalType;
 
-  /** Defaults to false, when using split view the modal window will become double the size and the form will show up in 2 columns (left/right) when possible (on mobile it will remain 1 column) */
-  useSplitView?: boolean;
+  /**
+   * Defaults to 1, how many columns do we want to show in the view layout?
+   * For example if you wish to see your form split in a 2 columns layout (split view)
+   */
+  viewColumnLayout?: 1 | 2 | 3;
 
   /** onError callback allows user to override what the system does when an error (error message & type) is thrown, defaults to console.log */
   onError?: (errorMsg: string, errorType: 'error' | 'info' | 'warning') => void;
@@ -85,11 +87,13 @@ export class SlickCompositeEditorComponent {
     }
   }
 
+  /** Dispose of the Component & unsubscribe all events */
   dispose() {
     this.disposeComponent();
     this._eventHandler.unsubscribeAll();
   }
 
+  /** Dispose of the Component without unsubscribing any events */
   disposeComponent() {
     if (typeof this._modalElm?.remove === 'function') {
       this._modalElm.remove();
@@ -100,17 +104,25 @@ export class SlickCompositeEditorComponent {
     }
   }
 
-  async openDetails(options: CompositeEditorOpenDetailOption): Promise<null | void> {
-    const onError = options?.onError ?? DEFAULT_ON_ERROR;
+  openDetails(options: CompositeEditorOpenDetailOption): null | void {
+    const onError = options.onError ?? DEFAULT_ON_ERROR;
+    const defaultOptions = {
+      backdrop: 'static',
+      closeOutside: true,
+      viewColumnLayout: 1,
+      modalType: 'edit',
+    } as CompositeEditorOpenDetailOption;
 
     try {
       if (!this.grid || (this.grid.getEditorLock().isActive() && !this.grid.getEditorLock().commitCurrentEdit())) {
         return;
       }
 
-      this._options = options;
-      const closeOutside = options?.closeOutside ?? true;
-      const modalType = options?.modalType ?? 'edit';
+      this._options = { ...defaultOptions, ...options, }; // merge default options with user options
+
+      this._options.backdrop = options.backdrop !== undefined ? options.backdrop : 'static';
+      const viewColumnLayout = this._options.viewColumnLayout || 1;
+      const modalType = this._options.modalType || 'edit';
       const activeCell = this.grid.getActiveCell();
       const activeColIndex = activeCell && activeCell.cell || 0;
       const activeRow = activeCell && activeCell.row || 0;
@@ -136,7 +148,7 @@ export class SlickCompositeEditorComponent {
         // focus on a first cell with an Editor (unless current cell already has an Editor then do nothing)
         // also when it's a "Create" modal, we'll scroll to the end of the grid
         const rowIndex = modalType === 'create' ? this.dataViewLength : activeRow;
-        const hasFoundEditor = await this.focusOnFirstCellWithEditor(columnDefinitions, dataContext, activeColIndex, rowIndex, isWithMassChange);
+        const hasFoundEditor = this.focusOnFirstCellWithEditor(columnDefinitions, dataContext, activeColIndex, rowIndex, isWithMassChange);
         if (!hasFoundEditor) {
           return;
         }
@@ -154,7 +166,7 @@ export class SlickCompositeEditorComponent {
         let modalColumns: Column[] = [];
         if (isWithMassChange) {
           // when using Mass Update, we only care about the columns that have the "massUpdate: true", we disregard anything else
-          modalColumns = columnDefinitions.filter(col => col.internalColumnEditor?.massUpdate);
+          modalColumns = columnDefinitions.filter(col => col.editor && col.internalColumnEditor?.massUpdate === true);
         } else {
           modalColumns = columnDefinitions.filter(col => col.editor);
         }
@@ -169,8 +181,9 @@ export class SlickCompositeEditorComponent {
 
         const modalContentElm = document.createElement('div');
         modalContentElm.className = 'slick-editor-modal-content';
-        if (options.useSplitView) {
-          modalContentElm.classList.add('split-view');
+        if (viewColumnLayout > 1) {
+          const splitClassName = viewColumnLayout === 2 ? 'split-view' : 'triple-split-view';
+          modalContentElm.classList.add(splitClassName);
         }
 
         const modalHeaderTitleElm = document.createElement('div');
@@ -183,7 +196,7 @@ export class SlickCompositeEditorComponent {
         modalCloseButtonElm.className = 'close';
         modalCloseButtonElm.dataset.action = 'close';
         modalCloseButtonElm.dataset.ariaLabel = 'Close';
-        if (closeOutside) {
+        if (this._options.closeOutside) {
           modalHeaderTitleElm?.classList?.add('outside');
           modalCloseButtonElm?.classList?.add('outside');
         }
@@ -246,8 +259,8 @@ export class SlickCompositeEditorComponent {
           if (columnDef.editor) {
             const itemContainer = document.createElement('div');
             itemContainer.className = `item-details-container editor-${columnDef.id}`;
-            if (options.useSplitView) {
-              itemContainer.classList.add('slick-col-6');
+            if (viewColumnLayout > 1) {
+              itemContainer.classList.add('slick-col-medium-6', `slick-col-xlarge-${12 / viewColumnLayout}`);
             }
 
             const templateItemLabelElm = document.createElement('div');
@@ -273,16 +286,14 @@ export class SlickCompositeEditorComponent {
         document.body.addEventListener('click', this.handleBodyClicked.bind(this));
 
         const containers = modalColumns.map(col => modalBodyElm.querySelector<HTMLDivElement>(`[data-editorid=${col.id}]`)) || [];
-        // const compositeEditor = new CompositeEditorExtension(modalColumns, containers, { destroy: this.dispose.bind(this) });
-        // this.grid.editActiveCell((compositeEditor.editor) as unknown as Editor);
 
-        // @ts-ignore
-        const compositeEditor = new Slick.CompositeEditor(modalColumns, containers, { destroy: this.disposeComponent.bind(this), modalType, validationMsgPrefix: '* ' });
+        const compositeEditor = new Slick.CompositeEditor(modalColumns, containers, { destroy: this.disposeComponent.bind(this), modalType, validationMsgPrefix: '* ', formValues: {} });
         this.grid.editActiveCell(compositeEditor);
 
         const onCompositeEditorChangeHandler = this.grid.onCompositeEditorChange;
         (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCompositeEditorChangeHandler>>).subscribe(onCompositeEditorChangeHandler, (e, args) => {
           console.log('onCompositeEditorChange', args);
+          const columnId = args.column?.id ?? '';
 
           // keep reference to the last composite editor, we'll need it when doing a MassUpdate or UpdateSelection
           this._lastCompositeEditor = {
@@ -291,8 +302,13 @@ export class SlickCompositeEditorComponent {
           };
 
           // add extra css styling to the composite editor input(s) that got modified
-          const editorElm = document.querySelector(`[data-editorid=${args.column?.id ?? ''}]`);
-          editorElm?.classList?.add('modified');
+          if (args.formValues.hasOwnProperty(columnId)) {
+            const editorElm = document.querySelector(`[data-editorid=${columnId}]`);
+            editorElm?.classList?.add('modified');
+          } else {
+            const editorElm = document.querySelector(`[data-editorid=${columnId}]`);
+            editorElm?.classList?.remove('modified');
+          }
 
           // after any input changes we'll re-validate all fields
           this.validateCompositeEditors();
@@ -310,11 +326,11 @@ export class SlickCompositeEditorComponent {
         const onAddNewRowHandler = this.grid.onAddNewRow;
         (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onAddNewRowHandler>>).subscribe(onAddNewRowHandler, (_e, args) => {
           console.log('add new row', args);
-          const newId = options?.insertNewId ?? this.dataViewLength + 1;
+          const newId = options.insertNewId ?? this.dataViewLength + 1;
           const item = args.item;
           item[this.gridOptions.datasetIdPropertyName || ''] = newId;
           if (!this.dataView.getItemById(newId)) {
-            this.gridService.addItem(item, options?.insertOptions);
+            this.gridService.addItem(item, options.insertOptions);
             this.dispose();
           }
         });
@@ -459,12 +475,12 @@ export class SlickCompositeEditorComponent {
 
   // For the Composite Editor to work, the current active cell must have an Editor (because it calls editActiveCell() and that only works with a cell with an Editor)
   // so if current active cell doesn't have an Editor, we'll find the first column with an Editor and focus on it (from left to right starting at index 0)
-  private async focusOnFirstCellWithEditor(columns: Column[], dataContext: any, columnIndex: number, rowIndex: number, isWithMassChange: boolean): Promise<boolean> {
+  private focusOnFirstCellWithEditor(columns: Column[], dataContext: any, columnIndex: number, rowIndex: number, isWithMassChange: boolean): boolean {
     let columnIndexWithEditor = columnIndex;
     const cellEditor = columns[columnIndex].editor;
 
     if (!cellEditor || !this.getActiveCellEditor(rowIndex, columnIndex)) {
-      columnIndexWithEditor = await this.findNextAvailableEditorColumnIndex(columns, dataContext, rowIndex, isWithMassChange);
+      columnIndexWithEditor = this.findNextAvailableEditorColumnIndex(columns, dataContext, rowIndex, isWithMassChange);
       if (columnIndexWithEditor === -1) {
         const onError = this._options?.onError ?? DEFAULT_ON_ERROR;
         onError('We could not find any Editor in your Column Definition', 'error');
@@ -481,14 +497,14 @@ export class SlickCompositeEditorComponent {
     return true;
   }
 
-  private async findNextAvailableEditorColumnIndex(columns: Column[], dataContext: any, rowIndex: number, isWithMassUpdate: boolean): Promise<number> {
+  private findNextAvailableEditorColumnIndex(columns: Column[], dataContext: any, rowIndex: number, isWithMassUpdate: boolean): number {
     let columnIndexWithEditor = -1;
 
     for (let colIndex = 0; colIndex < columns.length; colIndex++) {
       const col = columns[colIndex];
       if (col.editor && (!isWithMassUpdate || (isWithMassUpdate && col.internalColumnEditor?.massUpdate))) {
         // we can check that the cell is really editable by checking the onBeforeEditCell event not returning false (returning undefined, null also mean it is editable)
-        const isCellEditable = await this.grid.onBeforeEditCell.notify({ row: rowIndex, cell: colIndex, item: dataContext, column: col, grid: this.grid });
+        const isCellEditable = this.grid.onBeforeEditCell.notify({ row: rowIndex, cell: colIndex, item: dataContext, column: col, grid: this.grid });
         this.grid.setActiveCell(rowIndex, colIndex, false);
         if (isCellEditable !== false) {
           columnIndexWithEditor = colIndex;
