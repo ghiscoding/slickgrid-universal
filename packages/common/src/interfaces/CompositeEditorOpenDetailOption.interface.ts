@@ -1,6 +1,17 @@
 import { CompositeEditorModalType } from '../enums/compositeEditorModalType.type';
 import { GridServiceInsertOption } from './gridServiceInsertOption.interface';
 
+export type OnErrorOption = {
+  /** Error code (typically an uppercase error code key like: "NO_RECORD_FOUND") */
+  code?: string;
+
+  /** Error Message */
+  message: string;
+
+  /** Error Type (info, error, warning) */
+  type: 'error' | 'info' | 'warning';
+};
+
 export interface CompositeEditorOpenDetailOption {
   /**
    * Composite Editor modal header title with support to optional parsing and HTML rendering of any item property pulled from the dataContext, via template #{}
@@ -29,8 +40,11 @@ export interface CompositeEditorOpenDetailOption {
    * Defaults to 1, how many columns do we want to show in the view layout?
    * For example if you wish to see your form split in a 2 columns layout (split view)
    */
-  viewColumnLayout?: 1 | 2 | 3;
+  viewColumnLayout?: 1 | 2 | 3 | 'auto';
 
   /** onError callback allows user to override what the system does when an error (error message & type) is thrown, defaults to console.log */
-  onError?: (errorMsg: string, errorType: 'error' | 'info' | 'warning') => void;
+  onError?: (error: OnErrorOption) => void;
+
+  /** The "onMassSave" callback will be triggered after user clicked saved button, user can execute his own code and possibly apply the changes if he wishes to. */
+  onMassSave?: (formValues: any, applyChangesCallback: (formValues: any) => void) => Promise<boolean>;
 }

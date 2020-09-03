@@ -148,8 +148,23 @@ $icon-height: $icon-width;
   encodecolor($icon-color), $icon-height, $icon-width, inline-block);
 
 @include loadsvg(
+  ".mdi.mdi-dots-vertical",
+  "M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z",
+  encodecolor($icon-color), $icon-height, $icon-width, inline-block);
+
+@include loadsvg(
   ".mdi.mdi-download",
   "M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z",
+  encodecolor($icon-color), $icon-height, $icon-width, inline-block);
+
+  @include loadsvg(
+  ".mdi.mdi-drag",
+  "M7,19V17H9V19H7M11,19V17H13V19H11M15,19V17H17V19H15M7,15V13H9V15H7M11,15V13H13V15H11M15,15V13H17V15H15M7,11V9H9V11H7M11,11V9H13V11H11M15,11V9H17V11H15M7,7V5H9V7H7M11,7V5H13V7H11M15,7V5H17V7H15Z",
+  encodecolor($icon-color), $icon-height, $icon-width, inline-block);
+
+  @include loadsvg(
+  ".mdi.mdi-drag-vertical",
+  "M9,3H11V5H9V3M13,3H15V5H13V3M9,7H11V9H9V7M13,7H15V9H13V7M9,11H11V13H9V11M13,11H15V13H13V11M9,15H11V17H9V15M13,15H15V17H13V15M9,19H11V21H9V19M13,19H15V21H13V19Z",
   encodecolor($icon-color), $icon-height, $icon-width, inline-block);
 
 @include loadsvg(
@@ -225,6 +240,11 @@ $icon-height: $icon-width;
 @include loadsvg(
   ".mdi.mdi-link-variant",
   "M10.59,13.41C11,13.8 11,14.44 10.59,14.83C10.2,15.22 9.56,15.22 9.17,14.83C7.22,12.88 7.22,9.71 9.17,7.76V7.76L12.71,4.22C14.66,2.27 17.83,2.27 19.78,4.22C21.73,6.17 21.73,9.34 19.78,11.29L18.29,12.78C18.3,11.96 18.17,11.14 17.89,10.36L18.36,9.88C19.54,8.71 19.54,6.81 18.36,5.64C17.19,4.46 15.29,4.46 14.12,5.64L10.59,9.17C9.41,10.34 9.41,12.24 10.59,13.41M13.41,9.17C13.8,8.78 14.44,8.78 14.83,9.17C16.78,11.12 16.78,14.29 14.83,16.24V16.24L11.29,19.78C9.34,21.73 6.17,21.73 4.22,19.78C2.27,17.83 2.27,14.66 4.22,12.71L5.71,11.22C5.7,12.04 5.83,12.86 6.11,13.65L5.64,14.12C4.46,15.29 4.46,17.19 5.64,18.36C6.81,19.54 8.71,19.54 9.88,18.36L13.41,14.83C14.59,13.66 14.59,11.76 13.41,10.59C13,10.2 13,9.56 13.41,9.17Z",
+  encodecolor($icon-color), $icon-height, $icon-width, inline-block);
+
+@include loadsvg(
+  ".mdi.mdi-load",
+  "M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z",
   encodecolor($icon-color), $icon-height, $icon-width, inline-block);
 
 @include loadsvg(
@@ -350,5 +370,10 @@ $icon-height: $icon-width;
 @include loadsvg(
   ".mdi.mdi-undo",
   "M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z",
+  encodecolor($icon-color), $icon-height, $icon-width, inline-block);
+
+@include loadsvg(
+  ".mdi.mdi-vanish",
+  "M16,13V11H21V13H16M14.83,7.76L17.66,4.93L19.07,6.34L16.24,9.17L14.83,7.76M11,16H13V21H11V16M11,3H13V8H11V3M4.93,17.66L7.76,14.83L9.17,16.24L6.34,19.07L4.93,17.66M4.93,6.34L6.34,4.93L9.17,7.76L7.76,9.17L4.93,6.34M8,13H3V11H8V13M19.07,17.66L17.66,19.07L14.83,16.24L16.24,14.83L19.07,17.66Z",
   encodecolor($icon-color), $icon-height, $icon-width, inline-block);
 

@@ -152,6 +152,9 @@
       &:hover {
         border-color: $editor-modal-footer-button-border-hover;
       }
+      &:disabled {
+        background-color: $button-primary-bg-color-disabled;
+      }
     }
 
     .close {
@@ -213,6 +216,15 @@
       .slick-cell {
         height: inherit;
       }
+
+      .validation-summary {
+        padding: $editor-modal-validation-summary-padding;
+        color: $editor-modal-validation-summary-color;
+        width: $editor-modal-validation-summary-width;
+        margin-bottom: $editor-modal-validation-summary-margin-bottom;
+        font-size: $editor-modal-validation-summary-font-size;
+        font-style: $editor-modal-validation-summary-font-style;
+      }
     }
 
     .slick-editor-modal-header {
@@ -233,6 +245,15 @@
         float: right;
         text-align: right;
         width: 60%;
+        .saving:before {
+          height: $editor-modal-footer-button-saving-height;
+          width: $editor-modal-footer-button-saving-width;
+          display: $editor-modal-footer-button-saving-display;
+          vertical-align: $editor-modal-footer-button-saving-vertical-align;
+          margin: $editor-modal-footer-button-saving-margin;
+          animation: $editor-modal-footer-button-saving-animation;
+          content: $editor-modal-footer-button-saving-content;
+        }
       }
       .selection-counter {
         float: left;

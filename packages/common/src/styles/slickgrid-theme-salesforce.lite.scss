@@ -7,17 +7,11 @@
 /**
  * SlickGrid Salesforce Theme
  * (sames as `slickgrid-theme-salesforce.scss` but without Flatpickr & Multiple-Select styling)
+ * We also removed `slick-without-bootstrap-min-styling.scss` since that is causing issues with Bootstrap 4
  */
 
 @import './sass-utilities';
-
-// $cell-padding-top-bottom: 0;
-// $cell-padding-right-left: 0;
-// $cell-padding: 0;
-
-
 @import './variables-theme-salesforce';
-@import './slick-without-bootstrap-min-styling';
 @import './slick-default-theme';
 @import './slick-grid';
 @import './slick-controls';
@@ -40,6 +34,7 @@ $editable-field-hover-icon-width: 14px !default;
 
 .grid-canvas {
   .slick-row, .slick-row.odd {
+    /* editable field with blue background */
     .slick-cell.editable-field, .slick-cell.selected.editable-field {
       background-color: $editable-field-bg-color;
       &:hover:after {
@@ -54,6 +49,7 @@ $editable-field-hover-icon-width: 14px !default;
       }
     }
 
+    /* editable field with outline border */
     .slick-cell .editing-field, .slick-cell.selected .editing-field {
       border: 1px solid #dddbda;
       padding: 3px 6px;

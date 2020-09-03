@@ -108,7 +108,7 @@ describe('CompositeEditorService', () => {
 
       setTimeout(() => {
         component.openDetails(mockModalOptions);
-        expect(spyOnError).toHaveBeenCalledWith('Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.', 'error');
+        expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: 'ENABLE_CELL_NAVIGATION_REQUIRED', message: 'Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.' });
         done();
       });
     });
@@ -123,7 +123,7 @@ describe('CompositeEditorService', () => {
 
       setTimeout(() => {
         component.openDetails(mockModalOptions);
-        expect(spyOnError).toHaveBeenCalledWith('No records selected for edit operation', 'warning');
+        expect(spyOnError).toHaveBeenCalledWith({ type: 'warning', code: 'NO_RECORD_FOUND', message: 'No records selected for edit operation' });
         done();
       });
     });
@@ -143,7 +143,7 @@ describe('CompositeEditorService', () => {
 
       setTimeout(() => {
         component.openDetails(mockModalOptions);
-        expect(spyOnError).toHaveBeenCalledWith('We could not find any Editor in your Column Definition', 'error');
+        expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: 'NO_EDITOR_FOUND', message: 'We could not find any Editor in your Column Definition' });
         done();
       });
     });
@@ -246,7 +246,7 @@ describe('CompositeEditorService', () => {
       jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
 
       component = new SlickCompositeEditorComponent(gridStub, gridServiceStub);
-      component.openDetails({ headerTitle: 'Editing (#{id}) - #{product.name}' });
+      component.openDetails({ headerTitle: 'Editing ({{id}}) - {{product.name}}' });
 
       const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
       const compositeTitleElm = compositeContainerElm.querySelector<HTMLSelectElement>('.slick-editor-modal-title');

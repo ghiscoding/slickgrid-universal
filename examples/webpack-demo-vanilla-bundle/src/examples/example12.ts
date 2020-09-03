@@ -69,9 +69,7 @@ function checkItemIsEditable(dataContext, columnDef, grid) {
 const customEditableInputFormatter = (row, cell, value, columnDef, dataContext, grid) => {
   const isEditableLine = checkItemIsEditable(dataContext, columnDef, grid);
   value = (value === null || value === undefined) ? '' : value;
-  // return isEditableLine ? { text: value, addClasses: 'editable-field', toolTip: 'Click to Edit' } : value;
   return isEditableLine ? `<div class="editing-field">${value}</div>` : value;
-  // return isEditableLine ? { text: value, addClasses: 'editing-field', toolTip: 'Click to Edit' } : value;
 };
 
 export class Example12 {
@@ -384,9 +382,9 @@ export class Example12 {
         duration: Math.floor(Math.random() * 100) + 10,
         percentComplete: randomPercentComplete > 100 ? 100 : randomPercentComplete,
         start: new Date(randomYear, randomMonth, randomDay),
-        finish: (i % 3 !== 0 || (randomFinish < new Date() || i < 3)) ? '' : randomFinish, // make sure the random date is earlier than today and it's index is bigger than 3
+        finish: (i % 3 === 0 && (randomFinish > new Date() && i > 3)) ? randomFinish : '', // make sure the random date is earlier than today and it's index is bigger than 3
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
-        completed: (i % 3 === 0),
+        completed: (i % 3 === 0 && (randomFinish > new Date() && i > 3)),
         product: { id: this.mockProducts()[randomItemId]?.id, itemName: this.mockProducts()[randomItemId]?.itemName, },
         countryOfOrigin: (i % 2) ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' },
       };
@@ -743,8 +741,8 @@ export class Example12 {
   }
 
   openCompositeModal(modalType: CompositeEditorModalType, openDelay = 0) {
-    // open the editor modal and we can also provide a header title with optional parsing pulled from the dataContext, via template #{}
-    // for example #{title} => display the item title, or even complex object works #{product.itemName} => display item product name
+    // open the editor modal and we can also provide a header title with optional parsing pulled from the dataContext, via template {{ }}
+    // for example {{title}} => display the item title, or even complex object works {{product.itemName}} => display item product name
 
     let modalTitle = '';
     switch (modalType) {
@@ -752,7 +750,7 @@ export class Example12 {
         modalTitle = 'Inserting New Task';
         break;
       case 'edit':
-        modalTitle = 'Editing - #{title} (<span class="color-muted">id:</span> <span class="color-primary">#{id}</span>)'; // 'Editing - #{title} (#{product.itemName})'
+        modalTitle = 'Editing - {{title}} (<span class="color-muted">id:</span> <span class="color-primary">{{id}}</span>)'; // 'Editing - {{title}} ({{product.itemName}})'
         break;
       case 'mass-update':
         modalTitle = 'Mass Update (all rows)';
@@ -764,11 +762,23 @@ export class Example12 {
 
     setTimeout(() => this.sgb.slickCompositeEditor?.openDetails({
       headerTitle: modalTitle,
+      modalType,
       // closeOutside: true,
       // backdrop: null,
-      modalType,
-      viewColumnLayout: 3,
-      onError: (msg) => alert(msg),
+      // viewColumnLayout: 3,
+      onError: (error) => alert(error.message),
+      onMassSave: (formValues: any, applyChangesCallback) => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            if (formValues.percentComplete > 50) {
+              applyChangesCallback(formValues);
+              resolve(true);
+            } else {
+              reject('Unfortunately we only accept a minimum of 50% Completion...');
+            }
+          }, 1200);
+        });
+      }
     }), openDelay);
     // this.sgb.slickCompositeEditor.applyChanges(formValues, modalType);
     // this.sgb.slickCompositeEditor.undoLastMassChange();
