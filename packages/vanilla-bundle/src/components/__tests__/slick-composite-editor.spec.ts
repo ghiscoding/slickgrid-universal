@@ -123,7 +123,7 @@ describe('CompositeEditorService', () => {
 
       setTimeout(() => {
         component.openDetails(mockModalOptions);
-        expect(spyOnError).toHaveBeenCalledWith({ type: 'warning', code: 'NO_RECORD_FOUND', message: 'No records selected for edit operation' });
+        expect(spyOnError).toHaveBeenCalledWith({ type: 'warning', code: 'NO_RECORD_FOUND', message: 'No records selected for edit operation.' });
         done();
       });
     });

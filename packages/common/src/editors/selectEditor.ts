@@ -135,10 +135,10 @@ export class SelectEditor implements Editor {
         libOptions.selectAllText = this._translaterService.translate(`${translationPrefix}SELECT_ALL`);
         libOptions.okButtonText = this._translaterService.translate(`${translationPrefix}OK`);
       } else {
-        libOptions.countSelected = this._locales && this._locales.TEXT_X_OF_Y_SELECTED;
-        libOptions.allSelected = this._locales && this._locales.TEXT_ALL_SELECTED;
-        libOptions.selectAllText = this._locales && this._locales.TEXT_SELECT_ALL;
-        libOptions.okButtonText = this._locales && this._locales.TEXT_OK;
+        libOptions.countSelected = this._locales?.TEXT_X_OF_Y_SELECTED;
+        libOptions.allSelected = this._locales?.TEXT_ALL_SELECTED;
+        libOptions.selectAllText = this._locales?.TEXT_SELECT_ALL;
+        libOptions.okButtonText = this._locales?.TEXT_OK;
       }
     }
 
@@ -423,16 +423,12 @@ export class SelectEditor implements Editor {
   }
 
   save() {
-    // autocommit will not focus the next editor
-    const validation = this.validate();
-    if (validation && validation.valid && this.isValueChanged()) {
-      if (!this._destroying && this.hasAutoCommitEdit && !this.args.compositeEditorOptions) {
-        // do not use args.commitChanges() as this sets the focus to the next row.
-        // also the select list will stay shown when clicking off the grid
-        this.grid.getEditorLock().commitCurrentEdit();
-      } else {
-        this.args.commitChanges();
-      }
+    if (!this._destroying && this.hasAutoCommitEdit && this.isValueChanged()) {
+      // do not use args.commitChanges() as this sets the focus to the next row.
+      // also the select list will stay shown when clicking off the grid
+      this.grid.getEditorLock().commitCurrentEdit();
+    } else {
+      this.args.commitChanges();
     }
   }
 

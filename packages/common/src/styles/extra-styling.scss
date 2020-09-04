@@ -1,6 +1,7 @@
 $button-border-color: #ababab !default;
 $unsaved-editable-field-color: #fbfdd1 !default;
 $font-size-count: 50;
+$margin-max-count: 50;
 $padding-max-count: 30;
 
 .pointer { cursor: pointer; }
@@ -40,6 +41,11 @@ $padding-max-count: 30;
   &:hover {
       color: rgb(0, 153, 255);
   }
+}
+
+// margin-0px up to margin-30px
+@for $i from 0 through $margin-max-count {
+  .margin-#{$i}px { margin: #{$i}px; }
 }
 
 // padding-0px up to padding-30px

@@ -22,8 +22,20 @@ $icon-width-size-count: 50;
   &.mdi-pulse {
     animation: md-spin 1s infinite steps(8);
   }
+  /* use mdi-spin or mdi-spin-1s to change the speed */
   &.mdi-spin {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
     animation: md-spin 2s infinite linear;
+  }
+  @for $i from 1 through 5 {
+    &.mdi-spin-#{$i}s {
+      align-items: center;
+      display: inline-flex;
+      justify-content: center;
+      animation: md-spin #{$i}s infinite linear;
+    }
   }
   &.mdi-rotate-45  { @include md-icon-rotate(45deg, 1);  }
   &.mdi-rotate-90  { @include md-icon-rotate(90deg, 1);  }

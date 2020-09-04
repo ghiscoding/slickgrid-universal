@@ -61,6 +61,7 @@ export class SlickCompositeEditorComponent {
 
   /** Dispose of the Component & unsubscribe all events */
   dispose() {
+    this._formValues = undefined;
     this.disposeComponent();
     this._eventHandler.unsubscribeAll();
   }
@@ -91,23 +92,35 @@ export class SlickCompositeEditorComponent {
       }
 
       this._options = { ...defaultOptions, ...options, }; // merge default options with user options
-
       this._options.backdrop = options.backdrop !== undefined ? options.backdrop : 'static';
       const viewColumnLayout = this._options.viewColumnLayout || 1;
-      const modalType = this._options.modalType || 'edit';
       const activeCell = this.grid.getActiveCell();
-      const activeColIndex = activeCell && activeCell.cell || 0;
-      const activeRow = activeCell && activeCell.row || 0;
+      const activeColIndex = activeCell?.cell ?? 0;
+      const activeRow = activeCell?.row ?? 0;
       const gridUid = this.grid.getUID() || '';
+      let headerTitle = options.headerTitle;
+
+      if (this._options.modalType === 'mass' && this.grid.getSelectedRows) {
+        const selectedRowsIndexes = this.grid.getSelectedRows() || [];
+        if (selectedRowsIndexes.length > 0) {
+          this._options.modalType = 'mass-selection';
+          headerTitle = options?.headerTitleMassSelection ?? options.headerTitle;
+        } else {
+          this._options.modalType = 'mass-update';
+          headerTitle = options?.headerTitleMassUpdate ?? options.headerTitle;
+        }
+      }
+      const modalType = this._options.modalType || 'edit';
+
 
       if (!this.gridOptions.editable) {
-        onError({ type: 'error', code: 'EDITABLE_GRID_REQUIRED', message: 'Your grid must be editable in order to use the Composite Editor Modal', });
+        onError({ type: 'error', code: 'EDITABLE_GRID_REQUIRED', message: 'Your grid must be editable in order to use the Composite Editor Modal.', });
         return;
       } else if (!this.gridOptions.enableCellNavigation) {
         onError({ type: 'error', code: 'ENABLE_CELL_NAVIGATION_REQUIRED', message: 'Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.', });
         return;
       } else if (!activeCell && modalType === 'edit') {
-        onError({ type: 'warning', code: 'NO_RECORD_FOUND', message: 'No records selected for edit operation' });
+        onError({ type: 'warning', code: 'NO_RECORD_FOUND', message: 'No records selected for edit operation.' });
         return;
       } else {
         const dataContext = this.grid.getDataItem(activeRow);
@@ -126,11 +139,11 @@ export class SlickCompositeEditorComponent {
         }
 
         if (modalType === 'edit' && !dataContext) {
-          onError({ type: 'warning', code: 'ROW_NOT_EDITABLE', message: 'Current row is not editable', });
+          onError({ type: 'warning', code: 'ROW_NOT_EDITABLE', message: 'Current row is not editable.', });
           return;
         } else if (modalType === 'mass-selection') {
           if (selectedRowsIndexes.length < 1) {
-            onError({ type: 'warning', code: 'ROW_SELECTION_REQUIRED', message: 'You must select some rows before trying to apply new value(s)', });
+            onError({ type: 'warning', code: 'ROW_SELECTION_REQUIRED', message: 'You must select some rows before trying to apply new value(s).', });
             return;
           }
         }
@@ -145,7 +158,7 @@ export class SlickCompositeEditorComponent {
 
         // open the editor modal and we can also provide a header title with optional parsing pulled from the dataContext, via template {{ }}
         // for example {{title}} => display the item title, or even complex object works {{product.name}} => display item product name
-        const parsedHeaderTitle = options.headerTitle.replace(/\{\{(.*?)\}\}/g, (_match, group) => getDescendantProperty(dataContext, group));
+        const parsedHeaderTitle = headerTitle.replace(/\{\{(.*?)\}\}/g, (_match, group) => getDescendantProperty(dataContext, group));
         const sanitizedHeaderTitle = sanitizeTextByAvailableSanitizer(this.gridOptions, parsedHeaderTitle);
         const layoutColCount = viewColumnLayout === 'auto' ? this.autoCalculateLayoutColumnCount(modalColumns.length) : viewColumnLayout;
 
@@ -313,7 +326,8 @@ export class SlickCompositeEditorComponent {
       }
     } catch (error) {
       this.dispose();
-      onError({ type: 'error', code: error, message: error });
+      const errorMsg = (typeof error === 'string') ? error : (error?.message ?? error?.body?.message ?? '');
+      onError({ type: 'error', code: errorMsg, message: errorMsg });
     }
   }
 
@@ -356,10 +370,17 @@ export class SlickCompositeEditorComponent {
     }
   }
 
-  cancelEditing() {
-    this.grid.getEditController().cancelCurrentEdit();
-    this.grid.setActiveRow(this._lastActiveRowNumber);
-    this.dispose();
+  async cancelEditing() {
+    let confirmed = true;
+    if (this.formValues && Object.keys(this.formValues).length > 0 && typeof this._options.onClose === 'function') {
+      confirmed = await this._options.onClose();
+    }
+
+    if (confirmed) {
+      this.grid.getEditController().cancelCurrentEdit();
+      this.grid.setActiveRow(this._lastActiveRowNumber);
+      this.dispose();
+    }
   }
 
   handleSaveClicked() {
@@ -402,8 +423,8 @@ export class SlickCompositeEditorComponent {
           this._modalSaveButtonElm.classList.add('saving');
           this._modalSaveButtonElm.disabled = true;
 
-          if (this._options?.onMassSave) {
-            const successful = await this._options?.onMassSave(this.formValues, this[applyCallbackFnName].bind(this));
+          if (this._options?.onSave) {
+            const successful = await this._options?.onSave(this.formValues, this[applyCallbackFnName].bind(this));
 
             if (successful) {
               // once we're done doing the mass update, we can cancel the current editor since we don't want to add any new row

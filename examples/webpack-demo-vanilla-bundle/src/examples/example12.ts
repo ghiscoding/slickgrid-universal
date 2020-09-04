@@ -44,9 +44,10 @@ const myCustomTitleValidator = (value, args) => {
  * @returns {boolean} isEditable
  */
 function checkItemIsEditable(dataContext, columnDef, grid) {
-  let isEditable = true;
   const gridOptions = grid && grid.getOptions && grid.getOptions();
-  const gridParams = gridOptions && gridOptions.params || {};
+  const hasEditor = columnDef.editor;
+  const isGridEditable = gridOptions.editable;
+  let isEditable = (isGridEditable && hasEditor);
 
   if (dataContext && columnDef && gridOptions && gridOptions.editable) {
     switch (columnDef.id) {
@@ -249,7 +250,7 @@ export class Example12 {
       {
         id: 'action', name: 'Action', field: 'action', width: 70, maxWidth: 70,
         excludeFromExport: true,
-        formatter: () => `<div class="button-style margin-auto" style="width: 35px;"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
+        formatter: () => `<div class="button-style margin-auto" style="width: 35px; margin-top: -1px;"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           width: 200,
@@ -766,8 +767,9 @@ export class Example12 {
       // closeOutside: true,
       // backdrop: null,
       // viewColumnLayout: 3,
+      onClose: () => Promise.resolve(confirm('You have unsaved changes, are you sure you want to close this window?')),
       onError: (error) => alert(error.message),
-      onMassSave: (formValues: any, applyChangesCallback) => {
+      onSave: (formValues: any, applyChangesCallback) => {
         return new Promise((resolve, reject) => {
           setTimeout(() => {
             if (formValues.percentComplete > 50) {

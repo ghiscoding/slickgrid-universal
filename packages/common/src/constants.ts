@@ -3,6 +3,8 @@ import { Locale } from './interfaces/locale.interface';
 export class Constants {
   static readonly locales: Locale = {
     TEXT_ALL_SELECTED: 'All Selected',
+    TEXT_ALL_X_ITEMS: 'All {{x}} items',
+    TEXT_APPLY_TO_SELECTION: 'Apply to Selection',
     TEXT_CANCEL: 'Cancel',
     TEXT_CLEAR_ALL_FILTERS: 'Clear all Filters',
     TEXT_CLEAR_ALL_GROUPING: 'Clear all Grouping',
@@ -15,6 +17,13 @@ export class Constants {
     TEXT_COPY: 'Copy',
     TEXT_EQUALS: 'Equals',
     TEXT_ENDS_WITH: 'Ends With',
+    TEXT_ERROR_EDITABLE_GRID_REQUIRED: 'Your grid must be editable in order to use the Composite Editor Modal.',
+    TEXT_ERROR_ENABLE_CELL_NAVIGATION_REQUIRED: 'Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.',
+    TEXT_ERROR_NO_CHANGES_DETECTED: 'Sorry we could not detect any changes.',
+    TEXT_ERROR_NO_EDITOR_FOUND: 'We could not find any Editor in your Column Definition.',
+    TEXT_ERROR_NO_RECORD_FOUND: 'No records selected for edit operation.',
+    TEXT_ERROR_ROW_NOT_EDITABLE: 'Current row is not editable.',
+    TEXT_ERROR_ROW_SELECTION_REQUIRED: 'You must select some rows before trying to apply new value(s).',
     TEXT_EXPAND_ALL_GROUPS: 'Expand all Groups',
     TEXT_EXPORT_TO_CSV: 'Export in CSV format',
     TEXT_EXPORT_TO_TEXT_FORMAT: 'Export in Text format (Tab delimited)',
@@ -29,6 +38,7 @@ export class Constants {
     TEXT_OF: 'of',
     TEXT_OK: 'OK',
     TEXT_LAST_UPDATE: 'Last Update',
+    TEXT_MASS_UPDATE: 'Mass Update',
     TEXT_PAGE: 'Page',
     TEXT_REFRESH_DATASET: 'Refresh Dataset',
     TEXT_REMOVE_FILTER: 'Remove Filter',
@@ -42,6 +52,7 @@ export class Constants {
     TEXT_TOGGLE_FILTER_ROW: 'Toggle Filter Row',
     TEXT_TOGGLE_PRE_HEADER_ROW: 'Toggle Pre-Header Row',
     TEXT_X_OF_Y_SELECTED: '# of % selected',
+    TEXT_X_OF_Y_MASS_SELECTED: '{{x}} of {{y}} selected',
   };
   static readonly VALIDATION_REQUIRED_FIELD = 'Field is required';
   static readonly VALIDATION_EDITOR_VALID_NUMBER = 'Please enter a valid number';
