@@ -423,7 +423,7 @@ export class SelectEditor implements Editor {
   }
 
   save() {
-    if (!this._destroying && this.hasAutoCommitEdit && this.isValueChanged()) {
+    if (!this._destroying && this.hasAutoCommitEdit) {
       // do not use args.commitChanges() as this sets the focus to the next row.
       // also the select list will stay shown when clicking off the grid
       this.grid.getEditorLock().commitCurrentEdit();

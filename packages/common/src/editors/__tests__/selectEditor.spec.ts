@@ -411,19 +411,6 @@ describe('SelectEditor', () => {
 
         expect(spy).not.toHaveBeenCalled();
       });
-
-      it('should not call anything when the input value is empty but is required', () => {
-        mockItemData = { id: 1, gender: '', isActive: true };
-        mockColumn.internalColumnEditor.required = true;
-        gridOptionMock.autoCommitEdit = true;
-        const spy = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
-
-        editor = new SelectEditor(editorArguments, true);
-        editor.loadValue(mockItemData);
-        editor.save();
-
-        expect(spy).not.toHaveBeenCalled();
-      });
     });
 
     describe('validate method', () => {
