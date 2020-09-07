@@ -52,7 +52,7 @@
     "isomorphic-fetch": "^2.2.1"
   },
   "devDependencies": {
-    "@types/webpack": "^4.41.21",
+    "@types/webpack": "^4.41.22",
     "archiver": "^5.0.0",
     "cross-env": "^7.0.2",
     "dts-bundle-webpack": "^1.0.2",
