@@ -254,11 +254,12 @@ export class DateEditor implements Editor {
   }
 
   save() {
-    // autocommit will not focus the next editor
     const validation = this.validate();
     const isValid = (validation && validation.valid) || false;
 
     if (this.hasAutoCommitEdit && isValid) {
+      // do not use args.commitChanges() as this sets the focus to the next row.
+      // also the select list will stay shown when clicking off the grid
       this.grid.getEditorLock().commitCurrentEdit();
     } else {
       this.args.commitChanges();

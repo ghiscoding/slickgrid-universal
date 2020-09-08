@@ -81,7 +81,7 @@ export class SlickCompositeEditorComponent {
     const onError = options.onError ?? DEFAULT_ON_ERROR;
     const defaultOptions = {
       backdrop: 'static',
-      closeOutside: true,
+      showCloseButtonOutside: true,
       viewColumnLayout: 'auto',
       modalType: 'edit',
     } as CompositeEditorOpenDetailOption;
@@ -100,7 +100,7 @@ export class SlickCompositeEditorComponent {
       const gridUid = this.grid.getUID() || '';
       let headerTitle = options.headerTitle;
 
-      if (this._options.modalType === 'mass' && this.grid.getSelectedRows) {
+      if (this._options.modalType === 'auto-mass' && this.grid.getSelectedRows) {
         const selectedRowsIndexes = this.grid.getSelectedRows() || [];
         if (selectedRowsIndexes.length > 0) {
           this._options.modalType = 'mass-selection';
@@ -183,7 +183,7 @@ export class SlickCompositeEditorComponent {
         modalCloseButtonElm.className = 'close';
         modalCloseButtonElm.dataset.action = 'close';
         modalCloseButtonElm.dataset.ariaLabel = 'Close';
-        if (this._options.closeOutside) {
+        if (this._options.showCloseButtonOutside) {
           modalHeaderTitleElm?.classList?.add('outside');
           modalCloseButtonElm?.classList?.add('outside');
         }

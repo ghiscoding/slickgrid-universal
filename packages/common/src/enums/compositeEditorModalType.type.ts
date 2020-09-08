@@ -1,1 +1,1 @@
-export type CompositeEditorModalType = 'create' | 'edit' | 'mass' | 'mass-update' | 'mass-selection';
+export type CompositeEditorModalType = 'create' | 'edit' | 'auto-mass' | 'mass-update' | 'mass-selection';

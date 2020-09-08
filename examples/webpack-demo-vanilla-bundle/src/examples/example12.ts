@@ -764,7 +764,7 @@ export class Example12 {
     setTimeout(() => this.sgb.slickCompositeEditor?.openDetails({
       headerTitle: modalTitle,
       modalType,
-      // closeOutside: true,
+      // showCloseButtonOutside: true,
       // backdrop: null,
       // viewColumnLayout: 3,
       onClose: () => Promise.resolve(confirm('You have unsaved changes, are you sure you want to close this window?')),

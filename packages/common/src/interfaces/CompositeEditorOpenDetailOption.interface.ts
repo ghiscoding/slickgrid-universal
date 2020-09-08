@@ -31,7 +31,7 @@ export interface CompositeEditorOpenDetailOption {
   backdrop?: 'static' | null;
 
   /** Defaults to true, do we want the close button outside the modal (true) or inside the header modal (false)?  */
-  closeOutside?: boolean;
+  showCloseButtonOutside?: boolean;
 
   /** Optional insert options, for example what position in the grid do we want to insert (top/bottom), do we want to highlight, etc... */
   insertOptions?: GridServiceInsertOption;
