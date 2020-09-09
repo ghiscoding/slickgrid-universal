@@ -95,8 +95,6 @@ export class IntegerEditor implements Editor {
           const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
           debounce(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay)();
         });
-      } else {
-        setTimeout(() => this.focus(), 50);
       }
     }
   }
