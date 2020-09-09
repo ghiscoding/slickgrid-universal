@@ -113,6 +113,7 @@ export class DateEditor implements Editor {
         altFormat: outputFormat,
         dateFormat: inputFormat,
         closeOnSelect: true,
+        wrap: true,
         locale: (currentLocale !== 'en') ? this.loadFlatpickrLocale(currentLocale) : 'en',
         onChange: () => this.handleOnDateChange(),
         errorHandler: () => {
@@ -122,14 +123,25 @@ export class DateEditor implements Editor {
 
       // merge options with optional user's custom options
       this._pickerMergedOptions = { ...pickerOptions, ...(this.editorOptions as FlatpickrOption) };
-      const inputCssClasses = `.editor-text.editor-${columnId}.flatpickr`;
+      const inputCssClasses = `.editor-text.editor-${columnId}.form-control`;
       if (this._pickerMergedOptions.altInput) {
-        this._pickerMergedOptions.altInputClass = 'flatpickr-alt-input editor-text';
+        this._pickerMergedOptions.altInputClass = 'flatpickr-alt-input form-control';
       }
 
-      this._$input = $(`<input type="text" data-defaultDate="${this.defaultDate}" class="${inputCssClasses.replace(/\./g, ' ')}" placeholder="${placeholder}" title="${title}" />`);
-      this._$input.appendTo(this.args.container);
-      this.flatInstance = (this._$input[0] && typeof this._$input[0].flatpickr === 'function') ? this._$input[0].flatpickr(this._pickerMergedOptions) : flatpickr(this._$input, this._pickerMergedOptions as unknown as Partial<FlatpickrBaseOptions>);
+      const $editorInputElm: any = $(`<div class="flatpickr input-group"></div>`);
+      const closeButtonElm = $(`<span class="input-group-btn" data-clear>
+          <button class="btn btn-default icon-close" type="button"></button>
+        </span>`);
+      this._$input = $(`<input type="text" data-input data-defaultDate="${this.defaultDate}" class="${inputCssClasses.replace(/\./g, ' ')}" placeholder="${placeholder}" title="${title}" />`);
+      this._$input.appendTo($editorInputElm);
+
+      // show clear date button (unless user specifically doesn't want it)
+      if (!this.columnEditor?.params?.hideClearButton) {
+        closeButtonElm.appendTo($editorInputElm);
+      }
+
+      $editorInputElm.appendTo(this.args.container);
+      this.flatInstance = (flatpickr && $editorInputElm[0] && typeof $editorInputElm[0].flatpickr === 'function') ? $editorInputElm[0].flatpickr(this._pickerMergedOptions) : flatpickr($editorInputElm, this._pickerMergedOptions as unknown as Partial<FlatpickrBaseOptions>);
 
       // when we're using an alternate input to display data, we'll consider this input as the one to do the focus later on
       // else just use the top one

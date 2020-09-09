@@ -144,7 +144,7 @@ export class Example12 {
         formatter: Formatters.dateIso, columnGroup: 'Period',
         type: FieldType.date, outputType: FieldType.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },
-        editor: { model: Editors.date, massUpdate: true, },
+        editor: { model: Editors.date, massUpdate: true, params: { hideClearButton: false } },
       },
       {
         id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 20, maxWidth: 100,
@@ -766,7 +766,15 @@ export class Example12 {
       modalType,
       // showCloseButtonOutside: true,
       // backdrop: null,
-      // viewColumnLayout: 3,
+      // viewColumnLayout: 2, // choose from 'auto', 1, 2, or 3 (defaults to 'auto')
+      // labels: {
+      //   cancelButton: 'Cancel',
+      //   massSelectionButton: 'Apply to Selection',
+      //   massSelectionStatus: '{{x}} of {{y}} selected',
+      //   massUpdateButton: 'Mass Update',
+      //   massUpdateStatus: 'all {{x}} items',
+      //   saveButton: 'Save',
+      // },
       onClose: () => Promise.resolve(confirm('You have unsaved changes, are you sure you want to close this window?')),
       onError: (error) => alert(error.message),
       onSave: (formValues: any, applyChangesCallback) => {
