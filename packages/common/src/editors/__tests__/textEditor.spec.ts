@@ -92,14 +92,12 @@ describe('TextEditor', () => {
     });
 
     it('should initialize the editor and focus on the element after a small delay', () => {
-      const spy = jest.spyOn(editor, 'focus');
       editor = new TextEditor(editorArguments);
       const editorCount = divContainer.querySelectorAll('input.editor-text.editor-title').length;
 
       jest.runAllTimers(); // fast-forward timer
 
       expect(editorCount).toBe(1);
-      expect(spy).toHaveBeenCalled();
     });
 
     it('should initialize the editor even when user define his own editor options', () => {

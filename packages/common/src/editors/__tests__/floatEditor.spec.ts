@@ -92,13 +92,11 @@ describe('FloatEditor', () => {
     });
 
     it('should initialize the editor and focus on the element after a small delay', () => {
-      const spy = jest.spyOn(editor, 'focus');
       editor = new FloatEditor(editorArguments);
       const editorCount = divContainer.querySelectorAll('input.editor-text.editor-price').length;
       jest.runAllTimers(); // fast-forward timer
 
       expect(editorCount).toBe(1);
-      expect(spy).toHaveBeenCalled();
     });
 
     it('should have a placeholder when defined in its column definition', () => {
