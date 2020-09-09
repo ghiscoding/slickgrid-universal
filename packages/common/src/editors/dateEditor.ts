@@ -95,6 +95,7 @@ export class DateEditor implements Editor {
 
   init(): void {
     if (this.args && this.columnDef) {
+      const compositeEditorOptions = this.args.compositeEditorOptions;
       const columnId = this.columnDef && this.columnDef.id;
       const placeholder = this.columnEditor && this.columnEditor.placeholder || '';
       const title = this.columnEditor && this.columnEditor.title || '';
@@ -147,6 +148,13 @@ export class DateEditor implements Editor {
       // else just use the top one
       const altInputClass = (this._pickerMergedOptions && this._pickerMergedOptions.altInputClass) || '';
       this._$inputWithData = (altInputClass !== '') ? $(`.${altInputClass.replace(' ', '.')}`) : this._$input;
+
+      if (!compositeEditorOptions) {
+        setTimeout(() => {
+          this.show();
+          this.focus();
+        }, 50);
+      }
     }
   }
 
@@ -196,7 +204,7 @@ export class DateEditor implements Editor {
 
   show() {
     const isCompositeEditor = !!this.args?.compositeEditorOptions;
-    if (!isCompositeEditor && this.flatInstance && typeof this.flatInstance.open === 'function') {
+    if (!isCompositeEditor && this.flatInstance && typeof this.flatInstance.open === 'function' && this.flatInstance._input) {
       this.flatInstance.open();
     } else if (isCompositeEditor) {
       // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
@@ -248,7 +256,6 @@ export class DateEditor implements Editor {
 
   loadValue(item: any) {
     const fieldName = this.columnDef && this.columnDef.field;
-    const compositeEditorOptions = this.args.compositeEditorOptions;
 
     if (item && fieldName !== undefined) {
       // is the field a complex object, "address.streetNumber"
@@ -257,11 +264,6 @@ export class DateEditor implements Editor {
 
       this._originalDate = value;
       this.flatInstance.setDate(value);
-
-      if (!compositeEditorOptions) {
-        this.show();
-        this.focus();
-      }
     }
   }
 
