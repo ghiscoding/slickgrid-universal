@@ -4,11 +4,13 @@ import {
   Editor,
   Column,
   CompositeEditorOpenDetailOption,
+  Constants,
   EditorValidationResult,
   getDescendantProperty,
   GetSlickEventType,
   GridOption,
   GridService,
+  Locale,
   OnErrorOption,
   sanitizeTextByAvailableSanitizer,
   SlickEventHandler,
@@ -28,6 +30,7 @@ export class SlickCompositeEditorComponent {
   private _modalElm: HTMLDivElement;
   private _options: CompositeEditorOpenDetailOption;
   private _lastActiveRowNumber: number;
+  private _locales: Locale;
   private _formValues: any;
   private _modalBodyTopValidationElm: HTMLDivElement;
   private _modalSaveButtonElm: HTMLButtonElement;
@@ -57,6 +60,9 @@ export class SlickCompositeEditorComponent {
     if (this.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
+
+    // get locales provided by user in forRoot or else use default English locales via the Constants
+    this._locales = this.gridOptions?.locales ?? Constants.locales;
   }
 
   /** Dispose of the Component & unsubscribe all events */
@@ -91,7 +97,7 @@ export class SlickCompositeEditorComponent {
         return;
       }
 
-      this._options = { ...defaultOptions, ...options, }; // merge default options with user options
+      this._options = { ...defaultOptions, ...this.gridOptions.compositeEditorOptions, ...options, labels: { ...this.gridOptions.compositeEditorOptions?.labels, ...options?.labels } }; // merge default options with user options
       this._options.backdrop = options.backdrop !== undefined ? options.backdrop : 'static';
       const viewColumnLayout = this._options.viewColumnLayout || 1;
       const activeCell = this.grid.getActiveCell();
@@ -129,6 +135,7 @@ export class SlickCompositeEditorComponent {
         const selectedRowsIndexes = this.grid.getSelectedRows();
         const datasetLength = this.dataViewLength;
         this._lastActiveRowNumber = activeRow;
+        const textLabels = this._options?.labels;
 
         // focus on a first cell with an Editor (unless current cell already has an Editor then do nothing)
         // also when it's a "Create" modal, we'll scroll to the end of the grid
@@ -208,23 +215,30 @@ export class SlickCompositeEditorComponent {
         modalCancelButtonElm.type = 'button';
         modalCancelButtonElm.className = 'btn btn-cancel btn-default btn-sm';
         modalCancelButtonElm.dataset.action = 'cancel';
-        modalCancelButtonElm.dataset.ariaLabel = 'Cancel';
-        modalCancelButtonElm.textContent = 'Cancel';
+        modalCancelButtonElm.dataset.ariaLabel = this.getLabelText('cancelButton', 'TEXT_CANCEL', 'Cancel');
+        modalCancelButtonElm.textContent = this.getLabelText('cancelButton', 'TEXT_CANCEL', 'Cancel');
 
         let leftFooterText = '';
+        let saveButtonText = '';
         switch (modalType) {
           case 'mass-update':
-            leftFooterText = `all ${datasetLength} items`;
+            const footerUnparsedText = this.getLabelText('massUpdateStatus', 'TEXT_ALL_X_ITEMS', 'all {{x}} items');
+            leftFooterText = this.parseText(footerUnparsedText, { x: datasetLength });
+            saveButtonText = this.getLabelText('massSelectionButton', 'TEXT_APPLY_TO_SELECTION', 'Apply to Selection');
             break;
           case 'mass-selection':
-            leftFooterText = `${selectedRowsIndexes.length} of ${datasetLength} selected`;
+            const selectionUnparsedText = this.getLabelText('massSelectionStatus', 'TEXT_X_OF_Y_MASS_SELECTED', '{{x}} of {{y}} selected');
+            leftFooterText = this.parseText(selectionUnparsedText, { x: selectedRowsIndexes.length, y: datasetLength });
+            saveButtonText = this.getLabelText('massUpdateButton', 'TEXT_MASS_UPDATE', 'Mass Update');
             break;
+          default:
+            saveButtonText = this.getLabelText('saveButton', 'TEXT_SAVE', 'Save');
         }
+
         const selectionCounterElm = document.createElement('div');
         selectionCounterElm.className = 'selection-counter';
         selectionCounterElm.textContent = leftFooterText;
 
-        const saveButtonText = (modalType === 'create' || modalType === 'edit') ? 'Save' : (modalType === 'mass-update') ? 'Mass Update' : 'Apply to Selection';
         this._modalSaveButtonElm = document.createElement('button');
         this._modalSaveButtonElm.type = 'button';
         this._modalSaveButtonElm.className = 'btn btn-save btn-primary btn-sm';
@@ -443,6 +457,7 @@ export class SlickCompositeEditorComponent {
     } catch (errorMsg) {
       this._modalBodyTopValidationElm.textContent = errorMsg;
       this._modalBodyTopValidationElm.style.display = 'block';
+      this._modalBodyTopValidationElm.scrollIntoView();
       this._modalSaveButtonElm.disabled = false;
       this._modalSaveButtonElm.classList.remove('saving');
     }
@@ -563,6 +578,21 @@ export class SlickCompositeEditorComponent {
   private getActiveCellEditor(row: number, cell: number): Editor | null {
     this.grid.setActiveCell(row, cell, false);
     return this.grid.getCellEditor();
+  }
+
+  private getLabelText(labelProperty: string, localeText: string, defaultText: string): string {
+    const textLabels = { ...this.gridOptions.compositeEditorOptions?.labels, ...this._options?.labels };
+
+    if (this.gridOptions?.enableTranslate && this.translaterService?.translate) {
+      return this.translaterService.translate(`${labelProperty}Key`);
+    }
+    return (textLabels && textLabels[labelProperty]) || (this._locales && this._locales[localeText]) || defaultText;
+  }
+
+  private parseText(inputText: string, mappedArgs: any): string {
+    return inputText.replace(/\{\{(.*?)\}\}/g, (match, group) => {
+      return mappedArgs[group] !== undefined ? mappedArgs[group] : match;
+    });
   }
 
   private validateCompositeEditors(targetElm?: HTMLElement): EditorValidationResult {

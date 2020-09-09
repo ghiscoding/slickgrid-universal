@@ -14,6 +14,8 @@ export class TranslateServiceStub implements TranslaterService {
     let output = translationKey;
     switch (translationKey) {
       case 'ALL_SELECTED': output = this._locale === 'en' ? 'All Selected' : 'Tout sélectionnés'; break;
+      case 'ALL_X_ITEMS': output = this._locale === 'en' ? 'all {{x}} items' : 'sur tous les {{x}} éléments'; break;
+      case 'APPLY_TO_SELECTION': output = this._locale === 'en' ? 'Apply to Selected' : 'Appliquer à la sélection'; break;
       case 'CANCEL': output = this._locale === 'en' ? 'Cancel' : 'Annuler'; break;
       case 'CLEAR_ALL_GROUPING': output = this._locale === 'en' ? 'Clear all Grouping' : 'Supprimer tous les groupes'; break;
       case 'CLEAR_ALL_FILTERS': output = this._locale === 'en' ? 'Clear all Filters' : 'Supprimer tous les filtres'; break;
@@ -42,6 +44,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'LAST_NAME': output = this._locale === 'en' ? 'Last Name' : 'Nom de famille'; break;
       case 'LAST_UPDATE': output = this._locale === 'en' ? 'Last Update' : 'Dernière mise à jour'; break;
       case 'MALE': output = this._locale === 'en' ? 'Male' : 'Mâle'; break;
+      case 'MASS_UPDATE': output = this._locale === 'en' ? 'Mass Update' : 'Mise à jour en masse'; break;
       case 'ITEMS': output = this._locale === 'en' ? 'items' : 'éléments'; break;
       case 'ITEMS_PER_PAGE': output = this._locale === 'en' ? 'items per page' : 'éléments par page'; break;
       case 'OF': output = this._locale === 'en' ? 'of' : 'de'; break;
@@ -71,6 +74,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'IT_ADMIN': output = this._locale === 'en' ? 'IT Admin' : 'Administrateur IT'; break;
       case 'DEVELOPER': output = this._locale === 'en' ? 'Developer' : 'Développeur'; break;
       case 'X_OF_Y_SELECTED': output = this._locale === 'en' ? '# of % selected' : '# de % sélectionnés'; break;
+      case 'X_OF_Y_MASS_SELECTED': output = this._locale === 'en' ? '{{x}} of {{y}} selected' : '{{x}} de {{y}} sélectionnés'; break;
     }
     return output;
   }

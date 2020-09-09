@@ -1,5 +1,7 @@
 {
   "ALL_SELECTED": "Tout sélectionnés",
+  "ALL_X_ITEMS": "sur tous les {{x}} éléments",
+  "APPLY_TO_SELECTION": "Appliquer à la sélection",
   "CANCEL": "Annuler",
   "CLEAR_ALL_FILTERS": "Supprimer tous les filtres",
   "CLEAR_ALL_GROUPING": "Supprimer tous les groupes",
@@ -27,6 +29,7 @@
   "ITEMS": "éléments",
   "ITEMS_PER_PAGE": "éléments par page",
   "LAST_UPDATE": "Dernière mise à jour",
+  "MASS_UPDATE": "Mise à jour en masse",
   "NOT_IN_COLLECTION_SEPERATED_BY_COMMA": "Recherche excluant certain éléments d'une collection, doit être séparé par une virgule (a,b)",
   "OF": "de",
   "OK": "Terminé",
@@ -44,6 +47,7 @@
   "TOGGLE_FILTER_ROW": "Basculer la ligne des filtres",
   "TOGGLE_PRE_HEADER_ROW": "Basculer la ligne de pré-en-tête",
   "X_OF_Y_SELECTED": "# de % sélectionnés",
+  "X_OF_Y_MASS_SELECTED": "{{x}} de {{y}} sélectionnés",
   "BILLING": {
     "ADDRESS": {
       "STREET": "Adresse de facturation",

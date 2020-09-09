@@ -25,6 +25,7 @@ import {
   RowMoveManager,
   RowSelectionModelOption,
   TreeDataOption,
+  CompositeEditorOpenDetailOption,
 } from './index';
 import { ColumnReorderFunction, EventNamingStyle, GridAutosizeColsMode, OperatorType, OperatorString, } from '../enums/index';
 import { TranslaterService } from '../services/translater.service';
@@ -86,6 +87,9 @@ export interface GridOption {
 
   /** Column Picker Plugin options (columnTitle, forceFitTitle, syncResizeTitle) */
   columnPicker?: ColumnPicker;
+
+  /** Optionally provide global options to the Composite Editor instead of having to redeclare them every time you want to use it */
+  compositeEditorOptions?: Partial<CompositeEditorOpenDetailOption>;
 
   /** Context menu options (mouse right+click) */
   contextMenu?: ContextMenu;
