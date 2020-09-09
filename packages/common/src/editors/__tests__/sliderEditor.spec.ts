@@ -1,7 +1,8 @@
 import { Editors } from '../index';
 import { SliderEditor } from '../sliderEditor';
-import { Column, SlickDataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
 
+declare const Slick: SlickNamespace;
 jest.useFakeTimers();
 
 const containerId = 'demo-container';
@@ -22,11 +23,14 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
-  getOptions: () => gridOptionMock,
+  getActiveCell: jest.fn(),
   getColumns: jest.fn(),
   getEditorLock: () => getEditorLockMock,
   getHeaderRowColumn: jest.fn(),
+  getOptions: () => gridOptionMock,
   render: jest.fn(),
+  onBeforeEditCell: new Slick.Event(),
+  onCompositeEditorChange: new Slick.Event(),
 } as unknown as SlickGrid;
 
 describe('SliderEditor', () => {
@@ -185,10 +189,12 @@ describe('SliderEditor', () => {
       mockColumn.internalColumnEditor = { maxValue: 500 };
       editor = new SliderEditor(editorArguments);
       editor.loadValue(mockItemData);
+      const editorInputElm = editor.editorInputDomElement;
       const editorElm = editor.editorDomElement;
 
       expect(editor.getValue()).toBe('213');
-      expect(editorElm[0].defaultValue).toBe('0');
+      expect(editorElm).toBeTruthy();
+      expect(editorInputElm[0].defaultValue).toBe('0');
     });
 
     it('should update slider number every time a change event happens on the input slider', () => {
@@ -410,7 +416,7 @@ describe('SliderEditor', () => {
         editor.loadValue(mockItemData);
         editor.setValue(35);
         const spySave = jest.spyOn(editor, 'save');
-        const editorElm = editor.editorDomElement;
+        const editorElm = editor.editorInputDomElement;
 
         editorElm.trigger('mouseup');
         editorElm[0].dispatchEvent(new (window.window as any).Event('mouseup'));
@@ -438,6 +444,78 @@ describe('SliderEditor', () => {
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number between 10 and 99' });
       });
+    });
+  });
+
+  describe('with Composite Editor', () => {
+    beforeEach(() => {
+      editorArguments = {
+        ...editorArguments,
+        compositeEditorOptions: { headerTitle: 'Test', formValues: {}, modalType: 'edit' }
+      } as EditorArguments;
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
+
+      editor = new SliderEditor(editorArguments);
+      const disableSpy = jest.spyOn(editor, 'disable');
+      editor.show();
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(disableSpy).toHaveBeenCalledWith(false);
+    });
+
+    it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(false);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+
+      editor = new SliderEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      const disableSpy = jest.spyOn(editor, 'disable');
+      editor.show();
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: {},
+      }, expect.anything());
+      expect(disableSpy).toHaveBeenCalledWith(true);
+      expect(editor.editorInputDomElement.attr('disabled')).toEqual('disabled');
+      expect(editor.editorInputDomElement.val()).toEqual('0');
+    });
+
+    it('should expect "onCompositeEditorChange" to have been triggered with the new value showing up in its "formValues" object', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      gridOptionMock.autoCommitEdit = true;
+      mockItemData = { id: 1, price: 93, isActive: true };
+
+      editor = new SliderEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      editor.setValue(93);
+      const editorElm = editor.editorInputDomElement;
+      editorElm.trigger('mouseup');
+      editorElm[0].dispatchEvent(new (window.window as any).Event('mouseup'));
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: { price: 93 },
+      }, expect.anything());
     });
   });
 });

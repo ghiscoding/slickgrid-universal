@@ -70,7 +70,7 @@ export class DateEditor implements Editor {
     return this.columnDef && this.columnDef.internalColumnEditor || {};
   }
 
-  /** Get the Editor DOM Element */
+  /** Getter for the Editor DOM Element */
   get editorDomElement(): any {
     return this._$input;
   }

@@ -19,6 +19,7 @@ const dataViewStub = {
 const gridOptionMock = {
   autoCommitEdit: false,
   editable: true,
+  editorTypingDebounce: 0,
 } as GridOption;
 
 const getEditorLockMock = {
@@ -26,12 +27,15 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
-  getOptions: () => gridOptionMock,
+  getActiveCell: jest.fn(),
   getColumns: jest.fn(),
   getEditorLock: () => getEditorLockMock,
   getHeaderRowColumn: jest.fn(),
-  onValidationError: new Slick.Event(),
+  getOptions: () => gridOptionMock,
   render: jest.fn(),
+  onValidationError: new Slick.Event(),
+  onBeforeEditCell: new Slick.Event(),
+  onCompositeEditorChange: new Slick.Event(),
 } as unknown as SlickGrid;
 
 describe('DualInputEditor', () => {
@@ -819,6 +823,115 @@ describe('DualInputEditor', () => {
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
+    });
+  });
+
+  describe('with Composite Editor', () => {
+    beforeEach(() => {
+      editorArguments = {
+        ...editorArguments,
+        compositeEditorOptions: { headerTitle: 'Test', formValues: {}, modalType: 'edit' }
+      } as EditorArguments;
+
+      const editorParams = { leftInput: { field: 'from', type: 'float' }, rightInput: { field: 'to', type: 'float' } } as ColumnEditorDualInput;
+      mockItemData = { id: 1, from: 1, to: 22, isActive: true };
+      mockColumn = {
+        id: 'range', field: 'range', editable: true, internalColumnEditor: { params: editorParams },
+        editor: { model: Editors.dualInput, params: editorParams },
+      } as Column;
+
+      editorArguments.column = mockColumn;
+      editorArguments.item = mockItemData;
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
+
+      editor = new DualInputEditor(editorArguments);
+      const disableSpy = jest.spyOn(editor, 'disable');
+      editor.show();
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(disableSpy).toHaveBeenCalledWith(false);
+    });
+
+    it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(false);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+
+      editor = new DualInputEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      const disableSpy = jest.spyOn(editor, 'disable');
+      editor.show();
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: {},
+      }, expect.anything());
+      expect(disableSpy).toHaveBeenCalledWith(true);
+      expect(editor.editorDomElement.leftInput.disabled).toEqual(true);
+      expect(editor.editorDomElement.rightInput.disabled).toEqual(true);
+      expect(editor.editorDomElement.leftInput.value).toEqual('');
+      expect(editor.editorDomElement.rightInput.value).toEqual('');
+    });
+
+    it('should expect "onCompositeEditorChange" to have been triggered from the left input and expect the new value showing up in its "formValues" object', () => {
+      jest.useFakeTimers();
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      gridOptionMock.autoCommitEdit = true;
+      mockItemData = { id: 1, from: 4, to: 5, isActive: true };
+
+      editor = new DualInputEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      editor.setValues([4, 5]);
+      editor.editorDomElement.leftInput.dispatchEvent(new (window.window as any).Event('keyup'));
+
+      jest.runTimersToTime(50);
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: { from: 4, to: 5 },
+      }, expect.anything());
+    });
+
+    it('should expect "onCompositeEditorChange" to have been triggered from the right input and expect the new value showing up in its "formValues" object', () => {
+      jest.useFakeTimers();
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      gridOptionMock.autoCommitEdit = true;
+      mockItemData = { id: 1, from: 4, to: 5, isActive: true };
+
+      editor = new DualInputEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      editor.setValues([4, 5]);
+      editor.editorDomElement.rightInput.dispatchEvent(new (window.window as any).Event('keyup'));
+
+      jest.runTimersToTime(50);
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: { from: 4, to: 5 },
+      }, expect.anything());
     });
   });
 });

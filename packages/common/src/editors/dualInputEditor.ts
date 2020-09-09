@@ -1,5 +1,5 @@
 import { KeyCode } from '../enums/keyCode.enum';
-import { getDescendantProperty, setDeepValue } from '../services/utilities';
+import { debounce, getDescendantProperty, setDeepValue } from '../services/utilities';
 import { floatValidator, integerValidator, textValidator } from '../editorValidators';
 import {
   Column,
@@ -66,7 +66,7 @@ export class DualInputEditor implements Editor {
     return this.columnDef && this.columnDef.internalColumnEditor || {};
   }
 
-  /** Get the Editor DOM Element */
+  /** Getter for the Editor DOM Element */
   get editorDomElement(): { leftInput: HTMLInputElement, rightInput: HTMLInputElement } {
     return { leftInput: this._leftInput, rightInput: this._rightInput };
   }
@@ -118,7 +118,13 @@ export class DualInputEditor implements Editor {
 
     const compositeEditorOptions = this.args?.compositeEditorOptions;
     if (compositeEditorOptions) {
-      this._leftInput.addEventListener('change', (event: KeyboardEvent) => this.handleChangeOnCompositeEditor(event, compositeEditorOptions));
+      const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
+      this._leftInput.addEventListener('keyup', (event: KeyboardEvent) => {
+        debounce(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay)();
+      });
+      this._rightInput.addEventListener('keyup', (event: KeyboardEvent) => {
+        debounce(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay)();
+      });
     } else {
       setTimeout(() => this._leftInput.select(), 50);
     }
@@ -470,7 +476,8 @@ export class DualInputEditor implements Editor {
   private handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption) {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
-    const columnId = this.columnDef?.id ?? '';
+    const leftInputId = this.columnEditor.params?.leftInput?.field ?? '';
+    const rightInputId = this.columnEditor.params?.rightInput?.field ?? '';
     const item = this.args.item;
     const grid = this.grid;
 
@@ -479,8 +486,14 @@ export class DualInputEditor implements Editor {
       this.applyValue(this.args.item, this.serializeValue());
     }
     this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
-    if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
-      delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
+
+    // when the input is disabled we won't include it in the form result object
+    // we'll check with both left/right inputs
+    if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(leftInputId)) {
+      delete compositeEditorOptions.formValues[leftInputId];
+    }
+    if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(rightInputId)) {
+      delete compositeEditorOptions.formValues[rightInputId];
     }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
   }

@@ -1,8 +1,9 @@
 import { Editors } from '../index';
 import { AutoCompleteEditor } from '../autoCompleteEditor';
 import { KeyCode, FieldType } from '../../enums/index';
-import { AutocompleteOption, Column, SlickDataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { AutocompleteOption, Column, EditorArgs, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
 
+declare const Slick: SlickNamespace;
 const KEY_CHAR_A = 97;
 const containerId = 'demo-container';
 
@@ -25,11 +26,14 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
+  getActiveCell: jest.fn(),
   getOptions: () => gridOptionMock,
   getColumns: jest.fn(),
   getEditorLock: () => getEditorLockMock,
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
+  onBeforeEditCell: new Slick.Event(),
+  onCompositeEditorChange: new Slick.Event(),
 } as unknown as SlickGrid;
 
 describe('AutoCompleteEditor', () => {
@@ -576,7 +580,7 @@ describe('AutoCompleteEditor', () => {
       });
 
       it('should expect "setValue" to have been called but not "autoCommitEdit" when "autoCommitEdit" is disabled', () => {
-        const spyCommitEdit = jest.spyOn(gridStub, 'getEditorLock');
+        const commitEditSpy = jest.spyOn(gridStub, 'getEditorLock');
         gridOptionMock.autoCommitEdit = false;
         mockColumn.internalColumnEditor.collection = ['male', 'female'];
         mockItemData = { id: 123, gender: 'female', isActive: true };
@@ -586,12 +590,12 @@ describe('AutoCompleteEditor', () => {
         const output = editor.onSelect(null, { item: mockItemData.gender });
 
         expect(output).toBe(false);
-        expect(spyCommitEdit).not.toHaveBeenCalled();
+        expect(commitEditSpy).not.toHaveBeenCalled();
         expect(spySetValue).toHaveBeenCalledWith('female');
       });
 
       it('should expect "setValue" and "autoCommitEdit" to have been called with a string when item provided is a string', () => {
-        const spyCommitEdit = jest.spyOn(gridStub, 'getEditorLock');
+        const commitEditSpy = jest.spyOn(gridStub, 'getEditorLock');
         gridOptionMock.autoCommitEdit = true;
         mockColumn.internalColumnEditor.collection = ['male', 'female'];
         mockItemData = { id: 123, gender: 'female', isActive: true };
@@ -608,12 +612,12 @@ describe('AutoCompleteEditor', () => {
         jest.runAllTimers(); // fast-forward timer
 
         expect(output).toBe(false);
-        expect(spyCommitEdit).toHaveBeenCalled();
+        expect(commitEditSpy).toHaveBeenCalled();
         expect(spySetValue).toHaveBeenCalledWith('female');
       });
 
       it('should expect "setValue" and "autoCommitEdit" to have been called with the string label when item provided is an object', () => {
-        const spyCommitEdit = jest.spyOn(gridStub, 'getEditorLock');
+        const commitEditSpy = jest.spyOn(gridStub, 'getEditorLock');
         gridOptionMock.autoCommitEdit = true;
         mockColumn.internalColumnEditor.collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
         mockItemData = { id: 123, gender: { value: 'f', label: 'Female' }, isActive: true };
@@ -623,7 +627,7 @@ describe('AutoCompleteEditor', () => {
         const output = editor.onSelect(null, { item: mockItemData.gender });
 
         expect(output).toBe(false);
-        expect(spyCommitEdit).toHaveBeenCalled();
+        expect(commitEditSpy).toHaveBeenCalled();
         expect(spySetValue).toHaveBeenCalledWith('Female');
       });
 
@@ -723,6 +727,78 @@ describe('AutoCompleteEditor', () => {
         const liElm = ulElm.querySelector<HTMLLIElement>('li');
         expect(liElm.innerHTML).toBe(mockTemplateString);
       });
+    });
+  });
+
+  describe('with Composite Editor', () => {
+    beforeEach(() => {
+      editorArguments = {
+        ...editorArguments,
+        compositeEditorOptions: { headerTitle: 'Test', formValues: {}, modalType: 'edit' }
+      } as EditorArguments;
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
+
+      editor = new AutoCompleteEditor(editorArguments);
+      const disableSpy = jest.spyOn(editor, 'disable');
+      editor.show();
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(disableSpy).toHaveBeenCalledWith(false);
+    });
+
+    it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(false);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+
+      editor = new AutoCompleteEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      const disableSpy = jest.spyOn(editor, 'disable');
+      editor.show();
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: {},
+      }, expect.anything());
+      expect(disableSpy).toHaveBeenCalledWith(true);
+      expect(editor.editorDomElement.attr('disabled')).toEqual('disabled');
+      expect(editor.editorDomElement.val()).toEqual('');
+    });
+
+    it('should expect "setValue" to have been called and also "onCompositeEditorChange" to have been triggered with the new value showing up in its "formValues" object', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      gridOptionMock.autoCommitEdit = true;
+      mockColumn.internalColumnEditor.collection = ['male', 'female'];
+      mockItemData = { id: 123, gender: 'female', isActive: true };
+
+      editor = new AutoCompleteEditor(editorArguments);
+      const spySetValue = jest.spyOn(editor, 'setValue');
+      const output = editor.onSelect(null, { item: mockItemData.gender });
+
+      expect(output).toBe(false);
+      expect(spySetValue).toHaveBeenCalledWith('female');
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: { gender: 'female' },
+      }, expect.anything());
     });
   });
 });

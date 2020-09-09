@@ -73,12 +73,17 @@ export class AutoCompleteEditor implements Editor {
     return this._autoCompleteOptions || {};
   }
 
-  /** Get the Collection */
+  /** Getter of the Collection */
   get editorCollection(): any[] {
     return this.columnDef && this.columnDef.internalColumnEditor && this.columnDef.internalColumnEditor.collection || [];
   }
 
-  /** Get the Final Collection used in the AutoCompleted Source (this may vary from the "collection" especially when providing a customStructure) */
+  /** Getter for the Editor DOM Element */
+  get editorDomElement(): any {
+    return this._$editorElm;
+  }
+
+  /** Getter for the Final Collection used in the AutoCompleted Source (this may vary from the "collection" especially when providing a customStructure) */
   get elementCollection(): any[] {
     return this._elementCollection;
   }
@@ -127,11 +132,6 @@ export class AutoCompleteEditor implements Editor {
   /** Get the Validator function, can be passed in Editor property or Column Definition */
   get validator(): EditorValidator | undefined {
     return (this.columnEditor && this.columnEditor.validator) || (this.columnDef && this.columnDef.validator);
-  }
-
-  /** Get the Editor DOM Element */
-  get editorDomElement(): any {
-    return this._$editorElm;
   }
 
   init() {

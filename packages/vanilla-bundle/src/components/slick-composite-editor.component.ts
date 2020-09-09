@@ -224,12 +224,12 @@ export class SlickCompositeEditorComponent {
           case 'mass-update':
             const footerUnparsedText = this.getLabelText('massUpdateStatus', 'TEXT_ALL_X_ITEMS', 'all {{x}} items');
             leftFooterText = this.parseText(footerUnparsedText, { x: datasetLength });
-            saveButtonText = this.getLabelText('massSelectionButton', 'TEXT_APPLY_TO_SELECTION', 'Apply to Selection');
+            saveButtonText = this.getLabelText('massUpdateButton', 'TEXT_MASS_UPDATE', 'Mass Update');
             break;
           case 'mass-selection':
             const selectionUnparsedText = this.getLabelText('massSelectionStatus', 'TEXT_X_OF_Y_MASS_SELECTED', '{{x}} of {{y}} selected');
             leftFooterText = this.parseText(selectionUnparsedText, { x: selectedRowsIndexes.length, y: datasetLength });
-            saveButtonText = this.getLabelText('massUpdateButton', 'TEXT_MASS_UPDATE', 'Mass Update');
+            saveButtonText = this.getLabelText('massSelectionButton', 'TEXT_APPLY_TO_SELECTION', 'Apply to Selection');
             break;
           default:
             saveButtonText = this.getLabelText('saveButton', 'TEXT_SAVE', 'Save');

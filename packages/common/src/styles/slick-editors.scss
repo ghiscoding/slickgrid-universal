@@ -393,6 +393,9 @@
           cursor: initial;
         }
       }
+      .slider-value {
+        min-width: 28px;
+      }
 
       &.modified {
         input, .slick-large-editor-text, .ms-choice, .checkbox-editor-container {

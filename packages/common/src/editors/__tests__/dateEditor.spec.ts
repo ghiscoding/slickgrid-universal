@@ -3,9 +3,10 @@ import * as moment from 'moment-mini';
 import { Editors } from '../index';
 import { DateEditor } from '../dateEditor';
 import { FieldType } from '../../enums/index';
-import { Column, SlickDataView, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
+declare const Slick: SlickNamespace;
 const containerId = 'demo-container';
 
 // define a <div> container to simulate the grid container
@@ -26,13 +27,16 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
-  getOptions: () => gridOptionMock,
+  getActiveCell: jest.fn(),
   getColumns: jest.fn(),
   getEditorLock: () => getEditorLockMock,
   getHeaderRowColumn: jest.fn(),
+  getOptions: () => gridOptionMock,
   navigateNext: jest.fn(),
   navigatePrev: jest.fn(),
   render: jest.fn(),
+  onBeforeEditCell: new Slick.Event(),
+  onCompositeEditorChange: new Slick.Event(),
 } as unknown as SlickGrid;
 
 describe('DateEditor', () => {
@@ -96,6 +100,20 @@ describe('DateEditor', () => {
       editor = new DateEditor(editorArguments);
       const editorCount = divContainer.querySelectorAll('input.editor-text.editor-startDate').length;
       expect(editorCount).toBe(1);
+    });
+
+    it('should initialize the editor and focus on the element after a small delay', (done) => {
+      const focusSpy = jest.spyOn(editor, 'focus');
+      const showSpy = jest.spyOn(editor, 'focus');
+      editor = new DateEditor(editorArguments);
+      const editorCount = divContainer.querySelectorAll('input.editor-text.editor-startDate').length;
+
+      setTimeout(() => {
+        expect(editorCount).toBe(1);
+        expect(focusSpy).toHaveBeenCalled();
+        expect(showSpy).toHaveBeenCalled();
+        done();
+      }, 51);
     });
 
     it('should have a placeholder when defined in its column definition', () => {
@@ -412,6 +430,80 @@ describe('DateEditor', () => {
         expect(spy).toHaveBeenCalled();
         done();
       });
+    });
+  });
+
+  describe('with Composite Editor', () => {
+    beforeEach(() => {
+      editorArguments = {
+        ...editorArguments,
+        compositeEditorOptions: { headerTitle: 'Test', formValues: {}, modalType: 'edit' }
+      } as EditorArguments;
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
+
+      editor = new DateEditor(editorArguments);
+      const disableSpy = jest.spyOn(editor, 'disable');
+      editor.show();
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(disableSpy).toHaveBeenCalledWith(false);
+    });
+
+    it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(false);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+
+      editor = new DateEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      const disableSpy = jest.spyOn(editor, 'disable');
+      editor.show();
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: {},
+      }, expect.anything());
+      expect(disableSpy).toHaveBeenCalledWith(true);
+      expect(editor.flatInstance._input.disabled).toEqual(true);
+      expect(editor.flatInstance._input.value).toEqual('');
+    });
+
+    it('should expect "onCompositeEditorChange" to have been triggered with the new value showing up in its "formValues" object', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      mockColumn.internalColumnEditor.editorOptions = { allowInput: true, altInput: false };
+      mockColumn.type = FieldType.dateIso;
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      gridOptionMock.autoCommitEdit = true;
+      mockItemData = { id: 1, startDate: '2001-01-02', isActive: true };
+
+      editor = new DateEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      editor.focus();
+      const editorInputElm = divContainer.querySelector<HTMLInputElement>('.flatpickr input');
+      editorInputElm.value = '2001-01-02';
+      editorInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: { startDate: '2001-01-02' },
+      }, expect.anything());
     });
   });
 });

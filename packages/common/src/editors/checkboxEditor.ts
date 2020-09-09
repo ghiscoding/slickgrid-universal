@@ -36,7 +36,7 @@ export class CheckboxEditor implements Editor {
     return this.columnDef && this.columnDef.internalColumnEditor || {};
   }
 
-  /** Get the Editor DOM Element */
+  /** Getter for the Editor DOM Element */
   get editorDomElement(): any {
     return this._input;
   }
@@ -168,11 +168,7 @@ export class CheckboxEditor implements Editor {
       const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
 
       this._originalValue = value;
-      if (this._originalValue) {
-        this._input.checked = true;
-      } else {
-        this._input.checked = false;
-      }
+      this._input.checked = !!this._originalValue;
     }
   }
 

@@ -44,8 +44,13 @@ export class SliderEditor implements Editor {
     return this.columnDef && this.columnDef.internalColumnEditor || {};
   }
 
-  /** Get the Editor DOM Element */
+  /** Getter for the Editor DOM Element */
   get editorDomElement(): any {
+    return this._$editorElm;
+  }
+
+  /** Getter for the Editor Input DOM Element */
+  get editorInputDomElement(): any {
     return this._$input;
   }
 
