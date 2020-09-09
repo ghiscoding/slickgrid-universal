@@ -84,7 +84,7 @@ export class TextEditor implements Editor {
     // the lib does not get the focus out event for some reason
     // so register it here
     if (this.hasAutoCommitEdit && !compositeEditorOptions) {
-      this._input.addEventListener('focusout', () => { this.save(); console.log('focusout') });
+      this._input.addEventListener('focusout', () => this.save());
     }
 
     if (compositeEditorOptions) {
@@ -187,7 +187,7 @@ export class TextEditor implements Editor {
   save() {
     const validation = this.validate();
     const isValid = (validation && validation.valid) || false;
-    console.log(this.hasAutoCommitEdit && isValid)
+
     if (this.hasAutoCommitEdit && isValid) {
       // do not use args.commitChanges() as this sets the focus to the next row.
       // also the select list will stay shown when clicking off the grid
