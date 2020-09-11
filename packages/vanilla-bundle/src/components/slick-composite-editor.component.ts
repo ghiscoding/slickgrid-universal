@@ -5,11 +5,13 @@ import {
   Column,
   CompositeEditorOpenDetailOption,
   Constants,
+  CurrentRowSelection,
   EditorValidationResult,
   getDescendantProperty,
   GetSlickEventType,
   GridOption,
   GridService,
+  GridStateService,
   Locale,
   OnErrorOption,
   sanitizeTextByAvailableSanitizer,
@@ -55,7 +57,7 @@ export class SlickCompositeEditorComponent {
     return this.grid.getOptions();
   }
 
-  constructor(private grid: SlickGrid, private gridService: GridService, private translaterService?: TranslaterService) {
+  constructor(private grid: SlickGrid, private gridService: GridService, private gridStateService: GridStateService, private translaterService?: TranslaterService) {
     this._eventHandler = new Slick.EventHandler();
     if (this.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
@@ -104,26 +106,33 @@ export class SlickCompositeEditorComponent {
       const activeColIndex = activeCell?.cell ?? 0;
       const activeRow = activeCell?.row ?? 0;
       const gridUid = this.grid.getUID() || '';
-      let headerTitle = options.headerTitle;
+      let headerTitle = options.headerTitle || '';
 
-      if (this._options.modalType === 'auto-mass' && this.grid.getSelectedRows) {
+      if (this.hasRowSelectionEnabled() && this._options.modalType === 'auto-mass' && this.grid.getSelectedRows) {
         const selectedRowsIndexes = this.grid.getSelectedRows() || [];
         if (selectedRowsIndexes.length > 0) {
           this._options.modalType = 'mass-selection';
-          headerTitle = options?.headerTitleMassSelection ?? options.headerTitle;
+          if (options?.headerTitleMassSelection) {
+            headerTitle = options?.headerTitleMassSelection;
+          }
         } else {
           this._options.modalType = 'mass-update';
-          headerTitle = options?.headerTitleMassUpdate ?? options.headerTitle;
+          if (options?.headerTitleMassUpdate) {
+            headerTitle = options?.headerTitleMassUpdate;
+          }
         }
       }
       const modalType = this._options.modalType || 'edit';
 
 
       if (!this.gridOptions.editable) {
-        onError({ type: 'error', code: 'EDITABLE_GRID_REQUIRED', message: 'Your grid must be editable in order to use the Composite Editor Modal.', });
+        onError({ type: 'error', code: 'EDITABLE_GRID_REQUIRED', message: 'Your grid must be editable in order to use the Composite Editor Modal.' });
         return;
       } else if (!this.gridOptions.enableCellNavigation) {
-        onError({ type: 'error', code: 'ENABLE_CELL_NAVIGATION_REQUIRED', message: 'Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.', });
+        onError({ type: 'error', code: 'ENABLE_CELL_NAVIGATION_REQUIRED', message: 'Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.' });
+        return;
+      } else if (!this.gridOptions.enableAddRow && modalType === 'create') {
+        onError({ type: 'error', code: 'ENABLE_ADD_ROW_REQUIRED', message: 'Composite Editor requires the flag "enableAddRow" to be set to True in your Grid Options when creating a new item.' });
         return;
       } else if (!activeCell && modalType === 'edit') {
         onError({ type: 'warning', code: 'NO_RECORD_FOUND', message: 'No records selected for edit operation.' });
@@ -132,10 +141,11 @@ export class SlickCompositeEditorComponent {
         const dataContext = this.grid.getDataItem(activeRow);
         const isWithMassChange = (modalType === 'mass-update' || modalType === 'mass-selection');
         const columnDefinitions = this.grid.getColumns();
-        const selectedRowsIndexes = this.grid.getSelectedRows();
+        const selectedRowsIndexes = this.hasRowSelectionEnabled() ? this.grid.getSelectedRows() : [];
         const datasetLength = this.dataViewLength;
         this._lastActiveRowNumber = activeRow;
-        const textLabels = this._options?.labels;
+        const gridStateSelection = this.gridStateService.getCurrentRowSelections() as CurrentRowSelection;
+        const dataContextIds = gridStateSelection?.dataContextIds || [];
 
         // focus on a first cell with an Editor (unless current cell already has an Editor then do nothing)
         // also when it's a "Create" modal, we'll scroll to the end of the grid
@@ -146,11 +156,11 @@ export class SlickCompositeEditorComponent {
         }
 
         if (modalType === 'edit' && !dataContext) {
-          onError({ type: 'warning', code: 'ROW_NOT_EDITABLE', message: 'Current row is not editable.', });
+          onError({ type: 'warning', code: 'ROW_NOT_EDITABLE', message: 'Current row is not editable.' });
           return;
         } else if (modalType === 'mass-selection') {
           if (selectedRowsIndexes.length < 1) {
-            onError({ type: 'warning', code: 'ROW_SELECTION_REQUIRED', message: 'You must select some rows before trying to apply new value(s).', });
+            onError({ type: 'warning', code: 'ROW_SELECTION_REQUIRED', message: 'You must select some rows before trying to apply new value(s).' });
             return;
           }
         }
@@ -222,13 +232,15 @@ export class SlickCompositeEditorComponent {
         let saveButtonText = '';
         switch (modalType) {
           case 'mass-update':
-            const footerUnparsedText = this.getLabelText('massUpdateStatus', 'TEXT_ALL_X_ITEMS', 'all {{x}} items');
+            const footerUnparsedText = this.getLabelText('massUpdateStatus', 'TEXT_ALL_X_RECORDS_SELECTED', 'All {{x}} records selected');
             leftFooterText = this.parseText(footerUnparsedText, { x: datasetLength });
-            saveButtonText = this.getLabelText('massUpdateButton', 'TEXT_MASS_UPDATE', 'Mass Update');
+            saveButtonText = this.getLabelText('massUpdateButton', 'TEXT_APPLY_MASS_UPDATE', 'Mass Update');
             break;
           case 'mass-selection':
+            const fullDataset = this.dataView?.getItems() ?? [];
+            const fullDatasetLength = (Array.isArray(fullDataset)) ? fullDataset.length : 0;
             const selectionUnparsedText = this.getLabelText('massSelectionStatus', 'TEXT_X_OF_Y_MASS_SELECTED', '{{x}} of {{y}} selected');
-            leftFooterText = this.parseText(selectionUnparsedText, { x: selectedRowsIndexes.length, y: datasetLength });
+            leftFooterText = this.parseText(selectionUnparsedText, { x: dataContextIds.length, y: fullDatasetLength });
             saveButtonText = this.getLabelText('massSelectionButton', 'TEXT_APPLY_TO_SELECTION', 'Apply to Selection');
             break;
           default:
@@ -300,7 +312,7 @@ export class SlickCompositeEditorComponent {
         this.grid.editActiveCell(compositeEditor);
 
         const onCompositeEditorChangeHandler = this.grid.onCompositeEditorChange;
-        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCompositeEditorChangeHandler>>).subscribe(onCompositeEditorChangeHandler, (e, args) => {
+        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCompositeEditorChangeHandler>>).subscribe(onCompositeEditorChangeHandler, (_e, args) => {
           const columnId = args.column?.id ?? '';
           this._formValues = args.formValues;
 
@@ -328,8 +340,9 @@ export class SlickCompositeEditorComponent {
         // when adding a new row to the grid, we need to invalidate that row and re-render the grid
         const onAddNewRowHandler = this.grid.onAddNewRow;
         (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onAddNewRowHandler>>).subscribe(onAddNewRowHandler, (_e, args) => {
-          console.log('add new row', args);
-          const newId = options.insertNewId ?? this.dataViewLength + 1;
+          const fullDataset = this.dataView?.getItems() ?? [];
+          const fullDatasetLength = (Array.isArray(fullDataset)) ? fullDataset.length : 0;
+          const newId = options.insertNewId ?? fullDatasetLength + 1;
           const item = args.item;
           item[this.gridOptions.datasetIdPropertyName || ''] = newId;
           if (!this.dataView.getItemById(newId)) {
@@ -366,22 +379,24 @@ export class SlickCompositeEditorComponent {
     this.grid.invalidate();
   }
 
-  applySaveMassSelectionChanges(formValues: any) {
-    const selectedRowsIndexes = this.grid.getSelectedRows();
-    const data = this.dataView.getItems();
+  applySaveMassSelectionChanges(formValues: any, selection: { gridRowIndexes: number[]; dataContextIds: Array<number | string>; }) {
+    const selectedItemIds = selection?.dataContextIds ?? [];
+    const selectedItems = selectedItemIds.map(itemId => this.dataView.getItemById(itemId));
 
     // from the "lastCompositeEditor" object that we kept as reference, it contains all the changes inside the "formValues" property
     // we can loop through these changes and apply them on the selected row indexes
     for (const itemProp in formValues) {
       if (formValues.hasOwnProperty(itemProp)) {
-        selectedRowsIndexes.forEach(rowIndex => {
-          if (data[rowIndex] && data[rowIndex].hasOwnProperty(itemProp) && formValues.hasOwnProperty(itemProp)) {
-            data[rowIndex][itemProp] = formValues[itemProp];
-            this.grid.updateRow(rowIndex);
+        selectedItems.forEach(dataContext => {
+          if (dataContext && dataContext.hasOwnProperty(itemProp) && formValues.hasOwnProperty(itemProp)) {
+            dataContext[itemProp] = formValues[itemProp];
           }
         });
       }
     }
+
+    // update all items in the grid with the grid service
+    this.gridService.updateItems(selectedItems);
   }
 
   async cancelEditing() {
@@ -436,9 +451,12 @@ export class SlickCompositeEditorComponent {
         } else if (isFormValid && this.formValues) {
           this._modalSaveButtonElm.classList.add('saving');
           this._modalSaveButtonElm.disabled = true;
+          const gridStateSelection = this.gridStateService.getCurrentRowSelections() as CurrentRowSelection;
+          const gridRowIndexes = gridStateSelection?.gridRowIndexes || [];
+          const dataContextIds = gridStateSelection?.dataContextIds || [];
 
           if (this._options?.onSave) {
-            const successful = await this._options?.onSave(this.formValues, this[applyCallbackFnName].bind(this));
+            const successful = await this._options?.onSave(this.formValues, { gridRowIndexes, dataContextIds }, this[applyCallbackFnName].bind(this));
 
             if (successful) {
               // once we're done doing the mass update, we can cancel the current editor since we don't want to add any new row
@@ -446,7 +464,7 @@ export class SlickCompositeEditorComponent {
               executeCallback();
             }
           } else {
-            this[applyCallbackFnName](this.formValues);
+            this[applyCallbackFnName](this.formValues, { gridRowIndexes, dataContextIds });
             executeCallback();
             this.dispose();
           }
@@ -587,6 +605,13 @@ export class SlickCompositeEditorComponent {
       return this.translaterService.translate(`${labelProperty}Key`);
     }
     return (textLabels && textLabels[labelProperty]) || (this._locales && this._locales[localeText]) || defaultText;
+  }
+
+  /** Check wether the grid has the Row Selection enabled */
+  private hasRowSelectionEnabled() {
+    const selectionModel = this.grid.getSelectionModel();
+    const isRowSelectionEnabled = this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector;
+    return (isRowSelectionEnabled && selectionModel);
   }
 
   private parseText(inputText: string, mappedArgs: any): string {

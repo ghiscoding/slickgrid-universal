@@ -3,7 +3,8 @@ import { Locale } from './interfaces/locale.interface';
 export class Constants {
   static readonly locales: Locale = {
     TEXT_ALL_SELECTED: 'All Selected',
-    TEXT_ALL_X_ITEMS: 'all {{x}} items',
+    TEXT_ALL_X_RECORDS_SELECTED: 'All {{x}} records selected',
+    TEXT_APPLY_MASS_UPDATE: 'Apply Mass Update',
     TEXT_APPLY_TO_SELECTION: 'Apply to Selection',
     TEXT_CANCEL: 'Cancel',
     TEXT_CLEAR_ALL_FILTERS: 'Clear all Filters',
@@ -38,7 +39,6 @@ export class Constants {
     TEXT_OF: 'of',
     TEXT_OK: 'OK',
     TEXT_LAST_UPDATE: 'Last Update',
-    TEXT_MASS_UPDATE: 'Mass Update',
     TEXT_PAGE: 'Page',
     TEXT_REFRESH_DATASET: 'Refresh Dataset',
     TEXT_REMOVE_FILTER: 'Remove Filter',

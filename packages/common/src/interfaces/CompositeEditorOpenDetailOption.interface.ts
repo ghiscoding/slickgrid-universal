@@ -12,6 +12,11 @@ export type OnErrorOption = {
   type: 'error' | 'info' | 'warning';
 };
 
+export interface CompositeEditorSelection {
+  gridRowIndexes: number[];
+  dataContextIds: Array<number | string>;
+}
+
 export interface CompositeEditorOpenDetailOption {
   /**
    * Composite Editor modal header title with support to optional parsing and HTML rendering of any item property pulled from the dataContext, via template {{ }}
@@ -19,7 +24,7 @@ export interface CompositeEditorOpenDetailOption {
    * - {{title}} => would display the item title, or you could even parse complex object like {{product.name}} => displays the item product name
    * - Editing (id: <i>{{id}}</i>) => would display the "Editing (id: 123)" where the Id has italic font style
    */
-  headerTitle: string;
+  headerTitle?: string;
 
   /** Override the header title of the "mass-update" modal type, mostly used in combo when passing modal type as "modal" (auto-detect type), it will automatically detect the modal type ("mass-update" or "mass-selection")  */
   headerTitleMassUpdate?: string;
@@ -61,13 +66,13 @@ export interface CompositeEditorOpenDetailOption {
     /** Defaults to "Mass Update", override the Mass Update button label */
     massUpdateButton?: string;
 
-    /** Defaults to "MASS_UPDATE", translation key used for the Mass Update button label. */
+    /** Defaults to "APPLY_MASS_UPDATE", translation key used for the Mass Update button label. */
     massUpdateButtonKey?: string;
 
     /** Defaults to "all {{totalItems}} items", override the Mass Update status text on the footer left side */
     massUpdateStatus?: string;
 
-    /** Defaults to "ALL_X_ITEMS", translation key used for the Mass Update status text on the footer left side */
+    /** Defaults to "ALL_X_RECORDS_SELECTED", translation key used for the Mass Update status text on the footer left side */
     massUpdateStatusKey?: string;
 
     /** Defaults to "Save", override the Save button label used by a modal type of "create" or "edit" */
@@ -98,5 +103,5 @@ export interface CompositeEditorOpenDetailOption {
   onError?: (error: OnErrorOption) => void;
 
   /** The "onSave" callback will be triggered after user clicked saved button, user can execute his own code and possibly apply the changes if he wishes to. */
-  onSave?: (formValues: any, applyChangesCallback: (formValues: any) => void) => Promise<boolean>;
+  onSave?: (formValues: any, selection: CompositeEditorSelection, applyChangesCallback: (formValues: any, selection: CompositeEditorSelection) => void) => Promise<boolean>;
 }

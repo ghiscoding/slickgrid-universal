@@ -1,6 +1,7 @@
 {
   "ALL_SELECTED": "Tout sélectionnés",
-  "ALL_X_ITEMS": "sur tous les {{x}} éléments",
+  "ALL_X_RECORDS_SELECTED": "Sur tous les {{x}} éléments",
+  "APPLY_MASS_UPDATE": "Mettre à jour en masse",
   "APPLY_TO_SELECTION": "Appliquer à la sélection",
   "CANCEL": "Annuler",
   "CLEAR_ALL_FILTERS": "Supprimer tous les filtres",
@@ -29,7 +30,6 @@
   "ITEMS": "éléments",
   "ITEMS_PER_PAGE": "éléments par page",
   "LAST_UPDATE": "Dernière mise à jour",
-  "MASS_UPDATE": "Mise à jour en masse",
   "NOT_IN_COLLECTION_SEPERATED_BY_COMMA": "Recherche excluant certain éléments d'une collection, doit être séparé par une virgule (a,b)",
   "OF": "de",
   "OK": "Terminé",

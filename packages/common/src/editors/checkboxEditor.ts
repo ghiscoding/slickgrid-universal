@@ -92,6 +92,9 @@ export class CheckboxEditor implements Editor {
     if (elm) {
       elm.removeEventListener('click', this.save);
     }
+    if (this._input?.remove) {
+      this._input.remove();
+    }
   }
 
   disable(isDisabled = true) {

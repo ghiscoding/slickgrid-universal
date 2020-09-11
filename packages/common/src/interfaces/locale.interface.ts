@@ -2,8 +2,11 @@ export interface Locale {
   /** Text "All Selected" displayed in the Multiple Select Editor/Filter */
   TEXT_ALL_SELECTED: string;
 
-  /** Text "All {{x}} items" displayed in a Composite Editor modal of type  "mass-update". */
-  TEXT_ALL_X_ITEMS?: string;
+  /** Text "All {{x}} records selected" displayed in a Composite Editor modal of type  "mass-update". */
+  TEXT_ALL_X_RECORDS_SELECTED?: string;
+
+  /** Text "Apply Mass Update" displayed in the Composite Editor with a "mass-update" modal type. */
+  TEXT_APPLY_MASS_UPDATE?: string;
 
   /** Text "Apply to Selection" used by the "Mass Selection" button label in a Composite Editor modal. */
   TEXT_APPLY_TO_SELECTION?: string;
@@ -106,9 +109,6 @@ export interface Locale {
 
   /** Text "OK" displayed in the Multiple Select Editor/Filter */
   TEXT_OK: string;
-
-  /** Text "Mass Update" displayed in the Composite Editor with a "mass-update" modal type. */
-  TEXT_MASS_UPDATE?: string;
 
   /** Text "Page" displayed in the Pagination (when enabled) */
   TEXT_PAGE?: string;

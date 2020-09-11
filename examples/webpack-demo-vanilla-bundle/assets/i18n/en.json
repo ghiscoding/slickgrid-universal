@@ -1,7 +1,8 @@
 {
   "ALL_SELECTED": "All Selected",
-  "ALL_X_ITEMS": "all {{x}} items",
-  "APPLY_TO_SELECTION": "Apply to Selected",
+  "ALL_X_RECORDS_SELECTED": "All {{x}} records selected",
+  "APPLY_MASS_UPDATE": "Apply Mass Update",
+  "APPLY_TO_SELECTION": "Apply to Selection",
   "CANCEL": "Cancel",
   "CLEAR_ALL_FILTERS": "Clear all Filters",
   "CLEAR_ALL_GROUPING": "Clear all Grouping",
@@ -29,7 +30,6 @@
   "ITEMS": "items",
   "ITEMS_PER_PAGE": "items per page",
   "LAST_UPDATE": "Last Update",
-  "MASS_UPDATE": "Mass Update",
   "NOT_IN_COLLECTION_SEPERATED_BY_COMMA": "Search items not in a collection, must be separated by a comma (a,b)",
   "OF": "of",
   "OK": "OK",

@@ -81,6 +81,13 @@ $editable-field-hover-icon-width: 14px !default;
         content: none;
       }
     }
+
+    .slick-cell.unsaved-editable-field {
+      .editing-field {
+        border: $editor-modal-detail-container-border-modified;
+        border-width: $editor-modal-detail-container-border-width-modified;
+      }
+    }
   }
 }
 

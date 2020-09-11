@@ -32,6 +32,7 @@ declare const Slick: SlickNamespace;
 export class DateEditor implements Editor {
   private _$inputWithData: any;
   private _$input: any;
+  private _$editorInputElm: any;
   private _isDisabled = false;
   private _originalDate: string;
   private _pickerMergedOptions: FlatpickrOption;
@@ -129,20 +130,20 @@ export class DateEditor implements Editor {
         this._pickerMergedOptions.altInputClass = 'flatpickr-alt-input form-control';
       }
 
-      const $editorInputElm: any = $(`<div class="flatpickr input-group"></div>`);
+      this._$editorInputElm = $(`<div class="flatpickr input-group"></div>`);
       const closeButtonElm = $(`<span class="input-group-btn" data-clear>
           <button class="btn btn-default icon-close" type="button"></button>
         </span>`);
       this._$input = $(`<input type="text" data-input data-defaultDate="${this.defaultDate}" class="${inputCssClasses.replace(/\./g, ' ')}" placeholder="${placeholder}" title="${title}" />`);
-      this._$input.appendTo($editorInputElm);
+      this._$input.appendTo(this._$editorInputElm);
 
       // show clear date button (unless user specifically doesn't want it)
       if (!this.columnEditor?.params?.hideClearButton) {
-        closeButtonElm.appendTo($editorInputElm);
+        closeButtonElm.appendTo(this._$editorInputElm);
       }
 
-      $editorInputElm.appendTo(this.args.container);
-      this.flatInstance = (flatpickr && $editorInputElm[0] && typeof $editorInputElm[0].flatpickr === 'function') ? $editorInputElm[0].flatpickr(this._pickerMergedOptions) : flatpickr($editorInputElm, this._pickerMergedOptions as unknown as Partial<FlatpickrBaseOptions>);
+      this._$editorInputElm.appendTo(this.args.container);
+      this.flatInstance = (flatpickr && this._$editorInputElm[0] && typeof this._$editorInputElm[0].flatpickr === 'function') ? this._$editorInputElm[0].flatpickr(this._pickerMergedOptions) : flatpickr(this._$editorInputElm, this._pickerMergedOptions as unknown as Partial<FlatpickrBaseOptions>);
 
       // when we're using an alternate input to display data, we'll consider this input as the one to do the focus later on
       // else just use the top one
@@ -161,6 +162,9 @@ export class DateEditor implements Editor {
   destroy() {
     this.hide();
     this._$input.remove();
+    if (this._$editorInputElm?.remove) {
+      this._$editorInputElm.remove();
+    }
     if (this._$inputWithData && typeof this._$inputWithData.remove === 'function') {
       this._$inputWithData.remove();
     }

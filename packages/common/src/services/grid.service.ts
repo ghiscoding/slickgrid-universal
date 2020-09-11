@@ -12,7 +12,7 @@ import {
 } from '../interfaces/index';
 import { ExtensionService } from './extension.service';
 import { FilterService } from './filter.service';
-// import { GridStateService } from './gridState.service';
+import { PaginationService } from '../services/pagination.service';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
 import { SortService } from './sort.service';
@@ -30,8 +30,8 @@ export class GridService {
   constructor(
     private extensionService: ExtensionService,
     private filterService: FilterService,
-    // private gridStateService: GridStateService,
     private pubSubService: PubSubService,
+    private paginationService: PaginationService,
     private sharedService: SharedService,
     private sortService: SortService
   ) { }
@@ -254,7 +254,7 @@ export class GridService {
    * The column definitions could be passed as argument to reset (this can be used after a Grid State reset)
    * The reset will clear the Filters & Sort, then will reset the Columns to their original state
    */
-  resetGrid(columnDefinitions?: Column[]) {
+  resetGrid() {
     // reset columns to original states & refresh the grid
     if (this._grid && this._dataView) {
       const originalColumns = this.extensionService.getAllColumns();
@@ -265,7 +265,6 @@ export class GridService {
         if (this._gridOptions && this._gridOptions.enableAutoSizeColumns) {
           this._grid.autosizeColumns();
         }
-        // this.gridStateService.resetColumns(columnDefinitions);
       }
     }
 
@@ -285,6 +284,7 @@ export class GridService {
    */
   addItem<T = any>(item: T, options?: GridServiceInsertOption): number | undefined {
     options = { ...GridServiceInsertOptionDefaults, ...options };
+    const insertPosition = options?.position;
 
     if (!this._grid || !this._gridOptions || !this._dataView) {
       throw new Error('We could not find SlickGrid Grid, DataView objects');
@@ -296,7 +296,7 @@ export class GridService {
 
     // insert position top/bottom, defaults to top
     // when position is top we'll call insert at index 0, else call addItem which just push to the DataView array
-    if (options && options.position === 'bottom') {
+    if (options?.position === 'bottom') {
       this._dataView.addItem(item);
     } else {
       this._dataView.insertItem(0, item); // insert at index 0
@@ -332,6 +332,12 @@ export class GridService {
     // do we want to trigger an event after adding the item
     if (options.triggerEvent) {
       this.pubSubService.publish('onItemAdded', item);
+    }
+
+    // when using Pagination in a local grid, we need to either go to first page or last page depending on which position user want to insert the new row
+    const isLocalGrid = !(this._gridOptions && this._gridOptions.backendServiceApi);
+    if (isLocalGrid && this._gridOptions.enablePagination) {
+      insertPosition === 'top' ? this.paginationService.goToFirstPage() : this.paginationService.goToLastPage();
     }
 
     return rowNumber;
@@ -561,9 +567,10 @@ export class GridService {
     if (itemId === undefined) {
       throw new Error(`Cannot update a row without a valid "id"`);
     }
-    const rowNumber = this._dataView.getRowById(itemId);
+    const rowNumber = this._dataView.getRowById(itemId) as number;
 
-    if (!item || rowNumber === undefined) {
+    // when using pagination the item to update might not be on current page, so we bypass this condition
+    if ((!item || rowNumber === undefined) && !this._gridOptions.enablePagination) {
       throw new Error(`The item to update in the grid was not found with id: ${itemId}`);
     }
 
@@ -671,7 +678,9 @@ export class GridService {
     let isItemAdded = false;
     options = { ...GridServiceInsertOptionDefaults, ...options };
     if (itemId === undefined) {
-      throw new Error(`Calling Upsert of an item requires the item to include a valid and unique "id" property`);
+      if (!this.hasRowSelectionEnabled()) {
+        throw new Error(`Calling Upsert of an item requires the item to include a valid and unique "id" property`);
+      }
     }
 
     let rowNumberAdded: number | undefined;
@@ -690,5 +699,12 @@ export class GridService {
       isItemAdded ? this.pubSubService.publish('onItemAdded', item) : this.pubSubService.publish('onItemUpdated', item);
     }
     return { added: rowNumberAdded, updated: rowNumberUpdated };
+  }
+
+  /** Check wether the grid has the Row Selection enabled */
+  private hasRowSelectionEnabled() {
+    const selectionModel = this._grid.getSelectionModel();
+    const isRowSelectionEnabled = this._gridOptions.enableRowSelection || this._gridOptions.enableCheckboxSelector;
+    return (isRowSelectionEnabled && selectionModel);
   }
 }

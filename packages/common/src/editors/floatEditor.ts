@@ -107,6 +107,9 @@ export class FloatEditor implements Editor {
     if (elm) {
       elm.removeEventListener('focusout', this.save);
     }
+    if (this._input?.remove) {
+      this._input.remove();
+    }
   }
 
   disable(isDisabled = true) {

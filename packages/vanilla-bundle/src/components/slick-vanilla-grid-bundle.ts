@@ -275,9 +275,9 @@ export class SlickVanillaGridBundle {
     this.resizerService = new ResizerService(this._eventPubSubService);
     this.sortService = new SortService(this.sharedService, this._eventPubSubService);
     this.treeDataService = new TreeDataService(this.sharedService);
-    this.gridService = new GridService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
-    this.gridStateService = new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
     this.paginationService = new PaginationService(this._eventPubSubService, this.sharedService);
+    this.gridService = new GridService(this.extensionService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService);
+    this.gridStateService = new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
 
     // extensions
     const autoTooltipExtension = new AutoTooltipExtension(this.extensionUtility, this.sharedService);
@@ -521,7 +521,7 @@ export class SlickVanillaGridBundle {
 
     // also initialize (render) the pagination component
     if (this._gridOptions.enableCompositeEditor) {
-      this.slickCompositeEditor = new SlickCompositeEditorComponent(this.slickGrid, this.gridService, this.translaterService);
+      this.slickCompositeEditor = new SlickCompositeEditorComponent(this.slickGrid, this.gridService, this.gridStateService, this.translaterService);
     }
 
     // bind the Backend Service API callback functions only after the grid is initialized

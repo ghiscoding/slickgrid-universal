@@ -127,7 +127,7 @@ export interface SlickDataView {
   setItems(data: any[], objectIdProperty?: string): void;
 
   /** Set Paging Options */
-  setPagingOptions(args: PagingInfo): void;
+  setPagingOptions(args: Partial<PagingInfo>): void;
 
   setRefreshHints(hints: any): void;
 

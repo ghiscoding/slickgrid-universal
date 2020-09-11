@@ -1,15 +1,10 @@
 $button-border-color: #ababab !default;
-$unsaved-editable-field-color: #fbfdd1 !default;
 $font-size-count: 50;
 $margin-max-count: 50;
 $padding-max-count: 30;
 
 .pointer { cursor: pointer; }
 .bold { font-weight: bold; }
-
-.unsaved-editable-field {
-  background-color: $unsaved-editable-field-color !important;
-}
 
 .fake-hyperlink {
   cursor: pointer;

@@ -53,7 +53,7 @@ function checkItemIsEditable(dataContext, columnDef, grid) {
     switch (columnDef.id) {
       case 'finish':
         // case 'percentComplete':
-        isEditable = !!dataContext.completed;
+        isEditable = !!dataContext?.completed;
         break;
       // case 'completed':
       // case 'duration':
@@ -80,6 +80,8 @@ export class Example12 {
   isGridEditable = true;
   editQueue = [];
   editedItems = {};
+  isMassUpdateDisabled = false;
+  isMassSelectionDisabled = true;
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
 
@@ -100,7 +102,8 @@ export class Example12 {
     this.gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
     this.gridContainerElm.addEventListener('onbeforeeditcell', this.handleOnBeforeEditCell.bind(this));
     this.gridContainerElm.addEventListener('oncellchange', this.handleOnCellChange.bind(this));
-    this.gridContainerElm.addEventListener('onclick', () => this.handleOnCellClicked.bind(this));
+    this.gridContainerElm.addEventListener('onclick', this.handleOnCellClicked.bind(this));
+    this.gridContainerElm.addEventListener('onselectedrowschanged', this.handleOnSelectedRowsChanged.bind(this));
     this.gridContainerElm.addEventListener('ondblclick', () => this.openCompositeModal('edit', 50));
   }
 
@@ -261,7 +264,7 @@ export class Example12 {
               iconCssClass: 'mdi mdi-close color-danger', cssClass: 'red', textCssClass: 'bold',
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
-                return !args.dataContext.completed;
+                return !args.dataContext?.completed;
               },
               action: (event, args) => {
                 const dataContext = args.dataContext;
@@ -304,11 +307,11 @@ export class Example12 {
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       showCustomFooter: true,
-      // enablePagination: true,
-      // pagination: {
-      //   pageSize: 0,
-      //   pageSizes: [10, 200, 500]
-      // },
+      enablePagination: true,
+      pagination: {
+        pageSize: 10,
+        pageSizes: [10, 200, 500, 5000]
+      },
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: true
@@ -449,7 +452,21 @@ export class Example12 {
   }
 
   handleOnCellClicked(event) {
-    console.log(event);
+    const args = event && event.detail && event.detail.args;
+    const eventData = event && event.detail && event.detail.eventData;
+    console.log(eventData, args);
+    // if (eventData.target.classList.contains('mdi-help-circle-outline')) {
+    //   alert('please HELP!!!');
+    // } else if (eventData.target.classList.contains('mdi-chevron-down')) {
+    //   alert('do something else...');
+    // }
+  }
+
+  handleOnSelectedRowsChanged(event) {
+    const args = event && event.detail && event.detail.args;
+    if (Array.isArray(args?.rows)) {
+      this.isMassSelectionDisabled = args.rows.length === 0;
+    }
   }
 
   /**
@@ -486,9 +503,13 @@ export class Example12 {
     this.isGridEditable = !this.isGridEditable;
     this.sgb.gridOptions = { editable: this.isGridEditable };
     this.gridOptions = this.sgb.gridOptions;
+    this.isMassUpdateDisabled = !this.isGridEditable;
+    if (!this.isGridEditable) {
+      this.isMassSelectionDisabled = true;
+    }
   }
 
-  removeUnsavedStylingFromCell(item: any, column: Column, row: number) {
+  removeUnsavedStylingFromCell(_item: any, column: Column, row: number) {
     // remove unsaved css class from that cell
     this.sgb.slickGrid.removeCellCssStyles(`unsaved_highlight_${[column.field]}${row}`);
   }
@@ -754,10 +775,12 @@ export class Example12 {
         modalTitle = 'Editing - {{title}} (<span class="color-muted">id:</span> <span class="color-primary">{{id}}</span>)'; // 'Editing - {{title}} ({{product.itemName}})'
         break;
       case 'mass-update':
-        modalTitle = 'Mass Update (all rows)';
+        modalTitle = 'Mass Update All Records';
+        // modalTitle = 'Mise à jour en masse';
         break;
       case 'mass-selection':
-        modalTitle = 'Update on Current Selection';
+        modalTitle = 'Update Selected Records';
+        // modalTitle = 'Update selection';
         break;
     }
 
@@ -771,17 +794,28 @@ export class Example12 {
       //   cancelButton: 'Cancel',
       //   massSelectionButton: 'Apply to Selection',
       //   massSelectionStatus: '{{x}} of {{y}} selected',
-      //   massUpdateButton: 'Mass Update',
-      //   massUpdateStatus: 'all {{x}} items',
+      //   massUpdateButton: 'Apply Mass Update',
+      //   massUpdateStatus: 'All {{x}} records selected',
       //   saveButton: 'Save',
       // },
+      // insertOptions: {
+      //   position: 'bottom'
+      // },
+      labels: {
+        cancelButton: 'Annuler',
+        massSelectionButton: 'Appliquer à la sélection',
+        massSelectionStatus: '{{x}} de {{y}} sélectionnés',
+        massUpdateButton: 'Mettre à jour en masse',
+        massUpdateStatus: 'Sur tous les {{x}} éléments',
+        saveButton: 'Sauvegarder',
+      },
       onClose: () => Promise.resolve(confirm('You have unsaved changes, are you sure you want to close this window?')),
       onError: (error) => alert(error.message),
-      onSave: (formValues: any, applyChangesCallback) => {
+      onSave: (formValues, selection, applyChangesCallback) => {
         return new Promise((resolve, reject) => {
           setTimeout(() => {
             if (formValues.percentComplete > 50) {
-              applyChangesCallback(formValues);
+              applyChangesCallback(formValues, selection);
               resolve(true);
             } else {
               reject('Unfortunately we only accept a minimum of 50% Completion...');

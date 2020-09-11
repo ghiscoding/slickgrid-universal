@@ -160,6 +160,12 @@ export class DualInputEditor implements Editor {
     if (elements.length > 0) {
       elements.forEach((elm) => elm.removeEventListener('focusout', this.handleFocusOut.bind(this)));
     }
+    if (this._leftInput?.remove) {
+      this._leftInput.remove();
+    }
+    if (this._rightInput?.remove) {
+      this._rightInput.remove();
+    }
   }
 
   createInput(position: 'leftInput' | 'rightInput'): HTMLInputElement {

@@ -52,13 +52,13 @@
     </p>
     <p class="control">
       <button class="button is-small" onclick.delegate="openCompositeModal('mass-update')"
-              data-test="open-modal-mass-update-btn">
+              data-test="open-modal-mass-update-btn" disabled.bind="isMassUpdateDisabled">
         Open Mass Update Modal
       </button>
     </p>
     <p class="control">
       <button class="button is-small" onclick.delegate="openCompositeModal('mass-selection')"
-              data-test="open-modal-mass-selection-btn">
+              data-test="open-modal-mass-selection-btn" disabled.bind="isMassSelectionDisabled">
         Open Mass Selection Change
       </button>
     </p>
