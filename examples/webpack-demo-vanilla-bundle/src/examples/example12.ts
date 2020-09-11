@@ -67,7 +67,7 @@ function checkItemIsEditable(dataContext, columnDef, grid) {
   return isEditable;
 }
 
-const customEditableInputFormatter = (row, cell, value, columnDef, dataContext, grid) => {
+const customEditableInputFormatter = (_row, _cell, value, columnDef, dataContext, grid) => {
   const isEditableLine = checkItemIsEditable(dataContext, columnDef, grid);
   value = (value === null || value === undefined) ? '' : value;
   return isEditableLine ? `<div class="editing-field">${value}</div>` : value;
@@ -122,7 +122,7 @@ export class Example12 {
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
         type: FieldType.number, columnGroup: 'Common Factor',
-        formatter: (row, cell, value) => {
+        formatter: (_row, _cell, value) => {
           if (value === null || value === undefined) {
             return '';
           }
@@ -266,7 +266,7 @@ export class Example12 {
               itemVisibilityOverride: (args) => {
                 return !args.dataContext?.completed;
               },
-              action: (event, args) => {
+              action: (_event, args) => {
                 const dataContext = args.dataContext;
                 if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"`)) {
                   this.slickerGridInstance.gridService.deleteItemById(dataContext.id);
@@ -342,7 +342,7 @@ export class Example12 {
         const editorColumns = this.columnDefinitions.filter((col) => col.editor !== undefined);
 
         const modifiedColumns = [];
-        prevSerializedValues.forEach((val, index) => {
+        prevSerializedValues.forEach((_val, index) => {
           const prevSerializedValue = prevSerializedValues[index];
           const serializedValue = serializedValues[index];
 
@@ -775,12 +775,12 @@ export class Example12 {
         modalTitle = 'Editing - {{title}} (<span class="color-muted">id:</span> <span class="color-primary">{{id}}</span>)'; // 'Editing - {{title}} ({{product.itemName}})'
         break;
       case 'mass-update':
-        modalTitle = 'Mass Update All Records';
-        // modalTitle = 'Mise à jour en masse';
+        // modalTitle = 'Mass Update All Records';
+        modalTitle = 'Mise à jour en masse';
         break;
       case 'mass-selection':
-        modalTitle = 'Update Selected Records';
-        // modalTitle = 'Update selection';
+        // modalTitle = 'Update Selected Records';
+        modalTitle = 'Mise à jour de la sélection';
         break;
     }
 
@@ -792,7 +792,7 @@ export class Example12 {
       // viewColumnLayout: 2, // choose from 'auto', 1, 2, or 3 (defaults to 'auto')
       // labels: {
       //   cancelButton: 'Cancel',
-      //   massSelectionButton: 'Apply to Selection',
+      //   massSelectionButton: 'Update Selection',
       //   massSelectionStatus: '{{x}} of {{y}} selected',
       //   massUpdateButton: 'Apply Mass Update',
       //   massUpdateStatus: 'All {{x}} records selected',
@@ -803,7 +803,7 @@ export class Example12 {
       // },
       labels: {
         cancelButton: 'Annuler',
-        massSelectionButton: 'Appliquer à la sélection',
+        massSelectionButton: 'Mettre à jour la sélection',
         massSelectionStatus: '{{x}} de {{y}} sélectionnés',
         massUpdateButton: 'Mettre à jour en masse',
         massUpdateStatus: 'Sur tous les {{x}} éléments',

@@ -16,7 +16,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'ALL_SELECTED': output = this._locale === 'en' ? 'All Selected' : 'Tout sélectionnés'; break;
       case 'ALL_X_RECORDS_SELECTED': output = this._locale === 'en' ? 'All {{x}} records selected' : 'Sur tous les {{x}} éléments sélectionnés'; break;
       case 'APPLY_MASS_UPDATE': output = this._locale === 'en' ? 'Apply Mass Update' : 'Mettre à jour en masse'; break;
-      case 'APPLY_TO_SELECTION': output = this._locale === 'en' ? 'Apply to Selection' : 'Appliquer à la sélection'; break;
+      case 'APPLY_TO_SELECTION': output = this._locale === 'en' ? 'Update Selection' : 'Mettre à jour la sélection'; break;
       case 'CANCEL': output = this._locale === 'en' ? 'Cancel' : 'Annuler'; break;
       case 'CLEAR_ALL_GROUPING': output = this._locale === 'en' ? 'Clear all Grouping' : 'Supprimer tous les groupes'; break;
       case 'CLEAR_ALL_FILTERS': output = this._locale === 'en' ? 'Clear all Filters' : 'Supprimer tous les filtres'; break;

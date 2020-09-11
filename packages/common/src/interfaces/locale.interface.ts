@@ -8,7 +8,7 @@ export interface Locale {
   /** Text "Apply Mass Update" displayed in the Composite Editor with a "mass-update" modal type. */
   TEXT_APPLY_MASS_UPDATE?: string;
 
-  /** Text "Apply to Selection" used by the "Mass Selection" button label in a Composite Editor modal. */
+  /** Text "Update Selection" used by the "Mass Selection" button label in a Composite Editor modal. */
   TEXT_APPLY_TO_SELECTION?: string;
 
   /** Text "Cancel" shown in the Long Text Editor dialog */

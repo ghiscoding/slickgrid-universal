@@ -5,7 +5,7 @@ export class Constants {
     TEXT_ALL_SELECTED: 'All Selected',
     TEXT_ALL_X_RECORDS_SELECTED: 'All {{x}} records selected',
     TEXT_APPLY_MASS_UPDATE: 'Apply Mass Update',
-    TEXT_APPLY_TO_SELECTION: 'Apply to Selection',
+    TEXT_APPLY_TO_SELECTION: 'Update Selection',
     TEXT_CANCEL: 'Cancel',
     TEXT_CLEAR_ALL_FILTERS: 'Clear all Filters',
     TEXT_CLEAR_ALL_GROUPING: 'Clear all Grouping',

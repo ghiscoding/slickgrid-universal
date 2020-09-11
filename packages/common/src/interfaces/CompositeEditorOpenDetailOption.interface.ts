@@ -51,7 +51,7 @@ export interface CompositeEditorOpenDetailOption {
     /** Defaults to "CANCEL", translation key used for the Cancel button label. */
     cancelButtonKey?: string;
 
-    /** Defaults to "Apply to Selection", override the Mass Selection button label */
+    /** Defaults to "Update Selection", override the Mass Selection button label */
     massSelectionButton?: string;
 
     /** Defaults to "APPLY_TO_SELECTION", translation key used for the Mass Selection button label. */

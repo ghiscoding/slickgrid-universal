@@ -14,6 +14,8 @@ import {
   GridStateService,
   Locale,
   OnErrorOption,
+  OnAddNewRowEventArgs,
+  OnCompositeEditorChangeEventArgs,
   sanitizeTextByAvailableSanitizer,
   SlickEventHandler,
   SlickGrid,
@@ -150,7 +152,7 @@ export class SlickCompositeEditorComponent {
         // focus on a first cell with an Editor (unless current cell already has an Editor then do nothing)
         // also when it's a "Create" modal, we'll scroll to the end of the grid
         const rowIndex = modalType === 'create' ? this.dataViewLength : activeRow;
-        const hasFoundEditor = this.focusOnFirstCellWithEditor(columnDefinitions, dataContext, activeColIndex, rowIndex, isWithMassChange);
+        const hasFoundEditor = this.focusOnFirstColumnCellWithEditor(columnDefinitions, dataContext, activeColIndex, rowIndex, isWithMassChange);
         if (!hasFoundEditor) {
           return;
         }
@@ -241,14 +243,14 @@ export class SlickCompositeEditorComponent {
             const fullDatasetLength = (Array.isArray(fullDataset)) ? fullDataset.length : 0;
             const selectionUnparsedText = this.getLabelText('massSelectionStatus', 'TEXT_X_OF_Y_MASS_SELECTED', '{{x}} of {{y}} selected');
             leftFooterText = this.parseText(selectionUnparsedText, { x: dataContextIds.length, y: fullDatasetLength });
-            saveButtonText = this.getLabelText('massSelectionButton', 'TEXT_APPLY_TO_SELECTION', 'Apply to Selection');
+            saveButtonText = this.getLabelText('massSelectionButton', 'TEXT_APPLY_TO_SELECTION', 'Update Selection');
             break;
           default:
             saveButtonText = this.getLabelText('saveButton', 'TEXT_SAVE', 'Save');
         }
 
         const selectionCounterElm = document.createElement('div');
-        selectionCounterElm.className = 'selection-counter';
+        selectionCounterElm.className = 'footer-status-text';
         selectionCounterElm.textContent = leftFooterText;
 
         this._modalSaveButtonElm = document.createElement('button');
@@ -312,22 +314,8 @@ export class SlickCompositeEditorComponent {
         this.grid.editActiveCell(compositeEditor);
 
         const onCompositeEditorChangeHandler = this.grid.onCompositeEditorChange;
-        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCompositeEditorChangeHandler>>).subscribe(onCompositeEditorChangeHandler, (_e, args) => {
-          const columnId = args.column?.id ?? '';
-          this._formValues = args.formValues;
-
-          // add extra css styling to the composite editor input(s) that got modified
-          if (args.formValues.hasOwnProperty(columnId)) {
-            const editorElm = document.querySelector(`[data-editorid=${columnId}]`);
-            editorElm?.classList?.add('modified');
-          } else {
-            const editorElm = document.querySelector(`[data-editorid=${columnId}]`);
-            editorElm?.classList?.remove('modified');
-          }
-
-          // after any input changes we'll re-validate all fields
-          this.validateCompositeEditors();
-        });
+        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCompositeEditorChangeHandler>>)
+          .subscribe(onCompositeEditorChangeHandler, this.handleOnCompositeEditorChange.bind(this));
 
         // add event handlers
         modalCloseButtonElm.addEventListener('click', this.cancelEditing.bind(this));
@@ -339,17 +327,8 @@ export class SlickCompositeEditorComponent {
 
         // when adding a new row to the grid, we need to invalidate that row and re-render the grid
         const onAddNewRowHandler = this.grid.onAddNewRow;
-        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onAddNewRowHandler>>).subscribe(onAddNewRowHandler, (_e, args) => {
-          const fullDataset = this.dataView?.getItems() ?? [];
-          const fullDatasetLength = (Array.isArray(fullDataset)) ? fullDataset.length : 0;
-          const newId = options.insertNewId ?? fullDatasetLength + 1;
-          const item = args.item;
-          item[this.gridOptions.datasetIdPropertyName || ''] = newId;
-          if (!this.dataView.getItemById(newId)) {
-            this.gridService.addItem(item, options.insertOptions);
-            this.dispose();
-          }
-        });
+        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onAddNewRowHandler>>)
+          .subscribe(onAddNewRowHandler, this.handleOnAddNewRow.bind(this));
       }
     } catch (error) {
       this.dispose();
@@ -440,8 +419,7 @@ export class SlickCompositeEditorComponent {
   async handleMassSaving(modalType: 'mass-update' | 'mass-selection', executeCallback: () => void) {
     const validationResults = this.validateCompositeEditors();
     const isFormValid = validationResults.valid;
-    this._modalBodyTopValidationElm.style.display = 'none';
-    this._modalBodyTopValidationElm.textContent = '';
+    this.showValidationSummaryText(false, '');
     const applyCallbackFnName = (modalType === 'mass-update') ? 'applySaveMassUpdateChanges' : 'applySaveMassSelectionChanges';
 
     try {
@@ -473,11 +451,20 @@ export class SlickCompositeEditorComponent {
         }
       }
     } catch (errorMsg) {
+      this.showValidationSummaryText(true, errorMsg);
+    }
+  }
+
+  showValidationSummaryText(isShowing: boolean, errorMsg = '') {
+    if (isShowing) {
       this._modalBodyTopValidationElm.textContent = errorMsg;
       this._modalBodyTopValidationElm.style.display = 'block';
       this._modalBodyTopValidationElm.scrollIntoView();
       this._modalSaveButtonElm.disabled = false;
       this._modalSaveButtonElm.classList.remove('saving');
+    } else {
+      this._modalBodyTopValidationElm.style.display = 'none';
+      this._modalBodyTopValidationElm.textContent = errorMsg;
     }
   }
 
@@ -554,7 +541,7 @@ export class SlickCompositeEditorComponent {
 
   // For the Composite Editor to work, the current active cell must have an Editor (because it calls editActiveCell() and that only works with a cell with an Editor)
   // so if current active cell doesn't have an Editor, we'll find the first column with an Editor and focus on it (from left to right starting at index 0)
-  private focusOnFirstCellWithEditor(columns: Column[], dataContext: any, columnIndex: number, rowIndex: number, isWithMassChange: boolean): boolean {
+  private focusOnFirstColumnCellWithEditor(columns: Column[], dataContext: any, columnIndex: number, rowIndex: number, isWithMassChange: boolean): boolean {
     let columnIndexWithEditor = columnIndex;
     const cellEditor = columns[columnIndex].editor;
 
@@ -605,6 +592,35 @@ export class SlickCompositeEditorComponent {
       return this.translaterService.translate(`${labelProperty}Key`);
     }
     return (textLabels && textLabels[labelProperty]) || (this._locales && this._locales[localeText]) || defaultText;
+  }
+
+  private handleOnAddNewRow(_e: Event, args: OnAddNewRowEventArgs) {
+    const fullDataset = this.dataView?.getItems() ?? [];
+    const fullDatasetLength = (Array.isArray(fullDataset)) ? fullDataset.length : 0;
+    const newId = this._options.insertNewId ?? fullDatasetLength + 1;
+    const item = args.item;
+    item[this.gridOptions.datasetIdPropertyName || 'id'] = newId;
+
+    if (!this.dataView.getItemById(newId)) {
+      this.gridService.addItem(item, this._options.insertOptions);
+      this.dispose();
+    }
+  }
+
+  private handleOnCompositeEditorChange(_e: Event, args: OnCompositeEditorChangeEventArgs) {
+    const columnId = args.column?.id ?? '';
+    this._formValues = args.formValues;
+
+    // add extra css styling to the composite editor input(s) that got modified
+    const editorElm = document.querySelector(`[data-editorid=${columnId}]`);
+    if (args.formValues.hasOwnProperty(columnId)) {
+      editorElm?.classList?.add('modified');
+    } else {
+      editorElm?.classList?.remove('modified');
+    }
+
+    // after any input changes we'll re-validate all fields
+    this.validateCompositeEditors();
   }
 
   /** Check wether the grid has the Row Selection enabled */

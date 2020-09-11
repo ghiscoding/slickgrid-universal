@@ -3,9 +3,8 @@ import 'multiple-select-modified';
 
 import { Editors } from '../index';
 import { SelectEditor } from '../selectEditor';
-import { CollectionService } from './../../services/collection.service';
 import { FieldType, OperatorType } from '../../enums/index';
-import { AutocompleteOption, Column, EditorArgs, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { AutocompleteOption, Column, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 declare const Slick: SlickNamespace;
@@ -48,11 +47,9 @@ describe('SelectEditor', () => {
   let editorArguments: EditorArguments;
   let mockColumn: Column;
   let mockItemData: any;
-  let collectionService: CollectionService;
 
   beforeEach(() => {
     translateService = new TranslateServiceStub();
-    collectionService = new CollectionService(translateService);
 
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
@@ -281,7 +278,7 @@ describe('SelectEditor', () => {
       });
 
       it('should return item data with an empty string in its value when it fails the custom validation', () => {
-        mockColumn.internalColumnEditor.validator = (value: any, args: EditorArgs) => {
+        mockColumn.internalColumnEditor.validator = (value: any) => {
           if (value.length < 10) {
             return { valid: false, msg: 'Must be at least 10 chars long.' };
           }

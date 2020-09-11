@@ -7,7 +7,7 @@ export const SalesforceGlobalGridOptions: GridOption = {
   // compositeEditorOptions: {
   //   labels: {
   //     cancelButton: 'Cancel',
-  //     massSelectionButton: 'Apply to Selection',
+  //     massSelectionButton: 'Update Selection',
   //     massSelectionStatus: '{{x}} of {{y}} selected',
   //     massUpdateButton: 'Mass Update',
   //     massUpdateStatus: 'all {{x}} items',

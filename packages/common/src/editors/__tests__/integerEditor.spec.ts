@@ -1,7 +1,7 @@
 import { Editors } from '../index';
 import { IntegerEditor } from '../integerEditor';
 import { KeyCode } from '../../enums/index';
-import { Column, EditorArgs, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { Column, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
 
 declare const Slick: SlickNamespace;
 const KEY_CHAR_0 = 48;
@@ -255,7 +255,7 @@ describe('IntegerEditor', () => {
       });
 
       it('should return item data with an empty string in its value when it fails the custom validation', () => {
-        mockColumn.internalColumnEditor.validator = (value: any, args: EditorArgs) => {
+        mockColumn.internalColumnEditor.validator = (value: any) => {
           if (+value < 10) {
             return { valid: false, msg: 'Value must be over 10.' };
           }
@@ -590,7 +590,7 @@ describe('IntegerEditor', () => {
       expect(editor.editorDomElement.checked).toEqual(false);
     });
 
-    it('should expect "onCompositeEditorChange" to have been triggered with the new value showing up in its "formValues" object', () => {
+    it('should expect "onCompositeEditorChange" to have been triggered by keyup with the new value showing up in its "formValues" object', () => {
       jest.useFakeTimers();
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
@@ -603,6 +603,30 @@ describe('IntegerEditor', () => {
       editor.loadValue(mockItemData);
       editor.editorDomElement.value = 35;
       editor.editorDomElement.dispatchEvent(new (window.window as any).Event('keyup'));
+
+      jest.runTimersToTime(50);
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: { price: 35 },
+      }, expect.anything());
+    });
+
+    it('should expect "onCompositeEditorChange" to have been triggered by change (number spinner) with the new value showing up in its "formValues" object', () => {
+      jest.useFakeTimers();
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      gridOptionMock.autoCommitEdit = true;
+      mockItemData = { id: 1, price: 35, isActive: true };
+
+      editor = new IntegerEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      editor.editorDomElement.value = 35;
+      editor.editorDomElement.dispatchEvent(new (window.window as any).Event('change'));
 
       jest.runTimersToTime(50);
 

@@ -3,7 +3,6 @@ import 'multiple-select-modified';
 
 import { Editors } from '../index';
 import { SingleSelectEditor } from '../singleSelectEditor';
-import { CollectionService } from '../../services/collection.service';
 import { Column, SlickDataView, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
@@ -43,11 +42,8 @@ describe('SingleSelectEditor', () => {
   let editorArguments: EditorArguments;
   let mockColumn: Column;
   let mockItemData: any;
-  let collectionService: CollectionService;
 
   beforeEach(() => {
-    collectionService = new CollectionService(translateService);
-
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);

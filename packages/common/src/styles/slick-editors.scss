@@ -141,6 +141,7 @@
     background-color: $editor-modal-container-bg-color;
     box-shadow: $editor-modal-container-box-shadow;
     width: $editor-modal-container-width;
+    min-width: $editor-modal-container-min-width;
     top: $editor-modal-container-top;
     left: $editor-modal-container-left;
     transform: $editor-modal-container-transform;
@@ -170,12 +171,12 @@
     }
 
     .btn {
-      margin: $editor-modal-footer-button-margin;
-      height: $editor-modal-footer-button-height;
-      border: $editor-modal-footer-button-border;
-      border-radius: $editor-modal-footer-button-radius;
+      margin: $editor-modal-footer-btn-margin;
+      height: $editor-modal-footer-btn-height;
+      border: $editor-modal-footer-btn-border;
+      border-radius: $editor-modal-footer-btn-radius;
       &:hover {
-        border-color: $editor-modal-footer-button-border-hover;
+        border-color: $editor-modal-footer-btn-border-hover;
       }
       &:disabled {
         background-color: $button-primary-bg-color-disabled;
@@ -269,23 +270,30 @@
       .footer-buttons {
         float: right;
         text-align: right;
-        width: 60%;
+        width: $editor-modal-footer-buttons-width;
+
+        button {
+          max-width: $editor-modal-footer-btn-max-width;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
         .saving:before {
-          height: $editor-modal-footer-button-saving-height;
-          width: $editor-modal-footer-button-saving-width;
-          display: $editor-modal-footer-button-saving-display;
-          vertical-align: $editor-modal-footer-button-saving-vertical-align;
-          margin: $editor-modal-footer-button-saving-margin;
-          animation: $editor-modal-footer-button-saving-animation;
-          content: $editor-modal-footer-button-saving-content;
+          height: $editor-modal-footer-btn-saving-icon-height;
+          width: $editor-modal-footer-btn-saving-icon-width;
+          display: $editor-modal-footer-btn-saving-icon-display;
+          vertical-align: $editor-modal-footer-btn-saving-icon-vertical-align;
+          margin: $editor-modal-footer-btn-saving-icon-margin;
+          animation: $editor-modal-footer-btn-saving-icon-animation;
+          content: $editor-modal-footer-btn-saving-icon-content;
         }
       }
-      .selection-counter {
+      .footer-status-text {
         float: left;
         text-align: left;
-        width: 40%;
-        font-size: $editor-modal-footer-total-counter-font-size;
-        color: $editor-modal-footer-total-counter-color;
+        width: $editor-modal-footer-status-text-width;
+        font-size: $editor-modal-status-text-font-size;
+        color: $editor-modal-status-text-color;
       }
     }
 

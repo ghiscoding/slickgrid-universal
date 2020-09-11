@@ -92,6 +92,8 @@ export class IntegerEditor implements Editor {
 
       if (compositeEditorOptions) {
         this._input.addEventListener('keyup', this.handleOnKeyUp.bind(this));
+        this._input.addEventListener('change', this.handleOnChange.bind(this));
+        this._input.addEventListener('wheel', this.handleOnChange.bind(this));
       }
     }
   }
@@ -100,6 +102,8 @@ export class IntegerEditor implements Editor {
     if (this._input) {
       this._input.removeEventListener('focusout', this.save);
       this._input.removeEventListener('keyup', this.handleOnKeyUp);
+      this._input.removeEventListener('change', this.handleOnChange);
+      this._input.removeEventListener('wheel', this.handleOnChange);
       setTimeout(() => this._input.remove());
     }
   }
@@ -257,6 +261,14 @@ export class IntegerEditor implements Editor {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
+  }
+
+  /** When the input value changes (this will cover the input spinner arrows on the right) */
+  private handleOnChange(event: KeyboardEvent) {
+    const compositeEditorOptions = this.args.compositeEditorOptions;
+    if (compositeEditorOptions) {
+      this.handleChangeOnCompositeEditor(event, compositeEditorOptions);
+    }
   }
 
   private handleOnKeyUp(event: KeyboardEvent) {
