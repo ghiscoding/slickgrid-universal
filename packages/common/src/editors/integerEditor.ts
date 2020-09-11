@@ -261,7 +261,9 @@ export class IntegerEditor implements Editor {
 
   private handleOnKeyUp(event: KeyboardEvent) {
     const compositeEditorOptions = this.args.compositeEditorOptions;
-    const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
-    debounce(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay)();
+    if (compositeEditorOptions) {
+      const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
+      debounce(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay)();
+    }
   }
 }
