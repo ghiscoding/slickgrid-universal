@@ -80,7 +80,7 @@ export class Example12 {
   isGridEditable = true;
   editQueue = [];
   editedItems = {};
-  isMassUpdateDisabled = false;
+  isCompositeDisabled = false;
   isMassSelectionDisabled = true;
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
@@ -103,7 +103,7 @@ export class Example12 {
     this.gridContainerElm.addEventListener('onbeforeeditcell', this.handleOnBeforeEditCell.bind(this));
     this.gridContainerElm.addEventListener('oncellchange', this.handleOnCellChange.bind(this));
     this.gridContainerElm.addEventListener('onclick', this.handleOnCellClicked.bind(this));
-    this.gridContainerElm.addEventListener('onselectedrowschanged', this.handleOnSelectedRowsChanged.bind(this));
+    this.gridContainerElm.addEventListener('ongridstatechanged', this.handleOnSelectedRowsChanged.bind(this));
     this.gridContainerElm.addEventListener('ondblclick', () => this.openCompositeModal('edit', 50));
   }
 
@@ -463,9 +463,9 @@ export class Example12 {
   }
 
   handleOnSelectedRowsChanged(event) {
-    const args = event && event.detail && event.detail.args;
-    if (Array.isArray(args?.rows)) {
-      this.isMassSelectionDisabled = args.rows.length === 0;
+    const gridState = event && event.detail && event.detail.gridState;
+    if (Array.isArray(gridState?.rowSelection.dataContextIds)) {
+      this.isMassSelectionDisabled = gridState.rowSelection.dataContextIds.length === 0;
     }
   }
 
@@ -503,7 +503,7 @@ export class Example12 {
     this.isGridEditable = !this.isGridEditable;
     this.sgb.gridOptions = { editable: this.isGridEditable };
     this.gridOptions = this.sgb.gridOptions;
-    this.isMassUpdateDisabled = !this.isGridEditable;
+    this.isCompositeDisabled = !this.isGridEditable;
     if (!this.isGridEditable) {
       this.isMassSelectionDisabled = true;
     }

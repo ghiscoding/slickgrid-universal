@@ -78,7 +78,7 @@ export class Renderer {
   parsePropertyBinding(match: string, domAttribute: string, bindingType: string, variableName: string) {
     // wait a cycle so that the View is rendered before observing anything
     setTimeout(() => {
-      const elm = document.querySelector(`[${domAttribute}\\\.${bindingType}=${variableName}]`);
+      const elements = document.querySelectorAll<HTMLElement>(`[${domAttribute}\\\.${bindingType}=${variableName}]`);
       const attribute = domAttribute.toLowerCase();
 
       // before creating a new observer, first check if the variable already has an associated observer
@@ -91,30 +91,30 @@ export class Renderer {
 
       switch (attribute) {
         case 'class':
-          observer.bind(elm, 'className');
+          observer.bind(elements, 'className');
           break;
         case 'innerhtml':
         case 'innerHTML':
-          observer.bind(elm, 'innerHTML');
+          observer.bind(elements, 'innerHTML');
           break;
         case 'innertext':
         case 'innerText':
-          observer.bind(elm, 'innerText');
+          observer.bind(elements, 'innerText');
           break;
         case 'style':
-          observer.bind(elm, 'style');
+          observer.bind(elements, 'style');
           break;
         case 'textcontent':
         case 'textContent':
-          observer.bind(elm, 'textContent');
+          observer.bind(elements, 'textContent');
           break;
         case 'value':
           // add 2 possible events (change/keyup) on a value binding
-          observer.bind(elm, attribute, 'change').bind(elm, attribute, 'keyup');
+          observer.bind(elements, attribute, 'change').bind(elements, attribute, 'keyup');
           break;
         case 'checked':
         default:
-          observer.bind(elm, attribute, 'change');
+          observer.bind(elements, attribute, 'change');
           break;
       }
     }, 0);
