@@ -147,9 +147,6 @@ export class AutoCompleteEditor implements Editor {
 
   destroy() {
     this._$editorElm.off('keydown.nav').remove();
-    if (this._$editorElm?.remove) {
-      this._$editorElm.remove();
-    }
   }
 
   disable(isDisabled = true) {

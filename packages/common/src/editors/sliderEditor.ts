@@ -122,9 +122,6 @@ export class SliderEditor implements Editor {
 
   destroy() {
     this._$editorElm.off('input change mouseup touchend').remove();
-    if (this._$editorElm?.remove) {
-      this._$editorElm.remove();
-    }
   }
 
   disable(isDisabled = true) {

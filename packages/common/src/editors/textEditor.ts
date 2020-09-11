@@ -88,21 +88,15 @@ export class TextEditor implements Editor {
     }
 
     if (compositeEditorOptions) {
-      this._input.addEventListener('keyup', (event: KeyboardEvent) => {
-        const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
-        debounce(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay)();
-      });
+      this._input.addEventListener('keyup', this.handleOnKeyUp.bind(this));
     }
   }
 
   destroy() {
-    const columnId = this.columnDef && this.columnDef.id;
-    const elm = document.querySelector(`.editor-text.editor-${columnId}`);
-    if (elm) {
-      elm.removeEventListener('focusout', this.save);
-    }
-    if (this._input?.remove) {
-      this._input.remove();
+    if (this._input) {
+      this._input.removeEventListener('focusout', this.save);
+      this._input.removeEventListener('keyup', this.handleOnKeyUp);
+      setTimeout(() => this._input.remove());
     }
   }
 
@@ -254,5 +248,11 @@ export class TextEditor implements Editor {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
+  }
+
+  private handleOnKeyUp(event: KeyboardEvent) {
+    const compositeEditorOptions = this.args.compositeEditorOptions;
+    const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
+    debounce(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay)();
   }
 }
