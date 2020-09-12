@@ -1,10 +1,10 @@
 <h3 class="title is-3">
-  Example12 - Composite Editor Modal
+  Example 12 - Composite Editor Modal
   <span class="subtitle has-text-grey-dark">(with Salesforce Theme)</span>
 </h3>
 
-<section class="columns">
-  <div class="column field has-addons is-half is-narrow">
+<section class="columns is-desktop">
+  <div class="column field has-addons is-narrow">
     <p class="control">
       <button class="button is-small" onclick.delegate="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
         <span class="icon mdi mdi-table-edit"></span>
@@ -37,7 +37,7 @@
     </p>
   </div>
 
-  <div class="column field has-addons is-half is-narrow">
+  <div class="column field has-addons is-narrow">
     <p class="control">
       <button class="button is-small" onclick.delegate="openCompositeModal('create')"
               data-test="open-modal-create-btn" disabled.bind="isCompositeDisabled">

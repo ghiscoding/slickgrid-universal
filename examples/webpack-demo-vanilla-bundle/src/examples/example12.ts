@@ -775,12 +775,12 @@ export class Example12 {
         modalTitle = 'Editing - {{title}} (<span class="color-muted">id:</span> <span class="color-primary">{{id}}</span>)'; // 'Editing - {{title}} ({{product.itemName}})'
         break;
       case 'mass-update':
-        // modalTitle = 'Mass Update All Records';
-        modalTitle = 'Mise à jour en masse';
+        modalTitle = 'Mass Update All Records';
+        // modalTitle = 'Mise à jour en masse';
         break;
       case 'mass-selection':
-        // modalTitle = 'Update Selected Records';
-        modalTitle = 'Mise à jour de la sélection';
+        modalTitle = 'Update Selected Records';
+        // modalTitle = 'Mise à jour de la sélection';
         break;
     }
 
@@ -798,17 +798,14 @@ export class Example12 {
       //   massUpdateStatus: 'All {{x}} records selected',
       //   saveButton: 'Save',
       // },
-      // insertOptions: {
-      //   position: 'bottom'
+      // labels: {
+      //   cancelButton: 'Annuler',
+      //   massSelectionButton: 'Mettre à jour la sélection',
+      //   massSelectionStatus: '{{x}} de {{y}} sélectionnés',
+      //   massUpdateButton: 'Mettre à jour en masse',
+      //   massUpdateStatus: 'Sur tous les {{x}} éléments',
+      //   saveButton: 'Sauvegarder',
       // },
-      labels: {
-        cancelButton: 'Annuler',
-        massSelectionButton: 'Mettre à jour la sélection',
-        massSelectionStatus: '{{x}} de {{y}} sélectionnés',
-        massUpdateButton: 'Mettre à jour en masse',
-        massUpdateStatus: 'Sur tous les {{x}} éléments',
-        saveButton: 'Sauvegarder',
-      },
       onClose: () => Promise.resolve(confirm('You have unsaved changes, are you sure you want to close this window?')),
       onError: (error) => alert(error.message),
       onSave: (formValues, selection, applyChangesCallback) => {
