@@ -1,4 +1,4 @@
-import { Column, CompositeEditorOpenDetailOption, Editors, GridOption, GridService, GridStateService, SlickDataView, SlickGrid, SlickNamespace } from '@slickgrid-universal/common';
+import { Column, CompositeEditorOpenDetailOption, Editors, GridOption, GridService, GridStateService, SlickDataView, SlickGrid, SlickNamespace, SlickRowSelectionModel } from '@slickgrid-universal/common';
 import { SlickCompositeEditorComponent } from '../slick-composite-editor.component';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
@@ -67,6 +67,18 @@ const gridStub = {
   setActiveRow: jest.fn(),
   setSortColumns: jest.fn(),
 } as unknown as SlickGrid;
+
+const rowSelectionModelStub = {
+  pluginName: 'RowSelectionModel',
+  constructor: jest.fn(),
+  init: jest.fn(),
+  destroy: jest.fn(),
+  getSelectedRanges: jest.fn(),
+  setSelectedRanges: jest.fn(),
+  getSelectedRows: jest.fn(),
+  setSelectedRows: jest.fn(),
+  onSelectedRangesChanged: new Slick.Event(),
+} as SlickRowSelectionModel;
 
 function createNewColumDefinitions(count) {
   const columnsMock = [];
@@ -653,7 +665,7 @@ describe('CompositeEditorService', () => {
         const newGridOptions = { ...gridOptionsMock, enableRowSelection: true, };
         jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
         jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
-        jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue({});
+        jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
       });
 
       it('should throw an error when trying to edit a row that does not return any data context', (done) => {
@@ -668,6 +680,22 @@ describe('CompositeEditorService', () => {
         setTimeout(() => {
           component.openDetails(mockModalOptions);
           expect(spyOnError).toHaveBeenCalledWith({ type: 'warning', code: 'ROW_SELECTION_REQUIRED', message: 'You must select some rows before trying to apply new value(s).' });
+          done();
+        });
+      });
+
+      it('should expect that any error that are not defined as the built-in errors to still be caught then sent to the "onError"', (done) => {
+        // @ts-ignore
+        gridStub.getColumns.mockImplementation(() => { throw new Error('some error'); });
+        const mockOnError = jest.fn();
+
+        component = new SlickCompositeEditorComponent(gridStub, gridServiceStub, gridStateServiceStub);
+        const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-selection', onError: mockOnError } as CompositeEditorOpenDetailOption;
+        const spyOnError = jest.spyOn(mockModalOptions, 'onError');
+
+        setTimeout(() => {
+          component.openDetails(mockModalOptions);
+          expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: `some error`, message: `some error` });
           done();
         });
       });

@@ -140,8 +140,8 @@ export class SlickCompositeEditorComponent {
         onError({ type: 'warning', code: 'NO_RECORD_FOUND', message: 'No records selected for edit operation.' });
         return;
       } else {
-        const dataContext = this.grid.getDataItem(activeRow);
         const isWithMassChange = (modalType === 'mass-update' || modalType === 'mass-selection');
+        const dataContext = !isWithMassChange ? this.grid.getDataItem(activeRow) : {};
         const columnDefinitions = this.grid.getColumns();
         const selectedRowsIndexes = this.hasRowSelectionEnabled() ? this.grid.getSelectedRows() : [];
         const fullDataset = this.dataView?.getItems() ?? [];
@@ -312,17 +312,21 @@ export class SlickCompositeEditorComponent {
         const compositeEditor = new Slick.CompositeEditor(modalColumns, containers, { destroy: this.disposeComponent.bind(this), modalType, validationMsgPrefix: '* ', formValues: {} });
         this.grid.editActiveCell(compositeEditor);
 
-        const onCompositeEditorChangeHandler = this.grid.onCompositeEditorChange;
-        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCompositeEditorChangeHandler>>)
-          .subscribe(onCompositeEditorChangeHandler, this.handleOnCompositeEditorChange.bind(this));
+        // --
+        // Add a few Event Handlers
 
-        // add event handlers
+        // keyboard, blur & button event handlers
         modalCloseButtonElm.addEventListener('click', this.cancelEditing.bind(this));
         modalCancelButtonElm.addEventListener('click', this.cancelEditing.bind(this));
         this._modalSaveButtonElm.addEventListener('click', this.handleSaveClicked.bind(this));
         this._modalElm.addEventListener('keydown', this.handleKeyDown.bind(this));
         this._modalElm.addEventListener('focusout', this.validateCurrentEditor.bind(this));
         this._modalElm.addEventListener('blur', this.validateCurrentEditor.bind(this));
+
+        // when any of the input of the composite editor form changes, we'll add/remove a "modified" CSS className for styling purposes
+        const onCompositeEditorChangeHandler = this.grid.onCompositeEditorChange;
+        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCompositeEditorChangeHandler>>)
+          .subscribe(onCompositeEditorChangeHandler, this.handleOnCompositeEditorChange.bind(this));
 
         // when adding a new row to the grid, we need to invalidate that row and re-render the grid
         const onAddNewRowHandler = this.grid.onAddNewRow;
@@ -332,7 +336,8 @@ export class SlickCompositeEditorComponent {
     } catch (error) {
       this.dispose();
       const errorMsg = (typeof error === 'string') ? error : (error?.message ?? error?.body?.message ?? '');
-      onError({ type: 'error', code: errorMsg, message: errorMsg });
+      const errorCode = (typeof error === 'string') ? error : error?.status ?? error?.body?.status ?? errorMsg;
+      onError({ type: 'error', code: errorCode, message: errorMsg });
     }
   }
 
@@ -606,6 +611,7 @@ export class SlickCompositeEditorComponent {
     }
   }
 
+  /** Anytime an input of the Composite Editor form changes, we'll add/remove a "modified" CSS className for styling purposes */
   private handleOnCompositeEditorChange(_e: Event, args: OnCompositeEditorChangeEventArgs) {
     const columnId = args.column?.id ?? '';
     this._formValues = args.formValues;

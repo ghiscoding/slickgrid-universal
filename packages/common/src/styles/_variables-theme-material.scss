@@ -120,7 +120,7 @@ $row-move-plugin-icon-color:                    $icon-color !default;
 $row-move-plugin-icon:                          url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($row-move-plugin-icon-color)}" viewBox="0 0 24 24"><path d="M10,13H22V11H10M10,19H22V17H10M10,7H22V5H10M6,7H8.5L5,3.5L1.5,7H4V17H1.5L5,20.5L8.5,17H6V7Z"></path></svg>') !default;
 $date-editor-clear-button-icon-color:           $icon-color !default;
 $date-editor-clear-button-icon:                 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($date-editor-clear-button-icon-color)}" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"></path></svg>') !default;
-$date-editor-clear-button-icon-margin-top:      unset !default;
+$date-editor-clear-button-icon-margin-top:      inherit !default;
 $date-editor-clear-button-icon-padding:         1px 6px !default;
 $date-editor-clear-button-icon-size:            calc(#{$icon-font-size} + 2px) !default;
 $date-editor-clear-button-icon-vertical-align:  initial !default;
