@@ -44,7 +44,8 @@
       .btn {
         border-left: 0 !important;
         background-color: #eeeeee;
-        border: 1px solid #dbdbdb;
+        border: 1px solid #cccccc;
+        padding: $date-editor-clear-button-icon-padding;
         border-top-right-radius: $text-editor-border-radius;
         border-bottom-right-radius: $text-editor-border-radius;
         cursor: pointer;
@@ -57,6 +58,7 @@
           display: inline-block;
           height: $date-editor-clear-button-icon-height;
           width: $date-editor-clear-button-icon-width;
+          margin-top: $date-editor-clear-button-icon-margin-top;
         }
       }
     }
@@ -66,6 +68,7 @@
     height: $date-editor-height;
     border-top-left-radius: $text-editor-border-radius !important;
     border-bottom-left-radius: $text-editor-border-radius !important;
+    padding: $date-editor-input-padding;
 
     &.editor-text {
       cursor: pointer;
