@@ -73,7 +73,7 @@ export class SliderEditor implements Editor {
 
     if (container && this.columnDef) {
       // define the input & slider number IDs
-      const itemId = this.args && this.args.item && this.args.item.id;
+      const itemId = this.args?.item?.id ?? '';
       this._elementRangeInputId = `rangeInput_${this.columnDef.field}_${itemId}`;
       this._elementRangeOutputId = `rangeOutput_${this.columnDef.field}_${itemId}`;
       const compositeEditorOptions = this.args.compositeEditorOptions;
