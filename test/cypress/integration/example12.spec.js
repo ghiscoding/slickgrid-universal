@@ -414,7 +414,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.slick-editor-modal').should('not.exist');
   });
 
-  it('should have updated values in the entire grid', () => {
+  it('should have updated all the changed values BUT only on the 2 selected rows', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).should('contain', '51');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).should('not.be.empty');
