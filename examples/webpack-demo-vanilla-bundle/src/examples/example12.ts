@@ -29,9 +29,9 @@ declare const Slick: SlickNamespace;
 const myCustomTitleValidator = (value, args) => {
   if ((value === null || value === undefined || !value.length) && (args.compositeEditorOptions && args.compositeEditorOptions.modalType === 'create' || args.compositeEditorOptions.modalType === 'edit')) {
     // we will only check if the field is supplied when it's an inline editing OR a composite editor of type create/edit
-    return { valid: false, msg: 'This is a required field' };
+    return { valid: false, msg: 'This is a required field.' };
   } else if (!/^(task\s\d+)*$/i.test(value)) {
-    return { valid: false, msg: 'Your title is invalid, it must start with "Task" followed by a number' };
+    return { valid: false, msg: 'Your title is invalid, it must start with "Task" followed by a number.' };
   }
   return { valid: true, msg: '' };
 };
@@ -817,7 +817,7 @@ export class Example12 {
             } else {
               reject('Unfortunately we only accept a minimum of 50% Completion...');
             }
-          }, 1200);
+          }, 250);
         });
       }
     }), openDelay);

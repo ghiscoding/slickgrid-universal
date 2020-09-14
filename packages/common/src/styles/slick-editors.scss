@@ -221,7 +221,8 @@
       font-weight: $editor-modal-title-font-weight;
       line-height: $editor-modal-title-line-height;
       color: $editor-modal-title-font-color;
-      overflow-x: hidden;
+      height: calc(#{$editor-modal-header-height} - (#{$editor-modal-header-padding-top-bottom} * 2));
+      overflow: hidden auto;
       text-align: $editor-modal-title-text-align;
       text-overflow: ellipsis;
       width: calc(100% - #{$editor-modal-close-btn-width} - #{$editor-modal-close-btn-right});

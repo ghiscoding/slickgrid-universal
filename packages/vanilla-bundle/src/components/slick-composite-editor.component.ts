@@ -144,7 +144,8 @@ export class SlickCompositeEditorComponent {
         const isWithMassChange = (modalType === 'mass-update' || modalType === 'mass-selection');
         const columnDefinitions = this.grid.getColumns();
         const selectedRowsIndexes = this.hasRowSelectionEnabled() ? this.grid.getSelectedRows() : [];
-        const datasetLength = this.dataViewLength;
+        const fullDataset = this.dataView?.getItems() ?? [];
+        const fullDatasetLength = (Array.isArray(fullDataset)) ? fullDataset.length : 0;
         this._lastActiveRowNumber = activeRow;
         const gridStateSelection = this.gridStateService.getCurrentRowSelections() as CurrentRowSelection;
         const dataContextIds = gridStateSelection?.dataContextIds || [];
@@ -235,12 +236,10 @@ export class SlickCompositeEditorComponent {
         switch (modalType) {
           case 'mass-update':
             const footerUnparsedText = this.getLabelText('massUpdateStatus', 'TEXT_ALL_X_RECORDS_SELECTED', 'All {{x}} records selected');
-            leftFooterText = this.parseText(footerUnparsedText, { x: datasetLength });
+            leftFooterText = this.parseText(footerUnparsedText, { x: fullDatasetLength });
             saveButtonText = this.getLabelText('massUpdateButton', 'TEXT_APPLY_MASS_UPDATE', 'Mass Update');
             break;
           case 'mass-selection':
-            const fullDataset = this.dataView?.getItems() ?? [];
-            const fullDatasetLength = (Array.isArray(fullDataset)) ? fullDataset.length : 0;
             const selectionUnparsedText = this.getLabelText('massSelectionStatus', 'TEXT_X_OF_Y_MASS_SELECTED', '{{x}} of {{y}} selected');
             leftFooterText = this.parseText(selectionUnparsedText, { x: dataContextIds.length, y: fullDatasetLength });
             saveButtonText = this.getLabelText('massSelectionButton', 'TEXT_APPLY_TO_SELECTION', 'Update Selection');

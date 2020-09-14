@@ -43,8 +43,8 @@ $cell-even-background-color: 			                    #ffffff !default;
 $cell-odd-background-color:                           darken($grid-cell-color, 3%) !default; // for striping every second row
 $cell-odd-active-background-color:                    darken($grid-cell-color, 5%) !default;
 $cell-padding-top-bottom:                             5px !default;
-$cell-padding-right-left:                             6px !default;
-$cell-padding:                                        $cell-padding-top-bottom $cell-padding-right-left !default;
+$cell-padding-left-right:                             6px !default;
+$cell-padding:                                        $cell-padding-top-bottom $cell-padding-left-right !default;
 
 /** 4x available slick-pane (top, bottom, left,       right) */
 $slick-pane-top-border-top:                           none !default;
@@ -547,7 +547,9 @@ $editor-modal-container-left:                         50% !default;
 $editor-modal-container-transform:                    translate(-50%) !default;
 $editor-modal-container-z-index:                      1010 !default;
 $editor-modal-header-bg-color:                        #ffffff !default;
-$editor-modal-header-padding:                         12px 8px !default;
+$editor-modal-header-padding-left-right:              8px !default;
+$editor-modal-header-padding-top-bottom:              12px !default;
+$editor-modal-header-padding:                         $editor-modal-header-padding-top-bottom $editor-modal-header-padding-left-right !default;
 $editor-modal-header-border-bottom:                   1px solid #d2d2d2 !default;
 $editor-modal-header-height:                          52px !default;
 $editor-modal-close-btn-bg-color:                     transparent !default;
