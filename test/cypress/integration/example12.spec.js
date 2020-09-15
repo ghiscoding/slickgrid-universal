@@ -256,9 +256,9 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.editor-completed .editor-checkbox').check();
     cy.get('.item-details-container.editor-completed .modified').should('have.length', 1);
 
-    cy.get('.item-details-container.editor-product .autocomplete').type('a');
+    cy.get('.item-details-container.editor-product .autocomplete').type('granite');
     cy.get('.ui-menu.ui-autocomplete.autocomplete-custom-four-corners').should('be.visible');
-    cy.get('.ui-menu.ui-autocomplete.autocomplete-custom-four-corners').find('li.ui-menu-item:nth(1)').click();
+    cy.get('.ui-menu.ui-autocomplete.autocomplete-custom-four-corners').find('li.ui-menu-item:nth(0)').click();
     cy.get('.item-details-container.editor-product .modified').should('have.length', 1);
 
     cy.get('.item-details-container.editor-duration .editor-text').type('22');
@@ -270,8 +270,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.item-details-container.editor-finish .modified').should('have.length', 1);
 
     cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').type('c');
-    cy.get('#ui-id-2.ui-menu.ui-autocomplete').should('be.visible');
-    cy.get('#ui-id-2.ui-menu.ui-autocomplete').find('li.ui-menu-item:nth(1)').click();
+    cy.get('.ui-menu.ui-autocomplete:visible').find('li.ui-menu-item:nth(1)').click();
     cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').invoke('val').then(text => expect(text).to.eq('Antarctica'));
     cy.get('.item-details-container.editor-countryOfOrigin .modified').should('have.length', 1);
 
@@ -303,8 +302,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.item-details-container.editor-duration .modified').should('have.length', 1);
 
     cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').type('d');
-    cy.get('#ui-id-78.ui-menu.ui-autocomplete').should('be.visible');
-    cy.get('#ui-id-78.ui-menu.ui-autocomplete').find('li.ui-menu-item:nth(5)').click();
+    cy.get('.ui-menu.ui-autocomplete:visible').find('li.ui-menu-item:nth(5)').click();
     cy.get('.item-details-container.editor-countryOfOrigin .modified').should('have.length', 1);
     cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').invoke('val').then(text => expect(text).to.eq('Bermuda'));
 
@@ -337,11 +335,10 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`.flatpickr-day.today:visible`).click('bottom', { force: true });
     cy.get('.item-details-container.editor-finish .modified').should('have.length', 1);
 
-    cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').type('e');
-    cy.get('#ui-id-163.ui-menu.ui-autocomplete').should('be.visible');
-    cy.get('#ui-id-163.ui-menu.ui-autocomplete').find('li.ui-menu-item:nth(6)').click();
+    cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').type('bel');
+    cy.get('.ui-menu.ui-autocomplete:visible').find('li.ui-menu-item:nth(1)').click();
     cy.get('.item-details-container.editor-countryOfOrigin .modified').should('have.length', 1);
-    cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').invoke('val').then(text => expect(text).to.eq('Belarus'));
+    cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').invoke('val').then(text => expect(text).to.eq('Belgium'));
 
     cy.get('.btn-save').contains('Apply Mass Update').click();
     cy.get('.validation-summary').contains('Unfortunately we only accept a minimum of 50% Completion...');
@@ -357,22 +354,22 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).should('contain', '51');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).should('not.be.empty');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('contain', 'Belarus');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('contain', 'Belgium');
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(4)`).should('contain', '51');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(6)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(7)`).should('not.be.empty');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(9)`).should('contain', 'Belarus');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(9)`).should('contain', 'Belgium');
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).should('contain', '51');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(6)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(7)`).should('not.be.empty');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(9)`).should('contain', 'Belarus');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(9)`).should('contain', 'Belgium');
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(4)`).should('contain', '51');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(6)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(7)`).should('not.be.empty');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(9)`).should('contain', 'Belarus');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(9)`).should('contain', 'Belgium');
   });
 
   it('should have the "Mass Selection" button disabled when no rows are selected', () => {
@@ -398,9 +395,8 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`.flatpickr-day.today:visible`).click('bottom', { force: true });
     cy.get('.item-details-container.editor-finish .modified').should('have.length', 1);
 
-    cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').type('z');
-    cy.get('#ui-id-289.ui-menu.ui-autocomplete').should('be.visible');
-    cy.get('#ui-id-289.ui-menu.ui-autocomplete').find('li.ui-menu-item:nth(1)').click();
+    cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').type('ze');
+    cy.get('.ui-menu.ui-autocomplete:visible').find('li.ui-menu-item:nth(1)').click();
     cy.get('.item-details-container.editor-countryOfOrigin .modified').should('have.length', 1);
     cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').invoke('val').then(text => expect(text).to.eq('Belize'));
 
@@ -418,7 +414,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).should('contain', '51');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).should('not.be.empty');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('contain', 'Belarus');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('contain', 'Belgium');
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(4)`).should('contain', '77');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(6)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
@@ -433,6 +429,6 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(4)`).should('contain', '51');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(6)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(7)`).should('not.be.empty');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(9)`).should('contain', 'Belarus');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(9)`).should('contain', 'Belgium');
   });
 });
