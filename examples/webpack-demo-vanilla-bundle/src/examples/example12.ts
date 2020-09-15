@@ -776,11 +776,9 @@ export class Example12 {
         break;
       case 'mass-update':
         modalTitle = 'Mass Update All Records';
-        // modalTitle = 'Mise à jour en masse';
         break;
       case 'mass-selection':
         modalTitle = 'Update Selected Records';
-        // modalTitle = 'Mise à jour de la sélection';
         break;
     }
 
@@ -790,22 +788,6 @@ export class Example12 {
       // showCloseButtonOutside: true,
       // backdrop: null,
       // viewColumnLayout: 2, // choose from 'auto', 1, 2, or 3 (defaults to 'auto')
-      // labels: {
-      //   cancelButton: 'Cancel',
-      //   massSelectionButton: 'Update Selection',
-      //   massSelectionStatus: '{{x}} of {{y}} selected',
-      //   massUpdateButton: 'Apply Mass Update',
-      //   massUpdateStatus: 'All {{x}} records selected',
-      //   saveButton: 'Save',
-      // },
-      // labels: {
-      //   cancelButton: 'Annuler',
-      //   massSelectionButton: 'Mettre à jour la sélection',
-      //   massSelectionStatus: '{{x}} de {{y}} sélectionnés',
-      //   massUpdateButton: 'Mettre à jour en masse',
-      //   massUpdateStatus: 'Sur tous les {{x}} éléments',
-      //   saveButton: 'Sauvegarder',
-      // },
       onClose: () => Promise.resolve(confirm('You have unsaved changes, are you sure you want to close this window?')),
       onError: (error) => alert(error.message),
       onSave: (formValues, selection, applyChangesCallback) => {
@@ -821,7 +803,5 @@ export class Example12 {
         });
       }
     }), openDelay);
-    // this.sgb.slickCompositeEditor.applyChanges(formValues, modalType);
-    // this.sgb.slickCompositeEditor.undoLastMassChange();
   }
 }

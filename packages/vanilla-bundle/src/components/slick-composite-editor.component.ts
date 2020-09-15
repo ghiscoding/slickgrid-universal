@@ -437,7 +437,7 @@ export class SlickCompositeEditorComponent {
           const gridRowIndexes = gridStateSelection?.gridRowIndexes || [];
           const dataContextIds = gridStateSelection?.dataContextIds || [];
 
-          if (this._options?.onSave) {
+          if (typeof this._options?.onSave === 'function') {
             const successful = await this._options?.onSave(this.formValues, { gridRowIndexes, dataContextIds }, this[applyCallbackFnName].bind(this));
 
             if (successful) {
@@ -454,7 +454,8 @@ export class SlickCompositeEditorComponent {
           this._modalSaveButtonElm.classList.remove('saving');
         }
       }
-    } catch (errorMsg) {
+    } catch (error) {
+      const errorMsg = (typeof error === 'string') ? error : (error?.message ?? error?.body?.message ?? '');
       this.showValidationSummaryText(true, errorMsg);
     }
   }
@@ -463,7 +464,7 @@ export class SlickCompositeEditorComponent {
     if (isShowing) {
       this._modalBodyTopValidationElm.textContent = errorMsg;
       this._modalBodyTopValidationElm.style.display = 'block';
-      this._modalBodyTopValidationElm.scrollIntoView();
+      this._modalBodyTopValidationElm.scrollIntoView?.();
       this._modalSaveButtonElm.disabled = false;
       this._modalSaveButtonElm.classList.remove('saving');
     } else {
@@ -592,8 +593,9 @@ export class SlickCompositeEditorComponent {
   private getLabelText(labelProperty: string, localeText: string, defaultText: string): string {
     const textLabels = { ...this.gridOptions.compositeEditorOptions?.labels, ...this._options?.labels };
 
-    if (this.gridOptions?.enableTranslate && this.translaterService?.translate) {
-      return this.translaterService.translate(`${labelProperty}Key`);
+    if (this.gridOptions?.enableTranslate && this.translaterService?.translate && textLabels.hasOwnProperty(`${labelProperty}Key`)) {
+      const translationKey = textLabels[`${labelProperty}Key`];
+      return this.translaterService.translate(translationKey);
     }
     return (textLabels && textLabels[labelProperty]) || (this._locales && this._locales[localeText]) || defaultText;
   }

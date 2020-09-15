@@ -27,6 +27,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'COLLAPSE_ALL_GROUPS': output = this._locale === 'en' ? 'Collapse all Groups' : 'Réduire tous les groupes'; break;
       case 'CONTAINS': output = this._locale === 'en' ? 'Contains' : 'Contient'; break;
       case 'COPY': output = this._locale === 'en' ? 'Copy' : 'Copier'; break;
+      case 'DURATION': output = this._locale === 'en' ? 'Duration' : 'Durée'; break;
       case 'ENDS_WITH': output = this._locale === 'en' ? 'Ends With' : 'Se termine par'; break;
       case 'EQUALS': output = this._locale === 'en' ? 'Equals' : 'Égale'; break;
       case 'EXPAND_ALL_GROUPS': output = this._locale === 'en' ? 'Expand all Groups' : 'Étendre tous les groupes'; break;
@@ -39,6 +40,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'FORCE_FIT_COLUMNS': output = this._locale === 'en' ? 'Force fit columns' : 'Ajustement forcé des colonnes'; break;
       case 'FREEZE_COLUMNS': output = this._locale === 'en' ? 'Freeze Columns' : 'Geler les colonnes'; break;
       case 'GROUP_BY': output = this._locale === 'en' ? 'Grouped By' : 'Groupé par'; break;
+      case 'GROUP_NAME': output = this._locale === 'en' ? 'Group Name' : 'Nom du Groupe'; break;
       case 'HELLO': output = this._locale === 'en' ? 'Hello' : 'Bonjour'; break;
       case 'HELP': output = this._locale === 'en' ? 'Help' : 'Aide'; break;
       case 'HIDE_COLUMN': output = this._locale === 'en' ? 'Hide Column' : 'Cacher la colonne'; break;

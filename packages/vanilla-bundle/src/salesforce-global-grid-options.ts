@@ -4,16 +4,6 @@ import { GridOption, EventNamingStyle } from '@slickgrid-universal/common';
 export const SalesforceGlobalGridOptions: GridOption = {
   autoEdit: true, // true single click (false for double-click)
   autoCommitEdit: true,
-  // compositeEditorOptions: {
-  //   labels: {
-  //     cancelButton: 'Cancel',
-  //     massSelectionButton: 'Update Selection',
-  //     massSelectionStatus: '{{x}} of {{y}} selected',
-  //     massUpdateButton: 'Mass Update',
-  //     massUpdateStatus: 'all {{x}} items',
-  //     saveButton: 'Save',
-  //   },
-  // },
   datasetIdPropertyName: 'Id',
   defaultFilterPlaceholder: '',
   enableExport: true,

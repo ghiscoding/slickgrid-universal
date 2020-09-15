@@ -8,6 +8,22 @@ const gridOptionsMock = {
   editable: true,
   enableCellNavigation: true,
   enableCompositeEditor: true,
+  compositeEditorOptions: {
+    labels: {
+      cancelButton: 'Cancel',
+      cancelButtonKey: 'CANCEL',
+      massSelectionButton: 'Update Selection',
+      massSelectionButtonKey: 'APPLY_TO_SELECTION',
+      massSelectionStatus: '{{x}} of {{y}} selected',
+      massSelectionStatusKey: 'X_OF_Y_MASS_SELECTED',
+      massUpdateButton: 'Mass Update',
+      massUpdateButtonKey: 'APPLY_MASS_UPDATE',
+      massUpdateStatus: 'all {{x}} items',
+      massUpdateStatusKey: 'ALL_X_RECORDS_SELECTED',
+      saveButton: 'Save',
+      saveButtonKey: 'SAVE',
+    },
+  },
 } as GridOption;
 
 const dataViewStub = {
@@ -34,6 +50,7 @@ const getEditControllerMock = {
 
 const gridServiceStub = {
   addItem: jest.fn(),
+  updateItems: jest.fn(),
 } as unknown as GridService;
 
 const gridStateServiceStub = {
@@ -106,7 +123,6 @@ describe('CompositeEditorService', () => {
     Object.defineProperty(document.body, 'clientHeight', { writable: true, configurable: true, value: 1080 });
     Object.defineProperty(document.body, 'clientWidth', { writable: true, configurable: true, value: 1920 });
     window.dispatchEvent(new Event('resize'));
-    translateService = new TranslateServiceStub();
   });
 
   describe('Integration Tests', () => {
@@ -660,12 +676,16 @@ describe('CompositeEditorService', () => {
       }, 5);
     });
 
-    describe('with Row Selections', () => {
+    describe('with Row Selections and Mass Selection Change', () => {
       beforeEach(() => {
         const newGridOptions = { ...gridOptionsMock, enableRowSelection: true, };
         jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
         jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
         jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
+      });
+
+      afterEach(() => {
+        component?.dispose();
       });
 
       it('should throw an error when trying to edit a row that does not return any data context', (done) => {
@@ -746,6 +766,398 @@ describe('CompositeEditorService', () => {
         expect(component).toBeTruthy();
         expect(component.constructor).toBeDefined();
         expect(compositeContainerElm).toBeTruthy();
+      });
+
+      it('should throw an error when no rows are selected', (done) => {
+        const mockProduct = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+        const currentEditorMock = { validate: jest.fn() };
+        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+        jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+        jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
+        jest.spyOn(gridStateServiceStub, 'getCurrentRowSelections').mockReturnValue({ gridRowIndexes: [0], dataContextIds: [222] });
+        jest.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockProduct);
+        const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+        const setActiveRowSpy = jest.spyOn(gridStub, 'setActiveRow');
+        const updateItemsSpy = jest.spyOn(gridServiceStub, 'updateItems');
+
+        const mockOnError = jest.fn();
+        const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-selection', onError: mockOnError } as CompositeEditorOpenDetailOption;
+        component = new SlickCompositeEditorComponent(gridStub, gridServiceStub, gridStateServiceStub);
+        component.openDetails(mockModalOptions);
+        const spyOnError = jest.spyOn(mockModalOptions, 'onError');
+
+        const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
+        const compositeFooterSaveBtnElm = compositeContainerElm.querySelector<HTMLSelectElement>('.btn-save');
+        const compositeHeaderElm = document.querySelector<HTMLSelectElement>('.slick-editor-modal-header');
+        const compositeTitleElm = compositeHeaderElm.querySelector<HTMLSelectElement>('.slick-editor-modal-title');
+        const compositeBodyElm = document.querySelector<HTMLSelectElement>('.slick-editor-modal-body');
+        const field3DetailContainerElm = compositeBodyElm.querySelector<HTMLSelectElement>('.item-details-container.editor-field3.slick-col-medium-12');
+        const field3LabelElm = field3DetailContainerElm.querySelector<HTMLSelectElement>('.item-details-label.editor-field3');
+        const validationSummaryElm = compositeContainerElm.querySelector<HTMLSelectElement>('.validation-summary');
+
+        gridStub.onCompositeEditorChange.notify({ row: 0, cell: 0, column: columnsMock[0], item: mockProduct, formValues: {}, grid: gridStub });
+
+        compositeFooterSaveBtnElm.click();
+
+        setTimeout(() => {
+          expect(component).toBeTruthy();
+          expect(component.constructor).toBeDefined();
+          expect(compositeContainerElm).toBeTruthy();
+          expect(compositeHeaderElm).toBeTruthy();
+          expect(compositeTitleElm).toBeTruthy();
+          expect(compositeTitleElm.textContent).toBe('Details');
+          expect(field3LabelElm.textContent).toBe('Group Name - Field 3');
+          expect(compositeFooterSaveBtnElm).toBeTruthy();
+          expect(cancelCommitSpy).not.toHaveBeenCalled();
+          expect(setActiveRowSpy).not.toHaveBeenCalled();
+          expect(updateItemsSpy).not.toHaveBeenCalled();
+          expect(validationSummaryElm.style.display).toBe('none');
+          expect(validationSummaryElm.textContent).toBe('');
+          expect(spyOnError).toHaveBeenCalledWith({ type: 'warning', code: 'NO_CHANGES_DETECTED', message: 'Sorry we could not detect any changes.' });
+          done();
+        });
+      });
+
+      it('should handle saving and grid changes when "Mass Selection" save button is clicked', (done) => {
+        const mockProduct = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+        const currentEditorMock = { validate: jest.fn() };
+        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+        jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+        jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
+        jest.spyOn(gridStateServiceStub, 'getCurrentRowSelections').mockReturnValue({ gridRowIndexes: [0], dataContextIds: [222] });
+        jest.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockProduct);
+        const getEditSpy = jest.spyOn(gridStub, 'getEditController');
+        const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+        const setActiveRowSpy = jest.spyOn(gridStub, 'setActiveRow');
+        const updateItemsSpy = jest.spyOn(gridServiceStub, 'updateItems');
+
+        const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-selection' } as CompositeEditorOpenDetailOption;
+        component = new SlickCompositeEditorComponent(gridStub, gridServiceStub, gridStateServiceStub);
+        component.openDetails(mockModalOptions);
+
+        const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
+        const compositeFooterSaveBtnElm = compositeContainerElm.querySelector<HTMLSelectElement>('.btn-save');
+        const compositeHeaderElm = document.querySelector<HTMLSelectElement>('.slick-editor-modal-header');
+        const compositeTitleElm = compositeHeaderElm.querySelector<HTMLSelectElement>('.slick-editor-modal-title');
+        const compositeBodyElm = document.querySelector<HTMLSelectElement>('.slick-editor-modal-body');
+        const field3DetailContainerElm = compositeBodyElm.querySelector<HTMLSelectElement>('.item-details-container.editor-field3.slick-col-medium-12');
+        const field3LabelElm = field3DetailContainerElm.querySelector<HTMLSelectElement>('.item-details-label.editor-field3');
+        const validationSummaryElm = compositeContainerElm.querySelector<HTMLSelectElement>('.validation-summary');
+
+        gridStub.onCompositeEditorChange.notify({ row: 0, cell: 0, column: columnsMock[0], item: mockProduct, formValues: { field3: 'test' }, grid: gridStub });
+
+        compositeFooterSaveBtnElm.click();
+
+        setTimeout(() => {
+          expect(component).toBeTruthy();
+          expect(component.constructor).toBeDefined();
+          expect(compositeContainerElm).toBeTruthy();
+          expect(compositeHeaderElm).toBeTruthy();
+          expect(compositeTitleElm).toBeTruthy();
+          expect(compositeTitleElm.textContent).toBe('Details');
+          expect(field3LabelElm.textContent).toBe('Group Name - Field 3');
+          expect(updateItemsSpy).toHaveBeenCalledWith([mockProduct]);
+          expect(cancelCommitSpy).toHaveBeenCalled();
+          expect(setActiveRowSpy).toHaveBeenCalledWith(0);
+          expect(getEditSpy).toHaveBeenCalledTimes(2);
+          expect(validationSummaryElm.style.display).toBe('none');
+          expect(validationSummaryElm.textContent).toBe('');
+          expect(compositeFooterSaveBtnElm.classList.contains('saving')).toBeFalsy();
+          done();
+        });
+      });
+    });
+  });
+
+  describe('with Mass Update', () => {
+    beforeEach(() => {
+      const newGridOptions = { ...gridOptionsMock, enableRowSelection: true, };
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+      component?.dispose();
+    });
+
+    it('should handle saving and grid changes when "Mass Update" save button is clicked', (done) => {
+      const mockProduct1 = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+      const mockProduct2 = { id: 333, field3: 'else', address: { zip: 789123 }, product: { name: 'Product XYZ', price: 33.44 } };
+      const currentEditorMock = { validate: jest.fn() };
+      jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1, mockProduct2]);
+      jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+      jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
+      jest.spyOn(gridStateServiceStub, 'getCurrentRowSelections').mockReturnValue({ gridRowIndexes: [0], dataContextIds: [222] });
+      const getEditSpy = jest.spyOn(gridStub, 'getEditController');
+      const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+      const setActiveCellSpy = jest.spyOn(gridStub, 'setActiveCell');
+      const setItemsSpy = jest.spyOn(dataViewStub, 'setItems');
+
+      const mockOnClose = jest.fn();
+      const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-update', onClose: mockOnClose } as CompositeEditorOpenDetailOption;
+      component = new SlickCompositeEditorComponent(gridStub, gridServiceStub, gridStateServiceStub);
+      component.openDetails(mockModalOptions);
+
+      const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
+      const compositeFooterSaveBtnElm = compositeContainerElm.querySelector<HTMLSelectElement>('.btn-save');
+      const compositeHeaderElm = document.querySelector<HTMLSelectElement>('.slick-editor-modal-header');
+      const compositeTitleElm = compositeHeaderElm.querySelector<HTMLSelectElement>('.slick-editor-modal-title');
+      const compositeBodyElm = document.querySelector<HTMLSelectElement>('.slick-editor-modal-body');
+      const field3DetailContainerElm = compositeBodyElm.querySelector<HTMLSelectElement>('.item-details-container.editor-field3.slick-col-medium-12');
+      const field3LabelElm = field3DetailContainerElm.querySelector<HTMLSelectElement>('.item-details-label.editor-field3');
+      const validationSummaryElm = compositeContainerElm.querySelector<HTMLSelectElement>('.validation-summary');
+
+      gridStub.onCompositeEditorChange.notify({ row: 0, cell: 0, column: columnsMock[0], item: mockProduct1, formValues: { field3: 'test' }, grid: gridStub });
+
+      compositeFooterSaveBtnElm.click();
+
+      setTimeout(() => {
+        expect(component).toBeTruthy();
+        expect(component.constructor).toBeDefined();
+        expect(compositeContainerElm).toBeTruthy();
+        expect(compositeHeaderElm).toBeTruthy();
+        expect(compositeTitleElm).toBeTruthy();
+        expect(compositeTitleElm.textContent).toBe('Details');
+        expect(field3LabelElm.textContent).toBe('Group Name - Field 3');
+        expect(getEditSpy).toHaveBeenCalledTimes(2);
+        expect(setItemsSpy).toHaveBeenCalledWith([{ ...mockProduct1, field3: 'test' }, { ...mockProduct2, field3: 'test' }], undefined);
+        expect(cancelCommitSpy).toHaveBeenCalled();
+        expect(setActiveCellSpy).toHaveBeenCalledWith(0, 0, false);
+        expect(validationSummaryElm.style.display).toBe('none');
+        expect(validationSummaryElm.textContent).toBe('');
+        done();
+      });
+    });
+
+    it('should handle saving and grid changes when "Mass Update" save button is clicked and user provides a custom "onSave" async function', (done) => {
+      const mockProduct1 = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+      const mockProduct2 = { id: 333, field3: 'else', address: { zip: 789123 }, product: { name: 'Product XYZ', price: 33.44 } };
+      const currentEditorMock = { validate: jest.fn() };
+      jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1, mockProduct2]);
+      jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+      jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
+      jest.spyOn(gridStateServiceStub, 'getCurrentRowSelections').mockReturnValue({ gridRowIndexes: [0], dataContextIds: [222] });
+      const getEditSpy = jest.spyOn(gridStub, 'getEditController');
+      const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+      const setActiveCellSpy = jest.spyOn(gridStub, 'setActiveCell');
+      const setItemsSpy = jest.spyOn(dataViewStub, 'setItems');
+
+      const mockOnSave = jest.fn();
+      mockOnSave.mockResolvedValue(Promise.resolve(true));
+      const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-update', onSave: mockOnSave } as CompositeEditorOpenDetailOption;
+      component = new SlickCompositeEditorComponent(gridStub, gridServiceStub, gridStateServiceStub);
+      component.openDetails(mockModalOptions);
+
+      const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
+      const compositeFooterSaveBtnElm = compositeContainerElm.querySelector<HTMLSelectElement>('.btn-save');
+      const compositeHeaderElm = document.querySelector<HTMLSelectElement>('.slick-editor-modal-header');
+      const compositeTitleElm = compositeHeaderElm.querySelector<HTMLSelectElement>('.slick-editor-modal-title');
+      const compositeBodyElm = document.querySelector<HTMLSelectElement>('.slick-editor-modal-body');
+      const field3DetailContainerElm = compositeBodyElm.querySelector<HTMLSelectElement>('.item-details-container.editor-field3.slick-col-medium-12');
+      const field3LabelElm = field3DetailContainerElm.querySelector<HTMLSelectElement>('.item-details-label.editor-field3');
+      const validationSummaryElm = compositeContainerElm.querySelector<HTMLSelectElement>('.validation-summary');
+
+      gridStub.onCompositeEditorChange.notify({ row: 0, cell: 0, column: columnsMock[0], item: mockProduct1, formValues: { field3: 'test' }, grid: gridStub });
+
+      compositeFooterSaveBtnElm.click();
+
+      setTimeout(() => {
+        expect(component).toBeTruthy();
+        expect(component.constructor).toBeDefined();
+        expect(compositeContainerElm).toBeTruthy();
+        expect(compositeHeaderElm).toBeTruthy();
+        expect(compositeTitleElm).toBeTruthy();
+        expect(compositeTitleElm.textContent).toBe('Details');
+        expect(field3LabelElm.textContent).toBe('Group Name - Field 3');
+        expect(getEditSpy).toHaveBeenCalledTimes(2);
+        expect(mockOnSave).toHaveBeenCalledWith({ field3: 'test' }, { gridRowIndexes: [0], dataContextIds: [222] }, expect.any(Function));
+        expect(setItemsSpy).not.toHaveBeenCalled();
+        expect(cancelCommitSpy).toHaveBeenCalled();
+        expect(setActiveCellSpy).toHaveBeenCalledWith(0, 0, false);
+        expect(validationSummaryElm.style.display).toBe('none');
+        expect(validationSummaryElm.textContent).toBe('');
+        done();
+      });
+    });
+
+    it('should show a validation summary when clicking "Mass Update" save button and the custom "onSave" async function throws an error', (done) => {
+      const mockProduct1 = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+      const mockProduct2 = { id: 333, field3: 'else', address: { zip: 789123 }, product: { name: 'Product XYZ', price: 33.44 } };
+      const currentEditorMock = { validate: jest.fn() };
+      jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1, mockProduct2]);
+      jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+      jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
+      jest.spyOn(gridStateServiceStub, 'getCurrentRowSelections').mockReturnValue({ gridRowIndexes: [0], dataContextIds: [222] });
+      const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+
+      const mockOnSave = jest.fn();
+      mockOnSave.mockResolvedValue(Promise.reject(new Error('some error')));
+      const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-update', onSave: mockOnSave } as CompositeEditorOpenDetailOption;
+      component = new SlickCompositeEditorComponent(gridStub, gridServiceStub, gridStateServiceStub);
+      component.openDetails(mockModalOptions);
+
+      const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
+      const compositeFooterSaveBtnElm = compositeContainerElm.querySelector<HTMLSelectElement>('.btn-save');
+      const compositeHeaderElm = document.querySelector<HTMLSelectElement>('.slick-editor-modal-header');
+      const compositeTitleElm = compositeHeaderElm.querySelector<HTMLSelectElement>('.slick-editor-modal-title');
+      const compositeBodyElm = document.querySelector<HTMLSelectElement>('.slick-editor-modal-body');
+      const field3DetailContainerElm = compositeBodyElm.querySelector<HTMLSelectElement>('.item-details-container.editor-field3.slick-col-medium-12');
+      const field3LabelElm = field3DetailContainerElm.querySelector<HTMLSelectElement>('.item-details-label.editor-field3');
+      const validationSummaryElm = compositeContainerElm.querySelector<HTMLSelectElement>('.validation-summary');
+
+      gridStub.onCompositeEditorChange.notify({ row: 0, cell: 0, column: columnsMock[0], item: mockProduct1, formValues: { field3: 'test' }, grid: gridStub });
+
+      compositeFooterSaveBtnElm.click();
+      expect(compositeFooterSaveBtnElm.disabled).toBeTruthy();
+      expect(compositeFooterSaveBtnElm.classList.contains('saving')).toBeTruthy();
+
+      setTimeout(() => {
+        expect(component).toBeTruthy();
+        expect(component.constructor).toBeDefined();
+        expect(compositeContainerElm).toBeTruthy();
+        expect(compositeHeaderElm).toBeTruthy();
+        expect(compositeTitleElm).toBeTruthy();
+        expect(compositeTitleElm.textContent).toBe('Details');
+        expect(field3LabelElm.textContent).toBe('Group Name - Field 3');
+        expect(validationSummaryElm.style.display).toBe('block');
+        expect(validationSummaryElm.textContent).toBe('some error');
+        expect(compositeFooterSaveBtnElm.disabled).toBeFalsy();
+        expect(compositeFooterSaveBtnElm.classList.contains('saving')).toBeFalsy();
+        expect(cancelCommitSpy).not.toHaveBeenCalled();
+        done();
+      });
+    });
+  });
+
+  describe('with Translate Service', () => {
+    beforeEach(() => {
+      const newGridOptions = { ...gridOptionsMock, enableRowSelection: true, enableTranslate: true };
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+      translateService = new TranslateServiceStub();
+      translateService.use('fr');
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+      component?.dispose();
+    });
+
+    it('should have translate text when opening Composite Editor with New Item', () => {
+      const newGridOptions = { ...gridOptionsMock, enableAddRow: true, enableTranslate: true };
+      const mockProduct1 = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+      jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
+
+      const mockModalOptions = { headerTitle: 'Details', modalType: 'create' } as CompositeEditorOpenDetailOption;
+      component = new SlickCompositeEditorComponent(gridStub, gridServiceStub, gridStateServiceStub, translateService);
+      component.openDetails(mockModalOptions);
+
+      const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
+      const compositeHeaderElm = document.querySelector<HTMLSelectElement>('.slick-editor-modal-header');
+      const compositeTitleElm = compositeHeaderElm.querySelector<HTMLSelectElement>('.slick-editor-modal-title');
+      const compositeBodyElm = document.querySelector<HTMLSelectElement>('.slick-editor-modal-body');
+      const field1DetailContainerElm = compositeBodyElm.querySelector<HTMLSelectElement>('.item-details-container.editor-field1.slick-col-medium-12');
+      const field1LabelElm = field1DetailContainerElm.querySelector<HTMLSelectElement>('.item-details-label.editor-field1');
+      const compositeFooterElm = compositeContainerElm.querySelector<HTMLSelectElement>('.slick-editor-modal-footer');
+      const compositeFooterCancelBtnElm = compositeFooterElm.querySelector<HTMLSelectElement>('.btn-cancel');
+      const compositeFooterSaveBtnElm = compositeFooterElm.querySelector<HTMLSelectElement>('.btn-save');
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+      expect(compositeHeaderElm).toBeTruthy();
+      expect(compositeTitleElm).toBeTruthy();
+      expect(compositeTitleElm.textContent).toBe('Details');
+      expect(field1LabelElm.textContent).toBe('Titre');
+      expect(compositeFooterCancelBtnElm.textContent).toBe('Annuler');
+      expect(compositeFooterSaveBtnElm.textContent).toBe('Sauvegarder');
+    });
+
+    it('should have translated text when handling a saving of grid changes when "Mass Selection" save button is clicked', (done) => {
+      const mockProduct = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+      const currentEditorMock = { validate: jest.fn() };
+      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+      jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
+      jest.spyOn(gridStateServiceStub, 'getCurrentRowSelections').mockReturnValue({ gridRowIndexes: [0], dataContextIds: [222] });
+      jest.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockProduct);
+      const getEditSpy = jest.spyOn(gridStub, 'getEditController');
+      const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+      const setActiveRowSpy = jest.spyOn(gridStub, 'setActiveRow');
+      const updateItemsSpy = jest.spyOn(gridServiceStub, 'updateItems');
+
+      const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-selection' } as CompositeEditorOpenDetailOption;
+      component = new SlickCompositeEditorComponent(gridStub, gridServiceStub, gridStateServiceStub, translateService);
+      component.openDetails(mockModalOptions);
+
+      const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
+      const compositeHeaderElm = document.querySelector<HTMLSelectElement>('.slick-editor-modal-header');
+      const compositeTitleElm = compositeHeaderElm.querySelector<HTMLSelectElement>('.slick-editor-modal-title');
+      const compositeBodyElm = document.querySelector<HTMLSelectElement>('.slick-editor-modal-body');
+      const field3DetailContainerElm = compositeBodyElm.querySelector<HTMLSelectElement>('.item-details-container.editor-field3.slick-col-medium-12');
+      const field3LabelElm = field3DetailContainerElm.querySelector<HTMLSelectElement>('.item-details-label.editor-field3');
+      const compositeFooterElm = compositeContainerElm.querySelector<HTMLSelectElement>('.slick-editor-modal-footer');
+      const compositeFooterCancelBtnElm = compositeFooterElm.querySelector<HTMLSelectElement>('.btn-cancel');
+      const compositeFooterSaveBtnElm = compositeFooterElm.querySelector<HTMLSelectElement>('.btn-save');
+
+      gridStub.onCompositeEditorChange.notify({ row: 0, cell: 0, column: columnsMock[0], item: mockProduct, formValues: { field3: 'test' }, grid: gridStub });
+
+      compositeFooterSaveBtnElm.click();
+
+      setTimeout(() => {
+        expect(component).toBeTruthy();
+        expect(component.constructor).toBeDefined();
+        expect(compositeContainerElm).toBeTruthy();
+        expect(compositeHeaderElm).toBeTruthy();
+        expect(compositeTitleElm).toBeTruthy();
+        expect(compositeTitleElm.textContent).toBe('Details');
+        expect(field3LabelElm.textContent).toBe('Nom du Groupe - Durée');
+        expect(compositeFooterCancelBtnElm.textContent).toBe('Annuler');
+        expect(compositeFooterSaveBtnElm.textContent).toBe('Mettre à jour la sélection');
+        expect(updateItemsSpy).toHaveBeenCalledWith([mockProduct]);
+        expect(cancelCommitSpy).toHaveBeenCalled();
+        expect(setActiveRowSpy).toHaveBeenCalledWith(0);
+        expect(getEditSpy).toHaveBeenCalledTimes(2);
+        done();
+      });
+    });
+
+    it('should have translated text when handling a saving of grid changes when "Mass Update" save button is clicked', (done) => {
+      const mockProduct1 = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+      const mockProduct2 = { id: 333, field3: 'else', address: { zip: 789123 }, product: { name: 'Product XYZ', price: 33.44 } };
+      const currentEditorMock = { validate: jest.fn() };
+      jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1, mockProduct2]);
+      jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+      jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
+      jest.spyOn(gridStateServiceStub, 'getCurrentRowSelections').mockReturnValue({ gridRowIndexes: [0], dataContextIds: [222] });
+
+      const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-update' } as CompositeEditorOpenDetailOption;
+      component = new SlickCompositeEditorComponent(gridStub, gridServiceStub, gridStateServiceStub, translateService);
+      component.openDetails(mockModalOptions);
+
+      const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
+      const compositeHeaderElm = document.querySelector<HTMLSelectElement>('.slick-editor-modal-header');
+      const compositeTitleElm = compositeHeaderElm.querySelector<HTMLSelectElement>('.slick-editor-modal-title');
+      const compositeBodyElm = document.querySelector<HTMLSelectElement>('.slick-editor-modal-body');
+      const field3DetailContainerElm = compositeBodyElm.querySelector<HTMLSelectElement>('.item-details-container.editor-field3.slick-col-medium-12');
+      const field3LabelElm = field3DetailContainerElm.querySelector<HTMLSelectElement>('.item-details-label.editor-field3');
+      const compositeFooterElm = compositeContainerElm.querySelector<HTMLSelectElement>('.slick-editor-modal-footer');
+      const compositeFooterCancelBtnElm = compositeFooterElm.querySelector<HTMLSelectElement>('.btn-cancel');
+      const compositeFooterSaveBtnElm = compositeFooterElm.querySelector<HTMLSelectElement>('.btn-save');
+
+      setTimeout(() => {
+        expect(component).toBeTruthy();
+        expect(component.constructor).toBeDefined();
+        expect(compositeContainerElm).toBeTruthy();
+        expect(compositeHeaderElm).toBeTruthy();
+        expect(compositeTitleElm).toBeTruthy();
+        expect(compositeTitleElm.textContent).toBe('Details');
+        expect(field3LabelElm.textContent).toBe('Nom du Groupe - Durée');
+        expect(compositeFooterCancelBtnElm.textContent).toBe('Annuler');
+        expect(compositeFooterSaveBtnElm.textContent).toBe('Mettre à jour en masse');
+        done();
       });
     });
   });
