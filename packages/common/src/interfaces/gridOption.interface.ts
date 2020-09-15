@@ -25,6 +25,7 @@ import {
   RowMoveManager,
   RowSelectionModelOption,
   TreeDataOption,
+  CompositeEditorOpenDetailOption,
 } from './index';
 import { ColumnReorderFunction, EventNamingStyle, GridAutosizeColsMode, OperatorType, OperatorString, } from '../enums/index';
 import { TranslaterService } from '../services/translater.service';
@@ -81,8 +82,14 @@ export interface GridOption {
   /** Checkbox Select Plugin options (columnId, cssClass, toolTip, width) */
   checkboxSelector?: CheckboxSelectorOption;
 
+  /** Defaults to " - ", separator between the column group label and the column label. */
+  columnGroupSeparator?: string;
+
   /** Column Picker Plugin options (columnTitle, forceFitTitle, syncResizeTitle) */
   columnPicker?: ColumnPicker;
+
+  /** Optionally provide global options to the Composite Editor instead of having to redeclare them every time you want to use it */
+  compositeEditorOptions?: Partial<CompositeEditorOpenDetailOption>;
 
   /** Context menu options (mouse right+click) */
   contextMenu?: ContextMenu;
@@ -160,6 +167,9 @@ export interface GridOption {
   /** a global singleton editor lock. */
   editorLock?: any;
 
+  /** Default to 450ms and only applies to Composite Editor, how long to wait until we start validating the editor changes on Editor that support it (integer, float, text, longText). */
+  editorTypingDebounce?: number;
+
   /** Do we want to emulate paging when we are scrolling? */
   emulatePagingWhenScrolling?: boolean;
 
@@ -195,6 +205,12 @@ export interface GridOption {
 
   /** Defaults to true, which permits the user to move an entire column from a position to another. */
   enableColumnReorder?: boolean | ColumnReorderFunction;
+
+  /**
+   * Defaults to false, do we want to use a Composite Editor Modal?
+   * Composite Editor is providing a modal window to edit an entire row, it reuses every column definition editor/validators and displays them in a convenient single form.
+   */
+  enableCompositeEditor?: boolean;
 
   /** Do we want to enable Context Menu? (mouse right+click) */
   enableContextMenu?: boolean;

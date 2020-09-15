@@ -1,6 +1,9 @@
 import { Constants } from './../constants';
-import { Column, ColumnEditor, Editor, EditorArguments, EditorValidator, EditorValidatorOutput, SlickGrid } from './../interfaces/index';
+import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, SlickGrid, SlickNamespace } from './../interfaces/index';
 import { getDescendantProperty, setDeepValue } from '../services/utilities';
+
+// using external non-typed js libraries
+declare const Slick: SlickNamespace;
 
 /*
  * An example of a 'detached' editor.
@@ -8,7 +11,9 @@ import { getDescendantProperty, setDeepValue } from '../services/utilities';
  */
 export class CheckboxEditor implements Editor {
   private _input: HTMLInputElement;
-  originalValue: boolean;
+  private _checkboxContainerElm: HTMLDivElement;
+  private _isDisabled = false;
+  private _originalValue?: boolean | string;
 
   /** SlickGrid Grid object */
   grid: SlickGrid;
@@ -31,7 +36,7 @@ export class CheckboxEditor implements Editor {
     return this.columnDef && this.columnDef.internalColumnEditor || {};
   }
 
-  /** Get the Editor DOM Element */
+  /** Getter for the Editor DOM Element */
   get editorDomElement(): any {
     return this._input;
   }
@@ -48,21 +53,36 @@ export class CheckboxEditor implements Editor {
   init(): void {
     const columnId = this.columnDef && this.columnDef.id;
     const title = this.columnEditor && this.columnEditor.title || '';
+    const compositeEditorOptions = this.args.compositeEditorOptions;
 
-    this._input = document.createElement('input') as HTMLInputElement;
+    this._checkboxContainerElm = document.createElement('div');
+    this._checkboxContainerElm.className = `checkbox-editor-container editor-${columnId}`;
+
+    this._input = document.createElement('input');
     this._input.className = `editor-checkbox editor-${columnId}`;
     this._input.title = title;
     this._input.type = 'checkbox';
     this._input.value = 'true';
+
     const cellContainer = this.args?.container;
     if (cellContainer && typeof cellContainer.appendChild === 'function') {
-      cellContainer.appendChild(this._input);
+      if (compositeEditorOptions) {
+        this._checkboxContainerElm.appendChild(this._input);
+        cellContainer.appendChild(this._checkboxContainerElm);
+      } else {
+        cellContainer.appendChild(this._input);
+      }
     }
-    this.focus();
 
     // make the checkbox editor act like a regular checkbox that commit the value on click
-    if (this.hasAutoCommitEdit) {
+    if (this.hasAutoCommitEdit && !compositeEditorOptions) {
       this._input.addEventListener('click', () => this.save());
+    }
+
+    if (compositeEditorOptions) {
+      this._input.addEventListener('change', (event: KeyboardEvent) => this.handleChangeOnCompositeEditor(event, compositeEditorOptions));
+    } else {
+      this.focus();
     }
   }
 
@@ -72,10 +92,43 @@ export class CheckboxEditor implements Editor {
     if (elm) {
       elm.removeEventListener('click', this.save);
     }
+    if (this._input?.remove) {
+      this._input.remove();
+    }
+  }
+
+  disable(isDisabled = true) {
+    const prevIsDisabled = this._isDisabled;
+    this._isDisabled = isDisabled;
+
+    if (this._input) {
+      if (isDisabled) {
+        this._input.setAttribute('disabled', 'disabled');
+        this._checkboxContainerElm.classList.add('disabled');
+
+        // clear the checkbox when it's newly disabled
+        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+          this._input.checked = false;
+          this._originalValue = undefined;
+          this.handleChangeOnCompositeEditor(null, this.args.compositeEditorOptions);
+        }
+      } else {
+        this._input.removeAttribute('disabled');
+        this._checkboxContainerElm.classList.remove('disabled');
+      }
+    }
   }
 
   focus(): void {
     this._input.focus();
+  }
+
+  show() {
+    const isCompositeEditor = !!this.args?.compositeEditorOptions;
+    if (isCompositeEditor) {
+      // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
+      this.applyInputUsabilityState();
+    }
   }
 
   getValue() {
@@ -93,7 +146,7 @@ export class CheckboxEditor implements Editor {
       const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
       // validate the value before applying it (if not valid we'll set an empty string)
-      const validation = this.validate(state);
+      const validation = this.validate(null, state);
       const newValue = (validation && validation.valid) ? state : '';
 
       // set the new value to the item datacontext
@@ -106,7 +159,7 @@ export class CheckboxEditor implements Editor {
   }
 
   isValueChanged(): boolean {
-    return (this.serializeValue() !== this.originalValue);
+    return (this.serializeValue() !== this._originalValue);
   }
 
   loadValue(item: any) {
@@ -117,19 +170,21 @@ export class CheckboxEditor implements Editor {
       const isComplexObject = fieldName?.indexOf('.') > 0;
       const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
 
-      this.originalValue = value;
-      if (this.originalValue) {
-        this._input.checked = true;
-      } else {
-        this._input.checked = false;
-      }
+      this._originalValue = value;
+      this._input.checked = !!this._originalValue;
     }
   }
 
   save() {
     const validation = this.validate();
-    if (validation && validation.valid && this.isValueChanged() && this.hasAutoCommitEdit) {
+    const isValid = (validation && validation.valid) || false;
+
+    if (this.hasAutoCommitEdit && isValid) {
+      // do not use args.commitChanges() as this sets the focus to the next row.
+      // also the select list will stay shown when clicking off the grid
       this.grid.getEditorLock().commitCurrentEdit();
+    } else {
+      this.args.commitChanges();
     }
   }
 
@@ -137,10 +192,20 @@ export class CheckboxEditor implements Editor {
     return this._input.checked;
   }
 
-  validate(inputValue?: any): EditorValidatorOutput {
-    const isRequired = this.columnEditor.required;
+  validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
+    const isRequired = this.args?.compositeEditorOptions ? false : this.columnEditor.required;
     const isChecked = (inputValue !== undefined) ? inputValue : this._input.checked;
     const errorMsg = this.columnEditor.errorMessage;
+
+    // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
+    if (this.args.compositeEditorOptions) {
+      this.applyInputUsabilityState();
+    }
+
+    // when field is disabled, we can assume it's valid
+    if (this._isDisabled) {
+      return { valid: true, msg: '' };
+    }
 
     if (this.validator) {
       return this.validator(isChecked, this.args);
@@ -158,5 +223,34 @@ export class CheckboxEditor implements Editor {
       valid: true,
       msg: null
     };
+  }
+
+  // --
+  // private functions
+  // ------------------
+
+  /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
+  private applyInputUsabilityState() {
+    const activeCell = this.grid.getActiveCell();
+    const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
+    this.disable(isCellEditable === false);
+  }
+
+  private handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption) {
+    const activeCell = this.grid.getActiveCell();
+    const column = this.args.column;
+    const columnId = this.columnDef?.id ?? '';
+    const item = this.args.item;
+    const grid = this.grid;
+
+    // when valid, we'll also apply the new value to the dataContext item object
+    if (this.validate().valid) {
+      this.applyValue(this.args.item, this.serializeValue());
+    }
+    this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+    if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+      delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
+    }
+    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
   }
 }

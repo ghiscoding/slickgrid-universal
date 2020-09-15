@@ -1,51 +1,83 @@
 @import './variables';
+@import './slick.layout';
 
-.slick-row {
-  .slick-cell  {
-    &.active {
-      input.dual-editor-text,
-      input.editor-text {
-        border: $text-editor-border;
-        border-radius: $text-editor-border-radius;
-        background: $text-editor-background;
-        padding-bottom: $text-editor-padding-bottom;
-        padding-left: $text-editor-padding-left;
-        padding-right: $text-editor-padding-right;
-        padding-top: $text-editor-padding-top;
-        margin-left: $text-editor-margin-left;
-        margin-bottom: $text-editor-margin-bottom;
-        margin-right: $text-editor-margin-right;
-        margin-top: $text-editor-margin-top;
+.slick-cell  {
+  input.dual-editor-text,
+  input.editor-text {
+    border: $text-editor-border;
+    border-radius: $text-editor-border-radius;
+    background: $text-editor-background;
+    padding-bottom: $text-editor-padding-bottom;
+    padding-left: $text-editor-padding-left;
+    padding-right: $text-editor-padding-right;
+    padding-top: $text-editor-padding-top;
+    margin-left: $text-editor-margin-left;
+    margin-bottom: $text-editor-margin-bottom;
+    margin-right: $text-editor-margin-right;
+    margin-top: $text-editor-margin-top;
+    width: 100%;
+    transform: translate(0, -2px);
+    outline: 0;
+    height: 100%;
 
-        &:focus {
-          outline: 0;
-          border-color: $text-editor-focus-border-color;
-          box-shadow: $text-editor-focus-box-shadow;
-        }
+    &:focus {
+      outline: 0;
+      border-color: $text-editor-focus-border-color;
+      box-shadow: $text-editor-focus-box-shadow;
+    }
 
-        &.right {
-          margin-left: calc(#{$text-editor-margin-left} + 9px);
-        }
+    &.right {
+      margin-left: calc(#{$text-editor-margin-left} + 9px);
+    }
+  }
 
-        &[readonly] {
-          background-color: $text-editor-readonly-color;
+  .slider-editor-input {
+    &:focus {
+      outline: 0;
+      border-color: $slider-editor-focus-border-color;
+      box-shadow: $slider-editor-focus-box-shadow;
+    }
+  }
+
+  .flatpickr.input-group {
+    .input-group-btn {
+      .btn {
+        border-left: 0 !important;
+        background-color: #eeeeee;
+        border: 1px solid #cccccc;
+        padding: $date-editor-clear-button-icon-padding;
+        border-top-right-radius: $text-editor-border-radius;
+        border-bottom-right-radius: $text-editor-border-radius;
+        cursor: pointer;
+        height: $date-editor-height;
+        &.icon-close:before {
+          font-family: $icon-font-family;
+          font-size: $date-editor-clear-button-icon-size;
+          content: $date-editor-clear-button-icon;
+          vertical-align: $date-editor-clear-button-icon-vertical-align;
+          display: inline-block;
+          height: $date-editor-clear-button-icon-height;
+          width: $date-editor-clear-button-icon-width;
+          margin-top: $date-editor-clear-button-icon-margin-top;
         }
       }
+    }
+  }
+  .flatpickr-alt-input {
+    cursor: pointer;
+    height: $date-editor-height;
+    border-top-left-radius: $text-editor-border-radius !important;
+    border-bottom-left-radius: $text-editor-border-radius !important;
+    padding: $date-editor-input-padding;
 
-      .slider-editor-input {
-        &:focus {
-          outline: 0;
-          border-color: $slider-editor-focus-border-color;
-          box-shadow: $slider-editor-focus-box-shadow;
-        }
-      }
+    &.editor-text {
+      cursor: pointer;
+      background-color: $flatpickr-bgcolor;
 
-      .flatpickr-alt-input.editor-text {
-        &:focus {
-          outline: 0;
-          border-color: $date-editor-focus-border-color;
-          box-shadow: $date-editor-focus-box-shadow;
-        }
+      &:focus {
+        outline: 0;
+        border-color: $date-editor-focus-border-color;
+        box-shadow: $date-editor-focus-box-shadow;
       }
     }
   }
@@ -64,6 +96,7 @@
     text-align: $large-editor-button-text-align;
     button {
       margin-left: $large-editor-footer-spacing;
+      border-radius: $large-editor-button-border-radius;
     }
   }
 
@@ -79,5 +112,327 @@
     float: left;
     font-size: $large-editor-count-font-size;
     margin-top: $large-editor-count-margin-top;
+    .separator {
+      margin: $large-editor-count-separator-margin;
+    }
+  }
+}
+
+/* Slick Composite Editor Modal */
+.slick-modal-open {
+  overflow: hidden;
+}
+.slick-editor-modal {
+  position: fixed;
+  overflow-y: auto;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 1;
+  background: $editor-modal-backdrop-transition-background;
+  z-index: $editor-modal-container-z-index;
+  transition: $editor-modal-backdrop-transition-start;
+
+  .slick-editor-modal-content {
+    display: inline-block;
+    position: absolute;
+    border-radius: $editor-modal-container-radius;
+    font-family: $font-family;
+    border: $editor-modal-container-border;
+    margin: $editor-modal-container-margin;
+    background-color: $editor-modal-container-bg-color;
+    box-shadow: $editor-modal-container-box-shadow;
+    width: $editor-modal-container-width;
+    min-width: $editor-modal-container-min-width;
+    top: $editor-modal-container-top;
+    left: $editor-modal-container-left;
+    transform: $editor-modal-container-transform;
+    transition: $editor-modal-backdrop-transition-end;
+    transition-property: opacity,transform;
+
+    @media only screen and (min-width : 768px) {
+      &.split-view {
+        width: calc(#{$editor-modal-container-width} * 2);
+      }
+      &.triple-split-view {
+        width: calc(#{$editor-modal-container-width} * 3);
+      }
+    }
+
+    /** we'll triple the width only a large screen */
+    @media only screen and (max-width : 1200px) {
+      &.triple-split-view {
+        width: calc(#{$editor-modal-container-width} * 2);
+      }
+    }
+
+    @media only screen and (max-width: 768px) {
+      width: 100% !important;
+      margin: 0;
+      top: 0;
+    }
+
+    .btn {
+      margin: $editor-modal-footer-btn-margin;
+      height: $editor-modal-footer-btn-height;
+      border: $editor-modal-footer-btn-border;
+      border-radius: $editor-modal-footer-btn-radius;
+      &:hover {
+        border-color: $editor-modal-footer-btn-border-hover;
+      }
+      &:disabled {
+        background-color: $button-primary-bg-color-disabled;
+      }
+    }
+
+    .close {
+      cursor: pointer;
+      position: absolute;
+      float: right;
+      line-height: 0;
+      background-color: $editor-modal-close-btn-bg-color;
+      border: $editor-modal-close-btn-border;
+      color: $editor-modal-close-btn-color;
+      font-family: $editor-modal-close-btn-font-family;
+      font-size: $editor-modal-close-btn-font-size;
+      font-weight: $editor-modal-close-btn-font-weight;
+      height: $editor-modal-close-btn-height;
+      margin: $editor-modal-close-btn-margin;
+      padding: $editor-modal-close-btn-padding;
+      width: $editor-modal-close-btn-width;
+      right: $editor-modal-close-btn-right;
+      top: $editor-modal-close-btn-top;
+      &:hover {
+        color: $editor-modal-close-btn-color-hover;
+      }
+      &.outside {
+        @media only screen and (min-width: 769px) {
+          color: $editor-modal-close-btn-outside-color;
+          &:hover {
+            color: $editor-modal-close-btn-outside-color-hover;
+          }
+          font-size: $editor-modal-close-btn-outside-font-size;
+          right: $editor-modal-close-btn-outside-right;
+          top: $editor-modal-close-btn-outside-top;
+        }
+      }
+    }
+
+    .slick-editor-modal-title {
+      font-size: $editor-modal-title-font-size;
+      font-weight: $editor-modal-title-font-weight;
+      line-height: $editor-modal-title-line-height;
+      color: $editor-modal-title-font-color;
+      height: calc(#{$editor-modal-header-height} - (#{$editor-modal-header-padding-top-bottom} * 2));
+      overflow: hidden auto;
+      text-align: $editor-modal-title-text-align;
+      text-overflow: ellipsis;
+      width: calc(100% - #{$editor-modal-close-btn-width} - #{$editor-modal-close-btn-right});
+      white-space: nowrap;
+      &.outside {
+        width: 100%;
+      }
+    }
+
+    .slick-editor-modal-body {
+      padding: $editor-modal-body-padding;
+      min-height: $editor-modal-body-min-height;
+      max-height: $editor-modal-body-max-height;
+      overflow: $editor-modal-body-overflow;
+      display: flex;
+      flex-wrap: wrap;
+
+      .slick-cell {
+        height: inherit;
+      }
+
+      .validation-summary {
+        padding: $editor-modal-validation-summary-padding;
+        color: $editor-modal-validation-summary-color;
+        width: $editor-modal-validation-summary-width;
+        margin-bottom: $editor-modal-validation-summary-margin-bottom;
+        font-size: $editor-modal-validation-summary-font-size;
+        font-style: $editor-modal-validation-summary-font-style;
+      }
+    }
+
+    .slick-editor-modal-header {
+      padding: $editor-modal-header-padding;
+      height: $editor-modal-header-height;
+      border-bottom: $editor-modal-header-border-bottom;
+      background-color: $editor-modal-header-bg-color;
+    }
+
+    .slick-editor-modal-footer {
+      background-color: $editor-modal-footer-bg-color;
+      border-top: $editor-modal-footer-border-top;
+      min-height: $editor-modal-footer-height;
+      padding: $editor-modal-footer-padding;
+      line-height: $editor-modal-footer-line-height;
+
+      .footer-buttons {
+        float: right;
+        text-align: right;
+        width: $editor-modal-footer-buttons-width;
+
+        button {
+          max-width: $editor-modal-footer-btn-max-width;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .saving:before {
+          height: $editor-modal-footer-btn-saving-icon-height;
+          width: $editor-modal-footer-btn-saving-icon-width;
+          display: $editor-modal-footer-btn-saving-icon-display;
+          vertical-align: $editor-modal-footer-btn-saving-icon-vertical-align;
+          margin: $editor-modal-footer-btn-saving-icon-margin;
+          animation: $editor-modal-footer-btn-saving-icon-animation;
+          content: $editor-modal-footer-btn-saving-icon-content;
+        }
+      }
+      .footer-status-text {
+        float: left;
+        text-align: left;
+        width: $editor-modal-footer-status-text-width;
+        font-size: $editor-modal-status-text-font-size;
+        color: $editor-modal-status-text-color;
+      }
+    }
+
+    .item-details-label {
+      display: block;
+      margin: $editor-modal-detail-label-margin;
+      font-size: $editor-modal-detail-label-font-size;
+      font-style: $editor-modal-detail-label-font-style;
+      font-weight: $editor-modal-detail-label-font-weight;
+      &.invalid {
+        color: $editor-modal-detail-label-color-invalid;
+      }
+    }
+
+    .item-details-editor-container {
+      display: block;
+      box-sizing: border-box;
+      border: $editor-modal-detail-container-border;
+      border-radius: $editor-modal-detail-container-border-radius;
+      line-height: $editor-modal-detail-container-line-height;
+      margin: $editor-modal-detail-container-margin;
+      padding: $editor-modal-detail-container-padding;
+
+      input {
+        height: $editor-modal-input-editor-height;
+        margin: $editor-modal-input-editor-margin;
+        border: $editor-modal-input-editor-border;
+        padding: $editor-modal-input-editor-padding;
+        &:focus {
+          border-color: $text-editor-focus-border-color;
+          box-shadow: $text-editor-focus-box-shadow;
+        }
+        &:disabled {
+          background-color: $editor-input-disabled-color;
+        }
+      }
+      .input-group {
+        position: relative;
+        height: $editor-modal-input-editor-height;
+        input {
+          height: $editor-modal-input-editor-height;
+        }
+      }
+      .slick-large-editor-text {
+        border: $editor-modal-large-editor-border;
+        border-radius: $editor-modal-large-editor-border-radius;
+        padding: $editor-modal-large-editor-padding;
+        &:focus-within {
+          border-color: $text-editor-focus-border-color;
+          box-shadow: $text-editor-focus-box-shadow;
+        }
+        textarea {
+          width: 100%;
+          height: 100%;
+          &:disabled {
+            background-color: $editor-input-disabled-color;
+          }
+        }
+        .editor-footer {
+          height: $editor-modal-large-editor-footer-height;
+          line-height: $editor-modal-large-editor-footer-line-height;
+          color: $editor-modal-large-editor-count-color;
+          .counter {
+            font-size: $editor-modal-large-editor-count-font-size;
+            margin: $editor-modal-large-editor-count-margin;
+          }
+        }
+
+        &.invalid {
+          border: $editor-modal-detail-container-border-invalid;
+        }
+        &:disabled, &.disabled {
+          background-color: $editor-input-disabled-color;
+        }
+      }
+      .ms-choice {
+        &:disabled {
+          background-color: $editor-input-disabled-color;
+        }
+      }
+      .checkbox-editor-container {
+        padding: $editor-modal-checkbox-editor-padding;
+        border: $editor-modal-checkbox-editor-border;
+        border-radius: $editor-modal-checkbox-editor-border-radius;
+        height: $editor-modal-input-editor-height;
+        input {
+          height: inherit;
+        }
+        &.disabled {
+          background-color: $editor-input-disabled-color;
+        }
+      }
+
+      .flatpickr.input-group {
+        .input-group-btn {
+          .btn {
+            height: $editor-modal-input-editor-height;
+          }
+        }
+      }
+      .flatpickr-input.form-control, .flatpickr-alt-input[readonly] {
+        background-color: $flatpickr-bgcolor;
+        &:disabled {
+          background-color: $editor-input-disabled-color;
+          cursor: initial;
+        }
+      }
+      .slider-value {
+        min-width: 28px;
+      }
+
+      &.modified {
+        input, .slick-large-editor-text, .ms-choice, .checkbox-editor-container {
+          border: $editor-modal-detail-container-border-modified;
+          border-width: $editor-modal-detail-container-border-width-modified;
+        }
+      }
+      &.invalid {
+        input, .slick-large-editor-text {
+          border: $editor-modal-detail-container-border-invalid;
+        }
+      }
+      &.disabled {
+        background-color: $editor-input-disabled-color;
+      }
+    }
+
+    .item-details-validation {
+      color: $editor-modal-validation-color;
+      font-size: $editor-modal-validation-font-size;
+      font-style: $editor-modal-validation-font-style;
+      font-weight: $editor-modal-validation-font-weight;
+      line-height: $editor-modal-validation-line-height;
+      margin-left: $editor-modal-validation-margin-left;
+      min-height: $editor-modal-validation-min-height;
+    }
   }
 }

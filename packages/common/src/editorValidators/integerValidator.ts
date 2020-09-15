@@ -1,5 +1,5 @@
 import { Constants } from '../constants';
-import { EditorValidatorOutput } from '../interfaces/editorValidatorOutput.interface';
+import { EditorValidationResult } from '../interfaces/editorValidationResult.interface';
 import { EditorValidator } from '../interfaces/editorValidator.interface';
 
 interface IntegerValidatorOptions {
@@ -12,7 +12,7 @@ interface IntegerValidatorOptions {
   validator?: EditorValidator;
 }
 
-export function integerValidator(inputValue: any, options: IntegerValidatorOptions): EditorValidatorOutput {
+export function integerValidator(inputValue: any, options: IntegerValidatorOptions): EditorValidationResult {
   let intNumber = !isNaN(inputValue as number) ? parseInt(inputValue, 10) : null;
   if (intNumber !== null && isNaN(intNumber)) {
     intNumber = null;

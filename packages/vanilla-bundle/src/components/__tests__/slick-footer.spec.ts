@@ -1,5 +1,5 @@
 import { GridOption, SlickGrid } from '@slickgrid-universal/common';
-import { SlickFooterComponent } from '../slick-footer';
+import { SlickFooterComponent } from '../slick-footer.component';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 function removeExtraSpaces(textS: string) {
@@ -47,7 +47,7 @@ describe('Slick-Footer Component', () => {
       component.dispose();
     });
 
-    it('should make sure Slick-Footer is defined', () => {
+    it('should make sure Slick-Footer is being created and rendered', () => {
       component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions, translateService);
       component.renderFooter(div);
 

@@ -5,18 +5,23 @@ import {
   CollectionOption,
   Column,
   ColumnEditor,
+  CompositeEditorOption,
   Editor,
   EditorArguments,
   EditorValidator,
-  EditorValidatorOutput,
+  EditorValidationResult,
   GridOption,
   Locale,
   MultipleSelectOption,
   SelectOption,
   SlickGrid,
+  SlickNamespace,
 } from './../interfaces/index';
 import { CollectionService, findOrDefault, TranslaterService } from '../services/index';
 import { charArraysEqual, getDescendantProperty, getTranslationPrefix, htmlEncode, sanitizeTextByAvailableSanitizer, setDeepValue } from '../services/utilities';
+
+// using external non-typed js libraries
+declare const Slick: SlickNamespace;
 
 /**
  * Slickgrid editor class for multiple/single select lists
@@ -35,7 +40,7 @@ export class SelectEditor implements Editor {
   defaultOptions: MultipleSelectOption;
 
   /** The original item values that are set at the beginning */
-  originalValue: any[];
+  originalValue: any | any[];
 
   /** The property name for labels in the collection */
   labelName: string;
@@ -65,6 +70,8 @@ export class SelectEditor implements Editor {
   // commit changes from being called twice and erroring
   protected _destroying = false;
 
+  protected _isDisabled = false;
+
   /** Collection Service */
   protected _collectionService: CollectionService;
 
@@ -90,6 +97,7 @@ export class SelectEditor implements Editor {
     // provide the name attribute to the DOM element which will be needed to auto-adjust drop position (dropup / dropdown)
     const columnId = this.columnDef && this.columnDef.id;
     this.elementName = `editor-${columnId}`;
+    const compositeEditorOptions = this.args.compositeEditorOptions;
 
     const libOptions: MultipleSelectOption = {
       autoAdjustDropHeight: true,
@@ -105,7 +113,13 @@ export class SelectEditor implements Editor {
         const isRenderHtmlEnabled = this.columnEditor && this.columnEditor.enableRenderHtml || false;
         return isRenderHtmlEnabled ? $elm.text() : $elm.html();
       },
-      onClose: () => this.save(),
+      onClose: () => {
+        if (compositeEditorOptions) {
+          this.handleChangeOnCompositeEditor(compositeEditorOptions);
+        } else {
+          this.save();
+        }
+      },
     };
 
     if (isMultipleSelect) {
@@ -121,10 +135,10 @@ export class SelectEditor implements Editor {
         libOptions.selectAllText = this._translaterService.translate(`${translationPrefix}SELECT_ALL`);
         libOptions.okButtonText = this._translaterService.translate(`${translationPrefix}OK`);
       } else {
-        libOptions.countSelected = this._locales && this._locales.TEXT_X_OF_Y_SELECTED;
-        libOptions.allSelected = this._locales && this._locales.TEXT_ALL_SELECTED;
-        libOptions.selectAllText = this._locales && this._locales.TEXT_SELECT_ALL;
-        libOptions.okButtonText = this._locales && this._locales.TEXT_OK;
+        libOptions.countSelected = this._locales?.TEXT_X_OF_Y_SELECTED;
+        libOptions.allSelected = this._locales?.TEXT_ALL_SELECTED;
+        libOptions.selectAllText = this._locales?.TEXT_SELECT_ALL;
+        libOptions.okButtonText = this._locales?.TEXT_OK;
       }
     }
 
@@ -153,7 +167,7 @@ export class SelectEditor implements Editor {
     return this.columnDef && this.columnDef.internalColumnEditor || {};
   }
 
-  /** Get the Editor DOM Element */
+  /** Getter for the Editor DOM Element */
   get editorDomElement(): any {
     return this.$editorElm;
   }
@@ -302,8 +316,13 @@ export class SelectEditor implements Editor {
   }
 
   show() {
-    if (this.$editorElm && typeof this.$editorElm.multipleSelect === 'function') {
+    const isCompositeEditor = !!this.args?.compositeEditorOptions;
+
+    if (!isCompositeEditor && this.$editorElm && typeof this.$editorElm.multipleSelect === 'function') {
       this.$editorElm.multipleSelect('open');
+    } else if (isCompositeEditor) {
+      // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
+      this.applyInputUsabilityState();
     }
   }
 
@@ -328,7 +347,7 @@ export class SelectEditor implements Editor {
       const isComplexObject = fieldName !== undefined && fieldName?.indexOf('.') > 0;
 
       // validate the value before applying it (if not valid we'll set an empty string)
-      const validation = this.validate(newValue);
+      const validation = this.validate(null, newValue);
       newValue = (validation && validation.valid) ? newValue : '';
 
       // set the new value to the item datacontext
@@ -385,7 +404,7 @@ export class SelectEditor implements Editor {
 
       // compare all the array values but as string type since multiple-select always return string
       const currentStringValues = currentValues.map((i: any) => i.toString());
-      this.$editorElm.find('option').each((i: number, $e: any) => {
+      this.$editorElm.find('option').each((_i: number, $e: any) => {
         $e.selected = (currentStringValues.indexOf($e.value) !== -1);
       });
     }
@@ -397,26 +416,47 @@ export class SelectEditor implements Editor {
     this.$editorElm.val(currentValue);
 
     // make sure the prop exists first
-    this.$editorElm.find('option').each((i: number, $e: any) => {
+    this.$editorElm.find('option').each((_i: number, $e: any) => {
       // check equality after converting originalValue to string since the DOM value will always be of type string
       $e.selected = (`${currentValue}` === $e.value);
     });
   }
 
   save() {
-    // autocommit will not focus the next editor
     const validation = this.validate();
-    if (validation && validation.valid && this.isValueChanged()) {
-      if (!this._destroying && this.hasAutoCommitEdit) {
-        // do not use args.commitChanges() as this sets the focus to the next
-        // row. Also the select list will stay shown when clicking off the grid
-        this.grid.getEditorLock().commitCurrentEdit();
-      }
+    const isValid = (validation && validation.valid) || false;
+
+    if (!this._destroying && this.hasAutoCommitEdit && isValid) {
+      // do not use args.commitChanges() as this sets the focus to the next row.
+      // also the select list will stay shown when clicking off the grid
+      this.grid.getEditorLock().commitCurrentEdit();
+    } else {
+      this.args.commitChanges();
     }
   }
 
   serializeValue(): any | any[] {
     return (this.isMultipleSelect) ? this.currentValues : this.currentValue;
+  }
+
+  disable(isDisabled = true) {
+    const prevIsDisabled = this._isDisabled;
+    this._isDisabled = isDisabled;
+
+    if (this.$editorElm) {
+      if (isDisabled) {
+        this.$editorElm.multipleSelect('disable');
+
+        // clear the checkbox when it's newly disabled
+        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+          this.originalValue = this.isMultipleSelect ? [''] : '';
+          this.$editorElm.multipleSelect('setSelects', []);
+          this.handleChangeOnCompositeEditor(this.args.compositeEditorOptions);
+        }
+      } else {
+        this.$editorElm.multipleSelect('enable');
+      }
+    }
   }
 
   focus() {
@@ -432,10 +472,20 @@ export class SelectEditor implements Editor {
     return this.$editorElm.val() !== this.originalValue;
   }
 
-  validate(inputValue?: any): EditorValidatorOutput {
-    const isRequired = this.columnEditor && this.columnEditor.required;
+  validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
+    const isRequired = this.args?.compositeEditorOptions ? false : this.columnEditor?.required;
     const elmValue = (inputValue !== undefined) ? inputValue : this.$editorElm && this.$editorElm.val && this.$editorElm.val();
     const errorMsg = this.columnEditor && this.columnEditor.errorMessage;
+
+    // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
+    if (this.args.compositeEditorOptions) {
+      this.applyInputUsabilityState();
+    }
+
+    // when field is disabled, we can assume it's valid
+    if (this._isDisabled) {
+      return { valid: true, msg: '' };
+    }
 
     if (this.validator) {
       const value = (inputValue !== undefined) ? inputValue : (this.isMultipleSelect ? this.currentValues : this.currentValue);
@@ -459,6 +509,13 @@ export class SelectEditor implements Editor {
   //
   // protected functions
   // ------------------
+
+  /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
+  protected applyInputUsabilityState() {
+    const activeCell = this.grid.getActiveCell();
+    const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
+    this.disable(isCellEditable === false);
+  }
 
   /**
    * user might want to filter certain items of the collection
@@ -607,8 +664,28 @@ export class SelectEditor implements Editor {
       const editorOptions = (this.columnDef && this.columnDef.internalColumnEditor) ? this.columnDef.internalColumnEditor.editorOptions : {};
       this.editorElmOptions = { ...this.defaultOptions, ...editorOptions };
       this.$editorElm = this.$editorElm.multipleSelect(this.editorElmOptions);
-      setTimeout(() => this.show());
+      if (!this.args.compositeEditorOptions) {
+        setTimeout(() => this.show());
+      }
     }
+  }
+
+  protected handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption) {
+    const activeCell = this.grid.getActiveCell();
+    const column = this.args.column;
+    const columnId = this.columnDef?.id ?? '';
+    const item = this.args.item;
+    const grid = this.grid;
+
+    // when valid, we'll also apply the new value to the dataContext item object
+    if (this.validate().valid) {
+      this.applyValue(this.args.item, this.serializeValue());
+    }
+    this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+    if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+      delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
+    }
+    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, new Slick.EventData());
   }
 
   // refresh the jquery object because the selected checkboxes were already set

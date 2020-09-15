@@ -1,5 +1,5 @@
 import { Constants } from '../constants';
-import { EditorValidatorOutput } from '../interfaces/editorValidatorOutput.interface';
+import { EditorValidationResult } from '../interfaces/editorValidationResult.interface';
 import { EditorValidator } from '../interfaces/editorValidator.interface';
 
 interface FloatValidatorOptions {
@@ -13,7 +13,7 @@ interface FloatValidatorOptions {
   validator?: EditorValidator;
 }
 
-export function floatValidator(inputValue: any, options: FloatValidatorOptions): EditorValidatorOutput {
+export function floatValidator(inputValue: any, options: FloatValidatorOptions): EditorValidationResult {
   const floatNumber = !isNaN(inputValue as number) ? parseFloat(inputValue) : null;
   const decPlaces = options.decimal || 0;
   const isRequired = options.required;

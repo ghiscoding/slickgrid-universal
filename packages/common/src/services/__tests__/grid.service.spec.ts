@@ -1,6 +1,6 @@
 import 'jest-extended';
 
-import { FilterService, GridService, ExtensionService, PubSubService, SharedService, SortService } from '../index';
+import { FilterService, GridService, ExtensionService, PaginationService, PubSubService, SharedService, SortService } from '../index';
 import { GridOption, CellArgs, Column, OnEventArgs, SlickGrid, SlickDataView, SlickNamespace } from '../../interfaces/index';
 
 jest.useFakeTimers();
@@ -73,6 +73,11 @@ const gridStub = {
   updateRow: jest.fn(),
 } as unknown as SlickGrid;
 
+const paginationServiceStub = {
+  goToFirstPage: jest.fn(),
+  goToLastPage: jest.fn(),
+} as unknown as PaginationService;
+
 describe('Grid Service', () => {
   let service: GridService;
   const sharedService = new SharedService();
@@ -81,7 +86,7 @@ describe('Grid Service', () => {
   jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
 
   beforeEach(() => {
-    service = new GridService(extensionServiceStub, filterServiceStub, pubSubServiceStub, sharedService, sortServiceStub);
+    service = new GridService(extensionServiceStub, filterServiceStub, pubSubServiceStub, paginationServiceStub, sharedService, sortServiceStub);
     service.init(gridStub);
   });
 
@@ -574,6 +579,54 @@ describe('Grid Service', () => {
       expect(addSpy).toHaveBeenCalledWith(mockItem);
       expect(scrollSpy).toHaveBeenCalledWith(expectationNewRowPosition);
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
+    });
+
+    it('should expect the service to call the DataView "insertItem" and go to first page when using local Pagination and calling "addItem" when the insert position is set to "top"', () => {
+      const expectationNewRowPosition = 1000;
+      const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
+      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(expectationNewRowPosition);
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enablePagination: true } as GridOption);
+      const addSpy = jest.spyOn(dataviewStub, 'insertItem');
+      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const firstPageSpy = jest.spyOn(paginationServiceStub, 'goToFirstPage');
+      const lastPageSpy = jest.spyOn(paginationServiceStub, 'goToLastPage');
+
+      service.addItem(mockItem, { position: 'top' });
+
+      expect(addSpy).toHaveBeenCalledTimes(1);
+      expect(addSpy).toHaveBeenCalledWith(0, mockItem);
+      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
+      expect(firstPageSpy).toHaveBeenCalledTimes(1);
+      expect(lastPageSpy).toHaveBeenCalledTimes(0);
+
+      delete mockGridOptions.datasetIdPropertyName;
+      delete mockGridOptions.enablePagination;
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+    });
+
+    it('should expect the service to call the DataView "insertItem" and go to last page when using local Pagination and calling "addItem" when the insert position is set to "bottom"', () => {
+      const expectationNewRowPosition = 1000;
+      const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
+      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(expectationNewRowPosition);
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enablePagination: true } as GridOption);
+      const addSpy = jest.spyOn(dataviewStub, 'addItem');
+      const scrollSpy = jest.spyOn(gridStub, 'scrollRowIntoView');
+      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const firstPageSpy = jest.spyOn(paginationServiceStub, 'goToFirstPage');
+      const lastPageSpy = jest.spyOn(paginationServiceStub, 'goToLastPage');
+
+      service.addItem(mockItem, { position: 'bottom' });
+
+      expect(addSpy).toHaveBeenCalledTimes(1);
+      expect(addSpy).toHaveBeenCalledWith(mockItem);
+      expect(scrollSpy).toHaveBeenCalledWith(expectationNewRowPosition);
+      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
+      expect(firstPageSpy).toHaveBeenCalledTimes(0);
+      expect(lastPageSpy).toHaveBeenCalledTimes(1);
+
+      delete mockGridOptions.datasetIdPropertyName;
+      delete mockGridOptions.enablePagination;
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
     });
 
     it('should expect the service to call the "addItem" multiple times when calling "addItems" with an array of items', () => {

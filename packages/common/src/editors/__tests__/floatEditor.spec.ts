@@ -1,8 +1,9 @@
 import { Editors } from '../index';
 import { FloatEditor } from '../floatEditor';
 import { KeyCode } from '../../enums/index';
-import { Column, SlickDataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
 
+declare const Slick: SlickNamespace;
 const KEY_CHAR_0 = 48;
 const containerId = 'demo-container';
 
@@ -18,6 +19,7 @@ const dataViewStub = {
 const gridOptionMock = {
   autoCommitEdit: false,
   editable: true,
+  editorTypingDebounce: 0,
 } as GridOption;
 
 const getEditorLockMock = {
@@ -25,11 +27,14 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
-  getOptions: () => gridOptionMock,
+  getActiveCell: jest.fn(),
   getColumns: jest.fn(),
   getEditorLock: () => getEditorLockMock,
   getHeaderRowColumn: jest.fn(),
+  getOptions: () => gridOptionMock,
   render: jest.fn(),
+  onBeforeEditCell: new Slick.Event(),
+  onCompositeEditorChange: new Slick.Event(),
 } as unknown as SlickGrid;
 
 describe('FloatEditor', () => {
@@ -92,13 +97,11 @@ describe('FloatEditor', () => {
     });
 
     it('should initialize the editor and focus on the element after a small delay', () => {
-      const spy = jest.spyOn(editor, 'focus');
       editor = new FloatEditor(editorArguments);
       const editorCount = divContainer.querySelectorAll('input.editor-text.editor-price').length;
       jest.runAllTimers(); // fast-forward timer
 
       expect(editorCount).toBe(1);
-      expect(spy).toHaveBeenCalled();
     });
 
     it('should have a placeholder when defined in its column definition', () => {
@@ -143,7 +146,6 @@ describe('FloatEditor', () => {
     it('should define an item datacontext containing a string as cell value and expect this value to be loaded in the editor when calling "loadValue"', () => {
       editor = new FloatEditor(editorArguments);
       editor.loadValue(mockItemData);
-      const editorElm = editor.editorDomElement;
 
       expect(editor.getValue()).toBe('213');
     });
@@ -251,7 +253,7 @@ describe('FloatEditor', () => {
       });
 
       it('should return item data with an empty string in its value when it fails the custom validation', () => {
-        mockColumn.internalColumnEditor.validator = (value: any, args: EditorArgs) => {
+        mockColumn.internalColumnEditor.validator = (value: any) => {
           if (+value < 10) {
             return { valid: false, msg: 'Value must be over 10.' };
           }
@@ -406,7 +408,7 @@ describe('FloatEditor', () => {
         expect(spy).toHaveBeenCalled();
       });
 
-      it('should not call anything when the input value is not a valid float number', () => {
+      it('should call "commitCurrentEdit" even when the input value is not a valid float number', () => {
         mockItemData = { id: 1, price: null, isActive: true };
         gridOptionMock.autoCommitEdit = true;
         const spy = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
@@ -416,7 +418,7 @@ describe('FloatEditor', () => {
         editor.setValue('-.');
         editor.save();
 
-        expect(spy).not.toHaveBeenCalled();
+        expect(spy).toHaveBeenCalled();
       });
 
       it('should call "getEditorLock" and "save" methods when "hasAutoCommitEdit" is enabled and the event "focusout" is triggered', () => {
@@ -444,7 +446,7 @@ describe('FloatEditor', () => {
       it('should return False when field is required and field is empty', () => {
         mockColumn.internalColumnEditor.required = true;
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate('');
+        const validation = editor.validate(null, '');
 
         expect(validation).toEqual({ valid: false, msg: 'Field is required' });
       });
@@ -452,7 +454,7 @@ describe('FloatEditor', () => {
       it('should return False when field is not a valid float number', () => {
         mockColumn.internalColumnEditor.required = true;
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate('abc');
+        const validation = editor.validate(null, 'abc');
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number' });
       });
@@ -460,7 +462,7 @@ describe('FloatEditor', () => {
       it('should return False when field is lower than a minValue defined', () => {
         mockColumn.internalColumnEditor.minValue = 10.2;
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(10);
+        const validation = editor.validate(null, 10);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number that is greater than or equal to 10.2' });
       });
@@ -469,7 +471,7 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.minValue = 10.2;
         mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(10);
+        const validation = editor.validate(null, 10);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number that is greater than 10.2' });
       });
@@ -477,7 +479,7 @@ describe('FloatEditor', () => {
       it('should return True when field is equal to the minValue defined', () => {
         mockColumn.internalColumnEditor.minValue = 10.2;
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(10.2);
+        const validation = editor.validate(null, 10.2);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -485,7 +487,7 @@ describe('FloatEditor', () => {
       it('should return False when field is greater than a maxValue defined', () => {
         mockColumn.internalColumnEditor.maxValue = 10.2;
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(10.22);
+        const validation = editor.validate(null, 10.22);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number that is lower than or equal to 10.2' });
       });
@@ -494,7 +496,7 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.maxValue = 10.2;
         mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(10.22);
+        const validation = editor.validate(null, 10.22);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number that is lower than 10.2' });
       });
@@ -502,7 +504,7 @@ describe('FloatEditor', () => {
       it('should return True when field is equal to the maxValue defined', () => {
         mockColumn.internalColumnEditor.maxValue = 10.2;
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(10.2);
+        const validation = editor.validate(null, 10.2);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -511,7 +513,7 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.maxValue = 10.2;
         mockColumn.internalColumnEditor.operatorConditionalType = 'inclusive';
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(10.2);
+        const validation = editor.validate(null, 10.2);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -520,7 +522,7 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.maxValue = 10.2;
         mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(10.2);
+        const validation = editor.validate(null, 10.2);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number that is lower than 10.2' });
       });
@@ -529,7 +531,7 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.minValue = 10.5;
         mockColumn.internalColumnEditor.maxValue = 99.5;
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(99.6);
+        const validation = editor.validate(null, 99.6);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number between 10.5 and 99.5' });
       });
@@ -538,7 +540,7 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.minValue = 10.5;
         mockColumn.internalColumnEditor.maxValue = 99.5;
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(99.5);
+        const validation = editor.validate(null, 99.5);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -548,7 +550,7 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.maxValue = 99.5;
         mockColumn.internalColumnEditor.operatorConditionalType = 'inclusive';
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(10.5);
+        const validation = editor.validate(null, 10.5);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -558,8 +560,8 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.maxValue = 99.5;
         mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
         editor = new FloatEditor(editorArguments);
-        const validation1 = editor.validate(99.5);
-        const validation2 = editor.validate(10.5);
+        const validation1 = editor.validate(null, 99.5);
+        const validation2 = editor.validate(null, 10.5);
 
         expect(validation1).toEqual({ valid: false, msg: 'Please enter a valid number between 10.5 and 99.5' });
         expect(validation2).toEqual({ valid: false, msg: 'Please enter a valid number between 10.5 and 99.5' });
@@ -569,7 +571,7 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.params = { decimalPlaces: 2 };
 
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(99.6433);
+        const validation = editor.validate(null, 99.6433);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number with a maximum of 2 decimals' });
       });
@@ -578,7 +580,7 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.params = { decimalPlaces: 2 };
 
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(99.6);
+        const validation = editor.validate(null, 99.6);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -587,7 +589,7 @@ describe('FloatEditor', () => {
         mockColumn.internalColumnEditor.params = { decimalPlaces: 2 };
 
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(99.65);
+        const validation = editor.validate(null, 99.65);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -595,7 +597,7 @@ describe('FloatEditor', () => {
       it('should return True when field is required and field is a valid input value', () => {
         mockColumn.internalColumnEditor.required = true;
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate(2.5);
+        const validation = editor.validate(null, 2.5);
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -603,10 +605,107 @@ describe('FloatEditor', () => {
       it('should return True when field is required and field is a valid decimal value without 0 suffix', () => {
         mockColumn.internalColumnEditor.required = true;
         editor = new FloatEditor(editorArguments);
-        const validation = editor.validate('.5');
+        const validation = editor.validate(null, '.5');
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
+    });
+  });
+
+  describe('with Composite Editor', () => {
+    beforeEach(() => {
+      editorArguments = {
+        ...editorArguments,
+        compositeEditorOptions: { headerTitle: 'Test', formValues: {}, modalType: 'edit' }
+      } as EditorArguments;
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
+
+      editor = new FloatEditor(editorArguments);
+      const disableSpy = jest.spyOn(editor, 'disable');
+      editor.show();
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(disableSpy).toHaveBeenCalledWith(false);
+    });
+
+    it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(false);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+
+      editor = new FloatEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      const disableSpy = jest.spyOn(editor, 'disable');
+      editor.show();
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: {},
+      }, expect.anything());
+      expect(disableSpy).toHaveBeenCalledWith(true);
+      expect(editor.editorDomElement.disabled).toEqual(true);
+      expect(editor.editorDomElement.checked).toEqual(false);
+    });
+
+    it('should expect "onCompositeEditorChange" to have been triggered by keyup with the new value showing up in its "formValues" object', () => {
+      jest.useFakeTimers();
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      gridOptionMock.autoCommitEdit = true;
+      mockItemData = { id: 1, price: 35, isActive: true };
+
+      editor = new FloatEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      editor.editorDomElement.value = 35;
+      editor.editorDomElement.dispatchEvent(new (window.window as any).Event('keyup'));
+
+      jest.runTimersToTime(50);
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: { price: 35 },
+      }, expect.anything());
+    });
+
+    it('should expect "onCompositeEditorChange" to have been triggered by change (number spinner) with the new value showing up in its "formValues" object', () => {
+      jest.useFakeTimers();
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      gridOptionMock.autoCommitEdit = true;
+      mockItemData = { id: 1, price: 35, isActive: true };
+
+      editor = new FloatEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      editor.editorDomElement.value = 35;
+      editor.editorDomElement.dispatchEvent(new (window.window as any).Event('change'));
+
+      jest.runTimersToTime(50);
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: { price: 35 },
+      }, expect.anything());
     });
   });
 });

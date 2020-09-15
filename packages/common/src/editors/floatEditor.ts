@@ -1,9 +1,12 @@
 import { KeyCode } from '../enums/index';
-import { Column, ColumnEditor, Editor, EditorArguments, EditorValidator, EditorValidatorOutput, SlickGrid } from '../interfaces/index';
-import { setDeepValue, getDescendantProperty } from '../services/utilities';
+import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption, SlickGrid, SlickNamespace, } from '../interfaces/index';
+import { debounce, getDescendantProperty, setDeepValue } from '../services/utilities';
 import { floatValidator } from '../editorValidators/floatValidator';
 
-const defaultDecimalPlaces = 0;
+const DEFAULT_DECIMAL_PLACES = 0;
+
+// using external non-typed js libraries
+declare const Slick: SlickNamespace;
 
 /*
  * An example of a 'detached' editor.
@@ -11,17 +14,22 @@ const defaultDecimalPlaces = 0;
  */
 export class FloatEditor implements Editor {
   private _input: HTMLInputElement;
+  private _isDisabled = false;
   private _lastInputKeyEvent: KeyboardEvent;
-  originalValue: number | string;
+  private _originalValue: number | string;
 
   /** SlickGrid Grid object */
   grid: SlickGrid;
+
+  /** Grid options */
+  gridOptions: GridOption;
 
   constructor(private args: EditorArguments) {
     if (!args) {
       throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
     }
     this.grid = args.grid;
+    this.gridOptions = args.grid && args.grid.getOptions() as GridOption;
     this.init();
   }
 
@@ -35,7 +43,7 @@ export class FloatEditor implements Editor {
     return this.columnDef && this.columnDef.internalColumnEditor || {};
   }
 
-  /** Get the Editor DOM Element */
+  /** Getter for the Editor DOM Element */
   get editorDomElement(): any {
     return this._input;
   }
@@ -55,6 +63,7 @@ export class FloatEditor implements Editor {
       const placeholder = this.columnEditor.placeholder || '';
       const title = this.columnEditor.title || '';
       const inputStep = (this.columnEditor.valueStep !== undefined) ? this.columnEditor.valueStep : this.getInputDecimalSteps();
+      const compositeEditorOptions = this.args.compositeEditorOptions;
 
       this._input = document.createElement('input') as HTMLInputElement;
       this._input.className = `editor-text editor-${columnId}`;
@@ -69,6 +78,7 @@ export class FloatEditor implements Editor {
         cellContainer.appendChild(this._input);
       }
 
+      this._input.onfocus = () => this._input.select();
       this._input.onkeydown = ((event: KeyboardEvent) => {
         this._lastInputKeyEvent = event;
         if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT) {
@@ -78,19 +88,45 @@ export class FloatEditor implements Editor {
 
       // the lib does not get the focus out event for some reason
       // so register it here
-      if (this.hasAutoCommitEdit) {
+      if (this.hasAutoCommitEdit && !compositeEditorOptions) {
         this._input.addEventListener('focusout', () => this.save());
       }
 
-      setTimeout(() => this.focus(), 50);
+      if (compositeEditorOptions) {
+        this._input.addEventListener('keyup', this.handleOnKeyUp.bind(this));
+        this._input.addEventListener('change', this.handleOnChange.bind(this));
+        this._input.addEventListener('wheel', this.handleOnChange.bind(this));
+      }
     }
   }
 
   destroy() {
-    const columnId = this.columnDef && this.columnDef.id;
-    const elm = document.querySelector(`.editor-text.editor-${columnId}`);
-    if (elm) {
-      elm.removeEventListener('focusout', this.save);
+    if (this._input) {
+      this._input.removeEventListener('focusout', this.save);
+      this._input.removeEventListener('keyup', this.handleOnKeyUp);
+      this._input.removeEventListener('change', this.handleOnChange);
+      this._input.removeEventListener('wheel', this.handleOnChange.bind(this));
+      setTimeout(() => this._input.remove());
+    }
+  }
+
+  disable(isDisabled = true) {
+    const prevIsDisabled = this._isDisabled;
+    this._isDisabled = isDisabled;
+
+    if (this._input) {
+      if (isDisabled) {
+        this._input.setAttribute('disabled', 'disabled');
+
+        // clear the checkbox when it's newly disabled
+        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+          this._originalValue = '';
+          this._input.value = '';
+          this.handleChangeOnCompositeEditor(null, this.args.compositeEditorOptions);
+        }
+      } else {
+        this._input.removeAttribute('disabled');
+      }
     }
   }
 
@@ -98,12 +134,20 @@ export class FloatEditor implements Editor {
     this._input.focus();
   }
 
+  show() {
+    const isCompositeEditor = !!this.args?.compositeEditorOptions;
+    if (isCompositeEditor) {
+      // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
+      this.applyInputUsabilityState();
+    }
+  }
+
   getDecimalPlaces(): number {
     // returns the number of fixed decimal places or null
     let rtn = this.columnEditor?.decimal ?? this.columnEditor?.params?.decimalPlaces ?? undefined;
 
     if (rtn === undefined) {
-      rtn = defaultDecimalPlaces;
+      rtn = DEFAULT_DECIMAL_PLACES;
     }
     return (!rtn && rtn !== 0 ? null : rtn);
   }
@@ -134,7 +178,7 @@ export class FloatEditor implements Editor {
     if (fieldName !== undefined) {
       const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
-      const validation = this.validate(state);
+      const validation = this.validate(null, state);
       const newValue = (validation && validation.valid) ? state : '';
 
       // set the new value to the item datacontext
@@ -152,7 +196,7 @@ export class FloatEditor implements Editor {
     if (this.columnEditor && this.columnEditor.alwaysSaveOnEnterKey && lastKeyEvent === KeyCode.ENTER) {
       return true;
     }
-    return (!(elmValue === '' && (this.originalValue === null || this.originalValue === undefined))) && (elmValue !== this.originalValue);
+    return (!(elmValue === '' && (this._originalValue === null || this._originalValue === undefined))) && (elmValue !== this._originalValue);
   }
 
   loadValue(item: any) {
@@ -165,12 +209,12 @@ export class FloatEditor implements Editor {
         const isComplexObject = fieldName?.indexOf('.') > 0;
         const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
 
-        this.originalValue = value;
+        this._originalValue = value;
         const decPlaces = this.getDecimalPlaces();
-        if (decPlaces !== null && (this.originalValue || this.originalValue === 0) && (+this.originalValue).toFixed) {
-          this.originalValue = (+this.originalValue).toFixed(decPlaces);
+        if (decPlaces !== null && (this._originalValue || this._originalValue === 0) && (+this._originalValue).toFixed) {
+          this._originalValue = (+this._originalValue).toFixed(decPlaces);
         }
-        this._input.value = `${this.originalValue}`;
+        this._input.value = `${this._originalValue}`;
         this._input.select();
       }
     }
@@ -178,12 +222,14 @@ export class FloatEditor implements Editor {
 
   save() {
     const validation = this.validate();
-    if (validation && validation.valid && this.isValueChanged()) {
-      if (this.hasAutoCommitEdit) {
-        this.grid.getEditorLock().commitCurrentEdit();
-      } else {
-        this.args.commitChanges();
-      }
+    const isValid = (validation && validation.valid) || false;
+
+    if (this.hasAutoCommitEdit && isValid) {
+      // do not use args.commitChanges() as this sets the focus to the next row.
+      // also the select list will stay shown when clicking off the grid
+      this.grid.getEditorLock().commitCurrentEdit();
+    } else {
+      this.args.commitChanges();
     }
   }
 
@@ -202,7 +248,17 @@ export class FloatEditor implements Editor {
     return rtn;
   }
 
-  validate(inputValue?: any): EditorValidatorOutput {
+  validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
+    // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
+    if (this.args.compositeEditorOptions) {
+      this.applyInputUsabilityState();
+    }
+
+    // when field is disabled, we can assume it's valid
+    if (this._isDisabled) {
+      return { valid: true, msg: '' };
+    }
+
     const elmValue = (inputValue !== undefined) ? inputValue : this._input && this._input.value;
     return floatValidator(elmValue, {
       editorArgs: this.args,
@@ -211,8 +267,53 @@ export class FloatEditor implements Editor {
       minValue: this.columnEditor.minValue,
       maxValue: this.columnEditor.maxValue,
       operatorConditionalType: this.columnEditor.operatorConditionalType,
-      required: this.columnEditor.required,
+      required: this.args?.compositeEditorOptions ? false : this.columnEditor.required,
       validator: this.validator,
     });
+  }
+
+  // --
+  // private functions
+  // ------------------
+
+  /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
+  private applyInputUsabilityState() {
+    const activeCell = this.grid.getActiveCell();
+    const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
+    this.disable(isCellEditable === false);
+  }
+
+  private handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption) {
+    const activeCell = this.grid.getActiveCell();
+    const column = this.args.column;
+    const columnId = this.columnDef?.id ?? '';
+    const item = this.args.item;
+    const grid = this.grid;
+
+    // when valid, we'll also apply the new value to the dataContext item object
+    if (this.validate().valid) {
+      this.applyValue(this.args.item, this.serializeValue());
+    }
+    this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+    if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+      delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
+    }
+    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
+  }
+
+  /** When the input value changes (this will cover the input spinner arrows on the right) */
+  private handleOnChange(event: KeyboardEvent) {
+    const compositeEditorOptions = this.args.compositeEditorOptions;
+    if (compositeEditorOptions) {
+      this.handleChangeOnCompositeEditor(event, compositeEditorOptions);
+    }
+  }
+
+  private handleOnKeyUp(event: KeyboardEvent) {
+    const compositeEditorOptions = this.args.compositeEditorOptions;
+    if (compositeEditorOptions) {
+      const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
+      debounce(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay)();
+    }
   }
 }

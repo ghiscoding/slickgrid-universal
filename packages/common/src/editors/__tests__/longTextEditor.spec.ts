@@ -1,9 +1,10 @@
 import { Editors } from '../index';
 import { LongTextEditor } from '../longTextEditor';
 import { KeyCode } from '../../enums/index';
-import { AutocompleteOption, Column, SlickDataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { AutocompleteOption, Column, EditorArgs, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
+declare const Slick: SlickNamespace;
 const KEY_CHAR_A = 97;
 const containerId = 'demo-container';
 
@@ -18,6 +19,7 @@ const gridOptionMock = {
   autoCommitEdit: false,
   editable: true,
   i18n: null,
+  editorTypingDebounce: 0,
 } as GridOption;
 
 const getEditorLockMock = {
@@ -25,13 +27,16 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
-  getOptions: () => gridOptionMock,
+  getActiveCell: jest.fn(),
   getColumns: jest.fn(),
   getEditorLock: () => getEditorLockMock,
   getHeaderRowColumn: jest.fn(),
+  getOptions: () => gridOptionMock,
   navigateNext: jest.fn(),
   navigatePrev: jest.fn(),
   render: jest.fn(),
+  onBeforeEditCell: new Slick.Event(),
+  onCompositeEditorChange: new Slick.Event(),
 } as unknown as SlickGrid;
 
 describe('LongTextEditor', () => {
@@ -508,7 +513,7 @@ describe('LongTextEditor', () => {
       it('should return False when field is required and field is empty', () => {
         mockColumn.internalColumnEditor.required = true;
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate('');
+        const validation = editor.validate(null, '');
 
         expect(validation).toEqual({ valid: false, msg: 'Field is required' });
       });
@@ -516,7 +521,7 @@ describe('LongTextEditor', () => {
       it('should return True when field is required and input is a valid input value', () => {
         mockColumn.internalColumnEditor.required = true;
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate('text');
+        const validation = editor.validate(null, 'text');
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -524,7 +529,7 @@ describe('LongTextEditor', () => {
       it('should return False when field is lower than a minLength defined', () => {
         mockColumn.internalColumnEditor.minLength = 5;
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate('text');
+        const validation = editor.validate(null, 'text');
 
         expect(validation).toEqual({ valid: false, msg: 'Please make sure your text is at least 5 character(s)' });
       });
@@ -533,7 +538,7 @@ describe('LongTextEditor', () => {
         mockColumn.internalColumnEditor.minLength = 5;
         mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate('text');
+        const validation = editor.validate(null, 'text');
 
         expect(validation).toEqual({ valid: false, msg: 'Please make sure your text is more than 5 character(s)' });
       });
@@ -541,7 +546,7 @@ describe('LongTextEditor', () => {
       it('should return True when field is equal to the minLength defined', () => {
         mockColumn.internalColumnEditor.minLength = 4;
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate('text');
+        const validation = editor.validate(null, 'text');
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -549,7 +554,7 @@ describe('LongTextEditor', () => {
       it('should return False when field is greater than a maxLength defined', () => {
         mockColumn.internalColumnEditor.maxLength = 10;
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate('text is 16 chars');
+        const validation = editor.validate(null, 'text is 16 chars');
 
         expect(validation).toEqual({ valid: false, msg: 'Please make sure your text is less than or equal to 10 characters' });
       });
@@ -558,7 +563,7 @@ describe('LongTextEditor', () => {
         mockColumn.internalColumnEditor.maxLength = 10;
         mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate('text is 16 chars');
+        const validation = editor.validate(null, 'text is 16 chars');
 
         expect(validation).toEqual({ valid: false, msg: 'Please make sure your text is less than 10 characters' });
       });
@@ -566,7 +571,7 @@ describe('LongTextEditor', () => {
       it('should return True when field is equal to the maxLength defined', () => {
         mockColumn.internalColumnEditor.maxLength = 16;
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate('text is 16 chars');
+        const validation = editor.validate(null, 'text is 16 chars');
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -575,7 +580,7 @@ describe('LongTextEditor', () => {
         mockColumn.internalColumnEditor.maxLength = 16;
         mockColumn.internalColumnEditor.operatorConditionalType = 'inclusive';
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate('text is 16 chars');
+        const validation = editor.validate(null, 'text is 16 chars');
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -584,7 +589,7 @@ describe('LongTextEditor', () => {
         mockColumn.internalColumnEditor.maxLength = 16;
         mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate('text is 16 chars');
+        const validation = editor.validate(null, 'text is 16 chars');
 
         expect(validation).toEqual({ valid: false, msg: 'Please make sure your text is less than 16 characters' });
       });
@@ -593,7 +598,7 @@ describe('LongTextEditor', () => {
         mockColumn.internalColumnEditor.minLength = 0;
         mockColumn.internalColumnEditor.maxLength = 10;
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate('text is 16 chars');
+        const validation = editor.validate(null, 'text is 16 chars');
 
         expect(validation).toEqual({ valid: false, msg: 'Please make sure your text length is between 0 and 10 characters' });
       });
@@ -602,7 +607,7 @@ describe('LongTextEditor', () => {
         mockColumn.internalColumnEditor.minLength = 0;
         mockColumn.internalColumnEditor.maxLength = 16;
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate('text is 16 chars');
+        const validation = editor.validate(null, 'text is 16 chars');
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -612,7 +617,7 @@ describe('LongTextEditor', () => {
         mockColumn.internalColumnEditor.maxLength = 15;
         mockColumn.internalColumnEditor.operatorConditionalType = 'inclusive';
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate('text');
+        const validation = editor.validate(null, 'text');
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -622,8 +627,8 @@ describe('LongTextEditor', () => {
         mockColumn.internalColumnEditor.maxLength = 16;
         mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
         editor = new LongTextEditor(editorArguments);
-        const validation1 = editor.validate('text is 16 chars');
-        const validation2 = editor.validate('text');
+        const validation1 = editor.validate(null, 'text is 16 chars');
+        const validation2 = editor.validate(null, 'text');
 
         expect(validation1).toEqual({ valid: false, msg: 'Please make sure your text length is between 4 and 16 characters' });
         expect(validation2).toEqual({ valid: false, msg: 'Please make sure your text length is between 4 and 16 characters' });
@@ -632,10 +637,84 @@ describe('LongTextEditor', () => {
       it('should return False when field is greater than a maxValue defined', () => {
         mockColumn.internalColumnEditor.maxLength = 10;
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate('Task is longer than 10 chars');
+        const validation = editor.validate(null, 'Task is longer than 10 chars');
 
         expect(validation).toEqual({ valid: false, msg: 'Please make sure your text is less than or equal to 10 characters' });
       });
+    });
+  });
+
+  describe('with Composite Editor', () => {
+    beforeEach(() => {
+      editorArguments = {
+        ...editorArguments,
+        compositeEditorOptions: { headerTitle: 'Test', formValues: {}, modalType: 'edit' }
+      } as EditorArguments;
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
+
+      editor = new LongTextEditor(editorArguments);
+      const disableSpy = jest.spyOn(editor, 'disable');
+      editor.show();
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(disableSpy).toHaveBeenCalledWith(false);
+    });
+
+    it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(false);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+
+      editor = new LongTextEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      const disableSpy = jest.spyOn(editor, 'disable');
+      editor.show();
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: {},
+      }, expect.anything());
+      expect(disableSpy).toHaveBeenCalledWith(true);
+      expect(editor.editorDomElement.attr('disabled')).toEqual('disabled');
+      expect(editor.editorDomElement.val()).toEqual('');
+    });
+
+    it('should expect "onCompositeEditorChange" to have been triggered with the new value showing up in its "formValues" object', () => {
+      jest.useFakeTimers();
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      gridOptionMock.autoCommitEdit = true;
+      mockItemData = { id: 1, title: 'task 2', isActive: true };
+
+      editor = new LongTextEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      const editorElm = document.body.querySelector<HTMLTextAreaElement>('.editor-title textarea');
+      editorElm.value = 'task 2';
+      editorElm.dispatchEvent(new (window.window as any).Event('keyup'));
+
+      jest.runTimersToTime(50);
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: { title: 'task 2' },
+      }, expect.anything());
     });
   });
 });

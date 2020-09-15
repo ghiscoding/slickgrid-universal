@@ -3,6 +3,7 @@ import { getAssociatedDateFormatter } from './formatterUtilities';
 import { arrayObjectToCsvFormatter } from './arrayObjectToCsvFormatter';
 import { arrayToCsvFormatter } from './arrayToCsvFormatter';
 import { boldFormatter } from './boldFormatter';
+import { centerFormatter } from './centerFormatter';
 import { checkboxFormatter } from './checkboxFormatter';
 import { checkmarkFormatter } from './checkmarkFormatter';
 import { checkmarkMaterialFormatter } from './checkmarkMaterialFormatter';
@@ -49,6 +50,9 @@ export const Formatters = {
 
   /** show value in bold font weight */
   bold: boldFormatter,
+
+  /** Center a text value horizontally */
+  center: centerFormatter,
 
   /** When value is filled (true), it will display a checkbox Unicode icon */
   checkbox: checkboxFormatter,

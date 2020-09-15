@@ -29,14 +29,19 @@
   > .close {
     float: right;
     cursor: pointer;
+    color: $cell-menu-close-btn-color;
     background-color: $cell-menu-close-btn-bg-color;
     width: $cell-menu-close-btn-width;
     height: $cell-menu-close-btn-height;
     margin: $cell-menu-close-btn-margin;
     padding: $cell-menu-close-btn-padding;
     border: $cell-menu-close-btn-border;
+    font-family: $cell-menu-close-btn-font-family;
     font-size: $cell-menu-close-btn-font-size;
 
+    &:hover {
+      color: $cell-menu-close-btn-color-hover;
+    }
     > span {
       opacity: $cell-menu-close-btn-opacity;
     }
@@ -63,6 +68,7 @@
     margin: 0;
     width: $cell-menu-item-width;
     height: $cell-menu-item-height;
+    vertical-align: middle;
 
     &:hover {
       border: $cell-menu-item-hover-border;
@@ -78,6 +84,9 @@
       margin: $cell-menu-divider-margin;
       background-color: $cell-menu-divider-color;
       width: $cell-menu-divider-width;
+      margin-left: auto;
+      margin-right: auto;
+
       &:hover {
         border: none;
         background-color: $cell-menu-divider-color;
@@ -149,13 +158,19 @@
 
   > .close {
     float: right;
+    color: $context-menu-close-btn-color;
     background-color: $context-menu-close-btn-bg-color;
     width: $context-menu-close-btn-width;
     height: $context-menu-close-btn-height;
     margin: $context-menu-close-btn-margin;
     padding: $context-menu-close-btn-padding;
     border: $context-menu-close-btn-border;
+    font-family: $context-menu-close-btn-font-family;
+    font-size: $context-menu-close-btn-font-size;
 
+    &:hover {
+      color: $context-menu-close-btn-color-hover;
+    }
     > span {
       opacity: $context-menu-close-btn-opacity;
     }
@@ -193,6 +208,9 @@
       margin: $context-menu-divider-margin;
       background-color: $context-menu-divider-color;
       width: $context-menu-divider-width;
+      margin-left: auto;
+      margin-right: auto;
+
       &:hover {
         border: none;
         background-color: $context-menu-divider-color;
@@ -382,6 +400,9 @@
     margin: $header-menu-divider-margin;
     background-color: $header-menu-divider-color;
     width: $header-menu-divider-width;
+    margin-left: auto;
+    margin-right: auto;
+
     &:hover {
       border: none;
       background-color: $header-menu-item-disabled-color;
@@ -451,6 +472,15 @@
 .slick-headerrow-column,
 .slick-column-name,
 .slick-cell-checkboxsel {
+  text-align: center;
+  #filter-checkbox-selectall-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    // line-height: 0;
+  }
+
   input[type=checkbox],
   #filter-checkbox-selectall-container > input[type=checkbox] {
     display:none;  /* to hide the checkbox itself */
@@ -458,8 +488,7 @@
 
   input[type=checkbox],
   #filter-checkbox-selectall-container > input[type=checkbox] + label {
-    margin-left: 4px;
-    margin-top: 3px;
+    margin: 0;
   }
 
   input[type=checkbox] + label:before,
@@ -508,6 +537,7 @@
 .ms-choice {
   border: $multiselect-input-filter-border;
   background-color: transparent;
+  font-size: $header-font-size;
 
   div {
     &:before {
@@ -528,7 +558,7 @@
   }
   .placeholder {
     font-family: $multiselect-placeholder-font-family;
-    font-size: ($multiselect-input-filter-font-size + 2px);
+    font-size: $header-font-size;
   }
 }
 .ms-filter.search-filter {
@@ -698,20 +728,24 @@ input.search-filter {
 // ----------------------------------------------
 
 .search-filter .flatpickr {
+  input.form-control {
+    cursor: pointer;
+  }
+
   .flatpickr {
     flex: 1;
     cursor: pointer;
 
     input.flatpickr.form-control,
     .flatpickr-input.form-control {
+      background-color: $flatpickr-bgcolor;
+      font-family: $filter-placeholder-font-family;
+      font-size: $font-size-base;
+      border-radius: $compound-filter-border-radius;
+      width: 100%;
+      &[readonly] {
         background-color: $flatpickr-bgcolor;
-        font-family: $filter-placeholder-font-family;
-        font-size: $font-size-base;
-        border-radius: $compound-filter-border-radius;
-        width: 100%;
-        &[readonly] {
-          background-color: $flatpickr-bgcolor;
-        }
+      }
     }
     .flatpickr.form-control[readonly] {
       background-color: $flatpickr-bgcolor;
@@ -774,9 +808,10 @@ input.flatpickr.form-control {
       cursor: pointer;
       display: inline-flex;
       color: $draggable-group-delete-color;
+      font-size: $draggable-group-delete-font-size;
       padding-left: $draggable-group-delete-padding-left;
       padding-right: $draggable-group-delete-padding-right;
-      font-size: $draggable-group-delete-font-size;
+      vertical-align: $draggable-group-delete-vertical-align;
       &:hover {
         color: $draggable-group-delete-hover-color;
       }
@@ -916,8 +951,12 @@ input.slider-filter-input[type=range] {
   }
 }
 .search-filter {
+  height: $header-input-height;
+
   .slider-value {
     padding: 0;
+    height: 100%;
+
     .input-group-text {
       padding: $slider-filter-number-padding;
       font-size: $slider-filter-number-font-size;

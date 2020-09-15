@@ -23,6 +23,7 @@ import {
   SlickCellSelectionModel,
   SlickCheckboxSelectColumn,
   SlickColumnPicker,
+  SlickCompositeEditor,
   SlickContextMenu,
   SlickDataView,
   SlickDraggableGrouping,
@@ -41,6 +42,7 @@ import {
   SlickRowMoveManager,
   SlickRowSelectionModel,
 } from './index';
+import { CompositeEditorOption } from './compositeEditorOption.interface';
 
 /**
  * Slick Grid class interface of the entire library and it's multiple controls/plugins.
@@ -75,6 +77,9 @@ export interface SlickNamespace {
   // --
   // Slick Core
   // --------------------------
+
+  /** A composite SlickGrid editor factory. Generates an editor that is composed of multiple editors for given columns. */
+  CompositeEditor: new (modalColumns: Column[], containers: Array<HTMLElement | JQuery<HTMLElement> | null>, options?: CompositeEditorOption) => SlickCompositeEditor;
 
   /** Event is a Pub/Sub SlickGrid Event */
   Event: new () => SlickEvent;

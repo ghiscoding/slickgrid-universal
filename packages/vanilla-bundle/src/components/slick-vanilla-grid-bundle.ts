@@ -46,9 +46,9 @@ import {
   RowSelectionExtension,
 
   // services
-  FilterFactory,
   CollectionService,
   ExtensionService,
+  FilterFactory,
   FilterService,
   GridEventService,
   GridService,
@@ -71,9 +71,10 @@ import { EventPubSubService } from '../services/eventPubSub.service';
 import { FileExportService } from '../services/fileExport.service';
 import { ResizerService } from '../services/resizer.service';
 import { SalesforceGlobalGridOptions } from '../salesforce-global-grid-options';
-import { SlickFooterComponent } from './slick-footer';
-import { SlickPaginationComponent } from './slick-pagination';
+import { SlickFooterComponent } from './slick-footer.component';
+import { SlickPaginationComponent } from './slick-pagination.component';
 import { SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
+import { SlickCompositeEditorComponent } from './slick-composite-editor.component';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -128,6 +129,7 @@ export class SlickVanillaGridBundle {
   translaterService: TranslaterService | undefined;
   treeDataService: TreeDataService;
 
+  slickCompositeEditor: SlickCompositeEditorComponent | undefined;
   slickFooter: SlickFooterComponent | undefined;
   slickPagination: SlickPaginationComponent | undefined;
   gridClass: string;
@@ -273,9 +275,9 @@ export class SlickVanillaGridBundle {
     this.resizerService = new ResizerService(this._eventPubSubService);
     this.sortService = new SortService(this.sharedService, this._eventPubSubService);
     this.treeDataService = new TreeDataService(this.sharedService);
-    this.gridService = new GridService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
-    this.gridStateService = new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
     this.paginationService = new PaginationService(this._eventPubSubService, this.sharedService);
+    this.gridService = new GridService(this.extensionService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService);
+    this.gridStateService = new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
 
     // extensions
     const autoTooltipExtension = new AutoTooltipExtension(this.extensionUtility, this.sharedService);
@@ -339,6 +341,7 @@ export class SlickVanillaGridBundle {
       this.destroyGridContainerElm();
     }
 
+    // dispose the Services
     this.extensionService?.dispose();
     this.filterService?.dispose();
     this.gridEventService?.dispose();
@@ -348,6 +351,11 @@ export class SlickVanillaGridBundle {
     this.resizerService?.dispose();
     this.sortService?.dispose();
     this.treeDataService?.dispose();
+
+    // dispose the Components
+    this.slickCompositeEditor?.dispose();
+    this.slickFooter?.dispose();
+    this.slickPagination?.dispose();
 
     this._eventPubSubService?.unsubscribeAll();
   }
@@ -501,14 +509,19 @@ export class SlickVanillaGridBundle {
       this._registeredServices.push(this.groupingService);
     }
 
+    // when using Tree Data View, register its Service
     if (this.gridOptions.enableTreeData) {
-      // when using Tree Data View, register its Service
       this._registeredServices.push(this.treeDataService);
     }
 
     // when user enables translation, we need to translate Headers on first pass & subsequently in the bindDifferentHooks
     if (this.gridOptions.enableTranslate) {
       this.extensionService.translateColumnHeaders();
+    }
+
+    // also initialize (render) the pagination component
+    if (this._gridOptions.enableCompositeEditor) {
+      this.slickCompositeEditor = new SlickCompositeEditorComponent(this.slickGrid, this.gridService, this.gridStateService, this.translaterService);
     }
 
     // bind the Backend Service API callback functions only after the grid is initialized

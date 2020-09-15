@@ -1,4 +1,5 @@
 import { Column } from './column.interface';
+import { GridOption } from './gridOption.interface';
 import { SlickColumnPicker } from './slickColumnPicker.interface';
 
 export interface ColumnPicker extends ColumnPickerOption {
@@ -30,7 +31,7 @@ export interface ColumnPickerOption {
   syncResizeTitle?: string;
 
   /** Callback method to override the column name output used by the ColumnPicker/GridMenu. */
-  headerColumnValueExtractor?: (column: Column) => string;
+  headerColumnValueExtractor?: (column: Column, gridOptions?: GridOption) => string;
 
   // --
   // Events

@@ -1,6 +1,6 @@
 
 import { PaginationService, SharedService, SlickGrid, GridOption, Locale } from '@slickgrid-universal/common';
-import { SlickPaginationComponent } from '../slick-pagination';
+import { SlickPaginationComponent } from '../slick-pagination.component';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { EventPubSubService } from '../../services/eventPubSub.service';
 

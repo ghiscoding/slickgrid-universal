@@ -1,4 +1,3 @@
-// import { Column, Filter } from '../interfaces/index';
 import { AutoCompleteFilter } from './autoCompleteFilter';
 import { CompoundDateFilter } from './compoundDateFilter';
 import { CompoundInputFilter } from './compoundInputFilter';

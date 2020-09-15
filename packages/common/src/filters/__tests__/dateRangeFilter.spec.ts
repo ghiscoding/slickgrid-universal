@@ -59,7 +59,7 @@ describe('DateRangeFilter', () => {
 
   it('should initialize the filter', () => {
     filter.init(filterArguments);
-    const filterCount = divContainer.querySelectorAll('input.flatpickr.search-filter.filter-finish').length;
+    const filterCount = divContainer.querySelectorAll('.flatpickr.search-filter.filter-finish').length;
 
     expect(spyGetHeaderRow).toHaveBeenCalled();
     expect(filterCount).toBe(1);
@@ -133,7 +133,7 @@ describe('DateRangeFilter', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector<HTMLInputElement>('input.flatpickr.search-filter.filter-finish');
+    const filterInputElm = divContainer.querySelector<HTMLInputElement>('.flatpickr.search-filter.filter-finish input.input');
     filterInputElm.value = '2001-01-02T16:02:02.239Z to 2001-01-31T16:02:02.239Z';
     filterInputElm.dispatchEvent(new CustomEvent('change'));
     filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
@@ -149,7 +149,7 @@ describe('DateRangeFilter', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector<HTMLInputElement>('input.flatpickr.search-filter.filter-finish');
+    const filterInputElm = divContainer.querySelector<HTMLInputElement>('.flatpickr.search-filter.filter-finish input.input');
     filterInputElm.value = '2001-01-02T16:02:02.239Z to 2001-01-31T16:02:02.239Z';
     filterInputElm.dispatchEvent(new CustomEvent('change'));
     filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
@@ -165,7 +165,7 @@ describe('DateRangeFilter', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector<HTMLInputElement>('input.flatpickr.search-filter.filter-finish');
+    const filterInputElm = divContainer.querySelector<HTMLInputElement>('.flatpickr.search-filter.filter-finish input.input');
 
     filterInputElm.focus();
     filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
@@ -182,7 +182,7 @@ describe('DateRangeFilter', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector<HTMLInputElement>('input.flatpickr.search-filter.filter-finish');
+    const filterInputElm = divContainer.querySelector<HTMLInputElement>('.flatpickr.search-filter.filter-finish input.input');
 
     filterInputElm.focus();
     filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
@@ -200,7 +200,7 @@ describe('DateRangeFilter', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector<HTMLInputElement>('input.flatpickr.search-filter.filter-finish');
+    const filterInputElm = divContainer.querySelector<HTMLInputElement>('.flatpickr.search-filter.filter-finish input.input');
     const calendarElm = document.body.querySelector<HTMLDivElement>('.flatpickr-calendar');
     const selectonOptionElms = calendarElm.querySelectorAll<HTMLSelectElement>(' .flatpickr-monthDropdown-months option');
 
@@ -226,7 +226,7 @@ describe('DateRangeFilter', () => {
     mockColumn.filter.operator = 'RangeInclusive';
 
     filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector<HTMLInputElement>('input.flatpickr.search-filter.filter-finish');
+    const filterInputElm = divContainer.querySelector<HTMLInputElement>('.flatpickr.search-filter.filter-finish input.input');
     const calendarElm = document.body.querySelector<HTMLDivElement>('.flatpickr-calendar');
     const selectonOptionElms = calendarElm.querySelectorAll<HTMLSelectElement>(' .flatpickr-monthDropdown-months option');
 
@@ -246,7 +246,7 @@ describe('DateRangeFilter', () => {
 
     filter.init(filterArguments);
     filter.clear();
-    const filterInputElm = divContainer.querySelector<HTMLInputElement>('input.flatpickr.search-filter.filter-finish');
+    const filterInputElm = divContainer.querySelector<HTMLInputElement>('.flatpickr.search-filter.filter-finish input.input');
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.flatpickr.search-filter.filter-finish.filled');
 
     expect(filterInputElm.value).toBe('');
@@ -260,7 +260,7 @@ describe('DateRangeFilter', () => {
 
     filter.init(filterArguments);
     filter.clear(false);
-    const filterInputElm = divContainer.querySelector<HTMLInputElement>('input.flatpickr.search-filter.filter-finish');
+    const filterInputElm = divContainer.querySelector<HTMLInputElement>('.flatpickr.search-filter.filter-finish input.input');
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.flatpickr.search-filter.filter-finish.filled');
 
     expect(filterInputElm.value).toBe('');
@@ -275,7 +275,7 @@ describe('DateRangeFilter', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector<HTMLInputElement>('input.flatpickr.search-filter.filter-finish');
+    const filterInputElm = divContainer.querySelector<HTMLInputElement>('.flatpickr.search-filter.filter-finish input.input');
     filterInputElm.value = '2000-01-01T05:00:00.000+05:00 to 2000-01-31T05:00:00.000+05:00';
     filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.flatpickr.search-filter.filter-finish.filled');
@@ -295,7 +295,7 @@ describe('DateRangeFilter', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector<HTMLInputElement>('input.flatpickr.search-filter.filter-finish');
+    const filterInputElm = divContainer.querySelector<HTMLInputElement>('.flatpickr.search-filter.filter-finish input.flatpickr-input');
 
     filterInputElm.focus();
     filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
@@ -303,7 +303,7 @@ describe('DateRangeFilter', () => {
 
     expect(filterFilledElms.length).toBe(1);
     expect(filter.currentDates).toEqual(['2000-01-01T05:00:00.000Z', '2000-01-31T05:00:00.000Z']);
-    expect(filterInputElm.value).toBe('2000-01-01T05:00:00.000Z to 2000-01-31T05:00:00.000Z');
+    expect(filterInputElm.value).toBe('2000-01-01 to 2000-01-31');
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01', '2000-01-31'], shouldTriggerQuery: true });
   });
 });

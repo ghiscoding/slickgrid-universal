@@ -4,12 +4,14 @@ import {
   CollectionCustomStructure,
   Column,
   ColumnEditor,
+  CompositeEditorOption,
   Editor,
   EditorArguments,
   EditorValidator,
-  EditorValidatorOutput,
+  EditorValidationResult,
   GridOption,
   SlickGrid,
+  SlickNamespace,
 } from './../interfaces/index';
 import { textValidator } from '../editorValidators/textValidator';
 import {
@@ -23,6 +25,9 @@ import {
 // minimum length of chars to type before starting to start querying
 const MIN_LENGTH = 3;
 
+// using external non-typed js libraries
+declare const Slick: SlickNamespace;
+
 /*
  * An example of a 'detached' editor.
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
@@ -32,6 +37,7 @@ export class AutoCompleteEditor implements Editor {
   private _currentValue: any;
   private _defaultTextValue: string;
   private _elementCollection: any[];
+  private _isDisabled = false;
   private _lastInputKeyEvent: JQueryEventObject;
 
   /** The JQuery DOM element */
@@ -67,12 +73,17 @@ export class AutoCompleteEditor implements Editor {
     return this._autoCompleteOptions || {};
   }
 
-  /** Get the Collection */
+  /** Getter of the Collection */
   get editorCollection(): any[] {
     return this.columnDef && this.columnDef.internalColumnEditor && this.columnDef.internalColumnEditor.collection || [];
   }
 
-  /** Get the Final Collection used in the AutoCompleted Source (this may vary from the "collection" especially when providing a customStructure) */
+  /** Getter for the Editor DOM Element */
+  get editorDomElement(): any {
+    return this._$editorElm;
+  }
+
+  /** Getter for the Final Collection used in the AutoCompleted Source (this may vary from the "collection" especially when providing a customStructure) */
   get elementCollection(): any[] {
     return this._elementCollection;
   }
@@ -123,11 +134,6 @@ export class AutoCompleteEditor implements Editor {
     return (this.columnEditor && this.columnEditor.validator) || (this.columnDef && this.columnDef.validator);
   }
 
-  /** Get the Editor DOM Element */
-  get editorDomElement(): any {
-    return this._$editorElm;
-  }
-
   init() {
     this.labelName = this.customStructure && this.customStructure.label || 'label';
     this.valueName = this.customStructure && this.customStructure.value || 'value';
@@ -143,8 +149,36 @@ export class AutoCompleteEditor implements Editor {
     this._$editorElm.off('keydown.nav').remove();
   }
 
+  disable(isDisabled = true) {
+    const prevIsDisabled = this._isDisabled;
+    this._isDisabled = isDisabled;
+
+    if (this._$editorElm) {
+      if (isDisabled) {
+        this._$editorElm.attr('disabled', 'disabled');
+
+        // clear the checkbox when it's newly disabled
+        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+          this._defaultTextValue = '';
+          this._$editorElm.val('');
+          this.handleChangeOnCompositeEditor(null, this.args.compositeEditorOptions);
+        }
+      } else {
+        this._$editorElm.removeAttr('disabled');
+      }
+    }
+  }
+
   focus() {
     this._$editorElm.focus().select();
+  }
+
+  show() {
+    const isCompositeEditor = !!this.args?.compositeEditorOptions;
+    if (isCompositeEditor) {
+      // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
+      this.applyInputUsabilityState();
+    }
   }
 
   getValue() {
@@ -176,7 +210,7 @@ export class AutoCompleteEditor implements Editor {
       const isComplexObject = fieldName?.indexOf('.') > 0;
 
       // validate the value before applying it (if not valid we'll set an empty string)
-      const validation = this.validate(newValue);
+      const validation = this.validate(null, newValue);
       newValue = (validation && validation.valid) ? newValue : '';
 
       // set the new value to the item datacontext
@@ -214,12 +248,14 @@ export class AutoCompleteEditor implements Editor {
 
   save() {
     const validation = this.validate();
-    if (validation && validation.valid && this.isValueChanged()) {
-      if (this.hasAutoCommitEdit) {
-        this.grid.getEditorLock().commitCurrentEdit();
-      } else {
-        this.args.commitChanges();
-      }
+    const isValid = (validation && validation.valid) || false;
+
+    if (this.hasAutoCommitEdit && isValid) {
+      // do not use args.commitChanges() as this sets the focus to the next row.
+      // also the select list will stay shown when clicking off the grid
+      this.grid.getEditorLock().commitCurrentEdit();
+    } else {
+      this.args.commitChanges();
     }
   }
 
@@ -248,7 +284,17 @@ export class AutoCompleteEditor implements Editor {
     return this._currentValue;
   }
 
-  validate(inputValue?: any): EditorValidatorOutput {
+  validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
+    // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
+    if (this.args.compositeEditorOptions) {
+      this.applyInputUsabilityState();
+    }
+
+    // when field is disabled, we can assume it's valid
+    if (this._isDisabled) {
+      return { valid: true, msg: '' };
+    }
+
     const val = (inputValue !== undefined) ? inputValue : this._$editorElm && this._$editorElm.val && this._$editorElm.val();
     return textValidator(val, {
       editorArgs: this.args,
@@ -256,7 +302,7 @@ export class AutoCompleteEditor implements Editor {
       minLength: this.columnEditor.minLength,
       maxLength: this.columnEditor.maxLength,
       operatorConditionalType: this.columnEditor.operatorConditionalType,
-      required: this.columnEditor.required,
+      required: this.args?.compositeEditorOptions ? false : this.columnEditor.required,
       validator: this.validator,
     });
   }
@@ -265,26 +311,50 @@ export class AutoCompleteEditor implements Editor {
   // private functions
   // ------------------
 
+  /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
+  protected applyInputUsabilityState() {
+    const activeCell = this.grid.getActiveCell();
+    const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
+    this.disable(isCellEditable === false);
+  }
+
+  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption) {
+    const activeCell = this.grid.getActiveCell();
+    const column = this.args.column;
+    const columnId = this.columnDef?.id ?? '';
+    const item = this.args.item;
+    const grid = this.grid;
+
+    // when valid, we'll also apply the new value to the dataContext item object
+    if (this.validate().valid) {
+      this.applyValue(this.args.item, this.serializeValue());
+    }
+    this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+    if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+      delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
+    }
+    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
+  }
+
   // this function should be PRIVATE but for unit tests purposes we'll make it public until a better solution is found
   // a better solution would be to get the autocomplete DOM element to work with selection but I couldn't find how to do that in Jest
-  onSelect(_event: Event, ui: { item: any; }) {
+  onSelect(event: Event, ui: { item: any; }) {
     if (ui && ui.item) {
-      const item = ui && ui.item;
-      this._currentValue = item;
+      const selectedItem = ui && ui.item;
+      this._currentValue = selectedItem;
+      const compositeEditorOptions = this.args.compositeEditorOptions;
 
       // when the user defines a "renderItem" (or "_renderItem") template, then we assume the user defines his own custom structure of label/value pair
       // otherwise we know that jQueryUI always require a label/value pair, we can pull them directly
       const hasCustomRenderItemCallback = this.columnEditor?.callbacks?.hasOwnProperty('_renderItem') ?? this.columnEditor?.editorOptions?.renderItem ?? false;
 
-      const itemValue = typeof item === 'string' ? item : (hasCustomRenderItemCallback ? item[this.valueName] : item.value);
-      this.setValue(itemValue);
+      const itemLabel = typeof selectedItem === 'string' ? selectedItem : (hasCustomRenderItemCallback ? selectedItem[this.labelName] : selectedItem.label);
+      this.setValue(itemLabel);
 
-      if (this.hasAutoCommitEdit) {
-        // do not use args.commitChanges() as this sets the focus to the next row.
-        const validation = this.validate();
-        if (validation && validation.valid) {
-          this.grid.getEditorLock().commitCurrentEdit();
-        }
+      if (compositeEditorOptions) {
+        this.handleChangeOnCompositeEditor(event, compositeEditorOptions);
+      } else {
+        this.save();
       }
     }
     return false;
@@ -321,7 +391,7 @@ export class AutoCompleteEditor implements Editor {
       .appendTo(ul);
   }
 
-  private renderDomElement(collection: any[]) {
+  protected renderDomElement(collection: any[]) {
     if (!Array.isArray(collection)) {
       throw new Error('The "collection" passed to the Autocomplete Editor is not a valid array.');
     }
@@ -414,6 +484,10 @@ export class AutoCompleteEditor implements Editor {
       }
     }
 
-    setTimeout(() => this.focus(), 50);
+    this._$editorElm.on('focus', () => this._$editorElm.select());
+
+    if (!this.args.compositeEditorOptions) {
+      setTimeout(() => this.focus(), 50);
+    }
   }
 }

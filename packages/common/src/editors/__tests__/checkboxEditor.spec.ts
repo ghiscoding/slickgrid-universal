@@ -1,7 +1,8 @@
 import { Editors } from '../index';
 import { CheckboxEditor } from '../checkboxEditor';
-import { AutocompleteOption, Column, SlickDataView, EditorArgs, EditorArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { AutocompleteOption, Column, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
 
+declare const Slick: SlickNamespace;
 const KEY_CHAR_SPACE = 32;
 const containerId = 'demo-container';
 
@@ -22,11 +23,14 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
+  getActiveCell: jest.fn(),
   getOptions: () => gridOptionMock,
   getColumns: jest.fn(),
   getEditorLock: () => getEditorLockMock,
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
+  onBeforeEditCell: new Slick.Event(),
+  onCompositeEditorChange: new Slick.Event(),
 } as unknown as SlickGrid;
 
 describe('CheckboxEditor', () => {
@@ -321,7 +325,7 @@ describe('CheckboxEditor', () => {
       });
 
       it('should not save when custom validation fails', () => {
-        mockColumn.internalColumnEditor.validator = (value: any, args: EditorArgs) => {
+        mockColumn.internalColumnEditor.validator = (value: any) => {
           if (!value) {
             return { valid: false, msg: 'This must be accepted' };
           }
@@ -344,9 +348,9 @@ describe('CheckboxEditor', () => {
         const expectation = { valid: false, msg: 'Field is required' };
         mockColumn.internalColumnEditor.required = true;
         editor = new CheckboxEditor(editorArguments);
-        const validation1 = editor.validate('');
-        const validation2 = editor.validate(null);
-        const validation3 = editor.validate(false);
+        const validation1 = editor.validate(null, '');
+        const validation2 = editor.validate(null, null);
+        const validation3 = editor.validate(null, false);
 
         expect(validation1).toEqual(expectation);
         expect(validation2).toEqual(expectation);
@@ -356,7 +360,7 @@ describe('CheckboxEditor', () => {
       it('should return True when field is required and input is provided with True', () => {
         mockColumn.internalColumnEditor.required = true;
         editor = new CheckboxEditor(editorArguments);
-        const validation = editor.validate(true);
+        const validation = editor.validate(null, true);
 
         expect(validation).toEqual({ valid: true, msg: null });
       });
@@ -364,10 +368,80 @@ describe('CheckboxEditor', () => {
       it('should return True when field is required and input is provided with any text', () => {
         mockColumn.internalColumnEditor.required = true;
         editor = new CheckboxEditor(editorArguments);
-        const validation = editor.validate('text');
+        const validation = editor.validate(null, 'text');
 
         expect(validation).toEqual({ valid: true, msg: null });
       });
+    });
+  });
+
+  describe('with Composite Editor', () => {
+    beforeEach(() => {
+      editorArguments = {
+        ...editorArguments,
+        compositeEditorOptions: { headerTitle: 'Test', formValues: {}, modalType: 'edit' }
+      } as EditorArguments;
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
+
+      editor = new CheckboxEditor(editorArguments);
+      const disableSpy = jest.spyOn(editor, 'disable');
+      editor.show();
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(disableSpy).toHaveBeenCalledWith(false);
+    });
+
+    it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(false);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+
+      editor = new CheckboxEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      const disableSpy = jest.spyOn(editor, 'disable');
+      editor.show();
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: {},
+      }, expect.anything());
+      expect(disableSpy).toHaveBeenCalledWith(true);
+      expect(editor.editorDomElement.disabled).toEqual(true);
+      expect(editor.editorDomElement.checked).toEqual(false);
+    });
+
+    it('should expect "onCompositeEditorChange" to have been triggered with the new value showing up in its "formValues" object', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      gridOptionMock.autoCommitEdit = true;
+      mockItemData = { id: 1, title: 'task 1', isActive: true };
+
+      editor = new CheckboxEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      editor.editorDomElement.checked = true;
+      editor.editorDomElement.dispatchEvent(new (window.window as any).Event('change'));
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: { isActive: true },
+      }, expect.anything());
     });
   });
 });

@@ -1,5 +1,5 @@
 import { Constants } from '../constants';
-import { EditorValidatorOutput } from '../interfaces/editorValidatorOutput.interface';
+import { EditorValidationResult } from '../interfaces/editorValidationResult.interface';
 import { EditorValidator } from '../interfaces/editorValidator.interface';
 
 interface TextValidatorOptions {
@@ -12,7 +12,7 @@ interface TextValidatorOptions {
   validator?: EditorValidator;
 }
 
-export function textValidator(inputValue: any, options: TextValidatorOptions): EditorValidatorOutput {
+export function textValidator(inputValue: any, options: TextValidatorOptions): EditorValidationResult {
   const errorMsg = options.errorMessage;
   const isRequired = options.required;
   const minLength = options.minLength;

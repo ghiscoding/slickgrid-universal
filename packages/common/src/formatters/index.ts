@@ -1,3 +1,4 @@
+export * from './centerFormatter';
 export * from './collectionFormatter';
 export * from './italicFormatter';
 export * from './infoIconFormatter';

@@ -1,5 +1,8 @@
 {
   "ALL_SELECTED": "All Selected",
+  "ALL_X_RECORDS_SELECTED": "All {{x}} records selected",
+  "APPLY_MASS_UPDATE": "Apply Mass Update",
+  "APPLY_TO_SELECTION": "Update Selection",
   "CANCEL": "Cancel",
   "CLEAR_ALL_FILTERS": "Clear all Filters",
   "CLEAR_ALL_GROUPING": "Clear all Grouping",
@@ -44,6 +47,7 @@
   "TOGGLE_FILTER_ROW": "Toggle Filter Row",
   "TOGGLE_PRE_HEADER_ROW": "Toggle Pre-Header Row",
   "X_OF_Y_SELECTED": "# of % selected",
+  "X_OF_Y_MASS_SELECTED": "{{x}} of {{y}} selected",
   "BILLING": {
     "ADDRESS": {
       "STREET": "Billing Address Street",

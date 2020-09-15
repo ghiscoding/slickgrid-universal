@@ -20,6 +20,7 @@ export const GlobalGridOptions: GridOption = {
     cssClass: 'slick-cell-checkboxsel',
     width: 42
   },
+  columnGroupSeparator: ' - ',
   columnPicker: {
     fadeSpeed: 0,
     hideForceFitButton: false,
@@ -32,6 +33,16 @@ export const GlobalGridOptions: GridOption = {
     hideCloseButton: true,
     hideCommandSection: false,
     hideOptionSection: false,
+  },
+  compositeEditorOptions: {
+    labels: {
+      cancelButtonKey: 'CANCEL',
+      massSelectionButtonKey: 'APPLY_TO_SELECTION',
+      massSelectionStatusKey: 'X_OF_Y_MASS_SELECTED',
+      massUpdateButtonKey: 'APPLY_MASS_UPDATE',
+      massUpdateStatusKey: 'ALL_X_RECORDS_SELECTED',
+      saveButtonKey: 'SAVE',
+    },
   },
   contextMenu: {
     autoAdjustDrop: true,
@@ -52,7 +63,7 @@ export const GlobalGridOptions: GridOption = {
     iconClearGroupingCommand: 'fa fa-times mdi mdi-close',
     iconCopyCellValueCommand: 'fa fa-clone mdi mdi-content-copy',
     iconExportCsvCommand: 'fa fa-download mdi mdi-download',
-    iconExportExcelCommand: 'fa fa-file-excel-o mdi mdi-file-excel-outline text-success has-text-success',
+    iconExportExcelCommand: 'fa fa-file-excel-o mdi mdi-file-excel-outline',
     iconExportTextDelimitedCommand: 'fa fa-download mdi mdi-download',
     width: 200,
   },
@@ -84,6 +95,7 @@ export const GlobalGridOptions: GridOption = {
   defaultComponentEventPrefix: '',
   defaultSlickgridEventPrefix: '',
   editable: false,
+  editorTypingDebounce: 450,
   enableAutoResize: true,
   enableAutoSizeColumns: true,
   enableCellNavigation: false,
@@ -135,11 +147,11 @@ export const GlobalGridOptions: GridOption = {
     hideToggleFilterCommand: false,
     hideTogglePreHeaderCommand: false,
     iconCssClass: 'fa fa-bars mdi mdi-menu',
-    iconClearAllFiltersCommand: 'fa fa-filter text-danger mdi mdi-filter-remove-outline',
-    iconClearAllSortingCommand: 'fa fa-unsorted mdi mdi-swap-vertical text-danger',
+    iconClearAllFiltersCommand: 'fa fa-filter mdi mdi-filter-remove-outline',
+    iconClearAllSortingCommand: 'fa fa-unsorted mdi mdi-swap-vertical',
     iconClearFrozenColumnsCommand: 'fa fa-times mdi mdi-pin-off-outline',
     iconExportCsvCommand: 'fa fa-download mdi mdi-download',
-    iconExportExcelCommand: 'fa fa-file-excel-o mdi mdi-file-excel-outline text-success has-text-success',
+    iconExportExcelCommand: 'fa fa-file-excel-o mdi mdi-file-excel-outline',
     iconExportTextDelimitedCommand: 'fa fa-download mdi mdi-download',
     iconRefreshDatasetCommand: 'fa fa-refresh mdi mdi-sync',
     iconToggleFilterCommand: 'fa fa-random mdi mdi-flip-vertical',
@@ -153,7 +165,7 @@ export const GlobalGridOptions: GridOption = {
     autoAlign: true,
     autoAlignOffset: 12,
     minWidth: 140,
-    iconClearFilterCommand: 'fa fa-filter mdi mdi mdi-filter-remove-outline text-danger',
+    iconClearFilterCommand: 'fa fa-filter mdi mdi mdi-filter-remove-outline',
     iconClearSortCommand: 'fa fa-unsorted mdi mdi-swap-vertical',
     iconFreezeColumns: 'fa fa-thumb-tack mdi mdi-pin-outline',
     iconSortAscCommand: 'fa fa-sort-amount-asc mdi mdi-sort-ascending',
@@ -196,10 +208,11 @@ export const GlobalGridOptions: GridOption = {
  * when using Column Header Grouping, we'll prefix the column group title
  * else we'll simply return the column name title
  */
-function pickerHeaderColumnValueExtractor(column: Column) {
+function pickerHeaderColumnValueExtractor(column: Column, gridOptions?: GridOption) {
   const headerGroup = column?.columnGroup || '';
+  const columnGroupSeparator = gridOptions?.columnGroupSeparator ?? ' - ';
   if (headerGroup) {
-    return headerGroup + ' - ' + column.name;
+    return headerGroup + columnGroupSeparator + column.name;
   }
   return column?.name ?? '';
 }

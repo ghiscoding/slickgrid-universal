@@ -1,4 +1,5 @@
 export * from './caseType.enum';
+export * from './compositeEditorModalType.type';
 export * from './fieldType.enum';
 export * from './extensionList.type';
 export * from './eventNamingStyle.enum';

@@ -2,6 +2,15 @@ export interface Locale {
   /** Text "All Selected" displayed in the Multiple Select Editor/Filter */
   TEXT_ALL_SELECTED: string;
 
+  /** Text "All {{x}} records selected" displayed in a Composite Editor modal of type  "mass-update". */
+  TEXT_ALL_X_RECORDS_SELECTED?: string;
+
+  /** Text "Apply Mass Update" displayed in the Composite Editor with a "mass-update" modal type. */
+  TEXT_APPLY_MASS_UPDATE?: string;
+
+  /** Text "Update Selection" used by the "Mass Selection" button label in a Composite Editor modal. */
+  TEXT_APPLY_TO_SELECTION?: string;
+
   /** Text "Cancel" shown in the Long Text Editor dialog */
   TEXT_CANCEL: string;
 
@@ -38,6 +47,27 @@ export interface Locale {
   /** Text "Equals" shown in Compound Editors/Filters as an Operator */
   TEXT_EQUALS: string;
 
+  /** Error Text "Editable Grid Required" displayed by the Composite Editor component  */
+  TEXT_ERROR_EDITABLE_GRID_REQUIRED?: string;
+
+  /** Error Text "Cell Navigation Required when using Composite Editor modal" displayed by the Composite Editor component  */
+  TEXT_ERROR_ENABLE_CELL_NAVIGATION_REQUIRED?: string;
+
+  /** Error Text "No Changes Detected" displayed by the Composite Editor component  */
+  TEXT_ERROR_NO_CHANGES_DETECTED?: string;
+
+  /** Error Text "No Editor Found" displayed by the Composite Editor component  */
+  TEXT_ERROR_NO_EDITOR_FOUND?: string;
+
+  /** Error Text "No Record Found" displayed by the Composite Editor component  */
+  TEXT_ERROR_NO_RECORD_FOUND?: string;
+
+  /** Error Text "Current Row is not Editable" displayed by the Composite Editor component  */
+  TEXT_ERROR_ROW_NOT_EDITABLE?: string;
+
+  /** Error Text "Requires Row Selection for Mass Selection" displayed by the Composite Editor component  */
+  TEXT_ERROR_ROW_SELECTION_REQUIRED?: string;
+
   /** Text "Expand all Grouping" displayed in the Context Menu when Grouping is enabled */
   TEXT_EXPAND_ALL_GROUPS: string;
 
@@ -55,6 +85,9 @@ export interface Locale {
 
   /** Text "Force fit Columns" displayed in the Column Picker & Grid Menu (when enabled) */
   TEXT_FORCE_FIT_COLUMNS: string;
+
+  /** Text "Freeze Columns" shown in Header Menu (when enabled) */
+  TEXT_FREEZE_COLUMNS?: string;
 
   /** Text "Group by" shown in Export when using Grouping (when enabled) */
   TEXT_GROUP_BY: string;
@@ -89,7 +122,7 @@ export interface Locale {
   /** Text "Remove Sort" shown in Header Menu */
   TEXT_REMOVE_SORT: string;
 
-  /** Text "Cancel" shown in the Long Text Editor dialog */
+  /** Text "Save" shown in the Long Text Editor dialog */
   TEXT_SAVE: string;
 
   /** Text "Select All" displayed in the Multiple Select Editor/Filter */
@@ -113,9 +146,9 @@ export interface Locale {
   /** Text "Toggle Pre-Header Row" shown in Grid Menu (when enabled) */
   TEXT_TOGGLE_PRE_HEADER_ROW?: string;
 
-  /** Text "Freeze Columns" shown in Header Menu (when enabled) */
-  TEXT_FREEZE_COLUMNS?: string;
-
-  /** Text "3 of 10 selected" displayed in the Multiple Select Editor/Filter */
+  /** Text "x of y selected" displayed in the Multiple Select Editor/Filter */
   TEXT_X_OF_Y_SELECTED: string;
+
+  /** Text "x of y selected" status text displayed in the Composite Editor with a "mass-selection" modal type. */
+  TEXT_X_OF_Y_MASS_SELECTED?: string;
 }

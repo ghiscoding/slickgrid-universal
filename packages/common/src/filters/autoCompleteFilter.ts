@@ -80,7 +80,7 @@ export class AutoCompleteFilter implements Filter {
     return this.columnDef?.filter || {};
   }
 
-  /** Get the Editor DOM Element */
+  /** Getter for the Editor DOM Element */
   get filterDomElement(): any {
     return this.$filterElm;
   }

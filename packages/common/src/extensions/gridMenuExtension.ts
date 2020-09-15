@@ -5,7 +5,6 @@ import {
   GridOption,
   GridMenu,
   GridMenuItem,
-  Locale,
   SlickEventData,
   SlickEventHandler,
   SlickGridMenu,
@@ -33,7 +32,6 @@ export class GridMenuExtension implements Extension {
   private _addon: SlickGridMenu | null;
   private _areVisibleColumnDifferent = false;
   private _eventHandler: SlickEventHandler;
-  private _locales: Locale;
   private _userOriginalGridMenu: GridMenu;
 
   constructor(
@@ -75,9 +73,6 @@ export class GridMenuExtension implements Extension {
     if (this.sharedService && this.sharedService.gridOptions && this.sharedService.gridOptions.gridMenu) {
       // keep original user grid menu, useful when switching locale to translate
       this._userOriginalGridMenu = { ...this.sharedService.gridOptions.gridMenu };
-
-      // get locales provided by user in forRoot or else use default English locales via the Constants
-      this._locales = this.sharedService.gridOptions && this.sharedService.gridOptions.locales || Constants.locales;
 
       // dynamically import the SlickGrid plugin (addon) with RequireJS
       this.extensionUtility.loadExtensionDynamically(ExtensionName.gridMenu);

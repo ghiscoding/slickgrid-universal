@@ -38,7 +38,7 @@ export class Example7 {
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true,
         editor: { model: Editors.text, alwaysSaveOnEnterKey: true, },
-        formatter: (row: number, cell: number, value: any) => value > 1 ? `${value} days` : `${value} day`,
+        formatter: (_row: number, _cell: number, value: any) => value > 1 ? `${value} days` : `${value} day`,
       },
       { id: 'percentComplete', name: '% Complete', field: 'percentComplete', sortable: true, editor: { model: Editors.slider, minValue: 0, maxValue: 100, }, },
       {
@@ -142,7 +142,7 @@ export class Example7 {
     return true;
   }
 
-  onMoveRows(e, args) {
+  onMoveRows(_e, args) {
     const extractedRows = [];
     const rows = args.rows;
     const insertBefore = args.insertBefore;

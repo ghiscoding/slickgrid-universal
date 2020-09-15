@@ -1,5 +1,5 @@
 /// <reference types="Cypress" />
-import { changeTimezone, zeroPadding } from './utilities';
+import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
 describe('Example 11 - Batch Editing', () => {
   const GRID_ROW_HEIGHT = 33;
@@ -39,20 +39,20 @@ describe('Example 11 - Batch Editing', () => {
   it('should be able to change "Duration" values of first 4 rows', () => {
     // change duration
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'days').click();
-    cy.get('.editor-duration').type('0').type('{enter}');
+    cy.get('.editor-duration').type('0').type('{enter}', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
       .should('contain', '0 day')
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
-    cy.get('.editor-duration').type('1').type('{enter}');
+    cy.get('.editor-duration').type('1').type('{enter}', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(2)`).should('contain', '1 day')
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
-    cy.get('.editor-duration').type('2').type('{enter}');
+    cy.get('.editor-duration').type('2').type('{enter}', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(2)`).should('contain', '2 days')
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
-    cy.get('.editor-duration').type('3').type('{enter}');
+    cy.get('.editor-duration').type('3').type('{enter}', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(2)`).should('contain', '3 days')
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
     cy.get('.editor-duration').type('{esc}');
@@ -65,15 +65,15 @@ describe('Example 11 - Batch Editing', () => {
   it('should be able to change "Title" values of row indexes 1-3', () => {
     // change title
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 1').click();
-    cy.get('.editor-title').type('task 1111').type('{enter}');
+    cy.get('.editor-title').type('task 1111').type('{enter}', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 1111')
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
-    cy.get('.editor-title').type('task 2222').type('{enter}');
+    cy.get('.editor-title').type('task 2222').type('{enter}', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 2222')
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
-    cy.get('.editor-title').type('task 3333').type('{enter}');
+    cy.get('.editor-title').type('task 3333').type('{enter}', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 3333')
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
     cy.get('.editor-title').type('{esc}');
@@ -86,17 +86,17 @@ describe('Example 11 - Batch Editing', () => {
   it('should be able to change "% Complete" values of row indexes 2-4', () => {
     // change % complete
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).click();
-    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 5).trigger('change').type('{enter}');
+    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 5).trigger('change').type('{enter}', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).should('contain', '5')
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(4)`).click();
-    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 6).trigger('change').type('{enter}');
+    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 6).trigger('change').type('{enter}', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(4)`).should('contain', '6')
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(4)`).click();
-    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 7).trigger('change').type('{enter}');
+    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 7).trigger('change').type('{enter}', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(4)`).should('contain', '7')
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 

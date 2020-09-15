@@ -41,12 +41,12 @@ export class App {
   }
 
   disposeAll() {
-    this.renderer.dispose();
+    this.renderer?.dispose();
 
     for (const vmKey of Object.keys(this.viewModelObj)) {
       const viewModel = this.viewModelObj[vmKey];
       if (viewModel && viewModel.dispose) {
-        viewModel.dispose();
+        viewModel?.dispose();
         delete window[vmKey];
         delete this.viewModelObj[vmKey];
       }

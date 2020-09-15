@@ -21,22 +21,27 @@
 	overflow: auto;
   resize: both;
   width: auto;
-  padding-right: 24px; /* trick to cheat the width to include extra scrollbar width in addition to auto width */
+  padding-right: $column-picker-padding-right-patch; /* trick to cheat the width to include extra scrollbar width in addition to auto width */
 
   > .close {
     float: right;
     position: absolute;
+    color: $column-picker-close-btn-color;
     cursor: $column-picker-close-btn-cursor;
     width: $column-picker-close-btn-width;
     height: $column-picker-close-btn-height;
     margin: $column-picker-close-btn-margin;
     padding: $column-picker-close-btn-padding;
+    font-family: $column-picker-close-btn-font-family;
     font-size: $column-picker-close-btn-font-size;
     background-color: $column-picker-close-btn-bg-color;
     border: $column-picker-close-btn-border;
     right: $column-picker-close-btn-position-right;
     top: $column-picker-close-btn-position-top;
 
+    &:hover {
+      color: $column-picker-close-btn-color-hover;
+    }
     > span {
       opacity: $column-picker-close-btn-opacity;
     }
@@ -100,6 +105,9 @@
     margin: 6px 0;
     border: 0;
     border-top: 1px solid #d5d5d5;
+    width: $column-picker-divider-width;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   /* replace checkboxes by Font-Awesome icons */
@@ -155,17 +163,22 @@
   > .close {
     float: right;
     position: absolute;
+    color: $grid-menu-close-btn-color;
     cursor: $grid-menu-close-btn-cursor;
     width: $grid-menu-close-btn-width;
     height: $grid-menu-close-btn-height;
     margin: $grid-menu-close-btn-margin;
     padding: $grid-menu-close-btn-padding;
+    font-family: $grid-menu-close-btn-font-family;
     font-size: $grid-menu-close-btn-font-size;
     background-color: $grid-menu-close-btn-bg-color;
     border: $grid-menu-close-btn-border;
     right: $grid-menu-close-btn-position-right;
     top: $grid-menu-close-btn-position-top;
 
+    &:hover {
+      color: $grid-menu-close-btn-color-hover;
+    }
     > span {
       opacity: $grid-menu-close-btn-opacity;
     }
@@ -214,6 +227,7 @@
   border: 0;
   width: 22px;
   font-size: $grid-menu-icon-font-size;
+  z-index: 2;
 }
 
 .slick-gridmenu-custom {
@@ -242,6 +256,9 @@
     margin: $grid-menu-divider-margin;
     background-color: $grid-menu-divider-color;
     width: $grid-menu-divider-width;
+    margin-left: auto;
+    margin-right: auto;
+
     &:hover {
       border: none;
       background-color: $grid-menu-item-disabled-color;
@@ -306,6 +323,9 @@
     margin: 6px 0;
     border: 0;
     border-top: 1px solid #dddddd;
+    width: $grid-menu-divider-width;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   /* replace checkboxes by Font-Awesome icons */
