@@ -3,8 +3,11 @@ import './icons.scss';
 export class Icons {
   attached() {
     const iconContainerElm = document.querySelector<HTMLDivElement>(`.icons-container`);
+    const iconCounter = document.querySelector<HTMLDivElement>(`.icon-counter`);
 
     const icons = this.getIcons();
+    iconCounter.textContent = `(${icons.length} icons)`;
+
     icons.forEach((icon) => {
       const iconDivElm = document.createElement('div');
       iconDivElm.className = 'slick-col-medium-2';
