@@ -3,8 +3,11 @@ import './icons.scss';
 export class Icons {
   attached() {
     const iconContainerElm = document.querySelector<HTMLDivElement>(`.icons-container`);
+    const iconCounter = document.querySelector<HTMLDivElement>(`.icon-counter`);
 
     const icons = this.getIcons();
+    iconCounter.textContent = `(${icons.length} icons)`;
+
     icons.forEach((icon) => {
       const iconDivElm = document.createElement('div');
       iconDivElm.className = 'slick-col-medium-2';
@@ -64,6 +67,8 @@ export class Icons {
       '.mdi.mdi-currency-usd',
       '.mdi.mdi-currency-usd-off',
       '.mdi.mdi-database-refresh',
+      '.mdi.mdi-delete',
+      '.mdi.mdi-delete-outline',
       '.mdi.mdi-dots-vertical',
       '.mdi.mdi-download',
       '.mdi.mdi-drag',
@@ -115,6 +120,8 @@ export class Icons {
       '.mdi.mdi-table-refresh',
       '.mdi.mdi-toggle-switch',
       '.mdi.mdi-toggle-switch-off-outline',
+      '.mdi.mdi-trash-can',
+      '.mdi.mdi-trash-can-outline',
       '.mdi.mdi-tune',
       '.mdi.mdi-tune-variant',
       '.mdi.mdi-undo',

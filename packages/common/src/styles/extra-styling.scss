@@ -61,8 +61,10 @@ $padding-max-count: 30;
 .text-center { text-align: center; }
 .text-left   { text-align: left;   }
 .text-right  { text-align: right;  }
+.text-lowercase { text-transform: lowercase;  }
 .text-uppercase { text-transform: uppercase;  }
 .text-underline { text-decoration: underline; }
+.text-italic { font-style: italic; }
 
 .vertical-align-bottom {
   display: inline-block;

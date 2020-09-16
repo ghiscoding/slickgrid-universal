@@ -1,4 +1,5 @@
-$icon-width-size-count: 50;
+$icon-width-min-size: 8;
+$icon-width-max-size: 50;
 
 @-webkit-keyframes md-spin {
   0% { transform: rotate(0deg); }
@@ -48,7 +49,7 @@ $icon-width-size-count: 50;
     filter: none;
   }
 
-  @for $i from 5 through $icon-width-size-count {
+  @for $i from $icon-width-min-size through $icon-width-max-size {
     &.mdi-#{$i}px {
       &:before {
         height: #{$i}px;
