@@ -276,7 +276,7 @@ describe('Example 12 - Composite Editor Modal', () => {
   });
 
   it('should open the Composite Editor (Edit Item) and expect all form inputs to be filled with TASK 8888 data of previous create item', () => {
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).click();
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).click({ force: true });
     cy.get('[data-test="open-modal-edit-btn"]').click();
     cy.get('[data-test="open-modal-edit-btn"]').click();
     cy.get('.slick-editor-modal-title').contains('Editing - Task 8888 (id: 501)');
@@ -293,7 +293,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.item-details-container.editor-countryOfOrigin .modified').should('have.length', 1);
     cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').invoke('val').then(text => expect(text).to.eq('Bermuda'));
 
-    cy.get('.btn-save').contains('Save').click();
+    cy.get('.btn-save').contains('Save').click({ force: true });
     cy.get('.slick-editor-modal').should('not.exist');
   });
 

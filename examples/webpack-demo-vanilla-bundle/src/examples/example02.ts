@@ -203,6 +203,9 @@ export class Example2 {
         effortDriven: (i % 5 === 0)
       };
     }
+    if (this.sgb) {
+      this.sgb.dataset = tmpArray;
+    }
     return tmpArray;
   }
 
@@ -225,7 +228,7 @@ export class Example2 {
   groupByDuration() {
     this.dataViewObj.setGrouping({
       getter: 'duration',
-      formatter: (g) => `Duration:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
+      formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
       comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
       aggregators: [
         new Aggregators.Avg('percentComplete'),
@@ -244,7 +247,7 @@ export class Example2 {
     this.gridObj.setSortColumns([]);
     this.dataViewObj.setGrouping({
       getter: 'duration',
-      formatter: (g) => `Duration:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
+      formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
       comparer: (a, b) => a.count - b.count,
       aggregators: [
         new Aggregators.Avg('percentComplete'),
@@ -261,7 +264,7 @@ export class Example2 {
     this.dataViewObj.setGrouping([
       {
         getter: 'duration',
-        formatter: (g) => `Duration:  ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+        formatter: (g) => `Duration: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
         aggregators: [
           new Aggregators.Sum('duration'),
           new Aggregators.Sum('cost')
@@ -271,7 +274,7 @@ export class Example2 {
       },
       {
         getter: 'effortDriven',
-        formatter: (g) => `Effort-Driven:  ${(g.value ? 'True' : 'False')} <span style="color:green">(${g.count} items)</span>`,
+        formatter: (g) => `Effort-Driven: ${(g.value ? 'True' : 'False')} <span style="color:green">(${g.count} items)</span>`,
         aggregators: [
           new Aggregators.Avg('percentComplete'),
           new Aggregators.Sum('cost')
@@ -292,7 +295,7 @@ export class Example2 {
     this.dataViewObj.setGrouping([
       {
         getter: 'duration',
-        formatter: (g) => `Duration:  ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+        formatter: (g) => `Duration: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
         aggregators: [
           new Aggregators.Sum('duration'),
           new Aggregators.Sum('cost')
@@ -302,7 +305,7 @@ export class Example2 {
       },
       {
         getter: 'effortDriven',
-        formatter: (g) => `Effort-Driven:  ${(g.value ? 'True' : 'False')}  <span style="color:green">(${g.count} items)</span>`,
+        formatter: (g) => `Effort-Driven: ${(g.value ? 'True' : 'False')}  <span style="color:green">(${g.count} items)</span>`,
         aggregators: [
           new Aggregators.Sum('duration'),
           new Aggregators.Sum('cost')
@@ -311,7 +314,7 @@ export class Example2 {
       },
       {
         getter: 'percentComplete',
-        formatter: (g) => `% Complete:  ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+        formatter: (g) => `% Complete: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
         aggregators: [
           new Aggregators.Avg('percentComplete')
         ],
