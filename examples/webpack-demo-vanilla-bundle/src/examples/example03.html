@@ -5,38 +5,41 @@
 
 <section>
   <div class="row">
-    <button class="button is-small" onclick.delegate="loadData(500)">
+    <button class="button is-small" data-test="add-500-rows-btn" onclick.delegate="loadData(500)">
       500 rows
     </button>
-    <button class="button is-small" onclick.delegate="loadData(50000)">
+    <button class="button is-small" data-test="add-50k-rows-btn" onclick.delegate="loadData(50000)">
       50k rows
     </button>
-    <button class="button is-small" onclick.delegate="clearGroupsAndSelects()">
+    <button class="button is-small" data-test="clear-grouping-btn" onclick.delegate="clearGrouping()">
       <span class="icon mdi mdi-playlist-remove"></span>
       <span>Clear grouping</span>
     </button>
-    <button class="button is-small" onclick.delegate="collapseAllGroups()">
+    <button class="button is-small" data-test="collapse-all-btn" onclick.delegate="collapseAllGroups()">
       <span class="icon mdi mdi-arrow-collapse"></span>
       <span>Collapse all groups</span>
     </button>
-    <button class="button is-small" onclick.delegate="expandAllGroups()">
+    <button class="button is-small" data-test="expand-all-btn" onclick.delegate="expandAllGroups()">
       <span class="icon mdi mdi-arrow-expand"></span>
       <span>Expand all groups</span>
     </button>
-    <button class="button is-small" onclick.delegate="toggleDraggableGroupingRow()">
-      <span class="icon mdi mdi-flip-vertical"></span>
-      <span>Toggle Draggable Grouping Row</span>
+    <button class="button is-small" data-test="export-excel-btn" onclick.delegate="exportToExcel()">
+      <span class="icon mdi mdi-file-excel-outline"></span>
+      <span>Export to Excel</span>
     </button>
   </div>
 
   <div class="row" style="margin-top: 4px;">
-    <button class="button is-small" onclick.delegate="groupByDurationOrderByCount(false)">
+    <button class="button is-small" data-test="group-duration-sort-value-btn"
+            onclick.delegate="groupByDurationOrderByCount(false)">
       Group by duration &amp; sort groups by value
     </button>
-    <button class="button is-small" onclick.delegate="groupByDurationOrderByCount(true)">
+    <button class="button is-small" data-test="group-duration-sort-count-btn"
+            onclick.delegate="groupByDurationOrderByCount(true)">
       Group by duration &amp; sort groups by count
     </button>
-    <button class="button is-small" onclick.delegate="groupByDurationEffortDriven()">
+    <button class="button is-small" data-test="group-duration-effort-btn"
+            onclick.delegate="groupByDurationEffortDriven()">
       Group by Duration then Effort-Driven
     </button>
   </div>
