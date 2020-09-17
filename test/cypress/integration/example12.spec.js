@@ -76,13 +76,6 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 2222')
       .get('.editing-field')
       .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
-
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 3').click();
-    cy.get('.editor-title').type('task 3333');
-    cy.get('.editor-title .editor-footer .btn-save').click();
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 3333')
-      .get('.editing-field')
-      .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
   });
 
   it('should be able to change "% Complete" values of row indexes 2-4', () => {
@@ -96,12 +89,6 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(4)`).click();
     cy.get('.slider-editor input[type=range]').as('range').invoke('val', 6).trigger('change').type('{enter}', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(4)`).should('contain', '6')
-      .get('.editing-field')
-      .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
-
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(4)`).click();
-    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 7).trigger('change').type('{enter}', { force: true });
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(4)`).should('contain', '7')
       .get('.editing-field')
       .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
   });
@@ -158,7 +145,7 @@ describe('Example 12 - Composite Editor Modal', () => {
       .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
 
     cy.get('.unsaved-editable-field')
-      .should('have.length', 15);
+      .should('have.length', 13);
   });
 
   it('should undo last edit and expect the date editor to be opened as well when clicking the associated last undo with editor button', () => {
@@ -168,7 +155,7 @@ describe('Example 12 - Composite Editor Modal', () => {
       .should('exist');
 
     cy.get('.unsaved-editable-field')
-      .should('have.length', 14);
+      .should('have.length', 12);
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(7)`)
       .should('contain', '')
@@ -183,7 +170,7 @@ describe('Example 12 - Composite Editor Modal', () => {
       .should('not.exist');
 
     cy.get('.unsaved-editable-field')
-      .should('have.length', 13);
+      .should('have.length', 11);
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(7)`)
       .should('contain', '')
@@ -301,8 +288,8 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.item-details-container.editor-duration input.editor-text').type('33');
     cy.get('.item-details-container.editor-duration .modified').should('have.length', 1);
 
-    cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').type('d');
-    cy.get('.ui-menu.ui-autocomplete:visible').find('li.ui-menu-item:nth(5)').click();
+    cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').type('da');
+    cy.get('.ui-menu.ui-autocomplete:visible').find('li.ui-menu-item:nth(1)').click();
     cy.get('.item-details-container.editor-countryOfOrigin .modified').should('have.length', 1);
     cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').invoke('val').then(text => expect(text).to.eq('Bermuda'));
 
