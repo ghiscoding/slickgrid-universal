@@ -1,4 +1,3 @@
-import { Constants } from '../constants';
 import {
   Extension,
   GetSlickEventType,
