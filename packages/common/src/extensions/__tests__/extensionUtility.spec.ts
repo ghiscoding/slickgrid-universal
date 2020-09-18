@@ -58,16 +58,6 @@ describe('extensionUtility', () => {
       await translateService.use('fr');
     });
 
-    describe('arrayRemoveItemByIndex method', () => {
-      it('should remove an item from the array', () => {
-        const input = [{ field: 'field1', name: 'Field 1' }, { field: 'field2', name: 'Field 2' }, { field: 'field3', name: 'Field 3' }];
-        const expected = [{ field: 'field1', name: 'Field 1' }, { field: 'field3', name: 'Field 3' }];
-
-        const output = utility.arrayRemoveItemByIndex(input, 1);
-        expect(output).toEqual(expected);
-      });
-    });
-
     describe('loadExtensionDynamically method', () => {
       it('should check that autoTooltip gets loaded', () => {
         utility.loadExtensionDynamically(ExtensionName.autoTooltip);

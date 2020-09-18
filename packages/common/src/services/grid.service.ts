@@ -16,6 +16,7 @@ import { PaginationService } from '../services/pagination.service';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
 import { SortService } from './sort.service';
+import { arrayRemoveItemByIndex } from './utilities';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -173,6 +174,36 @@ export class GridService {
 
     const selectedRowIndexes = this._grid.getSelectedRows();
     return this.getDataItemByRowIndexes<T>(selectedRowIndexes);
+  }
+
+  /**
+   * Hide a Column from the Grid (the column will just become hidden and will still show up in columnPicker/gridMenu)
+   * @param column
+   */
+  hideColumn(column: Column) {
+    if (this.sharedService.slickGrid && this.sharedService.slickGrid.getColumns && this.sharedService.slickGrid.setColumns && this.sharedService.slickGrid.getColumnIndex) {
+      const columnIndex = this.sharedService.slickGrid.getColumnIndex(column.id);
+      if (columnIndex >= 0) {
+        this.hideColumnByIndex(columnIndex);
+      }
+    }
+  }
+
+  /**
+   * Hide a Column from the Grid by its column definition index (the column will just become hidden and will still show up in columnPicker/gridMenu)
+   * @param columnIndex - column definition index
+   * @param triggerEvent - do we want to trigger an event (onHeaderMenuColumnsChanged) when column becomes hidden? Defaults to true.
+   */
+  hideColumnByIndex(columnIndex: number, triggerEvent = true) {
+    if (this.sharedService.slickGrid && this.sharedService.slickGrid.getColumns && this.sharedService.slickGrid.setColumns && this.sharedService.slickGrid.getColumnIndex) {
+      const currentColumns = this.sharedService.slickGrid.getColumns();
+      const visibleColumns = arrayRemoveItemByIndex<Column>(currentColumns, columnIndex);
+      this.sharedService.visibleColumns = visibleColumns;
+      this.sharedService.slickGrid.setColumns(visibleColumns);
+      if (triggerEvent) {
+        this.pubSubService.publish('onHeaderMenuColumnsChanged', { columns: visibleColumns });
+      }
+    }
   }
 
   /**
