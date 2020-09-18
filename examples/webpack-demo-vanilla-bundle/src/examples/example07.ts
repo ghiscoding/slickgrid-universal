@@ -213,8 +213,8 @@ export class Example7 {
   }
 
   dynamicallyRemoveLastColumn() {
-    this.columnDefinitions.pop();
-    this.sgb.columnDefinitions = this.columnDefinitions.slice();
+    this.sgb.columnDefinitions.pop();
+    this.sgb.columnDefinitions = this.sgb.columnDefinitions.slice();
 
     // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
     // you MUST use the code below, first you must reassign the Editor facade (from the internalColumnEditor back to the editor)
@@ -228,7 +228,7 @@ export class Example7 {
     // remove your column the full set of columns
     // and use slice or spread [...] to trigger a dirty change
     allOriginalColumns.pop();
-    this.columnDefinitions = allOriginalColumns.slice();
+    this.sgb.columnDefinitions = allOriginalColumns.slice();
     */
   }
 
