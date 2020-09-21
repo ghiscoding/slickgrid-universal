@@ -10,7 +10,8 @@ export const SalesforceGlobalGridOptions: GridOption = {
   enableDeepCopyDatasetOnPageLoad: true,
   enableExport: true,
   exportOptions: {
-    exportWithFormatter: true
+    exportWithFormatter: true,
+    sanitizeDataExport: true,
   },
   enableCellNavigation: true,
   formatterOptions: {

@@ -50,7 +50,7 @@ export interface RowDetailViewOption {
 
   /**
    * Defaults to false, which will use a simpler way of calculating when rows become out (or back) of viewport range.
-   * It is recommended to enable this flag since it seems to work correctly with Angular-Slickgrid while the inverse is misbehaving
+   * It is recommended to enable this flag since it seems to work correctly with Slickgrid-Universal while the inverse is misbehaving
    */
   useSimpleViewportCalc?: boolean;
 
@@ -59,14 +59,14 @@ export interface RowDetailViewOption {
 
   /**
    * HTML Preload Template that will be used before the async process (typically used to show a spinner/loading)
-   * It's preferable to use the "preloadView" property to use an Angular View instead of plain HTML.
+   * It's preferable to use the "preloadView" property to use a framework View instead of plain HTML.
    * If you still wish to use these methods, we strongly suggest you to sanitize your HTML, e.g. "DOMPurify.sanitize()"
    */
   preTemplate?: () => string;
 
   /**
    * HTML Post Template (when Row Detail data is available) that will be loaded once the async function finishes
-   * It's preferable to use the "preloadView" property to use an Angular View instead of plain HTML
+   * It's preferable to use the "preloadView" property to use a framework View instead of plain HTML
    * If you still wish to use these methods, we strongly suggest you to sanitize your HTML, e.g. "DOMPurify.sanitize()"
    */
   postTemplate?: (item: any) => string;

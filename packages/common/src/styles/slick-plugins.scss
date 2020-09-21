@@ -858,6 +858,9 @@ input.flatpickr.form-control {
 // ----------------------------------------------
 // Input Slider Filter (with vanilla html)
 // ----------------------------------------------
+.ui-widget.ui-widget-content {
+  border: 0;
+}
 input.slider-editor-input[type=range],
 input.slider-filter-input[type=range] {
   /*removes default webkit styles*/

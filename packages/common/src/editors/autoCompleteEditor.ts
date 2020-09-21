@@ -470,11 +470,6 @@ export class AutoCompleteEditor implements Editor {
       });
     }
 
-    // we could optionally trigger a search when clicking on the AutoComplete
-    if (this.editorOptions.openSearchListOnFocus) {
-      this._$editorElm.click(() => this._$editorElm.autocomplete('search', this._$editorElm.val()));
-    }
-
     // user might override any of the jQueryUI callback methods
     if (this.columnEditor.callbacks) {
       for (const callback of Object.keys(this.columnEditor.callbacks)) {
@@ -484,7 +479,14 @@ export class AutoCompleteEditor implements Editor {
       }
     }
 
-    this._$editorElm.on('focus', () => this._$editorElm.select());
+    this._$editorElm.on('focus', () => {
+      this._$editorElm.select();
+
+      // we could optionally trigger a search to open the AutoComplete search list
+      if (this.editorOptions.openSearchListOnFocus) {
+        this._$editorElm.autocomplete('search', this._$editorElm.val());
+      }
+    });
 
     if (!this.args.compositeEditorOptions) {
       setTimeout(() => this.focus(), 50);

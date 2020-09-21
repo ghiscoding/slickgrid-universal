@@ -197,7 +197,6 @@ export class Example12 {
 
           // example with a Remote API call
           editorOptions: {
-            openSearchListOnFocus: true,
             minLength: 1,
             source: (request, response) => {
               // const items = require('c://TEMP/items.json');
@@ -236,7 +235,8 @@ export class Example12 {
           alwaysSaveOnEnterKey: true,
           massUpdate: true,
           editorOptions: {
-            minLength: 1,
+            minLength: 0,
+            openSearchListOnFocus: true,
             source: (request, response) => {
               const countries: any[] = require('./data/countries.json');
               const foundCountries = countries.filter((country) => country.name.toLowerCase().includes(request.term.toLowerCase()));
