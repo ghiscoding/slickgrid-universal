@@ -542,7 +542,7 @@ describe('SortService', () => {
         expect(col.sortable).toBeFalse();
       });
       mockColumns.forEach(col => col.header.menu.items.forEach(item => {
-        expect((item as MenuCommandItem).disabled).toBeTrue();
+        expect((item as MenuCommandItem).hidden).toBeTrue();
       }));
     });
 
@@ -560,7 +560,7 @@ describe('SortService', () => {
         expect(col.sortable).toBeFalse();
       });
       mockColumns.forEach(col => col.header.menu.items.forEach(item => {
-        expect((item as MenuCommandItem).disabled).toBeTrue();
+        expect((item as MenuCommandItem).hidden).toBeTrue();
       }));
     });
 
@@ -576,7 +576,7 @@ describe('SortService', () => {
         expect(col.sortable).toBeTrue();
       });
       mockColumns.forEach(col => col.header.menu.items.forEach(item => {
-        expect((item as MenuCommandItem).disabled).toBeFalse();
+        expect((item as MenuCommandItem).hidden).toBeFalse();
       }));
 
       setTimeout(() => {

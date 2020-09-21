@@ -523,7 +523,7 @@ export class SortService {
           if (menuItem && typeof menuItem !== 'string') {
             const menuCommand = menuItem.command;
             if (menuCommand === 'sort-asc' || menuCommand === 'sort-desc' || menuCommand === 'clear-sort') {
-              menuItem.disabled = isDisabling;
+              menuItem.hidden = isDisabling;
             }
           }
         });

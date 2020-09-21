@@ -8,8 +8,11 @@ export interface GridMenuItem {
   /** A CSS class to be added to the menu item container. */
   cssClass?: string;
 
-  /** Defaults to false, whether the item is disabled. */
+  /** Defaults to false, whether the item/command is disabled. */
   disabled?: boolean;
+
+  /** Defaults to false, whether the item/command is hidden. */
+  hidden?: boolean;
 
   /** Defaults to false, whether the command is actually a divider (separator). */
   divider?: boolean;

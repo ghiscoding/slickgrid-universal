@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../out-tsc/spec",
+    "baseUrl": "./",
+    "target": "es2015",
+    "module": "commonjs",
+    "lib": [
+      "ES2015"
+    ],
+    "types": [
+      "cypress",
+      "jest",
+      "jest-extended",
+      "jquery",
+      "node"
+    ]
+  },
+  "include": [
+    "**/*.spec.ts",
+    "src/typings/**/*.ts",
+    "**/*.d.ts"
+  ]
+}

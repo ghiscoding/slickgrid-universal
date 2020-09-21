@@ -229,7 +229,8 @@ export class Example11 {
               action: () => alert('Please Help!'),
             },
             'divider',
-            { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67, }
+            { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67, },
+            { command: 'hidden command', title: 'Hidden Command', hidden: true, positionOrder: 68, }
           ],
         }
       },
