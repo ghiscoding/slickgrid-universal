@@ -181,8 +181,8 @@ export class GridService {
    * @param column
    */
   hideColumn(column: Column) {
-    if (this.sharedService.slickGrid && this.sharedService.slickGrid.getColumns && this.sharedService.slickGrid.setColumns && this.sharedService.slickGrid.getColumnIndex) {
-      const columnIndex = this.sharedService.slickGrid.getColumnIndex(column.id);
+    if (this._grid && this._grid.getColumns && this._grid.setColumns && this._grid.getColumnIndex) {
+      const columnIndex = this._grid.getColumnIndex(column.id);
       if (columnIndex >= 0) {
         this.hideColumnByIndex(columnIndex);
       }
@@ -195,11 +195,11 @@ export class GridService {
    * @param triggerEvent - do we want to trigger an event (onHeaderMenuColumnsChanged) when column becomes hidden? Defaults to true.
    */
   hideColumnByIndex(columnIndex: number, triggerEvent = true) {
-    if (this.sharedService.slickGrid && this.sharedService.slickGrid.getColumns && this.sharedService.slickGrid.setColumns && this.sharedService.slickGrid.getColumnIndex) {
-      const currentColumns = this.sharedService.slickGrid.getColumns();
+    if (this._grid && this._grid.getColumns && this._grid.setColumns) {
+      const currentColumns = this._grid.getColumns();
       const visibleColumns = arrayRemoveItemByIndex<Column>(currentColumns, columnIndex);
       this.sharedService.visibleColumns = visibleColumns;
-      this.sharedService.slickGrid.setColumns(visibleColumns);
+      this._grid.setColumns(visibleColumns);
       if (triggerEvent) {
         this.pubSubService.publish('onHeaderMenuColumnsChanged', { columns: visibleColumns });
       }

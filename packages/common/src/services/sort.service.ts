@@ -182,9 +182,9 @@ export class SortService {
     this.pubSubService.publish('onSortCleared', true);
   }
 
-  disableSorting(isSortingDisabled: boolean, clearSortingOnDisable = true) {
+  disableSortFunctionality(isSortingDisabled: boolean, clearSortingWhenDisabled = true) {
     if (isSortingDisabled) {
-      if (clearSortingOnDisable) {
+      if (clearSortingWhenDisabled) {
         this.clearSorting();
       }
       this._eventHandler.unsubscribeAll();
@@ -200,11 +200,11 @@ export class SortService {
    * Toggle the Sorting functionality
    * @param clearSortingOnDisable - when disabling the sorting, do we also want to clear the sorting as well? Defaults to true.
    */
-  toggleSortingFunctionality(clearSortingOnDisable = true) {
+  toggleSortFunctionality(clearSortingOnDisable = true) {
     const previousSorting = this._gridOptions.enableSorting;
     this._gridOptions.enableSorting = !previousSorting;
     this._grid.setOptions({ enableSorting: this._gridOptions.enableSorting });
-    this.disableSorting(!this._gridOptions.enableSorting, clearSortingOnDisable);
+    this.disableSortFunctionality(!this._gridOptions.enableSorting, clearSortingOnDisable);
   }
 
   /**

@@ -239,11 +239,11 @@ export class Example7 {
     }
   }
 
-  toggleFilteringFunctionality() {
-    this.sgb.filterService.toggleFilteringFunctionality();
+  toggleFilter() {
+    this.sgb.filterService.toggleFilterFunctionality();
   }
 
   toggleSorting() {
-    this.sgb.sortService.toggleSortingFunctionality();
+    this.sgb.sortService.toggleSortFunctionality();
   }
 }

@@ -4,8 +4,9 @@ import {
   Column,
   ColumnSort,
   CurrentSorter,
-  SlickDataView,
   GridOption,
+  MenuCommandItem,
+  SlickDataView,
   SlickEventHandler,
   SlickGrid,
   SingleColumnSort,
@@ -62,6 +63,7 @@ const gridStub = {
   onLocalSortChanged: jest.fn(),
   onSort: new Slick.Event(),
   render: jest.fn(),
+  setOptions: jest.fn(),
   setSortColumns: jest.fn(),
 } as unknown as SlickGrid;
 
@@ -411,7 +413,6 @@ describe('SortService', () => {
   });
 
   describe('onBackendSortChanged method', () => {
-    const spyProcess = jest.fn();
     const spyPreProcess = jest.fn();
     const spyPostProcess = jest.fn();
 
@@ -451,7 +452,7 @@ describe('SortService', () => {
     it('should execute the "onError" method when the Promise throws an error', (done) => {
       const errorExpected = 'promise error';
       gridOptionMock.backendServiceApi.process = () => Promise.reject(errorExpected);
-      gridOptionMock.backendServiceApi.onError = (e) => jest.fn();
+      gridOptionMock.backendServiceApi.onError = (_e) => jest.fn();
       const spyOnError = jest.spyOn(gridOptionMock.backendServiceApi, 'onError');
 
       jest.spyOn(gridOptionMock.backendServiceApi, 'process');
@@ -515,6 +516,101 @@ describe('SortService', () => {
       const columnSorts = service.getCurrentColumnSorts('firstName');
 
       expect(columnSorts).toEqual([{ columnId: 'lastName', sortCol: { id: 'lastName', field: 'lastName' }, sortAsc: false }]);
+    });
+  });
+
+  describe('disableSortFunctionality method', () => {
+    let mockColumns: Column[];
+    beforeEach(() => {
+      mockColumns = [
+        { id: 'field1', field: 'field1', sortable: true, header: { menu: { items: [{ command: 'sort-asc' }, { command: 'sort-desc' }, { command: 'clear-sort' }] } } },
+        { id: 'field2', field: 'field2', sortable: true, header: { menu: { items: [{ command: 'sort-asc' }, { command: 'sort-desc' }, { command: 'clear-sort' }] } } },
+      ] as Column[];
+    });
+
+    it('should disable Sort functionality when passing True as 1st argument and trigger an event by default', () => {
+      const clearSpy = jest.spyOn(service, 'clearSorting');
+      const unsubscribeSpy = jest.spyOn(service.eventHandler, 'unsubscribeAll');
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+
+      service.bindLocalOnSort(gridStub);
+      service.disableSortFunctionality(true);
+
+      expect(clearSpy).toHaveBeenCalled();
+      expect(unsubscribeSpy).toHaveBeenCalled();
+      mockColumns.forEach(col => {
+        expect(col.sortable).toBeFalse();
+      });
+      mockColumns.forEach(col => col.header.menu.items.forEach(item => {
+        expect((item as MenuCommandItem).disabled).toBeTrue();
+      }));
+    });
+
+    it('should disable Sort functionality when passing True as 1st argument and False as 2nd argument SHOULD NOT trigger an event', () => {
+      const clearSpy = jest.spyOn(service, 'clearSorting');
+      const unsubscribeSpy = jest.spyOn(service.eventHandler, 'unsubscribeAll');
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+
+      service.bindLocalOnSort(gridStub);
+      service.disableSortFunctionality(true, false);
+
+      expect(clearSpy).not.toHaveBeenCalled();
+      expect(unsubscribeSpy).toHaveBeenCalled();
+      mockColumns.forEach(col => {
+        expect(col.sortable).toBeFalse();
+      });
+      mockColumns.forEach(col => col.header.menu.items.forEach(item => {
+        expect((item as MenuCommandItem).disabled).toBeTrue();
+      }));
+    });
+
+    it('should enable Sort functionality when passing False as 1st argument', (done) => {
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      const handleSpy = jest.spyOn(service, 'handleLocalOnSort');
+
+      service.bindLocalOnSort(gridStub);
+      service.disableSortFunctionality(false);
+      gridStub.onSort.notify({ multiColumnSort: true, sortCols: [], grid: gridStub }, new Slick.EventData(), gridStub);
+
+      mockColumns.forEach(col => {
+        expect(col.sortable).toBeTrue();
+      });
+      mockColumns.forEach(col => col.header.menu.items.forEach(item => {
+        expect((item as MenuCommandItem).disabled).toBeFalse();
+      }));
+
+      setTimeout(() => {
+        expect(handleSpy).toHaveBeenCalled();
+        done();
+      });
+    });
+  });
+
+  describe('toggleSortFunctionality method', () => {
+    beforeEach(() => {
+      gridOptionMock.enableSorting = true;
+    });
+
+    it('should toggle the Sorting', () => {
+      const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
+      const disableSpy = jest.spyOn(service, 'disableSortFunctionality');
+
+      service.bindLocalOnSort(gridStub);
+      service.toggleSortFunctionality();
+
+      expect(setOptionSpy).toHaveBeenCalledWith({ enableSorting: false });
+      expect(disableSpy).toHaveBeenCalledWith(true, true);
+    });
+
+    it('should toggle the Sorting BUT NOT trigger an event', () => {
+      const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
+      const disableSpy = jest.spyOn(service, 'disableSortFunctionality');
+
+      service.bindLocalOnSort(gridStub);
+      service.toggleSortFunctionality(false);
+
+      expect(setOptionSpy).toHaveBeenCalledWith({ enableSorting: false });
+      expect(disableSpy).toHaveBeenCalledWith(true, false);
     });
   });
 
@@ -671,7 +767,7 @@ describe('SortService', () => {
     it('should sort the data with 2 sorters which the second is by executing the "queryFieldNameGetterFn()" callback and sort by the field returned by it', () => {
       const mockSortedCols = [
         { sortCol: { id: 'address', field: 'address', queryField: 'lastName' }, sortAsc: true },
-        { sortCol: { id: 'random', field: 'random', queryFieldNameGetterFn: (dataContext) => 'zip' }, sortAsc: false },
+        { sortCol: { id: 'random', field: 'random', queryFieldNameGetterFn: (_dataContext) => 'zip' }, sortAsc: false },
       ] as ColumnSort[];
 
       dataset.sort((row1, row2) => service.sortComparers(mockSortedCols, row1, row2));

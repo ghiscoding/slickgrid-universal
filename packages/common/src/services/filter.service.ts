@@ -328,18 +328,6 @@ export class FilterService {
     return true;
   }
 
-  /**
-   * Toggle the Filtering Functionality (show/hide the header row filter bar as well)
-   */
-  toggleFilteringFunctionality() {
-    const previousFiltering = this._gridOptions.enableFiltering;
-    this._grid.setOptions({ enableFiltering: !previousFiltering });
-    this._grid.setHeaderRowVisibility(!previousFiltering);
-
-    // when displaying header row, we'll call "setColumns" which in terms will recreate the header row filters
-    this._grid.setColumns(this.sharedService.columnDefinitions);
-  }
-
   getFilterConditionOptionsOrBoolean(item: any, columnFilter: ColumnFilter, columnId: string | number, grid: SlickGrid): FilterConditionOption | boolean {
     let columnIndex = grid.getColumnIndex(columnId) as number;
     let columnDef = grid.getColumns()[columnIndex] as Column;
@@ -645,6 +633,18 @@ export class FilterService {
       this._tmpPreFilteredData = this.preFilterTreeData(this._dataView.getItems(), this._columnFilters);
       this._dataView.refresh(); // and finally this refresh() is what triggers a DataView filtering check
     }
+  }
+
+  /**
+   * Toggle the Filter Functionality (show/hide the header row filter bar as well)
+   */
+  toggleFilterFunctionality() {
+    const previousFiltering = this._gridOptions.enableFiltering;
+    this._grid.setOptions({ enableFiltering: !previousFiltering });
+    this._grid.setHeaderRowVisibility(!previousFiltering);
+
+    // when displaying header row, we'll call "setColumns" which in terms will recreate the header row filters
+    this._grid.setColumns(this.sharedService.columnDefinitions);
   }
 
   /**
