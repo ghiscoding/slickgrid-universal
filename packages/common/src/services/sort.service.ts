@@ -84,27 +84,29 @@ export class SortService {
     this.processTreeDataInitialSort();
 
     const onSortHandler = grid.onSort;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSortHandler>>).subscribe(onSortHandler, (e: SlickEventData, args: SingleColumnSort | MultiColumnSort) => {
-      // multiSort and singleSort are not exactly the same, but we want to structure it the same for the (for loop) after
-      // also to avoid having to rewrite the for loop in the sort, we will make the singleSort an array of 1 object
-      const sortColumns: Array<SingleColumnSort> = (args.multiColumnSort) ? args.sortCols : new Array({ columnId: (args as SingleColumnSort).sortCol.id, sortAsc: (args as SingleColumnSort).sortAsc, sortCol: (args as SingleColumnSort).sortCol });
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSortHandler>>).subscribe(onSortHandler, this.handleLocalOnSort.bind(this));
+  }
 
-      // keep current sorters
-      this._currentLocalSorters = []; // reset current local sorters
-      if (Array.isArray(sortColumns)) {
-        sortColumns.forEach((sortColumn: SingleColumnSort) => {
-          if (sortColumn.sortCol) {
-            this._currentLocalSorters.push({
-              columnId: sortColumn.sortCol.id,
-              direction: sortColumn.sortAsc ? SortDirection.ASC : SortDirection.DESC
-            });
-          }
-        });
-      }
+  handleLocalOnSort(_e: SlickEventData, args: SingleColumnSort | MultiColumnSort) {
+    // multiSort and singleSort are not exactly the same, but we want to structure it the same for the (for loop) after
+    // also to avoid having to rewrite the for loop in the sort, we will make the singleSort an array of 1 object
+    const sortColumns: Array<SingleColumnSort> = (args.multiColumnSort) ? args.sortCols : new Array({ columnId: (args as SingleColumnSort).sortCol.id, sortAsc: (args as SingleColumnSort).sortAsc, sortCol: (args as SingleColumnSort).sortCol });
 
-      this.onLocalSortChanged(this._grid, sortColumns);
-      this.emitSortChanged(EmitterType.local);
-    });
+    // keep current sorters
+    this._currentLocalSorters = []; // reset current local sorters
+    if (Array.isArray(sortColumns)) {
+      sortColumns.forEach((sortColumn: SingleColumnSort) => {
+        if (sortColumn.sortCol) {
+          this._currentLocalSorters.push({
+            columnId: sortColumn.sortCol.id,
+            direction: sortColumn.sortAsc ? SortDirection.ASC : SortDirection.DESC
+          });
+        }
+      });
+    }
+
+    this.onLocalSortChanged(this._grid, sortColumns);
+    this.emitSortChanged(EmitterType.local);
   }
 
   clearSortByColumnId(event: Event | undefined, columnId: string | number) {
@@ -178,6 +180,31 @@ export class SortService {
 
     // emit an event when sorts are all cleared
     this.pubSubService.publish('onSortCleared', true);
+  }
+
+  disableSortFunctionality(isSortingDisabled: boolean, clearSortingWhenDisabled = true) {
+    if (isSortingDisabled) {
+      if (clearSortingWhenDisabled) {
+        this.clearSorting();
+      }
+      this._eventHandler.unsubscribeAll();
+      this.disableSortingOnAllColumns(true);
+    } else {
+      this.disableSortingOnAllColumns(false);
+      const onSortHandler = this._grid.onSort;
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSortHandler>>).subscribe(onSortHandler, (e: SlickEventData, args: SingleColumnSort | MultiColumnSort) => this.handleLocalOnSort(e, args));
+    }
+  }
+
+  /**
+   * Toggle the Sorting functionality
+   * @param clearSortingOnDisable - when disabling the sorting, do we also want to clear the sorting as well? Defaults to true.
+   */
+  toggleSortFunctionality(clearSortingOnDisable = true) {
+    const previousSorting = this._gridOptions.enableSorting;
+    this._gridOptions.enableSorting = !previousSorting;
+    this._grid.setOptions({ enableSorting: this._gridOptions.enableSorting });
+    this.disableSortFunctionality(!this._gridOptions.enableSorting, clearSortingOnDisable);
   }
 
   /**
@@ -478,5 +505,29 @@ export class SortService {
         this.emitSortChanged(emitterType);
       }
     }
+  }
+
+  // --
+  // private functions
+  // -------------------
+
+  private disableSortingOnAllColumns(isDisabling = true) {
+    const columnDefinitions = this._grid.getColumns();
+
+    columnDefinitions.forEach((col) => {
+      if (typeof col.sortable !== undefined) {
+        col.sortable = !isDisabling;
+      }
+      if (col?.header?.menu) {
+        col.header.menu.items.forEach(menuItem => {
+          if (menuItem && typeof menuItem !== 'string') {
+            const menuCommand = menuItem.command;
+            if (menuCommand === 'sort-asc' || menuCommand === 'sort-desc' || menuCommand === 'clear-sort') {
+              menuItem.disabled = isDisabling;
+            }
+          }
+        });
+      }
+    });
   }
 }

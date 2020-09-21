@@ -33,14 +33,14 @@ export class Example7 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', name: 'Title', field: 'title', editor: { model: Editors.longText, required: true, alwaysSaveOnEnterKey: true, },
+        id: 'title', name: 'Title', field: 'title', filterable: true, editor: { model: Editors.longText, required: true, alwaysSaveOnEnterKey: true },
       },
       {
-        id: 'duration', name: 'Duration', field: 'duration', sortable: true,
+        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
         editor: { model: Editors.text, alwaysSaveOnEnterKey: true, },
         formatter: (_row: number, _cell: number, value: any) => value > 1 ? `${value} days` : `${value} day`,
       },
-      { id: 'percentComplete', name: '% Complete', field: 'percentComplete', sortable: true, editor: { model: Editors.slider, minValue: 0, maxValue: 100, }, },
+      { id: 'percentComplete', name: '% Complete', field: 'percentComplete', filterable: true, sortable: true, editor: { model: Editors.slider, minValue: 0, maxValue: 100, }, },
       {
         id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso,
         editor: { model: Editors.date }, type: FieldType.date,/* outputType: FieldType.dateUs, */ saveOutputType: FieldType.dateUtc,
@@ -79,6 +79,7 @@ export class Example7 {
         exportWithFormatter: true,
         sanitizeDataExport: true
       },
+      enableFiltering: true,
       registerExternalServices: [new ExcelExportService()],
       enableCellNavigation: true,
       enableCheckboxSelector: true,
@@ -212,8 +213,8 @@ export class Example7 {
   }
 
   dynamicallyRemoveLastColumn() {
-    this.columnDefinitions.pop();
-    this.sgb.columnDefinitions = this.columnDefinitions.slice();
+    this.sgb.columnDefinitions.pop();
+    this.sgb.columnDefinitions = this.sgb.columnDefinitions.slice();
 
     // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
     // you MUST use the code below, first you must reassign the Editor facade (from the internalColumnEditor back to the editor)
@@ -227,7 +228,22 @@ export class Example7 {
     // remove your column the full set of columns
     // and use slice or spread [...] to trigger a dirty change
     allOriginalColumns.pop();
-    this.columnDefinitions = allOriginalColumns.slice();
+    this.sgb.columnDefinitions = allOriginalColumns.slice();
     */
+  }
+
+  hideDurationColumnDynamically() {
+    const columnIndex = this.sgb.columnDefinitions.findIndex(col => col.id === 'duration');
+    if (columnIndex >= 0) {
+      this.sgb.gridService.hideColumnByIndex(columnIndex);
+    }
+  }
+
+  toggleFilter() {
+    this.sgb.filterService.toggleFilterFunctionality();
+  }
+
+  toggleSorting() {
+    this.sgb.sortService.toggleSortFunctionality();
   }
 }

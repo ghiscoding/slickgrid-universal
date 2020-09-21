@@ -157,7 +157,7 @@ export class FilterService {
 
     // subscribe to SlickGrid onHeaderRowCellRendered event to create filter template
     const onHeaderRowCellRenderedHandler = grid.onHeaderRowCellRendered;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onHeaderRowCellRenderedHandler>>).subscribe(onHeaderRowCellRenderedHandler, (e, args) => {
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onHeaderRowCellRenderedHandler>>).subscribe(onHeaderRowCellRenderedHandler, (_e, args) => {
       // firstColumnIdRendered is null at first, so if it changes to being filled and equal, then we would know that it was already rendered
       // this is to avoid rendering the filter twice (only the Select Filter for now), rendering it again also clears the filter which has unwanted side effect
       if (args.column.id === this._firstColumnIdRendered) {
@@ -210,7 +210,7 @@ export class FilterService {
 
     // subscribe to SlickGrid onHeaderRowCellRendered event to create filter template
     const onHeaderRowCellRenderedHandler = grid.onHeaderRowCellRendered;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onHeaderRowCellRenderedHandler>>).subscribe(onHeaderRowCellRenderedHandler, (e: SlickEventData, args: any) => {
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onHeaderRowCellRenderedHandler>>).subscribe(onHeaderRowCellRenderedHandler, (_e: SlickEventData, args: any) => {
       this.addFilterTemplateToHeaderRow(args);
     });
   }
@@ -633,6 +633,18 @@ export class FilterService {
       this._tmpPreFilteredData = this.preFilterTreeData(this._dataView.getItems(), this._columnFilters);
       this._dataView.refresh(); // and finally this refresh() is what triggers a DataView filtering check
     }
+  }
+
+  /**
+   * Toggle the Filter Functionality (show/hide the header row filter bar as well)
+   */
+  toggleFilterFunctionality() {
+    const previousFiltering = this._gridOptions.enableFiltering;
+    this._grid.setOptions({ enableFiltering: !previousFiltering });
+    this._grid.setHeaderRowVisibility(!previousFiltering);
+
+    // when displaying header row, we'll call "setColumns" which in terms will recreate the header row filters
+    this._grid.setColumns(this.sharedService.columnDefinitions);
   }
 
   /**

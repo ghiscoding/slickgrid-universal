@@ -1,4 +1,3 @@
-import { Constants } from '../constants';
 import {
   Column,
   CurrentSorter,
@@ -8,7 +7,6 @@ import {
   HeaderMenu,
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
-  Locale,
   SlickEventHandler,
   SlickHeaderMenu,
   SlickNamespace,
@@ -17,7 +15,7 @@ import {
   EmitterType,
   ExtensionName,
 } from '../enums/index';
-import { getTranslationPrefix } from '../services/utilities';
+import { arrayRemoveItemByIndex, getTranslationPrefix } from '../services/utilities';
 import { FilterService } from '../services/filter.service';
 import { SortService } from '../services/sort.service';
 import { SharedService } from '../services/shared.service';
@@ -234,7 +232,7 @@ export class HeaderMenuExtension implements Extension {
     if (this.sharedService.slickGrid && this.sharedService.slickGrid.getColumns && this.sharedService.slickGrid.setColumns && this.sharedService.slickGrid.getColumnIndex) {
       const columnIndex = this.sharedService.slickGrid.getColumnIndex(column.id);
       const currentColumns = this.sharedService.slickGrid.getColumns();
-      const visibleColumns = this.extensionUtility.arrayRemoveItemByIndex<Column>(currentColumns, columnIndex);
+      const visibleColumns = arrayRemoveItemByIndex<Column>(currentColumns, columnIndex);
       this.sharedService.visibleColumns = visibleColumns;
       this.sharedService.slickGrid.setColumns(visibleColumns);
       this.pubSubService.publish('onHeaderMenuColumnsChanged', { columns: visibleColumns });

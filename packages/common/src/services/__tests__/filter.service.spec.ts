@@ -76,7 +76,10 @@ const gridStub = {
   onSort: new Slick.Event(),
   onHeaderRowCellRendered: new Slick.Event(),
   render: jest.fn(),
+  setColumns: jest.fn(),
+  setHeaderRowVisibility: jest.fn(),
   setSortColumns: jest.fn(),
+  setOptions: jest.fn(),
 } as unknown as SlickGrid;
 
 const pubSubServiceStub = {
@@ -1091,6 +1094,26 @@ describe('FilterService', () => {
         isActive: { columnId: 'isActive', columnDef: mockColumn2, searchTerms: [false], operator: 'EQ' }
       });
       expect(clearSpy).toHaveBeenCalledWith(false);
+    });
+  });
+
+  describe('toggleFilterFunctionality method', () => {
+    beforeEach(() => {
+      gridOptionMock.enableFiltering = true;
+    });
+
+    it('should toggle the Filters', () => {
+      const mockColumns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
+      const setHeaderSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
+      const setColsSpy = jest.spyOn(gridStub, 'setColumns');
+      jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns)
+      service.init(gridStub);
+      service.toggleFilterFunctionality();
+
+      expect(setOptionSpy).toHaveBeenCalledWith({ enableFiltering: false });
+      expect(setHeaderSpy).toHaveBeenCalledWith(false);
+      expect(setColsSpy).toHaveBeenCalledWith(mockColumns);
     });
   });
 
