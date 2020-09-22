@@ -700,17 +700,18 @@
   min-width: 25px;
   border: none;
 
-  select.form-control {
-    cursor: pointer;
-    -moz-appearance: none;
-    -webkit-appearance:none;
-  }
-  select.form-control::-ms-expand {
-    display: none;
-  }
-  select.form-control {
-    .empty {
-      color: #c0c0c0;
+  select {
+    font-family: $compound-filter-operator-select-font-family;
+    &.form-control {
+      cursor: pointer;
+      -moz-appearance: none;
+      -webkit-appearance:none;
+      &:-ms-expand {
+        display: none;
+      }
+      .empty {
+        color: #c0c0c0;
+      }
     }
   }
 

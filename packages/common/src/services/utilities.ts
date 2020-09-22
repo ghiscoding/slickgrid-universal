@@ -275,6 +275,18 @@ export function htmlEntityDecode(input: string): string {
   });
 }
 
+export function htmlEncodedStringWithPadding(inputStr: string, paddingLength: number): string {
+  const inputStrLn = inputStr.length;
+  let outputStr = htmlEncode(inputStr);
+
+  if (inputStrLn < paddingLength) {
+    for (let i = inputStrLn; i < paddingLength; i++) {
+      outputStr += `&nbsp;`;
+    }
+  }
+  return outputStr;
+}
+
 /**
  * Take a number (or a string) and display it as a formatted decimal string with defined minimum and maximum decimals
  * @param input

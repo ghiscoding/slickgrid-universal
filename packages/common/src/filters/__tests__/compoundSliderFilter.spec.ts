@@ -1,7 +1,8 @@
-import { OperatorType } from '../../enums/index';
+import { FieldType, OperatorType } from '../../enums/index';
 import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { Filters } from '../index';
 import { CompoundSliderFilter } from '../compoundSliderFilter';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const containerId = 'demo-container';
 
@@ -21,6 +22,7 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 describe('CompoundSliderFilter', () => {
+  let translateService: TranslateServiceStub;
   let divContainer: HTMLDivElement;
   let filter: CompoundSliderFilter;
   let filterArguments: FilterArguments;
@@ -28,6 +30,7 @@ describe('CompoundSliderFilter', () => {
   let mockColumn: Column;
 
   beforeEach(() => {
+    translateService = new TranslateServiceStub();
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
@@ -40,7 +43,7 @@ describe('CompoundSliderFilter', () => {
       callback: jest.fn()
     };
 
-    filter = new CompoundSliderFilter();
+    filter = new CompoundSliderFilter(translateService);
   });
 
   afterEach(() => {
@@ -221,15 +224,50 @@ describe('CompoundSliderFilter', () => {
 
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector<HTMLInputElement>('.input-group.search-filter.filter-duration input');
-    const filterSelectElm = divContainer.querySelectorAll<HTMLSelectElement>('.search-filter.filter-duration select');
+    const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.search-filter.filter-duration select');
 
     expect(filterInputElm.value).toBe('9');
-    expect(filterSelectElm[0][1].title).toBe('=');
-    expect(filterSelectElm[0][1].textContent).toBe('=');
-    expect(filterSelectElm[0][2].textContent).toBe('<');
-    expect(filterSelectElm[0][3].textContent).toBe('<=');
-    expect(filterSelectElm[0][4].textContent).toBe('>');
-    expect(filterSelectElm[0][5].textContent).toBe('>=');
-    expect(filterSelectElm[0][6].textContent).toBe('<>');
+    expect(filterOperatorElm[0][1].title).toBe('Equal to');
+    expect(filterOperatorElm[0][2].title).toBe('Smaller than');
+    expect(filterOperatorElm[0][3].title).toBe('Smaller than or equal to');
+    expect(filterOperatorElm[0][4].title).toBe('Greater than');
+    expect(filterOperatorElm[0][5].title).toBe('Greater than or equal to');
+    expect(filterOperatorElm[0][6].title).toBe('Not equal to');
+    expect(filterOperatorElm[0][1].textContent).toBe('=');
+    expect(filterOperatorElm[0][2].textContent).toBe('<');
+    expect(filterOperatorElm[0][3].textContent).toBe('<=');
+    expect(filterOperatorElm[0][4].textContent).toBe('>');
+    expect(filterOperatorElm[0][5].textContent).toBe('>=');
+    expect(filterOperatorElm[0][6].textContent).toBe('<>');
+  });
+
+  describe('with French I18N translations', () => {
+    beforeEach(() => {
+      gridOptionMock.enableTranslate = true;
+      translateService.use('fr');
+    });
+
+    it('should have French text translated with operator dropdown options related to numbers when column definition type is FieldType.number', () => {
+      mockColumn.type = FieldType.number;
+      filterArguments.searchTerms = [9];
+
+      filter.init(filterArguments);
+      const filterInputElm = divContainer.querySelector<HTMLInputElement>('.input-group.search-filter.filter-duration input');
+      const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.search-filter.filter-duration select');
+
+      expect(filterInputElm.value).toBe('9');
+      expect(filterOperatorElm[0][1].title).toBe('Égal à');
+      expect(filterOperatorElm[0][2].title).toBe('Plus petit que');
+      expect(filterOperatorElm[0][3].title).toBe('Plus petit ou égal à');
+      expect(filterOperatorElm[0][4].title).toBe('Plus grand que');
+      expect(filterOperatorElm[0][5].title).toBe('Plus grand ou égal à');
+      expect(filterOperatorElm[0][6].title).toBe('Pas égal à');
+      expect(filterOperatorElm[0][1].textContent).toBe('=');
+      expect(filterOperatorElm[0][2].textContent).toBe('<');
+      expect(filterOperatorElm[0][3].textContent).toBe('<=');
+      expect(filterOperatorElm[0][4].textContent).toBe('>');
+      expect(filterOperatorElm[0][5].textContent).toBe('>=');
+      expect(filterOperatorElm[0][6].textContent).toBe('<>');
+    });
   });
 });

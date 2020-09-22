@@ -89,7 +89,7 @@ export class LongTextEditor implements Editor {
   init(): void {
     let cancelText = '';
     let saveText = '';
-    if (this._translater && this._translater.translate && this._translater.getCurrentLanguage && this._translater.getCurrentLanguage()) {
+    if (this._translater && this._translater.translate && this._translater.getCurrentLanguage) {
       const translationPrefix = getTranslationPrefix(this.gridOptions);
       cancelText = this._translater.translate(`${translationPrefix}CANCEL`);
       saveText = this._translater.translate(`${translationPrefix}SAVE`);

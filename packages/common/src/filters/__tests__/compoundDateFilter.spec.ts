@@ -317,4 +317,55 @@ describe('CompoundDateFilter', () => {
     expect(filterInputElm.value).toBe('2000-01-01T05:00:00.000Z');
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T05:00:00.000Z'], shouldTriggerQuery: true });
   });
+
+  it('should have default English text with operator dropdown options related to dates', () => {
+    mockColumn.outputType = null;
+    filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
+
+    filter.init(filterArguments);
+    const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.input-group-prepend.operator select');
+
+    expect(filterOperatorElm[0][0].title).toBe('');
+    expect(filterOperatorElm[0][1].title).toBe('Equal to');
+    expect(filterOperatorElm[0][2].title).toBe('Smaller than');
+    expect(filterOperatorElm[0][3].title).toBe('Smaller than or equal to');
+    expect(filterOperatorElm[0][4].title).toBe('Greater than');
+    expect(filterOperatorElm[0][5].title).toBe('Greater than or equal to');
+    expect(filterOperatorElm[0][6].title).toBe('Not equal to');
+    expect(filterOperatorElm[0][1].textContent).toBe('=');
+    expect(filterOperatorElm[0][2].textContent).toBe('<');
+    expect(filterOperatorElm[0][3].textContent).toBe('<=');
+    expect(filterOperatorElm[0][4].textContent).toBe('>');
+    expect(filterOperatorElm[0][5].textContent).toBe('>=');
+    expect(filterOperatorElm[0][6].textContent).toBe('<>');
+  });
+
+  describe('with French I18N translations', () => {
+    beforeEach(() => {
+      gridOptionMock.enableTranslate = true;
+      translateService.use('fr');
+    });
+
+    it('should have French text translated with operator dropdown options related to dates', () => {
+      mockColumn.outputType = null;
+      filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
+
+      filter.init(filterArguments);
+      const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.input-group-prepend.operator select');
+
+      expect(filterOperatorElm[0][0].title).toBe('');
+      expect(filterOperatorElm[0][1].title).toBe('Égal à');
+      expect(filterOperatorElm[0][2].title).toBe('Plus petit que');
+      expect(filterOperatorElm[0][3].title).toBe('Plus petit ou égal à');
+      expect(filterOperatorElm[0][4].title).toBe('Plus grand que');
+      expect(filterOperatorElm[0][5].title).toBe('Plus grand ou égal à');
+      expect(filterOperatorElm[0][6].title).toBe('Pas égal à');
+      expect(filterOperatorElm[0][1].textContent).toBe('=');
+      expect(filterOperatorElm[0][2].textContent).toBe('<');
+      expect(filterOperatorElm[0][3].textContent).toBe('<=');
+      expect(filterOperatorElm[0][4].textContent).toBe('>');
+      expect(filterOperatorElm[0][5].textContent).toBe('>=');
+      expect(filterOperatorElm[0][6].textContent).toBe('<>');
+    });
+  });
 });

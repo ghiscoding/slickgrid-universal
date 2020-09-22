@@ -17,6 +17,7 @@ export class Constants {
     TEXT_COMMANDS: 'Commands',
     TEXT_COPY: 'Copy',
     TEXT_EQUALS: 'Equals',
+    TEXT_EQUAL_TO: 'Equal to',
     TEXT_ENDS_WITH: 'Ends With',
     TEXT_ERROR_EDITABLE_GRID_REQUIRED: 'Your grid must be editable in order to use the Composite Editor Modal.',
     TEXT_ERROR_ENABLE_CELL_NAVIGATION_REQUIRED: 'Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.',
@@ -32,6 +33,8 @@ export class Constants {
     TEXT_EXPORT_TO_TAB_DELIMITED: 'Export in Text format (Tab delimited)',
     TEXT_FORCE_FIT_COLUMNS: 'Force fit columns',
     TEXT_FREEZE_COLUMNS: 'Freeze Columns',
+    TEXT_GREATER_THAN: 'Greater than',
+    TEXT_GREATER_THAN_OR_EQUAL_TO: 'Greater than or equal to',
     TEXT_GROUP_BY: 'Group By',
     TEXT_HIDE_COLUMN: 'Hide Column',
     TEXT_ITEMS: 'items',
@@ -39,12 +42,15 @@ export class Constants {
     TEXT_OF: 'of',
     TEXT_OK: 'OK',
     TEXT_LAST_UPDATE: 'Last Update',
+    TEXT_NOT_EQUAL_TO: 'Not equal to',
     TEXT_PAGE: 'Page',
     TEXT_REFRESH_DATASET: 'Refresh Dataset',
     TEXT_REMOVE_FILTER: 'Remove Filter',
     TEXT_REMOVE_SORT: 'Remove Sort',
     TEXT_SAVE: 'Save',
     TEXT_SELECT_ALL: 'Select All',
+    TEXT_SMALLER_THAN: 'Smaller than',
+    TEXT_SMALLER_THAN_OR_EQUAL_TO: 'Smaller than or equal to',
     TEXT_SYNCHRONOUS_RESIZE: 'Synchronous resize',
     TEXT_SORT_ASCENDING: 'Sort Ascending',
     TEXT_SORT_DESCENDING: 'Sort Descending',
@@ -54,6 +60,7 @@ export class Constants {
     TEXT_X_OF_Y_SELECTED: '# of % selected',
     TEXT_X_OF_Y_MASS_SELECTED: '{{x}} of {{y}} selected',
   };
+
   static readonly VALIDATION_REQUIRED_FIELD = 'Field is required';
   static readonly VALIDATION_EDITOR_VALID_NUMBER = 'Please enter a valid number';
   static readonly VALIDATION_EDITOR_VALID_INTEGER = 'Please enter a valid integer number';

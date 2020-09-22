@@ -73,10 +73,11 @@ export class TranslateService implements TranslaterService {
   }
 
   translate(translationKey: string): string {
+    let translatedText = '';
     if (this._locales?.hasOwnProperty(this._currentLanguage)) {
-      return getDescendantProperty(this._locales[this._currentLanguage], translationKey);
+      translatedText = getDescendantProperty(this._locales[this._currentLanguage], translationKey);
     }
-    return translationKey;
+    return translatedText || translationKey;
   }
 
   private publishLanguageChangeEvent(newLanguage: string) {

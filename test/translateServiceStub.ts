@@ -30,6 +30,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'DURATION': output = this._locale === 'en' ? 'Duration' : 'Durée'; break;
       case 'ENDS_WITH': output = this._locale === 'en' ? 'Ends With' : 'Se termine par'; break;
       case 'EQUALS': output = this._locale === 'en' ? 'Equals' : 'Égale'; break;
+      case 'EQUAL_TO': output = this._locale === 'en' ? 'Equal to' : 'Égal à'; break;
       case 'EXPAND_ALL_GROUPS': output = this._locale === 'en' ? 'Expand all Groups' : 'Étendre tous les groupes'; break;
       case 'EXPORT_TO_CSV': output = this._locale === 'en' ? 'Export in CSV format' : 'Exporter en format CSV'; break;
       case 'EXPORT_TO_EXCEL': output = this._locale === 'en' ? 'Export to Excel' : 'Exporter vers Excel'; break;
@@ -39,6 +40,8 @@ export class TranslateServiceStub implements TranslaterService {
       case 'FIRST_NAME': output = this._locale === 'en' ? 'First Name' : 'Prénom'; break;
       case 'FORCE_FIT_COLUMNS': output = this._locale === 'en' ? 'Force fit columns' : 'Ajustement forcé des colonnes'; break;
       case 'FREEZE_COLUMNS': output = this._locale === 'en' ? 'Freeze Columns' : 'Geler les colonnes'; break;
+      case 'GREATER_THAN': output = this._locale === 'en' ? 'Greater than' : 'Plus grand que'; break;
+      case 'GREATER_THAN_OR_EQUAL_TO': output = this._locale === 'en' ? 'Greater than or equal to' : 'Plus grand ou égal à'; break;
       case 'GROUP_BY': output = this._locale === 'en' ? 'Grouped By' : 'Groupé par'; break;
       case 'GROUP_NAME': output = this._locale === 'en' ? 'Group Name' : 'Nom du Groupe'; break;
       case 'HELLO': output = this._locale === 'en' ? 'Hello' : 'Bonjour'; break;
@@ -49,6 +52,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'MALE': output = this._locale === 'en' ? 'Male' : 'Mâle'; break;
       case 'ITEMS': output = this._locale === 'en' ? 'items' : 'éléments'; break;
       case 'ITEMS_PER_PAGE': output = this._locale === 'en' ? 'items per page' : 'éléments par page'; break;
+      case 'NOT_EQUAL_TO': output = this._locale === 'en' ? 'Not equal to' : 'Pas égal à'; break;
       case 'OF': output = this._locale === 'en' ? 'of' : 'de'; break;
       case 'OK': output = this._locale === 'en' ? 'OK' : 'Terminé'; break;
       case 'OPTIONS_LIST': output = this._locale === 'en' ? 'Options List' : 'Liste d\'options'; break;
@@ -57,6 +61,8 @@ export class TranslateServiceStub implements TranslaterService {
       case 'REFRESH_DATASET': output = this._locale === 'en' ? 'Refresh Dataset' : 'Rafraîchir les données'; break;
       case 'REMOVE_FILTER': output = this._locale === 'en' ? 'Remove Filter' : 'Supprimer le filtre'; break;
       case 'REMOVE_SORT': output = this._locale === 'en' ? 'Remove Sort' : 'Supprimer le tri'; break;
+      case 'SMALLER_THAN': output = this._locale === 'en' ? 'Smaller than or equal to' : 'Plus petit que'; break;
+      case 'SMALLER_THAN_OR_EQUAL_TO': output = this._locale === 'en' ? 'Smaller than or equal to' : 'Plus petit ou égal à'; break;
       case 'SORT_ASCENDING': output = this._locale === 'en' ? 'Sort Ascending' : 'Trier par ordre croissant'; break;
       case 'SORT_DESCENDING': output = this._locale === 'en' ? 'Sort Descending' : 'Trier par ordre décroissant'; break;
       case 'SAVE': output = this._locale === 'en' ? 'Save' : 'Sauvegarder'; break;

@@ -233,7 +233,7 @@ export class Example7 {
   }
 
   hideDurationColumnDynamically() {
-    const columnIndex = this.sgb.columnDefinitions.findIndex(col => col.id === 'duration');
+    const columnIndex = this.sgb.slickGrid.getColumns().findIndex(col => col.id === 'duration');
     if (columnIndex >= 0) {
       this.sgb.gridService.hideColumnByIndex(columnIndex);
     }

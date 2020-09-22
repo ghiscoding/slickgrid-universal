@@ -206,7 +206,12 @@ describe('CompoundInputFilter', () => {
     const filterSelectElm = divContainer.querySelectorAll<HTMLSelectElement>('.search-filter.filter-duration select');
 
     expect(filterInputElm.value).toBe('9');
-    expect(filterSelectElm[0][1].title).toBe('=');
+    expect(filterSelectElm[0][1].title).toBe('Equal to');
+    expect(filterSelectElm[0][2].title).toBe('Smaller than');
+    expect(filterSelectElm[0][3].title).toBe('Smaller than or equal to');
+    expect(filterSelectElm[0][4].title).toBe('Greater than');
+    expect(filterSelectElm[0][5].title).toBe('Greater than or equal to');
+    expect(filterSelectElm[0][6].title).toBe('Not equal to');
     expect(filterSelectElm[0][1].textContent).toBe('=');
     expect(filterSelectElm[0][2].textContent).toBe('<');
     expect(filterSelectElm[0][3].textContent).toBe('<=');
@@ -261,5 +266,53 @@ describe('CompoundInputFilter', () => {
     expect(filterInputElm.value).toBe('');
     expect(filterFilledElms.length).toBe(0);
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
+  });
+
+  describe('with French I18N translations', () => {
+    beforeEach(() => {
+      gridOptionMock.enableTranslate = true;
+      translateService.use('fr');
+    });
+
+    it('should have French text translated with operator dropdown options related to numbers when column definition type is FieldType.number', () => {
+      mockColumn.type = FieldType.number;
+      filterArguments.searchTerms = ['9'];
+
+      filter.init(filterArguments);
+      const filterInputElm = divContainer.querySelector<HTMLInputElement>('.search-filter.filter-duration input');
+      const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.search-filter.filter-duration select');
+
+      expect(filterInputElm.value).toBe('9');
+      expect(filterOperatorElm[0][1].title).toBe('Égal à');
+      expect(filterOperatorElm[0][2].title).toBe('Plus petit que');
+      expect(filterOperatorElm[0][3].title).toBe('Plus petit ou égal à');
+      expect(filterOperatorElm[0][4].title).toBe('Plus grand que');
+      expect(filterOperatorElm[0][5].title).toBe('Plus grand ou égal à');
+      expect(filterOperatorElm[0][6].title).toBe('Pas égal à');
+      expect(filterOperatorElm[0][1].textContent).toBe('=');
+      expect(filterOperatorElm[0][2].textContent).toBe('<');
+      expect(filterOperatorElm[0][3].textContent).toBe('<=');
+      expect(filterOperatorElm[0][4].textContent).toBe('>');
+      expect(filterOperatorElm[0][5].textContent).toBe('>=');
+      expect(filterOperatorElm[0][6].textContent).toBe('<>');
+    });
+
+    it('should have French text translated with operator dropdown options related to strings when column definition type is FieldType.string', () => {
+      mockColumn.type = FieldType.string;
+      filterArguments.searchTerms = ['xyz'];
+
+      filter.init(filterArguments);
+      const filterInputElm = divContainer.querySelector<HTMLInputElement>('.search-filter.filter-duration input');
+      const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.search-filter.filter-duration select');
+
+      expect(filterInputElm.value).toBe('xyz');
+      expect(filterOperatorElm[0][0].title).toBe('Contient');
+      expect(filterOperatorElm[0][1].title).toBe('Égale');
+      expect(filterOperatorElm[0][2].title).toBe('Commence par');
+      expect(filterOperatorElm[0][3].title).toBe('Se termine par');
+      expect(filterOperatorElm[0][1].textContent).toBe('=');
+      expect(filterOperatorElm[0][2].textContent).toBe('a*');
+      expect(filterOperatorElm[0][3].textContent).toBe('*z');
+    });
   });
 });
