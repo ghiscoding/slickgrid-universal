@@ -236,7 +236,7 @@ export class Example12 {
           massUpdate: true,
           editorOptions: {
             minLength: 0,
-            openSearchListOnFocus: true,
+            openSearchListOnFocus: false,
             source: (request, response) => {
               const countries: any[] = require('./data/countries.json');
               const foundCountries = countries.filter((country) => country.name.toLowerCase().includes(request.term.toLowerCase()));
