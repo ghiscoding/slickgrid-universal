@@ -116,6 +116,12 @@ export interface Locale {
   /** Text "Last Update" displayed in the Footer (when enabled) */
   TEXT_LAST_UPDATE?: string;
 
+  /** Text "Less than" shown in Compound Editors/Filters as an Operator */
+  TEXT_LESS_THAN: string;
+
+  /** Text "Less than or equal to" shown in Compound Editors/Filters as an Operator */
+  TEXT_LESS_THAN_OR_EQUAL_TO: string;
+
   /** Text "Not equal to" shown in Compound Editors/Filters as an Operator */
   TEXT_NOT_EQUAL_TO: string;
 
@@ -139,12 +145,6 @@ export interface Locale {
 
   /** Text "Select All" displayed in the Multiple Select Editor/Filter */
   TEXT_SELECT_ALL: string;
-
-  /** Text "Smaller than" shown in Compound Editors/Filters as an Operator */
-  TEXT_SMALLER_THAN: string;
-
-  /** Text "Smaller than or equal to" shown in Compound Editors/Filters as an Operator */
-  TEXT_SMALLER_THAN_OR_EQUAL_TO: string;
 
   /** Text "Clear Sort Ascending" shown in Header Menu */
   TEXT_SORT_ASCENDING: string;

@@ -11,6 +11,10 @@ const containerId = 'demo-container';
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
 
+function removeExtraSpaces(textS: string) {
+  return `${textS}`.replace(/\s+/g, ' ');
+}
+
 const gridOptionMock = {
   enableFiltering: true,
   enableFilterTrimWhiteSpace: true,
@@ -326,18 +330,12 @@ describe('CompoundDateFilter', () => {
     const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.input-group-prepend.operator select');
 
     expect(filterOperatorElm[0][0].title).toBe('');
-    expect(filterOperatorElm[0][1].title).toBe('Equal to');
-    expect(filterOperatorElm[0][2].title).toBe('Smaller than');
-    expect(filterOperatorElm[0][3].title).toBe('Smaller than or equal to');
-    expect(filterOperatorElm[0][4].title).toBe('Greater than');
-    expect(filterOperatorElm[0][5].title).toBe('Greater than or equal to');
-    expect(filterOperatorElm[0][6].title).toBe('Not equal to');
-    expect(filterOperatorElm[0][1].textContent).toBe('=');
-    expect(filterOperatorElm[0][2].textContent).toBe('<');
-    expect(filterOperatorElm[0][3].textContent).toBe('<=');
-    expect(filterOperatorElm[0][4].textContent).toBe('>');
-    expect(filterOperatorElm[0][5].textContent).toBe('>=');
-    expect(filterOperatorElm[0][6].textContent).toBe('<>');
+    expect(removeExtraSpaces(filterOperatorElm[0][1].textContent)).toBe('= Equal to');
+    expect(removeExtraSpaces(filterOperatorElm[0][2].textContent)).toBe('< Less than');
+    expect(removeExtraSpaces(filterOperatorElm[0][3].textContent)).toBe('<= Less than or equal to');
+    expect(removeExtraSpaces(filterOperatorElm[0][4].textContent)).toBe('> Greater than');
+    expect(removeExtraSpaces(filterOperatorElm[0][5].textContent)).toBe('>= Greater than or equal to');
+    expect(removeExtraSpaces(filterOperatorElm[0][6].textContent)).toBe('<> Not equal to');
   });
 
   describe('with French I18N translations', () => {
@@ -354,18 +352,12 @@ describe('CompoundDateFilter', () => {
       const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.input-group-prepend.operator select');
 
       expect(filterOperatorElm[0][0].title).toBe('');
-      expect(filterOperatorElm[0][1].title).toBe('Égal à');
-      expect(filterOperatorElm[0][2].title).toBe('Plus petit que');
-      expect(filterOperatorElm[0][3].title).toBe('Plus petit ou égal à');
-      expect(filterOperatorElm[0][4].title).toBe('Plus grand que');
-      expect(filterOperatorElm[0][5].title).toBe('Plus grand ou égal à');
-      expect(filterOperatorElm[0][6].title).toBe('Pas égal à');
-      expect(filterOperatorElm[0][1].textContent).toBe('=');
-      expect(filterOperatorElm[0][2].textContent).toBe('<');
-      expect(filterOperatorElm[0][3].textContent).toBe('<=');
-      expect(filterOperatorElm[0][4].textContent).toBe('>');
-      expect(filterOperatorElm[0][5].textContent).toBe('>=');
-      expect(filterOperatorElm[0][6].textContent).toBe('<>');
+      expect(removeExtraSpaces(filterOperatorElm[0][1].textContent)).toBe('= Égal à');
+      expect(removeExtraSpaces(filterOperatorElm[0][2].textContent)).toBe('< Plus petit que');
+      expect(removeExtraSpaces(filterOperatorElm[0][3].textContent)).toBe('<= Plus petit ou égal à');
+      expect(removeExtraSpaces(filterOperatorElm[0][4].textContent)).toBe('> Plus grand que');
+      expect(removeExtraSpaces(filterOperatorElm[0][5].textContent)).toBe('>= Plus grand ou égal à');
+      expect(removeExtraSpaces(filterOperatorElm[0][6].textContent)).toBe('<> Non égal à');
     });
   });
 });

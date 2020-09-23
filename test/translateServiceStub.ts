@@ -49,10 +49,12 @@ export class TranslateServiceStub implements TranslaterService {
       case 'HIDE_COLUMN': output = this._locale === 'en' ? 'Hide Column' : 'Cacher la colonne'; break;
       case 'LAST_NAME': output = this._locale === 'en' ? 'Last Name' : 'Nom de famille'; break;
       case 'LAST_UPDATE': output = this._locale === 'en' ? 'Last Update' : 'Dernière mise à jour'; break;
+      case 'LESS_THAN': output = this._locale === 'en' ? 'Less than or equal to' : 'Plus petit que'; break;
+      case 'LESS_THAN_OR_EQUAL_TO': output = this._locale === 'en' ? 'Less than or equal to' : 'Plus petit ou égal à'; break;
       case 'MALE': output = this._locale === 'en' ? 'Male' : 'Mâle'; break;
       case 'ITEMS': output = this._locale === 'en' ? 'items' : 'éléments'; break;
       case 'ITEMS_PER_PAGE': output = this._locale === 'en' ? 'items per page' : 'éléments par page'; break;
-      case 'NOT_EQUAL_TO': output = this._locale === 'en' ? 'Not equal to' : 'Pas égal à'; break;
+      case 'NOT_EQUAL_TO': output = this._locale === 'en' ? 'Not equal to' : 'Non égal à'; break;
       case 'OF': output = this._locale === 'en' ? 'of' : 'de'; break;
       case 'OK': output = this._locale === 'en' ? 'OK' : 'Terminé'; break;
       case 'OPTIONS_LIST': output = this._locale === 'en' ? 'Options List' : 'Liste d\'options'; break;
@@ -61,8 +63,6 @@ export class TranslateServiceStub implements TranslaterService {
       case 'REFRESH_DATASET': output = this._locale === 'en' ? 'Refresh Dataset' : 'Rafraîchir les données'; break;
       case 'REMOVE_FILTER': output = this._locale === 'en' ? 'Remove Filter' : 'Supprimer le filtre'; break;
       case 'REMOVE_SORT': output = this._locale === 'en' ? 'Remove Sort' : 'Supprimer le tri'; break;
-      case 'SMALLER_THAN': output = this._locale === 'en' ? 'Smaller than or equal to' : 'Plus petit que'; break;
-      case 'SMALLER_THAN_OR_EQUAL_TO': output = this._locale === 'en' ? 'Smaller than or equal to' : 'Plus petit ou égal à'; break;
       case 'SORT_ASCENDING': output = this._locale === 'en' ? 'Sort Ascending' : 'Trier par ordre croissant'; break;
       case 'SORT_DESCENDING': output = this._locale === 'en' ? 'Sort Descending' : 'Trier par ordre décroissant'; break;
       case 'SAVE': output = this._locale === 'en' ? 'Save' : 'Sauvegarder'; break;

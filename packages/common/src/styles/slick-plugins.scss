@@ -700,8 +700,21 @@
   min-width: 25px;
   border: none;
 
+  .form-control {
+    border-radius: $compound-filter-operator-border-radius;
+    // border-right: none;
+    padding: $compound-filter-text-padding !important;
+    font-size: $compound-filter-text-font-size;
+    color: $compound-filter-text-color;
+    font-weight: $compound-filter-text-weight;
+    background-color: $compound-filter-bgcolor;
+  }
+
   select {
     font-family: $compound-filter-operator-select-font-family;
+    font-size: $compound-filter-operator-select-font-size;
+    border: $compound-filter-operator-select-border;
+
     &.form-control {
       cursor: pointer;
       -moz-appearance: none;
@@ -714,31 +727,25 @@
       }
     }
   }
-
-  .form-control {
-    border-radius: $compound-filter-operator-border-radius;
-    border-right: none;
-    padding: $compound-filter-text-padding !important;
-    font-size: $compound-filter-text-font-size;
-    color: $compound-filter-text-color;
-    font-weight: $compound-filter-text-weight;
-    background-color: $compound-filter-bgcolor;
-  }
 }
 .search-filter .operator-char3.input-group-addon {
   min-width: 30px;
 }
 
 input.search-filter {
-    font-family: $filter-placeholder-font-family;
+  font-family: $filter-placeholder-font-family;
 }
 .search-filter {
-    input {
-        font-family: $filter-placeholder-font-family;
-        &.compound-input {
-          border-radius: $compound-filter-border-radius !important;
-        }
+  input {
+    font-family: $filter-placeholder-font-family;
+    &.compound-input {
+      border-radius: $compound-filter-border-radius !important;
+      border-left: none;
     }
+  }
+  input.compound-slider {
+    border-left: none !important;
+  }
 }
 
 // ----------------------------------------------
@@ -748,6 +755,7 @@ input.search-filter {
 .search-filter .flatpickr {
   input.form-control {
     cursor: pointer;
+    border-left: none;
   }
 
   .flatpickr {

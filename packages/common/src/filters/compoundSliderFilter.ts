@@ -200,8 +200,8 @@ export class CompoundSliderFilter implements Filter {
     return [
       { operator: '', description: '' },
       { operator: '=', description: this.getOutputText('EQUAL_TO', 'TEXT_EQUAL_TO', 'Equal to') },
-      { operator: '<', description: this.getOutputText('SMALLER_THAN', 'TEXT_SMALLER_THAN', 'Smaller than') },
-      { operator: '<=', description: this.getOutputText('SMALLER_THAN_OR_EQUAL_TO', 'TEXT_SMALLER_THAN_OR_EQUAL_TO', 'Smaller than or equal to') },
+      { operator: '<', description: this.getOutputText('LESS_THAN', 'TEXT_LESS_THAN', 'Less than') },
+      { operator: '<=', description: this.getOutputText('LESS_THAN_OR_EQUAL_TO', 'TEXT_LESS_THAN_OR_EQUAL_TO', 'Less than or equal to') },
       { operator: '>', description: this.getOutputText('GREATER_THAN', 'TEXT_GREATER_THAN', 'Greater than') },
       { operator: '>=', description: this.getOutputText('GREATER_THAN_OR_EQUAL_TO', 'TEXT_GREATER_THAN_OR_EQUAL_TO', 'Greater than or equal to') },
       { operator: '<>', description: this.getOutputText('NOT_EQUAL_TO', 'TEXT_NOT_EQUAL_TO', 'Not equal to') }
@@ -295,7 +295,7 @@ export class CompoundSliderFilter implements Filter {
       this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
     } else {
       this.$filterElm.addClass('filled');
-      const selectedOperator = this.$selectOperatorElm.find('option:selected').text();
+      const selectedOperator = this.$selectOperatorElm.find('option:selected').val();
       this.callback(e, { columnDef: this.columnDef, searchTerms: (value ? [value || '0'] : null), operator: selectedOperator || '', shouldTriggerQuery: this._shouldTriggerQuery });
     }
     // reset both flags for next use

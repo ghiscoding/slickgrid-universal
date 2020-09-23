@@ -171,12 +171,12 @@ export class CompoundInputFilter implements Filter {
       default:
         optionValues = [
           { operator: '' as OperatorString, description: '' },
-          { operator: '=', description: this.getOutputText('EQUAL_TO', 'TEXT_EQUAL_TO', 'Equal to') },
-          { operator: '<', description: this.getOutputText('SMALLER_THAN', 'TEXT_SMALLER_THAN', 'Smaller than') },
-          { operator: '<=', description: this.getOutputText('SMALLER_THAN_OR_EQUAL_TO', 'TEXT_SMALLER_THAN_OR_EQUAL_TO', 'Smaller than or equal to') },
-          { operator: '>', description: this.getOutputText('GREATER_THAN', 'TEXT_GREATER_THAN', 'Greater than') },
-          { operator: '>=', description: this.getOutputText('GREATER_THAN_OR_EQUAL_TO', 'TEXT_GREATER_THAN_OR_EQUAL_TO', 'Greater than or equal to') },
-          { operator: '<>', description: this.getOutputText('NOT_EQUAL_TO', 'TEXT_NOT_EQUAL_TO', 'Not equal to') }
+          { operator: '=' as OperatorString, description: this.getOutputText('EQUAL_TO', 'TEXT_EQUAL_TO', 'Equal to') },
+          { operator: '<' as OperatorString, description: this.getOutputText('LESS_THAN', 'TEXT_LESS_THAN', 'Less than') },
+          { operator: '<=' as OperatorString, description: this.getOutputText('LESS_THAN_OR_EQUAL_TO', 'TEXT_LESS_THAN_OR_EQUAL_TO', 'Less than or equal to') },
+          { operator: '>' as OperatorString, description: this.getOutputText('GREATER_THAN', 'TEXT_GREATER_THAN', 'Greater than') },
+          { operator: '>=' as OperatorString, description: this.getOutputText('GREATER_THAN_OR_EQUAL_TO', 'TEXT_GREATER_THAN_OR_EQUAL_TO', 'Greater than or equal to') },
+          { operator: '<>' as OperatorString, description: this.getOutputText('NOT_EQUAL_TO', 'TEXT_NOT_EQUAL_TO', 'Not equal to') }
         ];
         break;
     }
@@ -251,7 +251,7 @@ export class CompoundInputFilter implements Filter {
       this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
       this.$filterElm.removeClass('filled');
     } else {
-      const selectedOperator = this.$selectOperatorElm.find('option:selected').text();
+      const selectedOperator = this.$selectOperatorElm.find('option:selected').val();
       let value = this.$filterInputElm.val() as string;
       const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
       if (typeof value === 'string' && enableWhiteSpaceTrim) {
