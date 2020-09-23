@@ -1097,23 +1097,111 @@ describe('FilterService', () => {
     });
   });
 
-  describe('toggleFilterFunctionality method', () => {
+  describe('disableFilterFunctionality method', () => {
     beforeEach(() => {
       gridOptionMock.enableFiltering = true;
+      gridOptionMock.showHeaderRow = true;
     });
 
-    it('should toggle the Filters', () => {
+    it('should disable the Filter Functionality from the Grid Options & toggle the Header Filter row', () => {
       const mockColumns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
       const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
       const setHeaderSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
       const setColsSpy = jest.spyOn(gridStub, 'setColumns');
       jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns)
+
+      service.init(gridStub);
+      service.disableFilterFunctionality();
+
+      expect(setOptionSpy).toHaveBeenCalledWith({ enableFiltering: false }, false, true);
+      expect(setHeaderSpy).toHaveBeenCalledWith(false);
+      expect(setColsSpy).toHaveBeenCalledWith(mockColumns);
+    });
+
+    it('should enable the Filter Functionality when passing 1st argument as False', () => {
+      gridOptionMock.enableFiltering = false;
+      gridOptionMock.showHeaderRow = false;
+
+      const mockColumns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
+      const setHeaderSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
+      const setColsSpy = jest.spyOn(gridStub, 'setColumns');
+      jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns)
+
+      service.init(gridStub);
+      service.disableFilterFunctionality(false);
+
+      expect(setOptionSpy).toHaveBeenCalledWith({ enableFiltering: true }, false, true);
+      expect(setHeaderSpy).toHaveBeenCalledWith(true);
+      expect(setColsSpy).toHaveBeenCalledWith(mockColumns);
+    });
+
+    it('should NOT change neither call anything if the end result of disabling is the same', () => {
+      gridOptionMock.enableFiltering = true;
+      gridOptionMock.showHeaderRow = true;
+
+      const mockColumns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
+      const setHeaderSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
+      const setColsSpy = jest.spyOn(gridStub, 'setColumns');
+      jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns)
+
+      service.init(gridStub);
+      service.disableFilterFunctionality(false);
+
+      expect(setOptionSpy).not.toHaveBeenCalled();
+      expect(setHeaderSpy).not.toHaveBeenCalled();
+      expect(setColsSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('toggleFilterFunctionality method', () => {
+    beforeEach(() => {
+      gridOptionMock.enableFiltering = true;
+      gridOptionMock.showHeaderRow = true;
+    });
+
+    it('should toggle the Filter Functionality from the Grid Options & toggle the Header Filter row', () => {
+      const mockColumns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
+      const setHeaderSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
+      const setColsSpy = jest.spyOn(gridStub, 'setColumns');
+      jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns)
+
       service.init(gridStub);
       service.toggleFilterFunctionality();
 
-      expect(setOptionSpy).toHaveBeenCalledWith({ enableFiltering: false });
+      expect(setOptionSpy).toHaveBeenCalledWith({ enableFiltering: false }, false, true);
       expect(setHeaderSpy).toHaveBeenCalledWith(false);
       expect(setColsSpy).toHaveBeenCalledWith(mockColumns);
+    });
+  });
+
+  describe('toggleHeaderFilterRow method', () => {
+    beforeEach(() => {
+      gridOptionMock.enableFiltering = true;
+      gridOptionMock.showHeaderRow = true;
+    });
+
+    it('should toggle the Header Filter Row (to disabled when previously enabled)', () => {
+      const setHeaderSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
+
+      service.init(gridStub);
+      service.toggleHeaderFilterRow();
+
+      expect(setHeaderSpy).toHaveBeenCalledWith(false);
+    });
+
+    it('should toggle the Header Filter Row and expect to call "setColumns" when changing to enabled when previously disabled', () => {
+      gridOptionMock.showHeaderRow = false;
+      const setHeaderSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
+      const setColsSpy = jest.spyOn(gridStub, 'setColumns');
+
+      service.init(gridStub);
+      service.toggleHeaderFilterRow();
+
+      expect(setHeaderSpy).toHaveBeenCalledWith(true);
+      expect(setColsSpy).toHaveBeenCalled();
     });
   });
 

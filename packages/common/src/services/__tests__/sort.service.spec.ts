@@ -63,6 +63,7 @@ const gridStub = {
   onLocalSortChanged: jest.fn(),
   onSort: new Slick.Event(),
   render: jest.fn(),
+  setColumns: jest.fn(),
   setOptions: jest.fn(),
   setSortColumns: jest.fn(),
 } as unknown as SlickGrid;
@@ -594,23 +595,27 @@ describe('SortService', () => {
     it('should toggle the Sorting', () => {
       const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
       const disableSpy = jest.spyOn(service, 'disableSortFunctionality');
+      const setColsSpy = jest.spyOn(gridStub, 'setColumns');
 
       service.bindLocalOnSort(gridStub);
       service.toggleSortFunctionality();
 
-      expect(setOptionSpy).toHaveBeenCalledWith({ enableSorting: false });
+      expect(setOptionSpy).toHaveBeenCalledWith({ enableSorting: false }, false, true);
       expect(disableSpy).toHaveBeenCalledWith(true, true);
+      expect(setColsSpy).toHaveBeenCalled();
     });
 
-    it('should toggle the Sorting BUT NOT trigger an event', () => {
+    it('should toggle the Sorting BUT NOT trigger an event when defined as such', () => {
       const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
       const disableSpy = jest.spyOn(service, 'disableSortFunctionality');
+      const setColsSpy = jest.spyOn(gridStub, 'setColumns');
 
       service.bindLocalOnSort(gridStub);
       service.toggleSortFunctionality(false);
 
-      expect(setOptionSpy).toHaveBeenCalledWith({ enableSorting: false });
+      expect(setOptionSpy).toHaveBeenCalledWith({ enableSorting: false }, false, true);
       expect(disableSpy).toHaveBeenCalledWith(true, false);
+      expect(setColsSpy).toHaveBeenCalled();
     });
   });
 

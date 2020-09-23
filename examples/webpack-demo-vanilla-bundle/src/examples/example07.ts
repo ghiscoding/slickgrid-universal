@@ -1,9 +1,10 @@
 import {
   Column,
   Editors,
-  GridOption,
+  Filters,
   Formatters,
   FieldType,
+  GridOption,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -43,14 +44,23 @@ export class Example7 {
       { id: 'percentComplete', name: '% Complete', field: 'percentComplete', filterable: true, sortable: true, editor: { model: Editors.slider, minValue: 0, maxValue: 100, }, },
       {
         id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso,
+        filterable: true, sortable: true,
+        filter: { model: Filters.compoundDate },
         editor: { model: Editors.date }, type: FieldType.date,/* outputType: FieldType.dateUs, */ saveOutputType: FieldType.dateUtc,
       },
       {
         id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso,
+        filterable: true, sortable: true,
+        filter: { model: Filters.compoundDate },
         editor: { model: Editors.date }, type: FieldType.dateIso, saveOutputType: FieldType.dateUtc,
       },
       {
         id: 'effort-driven', name: 'Completed', field: 'effortDriven', formatter: Formatters.checkmarkMaterial,
+        filterable: true, sortable: true,
+        filter: {
+          collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
+          model: Filters.singleSelect
+        },
         editor: {
           model: Editors.singleSelect,
 
@@ -238,6 +248,20 @@ export class Example7 {
       this.sgb.gridService.hideColumnByIndex(columnIndex);
     }
   }
+
+  // Disable/Enable Filtering/Sorting functionalities
+  // --------------------------------------------------
+
+  disableFilters() {
+    this.sgb.filterService.disableFilterFunctionality(true);
+  }
+
+  disableSorting() {
+    this.sgb.sortService.disableSortFunctionality(true);
+  }
+
+  // or Toggle Filtering/Sorting functionalities
+  // ---------------------------------------------
 
   toggleFilter() {
     this.sgb.filterService.toggleFilterFunctionality();

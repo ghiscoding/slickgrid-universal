@@ -93,6 +93,7 @@ export class Example10 {
       },
       {
         id: 'billingAddressStreet', field: 'billing.address.street', nameKey: 'BILLING.ADDRESS.STREET',
+        formatter: Formatters.complexObject,
         width: 60, filterable: true, sortable: true, columnGroupKey: 'BILLING.INFORMATION',
       },
       {

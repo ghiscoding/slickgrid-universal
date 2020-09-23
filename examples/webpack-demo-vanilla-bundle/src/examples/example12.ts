@@ -116,6 +116,7 @@ export class Example12 {
       {
         id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,
         filterable: true, columnGroup: 'Common Factor',
+        filter: { model: Filters.compoundInputText },
         formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold] },
         editor: { model: Editors.longText, massUpdate: false, required: true, alwaysSaveOnEnterKey: true, validator: myCustomTitleValidator, },
       },
@@ -139,7 +140,7 @@ export class Example12 {
       {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
         sortable: true, filterable: true, columnGroup: 'Analysis',
-        filter: { model: Filters.slider, operator: '>=' },
+        filter: { model: Filters.compoundSlider, operator: '>=' },
         editor: { model: Editors.slider, massUpdate: true, minValue: 0, maxValue: 100, },
       },
       {
