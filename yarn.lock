@@ -10862,7 +10862,7 @@ slice-ansi@^2.1.0:
 
 "slickgrid@github:6pac/SlickGrid":
   version "2.4.28"
-  resolved "https://codeload.github.com/6pac/SlickGrid/tar.gz/e333c9df6ef4721d657411d77ec990a86eeb67a2"
+  resolved "https://codeload.github.com/6pac/SlickGrid/tar.gz/181c9d9dba3d774d8f9db3d6902af5fe9073c107"
   dependencies:
     jquery ">=1.8.0"
     jquery-ui ">=1.8.0"

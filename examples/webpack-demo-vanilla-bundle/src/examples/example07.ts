@@ -45,11 +45,13 @@ export class Example7 {
       {
         id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso,
         filterable: true, sortable: true,
+        filter: { model: Filters.compoundDate },
         editor: { model: Editors.date }, type: FieldType.date,/* outputType: FieldType.dateUs, */ saveOutputType: FieldType.dateUtc,
       },
       {
         id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso,
         filterable: true, sortable: true,
+        filter: { model: Filters.compoundDate },
         editor: { model: Editors.date }, type: FieldType.dateIso, saveOutputType: FieldType.dateUtc,
       },
       {
