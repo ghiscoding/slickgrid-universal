@@ -9,6 +9,10 @@ const containerId = 'demo-container';
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
 
+function removeExtraSpaces(textS: string) {
+  return `${textS}`.replace(/\s+/g, ' ');
+}
+
 const gridOptionMock = {
   enableFiltering: true,
 } as GridOption;
@@ -203,16 +207,15 @@ describe('CompoundInputFilter', () => {
 
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector<HTMLInputElement>('.search-filter.filter-duration input');
-    const filterSelectElm = divContainer.querySelectorAll<HTMLSelectElement>('.search-filter.filter-duration select');
+    const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.search-filter.filter-duration select');
 
     expect(filterInputElm.value).toBe('9');
-    expect(filterSelectElm[0][1].title).toBe('=');
-    expect(filterSelectElm[0][1].textContent).toBe('=');
-    expect(filterSelectElm[0][2].textContent).toBe('<');
-    expect(filterSelectElm[0][3].textContent).toBe('<=');
-    expect(filterSelectElm[0][4].textContent).toBe('>');
-    expect(filterSelectElm[0][5].textContent).toBe('>=');
-    expect(filterSelectElm[0][6].textContent).toBe('<>');
+    expect(removeExtraSpaces(filterOperatorElm[0][1].textContent)).toBe('= Equal to');
+    expect(removeExtraSpaces(filterOperatorElm[0][2].textContent)).toBe('< Less than');
+    expect(removeExtraSpaces(filterOperatorElm[0][3].textContent)).toBe('<= Less than or equal to');
+    expect(removeExtraSpaces(filterOperatorElm[0][4].textContent)).toBe('> Greater than');
+    expect(removeExtraSpaces(filterOperatorElm[0][5].textContent)).toBe('>= Greater than or equal to');
+    expect(removeExtraSpaces(filterOperatorElm[0][6].textContent)).toBe('<> Not equal to');
   });
 
   it('should create the input filter with operator dropdown options related to strings when column definition type is FieldType.string', () => {
@@ -221,16 +224,13 @@ describe('CompoundInputFilter', () => {
 
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector<HTMLInputElement>('.search-filter.filter-duration input');
-    const filterSelectElm = divContainer.querySelectorAll<HTMLSelectElement>('.search-filter.filter-duration select');
+    const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.search-filter.filter-duration select');
 
     expect(filterInputElm.value).toBe('xyz');
-    expect(filterSelectElm[0][0].title).toBe('Contains');
-    expect(filterSelectElm[0][1].title).toBe('Equals');
-    expect(filterSelectElm[0][2].title).toBe('Starts With');
-    expect(filterSelectElm[0][3].title).toBe('Ends With');
-    expect(filterSelectElm[0][1].textContent).toBe('=');
-    expect(filterSelectElm[0][2].textContent).toBe('a*');
-    expect(filterSelectElm[0][3].textContent).toBe('*z');
+    expect(removeExtraSpaces(filterOperatorElm[0][0].textContent)).toBe(' Contains');
+    expect(removeExtraSpaces(filterOperatorElm[0][1].textContent)).toBe('= Equals');
+    expect(removeExtraSpaces(filterOperatorElm[0][2].textContent)).toBe('a* Starts With');
+    expect(removeExtraSpaces(filterOperatorElm[0][3].textContent)).toBe('*z Ends With');
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {
@@ -261,5 +261,44 @@ describe('CompoundInputFilter', () => {
     expect(filterInputElm.value).toBe('');
     expect(filterFilledElms.length).toBe(0);
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
+  });
+
+  describe('with French I18N translations', () => {
+    beforeEach(() => {
+      gridOptionMock.enableTranslate = true;
+      translateService.use('fr');
+    });
+
+    it('should have French text translated with operator dropdown options related to numbers when column definition type is FieldType.number', () => {
+      mockColumn.type = FieldType.number;
+      filterArguments.searchTerms = ['9'];
+
+      filter.init(filterArguments);
+      const filterInputElm = divContainer.querySelector<HTMLInputElement>('.search-filter.filter-duration input');
+      const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.search-filter.filter-duration select');
+
+      expect(filterInputElm.value).toBe('9');
+      expect(removeExtraSpaces(filterOperatorElm[0][1].textContent)).toBe('= Égal à');
+      expect(removeExtraSpaces(filterOperatorElm[0][2].textContent)).toBe('< Plus petit que');
+      expect(removeExtraSpaces(filterOperatorElm[0][3].textContent)).toBe('<= Plus petit ou égal à');
+      expect(removeExtraSpaces(filterOperatorElm[0][4].textContent)).toBe('> Plus grand que');
+      expect(removeExtraSpaces(filterOperatorElm[0][5].textContent)).toBe('>= Plus grand ou égal à');
+      expect(removeExtraSpaces(filterOperatorElm[0][6].textContent)).toBe('<> Non égal à');
+    });
+
+    it('should have French text translated with operator dropdown options related to strings when column definition type is FieldType.string', () => {
+      mockColumn.type = FieldType.string;
+      filterArguments.searchTerms = ['xyz'];
+
+      filter.init(filterArguments);
+      const filterInputElm = divContainer.querySelector<HTMLInputElement>('.search-filter.filter-duration input');
+      const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.search-filter.filter-duration select');
+
+      expect(filterInputElm.value).toBe('xyz');
+      expect(removeExtraSpaces(filterOperatorElm[0][0].textContent)).toBe(' Contient');
+      expect(removeExtraSpaces(filterOperatorElm[0][1].textContent)).toBe('= Égale');
+      expect(removeExtraSpaces(filterOperatorElm[0][2].textContent)).toBe('a* Commence par');
+      expect(removeExtraSpaces(filterOperatorElm[0][3].textContent)).toBe('*z Se termine par');
+    });
   });
 });

@@ -34,8 +34,6 @@
     "postsass-build-task:scss-compile:bootstrap": "postcss --no-map --use autoprefixer --output dist/styles/css/slickgrid-theme-bootstrap.css dist/styles/css/slickgrid-theme-bootstrap.css --output-style compressed",
     "sass-build-task:scss-compile:material": "node-sass src/styles/slickgrid-theme-material.scss -o dist/styles/css --output-style compressed",
     "postsass-build-task:scss-compile:material": "postcss --no-map --use autoprefixer --output dist/styles/css/slickgrid-theme-material.css dist/styles/css/slickgrid-theme-material.css --output-style compressed",
-    "sass-build-task:scss-compile:se-material": "node-sass src/styles/se-slickgrid-theme-material.scss -o dist/styles/css --output-style compressed",
-    "postsass-build-task:scss-compile:se-material": "postcss --no-map --use autoprefixer --output dist/styles/css/se-slickgrid-theme-material.css dist/styles/css/se-slickgrid-theme-material.css --output-style compressed",
     "sass-build-task:scss-compile:material-bare": "node-sass src/styles/slickgrid-theme-material.bare.scss -o dist/styles/css --output-style compressed",
     "postsass-build-task:scss-compile:material-bare": "postcss --no-map --use autoprefixer --output dist/styles/css/slickgrid-theme-material.bare.css dist/styles/css/slickgrid-theme-material.bare.css --output-style compressed",
     "sass-build-task:scss-compile:material-lite": "node-sass src/styles/slickgrid-theme-material.lite.scss -o dist/styles/css --output-style compressed",
@@ -73,20 +71,21 @@
     "lodash.isequal": "^4.5.0",
     "moment-mini": "^2.24.0",
     "multiple-select-modified": "^1.3.3",
-    "slickgrid": "^2.4.28"
+    "slickgrid": "github:6pac/SlickGrid"
   },
   "devDependencies": {
     "@types/dompurify": "^2.0.4",
     "@types/jquery": "^3.5.1",
     "@types/moment": "^2.13.0",
-    "autoprefixer": "^9.8.6",
+    "autoprefixer": "^10.0.0",
     "copyfiles": "^2.3.0",
     "cross-env": "^7.0.2",
     "mini-css-extract-plugin": "^0.11.2",
     "node-sass": "4.14.1",
     "nodemon": "^2.0.4",
     "npm-run-all": "^4.1.5",
-    "postcss-cli": "^7.1.2",
+    "postcss": "^8.0.6",
+    "postcss-cli": "^8.0.0",
     "rimraf": "^3.0.2"
   },
   "engines": {

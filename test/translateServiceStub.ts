@@ -30,6 +30,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'DURATION': output = this._locale === 'en' ? 'Duration' : 'Durée'; break;
       case 'ENDS_WITH': output = this._locale === 'en' ? 'Ends With' : 'Se termine par'; break;
       case 'EQUALS': output = this._locale === 'en' ? 'Equals' : 'Égale'; break;
+      case 'EQUAL_TO': output = this._locale === 'en' ? 'Equal to' : 'Égal à'; break;
       case 'EXPAND_ALL_GROUPS': output = this._locale === 'en' ? 'Expand all Groups' : 'Étendre tous les groupes'; break;
       case 'EXPORT_TO_CSV': output = this._locale === 'en' ? 'Export in CSV format' : 'Exporter en format CSV'; break;
       case 'EXPORT_TO_EXCEL': output = this._locale === 'en' ? 'Export to Excel' : 'Exporter vers Excel'; break;
@@ -39,6 +40,8 @@ export class TranslateServiceStub implements TranslaterService {
       case 'FIRST_NAME': output = this._locale === 'en' ? 'First Name' : 'Prénom'; break;
       case 'FORCE_FIT_COLUMNS': output = this._locale === 'en' ? 'Force fit columns' : 'Ajustement forcé des colonnes'; break;
       case 'FREEZE_COLUMNS': output = this._locale === 'en' ? 'Freeze Columns' : 'Geler les colonnes'; break;
+      case 'GREATER_THAN': output = this._locale === 'en' ? 'Greater than' : 'Plus grand que'; break;
+      case 'GREATER_THAN_OR_EQUAL_TO': output = this._locale === 'en' ? 'Greater than or equal to' : 'Plus grand ou égal à'; break;
       case 'GROUP_BY': output = this._locale === 'en' ? 'Grouped By' : 'Groupé par'; break;
       case 'GROUP_NAME': output = this._locale === 'en' ? 'Group Name' : 'Nom du Groupe'; break;
       case 'HELLO': output = this._locale === 'en' ? 'Hello' : 'Bonjour'; break;
@@ -46,9 +49,12 @@ export class TranslateServiceStub implements TranslaterService {
       case 'HIDE_COLUMN': output = this._locale === 'en' ? 'Hide Column' : 'Cacher la colonne'; break;
       case 'LAST_NAME': output = this._locale === 'en' ? 'Last Name' : 'Nom de famille'; break;
       case 'LAST_UPDATE': output = this._locale === 'en' ? 'Last Update' : 'Dernière mise à jour'; break;
+      case 'LESS_THAN': output = this._locale === 'en' ? 'Less than or equal to' : 'Plus petit que'; break;
+      case 'LESS_THAN_OR_EQUAL_TO': output = this._locale === 'en' ? 'Less than or equal to' : 'Plus petit ou égal à'; break;
       case 'MALE': output = this._locale === 'en' ? 'Male' : 'Mâle'; break;
       case 'ITEMS': output = this._locale === 'en' ? 'items' : 'éléments'; break;
       case 'ITEMS_PER_PAGE': output = this._locale === 'en' ? 'items per page' : 'éléments par page'; break;
+      case 'NOT_EQUAL_TO': output = this._locale === 'en' ? 'Not equal to' : 'Non égal à'; break;
       case 'OF': output = this._locale === 'en' ? 'of' : 'de'; break;
       case 'OK': output = this._locale === 'en' ? 'OK' : 'Terminé'; break;
       case 'OPTIONS_LIST': output = this._locale === 'en' ? 'Options List' : 'Liste d\'options'; break;

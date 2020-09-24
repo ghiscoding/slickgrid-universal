@@ -636,15 +636,47 @@ export class FilterService {
   }
 
   /**
-   * Toggle the Filter Functionality (show/hide the header row filter bar as well)
+   * Toggle the Filter Functionality
+   * @param {boolean} isFilterDisabled - optionally force a disable/enable of the Sort Functionality? Defaults to True
+   * @param {boolean} clearFiltersWhenDisabled - when disabling the Filter, do we also want to clear all the filters as well? Defaults to True
    */
-  toggleFilterFunctionality() {
-    const previousFiltering = this._gridOptions.enableFiltering;
-    this._grid.setOptions({ enableFiltering: !previousFiltering });
-    this._grid.setHeaderRowVisibility(!previousFiltering);
+  disableFilterFunctionality(isFilterDisabled = true, clearFiltersWhenDisabled = true) {
+    const prevShowFilterFlag = this._gridOptions.enableFiltering;
+    const newShowFilterFlag = !prevShowFilterFlag;
+
+    if (newShowFilterFlag !== isFilterDisabled) {
+      if (clearFiltersWhenDisabled && isFilterDisabled) {
+        this.clearFilters();
+      }
+      this._grid.setOptions({ enableFiltering: newShowFilterFlag }, false, true);
+      this._grid.setHeaderRowVisibility(newShowFilterFlag);
+
+      // when displaying header row, we'll call "setColumns" which in terms will recreate the header row filters
+      this._grid.setColumns(this.sharedService.columnDefinitions);
+    }
+  }
+
+  /**
+   * Toggle the Filter Functionality (show/hide the header row filter bar as well)
+   * @param {boolean} clearFiltersWhenDisabled - when disabling the filters, do we want to clear the filters before hiding the filters? Defaults to True
+   */
+  toggleFilterFunctionality(clearFiltersWhenDisabled = true) {
+    const prevShowFilterFlag = this._gridOptions.enableFiltering;
+    this.disableFilterFunctionality(prevShowFilterFlag, clearFiltersWhenDisabled);
+  }
+
+  /**
+   * Toggle the Header Row filter bar (this does not disable the Filtering itself, you can use "toggleFilterFunctionality()" instead, however this will reset any column positions)
+   */
+  toggleHeaderFilterRow() {
+    let showHeaderRow = this._gridOptions?.showHeaderRow ?? false;
+    showHeaderRow = !showHeaderRow; // inverse show header flag
+    this._grid.setHeaderRowVisibility(showHeaderRow);
 
     // when displaying header row, we'll call "setColumns" which in terms will recreate the header row filters
-    this._grid.setColumns(this.sharedService.columnDefinitions);
+    if (showHeaderRow === true) {
+      this._grid.setColumns(this.sharedService.columnDefinitions);
+    }
   }
 
   /**

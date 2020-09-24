@@ -9,10 +9,8 @@ const inputFolder2 = '../common/dist/styles';
 const outputFilename = argv.outputFilename || 'bundle';
 const outputFolder = argv.outputFolder || './dist/';
 
-let archive;
-
 const ext = 'zip';
-archive = archiver('zip', {
+const archive = archiver('zip', {
   zlib: { level: 9 } // Sets the compression level.
 });
 
@@ -25,6 +23,7 @@ const outputPathFilename = `${outputFolder}/${outputFilename}.${ext}`;
 archive.pipe(fs.createWriteStream(outputPathFilename));
 archive.directory(inputFolder1, false);
 archive.directory(inputFolder2, 'styles');
+archive.file('package.json', { name: 'package.json' });
 archive.finalize();
 
 console.log(`Compressing input folder "${inputFolder1}" and "${inputFolder2}" to output folder ${outputPathFilename}`);

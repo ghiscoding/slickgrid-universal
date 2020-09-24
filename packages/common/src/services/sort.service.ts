@@ -182,29 +182,42 @@ export class SortService {
     this.pubSubService.publish('onSortCleared', true);
   }
 
-  disableSortFunctionality(isSortingDisabled: boolean, clearSortingWhenDisabled = true) {
+  /**
+   * Toggle the Sorting Functionality
+   * @param {boolean} isSortingDisabled - optionally force a disable/enable of the Sort Functionality? Defaults to True
+   * @param {boolean} clearSortingWhenDisabled - when disabling the sorting, do we also want to clear the sorting as well? Defaults to True
+   */
+  disableSortFunctionality(isSortingDisabled = true, clearSortingWhenDisabled = true) {
+    const prevSorting = this._gridOptions.enableSorting;
+    const newSorting = !prevSorting;
+
+    this._gridOptions.enableSorting = newSorting;
+    let updatedColumnDefinitions;
     if (isSortingDisabled) {
       if (clearSortingWhenDisabled) {
         this.clearSorting();
       }
       this._eventHandler.unsubscribeAll();
-      this.disableSortingOnAllColumns(true);
+      updatedColumnDefinitions = this.disableSortingOnAllColumns(true);
     } else {
-      this.disableSortingOnAllColumns(false);
+      updatedColumnDefinitions = this.disableSortingOnAllColumns(false);
       const onSortHandler = this._grid.onSort;
       (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSortHandler>>).subscribe(onSortHandler, (e: SlickEventData, args: SingleColumnSort | MultiColumnSort) => this.handleLocalOnSort(e, args));
     }
+    this._grid.setOptions({ enableSorting: this._gridOptions.enableSorting }, false, true);
+
+    // reset columns so that it recreate the column headers and remove/add the sort icon hints
+    // basically without this, the sort icon hints were still showing up even after disabling the Sorting
+    this._grid.setColumns(updatedColumnDefinitions);
   }
 
   /**
    * Toggle the Sorting functionality
-   * @param clearSortingOnDisable - when disabling the sorting, do we also want to clear the sorting as well? Defaults to true.
+   * @param {boolean} clearSortingWhenDisabled - when disabling the sorting, do we also want to clear the sorting as well? Defaults to True
    */
   toggleSortFunctionality(clearSortingOnDisable = true) {
     const previousSorting = this._gridOptions.enableSorting;
-    this._gridOptions.enableSorting = !previousSorting;
-    this._grid.setOptions({ enableSorting: this._gridOptions.enableSorting });
-    this.disableSortFunctionality(!this._gridOptions.enableSorting, clearSortingOnDisable);
+    this.disableSortFunctionality(previousSorting, clearSortingOnDisable);
   }
 
   /**
@@ -511,7 +524,15 @@ export class SortService {
   // private functions
   // -------------------
 
-  private disableSortingOnAllColumns(isDisabling = true) {
+  /**
+   * Loop through all column definitions and do the following 2 things
+   * 1. disable/enable the "sortable" property of each column
+   * 2. loop through each Header Menu commands and change the command "hidden" property to enable/disable
+   * Also note that we aren't deleting any properties, we just toggle their flags so that we can reloop through at later point in time.
+   * (if we previously deleted these properties we wouldn't be able to change them back since these properties wouldn't exist anymore, hence why we just hide the commands)
+   * @param {boolean} isDisabling - are we disabling the sort functionality? Defaults to true
+   */
+  private disableSortingOnAllColumns(isDisabling = true): Column[] {
     const columnDefinitions = this._grid.getColumns();
 
     columnDefinitions.forEach((col) => {
@@ -523,11 +544,13 @@ export class SortService {
           if (menuItem && typeof menuItem !== 'string') {
             const menuCommand = menuItem.command;
             if (menuCommand === 'sort-asc' || menuCommand === 'sort-desc' || menuCommand === 'clear-sort') {
-              menuItem.disabled = isDisabling;
+              menuItem.hidden = isDisabling;
             }
           }
         });
       }
     });
+
+    return columnDefinitions;
   }
 }

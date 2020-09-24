@@ -142,6 +142,7 @@ export class Icons {
       '.mdi.mdi-shape-square-plus',
       '.mdi.mdi-sort-ascending',
       '.mdi.mdi-sort-descending',
+      '.mdi.mdi-sort-variant-remove',
       '.mdi.mdi-square-edit-outline',
       '.mdi.mdi-swap-horizontal',
       '.mdi.mdi-swap-vertical',

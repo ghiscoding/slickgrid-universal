@@ -6,10 +6,12 @@ export const SalesforceGlobalGridOptions: GridOption = {
   autoCommitEdit: true,
   datasetIdPropertyName: 'Id',
   defaultFilterPlaceholder: '',
-  enableExport: true,
+  enableAutoTooltip: true,
   enableDeepCopyDatasetOnPageLoad: true,
+  enableExport: true,
   exportOptions: {
-    exportWithFormatter: true
+    exportWithFormatter: true,
+    sanitizeDataExport: true,
   },
   enableCellNavigation: true,
   formatterOptions: {
