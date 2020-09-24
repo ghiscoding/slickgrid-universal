@@ -34,8 +34,6 @@
     "postsass-build-task:scss-compile:bootstrap": "postcss --no-map --use autoprefixer --output dist/styles/css/slickgrid-theme-bootstrap.css dist/styles/css/slickgrid-theme-bootstrap.css --output-style compressed",
     "sass-build-task:scss-compile:material": "node-sass src/styles/slickgrid-theme-material.scss -o dist/styles/css --output-style compressed",
     "postsass-build-task:scss-compile:material": "postcss --no-map --use autoprefixer --output dist/styles/css/slickgrid-theme-material.css dist/styles/css/slickgrid-theme-material.css --output-style compressed",
-    "sass-build-task:scss-compile:se-material": "node-sass src/styles/se-slickgrid-theme-material.scss -o dist/styles/css --output-style compressed",
-    "postsass-build-task:scss-compile:se-material": "postcss --no-map --use autoprefixer --output dist/styles/css/se-slickgrid-theme-material.css dist/styles/css/se-slickgrid-theme-material.css --output-style compressed",
     "sass-build-task:scss-compile:material-bare": "node-sass src/styles/slickgrid-theme-material.bare.scss -o dist/styles/css --output-style compressed",
     "postsass-build-task:scss-compile:material-bare": "postcss --no-map --use autoprefixer --output dist/styles/css/slickgrid-theme-material.bare.css dist/styles/css/slickgrid-theme-material.bare.css --output-style compressed",
     "sass-build-task:scss-compile:material-lite": "node-sass src/styles/slickgrid-theme-material.lite.scss -o dist/styles/css --output-style compressed",
