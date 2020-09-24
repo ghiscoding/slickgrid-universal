@@ -282,10 +282,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.slick-editor-modal-title').contains('Editing - Task 8888 (id: 501)');
 
     cy.get('textarea').contains('Task 8888').type('Task 8899');
-
-    // this next line causes a flaky test, so let's do it 2x times in 2 different ways
-    cy.get('.slider-editor-input.editor-percentComplete').as('range').invoke('val', 15).trigger('change');
-    cy.get('.slider-editor-input.editor-percentComplete').as('range').invoke('val', 17).trigger('change').type('{enter}', { force: true });
+    cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 17).trigger('change'); // .type('{enter}', { force: true });
 
     cy.get('.item-details-editor-container .editor-checkbox').uncheck();
     cy.get('.item-details-container.editor-duration input.editor-text').type('33');
@@ -293,7 +290,7 @@ describe('Example 12 - Composite Editor Modal', () => {
 
     cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').type('da');
     cy.get('.ui-menu.ui-autocomplete:visible').find('li.ui-menu-item:nth(1)').click();
-    // cy.get('.item-details-container.editor-countryOfOrigin .modified').should('have.length', 1);
+    cy.get('.item-details-container.editor-countryOfOrigin .modified').should('have.length', 1);
     cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').invoke('val').then(text => expect(text).to.eq('Bermuda'));
 
     cy.get('.btn-save').contains('Save').click({ force: true });
