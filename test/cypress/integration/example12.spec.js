@@ -284,7 +284,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('textarea').contains('Task 8888').type('Task 8899');
 
     // this next line causes a flaky test, so let's do it 2x times in 2 different ways
-    cy.get('.slider-editor-input.editor-percentComplete').as('range').invoke('val', 17).trigger('change');
+    cy.get('.slider-editor-input.editor-percentComplete').as('range').invoke('val', 15).trigger('change');
     cy.get('.slider-editor-input.editor-percentComplete').as('range').invoke('val', 17).trigger('change').type('{enter}', { force: true });
 
     cy.get('.item-details-editor-container .editor-checkbox').uncheck();
