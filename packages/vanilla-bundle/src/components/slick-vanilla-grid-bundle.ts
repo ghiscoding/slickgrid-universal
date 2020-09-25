@@ -240,7 +240,39 @@ export class SlickVanillaGridBundle {
     return this._registeredServices;
   }
 
-  constructor(gridParentContainerElm: HTMLElement, columnDefs?: Column[], options?: GridOption, dataset?: any[], hierarchicalDataset?: any[]) {
+  /**
+   * Slicker Grid Bundle constructor
+   * @param {Object} gridParentContainerElm - div HTML DOM element container
+   * @param {Array<Column>} columnDefs - Column Definitions
+   * @param {Object} options - Grid Options
+   * @param {Array<Object>} dataset - Dataset
+   * @param {Array<Object>} hierarchicalDataset - Hierarchical Dataset
+   * @param {Object} services - Typically only used for Unit Testing when we want to pass Mocked/Stub Services
+   */
+  constructor(
+    gridParentContainerElm: HTMLElement,
+    columnDefs?: Column[],
+    options?: GridOption,
+    dataset?: any[],
+    hierarchicalDataset?: any[],
+    services?: {
+      collectionService?: CollectionService,
+      eventPubSubService?: EventPubSubService,
+      extensionService?: ExtensionService,
+      extensionUtility?: ExtensionUtility,
+      filterService?: FilterService,
+      gridEventService?: GridEventService,
+      gridService?: GridService,
+      gridStateService?: GridStateService,
+      groupingAndColspanService?: GroupingAndColspanService,
+      paginationService?: PaginationService,
+      resizerService?: ResizerService,
+      sharedService?: SharedService,
+      sortService?: SortService,
+      treeDataService?: TreeDataService,
+      translaterService?: TranslaterService
+    }
+  ) {
     // make sure that the grid container doesn't already have the "slickgrid-container" css class
     // if it does then we won't create yet another grid, just stop there
     if (gridParentContainerElm.querySelectorAll('.slickgrid-container').length !== 0) {
@@ -259,25 +291,25 @@ export class SlickVanillaGridBundle {
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions && this._gridOptions.enableDeepCopyDatasetOnPageLoad);
 
     // if user is providing a Translate Service, it has to be passed under the "i18n" grid option
-    this.translaterService = this._gridOptions.i18n;
+    this.translaterService = services?.translaterService ?? this._gridOptions.i18n;
 
     // initialize and assign all Service Dependencies
-    this._eventPubSubService = new EventPubSubService(gridParentContainerElm);
+    this._eventPubSubService = services?.eventPubSubService ?? new EventPubSubService(gridParentContainerElm);
     this._eventPubSubService.eventNamingStyle = this._gridOptions && this._gridOptions.eventNamingStyle || EventNamingStyle.camelCase;
 
-    this.gridEventService = new GridEventService();
+    this.gridEventService = services?.gridEventService ?? new GridEventService();
     const slickgridConfig = new SlickgridConfig();
-    this.sharedService = new SharedService();
-    this.collectionService = new CollectionService(this.translaterService);
-    this.extensionUtility = new ExtensionUtility(this.sharedService, this.translaterService);
+    this.sharedService = services?.sharedService ?? new SharedService();
+    this.collectionService = services?.collectionService ?? new CollectionService(this.translaterService);
+    this.extensionUtility = services?.extensionUtility ?? new ExtensionUtility(this.sharedService, this.translaterService);
     const filterFactory = new FilterFactory(slickgridConfig, this.translaterService, this.collectionService);
-    this.filterService = new FilterService(filterFactory, this._eventPubSubService, this.sharedService);
-    this.resizerService = new ResizerService(this._eventPubSubService);
-    this.sortService = new SortService(this.sharedService, this._eventPubSubService);
-    this.treeDataService = new TreeDataService(this.sharedService);
-    this.paginationService = new PaginationService(this._eventPubSubService, this.sharedService);
-    this.gridService = new GridService(this.extensionService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService);
-    this.gridStateService = new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
+    this.filterService = services?.filterService ?? new FilterService(filterFactory, this._eventPubSubService, this.sharedService);
+    this.resizerService = services?.resizerService ?? new ResizerService(this._eventPubSubService);
+    this.sortService = services?.sortService ?? new SortService(this.sharedService, this._eventPubSubService);
+    this.treeDataService = services?.treeDataService ?? new TreeDataService(this.sharedService);
+    this.paginationService = services?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService);
+    this.gridService = services?.gridService ?? new GridService(this.extensionService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService);
+    this.gridStateService = services?.gridStateService ?? new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
 
     // extensions
     const autoTooltipExtension = new AutoTooltipExtension(this.extensionUtility, this.sharedService);
@@ -294,7 +326,7 @@ export class SlickVanillaGridBundle {
     const rowMoveManagerExtension = new RowMoveManagerExtension(this.extensionUtility, this.sharedService);
     const rowSelectionExtension = new RowSelectionExtension(this.extensionUtility, this.sharedService);
 
-    this.extensionService = new ExtensionService(
+    this.extensionService = services?.extensionService ?? new ExtensionService(
       autoTooltipExtension,
       cellExternalCopyManagerExtension,
       cellMenuExtension,
@@ -311,7 +343,7 @@ export class SlickVanillaGridBundle {
       this.sharedService,
       this.translaterService,
     );
-    this.groupingService = new GroupingAndColspanService(this.extensionUtility, this.extensionService);
+    this.groupingService = services?.groupingAndColspanService ?? new GroupingAndColspanService(this.extensionUtility, this.extensionService);
 
     if (hierarchicalDataset) {
       this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
@@ -734,7 +766,7 @@ export class SlickVanillaGridBundle {
       }
 
       const onRowCountChangedHandler = dataView.onRowCountChanged;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowCountChangedHandler>>).subscribe(onRowCountChangedHandler, (e, args) => {
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowCountChangedHandler>>).subscribe(onRowCountChangedHandler, (_e, args) => {
         grid.invalidate();
 
         this.metrics = {
@@ -1191,48 +1223,5 @@ export class SlickVanillaGridBundle {
         columnRef.internalColumnEditor = column.editor as ColumnEditor;
       }
     }
-  }
-}
-
-/** This class is only for unit testing purposes */
-export class SlickVanillaGridBundleInitializer extends SlickVanillaGridBundle {
-  constructor(
-    collectionService: CollectionService,
-    eventPubSubService: EventPubSubService,
-    extensionService: ExtensionService,
-    extensionUtility: ExtensionUtility,
-    filterService: FilterService,
-    gridEventService: GridEventService,
-    gridService: GridService,
-    gridStateService: GridStateService,
-    groupingAndColspanService: GroupingAndColspanService,
-    paginationService: PaginationService,
-    resizerService: ResizerService,
-    sharedService: SharedService,
-    sortService: SortService,
-    treeDataService: TreeDataService,
-    translateService: TranslaterService,
-    gridParentContainerElm: HTMLElement,
-    columnDefs?: Column[],
-    options?: GridOption,
-    dataset?: any[],
-    hierarchicalDataset?: any[],
-  ) {
-    super(gridParentContainerElm, columnDefs, options, dataset, hierarchicalDataset);
-    this.collectionService = collectionService;
-    this._eventPubSubService = eventPubSubService;
-    this.extensionService = extensionService;
-    this.extensionUtility = extensionUtility;
-    this.filterService = filterService;
-    this.gridEventService = gridEventService;
-    this.gridService = gridService;
-    this.gridStateService = gridStateService;
-    this.groupingService = groupingAndColspanService;
-    this.paginationService = paginationService;
-    this.resizerService = resizerService;
-    this.sharedService = sharedService;
-    this.sortService = sortService;
-    this.treeDataService = treeDataService;
-    this.translaterService = translateService;
   }
 }

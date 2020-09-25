@@ -10860,9 +10860,10 @@ slice-ansi@^2.1.0:
     astral-regex "^1.0.0"
     is-fullwidth-code-point "^2.0.0"
 
-"slickgrid@github:6pac/SlickGrid":
-  version "2.4.28"
-  resolved "https://codeload.github.com/6pac/SlickGrid/tar.gz/181c9d9dba3d774d8f9db3d6902af5fe9073c107"
+slickgrid@^2.4.29:
+  version "2.4.29"
+  resolved "https://registry.yarnpkg.com/slickgrid/-/slickgrid-2.4.29.tgz#809eaf5d761346a2c6dcf633de77ec5e52f93a3d"
+  integrity sha512-Zybw7uogpf4ZJyZ8hDCqz2isiKXidUpZ2lRPEUg+ERPfSV8h9XIQVhfaswxpp+fmpprycryNXVd/P7Eq+3tNlw==
   dependencies:
     jquery ">=1.8.0"
     jquery-ui ">=1.8.0"
