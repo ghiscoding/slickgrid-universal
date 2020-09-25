@@ -162,6 +162,5 @@ yarn run test:watch
   - [x] try to copy SF lookup component look & feel ([SF Lookup](https://www.lightningdesignsystem.com/components/lookups/#site-main-content))
 - [x] Mutiple-Select is not showing caret icon to represent a dropdown in SF
 - [x] Check if Date Picker works correctly with new latest version of `Flatpickr`
+- [x] See if we can get all the vanilla-grid-bundle `instances` and Services as `readonly` class members
 - [ ] See if we can get `DOM Purify` to work in SF, else keep the custom sanitizer
-- [ ] See if we can get all the vanilla-grid-bundle `instances` as `readonly` class members
-- [ ] See if adding `lerna-changelog` make sense

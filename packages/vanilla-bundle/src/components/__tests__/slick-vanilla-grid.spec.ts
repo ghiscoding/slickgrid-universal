@@ -31,7 +31,7 @@ import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServi
 import * as backendUtilities from '@slickgrid-universal/common/dist/commonjs/services/backend-utilities';
 import * as utilities from '@slickgrid-universal/common/dist/commonjs/services/utilities';
 
-import { SlickVanillaGridBundle, SlickVanillaGridBundleInitializer } from '../slick-vanilla-grid-bundle';
+import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle';
 import { EventPubSubService } from '../../services/eventPubSub.service';
 import { FileExportService } from '../../services/fileExport.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
@@ -97,15 +97,6 @@ const collectionServiceStub = {
   singleFilterCollection: jest.fn(),
   sortCollection: jest.fn(),
 } as unknown as CollectionService;
-
-const compositeEditorServiceStub = {
-  init: jest.fn(),
-  dispose: jest.fn(),
-  openDetails: jest.fn(),
-  handleCancelClicked: jest.fn(),
-  handleSaveClicked: jest.fn(),
-  validateCurrentEditor: jest.fn(),
-} as unknown as SlickCompositeEditorComponent;
 
 const filterServiceStub = {
   clearFilters: jest.fn(),
@@ -309,26 +300,29 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     jest.spyOn(mockGrid, 'getOptions').mockReturnValue(gridOptions);
     dataset = [];
 
-    component = new SlickVanillaGridBundleInitializer(
-      collectionServiceStub,
-      eventPubSubService,
-      extensionServiceStub,
-      mockExtensionUtility,
-      filterServiceStub,
-      gridEventServiceStub,
-      gridServiceStub,
-      gridStateServiceStub,
-      groupingAndColspanServiceStub,
-      paginationServiceStub,
-      resizerServiceStub,
-      sharedService,
-      sortServiceStub,
-      treeDataServiceStub,
-      translateService as unknown as TranslaterService,
+    component = new SlickVanillaGridBundle(
       divContainer,
       columnDefinitions,
       gridOptions,
       dataset,
+      null,
+      {
+        collectionService: collectionServiceStub,
+        eventPubSubService,
+        extensionService: extensionServiceStub,
+        extensionUtility: mockExtensionUtility,
+        filterService: filterServiceStub,
+        gridEventService: gridEventServiceStub,
+        gridService: gridServiceStub,
+        gridStateService: gridStateServiceStub,
+        groupingAndColspanService: groupingAndColspanServiceStub,
+        paginationService: paginationServiceStub,
+        resizerService: resizerServiceStub,
+        sharedService,
+        sortService: sortServiceStub,
+        treeDataService: treeDataServiceStub,
+        translaterService: translateService as unknown as TranslaterService,
+      }
     );
   });
 
@@ -821,7 +815,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions = { enableCompositeEditor: true } as GridOption;
         component.initialization(divContainer, slickEventHandler);
 
-        // expect(SlickCompositeEditorComponent).toHaveBeenCalled();
         expect(component.slickCompositeEditor instanceof SlickCompositeEditorComponent).toBeTrue();
       });
 
@@ -1789,9 +1782,9 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
   let dataset = [];
   let hierarchicalDataset = null;
   let hierarchicalSpy;
-  let setItemsSpy;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     dataset = [];
     divContainer = document.createElement('div');
     cellDiv = document.createElement('div');
@@ -1817,30 +1810,31 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
     dataset = [];
     hierarchicalDataset = [{ file: 'documents', files: [{ file: 'vacation.txt' }] }];
 
-    component = new SlickVanillaGridBundleInitializer(
-      collectionServiceStub,
-      eventPubSubService,
-      extensionServiceStub,
-      mockExtensionUtility,
-      filterServiceStub,
-      gridEventServiceStub,
-      gridServiceStub,
-      gridStateServiceStub,
-      groupingAndColspanServiceStub,
-      paginationServiceStub,
-      resizerServiceStub,
-      sharedService,
-      sortServiceStub,
-      treeDataServiceStub,
-      translateService as unknown as TranslaterService,
+    component = new SlickVanillaGridBundle(
       divContainer,
       columnDefinitions,
       gridOptions,
       dataset,
       hierarchicalDataset,
+      {
+        collectionService: collectionServiceStub,
+        eventPubSubService,
+        extensionService: extensionServiceStub,
+        extensionUtility: mockExtensionUtility,
+        filterService: filterServiceStub,
+        gridEventService: gridEventServiceStub,
+        gridService: gridServiceStub,
+        gridStateService: gridStateServiceStub,
+        groupingAndColspanService: groupingAndColspanServiceStub,
+        paginationService: paginationServiceStub,
+        resizerService: resizerServiceStub,
+        sharedService,
+        sortService: sortServiceStub,
+        treeDataService: treeDataServiceStub,
+        translaterService: translateService as unknown as TranslaterService,
+      }
     );
     hierarchicalSpy = jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'set');
-    setItemsSpy = jest.spyOn(mockDataView, 'setItems');
   });
 
   it('should provide hierarchical dataset by the constructor and expect processTreeDataInitialSort being called with other methods', () => {
@@ -1850,12 +1844,10 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
     component.initialization(divContainer, slickEventHandler);
 
     expect(hierarchicalSpy).toHaveBeenCalledWith(mockHierarchical);
-    expect(setItemsSpy).toHaveBeenCalledWith([], 'id');
   });
 });
 
 describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with a Slickgrid Container that already exist', () => {
-  // jest.mock('slickgrid/slick.core', () => mockSlickCoreImplementation);
   jest.mock('slickgrid/slick.grid', () => mockGridImplementation);
   jest.mock('slickgrid/plugins/slick.draggablegrouping', () => mockDraggableGroupingImplementation);
   Slick.Grid = mockGridImplementation;
@@ -1889,26 +1881,29 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
     jest.spyOn(mockGrid, 'getOptions').mockReturnValue(gridOptions);
     dataset = [];
 
-    component = new SlickVanillaGridBundleInitializer(
-      collectionServiceStub,
-      eventPubSubService,
-      extensionServiceStub,
-      mockExtensionUtility,
-      filterServiceStub,
-      gridEventServiceStub,
-      gridServiceStub,
-      gridStateServiceStub,
-      groupingAndColspanServiceStub,
-      paginationServiceStub,
-      resizerServiceStub,
-      sharedService,
-      sortServiceStub,
-      treeDataServiceStub,
-      translateService as unknown as TranslaterService,
+    component = new SlickVanillaGridBundle(
       divContainer,
       columnDefinitions,
       gridOptions,
       dataset,
+      null,
+      {
+        collectionService: collectionServiceStub,
+        eventPubSubService,
+        extensionService: extensionServiceStub,
+        extensionUtility: mockExtensionUtility,
+        filterService: filterServiceStub,
+        gridEventService: gridEventServiceStub,
+        gridService: gridServiceStub,
+        gridStateService: gridStateServiceStub,
+        groupingAndColspanService: groupingAndColspanServiceStub,
+        paginationService: paginationServiceStub,
+        resizerService: resizerServiceStub,
+        sharedService,
+        sortService: sortServiceStub,
+        treeDataService: treeDataServiceStub,
+        translaterService: translateService as unknown as TranslaterService,
+      }
     );
   });
 
