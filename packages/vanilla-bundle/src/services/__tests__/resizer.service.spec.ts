@@ -166,6 +166,16 @@ describe('Resizer Service', () => {
       expect(spy).toHaveBeenCalledWith(true);
     });
 
+    it('should call the plugin "resizeGrid" method', () => {
+      service.init(gridStub, divContainer);
+      const instance = service.getAddonInstance();
+      const spy = jest.spyOn(instance, 'resizeGrid');
+
+      service.resizeGrid(10, { height: 600, width: 800 });
+
+      expect(spy).toHaveBeenCalledWith(10, { height: 600, width: 800 }, undefined);
+    });
+
     it('should expect autoResize bottom padding to be added to default pagination padding', () => {
       mockGridOptions = { autoResize: { bottomPadding: 50 } };
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
@@ -228,7 +238,7 @@ describe('Resizer Service', () => {
 
     it('should try to resize grid when its UI is deemed broken but expect an error shown in the console when "resizeGrid" throws an error', (done) => {
       const consoleSpy = jest.spyOn(global.console, 'log').mockReturnValue();
-      const promise = new Promise((resolve, reject) => setTimeout(() => reject('some error'), 0));
+      const promise = new Promise((_resolve, reject) => setTimeout(() => reject('some error'), 0));
       jest.spyOn(mockResizerImplementation, 'resizeGrid').mockReturnValue(promise);
 
       service.init(gridStub, divContainer);
