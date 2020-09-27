@@ -275,6 +275,11 @@ export function htmlEntityDecode(input: string): string {
   });
 }
 
+/**
+ * Encode string to html special char and add html space padding defined
+ * @param {string} inputStr - input string
+ * @param {number} paddingLength - padding to add
+ */
 export function htmlEncodedStringWithPadding(inputStr: string, paddingLength: number): string {
   const inputStrLn = inputStr.length;
   let outputStr = htmlEncode(inputStr);
