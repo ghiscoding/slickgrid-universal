@@ -247,6 +247,10 @@ export class Example7 {
     if (columnIndex >= 0) {
       this.sgb.gridService.hideColumnByIndex(columnIndex);
     }
+
+    // you can also remove the column from both pickers (ColumnPicker/GridMenu)
+    // this.sgb.columnDefinitions[columnIndex].excludeFromColumnPicker = true;
+    // this.sgb.columnDefinitions[columnIndex].excludeFromGridMenu = true;
   }
 
   // Disable/Enable Filtering/Sorting functionalities
