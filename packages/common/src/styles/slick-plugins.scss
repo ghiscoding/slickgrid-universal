@@ -773,6 +773,7 @@ input.search-filter {
         background-color: $flatpickr-bgcolor;
       }
     }
+    .form-control[readonly],
     .flatpickr.form-control[readonly] {
       background-color: $flatpickr-bgcolor;
     }

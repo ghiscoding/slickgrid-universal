@@ -230,7 +230,7 @@ export class Example3 {
             {
               command: 'command2', title: 'Command 2', positionOrder: 62,
               // you can use the "action" callback and/or use "onCallback" callback from the grid options, they both have the same arguments
-              action: (e, args) => {
+              action: (_e, args) => {
                 console.log(args.dataContext, args.column);
                 // action callback.. do something
               },
@@ -300,7 +300,7 @@ export class Example3 {
         dropPlaceHolderText: 'Drop a column header here to group by the column',
         // groupIconCssClass: 'fa fa-outdent',
         deleteIconCssClass: 'mdi mdi-close color-danger',
-        onGroupChanged: (e, args) => this.onGroupChanged(args),
+        onGroupChanged: (_e, args) => this.onGroupChanged(args),
         onExtensionRegistered: (extension) => this.draggableGroupingPlugin = extension,
       },
       enableCheckboxSelector: true,
@@ -309,7 +309,7 @@ export class Example3 {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,
       },
-      editCommandHandler: (item, column, editCommand) => {
+      editCommandHandler: (_item, _column, editCommand) => {
         this.editCommandQueue.push(editCommand);
         editCommand.execute();
       },
@@ -319,7 +319,7 @@ export class Example3 {
         // all the Cell Menu callback methods (except the action callback)
         // are available under the grid options as shown below
         onCommand: (e, args) => this.executeCommand(e, args),
-        onOptionSelected: (e, args) => {
+        onOptionSelected: (_e, args) => {
           // change "Completed" property with new option selected from the Cell Menu
           const dataContext = args && args.dataContext;
           if (dataContext && dataContext.hasOwnProperty('completed')) {
@@ -368,7 +368,7 @@ export class Example3 {
   }
 
   clearGroupingSelects() {
-    this.selectedGroupingFields.forEach((g, i) => this.selectedGroupingFields[i] = '');
+    this.selectedGroupingFields.forEach((_g, i) => this.selectedGroupingFields[i] = '');
     this.selectedGroupingFields = [...this.selectedGroupingFields]; // force dirty checking
   }
 
@@ -420,7 +420,7 @@ export class Example3 {
     }
   }
 
-  groupByFieldName(fieldName, index) {
+  groupByFieldName(_fieldName, _index) {
     this.clearGrouping();
     if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
       this.showPreHeader();
@@ -451,7 +451,7 @@ export class Example3 {
 
     if (Array.isArray(this.selectedGroupingFields) && Array.isArray(groups) && groups.length > 0) {
       // update all Group By select dropdown
-      this.selectedGroupingFields.forEach((g, i) => this.selectedGroupingFields[i] = groups[i] && groups[i].getter || '');
+      this.selectedGroupingFields.forEach((_g, i) => this.selectedGroupingFields[i] = groups[i] && groups[i].getter || '');
       this.selectedGroupingFields = [...this.selectedGroupingFields]; // force dirty checking
     } else if (groups.length === 0 && caller === 'remove-group') {
       this.clearGroupingSelects();
@@ -486,8 +486,8 @@ export class Example3 {
     console.log('handleOnSlickerGridCreated', this.slickerGridInstance);
   }
 
-  executeCommand(e, args) {
-    const columnDef = args.column;
+  executeCommand(_e, args) {
+    // const columnDef = args.column;
     const command = args.command;
     const dataContext = args.dataContext;
 
