@@ -93,5 +93,6 @@ $editable-field-hover-icon-width: 14px !default;
 }
 
 $link-color: $primary-color !default;
-@import './colors.scss';
+@import './colors';
+@import './colors-from-filters';
 @import './extra-styling';
