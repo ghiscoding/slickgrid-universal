@@ -1,0 +1,53 @@
+@import './sass-utilities';
+
+/* icon/text colors */
+// we'll use the same color set as text-colors defined in Bootstrap 4 (ref: https://getbootstrap.com/docs/4.5/utilities/colors/)
+// we also use CSS Filter to color on top of SVG icons, we use this codepen to calculatet the Filter (https://codepen.io/sosuke/pen/Pjoqqp)
+
+// NOTE: remember that we are using CSS "filter" and that is NOT the same as a using regular color/background-color, it behaves differently
+
+$color-primary: $primary-color !default;
+$color-secondary: #6c757d !default;
+$color-success: #28a745 !default;
+$color-danger: #dc3545 !default;
+$color-warning: #ffc107 !default;
+$color-info: #17a2b8 !default;
+$color-light: #f8f9fa !default;
+$color-dark: #343a40 !default;
+$color-body: #212529 !default;
+$color-muted: #6c757d !default;
+$color-white: #ffffff !default;
+$color-alt-default: #1e87f0 !default;
+$color-alt-warning: #faa05a !default;
+$color-alt-danger: #f0506e !default;
+$color-alt-success: #32d296 !default;
+$color-se-primary: #3dcd58 !default;
+$color-se-link: #42b4e6 !default;
+$color-se-link-dark: #337ab7 !default;
+$color-se-danger: #b10043 !default;
+$color-se-secondary: #9fa0a4 !default;
+$color-se-warning: #e47f00 !default;
+$color-se-warning-light: #ffd100 !default;
+
+.color-primary { filter: invert(31%) sepia(57%) saturate(6822%) hue-rotate(194deg) brightness(93%) contrast(102%); }
+.color-secondary { filter: invert(49%) sepia(14%) saturate(290%) hue-rotate(167deg) brightness(89%) contrast(89%); }
+.color-success { filter: invert(46%) sepia(96%) saturate(377%) hue-rotate(81deg) brightness(94%) contrast(91%); }
+.color-danger { filter: invert(35%) sepia(56%) saturate(4390%) hue-rotate(334deg) brightness(88%) contrast(95%); }
+.color-warning { filter: invert(68%) sepia(73%) saturate(596%) hue-rotate(354deg) brightness(105%) contrast(101%); }
+.color-info { filter: invert(51%) sepia(59%) saturate(588%) hue-rotate(140deg) brightness(92%) contrast(94%); }
+.color-light { filter: invert(91%) sepia(4%) saturate(576%) hue-rotate(200deg) brightness(109%) contrast(96%); }
+.color-dark { filter: invert(18%) sepia(6%) saturate(1291%) hue-rotate(169deg) brightness(89%) contrast(82%); }
+.color-body { filter: invert(12%) sepia(9%) saturate(824%) hue-rotate(169deg) brightness(94%) contrast(91%); }
+.color-muted { filter: invert(50%) sepia(2%) saturate(2378%) hue-rotate(168deg) brightness(89%) contrast(84%); }
+.color-white { filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(54deg) brightness(109%) contrast(101%); }
+.color-alt-default { filter: invert(46%) sepia(70%) saturate(3992%) hue-rotate(193deg) brightness(99%) contrast(90%); }
+.color-alt-warning { filter: invert(59%) sepia(94%) saturate(289%) hue-rotate(341deg) brightness(98%) contrast(99%); }
+.color-alt-danger { filter: invert(37%) sepia(84%) saturate(805%) hue-rotate(308deg) brightness(99%) contrast(90%); }
+.color-alt-success { filter: invert(80%) sepia(11%) saturate(2532%) hue-rotate(99deg) brightness(87%) contrast(89%); }
+.color-se-primary { filter: invert(67%) sepia(14%) saturate(2047%) hue-rotate(79deg) brightness(97%) contrast(90%); }
+.color-se-link { filter: invert(71%) sepia(47%) saturate(2213%) hue-rotate(167deg) brightness(93%) contrast(94%); }
+.color-se-link-dark { filter: invert(42%) sepia(23%) saturate(1361%) hue-rotate(166deg) brightness(98%) contrast(93%); }
+.color-se-danger { filter: invert(14%) sepia(84%) saturate(3919%) hue-rotate(325deg) brightness(79%) contrast(112%); }
+.color-se-secondary { filter: invert(71%) sepia(5%) saturate(181%) hue-rotate(191deg) brightness(91%) contrast(86%); }
+.color-se-warning { filter: invert(76%) sepia(49%) saturate(7416%) hue-rotate(7deg) brightness(95%) contrast(101%); }
+.color-se-warning-light { filter: invert(85%) sepia(31%) saturate(3980%) hue-rotate(359deg) brightness(103%) contrast(106%); }
