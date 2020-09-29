@@ -30,6 +30,9 @@ export class SelectEditor implements Editor {
   /** The JQuery DOM element */
   $editorElm: any;
 
+  /** is the Editor disabled? */
+  disabled = false;
+
   /** Editor Multiple-Select options */
   editorElmOptions: MultipleSelectOption;
 
@@ -69,8 +72,6 @@ export class SelectEditor implements Editor {
   // flag to signal that the editor is destroying itself, helps prevent
   // commit changes from being called twice and erroring
   protected _destroying = false;
-
-  protected _isDisabled = false;
 
   /** Collection Service */
   protected _collectionService: CollectionService;
@@ -295,6 +296,12 @@ export class SelectEditor implements Editor {
     // always render the Select (dropdown) DOM element, even if user passed a "collectionAsync",
     // if that is the case, the Select will simply be without any options but we still have to render it (else SlickGrid would throw an error)
     this.renderDomElement(this.collection);
+
+    // when having a collectionAsync and a collection that is empty, we'll toggle the Editor to disabled,
+    // it will be re-enabled when we get the collection filled (in slick-vanilla-bundle on method "updateEditorCollection()")
+    if (this.disabled || (this.columnEditor?.collectionAsync && Array.isArray(this.collection) && this.collection.length === 0)) {
+      this.disable(true);
+    }
   }
 
   getValue(): any | any[] {
@@ -440,8 +447,8 @@ export class SelectEditor implements Editor {
   }
 
   disable(isDisabled = true) {
-    const prevIsDisabled = this._isDisabled;
-    this._isDisabled = isDisabled;
+    const prevIsDisabled = this.disabled;
+    this.disabled = isDisabled;
 
     if (this.$editorElm) {
       if (isDisabled) {
@@ -483,7 +490,7 @@ export class SelectEditor implements Editor {
     }
 
     // when field is disabled, we can assume it's valid
-    if (this._isDisabled) {
+    if (this.disabled) {
       return { valid: true, msg: '' };
     }
 
@@ -552,7 +559,7 @@ export class SelectEditor implements Editor {
     return outputCollection;
   }
 
-  protected renderDomElement(collection: any[]) {
+  renderDomElement(collection: any[]) {
     if (!Array.isArray(collection) && this.collectionOptions && (this.collectionOptions.collectionInsideObjectProperty)) {
       const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty;
       collection = getDescendantProperty(collection, collectionInsideObjectProperty);
@@ -682,7 +689,7 @@ export class SelectEditor implements Editor {
       this.applyValue(this.args.item, this.serializeValue());
     }
     this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
-    if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+    if (this.disabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, new Slick.EventData());

@@ -26,7 +26,6 @@ declare const Slick: SlickNamespace;
  */
 export class DualInputEditor implements Editor {
   private _eventHandler: SlickEventHandler;
-  private _isDisabled = false;
   private _isValueSaveCalled = false;
   private _lastEventType: string | undefined;
   private _lastInputKeyEvent: KeyboardEvent;
@@ -36,6 +35,9 @@ export class DualInputEditor implements Editor {
   private _rightFieldName: string;
   private _originalLeftValue: string | number;
   private _originalRightValue: string | number;
+
+  /** is the Editor disabled? */
+  disabled = false;
 
   /** SlickGrid Grid object */
   grid: SlickGrid;
@@ -193,8 +195,8 @@ export class DualInputEditor implements Editor {
   }
 
   disable(isDisabled = true) {
-    const prevIsDisabled = this._isDisabled;
-    this._isDisabled = isDisabled;
+    const prevIsDisabled = this.disabled;
+    this.disabled = isDisabled;
 
     if (this._leftInput && this._rightInput) {
       if (isDisabled) {
@@ -397,7 +399,7 @@ export class DualInputEditor implements Editor {
     }
 
     // when field is disabled, we can assume it's valid
-    if (this._isDisabled) {
+    if (this.disabled) {
       return { valid: true, msg: '' };
     }
 
@@ -489,10 +491,10 @@ export class DualInputEditor implements Editor {
 
     // when the input is disabled we won't include it in the form result object
     // we'll check with both left/right inputs
-    if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(leftInputId)) {
+    if (this.disabled && compositeEditorOptions.formValues.hasOwnProperty(leftInputId)) {
       delete compositeEditorOptions.formValues[leftInputId];
     }
-    if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(rightInputId)) {
+    if (this.disabled && compositeEditorOptions.formValues.hasOwnProperty(rightInputId)) {
       delete compositeEditorOptions.formValues[rightInputId];
     }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });

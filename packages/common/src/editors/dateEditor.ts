@@ -33,12 +33,14 @@ export class DateEditor implements Editor {
   private _$inputWithData: any;
   private _$input: any;
   private _$editorInputElm: any;
-  private _isDisabled = false;
   private _originalDate: string;
   private _pickerMergedOptions: FlatpickrOption;
 
   flatInstance: any;
   defaultDate: string;
+
+  /** is the Editor disabled? */
+  disabled = false;
 
   /** SlickGrid Grid object */
   grid: SlickGrid;
@@ -173,8 +175,8 @@ export class DateEditor implements Editor {
   }
 
   disable(isDisabled = true) {
-    const prevIsDisabled = this._isDisabled;
-    this._isDisabled = isDisabled;
+    const prevIsDisabled = this.disabled;
+    this.disabled = isDisabled;
 
     if (this.flatInstance?._input) {
       if (isDisabled) {
@@ -308,7 +310,7 @@ export class DateEditor implements Editor {
     }
 
     // when field is disabled, we can assume it's valid
-    if (this._isDisabled) {
+    if (this.disabled) {
       return { valid: true, msg: '' };
     }
 
@@ -357,7 +359,7 @@ export class DateEditor implements Editor {
           this.applyValue(this.args.item, this.serializeValue());
         }
         this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
-        if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+        if (this.disabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
           delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
         }
         grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, new Slick.EventData());

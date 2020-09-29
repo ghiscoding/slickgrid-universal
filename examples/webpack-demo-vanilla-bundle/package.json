@@ -29,7 +29,7 @@
     "@slickgrid-universal/excel-export": "^0.1.0",
     "@slickgrid-universal/file-export": "^0.1.0",
     "@slickgrid-universal/vanilla-bundle": "^0.1.0",
-    "bulma": "^0.9.0",
+    "bulma": "^0.9.1",
     "moment-mini": "^2.24.0"
   },
   "devDependencies": {
