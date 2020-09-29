@@ -12,5 +12,5 @@
   "supportFile": "test/cypress/support/index.js",
   "videosFolder": "test/cypress/videos",
   "defaultCommandTimeout": 5000,
-  "pageLoadTimeout": 15000
+  "pageLoadTimeout": 18000
 }
