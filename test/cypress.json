@@ -10,5 +10,7 @@
   "pluginsFile": "test/cypress/plugins/index.js",
   "screenshotsFolder": "test/cypress/screenshots",
   "supportFile": "test/cypress/support/index.js",
-  "videosFolder": "test/cypress/videos"
+  "videosFolder": "test/cypress/videos",
+  "defaultCommandTimeout": 5000,
+  "pageLoadTimeout": 10000
 }
