@@ -5,6 +5,7 @@ import 'slickgrid/slick.grid';
 import 'slickgrid/slick.dataview';
 import 'slickgrid/plugins/slick.resizer';
 import {
+  AutoCompleteEditor,
   BackendServiceApi,
   Column,
   ColumnEditor,
@@ -27,6 +28,7 @@ import {
   onBackendError,
   refreshBackendDataset,
   Pagination,
+  SelectEditor,
   ServicePagination,
   Subscription,
 
@@ -1054,7 +1056,9 @@ export class SlickVanillaGridBundle {
 
   /** Load the Editor Collection asynchronously and replace the "collection" property when Promise resolves */
   private loadEditorCollectionAsync(column: Column) {
-    const collectionAsync = column && column.editor && (column.editor as ColumnEditor).collectionAsync;
+    const collectionAsync = (column?.editor as ColumnEditor).collectionAsync;
+    (column?.editor as ColumnEditor).disabled = true; // disable the Editor DOM element, we'll re-enable it after receiving the collection with "updateEditorCollection()"
+
     if (collectionAsync) {
       // wait for the "collectionAsync", once resolved we will save it into the "collection"
       // the collectionAsync can be of 3 types HttpClient, HttpFetch or a Promise
@@ -1214,14 +1218,23 @@ export class SlickVanillaGridBundle {
    */
   private updateEditorCollection<T = any>(column: Column<T>, newCollection: T[]) {
     (column.editor as ColumnEditor).collection = newCollection;
+    (column.editor as ColumnEditor).disabled = false;
 
-    // find the new column reference pointer & reassign the new editor to the internalColumnEditor
+    // find the new column reference pointer & re-assign the new editor to the internalColumnEditor
     const columns = this.slickGrid.getColumns();
     if (Array.isArray(columns)) {
       const columnRef = columns.find((col: Column) => col.id === column.id);
       if (columnRef) {
         columnRef.internalColumnEditor = column.editor as ColumnEditor;
       }
+    }
+
+    // get current Editor, remove it from the DOm then re-enable it and re-render it with the new collection.
+    const currentEditor = this.slickGrid.getCellEditor() as AutoCompleteEditor | SelectEditor;
+    if (currentEditor?.disable && currentEditor?.renderDomElement) {
+      currentEditor.destroy();
+      currentEditor.disable(false);
+      currentEditor.renderDomElement(newCollection);
     }
   }
 }

@@ -111,6 +111,22 @@ describe('AutoCompleteEditor', () => {
       expect(editorCount).toBe(1);
     });
 
+    it('should initialize the editor with element being disabled in the DOM when passing a collectionAsync and an empty collection property', () => {
+      const mockCollection = ['male', 'female'];
+      const promise = new Promise(resolve => resolve(mockCollection));
+      mockColumn.internalColumnEditor.collection = null;
+      mockColumn.internalColumnEditor.collectionAsync = promise;
+
+      editor = new AutoCompleteEditor(editorArguments);
+      const disableSpy = jest.spyOn(editor, 'disable');
+      editor.destroy();
+      editor.init();
+      const editorCount = divContainer.querySelectorAll('input.editor-text.editor-gender').length;
+
+      expect(editorCount).toBe(1);
+      expect(disableSpy).toHaveBeenCalledWith(true);
+    });
+
     it('should initialize the editor even when user define his own editor options', () => {
       mockColumn.internalColumnEditor.editorOptions = { minLength: 3 } as AutocompleteOption;
       editor = new AutoCompleteEditor(editorArguments);

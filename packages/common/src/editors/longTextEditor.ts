@@ -29,12 +29,14 @@ declare const Slick: SlickNamespace;
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
 export class LongTextEditor implements Editor {
-  private _isDisabled = false;
   private _locales: Locale;
   private _$textarea: any;
   private _$currentLengthElm: any;
   private _$wrapper: any;
   private _defaultTextValue: any;
+
+  /** is the Editor disabled? */
+  disabled = false;
 
   /** SlickGrid Grid object */
   grid: SlickGrid;
@@ -165,8 +167,8 @@ export class LongTextEditor implements Editor {
   }
 
   disable(isDisabled = true) {
-    const prevIsDisabled = this._isDisabled;
-    this._isDisabled = isDisabled;
+    const prevIsDisabled = this.disabled;
+    this.disabled = isDisabled;
 
     if (this._$textarea) {
       if (isDisabled) {
@@ -270,7 +272,7 @@ export class LongTextEditor implements Editor {
     }
 
     // when field is disabled, we can assume it's valid
-    if (this._isDisabled) {
+    if (this.disabled) {
       return { valid: true, msg: '' };
     }
 
@@ -344,7 +346,7 @@ export class LongTextEditor implements Editor {
       this.applyValue(this.args.item, this.serializeValue());
     }
     this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
-    if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+    if (this.disabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });

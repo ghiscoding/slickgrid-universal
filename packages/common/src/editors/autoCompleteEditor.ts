@@ -37,11 +37,13 @@ export class AutoCompleteEditor implements Editor {
   private _currentValue: any;
   private _defaultTextValue: string;
   private _elementCollection: any[];
-  private _isDisabled = false;
   private _lastInputKeyEvent: JQueryEventObject;
 
   /** The JQuery DOM element */
   private _$editorElm: any;
+
+  /** is the Editor disabled? */
+  disabled = false;
 
   /** SlickGrid Grid object */
   grid: SlickGrid;
@@ -143,6 +145,12 @@ export class AutoCompleteEditor implements Editor {
     // always render the DOM element, even if user passed a "collectionAsync",
     const newCollection = this.columnEditor.collection || [];
     this.renderDomElement(newCollection);
+
+    // when having a collectionAsync and a collection that is empty, we'll toggle the Editor to disabled,
+    // it will be re-enabled when we get the collection filled (in slick-vanilla-bundle on method "updateEditorCollection()")
+    if (this.disabled || (this.columnEditor?.collectionAsync && Array.isArray(newCollection) && newCollection.length === 0)) {
+      this.disable(true);
+    }
   }
 
   destroy() {
@@ -150,8 +158,8 @@ export class AutoCompleteEditor implements Editor {
   }
 
   disable(isDisabled = true) {
-    const prevIsDisabled = this._isDisabled;
-    this._isDisabled = isDisabled;
+    const prevIsDisabled = this.disabled;
+    this.disabled = isDisabled;
 
     if (this._$editorElm) {
       if (isDisabled) {
@@ -291,7 +299,7 @@ export class AutoCompleteEditor implements Editor {
     }
 
     // when field is disabled, we can assume it's valid
-    if (this._isDisabled) {
+    if (this.disabled) {
       return { valid: true, msg: '' };
     }
 
@@ -330,7 +338,7 @@ export class AutoCompleteEditor implements Editor {
       this.applyValue(this.args.item, this.serializeValue());
     }
     this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
-    if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+    if (this.disabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
@@ -391,7 +399,7 @@ export class AutoCompleteEditor implements Editor {
       .appendTo(ul);
   }
 
-  protected renderDomElement(collection: any[]) {
+  renderDomElement(collection: any[]) {
     if (!Array.isArray(collection)) {
       throw new Error('The "collection" passed to the Autocomplete Editor is not a valid array.');
     }

@@ -24,11 +24,11 @@ export interface ColumnEditor {
    */
   callbacks?: any;
 
-  /** A collection of items/options that will be loaded asynchronously (commonly used with a Select/Multi-Select Editor) */
+  /** A collection of items/options that will be loaded asynchronously (commonly used with AutoComplete & Single/Multi-Select Editors) */
   collectionAsync?: Promise<any>;
 
   /**
-   * A collection of items/options (commonly used with a Select/Multi-Select Editor)
+   * A collection of items/options (commonly used with AutoComplete & Single/Multi-Select Editors)
    * It can be a collection of string or label/value pair (the pair can be customized via the "customStructure" option)
    */
   collection?: any[];
@@ -54,6 +54,9 @@ export interface ColumnEditor {
 
   /** number of decimal places, works only with Editors supporting it (input float, integer, range, slider) */
   decimal?: number;
+
+  /** is the Editor disabled when we first open it? This could happen when we use "collectionAsync" and we wait for the "collection" to be filled before enabling the Editor. */
+  disabled?: boolean;
 
   /**
    * Options that could be provided to the Editor, example: { container: 'body', maxHeight: 250}

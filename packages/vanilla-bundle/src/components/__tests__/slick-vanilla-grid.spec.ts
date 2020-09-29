@@ -228,6 +228,7 @@ const mockGrid = {
   invalidate: jest.fn(),
   getActiveCellNode: jest.fn(),
   getColumns: jest.fn(),
+  getCellEditor: jest.fn(),
   getEditorLock: () => mockGetEditorLock,
   getUID: () => 'slickgrid_12345',
   getContainerNode: jest.fn(),
@@ -553,6 +554,36 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           expect(component.columnDefinitions[0].editor.collection).toEqual(mockCollection);
           expect(component.columnDefinitions[0].internalColumnEditor.collection).toEqual(mockCollection);
           expect(component.columnDefinitions[0].internalColumnEditor.model).toEqual(Editors.text);
+          done();
+        });
+      });
+
+      it('should be able to load collectionAsync and expect Editor to be destroyed and re-render when receiving new collection from await', (done) => {
+        const mockCollection = ['male', 'female'];
+        const promise = new Promise(resolve => resolve(mockCollection));
+        const mockEditor = {
+          disable: jest.fn(),
+          destroy: jest.fn(),
+          renderDomElement: jest.fn(),
+        };
+        const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: promise } }] as Column[];
+        const getColSpy = jest.spyOn(mockGrid, 'getColumns').mockReturnValue(mockColDefs);
+        jest.spyOn(mockGrid, 'getCellEditor').mockReturnValue(mockEditor);
+        const disableSpy = jest.spyOn(mockEditor, 'disable');
+        const destroySpy = jest.spyOn(mockEditor, 'destroy');
+        const renderSpy = jest.spyOn(mockEditor, 'renderDomElement');
+
+        component.columnDefinitions = mockColDefs;
+
+        setTimeout(() => {
+          expect(getColSpy).toHaveBeenCalled();
+          expect(component.columnDefinitions[0].editor).toBeTruthy();
+          expect(component.columnDefinitions[0].editor.collection).toEqual(mockCollection);
+          expect(component.columnDefinitions[0].internalColumnEditor.collection).toEqual(mockCollection);
+          expect(component.columnDefinitions[0].internalColumnEditor.model).toEqual(Editors.text);
+          expect(disableSpy).toHaveBeenCalledWith(false);
+          expect(destroySpy).toHaveBeenCalled();
+          expect(renderSpy).toHaveBeenCalledWith(mockCollection);
           done();
         });
       });

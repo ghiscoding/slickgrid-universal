@@ -12,8 +12,10 @@ declare const Slick: SlickNamespace;
 export class CheckboxEditor implements Editor {
   private _input: HTMLInputElement;
   private _checkboxContainerElm: HTMLDivElement;
-  private _isDisabled = false;
   private _originalValue?: boolean | string;
+
+  /** is the Editor disabled? */
+  disabled = false;
 
   /** SlickGrid Grid object */
   grid: SlickGrid;
@@ -98,8 +100,8 @@ export class CheckboxEditor implements Editor {
   }
 
   disable(isDisabled = true) {
-    const prevIsDisabled = this._isDisabled;
-    this._isDisabled = isDisabled;
+    const prevIsDisabled = this.disabled;
+    this.disabled = isDisabled;
 
     if (this._input) {
       if (isDisabled) {
@@ -203,7 +205,7 @@ export class CheckboxEditor implements Editor {
     }
 
     // when field is disabled, we can assume it's valid
-    if (this._isDisabled) {
+    if (this.disabled) {
       return { valid: true, msg: '' };
     }
 
@@ -248,7 +250,7 @@ export class CheckboxEditor implements Editor {
       this.applyValue(this.args.item, this.serializeValue());
     }
     this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
-    if (this._isDisabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+    if (this.disabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });

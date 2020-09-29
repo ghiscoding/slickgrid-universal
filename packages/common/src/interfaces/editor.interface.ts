@@ -9,8 +9,11 @@ export interface Editor {
   /** Initialize the Editor */
   init: (args?: EditorArguments) => void;
 
-  /** Disable the Editor input */
-  disable?: () => void;
+  /**
+   * Disable the Editor input
+   * @param {boolean} isDisabled - optionally specify if the editor is disabled or not.
+   */
+  disable?: (isDisabled?: boolean) => void;
 
   /** Saves the Editor value */
   save?: () => void;
@@ -33,8 +36,7 @@ export interface Editor {
    * and the absolute position of the edited cell is changed
    * if your UI is constructed as a child of document BODY, implement this to update the
    * position of the elements as the position of the cell changes
-   *
-   * the cellBox: { top, left, bottom, right, width, height, visible }
+   * @param {object} - cellBox position: { top, left, bottom, right, width, height, visible }
    */
   position?: (position: any) => void;
 
@@ -68,6 +70,9 @@ export interface Editor {
 
   /** return true if the value(s) being edited by the user has/have been changed */
   isValueChanged: () => boolean;
+
+  /** Optional render DOM element function */
+  renderDomElement?: (collection?: any[]) => any;
 
   /**
    * Validate user input and return the result along with the validation message.
