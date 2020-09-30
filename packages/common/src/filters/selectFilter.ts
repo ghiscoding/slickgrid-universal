@@ -254,8 +254,21 @@ export class SelectFilter implements Filter {
 
     // user can optionally add a blank entry at the beginning of the collection
     // make sure however that it wasn't added more than once
-    if (this.collectionOptions && this.collectionOptions.addBlankEntry && Array.isArray(collection) && collection.length > 0 && collection[0][this.labelName] !== '') {
+    if (this.collectionOptions?.addBlankEntry && Array.isArray(collection) && collection.length > 0 && collection[0][this.valueName] !== '') {
       collection.unshift(this.createBlankEntry());
+    }
+
+    // user can optionally add his own custom entry at the beginning of the collection
+    if (this.collectionOptions?.addCustomFirstEntry && Array.isArray(collection) && collection.length > 0 && collection[0][this.valueName] !== this.collectionOptions.addCustomFirstEntry[this.valueName]) {
+      collection.unshift(this.collectionOptions.addCustomFirstEntry);
+    }
+
+    // user can optionally add his own custom entry at the end of the collection
+    if (this.collectionOptions?.addCustomLastEntry && Array.isArray(collection) && collection.length > 0) {
+      const lastCollectionIndex = collection.length - 1;
+      if (collection[lastCollectionIndex][this.valueName] !== this.collectionOptions.addCustomLastEntry[this.valueName]) {
+        collection.push(this.collectionOptions.addCustomLastEntry);
+      }
     }
 
     // assign the collection to a temp variable before filtering/sorting the collection
@@ -312,7 +325,9 @@ export class SelectFilter implements Filter {
           let prefixText = option[this.labelPrefixName] || '';
           let suffixText = option[this.labelSuffixName] || '';
           let optionLabel = option.hasOwnProperty(this.optionLabel) ? option[this.optionLabel] : '';
-          optionLabel = optionLabel.toString().replace(/\"/g, '\''); // replace double quotes by single quotes to avoid interfering with regular html
+          if (optionLabel?.toString) {
+            optionLabel = optionLabel.toString().replace(/\"/g, '\''); // replace double quotes by single quotes to avoid interfering with regular html
+          }
 
           // also translate prefix/suffix if enableTranslateLabel is true and text is a string
           prefixText = (this.enableTranslateLabel && isTranslateEnabled && prefixText && typeof prefixText === 'string') ? this.translaterService?.getCurrentLanguage && this.translaterService.getCurrentLanguage() && this.translaterService.translate(prefixText || ' ') : prefixText;
@@ -332,7 +347,11 @@ export class SelectFilter implements Filter {
           }
 
           // html text of each select option
-          options += `<option value="${option[this.valueName]}" label="${optionLabel}" ${selected}>${optionText}</option>`;
+          let optionValue = option[this.valueName];
+          if (optionValue === undefined || optionValue === null) {
+            optionValue = '';
+          }
+          options += `<option value="${optionValue}" label="${optionLabel}" ${selected}>${optionText}</option>`;
 
           // if there's a search term, we will add the "filled" class for styling purposes
           // on a single select, we'll also make sure the single value is not an empty string to consider this being filled
