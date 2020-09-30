@@ -560,7 +560,7 @@ export class SelectEditor implements Editor {
   }
 
   renderDomElement(collection: any[]) {
-    if (!Array.isArray(collection) && this.collectionOptions && (this.collectionOptions.collectionInsideObjectProperty)) {
+    if (!Array.isArray(collection) && this.collectionOptions?.collectionInsideObjectProperty) {
       const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty;
       collection = getDescendantProperty(collection, collectionInsideObjectProperty);
     }
@@ -569,8 +569,22 @@ export class SelectEditor implements Editor {
     }
 
     // user can optionally add a blank entry at the beginning of the collection
-    if (this.collectionOptions && this.collectionOptions.addBlankEntry) {
+    // make sure however that it wasn't added more than once
+    if (this.collectionOptions?.addBlankEntry && Array.isArray(collection) && collection.length > 0 && collection[0][this.valueName] !== '') {
       collection.unshift(this.createBlankEntry());
+    }
+
+    // user can optionally add his own custom entry at the beginning of the collection
+    if (this.collectionOptions?.addCustomFirstEntry && Array.isArray(collection) && collection.length > 0 && collection[0][this.valueName] !== this.collectionOptions.addCustomFirstEntry[this.valueName]) {
+      collection.unshift(this.collectionOptions.addCustomFirstEntry);
+    }
+
+    // user can optionally add his own custom entry at the end of the collection
+    if (this.collectionOptions?.addCustomLastEntry && Array.isArray(collection) && collection.length > 0) {
+      const lastCollectionIndex = collection.length - 1;
+      if (collection[lastCollectionIndex][this.valueName] !== this.collectionOptions.addCustomLastEntry[this.valueName]) {
+        collection.push(this.collectionOptions.addCustomLastEntry);
+      }
     }
 
     // assign the collection to a temp variable before filtering/sorting the collection
@@ -614,7 +628,9 @@ export class SelectEditor implements Editor {
         let prefixText = option[this.labelPrefixName] || '';
         let suffixText = option[this.labelSuffixName] || '';
         let optionLabel = option[this.optionLabel] || '';
-        optionLabel = optionLabel.toString().replace(/\"/g, '\''); // replace double quotes by single quotes to avoid interfering with regular html
+        if (optionLabel?.toString) {
+          optionLabel = optionLabel.toString().replace(/\"/g, '\''); // replace double quotes by single quotes to avoid interfering with regular html
+        }
 
         // also translate prefix/suffix if enableTranslateLabel is true and text is a string
         prefixText = (this.enableTranslateLabel && prefixText && typeof prefixText === 'string') ? this._translaterService.translate(prefixText || ' ') : prefixText;
@@ -634,7 +650,12 @@ export class SelectEditor implements Editor {
           optionText = htmlEncode(sanitizedText);
         }
 
-        options += `<option value="${option[this.valueName]}" label="${optionLabel}">${optionText}</option>`;
+        // html text of each select option
+        let optionValue = option[this.valueName];
+        if (optionValue === undefined || optionValue === null) {
+          optionValue = '';
+        }
+        options += `<option value="${optionValue}" label="${optionLabel}">${optionText}</option>`;
       });
     }
     return `<select id="${this.elementName}" class="ms-filter search-filter editor-${columnId}" ${this.isMultipleSelect ? 'multiple="multiple"' : ''}>${options}</select>`;
