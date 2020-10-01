@@ -190,7 +190,7 @@ export class SelectEditor implements Editor {
 
     // collection of strings, just return the filtered string that are equals
     if (this.collection.every(x => typeof x === 'string')) {
-      return this.collection.filter(c => elmValue.indexOf(c.toString()) !== -1);
+      return this.collection.filter(c => elmValue.indexOf(c?.toString()) !== -1);
     }
 
     // collection of label/value pair
@@ -198,7 +198,7 @@ export class SelectEditor implements Editor {
     const isIncludingPrefixSuffix = this.collectionOptions && this.collectionOptions.includePrefixSuffixToSelectedValues || false;
 
     return this.collection
-      .filter(c => elmValue.indexOf(c.hasOwnProperty(this.valueName) && c[this.valueName].toString()) !== -1)
+      .filter(c => elmValue.indexOf(c.hasOwnProperty(this.valueName) && c[this.valueName]?.toString()) !== -1)
       .map(c => {
         const labelText = c[this.valueName];
         let prefixText = c[this.labelPrefixName] || '';
@@ -235,13 +235,13 @@ export class SelectEditor implements Editor {
     if (fieldName !== undefined) {
       // collection of strings, just return the filtered string that are equals
       if (this.collection.every(x => typeof x === 'string')) {
-        return findOrDefault(this.collection, (c: any) => c.toString() === elmValue);
+        return findOrDefault(this.collection, (c: any) => c?.toString() === elmValue);
       }
 
       // collection of label/value pair
       const separatorBetweenLabels = this.collectionOptions && this.collectionOptions.separatorBetweenTextLabels || '';
       const isIncludingPrefixSuffix = this.collectionOptions && this.collectionOptions.includePrefixSuffixToSelectedValues || false;
-      const itemFound = findOrDefault(this.collection, (c: any) => c.hasOwnProperty(this.valueName) && c[this.valueName].toString() === elmValue);
+      const itemFound = findOrDefault(this.collection, (c: any) => c.hasOwnProperty(this.valueName) && c[this.valueName]?.toString() === elmValue);
 
       // is the field a complex object, "address.streetNumber"
       const isComplexObject = fieldName?.indexOf('.') > 0;
@@ -559,14 +559,18 @@ export class SelectEditor implements Editor {
     return outputCollection;
   }
 
-  renderDomElement(collection: any[]) {
-    if (!Array.isArray(collection) && this.collectionOptions?.collectionInsideObjectProperty) {
+  renderDomElement(inputCollection: any[]) {
+    if (!Array.isArray(inputCollection) && this.collectionOptions?.collectionInsideObjectProperty) {
       const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty;
-      collection = getDescendantProperty(collection, collectionInsideObjectProperty);
+      inputCollection = getDescendantProperty(inputCollection, collectionInsideObjectProperty);
     }
-    if (!Array.isArray(collection)) {
+    if (!Array.isArray(inputCollection)) {
       throw new Error('The "collection" passed to the Select Editor is not a valid array.');
     }
+
+    // make a copy of the collection so that SelectFilter doesn't impact SelectEditor and vice versa
+    // (this could happen when calling "addBlankEntry" or "addCustomFirstEntry")
+    const collection = [...inputCollection];
 
     // user can optionally add a blank entry at the beginning of the collection
     // make sure however that it wasn't added more than once
