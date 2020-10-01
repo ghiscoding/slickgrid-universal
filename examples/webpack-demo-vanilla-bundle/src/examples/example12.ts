@@ -146,7 +146,7 @@ export class Example12 {
       {
         id: 'start', name: 'Start', field: 'start', sortable: true,
         formatter: Formatters.dateIso, columnGroup: 'Period',
-        type: FieldType.date, outputType: FieldType.dateIso,
+        type: FieldType.dateIso, outputType: FieldType.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },
         editor: { model: Editors.date, massUpdate: true, params: { hideClearButton: false } },
       },
@@ -166,7 +166,7 @@ export class Example12 {
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true,
         formatter: Formatters.dateIso, columnGroup: 'Period',
-        type: FieldType.date, outputType: FieldType.dateIso,
+        type: FieldType.dateIso, outputType: FieldType.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },
         editor: {
           model: Editors.date,
@@ -378,7 +378,8 @@ export class Example12 {
       const randomFinishYear = (new Date().getFullYear()) + Math.floor(Math.random() * 10); // use only years not lower than 3 years ago
       const randomMonth = Math.floor(Math.random() * 11);
       const randomDay = Math.floor((Math.random() * 29));
-      const randomFinish = new Date(randomFinishYear, (randomMonth + 1), randomDay);
+      const randomTime = Math.floor((Math.random() * 59));
+      const randomFinish = new Date(randomFinishYear, (randomMonth + 1), randomDay, randomTime, randomTime, randomTime);
       const randomPercentComplete = Math.floor(Math.random() * 100) + 15; // make it over 15 for E2E testing purposes
 
       tmpArray[i] = {
@@ -386,7 +387,7 @@ export class Example12 {
         title: 'Task ' + i,
         duration: Math.floor(Math.random() * 100) + 10,
         percentComplete: randomPercentComplete > 100 ? 100 : randomPercentComplete,
-        start: new Date(randomYear, randomMonth, randomDay),
+        start: new Date(randomYear, randomMonth, randomDay, randomDay, randomTime, randomTime, randomTime),
         finish: (i % 3 === 0 && (randomFinish > new Date() && i > 3)) ? randomFinish : '', // make sure the random date is earlier than today and it's index is bigger than 3
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
         completed: (i % 3 === 0 && (randomFinish > new Date() && i > 3)),
