@@ -569,7 +569,10 @@ export class SelectEditor implements Editor {
     }
 
     // make a copy of the collection so that we don't impact SelectFilter, this could happen when calling "addBlankEntry" or "addCustomFirstEntry"
-    const collection = [...inputCollection];
+    let collection: any[] = [];
+    if (inputCollection.length > 0) {
+      collection = [...inputCollection];
+    }
 
     // user can optionally add a blank entry at the beginning of the collection
     // make sure however that it wasn't added more than once
