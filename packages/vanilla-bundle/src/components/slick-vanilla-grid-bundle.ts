@@ -936,10 +936,13 @@ export class SlickVanillaGridBundle {
       }
 
       if (dataset.length > 0) {
-        if (!this._isDatasetInitialized && this._gridOptions.enableCheckboxSelector) {
-          this.loadRowSelectionPresetWhenExists();
+        if (!this._isDatasetInitialized) {
+          this.loadPresetsWhenDatasetInitialized();
+
+          if (this._gridOptions.enableCheckboxSelector) {
+            this.loadRowSelectionPresetWhenExists();
+          }
         }
-        this.loadPresetsWhenDatasetInitialized();
         this._isDatasetInitialized = true;
 
         // also update the hierarchical dataset
