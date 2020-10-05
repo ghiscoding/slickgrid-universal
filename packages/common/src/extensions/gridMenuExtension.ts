@@ -388,8 +388,7 @@ export class GridMenuExtension implements Extension {
       switch (args.command) {
         case 'clear-frozen-columns':
           const visibleColumns = [...this.sharedService.visibleColumns];
-          const showVerticalScroll = this.sharedService?.gridOptions?.enableGridMenu || false;
-          this.sharedService.slickGrid.setOptions({ frozenColumn: -1, alwaysShowVerticalScroll: showVerticalScroll });
+          this.sharedService.slickGrid.setOptions({ frozenColumn: -1 });
           if (Array.isArray(visibleColumns) && Array.isArray(this.sharedService.allColumns) && visibleColumns.length !== this.sharedService.allColumns.length) {
             this.sharedService.slickGrid.setColumns(visibleColumns);
           }

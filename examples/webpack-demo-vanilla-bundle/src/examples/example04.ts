@@ -17,7 +17,7 @@ import { ExampleGridOptions } from './example-grid-options';
 import './example02.scss';
 
 // you can create custom validator to pass to an inline editor
-const myCustomTitleValidator = (value, args) => {
+const myCustomTitleValidator = (value, _args) => {
   if (value === null || value === undefined || !value.length) {
     return { valid: false, msg: 'This is a required field' };
   } else if (!/^Task\s\d+$/.test(value)) {
@@ -36,7 +36,7 @@ interface ReportItem {
   effortDriven: boolean;
 }
 
-const customEditableInputFormatter = (row: number, cell: number, value: any, columnDef: Column, item: ReportItem) => {
+const customEditableInputFormatter = (_row: number, _cell: number, _value: any, _columnDef: Column, item: ReportItem) => {
   return item.title;
 };
 
@@ -282,7 +282,7 @@ export class Example4 {
             {
               command: 'command2', title: 'Command 2', positionOrder: 62,
               // you can use the "action" callback and/or use "onCallback" callback from the grid options, they both have the same arguments
-              action: (e, args) => {
+              action: (_e, args) => {
                 console.log(args.dataContext, args.column);
                 // action callback.. do something
               },
@@ -345,11 +345,10 @@ export class Example4 {
       },
       enableCheckboxSelector: true,
       enableRowSelection: true,
-      alwaysShowVerticalScroll: false, // disable scroll since we don't want it to show on the left pinned columns
       frozenColumn: this.frozenColumnCount,
       frozenRow: this.frozenRowCount,
       // frozenBottom: true, // if you want to freeze the bottom instead of the top, you can enable this property
-      editCommandHandler: (item, column, editCommand) => {
+      editCommandHandler: (_item, _column, editCommand) => {
         this.commandQueue.push(editCommand);
         editCommand.execute();
       },
@@ -359,7 +358,7 @@ export class Example4 {
         // all the Cell Menu callback methods (except the action callback)
         // are available under the grid options as shown below
         onCommand: (e, args) => this.executeCommand(e, args),
-        onOptionSelected: (e, args) => {
+        onOptionSelected: (_e, args) => {
           // change "Completed" property with new option selected from the Cell Menu
           const dataContext = args && args.dataContext;
           if (dataContext && dataContext.hasOwnProperty('completed')) {
@@ -390,7 +389,7 @@ export class Example4 {
     return this.dataset;
   }
 
-  costDurationFormatter(row, cell, value, columnDef, dataContext) {
+  costDurationFormatter(_row, _cell, _value, _columnDef, dataContext) {
     const costText = this.isNullUndefinedOrEmpty(dataContext.cost) ? 'n/a' : Slicker.Utilities.formatNumber(dataContext.cost, 0, 2, false, '$', '', '.', ',');
     let durationText = 'n/a';
     if (!this.isNullUndefinedOrEmpty(dataContext.duration) && dataContext.duration >= 0) {
@@ -454,8 +453,8 @@ export class Example4 {
     }
   }
 
-  executeCommand(e, args) {
-    const columnDef = args.column;
+  executeCommand(_e, args) {
+    // const columnDef = args.column;
     const command = args.command;
     const dataContext = args.dataContext;
 
