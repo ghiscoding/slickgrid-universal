@@ -8,9 +8,10 @@
  */
 
 $primary-color:                                 #006DCC !default;
+$primary-color-dark:                            #004487 !default;
 $highlight-color:                               #0070D2 !default;
-$button-primary-bg-color:                       #004487 !default;
-$button-primary-color:                          $button-primary-bg-color !default;
+$button-primary-bg-color:                       $primary-color-dark !default;
+$button-primary-color:                          $primary-color-dark !default;
 $bare-color:                                    #b5b5b5 !default;
 $icon-color:                                    #514f4d !default;
 $font-family:                                   var(--lwc-fontFamily,'Salesforce Sans', 'SalesforceSans-Regular', Arial, sans-serif) !default;
@@ -33,7 +34,7 @@ $header-font-size:                              13px !default;
 $header-font-weight:                            700 !default;
 $header-text-color:                             #514f4d !default;
 $header-border-bottom:                          transparent !default;
-$header-filter-row-border-bottom:               2px solid #{$highlight-color} !default;
+$header-filter-row-border-bottom:               2px solid #{$primary-color-dark} !default;
 $slick-pane-top-border-top:                     1px solid #d0d0d0 !default;
 $header-resizable-hover:                        2px solid #{$highlight-color} !default;
 $header-resizable-hover-border-bottom:          $header-resizable-hover !default;
@@ -121,7 +122,7 @@ $autocomplete-loading-icon-margin-left:         -26px !default;
 $autocomplete-loading-icon-line-height:         0px !default;
 $autocomplete-loading-icon-vertical-align:      sub !default;
 $compound-filter-operator-select-border:        1px solid #6cb6ff !default;
-$compound-filter-text-color:                    $button-primary-color !default;
+$compound-filter-text-color:                    $primary-color-dark !default;
 $multiselect-icon-arrow-font-size:              calc(#{$icon-font-size} - 4px) !default;
 $multiselect-icon-checked-color:                $highlight-color !default;
 $multiselect-icon-border:                       1px solid #d6d4d4 !default;
