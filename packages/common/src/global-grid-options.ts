@@ -134,6 +134,7 @@ export const GlobalGridOptions: GridOption = {
   gridAutosizeColsMode: GridAutosizeColsMode.none,
   eventNamingStyle: EventNamingStyle.lowerCase,
   forceFitColumns: false,
+  frozenHeaderWidthCalcDifferential: 1,
   gridMenu: {
     hideClearAllFiltersCommand: false,
     hideClearAllSortingCommand: false,

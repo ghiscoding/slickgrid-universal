@@ -136,6 +136,7 @@ export class GroupingAndColspanService {
     let lastColumnGroup = '';
     let widthTotal = 0;
     const frozenColumn = this._gridOptions?.frozenColumn ?? -1;
+    const frozenHeaderWidthCalcDifferential = this._gridOptions?.frozenHeaderWidthCalcDifferential ?? 0;
     const isFrozenGrid = frozenColumn >= 0;
 
     for (let i = start; i < end; i++) {
@@ -144,7 +145,7 @@ export class GroupingAndColspanService {
         if (lastColumnGroup === colDef.columnGroup && i > 0) {
           widthTotal += colDef.width || 0;
           if (header && header.width) {
-            header.width(widthTotal - headerColumnWidthDiff - 2); // remove 2px because of possible border
+            header.width(widthTotal - headerColumnWidthDiff - frozenHeaderWidthCalcDifferential); // remove possible frozen border
           }
         } else {
           widthTotal = colDef.width || 0;
