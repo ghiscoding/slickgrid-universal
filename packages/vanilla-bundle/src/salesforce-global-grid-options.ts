@@ -19,6 +19,7 @@ export const SalesforceGlobalGridOptions: GridOption = {
     maxDecimal: 2,
     thousandSeparator: ','
   },
+  frozenHeaderWidthCalcDifferential: 2,
   gridMenu: {
     hideTogglePreHeaderCommand: true,
     hideRefreshDatasetCommand: true,
