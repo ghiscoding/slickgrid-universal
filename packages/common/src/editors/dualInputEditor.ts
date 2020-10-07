@@ -497,6 +497,6 @@ export class DualInputEditor implements Editor {
     if (this.disabled && compositeEditorOptions.formValues.hasOwnProperty(rightInputId)) {
       delete compositeEditorOptions.formValues[rightInputId];
     }
-    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
+    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors }, { ...new Slick.EventData(), ...event });
   }
 }

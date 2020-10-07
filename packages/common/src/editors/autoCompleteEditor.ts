@@ -193,8 +193,27 @@ export class AutoCompleteEditor implements Editor {
     return this._$editorElm.val();
   }
 
-  setValue(value: string) {
-    this._$editorElm.val(value);
+  setValue(inputValue: any, isApplyingValue = false) {
+    let label = inputValue;
+    // if user provided a custom structure, we will serialize the value returned from the object with custom structure
+    if (inputValue && inputValue.hasOwnProperty(this.labelName)) {
+      label = inputValue[this.labelName];
+    } else {
+      label = inputValue;
+    }
+    this._$editorElm.val(label);
+
+    if (isApplyingValue) {
+      this._currentValue = inputValue;
+      this._defaultTextValue = typeof inputValue === 'string' ? inputValue : (inputValue?.[this.labelName] ?? '');
+      this.applyValue(this.args.item, this.serializeValue());
+
+      // if it's set by a Composite Editor, then also trigger a change for it
+      const compositeEditorOptions = this.args.compositeEditorOptions;
+      if (compositeEditorOptions) {
+        this.handleChangeOnCompositeEditor(null, compositeEditorOptions);
+      }
+    }
   }
 
   applyValue(item: any, state: any) {
@@ -341,7 +360,7 @@ export class AutoCompleteEditor implements Editor {
     if (this.disabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
-    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
+    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors }, { ...new Slick.EventData(), ...event });
   }
 
   // this function should be PRIVATE but for unit tests purposes we'll make it public until a better solution is found

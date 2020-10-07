@@ -117,6 +117,14 @@ describe('SingleSelectEditor', () => {
       expect(editor.getValue()).toEqual('male');
     });
 
+    it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
+      editor = new SingleSelectEditor(editorArguments);
+      editor.setValue('male', true);
+
+      expect(editor.getValue()).toEqual('male');
+      expect(editorArguments.item.gender).toBe('male');
+    });
+
     describe('isValueChanged method', () => {
       it('should return True after doing a check of an option', () => {
         editor = new SingleSelectEditor(editorArguments);
@@ -207,7 +215,7 @@ describe('SingleSelectEditor', () => {
     });
 
     describe('enableRenderHtml property', () => {
-      it('should create the multi-select filter with a default search term and have the HTML rendered when "enableRenderHtml" is set', () => {
+      it('should create the multi-select editor with a default value and have the HTML rendered when "enableRenderHtml" is set', () => {
         mockColumn.internalColumnEditor = {
           enableRenderHtml: true,
           collection: [{ value: true, label: 'True', labelPrefix: `<i class="fa fa-check"></i> ` }, { value: false, label: 'False' }],
@@ -229,7 +237,8 @@ describe('SingleSelectEditor', () => {
         expect(editorListElm[0].innerHTML).toBe('<i class="fa fa-check"></i> True');
       });
 
-      it('should create the multi-select filter with a default search term and have the HTML rendered and sanitized when "enableRenderHtml" is set and has <script> tag', () => {
+      it('should create the multi-select editor with a default value and have the HTML rendered and sanitized when "enableRenderHtml" is set and has <script> tag', () => {
+        mockColumn.field = 'isEffort';
         mockColumn.internalColumnEditor = {
           enableRenderHtml: true,
           collection: [{ isEffort: true, label: 'True', labelPrefix: `<script>alert('test')></script><i class="fa fa-check"></i> ` }, { isEffort: false, label: 'False' }],
@@ -243,7 +252,7 @@ describe('SingleSelectEditor', () => {
             labelPrefix: 'labelPrefix',
           },
         };
-        mockItemData = { id: 1, gender: 'male', isEffort: false };
+        mockItemData = { id: 1, gender: 'male', isEffort: true };
 
         editor = new SingleSelectEditor(editorArguments);
         editor.loadValue(mockItemData);

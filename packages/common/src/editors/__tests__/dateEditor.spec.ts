@@ -154,6 +154,15 @@ describe('DateEditor', () => {
       expect(editor.getValue()).toBe('2001-01-02T11:02:02.000Z');
     });
 
+    it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
+      mockColumn.type = FieldType.dateIso;
+      editor = new DateEditor(editorArguments);
+      editor.setValue('2001-01-02', true);
+
+      expect(editor.getValue()).toBe('2001-01-02');
+      expect(editorArguments.item.startDate).toBe('2001-01-02');
+    });
+
     it('should define an item datacontext containing a string as cell value and expect this value to be loaded in the editor when calling "loadValue"', () => {
       mockItemData = { id: 1, startDate: '2001-01-02T11:02:02.000Z', isActive: true };
       editor = new DateEditor(editorArguments);
@@ -437,12 +446,27 @@ describe('DateEditor', () => {
     beforeEach(() => {
       editorArguments = {
         ...editorArguments,
-        compositeEditorOptions: { headerTitle: 'Test', formValues: {}, modalType: 'edit' }
+        compositeEditorOptions: { headerTitle: 'Test', modalType: 'edit', formValues: {}, editors: {} },
       } as EditorArguments;
     });
 
     afterEach(() => {
       jest.clearAllMocks();
+    });
+
+    it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      mockColumn.type = FieldType.dateIso;
+      editor = new DateEditor(editorArguments);
+      editor.setValue('2001-01-02', true);
+
+      expect(editor.getValue()).toContain('2001-01-02');
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: { startDate: '2001-01-02' }, editors: {},
+      }, expect.anything());
     });
 
     it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
@@ -474,7 +498,7 @@ describe('DateEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {},
+        formValues: {}, editors: {},
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.flatInstance._input.disabled).toEqual(true);
@@ -502,7 +526,7 @@ describe('DateEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { startDate: '2001-01-02' },
+        formValues: { startDate: '2001-01-02' }, editors: {},
       }, expect.anything());
     });
   });

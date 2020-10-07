@@ -138,8 +138,18 @@ export class TextEditor implements Editor {
     return this._input.value || '';
   }
 
-  setValue(value: string) {
+  setValue(value: string, isApplyingValue = false) {
     this._input.value = value;
+
+    if (isApplyingValue) {
+      this.applyValue(this.args.item, this.serializeValue());
+
+      // if it's set by a Composite Editor, then also trigger a change for it
+      const compositeEditorOptions = this.args.compositeEditorOptions;
+      if (compositeEditorOptions) {
+        this.handleChangeOnCompositeEditor(null, compositeEditorOptions);
+      }
+    }
   }
 
   applyValue(item: any, state: any) {
@@ -249,7 +259,7 @@ export class TextEditor implements Editor {
     if (this.disabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
-    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
+    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors }, { ...new Slick.EventData(), ...event });
   }
 
   private handleOnKeyUp(event: KeyboardEvent) {

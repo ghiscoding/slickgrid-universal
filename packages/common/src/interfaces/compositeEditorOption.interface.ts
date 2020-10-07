@@ -1,3 +1,4 @@
+import { Editor } from './editor.interface';
 import { CompositeEditorModalType } from '../enums/compositeEditorModalType.type';
 
 export interface CompositeEditorOption {
@@ -21,6 +22,12 @@ export interface CompositeEditorOption {
 
   /** Destroy method that could be overridden */
   destroy?: () => void;
+
+  /**
+   * Object containing all Editor instance references used by the Composite Editor modal window
+   * The object is formed by the column id being the object key which contain each Editor instance
+   */
+  editors: { [columnId: string]: Editor; };
 
   /**
    * Object containing all the modal form values that got changed.

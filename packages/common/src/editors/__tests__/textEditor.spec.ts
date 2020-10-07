@@ -1,7 +1,7 @@
 import { Editors } from '../index';
 import { TextEditor } from '../textEditor';
 import { KeyCode } from '../../enums/index';
-import { AutocompleteOption, Column, EditorArgs, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { AutocompleteOption, Column, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
 
 declare const Slick: SlickNamespace;
 jest.useFakeTimers();
@@ -152,6 +152,14 @@ describe('TextEditor', () => {
       expect(editor.getValue()).toBe('task 1');
     });
 
+    it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
+      editor = new TextEditor(editorArguments);
+      editor.setValue('task 1', true);
+
+      expect(editor.getValue()).toBe('task 1');
+      expect(editorArguments.item.title).toBe('task 1');
+    });
+
     it('should define an item datacontext containing a string as cell value and expect this value to be loaded in the editor when calling "loadValue"', () => {
       editor = new TextEditor(editorArguments);
       editor.loadValue(mockItemData);
@@ -250,7 +258,7 @@ describe('TextEditor', () => {
       });
 
       it('should return item data with an empty string in its value when it fails the custom validation', () => {
-        mockColumn.internalColumnEditor.validator = (value: any, args: EditorArgs) => {
+        mockColumn.internalColumnEditor.validator = (value: any) => {
           if (value.length < 10) {
             return { valid: false, msg: 'Must be at least 10 chars long.' };
           }
@@ -511,12 +519,26 @@ describe('TextEditor', () => {
     beforeEach(() => {
       editorArguments = {
         ...editorArguments,
-        compositeEditorOptions: { headerTitle: 'Test', formValues: {}, modalType: 'edit' }
+        compositeEditorOptions: { headerTitle: 'Test', modalType: 'edit', formValues: {}, editors: {} },
       } as EditorArguments;
     });
 
     afterEach(() => {
       jest.clearAllMocks();
+    });
+
+    it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      editor = new TextEditor(editorArguments);
+      editor.setValue('task 1', true);
+
+      expect(editor.getValue()).toBe('task 1');
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: { title: 'task 1' }, editors: {},
+      }, expect.anything());
     });
 
     it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
@@ -548,7 +570,7 @@ describe('TextEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {},
+        formValues: {}, editors: {}
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorDomElement.disabled).toEqual(true);
@@ -575,7 +597,7 @@ describe('TextEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { title: 'task 2' },
+        formValues: { title: 'task 2' }, editors: {}
       }, expect.anything());
     });
   });

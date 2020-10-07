@@ -105,6 +105,7 @@ export class Example12 {
     this.gridContainerElm.addEventListener('onclick', this.handleOnCellClicked.bind(this));
     this.gridContainerElm.addEventListener('ongridstatechanged', this.handleOnSelectedRowsChanged.bind(this));
     this.gridContainerElm.addEventListener('ondblclick', () => this.openCompositeModal('edit', 50));
+    this.gridContainerElm.addEventListener('oncompositeeditorchange', this.handleOnCompositeEditorChange.bind(this));
   }
 
   dispose() {
@@ -141,7 +142,19 @@ export class Example12 {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
         sortable: true, filterable: true, columnGroup: 'Analysis',
         filter: { model: Filters.compoundSlider, operator: '>=' },
-        editor: { model: Editors.slider, massUpdate: true, minValue: 0, maxValue: 100, },
+        // formatter: Formatters.collectionEditor,
+        editor: {
+          model: Editors.slider,
+          // model: Editors.singleSelect,
+          // enableRenderHtml: true,
+          // collection: Array.from(Array(101).keys()).map(k => ({ value: k, label: k, symbol: ' <i class="mdi mdi-check-circle color-primary"></i>' })),
+          // customStructure: {
+          //   value: 'value',
+          //   label: 'label',
+          //   labelSuffix: 'symbol'
+          // },
+          massUpdate: true, minValue: 0, maxValue: 100,
+        },
       },
       {
         id: 'start', name: 'Start', field: 'start', sortable: true,
@@ -462,6 +475,19 @@ export class Example12 {
     // } else if (eventData.target.classList.contains('mdi-chevron-down')) {
     //   alert('do something else...');
     // }
+  }
+
+  handleOnCompositeEditorChange(event) {
+    const args = event && event.detail && event.detail.args;
+    const columnDef = args?.column;
+    const formValues = args?.formValues;
+
+    // you can change any other form input values when certain conditions are met
+    if (columnDef.id === 'percentComplete' && formValues.percentComplete === 100) {
+      this.sgb.slickCompositeEditor.changeFormInputValue('completed', true);
+      this.sgb.slickCompositeEditor.changeFormInputValue('finish', new Date());
+      // this.sgb.slickCompositeEditor.changeFormInputValue('product', { id: 0, itemName: 'Sleek Metal Computer' });
+    }
   }
 
   handleOnSelectedRowsChanged(event) {
