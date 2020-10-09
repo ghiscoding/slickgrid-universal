@@ -290,11 +290,6 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.item-details-container.editor-duration input.editor-text').type('33');
     cy.get('.item-details-container.editor-duration .modified').should('have.length', 1);
 
-    cy.get('.item-details-container.editor-origin .autocomplete').type('da');
-    cy.get('.ui-menu.ui-autocomplete:visible').find('li.ui-menu-item:nth(1)').click();
-    cy.get('.item-details-container.editor-origin').should('have.length', 1);
-    cy.get('.item-details-container.editor-origin .autocomplete').invoke('val').then(text => expect(text).to.eq('Bermuda'));
-
     cy.get('.modified').should('have.length.greaterThan', 1);
 
     cy.get('.btn-save').contains('Save').click({ force: true });
@@ -309,7 +304,6 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).find('.mdi.mdi-check.checkmark-icon').should('not.exist');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).should('be.empty');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(8)`).should('contain', 'Tasty Granite Table');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('contain', 'Bermuda');
   });
 
   it('should open the Composite Editor (Mass Update) and be able to change some of the inputs in the form', () => {
