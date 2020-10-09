@@ -215,7 +215,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.item-details-container.editor-duration .editor-text').should('be.empty');
     cy.get('.item-details-container.editor-start .flatpickr-alt-input').should('be.empty');
     cy.get('.item-details-container.editor-finish .flatpickr-alt-input').should('be.empty').should('be.disabled');
-    cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').should('be.empty');
+    cy.get('.item-details-container.editor-origin .autocomplete').should('be.empty');
   });
 
   it('should not be able to save, neither expect the modal window to close when having invalid fields', () => {
@@ -256,10 +256,10 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`.flatpickr-day.today:visible`).click('bottom', { force: true });
     cy.get('.item-details-container.editor-finish .modified').should('have.length', 1);
 
-    cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').type('c');
+    cy.get('.item-details-container.editor-origin .autocomplete').type('c');
     cy.get('.ui-menu.ui-autocomplete:visible').find('li.ui-menu-item:nth(1)').click();
-    cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').invoke('val').then(text => expect(text).to.eq('Antarctica'));
-    cy.get('.item-details-container.editor-countryOfOrigin .modified').should('have.length', 1);
+    cy.get('.item-details-container.editor-origin .autocomplete').invoke('val').then(text => expect(text).to.eq('Antarctica'));
+    cy.get('.item-details-container.editor-origin .modified').should('have.length', 1);
 
     cy.get('.btn-save').contains('Save').click();
     cy.get('.slick-editor-modal').should('not.exist');
@@ -290,10 +290,10 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.item-details-container.editor-duration input.editor-text').type('33');
     cy.get('.item-details-container.editor-duration .modified').should('have.length', 1);
 
-    cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').type('da');
+    cy.get('.item-details-container.editor-origin .autocomplete').type('da');
     cy.get('.ui-menu.ui-autocomplete:visible').find('li.ui-menu-item:nth(1)').click();
-    cy.get('.item-details-container.editor-countryOfOrigin').should('have.length', 1);
-    cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').invoke('val').then(text => expect(text).to.eq('Bermuda'));
+    cy.get('.item-details-container.editor-origin').should('have.length', 1);
+    cy.get('.item-details-container.editor-origin .autocomplete').invoke('val').then(text => expect(text).to.eq('Bermuda'));
 
     cy.get('.modified').should('have.length.greaterThan', 1);
 
@@ -326,10 +326,10 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`.flatpickr-day.today:visible`).click('bottom', { force: true });
     cy.get('.item-details-container.editor-finish .modified').should('have.length', 1);
 
-    cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').type('bel');
+    cy.get('.item-details-container.editor-origin .autocomplete').type('bel');
     cy.get('.ui-menu.ui-autocomplete:visible').find('li.ui-menu-item:nth(1)').click();
-    cy.get('.item-details-container.editor-countryOfOrigin .modified').should('have.length', 1);
-    cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').invoke('val').then(text => expect(text).to.eq('Belgium'));
+    cy.get('.item-details-container.editor-origin .modified').should('have.length', 1);
+    cy.get('.item-details-container.editor-origin .autocomplete').invoke('val').then(text => expect(text).to.eq('Belgium'));
 
     cy.get('.btn-save').contains('Apply Mass Update').click();
     cy.get('.validation-summary').contains('Unfortunately we only accept a minimum of 50% Completion...');
@@ -386,10 +386,10 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`.flatpickr-day.today:visible`).click('bottom', { force: true });
     cy.get('.item-details-container.editor-finish .modified').should('have.length', 1);
 
-    cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').type('ze');
+    cy.get('.item-details-container.editor-origin .autocomplete').type('ze');
     cy.get('.ui-menu.ui-autocomplete:visible').find('li.ui-menu-item:nth(1)').click();
-    cy.get('.item-details-container.editor-countryOfOrigin .modified').should('have.length', 1);
-    cy.get('.item-details-container.editor-countryOfOrigin .autocomplete').invoke('val').then(text => expect(text).to.eq('Belize'));
+    cy.get('.item-details-container.editor-origin .modified').should('have.length', 1);
+    cy.get('.item-details-container.editor-origin .autocomplete').invoke('val').then(text => expect(text).to.eq('Belize'));
 
     cy.get('.btn-save').contains('Update Selection').click();
     cy.get('.validation-summary').contains('Unfortunately we only accept a minimum of 50% Completion...');
