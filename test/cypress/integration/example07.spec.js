@@ -122,10 +122,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     // change % complete
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).click();
-    cy.get('.slider-editor input[type=range]').as('range')
-      .invoke('val', 25)
-      .trigger('change')
-      .type('{enter}', { force: true });
+    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 25).trigger('change');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).should('contain', '25');
 
     // change Finish date
@@ -190,10 +187,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     // change % complete
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).click();
-    cy.get('.slider-editor input[type=range]').as('range')
-      .invoke('val', 50)
-      .trigger('change')
-      .type('{enter}', { force: true });
+    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 50).trigger('change');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).should('contain', '50');
 
     // change Finish date
