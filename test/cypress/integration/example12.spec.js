@@ -81,13 +81,13 @@ describe('Example 12 - Composite Editor Modal', () => {
   it('should be able to change "% Complete" values of row indexes 2-4', () => {
     // change % complete
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).click();
-    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 5).trigger('change').type('{enter}', { force: true });
+    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 5).trigger('change');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).should('contain', '5')
       .get('.editing-field')
       .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(4)`).click();
-    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 6).trigger('change').type('{enter}', { force: true });
+    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 6).trigger('change');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(4)`).should('contain', '6')
       .get('.editing-field')
       .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
@@ -128,19 +128,19 @@ describe('Example 12 - Composite Editor Modal', () => {
     // change Finish date to today's date
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).should('contain', '').click(); // this date should also always be initially empty
     cy.get(`.flatpickr-day.today:visible`).click('bottom', { force: true });
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).should('contain', `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`)
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).should('contain', `${zeroPadding(currentMonth)}/${zeroPadding(currentDate)}/${currentYear}`)
       .get('.editing-field')
       .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(7)`).click();
     cy.get(`.flatpickr-day.today:visible`).click('bottom', { force: true });
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(7)`).should('contain', `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`)
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(7)`).should('contain', `${zeroPadding(currentMonth)}/${zeroPadding(currentDate)}/${currentYear}`)
       .get('.editing-field')
       .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(7)`).click();
     cy.get(`.flatpickr-day.today:visible`).click('bottom', { force: true });
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(7)`).should('contain', `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`)
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(7)`).should('contain', `${zeroPadding(currentMonth)}/${zeroPadding(currentDate)}/${currentYear}`)
       .get('.editing-field')
       .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
 
@@ -236,7 +236,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     //   .should('have.css', 'border')
     //   .and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
 
-    cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 5).trigger('change').type('{enter}', { force: true });
+    cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 5).trigger('change');
     cy.get('.item-details-editor-container .input-group-text').contains('5');
     cy.get('.item-details-container.editor-percentComplete .modified').should('have.length', 1);
 
@@ -282,7 +282,9 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.slick-editor-modal-title').contains('Editing - Task 8888 (id: 501)');
 
     cy.get('textarea').contains('Task 8888').type('Task 8899');
-    cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 17).trigger('change'); // .type('{enter}', { force: true });
+    cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 7).trigger('change');
+    cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 17).trigger('change');
+    cy.get('.item-details-container.editor-percentComplete .modified').should('have.length', 1);
 
     cy.get('.item-details-editor-container .editor-checkbox').uncheck();
     cy.get('.item-details-container.editor-duration input.editor-text').type('33');
@@ -332,7 +334,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.btn-save').contains('Apply Mass Update').click();
     cy.get('.validation-summary').contains('Unfortunately we only accept a minimum of 50% Completion...');
 
-    cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 51).trigger('change').type('{enter}', { force: true });
+    cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 51).trigger('change');
     cy.get('.item-details-editor-container .input-group-text').contains('51');
     cy.get('.btn-save').contains('Apply Mass Update').click();
 
@@ -392,7 +394,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.btn-save').contains('Update Selection').click();
     cy.get('.validation-summary').contains('Unfortunately we only accept a minimum of 50% Completion...');
 
-    cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 77).trigger('change').type('{enter}', { force: true });
+    cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 77).trigger('change');
     cy.get('.item-details-editor-container .input-group-text').contains('77');
     cy.get('.btn-save').contains('Update Selection').click();
 
@@ -419,5 +421,31 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(6)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(7)`).should('not.be.empty');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(9)`).should('contain', 'Belgium');
+  });
+
+  it(`should open the Composite Editor (Mass Update) change "Percent Complete" to 100% and expect "Completed" to become checked and "Finish" date to be today's date`, () => {
+    const now = new Date();
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const today = changeTimezone(now, tz);
+
+    const currentDate = today.getDate();
+    let currentMonth = today.getMonth() + 1; // month is zero based, let's add 1 to it
+    if (currentMonth < 10) {
+      currentMonth = `0${currentMonth}`; // add zero padding
+    }
+    const currentYear = today.getFullYear();
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).click();
+    cy.get('[data-test="open-modal-mass-update-btn"]').click();
+    cy.get('.slick-editor-modal-title').contains('Mass Update All Records');
+
+    cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 100).trigger('change');
+    cy.get('.item-details-container.editor-percentComplete .modified').should('have.length', 1);
+
+    cy.get('.item-details-container.editor-completed input.editor-checkbox:checked').should('have.length', 1);
+    cy.get('.item-details-container.editor-completed .modified').should('have.length', 1);
+
+    cy.get('.item-details-container.editor-finish .flatpickr-alt-input').should('contain.value', `${zeroPadding(currentMonth)}/${zeroPadding(currentDate)}/${currentYear}`);
+    cy.get('.item-details-container.editor-finish .modified').should('have.length', 1);
   });
 });
