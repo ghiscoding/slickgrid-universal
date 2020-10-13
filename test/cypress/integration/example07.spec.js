@@ -251,6 +251,27 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     cy.get('[data-test="toggle-filtering-btn"]').click(); // show it back
   });
 
+  it('should expect "Clear all Filters" command to be hidden in the Grid Menu', () => {
+    const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
+
+    cy.get('.grid7')
+      .find('button.slick-gridmenu-button')
+      .trigger('click')
+      .click();
+
+    cy.get('.slick-gridmenu-custom')
+      .find('.slick-gridmenu-item')
+      .each(($child, index) => {
+        const commandTitle = $child.text();
+        expect(commandTitle).to.eq(expectedFullHeaderMenuCommands[index]);
+
+        // expect all Sorting commands to be hidden
+        if (commandTitle === 'Clear all Filters' || commandTitle === 'Toggle Filter Row') {
+          expect($child).to.be.visible;
+        }
+      });
+  });
+
   it('should be able to toggle Filters functionality', () => {
     const expectedTitles = ['', '', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Title'];
 
@@ -273,7 +294,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
   });
 
-  it('should be able to toggle Sorting functionality (disable) and expect all Sorting commands to be hidden and also not show Sort hint while hovering a column', () => {
+  it('should be able to toggle Sorting functionality (disable) and expect all header menu Sorting commands to be hidden and also not show Sort hint while hovering a column', () => {
     const expectedFullHeaderMenuCommands = ['Sort Ascending', 'Sort Descending', '', 'Remove Filter', 'Remove Sort', 'Hide Column'];
 
     cy.get('.slick-sort-indicator').should('have.length.greaterThan', 0); // sort icon hints
@@ -299,7 +320,28 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       });
   });
 
-  it('should be able to toggle Sorting functionality (re-enable) and expect all Sorting commands to be hidden and also not show Sort hint while hovering a column', () => {
+  it('should expect "Clear Sorting" command to be hidden in the Grid Menu', () => {
+    const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
+
+    cy.get('.grid7')
+      .find('button.slick-gridmenu-button')
+      .trigger('click')
+      .click();
+
+    cy.get('.slick-gridmenu-custom')
+      .find('.slick-gridmenu-item')
+      .each(($child, index) => {
+        const commandTitle = $child.text();
+        expect(commandTitle).to.eq(expectedFullHeaderMenuCommands[index]);
+
+        // expect all Sorting commands to be hidden
+        if (commandTitle === 'Clear all Sorting') {
+          expect($child).not.to.be.visible;
+        }
+      });
+  });
+
+  it('should be able to toggle Sorting functionality (re-enable) and expect all Sorting header menu commands to be hidden and also not show Sort hint while hovering a column', () => {
     const expectedFullHeaderMenuCommands = ['Sort Ascending', 'Sort Descending', '', 'Remove Filter', 'Remove Sort', 'Hide Column'];
 
     cy.get('.slick-sort-indicator').should('have.length', 0); // sort icon hints
@@ -318,6 +360,27 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
         const commandTitle = $child.text();
         expect(commandTitle).to.eq(expectedFullHeaderMenuCommands[index]);
         expect($child).to.be.visible;
+      });
+  });
+
+  it('should expect "Clear Sorting" command to be hidden in the Grid Menu', () => {
+    const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
+
+    cy.get('.grid7')
+      .find('button.slick-gridmenu-button')
+      .trigger('click')
+      .click();
+
+    cy.get('.slick-gridmenu-custom')
+      .find('.slick-gridmenu-item')
+      .each(($child, index) => {
+        const commandTitle = $child.text();
+        expect(commandTitle).to.eq(expectedFullHeaderMenuCommands[index]);
+
+        // expect all Sorting commands to be hidden
+        if (commandTitle === 'Clear all Sorting') {
+          expect($child).to.be.visible;
+        }
       });
   });
 
@@ -342,6 +405,51 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
         // expect all Sorting commands to be hidden
         if (commandTitle === 'Sort Ascending' || commandTitle === 'Sort Descending' || commandTitle === 'Remove Sort') {
+          expect($child).not.to.be.visible;
+        }
+      });
+  });
+
+  it('should be able to click disable Filter functionality button and expect all Filter commands to be hidden and also not show Sort hint while hovering a column', () => {
+    const expectedFullHeaderMenuCommands = ['Sort Ascending', 'Sort Descending', '', 'Remove Filter', 'Remove Sort', 'Hide Column'];
+
+    cy.get('[data-test="disable-filters-btn"]').click().click(); // even clicking twice should have same result
+
+    cy.get('.grid7')
+      .find('.slick-header-column:nth(5)')
+      .trigger('mouseover')
+      .children('.slick-header-menubutton')
+      .click();
+
+    cy.get('.slick-header-menu')
+      .children()
+      .each(($child, index) => {
+        const commandTitle = $child.text();
+        expect(commandTitle).to.eq(expectedFullHeaderMenuCommands[index]);
+
+        // expect all Sorting commands to be hidden
+        if (commandTitle === 'Remove Filter') {
+          expect($child).not.to.be.visible;
+        }
+      });
+  });
+
+  it('should expect "Clear all Filters" command to be hidden in the Grid Menu', () => {
+    const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
+
+    cy.get('.grid7')
+      .find('button.slick-gridmenu-button')
+      .trigger('click')
+      .click();
+
+    cy.get('.slick-gridmenu-custom')
+      .find('.slick-gridmenu-item')
+      .each(($child, index) => {
+        const commandTitle = $child.text();
+        expect(commandTitle).to.eq(expectedFullHeaderMenuCommands[index]);
+
+        // expect all Sorting commands to be hidden
+        if (commandTitle === 'Clear all Filters' || commandTitle === 'Toggle Filter Row') {
           expect($child).not.to.be.visible;
         }
       });

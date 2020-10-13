@@ -158,8 +158,8 @@ export class Example12 {
       },
       {
         id: 'start', name: 'Start', field: 'start', sortable: true,
-        formatter: Formatters.dateIso, columnGroup: 'Period',
-        type: FieldType.dateIso, outputType: FieldType.dateIso,
+        formatter: Formatters.dateUs, columnGroup: 'Period',
+        type: FieldType.dateIso, outputType: FieldType.dateUs,
         filterable: true, filter: { model: Filters.compoundDate },
         editor: { model: Editors.date, massUpdate: true, params: { hideClearButton: false } },
       },
