@@ -2,7 +2,7 @@
   "baseUrl": "http://localhost:8888",
   "baseExampleUrl": "http://localhost:8888/#",
   "video": false,
-  "viewportWidth": 1200,
+  "viewportWidth": 1400,
   "viewportHeight": 950,
   "reporter": "mochawesome",
   "fixturesFolder": "test/cypress/fixtures",
