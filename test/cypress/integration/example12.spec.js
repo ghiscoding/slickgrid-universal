@@ -315,8 +315,8 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.item-details-container.editor-completed .modified').should('have.length', 1);
 
     cy.get('.item-details-container.editor-finish > .item-details-validation').contains('* You must provide a "Finish" date when "Completed" is checked.');
-    cy.get('.item-details-container.editor-finish input:visible').click({ force: true });
-    cy.get(`.flatpickr-day.today:visible`).click('bottom', { force: true });
+    cy.get('.item-details-container.editor-finish .flatpickr').click();
+    cy.get(`.flatpickr-day.today:visible`).click();
     cy.get('.item-details-container.editor-finish .modified').should('have.length', 1);
 
     cy.get('.item-details-container.editor-origin .autocomplete').type('bel');
