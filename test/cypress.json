@@ -1,8 +1,9 @@
 {
   "baseUrl": "http://localhost:8888",
   "baseExampleUrl": "http://localhost:8888/#",
+  "projectId": "p5zxx6",
   "video": false,
-  "viewportWidth": 1200,
+  "viewportWidth": 1000,
   "viewportHeight": 950,
   "reporter": "mochawesome",
   "fixturesFolder": "test/cypress/fixtures",

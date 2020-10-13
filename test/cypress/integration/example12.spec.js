@@ -309,15 +309,15 @@ describe('Example 12 - Composite Editor Modal', () => {
   xit('should open the Composite Editor (Mass Update) and be able to change some of the inputs in the form', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).click();
     cy.get('[data-test="open-modal-mass-update-btn"]').click();
-    cy.get('.slick-editor-modal-title').contains('Mass Update All Records');
-    cy.get('.footer-status-text').contains('All 501 records selected');
+    cy.get('.slick-editor-modal-title').should('contain', 'Mass Update All Records');
+    cy.get('.footer-status-text').should('contain', 'All 501 records selected');
 
     cy.get('.item-details-editor-container .editor-checkbox').check();
     cy.get('.item-details-container.editor-completed .modified').should('have.length', 1);
 
     cy.get('.item-details-container.editor-finish > .item-details-validation').contains('* You must provide a "Finish" date when "Completed" is checked.');
-    cy.get('.item-details-container.editor-finish .flatpickr-alt-input').click({ force: true });
-    cy.get(`.flatpickr-day.today:visible`).click('bottom', { force: true });
+    cy.get('.item-details-container.editor-finish .flatpickr').click();
+    cy.get(`.flatpickr-day.today:visible`).click();
     cy.get('.item-details-container.editor-finish .modified').should('have.length', 1);
 
     cy.get('.item-details-container.editor-origin .autocomplete').type('bel');
@@ -328,6 +328,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.btn-save').contains('Apply Mass Update').click();
     cy.get('.validation-summary').contains('Unfortunately we only accept a minimum of 50% Completion...');
 
+    cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 5).trigger('change');
     cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 51).trigger('change');
     cy.get('.item-details-editor-container .input-group-text').contains('51');
     cy.get('.btn-save').contains('Apply Mass Update').click();
@@ -365,7 +366,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0)`).click();
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(0)`).click();
     cy.get('[data-test="open-modal-mass-selection-btn"]').should('not.be.disabled');
-    cy.get('[data-test="open-modal-mass-selection-btn"]').click();
+    cy.get('[data-test="open-modal-mass-selection-btn"]').click({ force: true });
   });
 
   it('should be able to open the Composite Editor (Mass Selection) and be able to change some of the inputs in the form', () => {
@@ -430,7 +431,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     const currentYear = today.getFullYear();
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).click();
-    cy.get('[data-test="open-modal-mass-update-btn"]').click();
+    cy.get('[data-test="open-modal-mass-update-btn"]').click({ force: true });
     cy.get('.slick-editor-modal-title').contains('Mass Update All Records');
 
     cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 100).trigger('change');
