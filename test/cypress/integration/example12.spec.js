@@ -308,9 +308,6 @@ describe('Example 12 - Composite Editor Modal', () => {
 
   it('should open the Composite Editor (Mass Update) and be able to change some of the inputs in the form', () => {
     cy.get('[data-test="open-modal-mass-update-btn"]').click();
-    cy.get('.slick-editor-modal-header button.close').click();
-    cy.get('[data-test="open-modal-mass-update-btn"]').click({ force: true });
-    cy.wait(500);
     cy.get('.slick-editor-modal-title').should('contain', 'Mass Update All Records');
     cy.get('.footer-status-text').should('contain', 'All 501 records selected');
 
