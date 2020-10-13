@@ -307,8 +307,8 @@ describe('Example 12 - Composite Editor Modal', () => {
   });
 
   it('should open the Composite Editor (Mass Update) and be able to change some of the inputs in the form', () => {
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).click();
-    cy.get('[data-test="open-modal-mass-update-btn"]').click();
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).click({ force: true });
+    cy.get('[data-test="open-modal-mass-update-btn"]').click({ force: true });
     cy.get('.slick-editor-modal-title').contains('Mass Update All Records');
     cy.get('.footer-status-text').contains('All 501 records selected');
 
@@ -365,7 +365,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0)`).click();
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(0)`).click();
     cy.get('[data-test="open-modal-mass-selection-btn"]').should('not.be.disabled');
-    cy.get('[data-test="open-modal-mass-selection-btn"]').click();
+    cy.get('[data-test="open-modal-mass-selection-btn"]').click({ force: true });
   });
 
   it('should be able to open the Composite Editor (Mass Selection) and be able to change some of the inputs in the form', () => {
@@ -430,7 +430,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     const currentYear = today.getFullYear();
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).click();
-    cy.get('[data-test="open-modal-mass-update-btn"]').click();
+    cy.get('[data-test="open-modal-mass-update-btn"]').click({ force: true });
     cy.get('.slick-editor-modal-title').contains('Mass Update All Records');
 
     cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 100).trigger('change');
