@@ -93,7 +93,7 @@ export class SliderEditor implements Editor {
       // watch on change event
       this._$editorElm.appendTo(container);
 
-      this._$editorElm.on('mouseup touchend', (event: Event) => {
+      this._$editorElm.on('change mouseup touchend', (event: Event) => {
         if (compositeEditorOptions) {
           this.handleChangeOnCompositeEditor(event, compositeEditorOptions);
         } else {

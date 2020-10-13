@@ -59,7 +59,7 @@ function checkItemIsEditable(dataContext, columnDef, grid) {
       // case 'duration':
       // case 'title':
       // case 'product':
-      // case 'countryOfOrigin':
+      // case 'origin':
       // isEditable = dataContext.percentComplete < 50;
       // break;
     }
@@ -178,8 +178,8 @@ export class Example12 {
       },
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true,
-        formatter: Formatters.dateIso, columnGroup: 'Period',
-        type: FieldType.dateIso, outputType: FieldType.dateIso,
+        formatter: Formatters.dateUs, columnGroup: 'Period',
+        type: FieldType.dateIso, outputType: FieldType.dateUs,
         filterable: true, filter: { model: Filters.compoundDate },
         editor: {
           model: Editors.date,
@@ -234,7 +234,7 @@ export class Example12 {
         }
       },
       {
-        id: 'countryOfOrigin', name: 'Country of Origin', field: 'countryOfOrigin',
+        id: 'origin', name: 'Country of Origin', field: 'origin',
         formatter: Formatters.complexObject, columnGroup: 'Item',
         exportWithFormatter: true,
         dataKey: 'code',
@@ -261,7 +261,7 @@ export class Example12 {
         filter: {
           model: Filters.inputText,
           type: 'string',
-          queryField: 'countryOfOrigin.name',
+          queryField: 'origin.name',
         }
       },
       {
@@ -405,7 +405,7 @@ export class Example12 {
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
         completed: (i % 3 === 0 && (randomFinish > new Date() && i > 3)),
         product: { id: this.mockProducts()[randomItemId]?.id, itemName: this.mockProducts()[randomItemId]?.itemName, },
-        countryOfOrigin: (i % 2) ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' },
+        origin: (i % 2) ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' },
       };
 
       if (!(i % 8)) {
