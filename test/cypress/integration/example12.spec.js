@@ -317,6 +317,7 @@ describe('Example 12 - Composite Editor Modal', () => {
 
     cy.get('.item-details-container.editor-finish > .item-details-validation').contains('* You must provide a "Finish" date when "Completed" is checked.');
     cy.get('.item-details-container.editor-finish .flatpickr-alt-input').click({ force: true });
+    cy.get('.item-details-container.editor-finish .flatpickr-alt-input').click({ force: true });
     cy.get(`.flatpickr-day.today:visible`).click('bottom', { force: true });
     cy.get('.item-details-container.editor-finish .modified').should('have.length', 1);
 
@@ -328,6 +329,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.btn-save').contains('Apply Mass Update').click();
     cy.get('.validation-summary').contains('Unfortunately we only accept a minimum of 50% Completion...');
 
+    cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 5).trigger('change');
     cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 51).trigger('change');
     cy.get('.item-details-editor-container .input-group-text').contains('51');
     cy.get('.btn-save').contains('Apply Mass Update').click();
