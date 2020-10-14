@@ -366,12 +366,15 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0)`).click();
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(0)`).click();
     cy.get('[data-test="open-modal-mass-selection-btn"]').should('not.be.disabled');
-    cy.get('[data-test="open-modal-mass-selection-btn"]').click({ force: true });
+    cy.get('[data-test="open-modal-mass-selection-btn"]')
+      .wait(200)
+      .click();
   });
 
   it('should be able to open the Composite Editor (Mass Selection) and be able to change some of the inputs in the form', () => {
-    cy.get('.slick-editor-modal-title').contains('Update Selected Records');
-    cy.get('.footer-status-text').contains('2 of 501 selected');
+    cy.wait(1000);
+    cy.get('.slick-editor-modal-title').should('contain', 'Update Selected Records');
+    cy.get('.footer-status-text').should('contain', '2 of 501 selected');
 
     cy.get('.item-details-editor-container .editor-checkbox').check();
     cy.get('.item-details-container.editor-completed .modified').should('have.length', 1);
