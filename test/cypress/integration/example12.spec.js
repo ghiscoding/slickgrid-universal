@@ -292,7 +292,7 @@ describe('Example 12 - Composite Editor Modal', () => {
 
     cy.get('.modified').should('have.length.greaterThan', 1);
 
-    cy.get('.btn-save').contains('Save').click({ force: true });
+    cy.get('.btn-save').contains('Save').click();
     cy.get('.slick-editor-modal').should('not.exist');
   });
 
@@ -316,7 +316,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.item-details-container.editor-completed .modified').should('have.length', 1);
 
     cy.get('.item-details-container.editor-finish > .item-details-validation').contains('* You must provide a "Finish" date when "Completed" is checked.');
-    cy.get('.item-details-container.editor-finish .flatpickr').click();
+    cy.get('.item-details-container.editor-finish .flatpickr').click().click();
     cy.get(`.flatpickr-day.today:visible`).click();
     cy.get('.item-details-container.editor-finish .modified').should('have.length', 1);
 
@@ -366,13 +366,10 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0)`).click();
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(0)`).click();
     cy.get('[data-test="open-modal-mass-selection-btn"]').should('not.be.disabled');
-    cy.get('[data-test="open-modal-mass-selection-btn"]')
-      .wait(200)
-      .click();
+    cy.get('[data-test="open-modal-mass-selection-btn"]').wait(200).click();
   });
 
   it('should be able to open the Composite Editor (Mass Selection) and be able to change some of the inputs in the form', () => {
-    cy.wait(1000);
     cy.get('.slick-editor-modal-title').should('contain', 'Update Selected Records');
     cy.get('.footer-status-text').should('contain', '2 of 501 selected');
 
@@ -434,7 +431,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     const currentYear = today.getFullYear();
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).click();
-    cy.get('[data-test="open-modal-mass-update-btn"]').click({ force: true });
+    cy.get('[data-test="open-modal-mass-update-btn"]').click();
     cy.get('.slick-editor-modal-title').contains('Mass Update All Records');
 
     cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 100).trigger('change');
