@@ -177,6 +177,14 @@ describe('SliderEditor', () => {
       expect(editor.getValue()).toBe('85');
     });
 
+    it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
+      editor = new SliderEditor(editorArguments);
+      editor.setValue(85, true);
+
+      expect(editor.getValue()).toBe('85');
+      expect(editorArguments.item.price).toBe(85);
+    });
+
     it('should call "cancel" and expect "cancelChanges" to be called in the Slickgrid editor object', () => {
       const spy = jest.spyOn(editorArguments, 'cancelChanges');
       editor = new SliderEditor(editorArguments);
@@ -451,12 +459,26 @@ describe('SliderEditor', () => {
     beforeEach(() => {
       editorArguments = {
         ...editorArguments,
-        compositeEditorOptions: { headerTitle: 'Test', formValues: {}, modalType: 'edit' }
+        compositeEditorOptions: { headerTitle: 'Test', modalType: 'edit', formValues: {}, editors: {} },
       } as EditorArguments;
     });
 
     afterEach(() => {
       jest.clearAllMocks();
+    });
+
+    it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      editor = new SliderEditor(editorArguments);
+      editor.setValue(95, true);
+
+      expect(editor.getValue()).toBe('95');
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: { price: 95 }, editors: {},
+      }, expect.anything());
     });
 
     it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
@@ -488,7 +510,7 @@ describe('SliderEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {},
+        formValues: {}, editors: {}
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorInputDomElement.attr('disabled')).toEqual('disabled');
@@ -514,7 +536,7 @@ describe('SliderEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { price: 93 },
+        formValues: { price: 93 }, editors: {}
       }, expect.anything());
     });
   });

@@ -202,6 +202,14 @@ describe('SelectEditor', () => {
       expect(editor.getValue()).toEqual(['male']);
     });
 
+    it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
+      editor = new SelectEditor(editorArguments, true);
+      editor.setValue(['male'], true);
+
+      expect(editor.getValue()).toEqual(['male']);
+      expect(editorArguments.item.gender).toEqual(['male']);
+    });
+
     it('should define an item datacontext containing a string as cell value and expect this value to be loaded in the editor when calling "loadValue"', () => {
       editor = new SelectEditor(editorArguments, true);
       editor.loadValue(mockItemData);
@@ -724,7 +732,7 @@ describe('SelectEditor', () => {
     beforeEach(() => {
       editorArguments = {
         ...editorArguments,
-        compositeEditorOptions: { headerTitle: 'Test', formValues: {}, modalType: 'edit' }
+        compositeEditorOptions: { headerTitle: 'Test', modalType: 'edit', formValues: {}, editors: {} },
       } as EditorArguments;
 
       mockItemData = { id: 1, gender: 'male', isActive: true };
@@ -737,6 +745,20 @@ describe('SelectEditor', () => {
 
     afterEach(() => {
       jest.clearAllMocks();
+    });
+
+    it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      editor = new SelectEditor(editorArguments, true);
+      editor.setValue(['male'], true);
+
+      expect(editor.getValue()).toEqual(['male']);
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: { gender: ['male'] }, editors: {},
+      }, expect.anything());
     });
 
     it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
@@ -769,7 +791,7 @@ describe('SelectEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {},
+        formValues: {}, editors: {}
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editorBtnElm.classList.contains('disabled')).toEqual(true);
@@ -796,7 +818,7 @@ describe('SelectEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { gender: ['male'] },
+        formValues: { gender: ['male'] }, editors: {}
       }, expect.anything());
     });
   });

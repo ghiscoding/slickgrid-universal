@@ -308,11 +308,21 @@ export class SelectEditor implements Editor {
     return (this.isMultipleSelect) ? this.currentValues : this.currentValue;
   }
 
-  setValue(value: any | any[]) {
+  setValue(value: any | any[], isApplyingValue = false) {
     if (this.isMultipleSelect && Array.isArray(value)) {
       this.loadMultipleValues(value);
     } else {
       this.loadSingleValue(value);
+    }
+
+    if (isApplyingValue) {
+      this.applyValue(this.args.item, this.serializeValue());
+
+      // if it's set by a Composite Editor, then also trigger a change for it
+      const compositeEditorOptions = this.args.compositeEditorOptions;
+      if (compositeEditorOptions) {
+        this.handleChangeOnCompositeEditor(compositeEditorOptions);
+      }
     }
   }
 
@@ -408,12 +418,13 @@ export class SelectEditor implements Editor {
     if (Array.isArray(currentValues)) {
       // keep the default values in memory for references
       this.originalValue = currentValues.map((i: any) => i);
+      this.$editorElm.multipleSelect('setSelects', currentValues);
 
-      // compare all the array values but as string type since multiple-select always return string
-      const currentStringValues = currentValues.map((i: any) => i.toString());
-      this.$editorElm.find('option').each((_i: number, $e: any) => {
-        $e.selected = (currentStringValues.indexOf($e.value) !== -1);
-      });
+      // if it's set by a Composite Editor, then also trigger a change for it
+      const compositeEditorOptions = this.args.compositeEditorOptions;
+      if (compositeEditorOptions) {
+        this.handleChangeOnCompositeEditor(compositeEditorOptions);
+      }
     }
   }
 
@@ -421,12 +432,7 @@ export class SelectEditor implements Editor {
     // keep the default value in memory for references
     this.originalValue = typeof currentValue === 'number' ? `${currentValue}` : currentValue;
     this.$editorElm.val(currentValue);
-
-    // make sure the prop exists first
-    this.$editorElm.find('option').each((_i: number, $e: any) => {
-      // check equality after converting originalValue to string since the DOM value will always be of type string
-      $e.selected = (`${currentValue}` === $e.value);
-    });
+    this.$editorElm.multipleSelect('setSelects', [currentValue]);
   }
 
   save() {
@@ -719,7 +725,7 @@ export class SelectEditor implements Editor {
     if (this.disabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
-    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, new Slick.EventData());
+    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors }, new Slick.EventData());
   }
 
   // refresh the jquery object because the selected checkboxes were already set

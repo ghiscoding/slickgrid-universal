@@ -10,6 +10,7 @@ import { FieldType } from '../enums/index';
 import {
   Column,
   ColumnEditor,
+  CompositeEditorOption,
   Editor,
   EditorArguments,
   EditorValidator,
@@ -221,8 +222,18 @@ export class DateEditor implements Editor {
     return this._$input.val();
   }
 
-  setValue(val: string) {
+  setValue(val: string, isApplyingValue = false) {
     this.flatInstance.setDate(val);
+
+    if (isApplyingValue) {
+      this.applyValue(this.args.item, this.serializeValue());
+
+      // if it's set by a Composite Editor, then also trigger a change for it
+      const compositeEditorOptions = this.args.compositeEditorOptions;
+      if (compositeEditorOptions) {
+        this.handleChangeOnCompositeEditor(compositeEditorOptions);
+      }
+    }
   }
 
   applyValue(item: any, state: any) {
@@ -346,27 +357,30 @@ export class DateEditor implements Editor {
   private handleOnDateChange() {
     if (this.args) {
       const compositeEditorOptions = this.args.compositeEditorOptions;
-
       if (compositeEditorOptions) {
-        const activeCell = this.grid.getActiveCell();
-        const column = this.args.column;
-        const columnId = this.columnDef?.id ?? '';
-        const item = this.args.item;
-        const grid = this.grid;
-
-        // when valid, we'll also apply the new value to the dataContext item object
-        if (this.validate().valid) {
-          this.applyValue(this.args.item, this.serializeValue());
-        }
-        this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
-        if (this.disabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
-          delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
-        }
-        grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, new Slick.EventData());
+        this.handleChangeOnCompositeEditor(compositeEditorOptions);
       } else {
         this.save();
       }
     }
+  }
+
+  private handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption) {
+    const activeCell = this.grid.getActiveCell();
+    const column = this.args.column;
+    const columnId = this.columnDef?.id ?? '';
+    const item = this.args.item;
+    const grid = this.grid;
+
+    // when valid, we'll also apply the new value to the dataContext item object
+    if (this.validate().valid) {
+      this.applyValue(this.args.item, this.serializeValue());
+    }
+    this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+    if (this.disabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+      delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
+    }
+    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors }, new Slick.EventData());
   }
 
   /** Load a different set of locales for Flatpickr to be localized */

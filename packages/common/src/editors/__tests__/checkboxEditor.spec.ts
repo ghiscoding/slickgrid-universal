@@ -135,6 +135,14 @@ describe('CheckboxEditor', () => {
       expect(editor.getValue()).toBe(true);
     });
 
+    it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
+      editor = new CheckboxEditor(editorArguments);
+      editor.setValue(true, true);
+
+      expect(editor.getValue()).toBe(true);
+      expect(editorArguments.item.isActive).toBe(true);
+    });
+
     it('should call "setValue" with false and expect the DOM element value to return false (representing unchecked)', () => {
       editor = new CheckboxEditor(editorArguments);
       editor.setValue(false);
@@ -379,12 +387,26 @@ describe('CheckboxEditor', () => {
     beforeEach(() => {
       editorArguments = {
         ...editorArguments,
-        compositeEditorOptions: { headerTitle: 'Test', formValues: {}, modalType: 'edit' }
+        compositeEditorOptions: { headerTitle: 'Test', modalType: 'edit', formValues: {}, editors: {} },
       } as EditorArguments;
     });
 
     afterEach(() => {
       jest.clearAllMocks();
+    });
+
+    it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      editor = new CheckboxEditor(editorArguments);
+      editor.setValue(true, true);
+
+      expect(editor.getValue()).toBe(true);
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: { isActive: true }, editors: {},
+      }, expect.anything());
     });
 
     it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
@@ -416,7 +438,7 @@ describe('CheckboxEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {},
+        formValues: {}, editors: {},
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorDomElement.disabled).toEqual(true);
@@ -440,7 +462,7 @@ describe('CheckboxEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { isActive: true },
+        formValues: { isActive: true }, editors: {},
       }, expect.anything());
     });
   });

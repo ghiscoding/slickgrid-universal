@@ -1,11 +1,12 @@
 import 'slickgrid/slick.compositeeditor.js';
 
 import {
-  Editor,
   Column,
   CompositeEditorOpenDetailOption,
+  CompositeEditorOption,
   Constants,
   CurrentRowSelection,
+  Editor,
   EditorValidationResult,
   getDescendantProperty,
   GetSlickEventType,
@@ -36,6 +37,8 @@ export class SlickCompositeEditorComponent {
   private _lastActiveRowNumber: number;
   private _locales: Locale;
   private _formValues: any;
+  private _editors: any;
+  private _editorContainers: Array<HTMLElement | null>;
   private _modalBodyTopValidationElm: HTMLDivElement;
   private _modalSaveButtonElm: HTMLButtonElement;
 
@@ -53,6 +56,13 @@ export class SlickCompositeEditorComponent {
 
   get formValues(): any {
     return this._formValues;
+  }
+
+  get editors(): any {
+    return this._editors;
+  }
+  set editors(editors: any) {
+    this._editors = editors;
   }
 
   get gridOptions(): GridOption {
@@ -87,7 +97,41 @@ export class SlickCompositeEditorComponent {
     }
   }
 
-  openDetails(options: CompositeEditorOpenDetailOption): null | void {
+  /**
+   * Change input value of the Composite Editor form
+   * @param {String} columnId - column id
+   * @param {*} newValue - the new value
+   */
+  changeFormInputValue(columnId: string, newValue: any) {
+    const editor = this._editors?.[columnId] as Editor;
+    let outputValue = newValue;
+
+    if (editor && editor.setValue && Array.isArray(this._editorContainers)) {
+      editor.setValue(newValue, true);
+      const editorContainerElm = this._editorContainers.find((editorElm: HTMLElement) => editorElm.dataset.editorid === columnId);
+      if (!editor.disabled) {
+        editorContainerElm?.classList?.add('modified');
+      } else {
+        outputValue = '';
+        editorContainerElm?.classList?.remove('modified');
+      }
+      this._formValues = { ...this._formValues, [columnId]: outputValue };
+    }
+  }
+
+  /**
+   * Disable (or enable) an input of the Composite Editor form
+   * @param columnId
+   * @param isDisabled
+   */
+  disableFormInput(columnId: string, isDisabled = true) {
+    const editor = this._editors?.[columnId] as Editor;
+    if (editor?.disable && Array.isArray(this._editorContainers)) {
+      editor.disable(isDisabled);
+    }
+  }
+
+  openDetails(options: CompositeEditorOpenDetailOption): SlickCompositeEditorComponent | null {
     const onError = options.onError ?? DEFAULT_ON_ERROR;
     const defaultOptions = {
       backdrop: 'static',
@@ -98,7 +142,7 @@ export class SlickCompositeEditorComponent {
 
     try {
       if (!this.grid || (this.grid.getEditorLock().isActive() && !this.grid.getEditorLock().commitCurrentEdit())) {
-        return;
+        return null;
       }
 
       this._options = { ...defaultOptions, ...this.gridOptions.compositeEditorOptions, ...options, labels: { ...this.gridOptions.compositeEditorOptions?.labels, ...options?.labels } }; // merge default options with user options
@@ -129,16 +173,16 @@ export class SlickCompositeEditorComponent {
 
       if (!this.gridOptions.editable) {
         onError({ type: 'error', code: 'EDITABLE_GRID_REQUIRED', message: 'Your grid must be editable in order to use the Composite Editor Modal.' });
-        return;
+        return null;
       } else if (!this.gridOptions.enableCellNavigation) {
         onError({ type: 'error', code: 'ENABLE_CELL_NAVIGATION_REQUIRED', message: 'Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.' });
-        return;
+        return null;
       } else if (!this.gridOptions.enableAddRow && modalType === 'create') {
         onError({ type: 'error', code: 'ENABLE_ADD_ROW_REQUIRED', message: 'Composite Editor requires the flag "enableAddRow" to be set to True in your Grid Options when creating a new item.' });
-        return;
+        return null;
       } else if (!activeCell && modalType === 'edit') {
         onError({ type: 'warning', code: 'NO_RECORD_FOUND', message: 'No records selected for edit operation.' });
-        return;
+        return null;
       } else {
         const isWithMassChange = (modalType === 'mass-update' || modalType === 'mass-selection');
         const dataContext = !isWithMassChange ? this.grid.getDataItem(activeRow) : {};
@@ -155,16 +199,16 @@ export class SlickCompositeEditorComponent {
         const rowIndex = modalType === 'create' ? this.dataViewLength : activeRow;
         const hasFoundEditor = this.focusOnFirstColumnCellWithEditor(columnDefinitions, dataContext, activeColIndex, rowIndex, isWithMassChange);
         if (!hasFoundEditor) {
-          return;
+          return null;
         }
 
         if (modalType === 'edit' && !dataContext) {
           onError({ type: 'warning', code: 'ROW_NOT_EDITABLE', message: 'Current row is not editable.' });
-          return;
+          return null;
         } else if (modalType === 'mass-selection') {
           if (selectedRowsIndexes.length < 1) {
             onError({ type: 'warning', code: 'ROW_SELECTION_REQUIRED', message: 'You must select some rows before trying to apply new value(s).' });
-            return;
+            return null;
           }
         }
 
@@ -307,9 +351,10 @@ export class SlickCompositeEditorComponent {
         document.body.classList.add('slick-modal-open'); // add backdrop to body
         document.body.addEventListener('click', this.handleBodyClicked.bind(this));
 
-        const containers = modalColumns.map(col => modalBodyElm.querySelector<HTMLDivElement>(`[data-editorid=${col.id}]`)) || [];
-
-        const compositeEditor = new Slick.CompositeEditor(modalColumns, containers, { destroy: this.disposeComponent.bind(this), modalType, validationMsgPrefix: '* ', formValues: {} });
+        this._editors = {};
+        this._editorContainers = modalColumns.map(col => modalBodyElm.querySelector<HTMLDivElement>(`[data-editorid=${col.id}]`)) || [];
+        const compositeOptions: CompositeEditorOption = { destroy: this.disposeComponent.bind(this), modalType, validationMsgPrefix: '* ', formValues: {}, editors: this._editors };
+        const compositeEditor = new Slick.CompositeEditor(modalColumns, this._editorContainers, compositeOptions);
         this.grid.editActiveCell(compositeEditor);
 
         // --
@@ -333,11 +378,14 @@ export class SlickCompositeEditorComponent {
         (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onAddNewRowHandler>>)
           .subscribe(onAddNewRowHandler, this.handleOnAddNewRow.bind(this));
       }
+      return this;
+
     } catch (error) {
       this.dispose();
       const errorMsg = (typeof error === 'string') ? error : (error?.message ?? error?.body?.message ?? '');
       const errorCode = (typeof error === 'string') ? error : error?.status ?? error?.body?.status ?? errorMsg;
       onError({ type: 'error', code: errorCode, message: errorMsg });
+      return null;
     }
   }
 
@@ -643,7 +691,7 @@ export class SlickCompositeEditorComponent {
     });
   }
 
-  private validateCompositeEditors(targetElm?: HTMLElement): EditorValidationResult {
+  validateCompositeEditors(targetElm?: HTMLElement): EditorValidationResult {
     let validationResults: EditorValidationResult = { valid: true, msg: '' };
     const currentEditor = this.grid.getCellEditor();
 

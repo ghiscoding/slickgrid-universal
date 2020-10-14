@@ -100,6 +100,14 @@ describe('MultipleSelectEditor', () => {
       expect(editor.getValue()).toEqual(['male']);
     });
 
+    it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
+      editor = new MultipleSelectEditor(editorArguments);
+      editor.setValue(['male'], true);
+
+      expect(editor.getValue()).toEqual(['male']);
+      expect(editorArguments.item.gender).toEqual(['male']);
+    });
+
     it('should hide the DOM element div wrapper when the "hide" method is called', () => {
       editor = new MultipleSelectEditor(editorArguments);
       const editorElm = document.body.querySelector<HTMLDivElement>('[name=editor-gender].ms-drop');

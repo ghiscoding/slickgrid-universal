@@ -59,7 +59,7 @@ function checkItemIsEditable(dataContext, columnDef, grid) {
       // case 'duration':
       // case 'title':
       // case 'product':
-      // case 'countryOfOrigin':
+      // case 'origin':
       // isEditable = dataContext.percentComplete < 50;
       // break;
     }
@@ -105,6 +105,7 @@ export class Example12 {
     this.gridContainerElm.addEventListener('onclick', this.handleOnCellClicked.bind(this));
     this.gridContainerElm.addEventListener('ongridstatechanged', this.handleOnSelectedRowsChanged.bind(this));
     this.gridContainerElm.addEventListener('ondblclick', () => this.openCompositeModal('edit', 50));
+    this.gridContainerElm.addEventListener('oncompositeeditorchange', this.handleOnCompositeEditorChange.bind(this));
   }
 
   dispose() {
@@ -141,12 +142,24 @@ export class Example12 {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
         sortable: true, filterable: true, columnGroup: 'Analysis',
         filter: { model: Filters.compoundSlider, operator: '>=' },
-        editor: { model: Editors.slider, massUpdate: true, minValue: 0, maxValue: 100, },
+        // formatter: Formatters.collectionEditor,
+        editor: {
+          model: Editors.slider,
+          // model: Editors.singleSelect,
+          // enableRenderHtml: true,
+          // collection: Array.from(Array(101).keys()).map(k => ({ value: k, label: k, symbol: ' <i class="mdi mdi-check-circle color-primary"></i>' })),
+          // customStructure: {
+          //   value: 'value',
+          //   label: 'label',
+          //   labelSuffix: 'symbol'
+          // },
+          massUpdate: true, minValue: 0, maxValue: 100,
+        },
       },
       {
         id: 'start', name: 'Start', field: 'start', sortable: true,
-        formatter: Formatters.dateIso, columnGroup: 'Period',
-        type: FieldType.dateIso, outputType: FieldType.dateIso,
+        formatter: Formatters.dateUs, columnGroup: 'Period',
+        type: FieldType.dateIso, outputType: FieldType.dateUs,
         filterable: true, filter: { model: Filters.compoundDate },
         editor: { model: Editors.date, massUpdate: true, params: { hideClearButton: false } },
       },
@@ -165,8 +178,8 @@ export class Example12 {
       },
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true,
-        formatter: Formatters.dateIso, columnGroup: 'Period',
-        type: FieldType.dateIso, outputType: FieldType.dateIso,
+        formatter: Formatters.dateUs, columnGroup: 'Period',
+        type: FieldType.dateIso, outputType: FieldType.dateUs,
         filterable: true, filter: { model: Filters.compoundDate },
         editor: {
           model: Editors.date,
@@ -221,7 +234,7 @@ export class Example12 {
         }
       },
       {
-        id: 'countryOfOrigin', name: 'Country of Origin', field: 'countryOfOrigin',
+        id: 'origin', name: 'Country of Origin', field: 'origin',
         formatter: Formatters.complexObject, columnGroup: 'Item',
         exportWithFormatter: true,
         dataKey: 'code',
@@ -248,7 +261,7 @@ export class Example12 {
         filter: {
           model: Filters.inputText,
           type: 'string',
-          queryField: 'countryOfOrigin.name',
+          queryField: 'origin.name',
         }
       },
       {
@@ -392,7 +405,7 @@ export class Example12 {
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
         completed: (i % 3 === 0 && (randomFinish > new Date() && i > 3)),
         product: { id: this.mockProducts()[randomItemId]?.id, itemName: this.mockProducts()[randomItemId]?.itemName, },
-        countryOfOrigin: (i % 2) ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' },
+        origin: (i % 2) ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' },
       };
 
       if (!(i % 8)) {
@@ -462,6 +475,19 @@ export class Example12 {
     // } else if (eventData.target.classList.contains('mdi-chevron-down')) {
     //   alert('do something else...');
     // }
+  }
+
+  handleOnCompositeEditorChange(event) {
+    const args = event && event.detail && event.detail.args;
+    const columnDef = args?.column;
+    const formValues = args?.formValues;
+
+    // you can change any other form input values when certain conditions are met
+    if (columnDef.id === 'percentComplete' && formValues.percentComplete === 100) {
+      this.sgb.slickCompositeEditor.changeFormInputValue('completed', true);
+      this.sgb.slickCompositeEditor.changeFormInputValue('finish', new Date());
+      // this.sgb.slickCompositeEditor.changeFormInputValue('product', { id: 0, itemName: 'Sleek Metal Computer' });
+    }
   }
 
   handleOnSelectedRowsChanged(event) {

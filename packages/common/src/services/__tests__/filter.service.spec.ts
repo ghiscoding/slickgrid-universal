@@ -8,8 +8,10 @@ import {
   BackendService,
   Column,
   CurrentFilter,
-  SlickDataView,
+  GridMenuItem,
   GridOption,
+  MenuCommandItem,
+  SlickDataView,
   SlickEventHandler,
   SlickGrid,
   SlickNamespace,
@@ -40,6 +42,22 @@ const gridOptionMock = {
     preProcess: jest.fn(),
     process: jest.fn(),
     postProcess: jest.fn(),
+  },
+  gridMenu: {
+    customItems: [{
+      command: 'clear-filter',
+      disabled: false,
+      iconCssClass: 'fa fa-filter mdi mdi-filter-remove-outline',
+      positionOrder: 50,
+      title: 'Clear all Filters'
+    }, {
+      command: 'toggle-filter',
+      disabled: false,
+      hidden: true,
+      iconCssClass: 'fa fa-random mdi mdi-flip-vertical',
+      positionOrder: 52,
+      title: 'Toggle Filter Row'
+    }]
   }
 } as GridOption;
 
@@ -96,7 +114,6 @@ describe('FilterService', () => {
   let slickgridConfig: SlickgridConfig;
   let slickgridEventHandler: SlickEventHandler;
   let translateService: TranslateServiceStub;
-  const consoleSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
 
   beforeEach(() => {
     // define a <div> container to simulate a row detail DOM element
@@ -108,7 +125,7 @@ describe('FilterService', () => {
     slickgridConfig = new SlickgridConfig();
     translateService = new TranslateServiceStub();
     collectionService = new CollectionService(translateService);
-    const filterFactory = new FilterFactory(slickgridConfig, collectionService, translateService);
+    const filterFactory = new FilterFactory(slickgridConfig, translateService, collectionService);
     service = new FilterService(filterFactory, pubSubServiceStub, sharedService);
     slickgridEventHandler = service.eventHandler;
   });
@@ -712,7 +729,7 @@ describe('FilterService', () => {
     });
 
     it('should return True when input value from datacontext is IN searchTerms', () => {
-      const customFirstNameFormatter = (row: number, cell: number, value: any, columnDef: any, dataContext: any) => dataContext.fullName.split(' ')[0];
+      const customFirstNameFormatter = (_row: number, _cell: number, _value: any, _columnDef: any, dataContext: any) => dataContext.fullName.split(' ')[0];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true, formatter: customFirstNameFormatter, params: { useFormatterOuputToFilter: true } } as Column;
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
       jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
@@ -767,7 +784,7 @@ describe('FilterService', () => {
     // });
 
     it('should execute "queryFieldNameGetterFn()" callback and return True when input value matches the full name', () => {
-      const mockColumn1 = { id: 'name', field: 'name', filterable: true, queryFieldNameGetterFn: (dataContext) => 'fullName' } as Column;
+      const mockColumn1 = { id: 'name', field: 'name', filterable: true, queryFieldNameGetterFn: () => 'fullName' } as Column;
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
       jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
@@ -779,7 +796,7 @@ describe('FilterService', () => {
     });
 
     it('should execute "queryFieldNameGetterFn()" callback and return False when input value is not fullName but just the firstName', () => {
-      const mockColumn1 = { id: 'name', field: 'name', filterable: true, queryFieldNameGetterFn: (dataContext) => 'fullName' } as Column;
+      const mockColumn1 = { id: 'name', field: 'name', filterable: true, queryFieldNameGetterFn: () => 'fullName' } as Column;
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
       jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
@@ -791,7 +808,7 @@ describe('FilterService', () => {
     });
 
     it('should execute "queryFieldNameGetterFn()" callback and return False when input value is not fullName but just the lastName', () => {
-      const mockColumn1 = { id: 'name', field: 'name', filterable: true, queryFieldNameGetterFn: (dataContext) => 'fullName' } as Column;
+      const mockColumn1 = { id: 'name', field: 'name', filterable: true, queryFieldNameGetterFn: () => 'fullName' } as Column;
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
       jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
@@ -1104,15 +1121,25 @@ describe('FilterService', () => {
     });
 
     it('should disable the Filter Functionality from the Grid Options & toggle the Header Filter row', () => {
-      const mockColumns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const mockColumns = [
+        { id: 'field1', field: 'field1', width: 100, header: { menu: { items: [{ command: 'clear-filter' }] } } },
+        { id: 'field2', field: 'field2', width: 100, header: { menu: { items: [{ command: 'clear-filter' }] } } }
+      ];
       const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
       const setHeaderSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
       const setColsSpy = jest.spyOn(gridStub, 'setColumns');
-      jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns)
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
 
       service.init(gridStub);
       service.disableFilterFunctionality();
 
+      mockColumns.forEach(col => col.header.menu.items.forEach(item => {
+        expect((item as MenuCommandItem).hidden).toBeTruthy();
+      }));
+      gridOptionMock.gridMenu.customItems.forEach(item => {
+        expect((item as GridMenuItem).hidden).toBeTruthy();
+      });
       expect(setOptionSpy).toHaveBeenCalledWith({ enableFiltering: false }, false, true);
       expect(setHeaderSpy).toHaveBeenCalledWith(false);
       expect(setColsSpy).toHaveBeenCalledWith(mockColumns);
@@ -1122,15 +1149,25 @@ describe('FilterService', () => {
       gridOptionMock.enableFiltering = false;
       gridOptionMock.showHeaderRow = false;
 
-      const mockColumns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      const mockColumns = [
+        { id: 'field1', field: 'field1', width: 100, header: { menu: { items: [{ command: 'clear-filter' }] } } },
+        { id: 'field2', field: 'field2', width: 100, header: { menu: { items: [{ command: 'clear-filter' }] } } }
+      ];
       const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
       const setHeaderSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
       const setColsSpy = jest.spyOn(gridStub, 'setColumns');
-      jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns)
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
 
       service.init(gridStub);
       service.disableFilterFunctionality(false);
 
+      mockColumns.forEach(col => col.header.menu.items.forEach(item => {
+        expect((item as MenuCommandItem).hidden).toBeFalsy();
+      }));
+      gridOptionMock.gridMenu.customItems.forEach(item => {
+        expect((item as GridMenuItem).hidden).toBeFalsy();
+      });
       expect(setOptionSpy).toHaveBeenCalledWith({ enableFiltering: true }, false, true);
       expect(setHeaderSpy).toHaveBeenCalledWith(true);
       expect(setColsSpy).toHaveBeenCalledWith(mockColumns);
@@ -1144,7 +1181,7 @@ describe('FilterService', () => {
       const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
       const setHeaderSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
       const setColsSpy = jest.spyOn(gridStub, 'setColumns');
-      jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns)
+      jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
 
       service.init(gridStub);
       service.disableFilterFunctionality(false);
@@ -1166,7 +1203,7 @@ describe('FilterService', () => {
       const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
       const setHeaderSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
       const setColsSpy = jest.spyOn(gridStub, 'setColumns');
-      jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns)
+      jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
 
       service.init(gridStub);
       service.toggleFilterFunctionality();

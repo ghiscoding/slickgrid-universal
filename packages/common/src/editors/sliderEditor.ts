@@ -93,7 +93,7 @@ export class SliderEditor implements Editor {
       // watch on change event
       this._$editorElm.appendTo(container);
 
-      this._$editorElm.on('mouseup touchend', (event: Event) => {
+      this._$editorElm.on('change mouseup touchend', (event: Event) => {
         if (compositeEditorOptions) {
           this.handleChangeOnCompositeEditor(event, compositeEditorOptions);
         } else {
@@ -164,8 +164,19 @@ export class SliderEditor implements Editor {
     return this._$input.val() || '';
   }
 
-  setValue(value: number | string) {
+  setValue(value: number | string, isApplyingValue = false) {
     this._$input.val(value);
+    this.$sliderNumber.html(value);
+
+    if (isApplyingValue) {
+      this.applyValue(this.args.item, this.serializeValue());
+
+      // if it's set by a Composite Editor, then also trigger a change for it
+      const compositeEditorOptions = this.args.compositeEditorOptions;
+      if (compositeEditorOptions) {
+        this.handleChangeOnCompositeEditor(null, compositeEditorOptions);
+      }
+    }
   }
 
   applyValue(item: any, state: any) {
@@ -306,6 +317,6 @@ export class SliderEditor implements Editor {
     if (this.disabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
-    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues }, { ...new Slick.EventData(), ...event });
+    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors }, { ...new Slick.EventData(), ...event });
   }
 }

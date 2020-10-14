@@ -1,7 +1,7 @@
 import { Editors } from '../index';
 import { AutoCompleteEditor } from '../autoCompleteEditor';
 import { KeyCode, FieldType } from '../../enums/index';
-import { AutocompleteOption, Column, EditorArgs, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { AutocompleteOption, Column, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
 
 declare const Slick: SlickNamespace;
 const KEY_CHAR_A = 97;
@@ -164,6 +164,15 @@ describe('AutoCompleteEditor', () => {
       expect(editor.getValue()).toBe('male');
     });
 
+    it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
+      mockColumn.type = FieldType.object;
+      editor = new AutoCompleteEditor(editorArguments);
+      editor.setValue({ value: 'male', label: 'male' }, true);
+
+      expect(editor.getValue()).toBe('male');
+      expect(editorArguments.item.gender).toEqual({ value: 'male', label: 'male' });
+    });
+
     it('should define an item datacontext containing a string as cell value and expect this value to be loaded in the editor when calling "loadValue"', () => {
       editor = new AutoCompleteEditor(editorArguments);
       editor.loadValue(mockItemData);
@@ -302,7 +311,7 @@ describe('AutoCompleteEditor', () => {
       });
 
       it('should return item data with an empty string in its value when calling "applyValue" which fails the custom validation', () => {
-        mockColumn.internalColumnEditor.validator = (value: any, args: EditorArgs) => {
+        mockColumn.internalColumnEditor.validator = (value: any) => {
           if (value.label.length < 10) {
             return { valid: false, msg: 'Must be at least 10 chars long.' };
           }
@@ -714,7 +723,7 @@ describe('AutoCompleteEditor', () => {
 
       it('should provide "renderItem" in the "filterOptions" and expect the jQueryUI "_renderItem" to be overriden', () => {
         const mockTemplateString = `<div>Hello World</div>`;
-        const mockTemplateCallback = (item) => mockTemplateString;
+        const mockTemplateCallback = () => mockTemplateString;
         mockColumn.internalColumnEditor = {
           editorOptions: {
             source: [],
@@ -750,12 +759,26 @@ describe('AutoCompleteEditor', () => {
     beforeEach(() => {
       editorArguments = {
         ...editorArguments,
-        compositeEditorOptions: { headerTitle: 'Test', formValues: {}, modalType: 'edit' }
+        compositeEditorOptions: { headerTitle: 'Test', modalType: 'edit', formValues: {}, editors: {} },
       } as EditorArguments;
     });
 
     afterEach(() => {
       jest.clearAllMocks();
+    });
+
+    it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      editor = new AutoCompleteEditor(editorArguments);
+      editor.setValue({ value: 'male', label: 'Male' }, true);
+
+      expect(editor.getValue()).toBe('Male');
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: { gender: 'male' }, editors: {},
+      }, expect.anything());
     });
 
     it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
@@ -787,7 +810,7 @@ describe('AutoCompleteEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {},
+        formValues: {}, editors: {},
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorDomElement.attr('disabled')).toEqual('disabled');
@@ -813,7 +836,7 @@ describe('AutoCompleteEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { gender: 'female' },
+        formValues: { gender: 'female' }, editors: {},
       }, expect.anything());
     });
   });
