@@ -325,14 +325,14 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.item-details-container.editor-origin .modified').should('have.length', 1);
     cy.get('.item-details-container.editor-origin .autocomplete').invoke('val').then(text => expect(text).to.eq('Belgium'));
 
-    cy.get('.btn-save').contains('Apply Mass Update').click();
+    cy.get('.btn-save').contains('Apply & Save').click();
     cy.get('.validation-summary').contains('Unfortunately we only accept a minimum of 50% Completion...');
 
     cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 5).trigger('change');
     cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 51).trigger('change');
     cy.get('.item-details-editor-container .input-group-text').contains('51');
 
-    cy.get('.btn-save').contains('Apply Mass Update').click();
+    cy.get('.btn-save').contains('Apply & Save').click();
     cy.get('.slick-editor-modal').should('not.exist');
   });
 
@@ -386,12 +386,12 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.item-details-container.editor-origin .modified').should('have.length', 1);
     cy.get('.item-details-container.editor-origin .autocomplete').invoke('val').then(text => expect(text).to.eq('Belize'));
 
-    cy.get('.btn-save').contains('Update Selection').click();
+    cy.get('.btn-save').contains('Apply & Save').click();
     cy.get('.validation-summary').contains('Unfortunately we only accept a minimum of 50% Completion...');
 
     cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 77).trigger('change');
     cy.get('.item-details-editor-container .input-group-text').contains('77');
-    cy.get('.btn-save').contains('Update Selection').click();
+    cy.get('.btn-save').contains('Apply & Save').click();
 
     cy.get('.slick-editor-modal').should('not.exist');
   });
