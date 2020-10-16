@@ -14,7 +14,7 @@
     "rebuild": "run-s clean build",
     "clean": "rimraf --maxBusyTries=10 packages/*/dist dist",
     "cypress": "cypress open --config-file test/cypress.json",
-    "cypress:ci": "cypress run --config-file test/cypress.json --reporter mochawesome --record",
+    "cypress:ci": "cypress run --config-file test/cypress.json --reporter mochawesome",
     "dev:watch": "lerna run dev:watch --parallel",
     "diff": "lerna diff",
     "updated": "lerna updated",
