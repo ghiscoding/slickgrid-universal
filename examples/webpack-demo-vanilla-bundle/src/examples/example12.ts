@@ -395,7 +395,7 @@ export class Example12 {
       const randomPercentComplete = Math.floor(Math.random() * 100) + 15; // make it over 15 for E2E testing purposes
 
       tmpArray[i] = {
-        id: i + 13,
+        id: i,
         title: 'Task ' + i,
         duration: Math.floor(Math.random() * 100) + 10,
         percentComplete: randomPercentComplete > 100 ? 100 : randomPercentComplete,
