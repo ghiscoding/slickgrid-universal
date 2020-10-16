@@ -5,14 +5,12 @@ import {
   CompositeEditorOpenDetailOption,
   CompositeEditorOption,
   Constants,
-  CurrentRowSelection,
   Editor,
   EditorValidationResult,
   getDescendantProperty,
   GetSlickEventType,
   GridOption,
   GridService,
-  GridStateService,
   Locale,
   OnErrorOption,
   OnAddNewRowEventArgs,
@@ -69,7 +67,7 @@ export class SlickCompositeEditorComponent {
     return this.grid.getOptions();
   }
 
-  constructor(private grid: SlickGrid, private gridService: GridService, private gridStateService: GridStateService, private translaterService?: TranslaterService) {
+  constructor(private grid: SlickGrid, private gridService: GridService, private translaterService?: TranslaterService) {
     this._eventHandler = new Slick.EventHandler();
     if (this.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
@@ -154,8 +152,8 @@ export class SlickCompositeEditorComponent {
       const gridUid = this.grid.getUID() || '';
       let headerTitle = options.headerTitle || '';
 
-      if (this.hasRowSelectionEnabled() && this._options.modalType === 'auto-mass' && this.grid.getSelectedRows) {
-        const selectedRowsIndexes = this.grid.getSelectedRows() || [];
+      if (this.hasRowSelectionEnabled() && this._options.modalType === 'auto-mass' && this.dataView.getAllSelectedIds) {
+        const selectedRowsIndexes = this.dataView.getAllSelectedIds() || [];
         if (selectedRowsIndexes.length > 0) {
           this._options.modalType = 'mass-selection';
           if (options?.headerTitleMassSelection) {
@@ -187,12 +185,11 @@ export class SlickCompositeEditorComponent {
         const isWithMassChange = (modalType === 'mass-update' || modalType === 'mass-selection');
         const dataContext = !isWithMassChange ? this.grid.getDataItem(activeRow) : {};
         const columnDefinitions = this.grid.getColumns();
-        const selectedRowsIndexes = this.hasRowSelectionEnabled() ? this.grid.getSelectedRows() : [];
+        const selectedRowsIndexes = this.hasRowSelectionEnabled() ? this.dataView.getAllSelectedIds() : [];
         const fullDataset = this.dataView?.getItems() ?? [];
         const fullDatasetLength = (Array.isArray(fullDataset)) ? fullDataset.length : 0;
         this._lastActiveRowNumber = activeRow;
-        const gridStateSelection = this.gridStateService.getCurrentRowSelections() as CurrentRowSelection;
-        const dataContextIds = gridStateSelection?.dataContextIds || [];
+        const dataContextIds = this.dataView.getAllSelectedIds();
 
         // focus on a first cell with an Editor (unless current cell already has an Editor then do nothing)
         // also when it's a "Create" modal, we'll scroll to the end of the grid
@@ -481,9 +478,8 @@ export class SlickCompositeEditorComponent {
         } else if (isFormValid && this.formValues) {
           this._modalSaveButtonElm.classList.add('saving');
           this._modalSaveButtonElm.disabled = true;
-          const gridStateSelection = this.gridStateService.getCurrentRowSelections() as CurrentRowSelection;
-          const gridRowIndexes = gridStateSelection?.gridRowIndexes || [];
-          const dataContextIds = gridStateSelection?.dataContextIds || [];
+          const dataContextIds = this.dataView.getAllSelectedIds();
+          const gridRowIndexes = this.dataView.mapIdsToRows(dataContextIds);
 
           if (typeof this._options?.onSave === 'function') {
             const successful = await this._options?.onSave(this.formValues, { gridRowIndexes, dataContextIds }, this[applyCallbackFnName].bind(this));

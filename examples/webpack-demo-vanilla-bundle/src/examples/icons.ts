@@ -128,6 +128,8 @@ export class Icons {
       '.mdi.mdi-menu',
       '.mdi.mdi-microsoft-excel',
       '.mdi.mdi-minus',
+      '.mdi.mdi-minus-box',
+      '.mdi.mdi-minus-box-outline',
       '.mdi.mdi-order-bool-ascending-variant',
       '.mdi.mdi-page-first',
       '.mdi.mdi-page-last',
