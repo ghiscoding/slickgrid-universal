@@ -459,12 +459,14 @@ export class SelectEditor implements Editor {
    * @param {newValue} newValue - MultipleSelect new option value
    */
   changeEditorOption(optionName: keyof MultipleSelectOption, newValue: any) {
-    if (!this.columnEditor.editorOptions) {
-      this.columnEditor.editorOptions = {};
+    if (this.columnEditor) {
+      if (!this.columnEditor.editorOptions) {
+        this.columnEditor.editorOptions = {};
+      }
+      this.columnEditor.editorOptions[optionName] = newValue;
+      this.editorElmOptions = { ...this.editorElmOptions, [optionName]: newValue };
+      this.$editorElm.multipleSelect('refreshOptions', this.editorElmOptions);
     }
-    this.columnEditor.editorOptions[optionName] = newValue;
-    this.editorElmOptions = { ...this.editorElmOptions, [optionName]: newValue };
-    this.$editorElm.multipleSelect('refreshOptions', this.editorElmOptions);
   }
 
   disable(isDisabled = true) {
