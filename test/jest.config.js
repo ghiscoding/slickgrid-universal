@@ -4,7 +4,7 @@ module.exports = {
     'ts-jest': {
       diagnostics: false,
       isolatedModules: true,
-      tsConfig: '<rootDir>/test/tsconfig.spec.json',
+      tsconfig: '<rootDir>/test/tsconfig.spec.json',
       stringifyContentPathRegex: '\\.html$'
     },
   },
