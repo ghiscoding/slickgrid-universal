@@ -145,18 +145,18 @@ export class Example12 {
         filter: { model: Filters.compoundSlider, operator: '>=' },
         // formatter: Formatters.collectionEditor,
         editor: {
-          // model: Editors.slider,
-          model: Editors.multipleSelect,
-          enableRenderHtml: true,
-          collection: Array.from(Array(101).keys()).map(k => ({ value: k, label: k, symbol: ' <i class="mdi mdi-calendar-check color-primary"></i>' })),
-          collectionOptions: {
-            addCustomFirstEntry: { value: '', label: '--none--' }
-          },
-          customStructure: {
-            value: 'value',
-            label: 'label',
-            labelSuffix: 'symbol'
-          },
+          model: Editors.slider,
+          // model: Editors.singleSelect,
+          // enableRenderHtml: true,
+          // collection: Array.from(Array(101).keys()).map(k => ({ value: k, label: k, symbol: ' <i class="mdi mdi-calendar-check color-primary"></i>' })),
+          // collectionOptions: {
+          //   addCustomFirstEntry: { value: '', label: '--none--' }
+          // },
+          // customStructure: {
+          //   value: 'value',
+          //   label: 'label',
+          //   labelSuffix: 'symbol'
+          // },
           massUpdate: true, minValue: 0, maxValue: 100,
         },
       },
@@ -496,10 +496,12 @@ export class Example12 {
     }
 
     // you can also change any editor options (not all Editors supports this functionality, so far only these Editors AutoComplete, Date MultipleSelect & SingleSelect)
+    /*
     if (columnDef.id === 'completed' && formValues.completed) {
       this.sgb.slickCompositeEditor.changeFormEditorOption('percentComplete', 'filter', true);
       this.sgb.slickCompositeEditor.changeFormEditorOption('product', 'minLength', 3);
     }
+    */
   }
 
   handleOnSelectedRowsChanged(event) {

@@ -102,7 +102,7 @@ describe('DateEditor', () => {
       expect(editorCount).toBe(1);
     });
 
-    it('should initialize the editor and focus on the element after a small delay', (done) => {
+    it('should initialize the editor and expect to focus on the element after a small delay', (done) => {
       const focusSpy = jest.spyOn(editor, 'focus');
       const showSpy = jest.spyOn(editor, 'focus');
       editor = new DateEditor(editorArguments);
@@ -192,6 +192,16 @@ describe('DateEditor', () => {
 
       expect(calendarElm).toBeTruthy();
       expect(spy).toHaveBeenCalled();
+    });
+
+    it('should call the "changeEditorOption" method and expect new option to be merged with the previous Editor options and also expect to call Flatpickr "set" method', () => {
+      editor = new DateEditor(editorArguments);
+      const spy = jest.spyOn(editor.flatInstance, 'set');
+      const calendarElm = document.body.querySelector<HTMLDivElement>('.flatpickr-calendar');
+      editor.changeEditorOption('minDate', 'today');
+
+      expect(calendarElm).toBeTruthy();
+      expect(spy).toHaveBeenCalledWith('minDate', 'today');
     });
 
     describe('isValueChanged method', () => {
