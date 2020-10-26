@@ -20,7 +20,7 @@ jobs:
           command: yarn run bundle
       - run:
           name: Run Jest tests with JUnit as reporter
-          command: ./node_modules/.bin/jest --config test/jest.config.js --ci --runInBand --collectCoverage=true --reporters=default --reporters=jest-junit
+          command: ./node_modules/.bin/jest --config test/jest.config.js --ci --runInBand --collectCoverage=true --reporters=jest-junit
           environment:
             JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
       - run:

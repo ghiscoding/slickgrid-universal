@@ -27,6 +27,19 @@ declare const Slick: SlickNamespace;
  * Slickgrid editor class for multiple/single select lists
  */
 export class SelectEditor implements Editor {
+  /** Locales */
+  protected _locales: Locale;
+
+  // flag to signal that the editor is destroying itself, helps prevent
+  // commit changes from being called twice and erroring
+  protected _destroying = false;
+
+  /** Collection Service */
+  protected _collectionService: CollectionService;
+
+  /** The translate library */
+  protected _translaterService: TranslaterService;
+
   /** The JQuery DOM element */
   $editorElm: any;
 
@@ -65,19 +78,6 @@ export class SelectEditor implements Editor {
 
   /** Do we translate the label? */
   enableTranslateLabel: boolean;
-
-  /** Locales */
-  protected _locales: Locale;
-
-  // flag to signal that the editor is destroying itself, helps prevent
-  // commit changes from being called twice and erroring
-  protected _destroying = false;
-
-  /** Collection Service */
-  protected _collectionService: CollectionService;
-
-  /** The translate library */
-  protected _translaterService: TranslaterService;
 
   /** SlickGrid Grid object */
   grid: SlickGrid;
@@ -350,7 +350,7 @@ export class SelectEditor implements Editor {
 
     if (fieldName !== undefined) {
       // when the provided user defined the column field type as a possible number then try parsing the state value as that
-      if (fieldType === FieldType.number || fieldType === FieldType.integer || fieldType === FieldType.boolean) {
+      if ((fieldType === FieldType.number || fieldType === FieldType.integer || fieldType === FieldType.boolean) && !isNaN(parseFloat(state))) {
         newValue = parseFloat(state);
       }
 
@@ -361,7 +361,7 @@ export class SelectEditor implements Editor {
       }
 
       // is the field a complex object, "user.address.streetNumber"
-      const isComplexObject = fieldName !== undefined && fieldName?.indexOf('.') > 0;
+      const isComplexObject = fieldName?.indexOf('.') > 0;
 
       // validate the value before applying it (if not valid we'll set an empty string)
       const validation = this.validate(null, newValue);
@@ -373,7 +373,7 @@ export class SelectEditor implements Editor {
         // else we use the path provided in the Field Column Definition
         const objectPath = this.columnEditor && this.columnEditor.complexObjectPath || fieldName || '';
         setDeepValue(item, objectPath, newValue);
-      } else if (fieldName !== undefined) {
+      } else {
         item[fieldName] = newValue;
       }
     }
@@ -450,6 +450,21 @@ export class SelectEditor implements Editor {
 
   serializeValue(): any | any[] {
     return (this.isMultipleSelect) ? this.currentValues : this.currentValue;
+  }
+
+  /**
+   * Dynamically change an Editor option, this is especially useful with Composite Editor
+   * since this is the only way to change option after the Editor is created (for example dynamically change "minDate" or another Editor)
+   * @param {string} optionName - MultipleSelect option name
+   * @param {newValue} newValue - MultipleSelect new option value
+   */
+  changeEditorOption(optionName: keyof MultipleSelectOption, newValue: any) {
+    if (!this.columnEditor.editorOptions) {
+      this.columnEditor.editorOptions = {};
+    }
+    this.columnEditor.editorOptions[optionName] = newValue;
+    this.editorElmOptions = { ...this.editorElmOptions, [optionName]: newValue };
+    this.$editorElm.multipleSelect('refreshOptions', this.editorElmOptions);
   }
 
   disable(isDisabled = true) {
