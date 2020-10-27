@@ -195,6 +195,21 @@ export class DateEditor implements Editor {
     }
   }
 
+  /**
+   * Dynamically change an Editor option, this is especially useful with Composite Editor
+   * since this is the only way to change option after the Editor is created (for example dynamically change "minDate" or another Editor)
+   * @param {string} optionName - Flatpickr option name
+   * @param {newValue} newValue - Flatpickr new option value
+   */
+  changeEditorOption(optionName: keyof FlatpickrOption, newValue: any) {
+    if (!this.columnEditor.editorOptions) {
+      this.columnEditor.editorOptions = {};
+    }
+    this.columnEditor.editorOptions[optionName] = newValue;
+    this._pickerMergedOptions = { ...this._pickerMergedOptions, [optionName]: newValue };
+    this.flatInstance.set(optionName, newValue);
+  }
+
   focus() {
     this._$input.focus();
     if (this._$inputWithData && typeof this._$inputWithData.focus === 'function') {

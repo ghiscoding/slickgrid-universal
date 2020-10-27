@@ -8,11 +8,11 @@ export interface PagingInfo {
   pageNum: number;
 
   /** Total count of rows in dataset */
-  totalRows?: number;
+  totalRows: number;
 
   /** Total pages count that pagination has */
-  totalPages?: number;
+  totalPages: number;
 
   /** DataView object */
-  dataView?: SlickDataView;
+  dataView: SlickDataView;
 }

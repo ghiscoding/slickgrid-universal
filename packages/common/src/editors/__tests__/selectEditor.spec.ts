@@ -299,6 +299,14 @@ describe('SelectEditor', () => {
         expect(editorListElm.length).toBe(3);
         expect(editor.isValueChanged()).toBe(true);
       });
+
+      it('should call the "changeEditorOption" method and expect new option to be merged with the previous Editor options and also expect to call MultipleSelect "refreshOptions" setter method', () => {
+        editor = new SelectEditor(editorArguments, true);
+        const multipleSelectSpy = jest.spyOn(editor.editorDomElement, 'multipleSelect');
+        editor.changeEditorOption('filter', true);
+
+        expect(multipleSelectSpy).toHaveBeenCalledWith('refreshOptions', { ...editor.editorElmOptions, filter: true });
+      });
     });
 
     describe('applyValue method', () => {

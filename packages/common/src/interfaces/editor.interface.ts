@@ -13,6 +13,16 @@ export interface Editor {
   init: (args?: EditorArguments) => void;
 
   /**
+   * Dynamically change an Editor option, this is especially useful when using a Composite Editor
+   * since this is the only way to change/update an option of the Editor after its creation
+   * (not all Editors support this feature, current only available with AutoComplete, Date, MultipleSelect & SingleSelect Editors).
+   * For example, a use case could be to dynamically change the "minDate" of another Date Editor in the Composite Editor form.
+   * @param {string} optionName - option name
+   * @param {newValue} newValue - new option value
+   */
+  changeEditorOption?: (optionName: string, newValue: any) => void;
+
+  /**
    * Disable the Editor input
    * @param {boolean} isDisabled - optionally specify if the editor is disabled or not.
    */

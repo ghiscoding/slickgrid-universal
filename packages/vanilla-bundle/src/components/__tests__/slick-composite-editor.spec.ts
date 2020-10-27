@@ -736,6 +736,27 @@ describe('CompositeEditorService', () => {
         expect(component.formValues).toEqual({ field3: '' });
       });
 
+      it('should make sure Slick-Composite-Editor is being created and then call "changeFormInputValue" on an invalid Editor of the Form would thrown an error', (done) => {
+        const mockEditor = {
+          changeEditorOption: jest.fn(),
+          disable: jest.fn(),
+          setValue: jest.fn(),
+        } as unknown as Editor;
+        const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+
+        component = new SlickCompositeEditorComponent(gridStub, gridServiceStub, gridStateServiceStub);
+        component.editors = { field3: mockEditor };
+        component.openDetails({ headerTitle: 'Details' });
+
+        try {
+          component.changeFormInputValue('field4', 'Field 4 different text');
+        } catch (e) {
+          expect(e.toString()).toContain(`Editor with column id "field4" not found`);
+          done();
+        }
+      });
+
       it('should make sure Slick-Composite-Editor is being created and then call "disableFormInput" to disable the field', () => {
         const mockEditor = { setValue: jest.fn(), disable: jest.fn(), } as unknown as Editor;
         const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
@@ -763,6 +784,56 @@ describe('CompositeEditorService', () => {
         expect(field3LabelElm.textContent).toBe('Group Name - Field 3'); // with column group
         expect(field1DetailContainerElm).toBeTruthy();
         expect(disableSpy).toHaveBeenCalledWith(true);
+      });
+
+      it('should make sure Slick-Composite-Editor is being created and then call "changeFormEditorOption" on a Editor of the Form and expect it to call the Editor "changeEditorOption" method', () => {
+        const mockEditor = {
+          changeEditorOption: jest.fn(),
+          disable: jest.fn(),
+          setValue: jest.fn(),
+        } as unknown as Editor;
+        const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+
+        component = new SlickCompositeEditorComponent(gridStub, gridServiceStub, gridStateServiceStub);
+        component.openDetails({ headerTitle: 'Details' });
+
+        const compositeContainerElm = document.querySelector<HTMLSelectElement>('div.slick-editor-modal.slickgrid_123456');
+        const compositeBodyElm = compositeContainerElm.querySelector<HTMLSelectElement>('.slick-editor-modal-body');
+        const field1DetailContainerElm = compositeBodyElm.querySelector<HTMLSelectElement>('.item-details-container.editor-field1.slick-col-medium-12');
+        const field3DetailContainerElm = compositeBodyElm.querySelector<HTMLSelectElement>('.item-details-container.editor-field3.slick-col-medium-12');
+
+        component.editors = { field3: mockEditor };
+        component.changeFormEditorOption('field3', 'minDate', 'today');
+
+        expect(component).toBeTruthy();
+        expect(component.constructor).toBeDefined();
+        expect(compositeContainerElm).toBeTruthy();
+
+        expect(field1DetailContainerElm).toBeTruthy();
+        expect(field3DetailContainerElm).toBeTruthy();
+        expect(mockEditor.changeEditorOption).toHaveBeenCalledWith('minDate', 'today');
+      });
+
+      it('should make sure Slick-Composite-Editor is being created and then call "changeFormEditorOption" on an invalid Editor of the Form would thrown an error', (done) => {
+        const mockEditor = {
+          changeEditorOption: jest.fn(),
+          disable: jest.fn(),
+          setValue: jest.fn(),
+        } as unknown as Editor;
+        const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+
+        component = new SlickCompositeEditorComponent(gridStub, gridServiceStub, gridStateServiceStub);
+        component.editors = { field3: mockEditor };
+        component.openDetails({ headerTitle: 'Details' });
+
+        try {
+          component.changeFormEditorOption('field4', 'minDate', 'today');
+        } catch (e) {
+          expect(e.toString()).toContain(`Editor with column id "field4" not found OR the Editor does not support "changeEditorOption"`);
+          done();
+        }
       });
 
       it('should make sure Slick-Composite-Editor is being created and then call "disableFormInput" by passing False as 2nd argument to enable the field', () => {

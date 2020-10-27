@@ -139,7 +139,8 @@ export class Example12 {
         formatter: Formatters.dollar,
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
+        id: 'percentComplete', name: '% Complete', field: 'percentComplete',
+        type: FieldType.number,
         sortable: true, filterable: true, columnGroup: 'Analysis',
         filter: { model: Filters.compoundSlider, operator: '>=' },
         // formatter: Formatters.collectionEditor,
@@ -147,7 +148,10 @@ export class Example12 {
           model: Editors.slider,
           // model: Editors.singleSelect,
           // enableRenderHtml: true,
-          // collection: Array.from(Array(101).keys()).map(k => ({ value: k, label: k, symbol: ' <i class="mdi mdi-check-circle color-primary"></i>' })),
+          // collection: Array.from(Array(101).keys()).map(k => ({ value: k, label: k, symbol: ' <i class="mdi mdi-calendar-check color-primary"></i>' })),
+          // collectionOptions: {
+          //   addCustomFirstEntry: { value: '', label: '--none--' }
+          // },
           // customStructure: {
           //   value: 'value',
           //   label: 'label',
@@ -410,6 +414,7 @@ export class Example12 {
 
       if (!(i % 8)) {
         delete tmpArray[i].finish; // also test with undefined properties
+        delete tmpArray[i].percentComplete; // also test with undefined properties
       }
     }
     return tmpArray;
@@ -487,7 +492,16 @@ export class Example12 {
       this.sgb.slickCompositeEditor.changeFormInputValue('completed', true);
       this.sgb.slickCompositeEditor.changeFormInputValue('finish', new Date());
       // this.sgb.slickCompositeEditor.changeFormInputValue('product', { id: 0, itemName: 'Sleek Metal Computer' });
+
     }
+
+    // you can also change any editor options (not all Editors supports this functionality, so far only these Editors AutoComplete, Date MultipleSelect & SingleSelect)
+    /*
+    if (columnDef.id === 'completed' && formValues.completed) {
+      this.sgb.slickCompositeEditor.changeFormEditorOption('percentComplete', 'filter', true);
+      this.sgb.slickCompositeEditor.changeFormEditorOption('product', 'minLength', 3);
+    }
+    */
   }
 
   handleOnSelectedRowsChanged(event) {
