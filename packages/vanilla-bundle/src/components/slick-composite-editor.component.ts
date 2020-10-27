@@ -106,6 +106,9 @@ export class SlickCompositeEditorComponent {
     const editor = this._editors?.[columnId] as Editor;
     let outputValue = newValue;
 
+    if (!editor) {
+      throw new Error(`Editor with column id "${columnId}" not found.`);
+    }
     if (editor && editor.setValue && Array.isArray(this._editorContainers)) {
       editor.setValue(newValue, true);
       const editorContainerElm = this._editorContainers.find((editorElm: HTMLElement) => editorElm.dataset.editorid === columnId);
@@ -131,6 +134,8 @@ export class SlickCompositeEditorComponent {
     // change an Editor option (not all Editors have that method, so make sure it exists before trying to call it)
     if (editor?.changeEditorOption) {
       editor.changeEditorOption(optionName, newOptionValue);
+    } else {
+      throw new Error(`Editor with column id "${columnId}" not found OR the Editor does not support "changeEditorOption" (current only available with AutoComplete, Date, MultipleSelect & SingleSelect Editors).`);
     }
   }
 
