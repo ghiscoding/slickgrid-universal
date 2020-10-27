@@ -138,7 +138,7 @@ export class GridStateService {
     const currentColumns: CurrentColumn[] = [];
 
     if (gridColumns && Array.isArray(gridColumns)) {
-      gridColumns.forEach((column: Column, index: number) => {
+      gridColumns.forEach((column: Column) => {
         if (column && column.id) {
           currentColumns.push({
             columnId: column.id as string,
@@ -163,7 +163,7 @@ export class GridStateService {
     const gridColumns: Column[] = grid.getColumns();
 
     if (currentColumns && Array.isArray(currentColumns)) {
-      currentColumns.forEach((currentColumn: CurrentColumn, index: number) => {
+      currentColumns.forEach((currentColumn: CurrentColumn) => {
         const gridColumn: Column | undefined = gridColumns.find((c: Column) => c.id === currentColumn.columnId);
         if (gridColumn && gridColumn.id) {
           columns.push({
@@ -382,7 +382,7 @@ export class GridStateService {
     const slickEvent = extension && extension.instance && extension.instance[eventName];
 
     if (slickEvent && typeof slickEvent.subscribe === 'function') {
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof slickEvent>>).subscribe(slickEvent, (e, args) => {
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof slickEvent>>).subscribe(slickEvent, (_e, args) => {
         const columns: Column[] = args && args.columns;
         const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(columns);
         this.pubSubService.publish('onGridStateChanged', { change: { newValues: currentColumns, type: GridStateType.columns }, gridState: this.getCurrentGridState() });
@@ -437,7 +437,7 @@ export class GridStateService {
       });
 
       const onSelectedRowsChangedHandler = this._grid.onSelectedRowsChanged;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSelectedRowsChangedHandler>>).subscribe(onSelectedRowsChangedHandler, (e, args) => {
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSelectedRowsChangedHandler>>).subscribe(onSelectedRowsChangedHandler, (_e, args) => {
         if (Array.isArray(args.rows) && Array.isArray(args.previousSelectedRows)) {
           const newSelectedRows = args.rows as number[];
           const prevSelectedRows = args.previousSelectedRows as number[];
