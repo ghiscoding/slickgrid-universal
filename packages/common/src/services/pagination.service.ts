@@ -1,12 +1,27 @@
 import * as isequal_ from 'lodash.isequal';
 const isequal = isequal_; // patch to fix rollup to work
 
-import { BackendServiceApi, CurrentPagination, Pagination, ServicePagination, SlickDataView, SlickEventData, SlickGrid, Subscription } from '../interfaces/index';
+import {
+  BackendServiceApi,
+  CurrentPagination,
+  GetSlickEventType,
+  Pagination,
+  ServicePagination,
+  SlickDataView,
+  SlickEventHandler,
+  SlickGrid,
+  SlickNamespace,
+  Subscription
+} from '../interfaces/index';
 import { executeBackendProcessesCallback, onBackendError } from './backend-utilities';
 import { SharedService } from './shared.service';
 import { PubSubService } from './pubSub.service';
 
+// using external non-typed js libraries
+declare const Slick: SlickNamespace;
+
 export class PaginationService {
+  private _eventHandler = new Slick.EventHandler();
   private _initialized = false;
   private _isLocalGrid = true;
   private _backendServiceApi: BackendServiceApi | undefined;
@@ -86,7 +101,8 @@ export class PaginationService {
     }
 
     if (this._isLocalGrid && this.dataView) {
-      this.dataView.onPagingInfoChanged.subscribe((_e: SlickEventData, pagingInfo: { totalRows: number; pageNum: number; }) => {
+      const onPagingInfoChangedHandler = this.dataView.onPagingInfoChanged;
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onPagingInfoChangedHandler>>).subscribe(onPagingInfoChangedHandler, (_e, pagingInfo) => {
         if (this._totalItems !== pagingInfo.totalRows) {
           this.updateTotalItems(pagingInfo.totalRows);
         }
@@ -118,6 +134,9 @@ export class PaginationService {
 
   dispose() {
     this._initialized = false;
+
+    // unsubscribe all SlickGrid events
+    this._eventHandler.unsubscribeAll();
 
     // also unsubscribe all Subscriptions
     this.pubSubService.unsubscribeAll(this._subscriptions);
@@ -347,9 +366,7 @@ export class PaginationService {
         this._dataTo = this._totalItems;
       }
     }
-    if (this._totalItems > 0 && this._pageNumber === 0) {
-      this._pageNumber = 1;
-    }
+    this._pageNumber = (this._totalItems > 0 && this._pageNumber === 0) ? 1 : this._pageNumber;
 
     // do a final check on the From/To and make sure they are not over or below min/max acceptable values
     if (this._dataTo > this._totalItems) {

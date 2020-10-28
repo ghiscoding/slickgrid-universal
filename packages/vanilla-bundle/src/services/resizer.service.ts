@@ -60,6 +60,7 @@ export class ResizerService {
   /** dispose (destroy) the 3rd party plugin */
   dispose() {
     this._addon?.destroy();
+    this._eventHandler?.unsubscribeAll();
   }
 
   init(grid: SlickGrid, gridParentContainerElm: HTMLElement) {
@@ -89,13 +90,13 @@ export class ResizerService {
     if (this.gridOptions.autoResize) {
       if (this._addon && this._addon.onGridAfterResize) {
         const onGridAfterResizeHandler = this._addon.onGridAfterResize;
-        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onGridAfterResizeHandler>>).subscribe(onGridAfterResizeHandler, (e, args) => {
+        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onGridAfterResizeHandler>>).subscribe(onGridAfterResizeHandler, (_e, args) => {
           this.eventPubSubService.publish('onGridAfterResize', args);
         });
       }
       if (this._addon && this._addon.onGridBeforeResize) {
         const onGridBeforeResizeHandler = this._addon.onGridBeforeResize;
-        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onGridBeforeResizeHandler>>).subscribe(onGridBeforeResizeHandler, (e, args) => {
+        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onGridBeforeResizeHandler>>).subscribe(onGridBeforeResizeHandler, (_e, args) => {
           this.eventPubSubService.publish('onGridBeforeResize', args);
         });
       }
@@ -103,9 +104,9 @@ export class ResizerService {
   }
 
   /**
-	 * Return the last resize dimensions used by the service
-	 * @return {object} last dimensions (height: number, width: number)
-	 */
+   * Return the last resize dimensions used by the service
+   * @return {object} last dimensions (height: number, width: number)
+   */
   getLastResizeDimensions(): GridSize {
     return this._addon?.getLastResizeDimensions();
   }

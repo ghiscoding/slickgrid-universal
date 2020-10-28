@@ -277,6 +277,14 @@ describe('AutoCompleteEditor', () => {
       expect(spy).toHaveBeenCalled();
     });
 
+    it('should call the "changeEditorOption" method and expect new option to be merged with the previous Editor options and also expect to call AutoComplete "option" setter method', () => {
+      editor = new AutoCompleteEditor(editorArguments);
+      const autoCompleteSpy = jest.spyOn(editor.editorDomElement, 'autocomplete');
+      editor.changeEditorOption('delay', 500);
+
+      expect(autoCompleteSpy).toHaveBeenCalledWith('option', 'delay', 500);
+    });
+
     describe('applyValue method', () => {
       it('should apply the value to the gender property when it passes validation', () => {
         mockColumn.internalColumnEditor.validator = null;

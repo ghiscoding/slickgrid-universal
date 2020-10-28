@@ -98,7 +98,7 @@ export class SlickCompositeEditorComponent {
   }
 
   /**
-   * Change input value of the Composite Editor form
+   * Dynamically change value of an input from the Composite Editor form
    * @param {String} columnId - column id
    * @param {*} newValue - the new value
    */
@@ -106,6 +106,9 @@ export class SlickCompositeEditorComponent {
     const editor = this._editors?.[columnId] as Editor;
     let outputValue = newValue;
 
+    if (!editor) {
+      throw new Error(`Editor with column id "${columnId}" not found.`);
+    }
     if (editor && editor.setValue && Array.isArray(this._editorContainers)) {
       editor.setValue(newValue, true);
       const editorContainerElm = this._editorContainers.find((editorElm: HTMLElement) => editorElm.dataset.editorid === columnId);
@@ -116,6 +119,23 @@ export class SlickCompositeEditorComponent {
         editorContainerElm?.classList?.remove('modified');
       }
       this._formValues = { ...this._formValues, [columnId]: outputValue };
+    }
+  }
+
+  /**
+   * Dynamically change an Editor option of the Composite Editor form
+   * For example, a use case could be to dynamically change the "minDate" of another Date Editor in the Composite Editor form.
+   * @param {String} columnId - column id
+   * @param {*} newValue - the new value
+   */
+  changeFormEditorOption(columnId: string, optionName: string, newOptionValue: any) {
+    const editor = this._editors?.[columnId] as Editor;
+
+    // change an Editor option (not all Editors have that method, so make sure it exists before trying to call it)
+    if (editor?.changeEditorOption) {
+      editor.changeEditorOption(optionName, newOptionValue);
+    } else {
+      throw new Error(`Editor with column id "${columnId}" not found OR the Editor does not support "changeEditorOption" (current only available with AutoComplete, Date, MultipleSelect & SingleSelect Editors).`);
     }
   }
 

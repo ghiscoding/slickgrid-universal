@@ -6,8 +6,8 @@ export const SalesforceGlobalGridOptions: GridOption = {
   autoCommitEdit: true,
   compositeEditorOptions: {
     labels: {
-      massSelectionButton: 'Apply & Save',
-      massUpdateButton: 'Apply & Save'
+      massSelectionButton: 'Apply to Selected & Save',
+      massUpdateButton: 'Apply to All & Save'
     }
   },
   datasetIdPropertyName: 'Id',

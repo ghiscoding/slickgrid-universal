@@ -157,6 +157,21 @@ export class AutoCompleteEditor implements Editor {
     this._$editorElm.off('keydown.nav').remove();
   }
 
+  /**
+   * Dynamically change an Editor option, this is especially useful with Composite Editor
+   * since this is the only way to change option after the Editor is created (for example dynamically change "minDate" or another Editor)
+   * @param {string} optionName - MultipleSelect option name
+   * @param {newValue} newValue - MultipleSelect new option value
+   */
+  changeEditorOption(optionName: keyof AutocompleteOption, newValue: any) {
+    if (!this.columnEditor.editorOptions) {
+      this.columnEditor.editorOptions = {};
+    }
+    this.columnEditor.editorOptions[optionName] = newValue;
+    this._autoCompleteOptions = { ...this._autoCompleteOptions, [optionName]: newValue };
+    this._$editorElm.autocomplete('option', optionName, newValue);
+  }
+
   disable(isDisabled = true) {
     const prevIsDisabled = this.disabled;
     this.disabled = isDisabled;

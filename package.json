@@ -22,7 +22,7 @@
     "new-version": "lerna version --conventional-commits",
     "publish": "lerna publish",
     "serve:demo": "http-server ./docs -p 8888 -a localhost",
-    "test": "npx jest --runInBand --coverage --config ./test/jest.config.js",
+    "test": "npx jest --runInBand --coverage=true --config ./test/jest.config.js",
     "test:watch": "npx jest --watch --config ./test/jest.config.js"
   },
   "workspaces": {
