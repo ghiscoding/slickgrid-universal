@@ -333,7 +333,7 @@ export class FilterService {
     let columnDef = grid.getColumns()[columnIndex] as Column;
     const dataView = grid.getData() as SlickDataView;
 
-    // it might be a hidden column, if so it won't be part of the getColumns (because it we hide a column via setColumns)
+    // it might be a hidden column, if so it won't be part of the getColumns (because it could be hidden via setColumns())
     // when that happens we can try to get the column definition from all defined columns
     if (!columnDef && this.sharedService && Array.isArray(this.sharedService.allColumns)) {
       columnIndex = this.sharedService.allColumns.findIndex((col) => col.field === columnId);
