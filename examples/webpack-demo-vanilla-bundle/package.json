@@ -7,8 +7,8 @@
     "src": "src"
   },
   "scripts": {
-    "build:demo": "webpack --env.production --extractCss",
-    "dev:watch": "webpack-dev-server --env.server --extractCss",
+    "build:demo": "webpack --env.production",
+    "dev:watch": "webpack-dev-server --env.server",
     "test": "echo testing slickgrid-universal demo code"
   },
   "author": "Ghislain B.",

@@ -4,9 +4,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const ensureArray = (config) => config && (Array.isArray(config) ? config : [config]) || [];
-const when = (condition, config, negativeConfig) =>
-  condition ? ensureArray(config) : ensureArray(negativeConfig);
 const path = require('path');
 
 // primary config:
@@ -15,7 +12,6 @@ const baseUrl = '';
 const outDirLocal = path.resolve(__dirname, 'dist');
 const outDirProd = path.resolve(__dirname, '../../docs');
 const srcDir = path.resolve(__dirname, 'src');
-const nodeModulesDir = path.resolve(__dirname, 'node_modules');
 const platform = {
   hmr: false,
   open: true,
@@ -24,7 +20,7 @@ const platform = {
   output: 'dist'
 };
 
-module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, host } = {}) => ({
+module.exports = ({ production } = {}, { hmr, port, host } = {}) => ({
   mode: production ? 'production' : 'development',
   entry: {
     app: [`${srcDir}/main.ts`],
@@ -51,7 +47,7 @@ module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, 
       {
         test: /\.css$/i,
         issuer: [{ not: [{ test: /\.html$/i }] }],
-        use: extractCss ? [{ loader: MiniCssExtractPlugin.loader }, 'css-loader'] : ['style-loader', ...{ loader: 'css-loader' }]
+        use: [{ loader: MiniCssExtractPlugin.loader }, 'css-loader']
       },
       { test: /\.(sass|scss)$/, use: ['style-loader', 'css-loader', 'sass-loader'], issuer: /\.[tj]s$/i },
       { test: /\.(sass|scss)$/, use: ['css-loader', 'sass-loader'], issuer: /\.html?$/i },
@@ -93,10 +89,10 @@ module.exports = ({ production } = {}, { extractCss, analyze, tests, hmr, port, 
         { from: 'assets', to: 'assets' }
       ]
     }),
-    ...when(extractCss, new MiniCssExtractPlugin({ // updated to match the naming conventions for the js files
+    new MiniCssExtractPlugin({ // updated to match the naming conventions for the js files
       filename: production ? '[name].[contenthash].bundle.css' : '[name].[hash].bundle.css',
       chunkFilename: production ? '[name].[contenthash].chunk.css' : '[name].[hash].chunk.css'
-    })),
+    }),
     // Note that the usage of following plugin cleans the webpack output directory before build.
     new CleanWebpackPlugin(),
     new ForkTsCheckerWebpackPlugin()

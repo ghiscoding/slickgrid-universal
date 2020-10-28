@@ -16,7 +16,7 @@ import {
   formatNumber,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, SlickCompositeEditorComponent, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
@@ -74,6 +74,7 @@ const customEditableInputFormatter = (_row, _cell, value, columnDef, dataContext
 };
 
 export class Example12 {
+  compositeEditorInstance: SlickCompositeEditorComponent;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[] = [];
@@ -146,7 +147,7 @@ export class Example12 {
         // formatter: Formatters.collectionEditor,
         editor: {
           model: Editors.slider,
-          // model: Editors.singleSelect,
+          // model: Editors.multipleSelect,
           // enableRenderHtml: true,
           // collection: Array.from(Array(101).keys()).map(k => ({ value: k, label: k, symbol: ' <i class="mdi mdi-calendar-check color-primary"></i>' })),
           // collectionOptions: {
@@ -489,17 +490,17 @@ export class Example12 {
 
     // you can change any other form input values when certain conditions are met
     if (columnDef.id === 'percentComplete' && formValues.percentComplete === 100) {
-      this.sgb.slickCompositeEditor.changeFormInputValue('completed', true);
-      this.sgb.slickCompositeEditor.changeFormInputValue('finish', new Date());
-      // this.sgb.slickCompositeEditor.changeFormInputValue('product', { id: 0, itemName: 'Sleek Metal Computer' });
+      this.compositeEditorInstance.changeFormInputValue('completed', true);
+      this.compositeEditorInstance.changeFormInputValue('finish', new Date());
+      // this.compositeEditorInstance.changeFormInputValue('product', { id: 0, itemName: 'Sleek Metal Computer' });
 
     }
 
-    // you can also change any editor options (not all Editors supports this functionality, so far only these Editors AutoComplete, Date MultipleSelect & SingleSelect)
+    // you can also change some editor options (not all Editors supports this functionality, so far only these Editors AutoComplete, Date MultipleSelect & SingleSelect)
     /*
-    if (columnDef.id === 'completed' && formValues.completed) {
-      this.sgb.slickCompositeEditor.changeFormEditorOption('percentComplete', 'filter', true);
-      this.sgb.slickCompositeEditor.changeFormEditorOption('product', 'minLength', 3);
+    if (columnDef.id === 'completed') {
+      this.compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', formValues.completed);
+      this.compositeEditorInstance.changeFormEditorOption('product', 'minLength', 3);
     }
     */
   }
@@ -824,26 +825,28 @@ export class Example12 {
         break;
     }
 
-    setTimeout(() => this.sgb.slickCompositeEditor?.openDetails({
-      headerTitle: modalTitle,
-      modalType,
-      // showCloseButtonOutside: true,
-      // backdrop: null,
-      // viewColumnLayout: 2, // choose from 'auto', 1, 2, or 3 (defaults to 'auto')
-      onClose: () => Promise.resolve(confirm('You have unsaved changes, are you sure you want to close this window?')),
-      onError: (error) => alert(error.message),
-      onSave: (formValues, selection, applyChangesCallback) => {
-        return new Promise((resolve, reject) => {
-          setTimeout(() => {
-            if (formValues.percentComplete > 50) {
-              applyChangesCallback(formValues, selection);
-              resolve(true);
-            } else {
-              reject('Unfortunately we only accept a minimum of 50% Completion...');
-            }
-          }, 250);
-        });
-      }
-    }), openDelay);
+    setTimeout(() => {
+      this.compositeEditorInstance = this.sgb.slickCompositeEditor?.openDetails({
+        headerTitle: modalTitle,
+        modalType,
+        // showCloseButtonOutside: true,
+        // backdrop: null,
+        // viewColumnLayout: 2, // choose from 'auto', 1, 2, or 3 (defaults to 'auto')
+        onClose: () => Promise.resolve(confirm('You have unsaved changes, are you sure you want to close this window?')),
+        onError: (error) => alert(error.message),
+        onSave: (formValues, selection, applyChangesCallback) => {
+          return new Promise((resolve, reject) => {
+            setTimeout(() => {
+              if (formValues.percentComplete > 50) {
+                applyChangesCallback(formValues, selection);
+                resolve(true);
+              } else {
+                reject('Unfortunately we only accept a minimum of 50% Completion...');
+              }
+            }, 250);
+          });
+        }
+      });
+    }, openDelay);
   }
 }
