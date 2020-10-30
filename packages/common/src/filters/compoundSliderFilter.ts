@@ -36,6 +36,11 @@ export class CompoundSliderFilter implements Filter {
 
   constructor(private translaterService: TranslaterService) { }
 
+  /** Getter for the Filter Operator */
+  get columnFilter(): ColumnFilter {
+    return this.columnDef && this.columnDef.filter || {};
+  }
+
   /** Getter to know what would be the default operator when none is specified */
   get defaultOperator(): OperatorType | OperatorString {
     return OperatorType.empty;
@@ -63,7 +68,7 @@ export class CompoundSliderFilter implements Filter {
 
   /** Getter for the Filter Operator */
   get operator(): OperatorType | OperatorString {
-    return this._operator || this.defaultOperator;
+    return this._operator || this.columnFilter.operator || this.defaultOperator;
   }
 
   /** Setter for the Filter Operator */
@@ -143,8 +148,8 @@ export class CompoundSliderFilter implements Filter {
    * destroy the filter
    */
   destroy() {
-    if (this.$filterElm) {
-      this.$filterElm.off('input change').remove();
+    if (this.$filterInputElm) {
+      this.$filterInputElm.off('input change').remove();
     }
   }
 

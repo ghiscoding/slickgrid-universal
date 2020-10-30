@@ -18,6 +18,7 @@ describe('Testing library entry point', () => {
     expect(typeof entry.Slicker.GroupTotalFormatters).toBe('object');
     expect(typeof entry.Slicker.SortComparers).toBe('object');
     expect(typeof entry.Slicker.Utilities).toBe('object');
+    expect(typeof entry.SlickCompositeEditorComponent).toBe('function');
     expect(typeof entry.SlickVanillaGridBundle).toBe('function');
     expect(typeof entry.Aggregators).toBe('object');
     expect(typeof entry.Editors).toBe('object');

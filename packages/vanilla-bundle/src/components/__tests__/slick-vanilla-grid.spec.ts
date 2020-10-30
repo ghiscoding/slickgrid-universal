@@ -336,6 +336,14 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     expect(component.isGridInitialized).toBeTruthy();
   });
 
+  it('should load jQuery mousewheel when using a frozen grid', () => {
+    const loadSpy = jest.spyOn(component, 'loadJqueryMousewheelDynamically');
+    component.gridOptions.frozenRow = 3;
+    component.initialization(divContainer, slickEventHandler);
+
+    expect(loadSpy).toHaveBeenCalled();
+  });
+
   it('should create a grid and expect multiple Event Aggregator being called', () => {
     const pubSubSpy = jest.spyOn(eventPubSubService, 'publish');
 

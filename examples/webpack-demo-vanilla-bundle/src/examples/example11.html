@@ -3,30 +3,56 @@
   <span class="subtitle has-text-grey-dark">(with Salesforce Theme)</span>
 </h3>
 
-<section>
-  <div class="row">
-    <button class="button is-small" onclick.delegate="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
-      <span class="icon mdi mdi-table-edit"></span>
-      <span>Toggle Edit/Readonly Grid</span>
-    </button>
-    <button class="button is-small" onclick.delegate="undoLastEdit()" data-test="undo-last-edit-btn">
-      <span class="icon mdi mdi-undo"></span>
-      <span>Undo Last Edit</span>
-    </button>
-    <button class="button is-small" onclick.delegate="undoLastEdit(true)" data-test="undo-open-editor-btn">
-      <span class="icon mdi mdi-undo"></span>
-      <span>Undo Last Edit &amp; Open Editor</span>
-    </button>
-    <button class="button is-small" onclick.delegate="undoAllEdits()" data-test="undo-all-edits-btn">
-      <span class="icon mdi mdi-history"></span>
-      <span>Undo All Edits</span>
-    </button>
-    <button class="button is-small is-info" onclick.delegate="saveAll()" data-test="save-all-btn"
-            title="Check your console log for the result">
-      <span>Save All</span>
-    </button>
-  </div>
-</section>
+<div class="columns is-desktop">
+  <section class="column field has-addons is-narrow">
+    <div class="row">
+      <button class="button is-small" onclick.delegate="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
+        <span class="icon mdi mdi-table-edit"></span>
+        <span>Toggle Edit/Readonly Grid</span>
+      </button>
+      <button class="button is-small" onclick.delegate="undoLastEdit()" data-test="undo-last-edit-btn">
+        <span class="icon mdi mdi-undo"></span>
+        <span>Undo Last Edit</span>
+      </button>
+      <button class="button is-small" onclick.delegate="undoLastEdit(true)" data-test="undo-open-editor-btn">
+        <span class="icon mdi mdi-undo"></span>
+        <span>Undo Last Edit &amp; Open Editor</span>
+      </button>
+      <button class="button is-small" onclick.delegate="undoAllEdits()" data-test="undo-all-edits-btn">
+        <span class="icon mdi mdi-history"></span>
+        <span>Undo All Edits</span>
+      </button>
+      <button class="button is-small is-info" onclick.delegate="saveAll()" data-test="save-all-btn"
+              title="Check your console log for the result">
+        <span>Save All</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="column field has-addons is-narrow">
+    <div class="row">
+      <label for="selectedFilter">Preset Filters: </label>
+      <select class="select is-small selected-filter" style="margin-left: 5px" id="selectedFilter"
+              name="selectedFilter"
+              onchange.delegate="usePredefinedFilter(event.target.value)">
+      </select>
+      <span class="buttons has-addons" style="display: inline-flex">
+        <button class="button is-small" onclick.delegate="saveFilter()" data-test="save-filter-btn"
+                disabled.bind="isSaveFilterDisabled">
+          <span class="icon mdi mdi-plus"></span>
+          <span>Save Filter</span>
+        </button>
+        <button class="button is-small" onclick.delegate="deleteFilter()" data-test="delete-filter-btn"
+                disabled.bind="isDeleteFilterDisabled">
+          <span class="icon mdi mdi-close"></span>
+          <span>Delete Filter</span>
+        </button>
+      </span>
+    </div>
+  </section>
+
+</div>
+
 
 <div class="modal-container">
 </div>
