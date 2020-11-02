@@ -92,7 +92,7 @@ export class SlickPaginationComponent {
   get pageNumber(): number {
     return this.paginationService.pageNumber;
   }
-  set pageNumber(page: number) {
+  set pageNumber(_page: number) {
     // the setter has to be declared but we won't use it, instead we will use the "changeToCurrentPage()" to only update the value after ENTER keydown event
   }
 

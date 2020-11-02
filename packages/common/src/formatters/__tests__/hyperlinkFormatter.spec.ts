@@ -98,7 +98,7 @@ describe('the Hyperlink Formatter', () => {
 
     const result1 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl1, hyperlinkText: linkText1 } } as Column, {});
     const result2 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl2, hyperlinkText: linkText2 } } as Column, {});
-    const result3 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl3, hyperlinkText: linkText3 } } as Column, {}); 3
+    const result3 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl3, hyperlinkText: linkText3 } } as Column, {});
 
     expect(result1).toBe(`<a href="${hyperlinkUrl1}">${linkText1}</a>`);
     expect(result2).toBe(`<a href="${hyperlinkUrl2}">${linkText2}</a>`);

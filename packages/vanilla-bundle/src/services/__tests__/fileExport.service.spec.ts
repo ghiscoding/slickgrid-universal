@@ -1,4 +1,4 @@
-import { GridOption, SharedService, SlickGrid, SlickDataView, ExportOption, DelimiterType, FileType, PubSubService } from '@slickgrid-universal/common';
+import { GridOption, SharedService, SlickGrid, SlickDataView, PubSubService } from '@slickgrid-universal/common';
 import { FileExportService } from '../fileExport.service';
 
 const mockGridOptions = { enableTranslate: false } as GridOption;

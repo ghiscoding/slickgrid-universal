@@ -1,4 +1,4 @@
-import { Grouping, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { DraggableGroupingExtension } from '../draggableGroupingExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
@@ -32,7 +32,7 @@ describe('draggableGroupingExtension', () => {
       dropPlaceHolderText: 'test',
       groupIconCssClass: 'group-class',
       onExtensionRegistered: jest.fn(),
-      onGroupChanged: (e: Event, args: { caller?: string; groupColumns: Grouping[] }) => { },
+      onGroupChanged: () => { },
     }
   } as GridOption;
 

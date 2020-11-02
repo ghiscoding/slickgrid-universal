@@ -1,6 +1,6 @@
 import { Column, Formatter } from './../interfaces/index';
 
-export const complexObjectFormatter: Formatter = (row: number, cell: number, cellValue: any, columnDef: Column, dataContext: any) => {
+export const complexObjectFormatter: Formatter = (_row: number, _cell: number, cellValue: any, columnDef: Column, dataContext: any) => {
   if (!columnDef) {
     return '';
   }

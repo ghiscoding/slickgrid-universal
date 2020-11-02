@@ -1,5 +1,5 @@
-import { Column, Formatter } from './../interfaces/index';
+import { Formatter } from './../interfaces/index';
 
-export const italicFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any) => {
+export const italicFormatter: Formatter = (_row: number, _cell: number, value: any) => {
   return value ? `<i>${value}</i>` : '';
 };

@@ -44,13 +44,11 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 describe('GridOdataService', () => {
-  let mockColumns: Column[];
   let service: GridOdataService;
   let paginationOptions: Pagination;
   let serviceOptions: OdataOption;
 
   beforeEach(() => {
-    mockColumns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
     service = new GridOdataService();
     serviceOptions = {
       orderBy: '',

@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "andys8.jest-snippets",
+    "editorconfig.editorconfig",
+    "msjsdiag.debugger-for-chrome",
+    "dbaeumer.vscode-eslint"
+  ]
+}

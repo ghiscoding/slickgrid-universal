@@ -18,7 +18,7 @@
     "build:watch": "cross-env tsc --incremental --watch",
     "dev": "run-s build sass:build sass:copy",
     "dev:watch": "run-p build:watch",
-    "bundle": "npm-run-all bundle:commonjs bundle:es2015 bundle:es2020",
+    "bundle": "run-p bundle:commonjs bundle:es2015 bundle:es2020",
     "bundle:commonjs": "tsc --project tsconfig.build.json --outDir dist/commonjs --module commonjs",
     "bundle:es2015": "cross-env tsc --project tsconfig.build.json --outDir dist/es2015 --module es2020 --target es2015",
     "bundle:es2020": "cross-env tsc --project tsconfig.build.json --outDir dist/es2020 --module es2015 --target es2020",

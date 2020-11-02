@@ -480,11 +480,9 @@ describe('SortService', () => {
   });
 
   describe('getCurrentColumnSorts method', () => {
-    let mockSortedCol: ColumnSort;
     const mockColumns = [{ id: 'firstName', field: 'firstName' }, { id: 'lastName', field: 'lastName' }] as Column[];
 
     beforeEach(() => {
-      mockSortedCol = { columnId: 'lastName', sortCol: { id: 'lastName', field: 'lastName', width: 100 }, sortAsc: true };
       gridStub.getColumns = jest.fn();
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     });

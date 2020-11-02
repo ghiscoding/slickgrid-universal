@@ -38,7 +38,7 @@ describe('columnPickerExtension', () => {
       hideForceFitButton: false,
       hideSyncResizeButton: true,
       onExtensionRegistered: jest.fn(),
-      onColumnsChanged: (e, args: { columns: Column[] }) => { }
+      onColumnsChanged: () => { }
     },
   } as GridOption;
 

@@ -17,7 +17,6 @@ import {
 
 import { GraphqlServiceApi, GraphqlServiceOption, } from '../../interfaces/index';
 import { GraphqlService } from './../graphql.service';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const DEFAULT_ITEMS_PER_PAGE = 25;
 const DEFAULT_PAGE_SIZE = 20;
@@ -54,12 +53,10 @@ describe('GraphqlService', () => {
   let service: GraphqlService;
   let paginationOptions: Pagination;
   let serviceOptions: GraphqlServiceOption;
-  let translateService: TranslateServiceStub;
 
   beforeEach(() => {
     mockColumns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
     service = new GraphqlService();
-    translateService = new TranslateServiceStub();
     serviceOptions = {
       datasetName: 'users'
     };

@@ -2,13 +2,12 @@ import { Column, GridOption, SlickGrid } from '../../interfaces/index';
 import { decimalFormatter } from '../decimalFormatter';
 
 describe('the Decimal Formatter', () => {
-  let consoleSpy;
   const gridStub = {
     getOptions: jest.fn()
   } as unknown as SlickGrid;
 
   beforeEach(() => {
-    consoleSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
+    jest.spyOn(global.console, 'warn').mockReturnValue();
   });
 
   it('should display an empty string when no value is provided', () => {
