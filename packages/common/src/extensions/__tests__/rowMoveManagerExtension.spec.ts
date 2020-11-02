@@ -44,8 +44,8 @@ describe('rowMoveManagerExtension', () => {
       singleRowMove: true,
       disableRowSelection: true,
       onExtensionRegistered: jest.fn(),
-      onBeforeMoveRows: (e, args: { insertBefore: number; rows: number[]; }) => { },
-      onMoveRows: (e, args: { insertBefore: number; rows: number[]; }) => { },
+      onBeforeMoveRows: () => { },
+      onMoveRows: () => { },
     },
   } as GridOption;
 
@@ -112,7 +112,7 @@ describe('rowMoveManagerExtension', () => {
       columnsMock = [{
         id: '_move', name: '', field: 'move', width: 40,
         behavior: 'selectAndMove', selectable: false, resizable: false, cssClass: '',
-        formatter: (row, cell, value, columnDef, dataContext, grid) => ({ addClasses: 'cell-reorder dnd' })
+        formatter: () => ({ addClasses: 'cell-reorder dnd' })
       }, ...columnsMock] as Column[];
       const instance = extension.loadAddonWhenNotExists(columnsMock, gridOptionsMock);
       const spy = jest.spyOn(instance, 'getColumnDefinition').mockReturnValue({ id: '_move', field: 'move' });
@@ -213,7 +213,7 @@ describe('rowMoveManagerExtension', () => {
       const addonOptions = { ...gridOptionsMock, rowMoveManager: optionMock };
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(addonOptions);
 
-      const instance = extension.create(columnsMock, gridOptionsMock);
+      extension.create(columnsMock, gridOptionsMock);
       extension.register();
 
       expect(mockAddon).toHaveBeenCalledWith(gridOptionsMock.rowMoveManager);

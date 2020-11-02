@@ -32,9 +32,9 @@ const pubSubServiceStub = {
 // URL object is not supported in JSDOM, we can simply mock it
 (global as any).URL.createObjectURL = jest.fn();
 
-const myBoldHtmlFormatter: Formatter = (row, cell, value) => value !== null ? { text: `<b>${value}</b>` } : null;
-const myUppercaseFormatter: Formatter = (row, cell, value) => value ? { text: value.toUpperCase() } : null;
-const myCustomObjectFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any) => {
+const myBoldHtmlFormatter: Formatter = (_row, _cell, value) => value !== null ? { text: `<b>${value}</b>` } : null;
+const myUppercaseFormatter: Formatter = (_row, _cell, value) => value ? { text: value.toUpperCase() } : null;
+const myCustomObjectFormatter: Formatter = (_row: number, _cell: number, value: any, _columnDef: Column, dataContext: any) => {
   let textValue = value && value.hasOwnProperty('text') ? value.text : value;
   const toolTip = value && value.hasOwnProperty('toolTip') ? value.toolTip : '';
   const cssClasses = value && value.hasOwnProperty('addClasses') ? [value.addClasses] : [''];
@@ -817,7 +817,6 @@ describe('ExportService', () => {
     describe('with Multiple Columns Grouping (by Order then by LastName) and Translation', () => {
       let mockCollection: any[];
       let mockOrderGrouping;
-      let mockLastNameGrouping;
       let mockItem1;
       let mockItem2;
       let mockGroup1;
@@ -854,22 +853,6 @@ describe('ExportService', () => {
           displayTotalsRow: true,
           formatter: (g) => `Order:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
           getter: 'order',
-          getterIsAFn: false,
-          lazyTotalsCalculation: true,
-          predefinedValues: [],
-        };
-
-        mockLastNameGrouping = {
-          aggregateChildGroups: false,
-          aggregateCollapsed: false,
-          aggregateEmpty: false,
-          aggregators: [{ _count: 1, _field: 'lastName', _nonNullCount: 2, _sum: 4, }],
-          collapsed: false,
-          comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
-          compiledAccumulators: [jest.fn(), jest.fn()],
-          displayTotalsRow: true,
-          formatter: (g) => `Last Name:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
-          getter: 'lastName',
           getterIsAFn: false,
           lazyTotalsCalculation: true,
           predefinedValues: [],

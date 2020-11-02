@@ -282,7 +282,7 @@ export class GraphqlService implements BackendService {
   /*
    * FILTERING
    */
-  processOnFilterChanged(event: Event, args: FilterChangedArgs): string {
+  processOnFilterChanged(_event: Event, args: FilterChangedArgs): string {
     const gridOptions: GridOption = this._gridOptions;
     const backendApi = gridOptions.backendServiceApi;
 
@@ -332,7 +332,7 @@ export class GraphqlService implements BackendService {
    *     }
    *   }
    */
-  processOnPaginationChanged(event: Event, args: PaginationChangedArgs): string {
+  processOnPaginationChanged(_event: Event, args: PaginationChangedArgs): string {
     const pageSize = +(args.pageSize || ((this.pagination) ? this.pagination.pageSize : DEFAULT_PAGE_SIZE));
     this.updatePagination(args.newPage, pageSize);
 
@@ -353,7 +353,7 @@ export class GraphqlService implements BackendService {
    *    }
    *  }
    */
-  processOnSortChanged(event: Event, args: SingleColumnSort | MultiColumnSort): string {
+  processOnSortChanged(_event: Event, args: SingleColumnSort | MultiColumnSort): string {
     const sortColumns = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ columnId: (args as ColumnSort).sortCol.id, sortCol: (args as ColumnSort).sortCol, sortAsc: (args as ColumnSort).sortAsc });
 
     // loop through all columns to inspect sorters & set the query
@@ -576,7 +576,7 @@ export class GraphqlService implements BackendService {
     // example with (field: & direction:):  /field:s?(".*?")|direction:s?(".*?")/
     const reg = new RegExp(patternRegex, 'g');
 
-    return inputStr.replace(reg, (group1, group2, group3) => {
+    return inputStr.replace(reg, group1 => {
       // remove double quotes except when the string starts with a "field:"
       let removeDoubleQuotes = true;
       if (group1.startsWith('field:') && keepArgumentFieldDoubleQuotes) {

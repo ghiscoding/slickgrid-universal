@@ -607,9 +607,7 @@ describe('ExtensionService', () => {
       });
 
       it('should re-register the Column Picker when enable and method is called with new column definition collection provided as argument', () => {
-        const instanceMock = { onColumnsChanged: jest.fn() };
         const extensionMock = { name: ExtensionName.columnPicker, addon: null, instance: null, class: null } as ExtensionModel<any, any>;
-        const expectedExtension = { name: ExtensionName.columnPicker, instance: instanceMock as unknown, class: null } as ExtensionModel<any, any>;
         const gridOptionsMock = { enableColumnPicker: true } as GridOption;
         const columnsMock = [
           { id: 'field1', field: 'field1', nameKey: 'HELLO' },
@@ -617,7 +615,7 @@ describe('ExtensionService', () => {
         ] as Column[];
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
         jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-        const spyGetExt = jest.spyOn(service, 'getExtensionByName').mockReturnValue(extensionMock);
+        jest.spyOn(service, 'getExtensionByName').mockReturnValue(extensionMock);
         const spyCpDispose = jest.spyOn(extensionColumnPickerStub, 'dispose');
         const spyCpRegister = jest.spyOn(extensionColumnPickerStub, 'register');
         const spyAllCols = jest.spyOn(SharedService.prototype, 'allColumns', 'set');

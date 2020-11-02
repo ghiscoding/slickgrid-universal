@@ -1,6 +1,6 @@
 import { Column, Formatter } from './../interfaces/index';
 
-export const iconFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any) => {
+export const iconFormatter: Formatter = (_row: number, _cell: number, _value: any, columnDef: Column) => {
   const columnParams = columnDef && columnDef.params || {};
   const icon = columnParams.icon || columnParams.formatterIcon;
 

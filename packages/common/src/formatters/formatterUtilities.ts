@@ -26,7 +26,7 @@ export function getValueFromParamsOrFormatterOptions(optionName: string, columnD
 export function getAssociatedDateFormatter(fieldType: typeof FieldType[keyof typeof FieldType], defaultSeparator: string): Formatter {
   const defaultDateFormat = mapMomentDateFormatWithFieldType(fieldType);
 
-  return (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGrid) => {
+  return (_row: number, _cell: number, value: any, columnDef: Column, _dataContext: any, grid: SlickGrid) => {
     const gridOptions = ((grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {}) as GridOption;
     const customSeparator = gridOptions?.formatterOptions?.dateSeparator ?? defaultSeparator;
     const isParsingAsUtc = columnDef?.params?.parseDateAsUtc ?? false;

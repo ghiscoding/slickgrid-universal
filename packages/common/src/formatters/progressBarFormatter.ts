@@ -1,6 +1,6 @@
-import { Column, Formatter } from './../interfaces/index';
+import { Formatter } from './../interfaces/index';
 
-export const progressBarFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any): string => {
+export const progressBarFormatter: Formatter = (_row: number, _cell: number, value: any): string => {
   const isNumber = (value === null || value === undefined || value === '') ? false : !isNaN(+value);
   if (!isNumber) {
     return '';

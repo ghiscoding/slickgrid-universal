@@ -38,7 +38,7 @@ describe('headerButtonExtension', () => {
     command: 'toggle-highlight',
     grid: gridStub
   } as HeaderButtonOnCommandArgs;
-  const mockEventCallback = (e, args: HeaderButtonOnCommandArgs) => { };
+  const mockEventCallback = () => { };
   const gridOptionsMock = {
     enableHeaderButton: true,
     headerButton: {

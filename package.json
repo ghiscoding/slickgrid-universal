@@ -11,7 +11,7 @@
     "bundle:with-tests": "npm run test",
     "build": "lerna run build --stream",
     "build:demo": "lerna run build:demo --stream",
-    "rebuild": "run-s clean build",
+    "rebuild": "run-s clean lint build",
     "clean": "rimraf --maxBusyTries=10 packages/*/dist dist",
     "cypress": "cypress open --config-file test/cypress.json",
     "cypress:ci": "cypress run --config-file test/cypress.json --reporter mochawesome",
@@ -22,6 +22,7 @@
     "new-version": "lerna version --conventional-commits",
     "publish": "lerna publish",
     "serve:demo": "http-server ./docs -p 8888 -a localhost",
+    "lint": "eslint packages/** --ext .ts",
     "test": "npx jest --runInBand --coverage=true --config ./test/jest.config.js",
     "test:watch": "npx jest --watch --config ./test/jest.config.js"
   },

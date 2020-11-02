@@ -9,5 +9,9 @@
       "dom"
     ],
     "resolveJsonModule": true
-  }
+  },
+  "exclude": [
+    "dist/**/*.*",
+    "**/*.scss"
+  ]
 }

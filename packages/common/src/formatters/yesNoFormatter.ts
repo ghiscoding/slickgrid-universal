@@ -1,4 +1,4 @@
-import { Column, Formatter } from './../interfaces/index';
+import { Formatter } from './../interfaces/index';
 
-export const yesNoFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any): string =>
+export const yesNoFormatter: Formatter = (_row: number, _cell: number, value: any): string =>
   value ? 'Yes' : 'No';

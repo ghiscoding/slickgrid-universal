@@ -19,38 +19,38 @@ export interface SlickEditorLock {
    */
   isActive(editController?: Editor): boolean;
 
- /**
-  * Sets the specified edit controller as the active edit controller (acquire edit lock).
-  * If another edit controller is already active, and exception will be thrown.
-  * @method activate
-  * @param editController {EditController} edit controller acquiring the lock
-  */
+  /**
+   * Sets the specified edit controller as the active edit controller (acquire edit lock).
+   * If another edit controller is already active, and exception will be thrown.
+   * @method activate
+   * @param editController {EditController} edit controller acquiring the lock
+   */
   activate(editController: Editor): void;
 
- /**
-  * Unsets the specified edit controller as the active edit controller (release edit lock).
-  * If the specified edit controller is not the active one, an exception will be thrown.
-  * @method deactivate
-  * @param editController {EditController} edit controller releasing the lock
-  */
+  /**
+   * Unsets the specified edit controller as the active edit controller (release edit lock).
+   * If the specified edit controller is not the active one, an exception will be thrown.
+   * @method deactivate
+   * @param editController {EditController} edit controller releasing the lock
+   */
   deactivate(editController: Editor): void;
 
- /**
-  * Attempts to commit the current edit by calling "commitCurrentEdit" method on the active edit
-  * controller and returns whether the commit attempt was successful (commit may fail due to validation
-  * errors, etc.).  Edit controller's "commitCurrentEdit" must return true if the commit has succeeded
-  * and false otherwise.  If no edit controller is active, returns true.
-  * @method commitCurrentEdit
-  * @return {Boolean}
-  */
+  /**
+   * Attempts to commit the current edit by calling "commitCurrentEdit" method on the active edit
+   * controller and returns whether the commit attempt was successful (commit may fail due to validation
+   * errors, etc.).  Edit controller's "commitCurrentEdit" must return true if the commit has succeeded
+   * and false otherwise.  If no edit controller is active, returns true.
+   * @method commitCurrentEdit
+   * @return {Boolean}
+   */
   commitCurrentEdit(): boolean;
 
- /**
-  * Attempts to cancel the current edit by calling "cancelCurrentEdit" method on the active edit
-  * controller and returns whether the edit was successfully cancelled.  If no edit controller is
-  * active, returns true.
-  * @method cancelCurrentEdit
-  * @return {Boolean}
-  */
+  /**
+   * Attempts to cancel the current edit by calling "cancelCurrentEdit" method on the active edit
+   * controller and returns whether the edit was successfully cancelled.  If no edit controller is
+   * active, returns true.
+   * @method cancelCurrentEdit
+   * @return {Boolean}
+   */
   cancelCurrentEdit(): boolean;
 }
