@@ -436,7 +436,9 @@ export class ContextMenuExtension implements Extension {
           }
         }
       }
-    } catch (e) { }
+    } catch (e) {
+      /* do nothing */
+    }
   }
 
   /**

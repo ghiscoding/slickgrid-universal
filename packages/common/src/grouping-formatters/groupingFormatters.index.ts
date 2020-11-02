@@ -1,4 +1,3 @@
-import { Column } from './../interfaces/index';
 import { avgTotalsPercentageFormatter } from './avgTotalsPercentageFormatter';
 import { avgTotalsDollarFormatter } from './avgTotalsDollarFormatter';
 import { avgTotalsFormatter } from './avgTotalsFormatter';

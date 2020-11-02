@@ -1,0 +1,11 @@
+*.css
+*.scss
+*.html
+*.png
+*.json
+*.js
+*.d.ts
+*.map
+*.md
+*.zip
+**/dist/*.*

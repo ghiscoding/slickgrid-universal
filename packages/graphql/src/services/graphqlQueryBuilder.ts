@@ -84,7 +84,7 @@ export default class GraphqlQueryBuilder {
   // -----------------
 
   private parceFind(_levelA: any[]) {
-    const propsA = _levelA.map((currentValue, index) => {
+    const propsA = _levelA.map((_currentValue, index) => {
       const itemX = _levelA[index];
 
       if (itemX instanceof GraphqlQueryBuilder) {

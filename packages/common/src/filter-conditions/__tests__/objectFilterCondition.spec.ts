@@ -1,4 +1,4 @@
-import { FieldType, OperatorType } from '../../enums/index';
+import { FieldType } from '../../enums/index';
 import { FilterConditionOption } from '../../interfaces/index';
 import { objectFilterCondition } from '../objectFilterCondition';
 import { executeMappedCondition } from '../executeMappedCondition';

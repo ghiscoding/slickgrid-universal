@@ -375,7 +375,7 @@ describe('PaginationService', () => {
       const postSpy = jest.fn();
       mockGridOption.backendServiceApi.process = postSpy;
       jest.spyOn(mockBackendService, 'processOnPaginationChanged').mockReturnValue('backend query');
-      const promise = new Promise((resolve, reject) => setTimeout(() => reject(mockError), 1));
+      const promise = new Promise((_resolve, reject) => setTimeout(() => reject(mockError), 1));
       jest.spyOn(mockGridOption.backendServiceApi, 'process').mockReturnValue(promise);
 
       try {

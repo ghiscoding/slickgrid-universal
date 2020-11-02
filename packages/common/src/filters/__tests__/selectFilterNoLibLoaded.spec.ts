@@ -32,19 +32,16 @@ describe('SelectFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: SelectFilter;
   let filterArguments: FilterArguments;
-  let spyGetHeaderRow;
   let mockColumn: Column;
-  let collectionService: CollectionService;
   let translateService: TranslateServiceStub;
 
   beforeEach(() => {
     translateService = new TranslateServiceStub();
-    collectionService = new CollectionService(translateService);
 
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
-    spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+    jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
     mockColumn = {
       id: 'gender', field: 'gender', filterable: true,

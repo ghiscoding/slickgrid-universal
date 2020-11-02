@@ -142,7 +142,6 @@ describe('AutoCompleteFilter', () => {
     filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 109, bubbles: true, cancelable: true }));
     filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 109, bubbles: true, cancelable: true }));
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
-    const autocompleteListElms = document.body.querySelectorAll<HTMLLIElement>('ul.ui-autocomplete li');
 
     expect(filterFilledElms.length).toBe(1);
     // expect(autocompleteListElms.length).toBe(2);
@@ -194,7 +193,6 @@ describe('AutoCompleteFilter', () => {
     filterElm.focus();
     filterElm.value = 'a';
     filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
-    const autocompleteListElms = document.body.querySelectorAll<HTMLLIElement>('ul.ui-autocomplete li');
 
     // expect(autocompleteListElms.length).toBe(2);
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['a'], shouldTriggerQuery: true });
@@ -623,7 +621,7 @@ describe('AutoCompleteFilter', () => {
 
     it('should provide "renderItem" in the "filterOptions" and expect the jQueryUI "_renderItem" to be overriden', () => {
       const mockTemplateString = `<div>Hello World</div>`;
-      const mockTemplateCallback = (item) => mockTemplateString;
+      const mockTemplateCallback = () => mockTemplateString;
       mockColumn.filter.filterOptions = {
         source: [],
         renderItem: {

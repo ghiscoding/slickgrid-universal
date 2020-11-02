@@ -225,7 +225,7 @@ export class SliderRangeFilter implements Filter {
       step: +(step || 1),
       values: [defaultStartValue, defaultEndValue],
       change: (e: Event, ui: JQueryUiSliderResponse) => this.onValueChanged(e, ui),
-      slide: (e: Event, ui: JQueryUiSliderResponse) => {
+      slide: (_e: Event, ui: JQueryUiSliderResponse) => {
         const values = ui.values;
         if (!this.filterParams.hideSliderNumbers && Array.isArray(values)) {
           this.renderSliderValues(values[0], values[1]);

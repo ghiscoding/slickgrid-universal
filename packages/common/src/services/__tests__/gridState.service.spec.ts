@@ -72,7 +72,7 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 const extensionServiceStub = {
-  getExtensionByName: (name: string) => { }
+  getExtensionByName: (_name: string) => { }
 } as ExtensionService;
 
 const filterServiceStub = {
@@ -455,8 +455,8 @@ describe('GridStateService', () => {
         service.selectedRowDataContextIds = mockRowIds;
 
         // the regular event flow is 1.onBeforePagingInfoChanged, 2.onPagingInfoChanged then 3.onSelectedRowsChanged
-        dataViewStub.onBeforePagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: 0 });
-        dataViewStub.onPagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: (paginationMock.pageNumber - 1) });
+        dataViewStub.onBeforePagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: 0, totalPages: 1, totalRows: 0, dataView: dataViewStub });
+        dataViewStub.onPagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: (paginationMock.pageNumber - 1), totalPages: 1, totalRows: 0, dataView: dataViewStub });
         gridStub.onSelectedRowsChanged.notify({ rows: mockRowIndexes, previousSelectedRows: mockPreviousRowIndexes, grid: gridStub });
 
         setTimeout(() => {
@@ -494,8 +494,8 @@ describe('GridStateService', () => {
         jest.spyOn(gridStub, 'getSelectedRows').mockReturnValueOnce(currentSelectedRowIndexes);
 
         // the regular event flow is 1.onBeforePagingInfoChanged, 2.onPagingInfoChanged then 3.onSelectedRowsChanged
-        dataViewStub.onBeforePagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: 0 });
-        dataViewStub.onPagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: (paginationMock.pageNumber - 1) });
+        dataViewStub.onBeforePagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: 0, totalPages: 1, totalRows: 0, dataView: dataViewStub });
+        dataViewStub.onPagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: (paginationMock.pageNumber - 1), totalPages: 1, totalRows: 0, dataView: dataViewStub });
 
         setTimeout(() => {
           expect(setSelectSpy).toHaveBeenCalledWith(shouldBeSelectedRowIndexes);
@@ -528,7 +528,7 @@ describe('GridStateService', () => {
         const getSelectSpy = jest.spyOn(gridStub, 'getSelectedRows').mockReturnValueOnce(currentSelectedRowIndexes).mockReturnValue(shouldBeSelectedRowIndexes);
 
         // the regular event flow is 1.onBeforePagingInfoChanged, 2.onPagingInfoChanged then 3.onSelectedRowsChanged
-        dataViewStub.onBeforePagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: 0 });
+        dataViewStub.onBeforePagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: 0, totalPages: 1, totalRows: 0, dataView: dataViewStub });
         // dataViewStub.onPagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: (paginationMock.pageNumber - 1) });
         gridStub.onSelectedRowsChanged.notify({ rows: mockRowIndexes, previousSelectedRows: mockPreviousRowIndexes, grid: gridStub });
 
@@ -566,8 +566,8 @@ describe('GridStateService', () => {
         service.selectedRowDataContextIds = mockPreviousDataIds;
 
         // the regular event flow is 1.onBeforePagingInfoChanged, 2.onPagingInfoChanged then 3.onSelectedRowsChanged
-        dataViewStub.onBeforePagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: 0 });
-        dataViewStub.onPagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: (paginationMock.pageNumber - 1) });
+        dataViewStub.onBeforePagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: 0, totalPages: 1, totalRows: 0, dataView: dataViewStub });
+        dataViewStub.onPagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: (paginationMock.pageNumber - 1), totalPages: 1, totalRows: 0, dataView: dataViewStub });
         gridStub.onSelectedRowsChanged.notify({ rows: mockNewRowIndexes, previousSelectedRows: mockPreviousRowIndexes, grid: gridStub });
 
         setTimeout(() => {
@@ -593,8 +593,8 @@ describe('GridStateService', () => {
         service.selectedRowDataContextIds = mockPreviousDataIds;
 
         // the regular event flow is 1.onBeforePagingInfoChanged, 2.onPagingInfoChanged then 3.onSelectedRowsChanged
-        dataViewStub.onBeforePagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: 0 });
-        dataViewStub.onPagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: (paginationMock.pageNumber - 1) });
+        dataViewStub.onBeforePagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: 0, totalPages: 1, totalRows: 0, dataView: dataViewStub });
+        dataViewStub.onPagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: (paginationMock.pageNumber - 1), totalPages: 1, totalRows: 0, dataView: dataViewStub });
         gridStub.onSelectedRowsChanged.notify({ rows: mockNewRowIndexes, previousSelectedRows: mockPreviousRowIndexes, grid: gridStub });
         gridStub.onSelectedRowsChanged.notify({ rows: mockNewRowIndexes, previousSelectedRows: mockPreviousRowIndexes, grid: gridStub });
 
@@ -611,7 +611,6 @@ describe('GridStateService', () => {
 
         const mockFilteredRowItems = [{ id: 333 }, { id: 555 }];
         const mockFilterSearchTerms = [333, 555];
-        const mockPreviousRowIndexes = [3, 33];
         const mockRowIndexes = [3, 44];
         const columnMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
         const filterMock = [{ columnId: 'field1', operator: 'EQ', searchTerms: [] }] as CurrentFilter[];
