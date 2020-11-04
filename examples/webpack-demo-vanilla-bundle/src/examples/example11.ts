@@ -60,14 +60,14 @@ export class Example11 {
   dataset: any[] = [];
   currentSelectedFilterPreset: FilterPreset;
   isGridEditable = true;
-  isSaveFilterDisabled = false;
-  isDeleteFilterDisabled = true;
+  dropdownDeleteFilterClass = 'dropdown-item dropdown-item-disabled';
+  dropdownUpdateFilterClass = 'dropdown-item dropdown-item-disabled';
   editQueue = [];
   editedItems = {};
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
   currentYear = moment().year();
-  predefinedPresets = [
+  defaultPredefinedPresets = [
     {
       label: 'Tasks Finished in Previous Years',
       value: 'previousYears',
@@ -80,13 +80,14 @@ export class Example11 {
       ] as CurrentFilter[]
     },
     {
-      label: 'Tasks Finishing greater or equal than this Year',
-      value: 'greaterYears',
+      label: 'Tasks Finishing in Future Years',
+      value: 'greaterCurrentYear',
       isSelected: false,
       isUserDefined: false,
       filters: [{ columnId: 'finish', operator: '>=', searchTerms: [`${this.currentYear + 1}-01-01`] }]
     }
   ] as FilterPreset[];
+  predefinedPresets = [...this.defaultPredefinedPresets];
 
   get slickerGridInstance(): SlickerGridInstance {
     return this.sgb?.instances;
@@ -102,7 +103,7 @@ export class Example11 {
     // bind any of the grid events
     this.gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
     this.gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
-    this.populatePreDefinedFilters();
+    this.recreatePredefinedFilters();
   }
 
   dispose() {
@@ -342,14 +343,15 @@ export class Example11 {
       }
     };
 
-    const filterPresets = JSON.parse(localStorage[LOCAL_STORAGE_KEY] || null);
+    const filterPresets = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || null);
     if (filterPresets) {
       const presetFilter = filterPresets.find(preFilter => preFilter.isSelected);
       this.predefinedPresets = filterPresets;
 
       if (presetFilter && presetFilter.filters) {
         this.currentSelectedFilterPreset = presetFilter;
-        this.isDeleteFilterDisabled = !presetFilter.isUserDefined;
+        this.dropdownDeleteFilterClass = presetFilter.isUserDefined ? 'dropdown-item' : 'dropdown-item dropdown-item-disabled';
+        this.dropdownUpdateFilterClass = this.dropdownDeleteFilterClass;
         this.gridOptions.presets = {
           filters: presetFilter.filters
         };
@@ -564,9 +566,9 @@ export class Example11 {
     this.editQueue = [];
   }
 
-  populatePreDefinedFilters() {
-    this.pushNewFilterToSelectPreFilter(this.predefinedPresets);
-  }
+  // --
+  // PreDefined Filter Methods
+  // -----------------------------
 
   pushNewFilterToSelectPreFilter(predefinedFilters: FilterPreset | FilterPreset[], isOptionSelected = false) {
     if (isOptionSelected) {
@@ -590,39 +592,76 @@ export class Example11 {
     }
   }
 
-  async saveFilter() {
+  clearLocalStorage() {
+    localStorage.removeItem(LOCAL_STORAGE_KEY);
+    this.sgb.filterService.updateFilters([]);
+    this.predefinedPresets = this.defaultPredefinedPresets;
+    this.recreatePredefinedFilters();
+  }
+
+  recreatePredefinedFilters() {
+    // empty the Select dropdown element and re-populate it
+    const filterSelectElm = document.querySelector('.selected-filter');
+    filterSelectElm.innerHTML = '';
+    this.pushNewFilterToSelectPreFilter(this.predefinedPresets);
+  }
+
+  async createFilter(event) {
+    if (event.target.disabled) {
+      event.stopPropagation();
+      return;
+    }
     const currentFilters = this.sgb.filterService.getCurrentLocalFilters();
 
-    const filterName = await prompt('Please provide a name for the new Filter');
+    const filterName = await prompt('Please provide a name for the new Filter.');
     if (filterName) {
       const newPresetFilter = {
         label: filterName,
-        value: filterName.replace(' ', ''),
+        value: filterName.replace(/\s/g, ''),
         isSelected: true,
         isUserDefined: true,
         filters: deepCopy(currentFilters) // create a copy to avoid changing the original one
       };
 
-      this.isDeleteFilterDisabled = false;
+      this.dropdownDeleteFilterClass = 'dropdown-item';
+      this.dropdownUpdateFilterClass = 'dropdown-item';
       this.pushNewFilterToSelectPreFilter(newPresetFilter, true);
       this.predefinedPresets.push(newPresetFilter);
+      this.currentSelectedFilterPreset = newPresetFilter;
     }
-    localStorage[LOCAL_STORAGE_KEY] = JSON.stringify(this.predefinedPresets);
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.predefinedPresets));
   }
 
-  deleteFilter() {
+  deleteFilter(event) {
+    if (event.target.disabled) {
+      event.stopPropagation();
+      return;
+    }
     if (this.currentSelectedFilterPreset) {
       const selectedFilterIndex = this.predefinedPresets.findIndex(preset => preset.value === this.currentSelectedFilterPreset.value);
       this.predefinedPresets.splice(selectedFilterIndex, 1);
     }
-
-    // empty the Select dropdown element and re-populate it
-    const filterSelectElm = document.querySelector('.selected-filter');
-    filterSelectElm.innerHTML = '';
-    this.populatePreDefinedFilters();
-
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.predefinedPresets));
     this.sgb.filterService.updateFilters([]);
-    localStorage[LOCAL_STORAGE_KEY] = JSON.stringify(this.predefinedPresets);
+    this.recreatePredefinedFilters();
+    this.dropdownDeleteFilterClass = 'dropdown-item dropdown-item-disabled';
+    this.dropdownUpdateFilterClass = 'dropdown-item dropdown-item-disabled';
+  }
+
+  async updateFilter(event: any) {
+    if (event.target.disabled) {
+      event.stopPropagation();
+      return;
+    }
+    const currentFilters = this.sgb && this.sgb.filterService && this.sgb.filterService.getCurrentLocalFilters();
+    if (this.currentSelectedFilterPreset && currentFilters) {
+      const filterName = await prompt(`Update Filter name or click on OK to continue.`, this.currentSelectedFilterPreset.label);
+      this.currentSelectedFilterPreset.label = filterName;
+      this.currentSelectedFilterPreset.value = filterName.replace(/\s/g, '');
+      this.currentSelectedFilterPreset.filters = currentFilters;
+      this.recreatePredefinedFilters();
+      localStorage.setItem('gridFilterPreset', JSON.stringify(this.predefinedPresets));
+    }
   }
 
   usePredefinedFilter(filterValue: string) {
@@ -630,13 +669,15 @@ export class Example11 {
     const selectedFilter = this.predefinedPresets.find(preset => preset.value === filterValue);
     if (selectedFilter) {
       selectedFilter.isSelected = true;
-      this.isDeleteFilterDisabled = !selectedFilter.isUserDefined;
+      this.dropdownDeleteFilterClass = selectedFilter.isUserDefined ? 'dropdown-item' : 'dropdown-item dropdown-item-disabled';
+      this.dropdownUpdateFilterClass = this.dropdownDeleteFilterClass;
+
       const filters = selectedFilter?.filters ?? [];
       this.sgb.filterService.updateFilters(filters as CurrentFilter[]);
     } else {
       this.sgb.filterService.updateFilters([]);
     }
-    localStorage[LOCAL_STORAGE_KEY] = JSON.stringify(this.predefinedPresets);
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.predefinedPresets));
     this.currentSelectedFilterPreset = selectedFilter;
   }
 

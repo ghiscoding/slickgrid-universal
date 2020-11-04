@@ -7,3 +7,10 @@ $autocomplete-max-height: 250px;
 .unsaved-editable-field {
   background-color: #fbfdd1 !important;
 }
+.dropdown-item {
+  cursor: pointer;
+}
+.dropdown-item-disabled {
+  color: #afafaf;
+  cursor: default;
+}

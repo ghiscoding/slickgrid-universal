@@ -36,16 +36,35 @@
               name="selectedFilter"
               onchange.delegate="usePredefinedFilter(event.target.value)">
       </select>
-      <span class="buttons has-addons" style="display: inline-flex">
-        <button class="button is-small" onclick.delegate="saveFilter()" data-test="save-filter-btn"
-                disabled.bind="isSaveFilterDisabled">
-          <span class="icon mdi mdi-plus"></span>
-          <span>Save Filter</span>
-        </button>
-        <button class="button is-small" onclick.delegate="deleteFilter()" data-test="delete-filter-btn"
-                disabled.bind="isDeleteFilterDisabled">
-          <span class="icon mdi mdi-close"></span>
-          <span>Delete Filter</span>
+      <div class="dropdown action" style="margin-left: -6px">
+        <div class="dropdown-trigger">
+          <button class="button is-small" aria-haspopup="true" aria-controls="dropdown-menu">
+            <span>Action</span>
+            <span class="icon is-small">
+              <i class="mdi mdi-chevron-down mdi-bold" aria-hidden="true"></i>
+            </span>
+          </button>
+        </div>
+        <div class="dropdown-menu is-small" id="dropdown-menu" role="menu">
+          <div class="dropdown-content">
+            <span class="dropdown-item" onclick.delegate="createFilter(event)" data-test="save-filter-btn">
+              Save Filter
+            </span>
+            <span class.bind="dropdownDeleteFilterClass" onclick.delegate="updateFilter(event)"
+                  data-test="update-filter-btn">
+              Update Filter
+            </span>
+            <span class.bind="dropdownUpdateFilterClass" onclick.delegate="deleteFilter(event)"
+                  data-test="delete-filter-btn">
+              Delete Filter
+            </span>
+          </div>
+        </div>
+      </div>
+      <span style="margin-left: 5px">
+        <button class="button is-small" onclick.delegate="clearLocalStorage()" data-test="clear-storage-btn">
+          <span class="icon mdi mdi-close-circle mdi-14px"></span>
+          <span>Clear LocalStorage</span>
         </button>
       </span>
     </div>

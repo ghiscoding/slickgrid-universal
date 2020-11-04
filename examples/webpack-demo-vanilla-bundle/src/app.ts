@@ -71,6 +71,7 @@ export class App {
       if (viewModel && viewModel.attached && this.renderer.className) {
         this.viewModelObj[this.renderer.className] = viewModel;
         viewModel.attached();
+        this.dropdownToggle(); // rebind bulma dropdown toggle event handlers
       }
 
       // change browser's history state & title
@@ -79,6 +80,27 @@ export class App {
       }
       document.title = `${this.documentTitle} · ${mapRoute.name}`;
     }
+  }
+
+  /** bind bulma all dropdowns toggle event handlers */
+  dropdownToggle() {
+    const $dropdowns = document.querySelectorAll('.dropdown:not(.is-hoverable)');
+
+    if ($dropdowns.length > 0) {
+      $dropdowns.forEach(($el) => {
+        $el.addEventListener('click', (event) => {
+          event.stopPropagation();
+          $el.classList.toggle('is-active');
+        });
+      });
+
+      document.addEventListener('click', () => this.closeDropdowns());
+    }
+  }
+
+  closeDropdowns() {
+    const $dropdowns = document.querySelectorAll('.dropdown:not(.is-hoverable)');
+    $dropdowns.forEach($el => $el.classList.remove('is-active'));
   }
 
   /** Add event listener for the navbar hamburger menu toggle when menu shows up on mobile */
