@@ -1,11 +1,14 @@
 /// <reference types="Cypress" />
+import moment from 'moment-mini';
 import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
 describe('Example 11 - Batch Editing', () => {
+  const LOCAL_STORAGE_KEY = 'gridFilterPreset';
   const GRID_ROW_HEIGHT = 33;
   const EDITABLE_CELL_RGB_COLOR = 'rgba(227, 240, 251, 0.57)';
   const UNSAVED_RGB_COLOR = 'rgb(251, 253, 209)';
   const fullTitles = ['', 'Title', 'Duration', 'Cost', '% Complete', 'Start', 'Finish', 'Completed', 'Product', 'Country of Origin', 'Action'];
+  const currentYear = moment().year();
 
   beforeEach(() => {
     // create a console.log spy for later use
@@ -189,5 +192,215 @@ describe('Example 11 - Batch Editing', () => {
 
     cy.get('.editable-field')
       .should('not.have.length', 0);
+  });
+
+  it('should not have filters set', () => {
+    cy.get('.selected-filter').should('contain', '');
+
+    cy.get('.rangeInput_percentComplete')
+      .invoke('val')
+      .then(text => expect(text).to.eq('0'));
+
+    cy.get('.search-filter.filter-finish .flatpickr-input')
+      .invoke('val')
+      .then(text => expect(text).to.eq(''));
+
+    cy.get('.search-filter.filter-completed .ms-choice').should('contain', '')
+  });
+
+  it('should change pre-defined filter to "Tasks Finished in Previous Years" and expect data to be filtered accordingly', () => {
+    cy.get('.selected-filter').select('previousYears');
+    cy.get('.selected-filter').should('have.value', 'previousYears');
+
+    cy.get('.rangeInput_percentComplete')
+      .invoke('val')
+      .then(text => expect(text).to.eq('50'));
+
+    cy.get('.search-filter.filter-finish .operator .form-control')
+      .should('have.value', '<=');
+
+    cy.get('.search-filter.filter-finish .flatpickr-input')
+      .invoke('val')
+      .then(text => expect(text).to.eq(`${currentYear}-01-01`));
+
+    cy.get('.search-filter.filter-completed .ms-choice').should('contain', 'True');
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).should($elm => expect(+$elm.text()).to.be.greaterThan(50));
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(4)`).should($elm => expect(+$elm.text()).to.be.greaterThan(50));
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).should($elm => expect(+$elm.text()).to.be.greaterThan(50));
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).find('.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(7)`).find('.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(7)`).find('.checkmark-icon').should('have.length', 1);
+  });
+
+  it('should create a new Filter based on "Tasks Finished in Previous Years" that was already selected', () => {
+    const filterName = "Custom Filter Test"
+    const winPromptStub = () => filterName;
+
+    cy.window().then(win => {
+      cy.stub(win, 'prompt').callsFake(winPromptStub).as('winPromptStubReturnNonNull')
+    });
+
+    cy.get('input.search-filter.filter-title')
+      .type('*0');
+
+    cy.get('.action.dropdown')
+      .click();
+
+    cy.get('.action.dropdown .dropdown-item')
+      .contains('Save Filter')
+      .click();
+
+    cy.get('@winPromptStubReturnNonNull').should('be.calledOnce')
+      .and('be.calledWith', 'Please provide a name for the new Filter.')
+
+    cy.should(() => {
+      const savedDefinedFilters = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+      expect(Object.keys(savedDefinedFilters)).to.have.lengthOf(3);
+    });
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`).should('contain', '0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', '0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(1)`).should('contain', '0');
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).should($elm => expect(+$elm.text()).to.be.greaterThan(50));
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(4)`).should($elm => expect(+$elm.text()).to.be.greaterThan(50));
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).should($elm => expect(+$elm.text()).to.be.greaterThan(50));
+
+    cy.get('.selected-filter').should('have.value', 'CustomFilterTest');
+  });
+
+  it('should change pre-defined filter to "Tasks Finishing in Future Years" and expect data to be filtered accordingly', () => {
+    cy.get('.selected-filter').select('greaterCurrentYear');
+    cy.get('.selected-filter').should('have.value', 'greaterCurrentYear');
+
+    cy.get('.rangeInput_percentComplete')
+      .invoke('val')
+      .then(text => expect(text).to.eq('0'));
+
+    cy.get('.search-filter.filter-finish .operator .form-control')
+      .should('have.value', '>=');
+
+    cy.get('.search-filter.filter-finish .flatpickr-input')
+      .invoke('val')
+      .then(text => expect(text).to.eq(`${currentYear + 1}-01-01`));
+
+    cy.get('.search-filter.filter-completed .ms-choice').should('contain', '');
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).should($elm => expect($elm.text()).to.not.eq, '');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).should($elm => expect($elm.text()).to.not.contain, currentYear);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(6)`).should($elm => expect($elm.text()).to.not.eq, '');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(6)`).should($elm => expect($elm.text()).to.not.contain, currentYear);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(6)`).should($elm => expect($elm.text()).to.not.eq, '');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(6)`).should($elm => expect($elm.text()).to.not.contain, currentYear);
+  });
+
+  it('should NOT be able to Delete/Update a System Defined Filter', () => {
+    cy.get('.action.dropdown')
+      .click();
+
+    cy.get('.action.dropdown .dropdown-item:nth(1)')
+      .then($elm => {
+        expect($elm.text()).to.contain('Update Filter');
+        expect($elm.hasClass('dropdown-item-disabled')).to.be.true;
+      });
+
+    cy.get('.action.dropdown .dropdown-item:nth(2)')
+      .then($elm => {
+        expect($elm.text()).to.contain('Delete Filter');
+        expect($elm.hasClass('dropdown-item-disabled')).to.be.true;
+      });
+
+    cy.get('.selected-filter').should('have.value', 'greaterCurrentYear');
+  });
+
+  it('should reload the page and expect the Custom Filter to be reloaded from Local Storage and expect filtered data as well', () => {
+    cy.get('.selected-filter').select('CustomFilterTest');
+
+    cy.reload();
+    cy.wait(50);
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`).should('contain', '0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', '0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(1)`).should('contain', '0');
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).should($elm => expect(+$elm.text()).to.be.greaterThan(50));
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(4)`).should($elm => expect(+$elm.text()).to.be.greaterThan(50));
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).should($elm => expect(+$elm.text()).to.be.greaterThan(50));
+
+    cy.should(() => {
+      const savedDefinedFilters = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+      expect(Object.keys(savedDefinedFilters)).to.have.lengthOf(3);
+    });
+
+    cy.get('.selected-filter').should('have.value', 'CustomFilterTest');
+  });
+
+  it('should be able to Update the Custom Filter that we created earlier', () => {
+    const filterName = "Custom Updated Filter Test"
+    const winPromptStub = () => filterName;
+
+    cy.window().then(win => {
+      cy.stub(win, 'prompt').callsFake(winPromptStub).as('winPromptStubReturnNonNull')
+    });
+
+    cy.get('.selected-filter').select('CustomFilterTest');
+
+    cy.get('.action.dropdown')
+      .click();
+
+    cy.get('.action.dropdown .dropdown-item')
+      .contains('Update Filter')
+      .click();
+
+    cy.get('.action.dropdown .dropdown-item:nth(1)')
+      .then($elm => {
+        expect($elm.text()).to.contain('Update Filter');
+        expect($elm.hasClass('dropdown-item-disabled')).to.be.false;
+      });
+
+    cy.get('.action.dropdown')
+      .click();
+
+    cy.get('@winPromptStubReturnNonNull').should('be.calledOnce')
+      .and('be.calledWith', 'Update Filter name or click on OK to continue.', 'Custom Filter Test')
+
+    cy.should(() => {
+      const savedDefinedFilters = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+      expect(Object.keys(savedDefinedFilters)).to.have.lengthOf(3);
+    });
+
+    // select should have new name
+    cy.get('.selected-filter').should('have.value', 'CustomUpdatedFilterTest');
+  });
+
+  it('should be able to Delete the Custom Filter that we created earlier and also expect all Filters to be cleared', () => {
+    cy.get('.selected-filter').select('CustomUpdatedFilterTest');
+
+    cy.get('.action.dropdown')
+      .click();
+
+    cy.get('.action.dropdown .dropdown-item:nth(2)')
+      .then($elm => {
+        expect($elm.text()).to.contain('Delete Filter');
+        expect($elm.hasClass('dropdown-item-disabled')).to.be.false;
+      });
+
+    cy.get('.action.dropdown .dropdown-item')
+      .contains('Delete Filter')
+      .click();
+
+    cy.get('.selected-filter').should('not.have.value', 'CustomUpdatedFilterTest');
+
+    cy.get('.rangeInput_percentComplete')
+      .invoke('val')
+      .then(text => expect(text).to.eq('0'));
+
+    cy.get('.search-filter.filter-finish .flatpickr-input')
+      .invoke('val')
+      .then(text => expect(text).to.eq(''));
+
+    cy.get('.search-filter.filter-completed .ms-choice').should('contain', '')
   });
 });

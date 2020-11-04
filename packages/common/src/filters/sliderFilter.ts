@@ -19,6 +19,8 @@ export class SliderFilter implements Filter {
   private _elementRangeInputId = '';
   private _elementRangeOutputId = '';
   private $filterElm: any;
+  private $filterInputElm: any;
+  private $filterNumberElm: any;
   grid: SlickGrid;
   searchTerms: SearchTerm[];
   columnDef: Column;
@@ -83,7 +85,7 @@ export class SliderFilter implements Filter {
 
     // step 3, subscribe to the change event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    this.$filterElm.change((e: any) => {
+    this.$filterInputElm.change((e: any) => {
       const value = e && e.target && e.target.value;
       this._currentValue = +value;
 
@@ -102,7 +104,7 @@ export class SliderFilter implements Filter {
     // if user chose to display the slider number on the right side, then update it every time it changes
     // we need to use both "input" and "change" event to be all cross-browser
     if (!this.filterParams.hideSliderNumber) {
-      this.$filterElm.on('input change', (e: { target: HTMLInputElement }) => {
+      this.$filterInputElm.on('input change', (e: { target: HTMLInputElement }) => {
         const value = e && e.target && e.target.value;
         if (value !== undefined && value !== null && document) {
           const elements = document.getElementsByClassName(this._elementRangeOutputId || '');
@@ -124,10 +126,9 @@ export class SliderFilter implements Filter {
       this.searchTerms = [];
       const clearedValue = this.filterParams.hasOwnProperty('sliderStartValue') ? this.filterParams.sliderStartValue : DEFAULT_MIN_VALUE;
       this._currentValue = +clearedValue;
-      this.$filterElm.children('input').val(clearedValue);
-      this.$filterElm.children('div.input-group-addon.input-group-append').children().html(clearedValue);
-      this.$filterElm.val(clearedValue);
-      this.$filterElm.trigger('change');
+      this.$filterInputElm.val(clearedValue);
+      this.$filterNumberElm.html(clearedValue);
+      this.$filterInputElm.trigger('change');
     }
   }
 
@@ -135,8 +136,8 @@ export class SliderFilter implements Filter {
    * destroy the filter
    */
   destroy() {
-    if (this.$filterElm) {
-      this.$filterElm.off('change').remove();
+    if (this.$filterInputElm) {
+      this.$filterInputElm.off('change').remove();
     }
   }
 
@@ -151,10 +152,11 @@ export class SliderFilter implements Filter {
   /** Set value(s) on the DOM element */
   setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString) {
     if (Array.isArray(values)) {
-      this.$filterElm.val(values[0]);
+      this.$filterInputElm.val(`${values[0]}`);
+      this.$filterNumberElm.html(`${values[0]}`);
       this._currentValue = +values[0];
     } else if (values) {
-      this.$filterElm.val(values);
+      this.$filterInputElm.val(values);
       this._currentValue = +values;
     }
 
@@ -221,8 +223,10 @@ export class SliderFilter implements Filter {
     }
     this._currentValue = +searchTermInput;
 
-    $filterElm.children('input').val(searchTermInput);
-    $filterElm.children('div.input-group-addon.input-group-append').children().html(searchTermInput);
+    this.$filterInputElm = $filterElm.children('input');
+    this.$filterNumberElm = $filterElm.children('div.input-group-addon.input-group-append').children();
+    this.$filterInputElm.val(searchTermInput);
+    this.$filterNumberElm.html(searchTermInput);
     $filterElm.data('columnId', columnId);
 
     // if there's a search term, we will add the "filled" class for styling purposes

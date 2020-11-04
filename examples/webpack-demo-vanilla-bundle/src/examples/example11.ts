@@ -1,12 +1,14 @@
 import {
   AutocompleteOption,
   Column,
+  CurrentFilter,
   Editors,
   FieldType,
   Filters,
   Formatter,
   Formatters,
   GridOption,
+  OperatorType,
   SlickNamespace,
   SortComparers,
 
@@ -16,6 +18,7 @@ import {
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import * as moment from 'moment-mini';
 
 import { ExampleGridOptions } from './example-grid-options';
 import { loadComponent } from 'examples/utilities';
@@ -24,9 +27,10 @@ import './example11.scss';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
+const LOCAL_STORAGE_KEY = 'gridFilterPreset';
 
 // you can create custom validator to pass to an inline editor
-const myCustomTitleValidator = (value, args) => {
+const myCustomTitleValidator = (value) => {
   if (value === null || value === undefined || !value.length) {
     return { valid: false, msg: 'This is a required field' };
   } else if (!/^task\s\d+$/i.test(value)) {
@@ -35,22 +39,55 @@ const myCustomTitleValidator = (value, args) => {
   return { valid: true, msg: '' };
 };
 
-const customEditableInputFormatter = (row, cell, value, columnDef, dataContext, grid) => {
+const customEditableInputFormatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
   const gridOptions = grid && grid.getOptions && grid.getOptions();
   const isEditableLine = gridOptions.editable && columnDef.editor;
   value = (value === null || value === undefined) ? '' : value;
   return isEditableLine ? { text: value, addClasses: 'editable-field', toolTip: 'Click to Edit' } : value;
 };
 
+export interface FilterPreset {
+  label: string;
+  value: string;
+  isSelected?: boolean;
+  isUserDefined?: boolean;
+  filters: CurrentFilter[];
+}
+
 export class Example11 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[] = [];
+  currentSelectedFilterPreset: FilterPreset;
   isGridEditable = true;
+  dropdownDeleteFilterClass = 'dropdown-item dropdown-item-disabled';
+  dropdownUpdateFilterClass = 'dropdown-item dropdown-item-disabled';
   editQueue = [];
   editedItems = {};
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
+  currentYear = moment().year();
+  defaultPredefinedPresets = [
+    {
+      label: 'Tasks Finished in Previous Years',
+      value: 'previousYears',
+      isSelected: false,
+      isUserDefined: false,
+      filters: [
+        { columnId: 'finish', operator: OperatorType.lessThanOrEqual, searchTerms: [`${this.currentYear}-01-01`] },
+        { columnId: 'completed', operator: OperatorType.equal, searchTerms: [true], },
+        { columnId: 'percentComplete', operator: OperatorType.greaterThan, searchTerms: [50] },
+      ] as CurrentFilter[]
+    },
+    {
+      label: 'Tasks Finishing in Future Years',
+      value: 'greaterCurrentYear',
+      isSelected: false,
+      isUserDefined: false,
+      filters: [{ columnId: 'finish', operator: '>=', searchTerms: [`${this.currentYear + 1}-01-01`] }]
+    }
+  ] as FilterPreset[];
+  predefinedPresets = [...this.defaultPredefinedPresets];
 
   get slickerGridInstance(): SlickerGridInstance {
     return this.sgb?.instances;
@@ -66,6 +103,7 @@ export class Example11 {
     // bind any of the grid events
     this.gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
     this.gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
+    this.recreatePredefinedFilters();
   }
 
   dispose() {
@@ -83,7 +121,7 @@ export class Example11 {
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
         editor: { model: Editors.float, massUpdate: true, decimal: 2, valueStep: 1, maxValue: 10000, alwaysSaveOnEnterKey: true, },
-        formatter: (row, cell, value) => {
+        formatter: (_row, _cell, value) => {
           if (value === null || value === undefined) {
             return '';
           }
@@ -213,7 +251,7 @@ export class Example11 {
               itemVisibilityOverride: (args) => {
                 return !args.dataContext.completed;
               },
-              action: (event, args) => {
+              action: (_event, args) => {
                 const dataContext = args.dataContext;
                 if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"`)) {
                   this.slickerGridInstance.gridService.deleteItemById(dataContext.id);
@@ -304,6 +342,21 @@ export class Example11 {
         onCommand: (e, args) => this.executeCommand(e, args)
       }
     };
+
+    const filterPresets = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || null);
+    if (filterPresets) {
+      const presetFilter = filterPresets.find(preFilter => preFilter.isSelected);
+      this.predefinedPresets = filterPresets;
+
+      if (presetFilter && presetFilter.filters) {
+        this.currentSelectedFilterPreset = presetFilter;
+        this.dropdownDeleteFilterClass = presetFilter.isUserDefined ? 'dropdown-item' : 'dropdown-item dropdown-item-disabled';
+        this.dropdownUpdateFilterClass = this.dropdownDeleteFilterClass;
+        this.gridOptions.presets = {
+          filters: presetFilter.filters
+        };
+      }
+    }
   }
 
   loadData(count: number) {
@@ -324,9 +377,9 @@ export class Example11 {
         duration: Math.floor(Math.random() * 100) + 10,
         percentComplete: randomPercentComplete > 100 ? 100 : randomPercentComplete,
         start: new Date(randomYear, randomMonth, randomDay),
-        finish: (randomFinish < new Date() || i < 3) ? '' : randomFinish, // make sure the random date is earlier than today and it's index is bigger than 3
+        finish: (i < 3) ? '' : randomFinish, // make sure the random date is earlier than today and it's index is bigger than 3
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
-        completed: (i % 5 === 0),
+        completed: (randomFinish < new Date()),
         product: { id: this.mockProducts()[randomItemId]?.id, itemName: this.mockProducts()[randomItemId]?.itemName, },
         countryOfOrigin: (i % 2) ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' },
       };
@@ -352,7 +405,7 @@ export class Example11 {
     console.log('item deleted with id:', itemId);
   }
 
-  async executeCommand(e, args) {
+  async executeCommand(_e, args) {
     const command = args.command;
     const dataContext = args.dataContext;
 
@@ -449,7 +502,7 @@ export class Example11 {
     this.gridOptions = this.sgb.gridOptions;
   }
 
-  removeUnsavedStylingFromCell(item: any, column: Column, row: number) {
+  removeUnsavedStylingFromCell(_item: any, column: Column, row: number) {
     // remove unsaved css class from that cell
     this.sgb.slickGrid.removeCellCssStyles(`unsaved_highlight_${[column.field]}${row}`);
   }
@@ -511,6 +564,125 @@ export class Example11 {
     }
     this.sgb.slickGrid.invalidate(); // re-render the grid only after every cells got rolled back
     this.editQueue = [];
+  }
+
+  // --
+  // PreDefined Filter Methods
+  // -----------------------------
+
+  pushNewFilterToSelectPreFilter(predefinedFilters: FilterPreset | FilterPreset[], isOptionSelected = false) {
+    if (isOptionSelected) {
+      this.resetPredefinedFilterSelection(this.predefinedPresets);
+    }
+    const presetFilters: FilterPreset[] = Array.isArray(predefinedFilters) ? predefinedFilters : [predefinedFilters];
+    const filterSelect = document.querySelector('.selected-filter');
+
+    // empty an empty <option> when populating the array on page load
+    if (Array.isArray(predefinedFilters)) {
+      const emtySelectOption = document.createElement('option');
+      filterSelect.appendChild(emtySelectOption);
+    }
+
+    for (const preset of presetFilters) {
+      const selectOption = document.createElement('option');
+      selectOption.value = preset.value;
+      selectOption.label = preset.label;
+      filterSelect.appendChild(selectOption);
+      selectOption.selected = isOptionSelected || preset.isSelected || false;
+    }
+  }
+
+  clearLocalStorage() {
+    localStorage.removeItem(LOCAL_STORAGE_KEY);
+    this.sgb.filterService.updateFilters([]);
+    this.predefinedPresets = this.defaultPredefinedPresets;
+    this.recreatePredefinedFilters();
+  }
+
+  recreatePredefinedFilters() {
+    // empty the Select dropdown element and re-populate it
+    const filterSelectElm = document.querySelector('.selected-filter');
+    filterSelectElm.innerHTML = '';
+    this.pushNewFilterToSelectPreFilter(this.predefinedPresets);
+  }
+
+  async createFilter(event) {
+    if (event.target.disabled) {
+      event.stopPropagation();
+      return;
+    }
+    const currentFilters = this.sgb.filterService.getCurrentLocalFilters();
+
+    const filterName = await prompt('Please provide a name for the new Filter.');
+    if (filterName) {
+      const newPresetFilter = {
+        label: filterName,
+        value: filterName.replace(/\s/g, ''),
+        isSelected: true,
+        isUserDefined: true,
+        filters: deepCopy(currentFilters) // create a copy to avoid changing the original one
+      };
+
+      this.dropdownDeleteFilterClass = 'dropdown-item';
+      this.dropdownUpdateFilterClass = 'dropdown-item';
+      this.pushNewFilterToSelectPreFilter(newPresetFilter, true);
+      this.predefinedPresets.push(newPresetFilter);
+      this.currentSelectedFilterPreset = newPresetFilter;
+    }
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.predefinedPresets));
+  }
+
+  deleteFilter(event) {
+    if (event.target.disabled) {
+      event.stopPropagation();
+      return;
+    }
+    if (this.currentSelectedFilterPreset) {
+      const selectedFilterIndex = this.predefinedPresets.findIndex(preset => preset.value === this.currentSelectedFilterPreset.value);
+      this.predefinedPresets.splice(selectedFilterIndex, 1);
+    }
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.predefinedPresets));
+    this.sgb.filterService.updateFilters([]);
+    this.recreatePredefinedFilters();
+    this.dropdownDeleteFilterClass = 'dropdown-item dropdown-item-disabled';
+    this.dropdownUpdateFilterClass = 'dropdown-item dropdown-item-disabled';
+  }
+
+  async updateFilter(event: any) {
+    if (event.target.disabled) {
+      event.stopPropagation();
+      return;
+    }
+    const currentFilters = this.sgb && this.sgb.filterService && this.sgb.filterService.getCurrentLocalFilters();
+    if (this.currentSelectedFilterPreset && currentFilters) {
+      const filterName = await prompt(`Update Filter name or click on OK to continue.`, this.currentSelectedFilterPreset.label);
+      this.currentSelectedFilterPreset.label = filterName;
+      this.currentSelectedFilterPreset.value = filterName.replace(/\s/g, '');
+      this.currentSelectedFilterPreset.filters = currentFilters;
+      this.recreatePredefinedFilters();
+      localStorage.setItem('gridFilterPreset', JSON.stringify(this.predefinedPresets));
+    }
+  }
+
+  usePredefinedFilter(filterValue: string) {
+    this.resetPredefinedFilterSelection(this.predefinedPresets);
+    const selectedFilter = this.predefinedPresets.find(preset => preset.value === filterValue);
+    if (selectedFilter) {
+      selectedFilter.isSelected = true;
+      this.dropdownDeleteFilterClass = selectedFilter.isUserDefined ? 'dropdown-item' : 'dropdown-item dropdown-item-disabled';
+      this.dropdownUpdateFilterClass = this.dropdownDeleteFilterClass;
+
+      const filters = selectedFilter?.filters ?? [];
+      this.sgb.filterService.updateFilters(filters as CurrentFilter[]);
+    } else {
+      this.sgb.filterService.updateFilters([]);
+    }
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.predefinedPresets));
+    this.currentSelectedFilterPreset = selectedFilter;
+  }
+
+  resetPredefinedFilterSelection(predefinedFilters: FilterPreset[]) {
+    predefinedFilters.forEach(preFilter => preFilter.isSelected = false);
   }
 
   mockProducts() {
