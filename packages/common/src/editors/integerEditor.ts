@@ -12,7 +12,7 @@ declare const Slick: SlickNamespace;
  */
 export class IntegerEditor implements Editor {
   private _lastInputKeyEvent: KeyboardEvent;
-  private _input: HTMLInputElement;
+  private _input: HTMLInputElement | null;
   private _originalValue: number | string;
 
   /** is the Editor disabled? */
@@ -78,7 +78,7 @@ export class IntegerEditor implements Editor {
         cellContainer.appendChild(this._input);
       }
 
-      this._input.onfocus = () => this._input.select();
+      this._input.onfocus = () => this._input?.select();
       this._input.onkeydown = ((event: KeyboardEvent) => {
         this._lastInputKeyEvent = event;
         if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT) {
@@ -107,8 +107,10 @@ export class IntegerEditor implements Editor {
       this._input.removeEventListener('change', this.handleOnChange);
       this._input.removeEventListener('wheel', this.handleOnChange);
       setTimeout(() => {
-        this._input.remove();
-        this._input = null;
+        if (this._input) {
+          this._input.remove();
+          this._input = null;
+        }
       });
     }
   }
@@ -148,19 +150,21 @@ export class IntegerEditor implements Editor {
   }
 
   getValue(): string {
-    return this._input.value || '';
+    return this._input?.value || '';
   }
 
   setValue(value: number | string, isApplyingValue = false) {
-    this._input.value = `${value}`;
+    if (this._input) {
+      this._input.value = `${value}`;
 
-    if (isApplyingValue) {
-      this.applyValue(this.args.item, this.serializeValue());
+      if (isApplyingValue) {
+        this.applyValue(this.args.item, this.serializeValue());
 
-      // if it's set by a Composite Editor, then also trigger a change for it
-      const compositeEditorOptions = this.args.compositeEditorOptions;
-      if (compositeEditorOptions) {
-        this.handleChangeOnCompositeEditor(null, compositeEditorOptions);
+        // if it's set by a Composite Editor, then also trigger a change for it
+        const compositeEditorOptions = this.args.compositeEditorOptions;
+        if (compositeEditorOptions) {
+          this.handleChangeOnCompositeEditor(null, compositeEditorOptions);
+        }
       }
     }
   }
@@ -184,7 +188,7 @@ export class IntegerEditor implements Editor {
   }
 
   isValueChanged(): boolean {
-    const elmValue = this._input.value;
+    const elmValue = this._input?.value;
     const lastKeyEvent = this._lastInputKeyEvent && this._lastInputKeyEvent.keyCode;
     if (this.columnEditor && this.columnEditor.alwaysSaveOnEnterKey && lastKeyEvent === KeyCode.ENTER) {
       return true;
@@ -195,7 +199,7 @@ export class IntegerEditor implements Editor {
   loadValue(item: any) {
     const fieldName = this.columnDef && this.columnDef.field;
 
-    if (item && fieldName !== undefined) {
+    if (item && fieldName !== undefined && this._input) {
       // is the field a complex object, "address.streetNumber"
       const isComplexObject = fieldName?.indexOf('.') > 0;
 
@@ -220,8 +224,8 @@ export class IntegerEditor implements Editor {
   }
 
   serializeValue() {
-    const elmValue = this._input.value;
-    if (elmValue === '' || isNaN(+elmValue)) {
+    const elmValue = this._input?.value;
+    if (elmValue === undefined || elmValue === '' || isNaN(+elmValue)) {
       return elmValue;
     }
     const output = isNaN(+elmValue) ? elmValue : parseInt(elmValue, 10);

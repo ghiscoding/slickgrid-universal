@@ -388,12 +388,8 @@ export class SlickVanillaGridBundle {
     this._eventPubSubService?.unsubscribeAll();
     this.dataView?.setItems([]);
     this.slickGrid?.destroy();
-    this.dataView = null;
-    this.slickGrid = null;
     emptyElement(this._gridContainerElm);
     emptyElement(this._gridParentContainerElm);
-    this._gridContainerElm = null;
-    this._gridParentContainerElm = null;
 
     // we could optionally also empty the content of the grid container DOM element
     if (shouldEmptyDomElementContainer) {
