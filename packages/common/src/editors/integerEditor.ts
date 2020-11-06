@@ -106,7 +106,10 @@ export class IntegerEditor implements Editor {
       this._input.removeEventListener('keyup', this.handleOnKeyUp);
       this._input.removeEventListener('change', this.handleOnChange);
       this._input.removeEventListener('wheel', this.handleOnChange);
-      setTimeout(() => this._input.remove());
+      setTimeout(() => {
+        this._input.remove();
+        this._input = null;
+      });
     }
   }
 
@@ -131,7 +134,9 @@ export class IntegerEditor implements Editor {
   }
 
   focus(): void {
-    this._input.focus();
+    if (this._input) {
+      this._input.focus();
+    }
   }
 
   show() {

@@ -174,11 +174,12 @@ export class SelectFilter implements Filter {
    * destroy the filter
    */
   destroy() {
-    if (this.$filterElm) {
-      // remove event watcher
-      this.$filterElm.off().remove();
+    if (this.$filterElm && typeof this.$filterElm.multipleSelect === 'function') {
+      this.$filterElm.multipleSelect('destroy');
+      this.$filterElm.remove();
       const elementClassName = this.elementName.toString().replace('.', '\\.'); // make sure to escape any dot "." from CSS class to avoid console error
       $(`[name=${elementClassName}].ms-drop`).remove();
+      this.$filterElm = null;
     }
   }
 
@@ -461,21 +462,23 @@ export class SelectFilter implements Filter {
   }
 
   private onTriggerEvent() {
-    const selectedItems = this.getValues();
+    if (this.$filterElm) {
+      const selectedItems = this.getValues();
 
-    if (Array.isArray(selectedItems) && selectedItems.length > 1 || (selectedItems.length === 1 && selectedItems[0] !== '')) {
-      this.isFilled = true;
-      this.$filterElm.addClass('filled').siblings('div .search-filter').addClass('filled');
-    } else {
-      this.isFilled = false;
-      this.$filterElm.removeClass('filled');
-      this.$filterElm.siblings('div .search-filter').removeClass('filled');
+      if (Array.isArray(selectedItems) && selectedItems.length > 1 || (selectedItems.length === 1 && selectedItems[0] !== '')) {
+        this.isFilled = true;
+        this.$filterElm?.addClass('filled').siblings('div .search-filter').addClass('filled');
+      } else {
+        this.isFilled = false;
+        this.$filterElm.removeClass('filled');
+        this.$filterElm.siblings('div .search-filter').removeClass('filled');
+      }
+
+      this.searchTerms = selectedItems;
+      this.callback(undefined, { columnDef: this.columnDef, operator: this.operator, searchTerms: selectedItems, shouldTriggerQuery: this._shouldTriggerQuery });
+      // reset flag for next use
+      this._shouldTriggerQuery = true;
     }
-
-    this.searchTerms = selectedItems;
-    this.callback(undefined, { columnDef: this.columnDef, operator: this.operator, searchTerms: selectedItems, shouldTriggerQuery: this._shouldTriggerQuery });
-    // reset flag for next use
-    this._shouldTriggerQuery = true;
   }
 
   protected async renderOptionsAsync(collectionAsync: Promise<any | any[]>): Promise<any[]> {

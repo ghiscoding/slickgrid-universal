@@ -98,7 +98,10 @@ export class TextEditor implements Editor {
     if (this._input) {
       this._input.removeEventListener('focusout', this.save);
       this._input.removeEventListener('keyup', this.handleOnKeyUp);
-      setTimeout(() => this._input.remove());
+      setTimeout(() => {
+        this._input.remove();
+        this._input = null;
+      });
     }
   }
 
@@ -123,7 +126,9 @@ export class TextEditor implements Editor {
   }
 
   focus(): void {
-    this._input.focus();
+    if (this._input) {
+      this._input.focus();
+    }
   }
 
   show() {

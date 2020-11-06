@@ -97,6 +97,7 @@ export class CheckboxEditor implements Editor {
     if (this._input?.remove) {
       this._input.remove();
     }
+    this._input = null;
   }
 
   disable(isDisabled = true) {
@@ -122,7 +123,9 @@ export class CheckboxEditor implements Editor {
   }
 
   focus(): void {
-    this._input.focus();
+    if (this._input) {
+      this._input.focus();
+    }
   }
 
   show() {

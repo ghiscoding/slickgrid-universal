@@ -383,11 +383,11 @@ export class SelectEditor implements Editor {
     this._destroying = true;
     if (this.$editorElm && typeof this.$editorElm.multipleSelect === 'function') {
       this.$editorElm.multipleSelect('destroy');
+      this.$editorElm.remove();
       const elementClassName = this.elementName.toString().replace('.', '\\.'); // make sure to escape any dot "." from CSS class to avoid console error
       $(`[name=${elementClassName}].ms-drop`).remove();
-    }
-    if (this.$editorElm && typeof this.$editorElm.remove === 'function') {
       this.$editorElm.remove();
+      this.$editorElm = null;
     }
   }
 
