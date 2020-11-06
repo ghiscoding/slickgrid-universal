@@ -20,7 +20,7 @@ import {
   SlickGrid,
   SlickNamespace,
 } from './../interfaces/index';
-import { mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, setDeepValue, getDescendantProperty } from './../services/utilities';
+import { destroyObjectDomElementProps, getDescendantProperty, mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, setDeepValue } from './../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 
 // using external non-typed js libraries
@@ -163,19 +163,22 @@ export class DateEditor implements Editor {
 
   destroy() {
     this.hide();
-    this._$input.remove();
+    if (this.flatInstance && typeof this.flatInstance.destroy === 'function') {
+      this.flatInstance.destroy();
+      if (this.flatInstance.element) {
+        destroyObjectDomElementProps(this.flatInstance);
+      }
+      this.flatInstance = null;
+    }
     if (this._$editorInputElm?.remove) {
       this._$editorInputElm.remove();
       this._$editorInputElm = null;
     }
-    if (this._$inputWithData && typeof this._$inputWithData.remove === 'function') {
+    if (this._$inputWithData?.remove) {
       this._$inputWithData.remove();
       this._$inputWithData = null;
     }
-    if (this.flatInstance && typeof this.flatInstance.destroy === 'function') {
-      this.flatInstance.destroy();
-      this.flatInstance = null;
-    }
+    this._$input.remove();
   }
 
   disable(isDisabled = true) {
