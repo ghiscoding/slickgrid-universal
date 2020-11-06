@@ -133,7 +133,7 @@ export class CompoundDateFilter implements Filter {
       this.$filterElm = null;
     }
     if (this.$selectOperatorElm) {
-      this.$selectOperatorElm.off('change').remove();
+      this.$selectOperatorElm.off('change').remove()
     }
   }
 

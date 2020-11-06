@@ -178,7 +178,6 @@ export class DateEditor implements Editor {
       this._$inputWithData.remove();
       this._$inputWithData = null;
     }
-    this._$input.remove();
   }
 
   disable(isDisabled = true) {
