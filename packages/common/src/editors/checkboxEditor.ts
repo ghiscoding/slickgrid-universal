@@ -10,7 +10,7 @@ declare const Slick: SlickNamespace;
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
 export class CheckboxEditor implements Editor {
-  private _input: HTMLInputElement;
+  private _input: HTMLInputElement | null;
   private _checkboxContainerElm: HTMLDivElement;
   private _originalValue?: boolean | string;
 
@@ -97,6 +97,7 @@ export class CheckboxEditor implements Editor {
     if (this._input?.remove) {
       this._input.remove();
     }
+    this._input = null;
   }
 
   disable(isDisabled = true) {
@@ -122,7 +123,9 @@ export class CheckboxEditor implements Editor {
   }
 
   focus(): void {
-    this._input.focus();
+    if (this._input) {
+      this._input.focus();
+    }
   }
 
   show() {
@@ -134,12 +137,14 @@ export class CheckboxEditor implements Editor {
   }
 
   getValue() {
-    return this._input.checked;
+    return this._input?.checked ?? false;
   }
 
   setValue(val: boolean | string, isApplyingValue = false) {
     const isChecked = val ? true : false;
-    this._input.checked = isChecked;
+    if (this._input) {
+      this._input.checked = isChecked;
+    }
 
     if (isApplyingValue) {
       this.applyValue(this.args.item, this.serializeValue());
@@ -177,7 +182,7 @@ export class CheckboxEditor implements Editor {
   loadValue(item: any) {
     const fieldName = this.columnDef && this.columnDef.field;
 
-    if (item && fieldName !== undefined) {
+    if (item && fieldName !== undefined && this._input) {
       // is the field a complex object, "address.streetNumber"
       const isComplexObject = fieldName?.indexOf('.') > 0;
       const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
@@ -201,12 +206,12 @@ export class CheckboxEditor implements Editor {
   }
 
   serializeValue(): boolean {
-    return this._input.checked;
+    return this._input?.checked ?? false;
   }
 
   validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
     const isRequired = this.args?.compositeEditorOptions ? false : this.columnEditor.required;
-    const isChecked = (inputValue !== undefined) ? inputValue : this._input.checked;
+    const isChecked = (inputValue !== undefined) ? inputValue : this._input?.checked;
     const errorMsg = this.columnEditor.errorMessage;
 
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form

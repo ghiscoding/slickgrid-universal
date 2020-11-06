@@ -66,6 +66,7 @@ import {
 
   // utilities
   convertParentChildArrayToHierarchicalView,
+  emptyElement,
   GetSlickEventType,
 } from '@slickgrid-universal/common';
 
@@ -357,7 +358,7 @@ export class SlickVanillaGridBundle {
     }
   }
 
-  destroyGridContainerElm() {
+  emptyGridContainerElm() {
     const gridContainerId = this.gridOptions && this.gridOptions.gridContainerId || 'grid1';
     $(gridContainerId).empty();
   }
@@ -366,14 +367,7 @@ export class SlickVanillaGridBundle {
   dispose(shouldEmptyDomElementContainer = false) {
     this._eventPubSubService.publish('onBeforeGridDestroy', this.slickGrid);
     this._eventHandler?.unsubscribeAll();
-    this.slickGrid?.destroy();
-    this._gridOptions = {};
     this._eventPubSubService.publish('onAfterGridDestroyed', true);
-
-    // we could optionally also empty the content of the grid container DOM element
-    if (shouldEmptyDomElementContainer) {
-      this.destroyGridContainerElm();
-    }
 
     // dispose the Services
     this.extensionService?.dispose();
@@ -392,6 +386,15 @@ export class SlickVanillaGridBundle {
     this.slickPagination?.dispose();
 
     this._eventPubSubService?.unsubscribeAll();
+    this.dataView?.setItems([]);
+    this.slickGrid?.destroy();
+    emptyElement(this._gridContainerElm);
+    emptyElement(this._gridParentContainerElm);
+
+    // we could optionally also empty the content of the grid container DOM element
+    if (shouldEmptyDomElementContainer) {
+      this.emptyGridContainerElm();
+    }
   }
 
   initialization(gridContainerElm: HTMLElement, eventHandler: SlickEventHandler) {
@@ -934,7 +937,7 @@ export class SlickVanillaGridBundle {
     // local grid, check if we need to show the Pagination
     // if so then also check if there's any presets and finally initialize the PaginationService
     // a local grid with Pagination presets will potentially have a different total of items, we'll need to get it from the DataView and update our total
-    if (this._gridOptions && this._gridOptions.enablePagination && this._isLocalGrid) {
+    if (this._gridOptions.enablePagination && this._isLocalGrid) {
       this.showPagination = true;
       this.loadLocalGridPagination(dataset);
     }

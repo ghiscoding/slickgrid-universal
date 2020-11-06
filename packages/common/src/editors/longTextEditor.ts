@@ -163,14 +163,23 @@ export class LongTextEditor implements Editor {
   }
 
   destroy() {
-    this._$wrapper.remove();
+    if (this._$textarea) {
+      this._$textarea.off('keydown');
+      this._$textarea.off('keyup');
+    }
+    if (this._$wrapper) {
+      this._$wrapper.find('.btn-save').off('click');
+      this._$wrapper.find('.btn-cancel').off('click');
+      this._$wrapper.remove();
+    }
+    this._$wrapper = null;
   }
 
   disable(isDisabled = true) {
     const prevIsDisabled = this.disabled;
     this.disabled = isDisabled;
 
-    if (this._$textarea) {
+    if (this._$textarea && this._$wrapper) {
       if (isDisabled) {
         this._$textarea.attr('disabled', 'disabled');
         this._$wrapper.addClass('disabled');

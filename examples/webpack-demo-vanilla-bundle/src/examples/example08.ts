@@ -34,6 +34,11 @@ export class Example08 {
     this.sgb2 = new Slicker.GridBundle(gridContainerElm2, this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
   }
 
+  dispose() {
+    this.sgb1?.dispose();
+    this.sgb2?.dispose();
+  }
+
   definedGrid1() {
     this.columnDefinitions1 = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, columnGroup: 'Common Factor' },

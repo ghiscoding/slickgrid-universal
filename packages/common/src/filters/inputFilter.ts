@@ -120,6 +120,7 @@ export class InputFilter implements Filter {
   destroy() {
     if (this.$filterElm) {
       this.$filterElm.off('keyup input change').remove();
+      this.$filterElm = null;
     }
   }
 

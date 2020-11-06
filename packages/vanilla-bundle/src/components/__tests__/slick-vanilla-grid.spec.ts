@@ -867,7 +867,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should destroy customElement and its DOM element when requested', () => {
-        const spy = jest.spyOn(component, 'destroyGridContainerElm');
+        const spy = jest.spyOn(component, 'emptyGridContainerElm');
 
         component.initialization(divContainer, slickEventHandler);
         component.dispose(true);
