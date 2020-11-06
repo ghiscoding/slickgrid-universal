@@ -179,7 +179,7 @@ export class LongTextEditor implements Editor {
     const prevIsDisabled = this.disabled;
     this.disabled = isDisabled;
 
-    if (this._$textarea) {
+    if (this._$textarea && this._$wrapper) {
       if (isDisabled) {
         this._$textarea.attr('disabled', 'disabled');
         this._$wrapper.addClass('disabled');
