@@ -572,7 +572,7 @@ export class Example11 {
 
   pushNewFilterToSelectPreFilter(predefinedFilters: FilterPreset | FilterPreset[], isOptionSelected = false) {
     if (isOptionSelected) {
-      this.resetPredefinedFilterSelection(this.predefinedPresets);
+      this.predefinedPresets.forEach(preFilter => preFilter.isSelected = false); // reset selection
     }
     const presetFilters: FilterPreset[] = Array.isArray(predefinedFilters) ? predefinedFilters : [predefinedFilters];
     const filterSelect = document.querySelector('.selected-filter');
@@ -611,6 +611,7 @@ export class Example11 {
       event.stopPropagation();
       return;
     }
+    this.predefinedPresets.forEach(preFilter => preFilter.isSelected = false); // reset selection
     const currentFilters = this.sgb.filterService.getCurrentLocalFilters();
 
     const filterName = await prompt('Please provide a name for the new Filter.');
@@ -665,7 +666,7 @@ export class Example11 {
   }
 
   usePredefinedFilter(filterValue: string) {
-    this.resetPredefinedFilterSelection(this.predefinedPresets);
+    this.predefinedPresets.forEach(preFilter => preFilter.isSelected = false); // reset selection
     const selectedFilter = this.predefinedPresets.find(preset => preset.value === filterValue);
     if (selectedFilter) {
       selectedFilter.isSelected = true;
@@ -679,10 +680,6 @@ export class Example11 {
     }
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.predefinedPresets));
     this.currentSelectedFilterPreset = selectedFilter;
-  }
-
-  resetPredefinedFilterSelection(predefinedFilters: FilterPreset[]) {
-    predefinedFilters.forEach(preFilter => preFilter.isSelected = false);
   }
 
   mockProducts() {

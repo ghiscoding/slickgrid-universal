@@ -96,6 +96,13 @@ export const GlobalGridOptions: GridOption = {
   defaultSlickgridEventPrefix: '',
   editable: false,
   editorTypingDebounce: 450,
+  enableEmptyDataWarningMessage: true,
+  emptyDataWarning: {
+    class: 'slick-empty-data-warning',
+    message: 'No data to display.',
+    marginTop: 100,
+    marginLeft: 10
+  },
   enableAutoResize: true,
   enableAutoSizeColumns: true,
   enableCellNavigation: false,

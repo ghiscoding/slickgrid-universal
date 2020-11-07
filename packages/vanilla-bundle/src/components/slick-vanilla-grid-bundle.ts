@@ -74,6 +74,7 @@ import { EventPubSubService } from '../services/eventPubSub.service';
 import { FileExportService } from '../services/fileExport.service';
 import { ResizerService } from '../services/resizer.service';
 import { SalesforceGlobalGridOptions } from '../salesforce-global-grid-options';
+import { SlickEmptyWarningComponent } from './slick-empty-warning.component';
 import { SlickFooterComponent } from './slick-footer.component';
 import { SlickPaginationComponent } from './slick-pagination.component';
 import { SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
@@ -133,6 +134,7 @@ export class SlickVanillaGridBundle {
   treeDataService: TreeDataService;
 
   slickCompositeEditor: SlickCompositeEditorComponent | undefined;
+  slickEmptyWarning: SlickEmptyWarningComponent | undefined;
   slickFooter: SlickFooterComponent | undefined;
   slickPagination: SlickPaginationComponent | undefined;
   gridClass: string;
@@ -356,6 +358,8 @@ export class SlickVanillaGridBundle {
     if (!hierarchicalDataset && !this.gridOptions.backendServiceApi) {
       this.dataset = dataset || [];
     }
+
+    this.slickEmptyWarning = new SlickEmptyWarningComponent(this.slickGrid);
   }
 
   emptyGridContainerElm() {
@@ -381,6 +385,7 @@ export class SlickVanillaGridBundle {
     this.treeDataService?.dispose();
 
     // dispose the Components
+    this.slickEmptyWarning?.dispose();
     this.slickCompositeEditor?.dispose();
     this.slickFooter?.dispose();
     this.slickPagination?.dispose();
@@ -789,6 +794,11 @@ export class SlickVanillaGridBundle {
         if (this.slickFooter) {
           this.slickFooter.metrics = this.metrics;
         }
+
+        // when using local (in-memory) dataset, we'll display a warning message when filtered data is empty
+        if (this._isLocalGrid && this._gridOptions.enableEmptyDataWarningMessage) {
+          this.displayEmptyDataWarning(args.current === 0);
+        }
       });
 
       // when filtering data with local dataset, we need to update each row else it will not always show correctly in the UI
@@ -942,6 +952,11 @@ export class SlickVanillaGridBundle {
       this.loadLocalGridPagination(dataset);
     }
 
+    if (this._gridOptions.enableEmptyDataWarningMessage && Array.isArray(dataset) && this._isDatasetInitialized) {
+      const finalTotalCount = totalCount || dataset.length;
+      this.displayEmptyDataWarning(finalTotalCount < 1);
+    }
+
     if (Array.isArray(dataset) && this.slickGrid && this.dataView && typeof this.dataView.setItems === 'function') {
       this.dataView.setItems(dataset, this._gridOptions.datasetIdPropertyName);
       if (!this._gridOptions.backendServiceApi) {
@@ -1039,6 +1054,15 @@ export class SlickVanillaGridBundle {
       paginationOptions.pageNumber = gridOptions.presets.pagination.pageNumber;
     }
     return paginationOptions;
+  }
+
+  // --
+  // private functions
+  // ------------------
+
+  private displayEmptyDataWarning(showWarning = true) {
+    const gridClasses = Array.from(this._gridParentContainerElm.classList) || [];
+    this.slickEmptyWarning?.showEmptyDataMessage(`.${gridClasses.join('.')}`, showWarning);
   }
 
   /** Initialize the Pagination Service once */
