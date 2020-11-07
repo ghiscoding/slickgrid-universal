@@ -18,7 +18,7 @@ import {
   GridOption,
   SlickGrid,
 } from '../interfaces/index';
-import { mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType } from '../services/utilities';
+import { destroyObjectDomElementProps, mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 
 export class DateRangeFilter implements Filter {
@@ -113,13 +113,16 @@ export class DateRangeFilter implements Filter {
    * destroy the filter
    */
   destroy() {
+    if (this.flatInstance && typeof this.flatInstance.destroy === 'function') {
+      this.flatInstance.destroy();
+      if (this.flatInstance.element) {
+        destroyObjectDomElementProps(this.flatInstance);
+      }
+      this.flatInstance = null;
+    }
     if (this.$filterElm) {
       this.$filterElm.off('keyup').remove();
       this.$filterElm = null;
-    }
-    if (this.flatInstance && typeof this.flatInstance.destroy === 'function') {
-      this.flatInstance.destroy();
-      this.flatInstance = null;
     }
   }
 

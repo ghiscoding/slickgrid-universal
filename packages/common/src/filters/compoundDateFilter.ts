@@ -17,7 +17,7 @@ import {
 import { FieldType, OperatorString, OperatorType, SearchTerm } from '../enums/index';
 import { Constants } from '../constants';
 import { buildSelectOperatorHtmlString } from './filterUtilities';
-import { getTranslationPrefix, mapFlatpickrDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
+import { destroyObjectDomElementProps, getTranslationPrefix, mapFlatpickrDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 
 export class CompoundDateFilter implements Filter {
@@ -121,13 +121,19 @@ export class CompoundDateFilter implements Filter {
    * destroy the filter
    */
   destroy() {
+    if (this.flatInstance && typeof this.flatInstance.destroy === 'function') {
+      this.flatInstance.destroy();
+      if (this.flatInstance.element) {
+        destroyObjectDomElementProps(this.flatInstance);
+      }
+      this.flatInstance = null;
+    }
     if (this.$filterElm) {
       this.$filterElm.off('keyup').remove();
       this.$filterElm = null;
     }
-    if (this.flatInstance && typeof this.flatInstance.destroy === 'function') {
-      this.flatInstance.destroy();
-      this.flatInstance = null;
+    if (this.$selectOperatorElm) {
+      this.$selectOperatorElm.off('change').remove()
     }
   }
 
