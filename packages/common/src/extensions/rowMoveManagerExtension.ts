@@ -18,6 +18,7 @@ declare const Slick: SlickNamespace;
 export class RowMoveManagerExtension implements Extension {
   private _addon: SlickRowMoveManager | null;
   private _eventHandler: SlickEventHandler;
+  private _rowSelectionPlugin: SlickRowSelectionModel;
 
   constructor(private extensionUtility: ExtensionUtility, private sharedService: SharedService) {
     this._eventHandler = new Slick.EventHandler();
@@ -34,6 +35,9 @@ export class RowMoveManagerExtension implements Extension {
     if (this._addon && this._addon.destroy) {
       this._addon.destroy();
       this._addon = null;
+    }
+    if (this._rowSelectionPlugin?.destroy) {
+      this._rowSelectionPlugin.destroy();
     }
   }
 
@@ -101,7 +105,7 @@ export class RowMoveManagerExtension implements Extension {
         rowSelectionPlugin = new Slick.RowSelectionModel(this.sharedService.gridOptions.rowSelectionOptions);
         this.sharedService.slickGrid.setSelectionModel(rowSelectionPlugin);
       }
-
+      this._rowSelectionPlugin = rowSelectionPlugin;
       this.sharedService.slickGrid.registerPlugin<SlickRowMoveManager>(this._addon);
 
       // hook all events
