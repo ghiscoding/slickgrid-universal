@@ -24,7 +24,8 @@ export class SlickEmptyWarningComponent {
    */
   showEmptyDataMessage(gridSelector: string, isShowing = true, options?: EmptyWarning): boolean {
     const gridUid = this.grid.getUID();
-    const mergedOptions: EmptyWarning = { ...this.gridOptions.emptyDataWarning, ...options };
+    const defaultMessage = 'No data to display.';
+    const mergedOptions: EmptyWarning = { message: defaultMessage, ...this.gridOptions.emptyDataWarning, ...options };
     const emptyDataClassName = mergedOptions?.class ?? 'slick-empty-data-warning';
     const finalClassNames = [gridUid, emptyDataClassName];
     this._warningElement = document.querySelector<HTMLDivElement>(`.${finalClassNames.join('.')}`);
@@ -35,7 +36,7 @@ export class SlickEmptyWarningComponent {
     const headerRowCount = 2; // header title row is calculated by SASS and defined as (17px * headerRowCount + paddingTopBottom)
     const headerRowPaddingTopBottom = 10; // 5px (2x for both top/bottom), this is different in each SASS Theme
     const headerRowHeight = 17 * headerRowCount + headerRowPaddingTopBottom;
-    let warningMessage = mergedOptions?.message ?? 'No data to display.';
+    let warningMessage = mergedOptions.message;
     if (this.gridOptions.enableTranslate && this.translaterService && mergedOptions?.messageKey) {
       warningMessage = this.translaterService.translate(mergedOptions.messageKey);
     }
