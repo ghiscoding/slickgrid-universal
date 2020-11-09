@@ -100,6 +100,7 @@ export const GlobalGridOptions: GridOption = {
   emptyDataWarning: {
     class: 'slick-empty-data-warning',
     message: 'No data to display.',
+    messageKey: 'EMPTY_DATA_WARNING_MESSAGE',
     marginTop: 100,
     marginLeft: 10
   },

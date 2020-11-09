@@ -28,6 +28,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'CONTAINS': output = this._locale === 'en' ? 'Contains' : 'Contient'; break;
       case 'COPY': output = this._locale === 'en' ? 'Copy' : 'Copier'; break;
       case 'DURATION': output = this._locale === 'en' ? 'Duration' : 'Durée'; break;
+      case 'EMPTY_DATA_WARNING_MESSAGE': output = this._locale === 'en' ? 'No data to display.' : 'Aucune donnée à afficher.'; break;
       case 'ENDS_WITH': output = this._locale === 'en' ? 'Ends With' : 'Se termine par'; break;
       case 'EQUALS': output = this._locale === 'en' ? 'Equals' : 'Égale'; break;
       case 'EQUAL_TO': output = this._locale === 'en' ? 'Equal to' : 'Égal à'; break;
