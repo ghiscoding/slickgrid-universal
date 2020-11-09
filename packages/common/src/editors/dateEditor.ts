@@ -168,7 +168,6 @@ export class DateEditor implements Editor {
       if (this.flatInstance.element) {
         setTimeout(() => destroyObjectDomElementProps(this.flatInstance));
       }
-      this.flatInstance = null;
     }
     if (this._$editorInputElm?.remove) {
       this._$editorInputElm.remove();
@@ -178,6 +177,7 @@ export class DateEditor implements Editor {
       this._$inputWithData.remove();
       this._$inputWithData = null;
     }
+    this._$input.remove();
   }
 
   disable(isDisabled = true) {

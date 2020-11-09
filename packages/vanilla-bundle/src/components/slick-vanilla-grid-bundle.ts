@@ -74,6 +74,7 @@ import { EventPubSubService } from '../services/eventPubSub.service';
 import { FileExportService } from '../services/fileExport.service';
 import { ResizerService } from '../services/resizer.service';
 import { SalesforceGlobalGridOptions } from '../salesforce-global-grid-options';
+import { SlickEmptyWarningComponent } from './slick-empty-warning.component';
 import { SlickFooterComponent } from './slick-footer.component';
 import { SlickPaginationComponent } from './slick-pagination.component';
 import { SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
@@ -91,6 +92,7 @@ export class SlickVanillaGridBundle {
   private _gridParentContainerElm: HTMLElement;
   private _hideHeaderRowAfterPageLoad = false;
   private _isDatasetInitialized = false;
+  private _isDatasetProvided = false;
   private _isGridInitialized = false;
   private _isLocalGrid = true;
   private _isPaginationInitialized = false;
@@ -133,6 +135,7 @@ export class SlickVanillaGridBundle {
   treeDataService: TreeDataService;
 
   slickCompositeEditor: SlickCompositeEditorComponent | undefined;
+  slickEmptyWarning: SlickEmptyWarningComponent | undefined;
   slickFooter: SlickFooterComponent | undefined;
   slickPagination: SlickPaginationComponent | undefined;
   gridClass: string;
@@ -185,6 +188,7 @@ export class SlickVanillaGridBundle {
       this.dataView.setItems([], this._gridOptions.datasetIdPropertyName);
       this.sortService.processTreeDataInitialSort();
     }
+    this._isDatasetProvided = true;
   }
 
   get gridOptions(): GridOption {
@@ -355,7 +359,10 @@ export class SlickVanillaGridBundle {
     this.initialization(this._gridContainerElm, eventHandler);
     if (!hierarchicalDataset && !this.gridOptions.backendServiceApi) {
       this.dataset = dataset || [];
+      this._isDatasetProvided = true;
     }
+
+    this.slickEmptyWarning = new SlickEmptyWarningComponent(this.slickGrid, this.translaterService);
   }
 
   emptyGridContainerElm() {
@@ -373,6 +380,7 @@ export class SlickVanillaGridBundle {
     this.extensionService?.dispose();
     this.filterService?.dispose();
     this.gridEventService?.dispose();
+    this.gridService?.dispose();
     this.gridStateService?.dispose();
     this.groupingService?.dispose();
     this.paginationService?.dispose();
@@ -381,6 +389,7 @@ export class SlickVanillaGridBundle {
     this.treeDataService?.dispose();
 
     // dispose the Components
+    this.slickEmptyWarning?.dispose();
     this.slickCompositeEditor?.dispose();
     this.slickFooter?.dispose();
     this.slickPagination?.dispose();
@@ -673,6 +682,7 @@ export class SlickVanillaGridBundle {
           if (processResult && processResult.data && processResult.data[datasetName]) {
             this._dataset = processResult.data[datasetName].hasOwnProperty('nodes') ? (processResult as any).data[datasetName].nodes : (processResult as any).data[datasetName];
             const totalCount = processResult.data[datasetName].hasOwnProperty('totalCount') ? (processResult as any).data[datasetName].totalCount : (processResult as any).data[datasetName].length;
+            this._isDatasetProvided = true;
             this.refreshGridData(this._dataset, totalCount || 0);
           }
         };
@@ -788,6 +798,11 @@ export class SlickVanillaGridBundle {
         // if custom footer is enabled, then we'll update its metrics
         if (this.slickFooter) {
           this.slickFooter.metrics = this.metrics;
+        }
+
+        // when using local (in-memory) dataset, we'll display a warning message when filtered data is empty
+        if (this._isLocalGrid && this._gridOptions.enableEmptyDataWarningMessage) {
+          this.displayEmptyDataWarning(args.current === 0);
         }
       });
 
@@ -942,6 +957,11 @@ export class SlickVanillaGridBundle {
       this.loadLocalGridPagination(dataset);
     }
 
+    if (this._gridOptions.enableEmptyDataWarningMessage && Array.isArray(dataset) && this._isDatasetProvided) {
+      const finalTotalCount = totalCount || dataset.length;
+      this.displayEmptyDataWarning(finalTotalCount < 1);
+    }
+
     if (Array.isArray(dataset) && this.slickGrid && this.dataView && typeof this.dataView.setItems === 'function') {
       this.dataView.setItems(dataset, this._gridOptions.datasetIdPropertyName);
       if (!this._gridOptions.backendServiceApi) {
@@ -1039,6 +1059,14 @@ export class SlickVanillaGridBundle {
       paginationOptions.pageNumber = gridOptions.presets.pagination.pageNumber;
     }
     return paginationOptions;
+  }
+
+  // --
+  // private functions
+  // ------------------
+
+  private displayEmptyDataWarning(showWarning = true) {
+    this.slickEmptyWarning?.showEmptyDataMessage(showWarning);
   }
 
   /** Initialize the Pagination Service once */

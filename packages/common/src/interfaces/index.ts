@@ -43,6 +43,7 @@ export * from './editorValidationResult.interface';
 export * from './editorValidator.interface';
 export * from './editUndoRedoBuffer.interface';
 export * from './elementPosition.interface';
+export * from './emptyWarning.interface';
 export * from './excelCellFormat.interface';
 export * from './excelCopyBufferOption.interface';
 export * from './excelExportOption.interface';

@@ -126,14 +126,13 @@ export class CompoundDateFilter implements Filter {
       if (this.flatInstance.element) {
         destroyObjectDomElementProps(this.flatInstance);
       }
-      this.flatInstance = null;
     }
     if (this.$filterElm) {
       this.$filterElm.off('keyup').remove();
       this.$filterElm = null;
     }
     if (this.$selectOperatorElm) {
-      this.$selectOperatorElm.off('change').remove()
+      this.$selectOperatorElm.off('change').remove();
     }
   }
 

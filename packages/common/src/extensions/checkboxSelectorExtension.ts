@@ -8,6 +8,7 @@ declare const Slick: SlickNamespace;
 
 export class CheckboxSelectorExtension implements Extension {
   private _addon: SlickCheckboxSelectColumn | null;
+  private _rowSelectionPlugin: SlickRowSelectionModel;
 
   constructor(private extensionUtility: ExtensionUtility, private sharedService: SharedService) { }
 
@@ -15,6 +16,9 @@ export class CheckboxSelectorExtension implements Extension {
     if (this._addon && this._addon.destroy) {
       this._addon.destroy();
       this._addon = null;
+    }
+    if (this._rowSelectionPlugin?.destroy) {
+      this._rowSelectionPlugin.destroy();
     }
   }
 
@@ -73,7 +77,7 @@ export class CheckboxSelectorExtension implements Extension {
       if (this.sharedService.gridOptions.preselectedRows && rowSelectionPlugin && this.sharedService.slickGrid.getSelectionModel()) {
         setTimeout(() => this._addon?.selectRows(this.sharedService.gridOptions.preselectedRows || []));
       }
-
+      this._rowSelectionPlugin = rowSelectionPlugin;
       return rowSelectionPlugin;
     }
     return null;

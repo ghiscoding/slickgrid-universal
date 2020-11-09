@@ -7,14 +7,15 @@ jest.useFakeTimers();
 
 declare const Slick: SlickNamespace;
 
-const mockSelectionModel = jest.fn().mockImplementation(() => ({
+const mockSelectionModel = {
   init: jest.fn(),
   destroy: jest.fn()
-}));
+};
+const mockSelectionModelImplementation = jest.fn().mockImplementation(() => mockSelectionModel);
 
 jest.mock('flatpickr', () => { });
-jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockSelectionModel);
-Slick.RowSelectionModel = mockSelectionModel;
+jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockSelectionModelImplementation);
+Slick.RowSelectionModel = mockSelectionModelImplementation;
 
 const extensionServiceStub = {
   getAllColumns: jest.fn(),
@@ -97,6 +98,15 @@ describe('Grid Service', () => {
 
   it('should create the service', () => {
     expect(service).toBeTruthy();
+  });
+
+  it('should dispose of the service', () => {
+    const destroySpy = jest.spyOn(mockSelectionModel, 'destroy');
+
+    service.highlightRow(0, 10, 15);
+    service.dispose();
+
+    expect(destroySpy).toHaveBeenCalled();
   });
 
   describe('getAllColumnDefinitions method', () => {
@@ -1358,7 +1368,7 @@ describe('Grid Service', () => {
       const extensionSpy = jest.spyOn(extensionServiceStub, 'getAllColumns').mockReturnValue(mockColumns);
       // const gridStateSpy = jest.spyOn(gridStateServiceStub, 'resetColumns');
 
-      service.resetGrid(mockColumns);
+      service.resetGrid();
 
       expect(extensionSpy).toHaveBeenCalled();
       // expect(gridStateSpy).toHaveBeenCalledWith(mockColumns);

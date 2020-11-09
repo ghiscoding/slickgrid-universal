@@ -1,7 +1,6 @@
-import { SlickCellRangeDecorator, SlickGrid } from './index';
+import { SlickCellRangeDecorator, SlickGrid, SlickRange } from './index';
 import { CellRange } from './cellRange.interface';
 import { SlickEvent } from './slickEvent.interface';
-import { SlickEventData } from './slickEventData.interface';
 
 export interface SlickCellRangeSelector {
   pluginName: 'CellRangeSelector'
@@ -28,5 +27,5 @@ export interface SlickCellRangeSelector {
   onBeforeCellRangeSelected: SlickEvent<{ cell: { row: number; cell: number; } }>;
 
   /** Triggered after a cell range selection happened */
-  onCellRangeSelected: SlickEventData;
+  onCellRangeSelected: SlickEvent<{ range: SlickRange }>;
 }

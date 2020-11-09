@@ -208,7 +208,7 @@ export class Example10 {
    * @param query
    * @return Promise<GraphqlPaginatedResult>
    */
-  getCustomerApiCall(query: string): Promise<GraphqlPaginatedResult> {
+  getCustomerApiCall(_query: string): Promise<GraphqlPaginatedResult> {
     // in your case, you will call your WebAPI function (wich needs to return a Promise)
     // for the demo purpose, we will call a mock WebAPI function
     const mockedResult = {

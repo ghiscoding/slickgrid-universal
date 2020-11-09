@@ -9,6 +9,7 @@ import {
   OnEventArgs,
   SlickGrid,
   SlickNamespace,
+  SlickRowSelectionModel,
 } from '../interfaces/index';
 import { ExtensionService } from './extension.service';
 import { FilterService } from './filter.service';
@@ -27,6 +28,7 @@ const GridServiceUpdateOptionDefaults: GridServiceUpdateOption = { highlightRow:
 
 export class GridService {
   private _grid: SlickGrid;
+  private _rowSelectionPlugin: SlickRowSelectionModel;
 
   constructor(
     private extensionService: ExtensionService,
@@ -45,6 +47,12 @@ export class GridService {
   /** Getter for the Grid Options pulled through the Grid Object */
   private get _gridOptions(): GridOption {
     return (this._grid?.getOptions) ? this._grid.getOptions() : {};
+  }
+
+  dispose() {
+    if (this._rowSelectionPlugin?.destroy) {
+      this._rowSelectionPlugin.destroy();
+    }
   }
 
   init(grid: SlickGrid): void {
@@ -215,8 +223,8 @@ export class GridService {
   highlightRow(rowNumber: number | number[], fadeDelay = 1500, fadeOutDelay = 300) {
     // create a SelectionModel if there's not one yet
     if (!this._grid.getSelectionModel() && Slick && Slick.RowSelectionModel) {
-      const rowSelectionPlugin = new Slick.RowSelectionModel(this._gridOptions.rowSelectionOptions);
-      this._grid.setSelectionModel(rowSelectionPlugin);
+      this._rowSelectionPlugin = new Slick.RowSelectionModel(this._gridOptions.rowSelectionOptions);
+      this._grid.setSelectionModel(this._rowSelectionPlugin);
     }
 
     if (Array.isArray(rowNumber)) {

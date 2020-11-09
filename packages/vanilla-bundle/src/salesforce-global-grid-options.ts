@@ -1,7 +1,7 @@
 import { GridOption, EventNamingStyle } from '@slickgrid-universal/common';
 
 /** Global Grid Options Defaults for Salesforce */
-export const SalesforceGlobalGridOptions: GridOption = {
+export const SalesforceGlobalGridOptions = {
   autoEdit: true, // true single click (false for double-click)
   autoCommitEdit: true,
   compositeEditorOptions: {
@@ -12,6 +12,12 @@ export const SalesforceGlobalGridOptions: GridOption = {
   },
   datasetIdPropertyName: 'Id',
   defaultFilterPlaceholder: '',
+  emptyDataWarning: {
+    class: 'slick-empty-data-warning',
+    message: `<span class="mdi mdi-alert color-warning"></span> No data to display.`,
+    marginTop: 90,
+    marginLeft: 10
+  },
   enableAutoTooltip: true,
   enableDeepCopyDatasetOnPageLoad: true,
   enableExport: true,
@@ -45,4 +51,4 @@ export const SalesforceGlobalGridOptions: GridOption = {
   rowHeight: 33,
   eventNamingStyle: EventNamingStyle.lowerCaseWithoutOnPrefix,
   useSalesforceDefaultGridOptions: true,
-};
+} as GridOption;

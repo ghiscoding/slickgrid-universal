@@ -861,3 +861,11 @@ $footer-right-float:                                  right !default;
 $footer-right-text-align:                             right !default;
 $footer-right-text-color:                             $footer-text-color !default;
 $footer-right-width:                                  50% !default;
+
+/** Empty Data Warning element */
+$empty-data-warning-color:                            $cell-text-color !default;
+$empty-data-warning-font-family:                      $font-family !default;
+$empty-data-warning-font-size:                        calc(#{$font-size-base} + 2px) !default;
+$empty-data-warning-font-style:                       italic !default;
+$empty-data-warning-line-height:                      18px !default;
+$empty-data-warning-z-index:                           9999 !default;

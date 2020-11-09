@@ -11,6 +11,7 @@ import {
   DataViewOption,
   DraggableGrouping,
   EditCommand,
+  EmptyWarning,
   ExcelCopyBufferOption,
   ExcelExportOption,
   ExportOption,
@@ -169,6 +170,15 @@ export interface GridOption {
 
   /** Default to 450ms and only applies to Composite Editor, how long to wait until we start validating the editor changes on Editor that support it (integer, float, text, longText). */
   editorTypingDebounce?: number;
+
+  emptyDataWarning?: EmptyWarning;
+
+  /**
+   * Defaults to true, will display a warning message positioned inside the grid when there's no data returned.
+   * When using local (in-memory) dataset, it will show the message when there's no filtered data returned.
+   * When using backend Pagination it will display the message as soon as the total row count is 0.
+   */
+  enableEmptyDataWarningMessage?: boolean;
 
   /** Do we want to emulate paging when we are scrolling? */
   emulatePagingWhenScrolling?: boolean;

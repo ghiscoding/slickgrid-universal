@@ -59,7 +59,7 @@ export class ExtensionService {
     for (const extensionName of Object.keys(this._extensionList)) {
       if (this._extensionList.hasOwnProperty(extensionName)) {
         const extension = this._extensionList[extensionName] as ExtensionModel<any, any>;
-        if (extension && extension.class && extension.class.dispose) {
+        if (extension?.class?.dispose) {
           extension.class.dispose();
         }
       }
