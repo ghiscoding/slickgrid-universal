@@ -18,18 +18,16 @@ export class SlickEmptyWarningComponent {
   /**
    * Display a warning of empty data when the filtered dataset is empty
    * NOTE: to make this code reusable, you could (should) move this code into a utility service
-   * @param gridSelector - HTML Selector of the grid <div>
    * @param isShowing - are we showing the message?
    * @param options - any styling options you'd like to pass like the text color
    */
-  showEmptyDataMessage(gridSelector: string, isShowing = true, options?: EmptyWarning): boolean {
+  showEmptyDataMessage(isShowing = true, options?: EmptyWarning): boolean {
     const gridUid = this.grid.getUID();
     const defaultMessage = 'No data to display.';
     const mergedOptions: EmptyWarning = { message: defaultMessage, ...this.gridOptions.emptyDataWarning, ...options };
     const emptyDataClassName = mergedOptions?.class ?? 'slick-empty-data-warning';
     const finalClassNames = [gridUid, emptyDataClassName];
     this._warningElement = document.querySelector<HTMLDivElement>(`.${finalClassNames.join('.')}`);
-    const gridElm = document.querySelector<HTMLDivElement>(gridSelector);
 
     // calculate margins
     const gridHeaderFilterRowHeight = this.gridOptions?.headerRowHeight ?? 30; // filter row height
@@ -58,7 +56,8 @@ export class SlickEmptyWarningComponent {
       document.body.appendChild(this._warningElement);
     }
 
-    if (gridElm && this._warningElement) {
+    // if we did find the Slick-Empty-Warning element then we'll display/hide at the grid position with some margin offsets (we need to position under the headerRow and filterRow)
+    if (this._warningElement) {
       if (isShowing) {
         const gridPosition = this.grid.getGridPosition();
         this._warningElement.style.top = `${gridPosition.top + marginTop}px`;

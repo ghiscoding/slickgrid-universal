@@ -1066,8 +1066,7 @@ export class SlickVanillaGridBundle {
   // ------------------
 
   private displayEmptyDataWarning(showWarning = true) {
-    const gridClasses = Array.from(this._gridParentContainerElm.classList) || [];
-    this.slickEmptyWarning?.showEmptyDataMessage(`.${gridClasses.join('.')}`, showWarning);
+    this.slickEmptyWarning?.showEmptyDataMessage(showWarning);
   }
 
   /** Initialize the Pagination Service once */

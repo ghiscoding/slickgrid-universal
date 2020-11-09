@@ -42,9 +42,9 @@ describe('Slick-Empty-Warning Component', () => {
 
     it('should expect the Slick-Empty-Warning to be created and NOT be rendered when passing False as 2nd argument and component was never rendered', () => {
       component = new SlickEmptyWarningComponent(gridStub);
-      component.showEmptyDataMessage('.slickgrid_123456', false);
+      component.showEmptyDataMessage(false);
 
-      const componentElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456.slick-empty-data-warning');
+      const componentElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456.slick-empty-data-warning') as HTMLSelectElement;
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -53,9 +53,9 @@ describe('Slick-Empty-Warning Component', () => {
 
     it('should expect the Slick-Empty-Warning to be created and rendered and passing true as 2nd argument', () => {
       component = new SlickEmptyWarningComponent(gridStub);
-      component.showEmptyDataMessage('.slickgrid_123456', true);
+      component.showEmptyDataMessage(true);
 
-      const componentElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456.slick-empty-data-warning');
+      const componentElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456.slick-empty-data-warning') as HTMLSelectElement;
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -69,9 +69,9 @@ describe('Slick-Empty-Warning Component', () => {
       const mockOptions = { message: 'No Record found.', class: 'custom-class', marginTop: 22, marginLeft: 11 };
       jest.spyOn(gridStub, 'getGridPosition').mockReturnValue(mockGridPosition);
       component = new SlickEmptyWarningComponent(gridStub);
-      component.showEmptyDataMessage('.slickgrid_123456', true, mockOptions);
+      component.showEmptyDataMessage(true, mockOptions);
 
-      const componentElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456.custom-class');
+      const componentElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456.custom-class') as HTMLSelectElement;
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -88,8 +88,8 @@ describe('Slick-Empty-Warning Component', () => {
       translateService.use('fr');
 
       component = new SlickEmptyWarningComponent(gridStub, translateService);
-      component.showEmptyDataMessage('.slickgrid_123456', true);
-      const componentElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456.slick-empty-data-warning');
+      component.showEmptyDataMessage(true);
+      const componentElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456.slick-empty-data-warning') as HTMLSelectElement;
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
