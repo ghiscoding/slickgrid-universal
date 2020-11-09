@@ -1,4 +1,4 @@
-import { EmptyWarning, GridOption, sanitizeTextByAvailableSanitizer, SlickGrid, TranslaterService } from '@slickgrid-universal/common';
+import { EmptyWarning, getHtmlElementOffset, GridOption, sanitizeTextByAvailableSanitizer, SlickGrid, TranslaterService } from '@slickgrid-universal/common';
 
 export class SlickEmptyWarningComponent {
   private _warningElement: HTMLDivElement | null;
@@ -60,8 +60,13 @@ export class SlickEmptyWarningComponent {
     if (this._warningElement) {
       if (isShowing) {
         const gridPosition = this.grid.getGridPosition();
-        this._warningElement.style.top = `${gridPosition.top + marginTop}px`;
-        this._warningElement.style.left = `${gridPosition.left + marginLeft}px`;
+        const gridOffset = getHtmlElementOffset(document.querySelector(`.${this.grid.getUID()}`) as HTMLDivElement);
+
+        // SF seems to have problem with getGridPosition() so we can use getHtmlElementOffset when that happens
+        const gridPosTop = !isNaN(gridPosition.top) ? gridPosition.top : (gridOffset?.top ?? 0);
+        const gridPosLeft = !isNaN(gridPosition.left) ? gridPosition.left : (gridOffset?.left ?? 0);
+        this._warningElement.style.top = `${gridPosTop + marginTop}px`;
+        this._warningElement.style.left = `${gridPosLeft + marginLeft}px`;
       }
       this._warningElement.style.display = isShowing ? 'block' : 'none';
     }
