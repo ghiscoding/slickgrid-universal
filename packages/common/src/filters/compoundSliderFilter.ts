@@ -100,7 +100,7 @@ export class CompoundSliderFilter implements Filter {
     // and initialize it if searchTerm is filled
     this.$filterElm = this.createDomElement(searchTerm);
 
-    // step 3, subscribe to the keyup event and run the callback when that happens
+    // step 3, subscribe to the input change event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
     this.$filterInputElm.change((e: any) => {
       this.onTriggerEvent(e);

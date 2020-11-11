@@ -140,7 +140,7 @@ describe('AutoCompleteFilter', () => {
 
     filterElm.focus();
     filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 109, bubbles: true, cancelable: true }));
-    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 109, bubbles: true, cancelable: true }));
+    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { keyCode: 109, bubbles: true, cancelable: true }));
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
 
     expect(filterFilledElms.length).toBe(1);
@@ -158,7 +158,7 @@ describe('AutoCompleteFilter', () => {
     const filterElm = divContainer.querySelector<HTMLInputElement>('input.filter-gender');
 
     filterElm.focus();
-    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
+    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { keyCode: 97, bubbles: true, cancelable: true }));
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
 
     expect(filterFilledElms.length).toBe(1);
@@ -176,7 +176,7 @@ describe('AutoCompleteFilter', () => {
     const filterElm = divContainer.querySelector<HTMLInputElement>('input.filter-gender');
 
     filterElm.focus();
-    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
+    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { keyCode: 97, bubbles: true, cancelable: true }));
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
 
     expect(filterFilledElms.length).toBe(1);
@@ -192,7 +192,7 @@ describe('AutoCompleteFilter', () => {
 
     filterElm.focus();
     filterElm.value = 'a';
-    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
+    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { keyCode: 97, bubbles: true, cancelable: true }));
 
     // expect(autocompleteListElms.length).toBe(2);
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['a'], shouldTriggerQuery: true });
@@ -264,7 +264,7 @@ describe('AutoCompleteFilter', () => {
       filter.setValues('male');
 
       filterElm.focus();
-      filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
+      filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { keyCode: 97, bubbles: true, cancelable: true }));
       const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
 
       expect(autocompleteUlElms.length).toBe(1);
@@ -288,7 +288,7 @@ describe('AutoCompleteFilter', () => {
       filter.setValues('male');
 
       filterElm.focus();
-      filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
+      filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { keyCode: 97, bubbles: true, cancelable: true }));
       const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
 
       expect(autocompleteUlElms.length).toBe(1);
@@ -318,7 +318,7 @@ describe('AutoCompleteFilter', () => {
       filter.setValues('male');
 
       filterElm.focus();
-      filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
+      filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { keyCode: 97, bubbles: true, cancelable: true }));
       const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
 
       expect(autocompleteUlElms.length).toBe(1);

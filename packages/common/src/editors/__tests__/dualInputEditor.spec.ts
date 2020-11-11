@@ -898,7 +898,7 @@ describe('DualInputEditor', () => {
       editor = new DualInputEditor(editorArguments);
       editor.loadValue(mockItemData);
       editor.setValues([4, 5]);
-      editor.editorDomElement.leftInput.dispatchEvent(new (window.window as any).Event('keyup'));
+      editor.editorDomElement.leftInput.dispatchEvent(new (window.window as any).Event('input'));
 
       jest.runTimersToTime(50);
 
@@ -922,7 +922,7 @@ describe('DualInputEditor', () => {
       editor = new DualInputEditor(editorArguments);
       editor.loadValue(mockItemData);
       editor.setValues([4, 5]);
-      editor.editorDomElement.rightInput.dispatchEvent(new (window.window as any).Event('keyup'));
+      editor.editorDomElement.rightInput.dispatchEvent(new (window.window as any).Event('input'));
 
       jest.runTimersToTime(50);
 

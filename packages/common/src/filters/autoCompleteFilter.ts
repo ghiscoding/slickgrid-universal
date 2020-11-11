@@ -177,7 +177,7 @@ export class AutoCompleteFilter implements Filter {
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
       this.$filterElm.val('');
-      this.$filterElm.trigger('keyup');
+      this.$filterElm.trigger('input');
     }
   }
 
@@ -187,7 +187,7 @@ export class AutoCompleteFilter implements Filter {
   destroy() {
     if (this.$filterElm) {
       this.$filterElm.autocomplete('destroy');
-      this.$filterElm.off('keyup').remove();
+      this.$filterElm.off('input').remove();
     }
     this.$filterElm = null;
     this._collection = null;
@@ -269,9 +269,9 @@ export class AutoCompleteFilter implements Filter {
     this._collection = newCollection;
     this.createDomElement(filterTemplate, newCollection, searchTerm);
 
-    // step 3, subscribe to the keyup event and run the callback when that happens
+    // step 3, subscribe to the input change event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    this.$filterElm.on('keyup', this.handleOnKeyUp.bind(this));
+    this.$filterElm.on('input', this.handleOnInputChange.bind(this));
   }
 
   /**
@@ -406,7 +406,7 @@ export class AutoCompleteFilter implements Filter {
     return false;
   }
 
-  private handleOnKeyUp(e: any) {
+  private handleOnInputChange(e: any) {
     let value = e && e.target && e.target.value || '';
     const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
     if (typeof value === 'string' && enableWhiteSpaceTrim) {

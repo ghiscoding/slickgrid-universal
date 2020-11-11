@@ -79,9 +79,9 @@ export class InputFilter implements Filter {
     // step 2, create the DOM Element of the filter & initialize it if searchTerm is filled
     this.$filterElm = this.createDomElement(filterTemplate, searchTerm);
 
-    // step 3, subscribe to the keyup event and run the callback when that happens
+    // step 3, subscribe to the input event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    this.$filterElm.on('keyup input change', this.handleOnKeyUp.bind(this));
+    this.$filterElm.on('keyup input', this.handleInputChange.bind(this));
   }
 
   /**
@@ -93,7 +93,7 @@ export class InputFilter implements Filter {
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
       this.$filterElm.val('');
-      this.$filterElm.trigger('keyup');
+      this.$filterElm.trigger('input');
     }
   }
 
@@ -102,7 +102,7 @@ export class InputFilter implements Filter {
    */
   destroy() {
     if (this.$filterElm) {
-      this.$filterElm.off('keyup input change').remove();
+      this.$filterElm.off('keyup input').remove();
     }
     this.$filterElm = null;
   }
@@ -161,7 +161,12 @@ export class InputFilter implements Filter {
     return $filterElm;
   }
 
-  protected handleOnKeyUp(e: any) {
+  protected handleInputChange(e: any) {
+    // we'll use the "input" event for everything (keyup, change, mousewheel & spinner)
+    // with 1 small exception, we need to use the keyup event to handle ENTER key, everything will be processed by the "input" event
+    if (e && e.type === 'keyup' && e.key !== 'Enter') {
+      return;
+    }
     let value = e && e.target && e.target.value || '';
     const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
     if (typeof value === 'string' && enableWhiteSpaceTrim) {

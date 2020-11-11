@@ -223,7 +223,7 @@ describe('LongTextEditor', () => {
     describe('isValueChanged method', () => {
       it('should return True when previously dispatched keyboard event is a new char "a" and it should also update the text counter accordingly', () => {
         const eventKeyDown = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
-        const eventKeyUp = new (window.window as any).KeyboardEvent('keyup', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
+        const eventInput = new (window.window as any).KeyboardEvent('input', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
         mockColumn.internalColumnEditor.maxLength = 255;
 
         editor = new LongTextEditor(editorArguments);
@@ -234,7 +234,7 @@ describe('LongTextEditor', () => {
 
         editor.focus();
         editorElm.dispatchEvent(eventKeyDown);
-        editorElm.dispatchEvent(eventKeyUp);
+        editorElm.dispatchEvent(eventInput);
 
         expect(currentTextLengthElm.textContent).toBe('1');
         expect(maxTextLengthElm.textContent).toBe('255');
@@ -727,7 +727,7 @@ describe('LongTextEditor', () => {
       editor.loadValue(mockItemData);
       const editorElm = document.body.querySelector<HTMLTextAreaElement>('.editor-title textarea');
       editorElm.value = 'task 2';
-      editorElm.dispatchEvent(new (window.window as any).Event('keyup'));
+      editorElm.dispatchEvent(new (window.window as any).Event('input'));
 
       jest.runTimersToTime(50);
 

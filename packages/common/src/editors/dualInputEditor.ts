@@ -121,10 +121,10 @@ export class DualInputEditor implements Editor {
     const compositeEditorOptions = this.args?.compositeEditorOptions;
     if (compositeEditorOptions) {
       const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
-      this._leftInput.addEventListener('keyup', (event: KeyboardEvent) => {
+      this._leftInput.addEventListener('input', (event: KeyboardEvent) => {
         debounce(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay)();
       });
-      this._rightInput.addEventListener('keyup', (event: KeyboardEvent) => {
+      this._rightInput.addEventListener('input', (event: KeyboardEvent) => {
         debounce(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay)();
       });
     } else {
