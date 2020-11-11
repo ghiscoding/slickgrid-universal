@@ -23,7 +23,7 @@ import { TranslaterService } from '../services/translater.service';
 export class AutoCompleteFilter implements Filter {
   private _autoCompleteOptions: AutocompleteOption;
   private _clearFilterTriggered = false;
-  private _collection: any[];
+  private _collection: any[] | null;
   private _shouldTriggerQuery = true;
 
   /** DOM Element Name, useful for auto-detecting positioning (dropup / dropdown) */
@@ -71,7 +71,7 @@ export class AutoCompleteFilter implements Filter {
   }
 
   /** Getter for the Collection Used by the Filter */
-  get collection(): any[] {
+  get collection(): any[] | null {
     return this._collection;
   }
 
@@ -188,8 +188,9 @@ export class AutoCompleteFilter implements Filter {
     if (this.$filterElm) {
       this.$filterElm.autocomplete('destroy');
       this.$filterElm.off('keyup').remove();
-      this.$filterElm = null;
     }
+    this.$filterElm = null;
+    this._collection = null;
   }
 
   /** Set value(s) on the DOM element  */
@@ -270,24 +271,27 @@ export class AutoCompleteFilter implements Filter {
 
     // step 3, subscribe to the keyup event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    this.$filterElm.on('keyup', (e: any) => {
-      let value = e && e.target && e.target.value || '';
-      const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
-      if (typeof value === 'string' && enableWhiteSpaceTrim) {
-        value = value.trim();
-      }
+    this.$filterElm.on('keyup', this.handleOnKeyUp.bind(this));
+  }
 
-      if (this._clearFilterTriggered) {
-        this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
-        this.$filterElm.removeClass('filled');
-      } else {
-        value === '' ? this.$filterElm.removeClass('filled') : this.$filterElm.addClass('filled');
-        this.callback(e, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery });
-      }
-      // reset both flags for next use
-      this._clearFilterTriggered = false;
-      this._shouldTriggerQuery = true;
-    });
+  private handleOnKeyUp(e: any) {
+    let value = e && e.target && e.target.value || '';
+    const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
+    if (typeof value === 'string' && enableWhiteSpaceTrim) {
+      value = value.trim();
+    }
+
+    if (this._clearFilterTriggered) {
+      this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
+      this.$filterElm.removeClass('filled');
+    } else {
+      value === '' ? this.$filterElm.removeClass('filled') : this.$filterElm.addClass('filled');
+      this.callback(e, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery });
+    }
+
+    // reset both flags for next use
+    this._clearFilterTriggered = false;
+    this._shouldTriggerQuery = true;
   }
 
   /**

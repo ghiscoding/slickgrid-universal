@@ -22,8 +22,9 @@ declare const Slick: SlickNamespace;
 
 export class ContextMenuExtension implements Extension {
   private _addon: SlickContextMenu | null;
+  private _contextMenuOptions: ContextMenu | null;
   private _eventHandler: SlickEventHandler;
-  private _userOriginalContextMenu: ContextMenu;
+  private _userOriginalContextMenu: ContextMenu | undefined;
 
   constructor(
     private extensionUtility: ExtensionUtility,
@@ -44,11 +45,14 @@ export class ContextMenuExtension implements Extension {
 
     if (this._addon && this._addon.destroy) {
       this._addon.destroy();
-      this._addon = null;
     }
     if (this.sharedService.gridOptions && this.sharedService.gridOptions.contextMenu && this.sharedService.gridOptions.contextMenu.commandItems) {
       this.sharedService.gridOptions.contextMenu = this._userOriginalContextMenu;
     }
+
+    this.extensionUtility.nullifyFunctionNameStartingWithOn(this._contextMenuOptions);
+    this._addon = null;
+    this._contextMenuOptions = null;
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
@@ -63,23 +67,24 @@ export class ContextMenuExtension implements Extension {
     }
 
     if (this.sharedService && this.sharedService.slickGrid && this.sharedService.gridOptions && this.sharedService.gridOptions.contextMenu) {
-      const contextMenu = this.sharedService.gridOptions.contextMenu;
+      this._contextMenuOptions = this.sharedService.gridOptions.contextMenu;
       // keep original user context menu, useful when switching locale to translate
-      this._userOriginalContextMenu = { ...contextMenu };
+      this._userOriginalContextMenu = { ...this._contextMenuOptions };
 
       // dynamically import the SlickGrid plugin (addon) with RequireJS
       this.extensionUtility.loadExtensionDynamically(ExtensionName.contextMenu);
 
       // merge the original commands with the built-in internal commands
       const originalCommandItems = this._userOriginalContextMenu && Array.isArray(this._userOriginalContextMenu.commandItems) ? this._userOriginalContextMenu.commandItems : [];
-      contextMenu.commandItems = [...originalCommandItems, ...this.addMenuCustomCommands(originalCommandItems)];
-      this.sharedService.gridOptions.contextMenu = { ...contextMenu };
+      this._contextMenuOptions.commandItems = [...originalCommandItems, ...this.addMenuCustomCommands(originalCommandItems)];
+      this._contextMenuOptions = { ...this._contextMenuOptions };
+      this.sharedService.gridOptions.contextMenu = this._contextMenuOptions;
 
       // sort all menu items by their position order when defined
-      this.extensionUtility.sortItems(contextMenu.commandItems || [], 'positionOrder');
-      this.extensionUtility.sortItems(contextMenu.optionItems || [], 'positionOrder');
+      this.extensionUtility.sortItems(this._contextMenuOptions.commandItems || [], 'positionOrder');
+      this.extensionUtility.sortItems(this._contextMenuOptions.optionItems || [], 'positionOrder');
 
-      this._addon = new Slick.Plugins.ContextMenu(contextMenu);
+      this._addon = new Slick.Plugins.ContextMenu(this._contextMenuOptions);
       if (this._addon) {
         this.sharedService.slickGrid.registerPlugin<SlickContextMenu>(this._addon);
       }
@@ -90,47 +95,47 @@ export class ContextMenuExtension implements Extension {
       }
 
       // hook all events
-      if (this.sharedService.slickGrid && contextMenu) {
-        if (this._addon && contextMenu.onExtensionRegistered) {
-          contextMenu.onExtensionRegistered(this._addon);
+      if (this.sharedService.slickGrid && this._contextMenuOptions) {
+        if (this._addon && this._contextMenuOptions.onExtensionRegistered) {
+          this._contextMenuOptions.onExtensionRegistered(this._addon);
         }
-        if (contextMenu && typeof contextMenu.onCommand === 'function') {
+        if (this._contextMenuOptions && typeof this._contextMenuOptions.onCommand === 'function') {
           const onCommandHandler = this._addon.onCommand;
           (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCommandHandler>>).subscribe(onCommandHandler, (event, args) => {
-            if (contextMenu.onCommand) {
-              contextMenu.onCommand(event, args);
+            if (this._contextMenuOptions?.onCommand) {
+              this._contextMenuOptions.onCommand(event, args);
             }
           });
         }
-        if (contextMenu && typeof contextMenu.onOptionSelected === 'function') {
+        if (this._contextMenuOptions && typeof this._contextMenuOptions.onOptionSelected === 'function') {
           const onOptionSelectedHandler = this._addon.onOptionSelected;
           (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onOptionSelectedHandler>>).subscribe(onOptionSelectedHandler, (event, args) => {
-            if (contextMenu.onOptionSelected) {
-              contextMenu.onOptionSelected(event, args);
+            if (this._contextMenuOptions?.onOptionSelected) {
+              this._contextMenuOptions.onOptionSelected(event, args);
             }
           });
         }
-        if (contextMenu && typeof contextMenu.onBeforeMenuShow === 'function') {
+        if (this._contextMenuOptions && typeof this._contextMenuOptions.onBeforeMenuShow === 'function') {
           const onBeforeMenuShowHandler = this._addon.onBeforeMenuShow;
           (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMenuShowHandler>>).subscribe(onBeforeMenuShowHandler, (event, args) => {
-            if (contextMenu.onBeforeMenuShow) {
-              contextMenu.onBeforeMenuShow(event, args);
+            if (this._contextMenuOptions?.onBeforeMenuShow) {
+              this._contextMenuOptions.onBeforeMenuShow(event, args);
             }
           });
         }
-        if (contextMenu && typeof contextMenu.onBeforeMenuClose === 'function') {
+        if (this._contextMenuOptions && typeof this._contextMenuOptions.onBeforeMenuClose === 'function') {
           const onBeforeMenuCloseHandler = this._addon.onBeforeMenuClose;
           (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMenuCloseHandler>>).subscribe(onBeforeMenuCloseHandler, (event, args) => {
-            if (contextMenu.onBeforeMenuClose) {
-              contextMenu.onBeforeMenuClose(event, args);
+            if (this._contextMenuOptions?.onBeforeMenuClose) {
+              this._contextMenuOptions.onBeforeMenuClose(event, args);
             }
           });
         }
-        if (contextMenu && typeof contextMenu.onAfterMenuShow === 'function') {
+        if (this._contextMenuOptions && typeof this._contextMenuOptions.onAfterMenuShow === 'function') {
           const onAfterMenuShowHandler = this._addon.onAfterMenuShow;
           (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onAfterMenuShowHandler>>).subscribe(onAfterMenuShowHandler, (event, args) => {
-            if (contextMenu.onAfterMenuShow) {
-              contextMenu.onAfterMenuShow(event, args);
+            if (this._contextMenuOptions?.onAfterMenuShow) {
+              this._contextMenuOptions.onAfterMenuShow(event, args);
             }
           });
         }

@@ -110,12 +110,11 @@ export class FilterService {
   }
 
   dispose() {
-    this.disposeColumnFilters();
-
     // unsubscribe all SlickGrid events
     if (this._eventHandler && this._eventHandler.unsubscribeAll) {
       this._eventHandler.unsubscribeAll();
     }
+    this.disposeColumnFilters();
   }
 
   /**

@@ -118,12 +118,12 @@ export class DateRangeFilter implements Filter {
       if (this.flatInstance.element) {
         destroyObjectDomElementProps(this.flatInstance);
       }
-      this.flatInstance = null;
     }
     if (this.$filterElm) {
       this.$filterElm.off('keyup').remove();
-      this.$filterElm = null;
     }
+    this.flatInstance = null;
+    this.$filterElm = null;
   }
 
   hide() {
@@ -295,6 +295,7 @@ export class DateRangeFilter implements Filter {
       (this._currentDateStrings) ? this.$filterElm.addClass('filled') : this.$filterElm.removeClass('filled');
       this.callback(e, { columnDef: this.columnDef, searchTerms: (this._currentDateStrings ? this._currentDateStrings : [this._currentValue]), operator: this.operator || '', shouldTriggerQuery: this._shouldTriggerQuery });
     }
+
     // reset both flags for next use
     this._clearFilterTriggered = false;
     this._shouldTriggerQuery = true;

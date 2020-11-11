@@ -155,7 +155,7 @@ export class SlickVanillaGridBundle {
   }
 
   get dataset(): any[] {
-    return this.dataView.getItems();
+    return this.dataView?.getItems() ?? [];
   }
   set dataset(newDataset: any[]) {
     const prevDatasetLn = this.dataView.getLength();
@@ -170,11 +170,11 @@ export class SlickVanillaGridBundle {
     }
   }
 
-  get datasetHierarchical(): any[] {
+  get datasetHierarchical(): any[] | undefined {
     return this.sharedService.hierarchicalDataset;
   }
 
-  set datasetHierarchical(newHierarchicalDataset: any[]) {
+  set datasetHierarchical(newHierarchicalDataset: any[] | undefined) {
     this.sharedService.hierarchicalDataset = newHierarchicalDataset;
 
     if (newHierarchicalDataset && this.columnDefinitions && this.filterService && this.filterService.clearFilters) {
@@ -394,11 +394,24 @@ export class SlickVanillaGridBundle {
     this._eventPubSubService?.unsubscribeAll();
     this.dataView?.setItems([]);
     this.slickGrid?.destroy();
-    this.datasetHierarchical = null;
-    this._columnDefinitions = [];
-    this._gridOptions = undefined;
+
     emptyElement(this._gridContainerElm);
     emptyElement(this._gridParentContainerElm);
+
+    if (this.backendServiceApi) {
+      for (const prop of Object.keys(this.backendServiceApi)) {
+        this.backendServiceApi[prop] = null;
+      }
+      this.backendServiceApi = undefined;
+    }
+    for (const prop of Object.keys(this.columnDefinitions)) {
+      this.columnDefinitions[prop] = null;
+    }
+    for (const prop of Object.keys(this.sharedService)) {
+      this.sharedService[prop] = null;
+    }
+    this.datasetHierarchical = undefined;
+    this._columnDefinitions = [];
 
     // we could optionally also empty the content of the grid container DOM element
     if (shouldEmptyDomElementContainer) {

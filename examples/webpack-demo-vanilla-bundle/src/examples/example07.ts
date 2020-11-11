@@ -107,8 +107,8 @@ export class Example7 {
         singleRowMove: true,
         disableRowSelection: true,
         cancelEditOnDrag: true,
-        onBeforeMoveRows: (e, args) => this.onBeforeMoveRow(e, args),
-        onMoveRows: (e, args) => this.onMoveRows(e, args),
+        onBeforeMoveRows: this.onBeforeMoveRow,
+        onMoveRows: this.onMoveRows.bind(this),
 
         // you can also override the usability of the rows, for example make every 2nd row the only moveable rows,
         // usabilityOverride: (row, dataContext, grid) => dataContext.id % 2 === 1
@@ -178,7 +178,7 @@ export class Example7 {
       selectedRows.push(left.length + i);
     }
 
-    this.sgb.slickGrid.resetActiveCell();
+    args.grid.resetActiveCell();
     this.sgb.dataset = this.dataset; // update dataset and re-render the grid
   }
 

@@ -121,9 +121,9 @@ export class CompoundInputFilter implements Filter {
     if (this.$filterElm && this.$selectOperatorElm) {
       this.$filterElm.off('keyup input change').remove();
       this.$selectOperatorElm.off('change');
-      this.$filterElm = null;
-      this.$selectOperatorElm = null;
     }
+    this.$filterElm = null;
+    this.$selectOperatorElm = null;
   }
 
   /** Set value(s) on the DOM element  */
@@ -263,6 +263,7 @@ export class CompoundInputFilter implements Filter {
       (value !== null && value !== undefined && value !== '') ? this.$filterElm.addClass('filled') : this.$filterElm.removeClass('filled');
       this.callback(e, { columnDef: this.columnDef, searchTerms: (value ? [value] : null), operator: selectedOperator || '', shouldTriggerQuery: this._shouldTriggerQuery });
     }
+
     // reset both flags for next use
     this._clearFilterTriggered = false;
     this._shouldTriggerQuery = true;

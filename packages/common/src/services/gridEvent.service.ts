@@ -1,12 +1,15 @@
 import {
   Column,
-  SlickDataView,
+  GetSlickEventType,
   GridOption,
+  OnBeforeEditCellEventArgs,
+  OnClickEventArgs,
   OnEventArgs,
   SlickEventHandler,
+  SlickDataView,
+  SlickEventData,
   SlickGrid,
   SlickNamespace,
-  GetSlickEventType,
 } from './../interfaces/index';
 
 // using external non-typed js libraries
@@ -23,6 +26,10 @@ export class GridEventService {
     this._eventHandler = new Slick.EventHandler();
   }
 
+  dispose() {
+    this._eventHandler.unsubscribeAll();
+  }
+
   /* OnCellChange Event */
   bindOnBeforeEditCell(grid: SlickGrid) {
     const dataView = grid?.getData && grid.getData() as SlickDataView;
@@ -30,26 +37,7 @@ export class GridEventService {
     // subscribe to this Slickgrid event of onBeforeEditCell
     const onBeforeEditCellHandler = grid.onBeforeEditCell;
     (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeEditCellHandler>>).subscribe(onBeforeEditCellHandler, (e, args) => {
-      if (!e || !args || !grid || args.cell === undefined || !grid.getColumns || !grid.getDataItem) {
-        return;
-      }
-      const column: Column = grid.getColumns()[args.cell];
-
-      // if the column definition has a onBeforeEditCell property (a callback function), then run it
-      if (typeof column.onBeforeEditCell === 'function') {
-        // add to the output gridOptions & dataView since we'll need them inside the AJAX column.onBeforeEditCell
-        const returnedArgs: OnEventArgs = {
-          row: args.row,
-          cell: args.cell,
-          dataView,
-          grid,
-          columnDef: column,
-          dataContext: grid.getDataItem(args.row)
-        };
-
-        // finally call up the Slick.column.onBeforeEditCells.... function
-        column.onBeforeEditCell(e, returnedArgs);
-      }
+      this.handleOnCellChange.call(this, grid, dataView, e, args);
     });
   }
 
@@ -89,37 +77,66 @@ export class GridEventService {
 
     const onClickHandler = grid.onClick;
     (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onClickHandler>>).subscribe(onClickHandler, (e, args) => {
-      if (!e || !args || !grid || args.cell === undefined || !grid.getColumns || !grid.getDataItem) {
-        return;
-      }
-      const column: Column = grid && grid.getColumns && grid.getColumns()[args.cell];
-      const gridOptions: GridOption = grid && grid.getOptions && grid.getOptions() || {};
-
-      // only when using autoCommitEdit, we will make the cell active (in focus) when clicked
-      // setting the cell as active as a side effect and if autoCommitEdit is set to false then the Editors won't save correctly
-      if (gridOptions.enableCellNavigation && (!gridOptions.editable || (gridOptions.editable && gridOptions.autoCommitEdit))) {
-        grid.setActiveCell(args.row, args.cell);
-      }
-
-      // if the column definition has a onCellClick property (a callback function), then run it
-      if (typeof column.onCellClick === 'function') {
-        // add to the output gridOptions & dataView since we'll need them inside the AJAX column.onClick
-        const returnedArgs: OnEventArgs = {
-          row: args.row,
-          cell: args.cell,
-          dataView,
-          grid,
-          columnDef: column,
-          dataContext: grid.getDataItem(args.row)
-        };
-
-        // finally call up the Slick.column.onCellClick.... function
-        column.onCellClick(e, returnedArgs);
-      }
+      this.handleOnCellClick.call(this, grid, dataView, e, args);
     });
   }
 
-  dispose() {
-    this._eventHandler.unsubscribeAll();
+  //
+  // private functions
+  // ------------------
+
+  /* OnCellChange Event Handler */
+  handleOnCellChange(grid: SlickGrid, dataView: SlickDataView, e: SlickEventData, args: OnBeforeEditCellEventArgs) {
+    if (!e || !args || !grid || args.cell === undefined || !grid.getColumns || !grid.getDataItem) {
+      return;
+    }
+    const column: Column = grid.getColumns()[args.cell];
+
+    // if the column definition has a onBeforeEditCell property (a callback function), then run it
+    if (typeof column.onBeforeEditCell === 'function') {
+      // add to the output gridOptions & dataView since we'll need them inside the AJAX column.onBeforeEditCell
+      const returnedArgs: OnEventArgs = {
+        row: args.row,
+        cell: args.cell,
+        dataView,
+        grid,
+        columnDef: column,
+        dataContext: grid.getDataItem(args.row)
+      };
+
+      // finally call up the Slick.column.onBeforeEditCells.... function
+      column.onBeforeEditCell(e, returnedArgs);
+    }
+  }
+
+  /* OnCellClick Event Handler */
+  private handleOnCellClick(grid: any, dataView: any, e: SlickEventData, args: OnClickEventArgs) {
+    if (!e || !args || !grid || args.cell === undefined || !grid.getColumns || !grid.getDataItem) {
+      return;
+    }
+    const column: Column = grid && grid.getColumns && grid.getColumns()[args.cell];
+    const gridOptions: GridOption = grid && grid.getOptions && grid.getOptions() || {};
+
+    // only when using autoCommitEdit, we will make the cell active (in focus) when clicked
+    // setting the cell as active as a side effect and if autoCommitEdit is set to false then the Editors won't save correctly
+    if (gridOptions.enableCellNavigation && (!gridOptions.editable || (gridOptions.editable && gridOptions.autoCommitEdit))) {
+      grid.setActiveCell(args.row, args.cell);
+    }
+
+    // if the column definition has a onCellClick property (a callback function), then run it
+    if (typeof column.onCellClick === 'function') {
+      // add to the output gridOptions & dataView since we'll need them inside the AJAX column.onClick
+      const returnedArgs: OnEventArgs = {
+        row: args.row,
+        cell: args.cell,
+        dataView,
+        grid,
+        columnDef: column,
+        dataContext: grid.getDataItem(args.row)
+      };
+
+      // finally call up the Slick.column.onCellClick.... function
+      column.onCellClick(e, returnedArgs);
+    }
   }
 }

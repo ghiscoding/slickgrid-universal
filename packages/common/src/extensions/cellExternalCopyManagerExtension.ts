@@ -23,7 +23,7 @@ declare const Slick: SlickNamespace;
 
 export class CellExternalCopyManagerExtension implements Extension {
   private _addon: SlickCellExternalCopyManager | null;
-  private _addonOptions: ExcelCopyBufferOption;
+  private _addonOptions: ExcelCopyBufferOption | null;
   private _cellSelectionModel: SlickCellSelectionModel;
   private _eventHandler: SlickEventHandler;
   private _commandQueue: EditCommand[];
@@ -33,7 +33,7 @@ export class CellExternalCopyManagerExtension implements Extension {
     this._eventHandler = new Slick.EventHandler() as SlickEventHandler;
   }
 
-  get addonOptions(): ExcelCopyBufferOption {
+  get addonOptions(): ExcelCopyBufferOption | null {
     return this._addonOptions;
   }
 
@@ -59,6 +59,8 @@ export class CellExternalCopyManagerExtension implements Extension {
     if (this._cellSelectionModel?.destroy) {
       this._cellSelectionModel.destroy();
     }
+    this.extensionUtility.nullifyFunctionNameStartingWithOn(this._addonOptions);
+    this._addonOptions = null;
     document.removeEventListener('keydown', this.hookUndoShortcutKey.bind(this));
   }
 
@@ -85,29 +87,29 @@ export class CellExternalCopyManagerExtension implements Extension {
       }
 
       // hook to all possible events
-      if (this.sharedService.slickGrid && this.sharedService.gridOptions.excelCopyBufferOptions) {
-        if (this._addon && this.sharedService.gridOptions.excelCopyBufferOptions.onExtensionRegistered) {
-          this.sharedService.gridOptions.excelCopyBufferOptions.onExtensionRegistered(this._addon);
+      if (this.sharedService.slickGrid && this._addonOptions) {
+        if (this._addon && this._addonOptions.onExtensionRegistered) {
+          this._addonOptions.onExtensionRegistered(this._addon);
         }
 
         const onCopyCellsHandler = this._addon.onCopyCells;
         (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCopyCellsHandler>>).subscribe(onCopyCellsHandler, (e, args) => {
-          if (this.sharedService.gridOptions.excelCopyBufferOptions && typeof this.sharedService.gridOptions.excelCopyBufferOptions.onCopyCells === 'function') {
-            this.sharedService.gridOptions.excelCopyBufferOptions.onCopyCells(e, args);
+          if (this._addonOptions && typeof this._addonOptions.onCopyCells === 'function') {
+            this._addonOptions.onCopyCells(e, args);
           }
         });
 
         const onCopyCancelledHandler = this._addon.onCopyCancelled;
         (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCopyCancelledHandler>>).subscribe(onCopyCancelledHandler, (e, args) => {
-          if (this.sharedService.gridOptions.excelCopyBufferOptions && typeof this.sharedService.gridOptions.excelCopyBufferOptions.onCopyCancelled === 'function') {
-            this.sharedService.gridOptions.excelCopyBufferOptions.onCopyCancelled(e, args);
+          if (this._addonOptions && typeof this._addonOptions.onCopyCancelled === 'function') {
+            this._addonOptions.onCopyCancelled(e, args);
           }
         });
 
         const onPasteCellsHandler = this._addon.onPasteCells;
         (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onPasteCellsHandler>>).subscribe(onPasteCellsHandler, (e, args) => {
-          if (this.sharedService.gridOptions.excelCopyBufferOptions && typeof this.sharedService.gridOptions.excelCopyBufferOptions.onPasteCells === 'function') {
-            this.sharedService.gridOptions.excelCopyBufferOptions.onPasteCells(e, args);
+          if (this._addonOptions && typeof this._addonOptions.onPasteCells === 'function') {
+            this._addonOptions.onPasteCells(e, args);
           }
         });
       }

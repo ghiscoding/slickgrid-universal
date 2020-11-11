@@ -151,10 +151,10 @@ export class CompoundSliderFilter implements Filter {
     if (this.$filterInputElm) {
       this.$filterInputElm.off('input change').remove();
       this.$selectOperatorElm.off('change').remove();
-      this.$filterInputElm = null;
-      this.$filterElm = null;
-      this.$selectOperatorElm = null;
     }
+    this.$filterInputElm = null;
+    this.$filterElm = null;
+    this.$selectOperatorElm = null;
   }
 
   /**
@@ -307,6 +307,7 @@ export class CompoundSliderFilter implements Filter {
       const selectedOperator = this.$selectOperatorElm.find('option:selected').val();
       this.callback(e, { columnDef: this.columnDef, searchTerms: (value ? [value || '0'] : null), operator: selectedOperator || '', shouldTriggerQuery: this._shouldTriggerQuery });
     }
+
     // reset both flags for next use
     this._clearFilterTriggered = false;
     this._shouldTriggerQuery = true;

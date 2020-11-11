@@ -1,6 +1,7 @@
 import { Constants } from '../constants';
 import { ExtensionName } from '../enums/extensionName.enum';
 import {
+  CellMenu,
   CellMenuOption,
   Column,
   Extension,
@@ -21,6 +22,7 @@ declare const Slick: SlickNamespace;
 
 export class CellMenuExtension implements Extension {
   private _addon: SlickCellMenu | null;
+  private _cellMenuOptions: CellMenu | null;
   private _eventHandler: SlickEventHandler;
   private _locales: Locale;
 
@@ -42,8 +44,10 @@ export class CellMenuExtension implements Extension {
 
     if (this._addon && this._addon.destroy) {
       this._addon.destroy();
-      this._addon = null;
     }
+    this.extensionUtility.nullifyFunctionNameStartingWithOn(this._cellMenuOptions);
+    this._addon = null;
+    this._cellMenuOptions = null;
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
@@ -64,7 +68,8 @@ export class CellMenuExtension implements Extension {
 
       // dynamically import the SlickGrid plugin (addon) with RequireJS
       this.extensionUtility.loadExtensionDynamically(ExtensionName.cellMenu);
-      this.sharedService.gridOptions.cellMenu = { ...this.getDefaultCellMenuOptions(), ...this.sharedService.gridOptions.cellMenu };
+      this._cellMenuOptions = { ...this.getDefaultCellMenuOptions(), ...this.sharedService.gridOptions.cellMenu };
+      this.sharedService.gridOptions.cellMenu = this._cellMenuOptions;
 
       // translate the item keys when necessary
       if (this.sharedService.gridOptions.enableTranslate) {
@@ -74,15 +79,15 @@ export class CellMenuExtension implements Extension {
       // sort all menu items by their position order when defined
       this.sortMenuItems(this.sharedService.allColumns);
 
-      this._addon = new Slick.Plugins.CellMenu(this.sharedService.gridOptions.cellMenu);
+      this._addon = new Slick.Plugins.CellMenu(this._cellMenuOptions);
       if (this._addon) {
         this.sharedService.slickGrid.registerPlugin<SlickCellMenu>(this._addon);
       }
 
       // hook all events
-      if (this.sharedService.slickGrid && this.sharedService.gridOptions.cellMenu) {
-        if (this._addon && this.sharedService.gridOptions.cellMenu.onExtensionRegistered) {
-          this.sharedService.gridOptions.cellMenu.onExtensionRegistered(this._addon);
+      if (this.sharedService.slickGrid && this._cellMenuOptions) {
+        if (this._addon && this._cellMenuOptions.onExtensionRegistered) {
+          this._cellMenuOptions.onExtensionRegistered(this._addon);
         }
         if (cellMenu && typeof cellMenu.onCommand === 'function') {
           const onCommandHandler = this._addon.onCommand;
@@ -132,7 +137,7 @@ export class CellMenuExtension implements Extension {
 
   /** Translate the Cell Menu titles, we need to loop through all column definition to re-translate them */
   translateCellMenu() {
-    if (this.sharedService.gridOptions && this.sharedService.gridOptions.cellMenu) {
+    if (this.sharedService.gridOptions?.cellMenu) {
       this.resetMenuTranslations(this.sharedService.allColumns);
     }
   }

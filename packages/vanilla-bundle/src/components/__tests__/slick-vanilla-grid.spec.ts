@@ -185,6 +185,7 @@ const mockDataView = {
   getItem: jest.fn(),
   getItems: jest.fn(),
   getItemMetadata: jest.fn(),
+  getLength: jest.fn(),
   getPagingInfo: jest.fn(),
   mapIdsToRows: jest.fn(),
   mapRowsToIds: jest.fn(),
@@ -458,6 +459,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const autosizeSpy = jest.spyOn(mockGrid, 'autosizeColumns');
         const refreshSpy = jest.spyOn(component, 'refreshGridData');
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
+        jest.spyOn(mockDataView, 'getLength').mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(mockData.length);
 
         component.gridOptions = { autoFitColumnsOnFirstLoad: true };
         component.initialization(divContainer, slickEventHandler);
@@ -471,6 +473,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const autosizeSpy = jest.spyOn(mockGrid, 'autosizeColumns');
         const refreshSpy = jest.spyOn(component, 'refreshGridData');
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
+        jest.spyOn(mockDataView, 'getLength').mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(mockData.length);
 
         component.gridOptions = { autoFitColumnsOnFirstLoad: false };
         component.initialization(divContainer, slickEventHandler);
@@ -1661,6 +1664,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
         const selectRowSpy = jest.spyOn(mockGrid, 'setSelectedRows');
         jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true);
+        jest.spyOn(mockDataView, 'getLength').mockReturnValue(mockData.length);
 
         component.gridOptions.enableRowSelection = true;
         component.gridOptions.presets = { rowSelection: { gridRowIndexes: selectedGridRows } };
@@ -1680,6 +1684,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
         const selectRowSpy = jest.spyOn(mockGrid, 'setSelectedRows');
         jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true);
+        jest.spyOn(mockDataView, 'getLength').mockReturnValue(mockData.length);
 
         component.gridOptions = {
           enableRowSelection: true,
