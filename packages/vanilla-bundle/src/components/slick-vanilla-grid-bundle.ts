@@ -393,7 +393,7 @@ export class SlickVanillaGridBundle {
 
     this._eventPubSubService?.unsubscribeAll();
     this.dataView?.setItems([]);
-    this.slickGrid?.destroy();
+    this.slickGrid?.destroy(true);
 
     emptyElement(this._gridContainerElm);
     emptyElement(this._gridParentContainerElm);
