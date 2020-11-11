@@ -274,26 +274,6 @@ export class AutoCompleteFilter implements Filter {
     this.$filterElm.on('keyup', this.handleOnKeyUp.bind(this));
   }
 
-  private handleOnKeyUp(e: any) {
-    let value = e && e.target && e.target.value || '';
-    const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
-    if (typeof value === 'string' && enableWhiteSpaceTrim) {
-      value = value.trim();
-    }
-
-    if (this._clearFilterTriggered) {
-      this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
-      this.$filterElm.removeClass('filled');
-    } else {
-      value === '' ? this.$filterElm.removeClass('filled') : this.$filterElm.addClass('filled');
-      this.callback(e, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery });
-    }
-
-    // reset both flags for next use
-    this._clearFilterTriggered = false;
-    this._shouldTriggerQuery = true;
-  }
-
   /**
    * Create the HTML template as a string
    */
@@ -426,7 +406,27 @@ export class AutoCompleteFilter implements Filter {
     return false;
   }
 
-  protected renderCustomItem(ul: HTMLElement, item: any) {
+  private handleOnKeyUp(e: any) {
+    let value = e && e.target && e.target.value || '';
+    const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
+    if (typeof value === 'string' && enableWhiteSpaceTrim) {
+      value = value.trim();
+    }
+
+    if (this._clearFilterTriggered) {
+      this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
+      this.$filterElm.removeClass('filled');
+    } else {
+      value === '' ? this.$filterElm.removeClass('filled') : this.$filterElm.addClass('filled');
+      this.callback(e, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery });
+    }
+
+    // reset both flags for next use
+    this._clearFilterTriggered = false;
+    this._shouldTriggerQuery = true;
+  }
+
+  private renderCustomItem(ul: HTMLElement, item: any) {
     const templateString = this._autoCompleteOptions?.renderItem?.templateCallback(item) ?? '';
 
     // sanitize any unauthorized html tags like script and others
@@ -439,7 +439,7 @@ export class AutoCompleteFilter implements Filter {
       .appendTo(ul);
   }
 
-  protected renderCollectionItem(ul: any, item: any) {
+  private renderCollectionItem(ul: any, item: any) {
     const isRenderHtmlEnabled = this.columnFilter?.enableRenderHtml ?? false;
     const prefixText = item.labelPrefix || '';
     const labelText = item.label || '';
@@ -457,7 +457,7 @@ export class AutoCompleteFilter implements Filter {
       .appendTo(ul);
   }
 
-  protected async renderOptionsAsync(collectionAsync: Promise<any | any[]>): Promise<any[]> {
+  private async renderOptionsAsync(collectionAsync: Promise<any | any[]>): Promise<any[]> {
     let awaitedCollection: any = null;
 
     if (collectionAsync) {

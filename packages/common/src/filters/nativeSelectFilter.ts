@@ -86,23 +86,6 @@ export class NativeSelectFilter implements Filter {
     this.$filterElm.change(this.handleOnChange.bind(this));
   }
 
-  private handleOnChange(e: any) {
-    const value = e && e.target && e.target.value || '';
-    this._currentValues = [value];
-
-    if (this._clearFilterTriggered) {
-      this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
-      this.$filterElm.removeClass('filled');
-    } else {
-      value === '' ? this.$filterElm.removeClass('filled') : this.$filterElm.addClass('filled');
-      this.callback(e, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery });
-    }
-
-    // reset both flags for next use
-    this._clearFilterTriggered = false;
-    this._shouldTriggerQuery = true;
-  }
-
   /**
    * Clear the filter values
    */
@@ -210,5 +193,22 @@ export class NativeSelectFilter implements Filter {
     }
 
     return $filterElm;
+  }
+
+  private handleOnChange(e: any) {
+    const value = e && e.target && e.target.value || '';
+    this._currentValues = [value];
+
+    if (this._clearFilterTriggered) {
+      this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
+      this.$filterElm.removeClass('filled');
+    } else {
+      value === '' ? this.$filterElm.removeClass('filled') : this.$filterElm.addClass('filled');
+      this.callback(e, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery });
+    }
+
+    // reset both flags for next use
+    this._clearFilterTriggered = false;
+    this._shouldTriggerQuery = true;
   }
 }

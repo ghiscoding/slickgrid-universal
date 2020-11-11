@@ -102,22 +102,6 @@ export class SliderFilter implements Filter {
     }
   }
 
-  private handleOnChange(e: any) {
-    const value = e && e.target && e.target.value;
-    this._currentValue = +value;
-
-    if (this._clearFilterTriggered) {
-      this.$filterElm.removeClass('filled');
-      this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, searchTerms: [], shouldTriggerQuery: this._shouldTriggerQuery });
-    } else {
-      this.$filterElm.addClass('filled');
-      this.callback(e, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value || '0'], shouldTriggerQuery: this._shouldTriggerQuery });
-    }
-    // reset both flags for next use
-    this._clearFilterTriggered = false;
-    this._shouldTriggerQuery = true;
-  }
-
   /**
    * Clear the filter value
    */
@@ -244,5 +228,21 @@ export class SliderFilter implements Filter {
     }
 
     return $filterElm;
+  }
+
+  private handleOnChange(e: any) {
+    const value = e && e.target && e.target.value;
+    this._currentValue = +value;
+
+    if (this._clearFilterTriggered) {
+      this.$filterElm.removeClass('filled');
+      this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, searchTerms: [], shouldTriggerQuery: this._shouldTriggerQuery });
+    } else {
+      this.$filterElm.addClass('filled');
+      this.callback(e, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value || '0'], shouldTriggerQuery: this._shouldTriggerQuery });
+    }
+    // reset both flags for next use
+    this._clearFilterTriggered = false;
+    this._shouldTriggerQuery = true;
   }
 }

@@ -84,26 +84,6 @@ export class InputFilter implements Filter {
     this.$filterElm.on('keyup input change', this.handleOnKeyUp.bind(this));
   }
 
-  private handleOnKeyUp(e: any) {
-    let value = e && e.target && e.target.value || '';
-    const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
-    if (typeof value === 'string' && enableWhiteSpaceTrim) {
-      value = value.trim();
-    }
-
-    if (this._clearFilterTriggered) {
-      this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
-      this.$filterElm.removeClass('filled');
-    } else {
-      value === '' ? this.$filterElm.removeClass('filled') : this.$filterElm.addClass('filled');
-      this.callback(e, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery });
-    }
-
-    // reset both flags for next use
-    this._clearFilterTriggered = false;
-    this._shouldTriggerQuery = true;
-  }
-
   /**
    * Clear the filter value
    */
@@ -179,5 +159,25 @@ export class InputFilter implements Filter {
     }
 
     return $filterElm;
+  }
+
+  protected handleOnKeyUp(e: any) {
+    let value = e && e.target && e.target.value || '';
+    const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
+    if (typeof value === 'string' && enableWhiteSpaceTrim) {
+      value = value.trim();
+    }
+
+    if (this._clearFilterTriggered) {
+      this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
+      this.$filterElm.removeClass('filled');
+    } else {
+      value === '' ? this.$filterElm.removeClass('filled') : this.$filterElm.addClass('filled');
+      this.callback(e, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery });
+    }
+
+    // reset both flags for next use
+    this._clearFilterTriggered = false;
+    this._shouldTriggerQuery = true;
   }
 }
