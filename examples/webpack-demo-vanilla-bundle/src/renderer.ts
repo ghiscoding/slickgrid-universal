@@ -21,7 +21,9 @@ export class Renderer {
   }
 
   dispose() {
-    this._observers = [];
+    for (const observer of this._observers) {
+      observer.unbindAll();
+    }
   }
 
   getModuleClassName(module: any): string {
