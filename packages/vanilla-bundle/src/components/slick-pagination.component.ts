@@ -133,12 +133,11 @@ export class SlickPaginationComponent {
     const paginationTemplate = require('./slick-pagination.component.html');
 
     if (paginationTemplate) {
-      let temp = document.createElement('div');
+      const temp = document.createElement('div');
       temp.innerHTML = paginationTemplate;
       this._paginationElement = temp.firstChild as HTMLDivElement;
       this._paginationElement.classList.add(this.gridUid, 'pager');
       this._paginationElement.style.width = '100%';
-      temp = null;
 
       if (gridParentContainerElm?.appendChild && this._paginationElement) {
         gridParentContainerElm.appendChild(this._paginationElement);
