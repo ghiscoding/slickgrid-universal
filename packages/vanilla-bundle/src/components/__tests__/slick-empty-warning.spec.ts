@@ -1,4 +1,4 @@
-import { GridOption, SlickGrid } from '@slickgrid-universal/common';
+import { EmptyWarning, GridOption, SlickGrid } from '@slickgrid-universal/common';
 import { SlickEmptyWarningComponent } from '../slick-empty-warning.component';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
@@ -6,7 +6,7 @@ const GRID_UID = 'slickgrid_123456';
 
 const mockGridOptions = {
   enableTranslate: false,
-  showCustomFooter: true,
+  frozenRow: 0,
 } as GridOption;
 
 const gridStub = {
@@ -50,24 +50,151 @@ describe('Slick-Empty-Warning Component', () => {
       component = new SlickEmptyWarningComponent(gridStub);
       component.showEmptyDataMessage(false);
 
-      const componentElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas .slick-empty-data-warning') as HTMLSelectElement;
+      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
-      expect(componentElm).toBeFalsy();
+      expect(componentLeftElm).toBeFalsy();
+      expect(componentRightElm).toBeFalsy();
     });
 
-    it('should expect the Slick-Empty-Warning to be created and rendered and passing true as 2nd argument', () => {
+    it('should expect the Slick-Empty-Warning to be created in both viewports and rendered and passing true as 2nd argument', () => {
       component = new SlickEmptyWarningComponent(gridStub);
       component.showEmptyDataMessage(true);
 
-      const componentElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas .slick-empty-data-warning') as HTMLSelectElement;
+      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
-      expect(componentElm).toBeTruthy();
-      expect(componentElm.style.display).toBe('block');
-      expect(componentElm.textContent).toBe('No data to display.');
+      expect(componentLeftElm).toBeTruthy();
+      expect(componentLeftElm.style.display).toBe('block');
+      expect(componentRightElm.style.display).toBe('block');
+      expect(componentLeftElm.textContent).toBe('No data to display.');
+      expect(componentRightElm.textContent).toBe('No data to display.');
+    });
+
+    it('should expect the Slick-Empty-Warning to be created in both viewports when using Frozen Grid but NOT displayed on left when "hideFrozenLeftWarning" flag is enabled', () => {
+      mockGridOptions.frozenRow = 2;
+      (mockGridOptions.emptyDataWarning as EmptyWarning).hideFrozenLeftWarning = true;
+      (mockGridOptions.emptyDataWarning as EmptyWarning).hideFrozenRightWarning = false;
+      component = new SlickEmptyWarningComponent(gridStub);
+      component.showEmptyDataMessage(true);
+
+      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(componentLeftElm).toBeTruthy();
+      expect(componentLeftElm.style.display).toBe('none');
+      expect(componentRightElm.style.display).toBe('block');
+      expect(componentLeftElm.style.marginLeft).toBe('10px');
+      expect(componentRightElm.style.marginLeft).toBe('10px');
+      expect(componentLeftElm.textContent).toBe('No data to display.');
+      expect(componentRightElm.textContent).toBe('No data to display.');
+    });
+
+    it('should expect the Slick-Empty-Warning to be created and use different left margin when "leftViewportMarginLeft" is set', () => {
+      mockGridOptions.frozenRow = 0;
+      (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
+      component = new SlickEmptyWarningComponent(gridStub);
+      component.showEmptyDataMessage(true);
+
+      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(componentLeftElm).toBeTruthy();
+      expect(componentLeftElm.style.display).toBe('block');
+      expect(componentRightElm.style.display).toBe('block');
+      expect(componentLeftElm.style.marginLeft).toBe('40%');
+      expect(componentRightElm.style.marginLeft).toBe('0px');
+      expect(componentLeftElm.textContent).toBe('No data to display.');
+      expect(componentRightElm.textContent).toBe('No data to display.');
+    });
+
+    it('should expect the Slick-Empty-Warning to be created and use different left margin when "rightViewportMarginLeft" is set', () => {
+      mockGridOptions.frozenRow = 0;
+      (mockGridOptions.emptyDataWarning as EmptyWarning).rightViewportMarginLeft = '40%';
+      component = new SlickEmptyWarningComponent(gridStub);
+      component.showEmptyDataMessage(true);
+
+      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(componentLeftElm).toBeTruthy();
+      expect(componentLeftElm.style.display).toBe('block');
+      expect(componentRightElm.style.display).toBe('block');
+      expect(componentLeftElm.style.marginLeft).toBe('0px');
+      expect(componentRightElm.style.marginLeft).toBe('40%');
+      expect(componentLeftElm.textContent).toBe('No data to display.');
+      expect(componentRightElm.textContent).toBe('No data to display.');
+    });
+
+    it('should expect the Slick-Empty-Warning to be created in both viewports and use different left margin when "frozenLeftViewportMarginLeft" is set', () => {
+      mockGridOptions.frozenRow = 2;
+      (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
+      (mockGridOptions.emptyDataWarning as EmptyWarning).frozenLeftViewportMarginLeft = '15px';
+      component = new SlickEmptyWarningComponent(gridStub);
+      component.showEmptyDataMessage(true);
+
+      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(componentLeftElm).toBeTruthy();
+      expect(componentLeftElm.style.display).toBe('block');
+      expect(componentRightElm.style.display).toBe('block');
+      expect(componentLeftElm.style.marginLeft).toBe('15px');
+      expect(componentRightElm.style.marginLeft).toBe('10px');
+      expect(componentLeftElm.textContent).toBe('No data to display.');
+      expect(componentRightElm.textContent).toBe('No data to display.');
+    });
+
+    it('should expect the Slick-Empty-Warning to be created in both viewports and use different left margin when "frozenRightViewportMarginLeft" is set', () => {
+      mockGridOptions.frozenRow = 2;
+      (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
+      (mockGridOptions.emptyDataWarning as EmptyWarning).frozenRightViewportMarginLeft = '22px';
+      component = new SlickEmptyWarningComponent(gridStub);
+      component.showEmptyDataMessage(true);
+
+      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(componentLeftElm).toBeTruthy();
+      expect(componentLeftElm.style.display).toBe('block');
+      expect(componentRightElm.style.display).toBe('block');
+      expect(componentLeftElm.style.marginLeft).toBe('10px');
+      expect(componentRightElm.style.marginLeft).toBe('22px');
+      expect(componentLeftElm.textContent).toBe('No data to display.');
+      expect(componentRightElm.textContent).toBe('No data to display.');
+    });
+
+    it('should expect the Slick-Empty-Warning to be created in both viewports when using Frozen Grid but NOT displayed on right when "hideFrozenRightWarning" flag is enabled', () => {
+      mockGridOptions.frozenRow = 2;
+      (mockGridOptions.emptyDataWarning as EmptyWarning).hideFrozenLeftWarning = false;
+      (mockGridOptions.emptyDataWarning as EmptyWarning).hideFrozenRightWarning = true;
+      component = new SlickEmptyWarningComponent(gridStub);
+      component.showEmptyDataMessage(true);
+
+      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(componentLeftElm).toBeTruthy();
+      expect(componentLeftElm.style.display).toBe('block');
+      expect(componentRightElm.style.display).toBe('none');
+      expect(componentLeftElm.textContent).toBe('No data to display.');
+      expect(componentRightElm.textContent).toBe('No data to display.');
     });
 
     it('should expect the Slick-Empty-Warning to change some options and display a different message when provided as an option', () => {

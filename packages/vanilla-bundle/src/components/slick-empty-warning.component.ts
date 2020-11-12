@@ -42,12 +42,11 @@ export class SlickEmptyWarningComponent {
     this._warningLeftElement = document.querySelector<HTMLDivElement>(`.${emptyDataClassName}`);
     const gridCanvasLeftElm = document.querySelector<HTMLDivElement>(`.${gridUid} .grid-canvas.grid-canvas-left`);
     const gridCanvasRightElm = document.querySelector<HTMLDivElement>(`.${gridUid} .grid-canvas.grid-canvas-right`);
-    const gridViewportRightElm = document.querySelector<HTMLDivElement>(`.${gridUid} .slick-pane-top.slick-pane-right`);
     const leftElementMarginLeft = mergedOptions.leftViewportMarginLeft ?? 0;
     const rightElementMarginLeft = mergedOptions.rightViewportMarginLeft ?? 0;
     const leftElementFrozenMarginLeft = mergedOptions.frozenLeftViewportMarginLeft ?? 10;
     const rightElementFrozenMarginLeft = mergedOptions.frozenRightViewportMarginLeft ?? 10;
-    const isFrozenGrid = gridViewportRightElm?.style.display !== 'none' ?? false;
+    const isFrozenGrid = (this.gridOptions?.frozenRow !== undefined && this.gridOptions?.frozenRow >= 0);
     const leftViewportMarginLeft = typeof leftElementMarginLeft === 'string' ? leftElementMarginLeft : `${leftElementMarginLeft}px`;
     const rightViewportMarginLeft = typeof rightElementMarginLeft === 'string' ? rightElementMarginLeft : `${rightElementMarginLeft}px`;
 
@@ -83,7 +82,10 @@ export class SlickEmptyWarningComponent {
     // when using a frozen/pinned grid, we also have extra options to hide left/right message
     if (this._warningLeftElement) {
       // display/hide right/left messages
-      const leftDisplay = (isFrozenGrid && isShowing && !mergedOptions.hideFrozenLeftWarning) ? 'block' : (isShowing ? 'block' : 'none');
+      let leftDisplay = isShowing ? 'block' : 'none';
+      if (isFrozenGrid && isShowing) {
+        leftDisplay = (mergedOptions.hideFrozenLeftWarning) ? 'none' : 'block';
+      }
       this._warningLeftElement.style.display = leftDisplay;
 
       // use correct left margin (defaults to 40% on regular grid or 10px on frozen grid)
@@ -93,7 +95,10 @@ export class SlickEmptyWarningComponent {
 
     if (this._warningRightElement) {
       // use correct left margin (defaults to 40% on regular grid or 10px on frozen grid)
-      const rightDisplay = (isFrozenGrid && isShowing && !mergedOptions.hideFrozenRightWarning) ? 'block' : (isShowing ? 'block' : 'none');
+      let rightDisplay = isShowing ? 'block' : 'none';
+      if (isFrozenGrid && isShowing) {
+        rightDisplay = (mergedOptions.hideFrozenRightWarning) ? 'none' : 'block';
+      }
       this._warningRightElement.style.display = rightDisplay;
 
       // use correct left margin (defaults to 40% on regular grid or 10px on frozen grid)
