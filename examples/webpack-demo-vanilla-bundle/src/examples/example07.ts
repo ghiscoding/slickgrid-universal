@@ -8,22 +8,28 @@ import {
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { EventService } from './event.service';
 
 import { ExampleGridOptions } from './example-grid-options';
 
 export class Example7 {
+  private eventService: EventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
   sgb: SlickVanillaGridBundle;
   duplicateTitleHeaderCount = 1;
 
+  constructor() {
+    this.eventService = new EventService();
+  }
+
   attached() {
     this.initializeGrid();
     this.dataset = this.loadData(500);
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid7`);
-    gridContainerElm.addEventListener('oncellchange', this.handleOnCellChange.bind(this));
-    gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
+    this.eventService.addElementEventListener(gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
+    this.eventService.addElementEventListener(gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 

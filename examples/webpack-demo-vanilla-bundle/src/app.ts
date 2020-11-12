@@ -2,7 +2,14 @@ import { AppRouting } from './app-routing';
 import { Renderer } from './renderer';
 import { RouterConfig } from './interfaces';
 
+interface ElementEventListener {
+  element: Element;
+  eventName: string;
+  listener: EventListenerOrEventListenerObject;
+}
+
 export class App {
+  private _boundedEventWithListeners: ElementEventListener[] = [];
   documentTitle = 'Slickgrid-Universal';
   defaultRouteName: string;
   stateBangChar: string;
@@ -40,16 +47,31 @@ export class App {
     };
   }
 
+  addElementEventListener(element: Element, eventName: string, listener: EventListenerOrEventListenerObject) {
+    element.addEventListener(eventName, listener);
+    this._boundedEventWithListeners.push({ element, eventName, listener });
+  }
+
+  /** Dispose of the SPA App */
+  disposeApp() {
+    document.removeEventListener('DOMContentLoaded', this.handleNavbarHamburgerToggle);
+  }
+
+  /** Dispose of all View Models of the SPA */
   disposeAll() {
+    this.unbindAllEvents();
     this.renderer?.dispose();
 
     for (const vmKey of Object.keys(this.viewModelObj)) {
       const viewModel = this.viewModelObj[vmKey];
-      if (viewModel && viewModel.dispose) {
+      if (viewModel?.dispose) {
         viewModel?.dispose();
-        delete window[vmKey];
-        delete this.viewModelObj[vmKey];
       }
+      // nullify the object and then delete them to make sure it's picked by the garbage collector
+      window[vmKey] = null;
+      this.viewModelObj[vmKey] = null;
+      delete window[vmKey];
+      delete this.viewModelObj[vmKey];
     }
   }
 
@@ -63,12 +85,15 @@ export class App {
         return;
       }
       const viewModel = this.renderer.loadViewModel(require(`${mapRoute.moduleId}.ts`));
-      if (viewModel && viewModel.dispose) {
-        window.onunload = viewModel.dispose; // dispose when leaving SPA
+      if (viewModel?.dispose) {
+        window.onunload = () => {
+          viewModel.dispose; // dispose when leaving SPA
+          this.disposeApp();
+        };
       }
 
       this.renderer.loadView(require(`${mapRoute.moduleId}.html`));
-      if (viewModel && viewModel.attached && this.renderer.className) {
+      if (viewModel?.attached && this.renderer.className) {
         this.viewModelObj[this.renderer.className] = viewModel;
         viewModel.attached();
         this.dropdownToggle(); // rebind bulma dropdown toggle event handlers
@@ -87,14 +112,14 @@ export class App {
     const $dropdowns = document.querySelectorAll('.dropdown:not(.is-hoverable)');
 
     if ($dropdowns.length > 0) {
-      $dropdowns.forEach(($el) => {
-        $el.addEventListener('click', (event) => {
+      $dropdowns.forEach($el => {
+        this.addElementEventListener($el, 'click', (event) => {
           event.stopPropagation();
           $el.classList.toggle('is-active');
         });
       });
 
-      document.addEventListener('click', () => this.closeDropdowns());
+      this.addElementEventListener(document.body, 'click', this.closeDropdowns.bind(this));
     }
   }
 
@@ -105,27 +130,38 @@ export class App {
 
   /** Add event listener for the navbar hamburger menu toggle when menu shows up on mobile */
   navbarHamburgerToggle() {
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', this.handleNavbarHamburgerToggle);
+  }
 
-      // Get all "navbar-burger" elements
-      const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+  handleNavbarHamburgerToggle() {
+    // Get all "navbar-burger" elements
+    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
 
-      // Check if there are any navbar burgers
-      if ($navbarBurgers.length > 0) {
-        // Add a click event on each of them
-        $navbarBurgers.forEach(el => {
-          el.addEventListener('click', () => {
+    // Check if there are any navbar burgers
+    if ($navbarBurgers.length > 0) {
+      // Add a click event on each of them
+      $navbarBurgers.forEach(el => {
+        el.addEventListener('click', () => {
 
-            // Get the target from the "data-target" attribute
-            const target = el.dataset.target;
-            const $target = document.getElementById(target);
+          // Get the target from the "data-target" attribute
+          const target = el.dataset.target;
+          const $target = document.getElementById(target);
 
-            // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-            el.classList.toggle('is-active');
-            $target.classList.toggle('is-active');
-          });
+          // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+          el.classList.toggle('is-active');
+          $target.classList.toggle('is-active');
         });
+      });
+    }
+  }
+
+  /** Unbind All (remove) bounded elements with listeners */
+  unbindAllEvents() {
+    for (const boundedEvent of this._boundedEventWithListeners) {
+      const { element, eventName, listener } = boundedEvent;
+      if (element?.removeEventListener) {
+        element.removeEventListener(eventName, listener);
       }
-    });
+    }
   }
 }

@@ -10,14 +10,20 @@ import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bu
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
 import './example11-modal.scss';
+import { EventService } from './event.service';
 
 export class Example11Modal {
+  private eventService: EventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
   remoteCallbackFn: any;
   selectedIds: string[] = [];
+
+  constructor() {
+    this.eventService = new EventService();
+  }
 
   attached() {
     this.openBulmaModal(this.handleOnModalClose.bind(this));
@@ -29,7 +35,7 @@ export class Example11Modal {
       if (bindings.columnDefinitions) {
         this.columnDefinitions = bindings.columnDefinitions;
         this.gridContainerElm = document.querySelector<HTMLDivElement>(`.modal-grid`);
-        this.gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
+        this.eventService.addElementEventListener(this.gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
 
         const dataset = [this.createEmptyItem(bindings.columnDefinitions)];
         this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
@@ -44,6 +50,8 @@ export class Example11Modal {
 
   dispose() {
     this.sgb?.dispose();
+    this.eventService.unbindAllEvents();
+    this.gridContainerElm = null;
   }
 
   initializeGrid() {
