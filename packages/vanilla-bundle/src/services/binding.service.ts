@@ -24,7 +24,7 @@ export interface ElementBindingWithListener extends ElementBinding {
 export class BindingService {
   _value: any = null;
   _binding: Binding;
-  _bindedEventWithListeners: { element: Element; eventName: string; listener: EventListenerOrEventListenerObject; }[] = [];
+  _boundedEventWithListeners: { element: Element; eventName: string; listener: EventListenerOrEventListenerObject; }[] = [];
   _property: string;
   elementBindings: Array<ElementBinding | ElementBindingWithListener> = [];
 
@@ -48,6 +48,12 @@ export class BindingService {
 
   get property() {
     return this._property;
+  }
+
+  dispose() {
+    this.unbindAll();
+    this._boundedEventWithListeners = [];
+    this.elementBindings = [];
   }
 
   valueGetter() {
@@ -92,10 +98,11 @@ export class BindingService {
 
   /** Unbind All (remove) bounded elements with listeners */
   unbindAll() {
-    for (const bindedEvent of this._bindedEventWithListeners) {
-      const { element, eventName, listener } = bindedEvent;
+    for (const boundedEvent of this._boundedEventWithListeners) {
+      const { element, eventName, listener } = boundedEvent;
       this.unbind(element, eventName, listener);
     }
+    this._boundedEventWithListeners = [];
   }
 
   /**
@@ -123,7 +130,7 @@ export class BindingService {
         (binding as ElementBindingWithListener).event = eventName;
         (binding as ElementBindingWithListener).listener = listener;
         element.addEventListener(eventName, listener);
-        this._bindedEventWithListeners.push({ element, eventName, listener });
+        this._boundedEventWithListeners.push({ element, eventName, listener });
       }
       this.elementBindings.push(binding);
       element[attribute] = typeof this._value === 'string' ? this.sanitizeText(this._value) : this._value;

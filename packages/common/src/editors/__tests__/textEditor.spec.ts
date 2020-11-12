@@ -592,6 +592,7 @@ describe('TextEditor', () => {
       editor.editorDomElement.dispatchEvent(new (window.window as any).Event('input'));
 
       jest.runTimersToTime(50);
+      editor.destroy();
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });

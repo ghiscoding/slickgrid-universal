@@ -121,23 +121,24 @@ export class SlickPaginationComponent {
   }
 
   dispose() {
-    this.paginationService.dispose();
-    this._bindingHelper.dispose();
-    this._paginationElement.remove();
-
     // also dispose of all Subscriptions
     this.pubSubService.unsubscribeAll(this._subscriptions);
+
+    this._bindingHelper.dispose();
+    this.paginationService.dispose();
+    this._paginationElement.remove();
   }
 
   renderPagination(gridParentContainerElm: HTMLElement) {
     const paginationTemplate = require('./slick-pagination.component.html');
 
     if (paginationTemplate) {
-      const temp = document.createElement('div');
+      let temp = document.createElement('div');
       temp.innerHTML = paginationTemplate;
       this._paginationElement = temp.firstChild as HTMLDivElement;
       this._paginationElement.classList.add(this.gridUid, 'pager');
       this._paginationElement.style.width = '100%';
+      temp = null;
 
       if (gridParentContainerElm?.appendChild && this._paginationElement) {
         gridParentContainerElm.appendChild(this._paginationElement);

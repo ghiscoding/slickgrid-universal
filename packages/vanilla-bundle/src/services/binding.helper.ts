@@ -1,4 +1,4 @@
-import { BindingService, ElementBindingWithListener } from './binding.service';
+import { BindingService } from './binding.service';
 
 export class BindingHelper {
   private _observers: BindingService[] = [];
@@ -19,13 +19,9 @@ export class BindingHelper {
 
   dispose() {
     for (const observer of this._observers) {
-      const elementBindings = observer.elementBindings as Array<ElementBindingWithListener>;
-      for (const binding of elementBindings) {
-        if (binding?.event && binding?.listener) {
-          observer.unbind(binding.element, binding.event, binding.listener);
-        }
-      }
+      observer.dispose();
     }
+    this._observers = [];
   }
 
   addElementBinding(variable: any, property: string, selector: string, attribute: string, events?: string | string[], callback?: (val: any) => void) {

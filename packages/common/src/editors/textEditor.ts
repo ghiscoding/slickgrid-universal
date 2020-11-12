@@ -95,9 +95,13 @@ export class TextEditor implements Editor {
   }
 
   destroy() {
+    const compositeEditorOptions = this.args.compositeEditorOptions;
+
     if (this._input) {
       this._input.removeEventListener('focusout', this.save);
-      this._input.removeEventListener('input', this.handleOnInputChange);
+      if (compositeEditorOptions) {
+        this._input.removeEventListener('input', this.handleOnInputChange);
+      }
       setTimeout(() => {
         if (this._input) {
           this._input.remove();
