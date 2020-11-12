@@ -60,7 +60,6 @@ export class App {
   /** Dispose of all View Models of the SPA */
   disposeAll() {
     this.unbindAllEvents();
-    this.renderer?.dispose();
 
     for (const vmKey of Object.keys(this.viewModelObj)) {
       const viewModel = this.viewModelObj[vmKey];
@@ -73,6 +72,7 @@ export class App {
       delete window[vmKey];
       delete this.viewModelObj[vmKey];
     }
+    this.renderer?.dispose();
   }
 
   loadRoute(routeName: string, changeBrowserState = true) {
