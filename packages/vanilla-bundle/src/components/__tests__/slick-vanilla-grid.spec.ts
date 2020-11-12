@@ -233,6 +233,7 @@ const mockGrid = {
   getEditorLock: () => mockGetEditorLock,
   getUID: () => 'slickgrid_12345',
   getContainerNode: jest.fn(),
+  getGridPosition: jest.fn(),
   getOptions: jest.fn(),
   getSelectionModel: jest.fn(),
   getScrollbarDimensions: jest.fn(),
@@ -1524,6 +1525,26 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           change: { newValues: mockPagination, type: GridStateType.pagination },
           gridState: { columns: [], pagination: mockPagination }
         });
+      });
+    });
+
+    describe('Empty Warning Message', () => {
+      it('should display an Empty Warning Message when "enableEmptyDataWarningMessage" is enabled and the dataset is empty', () => {
+        const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
+        const mockGridOptions = { enableTranslate: true, enableEmptyDataWarningMessage: true, };
+        jest.spyOn(mockGrid, 'getOptions').mockReturnValue(mockGridOptions);
+        jest.spyOn(mockGrid, 'getGridPosition').mockReturnValue({ top: 10, left: 20 });
+
+        component.gridOptions = mockGridOptions;
+        component.initialization(divContainer, slickEventHandler);
+        const emptySpy = jest.spyOn(component.slickEmptyWarning, 'showEmptyDataMessage');
+        component.columnDefinitions = mockColDefs;
+        component.refreshGridData([]);
+
+        expect(component.columnDefinitions).toEqual(mockColDefs);
+        expect(component.gridOptions.enableEmptyDataWarningMessage).toBeTrue();
+        expect(component.slickEmptyWarning).toBeTruthy();
+        expect(emptySpy).toHaveBeenCalled();
       });
     });
 
