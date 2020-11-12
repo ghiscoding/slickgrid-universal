@@ -1529,7 +1529,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     });
 
     describe('Empty Warning Message', () => {
-      it('should display an Empty Warning Message when "enableEmptyDataWarningMessage" is enabled and the dataset is empty', () => {
+      it('should display an Empty Warning Message when "enableEmptyDataWarningMessage" is enabled and the dataset is empty', (done) => {
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
         const mockGridOptions = { enableTranslate: true, enableEmptyDataWarningMessage: true, };
         jest.spyOn(mockGrid, 'getOptions').mockReturnValue(mockGridOptions);
@@ -1540,11 +1540,15 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const emptySpy = jest.spyOn(component.slickEmptyWarning, 'showEmptyDataMessage');
         component.columnDefinitions = mockColDefs;
         component.refreshGridData([]);
+        mockDataView.onRowCountChanged.notify({ first: 'John' });
 
-        expect(component.columnDefinitions).toEqual(mockColDefs);
-        expect(component.gridOptions.enableEmptyDataWarningMessage).toBeTrue();
-        expect(component.slickEmptyWarning).toBeTruthy();
-        expect(emptySpy).toHaveBeenCalled();
+        setTimeout(() => {
+          expect(component.columnDefinitions).toEqual(mockColDefs);
+          expect(component.gridOptions.enableEmptyDataWarningMessage).toBeTrue();
+          expect(component.slickEmptyWarning).toBeTruthy();
+          expect(emptySpy).toHaveBeenCalledTimes(2);
+          done();
+        });
       });
     });
 
