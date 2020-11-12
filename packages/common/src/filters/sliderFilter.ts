@@ -85,21 +85,7 @@ export class SliderFilter implements Filter {
 
     // step 3, subscribe to the change event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    this.$filterInputElm.change((e: any) => {
-      const value = e && e.target && e.target.value;
-      this._currentValue = +value;
-
-      if (this._clearFilterTriggered) {
-        this.$filterElm.removeClass('filled');
-        this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, searchTerms: [], shouldTriggerQuery: this._shouldTriggerQuery });
-      } else {
-        this.$filterElm.addClass('filled');
-        this.callback(e, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value || '0'], shouldTriggerQuery: this._shouldTriggerQuery });
-      }
-      // reset both flags for next use
-      this._clearFilterTriggered = false;
-      this._shouldTriggerQuery = true;
-    });
+    this.$filterInputElm.change(this.handleOnChange.bind(this));
 
     // if user chose to display the slider number on the right side, then update it every time it changes
     // we need to use both "input" and "change" event to be all cross-browser
@@ -138,9 +124,9 @@ export class SliderFilter implements Filter {
   destroy() {
     if (this.$filterInputElm) {
       this.$filterInputElm.off('input change').remove();
-      this.$filterInputElm = null;
-      this.$filterElm = null;
     }
+    this.$filterInputElm = null;
+    this.$filterElm = null;
   }
 
   /**
@@ -242,5 +228,21 @@ export class SliderFilter implements Filter {
     }
 
     return $filterElm;
+  }
+
+  private handleOnChange(e: any) {
+    const value = e && e.target && e.target.value;
+    this._currentValue = +value;
+
+    if (this._clearFilterTriggered) {
+      this.$filterElm.removeClass('filled');
+      this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, searchTerms: [], shouldTriggerQuery: this._shouldTriggerQuery });
+    } else {
+      this.$filterElm.addClass('filled');
+      this.callback(e, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value || '0'], shouldTriggerQuery: this._shouldTriggerQuery });
+    }
+    // reset both flags for next use
+    this._clearFilterTriggered = false;
+    this._shouldTriggerQuery = true;
   }
 }

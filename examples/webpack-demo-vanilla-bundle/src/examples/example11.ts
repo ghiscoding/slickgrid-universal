@@ -24,6 +24,7 @@ import { ExampleGridOptions } from './example-grid-options';
 import { loadComponent } from 'examples/utilities';
 import '../salesforce-styles.scss';
 import './example11.scss';
+import { EventService } from './event.service';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -55,6 +56,7 @@ export interface FilterPreset {
 }
 
 export class Example11 {
+  private eventService: EventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[] = [];
@@ -93,6 +95,10 @@ export class Example11 {
     return this.sgb?.instances;
   }
 
+  constructor() {
+    this.eventService = new EventService();
+  }
+
   attached() {
     this.initializeGrid();
     this.dataset = this.loadData(500);
@@ -101,13 +107,15 @@ export class Example11 {
     this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
     // bind any of the grid events
-    this.gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
-    this.gridContainerElm.addEventListener('onitemdeleted', this.handleItemDeleted.bind(this));
+    this.eventService.addElementEventListener(this.gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
+    this.eventService.addElementEventListener(this.gridContainerElm, 'onitemdeleted', this.handleItemDeleted.bind(this));
     this.recreatePredefinedFilters();
   }
 
   dispose() {
     this.sgb?.dispose();
+    this.eventService.unbindAllEvents();
+    this.gridContainerElm = null;
   }
 
   initializeGrid() {

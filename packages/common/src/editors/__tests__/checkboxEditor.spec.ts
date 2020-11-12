@@ -457,6 +457,7 @@ describe('CheckboxEditor', () => {
       editor.loadValue(mockItemData);
       editor.editorDomElement.checked = true;
       editor.editorDomElement.dispatchEvent(new (window.window as any).Event('change'));
+      editor.destroy();
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });

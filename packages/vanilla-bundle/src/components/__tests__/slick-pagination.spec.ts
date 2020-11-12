@@ -82,7 +82,7 @@ describe('Slick-Pagination Component', () => {
     });
 
     it('should make sure Slick-Pagination is defined', () => {
-      const paginationElm = document.querySelector<HTMLSelectElement>('div.pager.slickgrid_123456');
+      const paginationElm = document.querySelector('div.pager.slickgrid_123456') as HTMLSelectElement;
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -90,9 +90,9 @@ describe('Slick-Pagination Component', () => {
     });
 
     it('should create a the Slick-Pagination component in the DOM', () => {
-      const pageInfoFromTo = document.querySelector('.page-info-from-to');
-      const pageInfoTotalItems = document.querySelector('.page-info-total-items');
-      const itemsPerPage = document.querySelector<HTMLSelectElement>('.items-per-page');
+      const pageInfoFromTo = document.querySelector('.page-info-from-to') as HTMLSpanElement;
+      const pageInfoTotalItems = document.querySelector('.page-info-total-items') as HTMLSpanElement;
+      const itemsPerPage = document.querySelector('.items-per-page') as HTMLSelectElement;
 
       expect(translateService.getCurrentLanguage()).toBe('en');
       expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe('<span data-test="item-from" class="item-from">10</span>-<span data-test="item-to" class="item-to">15</span><span class="text-of">of</span>');
@@ -103,7 +103,7 @@ describe('Slick-Pagination Component', () => {
     it('should call changeToFirstPage() from the View and expect the pagination service to be called with correct method', () => {
       const spy = jest.spyOn(paginationServiceStub, 'goToFirstPage');
 
-      const button = document.querySelector<HTMLAnchorElement>('.icon-seek-first');
+      const button = document.querySelector('.icon-seek-first') as HTMLAnchorElement;
       button.click();
       mockFullPagination.pageNumber = 1;
       mockFullPagination.dataFrom = 1;
@@ -111,9 +111,9 @@ describe('Slick-Pagination Component', () => {
       jest.spyOn(paginationServiceStub, 'dataFrom', 'get').mockReturnValue(mockFullPagination.dataFrom);
       jest.spyOn(paginationServiceStub, 'dataTo', 'get').mockReturnValue(mockFullPagination.dataTo);
 
-      const input = document.querySelector<HTMLInputElement>('input.form-control');
-      const itemFrom = document.querySelector<HTMLInputElement>('.item-from');
-      const itemTo = document.querySelector<HTMLInputElement>('.item-to');
+      const input = document.querySelector('input.form-control') as HTMLInputElement;
+      const itemFrom = document.querySelector('.item-from') as HTMLInputElement;
+      const itemTo = document.querySelector('.item-to') as HTMLInputElement;
 
       expect(spy).toHaveBeenCalled();
       expect(input.value).toBe('1');
@@ -127,7 +127,7 @@ describe('Slick-Pagination Component', () => {
     it('should call changeToNextPage() from the View and expect the pagination service to be called with correct method', () => {
       const spy = jest.spyOn(paginationServiceStub, 'goToNextPage');
 
-      const button = document.querySelector<HTMLAnchorElement>('.icon-seek-next');
+      const button = document.querySelector('.icon-seek-next') as HTMLAnchorElement;
       button.click();
 
       expect(spy).toHaveBeenCalled();
@@ -137,7 +137,7 @@ describe('Slick-Pagination Component', () => {
       mockFullPagination.pageNumber = 2;
       const spy = jest.spyOn(paginationServiceStub, 'goToPreviousPage');
 
-      const button = document.querySelector<HTMLAnchorElement>('.icon-seek-prev');
+      const button = document.querySelector('.icon-seek-prev') as HTMLAnchorElement;
       button.click();
 
       expect(spy).toHaveBeenCalled();
@@ -146,7 +146,7 @@ describe('Slick-Pagination Component', () => {
     it('should call changeToLastPage() from the View and expect the pagination service to be called with correct method', () => {
       const spy = jest.spyOn(paginationServiceStub, 'goToLastPage');
 
-      const button = document.querySelector<HTMLAnchorElement>('.icon-seek-end');
+      const button = document.querySelector('.icon-seek-end') as HTMLAnchorElement;
       button.click();
 
       expect(spy).toHaveBeenCalled();
@@ -156,7 +156,7 @@ describe('Slick-Pagination Component', () => {
       const spy = jest.spyOn(paginationServiceStub, 'goToPageNumber');
 
       const newPageNumber = 3;
-      const input = document.querySelector<HTMLInputElement>('input.form-control');
+      const input = document.querySelector('input.form-control') as HTMLInputElement;
       input.value = `${newPageNumber}`;
       const mockEvent = new CustomEvent('change', { bubbles: true, detail: { target: { value: newPageNumber } } });
       input.dispatchEvent(mockEvent);
@@ -169,7 +169,7 @@ describe('Slick-Pagination Component', () => {
       const spy = jest.spyOn(paginationServiceStub, 'changeItemPerPage');
 
       const newItemsPerPage = 10;
-      const select = document.querySelector<HTMLSelectElement>('select');
+      const select = document.querySelector('select') as HTMLSelectElement;
       select.value = `${newItemsPerPage}`;
       const mockEvent = new CustomEvent('change', { bubbles: true, detail: { target: { value: newItemsPerPage } } });
       select.dispatchEvent(mockEvent);
@@ -182,7 +182,7 @@ describe('Slick-Pagination Component', () => {
       mockFullPagination.totalItems = 100;
       component.pageNumber = 1;
       eventPubSubService.publish('onPaginationRefreshed', mockFullPagination);
-      const pageFromToElm = document.querySelector<HTMLSpanElement>('span.page-info-from-to');
+      const pageFromToElm = document.querySelector('span.page-info-from-to') as HTMLSpanElement;
 
       expect(component.firstButtonClasses).toBe('page-item seek-first disabled');
       expect(component.prevButtonClasses).toBe('page-item seek-prev disabled');
@@ -197,7 +197,7 @@ describe('Slick-Pagination Component', () => {
       mockFullPagination.totalItems = 100;
       component.pageNumber = 10;
       eventPubSubService.publish('onPaginationRefreshed', mockFullPagination);
-      const pageFromToElm = document.querySelector<HTMLSpanElement>('span.page-info-from-to');
+      const pageFromToElm = document.querySelector('span.page-info-from-to') as HTMLSpanElement;
 
       expect(component.firstButtonClasses).toBe('page-item seek-first');
       expect(component.prevButtonClasses).toBe('page-item seek-prev');
@@ -211,7 +211,7 @@ describe('Slick-Pagination Component', () => {
       mockFullPagination.totalItems = 0;
       component.pageNumber = 0;
       eventPubSubService.publish('onPaginationRefreshed', mockFullPagination);
-      const pageFromToElm = document.querySelector<HTMLSpanElement>('span.page-info-from-to');
+      const pageFromToElm = document.querySelector('span.page-info-from-to') as HTMLSpanElement;
 
       expect(component.firstButtonClasses).toBe('page-item seek-first disabled');
       expect(component.prevButtonClasses).toBe('page-item seek-prev disabled');
@@ -258,8 +258,8 @@ describe('with different i18n locale', () => {
     eventPubSubService.publish('onLanguageChange', 'fr');
 
     setTimeout(() => {
-      const pageInfoFromTo = document.querySelector('.page-info-from-to');
-      const pageInfoTotalItems = document.querySelector('.page-info-total-items');
+      const pageInfoFromTo = document.querySelector('.page-info-from-to') as HTMLSpanElement;
+      const pageInfoTotalItems = document.querySelector('.page-info-total-items') as HTMLSpanElement;
       expect(translateService.getCurrentLanguage()).toBe('fr');
       expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe(`<span data-test="item-from" class="item-from">10</span>-<span data-test="item-to" class="item-to">15</span><span class="text-of">de</span>`);
       expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe(`<span data-test="total-items" class="total-items">95</span><span class="text-items">éléments</span>`);

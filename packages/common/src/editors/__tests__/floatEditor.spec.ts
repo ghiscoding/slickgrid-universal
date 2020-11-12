@@ -682,7 +682,7 @@ describe('FloatEditor', () => {
       expect(editor.editorDomElement.checked).toEqual(false);
     });
 
-    it('should expect "onCompositeEditorChange" to have been triggered by keyup with the new value showing up in its "formValues" object', () => {
+    it('should expect "onCompositeEditorChange" to have been triggered by input change with the new value showing up in its "formValues" object', () => {
       jest.useFakeTimers();
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
@@ -694,7 +694,7 @@ describe('FloatEditor', () => {
       editor = new FloatEditor(editorArguments);
       editor.loadValue(mockItemData);
       editor.editorDomElement.value = 35;
-      editor.editorDomElement.dispatchEvent(new (window.window as any).Event('keyup'));
+      editor.editorDomElement.dispatchEvent(new (window.window as any).Event('input'));
 
       jest.runTimersToTime(50);
 
@@ -718,7 +718,31 @@ describe('FloatEditor', () => {
       editor = new FloatEditor(editorArguments);
       editor.loadValue(mockItemData);
       editor.editorDomElement.value = 35;
-      editor.editorDomElement.dispatchEvent(new (window.window as any).Event('change'));
+      editor.editorDomElement.dispatchEvent(new (window.window as any).Event('input'));
+
+      jest.runTimersToTime(50);
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: { price: 35 }, editors: {}
+      }, expect.anything());
+    });
+
+    it('should expect "onCompositeEditorChange" to have been triggered by mouse wheel (spinner) with the new value showing up in its "formValues" object', () => {
+      jest.useFakeTimers();
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      gridOptionMock.autoCommitEdit = true;
+      mockItemData = { id: 1, price: 35, isActive: true };
+
+      editor = new FloatEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      editor.editorDomElement.value = 35;
+      editor.editorDomElement.dispatchEvent(new (window.window as any).Event('wheel'));
 
       jest.runTimersToTime(50);
 

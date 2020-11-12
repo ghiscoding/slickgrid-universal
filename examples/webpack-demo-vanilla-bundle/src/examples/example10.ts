@@ -16,11 +16,13 @@ import * as moment from 'moment-mini';
 import { ExampleGridOptions } from './example-grid-options';
 import { TranslateService } from '../translate.service';
 import './example10.scss';
+import { EventService } from './event.service';
 
 const defaultPageSize = 20;
 const GRAPHQL_QUERY_DATASET_NAME = 'users';
 
 export class Example10 {
+  private eventService: EventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset = [];
@@ -37,6 +39,7 @@ export class Example10 {
   translateService: TranslateService;
 
   constructor() {
+    this.eventService = new EventService();
     // get the Translate Service from the window object,
     // it might be better with proper Dependency Injection but this project doesn't have any at this point
     this.translateService = (<any>window).TranslateService;
@@ -49,6 +52,7 @@ export class Example10 {
     if (this.sgb) {
       this.sgb?.dispose();
     }
+    this.eventService.unbindAllEvents();
     //   this.saveCurrentGridState();
   }
 
@@ -56,8 +60,8 @@ export class Example10 {
     this.initializeGrid();
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid10`);
 
-    // gridContainerElm.addEventListener('onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
-    // gridContainerElm.addEventListener('onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
+    // this.eventService.addElementEventListener(gridContainerElm, 'onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
+    // this.eventService.addElementEventListener(gridContainerElm, 'onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 

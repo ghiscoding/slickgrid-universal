@@ -1,12 +1,12 @@
 import {
   Column,
-  SlickDataView,
+  GetSlickEventType,
   GridOption,
   OnEventArgs,
+  SlickDataView,
   SlickEventHandler,
   SlickGrid,
   SlickNamespace,
-  GetSlickEventType,
 } from './../interfaces/index';
 
 // using external non-typed js libraries
@@ -21,6 +21,10 @@ export class GridEventService {
 
   constructor() {
     this._eventHandler = new Slick.EventHandler();
+  }
+
+  dispose() {
+    this._eventHandler.unsubscribeAll();
   }
 
   /* OnCellChange Event */
@@ -117,9 +121,5 @@ export class GridEventService {
         column.onCellClick(e, returnedArgs);
       }
     });
-  }
-
-  dispose() {
-    this._eventHandler.unsubscribeAll();
   }
 }

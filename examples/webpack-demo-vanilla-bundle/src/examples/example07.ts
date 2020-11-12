@@ -8,22 +8,28 @@ import {
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { EventService } from './event.service';
 
 import { ExampleGridOptions } from './example-grid-options';
 
 export class Example7 {
+  private eventService: EventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
   sgb: SlickVanillaGridBundle;
   duplicateTitleHeaderCount = 1;
 
+  constructor() {
+    this.eventService = new EventService();
+  }
+
   attached() {
     this.initializeGrid();
     this.dataset = this.loadData(500);
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid7`);
-    gridContainerElm.addEventListener('oncellchange', this.handleOnCellChange.bind(this));
-    gridContainerElm.addEventListener('onvalidationerror', this.handleValidationError.bind(this));
+    this.eventService.addElementEventListener(gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
+    this.eventService.addElementEventListener(gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
@@ -107,8 +113,8 @@ export class Example7 {
         singleRowMove: true,
         disableRowSelection: true,
         cancelEditOnDrag: true,
-        onBeforeMoveRows: (e, args) => this.onBeforeMoveRow(e, args),
-        onMoveRows: (e, args) => this.onMoveRows(e, args),
+        onBeforeMoveRows: this.onBeforeMoveRow,
+        onMoveRows: this.onMoveRows.bind(this),
 
         // you can also override the usability of the rows, for example make every 2nd row the only moveable rows,
         // usabilityOverride: (row, dataContext, grid) => dataContext.id % 2 === 1
@@ -178,7 +184,7 @@ export class Example7 {
       selectedRows.push(left.length + i);
     }
 
-    this.sgb.slickGrid.resetActiveCell();
+    args.grid.resetActiveCell();
     this.sgb.dataset = this.dataset; // update dataset and re-render the grid
   }
 

@@ -1,5 +1,5 @@
 import { ExtensionName } from '../enums/index';
-import { Extension, GetSlickEventType, GridOption, SlickDraggableGrouping, SlickEventHandler, SlickNamespace } from '../interfaces/index';
+import { DraggableGrouping, Extension, GetSlickEventType, GridOption, SlickDraggableGrouping, SlickEventHandler, SlickNamespace } from '../interfaces/index';
 import { ExtensionUtility } from './extensionUtility';
 import { SharedService } from '../services/shared.service';
 
@@ -8,6 +8,7 @@ declare const Slick: SlickNamespace;
 
 export class DraggableGroupingExtension implements Extension {
   private _addon: SlickDraggableGrouping | null;
+  private _draggableGroupingOptions: DraggableGrouping | null;
   private _eventHandler: SlickEventHandler;
 
   constructor(private extensionUtility: ExtensionUtility, private sharedService: SharedService) {
@@ -24,8 +25,10 @@ export class DraggableGroupingExtension implements Extension {
 
     if (this._addon && this._addon.destroy) {
       this._addon.destroy();
-      this._addon = null;
     }
+    this.extensionUtility.nullifyFunctionNameStartingWithOn(this._draggableGroupingOptions);
+    this._addon = null;
+    this._draggableGroupingOptions = null;
   }
 
   /**
@@ -57,15 +60,16 @@ export class DraggableGroupingExtension implements Extension {
 
       // Events
       if (this.sharedService.slickGrid && this.sharedService.gridOptions.draggableGrouping) {
-        if (this._addon && this.sharedService.gridOptions.draggableGrouping.onExtensionRegistered) {
-          this.sharedService.gridOptions.draggableGrouping.onExtensionRegistered(this._addon);
+        this._draggableGroupingOptions = this.sharedService.gridOptions.draggableGrouping;
+        if (this._addon && this._draggableGroupingOptions.onExtensionRegistered) {
+          this._draggableGroupingOptions.onExtensionRegistered(this._addon);
         }
 
         if (this._addon && this._addon.onGroupChanged) {
           const onGroupChangedHandler = this._addon.onGroupChanged;
           (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onGroupChangedHandler>>).subscribe(onGroupChangedHandler, (e, args) => {
-            if (this.sharedService.gridOptions.draggableGrouping && typeof this.sharedService.gridOptions.draggableGrouping.onGroupChanged === 'function') {
-              this.sharedService.gridOptions.draggableGrouping.onGroupChanged(e, args);
+            if (this._draggableGroupingOptions && typeof this._draggableGroupingOptions.onGroupChanged === 'function') {
+              this._draggableGroupingOptions.onGroupChanged(e, args);
             }
           });
         }

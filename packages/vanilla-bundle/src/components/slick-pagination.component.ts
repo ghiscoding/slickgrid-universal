@@ -121,12 +121,12 @@ export class SlickPaginationComponent {
   }
 
   dispose() {
-    this.paginationService.dispose();
-    this._bindingHelper.dispose();
-    this._paginationElement.remove();
-
     // also dispose of all Subscriptions
     this.pubSubService.unsubscribeAll(this._subscriptions);
+
+    this._bindingHelper.dispose();
+    this.paginationService.dispose();
+    this._paginationElement.remove();
   }
 
   renderPagination(gridParentContainerElm: HTMLElement) {

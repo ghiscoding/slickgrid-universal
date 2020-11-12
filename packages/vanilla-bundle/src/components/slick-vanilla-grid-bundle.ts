@@ -87,7 +87,6 @@ export class SlickVanillaGridBundle {
   protected _eventPubSubService: EventPubSubService;
   private _columnDefinitions: Column[];
   private _gridOptions: GridOption;
-  private _dataset: any[];
   private _gridContainerElm: HTMLElement;
   private _gridParentContainerElm: HTMLElement;
   private _hideHeaderRowAfterPageLoad = false;
@@ -156,14 +155,13 @@ export class SlickVanillaGridBundle {
   }
 
   get dataset(): any[] {
-    return this._dataset;
+    return this.dataView?.getItems() ?? [];
   }
   set dataset(newDataset: any[]) {
-    const prevDatasetLn = Array.isArray(this._dataset) ? this._dataset.length : 0;
+    const prevDatasetLn = this.dataView.getLength();
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions && this._gridOptions.enableDeepCopyDatasetOnPageLoad);
     const data = isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], newDataset) : newDataset;
-    this._dataset = data || [];
-    this.refreshGridData(this._dataset);
+    this.refreshGridData(data || []);
 
     // expand/autofit columns on first page load
     // we can assume that if the prevDataset was empty then we are on first load
@@ -172,19 +170,19 @@ export class SlickVanillaGridBundle {
     }
   }
 
-  get datasetHierarchical(): any[] {
+  get datasetHierarchical(): any[] | undefined {
     return this.sharedService.hierarchicalDataset;
   }
 
-  set datasetHierarchical(hierarchicalDataset: any[]) {
-    this.sharedService.hierarchicalDataset = hierarchicalDataset;
+  set datasetHierarchical(newHierarchicalDataset: any[] | undefined) {
+    this.sharedService.hierarchicalDataset = newHierarchicalDataset;
 
-    if (this.filterService && this.filterService.clearFilters) {
+    if (newHierarchicalDataset && this.columnDefinitions && this.filterService && this.filterService.clearFilters) {
       this.filterService.clearFilters();
     }
 
     // when a hierarchical dataset is set afterward, we can reset the flat dataset and call a tree data sort that will overwrite the flat dataset
-    if (this.sortService && this.sortService.processTreeDataInitialSort) {
+    if (newHierarchicalDataset && this.sortService && this.sortService.processTreeDataInitialSort) {
       this.dataView.setItems([], this._gridOptions.datasetIdPropertyName);
       this.sortService.processTreeDataInitialSort();
     }
@@ -292,7 +290,6 @@ export class SlickVanillaGridBundle {
     this._gridContainerElm.classList.add('slickgrid-container');
     gridParentContainerElm.appendChild(this._gridContainerElm);
 
-    this._dataset = [];
     this._columnDefinitions = columnDefs || [];
     this._gridOptions = this.mergeGridOptions(options || {});
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions && this._gridOptions.enableDeepCopyDatasetOnPageLoad);
@@ -396,9 +393,28 @@ export class SlickVanillaGridBundle {
 
     this._eventPubSubService?.unsubscribeAll();
     this.dataView?.setItems([]);
-    this.slickGrid?.destroy();
+    if (this.dataView?.destroy) {
+      this.dataView?.destroy();
+    }
+    this.slickGrid?.destroy(true);
+
     emptyElement(this._gridContainerElm);
     emptyElement(this._gridParentContainerElm);
+
+    if (this.backendServiceApi) {
+      for (const prop of Object.keys(this.backendServiceApi)) {
+        this.backendServiceApi[prop] = null;
+      }
+      this.backendServiceApi = undefined;
+    }
+    for (const prop of Object.keys(this.columnDefinitions)) {
+      this.columnDefinitions[prop] = null;
+    }
+    for (const prop of Object.keys(this.sharedService)) {
+      this.sharedService[prop] = null;
+    }
+    this.datasetHierarchical = undefined;
+    this._columnDefinitions = [];
 
     // we could optionally also empty the content of the grid container DOM element
     if (shouldEmptyDomElementContainer) {
@@ -508,7 +524,7 @@ export class SlickVanillaGridBundle {
 
     this.slickGrid.invalidate();
 
-    if (Array.isArray(this._dataset) && this._dataset.length > 0) {
+    if (this.dataView.getLength() > 0) {
       if (!this._isDatasetInitialized && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
         this.loadRowSelectionPresetWhenExists();
       }
@@ -677,13 +693,12 @@ export class SlickVanillaGridBundle {
       // internalPostProcess only works (for now) with a GraphQL Service, so make sure it is of that type
       if (/* backendApiService instanceof GraphqlService || */ typeof backendApiService.getDatasetName === 'function') {
         backendApi.internalPostProcess = (processResult: any) => {
-          this._dataset = [];
           const datasetName = (backendApi && backendApiService && typeof backendApiService.getDatasetName === 'function') ? backendApiService.getDatasetName() : '';
           if (processResult && processResult.data && processResult.data[datasetName]) {
-            this._dataset = processResult.data[datasetName].hasOwnProperty('nodes') ? (processResult as any).data[datasetName].nodes : (processResult as any).data[datasetName];
+            const data = processResult.data[datasetName].hasOwnProperty('nodes') ? (processResult as any).data[datasetName].nodes : (processResult as any).data[datasetName];
             const totalCount = processResult.data[datasetName].hasOwnProperty('totalCount') ? (processResult as any).data[datasetName].totalCount : (processResult as any).data[datasetName].length;
             this._isDatasetProvided = true;
-            this.refreshGridData(this._dataset, totalCount || 0);
+            this.refreshGridData(data, totalCount || 0);
           }
         };
       }

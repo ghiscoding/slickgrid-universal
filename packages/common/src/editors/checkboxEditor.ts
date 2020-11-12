@@ -90,11 +90,15 @@ export class CheckboxEditor implements Editor {
 
   destroy() {
     const columnId = this.columnDef && this.columnDef.id;
+    const compositeEditorOptions = this.args.compositeEditorOptions;
     const elm = document.querySelector(`.editor-checkbox.editor-${columnId}`);
     if (elm) {
       elm.removeEventListener('click', this.save);
     }
     if (this._input?.remove) {
+      if (compositeEditorOptions) {
+        this._input.removeEventListener('change', this.handleChangeOnCompositeEditor.bind(compositeEditorOptions));
+      }
       this._input.remove();
     }
     this._input = null;

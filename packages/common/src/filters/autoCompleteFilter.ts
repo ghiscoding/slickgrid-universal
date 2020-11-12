@@ -23,7 +23,7 @@ import { TranslaterService } from '../services/translater.service';
 export class AutoCompleteFilter implements Filter {
   private _autoCompleteOptions: AutocompleteOption;
   private _clearFilterTriggered = false;
-  private _collection: any[];
+  private _collection: any[] | null;
   private _shouldTriggerQuery = true;
 
   /** DOM Element Name, useful for auto-detecting positioning (dropup / dropdown) */
@@ -71,7 +71,7 @@ export class AutoCompleteFilter implements Filter {
   }
 
   /** Getter for the Collection Used by the Filter */
-  get collection(): any[] {
+  get collection(): any[] | null {
     return this._collection;
   }
 
@@ -177,7 +177,7 @@ export class AutoCompleteFilter implements Filter {
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
       this.$filterElm.val('');
-      this.$filterElm.trigger('keyup');
+      this.$filterElm.trigger('input');
     }
   }
 
@@ -187,9 +187,10 @@ export class AutoCompleteFilter implements Filter {
   destroy() {
     if (this.$filterElm) {
       this.$filterElm.autocomplete('destroy');
-      this.$filterElm.off('keyup').remove();
-      this.$filterElm = null;
+      this.$filterElm.off('input').remove();
     }
+    this.$filterElm = null;
+    this._collection = null;
   }
 
   /** Set value(s) on the DOM element  */
@@ -268,26 +269,9 @@ export class AutoCompleteFilter implements Filter {
     this._collection = newCollection;
     this.createDomElement(filterTemplate, newCollection, searchTerm);
 
-    // step 3, subscribe to the keyup event and run the callback when that happens
+    // step 3, subscribe to the input change event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    this.$filterElm.on('keyup', (e: any) => {
-      let value = e && e.target && e.target.value || '';
-      const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
-      if (typeof value === 'string' && enableWhiteSpaceTrim) {
-        value = value.trim();
-      }
-
-      if (this._clearFilterTriggered) {
-        this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
-        this.$filterElm.removeClass('filled');
-      } else {
-        value === '' ? this.$filterElm.removeClass('filled') : this.$filterElm.addClass('filled');
-        this.callback(e, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery });
-      }
-      // reset both flags for next use
-      this._clearFilterTriggered = false;
-      this._shouldTriggerQuery = true;
-    });
+    this.$filterElm.on('input', this.handleOnInputChange.bind(this));
   }
 
   /**
@@ -422,7 +406,27 @@ export class AutoCompleteFilter implements Filter {
     return false;
   }
 
-  protected renderCustomItem(ul: HTMLElement, item: any) {
+  private handleOnInputChange(e: any) {
+    let value = e && e.target && e.target.value || '';
+    const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
+    if (typeof value === 'string' && enableWhiteSpaceTrim) {
+      value = value.trim();
+    }
+
+    if (this._clearFilterTriggered) {
+      this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
+      this.$filterElm.removeClass('filled');
+    } else {
+      value === '' ? this.$filterElm.removeClass('filled') : this.$filterElm.addClass('filled');
+      this.callback(e, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery });
+    }
+
+    // reset both flags for next use
+    this._clearFilterTriggered = false;
+    this._shouldTriggerQuery = true;
+  }
+
+  private renderCustomItem(ul: HTMLElement, item: any) {
     const templateString = this._autoCompleteOptions?.renderItem?.templateCallback(item) ?? '';
 
     // sanitize any unauthorized html tags like script and others
@@ -435,7 +439,7 @@ export class AutoCompleteFilter implements Filter {
       .appendTo(ul);
   }
 
-  protected renderCollectionItem(ul: any, item: any) {
+  private renderCollectionItem(ul: any, item: any) {
     const isRenderHtmlEnabled = this.columnFilter?.enableRenderHtml ?? false;
     const prefixText = item.labelPrefix || '';
     const labelText = item.label || '';
@@ -453,7 +457,7 @@ export class AutoCompleteFilter implements Filter {
       .appendTo(ul);
   }
 
-  protected async renderOptionsAsync(collectionAsync: Promise<any | any[]>): Promise<any[]> {
+  private async renderOptionsAsync(collectionAsync: Promise<any | any[]>): Promise<any[]> {
     let awaitedCollection: any = null;
 
     if (collectionAsync) {

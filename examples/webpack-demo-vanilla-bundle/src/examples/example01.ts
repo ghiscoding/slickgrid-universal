@@ -20,15 +20,13 @@ export class Example1 {
 
   attached() {
     this.defineGrids();
-    const gridContainerElm1 = document.querySelector<HTMLDivElement>(`.grid1`);
-    const gridContainerElm2 = document.querySelector<HTMLDivElement>(`.grid2`);
 
     // mock some data (different in each dataset)
     this.dataset1 = this.mockData(NB_ITEMS);
     this.dataset2 = this.mockData(NB_ITEMS);
 
-    this.sgb1 = new Slicker.GridBundle(gridContainerElm1, this.columnDefinitions1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
-    this.sgb2 = new Slicker.GridBundle(gridContainerElm2, this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
+    this.sgb1 = new Slicker.GridBundle(document.querySelector<HTMLDivElement>(`.grid1`), this.columnDefinitions1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
+    this.sgb2 = new Slicker.GridBundle(document.querySelector<HTMLDivElement>(`.grid2`), this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
 
     // setTimeout(() => {
     //   this.slickgridLwc2.dataset = this.dataset2;

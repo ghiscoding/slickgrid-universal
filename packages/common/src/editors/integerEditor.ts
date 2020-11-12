@@ -93,9 +93,8 @@ export class IntegerEditor implements Editor {
       }
 
       if (compositeEditorOptions) {
-        this._input.addEventListener('keyup', this.handleOnKeyUp.bind(this));
-        this._input.addEventListener('change', this.handleOnChange.bind(this));
-        this._input.addEventListener('wheel', this.handleOnChange.bind(this));
+        this._input.addEventListener('input', this.handleOnInputChange.bind(this));
+        this._input.addEventListener('wheel', this.handleOnMouseWheel.bind(this));
       }
     }
   }
@@ -103,9 +102,8 @@ export class IntegerEditor implements Editor {
   destroy() {
     if (this._input) {
       this._input.removeEventListener('focusout', this.save);
-      this._input.removeEventListener('keyup', this.handleOnKeyUp);
-      this._input.removeEventListener('change', this.handleOnChange);
-      this._input.removeEventListener('wheel', this.handleOnChange);
+      this._input.removeEventListener('input', this.handleOnInputChange);
+      this._input.removeEventListener('wheel', this.handleOnMouseWheel);
       setTimeout(() => {
         if (this._input) {
           this._input.remove();
@@ -285,14 +283,14 @@ export class IntegerEditor implements Editor {
   }
 
   /** When the input value changes (this will cover the input spinner arrows on the right) */
-  private handleOnChange(event: KeyboardEvent) {
+  private handleOnMouseWheel(event: KeyboardEvent) {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     if (compositeEditorOptions) {
       this.handleChangeOnCompositeEditor(event, compositeEditorOptions);
     }
   }
 
-  private handleOnKeyUp(event: KeyboardEvent) {
+  private handleOnInputChange(event: KeyboardEvent) {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     if (compositeEditorOptions) {
       const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;

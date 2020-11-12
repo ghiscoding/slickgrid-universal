@@ -47,34 +47,37 @@ export interface SlickGrid {
 
   /**
    * Returns true if you can click on a given cell and make it the active focus.
-   * @param row A row index.
-   * @param col A column index.
+   * @param {number} row A row index.
+   * @param {number} col A column index.
    */
   canCellBeActive(row: number, col: number): boolean;
 
   /**
    * Returns true if selecting the row causes this particular cell to have the selectedCellCssClass applied to it. A cell can be selected if it exists and if it isn't on an empty / "Add New" row and if it is not marked as "unselectable" in the column definition.
-   * @param row A row index.
-   * @param col A column index.
+   * @param {number} row A row index.
+   * @param {number} col A column index.
    */
   canCellBeSelected(row: number, col: number): boolean;
 
-  /** Destroy (dispose) of SlickGrid */
-  destroy(): void;
+  /**
+   * Destroy (dispose) of SlickGrid
+   * @param {boolean} shouldDestroyAllElements - do we want to destroy (nullify) all DOM elements as well? This help in avoiding mem leaks
+   */
+  destroy(shouldDestroyAllElements?: boolean): void;
 
   /**
    * Attempts to switch the active cell into edit mode. Will throw an error if the cell is set to be not editable. Uses the specified editor, otherwise defaults to any default editor for that given cell.
-   * @param {object} editor A SlickGrid editor (see examples in slick.editors.js).
-   * @param {boolean} preClickModeOn Pre-Click Mode is Enabled?
+   * @param {object} editor - A SlickGrid editor (see examples in slick.editors.js).
+   * @param {boolean} preClickModeOn - Pre-Click Mode is Enabled?
    * @param {object} event
    */
   editActiveCell(editor: Editor | SlickCompositeEditor, preClickModeOn?: boolean, event?: Event): void;
 
   /**
    * Flashes the cell twice by toggling the CSS class 4 times.
-   * @param row A row index.
-   * @param cell A column index.
-   * @param speed (optional) - The milliseconds delay between the toggling calls. Defaults to 100 ms.
+   * @param {number} row A row index.
+   * @param {number} cell A column index.
+   * @param {number} speed (optional) - The milliseconds delay between the toggling calls. Defaults to 100 ms.
    */
   flashCell(row: number, cell: number, speed?: number): void;
 

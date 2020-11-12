@@ -75,4 +75,18 @@ describe('Binding Service', () => {
 
     expect(removeEventSpy).toHaveBeenCalledWith('click', mockCallback, false);
   });
+
+  it('should call unbindAll and expect a single unbind element being called', () => {
+    const mockElm = { addEventListener: jest.fn(), removeEventListener: jest.fn() } as unknown as HTMLElement;
+    const removeEventSpy = jest.spyOn(mockElm, 'removeEventListener');
+    const mockObj = { name: 'John', age: 20 };
+    const elm = document.createElement('input');
+    div.appendChild(elm);
+
+    service = new BindingService({ variable: mockObj, property: 'name' });
+    service.bind(mockElm, 'value', 'keyup');
+    service.unbindAll();
+
+    expect(removeEventSpy).toHaveBeenCalledWith('keyup', expect.toBeFunction(), undefined);
+  });
 });

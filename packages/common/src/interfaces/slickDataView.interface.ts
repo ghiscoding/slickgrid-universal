@@ -13,6 +13,9 @@ export interface SlickDataView {
   /** Begin Data Update Transaction */
   beginUpdate(): void;
 
+  /** Destroy (dispose) of Slick DataView */
+  destroy(): void;
+
   /** Collapse all Groups, optionally pass a level number to only collapse that level */
   collapseAllGroups(level?: number): void;
 

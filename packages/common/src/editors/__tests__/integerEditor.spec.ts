@@ -612,7 +612,7 @@ describe('IntegerEditor', () => {
       expect(editor.editorDomElement.checked).toEqual(false);
     });
 
-    it('should expect "onCompositeEditorChange" to have been triggered by keyup with the new value showing up in its "formValues" object', () => {
+    it('should expect "onCompositeEditorChange" to have been triggered by input change with the new value showing up in its "formValues" object', () => {
       jest.useFakeTimers();
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
@@ -624,7 +624,7 @@ describe('IntegerEditor', () => {
       editor = new IntegerEditor(editorArguments);
       editor.loadValue(mockItemData);
       editor.editorDomElement.value = 35;
-      editor.editorDomElement.dispatchEvent(new (window.window as any).Event('keyup'));
+      editor.editorDomElement.dispatchEvent(new (window.window as any).Event('input'));
 
       jest.runTimersToTime(50);
 
@@ -636,7 +636,7 @@ describe('IntegerEditor', () => {
       }, expect.anything());
     });
 
-    it('should expect "onCompositeEditorChange" to have been triggered by change (number spinner) with the new value showing up in its "formValues" object', () => {
+    it('should expect "onCompositeEditorChange" to have been triggered by by mouse wheel (spinner) with the new value showing up in its "formValues" object', () => {
       jest.useFakeTimers();
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
@@ -648,7 +648,7 @@ describe('IntegerEditor', () => {
       editor = new IntegerEditor(editorArguments);
       editor.loadValue(mockItemData);
       editor.editorDomElement.value = 35;
-      editor.editorDomElement.dispatchEvent(new (window.window as any).Event('change'));
+      editor.editorDomElement.dispatchEvent(new (window.window as any).Event('wheel'));
 
       jest.runTimersToTime(50);
 

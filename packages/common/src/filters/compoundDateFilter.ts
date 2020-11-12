@@ -129,11 +129,11 @@ export class CompoundDateFilter implements Filter {
     }
     if (this.$filterElm) {
       this.$filterElm.off('keyup').remove();
-      this.$filterElm = null;
     }
     if (this.$selectOperatorElm) {
       this.$selectOperatorElm.off('change').remove();
     }
+    this.$filterElm = null;
   }
 
   hide() {
@@ -325,6 +325,7 @@ export class CompoundDateFilter implements Filter {
       (this._currentValue) ? this.$filterElm.addClass('filled') : this.$filterElm.removeClass('filled');
       this.callback(e, { columnDef: this.columnDef, searchTerms: (this._currentValue ? [this._currentValue] : null), operator: selectedOperator || '', shouldTriggerQuery: this._shouldTriggerQuery });
     }
+
     // reset both flags for next use
     this._clearFilterTriggered = false;
     this._shouldTriggerQuery = true;

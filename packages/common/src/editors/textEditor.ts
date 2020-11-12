@@ -90,14 +90,18 @@ export class TextEditor implements Editor {
     }
 
     if (compositeEditorOptions) {
-      this._input.addEventListener('keyup', this.handleOnKeyUp.bind(this));
+      this._input.addEventListener('input', this.handleOnInputChange.bind(this));
     }
   }
 
   destroy() {
+    const compositeEditorOptions = this.args.compositeEditorOptions;
+
     if (this._input) {
       this._input.removeEventListener('focusout', this.save);
-      this._input.removeEventListener('keyup', this.handleOnKeyUp);
+      if (compositeEditorOptions) {
+        this._input.removeEventListener('input', this.handleOnInputChange);
+      }
       setTimeout(() => {
         if (this._input) {
           this._input.remove();
@@ -271,7 +275,7 @@ export class TextEditor implements Editor {
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors }, { ...new Slick.EventData(), ...event });
   }
 
-  private handleOnKeyUp(event: KeyboardEvent) {
+  private handleOnInputChange(event: KeyboardEvent) {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     if (compositeEditorOptions) {
       const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;

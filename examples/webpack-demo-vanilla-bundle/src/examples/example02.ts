@@ -20,10 +20,12 @@ import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid
 import { ExampleGridOptions } from './example-grid-options';
 import '../material-styles.scss';
 import './example02.scss';
+import { EventService } from './event.service';
 
 const NB_ITEMS = 500;
 
 export class Example2 {
+  private eventService: EventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
@@ -41,13 +43,17 @@ export class Example2 {
     return this.sgb?.instances;
   }
 
+  constructor() {
+    this.eventService = new EventService();
+  }
+
   attached() {
     this.initializeGrid();
     this.dataset = this.loadData(NB_ITEMS);
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid2`);
 
-    gridContainerElm.addEventListener('onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
-    gridContainerElm.addEventListener('onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
+    this.eventService.addElementEventListener(gridContainerElm, 'onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
+    this.eventService.addElementEventListener(gridContainerElm, 'onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 

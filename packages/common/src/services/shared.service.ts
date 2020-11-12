@@ -10,7 +10,7 @@ export class SharedService {
   private _currentPagination: CurrentPagination;
   private _visibleColumns: Column[];
   private _hideHeaderRowAfterPageLoad = false;
-  private _hierarchicalDataset: any[];
+  private _hierarchicalDataset: any[] | undefined;
   private _internalPubSubService: PubSubService;
   private _externalRegisteredServices: any[];
 
@@ -115,12 +115,12 @@ export class SharedService {
   }
 
   /** Getter for the Hierarchical Tree Data dataset when the feature is enabled */
-  get hierarchicalDataset(): any[] {
+  get hierarchicalDataset(): any[] | undefined {
     return this._hierarchicalDataset;
   }
 
   /** Getter for the Hierarchical Tree Data dataset when the feature is enabled */
-  set hierarchicalDataset(hierarchicalDataset: any[]) {
+  set hierarchicalDataset(hierarchicalDataset: any[] | undefined) {
     this._hierarchicalDataset = hierarchicalDataset;
   }
 }

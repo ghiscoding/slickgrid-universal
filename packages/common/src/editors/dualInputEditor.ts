@@ -120,13 +120,8 @@ export class DualInputEditor implements Editor {
 
     const compositeEditorOptions = this.args?.compositeEditorOptions;
     if (compositeEditorOptions) {
-      const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
-      this._leftInput.addEventListener('keyup', (event: KeyboardEvent) => {
-        debounce(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay)();
-      });
-      this._rightInput.addEventListener('keyup', (event: KeyboardEvent) => {
-        debounce(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay)();
-      });
+      this._leftInput.addEventListener('input', this.handleChangeOnCompositeEditorDebounce.bind(this));
+      this._rightInput.addEventListener('input', this.handleChangeOnCompositeEditorDebounce.bind(this));
     } else {
       setTimeout(() => this._leftInput.select(), 50);
     }
@@ -158,9 +153,13 @@ export class DualInputEditor implements Editor {
     this._eventHandler.unsubscribeAll();
 
     const columnId = this.columnDef && this.columnDef.id;
+    const compositeEditorOptions = this.args?.compositeEditorOptions;
     const elements = document.querySelectorAll(`.dual-editor-text.editor-${columnId}`);
     if (elements.length > 0) {
       elements.forEach((elm) => elm.removeEventListener('focusout', this.handleFocusOut.bind(this)));
+      if (compositeEditorOptions) {
+        elements.forEach((elm) => elm.removeEventListener('input', this.handleChangeOnCompositeEditorDebounce.bind(this)));
+      }
     }
   }
 
@@ -498,5 +497,13 @@ export class DualInputEditor implements Editor {
       delete compositeEditorOptions.formValues[rightInputId];
     }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors }, { ...new Slick.EventData(), ...event });
+  }
+
+  private handleChangeOnCompositeEditorDebounce(event: KeyboardEvent) {
+    const compositeEditorOptions = this.args?.compositeEditorOptions;
+    if (compositeEditorOptions) {
+      const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
+      debounce(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay)();
+    }
   }
 }
