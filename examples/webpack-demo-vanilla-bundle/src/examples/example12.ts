@@ -124,7 +124,7 @@ export class Example12 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,
+        id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string, minWidth: 100,
         filterable: true, columnGroup: 'Common Factor',
         filter: { model: Filters.compoundInputText },
         formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold] },
@@ -142,13 +142,13 @@ export class Example12 {
         editor: { model: Editors.float, massUpdate: true, decimal: 2, valueStep: 1, minValue: 0, maxValue: 10000, alwaysSaveOnEnterKey: true, required: true },
       },
       {
-        id: 'cost', name: 'Cost', field: 'cost', width: 90,
+        id: 'cost', name: 'Cost', field: 'cost', width: 90, minWidth: 100,
         sortable: true, filterable: true, type: FieldType.number, columnGroup: 'Analysis',
         filter: { model: Filters.compoundInputNumber },
         formatter: Formatters.dollar,
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete',
+        id: 'percentComplete', name: '% Complete', field: 'percentComplete', minWidth: 100,
         type: FieldType.number,
         sortable: true, filterable: true, columnGroup: 'Analysis',
         filter: { model: Filters.compoundSlider, operator: '>=' },
@@ -170,7 +170,7 @@ export class Example12 {
         },
       },
       {
-        id: 'start', name: 'Start', field: 'start', sortable: true,
+        id: 'start', name: 'Start', field: 'start', sortable: true, minWidth: 100,
         formatter: Formatters.dateUs, columnGroup: 'Period',
         type: FieldType.dateIso, outputType: FieldType.dateUs,
         filterable: true, filter: { model: Filters.compoundDate },
@@ -190,7 +190,7 @@ export class Example12 {
         // editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'Yes' }, { value: false, label: 'No' }], },
       },
       {
-        id: 'finish', name: 'Finish', field: 'finish', sortable: true,
+        id: 'finish', name: 'Finish', field: 'finish', sortable: true, minWidth: 100,
         formatter: Formatters.dateUs, columnGroup: 'Period',
         type: FieldType.dateIso, outputType: FieldType.dateUs,
         filterable: true, filter: { model: Filters.compoundDate },
@@ -278,7 +278,7 @@ export class Example12 {
         }
       },
       {
-        id: 'action', name: 'Action', field: 'action', width: 70, maxWidth: 70,
+        id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
         excludeFromExport: true,
         formatter: () => `<div class="button-style margin-auto" style="width: 35px; margin-top: -1px;"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
         cellMenu: {

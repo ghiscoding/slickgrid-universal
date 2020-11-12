@@ -12,12 +12,8 @@ export const SalesforceGlobalGridOptions = {
   },
   datasetIdPropertyName: 'Id',
   defaultFilterPlaceholder: '',
-  enableEmptyDataWarningMessage: false,
   emptyDataWarning: {
-    class: 'slick-empty-data-warning',
     message: `<span class="mdi mdi-alert color-warning"></span> No data to display.`,
-    marginTop: 90,
-    marginLeft: 10
   },
   enableAutoTooltip: true,
   enableDeepCopyDatasetOnPageLoad: true,

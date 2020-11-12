@@ -1,7 +1,18 @@
-import { EmptyWarning, getHtmlElementOffset, GridOption, sanitizeTextByAvailableSanitizer, SlickGrid, TranslaterService } from '@slickgrid-universal/common';
+import {
+  EmptyWarning,
+  GridOption,
+  sanitizeTextByAvailableSanitizer,
+  SlickGrid,
+  SlickNamespace,
+  TranslaterService
+} from '@slickgrid-universal/common';
+
+// using external non-typed js libraries
+declare const Slick: SlickNamespace;
 
 export class SlickEmptyWarningComponent {
-  private _warningElement: HTMLDivElement | null;
+  private _warningLeftElement: HTMLDivElement | null;
+  private _warningRightElement: HTMLDivElement | null;
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
@@ -11,8 +22,10 @@ export class SlickEmptyWarningComponent {
   constructor(private grid: SlickGrid, private translaterService?: TranslaterService) { }
 
   dispose() {
-    this._warningElement?.remove();
-    this._warningElement = null;
+    this._warningLeftElement?.remove();
+    this._warningRightElement?.remove();
+    this._warningLeftElement = null;
+    this._warningRightElement = null;
   }
 
   /**
@@ -25,50 +38,67 @@ export class SlickEmptyWarningComponent {
     const gridUid = this.grid.getUID();
     const defaultMessage = 'No data to display.';
     const mergedOptions: EmptyWarning = { message: defaultMessage, ...this.gridOptions.emptyDataWarning, ...options };
-    const emptyDataClassName = mergedOptions?.class ?? 'slick-empty-data-warning';
-    const finalClassNames = [gridUid, emptyDataClassName];
-    this._warningElement = document.querySelector<HTMLDivElement>(`.${finalClassNames.join('.')}`);
+    const emptyDataClassName = mergedOptions?.className ?? 'slick-empty-data-warning';
+    this._warningLeftElement = document.querySelector<HTMLDivElement>(`.${emptyDataClassName}`);
+    const gridCanvasLeftElm = document.querySelector<HTMLDivElement>(`.${gridUid} .grid-canvas.grid-canvas-left`);
+    const gridCanvasRightElm = document.querySelector<HTMLDivElement>(`.${gridUid} .grid-canvas.grid-canvas-right`);
+    const gridViewportRightElm = document.querySelector<HTMLDivElement>(`.${gridUid} .slick-pane-top.slick-pane-right`);
+    const leftElementMarginLeft = mergedOptions.leftViewportMarginLeft ?? 0;
+    const rightElementMarginLeft = mergedOptions.rightViewportMarginLeft ?? 0;
+    const leftElementFrozenMarginLeft = mergedOptions.frozenLeftViewportMarginLeft ?? 10;
+    const rightElementFrozenMarginLeft = mergedOptions.frozenRightViewportMarginLeft ?? 10;
+    const isFrozenGrid = gridViewportRightElm?.style.display !== 'none' ?? false;
+    const leftViewportMarginLeft = typeof leftElementMarginLeft === 'string' ? leftElementMarginLeft : `${leftElementMarginLeft}px`;
+    const rightViewportMarginLeft = typeof rightElementMarginLeft === 'string' ? rightElementMarginLeft : `${rightElementMarginLeft}px`;
 
-    // calculate margins
-    const gridHeaderFilterRowHeight = this.gridOptions?.headerRowHeight ?? 30; // filter row height
-    const headerRowCount = 2; // header title row is calculated by SASS and defined as (17px * headerRowCount + paddingTopBottom)
-    const headerRowPaddingTopBottom = 10; // 5px (2x for both top/bottom), this is different in each SASS Theme
-    const headerRowHeight = 17 * headerRowCount + headerRowPaddingTopBottom;
+    if (!this._warningLeftElement && !isShowing) {
+      return false;
+    }
+
+    // warning message could come from a translation key or by the warning options
     let warningMessage = mergedOptions.message;
     if (this.gridOptions.enableTranslate && this.translaterService && mergedOptions?.messageKey) {
       warningMessage = this.translaterService.translate(mergedOptions.messageKey);
     }
-    const preHeaderRowHeight = this.gridOptions.showPreHeaderPanel && this.gridOptions.preHeaderPanelHeight || 0;
-    const marginTop = (mergedOptions.marginTop ?? (headerRowHeight + gridHeaderFilterRowHeight + 5)) + preHeaderRowHeight;
-    const marginLeft = mergedOptions.marginLeft ?? 10;
 
-    if (!this._warningElement && !isShowing) {
-      return isShowing;
-    }
-
-    if (!this._warningElement) {
+    if (!this._warningLeftElement && gridCanvasLeftElm && gridCanvasRightElm) {
       const sanitizedOptions = this.gridOptions && this.gridOptions.sanitizeHtmlOptions || {};
       const sanitizedText = sanitizeTextByAvailableSanitizer(this.gridOptions, warningMessage, sanitizedOptions);
 
-      this._warningElement = document.createElement('div');
-      this._warningElement.className = finalClassNames.join(' ');
-      this._warningElement.innerHTML = sanitizedText;
-      document.body.appendChild(this._warningElement);
+      this._warningLeftElement = document.createElement('div');
+      this._warningLeftElement.classList.add(emptyDataClassName);
+      this._warningLeftElement.classList.add('left');
+      this._warningLeftElement.innerHTML = sanitizedText;
+
+      // clone the warning element and add the "right" class to it so we can distinguish
+      this._warningRightElement = this._warningLeftElement.cloneNode(true) as HTMLDivElement;
+      this._warningRightElement.classList.add('right');
+
+      // append both warning elements to both left/right canvas
+      gridCanvasRightElm.appendChild(this._warningRightElement);
+      gridCanvasLeftElm.appendChild(this._warningLeftElement);
     }
 
     // if we did find the Slick-Empty-Warning element then we'll display/hide at the grid position with some margin offsets (we need to position under the headerRow and filterRow)
-    if (this._warningElement) {
-      if (isShowing) {
-        const gridPosition = this.grid.getGridPosition();
-        const gridOffset = getHtmlElementOffset(document.querySelector(`.${this.grid.getUID()}`) as HTMLDivElement);
+    // when using a frozen/pinned grid, we also have extra options to hide left/right message
+    if (this._warningLeftElement) {
+      // display/hide right/left messages
+      const leftDisplay = (isFrozenGrid && isShowing && !mergedOptions.hideFrozenLeftWarning) ? 'block' : (isShowing ? 'block' : 'none');
+      this._warningLeftElement.style.display = leftDisplay;
 
-        // SF seems to have problem with getGridPosition() so we can use getHtmlElementOffset when that happens
-        const gridPosTop = !isNaN(gridPosition.top) ? gridPosition.top : (gridOffset?.top ?? 0);
-        const gridPosLeft = !isNaN(gridPosition.left) ? gridPosition.left : (gridOffset?.left ?? 0);
-        this._warningElement.style.top = `${gridPosTop + marginTop}px`;
-        this._warningElement.style.left = `${gridPosLeft + marginLeft}px`;
-      }
-      this._warningElement.style.display = isShowing ? 'block' : 'none';
+      // use correct left margin (defaults to 40% on regular grid or 10px on frozen grid)
+      const leftFrozenMarginLeft = typeof leftElementFrozenMarginLeft === 'string' ? leftElementFrozenMarginLeft : `${leftElementFrozenMarginLeft}px`;
+      this._warningLeftElement.style.marginLeft = isFrozenGrid ? leftFrozenMarginLeft : leftViewportMarginLeft;
+    }
+
+    if (this._warningRightElement) {
+      // use correct left margin (defaults to 40% on regular grid or 10px on frozen grid)
+      const rightDisplay = (isFrozenGrid && isShowing && !mergedOptions.hideFrozenRightWarning) ? 'block' : (isShowing ? 'block' : 'none');
+      this._warningRightElement.style.display = rightDisplay;
+
+      // use correct left margin (defaults to 40% on regular grid or 10px on frozen grid)
+      const rightFrozenMarginLeft = typeof rightElementFrozenMarginLeft === 'string' ? rightElementFrozenMarginLeft : `${rightElementFrozenMarginLeft}px`;
+      this._warningRightElement.style.marginLeft = isFrozenGrid ? rightFrozenMarginLeft : rightViewportMarginLeft;
     }
 
     return isShowing;
