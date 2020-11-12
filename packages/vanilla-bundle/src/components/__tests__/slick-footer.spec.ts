@@ -1,4 +1,4 @@
-import { GridOption, SlickGrid } from '@slickgrid-universal/common';
+import { CustomFooterOption, GridOption, SlickGrid } from '@slickgrid-universal/common';
 import { SlickFooterComponent } from '../slick-footer.component';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
@@ -48,7 +48,7 @@ describe('Slick-Footer Component', () => {
     });
 
     it('should make sure Slick-Footer is being created and rendered', () => {
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
       component.renderFooter(div);
 
       const footerContainerElm = document.querySelector<HTMLSelectElement>('div.slick-custom-footer.slickgrid_123456');
@@ -59,12 +59,12 @@ describe('Slick-Footer Component', () => {
     });
 
     it('should create a the Slick-Footer component in the DOM', () => {
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
       component.renderFooter(div);
 
-      const footerContainerElm = document.querySelector<HTMLDivElement>('div.slick-custom-footer.slickgrid_123456');
-      const leftFooterElm = document.querySelector<HTMLSpanElement>('div.slick-custom-footer.slickgrid_123456 > div.left-footer');
-      const rightFooterElm = document.querySelector<HTMLSpanElement>('div.slick-custom-footer.slickgrid_123456 > div.metrics');
+      const footerContainerElm = document.querySelector('div.slick-custom-footer.slickgrid_123456') as HTMLDivElement;
+      const leftFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.left-footer') as HTMLSpanElement;
+      const rightFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.metrics') as HTMLSpanElement;
 
       expect(translateService.getCurrentLanguage()).toBe('en');
       expect(footerContainerElm).toBeTruthy();
@@ -73,16 +73,16 @@ describe('Slick-Footer Component', () => {
     });
 
     it('should create a the Slick-Footer component with only left side content when everything else is defined as hidden', () => {
-      mockGridOptions.customFooterOptions.hideLastUpdateTimestamp = true;
-      mockGridOptions.customFooterOptions.hideMetrics = true;
+      (mockGridOptions.customFooterOptions as CustomFooterOption).hideLastUpdateTimestamp = true;
+      (mockGridOptions.customFooterOptions as CustomFooterOption).hideMetrics = true;
 
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
       component.renderFooter(div);
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
 
-      const footerContainerElm = document.querySelector<HTMLDivElement>('div.slick-custom-footer.slickgrid_123456');
-      const leftFooterElm = document.querySelector<HTMLSpanElement>('div.slick-custom-footer.slickgrid_123456 > div.left-footer');
-      const rightFooterElm = document.querySelector<HTMLSpanElement>('div.slick-custom-footer.slickgrid_123456 > div.metrics');
+      const footerContainerElm = document.querySelector('div.slick-custom-footer.slickgrid_123456') as HTMLDivElement;
+      const leftFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.left-footer') as HTMLSpanElement;
+      const rightFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.metrics') as HTMLSpanElement;
 
       expect(footerContainerElm).toBeTruthy();
       expect(leftFooterElm).toBeTruthy();
@@ -92,13 +92,13 @@ describe('Slick-Footer Component', () => {
     });
 
     it('should create a the Slick-Footer component in the DOM with only right side with last update timestamp & items count', () => {
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
       component.renderFooter(div);
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
 
-      const footerContainerElm = document.querySelector<HTMLDivElement>('div.slick-custom-footer.slickgrid_123456');
-      const leftFooterElm = document.querySelector<HTMLSpanElement>('div.slick-custom-footer.slickgrid_123456 > div.left-footer');
-      const rightFooterElm = document.querySelector<HTMLSpanElement>('div.slick-custom-footer.slickgrid_123456 > div.metrics');
+      const footerContainerElm = document.querySelector('div.slick-custom-footer.slickgrid_123456') as HTMLDivElement;
+      const leftFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.left-footer') as HTMLSpanElement;
+      const rightFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.metrics') as HTMLSpanElement;
 
       expect(footerContainerElm).toBeTruthy();
       expect(leftFooterElm).toBeTruthy();
@@ -112,16 +112,16 @@ describe('Slick-Footer Component', () => {
     });
 
     it('should create a the Slick-Footer component in the DOM with metrics but without timestamp when hidding it', () => {
-      mockGridOptions.customFooterOptions.hideMetrics = false;
-      mockGridOptions.customFooterOptions.hideLastUpdateTimestamp = true;
+      (mockGridOptions.customFooterOptions as CustomFooterOption).hideMetrics = false;
+      (mockGridOptions.customFooterOptions as CustomFooterOption).hideLastUpdateTimestamp = true;
 
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
       component.renderFooter(div);
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
 
-      const footerContainerElm = document.querySelector<HTMLDivElement>('div.slick-custom-footer.slickgrid_123456');
-      const leftFooterElm = document.querySelector<HTMLSpanElement>('div.slick-custom-footer.slickgrid_123456 > div.left-footer');
-      const rightFooterElm = document.querySelector<HTMLSpanElement>('div.slick-custom-footer.slickgrid_123456 > div.metrics');
+      const footerContainerElm = document.querySelector('div.slick-custom-footer.slickgrid_123456') as HTMLDivElement;
+      const leftFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.left-footer') as HTMLSpanElement;
+      const rightFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.metrics') as HTMLSpanElement;
 
       expect(footerContainerElm).toBeTruthy();
       expect(leftFooterElm).toBeTruthy();
@@ -135,17 +135,17 @@ describe('Slick-Footer Component', () => {
     });
 
     it('should create a the Slick-Footer component in the DOM with metrics but without timestamp neither totalCount when hidding it', () => {
-      mockGridOptions.customFooterOptions.hideMetrics = false;
-      mockGridOptions.customFooterOptions.hideLastUpdateTimestamp = true;
-      mockGridOptions.customFooterOptions.hideTotalItemCount = true;
+      (mockGridOptions.customFooterOptions as CustomFooterOption).hideMetrics = false;
+      (mockGridOptions.customFooterOptions as CustomFooterOption).hideLastUpdateTimestamp = true;
+      (mockGridOptions.customFooterOptions as CustomFooterOption).hideTotalItemCount = true;
 
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
       component.renderFooter(div);
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
 
-      const footerContainerElm = document.querySelector<HTMLDivElement>('div.slick-custom-footer.slickgrid_123456');
-      const leftFooterElm = document.querySelector<HTMLSpanElement>('div.slick-custom-footer.slickgrid_123456 > div.left-footer');
-      const rightFooterElm = document.querySelector<HTMLSpanElement>('div.slick-custom-footer.slickgrid_123456 > div.metrics');
+      const footerContainerElm = document.querySelector('div.slick-custom-footer.slickgrid_123456') as HTMLDivElement;
+      const leftFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.left-footer') as HTMLSpanElement;
+      const rightFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.metrics') as HTMLSpanElement;
 
       expect(footerContainerElm).toBeTruthy();
       expect(leftFooterElm).toBeTruthy();
@@ -159,15 +159,15 @@ describe('Slick-Footer Component', () => {
     });
 
     it('should create a the Slick-Footer component in the DOM and expect to use default English locale when none of the metricsText are defined', () => {
-      mockGridOptions.customFooterOptions.metricTexts = { items: '', lastUpdate: '', of: '' };
+      (mockGridOptions.customFooterOptions as CustomFooterOption).metricTexts = { items: '', lastUpdate: '', of: '' };
 
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
       component.renderFooter(div);
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
 
-      const footerContainerElm = document.querySelector<HTMLDivElement>('div.slick-custom-footer.slickgrid_123456');
-      const leftFooterElm = document.querySelector<HTMLSpanElement>('div.slick-custom-footer.slickgrid_123456 > div.left-footer');
-      const rightFooterElm = document.querySelector<HTMLSpanElement>('div.slick-custom-footer.slickgrid_123456 > div.metrics');
+      const footerContainerElm = document.querySelector('div.slick-custom-footer.slickgrid_123456') as HTMLDivElement;
+      const leftFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.left-footer') as HTMLSpanElement;
+      const rightFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.metrics') as HTMLSpanElement;
 
       expect(footerContainerElm).toBeTruthy();
       expect(leftFooterElm).toBeTruthy();
@@ -181,17 +181,17 @@ describe('Slick-Footer Component', () => {
     });
 
     it('should create a the Slick-Footer component in the DOM and use different locale when enableTranslate is enabled', () => {
-      mockGridOptions.customFooterOptions.metricTexts = { itemsKey: 'ITEMS', lastUpdateKey: 'LAST_UPDATE', ofKey: 'OF' };
+      (mockGridOptions.customFooterOptions as CustomFooterOption).metricTexts = { itemsKey: 'ITEMS', lastUpdateKey: 'LAST_UPDATE', ofKey: 'OF' };
       mockGridOptions.enableTranslate = true;
       translateService.use('fr');
 
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
       component.renderFooter(div);
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
 
-      const footerContainerElm = document.querySelector<HTMLDivElement>('div.slick-custom-footer.slickgrid_123456');
-      const leftFooterElm = document.querySelector<HTMLSpanElement>('div.slick-custom-footer.slickgrid_123456 > div.left-footer');
-      const rightFooterElm = document.querySelector<HTMLSpanElement>('div.slick-custom-footer.slickgrid_123456 > div.metrics');
+      const footerContainerElm = document.querySelector('div.slick-custom-footer.slickgrid_123456') as HTMLDivElement;
+      const leftFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.left-footer') as HTMLSpanElement;
+      const rightFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.metrics') as HTMLSpanElement;
 
       expect(footerContainerElm).toBeTruthy();
       expect(leftFooterElm).toBeTruthy();

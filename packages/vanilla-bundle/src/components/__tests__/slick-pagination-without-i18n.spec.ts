@@ -83,6 +83,7 @@ describe('Slick-Pagination Component', () => {
     it('should throw an error when "enableTranslate" is set and I18N Service is not provided', (done) => {
       try {
         mockGridOptions.enableTranslate = true;
+        // @ts-ignore
         translateService = null;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
 
@@ -101,8 +102,8 @@ describe('Slick-Pagination Component', () => {
       component = new SlickPaginationComponent(paginationServiceStub, eventPubSubService, sharedService, translateService);
       component.renderPagination(div);
 
-      const pageInfoFromTo = document.querySelector('.page-info-from-to');
-      const pageInfoTotalItems = document.querySelector('.page-info-total-items');
+      const pageInfoFromTo = document.querySelector('.page-info-from-to') as HTMLSpanElement;
+      const pageInfoTotalItems = document.querySelector('.page-info-total-items') as HTMLSpanElement;
 
       expect(translateService.getCurrentLanguage()).toBe('en');
       expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe('<span data-test="item-from" class="item-from">10</span>-<span data-test="item-to" class="item-to">15</span><span class="text-of">of</span>');
