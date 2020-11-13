@@ -423,7 +423,7 @@ export class SlickVanillaGridBundle {
   }
 
   initialization(gridContainerElm: HTMLElement, eventHandler: SlickEventHandler) {
-    if (this.gridOptions?.frozenRow !== undefined && this.gridOptions.frozenRow >= 0) {
+    if ((this.gridOptions?.frozenRow !== undefined && this.gridOptions.frozenRow >= 0) || this.gridOptions?.frozenColumn !== undefined && this.gridOptions.frozenColumn >= 0) {
       this.loadJqueryMousewheelDynamically();
     }
 

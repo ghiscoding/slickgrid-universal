@@ -39,14 +39,14 @@ export class SlickEmptyWarningComponent {
     const defaultMessage = 'No data to display.';
     const mergedOptions: EmptyWarning = { message: defaultMessage, ...this.gridOptions.emptyDataWarning, ...options };
     const emptyDataClassName = mergedOptions?.className ?? 'slick-empty-data-warning';
-    this._warningLeftElement = document.querySelector<HTMLDivElement>(`.${emptyDataClassName}`);
+    this._warningLeftElement = document.querySelector<HTMLDivElement>(`.${gridUid} .${emptyDataClassName}`);
     const gridCanvasLeftElm = document.querySelector<HTMLDivElement>(`.${gridUid} .grid-canvas.grid-canvas-left`);
     const gridCanvasRightElm = document.querySelector<HTMLDivElement>(`.${gridUid} .grid-canvas.grid-canvas-right`);
     const leftElementMarginLeft = mergedOptions.leftViewportMarginLeft ?? 0;
     const rightElementMarginLeft = mergedOptions.rightViewportMarginLeft ?? 0;
-    const leftElementFrozenMarginLeft = mergedOptions.frozenLeftViewportMarginLeft ?? 10;
-    const rightElementFrozenMarginLeft = mergedOptions.frozenRightViewportMarginLeft ?? 10;
-    const isFrozenGrid = (this.gridOptions?.frozenRow !== undefined && this.gridOptions.frozenRow >= 0);
+    const leftElementFrozenMarginLeft = mergedOptions.frozenLeftViewportMarginLeft ?? 0;
+    const rightElementFrozenMarginLeft = mergedOptions.frozenRightViewportMarginLeft ?? 0;
+    const isFrozenGrid = (this.gridOptions?.frozenColumn !== undefined && this.gridOptions.frozenColumn >= 0);
     const leftViewportMarginLeft = typeof leftElementMarginLeft === 'string' ? leftElementMarginLeft : `${leftElementMarginLeft}px`;
     const rightViewportMarginLeft = typeof rightElementMarginLeft === 'string' ? rightElementMarginLeft : `${rightElementMarginLeft}px`;
 
