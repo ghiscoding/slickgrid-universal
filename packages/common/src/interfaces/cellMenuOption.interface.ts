@@ -41,7 +41,10 @@ export interface CellMenuOption {
   /** Maximum height that the drop menu will have, can be a number (250) or text ("none") */
   maxHeight?: number | string;
 
-  /** Width that the drop menu can have */
+  /**
+   * Width that the drop menu can have.
+   * NOTE: the menu also has a "min-width" defined in CSS/SASS and setting a "width" below that threshold won't work, you change this min-width via SASS `$cell-menu-min-width`
+   */
   width?: number | string;
 
   /** Array of Option Items (title, option, disabled, ...) */
