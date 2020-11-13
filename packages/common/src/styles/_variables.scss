@@ -868,4 +868,6 @@ $empty-data-warning-font-family:                      $font-family !default;
 $empty-data-warning-font-size:                        calc(#{$font-size-base} + 2px) !default;
 $empty-data-warning-font-style:                       italic !default;
 $empty-data-warning-line-height:                      18px !default;
-$empty-data-warning-z-index:                           9999 !default;
+$empty-data-warning-margin:                           0px !default;
+$empty-data-warning-padding:                          8px !default;
+$empty-data-warning-z-index:                          10 !default;

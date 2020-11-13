@@ -45,13 +45,15 @@
 // ----------------------------------------------
 
 .slick-empty-data-warning {
-  position: absolute;
+  position: relative;
   color: $empty-data-warning-color;
   font-family: $empty-data-warning-font-family;
   font-size: $empty-data-warning-font-size;
   font-style: $empty-data-warning-font-style;
   line-height: $empty-data-warning-line-height;
   z-index: $empty-data-warning-z-index;
+  margin: $empty-data-warning-margin;
+  padding: $empty-data-warning-padding;
 }
 
 

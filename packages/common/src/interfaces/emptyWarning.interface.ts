@@ -6,11 +6,23 @@ export interface EmptyWarning {
   messageKey?: string;
 
   /** DOM Element class name, defaults to "empty-data-warning" */
-  class?: string;
+  className?: string;
 
-  /** Top margin position, number in pixel, of where the warning message will be displayed, default calculation is (header title row + filter row + 5px) */
-  marginTop?: number;
+  /** Defaults to False, when using a frozen/pinned grid, do we want to hide the warning on the left side? */
+  hideFrozenLeftWarning?: boolean;
 
-  /** Left margin position, number in pixel, of where the warning message will be displayed, defaults to 10px */
-  marginLeft?: number;
+  /** Defaults to False, when using a frozen/pinned grid, do we want to hide the warning on the right side? */
+  hideFrozenRightWarning?: boolean;
+
+  /** Defaults to "40%", what is the margin-left CSS style to use when we have a regular grid (non-frozen grid)? */
+  leftViewportMarginLeft?: number | string;
+
+  /** Defaults to "10px", what is the margin-left CSS style to use when the grid is a frozen/pinned grid? */
+  frozenLeftViewportMarginLeft?: number | string;
+
+  /** Defaults to "40%", what is the margin-left CSS style to use when we have a regular grid (non-frozen grid)? */
+  rightViewportMarginLeft?: number | string;
+
+  /** Defaults to "10px", what is the margin-left CSS style to use when the grid is a frozen/pinned grid? */
+  frozenRightViewportMarginLeft?: number | string;
 }
