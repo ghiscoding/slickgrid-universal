@@ -97,7 +97,7 @@ describe('Slick-Empty-Warning Component', () => {
     });
 
     it('should expect the Slick-Empty-Warning to be created and use different left margin when "leftViewportMarginLeft" is set', () => {
-      mockGridOptions.frozenRow = 0;
+      mockGridOptions.frozenRow = -1;
       (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
       component = new SlickEmptyWarningComponent(gridStub);
       component.showEmptyDataMessage(true);
@@ -117,8 +117,10 @@ describe('Slick-Empty-Warning Component', () => {
     });
 
     it('should expect the Slick-Empty-Warning to be created and use different left margin when "rightViewportMarginLeft" is set', () => {
-      mockGridOptions.frozenRow = 0;
+      mockGridOptions.frozenRow = -1;
       (mockGridOptions.emptyDataWarning as EmptyWarning).rightViewportMarginLeft = '40%';
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+
       component = new SlickEmptyWarningComponent(gridStub);
       component.showEmptyDataMessage(true);
 

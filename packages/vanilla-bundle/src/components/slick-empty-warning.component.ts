@@ -46,7 +46,7 @@ export class SlickEmptyWarningComponent {
     const rightElementMarginLeft = mergedOptions.rightViewportMarginLeft ?? 0;
     const leftElementFrozenMarginLeft = mergedOptions.frozenLeftViewportMarginLeft ?? 10;
     const rightElementFrozenMarginLeft = mergedOptions.frozenRightViewportMarginLeft ?? 10;
-    const isFrozenGrid = (this.gridOptions?.frozenRow !== undefined && this.gridOptions?.frozenRow >= 0);
+    const isFrozenGrid = (this.gridOptions?.frozenRow !== undefined && this.gridOptions.frozenRow >= 0);
     const leftViewportMarginLeft = typeof leftElementMarginLeft === 'string' ? leftElementMarginLeft : `${leftElementMarginLeft}px`;
     const rightViewportMarginLeft = typeof rightElementMarginLeft === 'string' ? rightElementMarginLeft : `${rightElementMarginLeft}px`;
 

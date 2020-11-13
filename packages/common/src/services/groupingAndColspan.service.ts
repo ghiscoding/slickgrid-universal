@@ -135,9 +135,8 @@ export class GroupingAndColspanService {
     let header;
     let lastColumnGroup = '';
     let widthTotal = 0;
-    const frozenColumn = this._gridOptions?.frozenColumn ?? -1;
     const frozenHeaderWidthCalcDifferential = this._gridOptions?.frozenHeaderWidthCalcDifferential ?? 0;
-    const isFrozenGrid = frozenColumn >= 0;
+    const isFrozenGrid = (this._gridOptions?.frozenRow !== undefined && this._gridOptions.frozenRow >= 0);
 
     for (let i = start; i < end; i++) {
       colDef = this._columnDefinitions[i];
