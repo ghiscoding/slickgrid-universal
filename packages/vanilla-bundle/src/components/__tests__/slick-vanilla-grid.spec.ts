@@ -535,7 +535,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.paginationOptions = mockPagination;
 
         expect(component.paginationOptions).toEqual({ ...mockPagination, totalItems: 0 });
-        expect(paginationSrvSpy).toHaveBeenCalledWith(0);
+        expect(paginationSrvSpy).toHaveBeenCalledWith(0, true);
       });
 
       it('should set brand new paginationOptions when none previously exist', () => {
@@ -546,7 +546,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.paginationOptions = mockPagination;
 
         expect(component.paginationOptions).toEqual(mockPagination);
-        expect(paginationSrvSpy).toHaveBeenCalledWith(1);
+        expect(paginationSrvSpy).toHaveBeenNthCalledWith(2, 1, true);
       });
     });
 
