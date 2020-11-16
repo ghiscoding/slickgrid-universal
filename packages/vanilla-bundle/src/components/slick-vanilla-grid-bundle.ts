@@ -218,7 +218,7 @@ export class SlickVanillaGridBundle {
       this._paginationOptions = options;
     }
     this.gridOptions.pagination = options;
-    this.paginationService.updateTotalItems(options?.totalItems || 0);
+    this.paginationService.updateTotalItems(options?.totalItems || 0, true);
   }
 
   get isDatasetInitialized(): boolean {
