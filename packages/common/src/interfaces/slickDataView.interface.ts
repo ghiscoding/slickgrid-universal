@@ -101,6 +101,18 @@ export interface SlickDataView {
   /** Get row number of an item in the dataset by its Id */
   getRowById(id: string | number): number | undefined;
 
+  /**
+   * Returns an array of all item IDs corresponding to the currently selected rows (including non-visible rows).
+   * This will also work with Pagination and will return selected IDs from all pages.
+   */
+  getAllSelectedIds(): number[];
+
+  /**
+   * Returns an array of all row dataContext corresponding to the currently selected rows (including non-visible rows).
+   * This will also work with Pagination and will return dataContext of selected rows from all pages.
+   */
+  getAllSelectedItems<T = any>(): T[];
+
   /** Insert an item to the dataset before a specific index */
   insertItem(insertBefore: number, item: any): void;
 
