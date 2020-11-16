@@ -442,5 +442,7 @@ describe('Example 12 - Composite Editor Modal', () => {
 
     cy.get('.item-details-container.editor-finish .flatpickr-alt-input').should('contain.value', `${zeroPadding(currentMonth)}/${zeroPadding(currentDate)}/${currentYear}`);
     cy.get('.item-details-container.editor-finish .modified').should('have.length', 1);
+
+    cy.get('.btn-cancel').click();
   });
 });

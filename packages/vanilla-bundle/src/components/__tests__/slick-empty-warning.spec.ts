@@ -46,6 +46,15 @@ describe('Slick-Empty-Warning Component', () => {
       component.dispose();
     });
 
+    it('should expect the Slick-Empty-Warning to return False when calling the "showEmptyDataMessage" method without a grid object defined', () => {
+      component = new SlickEmptyWarningComponent(null);
+      const output = component.showEmptyDataMessage(false);
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(output).toBeFalse();
+    });
+
     it('should expect the Slick-Empty-Warning to be created and NOT be rendered when passing False as 2nd argument and component was never rendered', () => {
       component = new SlickEmptyWarningComponent(gridStub);
       component.showEmptyDataMessage(false);
@@ -71,6 +80,23 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentLeftElm).toBeTruthy();
       expect(componentLeftElm.style.display).toBe('block');
       expect(componentRightElm.style.display).toBe('block');
+      expect(componentLeftElm.textContent).toBe('No data to display.');
+      expect(componentRightElm.textContent).toBe('No data to display.');
+    });
+
+    it('should expect the Slick-Empty-Warning to be created but not shown after calling the method twice with False on 2nd time', () => {
+      component = new SlickEmptyWarningComponent(gridStub);
+      component.showEmptyDataMessage(true);
+      component.showEmptyDataMessage(false);
+
+      const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
+      const componentRightElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning') as HTMLSelectElement;
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(componentLeftElm).toBeTruthy();
+      expect(componentLeftElm.style.display).toBe('none');
+      expect(componentRightElm.style.display).toBe('none');
       expect(componentLeftElm.textContent).toBe('No data to display.');
       expect(componentRightElm.textContent).toBe('No data to display.');
     });

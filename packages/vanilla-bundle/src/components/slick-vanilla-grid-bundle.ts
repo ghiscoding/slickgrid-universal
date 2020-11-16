@@ -91,7 +91,6 @@ export class SlickVanillaGridBundle {
   private _gridParentContainerElm: HTMLElement;
   private _hideHeaderRowAfterPageLoad = false;
   private _isDatasetInitialized = false;
-  private _isDatasetProvided = false;
   private _isGridInitialized = false;
   private _isLocalGrid = true;
   private _isPaginationInitialized = false;
@@ -186,7 +185,6 @@ export class SlickVanillaGridBundle {
       this.dataView.setItems([], this._gridOptions.datasetIdPropertyName);
       this.sortService.processTreeDataInitialSort();
     }
-    this._isDatasetProvided = true;
   }
 
   get gridOptions(): GridOption {
@@ -356,7 +354,6 @@ export class SlickVanillaGridBundle {
     this.initialization(this._gridContainerElm, eventHandler);
     if (!hierarchicalDataset && !this.gridOptions.backendServiceApi) {
       this.dataset = dataset || [];
-      this._isDatasetProvided = true;
     }
 
     this.slickEmptyWarning = new SlickEmptyWarningComponent(this.slickGrid, this.translaterService);
@@ -697,7 +694,6 @@ export class SlickVanillaGridBundle {
           if (processResult && processResult.data && processResult.data[datasetName]) {
             const data = processResult.data[datasetName].hasOwnProperty('nodes') ? (processResult as any).data[datasetName].nodes : (processResult as any).data[datasetName];
             const totalCount = processResult.data[datasetName].hasOwnProperty('totalCount') ? (processResult as any).data[datasetName].totalCount : (processResult as any).data[datasetName].length;
-            this._isDatasetProvided = true;
             this.refreshGridData(data, totalCount || 0);
           }
         };
@@ -972,7 +968,7 @@ export class SlickVanillaGridBundle {
       this.loadLocalGridPagination(dataset);
     }
 
-    if (this._gridOptions.enableEmptyDataWarningMessage && Array.isArray(dataset) && this._isDatasetProvided) {
+    if (this._gridOptions.enableEmptyDataWarningMessage && Array.isArray(dataset)) {
       const finalTotalCount = totalCount || dataset.length;
       this.displayEmptyDataWarning(finalTotalCount < 1);
     }
