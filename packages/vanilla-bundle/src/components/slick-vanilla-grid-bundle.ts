@@ -217,7 +217,7 @@ export class SlickVanillaGridBundle {
     } else {
       this._paginationOptions = options;
     }
-    this.gridOptions.pagination = options;
+    this.gridOptions.pagination = this._paginationOptions;
     this.paginationService.updateTotalItems(options?.totalItems || 0, true);
   }
 
