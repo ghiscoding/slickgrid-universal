@@ -249,14 +249,14 @@ export class Example7 {
   }
 
   hideDurationColumnDynamically() {
-    const columnIndex = this.sgb.slickGrid.getColumns().findIndex(col => col.id === 'duration');
-    if (columnIndex >= 0) {
-      this.sgb.gridService.hideColumnByIndex(columnIndex);
-    }
+    // -- you can hide by one Id or multiple Ids:
+    // hideColumnById(id, options), hideColumnByIds([ids], options)
+    // you can also provide options, defaults are: { autoResizeColumns: true, triggerEvent: true, hideFromColumnPicker: false, hideFromGridMenu: false }
 
-    // you can also remove the column from both pickers (ColumnPicker/GridMenu)
-    // this.sgb.columnDefinitions[columnIndex].excludeFromColumnPicker = true;
-    // this.sgb.columnDefinitions[columnIndex].excludeFromGridMenu = true;
+    this.sgb.gridService.hideColumnById('duration');
+
+    // or with multiple Ids and extra options
+    // this.sgb.gridService.hideColumnByIds(['duration', 'finish'], { autoResizeColumns: false, hideFromColumnPicker: true, hideFromGridMenu: false });
   }
 
   // Disable/Enable Filtering/Sorting functionalities

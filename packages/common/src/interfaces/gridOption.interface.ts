@@ -230,7 +230,7 @@ export interface GridOption {
 
   /** Defaults to true, which leads to use an Excel like copy buffer that gets copied in clipboard and can be pasted back in Excel or any other app */
   enableExcelCopyBuffer?: boolean;
-  
+
   /**
    * Defaults to true, will display a warning message positioned inside the grid when there's no data returned.
    * When using local (in-memory) dataset, it will show the message when there's no filtered data returned.

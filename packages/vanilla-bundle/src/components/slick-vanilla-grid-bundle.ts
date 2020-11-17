@@ -310,8 +310,6 @@ export class SlickVanillaGridBundle {
     this.sortService = services?.sortService ?? new SortService(this.sharedService, this._eventPubSubService);
     this.treeDataService = services?.treeDataService ?? new TreeDataService(this.sharedService);
     this.paginationService = services?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService);
-    this.gridService = services?.gridService ?? new GridService(this.extensionService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService);
-    this.gridStateService = services?.gridStateService ?? new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
 
     // extensions
     const autoTooltipExtension = new AutoTooltipExtension(this.extensionUtility, this.sharedService);
@@ -345,6 +343,10 @@ export class SlickVanillaGridBundle {
       this.sharedService,
       this.translaterService,
     );
+
+    this.gridService = services?.gridService ?? new GridService(this.extensionService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService);
+    this.gridStateService = services?.gridStateService ?? new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
+
     this.groupingService = services?.groupingAndColspanService ?? new GroupingAndColspanService(this.extensionUtility, this.extensionService);
 
     if (hierarchicalDataset) {

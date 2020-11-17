@@ -85,6 +85,7 @@ export * from './headerButtonItem.interface';
 export * from './headerButtonOnCommandArgs.interface';
 export * from './headerMenu.interface';
 export * from './headerMenuOption.interface';
+export * from './hideColumnOption.interface';
 export * from './htmlElementPosition.interface';
 export * from './jQueryUiSliderOption.interface';
 export * from './jQueryUiSliderResponse.interface';
