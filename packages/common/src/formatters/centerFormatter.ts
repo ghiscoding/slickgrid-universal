@@ -1,9 +1,10 @@
 import { Formatter } from './../interfaces/index';
 
 export const centerFormatter: Formatter = (_row: number, _cell: number, value: string | any): string => {
-  // make sure the value is a string
-  if (value !== undefined && typeof value !== 'string') {
-    value = value + '';
+  let outputValue = value;
+
+  if (value === null || value === undefined) {
+    outputValue = '';
   }
-  return `<center>${value}</center>`;
+  return `<center>${outputValue}</center>`;
 };

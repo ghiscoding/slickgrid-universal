@@ -1,5 +1,6 @@
 import { FieldType } from '../enums/index';
 import { getAssociatedDateFormatter } from './formatterUtilities';
+import { alignRightFormatter } from './alignRightFormatter';
 import { arrayObjectToCsvFormatter } from './arrayObjectToCsvFormatter';
 import { arrayToCsvFormatter } from './arrayToCsvFormatter';
 import { boldFormatter } from './boldFormatter';
@@ -38,6 +39,12 @@ import { yesNoFormatter } from './yesNoFormatter';
 
 /** Provides a list of different Formatters that will change the cell value displayed in the UI */
 export const Formatters = {
+  /** Align cell value to the center (alias to Formatters.center)  */
+  alignCenter: centerFormatter,
+
+  /** Align cell value to the right */
+  alignRight: alignRightFormatter,
+
   /**
    * Takes an array of complex objects converts it to a comma delimited string.
    * Requires to pass an array of "propertyNames" in the column definition the generic "params" property
