@@ -12,7 +12,7 @@ const gridStub = {
   getOptions: jest.fn(),
 } as unknown as SlickGrid;
 
-describe('the Uppercase Formatter', () => {
+describe('Tree Formatter', () => {
   let dataset;
   let mockGridOptions: GridOption;
 
