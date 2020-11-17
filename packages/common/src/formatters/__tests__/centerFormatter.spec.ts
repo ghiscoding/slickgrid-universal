@@ -1,11 +1,20 @@
 import { Column } from '../../interfaces/index';
 import { centerFormatter } from '../centerFormatter';
 
-describe('the Uppercase Formatter', () => {
+describe('Center Alignment Formatter', () => {
   it('should return an empty string when no value is passed', () => {
     const output = centerFormatter(1, 1, '', {} as Column, {});
     expect(output).toBe('<center></center>');
   });
+
+  it('should return an empty string when value is null or undefined', () => {
+    const output1 = centerFormatter(1, 1, null, {} as Column, {});
+    const output2 = centerFormatter(1, 1, undefined, {} as Column, {});
+
+    expect(output1).toBe('<center></center>');
+    expect(output2).toBe('<center></center>');
+  });
+
 
   it('should return a string all in uppercase', () => {
     const output = centerFormatter(1, 1, 'hello', {} as Column, {});

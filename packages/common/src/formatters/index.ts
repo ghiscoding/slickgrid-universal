@@ -1,3 +1,4 @@
+export * from './alignRightFormatter';
 export * from './arrayObjectToCsvFormatter';
 export * from './arrayToCsvFormatter';
 export * from './boldFormatter';
