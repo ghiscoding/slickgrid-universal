@@ -5,7 +5,7 @@ describe('Example 01 - Basic Grids', () => {
   const fullTitles = ['Title', 'Duration (days)', '% Complete', 'Start', 'Finish', 'Effort Driven'];
 
   it('should display Example title', () => {
-    cy.visit(Cypress.config('baseExampleUrl'), { timeout: 90000 });
+    cy.visit(`${Cypress.config('baseExampleUrl')}/example01`, { timeout: 120000 });
     cy.get('h3').should('contain', 'Example 01 - Basic Grids');
     cy.get('h3 span.subtitle').should('contain', '(with Salesforce Theme)');
   });
