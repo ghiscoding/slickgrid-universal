@@ -455,8 +455,16 @@ export class AutoCompleteEditor implements Editor {
         }
       });
 
-    // add a <span> in order to add spinner styling
-    $(`<span></span>`).appendTo(this.args.container);
+    // append the new DOM element to the slick cell container,
+    // we need the autocomplete-container so that the spinner is aligned properly with the Composite Editor
+    if (this._$editorElm && typeof this._$editorElm.appendTo === 'function') {
+      const $container = $(`<div class="autocomplete-container"></div>`);
+      $container.appendTo(this.args.container);
+      this._$editorElm.appendTo($container);
+
+      // add a <span> in order to add spinner styling
+      $(`<span></span>`).appendTo($container);
+    }
 
     // user might pass his own autocomplete options
     const autoCompleteOptions: AutocompleteOption = this.columnEditor.editorOptions;

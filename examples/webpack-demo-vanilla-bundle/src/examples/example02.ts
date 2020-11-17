@@ -55,6 +55,9 @@ export class Example2 {
     this.eventService.addElementEventListener(gridContainerElm, 'onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
     this.eventService.addElementEventListener(gridContainerElm, 'onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+
+    // you could group by duration on page load (must be AFTER the DataView is created, so after GridBundle)
+    // this.groupByDuration();
   }
 
   dispose() {
