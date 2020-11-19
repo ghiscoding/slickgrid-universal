@@ -4,7 +4,7 @@ import 'multiple-select-modified';
 import { Editors } from '../index';
 import { SelectEditor } from '../selectEditor';
 import { FieldType, OperatorType } from '../../enums/index';
-import { AutocompleteOption, Column, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { AutocompleteOption, Column, ColumnEditor, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 declare const Slick: SlickNamespace;
@@ -21,7 +21,7 @@ const gridOptionMock = {
   autoCommitEdit: false,
   editable: true,
   i18n: null,
-} as GridOption;
+} as unknown as GridOption;
 
 const getEditorLockMock = {
   commitCurrentEdit: jest.fn(),
@@ -61,6 +61,7 @@ describe('SelectEditor', () => {
       grid: gridStub,
       column: mockColumn,
       item: mockItemData,
+      // @ts-ignore
       event: null,
       cancelChanges: jest.fn(),
       commitChanges: jest.fn(),
@@ -75,6 +76,7 @@ describe('SelectEditor', () => {
   describe('with invalid Editor instance', () => {
     it('should throw an error when trying to call init without any arguments', (done) => {
       try {
+        // @ts-expect-error
         editor = new SelectEditor(null, true);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
@@ -84,7 +86,7 @@ describe('SelectEditor', () => {
 
     it('should throw an error when there is no collection provided in the editor property', (done) => {
       try {
-        mockColumn.internalColumnEditor.collection = undefined;
+        (mockColumn.internalColumnEditor as ColumnEditor).collection = undefined;
         editor = new SelectEditor(editorArguments, true);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") inside Column Definition Editor for the MultipleSelect/SingleSelect Editor to work correctly.`);
@@ -95,7 +97,7 @@ describe('SelectEditor', () => {
     it('should throw an error when collection is not a valid array', (done) => {
       try {
         // @ts-ignore
-        mockColumn.internalColumnEditor.collection = { hello: 'world' };
+        (mockColumn.internalColumnEditor as ColumnEditor).collection = { hello: 'world' };
         editor = new SelectEditor(editorArguments, true);
       } catch (e) {
         expect(e.toString()).toContain(`The "collection" passed to the Select Editor is not a valid array.`);
@@ -105,7 +107,7 @@ describe('SelectEditor', () => {
 
     it('should throw an error when collection is not a valid value/label pair array', (done) => {
       try {
-        mockColumn.internalColumnEditor.collection = [{ hello: 'world' }];
+        (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ hello: 'world' }];
         editor = new SelectEditor(editorArguments, true);
       } catch (e) {
         expect(e.toString()).toContain(`[select-editor] A collection with value/label (or value/labelKey when using Locale) is required to populate the Select list`);
@@ -115,9 +117,10 @@ describe('SelectEditor', () => {
 
     it('should throw an error when "enableTranslateLabel" is set without a valid I18N Service', (done) => {
       try {
+        // @ts-ignore
         translateService = undefined;
-        mockColumn.internalColumnEditor.enableTranslateLabel = true;
-        mockColumn.internalColumnEditor.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+        (mockColumn.internalColumnEditor as ColumnEditor).enableTranslateLabel = true;
+        (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
         editor = new SelectEditor(editorArguments, true);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.`);
@@ -130,7 +133,7 @@ describe('SelectEditor', () => {
     beforeEach(() => {
       mockItemData = { id: 1, gender: 'male', isActive: true };
       mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, internalColumnEditor: {} } as Column;
-      mockColumn.internalColumnEditor.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }, { value: 'other', label: 'other' }];
+      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }, { value: 'other', label: 'other' }];
 
       editorArguments.column = mockColumn;
       editorArguments.item = mockItemData;
@@ -141,7 +144,7 @@ describe('SelectEditor', () => {
     });
 
     it('should initialize the editor', () => {
-      mockColumn.internalColumnEditor.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
       gridOptionMock.i18n = translateService;
       editor = new SelectEditor(editorArguments, true);
       editor.focus();
@@ -153,8 +156,9 @@ describe('SelectEditor', () => {
     it('should initialize the editor with element being disabled in the DOM when passing a collectionAsync and an empty collection property', () => {
       const mockCollection = ['male', 'female'];
       const promise = new Promise(resolve => resolve(mockCollection));
-      mockColumn.internalColumnEditor.collection = null;
-      mockColumn.internalColumnEditor.collectionAsync = promise;
+      // @ts-expect-error
+      (mockColumn.internalColumnEditor as ColumnEditor).collection = null;
+      (mockColumn.internalColumnEditor as ColumnEditor).collectionAsync = promise;
       gridOptionMock.i18n = translateService;
 
       editor = new SelectEditor(editorArguments, true);
@@ -168,7 +172,7 @@ describe('SelectEditor', () => {
     });
 
     it('should initialize the editor even when user define his own editor options', () => {
-      mockColumn.internalColumnEditor.editorOptions = { minLength: 3 } as AutocompleteOption;
+      (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { minLength: 3 } as AutocompleteOption;
       editor = new SelectEditor(editorArguments, true);
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;
 
@@ -177,18 +181,18 @@ describe('SelectEditor', () => {
 
     it('should have a placeholder when defined in its column definition', () => {
       const testValue = 'test placeholder';
-      mockColumn.internalColumnEditor.placeholder = testValue;
-      mockColumn.internalColumnEditor.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      (mockColumn.internalColumnEditor as ColumnEditor).placeholder = testValue;
+      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
       editor = new SelectEditor(editorArguments, true);
-      const editorElm = divContainer.querySelector<HTMLSpanElement>('.ms-filter.editor-gender .placeholder');
+      const editorElm = divContainer.querySelector('.ms-filter.editor-gender .placeholder') as HTMLSpanElement;
 
       expect(editorElm.innerHTML).toBe(testValue);
     });
 
     it('should call "columnEditor" GETTER and expect to equal the editor settings we provided', () => {
-      mockColumn.internalColumnEditor.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-      mockColumn.internalColumnEditor.placeholder = 'test placeholder';
+      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      (mockColumn.internalColumnEditor as ColumnEditor).placeholder = 'test placeholder';
 
       editor = new SelectEditor(editorArguments, true);
 
@@ -220,13 +224,13 @@ describe('SelectEditor', () => {
     });
 
     it('should create the multi-select editor with a blank entry at the beginning of the collection when "addBlankEntry" is set in the "collectionOptions" property', () => {
-      mockColumn.internalColumnEditor.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-      mockColumn.internalColumnEditor.collectionOptions = { addBlankEntry: true };
+      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      (mockColumn.internalColumnEditor as ColumnEditor).collectionOptions = { addBlankEntry: true };
 
       editor = new SelectEditor(editorArguments, true);
-      const editorBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.editor-gender button.ms-choice');
+      const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
       const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
-      const editorOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=editor-gender].ms-drop .ms-ok-button`);
+      const editorOkElm = divContainer.querySelector(`[name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
       editorBtnElm.click();
       editorOkElm.click();
 
@@ -236,13 +240,13 @@ describe('SelectEditor', () => {
     });
 
     it('should create the multi-select editor with a custom entry at the beginning of the collection when "addCustomFirstEntry" is provided in the "collectionOptions" property', () => {
-      mockColumn.internalColumnEditor.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-      mockColumn.internalColumnEditor.collectionOptions = { addCustomFirstEntry: { value: null, label: '' } };
+      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      (mockColumn.internalColumnEditor as ColumnEditor).collectionOptions = { addCustomFirstEntry: { value: null, label: '' } };
 
       editor = new SelectEditor(editorArguments, true);
-      const editorBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.editor-gender button.ms-choice');
+      const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
       const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
-      const editorOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=editor-gender].ms-drop .ms-ok-button`);
+      const editorOkElm = divContainer.querySelector(`[name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
       editorBtnElm.click();
       editorOkElm.click();
 
@@ -252,13 +256,13 @@ describe('SelectEditor', () => {
     });
 
     it('should create the multi-select editor with a custom entry at the end of the collection when "addCustomFirstEntry" is provided in the "collectionOptions" property', () => {
-      mockColumn.internalColumnEditor.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-      mockColumn.internalColumnEditor.collectionOptions = { addCustomLastEntry: { value: null, label: '' } };
+      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      (mockColumn.internalColumnEditor as ColumnEditor).collectionOptions = { addCustomLastEntry: { value: null, label: '' } };
 
       editor = new SelectEditor(editorArguments, true);
-      const editorBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.editor-gender button.ms-choice');
+      const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
       const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
-      const editorOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=editor-gender].ms-drop .ms-ok-button`);
+      const editorOkElm = divContainer.querySelector(`[name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
       editorBtnElm.click();
       editorOkElm.click();
 
@@ -270,9 +274,9 @@ describe('SelectEditor', () => {
     describe('isValueChanged method', () => {
       it('should return True after doing a check of an option and clicking on the OK button', () => {
         editor = new SelectEditor(editorArguments, true);
-        const editorBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.editor-gender button.ms-choice');
+        const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
         const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
-        const editorOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=editor-gender].ms-drop .ms-ok-button`);
+        const editorOkElm = divContainer.querySelector(`[name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
         editorBtnElm.click();
 
         // we can use property "checked" or dispatch an event
@@ -285,9 +289,9 @@ describe('SelectEditor', () => {
 
       it('should return False after doing a check & uncheck of the same option and clicking on the OK button', () => {
         editor = new SelectEditor(editorArguments, true);
-        const editorBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.editor-gender button.ms-choice');
+        const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
         const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
-        const editorOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=editor-gender].ms-drop .ms-ok-button`);
+        const editorOkElm = divContainer.querySelector(`[name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
         editorBtnElm.click();
 
         // we can use property "checked" or dispatch an event
@@ -311,7 +315,8 @@ describe('SelectEditor', () => {
 
     describe('applyValue method', () => {
       it('should apply the value to the gender property when it passes validation', () => {
-        mockColumn.internalColumnEditor.validator = null;
+        // @ts-expect-error
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
         mockItemData = { id: 1, gender: 'male', isActive: true };
 
         editor = new SelectEditor(editorArguments, true);
@@ -321,7 +326,8 @@ describe('SelectEditor', () => {
       });
 
       it('should apply the value to the gender (last property) when field has a dot notation (complex object) that passes validation', () => {
-        mockColumn.internalColumnEditor.validator = null;
+        // @ts-expect-error
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
         mockColumn.field = 'person.bio.gender';
         mockItemData = { id: 1, person: { bio: { gender: 'male' } }, isActive: true };
 
@@ -332,8 +338,9 @@ describe('SelectEditor', () => {
       });
 
       it('should apply the value to the bio property (second last) when field has a dot notation (complex object) value provided is an object and it that passes validation', () => {
-        mockColumn.internalColumnEditor.validator = null;
-        mockColumn.internalColumnEditor.complexObjectPath = 'person.bio';
+        // @ts-expect-error
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
+        (mockColumn.internalColumnEditor as ColumnEditor).complexObjectPath = 'person.bio';
         mockColumn.field = 'person.bio.gender';
         mockItemData = { id: 1, person: { bio: { gender: 'male' } }, isActive: true };
 
@@ -344,7 +351,7 @@ describe('SelectEditor', () => {
       });
 
       it('should return item data with an empty string in its value when it fails the custom validation', () => {
-        mockColumn.internalColumnEditor.validator = (value: any) => {
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = (value: any) => {
           if (value.length < 10) {
             return { valid: false, msg: 'Must be at least 10 chars long.' };
           }
@@ -359,7 +366,8 @@ describe('SelectEditor', () => {
       });
 
       it('should apply the value to the gender property as an array with multiple when the input value is a CSV string', () => {
-        mockColumn.internalColumnEditor.validator = null;
+        // @ts-expect-error
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
         mockItemData = { id: 1, gender: 'male', isActive: true };
 
         editor = new SelectEditor(editorArguments, true);
@@ -371,7 +379,7 @@ describe('SelectEditor', () => {
       it('should parse the value as a float when field type is defined as float then apply the value', () => {
         mockColumn = { id: 'age', field: 'age', type: FieldType.boolean, editable: true, editor: { model: Editors.multipleSelect }, internalColumnEditor: {} } as Column;
         mockItemData = { id: 1, gender: 'male', isActive: true, age: 26 };
-        mockColumn.internalColumnEditor.collection = [{ value: 20, label: '20' }, { value: 25, label: '25' }];
+        (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 20, label: '20' }, { value: 25, label: '25' }];
 
         editorArguments.column = mockColumn;
         editor = new SelectEditor(editorArguments, true);
@@ -416,7 +424,7 @@ describe('SelectEditor', () => {
 
       it('should return value as a string when using a dot (.) notation for complex object with a collection of string values', () => {
         mockColumn.field = 'employee.gender';
-        mockColumn.internalColumnEditor.collection = ['male', 'female'];
+        (mockColumn.internalColumnEditor as ColumnEditor).collection = ['male', 'female'];
         mockItemData = { id: 1, employee: { id: 24, gender: 'male' }, isActive: true };
 
         editor = new SelectEditor(editorArguments, true);
@@ -441,7 +449,7 @@ describe('SelectEditor', () => {
       it('should return object value when using a dot (.) notation and we override the object path using "complexObjectPath" to find correct values', () => {
         mockColumn.field = 'employee.bio';
         mockItemData = { id: 1, employee: { id: 24, bio: { gender: ['male', 'other'] } }, isActive: true };
-        mockColumn.internalColumnEditor.complexObjectPath = 'employee.bio.gender';
+        (mockColumn.internalColumnEditor as ColumnEditor).complexObjectPath = 'employee.bio.gender';
         editor = new SelectEditor(editorArguments, true);
         editor.loadValue(mockItemData);
         const output = editor.serializeValue();
@@ -482,7 +490,7 @@ describe('SelectEditor', () => {
 
     describe('validate method', () => {
       it('should return False when field is required and field is empty', () => {
-        mockColumn.internalColumnEditor.required = true;
+        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
         editor = new SelectEditor(editorArguments, true);
         const validation = editor.validate(null, '');
 
@@ -490,7 +498,7 @@ describe('SelectEditor', () => {
       });
 
       it('should return True when field is required and input is a valid input value', () => {
-        mockColumn.internalColumnEditor.required = true;
+        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
         editor = new SelectEditor(editorArguments, true);
         const validation = editor.validate(null, 'text');
 
@@ -500,12 +508,12 @@ describe('SelectEditor', () => {
 
     describe('initialize with collection', () => {
       it('should create the multi-select editor with a default search term when passed as a filter argument even with collection an array of strings', () => {
-        mockColumn.internalColumnEditor.collection = ['male', 'female'];
+        (mockColumn.internalColumnEditor as ColumnEditor).collection = ['male', 'female'];
 
         editor = new SelectEditor(editorArguments, true);
-        const editorBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.editor-gender button.ms-choice');
+        const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
         const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
-        const editorOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=editor-gender].ms-drop .ms-ok-button`);
+        const editorOkElm = divContainer.querySelector(`[name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
         editorBtnElm.click();
         editorOkElm.click();
 
@@ -526,7 +534,7 @@ describe('SelectEditor', () => {
         };
 
         editor = new SelectEditor(editorArguments, true);
-        const editorBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.editor-gender button.ms-choice');
+        const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
         const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
         editorBtnElm.click();
 
@@ -551,7 +559,7 @@ describe('SelectEditor', () => {
         };
 
         editor = new SelectEditor(editorArguments, true);
-        const editorBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.editor-gender button.ms-choice');
+        const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
         const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
         editorBtnElm.click();
 
@@ -573,7 +581,7 @@ describe('SelectEditor', () => {
         };
 
         editor = new SelectEditor(editorArguments, true);
-        const editorBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.editor-gender button.ms-choice');
+        const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
         const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
         editorBtnElm.click();
 
@@ -595,7 +603,7 @@ describe('SelectEditor', () => {
         };
 
         editor = new SelectEditor(editorArguments, true);
-        const editorBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.editor-gender button.ms-choice');
+        const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
         const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
         editorBtnElm.click();
 
@@ -620,7 +628,7 @@ describe('SelectEditor', () => {
         };
 
         editor = new SelectEditor(editorArguments, true);
-        const editorBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.editor-gender button.ms-choice');
+        const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
         const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
         editorBtnElm.click();
 
@@ -645,7 +653,7 @@ describe('SelectEditor', () => {
         };
 
         editor = new SelectEditor(editorArguments, true);
-        const editorBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.editor-gender button.ms-choice');
+        const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
         const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
         editorBtnElm.click();
 
@@ -669,7 +677,7 @@ describe('SelectEditor', () => {
         };
 
         editor = new SelectEditor(editorArguments, true);
-        const editorBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.editor-gender button.ms-choice');
+        const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
         const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li span`);
         editorBtnElm.click();
 
@@ -696,7 +704,7 @@ describe('SelectEditor', () => {
         editor = new SelectEditor(editorArguments, true);
         editor.loadValue(mockItemData);
         editor.setValue([false]);
-        const editorBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.editor-gender button.ms-choice');
+        const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
         const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li span`);
         editorBtnElm.click();
 
@@ -725,7 +733,7 @@ describe('SelectEditor', () => {
         editor = new SelectEditor(editorArguments, true);
         editor.loadValue(mockItemData);
         editor.setValue([false]);
-        const editorBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.editor-gender button.ms-choice');
+        const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
         const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li span`);
         editorBtnElm.click();
 
@@ -745,7 +753,7 @@ describe('SelectEditor', () => {
 
       mockItemData = { id: 1, gender: 'male', isActive: true };
       mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, internalColumnEditor: {} } as Column;
-      mockColumn.internalColumnEditor.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }, { value: 'other', label: 'other' }];
+      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }, { value: 'other', label: 'other' }];
 
       editorArguments.column = mockColumn;
       editorArguments.item = mockItemData;
@@ -793,7 +801,7 @@ describe('SelectEditor', () => {
       editor.loadValue(mockItemData);
       const disableSpy = jest.spyOn(editor, 'disable');
       editor.show();
-      const editorBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.editor-gender button.ms-choice');
+      const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
@@ -817,8 +825,8 @@ describe('SelectEditor', () => {
       editor = new SelectEditor(editorArguments, true);
       editor.loadValue(mockItemData);
       editor.setValue(['male']);
-      const editorBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.editor-gender button.ms-choice');
-      const editorOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=editor-gender].ms-drop .ms-ok-button`);
+      const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
+      const editorOkElm = divContainer.querySelector(`[name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
       editorBtnElm.click();
       editorOkElm.click();
 

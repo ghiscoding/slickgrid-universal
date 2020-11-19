@@ -1,7 +1,7 @@
 import { Editors } from '../index';
 import { LongTextEditor } from '../longTextEditor';
 import { KeyCode } from '../../enums/index';
-import { AutocompleteOption, Column, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { AutocompleteOption, Column, ColumnEditor, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 declare const Slick: SlickNamespace;
@@ -20,7 +20,7 @@ const gridOptionMock = {
   editable: true,
   i18n: null,
   editorTypingDebounce: 0,
-} as GridOption;
+} as unknown as GridOption;
 
 const getEditorLockMock = {
   commitCurrentEdit: jest.fn(),
@@ -60,6 +60,7 @@ describe('LongTextEditor', () => {
       grid: gridStub,
       column: mockColumn,
       item: mockItemData,
+      // @ts-ignore
       event: null,
       cancelChanges: jest.fn(),
       commitChanges: jest.fn(),
@@ -74,6 +75,7 @@ describe('LongTextEditor', () => {
   describe('with invalid Editor instance', () => {
     it('should throw an error when trying to call init without any arguments', (done) => {
       try {
+        // @ts-expect-error
         editor = new LongTextEditor(null);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
@@ -105,11 +107,11 @@ describe('LongTextEditor', () => {
       editor = new LongTextEditor(editorArguments);
       const editorCount = document.body.querySelectorAll('.slick-large-editor-text.editor-title textarea').length;
       const editorTextCounter = document.body.querySelectorAll<HTMLDivElement>('.slick-large-editor-text.editor-title .editor-footer .counter');
-      const currentTextLengthElm = document.body.querySelector<HTMLDivElement>('.editor-footer .text-length');
-      const maxTextLengthElm = document.body.querySelector<HTMLDivElement>('.editor-footer .max-length');
-      const editorFooterElm = document.body.querySelector<HTMLDivElement>('.slick-large-editor-text.editor-title .editor-footer');
-      const buttonCancelElm = editorFooterElm.querySelector<HTMLButtonElement>('.btn-default');
-      const buttonSaveElm = editorFooterElm.querySelector<HTMLButtonElement>('.btn-primary');
+      const currentTextLengthElm = document.body.querySelector('.editor-footer .text-length') as HTMLDivElement;
+      const maxTextLengthElm = document.body.querySelector('.editor-footer .max-length') as HTMLDivElement;
+      const editorFooterElm = document.body.querySelector('.slick-large-editor-text.editor-title .editor-footer') as HTMLDivElement;
+      const buttonCancelElm = editorFooterElm.querySelector('.btn-default') as HTMLButtonElement;
+      const buttonSaveElm = editorFooterElm.querySelector('.btn-primary') as HTMLButtonElement;
 
       expect(editorCount).toBe(1);
       expect(editorTextCounter.length).toBe(1);
@@ -120,12 +122,13 @@ describe('LongTextEditor', () => {
     });
 
     it('should initialize the editor with default constant text when translate service is not provided', () => {
+      // @ts-ignore
       gridOptionMock.i18n = null;
       editor = new LongTextEditor(editorArguments);
       const editorCount = document.body.querySelectorAll('.slick-large-editor-text.editor-title textarea').length;
-      const editorFooterElm = document.body.querySelector<HTMLDivElement>('.slick-large-editor-text.editor-title .editor-footer');
-      const buttonCancelElm = editorFooterElm.querySelector<HTMLButtonElement>('.btn-default');
-      const buttonSaveElm = editorFooterElm.querySelector<HTMLButtonElement>('.btn-primary');
+      const editorFooterElm = document.body.querySelector('.slick-large-editor-text.editor-title .editor-footer') as HTMLDivElement;
+      const buttonCancelElm = editorFooterElm.querySelector('.btn-default') as HTMLButtonElement;
+      const buttonSaveElm = editorFooterElm.querySelector('.btn-primary') as HTMLButtonElement;
 
       expect(editorCount).toBe(1);
       expect(buttonCancelElm.textContent).toBe('Cancel');
@@ -133,7 +136,7 @@ describe('LongTextEditor', () => {
     });
 
     it('should initialize the editor even when user define his own editor options', () => {
-      mockColumn.internalColumnEditor.editorOptions = { minLength: 3 } as AutocompleteOption;
+      (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { minLength: 3 } as AutocompleteOption;
       editor = new LongTextEditor(editorArguments);
       const editorCount = document.body.querySelectorAll('.slick-large-editor-text.editor-title textarea').length;
 
@@ -142,20 +145,20 @@ describe('LongTextEditor', () => {
 
     it('should have a placeholder when defined in its column definition', () => {
       const testValue = 'test placeholder';
-      mockColumn.internalColumnEditor.placeholder = testValue;
+      (mockColumn.internalColumnEditor as ColumnEditor).placeholder = testValue;
 
       editor = new LongTextEditor(editorArguments);
-      const editorElm = document.body.querySelector<HTMLTextAreaElement>('.slick-large-editor-text.editor-title textarea');
+      const editorElm = document.body.querySelector('.slick-large-editor-text.editor-title textarea') as HTMLTextAreaElement;
 
       expect(editorElm.placeholder).toBe(testValue);
     });
 
     it('should have a title (tooltip) when defined in its column definition', () => {
       const testValue = 'test title';
-      mockColumn.internalColumnEditor.title = testValue;
+      (mockColumn.internalColumnEditor as ColumnEditor).title = testValue;
 
       editor = new LongTextEditor(editorArguments);
-      const editorElm = document.body.querySelector<HTMLTextAreaElement>('.slick-large-editor-text.editor-title textarea');
+      const editorElm = document.body.querySelector('.slick-large-editor-text.editor-title textarea') as HTMLTextAreaElement;
 
       expect(editorElm.title).toBe(testValue);
     });
@@ -190,8 +193,8 @@ describe('LongTextEditor', () => {
       editor = new LongTextEditor(editorArguments);
       editor.loadValue(mockItemData);
       const editorElm = editor.editorDomElement;
-      const currentTextLengthElm = document.body.querySelector<HTMLDivElement>('.editor-footer .text-length');
-      const maxTextLengthElm = document.body.querySelector<HTMLDivElement>('.editor-footer .max-length');
+      const currentTextLengthElm = document.body.querySelector('.editor-footer .text-length') as HTMLDivElement;
+      const maxTextLengthElm = document.body.querySelector('.editor-footer .max-length') as HTMLDivElement;
 
       expect(currentTextLengthElm.textContent).toBe('6');
       expect(maxTextLengthElm.textContent).toBe('500');
@@ -201,7 +204,7 @@ describe('LongTextEditor', () => {
 
     it('should hide the DOM element div wrapper when the "hide" method is called', () => {
       editor = new LongTextEditor(editorArguments);
-      const wrapperElm = document.body.querySelector<HTMLDivElement>('.slick-large-editor-text.editor-title');
+      const wrapperElm = document.body.querySelector('.slick-large-editor-text.editor-title') as HTMLDivElement;
       editor.show();
       expect(wrapperElm.style.display).toBe('');
 
@@ -211,7 +214,7 @@ describe('LongTextEditor', () => {
 
     it('should show the DOM element div wrapper when the "show" method is called', () => {
       editor = new LongTextEditor(editorArguments);
-      const wrapperElm = document.body.querySelector<HTMLDivElement>('.slick-large-editor-text.editor-title');
+      const wrapperElm = document.body.querySelector('.slick-large-editor-text.editor-title') as HTMLDivElement;
 
       editor.hide();
       expect(wrapperElm.style.display).toBe('none');
@@ -224,13 +227,13 @@ describe('LongTextEditor', () => {
       it('should return True when previously dispatched keyboard event is a new char "a" and it should also update the text counter accordingly', () => {
         const eventKeyDown = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
         const eventInput = new (window.window as any).KeyboardEvent('input', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
-        mockColumn.internalColumnEditor.maxLength = 255;
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 255;
 
         editor = new LongTextEditor(editorArguments);
         editor.setValue('z');
-        const editorElm = document.body.querySelector<HTMLTextAreaElement>('.editor-title textarea');
-        const currentTextLengthElm = document.body.querySelector<HTMLDivElement>('.editor-footer .text-length');
-        const maxTextLengthElm = document.body.querySelector<HTMLDivElement>('.editor-footer .max-length');
+        const editorElm = document.body.querySelector('.editor-title textarea') as HTMLTextAreaElement;
+        const currentTextLengthElm = document.body.querySelector('.editor-footer .text-length') as HTMLDivElement;
+        const maxTextLengthElm = document.body.querySelector('.editor-footer .max-length') as HTMLDivElement;
 
         editor.focus();
         editorElm.dispatchEvent(eventKeyDown);
@@ -245,7 +248,7 @@ describe('LongTextEditor', () => {
         const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
 
         editor = new LongTextEditor(editorArguments);
-        const editorElm = document.body.querySelector<HTMLTextAreaElement>('.editor-title textarea');
+        const editorElm = document.body.querySelector('.editor-title textarea') as HTMLTextAreaElement;
 
         editor.loadValue({ id: 1, title: 'a', isActive: true });
         editor.focus();
@@ -259,7 +262,7 @@ describe('LongTextEditor', () => {
 
         editor = new LongTextEditor(editorArguments);
         editor.setValue('a');
-        const editorElm = document.body.querySelector<HTMLTextAreaElement>('.editor-title textarea');
+        const editorElm = document.body.querySelector('.editor-title textarea') as HTMLTextAreaElement;
 
         editor.focus();
         editorElm.dispatchEvent(event);
@@ -270,7 +273,8 @@ describe('LongTextEditor', () => {
 
     describe('applyValue method', () => {
       it('should apply the value to the title property when it passes validation', () => {
-        mockColumn.internalColumnEditor.validator = null;
+        // @ts-expect-error
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
         mockItemData = { id: 1, title: 'task 1', isActive: true };
 
         editor = new LongTextEditor(editorArguments);
@@ -280,7 +284,8 @@ describe('LongTextEditor', () => {
       });
 
       it('should apply the value to the title property with a field having dot notation (complex object) that passes validation', () => {
-        mockColumn.internalColumnEditor.validator = null;
+        // @ts-expect-error
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
         mockColumn.field = 'part.title';
         mockItemData = { id: 1, part: { title: 'task 1' }, isActive: true };
 
@@ -291,7 +296,7 @@ describe('LongTextEditor', () => {
       });
 
       it('should return item data with an empty string in its value when it fails the custom validation', () => {
-        mockColumn.internalColumnEditor.validator = (value: any) => {
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = (value: any) => {
           if (value.length < 10) {
             return { valid: false, msg: 'Must be at least 10 chars long.' };
           }
@@ -370,7 +375,7 @@ describe('LongTextEditor', () => {
       it('should call "commitChanges" method when "hasAutoCommitEdit" is enabled but value is invalid', () => {
         mockItemData = { id: 1, title: 'task', isActive: true };
         gridOptionMock.autoCommitEdit = true;
-        mockColumn.internalColumnEditor.validator = (value: any) => {
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = (value: any) => {
           if (value.length < 10) {
             return { valid: false, msg: 'Must be at least 10 chars long.' };
           }
@@ -403,7 +408,7 @@ describe('LongTextEditor', () => {
 
       it('should not call anything when the input value is empty but is required', () => {
         mockItemData = { id: 1, title: '', isActive: true };
-        mockColumn.internalColumnEditor.required = true;
+        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
         gridOptionMock.autoCommitEdit = true;
         const spy = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
@@ -494,8 +499,8 @@ describe('LongTextEditor', () => {
         editor = new LongTextEditor(editorArguments);
         editor.loadValue(mockItemData);
         const spySave = jest.spyOn(editor, 'save');
-        const editorFooterElm = document.body.querySelector<HTMLDivElement>('.slick-large-editor-text.editor-title .editor-footer');
-        const buttonSaveElm = editorFooterElm.querySelector<HTMLButtonElement>('.btn-primary');
+        const editorFooterElm = document.body.querySelector('.slick-large-editor-text.editor-title .editor-footer') as HTMLDivElement;
+        const buttonSaveElm = editorFooterElm.querySelector('.btn-primary') as HTMLButtonElement;
 
         buttonSaveElm.click();
 
@@ -508,8 +513,8 @@ describe('LongTextEditor', () => {
         editor = new LongTextEditor(editorArguments);
         editor.loadValue(mockItemData);
         const spyCancel = jest.spyOn(editor, 'cancel');
-        const editorFooterElm = document.body.querySelector<HTMLDivElement>('.slick-large-editor-text.editor-title .editor-footer');
-        const buttonCancelElm = editorFooterElm.querySelector<HTMLButtonElement>('.btn-default');
+        const editorFooterElm = document.body.querySelector('.slick-large-editor-text.editor-title .editor-footer') as HTMLDivElement;
+        const buttonCancelElm = editorFooterElm.querySelector('.btn-default') as HTMLButtonElement;
 
         buttonCancelElm.click();
 
@@ -519,7 +524,7 @@ describe('LongTextEditor', () => {
 
     describe('validate method', () => {
       it('should return False when field is required and field is empty', () => {
-        mockColumn.internalColumnEditor.required = true;
+        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
         editor = new LongTextEditor(editorArguments);
         const validation = editor.validate(null, '');
 
@@ -527,7 +532,7 @@ describe('LongTextEditor', () => {
       });
 
       it('should return True when field is required and input is a valid input value', () => {
-        mockColumn.internalColumnEditor.required = true;
+        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
         editor = new LongTextEditor(editorArguments);
         const validation = editor.validate(null, 'text');
 
@@ -535,7 +540,7 @@ describe('LongTextEditor', () => {
       });
 
       it('should return False when field is lower than a minLength defined', () => {
-        mockColumn.internalColumnEditor.minLength = 5;
+        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 5;
         editor = new LongTextEditor(editorArguments);
         const validation = editor.validate(null, 'text');
 
@@ -543,8 +548,8 @@ describe('LongTextEditor', () => {
       });
 
       it('should return False when field is lower than a minLength defined using exclusive operator', () => {
-        mockColumn.internalColumnEditor.minLength = 5;
-        mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
+        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 5;
+        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'exclusive';
         editor = new LongTextEditor(editorArguments);
         const validation = editor.validate(null, 'text');
 
@@ -552,7 +557,7 @@ describe('LongTextEditor', () => {
       });
 
       it('should return True when field is equal to the minLength defined', () => {
-        mockColumn.internalColumnEditor.minLength = 4;
+        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 4;
         editor = new LongTextEditor(editorArguments);
         const validation = editor.validate(null, 'text');
 
@@ -560,7 +565,7 @@ describe('LongTextEditor', () => {
       });
 
       it('should return False when field is greater than a maxLength defined', () => {
-        mockColumn.internalColumnEditor.maxLength = 10;
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 10;
         editor = new LongTextEditor(editorArguments);
         const validation = editor.validate(null, 'text is 16 chars');
 
@@ -568,8 +573,8 @@ describe('LongTextEditor', () => {
       });
 
       it('should return False when field is greater than a maxLength defined using exclusive operator', () => {
-        mockColumn.internalColumnEditor.maxLength = 10;
-        mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 10;
+        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'exclusive';
         editor = new LongTextEditor(editorArguments);
         const validation = editor.validate(null, 'text is 16 chars');
 
@@ -577,7 +582,7 @@ describe('LongTextEditor', () => {
       });
 
       it('should return True when field is equal to the maxLength defined', () => {
-        mockColumn.internalColumnEditor.maxLength = 16;
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 16;
         editor = new LongTextEditor(editorArguments);
         const validation = editor.validate(null, 'text is 16 chars');
 
@@ -585,8 +590,8 @@ describe('LongTextEditor', () => {
       });
 
       it('should return True when field is equal to the maxLength defined and "operatorType" is set to "inclusive"', () => {
-        mockColumn.internalColumnEditor.maxLength = 16;
-        mockColumn.internalColumnEditor.operatorConditionalType = 'inclusive';
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 16;
+        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'inclusive';
         editor = new LongTextEditor(editorArguments);
         const validation = editor.validate(null, 'text is 16 chars');
 
@@ -594,8 +599,8 @@ describe('LongTextEditor', () => {
       });
 
       it('should return False when field is equal to the maxLength defined but "operatorType" is set to "exclusive"', () => {
-        mockColumn.internalColumnEditor.maxLength = 16;
-        mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 16;
+        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'exclusive';
         editor = new LongTextEditor(editorArguments);
         const validation = editor.validate(null, 'text is 16 chars');
 
@@ -603,8 +608,8 @@ describe('LongTextEditor', () => {
       });
 
       it('should return False when field is not between minLength & maxLength defined', () => {
-        mockColumn.internalColumnEditor.minLength = 0;
-        mockColumn.internalColumnEditor.maxLength = 10;
+        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 0;
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 10;
         editor = new LongTextEditor(editorArguments);
         const validation = editor.validate(null, 'text is 16 chars');
 
@@ -612,8 +617,8 @@ describe('LongTextEditor', () => {
       });
 
       it('should return True when field is is equal to maxLength defined when both min/max values are defined', () => {
-        mockColumn.internalColumnEditor.minLength = 0;
-        mockColumn.internalColumnEditor.maxLength = 16;
+        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 0;
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 16;
         editor = new LongTextEditor(editorArguments);
         const validation = editor.validate(null, 'text is 16 chars');
 
@@ -621,9 +626,9 @@ describe('LongTextEditor', () => {
       });
 
       it('should return True when field is is equal to minLength defined when "operatorType" is set to "inclusive" and both min/max values are defined', () => {
-        mockColumn.internalColumnEditor.minLength = 4;
-        mockColumn.internalColumnEditor.maxLength = 15;
-        mockColumn.internalColumnEditor.operatorConditionalType = 'inclusive';
+        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 4;
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 15;
+        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'inclusive';
         editor = new LongTextEditor(editorArguments);
         const validation = editor.validate(null, 'text');
 
@@ -631,9 +636,9 @@ describe('LongTextEditor', () => {
       });
 
       it('should return False when field is equal to maxLength but "operatorType" is set to "exclusive" when both min/max lengths are defined', () => {
-        mockColumn.internalColumnEditor.minLength = 4;
-        mockColumn.internalColumnEditor.maxLength = 16;
-        mockColumn.internalColumnEditor.operatorConditionalType = 'exclusive';
+        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 4;
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 16;
+        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'exclusive';
         editor = new LongTextEditor(editorArguments);
         const validation1 = editor.validate(null, 'text is 16 chars');
         const validation2 = editor.validate(null, 'text');
@@ -643,7 +648,7 @@ describe('LongTextEditor', () => {
       });
 
       it('should return False when field is greater than a maxValue defined', () => {
-        mockColumn.internalColumnEditor.maxLength = 10;
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 10;
         editor = new LongTextEditor(editorArguments);
         const validation = editor.validate(null, 'Task is longer than 10 chars');
 
@@ -725,7 +730,7 @@ describe('LongTextEditor', () => {
 
       editor = new LongTextEditor(editorArguments);
       editor.loadValue(mockItemData);
-      const editorElm = document.body.querySelector<HTMLTextAreaElement>('.editor-title textarea');
+      const editorElm = document.body.querySelector('.editor-title textarea') as HTMLTextAreaElement;
       editorElm.value = 'task 2';
       editorElm.dispatchEvent(new (window.window as any).Event('input'));
 

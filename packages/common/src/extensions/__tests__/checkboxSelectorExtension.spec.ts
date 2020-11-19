@@ -1,4 +1,4 @@
-import { Column, GridOption, SlickGrid, SlickRowSelectionModel, SlickNamespace } from '../../interfaces/index';
+import { Column, GridOption, SlickGrid, SlickRowSelectionModel, SlickNamespace, SlickCheckboxSelectColumn } from '../../interfaces/index';
 import { CheckboxSelectorExtension } from '../checkboxSelectorExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
@@ -55,6 +55,7 @@ describe('checkboxSelectorExtension', () => {
   });
 
   it('should return null after calling "create" method when either the column definitions or the grid options is missing', () => {
+    // @ts-ignore
     const output = extension.create([] as Column[], null);
     expect(output).toBeNull();
   });
@@ -81,8 +82,8 @@ describe('checkboxSelectorExtension', () => {
     it('should register the addon', () => {
       const pluginSpy = jest.spyOn(SharedService.prototype.slickGrid, 'registerPlugin');
 
-      const instance = extension.create(columnsMock, gridOptionsMock);
-      const selectionModel = extension.register();
+      const instance = extension.create(columnsMock, gridOptionsMock) as SlickCheckboxSelectColumn;
+      const selectionModel = extension.register() as SlickRowSelectionModel;
       const addonInstance = extension.getAddonInstance();
 
       expect(instance).toBeTruthy();
@@ -97,8 +98,8 @@ describe('checkboxSelectorExtension', () => {
       const pluginSpy = jest.spyOn(SharedService.prototype.slickGrid, 'registerPlugin');
       const selectionSpy = jest.spyOn(SharedService.prototype.slickGrid, 'getSelectionModel');
 
-      const instance = extension.create(columnsMock, gridOptionsMock);
-      const selectionModel = extension.register();
+      const instance = extension.create(columnsMock, gridOptionsMock) as SlickCheckboxSelectColumn;
+      const selectionModel = extension.register() as SlickRowSelectionModel;
       const selectionModel2 = extension.register(selectionModel);
 
       expect(selectionModel).not.toBeNull();
@@ -110,8 +111,8 @@ describe('checkboxSelectorExtension', () => {
     });
 
     it('should dispose of the addon', () => {
-      const instance = extension.create(columnsMock, gridOptionsMock);
-      const selectionModel = extension.register();
+      const instance = extension.create(columnsMock, gridOptionsMock) as SlickCheckboxSelectColumn;
+      const selectionModel = extension.register() as SlickRowSelectionModel;
       const addonDestroySpy = jest.spyOn(instance, 'destroy');
       const smDestroySpy = jest.spyOn(selectionModel, 'destroy');
 
@@ -128,7 +129,7 @@ describe('checkboxSelectorExtension', () => {
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(selectionModelOptions);
 
       // we can only spy after 1st "create" call, we'll only get a valid selectionColumn on 2nd "create" call
-      const instance = extension.create(columnsMock, gridOptionsMock);
+      const instance = extension.create(columnsMock, gridOptionsMock) as SlickCheckboxSelectColumn;
       jest.spyOn(instance, 'getColumnDefinition').mockReturnValue(columnSelectionMock);
       expect(columnsMock[0]).not.toEqual(selectionColumn);
 
@@ -153,7 +154,7 @@ describe('checkboxSelectorExtension', () => {
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(selectionModelOptions);
 
       // we can only spy after 1st "create" call, we'll only get a valid selectionColumn on 2nd "create" call
-      const instance = extension.create(columnsMock, gridOptionsMock);
+      const instance = extension.create(columnsMock, gridOptionsMock) as SlickCheckboxSelectColumn;
       jest.spyOn(instance, 'getColumnDefinition').mockReturnValue(columnSelectionMock);
       expect(columnsMock[0]).not.toEqual(selectionColumn);
 
@@ -177,9 +178,9 @@ describe('checkboxSelectorExtension', () => {
       // @ts-ignore
       const selectionSpy = jest.spyOn(SharedService.prototype.slickGrid, 'getSelectionModel').mockReturnValue(mockSelectionModel);
 
-      const instance = extension.create(columnsMock, gridOptionsMock);
+      const instance = extension.create(columnsMock, gridOptionsMock) as SlickCheckboxSelectColumn;
       const rowSpy = jest.spyOn(instance, 'selectRows');
-      const selectionModel = extension.register();
+      const selectionModel = extension.register() as SlickRowSelectionModel;
 
       jest.runAllTimers(); // fast-forward timer
 
