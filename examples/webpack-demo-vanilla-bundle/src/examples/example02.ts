@@ -1,5 +1,6 @@
 import {
   Aggregators,
+  BindingEventService,
   Column,
   FieldType,
   Filters,
@@ -11,7 +12,7 @@ import {
   SlickDataView,
   SlickGrid,
   SortComparers,
-  SortDirectionNumber
+  SortDirectionNumber,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { FileExportService } from '@slickgrid-universal/file-export';
@@ -20,12 +21,11 @@ import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid
 import { ExampleGridOptions } from './example-grid-options';
 import '../material-styles.scss';
 import './example02.scss';
-import { EventService } from './event.service';
 
 const NB_ITEMS = 500;
 
 export class Example2 {
-  private eventService: EventService;
+  private _bindingEventService: BindingEventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
@@ -44,7 +44,7 @@ export class Example2 {
   }
 
   constructor() {
-    this.eventService = new EventService();
+    this._bindingEventService = new BindingEventService();
   }
 
   attached() {
@@ -52,8 +52,8 @@ export class Example2 {
     this.dataset = this.loadData(NB_ITEMS);
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid2`);
 
-    this.eventService.addElementEventListener(gridContainerElm, 'onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
-    this.eventService.addElementEventListener(gridContainerElm, 'onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
+    this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
+    this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
     // you could group by duration on page load (must be AFTER the DataView is created, so after GridBundle)
@@ -62,6 +62,7 @@ export class Example2 {
 
   dispose() {
     this.sgb?.dispose();
+    this._bindingEventService.unbindAll();
   }
 
   initializeGrid() {

@@ -1,6 +1,7 @@
 import { Constants } from './../constants';
 import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, SlickGrid, SlickNamespace } from './../interfaces/index';
 import { getDescendantProperty, setDeepValue } from '../services/utilities';
+import { BindingEventService } from '../services/bindingEvent.service';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -10,6 +11,7 @@ declare const Slick: SlickNamespace;
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
 export class CheckboxEditor implements Editor {
+  private _bindEventService: BindingEventService;
   private _input: HTMLInputElement | null;
   private _checkboxContainerElm: HTMLDivElement;
   private _originalValue?: boolean | string;
@@ -25,6 +27,7 @@ export class CheckboxEditor implements Editor {
       throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
     }
     this.grid = args.grid;
+    this._bindEventService = new BindingEventService();
     this.init();
   }
 
@@ -78,30 +81,21 @@ export class CheckboxEditor implements Editor {
 
     // make the checkbox editor act like a regular checkbox that commit the value on click
     if (this.hasAutoCommitEdit && !compositeEditorOptions) {
-      this._input.addEventListener('click', () => this.save());
+      this._bindEventService.bind(this._input, 'click', () => this.save());
     }
 
     if (compositeEditorOptions) {
-      this._input.addEventListener('change', (event: KeyboardEvent) => this.handleChangeOnCompositeEditor(event, compositeEditorOptions));
+      this._bindEventService.bind(this._input, 'change', (event: KeyboardEvent) => this.handleChangeOnCompositeEditor(event, compositeEditorOptions));
     } else {
       this.focus();
     }
   }
 
   destroy() {
-    const columnId = this.columnDef && this.columnDef.id;
-    const compositeEditorOptions = this.args.compositeEditorOptions;
-    const elm = document.querySelector(`.editor-checkbox.editor-${columnId}`);
-    if (elm) {
-      elm.removeEventListener('click', this.save);
-    }
+    this._bindEventService.unbindAll();
     if (this._input?.remove) {
-      if (compositeEditorOptions) {
-        this._input.removeEventListener('change', this.handleChangeOnCompositeEditor.bind(compositeEditorOptions));
-      }
       this._input.remove();
     }
-    this._input = null;
   }
 
   disable(isDisabled = true) {

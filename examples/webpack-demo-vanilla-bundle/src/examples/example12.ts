@@ -1,5 +1,6 @@
 import {
   AutocompleteOption,
+  BindingEventService,
   Column,
   CompositeEditorModalType,
   Editors,
@@ -18,7 +19,6 @@ import {
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickCompositeEditorComponent, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
-import { EventService } from './event.service';
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
 import './example12.scss';
@@ -75,7 +75,7 @@ const customEditableInputFormatter = (_row, _cell, value, columnDef, dataContext
 };
 
 export class Example12 {
-  private eventService: EventService;
+  private _bindingEventService: BindingEventService;
   compositeEditorInstance: SlickCompositeEditorComponent;
   columnDefinitions: Column[];
   gridOptions: GridOption;
@@ -93,7 +93,7 @@ export class Example12 {
   }
 
   constructor() {
-    this.eventService = new EventService();
+    this._bindingEventService = new BindingEventService();
   }
 
   attached() {
@@ -105,19 +105,19 @@ export class Example12 {
     // this.sgb.slickGrid.setActiveCell(0, 0);
 
     // bind any of the grid events
-    this.eventService.addElementEventListener(this.gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
-    this.eventService.addElementEventListener(this.gridContainerElm, 'onitemdeleted', this.handleItemDeleted.bind(this));
-    this.eventService.addElementEventListener(this.gridContainerElm, 'onbeforeeditcell', this.handleOnBeforeEditCell.bind(this));
-    this.eventService.addElementEventListener(this.gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
-    this.eventService.addElementEventListener(this.gridContainerElm, 'onclick', this.handleOnCellClicked.bind(this));
-    this.eventService.addElementEventListener(this.gridContainerElm, 'ongridstatechanged', this.handleOnSelectedRowsChanged.bind(this));
-    this.eventService.addElementEventListener(this.gridContainerElm, 'ondblclick', () => this.openCompositeModal('edit', 50));
-    this.eventService.addElementEventListener(this.gridContainerElm, 'oncompositeeditorchange', this.handleOnCompositeEditorChange.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'onitemdeleted', this.handleItemDeleted.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'onbeforeeditcell', this.handleOnBeforeEditCell.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'onclick', this.handleOnCellClicked.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'ongridstatechanged', this.handleOnSelectedRowsChanged.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'ondblclick', () => this.openCompositeModal('edit', 50));
+    this._bindingEventService.bind(this.gridContainerElm, 'oncompositeeditorchange', this.handleOnCompositeEditorChange.bind(this));
   }
 
   dispose() {
     this.sgb?.dispose();
-    this.eventService.unbindAllEvents();
+    this._bindingEventService.unbindAll();
     this.gridContainerElm = null;
   }
 

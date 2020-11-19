@@ -1,5 +1,7 @@
 import {
   AutocompleteOption,
+  BindingEventService,
+  DOMEvent,
   Column,
   CurrentFilter,
   Editors,
@@ -24,7 +26,6 @@ import { ExampleGridOptions } from './example-grid-options';
 import { loadComponent } from 'examples/utilities';
 import '../salesforce-styles.scss';
 import './example11.scss';
-import { EventService } from './event.service';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -56,7 +57,7 @@ export interface FilterPreset {
 }
 
 export class Example11 {
-  private eventService: EventService;
+  private _bindingEventService: BindingEventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[] = [];
@@ -96,7 +97,7 @@ export class Example11 {
   }
 
   constructor() {
-    this.eventService = new EventService();
+    this._bindingEventService = new BindingEventService();
   }
 
   attached() {
@@ -107,14 +108,14 @@ export class Example11 {
     this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
     // bind any of the grid events
-    this.eventService.addElementEventListener(this.gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
-    this.eventService.addElementEventListener(this.gridContainerElm, 'onitemdeleted', this.handleItemDeleted.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'onitemdeleted', this.handleItemDeleted.bind(this));
     this.recreatePredefinedFilters();
   }
 
   dispose() {
     this.sgb?.dispose();
-    this.eventService.unbindAllEvents();
+    this._bindingEventService.unbindAll();
     this.gridContainerElm = null;
   }
 
@@ -657,7 +658,7 @@ export class Example11 {
     this.dropdownUpdateFilterClass = 'dropdown-item dropdown-item-disabled';
   }
 
-  async updateFilter(event: any) {
+  async updateFilter(event: DOMEvent<HTMLInputElement>) {
     if (event.target.disabled) {
       event.stopPropagation();
       return;

@@ -88,6 +88,7 @@ export const Formatters = {
    * this.columnDefs = [{ id: 'username', field: 'user.firstName', ... }]
    * OR this.columnDefs = [{ id: 'username', field: 'user', params: { complexField: 'user.firstName' }, ... }]
    */
+  complex: complexObjectFormatter,
   complexObject: complexObjectFormatter,
 
   /**

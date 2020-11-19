@@ -2,6 +2,7 @@ import { KeyCode } from '../enums/keyCode.enum';
 import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption, SlickGrid, SlickNamespace, } from '../interfaces/index';
 import { debounce, getDescendantProperty, setDeepValue } from '../services/utilities';
 import { textValidator } from '../editorValidators/textValidator';
+import { BindingEventService } from '../services/bindingEvent.service';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -11,6 +12,7 @@ declare const Slick: SlickNamespace;
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
 export class TextEditor implements Editor {
+  private _bindEventService: BindingEventService;
   private _lastInputKeyEvent: KeyboardEvent;
   private _input: HTMLInputElement | null;
   private _originalValue: string;
@@ -30,6 +32,7 @@ export class TextEditor implements Editor {
     }
     this.grid = args.grid;
     this.gridOptions = args.grid && args.grid.getOptions() as GridOption;
+    this._bindEventService = new BindingEventService();
     this.init();
   }
 
@@ -86,22 +89,17 @@ export class TextEditor implements Editor {
     // the lib does not get the focus out event for some reason
     // so register it here
     if (this.hasAutoCommitEdit && !compositeEditorOptions) {
-      this._input.addEventListener('focusout', () => this.save());
+      this._bindEventService.bind(this._input, 'focusout', () => this.save());
     }
 
     if (compositeEditorOptions) {
-      this._input.addEventListener('input', this.handleOnInputChange.bind(this));
+      this._bindEventService.bind(this._input, 'input', this.handleOnInputChange.bind(this));
     }
   }
 
   destroy() {
-    const compositeEditorOptions = this.args.compositeEditorOptions;
-
     if (this._input) {
-      this._input.removeEventListener('focusout', this.save);
-      if (compositeEditorOptions) {
-        this._input.removeEventListener('input', this.handleOnInputChange);
-      }
+      this._bindEventService.unbindAll();
       setTimeout(() => {
         if (this._input) {
           this._input.remove();

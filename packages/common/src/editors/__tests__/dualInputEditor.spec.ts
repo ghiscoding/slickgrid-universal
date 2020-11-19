@@ -1,7 +1,7 @@
 import { Editors } from '../index';
 import { DualInputEditor } from '../dualInputEditor';
 import { KeyCode } from '../../enums/index';
-import { Column, ColumnEditorDualInput, SlickDataView, EditorArguments, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { Column, ColumnEditor, ColumnEditorDualInput, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
 
 declare const Slick: SlickNamespace;
 const KEY_CHAR_0 = 48;
@@ -56,6 +56,7 @@ describe('DualInputEditor', () => {
       grid: gridStub,
       column: mockColumn,
       item: mockItemData,
+      // @ts-ignore
       event: null,
       cancelChanges: jest.fn(),
       commitChanges: jest.fn(),
@@ -70,6 +71,7 @@ describe('DualInputEditor', () => {
   describe('with invalid Editor instance', () => {
     it('should throw an error when trying to call init without any arguments', (done) => {
       try {
+        // @ts-expect-error
         editor = new DualInputEditor(null);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
@@ -102,7 +104,7 @@ describe('DualInputEditor', () => {
     });
 
     afterEach(() => {
-      editor.destroy();
+      editor?.destroy();
     });
 
     it('should initialize the editor', () => {
@@ -113,51 +115,51 @@ describe('DualInputEditor', () => {
 
     it('should have a placeholder on the left input when defined in its column definition', () => {
       const testValue = 'test placeholder';
-      mockColumn.internalColumnEditor.params.leftInput.placeholder = testValue;
+      (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.placeholder = testValue;
 
       editor = new DualInputEditor(editorArguments);
-      const editorElm = divContainer.querySelector<HTMLInputElement>('input.dual-editor-text.editor-range.left');
+      const editorElm = divContainer.querySelector('input.dual-editor-text.editor-range.left') as HTMLInputElement;
 
       expect(editorElm.placeholder).toBe(testValue);
     });
 
     it('should have a placeholder on the right input when defined in its column definition', () => {
       const testValue = 'test placeholder';
-      mockColumn.internalColumnEditor.params.rightInput.placeholder = testValue;
+      (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.placeholder = testValue;
 
       editor = new DualInputEditor(editorArguments);
-      const editorElm = divContainer.querySelector<HTMLInputElement>('input.dual-editor-text.editor-range.right');
+      const editorElm = divContainer.querySelector('input.dual-editor-text.editor-range.right') as HTMLInputElement;
 
       expect(editorElm.placeholder).toBe(testValue);
     });
 
     it('should have a title (tooltip) on left input when defined in its column definition', () => {
       const testValue = 'test title';
-      mockColumn.internalColumnEditor.params.leftInput.title = testValue;
+      (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.title = testValue;
 
       editor = new DualInputEditor(editorArguments);
-      const editorElm = divContainer.querySelector<HTMLInputElement>('input.dual-editor-text.editor-range.left');
+      const editorElm = divContainer.querySelector('input.dual-editor-text.editor-range.left') as HTMLInputElement;
 
       expect(editorElm.title).toBe(testValue);
     });
 
     it('should have a title (tooltip) on right input when defined in its column definition', () => {
       const testValue = 'test title';
-      mockColumn.internalColumnEditor.params.rightInput.title = testValue;
+      (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.title = testValue;
 
       editor = new DualInputEditor(editorArguments);
-      const editorElm = divContainer.querySelector<HTMLInputElement>('input.dual-editor-text.editor-range.right');
+      const editorElm = divContainer.querySelector('input.dual-editor-text.editor-range.right') as HTMLInputElement;
 
       expect(editorElm.title).toBe(testValue);
     });
 
     it('should have a left input as type number and right input as readonly text input when that right input is set to "readonly"', () => {
-      mockColumn.internalColumnEditor.params.leftInput.type = 'float';
-      mockColumn.internalColumnEditor.params.rightInput.type = 'readonly';
+      (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.type = 'float';
+      (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.type = 'readonly';
 
       editor = new DualInputEditor(editorArguments);
-      const editorLeftElm = divContainer.querySelector<HTMLInputElement>('input.dual-editor-text.editor-range.left');
-      const editorRightElm = divContainer.querySelector<HTMLInputElement>('input.dual-editor-text.editor-range.right');
+      const editorLeftElm = divContainer.querySelector('input.dual-editor-text.editor-range.left') as HTMLInputElement;
+      const editorRightElm = divContainer.querySelector('input.dual-editor-text.editor-range.right') as HTMLInputElement;
 
       expect(editorLeftElm.type).toBe('number');
       expect(editorRightElm.type).toBe('text');
@@ -166,7 +168,7 @@ describe('DualInputEditor', () => {
     });
 
     it('should call "columnEditor" GETTER and expect to equal the editor settings we provided', () => {
-      mockColumn.internalColumnEditor.params = {
+      (mockColumn.internalColumnEditor as ColumnEditor).params = {
         leftInput: {
           field: 'from',
           placeholder: 'test placeholder',
@@ -204,7 +206,7 @@ describe('DualInputEditor', () => {
       const spyEvent = jest.spyOn(event, 'stopImmediatePropagation');
 
       editor = new DualInputEditor(editorArguments);
-      const editorElm = divContainer.querySelector<HTMLInputElement>('input.editor-range');
+      const editorElm = divContainer.querySelector('input.editor-range') as HTMLInputElement;
 
       editor.focus();
       editorElm.dispatchEvent(event);
@@ -217,7 +219,7 @@ describe('DualInputEditor', () => {
       const spyEvent = jest.spyOn(event, 'stopImmediatePropagation');
 
       editor = new DualInputEditor(editorArguments);
-      const editorElm = divContainer.querySelector<HTMLInputElement>('input.editor-range');
+      const editorElm = divContainer.querySelector('input.editor-range') as HTMLInputElement;
 
       editor.focus();
       editorElm.dispatchEvent(event);
@@ -231,7 +233,7 @@ describe('DualInputEditor', () => {
 
         editor = new DualInputEditor(editorArguments);
         editor.setValues(['9', '9']);
-        const editorElm = divContainer.querySelector<HTMLInputElement>('input.editor-range');
+        const editorElm = divContainer.querySelector('input.editor-range') as HTMLInputElement;
 
         editor.focus();
         editorElm.dispatchEvent(event);
@@ -243,7 +245,7 @@ describe('DualInputEditor', () => {
         const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_0, bubbles: true, cancelable: true });
 
         editor = new DualInputEditor(editorArguments);
-        const editorElm = divContainer.querySelector<HTMLInputElement>('input.editor-range');
+        const editorElm = divContainer.querySelector('input.editor-range') as HTMLInputElement;
 
         editor.loadValue({ id: 1, range: '1-22', from: 0, to: 22, isActive: true });
         editor.focus();
@@ -256,7 +258,7 @@ describe('DualInputEditor', () => {
         const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_0, bubbles: true, cancelable: true });
 
         editor = new DualInputEditor(editorArguments);
-        const editorElm = divContainer.querySelector<HTMLInputElement>('input.editor-range');
+        const editorElm = divContainer.querySelector('input.editor-range') as HTMLInputElement;
 
         editor.loadValue({ id: 1, range: '1-22', from: '0', to: '22', isActive: true });
         editor.focus();
@@ -267,10 +269,10 @@ describe('DualInputEditor', () => {
 
       it('should return True when left input last dispatched keyboard event is ENTER and "alwaysSaveOnEnterKey" is enabled', () => {
         const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.ENTER, bubbles: true, cancelable: true });
-        mockColumn.internalColumnEditor.params.leftInput.alwaysSaveOnEnterKey = true;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.alwaysSaveOnEnterKey = true;
 
         editor = new DualInputEditor(editorArguments);
-        const editorLeftElm = divContainer.querySelector<HTMLInputElement>('input.editor-range.left');
+        const editorLeftElm = divContainer.querySelector('input.editor-range.left') as HTMLInputElement;
 
         editor.focus();
         editorLeftElm.dispatchEvent(event);
@@ -280,10 +282,10 @@ describe('DualInputEditor', () => {
 
       it('should return True when right input last dispatched keyboard event is ENTER and "alwaysSaveOnEnterKey" is enabled', () => {
         const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.ENTER, bubbles: true, cancelable: true });
-        mockColumn.internalColumnEditor.params.rightInput.alwaysSaveOnEnterKey = true;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.alwaysSaveOnEnterKey = true;
 
         editor = new DualInputEditor(editorArguments);
-        const editorRightElm = divContainer.querySelector<HTMLInputElement>('input.editor-range.right');
+        const editorRightElm = divContainer.querySelector('input.editor-range.right') as HTMLInputElement;
 
         editor.focus();
         editorRightElm.dispatchEvent(event);
@@ -294,7 +296,7 @@ describe('DualInputEditor', () => {
 
     describe('applyValue method', () => {
       it('should apply the value to the range property when it passes validation', () => {
-        mockColumn.internalColumnEditor.params.leftInput.validator = null;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.validator = null;
         mockItemData = { id: 1, range: '1-22', from: 0, to: 22, isActive: true };
 
         editor = new DualInputEditor(editorArguments);
@@ -304,10 +306,10 @@ describe('DualInputEditor', () => {
       });
 
       it('should apply the value to the range property with a field having dot notation (complex object) that passes validation', () => {
-        mockColumn.internalColumnEditor.params.leftInput.validator = null;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.validator = null;
         mockColumn.field = 'part.from';
-        mockColumn.internalColumnEditor.params.leftInput.field = 'part.from';
-        mockColumn.internalColumnEditor.params.rightInput.field = 'part.to';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.field = 'part.from';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.field = 'part.to';
         mockItemData = { id: 1, part: { range: '1-22', from: 0, to: 44 }, isActive: true };
 
         editor = new DualInputEditor(editorArguments);
@@ -317,7 +319,7 @@ describe('DualInputEditor', () => {
       });
 
       it('should return item data with an empty string in its left input value when it fails the custom validation', () => {
-        mockColumn.internalColumnEditor.params.leftInput.validator = (value: any) => {
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.validator = (value: any) => {
           if (+value < 10) {
             return { valid: false, msg: 'From value must be over 10.' };
           }
@@ -332,7 +334,7 @@ describe('DualInputEditor', () => {
       });
 
       it('should return item data with an empty string in its right input value when it fails the custom validation', () => {
-        mockColumn.internalColumnEditor.params.rightInput.validator = (value: any) => {
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.validator = (value: any) => {
           if (+value > 150) {
             return { valid: false, msg: 'To value must be below 150.' };
           }
@@ -347,7 +349,7 @@ describe('DualInputEditor', () => {
       });
 
       it('should return item data with an empty strings when the shared validator fails the custom validation', () => {
-        mockColumn.internalColumnEditor.validator = (values: any) => {
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = (values: any) => {
           if (values.from < 10 || values.to > 200) {
             return { valid: false, msg: '"From" value must be over 10 and "To" value below 200.' };
           }
@@ -381,8 +383,8 @@ describe('DualInputEditor', () => {
 
       it('should return serialized value as a float number when "decimal" is set to 2', () => {
         mockItemData = { id: 1, range: '32.789-45.67', from: 32.789, to: 45.67, isActive: true };
-        mockColumn.internalColumnEditor.params.leftInput.decimal = 1;
-        mockColumn.internalColumnEditor.params.rightInput.decimal = 3;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.decimal = 1;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.decimal = 3;
 
         editor = new DualInputEditor(editorArguments);
         editor.loadValue(mockItemData);
@@ -443,8 +445,8 @@ describe('DualInputEditor', () => {
 
       it('should return value as a number when using a dot (.) notation for complex object', () => {
         mockColumn.field = 'part.from';
-        mockColumn.internalColumnEditor.params.leftInput.field = 'part.from';
-        mockColumn.internalColumnEditor.params.rightInput.field = 'part.to';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.field = 'part.from';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.field = 'part.to';
         mockItemData = { id: 1, part: { range: '5-44', from: 5, to: 44 }, isActive: true };
 
         editor = new DualInputEditor(editorArguments);
@@ -468,8 +470,8 @@ describe('DualInputEditor', () => {
 
       it('should return decimal step as 0.1 increment when decimal is set to 1 decimal', () => {
         mockItemData = { id: 1, range: '2-32.7', from: 2, to: 32.7, isActive: true };
-        mockColumn.internalColumnEditor.params.leftInput.decimal = 1;
-        mockColumn.internalColumnEditor.params.rightInput.decimal = 2;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.decimal = 1;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.decimal = 2;
 
         editor = new DualInputEditor(editorArguments);
         editor.loadValue(mockItemData);
@@ -480,8 +482,8 @@ describe('DualInputEditor', () => {
 
       it('should return decimal step as 0.01 increment when decimal is set to 2 decimal', () => {
         mockItemData = { id: 1, range: '2-32.7', from: 2, to: 32.7, isActive: true };
-        mockColumn.internalColumnEditor.params.leftInput.decimal = 1;
-        mockColumn.internalColumnEditor.params.rightInput.decimal = 2;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.decimal = 1;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.decimal = 2;
 
         editor = new DualInputEditor(editorArguments);
         editor.loadValue(mockItemData);
@@ -583,12 +585,13 @@ describe('DualInputEditor', () => {
 
         expect(editor.eventHandler).toBeTruthy();
         expect(editor.isValueSaveCalled).toBe(false);
+        // @ts-ignore
         gridStub.onValidationError.notify({ row: 0, cell: 0, validationResults: { valid: false, msg: 'Field is required' }, grid: gridStub, column: {} as Column, editor, cellNode: document.createElement('div') });
         expect(editor.isValueSaveCalled).toBe(true);
       });
 
       it('should return False when field is required and field is empty', () => {
-        mockColumn.internalColumnEditor.params.leftInput.required = true;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.required = true;
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'leftInput', inputValue: '' });
 
@@ -596,7 +599,7 @@ describe('DualInputEditor', () => {
       });
 
       it('should return False when left input field is required and its value is empty when set by "setValues"', () => {
-        mockColumn.internalColumnEditor.params.leftInput.required = true;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.required = true;
         editor = new DualInputEditor(editorArguments);
         editor.setValues(['', 3]);
         const validation = editor.validate(null);
@@ -605,7 +608,7 @@ describe('DualInputEditor', () => {
       });
 
       it('should return False when left input field is required and its value is empty when set by "setValues"', () => {
-        mockColumn.internalColumnEditor.params.rightInput.required = true;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.required = true;
         editor = new DualInputEditor(editorArguments);
         editor.setValues([2, '']);
         const validation = editor.validate(null);
@@ -614,7 +617,7 @@ describe('DualInputEditor', () => {
       });
 
       it('should return False when editor is float but its field is not a valid float number', () => {
-        mockColumn.internalColumnEditor.params.rightInput.required = true;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.required = true;
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'rightInput', inputValue: 'abc' });
 
@@ -622,8 +625,8 @@ describe('DualInputEditor', () => {
       });
 
       it('should return False when editor is integer but its field is not a valid integer number', () => {
-        mockColumn.internalColumnEditor.params.rightInput.type = 'integer';
-        mockColumn.internalColumnEditor.params.rightInput.required = true;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.type = 'integer';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.required = true;
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'rightInput', inputValue: 'abc' });
 
@@ -631,8 +634,8 @@ describe('DualInputEditor', () => {
       });
 
       it('should return False when editor is a required text input but its text value is not provided', () => {
-        mockColumn.internalColumnEditor.params.rightInput.type = 'text';
-        mockColumn.internalColumnEditor.params.rightInput.required = true;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.type = 'text';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.required = true;
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'rightInput', inputValue: '' });
 
@@ -640,8 +643,8 @@ describe('DualInputEditor', () => {
       });
 
       it('should return False when editor is a required password input but its text value is not provided', () => {
-        mockColumn.internalColumnEditor.params.rightInput.type = 'password';
-        mockColumn.internalColumnEditor.params.rightInput.required = true;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.type = 'password';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.required = true;
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'rightInput', inputValue: '' });
 
@@ -649,7 +652,7 @@ describe('DualInputEditor', () => {
       });
 
       it('should return False when field is lower than a minValue defined', () => {
-        mockColumn.internalColumnEditor.params.leftInput.minValue = 10.2;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.minValue = 10.2;
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'leftInput', inputValue: 10 });
 
@@ -657,8 +660,8 @@ describe('DualInputEditor', () => {
       });
 
       it('should return False when field is lower than a minValue defined using exclusive operator', () => {
-        mockColumn.internalColumnEditor.params.leftInput.minValue = 10.2;
-        mockColumn.internalColumnEditor.params.leftInput.operatorConditionalType = 'exclusive';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.minValue = 10.2;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.operatorConditionalType = 'exclusive';
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'leftInput', inputValue: 10 });
 
@@ -666,7 +669,7 @@ describe('DualInputEditor', () => {
       });
 
       it('should return True when field is equal to the minValue defined', () => {
-        mockColumn.internalColumnEditor.params.rightInput.minValue = 10.2;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.minValue = 10.2;
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'rightInput', inputValue: 10.2 });
 
@@ -674,7 +677,7 @@ describe('DualInputEditor', () => {
       });
 
       it('should return False when field is greater than a maxValue defined', () => {
-        mockColumn.internalColumnEditor.params.leftInput.maxValue = 10.2;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.maxValue = 10.2;
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'leftInput', inputValue: 10.22 });
 
@@ -682,8 +685,8 @@ describe('DualInputEditor', () => {
       });
 
       it('should return False when field is greater than a maxValue defined using exclusive operator', () => {
-        mockColumn.internalColumnEditor.params.leftInput.maxValue = 10.2;
-        mockColumn.internalColumnEditor.params.leftInput.operatorConditionalType = 'exclusive';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.maxValue = 10.2;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.operatorConditionalType = 'exclusive';
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'leftInput', inputValue: 10.22 });
 
@@ -691,8 +694,8 @@ describe('DualInputEditor', () => {
       });
 
       it('should return True when field is equal to the maxValue defined', () => {
-        mockColumn.internalColumnEditor.params.rightInput.type = 'float';
-        mockColumn.internalColumnEditor.params.rightInput.maxValue = 10.2;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.type = 'float';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.maxValue = 10.2;
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'rightInput', inputValue: 10.2 });
 
@@ -700,9 +703,9 @@ describe('DualInputEditor', () => {
       });
 
       it('should return True when type is set to float and its field is equal to the maxValue defined and "operatorType" is set to "inclusive"', () => {
-        mockColumn.internalColumnEditor.params.rightInput.type = 'float';
-        mockColumn.internalColumnEditor.params.leftInput.maxValue = 10.2;
-        mockColumn.internalColumnEditor.params.leftInput.operatorConditionalType = 'inclusive';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.type = 'float';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.maxValue = 10.2;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.operatorConditionalType = 'inclusive';
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'leftInput', inputValue: 10.2 });
 
@@ -710,9 +713,9 @@ describe('DualInputEditor', () => {
       });
 
       it('should return True when type is set to integer and its field is equal to the maxValue defined and "operatorType" is set to "inclusive"', () => {
-        mockColumn.internalColumnEditor.params.leftInput.type = 'integer';
-        mockColumn.internalColumnEditor.params.leftInput.maxValue = 11;
-        mockColumn.internalColumnEditor.params.leftInput.operatorConditionalType = 'inclusive';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.type = 'integer';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.maxValue = 11;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.operatorConditionalType = 'inclusive';
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'leftInput', inputValue: 11 });
 
@@ -720,9 +723,9 @@ describe('DualInputEditor', () => {
       });
 
       it('should return False when type is set to float and its field is equal to the maxValue defined but "operatorType" is set to "exclusive"', () => {
-        mockColumn.internalColumnEditor.params.rightInput.type = 'float';
-        mockColumn.internalColumnEditor.params.rightInput.maxValue = 10.2;
-        mockColumn.internalColumnEditor.params.rightInput.operatorConditionalType = 'exclusive';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.type = 'float';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.maxValue = 10.2;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.operatorConditionalType = 'exclusive';
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'rightInput', inputValue: 10.2 });
 
@@ -730,9 +733,9 @@ describe('DualInputEditor', () => {
       });
 
       it('should return False when type is set to float and its field is equal to the maxValue defined but "operatorType" is set to "exclusive"', () => {
-        mockColumn.internalColumnEditor.params.rightInput.type = 'integer';
-        mockColumn.internalColumnEditor.params.rightInput.maxValue = 11;
-        mockColumn.internalColumnEditor.params.rightInput.operatorConditionalType = 'exclusive';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.type = 'integer';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.maxValue = 11;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.operatorConditionalType = 'exclusive';
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'rightInput', inputValue: 11 });
 
@@ -740,8 +743,8 @@ describe('DualInputEditor', () => {
       });
 
       it('should return False when type is set to float and its field is not between minValue & maxValue defined', () => {
-        mockColumn.internalColumnEditor.params.leftInput.minValue = 10.5;
-        mockColumn.internalColumnEditor.params.leftInput.maxValue = 99.5;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.minValue = 10.5;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.maxValue = 99.5;
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'leftInput', inputValue: 99.6 });
 
@@ -749,9 +752,9 @@ describe('DualInputEditor', () => {
       });
 
       it('should return False when type is set to integer and its field is not between minValue & maxValue defined', () => {
-        mockColumn.internalColumnEditor.params.leftInput.type = 'integer';
-        mockColumn.internalColumnEditor.params.leftInput.minValue = 11;
-        mockColumn.internalColumnEditor.params.leftInput.maxValue = 99;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.type = 'integer';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.minValue = 11;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.maxValue = 99;
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'leftInput', inputValue: 100 });
 
@@ -759,8 +762,8 @@ describe('DualInputEditor', () => {
       });
 
       it('should return True when field is is equal to maxValue defined when both min/max values are defined', () => {
-        mockColumn.internalColumnEditor.params.rightInput.minValue = 10.5;
-        mockColumn.internalColumnEditor.params.rightInput.maxValue = 99.5;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.minValue = 10.5;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.maxValue = 99.5;
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'rightInput', inputValue: 99.5 });
 
@@ -768,9 +771,9 @@ describe('DualInputEditor', () => {
       });
 
       it('should return True when field is is equal to minValue defined when "operatorType" is set to "inclusive" and both min/max values are defined', () => {
-        mockColumn.internalColumnEditor.params.leftInput.minValue = 10.5;
-        mockColumn.internalColumnEditor.params.leftInput.maxValue = 99.5;
-        mockColumn.internalColumnEditor.params.leftInput.operatorConditionalType = 'inclusive';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.minValue = 10.5;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.maxValue = 99.5;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.operatorConditionalType = 'inclusive';
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'leftInput', inputValue: 10.5 });
 
@@ -778,9 +781,9 @@ describe('DualInputEditor', () => {
       });
 
       it('should return False when field is equal to maxValue but "operatorType" is set to "exclusive" when both min/max values are defined', () => {
-        mockColumn.internalColumnEditor.params.rightInput.minValue = 10.5;
-        mockColumn.internalColumnEditor.params.rightInput.maxValue = 99.5;
-        mockColumn.internalColumnEditor.params.rightInput.operatorConditionalType = 'exclusive';
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.minValue = 10.5;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.maxValue = 99.5;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.operatorConditionalType = 'exclusive';
         editor = new DualInputEditor(editorArguments);
         const validation1 = editor.validate(null, { position: 'rightInput', inputValue: 99.5 });
         const validation2 = editor.validate(null, { position: 'rightInput', inputValue: 10.5 });
@@ -790,7 +793,7 @@ describe('DualInputEditor', () => {
       });
 
       it('should return False when field has more decimals than the "decimal" which is the maximum decimal allowed', () => {
-        mockColumn.internalColumnEditor.params.leftInput.decimal = 2;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.decimal = 2;
 
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'leftInput', inputValue: 99.6433 });
@@ -799,7 +802,7 @@ describe('DualInputEditor', () => {
       });
 
       it('should return True when field has less decimals than the "decimal" which is valid', () => {
-        mockColumn.internalColumnEditor.params.rightInput.decimal = 2;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.decimal = 2;
 
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'rightInput', inputValue: 99.6 });
@@ -808,7 +811,7 @@ describe('DualInputEditor', () => {
       });
 
       it('should return True when field has same number of decimals than the "decimal" which is also valid', () => {
-        mockColumn.internalColumnEditor.params.leftInput.decimal = 2;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.leftInput.decimal = 2;
 
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'leftInput', inputValue: 99.65 });
@@ -817,7 +820,7 @@ describe('DualInputEditor', () => {
       });
 
       it('should return True when field is required and field is a valid input value', () => {
-        mockColumn.internalColumnEditor.params.rightInput.required = true;
+        (mockColumn.internalColumnEditor as ColumnEditor).params.rightInput.required = true;
         editor = new DualInputEditor(editorArguments);
         const validation = editor.validate(null, { position: 'leftInput', inputValue: 2.5 });
 

@@ -1,4 +1,4 @@
-import { GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { GridOption, SlickAutoTooltips, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { AutoTooltipExtension } from '../autoTooltipExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
@@ -57,7 +57,7 @@ describe('autoTooltipExtension', () => {
     });
 
     it('should dispose of the addon', () => {
-      const instance = extension.register();
+      const instance = extension.register() as SlickAutoTooltips;
       const destroySpy = jest.spyOn(instance, 'destroy');
 
       extension.dispose();

@@ -1,19 +1,20 @@
 import {
+  BindingEventService,
   Column,
+  DOMEvent,
+  emptyElement,
   Formatter,
   Formatters,
   GridOption,
-  emptyElement,
 } from '@slickgrid-universal/common';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
 import './example11-modal.scss';
-import { EventService } from './event.service';
 
 export class Example11Modal {
-  private eventService: EventService;
+  private _bindingEventService: BindingEventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   sgb: SlickVanillaGridBundle;
@@ -22,7 +23,7 @@ export class Example11Modal {
   selectedIds: string[] = [];
 
   constructor() {
-    this.eventService = new EventService();
+    this._bindingEventService = new BindingEventService();
   }
 
   attached() {
@@ -35,7 +36,7 @@ export class Example11Modal {
       if (bindings.columnDefinitions) {
         this.columnDefinitions = bindings.columnDefinitions;
         this.gridContainerElm = document.querySelector<HTMLDivElement>(`.modal-grid`);
-        this.eventService.addElementEventListener(this.gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
+        this._bindingEventService.bind(this.gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
 
         const dataset = [this.createEmptyItem(bindings.columnDefinitions)];
         this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
@@ -50,7 +51,7 @@ export class Example11Modal {
 
   dispose() {
     this.sgb?.dispose();
-    this.eventService.unbindAllEvents();
+    this._bindingEventService.unbindAll();
     this.gridContainerElm = null;
   }
 
@@ -144,7 +145,7 @@ export class Example11Modal {
   private bindCloseBulmaModal(callback?: () => void) {
     const modalCloseBtnElms = document.querySelectorAll<HTMLButtonElement>('.close, .delete, .modal-close');
 
-    window.addEventListener('click', (event: any) => {
+    window.addEventListener('click', (event: DOMEvent<HTMLInputElement>) => {
       if (event.target.className === 'modal-background') {
         this.closeBulmaModal(callback);
       }

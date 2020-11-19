@@ -1,5 +1,6 @@
 import {
   AutocompleteOption,
+  BindingEventService,
   Column,
   ColumnEditorDualInput,
   Editors,
@@ -13,7 +14,6 @@ import {
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { EventService } from './event.service';
 import { ExampleGridOptions } from './example-grid-options';
 import './example02.scss';
 
@@ -42,7 +42,7 @@ const customEditableInputFormatter = (_row: number, _cell: number, _value: any, 
 };
 
 export class Example4 {
-  private eventService: EventService;
+  private _bindingEventService: BindingEventService;
   columnDefinitions: Column<ReportItem>[];
   gridOptions: GridOption;
   dataset: any[];
@@ -55,22 +55,22 @@ export class Example4 {
   sgb: SlickVanillaGridBundle;
 
   constructor() {
-    this.eventService = new EventService();
+    this._bindingEventService = new BindingEventService();
   }
 
   attached() {
     const dataset = this.initializeGrid();
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid4`);
 
-    // this.eventService.addElementEventListener(gridContainerElm, 'onclick', handleOnClick);
-    this.eventService.addElementEventListener(gridContainerElm, 'onvalidationerror', this.handleOnValidationError.bind(this));
-    this.eventService.addElementEventListener(gridContainerElm, 'onitemdeleted', this.handleOnItemDeleted.bind(this));
+    // this._bindingEventService.bind(gridContainerElm, 'onclick', handleOnClick);
+    this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleOnValidationError.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onitemdeleted', this.handleOnItemDeleted.bind(this));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
   }
 
   dispose() {
     this.sgb?.dispose();
-    this.eventService.unbindAllEvents();
+    this._bindingEventService.unbindAll();
   }
 
   initializeGrid() {

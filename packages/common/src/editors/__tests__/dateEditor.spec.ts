@@ -3,7 +3,7 @@ import * as moment from 'moment-mini';
 import { Editors } from '../index';
 import { DateEditor } from '../dateEditor';
 import { FieldType } from '../../enums/index';
-import { Column, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { Column, ColumnEditor, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 declare const Slick: SlickNamespace;
@@ -20,7 +20,7 @@ const gridOptionMock = {
   autoCommitEdit: false,
   editable: true,
   i18n: null,
-} as GridOption;
+} as unknown as GridOption;
 
 const getEditorLockMock = {
   commitCurrentEdit: jest.fn(),
@@ -60,6 +60,7 @@ describe('DateEditor', () => {
       grid: gridStub,
       column: mockColumn,
       item: mockItemData,
+      // @ts-ignore
       event: null,
       cancelChanges: jest.fn(),
       commitChanges: jest.fn(),
@@ -74,6 +75,7 @@ describe('DateEditor', () => {
   describe('with invalid Editor instance', () => {
     it('should throw an error when trying to call init without any arguments', (done) => {
       try {
+        // @ts-expect-error
         editor = new DateEditor(null);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
@@ -118,20 +120,20 @@ describe('DateEditor', () => {
 
     it('should have a placeholder when defined in its column definition', () => {
       const testValue = 'test placeholder';
-      mockColumn.internalColumnEditor.placeholder = testValue;
+      (mockColumn.internalColumnEditor as ColumnEditor).placeholder = testValue;
 
       editor = new DateEditor(editorArguments);
-      const editorElm = divContainer.querySelector<HTMLTextAreaElement>('input.editor-text.editor-startDate');
+      const editorElm = divContainer.querySelector('input.editor-text.editor-startDate') as HTMLTextAreaElement;
 
       expect(editorElm.placeholder).toBe(testValue);
     });
 
     it('should have a title (tooltip) when defined in its column definition', () => {
       const testValue = 'test title';
-      mockColumn.internalColumnEditor.title = testValue;
+      (mockColumn.internalColumnEditor as ColumnEditor).title = testValue;
 
       editor = new DateEditor(editorArguments);
-      const editorElm = divContainer.querySelector<HTMLTextAreaElement>('input.editor-text.editor-startDate');
+      const editorElm = divContainer.querySelector('input.editor-text.editor-startDate') as HTMLTextAreaElement;
 
       expect(editorElm.title).toBe(testValue);
     });
@@ -207,13 +209,13 @@ describe('DateEditor', () => {
     describe('isValueChanged method', () => {
       it('should return True when date is changed in the picker', () => {
         // change to allow input value only for testing purposes & use the regular flatpickr input to test that one too
-        mockColumn.internalColumnEditor.editorOptions = { allowInput: true, altInput: false };
+        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { allowInput: true, altInput: false };
         mockItemData = { id: 1, startDate: '2001-01-02T11:02:02.000Z', isActive: true };
 
         editor = new DateEditor(editorArguments);
         editor.loadValue(mockItemData);
         editor.focus();
-        const editorInputElm = divContainer.querySelector<HTMLInputElement>('.flatpickr input');
+        const editorInputElm = divContainer.querySelector('.flatpickr input') as HTMLInputElement;
         editorInputElm.value = '2024-04-02T16:02:02.239Z';
         editorInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
 
@@ -222,11 +224,11 @@ describe('DateEditor', () => {
 
       it('should return False when date in the picker is the same as the current date', () => {
         mockItemData = { id: 1, startDate: '2001-01-02T11:02:02.000Z', isActive: true };
-        mockColumn.internalColumnEditor.editorOptions = { allowInput: true }; // change to allow input value only for testing purposes
+        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { allowInput: true }; // change to allow input value only for testing purposes
 
         editor = new DateEditor(editorArguments);
         editor.loadValue(mockItemData);
-        const editorInputElm = divContainer.querySelector<HTMLInputElement>('input.flatpickr-alt-input');
+        const editorInputElm = divContainer.querySelector('input.flatpickr-alt-input') as HTMLInputElement;
         editorInputElm.value = '2001-01-02T11:02:02.000Z';
         editorInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
 
@@ -236,11 +238,11 @@ describe('DateEditor', () => {
       it('should return False when input date is invalid', () => {
         mockItemData = { id: 1, startDate: '1900-02-32', isActive: true };
         mockColumn.type = FieldType.dateUs;
-        mockColumn.internalColumnEditor.editorOptions = { allowInput: true }; // change to allow input value only for testing purposes
+        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { allowInput: true }; // change to allow input value only for testing purposes
 
         editor = new DateEditor(editorArguments);
         editor.loadValue(mockItemData);
-        const editorInputElm = divContainer.querySelector<HTMLInputElement>('input.flatpickr-alt-input');
+        const editorInputElm = divContainer.querySelector('input.flatpickr-alt-input') as HTMLInputElement;
         editorInputElm.value = '1900-02-32';
         editorInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
 
@@ -250,7 +252,8 @@ describe('DateEditor', () => {
 
     describe('applyValue method', () => {
       it('should apply the value to the startDate property with ISO format when no "outputType" is defined and when it passes validation', () => {
-        mockColumn.internalColumnEditor.validator = null;
+        // @ts-expect-error
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
         mockColumn.type = FieldType.date;
         mockItemData = { id: 1, startDate: '2001-04-05T11:33:42.000Z', isActive: true };
 
@@ -262,7 +265,8 @@ describe('DateEditor', () => {
       });
 
       it('should apply the value to the startDate property with "outputType" format with a field having dot notation (complex object) that passes validation', () => {
-        mockColumn.internalColumnEditor.validator = null;
+        // @ts-expect-error
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
         mockColumn.type = FieldType.date;
         mockColumn.outputType = FieldType.dateTimeIsoAmPm;
         mockColumn.field = 'employee.startDate';
@@ -276,7 +280,8 @@ describe('DateEditor', () => {
       });
 
       it('should apply the value to the startDate property with output format defined by "saveOutputType" when it passes validation', () => {
-        mockColumn.internalColumnEditor.validator = null;
+        // @ts-expect-error
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
         mockColumn.type = FieldType.date;
         mockColumn.saveOutputType = FieldType.dateTimeIsoAmPm;
         mockItemData = { id: 1, startDate: '2001-04-05T11:33:42.000Z', isActive: true };
@@ -289,7 +294,7 @@ describe('DateEditor', () => {
       });
 
       it('should return item data with an empty string in its value when it fails the custom validation', () => {
-        mockColumn.internalColumnEditor.validator = (value: any) => {
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = (value: any) => {
           if (value.length > 10) {
             return { valid: false, msg: 'Must be at least 10 chars long.' };
           }
@@ -382,7 +387,7 @@ describe('DateEditor', () => {
 
       it('should not call anything when the input value is empty but is required', () => {
         mockItemData = { id: 1, startDate: '', isActive: true };
-        mockColumn.internalColumnEditor.required = true;
+        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
         gridOptionMock.autoCommitEdit = true;
         const spy = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
@@ -395,7 +400,7 @@ describe('DateEditor', () => {
 
       it('should not throw any error when date is invalid when lower than required "minDate" defined in the "editorOptions" and "autoCommitEdit" is enabled', () => {
         // change to allow input value only for testing purposes & use the regular flatpickr input to test that one too
-        mockColumn.internalColumnEditor.editorOptions = { minDate: 'today', altInput: true };
+        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { minDate: 'today', altInput: true };
         mockItemData = { id: 1, startDate: '500-01-02T11:02:02.000Z', isActive: true };
         gridOptionMock.autoCommitEdit = true;
         gridOptionMock.autoEdit = true;
@@ -404,7 +409,7 @@ describe('DateEditor', () => {
         editor = new DateEditor(editorArguments);
         editor.loadValue(mockItemData);
         editor.flatInstance.toggle();
-        const editorInputElm = divContainer.querySelector<HTMLInputElement>('.flatpickr input');
+        const editorInputElm = divContainer.querySelector('.flatpickr input') as HTMLInputElement;
 
         expect(editor.pickerOptions).toBeTruthy();
         expect(editorInputElm.value).toBe('');
@@ -414,7 +419,7 @@ describe('DateEditor', () => {
 
     describe('validate method', () => {
       it('should return False when field is required and field is empty', () => {
-        mockColumn.internalColumnEditor.required = true;
+        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
         editor = new DateEditor(editorArguments);
         const validation = editor.validate(null, '');
 
@@ -422,7 +427,7 @@ describe('DateEditor', () => {
       });
 
       it('should return True when field is required and input is a valid input value', () => {
-        mockColumn.internalColumnEditor.required = true;
+        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
         editor = new DateEditor(editorArguments);
         const validation = editor.validate(null, 'text');
 
@@ -438,7 +443,7 @@ describe('DateEditor', () => {
         editor = new DateEditor(editorArguments);
 
         const spy = jest.spyOn(editor.flatInstance, 'open');
-        const calendarElm = document.body.querySelector<HTMLDivElement>('.flatpickr-calendar');
+        const calendarElm = document.body.querySelector('.flatpickr-calendar') as HTMLDivElement;
         const selectonOptionElms = calendarElm.querySelectorAll<HTMLSelectElement>(' .flatpickr-monthDropdown-months option');
 
         editor.show();
@@ -517,7 +522,7 @@ describe('DateEditor', () => {
 
     it('should expect "onCompositeEditorChange" to have been triggered with the new value showing up in its "formValues" object', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      mockColumn.internalColumnEditor.editorOptions = { allowInput: true, altInput: false };
+      (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { allowInput: true, altInput: false };
       mockColumn.type = FieldType.dateIso;
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
@@ -528,7 +533,7 @@ describe('DateEditor', () => {
       editor = new DateEditor(editorArguments);
       editor.loadValue(mockItemData);
       editor.focus();
-      const editorInputElm = divContainer.querySelector<HTMLInputElement>('.flatpickr input');
+      const editorInputElm = divContainer.querySelector('.flatpickr input') as HTMLInputElement;
       editorInputElm.value = '2001-01-02';
       editorInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
 
