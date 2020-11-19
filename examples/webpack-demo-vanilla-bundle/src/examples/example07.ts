@@ -1,4 +1,5 @@
 import {
+  BindingEventService,
   Column,
   Editors,
   Filters,
@@ -8,12 +9,11 @@ import {
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { EventService } from './event.service';
 
 import { ExampleGridOptions } from './example-grid-options';
 
 export class Example7 {
-  private eventService: EventService;
+  private _bindingEventService: BindingEventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
@@ -21,20 +21,21 @@ export class Example7 {
   duplicateTitleHeaderCount = 1;
 
   constructor() {
-    this.eventService = new EventService();
+    this._bindingEventService = new BindingEventService();
   }
 
   attached() {
     this.initializeGrid();
     this.dataset = this.loadData(500);
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid7`);
-    this.eventService.addElementEventListener(gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
-    this.eventService.addElementEventListener(gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   dispose() {
     this.sgb?.dispose();
+    this._bindingEventService.unbindAll();
   }
 
   initializeGrid() {

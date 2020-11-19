@@ -474,7 +474,7 @@ export class Example50 {
     this.sgb?.treeDataService.toggleTreeDataCollapse(false);
   }
 
-  handleOnClick(event: any) {
+  handleOnClick(event: CustomEvent) {
     const eventDetail = event && event.detail;
     const args = event && event.detail && event.detail.args;
     if (eventDetail && args) {

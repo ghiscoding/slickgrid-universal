@@ -1,13 +1,12 @@
-import { Column, FieldType, Filters, GridOption, GridStateChange, Metrics, OperatorType, } from '@slickgrid-universal/common';
+import { BindingEventService, Column, FieldType, Filters, GridOption, GridStateChange, Metrics, OperatorType, } from '@slickgrid-universal/common';
 import { GridOdataService, OdataServiceApi, OdataOption } from '@slickgrid-universal/odata';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { EventService } from './event.service';
 import { ExampleGridOptions } from './example-grid-options';
 
 const defaultPageSize = 20;
 
 export class Example09 {
-  private eventService: EventService;
+  private _bindingEventService: BindingEventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   metrics: Metrics;
@@ -21,16 +20,16 @@ export class Example09 {
   statusClass = 'is-success';
 
   constructor() {
-    this.eventService = new EventService();
+    this._bindingEventService = new BindingEventService();
   }
 
   attached() {
     this.initializeGrid();
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid9`);
 
-    this.eventService.addElementEventListener(gridContainerElm, 'ongridstatechanged', this.gridStateChanged.bind(this));
-    // this.eventService.addElementEventListener(gridContainerElm, 'onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
-    // this.eventService.addElementEventListener(gridContainerElm, 'onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
+    this._bindingEventService.bind(gridContainerElm, 'ongridstatechanged', this.gridStateChanged.bind(this));
+    // this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
+    // this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, []);
   }
 
@@ -38,6 +37,7 @@ export class Example09 {
     if (this.sgb) {
       this.sgb?.dispose();
     }
+    this._bindingEventService.unbindAll();
   }
 
   initializeGrid() {

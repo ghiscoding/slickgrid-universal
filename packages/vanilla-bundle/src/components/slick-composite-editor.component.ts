@@ -1,6 +1,7 @@
 import 'slickgrid/slick.compositeeditor.js';
 
 import {
+  BindingEventService,
   Column,
   CompositeEditorOpenDetailOption,
   CompositeEditorOption,
@@ -8,7 +9,6 @@ import {
   CurrentRowSelection,
   Editor,
   EditorValidationResult,
-  ElementEventListener,
   getDescendantProperty,
   GetSlickEventType,
   GridOption,
@@ -32,8 +32,8 @@ declare const Slick: SlickNamespace;
 const DEFAULT_ON_ERROR = (error: OnErrorOption) => console.log(error.message);
 
 export class SlickCompositeEditorComponent {
+  private _bindEventService: BindingEventService;
   private _eventHandler: SlickEventHandler;
-  private _boundedEventWithListeners: ElementEventListener[] = [];
   private _modalElm: HTMLDivElement;
   private _options: CompositeEditorOpenDetailOption;
   private _lastActiveRowNumber: number;
@@ -73,6 +73,7 @@ export class SlickCompositeEditorComponent {
 
   constructor(private grid: SlickGrid, private gridService: GridService, private gridStateService: GridStateService, private translaterService?: TranslaterService) {
     this._eventHandler = new Slick.EventHandler();
+    this._bindEventService = new BindingEventService();
     if (this.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
@@ -83,8 +84,8 @@ export class SlickCompositeEditorComponent {
 
   /** Dispose of the Component & unsubscribe all events */
   dispose() {
-    this.unbindAll();
     this._eventHandler.unsubscribeAll();
+    this._bindEventService.unbindAll();
     this._formValues = undefined;
     this.disposeComponent();
   }
@@ -97,17 +98,6 @@ export class SlickCompositeEditorComponent {
       // remove the body backdrop click listener, every other listeners will be dropped automatically since we destroy the component
       document.body.classList.remove('slick-modal-open');
     }
-  }
-
-  /** Unbind All (remove) bounded elements with listeners */
-  unbindAll() {
-    for (const boundedEvent of this._boundedEventWithListeners) {
-      const { element, eventName, listener } = boundedEvent;
-      if (element?.removeEventListener) {
-        element.removeEventListener(eventName, listener);
-      }
-    }
-    this._boundedEventWithListeners = [];
   }
 
   /**
@@ -382,7 +372,7 @@ export class SlickCompositeEditorComponent {
 
         document.body.appendChild(this._modalElm);
         document.body.classList.add('slick-modal-open'); // add backdrop to body
-        this.addElementEventListener(document.body, 'click', this.handleBodyClicked.bind(this));
+        this._bindEventService.bind(document.body, 'click', this.handleBodyClicked.bind(this));
 
         this._editors = {};
         this._editorContainers = modalColumns.map(col => modalBodyElm.querySelector<HTMLDivElement>(`[data-editorid=${col.id}]`)) || [];
@@ -394,12 +384,12 @@ export class SlickCompositeEditorComponent {
         // Add a few Event Handlers
 
         // keyboard, blur & button event handlers
-        this.addElementEventListener(modalCloseButtonElm, 'click', this.cancelEditing.bind(this));
-        this.addElementEventListener(modalCancelButtonElm, 'click', this.cancelEditing.bind(this));
-        this.addElementEventListener(this._modalSaveButtonElm, 'click', this.handleSaveClicked.bind(this));
-        this.addElementEventListener(this._modalElm, 'keydown', this.handleKeyDown.bind(this));
-        this.addElementEventListener(this._modalElm, 'focusout', this.validateCurrentEditor.bind(this));
-        this.addElementEventListener(this._modalElm, 'blur', this.validateCurrentEditor.bind(this));
+        this._bindEventService.bind(modalCloseButtonElm, 'click', this.cancelEditing.bind(this));
+        this._bindEventService.bind(modalCancelButtonElm, 'click', this.cancelEditing.bind(this));
+        this._bindEventService.bind(this._modalSaveButtonElm, 'click', this.handleSaveClicked.bind(this));
+        this._bindEventService.bind(this._modalElm, 'keydown', this.handleKeyDown.bind(this));
+        this._bindEventService.bind(this._modalElm, 'focusout', this.validateCurrentEditor.bind(this));
+        this._bindEventService.bind(this._modalElm, 'blur', this.validateCurrentEditor.bind(this));
 
         // when any of the input of the composite editor form changes, we'll add/remove a "modified" CSS className for styling purposes
         const onCompositeEditorChangeHandler = this.grid.onCompositeEditorChange;
@@ -420,11 +410,6 @@ export class SlickCompositeEditorComponent {
       onError({ type: 'error', code: errorCode, message: errorMsg });
       return null;
     }
-  }
-
-  addElementEventListener(element: Element, eventName: string, listener: EventListenerOrEventListenerObject) {
-    element.addEventListener(eventName, listener);
-    this._boundedEventWithListeners.push({ element, eventName, listener });
   }
 
   /** Apply Mass Update Changes from a the form changes */

@@ -1,5 +1,6 @@
 import {
   Aggregators,
+  BindingEventService,
   Column,
   Editors,
   FieldType,
@@ -22,7 +23,6 @@ import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
 import './example03.scss';
-import { EventService } from './event.service';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -38,7 +38,7 @@ interface ReportItem {
 }
 
 export class Example3 {
-  private eventService: EventService;
+  private _bindingEventService: BindingEventService;
   columnDefinitions: Column<ReportItem>[];
   gridOptions: GridOption;
   dataset: any[];
@@ -52,7 +52,7 @@ export class Example3 {
   selectedGroupingFields: Array<string | GroupingGetterFunction> = ['', '', ''];
 
   constructor() {
-    this.eventService = new EventService();
+    this._bindingEventService = new BindingEventService();
   }
 
   attached() {
@@ -60,17 +60,17 @@ export class Example3 {
     this.dataset = this.loadData(500);
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid3`);
 
-    this.eventService.addElementEventListener(gridContainerElm, 'onclick', this.handleOnClick.bind(this));
-    this.eventService.addElementEventListener(gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
-    this.eventService.addElementEventListener(gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
-    this.eventService.addElementEventListener(gridContainerElm, 'onitemdeleted', this.handleItemDeleted.bind(this));
-    this.eventService.addElementEventListener(gridContainerElm, 'onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onclick', this.handleOnClick.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onitemdeleted', this.handleItemDeleted.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   dispose() {
     this.sgb?.dispose();
-    this.eventService.unbindAllEvents();
+    this._bindingEventService.unbindAll();
   }
 
   initializeGrid() {

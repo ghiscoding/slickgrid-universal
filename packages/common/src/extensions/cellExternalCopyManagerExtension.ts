@@ -1,22 +1,23 @@
 import {
-  SlickCellExternalCopyManager,
-  SlickCellSelectionModel,
   Column,
-  SlickDataView,
   EditCommand,
   EditUndoRedoBuffer,
   ExcelCopyBufferOption,
   Extension,
-  SlickNamespace,
+  SlickCellExternalCopyManager,
+  SlickCellSelectionModel,
+  SlickDataView,
   SlickEventHandler,
+  SlickNamespace,
 
   // TypeScript Helper
   GetSlickEventType,
 } from '../interfaces/index';
 import { ExtensionName } from '../enums/index';
 import { ExtensionUtility } from './extensionUtility';
-import { sanitizeHtmlToText } from '../services/utilities';
+import { BindingEventService } from '../services/bindingEvent.service';
 import { SharedService } from '../services/shared.service';
+import { sanitizeHtmlToText } from '../services/utilities';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -28,9 +29,11 @@ export class CellExternalCopyManagerExtension implements Extension {
   private _eventHandler: SlickEventHandler;
   private _commandQueue: EditCommand[];
   private _undoRedoBuffer: EditUndoRedoBuffer;
+  private _bindingEventService: BindingEventService;
 
   constructor(private extensionUtility: ExtensionUtility, private sharedService: SharedService) {
     this._eventHandler = new Slick.EventHandler() as SlickEventHandler;
+    this._bindingEventService = new BindingEventService();
   }
 
   get addonOptions(): ExcelCopyBufferOption | null {
@@ -61,7 +64,7 @@ export class CellExternalCopyManagerExtension implements Extension {
     }
     this.extensionUtility.nullifyFunctionNameStartingWithOn(this._addonOptions);
     this._addonOptions = null;
-    document.removeEventListener('keydown', this.hookUndoShortcutKey.bind(this));
+    this._bindingEventService.unbindAll();
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
@@ -76,7 +79,7 @@ export class CellExternalCopyManagerExtension implements Extension {
       this.extensionUtility.loadExtensionDynamically(ExtensionName.cellExternalCopyManager);
 
       this.createUndoRedoBuffer();
-      this.hookUndoShortcutKey();
+      this._bindingEventService.bind(document.body, 'keydown', this.handleKeyDown.bind(this));
 
       this._addonOptions = { ...this.getDefaultOptions(), ...this.sharedService.gridOptions.excelCopyBufferOptions } as ExcelCopyBufferOption;
       this._cellSelectionModel = new Slick.CellSelectionModel() as SlickCellSelectionModel;
@@ -196,16 +199,14 @@ export class CellExternalCopyManagerExtension implements Extension {
   }
 
   /** Hook an undo shortcut key hook that will redo/undo the copy buffer using Ctrl+(Shift)+Z keyboard events */
-  private hookUndoShortcutKey() {
-    document.addEventListener('keydown', (e: KeyboardEvent) => {
-      const keyCode = e.keyCode || e.code;
-      if (keyCode === 90 && (e.ctrlKey || e.metaKey)) {
-        if (e.shiftKey) {
-          this._undoRedoBuffer.redo(); // Ctrl + Shift + Z
-        } else {
-          this._undoRedoBuffer.undo(); // Ctrl + Z
-        }
+  private handleKeyDown(e: KeyboardEvent) {
+    const keyCode = e.keyCode || e.code;
+    if (keyCode === 90 && (e.ctrlKey || e.metaKey)) {
+      if (e.shiftKey) {
+        this._undoRedoBuffer.redo(); // Ctrl + Shift + Z
+      } else {
+        this._undoRedoBuffer.undo(); // Ctrl + Z
       }
-    });
+    }
   }
 }
