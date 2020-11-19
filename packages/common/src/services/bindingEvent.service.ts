@@ -12,7 +12,7 @@ export class BindingEventService {
   /** Unbind all will remove every every event handlers that were bounded earlier */
   unbindAll() {
     while (this._boundedEvents.length > 0) {
-      const boundedEvent = this._boundedEvents.pop();
+      const boundedEvent = this._boundedEvents.pop() as ElementEventListener;
       const { element, eventName, listener } = boundedEvent;
       if (element?.removeEventListener) {
         element.removeEventListener(eventName, listener);

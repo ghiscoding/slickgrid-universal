@@ -8,4 +8,5 @@
 *.map
 *.md
 *.zip
+*.spec.ts
 **/dist/*.*
