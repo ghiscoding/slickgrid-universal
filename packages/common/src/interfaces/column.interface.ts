@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/indent */
 import {
   CellMenu,
   ColumnEditor,
@@ -13,6 +14,19 @@ import {
   SortComparer,
 } from './index';
 import { FieldType } from '../enums/fieldType.enum';
+
+type PathsToStringProps<T> = T extends string | number | boolean | Date ? [] : {
+  [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>]
+}[Extract<keyof T, string>];
+
+/* eslint-disable @typescript-eslint/indent */
+// disable eslint indent rule until this issue is fixed: https://github.com/typescript-eslint/typescript-eslint/issues/1824
+type Join<T extends any[], D extends string> =
+  T extends [] ? never :
+  T extends [infer F] ? F :
+  T extends [infer F, ...infer R] ?
+  F extends string ? string extends F ? string : `${F}${D}${Join<R, D>}` : never : string;
+/* eslint-enable @typescript-eslint/indent */
 
 export interface Column<T = any> {
   /** async background post-rendering formatter */
@@ -98,7 +112,7 @@ export interface Column<T = any> {
    * NOTE: a field with dot notation (.) will be considered a complex object.
    * For example: { id: 'Users', field: 'user.firstName' }
    */
-  field: string;
+  field: Join<PathsToStringProps<T>, '.'>;
 
   /**
    * Only used by Backend Services since the query is built using the column definitions, this is a way to pass extra properties to the backend query.

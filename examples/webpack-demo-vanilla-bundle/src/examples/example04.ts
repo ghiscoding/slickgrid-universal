@@ -6,6 +6,7 @@ import {
   Editors,
   FieldType,
   Filters,
+  Formatter,
   Formatters,
   GridOption,
   OperatorType,
@@ -34,16 +35,18 @@ interface ReportItem {
   percentComplete: number;
   start: Date;
   finish: Date;
+  completed: boolean;
+  cityOfOrigin: string;
   effortDriven: boolean;
 }
 
-const customEditableInputFormatter = (_row: number, _cell: number, _value: any, _columnDef: Column, item: ReportItem) => {
+const customEditableInputFormatter: Formatter<ReportItem> = (_row: number, _cell: number, _value: any, _columnDef: Column, item: ReportItem) => {
   return item.title;
 };
 
 export class Example4 {
   private _bindingEventService: BindingEventService;
-  columnDefinitions: Column<ReportItem>[];
+  columnDefinitions: Column<ReportItem & { action: string; }>[];
   gridOptions: GridOption;
   dataset: any[];
   dataViewObj: SlickDataView;
@@ -74,6 +77,7 @@ export class Example4 {
   }
 
   initializeGrid() {
+    // the columns field property is type-safe, try to add a different string not representing one of DataItems properties
     this.columnDefinitions = [
       {
         id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,

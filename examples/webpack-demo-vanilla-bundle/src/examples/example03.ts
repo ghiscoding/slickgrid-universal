@@ -39,7 +39,7 @@ interface ReportItem {
 
 export class Example3 {
   private _bindingEventService: BindingEventService;
-  columnDefinitions: Column<ReportItem>[];
+  columnDefinitions: Column<ReportItem & { action: string; }>[];
   gridOptions: GridOption;
   dataset: any[];
   dataViewObj: SlickDataView;
