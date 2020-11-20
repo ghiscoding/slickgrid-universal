@@ -20,7 +20,7 @@
     "updated": "lerna updated",
     "clean:tsconfig-build-cache": "rimraf --maxBusyTries=10 packages/*/dist/tsconfig.tsbuildinfo",
     "new-version": "lerna version --conventional-commits",
-    "publish": "lerna publish",
+    "publish": "lerna publish from-package",
     "serve:demo": "http-server ./docs -p 8888 -a localhost",
     "lint": "eslint packages/** --ext .ts",
     "test": "npx jest --runInBand --coverage=true --config ./test/jest.config.js",
