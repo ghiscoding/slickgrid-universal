@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/common",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "SlickGrid-Universal Common Code",
   "browser": "src/index.ts",
   "main": "dist/commonjs/index.js",
