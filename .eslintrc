@@ -21,6 +21,9 @@
   "plugins": [
     "@typescript-eslint"
   ],
+  "ignorePatterns": [
+    "**/__tests__/*.ts"
+  ],
   "rules": {
     "@typescript-eslint/adjacent-overload-signatures": "error",
     "@typescript-eslint/ban-ts-comment": "off",

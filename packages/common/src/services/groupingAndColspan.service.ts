@@ -12,6 +12,7 @@ import {
 import { ExtensionName } from '../enums/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { ExtensionService } from '../services/extension.service';
+import { PubSubService } from './pubSub.service';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -20,7 +21,7 @@ export class GroupingAndColspanService {
   private _eventHandler: SlickEventHandler;
   private _grid: SlickGrid;
 
-  constructor(private extensionUtility: ExtensionUtility, private extensionService: ExtensionService) {
+  constructor(private extensionUtility: ExtensionUtility, private extensionService: ExtensionService, private pubSubService: PubSubService,) {
     this._eventHandler = new Slick.EventHandler();
   }
 
@@ -71,6 +72,9 @@ export class GroupingAndColspanService {
         if (columnPickerExtension?.instance?.onColumnsChanged) {
           this._eventHandler.subscribe(columnPickerExtension.instance.onColumnsChanged, () => this.renderPreHeaderRowGroupingTitles());
         }
+        this.pubSubService.subscribe('onHeaderMenuHideColumns', () => {
+          this.delayRenderPreHeaderRowGroupingTitles(0);
+        });
 
         const gridMenuExtension = this.extensionService.getExtensionByName(ExtensionName.gridMenu);
         if (gridMenuExtension && gridMenuExtension.instance && gridMenuExtension.instance.onColumnsChanged && gridMenuExtension.instance.onMenuClose) {
@@ -89,13 +93,13 @@ export class GroupingAndColspanService {
         (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSetOptionsHandler>>).subscribe(onSetOptionsHandler, (_e, args) => {
           // when user changes frozen columns dynamically (e.g. from header menu), we need to re-render the pre-header of the grouping titles
           if (args?.optionsBefore?.frozenColumn !== args?.optionsAfter?.frozenColumn) {
-            setTimeout(() => this.renderPreHeaderRowGroupingTitles(), 0);
+            this.delayRenderPreHeaderRowGroupingTitles(0);
           }
         });
 
         // also not sure why at this point, but it seems that I need to call the 1st create in a delayed execution
         // probably some kind of timing issues and delaying it until the grid is fully ready fixes this problem
-        setTimeout(() => this.renderPreHeaderRowGroupingTitles(), 75);
+        this.delayRenderPreHeaderRowGroupingTitles(75);
       }
     }
   }
@@ -103,6 +107,11 @@ export class GroupingAndColspanService {
   dispose() {
     // unsubscribe all SlickGrid events
     this._eventHandler.unsubscribeAll();
+  }
+
+  /** call "renderPreHeaderRowGroupingTitles()" with a setTimeout delay */
+  delayRenderPreHeaderRowGroupingTitles(delay = 0) {
+    setTimeout(() => this.renderPreHeaderRowGroupingTitles(), delay);
   }
 
   /** Create or Render the Pre-Header Row Grouping Titles */

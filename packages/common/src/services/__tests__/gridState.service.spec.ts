@@ -708,6 +708,7 @@ describe('GridStateService', () => {
     });
 
     it('should return null when no BackendService is used and FilterService is missing the "getCurrentLocalFilters" method', () => {
+      // @ts-ignore
       gridStub.getOptions = undefined;
       const output = service.getCurrentFilters();
       expect(output).toBeNull();
@@ -760,7 +761,7 @@ describe('GridStateService', () => {
 
   describe('needToPreserveRowSelection method', () => {
     it('should return false when there are no "dataView" property defined in the grid options', () => {
-      const gridOptionsMock = { dataView: null } as GridOption;
+      const gridOptionsMock = { dataView: null } as unknown as GridOption;
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
       const output = service.needToPreserveRowSelection();
@@ -769,7 +770,7 @@ describe('GridStateService', () => {
     });
 
     it('should return false when "dataView" property is defined in the grid options with "syncGridSelection" property', () => {
-      const gridOptionsMock = { dataView: null } as GridOption;
+      const gridOptionsMock = { dataView: null } as unknown as GridOption;
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
       const output = service.needToPreserveRowSelection();
@@ -945,7 +946,7 @@ describe('GridStateService', () => {
       expect(pubSubSpy).toHaveBeenCalledWith(`onGridStateChanged`, stateChangeMock);
     });
 
-    it('should trigger a "onGridStateChanged" event when "onHeaderMenuColumnsChanged" is triggered', () => {
+    it('should trigger a "onGridStateChanged" event when "onHeaderMenuHideColumns" is triggered', () => {
       const columnsMock1 = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
       const currentColumnsMock1 = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
       const gridStateMock = { columns: currentColumnsMock1, filters: [], sorters: [] } as GridState;
@@ -954,7 +955,7 @@ describe('GridStateService', () => {
       const getCurGridStateSpy = jest.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
       const getAssocCurColSpy = jest.spyOn(service, 'getAssociatedCurrentColumns').mockReturnValue(currentColumnsMock1);
 
-      fnCallbacks['onHeaderMenuColumnsChanged'](columnsMock1);
+      fnCallbacks['onHeaderMenuHideColumns'](columnsMock1);
 
       expect(getCurGridStateSpy).toHaveBeenCalled();
       expect(getAssocCurColSpy).toHaveBeenCalled();
