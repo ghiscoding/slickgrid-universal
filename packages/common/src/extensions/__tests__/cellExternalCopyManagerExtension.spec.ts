@@ -287,7 +287,7 @@ describe('cellExternalCopyManagerExtension', () => {
       extension.register() as SlickCellExternalCopyManager;
       const spy = jest.spyOn(extension.undoRedoBuffer, 'queueAndExecuteCommand');
 
-      extension.addonOptions.clipboardCommandHandler(queueCallback);
+      extension.addonOptions!.clipboardCommandHandler!(queueCallback);
 
       expect(spy).toHaveBeenCalled();
     });
@@ -298,7 +298,7 @@ describe('cellExternalCopyManagerExtension', () => {
       const getDataSpy = jest.spyOn(gridStub, 'getData').mockReturnValue(mockGetData);
       const addItemSpy = jest.spyOn(mockGetData, 'addItem');
 
-      extension.addonOptions.newRowCreator(2);
+      extension.addonOptions!.newRowCreator!(2);
 
       expect(getDataSpy).toHaveBeenCalled();
       expect(addItemSpy).toHaveBeenCalledWith(expect.objectContaining({ id: 'newRow_0' }));
@@ -307,7 +307,7 @@ describe('cellExternalCopyManagerExtension', () => {
 
     it('should expect a formatted output after calling "dataItemColumnValueExtractor" callback', () => {
       extension.register();
-      const output = extension.addonOptions.dataItemColumnValueExtractor({ firstName: 'John', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: Formatters.bold });
+      const output = extension.addonOptions!.dataItemColumnValueExtractor!({ firstName: 'John', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: Formatters.bold });
       expect(output).toBe('<b>John</b>');
     });
 
@@ -318,7 +318,7 @@ describe('cellExternalCopyManagerExtension', () => {
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       extension.register();
 
-      const output = extension.addonOptions.dataItemColumnValueExtractor({ firstName: '<b>John</b>', lastName: null }, { id: 'lastName', field: 'lastName', exportWithFormatter: true, formatter: myBoldFormatter });
+      const output = extension.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: null }, { id: 'lastName', field: 'lastName', exportWithFormatter: true, formatter: myBoldFormatter });
 
       expect(output).toBe('');
     });
@@ -328,7 +328,7 @@ describe('cellExternalCopyManagerExtension', () => {
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       extension.register();
 
-      const output = extension.addonOptions.dataItemColumnValueExtractor({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: Formatters.bold });
+      const output = extension.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: Formatters.bold });
 
       expect(output).toBe('John');
     });
@@ -339,7 +339,7 @@ describe('cellExternalCopyManagerExtension', () => {
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       extension.register();
 
-      const output = extension.addonOptions.dataItemColumnValueExtractor({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: myBoldFormatter });
+      const output = extension.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: myBoldFormatter });
 
       expect(output).toBe('John');
     });
@@ -349,7 +349,7 @@ describe('cellExternalCopyManagerExtension', () => {
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       extension.register();
 
-      const output = extension.addonOptions.dataItemColumnValueExtractor({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName' });
+      const output = extension.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName' });
 
       expect(output).toBeNull();
     });

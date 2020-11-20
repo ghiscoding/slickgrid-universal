@@ -8,6 +8,6 @@ export interface HideColumnOption {
   /** Defaults to false, do we want to hide the column name from the grid menu after hidding the column from the grid? */
   hideFromGridMenu?: boolean;
 
-  /** Defaults to true, do we want to trigger an even "onHeaderMenuColumnsChanged" after hidding the column(s)? */
+  /** Defaults to true, do we want to trigger an event "onHeaderMenuHideColumns" after hidding the column(s)? */
   triggerEvent?: boolean;
 }

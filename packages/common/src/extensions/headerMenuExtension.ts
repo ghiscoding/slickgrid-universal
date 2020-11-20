@@ -236,7 +236,7 @@ export class HeaderMenuExtension implements Extension {
       const visibleColumns = arrayRemoveItemByIndex<Column>(currentColumns, columnIndex);
       this.sharedService.visibleColumns = visibleColumns;
       this.sharedService.slickGrid.setColumns(visibleColumns);
-      this.pubSubService.publish('onHeaderMenuColumnsChanged', { columns: visibleColumns });
+      this.pubSubService.publish('onHeaderMenuHideColumns', { columns: visibleColumns, hiddenColumn: column });
     }
   }
 

@@ -205,7 +205,7 @@ export class GridService {
    * @deprecated Hide a Column from the Grid by its column definition index (the column will just become hidden and will still show up in columnPicker/gridMenu)
    * @see hideColumnById Please use "hideColumnById(id)" or "hideColumnByIds([ids])" instead since it has a lot more options
    * @param columnIndex - column definition index
-   * @param triggerEvent - do we want to trigger an event (onHeaderMenuColumnsChanged) when column becomes hidden? Defaults to true.
+   * @param triggerEvent - do we want to trigger an event (onHeaderMenuHideColumns) when column becomes hidden? Defaults to true.
    */
   hideColumnByIndex(columnIndex: number, triggerEvent = true) {
     if (this._grid && this._grid.getColumns && this._grid.setColumns) {
@@ -214,7 +214,7 @@ export class GridService {
       this.sharedService.visibleColumns = visibleColumns;
       this._grid.setColumns(visibleColumns);
       if (triggerEvent) {
-        this.pubSubService.publish('onHeaderMenuColumnsChanged', { columns: visibleColumns });
+        this.pubSubService.publish('onHeaderMenuHideColumns', { columns: visibleColumns });
       }
     }
   }
@@ -222,7 +222,7 @@ export class GridService {
   /**
    * Hide a Column from the Grid by its column definition id, the column will just become hidden and will still show up in columnPicker/gridMenu
    * @param {string | number} columnId - column definition id
-   * @param {boolean} triggerEvent - do we want to trigger an event (onHeaderMenuColumnsChanged) when column becomes hidden? Defaults to true.
+   * @param {boolean} triggerEvent - do we want to trigger an event (onHeaderMenuHideColumns) when column becomes hidden? Defaults to true.
    * @return {number} columnIndex - column index position when found or -1
    */
   hideColumnById(columnId: string | number, options?: HideColumnOption): number {
@@ -253,7 +253,7 @@ export class GridService {
 
         // do we want to trigger an event after hidding
         if (options?.triggerEvent) {
-          this.pubSubService.publish('onHeaderMenuColumnsChanged', { columns: visibleColumns });
+          this.pubSubService.publish('onHeaderMenuHideColumns', { columns: visibleColumns });
         }
         return colIndexFound;
       }
@@ -264,7 +264,7 @@ export class GridService {
   /**
    * Hide a Column from the Grid by its column definition id(s), the column will just become hidden and will still show up in columnPicker/gridMenu
    * @param {Array<string | number>} columnIds - column definition ids, can be a single string and an array of strings
-   * @param {boolean} triggerEvent - do we want to trigger an event (onHeaderMenuColumnsChanged) when column becomes hidden? Defaults to true.
+   * @param {boolean} triggerEvent - do we want to trigger an event (onHeaderMenuHideColumns) when column becomes hidden? Defaults to true.
    */
   hideColumnByIds(columnIds: Array<string | number>, options?: HideColumnOption) {
     options = { ...HideColumnOptionDefaults, ...options };
@@ -279,7 +279,7 @@ export class GridService {
       }
       // do we want to trigger an event after hidding
       if (options?.triggerEvent) {
-        this.pubSubService.publish('onHeaderMenuColumnsChanged', { columns: this.sharedService.visibleColumns });
+        this.pubSubService.publish('onHeaderMenuHideColumns', { columns: this.sharedService.visibleColumns });
       }
     }
   }

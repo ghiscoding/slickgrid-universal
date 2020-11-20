@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { GroupingAndColspanService } from '../groupingAndColspan.service';
 import { Column, SlickDataView, GridOption, SlickEventHandler, SlickGrid, SlickNamespace, SlickColumnPicker, SlickGridMenu } from '../../interfaces/index';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
@@ -8,6 +9,17 @@ declare const Slick: SlickNamespace;
 const gridId = 'grid1';
 const gridUid = 'slickgrid_124343';
 const containerId = 'demo-container';
+
+const fnCallbacks = {};
+const mockPubSub = {
+  publish: jest.fn(),
+  subscribe: (eventName, fn) => fnCallbacks[eventName] = fn,
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+};
+jest.mock('../pubSub.service', () => ({
+  PubSubService: () => mockPubSub
+}));
 
 const gridOptionMock = {
   createPreHeaderPanel: true,
@@ -85,7 +97,7 @@ describe('GroupingAndColspanService', () => {
     div.innerHTML = template;
     document.body.appendChild(div);
 
-    service = new GroupingAndColspanService(mockExtensionUtility, extensionServiceStub);
+    service = new GroupingAndColspanService(mockExtensionUtility, extensionServiceStub, mockPubSub);
     slickgridEventHandler = service.eventHandler;
   });
 
@@ -324,6 +336,20 @@ describe('GroupingAndColspanService', () => {
       expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 0);
       expect(divHeaderColumns.length).toBeGreaterThan(2);
       expect(divHeaderColumns[0].outerHTML).toEqual(`<div style="width: 2815px; left: -1000px;" class="slick-header-columns">All your colums div here</div>`);
+    });
+
+    it('should  call the "renderPreHeaderRowGroupingTitles" when "onHeaderMenuHideColumns" is triggered', () => {
+      const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
+      const divHeaderColumns = document.getElementsByClassName('slick-header-columns');
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
+
+      service.init(gridStub);
+      fnCallbacks['onHeaderMenuHideColumns'](columnsMock);
+      jest.runAllTimers(); // fast-forward timer
+
+      expect(spy).toHaveBeenCalledTimes(2); // 1x for init, 1x for event
+      expect(divHeaderColumns.length).toBeGreaterThan(2);
     });
   });
 });

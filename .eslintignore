@@ -9,4 +9,5 @@
 *.md
 *.zip
 *.spec.ts
+**/__tests__/*.*
 **/dist/*.*
