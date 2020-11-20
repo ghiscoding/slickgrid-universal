@@ -26,6 +26,9 @@
     "test": "npx jest --runInBand --coverage=true --config ./test/jest.config.js",
     "test:watch": "npx jest --watch --config ./test/jest.config.js"
   },
+  "comments": {
+    "create-new-version": "To create a new version with Lerna, run the following scripts (1) 'new-version' and (2) 'publish' to finally push to NPM."
+  },
   "workspaces": {
     "packages": [
       "examples/*",
