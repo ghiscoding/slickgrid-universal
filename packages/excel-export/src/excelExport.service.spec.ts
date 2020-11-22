@@ -29,8 +29,8 @@ const pubSubServiceStub = {
 // URL object is not supported in JSDOM, we can simply mock it
 (global as any).URL.createObjectURL = jest.fn();
 
-const myBoldHtmlFormatter: Formatter = (_row, _cell, value) => value !== null ? { text: `<b>${value}</b>` } : null;
-const myUppercaseFormatter: Formatter = (_row, _cell, value) => value ? { text: value.toUpperCase() } : null;
+const myBoldHtmlFormatter: Formatter = (_row, _cell, value) => value !== null ? { text: `<b>${value}</b>` } : null as any;
+const myUppercaseFormatter: Formatter = (_row, _cell, value) => value ? { text: value.toUpperCase() } : null as any;
 const myUppercaseGroupTotalFormatter: GroupTotalsFormatter = (totals: any, columnDef: Column) => {
   const field = columnDef.field || '';
   const val = totals.sum && totals.sum[field];
@@ -39,7 +39,7 @@ const myUppercaseGroupTotalFormatter: GroupTotalsFormatter = (totals: any, colum
   }
   return '';
 };
-const myCustomObjectFormatter: Formatter = (_row: number, _cell: number, value: any, _columnDef: Column, dataContext: any) => {
+const myCustomObjectFormatter: Formatter = (_row, _cell, value, _columnDef, dataContext) => {
   let textValue = value && value.hasOwnProperty('text') ? value.text : value;
   const toolTip = value && value.hasOwnProperty('toolTip') ? value.toolTip : '';
   const cssClasses = value && value.hasOwnProperty('addClasses') ? [value.addClasses] : [''];
@@ -86,9 +86,8 @@ describe('ExcelExportService', () => {
       mockGridOptions.i18n = translateService;
       sharedService.internalPubSubService = pubSubServiceStub;
 
-      // @ts-ignore
-      navigator.__defineGetter__('appName', () => 'Netscape');
-      navigator.msSaveOrOpenBlob = undefined;
+      (navigator as any).__defineGetter__('appName', () => 'Netscape');
+      navigator.msSaveOrOpenBlob = undefined as any;
       mockExcelBlob = new Blob(['', ''], { type: `text/xlsx;charset=utf-8;` });
 
       mockExportExcelOptions = {
@@ -142,7 +141,7 @@ describe('ExcelExportService', () => {
 
       it('should throw an error when trying call exportToExcel" without a grid and/or dataview object initialized', async () => {
         try {
-          service.init(null, sharedService);
+          service.init(null as any, sharedService);
           await service.exportToExcel(mockExportExcelOptions);
         } catch (e) {
           expect(e.toString()).toContain('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects are not initialized did you forget to enable the grid option flag "enableExcelExport"?');
@@ -199,8 +198,7 @@ describe('ExcelExportService', () => {
       });
 
       it('should throw an error when browser is IE10 or lower', async () => {
-        // @ts-ignore
-        navigator.__defineGetter__('appName', () => 'Microsoft Internet Explorer');
+        (navigator as any).__defineGetter__('appName', () => 'Microsoft Internet Explorer');
 
         try {
           service.init(gridStub, sharedService);
@@ -462,7 +460,7 @@ describe('ExcelExportService', () => {
 
             // excel cells start with A1 which is upper left corner
             sheet.mergeCells('B1', 'D1');
-            const cols = [];
+            const cols: any[] = [];
             // push empty data on A1
             cols.push({ value: '' });
             // push data in B1 cell with metadata formatter
@@ -967,7 +965,7 @@ describe('ExcelExportService', () => {
       it(`should have a xlsx export with grouping but without indentation when "addGroupIndentation" is set to False
       and field should be exported as metadata when "exportWithFormatter" is false and the field type is number`, async () => {
         mockColumns[5].exportWithFormatter = false; // "order" field that is of type number will be exported as a number cell format metadata
-        mockGridOptions.excelExportOptions.addGroupIndentation = false;
+        mockGridOptions.excelExportOptions!.addGroupIndentation = false;
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
@@ -1274,7 +1272,7 @@ describe('ExcelExportService', () => {
         ] as Column[];
 
         jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-        jest.spyOn(dataViewStub, 'getGrouping').mockReturnValue(null);
+        jest.spyOn(dataViewStub, 'getGrouping').mockReturnValue(null as any);
       });
 
       it('should export with grouped header titles showing up on first row', async () => {
@@ -1336,7 +1334,7 @@ describe('ExcelExportService', () => {
         });
 
         it(`should have the LastName header title translated when defined as a "headerKey" and "i18n" is set in grid option`, async () => {
-          mockGridOptions.excelExportOptions.sanitizeDataExport = false;
+          mockGridOptions.excelExportOptions!.sanitizeDataExport = false;
           mockTranslateCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
           jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockTranslateCollection.length);
           jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockTranslateCollection[0]);
@@ -1377,12 +1375,12 @@ describe('ExcelExportService', () => {
 
   describe('without I18N Service', () => {
     beforeEach(() => {
-      translateService = null;
+      translateService = undefined as any;
       service = new ExcelExportService();
     });
 
     it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {
-      const gridOptionsMock = { enableTranslate: true, enableGridMenu: true, i18n: null, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' } } as GridOption;
+      const gridOptionsMock = { enableTranslate: true, enableGridMenu: true, i18n: undefined as any, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' } } as GridOption;
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
       expect(() => service.init(gridStub, sharedService)).toThrowError('[Slickgrid-Universal] requires a Translate Service to be passed in the "i18n" Grid Options when "enableTranslate" is enabled.');

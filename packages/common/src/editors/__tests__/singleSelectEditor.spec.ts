@@ -54,8 +54,7 @@ describe('SingleSelectEditor', () => {
       grid: gridStub,
       column: mockColumn,
       item: mockItemData,
-      // @ts-ignore
-      event: null,
+      event: null as any,
       cancelChanges: jest.fn(),
       commitChanges: jest.fn(),
       container: divContainer,

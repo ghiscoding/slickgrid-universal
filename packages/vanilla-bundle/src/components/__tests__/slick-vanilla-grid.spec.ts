@@ -26,6 +26,7 @@ import {
   SortService,
   TreeDataService,
   TranslaterService,
+  ColumnFilters,
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import * as backendUtilities from '@slickgrid-universal/common/dist/commonjs/services/backend-utilities';
@@ -46,14 +47,9 @@ const mockRefreshBackendDataset = jest.fn();
 const mockBackendError = jest.fn();
 const mockConvertParentChildArray = jest.fn();
 
-// @ts-ignore
-backendUtilities.executeBackendProcessesCallback = mockExecuteBackendProcess;
-
-// @ts-ignore
-backendUtilities.refreshBackendDataset = mockRefreshBackendDataset;
-
-// @ts-ignore
-backendUtilities.onBackendError = mockBackendError;
+(backendUtilities.executeBackendProcessesCallback as any) = mockExecuteBackendProcess;
+(backendUtilities.refreshBackendDataset as any) = mockRefreshBackendDataset;
+(backendUtilities.onBackendError as any) = mockBackendError;
 
 declare const Slick: any;
 const slickEventHandler = new MockSlickEventHandler();
@@ -1029,8 +1025,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
       it('should invoke "updateFilters" method with filters returned from "getColumnFilters" of the Filter Service when there is no Presets defined', () => {
         const mockColumnFilter = { name: { columnId: 'name', columnDef: { id: 'name', field: 'name', filter: { model: Filters.autoComplete } }, operator: 'EQ', searchTerms: ['john'] } };
-        // @ts-ignore
-        jest.spyOn(filterServiceStub, 'getColumnFilters').mockReturnValue(mockColumnFilter);
+        jest.spyOn(filterServiceStub, 'getColumnFilters').mockReturnValue(mockColumnFilter as unknown as ColumnFilters);
         const backendSpy = jest.spyOn(mockGraphqlService, 'updateFilters');
 
         component.gridOptions.presets = undefined;
@@ -1811,7 +1806,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should convert parent/child dataset to hierarchical dataset when Tree Data is enabled and "onRowsChanged" was triggered', () => {
-        // @ts-ignore
+        // @ts-ignore:2540
         utilities.convertParentChildArrayToHierarchicalView = mockConvertParentChildArray;
 
         const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', parentId: 0 }];

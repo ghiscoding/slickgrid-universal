@@ -27,7 +27,7 @@ import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { PubSubService } from '../pubSub.service';
 
 const mockRefreshBackendDataset = jest.fn();
-// @ts-ignore
+// @ts-ignore:2540
 utilities.refreshBackendDataset = mockRefreshBackendDataset;
 
 jest.mock('flatpickr', () => { });
@@ -768,8 +768,7 @@ describe('FilterService', () => {
     // });
 
     // it('should return True when using row detail custom "keyPrefix" and the item is found in its parent', () => {
-    //   // @ts-ignore
-    //   gridOptionMock.rowDetailView = { keyPrefix: 'prefix_' };
+    //   gridOptionMock.rowDetailView = { keyPrefix: 'prefix_' } as RowDetail;
     //   gridOptionMock.enableRowDetailView = true;
     //   const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip' } as Column;
     //   const mockItem2 = { prefix_isPadding: true, prefix_parent: mockItem1 };
@@ -870,9 +869,7 @@ describe('FilterService', () => {
       service.init(gridStub);
       const mockEvent = new CustomEvent('input');
       Object.defineProperty(mockEvent, 'target', { writable: true, configurable: true, value: { value: 'John' } });
-
-      // @ts-ignore
-      service.onBackendFilterChange(mockEvent, { grid: gridStub, shouldTriggerQuery: true });
+      service.onBackendFilterChange(mockEvent as any, { grid: gridStub, shouldTriggerQuery: true });
 
       expect(spy).not.toHaveBeenCalled();
 

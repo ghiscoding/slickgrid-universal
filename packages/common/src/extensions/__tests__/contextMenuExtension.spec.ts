@@ -67,10 +67,9 @@ const mockAddon = jest.fn().mockImplementation(() => ({
 }));
 
 jest.mock('slickgrid/plugins/slick.contextmenu', () => mockAddon);
-// @ts-ignore
 Slick.Plugins = {
   ContextMenu: mockAddon
-};
+} as any;
 
 describe('contextMenuExtension', () => {
   const columnsMock: Column[] = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
@@ -577,17 +576,15 @@ describe('contextMenuExtension', () => {
             selectNodeContents: () => { },
             setStart: () => { },
             setEnd: () => { },
-            // @ts-ignore
             commonAncestorContainer: { nodeName: 'BODY', ownerDocument: document },
-          });
+          } as any);
 
           window.document.execCommand = () => (true);
 
-          // @ts-ignore
           window.getSelection = () => ({
             removeAllRanges: () => { },
             addRange: () => { },
-          });
+          } as any);
         }
       });
 
@@ -601,7 +598,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'copy') as MenuCommandItem;
-        menuItemCommand.action(new CustomEvent('change'), {
+        menuItemCommand.action!(new CustomEvent('change'), {
           command: 'copy',
           cell: 2,
           row: 5,
@@ -624,7 +621,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'copy') as MenuCommandItem;
-        menuItemCommand.action(new CustomEvent('change'), {
+        menuItemCommand.action!(new CustomEvent('change'), {
           command: 'copy',
           cell: 2,
           row: 5,
@@ -648,7 +645,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'copy') as MenuCommandItem;
-        menuItemCommand.action(new CustomEvent('change'), {
+        menuItemCommand.action!(new CustomEvent('change'), {
           command: 'copy',
           cell: 2,
           row: 5,
@@ -672,7 +669,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'copy') as MenuCommandItem;
-        menuItemCommand.action(new CustomEvent('change'), {
+        menuItemCommand.action!(new CustomEvent('change'), {
           command: 'copy',
           cell: 2,
           row: 5,
@@ -694,7 +691,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'copy') as MenuCommandItem;
-        const isCommandUsable = menuItemCommand.itemUsabilityOverride({
+        const isCommandUsable = menuItemCommand.itemUsabilityOverride!({
           cell: 2,
           row: 2,
           grid: gridStub,
@@ -713,7 +710,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'copy') as MenuCommandItem;
-        const isCommandUsable = menuItemCommand.itemUsabilityOverride({
+        const isCommandUsable = menuItemCommand.itemUsabilityOverride!({
           cell: 2,
           row: 2,
           grid: gridStub,
@@ -732,7 +729,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'copy') as MenuCommandItem;
-        const isCommandUsable = menuItemCommand.itemUsabilityOverride({
+        const isCommandUsable = menuItemCommand.itemUsabilityOverride!({
           cell: 2,
           row: 2,
           grid: gridStub,
@@ -751,7 +748,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'copy') as MenuCommandItem;
-        const isCommandUsable = menuItemCommand.itemUsabilityOverride({
+        const isCommandUsable = menuItemCommand.itemUsabilityOverride!({
           cell: 2,
           row: 2,
           grid: gridStub,
@@ -770,7 +767,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'copy') as MenuCommandItem;
-        const isCommandUsable = menuItemCommand.itemUsabilityOverride({
+        const isCommandUsable = menuItemCommand.itemUsabilityOverride!({
           cell: 2,
           row: 2,
           grid: gridStub,
@@ -789,7 +786,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'copy') as MenuCommandItem;
-        const isCommandUsable = menuItemCommand.itemUsabilityOverride({
+        const isCommandUsable = menuItemCommand.itemUsabilityOverride!({
           cell: 2,
           row: 2,
           grid: gridStub,
@@ -807,7 +804,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'export-excel') as MenuCommandItem;
-        expect(() => menuItemCommand.action(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any))
+        expect(() => menuItemCommand.action!(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any))
           .toThrow('[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Context Menu.');
       });
 
@@ -818,7 +815,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'export-csv') as MenuCommandItem;
-        expect(() => menuItemCommand.action(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any))
+        expect(() => menuItemCommand.action!(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any))
           .toThrow('[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Context Menu.');
       });
 
@@ -828,7 +825,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'export-text-delimited') as MenuCommandItem;
-        expect(() => menuItemCommand.action(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any))
+        expect(() => menuItemCommand.action!(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any))
           .toThrow('[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Context Menu.');
       });
 
@@ -841,7 +838,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'export-excel') as MenuCommandItem;
-        menuItemCommand.action(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any);
+        menuItemCommand.action!(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any);
 
         expect(excelExportSpy).toHaveBeenCalledWith({
           filename: 'export',
@@ -857,7 +854,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'export-csv') as MenuCommandItem;
-        menuItemCommand.action(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any);
+        menuItemCommand.action!(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any);
 
         expect(exportSpy).toHaveBeenCalledWith({
           delimiter: DelimiterType.comma,
@@ -875,7 +872,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'export-text-delimited') as MenuCommandItem;
-        menuItemCommand.action(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any);
+        menuItemCommand.action!(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any);
 
         expect(exportSpy).toHaveBeenCalledWith({
           delimiter: DelimiterType.tab,
@@ -892,7 +889,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'clear-grouping') as MenuCommandItem;
-        menuItemCommand.action(new CustomEvent('change'), { command: 'clear-grouping', cell: 0, row: 0 } as any);
+        menuItemCommand.action!(new CustomEvent('change'), { command: 'clear-grouping', cell: 0, row: 0 } as any);
 
         expect(dataviewSpy).toHaveBeenCalledWith([]);
       });
@@ -904,7 +901,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'collapse-all-groups') as MenuCommandItem;
-        menuItemCommand.action(new CustomEvent('change'), { command: 'collapse-all-groups', cell: 0, row: 0 } as any);
+        menuItemCommand.action!(new CustomEvent('change'), { command: 'collapse-all-groups', cell: 0, row: 0 } as any);
 
         expect(dataviewSpy).toHaveBeenCalledWith();
       });
@@ -917,7 +914,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'collapse-all-groups') as MenuCommandItem;
-        menuItemCommand.action(new CustomEvent('change'), { command: 'collapse-all-groups', cell: 0, row: 0 } as any);
+        menuItemCommand.action!(new CustomEvent('change'), { command: 'collapse-all-groups', cell: 0, row: 0 } as any);
 
         expect(treeDataSpy).toHaveBeenCalledWith(true);
       });
@@ -929,7 +926,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'expand-all-groups') as MenuCommandItem;
-        menuItemCommand.action(new CustomEvent('change'), { command: 'expand-all-groups', cell: 0, row: 0 } as any);
+        menuItemCommand.action!(new CustomEvent('change'), { command: 'expand-all-groups', cell: 0, row: 0 } as any);
 
         expect(dataviewSpy).toHaveBeenCalledWith();
       });
@@ -942,7 +939,7 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'expand-all-groups') as MenuCommandItem;
-        menuItemCommand.action(new CustomEvent('change'), { command: 'expand-all-groups', cell: 0, row: 0 } as any);
+        menuItemCommand.action!(new CustomEvent('change'), { command: 'expand-all-groups', cell: 0, row: 0 } as any);
 
         expect(treeDataSpy).toHaveBeenCalledWith(false);
       });
@@ -954,11 +951,11 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuClearCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'clear-grouping') as MenuCommandItem;
-        const isClearCommandUsable = menuClearCommand.itemUsabilityOverride({ cell: 2, row: 2, grid: gridStub, } as any);
+        const isClearCommandUsable = menuClearCommand.itemUsabilityOverride!({ cell: 2, row: 2, grid: gridStub, } as any);
         const menuCollapseCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'collapse-all-groups') as MenuCommandItem;
-        const isCollapseCommandUsable = menuCollapseCommand.itemUsabilityOverride({ cell: 2, row: 2, grid: gridStub, } as any);
+        const isCollapseCommandUsable = menuCollapseCommand.itemUsabilityOverride!({ cell: 2, row: 2, grid: gridStub, } as any);
         const menuExpandCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'expand-all-groups') as MenuCommandItem;
-        const isExpandCommandUsable = menuExpandCommand.itemUsabilityOverride({ cell: 2, row: 2, grid: gridStub, } as any);
+        const isExpandCommandUsable = menuExpandCommand.itemUsabilityOverride!({ cell: 2, row: 2, grid: gridStub, } as any);
 
         expect(isClearCommandUsable).toBe(false);
         expect(isCollapseCommandUsable).toBe(false);
@@ -973,11 +970,11 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuClearCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'clear-grouping') as MenuCommandItem;
-        const isClearCommandUsable = menuClearCommand.itemUsabilityOverride({ cell: 2, row: 2, grid: gridStub, } as any);
+        const isClearCommandUsable = menuClearCommand.itemUsabilityOverride!({ cell: 2, row: 2, grid: gridStub, } as any);
         const menuCollapseCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'collapse-all-groups') as MenuCommandItem;
-        const isCollapseCommandUsable = menuCollapseCommand.itemUsabilityOverride({ cell: 2, row: 2, grid: gridStub, } as any);
+        const isCollapseCommandUsable = menuCollapseCommand.itemUsabilityOverride!({ cell: 2, row: 2, grid: gridStub, } as any);
         const menuExpandCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'expand-all-groups') as MenuCommandItem;
-        const isExpandCommandUsable = menuExpandCommand.itemUsabilityOverride({ cell: 2, row: 2, grid: gridStub, } as any);
+        const isExpandCommandUsable = menuExpandCommand.itemUsabilityOverride!({ cell: 2, row: 2, grid: gridStub, } as any);
 
         expect(isClearCommandUsable).toBe(true);
         expect(isCollapseCommandUsable).toBe(true);
@@ -991,9 +988,9 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuCollapseCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'collapse-all-groups') as MenuCommandItem;
-        const isCollapseCommandUsable = menuCollapseCommand.itemUsabilityOverride({ cell: 2, row: 2, grid: gridStub, } as any);
+        const isCollapseCommandUsable = menuCollapseCommand.itemUsabilityOverride!({ cell: 2, row: 2, grid: gridStub, } as any);
         const menuExpandCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'expand-all-groups') as MenuCommandItem;
-        const isExpandCommandUsable = menuExpandCommand.itemUsabilityOverride({ cell: 2, row: 2, grid: gridStub, } as any);
+        const isExpandCommandUsable = menuExpandCommand.itemUsabilityOverride!({ cell: 2, row: 2, grid: gridStub, } as any);
 
         expect(isCollapseCommandUsable).toBe(true);
         expect(isExpandCommandUsable).toBe(true);
@@ -1005,9 +1002,9 @@ describe('contextMenuExtension', () => {
         extension.register();
 
         const menuCollapseCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'collapse-all-groups') as MenuCommandItem;
-        const isCollapseCommandUsable = menuCollapseCommand.itemUsabilityOverride({ cell: 2, row: 2, grid: gridStub, } as any);
+        const isCollapseCommandUsable = menuCollapseCommand.itemUsabilityOverride!({ cell: 2, row: 2, grid: gridStub, } as any);
         const menuExpandCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'expand-all-groups') as MenuCommandItem;
-        const isExpandCommandUsable = menuExpandCommand.itemUsabilityOverride({ cell: 2, row: 2, grid: gridStub, } as any);
+        const isExpandCommandUsable = menuExpandCommand.itemUsabilityOverride!({ cell: 2, row: 2, grid: gridStub, } as any);
 
         expect(isCollapseCommandUsable).toBe(true);
         expect(isExpandCommandUsable).toBe(true);
@@ -1108,8 +1105,7 @@ describe('contextMenuExtension', () => {
 
     describe('without Translate Service', () => {
       beforeEach(() => {
-        // @ts-ignore
-        translateService = null;
+        translateService = undefined as any;
         extension = new ContextMenuExtension({} as ExtensionUtility, { gridOptions: { enableTranslate: true } } as SharedService, treeDataServiceStub, translateService);
       });
 

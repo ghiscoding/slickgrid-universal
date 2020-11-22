@@ -55,8 +55,7 @@ describe('checkboxSelectorExtension', () => {
   });
 
   it('should return null after calling "create" method when either the column definitions or the grid options is missing', () => {
-    // @ts-ignore
-    const output = extension.create([] as Column[], null);
+    const output = extension.create([] as Column[], null as any);
     expect(output).toBeNull();
   });
 
@@ -175,8 +174,7 @@ describe('checkboxSelectorExtension', () => {
       const selectionModelOptions = { ...gridOptionsMock, preselectedRows: [0], rowSelectionOptions: { selectActiveRow: true } };
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(selectionModelOptions);
       const pluginSpy = jest.spyOn(SharedService.prototype.slickGrid, 'registerPlugin');
-      // @ts-ignore
-      const selectionSpy = jest.spyOn(SharedService.prototype.slickGrid, 'getSelectionModel').mockReturnValue(mockSelectionModel);
+      const selectionSpy = jest.spyOn(SharedService.prototype.slickGrid, 'getSelectionModel').mockReturnValue(mockSelectionModel as unknown as SlickRowSelectionModel);
 
       const instance = extension.create(columnsMock, gridOptionsMock) as SlickCheckboxSelectColumn;
       const rowSpy = jest.spyOn(instance, 'selectRows');

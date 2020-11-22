@@ -200,7 +200,6 @@ export const GlobalGridOptions: GridOption = {
     pageSize: 25,
     totalItems: 0
   },
-  //   // @ts-ignore
   //   // technically speaking the Row Detail requires the process & viewComponent but we'll ignore it just to set certain options
   //   rowDetailView: {
   //     cssClass: 'detail-view-toggle',

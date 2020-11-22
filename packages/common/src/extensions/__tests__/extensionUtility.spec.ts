@@ -201,7 +201,7 @@ describe('extensionUtility', () => {
 
   describe('without Translate Service', () => {
     beforeEach(() => {
-      translateService = null;
+      translateService = undefined as any;
       utility = new ExtensionUtility(sharedService, translateService);
     });
 

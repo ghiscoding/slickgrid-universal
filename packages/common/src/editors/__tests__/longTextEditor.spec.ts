@@ -60,8 +60,7 @@ describe('LongTextEditor', () => {
       grid: gridStub,
       column: mockColumn,
       item: mockItemData,
-      // @ts-ignore
-      event: null,
+      event: null as any,
       cancelChanges: jest.fn(),
       commitChanges: jest.fn(),
       container: divContainer,
@@ -75,8 +74,7 @@ describe('LongTextEditor', () => {
   describe('with invalid Editor instance', () => {
     it('should throw an error when trying to call init without any arguments', (done) => {
       try {
-        // @ts-expect-error
-        editor = new LongTextEditor(null);
+        editor = new LongTextEditor(null as any);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
         done();
@@ -122,8 +120,7 @@ describe('LongTextEditor', () => {
     });
 
     it('should initialize the editor with default constant text when translate service is not provided', () => {
-      // @ts-ignore
-      gridOptionMock.i18n = null;
+      gridOptionMock.i18n = undefined as any;
       editor = new LongTextEditor(editorArguments);
       const editorCount = document.body.querySelectorAll('.slick-large-editor-text.editor-title textarea').length;
       const editorFooterElm = document.body.querySelector('.slick-large-editor-text.editor-title .editor-footer') as HTMLDivElement;
@@ -273,8 +270,7 @@ describe('LongTextEditor', () => {
 
     describe('applyValue method', () => {
       it('should apply the value to the title property when it passes validation', () => {
-        // @ts-expect-error
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
         mockItemData = { id: 1, title: 'task 1', isActive: true };
 
         editor = new LongTextEditor(editorArguments);
@@ -284,8 +280,7 @@ describe('LongTextEditor', () => {
       });
 
       it('should apply the value to the title property with a field having dot notation (complex object) that passes validation', () => {
-        // @ts-expect-error
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
         mockColumn.field = 'part.title';
         mockItemData = { id: 1, part: { title: 'task 1' }, isActive: true };
 

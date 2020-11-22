@@ -105,7 +105,7 @@ describe('GridEventService', () => {
       const spyGetCols = jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn]);
 
       service.bindOnCellChange(gridStub);
-      gridStub.onCellChange.notify({ cell: undefined, row: undefined, grid: gridStub, item: {} }, new Slick.EventData(), gridStub);
+      gridStub.onCellChange.notify({ cell: undefined, row: undefined, grid: gridStub, item: {}, column: {} as Column }, new Slick.EventData(), gridStub);
 
       expect(spyGetCols).not.toHaveBeenCalled();
     });
@@ -116,7 +116,7 @@ describe('GridEventService', () => {
       const spyOnChange = jest.spyOn(mockColumn, 'onCellChange');
 
       service.bindOnCellChange(gridStub);
-      gridStub.onCellChange.notify({ cell: 0, row: 0, grid: gridStub, item: {} }, new Slick.EventData(), gridStub);
+      gridStub.onCellChange.notify({ cell: 0, row: 0, grid: gridStub, item: {}, column: {} as Column }, new Slick.EventData(), gridStub);
 
       expect(spyGetCols).toHaveBeenCalled();
       expect(spyGetData).toHaveBeenCalled();

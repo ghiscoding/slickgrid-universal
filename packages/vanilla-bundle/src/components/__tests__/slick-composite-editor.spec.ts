@@ -148,8 +148,7 @@ describe('CompositeEditorService', () => {
         const newGridOptions = { ...gridOptionsMock, enableTranslate: true };
         jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
 
-        // @ts-ignore
-        translateService = undefined;
+        translateService = undefined as any;
         component = new SlickCompositeEditorComponent(gridStub, gridServiceStub, gridStateServiceStub, translateService);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.`);
@@ -226,8 +225,7 @@ describe('CompositeEditorService', () => {
     });
 
     it('should throw an error when there are no rows or active cell selected', (done) => {
-      // @ts-ignore
-      jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(null);
+      jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(null as any);
 
       component = new SlickCompositeEditorComponent(gridStub, gridServiceStub, gridStateServiceStub);
       const mockOnError = jest.fn();
@@ -893,8 +891,7 @@ describe('CompositeEditorService', () => {
       });
 
       it('should expect that any error that are not defined as the built-in errors to still be caught then sent to the "onError"', (done) => {
-        // @ts-ignore
-        gridStub.getColumns.mockImplementation(() => { throw new Error('some error'); });
+        (gridStub.getColumns as any).mockImplementation(() => { throw new Error('some error'); });
         const mockOnError = jest.fn();
 
         component = new SlickCompositeEditorComponent(gridStub, gridServiceStub, gridStateServiceStub);

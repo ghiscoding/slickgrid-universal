@@ -51,8 +51,7 @@ describe('CheckboxEditor', () => {
       grid: gridStub,
       column: mockColumn,
       item: mockItemData,
-      // @ts-ignore
-      event: null,
+      event: null as any,
       cancelChanges: jest.fn(),
       commitChanges: jest.fn(),
       container: divContainer,
@@ -66,8 +65,7 @@ describe('CheckboxEditor', () => {
   describe('with invalid Editor instance', () => {
     it('should throw an error when trying to call init without any arguments', (done) => {
       try {
-        // @ts-expect-error
-        editor = new CheckboxEditor(null);
+        editor = new CheckboxEditor(null as any);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
         done();
@@ -191,8 +189,7 @@ describe('CheckboxEditor', () => {
 
     describe('applyValue method', () => {
       it('should apply the value to the isActive property when it passes validation', () => {
-        // @ts-expect-error
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
         mockItemData = { id: 1, title: 'task 1', isActive: true };
 
         editor = new CheckboxEditor(editorArguments);
@@ -202,8 +199,7 @@ describe('CheckboxEditor', () => {
       });
 
       it('should apply the value to the title property with a field having dot notation (complex object) that passes validation', () => {
-        // @ts-expect-error
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
         mockColumn.field = 'part.isActive';
         mockItemData = { id: 1, part: { isActive: true } };
 

@@ -54,8 +54,7 @@ describe('AutoCompleteEditor', () => {
       grid: gridStub,
       column: mockColumn,
       item: mockItemData,
-      // @ts-ignore
-      event: null,
+      event: null as any,
       cancelChanges: jest.fn(),
       commitChanges: jest.fn(),
       container: divContainer,
@@ -69,8 +68,7 @@ describe('AutoCompleteEditor', () => {
   describe('with invalid Editor instance', () => {
     it('should throw an error when trying to call init without any arguments', (done) => {
       try {
-        // @ts-expect-error
-        editor = new AutoCompleteEditor(null);
+        editor = new AutoCompleteEditor(null as any);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
         done();
@@ -79,8 +77,7 @@ describe('AutoCompleteEditor', () => {
 
     it('should throw an error when collection is not a valid array', (done) => {
       try {
-        // @ts-ignore
-        (mockColumn.internalColumnEditor as ColumnEditor).collection = { hello: 'world' };
+        (mockColumn.internalColumnEditor as ColumnEditor).collection = { hello: 'world' } as any;
         editor = new AutoCompleteEditor(editorArguments);
       } catch (e) {
         expect(e.toString()).toContain(`The "collection" passed to the Autocomplete Editor is not a valid array.`);
@@ -116,8 +113,7 @@ describe('AutoCompleteEditor', () => {
     it('should initialize the editor with element being disabled in the DOM when passing a collectionAsync and an empty collection property', () => {
       const mockCollection = ['male', 'female'];
       const promise = new Promise(resolve => resolve(mockCollection));
-      // @ts-expect-error
-      (mockColumn.internalColumnEditor as ColumnEditor).collection = null;
+      (mockColumn.internalColumnEditor as ColumnEditor).collection = null as any;
       (mockColumn.internalColumnEditor as ColumnEditor).collectionAsync = promise;
 
       editor = new AutoCompleteEditor(editorArguments);
@@ -290,8 +286,7 @@ describe('AutoCompleteEditor', () => {
 
     describe('applyValue method', () => {
       it('should apply the value to the gender property when it passes validation', () => {
-        // @ts-expect-error
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
         mockItemData = { id: 123, gender: 'female', isActive: true };
 
         editor = new AutoCompleteEditor(editorArguments);
@@ -301,8 +296,7 @@ describe('AutoCompleteEditor', () => {
       });
 
       it('should apply the value to the gender property with a field having dot notation (complex object) that passes validation', () => {
-        // @ts-expect-error
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
         mockColumn.field = 'user.gender';
         mockItemData = { id: 1, user: { gender: 'female' }, isActive: true };
 
@@ -313,8 +307,7 @@ describe('AutoCompleteEditor', () => {
       });
 
       it('should return override the item data as a string found from the collection that passes validation', () => {
-        // @ts-expect-error
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
         (mockColumn.internalColumnEditor as ColumnEditor).collection = ['male', 'female'];
         mockItemData = { id: 123, gender: 'female', isActive: true };
 
@@ -626,8 +619,7 @@ describe('AutoCompleteEditor', () => {
 
         editor = new AutoCompleteEditor(editorArguments);
         const spySetValue = jest.spyOn(editor, 'setValue');
-        // @ts-expect-error
-        const output = editor.onSelect(null, { item: mockItemData.gender });
+        const output = editor.onSelect(null as any, { item: mockItemData.gender });
 
         expect(output).toBe(false);
         expect(commitEditSpy).not.toHaveBeenCalled();
@@ -642,8 +634,7 @@ describe('AutoCompleteEditor', () => {
 
         editor = new AutoCompleteEditor(editorArguments);
         const spySetValue = jest.spyOn(editor, 'setValue');
-        // @ts-expect-error
-        const output = editor.onSelect(null, { item: mockItemData.gender });
+        const output = editor.onSelect(null as any, { item: mockItemData.gender });
 
         // HOW DO WE TRIGGER the jQuery UI autocomplete select event? The following works only on "autocompleteselect"
         // but that doesn't trigger the "select" (onSelect) directly
@@ -665,8 +656,7 @@ describe('AutoCompleteEditor', () => {
 
         editor = new AutoCompleteEditor(editorArguments);
         const spySetValue = jest.spyOn(editor, 'setValue');
-        // @ts-expect-error
-        const output = editor.onSelect(null, { item: mockItemData.gender });
+        const output = editor.onSelect(null as any, { item: mockItemData.gender });
 
         expect(output).toBe(false);
         expect(commitEditSpy).toHaveBeenCalled();
@@ -680,7 +670,6 @@ describe('AutoCompleteEditor', () => {
         const event = new CustomEvent('change');
         editor = new AutoCompleteEditor(editorArguments);
         const spy = jest.spyOn(editor, 'onSelect');
-        // @ts-expect-error
         editor.autoCompleteOptions.select(event, { item: 'fem' });
 
         expect(spy).toHaveBeenCalledWith(event, { item: 'fem' });
@@ -694,7 +683,6 @@ describe('AutoCompleteEditor', () => {
         const event = new CustomEvent('change');
         editor = new AutoCompleteEditor(editorArguments);
         const spy = jest.spyOn(editor, 'onSelect');
-        // @ts-expect-error
         editor.autoCompleteOptions.select(event, { item: 'fem' });
 
         expect(spy).toHaveBeenCalledWith(event, { item: 'fem' });
@@ -710,7 +698,6 @@ describe('AutoCompleteEditor', () => {
         editor = new AutoCompleteEditor(editorArguments);
         const onSelectSpy = jest.spyOn(editor, 'onSelect');
         const focusSpy = jest.spyOn(editor, 'focus');
-        // @ts-expect-error
         editor.autoCompleteOptions.select(event, { item: 'fem' });
         jest.runAllTimers(); // fast-forward timer
 
@@ -848,8 +835,7 @@ describe('AutoCompleteEditor', () => {
 
       editor = new AutoCompleteEditor(editorArguments);
       const spySetValue = jest.spyOn(editor, 'setValue');
-      // @ts-expect-error
-      const output = editor.onSelect(null, { item: mockItemData.gender });
+      const output = editor.onSelect(null as any, { item: mockItemData.gender });
 
       expect(output).toBe(false);
       expect(spySetValue).toHaveBeenCalledWith('female');

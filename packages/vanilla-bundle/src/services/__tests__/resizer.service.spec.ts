@@ -20,10 +20,9 @@ const mockAddon = jest.fn().mockImplementation(() => mockResizerImplementation);
 
 jest.mock('slickgrid/plugins/slick.resizer', () => mockAddon);
 
-// @ts-ignore
 Slick.Plugins = {
   Resizer: mockAddon
-};
+} as any;
 
 const pubSubServiceStub = {
   publish: jest.fn(),

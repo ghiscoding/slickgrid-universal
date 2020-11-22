@@ -51,8 +51,7 @@ describe('SliderEditor', () => {
       grid: gridStub,
       column: mockColumn,
       item: mockItemData,
-      // @ts-ignore
-      event: null,
+      event: null as any,
       cancelChanges: jest.fn(),
       commitChanges: jest.fn(),
       container: divContainer,
@@ -66,7 +65,6 @@ describe('SliderEditor', () => {
   describe('with invalid Editor instance', () => {
     it('should throw an error when trying to call init without any arguments', (done) => {
       try {
-        // @ts-expect-error
         editor = new SliderEditor(null);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
@@ -274,8 +272,7 @@ describe('SliderEditor', () => {
 
     describe('applyValue method', () => {
       it('should apply the value to the price property when it passes validation', () => {
-        // @ts-ignore
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
         mockItemData = { id: 1, price: 456, isActive: true };
 
         editor = new SliderEditor(editorArguments);
@@ -285,8 +282,7 @@ describe('SliderEditor', () => {
       });
 
       it('should apply the value to the price property with a field having dot notation (complex object) that passes validation', () => {
-        // @ts-ignore
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
         mockColumn.field = 'part.price';
         mockItemData = { id: 1, part: { price: 456 }, isActive: true };
 
@@ -443,8 +439,7 @@ describe('SliderEditor', () => {
       it('should return False when field is required and field is empty', () => {
         (mockColumn.internalColumnEditor as ColumnEditor).required = true;
         editor = new SliderEditor(editorArguments);
-        // @ts-ignore
-        const validation = editor.validate(null, '');
+        const validation = editor.validate(null as any, '');
 
         expect(validation).toEqual({ valid: false, msg: 'Field is required' });
       });
@@ -453,8 +448,7 @@ describe('SliderEditor', () => {
         (mockColumn.internalColumnEditor as ColumnEditor).minValue = 10;
         (mockColumn.internalColumnEditor as ColumnEditor).maxValue = 99;
         editor = new SliderEditor(editorArguments);
-        // @ts-ignore
-        const validation = editor.validate(null, 100);
+        const validation = editor.validate(null as any, 100);
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number between 10 and 99' });
       });

@@ -9,7 +9,7 @@ const gridOptionsMock = {
   treeDataOptions: {
     columnId: 'file'
   }
-} as GridOption;
+} as unknown as GridOption;
 
 const dataViewStub = {
   getItem: jest.fn(),
