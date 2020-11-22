@@ -56,8 +56,7 @@ describe('DualInputEditor', () => {
       grid: gridStub,
       column: mockColumn,
       item: mockItemData,
-      // @ts-ignore
-      event: null,
+      event: null as any,
       cancelChanges: jest.fn(),
       commitChanges: jest.fn(),
       container: divContainer,
@@ -71,8 +70,7 @@ describe('DualInputEditor', () => {
   describe('with invalid Editor instance', () => {
     it('should throw an error when trying to call init without any arguments', (done) => {
       try {
-        // @ts-expect-error
-        editor = new DualInputEditor(null);
+        editor = new DualInputEditor(null as any);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
         done();
@@ -81,8 +79,7 @@ describe('DualInputEditor', () => {
 
     it('should throw an error when initialize the editor without the requires params leftInput/rightInput', (done) => {
       try {
-        // @ts-ignore
-        editor = new DualInputEditor({ grid: gridStub });
+        editor = new DualInputEditor({ grid: gridStub } as any);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Please make sure that your Combo Input Editor has params defined with "leftInput" and "rightInput"`);
         done();
@@ -585,8 +582,7 @@ describe('DualInputEditor', () => {
 
         expect(editor.eventHandler).toBeTruthy();
         expect(editor.isValueSaveCalled).toBe(false);
-        // @ts-ignore
-        gridStub.onValidationError.notify({ row: 0, cell: 0, validationResults: { valid: false, msg: 'Field is required' }, grid: gridStub, column: {} as Column, editor, cellNode: document.createElement('div') });
+        gridStub.onValidationError.notify({ row: 0, cell: 0, validationResults: { valid: false, msg: 'Field is required' }, grid: gridStub, column: {} as Column, editor, cellNode: document.createElement('div') } as any);
         expect(editor.isValueSaveCalled).toBe(true);
       });
 

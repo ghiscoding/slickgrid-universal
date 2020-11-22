@@ -61,8 +61,7 @@ describe('SelectEditor', () => {
       grid: gridStub,
       column: mockColumn,
       item: mockItemData,
-      // @ts-ignore
-      event: null,
+      event: null as any,
       cancelChanges: jest.fn(),
       commitChanges: jest.fn(),
       container: divContainer,
@@ -76,7 +75,6 @@ describe('SelectEditor', () => {
   describe('with invalid Editor instance', () => {
     it('should throw an error when trying to call init without any arguments', (done) => {
       try {
-        // @ts-expect-error
         editor = new SelectEditor(null, true);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
@@ -96,8 +94,7 @@ describe('SelectEditor', () => {
 
     it('should throw an error when collection is not a valid array', (done) => {
       try {
-        // @ts-ignore
-        (mockColumn.internalColumnEditor as ColumnEditor).collection = { hello: 'world' };
+        (mockColumn.internalColumnEditor as ColumnEditor).collection = { hello: 'world' } as any;
         editor = new SelectEditor(editorArguments, true);
       } catch (e) {
         expect(e.toString()).toContain(`The "collection" passed to the Select Editor is not a valid array.`);
@@ -117,8 +114,7 @@ describe('SelectEditor', () => {
 
     it('should throw an error when "enableTranslateLabel" is set without a valid I18N Service', (done) => {
       try {
-        // @ts-ignore
-        translateService = undefined;
+        translateService = undefined as any;
         (mockColumn.internalColumnEditor as ColumnEditor).enableTranslateLabel = true;
         (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
         editor = new SelectEditor(editorArguments, true);
@@ -156,7 +152,6 @@ describe('SelectEditor', () => {
     it('should initialize the editor with element being disabled in the DOM when passing a collectionAsync and an empty collection property', () => {
       const mockCollection = ['male', 'female'];
       const promise = new Promise(resolve => resolve(mockCollection));
-      // @ts-expect-error
       (mockColumn.internalColumnEditor as ColumnEditor).collection = null;
       (mockColumn.internalColumnEditor as ColumnEditor).collectionAsync = promise;
       gridOptionMock.i18n = translateService;
@@ -315,7 +310,6 @@ describe('SelectEditor', () => {
 
     describe('applyValue method', () => {
       it('should apply the value to the gender property when it passes validation', () => {
-        // @ts-expect-error
         (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
         mockItemData = { id: 1, gender: 'male', isActive: true };
 
@@ -326,7 +320,6 @@ describe('SelectEditor', () => {
       });
 
       it('should apply the value to the gender (last property) when field has a dot notation (complex object) that passes validation', () => {
-        // @ts-expect-error
         (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
         mockColumn.field = 'person.bio.gender';
         mockItemData = { id: 1, person: { bio: { gender: 'male' } }, isActive: true };
@@ -338,7 +331,6 @@ describe('SelectEditor', () => {
       });
 
       it('should apply the value to the bio property (second last) when field has a dot notation (complex object) value provided is an object and it that passes validation', () => {
-        // @ts-expect-error
         (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
         (mockColumn.internalColumnEditor as ColumnEditor).complexObjectPath = 'person.bio';
         mockColumn.field = 'person.bio.gender';
@@ -366,7 +358,6 @@ describe('SelectEditor', () => {
       });
 
       it('should apply the value to the gender property as an array with multiple when the input value is a CSV string', () => {
-        // @ts-expect-error
         (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
         mockItemData = { id: 1, gender: 'male', isActive: true };
 
@@ -641,8 +632,7 @@ describe('SelectEditor', () => {
     describe('collectionInsideObjectProperty setting', () => {
       it('should create the multi-select editor with a value/label pair collection that is inside an object when "collectionInsideObjectProperty" is defined with a dot notation', () => {
         mockColumn.internalColumnEditor = {
-          // @ts-ignore
-          collection: { deep: { myCollection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }] } },
+          collection: { deep: { myCollection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }] } } as any,
           collectionOptions: {
             collectionInsideObjectProperty: 'deep.myCollection'
           },

@@ -314,7 +314,7 @@ describe('CollectionService', () => {
 
   describe('without I18N Service', () => {
     beforeEach(() => {
-      translateService = null;
+      translateService = undefined as any;
       service = new CollectionService(translateService);
     });
 

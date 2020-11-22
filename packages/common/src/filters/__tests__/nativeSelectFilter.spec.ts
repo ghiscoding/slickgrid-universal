@@ -74,8 +74,7 @@ describe('NativeSelectFilter', () => {
 
   it('should throw an error when collection is not a valid array', (done) => {
     try {
-      // @ts-ignore
-      mockColumn.filter.collection = { hello: 'world' };
+      mockColumn.filter.collection = { hello: 'world' } as any;
       filter.init(filterArguments);
     } catch (e) {
       expect(e.toString()).toContain(`The "collection" passed to the Native Select Filter is not a valid array.`);

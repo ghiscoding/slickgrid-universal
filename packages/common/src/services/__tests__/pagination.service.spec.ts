@@ -2,7 +2,7 @@ import 'jest-extended';
 
 import { PaginationService } from './../pagination.service';
 import { SharedService } from '../shared.service';
-import { Column, SlickDataView, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { Column, SlickDataView, GridOption, SlickGrid, SlickNamespace, BackendServiceApi } from '../../interfaces/index';
 import * as utilities from '../backend-utilities';
 
 declare const Slick: SlickNamespace;
@@ -19,11 +19,11 @@ jest.mock('../pubSub.service', () => ({
 }));
 
 const mockExecuteBackendProcess = jest.fn();
-// @ts-ignore
+// @ts-ignore:2540
 utilities.executeBackendProcessesCallback = mockExecuteBackendProcess;
 
 const mockBackendError = jest.fn();
-// @ts-ignore
+// @ts-ignore:2540
 utilities.onBackendError = mockBackendError;
 
 const dataviewStub = {
@@ -476,8 +476,7 @@ describe('PaginationService', () => {
 
     it('should throw an error when backendServiceApi is defined without a "process" method', (done) => {
       try {
-        // @ts-ignore
-        mockGridOption.backendServiceApi = {};
+        mockGridOption.backendServiceApi = {} as BackendServiceApi;
         service.init(gridStub, mockGridOption.pagination, mockGridOption.backendServiceApi);
         service.refreshPagination();
       } catch (e) {

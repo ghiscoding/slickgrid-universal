@@ -663,7 +663,7 @@ describe('ExtensionService', () => {
 
   describe('without Translate Service', () => {
     beforeEach(() => {
-      translateService = null;
+      translateService = undefined as any;
       service = new ExtensionService(
         // extensions
         extensionStub as unknown as AutoTooltipExtension,

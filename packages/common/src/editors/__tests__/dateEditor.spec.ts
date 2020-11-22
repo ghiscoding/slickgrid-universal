@@ -60,8 +60,7 @@ describe('DateEditor', () => {
       grid: gridStub,
       column: mockColumn,
       item: mockItemData,
-      // @ts-ignore
-      event: null,
+      event: null as any,
       cancelChanges: jest.fn(),
       commitChanges: jest.fn(),
       container: divContainer,
@@ -75,8 +74,7 @@ describe('DateEditor', () => {
   describe('with invalid Editor instance', () => {
     it('should throw an error when trying to call init without any arguments', (done) => {
       try {
-        // @ts-expect-error
-        editor = new DateEditor(null);
+        editor = new DateEditor(null as any);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
         done();
@@ -252,8 +250,7 @@ describe('DateEditor', () => {
 
     describe('applyValue method', () => {
       it('should apply the value to the startDate property with ISO format when no "outputType" is defined and when it passes validation', () => {
-        // @ts-expect-error
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
         mockColumn.type = FieldType.date;
         mockItemData = { id: 1, startDate: '2001-04-05T11:33:42.000Z', isActive: true };
 
@@ -261,12 +258,12 @@ describe('DateEditor', () => {
         editor = new DateEditor(editorArguments);
         editor.applyValue(mockItemData, newDate);
 
+        // @ts-ignore:2349
         expect(mockItemData).toEqual({ id: 1, startDate: moment(newDate).format('YYYY-MM-DD'), isActive: true });
       });
 
       it('should apply the value to the startDate property with "outputType" format with a field having dot notation (complex object) that passes validation', () => {
-        // @ts-expect-error
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
         mockColumn.type = FieldType.date;
         mockColumn.outputType = FieldType.dateTimeIsoAmPm;
         mockColumn.field = 'employee.startDate';
@@ -276,11 +273,11 @@ describe('DateEditor', () => {
         editor = new DateEditor(editorArguments);
         editor.applyValue(mockItemData, newDate);
 
+        // @ts-ignore:2349
         expect(mockItemData).toEqual({ id: 1, employee: { startDate: moment(newDate).format('YYYY-MM-DD hh:mm:ss a') }, isActive: true });
       });
 
       it('should apply the value to the startDate property with output format defined by "saveOutputType" when it passes validation', () => {
-        // @ts-expect-error
         (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
         mockColumn.type = FieldType.date;
         mockColumn.saveOutputType = FieldType.dateTimeIsoAmPm;
@@ -290,6 +287,7 @@ describe('DateEditor', () => {
         editor = new DateEditor(editorArguments);
         editor.applyValue(mockItemData, newDate);
 
+        // @ts-ignore:2349
         expect(mockItemData).toEqual({ id: 1, startDate: moment(newDate).format('YYYY-MM-DD hh:mm:ss a'), isActive: true });
       });
 

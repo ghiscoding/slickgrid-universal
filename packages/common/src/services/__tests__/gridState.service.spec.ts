@@ -708,8 +708,7 @@ describe('GridStateService', () => {
     });
 
     it('should return null when no BackendService is used and FilterService is missing the "getCurrentLocalFilters" method', () => {
-      // @ts-ignore
-      gridStub.getOptions = undefined;
+      gridStub.getOptions = undefined as any;
       const output = service.getCurrentFilters();
       expect(output).toBeNull();
     });

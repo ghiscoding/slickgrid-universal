@@ -55,8 +55,7 @@ describe('FloatEditor', () => {
       grid: gridStub,
       column: mockColumn,
       item: mockItemData,
-      // @ts-ignore
-      event: null,
+      event: null as any,
       cancelChanges: jest.fn(),
       commitChanges: jest.fn(),
       container: divContainer,
@@ -70,8 +69,7 @@ describe('FloatEditor', () => {
   describe('with invalid Editor instance', () => {
     it('should throw an error when trying to call init without any arguments', (done) => {
       try {
-        // @ts-expect-error
-        editor = new FloatEditor(null);
+        editor = new FloatEditor(null as any);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
         done();
@@ -242,8 +240,7 @@ describe('FloatEditor', () => {
 
     describe('applyValue method', () => {
       it('should apply the value to the price property when it passes validation', () => {
-        // @ts-expect-error
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
         mockItemData = { id: 1, price: 456, isActive: true };
 
         editor = new FloatEditor(editorArguments);
@@ -253,8 +250,7 @@ describe('FloatEditor', () => {
       });
 
       it('should apply the value to the price property with a field having dot notation (complex object) that passes validation', () => {
-        // @ts-expect-error
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
         mockColumn.field = 'part.price';
         mockItemData = { id: 1, part: { price: 456 }, isActive: true };
 

@@ -36,10 +36,9 @@ const mockAddon = jest.fn().mockImplementation(() => ({
 }));
 
 jest.mock('slickgrid/plugins/slick.cellmenu', () => mockAddon);
-// @ts-ignore
 Slick.Plugins = {
   CellMenu: mockAddon
-};
+} as any;
 
 describe('CellMenuExtension', () => {
   const columnsMock: Column[] = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
@@ -397,8 +396,7 @@ describe('CellMenuExtension', () => {
 
     describe('without Translate Service', () => {
       beforeEach(() => {
-        // @ts-ignore
-        translateService = null;
+        translateService = undefined as any;
         extension = new CellMenuExtension({} as ExtensionUtility, { gridOptions: { enableTranslate: true } } as SharedService, translateService);
       });
 

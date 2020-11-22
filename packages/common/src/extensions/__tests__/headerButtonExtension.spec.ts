@@ -1,7 +1,7 @@
 import { HeaderButtonExtension } from '../headerButtonExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
-import { GridOption, HeaderButtonOnCommandArgs, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { GridOption, HeaderButton, HeaderButtonOnCommandArgs, SlickGrid, SlickHeaderButtons, SlickNamespace } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 declare const Slick: SlickNamespace;
@@ -18,10 +18,9 @@ const mockAddon = jest.fn().mockImplementation(() => ({
 }));
 
 jest.mock('slickgrid/plugins/slick.headerbuttons', () => mockAddon);
-// @ts-ignore
 Slick.Plugins = {
   HeaderButtons: mockAddon
-};
+} as any;
 
 describe('headerButtonExtension', () => {
   let extension: HeaderButtonExtension;
@@ -82,9 +81,9 @@ describe('headerButtonExtension', () => {
 
     it('should call internal event handler subscribe and expect the "onCommand" option to be called when addon notify is called', () => {
       const handlerSpy = jest.spyOn(extension.eventHandler, 'subscribe');
-      const onCopySpy = jest.spyOn(SharedService.prototype.gridOptions.headerButton, 'onCommand');
-      const instance = extension.register();
-      instance.onCommand.notify(mockOnCommandArgs, new Slick.EventData(), gridStub);
+      const onCopySpy = jest.spyOn(SharedService.prototype.gridOptions.headerButton as HeaderButton, 'onCommand');
+      const instance = extension.register() as SlickHeaderButtons;
+      instance.onCommand!.notify(mockOnCommandArgs, new Slick.EventData(), gridStub);
 
       expect(handlerSpy).toHaveBeenCalledWith(
         { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
@@ -94,7 +93,7 @@ describe('headerButtonExtension', () => {
     });
 
     it('should dispose of the addon', () => {
-      const instance = extension.register();
+      const instance = extension.register() as SlickHeaderButtons;
       const destroySpy = jest.spyOn(instance, 'destroy');
 
       extension.dispose();

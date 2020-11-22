@@ -83,8 +83,7 @@ describe('Slick-Pagination Component', () => {
     it('should throw an error when "enableTranslate" is set and I18N Service is not provided', (done) => {
       try {
         mockGridOptions.enableTranslate = true;
-        // @ts-ignore
-        translateService = null;
+        translateService = undefined as any;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOptions);
 
         component = new SlickPaginationComponent(paginationServiceStub, eventPubSubService, sharedService, translateService);

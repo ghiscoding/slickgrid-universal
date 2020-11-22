@@ -47,7 +47,7 @@ describe('Slick-Empty-Warning Component', () => {
     });
 
     it('should expect the Slick-Empty-Warning to return False when calling the "showEmptyDataMessage" method without a grid object defined', () => {
-      component = new SlickEmptyWarningComponent(null);
+      component = new SlickEmptyWarningComponent(null as any);
       const output = component.showEmptyDataMessage(false);
 
       expect(component).toBeTruthy();

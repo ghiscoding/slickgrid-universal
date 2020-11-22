@@ -264,7 +264,7 @@ describe('Shared Service', () => {
   });
 
   it('should call "externalRegisteredServices" GETTER and return all columns', () => {
-    // @ts-ignore
+    // @ts-ignore:2511
     const mockRegisteredServices = [new ExcelExportService()];
     const spy = jest.spyOn(service, 'externalRegisteredServices', 'get').mockReturnValue(mockRegisteredServices);
 
@@ -275,7 +275,7 @@ describe('Shared Service', () => {
   });
 
   it('should call "externalRegisteredServices" SETTER and expect GETTER to return the same', () => {
-    // @ts-ignore
+    // @ts-ignore:2511
     const mockRegisteredServices = [new ExcelExportService()];
     const getSpy = jest.spyOn(service, 'externalRegisteredServices', 'get');
     const setSpy = jest.spyOn(service, 'externalRegisteredServices', 'set');

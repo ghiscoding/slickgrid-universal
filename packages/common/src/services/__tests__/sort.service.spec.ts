@@ -22,7 +22,7 @@ import { SharedService } from '../shared.service';
 declare const Slick: SlickNamespace;
 
 const mockRefreshBackendDataset = jest.fn();
-// @ts-ignore
+// @ts-ignore:2540
 utilities.refreshBackendDataset = mockRefreshBackendDataset;
 
 const gridOptionMock = {
@@ -192,8 +192,7 @@ describe('SortService', () => {
       expect(previousSortSpy).toHaveBeenCalled();
       expect(setSortSpy).toHaveBeenCalled();
       expect(gridSortSpy).toHaveBeenCalledWith(mockSortedCols[1]);
-      // @ts-ignore
-      gridStub.getData = () => dataViewStub as SlickDataView; // put back regular dataview mock
+      gridStub.getData = () => dataViewStub as any; // put back regular dataview mock
     });
 
     it('should expect Sort Service to call "onLocalSortChanged" with empty array then also "sortLocalGridByDefaultSortFieldId" when there is no more columns left to sort', () => {
@@ -506,8 +505,7 @@ describe('SortService', () => {
 
     it('should return all current column sorts with their "sortCol" property', () => {
       const mockSortCols = [{ multiColumnSort: false, columnId: 'firstName', sortAsc: true, grid: gridStub }];
-      // @ts-ignore
-      jest.spyOn(gridStub, 'getSortColumns').mockReturnValue(mockSortCols);
+      jest.spyOn(gridStub, 'getSortColumns').mockReturnValue(mockSortCols as any);
       jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(0);
 
       service.bindLocalOnSort(gridStub);
@@ -518,8 +516,7 @@ describe('SortService', () => {
 
     it('should return the second sorted column without the first column since it was an exclusion', () => {
       const mockSortCols = [{ columnId: 'firstName', sortAsc: true }, { columnId: 'lastName', sortAsc: false }];
-      // @ts-ignore
-      jest.spyOn(gridStub, 'getSortColumns').mockReturnValue(mockSortCols);
+      jest.spyOn(gridStub, 'getSortColumns').mockReturnValue(mockSortCols as any);
       jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
 
       service.bindLocalOnSort(gridStub);

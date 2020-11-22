@@ -1,9 +1,9 @@
 import { SlickEvent, SlickEventHandler } from '@slickgrid-universal/common';
 
-interface PubSubEvent {
-  name: string;
-  handler: (args: any) => void;
-}
+// interface PubSubEvent {
+//   name: string;
+//   handler: (args: any) => void;
+// }
 
 export class MockSlickEvent implements SlickEvent {
   private _handlers = [];
@@ -33,17 +33,17 @@ export class MockSlickEvent implements SlickEvent {
 }
 
 export class MockSlickEventHandler implements SlickEventHandler {
-  private _eventHandlers = [];
+  private _handlers = [];
 
   notify(eventName: string, data?: any) {
-    const pubSub = this._eventHandlers.find(subscription => subscription.name === eventName);
+    const pubSub = this._handlers.find(subscription => subscription.name === eventName);
     if (typeof pubSub?.handler === 'function') {
       pubSub.handler(data);
     }
   }
 
   subscribe(event: MockSlickEvent, handler: (data: any, e?: any) => void): any {
-    this._eventHandlers.push({
+    this._handlers.push({
       event,
       handler
     });
@@ -55,11 +55,11 @@ export class MockSlickEventHandler implements SlickEventHandler {
   }
 
   unsubscribe(event: MockSlickEvent, handler: (data: any, e: any) => void) {
-    let i = this._eventHandlers.length;
+    let i = this._handlers.length;
     while (i--) {
-      if (this._eventHandlers[i].event === event &&
-        this._eventHandlers[i].handler === handler) {
-        this._eventHandlers.splice(i, 1);
+      if (this._handlers[i].event === event &&
+        this._handlers[i].handler === handler) {
+        this._handlers.splice(i, 1);
         if (event.unsubscribe) {
           event.unsubscribe(handler);
         }
@@ -71,13 +71,13 @@ export class MockSlickEventHandler implements SlickEventHandler {
   }
 
   unsubscribeAll() {
-    let i = this._eventHandlers.length;
+    let i = this._handlers.length;
     while (i--) {
-      if (this._eventHandlers[i].event.unsubscribe) {
-        this._eventHandlers[i].event.unsubscribe(this._eventHandlers[i].handler);
+      if (this._handlers[i].event.unsubscribe) {
+        this._handlers[i].event.unsubscribe(this._handlers[i].handler);
       }
     }
-    this._eventHandlers = [];
+    this._handlers = [];
 
     return this;  // allow chaining
   }
