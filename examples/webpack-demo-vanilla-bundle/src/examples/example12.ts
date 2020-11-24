@@ -113,6 +113,7 @@ export class Example12 {
     this._bindingEventService.bind(this.gridContainerElm, 'ongridstatechanged', this.handleOnSelectedRowsChanged.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'ondblclick', () => this.openCompositeModal('edit', 50));
     this._bindingEventService.bind(this.gridContainerElm, 'oncompositeeditorchange', this.handleOnCompositeEditorChange.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'onpaginationchanged', this.handlePaginationChanged.bind(this));
   }
 
   dispose() {
@@ -375,12 +376,11 @@ export class Example12 {
 
           if (prevSerializedValue !== serializedValue) {
             const finalColumn = Array.isArray(editCommand.prevSerializedValue) ? editorColumns[index] : column;
-            this.editedItems[editCommand.row] = item; // keep items by their row indexes, if the row got edited twice then we'll keep only the last change
+            this.editedItems[this.gridOptions.datasetIdPropertyName || 'id'] = item; // keep items by their row indexes, if the row got edited twice then we'll keep only the last change
             this.sgb.slickGrid.invalidate();
             editCommand.execute();
 
-            const hash = { [editCommand.row]: { [finalColumn.field]: 'unsaved-editable-field' } };
-            this.sgb.slickGrid.setCellCssStyles(`unsaved_highlight_${[finalColumn.field]}${editCommand.row}`, hash);
+            this.renderUnsavedCellStyling(item, finalColumn, editCommand);
             modifiedColumns.push(finalColumn);
           }
         });
@@ -513,6 +513,11 @@ export class Example12 {
     */
   }
 
+  handlePaginationChanged() {
+    this.removeAllUnsavedStylingFromCell();
+    this.renderUnsavedStylingOnAllVisibleCells();
+  }
+
   handleOnSelectedRowsChanged(event) {
     const gridState = event && event.detail && event.detail.gridState;
     if (Array.isArray(gridState?.rowSelection.dataContextIds)) {
@@ -573,6 +578,29 @@ export class Example12 {
         for (const lastEditColumn of lastEdit.columns) {
           this.removeUnsavedStylingFromCell(lastEdit.item, lastEditColumn, lastEditCommand.row);
         }
+      }
+    }
+  }
+
+  renderUnsavedStylingOnAllVisibleCells() {
+    for (const lastEdit of this.editQueue) {
+      if (lastEdit) {
+        const { item, columns, editCommand } = lastEdit;
+        if (Array.isArray(columns)) {
+          columns.forEach((col) => {
+            this.renderUnsavedCellStyling(item, col, editCommand);
+          });
+        }
+      }
+    }
+  }
+
+  renderUnsavedCellStyling(item, column, editCommand) {
+    if (editCommand && item && column) {
+      const row = this.sgb.dataView.getRowByItem(item);
+      if (row >= 0) {
+        const hash = { [row]: { [column.field]: 'unsaved-editable-field' } };
+        this.sgb.slickGrid.setCellCssStyles(`unsaved_highlight_${[column.field]}${row}`, hash);
       }
     }
   }
