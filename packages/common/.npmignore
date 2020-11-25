@@ -1,6 +1,4 @@
 src
-src/*
-src/index.ts
-/src
 tsconfig.json
 tsconfig.build.json
+CHANGELOG.md
