@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.1](https://github.com/ghiscoding/slickgrid-universal/compare/@slickgrid-universal/common@0.2.0...@slickgrid-universal/common@0.2.1) (2020-11-25)
+
+
+### Bug Fixes
+
+* **core:** don't expose src folder on npm & update few npm package ([#168](https://github.com/ghiscoding/slickgrid-universal/issues/168)) ([3c05938](https://github.com/ghiscoding/slickgrid-universal/commit/3c059381b35bba88ea98d0206692c912c625f227))
+* **editors:** make sure editor element exist before focusing ([e57235b](https://github.com/ghiscoding/slickgrid-universal/commit/e57235b4339ffa1bee522c245665bb598d963fd1))
+
+
+
+
+
 # [0.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/@slickgrid-universal/common@0.1.0...@slickgrid-universal/common@0.2.0) (2020-11-20)
 
 
