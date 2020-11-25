@@ -18,7 +18,7 @@ which is why they are better handled with a monorepo structure.
 
 ### Demo page
 The GitHub [demo page](https://ghiscoding.github.io/slickgrid-universal) uses 2 different themes (Material Design / Salesforce) but you could also use Bootstrap theme which is demoed in other frameworks.
-- [Webpack-Demo-Vanilla-Bundle](https://ghiscoding.github.io/slickgrid-universal) with Material Design theme & Salesforce theme
+- [Webpack-Demo-Vanilla-Bundle](https://ghiscoding.github.io/slickgrid-universal) with Material Design theme & Salesforce themes
 - [Angular-Slickgrid](https://ghiscoding.github.io/Angular-Slickgrid/)
 - [Aurelia-Slickgrid](https://ghiscoding.github.io/aurelia-slickgrid/)
 
@@ -29,17 +29,17 @@ You might be wondering why was this monorepo created? Here are a few of the reas
 (these libs have over 80% of code in common and that is not very DRY).
 2. decouple some Services that should not be required at all time (OData, GraphQL, Export to File, Export to Excel, ...)
 3. framework agnostic, it could be implemented in many more frameworks in the future (interested in adding other frameworks? please contact me...)
-   - you can use it in plain TypeScript or JavaScript (ES6), the later is what we use in Salesforce
+   - you can use it in plain TypeScript or even JavaScript (ES6), the later is what we use in Salesforce
 
 ### Frameworks using this monorepo
 This is a Work in Progress, the goal is to eventually to rewrite [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid)
 and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) to use this monorepo which will simplify debugging/fixing common code.
 
-Note however that this project also has a Vanilla Implementation (not associated to any framework)
-and it is also used to test with the UI portion. The Vanilla bundle is also used in our SalesForce (with Lightning Web Component) hence the creation of this monorepo.
+Note however that this project also has a Vanilla Implementation (not associated to any framework) with [WebPack](https://webpack.js.org/)
+and it is also used to test with [Cypress](https://www.cypress.io/) the UI portion. The Vanilla bundle is also used in our SalesForce (with Lightning Web Component) hence the creation of this monorepo.
 
 ### Fully Tested with [Jest](https://jestjs.io/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
-Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +10,000 lines of code (+2,800 unit tests) that are now fully tested with [Jest](https://jestjs.io/). There are also +200 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities.
+Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +12,000 lines of code (+2,800 unit tests) that are now fully tested with [Jest](https://jestjs.io/). There are also +200 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities.
 
 ### Available Public Packages
 
@@ -62,8 +62,7 @@ Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +10,00
 ## Installation
 To get going with this monorepo, you will need to clone the repo and then follow the steps below
 
-1. Install npm packages with Yarn
-This lib uses Yarn Workspaces and so you need to use Yarn to install all packages
+1. Install npm packages with Yarn since this lib uses Yarn Workspaces and so you need to use Yarn to install all packages
 ```bash
 yarn install
 ```
@@ -77,7 +76,7 @@ yarn run bootstrap
 
 3. Build
 
-To get started you must run (also once) an initial TS build so that all necessary `dist` are created for all the packages to work together.
+To get started you must run (also once) an initial TS build so that all necessary `dist` are created for all the Lerna packages to work together.
 ```bash
 yarn run build
 
@@ -96,7 +95,7 @@ yarn run dev:watch
 ```
 
 ### Tests
-To run all packages Jest unit tests, you can run this command
+To run all unit tests (with Jest), you can run this command
 ```bash
 yarn run test
 
