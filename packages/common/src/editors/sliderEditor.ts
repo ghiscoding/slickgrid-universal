@@ -152,7 +152,9 @@ export class SliderEditor implements Editor {
   }
 
   focus() {
-    this._$input.focus();
+    if (this._$input) {
+      this._$input.focus();
+    }
   }
 
   show() {

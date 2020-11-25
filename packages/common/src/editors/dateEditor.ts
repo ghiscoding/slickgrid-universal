@@ -216,7 +216,9 @@ export class DateEditor implements Editor {
   }
 
   focus() {
-    this._$input.focus();
+    if (this._$input) {
+      this._$input.focus();
+    }
     if (this._$inputWithData && typeof this._$inputWithData.focus === 'function') {
       this._$inputWithData.focus().select();
     }

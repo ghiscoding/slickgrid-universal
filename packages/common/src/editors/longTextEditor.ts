@@ -198,7 +198,9 @@ export class LongTextEditor implements Editor {
   }
 
   focus() {
-    this._$textarea.focus().select();
+    if (this._$textarea) {
+      this._$textarea.focus().select();
+    }
   }
 
   getValue(): string {

@@ -198,7 +198,9 @@ export class AutoCompleteEditor implements Editor {
   }
 
   focus() {
-    this._$editorElm?.focus().select();
+    if (this._$editorElm) {
+      this._$editorElm.focus().select();
+    }
   }
 
   show() {
