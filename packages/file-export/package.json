@@ -9,6 +9,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "/dist"
+  ],
   "scripts": {
     "build": "cross-env tsc --build",
     "build:watch": "cross-env tsc --incremental --watch",
