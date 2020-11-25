@@ -12,9 +12,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "cross-env tsc --build",
     "postbuild": "npm-run-all bundle:commonjs",
