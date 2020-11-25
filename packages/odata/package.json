@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/odata",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Grid OData Service to sync a grid with an OData backend server",
   "browser": "src/index.ts",
   "main": "dist/commonjs/index.js",
@@ -34,6 +34,6 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.2.2"
+    "@slickgrid-universal/common": "^0.2.3"
   }
 }
