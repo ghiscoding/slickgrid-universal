@@ -2,6 +2,7 @@
   "name": "@slickgrid-universal/common",
   "version": "0.2.10",
   "description": "SlickGrid-Universal Common Code",
+  "browser": "src/index.ts",
   "main": "dist/commonjs/index.js",
   "module": "dist/es2015/index.js",
   "typings": "dist/commonjs/index.d.ts",
@@ -12,7 +13,8 @@
     "access": "public"
   },
   "files": [
-    "/dist"
+    "/dist",
+    "!src/index.ts"
   ],
   "scripts": {
     "build": "cross-env tsc --build",
@@ -89,6 +91,5 @@
   "engines": {
     "node": ">=14.0.0",
     "npm": ">=6.14.0"
-  },
-  "gitHead": "7ec1d2c119c889a5c417adc412fd514f90bd981c"
+  }
 }

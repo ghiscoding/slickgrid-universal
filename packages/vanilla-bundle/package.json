@@ -61,6 +61,5 @@
     "rimraf": "^3.0.2",
     "ts-loader": "^8.0.11",
     "webpack": "^4.44.2"
-  },
-  "gitHead": "7ec1d2c119c889a5c417adc412fd514f90bd981c"
+  }
 }
