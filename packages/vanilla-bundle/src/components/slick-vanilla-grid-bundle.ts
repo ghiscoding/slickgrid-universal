@@ -422,8 +422,9 @@ export class SlickVanillaGridBundle {
   }
 
   initialization(gridContainerElm: HTMLElement, eventHandler: SlickEventHandler) {
-    if ((this.gridOptions?.frozenRow !== undefined && this.gridOptions.frozenRow >= 0) || this.gridOptions?.frozenColumn !== undefined && this.gridOptions.frozenColumn >= 0) {
-      this.loadJqueryMousewheelDynamically();
+    // when detecting a frozen grid, we'll automatically enable the mousewheel scroll handler so that we can scroll from both left/right frozen containers
+    if (this.gridOptions && ((this.gridOptions.frozenRow !== undefined && this.gridOptions.frozenRow >= 0) || this.gridOptions.frozenColumn !== undefined && this.gridOptions.frozenColumn >= 0) && this.gridOptions.enableMouseWheelScrollHandler === undefined) {
+      this.gridOptions.enableMouseWheelScrollHandler = true;
     }
 
     // create the slickgrid container and add it to the user's grid container
@@ -928,12 +929,6 @@ export class SlickVanillaGridBundle {
         this.sortService.loadGridSorters(gridOptions.presets.sorters);
       }
     }
-  }
-
-  loadJqueryMousewheelDynamically() {
-    // load jQuery mousewheel only when using a frozen grid (this will make the mousewheel work on any side of the frozen container).
-    // DO NOT USE with Row Detail
-    require('slickgrid/lib/jquery.mousewheel');
   }
 
   /**

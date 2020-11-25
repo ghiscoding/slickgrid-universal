@@ -334,12 +334,12 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     expect(component.isGridInitialized).toBeTruthy();
   });
 
-  it('should load jQuery mousewheel when using a frozen grid', () => {
-    const loadSpy = jest.spyOn(component, 'loadJqueryMousewheelDynamically');
+  it('should load enable jquery mousewheel scrolling when using a frozen grid', () => {
+    component.gridOptions.enableMouseWheelScrollHandler = undefined;
     component.gridOptions.frozenRow = 3;
     component.initialization(divContainer, slickEventHandler);
 
-    expect(loadSpy).toHaveBeenCalled();
+    expect(component.gridOptions.enableMouseWheelScrollHandler).toBeTrue();
   });
 
   it('should create a grid and expect multiple Event Aggregator being called', () => {
