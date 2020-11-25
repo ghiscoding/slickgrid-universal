@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/common",
-  "version": "0.2.3",
+  "version": "0.2.2",
   "description": "SlickGrid-Universal Common Code",
   "browser": "src/index.ts",
   "main": "dist/commonjs/index.js",
@@ -12,6 +12,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "cross-env tsc --build",
     "postbuild": "npm-run-all bundle:commonjs",
