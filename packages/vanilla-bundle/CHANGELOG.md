@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.6](https://github.com/ghiscoding/slickgrid-universal/compare/@slickgrid-universal/vanilla-bundle@0.2.5...@slickgrid-universal/vanilla-bundle@0.2.6) (2020-11-25)
+
+**Note:** Version bump only for package @slickgrid-universal/vanilla-bundle
+
+
+
+
+
 ## [0.2.5](https://github.com/ghiscoding/slickgrid-universal/compare/@slickgrid-universal/vanilla-bundle@0.2.3...@slickgrid-universal/vanilla-bundle@0.2.5) (2020-11-25)
 
 **Note:** Version bump only for package @slickgrid-universal/vanilla-bundle

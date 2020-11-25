@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/file-export",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Export to File (CSV/TXT) Service.",
   "browser": "src/index.ts",
   "main": "dist/commonjs/index.js",
@@ -37,7 +37,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.2.4",
+    "@slickgrid-universal/common": "^0.2.5",
     "text-encoding-utf-8": "^1.0.2"
   },
   "devDependencies": {
