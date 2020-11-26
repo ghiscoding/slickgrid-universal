@@ -24,7 +24,7 @@ module.exports = ({ production } = {}) => ({
     path: production ? `${outDir}/bundle` : `${outDir}/bundle-dev`, // includes sourcemap
     publicPath: baseUrl,
     filename: 'slickgrid-vanilla-bundle.js',
-    sourceMapFilename: 'slickgrid-vanilla-bundle.map',
+    sourceMapFilename: 'slickgrid-vanilla-bundle.js.map',
     libraryTarget: 'umd',
     library: 'Slickgrid-Universal',
     umdNamedDefine: true

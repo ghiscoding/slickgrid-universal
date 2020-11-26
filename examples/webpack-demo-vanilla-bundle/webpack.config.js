@@ -32,7 +32,7 @@ module.exports = ({ production } = {}, { hmr, port, host } = {}) => ({
     path: production ? outDirProd : outDirLocal,
     publicPath: baseUrl,
     filename: production ? '[name].[chunkhash].bundle.js' : '[name].[hash].bundle.js',
-    sourceMapFilename: production ? '[name].[chunkhash].bundle.map' : '[name].[hash].bundle.map',
+    sourceMapFilename: production ? '[name].[chunkhash].bundle.js.map' : '[name].[hash].bundle.js.map',
     chunkFilename: production ? '[name].[chunkhash].chunk.js' : '[name].[hash].chunk.js'
   },
   resolve: {
