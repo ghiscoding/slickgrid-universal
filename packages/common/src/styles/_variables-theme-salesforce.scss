@@ -91,8 +91,9 @@ $icon-group-collapsed:                          url('data:image/svg+xml,<svg xml
 $icon-group-expanded:                           url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($icon-group-color)}" viewBox="0 0 24 24"><path d="M22 8.2l-9.5 9.6c-.3.2-.7.2-1 0L2 8.2c-.2-.3-.2-.7 0-1l1-1c.3-.3.8-.3 1.1 0l7.4 7.5c.3.3.7.3 1 0l7.4-7.5c.3-.2.8-.2 1.1 0l1 1c.2.3.2.7 0 1z"></path></svg>') !default;
 $icon-group-font-weight:                        normal !default;
 $icon-group-margin-right:                       4px !default;
+$draggable-group-drop-border-top:               0px !default;
 $draggable-group-drop-width:                    100% !default;
-$draggable-group-drop-radius:                   0 !default;
+$draggable-group-drop-radius:                   0px !default;
 $draggable-group-delete-vertical-align:         middle !default;
 $draggable-group-toggle-collapsed-icon:         $icon-group-collapsed !default;
 $draggable-group-toggle-expanded-icon:          $icon-group-expanded !default;
