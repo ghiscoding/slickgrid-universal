@@ -65,6 +65,7 @@ module.exports = ({ production } = {}, { hmr, port, host } = {}) => ({
     port: port || platform.port,
     host: host || platform.host,
     open: platform.open,
+    disableHostCheck: true,
   },
   devtool: production ? 'nosources-source-map' : 'cheap-module-eval-source-map',
   plugins: [
