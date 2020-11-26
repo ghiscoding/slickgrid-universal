@@ -2,6 +2,7 @@
   "name": "@slickgrid-universal/excel-export",
   "version": "0.2.12",
   "description": "Excel Export (xls/xlsx) Service.",
+  "browser": "src/index.ts",
   "main": "dist/commonjs/index.js",
   "module": "dist/es2015/index.js",
   "typings": "dist/commonjs/index.d.ts",

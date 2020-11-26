@@ -2,6 +2,7 @@
   "name": "@slickgrid-universal/file-export",
   "version": "0.2.12",
   "description": "Export to File (CSV/TXT) Service.",
+  "browser": "src/index.ts",
   "main": "dist/commonjs/index.js",
   "module": "dist/es2015/index.js",
   "typings": "dist/commonjs/index.d.ts",
