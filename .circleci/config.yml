@@ -5,7 +5,7 @@ jobs:
   build:
     working_directory: ~/slickgrid-universal
     docker:
-      - image: circleci/node:14-browsers
+      - image: circleci/node:10-browsers
     steps:
       - checkout
       - restore_cache:
