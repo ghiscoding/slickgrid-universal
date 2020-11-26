@@ -72,6 +72,9 @@ $icon-group-collapsed:                          url('data:image/svg+xml,<svg xml
 $icon-group-expanded:                           url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($icon-group-color)}" viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"></path></svg>') !default;
 $icon-group-font-weight:                        normal !default;
 $icon-group-margin-right:                       0 !default;
+$draggable-group-drop-border-top:               0px !default;
+$draggable-group-drop-border-left:              0px !default;
+$draggable-group-drop-border-right:             0px !default;
 $draggable-group-drop-width:                    100% !default;
 $draggable-group-drop-radius:                   0 !default;
 $draggable-group-delete-vertical-align:         middle !default;

@@ -670,6 +670,10 @@ $date-range-filter-border-radius:                     4px !default;
 
 /* Draggable Grouping Plugin */
 $draggable-group-drop-border:                         1px solid #e0e0e0 !default;
+$draggable-group-drop-border-top:                     $draggable-group-drop-border !default;
+$draggable-group-drop-border-bottom:                  $draggable-group-drop-border !default;
+$draggable-group-drop-border-right:                   $draggable-group-drop-border !default;
+$draggable-group-drop-border-left:                    $draggable-group-drop-border !default;
 $draggable-group-drop-bgcolor:                        #ffffff !default;
 $draggable-group-drop-height:                         35px !default;
 $draggable-group-drop-padding:                        5px 10px !default;

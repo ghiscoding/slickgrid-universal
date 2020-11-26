@@ -800,7 +800,10 @@ input.flatpickr.form-control {
   .ui-droppable, .ui-droppable-hover {
     padding: $draggable-group-drop-padding;
     height: $draggable-group-drop-height;
-    border: $draggable-group-drop-border !important;
+    border-top: $draggable-group-drop-border-top !important;
+    border-left: $draggable-group-drop-border-left !important;
+    border-right: $draggable-group-drop-border-right !important;
+    border-bottom: $draggable-group-drop-border-bottom !important;
     width: $draggable-group-drop-width !important;
     border-radius: $draggable-group-drop-radius;
     background-color: $draggable-group-drop-bgcolor;
