@@ -9,7 +9,7 @@ import { findOrDefault } from '../services/index';
  * { params: { collection: [{ value: 1, label: 'foo'}, {value: 2, label: 'bar' }] }}
  * const dataset = [1, 2];
  */
-export const collectionFormatter: Formatter = (row, cell, value, columnDef, dataContext) => {
+export const collectionFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
   if (!value || !columnDef || !columnDef.params || !columnDef.params.collection
     || !columnDef.params.collection.length) {
     return value;
@@ -24,7 +24,8 @@ export const collectionFormatter: Formatter = (row, cell, value, columnDef, data
       cell,
       value.map((v: any) => findOrDefault(collection, (c: any) => c[valueName] === v)[labelName]),
       columnDef,
-      dataContext);
+      dataContext,
+      grid);
   }
 
   return findOrDefault(collection, (c: any) => c[valueName] === value)[labelName] || '';

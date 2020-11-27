@@ -10,7 +10,7 @@ import { findOrDefault } from '../services/index';
  * { editor: { collection: [{ value: 1, label: 'foo'}, {value: 2, label: 'bar' }] }}
  * const dataset = [1, 2];
  */
-export const collectionEditorFormatter: Formatter = (row, cell, value, columnDef, dataContext) => {
+export const collectionEditorFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
   if (!value || !columnDef || !columnDef.internalColumnEditor || !columnDef.internalColumnEditor.collection
     || !columnDef.internalColumnEditor.collection.length) {
     return value;
@@ -26,13 +26,15 @@ export const collectionEditorFormatter: Formatter = (row, cell, value, columnDef
         cell,
         value.map((v: any) => findOrDefault(collection, (c: any) => c === v)),
         columnDef,
-        dataContext);
+        dataContext,
+        grid);
     } else {
       return arrayToCsvFormatter(row,
         cell,
         value.map((v: any) => findOrDefault(collection, (c: any) => c[valueName] === v)[labelName]),
         columnDef,
-        dataContext);
+        dataContext,
+        grid);
     }
   }
 
