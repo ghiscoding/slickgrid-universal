@@ -1,6 +1,7 @@
 import { Formatter } from './../interfaces/index';
 
-export const progressBarFormatter: Formatter = (_row: number, _cell: number, value: any): string => {
+/** Takes a cell value number (between 0-100) and displays Bootstrap "progress-bar" a red (<30), silver (>30 & <70) or green (>=70) bar */
+export const progressBarFormatter: Formatter = (_row, _cell, value) => {
   const isNumber = (value === null || value === undefined || value === '') ? false : !isNaN(+value);
   if (!isNumber) {
     return '';

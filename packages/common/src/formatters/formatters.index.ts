@@ -39,7 +39,7 @@ import { yesNoFormatter } from './yesNoFormatter';
 
 /** Provides a list of different Formatters that will change the cell value displayed in the UI */
 export const Formatters = {
-  /** Align cell value to the center (alias to Formatters.center)  */
+  /** Align cell value to the center (alias to Formatters.center) */
   alignCenter: centerFormatter,
 
   /** Align cell value to the right */

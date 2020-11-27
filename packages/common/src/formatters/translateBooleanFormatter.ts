@@ -1,7 +1,7 @@
-import { Column, Formatter, SlickGrid } from './../interfaces/index';
+import { Formatter } from './../interfaces/index';
 
-/** Takes a boolean value, cast it to upperCase string and finally translates (i18n) it */
-export const translateBooleanFormatter: Formatter = (_row: number, _cell: number, value: any, columnDef: Column, _dataContext: any, grid: SlickGrid) => {
+/** Takes a boolean value, cast it to upperCase string and finally translates it (i18n). */
+export const translateBooleanFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
   const gridOptions = (grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {};
   const i18n = gridOptions.i18n || (columnDef && columnDef.params && columnDef.params.i18n);
 

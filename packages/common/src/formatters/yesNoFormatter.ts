@@ -1,4 +1,5 @@
 import { Formatter } from './../interfaces/index';
 
-export const yesNoFormatter: Formatter = (_row: number, _cell: number, value: any): string =>
+/** Takes a boolean value and display a string 'Yes' or 'No' */
+export const yesNoFormatter: Formatter = (_row, _cell, value) =>
   value ? 'Yes' : 'No';

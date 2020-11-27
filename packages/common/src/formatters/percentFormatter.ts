@@ -1,8 +1,9 @@
-import { Column, Formatter, SlickGrid } from './../interfaces/index';
+import { Formatter } from './../interfaces/index';
 import { formatNumber } from './../services/utilities';
 import { getValueFromParamsOrFormatterOptions } from './formatterUtilities';
 
-export const percentFormatter: Formatter = (_row: number, _cell: number, value: any, columnDef: Column, _dataContext: any, grid: SlickGrid): string => {
+/** Takes a cell value number (between 0.0-1.0) and displays a red (<50) or green (>=50) bar */
+export const percentFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
   const isNumber = (value === null || value === undefined || value === '') ? false : !isNaN(+value);
   const minDecimal = getValueFromParamsOrFormatterOptions('minDecimal', columnDef, grid);
   const maxDecimal = getValueFromParamsOrFormatterOptions('maxDecimal', columnDef, grid);
