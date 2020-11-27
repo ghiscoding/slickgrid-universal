@@ -171,7 +171,7 @@ describe('GridStateService', () => {
 
         const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
         const gridStateSpy = jest.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
-        const extensionSpy = jest.spyOn(extensionServiceStub, 'getExtensionByName').mockReturnValue(extensionMock);
+        const extensionSpy = jest.spyOn(extensionServiceStub, 'getExtensionByName').mockReturnValue(extensionMock as any);
 
         service.init(gridStub);
         jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
@@ -873,7 +873,7 @@ describe('GridStateService', () => {
       const gridOptionsMock = { enableRowSelection: true } as GridOption;
       const gridOptionSpy = jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       const setSelectionSpy = jest.spyOn(gridStub, 'setSelectedRows');
-      const extensionSpy = jest.spyOn(extensionServiceStub, 'getExtensionByName').mockReturnValue(extensionMock);
+      const extensionSpy = jest.spyOn(extensionServiceStub, 'getExtensionByName').mockReturnValue(extensionMock as any);
 
       service.resetRowSelectionWhenRequired();
 

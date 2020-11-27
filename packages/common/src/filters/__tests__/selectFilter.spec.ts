@@ -70,7 +70,7 @@ describe('SelectFilter', () => {
   });
 
   it('should throw an error when trying to call init without any arguments', () => {
-    expect(() => filter.init(null)).toThrowError('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
+    expect(() => filter.init(null as any)).toThrowError('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
   });
 
   it('should throw an error when there is no collection provided in the filter property', (done) => {
@@ -84,7 +84,7 @@ describe('SelectFilter', () => {
 
   it('should throw an error when collection is not a valid array', (done) => {
     try {
-      mockColumn.filter.collection = { hello: 'world' } as any;
+      mockColumn.filter!.collection = { hello: 'world' } as any;
       filter.init(filterArguments);
     } catch (e) {
       expect(e.message).toContain(`The "collection" passed to the Select Filter is not a valid array.`);
@@ -94,7 +94,7 @@ describe('SelectFilter', () => {
 
   it('should throw an error when collection is not a valid value/label pair array', (done) => {
     try {
-      mockColumn.filter.collection = [{ hello: 'world' }];
+      mockColumn.filter!.collection = [{ hello: 'world' }];
       filter.init(filterArguments);
     } catch (e) {
       expect(e.message).toContain(`[select-filter] A collection with value/label (or value/labelKey when using Locale) is required to populate the Select list`);
@@ -104,9 +104,9 @@ describe('SelectFilter', () => {
 
   it('should throw an error when "enableTranslateLabel" is set without a valid I18N Service', (done) => {
     try {
-      translateService = undefined;
-      mockColumn.filter.enableTranslateLabel = true;
-      mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      translateService = undefined as any;
+      mockColumn.filter!.enableTranslateLabel = true;
+      mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
       filter = new SelectFilter(translateService, collectionService);
       filter.init(filterArguments);
     } catch (e) {
@@ -116,7 +116,7 @@ describe('SelectFilter', () => {
   });
 
   it('should initialize the filter', () => {
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     filter.init(filterArguments);
     const filterCount = divContainer.querySelectorAll('select.ms-filter.search-filter.filter-gender').length;
 
@@ -125,7 +125,7 @@ describe('SelectFilter', () => {
   });
 
   it('should be a multiple-select filter by default when it is not specified in the constructor', () => {
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     filter = new SelectFilter(translateService, collectionService);
     filter.init(filterArguments);
     const filterCount = divContainer.querySelectorAll('select.ms-filter.search-filter.filter-gender').length;
@@ -137,23 +137,23 @@ describe('SelectFilter', () => {
 
   it('should have a placeholder when defined in its column definition', () => {
     const testValue = 'test placeholder';
-    mockColumn.filter.placeholder = testValue;
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter!.placeholder = testValue;
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
     filter.init(filterArguments);
-    const filterElm = divContainer.querySelector<HTMLSpanElement>('.ms-filter.search-filter.filter-gender .placeholder');
+    const filterElm = divContainer.querySelector('.ms-filter.search-filter.filter-gender .placeholder') as HTMLSpanElement;
 
     expect(filterElm.innerHTML).toBe(testValue);
   });
 
   it('should trigger multiple select change event and expect the callback to be called with the search terms we select from dropdown list', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
     filter.init(filterArguments);
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
-    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
 
     // we can use property "checked" or dispatch an event
@@ -169,12 +169,12 @@ describe('SelectFilter', () => {
 
   it('should trigger multiple select change event without choosing an option and expect the callback to be called without search terms and also expect the dropdown list to not have "filled" css class', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
     filter.init(filterArguments);
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
-    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
 
@@ -187,11 +187,11 @@ describe('SelectFilter', () => {
   it('should trigger multiple select change event and expect this to work with a regular array of strings', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
-    mockColumn.filter.collection = ['male', 'female'];
+    mockColumn.filter!.collection = ['male', 'female'];
     filter.init(filterArguments);
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
-    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
 
     // here we use "checked" property instead of dispatching an event
@@ -205,14 +205,14 @@ describe('SelectFilter', () => {
   });
 
   it('should pass a different operator then trigger an input change event and expect the callback to be called with the search terms we select from dropdown list', () => {
-    mockColumn.filter.operator = 'NIN';
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter!.operator = 'NIN';
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
-    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
 
     filterListElm[0].checked = true;
@@ -225,7 +225,7 @@ describe('SelectFilter', () => {
   });
 
   it('should have same value in "getValues" after being set in "setValues"', () => {
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     filter.init(filterArguments);
     filter.setValues('female');
     const values = filter.getValues();
@@ -235,7 +235,7 @@ describe('SelectFilter', () => {
   });
 
   it('should have empty array returned from "getValues" when nothing is set', () => {
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     filter.init(filterArguments);
     const values = filter.getValues();
 
@@ -251,15 +251,15 @@ describe('SelectFilter', () => {
   });
 
   it('should create the multi-select filter with a default search term when passed as a filter argument', () => {
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filterArguments.searchTerms = ['female'];
     filter.init(filterArguments);
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
 
@@ -270,15 +270,15 @@ describe('SelectFilter', () => {
   });
 
   it('should create the multi-select filter with default boolean search term converted as strings when passed as a filter argument', () => {
-    mockColumn.filter.collection = [{ value: true, label: 'True' }, { value: false, label: 'False' }];
+    mockColumn.filter!.collection = [{ value: true, label: 'True' }, { value: false, label: 'False' }];
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filterArguments.searchTerms = [false];
     filter.init(filterArguments);
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
 
@@ -289,15 +289,15 @@ describe('SelectFilter', () => {
   });
 
   it('should create the multi-select filter with default number search term converted as strings when passed as a filter argument', () => {
-    mockColumn.filter.collection = [{ value: 1, label: 'male' }, { value: 2, label: 'female' }];
+    mockColumn.filter!.collection = [{ value: 1, label: 'male' }, { value: 2, label: 'female' }];
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filterArguments.searchTerms = [2];
     filter.init(filterArguments);
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
 
@@ -309,14 +309,14 @@ describe('SelectFilter', () => {
 
   it('should create the multi-select filter with a default search term when passed as a filter argument even with collection an array of strings', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
-    mockColumn.filter.collection = ['male', 'female'];
+    mockColumn.filter!.collection = ['male', 'female'];
 
     filterArguments.searchTerms = ['female'];
     filter.init(filterArguments);
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
 
@@ -336,7 +336,7 @@ describe('SelectFilter', () => {
     };
 
     filter.init(filterArguments);
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
 
@@ -361,7 +361,7 @@ describe('SelectFilter', () => {
     };
 
     filter.init(filterArguments);
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
 
@@ -378,7 +378,7 @@ describe('SelectFilter', () => {
     };
 
     filter.init(filterArguments);
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
 
@@ -397,7 +397,7 @@ describe('SelectFilter', () => {
     };
 
     filter.init(filterArguments);
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
 
@@ -417,7 +417,7 @@ describe('SelectFilter', () => {
     };
 
     filter.init(filterArguments);
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
 
@@ -434,7 +434,7 @@ describe('SelectFilter', () => {
     };
 
     filter.init(filterArguments);
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
 
@@ -456,7 +456,7 @@ describe('SelectFilter', () => {
     };
 
     filter.init(filterArguments);
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
 
@@ -476,7 +476,7 @@ describe('SelectFilter', () => {
     };
 
     filter.init(filterArguments);
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
 
@@ -486,15 +486,15 @@ describe('SelectFilter', () => {
 
   it('should create the multi-select filter with a blank entry at the beginning of the collection when "addBlankEntry" is set in the "collectionOptions" property', () => {
     filterArguments.searchTerms = ['female'];
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-    mockColumn.filter.collectionOptions = { addBlankEntry: true };
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter!.collectionOptions = { addBlankEntry: true };
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
 
@@ -507,15 +507,15 @@ describe('SelectFilter', () => {
 
   it('should create the multi-select filter with a custom entry at the beginning of the collection when "addCustomFirstEntry" is provided in the "collectionOptions" property', () => {
     filterArguments.searchTerms = ['female'];
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-    mockColumn.filter.collectionOptions = { addCustomFirstEntry: { value: null, label: '' } };
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter!.collectionOptions = { addCustomFirstEntry: { value: null, label: '' } };
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
 
@@ -528,15 +528,15 @@ describe('SelectFilter', () => {
 
   it('should create the multi-select filter with a custom entry at the end of the collection when "addCustomFirstEntry" is provided in the "collectionOptions" property', () => {
     filterArguments.searchTerms = ['female'];
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-    mockColumn.filter.collectionOptions = { addCustomLastEntry: { value: null, label: '' } };
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter!.collectionOptions = { addCustomLastEntry: { value: null, label: '' } };
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
 
@@ -549,7 +549,7 @@ describe('SelectFilter', () => {
 
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {
     filterArguments.searchTerms = ['female'];
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
@@ -563,7 +563,7 @@ describe('SelectFilter', () => {
 
   it('should trigger a callback with the clear filter but without querying when when calling the "clear" method with False as argument', () => {
     filterArguments.searchTerms = ['female'];
-    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
@@ -592,11 +592,11 @@ describe('SelectFilter', () => {
     filter.init(filterArguments);
     jest.runAllTimers(); // fast-forward timer
 
-    const filterSelectAllElm = divContainer.querySelector<HTMLSpanElement>('.filter-gender .ms-select-all label span');
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterSelectAllElm = divContainer.querySelector('.filter-gender .ms-select-all label span') as HTMLSpanElement;
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
-    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
-    const filterParentElm = divContainer.querySelector<HTMLButtonElement>(`.ms-parent.ms-filter.search-filter.filter-gender button`);
+    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+    const filterParentElm = divContainer.querySelector(`.ms-parent.ms-filter.search-filter.filter-gender button`) as HTMLButtonElement;
     filterBtnElm.click();
 
     expect(filterListElm.length).toBe(3);
@@ -625,11 +625,11 @@ describe('SelectFilter', () => {
     filter.init(filterArguments);
     jest.runAllTimers(); // fast-forward timer
 
-    const filterSelectAllElm = divContainer.querySelector<HTMLSpanElement>('.filter-gender .ms-select-all label span');
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterSelectAllElm = divContainer.querySelector('.filter-gender .ms-select-all label span') as HTMLSpanElement;
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
-    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
-    const filterParentElm = divContainer.querySelector<HTMLButtonElement>(`.ms-parent.ms-filter.search-filter.filter-gender button`);
+    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+    const filterParentElm = divContainer.querySelector(`.ms-parent.ms-filter.search-filter.filter-gender button`) as HTMLButtonElement;
     filterBtnElm.click();
 
     expect(filterListElm.length).toBe(3);
@@ -644,16 +644,16 @@ describe('SelectFilter', () => {
   it('should create the multi-select filter with a default search term when using "collectionAsync" as a Promise', async () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
     const mockCollection = ['male', 'female'];
-    mockColumn.filter.collection = undefined;
-    mockColumn.filter.collectionAsync = Promise.resolve(mockCollection);
+    mockColumn.filter!.collection = undefined;
+    mockColumn.filter!.collectionAsync = Promise.resolve(mockCollection);
 
     filterArguments.searchTerms = ['female'];
     await filter.init(filterArguments);
 
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
 
@@ -666,16 +666,16 @@ describe('SelectFilter', () => {
   it('should create the multi-select filter with a default search term when using "collectionAsync" as a Promise with content to simulate http-client', async () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
     const mockCollection = ['male', 'female'];
-    mockColumn.filter.collection = undefined;
-    mockColumn.filter.collectionAsync = Promise.resolve({ content: mockCollection });
+    mockColumn.filter!.collection = undefined;
+    mockColumn.filter!.collectionAsync = Promise.resolve({ content: mockCollection });
 
     filterArguments.searchTerms = ['female'];
     await filter.init(filterArguments);
 
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
 
@@ -694,15 +694,15 @@ describe('SelectFilter', () => {
     http.returnKey = 'date';
     http.returnValue = '6/24/1984';
     http.responseHeaders = { accept: 'json' };
-    mockColumn.filter.collectionAsync = http.fetch('/api', { method: 'GET' });
+    mockColumn.filter!.collectionAsync = http.fetch('/api', { method: 'GET' });
 
     filterArguments.searchTerms = ['female'];
     await filter.init(filterArguments);
 
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-    const filterOkElm = divContainer.querySelector<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
 
@@ -722,7 +722,7 @@ describe('SelectFilter', () => {
 
     await filter.init(filterArguments);
 
-    const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
 
@@ -734,7 +734,7 @@ describe('SelectFilter', () => {
 
   it('should throw an error when "collectionAsync" Promise does not return a valid array', async (done) => {
     const promise = Promise.resolve({ hello: 'world' });
-    mockColumn.filter.collectionAsync = promise;
+    mockColumn.filter!.collectionAsync = promise;
 
     try {
       await filter.init(filterArguments);

@@ -1,7 +1,7 @@
 import { GroupItemMetaProviderExtension } from '../groupItemMetaProviderExtension';
 import { SharedService } from '../../services/shared.service';
 import { SlickGrid } from '../../interfaces/slickGrid.interface';
-import { SlickNamespace } from '../../interfaces/index';
+import { SlickGroupItemMetadataProvider, SlickNamespace } from '../../interfaces/index';
 
 declare const Slick: SlickNamespace;
 
@@ -51,7 +51,7 @@ describe('groupItemMetaProviderExtension', () => {
     });
 
     it('should dispose of the addon', () => {
-      const instance = extension.register();
+      const instance = extension.register() as SlickGroupItemMetadataProvider;
       const destroySpy = jest.spyOn(instance, 'destroy');
 
       extension.dispose();

@@ -52,7 +52,7 @@ describe('dateUtcFilterCondition method', () => {
   });
 
   it('should return False when there are no search term and no operator', () => {
-    const options = { dataKey: '', cellValue: '1993-12-25T10:50:50.108Z', fieldType: FieldType.dateUtc, searchTerms: [null] } as FilterConditionOption;
+    const options = { dataKey: '', cellValue: '1993-12-25T10:50:50.108Z', fieldType: FieldType.dateUtc, searchTerms: [null as any] } as FilterConditionOption;
     const output = executeMappedCondition(options);
     expect(output).toBe(false);
   });

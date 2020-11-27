@@ -6,6 +6,7 @@ import 'jest-extended';
 import { FieldType } from '../../enums/index';
 import {
   BackendService,
+  BackendServiceApi,
   Column,
   CurrentFilter,
   GridMenuItem,
@@ -59,7 +60,7 @@ const gridOptionMock = {
       title: 'Toggle Filter Row'
     }]
   }
-} as GridOption;
+} as unknown as GridOption;
 
 const dataViewStub = {
   getIdxById: jest.fn(),
@@ -164,7 +165,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       service.bindBackendOnFilter(gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
       const columnFilters = service.getColumnFilters();
       const filterMetadataArray = service.getFiltersMetadata();
 
@@ -185,8 +186,8 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       service.bindBackendOnFilter(gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
       const columnFilters = service.getColumnFilters();
       const filterMetadataArray = service.getFiltersMetadata();
 
@@ -217,16 +218,16 @@ describe('FilterService', () => {
         grid: gridStub
       };
       const mockHeaderArgs = { grid: gridStub, column: mockColumn, node: document.getElementById(DOM_ELEMENT_ID), };
-      const spyCurrentFilters = jest.spyOn(gridOptionMock.backendServiceApi.service, 'getCurrentFilters').mockReturnValue(expectationCurrentFilters);
+      const spyCurrentFilters = jest.spyOn(gridOptionMock.backendServiceApi!.service, 'getCurrentFilters').mockReturnValue(expectationCurrentFilters);
       const spyBackendChange = jest.spyOn(service, 'onBackendFilterChange');
       const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
       service.init(gridStub);
       service.bindBackendOnFilter(gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockHeaderArgs, new Slick.EventData(), gridStub);
-      service.onSearchChange.notify(mockSearchArgs, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockHeaderArgs as any, new Slick.EventData(), gridStub);
+      service.onSearchChange!.notify(mockSearchArgs, new Slick.EventData(), gridStub);
 
-      expect(spyBackendChange).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, ...mockSearchArgs });
+      expect(spyBackendChange).toHaveBeenCalledWith(expect.anything(), mockSearchArgs);
       setTimeout(() => {
         expect(spyCurrentFilters).toHaveBeenCalled();
         expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'isActive', operator: 'EQ', searchTerms: ['John'] }]);
@@ -249,7 +250,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
       const columnFilters = service.getColumnFilters();
       const filterMetadataArray = service.getFiltersMetadata();
 
@@ -273,7 +274,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
-      service.onSearchChange.notify(mockArgs, new Slick.EventData(), gridStub);
+      service.onSearchChange!.notify(mockArgs as any, new Slick.EventData(), gridStub);
 
       expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, []);
     });
@@ -299,8 +300,8 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockHeaderArgs, new Slick.EventData(), gridStub);
-      service.onSearchChange.notify(mockSearchArgs, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockHeaderArgs as any, new Slick.EventData(), gridStub);
+      service.onSearchChange!.notify(mockSearchArgs, new Slick.EventData(), gridStub);
 
       expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'firstName', operator: 'EQ', searchTerms: [true] }]);
     });
@@ -319,12 +320,12 @@ describe('FilterService', () => {
 
     it('should execute the search callback normally when a input change event is triggered and searchTerms are defined', () => {
       const expectationColumnFilter = { columnDef: mockColumn, columnId: 'firstName', operator: 'EQ', searchTerms: ['John'] };
-      const spySearchChange = jest.spyOn(service.onSearchChange, 'notify');
+      const spySearchChange = jest.spyOn(service.onSearchChange as any, 'notify');
       const spyEmit = jest.spyOn(service, 'emitFilterChanged');
 
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
       service.getFiltersMetadata()[0].callback(new CustomEvent('input'), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['John'], shouldTriggerQuery: true });
 
       expect(service.getColumnFilters()).toContainEntry(['firstName', expectationColumnFilter]);
@@ -343,11 +344,11 @@ describe('FilterService', () => {
 
     it('should execute the callback normally when a input change event is triggered and the searchTerm comes from this event.target', () => {
       const expectationColumnFilter = { columnDef: mockColumn, columnId: 'firstName', operator: 'EQ', searchTerms: ['John'] };
-      const spySearchChange = jest.spyOn(service.onSearchChange, 'notify');
+      const spySearchChange = jest.spyOn(service.onSearchChange as any, 'notify');
 
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
 
       const mockEvent = new CustomEvent('input');
       Object.defineProperty(mockEvent, 'target', { writable: true, configurable: true, value: { value: 'John' } });
@@ -369,7 +370,7 @@ describe('FilterService', () => {
     it('should delete the column filters entry (from column filter object) when searchTerms is empty', () => {
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
       service.getFiltersMetadata()[0].callback(new CustomEvent('input'), { columnDef: mockColumn, operator: 'EQ', searchTerms: [''], shouldTriggerQuery: true });
 
       expect(service.getColumnFilters()).toEqual({});
@@ -378,7 +379,7 @@ describe('FilterService', () => {
     it('should delete the column filters entry (from column filter object) when searchTerms is empty array and even when triggered event is undefined', () => {
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
       service.getFiltersMetadata()[0].callback(undefined, { columnDef: mockColumn, operator: 'EQ', searchTerms: [], shouldTriggerQuery: true });
 
       expect(service.getColumnFilters()).toEqual({});
@@ -387,7 +388,7 @@ describe('FilterService', () => {
     it('should delete the column filters entry (from column filter object) when searchTerms & operator are undefined or not provided', () => {
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
       service.getFiltersMetadata()[0].callback(undefined, { columnDef: mockColumn, shouldTriggerQuery: true });
 
       expect(service.getColumnFilters()).toEqual({});
@@ -396,7 +397,7 @@ describe('FilterService', () => {
     it('should have an column filters object when callback is called with an undefined column definition', () => {
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
       service.getFiltersMetadata()[0].callback(undefined, { columnDef: undefined, operator: 'EQ', searchTerms: ['John'], shouldTriggerQuery: true });
 
       expect(service.getColumnFilters()).toEqual({});
@@ -425,9 +426,9 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       service.bindBackendOnFilter(gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs1, new Slick.EventData(), gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs2, new Slick.EventData(), gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs3, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs3 as any, new Slick.EventData(), gridStub);
       service.getFiltersMetadata()[1].callback(new CustomEvent('input'), { columnDef: mockColumn3 });
       service.getFiltersMetadata()[0].callback(new CustomEvent('input'), { columnDef: mockColumn1, operator: 'EQ', searchTerms: ['John'], shouldTriggerQuery: true });
       service.getFiltersMetadata()[1].callback(new CustomEvent('input'), { columnDef: mockColumn2, operator: 'NE', searchTerms: ['Doe'], shouldTriggerQuery: true });
@@ -476,11 +477,11 @@ describe('FilterService', () => {
 
     describe('clearFilters method', () => {
       it('should clear all the Filters when the query response is a string', () => {
-        gridOptionMock.backendServiceApi.service.processOnFilterChanged = () => 'filter query string';
+        gridOptionMock.backendServiceApi!.service.processOnFilterChanged = () => 'filter query string';
         const spyClear = jest.spyOn(service.getFiltersMetadata()[0], 'clear');
         const spyFilterChange = jest.spyOn(service, 'onBackendFilterChange');
         const spyEmitter = jest.spyOn(service, 'emitFilterChanged');
-        const spyProcess = jest.spyOn(gridOptionMock.backendServiceApi, 'process');
+        const spyProcess = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'process');
 
         const filterCountBefore = Object.keys(service.getColumnFilters()).length;
         service.clearFilters();
@@ -495,11 +496,11 @@ describe('FilterService', () => {
 
       it('should execute the "onError" method when the Promise throws an error', (done) => {
         const errorExpected = 'promise error';
-        gridOptionMock.backendServiceApi.process = () => Promise.reject(errorExpected);
-        gridOptionMock.backendServiceApi.onError = () => jest.fn();
+        gridOptionMock.backendServiceApi!.process = () => Promise.reject(errorExpected);
+        gridOptionMock.backendServiceApi!.onError = () => jest.fn();
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyOnError = jest.spyOn(gridOptionMock.backendServiceApi, 'onError');
-        jest.spyOn(gridOptionMock.backendServiceApi, 'process');
+        const spyOnError = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'onError');
+        jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'process');
 
         service.clearFilters();
 
@@ -526,8 +527,8 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs1, new Slick.EventData(), gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs2, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
       service.getFiltersMetadata()[0].callback(new CustomEvent('input'), { columnDef: mockColumn1, operator: 'EQ', searchTerms: ['John'], shouldTriggerQuery: true });
       service.getFiltersMetadata()[1].callback(new CustomEvent('input'), { columnDef: mockColumn2, operator: 'NE', searchTerms: ['Doe'], shouldTriggerQuery: true });
     });
@@ -830,14 +831,14 @@ describe('FilterService', () => {
     });
 
     it('should throw an error when grid argument is undefined', (done) => {
-      service.onBackendFilterChange(undefined, undefined).catch((error) => {
+      service.onBackendFilterChange(undefined as any, undefined).catch((error) => {
         expect(error.message).toContain(`Something went wrong when trying to bind the "onBackendFilterChange(event, args)" function`);
         done();
       });
     });
 
     it('should throw an error when grid argument is an empty object', (done) => {
-      service.onBackendFilterChange(undefined, {}).catch((error) => {
+      service.onBackendFilterChange(undefined as any, {}).catch((error) => {
         expect(error.message).toContain(`Something went wrong when trying to bind the "onBackendFilterChange(event, args)" function`);
         done();
       });
@@ -846,25 +847,25 @@ describe('FilterService', () => {
     it('should throw an error when backendServiceApi is undefined', (done) => {
       gridOptionMock.backendServiceApi = undefined;
 
-      service.onBackendFilterChange(undefined, { grid: gridStub }).catch((error) => {
+      service.onBackendFilterChange(undefined as any, { grid: gridStub }).catch((error) => {
         expect(error.message).toContain(`BackendServiceApi requires at least a "process" function and a "service" defined`);
         done();
       });
     });
 
     it('should execute "preProcess" method when it is defined', () => {
-      const spy = jest.spyOn(gridOptionMock.backendServiceApi, 'preProcess');
+      const spy = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'preProcess');
 
       service.init(gridStub);
-      service.onBackendFilterChange(undefined, { grid: gridStub });
+      service.onBackendFilterChange(undefined as any, { grid: gridStub });
 
       expect(spy).toHaveBeenCalled();
     });
 
     it('should execute "processOnFilterChanged" method when "shouldTriggerQuery" is set to True and "debounceTypingDelay" is bigger than 0', () => {
       jest.useFakeTimers();
-      gridOptionMock.backendServiceApi.filterTypingDebounce = 50;
-      const spy = jest.spyOn(gridOptionMock.backendServiceApi.service, 'processOnFilterChanged').mockReturnValue('backend query');
+      gridOptionMock.backendServiceApi!.filterTypingDebounce = 50;
+      const spy = jest.spyOn(gridOptionMock.backendServiceApi!.service, 'processOnFilterChanged').mockReturnValue('backend query');
 
       service.init(gridStub);
       const mockEvent = new CustomEvent('input');
@@ -892,10 +893,10 @@ describe('FilterService', () => {
     });
 
     it('should return an empty array when column definitions returns nothing as well', () => {
-      gridStub.getColumns = undefined;
+      gridStub.getColumns = undefined as any;
 
       service.init(gridStub);
-      const output = service.populateColumnFilterSearchTermPresets(undefined);
+      const output = service.populateColumnFilterSearchTermPresets(undefined as any);
 
       expect(output).toEqual([]);
     });
@@ -907,7 +908,7 @@ describe('FilterService', () => {
       ]);
 
       service.init(gridStub);
-      const output = service.populateColumnFilterSearchTermPresets(gridOptionMock.presets.filters);
+      const output = service.populateColumnFilterSearchTermPresets(gridOptionMock.presets!.filters as any);
 
       expect(spy).toHaveBeenCalled();
       expect(output).toEqual([
@@ -928,7 +929,7 @@ describe('FilterService', () => {
       ]);
 
       service.init(gridStub);
-      const output = service.populateColumnFilterSearchTermPresets(gridOptionMock.presets.filters);
+      const output = service.populateColumnFilterSearchTermPresets(gridOptionMock.presets!.filters as any);
 
       expect(spy).toHaveBeenCalled();
       expect(output).toEqual([
@@ -949,7 +950,7 @@ describe('FilterService', () => {
       ]);
 
       service.init(gridStub);
-      const output = service.populateColumnFilterSearchTermPresets(gridOptionMock.presets.filters);
+      const output = service.populateColumnFilterSearchTermPresets(gridOptionMock.presets!.filters as any);
 
       expect(spy).toHaveBeenCalled();
       expect(output).toEqual([
@@ -972,7 +973,7 @@ describe('FilterService', () => {
         filters: [{ columnId: 'size', searchTerms: [20], operator: '>=' }]
       };
       service.init(gridStub);
-      const output = service.populateColumnFilterSearchTermPresets(gridOptionMock.presets.filters);
+      const output = service.populateColumnFilterSearchTermPresets(gridOptionMock.presets!.filters as any);
 
       expect(spyGetCols).toHaveBeenCalled();
       expect(spyRefresh).toHaveBeenCalled();
@@ -1023,8 +1024,8 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs1, new Slick.EventData(), gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs2, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
       service.updateFilters(mockNewFilters);
 
       expect(emitSpy).toHaveBeenCalledWith('local');
@@ -1041,8 +1042,8 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs1, new Slick.EventData(), gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs2, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
       service.updateFilters(mockNewFilters, false);
 
       expect(emitSpy).not.toHaveBeenCalled();
@@ -1066,8 +1067,8 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       service.bindBackendOnFilter(gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs1, new Slick.EventData(), gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs2, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
       service.updateFilters(mockNewFilters);
 
       expect(emitSpy).toHaveBeenCalledWith('remote');
@@ -1095,8 +1096,8 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       service.bindBackendOnFilter(gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs1, new Slick.EventData(), gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs2, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
       service.updateFilters(mockNewFilters, false, false);
 
       expect(backendProcessSpy).not.toHaveBeenCalled();
@@ -1134,7 +1135,7 @@ describe('FilterService', () => {
       mockColumns.forEach(col => col.header.menu.items.forEach(item => {
         expect((item as MenuCommandItem).hidden).toBeTruthy();
       }));
-      gridOptionMock.gridMenu.customItems.forEach(item => {
+      gridOptionMock.gridMenu!.customItems!.forEach(item => {
         expect((item as GridMenuItem).hidden).toBeTruthy();
       });
       expect(setOptionSpy).toHaveBeenCalledWith({ enableFiltering: false }, false, true);
@@ -1162,7 +1163,7 @@ describe('FilterService', () => {
       mockColumns.forEach(col => col.header.menu.items.forEach(item => {
         expect((item as MenuCommandItem).hidden).toBeFalsy();
       }));
-      gridOptionMock.gridMenu.customItems.forEach(item => {
+      gridOptionMock.gridMenu!.customItems!.forEach(item => {
         expect((item as GridMenuItem).hidden).toBeFalsy();
       });
       expect(setOptionSpy).toHaveBeenCalledWith({ enableFiltering: true }, false, true);
@@ -1275,7 +1276,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
       const columnFilters = service.getColumnFilters();
       const filterMetadataArray = service.getFiltersMetadata();
 
@@ -1310,7 +1311,7 @@ describe('FilterService', () => {
           { __hasChildren: true, __parentId: 21, __treeLevel: 1, file: 'xls', id: 7 },
           { __parentId: 7, __treeLevel: 2, dateModified: '2014-10-02T14:50:00.123Z', file: 'compilation.xls', id: 8, size: 2.3 },
           { __parentId: null, __treeLevel: 0, dateModified: '2015-03-03T03:50:00.123Z', file: 'something.txt', id: 18, size: 90 },
-        ];
+        ] as any;
 
         gridOptionMock.enableFiltering = true;
         gridOptionMock.backendServiceApi = undefined;
@@ -1325,7 +1326,7 @@ describe('FilterService', () => {
       it('should return True when item is found and its parent is not collapsed', () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
-        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4], __collapsed: false })
+        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any, __collapsed: false })
           .mockReturnValueOnce(dataset[5])
           .mockReturnValueOnce(dataset[6]);
 
@@ -1333,8 +1334,8 @@ describe('FilterService', () => {
 
         service.init(gridStub);
         service.bindLocalOnFilter(gridStub);
-        gridStub.onHeaderRowCellRendered.notify(mockArgs1, new Slick.EventData(), gridStub);
-        gridStub.onHeaderRowCellRendered.notify(mockArgs2, new Slick.EventData(), gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
 
         const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', searchTerms: ['map'] } };
         service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['map'] }], true, true, true);
@@ -1349,7 +1350,7 @@ describe('FilterService', () => {
       it('should return False when item is found BUT its parent is collapsed', () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
-        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4], __collapsed: true })
+        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any, __collapsed: true })
           .mockReturnValueOnce(dataset[5])
           .mockReturnValueOnce(dataset[6]);
 
@@ -1357,8 +1358,8 @@ describe('FilterService', () => {
 
         service.init(gridStub);
         service.bindLocalOnFilter(gridStub);
-        gridStub.onHeaderRowCellRendered.notify(mockArgs1, new Slick.EventData(), gridStub);
-        gridStub.onHeaderRowCellRendered.notify(mockArgs2, new Slick.EventData(), gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
 
         const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', searchTerms: ['map'] } };
         service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['map'] }], true, true, true);
@@ -1373,7 +1374,7 @@ describe('FilterService', () => {
       it('should return False when item is not found in the dataset', () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
-        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] })
+        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any })
           .mockReturnValueOnce(dataset[5])
           .mockReturnValueOnce(dataset[6]);
 
@@ -1381,8 +1382,8 @@ describe('FilterService', () => {
 
         service.init(gridStub);
         service.bindLocalOnFilter(gridStub);
-        gridStub.onHeaderRowCellRendered.notify(mockArgs1, new Slick.EventData(), gridStub);
-        gridStub.onHeaderRowCellRendered.notify(mockArgs2, new Slick.EventData(), gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
 
         const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', searchTerms: ['unknown'] } };
         service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['unknown'] }], true, true, true);

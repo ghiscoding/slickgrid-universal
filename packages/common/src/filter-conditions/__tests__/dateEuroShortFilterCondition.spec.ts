@@ -52,7 +52,7 @@ describe('dateEuroShortFilterCondition method', () => {
   });
 
   it('should return False when there are no search term and no operator', () => {
-    const options = { dataKey: '', fieldType: FieldType.dateEuroShort, cellValue: '25/12/93', searchTerms: [null] } as FilterConditionOption;
+    const options = { dataKey: '', fieldType: FieldType.dateEuroShort, cellValue: '25/12/93', searchTerms: [null as any] } as FilterConditionOption;
     const output = executeMappedCondition(options);
     expect(output).toBe(false);
   });

@@ -97,7 +97,7 @@ describe('SortService', () => {
       service.init(gridStub);
       const eventData = new Slick.EventData();
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
-      gridStub.onClick.notify({ cell: undefined, row: undefined, grid: gridStub }, eventData, gridStub);
+      gridStub.onClick.notify({ cell: undefined as any, row: undefined as any, grid: gridStub }, eventData, gridStub);
 
       expect(spyGetCols).not.toHaveBeenCalled();
     });
@@ -139,7 +139,7 @@ describe('SortService', () => {
 
     it('should toggle the collapsed custom class name to False when that custom class name was found to be True prior', () => {
       mockRowData.customCollapsed = true;
-      gridOptionsMock.treeDataOptions.collapsedPropName = 'customCollapsed';
+      gridOptionsMock.treeDataOptions!.collapsedPropName = 'customCollapsed';
       const spyGetItem = jest.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
       const spyUptItem = jest.spyOn(dataViewStub, 'updateItem');
       const spyInvalidate = jest.spyOn(gridStub, 'invalidate');
@@ -181,7 +181,7 @@ describe('SortService', () => {
       });
 
       it('should collapse all items with a custom collapsed property when calling the method with collapsing True', () => {
-        gridOptionsMock.treeDataOptions.collapsedPropName = 'customCollapsed';
+        gridOptionsMock.treeDataOptions!.collapsedPropName = 'customCollapsed';
         const dataGetItemsSpy = jest.spyOn(dataViewStub, 'getItems').mockReturnValue(itemsMock);
         const dataSetItemsSpy = jest.spyOn(dataViewStub, 'setItems');
 

@@ -13,7 +13,7 @@ describe('disctinctAggregator', () => {
       { id: 4, title: 'Task 4', duration: null, percentComplete: 55 },
       { id: 4, title: 'Task 5', duration: 32, percentComplete: 52 },
       { id: 4, title: 'Task 6', duration: 58, percentComplete: 52 },
-    ];
+    ] as any;
   });
 
   it('should return empty array when the field provided does not exist', () => {

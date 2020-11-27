@@ -20,7 +20,7 @@ const dataViewStub = {
 const gridOptionMock = {
   autoCommitEdit: false,
   editable: true,
-  i18n: null,
+  i18n: null as any,
 } as unknown as GridOption;
 
 const getEditorLockMock = {
@@ -65,7 +65,7 @@ describe('SelectEditor', () => {
       cancelChanges: jest.fn(),
       commitChanges: jest.fn(),
       container: divContainer,
-      columnMetaData: null,
+      columnMetaData: null as any,
       dataView: dataViewStub,
       gridPosition: { top: 0, left: 0, bottom: 10, right: 10, height: 100, width: 100, visible: true },
       position: { top: 0, left: 0, bottom: 10, right: 10, height: 100, width: 100, visible: true },
@@ -75,7 +75,7 @@ describe('SelectEditor', () => {
   describe('with invalid Editor instance', () => {
     it('should throw an error when trying to call init without any arguments', (done) => {
       try {
-        editor = new SelectEditor(null, true);
+        editor = new SelectEditor(null as any, true);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
         done();
@@ -152,7 +152,7 @@ describe('SelectEditor', () => {
     it('should initialize the editor with element being disabled in the DOM when passing a collectionAsync and an empty collection property', () => {
       const mockCollection = ['male', 'female'];
       const promise = new Promise(resolve => resolve(mockCollection));
-      (mockColumn.internalColumnEditor as ColumnEditor).collection = null;
+      (mockColumn.internalColumnEditor as ColumnEditor).collection = null as any;
       (mockColumn.internalColumnEditor as ColumnEditor).collectionAsync = promise;
       gridOptionMock.i18n = translateService;
 
@@ -236,7 +236,7 @@ describe('SelectEditor', () => {
 
     it('should create the multi-select editor with a custom entry at the beginning of the collection when "addCustomFirstEntry" is provided in the "collectionOptions" property', () => {
       (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-      (mockColumn.internalColumnEditor as ColumnEditor).collectionOptions = { addCustomFirstEntry: { value: null, label: '' } };
+      (mockColumn.internalColumnEditor as ColumnEditor).collectionOptions = { addCustomFirstEntry: { value: null as any, label: '' } };
 
       editor = new SelectEditor(editorArguments, true);
       const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
@@ -252,7 +252,7 @@ describe('SelectEditor', () => {
 
     it('should create the multi-select editor with a custom entry at the end of the collection when "addCustomFirstEntry" is provided in the "collectionOptions" property', () => {
       (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-      (mockColumn.internalColumnEditor as ColumnEditor).collectionOptions = { addCustomLastEntry: { value: null, label: '' } };
+      (mockColumn.internalColumnEditor as ColumnEditor).collectionOptions = { addCustomLastEntry: { value: null as any, label: '' } };
 
       editor = new SelectEditor(editorArguments, true);
       const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
@@ -310,7 +310,7 @@ describe('SelectEditor', () => {
 
     describe('applyValue method', () => {
       it('should apply the value to the gender property when it passes validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
         mockItemData = { id: 1, gender: 'male', isActive: true };
 
         editor = new SelectEditor(editorArguments, true);
@@ -320,7 +320,7 @@ describe('SelectEditor', () => {
       });
 
       it('should apply the value to the gender (last property) when field has a dot notation (complex object) that passes validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
         mockColumn.field = 'person.bio.gender';
         mockItemData = { id: 1, person: { bio: { gender: 'male' } }, isActive: true };
 
@@ -331,7 +331,7 @@ describe('SelectEditor', () => {
       });
 
       it('should apply the value to the bio property (second last) when field has a dot notation (complex object) value provided is an object and it that passes validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
         (mockColumn.internalColumnEditor as ColumnEditor).complexObjectPath = 'person.bio';
         mockColumn.field = 'person.bio.gender';
         mockItemData = { id: 1, person: { bio: { gender: 'male' } }, isActive: true };
@@ -358,7 +358,7 @@ describe('SelectEditor', () => {
       });
 
       it('should apply the value to the gender property as an array with multiple when the input value is a CSV string', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null;
+        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
         mockItemData = { id: 1, gender: 'male', isActive: true };
 
         editor = new SelectEditor(editorArguments, true);
@@ -402,7 +402,7 @@ describe('SelectEditor', () => {
       });
 
       it('should return serialized value as an empty string when item value is null', () => {
-        mockItemData = { id: 1, gender: null, isActive: true };
+        mockItemData = { id: 1, gender: null as any, isActive: true };
 
         editor = new SelectEditor(editorArguments, true);
         editor.loadValue(mockItemData);
@@ -483,7 +483,7 @@ describe('SelectEditor', () => {
       it('should return False when field is required and field is empty', () => {
         (mockColumn.internalColumnEditor as ColumnEditor).required = true;
         editor = new SelectEditor(editorArguments, true);
-        const validation = editor.validate(null, '');
+        const validation = editor.validate(null as any, '');
 
         expect(validation).toEqual({ valid: false, msg: 'Field is required' });
       });
@@ -491,7 +491,7 @@ describe('SelectEditor', () => {
       it('should return True when field is required and input is a valid input value', () => {
         (mockColumn.internalColumnEditor as ColumnEditor).required = true;
         editor = new SelectEditor(editorArguments, true);
-        const validation = editor.validate(null, 'text');
+        const validation = editor.validate(null as any, 'text');
 
         expect(validation).toEqual({ valid: true, msg: null });
       });

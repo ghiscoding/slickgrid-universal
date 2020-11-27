@@ -11,7 +11,7 @@ describe('avgAggregator', () => {
       { id: 2, title: 'Task 2', duration: '', percentComplete: 60 },
       { id: 3, title: 'Task 3', duration: '87', percentComplete: -2 },
       { id: 4, title: 'Task 4', duration: null, percentComplete: 15 },
-    ];
+    ] as any;
   });
 
   it('should return undefined when the field provided does not exist', () => {

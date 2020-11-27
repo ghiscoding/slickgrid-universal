@@ -162,7 +162,7 @@ describe('ExtensionService', () => {
         expect(gridSpy).toHaveBeenCalled();
         expect(getAddonSpy).toHaveBeenCalled();
         expect(extSpy).toHaveBeenCalled();
-        expect(output.instance).toEqual(instance);
+        expect(output!.instance).toEqual(instance);
         expect(output).toEqual({ name: ExtensionName.gridMenu, instance: instanceMock as unknown, class: extensionGridMenuStub } as ExtensionModel<any, any>);
       });
     });
@@ -251,7 +251,7 @@ describe('ExtensionService', () => {
         expect(gridSpy).toHaveBeenCalled();
         expect(getAddonSpy).toHaveBeenCalled();
         expect(extSpy).toHaveBeenCalled();
-        expect(output.instance).toEqual(instance);
+        expect(output!.instance).toEqual(instance);
         expect(output).toEqual({ name: ExtensionName.gridMenu, instance: instanceMock as unknown, class: extensionGridMenuStub } as ExtensionModel<any, any>);
       });
 

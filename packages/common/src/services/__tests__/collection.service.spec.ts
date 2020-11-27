@@ -5,7 +5,7 @@ import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 describe('CollectionService', () => {
   let collection = [];
-  let stringCollection = [];
+  let stringCollection: any[] = [];
   let service: CollectionService;
   let translateService: TranslateServiceStub;
 
@@ -24,13 +24,13 @@ describe('CollectionService', () => {
         { firstName: 'John', lastName: 'Zachary', position: 'SALES_REP', order: 2 },
         { firstName: 'John', lastName: 'Doe', position: 'DEVELOPER', order: 4 },
         { firstName: 'John Foo', lastName: 'Bar', position: 'SALES_REP', order: 8 },
-      ];
+      ] as any;
 
-      stringCollection = ['John', 'Jane', 'Ava Luna', '', 'Bob', 'John', null, 'John Foo'];
+      stringCollection = ['John', 'Jane', 'Ava Luna', '', 'Bob', 'John', null, 'John Foo'] as any[];
     });
 
     afterEach(() => {
-      collection = undefined;
+      collection = undefined as any;
     });
 
     it('should create the service', () => {

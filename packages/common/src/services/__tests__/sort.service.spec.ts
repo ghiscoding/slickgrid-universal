@@ -12,6 +12,7 @@ import {
   SlickGrid,
   SlickNamespace,
   SingleColumnSort,
+  BackendServiceApi,
 } from '../../interfaces/index';
 import { SortComparers } from '../../sortComparers';
 import { SortService } from '../sort.service';
@@ -43,7 +44,7 @@ const gridOptionMock = {
       title: 'Clear all Sorting'
     }]
   }
-} as GridOption;
+} as unknown as GridOption;
 
 const dataViewStub = {
   getItemMetadata: jest.fn(),
@@ -184,7 +185,7 @@ describe('SortService', () => {
       const setSortSpy = jest.spyOn(gridStub, 'setSortColumns');
       const gridSortSpy = jest.spyOn(gridStub.onSort, 'notify');
 
-      gridStub.getData = () => null; // fake a custom dataview by removing the dataView in shared
+      gridStub.getData = () => null as any; // fake a custom dataview by removing the dataView in shared
       const mockMouseEvent = new Event('mouseup');
       service.bindLocalOnSort(gridStub);
       service.clearSortByColumnId(mockMouseEvent, 'firstName');
@@ -377,8 +378,8 @@ describe('SortService', () => {
       const mockColumn = { id: 'lastName', field: 'lastName', width: 100 } as Column;
       const expectedSortCol = { columnId: 'lastName', direction: 'ASC' } as CurrentSorter;
       const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-      const spyBackendCurrentSort = jest.spyOn(gridOptionMock.backendServiceApi.service, 'getCurrentSorters').mockReturnValue([expectedSortCol]);
-      const spyBackendProcessSort = jest.spyOn(gridOptionMock.backendServiceApi.service, 'processOnSortChanged').mockReturnValue('backend query');
+      const spyBackendCurrentSort = jest.spyOn(gridOptionMock.backendServiceApi!.service, 'getCurrentSorters').mockReturnValue([expectedSortCol]);
+      const spyBackendProcessSort = jest.spyOn(gridOptionMock.backendServiceApi!.service, 'processOnSortChanged').mockReturnValue('backend query');
       const mockSortedCol = { columnId: mockColumn.id, sortCol: mockColumn, sortAsc: true, grid: gridStub } as ColumnSort;
 
       service.bindBackendOnSort(gridStub);
@@ -393,8 +394,8 @@ describe('SortService', () => {
     it('should expect some events being triggered when "multiColumnSort" is enabled and multiple sorts are called', () => {
       const expectedSortCols = [{ columnId: 'lastName', direction: 'ASC' }, { columnId: 'firstName', direction: 'DESC' }] as CurrentSorter[];
       const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-      const spyBackendCurrentSort = jest.spyOn(gridOptionMock.backendServiceApi.service, 'getCurrentSorters').mockReturnValue(expectedSortCols);
-      const spyBackendProcessSort = jest.spyOn(gridOptionMock.backendServiceApi.service, 'processOnSortChanged').mockReturnValue('backend query');
+      const spyBackendCurrentSort = jest.spyOn(gridOptionMock.backendServiceApi!.service, 'getCurrentSorters').mockReturnValue(expectedSortCols);
+      const spyBackendProcessSort = jest.spyOn(gridOptionMock.backendServiceApi!.service, 'processOnSortChanged').mockReturnValue('backend query');
       const mockSortedCols: ColumnSort[] = [
         { columnId: 'lastName', sortAsc: true, sortCol: { id: 'lastName', field: 'lastName', width: 100 } },
         { columnId: 'firstName', sortAsc: false, sortCol: { id: 'firstName', field: 'firstName', width: 75 } }
@@ -432,29 +433,29 @@ describe('SortService', () => {
         service: backendServiceStub,
         preProcess: spyPreProcess,
         postProcess: spyPostProcess,
-        process: undefined
+        process: undefined as any
       };
       gridStub.getOptions = () => gridOptionMock;
     });
 
     it('should throw an error when not passing a grid in the args', () => {
-      expect(() => service.onBackendSortChanged(undefined, undefined)).toThrowError('Something went wrong when trying to bind the "onBackendSortChanged(event, args)" function');
+      expect(() => service.onBackendSortChanged(undefined, undefined as any)).toThrowError('Something went wrong when trying to bind the "onBackendSortChanged(event, args)" function');
     });
 
     it('should throw an error when backend service is missing', () => {
-      gridOptionMock.backendServiceApi.service = undefined;
+      gridOptionMock.backendServiceApi!.service = undefined as any;
       service.bindBackendOnSort(gridStub);
       expect(() => service.onBackendSortChanged(undefined, { multiColumnSort: true, grid: gridStub, sortCols: [] })).toThrowError('BackendServiceApi requires at least a "process" function and a "service" defined');
     });
 
     it('should throw an error when backend "process" method is missing', () => {
-      gridOptionMock.backendServiceApi.process = undefined;
+      gridOptionMock.backendServiceApi!.process = undefined as any;
       service.bindBackendOnSort(gridStub);
       expect(() => service.onBackendSortChanged(undefined, { multiColumnSort: true, grid: gridStub, sortCols: [] })).toThrowError('BackendServiceApi requires at least a "process" function and a "service" defined');
     });
 
     it('should use an empty grid option object when grid "getOptions" method is not available', () => {
-      gridStub.getOptions = undefined;
+      gridStub.getOptions = undefined as any;
 
       service.bindBackendOnSort(gridStub);
       expect(() => service.onBackendSortChanged(undefined, { multiColumnSort: true, grid: gridStub, sortCols: [] })).toThrowError('BackendServiceApi requires at least a "process" function and a "service" defined');
@@ -462,11 +463,11 @@ describe('SortService', () => {
 
     it('should execute the "onError" method when the Promise throws an error', (done) => {
       const errorExpected = 'promise error';
-      gridOptionMock.backendServiceApi.process = () => Promise.reject(errorExpected);
-      gridOptionMock.backendServiceApi.onError = (_e) => jest.fn();
-      const spyOnError = jest.spyOn(gridOptionMock.backendServiceApi, 'onError');
+      gridOptionMock.backendServiceApi!.process = () => Promise.reject(errorExpected);
+      gridOptionMock.backendServiceApi!.onError = (_e) => jest.fn();
+      const spyOnError = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'onError');
 
-      jest.spyOn(gridOptionMock.backendServiceApi, 'process');
+      jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'process');
 
       service.bindBackendOnSort(gridStub);
       service.onBackendSortChanged(undefined, { multiColumnSort: true, sortCols: [], grid: gridStub });
@@ -548,10 +549,10 @@ describe('SortService', () => {
       mockColumns.forEach(col => {
         expect(col.sortable).toBeFalsy();
       });
-      mockColumns.forEach(col => col.header.menu.items.forEach(item => {
+      mockColumns.forEach(col => col.header!.menu!.items.forEach(item => {
         expect((item as MenuCommandItem).hidden).toBeTruthy();
       }));
-      gridOptionMock.gridMenu.customItems.forEach(item => {
+      gridOptionMock.gridMenu!.customItems!.forEach(item => {
         expect((item as GridMenuItem).hidden).toBeTruthy();
       });
     });
@@ -569,10 +570,10 @@ describe('SortService', () => {
       mockColumns.forEach(col => {
         expect(col.sortable).toBeFalsy();
       });
-      mockColumns.forEach(col => col.header.menu.items.forEach(item => {
+      mockColumns.forEach(col => col.header!.menu!.items.forEach(item => {
         expect((item as MenuCommandItem).hidden).toBeTruthy();
       }));
-      gridOptionMock.gridMenu.customItems.forEach(item => {
+      gridOptionMock.gridMenu!.customItems!.forEach(item => {
         expect((item as GridMenuItem).hidden).toBeTruthy();
       });
     });
@@ -588,10 +589,10 @@ describe('SortService', () => {
       mockColumns.forEach(col => {
         expect(col.sortable).toBeTruthy();
       });
-      mockColumns.forEach(col => col.header.menu.items.forEach(item => {
+      mockColumns.forEach(col => col.header!.menu!.items.forEach(item => {
         expect((item as MenuCommandItem).hidden).toBeFalsy();
       }));
-      gridOptionMock.gridMenu.customItems.forEach(item => {
+      gridOptionMock.gridMenu!.customItems!.forEach(item => {
         expect((item as GridMenuItem).hidden).toBeFalsy();
       });
 
@@ -724,11 +725,11 @@ describe('SortService', () => {
         { firstName: 'Jane', lastName: 'Smith', age: 40, address: { zip: 333333 } },
         { firstName: 'Erla', lastName: 'Richard', age: 101, address: { zip: 444444 } },
         { firstName: 'Christopher', lastName: 'McDonald', age: 40, address: { zip: 555555 } },
-      ];
+      ] as any;
     });
 
     afterEach(() => {
-      dataset = undefined;
+      dataset = undefined as any;
     });
 
     it('should sort the data with a sorter that is a number type', () => {
@@ -1047,7 +1048,7 @@ describe('SortService', () => {
               { id: 7, file: 'xls', files: [{ id: 8, file: 'compilation.xls', dateModified: '2014-10-02T14:50:00.123Z', size: 2.3, }] },
             ]
           },
-        ];
+        ] as any;
         sharedService.hierarchicalDataset = dataset;
       });
 
@@ -1093,7 +1094,6 @@ describe('SortService', () => {
         expect(spySetItems).toHaveBeenNthCalledWith(1, expectedSortedAscDataset, 'id');
         expect(spySetItems).toHaveBeenNthCalledWith(2, expectedSortedDescDataset, 'id');
       });
-
     });
   });
 });

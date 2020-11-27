@@ -55,7 +55,7 @@ describe('CompoundSliderFilter', () => {
   });
 
   it('should throw an error when trying to call init without any arguments', () => {
-    expect(() => filter.init(null)).toThrowError('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
+    expect(() => filter.init(null as any)).toThrowError('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
   });
 
   it('should initialize the filter', () => {
@@ -72,7 +72,7 @@ describe('CompoundSliderFilter', () => {
 
     filter.init(filterArgs);
     filter.setValues(['2']);
-    const filterElm = divContainer.querySelector('.input-group.search-filter.filter-duration input');
+    const filterElm = divContainer.querySelector('.input-group.search-filter.filter-duration input') as HTMLInputElement;
     filterElm.dispatchEvent(new CustomEvent('change'));
 
     expect(spyCallback).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: '>', searchTerms: ['2'], shouldTriggerQuery: true });
@@ -84,7 +84,7 @@ describe('CompoundSliderFilter', () => {
 
     filter.init(filterArgs);
     filter.setValues(3);
-    const filterElm = divContainer.querySelector('.input-group.search-filter.filter-duration input');
+    const filterElm = divContainer.querySelector('.input-group.search-filter.filter-duration input') as HTMLInputElement;
     filterElm.dispatchEvent(new CustomEvent('change'));
     const filterFilledElms = divContainer.querySelectorAll('.slider-container.search-filter.filter-duration.filled');
 
@@ -97,7 +97,7 @@ describe('CompoundSliderFilter', () => {
 
     filter.init(filterArguments);
     filter.setValues(9);
-    const filterSelectElm = divContainer.querySelector<HTMLInputElement>('.search-filter.filter-duration select');
+    const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
 
     filterSelectElm.value = '<=';
     filterSelectElm.dispatchEvent(new CustomEvent('change'));
@@ -111,7 +111,7 @@ describe('CompoundSliderFilter', () => {
     filter.init(filterArguments);
     filter.setValues(['9'], OperatorType.greaterThanOrEqual);
 
-    const filterSelectElm = divContainer.querySelector<HTMLInputElement>('.search-filter.filter-duration select');
+    const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
     filterSelectElm.dispatchEvent(new CustomEvent('change'));
 
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '>=', searchTerms: ['9'], shouldTriggerQuery: true });
@@ -121,7 +121,7 @@ describe('CompoundSliderFilter', () => {
     const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [3] } as FilterArguments;
 
     filter.init(filterArgs);
-    const filterNumberElm = divContainer.querySelector<HTMLInputElement>('.input-group-text');
+    const filterNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
     const filterFilledElms = divContainer.querySelectorAll('.slider-container.search-filter.filter-duration.filled');
 
     expect(filterFilledElms.length).toBe(1);
@@ -131,11 +131,11 @@ describe('CompoundSliderFilter', () => {
 
   it('should create the input filter with default search terms and a different step size when "valueStep" is provided', () => {
     const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [15] } as FilterArguments;
-    mockColumn.filter.valueStep = 5;
+    mockColumn.filter!.valueStep = 5;
 
     filter.init(filterArgs);
-    const filterNumberElm = divContainer.querySelector<HTMLInputElement>('.input-group-text');
-    const filterInputElm = divContainer.querySelector<HTMLInputElement>('.search-filter.filter-duration input');
+    const filterNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
 
     expect(filterInputElm.step).toBe('5');
     expect(filterNumberElm.textContent).toBe('15');
@@ -150,7 +150,7 @@ describe('CompoundSliderFilter', () => {
 
     filter.init(filterArguments);
 
-    const filterNumberElm = divContainer.querySelector<HTMLInputElement>('.input-group-text');
+    const filterNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
 
     expect(filterNumberElm.textContent).toBe('4');
     expect(filter.getValues()).toEqual(4);
@@ -166,7 +166,7 @@ describe('CompoundSliderFilter', () => {
 
     filter.init(filterArguments);
 
-    const filterNumberElm = divContainer.querySelector<HTMLInputElement>('.input-group-text');
+    const filterNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
 
     expect(filterNumberElm.textContent).toBe('4');
     expect(filter.getValues()).toEqual(4);
@@ -174,7 +174,7 @@ describe('CompoundSliderFilter', () => {
 
   it('should create the input filter with default search terms range but without showing side numbers when "hideSliderNumber" is set in params', () => {
     filterArguments.searchTerms = [3];
-    mockColumn.filter.params = { hideSliderNumber: true };
+    mockColumn.filter!.params = { hideSliderNumber: true };
 
     filter.init(filterArguments);
 
@@ -227,16 +227,16 @@ describe('CompoundSliderFilter', () => {
     filterArguments.searchTerms = ['9'];
 
     filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector<HTMLInputElement>('.input-group.search-filter.filter-duration input');
+    const filterInputElm = divContainer.querySelector('.input-group.search-filter.filter-duration input') as HTMLInputElement;
     const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.search-filter.filter-duration select');
 
     expect(filterInputElm.value).toBe('9');
-    expect(removeExtraSpaces(filterOperatorElm[0][1].textContent)).toBe('= Equal to');
-    expect(removeExtraSpaces(filterOperatorElm[0][2].textContent)).toBe('< Less than');
-    expect(removeExtraSpaces(filterOperatorElm[0][3].textContent)).toBe('<= Less than or equal to');
-    expect(removeExtraSpaces(filterOperatorElm[0][4].textContent)).toBe('> Greater than');
-    expect(removeExtraSpaces(filterOperatorElm[0][5].textContent)).toBe('>= Greater than or equal to');
-    expect(removeExtraSpaces(filterOperatorElm[0][6].textContent)).toBe('<> Not equal to');
+    expect(removeExtraSpaces(filterOperatorElm[0][1].textContent!)).toBe('= Equal to');
+    expect(removeExtraSpaces(filterOperatorElm[0][2].textContent!)).toBe('< Less than');
+    expect(removeExtraSpaces(filterOperatorElm[0][3].textContent!)).toBe('<= Less than or equal to');
+    expect(removeExtraSpaces(filterOperatorElm[0][4].textContent!)).toBe('> Greater than');
+    expect(removeExtraSpaces(filterOperatorElm[0][5].textContent!)).toBe('>= Greater than or equal to');
+    expect(removeExtraSpaces(filterOperatorElm[0][6].textContent!)).toBe('<> Not equal to');
   });
 
   describe('with French I18N translations', () => {
@@ -250,16 +250,16 @@ describe('CompoundSliderFilter', () => {
       filterArguments.searchTerms = [9];
 
       filter.init(filterArguments);
-      const filterInputElm = divContainer.querySelector<HTMLInputElement>('.input-group.search-filter.filter-duration input');
+      const filterInputElm = divContainer.querySelector('.input-group.search-filter.filter-duration input') as HTMLInputElement;
       const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.search-filter.filter-duration select');
 
       expect(filterInputElm.value).toBe('9');
-      expect(removeExtraSpaces(filterOperatorElm[0][1].textContent)).toBe('= Égal à');
-      expect(removeExtraSpaces(filterOperatorElm[0][2].textContent)).toBe('< Plus petit que');
-      expect(removeExtraSpaces(filterOperatorElm[0][3].textContent)).toBe('<= Plus petit ou égal à');
-      expect(removeExtraSpaces(filterOperatorElm[0][4].textContent)).toBe('> Plus grand que');
-      expect(removeExtraSpaces(filterOperatorElm[0][5].textContent)).toBe('>= Plus grand ou égal à');
-      expect(removeExtraSpaces(filterOperatorElm[0][6].textContent)).toBe('<> Non égal à');
+      expect(removeExtraSpaces(filterOperatorElm[0][1].textContent!)).toBe('= Égal à');
+      expect(removeExtraSpaces(filterOperatorElm[0][2].textContent!)).toBe('< Plus petit que');
+      expect(removeExtraSpaces(filterOperatorElm[0][3].textContent!)).toBe('<= Plus petit ou égal à');
+      expect(removeExtraSpaces(filterOperatorElm[0][4].textContent!)).toBe('> Plus grand que');
+      expect(removeExtraSpaces(filterOperatorElm[0][5].textContent!)).toBe('>= Plus grand ou égal à');
+      expect(removeExtraSpaces(filterOperatorElm[0][6].textContent!)).toBe('<> Non égal à');
     });
   });
 });

@@ -1,7 +1,7 @@
 import { HeaderMenuExtension } from '../headerMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
-import { Column, ColumnSort, SlickDataView, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { Column, ColumnSort, SlickDataView, GridOption, SlickGrid, SlickNamespace, HeaderMenu, SlickHeaderMenu } from '../../interfaces/index';
 import { FilterService, SortService, PubSubService } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
@@ -131,9 +131,9 @@ describe('headerMenuExtension', () => {
 
       it('should register the addon', () => {
         const pluginSpy = jest.spyOn(SharedService.prototype.slickGrid, 'registerPlugin');
-        const onRegisteredSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onExtensionRegistered');
+        const onRegisteredSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu as HeaderMenu, 'onExtensionRegistered');
 
-        const instance = extension.register();
+        const instance = extension.register() as SlickHeaderMenu;
         const addonInstance = extension.getAddonInstance();
 
         expect(instance).toBeTruthy();
@@ -158,12 +158,12 @@ describe('headerMenuExtension', () => {
 
       it('should call internal event handler subscribe and expect the "onBeforeMenuShow" option to be called when addon notify is called', () => {
         const handlerSpy = jest.spyOn(extension.eventHandler, 'subscribe');
-        const onBeforeSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onBeforeMenuShow');
-        const onAfterSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onAfterMenuShow');
-        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
+        const onBeforeSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu as HeaderMenu, 'onBeforeMenuShow');
+        const onAfterSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu as HeaderMenu, 'onAfterMenuShow');
+        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu as HeaderMenu, 'onCommand');
 
-        const instance = extension.register();
-        instance.onBeforeMenuShow.notify({ grid: gridStub, column: {} as Column, menu: divElement }, new Slick.EventData(), gridStub);
+        const instance = extension.register() as SlickHeaderMenu;
+        instance.onBeforeMenuShow!.notify({ grid: gridStub, column: {} as Column, menu: divElement }, new Slick.EventData(), gridStub);
 
         expect(handlerSpy).toHaveBeenCalledTimes(3);
         expect(handlerSpy).toHaveBeenCalledWith(
@@ -177,12 +177,12 @@ describe('headerMenuExtension', () => {
 
       it('should call internal event handler subscribe and expect the "onAfterMenuShow" option to be called when addon notify is called', () => {
         const handlerSpy = jest.spyOn(extension.eventHandler, 'subscribe');
-        const onAfterSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onAfterMenuShow');
-        const onBeforeSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onBeforeMenuShow');
-        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
+        const onAfterSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu as HeaderMenu, 'onAfterMenuShow');
+        const onBeforeSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu as HeaderMenu, 'onBeforeMenuShow');
+        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu as HeaderMenu, 'onCommand');
 
-        const instance = extension.register();
-        instance.onAfterMenuShow.notify({ grid: gridStub, column: {} as Column, menu: divElement }, new Slick.EventData(), gridStub);
+        const instance = extension.register() as SlickHeaderMenu;
+        instance.onAfterMenuShow!.notify({ grid: gridStub, column: {} as Column, menu: divElement }, new Slick.EventData(), gridStub);
 
         expect(handlerSpy).toHaveBeenCalledTimes(3);
         expect(handlerSpy).toHaveBeenCalledWith(
@@ -196,12 +196,12 @@ describe('headerMenuExtension', () => {
 
       it('should call internal event handler subscribe and expect the "onCommand" option to be called when addon notify is called', () => {
         const handlerSpy = jest.spyOn(extension.eventHandler, 'subscribe');
-        const onBeforeSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onBeforeMenuShow');
-        const onAfterSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onAfterMenuShow');
-        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
+        const onBeforeSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu as HeaderMenu, 'onBeforeMenuShow');
+        const onAfterSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu as HeaderMenu, 'onAfterMenuShow');
+        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu as HeaderMenu, 'onCommand');
 
-        const instance = extension.register();
-        instance.onCommand.notify({ grid: gridStub, command: 'help', item: { command: 'help' }, column: {} as Column }, new Slick.EventData(), gridStub);
+        const instance = extension.register() as SlickHeaderMenu;
+        instance.onCommand!.notify({ grid: gridStub, command: 'help', item: { command: 'help' }, column: {} as Column }, new Slick.EventData(), gridStub);
 
         expect(handlerSpy).toHaveBeenCalledTimes(3);
         expect(handlerSpy).toHaveBeenCalledWith(
@@ -214,7 +214,7 @@ describe('headerMenuExtension', () => {
       });
 
       it('should dispose of the addon', () => {
-        const instance = extension.register();
+        const instance = extension.register() as SlickHeaderMenu;
         const destroySpy = jest.spyOn(instance, 'destroy');
 
         extension.dispose();
@@ -280,8 +280,8 @@ describe('headerMenuExtension', () => {
 
       it('should expect only the "hide-column" command in the menu when "enableSorting" and "hideSortCommands" are set', () => {
         const copyGridOptionsMock = { ...gridOptionsMock, enableSorting: true } as unknown as GridOption;
-        copyGridOptionsMock.headerMenu.hideColumnHideCommand = false;
-        copyGridOptionsMock.headerMenu.hideSortCommands = true;
+        copyGridOptionsMock.headerMenu!.hideColumnHideCommand = false;
+        copyGridOptionsMock.headerMenu!.hideSortCommands = true;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
 
         extension.register();
@@ -385,10 +385,10 @@ describe('headerMenuExtension', () => {
       it('should trigger the command "freeze-columns" and grid "setOptions" method to be called with current column position', () => {
         const setOptionsSpy = jest.spyOn(gridStub, 'setOptions');
         const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
-        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
+        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu as HeaderMenu, 'onCommand');
 
-        const instance = extension.register();
-        instance.onCommand.notify({ column: columnsMock[0], grid: gridStub, command: 'freeze-columns', item: { command: 'freeze-columns' } }, new Slick.EventData(), gridStub);
+        const instance = extension.register() as SlickHeaderMenu;
+        instance.onCommand!.notify({ column: columnsMock[0], grid: gridStub, command: 'freeze-columns', item: { command: 'freeze-columns' } }, new Slick.EventData(), gridStub);
 
         expect(onCommandSpy).toHaveBeenCalled();
         expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: 0 });
@@ -398,10 +398,10 @@ describe('headerMenuExtension', () => {
       it('should trigger the command "freeze-columns" and grid "setOptions" method to be called with frozen column of -1 because the column found is not visible', () => {
         const setOptionsSpy = jest.spyOn(gridStub, 'setOptions');
         const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
-        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
+        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu as HeaderMenu, 'onCommand');
 
-        const instance = extension.register();
-        instance.onCommand.notify({ column: columnsMock[1], grid: gridStub, command: 'freeze-columns', item: { command: 'freeze-columns' } }, new Slick.EventData(), gridStub);
+        const instance = extension.register() as SlickHeaderMenu;
+        instance.onCommand!.notify({ column: columnsMock[1], grid: gridStub, command: 'freeze-columns', item: { command: 'freeze-columns' } }, new Slick.EventData(), gridStub);
 
         expect(onCommandSpy).toHaveBeenCalled();
         expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: -1 });
@@ -409,11 +409,11 @@ describe('headerMenuExtension', () => {
       });
 
       it('should trigger the command "hide" and expect the grid "autosizeColumns" method being called', () => {
-        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
+        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu as HeaderMenu, 'onCommand');
         const autosizeSpy = jest.spyOn(SharedService.prototype.slickGrid, 'autosizeColumns');
 
-        const instance = extension.register();
-        instance.onCommand.notify({ column: columnsMock[0], grid: gridStub, command: 'hide', item: { command: 'hide' } }, new Slick.EventData(), gridStub);
+        const instance = extension.register() as SlickHeaderMenu;
+        instance.onCommand!.notify({ column: columnsMock[0], grid: gridStub, command: 'hide', item: { command: 'hide' } }, new Slick.EventData(), gridStub);
 
         expect(onCommandSpy).toHaveBeenCalled();
         expect(autosizeSpy).toHaveBeenCalled();
@@ -421,10 +421,10 @@ describe('headerMenuExtension', () => {
 
       it('should trigger the command "clear-filter" and expect "clearColumnFilter" method being called with dataview refresh', () => {
         const filterSpy = jest.spyOn(filterServiceStub, 'clearFilterByColumnId');
-        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
+        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu as HeaderMenu, 'onCommand');
 
-        const instance = extension.register();
-        instance.onCommand.notify({ column: columnsMock[0], grid: gridStub, command: 'clear-filter', item: { command: 'clear-filter' } }, new Slick.EventData(), gridStub);
+        const instance = extension.register() as SlickHeaderMenu;
+        instance.onCommand!.notify({ column: columnsMock[0], grid: gridStub, command: 'clear-filter', item: { command: 'clear-filter' } }, new Slick.EventData(), gridStub);
 
         expect(onCommandSpy).toHaveBeenCalled();
         expect(filterSpy).toHaveBeenCalledWith(expect.anything(), columnsMock[0].id);
@@ -432,10 +432,10 @@ describe('headerMenuExtension', () => {
 
       it('should trigger the command "clear-sort" and expect "clearSortByColumnId" being called with event and column id', () => {
         const clearSortSpy = jest.spyOn(sortServiceStub, 'clearSortByColumnId');
-        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
+        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu as HeaderMenu, 'onCommand');
 
-        const instance = extension.register();
-        instance.onCommand.notify({ column: columnsMock[0], grid: gridStub, command: 'clear-sort', item: { command: 'clear-sort' } }, new Slick.EventData(), gridStub);
+        const instance = extension.register() as SlickHeaderMenu;
+        instance.onCommand!.notify({ column: columnsMock[0], grid: gridStub, command: 'clear-sort', item: { command: 'clear-sort' } }, new Slick.EventData(), gridStub);
 
         expect(clearSortSpy).toHaveBeenCalledWith(expect.anything(), columnsMock[0].id);
         expect(onCommandSpy).toHaveBeenCalled();
@@ -447,11 +447,11 @@ describe('headerMenuExtension', () => {
         const mockSortedOuput: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: true, sortCol: { id: 'field2', field: 'field2' } }];
         const previousSortSpy = jest.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
         const backendSortSpy = jest.spyOn(sortServiceStub, 'onBackendSortChanged');
-        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
+        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu as HeaderMenu, 'onCommand');
         const setSortSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setSortColumns');
 
-        const instance = extension.register();
-        instance.onCommand.notify({ column: mockSortedCols[1].sortCol, grid: gridStub, command: 'sort-asc', item: { command: 'sort-asc' } }, new Slick.EventData(), gridStub);
+        const instance = extension.register() as SlickHeaderMenu;
+        instance.onCommand!.notify({ column: mockSortedCols[1].sortCol, grid: gridStub, command: 'sort-asc', item: { command: 'sort-asc' } }, new Slick.EventData(), gridStub);
 
         expect(previousSortSpy).toHaveBeenCalled();
         expect(backendSortSpy).toHaveBeenCalledWith(expect.anything(), { multiColumnSort: true, sortCols: mockSortedOuput, grid: gridStub });
@@ -465,11 +465,11 @@ describe('headerMenuExtension', () => {
         const mockSortedOuput: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } }];
         const previousSortSpy = jest.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
         const backendSortSpy = jest.spyOn(sortServiceStub, 'onBackendSortChanged');
-        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
+        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu as HeaderMenu, 'onCommand');
         const setSortSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setSortColumns');
 
-        const instance = extension.register();
-        instance.onCommand.notify({ column: mockSortedCols[1].sortCol, grid: gridStub, command: 'sort-desc', item: { command: 'sort-desc' } }, new Slick.EventData(), gridStub);
+        const instance = extension.register() as SlickHeaderMenu;
+        instance.onCommand!.notify({ column: mockSortedCols[1].sortCol, grid: gridStub, command: 'sort-desc', item: { command: 'sort-desc' } }, new Slick.EventData(), gridStub);
 
         expect(previousSortSpy).toHaveBeenCalled();
         expect(backendSortSpy).toHaveBeenCalledWith(expect.anything(), { multiColumnSort: true, sortCols: mockSortedOuput, grid: gridStub });
@@ -485,11 +485,11 @@ describe('headerMenuExtension', () => {
         const mockSortedOuput: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } }];
         const previousSortSpy = jest.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
         const localSortSpy = jest.spyOn(sortServiceStub, 'onLocalSortChanged');
-        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
+        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu as HeaderMenu, 'onCommand');
         const setSortSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setSortColumns');
 
-        const instance = extension.register();
-        instance.onCommand.notify({ column: mockSortedCols[1].sortCol, grid: gridStub, command: 'sort-desc', item: { command: 'sort-desc' } }, new Slick.EventData(), gridStub);
+        const instance = extension.register() as SlickHeaderMenu;
+        instance.onCommand!.notify({ column: mockSortedCols[1].sortCol, grid: gridStub, command: 'sort-desc', item: { command: 'sort-desc' } }, new Slick.EventData(), gridStub);
 
         expect(previousSortSpy).toHaveBeenCalled();
         expect(localSortSpy).toHaveBeenCalledWith(gridStub, mockSortedOuput);
@@ -499,17 +499,17 @@ describe('headerMenuExtension', () => {
 
       it('should trigger the command "sort-desc" and expect "onSort" event triggered when no DataView is provided', () => {
         const copyGridOptionsMock = { ...gridOptionsMock, backendServiceApi: undefined } as unknown as GridOption;
-        jest.spyOn(SharedService.prototype, 'dataView', 'get').mockReturnValue(undefined);
+        jest.spyOn(SharedService.prototype, 'dataView', 'get').mockReturnValue(undefined as any);
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         const mockSortedCols: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: true, sortCol: { id: 'field2', field: 'field2' } }];
         const mockSortedOuput: ColumnSort[] = [{ columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } }, { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } }];
         const previousSortSpy = jest.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
-        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu, 'onCommand');
+        const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.headerMenu as HeaderMenu, 'onCommand');
         const setSortSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setSortColumns');
         const gridSortSpy = jest.spyOn(gridStub.onSort, 'notify');
 
-        const instance = extension.register();
-        instance.onCommand.notify({ column: mockSortedCols[1].sortCol, grid: gridStub, command: 'sort-desc', item: { command: 'sort-desc' } }, new Slick.EventData(), gridStub);
+        const instance = extension.register() as SlickHeaderMenu;
+        instance.onCommand!.notify({ column: mockSortedCols[1].sortCol, grid: gridStub, command: 'sort-desc', item: { command: 'sort-desc' } }, new Slick.EventData(), gridStub);
 
         expect(previousSortSpy).toHaveBeenCalled();
         expect(gridSortSpy).toHaveBeenCalledWith(mockSortedOuput);

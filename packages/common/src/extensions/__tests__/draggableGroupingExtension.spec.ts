@@ -1,4 +1,4 @@
-import { GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { DraggableGrouping, GridOption, SlickDraggableGrouping, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { DraggableGroupingExtension } from '../draggableGroupingExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
@@ -44,7 +44,7 @@ describe('draggableGroupingExtension', () => {
   });
 
   it('should return null after calling "create" method when the grid options is missing', () => {
-    const output = extension.create(null);
+    const output = extension.create(null as any);
     expect(output).toBeNull();
   });
 
@@ -60,10 +60,10 @@ describe('draggableGroupingExtension', () => {
     });
 
     it('should register the addon', () => {
-      const onRegisteredSpy = jest.spyOn(SharedService.prototype.gridOptions.draggableGrouping, 'onExtensionRegistered');
+      const onRegisteredSpy = jest.spyOn(SharedService.prototype.gridOptions.draggableGrouping as DraggableGrouping, 'onExtensionRegistered');
       const pluginSpy = jest.spyOn(SharedService.prototype.slickGrid, 'registerPlugin');
 
-      const instance = extension.create(gridOptionsMock);
+      const instance = extension.create(gridOptionsMock) as SlickDraggableGrouping;
       const addon = extension.register();
 
       const addonInstance = extension.getAddonInstance();
@@ -83,7 +83,7 @@ describe('draggableGroupingExtension', () => {
     });
 
     it('should dispose of the addon', () => {
-      const instance = extension.create(gridOptionsMock);
+      const instance = extension.create(gridOptionsMock) as SlickDraggableGrouping;
       const destroySpy = jest.spyOn(instance, 'destroy');
 
       extension.dispose();
@@ -108,9 +108,9 @@ describe('draggableGroupingExtension', () => {
 
     it('should call internal event handler subscribe and expect the "onGroupChanged" option to be called when addon notify is called', () => {
       const handlerSpy = jest.spyOn(extension.eventHandler, 'subscribe');
-      const onColumnSpy = jest.spyOn(SharedService.prototype.gridOptions.draggableGrouping, 'onGroupChanged');
+      const onColumnSpy = jest.spyOn(SharedService.prototype.gridOptions.draggableGrouping as DraggableGrouping, 'onGroupChanged');
 
-      const instance = extension.create(gridOptionsMock);
+      const instance = extension.create(gridOptionsMock) as SlickDraggableGrouping;
       extension.register();
       instance.onGroupChanged.notify({ caller: 'clear-all', groupColumns: [] }, new Slick.EventData(), gridStub);
 
