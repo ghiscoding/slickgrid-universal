@@ -14,6 +14,12 @@ describe('the DateTimeShortEuro Formatter', () => {
     expect(result).toBe('TBD');
   });
 
+  it('should provide a dateIso formatted input and return a formatted date value without time when valid date value is provided', () => {
+    const value = '2019-05-01 02:36:07';
+    const result = Formatters.dateTimeShortEuro(0, 0, value, { input: 'dateIso' } as unknown as Column, {});
+    expect(result).toBe('01/05/2019 02:36');
+  });
+
   it('should return a formatted date value in the morning when valid date value is provided', () => {
     const value = new Date('2019-05-01T02:36:07');
     const result = Formatters.dateTimeShortEuro(0, 0, value, {} as Column, {});

@@ -29,9 +29,11 @@ export function getAssociatedDateFormatter(fieldType: typeof FieldType[keyof typ
   return (_row: number, _cell: number, value: any, columnDef: Column, _dataContext: any, grid: SlickGrid) => {
     const gridOptions = ((grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {}) as GridOption;
     const customSeparator = gridOptions?.formatterOptions?.dateSeparator ?? defaultSeparator;
+    const inputType = columnDef?.type ?? 'date';
+    const inputDateFormat = mapMomentDateFormatWithFieldType(inputType);
     const isParsingAsUtc = columnDef?.params?.parseDateAsUtc ?? false;
 
-    const isDateValid = moment(value, defaultDateFormat, false).isValid();
+    const isDateValid = moment(value, inputDateFormat, false).isValid();
     let outputDate = value;
     if (value && isDateValid) {
       outputDate = isParsingAsUtc ? moment.utc(value).format(defaultDateFormat) : moment(value).format(defaultDateFormat);

@@ -39,7 +39,7 @@ module.exports = ({ production } = {}, { hmr, port, host } = {}) => ({
     extensions: ['.ts', '.js'],
     modules: [srcDir, 'node_modules'],
     alias: {
-      moment$: 'moment/moment.js'
+      moment: 'moment/moment.js'
     }
   },
   module: {
