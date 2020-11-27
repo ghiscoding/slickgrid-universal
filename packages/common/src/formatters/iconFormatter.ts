@@ -1,6 +1,7 @@
-import { Column, Formatter } from './../interfaces/index';
+import { Formatter } from './../interfaces/index';
 
-export const iconFormatter: Formatter = (_row: number, _cell: number, _value: any, columnDef: Column) => {
+/** Display whichever icon you want (library agnostic, it could be Font-Awesome or any other) */
+export const iconFormatter: Formatter = (_row, _cell, _value, columnDef) => {
   const columnParams = columnDef && columnDef.params || {};
   const icon = columnParams.icon || columnParams.formatterIcon;
 

@@ -1,5 +1,6 @@
 import { Formatter } from './../interfaces/index';
 
-export const boldFormatter: Formatter = (_row: number, _cell: number, value: any) => {
+/** show value in bold font weight */
+export const boldFormatter: Formatter = (_row, _cell, value) => {
   return value ? `<b>${value}</b>` : '';
 };

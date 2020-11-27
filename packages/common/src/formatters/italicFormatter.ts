@@ -1,5 +1,6 @@
 import { Formatter } from './../interfaces/index';
 
-export const italicFormatter: Formatter = (_row: number, _cell: number, value: any) => {
+/** show input text value as italic text */
+export const italicFormatter: Formatter = (_row, _cell, value) => {
   return value ? `<i>${value}</i>` : '';
 };

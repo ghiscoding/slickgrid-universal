@@ -1,8 +1,9 @@
-import { Column, Formatter, SlickGrid } from './../interfaces/index';
+import { Formatter } from './../interfaces/index';
 import { formatNumber } from './../services/utilities';
 import { getValueFromParamsOrFormatterOptions } from './formatterUtilities';
 
-export const dollarColoredFormatter: Formatter = (_row: number, _cell: number, value: any, columnDef: Column, _dataContext: any, grid: SlickGrid) => {
+/** Display the value as 2 decimals formatted with dollar sign '$' at the end of of the value, change color of text to red/green on negative/positive value */
+export const dollarColoredFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
   const isNumber = (value === null || value === undefined || value === '') ? false : !isNaN(+value);
   const minDecimal = getValueFromParamsOrFormatterOptions('minDecimal', columnDef, grid, 2);
   const maxDecimal = getValueFromParamsOrFormatterOptions('maxDecimal', columnDef, grid, 4);

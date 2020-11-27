@@ -1,6 +1,7 @@
 import { Formatter } from './../interfaces/index';
 
-export const alignRightFormatter: Formatter = (_row: number, _cell: number, value: string | any): string => {
+/** Align cell value to the right */
+export const alignRightFormatter: Formatter = (_row, _cell, value) => {
   let outputValue = value;
 
   if (value === null || value === undefined) {

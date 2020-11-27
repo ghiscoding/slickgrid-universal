@@ -1,8 +1,13 @@
-import { Column, Formatter, SlickGrid } from './../interfaces/index';
+import { Formatter } from './../interfaces/index';
 import { formatNumber } from './../services/utilities';
 import { getValueFromParamsOrFormatterOptions } from './formatterUtilities';
 
-export const decimalFormatter: Formatter = (_row: number, _cell: number, value: any, columnDef: Column, _dataContext: any, grid: SlickGrid) => {
+/**
+ * Display the value as x decimals formatted, defaults to 2 decimals.
+ * You can pass "minDecimal" and/or "maxDecimal" to the "params" property.
+ * For example:: `{ formatter: Formatters.decimal, params: { minDecimal: 2, maxDecimal: 4 }}`
+ */
+export const decimalFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
   const isNumber = (value === null || value === undefined || value === '') ? false : !isNaN(+value);
   const minDecimal = getValueFromParamsOrFormatterOptions('minDecimal', columnDef, grid, 2);
   const maxDecimal = getValueFromParamsOrFormatterOptions('maxDecimal', columnDef, grid, 2);

@@ -1,5 +1,6 @@
 import { Formatter } from './../interfaces/index';
 
-export const fakeHyperlinkFormatter: Formatter = (_row: number, _cell: number, value: string) => {
+/** Takes any text value and display it as a fake a hyperlink (only styled as an hyperlink), this can be used in combo with "onCellClick" event */
+export const fakeHyperlinkFormatter: Formatter = (_row, _cell, value) => {
   return value ? `<span class="fake-hyperlink">${value}</span>` : '';
 };

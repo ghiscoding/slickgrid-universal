@@ -161,9 +161,24 @@
       "error",
       "always",
       {
-        "markers": [
-          "/"
-        ]
+        "line": {
+          "markers": [
+            "/"
+          ],
+          "exceptions": [
+            "-",
+            "+"
+          ]
+        },
+        "block": {
+          "markers": [
+            "!"
+          ],
+          "exceptions": [
+            "*"
+          ],
+          "balanced": true
+        }
       }
     ],
     "use-isnan": "error",

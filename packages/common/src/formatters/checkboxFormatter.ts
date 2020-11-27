@@ -1,4 +1,5 @@
 import { Formatter } from './../interfaces/index';
 
-export const checkboxFormatter: Formatter = (_row: number, _cell: number, value: any) =>
+/** When value is filled (true), it will display a checkbox Unicode icon */
+export const checkboxFormatter: Formatter = (_row, _cell, value) =>
   value ? '&#x2611;' : '';
