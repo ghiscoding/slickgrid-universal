@@ -35,7 +35,7 @@ module.exports = ({ production } = {}) => ({
     mainFields: production ? ['module', 'main'] : ['browser', 'module', 'main'],
     alias: {
       dompurify: 'dompurify/dist/purify.es.js',
-      moment$: 'moment/moment.js'
+      moment: 'moment/moment.js'
     }
   },
   module: {

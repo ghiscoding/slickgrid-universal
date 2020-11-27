@@ -14,6 +14,12 @@ describe('the Date ISO Formatter', () => {
     expect(result).toBe('TBD');
   });
 
+  it('should provide a dateIso formatted input and return a formatted date value without time when valid date value is provided', () => {
+    const value = '2019-05-03 00:00:01';
+    const result = Formatters.dateIso(0, 0, value, { input: 'dateIso' } as unknown as Column, {});
+    expect(result).toBe('2019-05-03');
+  });
+
   it('should return a formatted date value without time when valid date value is provided', () => {
     const value = new Date('2019-05-03T00:00:01');
     const result = Formatters.dateIso(0, 0, value, {} as Column, {});
