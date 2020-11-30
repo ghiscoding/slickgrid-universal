@@ -1,4 +1,4 @@
-import { FieldType } from '../enums';
+import { FieldType } from '../enums/index';
 import {
   CollectionCustomStructure,
   CollectionFilterBy,
