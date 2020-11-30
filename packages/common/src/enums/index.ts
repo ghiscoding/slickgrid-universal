@@ -4,6 +4,7 @@ export * from './fieldType.enum';
 export * from './extensionList.type';
 export * from './eventNamingStyle.enum';
 export * from './emitterType.enum';
+export * from './fieldType.enum';
 export * from './fileType.enum';
 export * from './delimiterType.enum';
 export * from './columnReorderFunction.type';

@@ -367,9 +367,6 @@ export interface GridOption {
   /** Header menu options */
   headerMenu?: HeaderMenu;
 
-  /** Translater i18n translation service instance */
-  i18n?: TranslaterService;
-
   /**
    * When using custom Locales (that is when user is NOT using a Translate Service, this property does nothing when used with Translate Service),
    * This is useful so that every component of the lib knows the locale.
@@ -482,6 +479,9 @@ export interface GridOption {
 
   /** What is the top panel height in pixels (only type the number) */
   topPanelHeight?: number;
+
+  /** Translater Service used by Slickgrid-Universal for translating locale. */
+  translater?: TranslaterService;
 
   /** I18N Namespace Translation Prefix, you can also optionally change the separator by setting "translationNamespaceSeparator" (defaults to ":") */
   translationNamespace?: string;

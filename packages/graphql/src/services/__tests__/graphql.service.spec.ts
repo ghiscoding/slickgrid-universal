@@ -334,7 +334,7 @@ describe('GraphqlService', () => {
       gridOptionMock.enablePagination = true; // reset it for the next test
     });
 
-    it('should include default locale "en" in the query string when option "addLocaleIntoQuery" is enabled and i18n is not defined', () => {
+    it('should include default locale "en" in the query string when option "addLocaleIntoQuery" is enabled and translater is not defined', () => {
       const expectation = `query{ users(first:10, offset:0, locale: "en"){ totalCount, nodes{ id, field1, field2 }}}`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
@@ -350,7 +350,7 @@ describe('GraphqlService', () => {
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
-      gridOptionMock.i18n = { getCurrentLanguage: () => 'fr-CA' } as TranslaterService;
+      gridOptionMock.translater = { getCurrentLanguage: () => 'fr-CA' } as TranslaterService;
       service.init({ datasetName: 'users', addLocaleIntoQuery: true }, paginationOptions, gridStub);
       const query = service.buildQuery();
 

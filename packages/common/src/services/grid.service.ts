@@ -14,6 +14,7 @@ import {
 } from '../interfaces/index';
 import { ExtensionService } from './extension.service';
 import { FilterService } from './filter.service';
+import { GridStateService } from './gridState.service';
 import { PaginationService } from '../services/pagination.service';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
@@ -35,6 +36,7 @@ export class GridService {
 
   constructor(
     private extensionService: ExtensionService,
+    private gridStateService: GridStateService,
     private filterService: FilterService,
     private pubSubService: PubSubService,
     private paginationService: PaginationService,
@@ -363,7 +365,7 @@ export class GridService {
    * The column definitions could be passed as argument to reset (this can be used after a Grid State reset)
    * The reset will clear the Filters & Sort, then will reset the Columns to their original state
    */
-  resetGrid() {
+  resetGrid(columnDefinitions?: Column[]) {
     // reset columns to original states & refresh the grid
     if (this._grid && this._dataView) {
       const originalColumns = this.extensionService.getAllColumns();
@@ -374,6 +376,7 @@ export class GridService {
         if (this._gridOptions && this._gridOptions.enableAutoSizeColumns) {
           this._grid.autosizeColumns();
         }
+        this.gridStateService.resetColumns(columnDefinitions);
       }
     }
 
@@ -564,7 +567,7 @@ export class GridService {
     }
 
     // when user has row selection enabled, we should clear any selection to avoid confusion after a delete
-    const isSyncGridSelectionEnabled = /* this.gridStateService && this.gridStateService.needToPreserveRowSelection() || */ false;
+    const isSyncGridSelectionEnabled = this.gridStateService && this.gridStateService.needToPreserveRowSelection() || false;
     if (!isSyncGridSelectionEnabled && this._grid && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
       this.setSelectedRows([]);
     }

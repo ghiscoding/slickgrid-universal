@@ -292,8 +292,8 @@ export class SlickVanillaGridBundle {
     this._gridOptions = this.mergeGridOptions(options || {});
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions && this._gridOptions.enableDeepCopyDatasetOnPageLoad);
 
-    // if user is providing a Translate Service, it has to be passed under the "i18n" grid option
-    this.translaterService = services?.translaterService ?? this._gridOptions.i18n;
+    // if user is providing a Translate Service, it has to be passed under the "translater" grid option
+    this.translaterService = services?.translaterService ?? this._gridOptions.translater;
 
     // initialize and assign all Service Dependencies
     this._eventPubSubService = services?.eventPubSubService ?? new EventPubSubService(gridParentContainerElm);
@@ -344,8 +344,8 @@ export class SlickVanillaGridBundle {
       this.translaterService,
     );
 
-    this.gridService = services?.gridService ?? new GridService(this.extensionService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService);
     this.gridStateService = services?.gridStateService ?? new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
+    this.gridService = services?.gridService ?? new GridService(this.extensionService, this.gridStateService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService);
 
     this.groupingService = services?.groupingAndColspanService ?? new GroupingAndColspanService(this.extensionUtility, this.extensionService, this._eventPubSubService);
 
@@ -1033,7 +1033,7 @@ export class SlickVanillaGridBundle {
   /**
    * Dynamically change or update the column definitions list.
    * We will re-render the grid so that the new header and data shows up correctly.
-   * If using i18n, we also need to trigger a re-translate of the column headers
+   * If using translater, we also need to trigger a re-translate of the column headers
    */
   updateColumnDefinitionsList(newColumnDefinitions: Column[]) {
     // map/swap the internal library Editor to the SlickGrid Editor factory

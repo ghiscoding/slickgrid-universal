@@ -58,8 +58,8 @@ export class DateEditor implements Editor {
     }
     this.grid = args.grid;
     this.gridOptions = (this.grid.getOptions() || {}) as GridOption;
-    if (this.gridOptions && this.gridOptions.i18n) {
-      this._translaterService = this.gridOptions.i18n;
+    if (this.gridOptions?.translater) {
+      this._translaterService = this.gridOptions.translater;
     }
     this.init();
   }

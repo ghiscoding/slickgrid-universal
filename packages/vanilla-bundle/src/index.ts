@@ -1,5 +1,6 @@
 import { Aggregators, Editors, Enums, Filters, Formatters, GroupTotalFormatters, SortComparers, Utilities } from '@slickgrid-universal/common';
 import { BindingService } from './services/index';
+import { SlickEmptyWarningComponent } from './components/slick-empty-warning.component';
 import { SlickCompositeEditorComponent } from './components/slick-composite-editor.component';
 import { SlickVanillaGridBundle } from './components/slick-vanilla-grid-bundle';
 
@@ -23,7 +24,7 @@ if (typeof window !== 'undefined') {
 
 export { BindingService };
 export { Aggregators, Editors, Enums, Filters, Formatters, GroupTotalFormatters, SortComparers, Utilities };
-export { SlickCompositeEditorComponent, SlickVanillaGridBundle }; // just to export the interface
+export { SlickCompositeEditorComponent, SlickEmptyWarningComponent, SlickVanillaGridBundle }; // export the custom components & interface
 export { Slicker };
 export * from './interfaces/index';
 export * from './services/index';
