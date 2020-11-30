@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/vanilla-bundle",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "description": "Vanilla Slick Grid Bundle - Framework agnostic the output is to be used in vanilla JS/TS - Written in TypeScript and we also use WebPack to bundle everything into 1 JS file.",
   "browser": "src/index.ts",
   "main": "dist/commonjs/index.js",
@@ -44,9 +44,9 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.2.13",
-    "@slickgrid-universal/excel-export": "^0.2.13",
-    "@slickgrid-universal/file-export": "^0.2.13",
+    "@slickgrid-universal/common": "^0.2.15",
+    "@slickgrid-universal/excel-export": "^0.2.15",
+    "@slickgrid-universal/file-export": "^0.2.15",
     "dompurify": "^2.2.2",
     "es6-promise": "^4.2.8",
     "isomorphic-fetch": "^3.0.0"

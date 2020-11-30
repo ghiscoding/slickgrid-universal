@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.15](https://github.com/ghiscoding/slickgrid-universal/compare/v0.2.0...v0.2.15) (2020-11-30)
+
+
+### Bug Fixes
+
+* **core:** don't expose src folder on npm & update few npm package ([#168](https://github.com/ghiscoding/slickgrid-universal/issues/168)) ([3c05938](https://github.com/ghiscoding/slickgrid-universal/commit/3c059381b35bba88ea98d0206692c912c625f227))
+
+
+
+
+
 ## [0.2.13](https://github.com/ghiscoding/slickgrid-universal/compare/@slickgrid-universal/odata@0.2.12...@slickgrid-universal/odata@0.2.13) (2020-11-26)
 
 **Note:** Version bump only for package @slickgrid-universal/odata
