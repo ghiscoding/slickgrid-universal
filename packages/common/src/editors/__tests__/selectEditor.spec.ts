@@ -20,7 +20,7 @@ const dataViewStub = {
 const gridOptionMock = {
   autoCommitEdit: false,
   editable: true,
-  i18n: null as any,
+  translater: null as any,
 } as unknown as GridOption;
 
 const getEditorLockMock = {
@@ -141,7 +141,7 @@ describe('SelectEditor', () => {
 
     it('should initialize the editor', () => {
       (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-      gridOptionMock.i18n = translateService;
+      gridOptionMock.translater = translateService;
       editor = new SelectEditor(editorArguments, true);
       editor.focus();
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;
@@ -154,7 +154,7 @@ describe('SelectEditor', () => {
       const promise = new Promise(resolve => resolve(mockCollection));
       (mockColumn.internalColumnEditor as ColumnEditor).collection = null as any;
       (mockColumn.internalColumnEditor as ColumnEditor).collectionAsync = promise;
-      gridOptionMock.i18n = translateService;
+      gridOptionMock.translater = translateService;
 
       editor = new SelectEditor(editorArguments, true);
       const disableSpy = jest.spyOn(editor, 'disable');

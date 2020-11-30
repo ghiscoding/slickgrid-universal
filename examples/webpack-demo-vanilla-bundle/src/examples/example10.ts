@@ -126,7 +126,7 @@ export class Example10 {
 
     this.gridOptions = {
       enableTranslate: true,
-      i18n: this.translateService, // pass the TranslateService instance to the grid
+      translater: this.translateService, // pass the TranslateService instance to the grid
       enableAutoResize: false,
       gridHeight: 275,
       gridWidth: 900,

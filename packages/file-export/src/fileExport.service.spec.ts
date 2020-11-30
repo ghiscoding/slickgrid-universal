@@ -75,11 +75,11 @@ describe('ExportService', () => {
   let mockCsvBlob: Blob;
   let mockTxtBlob: Blob;
 
-  describe('with I18N Service', () => {
+  describe('with Translater Service', () => {
     beforeEach(() => {
       sharedService = new SharedService();
       translateService = new TranslateServiceStub();
-      mockGridOptions.i18n = translateService;
+      mockGridOptions.translater = translateService;
       sharedService.internalPubSubService = pubSubServiceStub;
 
       (navigator as any).__defineGetter__('appName', () => 'Netscape');
@@ -544,7 +544,7 @@ describe('ExportService', () => {
 
       beforeEach(() => {
         mockGridOptions.enableTranslate = true;
-        mockGridOptions.i18n = translateService;
+        mockGridOptions.translater = translateService;
 
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
@@ -562,7 +562,7 @@ describe('ExportService', () => {
         jest.clearAllMocks();
       });
 
-      it(`should have the LastName header title translated when defined as a "headerKey" and "i18n" is set in grid option`, (done) => {
+      it(`should have the LastName header title translated when defined as a "headerKey" and "translater" is set in grid option`, (done) => {
         mockGridOptions.exportOptions!.sanitizeDataExport = false;
         mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
@@ -1001,7 +1001,7 @@ describe('ExportService', () => {
 
         beforeEach(() => {
           mockGridOptions.enableTranslate = true;
-          mockGridOptions.i18n = translateService;
+          mockGridOptions.translater = translateService;
 
           mockColumns = [
             { id: 'id', field: 'id', excludeFromExport: true },
@@ -1018,7 +1018,7 @@ describe('ExportService', () => {
           jest.clearAllMocks();
         });
 
-        it(`should have the LastName header title translated when defined as a "headerKey" and "i18n" is set in grid option`, (done) => {
+        it(`should have the LastName header title translated when defined as a "headerKey" and "translater" is set in grid option`, (done) => {
           mockGridOptions.exportOptions!.sanitizeDataExport = false;
           mockTranslateCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
           jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockTranslateCollection.length);
@@ -1047,17 +1047,17 @@ describe('ExportService', () => {
     });
   });
 
-  describe('without I18N Service', () => {
+  describe('without Translater Service', () => {
     beforeEach(() => {
       translateService = undefined as any;
       service = new FileExportService();
     });
 
-    it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {
-      const gridOptionsMock = { enableTranslate: true, enableGridMenu: true, i18n: undefined as any, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' } } as GridOption;
+    it('should throw an error if "enableTranslate" is set but the Translater Service is null', () => {
+      const gridOptionsMock = { enableTranslate: true, enableGridMenu: true, translater: undefined as any, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' } } as GridOption;
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
-      expect(() => service.init(gridStub, sharedService)).toThrowError('[Slickgrid-Universal] requires a Translate Service to be passed in the "i18n" Grid Options when "enableTranslate" is enabled.');
+      expect(() => service.init(gridStub, sharedService)).toThrowError('[Slickgrid-Universal] requires a Translate Service to be passed in the "translater" Grid Options when "enableTranslate" is enabled.');
     });
   });
 });

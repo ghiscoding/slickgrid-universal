@@ -19,7 +19,7 @@ const dataViewStub = {
 const gridOptionMock = {
   autoCommitEdit: false,
   editable: true,
-  i18n: null,
+  translater: null,
 } as unknown as GridOption;
 
 const getEditorLockMock = {
@@ -96,7 +96,7 @@ describe('DateEditor', () => {
     });
 
     it('should initialize the editor', () => {
-      gridOptionMock.i18n = translateService;
+      gridOptionMock.translater = translateService;
       editor = new DateEditor(editorArguments);
       const editorCount = divContainer.querySelectorAll('input.editor-text.editor-startDate').length;
       expect(editorCount).toBe(1);
@@ -435,7 +435,7 @@ describe('DateEditor', () => {
 
     describe('with different locale', () => {
       it('should display text in new locale', (done) => {
-        gridOptionMock.i18n = translateService;
+        gridOptionMock.translater = translateService;
 
         translateService.use('fr-CA'); // will be trimmed to "fr"
         editor = new DateEditor(editorArguments);

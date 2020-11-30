@@ -1,4 +1,7 @@
 export interface ResizerOption {
+  /** Defaults to false, do we want to apply the resized dimentions to the grid container as well? */
+  applyResizeToContainer?: boolean;
+
   /** Defaults to 'window', which DOM element are we using to calculate the available size for the grid? */
   calculateAvailableSizeBy?: 'container' | 'window';
 

@@ -18,7 +18,7 @@ const dataViewStub = {
 const gridOptionMock = {
   autoCommitEdit: false,
   editable: true,
-  i18n: null,
+  translater: null,
   editorTypingDebounce: 0,
 } as unknown as GridOption;
 
@@ -101,7 +101,7 @@ describe('LongTextEditor', () => {
     });
 
     it('should initialize the editor', () => {
-      gridOptionMock.i18n = translateService;
+      gridOptionMock.translater = translateService;
       editor = new LongTextEditor(editorArguments);
       const editorCount = document.body.querySelectorAll('.slick-large-editor-text.editor-title textarea').length;
       const editorTextCounter = document.body.querySelectorAll<HTMLDivElement>('.slick-large-editor-text.editor-title .editor-footer .counter');
@@ -120,7 +120,7 @@ describe('LongTextEditor', () => {
     });
 
     it('should initialize the editor with default constant text when translate service is not provided', () => {
-      gridOptionMock.i18n = undefined as any;
+      gridOptionMock.translater = undefined as any;
       editor = new LongTextEditor(editorArguments);
       const editorCount = document.body.querySelectorAll('.slick-large-editor-text.editor-title textarea').length;
       const editorFooterElm = document.body.querySelector('.slick-large-editor-text.editor-title .editor-footer') as HTMLDivElement;

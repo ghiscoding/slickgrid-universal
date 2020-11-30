@@ -1,6 +1,6 @@
 import 'jest-extended';
 
-import { FilterService, GridService, ExtensionService, PaginationService, PubSubService, SharedService, SortService } from '../index';
+import { ExtensionService, FilterService, GridService, GridStateService, PaginationService, PubSubService, SharedService, SortService } from '../index';
 import { GridOption, CellArgs, Column, OnEventArgs, SlickGrid, SlickDataView, SlickNamespace } from '../../interfaces/index';
 
 jest.useFakeTimers();
@@ -54,6 +54,11 @@ const dataviewStub = {
   updateItem: jest.fn(),
 } as unknown as SlickDataView;
 
+const gridStateServiceStub = {
+  needToPreserveRowSelection: jest.fn(),
+  resetColumns: jest.fn(),
+} as unknown as GridStateService;
+
 const gridStub = {
   autosizeColumns: jest.fn(),
   insertItem: jest.fn(),
@@ -88,7 +93,7 @@ describe('Grid Service', () => {
   jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
 
   beforeEach(() => {
-    service = new GridService(extensionServiceStub, filterServiceStub, pubSubServiceStub, paginationServiceStub, sharedService, sortServiceStub);
+    service = new GridService(extensionServiceStub, gridStateServiceStub, filterServiceStub, pubSubServiceStub, paginationServiceStub, sharedService, sortServiceStub);
     service.init(gridStub);
   });
 
@@ -1503,7 +1508,7 @@ describe('Grid Service', () => {
       const extensionSpy = jest.spyOn(extensionServiceStub, 'getAllColumns').mockReturnValue(mockColumns);
       const setColSpy = jest.spyOn(gridStub, 'setColumns');
       const autosizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
-      // const gridStateSpy = jest.spyOn(gridStateServiceStub, 'resetColumns');
+      const gridStateSpy = jest.spyOn(gridStateServiceStub, 'resetColumns');
       const filterSpy = jest.spyOn(filterServiceStub, 'clearFilters');
       const sortSpy = jest.spyOn(sortServiceStub, 'clearSorting');
 
@@ -1512,7 +1517,7 @@ describe('Grid Service', () => {
       expect(extensionSpy).toHaveBeenCalled();
       expect(setColSpy).toHaveBeenCalled();
       expect(autosizeSpy).toHaveBeenCalled();
-      // expect(gridStateSpy).toHaveBeenCalled();
+      expect(gridStateSpy).toHaveBeenCalled();
       expect(filterSpy).toHaveBeenCalled();
       expect(sortSpy).toHaveBeenCalled();
     });
@@ -1521,12 +1526,12 @@ describe('Grid Service', () => {
       const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableAutoSizeColumns: true } as GridOption);
       const extensionSpy = jest.spyOn(extensionServiceStub, 'getAllColumns').mockReturnValue(mockColumns);
-      // const gridStateSpy = jest.spyOn(gridStateServiceStub, 'resetColumns');
+      const gridStateSpy = jest.spyOn(gridStateServiceStub, 'resetColumns');
 
-      service.resetGrid();
+      service.resetGrid(mockColumns);
 
       expect(extensionSpy).toHaveBeenCalled();
-      // expect(gridStateSpy).toHaveBeenCalledWith(mockColumns);
+      expect(gridStateSpy).toHaveBeenCalledWith(mockColumns);
     });
   });
 });

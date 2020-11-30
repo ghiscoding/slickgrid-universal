@@ -9,6 +9,7 @@ export const GlobalGridOptions: GridOption = {
   asyncEditorLoading: false,
   autoFitColumnsOnFirstLoad: true,
   autoResize: {
+    applyResizeToContainer: true,
     calculateAvailableSizeBy: 'window',
     bottomPadding: 20,
     minHeight: 180,
