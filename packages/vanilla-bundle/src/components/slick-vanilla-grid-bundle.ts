@@ -45,6 +45,7 @@ import {
   GroupItemMetaProviderExtension,
   HeaderMenuExtension,
   HeaderButtonExtension,
+  RowDetailViewExtension,
   RowSelectionExtension,
 
   // services
@@ -323,6 +324,7 @@ export class SlickVanillaGridBundle {
     const groupItemMetaProviderExtension = new GroupItemMetaProviderExtension(this.sharedService);
     const headerButtonExtension = new HeaderButtonExtension(this.extensionUtility, this.sharedService);
     const headerMenuExtension = new HeaderMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.translaterService);
+    const rowDetailViewExtension = new RowDetailViewExtension();
     const rowMoveManagerExtension = new RowMoveManagerExtension(this.extensionUtility, this.sharedService);
     const rowSelectionExtension = new RowSelectionExtension(this.extensionUtility, this.sharedService);
 
@@ -338,6 +340,7 @@ export class SlickVanillaGridBundle {
       groupItemMetaProviderExtension,
       headerButtonExtension,
       headerMenuExtension,
+      rowDetailViewExtension,
       rowMoveManagerExtension,
       rowSelectionExtension,
       this.sharedService,

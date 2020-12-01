@@ -1,4 +1,4 @@
-import { Column, Extension, GridOption, SlickEventHandler, SlickNamespace, SlickRowDetailView, Subscription } from '../interfaces/index';
+import { Column, Extension, GridOption, SlickEventHandler, SlickNamespace, SlickRowDetailView } from '../interfaces/index';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -6,7 +6,6 @@ declare const Slick: SlickNamespace;
 export class RowDetailViewExtension implements Extension {
   private _addon: SlickRowDetailView | null;
   private _eventHandler: SlickEventHandler;
-  private _subscriptions: Subscription[] = [];
 
   constructor() {
     this._eventHandler = new Slick.EventHandler();
