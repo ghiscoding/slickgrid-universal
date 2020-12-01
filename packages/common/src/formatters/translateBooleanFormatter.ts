@@ -6,7 +6,7 @@ export const translateBooleanFormatter: Formatter = (_row, _cell, value, columnD
   const translater = gridOptions.translater || (columnDef && columnDef.params && columnDef.params.translater);
 
   if (!translater || typeof translater.translate !== 'function') {
-    throw new Error(`The translate formatter requires the Translate Service to be provided as a Grid Options or Column Definition "i18n".
+    throw new Error(`"Formatters.translateBoolean" requires the Translate Service to be provided as a Grid Options "translater" (or "i18n" depending on which framework you use).
     For example: this.gridOptions = { enableTranslate: true, translater: this.translateService }`);
   }
 
