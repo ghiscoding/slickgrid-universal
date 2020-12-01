@@ -12,7 +12,7 @@ import {
   GroupItemMetaProviderExtension,
   HeaderButtonExtension,
   HeaderMenuExtension,
-  // RowDetailViewExtension,
+  RowDetailViewExtension,
   RowMoveManagerExtension,
   RowSelectionExtension,
 } from '../../extensions';
@@ -86,7 +86,7 @@ describe('ExtensionService', () => {
         extensionGroupItemMetaStub as unknown as GroupItemMetaProviderExtension,
         extensionStub as unknown as HeaderButtonExtension,
         extensionHeaderMenuStub as unknown as HeaderMenuExtension,
-        // extensionStub as unknown as RowDetailViewExtension,
+        extensionStub as unknown as RowDetailViewExtension,
         extensionStub as unknown as RowMoveManagerExtension,
         extensionStub as unknown as RowSelectionExtension,
         sharedService,
@@ -287,24 +287,24 @@ describe('ExtensionService', () => {
         expect(output).toEqual({ name: ExtensionName.checkboxSelector, instance: instanceMock as unknown, class: extensionStub } as ExtensionModel<any, any>);
       });
 
-      // it('should register the RowDetailView addon when "enableRowDetailView" is set in the grid options', () => {
-      //   const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
-      //   const gridOptionsMock = { enableRowDetailView: true } as GridOption;
-      //   const extCreateSpy = jest.spyOn(extensionStub, 'create').mockReturnValue(instanceMock);
-      //   const extRegisterSpy = jest.spyOn(extensionStub, 'register');
-      //   const gridSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+      it('should register the RowDetailView addon when "enableRowDetailView" is set in the grid options', () => {
+        const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
+        const gridOptionsMock = { enableRowDetailView: true } as GridOption;
+        const extCreateSpy = jest.spyOn(extensionStub, 'create').mockReturnValue(instanceMock);
+        const extRegisterSpy = jest.spyOn(extensionStub, 'register');
+        const gridSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
-      //   service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
-      //   service.bindDifferentExtensions();
-      //   const rowSelectionInstance = service.getExtensionByName(ExtensionName.rowSelection);
-      //   const output = service.getExtensionByName(ExtensionName.rowDetailView);
+        service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
+        service.bindDifferentExtensions();
+        const rowSelectionInstance = service.getExtensionByName(ExtensionName.rowSelection);
+        const output = service.getExtensionByName(ExtensionName.rowDetailView);
 
-      //   expect(gridSpy).toHaveBeenCalled();
-      //   expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
-      //   expect(rowSelectionInstance).not.toBeNull();
-      //   expect(extRegisterSpy).toHaveBeenCalled();
-      //   expect(output).toEqual({ name: ExtensionName.rowDetailView, instance: instanceMock  as unknown, class: extensionStub } as ExtensionModel<any, any>);
-      // });
+        expect(gridSpy).toHaveBeenCalled();
+        expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
+        expect(rowSelectionInstance).not.toBeNull();
+        expect(extRegisterSpy).toHaveBeenCalled();
+        expect(output).toEqual({ name: ExtensionName.rowDetailView, instance: instanceMock as unknown, class: extensionStub } as ExtensionModel<any, any>);
+      });
 
       it('should register the RowMoveManager addon when "enableRowMoveManager" is set in the grid options', () => {
         const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
@@ -421,15 +421,15 @@ describe('ExtensionService', () => {
         expect(extSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
       });
 
-      // it('should call rowDetailViewExtension create when "enableRowDetailView" is set in the grid options provided', () => {
-      //   const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
-      //   const gridOptionsMock = { enableRowDetailView: true } as GridOption;
-      //   const extSpy = jest.spyOn(extensionStub, 'create').mockReturnValue(instanceMock);
+      it('should call rowDetailViewExtension create when "enableRowDetailView" is set in the grid options provided', () => {
+        const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
+        const gridOptionsMock = { enableRowDetailView: true } as GridOption;
+        const extSpy = jest.spyOn(extensionStub, 'create').mockReturnValue(instanceMock);
 
-      //   service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
+        service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
 
-      //   expect(extSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
-      // });
+        expect(extSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
+      });
 
       it('should call draggableGroupingExtension create when "enableDraggableGrouping" is set in the grid options provided', () => {
         const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
@@ -677,7 +677,7 @@ describe('ExtensionService', () => {
         extensionGroupItemMetaStub as unknown as GroupItemMetaProviderExtension,
         extensionStub as unknown as HeaderButtonExtension,
         extensionHeaderMenuStub as unknown as HeaderMenuExtension,
-        // extensionStub as unknown as RowDetailViewExtension,
+        extensionStub as unknown as RowDetailViewExtension,
         extensionStub as unknown as RowMoveManagerExtension,
         extensionStub as unknown as RowSelectionExtension,
         sharedService,

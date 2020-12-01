@@ -17,7 +17,7 @@ import {
   GroupItemMetaProviderExtension,
   HeaderButtonExtension,
   HeaderMenuExtension,
-  // RowDetailViewExtension,
+  RowDetailViewExtension,
   RowMoveManagerExtension,
   RowSelectionExtension,
 } from '../extensions/index';
@@ -44,7 +44,7 @@ export class ExtensionService {
     private groupItemMetaExtension: GroupItemMetaProviderExtension,
     private headerButtonExtension: HeaderButtonExtension,
     private headerMenuExtension: HeaderMenuExtension,
-    // private rowDetailViewExtension: RowDetailViewExtension,
+    private rowDetailViewExtension: RowDetailViewExtension,
     private rowMoveManagerExtension: RowMoveManagerExtension,
     private rowSelectionExtension: RowSelectionExtension,
     private sharedService: SharedService,
@@ -225,18 +225,18 @@ export class ExtensionService {
         }
       }
 
-      // // Row Detail View Plugin
-      // if (this.sharedService.gridOptions.enableRowDetailView) {
-      //   if (this.rowDetailViewExtension && this.rowDetailViewExtension.register) {
-      //     const rowSelectionExtension = this.getExtensionByName(ExtensionName.rowSelection);
-      //     this.rowDetailViewExtension.register(rowSelectionExtension?.instance);
-      //     const createdExtension = this.getCreatedExtensionByName(ExtensionName.rowDetailView); // get the plugin from when it was really created earlier
-      //     const instance = createdExtension && createdExtension.instance;
-      //     if (instance) {
-      //       this._extensionList[ExtensionName.rowDetailView] ={ name: ExtensionName.rowDetailView, class: this.rowDetailViewExtension, instance };
-      //     }
-      //   }
-      // }
+      // Row Detail View Plugin
+      if (this.sharedService.gridOptions.enableRowDetailView) {
+        if (this.rowDetailViewExtension && this.rowDetailViewExtension.register) {
+          const rowSelectionExtension = this.getExtensionByName(ExtensionName.rowSelection);
+          this.rowDetailViewExtension.register(rowSelectionExtension?.instance);
+          const createdExtension = this.getCreatedExtensionByName(ExtensionName.rowDetailView); // get the plugin from when it was really created earlier
+          const instance = createdExtension && createdExtension.instance;
+          if (instance) {
+            this._extensionList[ExtensionName.rowDetailView] = { name: ExtensionName.rowDetailView, class: this.rowDetailViewExtension, instance };
+          }
+        }
+      }
 
       // Row Move Manager Plugin
       if (this.sharedService.gridOptions.enableRowMoveManager && this.rowMoveManagerExtension && this.rowMoveManagerExtension.register) {
@@ -274,12 +274,12 @@ export class ExtensionService {
         }
       }
     }
-    // if (options.enableRowDetailView) {
-    //   if (!this.getCreatedExtensionByName(ExtensionName.rowDetailView)) {
-    //     const rowDetailInstance = this.rowDetailViewExtension.create(columnDefinitions, options);
-    //     this._extensionCreatedList[ExtensionName.rowDetailView] = { name: ExtensionName.rowDetailView, instance: rowDetailInstance, class: this.rowDetailViewExtension };
-    //   }
-    // }
+    if (options.enableRowDetailView) {
+      if (!this.getCreatedExtensionByName(ExtensionName.rowDetailView)) {
+        const rowDetailInstance = this.rowDetailViewExtension.create(columnDefinitions, options);
+        this._extensionCreatedList[ExtensionName.rowDetailView] = { name: ExtensionName.rowDetailView, instance: rowDetailInstance, class: this.rowDetailViewExtension };
+      }
+    }
     if (options.enableDraggableGrouping) {
       if (!this.getCreatedExtensionByName(ExtensionName.draggableGrouping)) {
         const draggableInstance = this.draggableGroupingExtension.create(options);
