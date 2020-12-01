@@ -1,5 +1,9 @@
 import 'multiple-select-modified';
 
+import * as BackendUtilities from './services/backend-utilities';
+import * as ServiceUtilities from './services/utilities';
+import * as SortUtilities from './sortComparers/sortUtilities';
+
 // Public classes.
 export * from './constants';
 export * from './global-grid-options';
@@ -22,14 +26,9 @@ export * from './grouping-formatters/index';
 export * from './grouping-formatters/groupingFormatters.index';
 export * from './sortComparers/index';
 export * from './sortComparers/sortComparers.index';
-
-import * as Enums from './enums/index';
-import * as Interfaces from './interfaces/index';
-import * as BackendUtilities from './services/backend-utilities';
-import * as ServiceUtilities from './services/utilities';
-import * as SortUtilities from './sortComparers/sortUtilities';
+export * from './services/index';
+export { Enums } from './enums/enums.index';
 
 const Utilities = { ...BackendUtilities, ...ServiceUtilities, ...SortUtilities };
-export { Enums, Interfaces };
 export { Utilities };
 export { SlickgridConfig } from './slickgrid-config';

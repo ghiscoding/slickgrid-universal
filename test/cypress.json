@@ -1,6 +1,7 @@
 {
   "baseUrl": "http://localhost:8888",
   "baseExampleUrl": "http://localhost:8888/#",
+  "runMode": 2,
   "video": false,
   "viewportWidth": 1000,
   "viewportHeight": 950,
