@@ -1,29 +1,11 @@
-import { Column, Extension, GridOption, SlickEventHandler, SlickNamespace, SlickRowDetailView } from '../interfaces/index';
-
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
+import { Column, Extension, GridOption, SlickRowDetailView, SlickRowSelectionModel } from '../interfaces/index';
 
 export class RowDetailViewExtension implements Extension {
-  private _addon: SlickRowDetailView | null;
-  private _eventHandler: SlickEventHandler;
-
-  constructor() {
-    this._eventHandler = new Slick.EventHandler();
-  }
-
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
+  constructor() { }
 
   /** Dispose of the RowDetailView Extension */
   dispose() {
-    // unsubscribe all SlickGrid events
-    this._eventHandler.unsubscribeAll();
-
-    if (this._addon && this._addon.destroy) {
-      this._addon.destroy();
-      this._addon = null;
-    }
+    throw new Error('[Slickgrid-Universal] Row Detail "dispose" method is not yet implemented');
   }
 
   /**
@@ -31,16 +13,15 @@ export class RowDetailViewExtension implements Extension {
    * Mostly because the column definitions might change after the grid creation
    */
   create(_columnDefinitions: Column[], _gridOptions: GridOption) {
-    throw new Error('[Slickgrid-Universal] Row Detail not yet implemented');
+    throw new Error('[Slickgrid-Universal] Row Detail "create" method is not yet implemented');
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
   getAddonInstance() {
-    return this._addon;
+    throw new Error('[Slickgrid-Universal] Row Detail "getAddonInstance" method is not yet implemented');
   }
 
-  register(_rowSelectionPlugin?: SlickRowDetailView) {
-    throw new Error('[Slickgrid-Universal] Row Detail not yet implemented');
-    return null;
+  register(_rowSelectionPlugin?: SlickRowSelectionModel): SlickRowDetailView | null {
+    throw new Error('[Slickgrid-Universal] Row Detail "register" method is not yet implemented');
   }
 }
