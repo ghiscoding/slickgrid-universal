@@ -1,8 +1,6 @@
 import { Column, Extension, GridOption, SlickRowDetailView, SlickRowSelectionModel } from '../interfaces/index';
 
 export class RowDetailViewExtension implements Extension {
-  constructor() { }
-
   /** Dispose of the RowDetailView Extension */
   dispose() {
     throw new Error('[Slickgrid-Universal] RowDetailViewExtension "dispose" method is not yet implemented');
