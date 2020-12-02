@@ -352,7 +352,7 @@ export class HeaderMenuExtension implements Extension {
         case 'freeze-columns':
           const visibleColumns = [...this.sharedService.visibleColumns];
           const columnPosition = visibleColumns.findIndex((col) => col.id === args.column.id);
-          this.sharedService.slickGrid.setOptions({ frozenColumn: columnPosition });
+          this.sharedService.slickGrid.setOptions({ frozenColumn: columnPosition, enableMouseWheelScrollHandler: true });
           this.sharedService.frozenVisibleColumnId = args.column.id;
 
           // to freeze columns, we need to take only the visible columns and we also need to use setColumns() when some of them are hidden
