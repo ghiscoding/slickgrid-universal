@@ -12,5 +12,9 @@
   "supportFile": "test/cypress/support/index.js",
   "videosFolder": "test/cypress/videos",
   "defaultCommandTimeout": 5000,
-  "pageLoadTimeout": 90000
+  "pageLoadTimeout": 90000,
+  "retries": {
+    "runMode": 2,
+    "openMode": 0
+  }
 }

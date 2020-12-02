@@ -47,7 +47,7 @@ describe('InputFilter', () => {
   });
 
   it('should throw an error when trying to call init without any arguments', () => {
-    expect(() => filter.init(null)).toThrowError('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
+    expect(() => filter.init(null as any)).toThrowError('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
   });
 
   it('should initialize the filter', () => {
@@ -61,10 +61,10 @@ describe('InputFilter', () => {
 
   it('should have a placeholder when defined in its column definition', () => {
     const testValue = 'test placeholder';
-    mockColumn.filter.placeholder = testValue;
+    mockColumn.filter!.placeholder = testValue;
 
     filter.init(filterArguments);
-    const filterElm = divContainer.querySelector<HTMLInputElement>('input.filter-duration');
+    const filterElm = divContainer.querySelector('input.filter-duration') as HTMLInputElement;
 
     expect(filterElm.placeholder).toBe(testValue);
   });
@@ -74,7 +74,7 @@ describe('InputFilter', () => {
 
     filter.init(filterArguments);
     filter.setValues('abc');
-    const filterElm = divContainer.querySelector<HTMLInputElement>('input.filter-duration');
+    const filterElm = divContainer.querySelector('input.filter-duration') as HTMLInputElement;
 
     filterElm.focus();
     filterElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
@@ -89,7 +89,7 @@ describe('InputFilter', () => {
 
     filter.init(filterArguments);
     filter.setValues('abc');
-    const filterElm = divContainer.querySelector<HTMLInputElement>('input.filter-duration');
+    const filterElm = divContainer.querySelector('input.filter-duration') as HTMLInputElement;
 
     filterElm.focus();
     const event = new (window.window as any).Event('keyup', { bubbles: true, cancelable: true });
@@ -106,7 +106,7 @@ describe('InputFilter', () => {
 
     filter.init(filterArguments);
     filter.setValues('abc');
-    const filterElm = divContainer.querySelector<HTMLInputElement>('input.filter-duration');
+    const filterElm = divContainer.querySelector('input.filter-duration') as HTMLInputElement;
 
     filterElm.focus();
     const event = new (window.window as any).Event('keyup', { bubbles: true, cancelable: true });
@@ -124,7 +124,7 @@ describe('InputFilter', () => {
 
     filter.init(filterArguments);
     filter.setValues('    abc ', 'EQ');
-    const filterElm = divContainer.querySelector<HTMLInputElement>('input.filter-duration');
+    const filterElm = divContainer.querySelector('input.filter-duration') as HTMLInputElement;
 
     filterElm.focus();
     filterElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
@@ -136,12 +136,12 @@ describe('InputFilter', () => {
 
   it('should call "setValues" with extra spaces at the beginning of the searchTerms and trim value when "enableTrimWhiteSpace" is enabled in the column filter', () => {
     gridOptionMock.enableFilterTrimWhiteSpace = false;
-    mockColumn.filter.enableTrimWhiteSpace = true;
+    mockColumn.filter!.enableTrimWhiteSpace = true;
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.setValues('    abc ');
-    const filterElm = divContainer.querySelector<HTMLInputElement>('input.filter-duration');
+    const filterElm = divContainer.querySelector('input.filter-duration') as HTMLInputElement;
 
     filterElm.focus();
     filterElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
@@ -155,7 +155,7 @@ describe('InputFilter', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    const filterElm = divContainer.querySelector<HTMLInputElement>('input.filter-duration');
+    const filterElm = divContainer.querySelector('input.filter-duration') as HTMLInputElement;
 
     filterElm.focus();
     filterElm.value = 'a';
@@ -168,7 +168,7 @@ describe('InputFilter', () => {
     filterArguments.searchTerms = ['xyz'];
 
     filter.init(filterArguments);
-    const filterElm = divContainer.querySelector<HTMLInputElement>('input.filter-duration');
+    const filterElm = divContainer.querySelector('input.filter-duration') as HTMLInputElement;
 
     expect(filterElm.value).toBe('xyz');
   });
@@ -177,7 +177,7 @@ describe('InputFilter', () => {
     filterArguments.searchTerms = [''];
 
     filter.init(filterArguments);
-    const filterElm = divContainer.querySelector<HTMLInputElement>('input.filter-duration');
+    const filterElm = divContainer.querySelector('input.filter-duration') as HTMLInputElement;
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-duration.filled');
 
     expect(filterElm.value).toBe('');
@@ -190,7 +190,7 @@ describe('InputFilter', () => {
 
     filter.init(filterArguments);
     filter.clear();
-    const filterElm = divContainer.querySelector<HTMLInputElement>('input.filter-duration');
+    const filterElm = divContainer.querySelector('input.filter-duration') as HTMLInputElement;
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-duration.filled');
 
     expect(filterElm.value).toBe('');
@@ -204,7 +204,7 @@ describe('InputFilter', () => {
 
     filter.init(filterArguments);
     filter.clear(false);
-    const filterElm = divContainer.querySelector<HTMLInputElement>('input.filter-duration');
+    const filterElm = divContainer.querySelector('input.filter-duration') as HTMLInputElement;
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-duration.filled');
 
     expect(filterElm.value).toBe('');

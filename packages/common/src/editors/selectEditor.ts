@@ -88,8 +88,8 @@ export class SelectEditor implements Editor {
     }
     this.grid = args.grid;
     this.gridOptions = (this.grid.getOptions() || {}) as GridOption;
-    if (this.gridOptions && this.gridOptions.i18n) {
-      this._translaterService = this.gridOptions.i18n;
+    if (this.gridOptions?.translater) {
+      this._translaterService = this.gridOptions.translater;
     }
 
     // get locales provided by user in main file or else use default English locales via the Constants

@@ -69,6 +69,13 @@ export interface ColumnFilter {
   customStructure?: CollectionCustomStructure;
 
   /**
+   * Defaults to false, when enable it will add collection observers and re-render the Filter DOM element
+   * with the new collection when changes are detected. Also note that using "collectionAsync" automatically watch for changes,
+   * in consequence, there's no need to enable this flag in that particular case.
+   */
+  enableCollectionWatch?: boolean;
+
+  /**
    * Defaults to false, when set it will render any HTML code instead of removing it (sanitized)
    * Currently only supported by the following Editors: AutoComplete, MultipleSelect & SingleSelect
    */

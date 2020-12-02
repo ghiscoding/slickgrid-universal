@@ -13,6 +13,7 @@ export class SharedService {
   private _hierarchicalDataset: any[] | undefined;
   private _internalPubSubService: PubSubService;
   private _externalRegisteredServices: any[];
+  private _frozenVisibleColumnId: string | number;
 
   // --
   // public
@@ -48,6 +49,15 @@ export class SharedService {
   /** Setter for SlickGrid DataView object */
   set dataView(dataView: SlickDataView) {
     this._dataView = dataView;
+  }
+
+  /** Setter to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward */
+  get frozenVisibleColumnId(): string | number {
+    return this._frozenVisibleColumnId;
+  }
+  /** Getter to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward */
+  set frozenVisibleColumnId(columnId: string | number) {
+    this._frozenVisibleColumnId = columnId;
   }
 
   /** Getter for SlickGrid Grid object */

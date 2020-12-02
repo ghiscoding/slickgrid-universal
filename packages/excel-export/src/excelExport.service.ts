@@ -82,10 +82,10 @@ export class ExcelExportService implements BaseExcelExportService {
 
     // get locales provided by user in main file or else use default English locales via the Constants
     this._locales = this._gridOptions?.locales ?? Constants.locales;
-    this._translaterService = this._gridOptions?.i18n;
+    this._translaterService = this._gridOptions?.translater;
 
     if (this._gridOptions.enableTranslate && (!this._translaterService || !this._translaterService.translate)) {
-      throw new Error('[Slickgrid-Universal] requires a Translate Service to be passed in the "i18n" Grid Options when "enableTranslate" is enabled. (example: this.gridOptions = { enableTranslate: true, i18n: this.translaterService })');
+      throw new Error('[Slickgrid-Universal] requires a Translate Service to be passed in the "translater" Grid Options when "enableTranslate" is enabled. (example: this.gridOptions = { enableTranslate: true, translater: this.translaterService })');
     }
   }
 

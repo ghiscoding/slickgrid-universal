@@ -19,9 +19,9 @@ import { getDescendantProperty, getTranslationPrefix, htmlEncode, sanitizeTextBy
 import { TranslaterService } from '../services';
 
 export class SelectFilter implements Filter {
-  private _isMultipleSelect = true;
-  private _locales: Locale;
-  private _shouldTriggerQuery = true;
+  protected _isMultipleSelect = true;
+  protected _locales: Locale;
+  protected _shouldTriggerQuery = true;
 
   /** DOM Element Name, useful for auto-detecting positioning (dropup / dropdown) */
   elementName: string;
@@ -461,7 +461,7 @@ export class SelectFilter implements Filter {
     this.defaultOptions = options;
   }
 
-  private onTriggerEvent() {
+  protected onTriggerEvent() {
     if (this.$filterElm) {
       const selectedItems = this.getValues();
 

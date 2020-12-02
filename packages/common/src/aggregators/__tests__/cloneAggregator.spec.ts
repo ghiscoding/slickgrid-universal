@@ -11,7 +11,7 @@ describe('CloneAggregator', () => {
       { id: 2, title: 'Product 2', price: 2, productGroup: 'Sub-Cat2' },
       { id: 3, title: 'Product 3', price: 87, productGroup: 'Sub-Cat1' },
       { id: 4, title: 'Product 4', price: null, productGroup: 'Sub-Cat2' },
-    ];
+    ] as any;
   });
 
   it('should return empty string when the field provided does not exist', () => {

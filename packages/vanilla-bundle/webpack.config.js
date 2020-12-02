@@ -24,7 +24,7 @@ module.exports = ({ production } = {}) => ({
     path: production ? `${outDir}/bundle` : `${outDir}/bundle-dev`, // includes sourcemap
     publicPath: baseUrl,
     filename: 'slickgrid-vanilla-bundle.js',
-    sourceMapFilename: 'slickgrid-vanilla-bundle.map',
+    sourceMapFilename: 'slickgrid-vanilla-bundle.js.map',
     libraryTarget: 'umd',
     library: 'Slickgrid-Universal',
     umdNamedDefine: true
@@ -35,7 +35,7 @@ module.exports = ({ production } = {}) => ({
     mainFields: production ? ['module', 'main'] : ['browser', 'module', 'main'],
     alias: {
       dompurify: 'dompurify/dist/purify.es.js',
-      moment$: 'moment/moment.js'
+      moment: 'moment/moment.js'
     }
   },
   module: {

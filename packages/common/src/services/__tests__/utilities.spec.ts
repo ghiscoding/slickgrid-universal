@@ -118,7 +118,7 @@ describe('Service/Utilies', () => {
 
   describe('arraysEqual method', () => {
     it('should return false when at least 1 input is not an array', () => {
-      const array1 = null;
+      const array1 = null as any;
       const array2 = [];
       const isEqual = charArraysEqual(array1, array2);
       expect(isEqual).toBe(false);
@@ -249,7 +249,7 @@ describe('Service/Utilies', () => {
 
     it('should return undefined when item is not found', () => {
       const item = findItemInHierarchicalStructure(mockColumns, x => x.file === 'pop2', 'files');
-      expect(item).toEqual(undefined);
+      expect(item).toEqual(undefined as any);
     });
   });
 
@@ -464,7 +464,7 @@ describe('Service/Utilies', () => {
     it('should return a string without decimals when these arguments are null or undefined and the input provided is an integer', () => {
       const input = 12345678;
       const output1 = formatNumber(input);
-      const output2 = formatNumber(input, null, null);
+      const output2 = formatNumber(input, null as any, null as any);
       const output3 = formatNumber(input, undefined, undefined);
 
       expect(output1).toBe('12345678');
@@ -476,7 +476,7 @@ describe('Service/Utilies', () => {
       const input = 12345678;
       const decimalSeparator = '.';
       const thousandSeparator = ',';
-      const output1 = formatNumber(input, null, null, false, '', '', decimalSeparator, thousandSeparator);
+      const output1 = formatNumber(input, null as any, null as any, false, '', '', decimalSeparator, thousandSeparator);
       const output2 = formatNumber(input, undefined, undefined, false, '', '', decimalSeparator, thousandSeparator);
 
       expect(output1).toBe('12,345,678');
@@ -487,7 +487,7 @@ describe('Service/Utilies', () => {
       const input = 12345678;
       const decimalSeparator = ',';
       const thousandSeparator = '.';
-      const output1 = formatNumber(input, null, null, false, '', '', decimalSeparator, thousandSeparator);
+      const output1 = formatNumber(input, null as any, null as any, false, '', '', decimalSeparator, thousandSeparator);
       const output2 = formatNumber(input, undefined, undefined, false, '', '', decimalSeparator, thousandSeparator);
 
       expect(output1).toBe('12.345.678');
@@ -563,7 +563,7 @@ describe('Service/Utilies', () => {
       const displayNegativeNumberWithParentheses = true;
       const currencyPrefix = '$';
       const currencySuffix = ' CAD';
-      const output = formatNumber(input, null, null, displayNegativeNumberWithParentheses, currencyPrefix, currencySuffix);
+      const output = formatNumber(input, null as any, null as any, displayNegativeNumberWithParentheses, currencyPrefix, currencySuffix);
       expect(output).toBe('($1234 CAD)');
     });
 
@@ -574,7 +574,7 @@ describe('Service/Utilies', () => {
       const currencySuffix = ' CAD';
       const decimalSeparator = ',';
       const thousandSeparator = '_';
-      const output = formatNumber(input, null, null, displayNegativeNumberWithParentheses, currencyPrefix, currencySuffix, decimalSeparator, thousandSeparator);
+      const output = formatNumber(input, null as any, null as any, displayNegativeNumberWithParentheses, currencyPrefix, currencySuffix, decimalSeparator, thousandSeparator);
       expect(output).toBe('($12_345_678 CAD)');
     });
   });
@@ -612,7 +612,7 @@ describe('Service/Utilies', () => {
 
     it('should return undefined when search argument is not part of the input object', () => {
       const output = getDescendantProperty(obj, 'users');
-      expect(output).toBe(undefined);
+      expect(output).toBe(undefined as any);
     });
 
     it('should return the object descendant even when path given is not a dot notation', () => {
@@ -633,7 +633,7 @@ describe('Service/Utilies', () => {
 
   describe('getTranslationPrefix method', () => {
     it('should return empty Translation Prefix when no Grid Options are provided', () => {
-      const output = getTranslationPrefix(null);
+      const output = getTranslationPrefix(null as any);
       expect(output).toBe('');
     });
 
@@ -1343,13 +1343,13 @@ describe('Service/Utilies', () => {
 
   describe('thousandSeparatorFormatted method', () => {
     it('should return original value when input provided is null', () => {
-      const input = null;
+      const input = null as any;
       const output = thousandSeparatorFormatted(input, ',');
       expect(output).toBe(input);
     });
 
     it('should return original value when input provided is undefined', () => {
-      const input = undefined;
+      const input = undefined as any;
       const output = thousandSeparatorFormatted(input, ',');
       expect(output).toBe(input);
     });
@@ -1388,9 +1388,9 @@ describe('Service/Utilies', () => {
     });
 
     it('should return empty string when input is null', () => {
-      const input = null;
+      const input = null as any;
       const output = titleCase(input);
-      expect(output).toBe(null);
+      expect(output).toBe(null as any);
     });
 
     it('should return title case string that will uppercase each first char of every word', () => {
@@ -1414,9 +1414,9 @@ describe('Service/Utilies', () => {
     });
 
     it('should return empty string when input is null', () => {
-      const input = null;
+      const input = null as any;
       const output = toCamelCase(input);
-      expect(output).toBe(null);
+      expect(output).toBe(null as any);
     });
 
     it('should return a camelCase string when input is a sentence', () => {
@@ -1439,9 +1439,9 @@ describe('Service/Utilies', () => {
     });
 
     it('should return empty string when input is null', () => {
-      const input = null;
+      const input = null as any;
       const output = toKebabCase(input);
-      expect(output).toBe(null);
+      expect(output).toBe(null as any);
     });
 
     it('should return a kebab-case string when input is a sentence', () => {
@@ -1464,9 +1464,9 @@ describe('Service/Utilies', () => {
     });
 
     it('should return empty string when input is null', () => {
-      const input = null;
+      const input = null as any;
       const output = toSnakeCase(input);
-      expect(output).toBe(null);
+      expect(output).toBe(null as any);
     });
 
     it('should return a snake-case string when input is a sentence', () => {
@@ -1482,11 +1482,11 @@ describe('Service/Utilies', () => {
 
   describe('uniqueArray method', () => {
     it('should return original value when input is not an array', () => {
-      const output1 = uniqueArray(null);
-      const output2 = uniqueArray(undefined);
+      const output1 = uniqueArray(null as any);
+      const output2 = uniqueArray(undefined as any);
 
       expect(output1).toBeNull();
-      expect(output2).toBe(undefined);
+      expect(output2).toBe(undefined as any);
     });
 
     it('should return original array when array is empty', () => {
@@ -1507,11 +1507,11 @@ describe('Service/Utilies', () => {
 
   describe('uniqueObjectArray method', () => {
     it('should return original value when input is not an array', () => {
-      const output1 = uniqueObjectArray(null);
-      const output2 = uniqueObjectArray(undefined);
+      const output1 = uniqueObjectArray(null as any);
+      const output2 = uniqueObjectArray(undefined as any);
 
       expect(output1).toBeNull();
-      expect(output2).toBe(undefined);
+      expect(output2).toBe(undefined as any);
     });
 
     it('should return original array when array is empty', () => {

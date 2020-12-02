@@ -1,4 +1,4 @@
-import { GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { GridOption, SlickGrid, SlickNamespace, SlickRowSelectionModel } from '../../interfaces/index';
 import { RowSelectionExtension } from '../rowSelectionExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
@@ -49,7 +49,7 @@ describe('rowSelectionExtension', () => {
     it('should register the addon', () => {
       const pluginSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setSelectionModel');
 
-      const instance = extension.register();
+      const instance = extension.register() as SlickRowSelectionModel;
       const addonInstance = extension.getAddonInstance();
 
       expect(instance).toBeTruthy();
@@ -59,7 +59,7 @@ describe('rowSelectionExtension', () => {
     });
 
     it('should dispose of the addon', () => {
-      const instance = extension.register();
+      const instance = extension.register() as SlickRowSelectionModel;
       const destroySpy = jest.spyOn(instance, 'destroy');
 
       extension.dispose();

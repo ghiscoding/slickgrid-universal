@@ -20,7 +20,7 @@ const dataViewStub = {
 const gridOptionMock = {
   autoCommitEdit: false,
   editable: true,
-  i18n: null,
+  translater: null,
 } as unknown as GridOption;
 
 const getEditorLockMock = {
@@ -83,7 +83,7 @@ describe('MultipleSelectEditor', () => {
 
     it('should initialize the editor', () => {
       (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-      gridOptionMock.i18n = translateService;
+      gridOptionMock.translater = translateService;
       editor = new MultipleSelectEditor(editorArguments);
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;
       const spy = jest.spyOn(editor, 'show');

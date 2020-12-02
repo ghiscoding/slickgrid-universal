@@ -32,14 +32,14 @@ module.exports = ({ production } = {}, { hmr, port, host } = {}) => ({
     path: production ? outDirProd : outDirLocal,
     publicPath: baseUrl,
     filename: production ? '[name].[chunkhash].bundle.js' : '[name].[hash].bundle.js',
-    sourceMapFilename: production ? '[name].[chunkhash].bundle.map' : '[name].[hash].bundle.map',
+    sourceMapFilename: production ? '[name].[chunkhash].bundle.js.map' : '[name].[hash].bundle.js.map',
     chunkFilename: production ? '[name].[chunkhash].chunk.js' : '[name].[hash].chunk.js'
   },
   resolve: {
     extensions: ['.ts', '.js'],
     modules: [srcDir, 'node_modules'],
     alias: {
-      moment$: 'moment/moment.js'
+      moment: 'moment/moment.js'
     }
   },
   module: {
@@ -65,6 +65,7 @@ module.exports = ({ production } = {}, { hmr, port, host } = {}) => ({
     port: port || platform.port,
     host: host || platform.host,
     open: platform.open,
+    disableHostCheck: true,
   },
   devtool: production ? 'nosources-source-map' : 'cheap-module-eval-source-map',
   plugins: [

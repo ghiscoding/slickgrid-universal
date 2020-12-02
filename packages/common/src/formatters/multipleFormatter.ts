@@ -1,6 +1,12 @@
-import { Column, Formatter, SlickGrid } from './../interfaces/index';
+import { Formatter } from './../interfaces/index';
 
-export const multipleFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGrid) => {
+/**
+ * You can pipe multiple formatters (executed in sequence), use params to pass the list of formatters.
+ * Requires to pass an array of "formatters" in the column definition the generic "params" property
+ * For example::
+ * { field: 'title', formatter: Formatters.multiple, params: { formatters: [ Formatters.lowercase, Formatters.uppercase ] }
+ */
+export const multipleFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
   const params = columnDef.params || {};
   if (!params.formatters || !Array.isArray(params.formatters)) {
     throw new Error(`The multiple formatter requires the "formatters" to be provided as a column params.

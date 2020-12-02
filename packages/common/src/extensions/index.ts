@@ -10,5 +10,6 @@ export * from './gridMenuExtension';
 export * from './groupItemMetaProviderExtension';
 export * from './headerButtonExtension';
 export * from './headerMenuExtension';
+export * from './rowDetailViewExtension';
 export * from './rowMoveManagerExtension';
 export * from './rowSelectionExtension';

@@ -39,7 +39,7 @@ import { yesNoFormatter } from './yesNoFormatter';
 
 /** Provides a list of different Formatters that will change the cell value displayed in the UI */
 export const Formatters = {
-  /** Align cell value to the center (alias to Formatters.center)  */
+  /** Align cell value to the center (alias to Formatters.center) */
   alignCenter: centerFormatter,
 
   /** Align cell value to the right */
@@ -227,10 +227,10 @@ export const Formatters = {
   /** Takes a cell value number (between 0-100) and displays Bootstrap "progress-bar" a red (<30), silver (>30 & <70) or green (>=70) bar */
   progressBar: progressBarFormatter,
 
-  /** Takes a cell value and translates it (i18n). Requires an instance of the Translate Service:: `i18n: this.translate */
+  /** Takes a cell value and translates it. Requires an instance of the Translate Service:: `translater: this.translate */
   translate: translateFormatter,
 
-  /** Takes a boolean value, cast it to upperCase string and finally translates it (i18n). */
+  /** Takes a boolean value, cast it to upperCase string and finally translates it. Requires an instance of the Translate Service:: `translater: this.translate */
   translateBoolean: translateBooleanFormatter,
 
   /** Formatter that must be use with a Tree Data column */

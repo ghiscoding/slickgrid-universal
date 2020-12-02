@@ -47,12 +47,12 @@ describe('SliderRangeFilter', () => {
   });
 
   it('should throw an error when trying to call init without any arguments', () => {
-    expect(() => filter.init(null)).toThrowError('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
+    expect(() => filter.init(null as any)).toThrowError('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
   });
 
   it('should throw an error when trying to override the slider "change" method', (done) => {
     try {
-      mockColumn.filter.filterOptions = { change: () => { } } as JQueryUiSliderOption;
+      mockColumn.filter!.filterOptions = { change: () => { } } as JQueryUiSliderOption;
       filter.init(filterArguments);
     } catch (e) {
       expect(e.toString()).toContain(`[Slickgrid-Universal] You cannot override the "change" and/or the "slide" callback methods`);
@@ -62,7 +62,7 @@ describe('SliderRangeFilter', () => {
 
   it('should throw an error when trying to override the slider "slide" method', (done) => {
     try {
-      mockColumn.filter.filterOptions = { slide: () => { } } as JQueryUiSliderOption;
+      mockColumn.filter!.filterOptions = { slide: () => { } } as JQueryUiSliderOption;
       filter.init(filterArguments);
     } catch (e) {
       expect(e.toString()).toContain(`[Slickgrid-Universal] You cannot override the "change" and/or the "slide" callback methods`);
@@ -134,8 +134,8 @@ describe('SliderRangeFilter', () => {
 
     filter.init(filterArguments);
 
-    const filterLowestElm = divContainer.querySelector<HTMLInputElement>('.lowest-range-duration');
-    const filterHighestElm = divContainer.querySelector<HTMLInputElement>('.highest-range-duration');
+    const filterLowestElm = divContainer.querySelector('.lowest-range-duration') as HTMLInputElement;
+    const filterHighestElm = divContainer.querySelector('.highest-range-duration') as HTMLInputElement;
 
     expect(filterLowestElm.textContent).toBe('3');
     expect(filterHighestElm.textContent).toBe('80');
@@ -150,8 +150,8 @@ describe('SliderRangeFilter', () => {
 
     filter.init(filterArguments);
 
-    const filterLowestElm = divContainer.querySelector<HTMLInputElement>('.lowest-range-duration');
-    const filterHighestElm = divContainer.querySelector<HTMLInputElement>('.highest-range-duration');
+    const filterLowestElm = divContainer.querySelector('.lowest-range-duration') as HTMLInputElement;
+    const filterHighestElm = divContainer.querySelector('.highest-range-duration') as HTMLInputElement;
 
     expect(filterLowestElm.textContent).toBe('4');
     expect(filterHighestElm.textContent).toBe('69');
@@ -168,8 +168,8 @@ describe('SliderRangeFilter', () => {
 
     filter.init(filterArguments);
 
-    const filterLowestElm = divContainer.querySelector<HTMLInputElement>('.lowest-range-duration');
-    const filterHighestElm = divContainer.querySelector<HTMLInputElement>('.highest-range-duration');
+    const filterLowestElm = divContainer.querySelector('.lowest-range-duration') as HTMLInputElement;
+    const filterHighestElm = divContainer.querySelector('.highest-range-duration') as HTMLInputElement;
 
     expect(filterLowestElm.textContent).toBe('4');
     expect(filterHighestElm.textContent).toBe('69');
@@ -178,7 +178,7 @@ describe('SliderRangeFilter', () => {
 
   it('should create the input filter with default search terms range but without showing side numbers when "hideSliderNumbers" is set in params', () => {
     filterArguments.searchTerms = [3, 80];
-    mockColumn.filter.params = { hideSliderNumbers: true };
+    mockColumn.filter!.params = { hideSliderNumbers: true };
 
     filter.init(filterArguments);
 
@@ -233,7 +233,7 @@ describe('SliderRangeFilter', () => {
 
     mockColumn.filter = { minValue: 4, maxValue: 69, valueStep: 5 };
     filter.init(filterArguments);
-    filter.sliderOptions.slide(new CustomEvent('change'), { handle: document.createElement('div'), handleIndex: 1, value: 2, values: [2, 3] });
+    filter.sliderOptions.slide!(new CustomEvent('change'), { handle: document.createElement('div'), handleIndex: 1, value: 2, values: [2, 3] });
 
     expect(spy).toHaveBeenCalledWith(2, 3);
     expect(filter.sliderOptions).toEqual({
@@ -252,7 +252,7 @@ describe('SliderRangeFilter', () => {
 
     mockColumn.filter = { minValue: 4, maxValue: 69, valueStep: 5 };
     filter.init(filterArguments);
-    filter.sliderOptions.slide(new CustomEvent('change'), { handle: document.createElement('div'), handleIndex: 1, value: 2, values: [2, 3] });
+    filter.sliderOptions.slide!(new CustomEvent('change'), { handle: document.createElement('div'), handleIndex: 1, value: 2, values: [2, 3] });
 
     expect(spy).toHaveBeenCalledWith(2, 3);
     expect(filter.sliderOptions).toEqual({

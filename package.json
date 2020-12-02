@@ -20,7 +20,7 @@
     "updated": "lerna updated",
     "clean:tsconfig-build-cache": "rimraf --maxBusyTries=10 packages/*/dist/tsconfig.tsbuildinfo",
     "new-version": "lerna version --conventional-commits",
-    "publish": "lerna publish from-package",
+    "publish": "lerna publish from-package --registry=https://registry.npmjs.org/",
     "serve:demo": "http-server ./docs -p 8888 -a localhost",
     "lint": "eslint packages/** --ext .ts",
     "test": "npx jest --runInBand --coverage=true --config ./test/jest.config.js",
@@ -48,9 +48,9 @@
   "devDependencies": {
     "@types/jest": "^26.0.15",
     "@types/node": "^14.14.10",
-    "@typescript-eslint/eslint-plugin": "^4.8.2",
-    "@typescript-eslint/parser": "^4.8.2",
-    "cypress": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.9.0",
+    "@typescript-eslint/parser": "^4.9.0",
+    "cypress": "^6.0.1",
     "eslint": "^7.14.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prefer-arrow": "^1.2.2",
@@ -70,7 +70,7 @@
     "typescript": "^4.1.2"
   },
   "engines": {
-    "node": ">=14.0.0",
+    "node": ">=12.0.0",
     "npm": ">=6.14.0"
   }
 }

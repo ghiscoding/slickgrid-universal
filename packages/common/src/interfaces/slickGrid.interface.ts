@@ -157,7 +157,7 @@ export interface SlickGrid {
    */
   getColumnIndex(id: string | number): number;
 
-  /** Returns an array of column definitions, containing the option settings for each individual column.*/
+  /** Returns an array of column definitions, containing the option settings for each individual column. */
   getColumns(): Column[];
 
   /** Get Grid Canvas Node DOM Element */
@@ -241,7 +241,7 @@ export interface SlickGrid {
   /** Returns an array of row indices corresponding to the currently selected rows. */
   getSelectedRows(): number[];
 
-  /** Returns the current SelectionModel. See here for more information about SelectionModels.*/
+  /** Returns the current SelectionModel. See here for more information about SelectionModels. */
   getSelectionModel(): SlickCellSelectionModel | SlickRowSelectionModel;
 
   /** Get sorted columns **/

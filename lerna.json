@@ -4,13 +4,13 @@
   ],
   "npmClient": "yarn",
   "useWorkspaces": true,
-  "version": "independent",
+  "version": "0.2.15",
   "command": {
     "publish": {
       "conventionalCommits": true
     },
     "version": {
-      "message": "chore(release): publish"
+      "message": "chore(release): publish %"
     }
   }
 }

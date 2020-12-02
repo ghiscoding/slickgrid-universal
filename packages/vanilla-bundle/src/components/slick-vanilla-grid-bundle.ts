@@ -45,6 +45,7 @@ import {
   GroupItemMetaProviderExtension,
   HeaderMenuExtension,
   HeaderButtonExtension,
+  RowDetailViewExtension,
   RowSelectionExtension,
 
   // services
@@ -292,8 +293,8 @@ export class SlickVanillaGridBundle {
     this._gridOptions = this.mergeGridOptions(options || {});
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions && this._gridOptions.enableDeepCopyDatasetOnPageLoad);
 
-    // if user is providing a Translate Service, it has to be passed under the "i18n" grid option
-    this.translaterService = services?.translaterService ?? this._gridOptions.i18n;
+    // if user is providing a Translate Service, it has to be passed under the "translater" grid option
+    this.translaterService = services?.translaterService ?? this._gridOptions.translater;
 
     // initialize and assign all Service Dependencies
     this._eventPubSubService = services?.eventPubSubService ?? new EventPubSubService(gridParentContainerElm);
@@ -323,6 +324,7 @@ export class SlickVanillaGridBundle {
     const groupItemMetaProviderExtension = new GroupItemMetaProviderExtension(this.sharedService);
     const headerButtonExtension = new HeaderButtonExtension(this.extensionUtility, this.sharedService);
     const headerMenuExtension = new HeaderMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.translaterService);
+    const rowDetailViewExtension = new RowDetailViewExtension();
     const rowMoveManagerExtension = new RowMoveManagerExtension(this.extensionUtility, this.sharedService);
     const rowSelectionExtension = new RowSelectionExtension(this.extensionUtility, this.sharedService);
 
@@ -338,14 +340,15 @@ export class SlickVanillaGridBundle {
       groupItemMetaProviderExtension,
       headerButtonExtension,
       headerMenuExtension,
+      rowDetailViewExtension,
       rowMoveManagerExtension,
       rowSelectionExtension,
       this.sharedService,
       this.translaterService,
     );
 
-    this.gridService = services?.gridService ?? new GridService(this.extensionService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService);
     this.gridStateService = services?.gridStateService ?? new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
+    this.gridService = services?.gridService ?? new GridService(this.extensionService, this.gridStateService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService);
 
     this.groupingService = services?.groupingAndColspanService ?? new GroupingAndColspanService(this.extensionUtility, this.extensionService, this._eventPubSubService);
 
@@ -473,6 +476,12 @@ export class SlickVanillaGridBundle {
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.slickGrid, this._gridOptions, this.dataView);
     this._slickgridInitialized = true;
+
+    // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
+    const frozenColumnIndex = this._gridOptions?.frozenColumn ?? -1;
+    if (frozenColumnIndex >= 0 && frozenColumnIndex <= this._columnDefinitions.length) {
+      this.sharedService.frozenVisibleColumnId = this._columnDefinitions[frozenColumnIndex]?.id ?? '';
+    }
 
     // initialize the SlickGrid grid
     this.slickGrid.init();
@@ -1028,7 +1037,7 @@ export class SlickVanillaGridBundle {
   /**
    * Dynamically change or update the column definitions list.
    * We will re-render the grid so that the new header and data shows up correctly.
-   * If using i18n, we also need to trigger a re-translate of the column headers
+   * If using translater, we also need to trigger a re-translate of the column headers
    */
   updateColumnDefinitionsList(newColumnDefinitions: Column[]) {
     // map/swap the internal library Editor to the SlickGrid Editor factory
@@ -1090,7 +1099,7 @@ export class SlickVanillaGridBundle {
         this._eventPubSubService.subscribe('onPaginationChanged', (paginationChanges: ServicePagination) => this.paginationChanged(paginationChanges)),
         this._eventPubSubService.subscribe('onPaginationVisibilityChanged', (visibility: { visible: boolean }) => {
           this.showPagination = visibility?.visible ?? false;
-          if (this.gridOptions && this.gridOptions.backendServiceApi) {
+          if (this.gridOptions?.backendServiceApi) {
             refreshBackendDataset();
           }
         })

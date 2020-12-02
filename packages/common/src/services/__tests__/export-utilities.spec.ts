@@ -4,8 +4,8 @@ import { Column, Formatter, SlickGrid } from '../../interfaces/index';
 describe('Export Utilities', () => {
   let mockItem;
   let mockColumn: Column;
-  const myBoldHtmlFormatter: Formatter = (_row, _cell, value) => value !== null ? { text: value ? `<b>${value}</b>` : '' } : null;
-  const myUppercaseFormatter: Formatter = (_row, _cell, value) => value ? { text: value.toUpperCase() } : null;
+  const myBoldHtmlFormatter: Formatter = (_row, _cell, value) => value !== null ? { text: value ? `<b>${value}</b>` : '' } : null as any;
+  const myUppercaseFormatter: Formatter = (_row, _cell, value) => value ? { text: value.toUpperCase() } : null as any;
 
   beforeEach(() => {
     mockItem = { firstName: 'John', lastName: 'Doe', age: 45, address: { zip: 12345 } };

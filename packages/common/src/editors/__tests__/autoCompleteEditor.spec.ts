@@ -670,7 +670,7 @@ describe('AutoCompleteEditor', () => {
         const event = new CustomEvent('change');
         editor = new AutoCompleteEditor(editorArguments);
         const spy = jest.spyOn(editor, 'onSelect');
-        editor.autoCompleteOptions.select(event, { item: 'fem' });
+        editor.autoCompleteOptions.select!(event, { item: 'fem' });
 
         expect(spy).toHaveBeenCalledWith(event, { item: 'fem' });
       });
@@ -683,7 +683,7 @@ describe('AutoCompleteEditor', () => {
         const event = new CustomEvent('change');
         editor = new AutoCompleteEditor(editorArguments);
         const spy = jest.spyOn(editor, 'onSelect');
-        editor.autoCompleteOptions.select(event, { item: 'fem' });
+        editor.autoCompleteOptions.select!(event, { item: 'fem' });
 
         expect(spy).toHaveBeenCalledWith(event, { item: 'fem' });
       });
@@ -698,7 +698,7 @@ describe('AutoCompleteEditor', () => {
         editor = new AutoCompleteEditor(editorArguments);
         const onSelectSpy = jest.spyOn(editor, 'onSelect');
         const focusSpy = jest.spyOn(editor, 'focus');
-        editor.autoCompleteOptions.select(event, { item: 'fem' });
+        editor.autoCompleteOptions.select!(event, { item: 'fem' });
         jest.runAllTimers(); // fast-forward timer
 
         expect(onSelectSpy).toHaveBeenCalledWith(event, { item: 'fem' });

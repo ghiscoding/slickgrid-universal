@@ -48,16 +48,61 @@ export interface SlickGridMenu {
   // Events
 
   /** SlickGrid Event fired After the menu is shown. */
-  onAfterMenuShow?: SlickEvent<{ grid: SlickGrid; menu: HTMLElement; columns: Column[] }>;
+  onAfterMenuShow?: SlickEvent<{
+    /** Slick Grid object */
+    grid: SlickGrid;
+
+    /** Grid Menu DOM element */
+    menu: HTMLElement;
+
+    /** only visible columns (excluding hidden columns) */
+    columns: Column[]
+  }>;
 
   /** SlickGrid Event fired Before the menu is shown. */
-  onBeforeMenuShow?: SlickEvent<{ grid: SlickGrid; menu: HTMLElement; columns: Column[] }>;
+  onBeforeMenuShow?: SlickEvent<{
+    /** Slick Grid object */
+    grid: SlickGrid;
+
+    /** Grid Menu DOM element */
+    menu: HTMLElement;
+
+    /** only visible columns (excluding hidden columns) */
+    columns: Column[]
+  }>;
 
   /** SlickGrid Event fired when any of the columns checkbox selection changes. */
-  onColumnsChanged?: SlickEvent<{ grid: SlickGrid; allColumns: Column[]; columns: Column[]; }>;
+  onColumnsChanged?: SlickEvent<{
+    /** columnId that triggered the picker column change */
+    columnId: string,
+
+    /** is the column showing or hiding? */
+    showing: boolean,
+
+    /** all columns (including hidden ones) */
+    allColumns: Column[],
+
+    /** only visible columns (excluding hidden columns) */
+    columns: Column[],
+
+    /** Slick Grid object */
+    grid: SlickGrid;
+  }>;
 
   /** SlickGrid Event fired when the menu is closing. */
-  onMenuClose?: SlickEvent<{ grid: SlickGrid; menu: HTMLElement; allColumns: Column[], visibleColumns: Column[] }>;
+  onMenuClose?: SlickEvent<{
+    /** Slick Grid object */
+    grid: SlickGrid;
+
+    /** Grid Menu DOM element */
+    menu: HTMLElement;
+
+    /** all columns (including hidden ones) */
+    allColumns: Column[];
+
+    /** only visible columns (excluding hidden columns) */
+    visibleColumns: Column[]
+  }>;
 
   /** SlickGrid Event fired on menu option clicked from the Command items list */
   onCommand?: SlickEvent<MenuCommandItemCallbackArgs>;

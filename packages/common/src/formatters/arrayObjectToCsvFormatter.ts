@@ -1,6 +1,12 @@
-import { Column, Formatter } from './../interfaces/index';
+import { Formatter } from './../interfaces/index';
 
-export const arrayObjectToCsvFormatter: Formatter = (_row: number, _cell: number, value: any, columnDef: Column, dataContext: any) => {
+/**
+ * Takes an array of complex objects converts it to a comma delimited string.
+ * Requires to pass an array of "propertyNames" in the column definition the generic "params" property
+ * For example, if we have an array of user objects that have the property of firstName & lastName then we need to pass in your column definition::
+ * params: { propertyNames: ['firtName', 'lastName'] } => 'John Doe, Jane Doe'
+ */
+export const arrayObjectToCsvFormatter: Formatter = (_row, _cell, value, columnDef, dataContext) => {
   const columnParams = columnDef && columnDef.params || {};
   const propertyNames = columnParams.propertyNames;
   let parentObjectKeyName: string = columnParams.dataContextProperty;

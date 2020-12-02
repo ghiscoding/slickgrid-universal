@@ -1,13 +1,13 @@
-import { Column, Formatter, SlickGrid } from './../interfaces/index';
+import { Formatter } from './../interfaces/index';
 
-/** Takes a cell value and translates it (i18n). Requires an instance of the I18N Service:: `i18n: this.i18n` */
-export const translateFormatter: Formatter = (_row: number, _cell: number, value: any, columnDef: Column, _dataContext: any, grid: SlickGrid) => {
+/** Takes a cell value and translates it (translater). Requires an instance of the Translate Service:: `translater: this.translate */
+export const translateFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
   const gridOptions = (grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {};
-  const i18n = gridOptions.i18n || (columnDef && columnDef.params && columnDef.params.i18n);
+  const translater = gridOptions.translater || (columnDef && columnDef.params && columnDef.params.translater);
 
-  if (!i18n || typeof i18n.translate !== 'function') {
-    throw new Error(`The translate formatter requires the Translate Service to be provided as a Grid Options or Column Definition "i18n".
-    For example: this.gridOptions = { enableTranslate: true, i18n: this.translateService }`);
+  if (!translater || typeof translater.translate !== 'function') {
+    throw new Error(`"Formatters.translate" requires the Translate Service to be provided as a Grid Options "translater" (or "i18n" depending on which framework you use).
+    For example: this.gridOptions = { enableTranslate: true, translater: this.translateService }`);
   }
 
   // make sure the value is a string (for example a boolean value would throw an error)
@@ -15,5 +15,5 @@ export const translateFormatter: Formatter = (_row: number, _cell: number, value
     value = value + '';
   }
 
-  return value ? i18n.translate(value) : '';
+  return value ? translater.translate(value) : '';
 };

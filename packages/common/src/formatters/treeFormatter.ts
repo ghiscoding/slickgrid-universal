@@ -1,7 +1,8 @@
-import { Column, SlickDataView, Formatter, SlickGrid } from './../interfaces/index';
+import { SlickDataView, Formatter } from './../interfaces/index';
 import { getDescendantProperty, htmlEncode } from '../services/utilities';
 
-export const treeFormatter: Formatter = (_row: number, _cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGrid) => {
+/** Formatter that must be use with a Tree Data column */
+export const treeFormatter: Formatter = (_row, _cell, value, columnDef, dataContext, grid) => {
   const dataView = grid?.getData<SlickDataView>();
   const gridOptions = grid?.getOptions();
   const treeDataOptions = gridOptions?.treeDataOptions;

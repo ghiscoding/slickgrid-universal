@@ -1,4 +1,4 @@
-import { FieldType } from '../enums';
+import { FieldType } from '../enums/index';
 import {
   CollectionCustomStructure,
   CollectionFilterBy,
@@ -57,6 +57,13 @@ export interface ColumnEditor {
 
   /** is the Editor disabled when we first open it? This could happen when we use "collectionAsync" and we wait for the "collection" to be filled before enabling the Editor. */
   disabled?: boolean;
+
+  /**
+   * Defaults to false, when enable it will add collection observers and re-render the editor DOM element
+   * with the new collection when changes are detected. Also note that using "collectionAsync" automatically watch for changes,
+   * in consequence, there's no need to enable this flag in that particular case.
+   */
+  enableCollectionWatch?: boolean;
 
   /**
    * Options that could be provided to the Editor, example: { container: 'body', maxHeight: 250}

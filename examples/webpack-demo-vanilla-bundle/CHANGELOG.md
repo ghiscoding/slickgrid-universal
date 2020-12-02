@@ -3,6 +3,136 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.15](https://github.com/ghiscoding/slickgrid-universal/compare/v0.2.0...v0.2.15) (2020-11-30)
+
+
+### Bug Fixes
+
+* **core:** don't expose src folder on npm & update few npm package ([#168](https://github.com/ghiscoding/slickgrid-universal/issues/168)) ([3c05938](https://github.com/ghiscoding/slickgrid-universal/commit/3c059381b35bba88ea98d0206692c912c625f227))
+* **core:** rename i18n to translater & fix few other issues ([#174](https://github.com/ghiscoding/slickgrid-universal/issues/174)) ([34c963a](https://github.com/ghiscoding/slickgrid-universal/commit/34c963a2bcef1b841d3c62ea405a4bc49be98a5c))
+* **examples:** queued edit cells style should follow page it was edited ([#167](https://github.com/ghiscoding/slickgrid-universal/issues/167)) ([bf72139](https://github.com/ghiscoding/slickgrid-universal/commit/bf7213994151c148e878d703ea21d8f8ffb43ca8))
+* **formatters:** date formatters should accept ISO input & output to US ([#172](https://github.com/ghiscoding/slickgrid-universal/issues/172)) ([85ce7cf](https://github.com/ghiscoding/slickgrid-universal/commit/85ce7cf3636d5bb43d3ef18ec6998bb0c423d218))
+
+
+
+
+
+## [0.2.14](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.13...webpack-demo-vanilla-bundle@0.2.14) (2020-11-26)
+
+**Note:** Version bump only for package webpack-demo-vanilla-bundle
+
+
+
+
+
+## [0.2.13](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.12...webpack-demo-vanilla-bundle@0.2.13) (2020-11-26)
+
+**Note:** Version bump only for package webpack-demo-vanilla-bundle
+
+
+
+
+
+## [0.2.12](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.11...webpack-demo-vanilla-bundle@0.2.12) (2020-11-25)
+
+**Note:** Version bump only for package webpack-demo-vanilla-bundle
+
+
+
+
+
+## [0.2.11](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.10...webpack-demo-vanilla-bundle@0.2.11) (2020-11-25)
+
+**Note:** Version bump only for package webpack-demo-vanilla-bundle
+
+
+
+
+
+## [0.2.10](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.9...webpack-demo-vanilla-bundle@0.2.10) (2020-11-25)
+
+**Note:** Version bump only for package webpack-demo-vanilla-bundle
+
+
+
+
+
+## [0.2.9](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.8...webpack-demo-vanilla-bundle@0.2.9) (2020-11-25)
+
+**Note:** Version bump only for package webpack-demo-vanilla-bundle
+
+
+
+
+
+## [0.2.8](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.7...webpack-demo-vanilla-bundle@0.2.8) (2020-11-25)
+
+**Note:** Version bump only for package webpack-demo-vanilla-bundle
+
+
+
+
+
+## [0.2.7](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.6...webpack-demo-vanilla-bundle@0.2.7) (2020-11-25)
+
+**Note:** Version bump only for package webpack-demo-vanilla-bundle
+
+
+
+
+
+## [0.2.6](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.5...webpack-demo-vanilla-bundle@0.2.6) (2020-11-25)
+
+**Note:** Version bump only for package webpack-demo-vanilla-bundle
+
+
+
+
+
+## [0.2.5](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.4...webpack-demo-vanilla-bundle@0.2.5) (2020-11-25)
+
+**Note:** Version bump only for package webpack-demo-vanilla-bundle
+
+
+
+
+
+## [0.2.4](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.3...webpack-demo-vanilla-bundle@0.2.4) (2020-11-25)
+
+**Note:** Version bump only for package webpack-demo-vanilla-bundle
+
+
+
+
+
+## [0.2.3](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.2...webpack-demo-vanilla-bundle@0.2.3) (2020-11-25)
+
+**Note:** Version bump only for package webpack-demo-vanilla-bundle
+
+
+
+
+
+## [0.2.2](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.1...webpack-demo-vanilla-bundle@0.2.2) (2020-11-25)
+
+**Note:** Version bump only for package webpack-demo-vanilla-bundle
+
+
+
+
+
+## [0.2.1](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.0...webpack-demo-vanilla-bundle@0.2.1) (2020-11-25)
+
+
+### Bug Fixes
+
+* **core:** don't expose src folder on npm & update few npm package ([#168](https://github.com/ghiscoding/slickgrid-universal/issues/168)) ([3c05938](https://github.com/ghiscoding/slickgrid-universal/commit/3c059381b35bba88ea98d0206692c912c625f227))
+* **examples:** queued edit cells style should follow page it was edited ([#167](https://github.com/ghiscoding/slickgrid-universal/issues/167)) ([bf72139](https://github.com/ghiscoding/slickgrid-universal/commit/bf7213994151c148e878d703ea21d8f8ffb43ca8))
+
+
+
+
+
 # [0.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.1.0...webpack-demo-vanilla-bundle@0.2.0) (2020-11-20)
 
 

@@ -4,7 +4,7 @@ import { Column } from '../../interfaces/column.interface';
 
 describe('the String SortComparer', () => {
   it('should return original unsorted array when no direction is provided', () => {
-    const direction = null;
+    const direction = null as any;
     const inputArray = ['amazon', 'zebra', 'amazon', 'John', 'Abe', 'abc'];
     inputArray.sort((value1, value2) => stringSortComparer(value1, value2, direction));
     expect(inputArray).toEqual(['amazon', 'zebra', 'amazon', 'John', 'Abe', 'abc']);
