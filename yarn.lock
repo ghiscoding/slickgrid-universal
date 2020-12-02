@@ -10819,10 +10819,10 @@ slice-ansi@^2.1.0:
     astral-regex "^1.0.0"
     is-fullwidth-code-point "^2.0.0"
 
-slickgrid@^2.4.31:
-  version "2.4.31"
-  resolved "https://registry.yarnpkg.com/slickgrid/-/slickgrid-2.4.31.tgz#becbcdd6b8970455ff909a7651dfb2cf2cdcffde"
-  integrity sha512-2f+YuyOTo81oDPnRbz/XlvSNVkDvJoS4lm/16njnQV2q8SYHHUO3MojgXHvpTqyxfKI1P1r7qQoGItrupo56Zg==
+slickgrid@^2.4.32:
+  version "2.4.32"
+  resolved "https://registry.yarnpkg.com/slickgrid/-/slickgrid-2.4.32.tgz#4a71c06629bcc82a63261abe98da9027cb5ddc6c"
+  integrity sha512-tejeg6urqkBPMdCgR2a/8UuLz6Dc3K7KTUsmGgX+QWZlCIpGni+YdOxANAZsnq/eHTZt8cTDoEZQAD9InVLxyw==
   dependencies:
     jquery ">=1.8.0"
     jquery-ui ">=1.8.0"
