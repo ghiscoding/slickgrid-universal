@@ -59,6 +59,13 @@ export interface ColumnEditor {
   disabled?: boolean;
 
   /**
+   * Defaults to false, when enable it will add collection observers and re-render the editor DOM element
+   * with the new collection when changes are detected. Also note that using "collectionAsync" automatically watch for changes,
+   * in consequence, there's no need to enable this flag in that particular case.
+   */
+  enableCollectionWatch?: boolean;
+
+  /**
    * Options that could be provided to the Editor, example: { container: 'body', maxHeight: 250}
    *
    * Please note that if you use options that have existed model interfaces, you should cast with "as X",

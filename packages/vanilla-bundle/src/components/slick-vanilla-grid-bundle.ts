@@ -1098,7 +1098,7 @@ export class SlickVanillaGridBundle {
         this._eventPubSubService.subscribe('onPaginationChanged', (paginationChanges: ServicePagination) => this.paginationChanged(paginationChanges)),
         this._eventPubSubService.subscribe('onPaginationVisibilityChanged', (visibility: { visible: boolean }) => {
           this.showPagination = visibility?.visible ?? false;
-          if (this.gridOptions && this.gridOptions.backendServiceApi) {
+          if (this.gridOptions?.backendServiceApi) {
             refreshBackendDataset();
           }
         })
