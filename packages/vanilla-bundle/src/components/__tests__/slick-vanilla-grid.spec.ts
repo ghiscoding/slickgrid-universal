@@ -342,6 +342,14 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     expect(loadSpy).toHaveBeenCalled();
   });
 
+  it('should keep frozen column index reference (via frozenVisibleColumnId) when grid is a frozen grid', () => {
+    const sharedFrozenIndexSpy = jest.spyOn(SharedService.prototype, 'frozenVisibleColumnId', 'set');
+    component.gridOptions.frozenColumn = 0;
+    component.initialization(divContainer, slickEventHandler);
+
+    expect(sharedFrozenIndexSpy).toHaveBeenCalledWith('name');
+  });
+
   it('should create a grid and expect multiple Event Aggregator being called', () => {
     const pubSubSpy = jest.spyOn(eventPubSubService, 'publish');
 

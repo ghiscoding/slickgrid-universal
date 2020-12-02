@@ -476,6 +476,12 @@ export class SlickVanillaGridBundle {
     this.bindDifferentHooks(this.slickGrid, this._gridOptions, this.dataView);
     this._slickgridInitialized = true;
 
+    // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
+    const frozenColumnIndex = this._gridOptions?.frozenColumn ?? -1;
+    if (frozenColumnIndex >= 0 && frozenColumnIndex <= this._columnDefinitions.length) {
+      this.sharedService.frozenVisibleColumnId = this._columnDefinitions[frozenColumnIndex]?.id ?? '';
+    }
+
     // initialize the SlickGrid grid
     this.slickGrid.init();
 
