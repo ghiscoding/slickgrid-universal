@@ -128,28 +128,29 @@ export class ExtensionUtility {
 
   /**
    * When using ColumnPicker/GridMenu to show/hide a column, we potentially need to readjust the grid option "frozenColumn" index.
-   * Why? Because SlickGrid freezes by column index and but it has no knowledge of the columns themselves and won't change the index, we need to do that ourselves whenever necessary.
+   * That is because SlickGrid freezes by column index and it has no knowledge of the columns themselves and won't change the index, we need to do that ourselves whenever necessary.
+   * Note: we call this method right after the visibleColumns array got updated, it won't work properly if we call it before the setting the visibleColumns.
    * @param {String} pickerColumnId - what is the column id triggered by the picker
    * @param {Number} frozenColumnIndex - current frozenColumn index
-   * @param {Boolean} isColumnShown - is the column being shown or hidden?
+   * @param {Boolean} showingColumn - is the column being shown or hidden?
    * @param {Array<Object>} allColumns - all columns (including hidden ones)
    * @param {Array<Object>} visibleColumns - only visible columns (excluding hidden ones)
    */
-  readjustFrozenColumnIndexWhenNeeded(pickerColumnId: string | number, frozenColumnIndex: number, isColumnShown: boolean, allColumns: Column[], visibleColumns: Column[]) {
+  readjustFrozenColumnIndexWhenNeeded(pickerColumnId: string | number, frozenColumnIndex: number, showingColumn: boolean, allColumns: Column[], visibleColumns: Column[]) {
     if (frozenColumnIndex >= 0 && pickerColumnId) {
       // calculate a possible frozenColumn index variance
       let frozenColIndexVariance = 0;
-      if (isColumnShown) {
+      if (showingColumn) {
         const definedFrozenColumnIndex = visibleColumns.findIndex(col => col.id === this.sharedService.frozenVisibleColumnId);
         const columnIndex = visibleColumns.findIndex(col => col.id === pickerColumnId);
-        frozenColIndexVariance = (frozenColumnIndex >= columnIndex || definedFrozenColumnIndex === columnIndex) ? 1 : 0;
+        frozenColIndexVariance = (columnIndex >= 0 && (frozenColumnIndex >= columnIndex || definedFrozenColumnIndex === columnIndex)) ? 1 : 0;
       } else {
         const columnIndex = allColumns.findIndex(col => col.id === pickerColumnId);
-        frozenColIndexVariance = frozenColumnIndex >= columnIndex ? -1 : 0;
+        frozenColIndexVariance = (columnIndex >= 0 && frozenColumnIndex >= columnIndex) ? -1 : 0;
       }
       // if we have a variance different than 0 then apply it
       const newFrozenColIndex = frozenColumnIndex + frozenColIndexVariance;
-      if (newFrozenColIndex !== 0) {
+      if (frozenColIndexVariance !== 0) {
         this.sharedService.slickGrid.setOptions({ frozenColumn: newFrozenColIndex });
       }
 

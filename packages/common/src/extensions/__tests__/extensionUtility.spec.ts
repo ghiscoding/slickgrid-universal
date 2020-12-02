@@ -1,8 +1,15 @@
 import { ExtensionName } from '../../enums/index';
-import { GridOption } from '../../interfaces/index';
+import { Column, GridOption, SlickGrid } from '../../interfaces/index';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+
+const gridStub = {
+  getOptions: jest.fn(),
+  setColumns: jest.fn(),
+  setOptions: jest.fn(),
+  registerPlugin: jest.fn(),
+} as unknown as SlickGrid;
 
 const mockAddon = jest.fn().mockImplementation(() => ({
   init: jest.fn(),
@@ -195,6 +202,71 @@ describe('extensionUtility', () => {
       it('should translate using the Translate Service', () => {
         const output = utility.translateWhenEnabledAndServiceExist('COMMANDS', 'TEXT_COMMANDS');
         expect(output).toBe('Commandes');
+      });
+    });
+
+    describe('readjustFrozenColumnIndexWhenNeeded method', () => {
+      let gridOptionsMock: GridOption;
+
+      beforeEach(() => {
+        gridOptionsMock = { frozenColumn: 1 } as GridOption;
+        jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+        jest.spyOn(SharedService.prototype, 'frozenVisibleColumnId', 'get').mockReturnValue('field2');
+      });
+
+      afterEach(() => {
+        jest.clearAllMocks();
+      });
+
+      it('should increase "frozenColumn" from 0 to 1 when showing a column that was previously hidden and its index is lower or equal to provided argument (2nd arg, frozenColumnIndex)', () => {
+        const allColumns = [{ id: 'field1' }, { id: 'field2' }, { id: 'field3' }] as Column[];
+        const visibleColumns = [{ id: 'field1' }, { id: 'field2' }] as Column[];
+        const setOptionSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setOptions');
+
+        utility.readjustFrozenColumnIndexWhenNeeded('field1', 0, true, allColumns, visibleColumns);
+
+        expect(setOptionSpy).toHaveBeenCalledWith({ frozenColumn: 1 });
+      });
+
+      it('should keep "frozenColumn" at 0 when showing a column that was previously hidden and its index is greater than provided argument (2nd arg, frozenColumnIndex)', () => {
+        const allColumns = [{ id: 'field1' }, { id: 'field2' }, { id: 'field3' }] as Column[];
+        const visibleColumns = [{ id: 'field1' }, { id: 'field2' }, { id: 'field3' }] as Column[];
+        const setOptionSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setOptions');
+
+        utility.readjustFrozenColumnIndexWhenNeeded('field3', 0, true, allColumns, visibleColumns);
+
+        expect(setOptionSpy).not.toHaveBeenCalled();
+      });
+
+      it('should decrease "frozenColumn" from 1 to 0 when hiding a column that was previously shown and its index is lower or equal to provided argument (2nd arg, frozenColumnIndex)', () => {
+        const allColumns = [{ id: 'field1' }, { id: 'field2' }, { id: 'field3' }] as Column[];
+        const visibleColumns = [{ id: 'field1' }, { id: 'field2' }] as Column[];
+        const setOptionSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setOptions');
+
+        utility.readjustFrozenColumnIndexWhenNeeded('field1', 1, false, allColumns, visibleColumns);
+
+        expect(setOptionSpy).toHaveBeenCalledWith({ frozenColumn: 0 });
+      });
+
+      it('should keep "frozenColumn" at 1 when hiding a column that was previously hidden and its index is greater than provided argument (2nd arg, frozenColumnIndex)', () => {
+        const allColumns = [{ id: 'field1' }, { id: 'field2' }, { id: 'field3' }] as Column[];
+        const visibleColumns = [{ id: 'field1' }, { id: 'field2' }] as Column[];
+        const setOptionSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setOptions');
+
+        utility.readjustFrozenColumnIndexWhenNeeded('field3', 1, false, allColumns, visibleColumns);
+
+        expect(setOptionSpy).not.toHaveBeenCalled();
+      });
+
+      it('should not change "frozenColumn" when showing a column that was not found in the visibleColumns columns array', () => {
+        const allColumns = [{ id: 'field1' }, { id: 'field2' }, { id: 'field3' }] as Column[];
+        const visibleColumns = [{ id: 'field1' }, { field: 'field2' }] as Column[];
+        const setOptionSpy = jest.spyOn(SharedService.prototype.slickGrid, 'setOptions');
+
+        utility.readjustFrozenColumnIndexWhenNeeded('fiel3', 0, true, allColumns, visibleColumns);
+
+        expect(setOptionSpy).not.toHaveBeenCalled();
       });
     });
   });
