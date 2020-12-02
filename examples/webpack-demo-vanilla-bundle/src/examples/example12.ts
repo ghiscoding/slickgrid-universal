@@ -110,7 +110,7 @@ export class Example12 {
     this._bindingEventService.bind(this.gridContainerElm, 'onbeforeeditcell', this.handleOnBeforeEditCell.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'onclick', this.handleOnCellClicked.bind(this));
-    this._bindingEventService.bind(this.gridContainerElm, 'ongridstatechanged', this.handleOnSelectedRowsChanged.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'ongridstatechanged', this.handleOnGridStateChanged.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'ondblclick', () => this.openCompositeModal('edit', 50));
     this._bindingEventService.bind(this.gridContainerElm, 'oncompositeeditorchange', this.handleOnCompositeEditorChange.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'onpaginationchanged', this.handlePaginationChanged.bind(this));
@@ -518,7 +518,8 @@ export class Example12 {
     this.renderUnsavedStylingOnAllVisibleCells();
   }
 
-  handleOnSelectedRowsChanged(event) {
+  handleOnGridStateChanged(event) {
+    // console.log('handleOnGridStateChanged', event?.detail ?? '')
     const gridState = event && event.detail && event.detail.gridState;
     if (Array.isArray(gridState?.rowSelection.dataContextIds)) {
       this.isMassSelectionDisabled = gridState.rowSelection.dataContextIds.length === 0;

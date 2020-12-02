@@ -64,6 +64,13 @@ export class ColumnPickerExtension implements Extension {
           if (args && Array.isArray(args.columns) && args.columns.length !== this.sharedService.visibleColumns.length) {
             this.sharedService.visibleColumns = args.columns;
           }
+          // if we're using frozen columns, we need to readjust pinning when the new hidden column becomes visible again on the left pinning container
+          // we need to readjust frozenColumn index because SlickGrid freezes by index and has no knowledge of the columns themselves
+          const frozenColumnIndex = this.sharedService.gridOptions.frozenColumn ?? -1;
+          if (frozenColumnIndex >= 0) {
+            const { showing: isColumnShown, columnId, allColumns, columns: visibleColumns } = args;
+            this.extensionUtility.readjustFrozenColumnIndexWhenNeeded(columnId, frozenColumnIndex, isColumnShown, allColumns, visibleColumns);
+          }
         });
       }
       return this._addon;

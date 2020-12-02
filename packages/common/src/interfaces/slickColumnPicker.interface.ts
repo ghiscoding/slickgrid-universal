@@ -29,5 +29,20 @@ export interface SlickColumnPicker {
   // Events
 
   /** SlickGrid Event fired when any of the columns checkbox selection changes. */
-  onColumnsChanged: SlickEvent<{ allColumns: Column[], columns: Column[], grid: SlickGrid }>;
+  onColumnsChanged: SlickEvent<{
+    /** columnId that triggered the picker column change */
+    columnId: string,
+
+    /** is the column showing or hiding? */
+    showing: boolean,
+
+    /** all columns (including hidden ones) */
+    allColumns: Column[],
+
+    /** only visible columns (excluding hidden columns) */
+    columns: Column[],
+
+    /** Slick Grid object */
+    grid: SlickGrid;
+  }>;
 }
