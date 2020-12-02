@@ -21,10 +21,10 @@ import { getDescendantProperty, sanitizeTextByAvailableSanitizer, toKebabCase } 
 import { TranslaterService } from '../services/translater.service';
 
 export class AutoCompleteFilter implements Filter {
-  private _autoCompleteOptions: AutocompleteOption;
-  private _clearFilterTriggered = false;
-  private _collection: any[] | null;
-  private _shouldTriggerQuery = true;
+  protected _autoCompleteOptions: AutocompleteOption;
+  protected _clearFilterTriggered = false;
+  protected _collection: any[] | null;
+  protected _shouldTriggerQuery = true;
 
   /** DOM Element Name, useful for auto-detecting positioning (dropup / dropdown) */
   elementName: string;
@@ -277,7 +277,7 @@ export class AutoCompleteFilter implements Filter {
   /**
    * Create the HTML template as a string
    */
-  private buildTemplateHtmlString() {
+  protected buildTemplateHtmlString() {
     const columnId = this.columnDef && this.columnDef.id;
     let placeholder = (this.gridOptions) ? (this.gridOptions.defaultFilterPlaceholder || '') : '';
     if (this.columnFilter && this.columnFilter.placeholder) {
@@ -290,7 +290,7 @@ export class AutoCompleteFilter implements Filter {
    * From the html template string, create a DOM element
    * @param filterTemplate
    */
-  private createDomElement(filterTemplate: string, collection: any[], searchTerm?: SearchTerm) {
+  protected createDomElement(filterTemplate: string, collection: any[], searchTerm?: SearchTerm) {
     this._collection = collection;
     const columnId = this.columnDef && this.columnDef.id;
     const $headerElm = this.grid.getHeaderRowColumn(columnId);
@@ -380,7 +380,7 @@ export class AutoCompleteFilter implements Filter {
   }
 
   //
-  // private functions
+  // protected functions
   // ------------------
 
   // this function should be PRIVATE but for unit tests purposes we'll make it public until a better solution is found
@@ -406,7 +406,7 @@ export class AutoCompleteFilter implements Filter {
     return false;
   }
 
-  private handleOnInputChange(e: any) {
+  protected handleOnInputChange(e: any) {
     let value = e && e.target && e.target.value || '';
     const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
     if (typeof value === 'string' && enableWhiteSpaceTrim) {
@@ -426,7 +426,7 @@ export class AutoCompleteFilter implements Filter {
     this._shouldTriggerQuery = true;
   }
 
-  private renderCustomItem(ul: HTMLElement, item: any) {
+  protected renderCustomItem(ul: HTMLElement, item: any) {
     const templateString = this._autoCompleteOptions?.renderItem?.templateCallback(item) ?? '';
 
     // sanitize any unauthorized html tags like script and others
@@ -439,7 +439,7 @@ export class AutoCompleteFilter implements Filter {
       .appendTo(ul);
   }
 
-  private renderCollectionItem(ul: any, item: any) {
+  protected renderCollectionItem(ul: any, item: any) {
     const isRenderHtmlEnabled = this.columnFilter?.enableRenderHtml ?? false;
     const prefixText = item.labelPrefix || '';
     const labelText = item.label || '';
@@ -457,7 +457,7 @@ export class AutoCompleteFilter implements Filter {
       .appendTo(ul);
   }
 
-  private async renderOptionsAsync(collectionAsync: Promise<any | any[]>): Promise<any[]> {
+  protected async renderOptionsAsync(collectionAsync: Promise<any | any[]>): Promise<any[]> {
     let awaitedCollection: any = null;
 
     if (collectionAsync) {
