@@ -144,6 +144,8 @@ export class Icons {
       '.mdi.mdi-page-first',
       '.mdi.mdi-page-last',
       '.mdi.mdi-paperclip',
+      '.mdi.mdi-pencil',
+      '.mdi.mdi-pencil-outline',
       '.mdi.mdi-pencil-box-multiple',
       '.mdi.mdi-pencil-box-multiple-outline',
       '.mdi.mdi-pin-off-outline',
