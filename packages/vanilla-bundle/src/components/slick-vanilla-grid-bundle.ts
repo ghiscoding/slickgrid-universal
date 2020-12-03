@@ -924,7 +924,6 @@ export class SlickVanillaGridBundle {
       this.resizerService.resizeGrid();
     }
     if (grid && options && options.enableAutoResize) {
-      // this.resizerPlugin.bindAutoResizeDataGrid({ height: options.gridHeight, width: options.gridWidth });
       if (options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && typeof grid.autosizeColumns === 'function') {
         grid.autosizeColumns();
       }
