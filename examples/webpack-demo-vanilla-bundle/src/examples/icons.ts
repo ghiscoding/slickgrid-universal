@@ -119,6 +119,7 @@ export class Icons {
       '.mdi.mdi-folder-open',
       '.mdi.mdi-forum',
       '.mdi.mdi-forum-outline',
+      '.mdi.mdi-help',
       '.mdi.mdi-help-circle',
       '.mdi.mdi-help-circle-outline',
       '.mdi.mdi-history',

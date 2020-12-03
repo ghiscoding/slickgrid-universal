@@ -11,7 +11,6 @@ import {
   GridOption,
   OperatorType,
   SlickDataView,
-  SlickGrid,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -50,7 +49,6 @@ export class Example4 {
   gridOptions: GridOption;
   dataset: any[];
   dataViewObj: SlickDataView;
-  gridObj: SlickGrid;
   commandQueue = [];
   frozenColumnCount = 2;
   frozenRowCount = 3;
@@ -374,7 +372,7 @@ export class Example4 {
           const dataContext = args && args.dataContext;
           if (dataContext && dataContext.hasOwnProperty('completed')) {
             dataContext.completed = args.item.option;
-            this.sgb.gridService.updateItem(dataContext);
+            this.sgb?.gridService.updateItem(dataContext);
           }
         },
       },
@@ -433,31 +431,31 @@ export class Example4 {
 
   /** change dynamically, through slickgrid "setOptions()" the number of pinned columns */
   changeFrozenColumnCount() {
-    if (this.gridObj && this.gridObj.setOptions) {
-      this.gridObj.setOptions({
-        frozenColumn: this.frozenColumnCount
+    if (this.sgb?.slickGrid && this.sgb?.slickGrid.setOptions) {
+      this.sgb?.slickGrid.setOptions({
+        frozenColumn: +this.frozenColumnCount
       });
     }
   }
 
   /** change dynamically, through slickgrid "setOptions()" the number of pinned rows */
   changeFrozenRowCount() {
-    if (this.gridObj && this.gridObj.setOptions) {
-      this.gridObj.setOptions({
-        frozenRow: this.frozenRowCount
+    if (this.sgb?.slickGrid && this.sgb?.slickGrid.setOptions) {
+      this.sgb?.slickGrid.setOptions({
+        frozenRow: +this.frozenRowCount
       });
     }
   }
 
   setFrozenColumns(frozenCols: number) {
-    this.sgb.slickGrid.setOptions({ frozenColumn: frozenCols, alwaysShowVerticalScroll: false });
-    this.gridOptions = this.sgb.slickGrid.getOptions();
+    this.sgb?.slickGrid.setOptions({ frozenColumn: frozenCols, alwaysShowVerticalScroll: false });
+    this.gridOptions = this.sgb?.slickGrid.getOptions();
   }
 
   /** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */
   toggleFrozenBottomRows() {
-    if (this.gridObj && this.gridObj.setOptions) {
-      this.gridObj.setOptions({
+    if (this.sgb?.slickGrid && this.sgb?.slickGrid.setOptions) {
+      this.sgb?.slickGrid.setOptions({
         frozenBottom: !this.isFrozenBottom
       });
       this.isFrozenBottom = !this.isFrozenBottom; // toggle the variable
@@ -481,7 +479,7 @@ export class Example4 {
         break;
       case 'delete-row':
         if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"`)) {
-          this.sgb.gridService.deleteItemById(dataContext.id);
+          this.sgb?.gridService.deleteItemById(dataContext.id);
         }
         break;
     }

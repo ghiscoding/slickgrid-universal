@@ -4,21 +4,20 @@ import {
   Column,
   Editors,
   FieldType,
+  FileType,
   Filters,
   Formatters,
   GridOption,
   Grouping,
   GroupingGetterFunction,
   GroupTotalFormatters,
-  SlickDataView,
   SlickDraggableGrouping,
-  SlickGrid,
   SlickNamespace,
   SortComparers,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
@@ -42,17 +41,17 @@ export class Example3 {
   columnDefinitions: Column<ReportItem & { action: string; }>[];
   gridOptions: GridOption;
   dataset: any[];
-  dataViewObj: SlickDataView;
-  gridObj: SlickGrid;
   editCommandQueue = [];
+  excelExportService: ExcelExportService;
   sgb: SlickVanillaGridBundle;
-  slickerGridInstance: SlickerGridInstance;
   durationOrderByCount = false;
   draggableGroupingPlugin: SlickDraggableGrouping;
+  loadingClass = '';
   selectedGroupingFields: Array<string | GroupingGetterFunction> = ['', '', ''];
 
   constructor() {
     this._bindingEventService = new BindingEventService();
+    this.excelExportService = new ExcelExportService();
   }
 
   attached() {
@@ -64,7 +63,8 @@ export class Example3 {
     this._bindingEventService.bind(gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onitemdeleted', this.handleItemDeleted.bind(this));
-    this._bindingEventService.bind(gridContainerElm, 'onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-22px');
+    this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => this.loadingClass = '');
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
@@ -291,7 +291,7 @@ export class Example3 {
       excelExportOptions: {
         exportWithFormatter: true
       },
-      registerExternalServices: [new ExcelExportService()],
+      registerExternalServices: [this.excelExportService],
       enableFiltering: true,
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
@@ -383,15 +383,22 @@ export class Example3 {
     if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
       this.draggableGroupingPlugin.clearDroppedGroups();
     }
-    this.gridObj.invalidate(); // invalidate all rows and re-render
+    this.sgb?.slickGrid.invalidate(); // invalidate all rows and re-render
   }
 
   collapseAllGroups() {
-    this.dataViewObj.collapseAllGroups();
+    this.sgb?.dataView.collapseAllGroups();
   }
 
   expandAllGroups() {
-    this.dataViewObj.expandAllGroups();
+    this.sgb?.dataView.expandAllGroups();
+  }
+
+  exportToExcel() {
+    this.excelExportService.exportToExcel({
+      filename: 'Export',
+      format: FileType.xlsx
+    });
   }
 
   groupByDuration() {
@@ -399,7 +406,7 @@ export class Example3 {
     if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
       this.showPreHeader();
       this.draggableGroupingPlugin.setDroppedGroups('duration');
-      this.gridObj.invalidate(); // invalidate all rows and re-render
+      this.sgb?.slickGrid.invalidate(); // invalidate all rows and re-render
     }
   }
 
@@ -410,8 +417,8 @@ export class Example3 {
 
     // you need to manually add the sort icon(s) in UI
     const sortColumns = sortedByCount ? [] : [{ columnId: 'duration', sortAsc: true }];
-    this.gridObj.setSortColumns(sortColumns);
-    this.gridObj.invalidate(); // invalidate all rows and re-render
+    this.sgb?.slickGrid.setSortColumns(sortColumns);
+    this.sgb?.slickGrid.invalidate(); // invalidate all rows and re-render
   }
 
   groupByDurationEffortDriven() {
@@ -419,11 +426,11 @@ export class Example3 {
     if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
       this.showPreHeader();
       this.draggableGroupingPlugin.setDroppedGroups(['duration', 'effortDriven']);
-      this.gridObj.invalidate(); // invalidate all rows and re-render
+      this.sgb?.slickGrid.invalidate(); // invalidate all rows and re-render
 
       // you need to manually add the sort icon(s) in UI
       const sortColumns = [{ columnId: 'duration', sortAsc: true }];
-      this.gridObj.setSortColumns(sortColumns);
+      this.sgb?.slickGrid.setSortColumns(sortColumns);
     }
   }
 
@@ -439,17 +446,17 @@ export class Example3 {
       } else {
         this.draggableGroupingPlugin.setDroppedGroups(groupedFields);
       }
-      this.gridObj.invalidate(); // invalidate all rows and re-render
+      this.sgb?.slickGrid.invalidate(); // invalidate all rows and re-render
     }
   }
 
   showPreHeader() {
-    this.gridObj.setPreHeaderPanelVisibility(true);
+    this.sgb?.slickGrid.setPreHeaderPanelVisibility(true);
   }
 
   toggleDraggableGroupingRow() {
     this.clearGroupsAndSelects();
-    this.gridObj.setPreHeaderPanelVisibility(!this.gridObj.getOptions().showPreHeaderPanel);
+    this.sgb?.slickGrid.setPreHeaderPanelVisibility(!this.sgb?.slickGrid.getOptions().showPreHeaderPanel);
   }
 
   onGroupChanged(change: { caller?: string; groupColumns: Grouping[] }) {
@@ -486,13 +493,6 @@ export class Example3 {
     console.log('item deleted with id:', itemId);
   }
 
-  handleOnSlickerGridCreated(event) {
-    this.slickerGridInstance = event && event.detail;
-    this.gridObj = this.slickerGridInstance && this.slickerGridInstance.slickGrid;
-    this.dataViewObj = this.slickerGridInstance && this.slickerGridInstance.dataView;
-    console.log('handleOnSlickerGridCreated', this.slickerGridInstance);
-  }
-
   executeCommand(_e, args) {
     // const columnDef = args.column;
     const command = args.command;
@@ -510,7 +510,7 @@ export class Example3 {
         break;
       case 'delete-row':
         if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"`)) {
-          this.slickerGridInstance.gridService.deleteItemById(dataContext.id);
+          this.sgb?.gridService.deleteItemById(dataContext.id);
         }
         break;
     }
@@ -520,7 +520,7 @@ export class Example3 {
     const command = this.editCommandQueue.pop();
     if (command && Slick.GlobalEditorLock.cancelCurrentEdit()) {
       command.undo();
-      this.gridObj.gotoCell(command.row, command.cell, false);
+      this.sgb?.slickGrid.gotoCell(command.row, command.cell, false);
     }
   }
 }

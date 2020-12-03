@@ -247,38 +247,18 @@ export class Example11 {
       {
         id: 'action', name: 'Action', field: 'action', width: 75, maxWidth: 75,
         excludeFromExport: true,
-        formatter: () => `<div class="fake-hyperlink">Action <span class="font-12px">&#9660;</span></div>`,
-        cellMenu: {
-          hideCloseButton: false,
-          width: 175,
-          commandTitle: 'Commands',
-          commandItems: [
-            {
-              command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'mdi mdi-close color-danger', cssClass: 'red', textCssClass: 'bold',
-              // only show command to 'Delete Row' when the task is not completed
-              itemVisibilityOverride: (args) => {
-                return !args.dataContext.completed;
-              },
-              action: (_event, args) => {
-                const dataContext = args.dataContext;
-                if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"`)) {
-                  this.slickerGridInstance.gridService.deleteItemById(dataContext.id);
-                }
-              }
-            },
-            {
-              command: 'help',
-              title: 'Help',
-              iconCssClass: 'mdi mdi-help-circle-outline color-info',
-              textCssClass: 'color-info-dark',
-              positionOrder: 66,
-              action: () => alert('Please Help!'),
-            },
-            'divider',
-            { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67, },
-            { command: 'hidden command', title: 'Hidden Command', hidden: true, positionOrder: 68, }
-          ],
+        formatter: () => `<span class="button-style padding-1px" style="display: inline-block; line-height: 18px;" title"Delete the Row"><span class="mdi mdi-close color-danger"></span></span>
+        &nbsp;<span class="button-style padding-1px" style="display: inline-block; line-height: 18px;" title="Mark as Completed"><span class="mdi mdi-check-underline"></span></span>`,
+        onCellClick: (event, args) => {
+          const dataContext = args.dataContext;
+          if ((event.target as HTMLElement).classList.contains('mdi-close')) {
+            if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"`)) {
+              this.slickerGridInstance.gridService.deleteItemById(dataContext.id);
+            }
+          } else if ((event.target as HTMLElement).classList.contains('mdi-check-underline')) {
+            this.slickerGridInstance.gridService.updateItem({ ...dataContext, completed: true });
+            alert(`The "${dataContext.title}" is now Completed`);
+          }
         }
       },
     ];
@@ -326,8 +306,6 @@ export class Example11 {
           this.sgb.slickGrid.setCellCssStyles(`unsaved_highlight_${[column.field]}${editCommand.row}`, hash);
         }
       },
-      // when using the cellMenu, you can change some of the default options and all use some of the callback methods
-      enableCellMenu: true,
       enableContextMenu: true,
       contextMenu: {
         commandItems: [

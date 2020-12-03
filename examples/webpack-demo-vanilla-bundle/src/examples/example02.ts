@@ -9,14 +9,12 @@ import {
   GridOption,
   Grouping,
   GroupTotalFormatters,
-  SlickDataView,
-  SlickGrid,
   SortComparers,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { FileExportService } from '@slickgrid-universal/file-export';
-import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
 import '../material-styles.scss';
@@ -32,16 +30,6 @@ export class Example2 {
   commandQueue = [];
   sgb: SlickVanillaGridBundle;
   excelExportService = new ExcelExportService();
-
-  get dataViewObj(): SlickDataView {
-    return this.sgb?.dataView;
-  }
-  get gridObj(): SlickGrid {
-    return this.sgb?.slickGrid;
-  }
-  get slickerGridInstance(): SlickerGridInstance {
-    return this.sgb?.instances;
-  }
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -220,15 +208,15 @@ export class Example2 {
   }
 
   clearGrouping() {
-    this.dataViewObj.setGrouping([]);
+    this.sgb?.dataView.setGrouping([]);
   }
 
   collapseAllGroups() {
-    this.dataViewObj.collapseAllGroups();
+    this.sgb?.dataView.collapseAllGroups();
   }
 
   expandAllGroups() {
-    this.dataViewObj.expandAllGroups();
+    this.sgb?.dataView.expandAllGroups();
   }
 
   exportToExcel() {
@@ -236,7 +224,7 @@ export class Example2 {
   }
 
   groupByDuration() {
-    this.dataViewObj.setGrouping({
+    this.sgb?.dataView.setGrouping({
       getter: 'duration',
       formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
       comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
@@ -249,13 +237,13 @@ export class Example2 {
     } as Grouping);
 
     // you need to manually add the sort icon(s) in UI
-    this.sgb.instances.slickGrid.setSortColumns([{ columnId: 'duration', sortAsc: true }]);
-    this.gridObj.invalidate(); // invalidate all rows and re-render
+    this.sgb?.slickGrid.setSortColumns([{ columnId: 'duration', sortAsc: true }]);
+    this.sgb?.slickGrid.invalidate(); // invalidate all rows and re-render
   }
 
   groupByDurationOrderByCount(aggregateCollapsed) {
-    this.gridObj.setSortColumns([]);
-    this.dataViewObj.setGrouping({
+    this.sgb?.slickGrid.setSortColumns([]);
+    this.sgb?.dataView.setGrouping({
       getter: 'duration',
       formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
       comparer: (a, b) => a.count - b.count,
@@ -266,12 +254,12 @@ export class Example2 {
       aggregateCollapsed,
       lazyTotalsCalculation: true
     } as Grouping);
-    this.gridObj.invalidate(); // invalidate all rows and re-render
+    this.sgb?.slickGrid.invalidate(); // invalidate all rows and re-render
   }
 
   groupByDurationEffortDriven() {
-    this.gridObj.setSortColumns([]);
-    this.dataViewObj.setGrouping([
+    this.sgb?.slickGrid.setSortColumns([]);
+    this.sgb?.dataView.setGrouping([
       {
         getter: 'duration',
         formatter: (g) => `Duration: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
@@ -296,13 +284,13 @@ export class Example2 {
 
     // you need to manually add the sort icon(s) in UI
     const sortColumns = [{ columnId: 'duration', sortAsc: true }, { columnId: 'effortDriven', sortAsc: true }];
-    this.gridObj.setSortColumns(sortColumns);
-    this.gridObj.invalidate(); // invalidate all rows and re-render
+    this.sgb?.slickGrid.setSortColumns(sortColumns);
+    this.sgb?.slickGrid.invalidate(); // invalidate all rows and re-render
   }
 
   groupByDurationEffortDrivenPercent() {
-    this.gridObj.setSortColumns([]);
-    this.dataViewObj.setGrouping([
+    this.sgb?.slickGrid.setSortColumns([]);
+    this.sgb?.dataView.setGrouping([
       {
         getter: 'duration',
         formatter: (g) => `Duration: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
@@ -340,7 +328,7 @@ export class Example2 {
       { columnId: 'effortDriven', sortAsc: true },
       { columnId: 'percentComplete', sortAsc: true }
     ];
-    this.gridObj.setSortColumns(sortColumns);
-    this.gridObj.invalidate(); // invalidate all rows and re-render
+    this.sgb?.slickGrid.setSortColumns(sortColumns);
+    this.sgb?.slickGrid.invalidate(); // invalidate all rows and re-render
   }
 }
