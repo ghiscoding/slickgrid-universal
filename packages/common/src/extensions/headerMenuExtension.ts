@@ -396,7 +396,7 @@ export class HeaderMenuExtension implements Extension {
         args.grid.onSort.notify(sortOutput);
       }
 
-      // update the this.sharedService.gridObj sortColumns array which will at the same add the visual sort icon(s) on the UI
+      // update the sharedService.slickGrid sortColumns array which will at the same add the visual sort icon(s) on the UI
       const newSortColumns = sortedColsWithoutCurrent.map((col) => {
         return {
           columnId: col && col.sortCol && col.sortCol.id,
