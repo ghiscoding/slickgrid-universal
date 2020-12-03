@@ -53,16 +53,16 @@ interface OnSearchChangeEvent {
 }
 
 export class FilterService {
-  private _eventHandler: SlickEventHandler;
-  private _isFilterFirstRender = true;
-  private _firstColumnIdRendered: string | number = '';
-  private _filtersMetadata: any[] = [];
-  private _columnFilters: ColumnFilters = {};
-  private _grid: SlickGrid;
-  private _onSearchChange: SlickEvent<OnSearchChangeEvent> | null;
-  private _tmpPreFilteredData: number[];
+  protected _eventHandler: SlickEventHandler;
+  protected _isFilterFirstRender = true;
+  protected _firstColumnIdRendered: string | number = '';
+  protected _filtersMetadata: any[] = [];
+  protected _columnFilters: ColumnFilters = {};
+  protected _grid: SlickGrid;
+  protected _onSearchChange: SlickEvent<OnSearchChangeEvent> | null;
+  protected _tmpPreFilteredData: number[];
 
-  constructor(private filterFactory: FilterFactory, private pubSubService: PubSubService, private sharedService: SharedService) {
+  constructor(protected filterFactory: FilterFactory, protected pubSubService: PubSubService, protected sharedService: SharedService) {
     this._onSearchChange = new Slick.Event();
     this._eventHandler = new Slick.EventHandler();
   }
@@ -83,17 +83,17 @@ export class FilterService {
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
-  private get _gridOptions(): GridOption {
+  protected get _gridOptions(): GridOption {
     return (this._grid && this._grid.getOptions) ? this._grid.getOptions() : {};
   }
 
   /** Getter for the Column Definitions pulled through the Grid Object */
-  private get _columnDefinitions(): Column[] {
+  protected get _columnDefinitions(): Column[] {
     return (this._grid && this._grid.getColumns) ? this._grid.getColumns() : [];
   }
 
   /** Getter of SlickGrid DataView object */
-  private get _dataView(): SlickDataView {
+  protected get _dataView(): SlickDataView {
     return (this._grid?.getData && this._grid.getData()) as SlickDataView;
   }
 
@@ -214,7 +214,7 @@ export class FilterService {
 
     // subscribe to SlickGrid onHeaderRowCellRendered event to create filter template
     const onHeaderRowCellRenderedHandler = grid.onHeaderRowCellRendered;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onHeaderRowCellRenderedHandler>>).subscribe(onHeaderRowCellRenderedHandler, (_e: SlickEventData, args: any) => {
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onHeaderRowCellRenderedHandler>>).subscribe(onHeaderRowCellRenderedHandler, (_e, args) => {
       this.addFilterTemplateToHeaderRow(args);
     });
   }
@@ -757,11 +757,11 @@ export class FilterService {
   }
 
   // --
-  // private functions
+  // protected functions
   // -------------------
 
   /** Add all created filters (from their template) to the header row section area */
-  private addFilterTemplateToHeaderRow(args: { column: Column; grid: SlickGrid; node: HTMLElement }, isFilterFirstRender = true) {
+  protected addFilterTemplateToHeaderRow(args: { column: Column; grid: SlickGrid; node: HTMLElement }, isFilterFirstRender = true) {
     const columnDef = args.column;
     const columnId = columnDef && columnDef.id || '';
 
@@ -813,7 +813,7 @@ export class FilterService {
    * Callback method that is called and executed by the individual Filter (DOM element),
    * for example when user type in a word to search (which uses InputFilter), this Filter will execute the callback from an input change event.
    */
-  private callbackSearchEvent(event: SlickEventData | undefined, args: FilterCallbackArg) {
+  protected callbackSearchEvent(event: SlickEventData | undefined, args: FilterCallbackArg) {
     if (args) {
       const searchTerm = ((event && event.target) ? (event.target as HTMLInputElement).value : undefined);
       const searchTerms = (args.searchTerms && Array.isArray(args.searchTerms)) ? args.searchTerms : (searchTerm ? [searchTerm] : undefined);
@@ -872,7 +872,7 @@ export class FilterService {
    * (if we previously deleted these properties we wouldn't be able to change them back since these properties wouldn't exist anymore, hence why we just hide the commands)
    * @param {boolean} isDisabling - are we disabling the filter functionality? Defaults to true
    */
-  private disableAllFilteringCommands(isDisabling = true): Column[] {
+  protected disableAllFilteringCommands(isDisabling = true): Column[] {
     const columnDefinitions = this._grid.getColumns();
 
     // loop through column definition to hide/show header menu commands
@@ -904,7 +904,7 @@ export class FilterService {
     return columnDefinitions;
   }
 
-  private updateColumnFilters(searchTerms: SearchTerm[] | undefined, columnDef: any, operator?: OperatorType | OperatorString) {
+  protected updateColumnFilters(searchTerms: SearchTerm[] | undefined, columnDef: any, operator?: OperatorType | OperatorString) {
     if (searchTerms && columnDef) {
       this._columnFilters[columnDef.id] = {
         columnId: columnDef.id,
