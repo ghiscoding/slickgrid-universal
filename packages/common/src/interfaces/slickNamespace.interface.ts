@@ -37,6 +37,7 @@ import {
   SlickHeaderButtons,
   SlickHeaderMenu,
   SlickRange,
+  SlickRemoteModel,
   SlickResizer,
   SlickRowDetailView,
   SlickRowMoveManager,
@@ -58,6 +59,9 @@ export interface SlickNamespace {
     /** Slick DataView which has built-in data manipulation methods. Relies on the data item having an "id" property uniquely identifying it. */
     DataView: new (options?: DataViewOption) => SlickDataView;
 
+    /** Slick AJAX Remote Data store implementation. */
+    RemoteModel: new () => SlickRemoteModel;
+
     /**
      * Provides item metadata for group (Slick.Group) and totals (Slick.Totals) rows produced by the DataView.
      * This metadata overrides the default behavior and formatting of those rows so that they appear and function
@@ -71,7 +75,7 @@ export interface SlickNamespace {
   };
 
   /** Slick Grid is a data grid library and this class is the core of the library */
-  Grid: new (gridContainer: HTMLElement, data: SlickDataView | Array<any>, columnDefinitions: Column[], gridOptions: GridOption) => SlickGrid;
+  Grid: new (gridContainer: HTMLElement | string, data: SlickDataView | Array<any>, columnDefinitions: Column[], gridOptions: GridOption) => SlickGrid;
 
 
   // --

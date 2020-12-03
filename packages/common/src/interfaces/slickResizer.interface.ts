@@ -13,7 +13,7 @@ import {
  * automatically call the grid "autosizeColumns()" method after each resize.
  */
 export interface SlickResizer {
-  pluginName: 'Resizer',
+  pluginName: 'Resizer';
 
   /** Constructor of the 3rd party plugin, user can optionally pass some options to the plugin */
   constructor: (options?: ResizerOption, fixedGridDimensions?: GridSize) => void;
@@ -26,14 +26,14 @@ export interface SlickResizer {
 
   /**
    * Bind an auto resize trigger on the datagrid, if that is enable then it will resize itself to the available space
-	 * Options: we could also provide a % factor to resize on each height/width independently
-	 */
+   * Options: we could also provide a % factor to resize on each height/width independently
+   */
   bindAutoResizeDataGrid(newSizes: GridSize): void;
 
   /**
-	 * Return the last resize dimensions used by the service
-	 * @return {object} last dimensions (height: number, width: number)
-	 */
+   * Return the last resize dimensions used by the service
+   * @return {object} last dimensions (height: number, width: number)
+   */
   getLastResizeDimensions(): GridSize;
 
   /**
