@@ -4,8 +4,8 @@ import { SlickPaginationComponent } from '../slick-pagination.component';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { EventPubSubService } from '../../services/eventPubSub.service';
 
-function removeExtraSpaces(textS: string) {
-  return `${textS}`.replace(/\s{2,}/g, '');
+function removeExtraSpaces(text: string) {
+  return `${text}`.replace(/\s{2,}/g, '');
 }
 
 const gridStub = {

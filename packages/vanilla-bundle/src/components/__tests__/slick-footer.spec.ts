@@ -2,8 +2,8 @@ import { CustomFooterOption, GridOption, SlickGrid } from '@slickgrid-universal/
 import { SlickFooterComponent } from '../slick-footer.component';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
-function removeExtraSpaces(textS: string) {
-  return `${textS}`.replace(/\s{2,}/g, '');
+function removeExtraSpaces(text: string) {
+  return `${text}`.replace(/\s{2,}/g, '');
 }
 
 const mockGridOptions = {
