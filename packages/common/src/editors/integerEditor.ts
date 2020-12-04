@@ -81,13 +81,13 @@ export class IntegerEditor implements Editor {
         cellContainer.appendChild(this._input);
       }
 
-      this._input.onfocus = () => this._input?.select();
-      this._input.onkeydown = ((event: KeyboardEvent) => {
+      this._bindEventService.bind(this._input, 'focus', () => this._input?.select());
+      this._bindEventService.bind(this._input, 'keydown', ((event: KeyboardEvent) => {
         this._lastInputKeyEvent = event;
         if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT) {
           event.stopImmediatePropagation();
         }
-      });
+      }));
 
       // the lib does not get the focus out event for some reason
       // so register it here
@@ -97,6 +97,7 @@ export class IntegerEditor implements Editor {
 
       if (compositeEditorOptions) {
         this._bindEventService.bind(this._input, 'input', this.handleOnInputChange.bind(this));
+        this._bindEventService.bind(this._input, 'paste', this.handleOnInputChange.bind(this));
         this._bindEventService.bind(this._input, 'wheel', this.handleOnMouseWheel.bind(this));
       }
     }
