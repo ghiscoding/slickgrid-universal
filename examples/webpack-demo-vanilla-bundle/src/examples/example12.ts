@@ -10,6 +10,7 @@ import {
   Formatter,
   Formatters,
   GridOption,
+  LongTextEditorOption,
   SlickNamespace,
   SortComparers,
 
@@ -129,7 +130,19 @@ export class Example12 {
         filterable: true, columnGroup: 'Common Factor',
         filter: { model: Filters.compoundInputText },
         formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold] },
-        editor: { model: Editors.longText, massUpdate: false, required: true, alwaysSaveOnEnterKey: true, validator: myCustomTitleValidator, },
+        editor: {
+          model: Editors.longText, massUpdate: false, required: true, alwaysSaveOnEnterKey: true,
+          maxLength: 12,
+          editorOptions: {
+            cols: 45,
+            rows: 6,
+            buttonTexts: {
+              cancel: 'Close',
+              save: 'Done'
+            }
+          } as LongTextEditorOption,
+          validator: myCustomTitleValidator,
+        },
       },
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,

@@ -92,6 +92,7 @@ export * from './jQueryUiSliderOption.interface';
 export * from './jQueryUiSliderResponse.interface';
 export * from './keyTitlePair.interface';
 export * from './locale.interface';
+export * from './longTextEditorOption.interface';
 export * from './menuCallbackArgs.interface';
 export * from './menuCommandItem.interface';
 export * from './menuCommandItemCallbackArgs.interface';
