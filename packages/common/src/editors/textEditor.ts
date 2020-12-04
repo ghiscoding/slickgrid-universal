@@ -78,13 +78,13 @@ export class TextEditor implements Editor {
       cellContainer.appendChild(this._input);
     }
 
-    this._input.onfocus = () => this._input?.select();
-    this._input.onkeydown = ((event: KeyboardEvent) => {
+    this._bindEventService.bind(this._input, 'focus', () => this._input?.select());
+    this._bindEventService.bind(this._input, 'keydown', ((event: KeyboardEvent) => {
       this._lastInputKeyEvent = event;
       if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT) {
         event.stopImmediatePropagation();
       }
-    });
+    }));
 
     // the lib does not get the focus out event for some reason
     // so register it here
