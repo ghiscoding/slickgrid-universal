@@ -11,8 +11,8 @@ const containerId = 'demo-container';
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
 
-function removeExtraSpaces(textS: string) {
-  return `${textS}`.replace(/\s+/g, ' ');
+function removeExtraSpaces(text: string) {
+  return `${text}`.replace(/\s+/g, ' ');
 }
 
 const gridOptionMock = {

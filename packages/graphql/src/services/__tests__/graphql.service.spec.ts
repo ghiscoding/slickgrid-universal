@@ -22,8 +22,8 @@ import { GraphqlService } from './../graphql.service';
 const DEFAULT_ITEMS_PER_PAGE = 25;
 const DEFAULT_PAGE_SIZE = 20;
 
-function removeSpaces(textS: string) {
-  return `${textS}`.replace(/\s+/g, '');
+function removeSpaces(text: string) {
+  return `${text}`.replace(/\s+/g, '');
 }
 
 const gridOptionMock = {
