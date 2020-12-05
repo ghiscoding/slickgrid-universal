@@ -3,7 +3,7 @@ import { PubSubService } from './pubSub.service';
 export type TranslateServiceEventName = 'onLanguageChanged';
 
 export abstract class TranslaterService {
-  eventName: TranslateServiceEventName;
+  eventName?: TranslateServiceEventName;
 
   /**
    * Add an optional Pub/Sub Messaging Service,

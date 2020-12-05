@@ -60,7 +60,7 @@ export interface SlickNamespace {
     DataView: new (options?: DataViewOption) => SlickDataView;
 
     /** Slick AJAX Remote Data store implementation. */
-    RemoteModel: new () => SlickRemoteModel;
+    RemoteModel?: new () => SlickRemoteModel;
 
     /**
      * Provides item metadata for group (Slick.Group) and totals (Slick.Totals) rows produced by the DataView.
