@@ -159,7 +159,7 @@ export class SlickVanillaGridBundle {
   }
   set dataset(newDataset: any[]) {
     const prevDatasetLn = this.dataView.getLength();
-    const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions && this._gridOptions.enableDeepCopyDatasetOnPageLoad);
+    const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions?.enableDeepCopyDatasetOnPageLoad);
     const data = isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], newDataset) : newDataset;
     this.refreshGridData(data || []);
 
@@ -212,14 +212,14 @@ export class SlickVanillaGridBundle {
   get paginationOptions(): Pagination | undefined {
     return this._paginationOptions;
   }
-  set paginationOptions(options: Pagination | undefined) {
-    if (options && this._paginationOptions) {
-      this._paginationOptions = { ...this._paginationOptions, ...options };
+  set paginationOptions(newPaginationOptions: Pagination | undefined) {
+    if (newPaginationOptions && this._paginationOptions) {
+      this._paginationOptions = { ...this._paginationOptions, ...newPaginationOptions };
     } else {
-      this._paginationOptions = options;
+      this._paginationOptions = newPaginationOptions;
     }
     this.gridOptions.pagination = this._paginationOptions;
-    this.paginationService.updateTotalItems(options?.totalItems || 0, true);
+    this.paginationService.updateTotalItems(newPaginationOptions?.totalItems ?? 0, true);
   }
 
   get isDatasetInitialized(): boolean {
@@ -291,14 +291,14 @@ export class SlickVanillaGridBundle {
 
     this._columnDefinitions = columnDefs || [];
     this._gridOptions = this.mergeGridOptions(options || {});
-    const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions && this._gridOptions.enableDeepCopyDatasetOnPageLoad);
+    const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions?.enableDeepCopyDatasetOnPageLoad);
 
     // if user is providing a Translate Service, it has to be passed under the "translater" grid option
     this.translaterService = services?.translaterService ?? this._gridOptions.translater;
 
     // initialize and assign all Service Dependencies
     this._eventPubSubService = services?.eventPubSubService ?? new EventPubSubService(gridParentContainerElm);
-    this._eventPubSubService.eventNamingStyle = this._gridOptions && this._gridOptions.eventNamingStyle || EventNamingStyle.camelCase;
+    this._eventPubSubService.eventNamingStyle = this._gridOptions?.eventNamingStyle ?? EventNamingStyle.camelCase;
 
     this.gridEventService = services?.gridEventService ?? new GridEventService();
     const slickgridConfig = new SlickgridConfig();
@@ -436,9 +436,9 @@ export class SlickVanillaGridBundle {
 
     this._eventHandler = eventHandler;
     this._gridOptions = this.mergeGridOptions(this._gridOptions);
-    this.backendServiceApi = this._gridOptions && this._gridOptions.backendServiceApi;
+    this.backendServiceApi = this._gridOptions?.backendServiceApi;
     this._isLocalGrid = !this.backendServiceApi; // considered a local grid if it doesn't have a backend service set
-    this._eventPubSubService.eventNamingStyle = this._gridOptions && this._gridOptions.eventNamingStyle || EventNamingStyle.camelCase;
+    this._eventPubSubService.eventNamingStyle = this._gridOptions?.eventNamingStyle ?? EventNamingStyle.camelCase;
     this.sharedService.internalPubSubService = this._eventPubSubService;
     this._paginationOptions = this.gridOptions?.pagination;
 
@@ -479,7 +479,7 @@ export class SlickVanillaGridBundle {
 
     // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
     const frozenColumnIndex = this._gridOptions?.frozenColumn ?? -1;
-    if (frozenColumnIndex >= 0 && frozenColumnIndex <= this._columnDefinitions.length) {
+    if (frozenColumnIndex >= 0 && frozenColumnIndex <= this._columnDefinitions.length && this._columnDefinitions.length > 0) {
       this.sharedService.frozenVisibleColumnId = this._columnDefinitions[frozenColumnIndex]?.id ?? '';
     }
 
@@ -491,7 +491,7 @@ export class SlickVanillaGridBundle {
       this.dataView.setItems(this.dataset, this._gridOptions.datasetIdPropertyName);
     }
 
-    if (this._gridOptions && this._gridOptions.enableTreeData) {
+    if (this._gridOptions?.enableTreeData) {
       if (!this._gridOptions.treeDataOptions || !this._gridOptions.treeDataOptions.columnId) {
         throw new Error('[Slickgrid-Universal] When enabling tree data, you must also provide the "treeDataOption" property in your Grid Options with "childrenPropName" or "parentPropName" (depending if your array is hierarchical or flat) for the Tree Data to work properly');
       }
@@ -501,7 +501,7 @@ export class SlickVanillaGridBundle {
       const onRowsChangedHandler = this.dataView.onRowsChanged;
       (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowsChangedHandler>>).subscribe(onRowsChangedHandler, () => {
         const items = this.dataView.getItems();
-        if (items.length > 0 && !this._isDatasetInitialized) {
+        if (Array.isArray(items) && items.length > 0 && !this._isDatasetInitialized) {
           this.sharedService.hierarchicalDataset = this.treeDataSortComparer(items);
         }
       });
@@ -510,7 +510,7 @@ export class SlickVanillaGridBundle {
     // if you don't want the items that are not visible (due to being filtered out or being on a different page)
     // to stay selected, pass 'false' to the second arg
     const selectionModel = this.slickGrid && this.slickGrid.getSelectionModel();
-    if (selectionModel && this._gridOptions && this._gridOptions.dataView && this._gridOptions.dataView.hasOwnProperty('syncGridSelection')) {
+    if (selectionModel && this._gridOptions?.dataView && this._gridOptions.dataView.hasOwnProperty('syncGridSelection')) {
       // if we are using a Backend Service, we will do an extra flag check, the reason is because it might have some unintended behaviors
       // with the BackendServiceApi because technically the data in the page changes the DataView on every page change.
       let preservedRowSelectionWithBackend = false;
@@ -601,7 +601,7 @@ export class SlickVanillaGridBundle {
 
     // bind the Backend Service API callback functions only after the grid is initialized
     // because the preProcess() and onInit() might get triggered
-    if (this.gridOptions && this.gridOptions.backendServiceApi) {
+    if (this.gridOptions?.backendServiceApi) {
       this.bindBackendCallbackFunctions(this.gridOptions);
     }
 
@@ -790,7 +790,7 @@ export class SlickVanillaGridBundle {
         if (grid.hasOwnProperty(prop) && prop.startsWith('on')) {
           const gridEventHandler = grid[prop];
           (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof gridEventHandler>>).subscribe(gridEventHandler, (event, args) => {
-            const gridEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions && this._gridOptions.defaultSlickgridEventPrefix || '');
+            const gridEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions?.defaultSlickgridEventPrefix || '');
             return this._eventPubSubService.dispatchCustomEvent(gridEventName, { eventData: event, args });
           });
         }
@@ -801,7 +801,7 @@ export class SlickVanillaGridBundle {
         if (dataView.hasOwnProperty(prop) && prop.startsWith('on')) {
           const dataViewEventHandler = dataView[prop];
           (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof dataViewEventHandler>>).subscribe(dataViewEventHandler, (event, args) => {
-            const dataViewEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions && this._gridOptions.defaultSlickgridEventPrefix || '');
+            const dataViewEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions?.defaultSlickgridEventPrefix || '');
             return this._eventPubSubService.dispatchCustomEvent(dataViewEventName, { eventData: event, args });
           });
         }
@@ -846,7 +846,7 @@ export class SlickVanillaGridBundle {
     if (gridOptions?.colspanCallback && dataView?.getItem && dataView?.getItemMetadata) {
       dataView.getItemMetadata = (rowNumber: number) => {
         let callbackResult = null;
-        if (gridOptions.colspanCallback && gridOptions.colspanCallback) {
+        if (gridOptions.colspanCallback) {
           callbackResult = gridOptions.colspanCallback(dataView.getItem(rowNumber));
         }
         return callbackResult;
@@ -1007,12 +1007,12 @@ export class SlickVanillaGridBundle {
       // display the Pagination component only after calling this refresh data first, we call it here so that if we preset pagination page number it will be shown correctly
       this.showPagination = (this._gridOptions && (this._gridOptions.enablePagination || (this._gridOptions.backendServiceApi && this._gridOptions.enablePagination === undefined))) ? true : false;
 
-      if (this._gridOptions && this._gridOptions.backendServiceApi && this._gridOptions.pagination && this._paginationOptions) {
+      if (this._paginationOptions && this._gridOptions?.pagination && this._gridOptions?.backendServiceApi) {
         const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this._gridOptions, this._paginationOptions);
 
         // when we have a totalCount use it, else we'll take it from the pagination object
         // only update the total items if it's different to avoid refreshing the UI
-        const totalRecords = (totalCount !== undefined) ? totalCount : (this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems);
+        const totalRecords = (totalCount !== undefined) ? totalCount : (this._gridOptions?.pagination?.totalItems);
         if (totalRecords !== undefined && totalRecords !== this.totalItems) {
           this.totalItems = +totalRecords;
         }
@@ -1048,7 +1048,7 @@ export class SlickVanillaGridBundle {
       this.extensionService.renderColumnHeaders(newColumnDefinitions, true);
     }
 
-    if (this._gridOptions && this._gridOptions.enableAutoSizeColumns) {
+    if (this._gridOptions?.enableAutoSizeColumns) {
       this.slickGrid.autosizeColumns();
     }
   }
@@ -1175,9 +1175,9 @@ export class SlickVanillaGridBundle {
   private loadLocalGridPagination(dataset?: any[]) {
     if (this.gridOptions && this._paginationOptions) {
       this.totalItems = Array.isArray(dataset) ? dataset.length : 0;
-      if (this._paginationOptions && this.dataView && this.dataView.getPagingInfo) {
+      if (this._paginationOptions && this.dataView?.getPagingInfo) {
         const slickPagingInfo = this.dataView.getPagingInfo();
-        if (slickPagingInfo && slickPagingInfo.hasOwnProperty('totalRows') && this._paginationOptions.totalItems !== slickPagingInfo.totalRows) {
+        if (slickPagingInfo?.hasOwnProperty('totalRows') && this._paginationOptions.totalItems !== slickPagingInfo.totalRows) {
           this.totalItems = slickPagingInfo?.totalRows || 0;
         }
       }
