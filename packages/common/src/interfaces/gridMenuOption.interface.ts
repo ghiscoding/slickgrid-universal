@@ -40,13 +40,13 @@ export interface GridMenuOption {
   /** Defaults to true, which will hide the "Clear Frozen Columns" command in the Grid Menu */
   hideClearFrozenColumnsCommand?: boolean;
 
-  /** Defaults to false, which will hide the "Export to CSV" command in the Grid Menu (Grid Option "enableExport: true" has to be enabled) */
+  /** Defaults to false, which will hide the "Export to CSV" command in the Grid Menu (Grid Option "enableTextExport: true" has to be enabled) */
   hideExportCsvCommand?: boolean;
 
   /** Defaults to false, which will hide the "Export to Excel" command in the Grid Menu (Grid Option "enableExcelExport: true" has to be enabled) */
   hideExportExcelCommand?: boolean;
 
-  /** Defaults to false, which will hide the "Export to Text Delimited" command in the Grid Menu (Grid Option "enableExport: true" has to be enabled) */
+  /** Defaults to false, which will hide the "Export to Text Delimited" command in the Grid Menu (Grid Option "enableTextExport: true" has to be enabled) */
   hideExportTextDelimitedCommand?: boolean;
 
   /** Defaults to false, show/hide 1 of the last 2 checkbox at the end of the picker list */

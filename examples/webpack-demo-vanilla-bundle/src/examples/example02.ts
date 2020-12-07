@@ -13,7 +13,7 @@ import {
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { FileExportService } from '@slickgrid-universal/file-export';
+import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
@@ -157,7 +157,7 @@ export class Example2 {
         bottomPadding: 30,
         rightPadding: 10
       },
-      enableExport: true,
+      enableTextExport: true,
       enableFiltering: true,
       enableGrouping: true,
       exportOptions: {
@@ -167,7 +167,7 @@ export class Example2 {
       excelExportOptions: {
         sanitizeDataExport: true
       },
-      registerExternalServices: [this.excelExportService, new FileExportService()],
+      registerExternalServices: [this.excelExportService, new TextExportService()],
       showCustomFooter: true, // display some metrics in the bottom custom footer
       customFooterOptions: {
         // optionally display some text on the left footer container

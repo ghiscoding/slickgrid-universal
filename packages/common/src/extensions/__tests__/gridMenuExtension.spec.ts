@@ -3,7 +3,7 @@ import { Column, SlickDataView, GridOption, SlickGrid, SlickNamespace, GridMenu,
 import { GridMenuExtension } from '../gridMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
-import { ExcelExportService, FileExportService, FilterService, SortService } from '../../services';
+import { ExcelExportService, TextExportService, FilterService, SortService } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 declare const Slick: SlickNamespace;
@@ -19,9 +19,9 @@ const excelExportServiceStub = {
 } as unknown as ExcelExportService;
 
 const exportServiceStub = {
-  className: 'FileExportService',
+  className: 'TextExportService',
   exportToFile: jest.fn(),
-} as unknown as FileExportService;
+} as unknown as TextExportService;
 
 const filterServiceStub = {
   clearFilters: jest.fn(),
@@ -444,8 +444,8 @@ describe('gridMenuExtension', () => {
         expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([]);
       });
 
-      it('should have the "export-csv" menu command when "enableExport" is set', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableExport: true, gridMenu: { hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportTextDelimitedCommand: true } } as unknown as GridOption;
+      it('should have the "export-csv" menu command when "enableTextExport" is set', () => {
+        const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, gridMenu: { hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportTextDelimitedCommand: true } } as unknown as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
         extension.register(); // calling 2x register to make sure it doesn't duplicate commands
@@ -454,15 +454,15 @@ describe('gridMenuExtension', () => {
         ]);
       });
 
-      it('should not have the "export-csv" menu command when "enableExport" and "hideExportCsvCommand" are set', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableExport: true, gridMenu: { hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportCsvCommand: true, hideExportTextDelimitedCommand: true } } as unknown as GridOption;
+      it('should not have the "export-csv" menu command when "enableTextExport" and "hideExportCsvCommand" are set', () => {
+        const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, gridMenu: { hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportCsvCommand: true, hideExportTextDelimitedCommand: true } } as unknown as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
         expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([]);
       });
 
-      it('should have the "export-excel" menu command when "enableExport" is set', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: true, enableExport: false, gridMenu: { hideClearFrozenColumnsCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: false } } as unknown as GridOption;
+      it('should have the "export-excel" menu command when "enableTextExport" is set', () => {
+        const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: true, enableTextExport: false, gridMenu: { hideClearFrozenColumnsCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: false } } as unknown as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
         extension.register(); // calling 2x register to make sure it doesn't duplicate commands
@@ -471,8 +471,8 @@ describe('gridMenuExtension', () => {
         ]);
       });
 
-      it('should have the "export-text-delimited" menu command when "enableExport" is set', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableExport: true, gridMenu: { hideClearFrozenColumnsCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: true } } as unknown as GridOption;
+      it('should have the "export-text-delimited" menu command when "enableTextExport" is set', () => {
+        const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, gridMenu: { hideClearFrozenColumnsCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: true } } as unknown as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
         extension.register(); // calling 2x register to make sure it doesn't duplicate commands
@@ -481,8 +481,8 @@ describe('gridMenuExtension', () => {
         ]);
       });
 
-      it('should not have the "export-text-delimited" menu command when "enableExport" and "hideExportCsvCommand" are set', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableExport: true, gridMenu: { hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportCsvCommand: true, hideExportTextDelimitedCommand: true } } as unknown as GridOption;
+      it('should not have the "export-text-delimited" menu command when "enableTextExport" and "hideExportCsvCommand" are set', () => {
+        const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, gridMenu: { hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportCsvCommand: true, hideExportTextDelimitedCommand: true } } as unknown as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
         expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([]);
@@ -501,7 +501,7 @@ describe('gridMenuExtension', () => {
       beforeEach(() => {
         const copyGridOptionsMock = {
           ...gridOptionsMock,
-          enableExport: true,
+          enableTextExport: true,
           gridMenu: {
             customItems: customItemsMock,
             hideClearFrozenColumnsCommand: true,
@@ -642,23 +642,23 @@ describe('gridMenuExtension', () => {
         }
       });
 
-      it('should call "exportToFile" with CSV and expect an error thrown when FileExportService is not registered prior to calling the method', (done) => {
+      it('should call "exportToFile" with CSV and expect an error thrown when TextExportService is not registered prior to calling the method', (done) => {
         try {
           jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([]);
           const instance = extension.register() as SlickGridMenu;
           instance.onCommand!.notify({ item: { command: 'export-csv' }, column: {} as Column, grid: gridStub, command: 'export-csv' }, new Slick.EventData(), gridStub);
         } catch (e) {
-          expect(e.message).toContain('[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Grid Menu.');
+          expect(e.message).toContain('[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu.');
           done();
         }
       });
 
-      it('should call "exportToFile" with Text Delimited and expect an error thrown when FileExportService is not registered prior to calling the method', (done) => {
+      it('should call "exportToFile" with Text Delimited and expect an error thrown when TextExportService is not registered prior to calling the method', (done) => {
         try {
           const instance = extension.register() as SlickGridMenu;
           instance.onCommand!.notify({ item: { command: 'export-text-delimited' }, column: {} as Column, grid: gridStub, command: 'export-text-delimited' }, new Slick.EventData(), gridStub);
         } catch (e) {
-          expect(e.message).toContain('[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Grid Menu.');
+          expect(e.message).toContain('[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu.');
           done();
         }
       });

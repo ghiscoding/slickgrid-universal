@@ -17,7 +17,7 @@ export const SalesforceGlobalGridOptions = {
   },
   enableAutoTooltip: true,
   enableDeepCopyDatasetOnPageLoad: true,
-  enableExport: true,
+  enableTextExport: true,
   exportOptions: {
     exportWithFormatter: true,
     sanitizeDataExport: true,

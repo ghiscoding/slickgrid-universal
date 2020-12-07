@@ -6,6 +6,6 @@ describe('Testing Export Package entry point', () => {
   });
 
   it('should have Service defined', () => {
-    expect(typeof entry.FileExportService).toBeTruthy();
+    expect(typeof entry.TextExportService).toBeTruthy();
   });
 });

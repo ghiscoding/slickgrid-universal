@@ -14,7 +14,6 @@ import {
   EmptyWarning,
   ExcelCopyBufferOption,
   ExcelExportOption,
-  ExportOption,
   FormatterOption,
   GridMenu,
   GridState,
@@ -25,6 +24,7 @@ import {
   // RowDetailView,
   RowMoveManager,
   RowSelectionModelOption,
+  TextExportOption,
   TreeDataOption,
   CompositeEditorOpenDetailOption,
 } from './index';
@@ -241,7 +241,7 @@ export interface GridOption {
   /** Do we want to enable the Excel Export? (if Yes, it will show up in the Grid Menu) */
   enableExcelExport?: boolean;
 
-  /** Do we want to enable the Export to File? (if Yes, it will show up in the Grid Menu) */
+  /** @deprecated Please use "enableTextExport", Do we want to enable the Export to File? (if Yes, it will show up in the Grid Menu) */
   enableExport?: boolean;
 
   /** Do we want to enable Filters? */
@@ -291,6 +291,9 @@ export interface GridOption {
   /** Do we want to enable sorting? */
   enableSorting?: boolean;
 
+  /** Do we want to enable the Export to Text File? (if Yes, it will show up in the Grid Menu) */
+  enableTextExport?: boolean;
+
   /** Do we want to enable text selection on cells? Useful when user wants to do copy to clipboard. */
   enableTextSelectionOnCells?: boolean;
 
@@ -315,8 +318,8 @@ export interface GridOption {
   /** Some default options to set for the Excel export service */
   excelExportOptions?: ExcelExportOption;
 
-  /** Some default options to set for the export service */
-  exportOptions?: ExportOption;
+  /** @deprecated Please use "textExportOptions" Some default options to set for the export service */
+  exportOptions?: TextExportOption;
 
   /** Defaults to 25, which is the grid footer row panel height */
   footerRowHeight?: number;
@@ -419,7 +422,7 @@ export interface GridOption {
   /** Preselect certain rows by their row index ("enableCheckboxSelector" must be enabled) */
   preselectedRows?: number[];
 
-  /** Register any external Services like the ExcelExportService, FileExportService, ... */
+  /** Register any external Services like the ExcelExportService, TextExportService, ... */
   registerExternalServices?: any[];
 
   /** Row Detail View Plugin options & events (columnId, cssClass, toolTip, width) */
@@ -484,6 +487,9 @@ export interface GridOption {
 
   /** Defaults to false, when set to True will sync the column cell resize & apply the column width */
   syncColumnCellResize?: boolean;
+
+  /** Some default options to set for the text file export service */
+  textExportOptions?: TextExportOption;
 
   /** What is the top panel height in pixels (only type the number) */
   topPanelHeight?: number;

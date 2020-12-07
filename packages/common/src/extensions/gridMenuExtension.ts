@@ -15,7 +15,7 @@ import {
   FileType,
 } from '../enums/index';
 import { ExcelExportService } from '../services/excelExport.service';
-import { FileExportService } from '../services/fileExport.service';
+import { TextExportService } from '../services/textExport.service';
 import { ExtensionUtility } from './extensionUtility';
 import { FilterService } from '../services/filter.service';
 import { SortService } from '../services/sort.service';
@@ -332,7 +332,7 @@ export class GridMenuExtension implements Extension {
     }
 
     // show grid menu: Export to file
-    if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableExport && this._gridMenuOptions && !this._gridMenuOptions.hideExportCsvCommand) {
+    if ((this.sharedService.gridOptions?.enableExport || this.sharedService.gridOptions?.enableTextExport) && this._gridMenuOptions && !this._gridMenuOptions.hideExportCsvCommand) {
       const commandName = 'export-csv';
       if (!originalCustomItems.find((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
         gridMenuCustomItems.push(
@@ -364,7 +364,7 @@ export class GridMenuExtension implements Extension {
     }
 
     // show grid menu: export to text file as tab delimited
-    if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableExport && this._gridMenuOptions && !this._gridMenuOptions.hideExportTextDelimitedCommand) {
+    if ((this.sharedService.gridOptions?.enableExport || this.sharedService.gridOptions?.enableTextExport) && this._gridMenuOptions && !this._gridMenuOptions.hideExportTextDelimitedCommand) {
       const commandName = 'export-text-delimited';
       if (!originalCustomItems.find((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
         gridMenuCustomItems.push(
@@ -414,7 +414,7 @@ export class GridMenuExtension implements Extension {
           this.sharedService.dataView.refresh();
           break;
         case 'export-csv':
-          const exportCsvService: FileExportService = registedServices.find((service: any) => service.className === 'FileExportService');
+          const exportCsvService: TextExportService = registedServices.find((service: any) => service.className === 'TextExportService');
           if (exportCsvService?.exportToFile) {
             exportCsvService.exportToFile({
               delimiter: DelimiterType.comma,
@@ -423,7 +423,7 @@ export class GridMenuExtension implements Extension {
               useUtf8WithBom: true,
             });
           } else {
-            throw new Error(`[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableExport: true, registerExternalServices: [new FileExportService()] };`);
+            throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalServices: [new TextExportService()] };`);
           }
           break;
         case 'export-excel':
@@ -438,7 +438,7 @@ export class GridMenuExtension implements Extension {
           }
           break;
         case 'export-text-delimited':
-          const exportTxtService: FileExportService = registedServices.find((service: any) => service.className === 'FileExportService');
+          const exportTxtService: TextExportService = registedServices.find((service: any) => service.className === 'TextExportService');
           if (exportTxtService?.exportToFile) {
             exportTxtService.exportToFile({
               delimiter: DelimiterType.tab,
@@ -447,7 +447,7 @@ export class GridMenuExtension implements Extension {
               useUtf8WithBom: true,
             });
           } else {
-            throw new Error(`[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableExport: true, registerExternalServices: [new FileExportService()] };`);
+            throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalServices: [new TextExportService()] };`);
           }
           break;
         case 'toggle-filter':

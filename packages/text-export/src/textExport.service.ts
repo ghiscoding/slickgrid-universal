@@ -12,8 +12,7 @@ import {
   // interfaces
   Column,
   Constants,
-  ExportOption,
-  FileExportService as BaseFileExportService,
+  TextExportService as BaseTextExportService,
   FileType,
   GridOption,
   KeyTitlePair,
@@ -22,13 +21,14 @@ import {
   SharedService,
   SlickDataView,
   SlickGrid,
+  TextExportOption,
   TranslaterService,
 } from '@slickgrid-universal/common';
 
-export class FileExportService implements BaseFileExportService {
+export class TextExportService implements BaseTextExportService {
   private _delimiter = ',';
   private _exportQuoteWrapper = '';
-  private _exportOptions: ExportOption;
+  private _exportOptions: TextExportOption;
   private _fileFormat = FileType.csv;
   private _lineCarriageReturn = '\n';
   private _grid: SlickGrid;
@@ -40,7 +40,7 @@ export class FileExportService implements BaseFileExportService {
   private _translaterService: TranslaterService | undefined;
 
   /** ExcelExportService class name which is use to find service instance in the external registered services */
-  className = 'FileExportService';
+  className = 'TextExportService';
 
   constructor() { }
 
@@ -85,14 +85,14 @@ export class FileExportService implements BaseFileExportService {
    *
    * Example: exportToFile({ format: FileType.csv, delimiter: DelimiterType.comma })
    */
-  exportToFile(options: ExportOption): Promise<boolean> {
+  exportToFile(options: TextExportOption): Promise<boolean> {
     if (!this._grid || !this._dataView) {
-      throw new Error('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects are not initialized did you forget to enable the grid option flag "enableExport"?');
+      throw new Error('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects are not initialized did you forget to enable the grid option flag "enableTextExport"?');
     }
 
     return new Promise((resolve, reject) => {
       this._pubSubService.publish(`onBeforeExportToFile`, true);
-      this._exportOptions = deepCopy({ ...this._gridOptions.exportOptions, ...options });
+      this._exportOptions = deepCopy({ ...this._gridOptions.textExportOptions, ...options });
       this._delimiter = this._exportOptions.delimiterOverride || this._exportOptions.delimiter || '';
       this._fileFormat = this._exportOptions.format || FileType.csv;
 

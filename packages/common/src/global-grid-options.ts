@@ -116,7 +116,7 @@ export const GlobalGridOptions: GridOption = {
   enableColumnReorder: true,
   enableContextMenu: true,
   enableExcelExport: false,
-  enableExport: false,
+  enableTextExport: false,
   enableGridMenu: true,
   enableHeaderMenu: true,
   enableMouseHoverHighlightRow: true,
@@ -134,7 +134,7 @@ export const GlobalGridOptions: GridOption = {
     groupingAggregatorRowText: '',
     sanitizeDataExport: false,
   },
-  exportOptions: {
+  textExportOptions: {
     delimiter: DelimiterType.comma,
     exportWithFormatter: false,
     filename: 'export',

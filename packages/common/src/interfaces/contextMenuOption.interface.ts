@@ -47,13 +47,13 @@ export interface ContextMenuOption {
   /** Defaults to false, hide the "Expand all Groups" command in the menu (Grid Option "enableGrouping: true" has to be enabled) */
   hideExpandAllGroups?: boolean;
 
-  /** Defaults to false, which will hide the "Export to CSV" command in the menu (Grid Option "enableExport: true" has to be enabled) */
+  /** Defaults to false, which will hide the "Export to CSV" command in the menu (Grid Option "enableTextExport: true" has to be enabled) */
   hideExportCsvCommand?: boolean;
 
   /** Defaults to false, which will hide the "Export to Excel" command in the menu (Grid Option "enableExcelExport: true" has to be enabled) */
   hideExportExcelCommand?: boolean;
 
-  /** Defaults to false, which will hide the "Export to Text Delimited" command in the menu (Grid Option "enableExport: true" has to be enabled) */
+  /** Defaults to false, which will hide the "Export to Text Delimited" command in the menu (Grid Option "enableTextExport: true" has to be enabled) */
   hideExportTextDelimitedCommand?: boolean;
 
   /** Defaults to true, do we want to hide the Cell Menu when a scrolling event occurs? */

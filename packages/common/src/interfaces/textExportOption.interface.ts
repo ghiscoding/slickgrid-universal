@@ -1,7 +1,7 @@
 import { DelimiterType } from '../enums/delimiterType.enum';
 import { FileType } from '../enums/fileType.enum';
 
-export interface ExportOption {
+export interface TextExportOption {
   /** export delimiter, can be (comma, tab, ... or even custom string). */
   delimiter?: DelimiterType | string;
 

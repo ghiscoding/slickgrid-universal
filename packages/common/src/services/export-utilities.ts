@@ -1,6 +1,6 @@
-import { Column, ExportOption, ExcelExportOption, Formatter, SlickGrid } from '../interfaces/index';
+import { Column, ExcelExportOption, Formatter, SlickGrid, TextExportOption } from '../interfaces/index';
 
-export function exportWithFormatterWhenDefined(row: number, col: number, dataContext: any, columnDef: Column, grid: SlickGrid, exportOptions?: ExportOption | ExcelExportOption) {
+export function exportWithFormatterWhenDefined(row: number, col: number, dataContext: any, columnDef: Column, grid: SlickGrid, exportOptions?: TextExportOption | ExcelExportOption) {
   let output = '';
   let isEvaluatingFormatter = false;
 

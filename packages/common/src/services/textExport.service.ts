@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ExportOption, SlickGrid } from '../interfaces/index';
+import { TextExportOption, SlickGrid } from '../interfaces/index';
 import { SharedService } from './shared.service';
 
-export abstract class FileExportService {
+export abstract class TextExportService {
   /** ExcelExportService class name which is use to find service instance in the external registered services */
   className: string;
 
@@ -18,7 +18,7 @@ export abstract class FileExportService {
    * Method to return the current locale used by the App
    * @return {string} current locale
    */
-  exportToFile(_options: ExportOption): Promise<boolean> {
+  exportToFile(_options: TextExportOption): Promise<boolean> {
     throw new Error('ExportService the "exportToFile" method must be implemented');
   }
 }

@@ -15,7 +15,7 @@ import { ExtensionUtility } from './extensionUtility';
 import { exportWithFormatterWhenDefined } from '../services/export-utilities';
 import { SharedService } from '../services/shared.service';
 import { getDescendantProperty, getTranslationPrefix } from '../services/utilities';
-import { ExcelExportService, FileExportService, TranslaterService, TreeDataService } from '../services/index';
+import { ExcelExportService, TextExportService, TranslaterService, TreeDataService } from '../services/index';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -222,7 +222,7 @@ export class ContextMenuExtension implements Extension {
     }
 
     // show context menu: Export to file
-    if (gridOptions && gridOptions.enableExport && contextMenu && !contextMenu.hideExportCsvCommand) {
+    if ((gridOptions?.enableExport || gridOptions?.enableTextExport) && contextMenu && !contextMenu.hideExportCsvCommand) {
       const commandName = 'export-csv';
       if (!originalCustomItems.find((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === commandName)) {
         menuCustomItems.push(
@@ -234,7 +234,7 @@ export class ContextMenuExtension implements Extension {
             positionOrder: 51,
             action: () => {
               const registedServices = this.sharedService?.externalRegisteredServices || [];
-              const excelService: FileExportService = registedServices.find((service: any) => service.className === 'FileExportService');
+              const excelService: TextExportService = registedServices.find((service: any) => service.className === 'TextExportService');
               if (excelService?.exportToFile) {
                 excelService.exportToFile({
                   delimiter: DelimiterType.comma,
@@ -243,7 +243,7 @@ export class ContextMenuExtension implements Extension {
                   useUtf8WithBom: true,
                 });
               } else {
-                throw new Error(`[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableExport: true, registerExternalServices: [new FileExportService()] };`);
+                throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalServices: [new TextExportService()] };`);
               }
             },
           }
@@ -280,7 +280,7 @@ export class ContextMenuExtension implements Extension {
     }
 
     // show context menu: export to text file as tab delimited
-    if (gridOptions && gridOptions.enableExport && contextMenu && !contextMenu.hideExportTextDelimitedCommand) {
+    if ((gridOptions?.enableExport || gridOptions?.enableTextExport) && contextMenu && !contextMenu.hideExportTextDelimitedCommand) {
       const commandName = 'export-text-delimited';
       if (!originalCustomItems.find((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === commandName)) {
         menuCustomItems.push(
@@ -292,7 +292,7 @@ export class ContextMenuExtension implements Extension {
             positionOrder: 53,
             action: () => {
               const registedServices = this.sharedService?.externalRegisteredServices || [];
-              const excelService: FileExportService = registedServices.find((service: any) => service.className === 'FileExportService');
+              const excelService: TextExportService = registedServices.find((service: any) => service.className === 'TextExportService');
               if (excelService?.exportToFile) {
                 excelService.exportToFile({
                   delimiter: DelimiterType.tab,
@@ -301,7 +301,7 @@ export class ContextMenuExtension implements Extension {
                   useUtf8WithBom: true,
                 });
               } else {
-                throw new Error(`[Slickgrid-Universal] You must register the FileExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableExport: true, registerExternalServices: [new FileExportService()] };`);
+                throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalServices: [new TextExportService()] };`);
               }
             },
           }
@@ -420,7 +420,7 @@ export class ContextMenuExtension implements Extension {
         const columnDef = args && args.column;
         const dataContext = args && args.dataContext;
         const grid = this.sharedService && this.sharedService.slickGrid;
-        const exportOptions = gridOptions && (gridOptions.excelExportOptions || gridOptions.exportOptions);
+        const exportOptions = gridOptions && (gridOptions.excelExportOptions || gridOptions.exportOptions || gridOptions.textExportOptions);
         let textToCopy = exportWithFormatterWhenDefined(row, cell, dataContext, columnDef, grid, exportOptions);
 
         if (typeof columnDef.queryFieldNameGetterFn === 'function') {
