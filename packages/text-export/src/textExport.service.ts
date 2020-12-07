@@ -90,8 +90,8 @@ export class TextExportService implements BaseTextExportService {
       throw new Error('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects are not initialized did you forget to enable the grid option flag "enableTextExport"?');
     }
 
-    return new Promise((resolve, reject) => {
-      this._pubSubService.publish(`onBeforeExportToFile`, true);
+    return new Promise(resolve => {
+      this._pubSubService.publish(`onBeforeExportToTextFile`, true);
       this._exportOptions = deepCopy({ ...this._gridOptions.textExportOptions, ...options });
       this._delimiter = this._exportOptions.delimiterOverride || this._exportOptions.delimiter || '';
       this._fileFormat = this._exportOptions.format || FileType.csv;
@@ -102,21 +102,17 @@ export class TextExportService implements BaseTextExportService {
       // trigger a download file
       // wrap it into a setTimeout so that the EventAggregator has enough time to start a pre-process like showing a spinner
       setTimeout(() => {
-        try {
-          const downloadOptions = {
-            filename: `${this._exportOptions.filename}.${this._fileFormat}`,
-            format: this._fileFormat || FileType.csv,
-            mimeType: this._exportOptions.mimeType || 'text/plain',
-            useUtf8WithBom: (this._exportOptions && this._exportOptions.hasOwnProperty('useUtf8WithBom')) ? this._exportOptions.useUtf8WithBom : true
-          };
+        const downloadOptions = {
+          filename: `${this._exportOptions.filename}.${this._fileFormat}`,
+          format: this._fileFormat || FileType.csv,
+          mimeType: this._exportOptions.mimeType || 'text/plain',
+          useUtf8WithBom: (this._exportOptions && this._exportOptions.hasOwnProperty('useUtf8WithBom')) ? this._exportOptions.useUtf8WithBom : true
+        };
 
-          // start downloading but add the content property only on the start download not on the event itself
-          this.startDownloadFile({ ...downloadOptions, content: dataOutput }); // add content property
-          this._pubSubService.publish(`onAfterExportToFile`, downloadOptions);
-          resolve(true);
-        } catch (error) {
-          reject(error);
-        }
+        // start downloading but add the content property only on the start download not on the event itself
+        this.startDownloadFile({ ...downloadOptions, content: dataOutput }); // add content property
+        this._pubSubService.publish(`onAfterExportToTextFile`, downloadOptions);
+        resolve(true);
       }, 0);
     });
   }
@@ -128,11 +124,6 @@ export class TextExportService implements BaseTextExportService {
    * @param options
    */
   startDownloadFile(options: { filename: string, content: string, format: FileType | string, mimeType: string, useUtf8WithBom?: boolean }): void {
-    // IE(6-10) don't support javascript download and our service doesn't support either so throw an error, we have to make a round trip to the Web Server for exporting
-    if (navigator.appName === 'Microsoft Internet Explorer') {
-      throw new Error('Microsoft Internet Explorer 6 to 10 do not support javascript export to CSV. Please upgrade your browser.');
-    }
-
     // make sure no html entities exist in the data
     const csvContent = htmlEntityDecode(options.content);
 

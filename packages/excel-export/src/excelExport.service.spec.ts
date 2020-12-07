@@ -196,17 +196,6 @@ describe('ExcelExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyMsSave).toHaveBeenCalledWith(mockExcelBlob, 'export.xlsx');
       });
-
-      it('should throw an error when browser is IE10 or lower', async () => {
-        (navigator as any).__defineGetter__('appName', () => 'Microsoft Internet Explorer');
-
-        try {
-          service.init(gridStub, sharedService);
-          await service.exportToExcel(mockExportExcelOptions);
-        } catch (e) {
-          expect(e.toString()).toContain('Microsoft Internet Explorer 6 to 10 do not support javascript export to Excel.');
-        }
-      });
     });
 
     describe('startDownloadFile call after all private methods ran ', () => {

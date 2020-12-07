@@ -103,7 +103,7 @@ export class ExcelExportService implements BaseExcelExportService {
       throw new Error('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects are not initialized did you forget to enable the grid option flag "enableExcelExport"?');
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       this._pubSubService.publish(`onBeforeExportToExcel`, true);
       this._excelExportOptions = deepCopy({ ...this._gridOptions.excelExportOptions, ...options });
       this._fileFormat = this._excelExportOptions.format || FileType.xlsx;
@@ -133,39 +133,35 @@ export class ExcelExportService implements BaseExcelExportService {
       // trigger a download file
       // wrap it into a setTimeout so that the EventAggregator has enough time to start a pre-process like showing a spinner
       setTimeout(async () => {
-        try {
-          if (this._gridOptions && this._gridOptions.excelExportOptions && this._gridOptions.excelExportOptions.customExcelHeader) {
-            this._gridOptions.excelExportOptions.customExcelHeader(this._workbook, this._sheet);
-          }
-
-          const columns = this._grid && this._grid.getColumns && this._grid.getColumns() || [];
-          this._sheet.setColumns(this.getColumnStyles(columns));
-
-          const currentSheetData = this._sheet.data;
-          let finalOutput = currentSheetData;
-          if (Array.isArray(currentSheetData) && Array.isArray(dataOutput)) {
-            finalOutput = this._sheet.data.concat(dataOutput);
-          }
-
-          this._sheet.setData(finalOutput);
-          this._workbook.addWorksheet(this._sheet);
-
-          // using ExcelBuilder.Builder.createFile with WebPack but ExcelBuilder.createFile with RequireJS/SystemJS
-          const createFileFn = ExcelBuilder.Builder && ExcelBuilder.Builder.createFile ? ExcelBuilder.Builder.createFile : ExcelBuilder.createFile;
-          const mimeType = this._fileFormat === FileType.xls ? 'application/vnd.ms-excel' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet ';
-          const excelBlob = await createFileFn(this._workbook, { type: 'blob', mimeType });
-          const downloadOptions = {
-            filename: `${this._excelExportOptions.filename}.${this._fileFormat}`,
-            format: this._fileFormat
-          };
-
-          // start downloading but add the Blob property only on the start download not on the event itself
-          this.startDownloadFile({ ...downloadOptions, blob: excelBlob, data: this._sheet.data });
-          this._pubSubService.publish(`onAfterExportToExcel`, downloadOptions);
-          resolve(true);
-        } catch (error) {
-          reject(error);
+        if (this._gridOptions && this._gridOptions.excelExportOptions && this._gridOptions.excelExportOptions.customExcelHeader) {
+          this._gridOptions.excelExportOptions.customExcelHeader(this._workbook, this._sheet);
         }
+
+        const columns = this._grid && this._grid.getColumns && this._grid.getColumns() || [];
+        this._sheet.setColumns(this.getColumnStyles(columns));
+
+        const currentSheetData = this._sheet.data;
+        let finalOutput = currentSheetData;
+        if (Array.isArray(currentSheetData) && Array.isArray(dataOutput)) {
+          finalOutput = this._sheet.data.concat(dataOutput);
+        }
+
+        this._sheet.setData(finalOutput);
+        this._workbook.addWorksheet(this._sheet);
+
+        // using ExcelBuilder.Builder.createFile with WebPack but ExcelBuilder.createFile with RequireJS/SystemJS
+        const createFileFn = ExcelBuilder.Builder && ExcelBuilder.Builder.createFile ? ExcelBuilder.Builder.createFile : ExcelBuilder.createFile;
+        const mimeType = this._fileFormat === FileType.xls ? 'application/vnd.ms-excel' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet ';
+        const excelBlob = await createFileFn(this._workbook, { type: 'blob', mimeType });
+        const downloadOptions = {
+          filename: `${this._excelExportOptions.filename}.${this._fileFormat}`,
+          format: this._fileFormat
+        };
+
+        // start downloading but add the Blob property only on the start download not on the event itself
+        this.startDownloadFile({ ...downloadOptions, blob: excelBlob, data: this._sheet.data });
+        this._pubSubService.publish(`onAfterExportToExcel`, downloadOptions);
+        resolve(true);
       });
     });
   }
@@ -177,11 +173,6 @@ export class ExcelExportService implements BaseExcelExportService {
    * @param options
    */
   startDownloadFile(options: { filename: string, blob: Blob, data: any[] }) {
-    // IE(6-10) don't support javascript download and our service doesn't support either so throw an error, we have to make a round trip to the Web Server for exporting
-    if (navigator.appName === 'Microsoft Internet Explorer') {
-      throw new Error('Microsoft Internet Explorer 6 to 10 do not support javascript export to Excel. Please upgrade your browser.');
-    }
-
     // when using IE/Edge, then use different download call
     if (typeof navigator.msSaveOrOpenBlob === 'function') {
       navigator.msSaveOrOpenBlob(options.blob, options.filename);
