@@ -92,7 +92,8 @@ export class TextExportService implements BaseTextExportService {
 
     return new Promise(resolve => {
       this._pubSubService.publish(`onBeforeExportToTextFile`, true);
-      this._exportOptions = deepCopy({ ...this._gridOptions.textExportOptions, ...options });
+      const textExportOptions = this._gridOptions.exportOptions || this._gridOptions.textExportOptions;
+      this._exportOptions = deepCopy({ ...textExportOptions, ...options });
       this._delimiter = this._exportOptions.delimiterOverride || this._exportOptions.delimiter || '';
       this._fileFormat = this._exportOptions.format || FileType.csv;
 
