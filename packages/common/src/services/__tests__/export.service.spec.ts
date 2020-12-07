@@ -1,11 +1,11 @@
-import { FileExportService } from '../fileExport.service';
+import { TextExportService } from '../textExport.service';
 
 describe('Export Service', () => {
   it('should display a not implemented when calling "init" method', () => {
-    expect(() => FileExportService.prototype.init({} as any, {} as any)).toThrow('ExportService the "init" method must be implemented');
+    expect(() => TextExportService.prototype.init({} as any, {} as any)).toThrow('ExportService the "init" method must be implemented');
   });
 
   it('should display a not implemented when calling "exportToFile" method', () => {
-    expect(() => FileExportService.prototype.exportToFile({})).toThrow('ExportService the "exportToFile" method must be implemented');
+    expect(() => TextExportService.prototype.exportToFile({})).toThrow('ExportService the "exportToFile" method must be implemented');
   });
 });

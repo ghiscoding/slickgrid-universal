@@ -6,7 +6,7 @@ import {
   OnEventArgs,
   SortDirectionString
 } from '@slickgrid-universal/common';
-import { FileExportService } from '@slickgrid-universal/file-export';
+import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import '../salesforce-styles.scss';
@@ -162,11 +162,11 @@ export class Example50 {
       },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
-      enableExport: true,
+      enableTextExport: true,
       exportOptions: {
         exportWithFormatter: true,
       },
-      registerExternalServices: [new FileExportService()],
+      registerExternalServices: [new TextExportService()],
       enableCellNavigation: true,
       enableCheckboxSelector: true,
       enableFiltering: true,

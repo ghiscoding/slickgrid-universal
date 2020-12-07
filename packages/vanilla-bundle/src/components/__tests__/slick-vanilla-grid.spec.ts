@@ -34,13 +34,13 @@ import * as utilities from '@slickgrid-universal/common/dist/commonjs/services/u
 
 import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle';
 import { EventPubSubService } from '../../services/eventPubSub.service';
-import { FileExportService } from '../../services/fileExport.service';
+import { TextExportService } from '../../services/textExport.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { HttpStub } from '../../../../../test/httpClientStub';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../../test/mockSlickEvent';
 import { ResizerService } from '../../services/resizer.service';
 import { SlickCompositeEditorComponent } from '../slick-composite-editor.component';
-jest.mock('../../services/fileExport.service');
+jest.mock('../../services/textExport.service');
 
 const mockExecuteBackendProcess = jest.fn();
 const mockRefreshBackendDataset = jest.fn();
@@ -865,13 +865,13 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(component.slickCompositeEditor instanceof SlickCompositeEditorComponent).toBeTrue();
       });
 
-      it('should initialize ExportService when "enableExport" is set when using Salesforce', () => {
-        component.gridOptions = { enableExport: true, useSalesforceDefaultGridOptions: true } as unknown as GridOption;
+      it('should initialize ExportService when "enableTextExport" is set when using Salesforce', () => {
+        component.gridOptions = { enableTextExport: true, useSalesforceDefaultGridOptions: true } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
 
-        expect(FileExportService).toHaveBeenCalled();
-        expect(component.registeredServices.length).toBe(3); // FileExportService, GridService, GridStateService
-        expect(component.registeredServices[0] instanceof FileExportService).toBeTrue();
+        expect(TextExportService).toHaveBeenCalled();
+        expect(component.registeredServices.length).toBe(3); // TextExportService, GridService, GridStateService
+        expect(component.registeredServices[0] instanceof TextExportService).toBeTrue();
       });
 
       it('should destroy customElement and its DOM element when requested', () => {

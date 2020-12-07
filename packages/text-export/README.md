@@ -1,8 +1,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
-[![npm](https://img.shields.io/npm/v/@slickgrid-universal/file-export.svg?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/file-export)
-[![npm](https://img.shields.io/npm/dy/@slickgrid-universal/file-export?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/file-export)
+[![npm](https://img.shields.io/npm/v/@slickgrid-universal/text-export.svg?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/text-export)
+[![npm](https://img.shields.io/npm/dy/@slickgrid-universal/text-export?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/text-export)
 
 [![CircleCI](https://circleci.com/gh/ghiscoding/slickgrid-universal/tree/master.svg?style=shield)](https://circleci.com/gh/ghiscoding/workflows/slickgrid-universal/tree/master)
 [![Cypress.io](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)](https://www.cypress.io/)
@@ -10,7 +10,7 @@
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
 ## Export Service (text file) 
-#### @slickgrid-universal/file-export
+#### @slickgrid-universal/text-export
 
 Simple Export to File Service that allows to export as CSV or Text, user can also choose which separator to use (comma, colon, semicolon, ...). 
 
@@ -29,16 +29,16 @@ In order to use the Service, you will need to register it in your grid options v
 
 ##### ViewModel
 ```ts
-import { FileExportService } from '@slickgrid-universal/file-export';
+import { TextExportService } from '@slickgrid-universal/text-export';
 
 export class MyExample {
   prepareGrid {
     this.gridOptions = {
-      enableExport: true,
+      enableTextExport: true,
       exportOptions: {
         sanitizeDataExport: true
       },
-      registerExternalServices: [new FileExportService()],
+      registerExternalServices: [new TextExportService()],
     }
   }
 }
@@ -46,14 +46,14 @@ export class MyExample {
 
 If you wish to reference the service to use it with external export button, then simply create a reference while instantiating it.
 ```ts
-import { FileExportService } from '@slickgrid-universal/file-export';
+import { TextExportService } from '@slickgrid-universal/text-export';
 
 export class MyExample {
-  exportService = new FileExportService();
+  exportService = new TextExportService();
 
   prepareGrid {
     this.gridOptions = {
-      enableExport: true,
+      enableTextExport: true,
       exportOptions: {
         sanitizeDataExport: true
       },

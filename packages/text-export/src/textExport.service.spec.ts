@@ -1,4 +1,4 @@
-import { FileExportService } from './fileExport.service';
+import { TextExportService } from './textExport.service';
 import {
   Column,
   DelimiterType,
@@ -66,7 +66,7 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 describe('ExportService', () => {
-  let service: FileExportService;
+  let service: TextExportService;
   let sharedService: SharedService;
   let translateService: TranslateServiceStub;
   let mockColumns: Column[];
@@ -100,7 +100,7 @@ describe('ExportService', () => {
         format: FileType.txt
       };
 
-      service = new FileExportService();
+      service = new TextExportService();
     });
 
     afterEach(() => {
@@ -150,7 +150,7 @@ describe('ExportService', () => {
           service.init(null as any, sharedService);
           service.exportToFile(mockExportTxtOptions);
         } catch (e) {
-          expect(e.toString()).toContain('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects are not initialized did you forget to enable the grid option flag "enableExport"?');
+          expect(e.toString()).toContain('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects are not initialized did you forget to enable the grid option flag "enableTextExport"?');
           done();
         }
       });
@@ -251,7 +251,7 @@ describe('ExportService', () => {
       let mockCollection: any[];
 
       beforeEach(() => {
-        mockGridOptions.exportOptions = { delimiterOverride: '' };
+        mockGridOptions.textExportOptions = { delimiterOverride: '' };
       });
 
       it(`should have the Order exported correctly with multiple formatters which have 1 of them returning an object with a text property (instead of simple string)`, (done) => {
@@ -279,7 +279,7 @@ describe('ExportService', () => {
       });
 
       it(`should have the Order exported correctly with multiple formatters and use a different delimiter when "delimiterOverride" is provided`, (done) => {
-        mockGridOptions.exportOptions = { delimiterOverride: DelimiterType.doubleSemicolon };
+        mockGridOptions.textExportOptions = { delimiterOverride: DelimiterType.doubleSemicolon };
         mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -449,7 +449,7 @@ describe('ExportService', () => {
       });
 
       it(`should have the Order without html tags when the grid option has "sanitizeDataExport" enabled`, (done) => {
-        mockGridOptions.exportOptions = { sanitizeDataExport: true };
+        mockGridOptions.textExportOptions = { sanitizeDataExport: true };
         mockCollection = [{ id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 1 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -474,8 +474,8 @@ describe('ExportService', () => {
       });
 
       it(`should export as CSV even when the grid option format was not defined`, (done) => {
-        mockGridOptions.exportOptions!.format = undefined;
-        mockGridOptions.exportOptions!.sanitizeDataExport = false;
+        mockGridOptions.textExportOptions!.format = undefined;
+        mockGridOptions.textExportOptions!.sanitizeDataExport = false;
         mockCollection = [{ id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 1 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -563,7 +563,7 @@ describe('ExportService', () => {
       });
 
       it(`should have the LastName header title translated when defined as a "headerKey" and "translater" is set in grid option`, (done) => {
-        mockGridOptions.exportOptions!.sanitizeDataExport = false;
+        mockGridOptions.textExportOptions!.sanitizeDataExport = false;
         mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -598,7 +598,7 @@ describe('ExportService', () => {
       beforeEach(() => {
         mockGridOptions.enableGrouping = true;
         mockGridOptions.enableTranslate = false;
-        mockGridOptions.exportOptions = { sanitizeDataExport: true };
+        mockGridOptions.textExportOptions = { sanitizeDataExport: true };
 
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
@@ -710,7 +710,7 @@ describe('ExportService', () => {
       beforeEach(() => {
         mockGridOptions.enableGrouping = true;
         mockGridOptions.enableTranslate = true;
-        mockGridOptions.exportOptions = { sanitizeDataExport: true };
+        mockGridOptions.textExportOptions = { sanitizeDataExport: true };
 
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
@@ -824,7 +824,7 @@ describe('ExportService', () => {
       beforeEach(() => {
         mockGridOptions.enableGrouping = true;
         mockGridOptions.enableTranslate = true;
-        mockGridOptions.exportOptions = { sanitizeDataExport: true };
+        mockGridOptions.textExportOptions = { sanitizeDataExport: true };
 
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
@@ -957,7 +957,7 @@ describe('ExportService', () => {
       beforeEach(() => {
         mockGridOptions.createPreHeaderPanel = true;
         mockGridOptions.showPreHeaderPanel = true;
-        mockGridOptions.exportOptions = { delimiterOverride: '' };
+        mockGridOptions.textExportOptions = { delimiterOverride: '' };
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'firstName', field: 'firstName', width: 100, formatter: myBoldHtmlFormatter, columnGroup: 'User Profile' },
@@ -1019,7 +1019,7 @@ describe('ExportService', () => {
         });
 
         it(`should have the LastName header title translated when defined as a "headerKey" and "translater" is set in grid option`, (done) => {
-          mockGridOptions.exportOptions!.sanitizeDataExport = false;
+          mockGridOptions.textExportOptions!.sanitizeDataExport = false;
           mockTranslateCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
           jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockTranslateCollection.length);
           jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockTranslateCollection[0]);
@@ -1050,7 +1050,7 @@ describe('ExportService', () => {
   describe('without Translater Service', () => {
     beforeEach(() => {
       translateService = undefined as any;
-      service = new FileExportService();
+      service = new TextExportService();
     });
 
     it('should throw an error if "enableTranslate" is set but the Translater Service is null', () => {

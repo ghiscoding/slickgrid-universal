@@ -72,7 +72,7 @@ import {
 } from '@slickgrid-universal/common';
 
 import { EventPubSubService } from '../services/eventPubSub.service';
-import { FileExportService } from '../services/fileExport.service';
+import { TextExportService } from '../services/textExport.service';
 import { ResizerService } from '../services/resizer.service';
 import { SalesforceGlobalGridOptions } from '../salesforce-global-grid-options';
 import { SlickEmptyWarningComponent } from './slick-empty-warning.component';
@@ -566,9 +566,9 @@ export class SlickVanillaGridBundle {
     this._registeredServices = this.gridOptions.registerExternalServices || [];
 
     // when using Salesforce, we want the Export to CSV always enabled without registering it
-    if (this.gridOptions.enableExport && this.gridOptions.useSalesforceDefaultGridOptions) {
-      const fileExportService = new FileExportService();
-      this._registeredServices.push(fileExportService);
+    if (this.gridOptions.enableTextExport && this.gridOptions.useSalesforceDefaultGridOptions) {
+      const textExportService = new TextExportService();
+      this._registeredServices.push(textExportService);
     }
 
     // at this point, we consider all the registered services as external services, anything else registered afterward aren't external
