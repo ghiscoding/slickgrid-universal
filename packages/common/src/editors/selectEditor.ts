@@ -402,7 +402,7 @@ export class SelectEditor implements Editor {
       // else we use the path provided in the Field Column Definition
       const objectPath = this.columnEditor && this.columnEditor.complexObjectPath || fieldName;
       const currentValue = (isComplexObject) ? getDescendantProperty(item, objectPath as string) : (item.hasOwnProperty(fieldName) && item[fieldName]);
-      const value = (isComplexObject && currentValue.hasOwnProperty(this.valueName)) ? currentValue[this.valueName] : currentValue;
+      const value = (isComplexObject && currentValue?.hasOwnProperty(this.valueName)) ? currentValue[this.valueName] : currentValue;
 
       if (this.isMultipleSelect && Array.isArray(value)) {
         this.loadMultipleValues(value);
