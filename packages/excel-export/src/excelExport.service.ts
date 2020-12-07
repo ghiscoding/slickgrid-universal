@@ -552,10 +552,10 @@ export class ExcelExportService implements BaseExcelExportService {
 
       // if there's a exportCustomGroupTotalsFormatter or groupTotalsFormatter, we will re-run it to get the exact same output as what is shown in UI
       if (columnDef.exportCustomGroupTotalsFormatter) {
-        itemData = columnDef.exportCustomGroupTotalsFormatter(itemObj, columnDef);
+        itemData = columnDef.exportCustomGroupTotalsFormatter(itemObj, columnDef, this._grid);
       } else {
         if (columnDef.groupTotalsFormatter) {
-          itemData = columnDef.groupTotalsFormatter(itemObj, columnDef);
+          itemData = columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid);
         }
       }
 
