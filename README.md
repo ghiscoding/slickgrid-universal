@@ -32,14 +32,15 @@ You might be wondering why was this monorepo created? Here are a few of the reas
    - you can use it in plain TypeScript or even JavaScript (ES6), the later is what we use in Salesforce
 
 ### Frameworks using this monorepo
-This is a Work in Progress, the goal is to eventually to rewrite [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid)
+The goal is to eventually to rewrite [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid)
 and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) to use this monorepo which will simplify debugging/fixing common code.
+    - [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) `3.x` now uses Slickgrid-Universal
 
 Note however that this project also has a Vanilla Implementation (not associated to any framework) with [WebPack](https://webpack.js.org/)
 and it is also used to test with [Cypress](https://www.cypress.io/) the UI portion. The Vanilla bundle is also used in our SalesForce (with Lightning Web Component) hence the creation of this monorepo.
 
 ### Fully Tested with [Jest](https://jestjs.io/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
-Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +12,000 lines of code (+2,800 unit tests) that are now fully tested with [Jest](https://jestjs.io/). There are also +200 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities.
+Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +12,000 lines of code (+2,800 unit tests) that are now fully tested with [Jest](https://jestjs.io/). There are also +200 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (there's also another +360 tests in Aurelia-Slickgrid)
 
 ### Available Public Packages
 
