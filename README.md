@@ -35,7 +35,7 @@ You might be wondering why was this monorepo created? Here are a few of the reas
 The goal is to eventually to rewrite [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid)
 and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) to use this monorepo which will simplify debugging/fixing common code.
     
-    - [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) `3.x` now uses Slickgrid-Universal
+  - [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) `3.x` now uses Slickgrid-Universal
 
 Note however that this project also has a Vanilla Implementation (not associated to any framework) with [WebPack](https://webpack.js.org/)
 and it is also used to test with [Cypress](https://www.cypress.io/) the UI portion. The Vanilla bundle is also used in our SalesForce (with Lightning Web Component) hence the creation of this monorepo.
