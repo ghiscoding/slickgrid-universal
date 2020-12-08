@@ -111,6 +111,7 @@ describe('LongTextEditor', () => {
 
     it('should initialize the editor', () => {
       gridOptionMock.translater = translateService;
+      gridOptionMock.enableTranslate = true;
       editor = new LongTextEditor(editorArguments);
       const editorCount = document.body.querySelectorAll('.slick-large-editor-text.editor-title textarea').length;
       const editorTextCounter = document.body.querySelectorAll<HTMLDivElement>('.slick-large-editor-text.editor-title .editor-footer .counter');
