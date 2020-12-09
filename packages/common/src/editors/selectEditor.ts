@@ -111,7 +111,7 @@ export class SelectEditor implements Editor {
       single: true,
       textTemplate: ($elm) => {
         // render HTML code or not, by default it is sanitized and won't be rendered
-        const isRenderHtmlEnabled = this.columnEditor && this.columnEditor.enableRenderHtml || false;
+        const isRenderHtmlEnabled = this.columnEditor?.enableRenderHtml ?? false;
         return isRenderHtmlEnabled ? $elm.text() : $elm.html();
       },
       onClose: () => {
@@ -150,12 +150,12 @@ export class SelectEditor implements Editor {
 
   /** Get the Collection */
   get collection(): SelectOption[] {
-    return this.columnEditor && this.columnEditor.collection || [];
+    return this.columnEditor?.collection ?? [];
   }
 
   /** Getter for the Collection Options */
   get collectionOptions(): CollectionOption | undefined {
-    return this.columnEditor && this.columnEditor.collectionOptions;
+    return this.columnEditor?.collectionOptions;
   }
 
   /** Get Column Definition object */
@@ -165,7 +165,7 @@ export class SelectEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor | undefined {
-    return this.columnDef && this.columnDef.internalColumnEditor || {};
+    return this.columnDef?.internalColumnEditor ?? {};
   }
 
   /** Getter for the Editor DOM Element */
@@ -175,7 +175,7 @@ export class SelectEditor implements Editor {
 
   /** Getter for the Custom Structure if exist */
   protected get customStructure(): CollectionCustomStructure | undefined {
-    return this.columnDef && this.columnDef.internalColumnEditor && this.columnDef.internalColumnEditor.customStructure;
+    return this.columnDef?.internalColumnEditor?.customStructure;
   }
 
   get hasAutoCommitEdit() {
@@ -194,8 +194,8 @@ export class SelectEditor implements Editor {
     }
 
     // collection of label/value pair
-    const separatorBetweenLabels = this.collectionOptions && this.collectionOptions.separatorBetweenTextLabels || '';
-    const isIncludingPrefixSuffix = this.collectionOptions && this.collectionOptions.includePrefixSuffixToSelectedValues || false;
+    const separatorBetweenLabels = this.collectionOptions?.separatorBetweenTextLabels ?? '';
+    const isIncludingPrefixSuffix = this.collectionOptions?.includePrefixSuffixToSelectedValues ?? false;
 
     return this.collection
       .filter(c => elmValue.indexOf(c.hasOwnProperty(this.valueName) && c[this.valueName]?.toString()) !== -1)
@@ -205,11 +205,13 @@ export class SelectEditor implements Editor {
         let suffixText = c[this.labelSuffixName] || '';
 
         // when it's a complex object, then pull the object name only, e.g.: "user.firstName" => "user"
-        const fieldName = this.columnDef && this.columnDef.field || '';
+        const fieldName = this.columnDef?.field ?? '';
 
         // is the field a complex object, "address.streetNumber"
         const isComplexObject = fieldName?.indexOf('.') > 0;
-        if (isComplexObject && typeof c === 'object') {
+        const serializeComplexValueFormat = this.columnEditor?.serializeComplexValueFormat ?? 'object';
+
+        if (isComplexObject && typeof c === 'object' && serializeComplexValueFormat === 'object') {
           return c;
         }
 
@@ -239,14 +241,15 @@ export class SelectEditor implements Editor {
       }
 
       // collection of label/value pair
-      const separatorBetweenLabels = this.collectionOptions && this.collectionOptions.separatorBetweenTextLabels || '';
-      const isIncludingPrefixSuffix = this.collectionOptions && this.collectionOptions.includePrefixSuffixToSelectedValues || false;
+      const separatorBetweenLabels = this.collectionOptions?.separatorBetweenTextLabels ?? '';
+      const isIncludingPrefixSuffix = this.collectionOptions?.includePrefixSuffixToSelectedValues ?? false;
       const itemFound = findOrDefault(this.collection, (c: any) => c.hasOwnProperty(this.valueName) && c[this.valueName]?.toString() === elmValue);
 
       // is the field a complex object, "address.streetNumber"
       const isComplexObject = fieldName?.indexOf('.') > 0;
+      const serializeComplexValueFormat = this.columnEditor?.serializeComplexValueFormat ?? 'object';
 
-      if (isComplexObject && typeof itemFound === 'object') {
+      if (isComplexObject && typeof itemFound === 'object' && serializeComplexValueFormat === 'object') {
         return itemFound;
       } else if (itemFound && itemFound.hasOwnProperty(this.valueName)) {
         const labelText = itemFound[this.valueName];
@@ -282,12 +285,12 @@ export class SelectEditor implements Editor {
     }
 
     this._collectionService = new CollectionService(this._translaterService);
-    this.enableTranslateLabel = this.columnEditor && this.columnEditor.enableTranslateLabel || false;
-    this.labelName = this.customStructure && this.customStructure.label || 'label';
-    this.labelPrefixName = this.customStructure && this.customStructure.labelPrefix || 'labelPrefix';
-    this.labelSuffixName = this.customStructure && this.customStructure.labelSuffix || 'labelSuffix';
-    this.optionLabel = this.customStructure && this.customStructure.optionLabel || 'value';
-    this.valueName = this.customStructure && this.customStructure.value || 'value';
+    this.enableTranslateLabel = this.columnEditor?.enableTranslateLabel ?? false;
+    this.labelName = this.customStructure?.label ?? 'label';
+    this.labelPrefixName = this.customStructure?.labelPrefix ?? 'labelPrefix';
+    this.labelSuffixName = this.customStructure?.labelSuffix ?? 'labelSuffix';
+    this.optionLabel = this.customStructure?.optionLabel ?? 'value';
+    this.valueName = this.customStructure?.value ?? 'value';
 
     if (this.enableTranslateLabel && (!this._translaterService || typeof this._translaterService.translate !== 'function')) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
@@ -365,13 +368,13 @@ export class SelectEditor implements Editor {
 
       // validate the value before applying it (if not valid we'll set an empty string)
       const validation = this.validate(null, newValue);
-      newValue = (validation && validation.valid) ? newValue : '';
+      newValue = (validation?.valid) ? newValue : '';
 
       // set the new value to the item datacontext
       if (isComplexObject) {
         // when it's a complex object, user could override the object path (where the editable object is located)
         // else we use the path provided in the Field Column Definition
-        const objectPath = this.columnEditor && this.columnEditor.complexObjectPath || fieldName || '';
+        const objectPath = this.columnEditor?.complexObjectPath ?? fieldName ?? '';
         setDeepValue(item, objectPath, newValue);
       } else {
         item[fieldName] = newValue;
@@ -400,7 +403,7 @@ export class SelectEditor implements Editor {
     if (item && fieldName !== undefined) {
       // when it's a complex object, user could override the object path (where the editable object is located)
       // else we use the path provided in the Field Column Definition
-      const objectPath = this.columnEditor && this.columnEditor.complexObjectPath || fieldName;
+      const objectPath = this.columnEditor?.complexObjectPath ?? fieldName;
       const currentValue = (isComplexObject) ? getDescendantProperty(item, objectPath as string) : (item.hasOwnProperty(fieldName) && item[fieldName]);
       const value = (isComplexObject && currentValue?.hasOwnProperty(this.valueName)) ? currentValue[this.valueName] : currentValue;
 
@@ -437,7 +440,7 @@ export class SelectEditor implements Editor {
 
   save() {
     const validation = this.validate();
-    const isValid = (validation && validation.valid) || false;
+    const isValid = validation?.valid ?? false;
 
     if (!this._destroying && this.hasAutoCommitEdit && isValid) {
       // do not use args.commitChanges() as this sets the focus to the next row.
@@ -558,7 +561,7 @@ export class SelectEditor implements Editor {
     // user might want to filter certain items of the collection
     if (this.columnEditor && this.columnEditor.collectionFilterBy) {
       const filterBy = this.columnEditor.collectionFilterBy;
-      const filterCollectionBy = this.columnEditor.collectionOptions && this.columnEditor.collectionOptions.filterResultAfterEachPass || null;
+      const filterCollectionBy = this.columnEditor.collectionOptions?.filterResultAfterEachPass ?? null;
       outputCollection = this._collectionService.filterCollection(outputCollection, filterBy, filterCollectionBy);
     }
 
@@ -634,10 +637,10 @@ export class SelectEditor implements Editor {
   /** Build the template HTML string */
   protected buildTemplateHtmlString(collection: any[]): string {
     let options = '';
-    const columnId = this.columnDef && this.columnDef.id || '';
-    const separatorBetweenLabels = this.collectionOptions && this.collectionOptions.separatorBetweenTextLabels || '';
-    const isRenderHtmlEnabled = this.columnEditor && this.columnEditor.enableRenderHtml || false;
-    const sanitizedOptions = this.gridOptions && this.gridOptions.sanitizeHtmlOptions || {};
+    const columnId = this.columnDef?.id ?? '';
+    const separatorBetweenLabels = this.collectionOptions?.separatorBetweenTextLabels ?? '';
+    const isRenderHtmlEnabled = this.columnEditor?.enableRenderHtml ?? false;
+    const sanitizedOptions = this.gridOptions?.sanitizeHtmlOptions ?? {};
 
     // collection could be an Array of Strings OR Objects
     if (collection.every((x: any) => typeof x === 'string')) {
@@ -714,7 +717,7 @@ export class SelectEditor implements Editor {
     }
 
     // add placeholder when found
-    const placeholder = this.columnEditor && this.columnEditor.placeholder || '';
+    const placeholder = this.columnEditor?.placeholder ?? '';
     this.defaultOptions.placeholder = placeholder || '';
 
     if (typeof this.$editorElm.multipleSelect === 'function') {

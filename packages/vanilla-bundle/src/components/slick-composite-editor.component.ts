@@ -688,13 +688,17 @@ export class SlickCompositeEditorComponent {
   private handleOnCompositeEditorChange(_e: Event, args: OnCompositeEditorChangeEventArgs) {
     const columnId = args.column?.id ?? '';
     this._formValues = args.formValues;
+    const editor = this._editors?.[columnId] as Editor;
+    const isEditorValueChanged = editor?.isValueChanged?.() ?? false;
 
     // add extra css styling to the composite editor input(s) that got modified
     const editorElm = document.querySelector(`[data-editorid=${columnId}]`);
-    if (args.formValues.hasOwnProperty(columnId)) {
-      editorElm?.classList?.add('modified');
-    } else {
-      editorElm?.classList?.remove('modified');
+    if (editorElm?.classList) {
+      if (isEditorValueChanged) {
+        editorElm.classList.add('modified');
+      } else {
+        editorElm.classList.remove('modified');
+      }
     }
 
     // after any input changes we'll re-validate all fields
