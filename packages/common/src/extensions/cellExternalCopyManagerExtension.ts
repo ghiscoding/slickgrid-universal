@@ -167,7 +167,7 @@ export class CellExternalCopyManagerExtension implements Extension {
         // when grid or cell is not editable, we will possibly evaluate the Formatter if it was passed
         // to decide if we evaluate the Formatter, we will use the same flag from Export which is "exportWithFormatter"
         if (!this.sharedService.gridOptions.editable || !columnDef.editor) {
-          const textExportOptions = this.sharedService.gridOptions.exportOptions || this.sharedService.gridOptions.textExportOptions;
+          const textExportOptions = { ...this.sharedService.gridOptions.exportOptions, ...this.sharedService.gridOptions.textExportOptions };
           const isEvaluatingFormatter = (columnDef.exportWithFormatter !== undefined) ? columnDef.exportWithFormatter : (textExportOptions?.exportWithFormatter);
           if (columnDef.formatter && isEvaluatingFormatter) {
             const formattedOutput = columnDef.formatter(0, 0, item[columnDef.field], columnDef, item, this.sharedService.slickGrid);

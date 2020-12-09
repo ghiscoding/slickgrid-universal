@@ -401,12 +401,17 @@ export function formatNumber(input: number | string, minDecimal?: number, maxDec
   }
 }
 
-/** From a dot (.) notation path, find and return a property within an object given a path */
-export function getDescendantProperty<T = any>(obj: T, path: string | undefined): any {
-  if (!obj || !path) {
-    return obj;
+/**
+ * From a dot (.) notation path, find and return a property within an object given a path
+ * @param object - object input
+ * @param path - path of the complex object, string with dot (.) notation
+ * @returns outputValue - the object property value found if any
+ */
+export function getDescendantProperty<T = any>(object: T, path: string | undefined): any {
+  if (!object || !path) {
+    return object;
   }
-  return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+  return path.split('.').reduce((obj, prop) => obj && obj[prop], object);
 }
 
 /** Get I18N Translation Prefix, defaults to an empty string */
