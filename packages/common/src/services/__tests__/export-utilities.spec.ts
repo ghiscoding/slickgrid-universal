@@ -8,7 +8,7 @@ describe('Export Utilities', () => {
   const myUppercaseFormatter: Formatter = (_row, _cell, value) => value ? { text: value.toUpperCase() } : null as any;
 
   beforeEach(() => {
-    mockItem = { firstName: 'John', lastName: 'Doe', age: 45, address: { zip: 12345 } };
+    mockItem = { firstName: 'John', lastName: 'Doe', age: 45, address: { zip: 12345 }, empty: {} };
     mockColumn = { id: 'firstName', name: 'First Name', field: 'firstName', formatter: myUppercaseFormatter };
   });
 
@@ -21,6 +21,11 @@ describe('Export Utilities', () => {
     it('should provide a column definition field defined with a dot (.) notation and expect a complex object result', () => {
       const output = exportWithFormatterWhenDefined(1, 1, mockItem, { ...mockColumn, field: 'address.zip' }, {} as SlickGrid, {});
       expect(output).toEqual({ zip: 12345 });
+    });
+
+    it('should provide a column definition field defined with a dot (.) notation and expect an empty string when the complex result is an empty object', () => {
+      const output = exportWithFormatterWhenDefined(1, 1, mockItem, { ...mockColumn, field: 'empty' }, {} as SlickGrid, {});
+      expect(output).toEqual('');
     });
 
     it('should provide a exportCustomFormatter in the column definition and expect the output to be formatted', () => {
