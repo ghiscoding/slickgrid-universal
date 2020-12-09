@@ -420,7 +420,7 @@ export class ContextMenuExtension implements Extension {
         const columnDef = args && args.column;
         const dataContext = args && args.dataContext;
         const grid = this.sharedService && this.sharedService.slickGrid;
-        const exportOptions = gridOptions && (gridOptions.excelExportOptions || gridOptions.exportOptions || gridOptions.textExportOptions);
+        const exportOptions = gridOptions && (gridOptions.excelExportOptions || { ...gridOptions.exportOptions, ...gridOptions.textExportOptions });
         let textToCopy = exportWithFormatterWhenDefined(row, cell, dataContext, columnDef, grid, exportOptions);
 
         if (typeof columnDef.queryFieldNameGetterFn === 'function') {
