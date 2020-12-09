@@ -444,6 +444,7 @@ describe('CompositeEditorService', () => {
       const spyOnClose = jest.spyOn(mockModalOptions, 'onClose').mockReturnValue(Promise.resolve(true));
       component = new SlickCompositeEditorComponent(gridStub, gridServiceStub, gridStateServiceStub);
       component.openDetails(mockModalOptions);
+      component.editors = { field1: { setValue: jest.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
       gridStub.onCompositeEditorChange.notify({ row: 0, cell: 0, column: columnsMock[0], item: mockProduct, formValues: { field1: 'test' }, editors: {}, grid: gridStub });
 
       const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
@@ -645,6 +646,7 @@ describe('CompositeEditorService', () => {
       const mockModalOptions = { headerTitle: 'Details', modalType: 'create' } as CompositeEditorOpenDetailOption;
       component = new SlickCompositeEditorComponent(gridStub, gridServiceStub, gridStateServiceStub);
       component.openDetails(mockModalOptions);
+      component.editors = { field1: { setValue: jest.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
 
       const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeFooterElm = compositeContainerElm.querySelector('.slick-editor-modal-footer') as HTMLSelectElement;

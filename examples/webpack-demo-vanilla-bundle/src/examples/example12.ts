@@ -166,23 +166,28 @@ export class Example12 {
         type: FieldType.number,
         sortable: true, filterable: true, columnGroup: 'Analysis',
         filter: { model: Filters.compoundSlider, operator: '>=' },
-        // formatter: Formatters.collectionEditor,
         editor: {
           model: Editors.slider,
-          // model: Editors.multipleSelect,
-          // enableRenderHtml: true,
-          // collection: Array.from(Array(101).keys()).map(k => ({ value: k, label: k, symbol: ' <i class="mdi mdi-calendar-check color-primary"></i>' })),
-          // collectionOptions: {
-          //   addCustomFirstEntry: { value: '', label: '--none--' }
-          // },
-          // customStructure: {
-          //   value: 'value',
-          //   label: 'label',
-          //   labelSuffix: 'symbol'
-          // },
           massUpdate: true, minValue: 0, maxValue: 100,
         },
       },
+      // {
+      //   id: 'percentComplete2', name: '% Complete', field: 'analysis.percentComplete', minWidth: 100,
+      //   type: FieldType.number,
+      //   sortable: true, filterable: true, columnGroup: 'Analysis',
+      //   filter: { model: Filters.compoundSlider, operator: '>=' },
+      //   formatter: Formatters.complex,
+      //   exportCustomFormatter: Formatters.complex, // without the Editing cell Formatter
+      //   editor: {
+      //     model: Editors.singleSelect,
+      //     serializeComplexValueFormat: 'flat', // if we keep "object" as the default it will apply { value: 2, label: 2 } which is not what we want in this case
+      //     collection: Array.from(Array(101).keys()).map(k => ({ value: k, label: k })),
+      //     collectionOptions: {
+      //       addCustomFirstEntry: { value: '', label: '--none--' }
+      //     },
+      //     massUpdate: true, minValue: 0, maxValue: 100,
+      //   },
+      // },
       {
         id: 'start', name: 'Start', field: 'start', sortable: true, minWidth: 100,
         formatter: Formatters.dateUs, columnGroup: 'Period',
@@ -229,6 +234,7 @@ export class Example12 {
         dataKey: 'id',
         labelKey: 'itemName',
         formatter: Formatters.complexObject,
+        exportCustomFormatter: Formatters.complex, // without the Editing cell Formatter
         type: FieldType.object,
         sortComparer: SortComparers.objectString,
         editor: {
@@ -263,7 +269,7 @@ export class Example12 {
       {
         id: 'origin', name: 'Country of Origin', field: 'origin',
         formatter: Formatters.complexObject, columnGroup: 'Item',
-        exportWithFormatter: true,
+        exportCustomFormatter: Formatters.complex, // without the Editing cell Formatter
         dataKey: 'code',
         labelKey: 'name',
         type: FieldType.object,
@@ -355,7 +361,7 @@ export class Example12 {
       },
       enableExcelExport: true,
       excelExportOptions: {
-        exportWithFormatter: true
+        exportWithFormatter: false
       },
       registerExternalServices: [new ExcelExportService()],
       enableFiltering: true,
@@ -426,6 +432,9 @@ export class Example12 {
         title: 'Task ' + i,
         duration: Math.floor(Math.random() * 100) + 10,
         percentComplete: randomPercentComplete > 100 ? 100 : randomPercentComplete,
+        analysis: {
+          percentComplete: randomPercentComplete > 100 ? 100 : randomPercentComplete,
+        },
         start: new Date(randomYear, randomMonth, randomDay, randomDay, randomTime, randomTime, randomTime),
         finish: (i % 3 === 0 && (randomFinish > new Date() && i > 3)) ? randomFinish : '', // make sure the random date is earlier than today and it's index is bigger than 3
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
@@ -613,8 +622,8 @@ export class Example12 {
     if (editCommand && item && column) {
       const row = this.sgb.dataView.getRowByItem(item);
       if (row >= 0) {
-        const hash = { [row]: { [column.field]: 'unsaved-editable-field' } };
-        this.sgb.slickGrid.setCellCssStyles(`unsaved_highlight_${[column.field]}${row}`, hash);
+        const hash = { [row]: { [column.id]: 'unsaved-editable-field' } };
+        this.sgb.slickGrid.setCellCssStyles(`unsaved_highlight_${[column.id]}${row}`, hash);
       }
     }
   }

@@ -302,8 +302,8 @@ export class Example11 {
           this.sgb.slickGrid.invalidate();
           editCommand.execute();
 
-          const hash = { [editCommand.row]: { [column.field]: 'unsaved-editable-field' } };
-          this.sgb.slickGrid.setCellCssStyles(`unsaved_highlight_${[column.field]}${editCommand.row}`, hash);
+          const hash = { [editCommand.row]: { [column.id]: 'unsaved-editable-field' } };
+          this.sgb.slickGrid.setCellCssStyles(`unsaved_highlight_${[column.id]}${editCommand.row}`, hash);
         }
       },
       enableContextMenu: true,
