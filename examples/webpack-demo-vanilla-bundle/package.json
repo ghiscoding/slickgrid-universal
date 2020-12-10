@@ -25,7 +25,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.4.0",
+    "@slickgrid-universal/common": "*",
     "@slickgrid-universal/excel-export": "^0.4.1",
     "@slickgrid-universal/text-export": "^0.4.2",
     "@slickgrid-universal/vanilla-bundle": "^0.4.2",

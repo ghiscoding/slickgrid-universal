@@ -1,6 +1,19 @@
-import { Column, CompositeEditorOpenDetailOption, Editor, Editors, GridOption, GridService, GridStateService, SlickDataView, SlickGrid, SlickNamespace, SlickRowSelectionModel } from '@slickgrid-universal/common';
-import { SlickCompositeEditorComponent } from '../slick-composite-editor.component';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import {
+  Column,
+  CompositeEditorOpenDetailOption,
+  Editor,
+  Editors,
+  GridOption,
+  GridService,
+  GridStateService,
+  SlickDataView,
+  SlickGrid,
+  SlickNamespace,
+  SlickRowSelectionModel
+} from '@slickgrid-universal/common';
+
+import { SlickCompositeEditorComponent } from './slick-composite-editor.component';
+import { TranslateServiceStub } from '../../../test/translateServiceStub';
 
 declare const Slick: SlickNamespace;
 

@@ -1,6 +1,6 @@
 import { EmptyWarning, GridOption, SlickGrid } from '@slickgrid-universal/common';
-import { SlickEmptyWarningComponent } from '../slick-empty-warning.component';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { SlickEmptyWarningComponent } from './slick-empty-warning.component';
+import { TranslateServiceStub } from '../../../test/translateServiceStub';
 
 const GRID_UID = 'slickgrid_123456';
 

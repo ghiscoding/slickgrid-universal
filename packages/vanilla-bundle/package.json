@@ -44,9 +44,11 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.4.0",
-    "@slickgrid-universal/excel-export": "^0.4.1",
-    "@slickgrid-universal/text-export": "^0.4.2",
+    "@slickgrid-universal/common": "*",
+    "@slickgrid-universal/composite-editor-component": "*",
+    "@slickgrid-universal/empty-warning-component": "*",
+    "@slickgrid-universal/excel-export": "*",
+    "@slickgrid-universal/text-export": "*",
     "dompurify": "^2.2.2",
     "es6-promise": "^4.2.8",
     "isomorphic-fetch": "^3.0.0"

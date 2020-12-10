@@ -1,7 +1,7 @@
 import { Aggregators, Editors, Enums, Filters, Formatters, GroupTotalFormatters, SortComparers, Utilities } from '@slickgrid-universal/common';
+import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
+import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { BindingService } from './services/index';
-import { SlickEmptyWarningComponent } from './components/slick-empty-warning.component';
-import { SlickCompositeEditorComponent } from './components/slick-composite-editor.component';
 import { SlickVanillaGridBundle } from './components/slick-vanilla-grid-bundle';
 
 const Slicker = {

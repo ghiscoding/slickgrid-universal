@@ -29,6 +29,7 @@ import {
   ColumnFilters,
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
+import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import * as backendUtilities from '@slickgrid-universal/common/dist/commonjs/services/backend-utilities';
 import * as utilities from '@slickgrid-universal/common/dist/commonjs/services/utilities';
 
@@ -39,7 +40,6 @@ import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { HttpStub } from '../../../../../test/httpClientStub';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../../test/mockSlickEvent';
 import { ResizerService } from '../../services/resizer.service';
-import { SlickCompositeEditorComponent } from '../slick-composite-editor.component';
 jest.mock('../../services/textExport.service');
 
 const mockExecuteBackendProcess = jest.fn();
