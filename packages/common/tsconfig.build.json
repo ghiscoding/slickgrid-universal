@@ -4,7 +4,7 @@
     "moduleResolution": "node",
     "target": "es2015",
     "lib": [
-      "es2020",
+      "es2015",
       "dom"
     ],
     "types": [
@@ -18,7 +18,7 @@
       "../typings",
       "../../node_modules/@types"
     ],
-    "outDir": "dist/amd",
+    "outDir": "dist/commonjs",
     "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": false,

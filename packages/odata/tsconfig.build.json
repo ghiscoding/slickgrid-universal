@@ -18,7 +18,7 @@
       "../typings",
       "../../node_modules/@types"
     ],
-    "outDir": "dist/amd",
+    "outDir": "dist/2015",
     "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": false,

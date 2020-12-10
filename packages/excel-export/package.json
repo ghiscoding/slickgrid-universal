@@ -19,8 +19,7 @@
     "dev:watch": "run-p build:watch",
     "bundle:commonjs": "tsc --project tsconfig.build.json --outDir dist/commonjs --module commonjs",
     "bundle:es2015": "cross-env tsc --project tsconfig.build.json --outDir dist/es2015 --module es2020 --target es2015",
-    "bundle:es2020": "cross-env tsc --project tsconfig.build.json --outDir dist/es2020 --module es2015 --target es2020",
-    "bundle": "run-p bundle:commonjs bundle:es2015 bundle:es2020",
+    "bundle": "run-p bundle:commonjs bundle:es2015",
     "prebundle": "npm-run-all delete:dist",
     "delete:dist": "cross-env rimraf --maxBusyTries=10 dist"
   },
