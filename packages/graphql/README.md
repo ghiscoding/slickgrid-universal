@@ -14,7 +14,7 @@
 
 GraphQL Service to sync a grid with an GraphQL backend server, the service will consider any Filter/Sort and automatically build the necessary GraphQL query string that is sent to your GraphQL backend server.
 
-### Dependencies
+### External Dependencies
 No external dependency
 
 ### Installation

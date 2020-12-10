@@ -1,7 +1,7 @@
 {
-  "name": "@slickgrid-universal/odata",
+  "name": "@slickgrid-universal/empty-warning-component",
   "version": "0.4.0",
-  "description": "Grid OData Service to sync a grid with an OData backend server",
+  "description": "Slick Empty Warning Component - Vanilla Implementation of an Empty Dataset Warning Component",
   "browser": "src/index.ts",
   "main": "dist/commonjs/index.js",
   "module": "dist/es2015/index.js",
@@ -9,9 +9,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "files": [
-    "/dist"
-  ],
+  "directories": {
+    "src": "src"
+  },
   "scripts": {
     "build": "cross-env tsc --build",
     "build:watch": "cross-env tsc --incremental --watch",
@@ -36,6 +36,13 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.4.0"
+    "@slickgrid-universal/common": "*",
+    "dompurify": "^2.2.3"
+  },
+  "devDependencies": {
+    "@types/webpack": "^4.41.25",
+    "cross-env": "^7.0.3",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^3.0.2"
   }
 }

@@ -70,16 +70,16 @@ import {
   emptyElement,
   GetSlickEventType,
 } from '@slickgrid-universal/common';
+import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
+import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 
 import { EventPubSubService } from '../services/eventPubSub.service';
 import { TextExportService } from '../services/textExport.service';
 import { ResizerService } from '../services/resizer.service';
 import { SalesforceGlobalGridOptions } from '../salesforce-global-grid-options';
-import { SlickEmptyWarningComponent } from './slick-empty-warning.component';
 import { SlickFooterComponent } from './slick-footer.component';
 import { SlickPaginationComponent } from './slick-pagination.component';
 import { SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
-import { SlickCompositeEditorComponent } from './slick-composite-editor.component';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;

@@ -3,12 +3,8 @@ import {
   GridOption,
   sanitizeTextByAvailableSanitizer,
   SlickGrid,
-  SlickNamespace,
   TranslaterService
 } from '@slickgrid-universal/common';
-
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
 
 export class SlickEmptyWarningComponent {
   private _warningLeftElement: HTMLDivElement | null;
