@@ -194,6 +194,7 @@
       float: right;
       line-height: 0;
       background-color: $editor-modal-close-btn-bg-color;
+      opacity: $editor-modal-close-btn-opacity;
       border: $editor-modal-close-btn-border;
       color: $editor-modal-close-btn-color;
       font-family: $editor-modal-close-btn-font-family;
@@ -226,7 +227,7 @@
       font-weight: $editor-modal-title-font-weight;
       line-height: $editor-modal-title-line-height;
       color: $editor-modal-title-font-color;
-      height: calc(#{$editor-modal-header-height} - (#{$editor-modal-header-padding-top-bottom} * 2));
+      height: $editor-modal-title-height;
       overflow: hidden auto;
       text-align: $editor-modal-title-text-align;
       text-overflow: ellipsis;
