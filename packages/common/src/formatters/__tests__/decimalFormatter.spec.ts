@@ -26,31 +26,61 @@ describe('the Decimal Formatter', () => {
     expect(output).toBe('0.00');
   });
 
-  it('should display a number with negative dollar sign when a negative number is provided', () => {
+  it('should display a decimal number with negative when a negative number is provided', () => {
     const input = -15;
     const output = decimalFormatter(1, 1, input, {} as Column, {});
     expect(output).toBe('-15.00');
   });
 
-  it('should display a number with dollar sign when a number is provided', () => {
+  it('should display a decimal number with when a number is provided', () => {
     const input = 99;
     const output = decimalFormatter(1, 1, input, {} as Column, {});
     expect(output).toBe('99.00');
   });
 
-  it('should display a number with dollar sign when a string number is provided', () => {
+  it('should display a decimal number with a prefix when numberPrefix is provided', () => {
+    const input = 99;
+    const output = decimalFormatter(1, 1, input, { params: { numberPrefix: 'USD ' } } as Column, {});
+    expect(output).toBe('USD 99.00');
+  });
+
+  it('should display a negative decimal number with a prefix when numberPrefix is provided', () => {
+    const input = -99;
+    const output = decimalFormatter(1, 1, input, { params: { numberPrefix: '$' } } as Column, {});
+    expect(output).toBe('-$99.00');
+  });
+
+  it('should display a negative decimal number with a prefix when numberPrefix is provided', () => {
+    const input = -99;
+    const output = decimalFormatter(1, 1, input, { params: { displayNegativeNumberWithParentheses: true, numberPrefix: '$' } } as Column, {});
+    expect(output).toBe('($99.00)');
+  });
+
+  it('should display a decimal number with a prefix when numberSuffix is provided', () => {
+    const input = 99;
+    const output = decimalFormatter(1, 1, input, { params: { numberSuffix: ' USD' } } as Column, {});
+    expect(output).toBe('99.00 USD');
+  });
+
+  it('should display a decimal number with a prefix when numberSuffix is provided', () => {
+    const input = -99;
+    const output = decimalFormatter(1, 1, input, { params: { numberSuffix: ' USD' } } as Column, {});
+    expect(output).toBe('-99.00 USD');
+  });
+
+  it('should display a decimal number with when a string number is provided', () => {
     const input = '99';
     const output = decimalFormatter(1, 1, input, {} as Column, {});
     expect(output).toBe('99.00');
   });
 
-  it('should display a number with dollar sign and use "minDecimal" params', () => {
+  it('should display a decimal number with and use "minDecimal" params', () => {
     const input = 99.1;
     const output = decimalFormatter(1, 1, input, { params: { minDecimal: 2 } } as Column, {});
     expect(output).toBe('99.10');
   });
 
-  it('should display a number with dollar sign and use "minDecimal" params', () => {
+  it('should display a decimal number with and use "minDecimal" params', () => {
     const input = 12345678.1;
 
     const output1 = decimalFormatter(1, 1, input, { params: { minDecimal: 2 } } as Column, {});
@@ -64,7 +94,7 @@ describe('the Decimal Formatter', () => {
     expect(output4).toBe('12 345 678,10');
   });
 
-  it('should display a number with dollar sign and use "maxDecimal" params', () => {
+  it('should display a decimal number with and use "maxDecimal" params', () => {
     const input = 88.156789;
     const output = decimalFormatter(1, 1, input, { params: { maxDecimal: 3 } } as Column, {});
     expect(output).toBe(`88.157`);

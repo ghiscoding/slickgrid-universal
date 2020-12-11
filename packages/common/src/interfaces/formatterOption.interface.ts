@@ -14,6 +14,12 @@ export interface FormatterOption {
   /** Defaults to undefined, maximum number of decimals */
   maxDecimal?: number;
 
+  /** Defaults to undefined, add a prefix when using Formatters.decimal which can be used for example to display a currency. */
+  numberPrefix?: string;
+
+  /** Defaults to undefined, add a suffix when using Formatters.decimal which can be used for example to display a currency. */
+  numberSuffix?: string;
+
   /** Defaults to empty string, thousand separator on a number. Example: 12345678 becomes 12,345,678 */
   thousandSeparator?: ',' | '_' | '.' | ' ' | '';
 }
