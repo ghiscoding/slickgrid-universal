@@ -11,52 +11,82 @@ describe('the Decimal Formatter', () => {
   });
 
   it('should display an empty string when no value is provided', () => {
-    const output = decimalFormatter(1, 1, '', {} as Column, {});
+    const output = decimalFormatter(1, 1, '', {} as Column, {}, {} as any);
     expect(output).toBe('');
   });
 
   it('should display original string when non-numeric value is provided', () => {
-    const output = decimalFormatter(1, 1, 'hello', {} as Column, {});
+    const output = decimalFormatter(1, 1, 'hello', {} as Column, {}, {} as any);
     expect(output).toBe('hello');
   });
 
   it('should display $0 when number 0 is provided', () => {
     const input = 0;
-    const output = decimalFormatter(1, 1, input, {} as Column, {});
+    const output = decimalFormatter(1, 1, input, {} as Column, {}, {} as any);
     expect(output).toBe('0.00');
   });
 
-  it('should display a number with negative dollar sign when a negative number is provided', () => {
+  it('should display a decimal number with negative when a negative number is provided', () => {
     const input = -15;
-    const output = decimalFormatter(1, 1, input, {} as Column, {});
+    const output = decimalFormatter(1, 1, input, {} as Column, {}, {} as any);
     expect(output).toBe('-15.00');
   });
 
-  it('should display a number with dollar sign when a number is provided', () => {
+  it('should display a decimal number with when a number is provided', () => {
     const input = 99;
-    const output = decimalFormatter(1, 1, input, {} as Column, {});
+    const output = decimalFormatter(1, 1, input, {} as Column, {}, {} as any);
     expect(output).toBe('99.00');
   });
 
-  it('should display a number with dollar sign when a string number is provided', () => {
+  it('should display a decimal number with a prefix when numberPrefix is provided', () => {
+    const input = 99;
+    const output = decimalFormatter(1, 1, input, { params: { numberPrefix: 'USD ' } } as Column, {}, {} as any);
+    expect(output).toBe('USD 99.00');
+  });
+
+  it('should display a negative decimal number with a prefix when numberPrefix is provided', () => {
+    const input = -99;
+    const output = decimalFormatter(1, 1, input, { params: { numberPrefix: '$' } } as Column, {}, {} as any);
+    expect(output).toBe('-$99.00');
+  });
+
+  it('should display a negative decimal number with a prefix when numberPrefix is provided', () => {
+    const input = -99;
+    const output = decimalFormatter(1, 1, input, { params: { displayNegativeNumberWithParentheses: true, numberPrefix: '$' } } as Column, {}, {} as any);
+    expect(output).toBe('($99.00)');
+  });
+
+  it('should display a decimal number with a prefix when numberSuffix is provided', () => {
+    const input = 99;
+    const output = decimalFormatter(1, 1, input, { params: { numberSuffix: ' USD' } } as Column, {}, {} as any);
+    expect(output).toBe('99.00 USD');
+  });
+
+  it('should display a decimal number with a prefix when numberSuffix is provided', () => {
+    const input = -99;
+    const output = decimalFormatter(1, 1, input, { params: { numberSuffix: ' USD' } } as Column, {}, {} as any);
+    expect(output).toBe('-99.00 USD');
+  });
+
+  it('should display a decimal number with when a string number is provided', () => {
     const input = '99';
-    const output = decimalFormatter(1, 1, input, {} as Column, {});
+    const output = decimalFormatter(1, 1, input, {} as Column, {}, {} as any);
     expect(output).toBe('99.00');
   });
 
-  it('should display a number with dollar sign and use "minDecimal" params', () => {
+  it('should display a decimal number with and use "minDecimal" params', () => {
     const input = 99.1;
-    const output = decimalFormatter(1, 1, input, { params: { minDecimal: 2 } } as Column, {});
+    const output = decimalFormatter(1, 1, input, { params: { minDecimal: 2 } } as Column, {}, {} as any);
     expect(output).toBe('99.10');
   });
 
-  it('should display a number with dollar sign and use "minDecimal" params', () => {
+  it('should display a decimal number with and use "minDecimal" params', () => {
     const input = 12345678.1;
 
-    const output1 = decimalFormatter(1, 1, input, { params: { minDecimal: 2 } } as Column, {});
-    const output2 = decimalFormatter(1, 1, input, { params: { decimalPlaces: 2 } } as Column, {});
-    const output3 = decimalFormatter(1, 1, input, { params: { decimalPlaces: 2, thousandSeparator: ',' } } as Column, {});
-    const output4 = decimalFormatter(1, 1, input, { params: { decimalPlaces: 2, decimalSeparator: ',', thousandSeparator: ' ' } } as Column, {});
+    const output1 = decimalFormatter(1, 1, input, { params: { minDecimal: 2 } } as Column, {}, {} as any);
+    const output2 = decimalFormatter(1, 1, input, { params: { decimalPlaces: 2 } } as Column, {}, {} as any);
+    const output3 = decimalFormatter(1, 1, input, { params: { decimalPlaces: 2, thousandSeparator: ',' } } as Column, {}, {} as any);
+    const output4 = decimalFormatter(1, 1, input, { params: { decimalPlaces: 2, decimalSeparator: ',', thousandSeparator: ' ' } } as Column, {}, {} as any);
 
     expect(output1).toBe('12345678.10');
     expect(output2).toBe('12345678.10');
@@ -64,21 +94,21 @@ describe('the Decimal Formatter', () => {
     expect(output4).toBe('12 345 678,10');
   });
 
-  it('should display a number with dollar sign and use "maxDecimal" params', () => {
+  it('should display a decimal number with and use "maxDecimal" params', () => {
     const input = 88.156789;
-    const output = decimalFormatter(1, 1, input, { params: { maxDecimal: 3 } } as Column, {});
+    const output = decimalFormatter(1, 1, input, { params: { maxDecimal: 3 } } as Column, {}, {} as any);
     expect(output).toBe(`88.157`);
   });
 
   it('should display a negative number with parentheses when "displayNegativeNumberWithParentheses" is enabled in the "params"', () => {
     const input = -2.4;
-    const output = decimalFormatter(1, 1, input, { params: { displayNegativeNumberWithParentheses: true } } as Column, {});
+    const output = decimalFormatter(1, 1, input, { params: { displayNegativeNumberWithParentheses: true } } as Column, {}, {} as any);
     expect(output).toBe(`(2.40)`);
   });
 
   it('should display a negative number with parentheses when "displayNegativeNumberWithParentheses" is enabled and thousand separator in the "params"', () => {
     const input = -12345678.4;
-    const output = decimalFormatter(1, 1, input, { params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' } } as Column, {});
+    const output = decimalFormatter(1, 1, input, { params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' } } as Column, {}, {} as any);
     expect(output).toBe(`(12,345,678.40)`);
   });
 

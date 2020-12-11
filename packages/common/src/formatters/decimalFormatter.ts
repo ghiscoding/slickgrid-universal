@@ -13,10 +13,12 @@ export const decimalFormatter: Formatter = (_row, _cell, value, columnDef, _data
   const maxDecimal = getValueFromParamsOrFormatterOptions('maxDecimal', columnDef, grid, 2);
   const decimalSeparator = getValueFromParamsOrFormatterOptions('decimalSeparator', columnDef, grid, '.');
   const thousandSeparator = getValueFromParamsOrFormatterOptions('thousandSeparator', columnDef, grid, '');
+  const numberPrefix = getValueFromParamsOrFormatterOptions('numberPrefix', columnDef, grid, '');
+  const numberSuffix = getValueFromParamsOrFormatterOptions('numberSuffix', columnDef, grid, '');
   const displayNegativeNumberWithParentheses = getValueFromParamsOrFormatterOptions('displayNegativeNumberWithParentheses', columnDef, grid, false);
 
   if (isNumber) {
-    return formatNumber(value, minDecimal, maxDecimal, displayNegativeNumberWithParentheses, '', '', decimalSeparator, thousandSeparator);
+    return formatNumber(value, minDecimal, maxDecimal, displayNegativeNumberWithParentheses, numberPrefix, numberSuffix, decimalSeparator, thousandSeparator);
   }
   return value;
 };
