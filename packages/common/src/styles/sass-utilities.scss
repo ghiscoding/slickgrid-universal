@@ -1,4 +1,4 @@
-$svg-icon-vertical-align: text-top !default;
+$svg-icon-vertical-align: bottom !default;
 
 @function encodecolor($string) {
 	@if type-of($string) == 'color' {

@@ -14,6 +14,28 @@ $icon-width-max-size: 50;
 }
 
 .mdi {
+  &.mdi-v-align-bottom:before {
+    vertical-align: bottom;
+  }
+  &.mdi-v-align-middle:before {
+    vertical-align: middle;
+  }
+  &.mdi-v-align-sub:before {
+    vertical-align: sub;
+  }
+  &.mdi-v-align-super:before {
+    vertical-align: super;
+  }
+  &.mdi-v-align-text-bottom:before {
+    vertical-align: text-bottom;
+  }
+  &.mdi-v-align-text-top:before {
+    vertical-align: text-top;
+  }
+  &.mdi-v-align-top:before {
+    vertical-align: top;
+  }
+
   &.mdi-flip-h {
     transform: scaleX(-1);
   }

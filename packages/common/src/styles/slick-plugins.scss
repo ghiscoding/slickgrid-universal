@@ -60,7 +60,8 @@
 
   .slick-cell-menu-item {
     cursor: pointer;
-    display: block;
+    display: flex;
+    align-items: center;
     border: $cell-menu-item-border;
     border-radius: $cell-menu-item-border-radius;
     font-size: $cell-menu-item-font-size;
@@ -69,7 +70,6 @@
     margin: 0;
     width: $cell-menu-item-width;
     height: $cell-menu-item-height;
-    vertical-align: middle;
 
     &:hover {
       border: $cell-menu-item-hover-border;
@@ -607,6 +607,7 @@
       border-radius: $multiselect-icon-border-radius;
       margin: $multiselect-icon-margin;
       opacity: $multiselect-unchecked-opacity;
+      vertical-align: $multiselect-icon-vertical-align;
     }
 
     &:checked + span:before {
