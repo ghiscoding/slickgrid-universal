@@ -27,19 +27,20 @@ The GitHub [demo page](https://ghiscoding.github.io/slickgrid-universal) uses 2 
 You might be wondering why was this monorepo created? Here are a few of the reasons:
 1. it removes a lot of duplicate code that exist in both
 [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid)
-(these libs have over 80% of code in common and that is not very DRY).
-2. decouple some Services that should not be required at all time (OData, GraphQL, Export to File, Export to Excel, ...)
-3. framework agnostic, it could be implemented in many more frameworks in the future (interested in adding other frameworks? please contact me...)
-   - you can use it in plain TypeScript or even JavaScript (ES6), the later is what we use in Salesforce
+(these libs have over +85% of code in common and that is not very DRY).
+2. decouple some Services that should not be required neither imported every time (OData, GraphQL, Export to File, Export to Excel, ...)
+3. framework agnostic, it could be implemented in many more frameworks (if you're interested in adding support for other frameworks? please contact me...)
+   - you can use it in plain TypeScript or even JavaScript (ES6), the later is what we use in Salesforce LWC (Lightning Web Component)
 
 ### Frameworks using this monorepo
 The goal is to eventually to rewrite [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid)
 and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) to use this monorepo which will simplify debugging/fixing common code.
     
+Now implemented in:
   - [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) `3.x` now uses Slickgrid-Universal
 
-Note however that this project also has a Vanilla Implementation (not associated to any framework) with [WebPack](https://webpack.js.org/)
-and it is also used to test with [Cypress](https://www.cypress.io/) the UI portion. The Vanilla bundle is also used in our SalesForce (with Lightning Web Component) hence the creation of this monorepo.
+Note however that this project also has a Vanilla Implementation (not associated to any framework) built with [WebPack](https://webpack.js.org/)
+and it is also used to test the all UI features with [Cypress](https://www.cypress.io/). The [Vanilla bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) package is also what we use in our SalesForce (with Lightning Web Component) implementation, hence the creation of this monorepo library.
 
 ### Fully Tested with [Jest](https://jestjs.io/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
 Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +12,000 lines of code (+3,000 unit tests) that are now fully tested with [Jest](https://jestjs.io/). There are also +200 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (there's also an additional +360 tests in Aurelia-Slickgrid)
@@ -59,9 +60,10 @@ Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +12,00
 
 ### Available Demos
 
-| Package Name | Description |
+| Package or Lib Name | Description |
 | --------| ----------- |
 | [slickgrid-universal/webpack-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle) | standalone package written in plain TypeScript for demo & UI testing. |
+| [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) | Aurelia-Slickgrid (framework) implementation |
 
 
 ## Installation
