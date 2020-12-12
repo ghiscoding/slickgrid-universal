@@ -396,8 +396,11 @@
 
       .flatpickr.input-group {
         .input-group-btn {
+          min-width: 28px;
           .btn {
+            margin: 0;
             height: $editor-modal-input-editor-height;
+            border-radius: $editor-modal-close-btn-border-radius;
           }
         }
       }
@@ -409,7 +412,12 @@
         }
       }
       .slider-value {
+        min-height: $editor-modal-input-editor-height;
         min-width: 28px;
+        .input-group-text {
+          min-height: $editor-modal-input-editor-height;
+          min-width: 28px;
+        }
       }
 
       &.modified {
