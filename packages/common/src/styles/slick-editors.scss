@@ -412,11 +412,13 @@
         }
       }
       .slider-value {
-        min-height: $editor-modal-input-editor-height;
         min-width: 28px;
         .input-group-text {
-          min-height: $editor-modal-input-editor-height;
+          min-height: $editor-modal-slider-editor-value-min-height;
           min-width: 28px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
       }
 
