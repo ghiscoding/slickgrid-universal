@@ -115,6 +115,8 @@
       display: inline-flex;
 
       .page-link {
+        display: flex;
+        align-items: center;
         font-size: $pagination-icon-font-size;
         border: $pagination-button-border;
         height: $pagination-button-height;
@@ -152,6 +154,7 @@
           &:before {
             content: $pagination-icon-seek-first;
             display: block;
+            height: $pagination-icon-height;
             width: $pagination-icon-seek-first-width;
           }
         }
@@ -159,6 +162,7 @@
           &:before {
             content: $pagination-icon-seek-prev;
             display: block;
+            height: $pagination-icon-height;
             width: $pagination-icon-seek-prev-width;
           }
         }
@@ -166,6 +170,7 @@
           &:before {
             content: $pagination-icon-seek-next;
             display: block;
+            height: $pagination-icon-height;
             width: $pagination-icon-seek-next-width;
           }
         }
@@ -173,6 +178,7 @@
           &:before {
             content: $pagination-icon-seek-end;
             display: block;
+            height: $pagination-icon-height;
             width: $pagination-icon-seek-end-width;
           }
         }
