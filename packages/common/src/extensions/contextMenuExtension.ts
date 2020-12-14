@@ -191,7 +191,7 @@ export class ContextMenuExtension implements Extension {
     // show context menu: Copy (cell value)
     if (contextMenu && !contextMenu.hideCopyCellValueCommand) {
       const commandName = 'copy';
-      if (!originalCustomItems.find((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === commandName)) {
+      if (!originalCustomItems.some((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === commandName)) {
         menuCustomItems.push(
           {
             iconCssClass: contextMenu.iconCopyCellValueCommand || 'fa fa-clone',
@@ -224,7 +224,7 @@ export class ContextMenuExtension implements Extension {
     // show context menu: Export to file
     if ((gridOptions?.enableExport || gridOptions?.enableTextExport) && contextMenu && !contextMenu.hideExportCsvCommand) {
       const commandName = 'export-csv';
-      if (!originalCustomItems.find((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === commandName)) {
+      if (!originalCustomItems.some((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === commandName)) {
         menuCustomItems.push(
           {
             iconCssClass: contextMenu.iconExportCsvCommand || 'fa fa-download',
@@ -254,7 +254,7 @@ export class ContextMenuExtension implements Extension {
     // show context menu: Export to Excel
     if (gridOptions && gridOptions.enableExcelExport && contextMenu && !contextMenu.hideExportExcelCommand) {
       const commandName = 'export-excel';
-      if (!originalCustomItems.find((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === commandName)) {
+      if (!originalCustomItems.some((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === commandName)) {
         menuCustomItems.push(
           {
             iconCssClass: contextMenu.iconExportExcelCommand || 'fa fa-file-excel-o text-success',
@@ -282,7 +282,7 @@ export class ContextMenuExtension implements Extension {
     // show context menu: export to text file as tab delimited
     if ((gridOptions?.enableExport || gridOptions?.enableTextExport) && contextMenu && !contextMenu.hideExportTextDelimitedCommand) {
       const commandName = 'export-text-delimited';
-      if (!originalCustomItems.find((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === commandName)) {
+      if (!originalCustomItems.some((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === commandName)) {
         menuCustomItems.push(
           {
             iconCssClass: contextMenu.iconExportTextDelimitedCommand || 'fa fa-download',
@@ -319,7 +319,7 @@ export class ContextMenuExtension implements Extension {
       // show context menu: Clear Grouping (except for Tree Data which shouldn't have this feature)
       if (gridOptions && !gridOptions.enableTreeData && contextMenu && !contextMenu.hideClearAllGrouping) {
         const commandName = 'clear-grouping';
-        if (!originalCustomItems.find((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === commandName)) {
+        if (!originalCustomItems.some((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === commandName)) {
           menuCustomItems.push(
             {
               iconCssClass: contextMenu.iconClearGroupingCommand || 'fa fa-times',
@@ -341,7 +341,7 @@ export class ContextMenuExtension implements Extension {
       // show context menu: Collapse all Groups
       if (gridOptions && contextMenu && !contextMenu.hideCollapseAllGroups) {
         const commandName = 'collapse-all-groups';
-        if (!originalCustomItems.find((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === commandName)) {
+        if (!originalCustomItems.some((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === commandName)) {
           menuCustomItems.push(
             {
               iconCssClass: contextMenu.iconCollapseAllGroupsCommand || 'fa fa-compress',
@@ -372,7 +372,7 @@ export class ContextMenuExtension implements Extension {
       // show context menu: Expand all Groups
       if (gridOptions && contextMenu && !contextMenu.hideExpandAllGroups) {
         const commandName = 'expand-all-groups';
-        if (!originalCustomItems.find((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === commandName)) {
+        if (!originalCustomItems.some((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === commandName)) {
           menuCustomItems.push(
             {
               iconCssClass: contextMenu.iconExpandAllGroupsCommand || 'fa fa-expand',

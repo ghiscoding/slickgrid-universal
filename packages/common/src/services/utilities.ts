@@ -124,7 +124,7 @@ export function convertHierarchicalViewToParentChildArrayByReference<T = any>(hi
   if (Array.isArray(hierarchicalArray)) {
     for (const item of hierarchicalArray) {
       if (item) {
-        const itemExist = outputArrayRef.find((itm: T) => itm[identifierPropName] === item[identifierPropName]);
+        const itemExist = outputArrayRef.some((itm: T) => itm[identifierPropName] === item[identifierPropName]);
         if (!itemExist) {
           item[treeLevelPropName] = treeLevel; // save tree level ref
           item[parentPropName] = parentId || null;

@@ -251,9 +251,7 @@ export class GridOdataService implements BackendService {
         // if user defined some "presets", then we need to find the filters from the column definitions instead
         let columnDef: Column | undefined;
         if (isUpdatedByPresetOrDynamically && Array.isArray(this._columnDefinitions)) {
-          columnDef = this._columnDefinitions.find((column: Column) => {
-            return column.id === columnFilter.columnId;
-          });
+          columnDef = this._columnDefinitions.find((column: Column) => column.id === columnFilter.columnId);
         } else {
           columnDef = columnFilter.columnDef;
         }

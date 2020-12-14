@@ -232,7 +232,7 @@ export class GridMenuExtension implements Extension {
     // show grid menu: Clear Frozen Columns
     if (this.sharedService.gridOptions && this._gridMenuOptions && !this._gridMenuOptions.hideClearFrozenColumnsCommand) {
       const commandName = 'clear-frozen-columns';
-      if (!originalCustomItems.find((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
+      if (!originalCustomItems.some((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
         gridMenuCustomItems.push(
           {
             iconCssClass: this._gridMenuOptions.iconClearFrozenColumnsCommand || 'fa fa-times',
@@ -249,7 +249,7 @@ export class GridMenuExtension implements Extension {
       // show grid menu: Clear all Filters
       if (this.sharedService.gridOptions && this._gridMenuOptions && !this._gridMenuOptions.hideClearAllFiltersCommand) {
         const commandName = 'clear-filter';
-        if (!originalCustomItems.find((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
+        if (!originalCustomItems.some((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
           gridMenuCustomItems.push(
             {
               iconCssClass: this._gridMenuOptions.iconClearAllFiltersCommand || 'fa fa-filter text-danger',
@@ -265,7 +265,7 @@ export class GridMenuExtension implements Extension {
       // show grid menu: toggle filter row
       if (this.sharedService.gridOptions && this._gridMenuOptions && !this._gridMenuOptions.hideToggleFilterCommand) {
         const commandName = 'toggle-filter';
-        if (!originalCustomItems.find((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
+        if (!originalCustomItems.some((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
           gridMenuCustomItems.push(
             {
               iconCssClass: this._gridMenuOptions.iconToggleFilterCommand || 'fa fa-random',
@@ -281,7 +281,7 @@ export class GridMenuExtension implements Extension {
       // show grid menu: refresh dataset
       if (backendApi && this.sharedService.gridOptions && this._gridMenuOptions && !this._gridMenuOptions.hideRefreshDatasetCommand) {
         const commandName = 'refresh-dataset';
-        if (!originalCustomItems.find((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
+        if (!originalCustomItems.some((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
           gridMenuCustomItems.push(
             {
               iconCssClass: this._gridMenuOptions.iconRefreshDatasetCommand || 'fa fa-refresh',
@@ -299,7 +299,7 @@ export class GridMenuExtension implements Extension {
       // show grid menu: toggle pre-header row
       if (this.sharedService.gridOptions && this._gridMenuOptions && !this._gridMenuOptions.hideTogglePreHeaderCommand) {
         const commandName = 'toggle-preheader';
-        if (!originalCustomItems.find((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
+        if (!originalCustomItems.some((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
           gridMenuCustomItems.push(
             {
               iconCssClass: this._gridMenuOptions.iconTogglePreHeaderCommand || 'fa fa-random',
@@ -317,7 +317,7 @@ export class GridMenuExtension implements Extension {
       // show grid menu: Clear all Sorting
       if (this.sharedService.gridOptions && this._gridMenuOptions && !this._gridMenuOptions.hideClearAllSortingCommand) {
         const commandName = 'clear-sorting';
-        if (!originalCustomItems.find((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
+        if (!originalCustomItems.some((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
           gridMenuCustomItems.push(
             {
               iconCssClass: this._gridMenuOptions.iconClearAllSortingCommand || 'fa fa-unsorted text-danger',
@@ -334,7 +334,7 @@ export class GridMenuExtension implements Extension {
     // show grid menu: Export to file
     if ((this.sharedService.gridOptions?.enableExport || this.sharedService.gridOptions?.enableTextExport) && this._gridMenuOptions && !this._gridMenuOptions.hideExportCsvCommand) {
       const commandName = 'export-csv';
-      if (!originalCustomItems.find((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
+      if (!originalCustomItems.some((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
         gridMenuCustomItems.push(
           {
             iconCssClass: this._gridMenuOptions.iconExportCsvCommand || 'fa fa-download',
@@ -350,7 +350,7 @@ export class GridMenuExtension implements Extension {
     // show grid menu: Export to Excel
     if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableExcelExport && this._gridMenuOptions && !this._gridMenuOptions.hideExportExcelCommand) {
       const commandName = 'export-excel';
-      if (!originalCustomItems.find((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
+      if (!originalCustomItems.some((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
         gridMenuCustomItems.push(
           {
             iconCssClass: this._gridMenuOptions.iconExportExcelCommand || 'fa fa-file-excel-o text-success',
@@ -366,7 +366,7 @@ export class GridMenuExtension implements Extension {
     // show grid menu: export to text file as tab delimited
     if ((this.sharedService.gridOptions?.enableExport || this.sharedService.gridOptions?.enableTextExport) && this._gridMenuOptions && !this._gridMenuOptions.hideExportTextDelimitedCommand) {
       const commandName = 'export-text-delimited';
-      if (!originalCustomItems.find((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
+      if (!originalCustomItems.some((item: GridMenuItem) => item.hasOwnProperty('command') && item.command === commandName)) {
         gridMenuCustomItems.push(
           {
             iconCssClass: this._gridMenuOptions.iconExportTextDelimitedCommand || 'fa fa-download',
