@@ -58,7 +58,7 @@ export class Example08 {
         exportWithFormatter: true,
         sanitizeDataExport: true
       },
-      registerExternalServices: [new ExcelExportService()],
+      registerExternalResources: [new ExcelExportService()],
       enableCellNavigation: true,
       enableColumnReorder: false,
       enableSorting: true,

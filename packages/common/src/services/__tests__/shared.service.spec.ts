@@ -273,28 +273,28 @@ describe('Shared Service', () => {
     expect(service.internalPubSubService).toEqual(pubSubServiceStub);
   });
 
-  it('should call "externalRegisteredServices" GETTER and return all columns', () => {
+  it('should call "externalRegisteredResources" GETTER and return all columns', () => {
     // @ts-ignore:2511
-    const mockRegisteredServices = [new ExcelExportService()];
-    const spy = jest.spyOn(service, 'externalRegisteredServices', 'get').mockReturnValue(mockRegisteredServices);
+    const mockRegisteredResources = [new ExcelExportService()];
+    const spy = jest.spyOn(service, 'externalRegisteredResources', 'get').mockReturnValue(mockRegisteredResources);
 
-    const columns = service.externalRegisteredServices;
+    const columns = service.externalRegisteredResources;
 
     expect(spy).toHaveBeenCalled();
-    expect(columns).toEqual(mockRegisteredServices);
+    expect(columns).toEqual(mockRegisteredResources);
   });
 
-  it('should call "externalRegisteredServices" SETTER and expect GETTER to return the same', () => {
+  it('should call "externalRegisteredResources" SETTER and expect GETTER to return the same', () => {
     // @ts-ignore:2511
-    const mockRegisteredServices = [new ExcelExportService()];
-    const getSpy = jest.spyOn(service, 'externalRegisteredServices', 'get');
-    const setSpy = jest.spyOn(service, 'externalRegisteredServices', 'set');
+    const mockRegisteredResources = [new ExcelExportService()];
+    const getSpy = jest.spyOn(service, 'externalRegisteredResources', 'get');
+    const setSpy = jest.spyOn(service, 'externalRegisteredResources', 'set');
 
-    service.externalRegisteredServices = mockRegisteredServices;
-    const columns = service.externalRegisteredServices;
+    service.externalRegisteredResources = mockRegisteredResources;
+    const columns = service.externalRegisteredResources;
 
     expect(getSpy).toHaveBeenCalled();
     expect(setSpy).toHaveBeenCalled();
-    expect(columns).toEqual(mockRegisteredServices);
+    expect(columns).toEqual(mockRegisteredResources);
   });
 });

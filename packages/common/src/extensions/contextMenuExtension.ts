@@ -233,7 +233,7 @@ export class ContextMenuExtension implements Extension {
             command: commandName,
             positionOrder: 51,
             action: () => {
-              const registedServices = this.sharedService?.externalRegisteredServices || [];
+              const registedServices = this.sharedService?.externalRegisteredResources || [];
               const excelService: TextExportService = registedServices.find((service: any) => service.className === 'TextExportService');
               if (excelService?.exportToFile) {
                 excelService.exportToFile({
@@ -243,7 +243,7 @@ export class ContextMenuExtension implements Extension {
                   useUtf8WithBom: true,
                 });
               } else {
-                throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalServices: [new TextExportService()] };`);
+                throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalResources: [new TextExportService()] };`);
               }
             },
           }
@@ -263,7 +263,7 @@ export class ContextMenuExtension implements Extension {
             command: commandName,
             positionOrder: 52,
             action: () => {
-              const registedServices = this.sharedService?.externalRegisteredServices || [];
+              const registedServices = this.sharedService?.externalRegisteredResources || [];
               const excelService: ExcelExportService = registedServices.find((service: any) => service.className === 'ExcelExportService');
               if (excelService?.exportToExcel) {
                 excelService.exportToExcel({
@@ -271,7 +271,7 @@ export class ContextMenuExtension implements Extension {
                   format: FileType.xlsx,
                 });
               } else {
-                throw new Error(`[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Context Menu. Example:: this.gridOptions = { enableExcelExport: true, registerExternalServices: [new ExcelExportService()] };`);
+                throw new Error(`[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Context Menu. Example:: this.gridOptions = { enableExcelExport: true, registerExternalResources: [new ExcelExportService()] };`);
               }
             },
           }
@@ -291,7 +291,7 @@ export class ContextMenuExtension implements Extension {
             command: commandName,
             positionOrder: 53,
             action: () => {
-              const registedServices = this.sharedService?.externalRegisteredServices || [];
+              const registedServices = this.sharedService?.externalRegisteredResources || [];
               const excelService: TextExportService = registedServices.find((service: any) => service.className === 'TextExportService');
               if (excelService?.exportToFile) {
                 excelService.exportToFile({
@@ -301,7 +301,7 @@ export class ContextMenuExtension implements Extension {
                   useUtf8WithBom: true,
                 });
               } else {
-                throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalServices: [new TextExportService()] };`);
+                throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalResources: [new TextExportService()] };`);
               }
             },
           }

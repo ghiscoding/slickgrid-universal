@@ -21,7 +21,7 @@ This package requires [excel-builder-webpacker](https://www.npmjs.com/package/ex
 Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation), you can see a demo by looking at the [GitHub Demo](https://ghiscoding.github.io/slickgrid-universal) page and click on "Export to CSV" from the Grid Menu (aka hamburger menu).
 
 ### Usage
-In order to use the Service, you will need to register it in your grid options via the `registerExternalServices` as shown below.
+In order to use the Service, you will need to register it in your grid options via the `registerExternalResources` as shown below.
 
 ##### ViewModel
 ```ts
@@ -34,7 +34,7 @@ export class MyExample {
       excelExportOptions: {
         sanitizeDataExport: true
       },
-      registerExternalServices: [new ExcelExportService()],
+      registerExternalResources: [new ExcelExportService()],
     }
   }
 }
@@ -53,7 +53,7 @@ export class MyExample {
       excelExportOptions: {
         sanitizeDataExport: true
       },
-      registerExternalServices: [this.excelExportService],
+      registerExternalResources: [this.excelExportService],
     }
   }
 

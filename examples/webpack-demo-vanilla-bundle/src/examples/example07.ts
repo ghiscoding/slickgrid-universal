@@ -97,7 +97,7 @@ export class Example7 {
         sanitizeDataExport: true
       },
       enableFiltering: true,
-      registerExternalServices: [new ExcelExportService()],
+      registerExternalResources: [new ExcelExportService()],
       enableCellNavigation: true,
       enableCheckboxSelector: true,
       enableRowSelection: true,

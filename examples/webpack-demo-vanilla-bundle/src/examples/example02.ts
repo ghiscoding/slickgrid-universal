@@ -167,7 +167,7 @@ export class Example2 {
       excelExportOptions: {
         sanitizeDataExport: true
       },
-      registerExternalServices: [this.excelExportService, new TextExportService()],
+      registerExternalResources: [this.excelExportService, new TextExportService()],
       showCustomFooter: true, // display some metrics in the bottom custom footer
       customFooterOptions: {
         // optionally display some text on the left footer container

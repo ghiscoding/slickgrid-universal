@@ -291,7 +291,7 @@ export class Example3 {
       excelExportOptions: {
         exportWithFormatter: true
       },
-      registerExternalServices: [this.excelExportService],
+      registerExternalResources: [this.excelExportService],
       enableFiltering: true,
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)

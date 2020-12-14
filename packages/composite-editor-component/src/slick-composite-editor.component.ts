@@ -6,6 +6,7 @@ import {
   CompositeEditorOpenDetailOption,
   CompositeEditorOption,
   Constants,
+  ContainerService,
   CurrentRowSelection,
   Editor,
   EditorValidationResult,
@@ -24,6 +25,7 @@ import {
   SlickNamespace,
   SlickDataView,
   TranslaterService,
+  SharedService,
 } from '@slickgrid-universal/common';
 
 // using external non-typed js libraries
@@ -38,11 +40,15 @@ export class SlickCompositeEditorComponent {
   private _options: CompositeEditorOpenDetailOption;
   private _lastActiveRowNumber: number;
   private _locales: Locale;
-  private _formValues: any;
-  private _editors: any;
+  private _formValues: { [columnId: string]: any; } | null;
+  private _editors: { [columnId: string]: Editor; };
   private _editorContainers: Array<HTMLElement | null>;
   private _modalBodyTopValidationElm: HTMLDivElement;
   private _modalSaveButtonElm: HTMLButtonElement;
+  private grid: SlickGrid;
+  private gridService: GridService | null;
+  private gridStateService: GridStateService | null;
+  private translaterService?: TranslaterService | null;
 
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
@@ -60,20 +66,28 @@ export class SlickCompositeEditorComponent {
     return this._formValues;
   }
 
-  get editors(): any {
+  get editors(): { [columnId: string]: Editor; } {
     return this._editors;
   }
-  set editors(editors: any) {
+  set editors(editors: { [columnId: string]: Editor; }) {
     this._editors = editors;
   }
 
   get gridOptions(): GridOption {
-    return this.grid.getOptions();
+    return this.grid?.getOptions();
   }
 
-  constructor(private grid: SlickGrid, private gridService: GridService, private gridStateService: GridStateService, private translaterService?: TranslaterService) {
+  constructor() {
     this._eventHandler = new Slick.EventHandler();
     this._bindEventService = new BindingEventService();
+  }
+
+  init(grid: SlickGrid, _sharedService: SharedService, containerService: ContainerService) {
+    this.grid = grid;
+    this.gridService = containerService.get<GridService>('GridService');
+    this.gridStateService = containerService.get<GridStateService>('GridStateService');
+    this.translaterService = containerService.get<TranslaterService>('TranslaterService');
+
     if (this.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
@@ -86,7 +100,7 @@ export class SlickCompositeEditorComponent {
   dispose() {
     this._eventHandler.unsubscribeAll();
     this._bindEventService.unbindAll();
-    this._formValues = undefined;
+    this._formValues = null;
     this.disposeComponent();
   }
 
@@ -106,7 +120,7 @@ export class SlickCompositeEditorComponent {
    * @param {*} newValue - the new value
    */
   changeFormInputValue(columnId: string, newValue: any) {
-    const editor = this._editors?.[columnId] as Editor;
+    const editor = this._editors?.[columnId];
     let outputValue = newValue;
 
     if (!editor) {
@@ -132,7 +146,7 @@ export class SlickCompositeEditorComponent {
    * @param {*} newValue - the new value
    */
   changeFormEditorOption(columnId: string, optionName: string, newOptionValue: any) {
-    const editor = this._editors?.[columnId] as Editor;
+    const editor = this._editors?.[columnId];
 
     // change an Editor option (not all Editors have that method, so make sure it exists before trying to call it)
     if (editor?.changeEditorOption) {
@@ -148,7 +162,7 @@ export class SlickCompositeEditorComponent {
    * @param isDisabled
    */
   disableFormInput(columnId: string, isDisabled = true) {
-    const editor = this._editors?.[columnId] as Editor;
+    const editor = this._editors?.[columnId];
     if (editor?.disable && Array.isArray(this._editorContainers)) {
       editor.disable(isDisabled);
     }
@@ -214,7 +228,7 @@ export class SlickCompositeEditorComponent {
         const fullDataset = this.dataView?.getItems() ?? [];
         const fullDatasetLength = (Array.isArray(fullDataset)) ? fullDataset.length : 0;
         this._lastActiveRowNumber = activeRow;
-        const gridStateSelection = this.gridStateService.getCurrentRowSelections() as CurrentRowSelection;
+        const gridStateSelection = this.gridStateService?.getCurrentRowSelections() as CurrentRowSelection;
         const dataContextIds = gridStateSelection?.dataContextIds || [];
 
         // focus on a first cell with an Editor (unless current cell already has an Editor then do nothing)
@@ -450,7 +464,7 @@ export class SlickCompositeEditorComponent {
     }
 
     // update all items in the grid with the grid service
-    this.gridService.updateItems(selectedItems);
+    this.gridService?.updateItems(selectedItems);
   }
 
   async cancelEditing() {
@@ -504,7 +518,7 @@ export class SlickCompositeEditorComponent {
         } else if (isFormValid && this.formValues) {
           this._modalSaveButtonElm.classList.add('saving');
           this._modalSaveButtonElm.disabled = true;
-          const gridStateSelection = this.gridStateService.getCurrentRowSelections() as CurrentRowSelection;
+          const gridStateSelection = this.gridStateService?.getCurrentRowSelections() as CurrentRowSelection;
           const gridRowIndexes = gridStateSelection?.gridRowIndexes || [];
           const dataContextIds = gridStateSelection?.dataContextIds || [];
 
@@ -679,7 +693,7 @@ export class SlickCompositeEditorComponent {
     item[this.gridOptions.datasetIdPropertyName || 'id'] = newId;
 
     if (!this.dataView.getItemById(newId)) {
-      this.gridService.addItem(item, this._options.insertOptions);
+      this.gridService?.addItem(item, this._options.insertOptions);
       this.dispose();
     }
   }

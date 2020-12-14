@@ -18,7 +18,8 @@ import {
   formatNumber,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker, SlickCompositeEditorComponent, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
@@ -94,6 +95,7 @@ export class Example12 {
   }
 
   constructor() {
+    this.compositeEditorInstance = new SlickCompositeEditorComponent();
     this._bindingEventService = new BindingEventService();
   }
 
@@ -126,7 +128,7 @@ export class Example12 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string, minWidth: 100,
+        id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string, minWidth: 75,
         filterable: true, columnGroup: 'Common Factor',
         filter: { model: Filters.compoundInputText },
         formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold] },
@@ -145,7 +147,7 @@ export class Example12 {
         },
       },
       {
-        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
+        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, minWidth: 75,
         type: FieldType.number, columnGroup: 'Common Factor',
         formatter: (_row, _cell, value) => {
           if (value === null || value === undefined) {
@@ -156,7 +158,7 @@ export class Example12 {
         editor: { model: Editors.float, massUpdate: true, decimal: 2, valueStep: 1, minValue: 0, maxValue: 10000, alwaysSaveOnEnterKey: true, required: true },
       },
       {
-        id: 'cost', name: 'Cost', field: 'cost', width: 90, minWidth: 100,
+        id: 'cost', name: 'Cost', field: 'cost', width: 90, minWidth: 70,
         sortable: true, filterable: true, type: FieldType.number, columnGroup: 'Analysis',
         filter: { model: Filters.compoundInputNumber },
         formatter: Formatters.dollar,
@@ -196,7 +198,7 @@ export class Example12 {
         editor: { model: Editors.date, massUpdate: true, params: { hideClearButton: false } },
       },
       {
-        id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 20, maxWidth: 100,
+        id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 75, maxWidth: 100,
         sortable: true, filterable: true, columnGroup: 'Period',
         formatter: Formatters.multiple,
         params: { formatters: [Formatters.checkmarkMaterial, Formatters.center] },
@@ -363,7 +365,7 @@ export class Example12 {
       excelExportOptions: {
         exportWithFormatter: false
       },
-      registerExternalServices: [new ExcelExportService()],
+      registerExternalResources: [new ExcelExportService(), this.compositeEditorInstance],
       enableFiltering: true,
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
@@ -885,7 +887,7 @@ export class Example12 {
     }
 
     setTimeout(() => {
-      this.compositeEditorInstance = this.sgb.slickCompositeEditor?.openDetails({
+      this.compositeEditorInstance?.openDetails({
         headerTitle: modalTitle,
         modalType,
         // showCloseButtonOutside: true,

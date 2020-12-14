@@ -17,6 +17,7 @@ import {
   GridState,
   GridStateService,
   GridStateType,
+  SlickGroupItemMetadataProvider,
   GroupingAndColspanService,
   Pagination,
   PaginationService,
@@ -27,6 +28,9 @@ import {
   TreeDataService,
   TranslaterService,
   ColumnFilters,
+  Editor,
+  ExtensionName,
+  ColumnFilter,
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
@@ -40,6 +44,7 @@ import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { HttpStub } from '../../../../../test/httpClientStub';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../../test/mockSlickEvent';
 import { ResizerService } from '../../services/resizer.service';
+import { UniversalContainerService } from '../../services/universalContainer.service';
 jest.mock('../../services/textExport.service');
 
 const mockExecuteBackendProcess = jest.fn();
@@ -170,7 +175,7 @@ const mockGroupItemMetaProvider = {
   handleGridKeyDown: jest.fn(),
   getGroupRowMetadata: jest.fn(),
   getTotalsRowMetadata: jest.fn(),
-};
+} as unknown as SlickGroupItemMetadataProvider;
 
 const mockDataView = {
   constructor: jest.fn(),
@@ -246,7 +251,7 @@ const mockGrid = {
   onRendered: jest.fn(),
   onScroll: jest.fn(),
   onDataviewCreated: new MockSlickEvent(),
-};
+} as unknown as SlickGrid;
 
 const mockSlickEventHandlerImplementation = jest.fn().mockImplementation(() => mockSlickEventHandler);
 const mockDataViewImplementation = jest.fn().mockImplementation(() => mockDataView);
@@ -272,6 +277,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
   let eventPubSubService: EventPubSubService;
   let translateService: TranslateServiceStub;
   const http = new HttpStub();
+  const container = new UniversalContainerService();
   let dataset = [];
 
   beforeEach(() => {
@@ -321,6 +327,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         sortService: sortServiceStub,
         treeDataService: treeDataServiceStub,
         translaterService: translateService as unknown as TranslaterService,
+        universalContainerService: container,
       }
     );
   });
@@ -581,7 +588,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           disable: jest.fn(),
           destroy: jest.fn(),
           renderDomElement: jest.fn(),
-        };
+        } as unknown as Editor;
         const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: promise } }] as Column[];
         const getColSpy = jest.spyOn(mockGrid, 'getColumns').mockReturnValue(mockColDefs);
         jest.spyOn(mockGrid, 'getCellEditor').mockReturnValue(mockEditor);
@@ -678,7 +685,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const extensions = component.extensions;
 
         expect(Object.keys(extensions).length).toBe(1);
-        expect(extensionSpy).toHaveBeenCalledWith('groupItemMetaProvider');
+        expect(extensionSpy).toHaveBeenCalledWith(ExtensionName.groupItemMetaProvider);
         expect(dataviewSpy).toHaveBeenCalledWith({ inlineFilters: false, groupItemMetadataProvider: expect.anything() });
         expect(groupMetaSpy).toHaveBeenCalledWith();
         expect(sharedMetaSpy).toHaveBeenCalledWith(mockGroupItemMetaProvider);
@@ -695,7 +702,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions = { enableGrouping: true };
         component.initialization(divContainer, slickEventHandler);
 
-        expect(extensionSpy).toHaveBeenCalledWith('groupItemMetaProvider');
+        expect(extensionSpy).toHaveBeenCalledWith(ExtensionName.groupItemMetaProvider);
         expect(dataviewSpy).toHaveBeenCalledWith({ inlineFilters: false, groupItemMetadataProvider: expect.anything() });
         expect(groupMetaSpy).toHaveBeenCalledWith();
         expect(sharedMetaSpy).toHaveBeenCalledWith(mockGroupItemMetaProvider);
@@ -731,7 +738,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should call the DataView "syncGridSelection" method with 2nd argument as True when the "dataView.syncGridSelection" grid option is enabled', () => {
-        jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true);
+        jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true as any);
         const syncSpy = jest.spyOn(mockDataView, 'syncGridSelection');
 
         component.gridOptions = { dataView: { syncGridSelection: true }, enableRowSelection: true } as unknown as GridOption;
@@ -741,7 +748,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should call the DataView "syncGridSelection" method with 2nd argument as False when the "dataView.syncGridSelection" grid option is disabled', () => {
-        jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true);
+        jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true as any);
         const syncSpy = jest.spyOn(mockDataView, 'syncGridSelection');
 
         component.gridOptions = { dataView: { syncGridSelection: false }, enableRowSelection: true } as unknown as GridOption;
@@ -751,7 +758,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should call the DataView "syncGridSelection" method with 3 arguments when the "dataView" grid option is provided as an object', () => {
-        jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true);
+        jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true as any);
         const syncSpy = jest.spyOn(mockDataView, 'syncGridSelection');
 
         component.gridOptions = {
@@ -764,7 +771,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should call the DataView "syncGridSelection" method when using BackendServiceApi and "syncGridSelectionWithBackendService" when the "dataView.syncGridSelection" grid option is enabled as well', () => {
-        jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true);
+        jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true as any);
         const syncSpy = jest.spyOn(mockDataView, 'syncGridSelection');
 
         component.gridOptions = {
@@ -781,7 +788,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should call the DataView "syncGridSelection" method with false as 2nd argument when using BackendServiceApi and "syncGridSelectionWithBackendService" BUT the "dataView.syncGridSelection" grid option is disabled', () => {
-        jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true);
+        jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true as any);
         const syncSpy = jest.spyOn(mockDataView, 'syncGridSelection');
 
         component.gridOptions = {
@@ -798,7 +805,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should call the DataView "syncGridSelection" method with false as 2nd argument when using BackendServiceApi and "syncGridSelectionWithBackendService" disabled and the "dataView.syncGridSelection" grid option is enabled', () => {
-        jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true);
+        jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true as any);
         const syncSpy = jest.spyOn(mockDataView, 'syncGridSelection');
 
         component.gridOptions = {
@@ -837,7 +844,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions = { createPreHeaderPanel: true, enableDraggableGrouping: false } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
 
-        expect(spy).toHaveBeenCalledWith(mockGrid, sharedService);
+        // @ts-ignore
+        expect(spy).toHaveBeenCalledWith(mockGrid, sharedService, container);
       });
 
       it('should not initialize groupingAndColspanService when "createPreHeaderPanel" grid option is enabled and "enableDraggableGrouping" is also enabled', () => {
@@ -859,7 +867,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should initialize SlickCompositeEditorComponent when "enableCompositeEditor" is set', () => {
-        component.gridOptions = { enableCompositeEditor: true } as unknown as GridOption;
+        component.gridOptions = { enableCompositeEditor: true, useSalesforceDefaultGridOptions: true } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
 
         expect(component.slickCompositeEditor instanceof SlickCompositeEditorComponent).toBeTrue();
@@ -870,8 +878,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
 
         expect(TextExportService).toHaveBeenCalled();
-        expect(component.registeredServices.length).toBe(3); // TextExportService, GridService, GridStateService
-        expect(component.registeredServices[0] instanceof TextExportService).toBeTrue();
+        expect(component.registeredResources.length).toBe(3); // TextExportService, GridService, GridStateService
+        expect(component.registeredResources[0] instanceof TextExportService).toBeTrue();
       });
 
       it('should destroy customElement and its DOM element when requested', () => {
@@ -1039,7 +1047,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions.presets = undefined;
         component.initialization(divContainer, slickEventHandler);
 
-        expect(backendSpy).toHaveBeenCalledWith(mockColumnFilter, false);
+        expect(backendSpy).toHaveBeenCalledWith(mockColumnFilter as unknown as CurrentFilter[], false);
       });
 
       it('should call the "updateFilters" method when filters are defined in the "presets" property', () => {
@@ -1052,7 +1060,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should call the "updateSorters" method when filters are defined in the "presets" property', () => {
-        jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true);
+        jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true as any);
         const spy = jest.spyOn(mockGraphqlService, 'updateSorters');
         const mockSorters = [{ columnId: 'name', direction: 'asc' }] as CurrentSorter[];
         component.gridOptions.presets = { sorters: mockSorters };
@@ -1419,7 +1427,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
 
         component.eventHandler.subscribe(mockEventPubSub, callback);
-        mockGrid.onClick.notify({ rows: [1, 2, 3] });
+        mockGrid.onClick.notify({ rows: [1, 2, 3] } as any);
 
         // callback(new CustomEvent('onDblClick'), {});
         expect(dispatchSpy).toHaveBeenCalledWith('onclick', { eventData: undefined, args: { rows: [1, 2, 3] } });
@@ -1536,7 +1544,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
         const mockGridOptions = { enableTranslate: true, enableEmptyDataWarningMessage: true, };
         jest.spyOn(mockGrid, 'getOptions').mockReturnValue(mockGridOptions);
-        jest.spyOn(mockGrid, 'getGridPosition').mockReturnValue({ top: 10, left: 20 });
+        jest.spyOn(mockGrid, 'getGridPosition').mockReturnValue({ top: 10, left: 20 } as any);
 
         component.gridOptions = mockGridOptions;
         component.initialization(divContainer, slickEventHandler);
@@ -1673,7 +1681,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
         const dataviewSpy = jest.spyOn(mockDataView, 'mapIdsToRows').mockReturnValue(selectedGridRows);
         const selectRowSpy = jest.spyOn(mockGrid, 'setSelectedRows');
-        jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true);
+        jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true as any);
 
         component.gridOptions.enableCheckboxSelector = true;
         component.gridOptions.presets = { rowSelection: { dataContextIds: selectedRowIds } };
@@ -1691,7 +1699,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const selectedGridRows = [22];
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
         const selectRowSpy = jest.spyOn(mockGrid, 'setSelectedRows');
-        jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true);
+        jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true as any);
         jest.spyOn(mockDataView, 'getLength').mockReturnValue(mockData.length);
 
         component.gridOptions.enableRowSelection = true;
@@ -1711,7 +1719,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const selectedGridRows = [22];
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
         const selectRowSpy = jest.spyOn(mockGrid, 'setSelectedRows');
-        jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true);
+        jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true as any);
         jest.spyOn(mockDataView, 'getLength').mockReturnValue(mockData.length);
 
         component.gridOptions = {

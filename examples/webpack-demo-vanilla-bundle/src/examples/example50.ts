@@ -166,7 +166,7 @@ export class Example50 {
       exportOptions: {
         exportWithFormatter: true,
       },
-      registerExternalServices: [new TextExportService()],
+      registerExternalResources: [new TextExportService()],
       enableCellNavigation: true,
       enableCheckboxSelector: true,
       enableFiltering: true,

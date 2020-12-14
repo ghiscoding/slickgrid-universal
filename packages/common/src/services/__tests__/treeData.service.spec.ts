@@ -35,7 +35,7 @@ const gridStub = {
   setSortColumns: jest.fn(),
 } as unknown as SlickGrid;
 
-describe('SortService', () => {
+describe('TreeData Service', () => {
   let service: TreeDataService;
   let slickgridEventHandler: SlickEventHandler;
   const sharedService = new SharedService();

@@ -394,7 +394,7 @@ export class GridMenuExtension implements Extension {
    * @param GridMenuItem args
    */
   private executeGridMenuInternalCustomCommands(_e: Event, args: GridMenuItem) {
-    const registedServices = this.sharedService?.externalRegisteredServices || [];
+    const registeredResources = this.sharedService?.externalRegisteredResources || [];
 
     if (args && args.command) {
       switch (args.command) {
@@ -414,7 +414,7 @@ export class GridMenuExtension implements Extension {
           this.sharedService.dataView.refresh();
           break;
         case 'export-csv':
-          const exportCsvService: TextExportService = registedServices.find((service: any) => service.className === 'TextExportService');
+          const exportCsvService: TextExportService = registeredResources.find((service: any) => service.className === 'TextExportService');
           if (exportCsvService?.exportToFile) {
             exportCsvService.exportToFile({
               delimiter: DelimiterType.comma,
@@ -423,22 +423,22 @@ export class GridMenuExtension implements Extension {
               useUtf8WithBom: true,
             });
           } else {
-            throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalServices: [new TextExportService()] };`);
+            throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalResources: [new TextExportService()] };`);
           }
           break;
         case 'export-excel':
-          const excelService: ExcelExportService = registedServices.find((service: any) => service.className === 'ExcelExportService');
+          const excelService: ExcelExportService = registeredResources.find((service: any) => service.className === 'ExcelExportService');
           if (excelService?.exportToExcel) {
             excelService.exportToExcel({
               filename: 'export',
               format: FileType.xlsx,
             });
           } else {
-            throw new Error(`[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Grid Menu. Example:: this.gridOptions = { enableExcelExport: true, registerExternalServices: [new ExcelExportService()] };`);
+            throw new Error(`[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Grid Menu. Example:: this.gridOptions = { enableExcelExport: true, registerExternalResources: [new ExcelExportService()] };`);
           }
           break;
         case 'export-text-delimited':
-          const exportTxtService: TextExportService = registedServices.find((service: any) => service.className === 'TextExportService');
+          const exportTxtService: TextExportService = registeredResources.find((service: any) => service.className === 'TextExportService');
           if (exportTxtService?.exportToFile) {
             exportTxtService.exportToFile({
               delimiter: DelimiterType.tab,
@@ -447,7 +447,7 @@ export class GridMenuExtension implements Extension {
               useUtf8WithBom: true,
             });
           } else {
-            throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalServices: [new TextExportService()] };`);
+            throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalResources: [new TextExportService()] };`);
           }
           break;
         case 'toggle-filter':

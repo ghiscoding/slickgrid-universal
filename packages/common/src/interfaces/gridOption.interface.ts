@@ -422,8 +422,8 @@ export interface GridOption {
   /** Preselect certain rows by their row index ("enableCheckboxSelector" must be enabled) */
   preselectedRows?: number[];
 
-  /** Register any external Services like the ExcelExportService, TextExportService, ... */
-  registerExternalServices?: any[];
+  /** Register any external Resources (Components, Services) like the ExcelExportService, TextExportService, SlickCompositeEditorComponent, ... */
+  registerExternalResources?: any[];
 
   /** Row Detail View Plugin options & events (columnId, cssClass, toolTip, width) */
   // rowDetailView?: RowDetailView;

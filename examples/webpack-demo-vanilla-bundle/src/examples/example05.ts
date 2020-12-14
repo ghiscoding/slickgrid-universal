@@ -82,7 +82,7 @@ export class Example5 {
         exportWithFormatter: true,
         sanitizeDataExport: true
       },
-      registerExternalServices: [new ExcelExportService()],
+      registerExternalResources: [new ExcelExportService()],
       enableFiltering: true,
       showCustomFooter: true, // display some metrics in the bottom custom footer
       customFooterOptions: {
