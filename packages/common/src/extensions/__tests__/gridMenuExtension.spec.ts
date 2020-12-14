@@ -292,7 +292,7 @@ describe('gridMenuExtension', () => {
           { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
           expect.anything()
         );
-        expect(onCommandSpy).toHaveBeenCalledWith(expect.anything(), { item: { command: 'help' }, column: {}, grid: gridStub, command: 'help' });
+        expect(onCommandSpy).toHaveBeenCalledWith(expect.anything(), { item: { command: 'help' }, column: {} as Column, grid: gridStub, command: 'help' });
         expect(onAfterSpy).not.toHaveBeenCalled();
         expect(onColumnSpy).not.toHaveBeenCalled();
         expect(onBeforeSpy).not.toHaveBeenCalled();
@@ -633,7 +633,7 @@ describe('gridMenuExtension', () => {
 
       it('should call "exportToExcel" and expect an error thrown when ExcelExportService is not registered prior to calling the method', (done) => {
         try {
-          jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([]);
+          jest.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([]);
           const instance = extension.register() as SlickGridMenu;
           instance.onCommand!.notify({ item: { command: 'export-excel' }, column: {} as Column, grid: gridStub, command: 'export-excel' }, new Slick.EventData(), gridStub);
         } catch (e) {
@@ -644,7 +644,7 @@ describe('gridMenuExtension', () => {
 
       it('should call "exportToFile" with CSV and expect an error thrown when TextExportService is not registered prior to calling the method', (done) => {
         try {
-          jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([]);
+          jest.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([]);
           const instance = extension.register() as SlickGridMenu;
           instance.onCommand!.notify({ item: { command: 'export-csv' }, column: {} as Column, grid: gridStub, command: 'export-csv' }, new Slick.EventData(), gridStub);
         } catch (e) {
@@ -666,7 +666,7 @@ describe('gridMenuExtension', () => {
       it('should call "exportToExcel" set when the command triggered is "export-excel"', () => {
         const excelExportSpy = jest.spyOn(excelExportServiceStub, 'exportToExcel');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu as GridMenu, 'onCommand');
-        jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([excelExportServiceStub]);
+        jest.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([excelExportServiceStub]);
 
         const instance = extension.register() as SlickGridMenu;
         instance.onCommand!.notify({ item: { command: 'export-excel' }, column: {} as Column, grid: gridStub, command: 'export-excel' }, new Slick.EventData(), gridStub);
@@ -681,7 +681,7 @@ describe('gridMenuExtension', () => {
       it('should call "exportToFile" with CSV set when the command triggered is "export-csv"', () => {
         const exportSpy = jest.spyOn(exportServiceStub, 'exportToFile');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu as GridMenu, 'onCommand');
-        jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([exportServiceStub]);
+        jest.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([exportServiceStub]);
 
         const instance = extension.register() as SlickGridMenu;
         instance.onCommand!.notify({ item: { command: 'export-csv' }, column: {} as Column, grid: gridStub, command: 'export-csv' }, new Slick.EventData(), gridStub);
@@ -698,7 +698,7 @@ describe('gridMenuExtension', () => {
       it('should call "exportToFile" with Text Delimited set when the command triggered is "export-text-delimited"', () => {
         const exportSpy = jest.spyOn(exportServiceStub, 'exportToFile');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu as GridMenu, 'onCommand');
-        jest.spyOn(SharedService.prototype, 'externalRegisteredServices', 'get').mockReturnValue([exportServiceStub]);
+        jest.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([exportServiceStub]);
 
         const instance = extension.register() as SlickGridMenu;
         instance.onCommand!.notify({ item: { command: 'export-text-delimited' }, column: {} as Column, grid: gridStub, command: 'export-text-delimited' }, new Slick.EventData(), gridStub);

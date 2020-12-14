@@ -12,7 +12,7 @@ export class SharedService {
   private _hideHeaderRowAfterPageLoad = false;
   private _hierarchicalDataset: any[] | undefined;
   private _internalPubSubService: PubSubService;
-  private _externalRegisteredServices: any[];
+  private _externalRegisteredResources: any[];
   private _frozenVisibleColumnId: string | number;
 
   // --
@@ -107,12 +107,12 @@ export class SharedService {
   }
 
   /** Getter to know if user want to hide header row after 1st page load */
-  get externalRegisteredServices(): any[] {
-    return this._externalRegisteredServices;
+  get externalRegisteredResources(): any[] {
+    return this._externalRegisteredResources;
   }
   /** Setter for knowing if user want to hide header row after 1st page load */
-  set externalRegisteredServices(externalRegisteredServices: any[]) {
-    this._externalRegisteredServices = externalRegisteredServices;
+  set externalRegisteredResources(externalRegisteredResources: any[]) {
+    this._externalRegisteredResources = externalRegisteredResources;
   }
 
   /** Getter for the Visible Columns in the grid */

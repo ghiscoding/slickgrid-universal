@@ -242,7 +242,7 @@ export class SlickVanillaGridBundle {
     return this._extensions;
   }
 
-  get registeredServices(): any[] {
+  get registeredResources(): any[] {
     return this._registeredResources;
   }
 
@@ -607,7 +607,7 @@ export class SlickVanillaGridBundle {
 
     // at this point, we consider all the registered services as external services, anything else registered afterward aren't external
     if (Array.isArray(this._registeredResources)) {
-      this.sharedService.externalRegisteredServices = this._registeredResources;
+      this.sharedService.externalRegisteredResources = this._registeredResources;
     }
 
     // push all other Services that we want to be registered

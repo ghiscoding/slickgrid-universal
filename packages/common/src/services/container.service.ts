@@ -4,8 +4,6 @@ export interface ContainerInstance {
 }
 
 export class ContainerService {
-  dependencies: ContainerInstance[] = [];
-
   get<T = any>(_key: string): T | null {
     throw new Error('ContainerService "get" method must be implemented');
   }

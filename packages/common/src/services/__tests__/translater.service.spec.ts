@@ -1,7 +1,7 @@
 import { PubSubService } from '../pubSub.service';
 import { TranslaterService } from '../translater.service';
 
-describe('Export Service', () => {
+describe('Translater Service', () => {
   it('should display a not implemented when calling "addPubSubMessaging" method', () => {
     expect(() => TranslaterService.prototype.addPubSubMessaging!({} as unknown as PubSubService)).toThrow('TranslaterService "addPubSubMessaging" method must be implemented');
   });
