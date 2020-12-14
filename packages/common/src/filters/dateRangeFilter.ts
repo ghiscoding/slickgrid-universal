@@ -238,7 +238,7 @@ export class DateRangeFilter implements Filter {
    * @params searchTerms
    */
   private createDomElement(searchTerms?: SearchTerm[]) {
-    const columnId = this.columnDef && this.columnDef.id;
+    const columnId = this.columnDef?.id ?? '';
     const $headerElm = this.grid.getHeaderRowColumn(columnId);
     $($headerElm).empty();
 

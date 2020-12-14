@@ -56,8 +56,8 @@ export class CheckboxEditor implements Editor {
   }
 
   init(): void {
-    const columnId = this.columnDef && this.columnDef.id;
-    const title = this.columnEditor && this.columnEditor.title || '';
+    const columnId = this.columnDef?.id ?? '';
+    const title = this.columnEditor?.title ?? '';
     const compositeEditorOptions = this.args.compositeEditorOptions;
 
     this._checkboxContainerElm = document.createElement('div');

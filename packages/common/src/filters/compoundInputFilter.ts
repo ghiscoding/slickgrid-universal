@@ -142,7 +142,7 @@ export class CompoundInputFilter implements Filter {
   // ------------------
 
   private buildInputHtmlString() {
-    const columnId = this.columnDef && this.columnDef.id;
+    const columnId = this.columnDef?.id ?? '';
     let placeholder = (this.gridOptions) ? (this.gridOptions.defaultFilterPlaceholder || '') : '';
     if (this.columnFilter && this.columnFilter.placeholder) {
       placeholder = this.columnFilter.placeholder;
@@ -195,7 +195,7 @@ export class CompoundInputFilter implements Filter {
    * Create the DOM element
    */
   private createDomElement(searchTerm?: SearchTerm) {
-    const columnId = this.columnDef && this.columnDef.id;
+    const columnId = this.columnDef?.id ?? '';
     const $headerElm = this.grid.getHeaderRowColumn(columnId);
     $($headerElm).empty();
 

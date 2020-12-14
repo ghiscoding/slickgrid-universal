@@ -64,9 +64,9 @@ export class FloatEditor implements Editor {
 
   init() {
     if (this.columnDef && this.columnEditor && this.args) {
-      const columnId = this.columnDef.id;
-      const placeholder = this.columnEditor.placeholder || '';
-      const title = this.columnEditor.title || '';
+      const columnId = this.columnDef?.id ?? '';
+      const placeholder = this.columnEditor?.placeholder ?? '';
+      const title = this.columnEditor?.title ?? '';
       const inputStep = (this.columnEditor.valueStep !== undefined) ? this.columnEditor.valueStep : this.getInputDecimalSteps();
       const compositeEditorOptions = this.args.compositeEditorOptions;
 

@@ -100,8 +100,8 @@ export class DateEditor implements Editor {
   init(): void {
     if (this.args && this.columnDef) {
       const compositeEditorOptions = this.args.compositeEditorOptions;
-      const columnId = this.columnDef && this.columnDef.id;
-      const placeholder = this.columnEditor && this.columnEditor.placeholder || '';
+      const columnId = this.columnDef?.id ?? '';
+      const placeholder = this.columnEditor?.placeholder ?? '';
       const title = this.columnEditor && this.columnEditor.title || '';
       const gridOptions = (this.args.grid.getOptions() || {}) as GridOption;
       this.defaultDate = (this.args.item) ? this.args.item[this.columnDef.field] : null;

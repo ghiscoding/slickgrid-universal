@@ -62,9 +62,9 @@ export class IntegerEditor implements Editor {
 
   init() {
     if (this.columnDef && this.columnEditor) {
-      const columnId = this.columnDef.id;
-      const placeholder = this.columnEditor.placeholder || '';
-      const title = this.columnEditor.title || '';
+      const columnId = this.columnDef?.id ?? '';
+      const placeholder = this.columnEditor?.placeholder ?? '';
+      const title = this.columnEditor?.title ?? '';
       const inputStep = (this.columnEditor.valueStep !== undefined) ? this.columnEditor.valueStep : '1';
       const compositeEditorOptions = this.args.compositeEditorOptions;
 
