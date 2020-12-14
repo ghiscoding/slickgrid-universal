@@ -40,8 +40,8 @@ export class SlickCompositeEditorComponent {
   private _options: CompositeEditorOpenDetailOption;
   private _lastActiveRowNumber: number;
   private _locales: Locale;
-  private _formValues: any;
-  private _editors: any;
+  private _formValues: { [columnId: string]: any; } | null;
+  private _editors: { [columnId: string]: Editor; };
   private _editorContainers: Array<HTMLElement | null>;
   private _modalBodyTopValidationElm: HTMLDivElement;
   private _modalSaveButtonElm: HTMLButtonElement;
@@ -66,10 +66,10 @@ export class SlickCompositeEditorComponent {
     return this._formValues;
   }
 
-  get editors(): any {
+  get editors(): { [columnId: string]: Editor; } {
     return this._editors;
   }
-  set editors(editors: any) {
+  set editors(editors: { [columnId: string]: Editor; }) {
     this._editors = editors;
   }
 
@@ -100,7 +100,7 @@ export class SlickCompositeEditorComponent {
   dispose() {
     this._eventHandler.unsubscribeAll();
     this._bindEventService.unbindAll();
-    this._formValues = undefined;
+    this._formValues = null;
     this.disposeComponent();
   }
 
@@ -120,7 +120,7 @@ export class SlickCompositeEditorComponent {
    * @param {*} newValue - the new value
    */
   changeFormInputValue(columnId: string, newValue: any) {
-    const editor = this._editors?.[columnId] as Editor;
+    const editor = this._editors?.[columnId];
     let outputValue = newValue;
 
     if (!editor) {
@@ -146,7 +146,7 @@ export class SlickCompositeEditorComponent {
    * @param {*} newValue - the new value
    */
   changeFormEditorOption(columnId: string, optionName: string, newOptionValue: any) {
-    const editor = this._editors?.[columnId] as Editor;
+    const editor = this._editors?.[columnId];
 
     // change an Editor option (not all Editors have that method, so make sure it exists before trying to call it)
     if (editor?.changeEditorOption) {
@@ -162,7 +162,7 @@ export class SlickCompositeEditorComponent {
    * @param isDisabled
    */
   disableFormInput(columnId: string, isDisabled = true) {
-    const editor = this._editors?.[columnId] as Editor;
+    const editor = this._editors?.[columnId];
     if (editor?.disable && Array.isArray(this._editorContainers)) {
       editor.disable(isDisabled);
     }
