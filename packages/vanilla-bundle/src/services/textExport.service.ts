@@ -1,4 +1,4 @@
-import { SharedService, SlickGrid, TextExportOption } from '@slickgrid-universal/common';
+import { ContainerService, SlickGrid, TextExportOption } from '@slickgrid-universal/common';
 import { TextExportService as UniversalExportService } from '@slickgrid-universal/text-export';
 
 export class TextExportService extends UniversalExportService {
@@ -6,8 +6,8 @@ export class TextExportService extends UniversalExportService {
     super();
   }
 
-  init(grid: SlickGrid, sharedService: SharedService): void {
-    super.init(grid, sharedService);
+  init(grid: SlickGrid, containerService: ContainerService): void {
+    super.init(grid, containerService);
   }
 
   exportToFile(options: TextExportOption): Promise<boolean> {

@@ -25,7 +25,6 @@ import {
   SlickNamespace,
   SlickDataView,
   TranslaterService,
-  SharedService,
 } from '@slickgrid-universal/common';
 
 // using external non-typed js libraries
@@ -82,11 +81,15 @@ export class SlickCompositeEditorComponent {
     this._bindEventService = new BindingEventService();
   }
 
-  init(grid: SlickGrid, _sharedService: SharedService, containerService: ContainerService) {
+  init(grid: SlickGrid, containerService: ContainerService) {
     this.grid = grid;
     this.gridService = containerService.get<GridService>('GridService');
     this.gridStateService = containerService.get<GridStateService>('GridStateService');
     this.translaterService = containerService.get<TranslaterService>('TranslaterService');
+
+    if (!this.gridService || !this.gridStateService) {
+      throw new Error('[Slickgrid-Universal] it seems that the GridService and/or GridStateService are not being loaded properly, make sure the Container Service is properly implemented.');
+    }
 
     if (this.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');

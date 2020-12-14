@@ -363,6 +363,7 @@ export class SlickVanillaGridBundle {
     const eventHandler = new Slick.EventHandler();
 
     // register all service instances in the container
+    this.universalContainerService.registerInstance('PubSubService', this._eventPubSubService); // external resources require this one registration (ExcelExport, TextExport)
     this.universalContainerService.registerInstance('EventPubSubService', this._eventPubSubService);
     this.universalContainerService.registerInstance('ExtensionUtility', this.extensionUtility);
     this.universalContainerService.registerInstance('FilterService', this.filterService);
@@ -473,7 +474,6 @@ export class SlickVanillaGridBundle {
     this.backendServiceApi = this._gridOptions?.backendServiceApi;
     this._isLocalGrid = !this.backendServiceApi; // considered a local grid if it doesn't have a backend service set
     this._eventPubSubService.eventNamingStyle = this._gridOptions?.eventNamingStyle ?? EventNamingStyle.camelCase;
-    this.sharedService.internalPubSubService = this._eventPubSubService;
     this._paginationOptions = this.gridOptions?.pagination;
 
     this.createBackendApiInternalPostProcessCallback(this._gridOptions);
@@ -645,7 +645,7 @@ export class SlickVanillaGridBundle {
     if (Array.isArray(this._registeredResources)) {
       for (const service of this._registeredResources) {
         if (typeof service.init === 'function') {
-          service.init(this.slickGrid, this.sharedService, this.universalContainerService);
+          service.init(this.slickGrid, this.universalContainerService);
           if (service instanceof SlickCompositeEditorComponent) {
             this.slickCompositeEditor = service;
           }

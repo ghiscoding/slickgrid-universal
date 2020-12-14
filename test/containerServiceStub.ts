@@ -16,9 +16,11 @@ export class ContainerServiceStub implements ContainerService {
   }
 
   registerInstance(key: string, instance: any) {
-    const dependency = this.dependencies.find(dep => dep.key === key);
-    if (!dependency) {
+    const dependencyIndex = this.dependencies.findIndex(dep => dep.key === key);
+    if (dependencyIndex === -1) {
       this.dependencies.push({ key, instance });
+    } else {
+      this.dependencies[dependencyIndex].instance = instance;
     }
   }
 }

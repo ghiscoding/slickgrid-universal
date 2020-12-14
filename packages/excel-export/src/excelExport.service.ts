@@ -15,6 +15,7 @@ import {
   // interfaces
   Column,
   Constants,
+  ContainerService,
   ExcelExportService as BaseExcelExportService,
   FileType,
   FieldType,
@@ -22,7 +23,6 @@ import {
   KeyTitlePair,
   Locale,
   PubSubService,
-  SharedService,
   SlickDataView,
   SlickGrid,
   TranslaterService,
@@ -48,7 +48,7 @@ export class ExcelExportService implements BaseExcelExportService {
   private _sheet: ExcelWorksheet;
   private _stylesheet: ExcelStylesheet;
   private _stylesheetFormats: any;
-  private _pubSubService: PubSubService;
+  private _pubSubService: PubSubService | null;
   private _translaterService: TranslaterService | undefined;
   private _workbook: ExcelWorkbook;
 
@@ -74,11 +74,11 @@ export class ExcelExportService implements BaseExcelExportService {
   /**
    * Initialize the Export Service
    * @param grid
-   * @param sharedService
+   * @param containerService
    */
-  init(grid: SlickGrid, sharedService: SharedService): void {
+  init(grid: SlickGrid, containerService: ContainerService): void {
     this._grid = grid;
-    this._pubSubService = sharedService.internalPubSubService;
+    this._pubSubService = containerService.get<PubSubService>('PubSubService');
 
     // get locales provided by user in main file or else use default English locales via the Constants
     this._locales = this._gridOptions?.locales ?? Constants.locales;
@@ -99,12 +99,12 @@ export class ExcelExportService implements BaseExcelExportService {
    * Example: exportToExcel({ format: FileType.csv, delimiter: DelimiterType.comma })
    */
   exportToExcel(options: ExcelExportOption): Promise<boolean> {
-    if (!this._grid || !this._dataView) {
-      throw new Error('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects are not initialized did you forget to enable the grid option flag "enableExcelExport"?');
+    if (!this._grid || !this._dataView || !this._pubSubService) {
+      throw new Error('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects and/or PubSubService are not initialized did you forget to enable the grid option flag "enableExcelExport"?');
     }
 
     return new Promise(resolve => {
-      this._pubSubService.publish(`onBeforeExportToExcel`, true);
+      this._pubSubService?.publish(`onBeforeExportToExcel`, true);
       this._excelExportOptions = deepCopy({ ...this._gridOptions.excelExportOptions, ...options });
       this._fileFormat = this._excelExportOptions.format || FileType.xlsx;
 
@@ -160,7 +160,7 @@ export class ExcelExportService implements BaseExcelExportService {
 
         // start downloading but add the Blob property only on the start download not on the event itself
         this.startDownloadFile({ ...downloadOptions, blob: excelBlob, data: this._sheet.data });
-        this._pubSubService.publish(`onAfterExportToExcel`, downloadOptions);
+        this._pubSubService?.publish(`onAfterExportToExcel`, downloadOptions);
         resolve(true);
       });
     });

@@ -1,4 +1,5 @@
 import { GridOption, SharedService, SlickGrid, SlickDataView, PubSubService } from '@slickgrid-universal/common';
+import { ContainerServiceStub } from '../../../../../test/containerServiceStub';
 import { TextExportService } from '../textExport.service';
 
 const mockGridOptions = { enableTranslate: false } as GridOption;
@@ -30,18 +31,18 @@ const pubSubServiceStub = {
 
 describe('TextExport Service', () => {
   let service: TextExportService;
-  let sharedService: SharedService;
+  let container: ContainerServiceStub;
 
   beforeEach(() => {
-    sharedService = new SharedService();
-    sharedService.internalPubSubService = pubSubServiceStub;
+    container = new ContainerServiceStub();
+    container.registerInstance('PubSubService', pubSubServiceStub);
     service = new TextExportService();
   });
 
   it('should initialize the service', () => {
     const spy = jest.spyOn(service, 'exportToFile');
 
-    service.init(gridStub, sharedService);
+    service.init(gridStub, container);
     service.exportToFile({ exportWithFormatter: true, sanitizeDataExport: true });
 
     expect(service).toBeTruthy();
