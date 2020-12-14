@@ -66,7 +66,7 @@ export class Example6 {
         exportWithFormatter: true,
         sanitizeDataExport: true
       },
-      registerExternalServices: [new ExcelExportService()],
+      registerExternalResources: [new ExcelExportService()],
       enableFiltering: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       multiColumnSort: false,

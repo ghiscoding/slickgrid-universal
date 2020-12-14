@@ -21,7 +21,7 @@ No external dependency
 Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation), you can see a demo by looking at the [GitHub Demo](https://ghiscoding.github.io/slickgrid-universal/#/example09) page.
 
 ### Usage
-In order to use the Service, you will need to register it in your grid options via the `registerExternalServices` as shown below.
+Simply use pass the Service into the `backendServiceApi` Grid Option.
 
 ##### ViewModel
 ```ts

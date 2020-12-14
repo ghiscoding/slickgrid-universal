@@ -347,7 +347,7 @@ export class Example4 {
         exportWithFormatter: true,
         sanitizeDataExport: true
       },
-      registerExternalServices: [new ExcelExportService()],
+      registerExternalResources: [new ExcelExportService()],
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false

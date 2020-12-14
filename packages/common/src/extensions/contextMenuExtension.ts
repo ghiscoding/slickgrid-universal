@@ -243,7 +243,7 @@ export class ContextMenuExtension implements Extension {
                   useUtf8WithBom: true,
                 });
               } else {
-                throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalServices: [new TextExportService()] };`);
+                throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalResources: [new TextExportService()] };`);
               }
             },
           }
@@ -271,7 +271,7 @@ export class ContextMenuExtension implements Extension {
                   format: FileType.xlsx,
                 });
               } else {
-                throw new Error(`[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Context Menu. Example:: this.gridOptions = { enableExcelExport: true, registerExternalServices: [new ExcelExportService()] };`);
+                throw new Error(`[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Context Menu. Example:: this.gridOptions = { enableExcelExport: true, registerExternalResources: [new ExcelExportService()] };`);
               }
             },
           }
@@ -301,7 +301,7 @@ export class ContextMenuExtension implements Extension {
                   useUtf8WithBom: true,
                 });
               } else {
-                throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalServices: [new TextExportService()] };`);
+                throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalResources: [new TextExportService()] };`);
               }
             },
           }

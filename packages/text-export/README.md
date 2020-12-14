@@ -25,7 +25,7 @@ This package requires [text-encoding-utf-8](https://www.npmjs.com/package/text-e
 Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation), you can see a demo by looking at the [GitHub Demo](https://ghiscoding.github.io/slickgrid-universal) page and click on "Export to CSV" from the Grid Menu (aka hamburger menu).
 
 ### Usage
-In order to use the Service, you will need to register it in your grid options via the `registerExternalServices` as shown below.
+In order to use the Service, you will need to register it in your grid options via the `registerExternalResources` as shown below.
 
 ##### ViewModel
 ```ts
@@ -38,7 +38,7 @@ export class MyExample {
       exportOptions: {
         sanitizeDataExport: true
       },
-      registerExternalServices: [new TextExportService()],
+      registerExternalResources: [new TextExportService()],
     }
   }
 }
@@ -57,7 +57,7 @@ export class MyExample {
       exportOptions: {
         sanitizeDataExport: true
       },
-      registerExternalServices: [this.exportService],
+      registerExternalResources: [this.exportService],
     }
   }
 
