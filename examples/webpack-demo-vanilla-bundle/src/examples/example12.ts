@@ -592,7 +592,7 @@ export class Example12 {
 
   removeUnsavedStylingFromCell(_item: any, column: Column, row: number) {
     // remove unsaved css class from that cell
-    this.sgb.slickGrid.removeCellCssStyles(`unsaved_highlight_${[column.field]}${row}`);
+    this.sgb.slickGrid.removeCellCssStyles(`unsaved_highlight_${[column.id]}${row}`);
   }
 
   removeAllUnsavedStylingFromCell() {
