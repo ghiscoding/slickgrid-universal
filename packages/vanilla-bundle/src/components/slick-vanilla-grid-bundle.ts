@@ -80,6 +80,7 @@ import { SalesforceGlobalGridOptions } from '../salesforce-global-grid-options';
 import { SlickFooterComponent } from './slick-footer.component';
 import { SlickPaginationComponent } from './slick-pagination.component';
 import { SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
+import { UniversalContainerService } from '../services/universalContainer.service';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -98,7 +99,7 @@ export class SlickVanillaGridBundle {
   private _eventHandler: SlickEventHandler;
   private _extensions: ExtensionList<any, any> | undefined;
   private _paginationOptions: Pagination | undefined;
-  private _registeredServices: any[] = [];
+  private _registeredResources: any[] = [];
   private _slickgridInitialized = false;
   private _slickerGridInstances: SlickerGridInstance | undefined;
   backendServiceApi: BackendServiceApi | undefined;
@@ -132,6 +133,7 @@ export class SlickVanillaGridBundle {
   sortService: SortService;
   translaterService: TranslaterService | undefined;
   treeDataService: TreeDataService;
+  universalContainerService: UniversalContainerService;
 
   slickCompositeEditor: SlickCompositeEditorComponent | undefined;
   slickEmptyWarning: SlickEmptyWarningComponent | undefined;
@@ -241,7 +243,7 @@ export class SlickVanillaGridBundle {
   }
 
   get registeredServices(): any[] {
-    return this._registeredServices;
+    return this._registeredResources;
   }
 
   /**
@@ -274,7 +276,8 @@ export class SlickVanillaGridBundle {
       sharedService?: SharedService,
       sortService?: SortService,
       treeDataService?: TreeDataService,
-      translaterService?: TranslaterService
+      translaterService?: TranslaterService,
+      universalContainerService?: UniversalContainerService,
     }
   ) {
     // make sure that the grid container doesn't already have the "slickgrid-container" css class
@@ -292,6 +295,8 @@ export class SlickVanillaGridBundle {
     this._columnDefinitions = columnDefs || [];
     this._gridOptions = this.mergeGridOptions(options || {});
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions?.enableDeepCopyDatasetOnPageLoad);
+
+    this.universalContainerService = services?.universalContainerService ?? new UniversalContainerService();
 
     // if user is providing a Translate Service, it has to be passed under the "translater" grid option
     this.translaterService = services?.translaterService ?? this._gridOptions.translater;
@@ -356,6 +361,24 @@ export class SlickVanillaGridBundle {
       this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
     }
     const eventHandler = new Slick.EventHandler();
+
+    // register all service instances in the container
+    this.universalContainerService.registerInstance('EventPubSubService', this._eventPubSubService);
+    this.universalContainerService.registerInstance('ExtensionUtility', this.extensionUtility);
+    this.universalContainerService.registerInstance('FilterService', this.filterService);
+    this.universalContainerService.registerInstance('CollectionService', this.collectionService);
+    this.universalContainerService.registerInstance('ExtensionService', this.extensionService);
+    this.universalContainerService.registerInstance('GridEventService', this.gridEventService);
+    this.universalContainerService.registerInstance('GridService', this.gridService);
+    this.universalContainerService.registerInstance('GridStateService', this.gridStateService);
+    this.universalContainerService.registerInstance('GroupingAndColspanService', this.groupingService);
+    this.universalContainerService.registerInstance('PaginationService', this.paginationService);
+    this.universalContainerService.registerInstance('ResizerService', this.resizerService);
+    this.universalContainerService.registerInstance('SharedService', this.sharedService);
+    this.universalContainerService.registerInstance('SortService', this.sortService);
+    this.universalContainerService.registerInstance('TranslaterService', this.translaterService);
+    this.universalContainerService.registerInstance('TreeDataService', this.treeDataService);
+
     this.initialization(this._gridContainerElm, eventHandler);
     if (!hierarchicalDataset && !this.gridOptions.backendServiceApi) {
       this.dataset = dataset || [];
@@ -386,6 +409,17 @@ export class SlickVanillaGridBundle {
     this.resizerService?.dispose();
     this.sortService?.dispose();
     this.treeDataService?.dispose();
+
+    // dispose all registered external resources
+    if (Array.isArray(this._registeredResources)) {
+      while (this._registeredResources.length > 0) {
+        const resource = this._registeredResources.pop();
+        if (resource?.dispose) {
+          resource.dispose();
+        }
+      }
+      this._registeredResources = [];
+    }
 
     // dispose the Components
     this.slickEmptyWarning?.dispose();
@@ -563,30 +597,30 @@ export class SlickVanillaGridBundle {
     this.gridEventService.bindOnClick(this.slickGrid);
 
     // get any possible Services that user want to register
-    this._registeredServices = this.gridOptions.registerExternalServices || [];
+    this._registeredResources = this.gridOptions.registerExternalResources || [];
 
     // when using Salesforce, we want the Export to CSV always enabled without registering it
     if (this.gridOptions.enableTextExport && this.gridOptions.useSalesforceDefaultGridOptions) {
       const textExportService = new TextExportService();
-      this._registeredServices.push(textExportService);
+      this._registeredResources.push(textExportService);
     }
 
     // at this point, we consider all the registered services as external services, anything else registered afterward aren't external
-    if (Array.isArray(this._registeredServices)) {
-      this.sharedService.externalRegisteredServices = this._registeredServices;
+    if (Array.isArray(this._registeredResources)) {
+      this.sharedService.externalRegisteredServices = this._registeredResources;
     }
 
     // push all other Services that we want to be registered
-    this._registeredServices.push(this.gridService, this.gridStateService);
+    this._registeredResources.push(this.gridService, this.gridStateService);
 
     // when using Grouping/DraggableGrouping/Colspan register its Service
     if (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping) {
-      this._registeredServices.push(this.groupingService);
+      this._registeredResources.push(this.groupingService);
     }
 
     // when using Tree Data View, register its Service
     if (this.gridOptions.enableTreeData) {
-      this._registeredServices.push(this.treeDataService);
+      this._registeredResources.push(this.treeDataService);
     }
 
     // when user enables translation, we need to translate Headers on first pass & subsequently in the bindDifferentHooks
@@ -595,8 +629,9 @@ export class SlickVanillaGridBundle {
     }
 
     // also initialize (render) the pagination component
-    if (this._gridOptions.enableCompositeEditor) {
-      this.slickCompositeEditor = new SlickCompositeEditorComponent(this.slickGrid, this.gridService, this.gridStateService, this.translaterService);
+    if (this.gridOptions.enableCompositeEditor && this.gridOptions.useSalesforceDefaultGridOptions) {
+      this.slickCompositeEditor = new SlickCompositeEditorComponent();
+      this._registeredResources.push(this.slickCompositeEditor);
     }
 
     // bind the Backend Service API callback functions only after the grid is initialized
@@ -605,12 +640,15 @@ export class SlickVanillaGridBundle {
       this.bindBackendCallbackFunctions(this.gridOptions);
     }
 
-    // bind & initialize all Services that were tagged as enable
+    // bind & initialize all Components/Services that were tagged as enabled
     // register all services by executing their init method and providing them with the Grid object
-    if (Array.isArray(this._registeredServices)) {
-      for (const service of this._registeredServices) {
+    if (Array.isArray(this._registeredResources)) {
+      for (const service of this._registeredResources) {
         if (typeof service.init === 'function') {
-          service.init(this.slickGrid, this.sharedService);
+          service.init(this.slickGrid, this.sharedService, this.universalContainerService);
+          if (service instanceof SlickCompositeEditorComponent) {
+            this.slickCompositeEditor = service;
+          }
         }
       }
     }

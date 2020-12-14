@@ -9,7 +9,6 @@ export * from './constants';
 export * from './global-grid-options';
 export * from './enums/index';
 export * from './interfaces/index';
-export * from './services/index';
 export * from './aggregators/index';
 export * from './aggregators/aggregators.index';
 export * from './editors/index';

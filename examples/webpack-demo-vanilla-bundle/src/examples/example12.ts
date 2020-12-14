@@ -18,7 +18,8 @@ import {
   formatNumber,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker, SlickCompositeEditorComponent, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
@@ -94,6 +95,7 @@ export class Example12 {
   }
 
   constructor() {
+    this.compositeEditorInstance = new SlickCompositeEditorComponent();
     this._bindingEventService = new BindingEventService();
   }
 
@@ -363,7 +365,7 @@ export class Example12 {
       excelExportOptions: {
         exportWithFormatter: false
       },
-      registerExternalServices: [new ExcelExportService()],
+      registerExternalResources: [new ExcelExportService(), this.compositeEditorInstance],
       enableFiltering: true,
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
@@ -885,7 +887,7 @@ export class Example12 {
     }
 
     setTimeout(() => {
-      this.compositeEditorInstance = this.sgb.slickCompositeEditor?.openDetails({
+      this.compositeEditorInstance?.openDetails({
         headerTitle: modalTitle,
         modalType,
         // showCloseButtonOutside: true,
