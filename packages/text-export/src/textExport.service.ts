@@ -12,13 +12,13 @@ import {
   // interfaces
   Column,
   Constants,
+  ContainerService,
   TextExportService as BaseTextExportService,
   FileType,
   GridOption,
   KeyTitlePair,
   Locale,
   PubSubService,
-  SharedService,
   SlickDataView,
   SlickGrid,
   TextExportOption,
@@ -36,7 +36,7 @@ export class TextExportService implements BaseTextExportService {
   private _columnHeaders: Array<KeyTitlePair>;
   private _hasGroupedItems = false;
   private _locales: Locale;
-  private _pubSubService: PubSubService;
+  private _pubSubService: PubSubService | null;
   private _translaterService: TranslaterService | undefined;
 
   /** ExcelExportService class name which is use to find service instance in the external registered services */
@@ -61,11 +61,11 @@ export class TextExportService implements BaseTextExportService {
   /**
    * Initialize the Service
    * @param grid
-   * @param sharedService
+   * @param containerService
    */
-  init(grid: SlickGrid, sharedService: SharedService): void {
+  init(grid: SlickGrid, containerService: ContainerService): void {
     this._grid = grid;
-    this._pubSubService = sharedService.internalPubSubService;
+    this._pubSubService = containerService.get<PubSubService>('PubSubService');
 
     // get locales provided by user in main file or else use default English locales via the Constants
     this._locales = this._gridOptions && this._gridOptions.locales || Constants.locales;
@@ -86,12 +86,12 @@ export class TextExportService implements BaseTextExportService {
    * Example: exportToFile({ format: FileType.csv, delimiter: DelimiterType.comma })
    */
   exportToFile(options: TextExportOption): Promise<boolean> {
-    if (!this._grid || !this._dataView) {
-      throw new Error('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects are not initialized did you forget to enable the grid option flag "enableTextExport"?');
+    if (!this._grid || !this._dataView || !this._pubSubService) {
+      throw new Error('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects and/or PubSubService are not initialized did you forget to enable the grid option flag "enableTextExport"?');
     }
 
     return new Promise(resolve => {
-      this._pubSubService.publish(`onBeforeExportToTextFile`, true);
+      this._pubSubService?.publish(`onBeforeExportToTextFile`, true);
       this._exportOptions = deepCopy({ ...this._gridOptions.exportOptions, ...this._gridOptions.textExportOptions, ...options });
       this._delimiter = this._exportOptions.delimiterOverride || this._exportOptions.delimiter || '';
       this._fileFormat = this._exportOptions.format || FileType.csv;
@@ -111,7 +111,7 @@ export class TextExportService implements BaseTextExportService {
 
         // start downloading but add the content property only on the start download not on the event itself
         this.startDownloadFile({ ...downloadOptions, content: dataOutput }); // add content property
-        this._pubSubService.publish(`onAfterExportToTextFile`, downloadOptions);
+        this._pubSubService?.publish(`onAfterExportToTextFile`, downloadOptions);
         resolve(true);
       }, 0);
     });

@@ -16,6 +16,7 @@ import {
   SortDirectionNumber,
   TextExportOption,
 } from '@slickgrid-universal/common';
+import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
 
 function removeMultipleSpaces(textS) {
@@ -66,8 +67,8 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 describe('ExportService', () => {
+  let container: ContainerServiceStub;
   let service: TextExportService;
-  let sharedService: SharedService;
   let translateService: TranslateServiceStub;
   let mockColumns: Column[];
   let mockExportCsvOptions: TextExportOption;
@@ -77,10 +78,10 @@ describe('ExportService', () => {
 
   describe('with Translater Service', () => {
     beforeEach(() => {
-      sharedService = new SharedService();
       translateService = new TranslateServiceStub();
+      container = new ContainerServiceStub();
+      container.registerInstance('PubSubService', pubSubServiceStub);
       mockGridOptions.translater = translateService;
-      sharedService.internalPubSubService = pubSubServiceStub;
 
       (navigator as any).__defineGetter__('appName', () => 'Netscape');
       navigator.msSaveOrOpenBlob = undefined as any;
@@ -120,7 +121,7 @@ describe('ExportService', () => {
       const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
       const contentExpectation = '';
 
-      service.init(gridStub, sharedService);
+      service.init(gridStub, container);
       service.exportToFile(mockExportCsvOptions);
 
       setTimeout(() => {
@@ -147,10 +148,10 @@ describe('ExportService', () => {
 
       it('should throw an error when trying call exportToFile" without a grid and/or dataview object initialized', (done) => {
         try {
-          service.init(null as any, sharedService);
+          service.init(null as any, container);
           service.exportToFile(mockExportTxtOptions);
         } catch (e) {
-          expect(e.toString()).toContain('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects are not initialized did you forget to enable the grid option flag "enableTextExport"?');
+          expect(e.toString()).toContain('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects and/or PubSubService are not initialized did you forget to enable the grid option flag "enableTextExport"?');
           done();
         }
       });
@@ -158,7 +159,7 @@ describe('ExportService', () => {
       it('should trigger an event before exporting the file', () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportTxtOptions);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeExportToTextFile`, true);
@@ -167,7 +168,7 @@ describe('ExportService', () => {
       it('should trigger an event after exporting the file', (done) => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportTxtOptions);
 
         setTimeout(() => {
@@ -181,7 +182,7 @@ describe('ExportService', () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportCsvOptions);
 
         setTimeout(() => {
@@ -196,7 +197,7 @@ describe('ExportService', () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyMsSave = jest.spyOn(navigator, 'msSaveOrOpenBlob');
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportCsvOptions);
 
         setTimeout(() => {
@@ -210,7 +211,7 @@ describe('ExportService', () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportTxtOptions);
 
         setTimeout(() => {
@@ -225,7 +226,7 @@ describe('ExportService', () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyMsSave = jest.spyOn(navigator, 'msSaveOrOpenBlob');
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportTxtOptions);
 
         setTimeout(() => {
@@ -256,7 +257,7 @@ describe('ExportService', () => {
           `"User Id","FirstName","LastName","Position","Order"
           ="1E06","John","Z","SALES_REP","<b>10</b>"`;
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportCsvOptions);
 
         setTimeout(() => {
@@ -281,7 +282,7 @@ describe('ExportService', () => {
           `"User Id";;"FirstName";;"LastName";;"Position";;"Order"
               ="1E06";;"John";;"Z";;"SALES_REP";;"<b>10</b>"`;
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportCsvOptions);
 
         setTimeout(() => {
@@ -306,7 +307,7 @@ describe('ExportService', () => {
           `"User Id","FirstName","LastName","Position","Order"
           ="1E06","John","Z","SALES_REP","<b>10</b>"`;
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportCsvOptions);
 
         setTimeout(() => {
@@ -330,7 +331,7 @@ describe('ExportService', () => {
           `"User Id","FirstName","LastName","Position","Order"
           ="2B02","Jane","DOE","FINANCE_MANAGER","<b>1</b>"`;
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportCsvOptions);
 
         setTimeout(() => {
@@ -354,7 +355,7 @@ describe('ExportService', () => {
           `"User Id","FirstName","LastName","Position","Order"
           ="3C2","Ava Luna","","HUMAN_RESOURCES","<b>3</b>"`;
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportCsvOptions);
 
         setTimeout(() => {
@@ -378,7 +379,7 @@ describe('ExportService', () => {
           `"User Id","FirstName","LastName","Position","Order"
           ="","Ava","LUNA","HUMAN_RESOURCES","<b>3</b>"`;
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportCsvOptions);
 
         setTimeout(() => {
@@ -402,7 +403,7 @@ describe('ExportService', () => {
           `"User Id","FirstName","LastName","Position","Order"
           ="3C2","Ava","LUNA","HUMAN_RESOURCES",""`;
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportCsvOptions);
 
         setTimeout(() => {
@@ -426,7 +427,7 @@ describe('ExportService', () => {
           `"User Id","FirstName","LastName","Position","Order"
           ="","","CASH","SALES_REP","<b>3</b>"`;
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportCsvOptions);
 
         setTimeout(() => {
@@ -451,7 +452,7 @@ describe('ExportService', () => {
           `"User Id","FirstName","LastName","Position","Order"
           ="2B02","Jane","DOE","FINANCE_MANAGER","1"`;
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportCsvOptions);
 
         setTimeout(() => {
@@ -477,7 +478,7 @@ describe('ExportService', () => {
           `"User Id","FirstName","LastName","Position","Order"
           ="2B02","Jane","DOE","FINANCE_MANAGER","<b>1</b>"`;
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportCsvOptions);
 
         setTimeout(() => {
@@ -516,7 +517,7 @@ describe('ExportService', () => {
           `"First Name","Last Name","Position"
               "John","Z","SALES_REP"`;
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportCsvOptions);
 
         setTimeout(() => {
@@ -565,7 +566,7 @@ describe('ExportService', () => {
           `"User Id","First Name","Last Name","Position","Order"
           ="1E06","John","Z","Sales Rep.","<b>10</b>"`;
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportCsvOptions);
 
         setTimeout(() => {
@@ -653,7 +654,7 @@ describe('ExportService', () => {
              "",="2B02","Jane","DOE","FINANCE_MANAGER","10"
              "","","","","","20"`;
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportCsvOptions);
 
         setTimeout(() => {
@@ -677,7 +678,7 @@ describe('ExportService', () => {
              ;=2B02;Jane;DOE;FINANCE_MANAGER;10
              ;;;;;20`;
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportTxtOptions);
 
         setTimeout(() => {
@@ -765,7 +766,7 @@ describe('ExportService', () => {
              "",="2B02","Jane","DOE","Finance Manager","10"
              "","","","","","20"`;
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportCsvOptions);
 
         setTimeout(() => {
@@ -789,7 +790,7 @@ describe('ExportService', () => {
              ;=2B02;Jane;DOE;Finance Manager;10
              ;;;;;20`;
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportTxtOptions);
 
         setTimeout(() => {
@@ -901,7 +902,7 @@ describe('ExportService', () => {
              "","","","","","20"
              "","","","","","10"`;
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportCsvOptions);
 
         setTimeout(() => {
@@ -928,7 +929,7 @@ describe('ExportService', () => {
              ;;;;;20
              ;;;;;10`;
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportTxtOptions);
 
         setTimeout(() => {
@@ -974,7 +975,7 @@ describe('ExportService', () => {
           "FirstName","LastName","User Id","Position","Order"
           "John","Z",="1E06","SALES_REP","<b>10</b>"`;
 
-        service.init(gridStub, sharedService);
+        service.init(gridStub, container);
         service.exportToFile(mockExportCsvOptions);
 
         setTimeout(() => {
@@ -1022,7 +1023,7 @@ describe('ExportService', () => {
             "First Name","Last Name","User Id","Position","Order"
             "John","Z",="1E06","Sales Rep.","<b>10</b>"`;
 
-          service.init(gridStub, sharedService);
+          service.init(gridStub, container);
           service.exportToFile(mockExportCsvOptions);
 
           setTimeout(() => {
@@ -1046,7 +1047,7 @@ describe('ExportService', () => {
       const gridOptionsMock = { enableTranslate: true, enableGridMenu: true, translater: undefined as any, gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitleKey: 'TITLE' } } as GridOption;
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
-      expect(() => service.init(gridStub, sharedService)).toThrowError('[Slickgrid-Universal] requires a Translate Service to be passed in the "translater" Grid Options when "enableTranslate" is enabled.');
+      expect(() => service.init(gridStub, container)).toThrowError('[Slickgrid-Universal] requires a Translate Service to be passed in the "translater" Grid Options when "enableTranslate" is enabled.');
     });
   });
 });

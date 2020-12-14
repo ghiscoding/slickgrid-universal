@@ -268,11 +268,6 @@ describe('Shared Service', () => {
     expect(service.hideHeaderRowAfterPageLoad).toEqual(true);
   });
 
-  it('should call "internalPubSubService" GETTER and SETTER expect same value to be returned', () => {
-    service.internalPubSubService = pubSubServiceStub;
-    expect(service.internalPubSubService).toEqual(pubSubServiceStub);
-  });
-
   it('should call "externalRegisteredResources" GETTER and return all columns', () => {
     // @ts-ignore:2511
     const mockRegisteredResources = [new ExcelExportService()];

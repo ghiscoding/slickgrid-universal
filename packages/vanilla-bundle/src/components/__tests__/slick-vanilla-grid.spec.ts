@@ -845,7 +845,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
 
         // @ts-ignore
-        expect(spy).toHaveBeenCalledWith(mockGrid, sharedService, container);
+        expect(spy).toHaveBeenCalledWith(mockGrid, container);
       });
 
       it('should not initialize groupingAndColspanService when "createPreHeaderPanel" grid option is enabled and "enableDraggableGrouping" is also enabled', () => {
