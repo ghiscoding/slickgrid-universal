@@ -1265,6 +1265,10 @@ export class SlickVanillaGridBundle {
   private swapInternalEditorToSlickGridFactoryEditor(columnDefinitions: Column[]) {
     const columns = Array.isArray(columnDefinitions) ? columnDefinitions : [];
 
+    if (columns.some(col => `${col.id}`.includes('.'))) {
+      console.error('[Slickgrid-Universal] Make sure that none of your Column Definition "id" property includes a dot in its name because that will cause some problems with the Editors. For example if your column definition "field" property is "user.firstName" then use "firstName" as the column "id".');
+    }
+
     return columns.map((column: Column) => {
       // on every Editor that have a "collectionAsync", resolve the data and assign it to the "collection" property
       if (column.editor?.collectionAsync) {

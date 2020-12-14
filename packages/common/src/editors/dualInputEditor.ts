@@ -160,7 +160,7 @@ export class DualInputEditor implements Editor {
 
   createInput(position: 'leftInput' | 'rightInput'): HTMLInputElement {
     const editorSideParams = this.editorParams[position];
-    const columnId = this.columnDef && this.columnDef.id;
+    const columnId = this.columnDef?.id ?? '';
     const idPropName = this.gridOptions.datasetIdPropertyName || 'id';
     const itemId = this.args?.item[idPropName] || 0;
 

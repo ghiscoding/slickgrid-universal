@@ -562,6 +562,15 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     });
 
     describe('with editors', () => {
+      it('should display a console error when any of the column definition ids include a dot notation', () => {
+        const consoleSpy = jest.spyOn(global.console, 'error').mockReturnValue();
+        const mockColDefs = [{ id: 'user.gender', field: 'user.gender', editor: { model: Editors.text, collection: ['male', 'female'] } }] as Column[];
+
+        component.columnDefinitions = mockColDefs;
+
+        expect(consoleSpy).toHaveBeenCalledWith('[Slickgrid-Universal] Make sure that none of your Column Definition "id" property includes a dot in its name because that will cause some problems with the Editors. For example if your column definition "field" property is "user.firstName" then use "firstName" as the column "id".');
+      });
+
       it('should be able to load async editors with a regular Promise', (done) => {
         const mockCollection = ['male', 'female'];
         const promise = new Promise(resolve => resolve(mockCollection));
@@ -569,7 +578,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const getColSpy = jest.spyOn(mockGrid, 'getColumns').mockReturnValue(mockColDefs);
 
         component.columnDefinitions = mockColDefs;
-        // component.initialization(divContainer, slickEventHandler);
 
         setTimeout(() => {
           expect(getColSpy).toHaveBeenCalled();

@@ -61,9 +61,9 @@ export class TextEditor implements Editor {
   }
 
   init() {
-    const columnId = this.columnDef && this.columnDef.id;
-    const placeholder = this.columnEditor && this.columnEditor.placeholder || '';
-    const title = this.columnEditor && this.columnEditor.title || '';
+    const columnId = this.columnDef?.id ?? '';
+    const placeholder = this.columnEditor?.placeholder ?? '';
+    const title = this.columnEditor?.title ?? '';
     const compositeEditorOptions = this.args.compositeEditorOptions;
 
     this._input = document.createElement('input') as HTMLInputElement;

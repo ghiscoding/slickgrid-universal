@@ -278,9 +278,9 @@ export class AutoCompleteFilter implements Filter {
    * Create the HTML template as a string
    */
   protected buildTemplateHtmlString() {
-    const columnId = this.columnDef && this.columnDef.id;
+    const columnId = this.columnDef?.id ?? '';
     let placeholder = (this.gridOptions) ? (this.gridOptions.defaultFilterPlaceholder || '') : '';
-    if (this.columnFilter && this.columnFilter.placeholder) {
+    if (this.columnFilter?.placeholder) {
       placeholder = this.columnFilter.placeholder;
     }
     return `<input type="text" role="presentation" autocomplete="off" class="form-control search-filter filter-${columnId}" placeholder="${placeholder}">`;
@@ -292,7 +292,7 @@ export class AutoCompleteFilter implements Filter {
    */
   protected createDomElement(filterTemplate: string, collection: any[], searchTerm?: SearchTerm) {
     this._collection = collection;
-    const columnId = this.columnDef && this.columnDef.id;
+    const columnId = this.columnDef?.id ?? '';
     const $headerElm = this.grid.getHeaderRowColumn(columnId);
     $($headerElm).empty();
 

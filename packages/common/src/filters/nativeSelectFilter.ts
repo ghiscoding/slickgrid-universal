@@ -142,7 +142,7 @@ export class NativeSelectFilter implements Filter {
       throw new Error('The "collection" passed to the Native Select Filter is not a valid array.');
     }
 
-    const columnId = this.columnDef && this.columnDef.id;
+    const columnId = this.columnDef?.id ?? '';
     const labelName = (this.columnFilter.customStructure) ? this.columnFilter.customStructure.label : 'label';
     const valueName = (this.columnFilter.customStructure) ? this.columnFilter.customStructure.value : 'value';
     const isEnabledTranslate = (this.columnFilter.enableTranslateLabel) ? this.columnFilter.enableTranslateLabel : false;
@@ -172,7 +172,7 @@ export class NativeSelectFilter implements Filter {
    * @param filterTemplate
    */
   private createDomElement(filterTemplate: string, searchTerm?: SearchTerm) {
-    const columnId = this.columnDef && this.columnDef.id;
+    const columnId = this.columnDef?.id ?? '';
     const $headerElm = this.grid.getHeaderRowColumn(columnId);
     $($headerElm).empty();
 

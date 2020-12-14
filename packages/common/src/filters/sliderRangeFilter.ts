@@ -129,7 +129,7 @@ export class SliderRangeFilter implements Filter {
    * @param highestValue number
    */
   renderSliderValues(lowestValue: number | string, highestValue: number | string) {
-    const columnId = this.columnDef && this.columnDef.id;
+    const columnId = this.columnDef?.id ?? '';
     const lowerElm = document.querySelector(`.lowest-range-${columnId}`);
     const highestElm = document.querySelector(`.highest-range-${columnId}`);
     if (lowerElm && lowerElm.innerHTML) {
@@ -180,7 +180,7 @@ export class SliderRangeFilter implements Filter {
       throw new Error(`[Slickgrid-Universal] You cannot override the "change" and/or the "slide" callback methods
         since they are used in SliderRange Filter itself, however any other methods can be used for example the "create", "start", "stop" methods.`);
     }
-    const columnId = this.columnDef && this.columnDef.id;
+    const columnId = this.columnDef?.id ?? '';
     const $headerElm = this.grid.getHeaderRowColumn(columnId);
     const minValue = this.filterProperties.hasOwnProperty('minValue') ? this.filterProperties.minValue : DEFAULT_MIN_VALUE;
     const maxValue = this.filterProperties.hasOwnProperty('maxValue') ? this.filterProperties.maxValue : DEFAULT_MAX_VALUE;

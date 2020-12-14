@@ -96,7 +96,7 @@ export class SelectEditor implements Editor {
     this._locales = this.gridOptions.locales || Constants.locales;
 
     // provide the name attribute to the DOM element which will be needed to auto-adjust drop position (dropup / dropdown)
-    const columnId = this.columnDef && this.columnDef.id;
+    const columnId = this.columnDef?.id ?? '';
     this.elementName = `editor-${columnId}`;
     const compositeEditorOptions = this.args.compositeEditorOptions;
 

@@ -301,7 +301,7 @@ export class SelectFilter implements Filter {
    */
   protected buildTemplateHtmlString(optionCollection: any[], searchTerms: SearchTerm[]): string {
     let options = '';
-    const columnId = this.columnDef && this.columnDef.id;
+    const columnId = this.columnDef?.id ?? '';
     const separatorBetweenLabels = this.collectionOptions && this.collectionOptions.separatorBetweenTextLabels || '';
     const isTranslateEnabled = this.gridOptions && this.gridOptions.enableTranslate;
     const isRenderHtmlEnabled = this.columnFilter && this.columnFilter.enableRenderHtml || false;
@@ -393,7 +393,7 @@ export class SelectFilter implements Filter {
    * @param filterTemplate
    */
   protected createDomElement(filterTemplate: string) {
-    const columnId = this.columnDef && this.columnDef.id;
+    const columnId = this.columnDef?.id ?? '';
 
     // provide the name attribute to the DOM element which will be needed to auto-adjust drop position (dropup / dropdown)
     this.elementName = `filter-${columnId}`;

@@ -106,7 +106,7 @@ export class LongTextEditor implements Editor {
     }
 
     const compositeEditorOptions = this.args.compositeEditorOptions;
-    const columnId = this.columnDef?.id;
+    const columnId = this.columnDef?.id ?? '';
     const placeholder = this.columnEditor?.placeholder ?? '';
     const title = this.columnEditor?.title ?? '';
     const maxLength = this.columnEditor?.maxLength;

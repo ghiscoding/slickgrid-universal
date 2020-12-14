@@ -248,7 +248,7 @@ export class CompoundDateFilter implements Filter {
    * Create the DOM element
    */
   private createDomElement(searchTerm?: SearchTerm) {
-    const columnId = this.columnDef && this.columnDef.id;
+    const columnId = this.columnDef?.id ?? '';
     const $headerElm = this.grid.getHeaderRowColumn(columnId);
     $($headerElm).empty();
 
