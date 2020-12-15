@@ -8,7 +8,7 @@ export class ContainerService {
     throw new Error('ContainerService "get" method must be implemented');
   }
 
-  getAll(): ContainerInstance[] {
+  getAll?(): ContainerInstance[] {
     throw new Error('ContainerService "getAll" method must be implemented');
   }
 
