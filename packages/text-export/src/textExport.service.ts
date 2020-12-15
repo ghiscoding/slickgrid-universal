@@ -13,7 +13,7 @@ import {
   Column,
   Constants,
   ContainerService,
-  TextExportService as BaseTextExportService,
+  ExternalResource,
   FileType,
   GridOption,
   KeyTitlePair,
@@ -22,10 +22,11 @@ import {
   SlickDataView,
   SlickGrid,
   TextExportOption,
+  TextExportService as BaseTextExportService,
   TranslaterService,
 } from '@slickgrid-universal/common';
 
-export class TextExportService implements BaseTextExportService {
+export class TextExportService implements ExternalResource, BaseTextExportService {
   private _delimiter = ',';
   private _exportQuoteWrapper = '';
   private _exportOptions: TextExportOption;

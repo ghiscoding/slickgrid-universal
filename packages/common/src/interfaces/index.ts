@@ -55,6 +55,7 @@ export * from './excelWorkbook.interface';
 export * from './excelWorksheet.interface';
 export * from './extension.interface';
 export * from './extensionModel.interface';
+export * from './externalResource.interface';
 export * from './filter.interface';
 export * from './filterArguments.interface';
 export * from './filterCallback.interface';

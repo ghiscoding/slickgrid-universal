@@ -17,6 +17,7 @@ import {
   Constants,
   ContainerService,
   ExcelExportService as BaseExcelExportService,
+  ExternalResource,
   FileType,
   FieldType,
   GridOption,
@@ -37,7 +38,7 @@ import {
   ExcelWorksheet,
 } from './interfaces/index';
 
-export class ExcelExportService implements BaseExcelExportService {
+export class ExcelExportService implements ExternalResource, BaseExcelExportService {
   private _fileFormat = FileType.xlsx;
   private _grid: SlickGrid;
   private _locales: Locale;

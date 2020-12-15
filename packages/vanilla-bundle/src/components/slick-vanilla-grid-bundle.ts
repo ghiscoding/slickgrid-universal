@@ -12,6 +12,7 @@ import {
   DataViewOption,
   ExtensionList,
   ExtensionName,
+  ExternalResource,
   EventNamingStyle,
   GlobalGridOptions,
   GridOption,
@@ -99,7 +100,7 @@ export class SlickVanillaGridBundle {
   private _eventHandler: SlickEventHandler;
   private _extensions: ExtensionList<any, any> | undefined;
   private _paginationOptions: Pagination | undefined;
-  private _registeredResources: any[] = [];
+  private _registeredResources: ExternalResource[] = [];
   private _slickgridInitialized = false;
   private _slickerGridInstances: SlickerGridInstance | undefined;
   backendServiceApi: BackendServiceApi | undefined;
@@ -384,8 +385,6 @@ export class SlickVanillaGridBundle {
     if (!hierarchicalDataset && !this.gridOptions.backendServiceApi) {
       this.dataset = dataset || [];
     }
-
-    this.slickEmptyWarning = new SlickEmptyWarningComponent(this.slickGrid, this.translaterService);
   }
 
   emptyGridContainerElm() {
@@ -627,6 +626,10 @@ export class SlickVanillaGridBundle {
     if (this.gridOptions.enableTranslate) {
       this.extensionService.translateColumnHeaders();
     }
+
+    // also initialize (render) the empty warning component
+    this.slickEmptyWarning = new SlickEmptyWarningComponent();
+    this._registeredResources.push(this.slickEmptyWarning);
 
     // also initialize (render) the pagination component
     if (this.gridOptions.enableCompositeEditor && this.gridOptions.useSalesforceDefaultGridOptions) {
