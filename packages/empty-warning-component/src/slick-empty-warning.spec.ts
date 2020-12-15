@@ -1,5 +1,6 @@
 import { EmptyWarning, GridOption, SlickGrid } from '@slickgrid-universal/common';
 import { SlickEmptyWarningComponent } from './slick-empty-warning.component';
+import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
 
 const GRID_UID = 'slickgrid_123456';
@@ -17,11 +18,13 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 describe('Slick-Empty-Warning Component', () => {
+  let container: ContainerServiceStub;
   let component: SlickEmptyWarningComponent;
   let div: HTMLDivElement;
   let translateService: TranslateServiceStub;
 
   beforeEach(() => {
+    container = new ContainerServiceStub();
     div = document.createElement('div');
     const canvasLeft = document.createElement('div');
     const canvasRight = document.createElement('div');
@@ -47,7 +50,8 @@ describe('Slick-Empty-Warning Component', () => {
     });
 
     it('should expect the Slick-Empty-Warning to return False when calling the "showEmptyDataMessage" method without a grid object defined', () => {
-      component = new SlickEmptyWarningComponent(null as any);
+      component = new SlickEmptyWarningComponent();
+      component.init(null as any, container);
       const output = component.showEmptyDataMessage(false);
 
       expect(component).toBeTruthy();
@@ -56,7 +60,8 @@ describe('Slick-Empty-Warning Component', () => {
     });
 
     it('should expect the Slick-Empty-Warning to be created and NOT be rendered when passing False as 2nd argument and component was never rendered', () => {
-      component = new SlickEmptyWarningComponent(gridStub);
+      component = new SlickEmptyWarningComponent();
+      component.init(gridStub, container);
       component.showEmptyDataMessage(false);
 
       const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
@@ -69,7 +74,8 @@ describe('Slick-Empty-Warning Component', () => {
     });
 
     it('should expect the Slick-Empty-Warning to be created in both viewports and rendered and passing true as 2nd argument', () => {
-      component = new SlickEmptyWarningComponent(gridStub);
+      component = new SlickEmptyWarningComponent();
+      component.init(gridStub, container);
       component.showEmptyDataMessage(true);
 
       const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
@@ -85,7 +91,8 @@ describe('Slick-Empty-Warning Component', () => {
     });
 
     it('should expect the Slick-Empty-Warning to be created but not shown after calling the method twice with False on 2nd time', () => {
-      component = new SlickEmptyWarningComponent(gridStub);
+      component = new SlickEmptyWarningComponent();
+      component.init(gridStub, container);
       component.showEmptyDataMessage(true);
       component.showEmptyDataMessage(false);
 
@@ -105,7 +112,8 @@ describe('Slick-Empty-Warning Component', () => {
       mockGridOptions.frozenColumn = 2;
       (mockGridOptions.emptyDataWarning as EmptyWarning).hideFrozenLeftWarning = true;
       (mockGridOptions.emptyDataWarning as EmptyWarning).hideFrozenRightWarning = false;
-      component = new SlickEmptyWarningComponent(gridStub);
+      component = new SlickEmptyWarningComponent();
+      component.init(gridStub, container);
       component.showEmptyDataMessage(true);
 
       const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
@@ -125,7 +133,8 @@ describe('Slick-Empty-Warning Component', () => {
     it('should expect the Slick-Empty-Warning to be created and use different left margin when "leftViewportMarginLeft" is set', () => {
       mockGridOptions.frozenColumn = -1;
       (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
-      component = new SlickEmptyWarningComponent(gridStub);
+      component = new SlickEmptyWarningComponent();
+      component.init(gridStub, container);
       component.showEmptyDataMessage(true);
 
       const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
@@ -147,7 +156,8 @@ describe('Slick-Empty-Warning Component', () => {
       (mockGridOptions.emptyDataWarning as EmptyWarning).rightViewportMarginLeft = '40%';
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
 
-      component = new SlickEmptyWarningComponent(gridStub);
+      component = new SlickEmptyWarningComponent();
+      component.init(gridStub, container);
       component.showEmptyDataMessage(true);
 
       const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
@@ -168,7 +178,8 @@ describe('Slick-Empty-Warning Component', () => {
       mockGridOptions.frozenColumn = 2;
       (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
       (mockGridOptions.emptyDataWarning as EmptyWarning).frozenLeftViewportMarginLeft = '15px';
-      component = new SlickEmptyWarningComponent(gridStub);
+      component = new SlickEmptyWarningComponent();
+      component.init(gridStub, container);
       component.showEmptyDataMessage(true);
 
       const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
@@ -189,7 +200,8 @@ describe('Slick-Empty-Warning Component', () => {
       mockGridOptions.frozenColumn = 2;
       (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
       (mockGridOptions.emptyDataWarning as EmptyWarning).frozenRightViewportMarginLeft = '22px';
-      component = new SlickEmptyWarningComponent(gridStub);
+      component = new SlickEmptyWarningComponent();
+      component.init(gridStub, container);
       component.showEmptyDataMessage(true);
 
       const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
@@ -210,7 +222,8 @@ describe('Slick-Empty-Warning Component', () => {
       mockGridOptions.frozenColumn = 2;
       (mockGridOptions.emptyDataWarning as EmptyWarning).hideFrozenLeftWarning = false;
       (mockGridOptions.emptyDataWarning as EmptyWarning).hideFrozenRightWarning = true;
-      component = new SlickEmptyWarningComponent(gridStub);
+      component = new SlickEmptyWarningComponent();
+      component.init(gridStub, container);
       component.showEmptyDataMessage(true);
 
       const componentLeftElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning') as HTMLSelectElement;
@@ -227,7 +240,8 @@ describe('Slick-Empty-Warning Component', () => {
 
     it('should expect the Slick-Empty-Warning to change some options and display a different message when provided as an option', () => {
       const mockOptions = { message: '<span class="fa fa-warning"></span> No Record found.', className: 'custom-class', marginTop: 22, marginLeft: 11 };
-      component = new SlickEmptyWarningComponent(gridStub);
+      component = new SlickEmptyWarningComponent();
+      component.init(gridStub, container);
       component.showEmptyDataMessage(true, mockOptions);
 
       const componentElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas .custom-class') as HTMLSelectElement;
@@ -242,7 +256,8 @@ describe('Slick-Empty-Warning Component', () => {
 
     it('should expect the Slick-Empty-Warning provide html text and expect script to be sanitized out of the final html', () => {
       const mockOptions = { message: `<script>alert('test')></script><span class="fa fa-warning"></span> No Record found.`, className: 'custom-class', marginTop: 22, marginLeft: 11 };
-      component = new SlickEmptyWarningComponent(gridStub);
+      component = new SlickEmptyWarningComponent();
+      component.init(gridStub, container);
       component.showEmptyDataMessage(true, mockOptions);
 
       const componentElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas .custom-class') as HTMLSelectElement;
@@ -256,10 +271,12 @@ describe('Slick-Empty-Warning Component', () => {
     });
 
     it('should expect the Slick-Empty-Warning message to be translated to French when providing a Translater Service and "messageKey" property', () => {
+      container.registerInstance('TranslaterService', translateService);
       mockGridOptions.enableTranslate = true;
       translateService.use('fr');
 
-      component = new SlickEmptyWarningComponent(gridStub, translateService);
+      component = new SlickEmptyWarningComponent();
+      component.init(gridStub, container);
       component.showEmptyDataMessage(true);
       const componentElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas .slick-empty-data-warning') as HTMLSelectElement;
 
