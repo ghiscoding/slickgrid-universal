@@ -10,6 +10,7 @@ import {
   CurrentRowSelection,
   Editor,
   EditorValidationResult,
+  ExternalResource,
   getDescendantProperty,
   GetSlickEventType,
   GridOption,
@@ -32,7 +33,7 @@ declare const Slick: SlickNamespace;
 
 const DEFAULT_ON_ERROR = (error: OnErrorOption) => console.log(error.message);
 
-export class SlickCompositeEditorComponent {
+export class SlickCompositeEditorComponent implements ExternalResource {
   private _bindEventService: BindingEventService;
   private _eventHandler: SlickEventHandler;
   private _modalElm: HTMLDivElement;

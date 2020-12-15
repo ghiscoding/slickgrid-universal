@@ -14,6 +14,7 @@ import {
   EmptyWarning,
   ExcelCopyBufferOption,
   ExcelExportOption,
+  ExternalResource,
   FormatterOption,
   GridMenu,
   GridState,
@@ -423,7 +424,7 @@ export interface GridOption {
   preselectedRows?: number[];
 
   /** Register any external Resources (Components, Services) like the ExcelExportService, TextExportService, SlickCompositeEditorComponent, ... */
-  registerExternalResources?: any[];
+  registerExternalResources?: ExternalResource[];
 
   /** Row Detail View Plugin options & events (columnId, cssClass, toolTip, width) */
   // rowDetailView?: RowDetailView;

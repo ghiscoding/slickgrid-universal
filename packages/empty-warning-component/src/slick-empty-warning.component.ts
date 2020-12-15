@@ -1,21 +1,31 @@
 import {
+  ContainerService,
   EmptyWarning,
+  ExternalResource,
   GridOption,
   sanitizeTextByAvailableSanitizer,
   SlickGrid,
   TranslaterService
 } from '@slickgrid-universal/common';
 
-export class SlickEmptyWarningComponent {
+export class SlickEmptyWarningComponent implements ExternalResource {
   private _warningLeftElement: HTMLDivElement | null;
   private _warningRightElement: HTMLDivElement | null;
+  private grid: SlickGrid;
+  private translaterService?: TranslaterService | null;
+
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
     return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
   }
 
-  constructor(private grid: SlickGrid, private translaterService?: TranslaterService) { }
+  constructor() { }
+
+  init(grid: SlickGrid, containerService: ContainerService) {
+    this.grid = grid;
+    this.translaterService = containerService.get<TranslaterService>('TranslaterService');
+  }
 
   dispose() {
     this._warningLeftElement?.remove();

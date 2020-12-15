@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ExcelExportOption, SlickGrid } from '../interfaces/index';
+import { ExcelExportOption, ExternalResource, SlickGrid } from '../interfaces/index';
 import { ContainerService } from '../services/container.service';
 
-export abstract class ExcelExportService {
+export abstract class ExcelExportService implements ExternalResource {
   /** ExcelExportService class name which is use to find service instance in the external registered services */
   className: string;
 
