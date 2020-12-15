@@ -646,11 +646,11 @@ export class SlickVanillaGridBundle {
     // bind & initialize all Components/Services that were tagged as enabled
     // register all services by executing their init method and providing them with the Grid object
     if (Array.isArray(this._registeredResources)) {
-      for (const service of this._registeredResources) {
-        if (typeof service.init === 'function') {
-          service.init(this.slickGrid, this.universalContainerService);
-          if (service instanceof SlickCompositeEditorComponent) {
-            this.slickCompositeEditor = service;
+      for (const resource of this._registeredResources) {
+        if (typeof resource.init === 'function') {
+          resource.init(this.slickGrid, this.universalContainerService);
+          if (resource instanceof SlickCompositeEditorComponent) {
+            this.slickCompositeEditor = resource;
           }
         }
       }
