@@ -31,6 +31,7 @@ import {
   Editor,
   ExtensionName,
   ColumnFilter,
+  SlickEventHandler,
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
@@ -57,7 +58,7 @@ const mockConvertParentChildArray = jest.fn();
 (backendUtilities.onBackendError as any) = mockBackendError;
 
 declare const Slick: any;
-const slickEventHandler = new MockSlickEventHandler();
+const slickEventHandler = new MockSlickEventHandler() as SlickEventHandler;
 
 const extensionServiceStub = {
   bindDifferentExtensions: jest.fn(),
@@ -886,7 +887,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
 
         expect(TextExportService).toHaveBeenCalled();
-        expect(component.registeredResources.length).toBe(3); // TextExportService, GridService, GridStateService
+        expect(component.registeredResources.length).toBe(4); // TextExportService, GridService, GridStateService, SlickEmptyCompositeEditorComponent
         expect(component.registeredResources[0] instanceof TextExportService).toBeTrue();
       });
 
