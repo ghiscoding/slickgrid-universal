@@ -3,7 +3,7 @@ import moment from 'moment-mini';
 import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
 describe('Example 11 - Batch Editing', () => {
-  const LOCAL_STORAGE_KEY = 'gridFilterPreset';
+  const LOCAL_STORAGE_KEY = 'gridViewPreset';
   const GRID_ROW_HEIGHT = 33;
   const EDITABLE_CELL_RGB_COLOR = 'rgba(227, 240, 251, 0.57)';
   const UNSAVED_RGB_COLOR = 'rgb(251, 253, 209)';
@@ -195,7 +195,7 @@ describe('Example 11 - Batch Editing', () => {
   });
 
   it('should not have filters set', () => {
-    cy.get('.selected-filter').should('contain', '');
+    cy.get('.selected-view').should('contain', '');
 
     cy.get('.rangeInput_percentComplete')
       .invoke('val')
@@ -208,9 +208,15 @@ describe('Example 11 - Batch Editing', () => {
     cy.get('.search-filter.filter-completed .ms-choice').should('contain', '')
   });
 
-  it('should change pre-defined filter to "Tasks Finished in Previous Years" and expect data to be filtered accordingly', () => {
-    cy.get('.selected-filter').select('previousYears');
-    cy.get('.selected-filter').should('have.value', 'previousYears');
+  it('should change pre-defined view to "Tasks Finished in Previous Years" and expect data to be filtered/sorted accordingly with "Cost" column shown as well', () => {
+    const expectedTitles = ['', 'Title', 'Duration', 'Cost', '% Complete', 'Start', 'Finish', 'Completed', 'Action'];
+    cy.get('.selected-view').select('previousYears');
+    cy.get('.selected-view').should('have.value', 'previousYears');
+
+    cy.get('.grid11')
+      .find('.slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
 
     cy.get('.rangeInput_percentComplete')
       .invoke('val')
@@ -223,6 +229,11 @@ describe('Example 11 - Batch Editing', () => {
       .invoke('val')
       .then(text => expect(text).to.eq(`${currentYear}-01-01`));
 
+    cy.get('.slick-column-name')
+      .contains('Finish')
+      .find('~ .slick-sort-indicator.slick-sort-indicator-desc')
+      .should('have.length', 1);
+
     cy.get('.search-filter.filter-completed .ms-choice').should('contain', 'True');
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).should($elm => expect(+$elm.text()).to.be.greaterThan(50));
@@ -234,8 +245,24 @@ describe('Example 11 - Batch Editing', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(7)`).find('.checkmark-icon').should('have.length', 1);
   });
 
-  it('should create a new Filter based on "Tasks Finished in Previous Years" that was already selected', () => {
-    const filterName = "Custom Filter Test"
+  it('should show Column Picker and expect 2 columns to be hidden', () => {
+    cy.get('.grid11')
+      .find('.slick-header-column')
+      .first()
+      .trigger('mouseover')
+      .trigger('contextmenu')
+      .invoke('show');
+
+    cy.get('.slick-columnpicker-list')
+      .find('input[type="checkbox"]:checked')
+      .should('have.length', 11 - 2);
+
+    cy.get('.slick-columnpicker > button.close > .close')
+      .click();
+  });
+
+  it('should create a new View based on "Tasks Finished in Previous Years" that was already selected', () => {
+    const filterName = "Custom View Test"
     const winPromptStub = () => filterName;
 
     cy.window().then(win => {
@@ -249,11 +276,11 @@ describe('Example 11 - Batch Editing', () => {
       .click();
 
     cy.get('.action.dropdown .dropdown-item')
-      .contains('Save Filter')
+      .contains('Create New View')
       .click();
 
     cy.get('@winPromptStubReturnNonNull').should('be.calledOnce')
-      .and('be.calledWith', 'Please provide a name for the new Filter.')
+      .and('be.calledWith', 'Please provide a name for the new View.');
 
     cy.should(() => {
       const savedDefinedFilters = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
@@ -268,12 +295,19 @@ describe('Example 11 - Batch Editing', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(4)`).should($elm => expect(+$elm.text()).to.be.greaterThan(50));
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).should($elm => expect(+$elm.text()).to.be.greaterThan(50));
 
-    cy.get('.selected-filter').should('have.value', 'CustomFilterTest');
+    cy.get('.selected-view').should('have.value', 'CustomViewTest');
   });
 
-  it('should change pre-defined filter to "Tasks Finishing in Future Years" and expect data to be filtered accordingly', () => {
-    cy.get('.selected-filter').select('greaterCurrentYear');
-    cy.get('.selected-filter').should('have.value', 'greaterCurrentYear');
+  it('should change pre-defined view to "Tasks Finishing in Future Years" and expect data to be filtered accordingly', () => {
+    const expectedTitles = ['', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Product', 'Country of Origin', 'Action'];
+
+    cy.get('.selected-view').select('greaterCurrentYear');
+    cy.get('.selected-view').should('have.value', 'greaterCurrentYear');
+
+    cy.get('.grid11')
+      .find('.slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
 
     cy.get('.rangeInput_percentComplete')
       .invoke('val')
@@ -286,6 +320,11 @@ describe('Example 11 - Batch Editing', () => {
       .invoke('val')
       .then(text => expect(text).to.eq(`${currentYear + 1}-01-01`));
 
+    cy.get('.slick-column-name')
+      .contains('Finish')
+      .find('~ .slick-sort-indicator.slick-sort-indicator-asc')
+      .should('have.length', 1);
+
     cy.get('.search-filter.filter-completed .ms-choice').should('contain', '');
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).should($elm => expect($elm.text()).to.not.eq, '');
@@ -296,27 +335,27 @@ describe('Example 11 - Batch Editing', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(6)`).should($elm => expect($elm.text()).to.not.contain, currentYear);
   });
 
-  it('should NOT be able to Delete/Update a System Defined Filter', () => {
+  it('should NOT be able to Delete/Update a System Defined View', () => {
     cy.get('.action.dropdown')
       .click();
 
     cy.get('.action.dropdown .dropdown-item:nth(1)')
       .then($elm => {
-        expect($elm.text()).to.contain('Update Filter');
+        expect($elm.text()).to.contain('Update Current View');
         expect($elm.hasClass('dropdown-item-disabled')).to.be.true;
       });
 
     cy.get('.action.dropdown .dropdown-item:nth(2)')
       .then($elm => {
-        expect($elm.text()).to.contain('Delete Filter');
+        expect($elm.text()).to.contain('Delete Current View');
         expect($elm.hasClass('dropdown-item-disabled')).to.be.true;
       });
 
-    cy.get('.selected-filter').should('have.value', 'greaterCurrentYear');
+    cy.get('.selected-view').should('have.value', 'greaterCurrentYear');
   });
 
-  it('should reload the page and expect the Custom Filter to be reloaded from Local Storage and expect filtered data as well', () => {
-    cy.get('.selected-filter').select('CustomFilterTest');
+  it('should reload the page and expect the Custom View to be reloaded from Local Storage and expect filtered data as well', () => {
+    cy.get('.selected-view').select('CustomViewTest');
 
     cy.reload();
     cy.wait(50);
@@ -334,29 +373,29 @@ describe('Example 11 - Batch Editing', () => {
       expect(Object.keys(savedDefinedFilters)).to.have.lengthOf(3);
     });
 
-    cy.get('.selected-filter').should('have.value', 'CustomFilterTest');
+    cy.get('.selected-view').should('have.value', 'CustomViewTest');
   });
 
-  it('should be able to Update the Custom Filter that we created earlier', () => {
-    const filterName = "Custom Updated Filter Test"
+  it('should be able to Update the Custom View that we created earlier with a new name', () => {
+    const filterName = "Custom Updated View Test"
     const winPromptStub = () => filterName;
 
     cy.window().then(win => {
       cy.stub(win, 'prompt').callsFake(winPromptStub).as('winPromptStubReturnNonNull')
     });
 
-    cy.get('.selected-filter').select('CustomFilterTest');
+    cy.get('.selected-view').select('CustomViewTest');
 
     cy.get('.action.dropdown')
       .click();
 
     cy.get('.action.dropdown .dropdown-item')
-      .contains('Update Filter')
+      .contains('Update Current View')
       .click();
 
     cy.get('.action.dropdown .dropdown-item:nth(1)')
       .then($elm => {
-        expect($elm.text()).to.contain('Update Filter');
+        expect($elm.text()).to.contain('Update Current View');
         expect($elm.hasClass('dropdown-item-disabled')).to.be.false;
       });
 
@@ -364,7 +403,7 @@ describe('Example 11 - Batch Editing', () => {
       .click();
 
     cy.get('@winPromptStubReturnNonNull').should('be.calledOnce')
-      .and('be.calledWith', 'Update Filter name or click on OK to continue.', 'Custom Filter Test')
+      .and('be.calledWith', 'Update View name or click on OK to continue.', 'Custom View Test')
 
     cy.should(() => {
       const savedDefinedFilters = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
@@ -372,26 +411,36 @@ describe('Example 11 - Batch Editing', () => {
     });
 
     // select should have new name
-    cy.get('.selected-filter').should('have.value', 'CustomUpdatedFilterTest');
+    cy.get('.selected-view').should('have.value', 'CustomUpdatedViewTest');
   });
 
-  it('should be able to Delete the Custom Filter that we created earlier and also expect all Filters to be cleared', () => {
-    cy.get('.selected-filter').select('CustomUpdatedFilterTest');
+  it('should be able to Delete the Custom Filter that we created earlier', () => {
+    cy.get('.selected-view').select('CustomUpdatedViewTest');
 
     cy.get('.action.dropdown')
       .click();
 
     cy.get('.action.dropdown .dropdown-item:nth(2)')
       .then($elm => {
-        expect($elm.text()).to.contain('Delete Filter');
+        expect($elm.text()).to.contain('Delete Current View');
         expect($elm.hasClass('dropdown-item-disabled')).to.be.false;
       });
 
     cy.get('.action.dropdown .dropdown-item')
-      .contains('Delete Filter')
+      .contains('Delete Current View')
       .click();
+  });
 
-    cy.get('.selected-filter').should('not.have.value', 'CustomUpdatedFilterTest');
+  it('should expect all Filters & Sorting to be cleared and also expect all columns be back to original', () => {
+    cy.get('.grid11')
+      .find('.slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+
+    cy.get('.selected-view').should('not.have.value', 'CustomUpdatedViewTest');
+
+    cy.get('.slick-sort-indicator.slick-sort-indicator-desc')
+      .should('have.length', 0);
 
     cy.get('.rangeInput_percentComplete')
       .invoke('val')
@@ -401,6 +450,106 @@ describe('Example 11 - Batch Editing', () => {
       .invoke('val')
       .then(text => expect(text).to.eq(''));
 
-    cy.get('.search-filter.filter-completed .ms-choice').should('contain', '')
+    cy.get('.search-filter.filter-completed .ms-choice').should('contain', '');
+
+    cy.get('.grid11')
+      .find('.slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+  });
+
+  it('should change pre-defined view to "Tasks Finished in Previous Years" and expect 2 columns less than original list', () => {
+    const expectedTitles = ['', 'Title', 'Duration', 'Cost', '% Complete', 'Start', 'Finish', 'Completed', 'Action'];
+    cy.get('.selected-view').select('previousYears');
+    cy.get('.selected-view').should('have.value', 'previousYears');
+
+    cy.get('.grid11')
+      .find('.slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
+  });
+
+  it('should click on "Clear Local Storage" and expect to be back to original grid with all the columns', () => {
+    cy.get('[data-test="clear-storage-btn"]')
+      .click();
+
+    cy.get('.grid11')
+      .find('.slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+  });
+
+  it('should also expect all Filters & Sorting to be cleared', () => {
+    cy.get('.grid11')
+      .find('.slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+
+    cy.get('.selected-view').should('not.have.value', 'CustomUpdatedViewTest');
+
+    cy.get('.slick-sort-indicator.slick-sort-indicator-desc')
+      .should('have.length', 0);
+
+    cy.get('.rangeInput_percentComplete')
+      .invoke('val')
+      .then(text => expect(text).to.eq('0'));
+
+    cy.get('.search-filter.filter-finish .flatpickr-input')
+      .invoke('val')
+      .then(text => expect(text).to.eq(''));
+
+    cy.get('.search-filter.filter-completed .ms-choice').should('contain', '');
+  });
+
+  it('should have all columns shown (checkbox is checked) in the Column Picker', () => {
+    cy.get('.grid11')
+      .find('.slick-header-column')
+      .first()
+      .trigger('mouseover')
+      .trigger('contextmenu')
+      .invoke('show');
+
+    cy.get('.slick-columnpicker-list')
+      .find('input[type="checkbox"]:checked')
+      .should('have.length', 11);
+
+    cy.get('.slick-columnpicker > button.close > .close')
+      .click();
+  });
+
+  it('should be able to click on the delete button from the "Action" column of the 2nd row and expect "Task 1" to be delete', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 1');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 2');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 3');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 4');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 5}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 5');
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(10)`)
+      .find('.mdi-close')
+      .click();
+
+    cy.on('window:confirm', () => true);
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 2');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 3');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 4');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 5');
+  });
+
+  it('should be able to click on the checked 2nd button from the "Action" column of the 2nd row and expect "Task 2" to be completed', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 2');
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(10)`)
+      .find('.mdi-check-underline')
+      .click();
+
+    cy.on('window:alert', (str) => {
+      expect(str).to.equal('The "Task 2" is now Completed')
+    });
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(7)`).find('.checkmark-icon').should('have.length', 1);
   });
 });

@@ -97,6 +97,37 @@ export class GridStateService {
   }
 
   /**
+   * Dynamically change the arrangement/distribution of the columns Positions/Visibilities and optionally Widths.
+   * For a column to have its visibly as hidden, it has to be part of the original list but excluded from the list provided as argument to be considered a hidden field.
+   * If you are passing columns Width, then you probably don't want to trigger the autosizeColumns (2nd argument to False).
+   * @param {Array<Column>} definedColumns - defined columns
+   * @param {Boolean} triggerAutoSizeColumns - True by default, do we also want to call the "autosizeColumns()" method to make the columns fit in the grid?
+   */
+  changeColumnsArrangement(definedColumns: CurrentColumn[], triggerAutoSizeColumns = true) {
+    if (Array.isArray(definedColumns) && definedColumns.length > 0) {
+      const gridColumns: Column[] = this.getAssociatedGridColumns(this._grid, definedColumns);
+
+      if (gridColumns && Array.isArray(gridColumns) && gridColumns.length > 0) {
+        // make sure that the checkbox selector is still visible in the list when it is enabled
+        if (this._gridOptions.enableCheckboxSelector) {
+          const checkboxColumn = (Array.isArray(this.sharedService.allColumns) && this.sharedService.allColumns.length > 0) ? this.sharedService.allColumns[0] : null;
+          if (checkboxColumn?.id === '_checkbox_selector' && gridColumns[0].id !== '_checkbox_selector') {
+            gridColumns.unshift(checkboxColumn);
+          }
+        }
+
+        // finally set the new presets columns (including checkbox selector if need be)
+        this._grid.setColumns(gridColumns);
+
+        // resize the columns to fit the grid canvas
+        if (triggerAutoSizeColumns) {
+          this._grid.autosizeColumns();
+        }
+      }
+    }
+  }
+
+  /**
    * Get the current grid state (filters/sorters/pagination)
    * @return grid state
    */
@@ -160,7 +191,7 @@ export class GridStateService {
    */
   getAssociatedGridColumns(grid: SlickGrid, currentColumns: CurrentColumn[]): Column[] {
     const columns: Column[] = [];
-    const gridColumns: Column[] = grid.getColumns();
+    const gridColumns: Column[] = this.sharedService.allColumns || grid.getColumns();
 
     if (currentColumns && Array.isArray(currentColumns)) {
       currentColumns.forEach((currentColumn: CurrentColumn) => {
@@ -293,6 +324,19 @@ export class GridStateService {
     const columns: Column[] = columnDefinitions || this._columns;
     const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(columns);
     this.pubSubService.publish('onGridStateChanged', { change: { newValues: currentColumns, type: GridStateType.columns }, gridState: this.getCurrentGridState() });
+  }
+
+  /**
+   * Reset the grid to its original (all) columns, that is to display the entire set of columns with their original positions & visibilities
+   * @param {Boolean} triggerAutoSizeColumns - True by default, do we also want to call the "autosizeColumns()" method to make the columns fit in the grid?
+   */
+  resetToOriginalColumns(triggerAutoSizeColumns = true) {
+    this._grid.setColumns(this.sharedService.allColumns);
+
+    // resize the columns to fit the grid canvas
+    if (triggerAutoSizeColumns) {
+      this._grid.autosizeColumns();
+    }
   }
 
   /** if we use Row Selection or the Checkbox Selector, we need to reset any selection */
