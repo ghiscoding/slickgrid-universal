@@ -4,8 +4,11 @@ import 'flatpickr/dist/flatpickr.min.css';
 import './styles.scss';
 
 // import all other 3rd party libs required by Slickgrid-Universal
+// also only import jQueryUI necessary widget (note autocomplete & slider are imported in their respective editors/filters)
 import 'jquery';
-import 'jquery-ui-dist/jquery-ui';
+import 'jquery-ui/ui/widgets/draggable';
+import 'jquery-ui/ui/widgets/droppable';
+import 'jquery-ui/ui/widgets/sortable';
 import { Renderer } from './renderer';
 import * as SlickerModule from '@slickgrid-universal/vanilla-bundle';
 import { App } from './app';

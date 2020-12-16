@@ -1,3 +1,5 @@
+import 'jquery-ui/ui/widgets/autocomplete';
+
 import { FieldType, KeyCode, } from '../enums/index';
 import {
   AutocompleteOption,

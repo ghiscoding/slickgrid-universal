@@ -596,9 +596,7 @@ export class Example11 {
 
   clearLocalStorage() {
     localStorage.removeItem(LOCAL_STORAGE_KEY);
-    this.sgb.gridStateService.resetToOriginalColumns();
-    this.sgb.filterService.clearFilters();
-    this.sgb.sortService.clearSorting();
+    this.resetFiltersSortingAndColumns();
     this.predefinedViews = this.defaultPredefinedPresets;
     this.recreatePredefinedViews();
     this.dropdownDeleteViewClass = 'dropdown-item dropdown-item-disabled';
@@ -655,11 +653,16 @@ export class Example11 {
       this.predefinedViews.splice(selectedViewIndex, 1);
     }
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.predefinedViews));
-    this.sgb.filterService.clearFilters();
-    this.sgb.sortService.clearSorting();
+    this.resetFiltersSortingAndColumns();
     this.recreatePredefinedViews();
     this.dropdownDeleteViewClass = 'dropdown-item dropdown-item-disabled';
     this.dropdownUpdateViewClass = 'dropdown-item dropdown-item-disabled';
+  }
+
+  resetFiltersSortingAndColumns() {
+    this.sgb.gridStateService.resetToOriginalColumns();
+    this.sgb.filterService.clearFilters();
+    this.sgb.sortService.clearSorting();
   }
 
   async updateView(event: DOMEvent<HTMLInputElement>) {
