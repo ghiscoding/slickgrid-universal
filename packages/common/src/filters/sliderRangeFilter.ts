@@ -1,3 +1,5 @@
+import 'jquery-ui/ui/widgets/slider';
+
 import { OperatorType, OperatorString, SearchTerm, } from '../enums/index';
 import {
   Column,

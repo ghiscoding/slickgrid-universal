@@ -61,7 +61,7 @@
     "not dead"
   ],
   "dependencies": {
-    "dompurify": "^2.2.3",
+    "dompurify": "^2.2.4",
     "flatpickr": "^4.6.6",
     "jquery": "^3.5.1",
     "jquery-ui-dist": "^1.12.1",
