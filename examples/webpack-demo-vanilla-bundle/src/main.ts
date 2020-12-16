@@ -6,7 +6,6 @@ import './styles.scss';
 // import all other 3rd party libs required by Slickgrid-Universal
 // also only import jQueryUI necessary widget (note autocomplete & slider are imported in their respective editors/filters)
 import 'jquery';
-import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widgets/draggable';
 import 'jquery-ui/ui/widgets/droppable';
 import 'jquery-ui/ui/widgets/sortable';
