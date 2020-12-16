@@ -1,18 +1,14 @@
 export interface ContainerInstance {
-  key: string;
+  key: any;
   instance: any;
 }
 
 export class ContainerService {
-  get<T = any>(_key: string): T | null {
+  get<T = any>(_key: any): T | null {
     throw new Error('ContainerService "get" method must be implemented');
   }
 
-  getAll?(): ContainerInstance[] {
-    throw new Error('ContainerService "getAll" method must be implemented');
-  }
-
-  registerInstance(_key: string, _instance: any) {
+  registerInstance(_key: any, _instance: any) {
     throw new Error('ContainerService "registerInstance" method must be implemented');
   }
 }
