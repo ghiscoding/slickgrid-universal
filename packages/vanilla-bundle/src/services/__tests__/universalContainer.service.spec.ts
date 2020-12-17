@@ -19,9 +19,4 @@ describe('UniversalContainer Service', () => {
     service.registerInstance('SharedService', sharedService);
     expect(service.get('DifferentName')).toBeNull();
   });
-
-  it('should register an instance and expect it to be inside the array retrieved by the getAll method', () => {
-    service.registerInstance('SharedService', sharedService);
-    expect(service.getAll()).toEqual([{ key: 'SharedService', instance: sharedService }]);
-  });
 });
