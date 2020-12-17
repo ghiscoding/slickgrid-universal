@@ -182,7 +182,7 @@ export const GlobalGridOptions: GridOption = {
     iconClearFilterCommand: 'fa fa-filter mdi mdi mdi-filter-remove-outline',
     iconClearSortCommand: 'fa fa-unsorted mdi mdi-swap-vertical',
     iconFreezeColumns: 'fa fa-thumb-tack mdi mdi-pin-outline',
-    iconSortAscCommand: 'fa fa-sort-amount-asc mdi mdi-sort-ascending',
+    iconSortAscCommand: 'fa fa-sort-amount-asc mdi mdi-flip-v mdi-sort-ascending',
     iconSortDescCommand: 'fa fa-sort-amount-desc mdi mdi-flip-v mdi-sort-descending',
     iconColumnHideCommand: 'fa fa-times mdi mdi-close',
     hideColumnHideCommand: false,

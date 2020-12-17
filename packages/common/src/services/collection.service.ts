@@ -110,13 +110,13 @@ export class CollectionService<T = any> {
           for (let i = 0, l = sortByOptions.length; i < l; i++) {
             const sortBy = sortByOptions[i];
 
-            if (sortBy && sortBy.property) {
+            if (sortBy?.property) {
               // collection of objects with a property name provided
               const sortDirection = sortBy.sortDesc ? SortDirectionNumber.desc : SortDirectionNumber.asc;
               const objectProperty = sortBy.property;
-              const fieldType = sortBy.fieldType || FieldType.string;
-              const value1 = (enableTranslateLabel) ? this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLanguage && this.translaterService.getCurrentLanguage() && this.translaterService.translate(dataRow1[objectProperty] || ' ') : dataRow1[objectProperty];
-              const value2 = (enableTranslateLabel) ? this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLanguage && this.translaterService.getCurrentLanguage() && this.translaterService.translate(dataRow2[objectProperty] || ' ') : dataRow2[objectProperty];
+              const fieldType = sortBy?.fieldType ?? columnDef?.type ?? FieldType.string;
+              const value1 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate(dataRow1[objectProperty] || ' ') : dataRow1[objectProperty];
+              const value2 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate(dataRow2[objectProperty] || ' ') : dataRow2[objectProperty];
 
               const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef);
               if (sortResult !== SortDirectionNumber.neutral) {
@@ -126,16 +126,16 @@ export class CollectionService<T = any> {
           }
           return SortDirectionNumber.neutral;
         });
-      } else if (sortByOptions && sortByOptions.property) {
+      } else if (sortByOptions?.property) {
         // single sort
         // collection of objects with a property name provided
         const objectProperty = sortByOptions.property;
         const sortDirection = sortByOptions.sortDesc ? SortDirectionNumber.desc : SortDirectionNumber.asc;
-        const fieldType = sortByOptions.fieldType || FieldType.string;
+        const fieldType = sortByOptions?.fieldType ?? columnDef?.type ?? FieldType.string;
 
         sortedCollection = collection.sort((dataRow1: T, dataRow2: T) => {
-          const value1 = (enableTranslateLabel) ? this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLanguage && this.translaterService.getCurrentLanguage() && this.translaterService.translate(dataRow1[objectProperty] || ' ') : dataRow1[objectProperty];
-          const value2 = (enableTranslateLabel) ? this.translaterService && this.translaterService.translate && this.translaterService.getCurrentLanguage && this.translaterService.getCurrentLanguage() && this.translaterService.translate(dataRow2[objectProperty] || ' ') : dataRow2[objectProperty];
+          const value1 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate(dataRow1[objectProperty] || ' ') : dataRow1[objectProperty];
+          const value2 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate(dataRow2[objectProperty] || ' ') : dataRow2[objectProperty];
           const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef);
           if (sortResult !== SortDirectionNumber.neutral) {
             return sortResult;
@@ -144,11 +144,11 @@ export class CollectionService<T = any> {
         });
       } else if (sortByOptions && !sortByOptions.property) {
         const sortDirection = sortByOptions.sortDesc ? SortDirectionNumber.desc : SortDirectionNumber.asc;
-        const fieldType = sortByOptions.fieldType || FieldType.string;
+        const fieldType = sortByOptions?.fieldType ?? columnDef?.type ?? FieldType.string;
 
         sortedCollection = collection.sort((dataRow1: any, dataRow2: any) => {
-          const value1 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.getCurrentLanguage && this.translaterService.getCurrentLanguage() && this.translaterService.translate(dataRow1 || ' ') : dataRow1;
-          const value2 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.getCurrentLanguage && this.translaterService.getCurrentLanguage() && this.translaterService.translate(dataRow2 || ' ') : dataRow2;
+          const value1 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate(dataRow1 || ' ') : dataRow1;
+          const value2 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate(dataRow2 || ' ') : dataRow2;
           const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef);
           if (sortResult !== SortDirectionNumber.neutral) {
             return sortResult;

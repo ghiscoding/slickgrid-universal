@@ -4,6 +4,7 @@ import { GridOption, EventNamingStyle } from '@slickgrid-universal/common';
 export const SalesforceGlobalGridOptions = {
   autoEdit: true, // true single click (false for double-click)
   autoCommitEdit: true,
+  cellValueCouldBeUndefined: true,
   compositeEditorOptions: {
     labels: {
       massSelectionButton: 'Apply to Selected & Save',
@@ -36,6 +37,8 @@ export const SalesforceGlobalGridOptions = {
   },
   headerMenu: {
     hideFreezeColumnsCommand: false,
+    iconSortAscCommand: 'fa fa-sort-amount-asc mdi mdi-arrow-up',
+    iconSortDescCommand: 'fa fa-sort-amount-desc mdi mdi-arrow-down',
   },
   sanitizer: (dirtyHtml) => (dirtyHtml.replace(/(\b)(on\S+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script([<>]*)/gi, '')),
   showCustomFooter: true,

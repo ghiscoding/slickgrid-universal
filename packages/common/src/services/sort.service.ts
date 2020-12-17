@@ -416,7 +416,7 @@ export class SortService {
   }
 
   sortComparer(sortColumn: ColumnSort, dataRow1: any, dataRow2: any, querySortField?: string): number | undefined {
-    if (sortColumn && sortColumn.sortCol) {
+    if (sortColumn?.sortCol) {
       const columnDef = sortColumn.sortCol;
       const sortDirection = sortColumn.sortAsc ? SortDirectionNumber.asc : SortDirectionNumber.desc;
       let queryFieldName1 = querySortField || columnDef.queryFieldSorter || columnDef.queryField || columnDef.field;
@@ -442,12 +442,12 @@ export class SortService {
 
       // user could provide his own custom Sorter
       if (columnDef.sortComparer) {
-        const customSortResult = columnDef.sortComparer(value1, value2, sortDirection, columnDef);
+        const customSortResult = columnDef.sortComparer(value1, value2, sortDirection, columnDef, this._gridOptions);
         if (customSortResult !== SortDirectionNumber.neutral) {
           return customSortResult;
         }
       } else {
-        const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef);
+        const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef, this._gridOptions);
         if (sortResult !== SortDirectionNumber.neutral) {
           return sortResult;
         }

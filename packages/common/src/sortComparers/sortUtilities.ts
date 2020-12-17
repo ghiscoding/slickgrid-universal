@@ -1,16 +1,16 @@
 import { FieldType, SortDirectionNumber } from '../enums/index';
-import { Column } from '../interfaces/index';
+import { Column, GridOption } from '../interfaces/index';
 import { SortComparers } from './index';
 import { getAssociatedDateSortComparer } from './dateUtilities';
 
-export function sortByFieldType(fieldType: typeof FieldType[keyof typeof FieldType], value1: any, value2: any, sortDirection: number | SortDirectionNumber, sortColumn?: Column) {
+export function sortByFieldType(fieldType: typeof FieldType[keyof typeof FieldType], value1: any, value2: any, sortDirection: number | SortDirectionNumber, sortColumn?: Column, gridOptions?: GridOption) {
   let sortResult = 0;
 
   switch (fieldType) {
     case FieldType.float:
     case FieldType.integer:
     case FieldType.number:
-      sortResult = SortComparers.numeric(value1, value2, sortDirection, sortColumn);
+      sortResult = SortComparers.numeric(value1, value2, sortDirection, sortColumn, gridOptions);
       break;
     case FieldType.date:
     case FieldType.dateIso:
@@ -38,17 +38,17 @@ export function sortByFieldType(fieldType: typeof FieldType[keyof typeof FieldTy
     case FieldType.dateTimeUsShort:
     case FieldType.dateTimeUsShortAmPm:
     case FieldType.dateTimeUsShortAM_PM:
-      sortResult = getAssociatedDateSortComparer(fieldType).call(this, value1, value2, sortDirection, sortColumn);
+      sortResult = getAssociatedDateSortComparer(fieldType).call(this, value1, value2, sortDirection, sortColumn, gridOptions);
       break;
     case FieldType.object:
-      sortResult = SortComparers.objectString(value1, value2, sortDirection, sortColumn);
+      sortResult = SortComparers.objectString(value1, value2, sortDirection, sortColumn, gridOptions);
       break;
     case FieldType.string:
     case FieldType.text:
     case FieldType.password:
     case FieldType.readonly:
     default:
-      sortResult = SortComparers.string(value1, value2, sortDirection, sortColumn);
+      sortResult = SortComparers.string(value1, value2, sortDirection, sortColumn, gridOptions);
       break;
   }
 
