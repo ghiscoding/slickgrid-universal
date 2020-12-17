@@ -55,7 +55,7 @@ export class DateRangeFilter implements Filter {
 
   /** Getter to know what would be the default operator when none is specified */
   get defaultOperator(): OperatorType | OperatorString {
-    return this.gridOptions.defaultFilterRangeOperator || OperatorType.rangeExclusive;
+    return this.gridOptions.defaultFilterRangeOperator || OperatorType.rangeInclusive;
   }
 
   /** Getter for the Flatpickr Options */

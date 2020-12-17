@@ -1,12 +1,12 @@
-import { Column, SortComparer } from '../interfaces/index';
+import { Column, GridOption, SortComparer } from '../interfaces/index';
 import { SortDirectionNumber } from '../enums/sortDirectionNumber.enum';
 
-export const stringSortComparer: SortComparer = (value1: any, value2: any, sortDirection: number | SortDirectionNumber, sortColumn?: Column) => {
+export const stringSortComparer: SortComparer = (value1: any, value2: any, sortDirection: number | SortDirectionNumber, sortColumn?: Column, gridOptions?: GridOption) => {
   if (sortDirection === undefined || sortDirection === null) {
     sortDirection = SortDirectionNumber.neutral;
   }
   let position = 0;
-  const checkForUndefinedValues = sortColumn && sortColumn.valueCouldBeUndefined || false;
+  const checkForUndefinedValues = sortColumn?.valueCouldBeUndefined ?? gridOptions?.cellValueCouldBeUndefined ?? false;
 
   if (value1 === value2) {
     position = 0;
