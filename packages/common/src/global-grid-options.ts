@@ -91,7 +91,7 @@ export const GlobalGridOptions: GridOption = {
   defaultFilter: Filters.input,
   enableFilterTrimWhiteSpace: false, // do we want to trim white spaces on all Filters?
   defaultFilterPlaceholder: '&#128269;',
-  defaultFilterRangeOperator: OperatorType.rangeExclusive,
+  defaultFilterRangeOperator: OperatorType.rangeInclusive,
   defaultColumnSortFieldId: 'id',
   defaultComponentEventPrefix: '',
   defaultSlickgridEventPrefix: '',
