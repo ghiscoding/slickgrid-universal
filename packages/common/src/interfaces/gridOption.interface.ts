@@ -148,7 +148,7 @@ export interface GridOption {
   /** Default placeholder to use in Filters that support placeholder (autocomplete, input, flatpickr, select, ...) */
   defaultFilterPlaceholder?: string;
 
-  /** Defaults to 'RangeExclusive', allows to change the default filter range operator */
+  /** Defaults to 'RangeInclusive', allows to change the default filter range operator */
   defaultFilterRangeOperator?: OperatorString | OperatorType;
 
   /** Default prefix for SlickGrid Event names (events created in the SlickGrid and/or DataView objects) */
