@@ -46,7 +46,6 @@
   .flatpickr.input-group {
     .input-group-btn {
       .btn {
-        border-left: 0 !important;
         background-color: #eeeeee;
         border: 1px solid #cccccc;
         padding: $date-editor-clear-button-icon-padding;
@@ -175,16 +174,18 @@
       top: 0;
     }
 
-    .btn {
-      margin: $editor-modal-footer-btn-margin;
-      height: $editor-modal-footer-btn-height;
-      border: $editor-modal-footer-btn-border;
-      border-radius: $editor-modal-footer-btn-radius;
-      &:hover {
-        border-color: $editor-modal-footer-btn-border-hover;
-      }
-      &:disabled {
-        background-color: $button-primary-bg-color-disabled;
+    .footer-buttons {
+      .btn {
+        margin: $editor-modal-footer-btn-margin;
+        height: $editor-modal-footer-btn-height;
+        border: $editor-modal-footer-btn-border;
+        border-radius: $editor-modal-footer-btn-radius;
+        &:hover {
+          border-color: $editor-modal-footer-btn-border-hover;
+        }
+        &:disabled {
+          background-color: $button-primary-bg-color-disabled;
+        }
       }
     }
 
@@ -398,7 +399,8 @@
         .input-group-btn {
           min-width: 28px;
           .btn {
-            margin: 0;
+            min-width: 28px;
+            border-left: $editor-modal-close-btn-border-left;
             height: $editor-modal-input-editor-height;
             border-radius: $editor-modal-close-btn-border-radius;
           }
@@ -412,6 +414,7 @@
         }
       }
       .slider-value {
+        height: $editor-modal-slider-editor-value-height;
         min-width: 28px;
         .input-group-text {
           min-height: $editor-modal-slider-editor-value-min-height;

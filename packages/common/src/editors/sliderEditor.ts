@@ -14,7 +14,7 @@ declare const Slick: SlickNamespace;
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
 export class SliderEditor implements Editor {
-  private _defaultValue: any;
+  private _defaultValue = 0;
   private _elementRangeInputId = '';
   private _elementRangeOutputId = '';
   private _$editorElm: any;
@@ -76,8 +76,8 @@ export class SliderEditor implements Editor {
     if (container && this.columnDef) {
       // define the input & slider number IDs
       const itemId = this.args?.item?.id ?? '';
-      this._elementRangeInputId = `rangeInput_${this.columnDef.field}_${itemId}`;
-      this._elementRangeOutputId = `rangeOutput_${this.columnDef.field}_${itemId}`;
+      this._elementRangeInputId = `rangeInput_${this.columnDef.id}_${itemId}`;
+      this._elementRangeOutputId = `rangeOutput_${this.columnDef.id}_${itemId}`;
       const compositeEditorOptions = this.args.compositeEditorOptions;
 
       // create HTML string template
@@ -139,7 +139,7 @@ export class SliderEditor implements Editor {
 
         // clear the checkbox when it's newly disabled
         if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
-          this._defaultValue = '';
+          this._defaultValue = 0;
           this._$editorElm.children('input').val(0);
           this._$editorElm.children('div.input-group-addon.input-group-append').children().html(0);
           this._$editorElm.val(0);
@@ -185,7 +185,7 @@ export class SliderEditor implements Editor {
   }
 
   applyValue(item: any, state: any) {
-    const fieldName = this.columnDef && this.columnDef.field;
+    const fieldName = this.columnDef?.field ?? '';
     if (fieldName !== undefined) {
       const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
@@ -207,13 +207,13 @@ export class SliderEditor implements Editor {
   }
 
   loadValue(item: any) {
-    const fieldName = this.columnDef && this.columnDef.field;
+    const fieldName = this.columnDef?.field ?? '';
 
 
     if (item && fieldName !== undefined) {
       // is the field a complex object, "address.streetNumber"
       const isComplexObject = fieldName?.indexOf('.') > 0;
-      let value = (isComplexObject) ? getDescendantProperty(item, fieldName) : (item.hasOwnProperty(fieldName) && item[fieldName]);
+      let value = (isComplexObject) ? getDescendantProperty(item, fieldName) : (item.hasOwnProperty(fieldName) ? item[fieldName] : this._defaultValue);
 
       if (value === '' || value === null || value === undefined) {
         value = this._defaultValue; // load default value when item doesn't have any value
@@ -253,7 +253,7 @@ export class SliderEditor implements Editor {
       return { valid: true, msg: '' };
     }
 
-    const elmValue = (inputValue !== undefined) ? inputValue : this._$input && this._$input.val && this._$input.val();
+    const elmValue = (inputValue !== undefined) ? inputValue : this._$input?.val();
     return sliderValidator(elmValue, {
       editorArgs: this.args,
       errorMessage: this.columnEditor.errorMessage,
