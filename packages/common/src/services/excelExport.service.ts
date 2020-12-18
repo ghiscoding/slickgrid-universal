@@ -19,7 +19,7 @@ export abstract class ExcelExportService implements ExternalResource {
    * Method to return the current locale used by the App
    * @return {string} current locale
    */
-  exportToExcel(_options: ExcelExportOption): Promise<boolean> {
+  exportToExcel(_options?: ExcelExportOption): Promise<boolean> {
     throw new Error('ExcelExportService the "exportToExcel" method must be implemented');
   }
 }

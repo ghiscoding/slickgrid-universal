@@ -13,6 +13,7 @@ import {
   Column,
   Constants,
   ContainerService,
+  DelimiterType,
   ExternalResource,
   FileType,
   GridOption,
@@ -25,6 +26,13 @@ import {
   TextExportService as BaseTextExportService,
   TranslaterService,
 } from '@slickgrid-universal/common';
+
+const DEFAULT_EXPORT_OPTIONS: TextExportOption = {
+  delimiter: DelimiterType.comma,
+  filename: 'export',
+  format: FileType.csv,
+  useUtf8WithBom: true,
+};
 
 export class TextExportService implements ExternalResource, BaseTextExportService {
   private _delimiter = ',';
@@ -86,14 +94,14 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    *
    * Example: exportToFile({ format: FileType.csv, delimiter: DelimiterType.comma })
    */
-  exportToFile(options: TextExportOption): Promise<boolean> {
+  exportToFile(options?: TextExportOption): Promise<boolean> {
     if (!this._grid || !this._dataView || !this._pubSubService) {
       throw new Error('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects and/or PubSubService are not initialized did you forget to enable the grid option flag "enableTextExport"?');
     }
 
     return new Promise(resolve => {
       this._pubSubService?.publish(`onBeforeExportToTextFile`, true);
-      this._exportOptions = deepCopy({ ...this._gridOptions.exportOptions, ...this._gridOptions.textExportOptions, ...options });
+      this._exportOptions = deepCopy({ ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.exportOptions, ...this._gridOptions.textExportOptions, ...options });
       this._delimiter = this._exportOptions.delimiterOverride || this._exportOptions.delimiter || '';
       this._fileFormat = this._exportOptions.format || FileType.csv;
 

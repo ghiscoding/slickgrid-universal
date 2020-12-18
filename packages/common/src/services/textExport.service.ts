@@ -19,7 +19,7 @@ export abstract class TextExportService implements ExternalResource {
    * Method to return the current locale used by the App
    * @return {string} current locale
    */
-  exportToFile(_options: TextExportOption): Promise<boolean> {
+  exportToFile(_options?: TextExportOption): Promise<boolean> {
     throw new Error('ExportService the "exportToFile" method must be implemented');
   }
 }

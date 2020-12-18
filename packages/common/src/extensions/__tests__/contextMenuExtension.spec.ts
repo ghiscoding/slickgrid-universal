@@ -276,7 +276,7 @@ describe('contextMenuExtension', () => {
           { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
           expect.anything()
         );
-        expect(onCommandSpy).toHaveBeenCalledWith(expect.anything(), { item: { command: 'help' }, column: {}, grid: gridStub, command: 'help' });
+        expect(onCommandSpy).toHaveBeenCalledWith(expect.anything(), { item: { command: 'help' }, column: {} as Column, grid: gridStub, command: 'help' });
         expect(onOptionSpy).not.toHaveBeenCalled();
         expect(onb4CloseSpy).not.toHaveBeenCalled();
         expect(onb4ShowSpy).not.toHaveBeenCalled();
@@ -299,7 +299,7 @@ describe('contextMenuExtension', () => {
           { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
           expect.anything()
         );
-        expect(onOptionSpy).toHaveBeenCalledWith(expect.anything(), { item: { option: 'help' }, column: {}, grid: gridStub, option: 'help' });
+        expect(onOptionSpy).toHaveBeenCalledWith(expect.anything(), { item: { option: 'help' }, column: {} as Column, grid: gridStub, option: 'help' });
         expect(onCommandSpy).not.toHaveBeenCalled();
         expect(onb4CloseSpy).not.toHaveBeenCalled();
         expect(onb4ShowSpy).not.toHaveBeenCalled();
@@ -840,10 +840,7 @@ describe('contextMenuExtension', () => {
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'export-excel') as MenuCommandItem;
         menuItemCommand.action!(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any);
 
-        expect(excelExportSpy).toHaveBeenCalledWith({
-          filename: 'export',
-          format: FileType.xlsx,
-        });
+        expect(excelExportSpy).toHaveBeenCalled();
       });
 
       it('should call "exportToFile" with CSV set when the command triggered is "export-csv"', () => {
@@ -858,9 +855,7 @@ describe('contextMenuExtension', () => {
 
         expect(exportSpy).toHaveBeenCalledWith({
           delimiter: DelimiterType.comma,
-          filename: 'export',
           format: FileType.csv,
-          useUtf8WithBom: true
         });
       });
 
@@ -876,9 +871,7 @@ describe('contextMenuExtension', () => {
 
         expect(exportSpy).toHaveBeenCalledWith({
           delimiter: DelimiterType.tab,
-          filename: 'export',
           format: FileType.txt,
-          useUtf8WithBom: true
         });
       });
 
