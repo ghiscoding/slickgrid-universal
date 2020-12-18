@@ -418,9 +418,7 @@ export class GridMenuExtension implements Extension {
           if (exportCsvService?.exportToFile) {
             exportCsvService.exportToFile({
               delimiter: DelimiterType.comma,
-              filename: 'export',
               format: FileType.csv,
-              useUtf8WithBom: true,
             });
           } else {
             throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalResources: [new TextExportService()] };`);
@@ -429,10 +427,7 @@ export class GridMenuExtension implements Extension {
         case 'export-excel':
           const excelService: ExcelExportService = registeredResources.find((service: any) => service.className === 'ExcelExportService');
           if (excelService?.exportToExcel) {
-            excelService.exportToExcel({
-              filename: 'export',
-              format: FileType.xlsx,
-            });
+            excelService.exportToExcel();
           } else {
             throw new Error(`[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Grid Menu. Example:: this.gridOptions = { enableExcelExport: true, registerExternalResources: [new ExcelExportService()] };`);
           }
@@ -442,9 +437,7 @@ export class GridMenuExtension implements Extension {
           if (exportTxtService?.exportToFile) {
             exportTxtService.exportToFile({
               delimiter: DelimiterType.tab,
-              filename: 'export',
               format: FileType.txt,
-              useUtf8WithBom: true,
             });
           } else {
             throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalResources: [new TextExportService()] };`);

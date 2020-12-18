@@ -38,6 +38,11 @@ import {
   ExcelWorksheet,
 } from './interfaces/index';
 
+const DEFAULT_EXPORT_OPTIONS: ExcelExportOption = {
+  filename: 'export',
+  format: FileType.xlsx
+};
+
 export class ExcelExportService implements ExternalResource, BaseExcelExportService {
   private _fileFormat = FileType.xlsx;
   private _grid: SlickGrid;
@@ -99,14 +104,14 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    *
    * Example: exportToExcel({ format: FileType.csv, delimiter: DelimiterType.comma })
    */
-  exportToExcel(options: ExcelExportOption): Promise<boolean> {
+  exportToExcel(options?: ExcelExportOption): Promise<boolean> {
     if (!this._grid || !this._dataView || !this._pubSubService) {
       throw new Error('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects and/or PubSubService are not initialized did you forget to enable the grid option flag "enableExcelExport"?');
     }
 
     return new Promise(resolve => {
       this._pubSubService?.publish(`onBeforeExportToExcel`, true);
-      this._excelExportOptions = deepCopy({ ...this._gridOptions.excelExportOptions, ...options });
+      this._excelExportOptions = deepCopy({ ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.excelExportOptions, ...options });
       this._fileFormat = this._excelExportOptions.format || FileType.xlsx;
 
       // prepare the Excel Workbook & Sheet

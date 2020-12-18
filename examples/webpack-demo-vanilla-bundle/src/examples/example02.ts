@@ -164,9 +164,8 @@ export class Example2 {
         sanitizeDataExport: true
       },
       enableExcelExport: true,
-      excelExportOptions: {
-        sanitizeDataExport: true
-      },
+      excelExportOptions: { filename: 'my-export', sanitizeDataExport: true },
+      textExportOptions: { filename: 'my-export', sanitizeDataExport: true },
       registerExternalResources: [this.excelExportService, new TextExportService()],
       showCustomFooter: true, // display some metrics in the bottom custom footer
       customFooterOptions: {
