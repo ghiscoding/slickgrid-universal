@@ -20,7 +20,7 @@
     "updated": "lerna updated",
     "clean:tsconfig-build-cache": "rimraf --maxBusyTries=10 packages/*/dist/tsconfig.tsbuildinfo",
     "prenew-version": "lerna run package:remove-browser-prop",
-    "new-version": "lerna version --conventional-commits",
+    "new-version": "lerna version --conventional-commits --force-publish",
     "postnew-version": "lerna run package:add-browser-prop",
     "publish": "lerna publish from-package --registry=https://registry.npmjs.org/",
     "serve:demo": "http-server ./docs -p 8888 -a localhost",
