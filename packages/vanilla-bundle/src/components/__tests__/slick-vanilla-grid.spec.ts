@@ -2,11 +2,14 @@ import 'jest-extended';
 import {
   Column,
   CollectionService,
+  ColumnFilters,
   CurrentFilter,
   CurrentPagination,
   CurrentSorter,
+  Editor,
   Editors,
   ExtensionList,
+  ExtensionName,
   ExtensionService,
   ExtensionUtility,
   Filters,
@@ -17,21 +20,17 @@ import {
   GridState,
   GridStateService,
   GridStateType,
-  SlickGroupItemMetadataProvider,
   GroupingAndColspanService,
   Pagination,
   PaginationService,
   ServicePagination,
   SharedService,
+  SlickEventHandler,
   SlickGrid,
+  SlickGroupItemMetadataProvider,
   SortService,
   TreeDataService,
   TranslaterService,
-  ColumnFilters,
-  Editor,
-  ExtensionName,
-  ColumnFilter,
-  SlickEventHandler,
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
@@ -58,7 +57,7 @@ const mockConvertParentChildArray = jest.fn();
 (backendUtilities.onBackendError as any) = mockBackendError;
 
 declare const Slick: any;
-const slickEventHandler = new MockSlickEventHandler() as SlickEventHandler;
+const slickEventHandler = new MockSlickEventHandler() as unknown as SlickEventHandler;
 
 const extensionServiceStub = {
   bindDifferentExtensions: jest.fn(),
@@ -976,7 +975,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions = {
           backendServiceApi: {
             onInit: jest.fn(),
-            service: mockGraphqlService,
+            service: mockGraphqlService as any,
             preProcess: jest.fn(),
             postProcess: jest.fn(),
             process: jest.fn(),
@@ -1560,7 +1559,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const emptySpy = jest.spyOn(component.slickEmptyWarning, 'showEmptyDataMessage');
         component.columnDefinitions = mockColDefs;
         component.refreshGridData([]);
-        mockDataView.onRowCountChanged.notify({ first: 'John' });
+        mockDataView.onRowCountChanged.notify({ current: 0, item: { first: 'John' } });
 
         setTimeout(() => {
           expect(component.columnDefinitions).toEqual(mockColDefs);
@@ -1772,7 +1771,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       it('should call the backend service API to refresh the dataset', (done) => {
         component.gridOptions.enablePagination = true;
         component.gridOptions.backendServiceApi = {
-          service: mockGraphqlService,
+          service: mockGraphqlService as any,
           process: jest.fn(),
         };
 

@@ -422,8 +422,6 @@ export class SlickVanillaGridBundle {
     }
 
     // dispose the Components
-    this.slickEmptyWarning?.dispose();
-    this.slickCompositeEditor?.dispose();
     this.slickFooter?.dispose();
     this.slickPagination?.dispose();
 
@@ -631,10 +629,13 @@ export class SlickVanillaGridBundle {
     this.slickEmptyWarning = new SlickEmptyWarningComponent();
     this._registeredResources.push(this.slickEmptyWarning);
 
-    // also initialize (render) the pagination component
+    // also initialize (render) the pagination component when using the salesforce default options
+    // however before adding a new instance, just make sure there isn't one that might have been loaded by calling "registerExternalResources"
     if (this.gridOptions.enableCompositeEditor && this.gridOptions.useSalesforceDefaultGridOptions) {
-      this.slickCompositeEditor = new SlickCompositeEditorComponent();
-      this._registeredResources.push(this.slickCompositeEditor);
+      if (!this._registeredResources.some((resource => resource instanceof SlickCompositeEditorComponent))) {
+        this.slickCompositeEditor = new SlickCompositeEditorComponent();
+        this._registeredResources.push(this.slickCompositeEditor);
+      }
     }
 
     // bind the Backend Service API callback functions only after the grid is initialized
@@ -649,9 +650,6 @@ export class SlickVanillaGridBundle {
       for (const resource of this._registeredResources) {
         if (typeof resource.init === 'function') {
           resource.init(this.slickGrid, this.universalContainerService);
-          if (resource instanceof SlickCompositeEditorComponent) {
-            this.slickCompositeEditor = resource;
-          }
         }
       }
     }
