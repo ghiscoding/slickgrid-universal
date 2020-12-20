@@ -2,8 +2,8 @@
   "name": "@slickgrid-universal/excel-export",
   "version": "0.7.2",
   "description": "Excel Export (xls/xlsx) Service.",
-  "browser": "src/index.ts",
   "main": "dist/commonjs/index.js",
+  "browser": "src/index.ts",
   "module": "dist/es2015/index.js",
   "typings": "dist/commonjs/index.d.ts",
   "publishConfig": {
@@ -21,7 +21,9 @@
     "bundle:es2015": "cross-env tsc --project tsconfig.build.json --outDir dist/es2015 --module es2020 --target es2015",
     "bundle": "run-p bundle:commonjs bundle:es2015",
     "prebundle": "npm-run-all delete:dist",
-    "delete:dist": "cross-env rimraf --maxBusyTries=10 dist"
+    "delete:dist": "cross-env rimraf --maxBusyTries=10 dist",
+    "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=excel-export",
+    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=excel-export"
   },
   "author": "Ghislain B.",
   "license": "MIT",

@@ -2,8 +2,8 @@
   "name": "@slickgrid-universal/vanilla-bundle",
   "version": "0.7.2",
   "description": "Vanilla Slick Grid Bundle - Framework agnostic the output is to be used in vanilla JS/TS - Written in TypeScript and we also use WebPack to bundle everything into 1 JS file.",
-  "browser": "src/index.ts",
   "main": "dist/commonjs/index.js",
+  "browser": "src/index.ts",
   "module": "dist/es2015/index.js",
   "typings": "dist/commonjs/index.d.ts",
   "publishConfig": {
@@ -29,7 +29,9 @@
     "delete:zip": "cross-env rimraf --maxBusyTries=10 dist-bundle-zip",
     "webpack:prod": "webpack --env.production",
     "zip:dist:dev": "cross-env node compress.js --output-filename=slickgrid-vanilla-bundle-DEV --output-folder=\"dist-grid-bundle-zip/\"",
-    "zip:dist": "cross-env node compress.js --output-filename=slickgrid-vanilla-bundle --output-folder=\"dist-grid-bundle-zip/\""
+    "zip:dist": "cross-env node compress.js --output-filename=slickgrid-vanilla-bundle --output-folder=\"dist-grid-bundle-zip/\"",
+    "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=vanilla-bundle",
+    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=vanilla-bundle"
   },
   "author": "Ghislain B.",
   "license": "MIT",
