@@ -22,7 +22,7 @@
     "prenew-version": "lerna run package:remove-browser-prop",
     "new-version": "lerna version --conventional-commits --force-publish",
     "postnew-version": "lerna run package:add-browser-prop",
-    "publish": "lerna publish from-package --registry=https://registry.npmjs.org/",
+    "publish": "lerna publish from-package --registry=https://registry.npmjs.org/ --force-publish",
     "serve:demo": "http-server ./docs -p 8888 -a localhost",
     "lint": "eslint packages/** --ext .ts",
     "test": "npx jest --runInBand --coverage=true --config ./test/jest.config.js",
