@@ -1,9 +1,8 @@
 {
   "name": "@slickgrid-universal/text-export",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "Export to Text File (csv/txt) Service.",
   "main": "dist/commonjs/index.js",
-  "browser": "src/index.ts",
   "module": "dist/es2015/index.js",
   "typings": "dist/commonjs/index.d.ts",
   "publishConfig": {
@@ -38,7 +37,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.7.3",
+    "@slickgrid-universal/common": "^0.7.4",
     "text-encoding-utf-8": "^1.0.2"
   },
   "devDependencies": {

@@ -1,9 +1,8 @@
 {
   "name": "@slickgrid-universal/composite-editor-component",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "Slick Composite Editor Component - Vanilla Implementation of a Composite Editor Modal Window Component",
   "main": "dist/commonjs/index.js",
-  "browser": "src/index.ts",
   "module": "dist/es2015/index.js",
   "typings": "dist/commonjs/index.d.ts",
   "publishConfig": {
@@ -38,7 +37,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.7.3",
+    "@slickgrid-universal/common": "^0.7.4",
     "dompurify": "^2.2.4"
   },
   "devDependencies": {
