@@ -3,6 +3,7 @@
   "version": "0.7.3",
   "description": "SlickGrid-Universal Common Code",
   "main": "dist/commonjs/index.js",
+  "browser": "src/index.ts",
   "module": "dist/es2015/index.js",
   "typings": "dist/commonjs/index.d.ts",
   "type": "module",
