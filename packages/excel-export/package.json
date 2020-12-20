@@ -1,9 +1,8 @@
 {
   "name": "@slickgrid-universal/excel-export",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "description": "Excel Export (xls/xlsx) Service.",
   "main": "dist/commonjs/index.js",
-  "browser": "src/index.ts",
   "module": "dist/es2015/index.js",
   "typings": "dist/commonjs/index.d.ts",
   "publishConfig": {
@@ -38,7 +37,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.7.4",
+    "@slickgrid-universal/common": "^0.7.5",
     "excel-builder-webpacker": "^2.0.1",
     "moment-mini": "^2.24.0"
   },
