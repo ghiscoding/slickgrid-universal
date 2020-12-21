@@ -1,3 +1,5 @@
+import 'slickgrid/plugins/slick.cellexternalcopymanager';
+
 import {
   Column,
   EditCommand,
@@ -13,7 +15,6 @@ import {
   // TypeScript Helper
   GetSlickEventType,
 } from '../interfaces/index';
-import { ExtensionName } from '../enums/index';
 import { ExtensionUtility } from './extensionUtility';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { SharedService } from '../services/shared.service';
@@ -75,9 +76,6 @@ export class CellExternalCopyManagerExtension implements Extension {
   /** Register the 3rd party addon (plugin) */
   register(): SlickCellExternalCopyManager | null {
     if (this.sharedService && this.sharedService.slickGrid && this.sharedService.gridOptions) {
-      // dynamically import the SlickGrid plugin (addon) with RequireJS
-      this.extensionUtility.loadExtensionDynamically(ExtensionName.cellExternalCopyManager);
-
       this.createUndoRedoBuffer();
       this._bindingEventService.bind(document.body, 'keydown', this.handleKeyDown.bind(this));
 

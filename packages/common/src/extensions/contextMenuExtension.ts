@@ -1,3 +1,5 @@
+import 'slickgrid/plugins/slick.contextmenu';
+
 import {
   Column,
   ContextMenu,
@@ -10,7 +12,7 @@ import {
   SlickEventHandler,
   SlickNamespace,
 } from '../interfaces/index';
-import { DelimiterType, ExtensionName, FileType, } from '../enums/index';
+import { DelimiterType, FileType, } from '../enums/index';
 import { ExtensionUtility } from './extensionUtility';
 import { exportWithFormatterWhenDefined } from '../services/export-utilities';
 import { SharedService } from '../services/shared.service';
@@ -70,9 +72,6 @@ export class ContextMenuExtension implements Extension {
       this._contextMenuOptions = this.sharedService.gridOptions.contextMenu;
       // keep original user context menu, useful when switching locale to translate
       this._userOriginalContextMenu = { ...this._contextMenuOptions };
-
-      // dynamically import the SlickGrid plugin (addon) with RequireJS
-      this.extensionUtility.loadExtensionDynamically(ExtensionName.contextMenu);
 
       // merge the original commands with the built-in internal commands
       const originalCommandItems = this._userOriginalContextMenu && Array.isArray(this._userOriginalContextMenu.commandItems) ? this._userOriginalContextMenu.commandItems : [];

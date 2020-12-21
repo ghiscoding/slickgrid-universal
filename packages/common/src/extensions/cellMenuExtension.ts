@@ -1,5 +1,6 @@
+import 'slickgrid/plugins/slick.cellmenu';
+
 import { Constants } from '../constants';
-import { ExtensionName } from '../enums/extensionName.enum';
 import {
   CellMenu,
   CellMenuOption,
@@ -66,8 +67,6 @@ export class CellMenuExtension implements Extension {
       // get locales provided by user in main file or else use default English locales via the Constants
       this._locales = this.sharedService.gridOptions && this.sharedService.gridOptions.locales || Constants.locales;
 
-      // dynamically import the SlickGrid plugin (addon) with RequireJS
-      this.extensionUtility.loadExtensionDynamically(ExtensionName.cellMenu);
       this._cellMenuOptions = { ...this.getDefaultCellMenuOptions(), ...this.sharedService.gridOptions.cellMenu };
       this.sharedService.gridOptions.cellMenu = this._cellMenuOptions;
 

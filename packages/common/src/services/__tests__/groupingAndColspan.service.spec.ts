@@ -69,7 +69,6 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 const mockExtensionUtility = {
-  loadExtensionDynamically: jest.fn(),
   translateItems: jest.fn(),
 } as unknown as ExtensionUtility;
 

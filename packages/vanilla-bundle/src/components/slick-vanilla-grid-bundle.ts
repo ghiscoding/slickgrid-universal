@@ -3,6 +3,7 @@ import 'slickgrid/lib/jquery.mousewheel';
 import 'slickgrid/slick.core';
 import 'slickgrid/slick.grid';
 import 'slickgrid/slick.dataview';
+import 'slickgrid/slick.groupitemmetadataprovider';
 import 'slickgrid/plugins/slick.resizer';
 import {
   AutoCompleteEditor,
@@ -11,7 +12,6 @@ import {
   ColumnEditor,
   DataViewOption,
   ExtensionList,
-  ExtensionName,
   ExternalResource,
   EventNamingStyle,
   GlobalGridOptions,
@@ -319,20 +319,20 @@ export class SlickVanillaGridBundle {
     this.paginationService = services?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService);
 
     // extensions
-    const autoTooltipExtension = new AutoTooltipExtension(this.extensionUtility, this.sharedService);
+    const autoTooltipExtension = new AutoTooltipExtension(this.sharedService);
     const cellExternalCopyManagerExtension = new CellExternalCopyManagerExtension(this.extensionUtility, this.sharedService);
     const cellMenuExtension = new CellMenuExtension(this.extensionUtility, this.sharedService, this.translaterService);
     const contextMenuExtension = new ContextMenuExtension(this.extensionUtility, this.sharedService, this.treeDataService, this.translaterService);
     const columnPickerExtension = new ColumnPickerExtension(this.extensionUtility, this.sharedService);
-    const checkboxExtension = new CheckboxSelectorExtension(this.extensionUtility, this.sharedService);
+    const checkboxExtension = new CheckboxSelectorExtension(this.sharedService);
     const draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this.sharedService);
     const gridMenuExtension = new GridMenuExtension(this.extensionUtility, this.filterService, this.sharedService, this.sortService, this.translaterService);
     const groupItemMetaProviderExtension = new GroupItemMetaProviderExtension(this.sharedService);
     const headerButtonExtension = new HeaderButtonExtension(this.extensionUtility, this.sharedService);
     const headerMenuExtension = new HeaderMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.translaterService);
     const rowDetailViewExtension = new RowDetailViewExtension();
-    const rowMoveManagerExtension = new RowMoveManagerExtension(this.extensionUtility, this.sharedService);
-    const rowSelectionExtension = new RowSelectionExtension(this.extensionUtility, this.sharedService);
+    const rowMoveManagerExtension = new RowMoveManagerExtension(this.sharedService);
+    const rowSelectionExtension = new RowSelectionExtension(this.sharedService);
 
     this.extensionService = services?.extensionService ?? new ExtensionService(
       autoTooltipExtension,
@@ -480,7 +480,6 @@ export class SlickVanillaGridBundle {
       let dataViewOptions: DataViewOption = { inlineFilters: dataviewInlineFilters };
 
       if (this.gridOptions.draggableGrouping || this.gridOptions.enableGrouping) {
-        this.extensionUtility.loadExtensionDynamically(ExtensionName.groupItemMetaProvider);
         this.groupItemMetadataProvider = new Slick.Data.GroupItemMetadataProvider();
         this.sharedService.groupItemMetadataProvider = this.groupItemMetadataProvider;
         dataViewOptions = { ...dataViewOptions, groupItemMetadataProvider: this.groupItemMetadataProvider };

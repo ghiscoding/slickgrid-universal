@@ -1,4 +1,5 @@
-import { ExtensionName } from '../enums/index';
+import 'slickgrid/plugins/slick.headerbuttons';
+
 import { Extension, GetSlickEventType, SlickEventHandler, SlickNamespace, SlickHeaderButtons, HeaderButton } from '../interfaces/index';
 import { ExtensionUtility } from './extensionUtility';
 import { SharedService } from '../services/shared.service';
@@ -39,8 +40,6 @@ export class HeaderButtonExtension implements Extension {
   /** Register the 3rd party addon (plugin) */
   register(): SlickHeaderButtons | null {
     if (this.sharedService && this.sharedService.slickGrid && this.sharedService.gridOptions) {
-      // dynamically import the SlickGrid plugin (addon) with RequireJS
-      this.extensionUtility.loadExtensionDynamically(ExtensionName.headerButton);
       this._headerButtonOptions = this.sharedService.gridOptions.headerButton || {};
       this._addon = new Slick.Plugins.HeaderButtons(this._headerButtonOptions);
       if (this._addon) {

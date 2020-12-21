@@ -1,4 +1,5 @@
-import { ExtensionName } from '../enums/index';
+import 'slickgrid/plugins/slick.draggablegrouping';
+
 import { DraggableGrouping, Extension, GetSlickEventType, GridOption, SlickDraggableGrouping, SlickEventHandler, SlickNamespace } from '../interfaces/index';
 import { ExtensionUtility } from './extensionUtility';
 import { SharedService } from '../services/shared.service';
@@ -37,9 +38,6 @@ export class DraggableGroupingExtension implements Extension {
    */
   create(gridOptions: GridOption): SlickDraggableGrouping | null {
     if (gridOptions) {
-      // dynamically import the SlickGrid plugin (addon) with RequireJS
-      this.extensionUtility.loadExtensionDynamically(ExtensionName.draggableGrouping);
-
       if (!this._addon) {
         this._addon = new Slick.DraggableGrouping(gridOptions.draggableGrouping);
       }

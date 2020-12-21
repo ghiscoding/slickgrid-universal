@@ -1,6 +1,7 @@
-import { ExtensionName } from '../enums/extensionName.enum';
+import 'slickgrid/plugins/slick.checkboxselectcolumn';
+import 'slickgrid/plugins/slick.rowselectionmodel';
+
 import { Column, Extension, GridOption, SlickCheckboxSelectColumn, SlickNamespace, SlickRowSelectionModel } from '../interfaces/index';
-import { ExtensionUtility } from './extensionUtility';
 import { SharedService } from '../services/shared.service';
 
 // using external non-typed js libraries
@@ -10,7 +11,7 @@ export class CheckboxSelectorExtension implements Extension {
   private _addon: SlickCheckboxSelectColumn | null;
   private _rowSelectionPlugin: SlickRowSelectionModel;
 
-  constructor(private extensionUtility: ExtensionUtility, private sharedService: SharedService) { }
+  constructor(private sharedService: SharedService) { }
 
   dispose() {
     if (this._addon && this._addon.destroy) {
@@ -28,8 +29,6 @@ export class CheckboxSelectorExtension implements Extension {
    */
   create(columnDefinitions: Column[], gridOptions: GridOption): SlickCheckboxSelectColumn | null {
     if (Array.isArray(columnDefinitions) && gridOptions) {
-      // dynamically import the SlickGrid plugin (addon) with RequireJS
-      this.extensionUtility.loadExtensionDynamically(ExtensionName.checkboxSelector);
       if (!this._addon) {
         this._addon = new Slick.CheckboxSelectColumn(gridOptions.checkboxSelector);
       }
@@ -67,7 +66,6 @@ export class CheckboxSelectorExtension implements Extension {
 
       // this also requires the Row Selection Model to be registered as well
       if (!rowSelectionPlugin || !this.sharedService.slickGrid.getSelectionModel()) {
-        this.extensionUtility.loadExtensionDynamically(ExtensionName.rowSelection);
         rowSelectionPlugin = new Slick.RowSelectionModel(this.sharedService.gridOptions.rowSelectionOptions);
         this.sharedService.slickGrid.setSelectionModel(rowSelectionPlugin);
       }
