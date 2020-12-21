@@ -33,12 +33,12 @@
     <span>Toggle Sorting</span>
   </button>
 
-  <button class="button is-small" onclick.delegate="addItem()"
+  <button class="button is-small" data-test="add-item-btn" onclick.delegate="addItem()"
           title="Clear Filters &amp; Sorting to see it better">
     <span class="icon mdi mdi-plus"></span>
     <span>Add item</span>
   </button>
-  <button class="button is-small" onclick.delegate="deleteItem()">
+  <button class="button is-small" data-test="delete-item-btn" onclick.delegate="deleteItem()">
     <span class="icon mdi mdi-minus"></span>
     <span>Delete item</span>
   </button>

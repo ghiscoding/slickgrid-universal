@@ -491,4 +491,70 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
         }
       });
   });
+
+  it('should click Add Item button 2x times and expect "Task 500" and "Task 501" to be created', () => {
+    cy.get('[data-test="add-item-btn"]').click();
+    cy.wait(200);
+    cy.get('[data-test="add-item-btn"]').click();
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 501');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(2)`).should('contain', 'Task 500');
+
+    cy.get('[data-test="toggle-filtering-btn"]').click(); // show it back
+  });
+
+  it('should open the "Prerequisites" Filter and expect to have Task 500 & 501 in the Filter', () => {
+    cy.get('div.ms-filter.filter-prerequisites')
+      .trigger('click');
+
+    cy.get('.ms-drop')
+      .find('span:nth(1)')
+      .contains('Task 501');
+
+    cy.get('.ms-drop')
+      .find('span:nth(2)')
+      .contains('Task 500');
+
+    cy.get('div.ms-filter.filter-prerequisites')
+      .trigger('click');
+  });
+
+  it('should open the "Prerequisites" Editor and expect to have Task 500 & 501 in the Editor', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(8)`)
+      .should('contain', '')
+      .click();
+
+    cy.get('.ms-drop')
+      .find('span:nth(1)')
+      .contains('Task 501');
+
+    cy.get('.ms-drop')
+      .find('span:nth(2)')
+      .contains('Task 500');
+
+    cy.get('[name=editor-prerequisites].ms-drop ul > li:nth(0)')
+      .click();
+
+    cy.get('.ms-ok-button')
+      .last()
+      .click({ force: true });
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(8)`).should('contain', 'Task 501');
+  });
+
+  it('should delete the last item "Task 501" and expect it to be removed from the Filter', () => {
+    cy.get('[data-test="delete-item-btn"]').click();
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 500');
+
+    cy.get('div.ms-filter.filter-prerequisites')
+      .trigger('click');
+
+    cy.get('.ms-drop')
+      .find('span:nth(1)')
+      .contains('Task 500');
+
+    cy.get('div.ms-filter.filter-prerequisites')
+      .trigger('click');
+  });
 });

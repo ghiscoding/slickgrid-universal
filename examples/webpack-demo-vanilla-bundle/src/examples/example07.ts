@@ -223,7 +223,7 @@ export class Example7 {
 
         if (Array.isArray(collectionEditor) && Array.isArray(collectionFilter)) {
           // add the new row to the grid
-          this.sgb.gridService.addItem(newRows[0]);
+          this.sgb.gridService.addItem(newRows[0], { highlightRow: false });
 
           // then refresh the Editor/Filter "collection", we have 2 ways of doing it
 
@@ -236,7 +236,7 @@ export class Example7 {
           // requisiteColumnDef.editor.collection = [...requisiteColumnDef.editor.collection, ...[{ value: lastRowIndex, label: lastRowIndex, prefix: 'Task' }]];
         }
       }
-    }, 250);
+    }, 50);
   }
 
   /** Delete last inserted row */
