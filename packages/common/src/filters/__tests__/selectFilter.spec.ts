@@ -64,7 +64,6 @@ describe('SelectFilter', () => {
   });
 
   afterEach(() => {
-    mockColumn.filter = undefined;
     filter.destroy();
     jest.clearAllMocks();
   });
@@ -732,6 +731,62 @@ describe('SelectFilter', () => {
     expect(filterListElm[2].textContent).toBe('female');
   });
 
+  it('should trigger a re-render of the DOM element when collection is replaced by new collection', async () => {
+    const renderSpy = jest.spyOn(filter, 'renderDomElement');
+    const newCollection = [{ value: 'val1', label: 'label1' }, { value: 'val2', label: 'label2' }];
+    const mockDataResponse = [{ value: 'female', label: 'Female' }, { value: 'male', label: 'Male' }];
+
+    mockColumn.filter = {
+      collection: [],
+      collectionAsync: Promise.resolve(mockDataResponse),
+      enableCollectionWatch: true,
+    };
+
+    await filter.init(filterArguments);
+    mockColumn.filter!.collection = newCollection;
+    mockColumn.filter!.collection!.push({ value: 'val3', label: 'label3' });
+
+    jest.runAllTimers(); // fast-forward timer
+
+    expect(renderSpy).toHaveBeenCalledTimes(3);
+    expect(renderSpy).toHaveBeenCalledWith(newCollection);
+
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
+    filterBtnElm.click();
+
+    expect(filterListElm.length).toBe(3);
+    expect(filterListElm[0].textContent).toBe('label1');
+    expect(filterListElm[1].textContent).toBe('label2');
+    expect(filterListElm[2].textContent).toBe('label3');
+  });
+
+  it('should trigger a re-render of the DOM element when collection changes', async () => {
+    const renderSpy = jest.spyOn(filter, 'renderDomElement');
+
+    mockColumn.filter = {
+      collection: [{ value: 'female', label: 'Female' }, { value: 'male', label: 'Male' }],
+      enableCollectionWatch: true,
+    };
+
+    await filter.init(filterArguments);
+    mockColumn.filter!.collection!.push({ value: 'other', label: 'Other' });
+
+    jest.runAllTimers(); // fast-forward timer
+
+    expect(renderSpy).toHaveBeenCalledTimes(2);
+    expect(renderSpy).toHaveBeenCalledWith(mockColumn.filter!.collection);
+
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
+    filterBtnElm.click();
+
+    expect(filterListElm.length).toBe(3);
+    expect(filterListElm[0].textContent).toBe('Female');
+    expect(filterListElm[1].textContent).toBe('Male');
+    expect(filterListElm[2].textContent).toBe('Other');
+  });
+
   it('should throw an error when "collectionAsync" Promise does not return a valid array', async (done) => {
     const promise = Promise.resolve({ hello: 'world' });
     mockColumn.filter!.collectionAsync = promise;
@@ -742,5 +797,14 @@ describe('SelectFilter', () => {
       expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Select Filter, the collection is not a valid array.`);
       done();
     }
+  });
+
+  it('should throw an error when "collectionAsync" Promise does not return a valid array', (done) => {
+    const promise = Promise.resolve({ hello: 'world' });
+    mockColumn.filter!.collectionAsync = promise;
+    filter.init(filterArguments).catch((e) => {
+      expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Select Filter, the collection is not a valid array.`);
+      done();
+    });
   });
 });

@@ -1,6 +1,7 @@
 import 'multiple-select-modified';
 
 import * as BackendUtilities from './services/backend-utilities';
+import * as Observers from './services/observers';
 import * as ServiceUtilities from './services/utilities';
 import * as SortUtilities from './sortComparers/sortUtilities';
 
@@ -28,6 +29,6 @@ export * from './sortComparers/sortComparers.index';
 export * from './services/index';
 export { Enums } from './enums/enums.index';
 
-const Utilities = { ...BackendUtilities, ...ServiceUtilities, ...SortUtilities };
+const Utilities = { ...BackendUtilities, ...Observers, ...ServiceUtilities, ...SortUtilities };
 export { Utilities };
 export { SlickgridConfig } from './slickgrid-config';
