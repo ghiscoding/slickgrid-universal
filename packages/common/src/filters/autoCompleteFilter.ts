@@ -19,6 +19,7 @@ import {
   SlickGrid,
 } from './../interfaces/index';
 import { CollectionService } from '../services/collection.service';
+import { collectionObserver, propertyObserver } from '../services/observers';
 import { getDescendantProperty, sanitizeTextByAvailableSanitizer, toKebabCase } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 
@@ -158,14 +159,29 @@ export class AutoCompleteFilter implements Filter {
     this._collection = newCollection;
     this.renderDomElement(newCollection);
 
-    return new Promise(resolve => {
-      const collectionAsync = this.columnFilter.collectionAsync;
-      if (collectionAsync && !this.columnFilter.collection) {
-        // only read the collectionAsync once (on the 1st load),
-        // we do this because Http Fetch will throw an error saying body was already read and is streaming is locked
-        resolve(this.renderOptionsAsync(collectionAsync));
-      } else {
-        resolve(newCollection);
+    return new Promise(async (resolve, reject) => {
+      try {
+        const collectionAsync = this.columnFilter.collectionAsync;
+        let collectionOutput: Promise<any[]> | any[] | undefined;
+
+        if (collectionAsync && !this.columnFilter.collection) {
+          // only read the collectionAsync once (on the 1st load),
+          // we do this because Http Fetch will throw an error saying body was already read and is streaming is locked
+          collectionOutput = this.renderOptionsAsync(collectionAsync);
+          resolve(collectionOutput);
+        } else {
+          collectionOutput = newCollection;
+          resolve(newCollection);
+        }
+
+        // subscribe to both CollectionObserver and PropertyObserver
+        // any collection changes will trigger a re-render of the DOM element filter
+        if (collectionAsync || this.columnFilter.enableCollectionWatch) {
+          await (collectionOutput ?? collectionAsync);
+          this.watchCollectionChanges();
+        }
+      } catch (e) {
+        reject(e);
       }
     });
   }
@@ -242,6 +258,33 @@ export class AutoCompleteFilter implements Filter {
     }
 
     return outputCollection;
+  }
+
+  /**
+   * Subscribe to both CollectionObserver & PropertyObserver with BindingEngine.
+   * They each have their own purpose, the "propertyObserver" will trigger once the collection is replaced entirely
+   * while the "collectionObverser" will trigger on collection changes (`push`, `unshift`, `splice`, ...)
+   */
+  protected watchCollectionChanges() {
+    if (this.columnFilter?.collection) {
+      // subscribe to the "collection" changes (array `push`, `unshift`, `splice`, ...)
+      collectionObserver(this.columnFilter.collection, (updatedArray) => {
+        this.renderDomElement(this.columnFilter.collection || updatedArray || []);
+      });
+
+      // observe for any "collection" changes (array replace)
+      // then simply recreate/re-render the Select (dropdown) DOM Element
+      propertyObserver(this.columnFilter, 'collection', (newValue) => {
+        this.renderDomElement(newValue || []);
+
+        // when new assignment arrives, we need to also reassign observer to the new reference
+        if (this.columnFilter.collection) {
+          collectionObserver(this.columnFilter.collection, (updatedArray) => {
+            this.renderDomElement(this.columnFilter.collection || updatedArray || []);
+          });
+        }
+      });
+    }
   }
 
   renderDomElement(collection: any[]) {

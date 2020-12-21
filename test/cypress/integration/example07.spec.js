@@ -2,7 +2,7 @@
 
 describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
   const GRID_ROW_HEIGHT = 45;
-  const fullTitles = ['', '', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Completed'];
+  const fullTitles = ['', '', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites'];
 
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseExampleUrl')}/example07`);
@@ -135,11 +135,11 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should dynamically add 2x new "Title" columns', () => {
-    const updatedTitles = ['', '', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Title', 'Title'];
+    const updatedTitles = ['', '', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title', 'Title'];
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(8)`).should('not.exist');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('not.exist');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(10)`).should('not.exist');
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
       .should('contain', 'Task 0')
@@ -155,12 +155,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       .each(($child, index) => expect($child.text()).to.eq(updatedTitles[index]));
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(8)`).should('contain', 'Task 0');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('contain', 'Task 0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(10)`).should('contain', 'Task 0');
   });
 
   it('should dynamically remove 1x of the new "Title" columns', () => {
-    const updatedTitles = ['', '', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Title'];
+    const updatedTitles = ['', '', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title'];
 
     cy.get('[data-test=remove-title-column-btn]')
       .click();
@@ -195,11 +195,11 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     cy.get('.flatpickr-calendar:visible .flatpickr-day').contains('22').click('bottom', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).should('contain', '2009-01-22');
 
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(8)`).should('contain', 'Task 0000');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('contain', 'Task 0000');
   });
 
   it('should move "Duration" column to a different position in the grid', () => {
-    const expectedTitles = ['', '', 'Title', '% Complete', 'Start', 'Finish', 'Duration', 'Completed', 'Title'];
+    const expectedTitles = ['', '', 'Title', '% Complete', 'Start', 'Finish', 'Duration', 'Completed', 'Prerequisites', 'Title'];
 
     cy.get('.slick-header-columns')
       .children('.slick-header-column:nth(3)')
@@ -219,7 +219,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should be able to hide "Duration" column', () => {
-    const expectedTitles = ['', '', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Title'];
+    const expectedTitles = ['', '', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title'];
 
     cy.get('[data-test="hide-duration-btn"]').click();
 
@@ -230,7 +230,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should be able to click disable Filters functionality button and expect no Filters', () => {
-    const expectedTitles = ['', '', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Title'];
+    const expectedTitles = ['', '', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title'];
 
     cy.get('[data-test="disable-filters-btn"]').click().click(); // even clicking twice should have same result
 
@@ -267,7 +267,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should be able to toggle Filters functionality', () => {
-    const expectedTitles = ['', '', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Title'];
+    const expectedTitles = ['', '', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title'];
 
     cy.get('[data-test="toggle-filtering-btn"]').click(); // hide it
 
@@ -280,7 +280,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
 
     cy.get('[data-test="toggle-filtering-btn"]').click(); // show it
-    cy.get('.slick-headerrow-columns .slick-headerrow-column').should('have.length', 8);
+    cy.get('.slick-headerrow-columns .slick-headerrow-column').should('have.length', 9);
 
     cy.get('.grid7')
       .find('.slick-header-columns')
@@ -451,7 +451,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
   it('should open Column Picker and show the "Duration" column back to visible and expect it to have kept its position after toggling filter/sorting', () => {
     // first 2 cols are hidden but they do count as li item
-    const expectedFullPickerTitles = ['', '', 'Title', '% Complete', 'Start', 'Finish', 'Duration', 'Completed', 'Title'];
+    const expectedFullPickerTitles = ['', '', 'Title', '% Complete', 'Start', 'Finish', 'Duration', 'Completed', 'Prerequisites', 'Title'];
 
     cy.get('.grid7')
       .find('.slick-header-column')
@@ -490,5 +490,71 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
           expect($child.text()).to.eq(expectedFullPickerTitles[index]);
         }
       });
+  });
+
+  it('should click Add Item button 2x times and expect "Task 500" and "Task 501" to be created', () => {
+    cy.get('[data-test="add-item-btn"]').click();
+    cy.wait(200);
+    cy.get('[data-test="add-item-btn"]').click();
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 501');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(2)`).should('contain', 'Task 500');
+
+    cy.get('[data-test="toggle-filtering-btn"]').click(); // show it back
+  });
+
+  it('should open the "Prerequisites" Filter and expect to have Task 500 & 501 in the Filter', () => {
+    cy.get('div.ms-filter.filter-prerequisites')
+      .trigger('click');
+
+    cy.get('.ms-drop')
+      .find('span:nth(1)')
+      .contains('Task 501');
+
+    cy.get('.ms-drop')
+      .find('span:nth(2)')
+      .contains('Task 500');
+
+    cy.get('div.ms-filter.filter-prerequisites')
+      .trigger('click');
+  });
+
+  it('should open the "Prerequisites" Editor and expect to have Task 500 & 501 in the Editor', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(8)`)
+      .should('contain', '')
+      .click();
+
+    cy.get('.ms-drop')
+      .find('span:nth(1)')
+      .contains('Task 501');
+
+    cy.get('.ms-drop')
+      .find('span:nth(2)')
+      .contains('Task 500');
+
+    cy.get('[name=editor-prerequisites].ms-drop ul > li:nth(0)')
+      .click();
+
+    cy.get('.ms-ok-button')
+      .last()
+      .click({ force: true });
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(8)`).should('contain', 'Task 501');
+  });
+
+  it('should delete the last item "Task 501" and expect it to be removed from the Filter', () => {
+    cy.get('[data-test="delete-item-btn"]').click();
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 500');
+
+    cy.get('div.ms-filter.filter-prerequisites')
+      .trigger('click');
+
+    cy.get('.ms-drop')
+      .find('span:nth(1)')
+      .contains('Task 500');
+
+    cy.get('div.ms-filter.filter-prerequisites')
+      .trigger('click');
   });
 });

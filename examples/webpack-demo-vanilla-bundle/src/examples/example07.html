@@ -23,6 +23,7 @@
     <span class="icon mdi mdi-sort-variant-remove"></span>
     <span>Disable Sorting</span>
   </button>
+  <div style="margin: 5px 0"></div>
   <button class="button is-small" data-test="toggle-filtering-btn" onclick.delegate="toggleFilter()">
     <span class="icon mdi mdi-swap-vertical"></span>
     <span>Toggle Filtering</span>
@@ -31,6 +32,17 @@
     <span class="icon mdi mdi-swap-vertical"></span>
     <span>Toggle Sorting</span>
   </button>
+
+  <button class="button is-small" data-test="add-item-btn" onclick.delegate="addItem()"
+          title="Clear Filters &amp; Sorting to see it better">
+    <span class="icon mdi mdi-plus"></span>
+    <span>Add item</span>
+  </button>
+  <button class="button is-small" data-test="delete-item-btn" onclick.delegate="deleteItem()">
+    <span class="icon mdi mdi-minus"></span>
+    <span>Delete item</span>
+  </button>
+
 </div>
 
 <br />

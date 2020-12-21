@@ -2,10 +2,11 @@ import {
   BindingEventService,
   Column,
   Editors,
+  FieldType,
   Filters,
   Formatters,
-  FieldType,
   GridOption,
+  OperatorType,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -79,6 +80,81 @@ export class Example7 {
             resolve([{ value: true, label: 'True' }, { value: false, label: 'False' }]);
           }, 250)),
         },
+      },
+      {
+        id: 'prerequisites',
+        name: 'Prerequisites',
+        field: 'prerequisites',
+        filterable: true,
+        formatter: (_row, _cell, value) => {
+          if (value && Array.isArray(value)) {
+            const values = value.map((val) => `Task ${val}`).join(', ');
+            return `<span title="${values}">${values}</span>`;
+          }
+          return '';
+        },
+        exportWithFormatter: true,
+        sanitizeDataExport: true,
+        minWidth: 100,
+        sortable: true,
+        type: FieldType.string,
+        editor: {
+          // We can load the "collection" asynchronously (on first load only, after that we will simply use "collection")
+          // 2 ways are supported (aurelia-http-client, aurelia-fetch-client OR even Promise)
+
+          // OR 1- use "aurelia-fetch-client", they are both supported
+          // collectionAsync: fetch(URL_SAMPLE_COLLECTION_DATA),
+
+          // OR 2- use a Promise
+          collectionAsync: new Promise<any>((resolve) => {
+            setTimeout(() => {
+              resolve(Array.from(Array(this.dataset.length).keys()).map(k => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })));
+            }, 500);
+          }),
+
+          // OR a regular "collection" load
+          // collection: Array.from(Array(NB_ITEMS).keys()).map(k => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })),
+          collectionSortBy: {
+            property: 'value',
+            sortDesc: true,
+            fieldType: FieldType.number
+          },
+          customStructure: {
+            label: 'label',
+            value: 'value',
+            labelPrefix: 'prefix',
+          },
+          collectionOptions: {
+            separatorBetweenTextLabels: ' '
+          },
+          model: Editors.multipleSelect,
+        },
+        filter: {
+          // collectionAsync: fetch(URL_SAMPLE_COLLECTION_DATA),
+          collectionAsync: new Promise((resolve) => {
+            setTimeout(() => {
+              resolve(Array.from(Array(this.dataset.length).keys()).map(k => ({ value: k, label: `Task ${k}` })));
+            });
+          }),
+
+          // OR a regular collection load
+          // collection: Array.from(Array(NB_ITEMS).keys()).map(k => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })),
+          collectionSortBy: {
+            property: 'value',
+            sortDesc: true,
+            fieldType: FieldType.number
+          },
+          customStructure: {
+            label: 'label',
+            value: 'value',
+            labelPrefix: 'prefix',
+          },
+          collectionOptions: {
+            separatorBetweenTextLabels: ' '
+          },
+          model: Filters.multipleSelect,
+          operator: OperatorType.inContains,
+        },
       }
     ];
 
@@ -132,21 +208,73 @@ export class Example7 {
     };
   }
 
-  loadData(rowCount: number) {
+  /** Add a new row to the grid and refresh the Filter collection */
+  addItem() {
+    const lastRowIndex = this.dataset.length;
+    const newRows = this.loadData(1, lastRowIndex);
+
+    // wrap into a timer to simulate a backend async call
+    setTimeout(() => {
+      // at any time, we can poke the "collection" property and modify it
+      const requisiteColumnDef = this.columnDefinitions.find((column: Column) => column.id === 'prerequisites');
+      if (requisiteColumnDef) {
+        const collectionEditor = requisiteColumnDef.editor.collection;
+        const collectionFilter = requisiteColumnDef.filter.collection;
+
+        if (Array.isArray(collectionEditor) && Array.isArray(collectionFilter)) {
+          // add the new row to the grid
+          this.sgb.gridService.addItem(newRows[0], { highlightRow: false });
+
+          // then refresh the Editor/Filter "collection", we have 2 ways of doing it
+
+          // 1- push to the "collection"
+          collectionEditor.push({ value: lastRowIndex, label: lastRowIndex, prefix: 'Task', suffix: 'days' });
+          collectionFilter.push({ value: lastRowIndex, label: lastRowIndex, prefix: 'Task', suffix: 'days' });
+
+          // OR 2- replace the entire "collection" is also supported
+          // requisiteColumnDef.filter.collection = [...requisiteColumnDef.filter.collection, ...[{ value: lastRowIndex, label: lastRowIndex, prefix: 'Task' }]];
+          // requisiteColumnDef.editor.collection = [...requisiteColumnDef.editor.collection, ...[{ value: lastRowIndex, label: lastRowIndex, prefix: 'Task' }]];
+        }
+      }
+    }, 50);
+  }
+
+  /** Delete last inserted row */
+  deleteItem() {
+    const requisiteColumnDef = this.columnDefinitions.find((column: Column) => column.id === 'prerequisites');
+    if (requisiteColumnDef) {
+      const collectionEditor = requisiteColumnDef.editor.collection;
+      const collectionFilter = requisiteColumnDef.filter.collection;
+
+      if (Array.isArray(collectionEditor) && Array.isArray(collectionFilter)) {
+        // sort collection in descending order and take out last option from the collection
+        const selectCollectionObj = this.sortCollectionDescending(collectionEditor).pop();
+        this.sortCollectionDescending(collectionFilter).pop();
+        this.sgb.gridService.deleteItemById(selectCollectionObj.value);
+      }
+    }
+  }
+
+  loadData(itemCount: number, startingIndex = 0) {
     // Set up some test columns.
-    const mockDataset = [];
-    for (let i = 0; i < rowCount; i++) {
-      mockDataset[i] = {
+    const tempDataset = [];
+    for (let i = startingIndex; i < (startingIndex + itemCount); i++) {
+      tempDataset.push({
         id: i,
         title: 'Task ' + i,
         duration: Math.round(Math.random() * 25),
         percentComplete: Math.round(Math.random() * 100),
         start: new Date(2009, 0, 1),
         finish: new Date(2009, 0, 5),
-        effortDriven: (i % 5 === 0)
-      };
+        effortDriven: (i % 5 === 0),
+        prerequisites: (i % 2 === 0) && i !== 0 && i < 12 ? [i, i - 1] : [],
+      });
     }
-    return mockDataset;
+    return tempDataset;
+  }
+
+  sortCollectionDescending(collection) {
+    return collection.sort((item1, item2) => item1.value - item2.value);
   }
 
   onBeforeMoveRow(e, data) {

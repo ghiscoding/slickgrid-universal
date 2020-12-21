@@ -15,6 +15,7 @@ import {
   SlickGrid
 } from './../interfaces/index';
 import { CollectionService } from '../services/collection.service';
+import { collectionObserver, propertyObserver } from '../services/observers';
 import { getDescendantProperty, getTranslationPrefix, htmlEncode, sanitizeTextByAvailableSanitizer } from '../services/utilities';
 import { TranslaterService } from '../services';
 
@@ -140,17 +141,29 @@ export class SelectFilter implements Filter {
     const newCollection = this.columnFilter.collection || [];
     this.renderDomElement(newCollection);
 
-    // return new Promise(resolve => resolve(newCollection));
+    return new Promise(async (resolve, reject) => {
+      try {
+        const collectionAsync = this.columnFilter.collectionAsync;
+        let collectionOutput: Promise<any[]> | any[] | undefined;
 
-    return new Promise(async resolve => {
-      const collectionAsync = this.columnFilter.collectionAsync;
+        if (collectionAsync && !this.columnFilter.collection) {
+          // only read the collectionAsync once (on the 1st load),
+          // we do this because Http Fetch will throw an error saying body was already read and its streaming is locked
+          collectionOutput = this.renderOptionsAsync(collectionAsync);
+          resolve(collectionOutput);
+        } else {
+          collectionOutput = newCollection;
+          resolve(newCollection);
+        }
 
-      if (collectionAsync && !this.columnFilter.collection) {
-        // only read the collectionAsync once (on the 1st load),
-        // we do this because Http Fetch will throw an error saying body was already read and its streaming is locked
-        resolve(this.renderOptionsAsync(collectionAsync));
-      } else {
-        resolve(newCollection);
+        // subscribe to both CollectionObserver and PropertyObserver
+        // any collection changes will trigger a re-render of the DOM element filter
+        if (collectionAsync || this.columnFilter.enableCollectionWatch) {
+          await (collectionOutput ?? collectionAsync);
+          this.watchCollectionChanges();
+        }
+      } catch (e) {
+        reject(e);
       }
     });
   }
@@ -244,6 +257,33 @@ export class SelectFilter implements Filter {
     return outputCollection;
   }
 
+  /**
+   * Subscribe to both CollectionObserver & PropertyObserver with BindingEngine.
+   * They each have their own purpose, the "propertyObserver" will trigger once the collection is replaced entirely
+   * while the "collectionObverser" will trigger on collection changes (`push`, `unshift`, `splice`, ...)
+   */
+  protected watchCollectionChanges() {
+    if (this.columnFilter?.collection) {
+      // subscribe to the "collection" changes (array `push`, `unshift`, `splice`, ...)
+      collectionObserver(this.columnFilter.collection, (updatedArray) => {
+        this.renderDomElement(this.columnFilter.collection || updatedArray || []);
+      });
+
+      // observe for any "collection" changes (array replace)
+      // then simply recreate/re-render the Select (dropdown) DOM Element
+      propertyObserver(this.columnFilter, 'collection', (newValue) => {
+        this.renderDomElement(newValue || []);
+
+        // when new assignment arrives, we need to also reassign observer to the new reference
+        if (this.columnFilter.collection) {
+          collectionObserver(this.columnFilter.collection, (updatedArray) => {
+            this.renderDomElement(this.columnFilter.collection || updatedArray || []);
+          });
+        }
+      });
+    }
+  }
+
   renderDomElement(inputCollection: any[]) {
     if (!Array.isArray(inputCollection) && this.collectionOptions?.collectionInsideObjectProperty) {
       const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty;
@@ -302,10 +342,10 @@ export class SelectFilter implements Filter {
   protected buildTemplateHtmlString(optionCollection: any[], searchTerms: SearchTerm[]): string {
     let options = '';
     const columnId = this.columnDef?.id ?? '';
-    const separatorBetweenLabels = this.collectionOptions && this.collectionOptions.separatorBetweenTextLabels || '';
-    const isTranslateEnabled = this.gridOptions && this.gridOptions.enableTranslate;
-    const isRenderHtmlEnabled = this.columnFilter && this.columnFilter.enableRenderHtml || false;
-    const sanitizedOptions = this.gridOptions && this.gridOptions.sanitizeHtmlOptions || {};
+    const separatorBetweenLabels = this.collectionOptions?.separatorBetweenTextLabels ?? '';
+    const isTranslateEnabled = this.gridOptions?.enableTranslate ?? false;
+    const isRenderHtmlEnabled = this.columnFilter?.enableRenderHtml ?? false;
+    const sanitizedOptions = this.gridOptions?.sanitizeHtmlOptions ?? {};
 
     // collection could be an Array of Strings OR Objects
     if (Array.isArray(optionCollection)) {
