@@ -1,7 +1,7 @@
 import * as DOMPurify_ from 'dompurify';
 import * as moment_ from 'moment-mini';
 const DOMPurify = DOMPurify_; // patch to fix rollup to work
-const moment = moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
+const moment = moment_['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 import { FieldType, OperatorString, OperatorType } from '../enums/index';
 import { GridOption } from '../interfaces/index';
