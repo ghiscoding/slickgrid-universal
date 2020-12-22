@@ -56,12 +56,10 @@ const mockAddon = jest.fn().mockImplementation(() => ({
   onCommand: new Slick.Event(),
 }));
 
-jest.mock('slickgrid/plugins/slick.headermenu', () => mockAddon);
-Slick.Plugins = {
-  HeaderMenu: mockAddon
-} as any;
-
 describe('headerMenuExtension', () => {
+  jest.mock('slickgrid/plugins/slick.headermenu', () => mockAddon);
+  Slick.Plugins = { HeaderMenu: mockAddon } as any;
+
   const columnsMock: Column[] = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
   let extensionUtility: ExtensionUtility;
   let extension: HeaderMenuExtension;
@@ -170,7 +168,7 @@ describe('headerMenuExtension', () => {
           { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
           expect.anything()
         );
-        expect(onBeforeSpy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, column: {}, menu: divElement });
+        expect(onBeforeSpy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, column: {} as Column, menu: divElement });
         expect(onCommandSpy).not.toHaveBeenCalled();
         expect(onAfterSpy).not.toHaveBeenCalled();
       });
@@ -189,7 +187,7 @@ describe('headerMenuExtension', () => {
           { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
           expect.anything()
         );
-        expect(onAfterSpy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, column: {}, menu: divElement });
+        expect(onAfterSpy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, column: {} as Column, menu: divElement });
         expect(onBeforeSpy).not.toHaveBeenCalled();
         expect(onCommandSpy).not.toHaveBeenCalled();
       });
@@ -208,7 +206,7 @@ describe('headerMenuExtension', () => {
           { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
           expect.anything()
         );
-        expect(onCommandSpy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, command: 'help', item: { command: 'help' }, column: {} });
+        expect(onCommandSpy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, command: 'help', item: { command: 'help' }, column: {} as Column });
         expect(onBeforeSpy).not.toHaveBeenCalled();
         expect(onAfterSpy).not.toHaveBeenCalled();
       });

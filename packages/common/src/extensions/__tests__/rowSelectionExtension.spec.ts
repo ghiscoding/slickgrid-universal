@@ -18,10 +18,10 @@ const mockAddon = jest.fn().mockImplementation(() => ({
   destroy: jest.fn()
 }));
 
-jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockAddon);
-Slick.RowSelectionModel = mockAddon;
-
 describe('rowSelectionExtension', () => {
+  jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockAddon);
+  Slick.RowSelectionModel = mockAddon;
+
   let extension: RowSelectionExtension;
   let extensionUtility: ExtensionUtility;
   let sharedService: SharedService;
@@ -32,7 +32,7 @@ describe('rowSelectionExtension', () => {
     sharedService = new SharedService();
     translateService = new TranslateServiceStub();
     extensionUtility = new ExtensionUtility(sharedService, translateService);
-    extension = new RowSelectionExtension(extensionUtility, sharedService);
+    extension = new RowSelectionExtension(sharedService);
   });
 
   it('should return null when either the grid object or the grid options is missing', () => {

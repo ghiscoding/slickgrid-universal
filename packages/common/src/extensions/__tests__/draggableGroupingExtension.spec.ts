@@ -17,10 +17,10 @@ const mockAddon = jest.fn().mockImplementation(() => ({
   onGroupChanged: new Slick.Event(),
 }));
 
-jest.mock('slickgrid/plugins/slick.draggablegrouping', () => mockAddon);
-Slick.DraggableGrouping = mockAddon;
-
 describe('draggableGroupingExtension', () => {
+  jest.mock('slickgrid/plugins/slick.draggablegrouping', () => mockAddon);
+  Slick.DraggableGrouping = mockAddon;
+
   let extensionUtility: ExtensionUtility;
   let sharedService: SharedService;
   let extension: DraggableGroupingExtension;

@@ -26,13 +26,13 @@ const mockSelectionModel = jest.fn().mockImplementation(() => ({
   destroy: jest.fn()
 }));
 
-jest.mock('slickgrid/plugins/slick.rowmovemanager', () => mockAddon);
-Slick.RowMoveManager = mockAddon;
-
-jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockSelectionModel);
-Slick.RowSelectionModel = mockSelectionModel;
-
 describe('rowMoveManagerExtension', () => {
+  jest.mock('slickgrid/plugins/slick.rowmovemanager', () => mockAddon);
+  Slick.RowMoveManager = mockAddon;
+
+  jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockSelectionModel);
+  Slick.RowSelectionModel = mockSelectionModel;
+
   let extensionUtility: ExtensionUtility;
   let sharedService: SharedService;
   let translateService: TranslateServiceStub;
@@ -53,7 +53,7 @@ describe('rowMoveManagerExtension', () => {
     sharedService = new SharedService();
     translateService = new TranslateServiceStub();
     extensionUtility = new ExtensionUtility(sharedService, translateService);
-    extension = new RowMoveManagerExtension(extensionUtility, sharedService);
+    extension = new RowMoveManagerExtension(sharedService);
   });
 
   it('should return null after calling "create" method when either the column definitions or the grid options is missing', () => {

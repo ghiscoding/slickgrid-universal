@@ -34,13 +34,14 @@ const mockSelectionModel = jest.fn().mockImplementation(() => ({
   onSelectedRangesChanged: new Slick.Event(),
 } as SlickRowSelectionModel));
 
-jest.mock('slickgrid/plugins/slick.checkboxselectcolumn', () => mockAddon);
-Slick.CheckboxSelectColumn = mockAddon;
-
-jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockSelectionModel);
-Slick.RowSelectionModel = mockSelectionModel;
 
 describe('checkboxSelectorExtension', () => {
+  jest.mock('slickgrid/plugins/slick.checkboxselectcolumn', () => mockAddon);
+  Slick.CheckboxSelectColumn = mockAddon;
+
+  jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockSelectionModel);
+  Slick.RowSelectionModel = mockSelectionModel;
+
   let extension: CheckboxSelectorExtension;
   let extensionUtility: ExtensionUtility;
   let sharedService: SharedService;
@@ -51,7 +52,7 @@ describe('checkboxSelectorExtension', () => {
     sharedService = new SharedService();
     translateService = new TranslateServiceStub();
     extensionUtility = new ExtensionUtility(sharedService, translateService);
-    extension = new CheckboxSelectorExtension(extensionUtility, sharedService);
+    extension = new CheckboxSelectorExtension(sharedService);
   });
 
   it('should return null after calling "create" method when either the column definitions or the grid options is missing', () => {
