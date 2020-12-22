@@ -66,12 +66,12 @@ const mockAddon = jest.fn().mockImplementation(() => ({
   onOptionSelected: new Slick.Event(),
 }));
 
-jest.mock('slickgrid/plugins/slick.contextmenu', () => mockAddon);
-Slick.Plugins = {
-  ContextMenu: mockAddon
-} as any;
-
 describe('contextMenuExtension', () => {
+  jest.mock('slickgrid/plugins/slick.contextmenu', () => mockAddon);
+  Slick.Plugins = {
+    ContextMenu: mockAddon
+  } as any;
+
   const columnsMock: Column[] = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
   let extensionUtility: ExtensionUtility;
   let translateService: TranslateServiceStub;

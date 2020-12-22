@@ -17,12 +17,10 @@ const mockAddon = jest.fn().mockImplementation(() => ({
   destroy: jest.fn()
 }));
 
-jest.mock('slickgrid/plugins/slick.headerbuttons', () => mockAddon);
-Slick.Plugins = {
-  HeaderButtons: mockAddon
-} as any;
-
 describe('headerButtonExtension', () => {
+  jest.mock('slickgrid/plugins/slick.headerbuttons', () => mockAddon);
+  Slick.Plugins = { HeaderButtons: mockAddon } as any;
+
   let extension: HeaderButtonExtension;
   let extensionUtility: ExtensionUtility;
   let sharedService: SharedService;

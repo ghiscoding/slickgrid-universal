@@ -1,8 +1,6 @@
 import { GridOption, SlickAutoTooltips, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { AutoTooltipExtension } from '../autoTooltipExtension';
-import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 declare const Slick: SlickNamespace;
 
@@ -16,21 +14,17 @@ const mockAddon = jest.fn().mockImplementation(() => ({
   destroy: jest.fn()
 }));
 
-jest.mock('slickgrid/plugins/slick.autotooltips', () => mockAddon);
-Slick.AutoTooltips = mockAddon;
-
 describe('autoTooltipExtension', () => {
+  jest.mock('slickgrid/plugins/slick.autotooltips', () => mockAddon);
+  Slick.AutoTooltips = mockAddon;
+
   let extension: AutoTooltipExtension;
-  let extensionUtility: ExtensionUtility;
   let sharedService: SharedService;
-  let translateService: TranslateServiceStub;
   const gridOptionsMock = { enableAutoTooltip: true } as GridOption;
 
   beforeEach(() => {
     sharedService = new SharedService();
-    translateService = new TranslateServiceStub();
-    extensionUtility = new ExtensionUtility(sharedService, translateService);
-    extension = new AutoTooltipExtension(extensionUtility, sharedService);
+    extension = new AutoTooltipExtension(sharedService);
   });
 
   it('should return null when either the grid object or the grid options is missing', () => {

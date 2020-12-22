@@ -35,12 +35,12 @@ const mockAddon = jest.fn().mockImplementation(() => ({
   onOptionSelected: new Slick.Event(),
 }));
 
-jest.mock('slickgrid/plugins/slick.cellmenu', () => mockAddon);
-Slick.Plugins = {
-  CellMenu: mockAddon
-} as any;
-
 describe('CellMenuExtension', () => {
+  jest.mock('slickgrid/plugins/slick.cellmenu', () => mockAddon);
+  Slick.Plugins = {
+    CellMenu: mockAddon
+  } as any;
+
   const columnsMock: Column[] = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
   let extensionUtility: ExtensionUtility;
   let translateService: TranslateServiceStub;
@@ -226,7 +226,7 @@ describe('CellMenuExtension', () => {
           { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
           expect.anything()
         );
-        expect(onCommandSpy).toHaveBeenCalledWith(expect.anything(), { item: { command: 'help' }, column: {}, grid: gridStub, command: 'help' });
+        expect(onCommandSpy).toHaveBeenCalledWith(expect.anything(), { item: { command: 'help' }, column: {} as Column, grid: gridStub, command: 'help' });
         expect(onOptionSpy).not.toHaveBeenCalled();
         expect(onb4CloseSpy).not.toHaveBeenCalled();
         expect(onb4ShowSpy).not.toHaveBeenCalled();

@@ -1,3 +1,5 @@
+import 'slickgrid/plugins/slick.headermenu';
+
 import {
   Column,
   CurrentSorter,
@@ -11,10 +13,7 @@ import {
   SlickHeaderMenu,
   SlickNamespace,
 } from '../interfaces/index';
-import {
-  EmitterType,
-  ExtensionName,
-} from '../enums/index';
+import { EmitterType } from '../enums/index';
 import { arrayRemoveItemByIndex, getTranslationPrefix } from '../services/utilities';
 import { FilterService } from '../services/filter.service';
 import { SortService } from '../services/sort.service';
@@ -67,9 +66,6 @@ export class HeaderMenuExtension implements Extension {
     }
 
     if (this.sharedService && this.sharedService.slickGrid && this.sharedService.gridOptions) {
-      // dynamically import the SlickGrid plugin (addon) with RequireJS
-      this.extensionUtility.loadExtensionDynamically(ExtensionName.headerMenu);
-
       this.sharedService.gridOptions.headerMenu = { ...this.getDefaultHeaderMenuOptions(), ...this.sharedService.gridOptions.headerMenu };
       if (this.sharedService.gridOptions.enableHeaderMenu) {
         this.sharedService.gridOptions.headerMenu = this.addHeaderMenuCustomCommands(this.sharedService.gridOptions, this.sharedService.columnDefinitions);

@@ -62,11 +62,6 @@ const mockGridMenuAddon = {
 };
 const mockAddon = jest.fn().mockImplementation(() => mockGridMenuAddon);
 
-jest.mock('slickgrid/controls/slick.gridmenu', () => mockAddon);
-Slick.Controls = {
-  GridMenu: mockAddon
-} as any;
-
 // define a <div> container to simulate the grid container
 const template =
   `<div id="${containerId}" style="height: 800px; width: 600px;">
@@ -76,6 +71,9 @@ const template =
   </div>`;
 
 describe('gridMenuExtension', () => {
+  jest.mock('slickgrid/controls/slick.gridmenu', () => mockAddon);
+  Slick.Controls = { GridMenu: mockAddon } as any;
+
   const columnsMock: Column[] = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
   let divElement: HTMLDivElement;
   let extensionUtility: ExtensionUtility;

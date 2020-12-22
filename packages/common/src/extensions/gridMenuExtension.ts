@@ -1,3 +1,5 @@
+import 'slickgrid/controls/slick.gridmenu';
+
 import {
   Extension,
   GetSlickEventType,
@@ -9,11 +11,7 @@ import {
   SlickGridMenu,
   SlickNamespace,
 } from '../interfaces/index';
-import {
-  DelimiterType,
-  ExtensionName,
-  FileType,
-} from '../enums/index';
+import { DelimiterType, FileType } from '../enums/index';
 import { ExcelExportService } from '../services/excelExport.service';
 import { TextExportService } from '../services/textExport.service';
 import { ExtensionUtility } from './extensionUtility';
@@ -77,8 +75,6 @@ export class GridMenuExtension implements Extension {
       // keep original user grid menu, useful when switching locale to translate
       this._userOriginalGridMenu = { ...this.sharedService.gridOptions.gridMenu };
 
-      // dynamically import the SlickGrid plugin (addon) with RequireJS
-      this.extensionUtility.loadExtensionDynamically(ExtensionName.gridMenu);
       this._gridMenuOptions = { ...this.getDefaultGridMenuOptions(), ...this.sharedService.gridOptions.gridMenu };
       this.sharedService.gridOptions.gridMenu = this._gridMenuOptions;
 

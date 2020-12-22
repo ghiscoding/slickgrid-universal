@@ -20,12 +20,12 @@ const mockAddon = jest.fn().mockImplementation(() => ({
   onColumnsChanged: new Slick.Event(),
 }));
 
-jest.mock('slickgrid/controls/slick.columnpicker', () => mockAddon);
-Slick.Controls = {
-  ColumnPicker: mockAddon
-} as any;
-
 describe('columnPickerExtension', () => {
+  jest.mock('slickgrid/controls/slick.columnpicker', () => mockAddon);
+  Slick.Controls = {
+    ColumnPicker: mockAddon
+  } as any;
+
   const columnsMock: Column[] = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
   let extensionUtility: ExtensionUtility;
   let extension: ColumnPickerExtension;
