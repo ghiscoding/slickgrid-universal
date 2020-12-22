@@ -9,10 +9,13 @@
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
-## Vanilla Bundle
+## Empty Warning Component
 #### @slickgrid-universal/empty-warning-component
 
-Vanilla Implementation of an Empty Dataset Warning Component when no data showing in the grid.
+Vanilla Implementation of an Empty Dataset Warning Component when no data showing in the grid. This is in summary a very simplified `div` showing a warning message when there are no data to show in the grid.
+
+### External Dependencies
+No external dependency
 
 ### Installation
-Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation), you can see a demo by looking at the [GitHub Demo](https://ghiscoding.github.io/slickgrid-universal) page and click on "Export to CSV" from the Grid Menu (aka hamburger menu).
+Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation)

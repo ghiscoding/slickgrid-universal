@@ -9,7 +9,7 @@
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
-## Vanilla Bundle
+## Composite Editor Component
 #### @slickgrid-universal/composite-editor-component
 
 Vanilla Bundle implementation of a Composite Editor Modal Window which can do the following
@@ -19,4 +19,4 @@ Vanilla Bundle implementation of a Composite Editor Modal Window which can do th
 - Mass Selection Changes (similar to Mass Update but only for the selected items)
 
 ### Installation
-Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation), you can see a demo by looking at the [GitHub Demo](https://ghiscoding.github.io/slickgrid-universal) page and click on "Export to CSV" from the Grid Menu (aka hamburger menu).
+Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation).
