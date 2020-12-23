@@ -102,10 +102,21 @@ yarn run dev:watch
 ```
 
 ### Tests
-To run all unit tests (with Jest), you can run this command
+#### Jest Unit Tests
+To run all unit tests (with Jest), you can run these commands
 ```bash
 yarn run test
 
 # or as a watch
 yarn run test:watch
+```
+
+#### Cypress E2E Tests
+To run all E2E tests (with Cypress), you can run these commands
+```bash
+# run with Cypress Application
+yarn run cypress
+
+# or run in the shell like a CI/CD would
+yarn run cypress:ci
 ```
