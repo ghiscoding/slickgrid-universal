@@ -26,6 +26,7 @@
     "serve:demo": "http-server ./docs -p 8888 -a localhost",
     "lint": "eslint packages/** --ext .ts",
     "test": "npx jest --runInBand --coverage=true --config ./test/jest.config.js",
+    "test:ci": "npx jest --runInBand --coverage=true --ci --config ./test/jest.config.js",
     "test:watch": "npx jest --watch --config ./test/jest.config.js"
   },
   "comments": {

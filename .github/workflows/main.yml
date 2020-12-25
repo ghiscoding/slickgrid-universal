@@ -50,7 +50,7 @@ jobs:
         run: yarn run bundle
 
       - name: Run Jest unit tests
-        run: yarn test
+        run: yarn test:ci
 
       - name: Upload Jest coverage to Codecov
         run: bash <(curl -s https://codecov.io/bash)
@@ -63,4 +63,5 @@ jobs:
         with:
           start: yarn run serve:demo
           wait-on: 'http://localhost:8888'
+          config-file: test/cypress.json
           browser: chrome
