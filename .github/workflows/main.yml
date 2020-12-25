@@ -28,13 +28,6 @@ jobs:
         with:
           fetch-depth: 3
 
-      - uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
       - name: Set Node.js version
         uses: actions/setup-node@v2
         with:
@@ -43,8 +36,8 @@ jobs:
       - run: node --version
       - run: npm --version
 
-      - name: Install npm/yarn dependencies
-        run: yarn install
+      - name: Install root dependencies
+        uses: bahmutov/npm-install@v1
 
       - name: Build Full Bundle (all Bundler types)
         run: yarn run bundle
@@ -65,3 +58,9 @@ jobs:
           wait-on: 'http://localhost:8888'
           config-file: test/cypress.json
           browser: chrome
+          record: true
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          # pass GitHub token to allow accurately detecting a build vs a re-run build
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

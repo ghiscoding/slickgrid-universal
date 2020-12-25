@@ -2,6 +2,7 @@
   "baseUrl": "http://localhost:8888",
   "baseExampleUrl": "http://localhost:8888/#",
   "video": false,
+  "projectId": "p5zxx6",
   "viewportWidth": 1000,
   "viewportHeight": 950,
   "reporter": "mochawesome",
