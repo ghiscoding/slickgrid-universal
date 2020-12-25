@@ -28,6 +28,13 @@ jobs:
         with:
           fetch-depth: 3
 
+      - uses: actions/cache@v2
+        with:
+          path: ~/.cache/yarn
+          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Set Node.js version
         uses: actions/setup-node@v2
         with:
@@ -36,8 +43,8 @@ jobs:
       - run: node --version
       - run: npm --version
 
-      - name: Install root dependencies
-        uses: bahmutov/npm-install@v1
+      - name: Install npm/yarn dependencies
+        run: yarn install
 
       - name: Build Full Bundle (all Bundler types)
         run: yarn run bundle
