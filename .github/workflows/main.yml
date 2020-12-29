@@ -47,7 +47,7 @@ jobs:
         run: yarn install
 
       - name: Build Full Bundle (all Bundler types)
-        run: yarn run bundle
+        run: yarn bundle
 
       - name: Run Jest unit tests
         run: yarn test:ci
@@ -55,13 +55,16 @@ jobs:
       - name: Upload Jest coverage to Codecov
         run: bash <(curl -s https://codecov.io/bash)
 
+      - name: Clean Docs Folder
+        run: yarn clean:docs
+
       - name: Website Prod Build (GitHub demo site)
-        run: yarn run build:demo
+        run: yarn build:demo
 
       - name: Run Cypress E2E tests
         uses: cypress-io/github-action@v2
         with:
-          start: yarn run serve:demo
+          start: yarn serve:demo
           wait-on: 'http://localhost:8888'
           config-file: test/cypress.json
           browser: chrome

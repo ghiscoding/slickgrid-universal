@@ -1,0 +1,1 @@
+screenshots of Cypress errors
