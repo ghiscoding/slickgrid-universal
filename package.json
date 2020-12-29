@@ -13,7 +13,6 @@
     "build:demo": "lerna run build:demo --stream",
     "rebuild": "run-s clean lint build",
     "clean": "rimraf --maxBusyTries=10 packages/*/dist dist",
-    "clean:docs": "rimraf docs/*",
     "cypress": "cypress open --config-file test/cypress.json",
     "cypress:ci": "cypress run --config-file test/cypress.json --reporter mochawesome",
     "dev:watch": "lerna run dev:watch --parallel",

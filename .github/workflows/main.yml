@@ -54,9 +54,6 @@ jobs:
       - name: Upload Jest coverage to Codecov
         run: bash <(curl -s https://codecov.io/bash)
 
-      - name: Clean Docs Folder
-        run: yarn clean:docs
-
       - name: Website Prod Build (GitHub demo site)
         run: yarn build:demo
 
