@@ -76,3 +76,9 @@ jobs:
         with:
           name: cypress-screenshots
           path: cypress/screenshots
+
+      - name: Rebuild GitHub Demo Page and Publish
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "docs: update github demo page"
+          file_pattern: docs/**.*
