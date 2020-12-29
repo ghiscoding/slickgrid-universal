@@ -56,7 +56,7 @@ jobs:
         run: bash <(curl -s https://codecov.io/bash)
 
       - name: Clean Docs Folder
-        run: yarn clean:demo
+        run: yarn clean:docs
 
       - name: Website Prod Build (GitHub demo site)
         run: yarn build:demo
