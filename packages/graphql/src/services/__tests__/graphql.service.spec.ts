@@ -1272,7 +1272,7 @@ describe('GraphqlService', () => {
 
     it('should return a query without invalid characters to filter a search value that does contains invalid characters', () => {
       const expectation = `query{users(first:10,offset:0,filterBy:[{field:duration,operator:EQ,value:"-22"}]){totalCount,nodes{id,company,gender,duration,startDate}}}`;
-      const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
+      const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.float } as Column;
       const mockColumnFilters = {
         duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['-2a2'] },
       } as ColumnFilters;
@@ -1286,7 +1286,7 @@ describe('GraphqlService', () => {
 
     it('should return a query without invalid characters to filter a search value with an integer that contains invalid characters', () => {
       const expectation = `query{users(first:10,offset:0,filterBy:[{field:duration,operator:EQ,value:"22"}]){totalCount,nodes{id,company,gender,duration,startDate}}}`;
-      const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
+      const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.integer } as Column;
       const mockColumnFilters = {
         duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['22;'] },
       } as ColumnFilters;
