@@ -416,7 +416,7 @@ export class GraphqlService implements BackendService {
 
         if (Array.isArray(searchTerms) && searchTerms.length === 1 && typeof searchTerms[0] === 'string' && searchTerms[0].indexOf('..') >= 0) {
           if (!operator) {
-            operator = this._gridOptions.defaultFilterRangeOperator;
+            operator = this._gridOptions.defaultFilterRangeOperator as OperatorString;
           }
           searchTerms = searchTerms[0].split('..', 2);
           if (searchTerms[0] === '') {
@@ -444,7 +444,7 @@ export class GraphqlService implements BackendService {
 
         // No operator and 2 search terms should lead to default range operator.
         if (!operator && Array.isArray(searchTerms) && searchTerms.length === 2 && searchTerms[0] && searchTerms[1]) {
-          operator = this._gridOptions.defaultFilterRangeOperator;
+          operator = this._gridOptions.defaultFilterRangeOperator as OperatorString;
         }
 
         // Range with 1 searchterm should lead to equals for a date field.
