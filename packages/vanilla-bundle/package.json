@@ -51,7 +51,7 @@
     "@slickgrid-universal/empty-warning-component": "^0.8.0",
     "@slickgrid-universal/excel-export": "^0.8.0",
     "@slickgrid-universal/text-export": "^0.8.0",
-    "dompurify": "^2.2.4",
+    "dompurify": "^2.2.6",
     "es6-promise": "^4.2.8",
     "isomorphic-fetch": "^3.0.0"
   },

@@ -39,7 +39,7 @@
   ],
   "dependencies": {
     "@slickgrid-universal/common": "^0.8.0",
-    "dompurify": "^2.2.4"
+    "dompurify": "^2.2.6"
   },
   "devDependencies": {
     "@types/webpack": "^4.41.25",
