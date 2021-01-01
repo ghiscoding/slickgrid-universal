@@ -251,9 +251,7 @@ export class GridOdataService implements BackendService {
         // if user defined some "presets", then we need to find the filters from the column definitions instead
         let columnDef: Column | undefined;
         if (isUpdatedByPresetOrDynamically && Array.isArray(this._columnDefinitions)) {
-          columnDef = this._columnDefinitions.find((column: Column) => {
-            return column.id === columnFilter.columnId;
-          });
+          columnDef = this._columnDefinitions.find((column: Column) => column.id === columnFilter.columnId);
         } else {
           columnDef = columnFilter.columnDef;
         }
@@ -261,7 +259,7 @@ export class GridOdataService implements BackendService {
           throw new Error('[GridOData Service]: Something went wrong in trying to get the column definition of the specified filter (or preset filters). Did you make a typo on the filter columnId?');
         }
 
-        let fieldName = (columnDef.filter && columnDef.filter.queryField) || columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || columnDef.name || '';
+        let fieldName = columnDef.filter?.queryField || columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || columnDef.name || '';
         const fieldType = columnDef.type || FieldType.string;
         let searchTerms = (columnFilter && columnFilter.searchTerms ? [...columnFilter.searchTerms] : null) || [];
         let fieldSearchValue = (Array.isArray(searchTerms) && searchTerms.length === 1) ? searchTerms[0] : '';
@@ -448,15 +446,15 @@ export class GridOdataService implements BackendService {
           };
         }
         return null;
-      });
+      }) as { columnId: string | number; sortAsc: boolean; }[] | null;
 
       // set the sort icons, but also make sure to filter out null values (that happens when columnDef is not found)
-      if (Array.isArray(tmpSorterArray)) {
+      if (Array.isArray(tmpSorterArray) && this._grid) {
         this._grid.setSortColumns(tmpSorterArray);
       }
     } else if (sortColumns && !presetSorters) {
       // build the SortBy string, it could be multisort, example: customerNo asc, purchaserName desc
-      if (sortColumns && sortColumns.length === 0) {
+      if (sortColumns?.length === 0) {
         // TODO fix this line
         // currentSorters = new Array(this.defaultOptions.orderBy); // when empty, use the default sort
       } else {
