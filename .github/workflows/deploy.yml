@@ -1,13 +1,10 @@
-name: GitHub Actions
+name: GitHub Pages Deployment
 on:
   # Trigger the workflow on push or pull request,
   # but only for the master branch on Push and any branches on PR
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - '**'
 env:
   CI: true
   PREFERRED_WORKSPACE_MANAGER: yarn
@@ -76,9 +73,9 @@ jobs:
           name: cypress-screenshots
           path: cypress/screenshots
 
-      - name: Deploy to gh-pages
-        if: github.ref == 'refs/heads/master'
+      - name: deploy
         uses: peaceiris/actions-gh-pages@v3
+        if: success()
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
