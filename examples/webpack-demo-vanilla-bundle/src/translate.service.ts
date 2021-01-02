@@ -1,6 +1,5 @@
 import { getDescendantProperty, PubSubService, TranslaterService, TranslateServiceEventName } from '@slickgrid-universal/common';
-import * as fetch from 'isomorphic-fetch';
-import * as e6p from 'es6-promise';
+import { fetch } from 'whatwg-fetch';
 
 interface Locales {
   [locale: string]: string;
@@ -17,10 +16,6 @@ export class TranslateService implements TranslaterService {
   private _locales: { [language: string]: Locales } = {};
   private _pubSubServices: PubSubService[] = [];
   private _options;
-
-  constructor() {
-    (e6p as any).polyfill();
-  }
 
   /**
    * Add an optional Pub/Sub Messaging Service,

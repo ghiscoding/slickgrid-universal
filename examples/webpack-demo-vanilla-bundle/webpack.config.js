@@ -31,22 +31,33 @@ module.exports = ({ production } = {}, { hmr, port, host } = {}) => ({
   output: {
     path: production ? outDirProd : outDirLocal,
     publicPath: baseUrl,
-    filename: production ? '[name].[chunkhash].bundle.js' : '[name].[hash].bundle.js',
-    sourceMapFilename: production ? '[name].[chunkhash].bundle.js.map' : '[name].[hash].bundle.js.map',
-    chunkFilename: production ? '[name].[chunkhash].chunk.js' : '[name].[hash].chunk.js'
+    filename: '[name].[contenthash].bundle.js',
+    sourceMapFilename: '[name].[contenthash].bundle.js.map',
+    chunkFilename: '[name].[contenthash].chunk.js',
+
+    // https://github.com/webpack/webpack/issues/11660
+    chunkLoading: false,
+    wasmLoading: false
   },
   resolve: {
     extensions: ['.ts', '.js'],
     modules: [srcDir, 'node_modules'],
+    mainFields: ['browser', 'module', 'main'],
     alias: {
       moment: 'moment/moment.js'
+    },
+    fallback: {
+      http: false,
+      https: false,
+      stream: false,
+      util: false,
+      zlib: false,
     }
   },
   module: {
     rules: [
       {
         test: /\.css$/i,
-        issuer: [{ not: [{ test: /\.html$/i }] }],
         use: [{ loader: MiniCssExtractPlugin.loader }, 'css-loader']
       },
       { test: /\.(sass|scss)$/, use: ['style-loader', 'css-loader', 'sass-loader'], issuer: /\.[tj]s$/i },
@@ -67,7 +78,7 @@ module.exports = ({ production } = {}, { hmr, port, host } = {}) => ({
     open: platform.open,
     disableHostCheck: true,
   },
-  devtool: production ? 'nosources-source-map' : 'cheap-module-eval-source-map',
+  devtool: production ? false : 'eval-cheap-module-source-map',
   plugins: [
     new ProvidePlugin({
       '$': 'jquery',
@@ -85,14 +96,13 @@ module.exports = ({ production } = {}, { hmr, port, host } = {}) => ({
     }),
     new CopyWebpackPlugin({
       patterns: [
-        // { from: 'static', to: outDir, ignore: ['.*'] }, // ignore dot (hidden) files
         { from: `${srcDir}/favicon.ico`, to: 'favicon.ico' },
         { from: 'assets', to: 'assets' }
       ]
     }),
     new MiniCssExtractPlugin({ // updated to match the naming conventions for the js files
-      filename: production ? '[name].[contenthash].bundle.css' : '[name].[hash].bundle.css',
-      chunkFilename: production ? '[name].[contenthash].chunk.css' : '[name].[hash].chunk.css'
+      filename: '[name].[contenthash].bundle.css',
+      chunkFilename: '[name].[contenthash].chunk.css'
     }),
     // Note that the usage of following plugin cleans the webpack output directory before build.
     new CleanWebpackPlugin(),

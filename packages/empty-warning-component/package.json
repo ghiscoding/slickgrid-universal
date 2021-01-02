@@ -5,6 +5,7 @@
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
   "module": "dist/es2015/index.js",
+  "types": "dist/index.d.ts",
   "typings": "dist/commonjs/index.d.ts",
   "publishConfig": {
     "access": "public"

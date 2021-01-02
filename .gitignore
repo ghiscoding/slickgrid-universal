@@ -43,6 +43,7 @@ Thumbs.db
 # Distribution folder
 dist
 dist-demo
+docs
 
 # Tests Report & Coverage
 **/node_modules
