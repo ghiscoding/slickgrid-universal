@@ -64,7 +64,7 @@ jobs:
           wait-on: 'http://localhost:8888'
           config-file: test/cypress.json
           browser: chrome
-          # record: true
+          record: true
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
@@ -76,9 +76,9 @@ jobs:
           name: cypress-screenshots
           path: cypress/screenshots
 
-      - name: deploy
+      - name: Deploy to gh-pages
+        if: github.ref == 'refs/heads/master'
         uses: peaceiris/actions-gh-pages@v3
-        if: success()
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs

@@ -16,8 +16,6 @@ export class AppRouting {
       { route: 'example10', name: 'example10', title: 'Example10', moduleId: './examples/example10' },
       { route: 'example11', name: 'example11', title: 'Example11', moduleId: './examples/example11' },
       { route: 'example12', name: 'example12', title: 'Example12', moduleId: './examples/example12' },
-      { route: 'example50', name: 'example50', title: 'Example50', moduleId: './examples/example50' },
-      { route: 'example51', name: 'example51', title: 'Example51', moduleId: './examples/example51' },
       { route: 'icons', name: 'icons', title: 'icons', moduleId: './examples/icons' },
       { route: '', redirect: 'example01' },
       { route: '**', redirect: 'example01' }

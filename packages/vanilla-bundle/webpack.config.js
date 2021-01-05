@@ -27,7 +27,9 @@ module.exports = ({ production } = {}) => ({
     sourceMapFilename: 'slickgrid-vanilla-bundle.js.map',
     libraryTarget: 'umd',
     library: 'Slickgrid-Universal',
-    umdNamedDefine: true
+    umdNamedDefine: true,
+    chunkLoading: false,
+    wasmLoading: false
   },
   resolve: {
     extensions: ['.ts', '.js'],

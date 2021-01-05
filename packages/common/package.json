@@ -5,8 +5,8 @@
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
   "module": "dist/es2015/index.js",
+  "types": "dist/index.d.ts",
   "typings": "dist/commonjs/index.d.ts",
-  "type": "module",
   "author": "Ghislain B.",
   "license": "MIT",
   "publishConfig": {
@@ -64,7 +64,7 @@
   ],
   "dependencies": {
     "dompurify": "^2.2.6",
-    "flatpickr": "^4.6.6",
+    "flatpickr": "^4.6.9",
     "jquery": "^3.5.1",
     "jquery-ui-dist": "^1.12.1",
     "lodash.isequal": "^4.5.0",

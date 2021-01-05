@@ -1,5 +1,5 @@
 import 'jsdom-global/register';
-import 'isomorphic-fetch';
+import 'whatwg-fetch';
 import * as jQuery from 'jquery';
 
 (global as any).$ = (global as any).jQuery = jQuery;
