@@ -434,7 +434,7 @@ describe('DateEditor', () => {
     });
 
     describe('with different locale', () => {
-      it('should display a console warning when locale it not previously imported', (done) => {
+      it('should display a console warning when locale is not previously imported', (done) => {
         const consoleSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
 
         gridOptionMock.translater = translateService;

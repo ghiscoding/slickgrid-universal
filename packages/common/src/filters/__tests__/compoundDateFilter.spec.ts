@@ -236,7 +236,7 @@ describe('CompoundDateFilter', () => {
     expect(selectonOptionElms[0].textContent).toBe('janvier');
   });
 
-  it('should display a console warning when locale it not previously imported', (done) => {
+  it('should display a console warning when locale is not previously imported', (done) => {
     const consoleSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
 
     translateService.use('zz-yy'); // will be trimmed to 2 chars "zz"
