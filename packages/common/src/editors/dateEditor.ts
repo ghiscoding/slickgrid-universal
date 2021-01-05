@@ -119,10 +119,13 @@ export class DateEditor implements Editor {
         dateFormat: inputFormat,
         closeOnSelect: true,
         wrap: true,
-        locale: (currentLocale !== 'en') ? this.loadFlatpickrLocale(currentLocale) : 'en',
+        locale: currentLocale,
         onChange: () => this.handleOnDateChange(),
-        errorHandler: () => {
-          // do nothing, Flatpickr is a little too sensitive and will throw an error when provided date is lower than minDate so just disregard the error completely
+        errorHandler: (error: Error) => {
+          if (error.toString().includes('invalid locale')) {
+            console.warn(`[Slickgrid-Universal] Flatpickr missing locale imports (${currentLocale}), will revert to English as the default locale.
+          See Flatpickr Localization for more info, for example if we want to use French, then we can import it with:  import 'flatpickr/dist/l10n/fr';`);
+          }
         }
       };
 
@@ -403,17 +406,5 @@ export class DateEditor implements Editor {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors }, new Slick.EventData());
-  }
-
-  /** Load a different set of locales for Flatpickr to be localized */
-  private loadFlatpickrLocale(language: string) {
-    let locales = 'en';
-
-    if (language !== 'en') {
-      // change locale if needed, Flatpickr reference: https://chmln.github.io/flatpickr/localization/
-      const localeDefault: any = require(`flatpickr/dist/l10n/${language}.js`).default;
-      locales = (localeDefault && localeDefault[language]) ? localeDefault[language] : 'en';
-    }
-    return locales;
   }
 }

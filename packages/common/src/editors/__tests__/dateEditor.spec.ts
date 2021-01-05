@@ -434,10 +434,24 @@ describe('DateEditor', () => {
     });
 
     describe('with different locale', () => {
-      it('should display text in new locale', (done) => {
+      it('should display a console warning when locale it not previously imported', (done) => {
+        const consoleSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
+
         gridOptionMock.translater = translateService;
 
-        translateService.use('fr-CA'); // will be trimmed to "fr"
+        translateService.use('zz-yy'); // will be trimmed to 2 chars "zz"
+        editor = new DateEditor(editorArguments);
+        setTimeout(() => {
+          expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining(`[Slickgrid-Universal] Flatpickr missing locale imports (zz), will revert to English as the default locale.`));
+          done();
+        });
+      });
+
+      it('should display text in new locale', async () => {
+        await (await import('flatpickr/dist/l10n/fr')).French;
+        gridOptionMock.translater = translateService;
+
+        translateService.use('fr');
         editor = new DateEditor(editorArguments);
 
         const spy = jest.spyOn(editor.flatInstance, 'open');
@@ -450,7 +464,6 @@ describe('DateEditor', () => {
         expect(selectonOptionElms.length).toBe(12);
         expect(selectonOptionElms[0].textContent).toBe('janvier');
         expect(spy).toHaveBeenCalled();
-        done();
       });
     });
   });
