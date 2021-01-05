@@ -15,7 +15,9 @@
       "trace": true,
       "sourceMapPathOverrides": {
         "webpack:///${workspaceRoot}/packages/*": "${webRoot}/packages/*",
-        "webpack:///./src/*": "${webRoot}/examples/webpack-demo-vanilla-bundle/src/*"
+        "webpack://webpack-demo-vanilla-bundle/../../packages/*": "${webRoot}/packages/*",
+        "webpack:///./src/*": "${webRoot}/examples/webpack-demo-vanilla-bundle/src/*",
+        "webpack://webpack-demo-vanilla-bundle/./src/*": "${webRoot}/examples/webpack-demo-vanilla-bundle/src/*"
       }
     },
     {
