@@ -126,6 +126,8 @@ export class DateEditor implements Editor {
             console.warn(`[Slickgrid-Universal] Flatpickr missing locale imports (${currentLocale}), will revert to English as the default locale.
           See Flatpickr Localization for more info, for example if we want to use French, then we can import it with:  import 'flatpickr/dist/l10n/fr';`);
           }
+          // for any other error do nothing
+          // Flatpickr is a little too sensitive and will throw an error when provided date is lower than minDate so just disregard the error completely
         }
       };
 
