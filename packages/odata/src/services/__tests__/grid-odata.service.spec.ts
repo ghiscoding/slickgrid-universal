@@ -1653,7 +1653,7 @@ describe('GridOdataService', () => {
         expect(query).toBe(expectation);
       });
 
-      it('should return a query without invalid characters to filter a search value with a number that only has a minus characters', () => {
+      it('should return a query with 0 to filter a search value when the search value contains a minus', () => {
         const expectation = `$filter=(Duration eq 0)`;
         const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
         const mockColumnFilters = {
