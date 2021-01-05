@@ -751,6 +751,20 @@ input.search-filter {
     border-left: none !important;
   }
 }
+.slickgrid-container {
+  .slick-headerrow {
+    .slick-headerrow-columns {
+      .slick-headerrow-column {
+        .input-group-prepend + .flatpickr {
+          input.compound-input {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+          }
+        }
+      }
+    }
+  }
+}
 
 // ----------------------------------------------
 // Date Picker Filter

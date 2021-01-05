@@ -661,7 +661,7 @@ describe('gridMenuExtension', () => {
         }
       });
 
-      it('should call "exportToExcel" set when the command triggered is "export-excel"', () => {
+      it('should call "exportToExcel" when the command triggered is "export-excel"', () => {
         const excelExportSpy = jest.spyOn(excelExportServiceStub, 'exportToExcel');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu as GridMenu, 'onCommand');
         jest.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([excelExportServiceStub]);

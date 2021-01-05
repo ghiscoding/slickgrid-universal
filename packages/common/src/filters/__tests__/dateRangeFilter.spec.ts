@@ -106,6 +106,7 @@ describe('DateRangeFilter', () => {
       dateFormat: 'Y-m-d',
       defaultDate: [],
       enableTime: true,
+      errorHandler: expect.toBeFunction(),
       locale: 'en',
       mode: 'range',
       onChange: expect.anything(),
@@ -193,8 +194,10 @@ describe('DateRangeFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: ['2000-01-01', '2000-01-31'], shouldTriggerQuery: true });
   });
 
-  it('should work with different locale when locale is changed', () => {
-    translateService.use('fr-CA'); // will be trimmed to "fr"
+  it('should work with different locale when locale is changed', async () => {
+    await (await import('flatpickr/dist/l10n/fr')).French;
+
+    translateService.use('fr');
     filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z', '2000-01-31T05:00:00.000Z'];
     mockColumn.filter!.operator = 'RangeInclusive';
     const spyCallback = jest.spyOn(filterArguments, 'callback');
@@ -218,10 +221,10 @@ describe('DateRangeFilter', () => {
     expect(selectonOptionElms[0].textContent).toBe('janvier');
   });
 
-  it('should throw an error and use English locale when user tries to load an unsupported Flatpickr locale', () => {
-    translateService.use('zx');
+  it('should display a console warning when locale is not previously imported', (done) => {
     const consoleSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
 
+    translateService.use('zz-yy'); // will be trimmed to 2 chars "zz"
     filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z', '2000-01-31T05:00:00.000Z'];
     mockColumn.filter!.operator = 'RangeInclusive';
 
@@ -235,9 +238,12 @@ describe('DateRangeFilter', () => {
     filterInputElm.focus();
     filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
 
-    expect(consoleSpy).toHaveBeenCalledWith(expect.toInclude('[Slickgrid-Universal - DateRange Filter] It seems that "zx" is not a locale supported by Flatpickr'));
-    expect(selectonOptionElms.length).toBe(12);
-    expect(selectonOptionElms[0].textContent).toBe('January');
+    setTimeout(() => {
+      expect(selectonOptionElms.length).toBe(12);
+      expect(selectonOptionElms[0].textContent).toBe('January');
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining(`[Slickgrid-Universal] Flatpickr missing locale imports (zz), will revert to English as the default locale.`));
+      done();
+    });
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {

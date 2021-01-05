@@ -1,3 +1,4 @@
+import 'flatpickr/dist/l10n/fr';
 import 'slickgrid/lib/jquery.event.drag-2.3.0';
 import 'slickgrid/lib/jquery.mousewheel';
 import 'slickgrid/slick.core';

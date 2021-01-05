@@ -191,7 +191,7 @@ export class CompoundDateFilter implements Filter {
       dateFormat: inputFormat,
       wrap: true,
       closeOnSelect: true,
-      locale: (currentLocale !== 'en') ? this.loadFlatpickrLocale(currentLocale) : 'en',
+      locale: currentLocale,
       onChange: (selectedDates: Date[] | Date, dateStr: string) => {
         this._currentValue = dateStr;
         this._currentDate = Array.isArray(selectedDates) && selectedDates[0] || undefined;
@@ -203,6 +203,12 @@ export class CompoundDateFilter implements Filter {
           customEvent = new CustomEvent('keyup');
         }
         this.onTriggerEvent(customEvent);
+      },
+      errorHandler: (error) => {
+        if (error.toString().includes('invalid locale')) {
+          console.warn(`[Slickgrid-Universal] Flatpickr missing locale imports (${currentLocale}), will revert to English as the default locale.
+          See Flatpickr Localization for more info, for example if we want to use French, then we can import it with:  import 'flatpickr/dist/l10n/fr';`);
+        }
       }
     };
 
@@ -296,24 +302,6 @@ export class CompoundDateFilter implements Filter {
     }
 
     return $filterContainerElm;
-  }
-
-  /** Load a different set of locales for Flatpickr to be localized */
-  private loadFlatpickrLocale(language: string) {
-    let locales = 'en';
-
-    try {
-      if (language !== 'en') {
-        // change locale if needed, Flatpickr reference: https://chmln.github.io/flatpickr/localization/
-        const localeDefault: any = require(`flatpickr/dist/l10n/${language}.js`).default;
-        locales = (localeDefault && localeDefault[language]) ? localeDefault[language] : 'en';
-      }
-    } catch (e) {
-      console.warn(`[Slickgrid-Universal - CompoundDate Filter] It seems that "${language}" is not a locale supported by Flatpickr, we will use "en" instead. `
-        + `To avoid seeing this message, you can specifically set "filter: { filterOptions: { locale: 'en' } }" in your column definition.`);
-      return 'en';
-    }
-    return locales;
   }
 
   private onTriggerEvent(e: Event | undefined) {

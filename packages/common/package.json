@@ -73,7 +73,7 @@
     "slickgrid": "^2.4.32"
   },
   "devDependencies": {
-    "@types/dompurify": "^2.1.0",
+    "@types/dompurify": "^2.2.0",
     "@types/jquery": "^3.5.5",
     "@types/moment": "^2.13.0",
     "autoprefixer": "^10.1.0",
