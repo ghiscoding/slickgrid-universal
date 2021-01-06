@@ -12,19 +12,10 @@ const baseUrl = '';
 const outDirLocal = path.resolve(__dirname, 'dist');
 const outDirProd = path.resolve(__dirname, '../../docs');
 const srcDir = path.resolve(__dirname, 'src');
-const platform = {
-  hmr: false,
-  open: true,
-  port: 8888,
-  host: 'localhost',
-  output: 'dist'
-};
 
 module.exports = ({ production } = {}, { hmr, port, host } = {}) => ({
   mode: production ? 'production' : 'development',
-  entry: {
-    app: [`${srcDir}/main.ts`],
-  },
+  entry: `${srcDir}/main.ts`,
   stats: {
     warnings: false
   },
@@ -69,14 +60,12 @@ module.exports = ({ production } = {}, { hmr, port, host } = {}) => ({
     ],
   },
   devServer: {
-    contentBase: production ? outDirProd : outDirLocal,
-    // serve index.html for all 404 (required for push-state)
+    static: production ? outDirProd : outDirLocal,
+    port: 8888,
+    hot: false,
+    host: 'localhost',
+    open: true,
     historyApiFallback: true,
-    hot: hmr || platform.hmr,
-    port: port || platform.port,
-    host: host || platform.host,
-    open: platform.open,
-    disableHostCheck: true,
   },
   devtool: production ? false : 'eval-cheap-module-source-map',
   plugins: [
