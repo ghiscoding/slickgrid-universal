@@ -79,7 +79,7 @@ export class AutoCompleteEditor implements Editor {
 
   /** Getter of the Collection */
   get editorCollection(): any[] {
-    return this.columnDef && this.columnDef.internalColumnEditor && this.columnDef.internalColumnEditor.collection || [];
+    return this.columnDef?.internalColumnEditor?.collection ?? [];
   }
 
   /** Getter for the Editor DOM Element */
