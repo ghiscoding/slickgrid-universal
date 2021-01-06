@@ -96,7 +96,7 @@ export class Example4 {
           // We can also add HTML text to be rendered (any bad script will be sanitized) but we have to opt-in, else it will be sanitized
           enableRenderHtml: true,
           // collection: [{ value: '1', label: '1' }, { value: '2', label: '2' }, { value: '3', label: '3' }, { value: '4', label: '4' }, { value: '5', label: '5' }],
-          collection: Array.from(Array(101).keys()).map(k => ({ value: k, label: k, symbol: '<i class="mdi mdi-percent-outline" style="color:cadetblue"></i>' })),
+          collection: Array.from(Array(101).keys()).map(k => ({ value: k, label: k, symbol: '<i class="mdi mdi-percent-outline color-info"></i>' })),
           customStructure: {
             value: 'value',
             label: 'label',
@@ -111,6 +111,10 @@ export class Example4 {
             value: 0,
             operator: OperatorType.notEqual
           },
+          // collectionOverride: (updatedCollection, args) => {
+          //   console.log(args);
+          //   return updatedCollection.filter((col) => args.dataContext.id % 2 ? col.value < 50 : col.value >= 50);
+          // },
           editorOptions: {
             filter: true // adds a filter on top of the multi-select dropdown
           },

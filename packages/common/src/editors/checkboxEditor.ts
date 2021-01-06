@@ -32,8 +32,8 @@ export class CheckboxEditor implements Editor {
   }
 
   /** Get Column Definition object */
-  get columnDef(): Column | undefined {
-    return this.args && this.args.column;
+  get columnDef(): Column {
+    return this.args.column;
   }
 
   /** Get Column Editor object */

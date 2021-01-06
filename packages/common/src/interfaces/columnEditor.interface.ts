@@ -3,6 +3,7 @@ import {
   CollectionCustomStructure,
   CollectionFilterBy,
   CollectionOption,
+  CollectionOverrideArgs,
   CollectionSortBy,
   EditorValidator,
   MultipleSelectOption,
@@ -38,6 +39,12 @@ export interface ColumnEditor {
 
   /** Options to change the behavior of the "collection" */
   collectionOptions?: CollectionOption;
+
+  /**
+   * A collection override allows you to manipulate the collection provided to the Column Editor.
+   * NOTE: if you provide a "customStructure" it will still be applied on the collection, in other words make sure that the collection returned by the override does have the properties defined in the "customStructure".
+   */
+  collectionOverride?: (collectionInput: any[], args: CollectionOverrideArgs) => any[];
 
   /** We could sort the collection by 1 or more properties, or by translated value(s) when enableTranslateLabel is True */
   collectionSortBy?: CollectionSortBy | CollectionSortBy[];
