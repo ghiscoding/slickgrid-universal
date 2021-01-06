@@ -79,7 +79,7 @@ export class AutoCompleteEditor implements Editor {
 
   /** Getter of the Collection */
   get editorCollection(): any[] {
-    return this.columnDef && this.columnDef.internalColumnEditor && this.columnDef.internalColumnEditor.collection || [];
+    return this.columnDef?.internalColumnEditor?.collection ?? [];
   }
 
   /** Getter for the Editor DOM Element */
@@ -93,8 +93,8 @@ export class AutoCompleteEditor implements Editor {
   }
 
   /** Get Column Definition object */
-  get columnDef(): Column | undefined {
-    return this.args && this.args.column;
+  get columnDef(): Column {
+    return this.args.column;
   }
 
   /** Get Column Editor object */
@@ -475,6 +475,11 @@ export class AutoCompleteEditor implements Editor {
 
     // assign the collection to a temp variable before filtering/sorting the collection
     let finalCollection = collection;
+
+    // user could also override the collection
+    if (this.columnEditor?.collectionOverride) {
+      finalCollection = this.columnEditor.collectionOverride(finalCollection, { column: this.columnDef, dataContext: this.args.item, grid: this.grid });
+    }
 
     // user might provide his own custom structure
     // jQuery UI autocomplete requires a label/value pair, so we must remap them when user provide different ones

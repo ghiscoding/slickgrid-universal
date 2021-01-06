@@ -148,6 +148,8 @@ export class Icons {
       '.mdi.mdi-pencil-outline',
       '.mdi.mdi-pencil-box-multiple',
       '.mdi.mdi-pencil-box-multiple-outline',
+      '.mdi.mdi-percent',
+      '.mdi.mdi-percent-outline',
       '.mdi.mdi-pin-off-outline',
       '.mdi.mdi-pin-outline',
       '.mdi.mdi-playlist-plus',

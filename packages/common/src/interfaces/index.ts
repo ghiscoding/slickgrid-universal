@@ -13,6 +13,7 @@ export * from './checkboxSelectorOption.interface';
 export * from './collectionCustomStructure.interface';
 export * from './collectionFilterBy.interface';
 export * from './collectionOption.interface';
+export * from './collectionOverrideArgs.interface';
 export * from './collectionSortBy.interface';
 export * from './column.interface';
 export * from './columnEditor.interface';
