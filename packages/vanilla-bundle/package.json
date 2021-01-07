@@ -37,8 +37,8 @@
   "author": "Ghislain B.",
   "license": "MIT",
   "engines": {
-    "node": ">=12.0.0",
-    "npm": ">=6.14.0"
+    "node": ">=14.15.0",
+    "npm": ">=6.14.8"
   },
   "browserslist": [
     "last 2 version",
