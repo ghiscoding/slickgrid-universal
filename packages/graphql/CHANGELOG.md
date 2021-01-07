@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.8.0...v0.9.0) (2021-01-06)
+
+
+### Bug Fixes
+
+* **backend:** GraphQL queries with input filter ([#217](https://github.com/ghiscoding/slickgrid-universal/issues/217)) ([ff7f1e5](https://github.com/ghiscoding/slickgrid-universal/commit/ff7f1e5e8733d25a1fd7869e4de2b1bc700b8a7b))
+
+
+### Features
+
+* **build:** upgrade to WebPack 5 ([#225](https://github.com/ghiscoding/slickgrid-universal/issues/225)) ([c6b3ad3](https://github.com/ghiscoding/slickgrid-universal/commit/c6b3ad3eb6fb64306bfd8bd300fcc1e86b27e5a6))
+* **ci:** replace CircleCI with GitHub Actions ([#211](https://github.com/ghiscoding/slickgrid-universal/issues/211)) ([4f91140](https://github.com/ghiscoding/slickgrid-universal/commit/4f9114031ca6236ef45f04b67dcba1a9981035c4))
+
+
+
+
+
+
 # [0.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.7.7...v0.8.0) (2020-12-22)
 
 **Note:** Version bump only for package @slickgrid-universal/graphql
