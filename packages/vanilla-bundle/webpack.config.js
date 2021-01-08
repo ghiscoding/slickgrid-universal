@@ -20,6 +20,7 @@ module.exports = ({ production } = {}) => ({
   },
   // devtool: production ? 'nosources-source-map' : 'cheap-source-map',
   devtool: 'cheap-source-map',
+  target: production ? 'browserslist' : 'web',
   output: {
     path: production ? `${outDir}/bundle` : `${outDir}/bundle-dev`, // includes sourcemap
     publicPath: baseUrl,
@@ -28,8 +29,6 @@ module.exports = ({ production } = {}) => ({
     libraryTarget: 'umd',
     library: 'Slickgrid-Universal',
     umdNamedDefine: true,
-    chunkLoading: false,
-    wasmLoading: false
   },
   resolve: {
     extensions: ['.ts', '.js'],
