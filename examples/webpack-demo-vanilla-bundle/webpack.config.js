@@ -1,4 +1,4 @@
-const { ProvidePlugin } = require('webpack');
+const { HotModuleReplacementPlugin, ProvidePlugin } = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
@@ -13,22 +13,30 @@ const outDirLocal = path.resolve(__dirname, 'dist');
 const outDirProd = path.resolve(__dirname, '../../docs');
 const srcDir = path.resolve(__dirname, 'src');
 
-module.exports = ({ production } = {}, { hmr, port, host } = {}) => ({
+module.exports = ({ production } = {}) => ({
   mode: production ? 'production' : 'development',
   entry: `${srcDir}/main.ts`,
   stats: {
     warnings: false
   },
+  target: production ? 'browserslist' : 'web',
+  devServer: {
+    contentBase: production ? outDirProd : outDirLocal,
+    historyApiFallback: true,
+    compress: true,
+    hot: true,
+    liveReload: false,
+    port: 8888,
+    host: 'localhost',
+    open: true,
+  },
+  devtool: production ? false : 'eval-cheap-module-source-map',
   output: {
     path: production ? outDirProd : outDirLocal,
     publicPath: baseUrl,
     filename: '[name].[contenthash].bundle.js',
     sourceMapFilename: '[name].[contenthash].bundle.js.map',
     chunkFilename: '[name].[contenthash].chunk.js',
-
-    // https://github.com/webpack/webpack/issues/11660
-    chunkLoading: false,
-    wasmLoading: false
   },
   resolve: {
     extensions: ['.ts', '.js'],
@@ -59,15 +67,6 @@ module.exports = ({ production } = {}, { hmr, port, host } = {}) => ({
       { test: /\.ts?$/, use: [{ loader: 'ts-loader', options: { transpileOnly: true } }] }
     ],
   },
-  devServer: {
-    static: production ? outDirProd : outDirLocal,
-    port: 8888,
-    hot: false,
-    host: 'localhost',
-    open: true,
-    historyApiFallback: true,
-  },
-  devtool: production ? false : 'eval-cheap-module-source-map',
   plugins: [
     new ProvidePlugin({
       '$': 'jquery',
@@ -95,6 +94,7 @@ module.exports = ({ production } = {}, { hmr, port, host } = {}) => ({
     }),
     // Note that the usage of following plugin cleans the webpack output directory before build.
     new CleanWebpackPlugin(),
-    new ForkTsCheckerWebpackPlugin()
+    new ForkTsCheckerWebpackPlugin(),
+    new HotModuleReplacementPlugin(),
   ]
 });
