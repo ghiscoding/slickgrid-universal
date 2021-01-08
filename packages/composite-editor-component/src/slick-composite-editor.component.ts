@@ -119,17 +119,23 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /**
-   * Dynamically change value of an input from the Composite Editor form
+   * Dynamically change value of an input from the Composite Editor form.
+   *
+   * NOTE: user might get an error thrown when trying to apply a value on a Composite Editor that was not found in the form,
+   * but in some cases the user might still want the value to be applied to the formValues so that it will be sent to the save in final item data context
+   * and when that happens, you can just skip that error so it won't throw.
    * @param {String} columnId - column id
    * @param {*} newValue - the new value
+   * @param {Boolean} skipMissingEditorError - skipping the error when the Composite Editor was not found will allow to still apply the value into the formValues object
    */
-  changeFormInputValue(columnId: string, newValue: any) {
+  changeFormInputValue(columnId: string, newValue: any, skipMissingEditorError = false) {
     const editor = this._editors?.[columnId];
     let outputValue = newValue;
 
-    if (!editor) {
-      throw new Error(`Editor with column id "${columnId}" not found.`);
+    if (!editor && !skipMissingEditorError) {
+      throw new Error(`Composite Editor with column id "${columnId}" not found.`);
     }
+
     if (editor && editor.setValue && Array.isArray(this._editorContainers)) {
       editor.setValue(newValue, true);
       const editorContainerElm = this._editorContainers.find((editorElm: HTMLElement) => editorElm.dataset.editorid === columnId);
@@ -139,8 +145,10 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         outputValue = '';
         editorContainerElm?.classList?.remove('modified');
       }
-      this._formValues = { ...this._formValues, [columnId]: outputValue };
     }
+
+    // apply the value in the formValues object and we do it even when the editor is not found (so it also works when using skip error)
+    this._formValues = { ...this._formValues, [columnId]: outputValue };
   }
 
   /**

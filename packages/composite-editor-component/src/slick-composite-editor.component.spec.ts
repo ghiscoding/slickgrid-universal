@@ -807,9 +807,27 @@ describe('CompositeEditorService', () => {
         try {
           component.changeFormInputValue('field4', 'Field 4 different text');
         } catch (e) {
-          expect(e.toString()).toContain(`Editor with column id "field4" not found`);
+          expect(e.toString()).toContain(`Composite Editor with column id "field4" not found`);
           done();
         }
+      });
+
+      it('should make sure Slick-Composite-Editor is being created and then call "changeFormInputValue" on an invalid Editor BUT not throw an error when user want to skip the error', () => {
+        const mockEditor = {
+          changeEditorOption: jest.fn(),
+          disable: jest.fn(),
+          setValue: jest.fn(),
+        } as unknown as Editor;
+        const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+
+        component = new SlickCompositeEditorComponent();
+        component.init(gridStub, container);
+        component.editors = { field3: mockEditor };
+        component.openDetails({ headerTitle: 'Details' });
+        component.changeFormInputValue('field4', 'Field 4 different text', true);
+
+        expect(component.formValues).toEqual({ field4: 'Field 4 different text' });
       });
 
       it('should make sure Slick-Composite-Editor is being created and then call "disableFormInput" to disable the field', () => {
