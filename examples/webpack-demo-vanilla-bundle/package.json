@@ -51,7 +51,7 @@
     "ts-loader": "^8.0.14",
     "ts-node": "^9.1.1",
     "url-loader": "^4.1.1",
-    "webpack": "^5.11.1",
+    "webpack": "^5.12.1",
     "webpack-cli": "^4.3.1",
     "webpack-dev-server": "^3.11.1"
   }
