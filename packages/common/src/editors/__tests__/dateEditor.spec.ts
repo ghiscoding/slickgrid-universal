@@ -220,6 +220,40 @@ describe('DateEditor', () => {
         expect(editor.isValueChanged()).toBe(true);
       });
 
+      it('should return True when date is reset by the clear date button', () => {
+        // change to allow input value only for testing purposes & use the regular flatpickr input to test that one too
+        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { allowInput: true, altInput: false };
+        mockItemData = { id: 1, startDate: '2001-01-02T11:02:02.000Z', isActive: true };
+
+        editor = new DateEditor(editorArguments);
+        editor.loadValue(mockItemData);
+        editor.focus();
+        const clearBtnElm = divContainer.querySelector('.btn.icon-close') as HTMLInputElement;
+        const editorInputElm = divContainer.querySelector('.flatpickr input') as HTMLInputElement;
+        clearBtnElm.click();
+        editorInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
+
+        expect(editorInputElm.value).toBe('');
+        expect(editor.isValueChanged()).toBe(true);
+      });
+
+      it('should also return True when date is reset by the clear date button even if the previous date was empty', () => {
+        // change to allow input value only for testing purposes & use the regular flatpickr input to test that one too
+        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { allowInput: true, altInput: false };
+        mockItemData = { id: 1, startDate: '', isActive: true };
+
+        editor = new DateEditor(editorArguments);
+        editor.loadValue(mockItemData);
+        editor.focus();
+        const clearBtnElm = divContainer.querySelector('.btn.icon-close') as HTMLInputElement;
+        const editorInputElm = divContainer.querySelector('.flatpickr input') as HTMLInputElement;
+        clearBtnElm.click();
+        editorInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
+
+        expect(editorInputElm.value).toBe('');
+        expect(editor.isValueChanged()).toBe(true);
+      });
+
       it('should return False when date in the picker is the same as the current date', () => {
         mockItemData = { id: 1, startDate: '2001-01-02T11:02:02.000Z', isActive: true };
         (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { allowInput: true }; // change to allow input value only for testing purposes
@@ -509,11 +543,36 @@ describe('DateEditor', () => {
       expect(disableSpy).toHaveBeenCalledWith(false);
     });
 
+    it('should call "show" and expect the DOM element to become disabled with empty value set in the form values when "onBeforeEditCell" returns false', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(false);
+      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+
+      editor = new DateEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      const disableSpy = jest.spyOn(editor, 'disable');
+      editor.show();
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: { startDate: '' }, editors: {},
+      }, expect.anything());
+      expect(disableSpy).toHaveBeenCalledWith(true);
+      expect(editor.flatInstance._input.disabled).toEqual(true);
+      expect(editor.flatInstance._input.value).toEqual('');
+    });
+
     it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(false);
       const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      gridOptionMock.compositeEditorOptions = {
+        excludeDisabledFieldFormValues: true
+      };
 
       editor = new DateEditor(editorArguments);
       editor.loadValue(mockItemData);

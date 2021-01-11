@@ -417,13 +417,16 @@ export class LongTextEditor implements Editor {
     const columnId = this.columnDef?.id ?? '';
     const item = this.args.item;
     const grid = this.grid;
+    const newValue = this.serializeValue();
 
     // when valid, we'll also apply the new value to the dataContext item object
     if (this.validate().valid) {
-      this.applyValue(this.args.item, this.serializeValue());
+      this.applyValue(this.args.item, newValue);
     }
-    this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
-    if (this.disabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+    this.applyValue(compositeEditorOptions.formValues, newValue);
+
+    const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
+    if (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors }, { ...new Slick.EventData(), ...event });

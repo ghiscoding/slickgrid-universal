@@ -759,11 +759,43 @@ describe('CompositeEditorService', () => {
         expect(component.formValues).toEqual({ field3: 'Field 3 different text' });
       });
 
-      it('should make sure Slick-Composite-Editor is being created and then call "changeFormInputValue" on a disabled field and expect the field to not be modified', () => {
+      it('should make sure Slick-Composite-Editor is being created and then call "changeFormInputValue" on a disabled field and expect the field to be modified but empty', () => {
         const mockEditor = { setValue: jest.fn(), disable: jest.fn(), } as unknown as Editor;
         mockEditor.disabled = true;
         const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
         jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+
+        component = new SlickCompositeEditorComponent();
+        component.init(gridStub, container);
+        component.openDetails({ headerTitle: 'Details' });
+
+        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeBodyElm = compositeContainerElm.querySelector('.slick-editor-modal-body') as HTMLSelectElement;
+        const field1DetailContainerElm = compositeBodyElm.querySelector('.item-details-container.editor-field1.slick-col-medium-12') as HTMLSelectElement;
+        const field3DetailContainerElm = compositeBodyElm.querySelector('.item-details-container.editor-field3.slick-col-medium-12') as HTMLSelectElement;
+        const field1LabelElm = field1DetailContainerElm.querySelector('.item-details-label.editor-field1') as HTMLSelectElement;
+        const field3LabelElm = field3DetailContainerElm.querySelector('.item-details-label.editor-field3') as HTMLSelectElement;
+        const field3DetailCellElm = field3DetailContainerElm.querySelector('.slick-cell') as HTMLSelectElement;
+
+        component.editors = { field3: mockEditor };
+        component.changeFormInputValue('field3', 'Field 3 different text');
+
+        expect(component).toBeTruthy();
+        expect(component.constructor).toBeDefined();
+        expect(compositeContainerElm).toBeTruthy();
+        expect(field1LabelElm.textContent).toBe('Field 1'); // regular, without column group
+        expect(field3LabelElm.textContent).toBe('Group Name - Field 3'); // with column group
+        expect(field1DetailContainerElm).toBeTruthy();
+        expect(field3DetailCellElm.classList.contains('modified')).toBe(true);
+        expect(component.formValues).toEqual({ field3: '' });
+      });
+
+      it('should make sure Slick-Composite-Editor is being created and then call "changeFormInputValue" on a disabled field and expect the field to be empty and not modified when "excludeDisabledFieldFormValues" grid option is set to True', () => {
+        const mockEditor = { setValue: jest.fn(), disable: jest.fn(), } as unknown as Editor;
+        mockEditor.disabled = true;
+        const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+        jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+        gridOptionsMock.compositeEditorOptions.excludeDisabledFieldFormValues = true;
 
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
