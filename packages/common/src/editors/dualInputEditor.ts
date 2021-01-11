@@ -333,7 +333,7 @@ export class DualInputEditor implements Editor {
     }
   }
 
-  serializeValue() {
+  serializeValue(): { [fieldName: string]: any } {
     const obj = {};
     const leftValue = this.serializeValueByPosition('leftInput');
     const rightValue = this.serializeValueByPosition('rightInput');
@@ -476,19 +476,21 @@ export class DualInputEditor implements Editor {
     const rightInputId = this.columnEditor.params?.rightInput?.field ?? '';
     const item = this.args.item;
     const grid = this.grid;
+    const newValues = this.serializeValue();
 
     // when valid, we'll also apply the new value to the dataContext item object
     if (this.validate().valid) {
-      this.applyValue(this.args.item, this.serializeValue());
+      this.applyValue(this.args.item, newValues);
     }
-    this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
+    this.applyValue(compositeEditorOptions.formValues, newValues);
 
     // when the input is disabled we won't include it in the form result object
     // we'll check with both left/right inputs
-    if (this.disabled && compositeEditorOptions.formValues.hasOwnProperty(leftInputId)) {
+    const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
+    if (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(leftInputId)) {
       delete compositeEditorOptions.formValues[leftInputId];
     }
-    if (this.disabled && compositeEditorOptions.formValues.hasOwnProperty(rightInputId)) {
+    if (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(rightInputId)) {
       delete compositeEditorOptions.formValues[rightInputId];
     }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors }, { ...new Slick.EventData(), ...event });

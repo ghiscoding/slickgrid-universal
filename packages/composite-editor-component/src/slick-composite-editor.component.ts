@@ -139,11 +139,18 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     if (editor && editor.setValue && Array.isArray(this._editorContainers)) {
       editor.setValue(newValue, true);
       const editorContainerElm = this._editorContainers.find((editorElm: HTMLElement) => editorElm.dataset.editorid === columnId);
-      if (!editor.disabled) {
+      const excludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
+
+      if (!editor.disabled || (editor.disabled && !excludeDisabledFieldFormValues)) {
         editorContainerElm?.classList?.add('modified');
       } else {
         outputValue = '';
         editorContainerElm?.classList?.remove('modified');
+      }
+
+      // when the field is disabled, we will only allow a blank value anything else will be disregarded
+      if (editor.disabled && (outputValue !== '' || outputValue !== null || outputValue !== undefined || outputValue !== 0)) {
+        outputValue = '';
       }
     }
 

@@ -395,7 +395,7 @@ export class Example12 {
           const prevSerializedValue = prevSerializedValues[index];
           const serializedValue = serializedValues[index];
 
-          if (prevSerializedValue !== serializedValue) {
+          if (prevSerializedValue !== serializedValue || serializedValue === '') {
             const finalColumn = Array.isArray(editCommand.prevSerializedValue) ? editorColumns[index] : column;
             this.editedItems[this.gridOptions.datasetIdPropertyName || 'id'] = item; // keep items by their row indexes, if the row got edited twice then we'll keep only the last change
             this.sgb.slickGrid.invalidate();
@@ -525,7 +525,6 @@ export class Example12 {
       this.compositeEditorInstance.changeFormInputValue('completed', true);
       this.compositeEditorInstance.changeFormInputValue('finish', new Date());
       // this.compositeEditorInstance.changeFormInputValue('product', { id: 0, itemName: 'Sleek Metal Computer' });
-
     }
 
     // you can also change some editor options (not all Editors supports this functionality, so far only these Editors AutoComplete, Date MultipleSelect & SingleSelect)

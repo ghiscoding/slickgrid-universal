@@ -91,6 +91,12 @@ export interface CompositeEditorOpenDetailOption {
   modalType?: CompositeEditorModalType;
 
   /**
+   * Defaults is false, when set to true it would remove disabled blank field from the form values
+   * For example if we disable a "DateCreated" field, it will blank the value and by default add it to the FormValues object as `formValues = { dateCreated: '' }`
+   */
+  excludeDisabledFieldFormValues?: boolean;
+
+  /**
    * Defaults to 1, how many columns do we want to show in the view layout?
    * For example if you wish to see your form split in a 2 columns layout (split view)
    */

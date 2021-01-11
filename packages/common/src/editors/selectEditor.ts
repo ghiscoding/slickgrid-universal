@@ -502,7 +502,8 @@ export class SelectEditor implements Editor {
     if (this.isMultipleSelect) {
       return !charArraysEqual(this.$editorElm.val(), this.originalValue);
     }
-    return this.$editorElm.val() !== this.originalValue;
+    const isChanged = this.$editorElm.val() !== this.originalValue;
+    return isChanged;
   }
 
   validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
@@ -604,11 +605,13 @@ export class SelectEditor implements Editor {
     // make sure however that it wasn't added more than once
     if (this.collectionOptions?.addBlankEntry && Array.isArray(collection) && collection.length > 0 && collection[0][this.valueName] !== '') {
       collection.unshift(this.createBlankEntry());
+      this.collection.unshift(this.createBlankEntry()); // also make the change on the original collection
     }
 
     // user can optionally add his own custom entry at the beginning of the collection
     if (this.collectionOptions?.addCustomFirstEntry && Array.isArray(collection) && collection.length > 0 && collection[0][this.valueName] !== this.collectionOptions.addCustomFirstEntry[this.valueName]) {
       collection.unshift(this.collectionOptions.addCustomFirstEntry);
+      this.collection.unshift(this.collectionOptions.addCustomFirstEntry); // also make the change on the original collection
     }
 
     // user can optionally add his own custom entry at the end of the collection
@@ -741,13 +744,16 @@ export class SelectEditor implements Editor {
     const columnId = this.columnDef?.id ?? '';
     const item = this.args.item;
     const grid = this.grid;
+    const newValues = this.serializeValue();
 
     // when valid, we'll also apply the new value to the dataContext item object
     if (this.validate().valid) {
-      this.applyValue(this.args.item, this.serializeValue());
+      this.applyValue(this.args.item, newValues);
     }
-    this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
-    if (this.disabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+    this.applyValue(compositeEditorOptions.formValues, newValues);
+
+    const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
+    if (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors }, new Slick.EventData());

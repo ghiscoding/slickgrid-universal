@@ -34,6 +34,7 @@ export class DateEditor implements Editor {
   private _$inputWithData: any;
   private _$input: any;
   private _$editorInputElm: any;
+  private _isTriggeredByClear = false;
   private _originalDate: string;
   private _pickerMergedOptions: FlatpickrOption;
 
@@ -148,6 +149,7 @@ export class DateEditor implements Editor {
       // show clear date button (unless user specifically doesn't want it)
       if (!this.columnEditor?.params?.hideClearButton) {
         closeButtonElm.appendTo(this._$editorInputElm);
+        closeButtonElm.on('click', () => this._isTriggeredByClear = true);
       }
 
       this._$editorInputElm.appendTo(this.args.container);
@@ -253,6 +255,7 @@ export class DateEditor implements Editor {
     this.flatInstance.setDate(val);
 
     if (isApplyingValue) {
+      this._isTriggeredByClear = true;
       this.applyValue(this.args.item, this.serializeValue());
 
       // if it's set by a Composite Editor, then also trigger a change for it
@@ -293,7 +296,9 @@ export class DateEditor implements Editor {
       return false;
     }
 
-    const isChanged = (!(elmDateStr === '' && orgDateStr === '')) && (elmDateStr !== orgDateStr);
+    const isChanged = this._isTriggeredByClear || (!(elmDateStr === '' && orgDateStr === '')) && (elmDateStr !== orgDateStr);
+    this._isTriggeredByClear = false; // reset flag
+
     return isChanged;
   }
 
@@ -398,13 +403,16 @@ export class DateEditor implements Editor {
     const columnId = this.columnDef?.id ?? '';
     const item = this.args.item;
     const grid = this.grid;
+    const newValue = this.serializeValue();
 
     // when valid, we'll also apply the new value to the dataContext item object
     if (this.validate().valid) {
-      this.applyValue(this.args.item, this.serializeValue());
+      this.applyValue(this.args.item, newValue);
     }
-    this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
-    if (this.disabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+    this.applyValue(compositeEditorOptions.formValues, newValue);
+
+    const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
+    if (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors }, new Slick.EventData());

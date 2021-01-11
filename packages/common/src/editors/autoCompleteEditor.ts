@@ -186,15 +186,18 @@ export class AutoCompleteEditor implements Editor {
     if (this._$editorElm) {
       if (isDisabled) {
         this._$editorElm.attr('disabled', 'disabled');
+        this._$editorElm.autocomplete('disable');
 
         // clear the checkbox when it's newly disabled
         if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+          this._currentValue = '';
           this._defaultTextValue = '';
           this._$editorElm.val('');
           this.handleChangeOnCompositeEditor(null, this.args.compositeEditorOptions);
         }
       } else {
         this._$editorElm.removeAttr('disabled');
+        this._$editorElm.autocomplete('enable');
       }
     }
   }
@@ -375,13 +378,16 @@ export class AutoCompleteEditor implements Editor {
     const columnId = this.columnDef?.id ?? '';
     const item = this.args.item;
     const grid = this.grid;
+    const newValue = this.serializeValue();
 
     // when valid, we'll also apply the new value to the dataContext item object
     if (this.validate().valid) {
-      this.applyValue(this.args.item, this.serializeValue());
+      this.applyValue(this.args.item, newValue);
     }
-    this.applyValue(compositeEditorOptions.formValues, this.serializeValue());
-    if (this.disabled && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+    this.applyValue(compositeEditorOptions.formValues, newValue);
+
+    const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
+    if (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors }, { ...new Slick.EventData(), ...event });
