@@ -186,7 +186,6 @@ export class AutoCompleteEditor implements Editor {
     if (this._$editorElm) {
       if (isDisabled) {
         this._$editorElm.attr('disabled', 'disabled');
-        this._$editorElm.autocomplete('disable');
 
         // clear the checkbox when it's newly disabled
         if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
@@ -197,7 +196,6 @@ export class AutoCompleteEditor implements Editor {
         }
       } else {
         this._$editorElm.removeAttr('disabled');
-        this._$editorElm.autocomplete('enable');
       }
     }
   }
