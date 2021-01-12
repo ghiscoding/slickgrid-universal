@@ -614,12 +614,13 @@ export class SlickCompositeEditorComponent implements ExternalResource {
    */
   private getColumnLabel(columnDef: Column): string {
     const columnGroupSeparator = this.gridOptions.columnGroupSeparator || ' - ';
-    let columnName = columnDef.name || '';
+    let columnName = columnDef.nameCompositeEditor || columnDef.name || '';
     let columnGroup = columnDef.columnGroup || '';
 
     if (this.gridOptions.enableTranslate && this.translaterService) {
-      if (columnDef.nameKey) {
-        columnName = this.translaterService.translate(columnDef.nameKey);
+      const translationKey = columnDef.nameCompositeEditorKey || columnDef.nameKey;
+      if (translationKey) {
+        columnName = this.translaterService.translate(translationKey);
       }
       if (columnDef.columnGroupKey && this.translaterService?.translate) {
         columnGroup = this.translaterService.translate(columnDef.columnGroupKey);
