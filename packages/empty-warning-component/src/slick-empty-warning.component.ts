@@ -67,10 +67,11 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     // that is because it is not aware that we are adding this slick empty element in this grid DOM
     if (this.gridOptions.autoHeight) {
       const leftPaneElm = document.querySelector<HTMLDivElement>('.slick-pane.slick-pane-top.slick-pane-left');
-      if (leftPaneElm?.style && gridCanvasLeftElm?.style) {
+      if (leftPaneElm && leftPaneElm.style && gridCanvasLeftElm && gridCanvasLeftElm.style) {
         const leftPaneHeight = parseInt(leftPaneElm.style.height, 10) || 0;
-        leftPaneElm.style.height = `${leftPaneHeight + this.gridOptions.rowHeight}px`;
-        gridCanvasLeftElm.style.height = `${this.gridOptions.rowHeight}px`;
+        const gridRowHeight = this.gridOptions?.rowHeight ?? 0;
+        leftPaneElm.style.height = `${leftPaneHeight + gridRowHeight}px`;
+        gridCanvasLeftElm.style.height = `${gridRowHeight}px`;
       }
     }
 
