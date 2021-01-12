@@ -173,13 +173,13 @@ export interface Column<T = any> {
   /** Column Title Name to be displayed in the Grid (UI) */
   name?: string;
 
-  /** Column Title Name that could be used by the Composite Editor Modal, it has precedence over the column "name" property. */
+  /** Alternative Column Title Name that could be used by the Composite Editor Modal, it has precedence over the column "name" property. */
   nameCompositeEditor?: string;
 
   /** Column Title Name translation key that can be used by the translate Service (i18n) to display the text for each column header title */
   nameKey?: string;
 
-  /** Column Title Name translation key that could be used by the Composite Editor Modal, it has precedence over the column "name" property. */
+  /** Alternative Column Title Name translation key that could be used by the Composite Editor Modal, it has precedence over the column "name" property. */
   nameCompositeEditorKey?: string;
 
   /** an event that can be used for executing an action before the cell becomes editable (that event happens before the "onCellChange" event) */
