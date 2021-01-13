@@ -480,8 +480,10 @@ export class SelectEditor implements Editor {
       if (isDisabled) {
         this.$editorElm.multipleSelect('disable');
 
-        // clear the checkbox when it's newly disabled
-        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+        // clear select when it's newly disabled and not yet empty
+        const currentValues: any | any[] = this.getValue();
+        const isValueBlank = this.isMultipleSelect ? currentValues === [''] : currentValues === '';
+        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions && !isValueBlank) {
           this.originalValue = this.isMultipleSelect ? [''] : '';
           this.$editorElm.multipleSelect('setSelects', []);
           this.handleChangeOnCompositeEditor(this.args.compositeEditorOptions);

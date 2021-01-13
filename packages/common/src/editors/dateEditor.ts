@@ -1,7 +1,7 @@
 import * as flatpickr_ from 'flatpickr';
 import * as moment_ from 'moment-mini';
 import { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
-import { FlatpickrFn } from 'flatpickr/dist/types/instance';
+import { Instance as FlatpickrInstance, FlatpickrFn } from 'flatpickr/dist/types/instance';
 const flatpickr: FlatpickrFn = (flatpickr_ && flatpickr_['default'] || flatpickr_) as any; // patch for rollup
 const moment = moment_['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
@@ -34,11 +34,12 @@ export class DateEditor implements Editor {
   private _$inputWithData: any;
   private _$input: any;
   private _$editorInputElm: any;
-  private _isTriggeredByClear = false;
+  private _$closeButtonGroupElm: any;
+  private _lastTriggeredByClearDate = false;
   private _originalDate: string;
   private _pickerMergedOptions: FlatpickrOption;
 
-  flatInstance: any;
+  flatInstance: FlatpickrInstance;
   defaultDate: string;
 
   /** is the Editor disabled? */
@@ -140,16 +141,17 @@ export class DateEditor implements Editor {
       }
 
       this._$editorInputElm = $(`<div class="flatpickr input-group"></div>`);
-      const closeButtonElm = $(`<span class="input-group-btn input-group-append" data-clear>
-          <button class="btn btn-default icon-close" type="button"></button>
-        </span>`);
+      const $closeButtonGroupElm = $(`<span class="input-group-btn input-group-append" data-clear></span>`);
+      this._$closeButtonGroupElm = $(`<button class="btn btn-default icon-close" type="button"></button>`);
+
       this._$input = $(`<input type="text" data-input data-defaultDate="${this.defaultDate}" class="${inputCssClasses.replace(/\./g, ' ')}" placeholder="${placeholder}" title="${title}" />`);
       this._$input.appendTo(this._$editorInputElm);
 
       // show clear date button (unless user specifically doesn't want it)
       if (!this.columnEditor?.params?.hideClearButton) {
-        closeButtonElm.appendTo(this._$editorInputElm);
-        closeButtonElm.on('click', () => this._isTriggeredByClear = true);
+        this._$closeButtonGroupElm.appendTo($closeButtonGroupElm);
+        $closeButtonGroupElm.appendTo(this._$editorInputElm);
+        this._$closeButtonGroupElm.on('click', () => this._lastTriggeredByClearDate = true);
       }
 
       this._$editorInputElm.appendTo(this.args.container);
@@ -194,15 +196,18 @@ export class DateEditor implements Editor {
     if (this.flatInstance?._input) {
       if (isDisabled) {
         this.flatInstance._input.setAttribute('disabled', 'disabled');
+        this._$closeButtonGroupElm.prop('disabled', true);
 
-        // clear the checkbox when it's newly disabled
-        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+        // clear picker when it's newly disabled and not empty
+        const currentValue = this.getValue();
+        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions && currentValue !== '') {
           this._originalDate = '';
           this.flatInstance.setDate('');
           this.flatInstance.clear();
         }
       } else {
-        this.flatInstance._input.removeAttribute('disabled', 'disabled');
+        this.flatInstance._input.removeAttribute('disabled');
+        this._$closeButtonGroupElm.prop('disabled', false);
       }
     }
   }
@@ -255,7 +260,6 @@ export class DateEditor implements Editor {
     this.flatInstance.setDate(val);
 
     if (isApplyingValue) {
-      this._isTriggeredByClear = true;
       this.applyValue(this.args.item, this.serializeValue());
 
       // if it's set by a Composite Editor, then also trigger a change for it
@@ -295,9 +299,7 @@ export class DateEditor implements Editor {
     if (elmDateStr === 'Invalid date' || orgDateStr === 'Invalid date') {
       return false;
     }
-
-    const isChanged = this._isTriggeredByClear || (!(elmDateStr === '' && orgDateStr === '')) && (elmDateStr !== orgDateStr);
-    this._isTriggeredByClear = false; // reset flag
+    const isChanged = this._lastTriggeredByClearDate || (!(elmDateStr === '' && orgDateStr === '')) && (elmDateStr !== orgDateStr);
 
     return isChanged;
   }
@@ -395,6 +397,7 @@ export class DateEditor implements Editor {
         this.save();
       }
     }
+    setTimeout(() => this._lastTriggeredByClearDate = false); // reset flag after a cycle
   }
 
   private handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption) {

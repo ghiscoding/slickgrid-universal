@@ -552,10 +552,8 @@ export class SlickCompositeEditorComponent implements ExternalResource {
           } else {
             this[applyCallbackFnName](this.formValues, { gridRowIndexes, dataContextIds });
             executeCallback();
-            this.dispose();
           }
-          this._modalSaveButtonElm.disabled = false;
-          this._modalSaveButtonElm.classList.remove('saving');
+          this.dispose();
         }
       }
     } catch (error) {

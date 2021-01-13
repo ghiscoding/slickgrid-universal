@@ -111,8 +111,9 @@ export class CheckboxEditor implements Editor {
         this._input.setAttribute('disabled', 'disabled');
         this._checkboxContainerElm.classList.add('disabled');
 
-        // clear the checkbox when it's newly disabled
-        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+        // clear checkbox when it's newly disabled and not empty
+        const currentValue = this.getValue();
+        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions && currentValue !== false) {
           this._input.checked = false;
           this._originalValue = undefined;
           this.handleChangeOnCompositeEditor(null, this.args.compositeEditorOptions);

@@ -470,12 +470,12 @@ describe('SliderEditor', () => {
     it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
       const activeCellMock = { row: 0, cell: 0 };
       jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
       editor = new SliderEditor(editorArguments);
       editor.setValue(95, true);
 
       expect(editor.getValue()).toBe('95');
-      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
         formValues: { price: 95 }, editors: {},
       }, expect.anything());
@@ -499,7 +499,7 @@ describe('SliderEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(false);
-      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
 
       editor = new SliderEditor(editorArguments);
       editor.loadValue(mockItemData);
@@ -508,7 +508,7 @@ describe('SliderEditor', () => {
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
-      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
         formValues: { price: 0 }, editors: {}
       }, expect.anything());
@@ -521,7 +521,7 @@ describe('SliderEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(false);
-      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
       gridOptionMock.compositeEditorOptions = {
         excludeDisabledFieldFormValues: true
       };
@@ -533,7 +533,7 @@ describe('SliderEditor', () => {
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
-      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
         formValues: {}, editors: {}
       }, expect.anything());
@@ -546,7 +546,7 @@ describe('SliderEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
-      const onBeforeCompositeSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
       gridOptionMock.autoCommitEdit = true;
       mockItemData = { id: 1, price: 93, isActive: true };
 
@@ -559,7 +559,7 @@ describe('SliderEditor', () => {
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
-      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
         formValues: { price: 93 }, editors: {}
       }, expect.anything());

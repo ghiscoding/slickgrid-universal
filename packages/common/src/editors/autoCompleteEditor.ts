@@ -187,8 +187,9 @@ export class AutoCompleteEditor implements Editor {
       if (isDisabled) {
         this._$editorElm.attr('disabled', 'disabled');
 
-        // clear the checkbox when it's newly disabled
-        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+        // clear value when it's newly disabled and not empty
+        const currentValue = this.getValue();
+        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions && currentValue !== '') {
           this._currentValue = '';
           this._defaultTextValue = '';
           this._$editorElm.val('');

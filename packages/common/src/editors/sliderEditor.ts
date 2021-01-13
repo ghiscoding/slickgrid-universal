@@ -141,8 +141,9 @@ export class SliderEditor implements Editor {
       if (isDisabled) {
         this._$input.attr('disabled', 'disabled');
 
-        // clear the checkbox when it's newly disabled
-        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+        // clear value when it's newly disabled and not empty
+        const currentValue = this.getValue();
+        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions && currentValue !== '') {
           this._defaultValue = 0;
           this._$editorElm.children('input').val(0);
           this._$editorElm.children('div.input-group-addon.input-group-append').children().html(0);
