@@ -248,7 +248,6 @@ describe('DateEditor', () => {
         const clearBtnElm = divContainer.querySelector('.btn.icon-close') as HTMLInputElement;
         const editorInputElm = divContainer.querySelector('.flatpickr input') as HTMLInputElement;
         clearBtnElm.click();
-        editorInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
 
         expect(editorInputElm.value).toBe('');
         expect(editor.isValueChanged()).toBe(true);
@@ -565,7 +564,7 @@ describe('DateEditor', () => {
       expect(editor.flatInstance._input.value).toEqual('');
     });
 
-    it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false', () => {
+    it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false and also expect "onBeforeComposite" to not be called because the value is blank', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(false);
@@ -581,10 +580,7 @@ describe('DateEditor', () => {
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
-      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {}, editors: {},
-      }, expect.anything());
+      expect(onBeforeCompositeSpy).not.toHaveBeenCalled();
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.flatInstance._input.disabled).toEqual(true);
       expect(editor.flatInstance._input.value).toEqual('');

@@ -682,7 +682,7 @@ describe('FloatEditor', () => {
       expect(editor.editorDomElement.checked).toEqual(false);
     });
 
-    it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false', () => {
+    it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false and also expect "onBeforeComposite" to not be called because the value is blank', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(false);
@@ -698,10 +698,7 @@ describe('FloatEditor', () => {
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
-      expect(onBeforeCompositeSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {}, editors: {}
-      }, expect.anything());
+      expect(onBeforeCompositeSpy).not.toHaveBeenCalled;
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorDomElement.disabled).toEqual(true);
       expect(editor.editorDomElement.checked).toEqual(false);

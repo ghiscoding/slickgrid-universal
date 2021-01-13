@@ -1138,6 +1138,7 @@ describe('CompositeEditorService', () => {
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
         component.openDetails(mockModalOptions);
+        const disposeSpy = jest.spyOn(component, 'dispose');
 
         const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeFooterSaveBtnElm = compositeContainerElm.querySelector('.btn-save') as HTMLSelectElement;
@@ -1166,7 +1167,7 @@ describe('CompositeEditorService', () => {
           expect(getEditSpy).toHaveBeenCalledTimes(2);
           expect(validationSummaryElm.style.display).toBe('none');
           expect(validationSummaryElm.textContent).toBe('');
-          expect(compositeFooterSaveBtnElm.classList.contains('saving')).toBeFalsy();
+          expect(disposeSpy).toHaveBeenCalled();
           done();
         });
       });

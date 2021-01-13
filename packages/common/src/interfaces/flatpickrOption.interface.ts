@@ -160,7 +160,7 @@ export interface FlatpickrOption {
   /** Function to trigger when the calendar is ready. See Events API */
   onReady?: () => void;
 
-  /** Function(s) to trigger on every time the year changes. See Events API */
+  /** Function(s) to trigger on every time the value input associated with the calendar get updated. See Events API */
   onValueUpdate?: (selectedDates: Date[] | Date, dateStr: string, instance: any) => void;
 
   /** Function(s) to trigger on every time the year changes. See Events API */

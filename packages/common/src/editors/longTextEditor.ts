@@ -194,8 +194,9 @@ export class LongTextEditor implements Editor {
         this._$textarea.attr('disabled', 'disabled');
         this._$wrapper.addClass('disabled');
 
-        // clear the checkbox when it's newly disabled
-        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+        // clear value when it's newly disabled and not empty
+        const currentValue = this.getValue();
+        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions && currentValue !== '') {
           this._defaultTextValue = '';
           this._$textarea.val('');
           this.handleChangeOnCompositeEditor(null, this.args.compositeEditorOptions);

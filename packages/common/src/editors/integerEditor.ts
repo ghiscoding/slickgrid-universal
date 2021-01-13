@@ -123,8 +123,9 @@ export class IntegerEditor implements Editor {
       if (isDisabled) {
         this._input.setAttribute('disabled', 'disabled');
 
-        // clear the checkbox when it's newly disabled
-        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+        // clear value when it's newly disabled and not empty
+        const currentValue = this.getValue();
+        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions && currentValue !== '') {
           this._originalValue = '';
           this._input.value = '';
           this.handleChangeOnCompositeEditor(null, this.args.compositeEditorOptions);
