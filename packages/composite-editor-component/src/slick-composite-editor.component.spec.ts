@@ -26,6 +26,8 @@ const gridOptionsMock = {
     labels: {
       cancelButton: 'Cancel',
       cancelButtonKey: 'CANCEL',
+      cloneButton: 'Clone',
+      cloneButtonKey: 'CLONE',
       massSelectionButton: 'Update Selection',
       massSelectionButtonKey: 'APPLY_TO_SELECTION',
       massSelectionStatus: '{{x}} of {{y}} selected',
@@ -201,7 +203,7 @@ describe('CompositeEditorService', () => {
 
       setTimeout(() => {
         component.openDetails(mockModalOptions);
-        expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: 'ENABLE_ADD_ROW_REQUIRED', message: 'Composite Editor requires the flag "enableAddRow" to be set to True in your Grid Options when creating a new item.', });
+        expect(spyOnError).toHaveBeenCalledWith({ type: 'error', code: 'ENABLE_ADD_ROW_REQUIRED', message: 'Composite Editor requires the flag "enableAddRow" to be set to True in your Grid Options when cloning/creating a new item.', });
         done();
       });
     });
@@ -269,7 +271,7 @@ describe('CompositeEditorService', () => {
 
       setTimeout(() => {
         component.openDetails(mockModalOptions);
-        expect(spyOnError).toHaveBeenCalledWith({ type: 'warning', code: 'NO_RECORD_FOUND', message: 'No records selected for edit operation.' });
+        expect(spyOnError).toHaveBeenCalledWith({ type: 'warning', code: 'NO_RECORD_FOUND', message: 'No records selected for edit or clone operation.' });
         done();
       });
     });

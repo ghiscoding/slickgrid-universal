@@ -187,6 +187,14 @@ export class Example12 {
       //     collectionOptions: {
       //       addCustomFirstEntry: { value: '', label: '--none--' }
       //     },
+      //     collectionOverride: (_collectionInput, args) => {
+      //       const originalCollection = args.originalCollections || [];
+      //       const duration = args?.dataContext?.duration ?? args?.compositeEditorOptions?.formValues?.duration;
+      //       if (duration === 10) {
+      //         return originalCollection.filter(itemCollection => +itemCollection.value !== 1);
+      //       }
+      //       return originalCollection;
+      //     },
       //     massUpdate: true, minValue: 0, maxValue: 100,
       //   },
       // },
@@ -517,8 +525,14 @@ export class Example12 {
 
   handleOnCompositeEditorChange(event) {
     const args = event && event.detail && event.detail.args;
-    const columnDef = args?.column;
+    const columnDef = args?.column as Column;
     const formValues = args?.formValues;
+
+    // if (columnDef.id === 'duration') {
+    //   const editor = this.compositeEditorInstance.editors['percentComplete2'] as SelectEditor;
+    //   const newCollection = editor.finalCollection;
+    //   editor.renderDomElement(newCollection);
+    // }
 
     // you can change any other form input values when certain conditions are met
     if (columnDef.id === 'percentComplete' && formValues.percentComplete === 100) {
@@ -873,6 +887,9 @@ export class Example12 {
     switch (modalType) {
       case 'create':
         modalTitle = 'Inserting New Task';
+        break;
+      case 'clone':
+        modalTitle = 'Clone - {{title}}';
         break;
       case 'edit':
         modalTitle = 'Editing - {{title}} (<span class="color-muted">id:</span> <span class="color-primary">{{id}}</span>)'; // 'Editing - {{title}} ({{product.itemName}})'

@@ -51,6 +51,12 @@ export interface CompositeEditorOpenDetailOption {
     /** Defaults to "CANCEL", translation key used for the Cancel button label. */
     cancelButtonKey?: string;
 
+    /** Defaults to "Clone", override the Clone button label used by a modal type of "clone" */
+    cloneButton?: string;
+
+    /** Defaults to "CLONE", translation key used for the Clone button label used by a modal type of "clone" */
+    cloneButtonKey?: string;
+
     /** Defaults to "Update Selection", override the Mass Selection button label */
     massSelectionButton?: string;
 

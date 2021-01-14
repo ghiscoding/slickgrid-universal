@@ -3,11 +3,13 @@ import 'slickgrid/slick.compositeeditor.js';
 import {
   BindingEventService,
   Column,
+  CompositeEditorModalType,
   CompositeEditorOpenDetailOption,
   CompositeEditorOption,
   Constants,
   ContainerService,
   CurrentRowSelection,
+  deepCopy,
   Editor,
   EditorValidationResult,
   ExternalResource,
@@ -37,6 +39,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   private _bindEventService: BindingEventService;
   private _eventHandler: SlickEventHandler;
   private _modalElm: HTMLDivElement;
+  private _originalDataContext: any;
   private _options: CompositeEditorOpenDetailOption;
   private _lastActiveRowNumber: number;
   private _locales: Locale;
@@ -224,8 +227,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
           }
         }
       }
-      const modalType = this._options.modalType || 'edit';
-
+      const modalType: CompositeEditorModalType = this._options.modalType || 'edit';
 
       if (!this.gridOptions.editable) {
         onError({ type: 'error', code: 'EDITABLE_GRID_REQUIRED', message: 'Your grid must be editable in order to use the Composite Editor Modal.' });
@@ -233,15 +235,16 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       } else if (!this.gridOptions.enableCellNavigation) {
         onError({ type: 'error', code: 'ENABLE_CELL_NAVIGATION_REQUIRED', message: 'Composite Editor requires the flag "enableCellNavigation" to be set to True in your Grid Options.' });
         return null;
-      } else if (!this.gridOptions.enableAddRow && modalType === 'create') {
-        onError({ type: 'error', code: 'ENABLE_ADD_ROW_REQUIRED', message: 'Composite Editor requires the flag "enableAddRow" to be set to True in your Grid Options when creating a new item.' });
+      } else if (!this.gridOptions.enableAddRow && (modalType === 'clone' || modalType === 'create')) {
+        onError({ type: 'error', code: 'ENABLE_ADD_ROW_REQUIRED', message: 'Composite Editor requires the flag "enableAddRow" to be set to True in your Grid Options when cloning/creating a new item.' });
         return null;
-      } else if (!activeCell && modalType === 'edit') {
-        onError({ type: 'warning', code: 'NO_RECORD_FOUND', message: 'No records selected for edit operation.' });
+      } else if (!activeCell && (modalType === 'clone' || modalType === 'edit')) {
+        onError({ type: 'warning', code: 'NO_RECORD_FOUND', message: 'No records selected for edit or clone operation.' });
         return null;
       } else {
         const isWithMassChange = (modalType === 'mass-update' || modalType === 'mass-selection');
         const dataContext = !isWithMassChange ? this.grid.getDataItem(activeRow) : {};
+        this._originalDataContext = deepCopy(dataContext);
         const columnDefinitions = this.grid.getColumns();
         const selectedRowsIndexes = this.hasRowSelectionEnabled() ? this.grid.getSelectedRows() : [];
         const fullDataset = this.dataView?.getItems() ?? [];
@@ -334,6 +337,9 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         let leftFooterText = '';
         let saveButtonText = '';
         switch (modalType) {
+          case 'clone':
+            saveButtonText = this.getLabelText('cloneButton', 'TEXT_CLONE', 'Clone');
+            break;
           case 'mass-update':
             const footerUnparsedText = this.getLabelText('massUpdateStatus', 'TEXT_ALL_X_RECORDS_SELECTED', 'All {{x}} records selected');
             leftFooterText = this.parseText(footerUnparsedText, { x: fullDatasetLength });
@@ -494,9 +500,23 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
     if (confirmed) {
       this.grid.getEditController().cancelCurrentEdit();
+
+      // cancel current edit is not enough when editing/cloning,
+      // we also need to reset with the original item data context to undo/reset the entire row
+      if (this._options?.modalType === 'edit' || this._options?.modalType === 'clone') {
+        this.resetCurrentRowDataContext();
+      }
+
       this.grid.setActiveRow(this._lastActiveRowNumber);
       this.dispose();
     }
+  }
+
+  /** Put back the current row to its original item data context using the DataView without triggering a change */
+  resetCurrentRowDataContext() {
+    const idPropName = this.gridOptions.datasetIdPropertyName || 'id';
+    const dataView = this.grid.getData();
+    dataView.updateItem(this._originalDataContext[idPropName], this._originalDataContext);
   }
 
   handleSaveClicked() {
@@ -515,6 +535,26 @@ export class SlickCompositeEditorComponent implements ExternalResource {
           this.grid.setActiveRow(this._lastActiveRowNumber);
           this.dispose();
         });
+        break;
+      case 'clone':
+        const validationResults = this.validateCompositeEditors();
+        const isFormValid = validationResults.valid;
+        this.showValidationSummaryText(false, '');
+        if (isFormValid && this.formValues) {
+          const fullDataset = this.dataView?.getItems() ?? [];
+          const fullDatasetLength = (Array.isArray(fullDataset)) ? fullDataset.length : 0;
+          const newId = this._options.insertNewId ?? fullDatasetLength + 1;
+          const item = { ... this._originalDataContext, ...this.formValues, [this.gridOptions.datasetIdPropertyName || 'id']: newId };
+
+          if (!this.dataView.getItemById(newId)) {
+            this.gridService?.addItem(item, this._options.insertOptions);
+            this.resetCurrentRowDataContext();
+            this.dispose();
+          }
+
+          this.grid.getEditController().cancelCurrentEdit();
+          this.grid.setActiveCell(0, 0, false);
+        }
         break;
       case 'create':
       case 'edit':
