@@ -469,7 +469,7 @@ export class DualInputEditor implements Editor {
     this.disable(isCellEditable === false);
   }
 
-  private handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption) {
+  private handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const leftInputId = this.columnEditor.params?.leftInput?.field ?? '';
@@ -493,7 +493,10 @@ export class DualInputEditor implements Editor {
     if (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(rightInputId)) {
       delete compositeEditorOptions.formValues[rightInputId];
     }
-    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors }, { ...new Slick.EventData(), ...event });
+    grid.onCompositeEditorChange.notify(
+      { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
+      { ...new Slick.EventData(), ...event }
+    );
   }
 
   private handleChangeOnCompositeEditorDebounce(event: KeyboardEvent) {

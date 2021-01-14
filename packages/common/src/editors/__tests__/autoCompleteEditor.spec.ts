@@ -801,7 +801,7 @@ describe('AutoCompleteEditor', () => {
       expect(editor.getValue()).toBe('Male');
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { gender: 'male' }, editors: {},
+        formValues: { gender: 'male' }, editors: {}, triggeredBy: 'system',
       }, expect.anything());
     });
 
@@ -834,7 +834,7 @@ describe('AutoCompleteEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { gender: '' }, editors: {},
+        formValues: { gender: '' }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorDomElement.attr('disabled')).toEqual('disabled');
@@ -879,7 +879,7 @@ describe('AutoCompleteEditor', () => {
       expect(getCellSpy).toHaveBeenCalled();
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {}, editors: {},
+        formValues: {}, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(editor.editorDomElement.attr('disabled')).toEqual('disabled');
       expect(editor.editorDomElement.val()).toEqual('');
@@ -904,8 +904,28 @@ describe('AutoCompleteEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { gender: 'female' }, editors: {},
+        formValues: { gender: 'female' }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
+    });
+
+    describe('collectionOverride callback option', () => {
+      it('should create the editor and expect a different collection outputed when using the override', () => {
+        const activeCellMock = { row: 0, cell: 0 };
+        jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+        const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+        mockColumn.internalColumnEditor = {
+          collection: ['Other', 'Male', 'Female'],
+          collectionOverride: (inputCollection) => inputCollection.filter(item => item !== 'other')
+        };
+        editor = new AutoCompleteEditor(editorArguments);
+        editor.setValue('Male', true);
+
+        expect(editor.getValue()).toBe('Male');
+        expect(onCompositeEditorSpy).toHaveBeenCalledWith({
+          ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+          formValues: { gender: 'Male' }, editors: {}, triggeredBy: 'system',
+        }, expect.anything());
+      });
     });
   });
 });

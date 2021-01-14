@@ -405,7 +405,7 @@ describe('CheckboxEditor', () => {
       expect(editor.getValue()).toBe(true);
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { isActive: true }, editors: {},
+        formValues: { isActive: true }, editors: {}, triggeredBy: 'system',
       }, expect.anything());
     });
 
@@ -438,7 +438,7 @@ describe('CheckboxEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { isActive: false }, editors: {},
+        formValues: { isActive: false }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorDomElement.disabled).toEqual(true);
@@ -483,7 +483,7 @@ describe('CheckboxEditor', () => {
       expect(getCellSpy).toHaveBeenCalled();
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {}, editors: {},
+        formValues: {}, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(editor.editorDomElement.disabled).toEqual(true);
       expect(editor.editorDomElement.checked).toEqual(false);
@@ -508,7 +508,7 @@ describe('CheckboxEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { isActive: true }, editors: {},
+        formValues: { isActive: true }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
     });
   });

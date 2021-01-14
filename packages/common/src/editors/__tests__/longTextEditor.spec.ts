@@ -770,7 +770,7 @@ describe('LongTextEditor', () => {
       expect(editor.getValue()).toBe('task 2');
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { title: 'task 2' }, editors: {},
+        formValues: { title: 'task 2' }, editors: {}, triggeredBy: 'system',
       }, expect.anything());
     });
 
@@ -803,7 +803,7 @@ describe('LongTextEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { title: '' }, editors: {},
+        formValues: { title: '' }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorDomElement.attr('disabled')).toEqual('disabled');
@@ -848,7 +848,7 @@ describe('LongTextEditor', () => {
       expect(getCellSpy).toHaveBeenCalled();
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {}, editors: {},
+        formValues: {}, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(editor.editorDomElement.attr('disabled')).toEqual('disabled');
       expect(editor.editorDomElement.val()).toEqual('');
@@ -875,7 +875,7 @@ describe('LongTextEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { title: 'task 2' }, editors: {},
+        formValues: { title: 'task 2' }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
     });
   });

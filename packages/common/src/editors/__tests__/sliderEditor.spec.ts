@@ -477,7 +477,7 @@ describe('SliderEditor', () => {
       expect(editor.getValue()).toBe('95');
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { price: 95 }, editors: {},
+        formValues: { price: 95 }, editors: {}, triggeredBy: 'system',
       }, expect.anything());
     });
 
@@ -510,7 +510,7 @@ describe('SliderEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { price: 0 }, editors: {}
+        formValues: { price: 0 }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorInputDomElement.attr('disabled')).toEqual('disabled');
@@ -535,7 +535,7 @@ describe('SliderEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {}, editors: {}
+        formValues: {}, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorInputDomElement.attr('disabled')).toEqual('disabled');
@@ -561,7 +561,7 @@ describe('SliderEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { price: 93 }, editors: {}
+        formValues: { price: 93 }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
     });
   });

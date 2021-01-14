@@ -3,6 +3,7 @@ import { FieldType } from './../enums/index';
 import {
   CollectionCustomStructure,
   CollectionOption,
+  CollectionOverrideArgs,
   Column,
   ColumnEditor,
   CompositeEditorOption,
@@ -81,6 +82,9 @@ export class SelectEditor implements Editor {
 
   /** SlickGrid Grid object */
   grid: SlickGrid;
+
+  /** Final collection displayed in the UI, that is after processing filter/sort/override */
+  finalCollection: any[] = [];
 
   constructor(protected args: EditorArguments, protected isMultipleSelect: boolean) {
     if (!args) {
@@ -324,7 +328,7 @@ export class SelectEditor implements Editor {
       // if it's set by a Composite Editor, then also trigger a change for it
       const compositeEditorOptions = this.args.compositeEditorOptions;
       if (compositeEditorOptions) {
-        this.handleChangeOnCompositeEditor(compositeEditorOptions);
+        this.handleChangeOnCompositeEditor(compositeEditorOptions, 'system');
       }
     }
   }
@@ -625,19 +629,27 @@ export class SelectEditor implements Editor {
     }
 
     // assign the collection to a temp variable before filtering/sorting the collection
-    let newCollection = collection;
+    let finalCollection = collection;
 
     // user might want to filter and/or sort certain items of the collection
-    newCollection = this.filterCollection(newCollection);
-    newCollection = this.sortCollection(newCollection);
+    finalCollection = this.filterCollection(finalCollection);
+    finalCollection = this.sortCollection(finalCollection);
 
     // user could also override the collection
     if (this.columnEditor?.collectionOverride) {
-      newCollection = this.columnEditor.collectionOverride(newCollection, { column: this.columnDef, dataContext: this.args.item, grid: this.grid });
+      const overrideArgs: CollectionOverrideArgs = { column: this.columnDef, dataContext: this.args.item, grid: this.grid, originalCollections: this.collection };
+      if (this.args.compositeEditorOptions) {
+        const { formValues, modalType } = this.args.compositeEditorOptions;
+        overrideArgs.compositeEditorOptions = { formValues, modalType };
+      }
+      finalCollection = this.columnEditor.collectionOverride(finalCollection, overrideArgs);
     }
 
+    // keep reference of the final collection displayed in the UI
+    this.finalCollection = finalCollection;
+
     // step 1, create HTML string template
-    const editorTemplate = this.buildTemplateHtmlString(newCollection);
+    const editorTemplate = this.buildTemplateHtmlString(finalCollection);
 
     // step 2, create the DOM Element of the editor
     // also subscribe to the onClose event
@@ -723,6 +735,7 @@ export class SelectEditor implements Editor {
     this.$editorElm = $(editorTemplate);
 
     if (this.$editorElm && typeof this.$editorElm.appendTo === 'function') {
+      $(this.args.container).empty();
       this.$editorElm.appendTo(this.args.container);
     }
 
@@ -740,7 +753,7 @@ export class SelectEditor implements Editor {
     }
   }
 
-  protected handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption) {
+  protected handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -758,7 +771,10 @@ export class SelectEditor implements Editor {
     if (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
-    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors }, new Slick.EventData());
+    grid.onCompositeEditorChange.notify(
+      { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
+      new Slick.EventData()
+    );
   }
 
   // refresh the jquery object because the selected checkboxes were already set

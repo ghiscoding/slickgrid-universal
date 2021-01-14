@@ -155,7 +155,7 @@ export class CheckboxEditor implements Editor {
       // if it's set by a Composite Editor, then also trigger a change for it
       const compositeEditorOptions = this.args.compositeEditorOptions;
       if (compositeEditorOptions) {
-        this.handleChangeOnCompositeEditor(null, compositeEditorOptions);
+        this.handleChangeOnCompositeEditor(null, compositeEditorOptions, 'system');
       }
     }
   }
@@ -256,7 +256,7 @@ export class CheckboxEditor implements Editor {
     this.disable(isCellEditable === false);
   }
 
-  private handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption) {
+  private handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -274,6 +274,9 @@ export class CheckboxEditor implements Editor {
     if (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
-    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors }, { ...new Slick.EventData(), ...event });
+    grid.onCompositeEditorChange.notify(
+      { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
+      { ...new Slick.EventData(), ...event }
+    );
   }
 }

@@ -876,7 +876,7 @@ describe('DualInputEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { from: '', to: '' }, editors: {},
+        formValues: { from: '', to: '' }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorDomElement.leftInput.disabled).toEqual(true);
@@ -903,7 +903,7 @@ describe('DualInputEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {}, editors: {},
+        formValues: {}, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorDomElement.leftInput.disabled).toEqual(true);
@@ -932,7 +932,7 @@ describe('DualInputEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { from: 4, to: 5 }, editors: {},
+        formValues: { from: 4, to: 5 }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
     });
 
@@ -957,7 +957,7 @@ describe('DualInputEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { from: 4, to: 5 }, editors: {}
+        formValues: { from: 4, to: 5 }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
     });
   });

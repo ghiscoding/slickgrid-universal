@@ -537,7 +537,7 @@ describe('TextEditor', () => {
       expect(editor.getValue()).toBe('task 1');
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { title: 'task 1' }, editors: {},
+        formValues: { title: 'task 1' }, editors: {}, triggeredBy: 'system',
       }, expect.anything());
     });
 
@@ -570,7 +570,7 @@ describe('TextEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { title: '' }, editors: {}
+        formValues: { title: '' }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorDomElement.disabled).toEqual(true);
@@ -615,7 +615,7 @@ describe('TextEditor', () => {
       expect(getCellSpy).toHaveBeenCalled();
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {}, editors: {},
+        formValues: {}, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(editor.editorDomElement.disabled).toEqual(true);
       expect(editor.editorDomElement.value).toEqual('');
@@ -642,7 +642,7 @@ describe('TextEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { title: 'task 2' }, editors: {}
+        formValues: { title: 'task 2' }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
     });
   });
