@@ -12,7 +12,7 @@
 ## Empty Warning Component
 #### @slickgrid-universal/empty-warning-component
 
-Vanilla Implementation of an Empty Dataset Warning Component when no data showing in the grid. This is in summary a very simplified `div` showing a warning message when there are no data to show in the grid.
+Vanilla Implementation of an Empty Dataset Warning Component when there is no data available in the grid. This is in summary a very simplified `div` showing a warning message (that can be translated as well) when there are no data to show in the grid.
 
 ### External Dependencies
 No external dependency
