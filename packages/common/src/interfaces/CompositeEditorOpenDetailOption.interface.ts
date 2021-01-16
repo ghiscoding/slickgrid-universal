@@ -115,5 +115,5 @@ export interface CompositeEditorOpenDetailOption {
   onError?: (error: OnErrorOption) => void;
 
   /** The "onSave" callback will be triggered after user clicked saved button, user can execute his own code and possibly apply the changes if he wishes to. */
-  onSave?: (formValues: any, selection: CompositeEditorSelection, applyChangesCallback: (formValues: any, selection: CompositeEditorSelection) => void) => Promise<boolean>;
+  onSave?: (formValues: any, selection: CompositeEditorSelection, applyChangesCallback?: (formValues: any, selection: CompositeEditorSelection) => void) => Promise<boolean>;
 }

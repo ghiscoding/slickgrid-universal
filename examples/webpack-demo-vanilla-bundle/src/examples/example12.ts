@@ -539,6 +539,10 @@ export class Example12 {
       this.compositeEditorInstance.changeFormInputValue('completed', true);
       this.compositeEditorInstance.changeFormInputValue('finish', new Date());
       // this.compositeEditorInstance.changeFormInputValue('product', { id: 0, itemName: 'Sleek Metal Computer' });
+
+      // you can even change a value that is not part of the form (but is part of the grid)
+      // but you will have to bypass the error thrown by passing 3rd argument as true
+      // this.compositeEditorInstance.changeFormInputValue('cost', 9999.99, true);
     }
 
     // you can also change some editor options (not all Editors supports this functionality, so far only these Editors AutoComplete, Date MultipleSelect & SingleSelect)
@@ -912,16 +916,20 @@ export class Example12 {
         onClose: () => Promise.resolve(confirm('You have unsaved changes, are you sure you want to close this window?')),
         onError: (error) => alert(error.message),
         onSave: (formValues, selection, applyChangesCallback) => {
-          return new Promise((resolve, reject) => {
-            setTimeout(() => {
-              if (formValues.percentComplete > 50) {
-                applyChangesCallback(formValues, selection);
-                resolve(true);
-              } else {
-                reject('Unfortunately we only accept a minimum of 50% Completion...');
-              }
-            }, 250);
-          });
+
+          // when processing a mass update or mass selection changes
+          if (modalType === 'mass-update' || modalType === 'mass-selection') {
+            return new Promise((resolve, reject) => {
+              setTimeout(() => {
+                if (formValues.percentComplete > 50) {
+                  applyChangesCallback(formValues, selection);
+                  resolve(true);
+                } else {
+                  reject('Unfortunately we only accept a minimum of 50% Completion...');
+                }
+              }, 250);
+            });
+          }
         }
       });
     }, openDelay);

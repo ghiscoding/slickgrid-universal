@@ -62,6 +62,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'OPTIONS_LIST': output = this._locale === 'en' ? 'Options List' : 'Liste d\'options'; break;
       case 'OTHER': output = this._locale === 'en' ? 'Other' : 'Autre'; break;
       case 'PAGE': output = this._locale === 'en' ? 'Page' : 'Page'; break;
+      case 'PRODUCT': output = this._locale === 'en' ? 'Product' : 'Produit'; break;
       case 'REFRESH_DATASET': output = this._locale === 'en' ? 'Refresh Dataset' : 'Rafraîchir les données'; break;
       case 'REMOVE_FILTER': output = this._locale === 'en' ? 'Remove Filter' : 'Supprimer le filtre'; break;
       case 'REMOVE_SORT': output = this._locale === 'en' ? 'Remove Sort' : 'Supprimer le tri'; break;

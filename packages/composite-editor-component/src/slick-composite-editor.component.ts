@@ -20,7 +20,6 @@ import {
   GridStateService,
   Locale,
   OnErrorOption,
-  OnAddNewRowEventArgs,
   OnCompositeEditorChangeEventArgs,
   sanitizeTextByAvailableSanitizer,
   SlickEventHandler,
@@ -85,6 +84,12 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     this._bindEventService = new BindingEventService();
   }
 
+  /**
+   * initialize the Composite Editor by passing the SlickGrid object and the container service
+   *
+   * Note: we aren't using DI in the constructor simply to be as framework agnostic as possible,
+   * we are simply using this init() function with a very basic container service to do the job
+   */
   init(grid: SlickGrid, containerService: ContainerService) {
     this.grid = grid;
     this.gridService = containerService.get<GridService>('GridService');
@@ -180,8 +185,8 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
   /**
    * Disable (or enable) an input of the Composite Editor form
-   * @param columnId
-   * @param isDisabled
+   * @param {String} columnId - column definition id
+   * @param isDisabled - defaults to True, are we disabling the associated form input
    */
   disableFormInput(columnId: string, isDisabled = true) {
     const editor = this._editors?.[columnId];
@@ -190,6 +195,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     }
   }
 
+  /** Entry point to initialize and open the Composite Editor modal window */
   openDetails(options: CompositeEditorOpenDetailOption): SlickCompositeEditorComponent | null {
     const onError = options.onError ?? DEFAULT_ON_ERROR;
     const defaultOptions = {
@@ -438,7 +444,10 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         // when adding a new row to the grid, we need to invalidate that row and re-render the grid
         const onAddNewRowHandler = this.grid.onAddNewRow;
         (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onAddNewRowHandler>>)
-          .subscribe(onAddNewRowHandler, this.handleOnAddNewRow.bind(this));
+          .subscribe(onAddNewRowHandler, (_e, args) => {
+            this.insertNewItemInDataView(args.item);
+            this.dispose();
+          });
       }
       return this;
 
@@ -451,47 +460,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     }
   }
 
-  /** Apply Mass Update Changes from a the form changes */
-  applySaveMassUpdateChanges(formValues: any) {
-    const data = this.dataView.getItems();
-
-    // from the "lastCompositeEditor" object that we kept as reference, it contains all the changes inside the "formValues" property
-    // we can loop through these changes and apply them on the selected row indexes
-    for (const itemProp in formValues) {
-      if (formValues.hasOwnProperty(itemProp)) {
-        data.forEach(item => {
-          if (formValues.hasOwnProperty(itemProp)) {
-            item[itemProp] = formValues[itemProp];
-          }
-        });
-      }
-    }
-
-    // change the entire dataset with our updated dataset
-    this.dataView.setItems(data, this.gridOptions.datasetIdPropertyName);
-    this.grid.invalidate();
-  }
-
-  applySaveMassSelectionChanges(formValues: any, selection: { gridRowIndexes: number[]; dataContextIds: Array<number | string>; }) {
-    const selectedItemIds = selection?.dataContextIds ?? [];
-    const selectedItems = selectedItemIds.map(itemId => this.dataView.getItemById(itemId));
-
-    // from the "lastCompositeEditor" object that we kept as reference, it contains all the changes inside the "formValues" property
-    // we can loop through these changes and apply them on the selected row indexes
-    for (const itemProp in formValues) {
-      if (formValues.hasOwnProperty(itemProp)) {
-        selectedItems.forEach(dataContext => {
-          if (dataContext && dataContext.hasOwnProperty(itemProp) && formValues.hasOwnProperty(itemProp)) {
-            dataContext[itemProp] = formValues[itemProp];
-          }
-        });
-      }
-    }
-
-    // update all items in the grid with the grid service
-    this.gridService?.updateItems(selectedItems);
-  }
-
+  /** Cancel the Editing which will also close the modal window */
   async cancelEditing() {
     let confirmed = true;
     if (this.formValues && Object.keys(this.formValues).length > 0 && typeof this._options.onClose === 'function') {
@@ -512,119 +481,51 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     }
   }
 
-  /** Put back the current row to its original item data context using the DataView without triggering a change */
-  resetCurrentRowDataContext() {
-    const idPropName = this.gridOptions.datasetIdPropertyName || 'id';
-    const dataView = this.grid.getData();
-    dataView.updateItem(this._originalDataContext[idPropName], this._originalDataContext);
-  }
-
-  handleSaveClicked() {
-    const modalType = this._options?.modalType;
-    switch (modalType) {
-      case 'mass-update':
-        this.handleMassSaving(modalType, () => {
-          this.grid.getEditController().cancelCurrentEdit();
-          this.grid.setActiveCell(0, 0, false);
-          this.dispose();
-        });
-        break;
-      case 'mass-selection':
-        this.handleMassSaving(modalType, () => {
-          this.grid.getEditController().cancelCurrentEdit();
-          this.grid.setActiveRow(this._lastActiveRowNumber);
-          this.dispose();
-        });
-        break;
-      case 'clone':
-        const validationResults = this.validateCompositeEditors();
-        const isFormValid = validationResults.valid;
-        this.showValidationSummaryText(false, '');
-        if (isFormValid && this.formValues) {
-          const fullDataset = this.dataView?.getItems() ?? [];
-          const fullDatasetLength = (Array.isArray(fullDataset)) ? fullDataset.length : 0;
-          const newId = this._options.insertNewId ?? fullDatasetLength + 1;
-          const item = { ... this._originalDataContext, ...this.formValues, [this.gridOptions.datasetIdPropertyName || 'id']: newId };
-
-          if (!this.dataView.getItemById(newId)) {
-            this.gridService?.addItem(item, this._options.insertOptions);
-            this.resetCurrentRowDataContext();
-            this.dispose();
-          }
-
-          this.grid.getEditController().cancelCurrentEdit();
-          this.grid.setActiveCell(0, 0, false);
-        }
-        break;
-      case 'create':
-      case 'edit':
-      default:
-        this.grid.getEditController().commitCurrentEdit();
-        break;
-    }
-  }
-
-  async handleMassSaving(modalType: 'mass-update' | 'mass-selection', executeCallback: () => void) {
-    const validationResults = this.validateCompositeEditors();
-    const isFormValid = validationResults.valid;
-    this.showValidationSummaryText(false, '');
-    const applyCallbackFnName = (modalType === 'mass-update') ? 'applySaveMassUpdateChanges' : 'applySaveMassSelectionChanges';
-
-    try {
-      if (typeof this[applyCallbackFnName] === 'function') {
-        if (!this.formValues || Object.keys(this.formValues).length === 0) {
-          this.executeOnError({ type: 'warning', code: 'NO_CHANGES_DETECTED', message: 'Sorry we could not detect any changes.' });
-        } else if (isFormValid && this.formValues) {
-          this._modalSaveButtonElm.classList.add('saving');
-          this._modalSaveButtonElm.disabled = true;
-          const gridStateSelection = this.gridStateService?.getCurrentRowSelections() as CurrentRowSelection;
-          const gridRowIndexes = gridStateSelection?.gridRowIndexes || [];
-          const dataContextIds = gridStateSelection?.dataContextIds || [];
-
-          if (typeof this._options?.onSave === 'function') {
-            const successful = await this._options?.onSave(this.formValues, { gridRowIndexes, dataContextIds }, this[applyCallbackFnName].bind(this));
-
-            if (successful) {
-              // once we're done doing the mass update, we can cancel the current editor since we don't want to add any new row
-              // that will also destroy/close the modal window
-              executeCallback();
-            }
-          } else {
-            this[applyCallbackFnName](this.formValues, { gridRowIndexes, dataContextIds });
-            executeCallback();
-          }
-          this.dispose();
-        }
-      }
-    } catch (error) {
-      const errorMsg = (typeof error === 'string') ? error : (error?.message ?? error?.body?.message ?? '');
-      this.showValidationSummaryText(true, errorMsg);
-    }
-  }
-
-  showValidationSummaryText(isShowing: boolean, errorMsg = '') {
-    if (isShowing) {
-      this._modalBodyTopValidationElm.textContent = errorMsg;
-      this._modalBodyTopValidationElm.style.display = 'block';
-      this._modalBodyTopValidationElm.scrollIntoView?.();
-      this._modalSaveButtonElm.disabled = false;
-      this._modalSaveButtonElm.classList.remove('saving');
-    } else {
-      this._modalBodyTopValidationElm.style.display = 'none';
-      this._modalBodyTopValidationElm.textContent = errorMsg;
-    }
-  }
-
-  validateCurrentEditor() {
-    const currentEditor = this.grid.getCellEditor();
-    if (currentEditor?.validate) {
-      currentEditor.validate();
-    }
-  }
-
   // --
   // private methods
   // ----------------
+
+  /** Apply Mass Update Changes (form values) to the entire dataset */
+  private applySaveMassUpdateChanges(formValues: any) {
+    const data = this.dataView.getItems();
+
+    // from the "lastCompositeEditor" object that we kept as reference, it contains all the changes inside the "formValues" property
+    // we can loop through these changes and apply them on the selected row indexes
+    for (const itemProp in formValues) {
+      if (formValues.hasOwnProperty(itemProp)) {
+        data.forEach(item => {
+          if (formValues.hasOwnProperty(itemProp)) {
+            item[itemProp] = formValues[itemProp];
+          }
+        });
+      }
+    }
+
+    // change the entire dataset with our updated dataset
+    this.dataView.setItems(data, this.gridOptions.datasetIdPropertyName);
+    this.grid.invalidate();
+  }
+
+  /** Apply Mass Changes to the Selected rows in the grid (form values) */
+  private applySaveMassSelectionChanges(formValues: any, selection: { gridRowIndexes: number[]; dataContextIds: Array<number | string>; }) {
+    const selectedItemIds = selection?.dataContextIds ?? [];
+    const selectedItems = selectedItemIds.map(itemId => this.dataView.getItemById(itemId));
+
+    // from the "lastCompositeEditor" object that we kept as reference, it contains all the changes inside the "formValues" property
+    // we can loop through these changes and apply them on the selected row indexes
+    for (const itemProp in formValues) {
+      if (formValues.hasOwnProperty(itemProp)) {
+        selectedItems.forEach(dataContext => {
+          if (dataContext && dataContext.hasOwnProperty(itemProp) && formValues.hasOwnProperty(itemProp)) {
+            dataContext[itemProp] = formValues[itemProp];
+          }
+        });
+      }
+    }
+
+    // update all items in the grid with the grid service
+    this.gridService?.updateItems(selectedItems);
+  }
 
   /**
    * Auto-Calculate how many columns to display in the view layout (1, 2, or 3).
@@ -641,6 +542,10 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     return 1;
   }
 
+  /**
+   * Execute the onError callback when defined
+   * or use the default onError callback which is to simply display the error in the console
+   */
   private executeOnError(error: OnErrorOption) {
     const onError = this._options?.onError ?? DEFAULT_ON_ERROR;
     onError(error);
@@ -743,23 +648,93 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     return (textLabels && textLabels[labelProperty]) || (this._locales && this._locales[localeText]) || defaultText;
   }
 
-  private handleOnAddNewRow(_e: Event, args: OnAddNewRowEventArgs) {
-    const fullDataset = this.dataView?.getItems() ?? [];
-    const fullDatasetLength = (Array.isArray(fullDataset)) ? fullDataset.length : 0;
-    const newId = this._options.insertNewId ?? fullDatasetLength + 1;
-    const item = args.item;
-    item[this.gridOptions.datasetIdPropertyName || 'id'] = newId;
+  /** Callback which processes a Cloning of a row item */
+  private async handleCloneSaving() {
+    const validationResults = this.validateCompositeEditors();
+    const isFormValid = validationResults.valid;
+    this.showValidationSummaryText(false, '');
 
-    if (!this.dataView.getItemById(newId)) {
-      this.gridService?.addItem(item, this._options.insertOptions);
-      this.dispose();
+    // callback method to execute after the post processing (after onSave when there is) is done
+    const postCallback = () => {
+      this.insertNewItemInDataView({ ... this._originalDataContext, ...this.formValues });
+      this.grid.getEditController().cancelCurrentEdit();
+      this.grid.setActiveCell(0, 0, false);
+    };
+
+    try {
+      if (isFormValid) {
+        this._modalSaveButtonElm.classList.add('saving');
+        this._modalSaveButtonElm.disabled = true;
+
+        if (typeof this._options?.onSave === 'function') {
+          const gridStateSelection = this.gridStateService?.getCurrentRowSelections() as CurrentRowSelection;
+          const gridRowIndexes = gridStateSelection?.gridRowIndexes || [];
+          const dataContextIds = gridStateSelection?.dataContextIds || [];
+          const successful = await this._options?.onSave(this.formValues, { gridRowIndexes, dataContextIds });
+
+          if (successful) {
+            // once we're done doing the mass update, we can cancel the current editor since we don't want to add any new row
+            // that will also destroy/close the modal window
+            postCallback();
+          }
+        } else {
+          postCallback();
+        }
+
+        // close the modal only when successful
+        this.dispose();
+      }
+    } catch (error) {
+      const errorMsg = (typeof error === 'string') ? error : (error?.message ?? error?.body?.message ?? '');
+      this.showValidationSummaryText(true, errorMsg);
+    }
+  }
+
+  /** Callback which processes a Mass Update or Mass Selection Changes */
+  private async handleMassSaving(modalType: 'mass-update' | 'mass-selection', executePostCallback: () => void) {
+    const validationResults = this.validateCompositeEditors();
+    const isFormValid = validationResults.valid;
+    this.showValidationSummaryText(false, '');
+    const applyCallbackFnName = (modalType === 'mass-update') ? 'applySaveMassUpdateChanges' : 'applySaveMassSelectionChanges';
+
+    try {
+      if (typeof this[applyCallbackFnName] === 'function') {
+        if (!this.formValues || Object.keys(this.formValues).length === 0) {
+          this.executeOnError({ type: 'warning', code: 'NO_CHANGES_DETECTED', message: 'Sorry we could not detect any changes.' });
+        } else if (isFormValid && this.formValues) {
+          this._modalSaveButtonElm.classList.add('saving');
+          this._modalSaveButtonElm.disabled = true;
+          const gridStateSelection = this.gridStateService?.getCurrentRowSelections() as CurrentRowSelection;
+          const gridRowIndexes = gridStateSelection?.gridRowIndexes || [];
+          const dataContextIds = gridStateSelection?.dataContextIds || [];
+
+          if (typeof this._options?.onSave === 'function') {
+            const successful = await this._options?.onSave(this.formValues, { gridRowIndexes, dataContextIds }, this[applyCallbackFnName].bind(this));
+
+            if (successful) {
+              // once we're done doing the mass update, we can cancel the current editor since we don't want to add any new row
+              // that will also destroy/close the modal window
+              executePostCallback();
+            }
+          } else {
+            this[applyCallbackFnName](this.formValues, { gridRowIndexes, dataContextIds });
+            executePostCallback();
+          }
+
+          // close the modal only when successful
+          this.dispose();
+        }
+      }
+    } catch (error) {
+      const errorMsg = (typeof error === 'string') ? error : (error?.message ?? error?.body?.message ?? '');
+      this.showValidationSummaryText(true, errorMsg);
     }
   }
 
   /** Anytime an input of the Composite Editor form changes, we'll add/remove a "modified" CSS className for styling purposes */
   private handleOnCompositeEditorChange(_e: Event, args: OnCompositeEditorChangeEventArgs) {
     const columnId = args.column?.id ?? '';
-    this._formValues = args.formValues;
+    this._formValues = { ...this._formValues, ...args.formValues };
     const editor = this._editors?.[columnId] as Editor;
     const isEditorValueChanged = editor?.isValueChanged?.() ?? false;
 
@@ -784,13 +759,78 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     return (isRowSelectionEnabled && selectionModel);
   }
 
+  /** switch case handler to determine which code to execute depending on the modal type */
+  private handleSaveClicked() {
+    const modalType = this._options?.modalType;
+    switch (modalType) {
+      case 'mass-update':
+        this.handleMassSaving(modalType, () => {
+          this.grid.getEditController().cancelCurrentEdit();
+          this.grid.setActiveCell(0, 0, false);
+          this.dispose();
+        });
+        break;
+      case 'mass-selection':
+        this.handleMassSaving(modalType, () => {
+          this.grid.getEditController().cancelCurrentEdit();
+          this.grid.setActiveRow(this._lastActiveRowNumber);
+          this.dispose();
+        });
+        break;
+      case 'clone':
+        this.handleCloneSaving();
+        break;
+      case 'create':
+      case 'edit':
+      default:
+        this.grid.getEditController().commitCurrentEdit();
+        break;
+    }
+  }
+
+  /** Insert an item into the DataView or throw an error when finding duplicate id in the dataset */
+  private insertNewItemInDataView(item: any) {
+    const fullDataset = this.dataView?.getItems() ?? [];
+    const fullDatasetLength = (Array.isArray(fullDataset)) ? fullDataset.length : 0;
+    const newId = this._options.insertNewId ?? fullDatasetLength + 1;
+    item[this.gridOptions.datasetIdPropertyName || 'id'] = newId;
+
+    if (!this.dataView.getItemById(newId)) {
+      this.gridService?.addItem(item, this._options.insertOptions);
+    } else {
+      this.executeOnError({ type: 'error', code: 'ITEM_ALREADY_EXIST', message: `The item object which you are trying to add already exist with the same Id:: ${newId}` });
+    }
+  }
+
   private parseText(inputText: string, mappedArgs: any): string {
     return inputText.replace(/\{\{(.*?)\}\}/g, (match, group) => {
       return mappedArgs[group] !== undefined ? mappedArgs[group] : match;
     });
   }
 
-  validateCompositeEditors(targetElm?: HTMLElement): EditorValidationResult {
+  /** Put back the current row to its original item data context using the DataView without triggering a change */
+  private resetCurrentRowDataContext() {
+    const idPropName = this.gridOptions.datasetIdPropertyName || 'id';
+    const dataView = this.grid.getData();
+    dataView.updateItem(this._originalDataContext[idPropName], this._originalDataContext);
+  }
+
+  /** Show the Validation Summary text (as a <div>) when a validation fails or simply hide it when there's no error */
+  private showValidationSummaryText(isShowing: boolean, errorMsg = '') {
+    if (isShowing) {
+      this._modalBodyTopValidationElm.textContent = errorMsg;
+      this._modalBodyTopValidationElm.style.display = 'block';
+      this._modalBodyTopValidationElm.scrollIntoView?.();
+      this._modalSaveButtonElm.disabled = false;
+      this._modalSaveButtonElm.classList.remove('saving');
+    } else {
+      this._modalBodyTopValidationElm.style.display = 'none';
+      this._modalBodyTopValidationElm.textContent = errorMsg;
+    }
+  }
+
+  /** Validate all the Composite Editors that are defined in the form */
+  private validateCompositeEditors(targetElm?: HTMLElement): EditorValidationResult {
     let validationResults: EditorValidationResult = { valid: true, msg: '' };
     const currentEditor = this.grid.getCellEditor();
 
@@ -798,5 +838,13 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       validationResults = currentEditor.validate(targetElm);
     }
     return validationResults;
+  }
+
+  /** Validate the current cell editor */
+  private validateCurrentEditor() {
+    const currentEditor = this.grid.getCellEditor();
+    if (currentEditor?.validate) {
+      currentEditor.validate();
+    }
   }
 }
