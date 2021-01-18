@@ -649,17 +649,14 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Callback which processes a Cloning of a row item */
-  private async handleCloneSaving() {
+  private async handleCloneSaving(executePostCallback: () => void) {
     const validationResults = this.validateCompositeEditors();
     const isFormValid = validationResults.valid;
     this.showValidationSummaryText(false, '');
+    const newItemDataContext = { ...this._originalDataContext, ...this.formValues };
 
     // callback method to execute after the post processing (after onSave when there is) is done
-    const postCallback = () => {
-      this.insertNewItemInDataView({ ... this._originalDataContext, ...this.formValues });
-      this.grid.getEditController().cancelCurrentEdit();
-      this.grid.setActiveCell(0, 0, false);
-    };
+    const applyChangesCallback = () => this.insertNewItemInDataView(newItemDataContext);
 
     try {
       if (isFormValid) {
@@ -667,19 +664,21 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         this._modalSaveButtonElm.disabled = true;
 
         if (typeof this._options?.onSave === 'function') {
-          const gridStateSelection = this.gridStateService?.getCurrentRowSelections() as CurrentRowSelection;
-          const gridRowIndexes = gridStateSelection?.gridRowIndexes || [];
-          const dataContextIds = gridStateSelection?.dataContextIds || [];
-          const successful = await this._options?.onSave(this.formValues, { gridRowIndexes, dataContextIds });
+          const successful = await this._options?.onSave(this.formValues, this.getCurrentRowSelections(), applyChangesCallback.bind(this), newItemDataContext);
 
           if (successful) {
             // once we're done doing the mass update, we can cancel the current editor since we don't want to add any new row
             // that will also destroy/close the modal window
-            postCallback();
+            executePostCallback();
           }
         } else {
-          postCallback();
+          applyChangesCallback();
+          executePostCallback();
         }
+
+        // we need to also reset the current row data context because its object reference is used to edit the data
+        // and if we don't reset it, then it will contain the same edited data as the new cloned row
+        this.resetCurrentRowDataContext();
 
         // close the modal only when successful
         this.dispose();
@@ -704,12 +703,9 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         } else if (isFormValid && this.formValues) {
           this._modalSaveButtonElm.classList.add('saving');
           this._modalSaveButtonElm.disabled = true;
-          const gridStateSelection = this.gridStateService?.getCurrentRowSelections() as CurrentRowSelection;
-          const gridRowIndexes = gridStateSelection?.gridRowIndexes || [];
-          const dataContextIds = gridStateSelection?.dataContextIds || [];
 
           if (typeof this._options?.onSave === 'function') {
-            const successful = await this._options?.onSave(this.formValues, { gridRowIndexes, dataContextIds }, this[applyCallbackFnName].bind(this));
+            const successful = await this._options?.onSave(this.formValues, this.getCurrentRowSelections(), this[applyCallbackFnName].bind(this));
 
             if (successful) {
               // once we're done doing the mass update, we can cancel the current editor since we don't want to add any new row
@@ -717,7 +713,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
               executePostCallback();
             }
           } else {
-            this[applyCallbackFnName](this.formValues, { gridRowIndexes, dataContextIds });
+            this[applyCallbackFnName](this.formValues, this.getCurrentRowSelections());
             executePostCallback();
           }
 
@@ -778,7 +774,10 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         });
         break;
       case 'clone':
-        this.handleCloneSaving();
+        this.handleCloneSaving(() => {
+          this.grid.getEditController().cancelCurrentEdit();
+          this.grid.setActiveCell(0, 0, false);
+        });
         break;
       case 'create':
       case 'edit':
@@ -786,6 +785,14 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         this.grid.getEditController().commitCurrentEdit();
         break;
     }
+  }
+
+  /** Retrieve the current selection of row indexes & data context Ids */
+  private getCurrentRowSelections(): { gridRowIndexes: number[], dataContextIds: Array<string | number> } {
+    const gridStateSelection = this.gridStateService?.getCurrentRowSelections() as CurrentRowSelection;
+    const gridRowIndexes = gridStateSelection?.gridRowIndexes || [];
+    const dataContextIds = gridStateSelection?.dataContextIds || [];
+    return { gridRowIndexes, dataContextIds };
   }
 
   /** Insert an item into the DataView or throw an error when finding duplicate id in the dataset */

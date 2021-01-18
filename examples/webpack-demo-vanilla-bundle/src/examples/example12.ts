@@ -436,19 +436,21 @@ export class Example12 {
       const randomTime = Math.floor((Math.random() * 59));
       const randomFinish = new Date(randomFinishYear, (randomMonth + 1), randomDay, randomTime, randomTime, randomTime);
       const randomPercentComplete = Math.floor(Math.random() * 100) + 15; // make it over 15 for E2E testing purposes
+      const percentCompletion = randomPercentComplete > 100 ? (i > 5 ? 100 : 88) : randomPercentComplete; // don't use 100 unless it's over index 5, for E2E testing purposes
+      const isCompleted = percentCompletion === 100;
 
       tmpArray[i] = {
         id: i,
         title: 'Task ' + i,
         duration: Math.floor(Math.random() * 100) + 10,
-        percentComplete: randomPercentComplete > 100 ? 100 : randomPercentComplete,
+        percentComplete: percentCompletion,
         analysis: {
-          percentComplete: randomPercentComplete > 100 ? 100 : randomPercentComplete,
+          percentComplete: percentCompletion,
         },
         start: new Date(randomYear, randomMonth, randomDay, randomDay, randomTime, randomTime, randomTime),
-        finish: (i % 3 === 0 && (randomFinish > new Date() && i > 3)) ? randomFinish : '', // make sure the random date is earlier than today and it's index is bigger than 3
+        finish: (isCompleted || (i % 3 === 0 && (randomFinish > new Date() && i > 3)) ? (isCompleted ? new Date() : randomFinish) : ''), // make sure the random date is earlier than today and it's index is bigger than 3
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
-        completed: (i % 3 === 0 && (randomFinish > new Date() && i > 3)),
+        completed: (isCompleted || (i % 3 === 0 && (randomFinish > new Date() && i > 3))),
         product: { id: this.mockProducts()[randomItemId]?.id, itemName: this.mockProducts()[randomItemId]?.itemName, },
         origin: (i % 2) ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' },
       };
@@ -915,9 +917,19 @@ export class Example12 {
         // viewColumnLayout: 2, // choose from 'auto', 1, 2, or 3 (defaults to 'auto')
         onClose: () => Promise.resolve(confirm('You have unsaved changes, are you sure you want to close this window?')),
         onError: (error) => alert(error.message),
-        onSave: (formValues, selection, applyChangesCallback) => {
+        onSave: (formValues, selection, applyChangesCallback, dataContext) => {
+          // simulate a backend server call when processing a clone change
+          if (modalType === 'clone') {
+            return new Promise(resolve => {
+              setTimeout(() => {
+                applyChangesCallback(formValues); // apply the changes to see it inserted in the grid
+                resolve(true);
+                console.log(`new ${modalType}d item`, dataContext);
+              }, 250);
+            });
+          }
 
-          // when processing a mass update or mass selection changes
+          // simulate a backend server call when processing a mass update or mass selection changes
           if (modalType === 'mass-update' || modalType === 'mass-selection') {
             return new Promise((resolve, reject) => {
               setTimeout(() => {

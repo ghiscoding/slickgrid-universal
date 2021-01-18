@@ -108,12 +108,30 @@ export interface CompositeEditorOpenDetailOption {
    */
   viewColumnLayout?: 1 | 2 | 3 | 'auto';
 
-  /** onClose callback allows user to add a confirm dialog or any other code before closing the modal window, returning false will cancel the modal closing. */
+  /**
+   * onClose callback allows user to add a confirm dialog or any other code before closing the modal window, returning false will cancel the modal closing.
+   * NOTE: this won't be called when there's no changes done in the form.
+   */
   onClose?: () => Promise<boolean>;
 
   /** onError callback allows user to override what the system does when an error (error message & type) is thrown, defaults to console.log */
   onError?: (error: OnErrorOption) => void;
 
-  /** The "onSave" callback will be triggered after user clicked saved button, user can execute his own code and possibly apply the changes if he wishes to. */
-  onSave?: (formValues: any, selection: CompositeEditorSelection, applyChangesCallback?: (formValues: any, selection: CompositeEditorSelection) => void) => Promise<boolean>;
+  /**
+   * onSave callback will be triggered (when defined) after user clicked the save/apply button, user can execute his own custom code and possibly apply the changes if he wishes to.
+   * NOTE: When calling the "onSave" function, it's the responsability of the developer to call the applyChangesCallback or his own custom code, if you don't then the changes won't be reflected in the grid since you opt out of it.
+   */
+  onSave?: (
+    /** object containing all composite editor form values, each value is defined by its column id */
+    formValues: any,
+
+    /** current selection of row indexes & data context Ids */
+    selection: CompositeEditorSelection,
+
+    /** callback function to apply the changes after the save button is clicked. */
+    applyChangesCallback?: (formValues: any, selection?: CompositeEditorSelection) => void,
+
+    /** optional item data context that is returned only when the modal type is clone/create/edit */
+    dataContext?: any
+  ) => Promise<boolean>;
 }

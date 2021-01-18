@@ -806,9 +806,11 @@ describe('CompositeEditorService', () => {
         const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
         const gridSrvAddItemSpy = jest.spyOn(gridServiceStub, 'addItem');
 
-        const mockOnSave = jest.fn();
-        mockOnSave.mockResolvedValue(Promise.resolve(true));
-        const mockModalOptions = { headerTitle: 'Details', modalType: 'clone', insertNewId: 3, onSave: mockOnSave } as CompositeEditorOpenDetailOption;
+        const onSaveCallback = (formValues, _selections, applyChangesCallback) => {
+          applyChangesCallback(formValues);
+          return Promise.resolve(true);
+        };
+        const mockModalOptions = { headerTitle: 'Details', modalType: 'clone', insertNewId: 3, onSave: onSaveCallback } as CompositeEditorOpenDetailOption;
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
         component.openDetails(mockModalOptions);
