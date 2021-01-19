@@ -31,7 +31,7 @@ import {
   SlickNamespace,
 } from './../interfaces/index';
 import { executeBackendCallback, refreshBackendDataset } from './backend-utilities';
-import { debounce, getDescendantProperty } from './utilities';
+import { debounce, getDescendantProperty, mapOperatorByFieldType } from './utilities';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
 
@@ -56,7 +56,7 @@ export class FilterService {
   protected _eventHandler: SlickEventHandler;
   protected _isFilterFirstRender = true;
   protected _firstColumnIdRendered: string | number = '';
-  protected _filtersMetadata: any[] = [];
+  protected _filtersMetadata: Array<Filter> = [];
   protected _columnFilters: ColumnFilters = {};
   protected _grid: SlickGrid;
   protected _onSearchChange: SlickEvent<OnSearchChangeEvent> | null;
@@ -126,9 +126,9 @@ export class FilterService {
 
     // also destroy each Filter instances
     if (Array.isArray(this._filtersMetadata)) {
-      this._filtersMetadata.forEach((filter: any) => {
-        if (filter && filter.destroy) {
-          filter.destroy(true);
+      this._filtersMetadata.forEach(filter => {
+        if (filter?.destroy) {
+          filter.destroy();
         }
       });
     }
@@ -228,8 +228,8 @@ export class FilterService {
     }
 
     // find the filter object and call its clear method with true (the argument tells the method it was called by a clear filter)
-    const colFilter: Filter = this._filtersMetadata.find((filter: Filter) => filter.columnDef.id === columnId);
-    if (colFilter && colFilter.clear) {
+    const colFilter: Filter | undefined = this._filtersMetadata.find((filter: Filter) => filter.columnDef.id === columnId);
+    if (colFilter?.clear) {
       colFilter.clear(true);
     }
 
@@ -251,7 +251,7 @@ export class FilterService {
   /** Clear the search filters (below the column titles) */
   clearFilters(triggerChange = true) {
     this._filtersMetadata.forEach((filter: Filter) => {
-      if (filter && filter.clear) {
+      if (filter?.clear) {
         // clear element but don't trigger individual clear change,
         // we'll do 1 trigger for all filters at once afterward
         filter.clear(false);
@@ -362,7 +362,7 @@ export class FilterService {
     if (typeof columnDef.queryFieldNameGetterFn === 'function') {
       queryFieldName = columnDef.queryFieldNameGetterFn(item);
     }
-    const fieldType = columnDef.filter?.type || columnDef.type || FieldType.string;
+    const fieldType = columnDef.filter?.type ?? columnDef.type ?? FieldType.string;
     const filterSearchType = (columnDef.filterSearchType) ? columnDef.filterSearchType : null;
     let cellValue = item[queryFieldName];
 
@@ -763,13 +763,13 @@ export class FilterService {
   /** Add all created filters (from their template) to the header row section area */
   protected addFilterTemplateToHeaderRow(args: { column: Column; grid: SlickGrid; node: HTMLElement }, isFilterFirstRender = true) {
     const columnDef = args.column;
-    const columnId = columnDef && columnDef.id || '';
+    const columnId = columnDef?.id ?? '';
 
     if (columnDef && columnId !== 'selector' && columnDef.filterable) {
       let searchTerms: SearchTerm[] | undefined;
       let operator: OperatorString | OperatorType | undefined;
       const newFilter: Filter | undefined = this.filterFactory.createFilter(columnDef.filter);
-      operator = (columnDef && columnDef.filter && columnDef.filter.operator) || (newFilter && newFilter.operator);
+      operator = columnDef?.filter?.operator ?? newFilter?.operator;
 
       if (this._columnFilters[columnDef.id]) {
         searchTerms = this._columnFilters[columnDef.id].searchTerms || undefined;
@@ -818,7 +818,8 @@ export class FilterService {
       const searchTerm = ((event && event.target) ? (event.target as HTMLInputElement).value : undefined);
       const searchTerms = (args.searchTerms && Array.isArray(args.searchTerms)) ? args.searchTerms : (searchTerm ? [searchTerm] : undefined);
       const columnDef = args.columnDef || null;
-      const columnId = columnDef && columnDef.id || '';
+      const columnId = columnDef?.id ?? '';
+      const fieldType = columnDef?.filter?.type ?? columnDef?.type ?? FieldType.string;
       const operator = args.operator || undefined;
       const hasSearchTerms = searchTerms && Array.isArray(searchTerms);
       const termsCount = hasSearchTerms && searchTerms && searchTerms.length;
@@ -836,9 +837,7 @@ export class FilterService {
             columnDef,
             searchTerms,
           };
-          if (operator) {
-            colFilter.operator = operator;
-          }
+          colFilter.operator = operator || mapOperatorByFieldType(fieldType);
           this._columnFilters[colId] = colFilter;
         }
       }
@@ -857,7 +856,7 @@ export class FilterService {
           columnId,
           columnDef,
           columnFilters: this._columnFilters,
-          operator,
+          operator: operator || mapOperatorByFieldType(fieldType),
           searchTerms,
           grid: this._grid
         }, eventData);
