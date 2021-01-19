@@ -85,7 +85,7 @@ export class SelectFilter implements Filter {
 
   /** Getter for the Filter Operator */
   get operator(): OperatorType | OperatorString {
-    return this.columnFilter && this.columnFilter.operator || this.defaultOperator;
+    return this.columnFilter?.operator ?? this.defaultOperator;
   }
 
   /** Setter for the filter operator */
