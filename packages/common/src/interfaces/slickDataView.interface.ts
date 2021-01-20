@@ -86,10 +86,13 @@ export interface SlickDataView {
   /** Get row index in the dataset by its Id */
   getIdxById(id: string | number): number | undefined;
 
+  /** Get item count, full dataset length */
+  getItemCount(): number;
+
   /** Get item metadata at specific index */
   getItemMetadata(index: number): any;
 
-  /** Get dataset length */
+  /** Get row count (rows in displayed current page) */
   getLength(): number;
 
   /** Get Paging Options */
@@ -221,7 +224,7 @@ export interface SlickDataView {
 
 export interface OnGroupExpandedEventArgs { level: number; groupingKey: string | number; }
 export interface OnGroupCollapsedEventArgs { level: number; groupingKey: string | number; }
-export interface OnRowCountChangedEventArgs { previous: number; current: number; dataView: SlickDataView; callingOnRowsChanged: boolean; }
-export interface OnRowsChangedEventArgs { rows: number[]; dataView: SlickDataView; calledOnRowCountChanged: boolean; }
-export interface OnRowsOrCountChangedEventArgs { rowsDiff: number[]; previousRowCount: number; currentRowCount: number; rowCountChanged: boolean; rowsChanged: boolean; dataView: SlickDataView; }
-export interface OnSetItemsCalledEventArgs { idProperty: string; }
+export interface OnRowCountChangedEventArgs { previous: number; current: number; itemCount: number; dataView: SlickDataView; callingOnRowsChanged: boolean; }
+export interface OnRowsChangedEventArgs { rows: number[]; itemCount: number; dataView: SlickDataView; calledOnRowCountChanged: boolean; }
+export interface OnRowsOrCountChangedEventArgs { rowsDiff: number[]; previousRowCount: number; currentRowCount: number; itemCount: number; rowCountChanged: boolean; rowsChanged: boolean; dataView: SlickDataView; }
+export interface OnSetItemsCalledEventArgs { idProperty: string; itemCount: number; }

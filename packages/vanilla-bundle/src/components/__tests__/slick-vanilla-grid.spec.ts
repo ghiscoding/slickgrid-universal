@@ -9,7 +9,6 @@ import {
   Editor,
   Editors,
   ExtensionList,
-  ExtensionName,
   ExtensionService,
   ExtensionUtility,
   Filters,
@@ -189,9 +188,9 @@ const mockDataView = {
   getPagingInfo: jest.fn(),
   mapIdsToRows: jest.fn(),
   mapRowsToIds: jest.fn(),
-  onSetItemsCalled: jest.fn(),
   onRowsChanged: new MockSlickEvent(),
   onRowCountChanged: new MockSlickEvent(),
+  onSetItemsCalled: new MockSlickEvent(),
   reSort: jest.fn(),
   setItems: jest.fn(),
   syncGridSelection: jest.fn(),
@@ -1652,6 +1651,23 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         });
       });
 
+      it('should have custom footer with metrics when the DataView "onSetItemsCalled" event is triggered', () => {
+        const expectation = {
+          startTime: expect.toBeDate(),
+          endTime: expect.toBeDate(),
+          itemCount: 0,
+          totalItemCount: 0
+        };
+
+        component.gridOptions = { enablePagination: false, showCustomFooter: true };
+        component.initialization(divContainer, slickEventHandler);
+        const footerSpy = jest.spyOn(component.slickFooter, 'metrics', 'set');
+        mockDataView.onSetItemsCalled.notify({ idProperty: 'id', itemCount: 0 });
+
+        expect(component.metrics).toEqual(expectation);
+        expect(footerSpy).toHaveBeenCalledWith(expectation);
+      });
+
       it('should have custom footer with metrics when the DataView "onRowCountChanged" event is triggered', () => {
         const invalidateSpy = jest.spyOn(mockGrid, 'invalidate');
         const expectation = {
@@ -1664,8 +1680,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions = { enablePagination: false, showCustomFooter: true };
         component.initialization(divContainer, slickEventHandler);
         const footerSpy = jest.spyOn(component.slickFooter, 'metrics', 'set');
+        mockDataView.onRowCountChanged.notify({ first: 'John', itemCount: 0, current: 0, previous: 1 });
 
-        mockDataView.onRowCountChanged.notify({ first: 'John' });
         expect(invalidateSpy).toHaveBeenCalled();
         expect(component.metrics).toEqual(expectation);
         expect(footerSpy).toHaveBeenCalledWith(expectation);
