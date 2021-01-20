@@ -22,7 +22,7 @@ import {
   HeaderMenu,
   Locale,
   Pagination,
-  // RowDetailView,
+  RowDetailView,
   RowMoveManager,
   RowSelectionModelOption,
   TextExportOption,
@@ -435,7 +435,7 @@ export interface GridOption {
   registerExternalResources?: ExternalResource[];
 
   /** Row Detail View Plugin options & events (columnId, cssClass, toolTip, width) */
-  // rowDetailView?: RowDetailView;
+  rowDetailView?: RowDetailView;
 
   /** Grid row height in pixels (only type the number). Row of cell values. */
   rowHeight?: number;
