@@ -12,6 +12,7 @@ export class SlickEmptyWarningComponent implements ExternalResource {
   private _warningLeftElement: HTMLDivElement | null;
   private _warningRightElement: HTMLDivElement | null;
   private grid: SlickGrid;
+  private isPreviouslyShown = false;
   private translaterService?: TranslaterService | null;
 
 
@@ -41,9 +42,13 @@ export class SlickEmptyWarningComponent implements ExternalResource {
    * @param options - any styling options you'd like to pass like the text color
    */
   showEmptyDataMessage(isShowing = true, options?: EmptyWarning): boolean {
-    if (!this.grid || !this.gridOptions) {
+    if (!this.grid || !this.gridOptions || this.isPreviouslyShown === isShowing) {
       return false;
     }
+
+    // keep reference so that we won't re-render the warning if the status is the same
+    this.isPreviouslyShown = isShowing;
+
     const gridUid = this.grid.getUID();
     const defaultMessage = 'No data to display.';
     const mergedOptions: EmptyWarning = { message: defaultMessage, ...this.gridOptions.emptyDataWarning, ...options };
@@ -59,19 +64,27 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     const leftViewportMarginLeft = typeof leftElementMarginLeft === 'string' ? leftElementMarginLeft : `${leftElementMarginLeft}px`;
     const rightViewportMarginLeft = typeof rightElementMarginLeft === 'string' ? rightElementMarginLeft : `${rightElementMarginLeft}px`;
 
-    if (!this._warningLeftElement && !isShowing) {
-      return false;
-    }
-
     // when dealing with a grid that has "autoHeight" option, we need to override 2 height that get miscalculated
     // that is because it is not aware that we are adding this slick empty element in this grid DOM
     if (this.gridOptions.autoHeight) {
       const leftPaneElm = document.querySelector<HTMLDivElement>('.slick-pane.slick-pane-top.slick-pane-left');
       if (leftPaneElm && leftPaneElm.style && gridCanvasLeftElm && gridCanvasLeftElm.style) {
-        const leftPaneHeight = parseInt(leftPaneElm.style.height, 10) || 0;
-        const gridRowHeight = this.gridOptions?.rowHeight ?? 0;
-        leftPaneElm.style.height = `${leftPaneHeight + gridRowHeight}px`;
-        gridCanvasLeftElm.style.height = `${gridRowHeight}px`;
+        const leftPaneHeight = parseInt(leftPaneElm.style.height, 10) || 0; // this field auto calc by row height
+
+        // get row height of each feature when enabled (rowHeight will always be defined because that is the cell height)
+        const cellRowHeight = this.gridOptions?.rowHeight ?? 0;
+        const filterRowHeight = this.gridOptions.enableFiltering ? (this.gridOptions?.headerRowHeight ?? 0) : 0;
+        const preHeaderRowHeight = this.gridOptions.createPreHeaderPanel ? (this.gridOptions?.preHeaderPanelHeight ?? 0) : 0;
+
+        if (isShowing) {
+          // use when height with rows more that 100px
+          // AutoHeight option collapse dataview to 100px when show message without data in huge grid
+          // (default autoHeight for message - 100px you can add as param if needed)
+          let leftPaneMinHeight = (leftPaneHeight !== null && leftPaneHeight < 100) ? leftPaneHeight : 100;
+          leftPaneMinHeight += filterRowHeight + preHeaderRowHeight; // add preHeader & filter height when enabled
+          leftPaneElm.style.minHeight = `${leftPaneMinHeight}px`;
+          gridCanvasLeftElm.style.minHeight = `${cellRowHeight}px`;
+        }
       }
     }
 
