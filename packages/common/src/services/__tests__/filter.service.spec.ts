@@ -13,6 +13,7 @@ import {
   GridMenuItem,
   GridOption,
   MenuCommandItem,
+  RowDetailView,
   SlickDataView,
   SlickEventHandler,
   SlickGrid,
@@ -755,34 +756,34 @@ describe('FilterService', () => {
       expect(output).toBe(true);
     });
 
-    // it('should return True when using row detail and the item is found in its parent', () => {
-    //   gridOptionMock.enableRowDetailView = true;
-    //   const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip' } as Column;
-    //   const mockItem2 = { __isPadding: true, __parent: mockItem1 };
-    //   jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
-    //   jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
+    it('should return True when using row detail and the item is found in its parent', () => {
+      gridOptionMock.enableRowDetailView = true;
+      const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip' } as Column;
+      const mockItem2 = { __isPadding: true, __parent: mockItem1 };
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
-    //   service.init(gridStub);
-    //   const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456] } };
-    //   const output = service.customLocalFilter(mockItem2, { dataView: dataViewStub, grid: gridStub, columnFilters });
+      service.init(gridStub);
+      const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456] } };
+      const output = service.customLocalFilter(mockItem2, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
-    //   expect(output).toBe(true);
-    // });
+      expect(output).toBe(true);
+    });
 
-    // it('should return True when using row detail custom "keyPrefix" and the item is found in its parent', () => {
-    //   gridOptionMock.rowDetailView = { keyPrefix: 'prefix_' } as RowDetail;
-    //   gridOptionMock.enableRowDetailView = true;
-    //   const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip' } as Column;
-    //   const mockItem2 = { prefix_isPadding: true, prefix_parent: mockItem1 };
-    //   jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
-    //   jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
+    it('should return True when using row detail custom "keyPrefix" and the item is found in its parent', () => {
+      gridOptionMock.rowDetailView = { keyPrefix: 'prefix_' } as RowDetailView;
+      gridOptionMock.enableRowDetailView = true;
+      const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip' } as Column;
+      const mockItem2 = { prefix_isPadding: true, prefix_parent: mockItem1 };
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
-    //   service.init(gridStub);
-    //   const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456] } };
-    //   const output = service.customLocalFilter(mockItem2, { dataView: dataViewStub, grid: gridStub, columnFilters });
+      service.init(gridStub);
+      const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456] } };
+      const output = service.customLocalFilter(mockItem2, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
-    //   expect(output).toBe(true);
-    // });
+      expect(output).toBe(true);
+    });
 
     it('should execute "queryFieldNameGetterFn()" callback and return True when input value matches the full name', () => {
       const mockColumn1 = { id: 'name', field: 'name', filterable: true, queryFieldNameGetterFn: () => 'fullName' } as Column;
