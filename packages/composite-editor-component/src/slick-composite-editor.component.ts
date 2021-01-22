@@ -499,10 +499,10 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     // from the "lastCompositeEditor" object that we kept as reference, it contains all the changes inside the "formValues" property
     // we can loop through these changes and apply them on the selected row indexes
     for (const itemProp in formValues) {
-      if (formValues.hasOwnProperty(itemProp)) {
-        data.forEach(item => {
-          if (formValues.hasOwnProperty(itemProp)) {
-            item[itemProp] = formValues[itemProp];
+      if (itemProp in formValues) {
+        data.forEach(dataContext => {
+          if (itemProp in formValues) {
+            dataContext[itemProp] = formValues[itemProp];
           }
         });
       }
@@ -521,9 +521,9 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     // from the "lastCompositeEditor" object that we kept as reference, it contains all the changes inside the "formValues" property
     // we can loop through these changes and apply them on the selected row indexes
     for (const itemProp in formValues) {
-      if (formValues.hasOwnProperty(itemProp)) {
+      if (itemProp in formValues) {
         selectedItems.forEach(dataContext => {
-          if (dataContext && dataContext.hasOwnProperty(itemProp) && formValues.hasOwnProperty(itemProp)) {
+          if (itemProp in formValues) {
             dataContext[itemProp] = formValues[itemProp];
           }
         });
