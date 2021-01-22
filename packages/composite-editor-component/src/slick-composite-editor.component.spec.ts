@@ -806,10 +806,7 @@ describe('CompositeEditorService', () => {
         const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
         const gridSrvAddItemSpy = jest.spyOn(gridServiceStub, 'addItem');
 
-        const onSaveCallback = (formValues, _selections, applyChangesCallback) => {
-          applyChangesCallback(formValues);
-          return Promise.resolve(true);
-        };
+        const onSaveCallback = () => Promise.resolve(true);
         const mockModalOptions = { headerTitle: 'Details', modalType: 'clone', insertNewId: 3, onSave: onSaveCallback } as CompositeEditorOpenDetailOption;
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
@@ -914,7 +911,7 @@ describe('CompositeEditorService', () => {
     });
 
     describe('create item', () => {
-      it('should execute "onAddNewRow" callback when triggered by a new item', () => {
+      it('should execute "onAddNewRow" callback when triggered by a new item', (done) => {
         const newGridOptions = { ...gridOptionsMock, enableAddRow: true };
         const mockProduct1 = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
         const mockProduct2 = { address: { zip: 345678 }, product: { name: 'Product DEF', price: 22.33 } };
@@ -944,16 +941,19 @@ describe('CompositeEditorService', () => {
         compositeFooterSaveBtnElm.click();
         gridStub.onAddNewRow.notify({ grid: gridStub, item: mockProduct2, column: columnsMock[0] });
 
-        expect(component).toBeTruthy();
-        expect(component.constructor).toBeDefined();
-        expect(compositeContainerElm).toBeTruthy();
-        expect(compositeHeaderElm).toBeTruthy();
-        expect(compositeTitleElm).toBeTruthy();
-        expect(compositeTitleElm.textContent).toBe('Details');
-        expect(productNameLabelElm.textContent).toBe('Product');
-        expect(productNameDetailCellElm.classList.contains('modified')).toBe(true);
-        expect(gridSrvAddItemSpy).toHaveBeenCalledWith({ ...mockProduct2, id: 2 }, undefined);
-        expect(saveSpy).toHaveBeenCalled();
+        setTimeout(() => {
+          expect(component).toBeTruthy();
+          expect(component.constructor).toBeDefined();
+          expect(compositeContainerElm).toBeTruthy();
+          expect(compositeHeaderElm).toBeTruthy();
+          expect(compositeTitleElm).toBeTruthy();
+          expect(compositeTitleElm.textContent).toBe('Details');
+          expect(productNameLabelElm.textContent).toBe('Product');
+          expect(productNameDetailCellElm.classList.contains('modified')).toBe(true);
+          expect(gridSrvAddItemSpy).toHaveBeenCalledWith({ ...mockProduct2, id: 2 }, undefined);
+          expect(saveSpy).toHaveBeenCalled();
+          done();
+        });
       });
     });
 
@@ -1507,8 +1507,8 @@ describe('CompositeEditorService', () => {
         expect(compositeTitleElm.textContent).toBe('Details');
         expect(field3LabelElm.textContent).toBe('Group Name - Field 3');
         expect(getEditSpy).toHaveBeenCalledTimes(2);
-        expect(mockOnSave).toHaveBeenCalledWith({ field3: 'test' }, { gridRowIndexes: [0], dataContextIds: [222] }, expect.any(Function));
-        expect(setItemsSpy).not.toHaveBeenCalled();
+        expect(mockOnSave).toHaveBeenCalledWith({ field3: 'test' }, { gridRowIndexes: [0], dataContextIds: [222] }, undefined);
+        expect(setItemsSpy).toHaveBeenCalled();
         expect(cancelCommitSpy).toHaveBeenCalled();
         expect(setActiveCellSpy).toHaveBeenCalledWith(0, 0, false);
         expect(validationSummaryElm.style.display).toBe('none');

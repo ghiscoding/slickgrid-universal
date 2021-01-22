@@ -118,8 +118,8 @@ export interface CompositeEditorOpenDetailOption {
   onError?: (error: OnErrorOption) => void;
 
   /**
-   * onSave callback will be triggered (when defined) after user clicked the save/apply button, user can execute his own custom code and possibly apply the changes if he wishes to.
-   * NOTE: When calling the "onSave" function, it's the responsability of the developer to call the applyChangesCallback or his own custom code, if you don't then the changes won't be reflected in the grid since you opt out of it.
+   * onSave callback will be triggered (when defined) after user clicked the save/apply button,
+   * this callback is used when connecting a backend server with custom code to execute after clicking the save/apply button
    */
   onSave?: (
     /** object containing all composite editor form values, each value is defined by its column id */
@@ -127,9 +127,6 @@ export interface CompositeEditorOpenDetailOption {
 
     /** current selection of row indexes & data context Ids */
     selection: CompositeEditorSelection,
-
-    /** callback function to apply the changes after the save button is clicked. */
-    applyChangesCallback?: (formValues: any, selection?: CompositeEditorSelection) => void,
 
     /** optional item data context that is returned only when the modal type is clone/create/edit */
     dataContext?: any

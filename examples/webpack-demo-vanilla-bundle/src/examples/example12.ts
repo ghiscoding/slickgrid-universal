@@ -917,30 +917,27 @@ export class Example12 {
         // viewColumnLayout: 2, // choose from 'auto', 1, 2, or 3 (defaults to 'auto')
         onClose: () => Promise.resolve(confirm('You have unsaved changes, are you sure you want to close this window?')),
         onError: (error) => alert(error.message),
-        onSave: (formValues, selection, applyChangesCallback, dataContext) => {
-          // simulate a backend server call when processing a clone change
-          if (modalType === 'clone') {
-            return new Promise(resolve => {
-              setTimeout(() => {
-                applyChangesCallback(formValues); // apply the changes to see it inserted in the grid
-                resolve(true);
-                console.log(`new ${modalType}d item`, dataContext);
-              }, 250);
-            });
-          }
+        onSave: (formValues, _selection, dataContext) => {
+          const serverResponseDelay = 250;
 
-          // simulate a backend server call when processing a mass update or mass selection changes
+          // simulate a backend server call which will reject if the "% Complete" is below 50%
+          // when processing a mass update or mass selection
           if (modalType === 'mass-update' || modalType === 'mass-selection') {
             return new Promise((resolve, reject) => {
               setTimeout(() => {
-                if (formValues.percentComplete > 50) {
-                  applyChangesCallback(formValues, selection);
+                if (formValues.percentComplete >= 50) {
                   resolve(true);
                 } else {
                   reject('Unfortunately we only accept a minimum of 50% Completion...');
                 }
-              }, 250);
+              }, serverResponseDelay);
             });
+          } else {
+            // also simulate a server cal for any other modal type (create/clone/edit)
+            // we'll just apply the change without any rejection from the server and
+            // note that we also have access to the "dataContext" which is only available for these modal
+            console.log(`new ${modalType}d item`, dataContext);
+            return new Promise(resolve => setTimeout(() => resolve(true), serverResponseDelay));
           }
         }
       });
