@@ -852,16 +852,10 @@ export class SlickVanillaGridBundle {
       }
 
       // When data changes in the DataView, we need to refresh the metrics and/or display a warning if the dataset is empty
-      // we will do that via the following 2 handlers (onSetItemsCalled, onRowCountChanged)
-      const onSetItemsCalledHandler = dataView.onSetItemsCalled;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSetItemsCalledHandler>>).subscribe(onSetItemsCalledHandler, () => {
-        this.handleOnItemsChanged(this.dataset.length);
-      });
-
-      const onRowCountChangedHandler = dataView.onRowCountChanged;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowCountChangedHandler>>).subscribe(onRowCountChangedHandler, (_e, args) => {
+      const onRowsOrCountChangedHandler = dataView.onRowsOrCountChanged;
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowsOrCountChangedHandler>>).subscribe(onRowsOrCountChangedHandler, (_e, args) => {
         grid.invalidate();
-        this.handleOnItemsChanged(args.current || 0);
+        this.handleOnItemCountChanged(args.currentRowCount || 0);
       });
 
       // when filtering data with local dataset, we need to update each row else it will not always show correctly in the UI
@@ -1121,7 +1115,7 @@ export class SlickVanillaGridBundle {
   }
 
   /** When data changes in the DataView, we'll refresh the metrics and/or display a warning if the dataset is empty */
-  private handleOnItemsChanged(itemCount: number) {
+  private handleOnItemCountChanged(itemCount: number) {
     this.metrics = {
       startTime: new Date(),
       endTime: new Date(),
