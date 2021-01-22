@@ -201,7 +201,7 @@ export class Example12 {
       {
         id: 'start', name: 'Start', field: 'start', sortable: true, minWidth: 100,
         formatter: Formatters.dateUs, columnGroup: 'Period',
-        type: FieldType.dateIso, outputType: FieldType.dateUs,
+        type: FieldType.dateUs, outputType: FieldType.dateUs,
         filterable: true, filter: { model: Filters.compoundDate },
         editor: { model: Editors.date, massUpdate: true, params: { hideClearButton: false } },
       },
@@ -221,7 +221,7 @@ export class Example12 {
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true, minWidth: 100,
         formatter: Formatters.dateUs, columnGroup: 'Period',
-        type: FieldType.dateIso, outputType: FieldType.dateUs,
+        type: FieldType.dateUs, outputType: FieldType.dateUs,
         filterable: true, filter: { model: Filters.compoundDate },
         editor: {
           model: Editors.date,
