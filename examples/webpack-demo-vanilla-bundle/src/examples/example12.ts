@@ -11,6 +11,7 @@ import {
   Formatters,
   GridOption,
   LongTextEditorOption,
+  OnCompositeEditorChangeEventArgs,
   SlickNamespace,
   SortComparers,
 
@@ -526,10 +527,12 @@ export class Example12 {
   }
 
   handleOnCompositeEditorChange(event) {
-    const args = event && event.detail && event.detail.args;
-    const columnDef = args?.column as Column;
-    const formValues = args?.formValues;
+    const args = event.detail.args as OnCompositeEditorChangeEventArgs;
+    const columnDef = args.column as Column;
+    const formValues = args.formValues;
 
+    // you can dynamically change a select dropdown collection,
+    // if you need to re-render the editor for the list to be reflected
     // if (columnDef.id === 'duration') {
     //   const editor = this.compositeEditorInstance.editors['percentComplete2'] as SelectEditor;
     //   const newCollection = editor.finalCollection;
@@ -543,7 +546,7 @@ export class Example12 {
       // this.compositeEditorInstance.changeFormInputValue('product', { id: 0, itemName: 'Sleek Metal Computer' });
 
       // you can even change a value that is not part of the form (but is part of the grid)
-      // but you will have to bypass the error thrown by passing 3rd argument as true
+      // but you will have to bypass the error thrown by providing `true` as the 3rd argument
       // this.compositeEditorInstance.changeFormInputValue('cost', 9999.99, true);
     }
 
