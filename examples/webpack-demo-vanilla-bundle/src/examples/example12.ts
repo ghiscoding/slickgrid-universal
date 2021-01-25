@@ -318,8 +318,23 @@ export class Example12 {
           commandTitle: 'Commands',
           commandItems: [
             {
+              command: 'edit',
+              title: 'Edit Row',
+              iconCssClass: 'mdi mdi-square-edit-outline',
+              positionOrder: 66,
+              action: () => this.openCompositeModal('edit'),
+            },
+            {
+              command: 'clone',
+              title: 'Clone Row',
+              iconCssClass: 'mdi mdi-content-copy',
+              positionOrder: 66,
+              action: () => this.openCompositeModal('clone'),
+            },
+            'divider',
+            {
               command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'mdi mdi-close color-danger', cssClass: 'red', textCssClass: 'bold',
+              iconCssClass: 'mdi mdi-close color-danger', cssClass: 'red', textCssClass: 'text-italic color-danger-light',
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
                 return !args.dataContext?.completed;
@@ -331,16 +346,6 @@ export class Example12 {
                 }
               }
             },
-            {
-              command: 'help',
-              title: 'Help',
-              iconCssClass: 'mdi mdi-help-circle-outline color-info',
-              textCssClass: 'color-info-dark',
-              positionOrder: 66,
-              action: () => alert('Please Help!'),
-            },
-            'divider',
-            { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67, }
           ],
         }
       },
