@@ -524,7 +524,7 @@ describe('DateEditor', () => {
       expect(editor.getValue()).toContain('2001-01-02');
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { startDate: '2001-01-02' }, editors: {},
+        formValues: { startDate: '2001-01-02' }, editors: {}, triggeredBy: 'system',
       }, expect.anything());
     });
 
@@ -557,7 +557,7 @@ describe('DateEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { startDate: '' }, editors: {},
+        formValues: { startDate: '' }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.flatInstance._input.disabled).toEqual(true);
@@ -602,7 +602,7 @@ describe('DateEditor', () => {
       expect(getCellSpy).toHaveBeenCalled();
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {}, editors: {},
+        formValues: {}, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(editor.flatInstance._input.disabled).toEqual(true);
       expect(editor.flatInstance._input.value).toEqual('');
@@ -629,7 +629,7 @@ describe('DateEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { startDate: '2001-01-02' }, editors: {},
+        formValues: { startDate: '2001-01-02' }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
     });
   });

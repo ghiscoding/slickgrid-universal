@@ -4,6 +4,7 @@ import { FieldType, KeyCode, } from '../enums/index';
 import {
   AutocompleteOption,
   CollectionCustomStructure,
+  CollectionOverrideArgs,
   Column,
   ColumnEditor,
   CompositeEditorOption,
@@ -64,6 +65,9 @@ export class AutoCompleteEditor implements Editor {
 
   forceUserInput: boolean;
 
+  /** Final collection displayed in the UI, that is after processing filter/sort/override */
+  finalCollection: any[] = [];
+
   constructor(private args: EditorArguments) {
     if (!args) {
       throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
@@ -78,8 +82,8 @@ export class AutoCompleteEditor implements Editor {
   }
 
   /** Getter of the Collection */
-  get editorCollection(): any[] {
-    return this.columnDef?.internalColumnEditor?.collection ?? [];
+  get collection(): any[] {
+    return this.columnEditor?.collection ?? [];
   }
 
   /** Getter for the Editor DOM Element */
@@ -237,7 +241,7 @@ export class AutoCompleteEditor implements Editor {
       // if it's set by a Composite Editor, then also trigger a change for it
       const compositeEditorOptions = this.args.compositeEditorOptions;
       if (compositeEditorOptions) {
-        this.handleChangeOnCompositeEditor(null, compositeEditorOptions);
+        this.handleChangeOnCompositeEditor(null, compositeEditorOptions, 'system');
       }
     }
   }
@@ -248,8 +252,8 @@ export class AutoCompleteEditor implements Editor {
 
     if (fieldName !== undefined) {
       // if we have a collection defined, we will try to find the string within the collection and return it
-      if (Array.isArray(this.editorCollection) && this.editorCollection.length > 0) {
-        newValue = findOrDefault(this.editorCollection, (collectionItem: any) => {
+      if (Array.isArray(this.collection) && this.collection.length > 0) {
+        newValue = findOrDefault(this.collection, (collectionItem: any) => {
           if (collectionItem && typeof state === 'object' && collectionItem.hasOwnProperty(this.labelName)) {
             return (collectionItem.hasOwnProperty(this.labelName) && collectionItem[this.labelName].toString()) === (state.hasOwnProperty(this.labelName) && state[this.labelName].toString());
           } else if (collectionItem && typeof state === 'string' && collectionItem.hasOwnProperty(this.labelName)) {
@@ -371,7 +375,7 @@ export class AutoCompleteEditor implements Editor {
     this.disable(isCellEditable === false);
   }
 
-  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption) {
+  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -389,7 +393,10 @@ export class AutoCompleteEditor implements Editor {
     if (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
-    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors }, { ...new Slick.EventData(), ...event });
+    grid.onCompositeEditorChange.notify(
+      { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
+      { ...new Slick.EventData(), ...event }
+    );
   }
 
   // this function should be PRIVATE but for unit tests purposes we'll make it public until a better solution is found
@@ -483,8 +490,16 @@ export class AutoCompleteEditor implements Editor {
 
     // user could also override the collection
     if (this.columnEditor?.collectionOverride) {
-      finalCollection = this.columnEditor.collectionOverride(finalCollection, { column: this.columnDef, dataContext: this.args.item, grid: this.grid });
+      const overrideArgs: CollectionOverrideArgs = { column: this.columnDef, dataContext: this.args.item, grid: this.grid, originalCollections: this.collection };
+      if (this.args.compositeEditorOptions) {
+        const { formValues, modalType } = this.args.compositeEditorOptions;
+        overrideArgs.compositeEditorOptions = { formValues, modalType };
+      }
+      finalCollection = this.columnEditor.collectionOverride(finalCollection, overrideArgs);
     }
+
+    // keep reference of the final collection displayed in the UI
+    this.finalCollection = finalCollection;
 
     // user might provide his own custom structure
     // jQuery UI autocomplete requires a label/value pair, so we must remap them when user provide different ones

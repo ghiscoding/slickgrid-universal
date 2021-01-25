@@ -15,6 +15,7 @@ export * from './gridStateType.enum';
 export * from './keyCode.enum';
 export * from './operatorString.type';
 export * from './operatorType.enum';
+export * from './plainFunc.type';
 export * from './searchTerm.type';
 export * from './slickControlList.enum';
 export * from './slickPluginList.enum';

@@ -67,7 +67,7 @@ export class SliderRangeFilter implements Filter {
 
   /** Getter of the Operator to use when doing the filter comparing */
   get operator(): OperatorType | OperatorString {
-    return this.columnFilter && this.columnFilter.operator || this.defaultOperator;
+    return this.columnFilter?.operator ?? this.defaultOperator;
   }
 
   /** Setter for the filter operator */

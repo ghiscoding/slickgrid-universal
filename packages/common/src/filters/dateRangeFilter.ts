@@ -68,7 +68,7 @@ export class DateRangeFilter implements Filter {
 
   /** Getter of the Operator to use when doing the filter comparing */
   get operator(): OperatorType | OperatorString {
-    return this.columnFilter && this.columnFilter.operator || this.defaultOperator;
+    return this.columnFilter?.operator ?? this.defaultOperator;
   }
 
   /** Setter for the filter operator */
@@ -204,7 +204,7 @@ export class DateRangeFilter implements Filter {
       wrap: true,
       closeOnSelect: true,
       locale: currentLocale,
-      onChange: (selectedDates: Date[] | Date, _dateStr: string, _instance: any) => {
+      onChange: (selectedDates: Date[] | Date) => {
         if (Array.isArray(selectedDates)) {
           this._currentDates = selectedDates;
           const outFormat = mapMomentDateFormatWithFieldType(this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateIso);

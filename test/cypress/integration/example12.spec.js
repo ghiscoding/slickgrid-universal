@@ -445,4 +445,80 @@ describe('Example 12 - Composite Editor Modal', () => {
 
     cy.get('.btn-cancel').click();
   });
+
+  it('should focus on first row and open the Composite Editor (Clone Item) and expect all form inputs to be filled with first row data', () => {
+    // it('should focus on first row, then "Clone" it and change the "Title" & "Duration" and save and expect a new row in the grid', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).click({ force: true });
+    cy.get('[data-test="open-modal-clone-btn"]').click();
+    cy.get('.slick-editor-modal-title').contains('Clone - Task 8899');
+
+    cy.get('textarea').contains('Task 8899');
+    cy.get('.item-details-editor-container .slider-editor .input-group-text').contains('51');
+    cy.get('.item-details-container.editor-completed input.editor-checkbox:checked').should('have.length', 1);
+    cy.get('.item-details-container.editor-duration input.editor-text').invoke('val').then(text => expect(text).to.eq('33.00'));
+  });
+
+  it('should change the "Title" & "Duration" from the Clone form, then click on "Cancel" button and expect no changes in the grid', () => {
+    cy.get('.slick-editor-modal-title').contains('Clone - Task 8899');
+
+    cy.get('textarea').contains('Task 8899').type('Task 9999');
+    cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 7).trigger('change');
+    cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 17).trigger('change');
+    cy.get('.item-details-container.editor-percentComplete .modified').should('have.length', 1);
+
+    cy.get('.item-details-editor-container .editor-checkbox').uncheck();
+
+    cy.get('.btn-cancel').click();
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 8899');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '33 days');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).should('contain', '51');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).should('not.be.empty');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('contain', 'Belgium');
+  });
+
+  it('should focus again on first row and open the Composite Editor (Clone Item) and expect all form inputs to be filled with first row data', () => {
+    // it('should focus on first row, then "Clone" it and change the "Title" & "Duration" and save and expect a new row in the grid', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).click({ force: true });
+    cy.get('[data-test="open-modal-clone-btn"]').click();
+    cy.get('.slick-editor-modal-title').contains('Clone - Task 8899');
+
+    cy.get('textarea').contains('Task 8899');
+    cy.get('.item-details-editor-container .slider-editor .input-group-text').contains('51');
+    cy.get('.item-details-container.editor-completed input.editor-checkbox:checked').should('have.length', 1);
+    cy.get('.item-details-container.editor-duration input.editor-text').invoke('val').then(text => expect(text).to.eq('33.00'));
+  });
+
+  it('should change the "Title" & "Duration" from the Clone form, then click on "Clone" button and expect a new row to show up on top of the grid', () => {
+    cy.get('.slick-editor-modal-title').contains('Clone - Task 8899');
+
+    cy.get('textarea').contains('Task 8899').type('Task 9999');
+    cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 7).trigger('change');
+    cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 17).trigger('change');
+    cy.get('.item-details-container.editor-percentComplete .modified').should('have.length', 1);
+
+    cy.get('.item-details-editor-container .editor-checkbox').uncheck();
+
+    cy.get('.item-details-container.editor-duration input.editor-text').type('44');
+    cy.get('.item-details-container.editor-duration .modified').should('have.length', 1);
+
+    cy.get('.btn-save').contains('Clone').click();
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 9999');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '44 days');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).should('contain', '17');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 0);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).should('be.empty');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('contain', 'Belgium');
+  });
+
+  it('should expect original, that was originally used to clone, to now be exist as that 2nd row in the grid', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', '8899');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(2)`).should('contain', '33 days');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(4)`).should('contain', '51');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(6)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(7)`).should('not.be.empty');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(9)`).should('contain', 'Belgium');
+  });
 });

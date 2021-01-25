@@ -11,6 +11,7 @@ import {
   Formatters,
   GridOption,
   LongTextEditorOption,
+  OnCompositeEditorChangeEventArgs,
   SlickNamespace,
   SortComparers,
 
@@ -187,13 +188,21 @@ export class Example12 {
       //     collectionOptions: {
       //       addCustomFirstEntry: { value: '', label: '--none--' }
       //     },
+      //     collectionOverride: (_collectionInput, args) => {
+      //       const originalCollection = args.originalCollections || [];
+      //       const duration = args?.dataContext?.duration ?? args?.compositeEditorOptions?.formValues?.duration;
+      //       if (duration === 10) {
+      //         return originalCollection.filter(itemCollection => +itemCollection.value !== 1);
+      //       }
+      //       return originalCollection;
+      //     },
       //     massUpdate: true, minValue: 0, maxValue: 100,
       //   },
       // },
       {
         id: 'start', name: 'Start', field: 'start', sortable: true, minWidth: 100,
         formatter: Formatters.dateUs, columnGroup: 'Period',
-        type: FieldType.dateIso, outputType: FieldType.dateUs,
+        type: FieldType.dateUs, outputType: FieldType.dateUs,
         filterable: true, filter: { model: Filters.compoundDate },
         editor: { model: Editors.date, massUpdate: true, params: { hideClearButton: false } },
       },
@@ -213,7 +222,7 @@ export class Example12 {
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true, minWidth: 100,
         formatter: Formatters.dateUs, columnGroup: 'Period',
-        type: FieldType.dateIso, outputType: FieldType.dateUs,
+        type: FieldType.dateUs, outputType: FieldType.dateUs,
         filterable: true, filter: { model: Filters.compoundDate },
         editor: {
           model: Editors.date,
@@ -428,19 +437,21 @@ export class Example12 {
       const randomTime = Math.floor((Math.random() * 59));
       const randomFinish = new Date(randomFinishYear, (randomMonth + 1), randomDay, randomTime, randomTime, randomTime);
       const randomPercentComplete = Math.floor(Math.random() * 100) + 15; // make it over 15 for E2E testing purposes
+      const percentCompletion = randomPercentComplete > 100 ? (i > 5 ? 100 : 88) : randomPercentComplete; // don't use 100 unless it's over index 5, for E2E testing purposes
+      const isCompleted = percentCompletion === 100;
 
       tmpArray[i] = {
         id: i,
         title: 'Task ' + i,
         duration: Math.floor(Math.random() * 100) + 10,
-        percentComplete: randomPercentComplete > 100 ? 100 : randomPercentComplete,
+        percentComplete: percentCompletion,
         analysis: {
-          percentComplete: randomPercentComplete > 100 ? 100 : randomPercentComplete,
+          percentComplete: percentCompletion,
         },
         start: new Date(randomYear, randomMonth, randomDay, randomDay, randomTime, randomTime, randomTime),
-        finish: (i % 3 === 0 && (randomFinish > new Date() && i > 3)) ? randomFinish : '', // make sure the random date is earlier than today and it's index is bigger than 3
+        finish: (isCompleted || (i % 3 === 0 && (randomFinish > new Date() && i > 3)) ? (isCompleted ? new Date() : randomFinish) : ''), // make sure the random date is earlier than today and it's index is bigger than 3
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
-        completed: (i % 3 === 0 && (randomFinish > new Date() && i > 3)),
+        completed: (isCompleted || (i % 3 === 0 && (randomFinish > new Date() && i > 3))),
         product: { id: this.mockProducts()[randomItemId]?.id, itemName: this.mockProducts()[randomItemId]?.itemName, },
         origin: (i % 2) ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' },
       };
@@ -516,15 +527,27 @@ export class Example12 {
   }
 
   handleOnCompositeEditorChange(event) {
-    const args = event && event.detail && event.detail.args;
-    const columnDef = args?.column;
-    const formValues = args?.formValues;
+    const args = event.detail.args as OnCompositeEditorChangeEventArgs;
+    const columnDef = args.column as Column;
+    const formValues = args.formValues;
+
+    // you can dynamically change a select dropdown collection,
+    // if you need to re-render the editor for the list to be reflected
+    // if (columnDef.id === 'duration') {
+    //   const editor = this.compositeEditorInstance.editors['percentComplete2'] as SelectEditor;
+    //   const newCollection = editor.finalCollection;
+    //   editor.renderDomElement(newCollection);
+    // }
 
     // you can change any other form input values when certain conditions are met
     if (columnDef.id === 'percentComplete' && formValues.percentComplete === 100) {
       this.compositeEditorInstance.changeFormInputValue('completed', true);
       this.compositeEditorInstance.changeFormInputValue('finish', new Date());
       // this.compositeEditorInstance.changeFormInputValue('product', { id: 0, itemName: 'Sleek Metal Computer' });
+
+      // you can even change a value that is not part of the form (but is part of the grid)
+      // but you will have to bypass the error thrown by providing `true` as the 3rd argument
+      // this.compositeEditorInstance.changeFormInputValue('cost', 9999.99, true);
     }
 
     // you can also change some editor options (not all Editors supports this functionality, so far only these Editors AutoComplete, Date MultipleSelect & SingleSelect)
@@ -874,6 +897,9 @@ export class Example12 {
       case 'create':
         modalTitle = 'Inserting New Task';
         break;
+      case 'clone':
+        modalTitle = 'Clone - {{title}}';
+        break;
       case 'edit':
         modalTitle = 'Editing - {{title}} (<span class="color-muted">id:</span> <span class="color-primary">{{id}}</span>)'; // 'Editing - {{title}} ({{product.itemName}})'
         break;
@@ -894,17 +920,28 @@ export class Example12 {
         // viewColumnLayout: 2, // choose from 'auto', 1, 2, or 3 (defaults to 'auto')
         onClose: () => Promise.resolve(confirm('You have unsaved changes, are you sure you want to close this window?')),
         onError: (error) => alert(error.message),
-        onSave: (formValues, selection, applyChangesCallback) => {
-          return new Promise((resolve, reject) => {
-            setTimeout(() => {
-              if (formValues.percentComplete > 50) {
-                applyChangesCallback(formValues, selection);
-                resolve(true);
-              } else {
-                reject('Unfortunately we only accept a minimum of 50% Completion...');
-              }
-            }, 250);
-          });
+        onSave: (formValues, _selection, dataContext) => {
+          const serverResponseDelay = 250;
+
+          // simulate a backend server call which will reject if the "% Complete" is below 50%
+          // when processing a mass update or mass selection
+          if (modalType === 'mass-update' || modalType === 'mass-selection') {
+            return new Promise((resolve, reject) => {
+              setTimeout(() => {
+                if (formValues.percentComplete >= 50) {
+                  resolve(true);
+                } else {
+                  reject('Unfortunately we only accept a minimum of 50% Completion...');
+                }
+              }, serverResponseDelay);
+            });
+          } else {
+            // also simulate a server cal for any other modal type (create/clone/edit)
+            // we'll just apply the change without any rejection from the server and
+            // note that we also have access to the "dataContext" which is only available for these modal
+            console.log(`new ${modalType}d item`, dataContext);
+            return new Promise(resolve => setTimeout(() => resolve(true), serverResponseDelay));
+          }
         }
       });
     }, openDelay);

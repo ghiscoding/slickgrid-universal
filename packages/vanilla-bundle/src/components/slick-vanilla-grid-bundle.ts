@@ -545,7 +545,7 @@ export class SlickVanillaGridBundle {
 
     // if you don't want the items that are not visible (due to being filtered out or being on a different page)
     // to stay selected, pass 'false' to the second arg
-    const selectionModel = this.slickGrid && this.slickGrid.getSelectionModel();
+    const selectionModel = this.slickGrid?.getSelectionModel?.();
     if (selectionModel && this._gridOptions?.dataView && this._gridOptions.dataView.hasOwnProperty('syncGridSelection')) {
       // if we are using a Backend Service, we will do an extra flag check, the reason is because it might have some unintended behaviors
       // with the BackendServiceApi because technically the data in the page changes the DataView on every page change.
@@ -680,7 +680,7 @@ export class SlickVanillaGridBundle {
       dispose: this.dispose.bind(this),
 
       // return all available Services (non-singleton)
-      backendService: this.gridOptions && this.gridOptions.backendServiceApi && this.gridOptions.backendServiceApi.service,
+      backendService: this.gridOptions?.backendServiceApi?.service,
       filterService: this.filterService,
       gridEventService: this.gridEventService,
       gridStateService: this.gridStateService,
@@ -721,7 +721,7 @@ export class SlickVanillaGridBundle {
 
     // when we use Pagination on Local Grid, it doesn't seem to work without enableFiltering
     // so we'll enable the filtering but we'll keep the header row hidden
-    if (options && !options.enableFiltering && options.enablePagination && this._isLocalGrid) {
+    if (!options.enableFiltering && options.enablePagination && this._isLocalGrid) {
       options.enableFiltering = true;
       options.showHeaderRow = false;
       this._hideHeaderRowAfterPageLoad = true;
@@ -739,8 +739,8 @@ export class SlickVanillaGridBundle {
    * refresh the Dataset & Pagination without having the user to create his own PostProcess every time
    */
   createBackendApiInternalPostProcessCallback(gridOptions: GridOption) {
-    const backendApi = gridOptions && gridOptions.backendServiceApi;
-    if (backendApi && backendApi.service) {
+    const backendApi = gridOptions?.backendServiceApi;
+    if (backendApi?.service) {
       const backendApiService = backendApi.service;
 
       // internalPostProcess only works (for now) with a GraphQL Service, so make sure it is of that type
@@ -823,7 +823,7 @@ export class SlickVanillaGridBundle {
     if (gridOptions.backendServiceApi) {
       const backendApi = gridOptions.backendServiceApi;
 
-      if (backendApi && backendApi.service && backendApi.service.init) {
+      if (backendApi?.service?.init) {
         backendApi.service.init(backendApi.options, gridOptions.pagination, this.slickGrid);
       }
     }
@@ -851,26 +851,11 @@ export class SlickVanillaGridBundle {
         }
       }
 
-      const onRowCountChangedHandler = dataView.onRowCountChanged;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowCountChangedHandler>>).subscribe(onRowCountChangedHandler, (_e, args) => {
+      // When data changes in the DataView, we need to refresh the metrics and/or display a warning if the dataset is empty
+      const onRowsOrCountChangedHandler = dataView.onRowsOrCountChanged;
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowsOrCountChangedHandler>>).subscribe(onRowsOrCountChangedHandler, (_e, args) => {
         grid.invalidate();
-
-        this.metrics = {
-          startTime: new Date(),
-          endTime: new Date(),
-          itemCount: args && args.current || 0,
-          totalItemCount: Array.isArray(this.dataset) ? this.dataset.length : 0
-        };
-
-        // if custom footer is enabled, then we'll update its metrics
-        if (this.slickFooter) {
-          this.slickFooter.metrics = this.metrics;
-        }
-
-        // when using local (in-memory) dataset, we'll display a warning message when filtered data is empty
-        if (this._isLocalGrid && this._gridOptions.enableEmptyDataWarningMessage) {
-          this.displayEmptyDataWarning(args.current === 0);
-        }
+        this.handleOnItemCountChanged(args.currentRowCount || 0);
       });
 
       // when filtering data with local dataset, we need to update each row else it will not always show correctly in the UI
@@ -878,7 +863,7 @@ export class SlickVanillaGridBundle {
       if (gridOptions && gridOptions.enableFiltering && !gridOptions.enableRowDetailView) {
         const onRowsChangedHandler = dataView.onRowsChanged;
         (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowsChangedHandler>>).subscribe(onRowsChangedHandler, (_e, args) => {
-          if (args && args.rows && Array.isArray(args.rows)) {
+          if (args?.rows && Array.isArray(args.rows)) {
             args.rows.forEach((row) => grid.updateRow(row));
             grid.render();
           }
@@ -900,14 +885,14 @@ export class SlickVanillaGridBundle {
 
   bindBackendCallbackFunctions(gridOptions: GridOption) {
     const backendApi = gridOptions.backendServiceApi;
-    const backendApiService = backendApi && backendApi.service;
-    const serviceOptions: BackendServiceOption = backendApiService && backendApiService.options || {};
-    const isExecuteCommandOnInit = (!serviceOptions) ? false : ((serviceOptions && serviceOptions.hasOwnProperty('executeProcessCommandOnInit')) ? serviceOptions['executeProcessCommandOnInit'] : true);
+    const backendApiService = backendApi?.service;
+    const serviceOptions: BackendServiceOption = backendApiService?.options ?? {};
+    const isExecuteCommandOnInit = (!serviceOptions) ? false : ((serviceOptions?.hasOwnProperty('executeProcessCommandOnInit')) ? serviceOptions['executeProcessCommandOnInit'] : true);
 
     if (backendApiService) {
       // update backend filters (if need be) BEFORE the query runs (via the onInit command a few lines below)
       // if user entered some any "presets", we need to reflect them all in the grid
-      if (gridOptions && gridOptions.presets) {
+      if (gridOptions?.presets) {
         // Filters "presets"
         if (backendApiService.updateFilters && Array.isArray(gridOptions.presets.filters) && gridOptions.presets.filters.length > 0) {
           backendApiService.updateFilters(gridOptions.presets.filters, true);
@@ -931,7 +916,7 @@ export class SlickVanillaGridBundle {
       // execute onInit command when necessary
       if (backendApi && backendApiService && (backendApi.onInit || isExecuteCommandOnInit)) {
         const query = (typeof backendApiService.buildQuery === 'function') ? backendApiService.buildQuery() : '';
-        const process = (isExecuteCommandOnInit) ? (backendApi.process && backendApi.process(query) || null) : (backendApi.onInit && backendApi.onInit(query) || null);
+        const process = isExecuteCommandOnInit ? (backendApi.process?.(query) ?? null) : (backendApi.onInit?.(query) ?? null);
 
         // wrap this inside a setTimeout to avoid timing issue since the gridOptions needs to be ready before running this onInit
         setTimeout(() => {
@@ -967,7 +952,7 @@ export class SlickVanillaGridBundle {
     } else {
       this.resizerService.resizeGrid();
     }
-    if (grid && options && options.enableAutoResize) {
+    if (grid && options?.enableAutoResize) {
       if (options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && typeof grid.autosizeColumns === 'function') {
         grid.autosizeColumns();
       }
@@ -988,7 +973,7 @@ export class SlickVanillaGridBundle {
    * Also if we use Row Selection or the Checkbox Selector, we need to reset any selection
    */
   paginationChanged(pagination: ServicePagination) {
-    const isSyncGridSelectionEnabled = this.gridStateService && this.gridStateService.needToPreserveRowSelection() || false;
+    const isSyncGridSelectionEnabled = this.gridStateService?.needToPreserveRowSelection() ?? false;
     if (!isSyncGridSelectionEnabled && (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector)) {
       this.slickGrid.setSelectedRows([]);
     }
@@ -1114,7 +1099,7 @@ export class SlickVanillaGridBundle {
    * if there are then load them in the paginationOptions object
    */
   setPaginationOptionsWhenPresetDefined(gridOptions: GridOption, paginationOptions: Pagination): Pagination {
-    if (gridOptions.presets && gridOptions.presets.pagination && gridOptions.pagination) {
+    if (gridOptions.presets?.pagination && gridOptions.pagination) {
       paginationOptions.pageSize = gridOptions.presets.pagination.pageSize;
       paginationOptions.pageNumber = gridOptions.presets.pagination.pageNumber;
     }
@@ -1127,6 +1112,26 @@ export class SlickVanillaGridBundle {
 
   private displayEmptyDataWarning(showWarning = true) {
     this.slickEmptyWarning?.showEmptyDataMessage(showWarning);
+  }
+
+  /** When data changes in the DataView, we'll refresh the metrics and/or display a warning if the dataset is empty */
+  private handleOnItemCountChanged(itemCount: number) {
+    this.metrics = {
+      startTime: new Date(),
+      endTime: new Date(),
+      itemCount,
+      totalItemCount: Array.isArray(this.dataset) ? this.dataset.length : 0
+    };
+
+    // if custom footer is enabled, then we'll update its metrics
+    if (this.slickFooter) {
+      this.slickFooter.metrics = this.metrics;
+    }
+
+    // when using local (in-memory) dataset, we'll display a warning message when filtered data is empty
+    if (this._isLocalGrid && this._gridOptions.enableEmptyDataWarningMessage) {
+      this.displayEmptyDataWarning(itemCount === 0);
+    }
   }
 
   /** Initialize the Pagination Service once */
@@ -1234,10 +1239,10 @@ export class SlickVanillaGridBundle {
   /** Load any Row Selections into the DataView that were presets by the user */
   private loadRowSelectionPresetWhenExists() {
     // if user entered some Row Selections "presets"
-    const presets = this.gridOptions && this.gridOptions.presets;
-    const selectionModel = this.slickGrid && this.slickGrid.getSelectionModel();
+    const presets = this.gridOptions?.presets;
+    const selectionModel = this.slickGrid?.getSelectionModel?.();
     const enableRowSelection = this.gridOptions && (this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection);
-    if (enableRowSelection && selectionModel && presets && presets.rowSelection && (Array.isArray(presets.rowSelection.gridRowIndexes) || Array.isArray(presets.rowSelection.dataContextIds))) {
+    if (enableRowSelection && selectionModel && presets?.rowSelection && (Array.isArray(presets.rowSelection.gridRowIndexes) || Array.isArray(presets.rowSelection.dataContextIds))) {
       let dataContextIds = presets.rowSelection.dataContextIds;
       let gridRowIndexes = presets.rowSelection.gridRowIndexes;
 

@@ -11,12 +11,12 @@ import {
   PagingInfo,
   SingleColumnSort,
   SlickCellSelectionModel,
+  SlickCompositeEditor,
   SlickDataView,
   SlickEditorLock,
   SlickEvent,
   SlickRowSelectionModel,
 } from './index';
-import { SlickCompositeEditor } from './slickCompositeEditor.interface';
 
 export interface SlickGrid {
   /**
@@ -536,7 +536,7 @@ export interface OnCellCssStylesChangedEventArgs extends SlickGridEventData { ke
 export interface OnColumnsDragEventArgs extends SlickGridEventData { triggeredByColumn: string; resizeHandle: HTMLElement; }
 export interface OnColumnsReorderedEventArgs extends SlickGridEventData { impactedColumns: Column[]; }
 export interface OnColumnsResizedEventArgs extends SlickGridEventData { triggeredByColumn: string; }
-export interface OnCompositeEditorChangeEventArgs extends SlickGridEventData { row: number; cell: number; item: any; column: Column; formValues: any; editors: { [columnId: string]: Editor; }; }
+export interface OnCompositeEditorChangeEventArgs extends SlickGridEventData { row: number; cell: number; item: any; column: Column; formValues: any; editors: { [columnId: string]: Editor; }; triggeredBy?: 'user' | 'system'; }
 export interface OnClickEventArgs extends SlickGridEventData { row: number; cell: number; }
 export interface OnDblClickEventArgs extends SlickGridEventData { row: number; cell: number; }
 export interface OnFooterContextMenuEventArgs extends SlickGridEventData { column: Column; }

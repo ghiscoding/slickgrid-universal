@@ -794,7 +794,7 @@ describe('SelectEditor', () => {
       expect(editor.getValue()).toEqual(['male']);
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { gender: ['male'] }, editors: {},
+        formValues: { gender: ['male'] }, editors: {}, triggeredBy: 'system',
       }, expect.anything());
     });
 
@@ -828,7 +828,7 @@ describe('SelectEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { gender: [] }, editors: {}
+        formValues: { gender: [] }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editorBtnElm.classList.contains('disabled')).toEqual(true);
@@ -854,7 +854,7 @@ describe('SelectEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {}, editors: {}
+        formValues: {}, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editorBtnElm.classList.contains('disabled')).toEqual(true);
@@ -881,8 +881,28 @@ describe('SelectEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { gender: ['male'] }, editors: {}
+        formValues: { gender: ['male'] }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
+    });
+
+    describe('collectionOverride callback option', () => {
+      it('should create the editor and expect a different collection outputed when using the override', () => {
+        const activeCellMock = { row: 0, cell: 0 };
+        jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+        const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+        mockColumn.internalColumnEditor = {
+          collection: [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }, { value: 'other', label: 'other' }],
+          collectionOverride: (inputCollection) => inputCollection.filter(item => item.value !== 'other')
+        };
+        editor = new SelectEditor(editorArguments, true);
+        editor.setValue(['male'], true);
+
+        expect(editor.getValue()).toEqual(['male']);
+        expect(onCompositeEditorSpy).toHaveBeenCalledWith({
+          ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+          formValues: { gender: ['male'] }, editors: {}, triggeredBy: 'system',
+        }, expect.anything());
+      });
     });
   });
 });
