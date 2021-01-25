@@ -21,7 +21,7 @@ import {
   Locale,
   OnErrorOption,
   OnCompositeEditorChangeEventArgs,
-  PlainFunction,
+  PlainFunc,
   sanitizeTextByAvailableSanitizer,
   SlickEventHandler,
   SlickGrid,
@@ -566,7 +566,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
  * @param {Function} beforeClosingCallback - third and last callback to execute after Saving but just before closing the modal window
  * @param {Object} itemDataContext - item data context, only provided for modal type (create/clone/edit)
  */
-  private async executeOnSave(applyChangesCallback: ApplyChangesCallbackFn, executePostCallback: PlainFunction, beforeClosingCallback?: PlainFunction, itemDataContext?: any) {
+  private async executeOnSave(applyChangesCallback: ApplyChangesCallbackFn, executePostCallback: PlainFunc, beforeClosingCallback?: PlainFunc, itemDataContext?: any) {
     try {
       this.showValidationSummaryText(false, '');
       const validationResults = this.validateCompositeEditors();
@@ -716,7 +716,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Callback which processes a Mass Update or Mass Selection Changes */
-  private async handleMassSaving(modalType: 'mass-update' | 'mass-selection', executePostCallback: PlainFunction) {
+  private async handleMassSaving(modalType: 'mass-update' | 'mass-selection', executePostCallback: PlainFunc) {
     if (!this.formValues || Object.keys(this.formValues).length === 0) {
       this.executeOnError({ type: 'warning', code: 'NO_CHANGES_DETECTED', message: 'Sorry we could not detect any changes.' });
     } else {
