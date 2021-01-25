@@ -285,22 +285,22 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
   /** Get each column style including a style for the width of each column */
   private getColumnStyles(columns: Column[]): any[] {
-    const grouping = this._dataView && this._dataView.getGrouping && this._dataView.getGrouping();
+    const grouping = this._dataView.getGrouping();
     const columnStyles = [];
-    if (grouping) {
+    if (Array.isArray(grouping) && grouping.length > 0) {
       columnStyles.push({
         bestFit: true,
-        columnStyles: (this._gridOptions && this._gridOptions.excelExportOptions && this._gridOptions.excelExportOptions.customColumnWidth) || 10
+        columnStyles: this._gridOptions?.excelExportOptions?.customColumnWidth ?? 10
       });
     }
 
     columns.forEach((columnDef: Column) => {
-      const skippedField = columnDef.excludeFromExport || false;
+      const skippedField = columnDef.excludeFromExport ?? false;
       // if column width is 0, then we consider that field as a hidden field and should not be part of the export
       if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
         columnStyles.push({
           bestFit: true,
-          width: columnDef.exportColumnWidth || (this._gridOptions && this._gridOptions.excelExportOptions && this._gridOptions.excelExportOptions.customColumnWidth) || 10
+          width: columnDef.exportColumnWidth ?? this._gridOptions?.excelExportOptions?.customColumnWidth ?? 10
         });
       }
     });
@@ -387,8 +387,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
     // get grouped column titles and if found, we will add a "Group by" column at the first column index
     // if it's a CSV format, we'll escape the text in double quotes
-    const grouping = this._dataView && this._dataView.getGrouping && this._dataView.getGrouping();
-    if (grouping && Array.isArray(grouping) && grouping.length > 0) {
+    const grouping = this._dataView.getGrouping();
+    if (Array.isArray(grouping) && grouping.length > 0) {
       this._hasGroupedItems = true;
       return groupByColumnHeader;
     } else {
@@ -461,7 +461,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * Get all the grid row data and return that as an output string
    */
   private pushAllGridRowDataToArray(originalDaraArray: Array<string[] | ExcelCellFormat[]>, columns: Column[]): Array<string[] | ExcelCellFormat[]> {
-    const lineCount = this._dataView && this._dataView.getLength && this._dataView.getLength();
+    const lineCount = this._dataView.getLength();
 
     // loop through all the grid rows of data
     for (let rowNumber = 0; rowNumber < lineCount; rowNumber++) {
