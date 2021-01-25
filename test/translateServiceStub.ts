@@ -22,6 +22,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'CLEAR_ALL_FILTERS': output = this._locale === 'en' ? 'Clear all Filters' : 'Supprimer tous les filtres'; break;
       case 'CLEAR_ALL_SORTING': output = this._locale === 'en' ? 'Clear all Sorting' : 'Supprimer tous les tris'; break;
       case 'CLEAR_FROZEN_COLUMNS': output = this._locale === 'en' ? 'Clear Frozen Columns' : 'Libérer les colonnes gelées'; break;
+      case 'CLONE': output = this._locale === 'en' ? 'Clone' : 'Cloner'; break;
       case 'COLUMNS': output = this._locale === 'en' ? 'Columns' : 'Colonnes'; break;
       case 'COMMANDS': output = this._locale === 'en' ? 'Commands' : 'Commandes'; break;
       case 'COLLAPSE_ALL_GROUPS': output = this._locale === 'en' ? 'Collapse all Groups' : 'Réduire tous les groupes'; break;
@@ -61,6 +62,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'OPTIONS_LIST': output = this._locale === 'en' ? 'Options List' : 'Liste d\'options'; break;
       case 'OTHER': output = this._locale === 'en' ? 'Other' : 'Autre'; break;
       case 'PAGE': output = this._locale === 'en' ? 'Page' : 'Page'; break;
+      case 'PRODUCT': output = this._locale === 'en' ? 'Product' : 'Produit'; break;
       case 'REFRESH_DATASET': output = this._locale === 'en' ? 'Refresh Dataset' : 'Rafraîchir les données'; break;
       case 'REMOVE_FILTER': output = this._locale === 'en' ? 'Remove Filter' : 'Supprimer le filtre'; break;
       case 'REMOVE_SORT': output = this._locale === 'en' ? 'Remove Sort' : 'Supprimer le tri'; break;

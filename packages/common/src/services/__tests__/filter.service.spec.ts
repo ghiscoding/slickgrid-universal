@@ -8,10 +8,12 @@ import {
   BackendService,
   BackendServiceApi,
   Column,
+  ColumnFilters,
   CurrentFilter,
   GridMenuItem,
   GridOption,
   MenuCommandItem,
+  RowDetailView,
   SlickDataView,
   SlickEventHandler,
   SlickGrid,
@@ -754,34 +756,34 @@ describe('FilterService', () => {
       expect(output).toBe(true);
     });
 
-    // it('should return True when using row detail and the item is found in its parent', () => {
-    //   gridOptionMock.enableRowDetailView = true;
-    //   const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip' } as Column;
-    //   const mockItem2 = { __isPadding: true, __parent: mockItem1 };
-    //   jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
-    //   jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
+    it('should return True when using row detail and the item is found in its parent', () => {
+      gridOptionMock.enableRowDetailView = true;
+      const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip' } as Column;
+      const mockItem2 = { __isPadding: true, __parent: mockItem1 };
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
-    //   service.init(gridStub);
-    //   const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456] } };
-    //   const output = service.customLocalFilter(mockItem2, { dataView: dataViewStub, grid: gridStub, columnFilters });
+      service.init(gridStub);
+      const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456] } };
+      const output = service.customLocalFilter(mockItem2, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
-    //   expect(output).toBe(true);
-    // });
+      expect(output).toBe(true);
+    });
 
-    // it('should return True when using row detail custom "keyPrefix" and the item is found in its parent', () => {
-    //   gridOptionMock.rowDetailView = { keyPrefix: 'prefix_' } as RowDetail;
-    //   gridOptionMock.enableRowDetailView = true;
-    //   const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip' } as Column;
-    //   const mockItem2 = { prefix_isPadding: true, prefix_parent: mockItem1 };
-    //   jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
-    //   jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
+    it('should return True when using row detail custom "keyPrefix" and the item is found in its parent', () => {
+      gridOptionMock.rowDetailView = { keyPrefix: 'prefix_' } as RowDetailView;
+      gridOptionMock.enableRowDetailView = true;
+      const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip' } as Column;
+      const mockItem2 = { prefix_isPadding: true, prefix_parent: mockItem1 };
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
+      jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
-    //   service.init(gridStub);
-    //   const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456] } };
-    //   const output = service.customLocalFilter(mockItem2, { dataView: dataViewStub, grid: gridStub, columnFilters });
+      service.init(gridStub);
+      const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456] } };
+      const output = service.customLocalFilter(mockItem2, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
-    //   expect(output).toBe(true);
-    // });
+      expect(output).toBe(true);
+    });
 
     it('should execute "queryFieldNameGetterFn()" callback and return True when input value matches the full name', () => {
       const mockColumn1 = { id: 'name', field: 'name', filterable: true, queryFieldNameGetterFn: () => 'fullName' } as Column;
@@ -1337,11 +1339,11 @@ describe('FilterService', () => {
         gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
         gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
 
-        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', searchTerms: ['map'] } };
+        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', operator: 'Contains', searchTerms: ['map'] } };
         service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['map'] }], true, true, true);
         const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', searchTerms: ['map',] }]);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['map',] }]);
         expect(output).toBe(true);
         expect(preFilterSpy).toHaveBeenCalledWith(dataset, columnFilters);
         expect(preFilterSpy).toHaveReturnedWith([21, 4, 5]);
@@ -1361,11 +1363,11 @@ describe('FilterService', () => {
         gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
         gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
 
-        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', searchTerms: ['map'] } };
+        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', operator: 'Contains', searchTerms: ['map'] } };
         service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['map'] }], true, true, true);
         const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', searchTerms: ['map',] }]);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['map'] }]);
         expect(output).toBe(false);
         expect(preFilterSpy).toHaveBeenCalledWith(dataset, columnFilters);
         expect(preFilterSpy).toHaveReturnedWith([21, 4, 5]);
@@ -1385,13 +1387,13 @@ describe('FilterService', () => {
         gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
         gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
 
-        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', searchTerms: ['unknown'] } };
+        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', searchTerms: ['unknown'] } } as ColumnFilters;
         service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['unknown'] }], true, true, true);
         const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', searchTerms: ['unknown',] }]);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['unknown'] }]);
         expect(output).toBe(false);
-        expect(preFilterSpy).toHaveBeenCalledWith(dataset, columnFilters);
+        expect(preFilterSpy).toHaveBeenCalledWith(dataset, { ...columnFilters, file: { ...columnFilters.file, operator: 'Contains' } }); // it will use Contains by default
         expect(preFilterSpy).toHaveReturnedWith([]);
       });
     });

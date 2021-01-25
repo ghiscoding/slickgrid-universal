@@ -9,7 +9,6 @@ import {
   Editor,
   Editors,
   ExtensionList,
-  ExtensionName,
   ExtensionService,
   ExtensionUtility,
   Filters,
@@ -21,16 +20,21 @@ import {
   GridStateService,
   GridStateType,
   GroupingAndColspanService,
+  OnRowsChangedEventArgs,
+  OnRowsOrCountChangedEventArgs,
   Pagination,
   PaginationService,
   ServicePagination,
   SharedService,
+  SlickDataView,
+  SlickDraggableGrouping,
   SlickEventHandler,
   SlickGrid,
   SlickGroupItemMetadataProvider,
   SortService,
   TreeDataService,
   TranslaterService,
+  SlickEditorLock,
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
@@ -189,25 +193,24 @@ const mockDataView = {
   getPagingInfo: jest.fn(),
   mapIdsToRows: jest.fn(),
   mapRowsToIds: jest.fn(),
-  onSetItemsCalled: jest.fn(),
-  onRowsChanged: new MockSlickEvent(),
-  onRowCountChanged: new MockSlickEvent(),
+  onRowsChanged: new MockSlickEvent<OnRowsChangedEventArgs>(),
+  onRowsOrCountChanged: new MockSlickEvent<OnRowsOrCountChangedEventArgs>(),
   reSort: jest.fn(),
   setItems: jest.fn(),
   syncGridSelection: jest.fn(),
-};
+} as unknown as SlickDataView;
 
 const mockDraggableGroupingExtension = {
   constructor: jest.fn(),
   init: jest.fn(),
   destroy: jest.fn(),
-};
+} as unknown as SlickDraggableGrouping;
 
 const mockEventPubSub = {
   notify: jest.fn(),
   subscribe: jest.fn(),
   unsubscribe: jest.fn(),
-};
+} as unknown as EventPubSubService;
 
 const mockSlickEventHandler = {
   handlers: [],
@@ -215,12 +218,12 @@ const mockSlickEventHandler = {
   subscribe: jest.fn(),
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
-};
+} as unknown as SlickEventHandler;
 
 const mockGetEditorLock = {
   isActive: () => true,
   commitCurrentEdit: jest.fn(),
-};
+} as unknown as SlickEditorLock;
 
 const mockGrid = {
   autosizeColumns: jest.fn(),
@@ -941,7 +944,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const expectedPageNumber = 3;
         const expectedTotalItems = 15;
         const refreshSpy = jest.spyOn(component, 'refreshGridData');
-        const getPagingSpy = jest.spyOn(mockDataView, 'getPagingInfo').mockReturnValue({ pageNum: 1, totalRows: expectedTotalItems });
+        const getPagingSpy = jest.spyOn(mockDataView, 'getPagingInfo').mockReturnValue({ pageNum: 1, totalRows: expectedTotalItems, pageSize: 10, totalPages: 15, dataView: mockDataView });
 
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
         component.gridOptions = {
@@ -1415,7 +1418,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         component.gridOptions = { enableFiltering: true };
         component.initialization(divContainer, slickEventHandler);
-        mockDataView.onRowsChanged.notify({ rows: [1, 2, 3] });
+        mockDataView.onRowsChanged.notify({ itemCount: 0, dataView: mockDataView, rows: [1, 2, 3], calledOnRowCountChanged: false });
 
         expect(component.eventHandler).toEqual(slickEventHandler);
         expect(renderSpy).toHaveBeenCalled();
@@ -1429,7 +1432,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions = { enableFiltering: true };
         component.initialization(divContainer, slickEventHandler);
 
-        component.eventHandler.subscribe(mockEventPubSub, callback);
+        component.eventHandler.subscribe(mockEventPubSub as any, callback);
         mockGrid.onClick.notify({ rows: [1, 2, 3] } as any);
 
         // callback(new CustomEvent('onDblClick'), {});
@@ -1554,7 +1557,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const emptySpy = jest.spyOn(component.slickEmptyWarning, 'showEmptyDataMessage');
         component.columnDefinitions = mockColDefs;
         component.refreshGridData([]);
-        mockDataView.onRowCountChanged.notify({ current: 0, item: { first: 'John' } });
+        mockDataView.onRowsOrCountChanged.notify({ currentRowCount: 0, dataView: mockDataView, itemCount: 0, previousRowCount: 0, rowCountChanged: false, rowsChanged: false, rowsDiff: [0] });
 
         setTimeout(() => {
           expect(component.columnDefinitions).toEqual(mockColDefs);
@@ -1652,7 +1655,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         });
       });
 
-      it('should have custom footer with metrics when the DataView "onRowCountChanged" event is triggered', () => {
+      it('should have custom footer with metrics when the DataView "onRowsOrCountChanged" event is triggered', () => {
         const invalidateSpy = jest.spyOn(mockGrid, 'invalidate');
         const expectation = {
           startTime: expect.toBeDate(),
@@ -1664,8 +1667,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions = { enablePagination: false, showCustomFooter: true };
         component.initialization(divContainer, slickEventHandler);
         const footerSpy = jest.spyOn(component.slickFooter, 'metrics', 'set');
+        mockDataView.onRowsOrCountChanged.notify({ currentRowCount: 0, dataView: mockDataView, itemCount: 0, previousRowCount: 1, rowCountChanged: false, rowsChanged: false, rowsDiff: [0] });
 
-        mockDataView.onRowCountChanged.notify({ first: 'John' });
         expect(invalidateSpy).toHaveBeenCalled();
         expect(component.metrics).toEqual(expectation);
         expect(footerSpy).toHaveBeenCalledWith(expectation);
@@ -1847,7 +1850,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
         component.dataset = mockFlatDataset;
         component.isDatasetInitialized = false;
-        mockDataView.onRowsChanged.notify({ rows: [1, 2, 3] });
+        mockDataView.onRowsChanged.notify({ itemCount: 0, dataView: mockDataView, rows: [1, 2, 3], calledOnRowCountChanged: false });
 
         expect(hierarchicalSpy).toHaveBeenCalled();
         expect(mockConvertParentChildArray).toHaveBeenCalled();

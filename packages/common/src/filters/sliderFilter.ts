@@ -48,7 +48,7 @@ export class SliderFilter implements Filter {
 
   /** Getter for the current Operator */
   get operator(): OperatorType | OperatorString {
-    return this.columnFilter && this.columnFilter.operator || this.defaultOperator;
+    return this.columnFilter?.operator ?? this.defaultOperator;
   }
 
   /** Setter for the filter operator */

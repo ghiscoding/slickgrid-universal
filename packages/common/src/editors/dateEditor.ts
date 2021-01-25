@@ -265,7 +265,7 @@ export class DateEditor implements Editor {
       // if it's set by a Composite Editor, then also trigger a change for it
       const compositeEditorOptions = this.args.compositeEditorOptions;
       if (compositeEditorOptions) {
-        this.handleChangeOnCompositeEditor(compositeEditorOptions);
+        this.handleChangeOnCompositeEditor(compositeEditorOptions, 'system');
       }
     }
   }
@@ -400,7 +400,7 @@ export class DateEditor implements Editor {
     setTimeout(() => this._lastTriggeredByClearDate = false); // reset flag after a cycle
   }
 
-  private handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption) {
+  private handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -418,6 +418,9 @@ export class DateEditor implements Editor {
     if (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
-    grid.onCompositeEditorChange.notify({ ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors }, new Slick.EventData());
+    grid.onCompositeEditorChange.notify(
+      { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
+      new Slick.EventData()
+    );
   }
 }

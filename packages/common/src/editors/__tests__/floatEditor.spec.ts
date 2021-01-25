@@ -642,7 +642,7 @@ describe('FloatEditor', () => {
       expect(editor.getValue()).toBe('123');
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { price: 123 }, editors: {},
+        formValues: { price: 123 }, editors: {}, triggeredBy: 'system',
       }, expect.anything());
     });
 
@@ -675,7 +675,7 @@ describe('FloatEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { price: '' }, editors: {}
+        formValues: { price: '' }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorDomElement.disabled).toEqual(true);
@@ -720,7 +720,7 @@ describe('FloatEditor', () => {
       expect(getCellSpy).toHaveBeenCalled();
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {}, editors: {},
+        formValues: {}, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(editor.editorDomElement.disabled).toEqual(true);
       expect(editor.editorDomElement.value).toEqual('');
@@ -746,7 +746,7 @@ describe('FloatEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { price: 35 }, editors: {}
+        formValues: { price: 35 }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
     });
 
@@ -770,7 +770,7 @@ describe('FloatEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { price: 35 }, editors: {}
+        formValues: { price: 35 }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
     });
 
@@ -794,7 +794,7 @@ describe('FloatEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { price: 35 }, editors: {}
+        formValues: { price: 35 }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
     });
   });

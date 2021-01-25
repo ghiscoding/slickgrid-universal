@@ -1,3 +1,4 @@
+import { CompositeEditorOption } from './compositeEditorOption.interface';
 import { Column, SlickGrid } from './index';
 
 export interface CollectionOverrideArgs {
@@ -9,4 +10,10 @@ export interface CollectionOverrideArgs {
 
   /** Slick Grid object */
   grid: SlickGrid;
+
+  /** Potential Composite Editor option when triggered by the Composite Editor modal window */
+  compositeEditorOptions?: Pick<CompositeEditorOption, 'formValues' | 'modalType'>;
+
+  /** Original collection provided to the editor (without being filtered/sorted or overridden) */
+  originalCollections: any[];
 }
