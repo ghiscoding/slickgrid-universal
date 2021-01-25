@@ -5,8 +5,8 @@
     "rootDir": "src",
     "declarationDir": "dist/commonjs",
     "outDir": "dist/commonjs",
-    "target": "es2015",
-    "module": "commonjs",
+    "target": "es2020",
+    "module": "esnext",
     "sourceMap": true,
     "noImplicitReturns": true,
     "lib": [

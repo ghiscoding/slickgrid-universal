@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "module": "es2020",
+    "module": "esnext",
     "moduleResolution": "node",
-    "target": "es2015",
+    "target": "es2020",
     "lib": [
       "es2020",
       "dom"
@@ -18,7 +18,7 @@
       "../typings",
       "../../node_modules/@types"
     ],
-    "outDir": "dist/2015",
+    "outDir": "dist/commonjs",
     "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": false,

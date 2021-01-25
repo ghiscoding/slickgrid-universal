@@ -1,25 +1,25 @@
 {
-    "compilerOptions": {
-        "pretty": true,
-        "lib": [
-            "esnext"
-        ],
-        "target": "es2018",
-        "module": "esnext",
-        "moduleResolution": "node",
-        "importHelpers": true,
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "rootDir": ".",
-        "declaration": true,
-        "declarationMap": true,
-        "sourceMap": true,
-        "composite": true,
-        "noEmitOnError": true,
-        "skipLibCheck": true,
-        "preserveConstEnums": true,
-        "stripInternal": true,
-        "strict": false,
-        "types": []
-    }
+  "compilerOptions": {
+    "pretty": true,
+    "lib": [
+      "esnext"
+    ],
+    "target": "es2017",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "rootDir": ".",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true,
+    "noEmitOnError": true,
+    "skipLibCheck": true,
+    "preserveConstEnums": true,
+    "stripInternal": true,
+    "strict": false,
+    "types": []
+  }
 }

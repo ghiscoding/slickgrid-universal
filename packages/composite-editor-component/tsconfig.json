@@ -3,10 +3,10 @@
   "compileOnSave": false,
   "compilerOptions": {
     "rootDir": "src",
-    "declarationDir": "dist/es2015",
-    "outDir": "dist/es2015",
-    "target": "es2017",
-    "module": "es2015",
+    "declarationDir": "dist/esm",
+    "outDir": "dist/esm",
+    "target": "es2020",
+    "module": "esnext",
     "sourceMap": true,
     "noImplicitReturns": true,
     "lib": [

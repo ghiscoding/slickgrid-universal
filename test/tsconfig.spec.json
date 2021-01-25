@@ -2,10 +2,10 @@
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
     "baseUrl": "./",
-    "target": "es2015",
+    "target": "es2017",
     "module": "commonjs",
     "lib": [
-      "ES2015"
+      "es2017"
     ],
     "types": [
       "cypress",
