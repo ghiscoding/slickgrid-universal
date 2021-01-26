@@ -81,6 +81,7 @@ export class ExtensionUtility {
     if (frozenColumnIndex >= 0) {
       const recalculatedFrozenColumnIndex = visibleColumns.findIndex(col => col.id === this.sharedService.frozenVisibleColumnId);
       if (recalculatedFrozenColumnIndex >= 0 && recalculatedFrozenColumnIndex !== frozenColumnIndex) {
+        this.sharedService.gridOptions.frozenColumn = recalculatedFrozenColumnIndex;
         this.sharedService.slickGrid.setOptions({ frozenColumn: recalculatedFrozenColumnIndex });
       }
 
