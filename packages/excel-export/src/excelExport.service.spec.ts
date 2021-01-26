@@ -9,12 +9,11 @@ import {
   GridOption,
   GroupTotalsFormatter,
   GroupTotalFormatters,
-  SharedService,
+  PubSubService,
   SlickDataView,
   SlickGrid,
-  SortDirectionNumber,
   SortComparers,
-  PubSubService,
+  SortDirectionNumber,
 } from '@slickgrid-universal/common';
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
