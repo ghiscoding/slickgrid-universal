@@ -488,6 +488,20 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     }
   }
 
+  /** Show a Validation Summary text (as a <div>) when a validation fails or simply hide it when there's no error */
+  showValidationSummaryText(isShowing: boolean, errorMsg = '') {
+    if (isShowing) {
+      this._modalBodyTopValidationElm.textContent = errorMsg;
+      this._modalBodyTopValidationElm.style.display = 'block';
+      this._modalBodyTopValidationElm.scrollIntoView?.();
+      this._modalSaveButtonElm.disabled = false;
+      this._modalSaveButtonElm.classList.remove('saving');
+    } else {
+      this._modalBodyTopValidationElm.style.display = 'none';
+      this._modalBodyTopValidationElm.textContent = errorMsg;
+    }
+  }
+
   // --
   // private methods
   // ----------------
@@ -830,20 +844,6 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     const idPropName = this.gridOptions.datasetIdPropertyName || 'id';
     const dataView = this.grid.getData();
     dataView.updateItem(this._originalDataContext[idPropName], this._originalDataContext);
-  }
-
-  /** Show the Validation Summary text (as a <div>) when a validation fails or simply hide it when there's no error */
-  private showValidationSummaryText(isShowing: boolean, errorMsg = '') {
-    if (isShowing) {
-      this._modalBodyTopValidationElm.textContent = errorMsg;
-      this._modalBodyTopValidationElm.style.display = 'block';
-      this._modalBodyTopValidationElm.scrollIntoView?.();
-      this._modalSaveButtonElm.disabled = false;
-      this._modalSaveButtonElm.classList.remove('saving');
-    } else {
-      this._modalBodyTopValidationElm.style.display = 'none';
-      this._modalBodyTopValidationElm.textContent = errorMsg;
-    }
   }
 
   /** Validate all the Composite Editors that are defined in the form */
