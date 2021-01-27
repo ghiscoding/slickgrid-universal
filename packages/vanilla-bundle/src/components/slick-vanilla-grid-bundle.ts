@@ -83,6 +83,7 @@ import { SlickFooterComponent } from './slick-footer.component';
 import { SlickPaginationComponent } from './slick-pagination.component';
 import { SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
 import { UniversalContainerService } from '../services/universalContainer.service';
+import { autoAddEditorFormatterToColumnsWithEditor } from './slick-vanilla-utilities';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -494,6 +495,11 @@ export class SlickVanillaGridBundle {
     // so in our lib we will swap "editor" and copy it into a new property called "internalColumnEditor"
     // then take back "editor.model" and make it the new "editor" so that SlickGrid Editor Factory still works
     this._columnDefinitions = this.swapInternalEditorToSlickGridFactoryEditor(this._columnDefinitions);
+
+    // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
+    if (this._gridOptions.autoAddCustomEditorFormatter) {
+      autoAddEditorFormatterToColumnsWithEditor(this._columnDefinitions, this._gridOptions.autoAddCustomEditorFormatter);
+    }
 
     // save reference for all columns before they optionally become hidden/visible
     this.sharedService.allColumns = this._columnDefinitions;
@@ -1070,6 +1076,11 @@ export class SlickVanillaGridBundle {
   updateColumnDefinitionsList(newColumnDefinitions: Column[]) {
     // map/swap the internal library Editor to the SlickGrid Editor factory
     newColumnDefinitions = this.swapInternalEditorToSlickGridFactoryEditor(newColumnDefinitions);
+
+    // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
+    if (this._gridOptions.autoAddCustomEditorFormatter) {
+      autoAddEditorFormatterToColumnsWithEditor(newColumnDefinitions, this._gridOptions.autoAddCustomEditorFormatter);
+    }
 
     if (this._gridOptions.enableTranslate) {
       this.extensionService.translateColumnHeaders(false, newColumnDefinitions);

@@ -15,6 +15,7 @@ import {
   ExcelCopyBufferOption,
   ExcelExportOption,
   ExternalResource,
+  Formatter,
   FormatterOption,
   GridMenu,
   GridState,
@@ -50,6 +51,14 @@ export interface GridOption {
 
   /** Defaults to 40, which is the delay before the asynchronous post renderer start cleanup execution */
   asyncPostRenderCleanupDelay?: number;
+
+  /**
+   * Automatically add a Custom Formatter on all column definitions that have an Editor.
+   * Instead of manually adding a Custom Formatter on every column definitions that are editables, let's ask the system to do it in an easier automated way.
+   * It will loop through all column definitions and add an Custom Editor Formatter when necessary,
+   * also note that if there's already a Formatter on the column definition it will automatically use the Formatters.multiple and add the custom formatter into the `params: formatters: {}}`
+   */
+  autoAddCustomEditorFormatter?: Formatter;
 
   /** Defaults to false, when enabled will try to commit the current edit without focusing on the next row. If a custom editor is implemented and the grid cannot auto commit, you must use this option to implement it yourself */
   autoCommitEdit?: boolean;

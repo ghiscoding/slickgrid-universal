@@ -35,11 +35,13 @@ import {
   TreeDataService,
   TranslaterService,
   SlickEditorLock,
+  Formatter,
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import * as backendUtilities from '@slickgrid-universal/common/dist/commonjs/services/backend-utilities';
 import * as utilities from '@slickgrid-universal/common/dist/commonjs/services/utilities';
+import * as slickVanillaUtilities from '../slick-vanilla-utilities';
 
 import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle';
 import { EventPubSubService } from '../../services/eventPubSub.service';
@@ -55,10 +57,12 @@ const mockExecuteBackendProcess = jest.fn();
 const mockRefreshBackendDataset = jest.fn();
 const mockBackendError = jest.fn();
 const mockConvertParentChildArray = jest.fn();
+const mockAutoAddCustomEditorFormatter = jest.fn();
 
 (backendUtilities.executeBackendProcessesCallback as any) = mockExecuteBackendProcess;
 (backendUtilities.refreshBackendDataset as any) = mockRefreshBackendDataset;
 (backendUtilities.onBackendError as any) = mockBackendError;
+(slickVanillaUtilities.autoAddEditorFormatterToColumnsWithEditor as any) = mockAutoAddCustomEditorFormatter;
 
 declare const Slick: any;
 const slickEventHandler = new MockSlickEventHandler() as unknown as SlickEventHandler;
@@ -377,6 +381,12 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
   });
 
   describe('initialization method', () => {
+    const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef) => {
+      const isEditableLine = !!columnDef.editor;
+      value = (value === null || value === undefined) ? '' : value;
+      return isEditableLine ? `<div class="editing-field">${value}</div>` : value;
+    };
+
     afterEach(() => {
       jest.clearAllMocks();
     });
@@ -420,6 +430,17 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       expect(resizerSpy).toHaveBeenCalledWith();
     });
 
+    describe('autoAddCustomEditorFormatter grid option', () => {
+      it('should initialize the grid and automatically add custom Editor Formatter when provided in the grid options', () => {
+        const autoAddFormatterSpy = jest.spyOn(slickVanillaUtilities, 'autoAddEditorFormatterToColumnsWithEditor');
+
+        component.gridOptions = { autoAddCustomEditorFormatter: customEditableInputFormatter };
+        component.initialization(divContainer, slickEventHandler);
+
+        expect(autoAddFormatterSpy).toHaveBeenCalledWith([{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }], customEditableInputFormatter);
+      });
+    });
+
     describe('columns definitions changed', () => {
       it('should expect "translateColumnHeaders" being called when "enableTranslate" is set', () => {
         const translateSpy = jest.spyOn(extensionServiceStub, 'translateColumnHeaders');
@@ -448,10 +469,11 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const renderSpy = jest.spyOn(extensionServiceStub, 'renderColumnHeaders');
         const eventSpy = jest.spyOn(eventPubSubService, 'publish');
         const addPubSubSpy = jest.spyOn(component.translaterService, 'addPubSubMessaging');
+        const autoAddFormatterSpy = jest.spyOn(slickVanillaUtilities, 'autoAddEditorFormatterToColumnsWithEditor');
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
 
+        component.gridOptions = { enableTranslate: false, autoAddCustomEditorFormatter: customEditableInputFormatter };
         component.columnDefinitions = mockColDefs;
-        component.gridOptions = { enableTranslate: false };
         component.initialization(divContainer, slickEventHandler);
 
         expect(translateSpy).not.toHaveBeenCalled();
@@ -460,6 +482,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(eventSpy).toHaveBeenCalledTimes(4);
         expect(updateSpy).toHaveBeenCalledWith(mockColDefs);
         expect(renderSpy).toHaveBeenCalledWith(mockColDefs, true);
+        expect(autoAddFormatterSpy).toHaveBeenCalledWith([{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }], customEditableInputFormatter);
       });
     });
 

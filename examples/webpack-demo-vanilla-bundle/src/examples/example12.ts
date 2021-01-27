@@ -71,7 +71,7 @@ function checkItemIsEditable(dataContext, columnDef, grid) {
   return isEditable;
 }
 
-const customEditableInputFormatter = (_row, _cell, value, columnDef, dataContext, grid) => {
+const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, dataContext, grid) => {
   const isEditableLine = checkItemIsEditable(dataContext, columnDef, grid);
   value = (value === null || value === undefined) ? '' : value;
   return isEditableLine ? `<div class="editing-field">${value}</div>` : value;
@@ -351,14 +351,12 @@ export class Example12 {
       },
     ];
 
-    // automatically add a Custom Formatter with blue background for any Editable Fields
-    this.autoAddCustomEditorFormatter(this.columnDefinitions, customEditableInputFormatter);
-
     this.gridOptions = {
       useSalesforceDefaultGridOptions: true,
       datasetIdPropertyName: 'id',
       eventNamingStyle: EventNamingStyle.lowerCase,
       editable: true,
+      autoAddCustomEditorFormatter: customEditableInputFormatter,
       enableAddRow: true, // <-- this flag is required to work with the (create & clone) modal types
       enableCellNavigation: true,
       asyncEditorLoading: false,
@@ -574,32 +572,6 @@ export class Example12 {
     const gridState = event && event.detail && event.detail.gridState;
     if (Array.isArray(gridState?.rowSelection.dataContextIds)) {
       this.isMassSelectionDisabled = gridState.rowSelection.dataContextIds.length === 0;
-    }
-  }
-
-  /**
-   * Instead of manually adding a Custom Formatter on every column definition that is editable, let's do it in an automated way
-   * We'll loop through all column definitions and add a Formatter (blue background) when necessary
-   * Note however that if there's already a Formatter on that column definition, we need to turn it into a Formatters.multiple
-   */
-  autoAddCustomEditorFormatter(columnDefinitions: Column[], customFormatter: Formatter) {
-    if (Array.isArray(columnDefinitions)) {
-      for (const columnDef of columnDefinitions) {
-        if (columnDef.editor) {
-          if (columnDef.formatter && columnDef.formatter !== Formatters.multiple) {
-            const prevFormatter = columnDef.formatter;
-            columnDef.formatter = Formatters.multiple;
-            columnDef.params = { ...columnDef.params, formatters: [prevFormatter, customFormatter] };
-          } else if (columnDef.formatter && columnDef.formatter === Formatters.multiple) {
-            if (!columnDef.params) {
-              columnDef.params = {};
-            }
-            columnDef.params.formatters = [...columnDef.params.formatters, customFormatter];
-          } else {
-            columnDef.formatter = customFormatter;
-          }
-        }
-      }
     }
   }
 
