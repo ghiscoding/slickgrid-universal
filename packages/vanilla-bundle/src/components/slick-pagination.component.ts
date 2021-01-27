@@ -31,7 +31,7 @@ export class SlickPaginationComponent {
   textOf = 'of';
   textPage = 'Page';
 
-  constructor(private paginationService: PaginationService, private pubSubService: PubSubService, private sharedService: SharedService, private translaterService?: TranslaterService) {
+  constructor(private readonly paginationService: PaginationService, private readonly pubSubService: PubSubService, private readonly sharedService: SharedService, private readonly translaterService?: TranslaterService) {
     this._bindingHelper = new BindingHelper();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
 

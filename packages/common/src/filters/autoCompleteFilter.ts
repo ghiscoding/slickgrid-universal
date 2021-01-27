@@ -61,7 +61,7 @@ export class AutoCompleteFilter implements Filter {
   /**
    * Initialize the Filter
    */
-  constructor(protected translaterService: TranslaterService, protected collectionService: CollectionService) { }
+  constructor(protected readonly translaterService: TranslaterService, protected readonly collectionService: CollectionService) { }
 
   /** Getter for the Autocomplete Option */
   get autoCompleteOptions(): Partial<AutocompleteOption> {

@@ -13,14 +13,14 @@ const DEFAULT_MAX_VALUE = 100;
 const DEFAULT_STEP = 1;
 
 export class SliderFilter implements Filter {
-  private _clearFilterTriggered = false;
-  private _currentValue: number;
-  private _shouldTriggerQuery = true;
-  private _elementRangeInputId = '';
-  private _elementRangeOutputId = '';
-  private $filterElm: any;
-  private $filterInputElm: any;
-  private $filterNumberElm: any;
+  protected _clearFilterTriggered = false;
+  protected _currentValue: number;
+  protected _shouldTriggerQuery = true;
+  protected _elementRangeInputId = '';
+  protected _elementRangeOutputId = '';
+  protected $filterElm: any;
+  protected $filterInputElm: any;
+  protected $filterNumberElm: any;
   grid: SlickGrid;
   searchTerms: SearchTerm[];
   columnDef: Column;
@@ -37,12 +37,12 @@ export class SliderFilter implements Filter {
   }
 
   /** Getter for the Filter Generic Params */
-  private get filterParams(): any {
+  protected get filterParams(): any {
     return this.columnDef && this.columnDef.filter && this.columnDef.filter.params || {};
   }
 
   /** Getter for the `filter` properties */
-  private get filterProperties(): ColumnFilter {
+  protected get filterProperties(): ColumnFilter {
     return this.columnDef && this.columnDef.filter || {};
   }
 
@@ -153,13 +153,13 @@ export class SliderFilter implements Filter {
   }
 
   //
-  // private functions
+  // protected functions
   // ------------------
 
   /**
    * Create the HTML template as a string
    */
-  private buildTemplateHtmlString() {
+  protected buildTemplateHtmlString() {
     const columnId = this.columnDef?.id ?? '';
     const minValue = this.filterProperties.hasOwnProperty('minValue') ? this.filterProperties.minValue : DEFAULT_MIN_VALUE;
     const maxValue = this.filterProperties.hasOwnProperty('maxValue') ? this.filterProperties.maxValue : DEFAULT_MAX_VALUE;
@@ -193,7 +193,7 @@ export class SliderFilter implements Filter {
    * @param filterTemplate string
    * @param searchTerm optional preset search terms
    */
-  private createDomElement(filterTemplate: string, searchTerm?: SearchTerm) {
+  protected createDomElement(filterTemplate: string, searchTerm?: SearchTerm) {
     const columnId = this.columnDef && this.columnDef.id;
     const minValue = (this.filterProperties.hasOwnProperty('minValue') && this.filterProperties.minValue !== undefined) ? this.filterProperties.minValue : DEFAULT_MIN_VALUE;
     const startValue = +(this.filterParams.hasOwnProperty('sliderStartValue') ? this.filterParams.sliderStartValue : minValue);
@@ -230,7 +230,7 @@ export class SliderFilter implements Filter {
     return $filterElm;
   }
 
-  private handleOnChange(e: any) {
+  protected handleOnChange(e: any) {
     const value = e && e.target && e.target.value;
     this._currentValue = +value;
 

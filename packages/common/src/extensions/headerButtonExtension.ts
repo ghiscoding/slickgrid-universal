@@ -12,7 +12,7 @@ export class HeaderButtonExtension implements Extension {
   private _addon: SlickHeaderButtons | null;
   private _headerButtonOptions: HeaderButton | null;
 
-  constructor(private extensionUtility: ExtensionUtility, private sharedService: SharedService) {
+  constructor(private readonly extensionUtility: ExtensionUtility, private readonly sharedService: SharedService) {
     this._eventHandler = new Slick.EventHandler();
   }
 

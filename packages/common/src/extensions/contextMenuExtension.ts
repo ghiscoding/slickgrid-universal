@@ -29,10 +29,10 @@ export class ContextMenuExtension implements Extension {
   private _userOriginalContextMenu: ContextMenu | undefined;
 
   constructor(
-    private extensionUtility: ExtensionUtility,
-    private sharedService: SharedService,
-    private treeDataService: TreeDataService,
-    private translaterService?: TranslaterService,
+    private readonly extensionUtility: ExtensionUtility,
+    private readonly sharedService: SharedService,
+    private readonly treeDataService: TreeDataService,
+    private readonly translaterService?: TranslaterService,
   ) {
     this._eventHandler = new Slick.EventHandler();
   }

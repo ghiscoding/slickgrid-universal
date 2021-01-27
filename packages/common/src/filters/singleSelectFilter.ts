@@ -6,7 +6,7 @@ export class SingleSelectFilter extends SelectFilter {
   /**
    * Initialize the Filter
    */
-  constructor(protected translaterService: TranslaterService, protected collectionService: CollectionService) {
+  constructor(protected readonly translaterService: TranslaterService, protected readonly collectionService: CollectionService) {
     super(translaterService, collectionService, false);
   }
 }

@@ -30,12 +30,12 @@ export class HeaderMenuExtension implements Extension {
   private _eventHandler: SlickEventHandler;
 
   constructor(
-    private extensionUtility: ExtensionUtility,
-    private filterService: FilterService,
-    private pubSubService: PubSubService,
-    private sharedService: SharedService,
-    private sortService: SortService,
-    private translaterService?: TranslaterService,
+    private readonly extensionUtility: ExtensionUtility,
+    private readonly filterService: FilterService,
+    private readonly pubSubService: PubSubService,
+    private readonly sharedService: SharedService,
+    private readonly sortService: SortService,
+    private readonly translaterService?: TranslaterService,
   ) {
     this._eventHandler = new Slick.EventHandler();
   }

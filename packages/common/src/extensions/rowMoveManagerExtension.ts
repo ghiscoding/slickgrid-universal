@@ -20,7 +20,7 @@ export class RowMoveManagerExtension implements Extension {
   private _eventHandler: SlickEventHandler;
   private _rowSelectionPlugin: SlickRowSelectionModel;
 
-  constructor(private sharedService: SharedService) {
+  constructor(private readonly sharedService: SharedService) {
     this._eventHandler = new Slick.EventHandler();
   }
 
