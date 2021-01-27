@@ -10,4 +10,4 @@
 *.zip
 *.spec.ts
 **/__tests__/*.*
-**/dist/*.*
+**/dist/**/*.*
