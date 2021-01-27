@@ -623,16 +623,21 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   // For the Composite Editor to work, the current active cell must have an Editor (because it calls editActiveCell() and that only works with a cell with an Editor)
   // so if current active cell doesn't have an Editor, we'll find the first column with an Editor and focus on it (from left to right starting at index 0)
   private focusOnFirstColumnCellWithEditor(columns: Column[], dataContext: any, columnIndex: number, rowIndex: number, isWithMassChange: boolean): boolean {
+    // make sure we're not trying to activate a cell outside of the grid, that can happen when using MassUpdate without `enableAddRow` flag enabled
+    const activeCellIndex = (isWithMassChange && !this.gridOptions.enableAddRow && (rowIndex >= this.dataViewLength)) ? this.dataViewLength - 1 : rowIndex;
+
     let columnIndexWithEditor = columnIndex;
     const cellEditor = columns[columnIndex].editor;
+    let activeEditorCellNode = this.grid.getCellNode(activeCellIndex, columnIndex);
 
-    if (!cellEditor || !this.getActiveCellEditor(rowIndex, columnIndex)) {
+    if (!cellEditor || !activeEditorCellNode || !this.getActiveCellEditor(activeCellIndex, columnIndex)) {
       columnIndexWithEditor = this.findNextAvailableEditorColumnIndex(columns, dataContext, rowIndex, isWithMassChange);
       if (columnIndexWithEditor === -1) {
         this.executeOnError({ type: 'error', code: 'NO_EDITOR_FOUND', message: 'We could not find any Editor in your Column Definition' });
         return false;
       } else {
-        this.grid.setActiveCell(rowIndex, columnIndexWithEditor, false);
+        this.grid.setActiveCell(activeCellIndex, columnIndexWithEditor, false);
+
         if (isWithMassChange) {
           // when it's a mass change, we'll activate the last row without scrolling to it
           // that is possible via the 3rd argument "suppressScrollIntoView" set to "true"
@@ -640,7 +645,11 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         }
       }
     }
-    return true;
+
+    // check again if the cell node is now being created, if it is then we're good
+    activeEditorCellNode = this.grid.getCellNode(activeCellIndex, columnIndexWithEditor);
+
+    return !!activeEditorCellNode;
   }
 
   private findNextAvailableEditorColumnIndex(columns: Column[], dataContext: any, rowIndex: number, isWithMassUpdate: boolean): number {

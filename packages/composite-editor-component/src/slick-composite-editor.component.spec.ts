@@ -78,6 +78,7 @@ const gridStub = {
   editActiveCell: jest.fn(),
   getColumnIndex: jest.fn(),
   getActiveCell: jest.fn(),
+  getCellNode: jest.fn(),
   getCellEditor: jest.fn(),
   getData: jest.fn(),
   getDataItem: jest.fn(),
@@ -150,6 +151,7 @@ describe('CompositeEditorService', () => {
       jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
       jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);
       jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ row: 0, cell: 0 });
+      jest.spyOn(gridStub, 'getCellNode').mockReturnValue(document.createElement('div'));
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
       jest.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
