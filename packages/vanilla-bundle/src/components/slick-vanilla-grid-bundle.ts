@@ -7,10 +7,8 @@ import 'slickgrid/slick.dataview';
 import 'slickgrid/slick.groupitemmetadataprovider';
 import 'slickgrid/plugins/slick.resizer';
 import {
-  AutoCompleteEditor,
   BackendServiceApi,
   Column,
-  ColumnEditor,
   DataViewOption,
   ExtensionList,
   ExternalResource,
@@ -30,7 +28,6 @@ import {
   onBackendError,
   refreshBackendDataset,
   Pagination,
-  SelectEditor,
   ServicePagination,
   Subscription,
 
@@ -83,6 +80,7 @@ import { SlickFooterComponent } from './slick-footer.component';
 import { SlickPaginationComponent } from './slick-pagination.component';
 import { SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
 import { UniversalContainerService } from '../services/universalContainer.service';
+import { autoAddEditorFormatterToColumnsWithEditor, swapInternalEditorToSlickGridFactoryEditor } from './slick-vanilla-utilities';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -493,7 +491,12 @@ export class SlickVanillaGridBundle {
     // however "editor" is used internally by SlickGrid for it's own Editor Factory
     // so in our lib we will swap "editor" and copy it into a new property called "internalColumnEditor"
     // then take back "editor.model" and make it the new "editor" so that SlickGrid Editor Factory still works
-    this._columnDefinitions = this.swapInternalEditorToSlickGridFactoryEditor(this._columnDefinitions);
+    this._columnDefinitions = swapInternalEditorToSlickGridFactoryEditor(this._columnDefinitions, this.slickGrid);
+
+    // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
+    if (this._gridOptions.autoAddCustomEditorFormatter) {
+      autoAddEditorFormatterToColumnsWithEditor(this._columnDefinitions, this._gridOptions.autoAddCustomEditorFormatter);
+    }
 
     // save reference for all columns before they optionally become hidden/visible
     this.sharedService.allColumns = this._columnDefinitions;
@@ -1069,7 +1072,12 @@ export class SlickVanillaGridBundle {
    */
   updateColumnDefinitionsList(newColumnDefinitions: Column[]) {
     // map/swap the internal library Editor to the SlickGrid Editor factory
-    newColumnDefinitions = this.swapInternalEditorToSlickGridFactoryEditor(newColumnDefinitions);
+    newColumnDefinitions = swapInternalEditorToSlickGridFactoryEditor(newColumnDefinitions, this.slickGrid);
+
+    // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
+    if (this._gridOptions.autoAddCustomEditorFormatter) {
+      autoAddEditorFormatterToColumnsWithEditor(newColumnDefinitions, this._gridOptions.autoAddCustomEditorFormatter);
+    }
 
     if (this._gridOptions.enableTranslate) {
       this.extensionService.translateColumnHeaders(false, newColumnDefinitions);
@@ -1163,32 +1171,6 @@ export class SlickVanillaGridBundle {
     }
   }
 
-  /** Load the Editor Collection asynchronously and replace the "collection" property when Promise resolves */
-  private loadEditorCollectionAsync(column: Column) {
-    const collectionAsync = (column?.editor as ColumnEditor).collectionAsync;
-    (column?.editor as ColumnEditor).disabled = true; // disable the Editor DOM element, we'll re-enable it after receiving the collection with "updateEditorCollection()"
-
-    if (collectionAsync) {
-      // wait for the "collectionAsync", once resolved we will save it into the "collection"
-      // the collectionAsync can be of 3 types HttpClient, HttpFetch or a Promise
-      collectionAsync.then((response: any | any[]) => {
-        if (Array.isArray(response)) {
-          this.updateEditorCollection(column, response); // from Promise
-        } else if (response instanceof Response && typeof response.json === 'function') {
-          if (response.bodyUsed) {
-            console.warn(`[SlickGrid-Universal] The response body passed to collectionAsync was already read.`
-              + `Either pass the dataset from the Response or clone the response first using response.clone()`);
-          } else {
-            // from Fetch
-            (response as Response).json().then(data => this.updateEditorCollection(column, data));
-          }
-        } else if (response && response['content']) {
-          this.updateEditorCollection(column, response['content']); // from http-client
-        }
-      });
-    }
-  }
-
   /** Load any possible Grid Presets (columns, filters) */
   private loadPresetsWhenDatasetInitialized() {
     if (this.gridOptions && !this.customDataView) {
@@ -1267,32 +1249,6 @@ export class SlickVanillaGridBundle {
     }
   }
 
-  /**
-   * For convenience to the user, we provide the property "editor" as an Slickgrid-Universal editor complex object
-   * however "editor" is used internally by SlickGrid for it's own Editor Factory
-   * so in our lib we will swap "editor" and copy it into a new property called "internalColumnEditor"
-   * then take back "editor.model" and make it the new "editor" so that SlickGrid Editor Factory still works
-   */
-  private swapInternalEditorToSlickGridFactoryEditor(columnDefinitions: Column[]) {
-    const columns = Array.isArray(columnDefinitions) ? columnDefinitions : [];
-
-    if (columns.some(col => `${col.id}`.includes('.'))) {
-      console.error('[Slickgrid-Universal] Make sure that none of your Column Definition "id" property includes a dot in its name because that will cause some problems with the Editors. For example if your column definition "field" property is "user.firstName" then use "firstName" as the column "id".');
-    }
-
-    return columns.map((column: Column) => {
-      // on every Editor that have a "collectionAsync", resolve the data and assign it to the "collection" property
-      if (column.editor?.collectionAsync) {
-        this.loadEditorCollectionAsync(column);
-      }
-
-      // if there's already an internalColumnEditor we'll use it, else it would be inside the editor
-      const columnEditor = column.internalColumnEditor || column.editor as ColumnEditor;
-
-      return { ...column, editor: columnEditor?.model, internalColumnEditor: { ...columnEditor } };
-    });
-  }
-
   private treeDataSortComparer(flatDataset: any[]): any[] {
     const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
     const treeDataOpt: TreeDataOption = this._gridOptions?.treeDataOptions ?? { columnId: '' };
@@ -1322,32 +1278,5 @@ export class SlickVanillaGridBundle {
   /** translate all column groups (including hidden columns) */
   private translateColumnGroupKeys() {
     this.extensionUtility.translateItems(this.sharedService.allColumns, 'columnGroupKey', 'columnGroup');
-  }
-
-  /**
-   * Update the "internalColumnEditor.collection" property.
-   * Since this is called after the async call resolves, the pointer will not be the same as the "column" argument passed.
-   * Once we found the new pointer, we will reassign the "editor" and "collection" to the "internalColumnEditor" so it has newest collection
-   */
-  private updateEditorCollection<T = any>(column: Column<T>, newCollection: T[]) {
-    (column.editor as ColumnEditor).collection = newCollection;
-    (column.editor as ColumnEditor).disabled = false;
-
-    // find the new column reference pointer & re-assign the new editor to the internalColumnEditor
-    const columns = this.slickGrid.getColumns();
-    if (Array.isArray(columns)) {
-      const columnRef = columns.find((col: Column) => col.id === column.id);
-      if (columnRef) {
-        columnRef.internalColumnEditor = column.editor as ColumnEditor;
-      }
-    }
-
-    // get current Editor, remove it from the DOm then re-enable it and re-render it with the new collection.
-    const currentEditor = this.slickGrid.getCellEditor() as AutoCompleteEditor | SelectEditor;
-    if (currentEditor?.disable && currentEditor?.renderDomElement) {
-      currentEditor.destroy();
-      currentEditor.disable(false);
-      currentEditor.renderDomElement(newCollection);
-    }
   }
 }
