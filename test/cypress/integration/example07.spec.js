@@ -533,7 +533,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       .contains('Task 500');
 
     cy.get('[name=editor-prerequisites].ms-drop ul > li:nth(0)')
-      .click({ force: true });
+      .click();
 
     cy.get('.ms-ok-button')
       .last()
