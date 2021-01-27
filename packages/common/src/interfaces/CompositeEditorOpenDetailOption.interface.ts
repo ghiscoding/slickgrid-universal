@@ -104,7 +104,8 @@ export interface CompositeEditorOpenDetailOption {
 
   /**
    * Defaults to 1, how many columns do we want to show in the view layout?
-   * For example if you wish to see your form split in a 2 columns layout (split view)
+   * For example if you wish to see your form split in a 2 columns layout (split view).
+   * The 'auto' mode will display a 1 column layout for 8 or less Editors, 2 columns layout for less than 15 Editors or 3 columns when more than 15 Editors
    */
   viewColumnLayout?: 1 | 2 | 3 | 'auto';
 

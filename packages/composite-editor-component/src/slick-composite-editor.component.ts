@@ -550,7 +550,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
   /**
    * Auto-Calculate how many columns to display in the view layout (1, 2, or 3).
-   * We'll display a 1 column layount for 8 or less Editors, 2 columns layout for less than 15 Editors or 3 columns when more than 15 Editors
+   * We'll display a 1 column layout for 8 or less Editors, 2 columns layout for less than 15 Editors or 3 columns when more than 15 Editors
    * @param {number} editorCount - how many Editors do we have in total
    * @returns {number} count - calculated column count (1, 2 or 3)
    */

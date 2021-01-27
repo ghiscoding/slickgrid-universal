@@ -359,7 +359,7 @@ export class Example12 {
       datasetIdPropertyName: 'id',
       eventNamingStyle: EventNamingStyle.lowerCase,
       editable: true,
-      enableAddRow: true, // <-- this flag is required to work with these modal types (create/mass-update/mass-selection)
+      enableAddRow: true, // <-- this flag is required to work with the (create & clone) modal types
       enableCellNavigation: true,
       asyncEditorLoading: false,
       autoEdit: true,
@@ -922,7 +922,7 @@ export class Example12 {
         modalType,
         // showCloseButtonOutside: true,
         // backdrop: null,
-        // viewColumnLayout: 2, // choose from 'auto', 1, 2, or 3 (defaults to 'auto')
+        // viewColumnLayout: 2, // responsive layout, choose from 'auto', 1, 2, or 3 (defaults to 'auto')
         onClose: () => Promise.resolve(confirm('You have unsaved changes, are you sure you want to close this window?')),
         onError: (error) => alert(error.message),
         onSave: (formValues, _selection, dataContext) => {
@@ -944,7 +944,7 @@ export class Example12 {
             // also simulate a server cal for any other modal type (create/clone/edit)
             // we'll just apply the change without any rejection from the server and
             // note that we also have access to the "dataContext" which is only available for these modal
-            console.log(`new ${modalType}d item`, dataContext);
+            console.log(`${modalType} item data context`, dataContext);
             return new Promise(resolve => setTimeout(() => resolve(true), serverResponseDelay));
           }
         }
