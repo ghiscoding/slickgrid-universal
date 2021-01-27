@@ -3,7 +3,7 @@ import { CompoundInputFilter } from './compoundInputFilter';
 
 export class CompoundInputPasswordFilter extends CompoundInputFilter {
   /** Initialize the Filter */
-  constructor(protected translaterService: TranslaterService) {
+  constructor(protected readonly translaterService: TranslaterService) {
     super(translaterService);
     this.inputType = 'password';
   }

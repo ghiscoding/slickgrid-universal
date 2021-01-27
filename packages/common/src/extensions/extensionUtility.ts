@@ -6,7 +6,7 @@ import { TranslaterService } from '../services';
 import { getTranslationPrefix } from '../services/utilities';
 
 export class ExtensionUtility {
-  constructor(private sharedService: SharedService, private translaterService?: TranslaterService) { }
+  constructor(private readonly sharedService: SharedService, private readonly translaterService?: TranslaterService) { }
 
   /**
    * From a Grid Menu object property name, we will return the correct title output string following this order

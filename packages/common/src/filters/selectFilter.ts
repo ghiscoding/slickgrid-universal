@@ -49,7 +49,7 @@ export class SelectFilter implements Filter {
   /**
    * Initialize the Filter
    */
-  constructor(protected translaterService: TranslaterService, protected collectionService: CollectionService, isMultipleSelect = true) {
+  constructor(protected readonly translaterService: TranslaterService, protected readonly collectionService: CollectionService, isMultipleSelect = true) {
     this._isMultipleSelect = isMultipleSelect;
   }
 

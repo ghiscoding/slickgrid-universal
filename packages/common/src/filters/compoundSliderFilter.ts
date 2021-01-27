@@ -19,22 +19,22 @@ const DEFAULT_MAX_VALUE = 100;
 const DEFAULT_STEP = 1;
 
 export class CompoundSliderFilter implements Filter {
-  private _clearFilterTriggered = false;
-  private _currentValue: number;
-  private _shouldTriggerQuery = true;
-  private _elementRangeInputId = '';
-  private _elementRangeOutputId = '';
-  private _operator: OperatorType | OperatorString;
-  private $containerInputGroupElm: any;
-  private $filterElm: any;
-  private $filterInputElm: any;
-  private $selectOperatorElm: any;
+  protected _clearFilterTriggered = false;
+  protected _currentValue: number;
+  protected _shouldTriggerQuery = true;
+  protected _elementRangeInputId = '';
+  protected _elementRangeOutputId = '';
+  protected _operator: OperatorType | OperatorString;
+  protected $containerInputGroupElm: any;
+  protected $filterElm: any;
+  protected $filterInputElm: any;
+  protected $selectOperatorElm: any;
   grid: SlickGrid;
   searchTerms: SearchTerm[];
   columnDef: Column;
   callback: FilterCallback;
 
-  constructor(private translaterService: TranslaterService) { }
+  constructor(protected readonly translaterService: TranslaterService) { }
 
   /** Getter for the Filter Operator */
   get columnFilter(): ColumnFilter {
@@ -47,17 +47,17 @@ export class CompoundSliderFilter implements Filter {
   }
 
   /** Getter for the Filter Generic Params */
-  private get filterParams(): any {
+  protected get filterParams(): any {
     return this.columnDef && this.columnDef.filter && this.columnDef.filter.params || {};
   }
 
   /** Getter for the `filter` properties */
-  private get filterProperties(): ColumnFilter {
+  protected get filterProperties(): ColumnFilter {
     return this.columnDef && this.columnDef.filter || {};
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
-  private get gridOptions(): GridOption {
+  protected get gridOptions(): GridOption {
     return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
   }
 
@@ -181,11 +181,11 @@ export class CompoundSliderFilter implements Filter {
   }
 
   //
-  // private functions
+  // protected functions
   // ------------------
 
   /** Build HTML Template for the input range (slider) */
-  private buildTemplateHtmlString() {
+  protected buildTemplateHtmlString() {
     const minValue = this.filterProperties.hasOwnProperty('minValue') ? this.filterProperties.minValue : DEFAULT_MIN_VALUE;
     const maxValue = this.filterProperties.hasOwnProperty('maxValue') ? this.filterProperties.maxValue : DEFAULT_MAX_VALUE;
     const defaultValue = this.filterParams.hasOwnProperty('sliderStartValue') ? this.filterParams.sliderStartValue : minValue;
@@ -197,7 +197,7 @@ export class CompoundSliderFilter implements Filter {
   }
 
   /** Build HTML Template for the text (number) that is shown appended to the slider */
-  private buildTemplateSliderTextHtmlString() {
+  protected buildTemplateSliderTextHtmlString() {
     const minValue = this.filterProperties.hasOwnProperty('minValue') ? this.filterProperties.minValue : DEFAULT_MIN_VALUE;
     const defaultValue = this.filterParams.hasOwnProperty('sliderStartValue') ? this.filterParams.sliderStartValue : minValue;
 
@@ -205,7 +205,7 @@ export class CompoundSliderFilter implements Filter {
   }
 
   /** Get the available operator option values */
-  private getOptionValues(): { operator: OperatorString, description: string }[] {
+  protected getOptionValues(): { operator: OperatorString, description: string }[] {
     return [
       { operator: '', description: '' },
       { operator: '=', description: this.getOutputText('EQUAL_TO', 'TEXT_EQUAL_TO', 'Equal to') },
@@ -218,7 +218,7 @@ export class CompoundSliderFilter implements Filter {
   }
 
   /** Get Locale, Translated or a Default Text if first two aren't detected */
-  private getOutputText(translationKey: string, localeText: string, defaultText: string): string {
+  protected getOutputText(translationKey: string, localeText: string, defaultText: string): string {
     if (this.gridOptions?.enableTranslate && this.translaterService?.translate) {
       const translationPrefix = getTranslationPrefix(this.gridOptions);
       return this.translaterService.translate(`${translationPrefix}${translationKey}`);
@@ -229,7 +229,7 @@ export class CompoundSliderFilter implements Filter {
   /**
    * Create the DOM element
    */
-  private createDomElement(searchTerm?: SearchTerm) {
+  protected createDomElement(searchTerm?: SearchTerm) {
     const columnId = this.columnDef?.id ?? '';
     const minValue = (this.filterProperties.hasOwnProperty('minValue') && this.filterProperties.minValue) ? this.filterProperties.minValue : DEFAULT_MIN_VALUE;
     const startValue = +(this.filterParams.hasOwnProperty('sliderStartValue') ? this.filterParams.sliderStartValue : minValue);
@@ -295,7 +295,7 @@ export class CompoundSliderFilter implements Filter {
     return $filterContainerElm;
   }
 
-  private onTriggerEvent(e: Event | undefined) {
+  protected onTriggerEvent(e: Event | undefined) {
     const value = this.$filterInputElm.val();
     this._currentValue = +value;
 

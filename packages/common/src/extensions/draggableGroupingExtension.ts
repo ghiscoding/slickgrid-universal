@@ -12,7 +12,7 @@ export class DraggableGroupingExtension implements Extension {
   private _draggableGroupingOptions: DraggableGrouping | null;
   private _eventHandler: SlickEventHandler;
 
-  constructor(private extensionUtility: ExtensionUtility, private sharedService: SharedService) {
+  constructor(private readonly extensionUtility: ExtensionUtility, private readonly sharedService: SharedService) {
     this._eventHandler = new Slick.EventHandler();
   }
 

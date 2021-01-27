@@ -11,7 +11,7 @@ export class CheckboxSelectorExtension implements Extension {
   private _addon: SlickCheckboxSelectColumn | null;
   private _rowSelectionPlugin: SlickRowSelectionModel;
 
-  constructor(private sharedService: SharedService) { }
+  constructor(private readonly sharedService: SharedService) { }
 
   dispose() {
     if (this._addon && this._addon.destroy) {

@@ -33,22 +33,22 @@ export class ExtensionService {
   }
 
   constructor(
-    private autoTooltipExtension: AutoTooltipExtension,
-    private cellExternalCopyExtension: CellExternalCopyManagerExtension,
-    private cellMenuExtension: CellMenuExtension,
-    private checkboxSelectorExtension: CheckboxSelectorExtension,
-    private columnPickerExtension: ColumnPickerExtension,
-    private contextMenuExtension: ContextMenuExtension,
-    private draggableGroupingExtension: DraggableGroupingExtension,
-    private gridMenuExtension: GridMenuExtension,
-    private groupItemMetaExtension: GroupItemMetaProviderExtension,
-    private headerButtonExtension: HeaderButtonExtension,
-    private headerMenuExtension: HeaderMenuExtension,
-    private rowDetailViewExtension: RowDetailViewExtension,
-    private rowMoveManagerExtension: RowMoveManagerExtension,
-    private rowSelectionExtension: RowSelectionExtension,
-    private sharedService: SharedService,
-    private translaterService?: TranslaterService,
+    private readonly autoTooltipExtension: AutoTooltipExtension,
+    private readonly cellExternalCopyExtension: CellExternalCopyManagerExtension,
+    private readonly cellMenuExtension: CellMenuExtension,
+    private readonly checkboxSelectorExtension: CheckboxSelectorExtension,
+    private readonly columnPickerExtension: ColumnPickerExtension,
+    private readonly contextMenuExtension: ContextMenuExtension,
+    private readonly draggableGroupingExtension: DraggableGroupingExtension,
+    private readonly gridMenuExtension: GridMenuExtension,
+    private readonly groupItemMetaExtension: GroupItemMetaProviderExtension,
+    private readonly headerButtonExtension: HeaderButtonExtension,
+    private readonly headerMenuExtension: HeaderMenuExtension,
+    private readonly rowDetailViewExtension: RowDetailViewExtension,
+    private readonly rowMoveManagerExtension: RowMoveManagerExtension,
+    private readonly rowSelectionExtension: RowSelectionExtension,
+    private readonly sharedService: SharedService,
+    private readonly translaterService?: TranslaterService,
   ) { }
 
   /** Dispose of all the controls & plugins */

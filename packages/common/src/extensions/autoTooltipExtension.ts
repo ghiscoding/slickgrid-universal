@@ -9,7 +9,7 @@ declare const Slick: SlickNamespace;
 export class AutoTooltipExtension implements Extension {
   private _addon: SlickAutoTooltips | null;
 
-  constructor(private sharedService: SharedService) { }
+  constructor(private readonly sharedService: SharedService) { }
 
   dispose() {
     if (this._addon && this._addon.destroy) {

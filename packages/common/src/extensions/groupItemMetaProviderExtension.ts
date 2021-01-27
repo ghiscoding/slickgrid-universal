@@ -4,7 +4,7 @@ import { SharedService } from '../services/shared.service';
 export class GroupItemMetaProviderExtension implements Extension {
   private _addon: SlickGroupItemMetadataProvider | null;
 
-  constructor(private sharedService: SharedService) { }
+  constructor(private readonly sharedService: SharedService) { }
 
   dispose() {
     if (this._addon && this._addon.destroy) {

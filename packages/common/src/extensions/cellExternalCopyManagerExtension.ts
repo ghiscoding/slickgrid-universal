@@ -32,7 +32,7 @@ export class CellExternalCopyManagerExtension implements Extension {
   private _undoRedoBuffer: EditUndoRedoBuffer;
   private _bindingEventService: BindingEventService;
 
-  constructor(private extensionUtility: ExtensionUtility, private sharedService: SharedService) {
+  constructor(private readonly extensionUtility: ExtensionUtility, private readonly sharedService: SharedService) {
     this._eventHandler = new Slick.EventHandler() as SlickEventHandler;
     this._bindingEventService = new BindingEventService();
   }

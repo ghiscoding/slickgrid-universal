@@ -12,7 +12,7 @@ export class ColumnPickerExtension implements Extension {
   private _addon: SlickColumnPicker | null;
   private _columnPicker: ColumnPicker | null;
 
-  constructor(private extensionUtility: ExtensionUtility, private sharedService: SharedService) {
+  constructor(private readonly extensionUtility: ExtensionUtility, private readonly sharedService: SharedService) {
     this._eventHandler = new Slick.EventHandler();
   }
 

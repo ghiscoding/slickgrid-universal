@@ -33,11 +33,11 @@ export class GridMenuExtension implements Extension {
   private _userOriginalGridMenu: GridMenu;
 
   constructor(
-    private extensionUtility: ExtensionUtility,
-    private filterService: FilterService,
-    private sharedService: SharedService,
-    private sortService: SortService,
-    private translaterService?: TranslaterService,
+    private readonly extensionUtility: ExtensionUtility,
+    private readonly filterService: FilterService,
+    private readonly sharedService: SharedService,
+    private readonly sortService: SortService,
+    private readonly translaterService?: TranslaterService,
   ) {
     this._eventHandler = new Slick.EventHandler();
   }

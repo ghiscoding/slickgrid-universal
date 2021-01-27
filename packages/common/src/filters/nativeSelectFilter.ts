@@ -11,16 +11,16 @@ import { OperatorType, OperatorString, SearchTerm } from '../enums/index';
 import { TranslaterService } from '../services/translater.service';
 
 export class NativeSelectFilter implements Filter {
-  private _clearFilterTriggered = false;
-  private _shouldTriggerQuery = true;
-  private _currentValues: any | any[] = [];
+  protected _clearFilterTriggered = false;
+  protected _shouldTriggerQuery = true;
+  protected _currentValues: any | any[] = [];
   $filterElm: any;
   grid: SlickGrid;
   searchTerms: SearchTerm[];
   columnDef: Column;
   callback: FilterCallback;
 
-  constructor(private translater: TranslaterService) { }
+  constructor(protected readonly translater: TranslaterService) { }
 
   /** Getter for the Column Filter itself */
   protected get columnFilter(): ColumnFilter {
@@ -133,10 +133,10 @@ export class NativeSelectFilter implements Filter {
   }
 
   //
-  // private functions
+  // protected functions
   // ------------------
 
-  private buildTemplateHtmlString() {
+  protected buildTemplateHtmlString() {
     const collection = this.columnFilter && this.columnFilter.collection || [];
     if (!Array.isArray(collection)) {
       throw new Error('The "collection" passed to the Native Select Filter is not a valid array.');
@@ -171,7 +171,7 @@ export class NativeSelectFilter implements Filter {
    * From the html template string, create a DOM element
    * @param filterTemplate
    */
-  private createDomElement(filterTemplate: string, searchTerm?: SearchTerm) {
+  protected createDomElement(filterTemplate: string, searchTerm?: SearchTerm) {
     const columnId = this.columnDef?.id ?? '';
     const $headerElm = this.grid.getHeaderRowColumn(columnId);
     $($headerElm).empty();
@@ -195,7 +195,7 @@ export class NativeSelectFilter implements Filter {
     return $filterElm;
   }
 
-  private handleOnChange(e: any) {
+  protected handleOnChange(e: any) {
     const value = e && e.target && e.target.value || '';
     this._currentValues = [value];
 

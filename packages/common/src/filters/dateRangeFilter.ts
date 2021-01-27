@@ -25,24 +25,24 @@ import { destroyObjectDomElementProps, mapFlatpickrDateFormatWithFieldType, mapM
 import { TranslaterService } from '../services/translater.service';
 
 export class DateRangeFilter implements Filter {
-  private _clearFilterTriggered = false;
-  private _currentValue: string;
-  private _currentDates: Date[];
-  private _currentDateStrings: string[];
-  private _flatpickrOptions: FlatpickrOption;
-  private _shouldTriggerQuery = true;
-  private $filterElm: any;
-  private $filterInputElm: any;
+  protected _clearFilterTriggered = false;
+  protected _currentValue: string;
+  protected _currentDates: Date[];
+  protected _currentDateStrings: string[];
+  protected _flatpickrOptions: FlatpickrOption;
+  protected _shouldTriggerQuery = true;
+  protected $filterElm: any;
+  protected $filterInputElm: any;
   flatInstance: any;
   grid: SlickGrid;
   searchTerms: SearchTerm[];
   columnDef: Column;
   callback: FilterCallback;
 
-  constructor(private translaterService: TranslaterService) { }
+  constructor(protected readonly translaterService: TranslaterService) { }
 
   /** Getter for the Grid Options pulled through the Grid Object */
-  private get gridOptions(): GridOption {
+  protected get gridOptions(): GridOption {
     return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
   }
 
@@ -165,9 +165,9 @@ export class DateRangeFilter implements Filter {
   }
 
   //
-  // private functions
+  // protected functions
   // ------------------
-  private buildDatePickerInput(searchTerms?: SearchTerm | SearchTerm[]) {
+  protected buildDatePickerInput(searchTerms?: SearchTerm | SearchTerm[]) {
     const columnId = this.columnDef?.id ?? '';
     const inputFormat = mapFlatpickrDateFormatWithFieldType(this.columnFilter.type || this.columnDef.type || FieldType.dateIso);
     const outputFormat = mapFlatpickrDateFormatWithFieldType(this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc);
@@ -246,7 +246,7 @@ export class DateRangeFilter implements Filter {
    * Create the DOM element
    * @params searchTerms
    */
-  private createDomElement(searchTerms?: SearchTerm[]) {
+  protected createDomElement(searchTerms?: SearchTerm[]) {
     const columnId = this.columnDef?.id ?? '';
     const $headerElm = this.grid.getHeaderRowColumn(columnId);
     $($headerElm).empty();
@@ -278,7 +278,7 @@ export class DateRangeFilter implements Filter {
     return this.$filterInputElm;
   }
 
-  private onTriggerEvent(e: Event | undefined) {
+  protected onTriggerEvent(e: Event | undefined) {
     if (this._clearFilterTriggered) {
       this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
       this.$filterElm.removeClass('filled');
