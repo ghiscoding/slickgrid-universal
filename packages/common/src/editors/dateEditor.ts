@@ -31,13 +31,13 @@ declare const Slick: SlickNamespace;
  * https://chmln.github.io/flatpickr
  */
 export class DateEditor implements Editor {
-  private _$inputWithData: any;
-  private _$input: any;
-  private _$editorInputElm: any;
-  private _$closeButtonGroupElm: any;
-  private _lastTriggeredByClearDate = false;
-  private _originalDate: string;
-  private _pickerMergedOptions: FlatpickrOption;
+  protected _$inputWithData: any;
+  protected _$input: any;
+  protected _$editorInputElm: any;
+  protected _$closeButtonGroupElm: any;
+  protected _lastTriggeredByClearDate = false;
+  protected _originalDate: string;
+  protected _pickerMergedOptions: FlatpickrOption;
 
   flatInstance: FlatpickrInstance;
   defaultDate: string;
@@ -54,7 +54,7 @@ export class DateEditor implements Editor {
   /** The translate library */
   protected _translaterService: TranslaterService;
 
-  constructor(private args: EditorArguments) {
+  constructor(protected readonly args: EditorArguments) {
     if (!args) {
       throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
     }
@@ -378,17 +378,17 @@ export class DateEditor implements Editor {
   }
 
   //
-  // private functions
+  // protected functions
   // ------------------
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
-  private applyInputUsabilityState() {
+  protected applyInputUsabilityState() {
     const activeCell = this.grid.getActiveCell();
     const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
     this.disable(isCellEditable === false);
   }
 
-  private handleOnDateChange() {
+  protected handleOnDateChange() {
     if (this.args) {
       const compositeEditorOptions = this.args.compositeEditorOptions;
       if (compositeEditorOptions) {
@@ -400,7 +400,7 @@ export class DateEditor implements Editor {
     setTimeout(() => this._lastTriggeredByClearDate = false); // reset flag after a cycle
   }
 
-  private handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
+  protected handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';

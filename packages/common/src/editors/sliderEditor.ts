@@ -14,11 +14,11 @@ declare const Slick: SlickNamespace;
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
 export class SliderEditor implements Editor {
-  private _defaultValue = 0;
-  private _elementRangeInputId = '';
-  private _elementRangeOutputId = '';
-  private _$editorElm: any;
-  private _$input: any;
+  protected _defaultValue = 0;
+  protected _elementRangeInputId = '';
+  protected _elementRangeOutputId = '';
+  protected _$editorElm: any;
+  protected _$input: any;
   $sliderNumber: any;
   originalValue: any;
 
@@ -31,7 +31,7 @@ export class SliderEditor implements Editor {
   /** Grid options */
   gridOptions: GridOption;
 
-  constructor(private args: EditorArguments) {
+  constructor(protected readonly args: EditorArguments) {
     if (!args) {
       throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
     }
@@ -65,7 +65,7 @@ export class SliderEditor implements Editor {
   }
 
   /** Getter for the Editor Generic Params */
-  private get editorParams(): any {
+  protected get editorParams(): any {
     return this.columnEditor.params || {};
   }
 
@@ -270,13 +270,13 @@ export class SliderEditor implements Editor {
   }
 
   //
-  // private functions
+  // protected functions
   // ------------------
 
   /**
    * Create the HTML template as a string
    */
-  private buildTemplateHtmlString() {
+  protected buildTemplateHtmlString() {
     const columnId = this.columnDef?.id ?? '';
     const title = this.columnEditor && this.columnEditor.title || '';
     const minValue = this.columnEditor.hasOwnProperty('minValue') ? this.columnEditor.minValue : DEFAULT_MIN_VALUE;
@@ -306,13 +306,13 @@ export class SliderEditor implements Editor {
   }
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
-  private applyInputUsabilityState() {
+  protected applyInputUsabilityState() {
     const activeCell = this.grid.getActiveCell();
     const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
     this.disable(isCellEditable === false);
   }
 
-  private handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
+  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';

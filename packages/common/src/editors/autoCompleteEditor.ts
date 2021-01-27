@@ -36,14 +36,14 @@ declare const Slick: SlickNamespace;
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
 export class AutoCompleteEditor implements Editor {
-  private _autoCompleteOptions: AutocompleteOption;
-  private _currentValue: any;
-  private _defaultTextValue: string;
-  private _elementCollection: any[] | null;
-  private _lastInputKeyEvent: JQuery.Event;
+  protected _autoCompleteOptions: AutocompleteOption;
+  protected _currentValue: any;
+  protected _defaultTextValue: string;
+  protected _elementCollection: any[] | null;
+  protected _lastInputKeyEvent: JQuery.Event;
 
   /** The JQuery DOM element */
-  private _$editorElm: any;
+  protected _$editorElm: any;
 
   /** is the Editor disabled? */
   disabled = false;
@@ -68,7 +68,7 @@ export class AutoCompleteEditor implements Editor {
   /** Final collection displayed in the UI, that is after processing filter/sort/override */
   finalCollection: any[] = [];
 
-  constructor(private args: EditorArguments) {
+  constructor(protected readonly args: EditorArguments) {
     if (!args) {
       throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
     }
@@ -365,7 +365,7 @@ export class AutoCompleteEditor implements Editor {
   }
 
   //
-  // private functions
+  // protected functions
   // ------------------
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
@@ -399,7 +399,7 @@ export class AutoCompleteEditor implements Editor {
     );
   }
 
-  // this function should be PRIVATE but for unit tests purposes we'll make it public until a better solution is found
+  // this function should be protected but for unit tests purposes we'll make it public until a better solution is found
   // a better solution would be to get the autocomplete DOM element to work with selection but I couldn't find how to do that in Jest
   onSelect(event: Event, ui: { item: any; }) {
     if (ui && ui.item) {

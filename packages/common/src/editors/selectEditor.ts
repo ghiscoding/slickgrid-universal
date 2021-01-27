@@ -86,7 +86,7 @@ export class SelectEditor implements Editor {
   /** Final collection displayed in the UI, that is after processing filter/sort/override */
   finalCollection: any[] = [];
 
-  constructor(protected args: EditorArguments, protected isMultipleSelect: boolean) {
+  constructor(protected readonly args: EditorArguments, protected readonly isMultipleSelect: boolean) {
     if (!args) {
       throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
     }

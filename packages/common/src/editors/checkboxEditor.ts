@@ -11,10 +11,10 @@ declare const Slick: SlickNamespace;
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
 export class CheckboxEditor implements Editor {
-  private _bindEventService: BindingEventService;
-  private _input: HTMLInputElement | null;
-  private _checkboxContainerElm: HTMLDivElement;
-  private _originalValue?: boolean | string;
+  protected _bindEventService: BindingEventService;
+  protected _input: HTMLInputElement | null;
+  protected _checkboxContainerElm: HTMLDivElement;
+  protected _originalValue?: boolean | string;
 
   /** is the Editor disabled? */
   disabled = false;
@@ -25,7 +25,7 @@ export class CheckboxEditor implements Editor {
   /** Grid options */
   gridOptions: GridOption;
 
-  constructor(private args: EditorArguments) {
+  constructor(protected readonly args: EditorArguments) {
     if (!args) {
       throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
     }
@@ -246,17 +246,17 @@ export class CheckboxEditor implements Editor {
   }
 
   // --
-  // private functions
+  // protected functions
   // ------------------
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
-  private applyInputUsabilityState() {
+  protected applyInputUsabilityState() {
     const activeCell = this.grid.getActiveCell();
     const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
     this.disable(isCellEditable === false);
   }
 
-  private handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
+  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';

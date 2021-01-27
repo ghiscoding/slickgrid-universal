@@ -28,11 +28,11 @@ declare const Slick: SlickNamespace;
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
 export class LongTextEditor implements Editor {
-  private _locales: Locale;
-  private _$textarea: any;
-  private _$currentLengthElm: any;
-  private _$wrapper: any;
-  private _defaultTextValue: any;
+  protected _locales: Locale;
+  protected _$textarea: any;
+  protected _$currentLengthElm: any;
+  protected _$wrapper: any;
+  protected _defaultTextValue: any;
 
   /** is the Editor disabled? */
   disabled = false;
@@ -44,9 +44,9 @@ export class LongTextEditor implements Editor {
   gridOptions: GridOption;
 
   /** The translate library */
-  private _translater: TranslaterService;
+  protected _translater: TranslaterService;
 
-  constructor(private args: EditorArguments) {
+  constructor(protected readonly args: EditorArguments) {
     if (!args) {
       throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
     }
@@ -353,17 +353,17 @@ export class LongTextEditor implements Editor {
   }
 
   // --
-  // private functions
+  // protected functions
   // ------------------
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
-  private applyInputUsabilityState() {
+  protected applyInputUsabilityState() {
     const activeCell = this.grid.getActiveCell();
     const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
     this.disable(isCellEditable === false);
   }
 
-  private handleKeyDown(event: KeyboardEvent) {
+  protected handleKeyDown(event: KeyboardEvent) {
     const keyCode = event.keyCode || event.code;
 
     if (!this.args.compositeEditorOptions) {
@@ -387,7 +387,7 @@ export class LongTextEditor implements Editor {
   }
 
   /** On every input change event, we'll update the current text length counter */
-  private handleOnInputChange(event: JQuery.Event & { originalEvent: any, target: HTMLTextAreaElement }) {
+  protected handleOnInputChange(event: JQuery.Event & { originalEvent: any, target: HTMLTextAreaElement }) {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     const maxLength = this.columnEditor?.maxLength;
 
@@ -412,7 +412,7 @@ export class LongTextEditor implements Editor {
     }
   }
 
-  private handleChangeOnCompositeEditor(event: JQuery.Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
+  protected handleChangeOnCompositeEditor(event: JQuery.Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -442,7 +442,7 @@ export class LongTextEditor implements Editor {
    * @param maxLength - max acceptable length
    * @returns truncated - returns True if it truncated or False otherwise
    */
-  private truncateText($inputElm: JQuery<HTMLTextAreaElement>, maxLength: number): boolean {
+  protected truncateText($inputElm: JQuery<HTMLTextAreaElement>, maxLength: number): boolean {
     const text = $inputElm.val() + '';
     if (text.length > maxLength) {
       $inputElm.val(text.substring(0, maxLength));

@@ -12,10 +12,10 @@ declare const Slick: SlickNamespace;
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
 export class IntegerEditor implements Editor {
-  private _bindEventService: BindingEventService;
-  private _lastInputKeyEvent: KeyboardEvent;
-  private _input: HTMLInputElement | null;
-  private _originalValue: number | string;
+  protected _bindEventService: BindingEventService;
+  protected _lastInputKeyEvent: KeyboardEvent;
+  protected _input: HTMLInputElement | null;
+  protected _originalValue: number | string;
 
   /** is the Editor disabled? */
   disabled = false;
@@ -26,7 +26,7 @@ export class IntegerEditor implements Editor {
   /** Grid options */
   gridOptions: GridOption;
 
-  constructor(private args: EditorArguments) {
+  constructor(protected readonly args: EditorArguments) {
     if (!args) {
       throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
     }
@@ -257,17 +257,17 @@ export class IntegerEditor implements Editor {
   }
 
   // --
-  // private functions
+  // protected functions
   // ------------------
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
-  private applyInputUsabilityState() {
+  protected applyInputUsabilityState() {
     const activeCell = this.grid.getActiveCell();
     const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
     this.disable(isCellEditable === false);
   }
 
-  private handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
+  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -292,14 +292,14 @@ export class IntegerEditor implements Editor {
   }
 
   /** When the input value changes (this will cover the input spinner arrows on the right) */
-  private handleOnMouseWheel(event: KeyboardEvent) {
+  protected handleOnMouseWheel(event: KeyboardEvent) {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     if (compositeEditorOptions) {
       this.handleChangeOnCompositeEditor(event, compositeEditorOptions);
     }
   }
 
-  private handleOnInputChange(event: KeyboardEvent) {
+  protected handleOnInputChange(event: KeyboardEvent) {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     if (compositeEditorOptions) {
       const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
