@@ -3,8 +3,8 @@
   "compileOnSave": false,
   "compilerOptions": {
     "rootDir": "src",
-    "declarationDir": "dist/commonjs",
-    "outDir": "dist/commonjs",
+    "declarationDir": "dist/esm",
+    "outDir": "dist/esm",
     "target": "es2020",
     "module": "esnext",
     "sourceMap": true,
