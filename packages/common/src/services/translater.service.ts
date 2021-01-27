@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { PubSubService } from './pubSub.service';
 
 export type TranslateServiceEventName = 'onLanguageChanged';
