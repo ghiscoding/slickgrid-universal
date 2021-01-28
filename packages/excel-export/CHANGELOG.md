@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.9.0...v0.10.0) (2021-01-28)
+
+
+### Bug Fixes
+
+* **core:** fix types index.d.ts url ([a76b3a3](https://github.com/ghiscoding/slickgrid-universal/commit/a76b3a3d97a6d211ec2e7e8d9060fd8dd0719f58))
+* **exports:** Excel Export custom width applies the width to next column ([#242](https://github.com/ghiscoding/slickgrid-universal/issues/242)) ([146f64f](https://github.com/ghiscoding/slickgrid-universal/commit/146f64f1b89005e6bb5e982721b5c7e43ecf5ac4))
+* **tsc:** running dev watch was overriding commonjs folder ([#249](https://github.com/ghiscoding/slickgrid-universal/issues/249)) ([e466f62](https://github.com/ghiscoding/slickgrid-universal/commit/e466f6214d9450b593daecfdee6682f1f7c9ed19))
+
+
+
+
+
 # [0.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.8.0...v0.9.0) (2021-01-06)
 
 

@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.9.0...v0.10.0) (2021-01-28)
+
+
+### Bug Fixes
+
+* **comp:** empty data warning should work with autoheight grid ([#240](https://github.com/ghiscoding/slickgrid-universal/issues/240)) ([8c9cb84](https://github.com/ghiscoding/slickgrid-universal/commit/8c9cb84847bfd08a678d333a8555ae6fc9295670))
+* **components:** empty data warning should work with autoheight grid ([#234](https://github.com/ghiscoding/slickgrid-universal/issues/234)) ([16daa36](https://github.com/ghiscoding/slickgrid-universal/commit/16daa368f0e46112fc1d1dd0b1a944ec2b60ced0))
+* **core:** fix types index.d.ts url ([a76b3a3](https://github.com/ghiscoding/slickgrid-universal/commit/a76b3a3d97a6d211ec2e7e8d9060fd8dd0719f58))
+
+
+### Features
+
+* **editors:** add Clone functionality to Composite Editor ([#236](https://github.com/ghiscoding/slickgrid-universal/issues/236)) ([df545e4](https://github.com/ghiscoding/slickgrid-universal/commit/df545e4ec64271307b1979feb5e786f449433639))
+
+
+
+
+
 # [0.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.8.0...v0.9.0) (2021-01-06)
 
 
