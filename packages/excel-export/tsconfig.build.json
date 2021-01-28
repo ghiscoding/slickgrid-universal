@@ -2,9 +2,9 @@
   "compilerOptions": {
     "module": "esnext",
     "moduleResolution": "node",
-    "target": "es2020",
+    "target": "es2017",
     "lib": [
-      "es2020",
+      "es2017",
       "dom"
     ],
     "typeRoots": [

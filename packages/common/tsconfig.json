@@ -5,7 +5,7 @@
     "rootDir": "src",
     "declarationDir": "dist/esm",
     "outDir": "dist/esm",
-    "target": "es2020",
+    "target": "es2017",
     "module": "esnext",
     "sourceMap": true,
     "noImplicitReturns": true,

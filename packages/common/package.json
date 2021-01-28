@@ -25,7 +25,7 @@
     "prebundle": "npm-run-all delete:dist",
     "postbundle": "npm-run-all sass:build sass:copy",
     "bundle:commonjs": "tsc --project tsconfig.build.json --outDir dist/commonjs --module commonjs",
-    "bundle:esm": "cross-env tsc --project tsconfig.build.json --outDir dist/esm --module esnext --target es2020",
+    "bundle:esm": "cross-env tsc --project tsconfig.build.json --outDir dist/esm --module esnext --target es2017",
     "delete:dist": "cross-env rimraf --maxBusyTries=10 dist",
     "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=common",
     "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=common",

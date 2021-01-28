@@ -20,7 +20,7 @@
     "dev:watch": "run-p build:watch",
     "bundle": "run-p bundle:commonjs bundle:esm",
     "bundle:commonjs": "tsc --project tsconfig.build.json --outDir dist/commonjs --module commonjs",
-    "bundle:esm": "cross-env tsc --project tsconfig.build.json --outDir dist/esm --module esnext --target es2020",
+    "bundle:esm": "cross-env tsc --project tsconfig.build.json --outDir dist/esm --module esnext --target es2017",
     "prebundle": "npm-run-all delete:dist",
     "delete:dist": "cross-env rimraf --maxBusyTries=10 dist",
     "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=graphql",
