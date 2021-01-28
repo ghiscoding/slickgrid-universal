@@ -31,7 +31,7 @@
     "test:watch": "npx jest --watch --config ./test/jest.config.js"
   },
   "comments": {
-    "create-new-version": "To create a new version with Lerna, run the following scripts (1) 'new-version' and (2) 'publish' to finally push to NPM."
+    "create-new-version": "To create a new version with Lerna, run the following scripts (1) 'bundle', (2) 'new-version' and (3) 'publish' to finally push to NPM."
   },
   "workspaces": {
     "packages": [

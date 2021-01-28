@@ -23,6 +23,7 @@
   ],
   "ignorePatterns": [
     "**/dist/**/*.*",
+    "**/packages/**/*.js",
     "**/__tests__/*.ts"
   ],
   "rules": {

@@ -11,3 +11,4 @@
 *.spec.ts
 **/__tests__/*.*
 **/dist/**/*.*
+**/packages/**/*.js
