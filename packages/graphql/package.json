@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/graphql",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "GraphQL Service to sync a grid with a GraphQL backend server",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
@@ -38,7 +38,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.10.0"
+    "@slickgrid-universal/common": "^0.10.1"
   },
   "devDependencies": {
     "moment-mini": "^2.24.0"
