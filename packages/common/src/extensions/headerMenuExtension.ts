@@ -143,7 +143,7 @@ export class HeaderMenuExtension implements Extension {
 
           // Freeze Column (pinning)
           if (headerMenuOptions && !headerMenuOptions.hideFreezeColumnsCommand) {
-            if (columnHeaderMenuItems.filter((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'freeze-columns').length === 0) {
+            if (!columnHeaderMenuItems.some((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'freeze-columns')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconFreezeColumns || 'fa fa-thumb-tack',
                 title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}FREEZE_COLUMNS`, 'TEXT_FREEZE_COLUMNS'),
@@ -153,14 +153,14 @@ export class HeaderMenuExtension implements Extension {
             }
 
             // add a divider (separator) between the top freeze columns commands and the rest of the commands
-            if (columnHeaderMenuItems.filter((item: MenuCommandItem) => item.positionOrder === 49).length === 0) {
+            if (!columnHeaderMenuItems.some((item: MenuCommandItem) => item.positionOrder === 49)) {
               columnHeaderMenuItems.push({ divider: true, command: '', positionOrder: 49 });
             }
           }
 
           // Sorting Commands
           if (options.enableSorting && columnDef.sortable && headerMenuOptions && !headerMenuOptions.hideSortCommands) {
-            if (columnHeaderMenuItems.filter((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'sort-asc').length === 0) {
+            if (!columnHeaderMenuItems.some((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'sort-asc')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconSortAscCommand || 'fa fa-sort-asc',
                 title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}SORT_ASCENDING`, 'TEXT_SORT_ASCENDING'),
@@ -168,7 +168,7 @@ export class HeaderMenuExtension implements Extension {
                 positionOrder: 50
               });
             }
-            if (columnHeaderMenuItems.filter((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'sort-desc').length === 0) {
+            if (!columnHeaderMenuItems.some((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'sort-desc')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconSortDescCommand || 'fa fa-sort-desc',
                 title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}SORT_DESCENDING`, 'TEXT_SORT_DESCENDING'),
@@ -178,11 +178,11 @@ export class HeaderMenuExtension implements Extension {
             }
 
             // add a divider (separator) between the top sort commands and the other clear commands
-            if (columnHeaderMenuItems.filter((item: MenuCommandItem) => item.positionOrder === 52).length === 0) {
+            if (!columnHeaderMenuItems.some((item: MenuCommandItem) => item.positionOrder === 52)) {
               columnHeaderMenuItems.push({ divider: true, command: '', positionOrder: 52 });
             }
 
-            if (!headerMenuOptions.hideClearSortCommand && columnHeaderMenuItems.filter((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'clear-sort').length === 0) {
+            if (!headerMenuOptions.hideClearSortCommand && !columnHeaderMenuItems.some((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'clear-sort')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconClearSortCommand || 'fa fa-unsorted',
                 title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}REMOVE_SORT`, 'TEXT_REMOVE_SORT'),
@@ -194,7 +194,7 @@ export class HeaderMenuExtension implements Extension {
 
           // Filtering Commands
           if (options.enableFiltering && columnDef.filterable && headerMenuOptions && !headerMenuOptions.hideFilterCommand) {
-            if (!headerMenuOptions.hideClearFilterCommand && columnHeaderMenuItems.filter((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'clear-filter').length === 0) {
+            if (!headerMenuOptions.hideClearFilterCommand && !columnHeaderMenuItems.some((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'clear-filter')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconClearFilterCommand || 'fa fa-filter',
                 title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}REMOVE_FILTER`, 'TEXT_REMOVE_FILTER'),
@@ -205,7 +205,7 @@ export class HeaderMenuExtension implements Extension {
           }
 
           // Hide Column Command
-          if (headerMenuOptions && !headerMenuOptions.hideColumnHideCommand && columnHeaderMenuItems.filter((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'hide').length === 0) {
+          if (headerMenuOptions && !headerMenuOptions.hideColumnHideCommand && !columnHeaderMenuItems.some((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'hide')) {
             columnHeaderMenuItems.push({
               iconCssClass: headerMenuOptions.iconColumnHideCommand || 'fa fa-times',
               title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}HIDE_COLUMN`, 'TEXT_HIDE_COLUMN'),
