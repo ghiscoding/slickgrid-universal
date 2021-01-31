@@ -1,26 +1,13 @@
 {
-  "extends": "../tsconfig-build.json",
+  "extends": "../tsconfig.base.json",
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": "./",
     "rootDir": "src",
     "declarationDir": "dist/esm",
     "outDir": "dist/esm",
-    "target": "es2017",
-    "module": "esnext",
-    "sourceMap": true,
-    "noImplicitReturns": true,
-    "lib": [
-      "es2017",
-      "dom"
-    ],
-    "types": [
-      "moment",
-      "jquery",
-      "node"
-    ],
     "typeRoots": [
-      "node_modules/@types",
-      "src/typings"
+      "typings"
     ],
     "paths": {
       "jszip": [
@@ -29,18 +16,15 @@
     }
   },
   "exclude": [
-    "cypress",
     "dist",
     "node_modules",
     "**/*.spec.ts"
   ],
   "filesGlob": [
-    "./src/**/*.ts",
-    "./test/**/*.ts",
-    "./custom_typings/**/*.d.ts"
+    "./src/**/*.ts"
   ],
   "include": [
     "src/**/*.ts",
-    "src/typings/**/*.ts"
+    "typings/**/*.ts"
   ]
 }

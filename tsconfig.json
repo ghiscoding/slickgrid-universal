@@ -2,10 +2,11 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "esModuleInterop": true,
+    "composite": true,
     "module": "commonjs",
-    "target": "es2017",
+    "target": "es2018",
     "lib": [
-      "es2017",
+      "es2018",
       "dom"
     ],
     "resolveJsonModule": true
