@@ -1,0 +1,20 @@
+{
+  "extends": "../tsconfig.bundle.json",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "dist/commonjs",
+    "typeRoots": [
+      "../typings",
+      "../../node_modules/@types"
+    ],
+    "paths": {
+      "jszip": [
+        "node_modules/jszip/dist/jszip.min.js"
+      ]
+    }
+  },
+  "include": [
+    "../typings",
+    "**/*"
+  ]
+}

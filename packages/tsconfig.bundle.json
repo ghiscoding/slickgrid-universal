@@ -2,16 +2,18 @@
   "compilerOptions": {
     "module": "esnext",
     "moduleResolution": "node",
-    "target": "es2017",
+    "target": "es2018",
     "lib": [
-      "es2017",
+      "es2018",
       "dom"
     ],
-    "typeRoots": [
-      "../typings",
-      "../../node_modules/@types"
+    "types": [
+      "jest",
+      "jest-extended",
+      "jquery",
+      "moment",
+      "node"
     ],
-    "outDir": "dist/commonjs",
     "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": false,
@@ -24,23 +26,9 @@
     "experimentalDecorators": true,
     "noEmitHelpers": false,
     "stripInternal": true,
-    "sourceMap": true,
-    "baseUrl": "./",
-    "paths": {
-      "jszip": [
-        "../node_modules/jszip/dist/jszip.min.js"
-      ]
-    }
+    "sourceMap": true
   },
   "exclude": [
-    ".vscode",
-    "src/examples",
-    "src/resources",
-    "test",
     "**/*.spec.ts"
   ],
-  "include": [
-    "../typings",
-    "**/*"
-  ]
 }

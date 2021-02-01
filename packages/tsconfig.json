@@ -1,0 +1,13 @@
+{
+  "files": [],
+  "references": [
+    { "path": "common" },
+    { "path": "composite-editor-component" },
+    { "path": "empty-warning-component" },
+    { "path": "excel-export" },
+    { "path": "graphql" },
+    { "path": "odata" },
+    { "path": "text-export" },
+    { "path": "vanilla-bundle" }
+  ]
+}

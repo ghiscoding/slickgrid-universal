@@ -1,15 +1,27 @@
 {
   "compilerOptions": {
-    "pretty": true,
-    "lib": [
-      "esnext"
-    ],
-    "target": "es2017",
     "module": "esnext",
     "moduleResolution": "node",
+    "target": "es2018",
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    "types": [
+      "jest",
+      "jest-extended",
+      "jquery",
+      "moment",
+      "node"
+    ],
+    "typeRoots": [
+      "node_modules/@types",
+    ],
+    "pretty": true,
     "importHelpers": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "noImplicitReturns": true,
     "rootDir": ".",
     "declaration": true,
     "declarationMap": true,
@@ -19,7 +31,6 @@
     "skipLibCheck": true,
     "preserveConstEnums": true,
     "stripInternal": true,
-    "strict": false,
-    "types": []
+    "strict": false
   }
 }

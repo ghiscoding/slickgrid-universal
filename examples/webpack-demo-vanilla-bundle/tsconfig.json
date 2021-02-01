@@ -12,7 +12,7 @@
     "baseUrl": "src",
     "skipLibCheck": true,
     "lib": [
-      "es2017",
+      "es2018",
       "dom"
     ],
     "types": [
