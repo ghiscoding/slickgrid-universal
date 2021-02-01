@@ -29,9 +29,10 @@ export class Example2 {
   dataset: any[];
   commandQueue = [];
   sgb: SlickVanillaGridBundle;
-  excelExportService = new ExcelExportService();
+  excelExportService: ExcelExportService;
 
   constructor() {
+    this.excelExportService = new ExcelExportService();
     this._bindingEventService = new BindingEventService();
   }
 

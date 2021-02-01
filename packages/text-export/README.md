@@ -49,7 +49,11 @@ If you wish to reference the service to use it with external export button, then
 import { TextExportService } from '@slickgrid-universal/text-export';
 
 export class MyExample {
-  exportService = new TextExportService();
+  exportService: TextExportService;
+
+  constructor() {
+    this.exportService = new TextExportService();
+  }
 
   prepareGrid {
     this.gridOptions = {

@@ -45,7 +45,11 @@ If you wish to reference the service to use it with external export button, then
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 
 export class MyExample {
-  excelExportService = new ExcelExportService();
+  excelExportService: ExcelExportService;
+
+  constructor() {
+    this.excelExportService = new ExcelExportService();
+  }
 
   prepareGrid {
     this.gridOptions = {

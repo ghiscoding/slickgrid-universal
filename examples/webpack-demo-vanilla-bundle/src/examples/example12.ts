@@ -553,11 +553,13 @@ export class Example12 {
       // this.compositeEditorInstance.changeFormInputValue('cost', 9999.99, true);
     }
 
-    // you can also change some editor options (not all Editors supports this functionality, so far only these Editors AutoComplete, Date MultipleSelect & SingleSelect)
+    // you can also change some editor options
+    // not all Editors supports this functionality, so far only these Editors are supported: AutoComplete, Date Single/Multiple Select
     /*
     if (columnDef.id === 'completed') {
-      this.compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', formValues.completed);
-      this.compositeEditorInstance.changeFormEditorOption('product', 'minLength', 3);
+      this.compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', true); // multiple-select.js, show filter in dropdown
+      this.compositeEditorInstance.changeFormEditorOption('product', 'minLength', 3);         // autocomplete, change minLength char to type
+      this.compositeEditorInstance.changeFormEditorOption('finish', 'minDate', 'today');      // flatpickr, change minDate to today
     }
     */
   }
