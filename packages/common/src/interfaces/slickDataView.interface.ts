@@ -7,11 +7,17 @@ export interface SlickDataView {
   // --
   // Available Methods
 
-  /** Add an item to the dataset */
+  /** Add an item to the DataView */
   addItem(item: any): void;
 
-  /** Begin Data Update Transaction */
-  beginUpdate(): void;
+  /** Add multiple items to the DataView */
+  addItems(items: any[]): void;
+
+  /**
+   * Begin Data Update Transaction
+   * @param {Boolean} isBulkUpdate - are we doing a bulk update transactions? Defaults to false
+   */
+  beginUpdate(isBulkUpdate?: boolean): void;
 
   /** Destroy (dispose) of Slick DataView */
   destroy(): void;
@@ -26,8 +32,11 @@ export interface SlickDataView {
    */
   collapseGroup(...args: any): void;
 
-  /** Delete an item from the dataset */
+  /** Delete an item from the DataView identified by its id */
   deleteItem(id: string | number): void;
+
+  /** Delete multiple items from the DataView identified by their given ids */
+  deleteItems(ids: Array<string | number>): void;
 
   /** End Data Update Transaction */
   endUpdate(): void;
@@ -59,7 +68,7 @@ export interface SlickDataView {
   /** Get current Filter used by the DataView */
   getFilter(): any;
 
-  /** Get only the dataset filtered items */
+  /** Get only the DataView filtered items */
   getFilteredItems: <T = any>() => T[];
 
   /** Get current Grouping info */
@@ -71,22 +80,22 @@ export interface SlickDataView {
   /** Get the DataView Id property name to use (defaults to "Id" but could be customized to something else when instantiating the DataView) */
   getIdPropertyName(): string;
 
-  /** Get all Dataset Items */
+  /** Get all DataView Items */
   getItems: <T = any>() => T[];
 
-  /** Get dataset item at specific index */
+  /** Get DataView item at specific index */
   getItem: <T = any>(index: number) => T;
 
-  /** Get an item in the dataset by its Id */
+  /** Get an item in the DataView by its Id */
   getItemById: <T = any>(id: string | number) => T;
 
-  /** Get an item in the dataset by its row index */
+  /** Get an item in the DataView by its row index */
   getItemByIdx: <T = any>(idx: number) => T;
 
-  /** Get row index in the dataset by its Id */
+  /** Get row index in the DataView by its Id */
   getIdxById(id: string | number): number | undefined;
 
-  /** Get item count, full dataset length */
+  /** Get item count, full dataset length that is defined in the DataView */
   getItemCount(): number;
 
   /** Get item metadata at specific index */
@@ -98,10 +107,10 @@ export interface SlickDataView {
   /** Get Paging Options */
   getPagingInfo(): PagingInfo;
 
-  /** Get row number of an item in the dataset */
+  /** Get row number of an item in the DataView */
   getRowByItem(item: any): number | undefined;
 
-  /** Get row number of an item in the dataset by its Id */
+  /** Get row number of an item in the DataView by its Id */
   getRowById(id: string | number): number | undefined;
 
   /**
@@ -116,8 +125,11 @@ export interface SlickDataView {
    */
   getAllSelectedItems<T = any>(): T[];
 
-  /** Insert an item to the dataset before a specific index */
+  /** Insert an item to the DataView before a specific index */
   insertItem(insertBefore: number, item: any): void;
+
+  /** Insert multiple items to the DataView before a specific index */
+  insertItems(insertBefore: number, items: any[]): void;
 
   /** From the items array provided, return the mapped rows */
   mapItemsToRows(items: any[]): number[];
@@ -190,8 +202,11 @@ export interface SlickDataView {
   /** Update a specific Index */
   updateIdxById(startingIndex: number): void;
 
-  /** Update an item in the dataset by its Id */
+  /** Update an item in the DataView identified by its Id */
   updateItem<T = any>(id: string | number, item: T): void;
+
+  /** Update multiple items in the DataView identified by their Ids */
+  updateItems<T = any>(id: Array<string | number>, items: T[]): void;
 
   // ---------------------------
   // Available DataView Events
@@ -209,13 +224,13 @@ export interface SlickDataView {
   /** Event triggered while Paging Info is getting changed */
   onPagingInfoChanged: SlickEvent<PagingInfo>;
 
-  /** Event triggered when the dataset row count changes */
+  /** Event triggered when the DataView row count changes */
   onRowCountChanged: SlickEvent<OnRowCountChangedEventArgs>;
 
   /** Event triggered when any of the row got changed */
   onRowsChanged: SlickEvent<OnRowsChangedEventArgs>;
 
-  /** Event triggered when the  dataset row count changes OR any of the row got changed */
+  /** Event triggered when the  DataView row count changes OR any of the row got changed */
   onRowsOrCountChanged: SlickEvent<OnRowsOrCountChangedEventArgs>;
 
   /** Event triggered when "setItems" function is called */

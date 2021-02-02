@@ -50,7 +50,7 @@ export class GridService {
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
-  private get _gridOptions(): GridOption {
+  get _gridOptions(): GridOption {
     return (this._grid?.getOptions) ? this._grid.getOptions() : {};
   }
 
@@ -396,7 +396,7 @@ export class GridService {
    */
   addItem<T = any>(item: T, options?: GridServiceInsertOption): number | undefined {
     options = { ...GridServiceInsertOptionDefaults, ...options };
-    const insertPosition = options?.position;
+    const insertPosition = options?.position ?? 'top';
 
     if (!this._grid || !this._gridOptions || !this._dataView) {
       throw new Error('We could not find SlickGrid Grid, DataView objects');
@@ -408,7 +408,7 @@ export class GridService {
 
     // insert position top/bottom, defaults to top
     // when position is top we'll call insert at index 0, else call addItem which just push to the DataView array
-    if (options?.position === 'bottom') {
+    if (insertPosition === 'bottom') {
       this._dataView.addItem(item);
     } else {
       this._dataView.insertItem(0, item); // insert at index 0
@@ -427,7 +427,7 @@ export class GridService {
       rowNumber = this._dataView.getRowById(itemId);
     } else {
       // scroll to row index 0 when inserting on top else scroll to the bottom where it got inserted
-      rowNumber = (options && options.position === 'bottom') ? this._dataView.getRowById(itemId) : 0;
+      rowNumber = (insertPosition === 'bottom') ? this._dataView.getRowById(itemId) : 0;
       this._grid.scrollRowIntoView(rowNumber || 0);
     }
 
@@ -463,14 +463,25 @@ export class GridService {
   addItems<T = any>(items: T | T[], options?: GridServiceInsertOption): number[] {
     options = { ...GridServiceInsertOptionDefaults, ...options };
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
+    const insertPosition = options?.position ?? 'top';
     const rowNumbers: number[] = [];
 
     // loop through all items to add
     if (!Array.isArray(items)) {
-      return [this.addItem<T>(items, options) || 0];
+      return [this.addItem<T>(items, options) || 0]; // on a single item, just call addItem()
     } else {
-      this._dataView.beginUpdate();
-      items.forEach((item: T) => this.addItem(item, { ...options, highlightRow: false, resortGrid: false, triggerEvent: false, selectRow: false }));
+      // begin bulk transaction
+      this._dataView.beginUpdate(true);
+
+      // insert position top/bottom, defaults to top
+      // when position is top we'll call insert at index 0, else call addItem which just push to the DataView array
+      if (insertPosition === 'bottom') {
+        this._dataView.addItems(items);
+      } else {
+        this._dataView.insertItems(0, items); // insert at index 0 to the start of the dataset
+      }
+
+      // end the bulk transaction since we're all done
       this._dataView.endUpdate();
     }
 
@@ -480,7 +491,7 @@ export class GridService {
     }
 
     // scroll to row index 0 when inserting on top else scroll to the bottom where it got inserted
-    (options && options.position === 'bottom') ? this._grid.navigateBottom() : this._grid.navigateTop();
+    (insertPosition === 'bottom') ? this._grid.navigateBottom() : this._grid.navigateTop();
 
     // get row numbers of all new inserted items
     // we need to do it after resort and get each row number because it possibly changed after the sort
@@ -526,7 +537,7 @@ export class GridService {
    * @param options: provide the possibility to do certain actions after or during the upsert (triggerEvent)
    * @return item id deleted
    */
-  deleteItems<T = any>(items: T | T[], options?: GridServiceDeleteOption): number[] | string[] {
+  deleteItems<T = any>(items: T | T[], options?: GridServiceDeleteOption): Array<number | string> {
     options = { ...GridServiceDeleteOptionDefaults, ...options };
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
 
@@ -536,14 +547,20 @@ export class GridService {
       return [items[idPropName]];
     }
 
-    this._dataView.beginUpdate();
+    // begin bulk transaction
+    this._dataView.beginUpdate(true);
+
     const itemIds: string[] = [];
     items.forEach((item: T) => {
       if (item && item[idPropName] !== undefined) {
         itemIds.push(item[idPropName]);
       }
-      this.deleteItem<T>(item, { ...options, triggerEvent: false });
     });
+
+    // delete the item from the dataView
+    this._dataView.deleteItems(itemIds);
+
+    // end the bulk transaction since we're all done
     this._dataView.endUpdate();
 
     // do we want to trigger an event after deleting the item
@@ -587,17 +604,21 @@ export class GridService {
    * @param itemIds array of item unique IDs
    * @param options: provide the possibility to do certain actions after or during the upsert (triggerEvent)
    */
-  deleteItemByIds(itemIds: number[] | string[], options?: GridServiceDeleteOption): number[] | string[] {
+  deleteItemByIds(itemIds: Array<number | string>, options?: GridServiceDeleteOption): Array<number | string> {
     options = { ...GridServiceDeleteOptionDefaults, ...options };
 
     // when it's not an array, we can call directly the single item delete
     if (Array.isArray(itemIds)) {
-      this._dataView.beginUpdate();
+      // begin bulk transaction
+      this._dataView.beginUpdate(true);
+
       for (let i = 0; i < itemIds.length; i++) {
         if (itemIds[i] !== null) {
           this.deleteItemById(itemIds[i], { triggerEvent: false });
         }
       }
+
+      // end the bulk transaction since we're all done
       this._dataView.endUpdate();
 
       // do we want to trigger an event after deleting the item
@@ -630,33 +651,51 @@ export class GridService {
   /**
    * Update an array of existing items with new properties inside the datagrid
    * @param item object arrays, which must contain unique "id" property and any other suitable properties
-   * @param options: provide the possibility to do certain actions after or during the upsert (highlightRow, selectRow, triggerEvent)
+   * @param options: provide the possibility to do certain actions after or during the update (highlightRow, selectRow, triggerEvent)
    * @return grid row indexes
    */
   updateItems<T = any>(items: T | T[], options?: GridServiceUpdateOption): number[] {
     options = { ...GridServiceUpdateOptionDefaults, ...options };
+    const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
 
     // when it's not an array, we can call directly the single item update
     if (!Array.isArray(items)) {
       return [this.updateItem<T>(items, options)];
     }
 
-    this._dataView.beginUpdate();
-    const gridRowNumbers: number[] = [];
+    // begin bulk transaction
+    this._dataView.beginUpdate(true);
+
+    // loop through each item, get their Ids and row number position in the grid
+    // also call a grid render on the modified row for the item to be reflected in the UI
+    const rowNumbers: number[] = [];
+    const itemIds: Array<string | number> = [];
     items.forEach((item: T) => {
-      gridRowNumbers.push(this.updateItem<T>(item, { ...options, highlightRow: false, selectRow: false, triggerEvent: false }));
+      const itemId = (!item || !(idPropName in item)) ? undefined : item[idPropName];
+      itemIds.push(itemId);
+
+      if (this._dataView.getIdxById(itemId) !== undefined) {
+        const rowNumber = this._dataView.getRowById(itemId);
+        rowNumbers.push(rowNumber);
+        this._grid.updateRow(rowNumber);
+      }
     });
+
+    // Update the items in the dataView, note that the itemIds must be in the same order as the items
+    this._dataView.updateItems<T>(itemIds, items);
+
+    // end the bulk transaction since we're all done
     this._dataView.endUpdate();
 
     // only highlight at the end, all at once
     // we have to do this because doing highlight 1 by 1 would only re-select the last highlighted row which is wrong behavior
     if (options.highlightRow) {
-      this.highlightRow(gridRowNumbers);
+      this.highlightRow(rowNumbers);
     }
 
     // select the row in the grid
     if (options.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
-      this.setSelectedRows(gridRowNumbers);
+      this.setSelectedRows(rowNumbers);
     }
 
     // do we want to trigger an event after updating the item
@@ -664,7 +703,7 @@ export class GridService {
       this.pubSubService.publish('onItemUpdated', items);
     }
 
-    return gridRowNumbers;
+    return rowNumbers;
   }
 
   /**
@@ -739,16 +778,20 @@ export class GridService {
    */
   upsertItems<T = any>(items: T | T[], options?: GridServiceInsertOption): { added: number | undefined, updated: number | undefined }[] {
     options = { ...GridServiceInsertOptionDefaults, ...options };
-    // when it's not an array, we can call directly the single item update
+    // when it's not an array, we can call directly the single item upsert
     if (!Array.isArray(items)) {
       return [this.upsertItem<T>(items, options)];
     }
 
-    this._dataView.beginUpdate();
+    // begin bulk transaction
+    this._dataView.beginUpdate(true);
+
     const upsertedRows: { added: number | undefined, updated: number | undefined }[] = [];
     items.forEach((item: T) => {
       upsertedRows.push(this.upsertItem<T>(item, { ...options, highlightRow: false, resortGrid: false, selectRow: false, triggerEvent: false }));
     });
+
+    // end the bulk transaction since we're all done
     this._dataView.endUpdate();
 
     const rowNumbers = upsertedRows.map((upsertRow) => upsertRow.added !== undefined ? upsertRow.added : upsertRow.updated) as number[];
@@ -812,6 +855,10 @@ export class GridService {
     }
     return { added: rowNumberAdded, updated: rowNumberUpdated };
   }
+
+  // --
+  // private functions
+  // -------------------
 
   /** Check wether the grid has the Row Selection enabled */
   private hasRowSelectionEnabled() {
