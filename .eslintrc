@@ -25,6 +25,7 @@
   "ignorePatterns": [
     "**/dist/**/*.*",
     "**/packages/**/*.js",
+    "**/**/*.json",
     "**/__tests__/*.ts"
   ],
   "rules": {

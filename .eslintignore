@@ -9,6 +9,8 @@
 *.md
 *.zip
 *.spec.ts
+**/**/*.json
+**/**/*.js
 **/__tests__/*.*
 **/dist/**/*.*
 **/packages/**/*.js
