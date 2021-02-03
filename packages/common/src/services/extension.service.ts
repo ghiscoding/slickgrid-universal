@@ -400,24 +400,24 @@ export class ExtensionService {
       this.sharedService.slickGrid.setColumns(collection);
     }
 
-    // dispose of previous Column Picker instance, then re-register it and don't forget to overwrite previous instance ref
+    // recreate the Column Picker when enabled
     if (this.sharedService.gridOptions.enableColumnPicker) {
-      this.columnPickerExtension.dispose();
-      const instance = this.columnPickerExtension.register();
-      const extension = this.getExtensionByName(ExtensionName.columnPicker);
-      if (extension && instance) {
-        extension.instance = instance;
-      }
+      this.recreateExternalAddon(this.columnPickerExtension, ExtensionName.columnPicker);
     }
 
-    // dispose of previous Grid Menu instance, then re-register it and don't forget to overwrite previous instance ref
+    // recreate the Grid Menu when enabled
     if (this.sharedService.gridOptions.enableGridMenu) {
-      this.gridMenuExtension.dispose();
-      const instance = this.gridMenuExtension.register();
-      const extension = this.getExtensionByName(ExtensionName.gridMenu);
-      if (extension && instance) {
-        extension.instance = instance;
-      }
+      this.recreateExternalAddon(this.gridMenuExtension, ExtensionName.gridMenu);
+    }
+
+    // recreate the Header Button when enabled
+    if (this.sharedService.gridOptions.enableHeaderButton) {
+      this.recreateExternalAddon(this.headerButtonExtension, ExtensionName.headerButton);
+    }
+
+    // recreate the Header Menu when enabled
+    if (this.sharedService.gridOptions.enableHeaderMenu) {
+      this.recreateExternalAddon(this.headerMenuExtension, ExtensionName.headerMenu);
     }
   }
 
@@ -434,6 +434,20 @@ export class ExtensionService {
       return this._extensionCreatedList[name];
     }
     return undefined;
+  }
+
+  /**
+   * Dispose of previous extension/addon instance, then re-register it and don't forget to overwrite previous instance ref
+   * @param externalExtension - extension instance
+   * @param extensionName - extension name
+   */
+  private recreateExternalAddon(externalExtension: Extension, extensionName: ExtensionName) {
+    externalExtension.dispose();
+    const instance = externalExtension.register();
+    const extension = this.getExtensionByName(extensionName);
+    if (extension) {
+      extension.instance = instance;
+    }
   }
 
   /** Translate an array of items from an input key and assign translated value to the output key */

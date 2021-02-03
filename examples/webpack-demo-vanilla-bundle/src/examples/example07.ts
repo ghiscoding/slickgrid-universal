@@ -339,7 +339,7 @@ export class Example7 {
         required: true,
         // validator: myCustomTitleValidator, // use a custom validator
       },
-      sortable: true, minWidth: 100, filterable: true, params: { useFormatterOuputToFilter: true }
+      sortable: true, minWidth: 100, filterable: true,
     };
 
     // you can dynamically add your column to your column definitions
