@@ -159,6 +159,33 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(10)`).should('contain', 'Task 0');
   });
 
+  it('should be able to filter and search "Task 2222" in the new column and expect only 1 row showing in the grid', () => {
+    cy.get('input.search-filter.filter-title1')
+      .type('Task 2222', { force: true })
+      .should('have.value', 'Task 2222');
+
+    cy.get('.slick-row').should('have.length', 1);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 2222');
+  });
+
+  it('should hover over the last "Title" column and click on "Clear Filter" and expect grid to have all rows shown', () => {
+    cy.get('.slick-header-column:nth(9)')
+      .first()
+      .trigger('mouseover')
+      .children('.slick-header-menubutton')
+      // .invoke('show')
+      .click();
+
+    cy.get('.slick-header-menu')
+      .should('be.visible')
+      .children('.slick-header-menuitem:nth-child(4)')
+      .children('.slick-header-menucontent')
+      .should('contain', 'Remove Filter')
+      .click();
+
+    cy.get('.slick-row').should('have.length.greaterThan', 1);
+  });
+
   it('should dynamically remove 1x of the new "Title" columns', () => {
     const updatedTitles = ['', '', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title'];
 
