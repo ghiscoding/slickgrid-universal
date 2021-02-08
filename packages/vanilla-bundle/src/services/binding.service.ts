@@ -1,5 +1,5 @@
 import * as DOMPurify_ from 'dompurify';
-const DOMPurify = DOMPurify_; // patch to fix rollup to work
+const DOMPurify = DOMPurify_['default'] || DOMPurify_; // patch to fix rollup to work
 
 interface Binding {
   variable: any;
