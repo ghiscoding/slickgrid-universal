@@ -1,5 +1,4 @@
-import * as isequal_ from 'lodash.isequal';
-const isequal = isequal_['default'] || isequal_; // patch to fix rollup to work
+import { dequal } from 'dequal';
 
 import { FilterConditions } from './../filter-conditions/index';
 import { FilterFactory } from './../filters/filterFactory';
@@ -849,7 +848,7 @@ export class FilterService {
       // trigger an event only if Filters changed or if ENTER key was pressed
       const eventKey = event?.key;
       const eventKeyCode = event?.keyCode;
-      if (this._onSearchChange && (eventKey === 'Enter' || eventKeyCode === KeyCode.ENTER || !isequal(oldColumnFilters, this._columnFilters))) {
+      if (this._onSearchChange && (eventKey === 'Enter' || eventKeyCode === KeyCode.ENTER || !dequal(oldColumnFilters, this._columnFilters))) {
         this._onSearchChange.notify({
           clearFilterTriggered: args.clearFilterTriggered,
           shouldTriggerQuery: args.shouldTriggerQuery,
