@@ -331,7 +331,7 @@ export class FilterService {
     return true;
   }
 
-  getSearchInputConditions(inputSearchTerms: SearchTerm[], columnFilter: Omit<SearchColumnFilter, 'searchTerms'>): Omit<FilterConditionOption, 'cellValue'> {
+  getSearchInputConditions(inputSearchTerms: SearchTerm[] | undefined, columnFilter: Omit<SearchColumnFilter, 'searchTerms'>): Omit<FilterConditionOption, 'cellValue'> {
     const searchValues: SearchTerm[] = deepCopy(inputSearchTerms) || [];
     let fieldSearchValue = (Array.isArray(searchValues) && searchValues.length === 1) ? searchValues[0] : '';
     const columnDef = columnFilter.columnDef;
@@ -376,7 +376,7 @@ export class FilterService {
     return {
       dataKey: columnDef.dataKey,
       fieldType,
-      searchTerms: searchValues,
+      searchTerms: searchValues || [],
       operator: operator as OperatorString,
       searchInputLastChar: inputLastChar,
       filterSearchType: columnDef.filterSearchType
@@ -885,7 +885,7 @@ export class FilterService {
           // use searchTerms only coming from the input search result because original terms might include extra operator symbols within their string
           // and the input search result would be correctly stripped them from input result and assigned to the appropriate operator
           // for example we might have: { searchTerms: ['*doe'] } and that should be reassigned to: { operator: EndsWith, searchTerms: 'doe' }
-          (colFilter as SearchColumnFilter).searchTerms = inputSearchConditions.searchTerms;
+          (colFilter as SearchColumnFilter).searchTerms = inputSearchConditions.searchTerms || [];
           this._columnFilters[colId] = colFilter as SearchColumnFilter;
         }
       }
@@ -955,7 +955,7 @@ export class FilterService {
 
   protected updateColumnFilters(searchTerms: SearchTerm[] | undefined, columnDef: any, operator?: OperatorType | OperatorString) {
     const fieldType = columnDef.filter?.type ?? columnDef.type ?? FieldType.string;
-    const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, fieldType);
+    const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, fieldType) || [];
 
     if (searchTerms && columnDef) {
       this._columnFilters[columnDef.id] = {
