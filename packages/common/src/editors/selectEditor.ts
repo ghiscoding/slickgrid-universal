@@ -1,3 +1,5 @@
+import { dequal } from 'dequal';
+
 import { Constants } from '../constants';
 import { FieldType } from './../enums/index';
 import {
@@ -19,7 +21,7 @@ import {
   SlickNamespace,
 } from './../interfaces/index';
 import { CollectionService, findOrDefault, TranslaterService } from '../services/index';
-import { charArraysEqual, getDescendantProperty, getTranslationPrefix, htmlEncode, sanitizeTextByAvailableSanitizer, setDeepValue } from '../services/utilities';
+import { getDescendantProperty, getTranslationPrefix, htmlEncode, sanitizeTextByAvailableSanitizer, setDeepValue } from '../services/utilities';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -506,7 +508,7 @@ export class SelectEditor implements Editor {
 
   isValueChanged(): boolean {
     if (this.isMultipleSelect) {
-      return !charArraysEqual(this.$editorElm.val(), this.originalValue);
+      return !dequal(this.$editorElm.val(), this.originalValue);
     }
     const isChanged = this.$editorElm.val() !== this.originalValue;
     return isChanged;

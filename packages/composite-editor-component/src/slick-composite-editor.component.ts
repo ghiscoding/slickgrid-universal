@@ -207,6 +207,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     const defaultOptions = {
       backdrop: 'static',
       showCloseButtonOutside: true,
+      shouldClearRowSelectionAfterMassAction: true,
       viewColumnLayout: 'auto',
       modalType: 'edit',
     } as CompositeEditorOpenDetailOption;
@@ -784,12 +785,18 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         this.handleMassSaving(modalType, () => {
           this.grid.getEditController().cancelCurrentEdit();
           this.grid.setActiveCell(0, 0, false);
+          if (this._options.shouldClearRowSelectionAfterMassAction) {
+            this.grid.setSelectedRows([]);
+          }
         });
         break;
       case 'mass-selection':
         this.handleMassSaving(modalType, () => {
           this.grid.getEditController().cancelCurrentEdit();
           this.grid.setActiveRow(this._lastActiveRowNumber);
+          if (this._options.shouldClearRowSelectionAfterMassAction) {
+            this.grid.setSelectedRows([]);
+          }
         });
         break;
       case 'clone':

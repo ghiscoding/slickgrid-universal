@@ -1,5 +1,4 @@
-import * as isequal_ from 'lodash.isequal';
-const isequal = isequal_['default'] || isequal_; // patch to fix rollup to work
+import { dequal } from 'dequal';
 
 import {
   BackendServiceApi,
@@ -265,12 +264,12 @@ export class PaginationService {
     this.pubSubService.publish(`onPaginationRefreshed`, this.getFullPagination());
 
     // publish a pagination change only when flag requires it (triggered by page or pageSize change, dataset length change by a filter or others)
-    if (triggerChangedEvent && !isequal(previousPagination, this.getFullPagination())) {
+    if (triggerChangedEvent && !dequal(previousPagination, this.getFullPagination())) {
       this.pubSubService.publish(`onPaginationChanged`, this.getFullPagination());
     }
 
     // publish on the first pagination initialization (called by the "init()" method on first load)
-    if (triggerInitializedEvent && !isequal(previousPagination, this.getFullPagination())) {
+    if (triggerInitializedEvent && !dequal(previousPagination, this.getFullPagination())) {
       this.pubSubService.publish(`onPaginationPresetsInitialized`, this.getFullPagination());
     }
   }
