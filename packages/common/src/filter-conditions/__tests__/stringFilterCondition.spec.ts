@@ -82,8 +82,8 @@ describe('stringFilterCondition method', () => {
     expect(output).toBe(true);
   });
 
-  it('should return True when input value provided starts with same substring and the operator is empty string & option "cellValueLastChar" is asterisk (*)', () => {
-    const options = { dataKey: '', operator: '', cellValueLastChar: '*', cellValue: 'abbostford', fieldType: FieldType.string, searchTerms: ['abb'] } as FilterConditionOption;
+  it('should return True when input value provided starts with same substring and the operator is empty string & option "searchInputLastChar" is asterisk (*)', () => {
+    const options = { dataKey: '', operator: '', searchInputLastChar: '*', cellValue: 'abbostford', fieldType: FieldType.string, searchTerms: ['abb'] } as FilterConditionOption;
     const output = stringFilterCondition(options);
     expect(output).toBe(true);
   });

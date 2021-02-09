@@ -2,29 +2,16 @@ import { OperatorType } from '../enums/index';
 import { FilterCondition, FilterConditionOption } from '../interfaces/index';
 import { testFilterCondition } from './filterUtilities';
 
-export const numberFilterCondition: FilterCondition = (options: FilterConditionOption) => {
+export const numberFilterCondition: FilterCondition = (options: FilterConditionOption, ...parsedSearchValues: number[]) => {
   const cellValue = parseFloat(options.cellValue);
-  const searchTerms = Array.isArray(options.searchTerms) && options.searchTerms || [0];
-
-  let isRangeSearch = false;
-  let searchValue1;
-  let searchValue2;
-
-  if (searchTerms.length === 2 || (typeof searchTerms[0] === 'string' && (searchTerms[0] as string).indexOf('..') > 0)) {
-    isRangeSearch = true;
-    const searchValues = (searchTerms.length === 2) ? searchTerms : (searchTerms[0] as string).split('..');
-    searchValue1 = parseFloat(Array.isArray(searchValues) ? (searchValues[0] + '') : '');
-    searchValue2 = parseFloat(Array.isArray(searchValues) ? (searchValues[1] + '') : '');
-  } else {
-    searchValue1 = parseFloat(searchTerms[0] + '');
-  }
+  const [searchValue1, searchValue2] = parsedSearchValues;
 
   if (!searchValue1 && !options.operator) {
     return true;
   }
 
-  if (isRangeSearch) {
-    const isInclusive = options.operator && options.operator === OperatorType.rangeInclusive;
+  if (searchValue1 !== undefined && searchValue2 !== undefined) {
+    const isInclusive = options?.operator === OperatorType.rangeInclusive;
     const resultCondition1 = testFilterCondition((isInclusive ? '>=' : '>'), cellValue, searchValue1);
     const resultCondition2 = testFilterCondition((isInclusive ? '<=' : '<'), cellValue, searchValue2);
     return (resultCondition1 && resultCondition2);
