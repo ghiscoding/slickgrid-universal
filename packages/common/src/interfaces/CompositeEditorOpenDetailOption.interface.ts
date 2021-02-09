@@ -35,9 +35,6 @@ export interface CompositeEditorOpenDetailOption {
   /** Defaults to "static", when backdrop is set to "static", the modal will not close when clicking outside of it. */
   backdrop?: 'static' | null;
 
-  /** Defaults to true, do we want the close button outside the modal (true) or inside the header modal (false)?  */
-  showCloseButtonOutside?: boolean;
-
   /** Optional insert options, for example what position in the grid do we want to insert (top/bottom), do we want to highlight, etc... */
   insertOptions?: GridServiceInsertOption;
 
@@ -101,6 +98,12 @@ export interface CompositeEditorOpenDetailOption {
    * For example if we disable a "DateCreated" field, it will blank the value and by default add it to the FormValues object as `formValues = { dateCreated: '' }`
    */
   excludeDisabledFieldFormValues?: boolean;
+
+  /** Defaults to true, do we want the close button outside the modal (true) or inside the header modal (false)?  */
+  showCloseButtonOutside?: boolean;
+
+  /** Defaults to true, do we want to clear the row selections (after save) when executed by any of the mass change actions (Mass-Update or Update-Selected) */
+  shouldClearRowSelectionAfterMassAction?: boolean;
 
   /**
    * Defaults to 1, how many columns do we want to show in the view layout?

@@ -98,6 +98,7 @@ const gridStub = {
   onCompositeEditorChange: new Slick.Event(),
   render: jest.fn(),
   setActiveCell: jest.fn(),
+  setSelectedRows: jest.fn(),
   setActiveRow: jest.fn(),
   setSortColumns: jest.fn(),
 } as unknown as SlickGrid;
@@ -1366,6 +1367,7 @@ describe('CompositeEditorService', () => {
         jest.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockProduct);
         const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
         const setActiveRowSpy = jest.spyOn(gridStub, 'setActiveRow');
+        const clearSelectionSpy = jest.spyOn(gridStub, 'setSelectedRows');
         const updateItemsSpy = jest.spyOn(gridServiceStub, 'updateItems');
 
         const mockOnError = jest.fn();
@@ -1402,6 +1404,7 @@ describe('CompositeEditorService', () => {
           expect(updateItemsSpy).not.toHaveBeenCalled();
           expect(validationSummaryElm.style.display).toBe('none');
           expect(validationSummaryElm.textContent).toBe('');
+          expect(clearSelectionSpy).not.toHaveBeenCalled();
           expect(spyOnError).toHaveBeenCalledWith({ type: 'warning', code: 'NO_CHANGES_DETECTED', message: 'Sorry we could not detect any changes.' });
           done();
         });
@@ -1418,6 +1421,7 @@ describe('CompositeEditorService', () => {
         const getEditSpy = jest.spyOn(gridStub, 'getEditController');
         const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
         const setActiveRowSpy = jest.spyOn(gridStub, 'setActiveRow');
+        const clearSelectionSpy = jest.spyOn(gridStub, 'setSelectedRows');
         const updateItemsSpy = jest.spyOn(gridServiceStub, 'updateItems');
 
         const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-selection' } as CompositeEditorOpenDetailOption;
@@ -1453,6 +1457,7 @@ describe('CompositeEditorService', () => {
           expect(getEditSpy).toHaveBeenCalledTimes(2);
           expect(validationSummaryElm.style.display).toBe('none');
           expect(validationSummaryElm.textContent).toBe('');
+          expect(clearSelectionSpy).toHaveBeenCalled();
           expect(disposeSpy).toHaveBeenCalled();
           done();
         });
@@ -1483,6 +1488,7 @@ describe('CompositeEditorService', () => {
       const getEditSpy = jest.spyOn(gridStub, 'getEditController');
       const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
       const setActiveCellSpy = jest.spyOn(gridStub, 'setActiveCell');
+      const clearSelectionSpy = jest.spyOn(gridStub, 'setSelectedRows');
       const setItemsSpy = jest.spyOn(dataViewStub, 'setItems');
 
       const mockOnClose = jest.fn();
@@ -1518,6 +1524,7 @@ describe('CompositeEditorService', () => {
         expect(setActiveCellSpy).toHaveBeenCalledWith(0, 0, false);
         expect(validationSummaryElm.style.display).toBe('none');
         expect(validationSummaryElm.textContent).toBe('');
+        expect(clearSelectionSpy).toHaveBeenCalled();
         done();
       });
     });
@@ -1533,11 +1540,12 @@ describe('CompositeEditorService', () => {
       const getEditSpy = jest.spyOn(gridStub, 'getEditController');
       const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
       const setActiveCellSpy = jest.spyOn(gridStub, 'setActiveCell');
+      const clearSelectionSpy = jest.spyOn(gridStub, 'setSelectedRows');
       const setItemsSpy = jest.spyOn(dataViewStub, 'setItems');
 
       const mockOnSave = jest.fn();
       mockOnSave.mockResolvedValue(Promise.resolve(true));
-      const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-update', onSave: mockOnSave } as CompositeEditorOpenDetailOption;
+      const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-update', onSave: mockOnSave, shouldClearRowSelectionAfterMassAction: false } as CompositeEditorOpenDetailOption;
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
       component.openDetails(mockModalOptions);
@@ -1570,6 +1578,7 @@ describe('CompositeEditorService', () => {
         expect(setActiveCellSpy).toHaveBeenCalledWith(0, 0, false);
         expect(validationSummaryElm.style.display).toBe('none');
         expect(validationSummaryElm.textContent).toBe('');
+        expect(clearSelectionSpy).not.toHaveBeenCalled(); // shouldClearRowSelectionAfterMassAction is false
         done();
       });
     });

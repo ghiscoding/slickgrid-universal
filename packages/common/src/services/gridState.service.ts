@@ -1,5 +1,4 @@
-import * as isequal_ from 'lodash.isequal';
-const isequal = isequal_['default'] || isequal_; // patch to fix rollup to work
+import { dequal } from 'dequal';
 
 import {
   ExtensionName,
@@ -474,7 +473,7 @@ export class GridStateService {
         setTimeout(() => {
           const shouldBeSelectedRowIndexes = this._dataView.mapIdsToRows(this._selectedRowDataContextIds || []);
           const currentSelectedRowIndexes = this._grid.getSelectedRows();
-          if (!isequal(shouldBeSelectedRowIndexes, currentSelectedRowIndexes)) {
+          if (!dequal(shouldBeSelectedRowIndexes, currentSelectedRowIndexes)) {
             this._grid.setSelectedRows(shouldBeSelectedRowIndexes);
           }
         });
@@ -518,7 +517,7 @@ export class GridStateService {
           // this could happen if the previous step was a page change
           const shouldBeSelectedRowIndexes = this._dataView.mapIdsToRows(this._selectedRowDataContextIds || []);
           const currentSelectedRowIndexes = this._grid.getSelectedRows();
-          if (!isequal(shouldBeSelectedRowIndexes, currentSelectedRowIndexes)) {
+          if (!dequal(shouldBeSelectedRowIndexes, currentSelectedRowIndexes)) {
             this._grid.setSelectedRows(shouldBeSelectedRowIndexes);
           }
 
@@ -543,7 +542,7 @@ export class GridStateService {
     const filteredDataContextIds = this.refreshFilteredRowSelections();
 
     // when selection changed, we'll send a Grid State event with the selection changes
-    if (!isequal(this._selectedFilteredRowDataContextIds, previousSelectedFilteredRowDataContextIds)) {
+    if (!dequal(this._selectedFilteredRowDataContextIds, previousSelectedFilteredRowDataContextIds)) {
       const newValues = { gridRowIndexes: currentSelectedRowIndexes, dataContextIds: this._selectedRowDataContextIds, filteredDataContextIds } as CurrentRowSelection;
       this.pubSubService.publish('onGridStateChanged', { change: { newValues, type: GridStateType.rowSelection }, gridState: this.getCurrentGridState({ requestRefreshRowFilteredRow: false }) });
     }

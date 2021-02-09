@@ -396,6 +396,13 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.slick-editor-modal').should('not.exist');
   });
 
+  it('should not have any row selected after the mass-selection save is over', () => {
+    cy.get('.slick-row')
+      .children()
+      .filter('.slick-cell-checkboxsel.selected.true')
+      .should('have.length', 0);
+  });
+
   it('should have updated all the changed values BUT only on the 2 selected rows', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).should('contain', '51');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
@@ -444,6 +451,13 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.item-details-container.editor-finish .modified').should('have.length', 1);
 
     cy.get('.btn-cancel').click();
+  });
+
+  it('should not have any row selected after the mass-update save is over', () => {
+    cy.get('.slick-row')
+      .children()
+      .filter('.slick-cell-checkboxsel.selected.true')
+      .should('have.length', 0);
   });
 
   it('should focus on first row and open the Composite Editor (Clone Item) and expect all form inputs to be filled with first row data', () => {
