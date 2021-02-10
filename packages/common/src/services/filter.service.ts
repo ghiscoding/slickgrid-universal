@@ -47,7 +47,7 @@ interface OnSearchChangeEvent {
   columnDef: Column;
   columnFilters: ColumnFilters;
   operator: OperatorType | OperatorString | undefined;
-  parsedSearchTerms?: SearchTerm[] | undefined;
+  parsedSearchTerms?: SearchTerm | SearchTerm[] | undefined;
   searchTerms: SearchTerm[] | undefined;
   grid: SlickGrid;
 }
@@ -319,7 +319,7 @@ export class FilterService {
             return conditionOptions;
           }
 
-          const parsedSearchTerms = columnFilter?.parsedSearchTerms ?? [];
+          const parsedSearchTerms = columnFilter?.parsedSearchTerms ?? []; // parsed term could a single value or an array of values
           if (!FilterConditions.executeMappedCondition(conditionOptions as FilterConditionOption, parsedSearchTerms)) {
             return false;
           }
@@ -339,7 +339,7 @@ export class FilterService {
 
     let matches = null;
     if (fieldType !== FieldType.object) {
-      fieldSearchValue = '' + fieldSearchValue; // make sure it's a string
+      fieldSearchValue = (fieldSearchValue === undefined || fieldSearchValue === null) ? '' : `${fieldSearchValue}`; // make sure it's a string
       matches = fieldSearchValue.match(/^([<>!=\*]{0,2})(.*[^<>!=\*])?([\*]?)$/); // group 1: Operator, 2: searchValue, 3: last char is '*' (meaning starts with, ex.: abc*)
     }
 
@@ -483,7 +483,9 @@ export class FilterService {
         delete treeObj[inputArray[i][dataViewIdIdentifier]].__used;
       }
 
-      // loop through all column filters and execute filter condition(s)
+      // TODO revisit this piece of code, we use parsedSearchTerms twice
+
+      // loop through all column filters and get parsed filter search value then save a reference in the columnFilter itself
       for (const columnId of Object.keys(columnFilters)) {
         const columnFilter = columnFilters[columnId] as SearchColumnFilter;
         const searchValues: SearchTerm[] = columnFilter?.searchTerms ? deepCopy(columnFilter.searchTerms) : [];
@@ -492,8 +494,8 @@ export class FilterService {
 
         const columnDef = columnFilter.columnDef;
         const fieldType = columnDef?.filter?.type ?? columnDef?.type ?? FieldType.string;
-        const parsedSearchTerms = getParsedSearchTermsByFieldType(inputSearchConditions.searchTerms, fieldType);
-        if (parsedSearchTerms) {
+        const parsedSearchTerms = getParsedSearchTermsByFieldType(inputSearchConditions.searchTerms, fieldType); // parsed term could a single value or an array of values
+        if (parsedSearchTerms !== undefined) {
           columnFilter.parsedSearchTerms = parsedSearchTerms;
         }
       }
@@ -508,7 +510,7 @@ export class FilterService {
           const conditionOptionResult = this.getFilterConditionOptionsOrBoolean(item, columnFilter, this._grid);
 
           if (conditionOptionResult) {
-            const parsedSearchTerms = columnFilter?.parsedSearchTerms ?? [];
+            const parsedSearchTerms = columnFilter?.parsedSearchTerms ?? []; // parsed term could a single value or an array of values
             const conditionResult = (typeof conditionOptionResult === 'boolean') ? conditionOptionResult : FilterConditions.executeMappedCondition(conditionOptionResult as FilterConditionOption, parsedSearchTerms);
             if (conditionResult) {
               // don't return true since we still need to check other keys in columnFilters
@@ -860,7 +862,7 @@ export class FilterService {
       const hasSearchTerms = searchTerms && Array.isArray(searchTerms);
       const termsCount = hasSearchTerms && searchTerms && searchTerms.length;
       const oldColumnFilters = { ...this._columnFilters };
-      let parsedSearchTerms: SearchTerm[] | undefined;
+      let parsedSearchTerms: SearchTerm | SearchTerm[] | undefined;
 
       if (columnDef && columnId) {
         if (!hasSearchTerms || termsCount === 0 || (termsCount === 1 && Array.isArray(searchTerms) && searchTerms[0] === '')) {
@@ -878,7 +880,7 @@ export class FilterService {
           const inputSearchConditions = this.getSearchInputConditions(searchTerms, colFilter);
           colFilter.operator = operator || inputSearchConditions.operator || mapOperatorByFieldType(fieldType);
           parsedSearchTerms = getParsedSearchTermsByFieldType(inputSearchConditions.searchTerms, fieldType);
-          if (parsedSearchTerms) {
+          if (parsedSearchTerms !== undefined) {
             colFilter.parsedSearchTerms = parsedSearchTerms;
           }
 
@@ -955,7 +957,7 @@ export class FilterService {
 
   protected updateColumnFilters(searchTerms: SearchTerm[] | undefined, columnDef: any, operator?: OperatorType | OperatorString) {
     const fieldType = columnDef.filter?.type ?? columnDef.type ?? FieldType.string;
-    const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, fieldType) || [];
+    const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, fieldType) || []; // parsed term could a single value or an array of values
 
     if (searchTerms && columnDef) {
       this._columnFilters[columnDef.id] = {

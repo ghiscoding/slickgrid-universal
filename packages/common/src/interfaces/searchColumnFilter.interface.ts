@@ -13,7 +13,7 @@ export interface SearchColumnFilter {
    * Parsed Search Terms is similar to SearchTerms but is already parsed in the correct format,
    * for example on a date field the searchTerms might be in string format but their respective parsedSearchTerms will be of type Date
    */
-  parsedSearchTerms: SearchTerm[];
+  parsedSearchTerms: SearchTerm | SearchTerm[];
 
   /** Search terms to preload (collection), please note it is better to use the "presets" grid option which is more powerful. */
   searchTerms: SearchTerm[];

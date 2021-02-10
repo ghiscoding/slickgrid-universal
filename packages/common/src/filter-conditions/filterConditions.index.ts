@@ -1,15 +1,15 @@
-import { booleanFilterCondition } from './booleanFilterCondition';
+import { executeBooleanFilterCondition } from './booleanFilterCondition';
 import { executeMappedCondition } from './executeMappedCondition';
-import { collectionSearchFilterCondition } from './collectionSearchFilterCondition';
-import { numberFilterCondition } from './numberFilterCondition';
-import { stringFilterCondition } from './stringFilterCondition';
+import { executeCollectionSearchFilterCondition } from './collectionSearchFilterCondition';
+import { executeNumberFilterCondition } from './numberFilterCondition';
+import { executeStringFilterCondition } from './stringFilterCondition';
 import { testFilterCondition } from './filterUtilities';
 
 export const FilterConditions = {
   executeMappedCondition,
-  booleanFilter: booleanFilterCondition,
-  collectionSearchFilter: collectionSearchFilterCondition,
-  numberFilter: numberFilterCondition,
-  stringFilter: stringFilterCondition,
+  booleanFilter: executeBooleanFilterCondition,
+  collectionSearchFilter: executeCollectionSearchFilterCondition,
+  numberFilter: executeNumberFilterCondition,
+  stringFilter: executeStringFilterCondition,
   testFilter: testFilterCondition
 };

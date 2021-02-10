@@ -1,151 +1,84 @@
-import { booleanFilterCondition } from './booleanFilterCondition';
-import { collectionSearchFilterCondition } from './collectionSearchFilterCondition';
-import { numberFilterCondition } from './numberFilterCondition';
-import { objectFilterCondition } from './objectFilterCondition';
-import { stringFilterCondition } from './stringFilterCondition';
-
-import { FieldType, OperatorType, SearchTerm } from '../enums/index';
+import { FieldType, SearchTerm } from '../enums/index';
 import { FilterCondition, FilterConditionOption } from '../interfaces/index';
-import { mapMomentDateFormatWithFieldType } from './../services/utilities';
-import { testFilterCondition } from './filterUtilities';
-import * as moment_ from 'moment-mini';
+import { executeBooleanFilterCondition, getFilterParsedBoolean } from './booleanFilterCondition';
+import { executeCollectionSearchFilterCondition } from './collectionSearchFilterCondition';
+import { getFilterParsedNumbers, executeNumberFilterCondition } from './numberFilterCondition';
+import { executeAssociatedDateCondition, getFilterParsedDates } from './dateFilterCondition';
+import { executeObjectFilterCondition, getFilterParsedObjectResult } from './objectFilterCondition';
+import { executeStringFilterCondition, getFilterParsedText } from './stringFilterCondition';
 
-const moment = moment_['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
+/** General variable type, just 5x types instead of the multiple FieldType (over 30x of them) */
+export type GeneralVariableType = 'boolean' | 'date' | 'number' | 'object' | 'text';
 
-export type GeneralFieldType = 'boolean' | 'date' | 'number' | 'object' | 'text';
-
-export const executeMappedCondition: FilterCondition = (options: FilterConditionOption, parsedSearchTerms: SearchTerm[]) => {
+/** Execute mapped condition (per field type) for each cell in the grid */
+export const executeMappedCondition: FilterCondition = (options: FilterConditionOption, parsedSearchTerms: SearchTerm | SearchTerm[]) => {
   // when using a multi-select ('IN' operator) we will not use the field type but instead go directly with a collection search
-  const operator = options && options.operator && options.operator.toUpperCase();
-  if (operator === 'IN' || operator === 'NIN' || operator === 'IN_CONTAINS' || operator === 'NIN_CONTAINS') {
-    return collectionSearchFilterCondition(options, parsedSearchTerms);
+  const operator = options.operator?.toUpperCase();
+  if (operator === 'IN' || operator === 'NIN' || operator === 'NOT_IN' || operator === 'IN_CONTAINS' || operator === 'NIN_CONTAINS' || operator === 'NOT_IN_CONTAINS') {
+    return executeCollectionSearchFilterCondition(options);
   }
 
+  // From a more specific field type (dateIso, dateEuro, text, readonly, ...), get the more generalized type (boolean, date, number, object, text)
   const generalType = getGeneralTypeByFieldType(options.fieldType);
-
 
   // execute the mapped type, or default to String condition check
   switch (generalType) {
     case 'boolean':
-      return booleanFilterCondition(options, parsedSearchTerms);
+      // the parsedSearchTerms should be single value (pulled from getFilterParsedBoolean()), but we can play safe
+      const parsedSearchBoolean = Array.isArray(parsedSearchTerms) ? parsedSearchTerms[0] : parsedSearchTerms;
+      return executeBooleanFilterCondition(options, parsedSearchBoolean as SearchTerm);
     case 'date':
-      return executeAssociatedDateCondition(options, ...parsedSearchTerms);
+      return executeAssociatedDateCondition(options, ...parsedSearchTerms as any[]);
     case 'number':
-      return numberFilterCondition(options, ...parsedSearchTerms as number[]);
+      return executeNumberFilterCondition(options, ...parsedSearchTerms as number[]);
     case 'object':
-      return objectFilterCondition(options, parsedSearchTerms);
+      // the parsedSearchTerms should be single value (pulled from getFilterParsedObjectResult()), but we can play safe
+      const parsedSearchObjectValue = Array.isArray(parsedSearchTerms) ? parsedSearchTerms[0] : parsedSearchTerms;
+      return executeObjectFilterCondition(options, parsedSearchObjectValue as SearchTerm);
     case 'text':
     default:
-      return stringFilterCondition(options, parsedSearchTerms);
+      // the parsedSearchTerms should be single value (pulled from getFilterParsedText()), but we can play safe
+      const parsedSearchText = Array.isArray(parsedSearchTerms) ? parsedSearchTerms[0] : parsedSearchTerms;
+      return executeStringFilterCondition(options, parsedSearchText as SearchTerm);
   }
 };
 
 /**
- * Execute Date filter condition and use correct date format depending on it's field type (or filterSearchType when that is provided)
- * @param options
+ * From our search filter value(s), get their parsed value(s),
+ * for example a "dateIso" filter will be parsed as Moment object(s) to later execute filtering checks.
+ * This is called only once per filter before running the actual filter condition check on each cell afterward.
  */
-function executeAssociatedDateCondition(options: FilterConditionOption, ...parsedSearchDates: any[]): boolean {
-  const filterSearchType = options && (options.filterSearchType || options.fieldType) || FieldType.dateIso;
-  const FORMAT = mapMomentDateFormatWithFieldType(filterSearchType);
-  const [searchDate1, searchDate2] = parsedSearchDates;
-
-  // cell value in moment format
-  const dateCell = moment(options.cellValue, FORMAT, true);
-
-  // return when cell value is not a valid date
-  if ((!searchDate1 && !searchDate2) || !dateCell.isValid()) {
-    return false;
-  }
-
-  // when comparing with Dates only (without time), we need to disregard the time portion, we can do so by setting our time to start at midnight
-  // ref, see https://stackoverflow.com/a/19699447/1212166
-  const dateCellTimestamp = FORMAT.toLowerCase().includes('h') ? dateCell.valueOf() : dateCell.clone().startOf('day').valueOf();
-
-  // having 2 search dates, we assume that it's a date range filtering and we'll compare against both dates
-  if (searchDate1 && searchDate2) {
-    const isInclusive = options.operator && options.operator === OperatorType.rangeInclusive;
-    const resultCondition1 = testFilterCondition((isInclusive ? '>=' : '>'), dateCellTimestamp, searchDate1.valueOf());
-    const resultCondition2 = testFilterCondition((isInclusive ? '<=' : '<'), dateCellTimestamp, searchDate2.valueOf());
-    return (resultCondition1 && resultCondition2);
-  }
-
-  // comparing against a single search date
-  const dateSearchTimestamp1 = FORMAT.toLowerCase().includes('h') ? searchDate1.valueOf() : searchDate1.clone().startOf('day').valueOf();
-  return testFilterCondition(options.operator || '==', dateCellTimestamp, dateSearchTimestamp1);
-}
-
-export function getParsedSearchTermsByFieldType(inputSearchTerms: SearchTerm[] | undefined, inputFilterSearchType: typeof FieldType[keyof typeof FieldType]): SearchTerm[] | undefined {
+export function getParsedSearchTermsByFieldType(inputSearchTerms: SearchTerm[] | undefined, inputFilterSearchType: typeof FieldType[keyof typeof FieldType]): SearchTerm | SearchTerm[] | undefined {
   const generalType = getGeneralTypeByFieldType(inputFilterSearchType);
+  let parsedSearchValues: SearchTerm | SearchTerm[] | undefined;
 
   switch (generalType) {
+    case 'boolean':
+      parsedSearchValues = getFilterParsedBoolean(inputSearchTerms) as boolean;
+      break;
     case 'date':
-      return getParsedSearchDates(inputSearchTerms, inputFilterSearchType);
+      parsedSearchValues = getFilterParsedDates(inputSearchTerms, inputFilterSearchType) as SearchTerm[];
+      break;
     case 'number':
-      return getParsedSearchNumbers(inputSearchTerms);
-  }
-  return undefined;
-}
-
-function getParsedSearchDates(inputSearchTerms: SearchTerm[] | undefined, inputFilterSearchType: typeof FieldType[keyof typeof FieldType]): SearchTerm[] | undefined {
-  const searchTerms = Array.isArray(inputSearchTerms) && inputSearchTerms || [];
-  const filterSearchType = inputFilterSearchType || FieldType.dateIso;
-  const FORMAT = mapMomentDateFormatWithFieldType(filterSearchType);
-
-  const parsedSearchValues: any[] = [];
-
-  if (searchTerms.length === 2 || (typeof searchTerms[0] === 'string' && (searchTerms[0] as string).indexOf('..') > 0)) {
-    const searchValues = (searchTerms.length === 2) ? searchTerms : (searchTerms[0] as string).split('..');
-    const searchValue1 = (Array.isArray(searchValues) && searchValues[0] || '') as Date | string;
-    const searchValue2 = (Array.isArray(searchValues) && searchValues[1] || '') as Date | string;
-    const searchDate1 = moment(searchValue1, FORMAT, true);
-    const searchDate2 = moment(searchValue2, FORMAT, true);
-
-    // return if any of the 2 values are invalid dates
-    if (!searchDate1.isValid() || !searchDate2.isValid()) {
-      return undefined;
-    }
-    parsedSearchValues.push(searchDate1, searchDate2);
-  } else {
-    // return if the search term is an invalid date
-    const searchDate1 = moment(searchTerms[0] as Date | string, FORMAT, true);
-    if (!searchDate1.isValid()) {
-      return undefined;
-    }
-    parsedSearchValues.push(searchDate1);
+      parsedSearchValues = getFilterParsedNumbers(inputSearchTerms) as SearchTerm[];
+      break;
+    case 'object':
+      parsedSearchValues = getFilterParsedObjectResult(inputSearchTerms) as SearchTerm;
+      break;
+    case 'text':
+      parsedSearchValues = getFilterParsedText(inputSearchTerms) as SearchTerm;
+      break;
   }
   return parsedSearchValues;
 }
 
-function getParsedSearchNumbers(inputSearchTerms: SearchTerm[] | undefined): number[] | undefined {
-  const searchTerms = Array.isArray(inputSearchTerms) && inputSearchTerms || [];
-  const parsedSearchValues: number[] = [];
-  let searchValue1;
-  let searchValue2;
-
-  if (searchTerms.length === 2 || (typeof searchTerms[0] === 'string' && (searchTerms[0] as string).indexOf('..') > 0)) {
-    const searchValues = (searchTerms.length === 2) ? searchTerms : (searchTerms[0] as string).split('..');
-    searchValue1 = parseFloat(Array.isArray(searchValues) ? (searchValues[0] + '') : '');
-    searchValue2 = parseFloat(Array.isArray(searchValues) ? (searchValues[1] + '') : '');
-  } else {
-    searchValue1 = parseFloat(searchTerms[0] + '');
-  }
-
-  if (searchValue1 !== undefined && searchValue2 !== undefined) {
-    parsedSearchValues.push(searchValue1, searchValue2);
-  } else if (searchValue1 !== undefined) {
-    parsedSearchValues.push(searchValue1);
-  } else {
-    return undefined;
-  }
-  return parsedSearchValues;
-}
 
 /**
  * From a more specific field type, let's return a simple and more general type (boolean, date, number, object, text)
  * @param fieldType - specific field type
  * @returns generalType - general field type
  */
-function getGeneralTypeByFieldType(fieldType: typeof FieldType[keyof typeof FieldType]): GeneralFieldType {
+function getGeneralTypeByFieldType(fieldType: typeof FieldType[keyof typeof FieldType]): GeneralVariableType {
   // return general field type
   switch (fieldType) {
     case FieldType.boolean:
