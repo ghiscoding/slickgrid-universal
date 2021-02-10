@@ -3,8 +3,8 @@ import { FilterCondition, FilterConditionOption } from '../interfaces/index';
 import { compareObjects } from './filterUtilities';
 
 /** Execute filter condition check on each cell */
-export const executeObjectFilterCondition: FilterCondition = (options: FilterConditionOption, parsedSearchValue: SearchTerm) => {
-  if (!parsedSearchValue && !options.operator) {
+export const executeObjectFilterCondition: FilterCondition = (options: FilterConditionOption, parsedSearchValue: SearchTerm | undefined) => {
+  if (parsedSearchValue === undefined && !options.operator) {
     return true;
   }
 

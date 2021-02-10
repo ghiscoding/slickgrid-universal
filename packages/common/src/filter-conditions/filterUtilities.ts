@@ -27,6 +27,23 @@ export function compareObjects(o1: any, o2: any, compareKey?: string): boolean {
   return true;
 }
 
+/** Simple check to see if the given Operator is meant to be used with a collection check */
+export function isCollectionOperator(operator: OperatorString): boolean {
+  const inputOperator = operator?.toUpperCase() ?? '';
+  switch (inputOperator) {
+    case 'IN':
+    case 'NIN':
+    case 'NOT_IN':
+    case 'IN_CONTAINS':
+    case 'NIN_CONTAINS':
+    case 'NOT_IN_CONTAINS':
+      return true;
+    default:
+      return false;
+  }
+}
+
+/** Execute the test on the filter condition given an operator and both values, returns a boolean */
 export const testFilterCondition = (operator: OperatorString, value1: any, value2: any): boolean => {
   switch (operator) {
     case '<':

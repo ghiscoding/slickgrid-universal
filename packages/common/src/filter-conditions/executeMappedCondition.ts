@@ -6,6 +6,7 @@ import { getFilterParsedNumbers, executeNumberFilterCondition } from './numberFi
 import { executeAssociatedDateCondition, getFilterParsedDates } from './dateFilterCondition';
 import { executeObjectFilterCondition, getFilterParsedObjectResult } from './objectFilterCondition';
 import { executeStringFilterCondition, getFilterParsedText } from './stringFilterCondition';
+import { isCollectionOperator } from './filterUtilities';
 
 /** General variable type, just 5x types instead of the multiple FieldType (over 30x of them) */
 export type GeneralVariableType = 'boolean' | 'date' | 'number' | 'object' | 'text';
@@ -13,8 +14,7 @@ export type GeneralVariableType = 'boolean' | 'date' | 'number' | 'object' | 'te
 /** Execute mapped condition (per field type) for each cell in the grid */
 export const executeMappedCondition: FilterCondition = (options: FilterConditionOption, parsedSearchTerms: SearchTerm | SearchTerm[]) => {
   // when using a multi-select ('IN' operator) we will not use the field type but instead go directly with a collection search
-  const operator = options.operator?.toUpperCase();
-  if (operator === 'IN' || operator === 'NIN' || operator === 'NOT_IN' || operator === 'IN_CONTAINS' || operator === 'NIN_CONTAINS' || operator === 'NOT_IN_CONTAINS') {
+  if (isCollectionOperator(options.operator)) {
     return executeCollectionSearchFilterCondition(options);
   }
 
@@ -24,22 +24,19 @@ export const executeMappedCondition: FilterCondition = (options: FilterCondition
   // execute the mapped type, or default to String condition check
   switch (generalType) {
     case 'boolean':
-      // the parsedSearchTerms should be single value (pulled from getFilterParsedBoolean()), but we can play safe
-      const parsedSearchBoolean = Array.isArray(parsedSearchTerms) ? parsedSearchTerms[0] : parsedSearchTerms;
-      return executeBooleanFilterCondition(options, parsedSearchBoolean as SearchTerm);
+      // the parsedSearchTerms should be single value (originated from getFilterParsedBoolean())
+      return executeBooleanFilterCondition(options, parsedSearchTerms as SearchTerm);
     case 'date':
       return executeAssociatedDateCondition(options, ...parsedSearchTerms as any[]);
     case 'number':
       return executeNumberFilterCondition(options, ...parsedSearchTerms as number[]);
     case 'object':
-      // the parsedSearchTerms should be single value (pulled from getFilterParsedObjectResult()), but we can play safe
-      const parsedSearchObjectValue = Array.isArray(parsedSearchTerms) ? parsedSearchTerms[0] : parsedSearchTerms;
-      return executeObjectFilterCondition(options, parsedSearchObjectValue as SearchTerm);
+      // the parsedSearchTerms should be single value (originated from getFilterParsedObjectResult())
+      return executeObjectFilterCondition(options, parsedSearchTerms as SearchTerm);
     case 'text':
     default:
-      // the parsedSearchTerms should be single value (pulled from getFilterParsedText()), but we can play safe
-      const parsedSearchText = Array.isArray(parsedSearchTerms) ? parsedSearchTerms[0] : parsedSearchTerms;
-      return executeStringFilterCondition(options, parsedSearchText as SearchTerm);
+      // the parsedSearchTerms should be single value (originated from getFilterParsedText())
+      return executeStringFilterCondition(options, parsedSearchTerms as SearchTerm);
   }
 };
 
@@ -52,6 +49,8 @@ export function getParsedSearchTermsByFieldType(inputSearchTerms: SearchTerm[] |
   const generalType = getGeneralTypeByFieldType(inputFilterSearchType);
   let parsedSearchValues: SearchTerm | SearchTerm[] | undefined;
 
+  // parse the search value(s), the Date & Numbers could be in a range and so we will return an array for them
+  // any other type will return a single search value
   switch (generalType) {
     case 'boolean':
       parsedSearchValues = getFilterParsedBoolean(inputSearchTerms) as boolean;
@@ -63,10 +62,10 @@ export function getParsedSearchTermsByFieldType(inputSearchTerms: SearchTerm[] |
       parsedSearchValues = getFilterParsedNumbers(inputSearchTerms) as SearchTerm[];
       break;
     case 'object':
-      parsedSearchValues = getFilterParsedObjectResult(inputSearchTerms) as SearchTerm;
+      parsedSearchValues = getFilterParsedObjectResult(inputSearchTerms);
       break;
     case 'text':
-      parsedSearchValues = getFilterParsedText(inputSearchTerms) as SearchTerm;
+      parsedSearchValues = getFilterParsedText(inputSearchTerms);
       break;
   }
   return parsedSearchValues;

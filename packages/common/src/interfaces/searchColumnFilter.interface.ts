@@ -3,19 +3,19 @@ import { Column, } from './index';
 import { SearchTerm } from '../enums/searchTerm.type';
 
 export interface SearchColumnFilter {
-  /** Column ID */
+  /** Column definition Id */
   columnId: string;
 
-  /** Column Definition */
+  /** Column definition */
   columnDef: Column;
 
   /**
    * Parsed Search Terms is similar to SearchTerms but is already parsed in the correct format,
    * for example on a date field the searchTerms might be in string format but their respective parsedSearchTerms will be of type Date
    */
-  parsedSearchTerms: SearchTerm | SearchTerm[];
+  parsedSearchTerms?: SearchTerm | SearchTerm[];
 
-  /** Search terms to preload (collection), please note it is better to use the "presets" grid option which is more powerful. */
+  /** Search Terms to preload (collection), please note it is better to use the "presets" grid option which is more powerful. */
   searchTerms: SearchTerm[];
 
   /** Operator to use when filtering (>, >=, EQ, IN, ...) */

@@ -3,7 +3,7 @@ import { FilterCondition, FilterConditionOption } from './../interfaces/index';
 import { parseBoolean } from '../services/utilities';
 
 /** Execute filter condition check on each cell */
-export const executeBooleanFilterCondition: FilterCondition = (options: FilterConditionOption, parsedSearchValue: boolean) => {
+export const executeBooleanFilterCondition: FilterCondition = (options: FilterConditionOption, parsedSearchValue: boolean | undefined) => {
   return parseBoolean(options.cellValue) === parseBoolean(parsedSearchValue);
 };
 

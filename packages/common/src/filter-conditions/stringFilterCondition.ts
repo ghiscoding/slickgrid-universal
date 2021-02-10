@@ -3,13 +3,19 @@ import { FilterCondition, FilterConditionOption } from '../interfaces/index';
 import { testFilterCondition } from './filterUtilities';
 
 /** Execute filter condition check on each cell */
-export const executeStringFilterCondition: FilterCondition = (options: FilterConditionOption, parsedSearchValue: string) => {
+export const executeStringFilterCondition: FilterCondition = (options: FilterConditionOption, parsedSearchValue: string | undefined) => {
+  if (parsedSearchValue === undefined && !options.operator) {
+    return true;
+  }
+
   // make sure the cell value is a string by casting it when possible
   options.cellValue = (options.cellValue === undefined || options.cellValue === null) ? '' : options.cellValue.toString();
 
   // make both the cell value and search value lower for case insensitive comparison
   const cellValue = options.cellValue.toLowerCase();
-  parsedSearchValue = parsedSearchValue.toLowerCase();
+  if (typeof parsedSearchValue === 'string') {
+    parsedSearchValue = parsedSearchValue.toLowerCase();
+  }
 
   if (options.operator === '*' || options.operator === OperatorType.endsWith) {
     return cellValue.endsWith(parsedSearchValue);
