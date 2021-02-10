@@ -46,9 +46,9 @@ export function getFilterParsedNumbers(inputSearchTerms: SearchTerm[] | undefine
   }
 
   if (isNumber(searchValue1, true) && isNumber(searchValue2, true)) {
-    parsedSearchValues.push(searchValue1, searchValue2);
+    parsedSearchValues.push(searchValue1 as number, searchValue2 as number);
   } else if (isNumber(searchValue1, true)) {
-    parsedSearchValues.push(searchValue1);
+    parsedSearchValues.push(searchValue1 as number);
   }
   return parsedSearchValues;
 }
