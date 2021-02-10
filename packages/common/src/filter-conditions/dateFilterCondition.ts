@@ -12,7 +12,12 @@ import { testFilterCondition } from './filterUtilities';
 export function executeAssociatedDateCondition(options: FilterConditionOption, ...parsedSearchDates: any[]): boolean {
   const filterSearchType = options && (options.filterSearchType || options.fieldType) || FieldType.dateIso;
   const FORMAT = mapMomentDateFormatWithFieldType(filterSearchType);
-  const [searchDate1, searchDate2] = parsedSearchDates;
+  let [searchDate1, searchDate2] = parsedSearchDates;
+
+  // using the spread argument might cause it to be an array inside an array, in that case do another split
+  if (Array.isArray(searchDate1)) {
+    [searchDate1, searchDate2] = searchDate1;
+  }
 
   // cell value in moment format
   const dateCell = moment(options.cellValue, FORMAT, true);
@@ -43,7 +48,7 @@ export function executeAssociatedDateCondition(options: FilterConditionOption, .
  * From our search filter value(s), get the parsed value(s), they are parsed as Moment object(s).
  * This is called only once per filter before running the actual filter condition check on each cell
  */
-export function getFilterParsedDates(inputSearchTerms: SearchTerm[] | undefined, inputFilterSearchType: typeof FieldType[keyof typeof FieldType]): SearchTerm[] | undefined {
+export function getFilterParsedDates(inputSearchTerms: SearchTerm[] | undefined, inputFilterSearchType: typeof FieldType[keyof typeof FieldType]): SearchTerm[] {
   const searchTerms = Array.isArray(inputSearchTerms) && inputSearchTerms || [];
   const filterSearchType = inputFilterSearchType || FieldType.dateIso;
   const FORMAT = mapMomentDateFormatWithFieldType(filterSearchType);
@@ -59,14 +64,14 @@ export function getFilterParsedDates(inputSearchTerms: SearchTerm[] | undefined,
 
     // return if any of the 2 values are invalid dates
     if (!searchDate1.isValid() || !searchDate2.isValid()) {
-      return undefined;
+      return [];
     }
     parsedSearchValues.push(searchDate1, searchDate2);
   } else {
     // return if the search term is an invalid date
     const searchDate1 = moment(searchTerms[0] as Date | string, FORMAT, true);
     if (!searchDate1.isValid()) {
-      return undefined;
+      return [];
     }
     parsedSearchValues.push(searchDate1);
   }

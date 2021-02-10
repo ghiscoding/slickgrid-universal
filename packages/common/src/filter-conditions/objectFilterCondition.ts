@@ -8,7 +8,9 @@ export const executeObjectFilterCondition: FilterCondition = (options: FilterCon
     return true;
   }
 
-  switch (options.operator) {
+  const operator = (options.operator || '').toUpperCase();
+
+  switch (operator) {
     case '!=':
     case '<>':
     case 'NE':
@@ -26,6 +28,6 @@ export const executeObjectFilterCondition: FilterCondition = (options: FilterCon
  * This is called only once per filter before running the actual filter condition check on each cell
  */
 export function getFilterParsedObjectResult(inputSearchTerms: SearchTerm[] | undefined): SearchTerm {
-  const searchTerm = (Array.isArray(inputSearchTerms) && inputSearchTerms[0] || '');
-  return searchTerm;
+  const parsedSearchValue = (Array.isArray(inputSearchTerms) && inputSearchTerms.length > 0) ? inputSearchTerms[0] : '';
+  return parsedSearchValue || '';
 }

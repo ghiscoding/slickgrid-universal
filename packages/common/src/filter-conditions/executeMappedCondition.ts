@@ -9,7 +9,7 @@ import { executeStringFilterCondition, getFilterParsedText } from './stringFilte
 import { isCollectionOperator } from './filterUtilities';
 
 /** General variable type, just 5x types instead of the multiple FieldType (over 30x of them) */
-export type GeneralVariableType = 'boolean' | 'date' | 'number' | 'object' | 'text';
+export type GeneralizedVariableType = 'boolean' | 'date' | 'number' | 'object' | 'text';
 
 /** Execute mapped condition (per field type) for each cell in the grid */
 export const executeMappedCondition: FilterCondition = (options: FilterConditionOption, parsedSearchTerms: SearchTerm | SearchTerm[]) => {
@@ -19,23 +19,23 @@ export const executeMappedCondition: FilterCondition = (options: FilterCondition
   }
 
   // From a more specific field type (dateIso, dateEuro, text, readonly, ...), get the more generalized type (boolean, date, number, object, text)
-  const generalType = getGeneralTypeByFieldType(options.fieldType);
+  const generalizedType = getGeneralizedTypeByFieldType(options.filterSearchType || options.fieldType);
 
   // execute the mapped type, or default to String condition check
-  switch (generalType) {
+  switch (generalizedType) {
     case 'boolean':
-      // the parsedSearchTerms should be single value (originated from getFilterParsedBoolean())
+      // the parsedSearchTerms should be single value (result came from getFilterParsedBoolean() method)
       return executeBooleanFilterCondition(options, parsedSearchTerms as SearchTerm);
     case 'date':
       return executeAssociatedDateCondition(options, ...parsedSearchTerms as any[]);
     case 'number':
       return executeNumberFilterCondition(options, ...parsedSearchTerms as number[]);
     case 'object':
-      // the parsedSearchTerms should be single value (originated from getFilterParsedObjectResult())
+      // the parsedSearchTerms should be single value (result came from getFilterParsedObjectResult() method)
       return executeObjectFilterCondition(options, parsedSearchTerms as SearchTerm);
     case 'text':
     default:
-      // the parsedSearchTerms should be single value (originated from getFilterParsedText())
+      // the parsedSearchTerms should be single value (result came from getFilterParsedText() method)
       return executeStringFilterCondition(options, parsedSearchTerms as SearchTerm);
   }
 };
@@ -46,12 +46,12 @@ export const executeMappedCondition: FilterCondition = (options: FilterCondition
  * This is called only once per filter before running the actual filter condition check on each cell afterward.
  */
 export function getParsedSearchTermsByFieldType(inputSearchTerms: SearchTerm[] | undefined, inputFilterSearchType: typeof FieldType[keyof typeof FieldType]): SearchTerm | SearchTerm[] | undefined {
-  const generalType = getGeneralTypeByFieldType(inputFilterSearchType);
+  const generalizedType = getGeneralizedTypeByFieldType(inputFilterSearchType);
   let parsedSearchValues: SearchTerm | SearchTerm[] | undefined;
 
   // parse the search value(s), the Date & Numbers could be in a range and so we will return an array for them
   // any other type will return a single search value
-  switch (generalType) {
+  switch (generalizedType) {
     case 'boolean':
       parsedSearchValues = getFilterParsedBoolean(inputSearchTerms) as boolean;
       break;
@@ -77,7 +77,7 @@ export function getParsedSearchTermsByFieldType(inputSearchTerms: SearchTerm[] |
  * @param fieldType - specific field type
  * @returns generalType - general field type
  */
-function getGeneralTypeByFieldType(fieldType: typeof FieldType[keyof typeof FieldType]): GeneralVariableType {
+function getGeneralizedTypeByFieldType(fieldType: typeof FieldType[keyof typeof FieldType]): GeneralizedVariableType {
   // return general field type
   switch (fieldType) {
     case FieldType.boolean:

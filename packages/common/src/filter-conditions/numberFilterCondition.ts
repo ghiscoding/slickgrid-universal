@@ -1,11 +1,17 @@
 import { OperatorType, SearchTerm } from '../enums/index';
 import { FilterCondition, FilterConditionOption } from '../interfaces/index';
+import { isNumber } from '../services/utilities';
 import { testFilterCondition } from './filterUtilities';
 
 /** Execute filter condition check on each cell */
 export const executeNumberFilterCondition: FilterCondition = (options: FilterConditionOption, ...parsedSearchValues: number[]) => {
   const cellValue = parseFloat(options.cellValue);
-  const [searchValue1, searchValue2] = parsedSearchValues;
+  let [searchValue1, searchValue2] = parsedSearchValues;
+
+  // using the spread argument might cause it to be an array inside an array, in that case do another split
+  if (Array.isArray(searchValue1)) {
+    [searchValue1, searchValue2] = searchValue1;
+  }
 
   if (searchValue1 === undefined && !options.operator) {
     return true;
@@ -25,22 +31,23 @@ export const executeNumberFilterCondition: FilterCondition = (options: FilterCon
  * This is called only once per filter before running the actual filter condition check on each cell
  */
 export function getFilterParsedNumbers(inputSearchTerms: SearchTerm[] | undefined): number[] {
-  const searchTerms = Array.isArray(inputSearchTerms) && inputSearchTerms || [];
+  const defaultSearchTerm = 0; // when nothing is provided, we'll default to 0
+  const searchTerms = Array.isArray(inputSearchTerms) && inputSearchTerms || [defaultSearchTerm];
   const parsedSearchValues: number[] = [];
   let searchValue1;
   let searchValue2;
 
   if (searchTerms.length === 2 || (typeof searchTerms[0] === 'string' && (searchTerms[0] as string).indexOf('..') > 0)) {
     const searchValues = (searchTerms.length === 2) ? searchTerms : (searchTerms[0] as string).split('..');
-    searchValue1 = parseFloat(Array.isArray(searchValues) ? (searchValues[0] + '') : '');
-    searchValue2 = parseFloat(Array.isArray(searchValues) ? (searchValues[1] + '') : '');
+    searchValue1 = parseFloat(Array.isArray(searchValues) ? searchValues[0] as string : '');
+    searchValue2 = parseFloat(Array.isArray(searchValues) ? searchValues[1] as string : '');
   } else {
-    searchValue1 = parseFloat(searchTerms[0] + '');
+    searchValue1 = parseFloat(searchTerms[0] as string);
   }
 
-  if (searchValue1 !== undefined && searchValue2 !== undefined) {
+  if (isNumber(searchValue1, true) && isNumber(searchValue2, true)) {
     parsedSearchValues.push(searchValue1, searchValue2);
-  } else if (searchValue1 !== undefined) {
+  } else if (isNumber(searchValue1, true)) {
     parsedSearchValues.push(searchValue1);
   }
   return parsedSearchValues;
