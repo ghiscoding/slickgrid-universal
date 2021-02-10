@@ -31,6 +31,13 @@ describe('executeObjectFilterCondition method', () => {
     expect(output).toBe(true);
   });
 
+  it('should return True when first searchTerm is undefined provided neither an operator when executing "executeMappedCondition" method', () => {
+    const searchTerms = undefined;
+    const options = { dataKey: '', cellValue: mockRow, fieldType: FieldType.object } as FilterConditionOption;
+    const output = executeMappedCondition(options, searchTerms);
+    expect(output).toBe(true);
+  });
+
   it('should return False when any cell input value is provided without any search terms', () => {
     const searchTerms = [];
     const options = { dataKey: '', operator: 'EQ', cellValue: mockRow, fieldType: FieldType.object } as FilterConditionOption;

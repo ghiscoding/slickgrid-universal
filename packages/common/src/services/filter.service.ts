@@ -357,9 +357,7 @@ export class FilterService {
     const searchTerm = matches?.[2] || '';
     const inputLastChar = matches?.[3] || (operator === '*z' ? '*' : '');
 
-    if (Array.isArray(searchValues) && searchValues.length > 1) {
-      fieldSearchValue = searchValues.join(',');
-    } else if (typeof fieldSearchValue === 'string') {
+    if (typeof fieldSearchValue === 'string') {
       // escaping the search value
       fieldSearchValue = fieldSearchValue.replace(`'`, `''`); // escape single quotes by doubling them
       if (operator === '*' || operator === 'a*' || operator === '*z' || inputLastChar === '*') {

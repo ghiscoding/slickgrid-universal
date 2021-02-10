@@ -300,7 +300,7 @@ export function htmlEncodedStringWithPadding(inputStr: string, paddingLength: nu
  */
 export function isNumber(value: any, strict = false) {
   if (strict) {
-    return (value === null || value === undefined || value === '') ? false : !isNaN(value);
+    return (value === null || value === undefined || typeof value === 'string') ? false : !isNaN(value);
   }
   return (value === null || value === undefined || value === '') ? false : !isNaN(+value);
 }

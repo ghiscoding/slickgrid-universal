@@ -13,8 +13,15 @@ describe('executeNumberFilterCondition method', () => {
 
   it('should return True when input cell value equals the default search term', () => {
     const searchTerms = undefined;
-    const options = { dataKey: '', operator: 'EQ', cellValue: 0, fieldType: FieldType.string } as FilterConditionOption;
+    const options = { dataKey: '', operator: 'EQ', cellValue: 0, fieldType: FieldType.number } as FilterConditionOption;
     const output = executeNumberFilterCondition(options, getFilterParsedNumbers(searchTerms));
+    expect(output).toBe(true);
+  });
+
+  it('should return True when first searchTerm is undefined provided neither an operator when executing "executeMappedCondition" method', () => {
+    const searchTerms = [undefined];
+    const options = { dataKey: '', cellValue: 0, fieldType: FieldType.number } as FilterConditionOption;
+    const output = executeMappedCondition(options, searchTerms);
     expect(output).toBe(true);
   });
 
