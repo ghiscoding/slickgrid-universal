@@ -862,7 +862,6 @@ export class SlickVanillaGridBundle {
       (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowsOrCountChangedHandler>>).subscribe(onRowsOrCountChangedHandler, (_e, args) => {
         grid.invalidate();
         this.handleOnItemCountChanged(args.currentRowCount || 0);
-        console.timeEnd('searching');
       });
 
       // when filtering data with local dataset, we need to update each row else it will not always show correctly in the UI

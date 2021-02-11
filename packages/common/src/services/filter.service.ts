@@ -358,10 +358,11 @@ export class FilterService {
     const inputLastChar = matches?.[3] || (operator === '*z' ? '*' : '');
 
     if (typeof fieldSearchValue === 'string') {
-      // escaping the search value
-      fieldSearchValue = fieldSearchValue.replace(`'`, `''`); // escape single quotes by doubling them
-      if (operator === '*' || operator === 'a*' || operator === '*z' || inputLastChar === '*') {
-        operator = (operator === '*' || operator === '*z') ? OperatorType.endsWith : OperatorType.startsWith;
+      fieldSearchValue = fieldSearchValue.replace(`'`, `''`); // escape any single quotes by doubling them
+      if (operator === '*' || operator === '*z') {
+        operator = OperatorType.endsWith;
+      } else if (operator === 'a*' || inputLastChar === '*') {
+        operator = OperatorType.startsWith;
       }
     }
 
@@ -902,7 +903,6 @@ export class FilterService {
       // event might have been created as a CustomEvent (e.g. CompoundDateFilter), without being a valid Slick.EventData,
       // if so we will create a new Slick.EventData and merge it with that CustomEvent to avoid having SlickGrid errors
       const eventData = (event && typeof event.isPropagationStopped !== 'function') ? $.extend({}, new Slick.EventData(), event) : event;
-      console.time('searching');
 
       // trigger an event only if Filters changed or if ENTER key was pressed
       const eventKey = event?.key;
