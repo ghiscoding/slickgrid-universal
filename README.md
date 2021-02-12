@@ -5,7 +5,7 @@
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 [![NPM downloads](https://img.shields.io/npm/dy/@slickgrid-universal/common.svg)](https://www.npmjs.com/package/@slickgrid-universal/common)
 
-[![Actions Status](https://github.com/ghiscoding/slickgrid-universal/workflows/GitHub%20Actions/badge.svg)](https://github.com/ghiscoding/slickgrid-universal/actions)
+[![Actions Status](https://github.com/ghiscoding/slickgrid-universal/workflows/CI%20Build/badge.svg)](https://github.com/ghiscoding/slickgrid-universal/actions)
 [![Cypress.io](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)](https://www.cypress.io/)
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
@@ -43,7 +43,7 @@ Note however that this project also has a Vanilla Implementation (not associated
 and it is also used to test the all UI features with [Cypress](https://www.cypress.io/). The [Vanilla bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) package is also what we use in our SalesForce (with Lightning Web Component) implementation, hence the creation of this monorepo library.
 
 ### Fully Tested with [Jest](https://jestjs.io/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
-Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +12,000 lines of code (+3,000 unit tests) that are now fully tested with [Jest](https://jestjs.io/). There are also +200 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (there's also an additional +360 tests in Aurelia-Slickgrid)
+Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +12,000 lines of code (+3,000 unit tests) that are now fully tested with [Jest](https://jestjs.io/). There are also +250 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (there's also an additional +400 tests in Aurelia-Slickgrid)
 
 ### Available Public Packages
 
