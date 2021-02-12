@@ -284,12 +284,11 @@
   * This makes all "float:right" elements after it that spill over to the next line
   * display way below the lower boundary of the column thus hiding them.
   */
-  float: right;
-  vertical-align: top;
-  margin: 1px;
-  margin-bottom: 100px;
-  height: 15px;
-  width: 15px;
+  float: $header-button-float;
+  vertical-align: $header-button-vertical-align;
+  margin: $header-button-margin;
+  height: $header-button-height;
+  width: $header-button-width;
   background-repeat: no-repeat;
   background-position: center center;
   cursor: pointer;
@@ -297,15 +296,12 @@
 
 .slick-header-button-hidden {
   width: 0;
-  margin-right: -8px;
-
-  -webkit-transition: 0.2s width;
-  -ms-transition: 0.2s width;
+  margin-right: $header-button-hidden-margin-right;
   transition: 0.2s width;
 }
 
 .slick-header-column:hover > .slick-header-button {
-  width: 15px;
+  width: $header-button-width;
 }
 
 // ----------------------------------------------
