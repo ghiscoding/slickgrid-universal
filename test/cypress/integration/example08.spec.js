@@ -135,6 +135,9 @@ describe('Example 08 - Column Span & Header Grouping', () => {
   });
 
   it('should search for "% Complete" below 50 and expect rows to be that', () => {
+    cy.get('[data-test="clear-search-string"]')
+      .click();
+
     cy.get('[data-test="search-column-list"]')
       .select('percentComplete');
 
