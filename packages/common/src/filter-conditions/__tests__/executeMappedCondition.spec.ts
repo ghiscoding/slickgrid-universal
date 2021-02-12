@@ -1,6 +1,6 @@
 import * as moment from 'moment-mini';
 
-import { getParsedSearchTermsByFieldType } from '../executeMappedCondition';
+import { getParsedSearchTermsByFieldType } from '../filterConditionProcesses';
 
 describe('getParsedSearchTermsByFieldType method', () => {
   it('should get parsed result as the first array item boolean when a boolean field type is provided', () => {

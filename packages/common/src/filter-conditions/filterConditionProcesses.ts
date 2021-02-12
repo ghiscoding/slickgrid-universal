@@ -3,23 +3,26 @@ import { FilterCondition, FilterConditionOption } from '../interfaces/index';
 import { executeBooleanFilterCondition, getFilterParsedBoolean } from './booleanFilterCondition';
 import { executeCollectionSearchFilterCondition } from './collectionSearchFilterCondition';
 import { getFilterParsedNumbers, executeNumberFilterCondition } from './numberFilterCondition';
-import { executeAssociatedDateCondition, getFilterParsedDates } from './dateFilterCondition';
+import { executeDateFilterCondition, getFilterParsedDates } from './dateFilterCondition';
 import { executeObjectFilterCondition, getFilterParsedObjectResult } from './objectFilterCondition';
 import { executeStringFilterCondition, getFilterParsedText } from './stringFilterCondition';
 import { isCollectionOperator } from './filterUtilities';
 
-/** General variable type, just 5x types instead of the multiple FieldType (over 30x of them) */
+/**
+ * General variable types, just 5x types instead of the multiple FieldType.
+ * For example all DateIso, DateUs are all "date", this makes it easier to know which filter condition to call
+ */
 export type GeneralizedVariableType = 'boolean' | 'date' | 'number' | 'object' | 'text';
 
 /** Execute mapped condition (per field type) for each cell in the grid */
-export const executeMappedCondition: FilterCondition = (options: FilterConditionOption, parsedSearchTerms: SearchTerm | SearchTerm[]) => {
+export const executeFilterConditionTest: FilterCondition = (options: FilterConditionOption, parsedSearchTerms: SearchTerm | SearchTerm[]) => {
   // when using a multi-select ('IN' operator) we will not use the field type but instead go directly with a collection search
   if (isCollectionOperator(options.operator)) {
     return executeCollectionSearchFilterCondition(options);
   }
 
   // From a more specific field type (dateIso, dateEuro, text, readonly, ...), get the more generalized type (boolean, date, number, object, text)
-  const generalizedType = getGeneralizedTypeByFieldType(options.filterSearchType || options.fieldType);
+  const generalizedType = getGeneralizedVarTypeByFieldType(options.filterSearchType || options.fieldType);
 
   // execute the mapped type, or default to String condition check
   switch (generalizedType) {
@@ -27,7 +30,7 @@ export const executeMappedCondition: FilterCondition = (options: FilterCondition
       // the parsedSearchTerms should be single value (result came from getFilterParsedBoolean() method)
       return executeBooleanFilterCondition(options, parsedSearchTerms as SearchTerm);
     case 'date':
-      return executeAssociatedDateCondition(options, (parsedSearchTerms || []) as any[]);
+      return executeDateFilterCondition(options, (parsedSearchTerms || []) as any[]);
     case 'number':
       return executeNumberFilterCondition(options, (parsedSearchTerms || []) as number[]);
     case 'object':
@@ -41,12 +44,12 @@ export const executeMappedCondition: FilterCondition = (options: FilterCondition
 };
 
 /**
- * From our search filter value(s), get their parsed value(s),
- * for example a "dateIso" filter will be parsed as Moment object(s) to later execute filtering checks.
- * This is called only once per filter before running the actual filter condition check on each cell afterward.
+ * From our search filter value(s), get their parsed value(s), for example a "dateIso" filter will be parsed as Moment object.
+ * Then later when we execute the filtering checks, we won't need to re-parse all search value(s) again and again.
+ * So this is called only once, for each search filter that is, prior to running the actual filter condition checks on each cell afterward.
  */
 export function getParsedSearchTermsByFieldType(inputSearchTerms: SearchTerm[] | undefined, inputFilterSearchType: typeof FieldType[keyof typeof FieldType]): SearchTerm | SearchTerm[] | undefined {
-  const generalizedType = getGeneralizedTypeByFieldType(inputFilterSearchType);
+  const generalizedType = getGeneralizedVarTypeByFieldType(inputFilterSearchType);
   let parsedSearchValues: SearchTerm | SearchTerm[] | undefined;
 
   // parse the search value(s), the Date & Numbers could be in a range and so we will return an array for them
@@ -77,7 +80,7 @@ export function getParsedSearchTermsByFieldType(inputSearchTerms: SearchTerm[] |
  * @param fieldType - specific field type
  * @returns generalType - general field type
  */
-function getGeneralizedTypeByFieldType(fieldType: typeof FieldType[keyof typeof FieldType]): GeneralizedVariableType {
+function getGeneralizedVarTypeByFieldType(fieldType: typeof FieldType[keyof typeof FieldType]): GeneralizedVariableType {
   // return general field type
   switch (fieldType) {
     case FieldType.boolean:

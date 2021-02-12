@@ -1,6 +1,6 @@
 import { FieldType, OperatorType } from '../../enums/index';
 import { FilterConditionOption } from '../../interfaces/index';
-import { executeMappedCondition } from '../executeMappedCondition';
+import { executeFilterConditionTest } from '../filterConditionProcesses';
 import { executeStringFilterCondition, getFilterParsedText } from '../stringFilterCondition';
 
 describe('executeStringFilterCondition method', () => {
@@ -18,10 +18,10 @@ describe('executeStringFilterCondition method', () => {
     expect(output).toBe(true);
   });
 
-  it('should return True when first searchTerm is undefined provided neither an operator when executing "executeMappedCondition" method', () => {
+  it('should return True when first searchTerm is undefined provided neither an operator when executing "executeFilterConditionTest" method', () => {
     const searchTerms = undefined;
     const options = { dataKey: '', cellValue: 'foo', fieldType: FieldType.string } as FilterConditionOption;
-    const output = executeMappedCondition(options, searchTerms);
+    const output = executeFilterConditionTest(options, searchTerms);
     expect(output).toBe(true);
   });
 
@@ -46,10 +46,10 @@ describe('executeStringFilterCondition method', () => {
     expect(output).toBe(true);
   });
 
-  it('should return True when input value provided is equal to the searchTerms and is called by "executeMappedCondition"', () => {
+  it('should return True when input value provided is equal to the searchTerms and is called by "executeFilterConditionTest"', () => {
     const searchTerms = ['foo'];
     const options = { dataKey: '', operator: 'EQ', cellValue: 'foo', fieldType: FieldType.string, searchTerms } as FilterConditionOption;
-    const output = executeMappedCondition(options, getFilterParsedText(searchTerms));
+    const output = executeFilterConditionTest(options, getFilterParsedText(searchTerms));
     expect(output).toBe(true);
   });
 

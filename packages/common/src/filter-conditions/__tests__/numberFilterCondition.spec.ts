@@ -1,6 +1,6 @@
 import { FieldType } from '../../enums/index';
 import { FilterConditionOption } from '../../interfaces/index';
-import { executeMappedCondition } from '../executeMappedCondition';
+import { executeFilterConditionTest } from '../filterConditionProcesses';
 import { executeNumberFilterCondition, getFilterParsedNumbers } from '../numberFilterCondition';
 
 describe('executeNumberFilterCondition method', () => {
@@ -18,10 +18,10 @@ describe('executeNumberFilterCondition method', () => {
     expect(output).toBe(true);
   });
 
-  it('should return True when first searchTerm is undefined provided neither an operator when executing "executeMappedCondition" method', () => {
+  it('should return True when first searchTerm is undefined provided neither an operator when executing "executeFilterConditionTest" method', () => {
     const searchTerms = [undefined];
     const options = { dataKey: '', cellValue: 0, fieldType: FieldType.number } as FilterConditionOption;
-    const output = executeMappedCondition(options, searchTerms);
+    const output = executeFilterConditionTest(options, searchTerms);
     expect(output).toBe(true);
   });
 
@@ -46,24 +46,24 @@ describe('executeNumberFilterCondition method', () => {
     expect(output).toBe(true);
   });
 
-  it('should return True when input value provided is equal to the searchTerms and is called by "executeMappedCondition" with fieldType.number', () => {
+  it('should return True when input value provided is equal to the searchTerms and is called by "executeFilterConditionTest" with fieldType.number', () => {
     const searchTerms = [3];
     const options = { dataKey: '', operator: 'EQ', cellValue: 3, fieldType: FieldType.number, searchTerms } as FilterConditionOption;
-    const output = executeMappedCondition(options, getFilterParsedNumbers(searchTerms));
+    const output = executeFilterConditionTest(options, getFilterParsedNumbers(searchTerms));
     expect(output).toBe(true);
   });
 
-  it('should return True when input value provided is equal to the searchTerms and is called by "executeMappedCondition"  with fieldType.float', () => {
+  it('should return True when input value provided is equal to the searchTerms and is called by "executeFilterConditionTest"  with fieldType.float', () => {
     const searchTerms = [3];
     const options = { dataKey: '', operator: 'EQ', cellValue: 3, fieldType: FieldType.float, searchTerms } as FilterConditionOption;
-    const output = executeMappedCondition(options, getFilterParsedNumbers(searchTerms));
+    const output = executeFilterConditionTest(options, getFilterParsedNumbers(searchTerms));
     expect(output).toBe(true);
   });
 
-  it('should return True when input value provided is equal to the searchTerms and is called by "executeMappedCondition"  with fieldType.integer', () => {
+  it('should return True when input value provided is equal to the searchTerms and is called by "executeFilterConditionTest"  with fieldType.integer', () => {
     const searchTerms = [3];
     const options = { dataKey: '', operator: 'EQ', cellValue: 3, fieldType: FieldType.integer, searchTerms } as FilterConditionOption;
-    const output = executeMappedCondition(options, getFilterParsedNumbers(searchTerms));
+    const output = executeFilterConditionTest(options, getFilterParsedNumbers(searchTerms));
     expect(output).toBe(true);
   });
 

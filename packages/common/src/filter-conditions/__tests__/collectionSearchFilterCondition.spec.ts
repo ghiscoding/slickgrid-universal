@@ -1,7 +1,7 @@
 import { FieldType } from '../../enums/index';
 import { FilterConditionOption } from '../../interfaces/index';
 import { executeCollectionSearchFilterCondition } from '../collectionSearchFilterCondition';
-import { executeMappedCondition } from '../executeMappedCondition';
+import { executeFilterConditionTest } from '../filterConditionProcesses';
 
 describe('executeCollectionSearchFilterCondition method', () => {
   it('should return False when searchTerms is empty', () => {
@@ -34,9 +34,9 @@ describe('executeCollectionSearchFilterCondition method', () => {
     expect(output).toBe(true);
   });
 
-  it('should return True when the cell value is equal to at least 1 of the searchTerms and called by the "executeMappedCondition"', () => {
+  it('should return True when the cell value is equal to at least 1 of the searchTerms and called by the "executeFilterConditionTest"', () => {
     const options = { dataKey: '', operator: 'IN', cellValue: 'foo', fieldType: FieldType.string, searchTerms: ['bar', 'foo', 'John'] } as FilterConditionOption;
-    const output = executeMappedCondition(options);
+    const output = executeFilterConditionTest(options);
     expect(output).toBe(true);
   });
 

@@ -331,7 +331,7 @@ export class FilterService {
           }
 
           // execute the filtering conditions check (all cell values vs search term(s))
-          if (!FilterConditions.executeMappedCondition(conditionOptions as FilterConditionOption, parsedSearchTerms)) {
+          if (!FilterConditions.executeFilterConditionTest(conditionOptions as FilterConditionOption, parsedSearchTerms)) {
             return false;
           }
         }
@@ -501,9 +501,9 @@ export class FilterService {
         delete treeObj[inputArray[i][dataViewIdIdentifier]].__used;
       }
 
-      // TODO revisit this piece of code, we use parsedSearchTerms twice
-
+      // Step 1. prepare search filter by getting their parsed value(s), for example if it's a date filter then parse it to a Moment object
       // loop through all column filters once and get parsed filter search value then save a reference in the columnFilter itself
+      // it is much more effective to do it outside and prior to Step 2 so that we don't re-parse search filter for no reason while checking every row
       for (const columnId of Object.keys(columnFilters)) {
         const columnFilter = columnFilters[columnId] as SearchColumnFilter;
         const searchValues: SearchTerm[] = columnFilter?.searchTerms ? deepCopy(columnFilter.searchTerms) : [];
@@ -518,7 +518,7 @@ export class FilterService {
         }
       }
 
-      // loop through every item data context
+      // Step 2. loop through every item data context to execute filter condition check
       for (let i = 0; i < inputArray.length; i++) {
         const item = inputArray[i];
         let matchFilter = true; // valid until proven otherwise
@@ -530,7 +530,7 @@ export class FilterService {
 
           if (conditionOptionResult) {
             const parsedSearchTerms = columnFilter?.parsedSearchTerms; // parsed term could a single value or an array of values
-            const conditionResult = (typeof conditionOptionResult === 'boolean') ? conditionOptionResult : FilterConditions.executeMappedCondition(conditionOptionResult as FilterConditionOption, parsedSearchTerms);
+            const conditionResult = (typeof conditionOptionResult === 'boolean') ? conditionOptionResult : FilterConditions.executeFilterConditionTest(conditionOptionResult as FilterConditionOption, parsedSearchTerms);
             if (conditionResult) {
               // don't return true since we still need to check other keys in columnFilters
               continue;

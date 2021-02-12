@@ -1,12 +1,12 @@
 import { executeBooleanFilterCondition } from './booleanFilterCondition';
-import { executeMappedCondition } from './executeMappedCondition';
+import { executeFilterConditionTest } from './filterConditionProcesses';
 import { executeCollectionSearchFilterCondition } from './collectionSearchFilterCondition';
 import { executeNumberFilterCondition } from './numberFilterCondition';
 import { executeStringFilterCondition } from './stringFilterCondition';
 import { testFilterCondition } from './filterUtilities';
 
 export const FilterConditions = {
-  executeMappedCondition,
+  executeFilterConditionTest,
   booleanFilter: executeBooleanFilterCondition,
   collectionSearchFilter: executeCollectionSearchFilterCondition,
   numberFilter: executeNumberFilterCondition,

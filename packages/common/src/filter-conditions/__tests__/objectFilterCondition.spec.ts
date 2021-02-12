@@ -1,6 +1,6 @@
 import { FieldType } from '../../enums/index';
 import { FilterConditionOption } from '../../interfaces/index';
-import { executeMappedCondition } from '../executeMappedCondition';
+import { executeFilterConditionTest } from '../filterConditionProcesses';
 import { executeObjectFilterCondition, getFilterParsedObjectResult } from '../objectFilterCondition';
 
 describe('executeObjectFilterCondition method', () => {
@@ -31,10 +31,10 @@ describe('executeObjectFilterCondition method', () => {
     expect(output).toBe(true);
   });
 
-  it('should return True when first searchTerm is undefined provided neither an operator when executing "executeMappedCondition" method', () => {
+  it('should return True when first searchTerm is undefined provided neither an operator when executing "executeFilterConditionTest" method', () => {
     const searchTerms = undefined;
     const options = { dataKey: '', cellValue: mockRow, fieldType: FieldType.object } as FilterConditionOption;
-    const output = executeMappedCondition(options, searchTerms);
+    const output = executeFilterConditionTest(options, searchTerms);
     expect(output).toBe(true);
   });
 
@@ -73,10 +73,10 @@ describe('executeObjectFilterCondition method', () => {
     expect(output).toBe(true);
   });
 
-  it('should return True when using the "dataKey" to compare the object with the searchTerms and is called by "executeMappedCondition"', () => {
+  it('should return True when using the "dataKey" to compare the object with the searchTerms and is called by "executeFilterConditionTest"', () => {
     const searchTerms = [mockRow];
     const options = { dataKey: 'code', operator: 'EQ', cellValue: mockRow, fieldType: FieldType.object, searchTerms } as FilterConditionOption;
-    const output = executeMappedCondition(options, getFilterParsedObjectResult(searchTerms));
+    const output = executeFilterConditionTest(options, getFilterParsedObjectResult(searchTerms));
     expect(output).toBe(true);
   });
 

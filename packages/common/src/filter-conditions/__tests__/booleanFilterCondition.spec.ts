@@ -1,7 +1,7 @@
 import { FieldType } from '../../enums/index';
 import { FilterConditionOption } from '../../interfaces/index';
 import { executeBooleanFilterCondition, getFilterParsedBoolean } from '../booleanFilterCondition';
-import { executeMappedCondition } from '../executeMappedCondition';
+import { executeFilterConditionTest } from '../filterConditionProcesses';
 
 /** will return True in all cases with only 1 exception when the only searchTerm is inversed to the cell value */
 
@@ -20,10 +20,10 @@ describe('executeBooleanFilterCondition method', () => {
     expect(output).toBe(true);
   });
 
-  it('should return True when boolean value True is provided as cell value and called from the "executeMappedCondition"', () => {
+  it('should return True when boolean value True is provided as cell value and called from the "executeFilterConditionTest"', () => {
     const searchTerms = ['true'];
     const options = { dataKey: '', operator: 'EQ', cellValue: 'true', fieldType: FieldType.boolean, searchTerms } as FilterConditionOption;
-    const output = executeMappedCondition(options, getFilterParsedBoolean(searchTerms));
+    const output = executeFilterConditionTest(options, getFilterParsedBoolean(searchTerms));
     expect(output).toBe(true);
   });
 
