@@ -6,12 +6,7 @@ import { testFilterCondition } from './filterUtilities';
 /** Execute filter condition check on each cell */
 export const executeNumberFilterCondition: FilterCondition = (options: FilterConditionOption, parsedSearchValues: number[]) => {
   const cellValue = parseFloat(options.cellValue);
-  let [searchValue1, searchValue2] = parsedSearchValues;
-
-  // using the spread argument might cause it to be an array inside an array, in that case do another split
-  if (Array.isArray(searchValue1)) {
-    [searchValue1, searchValue2] = searchValue1;
-  }
+  const [searchValue1, searchValue2] = parsedSearchValues;
 
   if (searchValue1 === undefined && !options.operator) {
     return true;

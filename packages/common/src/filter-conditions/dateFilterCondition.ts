@@ -12,12 +12,7 @@ import { testFilterCondition } from './filterUtilities';
 export function executeAssociatedDateCondition(options: FilterConditionOption, parsedSearchDates: any[]): boolean {
   const filterSearchType = options && (options.filterSearchType || options.fieldType) || FieldType.dateIso;
   const FORMAT = mapMomentDateFormatWithFieldType(filterSearchType);
-  let [searchDate1, searchDate2] = parsedSearchDates;
-
-  // using the spread argument might cause it to be an array inside an array, in that case do another split
-  if (Array.isArray(searchDate1)) {
-    [searchDate1, searchDate2] = searchDate1;
-  }
+  const [searchDate1, searchDate2] = parsedSearchDates;
 
   // cell value in moment format
   const dateCell = moment(options.cellValue, FORMAT, true);
