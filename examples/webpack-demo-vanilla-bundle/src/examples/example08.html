@@ -36,9 +36,8 @@
   <form class="form-inline flex-container">
     <div>
       <label class="my-1 mr-2" for="columnSelect">Single Search:</label>
-      <select id="columnSelect"
+      <select id="columnSelect" class="select is-small selected-column"
               data-test="search-column-list"
-              class="select is-small selected-column"
               onchange.delegate="selectedColumnChanged(event.target.value)">
       </select>
     </div>

@@ -87,7 +87,7 @@ export class Example08 {
       { id: 'duration', name: 'Duration', field: 'duration', type: FieldType.number, minWidth: 120, columnGroup: 'Common Factor' },
       { id: 'start', name: 'Start', field: 'start', minWidth: 145, columnGroup: 'Period' },
       { id: 'finish', name: 'Finish', field: 'finish', minWidth: 145, columnGroup: 'Period' },
-      { id: '%', name: '% Complete', field: 'percentComplete', type: FieldType.number, minWidth: 145, selectable: false, columnGroup: 'Analysis' },
+      { id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number, minWidth: 145, selectable: false, columnGroup: 'Analysis' },
       { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', minWidth: 145, type: FieldType.boolean, columnGroup: 'Analysis' }
     ];
 
@@ -172,6 +172,18 @@ export class Example08 {
     this.updateFilter();
   }
 
+  populategrid2SearchColumnsDropdown() {
+    const columnSelect = document.querySelector('.selected-column');
+
+    for (const columnDef of this.columnDefinitions2) {
+      const selectOption = document.createElement('option');
+      selectOption.value = `${columnDef.id}`;
+      selectOption.label = columnDef.name;
+      columnSelect.appendChild(selectOption);
+    }
+    this.grid2SearchSelectedColumn = this.columnDefinitions2[0];
+  }
+
   populategrid2SearchOperatorDropdown() {
     const operatorSelect = document.querySelector('.selected-operator');
 
@@ -184,25 +196,13 @@ export class Example08 {
     this.grid2SelectedOperator = this.operatorList[0];
   }
 
-  populategrid2SearchColumnsDropdown() {
-    const columnSelect = document.querySelector('.selected-column');
-
-    for (const columnDef of this.columnDefinitions1) {
-      const selectOption = document.createElement('option');
-      selectOption.value = JSON.stringify(columnDef);
-      selectOption.label = columnDef.name;
-      columnSelect.appendChild(selectOption);
-    }
-    this.grid2SearchSelectedColumn = this.columnDefinitions1[0];
-  }
-
   selectedOperatorChanged(newOperator: string) {
     this.grid2SelectedOperator = newOperator as OperatorString;
     this.updateFilter();
   }
 
-  selectedColumnChanged(selectedColumnStringified: string) {
-    this.grid2SearchSelectedColumn = JSON.parse(selectedColumnStringified) as Column;
+  selectedColumnChanged(selectedColumnId: string) {
+    this.grid2SearchSelectedColumn = this.columnDefinitions2.find(col => col.id === selectedColumnId);
     this.updateFilter();
   }
 
