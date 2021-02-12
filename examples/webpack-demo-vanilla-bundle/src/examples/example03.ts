@@ -181,7 +181,7 @@ export class Example3 {
         // formatter: Formatters.dateIso,
         type: FieldType.date, outputType: FieldType.dateIso,
         formatter: Formatters.dateIso,
-        filterable: true, filter: { model: Filters.compoundDate },
+        filterable: true, filter: { model: Filters.dateRange },
         grouping: {
           getter: 'finish',
           formatter: (g) => `Finish: ${g.value} <span style="color:green">(${g.count} items)</span>`,

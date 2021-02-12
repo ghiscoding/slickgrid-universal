@@ -858,15 +858,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         sharedService.slickGrid = mockGrid as unknown as SlickGrid;
       });
 
-      it('should call "showHeaderRow" method with false when its flag is disabled', () => {
-        const gridSpy = jest.spyOn(mockGrid, 'setHeaderRowVisibility');
-
-        component.gridOptions = { showHeaderRow: false } as unknown as GridOption;
-        component.initialization(divContainer, slickEventHandler);
-
-        expect(gridSpy).toHaveBeenCalledWith(false, false);
-      });
-
       it('should initialize groupingAndColspanService when "createPreHeaderPanel" grid option is enabled and "enableDraggableGrouping" is disabled', () => {
         const spy = jest.spyOn(groupingAndColspanServiceStub, 'init');
 

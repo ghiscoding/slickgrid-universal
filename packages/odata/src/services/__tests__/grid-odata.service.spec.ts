@@ -542,7 +542,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(Gender eq 'female')`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ' },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -556,8 +556,8 @@ describe('GridOdataService', () => {
       const expectation = `$top=10`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, operator: 'EQ' },
-      } as ColumnFilters;
+        gender: { columnId: 'gender', columnDef: mockColumn, operator: 'EQ', type: FieldType.string },
+      } as unknown as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
       service.updateFilters(mockColumnFilters, false);
@@ -571,8 +571,8 @@ describe('GridOdataService', () => {
       const mockColumnGender = { id: 'gender', field: 'gender' } as Column;
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['female'], operator: 'EQ' },
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: OperatorType.notContains },
+        gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['female'], operator: 'EQ', type: FieldType.string },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: OperatorType.notContains, type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -587,8 +587,8 @@ describe('GridOdataService', () => {
       const mockColumnGender = { id: 'gender', field: 'gender' } as Column;
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['female'], operator: 'EQ' },
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: [`abc's`], operator: OperatorType.notContains },
+        gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['female'], operator: 'EQ', type: FieldType.string },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: [`abc's`], operator: OperatorType.notContains, type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -603,8 +603,8 @@ describe('GridOdataService', () => {
       const mockColumnGender = { id: 'gender', field: 'gender' } as Column;
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['female'], operator: 'EQ' },
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains' },
+        gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['female'], operator: 'EQ', type: FieldType.string },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -617,7 +617,7 @@ describe('GridOdataService', () => {
     it('should return a query with the new filter when filters are passed as a Grid Preset of type CurrentFilter', () => {
       const expectation = `$top=10&$filter=(Gender eq 'female')`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
-      const mockCurrentFilter = { columnDef: mockColumn, columnId: 'gender', operator: 'EQ', searchTerms: ['female'] } as CurrentFilter;
+      const mockCurrentFilter = { columnDef: mockColumn, columnId: 'gender', operator: 'EQ', searchTerms: ['female'], type: FieldType.string } as CurrentFilter;
 
       service.init(serviceOptions, paginationOptions, gridStub);
       service.updateFilters([mockCurrentFilter], true);
@@ -632,7 +632,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(startswith(Gender, 'fem'))`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['fem*'] },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['fem*'], type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -646,7 +646,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(endswith(Gender, 'le'))`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['*le'] },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['*le'], type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -660,7 +660,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(endswith(Gender, 'le'))`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le*'], operator: '*z' },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le*'], operator: '*z', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -674,7 +674,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(startswith(Gender, 'le'))`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le*'], operator: 'a*' },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le*'], operator: 'a*', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -688,7 +688,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(endswith(Gender, 'le'))`;
       const mockColumn = { id: 'gender', field: 'gender', filter: { operator: '*z' } } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le'] },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le'], type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -702,7 +702,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(startswith(Gender, 'le'))`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le'], operator: 'a*' },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le'], operator: 'a*', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -716,7 +716,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(Gender eq 'female' or Gender eq 'male')`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'male'], operator: 'IN' },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'male'], operator: 'IN', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -730,7 +730,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(Gender eq 'female' or Gender eq 'ma%2Fle')`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'ma/le'], operator: 'IN' },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'ma/le'], operator: 'IN', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -744,7 +744,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(Id eq 100 or Id eq 101)`;
       const mockColumn = { id: 'id', field: 'id', type: FieldType.number } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'id', columnDef: mockColumn, searchTerms: [100, 101], operator: 'IN' },
+        gender: { columnId: 'id', columnDef: mockColumn, searchTerms: [100, 101], operator: 'IN', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -758,7 +758,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(Gender ne 'female' and Gender ne 'male')`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'male'], operator: OperatorType.notIn },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'male'], operator: OperatorType.notIn, type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -772,7 +772,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(Gender ne 'female' and Gender ne 'ma%2Fle')`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'ma/le'], operator: OperatorType.notIn },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'ma/le'], operator: OperatorType.notIn, type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -786,7 +786,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(Gender ne 'female' and Gender ne 'male')`;
       const mockColumn = { id: 'gender', field: 'gender', filter: { operator: OperatorType.notIn } } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'male'] },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'male'], type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -801,8 +801,8 @@ describe('GridOdataService', () => {
       const mockColumnGender = { id: 'gender', field: 'gender', type: FieldType.string } as Column;
       const mockColumnAge = { id: 'age', field: 'age', type: FieldType.number } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['le'] },
-        age: { columnId: 'age', columnDef: mockColumnAge, searchTerms: [28] },
+        gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['le'], type: FieldType.string },
+        age: { columnId: 'age', columnDef: mockColumnAge, searchTerms: [28], type: FieldType.number },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -817,8 +817,8 @@ describe('GridOdataService', () => {
       const mockColumnGender = { id: 'gender', field: 'gender' } as Column;
       const mockColumnCity = { id: 'city', field: 'city' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['le'] },
-        city: { columnId: 'city', columnDef: mockColumnCity, searchTerms: ['Bali'] },
+        gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['le'], type: FieldType.string },
+        city: { columnId: 'city', columnDef: mockColumnCity, searchTerms: ['Bali'], type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -832,7 +832,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: [undefined as any], operator: 'EQ' },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: [undefined as any], operator: 'EQ', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -846,7 +846,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: [''], operator: 'EQ' },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: [''], operator: 'EQ', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -860,7 +860,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(IsMale eq true)`;
       const mockColumn = { id: 'gender', field: 'gender', type: FieldType.boolean, queryField: 'isMale' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: [true], operator: 'EQ' },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: [true], operator: 'EQ', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -874,7 +874,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(HasPriority eq 'female')`;
       const mockColumn = { id: 'gender', field: 'gender', queryField: 'isAfter', queryFieldFilter: 'hasPriority' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ' },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -888,7 +888,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(Gender eq 'female')`;
       const mockColumn = { id: 'gender', name: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ' },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -903,8 +903,8 @@ describe('GridOdataService', () => {
       const mockColumnGender = { id: 'gender', field: 'gender' } as Column;
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['female'], operator: 'EQ', bypassBackendQuery: true },
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains' },
+        gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['female'], operator: 'EQ', bypassBackendQuery: true, type: FieldType.string },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -919,8 +919,8 @@ describe('GridOdataService', () => {
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnUpdated = { id: 'updatedDate', field: 'updatedDate', type: FieldType.date } as Column;
       const mockColumnFilters = {
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains' },
-        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-02-28'], operator: 'EQ' },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
+        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-02-28'], operator: 'EQ', type: FieldType.date },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -934,7 +934,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ' },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ', type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -952,8 +952,8 @@ describe('GridOdataService', () => {
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
       const mockColumnFilters = {
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains' },
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['5..22'], operator: 'RangeInclusive' },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['5..22'], operator: 'RangeInclusive', type: FieldType.number },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -967,7 +967,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(Duration ge 5)`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
       const mockColumnFilters = {
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['5..'], operator: 'RangeInclusive' },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['5..'], operator: 'RangeInclusive', type: FieldType.number },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -981,7 +981,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(Duration le 5)`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
       const mockColumnFilters = {
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: 'RangeInclusive' },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: 'RangeInclusive', type: FieldType.number },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -995,7 +995,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(Duration gt 5)`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
       const mockColumnFilters = {
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['5..'], operator: 'RangeExclusive' },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['5..'], operator: 'RangeExclusive', type: FieldType.number },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1009,7 +1009,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(Duration lt 5)`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
       const mockColumnFilters = {
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: 'RangeExclusive' },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: 'RangeExclusive', type: FieldType.number },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1024,8 +1024,8 @@ describe('GridOdataService', () => {
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
       const mockColumnFilters = {
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains' },
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: [5, 22], operator: 'RangeExclusive' },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: [5, 22], operator: 'RangeExclusive', type: FieldType.number },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1040,8 +1040,8 @@ describe('GridOdataService', () => {
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnUpdated = { id: 'updatedDate', field: 'updatedDate', type: FieldType.date } as Column;
       const mockColumnFilters = {
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains' },
-        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-01-20..2001-02-28'], operator: 'RangeInclusive' },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
+        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-01-20..2001-02-28'], operator: 'RangeInclusive', type: FieldType.dateIso },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1056,8 +1056,8 @@ describe('GridOdataService', () => {
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnUpdated = { id: 'updatedDate', field: 'updatedDate', type: FieldType.date } as Column;
       const mockColumnFilters = {
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains' },
-        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-01-20', '2001-02-28'], operator: 'RangeExclusive' },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
+        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-01-20', '2001-02-28'], operator: 'RangeExclusive', type: FieldType.dateIso },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1076,7 +1076,7 @@ describe('GridOdataService', () => {
         const expectation = `$filter=(Gender eq 'female')`;
         const mockColumn = { id: 'gender', field: 'gender' } as Column;
         const mockColumnFilters = {
-          gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ' },
+          gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ', type: FieldType.string },
         } as ColumnFilters;
 
         service.init(serviceOptions, paginationOptions, gridStub);
@@ -1090,7 +1090,7 @@ describe('GridOdataService', () => {
         const expectation = '';
         const mockColumn = { id: 'gender', field: 'gender' } as Column;
         const mockColumnFilters = {
-          gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ' },
+          gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ', type: FieldType.string },
         } as ColumnFilters;
 
         service.init(serviceOptions, paginationOptions, gridStub);
@@ -1108,8 +1108,8 @@ describe('GridOdataService', () => {
         const mockColumnCompany = { id: 'company', field: 'company' } as Column;
         const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
         const mockColumnFilters = {
-          company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains' },
-          duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['5..22'], operator: 'RangeInclusive' },
+          company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
+          duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['5..22'], operator: 'RangeInclusive', type: FieldType.number },
         } as ColumnFilters;
 
         service.init(serviceOptions, paginationOptions, gridStub);
@@ -1133,8 +1133,8 @@ describe('GridOdataService', () => {
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnUpdated = { id: 'updatedDate', field: 'updatedDate', type: FieldType.date } as Column;
       const mockColumnFilters = {
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains' },
-        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-02-28'], operator: 'EQ' },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
+        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-02-28'], operator: 'EQ', type: FieldType.dateIso },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1149,8 +1149,8 @@ describe('GridOdataService', () => {
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
       const mockColumnFilters = {
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains' },
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['5..22'], operator: 'RangeInclusive' },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['5..22'], operator: 'RangeInclusive', type: FieldType.number },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1165,8 +1165,8 @@ describe('GridOdataService', () => {
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
       const mockColumnFilters = {
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains' },
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: [5, 22], operator: 'RangeExclusive' },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: [5, 22], operator: 'RangeExclusive', type: FieldType.number },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1181,8 +1181,8 @@ describe('GridOdataService', () => {
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnDuration = { id: 'duration', field: 'duration' } as Column;
       const mockColumnFilters = {
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains' },
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: [5, 22], operator: 'RangeExclusive' },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: [5, 22], operator: 'RangeExclusive', type: FieldType.number },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1197,8 +1197,8 @@ describe('GridOdataService', () => {
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnUpdated = { id: 'updatedDate', field: 'updatedDate', type: FieldType.date } as Column;
       const mockColumnFilters = {
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains' },
-        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-01-20..2001-02-28'], operator: 'RangeInclusive' },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
+        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-01-20..2001-02-28'], operator: 'RangeInclusive', type: FieldType.dateIso },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1213,8 +1213,8 @@ describe('GridOdataService', () => {
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnUpdated = { id: 'updatedDate', field: 'updatedDate', type: FieldType.date } as Column;
       const mockColumnFilters = {
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains' },
-        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-01-20', '2001-02-28'], operator: 'RangeExclusive' },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
+        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-01-20', '2001-02-28'], operator: 'RangeExclusive', type: FieldType.dateIso },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1229,8 +1229,8 @@ describe('GridOdataService', () => {
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnUpdated = { id: 'updatedDate', field: 'updatedDate', type: FieldType.date } as Column;
       const mockColumnFilters = {
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains' },
-        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-01-20'], operator: 'RangeExclusive' },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
+        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-01-20'], operator: 'RangeExclusive', type: FieldType.dateIso },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1245,8 +1245,8 @@ describe('GridOdataService', () => {
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnUpdated = { id: 'updatedDate', field: 'updatedDate', type: FieldType.date } as Column;
       const mockColumnFilters = {
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains' },
-        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: [], operator: 'RangeExclusive' },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
+        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: [], operator: 'RangeExclusive', type: FieldType.dateIso },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1261,8 +1261,8 @@ describe('GridOdataService', () => {
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
       const mockColumnFilters = {
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains' },
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: [], operator: 'RangeInclusive' },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: [], operator: 'RangeInclusive', type: FieldType.dateIso },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1282,8 +1282,8 @@ describe('GridOdataService', () => {
         const mockColumnCompany = { id: 'company', field: 'company' } as Column;
         const mockColumnUpdated = { id: 'updatedDate', field: 'updatedDate', type: FieldType.date } as Column;
         const mockColumnFilters = {
-          company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains' },
-          updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-02-28'], operator: 'EQ' },
+          company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
+          updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-02-28'], operator: 'EQ', type: FieldType.dateIso },
         } as ColumnFilters;
 
         service.init(serviceOptions, paginationOptions, gridStub);
@@ -1298,8 +1298,8 @@ describe('GridOdataService', () => {
         const mockColumnCompany = { id: 'company', field: 'company' } as Column;
         const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
         const mockColumnFilters = {
-          company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains' },
-          duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['5..22'], operator: 'RangeInclusive' },
+          company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
+          duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['5..22'], operator: 'RangeInclusive', type: FieldType.number },
         } as ColumnFilters;
 
         service.init(serviceOptions, paginationOptions, gridStub);
@@ -1615,7 +1615,7 @@ describe('GridOdataService', () => {
         const expectation = `$filter=(Duration eq 0.22)`;
         const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.float } as Column;
         const mockColumnFilters = {
-          duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['.22'] },
+          duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['.22'], type: FieldType.number },
         } as ColumnFilters;
 
         service.init(serviceOptions, paginationOptions, gridStub);
@@ -1629,7 +1629,7 @@ describe('GridOdataService', () => {
         const expectation = `$filter=(Duration eq -22)`;
         const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
         const mockColumnFilters = {
-          duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['-2a2'] },
+          duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['-2a2'], type: FieldType.number },
         } as ColumnFilters;
 
         service.init(serviceOptions, paginationOptions, gridStub);
@@ -1643,7 +1643,7 @@ describe('GridOdataService', () => {
         const expectation = `$filter=(Duration eq 22)`;
         const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.integer } as Column;
         const mockColumnFilters = {
-          duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['22;'] },
+          duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['22;'], type: FieldType.number },
         } as ColumnFilters;
 
         service.init(serviceOptions, paginationOptions, gridStub);
@@ -1657,7 +1657,7 @@ describe('GridOdataService', () => {
         const expectation = `$filter=(Duration eq 0)`;
         const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
         const mockColumnFilters = {
-          duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['-'] },
+          duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['-'], type: FieldType.number },
         } as ColumnFilters;
 
         service.init(serviceOptions, paginationOptions, gridStub);

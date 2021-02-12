@@ -22,6 +22,7 @@ import {
 import { Filters } from '../../filters';
 import { FilterService } from '../filter.service';
 import { FilterFactory } from '../../filters/filterFactory';
+import { getParsedSearchTermsByFieldType } from '../../filter-conditions';
 import { SlickgridConfig } from '../../slickgrid-config';
 import { SharedService } from '../shared.service';
 import * as utilities from '../../services/backend-utilities';
@@ -179,7 +180,7 @@ describe('FilterService', () => {
 
     it('should call the same filter twice but expect the filter to be rendered only once', () => {
       const mockColumn = {
-        id: 'isActive', field: 'isActive', filterable: true,
+        id: 'isActive', field: 'isActive', filterable: true, type: FieldType.boolean,
         filter: {
           model: Filters.select, searchTerms: [true], collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }],
         }
@@ -195,7 +196,7 @@ describe('FilterService', () => {
 
       expect(service.isFilterFirstRender).toBe(false);
       expect(columnFilters).toEqual({
-        isActive: { columnDef: mockColumn, columnId: 'isActive', operator: 'EQ', searchTerms: [true], },
+        isActive: { columnDef: mockColumn, columnId: 'isActive', operator: 'EQ', searchTerms: [true], parsedSearchTerms: true, type: FieldType.boolean },
       });
       expect(filterMetadataArray.length).toBe(1);
       expect(filterMetadataArray[0]).toContainEntry(['$filterElm', expect.anything()]);
@@ -321,7 +322,7 @@ describe('FilterService', () => {
     });
 
     it('should execute the search callback normally when a input change event is triggered and searchTerms are defined', () => {
-      const expectationColumnFilter = { columnDef: mockColumn, columnId: 'firstName', operator: 'EQ', searchTerms: ['John'] };
+      const expectationColumnFilter = { columnDef: mockColumn, columnId: 'firstName', operator: 'EQ', searchTerms: ['John'], parsedSearchTerms: 'John', type: FieldType.string };
       const spySearchChange = jest.spyOn(service.onSearchChange as any, 'notify');
       const spyEmit = jest.spyOn(service, 'emitFilterChanged');
 
@@ -339,13 +340,14 @@ describe('FilterService', () => {
         columnFilters: { firstName: expectationColumnFilter },
         operator: 'EQ',
         searchTerms: ['John'],
+        parsedSearchTerms: 'John',
         grid: gridStub
       }, expect.anything());
       expect(spyEmit).toHaveBeenCalledWith('local');
     });
 
     it('should execute the callback normally when a input change event is triggered and the searchTerm comes from this event.target', () => {
-      const expectationColumnFilter = { columnDef: mockColumn, columnId: 'firstName', operator: 'EQ', searchTerms: ['John'] };
+      const expectationColumnFilter = { columnDef: mockColumn, columnId: 'firstName', operator: 'EQ', searchTerms: ['John'], parsedSearchTerms: 'John', type: FieldType.string };
       const spySearchChange = jest.spyOn(service.onSearchChange as any, 'notify');
 
       service.init(gridStub);
@@ -365,6 +367,7 @@ describe('FilterService', () => {
         columnFilters: { firstName: expectationColumnFilter },
         operator: 'EQ',
         searchTerms: ['John'],
+        parsedSearchTerms: 'John',
         grid: gridStub
       }, expect.anything());
     });
@@ -438,7 +441,7 @@ describe('FilterService', () => {
 
     describe('clearFilterByColumnId method', () => {
       it('should clear the filter by passing a column id as argument on a backend grid', () => {
-        const filterExpectation = { columnDef: mockColumn2, columnId: 'lastName', operator: 'NE', searchTerms: ['Doe'] };
+        const filterExpectation = { columnDef: mockColumn2, columnId: 'lastName', operator: 'NE', searchTerms: ['Doe'], parsedSearchTerms: 'Doe', type: FieldType.string };
         const newEvent = new CustomEvent(`mouseup`);
         const spyClear = jest.spyOn(service.getFiltersMetadata()[0], 'clear');
         const spyFilterChange = jest.spyOn(service, 'onBackendFilterChange');
@@ -457,8 +460,8 @@ describe('FilterService', () => {
       });
 
       it('should not call "onBackendFilterChange" method when the filter is previously empty', () => {
-        const filterFirstExpectation = { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms: ['John'] };
-        const filterLastExpectation = { columnDef: mockColumn2, columnId: 'lastName', operator: 'NE', searchTerms: ['Doe'] };
+        const filterFirstExpectation = { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms: ['John'], parsedSearchTerms: 'John', type: FieldType.string };
+        const filterLastExpectation = { columnDef: mockColumn2, columnId: 'lastName', operator: 'NE', searchTerms: ['Doe'], parsedSearchTerms: 'Doe', type: FieldType.string };
         const newEvent = new Event('mouseup');
         const spyClear = jest.spyOn(service.getFiltersMetadata()[2], 'clear');
         const spyFilterChange = jest.spyOn(service, 'onBackendFilterChange');
@@ -547,7 +550,7 @@ describe('FilterService', () => {
         expect(spyClear).toHaveBeenCalled();
         expect(filterCountBefore).toBe(2);
         expect(filterCountAfter).toBe(1);
-        expect(service.getColumnFilters()).toEqual({ lastName: { columnDef: mockColumn2, columnId: 'lastName', operator: 'NE', searchTerms: ['Doe'] } });
+        expect(service.getColumnFilters()).toEqual({ lastName: { columnDef: mockColumn2, columnId: 'lastName', operator: 'NE', searchTerms: ['Doe'], parsedSearchTerms: 'Doe', type: FieldType.string } });
         expect(spyEmitter).toHaveBeenCalledWith('local');
       });
     });
@@ -561,38 +564,54 @@ describe('FilterService', () => {
       mockItem1 = { firstName: 'John', lastName: 'Doe', fullName: 'John Doe', age: 26, address: { zip: 123456 } };
     });
 
-    it('should return True (nothing to filter, all rows will be returned) when there are no column definition found', () => {
-      const searchValue = 'John';
+    it('should execute "getParsedSearchTermsByFieldType" once if the first "customLocalFilter" is executed without parsedSearchTerms at the beginning', () => {
+      const searchTerms = ['John'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
 
       service.init(gridStub);
-      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms: [searchValue] } };
+      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms } };
+      const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
+
+      expect(columnFilters.firstName['parsedSearchTerms']).toBe('John');
+      expect(output).toBe(true);
+    });
+
+    it('should return True (nothing to filter, all rows will be returned) when there are no column definition found', () => {
+      const searchTerms = ['John'];
+      const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+
+      service.init(gridStub);
+      const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
+      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms, parsedSearchTerms } };
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
     });
 
     it('should return True when input value from datacontext is the same as the searchTerms', () => {
-      const searchValue = 'John';
+      const searchTerms = ['John'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms: [searchValue] } };
+      const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
+      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms, parsedSearchTerms } };
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
     });
 
     it('should work on a hidden column by using the sharedService "allColumns" and return True when input value the same as the searchTerms', () => {
-      const searchValue = 'John';
+      const searchTerms = ['John'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
       sharedService.allColumns = [mockColumn1];
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
 
       service.init(gridStub);
-      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms: [searchValue] } };
+      const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
+      const columnFilters = { firstName: { columnDef: undefined, columnId: 'firstName', operator: 'EQ', searchTerms, parsedSearchTerms } };
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -621,111 +640,135 @@ describe('FilterService', () => {
     });
 
     it('should return False when input value from datacontext is not equal to the searchTerms', () => {
-      const searchValue = 'Johnny';
+      const searchTerms = ['Johnny'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms: [searchValue] } };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
+      const columnFilters = { firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms } };
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(false);
     });
 
     it('should work on a hidden column by using the sharedService "allColumns" and return return False when input value is not equal to the searchTerms', () => {
-      const searchValue = 'Johnny';
+      const searchTerms = ['Johnny'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
       sharedService.allColumns = [mockColumn1];
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
 
       service.init(gridStub);
-      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms: [searchValue] } };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
+      const columnFilters = { firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms } };
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(false);
     });
 
     it('should return True when input value from datacontext is a number and searchTerms is also a number', () => {
-      const searchValue = 26;
-      const mockColumn1 = { id: 'age', field: 'age', filterable: true } as Column;
+      const searchTerms = [26];
+      const mockColumn1 = { id: 'age', field: 'age', filterable: true, type: FieldType.number } as Column;
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilters = { age: { columnDef: mockColumn1, columnId: 'age', operator: 'EQ', searchTerms: [searchValue] } };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'age', type: FieldType.number };
+      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'number');
+      const columnFilters = { age: { ...columnFilter, operator: 'EQ', searchTerms: filterCondition.searchTerms, parsedSearchTerms } };
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
     });
 
     it('should return True when input value from datacontext is a number, "filterSearchType" is a FieldType number and finally searchTerms is also a number', () => {
-      const searchValue = 26;
+      const searchTerms = [26];
       const mockColumn1 = { id: 'age', field: 'age', filterable: true, filterSearchType: FieldType.number } as Column;
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilters = { age: { columnDef: mockColumn1, columnId: 'age', operator: 'EQ', searchTerms: [searchValue] } };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'age', type: FieldType.string };
+      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'number');
+      const columnFilters = { age: { ...columnFilter, operator: 'EQ', searchTerms: filterCondition.searchTerms, parsedSearchTerms } };
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
     });
 
     it('should return True when input value from datacontext is equal to startsWith substring', () => {
-      const searchValue = 'Jo*';
+      const searchTerms = ['Jo*'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms: [searchValue] } };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
+      const columnFilters = { firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms } };
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
     });
 
     it('should return True when input value from datacontext is equal to startsWith substring when using Operator startsWith', () => {
-      const searchValue = 'Jo';
+      const searchTerms = ['Jo'];
       const operator = 'a*';
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator, searchTerms: [searchValue] } };
+      const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
+      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator, searchTerms, parsedSearchTerms, type: FieldType.string } };
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
     });
 
     it('should return True when input value from datacontext is equal to startsWith substring when having (*) as the last character in the searchTerms', () => {
-      const searchValue = 'Jo*';
+      const searchTerms = ['Jo*'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', searchTerms: [searchValue] } };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
+      const columnFilters = { firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms } };
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
     });
 
     it('should return True when input value from datacontext is equal to endsWith substring', () => {
-      const searchValue = '*hn';
+      const searchTerms = ['*hn'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', searchTerms: [searchValue] } };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
+      const columnFilters = { firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms } };
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
     });
 
     it('should return True when input value from datacontext is equal to endsWith substring when using Operator endsWith', () => {
-      const searchValue = '*hn';
-      const operator = '*z';
+      const searchTerms = ['*hn'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator, searchTerms: [searchValue] } };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
+      const columnFilters = { firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms } };
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -745,12 +788,14 @@ describe('FilterService', () => {
     });
 
     it('should return True when input value is a complex object searchTerms value is found following the dot notation', () => {
-      const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip' } as Column;
+      const searchTerms = [123456];
+      const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip', type: FieldType.number } as Column;
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
       jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
-      const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456] } };
+      const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'number');
+      const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms, parsedSearchTerms, type: FieldType.number } };
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -758,13 +803,13 @@ describe('FilterService', () => {
 
     it('should return True when using row detail and the item is found in its parent', () => {
       gridOptionMock.enableRowDetailView = true;
-      const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip' } as Column;
+      const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip', type: FieldType.number } as Column;
       const mockItem2 = { __isPadding: true, __parent: mockItem1 };
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
       jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
-      const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456] } };
+      const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456], parsedSearchTerms: [123456], type: FieldType.number } };
       const output = service.customLocalFilter(mockItem2, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -773,13 +818,13 @@ describe('FilterService', () => {
     it('should return True when using row detail custom "keyPrefix" and the item is found in its parent', () => {
       gridOptionMock.rowDetailView = { keyPrefix: 'prefix_' } as RowDetailView;
       gridOptionMock.enableRowDetailView = true;
-      const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip' } as Column;
+      const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip', type: FieldType.number } as Column;
       const mockItem2 = { prefix_isPadding: true, prefix_parent: mockItem1 };
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
       jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
-      const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456] } };
+      const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456], parsedSearchTerms: [123456], type: FieldType.number } };
       const output = service.customLocalFilter(mockItem2, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -791,7 +836,7 @@ describe('FilterService', () => {
       jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
-      const columnFilters = { name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['John Doe'] } };
+      const columnFilters = { name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['John Doe'], parsedSearchTerms: 'John Doe', type: FieldType.string } };
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -803,7 +848,7 @@ describe('FilterService', () => {
       jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
-      const columnFilters = { name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['John'] } };
+      const columnFilters = { name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['John'], parsedSearchTerms: 'John', type: FieldType.string } };
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(false);
@@ -815,7 +860,7 @@ describe('FilterService', () => {
       jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
-      const columnFilters = { name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['Doe'] } };
+      const columnFilters = { name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['Doe'], parsedSearchTerms: 'Doe', type: FieldType.string } };
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(false);
@@ -999,7 +1044,7 @@ describe('FilterService', () => {
       gridOptionMock.enableFiltering = true;
       gridOptionMock.backendServiceApi = undefined;
       mockColumn1 = { id: 'firstName', name: 'firstName', field: 'firstName', filterable: true, filter: { model: Filters.inputText } };
-      mockColumn2 = { id: 'isActive', name: 'isActive', field: 'isActive', filterable: true, filter: { model: Filters.select, collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }], } };
+      mockColumn2 = { id: 'isActive', name: 'isActive', field: 'isActive', type: FieldType.boolean, filterable: true, filter: { model: Filters.select, collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }], } };
       mockArgs1 = { grid: gridStub, column: mockColumn1, node: document.getElementById(DOM_ELEMENT_ID) };
       mockArgs2 = { grid: gridStub, column: mockColumn2, node: document.getElementById(DOM_ELEMENT_ID) };
       mockNewFilters = [
@@ -1033,8 +1078,8 @@ describe('FilterService', () => {
       expect(emitSpy).toHaveBeenCalledWith('local');
       expect(clearSpy).toHaveBeenCalledWith(false);
       expect(service.getColumnFilters()).toEqual({
-        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith' },
-        isActive: { columnId: 'isActive', columnDef: mockColumn2, searchTerms: [false], operator: 'EQ' }
+        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith', parsedSearchTerms: 'Jane', type: FieldType.string },
+        isActive: { columnId: 'isActive', columnDef: mockColumn2, searchTerms: [false], operator: 'EQ', parsedSearchTerms: false, type: FieldType.boolean }
       });
     });
 
@@ -1051,8 +1096,8 @@ describe('FilterService', () => {
       expect(emitSpy).not.toHaveBeenCalled();
       expect(clearSpy).toHaveBeenCalledWith(false);
       expect(service.getColumnFilters()).toEqual({
-        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith' },
-        isActive: { columnId: 'isActive', columnDef: mockColumn2, searchTerms: [false], operator: 'EQ' }
+        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith', parsedSearchTerms: 'Jane', type: FieldType.string },
+        isActive: { columnId: 'isActive', columnDef: mockColumn2, searchTerms: [false], operator: 'EQ', parsedSearchTerms: false, type: FieldType.boolean }
       });
     });
 
@@ -1078,8 +1123,8 @@ describe('FilterService', () => {
       expect(clearSpy).toHaveBeenCalledWith(false);
       expect(backendUpdateSpy).toHaveBeenCalledWith(mockNewFilters, true);
       expect(service.getColumnFilters()).toEqual({
-        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith' },
-        isActive: { columnId: 'isActive', columnDef: mockColumn2, searchTerms: [false], operator: 'EQ' }
+        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith', parsedSearchTerms: 'Jane', type: FieldType.string },
+        isActive: { columnId: 'isActive', columnDef: mockColumn2, searchTerms: [false], operator: 'EQ', parsedSearchTerms: false, type: FieldType.boolean }
       });
       expect(clearSpy).toHaveBeenCalledWith(false);
       expect(mockRefreshBackendDataset).toHaveBeenCalledWith(gridOptionMock);
@@ -1107,8 +1152,8 @@ describe('FilterService', () => {
       expect(mockRefreshBackendDataset).not.toHaveBeenCalled();
       expect(backendUpdateSpy).toHaveBeenCalledWith(mockNewFilters, true);
       expect(service.getColumnFilters()).toEqual({
-        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith' },
-        isActive: { columnId: 'isActive', columnDef: mockColumn2, searchTerms: [false], operator: 'EQ' }
+        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith', parsedSearchTerms: 'Jane', type: FieldType.string },
+        isActive: { columnId: 'isActive', columnDef: mockColumn2, searchTerms: [false], operator: 'EQ', parsedSearchTerms: false, type: FieldType.boolean }
       });
       expect(clearSpy).toHaveBeenCalledWith(false);
     });
@@ -1339,7 +1384,7 @@ describe('FilterService', () => {
         gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
         gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
 
-        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', operator: 'Contains', searchTerms: ['map'] } };
+        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', operator: 'Contains', searchTerms: ['map'], parsedSearchTerms: 'map', type: FieldType.string } };
         service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['map'] }], true, true, true);
         const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -1363,7 +1408,7 @@ describe('FilterService', () => {
         gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
         gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
 
-        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', operator: 'Contains', searchTerms: ['map'] } };
+        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', operator: 'Contains', searchTerms: ['map'], parsedSearchTerms: 'map', type: FieldType.string } };
         service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['map'] }], true, true, true);
         const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -1387,13 +1432,13 @@ describe('FilterService', () => {
         gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
         gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
 
-        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', searchTerms: ['unknown'] } } as ColumnFilters;
+        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', searchTerms: ['unknown'], type: FieldType.string } } as ColumnFilters;
         service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['unknown'] }], true, true, true);
         const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['unknown'] }]);
         expect(output).toBe(false);
-        expect(preFilterSpy).toHaveBeenCalledWith(dataset, { ...columnFilters, file: { ...columnFilters.file, operator: 'Contains' } }); // it will use Contains by default
+        expect(preFilterSpy).toHaveBeenCalledWith(dataset, { ...columnFilters, file: { ...columnFilters.file, operator: 'Contains', parsedSearchTerms: 'unknown', type: 'string' } }); // it will use Contains by default
         expect(preFilterSpy).toHaveReturnedWith([]);
       });
     });

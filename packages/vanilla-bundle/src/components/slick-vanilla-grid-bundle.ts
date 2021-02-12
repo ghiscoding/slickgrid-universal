@@ -295,6 +295,10 @@ export class SlickVanillaGridBundle {
     this._gridContainerElm.classList.add('slickgrid-container');
     gridParentContainerElm.appendChild(this._gridContainerElm);
 
+    // check if the user wants to hide the header row from the start
+    // we only want to do this check once in the constructor
+    this._hideHeaderRowAfterPageLoad = (options?.showHeaderRow === false);
+
     this._columnDefinitions = columnDefs || [];
     this._gridOptions = this.mergeGridOptions(options || {});
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions?.enableDeepCopyDatasetOnPageLoad);
@@ -713,7 +717,6 @@ export class SlickVanillaGridBundle {
     const options = $.extend(true, {}, GlobalGridOptions, extraOptions, gridOptions);
 
     // also make sure to show the header row if user have enabled filtering
-    this._hideHeaderRowAfterPageLoad = (options.showHeaderRow === false);
     if (options.enableFiltering && !options.showHeaderRow) {
       options.showHeaderRow = options.enableFiltering;
     }

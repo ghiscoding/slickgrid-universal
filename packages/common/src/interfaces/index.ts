@@ -114,6 +114,7 @@ export * from './rowDetailView.interface';
 export * from './rowDetailViewOption.interface';
 export * from './rowMoveManager.interface';
 export * from './rowMoveManagerOption.interface';
+export * from './searchColumnFilter.interface';
 export * from './selectOption.interface';
 export * from './servicePagination.interface';
 export * from './singleColumnSort.interface';
