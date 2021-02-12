@@ -564,6 +564,19 @@ describe('FilterService', () => {
       mockItem1 = { firstName: 'John', lastName: 'Doe', fullName: 'John Doe', age: 26, address: { zip: 123456 } };
     });
 
+    it('should execute "getParsedSearchTermsByFieldType" once if the first "customLocalFilter" is executed without parsedSearchTerms at the beginning', () => {
+      const searchTerms = ['John'];
+      const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+
+      service.init(gridStub);
+      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms } };
+      const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
+
+      expect(columnFilters.firstName['parsedSearchTerms']).toBe('John');
+      expect(output).toBe(true);
+    });
+
     it('should return True (nothing to filter, all rows will be returned) when there are no column definition found', () => {
       const searchTerms = ['John'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;

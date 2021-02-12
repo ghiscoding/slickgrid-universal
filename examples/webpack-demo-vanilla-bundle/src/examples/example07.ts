@@ -46,10 +46,13 @@ export class Example7 {
       },
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
-        editor: { model: Editors.text, alwaysSaveOnEnterKey: true, },
+        type: 'number', editor: { model: Editors.text, alwaysSaveOnEnterKey: true, },
         formatter: (_row: number, _cell: number, value: any) => value > 1 ? `${value} days` : `${value} day`,
       },
-      { id: 'percentComplete', name: '% Complete', field: 'percentComplete', filterable: true, sortable: true, editor: { model: Editors.slider, minValue: 0, maxValue: 100, }, },
+      {
+        id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: 'number',
+        filterable: true, sortable: true, editor: { model: Editors.slider, minValue: 0, maxValue: 100, },
+      },
       {
         id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso,
         filterable: true, sortable: true,

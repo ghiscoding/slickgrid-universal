@@ -27,9 +27,9 @@ export const executeMappedCondition: FilterCondition = (options: FilterCondition
       // the parsedSearchTerms should be single value (result came from getFilterParsedBoolean() method)
       return executeBooleanFilterCondition(options, parsedSearchTerms as SearchTerm);
     case 'date':
-      return executeAssociatedDateCondition(options, ...parsedSearchTerms as any[]);
+      return executeAssociatedDateCondition(options, (parsedSearchTerms || []) as any[]);
     case 'number':
-      return executeNumberFilterCondition(options, ...parsedSearchTerms as number[]);
+      return executeNumberFilterCondition(options, (parsedSearchTerms || []) as number[]);
     case 'object':
       // the parsedSearchTerms should be single value (result came from getFilterParsedObjectResult() method)
       return executeObjectFilterCondition(options, parsedSearchTerms as SearchTerm);

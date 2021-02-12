@@ -2,12 +2,15 @@ import {
   Column,
   GridOption,
   FieldType,
+  FilterCallbackArg,
+  OperatorString,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
+import './example08.scss';
 
 export class Example08 {
   columnDefinitions1: Column[];
@@ -18,6 +21,10 @@ export class Example08 {
   dataset2 = [];
   sgb1: SlickVanillaGridBundle;
   sgb2: SlickVanillaGridBundle;
+  grid2SearchSelectedColumn: Column;
+  grid2SelectedOperator: OperatorString;
+  grid2SearchValue: any;
+  operatorList: OperatorString[] = ['=', '<', '<=', '>', '>=', '<>', 'StartsWith', 'EndsWith'];
 
   constructor() {
     this.definedGrid1();
@@ -32,6 +39,8 @@ export class Example08 {
     const gridContainerElm2 = document.querySelector<HTMLDivElement>(`.grid2`);
     this.sgb1 = new Slicker.GridBundle(gridContainerElm1, this.columnDefinitions1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
     this.sgb2 = new Slicker.GridBundle(gridContainerElm2, this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
+    this.populategrid2SearchColumnsDropdown();
+    this.populategrid2SearchOperatorDropdown();
   }
 
   dispose() {
@@ -42,10 +51,10 @@ export class Example08 {
   definedGrid1() {
     this.columnDefinitions1 = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, columnGroup: 'Common Factor' },
-      { id: 'duration', name: 'Duration', field: 'duration', columnGroup: 'Common Factor' },
+      { id: 'duration', name: 'Duration', type: FieldType.number, field: 'duration', columnGroup: 'Common Factor' },
       { id: 'start', name: 'Start', field: 'start', columnGroup: 'Period' },
       { id: 'finish', name: 'Finish', field: 'finish', columnGroup: 'Period' },
-      { id: '%', name: '% Complete', field: 'percentComplete', selectable: false, columnGroup: 'Analysis' },
+      { id: '%', name: '% Complete', type: FieldType.number, field: 'percentComplete', selectable: false, columnGroup: 'Analysis' },
       { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', type: FieldType.boolean, columnGroup: 'Analysis' }
     ];
 
@@ -75,10 +84,10 @@ export class Example08 {
     this.columnDefinitions2 = [
       { id: 'sel', name: '#', field: 'num', behavior: 'select', cssClass: 'cell-selection', width: 40, resizable: false, selectable: false },
       { id: 'title', name: 'Title', field: 'title', minWidth: 120, sortable: true, columnGroup: 'Common Factor' },
-      { id: 'duration', name: 'Duration', field: 'duration', minWidth: 120, columnGroup: 'Common Factor' },
+      { id: 'duration', name: 'Duration', field: 'duration', type: FieldType.number, minWidth: 120, columnGroup: 'Common Factor' },
       { id: 'start', name: 'Start', field: 'start', minWidth: 145, columnGroup: 'Period' },
       { id: 'finish', name: 'Finish', field: 'finish', minWidth: 145, columnGroup: 'Period' },
-      { id: '%', name: '% Complete', field: 'percentComplete', minWidth: 145, selectable: false, columnGroup: 'Analysis' },
+      { id: '%', name: '% Complete', field: 'percentComplete', type: FieldType.number, minWidth: 145, selectable: false, columnGroup: 'Analysis' },
       { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', minWidth: 145, type: FieldType.boolean, columnGroup: 'Analysis' }
     ];
 
@@ -95,7 +104,11 @@ export class Example08 {
       frozenColumn: 2,
       rowHeight: 33,
       gridMenu: { hideClearFrozenColumnsCommand: false },
-      headerMenu: { hideFreezeColumnsCommand: false }
+      headerMenu: { hideFreezeColumnsCommand: false },
+
+      // enable the filtering but hide the user filter row since we use our own single filter
+      enableFiltering: true,
+      showHeaderRow: false, // hide the filter row (header row)
     };
   }
 
@@ -145,5 +158,78 @@ export class Example08 {
         }
       };
     }
+  }
+
+  //
+  // -- if any of the Search form input changes, we'll call the updateFilter() method
+  //
+
+  cleargrid2SearchInput() {
+    const searchInput = document.querySelector<HTMLInputElement>('input.search');
+    searchInput.value = '';
+    this.grid2SearchValue = '';
+    searchInput.focus();
+    this.updateFilter();
+  }
+
+  populategrid2SearchOperatorDropdown() {
+    const operatorSelect = document.querySelector('.selected-operator');
+
+    for (const operator of this.operatorList) {
+      const selectOption = document.createElement('option');
+      selectOption.value = operator;
+      selectOption.label = operator;
+      operatorSelect.appendChild(selectOption);
+    }
+    this.grid2SelectedOperator = this.operatorList[0];
+  }
+
+  populategrid2SearchColumnsDropdown() {
+    const columnSelect = document.querySelector('.selected-column');
+
+    for (const columnDef of this.columnDefinitions1) {
+      const selectOption = document.createElement('option');
+      selectOption.value = JSON.stringify(columnDef);
+      selectOption.label = columnDef.name;
+      columnSelect.appendChild(selectOption);
+    }
+    this.grid2SearchSelectedColumn = this.columnDefinitions1[0];
+  }
+
+  selectedOperatorChanged(newOperator: string) {
+    this.grid2SelectedOperator = newOperator as OperatorString;
+    this.updateFilter();
+  }
+
+  selectedColumnChanged(selectedColumnStringified: string) {
+    this.grid2SearchSelectedColumn = JSON.parse(selectedColumnStringified) as Column;
+    this.updateFilter();
+  }
+
+  searchValueChanged(newValue: string) {
+    this.grid2SearchValue = newValue;
+    this.updateFilter();
+  }
+
+  updateFilter() {
+    const columnId = this.grid2SearchSelectedColumn?.id;
+    const filter = {};
+    const filterArg: FilterCallbackArg = {
+      columnDef: this.grid2SearchSelectedColumn,
+      operator: this.grid2SelectedOperator as OperatorString, // or fix one yourself like '='
+      searchTerms: [this.grid2SearchValue || '']
+    };
+    if (this.grid2SearchValue) {
+      // pass a columnFilter object as an object which it's property name must be a column field name (e.g.: 'duration': {...} )
+      filter[columnId] = filterArg;
+    }
+
+    // const currentFilter = { columnId, operator: this.grid2SelectedOperator as OperatorString, searchTerms: this.grid2SearchValue || '' } as CurrentFilter;
+    // this.sgb2.filterService.updateSingleFilter(currentFilter);
+    this.sgb2.dataView.setFilterArgs({
+      columnFilters: filter,
+      grid: this.sgb2.slickGrid
+    });
+    this.sgb2.dataView.refresh();
   }
 }

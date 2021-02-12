@@ -712,27 +712,32 @@ export class SlickVanillaGridBundle {
     const extraOptions = (gridOptions.useSalesforceDefaultGridOptions || (this._gridOptions && this._gridOptions.useSalesforceDefaultGridOptions)) ? SalesforceGlobalGridOptions : {};
     const options = $.extend(true, {}, GlobalGridOptions, extraOptions, gridOptions);
 
-    // also make sure to show the header row if user have enabled filtering
-    this._hideHeaderRowAfterPageLoad = (options.showHeaderRow === false);
-    if (options.enableFiltering && !options.showHeaderRow) {
-      options.showHeaderRow = options.enableFiltering;
-    }
+    // only after the grid initialized, we'll analyze some more configs
+    // we do this because mergeGridOptions() is called multiple times (by the constructor, initialization & gridOptions SETTER)
+    // but we don't want to run these extra config checks until the grid is initialized
+    if (this._isGridInitialized) {
+      // also make sure to show the header row if user have enabled filtering
+      this._hideHeaderRowAfterPageLoad = (options.showHeaderRow === false);
+      if (options.enableFiltering && !options.showHeaderRow) {
+        options.showHeaderRow = options.enableFiltering;
+      }
 
-    // using jQuery extend to do a deep clone has an unwanted side on objects and pageSizes but ES6 spread has other worst side effects
-    // so we will just overwrite the pageSizes when needed, this is the only one causing issues so far.
-    // jQuery wrote this on their docs:: On a deep extend, Object and Array are extended, but object wrappers on primitive types such as String, Boolean, and Number are not.
-    if (options?.pagination && (gridOptions.enablePagination || gridOptions.backendServiceApi) && gridOptions.pagination && Array.isArray(gridOptions.pagination.pageSizes)) {
-      options.pagination.pageSizes = gridOptions.pagination.pageSizes;
-    }
+      // using jQuery extend to do a deep clone has an unwanted side on objects and pageSizes but ES6 spread has other worst side effects
+      // so we will just overwrite the pageSizes when needed, this is the only one causing issues so far.
+      // jQuery wrote this on their docs:: On a deep extend, Object and Array are extended, but object wrappers on primitive types such as String, Boolean, and Number are not.
+      if (options?.pagination && (gridOptions.enablePagination || gridOptions.backendServiceApi) && gridOptions.pagination && Array.isArray(gridOptions.pagination.pageSizes)) {
+        options.pagination.pageSizes = gridOptions.pagination.pageSizes;
+      }
 
-    // when we use Pagination on Local Grid, it doesn't seem to work without enableFiltering
-    // so we'll enable the filtering but we'll keep the header row hidden
-    if (!options.enableFiltering && options.enablePagination && this._isLocalGrid) {
-      options.enableFiltering = true;
-      options.showHeaderRow = false;
-      this._hideHeaderRowAfterPageLoad = true;
-      if (this.sharedService) {
-        this.sharedService.hideHeaderRowAfterPageLoad = true;
+      // when we use Pagination on Local Grid, it doesn't seem to work without enableFiltering
+      // so we'll enable the filtering but we'll keep the header row hidden
+      if (!options.enableFiltering && options.enablePagination && this._isLocalGrid) {
+        options.enableFiltering = true;
+        options.showHeaderRow = false;
+        this._hideHeaderRowAfterPageLoad = true;
+        if (this.sharedService) {
+          this.sharedService.hideHeaderRowAfterPageLoad = true;
+        }
       }
     }
 

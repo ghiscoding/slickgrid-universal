@@ -9,7 +9,7 @@ import { testFilterCondition } from './filterUtilities';
 /**
  * Execute Date filter condition check on each cell and use correct date format depending on it's field type (or filterSearchType when that is provided)
  */
-export function executeAssociatedDateCondition(options: FilterConditionOption, ...parsedSearchDates: any[]): boolean {
+export function executeAssociatedDateCondition(options: FilterConditionOption, parsedSearchDates: any[]): boolean {
   const filterSearchType = options && (options.filterSearchType || options.fieldType) || FieldType.dateIso;
   const FORMAT = mapMomentDateFormatWithFieldType(filterSearchType);
   let [searchDate1, searchDate2] = parsedSearchDates;

@@ -4,7 +4,7 @@ import { isNumber } from '../services/utilities';
 import { testFilterCondition } from './filterUtilities';
 
 /** Execute filter condition check on each cell */
-export const executeNumberFilterCondition: FilterCondition = (options: FilterConditionOption, ...parsedSearchValues: number[]) => {
+export const executeNumberFilterCondition: FilterCondition = (options: FilterConditionOption, parsedSearchValues: number[]) => {
   const cellValue = parseFloat(options.cellValue);
   let [searchValue1, searchValue2] = parsedSearchValues;
 

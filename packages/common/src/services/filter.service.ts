@@ -319,7 +319,18 @@ export class FilterService {
             return conditionOptions;
           }
 
-          const parsedSearchTerms = columnFilter?.parsedSearchTerms; // parsed term could a single value or an array of values
+          let parsedSearchTerms = columnFilter?.parsedSearchTerms; // parsed term could a single value or an array of values
+
+          // in the rare case that it's empty (it can happen when creating an external grid global search)
+          // then get the parsed terms, once it's filled it typically won't ask for it anymore
+          if (parsedSearchTerms === undefined) {
+            parsedSearchTerms = getParsedSearchTermsByFieldType(columnFilter.searchTerms, columnFilter.columnDef.type || FieldType.string); // parsed term could a single value or an array of values
+            if (parsedSearchTerms !== undefined) {
+              columnFilter.parsedSearchTerms = parsedSearchTerms;
+            }
+          }
+
+          // execute the filtering conditions check (all cell values vs search term(s))
           if (!FilterConditions.executeMappedCondition(conditionOptions as FilterConditionOption, parsedSearchTerms)) {
             return false;
           }

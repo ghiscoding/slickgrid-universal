@@ -154,14 +154,14 @@ describe('executeNumberFilterCondition method', () => {
   it('should return True when input value equals the search terms min (first array term) inclusive value and operator is set to "rangeInclusive"', () => {
     const searchTerms = [1, 5];
     const options = { dataKey: '', operator: 'RangeInclusive', cellValue: '1', fieldType: FieldType.number, searchTerms } as FilterConditionOption;
-    const output = executeNumberFilterCondition(options, ...getFilterParsedNumbers(searchTerms));
+    const output = executeNumberFilterCondition(options, getFilterParsedNumbers(searchTerms));
     expect(output).toBe(true);
   });
 
   it('should return False when input value equals the search terms min (first array term) inclusive value and operator is set to "RangeExclusive"', () => {
     const searchTerms = [1, 5];
     const options = { dataKey: '', operator: 'RangeExclusive', cellValue: '1', fieldType: FieldType.number, searchTerms } as FilterConditionOption;
-    const output = executeNumberFilterCondition(options, ...getFilterParsedNumbers(searchTerms));
+    const output = executeNumberFilterCondition(options, getFilterParsedNumbers(searchTerms));
     expect(output).toBe(false);
   });
 });
