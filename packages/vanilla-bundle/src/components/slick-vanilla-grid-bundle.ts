@@ -297,7 +297,7 @@ export class SlickVanillaGridBundle {
 
     // check if the user wants to hide the header row from the start
     // we only want to do this check once in the constructor
-    this._hideHeaderRowAfterPageLoad = (options.showHeaderRow === false);
+    this._hideHeaderRowAfterPageLoad = (options?.showHeaderRow === false);
 
     this._columnDefinitions = columnDefs || [];
     this._gridOptions = this.mergeGridOptions(options || {});
