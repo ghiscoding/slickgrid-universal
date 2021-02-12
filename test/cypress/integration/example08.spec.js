@@ -134,7 +134,7 @@ describe('Example 08 - Column Span & Header Grouping', () => {
     cy.get(`.grid2 .grid-canvas-left > [style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(1)`).should('contain', 'Task 45');
   });
 
-  it('should search for Duration below 50 and expect rows to be that', () => {
+  it('should search for "% Complete" below 50 and expect rows to be that', () => {
     cy.get('[data-test="search-column-list"]')
       .select('percentComplete');
 
@@ -142,6 +142,9 @@ describe('Example 08 - Column Span & Header Grouping', () => {
       .select('<');
 
     cy.wait(200);
+
+    cy.get('[data-test="search-string"]')
+      .type('50');
 
     cy.get('.grid2')
       .find('.slick-row .slick-cell:nth(5)')
