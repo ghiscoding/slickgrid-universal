@@ -25,3 +25,9 @@ $link-color: #2cad56;
   top: 18px;
   margin-left: 5px;
 }
+.faded {
+  opacity: 0.7;
+}
+.faded:hover {
+  opacity: 1;
+}

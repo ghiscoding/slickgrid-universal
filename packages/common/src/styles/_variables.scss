@@ -433,6 +433,15 @@ $context-menu-title-font-weight:                      normal !default;
 $context-menu-title-margin-bottom:                    10px !default;
 $context-menu-title-width:                            calc(100% - #{$context-menu-close-btn-width} - 10px) !default;
 
+/* Header Button Plugin */
+$header-button-float:                                 right !default;
+$header-button-margin:                                1px 0 100px 0 !default;
+$header-button-height:                                15px !default;
+$header-button-width:                                 15px !default;
+$header-button-hidden-margin-right:                   -5px !default;
+$header-button-hidden-transition:                     0.2s width !default;
+$header-button-vertical-align:                        top !default;
+
 /* Header Menu Plugin */
 $header-menu-bg-color:                                #ffffff !default;
 $header-menu-button-bg-color:                         #ffffff !default;
