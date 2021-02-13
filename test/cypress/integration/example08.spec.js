@@ -170,4 +170,15 @@ describe('Example 08 - Column Span & Header Grouping', () => {
     cy.get('.slick-empty-data-warning:visible')
       .contains('No data to display.');
   });
+
+  it('should clear search input and expect empty dataset warning to go away and also expect data back (Task 0, 1, 2, ...)', () => {
+    cy.get('[data-test="clear-search-input"]')
+      .click();
+
+    cy.get(`.grid2 .grid-canvas-left > [style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`).should('contain', 'Task 0');
+    cy.get(`.grid2 .grid-canvas-left > [style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', 'Task 1');
+    cy.get(`.grid2 .grid-canvas-left > [style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(1)`).should('contain', 'Task 2');
+    cy.get(`.grid2 .grid-canvas-left > [style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1)`).should('contain', 'Task 3');
+    cy.get(`.grid2 .grid-canvas-left > [style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(1)`).should('contain', 'Task 4');
+  });
 });
