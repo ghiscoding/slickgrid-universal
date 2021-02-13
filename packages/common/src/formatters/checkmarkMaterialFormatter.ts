@@ -1,4 +1,5 @@
 import { Formatter } from './../interfaces/index';
+import { isNumber } from '../services/utilities';
 
 /**
  * When value is filled, or if the value is a number and is bigger than 0, it will display a Material Design check icon (mdi-check).
@@ -8,13 +9,13 @@ import { Formatter } from './../interfaces/index';
  */
 export const checkmarkMaterialFormatter: Formatter = (_row, _cell, value) => {
   let isChecked = false;
-  const isNumber = (value === null || value === undefined || value === '') ? false : !isNaN(+value);
+  const isValidNumber = isNumber(value);
 
-  if (isNumber) {
+  if (isValidNumber) {
     value = +value; // convert to number before doing next condition
   }
 
-  if (value === true || (isNumber && +value > 0) || (typeof value === 'string' && value.length > 0 && value.toLowerCase() !== 'false' && value !== '0')) {
+  if (value === true || (isValidNumber && +value > 0) || (typeof value === 'string' && value.length > 0 && value.toLowerCase() !== 'false' && value !== '0')) {
     isChecked = true;
   }
 

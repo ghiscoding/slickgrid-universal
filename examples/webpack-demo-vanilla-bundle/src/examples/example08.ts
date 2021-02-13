@@ -176,6 +176,9 @@ export class Example08 {
     const columnSelect = document.querySelector('.selected-column');
 
     for (const columnDef of this.columnDefinitions2) {
+      if (columnDef.id === 'sel') {
+        continue;
+      }
       const selectOption = document.createElement('option');
       selectOption.value = `${columnDef.id}`;
       selectOption.label = columnDef.name;
@@ -231,5 +234,6 @@ export class Example08 {
       grid: this.sgb2.slickGrid
     });
     this.sgb2.dataView.refresh();
+    this.sgb2.slickGrid.invalidate();
   }
 }
