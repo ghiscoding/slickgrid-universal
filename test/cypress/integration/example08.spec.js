@@ -49,8 +49,8 @@ describe('Example 08 - Column Span & Header Grouping', () => {
   });
 
   it('should click on the "Remove Frozen Columns" button to switch to a regular grid without frozen columns and expect 7 columns on the left container', () => {
-    cy.contains('Remove Frozen Columns')
-      .click({ force: true });
+    cy.get('[data-test="remove-frozen-column-button"]')
+      .click();
 
     cy.get('.grid2').find(`[style="top:${GRID_ROW_HEIGHT * 0}px"]`).should('have.length', 1);
     cy.get('.grid2').find(`.grid-canvas-left > [style="top:${GRID_ROW_HEIGHT * 0}px"]`).children().should('have.length', 7);
@@ -121,10 +121,13 @@ describe('Example 08 - Column Span & Header Grouping', () => {
   });
 
   it('should search for Title ending with text "5" expect rows to be (Task 5, 15, 25, ...)', () => {
+    cy.get('[data-test="search-column-list"]')
+      .select('title');
+
     cy.get('[data-test="search-operator-list"]')
       .select('EndsWith');
 
-    cy.get('[data-test="search-string"]')
+    cy.get('[data-test="search-value-input"]')
       .type('5');
 
     cy.get(`.grid2 .grid-canvas-left > [style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`).should('contain', 'Task 5');
@@ -135,7 +138,7 @@ describe('Example 08 - Column Span & Header Grouping', () => {
   });
 
   it('should search for "% Complete" below 50 and expect rows to be that', () => {
-    cy.get('[data-test="clear-search-string"]')
+    cy.get('[data-test="clear-search-input"]')
       .click();
 
     cy.get('[data-test="search-column-list"]')
@@ -144,18 +147,38 @@ describe('Example 08 - Column Span & Header Grouping', () => {
     cy.get('[data-test="search-operator-list"]')
       .select('<');
 
-    cy.wait(200);
-
-    cy.get('[data-test="search-string"]')
+    cy.get('[data-test="search-value-input"]')
       .type('50');
 
+    cy.wait(50);
+
     cy.get('.grid2')
-      .find('.slick-row .slick-cell:nth(5)')
+      .find('.slick-row .slick-cell:nth-child(6):visible')
       .each(($child, index) => {
-        if (index > 10) {
+        if (index > 8) {
           return;
         }
         expect(+$child.text()).to.be.lt(50);
       });
+  });
+
+  it('should type a filter which returns an empty dataset', () => {
+    cy.get('[data-test="search-value-input"]')
+      .clear()
+      .type('zzz');
+
+    cy.get('.slick-empty-data-warning:visible')
+      .contains('No data to display.');
+  });
+
+  it('should clear search input and expect empty dataset warning to go away and also expect data back (Task 0, 1, 2, ...)', () => {
+    cy.get('[data-test="clear-search-input"]')
+      .click();
+
+    cy.get(`.grid2 .grid-canvas-left > [style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`).should('contain', 'Task 0');
+    cy.get(`.grid2 .grid-canvas-left > [style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', 'Task 1');
+    cy.get(`.grid2 .grid-canvas-left > [style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(1)`).should('contain', 'Task 2');
+    cy.get(`.grid2 .grid-canvas-left > [style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1)`).should('contain', 'Task 3');
+    cy.get(`.grid2 .grid-canvas-left > [style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(1)`).should('contain', 'Task 4');
   });
 });
