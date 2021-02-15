@@ -1134,7 +1134,7 @@ export class SlickVanillaGridBundle {
       startTime: new Date(),
       endTime: new Date(),
       itemCount,
-      totalItemCount: Array.isArray(this.dataset) ? this.dataset.length : 0
+      totalItemCount: this.dataView?.getItemCount() || 0
     };
 
     // if custom footer is enabled, then we'll update its metrics
