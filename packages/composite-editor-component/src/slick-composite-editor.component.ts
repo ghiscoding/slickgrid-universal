@@ -12,6 +12,7 @@ import {
   deepCopy,
   Editor,
   EditorValidationResult,
+  emptyObject,
   ExternalResource,
   getDescendantProperty,
   GetSlickEventType,
@@ -28,6 +29,7 @@ import {
   SlickNamespace,
   SlickDataView,
   TranslaterService,
+  DOMEvent,
 } from '@slickgrid-universal/common';
 
 // using external non-typed js libraries
@@ -415,12 +417,24 @@ export class SlickCompositeEditorComponent implements ExternalResource {
             const templateItemValidationElm = document.createElement('div');
             templateItemValidationElm.className = `item-details-validation editor-${columnDef.id}`;
 
+            const resetButtonElm = document.createElement('button');
+            resetButtonElm.type = 'button';
+            resetButtonElm.name = `${columnDef.id}`;
+            resetButtonElm.title = 'Reset Input Value';
+            resetButtonElm.className = 'btn btn-xs btn-editor-reset mdi mdi-refresh mdi-15px mdi-v-align-text-top';
+            this._bindEventService.bind(resetButtonElm, 'click', this.resetInputValue.bind(this));
+            templateItemLabelElm.appendChild(resetButtonElm);
+
             itemContainer.appendChild(templateItemLabelElm);
             itemContainer.appendChild(templateItemEditorElm);
             itemContainer.appendChild(templateItemValidationElm);
             modalBodyElm.appendChild(itemContainer);
           }
         }
+
+        // add a reset button
+        const resetButtonContainerElm = this.addResetButtonElement();
+        modalBodyElm.appendChild(resetButtonContainerElm);
 
         document.body.appendChild(this._modalElm);
         document.body.classList.add('slick-modal-open'); // add backdrop to body
@@ -468,6 +482,26 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     }
   }
 
+  addResetButtonElement() {
+    const resetButtonContainerElm = document.createElement('div');
+    resetButtonContainerElm.className = 'reset-container';
+    const resetButtonElm = document.createElement('button');
+    resetButtonElm.type = 'button';
+    resetButtonElm.textContent = ' Reset Form';
+    resetButtonElm.className = 'btn btn-sm reset-form';
+
+    const resetIconSpanElm = document.createElement('span');
+    resetIconSpanElm.className = 'mdi mdi-refresh mdi-16px mdi-flip-h mdi-v-align-text-top';
+
+    resetButtonElm.prepend(resetIconSpanElm);
+    resetButtonContainerElm.appendChild(resetButtonElm);
+
+    // add button handler
+    this._bindEventService.bind(resetButtonElm, 'click', this.handleResetFormClicked.bind(this));
+
+    return resetButtonContainerElm;
+  }
+
   /** Cancel the Editing which will also close the modal window */
   async cancelEditing() {
     let confirmed = true;
@@ -487,6 +521,15 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       this.grid.setActiveRow(this._lastActiveRowNumber);
       this.dispose();
     }
+  }
+
+  resetInputValue(event: DOMEvent<HTMLButtonElement>) {
+    const columnId = event.target.name;
+    const editor = this._editors?.[columnId];
+    if (editor?.reset) {
+      editor.reset();
+    }
+    delete this._formValues?.[columnId];
   }
 
   /** Show a Validation Summary text (as a <div>) when a validation fails or simply hide it when there's no error */
@@ -574,13 +617,13 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /**
- * A simple and generic method to execute the "OnSave" callback if it's defined by the user OR else simply execute built-in apply changes callback.
- * This method deals with multiple callbacks as shown below
- * @param {Function} applyChangesCallback - first callback to apply the changes into the grid (this could be a user custom callback)
- * @param {Function} executePostCallback - second callback to execute right after the "onSave"
- * @param {Function} beforeClosingCallback - third and last callback to execute after Saving but just before closing the modal window
- * @param {Object} itemDataContext - item data context, only provided for modal type (create/clone/edit)
- */
+   * A simple and generic method to execute the "OnSave" callback if it's defined by the user OR else simply execute built-in apply changes callback.
+   * This method deals with multiple callbacks as shown below
+   * @param {Function} applyChangesCallback - first callback to apply the changes into the grid (this could be a user custom callback)
+   * @param {Function} executePostCallback - second callback to execute right after the "onSave"
+   * @param {Function} beforeClosingCallback - third and last callback to execute after Saving but just before closing the modal window
+   * @param {Object} itemDataContext - item data context, only provided for modal type (create/clone/edit)
+   */
   private async executeOnSave(applyChangesCallback: ApplyChangesCallbackFn, executePostCallback: PlainFunc, beforeClosingCallback?: PlainFunc, itemDataContext?: any) {
     try {
       this.showValidationSummaryText(false, '');
@@ -754,12 +797,12 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     const columnId = args.column?.id ?? '';
     this._formValues = { ...this._formValues, ...args.formValues };
     const editor = this._editors?.[columnId] as Editor;
-    const isEditorValueChanged = editor?.isValueChanged?.() ?? false;
+    const isEditorValueTouched = editor?.isValueTouched?.() ?? editor?.isValueChanged?.() ?? false;
 
     // add extra css styling to the composite editor input(s) that got modified
     const editorElm = document.querySelector(`[data-editorid=${columnId}]`);
     if (editorElm?.classList) {
-      if (isEditorValueChanged) {
+      if (isEditorValueTouched) {
         editorElm.classList.add('modified');
       } else {
         editorElm.classList.remove('modified');
@@ -775,6 +818,17 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     const selectionModel = this.grid.getSelectionModel();
     const isRowSelectionEnabled = this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector;
     return (isRowSelectionEnabled && selectionModel);
+  }
+
+  private handleResetFormClicked() {
+    for (const columnId of Object.keys(this._editors)) {
+      const editor = this._editors[columnId];
+      if (editor?.reset) {
+        editor.reset();
+      }
+    }
+
+    this._formValues = emptyObject(this._formValues);
   }
 
   /** switch case handler to determine which code to execute depending on the modal type */

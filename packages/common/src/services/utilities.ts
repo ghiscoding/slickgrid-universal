@@ -223,6 +223,22 @@ export function emptyElement<T extends HTMLElement = HTMLElement>(element?: T): 
 }
 
 /**
+ * Empty an object properties by looping through them all and deleting them
+ * @param obj - input object
+ */
+export function emptyObject(obj: any) {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      delete obj[key];
+    }
+  }
+  obj = null;
+  obj = {};
+
+  return obj;
+}
+
+/**
  * Find an item from a hierarchical view structure (a parent that can have children array which themseleves can children and so on)
  * @param hierarchicalArray
  * @param predicate

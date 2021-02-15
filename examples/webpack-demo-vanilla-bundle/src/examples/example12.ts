@@ -151,7 +151,7 @@ export class Example12 {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, minWidth: 75,
         type: FieldType.number, columnGroup: 'Common Factor',
         formatter: (_row, _cell, value) => {
-          if (value === null || value === undefined) {
+          if (value === null || value === undefined || value === '') {
             return '';
           }
           return value > 1 ? `${value} days` : `${value} day`;
@@ -907,11 +907,12 @@ export class Example12 {
           if (modalType === 'mass-update' || modalType === 'mass-selection') {
             return new Promise((resolve, reject) => {
               setTimeout(() => {
-                if (formValues.percentComplete >= 50) {
-                  resolve(true);
-                } else {
-                  reject('Unfortunately we only accept a minimum of 50% Completion...');
-                }
+                // if (formValues.percentComplete >= 50) {
+                //   resolve(true);
+                // } else {
+                //   reject('Unfortunately we only accept a minimum of 50% Completion...');
+                // }
+                resolve(true);
               }, serverResponseDelay);
             });
           } else {

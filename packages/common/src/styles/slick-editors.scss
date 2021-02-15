@@ -174,18 +174,42 @@
       top: 0;
     }
 
-    .footer-buttons {
-      .btn {
-        margin: $editor-modal-footer-btn-margin;
-        height: $editor-modal-footer-btn-height;
-        border: $editor-modal-footer-btn-border;
-        border-radius: $editor-modal-footer-btn-radius;
-        &:hover {
-          border-color: $editor-modal-footer-btn-border-hover;
-        }
-        &:disabled {
-          background-color: $button-primary-bg-color-disabled;
-        }
+    .reset-container {
+      width: 100%;
+      .reset-form.btn {
+        background-color: #ffffff;
+        float: right;
+      }
+    }
+
+    .btn-editor-reset,
+    .reset-form.btn,
+    .footer-buttons .btn {
+      margin: $editor-modal-footer-btn-margin;
+      height: $editor-modal-footer-btn-height;
+      border: $editor-modal-footer-btn-border;
+      border-radius: $editor-modal-footer-btn-radius;
+      &:hover {
+        border-color: $editor-modal-footer-btn-border-hover;
+      }
+      &:disabled {
+        background-color: $button-primary-bg-color-disabled;
+      }
+    }
+
+    .btn-editor-reset {
+      height: 20px;
+      background-color: #fff;
+      float: right;
+      margin: 27px 10px 2px 5px;
+      border: 0;
+      outline: none;
+      opacity: 0.6;
+      &:active {
+        background-color: #f7f7f7;
+      }
+      &:hover {
+        opacity: 1;
       }
     }
 

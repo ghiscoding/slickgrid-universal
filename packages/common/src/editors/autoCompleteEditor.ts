@@ -39,7 +39,9 @@ export class AutoCompleteEditor implements Editor {
   protected _autoCompleteOptions: AutocompleteOption;
   protected _currentValue: any;
   protected _defaultTextValue: string;
+  protected _originalValue: any;
   protected _elementCollection: any[] | null;
+  protected _isValueTouched: boolean;
   protected _lastInputKeyEvent: JQuery.Event;
 
   /** The JQuery DOM element */
@@ -194,10 +196,7 @@ export class AutoCompleteEditor implements Editor {
         // clear value when it's newly disabled and not empty
         const currentValue = this.getValue();
         if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions && currentValue !== '') {
-          this._currentValue = '';
-          this._defaultTextValue = '';
-          this._$editorElm.val('');
-          this.handleChangeOnCompositeEditor(null, this.args.compositeEditorOptions);
+          this.reset('', true, true);
         }
       } else {
         this._$editorElm.removeAttr('disabled');
@@ -288,6 +287,10 @@ export class AutoCompleteEditor implements Editor {
     return (!(elmValue === '' && (this._defaultTextValue === null || this._defaultTextValue === undefined))) && (elmValue !== this._defaultTextValue);
   }
 
+  isValueTouched(): boolean {
+    return this._isValueTouched;
+  }
+
   loadValue(item: any) {
     const fieldName = this.columnDef && this.columnDef.field;
 
@@ -297,9 +300,30 @@ export class AutoCompleteEditor implements Editor {
       const data = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
 
       this._currentValue = data;
+      this._originalValue = data;
       this._defaultTextValue = typeof data === 'string' ? data : (data?.[this.labelName] ?? '');
       this._$editorElm.val(this._defaultTextValue);
       this._$editorElm.select();
+    }
+  }
+
+  /**
+   * You can reset or clear the input value,
+   * when no value is provided it will use the original value to reset (could be useful with Composite Editor Modal with edit/clone)
+   */
+  reset(value?: any, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
+    const inputValue = value ?? this._originalValue ?? '';
+    if (this._$editorElm) {
+      this._currentValue = inputValue;
+      this._defaultTextValue = typeof inputValue === 'string' ? inputValue : (inputValue?.[this.labelName] ?? '');
+      this._$editorElm.val(this._defaultTextValue);
+    }
+    this._isValueTouched = false;
+
+    const compositeEditorOptions = this.args.compositeEditorOptions;
+    if (compositeEditorOptions && triggerCompositeEventWhenExist) {
+      const shouldDeleteFormValue = !clearByDisableCommand;
+      this.handleChangeOnCompositeEditor(null, compositeEditorOptions, 'user', shouldDeleteFormValue);
     }
   }
 
@@ -375,7 +399,7 @@ export class AutoCompleteEditor implements Editor {
     this.disable(isCellEditable === false);
   }
 
-  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
+  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false) {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -390,7 +414,7 @@ export class AutoCompleteEditor implements Editor {
     this.applyValue(compositeEditorOptions.formValues, newValue);
 
     const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
-    if (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+    if (isCalledByClearValue || (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify(
@@ -405,6 +429,7 @@ export class AutoCompleteEditor implements Editor {
     if (ui && ui.item) {
       const selectedItem = ui && ui.item;
       this._currentValue = selectedItem;
+      this._isValueTouched = true;
       const compositeEditorOptions = this.args.compositeEditorOptions;
 
       // when the user defines a "renderItem" (or "_renderItem") template, then we assume the user defines his own custom structure of label/value pair

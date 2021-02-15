@@ -33,6 +33,8 @@ export class DualInputEditor implements Editor {
   protected _lastEventType: string | undefined;
   protected _lastInputKeyEvent: KeyboardEvent;
   protected _leftInput: HTMLInputElement;
+  protected _isLeftValueTouched: boolean;
+  protected _isRightValueTouched: boolean;
   protected _rightInput: HTMLInputElement;
   protected _leftFieldName: string;
   protected _rightFieldName: string;
@@ -138,6 +140,11 @@ export class DualInputEditor implements Editor {
 
     if (!compositeEditorOptions && (targetClassNames.indexOf('dual-editor') === -1 && this._lastEventType !== 'focusout-right')) {
       if (position === 'rightInput' || (position === 'leftInput' && this._lastEventType !== 'focusout-left')) {
+        if (position === 'leftInput') {
+          this._isLeftValueTouched = true;
+        } else {
+          this._isRightValueTouched = true;
+        }
         this.save();
       }
     }
@@ -199,11 +206,7 @@ export class DualInputEditor implements Editor {
 
         // clear the checkbox when it's newly disabled
         if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
-          this._originalLeftValue = '';
-          this._originalRightValue = '';
-          this._leftInput.value = '';
-          this._rightInput.value = '';
-          this.handleChangeOnCompositeEditor(null, this.args?.compositeEditorOptions);
+          this.reset('', true, true);
         }
       } else {
         this._leftInput.removeAttribute('disabled');
@@ -290,6 +293,10 @@ export class DualInputEditor implements Editor {
     return leftResult || rightResult;
   }
 
+  isValueTouched(): boolean {
+    return this._isLeftValueTouched || this._isRightValueTouched;
+  }
+
   loadValue(item: any) {
     this.loadValueByPosition(item, 'leftInput');
     this.loadValueByPosition(item, 'rightInput');
@@ -316,6 +323,29 @@ export class DualInputEditor implements Editor {
       if (this[inputVarPosition]) {
         this[inputVarPosition].value = `${this[originalValuePosition]}`;
       }
+    }
+  }
+
+  /**
+   * You can reset or clear the input value,
+   * when no value is provided it will use the original value to reset (could be useful with Composite Editor Modal with edit/clone)
+   */
+  reset(value?: number | string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
+    const inputLeftValue = value ?? this._originalLeftValue ?? '';
+    const inputRightValue = value ?? this._originalRightValue ?? '';
+    if (this._leftInput && this._rightInput) {
+      this._originalLeftValue = inputLeftValue;
+      this._originalRightValue = inputRightValue;
+      this._leftInput.value = `${inputLeftValue}`;
+      this._rightInput.value = `${inputRightValue}`;
+    }
+    this._isLeftValueTouched = false;
+    this._isRightValueTouched = false;
+
+    const compositeEditorOptions = this.args.compositeEditorOptions;
+    if (compositeEditorOptions && triggerCompositeEventWhenExist) {
+      const shouldDeleteFormValue = !clearByDisableCommand;
+      this.handleChangeOnCompositeEditor(null, compositeEditorOptions, 'user', shouldDeleteFormValue);
     }
   }
 
@@ -469,7 +499,7 @@ export class DualInputEditor implements Editor {
     this.disable(isCellEditable === false);
   }
 
-  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
+  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false) {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const leftInputId = this.columnEditor.params?.leftInput?.field ?? '';
@@ -487,10 +517,10 @@ export class DualInputEditor implements Editor {
     // when the input is disabled we won't include it in the form result object
     // we'll check with both left/right inputs
     const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
-    if (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(leftInputId)) {
+    if (isCalledByClearValue || (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(leftInputId))) {
       delete compositeEditorOptions.formValues[leftInputId];
     }
-    if (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(rightInputId)) {
+    if (isCalledByClearValue || (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(rightInputId))) {
       delete compositeEditorOptions.formValues[rightInputId];
     }
     grid.onCompositeEditorChange.notify(

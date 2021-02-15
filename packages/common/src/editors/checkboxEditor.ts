@@ -12,8 +12,9 @@ declare const Slick: SlickNamespace;
  */
 export class CheckboxEditor implements Editor {
   protected _bindEventService: BindingEventService;
-  protected _input: HTMLInputElement | null;
   protected _checkboxContainerElm: HTMLDivElement;
+  protected _input: HTMLInputElement | null;
+  protected _isValueTouched: boolean;
   protected _originalValue?: boolean | string;
 
   /** is the Editor disabled? */
@@ -85,11 +86,17 @@ export class CheckboxEditor implements Editor {
 
     // make the checkbox editor act like a regular checkbox that commit the value on click
     if (this.hasAutoCommitEdit && !compositeEditorOptions) {
-      this._bindEventService.bind(this._input, 'click', () => this.save());
+      this._bindEventService.bind(this._input, 'click', () => {
+        this._isValueTouched = true;
+        this.save();
+      });
     }
 
     if (compositeEditorOptions) {
-      this._bindEventService.bind(this._input, 'change', (event: KeyboardEvent) => this.handleChangeOnCompositeEditor(event, compositeEditorOptions));
+      this._bindEventService.bind(this._input, 'change', (event: KeyboardEvent) => {
+        this._isValueTouched = true;
+        this.handleChangeOnCompositeEditor(event, compositeEditorOptions);
+      });
     } else {
       this.focus();
     }
@@ -114,9 +121,7 @@ export class CheckboxEditor implements Editor {
         // clear checkbox when it's newly disabled and not empty
         const currentValue = this.getValue();
         if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions && currentValue !== false) {
-          this._input.checked = false;
-          this._originalValue = undefined;
-          this.handleChangeOnCompositeEditor(null, this.args.compositeEditorOptions);
+          this.reset(false, true, true);
         }
       } else {
         this._input.removeAttribute('disabled');
@@ -182,6 +187,10 @@ export class CheckboxEditor implements Editor {
     return (this.serializeValue() !== this._originalValue);
   }
 
+  isValueTouched(): boolean {
+    return this._isValueTouched;
+  }
+
   loadValue(item: any) {
     const fieldName = this.columnDef && this.columnDef.field;
 
@@ -192,6 +201,25 @@ export class CheckboxEditor implements Editor {
 
       this._originalValue = value;
       this._input.checked = !!this._originalValue;
+    }
+  }
+
+  /**
+   * You can reset or clear the input value,
+   * when no value is provided it will use the original value to reset (could be useful with Composite Editor Modal with edit/clone)
+   */
+  reset(value?: boolean, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
+    const inputValue = value ?? this._originalValue ?? false;
+    if (this._input) {
+      this._originalValue = inputValue;
+      this._input.checked = !!(inputValue);
+    }
+    this._isValueTouched = false;
+
+    const compositeEditorOptions = this.args.compositeEditorOptions;
+    if (compositeEditorOptions && triggerCompositeEventWhenExist) {
+      const shouldDeleteFormValue = !clearByDisableCommand;
+      this.handleChangeOnCompositeEditor(null, compositeEditorOptions, 'user', shouldDeleteFormValue);
     }
   }
 
@@ -256,7 +284,7 @@ export class CheckboxEditor implements Editor {
     this.disable(isCellEditable === false);
   }
 
-  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
+  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false) {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -271,7 +299,7 @@ export class CheckboxEditor implements Editor {
     this.applyValue(compositeEditorOptions.formValues, newValue);
 
     const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
-    if (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+    if (isCalledByClearValue || (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify(

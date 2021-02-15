@@ -1,3 +1,5 @@
+import 'jest-extended';
+
 import { FieldType, OperatorType } from '../../enums/index';
 import { GridOption } from '../../interfaces/index';
 import {
@@ -10,6 +12,7 @@ import {
   debounce,
   deepCopy,
   emptyElement,
+  emptyObject,
   findItemInHierarchicalStructure,
   findOrDefault,
   formatNumber,
@@ -396,6 +399,13 @@ describe('Service/Utilies', () => {
       expect(div.outerHTML).toBe('<div><ul><li>Item 1</li><li>Item 2</li></ul></div>');
       emptyElement(div);
       expect(div.outerHTML).toBe('<div></div>');
+    });
+  });
+
+  describe('emptyObject method', () => {
+    it('should empty all object properties', () => {
+      const obj = { firstName: 'John', address: { zip: 123456, streetNumber: '123 Belleville Blvd' } };
+      expect(emptyObject(obj)).toEqual({});
     });
   });
 

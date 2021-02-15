@@ -14,6 +14,7 @@ declare const Slick: SlickNamespace;
 export class IntegerEditor implements Editor {
   protected _bindEventService: BindingEventService;
   protected _lastInputKeyEvent: KeyboardEvent;
+  protected _isValueTouched: boolean;
   protected _input: HTMLInputElement | null;
   protected _originalValue: number | string;
 
@@ -92,7 +93,10 @@ export class IntegerEditor implements Editor {
       // the lib does not get the focus out event for some reason
       // so register it here
       if (this.hasAutoCommitEdit && !compositeEditorOptions) {
-        this._bindEventService.bind(this._input, 'focusout', () => this.save());
+        this._bindEventService.bind(this._input, 'focusout', () => {
+          this._isValueTouched = true;
+          this.save();
+        });
       }
 
       if (compositeEditorOptions) {
@@ -126,9 +130,7 @@ export class IntegerEditor implements Editor {
         // clear value when it's newly disabled and not empty
         const currentValue = this.getValue();
         if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions && currentValue !== '') {
-          this._originalValue = '';
-          this._input.value = '';
-          this.handleChangeOnCompositeEditor(null, this.args.compositeEditorOptions);
+          this.reset('', true, true);
         }
       } else {
         this._input.removeAttribute('disabled');
@@ -197,6 +199,10 @@ export class IntegerEditor implements Editor {
     return (!(elmValue === '' && (this._originalValue === null || this._originalValue === undefined))) && (elmValue !== this._originalValue);
   }
 
+  isValueTouched(): boolean {
+    return this._isValueTouched;
+  }
+
   loadValue(item: any) {
     const fieldName = this.columnDef && this.columnDef.field;
 
@@ -208,6 +214,25 @@ export class IntegerEditor implements Editor {
       this._originalValue = (isNaN(value) || value === null || value === undefined) ? value : `${value}`;
       this._input.value = `${this._originalValue}`;
       this._input.select();
+    }
+  }
+
+  /**
+   * You can reset or clear the input value,
+   * when no value is provided it will use the original value to reset (could be useful with Composite Editor Modal with edit/clone)
+   */
+  reset(value?: number | string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
+    const inputValue = value ?? this._originalValue ?? '';
+    if (this._input) {
+      this._originalValue = inputValue;
+      this._input.value = `${inputValue}`;
+    }
+    this._isValueTouched = false;
+
+    const compositeEditorOptions = this.args.compositeEditorOptions;
+    if (compositeEditorOptions && triggerCompositeEventWhenExist) {
+      const shouldDeleteFormValue = !clearByDisableCommand;
+      this.handleChangeOnCompositeEditor(null, compositeEditorOptions, 'user', shouldDeleteFormValue);
     }
   }
 
@@ -267,7 +292,7 @@ export class IntegerEditor implements Editor {
     this.disable(isCellEditable === false);
   }
 
-  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
+  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false) {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -282,7 +307,7 @@ export class IntegerEditor implements Editor {
     this.applyValue(compositeEditorOptions.formValues, newValue);
 
     const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
-    if (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+    if (isCalledByClearValue || (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify(
