@@ -151,7 +151,7 @@ export class Example12 {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, minWidth: 75,
         type: FieldType.number, columnGroup: 'Common Factor',
         formatter: (_row, _cell, value) => {
-          if (value === null || value === undefined) {
+          if (value === null || value === undefined || value === '') {
             return '';
           }
           return value > 1 ? `${value} days` : `${value} day`;
