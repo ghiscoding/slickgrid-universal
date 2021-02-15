@@ -1,5 +1,9 @@
 /// <reference types="cypress" />
 
+function removeExtraSpaces(textS) {
+  return `${textS}`.replace(/\s+/g, ' ').trim();
+}
+
 describe('Example 08 - Column Span & Header Grouping', () => {
   // NOTE:  everywhere there's a * 2 is because we have a top+bottom (frozen rows) containers even after clear frozen columns
   const fullPreTitles = ['', 'Common Factor', 'Period', 'Analysis'];
@@ -135,6 +139,14 @@ describe('Example 08 - Column Span & Header Grouping', () => {
     cy.get(`.grid2 .grid-canvas-left > [style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(1)`).should('contain', 'Task 25');
     cy.get(`.grid2 .grid-canvas-left > [style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1)`).should('contain', 'Task 35');
     cy.get(`.grid2 .grid-canvas-left > [style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(1)`).should('contain', 'Task 45');
+
+    cy.get('.grid2')
+      .find('.slick-custom-footer')
+      .find('.right-footer')
+      .should($span => {
+        const text = removeExtraSpaces($span.text()); // remove all white spaces
+        expect(text).to.eq(`50 of 500 items`);
+      });
   });
 
   it('should search for "% Complete" below 50 and expect rows to be that', () => {
@@ -180,5 +192,13 @@ describe('Example 08 - Column Span & Header Grouping', () => {
     cy.get(`.grid2 .grid-canvas-left > [style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(1)`).should('contain', 'Task 2');
     cy.get(`.grid2 .grid-canvas-left > [style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1)`).should('contain', 'Task 3');
     cy.get(`.grid2 .grid-canvas-left > [style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(1)`).should('contain', 'Task 4');
+
+    cy.get('.grid2')
+      .find('.slick-custom-footer')
+      .find('.right-footer')
+      .should($span => {
+        const text = removeExtraSpaces($span.text()); // remove all white spaces
+        expect(text).to.eq(`500 of 500 items`);
+      });
   });
 });

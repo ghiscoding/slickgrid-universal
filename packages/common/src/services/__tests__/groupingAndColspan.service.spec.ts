@@ -200,8 +200,9 @@ describe('GroupingAndColspanService', () => {
       jest.runAllTimers(); // fast-forward timer
 
       expect(spy).toHaveBeenCalledTimes(2);
-      expect(setTimeout).toHaveBeenCalledTimes(1);
-      expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 75);
+      expect(setTimeout).toHaveBeenCalledTimes(2);
+      expect(setTimeout).toHaveBeenNthCalledWith(1, expect.any(Function), 75);
+      expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 0);
     });
 
     it('should call the "renderPreHeaderRowGroupingTitles" after triggering a grid resize', () => {

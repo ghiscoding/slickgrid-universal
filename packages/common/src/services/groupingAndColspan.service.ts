@@ -65,7 +65,7 @@ export class GroupingAndColspanService {
         this._eventHandler.subscribe(grid.onSort, () => this.renderPreHeaderRowGroupingTitles());
         this._eventHandler.subscribe(grid.onColumnsResized, () => this.renderPreHeaderRowGroupingTitles());
         this._eventHandler.subscribe(grid.onColumnsReordered, () => this.renderPreHeaderRowGroupingTitles());
-        this._eventHandler.subscribe(this._dataView.onRowCountChanged, () => this.renderPreHeaderRowGroupingTitles());
+        this._eventHandler.subscribe(this._dataView.onRowCountChanged, () => this.delayRenderPreHeaderRowGroupingTitles(0));
 
         // for both picker (columnPicker/gridMenu) we also need to re-create after hiding/showing columns
         const columnPickerExtension = this.extensionService.getExtensionByName<SlickColumnPicker>(ExtensionName.columnPicker);
