@@ -2,7 +2,6 @@ import {
   Column,
   GridOption,
   FieldType,
-  FilterCallbackArg,
   OperatorString,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
@@ -103,6 +102,7 @@ export class Example08 {
       explicitInitialization: true,
       frozenColumn: 2,
       rowHeight: 33,
+      showCustomFooter: true,
       gridMenu: { hideClearFrozenColumnsCommand: false },
       headerMenu: { hideFreezeColumnsCommand: false },
 
@@ -184,7 +184,7 @@ export class Example08 {
       selectOption.label = columnDef.name;
       columnSelect.appendChild(selectOption);
     }
-    this.grid2SearchSelectedColumn = this.columnDefinitions2[0];
+    this.grid2SearchSelectedColumn = this.columnDefinitions2.find(col => col.id === 'title');
   }
 
   populategrid2SearchOperatorDropdown() {
@@ -215,25 +215,10 @@ export class Example08 {
   }
 
   updateFilter() {
-    const columnId = this.grid2SearchSelectedColumn?.id;
-    const filter = {};
-    const filterArg: FilterCallbackArg = {
-      columnDef: this.grid2SearchSelectedColumn,
-      operator: this.grid2SelectedOperator as OperatorString, // or fix one yourself like '='
+    this.sgb2.filterService.updateSingleFilter({
+      columnId: `${this.grid2SearchSelectedColumn?.id ?? ''}`,
+      operator: this.grid2SelectedOperator as OperatorString,
       searchTerms: [this.grid2SearchValue || '']
-    };
-    if (this.grid2SearchValue) {
-      // pass a columnFilter object as an object which it's property name must be a column field name (e.g.: 'duration': {...} )
-      filter[columnId] = filterArg;
-    }
-
-    // const currentFilter = { columnId, operator: this.grid2SelectedOperator as OperatorString, searchTerms: this.grid2SearchValue || '' } as CurrentFilter;
-    // this.sgb2.filterService.updateSingleFilter(currentFilter);
-    this.sgb2.dataView.setFilterArgs({
-      columnFilters: filter,
-      grid: this.sgb2.slickGrid
     });
-    this.sgb2.dataView.refresh();
-    this.sgb2.slickGrid.invalidate();
   }
 }
