@@ -15,25 +15,13 @@
 
 <hr />
 
-<div class="title is-4">
+<div class="title is-4" style="margin-bottom: 12px">
   Grid 2
   <small>(with Header Grouping &amp; Frozen/Pinned Columns)</small>
-
-  <span style="margin-left: 10px">
-    <button class="button is-small" onclick.delegate="setFrozenColumns2(-1)"
-            data-test="remove-frozen-column-button">
-      <span class="icon mdi mdi-close" style="margin-top: 2px"></span>
-      <span>Remove Frozen Columns</span>
-    </button>
-    <button class="button is-small" onclick.delegate="setFrozenColumns2(2)" data-test="set-3frozen-columns">
-      <span class="icon mdi mdi-pin-outline"></span>
-      <span>Set 3 Frozen Columns</span>
-    </button>
-  </span>
 </div>
 
-<div class="column is-6">
-  <form class="form-inline flex-container">
+<div class="column" style="padding-top: 10px; padding: 8px 0;">
+  <div class="form-inline flex-container">
     <div>
       <label class="my-1 mr-2" for="columnSelect">Single Search:</label>
       <select id="columnSelect" class="select is-small selected-column"
@@ -50,16 +38,28 @@
 
     <div class="field has-addons">
       <p class="control">
-        <input type="text" class="input search is-small" data-test="search-string"
+        <input type="text" class="input search is-small" data-test="search-value-input"
                onkeyup.delegate="searchValueChanged(event.target.value)">
       </p>
-      <p class="control pointer" onclick.delegate="cleargrid2SearchInput()" data-test="clear-search-string">
+      <p class="control pointer" onclick.delegate="cleargrid2SearchInput()" data-test="clear-search-input">
         <a class="button is-static is-small">
           <span class="icon mdi mdi-close-thick" style="margin-top: 2px"></span>
         </a>
       </p>
     </div>
-  </form>
+    <div>&nbsp;&nbsp;</div>
+    <div style="padding-left: 8px">
+      <button class="button is-small" onclick.delegate="setFrozenColumns2(-1)"
+              data-test="remove-frozen-column-button">
+        <span class="icon mdi mdi-close" style="margin-top: 2px"></span>
+        <span>Remove Frozen Columns</span>
+      </button>
+      <button class="button is-small" onclick.delegate="setFrozenColumns2(2)" data-test="set-3frozen-columns">
+        <span class="icon mdi mdi-pin-outline"></span>
+        <span>Set 3 Frozen Columns</span>
+      </button>
+    </div>
+  </div>
 </div>
 
 <div class="grid2">
