@@ -249,6 +249,7 @@ describe('LongTextEditor', () => {
         expect(currentTextLengthElm.textContent).toBe('1');
         expect(maxTextLengthElm.textContent).toBe('255');
         expect(editor.isValueChanged()).toBe(true);
+        expect(editor.isValueTouched()).toBe(true);
       });
 
       it('should return False when previously dispatched keyboard event is same string number as current value', () => {
@@ -262,6 +263,7 @@ describe('LongTextEditor', () => {
         editorElm.dispatchEvent(event);
 
         expect(editor.isValueChanged()).toBe(false);
+        expect(editor.isValueTouched()).toBe(true);
       });
 
       it('should return True when previously dispatched keyboard event ENTER', () => {
@@ -275,6 +277,7 @@ describe('LongTextEditor', () => {
         editorElm.dispatchEvent(event);
 
         expect(editor.isValueChanged()).toBe(true);
+        expect(editor.isValueTouched()).toBe(true);
       });
     });
 
@@ -450,6 +453,7 @@ describe('LongTextEditor', () => {
 
         expect(spyCommit).toHaveBeenCalled();
         expect(spySave).toHaveBeenCalled();
+        expect(editor.isValueTouched()).toBe(true);
       });
 
       it('should call the "cancel" method when the Escape keydown event is triggered', () => {
@@ -479,6 +483,7 @@ describe('LongTextEditor', () => {
         }));
 
         expect(spyNavigate).toHaveBeenCalled();
+        expect(editor.isValueTouched()).toBe(true);
       });
 
       it('should call the grid "navigateNext" method when the TAB (without shift) event is triggered', () => {
@@ -494,6 +499,7 @@ describe('LongTextEditor', () => {
         }));
 
         expect(spyNavigate).toHaveBeenCalled();
+        expect(editor.isValueTouched()).toBe(true);
       });
     });
 

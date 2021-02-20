@@ -35,7 +35,7 @@ export class DateEditor implements Editor {
   protected _$input: any;
   protected _$editorInputElm: any;
   protected _$closeButtonGroupElm: any;
-  protected _isValueTouched: boolean;
+  protected _isValueTouched = false;
   protected _lastTriggeredByClearDate = false;
   protected _originalDate: string;
   protected _pickerMergedOptions: FlatpickrOption;

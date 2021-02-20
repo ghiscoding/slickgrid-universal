@@ -410,6 +410,7 @@ describe('IntegerEditor', () => {
 
         jest.runAllTimers(); // fast-forward timer
 
+        expect(editor.isValueTouched()).toBe(true);
         expect(spyCommit).toHaveBeenCalled();
         expect(spySave).toHaveBeenCalled();
       });
@@ -673,6 +674,7 @@ describe('IntegerEditor', () => {
       jest.runTimersToTime(50);
 
       expect(getCellSpy).toHaveBeenCalled();
+      expect(editor.isValueTouched()).toBe(true);
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
@@ -697,6 +699,7 @@ describe('IntegerEditor', () => {
       jest.runTimersToTime(50);
 
       expect(getCellSpy).toHaveBeenCalled();
+      expect(editor.isValueTouched()).toBe(true);
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,

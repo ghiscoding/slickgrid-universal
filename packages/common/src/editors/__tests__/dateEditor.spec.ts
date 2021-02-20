@@ -218,6 +218,7 @@ describe('DateEditor', () => {
         editorInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
 
         expect(editor.isValueChanged()).toBe(true);
+        expect(editor.isValueTouched()).toBe(true);
       });
 
       it('should return True when date is reset by the clear date button', () => {
@@ -235,6 +236,7 @@ describe('DateEditor', () => {
 
         expect(editorInputElm.value).toBe('');
         expect(editor.isValueChanged()).toBe(true);
+        expect(editor.isValueTouched()).toBe(true);
       });
 
       it('should also return True when date is reset by the clear date button even if the previous date was empty', () => {
@@ -251,6 +253,7 @@ describe('DateEditor', () => {
 
         expect(editorInputElm.value).toBe('');
         expect(editor.isValueChanged()).toBe(true);
+        expect(editor.isValueTouched()).toBe(true);
       });
 
       it('should return False when date in the picker is the same as the current date', () => {
@@ -264,6 +267,7 @@ describe('DateEditor', () => {
         editorInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
 
         expect(editor.isValueChanged()).toBe(false);
+        expect(editor.isValueTouched()).toBe(true);
       });
 
       it('should return False when input date is invalid', () => {
@@ -278,6 +282,7 @@ describe('DateEditor', () => {
         editorInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
 
         expect(editor.isValueChanged()).toBe(false);
+        expect(editor.isValueTouched()).toBe(true);
       });
     });
 

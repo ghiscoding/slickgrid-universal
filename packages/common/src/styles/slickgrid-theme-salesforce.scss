@@ -34,6 +34,7 @@ $editable-field-hover-icon: url('data:image/svg+xml,<svg xmlns="http://www.w3.or
 $editable-field-hover-icon-margin-right: 8px !default;
 $editable-field-hover-icon-margin-top: 8px !default;
 $editable-field-hover-icon-width: 14px !default;
+$editor-grid-cell-border-width-modified: 1px 6px 1px 1px !default;
 
 .grid-canvas {
   .slick-row, .slick-row.odd {
@@ -85,7 +86,7 @@ $editable-field-hover-icon-width: 14px !default;
     .slick-cell.unsaved-editable-field {
       .editing-field {
         border: $editor-modal-detail-container-border-modified;
-        border-width: $editor-modal-detail-container-border-width-modified;
+        border-width: $editor-grid-cell-border-width-modified;
       }
     }
   }

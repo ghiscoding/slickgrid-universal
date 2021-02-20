@@ -14,7 +14,7 @@ declare const Slick: SlickNamespace;
 export class TextEditor implements Editor {
   protected _bindEventService: BindingEventService;
   protected _input: HTMLInputElement | null;
-  protected _isValueTouched: boolean;
+  protected _isValueTouched = false;
   protected _lastInputKeyEvent: KeyboardEvent;
   protected _originalValue: string;
 
@@ -81,6 +81,7 @@ export class TextEditor implements Editor {
 
     this._bindEventService.bind(this._input, 'focus', () => this._input?.select());
     this._bindEventService.bind(this._input, 'keydown', ((event: KeyboardEvent) => {
+      this._isValueTouched = true;
       this._lastInputKeyEvent = event;
       if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT) {
         event.stopImmediatePropagation();

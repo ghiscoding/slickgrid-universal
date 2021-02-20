@@ -179,6 +179,7 @@ describe('TextEditor', () => {
       editorElm.dispatchEvent(event);
 
       expect(spyEvent).toHaveBeenCalled();
+      expect(editor.isValueTouched()).toBe(true);
     });
 
     it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Right Arrow key', () => {
@@ -639,6 +640,7 @@ describe('TextEditor', () => {
       editor.destroy();
 
       expect(getCellSpy).toHaveBeenCalled();
+      expect(editor.isValueTouched()).toBe(true);
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,

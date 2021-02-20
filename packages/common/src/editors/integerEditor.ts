@@ -14,7 +14,7 @@ declare const Slick: SlickNamespace;
 export class IntegerEditor implements Editor {
   protected _bindEventService: BindingEventService;
   protected _lastInputKeyEvent: KeyboardEvent;
-  protected _isValueTouched: boolean;
+  protected _isValueTouched = false;
   protected _input: HTMLInputElement | null;
   protected _originalValue: number | string;
 
@@ -318,6 +318,7 @@ export class IntegerEditor implements Editor {
 
   /** When the input value changes (this will cover the input spinner arrows on the right) */
   protected handleOnMouseWheel(event: KeyboardEvent) {
+    this._isValueTouched = true;
     const compositeEditorOptions = this.args.compositeEditorOptions;
     if (compositeEditorOptions) {
       this.handleChangeOnCompositeEditor(event, compositeEditorOptions);
@@ -325,6 +326,7 @@ export class IntegerEditor implements Editor {
   }
 
   protected handleOnInputChange(event: KeyboardEvent) {
+    this._isValueTouched = true;
     const compositeEditorOptions = this.args.compositeEditorOptions;
     if (compositeEditorOptions) {
       const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;

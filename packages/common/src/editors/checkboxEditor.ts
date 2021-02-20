@@ -14,7 +14,7 @@ export class CheckboxEditor implements Editor {
   protected _bindEventService: BindingEventService;
   protected _checkboxContainerElm: HTMLDivElement;
   protected _input: HTMLInputElement | null;
-  protected _isValueTouched: boolean;
+  protected _isValueTouched = false;
   protected _originalValue?: boolean | string;
 
   /** is the Editor disabled? */

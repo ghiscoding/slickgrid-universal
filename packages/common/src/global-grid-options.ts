@@ -39,6 +39,8 @@ export const GlobalGridOptions: GridOption = {
     labels: {
       cancelButtonKey: 'CANCEL',
       cloneButtonKey: 'CLONE',
+      resetEditorButtonTooltipKey: 'RESET_INPUT_VALUE',
+      resetFormButtonKey: 'RESET_FORM',
       massSelectionButtonKey: 'APPLY_TO_SELECTION',
       massSelectionStatusKey: 'X_OF_Y_MASS_SELECTED',
       massUpdateButtonKey: 'APPLY_MASS_UPDATE',

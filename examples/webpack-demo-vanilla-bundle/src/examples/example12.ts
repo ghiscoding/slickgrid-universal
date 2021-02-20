@@ -897,6 +897,8 @@ export class Example12 {
         // showCloseButtonOutside: true,
         // backdrop: null,
         // viewColumnLayout: 2, // responsive layout, choose from 'auto', 1, 2, or 3 (defaults to 'auto')
+        // showFormResetButton: true,
+        // showResetButtonOnEachEditor: true,
         onClose: () => Promise.resolve(confirm('You have unsaved changes, are you sure you want to close this window?')),
         onError: (error) => alert(error.message),
         onSave: (formValues, _selection, dataContext) => {
@@ -907,12 +909,11 @@ export class Example12 {
           if (modalType === 'mass-update' || modalType === 'mass-selection') {
             return new Promise((resolve, reject) => {
               setTimeout(() => {
-                // if (formValues.percentComplete >= 50) {
-                //   resolve(true);
-                // } else {
-                //   reject('Unfortunately we only accept a minimum of 50% Completion...');
-                // }
-                resolve(true);
+                if (formValues.percentComplete >= 50) {
+                  resolve(true);
+                } else {
+                  reject('Unfortunately we only accept a minimum of 50% Completion...');
+                }
               }, serverResponseDelay);
             });
           } else {

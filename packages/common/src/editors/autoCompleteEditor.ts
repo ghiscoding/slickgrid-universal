@@ -41,7 +41,7 @@ export class AutoCompleteEditor implements Editor {
   protected _defaultTextValue: string;
   protected _originalValue: any;
   protected _elementCollection: any[] | null;
-  protected _isValueTouched: boolean;
+  protected _isValueTouched = false;
   protected _lastInputKeyEvent: JQuery.Event;
 
   /** The JQuery DOM element */

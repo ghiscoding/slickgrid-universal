@@ -430,6 +430,7 @@ describe('SliderEditor', () => {
         editorElm[0].dispatchEvent(new (window.window as any).Event('mouseup'));
         jest.runAllTimers(); // fast-forward timer
 
+        expect(editor.isValueTouched()).toBe(true);
         expect(spyCommit).toHaveBeenCalled();
         expect(spySave).toHaveBeenCalled();
       });
@@ -558,6 +559,7 @@ describe('SliderEditor', () => {
       editorElm[0].dispatchEvent(new (window.window as any).Event('mouseup'));
 
       expect(getCellSpy).toHaveBeenCalled();
+      expect(editor.isValueTouched()).toBe(true);
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,

@@ -33,8 +33,8 @@ export class DualInputEditor implements Editor {
   protected _lastEventType: string | undefined;
   protected _lastInputKeyEvent: KeyboardEvent;
   protected _leftInput: HTMLInputElement;
-  protected _isLeftValueTouched: boolean;
-  protected _isRightValueTouched: boolean;
+  protected _isLeftValueTouched = false;
+  protected _isRightValueTouched = false;
   protected _rightInput: HTMLInputElement;
   protected _leftFieldName: string;
   protected _rightFieldName: string;
@@ -115,8 +115,8 @@ export class DualInputEditor implements Editor {
       containerElm.appendChild(this._rightInput);
     }
 
-    this._leftInput.onkeydown = this.handleKeyDown.bind(this);
-    this._rightInput.onkeydown = this.handleKeyDown.bind(this);
+    this._bindEventService.bind(this._leftInput, 'keydown', (event: KeyboardEvent) => this.handleKeyDown(event, 'leftInput'));
+    this._bindEventService.bind(this._rightInput, 'keydown', (event: KeyboardEvent) => this.handleKeyDown(event, 'rightInput'));
 
     // the lib does not get the focus out event for some reason, so register it here
     if (this.hasAutoCommitEdit) {
@@ -152,7 +152,12 @@ export class DualInputEditor implements Editor {
     this._lastEventType = `${event?.type}-${side}`;
   }
 
-  handleKeyDown(event: KeyboardEvent) {
+  handleKeyDown(event: KeyboardEvent, position: 'leftInput' | 'rightInput') {
+    if (position === 'leftInput') {
+      this._isLeftValueTouched = true;
+    } else {
+      this._isRightValueTouched = true;
+    }
     this._lastInputKeyEvent = event;
     if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT || event.keyCode === KeyCode.TAB) {
       event.stopImmediatePropagation();

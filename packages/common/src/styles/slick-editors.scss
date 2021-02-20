@@ -198,19 +198,17 @@
     }
 
     .btn-editor-reset {
-      height: 20px;
-      background-color: #fff;
-      float: right;
-      margin: 27px 10px 2px 5px;
-      border: 0;
-      outline: none;
-      opacity: 0.6;
-      &:active {
-        background-color: #f7f7f7;
-      }
-      &:hover {
-        opacity: 1;
-      }
+      height: $editor-modal-editor-btn-reset-height;
+      background-color: $editor-modal-editor-btn-reset-bg-color;
+      margin: $editor-modal-editor-btn-reset-margin;
+      // margin: 27px 10px 2px 5px;
+      // float: right;
+      // border: 0;
+      // outline: none;
+      // opacity: 0.6;
+      // &:active {
+      //   background-color: #f7f7f7;
+      // }
     }
 
     .close {

@@ -36,6 +36,8 @@ const gridOptionsMock = {
       massUpdateButtonKey: 'APPLY_MASS_UPDATE',
       massUpdateStatus: 'all {{x}} items',
       massUpdateStatusKey: 'ALL_X_RECORDS_SELECTED',
+      resetFormButton: 'Reset Form',
+      resetFormButtonKey: 'RESET_FORM',
       saveButton: 'Save',
       saveButtonKey: 'SAVE',
     },

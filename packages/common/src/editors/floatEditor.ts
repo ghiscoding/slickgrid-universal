@@ -16,7 +16,7 @@ declare const Slick: SlickNamespace;
 export class FloatEditor implements Editor {
   protected _bindEventService: BindingEventService;
   protected _input: HTMLInputElement | null;
-  protected _isValueTouched: boolean;
+  protected _isValueTouched = false;
   protected _lastInputKeyEvent: KeyboardEvent;
   protected _originalValue: number | string;
 

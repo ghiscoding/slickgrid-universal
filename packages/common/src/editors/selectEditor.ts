@@ -30,7 +30,7 @@ declare const Slick: SlickNamespace;
  * Slickgrid editor class for multiple/single select lists
  */
 export class SelectEditor implements Editor {
-  protected _isValueTouched: boolean;
+  protected _isValueTouched = false;
 
   /** Locales */
   protected _locales: Locale;
@@ -122,11 +122,13 @@ export class SelectEditor implements Editor {
         const isRenderHtmlEnabled = this.columnEditor?.enableRenderHtml ?? false;
         return isRenderHtmlEnabled ? $elm.text() : $elm.html();
       },
+      onClick: () => this._isValueTouched = true,
+      onCheckAll: () => this._isValueTouched = true,
+      onUncheckAll: () => this._isValueTouched = true,
       onClose: () => {
         if (compositeEditorOptions) {
           this.handleChangeOnCompositeEditor(compositeEditorOptions);
         } else {
-          this._isValueTouched = true;
           this.save();
         }
       },
@@ -495,11 +497,13 @@ export class SelectEditor implements Editor {
   }
 
   isValueChanged(): boolean {
+    const valueSelection = this.$editorElm.multipleSelect('getSelects');
     if (this.isMultipleSelect) {
-      return !dequal(this.$editorElm.val(), this.originalValue);
+      const isEqual = dequal(valueSelection, this.originalValue);
+      return !isEqual;
     }
-    const isChanged = this.$editorElm.val() !== this.originalValue;
-    return isChanged;
+    const value = Array.isArray(valueSelection) && valueSelection.length > 0 ? valueSelection[0] : undefined;
+    return value !== this.originalValue;
   }
 
   isValueTouched(): boolean {
@@ -511,10 +515,10 @@ export class SelectEditor implements Editor {
    * when no value is provided it will use the original value to reset (could be useful with Composite Editor Modal with edit/clone)
    */
   reset(value?: string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
-    const inputValue = value ?? this.originalValue ?? '';
+    const inputValue = value ?? this.originalValue;
     if (this.$editorElm) {
-      this.originalValue = this.isMultipleSelect ? [inputValue] : inputValue;
-      const selection = this.originalValue === '' ? [] : [this.originalValue];
+      this.originalValue = this.isMultipleSelect ? (inputValue !== undefined ? [inputValue] : []) : inputValue;
+      const selection = this.originalValue === undefined ? [] : [this.originalValue];
       this.$editorElm.multipleSelect('setSelects', selection);
     }
     this._isValueTouched = false;

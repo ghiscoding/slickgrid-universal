@@ -9,7 +9,9 @@ export const SalesforceGlobalGridOptions = {
     labels: {
       massSelectionButton: 'Apply to Selected & Save',
       massUpdateButton: 'Apply to All & Save'
-    }
+    },
+    resetEditorButtonCssClass: 'mdi mdi-refresh mdi-15px mdi-v-align-text-top',
+    resetFormButtonIconCssClass: 'mdi mdi-refresh mdi-16px mdi-flip-h mdi-v-align-text-top'
   },
   datasetIdPropertyName: 'Id',
   defaultFilterPlaceholder: '',

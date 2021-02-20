@@ -19,7 +19,7 @@ export class SliderEditor implements Editor {
   protected _elementRangeOutputId = '';
   protected _$editorElm: any;
   protected _$input: any;
-  protected _isValueTouched: boolean;
+  protected _isValueTouched = false;
   $sliderNumber: any;
   originalValue: any;
 

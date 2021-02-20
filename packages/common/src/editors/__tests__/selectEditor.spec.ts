@@ -269,23 +269,27 @@ describe('SelectEditor', () => {
     describe('isValueChanged method', () => {
       it('should return True after doing a check of an option and clicking on the OK button', () => {
         editor = new SelectEditor(editorArguments, true);
+        editor.reset();
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
         const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
         const editorOkElm = divContainer.querySelector(`[name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
         editorBtnElm.click();
 
         // we can use property "checked" or dispatch an event
-        editorListElm[0].dispatchEvent(new CustomEvent('click'));
+        editorListElm[1].checked = true;
+        editorListElm[1].dispatchEvent(new CustomEvent('click'));
         editorOkElm.click();
 
         expect(editorListElm.length).toBe(3);
         expect(editor.isValueChanged()).toBe(true);
+        expect(editor.isValueTouched()).toBe(true);
       });
 
       it('should return False after doing a check & uncheck of the same option and clicking on the OK button', () => {
         editor = new SelectEditor(editorArguments, true);
+        editor.reset();
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`.ms-drop ul>li input[type=checkbox]`);
         const editorOkElm = divContainer.querySelector(`[name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
         editorBtnElm.click();
 
@@ -293,18 +297,54 @@ describe('SelectEditor', () => {
         // check and uncheck the same option
         editorListElm[0].checked = true;
         editorListElm[0].checked = false;
+        editorListElm[0].dispatchEvent(new CustomEvent('click'));
         editorOkElm.click();
 
         expect(editorListElm.length).toBe(3);
-        expect(editor.isValueChanged()).toBe(true);
+        expect(editor.isValueChanged()).toBe(false);
+        expect(editor.isValueTouched()).toBe(true);
+      });
+    });
+
+    describe('isValueTouched method', () => {
+      it('should return True after triggering an Check All event', () => {
+        editor = new SelectEditor(editorArguments, true);
+        editor.reset();
+        const selectAllBtnElm = divContainer.querySelector('.ms-select-all') as HTMLButtonElement;
+        const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`.ms-drop ul>li input[type=checkbox]`);
+        const editorOkElm = divContainer.querySelector(`[name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+        editorBtnElm.click();
+
+        // we can use property "checked" or dispatch an event
+        // check and uncheck the same option
+        selectAllBtnElm.dispatchEvent(new CustomEvent('onCheckAll'));
+        selectAllBtnElm.click();
+        editorOkElm.click();
+        editor.editorDomElement.multipleSelect('checkAll');
+
+        expect(editorListElm.length).toBe(3);
+        expect(editor.isValueTouched()).toBe(true);
       });
 
-      it('should call the "changeEditorOption" method and expect new option to be merged with the previous Editor options and also expect to call MultipleSelect "refreshOptions" setter method', () => {
+      it('should return True after triggering an UnCheck All event', () => {
         editor = new SelectEditor(editorArguments, true);
-        const multipleSelectSpy = jest.spyOn(editor.editorDomElement, 'multipleSelect');
-        editor.changeEditorOption('filter', true);
+        editor.reset();
+        const selectAllBtnElm = divContainer.querySelector('.ms-select-all') as HTMLButtonElement;
+        const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`.ms-drop ul>li input[type=checkbox]`);
+        const editorOkElm = divContainer.querySelector(`[name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+        editorBtnElm.click();
 
-        expect(multipleSelectSpy).toHaveBeenCalledWith('refreshOptions', { ...editor.editorElmOptions, filter: true });
+        // we can use property "checked" or dispatch an event
+        // check and uncheck the same option
+        selectAllBtnElm.dispatchEvent(new CustomEvent('onCheckAll'));
+        selectAllBtnElm.click();
+        editorOkElm.click();
+        editor.editorDomElement.multipleSelect('uncheckAll');
+
+        expect(editorListElm.length).toBe(3);
+        expect(editor.isValueTouched()).toBe(true);
       });
     });
 

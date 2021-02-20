@@ -150,7 +150,7 @@ describe('Example 08 - Column Span & Header Grouping', () => {
       .type('50');
 
     cy.get('.grid2')
-      .find('.slick-row .slick-cell:nth(5)')
+      .find('.slick-row .slick-cell:visible:nth(5)')
       .each(($child, index) => {
         if (index > 10) {
           return;

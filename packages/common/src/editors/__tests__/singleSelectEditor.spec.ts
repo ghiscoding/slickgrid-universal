@@ -133,6 +133,7 @@ describe('SingleSelectEditor', () => {
         editorBtnElm.click();
 
         // we can use property "checked" or dispatch an event
+        editorListElm[0].checked = true;
         editorListElm[0].dispatchEvent(new CustomEvent('click'));
 
         expect(editorListElm.length).toBe(3);
@@ -151,6 +152,7 @@ describe('SingleSelectEditor', () => {
         editorBtnElm.click();
 
         // we can use property "checked" or dispatch an event
+        editorListElm[0].checked = true;
         editorListElm[0].dispatchEvent(new CustomEvent('click'));
 
         expect(editorListElm.length).toBe(2);

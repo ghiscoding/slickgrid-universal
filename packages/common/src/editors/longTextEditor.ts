@@ -29,7 +29,7 @@ declare const Slick: SlickNamespace;
  */
 export class LongTextEditor implements Editor {
   protected _defaultTextValue: any;
-  protected _isValueTouched: boolean;
+  protected _isValueTouched = false;
   protected _locales: Locale;
   protected _$textarea: any;
   protected _$currentLengthElm: any;
@@ -388,10 +388,10 @@ export class LongTextEditor implements Editor {
 
   protected handleKeyDown(event: KeyboardEvent) {
     const keyCode = event.keyCode || event.code;
+    this._isValueTouched = true;
 
     if (!this.args.compositeEditorOptions) {
       if (keyCode === KeyCode.ENTER && event.ctrlKey) {
-        this._isValueTouched = true;
         this.save();
       } else if (keyCode === KeyCode.ESCAPE) {
         event.preventDefault();

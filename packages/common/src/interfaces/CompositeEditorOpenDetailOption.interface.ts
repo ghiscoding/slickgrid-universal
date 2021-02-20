@@ -78,6 +78,18 @@ export interface CompositeEditorOpenDetailOption {
     /** Defaults to "ALL_X_RECORDS_SELECTED", translation key used for the Mass Update status text on the footer left side */
     massUpdateStatusKey?: string;
 
+    /** Defaults to "Reset Input Value", override the Reset button tooltip (title) text */
+    resetEditorButtonTooltip?: string;
+
+    /** Defaults to "RESET_INPUT_VALUE", override the Reset button tooltip (title) text */
+    resetEditorButtonTooltipKey?: string;
+
+    /** Defaults to "Reset Form", override the Reset Form button label */
+    resetFormButton?: string;
+
+    /** Defaults to "RESET_FORM", translation key used for the Reset Form button label. */
+    resetFormButtonKey?: string;
+
     /** Defaults to "Save", override the Save button label used by a modal type of "create" or "edit" */
     saveButton?: string;
 
@@ -99,8 +111,20 @@ export interface CompositeEditorOpenDetailOption {
    */
   excludeDisabledFieldFormValues?: boolean;
 
+  /** Optional provide a CSS class by the reset button shown beside each editor */
+  resetEditorButtonCssClass?: string;
+
+  /** Optionally provide a CSS class by the form reset button */
+  resetFormButtonIconCssClass?: string;
+
   /** Defaults to true, do we want the close button outside the modal (true) or inside the header modal (false)?  */
   showCloseButtonOutside?: boolean;
+
+  /** Defaults to false, show a reset button beside each editor input */
+  showResetButtonOnEachEditor?: boolean;
+
+  /** Defaults to false, show a single form reset button at bottom of the form (or inside the form footer) */
+  showFormResetButton?: boolean;
 
   /** Defaults to true, do we want to clear the row selections (after save) when executed by any of the mass change actions (Mass-Update or Update-Selected) */
   shouldClearRowSelectionAfterMassAction?: boolean;

@@ -46,6 +46,8 @@
   "REFRESH_DATASET": "Refresh Dataset",
   "REMOVE_FILTER": "Remove Filter",
   "REMOVE_SORT": "Remove Sort",
+  "RESET_INPUT_VALUE": "Reset Input Value",
+  "RESET_FORM": "Reset Form",
   "SAVE": "Save",
   "SELECT_ALL": "Select All",
   "SORT_ASCENDING": "Sort Ascending",
