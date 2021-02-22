@@ -1673,19 +1673,20 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should have custom footer with metrics when the DataView "onRowsOrCountChanged" event is triggered', () => {
+        const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
         const invalidateSpy = jest.spyOn(mockGrid, 'invalidate');
         const expectation = {
           startTime: expect.toBeDate(),
           endTime: expect.toBeDate(),
-          itemCount: 0,
-          totalItemCount: 0
+          itemCount: 2,
+          totalItemCount: 2
         };
-        jest.spyOn(mockDataView, 'getItemCount').mockReturnValue(0);
+        jest.spyOn(mockDataView, 'getItemCount').mockReturnValue(mockData.length);
 
         component.gridOptions = { enablePagination: false, showCustomFooter: true };
         component.initialization(divContainer, slickEventHandler);
         const footerSpy = jest.spyOn(component.slickFooter, 'metrics', 'set');
-        mockDataView.onRowsOrCountChanged.notify({ currentRowCount: 0, dataView: mockDataView, itemCount: 0, previousRowCount: 1, rowCountChanged: false, rowsChanged: false, rowsDiff: [0] });
+        mockDataView.onRowsOrCountChanged.notify({ currentRowCount: 2, dataView: mockDataView, itemCount: 2, previousRowCount: 1, rowCountChanged: false, rowsChanged: false, rowsDiff: [2] });
 
         expect(invalidateSpy).toHaveBeenCalled();
         expect(component.metrics).toEqual(expectation);
