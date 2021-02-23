@@ -49,6 +49,7 @@ const dataviewStub = {
   deleteItem: jest.fn(),
   deleteItems: jest.fn(),
   getIdxById: jest.fn(),
+  getItemMetadata: jest.fn(),
   getItem: jest.fn(),
   getRowById: jest.fn(),
   insertItem: jest.fn(),
@@ -1506,6 +1507,28 @@ describe('Grid Service', () => {
 
       expect(extensionSpy).toHaveBeenCalled();
       expect(gridStateSpy).toHaveBeenCalledWith(mockColumns);
+    });
+  });
+
+  describe('highlightRow method', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should be able to highlight first row at zero index', () => {
+      const mockRowMetadata = (rowNumber) => ({ cssClasses: `row-${rowNumber}` });
+      const mockItem = { id: 0, firstName: 'John', lastName: 'Doe' };
+      jest.spyOn(service, 'getItemRowMetadataToHighlight').mockReturnValue(mockRowMetadata);
+      jest.spyOn(dataviewStub, 'getItem').mockReturnValue(mockItem);
+      jest.spyOn(dataviewStub, 'getIdxById').mockReturnValue(0);
+      const updateSpy = jest.spyOn(dataviewStub, 'updateItem');
+      const renderSpy = jest.spyOn(service, 'renderGrid');
+
+      service.highlightRow(0, 10, 15);
+      jest.runAllTimers(); // fast-forward timer
+
+      expect(updateSpy).toHaveBeenCalledWith(0, mockItem)
+      expect(renderSpy).toHaveBeenCalledTimes(3);
     });
   });
 });

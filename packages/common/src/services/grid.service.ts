@@ -312,7 +312,7 @@ export class GridService {
     const item = this._dataView.getItem(rowNumber);
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
 
-    if (item && item[idPropName]) {
+    if (item?.[idPropName] !== undefined) {
       item.rowClass = 'highlight';
       this._dataView.updateItem(item[idPropName], item);
       this.renderGrid();
@@ -327,7 +327,7 @@ export class GridService {
 
       // delete the row's CSS highlight classes once the delay is passed
       setTimeout(() => {
-        if (item && item[idPropName]) {
+        if (item?.[idPropName] !== undefined) {
           delete item.rowClass;
           if (this._dataView.getIdxById(item[idPropName]) !== undefined) {
             this._dataView.updateItem(item[idPropName], item);
@@ -416,7 +416,7 @@ export class GridService {
 
     // row number in the grid, by default it will be on first row (top is the default)
     let rowNumber: number | undefined = 0;
-    const itemId = item && item[idPropName] || '';
+    const itemId = item?.[idPropName] ?? '';
 
     // do we want the item to be sorted in the grid, when set to False it will insert on first row (defaults to false)
     if (options.resortGrid) {
@@ -552,7 +552,7 @@ export class GridService {
 
     const itemIds: string[] = [];
     items.forEach((item: T) => {
-      if (item && item[idPropName] !== undefined) {
+      if (item?.[idPropName] !== undefined) {
         itemIds.push(item[idPropName]);
       }
     });
