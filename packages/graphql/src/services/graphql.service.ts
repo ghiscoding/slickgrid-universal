@@ -638,7 +638,7 @@ export class GraphqlService implements BackendService {
   }
 
   /** Normalizes the search value according to field type. */
-  private normalizeSearchValue(fieldType: typeof FieldType[keyof typeof FieldType], searchValue: any) {
+  private normalizeSearchValue(fieldType: typeof FieldType[keyof typeof FieldType], searchValue: any): any {
     switch (fieldType) {
       case FieldType.date:
       case FieldType.string:
