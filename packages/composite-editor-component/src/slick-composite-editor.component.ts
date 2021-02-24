@@ -420,19 +420,9 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
             // optionally add a reset button beside each editor
             if (this._options?.showResetButtonOnEachEditor) {
-              const resetButtonElm = document.createElement('button');
-              resetButtonElm.type = 'button';
-              resetButtonElm.name = `${columnDef.id}`;
-              resetButtonElm.title = this._options?.labels?.resetFormButton ?? 'Reset Form Input';
-              resetButtonElm.className = 'btn btn-xs btn-editor-reset';
-              if (this._options?.resetEditorButtonCssClass) {
-                const resetBtnClasses = this._options?.resetEditorButtonCssClass.split(' ');
-                for (const cssClass of resetBtnClasses) {
-                  resetButtonElm.classList.add(cssClass);
-                }
-              }
-              this._bindEventService.bind(resetButtonElm, 'click', this.handleResetInputValue.bind(this) as EventListener);
-              templateItemLabelElm.appendChild(resetButtonElm);
+              const editorResetButtonElm = this.createEditorResetButtonElement(`${columnDef.id}`);
+              this._bindEventService.bind(editorResetButtonElm, 'click', this.handleResetInputValue.bind(this) as EventListener);
+              templateItemLabelElm.appendChild(editorResetButtonElm);
             }
 
             itemContainer.appendChild(templateItemLabelElm);
@@ -444,7 +434,8 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
         // optionally add a form reset button
         if (this._options?.showFormResetButton) {
-          const resetButtonContainerElm = this.addResetButtonElement();
+          const resetButtonContainerElm = this.createFormResetButtonElement();
+          this._bindEventService.bind(resetButtonContainerElm, 'click', this.handleResetFormClicked.bind(this));
           modalBodyElm.appendChild(resetButtonContainerElm);
         }
 
@@ -533,26 +524,6 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   // protected methods
   // ----------------
 
-  protected addResetButtonElement() {
-    const resetButtonContainerElm = document.createElement('div');
-    resetButtonContainerElm.className = 'reset-container';
-    const resetButtonElm = document.createElement('button');
-    resetButtonElm.type = 'button';
-    resetButtonElm.textContent = ' Reset Form';
-    resetButtonElm.className = 'btn btn-sm reset-form';
-
-    const resetIconSpanElm = document.createElement('span');
-    resetIconSpanElm.className = this._options?.resetFormButtonIconCssClass ?? '';
-
-    resetButtonElm.prepend(resetIconSpanElm);
-    resetButtonContainerElm.appendChild(resetButtonElm);
-
-    // add button handler
-    this._bindEventService.bind(resetButtonElm, 'click', this.handleResetFormClicked.bind(this));
-
-    return resetButtonContainerElm;
-  }
-
   /** Apply Mass Update Changes (form values) to the entire dataset */
   protected applySaveMassUpdateChanges(formValues: any) {
     const data = this.dataView.getItems();
@@ -608,6 +579,50 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       return 2;
     }
     return 1;
+  }
+
+  /**
+   * Create a reset button for each editor and attach a button click handler
+   * @param {String} columnId - column id
+   * @returns {Object} - html button
+   */
+  protected createEditorResetButtonElement(columnId: string): HTMLButtonElement {
+    const resetButtonElm = document.createElement('button');
+    resetButtonElm.type = 'button';
+    resetButtonElm.name = columnId;
+    resetButtonElm.title = this._options?.labels?.resetFormButton ?? 'Reset Form Input';
+    resetButtonElm.className = 'btn btn-xs btn-editor-reset';
+    if (this._options?.resetEditorButtonCssClass) {
+      const resetBtnClasses = this._options?.resetEditorButtonCssClass.split(' ');
+      for (const cssClass of resetBtnClasses) {
+        resetButtonElm.classList.add(cssClass);
+      }
+    }
+
+    return resetButtonElm;
+  }
+
+  /**
+   * Create a form reset button and attach a button click handler
+   * @param {String} columnId - column id
+   * @returns {Object} - html button
+   */
+  protected createFormResetButtonElement(): HTMLDivElement {
+    const resetButtonContainerElm = document.createElement('div');
+    resetButtonContainerElm.className = 'reset-container';
+
+    const resetButtonElm = document.createElement('button');
+    resetButtonElm.type = 'button';
+    resetButtonElm.textContent = ' Reset Form';
+    resetButtonElm.className = 'btn btn-sm reset-form';
+
+    const resetIconSpanElm = document.createElement('span');
+    resetIconSpanElm.className = this._options?.resetFormButtonIconCssClass ?? '';
+
+    resetButtonElm.prepend(resetIconSpanElm);
+    resetButtonContainerElm.appendChild(resetButtonElm);
+
+    return resetButtonContainerElm;
   }
 
   /**
@@ -832,6 +847,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     return (isRowSelectionEnabled && selectionModel);
   }
 
+  /** Reset Form button handler */
   protected handleResetFormClicked() {
     for (const columnId of Object.keys(this._editors)) {
       const editor = this._editors[columnId];
