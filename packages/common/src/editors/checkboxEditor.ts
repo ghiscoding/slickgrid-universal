@@ -12,8 +12,8 @@ declare const Slick: SlickNamespace;
  */
 export class CheckboxEditor implements Editor {
   protected _bindEventService: BindingEventService;
-  protected _checkboxContainerElm: HTMLDivElement;
-  protected _input: HTMLInputElement | null;
+  protected _checkboxContainerElm!: HTMLDivElement;
+  protected _input!: HTMLInputElement;
   protected _isValueTouched = false;
   protected _originalValue?: boolean | string;
 
@@ -93,10 +93,10 @@ export class CheckboxEditor implements Editor {
     }
 
     if (compositeEditorOptions) {
-      this._bindEventService.bind(this._input, 'change', (event: KeyboardEvent) => {
+      this._bindEventService.bind(this._input, 'change', ((event: KeyboardEvent) => {
         this._isValueTouched = true;
         this.handleChangeOnCompositeEditor(event, compositeEditorOptions);
-      });
+      }) as EventListener);
     } else {
       this.focus();
     }
@@ -240,7 +240,7 @@ export class CheckboxEditor implements Editor {
     return this._input?.checked ?? false;
   }
 
-  validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
+  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     const isRequired = this.args?.compositeEditorOptions ? false : this.columnEditor.required;
     const isChecked = (inputValue !== undefined) ? inputValue : this._input?.checked;
     const errorMsg = this.columnEditor.errorMessage;

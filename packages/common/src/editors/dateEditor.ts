@@ -3,7 +3,7 @@ import * as moment_ from 'moment-mini';
 import { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
 import { Instance as FlatpickrInstance, FlatpickrFn } from 'flatpickr/dist/types/instance';
 const flatpickr: FlatpickrFn = (flatpickr_ && flatpickr_['default'] || flatpickr_) as any; // patch for rollup
-const moment = moment_['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
+const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 import { Constants } from './../constants';
 import { FieldType } from '../enums/index';
@@ -37,11 +37,11 @@ export class DateEditor implements Editor {
   protected _$closeButtonGroupElm: any;
   protected _isValueTouched = false;
   protected _lastTriggeredByClearDate = false;
-  protected _originalDate: string;
-  protected _pickerMergedOptions: FlatpickrOption;
+  protected _originalDate?: string;
+  protected _pickerMergedOptions!: FlatpickrOption;
 
-  flatInstance: FlatpickrInstance;
-  defaultDate: string;
+  flatInstance!: FlatpickrInstance;
+  defaultDate?: string;
 
   /** is the Editor disabled? */
   disabled = false;
@@ -53,7 +53,7 @@ export class DateEditor implements Editor {
   gridOptions: GridOption;
 
   /** The translate library */
-  protected _translaterService: TranslaterService;
+  protected _translaterService: TranslaterService | undefined;
 
   constructor(protected readonly args: EditorArguments) {
     if (!args) {
@@ -156,7 +156,7 @@ export class DateEditor implements Editor {
       }
 
       this._$editorInputElm.appendTo(this.args.container);
-      this.flatInstance = (flatpickr && this._$editorInputElm[0] && typeof this._$editorInputElm[0].flatpickr === 'function') ? this._$editorInputElm[0].flatpickr(this._pickerMergedOptions) : flatpickr(this._$editorInputElm, this._pickerMergedOptions as unknown as Partial<FlatpickrBaseOptions>);
+      this.flatInstance = (this._$editorInputElm[0] && typeof this._$editorInputElm[0].flatpickr === 'function') ? this._$editorInputElm[0].flatpickr(this._pickerMergedOptions) : flatpickr(this._$editorInputElm, this._pickerMergedOptions as unknown as Partial<FlatpickrBaseOptions>);
 
       // when we're using an alternate input to display data, we'll consider this input as the one to do the focus later on
       // else just use the top one
@@ -369,7 +369,7 @@ export class DateEditor implements Editor {
     return value;
   }
 
-  validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
+  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     const isRequired = this.args?.compositeEditorOptions ? false : this.columnEditor.required;
     const elmValue = (inputValue !== undefined) ? inputValue : this._$input && this._$input.val && this._$input.val();
     const errorMsg = this.columnEditor.errorMessage;

@@ -32,8 +32,8 @@ declare const Slick: SlickNamespace;
 export class SortService {
   private _currentLocalSorters: CurrentSorter[] = [];
   private _eventHandler: SlickEventHandler;
-  private _dataView: SlickDataView;
-  private _grid: SlickGrid;
+  private _dataView!: SlickDataView;
+  private _grid!: SlickGrid;
   private _isBackendGrid = false;
 
   constructor(private sharedService: SharedService, private pubSubService: PubSubService) {
@@ -111,8 +111,8 @@ export class SortService {
 
   clearSortByColumnId(event: Event | undefined, columnId: string | number) {
     // get previously sorted columns
-    const allSortedCols: ColumnSort[] = this.getCurrentColumnSorts();
-    const sortedColsWithoutCurrent: ColumnSort[] = this.getCurrentColumnSorts(`${columnId}`);
+    const allSortedCols = this.getCurrentColumnSorts() as ColumnSort[];
+    const sortedColsWithoutCurrent = this.getCurrentColumnSorts(`${columnId}`) as ColumnSort[];
 
     if (Array.isArray(allSortedCols) && Array.isArray(sortedColsWithoutCurrent) && allSortedCols.length !== sortedColsWithoutCurrent.length) {
       if (this._gridOptions.backendServiceApi) {
@@ -202,7 +202,7 @@ export class SortService {
     } else {
       updatedColumnDefinitions = this.disableAllSortingCommands(false);
       const onSortHandler = this._grid.onSort;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSortHandler>>).subscribe(onSortHandler, (e: SlickEventData, args: SingleColumnSort | MultiColumnSort) => this.handleLocalOnSort(e, args));
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSortHandler>>).subscribe(onSortHandler, (e, args) => this.handleLocalOnSort(e, args as SingleColumnSort | MultiColumnSort));
     }
     this._grid.setOptions({ enableSorting: this._gridOptions.enableSorting }, false, true);
     this.sharedService.gridOptions = this._gridOptions;
@@ -258,9 +258,9 @@ export class SortService {
 
       // get the column definition but only keep column which are not equal to our current column
       if (Array.isArray(oldSortColumns)) {
-        const sortedCols = oldSortColumns.reduce((cols: ColumnSort[], col: SingleColumnSort) => {
-          if (col && (!excludedColumnId || col.columnId !== excludedColumnId)) {
-            cols.push({ columnId: col.columnId || '', sortCol: this._columnDefinitions[this._grid.getColumnIndex(col.columnId || '')], sortAsc: col.sortAsc });
+        const sortedCols = oldSortColumns.reduce((cols: ColumnSort[], col: SingleColumnSort | MultiColumnSort) => {
+          if (col && (!excludedColumnId || (col as SingleColumnSort).columnId !== excludedColumnId)) {
+            cols.push({ columnId: (col as SingleColumnSort).columnId || '', sortCol: this._columnDefinitions[this._grid.getColumnIndex((col as SingleColumnSort).columnId || '')], sortAsc: (col as SingleColumnSort).sortAsc });
           }
           return cols;
         }, []);

@@ -13,10 +13,10 @@ declare const Slick: SlickNamespace;
  */
 export class IntegerEditor implements Editor {
   protected _bindEventService: BindingEventService;
-  protected _lastInputKeyEvent: KeyboardEvent;
+  protected _lastInputKeyEvent?: KeyboardEvent;
   protected _isValueTouched = false;
-  protected _input: HTMLInputElement | null;
-  protected _originalValue: number | string;
+  protected _input!: HTMLInputElement | undefined;
+  protected _originalValue?: number | string;
 
   /** is the Editor disabled? */
   disabled = false;
@@ -88,7 +88,7 @@ export class IntegerEditor implements Editor {
         if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT) {
           event.stopImmediatePropagation();
         }
-      }));
+      }) as EventListener);
 
       // the lib does not get the focus out event for some reason
       // so register it here
@@ -100,9 +100,9 @@ export class IntegerEditor implements Editor {
       }
 
       if (compositeEditorOptions) {
-        this._bindEventService.bind(this._input, 'input', this.handleOnInputChange.bind(this));
-        this._bindEventService.bind(this._input, 'paste', this.handleOnInputChange.bind(this));
-        this._bindEventService.bind(this._input, 'wheel', this.handleOnMouseWheel.bind(this));
+        this._bindEventService.bind(this._input, 'input', this.handleOnInputChange.bind(this) as EventListener);
+        this._bindEventService.bind(this._input, 'paste', this.handleOnInputChange.bind(this) as EventListener);
+        this._bindEventService.bind(this._input, 'wheel', this.handleOnMouseWheel.bind(this) as EventListener);
       }
     }
   }
@@ -113,7 +113,7 @@ export class IntegerEditor implements Editor {
       setTimeout(() => {
         if (this._input) {
           this._input.remove();
-          this._input = null;
+          this._input = undefined;
         }
       });
     }
@@ -258,7 +258,7 @@ export class IntegerEditor implements Editor {
     return isNaN(+output) ? elmValue : output;
   }
 
-  validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
+  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
     if (this.args.compositeEditorOptions) {
       this.applyInputUsabilityState();

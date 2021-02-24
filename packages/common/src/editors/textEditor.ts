@@ -13,10 +13,10 @@ declare const Slick: SlickNamespace;
  */
 export class TextEditor implements Editor {
   protected _bindEventService: BindingEventService;
-  protected _input: HTMLInputElement | null;
+  protected _input!: HTMLInputElement | undefined;
   protected _isValueTouched = false;
-  protected _lastInputKeyEvent: KeyboardEvent;
-  protected _originalValue: string;
+  protected _lastInputKeyEvent?: KeyboardEvent;
+  protected _originalValue?: string;
 
   /** is the Editor disabled? */
   disabled = false;
@@ -86,7 +86,7 @@ export class TextEditor implements Editor {
       if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT) {
         event.stopImmediatePropagation();
       }
-    }));
+    }) as EventListener);
 
     // the lib does not get the focus out event for some reason
     // so register it here
@@ -95,7 +95,7 @@ export class TextEditor implements Editor {
     }
 
     if (compositeEditorOptions) {
-      this._bindEventService.bind(this._input, 'input', this.handleOnInputChange.bind(this));
+      this._bindEventService.bind(this._input, 'input', this.handleOnInputChange.bind(this) as EventListener);
     }
   }
 
@@ -105,7 +105,7 @@ export class TextEditor implements Editor {
       setTimeout(() => {
         if (this._input) {
           this._input.remove();
-          this._input = null;
+          this._input = undefined;
         }
       });
     }
@@ -204,7 +204,7 @@ export class TextEditor implements Editor {
       const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : (item.hasOwnProperty(fieldName) && item[fieldName] || '');
 
       this._originalValue = value;
-      this._input.value = this._originalValue;
+      this._input.value = this._originalValue as string;
       this._input.select();
     }
   }
@@ -245,7 +245,7 @@ export class TextEditor implements Editor {
     return this._input?.value;
   }
 
-  validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
+  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
     if (this.args.compositeEditorOptions) {
       this.applyInputUsabilityState();

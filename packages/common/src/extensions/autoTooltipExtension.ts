@@ -7,7 +7,7 @@ import { SlickAutoTooltips, Extension, SlickNamespace } from '../interfaces/inde
 declare const Slick: SlickNamespace;
 
 export class AutoTooltipExtension implements Extension {
-  private _addon: SlickAutoTooltips | null;
+  private _addon: SlickAutoTooltips | null = null;
 
   constructor(private readonly sharedService: SharedService) { }
 

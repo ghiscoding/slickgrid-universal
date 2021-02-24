@@ -23,18 +23,18 @@ import { TranslaterService } from '../services/translater.service';
 export class CompoundDateFilter implements Filter {
   protected _clearFilterTriggered = false;
   protected _currentDate: Date | undefined;
-  protected _flatpickrOptions: FlatpickrOption;
+  protected _flatpickrOptions!: FlatpickrOption;
   protected _shouldTriggerQuery = true;
   protected $filterElm: any;
   protected $filterInputElm: any;
   protected $selectOperatorElm: any;
-  protected _currentValue: string;
-  protected _operator: OperatorType | OperatorString;
+  protected _currentValue?: string;
+  protected _operator!: OperatorType | OperatorString;
   flatInstance: any;
-  grid: SlickGrid;
-  searchTerms: SearchTerm[];
-  columnDef: Column;
-  callback: FilterCallback;
+  grid!: SlickGrid;
+  searchTerms: SearchTerm[] = [];
+  columnDef!: Column;
+  callback!: FilterCallback;
 
   constructor(protected readonly translaterService: TranslaterService) { }
 
@@ -225,7 +225,7 @@ export class CompoundDateFilter implements Filter {
       placeholder = this.columnFilter.placeholder;
     }
     const $filterInputElm: any = $(`<div class="flatpickr"><input type="text" class="form-control" data-input placeholder="${placeholder}"></div>`);
-    this.flatInstance = (flatpickr && $filterInputElm[0] && typeof $filterInputElm[0].flatpickr === 'function') ? $filterInputElm[0].flatpickr(this._flatpickrOptions) : flatpickr($filterInputElm, this._flatpickrOptions as unknown as Partial<FlatpickrBaseOptions>);
+    this.flatInstance = ($filterInputElm[0] && typeof $filterInputElm[0].flatpickr === 'function') ? $filterInputElm[0].flatpickr(this._flatpickrOptions) : flatpickr($filterInputElm, this._flatpickrOptions as unknown as Partial<FlatpickrBaseOptions>);
     return $filterInputElm;
   }
 
@@ -247,7 +247,7 @@ export class CompoundDateFilter implements Filter {
       const translationPrefix = getTranslationPrefix(this.gridOptions);
       return this.translaterService.translate(`${translationPrefix}${translationKey}`);
     }
-    return this.locales?.[localeText] ?? defaultText;
+    return this.locales?.[localeText as keyof Locale] ?? defaultText;
   }
 
   /**

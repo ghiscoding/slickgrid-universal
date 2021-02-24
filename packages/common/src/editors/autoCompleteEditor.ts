@@ -36,13 +36,13 @@ declare const Slick: SlickNamespace;
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
 export class AutoCompleteEditor implements Editor {
-  protected _autoCompleteOptions: AutocompleteOption;
+  protected _autoCompleteOptions!: AutocompleteOption;
   protected _currentValue: any;
-  protected _defaultTextValue: string;
+  protected _defaultTextValue!: string;
   protected _originalValue: any;
-  protected _elementCollection: any[] | null;
+  protected _elementCollection!: any[] | null;
   protected _isValueTouched = false;
-  protected _lastInputKeyEvent: JQuery.Event;
+  protected _lastInputKeyEvent?: JQuery.Event;
 
   /** The JQuery DOM element */
   protected _$editorElm: any;
@@ -54,18 +54,18 @@ export class AutoCompleteEditor implements Editor {
   grid: SlickGrid;
 
   /** The property name for labels in the collection */
-  labelName: string;
+  labelName!: string;
 
   /** The property name for a prefix that can be added to the labels in the collection */
-  labelPrefixName: string;
+  labelPrefixName!: string;
 
   /** The property name for a suffix that can be added to the labels in the collection */
-  labelSuffixName: string;
+  labelSuffixName!: string;
 
   /** The property name for values in the collection */
-  valueName: string;
+  valueName!: string;
 
-  forceUserInput: boolean;
+  forceUserInput = false;
 
   /** Final collection displayed in the UI, that is after processing filter/sort/override */
   finalCollection: any[] = [];
@@ -365,7 +365,7 @@ export class AutoCompleteEditor implements Editor {
     return this._currentValue;
   }
 
-  validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
+  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
     if (this.args.compositeEditorOptions) {
       this.applyInputUsabilityState();

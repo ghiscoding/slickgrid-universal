@@ -3,6 +3,7 @@ import 'slickgrid/slick.compositeeditor.js';
 import {
   BindingEventService,
   Column,
+  CompositeEditorLabel,
   CompositeEditorModalType,
   CompositeEditorOpenDetailOption,
   CompositeEditorOption,
@@ -45,19 +46,19 @@ type ApplyChangesCallbackFn = (
 export class SlickCompositeEditorComponent implements ExternalResource {
   protected _bindEventService: BindingEventService;
   protected _eventHandler: SlickEventHandler;
-  protected _modalElm: HTMLDivElement;
+  protected _modalElm!: HTMLDivElement;
   protected _originalDataContext: any;
-  protected _options: CompositeEditorOpenDetailOption;
-  protected _lastActiveRowNumber: number;
-  protected _locales: Locale;
-  protected _formValues: { [columnId: string]: any; } | null;
-  protected _editors: { [columnId: string]: Editor; };
-  protected _editorContainers: Array<HTMLElement | null>;
-  protected _modalBodyTopValidationElm: HTMLDivElement;
-  protected _modalSaveButtonElm: HTMLButtonElement;
-  protected grid: SlickGrid;
-  protected gridService: GridService | null;
-  protected gridStateService: GridStateService | null;
+  protected _options!: CompositeEditorOpenDetailOption;
+  protected _lastActiveRowNumber = -1;
+  protected _locales!: Locale;
+  protected _formValues: { [columnId: string]: any; } | null = null;
+  protected _editors!: { [columnId: string]: Editor; };
+  protected _editorContainers!: Array<HTMLElement | null>;
+  protected _modalBodyTopValidationElm!: HTMLDivElement;
+  protected _modalSaveButtonElm!: HTMLButtonElement;
+  protected grid!: SlickGrid;
+  protected gridService: GridService | null = null;
+  protected gridStateService: GridStateService | null = null;
   protected translaterService?: TranslaterService | null;
 
   get eventHandler(): SlickEventHandler {
@@ -430,7 +431,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
                   resetButtonElm.classList.add(cssClass);
                 }
               }
-              this._bindEventService.bind(resetButtonElm, 'click', this.handleResetInputValue.bind(this));
+              this._bindEventService.bind(resetButtonElm, 'click', this.handleResetInputValue.bind(this) as EventListener);
               templateItemLabelElm.appendChild(resetButtonElm);
             }
 
@@ -461,12 +462,12 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         // Add a few Event Handlers
 
         // keyboard, blur & button event handlers
-        this._bindEventService.bind(modalCloseButtonElm, 'click', this.cancelEditing.bind(this));
-        this._bindEventService.bind(modalCancelButtonElm, 'click', this.cancelEditing.bind(this));
-        this._bindEventService.bind(this._modalSaveButtonElm, 'click', this.handleSaveClicked.bind(this));
-        this._bindEventService.bind(this._modalElm, 'keydown', this.handleKeyDown.bind(this));
-        this._bindEventService.bind(this._modalElm, 'focusout', this.validateCurrentEditor.bind(this));
-        this._bindEventService.bind(this._modalElm, 'blur', this.validateCurrentEditor.bind(this));
+        this._bindEventService.bind(modalCloseButtonElm, 'click', this.cancelEditing.bind(this) as EventListener);
+        this._bindEventService.bind(modalCancelButtonElm, 'click', this.cancelEditing.bind(this) as EventListener);
+        this._bindEventService.bind(this._modalSaveButtonElm, 'click', this.handleSaveClicked.bind(this) as EventListener);
+        this._bindEventService.bind(this._modalElm, 'keydown', this.handleKeyDown.bind(this) as EventListener);
+        this._bindEventService.bind(this._modalElm, 'focusout', this.validateCurrentEditor.bind(this) as EventListener);
+        this._bindEventService.bind(this._modalElm, 'blur', this.validateCurrentEditor.bind(this) as EventListener);
 
         // when any of the input of the composite editor form changes, we'll add/remove a "modified" CSS className for styling purposes
         const onCompositeEditorChangeHandler = this.grid.onCompositeEditorChange;
@@ -746,14 +747,14 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Get the correct label text depending, if we use a Translater Service then translate the text when possible else use default text */
-  protected getLabelText(labelProperty: string, localeText: string, defaultText: string): string {
+  protected getLabelText(labelProperty: keyof CompositeEditorLabel, localeText: string, defaultText: string): string {
     const textLabels = { ...this.gridOptions.compositeEditorOptions?.labels, ...this._options?.labels };
 
-    if (this.gridOptions?.enableTranslate && this.translaterService?.translate && textLabels.hasOwnProperty(`${labelProperty}Key`)) {
-      const translationKey = textLabels[`${labelProperty}Key`];
-      return this.translaterService.translate(translationKey);
+    if (this.gridOptions?.enableTranslate && this.translaterService?.translate && textLabels.hasOwnProperty(`${labelProperty}Key` as keyof CompositeEditorLabel)) {
+      const translationKey = textLabels[`${labelProperty}Key` as keyof CompositeEditorLabel];
+      return this.translaterService.translate(translationKey || '');
     }
-    return textLabels?.[labelProperty] ?? this._locales?.[localeText] ?? defaultText;
+    return textLabels?.[labelProperty as keyof CompositeEditorLabel] ?? this._locales?.[localeText as keyof CompositeEditorLabel] ?? defaultText;
   }
 
   /** Retrieve the current selection of row indexes & data context Ids */

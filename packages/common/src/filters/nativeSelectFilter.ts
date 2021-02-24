@@ -15,16 +15,16 @@ export class NativeSelectFilter implements Filter {
   protected _shouldTriggerQuery = true;
   protected _currentValues: any | any[] = [];
   $filterElm: any;
-  grid: SlickGrid;
-  searchTerms: SearchTerm[];
-  columnDef: Column;
-  callback: FilterCallback;
+  grid!: SlickGrid;
+  searchTerms: SearchTerm[] = [];
+  columnDef!: Column;
+  callback!: FilterCallback;
 
   constructor(protected readonly translater: TranslaterService) { }
 
   /** Getter for the Column Filter itself */
   protected get columnFilter(): ColumnFilter {
-    return this.columnDef && this.columnDef.filter || {};
+    return this.columnDef?.filter ?? {};
   }
 
   /** Getter to know what would be the default operator when none is specified */

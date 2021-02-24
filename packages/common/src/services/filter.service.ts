@@ -783,7 +783,7 @@ export class FilterService {
         if (newFilter && uiFilter) {
           const newOperator = newFilter.operator || uiFilter.defaultOperator;
           this.updateColumnFilters(newFilter.searchTerms, uiFilter.columnDef, newOperator);
-          uiFilter.setValues(newFilter.searchTerms, newOperator);
+          uiFilter.setValues(newFilter.searchTerms || [], newOperator);
 
           if (triggerOnSearchChangeEvent) {
             this.callbackSearchEvent(undefined, { columnDef: uiFilter.columnDef, operator: newOperator, searchTerms: newFilter.searchTerms, shouldTriggerQuery: true });

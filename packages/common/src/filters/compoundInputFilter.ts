@@ -21,11 +21,11 @@ export class CompoundInputFilter implements Filter {
   protected $filterElm: any;
   protected $filterInputElm: any;
   protected $selectOperatorElm: any;
-  protected _operator: OperatorType | OperatorString;
-  grid: SlickGrid;
-  searchTerms: SearchTerm[];
-  columnDef: Column;
-  callback: FilterCallback;
+  protected _operator?: OperatorType | OperatorString;
+  grid!: SlickGrid;
+  searchTerms: SearchTerm[] = [];
+  columnDef!: Column;
+  callback!: FilterCallback;
 
   constructor(protected readonly translaterService: TranslaterService) { }
 
@@ -123,7 +123,7 @@ export class CompoundInputFilter implements Filter {
   }
 
   /** Set value(s) on the DOM element  */
-  setValues(values: SearchTerm[], operator?: OperatorType | OperatorString) {
+  setValues(values: SearchTerm[] | SearchTerm, operator?: OperatorType | OperatorString) {
     if (values) {
       const newValue = Array.isArray(values) ? values[0] : values;
       this.$filterInputElm.val(newValue);
@@ -188,7 +188,7 @@ export class CompoundInputFilter implements Filter {
       const translationPrefix = getTranslationPrefix(this.gridOptions);
       return this.translaterService.translate(`${translationPrefix}${translationKey}`);
     }
-    return this.locales?.[localeText] ?? defaultText;
+    return this.locales?.[localeText as keyof Locale] ?? defaultText;
   }
 
   /**

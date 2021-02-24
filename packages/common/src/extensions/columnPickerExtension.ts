@@ -9,8 +9,8 @@ declare const Slick: SlickNamespace;
 
 export class ColumnPickerExtension implements Extension {
   private _eventHandler: SlickEventHandler;
-  private _addon: SlickColumnPicker | null;
-  private _columnPicker: ColumnPicker | null;
+  private _addon: SlickColumnPicker | null = null;
+  private _columnPicker: ColumnPicker | null = null;
 
   constructor(private readonly extensionUtility: ExtensionUtility, private readonly sharedService: SharedService) {
     this._eventHandler = new Slick.EventHandler();

@@ -24,34 +24,34 @@ import { getDescendantProperty, sanitizeTextByAvailableSanitizer, toKebabCase } 
 import { TranslaterService } from '../services/translater.service';
 
 export class AutoCompleteFilter implements Filter {
-  protected _autoCompleteOptions: AutocompleteOption;
+  protected _autoCompleteOptions!: AutocompleteOption;
   protected _clearFilterTriggered = false;
-  protected _collection: any[] | null;
+  protected _collection?: any[];
   protected _shouldTriggerQuery = true;
 
   /** DOM Element Name, useful for auto-detecting positioning (dropup / dropdown) */
-  elementName: string;
+  elementName!: string;
 
   /** The JQuery DOM element */
   $filterElm: any;
 
-  grid: SlickGrid;
-  searchTerms: SearchTerm[];
-  columnDef: Column;
-  callback: FilterCallback;
+  grid!: SlickGrid;
+  searchTerms: SearchTerm[] = [];
+  columnDef!: Column;
+  callback!: FilterCallback;
   isFilled = false;
 
   /** The property name for labels in the collection */
-  labelName: string;
+  labelName!: string;
 
   /** The property name for a prefix that can be added to the labels in the collection */
-  labelPrefixName: string;
+  labelPrefixName!: string;
 
   /** The property name for a suffix that can be added to the labels in the collection */
-  labelSuffixName: string;
+  labelSuffixName!: string;
 
   /** The property name for values in the collection */
-  optionLabel: string;
+  optionLabel!: string;
 
   /** The property name for values in the collection */
   valueName = 'label';
@@ -74,7 +74,7 @@ export class AutoCompleteFilter implements Filter {
   }
 
   /** Getter for the Collection Used by the Filter */
-  get collection(): any[] | null {
+  get collection(): any[] | undefined {
     return this._collection;
   }
 
@@ -208,7 +208,7 @@ export class AutoCompleteFilter implements Filter {
       this.$filterElm.off('input').remove();
     }
     this.$filterElm = null;
-    this._collection = null;
+    this._collection = undefined;
   }
 
   /** Set value(s) on the DOM element  */

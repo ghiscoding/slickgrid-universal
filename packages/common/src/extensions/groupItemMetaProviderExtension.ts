@@ -2,7 +2,7 @@ import { Extension, SlickGroupItemMetadataProvider } from '../interfaces/index';
 import { SharedService } from '../services/shared.service';
 
 export class GroupItemMetaProviderExtension implements Extension {
-  private _addon: SlickGroupItemMetadataProvider | null;
+  private _addon: SlickGroupItemMetadataProvider | null = null;
 
   constructor(private readonly sharedService: SharedService) { }
 

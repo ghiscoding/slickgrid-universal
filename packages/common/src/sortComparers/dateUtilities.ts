@@ -2,7 +2,7 @@ import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { FieldType } from '../enums/fieldType.enum';
 import { Column, GridOption, SortComparer } from '../interfaces/index';
 import * as moment_ from 'moment-mini';
-const moment = moment_['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
+const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 export function compareDates(value1: any, value2: any, sortDirection: number, sortColumn: Column, gridOptions: GridOption, format: string | moment_.MomentBuiltinFormat, strict?: boolean) {
   let diff = 0;
@@ -27,8 +27,8 @@ export function getAssociatedDateSortComparer(fieldType: typeof FieldType[keyof 
 
   return (value1: any, value2: any, sortDirection: number, sortColumn: Column, gridOptions: GridOption) => {
     if (FORMAT === moment.ISO_8601) {
-      return compareDates(value1, value2, sortDirection, sortColumn, gridOptions, FORMAT, false);
+      return compareDates(value1, value2, sortDirection, sortColumn, gridOptions, FORMAT, false) as number;
     }
-    return compareDates(value1, value2, sortDirection, sortColumn, gridOptions, FORMAT, true);
+    return compareDates(value1, value2, sortDirection, sortColumn, gridOptions, FORMAT, true) as number;
   };
 }

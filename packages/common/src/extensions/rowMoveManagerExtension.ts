@@ -16,9 +16,9 @@ import { SharedService } from '../services/shared.service';
 declare const Slick: SlickNamespace;
 
 export class RowMoveManagerExtension implements Extension {
-  private _addon: SlickRowMoveManager | null;
+  private _addon: SlickRowMoveManager | null = null;
   private _eventHandler: SlickEventHandler;
-  private _rowSelectionPlugin: SlickRowSelectionModel;
+  private _rowSelectionPlugin!: SlickRowSelectionModel;
 
   constructor(private readonly sharedService: SharedService) {
     this._eventHandler = new Slick.EventHandler();

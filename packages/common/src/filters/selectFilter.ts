@@ -22,29 +22,29 @@ import { TranslaterService } from '../services';
 export class SelectFilter implements Filter {
   protected _isMultipleSelect = true;
   protected _collectionLength = 0;
-  protected _locales: Locale;
+  protected _locales!: Locale;
   protected _shouldTriggerQuery = true;
 
   /** DOM Element Name, useful for auto-detecting positioning (dropup / dropdown) */
-  elementName: string;
+  elementName!: string;
 
   /** Filter Multiple-Select options */
-  filterElmOptions: MultipleSelectOption;
+  filterElmOptions!: MultipleSelectOption;
 
   /** The JQuery DOM element */
   $filterElm: any;
 
-  grid: SlickGrid;
-  searchTerms: SearchTerm[];
-  columnDef: Column;
-  callback: FilterCallback;
-  defaultOptions: MultipleSelectOption;
+  grid!: SlickGrid;
+  searchTerms: SearchTerm[] | undefined;
+  columnDef!: Column;
+  callback!: FilterCallback;
+  defaultOptions!: MultipleSelectOption;
   isFilled = false;
-  labelName: string;
-  labelPrefixName: string;
-  labelSuffixName: string;
-  optionLabel: string;
-  valueName: string;
+  labelName!: string;
+  labelPrefixName!: string;
+  labelSuffixName!: string;
+  optionLabel!: string;
+  valueName!: string;
   enableTranslateLabel = false;
 
   /**
@@ -327,7 +327,7 @@ export class SelectFilter implements Filter {
     newCollection = this.sortCollection(newCollection);
 
     // step 1, create HTML string template
-    const filterTemplate = this.buildTemplateHtmlString(newCollection, this.searchTerms);
+    const filterTemplate = this.buildTemplateHtmlString(newCollection, this.searchTerms || []);
 
     // step 2, create the DOM Element of the filter & pre-load search terms
     // also subscribe to the onClose event

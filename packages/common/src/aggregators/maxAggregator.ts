@@ -1,7 +1,7 @@
 import { Aggregator } from './../interfaces/aggregator.interface';
 
 export class MaxAggregator implements Aggregator {
-  private _max: number | null;
+  private _max: number | null = null;
   private _field: number | string;
   private _type = 'max';
 

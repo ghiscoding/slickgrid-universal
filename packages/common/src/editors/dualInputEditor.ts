@@ -31,15 +31,15 @@ export class DualInputEditor implements Editor {
   protected _eventHandler: SlickEventHandler;
   protected _isValueSaveCalled = false;
   protected _lastEventType: string | undefined;
-  protected _lastInputKeyEvent: KeyboardEvent;
-  protected _leftInput: HTMLInputElement;
+  protected _lastInputKeyEvent?: KeyboardEvent;
+  protected _leftInput!: HTMLInputElement;
   protected _isLeftValueTouched = false;
   protected _isRightValueTouched = false;
-  protected _rightInput: HTMLInputElement;
-  protected _leftFieldName: string;
-  protected _rightFieldName: string;
-  protected _originalLeftValue: string | number;
-  protected _originalRightValue: string | number;
+  protected _rightInput!: HTMLInputElement;
+  protected _leftFieldName!: string;
+  protected _rightFieldName!: string;
+  protected _originalLeftValue!: string | number;
+  protected _originalRightValue!: string | number;
 
   /** is the Editor disabled? */
   disabled = false;
@@ -115,19 +115,19 @@ export class DualInputEditor implements Editor {
       containerElm.appendChild(this._rightInput);
     }
 
-    this._bindEventService.bind(this._leftInput, 'keydown', (event: KeyboardEvent) => this.handleKeyDown(event, 'leftInput'));
-    this._bindEventService.bind(this._rightInput, 'keydown', (event: KeyboardEvent) => this.handleKeyDown(event, 'rightInput'));
+    this._bindEventService.bind(this._leftInput, 'keydown', ((event: KeyboardEvent) => this.handleKeyDown(event, 'leftInput')) as EventListener);
+    this._bindEventService.bind(this._rightInput, 'keydown', ((event: KeyboardEvent) => this.handleKeyDown(event, 'rightInput')) as EventListener);
 
     // the lib does not get the focus out event for some reason, so register it here
     if (this.hasAutoCommitEdit) {
-      this._bindEventService.bind(this._leftInput, 'focusout', (event: DOMEvent<HTMLInputElement>) => this.handleFocusOut(event, 'leftInput'));
-      this._bindEventService.bind(this._rightInput, 'focusout', (event: DOMEvent<HTMLInputElement>) => this.handleFocusOut(event, 'rightInput'));
+      this._bindEventService.bind(this._leftInput, 'focusout', ((event: DOMEvent<HTMLInputElement>) => this.handleFocusOut(event, 'leftInput')) as EventListener);
+      this._bindEventService.bind(this._rightInput, 'focusout', ((event: DOMEvent<HTMLInputElement>) => this.handleFocusOut(event, 'rightInput')) as EventListener);
     }
 
     const compositeEditorOptions = this.args?.compositeEditorOptions;
     if (compositeEditorOptions) {
-      this._bindEventService.bind(this._leftInput, 'input', this.handleChangeOnCompositeEditorDebounce.bind(this));
-      this._bindEventService.bind(this._rightInput, 'input', this.handleChangeOnCompositeEditorDebounce.bind(this));
+      this._bindEventService.bind(this._leftInput, 'input', this.handleChangeOnCompositeEditorDebounce.bind(this) as EventListener);
+      this._bindEventService.bind(this._rightInput, 'input', this.handleChangeOnCompositeEditorDebounce.bind(this) as EventListener);
     } else {
       setTimeout(() => this._leftInput.select(), 50);
     }
@@ -421,7 +421,7 @@ export class DualInputEditor implements Editor {
     return '1';
   }
 
-  validate(_targetElm?: null, inputValidation?: { position: 'leftInput' | 'rightInput', inputValue: any }): EditorValidationResult {
+  validate(_targetElm?: any, inputValidation?: { position: 'leftInput' | 'rightInput', inputValue: any }): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
     if (this.args.compositeEditorOptions) {
       this.applyInputUsabilityState();

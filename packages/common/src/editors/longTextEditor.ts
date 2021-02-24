@@ -45,7 +45,7 @@ export class LongTextEditor implements Editor {
   gridOptions: GridOption;
 
   /** The translate library */
-  protected _translater: TranslaterService;
+  protected _translater?: TranslaterService;
 
   constructor(protected readonly args: EditorArguments) {
     if (!args) {
@@ -352,7 +352,7 @@ export class LongTextEditor implements Editor {
     return this._$textarea.val();
   }
 
-  validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
+  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
     if (this.args.compositeEditorOptions) {
       this.applyInputUsabilityState();

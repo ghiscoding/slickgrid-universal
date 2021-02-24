@@ -269,7 +269,7 @@ export class SliderEditor implements Editor {
     return elmValue !== '' ? parseInt(elmValue, 10) : this.originalValue;
   }
 
-  validate(_targetElm?: undefined, inputValue?: any): EditorValidationResult {
+  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
     if (this.args.compositeEditorOptions) {
       this.applyInputUsabilityState();
