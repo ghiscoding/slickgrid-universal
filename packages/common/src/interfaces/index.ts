@@ -24,7 +24,7 @@ export * from './columnPicker.interface';
 export * from './columnSort.interface';
 export * from './compositeEditorError.interface';
 export * from './compositeEditorLabel.interface';
-export * from './compositeEditorOpenDetailOptions.interface';
+export * from './compositeEditorOpenDetailOption.interface';
 export * from './compositeEditorOption.interface';
 export * from './contextMenu.interface';
 export * from './contextMenuOption.interface';
