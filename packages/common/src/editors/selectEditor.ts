@@ -623,7 +623,7 @@ export class SelectEditor implements Editor {
     return outputCollection;
   }
 
-  renderDomElement(inputCollection: any[]) {
+  renderDomElement(inputCollection?: any[]) {
     if (!Array.isArray(inputCollection) && this.collectionOptions?.collectionInsideObjectProperty) {
       const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty;
       inputCollection = getDescendantProperty(inputCollection, collectionInsideObjectProperty);

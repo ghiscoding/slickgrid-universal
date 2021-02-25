@@ -1,5 +1,5 @@
 import * as moment_ from 'moment-mini';
-const moment = moment_['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
+const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 import {
   Constants,
@@ -7,6 +7,7 @@ import {
   GridOption,
   Locale,
   Metrics,
+  MetricTexts,
   SlickGrid,
   TranslaterService,
   sanitizeTextByAvailableSanitizer,
@@ -15,7 +16,7 @@ import { BindingHelper } from '../services/binding.helper';
 
 export class SlickFooterComponent {
   private _bindingHelper: BindingHelper;
-  private _footerElement: HTMLDivElement;
+  private _footerElement!: HTMLDivElement;
 
   get gridUid(): string {
     return this.grid?.getUID() ?? '';
@@ -178,7 +179,7 @@ export class SlickFooterComponent {
       for (const propName of Object.keys(this.customFooterOptions.metricTexts)) {
         if (propName.lastIndexOf('Key') > 0) {
           const propNameWithoutKey = propName.substring(0, propName.lastIndexOf('Key'));
-          this.customFooterOptions.metricTexts[propNameWithoutKey] = this.translaterService.translate(this.customFooterOptions.metricTexts[propName] || ' ');
+          this.customFooterOptions.metricTexts[propNameWithoutKey as keyof MetricTexts] = this.translaterService.translate(this.customFooterOptions.metricTexts[propName as keyof MetricTexts] || ' ');
         }
       }
     }

@@ -15,7 +15,7 @@ import { isCollectionOperator } from './filterUtilities';
 export type GeneralizedVariableType = 'boolean' | 'date' | 'number' | 'object' | 'text';
 
 /** Execute mapped condition (per field type) for each cell in the grid */
-export const executeFilterConditionTest: FilterCondition = (options: FilterConditionOption, parsedSearchTerms: SearchTerm | SearchTerm[]) => {
+export const executeFilterConditionTest: FilterCondition = ((options: FilterConditionOption, parsedSearchTerms: SearchTerm | SearchTerm[]) => {
   // when using a multi-select ('IN' operator) we will not use the field type but instead go directly with a collection search
   if (isCollectionOperator(options.operator)) {
     return executeCollectionSearchFilterCondition(options);
@@ -41,7 +41,7 @@ export const executeFilterConditionTest: FilterCondition = (options: FilterCondi
       // the parsedSearchTerms should be single value (result came from getFilterParsedText() method)
       return executeStringFilterCondition(options, parsedSearchTerms as SearchTerm);
   }
-};
+}) as FilterCondition;
 
 /**
  * From our search filter value(s), get their parsed value(s), for example a "dateIso" filter will be parsed as Moment object.

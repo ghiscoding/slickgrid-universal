@@ -8,7 +8,7 @@ export function collectionObserver(inputArray: any[], callback: (outputArray: an
   // Add more methods here if you want to listen to them
   const mutationMethods = ['pop', 'push', 'reverse', 'shift', 'unshift', 'splice', 'sort'];
 
-  mutationMethods.forEach((changeMethod) => {
+  mutationMethods.forEach((changeMethod: any) => {
     inputArray[changeMethod] = (...args: any[]) => {
       const res = Array.prototype[changeMethod].apply(inputArray, args);  // call normal behaviour
       callback.apply(inputArray, [inputArray, args]);  // finally call the callback supplied
@@ -33,6 +33,7 @@ export function propertyObserver(obj: any, prop: string, callback: (newValue: an
     },
     set(newValue) {
       innerValue = newValue;
+      // @ts-ignore
       callback.apply(obj, [newValue, obj[prop]]);
     }
   });

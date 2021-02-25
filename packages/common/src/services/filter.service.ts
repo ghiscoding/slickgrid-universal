@@ -58,9 +58,9 @@ export class FilterService {
   protected _firstColumnIdRendered: string | number = '';
   protected _filtersMetadata: Array<Filter> = [];
   protected _columnFilters: ColumnFilters = {};
-  protected _grid: SlickGrid;
+  protected _grid!: SlickGrid;
   protected _onSearchChange: SlickEvent<OnSearchChangeEvent> | null;
-  protected _tmpPreFilteredData: number[];
+  protected _tmpPreFilteredData?: number[];
 
   constructor(protected filterFactory: FilterFactory, protected pubSubService: PubSubService, protected sharedService: SharedService) {
     this._onSearchChange = new Slick.Event();
@@ -494,11 +494,11 @@ export class FilterService {
 
     if (Array.isArray(inputArray)) {
       for (let i = 0; i < inputArray.length; i++) {
-        treeObj[inputArray[i][dataViewIdIdentifier]] = inputArray[i];
+        (treeObj as any)[inputArray[i][dataViewIdIdentifier]] = inputArray[i];
         // as the filtered data is then used again as each subsequent letter
         // we need to delete the .__used property, otherwise the logic below
         // in the while loop (which checks for parents) doesn't work:
-        delete treeObj[inputArray[i][dataViewIdIdentifier]].__used;
+        delete (treeObj as any)[inputArray[i][dataViewIdIdentifier]].__used;
       }
 
       // Step 1. prepare search filter by getting their parsed value(s), for example if it's a date filter then parse it to a Moment object
@@ -546,14 +546,14 @@ export class FilterService {
           const len = filteredChildrenAndParents.length;
           // add child (id):
           filteredChildrenAndParents.splice(len, 0, item[dataViewIdIdentifier]);
-          let parent = treeObj[item[parentPropName]] || false;
+          let parent = (treeObj as any)[item[parentPropName]] || false;
           while (parent) {
             // only add parent (id) if not already added:
             parent.__used || filteredChildrenAndParents.splice(len, 0, parent[dataViewIdIdentifier]);
             // mark each parent as used to not use them again later:
-            treeObj[parent[dataViewIdIdentifier]].__used = true;
+            (treeObj as any)[parent[dataViewIdIdentifier]].__used = true;
             // try to find parent of the current parent, if exists:
-            parent = treeObj[parent[parentPropName]] || false;
+            parent = (treeObj as any)[parent[parentPropName]] || false;
           }
         }
       }
@@ -919,7 +919,7 @@ export class FilterService {
    * Callback method that is called and executed by the individual Filter (DOM element),
    * for example when user starts typing chars on a search input (which uses InputFilter), this Filter will execute the callback from an input change event.
    */
-  protected callbackSearchEvent(event: SlickEventData | undefined, args: FilterCallbackArg) {
+  protected callbackSearchEvent(event: Event | undefined, args: FilterCallbackArg) {
     if (args) {
       const searchTerm = ((event && event.target) ? (event.target as HTMLInputElement).value : undefined);
       const searchTerms = (args.searchTerms && Array.isArray(args.searchTerms)) ? args.searchTerms : (searchTerm ? [searchTerm] : undefined);
@@ -962,11 +962,11 @@ export class FilterService {
 
       // event might have been created as a CustomEvent (e.g. CompoundDateFilter), without being a valid Slick.EventData,
       // if so we will create a new Slick.EventData and merge it with that CustomEvent to avoid having SlickGrid errors
-      const eventData = (event && typeof event.isPropagationStopped !== 'function') ? $.extend({}, new Slick.EventData(), event) : event;
+      const eventData = ((event && typeof (event as SlickEventData).isPropagationStopped !== 'function') ? $.extend({}, new Slick.EventData(), event) : event) as SlickEventData;
 
       // trigger an event only if Filters changed or if ENTER key was pressed
-      const eventKey = event?.key;
-      const eventKeyCode = event?.keyCode;
+      const eventKey = (event as KeyboardEvent)?.key;
+      const eventKeyCode = (event as KeyboardEvent)?.keyCode;
       if (this._onSearchChange && (eventKey === 'Enter' || eventKeyCode === KeyCode.ENTER || !dequal(oldColumnFilters, this._columnFilters))) {
         this._onSearchChange.notify({
           clearFilterTriggered: args.clearFilterTriggered,

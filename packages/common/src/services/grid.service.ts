@@ -31,8 +31,8 @@ const GridServiceUpdateOptionDefaults: GridServiceUpdateOption = { highlightRow:
 const HideColumnOptionDefaults: HideColumnOption = { autoResizeColumns: true, triggerEvent: true, hideFromColumnPicker: false, hideFromGridMenu: false };
 
 export class GridService {
-  private _grid: SlickGrid;
-  private _rowSelectionPlugin: SlickRowSelectionModel;
+  private _grid!: SlickGrid;
+  private _rowSelectionPlugin?: SlickRowSelectionModel;
 
   constructor(
     private extensionService: ExtensionService,
@@ -195,7 +195,7 @@ export class GridService {
    * @param column
    */
   hideColumn(column: Column) {
-    if (this._grid && this._grid.getColumns && this._grid.setColumns && this._grid.getColumnIndex) {
+    if (this._gridOptions && this._grid.getColumnIndex) {
       const columnIndex = this._grid.getColumnIndex(column.id);
       if (columnIndex >= 0) {
         this.hideColumnByIndex(columnIndex);
@@ -416,7 +416,7 @@ export class GridService {
 
     // row number in the grid, by default it will be on first row (top is the default)
     let rowNumber: number | undefined = 0;
-    const itemId = item?.[idPropName] ?? '';
+    const itemId = (item as any)?.[idPropName] ?? '';
 
     // do we want the item to be sorted in the grid, when set to False it will insert on first row (defaults to false)
     if (options.resortGrid) {
@@ -495,7 +495,7 @@ export class GridService {
 
     // get row numbers of all new inserted items
     // we need to do it after resort and get each row number because it possibly changed after the sort
-    items.forEach((item: T) => rowNumbers.push(this._dataView.getRowById(item[idPropName]) as number));
+    items.forEach((item: T) => rowNumbers.push(this._dataView.getRowById((item as any)[idPropName]) as number));
 
     // if user wanted to see highlighted row
     if (options.highlightRow) {
@@ -528,7 +528,7 @@ export class GridService {
     if (!item || !(idPropName in item)) {
       throw new Error(`Deleting an item requires the item to include an "${idPropName}" property`);
     }
-    return this.deleteItemById(item[idPropName], options);
+    return this.deleteItemById((item as any)[idPropName], options);
   }
 
   /**
@@ -544,7 +544,7 @@ export class GridService {
     // when it's not an array, we can call directly the single item delete
     if (!Array.isArray(items)) {
       this.deleteItem<T>(items, options);
-      return [items[idPropName]];
+      return [(items as any)[idPropName]];
     }
 
     // begin bulk transaction
@@ -552,8 +552,8 @@ export class GridService {
 
     const itemIds: string[] = [];
     items.forEach((item: T) => {
-      if (item?.[idPropName] !== undefined) {
-        itemIds.push(item[idPropName]);
+      if ((item as any)?.[idPropName] !== undefined) {
+        itemIds.push((item as any)[idPropName]);
       }
     });
 
@@ -639,7 +639,7 @@ export class GridService {
   updateItem<T = any>(item: T, options?: GridServiceUpdateOption): number {
     options = { ...GridServiceUpdateOptionDefaults, ...options };
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
-    const itemId = (!item || !(idPropName in item)) ? undefined : item[idPropName];
+    const itemId = (!item || !(idPropName in item)) ? undefined : (item as any)[idPropName];
 
     if (itemId === undefined) {
       throw new Error(`Calling Update of an item requires the item to include an "${idPropName}" property`);
@@ -671,7 +671,7 @@ export class GridService {
     const rowNumbers: number[] = [];
     const itemIds: Array<string | number> = [];
     items.forEach((item: T) => {
-      const itemId = (!item || !(idPropName in item)) ? undefined : item[idPropName];
+      const itemId = (!item || !(idPropName in item)) ? undefined : (item as any)[idPropName];
       itemIds.push(itemId);
 
       if (this._dataView.getIdxById(itemId) !== undefined) {
@@ -763,7 +763,7 @@ export class GridService {
   upsertItem<T = any>(item: T, options?: GridServiceInsertOption): { added: number | undefined, updated: number | undefined } {
     options = { ...GridServiceInsertOptionDefaults, ...options };
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
-    const itemId = (!item || !(idPropName in item)) ? undefined : item[idPropName];
+    const itemId = (!item || !(idPropName in item)) ? undefined : (item as any)[idPropName];
 
     if (itemId === undefined) {
       throw new Error(`Calling Upsert of an item requires the item to include an "${idPropName}" property`);

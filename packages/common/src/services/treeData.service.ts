@@ -5,7 +5,7 @@ import { SharedService } from './shared.service';
 declare const Slick: SlickNamespace;
 
 export class TreeDataService {
-  private _grid: SlickGrid;
+  private _grid!: SlickGrid;
   private _eventHandler: SlickEventHandler;
 
   constructor(private sharedService: SharedService) {

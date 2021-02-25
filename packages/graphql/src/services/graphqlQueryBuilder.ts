@@ -8,7 +8,7 @@
  */
 export default class GraphqlQueryBuilder {
   // eslint-disable-next-line @typescript-eslint/ban-types
-  alias: string | Function;
+  alias!: string | Function;
   head: any[] = [];
   body: any;
 

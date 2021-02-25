@@ -19,10 +19,10 @@ const DEFAULT_INTERVAL_MAX_RETRIES = 70;
 const DEFAULT_INTERVAL_RETRY_DELAY = 250;
 
 export class ResizerService {
-  private _grid: SlickGrid;
-  private _addon: SlickResizer;
+  private _grid!: SlickGrid;
+  private _addon!: SlickResizer;
   private _eventHandler: SlickEventHandler;
-  private _intervalId: NodeJS.Timeout;
+  private _intervalId!: NodeJS.Timeout;
   private _intervalExecutionCounter = 0;
   private _intervalRetryDelay = DEFAULT_INTERVAL_RETRY_DELAY;
   private _isStopResizeIntervalRequested = false;

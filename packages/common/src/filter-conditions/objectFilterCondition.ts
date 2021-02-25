@@ -3,7 +3,7 @@ import { FilterCondition, FilterConditionOption } from '../interfaces/index';
 import { compareObjects } from './filterUtilities';
 
 /** Execute filter condition check on each cell */
-export const executeObjectFilterCondition: FilterCondition = (options: FilterConditionOption, parsedSearchValue: SearchTerm | undefined) => {
+export const executeObjectFilterCondition: FilterCondition = ((options: FilterConditionOption, parsedSearchValue: SearchTerm | undefined) => {
   if (parsedSearchValue === undefined && !options.operator) {
     return true;
   }
@@ -21,7 +21,7 @@ export const executeObjectFilterCondition: FilterCondition = (options: FilterCon
     default:
       return compareObjects(options.cellValue, parsedSearchValue, options.dataKey);
   }
-};
+}) as FilterCondition;
 
 /**
  * From our search filter value(s), get the parsed value(s).

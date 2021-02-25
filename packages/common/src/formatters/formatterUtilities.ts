@@ -2,7 +2,7 @@ import { FieldType } from '../enums/fieldType.enum';
 import { Column, Formatter, GridOption, SlickGrid } from '../interfaces/index';
 import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 import * as moment_ from 'moment-mini';
-const moment = moment_['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
+const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 /**
  * Find the option value from the following (in order of execution)
@@ -16,8 +16,8 @@ export function getValueFromParamsOrFormatterOptions(optionName: string, columnD
 
   if (params && params.hasOwnProperty(optionName)) {
     return params[optionName];
-  } else if (gridOptions.formatterOptions && gridOptions.formatterOptions.hasOwnProperty(optionName)) {
-    return gridOptions.formatterOptions[optionName];
+  } else if (gridOptions.formatterOptions?.hasOwnProperty(optionName)) {
+    return (gridOptions.formatterOptions as any)[optionName];
   }
   return defaultValue;
 }

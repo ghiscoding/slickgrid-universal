@@ -15,7 +15,7 @@ import { BindingHelper } from '../services/binding.helper';
 
 export class SlickPaginationComponent {
   private _bindingHelper: BindingHelper;
-  private _paginationElement: HTMLDivElement;
+  private _paginationElement!: HTMLDivElement;
   private _enableTranslate = false;
   private _locales: Locale;
   private _subscriptions: Subscription[] = [];
@@ -55,7 +55,7 @@ export class SlickPaginationComponent {
     this._subscriptions.push(
       this.pubSubService.subscribe('onPaginationRefreshed', (paginationChanges: ServicePagination) => {
         for (const key of Object.keys(paginationChanges)) {
-          this.currentPagination[key] = paginationChanges[key];
+          (this.currentPagination as any)[key] = (paginationChanges as any)[key];
         }
         this.updatePageButtonsUsability();
         const pageFromToElm = document.querySelector<HTMLSpanElement>(`.${this.gridUid} span.page-info-from-to`);
@@ -184,10 +184,10 @@ export class SlickPaginationComponent {
 
   /** Add some DOM Element event listeners */
   addEventListeners() {
-    this._bindingHelper.bindEventHandler('.icon-seek-first', 'click', this.changeToFirstPage.bind(this));
-    this._bindingHelper.bindEventHandler('.icon-seek-end', 'click', this.changeToLastPage.bind(this));
-    this._bindingHelper.bindEventHandler('.icon-seek-next', 'click', this.changeToNextPage.bind(this));
-    this._bindingHelper.bindEventHandler('.icon-seek-prev', 'click', this.changeToPreviousPage.bind(this));
+    this._bindingHelper.bindEventHandler('.icon-seek-first', 'click', this.changeToFirstPage.bind(this) as EventListener);
+    this._bindingHelper.bindEventHandler('.icon-seek-end', 'click', this.changeToLastPage.bind(this) as EventListener);
+    this._bindingHelper.bindEventHandler('.icon-seek-next', 'click', this.changeToNextPage.bind(this) as EventListener);
+    this._bindingHelper.bindEventHandler('.icon-seek-prev', 'click', this.changeToPreviousPage.bind(this) as EventListener);
     this._bindingHelper.bindEventHandler('select.items-per-page', 'change', (event: & { target: any }) => this.itemsPerPage = +(event?.target?.value ?? 0));
   }
 

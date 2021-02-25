@@ -67,7 +67,7 @@ export class SortService {
 
     // subscribe to the SlickGrid event and call the backend execution
     const onSortHandler = grid.onSort;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSortHandler>>).subscribe(onSortHandler, this.onBackendSortChanged.bind(this));
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSortHandler>>).subscribe(onSortHandler, this.onBackendSortChanged.bind(this) as EventListener);
   }
 
   /**
@@ -84,7 +84,7 @@ export class SortService {
     this.processTreeDataInitialSort();
 
     const onSortHandler = grid.onSort;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSortHandler>>).subscribe(onSortHandler, this.handleLocalOnSort.bind(this));
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSortHandler>>).subscribe(onSortHandler, this.handleLocalOnSort.bind(this) as EventListener);
   }
 
   handleLocalOnSort(_e: SlickEventData, args: SingleColumnSort | MultiColumnSort) {

@@ -4,6 +4,7 @@ import { Column } from '../interfaces/column.interface';
 import { SharedService } from '../services/shared.service';
 import { TranslaterService } from '../services';
 import { getTranslationPrefix } from '../services/utilities';
+import { Locale } from '../interfaces/locale.interface';
 
 export class ExtensionUtility {
   constructor(private readonly sharedService: SharedService, private readonly translaterService?: TranslaterService) { }
@@ -26,8 +27,8 @@ export class ExtensionUtility {
     // get locales provided by user in forRoot or else use default English locales via the Constants
     const locales = this.sharedService && this.sharedService.gridOptions && this.sharedService.gridOptions.locales || Constants.locales;
 
-    const title = picker && picker[propName];
-    const titleKey = picker && picker[`${propName}Key`];
+    const title = (picker as any)?.[propName];
+    const titleKey = (picker as any)?.[`${propName}Key`];
     const gridOptions = this.sharedService.gridOptions;
     const translationPrefix = getTranslationPrefix(gridOptions);
 
@@ -114,8 +115,8 @@ export class ExtensionUtility {
   translateItems<T = any>(items: T[], inputKey: string, outputKey: string) {
     if (Array.isArray(items)) {
       for (const item of items) {
-        if (item[inputKey]) {
-          item[outputKey] = this.translaterService && this.translaterService.getCurrentLanguage && this.translaterService.translate && this.translaterService.translate(item[inputKey]);
+        if ((item as any)[inputKey]) {
+          (item as any)[outputKey] = this.translaterService && this.translaterService.getCurrentLanguage && this.translaterService.translate && this.translaterService.translate((item as any)[inputKey]);
         }
       }
     }
@@ -136,7 +137,7 @@ export class ExtensionUtility {
     if (gridOptions.enableTranslate && this.translaterService && this.translaterService.getCurrentLanguage && this.translaterService.translate) {
       text = this.translaterService.translate(translationKey || ' ');
     } else if (locales && locales.hasOwnProperty(localeKey)) {
-      text = locales[localeKey];
+      text = locales[localeKey as keyof Locale] as string;
     } else {
       text = localeKey;
     }

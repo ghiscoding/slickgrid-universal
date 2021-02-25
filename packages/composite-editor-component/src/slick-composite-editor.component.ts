@@ -155,7 +155,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
     if (editor && editor.setValue && Array.isArray(this._editorContainers)) {
       editor.setValue(newValue, true);
-      const editorContainerElm = this._editorContainers.find((editorElm: HTMLElement) => editorElm.dataset.editorid === columnId);
+      const editorContainerElm = (this._editorContainers as HTMLElement[]).find(editorElm => editorElm!.dataset!.editorid === columnId);
       const excludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
 
       if (!editor.disabled || (editor.disabled && !excludeDisabledFieldFormValues)) {
@@ -769,7 +769,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       const translationKey = textLabels[`${labelProperty}Key` as keyof CompositeEditorLabel];
       return this.translaterService.translate(translationKey || '');
     }
-    return textLabels?.[labelProperty as keyof CompositeEditorLabel] ?? this._locales?.[localeText as keyof CompositeEditorLabel] ?? defaultText;
+    return textLabels?.[labelProperty as keyof CompositeEditorLabel] ?? this._locales?.[localeText as keyof Locale] ?? defaultText;
   }
 
   /** Retrieve the current selection of row indexes & data context Ids */

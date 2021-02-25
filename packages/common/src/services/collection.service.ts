@@ -58,21 +58,21 @@ export class CollectionService<T = any> {
       switch (operator) {
         case OperatorType.equal:
           if (objectProperty) {
-            filteredCollection = collection.filter((item) => item[objectProperty] === value);
+            filteredCollection = collection.filter((item) => (item as any)[objectProperty] === value);
           } else {
             filteredCollection = collection.filter((item) => item === value);
           }
           break;
         case OperatorType.contains:
           if (objectProperty) {
-            filteredCollection = collection.filter((item) => item[objectProperty].toString().indexOf(value.toString()) !== -1);
+            filteredCollection = collection.filter((item) => (item as any)[objectProperty].toString().indexOf(value.toString()) !== -1);
           } else {
             filteredCollection = collection.filter((item: any) => (item !== null && item !== undefined) && item.toString().indexOf(value.toString()) !== -1);
           }
           break;
         case OperatorType.notContains:
           if (objectProperty) {
-            filteredCollection = collection.filter((item) => item[objectProperty].toString().indexOf(value.toString()) === -1);
+            filteredCollection = collection.filter((item) => (item as any)[objectProperty].toString().indexOf(value.toString()) === -1);
           } else {
             filteredCollection = collection.filter((item: any) => (item !== null && item !== undefined) && item.toString().indexOf(value.toString()) === -1);
           }
@@ -80,7 +80,7 @@ export class CollectionService<T = any> {
         case OperatorType.notEqual:
         default:
           if (objectProperty) {
-            filteredCollection = collection.filter((item) => item[objectProperty] !== value);
+            filteredCollection = collection.filter((item) => (item as any)[objectProperty] !== value);
           } else {
             filteredCollection = collection.filter((item) => item !== value);
           }
@@ -115,8 +115,8 @@ export class CollectionService<T = any> {
               const sortDirection = sortBy.sortDesc ? SortDirectionNumber.desc : SortDirectionNumber.asc;
               const objectProperty = sortBy.property;
               const fieldType = sortBy?.fieldType ?? columnDef?.type ?? FieldType.string;
-              const value1 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate(dataRow1[objectProperty] || ' ') : dataRow1[objectProperty];
-              const value2 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate(dataRow2[objectProperty] || ' ') : dataRow2[objectProperty];
+              const value1 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate((dataRow1 as any)[objectProperty] || ' ') : (dataRow1 as any)[objectProperty];
+              const value2 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate((dataRow2 as any)[objectProperty] || ' ') : (dataRow2 as any)[objectProperty];
 
               const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef);
               if (sortResult !== SortDirectionNumber.neutral) {
@@ -134,8 +134,8 @@ export class CollectionService<T = any> {
         const fieldType = sortByOptions?.fieldType ?? columnDef?.type ?? FieldType.string;
 
         sortedCollection = collection.sort((dataRow1: T, dataRow2: T) => {
-          const value1 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate(dataRow1[objectProperty] || ' ') : dataRow1[objectProperty];
-          const value2 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate(dataRow2[objectProperty] || ' ') : dataRow2[objectProperty];
+          const value1 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate((dataRow1 as any)[objectProperty] || ' ') : (dataRow1 as any)[objectProperty];
+          const value2 = (enableTranslateLabel) ? this.translaterService?.translate && this.translaterService.translate((dataRow2 as any)[objectProperty] || ' ') : (dataRow2 as any)[objectProperty];
           const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef);
           if (sortResult !== SortDirectionNumber.neutral) {
             return sortResult;

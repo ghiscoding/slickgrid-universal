@@ -4,7 +4,7 @@ import { ContainerService } from '../services/container.service';
 
 export abstract class ExcelExportService implements ExternalResource {
   /** ExcelExportService class name which is use to find service instance in the external registered services */
-  className: string;
+  className!: string;
 
   /**
    * Initialize the Export Service

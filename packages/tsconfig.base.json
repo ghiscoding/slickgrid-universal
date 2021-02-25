@@ -31,6 +31,6 @@
     "skipLibCheck": true,
     "preserveConstEnums": true,
     "stripInternal": true,
-    "strict": false
+    "strict": true
   }
 }

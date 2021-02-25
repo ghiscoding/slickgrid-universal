@@ -2,7 +2,7 @@ import { Aggregator } from './../interfaces/aggregator.interface';
 
 export class DistinctAggregator implements Aggregator {
   private _field: number | string;
-  private _distinctValues: any[];
+  private _distinctValues: any[] = [];
   private _type = 'distinct';
 
   constructor(field: number | string) {

@@ -4,7 +4,7 @@ import { OdataOption } from '../interfaces/odataOption.interface';
 export class OdataQueryBuilderService {
   _columnFilters: any;
   _defaultSortBy: string;
-  _filterCount: number;
+  _filterCount = 0;
   _odataOptions: Partial<OdataOption>;
 
   constructor() {
@@ -114,13 +114,13 @@ export class OdataQueryBuilderService {
   updateOptions(options: Partial<OdataOption>) {
     for (const property of Object.keys(options)) {
       if (options.hasOwnProperty(property)) {
-        this._odataOptions[property] = options[property]; // replace of the property
+        this._odataOptions[property as keyof OdataOption] = options[property as keyof OdataOption]; // replace of the property
       }
 
       // we need to keep the defaultSortBy for references whenever the user removes his Sorting
       // then we would revert to the defaultSortBy and the only way is to keep a hard copy here
       if (property === 'orderBy' || property === 'sortBy') {
-        let sortBy = options[property];
+        let sortBy = options[property as keyof OdataOption];
 
         // make sure first char of each orderBy field is capitalize
         if (this._odataOptions.caseType === CaseType.pascalCase) {
@@ -129,7 +129,7 @@ export class OdataQueryBuilderService {
               inputArray[index] = titleCase(field);
             });
           } else {
-            sortBy = titleCase(options[property]);
+            sortBy = titleCase(options[property as keyof OdataOption]);
           }
         }
         this._odataOptions.orderBy = sortBy;

@@ -38,6 +38,7 @@ export function sortByFieldType(fieldType: typeof FieldType[keyof typeof FieldTy
     case FieldType.dateTimeUsShort:
     case FieldType.dateTimeUsShortAmPm:
     case FieldType.dateTimeUsShortAM_PM:
+      // @ts-ignore
       sortResult = getAssociatedDateSortComparer(fieldType).call(this, value1, value2, sortDirection, sortColumn, gridOptions);
       break;
     case FieldType.object:
