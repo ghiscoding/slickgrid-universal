@@ -25,10 +25,10 @@ export function compareDates(value1: any, value2: any, sortDirection: number, so
 export function getAssociatedDateSortComparer(fieldType: typeof FieldType[keyof typeof FieldType]): SortComparer {
   const FORMAT = (fieldType === FieldType.date) ? moment.ISO_8601 : mapMomentDateFormatWithFieldType(fieldType);
 
-  return (value1: any, value2: any, sortDirection: number, sortColumn: Column, gridOptions: GridOption) => {
+  return ((value1: any, value2: any, sortDirection: number, sortColumn: Column, gridOptions: GridOption) => {
     if (FORMAT === moment.ISO_8601) {
       return compareDates(value1, value2, sortDirection, sortColumn, gridOptions, FORMAT, false) as number;
     }
     return compareDates(value1, value2, sortDirection, sortColumn, gridOptions, FORMAT, true) as number;
-  };
+  }) as SortComparer;
 }

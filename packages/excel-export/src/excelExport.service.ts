@@ -1,6 +1,6 @@
 import * as ExcelBuilder from 'excel-builder-webpacker';
 import * as moment_ from 'moment-mini';
-const moment = moment_['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
+const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 import {
   // utility functions
@@ -45,18 +45,18 @@ const DEFAULT_EXPORT_OPTIONS: ExcelExportOption = {
 
 export class ExcelExportService implements ExternalResource, BaseExcelExportService {
   private _fileFormat = FileType.xlsx;
-  private _grid: SlickGrid;
-  private _locales: Locale;
-  private _groupedColumnHeaders: Array<KeyTitlePair>;
-  private _columnHeaders: Array<KeyTitlePair>;
+  private _grid!: SlickGrid;
+  private _locales!: Locale;
+  private _groupedColumnHeaders?: Array<KeyTitlePair>;
+  private _columnHeaders: Array<KeyTitlePair> = [];
   private _hasGroupedItems = false;
-  private _excelExportOptions: ExcelExportOption;
-  private _sheet: ExcelWorksheet;
-  private _stylesheet: ExcelStylesheet;
+  private _excelExportOptions!: ExcelExportOption;
+  private _sheet!: ExcelWorksheet;
+  private _stylesheet!: ExcelStylesheet;
   private _stylesheetFormats: any;
-  private _pubSubService: PubSubService | null;
+  private _pubSubService: PubSubService | null = null;
   private _translaterService: TranslaterService | undefined;
-  private _workbook: ExcelWorkbook;
+  private _workbook!: ExcelWorkbook;
 
   /** ExcelExportService class name which is use to find service instance in the external registered services */
   className = 'ExcelExportService';

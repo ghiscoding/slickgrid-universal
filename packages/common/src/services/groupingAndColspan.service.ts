@@ -19,7 +19,7 @@ declare const Slick: SlickNamespace;
 
 export class GroupingAndColspanService {
   private _eventHandler: SlickEventHandler;
-  private _grid: SlickGrid;
+  private _grid!: SlickGrid;
 
   constructor(private extensionUtility: ExtensionUtility, private extensionService: ExtensionService, private pubSubService: PubSubService,) {
     this._eventHandler = new Slick.EventHandler();

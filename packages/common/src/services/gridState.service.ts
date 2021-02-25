@@ -33,7 +33,7 @@ export class GridStateService {
   private _eventHandler = new Slick.EventHandler();
   private _columns: Column[] = [];
   private _currentColumns: CurrentColumn[] = [];
-  private _grid: SlickGrid;
+  private _grid!: SlickGrid;
   private _subscriptions: Subscription[] = [];
   private _selectedRowDataContextIds: Array<number | string> | undefined = []; // used with row selection
   private _selectedFilteredRowDataContextIds: Array<number | string> | undefined = []; // used with row selection
@@ -265,20 +265,18 @@ export class GridStateService {
    */
   getCurrentRowSelections(requestRefreshFilteredRow = true): CurrentRowSelection | null {
     if (this._grid && this._gridOptions && this._dataView && this.hasRowSelectionEnabled()) {
-      if (this._grid.getSelectedRows && this._dataView.mapRowsToIds) {
-        let filteredDataContextIds: Array<number | string> | undefined = [];
-        const gridRowIndexes: number[] = this._dataView.mapIdsToRows(this._selectedRowDataContextIds || []); // note that this will return only what is visible in current page
-        const dataContextIds: Array<number | string> | undefined = this._selectedRowDataContextIds;
+      let filteredDataContextIds: Array<number | string> | undefined = [];
+      const gridRowIndexes: number[] = this._dataView.mapIdsToRows(this._selectedRowDataContextIds || []); // note that this will return only what is visible in current page
+      const dataContextIds: Array<number | string> | undefined = this._selectedRowDataContextIds;
 
-        // user might request to refresh the filtered selection dataset
-        // typically always True, except when "reEvaluateRowSelectionAfterFilterChange" is called and we don't need to refresh the filtered dataset twice
-        if (requestRefreshFilteredRow === true) {
-          filteredDataContextIds = this.refreshFilteredRowSelections();
-        }
-        filteredDataContextIds = this._selectedFilteredRowDataContextIds;
-
-        return { gridRowIndexes, dataContextIds, filteredDataContextIds };
+      // user might request to refresh the filtered selection dataset
+      // typically always True, except when "reEvaluateRowSelectionAfterFilterChange" is called and we don't need to refresh the filtered dataset twice
+      if (requestRefreshFilteredRow === true) {
+        filteredDataContextIds = this.refreshFilteredRowSelections();
       }
+      filteredDataContextIds = this._selectedFilteredRowDataContextIds;
+
+      return { gridRowIndexes, dataContextIds, filteredDataContextIds };
     }
     return null;
   }
@@ -439,7 +437,7 @@ export class GridStateService {
    * @param grid
    */
   bindSlickGridColumnChangeEventToGridStateChange(eventName: string, grid: SlickGrid) {
-    const slickGridEvent = grid && grid[eventName];
+    const slickGridEvent = (grid as any)?.[eventName];
 
     if (slickGridEvent && typeof slickGridEvent.subscribe === 'function') {
       (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof slickGridEvent>>).subscribe(slickGridEvent, () => {

@@ -36,12 +36,12 @@ const DEFAULT_PAGE_SIZE = 20;
 
 export class GridOdataService implements BackendService {
   private _currentFilters: CurrentFilter[] = [];
-  private _currentPagination: CurrentPagination | null;
+  private _currentPagination: CurrentPagination | null = null;
   private _currentSorters: CurrentSorter[] = [];
-  private _columnDefinitions: Column[];
+  private _columnDefinitions: Column[] = [];
   private _grid: SlickGrid | undefined;
   private _odataService: OdataQueryBuilderService;
-  options: Partial<OdataOption>;
+  options?: Partial<OdataOption>;
   pagination: Pagination | undefined;
   defaultOptions: OdataOption = {
     top: DEFAULT_ITEMS_PER_PAGE,
@@ -68,7 +68,7 @@ export class GridOdataService implements BackendService {
     this._odataService = new OdataQueryBuilderService();
   }
 
-  init(serviceOptions: Partial<OdataOption>, pagination?: Pagination, grid?: SlickGrid): void {
+  init(serviceOptions?: Partial<OdataOption>, pagination?: Pagination, grid?: SlickGrid): void {
     this._grid = grid;
     const mergedOptions = { ...this.defaultOptions, ...serviceOptions };
 
@@ -183,7 +183,7 @@ export class GridOdataService implements BackendService {
   /*
    * FILTERING
    */
-  processOnFilterChanged(_event: Event, args: FilterChangedArgs): string {
+  processOnFilterChanged(_event: Event | undefined, args: FilterChangedArgs): string {
     const gridOptions: GridOption = this._gridOptions;
     const backendApi = gridOptions.backendServiceApi;
 
@@ -208,7 +208,7 @@ export class GridOdataService implements BackendService {
   /*
    * PAGINATION
    */
-  processOnPaginationChanged(_event: Event, args: PaginationChangedArgs) {
+  processOnPaginationChanged(_event: Event | undefined, args: PaginationChangedArgs) {
     const pageSize = +(args.pageSize || ((this.pagination) ? this.pagination.pageSize : DEFAULT_PAGE_SIZE));
     this.updatePagination(args.newPage, pageSize);
 
@@ -219,7 +219,7 @@ export class GridOdataService implements BackendService {
   /*
    * SORTING
    */
-  processOnSortChanged(_event: Event, args: SingleColumnSort | MultiColumnSort) {
+  processOnSortChanged(_event: Event | undefined, args: SingleColumnSort | MultiColumnSort) {
     const sortColumns = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ columnId: (args as ColumnSort).sortCol.id, sortCol: (args as ColumnSort).sortCol, sortAsc: (args as ColumnSort).sortAsc });
 
     // loop through all columns to inspect sorters & set the query
@@ -246,7 +246,7 @@ export class GridOdataService implements BackendService {
     // loop through all columns to inspect filters
     for (const columnId in columnFilters) {
       if (columnFilters.hasOwnProperty(columnId)) {
-        const columnFilter = columnFilters[columnId];
+        const columnFilter = (columnFilters as any)[columnId];
 
         // if user defined some "presets", then we need to find the filters from the column definitions instead
         let columnDef: Column | undefined;
@@ -520,7 +520,7 @@ export class GridOdataService implements BackendService {
    */
   private castFilterToColumnFilters(columnFilters: ColumnFilters | CurrentFilter[]): CurrentFilter[] {
     // keep current filters & always save it as an array (columnFilters can be an object when it is dealt by SlickGrid Filter)
-    const filtersArray: ColumnFilter[] = (typeof columnFilters === 'object') ? Object.keys(columnFilters).map(key => columnFilters[key]) : columnFilters;
+    const filtersArray: ColumnFilter[] = (typeof columnFilters === 'object') ? Object.keys(columnFilters).map(key => (columnFilters as any)[key]) : columnFilters;
 
     if (!Array.isArray(filtersArray)) {
       return [];

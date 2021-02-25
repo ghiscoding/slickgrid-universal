@@ -58,14 +58,14 @@ export class ExtensionService {
     // dispose of each control/plugin & reset the list
     for (const extensionName of Object.keys(this._extensionList)) {
       if (this._extensionList.hasOwnProperty(extensionName)) {
-        const extension = this._extensionList[extensionName] as ExtensionModel<any, any>;
+        const extension = this._extensionList[extensionName as keyof Record<ExtensionName, ExtensionModel<any, any>>] as ExtensionModel<any, any>;
         if (extension?.class?.dispose) {
           extension.class.dispose();
         }
       }
     }
     for (const key of Object.keys(this._extensionList)) {
-      delete this._extensionList[key];
+      delete this._extensionList[key as keyof Record<ExtensionName, ExtensionModel<any, any>>];
     }
   }
 

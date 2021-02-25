@@ -66,7 +66,7 @@ export class BindingHelper {
     elements.forEach(elm => {
       elm.textContent = '';
       if (elm && attribute in elm) {
-        elm[attribute] = value;
+        (elm as any)[attribute] = value;
       }
     });
   }

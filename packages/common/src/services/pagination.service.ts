@@ -26,16 +26,16 @@ export class PaginationService {
   private _backendServiceApi: BackendServiceApi | undefined;
   private _dataFrom = 1;
   private _dataTo = 1;
-  private _itemsPerPage: number;
+  private _itemsPerPage = 0;
   private _pageCount = 1;
   private _pageNumber = 1;
   private _totalItems = 0;
-  private _availablePageSizes: number[];
-  private _paginationOptions: Pagination;
+  private _availablePageSizes: number[] = [];
+  private _paginationOptions!: Pagination;
   private _subscriptions: Subscription[] = [];
 
   /** SlickGrid Grid object */
-  grid: SlickGrid;
+  grid!: SlickGrid;
 
   /** Constructor */
   constructor(private pubSubService: PubSubService, private sharedService: SharedService) { }

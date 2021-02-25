@@ -26,7 +26,8 @@
     "experimentalDecorators": true,
     "noEmitHelpers": false,
     "stripInternal": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "strict": true
   },
   "exclude": [
     "**/*.spec.ts"

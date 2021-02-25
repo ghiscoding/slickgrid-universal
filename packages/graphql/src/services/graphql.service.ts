@@ -41,9 +41,9 @@ const DEFAULT_PAGE_SIZE = 20;
 
 export class GraphqlService implements BackendService {
   private _currentFilters: ColumnFilters | CurrentFilter[] = [];
-  private _currentPagination: CurrentPagination | null;
+  private _currentPagination: CurrentPagination | null = null;
   private _currentSorters: CurrentSorter[] = [];
-  private _columnDefinitions: Column[];
+  private _columnDefinitions!: Column[];
   private _grid: SlickGrid | undefined;
   private _datasetIdPropName = 'id';
   options: GraphqlServiceOption | undefined;
@@ -64,7 +64,7 @@ export class GraphqlService implements BackendService {
   }
 
   /** Initialization of the service, which acts as a constructor */
-  init(serviceOptions: GraphqlServiceOption, pagination?: Pagination, grid?: SlickGrid): void {
+  init(serviceOptions?: GraphqlServiceOption, pagination?: Pagination, grid?: SlickGrid): void {
     this._grid = grid;
     this.options = serviceOptions || { datasetName: '' };
     this.pagination = pagination;
@@ -146,7 +146,8 @@ export class GraphqlService implements BackendService {
       };
 
       if (!this.options.isWithCursor) {
-        datasetFilters.offset = ((this.options.paginationOptions && this.options.paginationOptions.hasOwnProperty('offset')) ? +this.options.paginationOptions['offset'] : 0);
+        const paginationOptions = this.options?.paginationOptions;
+        datasetFilters.offset = paginationOptions?.hasOwnProperty('offset') ? +(paginationOptions as any)['offset'] : 0;
       }
     }
 
@@ -165,7 +166,7 @@ export class GraphqlService implements BackendService {
     if (this.options.extraQueryArguments) {
       // first: 20, ... userId: 123
       for (const queryArgument of this.options.extraQueryArguments) {
-        datasetFilters[queryArgument.field] = queryArgument.value;
+        (datasetFilters as any)[queryArgument.field] = queryArgument.value;
       }
     }
 
@@ -282,7 +283,7 @@ export class GraphqlService implements BackendService {
   /*
    * FILTERING
    */
-  processOnFilterChanged(_event: Event, args: FilterChangedArgs): string {
+  processOnFilterChanged(_event: Event | undefined, args: FilterChangedArgs): string {
     const gridOptions: GridOption = this._gridOptions;
     const backendApi = gridOptions.backendServiceApi;
 
@@ -332,7 +333,7 @@ export class GraphqlService implements BackendService {
    *     }
    *   }
    */
-  processOnPaginationChanged(_event: Event, args: PaginationChangedArgs): string {
+  processOnPaginationChanged(_event: Event | undefined, args: PaginationChangedArgs): string {
     const pageSize = +(args.pageSize || ((this.pagination) ? this.pagination.pageSize : DEFAULT_PAGE_SIZE));
     this.updatePagination(args.newPage, pageSize);
 
@@ -353,7 +354,7 @@ export class GraphqlService implements BackendService {
    *    }
    *  }
    */
-  processOnSortChanged(_event: Event, args: SingleColumnSort | MultiColumnSort): string {
+  processOnSortChanged(_event: Event | undefined, args: SingleColumnSort | MultiColumnSort): string {
     const sortColumns = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ columnId: (args as ColumnSort).sortCol.id, sortCol: (args as ColumnSort).sortCol, sortAsc: (args as ColumnSort).sortAsc });
 
     // loop through all columns to inspect sorters & set the query
@@ -378,7 +379,7 @@ export class GraphqlService implements BackendService {
 
     for (const columnId in columnFilters) {
       if (columnFilters.hasOwnProperty(columnId)) {
-        const columnFilter = columnFilters[columnId];
+        const columnFilter = (columnFilters as any)[columnId];
 
         // if user defined some "presets", then we need to find the filters from the column definitions instead
         let columnDef: Column | undefined;
@@ -619,7 +620,7 @@ export class GraphqlService implements BackendService {
    */
   private castFilterToColumnFilters(columnFilters: ColumnFilters | CurrentFilter[]): CurrentFilter[] {
     // keep current filters & always save it as an array (columnFilters can be an object when it is dealt by SlickGrid Filter)
-    const filtersArray: ColumnFilter[] = (typeof columnFilters === 'object') ? Object.keys(columnFilters).map(key => columnFilters[key]) : columnFilters;
+    const filtersArray: ColumnFilter[] = (typeof columnFilters === 'object') ? Object.keys(columnFilters).map(key => (columnFilters as any)[key]) : columnFilters;
 
     if (!Array.isArray(filtersArray)) {
       return [];

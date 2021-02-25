@@ -479,7 +479,7 @@ export class AutoCompleteEditor implements Editor {
       .appendTo(ul);
   }
 
-  renderDomElement(collection: any[]) {
+  renderDomElement(collection?: any[]) {
     if (!Array.isArray(collection)) {
       throw new Error('The "collection" passed to the Autocomplete Editor is not a valid array.');
     }

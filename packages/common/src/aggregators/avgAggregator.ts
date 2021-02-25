@@ -2,7 +2,7 @@ import { Aggregator } from './../interfaces/aggregator.interface';
 
 export class AvgAggregator implements Aggregator {
   private _nonNullCount = 0;
-  private _sum: number;
+  private _sum = 0;
   private _field: number | string;
   private _type = 'avg';
 

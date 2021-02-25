@@ -65,7 +65,7 @@ export class BindingService {
     if (Array.isArray(this.elementBindings)) {
       for (const binding of this.elementBindings) {
         if (binding?.element && binding?.attribute) {
-          binding.element[binding.attribute] = typeof val === 'string' ? this.sanitizeText(val) : val;
+          (binding.element as any)[binding.attribute] = typeof val === 'string' ? this.sanitizeText(val) : val;
         }
       }
     }
@@ -116,7 +116,7 @@ export class BindingService {
     if (element) {
       if (eventName) {
         const listener = () => {
-          const elmValue = element[attribute];
+          const elmValue = element[attribute as keyof Element];
           this.valueSetter(elmValue);
           if (this._binding.variable.hasOwnProperty(this._binding.property) || this._binding.property in this._binding.variable) {
             this._binding.variable[this._binding.property] = this.valueGetter();
@@ -133,7 +133,7 @@ export class BindingService {
         this._boundedEventWithListeners.push({ element, eventName, listener });
       }
       this.elementBindings.push(binding);
-      element[attribute] = typeof this._value === 'string' ? this.sanitizeText(this._value) : this._value;
+      (element as any)[attribute] = typeof this._value === 'string' ? this.sanitizeText(this._value) : this._value;
     }
   }
 

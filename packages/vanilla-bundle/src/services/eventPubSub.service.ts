@@ -30,12 +30,12 @@ export class EventPubSubService implements PubSubService {
     this.dispatchCustomEvent<T>(eventNameByConvention, data, true, false);
   }
 
-  subscribe<T = any>(eventName: string, callback: (data: T) => void): any {
+  subscribe<T = any>(eventName: string, callback: (data: any) => void): any {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
 
     // the event listener will return the data in the "event.detail", so we need to return its content to the final callback
     // basically we substitute the "data" with "event.detail" so that the user ends up with only the "data" result
-    this._elementSource.addEventListener(eventNameByConvention, (event: CustomEventInit<T>) => callback.call(null, event.detail));
+    this._elementSource.addEventListener(eventNameByConvention, (event: CustomEventInit<T>) => callback.call(null, event.detail as T));
     this._subscribedEvents.push({ name: eventNameByConvention, listener: callback });
   }
 

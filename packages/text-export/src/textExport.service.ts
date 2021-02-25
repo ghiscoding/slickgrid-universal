@@ -45,15 +45,15 @@ type ExportTextDownloadOption = {
 export class TextExportService implements ExternalResource, BaseTextExportService {
   private _delimiter = ',';
   private _exportQuoteWrapper = '';
-  private _exportOptions: TextExportOption;
+  private _exportOptions!: TextExportOption;
   private _fileFormat = FileType.csv;
   private _lineCarriageReturn = '\n';
-  private _grid: SlickGrid;
-  private _groupedColumnHeaders: Array<KeyTitlePair>;
-  private _columnHeaders: Array<KeyTitlePair>;
+  private _grid!: SlickGrid;
+  private _groupedColumnHeaders?: Array<KeyTitlePair>;
+  private _columnHeaders: Array<KeyTitlePair> = [];
   private _hasGroupedItems = false;
-  private _locales: Locale;
-  private _pubSubService: PubSubService | null;
+  private _locales!: Locale;
+  private _pubSubService!: PubSubService | null;
   private _translaterService: TranslaterService | undefined;
 
   /** ExcelExportService class name which is use to find service instance in the external registered services */

@@ -18,6 +18,7 @@ import {
   GlobalGridOptions,
   GridOption,
   Metrics,
+  MetricTexts,
   SlickDataView,
   SlickEventHandler,
   SlickGrid,
@@ -89,61 +90,61 @@ import { autoAddEditorFormatterToColumnsWithEditor } from './slick-vanilla-utili
 declare const Slick: SlickNamespace;
 
 export class SlickVanillaGridBundle {
-  protected _eventPubSubService: EventPubSubService;
-  private _columnDefinitions: Column[];
-  private _gridOptions: GridOption;
-  private _gridContainerElm: HTMLElement;
-  private _gridParentContainerElm: HTMLElement;
+  private _eventPubSubService!: EventPubSubService;
+  private _columnDefinitions!: Column[];
+  private _gridOptions!: GridOption;
+  private _gridContainerElm!: HTMLElement;
+  private _gridParentContainerElm!: HTMLElement;
   private _hideHeaderRowAfterPageLoad = false;
   private _isDatasetInitialized = false;
   private _isGridInitialized = false;
   private _isLocalGrid = true;
   private _isPaginationInitialized = false;
-  private _eventHandler: SlickEventHandler;
+  private _eventHandler!: SlickEventHandler;
   private _extensions: ExtensionList<any, any> | undefined;
   private _paginationOptions: Pagination | undefined;
   private _registeredResources: ExternalResource[] = [];
   private _slickgridInitialized = false;
   private _slickerGridInstances: SlickerGridInstance | undefined;
   backendServiceApi: BackendServiceApi | undefined;
-  dataView: SlickDataView;
-  slickGrid: SlickGrid;
-  metrics: Metrics;
+  dataView!: SlickDataView;
+  slickGrid!: SlickGrid;
+  metrics?: Metrics;
   customDataView = false;
-  paginationData: {
+  paginationData?: {
     gridOptions: GridOption;
     paginationService: PaginationService;
   };
   totalItems = 0;
-  groupItemMetadataProvider: SlickGroupItemMetadataProvider;
-  resizerService: ResizerService;
+  groupItemMetadataProvider?: SlickGroupItemMetadataProvider;
+  resizerService!: ResizerService;
   subscriptions: Subscription[] = [];
   showPagination = false;
 
   // extensions
-  extensionUtility: ExtensionUtility;
+  extensionUtility!: ExtensionUtility;
 
   // services
-  collectionService: CollectionService;
-  extensionService: ExtensionService;
-  filterService: FilterService;
-  gridEventService: GridEventService;
-  gridService: GridService;
-  gridStateService: GridStateService;
-  groupingService: GroupingAndColspanService;
-  paginationService: PaginationService;
-  sharedService: SharedService;
-  sortService: SortService;
+  collectionService!: CollectionService;
+  extensionService!: ExtensionService;
+  filterService!: FilterService;
+  gridEventService!: GridEventService;
+  gridService!: GridService;
+  gridStateService!: GridStateService;
+  groupingService!: GroupingAndColspanService;
+  paginationService!: PaginationService;
+  sharedService!: SharedService;
+  sortService!: SortService;
   translaterService: TranslaterService | undefined;
-  treeDataService: TreeDataService;
-  universalContainerService: UniversalContainerService;
+  treeDataService!: TreeDataService;
+  universalContainerService!: UniversalContainerService;
 
   slickCompositeEditor: SlickCompositeEditorComponent | undefined;
   slickEmptyWarning: SlickEmptyWarningComponent | undefined;
   slickFooter: SlickFooterComponent | undefined;
   slickPagination: SlickPaginationComponent | undefined;
-  gridClass: string;
-  gridClassName: string;
+  gridClass!: string;
+  gridClassName!: string;
 
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
@@ -443,15 +444,15 @@ export class SlickVanillaGridBundle {
 
     if (this.backendServiceApi) {
       for (const prop of Object.keys(this.backendServiceApi)) {
-        this.backendServiceApi[prop] = null;
+        (this.backendServiceApi as any)[prop] = null;
       }
       this.backendServiceApi = undefined;
     }
     for (const prop of Object.keys(this.columnDefinitions)) {
-      this.columnDefinitions[prop] = null;
+      (this.columnDefinitions as any)[prop] = null;
     }
     for (const prop of Object.keys(this.sharedService)) {
-      this.sharedService[prop] = null;
+      (this.sharedService as any)[prop] = null;
     }
     this.datasetHierarchical = undefined;
     this._columnDefinitions = [];
@@ -841,7 +842,7 @@ export class SlickVanillaGridBundle {
       // expose all Slick Grid Events through dispatch
       for (const prop in grid) {
         if (grid.hasOwnProperty(prop) && prop.startsWith('on')) {
-          const gridEventHandler = grid[prop];
+          const gridEventHandler = (grid as any)[prop];
           (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof gridEventHandler>>).subscribe(gridEventHandler, (event, args) => {
             const gridEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions?.defaultSlickgridEventPrefix || '');
             return this._eventPubSubService.dispatchCustomEvent(gridEventName, { eventData: event, args });
@@ -852,7 +853,7 @@ export class SlickVanillaGridBundle {
       // expose all Slick DataView Events through dispatch
       for (const prop in dataView) {
         if (dataView.hasOwnProperty(prop) && prop.startsWith('on')) {
-          const dataViewEventHandler = dataView[prop];
+          const dataViewEventHandler = (dataView as any)[prop];
           (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof dataViewEventHandler>>).subscribe(dataViewEventHandler, (event, args) => {
             const dataViewEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions?.defaultSlickgridEventPrefix || '');
             return this._eventPubSubService.dispatchCustomEvent(dataViewEventName, { eventData: event, args });
@@ -1326,7 +1327,7 @@ export class SlickVanillaGridBundle {
       for (const propName of Object.keys(customFooterOptions.metricTexts)) {
         if (propName.lastIndexOf('Key') > 0) {
           const propNameWithoutKey = propName.substring(0, propName.lastIndexOf('Key'));
-          customFooterOptions.metricTexts[propNameWithoutKey] = this.translaterService.translate(customFooterOptions.metricTexts[propName] || ' ');
+          customFooterOptions.metricTexts[propNameWithoutKey as keyof MetricTexts] = this.translaterService.translate(customFooterOptions.metricTexts[propName as keyof MetricTexts] || ' ');
         }
       }
     }
