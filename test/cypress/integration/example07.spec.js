@@ -9,7 +9,6 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     cy.get('h3').should('contain', 'Example 07 - Row Move & Row Selections');
   });
 
-
   it('should have exact Column Titles in the grid', () => {
     cy.get('.grid7')
       .find('.slick-header-columns')
