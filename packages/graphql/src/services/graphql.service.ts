@@ -43,7 +43,7 @@ export class GraphqlService implements BackendService {
   private _currentFilters: ColumnFilters | CurrentFilter[] = [];
   private _currentPagination: CurrentPagination | null = null;
   private _currentSorters: CurrentSorter[] = [];
-  private _columnDefinitions: Column[] = [];
+  private _columnDefinitions!: Column[];
   private _grid: SlickGrid | undefined;
   private _datasetIdPropName = 'id';
   options: GraphqlServiceOption | undefined;
