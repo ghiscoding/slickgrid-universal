@@ -1,7 +1,7 @@
 import * as DOMPurify_ from 'dompurify';
 import * as moment_ from 'moment-mini';
 const DOMPurify = DOMPurify_; // patch to fix rollup to work
-const moment = moment_['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
+const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 import { FieldType, OperatorString, OperatorType } from '../enums/index';
 import { GridOption } from '../interfaces/index';
@@ -15,7 +15,7 @@ import { GridOption } from '../interfaces/index';
 export function addToArrayWhenNotExists<T = any>(inputArray: T[], inputItem: T, itemIdPropName = 'id') {
   let arrayRowIndex = -1;
   if (typeof inputItem === 'object' && itemIdPropName in inputItem) {
-    arrayRowIndex = inputArray.findIndex((item) => item[itemIdPropName] === inputItem[itemIdPropName]);
+    arrayRowIndex = inputArray.findIndex((item) => (item as any)[itemIdPropName] === (inputItem as any)[itemIdPropName]);
   } else {
     arrayRowIndex = inputArray.findIndex((item) => item === inputItem);
   }
@@ -67,16 +67,16 @@ export function convertParentChildArrayToHierarchicalView<T = any>(flatArray: T[
   // make them accessible by guid on this map
   const all = {};
 
-  inputArray.forEach((item) => all[item[identifierPropName]] = item);
+  inputArray.forEach((item) => (all as any)[(item as any)[identifierPropName]] = item);
 
   // connect childrens to its parent, and split roots apart
   Object.keys(all).forEach((id) => {
-    const item = all[id];
+    const item = (all as any)[id];
     if (item[parentPropName] === null || !item.hasOwnProperty(parentPropName)) {
       delete item[parentPropName];
       roots.push(item);
     } else if (item[parentPropName] in all) {
-      const p = all[item[parentPropName]];
+      const p = (all as any)[item[parentPropName]];
       if (!(childrenPropName in p)) {
         p[childrenPropName] = [];
       }
@@ -124,18 +124,18 @@ export function convertHierarchicalViewToParentChildArrayByReference<T = any>(hi
   if (Array.isArray(hierarchicalArray)) {
     for (const item of hierarchicalArray) {
       if (item) {
-        const itemExist = outputArrayRef.some((itm: T) => itm[identifierPropName] === item[identifierPropName]);
+        const itemExist = outputArrayRef.some((itm: T) => (itm as any)[identifierPropName] === (item as any)[identifierPropName]);
         if (!itemExist) {
-          item[treeLevelPropName] = treeLevel; // save tree level ref
-          item[parentPropName] = parentId || null;
+          (item as any)[treeLevelPropName] = treeLevel; // save tree level ref
+          (item as any)[parentPropName] = parentId || null;
           outputArrayRef.push(item);
         }
-        if (Array.isArray(item[childrenPropName])) {
+        if (Array.isArray((item as any)[childrenPropName])) {
           treeLevel++;
-          convertHierarchicalViewToParentChildArrayByReference(item[childrenPropName], outputArrayRef, options, treeLevel, item[identifierPropName]);
+          convertHierarchicalViewToParentChildArrayByReference((item as any)[childrenPropName], outputArrayRef, options, treeLevel, (item as any)[identifierPropName]);
           treeLevel--;
-          item[hasChildrenFlagPropName] = true;
-          delete item[childrenPropName]; // remove the children property
+          (item as any)[hasChildrenFlagPropName] = true;
+          delete (item as any)[childrenPropName]; // remove the children property
         }
       }
     }
@@ -164,7 +164,7 @@ export function debounce<F extends ((...args: any[]) => any | void)>(func: F, wa
  * @param  {Array|Object} objectOrArray The array or object to copy
  * @return {Array|Object}     The clone of the array or object
  */
-export function deepCopy(objectOrArray: any) {
+export function deepCopy(objectOrArray: any | any[]): any | any[] {
   /**
    * Create an immutable copy of an object
    * @return {Object}
@@ -177,7 +177,7 @@ export function deepCopy(objectOrArray: any) {
     // Recursively copy it's value and add to the clone
     for (const key in objectOrArray) {
       if (Object.prototype.hasOwnProperty.call(objectOrArray, key)) {
-        clone[key] = deepCopy(objectOrArray[key]);
+        (clone as any)[key] = deepCopy(objectOrArray[key]);
       }
     }
     return clone;
@@ -223,6 +223,22 @@ export function emptyElement<T extends HTMLElement = HTMLElement>(element?: T): 
 }
 
 /**
+ * Empty an object properties by looping through them all and deleting them
+ * @param obj - input object
+ */
+export function emptyObject(obj: any) {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      delete obj[key];
+    }
+  }
+  obj = null;
+  obj = {};
+
+  return obj;
+}
+
+/**
  * Find an item from a hierarchical view structure (a parent that can have children array which themseleves can children and so on)
  * @param hierarchicalArray
  * @param predicate
@@ -233,14 +249,14 @@ export function findItemInHierarchicalStructure<T = any>(hierarchicalArray: T[],
     throw new Error('findRecursive requires parameter "childrenPropertyName"');
   }
   const initialFind = hierarchicalArray.find(predicate);
-  const elementsWithChildren = hierarchicalArray.filter((x: T) => childrenPropertyName in x && x[childrenPropertyName]);
+  const elementsWithChildren = hierarchicalArray.filter((x: T) => childrenPropertyName in x && (x as any)[childrenPropertyName]);
   if (initialFind) {
     return initialFind;
   } else if (elementsWithChildren.length) {
     const childElements: T[] = [];
     elementsWithChildren.forEach((item: T) => {
       if (childrenPropertyName in item) {
-        childElements.push(...item[childrenPropertyName]);
+        childElements.push(...(item as any)[childrenPropertyName]);
       }
     });
     return findItemInHierarchicalStructure<T>(childElements, predicate, childrenPropertyName);
@@ -261,7 +277,7 @@ export function htmlEncode(inputValue: string): string {
     '"': '&quot;',
     '\'': '&#39;'
   };
-  return (inputValue || '').toString().replace(/[&<>"']/g, (s) => entityMap[s]);
+  return (inputValue || '').toString().replace(/[&<>"']/g, (s) => (entityMap as any)[s]);
 }
 
 /**
@@ -424,7 +440,7 @@ export function getDescendantProperty<T = any>(object: T, path: string | undefin
   if (!object || !path) {
     return object;
   }
-  return path.split('.').reduce((obj, prop) => obj && obj[prop], object);
+  return path.split('.').reduce((obj, prop) => obj && (obj as any)[prop], object);
 }
 
 /** Get I18N Translation Prefix, defaults to an empty string */
@@ -854,13 +870,13 @@ export function setDeepValue<T = any>(obj: T, path: string | string[], value: an
     const e = path.shift();
     if (obj && e !== undefined) {
       setDeepValue(
-        obj[e] = Object.prototype.toString.call(obj[e]) === '[object Object]' ? obj[e] : {},
+        (obj as any)[e] = Object.prototype.toString.call((obj as any)[e]) === '[object Object]' ? (obj as any)[e] : {},
         path,
         value
       );
     }
   } else if (obj && path[0]) {
-    obj[path[0]] = value;
+    (obj as any)[path[0]] = value;
   }
 }
 

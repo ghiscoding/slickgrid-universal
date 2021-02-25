@@ -143,6 +143,12 @@ export interface Locale {
   /** Text "Remove Sort" shown in Header Menu */
   TEXT_REMOVE_SORT: string;
 
+  /** Text "Reset Input Value" optionally shown in the Composite Editor Modal beside each editor */
+  TEXT_RESET_INPUT_VALUE?: string;
+
+  /** Text "Reset Form" optionally shown in the Composite Editor Modal */
+  TEXT_RESET_FORM?: string;
+
   /** Text "Save" shown in the Long Text Editor dialog */
   TEXT_SAVE: string;
 

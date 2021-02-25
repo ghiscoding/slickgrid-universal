@@ -90,6 +90,13 @@ export class Example12 {
   isMassSelectionDisabled = true;
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
+  complexityLevelList = [
+    { value: 0, label: 'Very Simple' },
+    { value: 1, label: 'Simple' },
+    { value: 2, label: 'Straightforward' },
+    { value: 3, label: 'Complex' },
+    { value: 4, label: 'Very Complex' },
+  ];
 
   get slickerGridInstance(): SlickerGridInstance {
     return this.sgb?.instances;
@@ -174,31 +181,21 @@ export class Example12 {
           massUpdate: true, minValue: 0, maxValue: 100,
         },
       },
-      // {
-      //   id: 'percentComplete2', name: '% Complete', field: 'analysis.percentComplete', minWidth: 100,
-      //   type: FieldType.number,
-      //   sortable: true, filterable: true, columnGroup: 'Analysis',
-      //   filter: { model: Filters.compoundSlider, operator: '>=' },
-      //   formatter: Formatters.complex,
-      //   exportCustomFormatter: Formatters.complex, // without the Editing cell Formatter
-      //   editor: {
-      //     model: Editors.singleSelect,
-      //     serializeComplexValueFormat: 'flat', // if we keep "object" as the default it will apply { value: 2, label: 2 } which is not what we want in this case
-      //     collection: Array.from(Array(101).keys()).map(k => ({ value: k, label: k })),
-      //     collectionOptions: {
-      //       addCustomFirstEntry: { value: '', label: '--none--' }
-      //     },
-      //     collectionOverride: (_collectionInput, args) => {
-      //       const originalCollection = args.originalCollections || [];
-      //       const duration = args?.dataContext?.duration ?? args?.compositeEditorOptions?.formValues?.duration;
-      //       if (duration === 10) {
-      //         return originalCollection.filter(itemCollection => +itemCollection.value !== 1);
-      //       }
-      //       return originalCollection;
-      //     },
-      //     massUpdate: true, minValue: 0, maxValue: 100,
-      //   },
-      // },
+      {
+        id: 'complexity', name: 'Complexity', field: 'complexity', minWidth: 100,
+        type: FieldType.number,
+        sortable: true, filterable: true, columnGroup: 'Analysis',
+        formatter: (_row, _cell, value) => this.complexityLevelList[value].label,
+        filter: {
+          model: Filters.multipleSelect,
+          collection: this.complexityLevelList
+        },
+        editor: {
+          model: Editors.singleSelect,
+          collection: this.complexityLevelList,
+          massUpdate: true
+        },
+      },
       {
         id: 'start', name: 'Start', field: 'start', sortable: true, minWidth: 100,
         formatter: Formatters.dateUs, columnGroup: 'Period',
@@ -451,6 +448,7 @@ export class Example12 {
         analysis: {
           percentComplete: percentCompletion,
         },
+        complexity: i % 3 ? 0 : 2,
         start: new Date(randomYear, randomMonth, randomDay, randomDay, randomTime, randomTime, randomTime),
         finish: (isCompleted || (i % 3 === 0 && (randomFinish > new Date() && i > 3)) ? (isCompleted ? new Date() : randomFinish) : ''), // make sure the random date is earlier than today and it's index is bigger than 3
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
@@ -897,6 +895,8 @@ export class Example12 {
         // showCloseButtonOutside: true,
         // backdrop: null,
         // viewColumnLayout: 2, // responsive layout, choose from 'auto', 1, 2, or 3 (defaults to 'auto')
+        showFormResetButton: true,
+        // showResetButtonOnEachEditor: true,
         onClose: () => Promise.resolve(confirm('You have unsaved changes, are you sure you want to close this window?')),
         onError: (error) => alert(error.message),
         onSave: (formValues, _selection, dataContext) => {

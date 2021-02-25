@@ -7,7 +7,7 @@ import { SharedService } from '../services/shared.service';
 declare const Slick: SlickNamespace;
 
 export class RowSelectionExtension implements Extension {
-  private _addon: SlickRowSelectionModel | null;
+  private _addon: SlickRowSelectionModel | null = null;
 
   constructor(private readonly sharedService: SharedService) { }
 

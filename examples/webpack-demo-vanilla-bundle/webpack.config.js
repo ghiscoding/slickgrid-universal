@@ -42,9 +42,6 @@ module.exports = ({ production } = {}) => ({
     extensions: ['.ts', '.js'],
     modules: [srcDir, 'node_modules'],
     mainFields: ['browser', 'module', 'main'],
-    alias: {
-      moment: 'moment/moment.js'
-    },
     fallback: {
       http: false,
       https: false,

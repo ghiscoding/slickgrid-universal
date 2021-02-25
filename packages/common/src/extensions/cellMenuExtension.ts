@@ -22,10 +22,10 @@ import { TranslaterService } from '../services';
 declare const Slick: SlickNamespace;
 
 export class CellMenuExtension implements Extension {
-  private _addon: SlickCellMenu | null;
-  private _cellMenuOptions: CellMenu | null;
+  private _addon: SlickCellMenu | null = null;
+  private _cellMenuOptions: CellMenu | null = null;
   private _eventHandler: SlickEventHandler;
-  private _locales: Locale;
+  private _locales!: Locale;
 
   constructor(
     private readonly extensionUtility: ExtensionUtility,

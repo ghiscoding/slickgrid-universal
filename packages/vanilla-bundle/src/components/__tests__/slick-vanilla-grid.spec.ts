@@ -36,6 +36,7 @@ import {
   TranslaterService,
   SlickEditorLock,
   Formatter,
+  OnSetItemsCalledEventArgs,
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
@@ -200,6 +201,7 @@ const mockDataView = {
   mapRowsToIds: jest.fn(),
   onRowsChanged: new MockSlickEvent<OnRowsChangedEventArgs>(),
   onRowsOrCountChanged: new MockSlickEvent<OnRowsOrCountChangedEventArgs>(),
+  onSetItemsCalled: new MockSlickEvent<OnSetItemsCalledEventArgs>(),
   reSort: jest.fn(),
   setItems: jest.fn(),
   syncGridSelection: jest.fn(),
@@ -1685,6 +1687,26 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
         const footerSpy = jest.spyOn(component.slickFooter, 'metrics', 'set');
         mockDataView.onRowsOrCountChanged.notify({ currentRowCount: 2, dataView: mockDataView, itemCount: 2, previousRowCount: 1, rowCountChanged: false, rowsChanged: false, rowsDiff: [2] });
+
+        expect(invalidateSpy).toHaveBeenCalled();
+        expect(component.metrics).toEqual(expectation);
+        expect(footerSpy).toHaveBeenCalledWith(expectation);
+      });
+
+      it('should have custom footer with metrics when the DataView "onSetItemsCalled" event is triggered', () => {
+        const invalidateSpy = jest.spyOn(mockGrid, 'invalidate');
+        const expectation = {
+          startTime: expect.toBeDate(),
+          endTime: expect.toBeDate(),
+          itemCount: 0,
+          totalItemCount: 0
+        };
+        jest.spyOn(mockDataView, 'getLength').mockReturnValue(0);
+
+        component.gridOptions = { enablePagination: false, showCustomFooter: true };
+        component.initialization(divContainer, slickEventHandler);
+        const footerSpy = jest.spyOn(component.slickFooter, 'metrics', 'set');
+        mockDataView.onSetItemsCalled.notify({ idProperty: 'id', itemCount: 0 });
 
         expect(invalidateSpy).toHaveBeenCalled();
         expect(component.metrics).toEqual(expectation);

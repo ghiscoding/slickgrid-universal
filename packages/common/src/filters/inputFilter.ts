@@ -14,10 +14,10 @@ export class InputFilter implements Filter {
   protected _shouldTriggerQuery = true;
   protected _inputType = 'text';
   protected $filterElm: any;
-  grid: SlickGrid;
-  searchTerms: SearchTerm[];
-  columnDef: Column;
-  callback: FilterCallback;
+  grid!: SlickGrid;
+  searchTerms: SearchTerm[] = [];
+  columnDef!: Column;
+  callback!: FilterCallback;
 
   constructor() { }
 
@@ -108,7 +108,7 @@ export class InputFilter implements Filter {
   }
 
   /** Set value(s) on the DOM element */
-  setValues(values: SearchTerm, operator?: OperatorType | OperatorString) {
+  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString) {
     if (values) {
       this.$filterElm.val(values);
     }

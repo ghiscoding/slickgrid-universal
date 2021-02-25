@@ -1,7 +1,7 @@
 import { Aggregator } from './../interfaces/aggregator.interface';
 
 export class MinAggregator implements Aggregator {
-  private _min: number | null;
+  private _min: number | null = null;
   private _field: number | string;
   private _type = 'min';
 

@@ -641,6 +641,7 @@ describe('AutoCompleteEditor', () => {
         expect(output).toBe(false);
         expect(commitEditSpy).not.toHaveBeenCalled();
         expect(spySetValue).toHaveBeenCalledWith('female');
+        expect(editor.isValueTouched()).toBe(true);
       });
 
       it('should expect "setValue" and "autoCommitEdit" to have been called with a string when item provided is a string', () => {
@@ -663,6 +664,7 @@ describe('AutoCompleteEditor', () => {
         expect(output).toBe(false);
         expect(commitEditSpy).toHaveBeenCalled();
         expect(spySetValue).toHaveBeenCalledWith('female');
+        expect(editor.isValueTouched()).toBe(true);
       });
 
       it('should expect "setValue" and "autoCommitEdit" to have been called with the string label when item provided is an object', () => {
@@ -678,6 +680,7 @@ describe('AutoCompleteEditor', () => {
         expect(output).toBe(false);
         expect(commitEditSpy).toHaveBeenCalled();
         expect(spySetValue).toHaveBeenCalledWith('Female');
+        expect(editor.isValueTouched()).toBe(true);
       });
 
       it('should expect the "onSelect" method to be called when the callback method is triggered when user provide his own filterOptions', () => {
@@ -690,6 +693,7 @@ describe('AutoCompleteEditor', () => {
         editor.autoCompleteOptions.select!(event, { item: 'fem' });
 
         expect(spy).toHaveBeenCalledWith(event, { item: 'fem' });
+        expect(editor.isValueTouched()).toBe(true);
       });
 
       it('should expect the "onSelect" method to be called when the callback method is triggered', () => {
@@ -703,6 +707,7 @@ describe('AutoCompleteEditor', () => {
         editor.autoCompleteOptions.select!(event, { item: 'fem' });
 
         expect(spy).toHaveBeenCalledWith(event, { item: 'fem' });
+        expect(editor.isValueTouched()).toBe(true);
       });
 
       it('should initialize the editor with editorOptions and expect the "onSelect" method to be called when the callback method is triggered', () => {
@@ -720,6 +725,7 @@ describe('AutoCompleteEditor', () => {
 
         expect(onSelectSpy).toHaveBeenCalledWith(event, { item: 'fem' });
         expect(focusSpy).toHaveBeenCalled();
+        expect(editor.isValueTouched()).toBe(true);
       });
     });
 

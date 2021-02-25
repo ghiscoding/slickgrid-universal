@@ -8,8 +8,8 @@ import { SharedService } from '../services/shared.service';
 declare const Slick: SlickNamespace;
 
 export class CheckboxSelectorExtension implements Extension {
-  private _addon: SlickCheckboxSelectColumn | null;
-  private _rowSelectionPlugin: SlickRowSelectionModel;
+  private _addon: SlickCheckboxSelectColumn | null = null;
+  private _rowSelectionPlugin!: SlickRowSelectionModel;
 
   constructor(private readonly sharedService: SharedService) { }
 

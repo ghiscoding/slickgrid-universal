@@ -20,19 +20,19 @@ const DEFAULT_STEP = 1;
 
 export class CompoundSliderFilter implements Filter {
   protected _clearFilterTriggered = false;
-  protected _currentValue: number;
+  protected _currentValue?: number;
   protected _shouldTriggerQuery = true;
   protected _elementRangeInputId = '';
   protected _elementRangeOutputId = '';
-  protected _operator: OperatorType | OperatorString;
+  protected _operator?: OperatorType | OperatorString;
   protected $containerInputGroupElm: any;
   protected $filterElm: any;
   protected $filterInputElm: any;
   protected $selectOperatorElm: any;
-  grid: SlickGrid;
-  searchTerms: SearchTerm[];
-  columnDef: Column;
-  callback: FilterCallback;
+  grid!: SlickGrid;
+  searchTerms: SearchTerm[] = [];
+  columnDef!: Column;
+  callback!: FilterCallback;
 
   constructor(protected readonly translaterService: TranslaterService) { }
 
@@ -161,7 +161,7 @@ export class CompoundSliderFilter implements Filter {
    * Get selected value retrieved from the slider element
    * @params selected items
    */
-  getValues(): number {
+  getValues(): number | undefined {
     return this._currentValue;
   }
 
@@ -223,7 +223,7 @@ export class CompoundSliderFilter implements Filter {
       const translationPrefix = getTranslationPrefix(this.gridOptions);
       return this.translaterService.translate(`${translationPrefix}${translationKey}`);
     }
-    return this.locales?.[localeText] ?? defaultText;
+    return this.locales?.[localeText as keyof Locale] ?? defaultText;
   }
 
   /**

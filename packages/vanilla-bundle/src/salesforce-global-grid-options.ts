@@ -9,7 +9,9 @@ export const SalesforceGlobalGridOptions = {
     labels: {
       massSelectionButton: 'Apply to Selected & Save',
       massUpdateButton: 'Apply to All & Save'
-    }
+    },
+    resetEditorButtonCssClass: 'mdi mdi-refresh mdi-15px mdi-v-align-text-top',
+    resetFormButtonIconCssClass: 'mdi mdi-refresh mdi-16px mdi-flip-h mdi-v-align-text-top'
   },
   datasetIdPropertyName: 'Id',
   defaultFilterPlaceholder: '',
@@ -40,7 +42,7 @@ export const SalesforceGlobalGridOptions = {
     iconSortAscCommand: 'fa fa-sort-amount-asc mdi mdi-arrow-up',
     iconSortDescCommand: 'fa fa-sort-amount-desc mdi mdi-arrow-down',
   },
-  sanitizer: (dirtyHtml) => (dirtyHtml.replace(/(\b)(on\S+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script([<>]*)/gi, '')),
+  sanitizer: (dirtyHtml: string) => (dirtyHtml.replace(/(\b)(on\S+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script([<>]*)/gi, '')),
   showCustomFooter: true,
   customFooterOptions: {
     hideMetrics: false,

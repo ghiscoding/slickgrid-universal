@@ -30,6 +30,8 @@ declare const Slick: SlickNamespace;
  * Slickgrid editor class for multiple/single select lists
  */
 export class SelectEditor implements Editor {
+  protected _isValueTouched = false;
+
   /** Locales */
   protected _locales: Locale;
 
@@ -38,10 +40,10 @@ export class SelectEditor implements Editor {
   protected _destroying = false;
 
   /** Collection Service */
-  protected _collectionService: CollectionService;
+  protected _collectionService!: CollectionService;
 
   /** The translate library */
-  protected _translaterService: TranslaterService;
+  protected _translaterService?: TranslaterService;
 
   /** The JQuery DOM element */
   $editorElm: any;
@@ -50,7 +52,7 @@ export class SelectEditor implements Editor {
   disabled = false;
 
   /** Editor Multiple-Select options */
-  editorElmOptions: MultipleSelectOption;
+  editorElmOptions!: MultipleSelectOption;
 
   /** DOM Element Name, useful for auto-detecting positioning (dropup / dropdown) */
   elementName: string;
@@ -62,25 +64,25 @@ export class SelectEditor implements Editor {
   originalValue: any | any[];
 
   /** The property name for labels in the collection */
-  labelName: string;
+  labelName!: string;
 
   /** The property name for a prefix that can be added to the labels in the collection */
-  labelPrefixName: string;
+  labelPrefixName!: string;
 
   /** The property name for a suffix that can be added to the labels in the collection */
-  labelSuffixName: string;
+  labelSuffixName!: string;
 
   /** A label that can be added to each option and can be used as an alternative to display selected options */
-  optionLabel: string;
+  optionLabel!: string;
 
   /** The property name for values in the collection */
-  valueName: string;
+  valueName!: string;
 
   /** Grid options */
   gridOptions: GridOption;
 
   /** Do we translate the label? */
-  enableTranslateLabel: boolean;
+  enableTranslateLabel = false;
 
   /** SlickGrid Grid object */
   grid: SlickGrid;
@@ -120,6 +122,9 @@ export class SelectEditor implements Editor {
         const isRenderHtmlEnabled = this.columnEditor?.enableRenderHtml ?? false;
         return isRenderHtmlEnabled ? $elm.text() : $elm.html();
       },
+      onClick: () => this._isValueTouched = true,
+      onCheckAll: () => this._isValueTouched = true,
+      onUncheckAll: () => this._isValueTouched = true,
       onClose: () => {
         if (compositeEditorOptions) {
           this.handleChangeOnCompositeEditor(compositeEditorOptions);
@@ -135,7 +140,7 @@ export class SelectEditor implements Editor {
       libOptions.okButton = true;
       libOptions.selectAllDelimiter = ['', ''];
 
-      if (this._translaterService && this._translaterService.translate && this._translaterService.getCurrentLanguage && this._translaterService.getCurrentLanguage()) {
+      if (this._translaterService && this._translaterService.getCurrentLanguage && this._translaterService.getCurrentLanguage()) {
         const translationPrefix = getTranslationPrefix(this.gridOptions);
         libOptions.countSelected = this._translaterService.translate(`${translationPrefix}X_OF_Y_SELECTED`);
         libOptions.allSelected = this._translaterService.translate(`${translationPrefix}ALL_SELECTED`);
@@ -222,8 +227,8 @@ export class SelectEditor implements Editor {
         }
 
         // also translate prefix/suffix if enableTranslateLabel is true and text is a string
-        prefixText = (this.enableTranslateLabel && prefixText && typeof prefixText === 'string') ? this._translaterService.translate(prefixText || ' ') : prefixText;
-        suffixText = (this.enableTranslateLabel && suffixText && typeof suffixText === 'string') ? this._translaterService.translate(suffixText || ' ') : suffixText;
+        prefixText = (this.enableTranslateLabel && this._translaterService && prefixText && typeof prefixText === 'string') ? this._translaterService.translate(prefixText || ' ') : prefixText;
+        suffixText = (this.enableTranslateLabel && this._translaterService && suffixText && typeof suffixText === 'string') ? this._translaterService.translate(suffixText || ' ') : suffixText;
 
         if (isIncludingPrefixSuffix) {
           const tmpOptionArray = [prefixText, labelText, suffixText].filter((text) => text); // add to a temp array for joining purpose and filter out empty text
@@ -265,8 +270,8 @@ export class SelectEditor implements Editor {
           let suffixText = itemFound[this.labelSuffixName] || '';
 
           // also translate prefix/suffix if enableTranslateLabel is true and text is a string
-          prefixText = (this.enableTranslateLabel && prefixText && typeof prefixText === 'string') ? this._translaterService.translate(prefixText || ' ') : prefixText;
-          suffixText = (this.enableTranslateLabel && suffixText && typeof suffixText === 'string') ? this._translaterService.translate(suffixText || ' ') : suffixText;
+          prefixText = (this.enableTranslateLabel && this._translaterService && prefixText && typeof prefixText === 'string') ? this._translaterService.translate(prefixText || ' ') : prefixText;
+          suffixText = (this.enableTranslateLabel && this._translaterService && suffixText && typeof suffixText === 'string') ? this._translaterService.translate(suffixText || ' ') : suffixText;
 
           // add to a temp array for joining purpose and filter out empty text
           const tmpOptionArray = [prefixText, labelText, suffixText].filter((text) => text);
@@ -444,19 +449,6 @@ export class SelectEditor implements Editor {
     this.$editorElm.multipleSelect('setSelects', [currentValue]);
   }
 
-  save() {
-    const validation = this.validate();
-    const isValid = validation?.valid ?? false;
-
-    if (!this._destroying && this.hasAutoCommitEdit && isValid) {
-      // do not use args.commitChanges() as this sets the focus to the next row.
-      // also the select list will stay shown when clicking off the grid
-      this.grid.getEditorLock().commitCurrentEdit();
-    } else {
-      this.args.commitChanges();
-    }
-  }
-
   serializeValue(): any | any[] {
     return (this.isMultipleSelect) ? this.currentValues : this.currentValue;
   }
@@ -490,9 +482,7 @@ export class SelectEditor implements Editor {
         const currentValues: any | any[] = this.getValue();
         const isValueBlank = this.isMultipleSelect ? currentValues === [''] : currentValues === '';
         if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions && !isValueBlank) {
-          this.originalValue = this.isMultipleSelect ? [''] : '';
-          this.$editorElm.multipleSelect('setSelects', []);
-          this.handleChangeOnCompositeEditor(this.args.compositeEditorOptions);
+          this.reset('', true, true);
         }
       } else {
         this.$editorElm.multipleSelect('enable');
@@ -507,14 +497,53 @@ export class SelectEditor implements Editor {
   }
 
   isValueChanged(): boolean {
+    const valueSelection = this.$editorElm.multipleSelect('getSelects');
     if (this.isMultipleSelect) {
-      return !dequal(this.$editorElm.val(), this.originalValue);
+      const isEqual = dequal(valueSelection, this.originalValue);
+      return !isEqual;
     }
-    const isChanged = this.$editorElm.val() !== this.originalValue;
-    return isChanged;
+    const value = Array.isArray(valueSelection) && valueSelection.length > 0 ? valueSelection[0] : undefined;
+    return value !== this.originalValue;
   }
 
-  validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
+  isValueTouched(): boolean {
+    return this._isValueTouched;
+  }
+
+  /**
+   * You can reset or clear the input value,
+   * when no value is provided it will use the original value to reset (could be useful with Composite Editor Modal with edit/clone)
+   */
+  reset(value?: string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
+    const inputValue = value ?? this.originalValue;
+    if (this.$editorElm) {
+      this.originalValue = this.isMultipleSelect ? (inputValue !== undefined ? [inputValue] : []) : inputValue;
+      const selection = this.originalValue === undefined ? [] : [this.originalValue];
+      this.$editorElm.multipleSelect('setSelects', selection);
+    }
+    this._isValueTouched = false;
+
+    const compositeEditorOptions = this.args.compositeEditorOptions;
+    if (compositeEditorOptions && triggerCompositeEventWhenExist) {
+      const shouldDeleteFormValue = !clearByDisableCommand;
+      this.handleChangeOnCompositeEditor(compositeEditorOptions, 'user', shouldDeleteFormValue);
+    }
+  }
+
+  save() {
+    const validation = this.validate();
+    const isValid = validation?.valid ?? false;
+
+    if (!this._destroying && this.hasAutoCommitEdit && isValid) {
+      // do not use args.commitChanges() as this sets the focus to the next row.
+      // also the select list will stay shown when clicking off the grid
+      this.grid.getEditorLock().commitCurrentEdit();
+    } else {
+      this.args.commitChanges();
+    }
+  }
+
+  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     const isRequired = this.args?.compositeEditorOptions ? false : this.columnEditor?.required;
     const elmValue = (inputValue !== undefined) ? inputValue : this.$editorElm && this.$editorElm.val && this.$editorElm.val();
     const errorMsg = this.columnEditor && this.columnEditor.errorMessage;
@@ -680,7 +709,7 @@ export class SelectEditor implements Editor {
             '{ collection: [ { value: \'1\', label: \'One\' } ])');
         }
         const labelKey = (option.labelKey || option[this.labelName]) as string;
-        const labelText = ((option.labelKey || this.enableTranslateLabel) && labelKey) ? this._translaterService.translate(labelKey || ' ') : labelKey;
+        const labelText = ((option.labelKey || (this.enableTranslateLabel && this._translaterService)) && labelKey) ? this._translaterService?.translate(labelKey || ' ') : labelKey;
         let prefixText = option[this.labelPrefixName] || '';
         let suffixText = option[this.labelSuffixName] || '';
         let optionLabel = option[this.optionLabel] || '';
@@ -689,9 +718,9 @@ export class SelectEditor implements Editor {
         }
 
         // also translate prefix/suffix if enableTranslateLabel is true and text is a string
-        prefixText = (this.enableTranslateLabel && prefixText && typeof prefixText === 'string') ? this._translaterService.translate(prefixText || ' ') : prefixText;
-        suffixText = (this.enableTranslateLabel && suffixText && typeof suffixText === 'string') ? this._translaterService.translate(suffixText || ' ') : suffixText;
-        optionLabel = (this.enableTranslateLabel && optionLabel && typeof optionLabel === 'string') ? this._translaterService.translate(optionLabel || ' ') : optionLabel;
+        prefixText = (this.enableTranslateLabel && this._translaterService && prefixText && typeof prefixText === 'string') ? this._translaterService.translate(prefixText || ' ') : prefixText;
+        suffixText = (this.enableTranslateLabel && this._translaterService && suffixText && typeof suffixText === 'string') ? this._translaterService.translate(suffixText || ' ') : suffixText;
+        optionLabel = (this.enableTranslateLabel && this._translaterService && optionLabel && typeof optionLabel === 'string') ? this._translaterService.translate(optionLabel || ' ') : optionLabel;
 
         // add to a temp array for joining purpose and filter out empty text
         const tmpOptionArray = [prefixText, labelText, suffixText].filter(text => (text !== undefined && text !== ''));
@@ -755,7 +784,7 @@ export class SelectEditor implements Editor {
     }
   }
 
-  protected handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
+  protected handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false) {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -770,7 +799,7 @@ export class SelectEditor implements Editor {
     this.applyValue(compositeEditorOptions.formValues, newValues);
 
     const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
-    if (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+    if (isCalledByClearValue || (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify(

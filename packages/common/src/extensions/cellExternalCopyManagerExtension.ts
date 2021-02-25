@@ -24,12 +24,12 @@ import { sanitizeHtmlToText } from '../services/utilities';
 declare const Slick: SlickNamespace;
 
 export class CellExternalCopyManagerExtension implements Extension {
-  private _addon: SlickCellExternalCopyManager | null;
-  private _addonOptions: ExcelCopyBufferOption | null;
-  private _cellSelectionModel: SlickCellSelectionModel;
+  private _addon: SlickCellExternalCopyManager | null = null;
+  private _addonOptions: ExcelCopyBufferOption | null = null;
+  private _cellSelectionModel!: SlickCellSelectionModel;
   private _eventHandler: SlickEventHandler;
-  private _commandQueue: EditCommand[];
-  private _undoRedoBuffer: EditUndoRedoBuffer;
+  private _commandQueue!: EditCommand[];
+  private _undoRedoBuffer!: EditUndoRedoBuffer;
   private _bindingEventService: BindingEventService;
 
   constructor(private readonly extensionUtility: ExtensionUtility, private readonly sharedService: SharedService) {
@@ -77,7 +77,7 @@ export class CellExternalCopyManagerExtension implements Extension {
   register(): SlickCellExternalCopyManager | null {
     if (this.sharedService && this.sharedService.slickGrid && this.sharedService.gridOptions) {
       this.createUndoRedoBuffer();
-      this._bindingEventService.bind(document.body, 'keydown', this.handleKeyDown.bind(this));
+      this._bindingEventService.bind(document.body, 'keydown', this.handleKeyDown.bind(this) as EventListener);
 
       this._addonOptions = { ...this.getDefaultOptions(), ...this.sharedService.gridOptions.excelCopyBufferOptions } as ExcelCopyBufferOption;
       this._cellSelectionModel = new Slick.CellSelectionModel() as SlickCellSelectionModel;

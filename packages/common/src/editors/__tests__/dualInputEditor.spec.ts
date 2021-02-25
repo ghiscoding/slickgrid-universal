@@ -224,7 +224,7 @@ describe('DualInputEditor', () => {
       expect(spyEvent).toHaveBeenCalled();
     });
 
-    describe('isValueChanged method', () => {
+    describe('isValueChanged method (and isValueTouched method will always true for all since we trigger events in all)', () => {
       it('should return True when previously dispatched keyboard event is a new char 0', () => {
         const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_0, bubbles: true, cancelable: true });
 
@@ -236,6 +236,7 @@ describe('DualInputEditor', () => {
         editorElm.dispatchEvent(event);
 
         expect(editor.isValueChanged()).toBe(true);
+        expect(editor.isValueTouched()).toBe(true);
       });
 
       it('should return False when previously dispatched keyboard event is same number as current value', () => {
@@ -249,6 +250,7 @@ describe('DualInputEditor', () => {
         editorElm.dispatchEvent(event);
 
         expect(editor.isValueChanged()).toBe(false);
+        expect(editor.isValueTouched()).toBe(true);
       });
 
       it('should return False when previously dispatched keyboard event is same string number as current value', () => {
@@ -262,6 +264,7 @@ describe('DualInputEditor', () => {
         editorElm.dispatchEvent(event);
 
         expect(editor.isValueChanged()).toBe(false);
+        expect(editor.isValueTouched()).toBe(true);
       });
 
       it('should return True when left input last dispatched keyboard event is ENTER and "alwaysSaveOnEnterKey" is enabled', () => {
@@ -275,6 +278,7 @@ describe('DualInputEditor', () => {
         editorLeftElm.dispatchEvent(event);
 
         expect(editor.isValueChanged()).toBe(true);
+        expect(editor.isValueTouched()).toBe(true);
       });
 
       it('should return True when right input last dispatched keyboard event is ENTER and "alwaysSaveOnEnterKey" is enabled', () => {
@@ -288,6 +292,7 @@ describe('DualInputEditor', () => {
         editorRightElm.dispatchEvent(event);
 
         expect(editor.isValueChanged()).toBe(true);
+        expect(editor.isValueTouched()).toBe(true);
       });
     });
 

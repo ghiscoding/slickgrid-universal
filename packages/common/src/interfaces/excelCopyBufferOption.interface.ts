@@ -35,7 +35,7 @@ export interface ExcelCopyBufferOption<T = any> {
   onCopySuccess?: (rowCount: number) => void;
 
   /** function to add rows to table if paste overflows bottom of table, if this function is not provided new rows will be ignored. */
-  newRowCreator?: (rows: number | number[]) => void;
+  newRowCreator?: (rows: number) => void;
 
   /** suppresses paste */
   readOnlyMode?: boolean;

@@ -3,6 +3,7 @@ import 'slickgrid/slick.compositeeditor.js';
 import {
   BindingEventService,
   Column,
+  CompositeEditorLabel,
   CompositeEditorModalType,
   CompositeEditorOpenDetailOption,
   CompositeEditorOption,
@@ -12,6 +13,7 @@ import {
   deepCopy,
   Editor,
   EditorValidationResult,
+  emptyObject,
   ExternalResource,
   getDescendantProperty,
   GetSlickEventType,
@@ -28,6 +30,7 @@ import {
   SlickNamespace,
   SlickDataView,
   TranslaterService,
+  DOMEvent,
 } from '@slickgrid-universal/common';
 
 // using external non-typed js libraries
@@ -41,22 +44,22 @@ type ApplyChangesCallbackFn = (
 ) => void;
 
 export class SlickCompositeEditorComponent implements ExternalResource {
-  private _bindEventService: BindingEventService;
-  private _eventHandler: SlickEventHandler;
-  private _modalElm: HTMLDivElement;
-  private _originalDataContext: any;
-  private _options: CompositeEditorOpenDetailOption;
-  private _lastActiveRowNumber: number;
-  private _locales: Locale;
-  private _formValues: { [columnId: string]: any; } | null;
-  private _editors: { [columnId: string]: Editor; };
-  private _editorContainers: Array<HTMLElement | null>;
-  private _modalBodyTopValidationElm: HTMLDivElement;
-  private _modalSaveButtonElm: HTMLButtonElement;
-  private grid: SlickGrid;
-  private gridService: GridService | null;
-  private gridStateService: GridStateService | null;
-  private translaterService?: TranslaterService | null;
+  protected _bindEventService: BindingEventService;
+  protected _eventHandler: SlickEventHandler;
+  protected _modalElm!: HTMLDivElement;
+  protected _originalDataContext: any;
+  protected _options!: CompositeEditorOpenDetailOption;
+  protected _lastActiveRowNumber = -1;
+  protected _locales!: Locale;
+  protected _formValues: { [columnId: string]: any; } | null = null;
+  protected _editors!: { [columnId: string]: Editor; };
+  protected _editorContainers!: Array<HTMLElement | null>;
+  protected _modalBodyTopValidationElm!: HTMLDivElement;
+  protected _modalSaveButtonElm!: HTMLButtonElement;
+  protected grid!: SlickGrid;
+  protected gridService: GridService | null = null;
+  protected gridStateService: GridStateService | null = null;
+  protected translaterService?: TranslaterService | null;
 
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
@@ -415,11 +418,25 @@ export class SlickCompositeEditorComponent implements ExternalResource {
             const templateItemValidationElm = document.createElement('div');
             templateItemValidationElm.className = `item-details-validation editor-${columnDef.id}`;
 
+            // optionally add a reset button beside each editor
+            if (this._options?.showResetButtonOnEachEditor) {
+              const editorResetButtonElm = this.createEditorResetButtonElement(`${columnDef.id}`);
+              this._bindEventService.bind(editorResetButtonElm, 'click', this.handleResetInputValue.bind(this) as EventListener);
+              templateItemLabelElm.appendChild(editorResetButtonElm);
+            }
+
             itemContainer.appendChild(templateItemLabelElm);
             itemContainer.appendChild(templateItemEditorElm);
             itemContainer.appendChild(templateItemValidationElm);
             modalBodyElm.appendChild(itemContainer);
           }
+        }
+
+        // optionally add a form reset button
+        if (this._options?.showFormResetButton) {
+          const resetButtonContainerElm = this.createFormResetButtonElement();
+          this._bindEventService.bind(resetButtonContainerElm, 'click', this.handleResetFormClicked.bind(this));
+          modalBodyElm.appendChild(resetButtonContainerElm);
         }
 
         document.body.appendChild(this._modalElm);
@@ -436,12 +453,12 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         // Add a few Event Handlers
 
         // keyboard, blur & button event handlers
-        this._bindEventService.bind(modalCloseButtonElm, 'click', this.cancelEditing.bind(this));
-        this._bindEventService.bind(modalCancelButtonElm, 'click', this.cancelEditing.bind(this));
-        this._bindEventService.bind(this._modalSaveButtonElm, 'click', this.handleSaveClicked.bind(this));
-        this._bindEventService.bind(this._modalElm, 'keydown', this.handleKeyDown.bind(this));
-        this._bindEventService.bind(this._modalElm, 'focusout', this.validateCurrentEditor.bind(this));
-        this._bindEventService.bind(this._modalElm, 'blur', this.validateCurrentEditor.bind(this));
+        this._bindEventService.bind(modalCloseButtonElm, 'click', this.cancelEditing.bind(this) as EventListener);
+        this._bindEventService.bind(modalCancelButtonElm, 'click', this.cancelEditing.bind(this) as EventListener);
+        this._bindEventService.bind(this._modalSaveButtonElm, 'click', this.handleSaveClicked.bind(this) as EventListener);
+        this._bindEventService.bind(this._modalElm, 'keydown', this.handleKeyDown.bind(this) as EventListener);
+        this._bindEventService.bind(this._modalElm, 'focusout', this.validateCurrentEditor.bind(this) as EventListener);
+        this._bindEventService.bind(this._modalElm, 'blur', this.validateCurrentEditor.bind(this) as EventListener);
 
         // when any of the input of the composite editor form changes, we'll add/remove a "modified" CSS className for styling purposes
         const onCompositeEditorChangeHandler = this.grid.onCompositeEditorChange;
@@ -504,11 +521,11 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   // --
-  // private methods
+  // protected methods
   // ----------------
 
   /** Apply Mass Update Changes (form values) to the entire dataset */
-  private applySaveMassUpdateChanges(formValues: any) {
+  protected applySaveMassUpdateChanges(formValues: any) {
     const data = this.dataView.getItems();
 
     // from the "lastCompositeEditor" object that we kept as reference, it contains all the changes inside the "formValues" property
@@ -529,7 +546,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Apply Mass Changes to the Selected rows in the grid (form values) */
-  private applySaveMassSelectionChanges(formValues: any, selection: { gridRowIndexes: number[]; dataContextIds: Array<number | string>; }) {
+  protected applySaveMassSelectionChanges(formValues: any, selection: { gridRowIndexes: number[]; dataContextIds: Array<number | string>; }) {
     const selectedItemIds = selection?.dataContextIds ?? [];
     const selectedItems = selectedItemIds.map(itemId => this.dataView.getItemById(itemId));
 
@@ -555,7 +572,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
    * @param {number} editorCount - how many Editors do we have in total
    * @returns {number} count - calculated column count (1, 2 or 3)
    */
-  private autoCalculateLayoutColumnCount(editorCount: number): number {
+  protected autoCalculateLayoutColumnCount(editorCount: number): number {
     if (editorCount >= 15) {
       return 3;
     } else if (editorCount >= 8) {
@@ -565,23 +582,67 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /**
+   * Create a reset button for each editor and attach a button click handler
+   * @param {String} columnId - column id
+   * @returns {Object} - html button
+   */
+  protected createEditorResetButtonElement(columnId: string): HTMLButtonElement {
+    const resetButtonElm = document.createElement('button');
+    resetButtonElm.type = 'button';
+    resetButtonElm.name = columnId;
+    resetButtonElm.title = this._options?.labels?.resetFormButton ?? 'Reset Form Input';
+    resetButtonElm.className = 'btn btn-xs btn-editor-reset';
+    if (this._options?.resetEditorButtonCssClass) {
+      const resetBtnClasses = this._options?.resetEditorButtonCssClass.split(' ');
+      for (const cssClass of resetBtnClasses) {
+        resetButtonElm.classList.add(cssClass);
+      }
+    }
+
+    return resetButtonElm;
+  }
+
+  /**
+   * Create a form reset button and attach a button click handler
+   * @param {String} columnId - column id
+   * @returns {Object} - html button
+   */
+  protected createFormResetButtonElement(): HTMLDivElement {
+    const resetButtonContainerElm = document.createElement('div');
+    resetButtonContainerElm.className = 'reset-container';
+
+    const resetButtonElm = document.createElement('button');
+    resetButtonElm.type = 'button';
+    resetButtonElm.textContent = ' Reset Form';
+    resetButtonElm.className = 'btn btn-sm reset-form';
+
+    const resetIconSpanElm = document.createElement('span');
+    resetIconSpanElm.className = this._options?.resetFormButtonIconCssClass ?? '';
+
+    resetButtonElm.prepend(resetIconSpanElm);
+    resetButtonContainerElm.appendChild(resetButtonElm);
+
+    return resetButtonContainerElm;
+  }
+
+  /**
    * Execute the onError callback when defined
    * or use the default onError callback which is to simply display the error in the console
    */
-  private executeOnError(error: OnErrorOption) {
+  protected executeOnError(error: OnErrorOption) {
     const onError = this._options?.onError ?? DEFAULT_ON_ERROR;
     onError(error);
   }
 
   /**
- * A simple and generic method to execute the "OnSave" callback if it's defined by the user OR else simply execute built-in apply changes callback.
- * This method deals with multiple callbacks as shown below
- * @param {Function} applyChangesCallback - first callback to apply the changes into the grid (this could be a user custom callback)
- * @param {Function} executePostCallback - second callback to execute right after the "onSave"
- * @param {Function} beforeClosingCallback - third and last callback to execute after Saving but just before closing the modal window
- * @param {Object} itemDataContext - item data context, only provided for modal type (create/clone/edit)
- */
-  private async executeOnSave(applyChangesCallback: ApplyChangesCallbackFn, executePostCallback: PlainFunc, beforeClosingCallback?: PlainFunc, itemDataContext?: any) {
+   * A simple and generic method to execute the "OnSave" callback if it's defined by the user OR else simply execute built-in apply changes callback.
+   * This method deals with multiple callbacks as shown below
+   * @param {Function} applyChangesCallback - first callback to apply the changes into the grid (this could be a user custom callback)
+   * @param {Function} executePostCallback - second callback to execute right after the "onSave"
+   * @param {Function} beforeClosingCallback - third and last callback to execute after Saving but just before closing the modal window
+   * @param {Object} itemDataContext - item data context, only provided for modal type (create/clone/edit)
+   */
+  protected async executeOnSave(applyChangesCallback: ApplyChangesCallbackFn, executePostCallback: PlainFunc, beforeClosingCallback?: PlainFunc, itemDataContext?: any) {
     try {
       this.showValidationSummaryText(false, '');
       const validationResults = this.validateCompositeEditors();
@@ -623,7 +684,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
   // For the Composite Editor to work, the current active cell must have an Editor (because it calls editActiveCell() and that only works with a cell with an Editor)
   // so if current active cell doesn't have an Editor, we'll find the first column with an Editor and focus on it (from left to right starting at index 0)
-  private focusOnFirstColumnCellWithEditor(columns: Column[], dataContext: any, columnIndex: number, rowIndex: number, isWithMassChange: boolean): boolean {
+  protected focusOnFirstColumnCellWithEditor(columns: Column[], dataContext: any, columnIndex: number, rowIndex: number, isWithMassChange: boolean): boolean {
     // make sure we're not trying to activate a cell outside of the grid, that can happen when using MassUpdate without `enableAddRow` flag enabled
     const activeCellIndex = (isWithMassChange && !this.gridOptions.enableAddRow && (rowIndex >= this.dataViewLength)) ? this.dataViewLength - 1 : rowIndex;
 
@@ -653,7 +714,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     return !!activeEditorCellNode;
   }
 
-  private findNextAvailableEditorColumnIndex(columns: Column[], dataContext: any, rowIndex: number, isWithMassUpdate: boolean): number {
+  protected findNextAvailableEditorColumnIndex(columns: Column[], dataContext: any, rowIndex: number, isWithMassUpdate: boolean): number {
     let columnIndexWithEditor = -1;
 
     for (let colIndex = 0; colIndex < columns.length; colIndex++) {
@@ -671,7 +732,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     return columnIndexWithEditor;
   }
 
-  private getActiveCellEditor(row: number, cell: number): Editor | null {
+  protected getActiveCellEditor(row: number, cell: number): Editor | null {
     this.grid.setActiveCell(row, cell, false);
     return this.grid.getCellEditor();
   }
@@ -681,7 +742,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
    * @param {object} columnDef - column definition
    * @returns {string} label - column label
    */
-  private getColumnLabel(columnDef: Column): string {
+  protected getColumnLabel(columnDef: Column): string {
     const columnGroupSeparator = this.gridOptions.columnGroupSeparator || ' - ';
     let columnName = columnDef.nameCompositeEditor || columnDef.name || '';
     let columnGroup = columnDef.columnGroup || '';
@@ -701,18 +762,18 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Get the correct label text depending, if we use a Translater Service then translate the text when possible else use default text */
-  private getLabelText(labelProperty: string, localeText: string, defaultText: string): string {
+  protected getLabelText(labelProperty: keyof CompositeEditorLabel, localeText: string, defaultText: string): string {
     const textLabels = { ...this.gridOptions.compositeEditorOptions?.labels, ...this._options?.labels };
 
-    if (this.gridOptions?.enableTranslate && this.translaterService?.translate && textLabels.hasOwnProperty(`${labelProperty}Key`)) {
-      const translationKey = textLabels[`${labelProperty}Key`];
-      return this.translaterService.translate(translationKey);
+    if (this.gridOptions?.enableTranslate && this.translaterService?.translate && textLabels.hasOwnProperty(`${labelProperty}Key` as keyof CompositeEditorLabel)) {
+      const translationKey = textLabels[`${labelProperty}Key` as keyof CompositeEditorLabel];
+      return this.translaterService.translate(translationKey || '');
     }
-    return textLabels?.[labelProperty] ?? this._locales?.[localeText] ?? defaultText;
+    return textLabels?.[labelProperty as keyof CompositeEditorLabel] ?? this._locales?.[localeText as keyof CompositeEditorLabel] ?? defaultText;
   }
 
   /** Retrieve the current selection of row indexes & data context Ids */
-  private getCurrentRowSelections(): { gridRowIndexes: number[], dataContextIds: Array<string | number> } {
+  protected getCurrentRowSelections(): { gridRowIndexes: number[], dataContextIds: Array<string | number> } {
     const gridStateSelection = this.gridStateService?.getCurrentRowSelections() as CurrentRowSelection;
     const gridRowIndexes = gridStateSelection?.gridRowIndexes || [];
     const dataContextIds = gridStateSelection?.dataContextIds || [];
@@ -721,7 +782,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
 
 
-  private handleBodyClicked(event: Event) {
+  protected handleBodyClicked(event: Event) {
     if ((event.target as HTMLElement)?.classList?.contains('slick-editor-modal')) {
       if (this._options?.backdrop !== 'static') {
         this.dispose();
@@ -729,7 +790,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     }
   }
 
-  private handleKeyDown(event: KeyboardEvent) {
+  protected handleKeyDown(event: KeyboardEvent) {
     if (event.code === 'Escape') {
       this.cancelEditing();
       event.stopPropagation();
@@ -739,8 +800,17 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     }
   }
 
+  protected handleResetInputValue(event: DOMEvent<HTMLButtonElement>) {
+    const columnId = event.target.name;
+    const editor = this._editors?.[columnId];
+    if (editor?.reset) {
+      editor.reset();
+    }
+    delete this._formValues?.[columnId];
+  }
+
   /** Callback which processes a Mass Update or Mass Selection Changes */
-  private async handleMassSaving(modalType: 'mass-update' | 'mass-selection', executePostCallback: PlainFunc) {
+  protected async handleMassSaving(modalType: 'mass-update' | 'mass-selection', executePostCallback: PlainFunc) {
     if (!this.formValues || Object.keys(this.formValues).length === 0) {
       this.executeOnError({ type: 'warning', code: 'NO_CHANGES_DETECTED', message: 'Sorry we could not detect any changes.' });
     } else {
@@ -750,16 +820,16 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Anytime an input of the Composite Editor form changes, we'll add/remove a "modified" CSS className for styling purposes */
-  private handleOnCompositeEditorChange(_e: Event, args: OnCompositeEditorChangeEventArgs) {
+  protected handleOnCompositeEditorChange(_e: Event, args: OnCompositeEditorChangeEventArgs) {
     const columnId = args.column?.id ?? '';
     this._formValues = { ...this._formValues, ...args.formValues };
     const editor = this._editors?.[columnId] as Editor;
-    const isEditorValueChanged = editor?.isValueChanged?.() ?? false;
+    const isEditorValueTouched = editor?.isValueTouched?.() ?? editor?.isValueChanged?.() ?? false;
 
     // add extra css styling to the composite editor input(s) that got modified
     const editorElm = document.querySelector(`[data-editorid=${columnId}]`);
     if (editorElm?.classList) {
-      if (isEditorValueChanged) {
+      if (isEditorValueTouched) {
         editorElm.classList.add('modified');
       } else {
         editorElm.classList.remove('modified');
@@ -771,14 +841,26 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Check wether the grid has the Row Selection enabled */
-  private hasRowSelectionEnabled() {
+  protected hasRowSelectionEnabled() {
     const selectionModel = this.grid.getSelectionModel();
     const isRowSelectionEnabled = this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector;
     return (isRowSelectionEnabled && selectionModel);
   }
 
+  /** Reset Form button handler */
+  protected handleResetFormClicked() {
+    for (const columnId of Object.keys(this._editors)) {
+      const editor = this._editors[columnId];
+      if (editor?.reset) {
+        editor.reset();
+      }
+    }
+
+    this._formValues = emptyObject(this._formValues);
+  }
+
   /** switch case handler to determine which code to execute depending on the modal type */
-  private handleSaveClicked() {
+  protected handleSaveClicked() {
     const modalType = this._options?.modalType;
     switch (modalType) {
       case 'mass-update':
@@ -836,7 +918,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Insert an item into the DataView or throw an error when finding duplicate id in the dataset */
-  private insertNewItemInDataView(item: any) {
+  protected insertNewItemInDataView(item: any) {
     const fullDataset = this.dataView?.getItems() ?? [];
     const fullDatasetLength = (Array.isArray(fullDataset)) ? fullDataset.length : 0;
     const newId = this._options.insertNewId ?? fullDatasetLength + 1;
@@ -849,21 +931,21 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     }
   }
 
-  private parseText(inputText: string, mappedArgs: any): string {
+  protected parseText(inputText: string, mappedArgs: any): string {
     return inputText.replace(/\{\{(.*?)\}\}/g, (match, group) => {
       return mappedArgs[group] !== undefined ? mappedArgs[group] : match;
     });
   }
 
   /** Put back the current row to its original item data context using the DataView without triggering a change */
-  private resetCurrentRowDataContext() {
+  protected resetCurrentRowDataContext() {
     const idPropName = this.gridOptions.datasetIdPropertyName || 'id';
     const dataView = this.grid.getData();
     dataView.updateItem(this._originalDataContext[idPropName], this._originalDataContext);
   }
 
   /** Validate all the Composite Editors that are defined in the form */
-  private validateCompositeEditors(targetElm?: HTMLElement): EditorValidationResult {
+  protected validateCompositeEditors(targetElm?: HTMLElement): EditorValidationResult {
     let validationResults: EditorValidationResult = { valid: true, msg: '' };
     const currentEditor = this.grid.getCellEditor();
 
@@ -874,7 +956,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Validate the current cell editor */
-  private validateCurrentEditor() {
+  protected validateCurrentEditor() {
     const currentEditor = this.grid.getCellEditor();
     if (currentEditor?.validate) {
       currentEditor.validate();

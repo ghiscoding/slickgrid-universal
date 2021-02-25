@@ -20,15 +20,15 @@ const DEFAULT_STEP = 1;
 /** A Slider Range Filter which uses jQuery UI, this is only meant to be used as a range filter (with 2 handles lowest & highest values) */
 export class SliderRangeFilter implements Filter {
   protected _clearFilterTriggered = false;
-  protected _currentValues: number[];
+  protected _currentValues?: number[];
   protected _shouldTriggerQuery = true;
-  protected _sliderOptions: JQueryUiSliderOption;
+  protected _sliderOptions!: JQueryUiSliderOption;
   protected $filterElm: any;
   protected $filterContainerElm: any;
-  grid: SlickGrid;
-  searchTerms: SearchTerm[];
-  columnDef: Column;
-  callback: FilterCallback;
+  grid!: SlickGrid;
+  searchTerms: SearchTerm[] = [];
+  columnDef!: Column;
+  callback!: FilterCallback;
 
   /** Getter for the Filter Generic Params */
   protected get filterParams(): any {
@@ -46,7 +46,7 @@ export class SliderRangeFilter implements Filter {
   }
 
   /** Getter for the Current Slider Values */
-  get currentValues(): number[] {
+  get currentValues(): number[] | undefined {
     return this._currentValues;
   }
 

@@ -8,8 +8,8 @@ import { SharedService } from '../services/shared.service';
 declare const Slick: SlickNamespace;
 
 export class DraggableGroupingExtension implements Extension {
-  private _addon: SlickDraggableGrouping | null;
-  private _draggableGroupingOptions: DraggableGrouping | null;
+  private _addon: SlickDraggableGrouping | null = null;
+  private _draggableGroupingOptions: DraggableGrouping | null = null;
   private _eventHandler: SlickEventHandler;
 
   constructor(private readonly extensionUtility: ExtensionUtility, private readonly sharedService: SharedService) {

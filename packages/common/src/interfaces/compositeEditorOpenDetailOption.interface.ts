@@ -1,4 +1,5 @@
 import { CompositeEditorModalType } from '../enums/compositeEditorModalType.type';
+import { CompositeEditorLabel } from './compositeEditorLabel.interface';
 import { GridServiceInsertOption } from './gridServiceInsertOption.interface';
 
 export type OnErrorOption = {
@@ -41,49 +42,7 @@ export interface CompositeEditorOpenDetailOption {
   /** Defaults to (dataset length + 1), what is the default insert Id to use when creating a new item? */
   insertNewId?: number;
 
-  labels?: {
-    /** Defaults to "Cancel", override the Cancel button label */
-    cancelButton?: string;
-
-    /** Defaults to "CANCEL", translation key used for the Cancel button label. */
-    cancelButtonKey?: string;
-
-    /** Defaults to "Clone", override the Clone button label used by a modal type of "clone" */
-    cloneButton?: string;
-
-    /** Defaults to "CLONE", translation key used for the Clone button label used by a modal type of "clone" */
-    cloneButtonKey?: string;
-
-    /** Defaults to "Update Selection", override the Mass Selection button label */
-    massSelectionButton?: string;
-
-    /** Defaults to "APPLY_TO_SELECTION", translation key used for the Mass Selection button label. */
-    massSelectionButtonKey?: string;
-
-    /** Defaults to "{{selectedRowCount}} of {{totalItems}} selected", override the Mass Selection status text on the footer left side */
-    massSelectionStatus?: string;
-
-    /** Defaults to "X_OF_Y_MASS_SELECTED", translation key used for the Mass Selection status text on the footer left side */
-    massSelectionStatusKey?: string;
-
-    /** Defaults to "Mass Update", override the Mass Update button label */
-    massUpdateButton?: string;
-
-    /** Defaults to "APPLY_MASS_UPDATE", translation key used for the Mass Update button label. */
-    massUpdateButtonKey?: string;
-
-    /** Defaults to "all {{totalItems}} items", override the Mass Update status text on the footer left side */
-    massUpdateStatus?: string;
-
-    /** Defaults to "ALL_X_RECORDS_SELECTED", translation key used for the Mass Update status text on the footer left side */
-    massUpdateStatusKey?: string;
-
-    /** Defaults to "Save", override the Save button label used by a modal type of "create" or "edit" */
-    saveButton?: string;
-
-    /** Defaults to "SAVE", translation key used for the Save button label used by a modal type of "create" or "edit" */
-    saveButtonKey?: string;
-  };
+  labels?: CompositeEditorLabel;
 
   /**
    * Defaults to "edit", Composite Editor modal type (create, edit, mass, mass-update, mass-selection).
@@ -99,8 +58,20 @@ export interface CompositeEditorOpenDetailOption {
    */
   excludeDisabledFieldFormValues?: boolean;
 
+  /** Optional provide a CSS class by the reset button shown beside each editor */
+  resetEditorButtonCssClass?: string;
+
+  /** Optionally provide a CSS class by the form reset button */
+  resetFormButtonIconCssClass?: string;
+
   /** Defaults to true, do we want the close button outside the modal (true) or inside the header modal (false)?  */
   showCloseButtonOutside?: boolean;
+
+  /** Defaults to false, show a reset button beside each editor input */
+  showResetButtonOnEachEditor?: boolean;
+
+  /** Defaults to false, show a single form reset button at bottom of the form (or inside the form footer) */
+  showFormResetButton?: boolean;
 
   /** Defaults to true, do we want to clear the row selections (after save) when executed by any of the mass change actions (Mass-Update or Update-Selected) */
   shouldClearRowSelectionAfterMassAction?: boolean;

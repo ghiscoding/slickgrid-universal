@@ -3,7 +3,7 @@ import * as moment_ from 'moment-mini';
 import { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
 import { Instance as FlatpickrInstance, FlatpickrFn } from 'flatpickr/dist/types/instance';
 const flatpickr: FlatpickrFn = (flatpickr_ && flatpickr_['default'] || flatpickr_) as any; // patch for rollup
-const moment = moment_['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
+const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 import { Constants } from './../constants';
 import { FieldType } from '../enums/index';
@@ -35,12 +35,13 @@ export class DateEditor implements Editor {
   protected _$input: any;
   protected _$editorInputElm: any;
   protected _$closeButtonGroupElm: any;
+  protected _isValueTouched = false;
   protected _lastTriggeredByClearDate = false;
-  protected _originalDate: string;
-  protected _pickerMergedOptions: FlatpickrOption;
+  protected _originalDate?: string;
+  protected _pickerMergedOptions!: FlatpickrOption;
 
-  flatInstance: FlatpickrInstance;
-  defaultDate: string;
+  flatInstance!: FlatpickrInstance;
+  defaultDate?: string;
 
   /** is the Editor disabled? */
   disabled = false;
@@ -52,7 +53,7 @@ export class DateEditor implements Editor {
   gridOptions: GridOption;
 
   /** The translate library */
-  protected _translaterService: TranslaterService;
+  protected _translaterService: TranslaterService | undefined;
 
   constructor(protected readonly args: EditorArguments) {
     if (!args) {
@@ -155,7 +156,7 @@ export class DateEditor implements Editor {
       }
 
       this._$editorInputElm.appendTo(this.args.container);
-      this.flatInstance = (flatpickr && this._$editorInputElm[0] && typeof this._$editorInputElm[0].flatpickr === 'function') ? this._$editorInputElm[0].flatpickr(this._pickerMergedOptions) : flatpickr(this._$editorInputElm, this._pickerMergedOptions as unknown as Partial<FlatpickrBaseOptions>);
+      this.flatInstance = (this._$editorInputElm[0] && typeof this._$editorInputElm[0].flatpickr === 'function') ? this._$editorInputElm[0].flatpickr(this._pickerMergedOptions) : flatpickr(this._$editorInputElm, this._pickerMergedOptions as unknown as Partial<FlatpickrBaseOptions>);
 
       // when we're using an alternate input to display data, we'll consider this input as the one to do the focus later on
       // else just use the top one
@@ -201,9 +202,7 @@ export class DateEditor implements Editor {
         // clear picker when it's newly disabled and not empty
         const currentValue = this.getValue();
         if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions && currentValue !== '') {
-          this._originalDate = '';
-          this.flatInstance.setDate('');
-          this.flatInstance.clear();
+          this.reset('', true, true);
         }
       } else {
         this.flatInstance._input.removeAttribute('disabled');
@@ -304,6 +303,10 @@ export class DateEditor implements Editor {
     return isChanged;
   }
 
+  isValueTouched(): boolean {
+    return this._isValueTouched;
+  }
+
   loadValue(item: any) {
     const fieldName = this.columnDef && this.columnDef.field;
 
@@ -314,6 +317,28 @@ export class DateEditor implements Editor {
 
       this._originalDate = value;
       this.flatInstance.setDate(value);
+    }
+  }
+
+  /**
+   * You can reset or clear the input value,
+   * when no value is provided it will use the original value to reset (could be useful with Composite Editor Modal with edit/clone)
+   */
+  reset(value?: string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
+    const inputValue = value ?? this._originalDate ?? '';
+    if (this.flatInstance) {
+      this._originalDate = inputValue;
+      this.flatInstance.setDate(inputValue);
+      if (!inputValue) {
+        this.flatInstance.clear();
+      }
+    }
+    this._isValueTouched = false;
+
+    const compositeEditorOptions = this.args.compositeEditorOptions;
+    if (compositeEditorOptions && triggerCompositeEventWhenExist) {
+      const shouldDeleteFormValue = !clearByDisableCommand;
+      this.handleChangeOnCompositeEditor(compositeEditorOptions, 'user', shouldDeleteFormValue);
     }
   }
 
@@ -344,7 +369,7 @@ export class DateEditor implements Editor {
     return value;
   }
 
-  validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
+  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     const isRequired = this.args?.compositeEditorOptions ? false : this.columnEditor.required;
     const elmValue = (inputValue !== undefined) ? inputValue : this._$input && this._$input.val && this._$input.val();
     const errorMsg = this.columnEditor.errorMessage;
@@ -389,6 +414,8 @@ export class DateEditor implements Editor {
   }
 
   protected handleOnDateChange() {
+    this._isValueTouched = true;
+
     if (this.args) {
       const compositeEditorOptions = this.args.compositeEditorOptions;
       if (compositeEditorOptions) {
@@ -400,7 +427,7 @@ export class DateEditor implements Editor {
     setTimeout(() => this._lastTriggeredByClearDate = false); // reset flag after a cycle
   }
 
-  protected handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
+  protected handleChangeOnCompositeEditor(compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false) {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -415,7 +442,7 @@ export class DateEditor implements Editor {
     this.applyValue(compositeEditorOptions.formValues, newValue);
 
     const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
-    if (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+    if (isCalledByClearValue || (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify(

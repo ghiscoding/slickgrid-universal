@@ -3,7 +3,7 @@ import * as moment_ from 'moment-mini';
 import { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
 import { FlatpickrFn } from 'flatpickr/dist/types/instance';
 const flatpickr: FlatpickrFn = (flatpickr_ && flatpickr_['default'] || flatpickr_) as any; // patch for rollup
-const moment = moment_['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
+const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 import {
   FieldType,
@@ -26,18 +26,18 @@ import { TranslaterService } from '../services/translater.service';
 
 export class DateRangeFilter implements Filter {
   protected _clearFilterTriggered = false;
-  protected _currentValue: string;
-  protected _currentDates: Date[];
-  protected _currentDateStrings: string[];
-  protected _flatpickrOptions: FlatpickrOption;
+  protected _currentValue?: string;
+  protected _currentDates?: Date[];
+  protected _currentDateStrings?: string[];
+  protected _flatpickrOptions!: FlatpickrOption;
   protected _shouldTriggerQuery = true;
   protected $filterElm: any;
   protected $filterInputElm: any;
   flatInstance: any;
-  grid: SlickGrid;
-  searchTerms: SearchTerm[];
-  columnDef: Column;
-  callback: FilterCallback;
+  grid!: SlickGrid;
+  searchTerms: SearchTerm[] = [];
+  columnDef!: Column;
+  callback!: FilterCallback;
 
   constructor(protected readonly translaterService: TranslaterService) { }
 
@@ -52,7 +52,7 @@ export class DateRangeFilter implements Filter {
   }
 
   /** Getter for the Current Dates selected */
-  get currentDates(): Date[] {
+  get currentDates(): Date[] | undefined {
     return this._currentDates;
   }
 
@@ -145,7 +145,7 @@ export class DateRangeFilter implements Filter {
    * Set value(s) on the DOM element
    * @params searchTerms
    */
-  setValues(searchTerms: SearchTerm[], operator?: OperatorType | OperatorString) {
+  setValues(searchTerms: SearchTerm[] | SearchTerm | undefined, operator?: OperatorType | OperatorString) {
     let pickerValues: any[] = [];
 
     // get the picker values, if it's a string with the "..", we'll do the split else we'll use the array of search terms
@@ -238,7 +238,7 @@ export class DateRangeFilter implements Filter {
       placeholder = this.columnFilter.placeholder;
     }
     const $filterInputElm: any = $(`<div class="flatpickr search-filter filter-${columnId}"><input type="text" class="form-control" data-input placeholder="${placeholder}"></div>`);
-    this.flatInstance = (flatpickr && $filterInputElm[0] && typeof $filterInputElm[0].flatpickr === 'function') ? $filterInputElm[0].flatpickr(this._flatpickrOptions) : flatpickr($filterInputElm, this._flatpickrOptions as unknown as Partial<FlatpickrBaseOptions>);
+    this.flatInstance = ($filterInputElm[0] && typeof $filterInputElm[0].flatpickr === 'function') ? $filterInputElm[0].flatpickr(this._flatpickrOptions) : flatpickr($filterInputElm, this._flatpickrOptions as unknown as Partial<FlatpickrBaseOptions>);
     return $filterInputElm;
   }
 
@@ -284,7 +284,7 @@ export class DateRangeFilter implements Filter {
       this.$filterElm.removeClass('filled');
     } else {
       (this._currentDateStrings) ? this.$filterElm.addClass('filled') : this.$filterElm.removeClass('filled');
-      this.callback(e, { columnDef: this.columnDef, searchTerms: (this._currentDateStrings ? this._currentDateStrings : [this._currentValue]), operator: this.operator || '', shouldTriggerQuery: this._shouldTriggerQuery });
+      this.callback(e, { columnDef: this.columnDef, searchTerms: (this._currentDateStrings ? this._currentDateStrings : [this._currentValue as string]), operator: this.operator || '', shouldTriggerQuery: this._shouldTriggerQuery });
     }
 
     // reset both flags for next use

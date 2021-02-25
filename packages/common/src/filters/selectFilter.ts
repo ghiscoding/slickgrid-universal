@@ -21,29 +21,30 @@ import { TranslaterService } from '../services';
 
 export class SelectFilter implements Filter {
   protected _isMultipleSelect = true;
-  protected _locales: Locale;
+  protected _collectionLength = 0;
+  protected _locales!: Locale;
   protected _shouldTriggerQuery = true;
 
   /** DOM Element Name, useful for auto-detecting positioning (dropup / dropdown) */
-  elementName: string;
+  elementName!: string;
 
   /** Filter Multiple-Select options */
-  filterElmOptions: MultipleSelectOption;
+  filterElmOptions!: MultipleSelectOption;
 
   /** The JQuery DOM element */
   $filterElm: any;
 
-  grid: SlickGrid;
-  searchTerms: SearchTerm[];
-  columnDef: Column;
-  callback: FilterCallback;
-  defaultOptions: MultipleSelectOption;
+  grid!: SlickGrid;
+  searchTerms: SearchTerm[] | undefined;
+  columnDef!: Column;
+  callback!: FilterCallback;
+  defaultOptions!: MultipleSelectOption;
   isFilled = false;
-  labelName: string;
-  labelPrefixName: string;
-  labelSuffixName: string;
-  optionLabel: string;
-  valueName: string;
+  labelName!: string;
+  labelPrefixName!: string;
+  labelSuffixName!: string;
+  optionLabel!: string;
+  valueName!: string;
   enableTranslateLabel = false;
 
   /**
@@ -55,17 +56,17 @@ export class SelectFilter implements Filter {
 
   /** Getter for the Collection Options */
   protected get collectionOptions(): CollectionOption {
-    return this.columnDef && this.columnDef.filter && this.columnDef.filter.collectionOptions || {};
+    return this.columnDef?.filter?.collectionOptions ?? {};
   }
 
   /** Getter for the Filter Operator */
   get columnFilter(): ColumnFilter {
-    return this.columnDef && this.columnDef.filter || {};
+    return this.columnDef?.filter ?? {};
   }
 
   /** Getter for the Custom Structure if exist */
   get customStructure(): CollectionCustomStructure | undefined {
-    return this.columnDef && this.columnDef.filter && this.columnDef.filter.customStructure;
+    return this.columnDef?.filter?.customStructure;
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
@@ -172,7 +173,7 @@ export class SelectFilter implements Filter {
    * Clear the filter values
    */
   clear(shouldTriggerQuery = true) {
-    if (this.$filterElm && this.$filterElm.multipleSelect) {
+    if (this.$filterElm && this.$filterElm.multipleSelect && this._collectionLength > 0) {
       // reload the filter element by it's id, to make sure it's still a valid element (because of some issue in the GraphQL example)
       this.$filterElm.multipleSelect('setSelects', []);
       this.$filterElm.removeClass('filled').siblings('div .search-filter').removeClass('filled');
@@ -326,11 +327,12 @@ export class SelectFilter implements Filter {
     newCollection = this.sortCollection(newCollection);
 
     // step 1, create HTML string template
-    const filterTemplate = this.buildTemplateHtmlString(newCollection, this.searchTerms);
+    const filterTemplate = this.buildTemplateHtmlString(newCollection, this.searchTerms || []);
 
     // step 2, create the DOM Element of the filter & pre-load search terms
     // also subscribe to the onClose event
     this.createDomElement(filterTemplate);
+    this._collectionLength = newCollection.length;
   }
 
   /**

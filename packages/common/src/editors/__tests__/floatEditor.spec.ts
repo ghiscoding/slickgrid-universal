@@ -447,6 +447,7 @@ describe('FloatEditor', () => {
         expect(spyGetEditor).toHaveBeenCalled();
         expect(spyCommit).toHaveBeenCalled();
         expect(spySave).toHaveBeenCalled();
+        expect(editor.isValueTouched()).toBe(true);
       });
     });
 
@@ -767,6 +768,7 @@ describe('FloatEditor', () => {
       jest.runTimersToTime(50);
 
       expect(getCellSpy).toHaveBeenCalled();
+      expect(editor.isValueTouched()).toBe(true);
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
@@ -791,6 +793,7 @@ describe('FloatEditor', () => {
       jest.runTimersToTime(50);
 
       expect(getCellSpy).toHaveBeenCalled();
+      expect(editor.isValueTouched()).toBe(true);
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,

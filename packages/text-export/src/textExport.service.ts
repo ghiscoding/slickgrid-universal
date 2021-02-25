@@ -34,6 +34,14 @@ const DEFAULT_EXPORT_OPTIONS: TextExportOption = {
   useUtf8WithBom: true,
 };
 
+type ExportTextDownloadOption = {
+  filename: string;
+  content: string;
+  format: FileType | string;
+  mimeType: string;
+  useUtf8WithBom?: boolean;
+};
+
 export class TextExportService implements ExternalResource, BaseTextExportService {
   private _delimiter = ',';
   private _exportQuoteWrapper = '';
@@ -119,8 +127,8 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
         };
 
         // start downloading but add the content property only on the start download not on the event itself
-        this.startDownloadFile({ ...downloadOptions, content: dataOutput }); // add content property
-        this._pubSubService?.publish(`onAfterExportToTextFile`, downloadOptions);
+        this.startDownloadFile({ ...downloadOptions, content: dataOutput } as ExportTextDownloadOption); // add content property
+        this._pubSubService?.publish(`onAfterExportToTextFile`, downloadOptions as ExportTextDownloadOption);
         resolve(true);
       }, 0);
     });
@@ -132,7 +140,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    * All other browsers will use plain javascript on client side to produce a file download.
    * @param options
    */
-  startDownloadFile(options: { filename: string, content: string, format: FileType | string, mimeType: string, useUtf8WithBom?: boolean }): void {
+  startDownloadFile(options: ExportTextDownloadOption): void {
     // make sure no html entities exist in the data
     const csvContent = htmlEntityDecode(options.content);
 

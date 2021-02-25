@@ -28,11 +28,12 @@ declare const Slick: SlickNamespace;
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
 export class LongTextEditor implements Editor {
+  protected _defaultTextValue: any;
+  protected _isValueTouched = false;
   protected _locales: Locale;
   protected _$textarea: any;
   protected _$currentLengthElm: any;
   protected _$wrapper: any;
-  protected _defaultTextValue: any;
 
   /** is the Editor disabled? */
   disabled = false;
@@ -44,7 +45,7 @@ export class LongTextEditor implements Editor {
   gridOptions: GridOption;
 
   /** The translate library */
-  protected _translater: TranslaterService;
+  protected _translater?: TranslaterService;
 
   constructor(protected readonly args: EditorArguments) {
     if (!args) {
@@ -197,9 +198,7 @@ export class LongTextEditor implements Editor {
         // clear value when it's newly disabled and not empty
         const currentValue = this.getValue();
         if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions && currentValue !== '') {
-          this._defaultTextValue = '';
-          this._$textarea.val('');
-          this.handleChangeOnCompositeEditor(null, this.args.compositeEditorOptions);
+          this.reset('', true, true);
         }
       } else {
         this._$textarea.removeAttr('disabled');
@@ -254,6 +253,10 @@ export class LongTextEditor implements Editor {
   isValueChanged(): boolean {
     const elmValue = this._$textarea.val();
     return (!(elmValue === '' && (this._defaultTextValue === null || this._defaultTextValue === undefined))) && (elmValue !== this._defaultTextValue);
+  }
+
+  isValueTouched(): boolean {
+    return this._isValueTouched;
   }
 
   loadValue(item: any) {
@@ -312,6 +315,26 @@ export class LongTextEditor implements Editor {
       .css('left', newPositionLeft);
   }
 
+  /**
+   * You can reset or clear the input value,
+   * when no value is provided it will use the original value to reset (could be useful with Composite Editor Modal with edit/clone)
+   */
+  reset(value?: string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
+    const inputValue = value ?? this._defaultTextValue ?? '';
+    if (this._$textarea) {
+      this._defaultTextValue = inputValue;
+      this._$textarea.val(inputValue);
+      this._$currentLengthElm.text(inputValue.length);
+    }
+    this._isValueTouched = false;
+
+    const compositeEditorOptions = this.args.compositeEditorOptions;
+    if (compositeEditorOptions && triggerCompositeEventWhenExist) {
+      const shouldDeleteFormValue = !clearByDisableCommand;
+      this.handleChangeOnCompositeEditor(null, compositeEditorOptions, 'user', shouldDeleteFormValue);
+    }
+  }
+
   save() {
     const validation = this.validate();
     const isValid = (validation && validation.valid) || false;
@@ -329,7 +352,7 @@ export class LongTextEditor implements Editor {
     return this._$textarea.val();
   }
 
-  validate(_targetElm?: null, inputValue?: any): EditorValidationResult {
+  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
     if (this.args.compositeEditorOptions) {
       this.applyInputUsabilityState();
@@ -365,6 +388,7 @@ export class LongTextEditor implements Editor {
 
   protected handleKeyDown(event: KeyboardEvent) {
     const keyCode = event.keyCode || event.code;
+    this._isValueTouched = true;
 
     if (!this.args.compositeEditorOptions) {
       if (keyCode === KeyCode.ENTER && event.ctrlKey) {
@@ -412,7 +436,7 @@ export class LongTextEditor implements Editor {
     }
   }
 
-  protected handleChangeOnCompositeEditor(event: JQuery.Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
+  protected handleChangeOnCompositeEditor(event: JQuery.Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false) {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -427,7 +451,7 @@ export class LongTextEditor implements Editor {
     this.applyValue(compositeEditorOptions.formValues, newValue);
 
     const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
-    if (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+    if (isCalledByClearValue || (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify(

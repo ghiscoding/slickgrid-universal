@@ -50,6 +50,8 @@ export class Constants {
     TEXT_REFRESH_DATASET: 'Refresh Dataset',
     TEXT_REMOVE_FILTER: 'Remove Filter',
     TEXT_REMOVE_SORT: 'Remove Sort',
+    TEXT_RESET_INPUT_VALUE: 'Reset Input Value',
+    TEXT_RESET_FORM: 'Reset Form',
     TEXT_SAVE: 'Save',
     TEXT_SELECT_ALL: 'Select All',
     TEXT_SYNCHRONOUS_RESIZE: 'Synchronous resize',

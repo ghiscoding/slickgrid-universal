@@ -176,7 +176,7 @@ export class GridOdataService implements BackendService {
     });
   }
 
-  saveColumnFilter(fieldName: string, value: string, terms?: any[]) {
+  saveColumnFilter(fieldName: string, value: string, terms?: SearchTerm[]) {
     this._odataService.saveColumnFilter(fieldName, value, terms);
   }
 
@@ -236,7 +236,7 @@ export class GridOdataService implements BackendService {
   updateFilters(columnFilters: ColumnFilters | CurrentFilter[], isUpdatedByPresetOrDynamically?: boolean) {
     let searchBy = '';
     const searchByArray: string[] = [];
-    const odataVersion = this._odataService && this._odataService.options && this._odataService.options.version || 2;
+    const odataVersion = this._odataService?.options?.version ?? 2;
 
     // on filter preset load, we need to keep current filters
     if (isUpdatedByPresetOrDynamically) {

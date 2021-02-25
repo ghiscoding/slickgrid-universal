@@ -19,6 +19,7 @@ export class SliderEditor implements Editor {
   protected _elementRangeOutputId = '';
   protected _$editorElm: any;
   protected _$input: any;
+  protected _isValueTouched = false;
   $sliderNumber: any;
   originalValue: any;
 
@@ -98,6 +99,7 @@ export class SliderEditor implements Editor {
       this._$editorElm.appendTo(container);
 
       this._$editorElm.on('change mouseup touchend', (event: Event) => {
+        this._isValueTouched = true;
         if (compositeEditorOptions) {
           this.handleChangeOnCompositeEditor(event, compositeEditorOptions);
         } else {
@@ -144,11 +146,7 @@ export class SliderEditor implements Editor {
         // clear value when it's newly disabled and not empty
         const currentValue = this.getValue();
         if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions && currentValue !== '') {
-          this._defaultValue = 0;
-          this._$editorElm.children('input').val(0);
-          this._$editorElm.children('div.input-group-addon.input-group-append').children().html(0);
-          this._$editorElm.val(0);
-          this.handleChangeOnCompositeEditor(null, this.args.compositeEditorOptions);
+          this.reset(0, true, true);
         }
       } else {
         this._$input.removeAttr('disabled');
@@ -211,6 +209,10 @@ export class SliderEditor implements Editor {
     return (!(elmValue === '' && this.originalValue === undefined)) && (+elmValue !== this.originalValue);
   }
 
+  isValueTouched(): boolean {
+    return this._isValueTouched;
+  }
+
   loadValue(item: any) {
     const fieldName = this.columnDef?.field ?? '';
 
@@ -226,6 +228,26 @@ export class SliderEditor implements Editor {
       this.originalValue = +value;
       this._$input.val(value);
       this.$sliderNumber.html(value);
+    }
+  }
+
+  /**
+   * You can reset or clear the input value,
+   * when no value is provided it will use the original value to reset (could be useful with Composite Editor Modal with edit/clone)
+   */
+  reset(value?: number | string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
+    const inputValue = value ?? this.originalValue ?? 0;
+    if (this._$editorElm) {
+      this._$editorElm.children('input').val(inputValue);
+      this._$editorElm.children('div.input-group-addon.input-group-append').children().html(inputValue);
+      this._$editorElm.val(inputValue);
+    }
+    this._isValueTouched = false;
+
+    const compositeEditorOptions = this.args.compositeEditorOptions;
+    if (compositeEditorOptions && triggerCompositeEventWhenExist) {
+      const shouldDeleteFormValue = !clearByDisableCommand;
+      this.handleChangeOnCompositeEditor(null, compositeEditorOptions, 'user', shouldDeleteFormValue);
     }
   }
 
@@ -247,7 +269,7 @@ export class SliderEditor implements Editor {
     return elmValue !== '' ? parseInt(elmValue, 10) : this.originalValue;
   }
 
-  validate(_targetElm?: undefined, inputValue?: any): EditorValidationResult {
+  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
     if (this.args.compositeEditorOptions) {
       this.applyInputUsabilityState();
@@ -312,7 +334,7 @@ export class SliderEditor implements Editor {
     this.disable(isCellEditable === false);
   }
 
-  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user') {
+  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false) {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -327,7 +349,7 @@ export class SliderEditor implements Editor {
     this.applyValue(compositeEditorOptions.formValues, newValue);
 
     const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
-    if (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId)) {
+    if (isCalledByClearValue || (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify(

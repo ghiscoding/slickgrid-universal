@@ -14,17 +14,17 @@ const DEFAULT_STEP = 1;
 
 export class SliderFilter implements Filter {
   protected _clearFilterTriggered = false;
-  protected _currentValue: number;
+  protected _currentValue?: number;
   protected _shouldTriggerQuery = true;
   protected _elementRangeInputId = '';
   protected _elementRangeOutputId = '';
   protected $filterElm: any;
   protected $filterInputElm: any;
   protected $filterNumberElm: any;
-  grid: SlickGrid;
-  searchTerms: SearchTerm[];
-  columnDef: Column;
-  callback: FilterCallback;
+  grid!: SlickGrid;
+  searchTerms: SearchTerm[] = [];
+  columnDef!: Column;
+  callback!: FilterCallback;
 
   /** Getter for the Column Filter */
   get columnFilter(): ColumnFilter {
@@ -133,7 +133,7 @@ export class SliderFilter implements Filter {
    * Get selected value retrieved from the slider element
    * @params selected items
    */
-  getValues(): number {
+  getValues(): number | undefined {
     return this._currentValue;
   }
 

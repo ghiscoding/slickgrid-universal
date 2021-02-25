@@ -20,13 +20,23 @@ export interface Editor {
    * @param {string} optionName - option name
    * @param {newValue} newValue - new option value
    */
-  changeEditorOption?: (optionName: string, newValue: any) => void;
+  changeEditorOption?: (optionName: any, newValue: any) => void;
 
   /**
-   * Disable the Editor input
+   * Disable the Editor input, this is only used by the Composite Editor Modal
    * @param {boolean} isDisabled - optionally specify if the editor is disabled or not.
    */
   disable?: (isDisabled?: boolean) => void;
+
+  /**
+   * Reset (or clear) editor function, when no value(s) is provided it will use the original value to reset.
+   * Also note that if this is called by the Composite Editor, it will by default also trigger the "onCompositeEditor" event
+   * For example if your editor is the TextEditor and you want to clear the input, then you can pass an empty string as the input value.
+   * @param value - optional input value, if not provided it will use the original value to reset
+   * @param triggerCompositeEventWhenExist - True by default, when the editor from the Composite Editor Modal, do we want to trigger the "onCompositeEditor" event
+   * @param clearByDisableCommand - False by default, is the reset called by the "disable()" method?
+   */
+  reset?: (value?: any, triggerCompositeEventWhenExist?: boolean, clearByDisableCommand?: boolean) => void;
 
   /** Saves the Editor value */
   save?: () => void;
@@ -84,8 +94,15 @@ export interface Editor {
   /** return true if the value(s) being edited by the user has/have been changed */
   isValueChanged: () => boolean;
 
+  /**
+   * return true if the value(s) was touched.
+   * It is very similar to isValueChanged() except that if editor value goes back to original value
+   * then isValueTouched() will return True while isValueChanged() will return False
+   */
+  isValueTouched?: () => boolean;
+
   /** Optional render DOM element function */
-  renderDomElement?: (collection?: any[]) => any;
+  renderDomElement?: (collection?: any[]) => any | void;
 
   /** Update the Editor DOM element value with a provided value, we can optionally apply the value to the item dataContext object */
   setValue?: (value: any, isApplyingValue?: boolean) => void;
@@ -95,5 +112,5 @@ export interface Editor {
    * if the input is valid then the validation result output would be returning { valid:true, msg:null }
    * The first argument "targetElm" is ONLY used internally by the Composite Editor in most cases you want to make this null or undefined
    */
-  validate: (targetElm?: HTMLElement | JQuery<HTMLElement> | null, options?: any) => EditorValidationResult;
+  validate: (targetElm?: HTMLElement | JQuery<HTMLElement>, options?: any) => EditorValidationResult;
 }

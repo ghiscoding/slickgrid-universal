@@ -26,7 +26,7 @@ import { PubSubService } from '../services/pubSub.service';
 declare const Slick: SlickNamespace;
 
 export class HeaderMenuExtension implements Extension {
-  private _addon: SlickHeaderMenu | null;
+  private _addon: SlickHeaderMenu | null = null;
   private _eventHandler: SlickEventHandler;
 
   constructor(
@@ -143,7 +143,7 @@ export class HeaderMenuExtension implements Extension {
 
           // Freeze Column (pinning)
           if (headerMenuOptions && !headerMenuOptions.hideFreezeColumnsCommand) {
-            if (!columnHeaderMenuItems.some((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'freeze-columns')) {
+            if (!columnHeaderMenuItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === 'freeze-columns')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconFreezeColumns || 'fa fa-thumb-tack',
                 title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}FREEZE_COLUMNS`, 'TEXT_FREEZE_COLUMNS'),
@@ -153,14 +153,14 @@ export class HeaderMenuExtension implements Extension {
             }
 
             // add a divider (separator) between the top freeze columns commands and the rest of the commands
-            if (!columnHeaderMenuItems.some((item: MenuCommandItem) => item.positionOrder === 49)) {
+            if (!columnHeaderMenuItems.some(item => item !== 'divider' && item.positionOrder === 49)) {
               columnHeaderMenuItems.push({ divider: true, command: '', positionOrder: 49 });
             }
           }
 
           // Sorting Commands
           if (options.enableSorting && columnDef.sortable && headerMenuOptions && !headerMenuOptions.hideSortCommands) {
-            if (!columnHeaderMenuItems.some((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'sort-asc')) {
+            if (!columnHeaderMenuItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === 'sort-asc')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconSortAscCommand || 'fa fa-sort-asc',
                 title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}SORT_ASCENDING`, 'TEXT_SORT_ASCENDING'),
@@ -168,7 +168,7 @@ export class HeaderMenuExtension implements Extension {
                 positionOrder: 50
               });
             }
-            if (!columnHeaderMenuItems.some((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'sort-desc')) {
+            if (!columnHeaderMenuItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === 'sort-desc')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconSortDescCommand || 'fa fa-sort-desc',
                 title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}SORT_DESCENDING`, 'TEXT_SORT_DESCENDING'),
@@ -178,11 +178,11 @@ export class HeaderMenuExtension implements Extension {
             }
 
             // add a divider (separator) between the top sort commands and the other clear commands
-            if (!columnHeaderMenuItems.some((item: MenuCommandItem) => item.positionOrder === 52)) {
+            if (!columnHeaderMenuItems.some(item => item !== 'divider' && item.positionOrder === 52)) {
               columnHeaderMenuItems.push({ divider: true, command: '', positionOrder: 52 });
             }
 
-            if (!headerMenuOptions.hideClearSortCommand && !columnHeaderMenuItems.some((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'clear-sort')) {
+            if (!headerMenuOptions.hideClearSortCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === 'clear-sort')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconClearSortCommand || 'fa fa-unsorted',
                 title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}REMOVE_SORT`, 'TEXT_REMOVE_SORT'),
@@ -194,7 +194,7 @@ export class HeaderMenuExtension implements Extension {
 
           // Filtering Commands
           if (options.enableFiltering && columnDef.filterable && headerMenuOptions && !headerMenuOptions.hideFilterCommand) {
-            if (!headerMenuOptions.hideClearFilterCommand && !columnHeaderMenuItems.some((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'clear-filter')) {
+            if (!headerMenuOptions.hideClearFilterCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === 'clear-filter')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconClearFilterCommand || 'fa fa-filter',
                 title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}REMOVE_FILTER`, 'TEXT_REMOVE_FILTER'),
@@ -205,7 +205,7 @@ export class HeaderMenuExtension implements Extension {
           }
 
           // Hide Column Command
-          if (headerMenuOptions && !headerMenuOptions.hideColumnHideCommand && !columnHeaderMenuItems.some((item: MenuCommandItem) => item.hasOwnProperty('command') && item.command === 'hide')) {
+          if (headerMenuOptions && !headerMenuOptions.hideColumnHideCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === 'hide')) {
             columnHeaderMenuItems.push({
               iconCssClass: headerMenuOptions.iconColumnHideCommand || 'fa fa-times',
               title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}HIDE_COLUMN`, 'TEXT_HIDE_COLUMN'),
@@ -226,7 +226,7 @@ export class HeaderMenuExtension implements Extension {
 
   /** Hide a column from the grid */
   hideColumn(column: Column) {
-    if (this.sharedService.slickGrid && this.sharedService.slickGrid.getColumns && this.sharedService.slickGrid.setColumns && this.sharedService.slickGrid.getColumnIndex) {
+    if (this.sharedService?.slickGrid && this.sharedService.slickGrid.getColumnIndex) {
       const columnIndex = this.sharedService.slickGrid.getColumnIndex(column.id);
       const currentVisibleColumns = this.sharedService.slickGrid.getColumns();
 
@@ -278,8 +278,8 @@ export class HeaderMenuExtension implements Extension {
       if (columnDef && columnDef.header && columnDef.header.menu && columnDef.header.menu.items) {
         if (!columnDef.excludeFromHeaderMenu) {
           const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef.header.menu.items || [];
-          columnHeaderMenuItems.forEach((item: MenuCommandItem) => {
-            if (item.hasOwnProperty('command')) {
+          columnHeaderMenuItems.forEach(item => {
+            if (item !== 'divider' && item.hasOwnProperty('command')) {
               switch (item.command) {
                 case 'clear-filter':
                   item.title = this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}REMOVE_FILTER`, 'TEXT_REMOVE_FILTER');

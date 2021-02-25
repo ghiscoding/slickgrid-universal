@@ -864,7 +864,11 @@ export class SlickVanillaGridBundle {
       const onRowsOrCountChangedHandler = dataView.onRowsOrCountChanged;
       (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowsOrCountChangedHandler>>).subscribe(onRowsOrCountChangedHandler, (_e, args) => {
         grid.invalidate();
-        this.handleOnItemCountChanged(args.currentRowCount || 0);
+        this.handleOnItemCountChanged(args.currentRowCount || 0, this.dataView.getItemCount());
+      });
+      const onSetItemsCalledHandler = dataView.onSetItemsCalled;
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSetItemsCalledHandler>>).subscribe(onSetItemsCalledHandler, (_e, args) => {
+        this.handleOnItemCountChanged(this.dataView.getLength(), args.itemCount);
       });
 
       // when filtering data with local dataset, we need to update each row else it will not always show correctly in the UI
@@ -1129,12 +1133,12 @@ export class SlickVanillaGridBundle {
   }
 
   /** When data changes in the DataView, we'll refresh the metrics and/or display a warning if the dataset is empty */
-  private handleOnItemCountChanged(itemCount: number) {
+  private handleOnItemCountChanged(currentPageRowItemCount: number, totalItemCount: number) {
     this.metrics = {
       startTime: new Date(),
       endTime: new Date(),
-      itemCount,
-      totalItemCount: this.dataView?.getItemCount() || 0
+      itemCount: currentPageRowItemCount,
+      totalItemCount
     };
 
     // if custom footer is enabled, then we'll update its metrics
@@ -1144,7 +1148,7 @@ export class SlickVanillaGridBundle {
 
     // when using local (in-memory) dataset, we'll display a warning message when filtered data is empty
     if (this._isLocalGrid && this._gridOptions.enableEmptyDataWarningMessage) {
-      this.displayEmptyDataWarning(itemCount === 0);
+      this.displayEmptyDataWarning(currentPageRowItemCount === 0);
     }
   }
 

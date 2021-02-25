@@ -9,8 +9,8 @@ declare const Slick: SlickNamespace;
 
 export class HeaderButtonExtension implements Extension {
   private _eventHandler: SlickEventHandler;
-  private _addon: SlickHeaderButtons | null;
-  private _headerButtonOptions: HeaderButton | null;
+  private _addon: SlickHeaderButtons | null = null;
+  private _headerButtonOptions: HeaderButton | null = null;
 
   constructor(private readonly extensionUtility: ExtensionUtility, private readonly sharedService: SharedService) {
     this._eventHandler = new Slick.EventHandler();

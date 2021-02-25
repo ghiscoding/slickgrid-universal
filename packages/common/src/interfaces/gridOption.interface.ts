@@ -6,6 +6,7 @@ import {
   CheckboxSelectorOption,
   Column,
   ColumnPicker,
+  CompositeEditorOpenDetailOption,
   ContextMenu,
   CustomFooterOption,
   DataViewOption,
@@ -28,7 +29,6 @@ import {
   RowSelectionModelOption,
   TextExportOption,
   TreeDataOption,
-  CompositeEditorOpenDetailOption,
 } from './index';
 import { ColumnReorderFunction, EventNamingStyle, GridAutosizeColsMode, OperatorType, OperatorString, } from '../enums/index';
 import { TranslaterService } from '../services/translater.service';

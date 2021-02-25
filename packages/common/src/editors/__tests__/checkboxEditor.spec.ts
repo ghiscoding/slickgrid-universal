@@ -172,6 +172,7 @@ describe('CheckboxEditor', () => {
         editor.editorDomElement.dispatchEvent(new (window.window as any).Event('click'));
 
         expect(editor.isValueChanged()).toBe(true);
+        expect(editor.isValueTouched()).toBe(true);
         expect(saveSpy).toHaveBeenCalledTimes(1);
       });
 
@@ -505,6 +506,7 @@ describe('CheckboxEditor', () => {
       editor.destroy();
 
       expect(getCellSpy).toHaveBeenCalled();
+      expect(editor.isValueTouched()).toBe(true);
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
