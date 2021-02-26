@@ -186,6 +186,7 @@ export class Example12 {
         type: FieldType.number,
         sortable: true, filterable: true, columnGroup: 'Analysis',
         formatter: (_row, _cell, value) => this.complexityLevelList[value].label,
+        exportCustomFormatter: (_row, _cell, value) => this.complexityLevelList[value].label,
         filter: {
           model: Filters.multipleSelect,
           collection: this.complexityLevelList
@@ -199,7 +200,8 @@ export class Example12 {
       {
         id: 'start', name: 'Start', field: 'start', sortable: true, minWidth: 100,
         formatter: Formatters.dateUs, columnGroup: 'Period',
-        type: FieldType.dateUs, outputType: FieldType.dateUs,
+        exportCustomFormatter: Formatters.dateUs,
+        type: FieldType.date, outputType: FieldType.dateUs, saveOutputType: FieldType.dateUtc,
         filterable: true, filter: { model: Filters.compoundDate },
         editor: { model: Editors.date, massUpdate: true, params: { hideClearButton: false } },
       },
@@ -219,8 +221,9 @@ export class Example12 {
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true, minWidth: 100,
         formatter: Formatters.dateUs, columnGroup: 'Period',
-        type: FieldType.dateUs, outputType: FieldType.dateUs,
+        type: FieldType.date, outputType: FieldType.dateUs, saveOutputType: FieldType.dateUtc,
         filterable: true, filter: { model: Filters.compoundDate },
+        exportCustomFormatter: Formatters.dateUs,
         editor: {
           model: Editors.date,
           editorOptions: { minDate: 'today' },
@@ -892,6 +895,7 @@ export class Example12 {
       this.compositeEditorInstance?.openDetails({
         headerTitle: modalTitle,
         modalType,
+        insertOptions: { highlightRow: false }, // disable highlight to avoid flaky tests in Cypress
         // showCloseButtonOutside: true,
         // backdrop: null,
         // viewColumnLayout: 2, // responsive layout, choose from 'auto', 1, 2, or 3 (defaults to 'auto')
@@ -900,7 +904,7 @@ export class Example12 {
         onClose: () => Promise.resolve(confirm('You have unsaved changes, are you sure you want to close this window?')),
         onError: (error) => alert(error.message),
         onSave: (formValues, _selection, dataContext) => {
-          const serverResponseDelay = 250;
+          const serverResponseDelay = 50;
 
           // simulate a backend server call which will reject if the "% Complete" is below 50%
           // when processing a mass update or mass selection

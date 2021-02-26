@@ -783,6 +783,17 @@ describe('AutoCompleteEditor', () => {
         expect(liElm.innerHTML).toBe(mockTemplateString);
       });
     });
+
+    it('should call "clear" method and expect the DOM element to become blank & untouched', () => {
+      editor = new AutoCompleteEditor(editorArguments);
+      const saveSpy = jest.spyOn(editor, 'save');
+      editor.loadValue({ ...mockItemData, gender: 'male' });
+      editor.show();
+      editor.clear();
+
+      expect(saveSpy).toHaveBeenCalled();
+      expect(editor.editorDomElement.val()).toEqual('');
+    });
   });
 
   describe('with Composite Editor', () => {
@@ -881,6 +892,28 @@ describe('AutoCompleteEditor', () => {
       editor.loadValue({ ...mockItemData, gender: 'male' });
       editor.show();
       editor.disable();
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
+        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
+        formValues: {}, editors: {}, triggeredBy: 'user',
+      }, expect.anything());
+      expect(editor.editorDomElement.attr('disabled')).toEqual('disabled');
+      expect(editor.editorDomElement.val()).toEqual('');
+    });
+
+    it('should call "reset" method and expect the DOM element to become blank & untouched and have an empty formValues be passed in the onCompositeEditorChange event', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      gridOptionMock.compositeEditorOptions = {
+        excludeDisabledFieldFormValues: true
+      };
+
+      editor = new AutoCompleteEditor(editorArguments);
+      editor.loadValue({ ...mockItemData, gender: 'male' });
+      editor.show();
+      editor.reset('');
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({

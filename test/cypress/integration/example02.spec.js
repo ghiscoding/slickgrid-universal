@@ -34,8 +34,9 @@ describe('Example 02 - Grouping & Aggregators', () => {
       .find('.slick-custom-footer')
       .find('.right-footer')
       .should($span => {
+        const dateTime = moment().format('YYYY-MM-DD, hh:mm a');
         const text = removeExtraSpaces($span.text()); // remove all white spaces
-        expect(text).to.eq(`Last Update ${moment().format('YYYY-MM-DD, hh:mm a')} | 500 of 500 items`);
+        expect(text).to.eq(`Last Update ${dateTime} | 500 of 500 items`);
       });
   });
 
