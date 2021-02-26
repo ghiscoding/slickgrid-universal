@@ -94,10 +94,10 @@ describe('Example 12 - Composite Editor Modal', () => {
   });
 
   it('should not be able to change the "Finish" dates on first 2 rows', () => {
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(8)`).should('contain', '').click(); // this date should also always be initially empty
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(8)`).should('contain', '').click(); // this date should also always be initially empty
     cy.get(`.flatpickr-day.today:visible`).should('not.exist');
 
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(8)`).should('contain', '').click(); // this date should also always be initially empty
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(8)`).should('contain', '').click(); // this date should also always be initially empty
     cy.get(`.flatpickr-day.today:visible`).should('not.exist');
   });
 
@@ -278,7 +278,6 @@ describe('Example 12 - Composite Editor Modal', () => {
   it('should open the Composite Editor (Edit Item) and expect all form inputs to be filled with TASK 8888 data of previous create item', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).click({ force: true });
     cy.get('[data-test="open-modal-edit-btn"]').click();
-    cy.get('[data-test="open-modal-edit-btn"]').click();
     cy.get('.slick-editor-modal-title').contains('Editing - Task 8888 (id: 501)');
 
     cy.get('textarea').contains('Task 8888').type('Task 8899');
@@ -366,7 +365,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(10)`).should('contain', 'Belgium');
   });
 
-  it('should open the Composite Editor (Mass Update) change some inputs then click on the "Reset Form" and expect the form to be all empty', () => {
+  it('should open the Composite Editor (Mass Update) change some inputs', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).click();
     cy.get('[data-test="open-modal-mass-update-btn"]').wait(200).click();
     cy.get('.slick-editor-modal-title').should('contain', 'Mass Update All Records');
@@ -388,12 +387,29 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.ui-menu.ui-autocomplete:visible').find('li.ui-menu-item:nth(1)').click();
     cy.get('.item-details-container.editor-origin .modified').should('have.length', 1);
     cy.get('.item-details-container.editor-origin .autocomplete').invoke('val').then(text => expect(text).to.eq('Belgium'));
+  });
+
+  it('should be able to clear the "Country of Origin" autocomplete field in the modal form via the Clear button from the editor', () => {
+    cy.get('.item-details-container.editor-origin .modified').should('have.length', 1);
+    cy.get('.item-details-container.editor-origin .autocomplete-container button.icon-clear').click();
+    cy.get('.item-details-container.editor-origin .modified').should('have.length', 1);
+    cy.get('.item-details-container.editor-origin .autocomplete').invoke('val').then(text => expect(text).to.eq(''));
+  });
+
+  it('should be able to click on the "Reset Form" button from the (Mass Update) and expect the form to be empty and not be able to Save', () => {
+    const alertStub = cy.stub();
+    cy.on('window:alert', alertStub);
 
     cy.get('.item-details-container .modified').should('have.length', 4);
     cy.get('.reset-form').contains('Reset Form').click();
     cy.get('.item-details-container .modified').should('have.length', 0);
 
-    cy.get('.btn-cancel').click();
+    cy.get('.btn-save')
+      .click()
+      .then(() => expect(alertStub.getCall(0)).to.be.calledWith('Sorry we could not detect any changes.'))
+
+    cy.get('.btn-cancel')
+      .click()
   });
 
   it('should have the "Mass Selection" button disabled when no rows are selected', () => {
@@ -570,5 +586,15 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(8)`).should('not.be.empty');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(10)`).should('contain', 'Belgium');
+  });
+
+  it('should be able to clear the "Country of Origin" autocomplete field in the grid via the Clear button from the editor', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(10)`).should('contain', 'Belgium');
+
+    // clear Country
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(10)`).click();
+    cy.get('.autocomplete-container button.icon-clear').click();
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(10)`).should('contain', '');
   });
 });

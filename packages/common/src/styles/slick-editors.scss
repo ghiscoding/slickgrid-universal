@@ -16,7 +16,6 @@
     margin-right: $text-editor-margin-right;
     margin-top: $text-editor-margin-top;
     width: $text-editor-width;
-    transform: translate(0, -2px);
     outline: 0;
     height: 100%;
 
@@ -43,25 +42,38 @@
     }
   }
 
+  .input-group {
+    input.editor-text {
+      height: 24px;
+      margin-left: 0;
+      transform: none;
+    }
+  }
+
+  .ms-filter.search-filter {
+    transform: $multiselect-editor-transform;
+  }
+
+  .autocomplete-container.input-group,
   .flatpickr.input-group {
     .input-group-btn {
       .btn {
         background-color: #eeeeee;
         border: 1px solid #cccccc;
-        padding: $date-editor-clear-button-icon-padding;
+        padding: $editor-input-group-clear-btn-icon-padding;
         border-top-right-radius: $text-editor-border-radius;
         border-bottom-right-radius: $text-editor-border-radius;
         cursor: pointer;
         height: $date-editor-height;
-        &.icon-close:before {
+        &.icon-clear:before {
           font-family: $icon-font-family;
-          font-size: $date-editor-clear-button-icon-size;
-          content: $date-editor-clear-button-icon;
-          vertical-align: $date-editor-clear-button-icon-vertical-align;
+          font-size: $editor-input-group-clear-btn-icon-size;
+          content: $editor-input-group-clear-btn-icon;
+          vertical-align: $editor-input-group-clear-btn-icon-vertical-align;
           display: inline-block;
-          height: $date-editor-clear-button-icon-height;
-          width: $date-editor-clear-button-icon-width;
-          margin-top: $date-editor-clear-button-icon-margin-top;
+          height: $editor-input-group-clear-btn-icon-height;
+          width: $editor-input-group-clear-btn-icon-width;
+          margin-top: $editor-input-group-clear-btn-icon-margin-top;
         }
       }
     }
@@ -201,14 +213,6 @@
       height: $editor-modal-editor-btn-reset-height;
       background-color: $editor-modal-editor-btn-reset-bg-color;
       margin: $editor-modal-editor-btn-reset-margin;
-      // margin: 27px 10px 2px 5px;
-      // float: right;
-      // border: 0;
-      // outline: none;
-      // opacity: 0.6;
-      // &:active {
-      //   background-color: #f7f7f7;
-      // }
     }
 
     .close {
@@ -417,6 +421,7 @@
         }
       }
 
+      .autocomplete-container.input-group,
       .flatpickr.input-group {
         .input-group-btn {
           min-width: 28px;

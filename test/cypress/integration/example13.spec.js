@@ -106,9 +106,6 @@ describe('Example 13 - Header Button Plugin', () => {
       .scrollTo('left')
       .wait(50);
 
-    const alertStub = cy.stub();
-    cy.on('window:alert', alertStub);
-
     cy.get('.slick-header-columns')
       .children('.slick-header-column:nth(0)')
       .should('contain', 'Resize me!');

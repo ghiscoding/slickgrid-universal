@@ -33,7 +33,7 @@ declare const Slick: SlickNamespace;
 export class DateEditor implements Editor {
   protected _$inputWithData: any;
   protected _$input: any;
-  protected _$editorInputElm: any;
+  protected _$editorInputGroupElm: any;
   protected _$closeButtonGroupElm: any;
   protected _isValueTouched = false;
   protected _lastTriggeredByClearDate = false;
@@ -141,22 +141,22 @@ export class DateEditor implements Editor {
         this._pickerMergedOptions.altInputClass = 'flatpickr-alt-input form-control';
       }
 
-      this._$editorInputElm = $(`<div class="flatpickr input-group"></div>`);
+      this._$editorInputGroupElm = $(`<div class="flatpickr input-group"></div>`);
       const $closeButtonGroupElm = $(`<span class="input-group-btn input-group-append" data-clear></span>`);
-      this._$closeButtonGroupElm = $(`<button class="btn btn-default icon-close" type="button"></button>`);
+      this._$closeButtonGroupElm = $(`<button class="btn btn-default icon-clear" type="button"></button>`);
 
       this._$input = $(`<input type="text" data-input data-defaultDate="${this.defaultDate}" class="${inputCssClasses.replace(/\./g, ' ')}" placeholder="${placeholder}" title="${title}" />`);
-      this._$input.appendTo(this._$editorInputElm);
+      this._$input.appendTo(this._$editorInputGroupElm);
 
       // show clear date button (unless user specifically doesn't want it)
       if (!this.columnEditor?.params?.hideClearButton) {
         this._$closeButtonGroupElm.appendTo($closeButtonGroupElm);
-        $closeButtonGroupElm.appendTo(this._$editorInputElm);
+        $closeButtonGroupElm.appendTo(this._$editorInputGroupElm);
         this._$closeButtonGroupElm.on('click', () => this._lastTriggeredByClearDate = true);
       }
 
-      this._$editorInputElm.appendTo(this.args.container);
-      this.flatInstance = (this._$editorInputElm[0] && typeof this._$editorInputElm[0].flatpickr === 'function') ? this._$editorInputElm[0].flatpickr(this._pickerMergedOptions) : flatpickr(this._$editorInputElm, this._pickerMergedOptions as unknown as Partial<FlatpickrBaseOptions>);
+      this._$editorInputGroupElm.appendTo(this.args.container);
+      this.flatInstance = (this._$editorInputGroupElm[0] && typeof this._$editorInputGroupElm[0].flatpickr === 'function') ? this._$editorInputGroupElm[0].flatpickr(this._pickerMergedOptions) : flatpickr(this._$editorInputGroupElm, this._pickerMergedOptions as unknown as Partial<FlatpickrBaseOptions>);
 
       // when we're using an alternate input to display data, we'll consider this input as the one to do the focus later on
       // else just use the top one
@@ -179,9 +179,9 @@ export class DateEditor implements Editor {
         setTimeout(() => destroyObjectDomElementProps(this.flatInstance));
       }
     }
-    if (this._$editorInputElm?.remove) {
-      this._$editorInputElm.remove();
-      this._$editorInputElm = null;
+    if (this._$editorInputGroupElm?.remove) {
+      this._$editorInputGroupElm.remove();
+      this._$editorInputGroupElm = null;
     }
     if (this._$inputWithData?.remove) {
       this._$inputWithData.remove();
