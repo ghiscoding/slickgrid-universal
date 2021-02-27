@@ -1,8 +1,11 @@
-import { FieldType, OperatorString, SearchTerm } from '../enums/index';
+import { FieldType, OperatorString, OperatorType, SearchTerm } from '../enums/index';
 
 export interface FilterConditionOption {
   /** optional object data key */
   dataKey?: string;
+
+  /** pull the grid option default filter in case the "operator" provided is not a range operator or is simply undefined */
+  defaultFilterRangeOperator: OperatorType | OperatorString;
 
   /** filter operator */
   operator: OperatorString;

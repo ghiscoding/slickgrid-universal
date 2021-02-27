@@ -1,4 +1,4 @@
-import { FieldType, SearchTerm } from '../../enums/index';
+import { FieldType, OperatorType } from '../../enums/index';
 import { FilterConditionOption } from '../../interfaces/index';
 import { executeDateFilterCondition, getFilterParsedDates } from '../dateFilterCondition';
 import { executeFilterConditionTest, getParsedSearchTermsByFieldType } from '../filterConditionProcesses';
@@ -99,6 +99,20 @@ describe('dateIsoFilterCondition method', () => {
     });
 
     describe('date range', () => {
+      it('should return True when input value is on the inclusive limit range of search terms using 2 dots (..) notation AND no operator provided except a defaultFilterRangeOperator is rangeInclusive', () => {
+        const searchTerms = ['1993-12-01..1993-12-31'];
+        const options = { dataKey: '', defaultFilterRangeOperator: OperatorType.rangeInclusive, cellValue: '1993-12-01', fieldType: FieldType.dateIso, searchTerms } as FilterConditionOption;
+        const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateIso));
+        expect(output).toBe(true);
+      });
+
+      it('should return False when input value is on the inclusive limit range of search terms using 2 dots (..) notation AND no operator provided except a defaultFilterRangeOperator is rangeExclusive', () => {
+        const searchTerms = ['1993-12-01..1993-12-31'];
+        const options = { dataKey: '', defaultFilterRangeOperator: OperatorType.rangeExclusive, cellValue: '1993-12-01', fieldType: FieldType.dateIso, searchTerms } as FilterConditionOption;
+        const output = executeFilterConditionTest(options, getFilterParsedDates(searchTerms, FieldType.dateIso));
+        expect(output).toBe(false);
+      });
+
       it('should return True when input value is in the range of search terms', () => {
         const searchTerms = ['1993-12-01..1993-12-31'];
         const options = { dataKey: '', operator: 'EQ', cellValue: '1993-12-25', fieldType: FieldType.dateIso, searchTerms } as FilterConditionOption;
