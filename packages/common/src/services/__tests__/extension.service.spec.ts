@@ -663,36 +663,6 @@ describe('ExtensionService', () => {
         expect(setColumnsSpy).toHaveBeenCalledWith(columnsMock);
       });
 
-      it('should re-register the Header Button when enable and method is called with new column definition collection provided as argument', () => {
-        const instanceMock = { onColumnsChanged: jest.fn() };
-        const extensionMock = { name: ExtensionName.headerButton, addon: null, instance: null, class: null } as ExtensionModel<any, any>;
-        const expectedExtension = { name: ExtensionName.headerButton, instance: instanceMock as unknown, class: null } as ExtensionModel<any, any>;
-        const gridOptionsMock = { enableHeaderButton: true } as GridOption;
-        const columnsMock = [
-          { id: 'field1', field: 'field1', nameKey: 'HELLO' },
-          { id: 'field2', field: 'field2', nameKey: 'WORLD' }
-        ] as Column[];
-
-        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-        jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-        const spyGetExt = jest.spyOn(service, 'getExtensionByName').mockReturnValue(extensionMock);
-        const spyGmDispose = jest.spyOn(extensionHeaderButtonStub, 'dispose');
-        const spyGmRegister = jest.spyOn(extensionHeaderButtonStub, 'register').mockReturnValue(instanceMock);
-        const spyAllCols = jest.spyOn(SharedService.prototype, 'allColumns', 'set');
-        const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
-
-        service.renderColumnHeaders(columnsMock);
-
-        expect(expectedExtension).toEqual(expectedExtension);
-        expect(spyGetExt).toHaveBeenCalled();
-        expect(expectedExtension).toEqual(expectedExtension);
-        expect(spyGetExt).toHaveBeenCalled();
-        expect(spyGmDispose).toHaveBeenCalled();
-        expect(spyGmRegister).toHaveBeenCalled();
-        expect(spyAllCols).toHaveBeenCalledWith(columnsMock);
-        expect(setColumnsSpy).toHaveBeenCalledWith(columnsMock);
-      });
-
       it('should re-register the Header Menu when enable and method is called with new column definition collection provided as argument', () => {
         const instanceMock = { onColumnsChanged: jest.fn() };
         const extensionMock = { name: ExtensionName.headerMenu, addon: null, instance: null, class: null } as ExtensionModel<any, any>;
