@@ -525,6 +525,7 @@ export class AutoCompleteEditor implements Editor {
       this._$editorInputGroupElm = $(`<div class="autocomplete-container input-group"></div>`);
       this._$editorInputGroupElm.appendTo(this.args.container);
       this._$input.appendTo(this._$editorInputGroupElm);
+      this._$input.addClass('input-group-editor');
 
       const $closeButtonGroupElm = $(`<span class="input-group-btn input-group-append" data-clear></span>`);
       this._$closeButtonGroupElm = $(`<button class="btn btn-default icon-clear" type="button"></button>`);

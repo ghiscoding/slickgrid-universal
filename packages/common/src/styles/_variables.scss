@@ -532,7 +532,7 @@ $text-editor-background:                              #ffffff !default;
 $text-editor-margin-bottom:                           2px !default;
 $text-editor-margin-left:                             -2px !default; /* negative number to cancel inside padding */
 $text-editor-right-input-margin-left:                 calc(#{$text-editor-margin-left} + 9px) !default;
-$text-editor-margin-right:                            2px !default;
+$text-editor-margin-right:                            0px !default;
 $text-editor-margin-top:                              0px !default;
 $text-editor-padding-bottom:                          0 !default;
 $text-editor-padding-left:                            2px !default;
@@ -541,7 +541,6 @@ $text-editor-padding-top:                             0 !default;
 $text-editor-focus-border-color:                      $editor-focus-border-color !default;
 $text-editor-focus-box-shadow:                        $editor-focus-box-shadow !default;
 $text-editor-readonly-color:                          #f0f0f0 !default;
-$text-editor-width:                                   calc(100% + 2px) !default;
 $slider-editor-height:                                $editor-input-height !default;
 $slider-editor-runnable-track-padding:                0 6px !default;
 $slider-editor-number-padding:                        4px 6px !default;

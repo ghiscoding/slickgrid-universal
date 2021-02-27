@@ -15,10 +15,13 @@
     margin-bottom: $text-editor-margin-bottom;
     margin-right: $text-editor-margin-right;
     margin-top: $text-editor-margin-top;
-    width: $text-editor-width;
     outline: 0;
     height: 100%;
+    max-width: 100%;
 
+    &:not(.input-group-editor) {
+      width: 100%;
+    }
     &:focus {
       outline: 0;
       border-color: $text-editor-focus-border-color;
