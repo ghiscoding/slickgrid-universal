@@ -13,7 +13,11 @@ export const executeNumberFilterCondition: FilterCondition = ((options: FilterCo
   }
 
   if (searchValue1 !== undefined && searchValue2 !== undefined) {
-    const isInclusive = options?.operator === OperatorType.rangeInclusive;
+    let operator = options?.operator ?? options.defaultFilterRangeOperator;
+    if (operator !== OperatorType.rangeInclusive && operator !== OperatorType.rangeExclusive) {
+      operator = options.defaultFilterRangeOperator;
+    }
+    const isInclusive = operator === OperatorType.rangeInclusive;
     const resultCondition1 = testFilterCondition((isInclusive ? '>=' : '>'), cellValue, +searchValue1);
     const resultCondition2 = testFilterCondition((isInclusive ? '<=' : '<'), cellValue, +searchValue2);
     return (resultCondition1 && resultCondition2);
@@ -31,7 +35,6 @@ export function getFilterParsedNumbers(inputSearchTerms: SearchTerm[] | undefine
   const parsedSearchValues: number[] = [];
   let searchValue1;
   let searchValue2;
-
   if (searchTerms.length === 2 || (typeof searchTerms[0] === 'string' && (searchTerms[0] as string).indexOf('..') > 0)) {
     const searchValues = (searchTerms.length === 2) ? searchTerms : (searchTerms[0] as string).split('..');
     searchValue1 = parseFloat(Array.isArray(searchValues) ? searchValues[0] as string : '');

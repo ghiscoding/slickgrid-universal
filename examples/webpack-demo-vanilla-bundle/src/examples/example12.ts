@@ -181,6 +181,31 @@ export class Example12 {
           massUpdate: true, minValue: 0, maxValue: 100,
         },
       },
+      // {
+      //   id: 'percentComplete2', name: '% Complete', field: 'analysis.percentComplete', minWidth: 100,
+      //   type: FieldType.number,
+      //   sortable: true, filterable: true, columnGroup: 'Analysis',
+      //   // filter: { model: Filters.compoundSlider, operator: '>=' },
+      //   formatter: Formatters.complex,
+      //   exportCustomFormatter: Formatters.complex, // without the Editing cell Formatter
+      //   editor: {
+      //     model: Editors.singleSelect,
+      //     serializeComplexValueFormat: 'flat', // if we keep "object" as the default it will apply { value: 2, label: 2 } which is not what we want in this case
+      //     collection: Array.from(Array(101).keys()).map(k => ({ value: k, label: k })),
+      //     collectionOptions: {
+      //       addCustomFirstEntry: { value: '', label: '--none--' }
+      //     },
+      //     collectionOverride: (_collectionInput, args) => {
+      //       const originalCollection = args.originalCollections || [];
+      //       const duration = args?.dataContext?.duration ?? args?.compositeEditorOptions?.formValues?.duration;
+      //       if (duration === 10) {
+      //         return originalCollection.filter(itemCollection => +itemCollection.value !== 1);
+      //       }
+      //       return originalCollection;
+      //     },
+      //     massUpdate: true, minValue: 0, maxValue: 100,
+      //   },
+      // },
       {
         id: 'complexity', name: 'Complexity', field: 'complexity', minWidth: 100,
         type: FieldType.number,
