@@ -52,7 +52,7 @@
     "@slickgrid-universal/excel-export": "^0.11.2",
     "@slickgrid-universal/text-export": "^0.11.2",
     "dompurify": "^2.2.6",
-    "whatwg-fetch": "^3.6.1"
+    "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
     "@types/webpack": "^4.41.26",
