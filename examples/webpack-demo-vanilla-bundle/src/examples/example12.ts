@@ -398,7 +398,6 @@ export class Example12 {
         pageSize: 10,
         pageSizes: [10, 200, 500, 5000]
       },
-      frozenColumn: 2,
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: false
