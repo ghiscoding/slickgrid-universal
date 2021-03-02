@@ -60,6 +60,7 @@ const gridStub = {
   invalidate: jest.fn(),
   onColumnsReordered: new Slick.Event(),
   onColumnsResized: new Slick.Event(),
+  onRendered: new Slick.Event(),
   onSetOptions: new Slick.Event(),
   onSort: new Slick.Event(),
   render: jest.fn(),
@@ -161,6 +162,18 @@ describe('GroupingAndColspanService', () => {
 
       service.init(gridStub);
       gridStub.onSort.notify({ columnId: 'lastName', sortAsc: true, sortCol: mockColumns[0] }, new Slick.EventData(), gridStub);
+      jest.runAllTimers(); // fast-forward timer
+
+      expect(spy).toHaveBeenCalledTimes(2);
+      expect(setTimeout).toHaveBeenCalledTimes(1);
+      expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 75);
+    });
+
+    it('should call the "renderPreHeaderRowGroupingTitles" after triggering a grid "onRendered"', () => {
+      const spy = jest.spyOn(service, 'renderPreHeaderRowGroupingTitles');
+
+      service.init(gridStub);
+      gridStub.onRendered.notify({ startRow: 0, endRow: 10, grid: gridStub }, new Slick.EventData(), gridStub);
       jest.runAllTimers(); // fast-forward timer
 
       expect(spy).toHaveBeenCalledTimes(2);
