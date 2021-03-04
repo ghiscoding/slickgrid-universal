@@ -1,0 +1,70 @@
+<h3 class="title is-3">
+  Example 14 - Columns Resize by Content
+  <span class="subtitle is-size-5 has-text-grey-dark">(with Salesforce Theme)</span>
+  <div class="subtitle" style="float: right; margin-top: -20px">
+    <a class="is-size-5"
+       target="_blank"
+       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example14.ts">
+      <span class="mdi mdi-link mdi-v-align-sub"></span> code
+    </a>
+  </div>
+</h3>
+
+<section class="columns is-desktop">
+  <div class="column field has-addons is-narrow">
+    <p class="control">
+      <button class="button is-small" onclick.delegate="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
+        <span class="icon mdi mdi-table-edit"></span>
+        <span>Toggle Edit/Readonly Grid</span>
+      </button>
+    </p>
+    <p class="control">
+      <button class="button is-small" onclick.delegate="undoLastEdit()" data-test="undo-last-edit-btn">
+        <span class="icon mdi mdi-undo"></span>
+        <span>Undo Last Edit</span>
+      </button>
+    </p>
+    <p class="control">
+      <button class="button is-small is-info" onclick.delegate="saveAll()" data-test="save-all-btn"
+              title="Check your console log for the result">
+        <span>Save All</span>
+      </button>
+    </p>
+  </div>
+
+
+</section>
+
+<div class="columns">
+  <div class="column field is-narrow">
+    <h4 class="title is-4">Container Size (1000px)</h4>
+  </div>
+  <div class="column field has-addons is-narrow">
+    <p class="control">
+      <button class="button is-small" onclick.delegate="handleBeforeResizeColumns()">
+        <span class="icon mdi mdi-swap-horizontal"></span>
+        <span>Previous "autosizeColumns"</span>
+      </button>
+    </p>
+    <p class="control">
+      <button class="button is-small" onclick.delegate="handleNewResizeColumns()">
+        <span class="icon mdi mdi-swap-horizontal"></span>
+        <span>New Resize by Cell Content</span>
+      </button>
+    </p>
+  </div>
+</div>
+
+<div style="width: 1000px" class="grid-container">
+  <div class="grid1">
+  </div>
+</div>
+
+<br>
+<hr>
+<br>
+
+<div style="width: 1000px" class="grid-container">
+  <div class="grid2">
+  </div>
+</div>
