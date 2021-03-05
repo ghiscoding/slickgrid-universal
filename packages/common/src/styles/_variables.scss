@@ -501,7 +501,7 @@ $checkbox-selector-opacity-hover:                     0.35 !default;
 /* Editors */
 $editor-input-border-radius:                          3px !default;
 $editor-input-disabled-color:                         #ececec !default;
-$editor-input-height:                                 100% !default;
+$editor-input-height:                                 24px !default;
 $editor-focus-border-color:                           lighten($primary-color, 10%) !default;
 $editor-focus-box-shadow:                             inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(lighten($primary-color, 3%), .3) !default;
 $editor-input-group-clear-btn-icon:                   "\f00d" !default;

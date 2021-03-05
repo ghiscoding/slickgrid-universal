@@ -126,6 +126,7 @@ $preheader-border-right:                              1px solid #e2e2e2 !default
 $row-move-plugin-cursor:                              grab !default;
 $row-move-plugin-icon-color:                          $icon-color !default;
 $row-move-plugin-icon:                                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($row-move-plugin-icon-color)}" viewBox="0 0 24 24"><path d="M10,13H22V11H10M10,19H22V17H10M10,7H22V5H10M6,7H8.5L5,3.5L1.5,7H4V17H1.5L5,20.5L8.5,17H6V7Z"></path></svg>') !default;
+$editor-input-height:                                 100% !default;
 $editor-input-group-clear-btn-icon-color:             $icon-color !default;
 $editor-input-group-clear-btn-icon:                   url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($editor-input-group-clear-btn-icon-color)}" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"></path></svg>') !default;
 $editor-input-group-clear-btn-icon-margin-top:        inherit !default;
