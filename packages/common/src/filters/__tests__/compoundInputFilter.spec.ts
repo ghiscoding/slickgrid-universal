@@ -29,7 +29,7 @@ describe('CompoundInputFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: CompoundInputFilter;
   let filterArguments: FilterArguments;
-  let spyGetHeaderRow;
+  let spyGetHeaderRow: jest.SpyInstance;
   let mockColumn: Column;
 
   beforeEach(() => {
@@ -262,9 +262,11 @@ describe('CompoundInputFilter', () => {
 
     expect(filterInputElm.value).toBe('xyz');
     expect(removeExtraSpaces(filterOperatorElm[0][0].textContent!)).toBe(' Contains');
-    expect(removeExtraSpaces(filterOperatorElm[0][1].textContent!)).toBe('= Equals');
-    expect(removeExtraSpaces(filterOperatorElm[0][2].textContent!)).toBe('a* Starts With');
-    expect(removeExtraSpaces(filterOperatorElm[0][3].textContent!)).toBe('*z Ends With');
+    expect(removeExtraSpaces(filterOperatorElm[0][1].textContent!)).toBe('<> Not contains');
+    expect(removeExtraSpaces(filterOperatorElm[0][2].textContent!)).toBe('= Equals');
+    expect(removeExtraSpaces(filterOperatorElm[0][3].textContent!)).toBe('!= Not equal to');
+    expect(removeExtraSpaces(filterOperatorElm[0][4].textContent!)).toBe('a* Starts With');
+    expect(removeExtraSpaces(filterOperatorElm[0][5].textContent!)).toBe('*z Ends With');
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {
@@ -330,9 +332,11 @@ describe('CompoundInputFilter', () => {
 
       expect(filterInputElm.value).toBe('xyz');
       expect(removeExtraSpaces(filterOperatorElm[0][0].textContent!)).toBe(' Contient');
-      expect(removeExtraSpaces(filterOperatorElm[0][1].textContent!)).toBe('= Égale');
-      expect(removeExtraSpaces(filterOperatorElm[0][2].textContent!)).toBe('a* Commence par');
-      expect(removeExtraSpaces(filterOperatorElm[0][3].textContent!)).toBe('*z Se termine par');
+      expect(removeExtraSpaces(filterOperatorElm[0][1].textContent!)).toBe('<> Ne contient pas');
+      expect(removeExtraSpaces(filterOperatorElm[0][2].textContent!)).toBe('= Égale');
+      expect(removeExtraSpaces(filterOperatorElm[0][3].textContent!)).toBe('!= Non égal à');
+      expect(removeExtraSpaces(filterOperatorElm[0][4].textContent!)).toBe('a* Commence par');
+      expect(removeExtraSpaces(filterOperatorElm[0][5].textContent!)).toBe('*z Se termine par');
     });
   });
 });
