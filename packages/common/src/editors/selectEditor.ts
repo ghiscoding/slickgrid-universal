@@ -743,7 +743,7 @@ export class SelectEditor implements Editor {
         options += `<option value="${optionValue}" label="${optionLabel}">${optionText}</option>`;
       });
     }
-    return `<select id="${this.elementName}" class="ms-filter search-filter editor-${columnId}" ${this.isMultipleSelect ? 'multiple="multiple"' : ''}>${options}</select>`;
+    return `<select id="${this.elementName}" class="ms-filter search-filter select-editor editor-${columnId}" ${this.isMultipleSelect ? 'multiple="multiple"' : ''}>${options}</select>`;
   }
 
   /** Create a blank entry that can be added to the collection. It will also reuse the same collection structure provided by the user */
