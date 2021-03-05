@@ -95,6 +95,20 @@ describe('executeStringFilterCondition method', () => {
     expect(output).toBe(true);
   });
 
+  it('should return False when search term is a substring of the cell value and the operator is "<>" (not contains)', () => {
+    const searchTerms = ['bost'];
+    const options = { dataKey: '', operator: '<>', cellValue: 'abbostford', fieldType: FieldType.string, searchTerms } as FilterConditionOption;
+    const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
+    expect(output).toBe(false);
+  });
+
+  it('should return True when search term is a substring of the cell value and the operator is "!=" (not contains) because "!=" compares agains the entire string', () => {
+    const searchTerms = ['bost'];
+    const options = { dataKey: '', operator: '!=', cellValue: 'abbostford', fieldType: FieldType.string, searchTerms } as FilterConditionOption;
+    const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
+    expect(output).toBe(true);
+  });
+
   it('should return True when input value provided starts with same substring and the operator is empty string', () => {
     const searchTerms = ['abb'];
     const options = { dataKey: '', operator: '', cellValue: 'abbostford', fieldType: FieldType.string, searchTerms } as FilterConditionOption;
