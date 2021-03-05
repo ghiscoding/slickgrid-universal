@@ -19,7 +19,7 @@ export const GlobalGridOptions: GridOption = {
   cellHighlightCssClass: 'slick-cell-modified',
   checkboxSelector: {
     cssClass: 'slick-cell-checkboxsel',
-    width: 42
+    width: 40
   },
   columnGroupSeparator: ' - ',
   columnPicker: {
