@@ -33,6 +33,7 @@ import { executeBackendCallback, refreshBackendDataset } from './backend-utiliti
 import { debounce, deepCopy, getDescendantProperty, mapOperatorByFieldType } from './utilities';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
+import { isObservable, SubjectFacade } from './rxjsFacade';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -61,6 +62,7 @@ export class FilterService {
   protected _grid!: SlickGrid;
   protected _onSearchChange: SlickEvent<OnSearchChangeEvent> | null;
   protected _tmpPreFilteredData?: number[];
+  protected httpCancelRequests$: SubjectFacade<void> = new SubjectFacade<void>(); // this will be used to cancel any pending http request
 
   constructor(protected filterFactory: FilterFactory, protected pubSubService: PubSubService, protected sharedService: SharedService) {
     this._onSearchChange = new Slick.Event();
@@ -113,6 +115,9 @@ export class FilterService {
     // unsubscribe all SlickGrid events
     if (this._eventHandler && this._eventHandler.unsubscribeAll) {
       this._eventHandler.unsubscribeAll();
+    }
+    if (isObservable(this.httpCancelRequests$)) {
+      this.httpCancelRequests$.next(); // this cancels any pending http requests
     }
     this.disposeColumnFilters();
     this._onSearchChange = null;
@@ -646,12 +651,12 @@ export class FilterService {
         debounce(() => {
           const query = backendApi.service.processOnFilterChanged(event, args);
           const totalItems = this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems || 0;
-          executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitFilterChanged.bind(this));
+          executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitFilterChanged.bind(this), this.httpCancelRequests$);
         }, debounceTypingDelay)();
       } else {
         const query = backendApi.service.processOnFilterChanged(event, args);
         const totalItems = this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems || 0;
-        executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitFilterChanged.bind(this));
+        executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitFilterChanged.bind(this), this.httpCancelRequests$);
       }
     }
   }

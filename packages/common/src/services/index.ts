@@ -12,6 +12,7 @@ export * from './gridState.service';
 export * from './groupingAndColspan.service';
 export * from './pagination.service';
 export * from './pubSub.service';
+export * from './rxjsFacade';
 export * from './shared.service';
 export * from './sort.service';
 export * from './textExport.service';

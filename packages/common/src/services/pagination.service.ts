@@ -15,6 +15,7 @@ import {
 import { executeBackendProcessesCallback, onBackendError } from './backend-utilities';
 import { SharedService } from './shared.service';
 import { PubSubService } from './pubSub.service';
+import { isObservable, ObservableFacade } from './rxjsFacade';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -345,7 +346,20 @@ export class PaginationService {
                 onBackendError(error, this._backendServiceApi);
                 reject(process);
               });
+          } else if (isObservable(process)) {
+            this._subscriptions.push(
+              (process as ObservableFacade<any>).subscribe(
+                (processResult: any) => {
+                  resolve(executeBackendProcessesCallback(startTime, processResult, this._backendServiceApi, this._totalItems));
+                },
+                (error: any) => {
+                  onBackendError(error, this._backendServiceApi);
+                  reject(process);
+                }
+              )
+            );
           }
+
           this.pubSubService.publish(`onPaginationRefreshed`, this.getFullPagination());
           this.pubSubService.publish(`onPaginationChanged`, this.getFullPagination());
         }

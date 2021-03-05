@@ -1184,7 +1184,7 @@ export class SlickVanillaGridBundle {
 
   /** Load the Editor Collection asynchronously and replace the "collection" property when Promise resolves */
   private loadEditorCollectionAsync(column: Column) {
-    const collectionAsync = (column?.editor as ColumnEditor).collectionAsync;
+    const collectionAsync = (column?.editor as ColumnEditor).collectionAsync as Promise<any>;
     (column?.editor as ColumnEditor).disabled = true; // disable the Editor DOM element, we'll re-enable it after receiving the collection with "updateEditorCollection()"
 
     if (collectionAsync) {

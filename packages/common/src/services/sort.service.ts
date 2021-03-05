@@ -25,6 +25,7 @@ import { getDescendantProperty, convertHierarchicalViewToParentChildArray } from
 import { sortByFieldType } from '../sortComparers/sortUtilities';
 import { PubSubService } from './pubSub.service';
 import { SharedService } from './shared.service';
+import { isObservable, SubjectFacade } from './rxjsFacade';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -35,6 +36,7 @@ export class SortService {
   private _dataView!: SlickDataView;
   private _grid!: SlickGrid;
   private _isBackendGrid = false;
+  private httpCancelRequests$: SubjectFacade<void> = new SubjectFacade<void>(); // this will be used to cancel any pending http request
 
   constructor(private sharedService: SharedService, private pubSubService: PubSubService) {
     this._eventHandler = new Slick.EventHandler();
@@ -308,6 +310,9 @@ export class SortService {
     if (this._eventHandler && this._eventHandler.unsubscribeAll) {
       this._eventHandler.unsubscribeAll();
     }
+    if (isObservable(this.httpCancelRequests$)) {
+      this.httpCancelRequests$.next(); // this cancels any pending http requests
+    }
   }
 
   /** Process the initial sort, typically it will sort ascending by the column that has the Tree Data unless user specifies a different initialSort */
@@ -358,7 +363,7 @@ export class SortService {
     // query backend
     const query = backendApi.service.processOnSortChanged(event, args);
     const totalItems = gridOptions && gridOptions.pagination && gridOptions.pagination.totalItems || 0;
-    executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitSortChanged.bind(this));
+    executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitSortChanged.bind(this), this.httpCancelRequests$);
   }
 
   /** When a Sort Changes on a Local grid (JSON dataset) */

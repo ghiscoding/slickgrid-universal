@@ -167,7 +167,7 @@ export class AutoCompleteFilter implements Filter {
         if (collectionAsync && !this.columnFilter.collection) {
           // only read the collectionAsync once (on the 1st load),
           // we do this because Http Fetch will throw an error saying body was already read and is streaming is locked
-          collectionOutput = this.renderOptionsAsync(collectionAsync);
+          collectionOutput = this.renderOptionsAsync(collectionAsync as Promise<any>);
           resolve(collectionOutput);
         } else {
           collectionOutput = newCollection;

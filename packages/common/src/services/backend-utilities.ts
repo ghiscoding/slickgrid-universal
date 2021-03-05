@@ -1,3 +1,4 @@
+import { EMPTY, iif, isObservable, takeUntil, SubjectFacade, ObservableFacade } from './rxjsFacade';
 import { EmitterType } from '../enums/emitterType.enum';
 import { BackendServiceApi, GridOption } from '../interfaces/index';
 
@@ -42,7 +43,7 @@ main.onBackendError = function backendError(e: any, backendApi: BackendServiceAp
  * Execute the backend callback, which are mainly the "process" & "postProcess" methods.
  * Also note that "preProcess" was executed prior to this callback
  */
-main.executeBackendCallback = function exeBackendCallback(backendServiceApi: BackendServiceApi, query: string, args: any, startTime: Date, totalItems: number, emitActionChangedCallback: (type: EmitterType) => void) {
+main.executeBackendCallback = function exeBackendCallback(backendServiceApi: BackendServiceApi, query: string, args: any, startTime: Date, totalItems: number, emitActionChangedCallback: (type: EmitterType) => void, httpCancelRequests$?: SubjectFacade<void>) {
   if (backendServiceApi) {
     // emit an onFilterChanged event when it's not called by a clear filter
     if (args && !args.clearFilterTriggered && !args.clearSortTriggered) {
@@ -54,6 +55,20 @@ main.executeBackendCallback = function exeBackendCallback(backendServiceApi: Bac
     if (process instanceof Promise && process.then) {
       process.then((processResult: any) => main.executeBackendProcessesCallback(startTime, processResult, backendServiceApi, totalItems))
         .catch((error: any) => main.onBackendError(error, backendServiceApi));
+    } else if (isObservable(process)) {
+      // this will abort any previous HTTP requests, that were previously hooked in the takeUntil, before sending a new request
+      if (isObservable(httpCancelRequests$)) {
+        httpCancelRequests$!.next();
+      }
+
+      (process as unknown as ObservableFacade<any>)
+        // the following takeUntil, will potentially be used later to cancel any pending http request (takeUntil another rx, that would be httpCancelRequests$, completes)
+        // but make sure the observable is actually defined with the iif condition check before piping it to the takeUntil
+        .pipe(takeUntil(iif(() => isObservable(httpCancelRequests$), httpCancelRequests$, EMPTY)))
+        .subscribe(
+          (processResult: any) => main.executeBackendProcessesCallback(startTime, processResult, backendServiceApi, totalItems),
+          (error: any) => main.onBackendError(error, backendServiceApi)
+        );
     }
   }
 };
