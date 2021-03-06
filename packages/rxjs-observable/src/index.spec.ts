@@ -6,7 +6,6 @@ describe('Testing library entry point', () => {
   });
 
   it('should have all exported object defined', () => {
-    expect(typeof entry.ObservableWrapper).toBe('function');
-    expect(typeof entry.SubscriptionWrapper).toBe('function');
+    expect(typeof entry.RxJsResource).toBe('function');
   });
 });

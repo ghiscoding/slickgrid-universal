@@ -1,2 +1,1 @@
-export * from './observableWrapper';
-export * from './subscriptionWrapper';
+export * from './rxjs.resource';

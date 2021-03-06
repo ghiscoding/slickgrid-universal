@@ -20,12 +20,12 @@ import {
   SortDirectionNumber,
   SortDirectionString,
 } from '../enums/index';
-import { executeBackendCallback, refreshBackendDataset } from './backend-utilities';
+import { BackendUtilityService } from './backend-utilities';
 import { getDescendantProperty, convertHierarchicalViewToParentChildArray } from './utilities';
 import { sortByFieldType } from '../sortComparers/sortUtilities';
 import { PubSubService } from './pubSub.service';
 import { SharedService } from './shared.service';
-import { isObservable, SubjectFacade } from './rxjsFacade';
+import { RxJsFacade, SubjectFacade } from './rxjsFacade';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -36,10 +36,13 @@ export class SortService {
   private _dataView!: SlickDataView;
   private _grid!: SlickGrid;
   private _isBackendGrid = false;
-  private httpCancelRequests$: SubjectFacade<void> = new SubjectFacade<void>(); // this will be used to cancel any pending http request
+  private httpCancelRequests$?: SubjectFacade<void>; // this will be used to cancel any pending http request
 
-  constructor(private sharedService: SharedService, private pubSubService: PubSubService) {
+  constructor(private sharedService: SharedService, private pubSubService: PubSubService, private backendUtilities?: BackendUtilityService, private rxjs?: RxJsFacade) {
     this._eventHandler = new Slick.EventHandler();
+    if (this.rxjs) {
+      this.httpCancelRequests$ = this.rxjs.createSubject<void>();
+    }
   }
 
   /** Getter of the SlickGrid Event Handler */
@@ -55,6 +58,10 @@ export class SortService {
   /** Getter for the Column Definitions pulled through the Grid Object */
   private get _columnDefinitions(): Column[] {
     return (this._grid && this._grid.getColumns) ? this._grid.getColumns() : [];
+  }
+
+  addRxJsResource(rxjs: RxJsFacade) {
+    this.rxjs = rxjs;
   }
 
   /**
@@ -310,7 +317,7 @@ export class SortService {
     if (this._eventHandler && this._eventHandler.unsubscribeAll) {
       this._eventHandler.unsubscribeAll();
     }
-    if (isObservable(this.httpCancelRequests$)) {
+    if (this.httpCancelRequests$ && this.rxjs?.isObservable(this.httpCancelRequests$)) {
       this.httpCancelRequests$.next(); // this cancels any pending http requests
     }
   }
@@ -363,7 +370,7 @@ export class SortService {
     // query backend
     const query = backendApi.service.processOnSortChanged(event, args);
     const totalItems = gridOptions && gridOptions.pagination && gridOptions.pagination.totalItems || 0;
-    executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitSortChanged.bind(this), this.httpCancelRequests$);
+    this.backendUtilities?.executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitSortChanged.bind(this), this.httpCancelRequests$);
   }
 
   /** When a Sort Changes on a Local grid (JSON dataset) */
@@ -512,7 +519,7 @@ export class SortService {
         if (backendApiService && backendApiService.updateSorters) {
           backendApiService.updateSorters(undefined, sorters);
           if (triggerBackendQuery) {
-            refreshBackendDataset(this._gridOptions);
+            this.backendUtilities?.refreshBackendDataset(this._gridOptions);
           }
         }
       } else {

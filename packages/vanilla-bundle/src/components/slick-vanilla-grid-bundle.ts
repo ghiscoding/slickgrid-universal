@@ -9,6 +9,7 @@ import 'slickgrid/plugins/slick.resizer';
 import {
   AutoCompleteEditor,
   BackendServiceApi,
+  BackendServiceOption,
   Column,
   ColumnEditor,
   DataViewOption,
@@ -17,23 +18,19 @@ import {
   EventNamingStyle,
   GlobalGridOptions,
   GridOption,
+  GridStateType,
   Metrics,
   MetricTexts,
+  Pagination,
+  SelectEditor,
+  ServicePagination,
   SlickDataView,
   SlickEventHandler,
   SlickGrid,
   SlickGroupItemMetadataProvider,
   SlickNamespace,
-  TreeDataOption,
-  executeBackendProcessesCallback,
-  GridStateType,
-  BackendServiceOption,
-  onBackendError,
-  refreshBackendDataset,
-  Pagination,
-  SelectEditor,
-  ServicePagination,
   Subscription,
+  TreeDataOption,
 
   // extensions
   AutoTooltipExtension,
@@ -52,6 +49,7 @@ import {
   RowSelectionExtension,
 
   // services
+  BackendUtilityService,
   CollectionService,
   ExtensionService,
   FilterFactory,
@@ -60,8 +58,10 @@ import {
   GridService,
   GridStateService,
   GroupingAndColspanService,
+  ObservableFacade,
   PaginationService,
   RowMoveManagerExtension,
+  RxJsFacade,
   SharedService,
   SortService,
   SlickgridConfig,
@@ -125,6 +125,7 @@ export class SlickVanillaGridBundle {
   extensionUtility!: ExtensionUtility;
 
   // services
+  backendUtilityService!: BackendUtilityService;
   collectionService!: CollectionService;
   extensionService!: ExtensionService;
   filterService!: FilterService;
@@ -133,6 +134,7 @@ export class SlickVanillaGridBundle {
   gridStateService!: GridStateService;
   groupingService!: GroupingAndColspanService;
   paginationService!: PaginationService;
+  rxjs?: RxJsFacade;
   sharedService!: SharedService;
   sortService!: SortService;
   translaterService: TranslaterService | undefined;
@@ -266,6 +268,7 @@ export class SlickVanillaGridBundle {
     dataset?: any[],
     hierarchicalDataset?: any[],
     services?: {
+      backendUtilityService?: BackendUtilityService,
       collectionService?: CollectionService,
       eventPubSubService?: EventPubSubService,
       extensionService?: ExtensionService,
@@ -277,6 +280,7 @@ export class SlickVanillaGridBundle {
       groupingAndColspanService?: GroupingAndColspanService,
       paginationService?: PaginationService,
       resizerService?: ResizerService,
+      rxjs?: RxJsFacade,
       sharedService?: SharedService,
       sortService?: SortService,
       treeDataService?: TreeDataService,
@@ -313,17 +317,18 @@ export class SlickVanillaGridBundle {
     this._eventPubSubService = services?.eventPubSubService ?? new EventPubSubService(gridParentContainerElm);
     this._eventPubSubService.eventNamingStyle = this._gridOptions?.eventNamingStyle ?? EventNamingStyle.camelCase;
 
-    this.gridEventService = services?.gridEventService ?? new GridEventService();
     const slickgridConfig = new SlickgridConfig();
+    this.backendUtilityService = services?.backendUtilityService ?? new BackendUtilityService();
+    this.gridEventService = services?.gridEventService ?? new GridEventService();
     this.sharedService = services?.sharedService ?? new SharedService();
     this.collectionService = services?.collectionService ?? new CollectionService(this.translaterService);
     this.extensionUtility = services?.extensionUtility ?? new ExtensionUtility(this.sharedService, this.translaterService);
     const filterFactory = new FilterFactory(slickgridConfig, this.translaterService, this.collectionService);
-    this.filterService = services?.filterService ?? new FilterService(filterFactory, this._eventPubSubService, this.sharedService);
+    this.filterService = services?.filterService ?? new FilterService(filterFactory, this._eventPubSubService, this.sharedService, this.backendUtilityService);
     this.resizerService = services?.resizerService ?? new ResizerService(this._eventPubSubService);
-    this.sortService = services?.sortService ?? new SortService(this.sharedService, this._eventPubSubService);
+    this.sortService = services?.sortService ?? new SortService(this.sharedService, this._eventPubSubService, this.backendUtilityService);
     this.treeDataService = services?.treeDataService ?? new TreeDataService(this.sharedService);
-    this.paginationService = services?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService);
+    this.paginationService = services?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService, this.backendUtilityService);
 
     // extensions
     const autoTooltipExtension = new AutoTooltipExtension(this.sharedService);
@@ -333,7 +338,7 @@ export class SlickVanillaGridBundle {
     const columnPickerExtension = new ColumnPickerExtension(this.extensionUtility, this.sharedService);
     const checkboxExtension = new CheckboxSelectorExtension(this.sharedService);
     const draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this.sharedService);
-    const gridMenuExtension = new GridMenuExtension(this.extensionUtility, this.filterService, this.sharedService, this.sortService, this.translaterService);
+    const gridMenuExtension = new GridMenuExtension(this.extensionUtility, this.filterService, this.sharedService, this.sortService, this.backendUtilityService, this.translaterService);
     const groupItemMetaProviderExtension = new GroupItemMetaProviderExtension(this.sharedService);
     const headerButtonExtension = new HeaderButtonExtension(this.extensionUtility, this.sharedService);
     const headerMenuExtension = new HeaderMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.translaterService);
@@ -667,6 +672,14 @@ export class SlickVanillaGridBundle {
         if (typeof resource.init === 'function') {
           resource.init(this.slickGrid, this.universalContainerService);
         }
+        if (resource?.className === 'RxJsResource') {
+          this.rxjs = resource as RxJsFacade;
+          this.backendUtilityService.addRxJsResource(this.rxjs);
+          this.filterService.addRxJsResource(this.rxjs);
+          this.sortService.addRxJsResource(this.rxjs);
+          this.paginationService.addRxJsResource(this.rxjs);
+          this.universalContainerService.registerInstance('RxJsResource', this.rxjs);
+        }
       }
     }
 
@@ -934,6 +947,7 @@ export class SlickVanillaGridBundle {
 
         // wrap this inside a setTimeout to avoid timing issue since the gridOptions needs to be ready before running this onInit
         setTimeout(() => {
+          const backendUtilityService = this.backendUtilityService as BackendUtilityService;
           // keep start time & end timestamps & return it after process execution
           const startTime = new Date();
 
@@ -943,11 +957,18 @@ export class SlickVanillaGridBundle {
           }
 
           // the processes can be a Promise (like Http)
-          if (process instanceof Promise && process.then) {
-            const totalItems = this.gridOptions && this.gridOptions.pagination && this.gridOptions.pagination.totalItems || 0;
+          const totalItems = this.gridOptions?.pagination?.totalItems ?? 0;
+          if (process instanceof Promise) {
             process
-              .then((processResult: any) => executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems))
-              .catch((error) => onBackendError(error, backendApi));
+              .then((processResult: any) => backendUtilityService.executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems))
+              .catch((error) => backendUtilityService.onBackendError(error, backendApi));
+          } else if (process && this.rxjs?.isObservable(process)) {
+            this.subscriptions.push(
+              (process as ObservableFacade<any>).subscribe(
+                (processResult: any) => backendUtilityService.executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems),
+                (error: any) => backendUtilityService.onBackendError(error, backendApi)
+              )
+            );
           }
         });
       }
@@ -1167,7 +1188,7 @@ export class SlickVanillaGridBundle {
         this._eventPubSubService.subscribe('onPaginationVisibilityChanged', (visibility: { visible: boolean }) => {
           this.showPagination = visibility?.visible ?? false;
           if (this.gridOptions?.backendServiceApi) {
-            refreshBackendDataset();
+            this.backendUtilityService?.refreshBackendDataset(this.gridOptions);
           }
         })
       );
@@ -1184,10 +1205,10 @@ export class SlickVanillaGridBundle {
 
   /** Load the Editor Collection asynchronously and replace the "collection" property when Promise resolves */
   private loadEditorCollectionAsync(column: Column) {
-    const collectionAsync = (column?.editor as ColumnEditor).collectionAsync as Promise<any>;
+    const collectionAsync = (column?.editor as ColumnEditor).collectionAsync;
     (column?.editor as ColumnEditor).disabled = true; // disable the Editor DOM element, we'll re-enable it after receiving the collection with "updateEditorCollection()"
 
-    if (collectionAsync) {
+    if (collectionAsync instanceof Promise) {
       // wait for the "collectionAsync", once resolved we will save it into the "collection"
       // the collectionAsync can be of 3 types HttpClient, HttpFetch or a Promise
       collectionAsync.then((response: any | any[]) => {
@@ -1205,6 +1226,10 @@ export class SlickVanillaGridBundle {
           this.updateEditorCollection(column, response['content']); // from http-client
         }
       });
+    } else if (this.rxjs?.isObservable(collectionAsync)) {
+      this.subscriptions.push(
+        (collectionAsync as ObservableFacade<any>).subscribe((resolvedCollection) => this.updateEditorCollection(column, resolvedCollection))
+      );
     }
   }
 

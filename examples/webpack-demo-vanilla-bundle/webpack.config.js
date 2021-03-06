@@ -82,7 +82,8 @@ module.exports = ({ production } = {}) => ({
     new CopyWebpackPlugin({
       patterns: [
         { from: `${srcDir}/favicon.ico`, to: 'favicon.ico' },
-        { from: 'assets', to: 'assets' }
+        { from: 'assets', to: 'assets' },
+        { from: 'src/examples/data', to: 'assets/data' }
       ]
     }),
     new MiniCssExtractPlugin({ // updated to match the naming conventions for the js files

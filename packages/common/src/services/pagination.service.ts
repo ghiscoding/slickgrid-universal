@@ -12,10 +12,10 @@ import {
   SlickNamespace,
   Subscription
 } from '../interfaces/index';
-import { executeBackendProcessesCallback, onBackendError } from './backend-utilities';
+import { BackendUtilityService } from './backend-utilities';
 import { SharedService } from './shared.service';
 import { PubSubService } from './pubSub.service';
-import { isObservable, ObservableFacade } from './rxjsFacade';
+import { ObservableFacade, RxJsFacade } from './rxjsFacade';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -39,7 +39,7 @@ export class PaginationService {
   grid!: SlickGrid;
 
   /** Constructor */
-  constructor(private pubSubService: PubSubService, private sharedService: SharedService) { }
+  constructor(private pubSubService: PubSubService, private sharedService: SharedService, private backendUtilities?: BackendUtilityService, private rxjs?: RxJsFacade) { }
 
   /** Getter of SlickGrid DataView object */
   get dataView(): SlickDataView | undefined {
@@ -86,6 +86,10 @@ export class PaginationService {
     if (this._initialized) {
       this.refreshPagination();
     }
+  }
+
+  addRxJsResource(rxjs: RxJsFacade) {
+    this.rxjs = rxjs;
   }
 
   init(grid: SlickGrid, paginationOptions: Pagination, backendServiceApi?: BackendServiceApi) {
@@ -327,11 +331,11 @@ export class PaginationService {
         const startTime = new Date();
 
         // run any pre-process, if defined, for example a spinner
-        if (this._backendServiceApi && this._backendServiceApi.preProcess) {
+        if (this._backendServiceApi?.preProcess) {
           this._backendServiceApi.preProcess();
         }
 
-        if (this._backendServiceApi && this._backendServiceApi.process) {
+        if (this._backendServiceApi?.process) {
           const query = this._backendServiceApi.service.processOnPaginationChanged(event, { newPage: pageNumber, pageSize: itemsPerPage });
 
           // the processes can be Promises
@@ -339,21 +343,21 @@ export class PaginationService {
           if (process instanceof Promise) {
             process
               .then((processResult: any) => {
-                executeBackendProcessesCallback(startTime, processResult, this._backendServiceApi, this._totalItems);
+                this.backendUtilities?.executeBackendProcessesCallback(startTime, processResult, this._backendServiceApi as BackendServiceApi, this._totalItems);
                 resolve(this.getFullPagination());
               })
               .catch((error) => {
-                onBackendError(error, this._backendServiceApi);
+                this.backendUtilities?.onBackendError(error, this._backendServiceApi as BackendServiceApi);
                 reject(process);
               });
-          } else if (isObservable(process)) {
+          } else if (this.rxjs?.isObservable(process)) {
             this._subscriptions.push(
               (process as ObservableFacade<any>).subscribe(
                 (processResult: any) => {
-                  resolve(executeBackendProcessesCallback(startTime, processResult, this._backendServiceApi, this._totalItems));
+                  resolve(this.backendUtilities?.executeBackendProcessesCallback(startTime, processResult, this._backendServiceApi as BackendServiceApi, this._totalItems));
                 },
                 (error: any) => {
-                  onBackendError(error, this._backendServiceApi);
+                  this.backendUtilities?.onBackendError(error, this._backendServiceApi as BackendServiceApi);
                   reject(process);
                 }
               )

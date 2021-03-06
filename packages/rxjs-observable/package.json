@@ -1,5 +1,5 @@
 {
-  "name": "@slickgrid-universal/observable-rxjs",
+  "name": "@slickgrid-universal/rxjs-observable",
   "version": "0.11.2",
   "description": "RxJS Observable Wrapper",
   "main": "dist/commonjs/index.js",
