@@ -896,6 +896,13 @@ export class SlickVanillaGridBundle {
           }
         });
       }
+
+      // when column are reordered, we need to update the visibleColumn array
+      const onColumnsReorderedHandler = grid.onColumnsReordered;
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onColumnsReorderedHandler>>).subscribe(onColumnsReorderedHandler, (_e, args) => {
+        this.sharedService.hasColumnsReordered = true;
+        this.sharedService.visibleColumns = args.impactedColumns;
+      });
     }
 
     // does the user have a colspan callback?
