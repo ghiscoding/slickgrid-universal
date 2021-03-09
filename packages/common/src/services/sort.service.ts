@@ -20,7 +20,7 @@ import {
   SortDirectionNumber,
   SortDirectionString,
 } from '../enums/index';
-import { BackendUtilityService } from './backend-utilities';
+import { BackendUtilityService } from './backendUtility.service';
 import { getDescendantProperty, convertHierarchicalViewToParentChildArray } from './utilities';
 import { sortByFieldType } from '../sortComparers/sortUtilities';
 import { PubSubService } from './pubSub.service';

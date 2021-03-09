@@ -19,7 +19,7 @@ import { FilterService } from '../services/filter.service';
 import { SortService } from '../services/sort.service';
 import { SharedService } from '../services/shared.service';
 import { TranslaterService } from '../services/translater.service';
-import { BackendUtilityService } from '../services/backend-utilities';
+import { BackendUtilityService } from '../services/backendUtility.service';
 import { getTranslationPrefix } from '../services/utilities';
 
 // using external js libraries

@@ -1,5 +1,6 @@
 import 'jest-extended';
 import {
+  BackendUtilityService,
   Column,
   CollectionService,
   ColumnFilters,
@@ -40,7 +41,6 @@ import {
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
-import * as backendUtilities from '@slickgrid-universal/common/dist/commonjs/services/backend-utilities';
 import * as utilities from '@slickgrid-universal/common/dist/commonjs/services/utilities';
 import * as slickVanillaUtilities from '../slick-vanilla-utilities';
 
@@ -54,15 +54,9 @@ import { ResizerService } from '../../services/resizer.service';
 import { UniversalContainerService } from '../../services/universalContainer.service';
 jest.mock('../../services/textExport.service');
 
-const mockExecuteBackendProcess = jest.fn();
-const mockRefreshBackendDataset = jest.fn();
-const mockBackendError = jest.fn();
 const mockConvertParentChildArray = jest.fn();
 const mockAutoAddCustomEditorFormatter = jest.fn();
 
-(backendUtilities.executeBackendProcessesCallback as any) = mockExecuteBackendProcess;
-(backendUtilities.refreshBackendDataset as any) = mockRefreshBackendDataset;
-(backendUtilities.onBackendError as any) = mockBackendError;
 (slickVanillaUtilities.autoAddEditorFormatterToColumnsWithEditor as any) = mockAutoAddCustomEditorFormatter;
 
 declare const Slick: any;
@@ -100,6 +94,14 @@ const mockGraphqlService = {
   updateSorters: jest.fn(),
   updatePagination: jest.fn(),
 } as unknown as GraphqlService;
+
+const backendUtilityServiceStub = {
+  executeBackendProcessesCallback: jest.fn(),
+  executeBackendCallback: jest.fn(),
+  onBackendError: jest.fn(),
+  refreshBackendDataset: jest.fn(),
+} as unknown as BackendUtilityService;
+
 
 const collectionServiceStub = {
   filterCollection: jest.fn(),
@@ -322,6 +324,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       dataset,
       undefined,
       {
+        backendUtilityService: backendUtilityServiceStub,
         collectionService: collectionServiceStub,
         eventPubSubService,
         extensionService: extensionServiceStub,
@@ -1143,6 +1146,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const promise = new Promise(resolve => setTimeout(() => resolve(processResult), 1));
         const processSpy = jest.spyOn(component.gridOptions.backendServiceApi, 'process').mockReturnValue(promise);
         jest.spyOn(component.gridOptions.backendServiceApi.service, 'buildQuery').mockReturnValue(query);
+        const backendExecuteSpy = jest.spyOn(backendUtilityServiceStub, 'executeBackendProcessesCallback');
 
         component.gridOptions.backendServiceApi.service.options = { executeProcessCommandOnInit: true };
         component.initialization(divContainer, slickEventHandler);
@@ -1150,7 +1154,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(processSpy).toHaveBeenCalled();
 
         setTimeout(() => {
-          expect(mockExecuteBackendProcess).toHaveBeenCalledWith(expect.toBeDate(), processResult, component.gridOptions.backendServiceApi, 0);
+          expect(backendExecuteSpy).toHaveBeenCalledWith(expect.toBeDate(), processResult, component.gridOptions.backendServiceApi, 0);
           done();
         }, 5);
       });
@@ -1165,6 +1169,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const promise = new Promise(resolve => setTimeout(() => resolve(processResult), 1));
         const processSpy = jest.spyOn(component.gridOptions.backendServiceApi, 'process').mockReturnValue(promise);
         jest.spyOn(component.gridOptions.backendServiceApi.service, 'buildQuery').mockReturnValue(query);
+        const backendExecuteSpy = jest.spyOn(backendUtilityServiceStub, 'executeBackendProcessesCallback');
 
         component.gridOptions.backendServiceApi.service.options = { executeProcessCommandOnInit: true };
         component.initialization(divContainer, slickEventHandler);
@@ -1172,7 +1177,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(processSpy).toHaveBeenCalled();
 
         setTimeout(() => {
-          expect(mockExecuteBackendProcess).toHaveBeenCalledWith(expect.toBeDate(), processResult, component.gridOptions.backendServiceApi, 0);
+          expect(backendExecuteSpy).toHaveBeenCalledWith(expect.toBeDate(), processResult, component.gridOptions.backendServiceApi, 0);
           done();
         }, 5);
       });
@@ -1821,6 +1826,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should call the backend service API to refresh the dataset', (done) => {
+        const backendRefreshSpy = jest.spyOn(backendUtilityServiceStub, 'refreshBackendDataset');
         component.gridOptions.enablePagination = true;
         component.gridOptions.backendServiceApi = {
           service: mockGraphqlService as any,
@@ -1832,7 +1838,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         eventPubSubService.publish('onPaginationVisibilityChanged', { visible: false });
 
         setTimeout(() => {
-          expect(mockRefreshBackendDataset).toHaveBeenCalled();
+          expect(backendRefreshSpy).toHaveBeenCalled();
           expect(component.showPagination).toBeFalsy();
           done();
         });
@@ -1968,6 +1974,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
       dataset,
       hierarchicalDataset,
       {
+        backendUtilityService: backendUtilityServiceStub,
         collectionService: collectionServiceStub,
         eventPubSubService,
         extensionService: extensionServiceStub,
@@ -2039,6 +2046,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
       dataset,
       null,
       {
+        backendUtilityService: backendUtilityServiceStub,
         collectionService: collectionServiceStub,
         eventPubSubService,
         extensionService: extensionServiceStub,

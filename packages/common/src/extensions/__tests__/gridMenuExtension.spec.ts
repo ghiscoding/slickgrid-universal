@@ -3,7 +3,7 @@ import { Column, SlickDataView, GridOption, SlickGrid, SlickNamespace, GridMenu,
 import { GridMenuExtension } from '../gridMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
-import { ExcelExportService, TextExportService, FilterService, SortService } from '../../services';
+import { ExcelExportService, TextExportService, FilterService, SortService, BackendUtilityService } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 declare const Slick: SlickNamespace;
@@ -76,6 +76,7 @@ describe('gridMenuExtension', () => {
 
   const columnsMock: Column[] = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
   let divElement: HTMLDivElement;
+  let backendUtilityService: BackendUtilityService;
   let extensionUtility: ExtensionUtility;
   let translateService: TranslateServiceStub;
   let extension: GridMenuExtension;
@@ -122,10 +123,11 @@ describe('gridMenuExtension', () => {
       div.innerHTML = template;
       document.body.appendChild(div);
 
+      backendUtilityService = new BackendUtilityService();
       sharedService = new SharedService();
       translateService = new TranslateServiceStub();
       extensionUtility = new ExtensionUtility(sharedService, translateService);
-      extension = new GridMenuExtension(extensionUtility, filterServiceStub, sharedService, sortServiceStub, translateService);
+      extension = new GridMenuExtension(extensionUtility, filterServiceStub, sharedService, sortServiceStub, backendUtilityService, translateService);
       translateService.use('fr');
     });
 
@@ -809,7 +811,8 @@ describe('gridMenuExtension', () => {
   describe('without Translate Service', () => {
     beforeEach(() => {
       translateService = undefined as any;
-      extension = new GridMenuExtension({} as ExtensionUtility, filterServiceStub, { gridOptions: { enableTranslate: true } } as SharedService, {} as SortService, translateService);
+      backendUtilityService = new BackendUtilityService();
+      extension = new GridMenuExtension({} as ExtensionUtility, filterServiceStub, { gridOptions: { enableTranslate: true } } as SharedService, {} as SortService, backendUtilityService, translateService);
     });
 
     it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {

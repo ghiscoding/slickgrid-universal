@@ -1,6 +1,5 @@
 import { BackendServiceApi, GridOption } from '../../interfaces/index';
-import main, { executeBackendProcessesCallback, onBackendError, refreshBackendDataset } from '../../services/backend-utilities';
-// import { GraphqlService } from '../../services/graphql.service';
+import { BackendUtilityService } from '../backendUtility.service';
 
 jest.mock('flatpickr', () => { });
 
@@ -11,8 +10,9 @@ const graphqlServiceMock = {
   updateSorters: jest.fn(),
 } as unknown;
 
-describe('backend-utilities', () => {
+describe('Backend Utility Service', () => {
   let gridOptionMock: GridOption;
+  let service: BackendUtilityService;
 
   beforeEach(() => {
     gridOptionMock = {
@@ -30,6 +30,7 @@ describe('backend-utilities', () => {
         totalItems: 0
       }
     } as GridOption;
+    service = new BackendUtilityService();
   });
 
   describe('executeBackendProcessesCallback method', () => {
@@ -37,7 +38,7 @@ describe('backend-utilities', () => {
       const now = new Date();
       gridOptionMock.backendServiceApi!.internalPostProcess = jest.fn();
       const spy = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'internalPostProcess');
-      executeBackendProcessesCallback(now, { data: {} }, gridOptionMock.backendServiceApi as BackendServiceApi, 0);
+      service.executeBackendProcessesCallback(now, { data: {} }, gridOptionMock.backendServiceApi as BackendServiceApi, 0);
 
       expect(spy).toHaveBeenCalled();
     });
@@ -59,7 +60,7 @@ describe('backend-utilities', () => {
       gridOptionMock.pagination = { totalItems: 1, pageSizes: [10, 25], pageSize: 10 };
 
       const spy = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'postProcess');
-      executeBackendProcessesCallback(now, mockResult, gridOptionMock.backendServiceApi as BackendServiceApi, 1);
+      service.executeBackendProcessesCallback(now, mockResult, gridOptionMock.backendServiceApi as BackendServiceApi, 1);
 
       expect(spy).toHaveBeenCalledWith(expectaction);
     });
@@ -70,29 +71,24 @@ describe('backend-utilities', () => {
       gridOptionMock.backendServiceApi!.onError = jest.fn();
       const spy = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'onError');
 
-      onBackendError('some error', gridOptionMock.backendServiceApi);
+      service.onBackendError('some error', gridOptionMock.backendServiceApi);
 
       expect(spy).toHaveBeenCalled();
     });
 
     it('should throw back the error when callback was provided', () => {
       gridOptionMock.backendServiceApi!.onError = undefined;
-      expect(() => onBackendError('some error', gridOptionMock.backendServiceApi)).toThrow();
+      expect(() => service.onBackendError('some error', gridOptionMock.backendServiceApi)).toThrow();
     });
   });
 
   describe('refreshBackendDataset method', () => {
-    let executeSpy;
-
-    beforeAll(() => {
-      executeSpy = jest.spyOn(main, 'executeBackendCallback');
-    });
-
     it('should call "executeBackendCallback" after calling the "refreshBackendDataset" method with Pagination', () => {
       const query = `query { users (first:20,offset:0) { totalCount, nodes { id,name,gender,company } } }`;
       const querySpy = jest.spyOn(gridOptionMock.backendServiceApi!.service, 'buildQuery').mockReturnValue(query);
+      const executeSpy = jest.spyOn(service, 'executeBackendCallback');
 
-      refreshBackendDataset(gridOptionMock);
+      service.refreshBackendDataset(gridOptionMock);
 
       expect(querySpy).toHaveBeenCalled();
       expect(executeSpy).toHaveBeenCalledWith(gridOptionMock.backendServiceApi as BackendServiceApi, query, null, expect.toBeDate(), gridOptionMock.pagination!.totalItems);
@@ -102,8 +98,9 @@ describe('backend-utilities', () => {
       gridOptionMock.enablePagination = false;
       const query = `query { users { id,name,gender,company } }`;
       const querySpy = jest.spyOn(gridOptionMock.backendServiceApi!.service, 'buildQuery').mockReturnValue(query);
+      const executeSpy = jest.spyOn(service, 'executeBackendCallback');
 
-      refreshBackendDataset(gridOptionMock);
+      service.refreshBackendDataset(gridOptionMock);
 
       expect(querySpy).toHaveBeenCalled();
       expect(executeSpy).toHaveBeenCalledWith(gridOptionMock.backendServiceApi as BackendServiceApi, query, null, expect.toBeDate(), gridOptionMock.pagination!.totalItems);
@@ -113,7 +110,7 @@ describe('backend-utilities', () => {
       gridOptionMock.enablePagination = true;
       try {
         gridOptionMock.backendServiceApi = undefined;
-        refreshBackendDataset(undefined);
+        service.refreshBackendDataset(undefined);
       } catch (e) {
         expect(e.toString()).toContain('BackendServiceApi requires at least a "process" function and a "service" defined');
         done();

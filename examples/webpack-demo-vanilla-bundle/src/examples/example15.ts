@@ -2,8 +2,7 @@ import { BindingEventService, Column, FieldType, Filters, GridOption, GridStateC
 import { GridOdataService, OdataServiceApi, OdataOption } from '@slickgrid-universal/odata';
 import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import Axios from 'axios-observable';
-import { from } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { ExampleGridOptions } from './example-grid-options';
 
@@ -137,19 +136,19 @@ export class Example15 {
     this.odataQuery = data['query'];
   }
 
-  getCustomerApiCall(query) {
+  getCustomerApiCall(query): Observable<any> {
     // in your case, you will call your WebAPI function (wich needs to return an Observable)
     // for the demo purpose, we will call a mock WebAPI function
-    return from(this.getCustomerDataApiMock(query)); // turn the Promise into an Observable for testing purpose
+    return this.getCustomerDataApiMock(query);
   }
 
   /**
    * This function is only here to mock a WebAPI call (since we are using a JSON file for the demo)
    *  in your case the getCustomer() should be a WebAPI function returning a Promise
    */
-  getCustomerDataApiMock(query): Promise<any> {
+  getCustomerDataApiMock(query): Observable<any> {
     // the mock is returning a Promise, just like a WebAPI typically does
-    return new Promise((resolve) => {
+    return new Observable((observer) => {
       const queryParams = query.toLowerCase().split('&');
       let top: number;
       let skip = 0;
@@ -205,64 +204,59 @@ export class Example15 {
           ? 'DESC'
           : '';
 
-      let url;
+      let data;
       switch (sort) {
         case 'ASC':
-          url = 'assets/data/customers_100_ASC.json';
+          data = require('./data/customers_100_ASC.json');
           break;
         case 'DESC':
-          url = 'assets/data/customers_100_DESC.json';
+          data = require('./data/customers_100_DESC.json');
           break;
         default:
-          url = 'assets/data/customers_100.json';
+          data = require('./data/customers_100.json');
           break;
       }
 
-      // Make a request for a user with a given ID
-      Axios.get(url)
-        .subscribe(response => {
-          // Read the result field from the JSON response.
-          const data = response.data;
-          const firstRow = skip;
-          let filteredData = data;
-          if (columnFilters) {
-            for (const columnId in columnFilters) {
-              if (columnFilters.hasOwnProperty(columnId)) {
-                filteredData = filteredData.filter(column => {
-                  const filterType = columnFilters[columnId].type;
-                  const searchTerm = columnFilters[columnId].term;
-                  let colId = columnId;
-                  if (columnId && columnId.indexOf(' ') !== -1) {
-                    const splitIds = columnId.split(' ');
-                    colId = splitIds[splitIds.length - 1];
-                  }
-                  const filterTerm = column[colId];
-                  if (filterTerm) {
-                    switch (filterType) {
-                      case 'equal': return filterTerm.toLowerCase() === searchTerm;
-                      case 'ends': return filterTerm.toLowerCase().endsWith(searchTerm);
-                      case 'starts': return filterTerm.toLowerCase().startsWith(searchTerm);
-                      case 'substring': return filterTerm.toLowerCase().includes(searchTerm);
-                    }
-                  }
-                });
+      // Read the result field from the JSON response.
+      const firstRow = skip;
+      let filteredData = data;
+      if (columnFilters) {
+        for (const columnId in columnFilters) {
+          if (columnFilters.hasOwnProperty(columnId)) {
+            filteredData = filteredData.filter(column => {
+              const filterType = columnFilters[columnId].type;
+              const searchTerm = columnFilters[columnId].term;
+              let colId = columnId;
+              if (columnId && columnId.indexOf(' ') !== -1) {
+                const splitIds = columnId.split(' ');
+                colId = splitIds[splitIds.length - 1];
               }
-            }
-            countTotalItems = filteredData.length;
+              const filterTerm = column[colId];
+              if (filterTerm) {
+                switch (filterType) {
+                  case 'equal': return filterTerm.toLowerCase() === searchTerm;
+                  case 'ends': return filterTerm.toLowerCase().endsWith(searchTerm);
+                  case 'starts': return filterTerm.toLowerCase().startsWith(searchTerm);
+                  case 'substring': return filterTerm.toLowerCase().includes(searchTerm);
+                }
+              }
+            });
           }
-          const updatedData = filteredData.slice(firstRow, firstRow + top);
+        }
+        countTotalItems = filteredData.length;
+      }
+      const updatedData = filteredData.slice(firstRow, firstRow + top);
 
-          setTimeout(() => {
-            let countPropName = 'totalRecordCount';
-            if (this.isCountEnabled) {
-              countPropName = (this.odataVersion === 4) ? '@odata.count' : 'odata.count';
-            }
-            const backendResult = { items: updatedData, [countPropName]: countTotalItems, query };
-            // console.log('Backend Result', backendResult);
-            resolve(backendResult);
-          }, 150);
-        });
-
+      setTimeout(() => {
+        let countPropName = 'totalRecordCount';
+        if (this.isCountEnabled) {
+          countPropName = (this.odataVersion === 4) ? '@odata.count' : 'odata.count';
+        }
+        const backendResult = { items: updatedData, [countPropName]: countTotalItems, query };
+        // console.log('Backend Result', backendResult);
+        observer.next(backendResult);
+        observer.complete();
+      }, 150);
     });
   }
 

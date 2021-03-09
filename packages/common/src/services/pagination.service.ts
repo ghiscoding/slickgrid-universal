@@ -12,7 +12,7 @@ import {
   SlickNamespace,
   Subscription
 } from '../interfaces/index';
-import { BackendUtilityService } from './backend-utilities';
+import { BackendUtilityService } from './backendUtility.service';
 import { SharedService } from './shared.service';
 import { PubSubService } from './pubSub.service';
 import { ObservableFacade, RxJsFacade } from './rxjsFacade';

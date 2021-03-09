@@ -16,15 +16,12 @@ import {
 } from '../../interfaces/index';
 import { SortComparers } from '../../sortComparers';
 import { SortService } from '../sort.service';
-import * as utilities from '../../services/backend-utilities';
+import { BackendUtilityService } from '../backendUtility.service';
 import { PubSubService } from '../pubSub.service';
 import { SharedService } from '../shared.service';
 
 declare const Slick: SlickNamespace;
 
-const mockRefreshBackendDataset = jest.fn();
-// @ts-ignore:2540
-utilities.refreshBackendDataset = mockRefreshBackendDataset;
 
 const gridOptionMock = {
   enablePagination: true,
@@ -88,14 +85,17 @@ const pubSubServiceStub = {
 } as PubSubService;
 
 describe('SortService', () => {
+  let backendUtilityService: BackendUtilityService;
   let sharedService: SharedService;
   let service: SortService;
   let slickgridEventHandler: SlickEventHandler;
 
   beforeEach(() => {
+    backendUtilityService = new BackendUtilityService();
     sharedService = new SharedService();
     sharedService.dataView = dataViewStub;
-    service = new SortService(sharedService, pubSubServiceStub);
+
+    service = new SortService(sharedService, pubSubServiceStub, backendUtilityService);
     slickgridEventHandler = service.eventHandler;
   });
 
@@ -904,6 +904,7 @@ describe('SortService', () => {
       };
       const emitSpy = jest.spyOn(service, 'emitSortChanged');
       const backendUpdateSpy = jest.spyOn(backendServiceStub, 'updateSorters');
+      const refreshBackendSpy = jest.spyOn(backendUtilityService, 'refreshBackendDataset');
 
       service.bindLocalOnSort(gridStub);
       service.updateSorting(mockNewSorters);
@@ -911,7 +912,7 @@ describe('SortService', () => {
       expect(emitSpy).toHaveBeenCalledWith('remote');
       expect(service.getCurrentLocalSorters()).toEqual([]);
       expect(backendUpdateSpy).toHaveBeenCalledWith(undefined, mockNewSorters);
-      expect(mockRefreshBackendDataset).toHaveBeenCalledWith(gridOptionMock);
+      expect(refreshBackendSpy).toHaveBeenCalledWith(gridOptionMock);
     });
 
     it('should expect sorters to be sent to the backend when using "bindBackendOnSort" without triggering a sort changed event neither a backend query when both flag arguments are set to false', () => {
@@ -921,13 +922,14 @@ describe('SortService', () => {
       };
       const emitSpy = jest.spyOn(service, 'emitSortChanged');
       const backendUpdateSpy = jest.spyOn(backendServiceStub, 'updateSorters');
+      const refreshBackendSpy = jest.spyOn(backendUtilityService, 'refreshBackendDataset');
 
       service.bindBackendOnSort(gridStub);
       service.updateSorting(mockNewSorters, false, false);
 
       expect(emitSpy).not.toHaveBeenCalled();
       expect(backendUpdateSpy).toHaveBeenCalledWith(undefined, mockNewSorters);
-      expect(mockRefreshBackendDataset).not.toHaveBeenCalled();
+      expect(refreshBackendSpy).not.toHaveBeenCalled();
     });
   });
 

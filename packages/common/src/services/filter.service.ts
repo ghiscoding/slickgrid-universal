@@ -29,7 +29,7 @@ import {
   SlickGrid,
   SlickNamespace,
 } from './../interfaces/index';
-import { BackendUtilityService } from './backend-utilities';
+import { BackendUtilityService } from './backendUtility.service';
 import { debounce, deepCopy, getDescendantProperty, mapOperatorByFieldType } from './utilities';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
@@ -277,12 +277,12 @@ export class FilterService {
     }
 
     // when using backend service, we need to query only once so it's better to do it here
-    const backendApi = this._gridOptions && this._gridOptions.backendServiceApi;
+    const backendApi = this._gridOptions?.backendServiceApi;
     if (backendApi && triggerChange) {
       const callbackArgs = { clearFilterTriggered: true, shouldTriggerQuery: triggerChange, grid: this._grid, columnFilters: this._columnFilters };
       const queryResponse = backendApi.service.processOnFilterChanged(undefined, callbackArgs as FilterChangedArgs);
       const query = queryResponse as string;
-      const totalItems = this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems || 0;
+      const totalItems = this._gridOptions?.pagination?.totalItems ?? 0;
       this.backendUtilities?.executeBackendCallback(backendApi, query, callbackArgs, new Date(), totalItems, this.emitFilterChanged.bind(this));
     }
 

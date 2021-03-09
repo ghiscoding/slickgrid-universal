@@ -37,8 +37,6 @@
     "@types/moment": "^2.13.0",
     "@types/node": "^14.14.31",
     "@types/webpack": "^4.41.26",
-    "axios": "^0.21.1",
-    "axios-observable": "^1.1.6",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^8.0.0",
     "css-loader": "^5.1.1",

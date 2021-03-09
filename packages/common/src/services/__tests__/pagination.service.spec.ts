@@ -3,7 +3,7 @@ import 'jest-extended';
 import { PaginationService } from './../pagination.service';
 import { SharedService } from '../shared.service';
 import { Column, SlickDataView, GridOption, SlickGrid, SlickNamespace, BackendServiceApi, Pagination } from '../../interfaces/index';
-import * as utilities from '../backend-utilities';
+import { BackendUtilityService } from '../backendUtility.service';
 
 declare const Slick: SlickNamespace;
 
@@ -18,13 +18,12 @@ jest.mock('../pubSub.service', () => ({
   PubSubService: () => mockPubSub
 }));
 
-const mockExecuteBackendProcess = jest.fn();
-// @ts-ignore:2540
-utilities.executeBackendProcessesCallback = mockExecuteBackendProcess;
-
-const mockBackendError = jest.fn();
-// @ts-ignore:2540
-utilities.onBackendError = mockBackendError;
+const backendUtilityServiceStub = {
+  executeBackendProcessesCallback: jest.fn(),
+  executeBackendCallback: jest.fn(),
+  onBackendError: jest.fn(),
+  refreshBackendDataset: jest.fn(),
+} as unknown as BackendUtilityService;
 
 const dataviewStub = {
   onPagingInfoChanged: new Slick.Event(),
@@ -42,13 +41,6 @@ const mockBackendService = {
   processOnSortChanged: jest.fn(),
   processOnPaginationChanged: jest.fn(),
 };
-
-// const pubSubServiceStub = {
-//   publish: jest.fn(),
-//   subscribe: jest.fn(),
-//   unsubscribe: jest.fn(),
-//   unsubscribeAll: jest.fn(),
-// } as PubSubService;
 
 const mockGridOption = {
   enableAutoResize: true,
@@ -87,7 +79,7 @@ describe('PaginationService', () => {
 
   beforeEach(() => {
     sharedService = new SharedService();
-    service = new PaginationService(mockPubSub, sharedService);
+    service = new PaginationService(mockPubSub, sharedService, backendUtilityServiceStub);
     jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOption);
   });
 
@@ -375,20 +367,21 @@ describe('PaginationService', () => {
       const postSpy = jest.fn();
       mockGridOption.backendServiceApi!.process = postSpy;
       jest.spyOn(mockBackendService, 'processOnPaginationChanged').mockReturnValue('backend query');
-      const promise = new Promise((_resolve, reject) => setTimeout(() => reject(mockError), 1));
-      jest.spyOn(mockGridOption.backendServiceApi as BackendServiceApi, 'process').mockReturnValue(promise);
+      jest.spyOn(mockGridOption.backendServiceApi as BackendServiceApi, 'process').mockReturnValue(Promise.reject(mockError));
+      const backendErrorSpy = jest.spyOn(backendUtilityServiceStub, 'onBackendError');
 
       try {
         service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
-        await service.processOnPageChanged(1);
+        const response = await service.processOnPageChanged(1);
       } catch (e) {
-        expect(mockBackendError).toHaveBeenCalledWith(mockError, mockGridOption.backendServiceApi);
+        expect(backendErrorSpy).toHaveBeenCalledWith(mockError, mockGridOption.backendServiceApi);
       }
     });
 
     it('should execute "process" method when defined', (done) => {
       const postSpy = jest.fn();
       mockGridOption.backendServiceApi!.process = postSpy;
+      const backendExecuteSpy = jest.spyOn(backendUtilityServiceStub, 'executeBackendProcessesCallback');
       jest.spyOn(mockBackendService, 'processOnPaginationChanged').mockReturnValue('backend query');
       const now = new Date();
       const processResult = { users: [{ name: 'John' }], metrics: { startTime: now, endTime: now, executionTime: 0, totalItemCount: 0 } };
@@ -400,7 +393,7 @@ describe('PaginationService', () => {
 
       setTimeout(() => {
         expect(postSpy).toHaveBeenCalled();
-        expect(mockExecuteBackendProcess).toHaveBeenCalledWith(expect.toBeDate(), processResult, mockGridOption.backendServiceApi as BackendServiceApi, 85);
+        expect(backendExecuteSpy).toHaveBeenCalledWith(expect.toBeDate(), processResult, mockGridOption.backendServiceApi as BackendServiceApi, 85);
         done();
       }, 10);
     });

@@ -36,7 +36,7 @@ export class BackendUtilityService {
 
   /** On a backend service api error, we will run the "onError" if there is 1 provided or just throw back the error when nothing is provided */
   onBackendError(e: any, backendApi: BackendServiceApi) {
-    if (backendApi && backendApi.onError) {
+    if (backendApi?.onError) {
       backendApi.onError(e);
     } else {
       throw e;
