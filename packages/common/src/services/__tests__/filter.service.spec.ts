@@ -1,7 +1,7 @@
 // import 3rd party lib multiple-select for the tests
 import 'multiple-select-modified';
-
 import 'jest-extended';
+import { of, throwError } from 'rxjs';
 
 import { FieldType } from '../../enums/index';
 import {
@@ -29,6 +29,7 @@ import { BackendUtilityService } from '../backendUtility.service';
 import { CollectionService } from '../collection.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { PubSubService } from '../pubSub.service';
+import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 
 jest.mock('flatpickr', () => { });
 declare const Slick: SlickNamespace;
@@ -114,6 +115,7 @@ describe('FilterService', () => {
   let sharedService: SharedService;
   let slickgridConfig: SlickgridConfig;
   let slickgridEventHandler: SlickEventHandler;
+  let rxjsResourceStub: RxJsResourceStub;
   let translateService: TranslateServiceStub;
 
   beforeEach(() => {
@@ -126,9 +128,10 @@ describe('FilterService', () => {
     slickgridConfig = new SlickgridConfig();
     translateService = new TranslateServiceStub();
     collectionService = new CollectionService(translateService);
+    rxjsResourceStub = new RxJsResourceStub();
     backendUtilityService = new BackendUtilityService();
     const filterFactory = new FilterFactory(slickgridConfig, translateService, collectionService);
-    service = new FilterService(filterFactory, pubSubServiceStub, sharedService, backendUtilityService);
+    service = new FilterService(filterFactory, pubSubServiceStub, sharedService, backendUtilityService, rxjsResourceStub);
     slickgridEventHandler = service.eventHandler;
   });
 
@@ -505,6 +508,26 @@ describe('FilterService', () => {
         const spyOnError = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'onError');
         jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'process');
 
+        service.clearFilters();
+
+        setTimeout(() => {
+          expect(pubSubSpy).toHaveBeenCalledWith(`onFilterCleared`, true);
+          expect(spyOnError).toHaveBeenCalledWith(errorExpected);
+          done();
+        });
+      });
+
+      it('should execute the "onError" method when the Observable throws an error', (done) => {
+        const errorExpected = 'observable error';
+        const spyProcess = jest.fn();
+        gridOptionMock.backendServiceApi!.process = () => of(spyProcess);
+        gridOptionMock.backendServiceApi!.onError = () => jest.fn();
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const spyOnError = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'onError');
+        jest.spyOn(gridOptionMock.backendServiceApi, 'process').mockReturnValue(throwError(errorExpected));
+
+        backendUtilityService.addRxJsResource(rxjsResourceStub);
+        service.addRxJsResource(rxjsResourceStub);
         service.clearFilters();
 
         setTimeout(() => {

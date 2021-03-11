@@ -1,3 +1,5 @@
+import { of, throwError } from 'rxjs';
+
 import { EmitterType, FieldType, } from '../../enums/index';
 import {
   BackendService,
@@ -19,6 +21,7 @@ import { SortService } from '../sort.service';
 import { BackendUtilityService } from '../backendUtility.service';
 import { PubSubService } from '../pubSub.service';
 import { SharedService } from '../shared.service';
+import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 
 declare const Slick: SlickNamespace;
 
@@ -88,14 +91,16 @@ describe('SortService', () => {
   let backendUtilityService: BackendUtilityService;
   let sharedService: SharedService;
   let service: SortService;
+  let rxjsResourceStub: RxJsResourceStub;
   let slickgridEventHandler: SlickEventHandler;
 
   beforeEach(() => {
     backendUtilityService = new BackendUtilityService();
     sharedService = new SharedService();
+    rxjsResourceStub = new RxJsResourceStub();
     sharedService.dataView = dataViewStub;
 
-    service = new SortService(sharedService, pubSubServiceStub, backendUtilityService);
+    service = new SortService(sharedService, pubSubServiceStub, backendUtilityService, rxjsResourceStub);
     slickgridEventHandler = service.eventHandler;
   });
 
@@ -476,6 +481,25 @@ describe('SortService', () => {
         expect(spyOnError).toHaveBeenCalledWith(errorExpected);
         done();
       }, 0);
+    });
+
+    it('should execute the "onError" method when the Observable throws an error', (done) => {
+      const spyProcess = jest.fn();
+      const errorExpected = 'observable error';
+      gridOptionMock.backendServiceApi.process = () => of(spyProcess);
+      gridOptionMock.backendServiceApi.onError = (e) => jest.fn();
+      const spyOnError = jest.spyOn(gridOptionMock.backendServiceApi, 'onError');
+      jest.spyOn(gridOptionMock.backendServiceApi, 'process').mockReturnValue(throwError(errorExpected));
+
+      backendUtilityService.addRxJsResource(rxjsResourceStub);
+      service.addRxJsResource(rxjsResourceStub);
+      service.bindBackendOnSort(gridStub);
+      service.onBackendSortChanged(undefined, { multiColumnSort: true, sortCols: [], grid: gridStub });
+
+      setTimeout(() => {
+        expect(spyOnError).toHaveBeenCalledWith(errorExpected);
+        done();
+      });
     });
   });
 

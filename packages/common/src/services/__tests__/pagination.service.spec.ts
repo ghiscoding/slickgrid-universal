@@ -1,9 +1,11 @@
 import 'jest-extended';
+import { of, throwError } from 'rxjs';
 
 import { PaginationService } from './../pagination.service';
 import { SharedService } from '../shared.service';
 import { Column, SlickDataView, GridOption, SlickGrid, SlickNamespace, BackendServiceApi, Pagination } from '../../interfaces/index';
 import { BackendUtilityService } from '../backendUtility.service';
+import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 
 declare const Slick: SlickNamespace;
 
@@ -76,10 +78,12 @@ const gridStub = {
 describe('PaginationService', () => {
   let service: PaginationService;
   let sharedService: SharedService;
+  let rxjsResourceStub: RxJsResourceStub;
 
   beforeEach(() => {
     sharedService = new SharedService();
-    service = new PaginationService(mockPubSub, sharedService, backendUtilityServiceStub);
+    rxjsResourceStub = new RxJsResourceStub();
+    service = new PaginationService(mockPubSub, sharedService, backendUtilityServiceStub, rxjsResourceStub);
     jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(mockGridOption);
   });
 
@@ -372,13 +376,30 @@ describe('PaginationService', () => {
 
       try {
         service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
-        const response = await service.processOnPageChanged(1);
+        await service.processOnPageChanged(1);
       } catch (e) {
         expect(backendErrorSpy).toHaveBeenCalledWith(mockError, mockGridOption.backendServiceApi);
       }
     });
 
-    it('should execute "process" method when defined', (done) => {
+    it('should execute "process" method and catch error when process Observable fails', async (done) => {
+      const mockError = 'observable error';
+      const postSpy = jest.fn();
+      mockGridOption.backendServiceApi!.process = postSpy;
+      jest.spyOn(mockBackendService, 'processOnPaginationChanged').mockReturnValue('backend query');
+      jest.spyOn(mockGridOption.backendServiceApi as BackendServiceApi, 'process').mockReturnValue(throwError(mockError));
+      const backendErrorSpy = jest.spyOn(backendUtilityServiceStub, 'onBackendError');
+
+      try {
+        service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
+        await service.processOnPageChanged(1);
+      } catch (e) {
+        expect(backendErrorSpy).toHaveBeenCalledWith(mockError, mockGridOption.backendServiceApi);
+        done();
+      }
+    });
+
+    it('should execute "process" method when defined as a Promise', (done) => {
       const postSpy = jest.fn();
       mockGridOption.backendServiceApi!.process = postSpy;
       const backendExecuteSpy = jest.spyOn(backendUtilityServiceStub, 'executeBackendProcessesCallback');
@@ -396,6 +417,26 @@ describe('PaginationService', () => {
         expect(backendExecuteSpy).toHaveBeenCalledWith(expect.toBeDate(), processResult, mockGridOption.backendServiceApi as BackendServiceApi, 85);
         done();
       }, 10);
+    });
+
+    it('should execute "process" method when defined as an Observable', (done) => {
+      const postSpy = jest.fn();
+      mockGridOption.backendServiceApi.process = postSpy;
+      const backendExecuteSpy = jest.spyOn(backendUtilityServiceStub, 'executeBackendProcessesCallback');
+      jest.spyOn(mockBackendService, 'processOnPaginationChanged').mockReturnValue('backend query');
+      const now = new Date();
+      const processResult = { users: [{ name: 'John' }], metrics: { startTime: now, endTime: now, executionTime: 0, totalItemCount: 0 } };
+      jest.spyOn(mockGridOption.backendServiceApi as BackendServiceApi, 'process').mockReturnValue(of(processResult));
+
+      service.addRxJsResource(rxjsResourceStub);
+      service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
+      service.processOnPageChanged(1);
+
+      setTimeout(() => {
+        expect(postSpy).toHaveBeenCalled();
+        expect(backendExecuteSpy).toHaveBeenCalledWith(expect.toBeDate(), processResult, mockGridOption.backendServiceApi as BackendServiceApi, 85);
+        done();
+      });
     });
 
     it('should call "setPagingOptions" from the DataView and trigger "onPaginationChanged" when using a Local Grid', () => {

@@ -13,28 +13,28 @@
  * That external `rsjs-observable` package simply implements this RxJsFacade
  * and is just a very simple and basic RxJS Wrapper package (which will depend on the real RxJS package)
  */
-export class RxJsFacade {
+export abstract class RxJsFacade {
   /**
    * The same Observable instance returned by any call to without a scheduler.
    * This returns the EMPTY constant from RxJS
    */
   get EMPTY(): ObservableFacade<never> {
-    throw new Error('RxJs Facade "EMPTY" constant must be implemented');
+    throw new Error('RxJS Facade "EMPTY" constant must be implemented');
   }
 
   /** Simple method to create an Observable */
   createObservable<T>(): ObservableFacade<T> {
-    throw new Error('RxJs Facade "createObservable" method must be implemented');
+    throw new Error('RxJS Facade "createObservable" method must be implemented');
   }
 
   /** Simple method to create a Subject */
   createSubject<T>(): SubjectFacade<T> {
-    throw new Error('RxJs Facade "createSubject" method must be implemented');
+    throw new Error('RxJS Facade "createSubject" method must be implemented');
   }
 
   /** Decides at subscription time which Observable will actually be subscribed. */
   iif<T = never, F = never>(condition: () => boolean, trueResult?: any, falseResult?: any): ObservableFacade<T | F> {
-    throw new Error('RxJs Facade "iif" method must be implemented');
+    throw new Error('RxJS Facade "iif" method must be implemented');
   }
 
   /** Tests to see if the object is an RxJS Observable */
@@ -44,7 +44,7 @@ export class RxJsFacade {
 
   /** Emits the values emitted by the source Observable until a `notifier` Observable emits a value. */
   takeUntil<T>(notifier: ObservableFacade<any>): any {
-    throw new Error('RxJs Facade "takeUntil" method must be implemented');
+    throw new Error('RxJS Facade "takeUntil" method must be implemented');
   }
 }
 
@@ -54,11 +54,11 @@ export class RxJsFacade {
  */
 export abstract class SubjectFacade<T> {
   next(value?: T): void {
-    throw new Error('RxJs Subject "next" method must be implemented');
+    throw new Error('RxJS Subject "next" method must be implemented');
   }
 
   unsubscribe(): void {
-    throw new Error('RxJs Subject "unsubscribe" method must be implemented');
+    throw new Error('RxJS Subject "unsubscribe" method must be implemented');
   }
 }
 
