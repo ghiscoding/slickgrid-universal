@@ -673,12 +673,7 @@ export class SlickVanillaGridBundle {
           resource.init(this.slickGrid, this.universalContainerService);
         }
         if (resource?.className === 'RxJsResource') {
-          this.rxjs = resource as RxJsFacade;
-          this.backendUtilityService.addRxJsResource(this.rxjs);
-          this.filterService.addRxJsResource(this.rxjs);
-          this.sortService.addRxJsResource(this.rxjs);
-          this.paginationService.addRxJsResource(this.rxjs);
-          this.universalContainerService.registerInstance('RxJsResource', this.rxjs);
+          this.registerRxJsResource(resource as RxJsFacade);
         }
       }
     }
@@ -1316,6 +1311,16 @@ export class SlickVanillaGridBundle {
         });
       }
     }
+  }
+
+  /** Register the RxJS Resource in all necessary services which uses */
+  private registerRxJsResource(resource: RxJsFacade) {
+    this.rxjs = resource;
+    this.backendUtilityService.addRxJsResource(this.rxjs);
+    this.filterService.addRxJsResource(this.rxjs);
+    this.sortService.addRxJsResource(this.rxjs);
+    this.paginationService.addRxJsResource(this.rxjs);
+    this.universalContainerService.registerInstance('RxJsResource', this.rxjs);
   }
 
   /**

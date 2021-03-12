@@ -23,11 +23,6 @@ export class RxJsResource implements RxJsFacade {
     return new Subject<T>();
   }
 
-  /** he same Observable instance returned by any call to without a scheduler. It is preferrable to use this over empty() */
-  empty(): Observable<never> {
-    return EMPTY;
-  }
-
   iif<T = never, F = never>(condition: () => boolean, trueResult?: any, falseResult?: any): Observable<T | F> {
     return iif<T, F>(condition, trueResult, falseResult);
   }

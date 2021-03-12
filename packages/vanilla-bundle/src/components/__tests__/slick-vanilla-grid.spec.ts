@@ -1,4 +1,5 @@
 import 'jest-extended';
+import { of, throwError } from 'rxjs';
 import {
   BackendUtilityService,
   Column,
@@ -52,6 +53,7 @@ import { HttpStub } from '../../../../../test/httpClientStub';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../../test/mockSlickEvent';
 import { ResizerService } from '../../services/resizer.service';
 import { UniversalContainerService } from '../../services/universalContainer.service';
+import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 jest.mock('../../services/textExport.service');
 
 const mockConvertParentChildArray = jest.fn();
@@ -96,6 +98,7 @@ const mockGraphqlService = {
 } as unknown as GraphqlService;
 
 const backendUtilityServiceStub = {
+  addRxJsResource: jest.fn(),
   executeBackendProcessesCallback: jest.fn(),
   executeBackendCallback: jest.fn(),
   onBackendError: jest.fn(),
@@ -110,6 +113,7 @@ const collectionServiceStub = {
 } as unknown as CollectionService;
 
 const filterServiceStub = {
+  addRxJsResource: jest.fn(),
   clearFilters: jest.fn(),
   dispose: jest.fn(),
   init: jest.fn(),
@@ -144,6 +148,7 @@ const gridStateServiceStub = {
 
 const paginationServiceStub = {
   totalItems: 0,
+  addRxJsResource: jest.fn(),
   init: jest.fn(),
   dispose: jest.fn(),
   getFullPagination: jest.fn(),
@@ -162,6 +167,7 @@ Object.defineProperty(paginationServiceStub, 'totalItems', {
 });
 
 const sortServiceStub = {
+  addRxJsResource: jest.fn(),
   bindBackendOnSort: jest.fn(),
   bindLocalOnSort: jest.fn(),
   dispose: jest.fn(),
@@ -704,6 +710,25 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         });
       });
 
+      it('should be able to load async editors with an Observable', (done) => {
+        const mockCollection = ['male', 'female'];
+        const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: of(mockCollection) } }] as Column[];
+        const getColSpy = jest.spyOn(mockGrid, 'getColumns').mockReturnValue(mockColDefs);
+
+        const rxjsMock = new RxJsResourceStub();
+        component.gridOptions = { registerExternalResources: [rxjsMock] } as unknown as GridOption;
+        component.initialization(divContainer, slickEventHandler);
+        component.columnDefinitions = mockColDefs;
+
+        setTimeout(() => {
+          expect(getColSpy).toHaveBeenCalled();
+          expect(component.columnDefinitions[0].editor!.collection).toEqual(mockCollection);
+          expect(component.columnDefinitions[0].internalColumnEditor!.collection).toEqual(mockCollection);
+          expect(component.columnDefinitions[0].internalColumnEditor!.model).toEqual(Editors.text);
+          done();
+        });
+      });
+
       it('should throw an error when Fetch Promise response bodyUsed is true', (done) => {
         const consoleSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
         const mockCollection = ['male', 'female'];
@@ -923,6 +948,24 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(component.registeredResources[0] instanceof TextExportService).toBeTrue();
       });
 
+      it('should add RxJS resource to all necessary Services when RxJS external resource is registered', () => {
+        const rxjsMock = new RxJsResourceStub();
+        const backendUtilitySpy = jest.spyOn(backendUtilityServiceStub, 'addRxJsResource');
+        const filterServiceSpy = jest.spyOn(filterServiceStub, 'addRxJsResource');
+        const sortServiceSpy = jest.spyOn(sortServiceStub, 'addRxJsResource');
+        const paginationServiceSpy = jest.spyOn(paginationServiceStub, 'addRxJsResource');
+
+        component.gridOptions = { registerExternalResources: [rxjsMock] } as unknown as GridOption;
+        component.initialization(divContainer, slickEventHandler);
+
+        expect(backendUtilitySpy).toHaveBeenCalled();
+        expect(filterServiceSpy).toHaveBeenCalled();
+        expect(sortServiceSpy).toHaveBeenCalled();
+        expect(paginationServiceSpy).toHaveBeenCalled();
+        expect(component.registeredResources.length).toBe(4); // RxJsResourceStub, GridService, GridStateService, SlickEmptyCompositeEditorComponent
+        expect(component.registeredResources[0] instanceof RxJsResourceStub).toBeTrue();
+      });
+
       it('should destroy customElement and its DOM element when requested', () => {
         const spy = jest.spyOn(component, 'emptyGridContainerElm');
 
@@ -1136,7 +1179,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(refreshSpy).toHaveBeenCalledWith(mockData);
       });
 
-      it('should execute the process method on initialization when "executeProcessCommandOnInit" is set as a backend service options with Pagination enabled', (done) => {
+      it('should execute the process method on initialization when "executeProcessCommandOnInit" is set as a backend service options with a Promise and Pagination enabled', (done) => {
         const now = new Date();
         const query = `query { users (first:20,offset:0) { totalCount, nodes { id,name,gender,company } } }`;
         const processResult = {
@@ -1148,6 +1191,30 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         jest.spyOn(component.gridOptions.backendServiceApi.service, 'buildQuery').mockReturnValue(query);
         const backendExecuteSpy = jest.spyOn(backendUtilityServiceStub, 'executeBackendProcessesCallback');
 
+        component.gridOptions.backendServiceApi.service.options = { executeProcessCommandOnInit: true };
+        component.initialization(divContainer, slickEventHandler);
+
+        expect(processSpy).toHaveBeenCalled();
+
+        setTimeout(() => {
+          expect(backendExecuteSpy).toHaveBeenCalledWith(expect.toBeDate(), processResult, component.gridOptions.backendServiceApi, 0);
+          done();
+        }, 5);
+      });
+
+      it('should execute the process method on initialization when "executeProcessCommandOnInit" is set as a backend service options with an Observable and Pagination enabled', (done) => {
+        const now = new Date();
+        const rxjsMock = new RxJsResourceStub();
+        const query = `query { users (first:20,offset:0) { totalCount, nodes { id,name,gender,company } } }`;
+        const processResult = {
+          data: { users: { nodes: [] }, pageInfo: { hasNextPage: true }, totalCount: 0 },
+          metrics: { startTime: now, endTime: now, executionTime: 0, totalItemCount: 0 }
+        };
+        const processSpy = jest.spyOn((component.gridOptions as any).backendServiceApi, 'process').mockReturnValue(of(processResult));
+        jest.spyOn((component.gridOptions as any).backendServiceApi.service, 'buildQuery').mockReturnValue(query);
+        const backendExecuteSpy = jest.spyOn(backendUtilityServiceStub, 'executeBackendProcessesCallback');
+
+        component.gridOptions.registerExternalResources = [rxjsMock];
         component.gridOptions.backendServiceApi.service.options = { executeProcessCommandOnInit: true };
         component.initialization(divContainer, slickEventHandler);
 
@@ -1196,6 +1263,26 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         promise.catch((e) => {
           expect(e).toEqual(mockError);
+          done();
+        });
+      });
+
+      it('should throw an error when the process method on initialization when "executeProcessCommandOnInit" is set as a backend service options from an Observable', (done) => {
+        const mockError = { error: '404' };
+        const rxjsMock = new RxJsResourceStub();
+        const query = `query { users (first:20,offset:0) { totalCount, nodes { id,name,gender,company } } }`;
+        const processSpy = jest.spyOn((component.gridOptions as any).backendServiceApi, 'process').mockReturnValue(throwError(mockError));
+        jest.spyOn((component.gridOptions as any).backendServiceApi.service, 'buildQuery').mockReturnValue(query);
+        const backendErrorSpy = jest.spyOn(backendUtilityServiceStub, 'onBackendError');
+
+        component.gridOptions.registerExternalResources = [rxjsMock];
+        component.gridOptions.backendServiceApi.service.options = { executeProcessCommandOnInit: true };
+        component.initialization(divContainer, slickEventHandler);
+
+        expect(processSpy).toHaveBeenCalled();
+
+        setTimeout(() => {
+          expect(backendErrorSpy).toHaveBeenCalledWith(mockError, component.gridOptions.backendServiceApi);
           done();
         });
       });
