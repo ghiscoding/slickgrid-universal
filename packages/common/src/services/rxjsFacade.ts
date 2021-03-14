@@ -37,6 +37,10 @@ export abstract class RxJsFacade {
     throw new Error('RxJS Facade "iif" method must be implemented');
   }
 
+  first<T, D = T>(predicate?: null, defaultValue?: D): any {
+    throw new Error('RxJS Facade "first" method must be implemented');
+  }
+
   /** Tests to see if the object is an RxJS Observable */
   isObservable<T>(obj: any): boolean {
     return false;
@@ -45,20 +49,6 @@ export abstract class RxJsFacade {
   /** Emits the values emitted by the source Observable until a `notifier` Observable emits a value. */
   takeUntil<T>(notifier: ObservableFacade<any>): any {
     throw new Error('RxJS Facade "takeUntil" method must be implemented');
-  }
-}
-
-/**
- * A Subject is a special type of Observable that allows values to be
- * multicasted to many Observers. Subjects are like EventEmitters.
- */
-export abstract class SubjectFacade<T> {
-  next(value?: T): void {
-    throw new Error('RxJS Subject "next" method must be implemented');
-  }
-
-  unsubscribe(): void {
-    throw new Error('RxJS Subject "unsubscribe" method must be implemented');
   }
 }
 
@@ -77,6 +67,20 @@ export abstract class ObservableFacade<T> {
   /** Pipe an operator function to the Observable */
   pipe(fns?: any): any {
     throw new Error('RxJS Observable Facade "pipe" method must be implemented');
+  }
+}
+
+/**
+ * A Subject is a special type of Observable that allows values to be
+ * multicasted to many Observers. Subjects are like EventEmitters.
+ */
+export abstract class SubjectFacade<T> extends ObservableFacade<T> {
+  next(value?: T): void {
+    throw new Error('RxJS Subject "next" method must be implemented');
+  }
+
+  unsubscribe(): void {
+    throw new Error('RxJS Subject "unsubscribe" method must be implemented');
   }
 }
 

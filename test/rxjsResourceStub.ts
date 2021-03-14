@@ -1,6 +1,6 @@
 import { RxJsFacade } from '@slickgrid-universal/common';
-import { iif, isObservable, Observable, Subject, EMPTY } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { EMPTY, iif, isObservable, Observable, OperatorFunction, Subject } from 'rxjs';
+import { first, takeUntil } from 'rxjs/operators';
 
 export class RxJsResourceStub implements RxJsFacade {
   readonly className = 'RxJsResource';
@@ -26,6 +26,10 @@ export class RxJsResourceStub implements RxJsFacade {
   /** he same Observable instance returned by any call to without a scheduler. It is preferrable to use this over empty() */
   empty(): Observable<never> {
     return EMPTY;
+  }
+
+  first<T, D = T>(predicate?: null, defaultValue?: D): OperatorFunction<T, T | D> {
+    return first(predicate, defaultValue);
   }
 
   iif<T = never, F = never>(condition: () => boolean, trueResult?: any, falseResult?: any): Observable<T | F> {

@@ -5,6 +5,7 @@ const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "m
 
 import { FieldType, OperatorString, OperatorType } from '../enums/index';
 import { GridOption } from '../interfaces/index';
+import { ObservableFacade, RxJsFacade, SubjectFacade } from './rxjsFacade';
 
 /**
  * Add an item to an array only when the item does not exists, when the item is an object we will be using their "id" to compare
@@ -46,6 +47,28 @@ export function addWhiteSpaces(nbSpaces: number): string {
  */
 export function arrayRemoveItemByIndex<T>(array: T[], index: number): T[] {
   return array.filter((_el: T, i: number) => index !== i);
+}
+
+/**
+ * Try casting an input of type Promise | Observable into a Promise type.
+ * @param object which could be of type Promise or Observable
+ * @param fromServiceName string representing the caller service name and will be used if we throw a casting problem error
+ */
+export function castObservableToPromise<T>(rxjs: RxJsFacade, input: Promise<T> | ObservableFacade<T> | SubjectFacade<T>, fromServiceName = ''): Promise<T> {
+  let promise: any = input;
+
+  if (input instanceof Promise) {
+    // if it's already a Promise then return it
+    return input;
+  } else if (rxjs.isObservable(input)) {
+    promise = input.pipe(rxjs.first()).toPromise();
+  }
+
+  if (!(promise instanceof Promise)) {
+    throw new Error(`Something went wrong, Slickgrid-Universal ${fromServiceName} is not able to convert the Observable into a Promise.`);
+  }
+
+  return promise;
 }
 
 /**

@@ -12,12 +12,13 @@ import {
   Locale,
   MultipleSelectOption,
   SelectOption,
-  SlickGrid
+  SlickGrid,
+  Subscription
 } from './../interfaces/index';
 import { CollectionService } from '../services/collection.service';
 import { collectionObserver, propertyObserver } from '../services/observers';
-import { getDescendantProperty, getTranslationPrefix, htmlEncode, sanitizeTextByAvailableSanitizer } from '../services/utilities';
-import { TranslaterService } from '../services';
+import { castObservableToPromise, getDescendantProperty, getTranslationPrefix, htmlEncode, sanitizeTextByAvailableSanitizer } from '../services/utilities';
+import { ObservableFacade, RxJsFacade, SubjectFacade, TranslaterService } from '../services';
 
 export class SelectFilter implements Filter {
   protected _isMultipleSelect = true;
@@ -46,11 +47,16 @@ export class SelectFilter implements Filter {
   optionLabel!: string;
   valueName!: string;
   enableTranslateLabel = false;
+  subscriptions: Subscription[] = [];
 
   /**
    * Initialize the Filter
    */
-  constructor(protected readonly translaterService: TranslaterService, protected readonly collectionService: CollectionService, isMultipleSelect = true) {
+  constructor(
+    protected readonly translaterService: TranslaterService,
+    protected readonly collectionService: CollectionService,
+    protected readonly rxjs: RxJsFacade,
+    isMultipleSelect = true) {
     this._isMultipleSelect = isMultipleSelect;
   }
 
@@ -523,10 +529,33 @@ export class SelectFilter implements Filter {
     }
   }
 
-  protected async renderOptionsAsync(collectionAsync: Promise<any | any[]>): Promise<any[]> {
+  /**
+ * When user use a CollectionAsync we will use the returned collection to render the filter DOM element
+ * and reinitialize filter collection with this new collection
+ */
+  protected renderDomElementFromCollectionAsync(collection: any[]) {
+    if (this.collectionOptions && this.collectionOptions.collectionInsideObjectProperty) {
+      const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty;
+      collection = getDescendantProperty(collection, collectionInsideObjectProperty as string);
+    }
+    if (!Array.isArray(collection)) {
+      throw new Error('Something went wrong while trying to pull the collection from the "collectionAsync" call in the Select Filter, the collection is not a valid array.');
+    }
+
+    // copy over the array received from the async call to the "collection" as the new collection to use
+    // this has to be BEFORE the `collectionObserver().subscribe` to avoid going into an infinite loop
+    this.columnFilter.collection = collection;
+
+    // recreate Multiple Select after getting async collection
+    this.renderDomElement(collection);
+  }
+
+  protected async renderOptionsAsync(collectionAsync: Promise<any | any[]> | ObservableFacade<any | any[]> | SubjectFacade<any | any[]>): Promise<any[]> {
     let awaitedCollection: any = null;
 
     if (collectionAsync) {
+      awaitedCollection = await castObservableToPromise(this.rxjs, collectionAsync) as Promise<any>;
+
       // wait for the "collectionAsync", once resolved we will save it into the "collection"
       const response: any | any[] = await collectionAsync;
 
@@ -557,5 +586,14 @@ export class SelectFilter implements Filter {
     }
 
     return awaitedCollection;
+  }
+
+  /** Create or recreate an Observable Subject and reassign it to the "collectionAsync" object so user can call a "collectionAsync.next()" on it */
+  protected createCollectionAsyncSubject() {
+    const newCollectionAsync = this.rxjs.createSubject<any>();
+    this.columnFilter.collectionAsync = newCollectionAsync;
+    this.subscriptions.push(
+      newCollectionAsync.subscribe(collection => this.renderDomElementFromCollectionAsync(collection))
+    );
   }
 }

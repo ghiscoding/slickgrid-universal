@@ -2,7 +2,7 @@ import { BindingEventService, Column, FieldType, Filters, GridOption, GridStateC
 import { GridOdataService, OdataServiceApi, OdataOption } from '@slickgrid-universal/odata';
 import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { Observable } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 
 import { ExampleGridOptions } from './example-grid-options';
 
@@ -21,6 +21,8 @@ export class Example15 {
   processing = false;
   status = '';
   statusClass = 'is-success';
+  isOtherGenderAdded = false;
+  genderCollection = [{ value: '', label: '' }, { value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -57,7 +59,7 @@ export class Example15 {
         id: 'gender', name: 'Gender', field: 'gender', filterable: true,
         filter: {
           model: Filters.singleSelect,
-          collection: [{ value: '', label: '' }, { value: 'male', label: 'male' }, { value: 'female', label: 'female' }]
+          collectionAsync: of(this.genderCollection)
         }
       },
       { id: 'company', name: 'Company', field: 'company' },
@@ -111,6 +113,41 @@ export class Example15 {
       } as OdataServiceApi,
       registerExternalResources: [new RxJsResource()]
     };
+  }
+
+  addOtherGender() {
+    this.isOtherGenderAdded = true;
+    const genderColumn = this.columnDefinitions.find((column: Column) => column.id === 'gender');
+    if (genderColumn) {
+      this.genderCollection.push({ value: 'other', label: 'other' });
+      const filterCollectionAsync = genderColumn.filter!.collectionAsync;
+      // const editorCollection = genderColumn.editor!.collection;
+
+      // if (Array.isArray(editorCollection)) {
+      //   // add the new row to the grid
+      //   this.angularGrid.gridService.addItemToDatagrid(newRows[0]);
+
+      //   // then refresh the Editor "collection", we have 2 ways of doing it
+
+      //   // Push to the Editor "collection"
+      //   editorCollection.push({ value: lastRowIndex, label: lastRowIndex, prefix: 'Task' });
+
+      //   // or replace entire "collection"
+      //   // durationColumnDef.editor.collection = [...collection, ...[{ value: lastRowIndex, label: lastRowIndex }]];
+
+      //   // for the Filter only, we have a trigger an RxJS/Subject change with the new collection
+      //   // we do this because Filter(s) are shown at all time, while on Editor it's unnecessary since they are only shown when opening them
+      //   if (filterCollectionAsync instanceof Subject) {
+      //     filterCollectionAsync.next(editorCollection);
+      //   }
+      // }
+
+      // for the Filter only, we have a trigger an RxJS/Subject change with the new collection
+      // we do this because Filter(s) are shown at all time, while on Editor it's unnecessary since they are only shown when opening them
+      if (filterCollectionAsync instanceof Subject) {
+        filterCollectionAsync.next(this.genderCollection);
+      }
+    }
   }
 
   displaySpinner(isProcessing) {

@@ -128,6 +128,7 @@ export class SlickVanillaGridBundle {
   backendUtilityService!: BackendUtilityService;
   collectionService!: CollectionService;
   extensionService!: ExtensionService;
+  filterFactory!: FilterFactory;
   filterService!: FilterService;
   gridEventService!: GridEventService;
   gridService!: GridService;
@@ -323,8 +324,8 @@ export class SlickVanillaGridBundle {
     this.sharedService = services?.sharedService ?? new SharedService();
     this.collectionService = services?.collectionService ?? new CollectionService(this.translaterService);
     this.extensionUtility = services?.extensionUtility ?? new ExtensionUtility(this.sharedService, this.translaterService);
-    const filterFactory = new FilterFactory(slickgridConfig, this.translaterService, this.collectionService);
-    this.filterService = services?.filterService ?? new FilterService(filterFactory, this._eventPubSubService, this.sharedService, this.backendUtilityService);
+    this.filterFactory = new FilterFactory(slickgridConfig, this.translaterService, this.collectionService);
+    this.filterService = services?.filterService ?? new FilterService(this.filterFactory, this._eventPubSubService, this.sharedService, this.backendUtilityService);
     this.resizerService = services?.resizerService ?? new ResizerService(this._eventPubSubService);
     this.sortService = services?.sortService ?? new SortService(this.sharedService, this._eventPubSubService, this.backendUtilityService);
     this.treeDataService = services?.treeDataService ?? new TreeDataService(this.sharedService);
@@ -530,6 +531,9 @@ export class SlickVanillaGridBundle {
       this.sharedService.frozenVisibleColumnId = this._columnDefinitions[frozenColumnIndex]?.id ?? '';
     }
 
+    // get any possible Services that user want to register
+    this.registerResources();
+
     // initialize the SlickGrid grid
     this.slickGrid.init();
 
@@ -614,68 +618,10 @@ export class SlickVanillaGridBundle {
     this.gridEventService.bindOnCellChange(this.slickGrid);
     this.gridEventService.bindOnClick(this.slickGrid);
 
-    // get any possible Services that user want to register
-    this._registeredResources = this.gridOptions.registerExternalResources || [];
-
-    // when using Salesforce, we want the Export to CSV always enabled without registering it
-    if (this.gridOptions.enableTextExport && this.gridOptions.useSalesforceDefaultGridOptions) {
-      const textExportService = new TextExportService();
-      this._registeredResources.push(textExportService);
-    }
-
-    // at this point, we consider all the registered services as external services, anything else registered afterward aren't external
-    if (Array.isArray(this._registeredResources)) {
-      this.sharedService.externalRegisteredResources = this._registeredResources;
-    }
-
-    // push all other Services that we want to be registered
-    this._registeredResources.push(this.gridService, this.gridStateService);
-
-    // when using Grouping/DraggableGrouping/Colspan register its Service
-    if (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping) {
-      this._registeredResources.push(this.groupingService);
-    }
-
-    // when using Tree Data View, register its Service
-    if (this.gridOptions.enableTreeData) {
-      this._registeredResources.push(this.treeDataService);
-    }
-
-    // when user enables translation, we need to translate Headers on first pass & subsequently in the bindDifferentHooks
-    if (this.gridOptions.enableTranslate) {
-      this.extensionService.translateColumnHeaders();
-    }
-
-    // also initialize (render) the empty warning component
-    this.slickEmptyWarning = new SlickEmptyWarningComponent();
-    this._registeredResources.push(this.slickEmptyWarning);
-
-    // also initialize (render) the pagination component when using the salesforce default options
-    // however before adding a new instance, just make sure there isn't one that might have been loaded by calling "registerExternalResources"
-    if (this.gridOptions.enableCompositeEditor && this.gridOptions.useSalesforceDefaultGridOptions) {
-      if (!this._registeredResources.some((resource => resource instanceof SlickCompositeEditorComponent))) {
-        this.slickCompositeEditor = new SlickCompositeEditorComponent();
-        this._registeredResources.push(this.slickCompositeEditor);
-      }
-    }
-
     // bind the Backend Service API callback functions only after the grid is initialized
     // because the preProcess() and onInit() might get triggered
     if (this.gridOptions?.backendServiceApi) {
       this.bindBackendCallbackFunctions(this.gridOptions);
-    }
-
-    // bind & initialize all Components/Services that were tagged as enabled
-    // register all services by executing their init method and providing them with the Grid object
-    if (Array.isArray(this._registeredResources)) {
-      for (const resource of this._registeredResources) {
-        if (typeof resource.init === 'function') {
-          resource.init(this.slickGrid, this.universalContainerService);
-        }
-        if (resource?.className === 'RxJsResource') {
-          this.registerRxJsResource(resource as RxJsFacade);
-        }
-      }
     }
 
     // publish & dispatch certain events
@@ -1313,10 +1259,70 @@ export class SlickVanillaGridBundle {
     }
   }
 
+  private registerResources() {
+    this._registeredResources = this.gridOptions.registerExternalResources || [];
+
+    // when using Salesforce, we want the Export to CSV always enabled without registering it
+    if (this.gridOptions.enableTextExport && this.gridOptions.useSalesforceDefaultGridOptions) {
+      const textExportService = new TextExportService();
+      this._registeredResources.push(textExportService);
+    }
+
+    // at this point, we consider all the registered services as external services, anything else registered afterward aren't external
+    if (Array.isArray(this._registeredResources)) {
+      this.sharedService.externalRegisteredResources = this._registeredResources;
+    }
+
+    // push all other Services that we want to be registered
+    this._registeredResources.push(this.gridService, this.gridStateService);
+
+    // when using Grouping/DraggableGrouping/Colspan register its Service
+    if (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping) {
+      this._registeredResources.push(this.groupingService);
+    }
+
+    // when using Tree Data View, register its Service
+    if (this.gridOptions.enableTreeData) {
+      this._registeredResources.push(this.treeDataService);
+    }
+
+    // when user enables translation, we need to translate Headers on first pass & subsequently in the bindDifferentHooks
+    if (this.gridOptions.enableTranslate) {
+      this.extensionService.translateColumnHeaders();
+    }
+
+    // also initialize (render) the empty warning component
+    this.slickEmptyWarning = new SlickEmptyWarningComponent();
+    this._registeredResources.push(this.slickEmptyWarning);
+
+    // also initialize (render) the pagination component when using the salesforce default options
+    // however before adding a new instance, just make sure there isn't one that might have been loaded by calling "registerExternalResources"
+    if (this.gridOptions.enableCompositeEditor && this.gridOptions.useSalesforceDefaultGridOptions) {
+      if (!this._registeredResources.some((resource => resource instanceof SlickCompositeEditorComponent))) {
+        this.slickCompositeEditor = new SlickCompositeEditorComponent();
+        this._registeredResources.push(this.slickCompositeEditor);
+      }
+    }
+
+    // bind & initialize all Components/Services that were tagged as enabled
+    // register all services by executing their init method and providing them with the Grid object
+    if (Array.isArray(this._registeredResources)) {
+      for (const resource of this._registeredResources) {
+        if (typeof resource.init === 'function') {
+          resource.init(this.slickGrid, this.universalContainerService);
+        }
+        if (resource?.className === 'RxJsResource') {
+          this.registerRxJsResource(resource as RxJsFacade);
+        }
+      }
+    }
+  }
+
   /** Register the RxJS Resource in all necessary services which uses */
   private registerRxJsResource(resource: RxJsFacade) {
     this.rxjs = resource;
     this.backendUtilityService.addRxJsResource(this.rxjs);
+    this.filterFactory.addRxJsResource(this.rxjs);
     this.filterService.addRxJsResource(this.rxjs);
     this.sortService.addRxJsResource(this.rxjs);
     this.paginationService.addRxJsResource(this.rxjs);

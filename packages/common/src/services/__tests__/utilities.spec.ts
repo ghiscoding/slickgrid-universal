@@ -1,11 +1,14 @@
 import 'jest-extended';
+import { of } from 'rxjs';
 
 import { FieldType, OperatorType } from '../../enums/index';
 import { GridOption } from '../../interfaces/index';
+import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import {
   addToArrayWhenNotExists,
   addWhiteSpaces,
   arrayRemoveItemByIndex,
+  castObservableToPromise,
   convertHierarchicalViewToParentChildArray,
   convertParentChildArrayToHierarchicalView,
   decimalFormatted,
@@ -171,6 +174,32 @@ describe('Service/Utilies', () => {
         },
         { id: 18, file: 'something.txt', dateModified: '2015-03-03', size: 90, },
       ]);
+    });
+  });
+
+  describe('castObservableToPromise method', () => {
+    let rxjs: RxJsResourceStub;
+    beforeEach(() => {
+      rxjs = new RxJsResourceStub();
+    });
+
+    it('should throw an error when argument provided is not a Promise neither an Observable', async () => {
+      expect(() => castObservableToPromise(rxjs, null)).toThrowError('Something went wrong,');
+    });
+
+    it('should return original Promise when argument is already a Promise', async () => {
+      const promise = new Promise((resolve) => setTimeout(() => resolve('hello'), 1));
+      const castPromise = castObservableToPromise(rxjs, promise);
+      expect(promise).toBe(castPromise);
+    });
+
+    it('should be able to cast an Observable to a Promise', () => {
+      const inputArray = ['hello', 'world'];
+      const observable = of(inputArray);
+
+      castObservableToPromise(rxjs, observable).then((outputArray) => {
+        expect(outputArray).toBe(inputArray);
+      });
     });
   });
 

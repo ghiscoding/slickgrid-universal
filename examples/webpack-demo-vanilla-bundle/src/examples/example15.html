@@ -21,6 +21,10 @@
   <button class="button is-small" data-test="set-dynamic-sorting" onclick.delegate="setSortingDynamically()">
     Set Sorting Dynamically
   </button>
+  <button class="button is-small" style="margin-left: 10px" data-test="add-gender-button"
+          onclick.delegate="addOtherGender()" disabled.bind="isOtherGenderAdded">
+    Add Other Gender via RxJS
+  </button>
 </div>
 
 <br />
