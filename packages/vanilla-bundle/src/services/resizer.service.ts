@@ -67,11 +67,11 @@ export class ResizerService {
     this._grid = grid;
     const fixedGridDimensions = (this.gridOptions?.gridHeight || this.gridOptions?.gridWidth) ? { height: this.gridOptions?.gridHeight, width: this.gridOptions?.gridWidth } : undefined;
     const autoResizeOptions = this.gridOptions?.autoResize ?? { bottomPadding: 0 };
-    if (autoResizeOptions && autoResizeOptions.bottomPadding !== undefined && this.gridOptions.showCustomFooter) {
+    if (autoResizeOptions?.bottomPadding !== undefined && this.gridOptions.showCustomFooter) {
       const footerHeight: string | number = this.gridOptions?.customFooterOptions?.footerHeight ?? DATAGRID_FOOTER_HEIGHT;
       autoResizeOptions.bottomPadding += parseInt(`${footerHeight}`, 10);
     }
-    if (autoResizeOptions && autoResizeOptions.bottomPadding !== undefined && this.gridOptions.enablePagination) {
+    if (autoResizeOptions?.bottomPadding !== undefined && this.gridOptions.enablePagination) {
       autoResizeOptions.bottomPadding += DATAGRID_PAGINATION_HEIGHT;
     }
     if (fixedGridDimensions?.width && gridParentContainerElm?.style) {
