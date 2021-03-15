@@ -384,8 +384,11 @@ export interface GridOption {
   /** Grid DOM element container ID (used Slickgrid-Universal auto-resizer) */
   gridContainerId?: string;
 
-  /** When using a fixed grid height */
-  gridHeight?: number;
+  /**
+   * When using a fixed grid height, can be a number or a string.
+   * if a number is provided it will add the `px` suffix for pixels, or if a string is passed it will use it as is.
+   */
+  gridHeight?: number | string;
 
   /** Grid DOM element ID */
   gridId?: string;
@@ -393,8 +396,11 @@ export interface GridOption {
   /** Grid Menu options (aka hamburger menu) */
   gridMenu?: GridMenu;
 
-  /** When using a fixed grid width */
-  gridWidth?: number;
+  /**
+   * When using a fixed grid width, can be a number or a string.
+   * if a number is provided it will add the `px` suffix for pixels, or if a string is passed it will use it as is.
+   */
+  gridWidth?: number | string;
 
   /** Header row height in pixels (only type the number). Header row is where the filters are. */
   headerRowHeight?: number;
