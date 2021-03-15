@@ -9,7 +9,6 @@ import {
   convertHierarchicalViewToParentChildArray,
   convertParentChildArrayToHierarchicalView,
   decimalFormatted,
-  debounce,
   deepCopy,
   emptyElement,
   emptyObject,
@@ -335,25 +334,6 @@ describe('Service/Utilies', () => {
       const input = 1234567890.44566;
       const output = decimalFormatted(input, 2, 4, '.', ',');
       expect(output).toBe('1,234,567,890.4457');
-    });
-  });
-
-  describe('debounce method', () => {
-    it('should execute a function after a given waiting time', () => {
-      jest.useFakeTimers();
-
-      const func = jest.fn();
-      const debouncedFunction = debounce(func, 100);
-
-      debouncedFunction();
-      expect(func).not.toBeCalled();
-
-      jest.runTimersToTime(50);
-      expect(func).not.toBeCalled();
-
-      jest.runTimersToTime(100);
-      expect(func).toBeCalled();
-      expect(func.mock.calls.length).toBe(1);
     });
   });
 

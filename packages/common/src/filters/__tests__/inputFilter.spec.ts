@@ -1,5 +1,5 @@
 import { InputFilter } from '../inputFilter';
-import { GridOption, FilterArguments, Column, SlickGrid } from '../../interfaces/index';
+import { GridOption, FilterArguments, Column, SlickGrid, BackendServiceApi } from '../../interfaces/index';
 import { Filters } from '..';
 
 const containerId = 'demo-container';
@@ -162,6 +162,43 @@ describe('InputFilter', () => {
     filterElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
 
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['a'], shouldTriggerQuery: true });
+  });
+
+  it('should trigger the callback method with a delay when "filterTypingDebounce" is set in grid options and user types something in the input', (done) => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    gridOptionMock.filterTypingDebounce = 2;
+
+    filter.init(filterArguments);
+    const filterElm = divContainer.querySelector('input.filter-duration') as HTMLInputElement;
+
+    filterElm.focus();
+    filterElm.value = 'a';
+    filterElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
+
+    setTimeout(() => {
+      expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['a'], shouldTriggerQuery: true });
+      done();
+    }, 2);
+  });
+
+  it('should trigger the callback method with a delay when BackendService is used with a "filterTypingDebounce" is set in grid options and user types something in the input', (done) => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    gridOptionMock.defaultBackendServiceFilterTypingDebounce = 2;
+    gridOptionMock.backendServiceApi = {
+      service: {}
+    } as unknown as BackendServiceApi;
+
+    filter.init(filterArguments);
+    const filterElm = divContainer.querySelector('input.filter-duration') as HTMLInputElement;
+
+    filterElm.focus();
+    filterElm.value = 'a';
+    filterElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
+
+    setTimeout(() => {
+      expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['a'], shouldTriggerQuery: true });
+      done();
+    }, 2);
   });
 
   it('should create the input filter with a default search term when passed as a filter argument', () => {

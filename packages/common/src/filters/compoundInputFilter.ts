@@ -16,6 +16,7 @@ import { TranslaterService } from '../services/translater.service';
 
 export class CompoundInputFilter implements Filter {
   protected _clearFilterTriggered = false;
+  protected _debounceTypingDelay = 0;
   protected _shouldTriggerQuery = true;
   protected _inputType = 'text';
   protected $filterElm: any;
@@ -26,6 +27,7 @@ export class CompoundInputFilter implements Filter {
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
+  timer?: NodeJS.Timeout;
 
   constructor(protected readonly translaterService: TranslaterService) { }
 
@@ -83,6 +85,11 @@ export class CompoundInputFilter implements Filter {
     this.operator = args.operator || '';
     this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
 
+    // analyze if we have any keyboard debounce delay (do we wait for user to finish typing before querying)
+    // it is used by default for a backend service but is optional when using local dataset
+    const backendApi = this.gridOptions?.backendServiceApi;
+    this._debounceTypingDelay = (backendApi ? (backendApi?.filterTypingDebounce ?? this.gridOptions?.defaultBackendServiceFilterTypingDebounce) : this.gridOptions?.filterTypingDebounce) ?? 0;
+
     // filter input can only have 1 search term, so we will use the 1st array index if it exist
     const searchTerm = (Array.isArray(this.searchTerms) && this.searchTerms.length >= 0) ? this.searchTerms[0] : '';
 
@@ -92,7 +99,7 @@ export class CompoundInputFilter implements Filter {
 
     // step 3, subscribe to the input change event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    this.$filterInputElm.on('keyup input', this.onTriggerEvent.bind(this));
+    this.$filterInputElm.on('keyup input blur', this.onTriggerEvent.bind(this));
     this.$selectOperatorElm.on('change', this.onTriggerEvent.bind(this));
   }
 
@@ -246,14 +253,14 @@ export class CompoundInputFilter implements Filter {
   }
 
   /** Event trigger, could be called by the Operator dropdown or the input itself */
-  protected onTriggerEvent(e: KeyboardEvent | undefined) {
+  protected onTriggerEvent(event: KeyboardEvent | undefined) {
     // we'll use the "input" event for everything (keyup, change, mousewheel & spinner)
     // with 1 small exception, we need to use the keyup event to handle ENTER key, everything will be processed by the "input" event
-    if (e && e.type === 'keyup' && e.key !== 'Enter') {
+    if (event && event.type === 'keyup' && event.key !== 'Enter') {
       return;
     }
     if (this._clearFilterTriggered) {
-      this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
+      this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
       this.$filterElm.removeClass('filled');
     } else {
       const selectedOperator = this.$selectOperatorElm.find('option:selected').val();
@@ -264,7 +271,15 @@ export class CompoundInputFilter implements Filter {
       }
 
       (value !== null && value !== undefined && value !== '') ? this.$filterElm.addClass('filled') : this.$filterElm.removeClass('filled');
-      this.callback(e, { columnDef: this.columnDef, searchTerms: (value ? [value] : null), operator: selectedOperator || '', shouldTriggerQuery: this._shouldTriggerQuery });
+      const callbackArgs = { columnDef: this.columnDef, searchTerms: (value ? [value] : null), operator: selectedOperator || '', shouldTriggerQuery: this._shouldTriggerQuery };
+      const typingDelay = (event?.key === 'Enter' || event?.type === 'blur') ? 0 : this._debounceTypingDelay;
+
+      if (typingDelay > 0) {
+        clearTimeout(this.timer as NodeJS.Timeout);
+        this.timer = setTimeout(() => this.callback(event, callbackArgs), typingDelay);
+      } else {
+        this.callback(event, callbackArgs);
+      }
     }
 
     // reset both flags for next use

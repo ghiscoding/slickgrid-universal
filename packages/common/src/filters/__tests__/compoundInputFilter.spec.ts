@@ -1,5 +1,5 @@
 import { FieldType, OperatorType } from '../../enums/index';
-import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { BackendServiceApi, Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { Filters } from '../index';
 import { CompoundInputFilter } from '../compoundInputFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
@@ -213,6 +213,44 @@ describe('CompoundInputFilter', () => {
     filterInputElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
 
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: ['a'], shouldTriggerQuery: true });
+  });
+
+  it('should trigger the callback method with a delay when "filterTypingDebounce" is set in grid options and user types something in the input', (done) => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    gridOptionMock.filterTypingDebounce = 2;
+
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
+
+    filterInputElm.focus();
+    filterInputElm.value = 'a';
+    filterInputElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
+
+    setTimeout(() => {
+      expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: ['a'], shouldTriggerQuery: true });
+      done();
+    }, 2);
+  });
+
+  it('should trigger the callback method with a delay when BackendService is used with a "filterTypingDebounce" is set in grid options and user types something in the input', (done) => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    gridOptionMock.defaultBackendServiceFilterTypingDebounce = 2;
+    gridOptionMock.backendServiceApi = {
+      filterTypingDebounce: 2,
+      service: {}
+    } as unknown as BackendServiceApi;
+
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
+
+    filterInputElm.focus();
+    filterInputElm.value = 'a';
+    filterInputElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
+
+    setTimeout(() => {
+      expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: ['a'], shouldTriggerQuery: true });
+      done();
+    }, 2);
   });
 
   it('should create the input filter with a default search term when passed as a filter argument', () => {

@@ -15,7 +15,7 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
-import { debounce, getDescendantProperty, setDeepValue } from '../services/utilities';
+import { getDescendantProperty, setDeepValue } from '../services/utilities';
 import { floatValidator, integerValidator, textValidator } from '../editorValidators';
 import { BindingEventService } from '../services/bindingEvent.service';
 
@@ -40,6 +40,7 @@ export class DualInputEditor implements Editor {
   protected _rightFieldName!: string;
   protected _originalLeftValue!: string | number;
   protected _originalRightValue!: string | number;
+  protected _timer?: NodeJS.Timeout;
 
   /** is the Editor disabled? */
   disabled = false;
@@ -538,7 +539,8 @@ export class DualInputEditor implements Editor {
     const compositeEditorOptions = this.args?.compositeEditorOptions;
     if (compositeEditorOptions) {
       const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
-      debounce(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay)();
+      clearTimeout(this._timer as NodeJS.Timeout);
+      this._timer = setTimeout(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay);
     }
   }
 }

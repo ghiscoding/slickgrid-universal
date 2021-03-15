@@ -15,7 +15,7 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
-import { debounce, getDescendantProperty, getHtmlElementOffset, getTranslationPrefix, setDeepValue, } from '../services/utilities';
+import { getDescendantProperty, getHtmlElementOffset, getTranslationPrefix, setDeepValue, } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 import { textValidator } from '../editorValidators/textValidator';
 
@@ -31,6 +31,7 @@ export class LongTextEditor implements Editor {
   protected _defaultTextValue: any;
   protected _isValueTouched = false;
   protected _locales: Locale;
+  protected _timer?: NodeJS.Timeout;
   protected _$textarea: any;
   protected _$currentLengthElm: any;
   protected _$wrapper: any;
@@ -432,7 +433,8 @@ export class LongTextEditor implements Editor {
     // when using a Composite Editor, we'll want to add a debounce delay to avoid perf issue since Composite could affect other editors in the same form
     if (compositeEditorOptions) {
       const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
-      debounce(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay)();
+      clearTimeout(this._timer as NodeJS.Timeout);
+      this._timer = setTimeout(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay);
     }
   }
 

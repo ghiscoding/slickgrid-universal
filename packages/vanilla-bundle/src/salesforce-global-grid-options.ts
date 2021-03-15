@@ -26,6 +26,7 @@ export const SalesforceGlobalGridOptions = {
     sanitizeDataExport: true,
   },
   enableCellNavigation: true,
+  filterTypingDebounce: 250,
   formatterOptions: {
     minDecimal: 0,
     maxDecimal: 2,

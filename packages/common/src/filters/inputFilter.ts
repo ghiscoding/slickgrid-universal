@@ -11,8 +11,10 @@ import { OperatorType, OperatorString, SearchTerm } from '../enums/index';
 
 export class InputFilter implements Filter {
   protected _clearFilterTriggered = false;
+  protected _debounceTypingDelay = 0;
   protected _shouldTriggerQuery = true;
   protected _inputType = 'text';
+  protected _timer?: NodeJS.Timeout;
   protected $filterElm: any;
   grid!: SlickGrid;
   searchTerms: SearchTerm[] = [];
@@ -70,6 +72,11 @@ export class InputFilter implements Filter {
     this.columnDef = args.columnDef;
     this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
 
+    // analyze if we have any keyboard debounce delay (do we wait for user to finish typing before querying)
+    // it is used by default for a backend service but is optional when using local dataset
+    const backendApi = this.gridOptions?.backendServiceApi;
+    this._debounceTypingDelay = (backendApi ? (backendApi?.filterTypingDebounce ?? this.gridOptions?.defaultBackendServiceFilterTypingDebounce) : this.gridOptions?.filterTypingDebounce) ?? 0;
+
     // filter input can only have 1 search term, so we will use the 1st array index if it exist
     const searchTerm = (Array.isArray(this.searchTerms) && this.searchTerms.length >= 0) ? this.searchTerms[0] : '';
 
@@ -81,7 +88,7 @@ export class InputFilter implements Filter {
 
     // step 3, subscribe to the input event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    this.$filterElm.on('keyup input', this.handleInputChange.bind(this));
+    this.$filterElm.on('keyup input blur', this.handleInputChange.bind(this));
   }
 
   /**
@@ -161,24 +168,32 @@ export class InputFilter implements Filter {
     return $filterElm;
   }
 
-  protected handleInputChange(e: any) {
+  protected handleInputChange(event: KeyboardEvent & { target: any; }) {
     // we'll use the "input" event for everything (keyup, change, mousewheel & spinner)
     // with 1 small exception, we need to use the keyup event to handle ENTER key, everything will be processed by the "input" event
-    if (e && e.type === 'keyup' && e.key !== 'Enter') {
+    if (event && event.type === 'keyup' && event.key !== 'Enter') {
       return;
-    }
-    let value = e && e.target && e.target.value || '';
-    const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
-    if (typeof value === 'string' && enableWhiteSpaceTrim) {
-      value = value.trim();
     }
 
     if (this._clearFilterTriggered) {
-      this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
+      this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
       this.$filterElm.removeClass('filled');
     } else {
+      let value = event?.target?.value ?? '';
+      const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
+      if (typeof value === 'string' && enableWhiteSpaceTrim) {
+        value = value.trim();
+      }
       value === '' ? this.$filterElm.removeClass('filled') : this.$filterElm.addClass('filled');
-      this.callback(e, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery });
+      const callbackArgs = { columnDef: this.columnDef, operator: this.operator, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery };
+      const typingDelay = (event?.key === 'Enter' || event?.type === 'blur') ? 0 : this._debounceTypingDelay;
+
+      if (typingDelay > 0) {
+        clearTimeout(this._timer as NodeJS.Timeout);
+        this._timer = setTimeout(() => this.callback(event, callbackArgs), typingDelay);
+      } else {
+        this.callback(event, callbackArgs);
+      }
     }
 
     // reset both flags for next use

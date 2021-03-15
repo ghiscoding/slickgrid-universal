@@ -150,6 +150,9 @@ export interface GridOption {
     syncGridSelectionWithBackendService?: boolean;
   };
 
+  /** Defaults to 500, how long to wait between each characters that the user types before processing the filtering process when using a Backend Service? */
+  defaultBackendServiceFilterTypingDebounce?: number;
+
   /** Defaults to 'id', what is the default column field id to sort when calling clear sorting */
   defaultColumnSortFieldId?: string;
 
@@ -338,6 +341,12 @@ export interface GridOption {
 
   /** @deprecated Please use "textExportOptions" Some default options to set for the export service */
   exportOptions?: TextExportOption;
+
+  /**
+   * Default to 0ms, how long to wait between each characters that the user types before processing the filtering process (only applies for local/in-memory grid).
+   * NOTE: please note that the BackendServiceApi has its own `filterTypingDebounce` within the `BackendServiceApi` options which is set to 500ms.
+   */
+  filterTypingDebounce?: number;
 
   /** Defaults to 25, which is the grid footer row panel height */
   footerRowHeight?: number;
