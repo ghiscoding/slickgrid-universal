@@ -642,7 +642,7 @@ export class FilterService {
    * @param grid
    */
   populateColumnFilterSearchTermPresets(filters: CurrentFilter[]) {
-    if (Array.isArray(filters) && filters.length > 0) {
+    if (Array.isArray(filters)) {
       this._columnDefinitions.forEach((columnDef: Column) => {
         // clear any columnDef searchTerms before applying Presets
         if (columnDef.filter && columnDef.filter.searchTerms) {

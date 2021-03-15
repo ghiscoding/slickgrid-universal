@@ -85,7 +85,7 @@ describe('CompoundInputFilter', () => {
     const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
 
     filterInputElm.focus();
-    filterInputElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
+    filterInputElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.filter-duration.filled');
 
     expect(filterFilledElms.length).toBe(1);
@@ -109,23 +109,6 @@ describe('CompoundInputFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: ['abc'], shouldTriggerQuery: true });
   });
 
-  it('should call "setValues" and expect that value NOT to be in the callback when triggered by a keyup event that is NOT the ENTER key', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
-
-    filter.init(filterArguments);
-    filter.setValues(['abc']);
-    const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
-
-    filterInputElm.focus();
-    const event = new (window.window as any).Event('keyup', { bubbles: true, cancelable: true });
-    event.key = 'a';
-    filterInputElm.dispatchEvent(event);
-    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.filter-duration.filled');
-
-    expect(filterFilledElms.length).toBe(0);
-    expect(spyCallback).not.toHaveBeenCalled();
-  });
-
   it('should call "setValues" with "operator" set in the filter arguments and expect that value to be in the callback when triggered', () => {
     mockColumn.type = FieldType.number;
     const filterArgs = { ...filterArguments, operator: '>' } as FilterArguments;
@@ -136,7 +119,7 @@ describe('CompoundInputFilter', () => {
     const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
 
     filterInputElm.focus();
-    filterInputElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
+    filterInputElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
 
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '>', searchTerms: ['9'], shouldTriggerQuery: true });
   });
@@ -180,7 +163,7 @@ describe('CompoundInputFilter', () => {
     const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
 
     filterInputElm.focus();
-    filterInputElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
+    filterInputElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
 
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '>', searchTerms: ['987'], shouldTriggerQuery: true });
   });
@@ -197,7 +180,7 @@ describe('CompoundInputFilter', () => {
     const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
 
     filterInputElm.focus();
-    filterInputElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
+    filterInputElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
 
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '>', searchTerms: ['987'], shouldTriggerQuery: true });
   });
@@ -210,7 +193,7 @@ describe('CompoundInputFilter', () => {
 
     filterInputElm.focus();
     filterInputElm.value = 'a';
-    filterInputElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
+    filterInputElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
 
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: ['a'], shouldTriggerQuery: true });
   });
@@ -224,7 +207,7 @@ describe('CompoundInputFilter', () => {
 
     filterInputElm.focus();
     filterInputElm.value = 'a';
-    filterInputElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
+    filterInputElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
 
     setTimeout(() => {
       expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: ['a'], shouldTriggerQuery: true });
@@ -245,7 +228,7 @@ describe('CompoundInputFilter', () => {
 
     filterInputElm.focus();
     filterInputElm.value = 'a';
-    filterInputElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
+    filterInputElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
 
     setTimeout(() => {
       expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: ['a'], shouldTriggerQuery: true });
