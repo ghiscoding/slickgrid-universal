@@ -1,4 +1,5 @@
 import { FilterCondition, FilterConditionOption } from '../interfaces/index';
+import { toKebabCase } from '../services';
 import { testFilterCondition } from './filterUtilities';
 
 /**
@@ -9,5 +10,5 @@ export const executeCollectionSearchFilterCondition: FilterCondition = (options:
   // multiple-select will always return text, so we should make our cell values text as well
   const cellValue = (options.cellValue === undefined || options.cellValue === null) ? '' : `${options.cellValue}`;
 
-  return testFilterCondition(options.operator || 'IN', cellValue, options.searchTerms || []);
+  return testFilterCondition(options.operator || 'IN', (!!cellValue ? toKebabCase(cellValue) : ''), (!!options.searchTerms.length ? options.searchTerms.map(searchTerm => toKebabCase(searchTerm.toString())) : []));
 };
