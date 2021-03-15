@@ -92,6 +92,7 @@ export const GlobalGridOptions: GridOption = {
   },
   datasetIdPropertyName: 'id',
   defaultFilter: Filters.input,
+  defaultBackendServiceFilterTypingDebounce: 500,
   enableFilterTrimWhiteSpace: false, // do we want to trim white spaces on all Filters?
   defaultFilterPlaceholder: '&#128269;',
   defaultFilterRangeOperator: OperatorType.rangeInclusive,
@@ -100,6 +101,7 @@ export const GlobalGridOptions: GridOption = {
   defaultSlickgridEventPrefix: '',
   editable: false,
   editorTypingDebounce: 450,
+  filterTypingDebounce: 0,
   enableEmptyDataWarningMessage: true,
   emptyDataWarning: {
     className: 'slick-empty-data-warning',
