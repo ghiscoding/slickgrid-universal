@@ -862,10 +862,10 @@ export class SlickVanillaGridBundle {
       }
 
       // When data changes in the DataView, we need to refresh the metrics and/or display a warning if the dataset is empty
-      const onRowsOrCountChangedHandler = dataView.onRowsOrCountChanged;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowsOrCountChangedHandler>>).subscribe(onRowsOrCountChangedHandler, (_e, args) => {
+      const onRowCountChangedHandler = dataView.onRowCountChanged;
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowCountChangedHandler>>).subscribe(onRowCountChangedHandler, (_e, args) => {
         grid.invalidate();
-        this.handleOnItemCountChanged(args.currentRowCount || 0, this.dataView.getItemCount());
+        this.handleOnItemCountChanged(args.current || 0, this.dataView.getItemCount());
       });
       const onSetItemsCalledHandler = dataView.onSetItemsCalled;
       (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSetItemsCalledHandler>>).subscribe(onSetItemsCalledHandler, (_e, args) => {
@@ -878,7 +878,7 @@ export class SlickVanillaGridBundle {
         const onRowsChangedHandler = dataView.onRowsChanged;
         (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowsChangedHandler>>).subscribe(onRowsChangedHandler, (_e, args) => {
           if (args?.rows && Array.isArray(args.rows)) {
-            args.rows.forEach((row) => grid.updateRow(row));
+            args.rows.forEach((row: number) => grid.updateRow(row));
             grid.render();
           }
         });
@@ -983,7 +983,7 @@ export class SlickVanillaGridBundle {
   executeAfterDataviewCreated(gridOptions: GridOption) {
     // if user entered some Sort "presets", we need to reflect them all in the DOM
     if (gridOptions.enableSorting) {
-      if (gridOptions.presets && Array.isArray(gridOptions.presets.sorters) && gridOptions.presets.sorters.length > 0) {
+      if (gridOptions.presets && Array.isArray(gridOptions.presets.sorters)) {
         this.sortService.loadGridSorters(gridOptions.presets.sorters);
       }
     }
@@ -1219,7 +1219,7 @@ export class SlickVanillaGridBundle {
   private loadPresetsWhenDatasetInitialized() {
     if (this.gridOptions && !this.customDataView) {
       // if user entered some Filter "presets", we need to reflect them all in the DOM
-      if (this.gridOptions.presets && Array.isArray(this.gridOptions.presets.filters) && this.gridOptions.presets.filters.length > 0) {
+      if (this.gridOptions.presets && Array.isArray(this.gridOptions.presets.filters)) {
         this.filterService.populateColumnFilterSearchTermPresets(this.gridOptions.presets.filters);
       }
 

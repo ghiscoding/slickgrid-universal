@@ -88,7 +88,8 @@ export class InputFilter implements Filter {
 
     // step 3, subscribe to the input event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    this.$filterElm.on('keyup input blur', this.handleInputChange.bind(this));
+    // we'll use all necessary events to cover the following (keyup, change, mousewheel & spinner)
+    this.$filterElm.on('keyup blur change wheel', this.handleInputChange.bind(this));
   }
 
   /**
@@ -100,7 +101,7 @@ export class InputFilter implements Filter {
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
       this.$filterElm.val('');
-      this.$filterElm.trigger('input');
+      this.$filterElm.trigger('change');
     }
   }
 
@@ -109,7 +110,7 @@ export class InputFilter implements Filter {
    */
   destroy() {
     if (this.$filterElm) {
-      this.$filterElm.off('keyup input').remove();
+      this.$filterElm.off('keyup blur change wheel').remove();
     }
     this.$filterElm = null;
   }
@@ -168,17 +169,16 @@ export class InputFilter implements Filter {
     return $filterElm;
   }
 
+  /**
+   * Event handler to cover the following (keyup, change, mousewheel & spinner)
+   * We will trigger the Filter Service callback from this handler
+   */
   protected handleInputChange(event: KeyboardEvent & { target: any; }) {
-    // we'll use the "input" event for everything (keyup, change, mousewheel & spinner)
-    // with 1 small exception, we need to use the keyup event to handle ENTER key, everything will be processed by the "input" event
-    if (event && event.type === 'keyup' && event.key !== 'Enter') {
-      return;
-    }
-
     if (this._clearFilterTriggered) {
       this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
       this.$filterElm.removeClass('filled');
     } else {
+      const eventType = event?.type ?? '';
       let value = event?.target?.value ?? '';
       const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
       if (typeof value === 'string' && enableWhiteSpaceTrim) {
@@ -186,7 +186,7 @@ export class InputFilter implements Filter {
       }
       value === '' ? this.$filterElm.removeClass('filled') : this.$filterElm.addClass('filled');
       const callbackArgs = { columnDef: this.columnDef, operator: this.operator, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery };
-      const typingDelay = (event?.key === 'Enter' || event?.type === 'blur') ? 0 : this._debounceTypingDelay;
+      const typingDelay = (eventType === 'keyup' && event?.key !== 'Enter') ? this._debounceTypingDelay : 0;
 
       if (typingDelay > 0) {
         clearTimeout(this._timer as NodeJS.Timeout);

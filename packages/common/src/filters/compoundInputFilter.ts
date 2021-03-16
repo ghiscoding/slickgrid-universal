@@ -99,7 +99,8 @@ export class CompoundInputFilter implements Filter {
 
     // step 3, subscribe to the input change event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    this.$filterInputElm.on('keyup input blur', this.onTriggerEvent.bind(this));
+    // we'll use all necessary events to cover the following (keyup, change, mousewheel & spinner)
+    this.$filterInputElm.on('keyup blur change wheel', this.onTriggerEvent.bind(this));
     this.$selectOperatorElm.on('change', this.onTriggerEvent.bind(this));
   }
 
@@ -122,7 +123,7 @@ export class CompoundInputFilter implements Filter {
    */
   destroy() {
     if (this.$filterElm && this.$selectOperatorElm) {
-      this.$filterElm.off('keyup input').remove();
+      this.$filterElm.off('keyup blur change wheel').remove();
       this.$selectOperatorElm.off('change');
     }
     this.$filterElm = null;
@@ -252,17 +253,16 @@ export class CompoundInputFilter implements Filter {
     return $filterContainerElm;
   }
 
-  /** Event trigger, could be called by the Operator dropdown or the input itself */
+  /**
+   * Event trigger, could be called by the Operator dropdown or the input itself and we will cover the following (keyup, change, mousewheel & spinner)
+   * We will trigger the Filter Service callback from this handler
+   */
   protected onTriggerEvent(event: KeyboardEvent | undefined) {
-    // we'll use the "input" event for everything (keyup, change, mousewheel & spinner)
-    // with 1 small exception, we need to use the keyup event to handle ENTER key, everything will be processed by the "input" event
-    if (event && event.type === 'keyup' && event.key !== 'Enter') {
-      return;
-    }
     if (this._clearFilterTriggered) {
       this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
       this.$filterElm.removeClass('filled');
     } else {
+      const eventType = event?.type ?? '';
       const selectedOperator = this.$selectOperatorElm.find('option:selected').val();
       let value = this.$filterInputElm.val() as string;
       const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
@@ -272,7 +272,7 @@ export class CompoundInputFilter implements Filter {
 
       (value !== null && value !== undefined && value !== '') ? this.$filterElm.addClass('filled') : this.$filterElm.removeClass('filled');
       const callbackArgs = { columnDef: this.columnDef, searchTerms: (value ? [value] : null), operator: selectedOperator || '', shouldTriggerQuery: this._shouldTriggerQuery };
-      const typingDelay = (event?.key === 'Enter' || event?.type === 'blur') ? 0 : this._debounceTypingDelay;
+      const typingDelay = (eventType === 'keyup' && event?.key !== 'Enter') ? this._debounceTypingDelay : 0;
 
       if (typingDelay > 0) {
         clearTimeout(this.timer as NodeJS.Timeout);
