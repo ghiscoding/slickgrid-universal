@@ -5,6 +5,8 @@ import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bu
 import { Observable, of, Subject } from 'rxjs';
 
 import { ExampleGridOptions } from './example-grid-options';
+import '../salesforce-styles.scss';
+import './example12.scss';
 
 const defaultPageSize = 20;
 
@@ -22,7 +24,7 @@ export class Example15 {
   status = '';
   statusClass = 'is-success';
   isOtherGenderAdded = false;
-  genderCollection = [{ value: '', label: '' }, { value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+  genderCollection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -64,7 +66,10 @@ export class Example15 {
         },
         filter: {
           model: Filters.singleSelect,
-          collectionAsync: of(this.genderCollection)
+          collectionAsync: of(this.genderCollection),
+          collectionOptions: {
+            addBlankEntry: true
+          }
         }
       },
       { id: 'company', name: 'Company', field: 'company' },
@@ -83,6 +88,9 @@ export class Example15 {
       },
       editable: true,
       autoEdit: true,
+      autoCommitEdit: true,
+      rowHeight: 33,
+      headerRowHeight: 35,
       enableCellNavigation: true,
       enableFiltering: true,
       enableCheckboxSelector: true,
