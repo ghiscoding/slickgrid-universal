@@ -1,9 +1,12 @@
+import { of, Subject } from 'rxjs';
+
 import { Filters } from '../index';
 import { AutoCompleteFilter } from '../autoCompleteFilter';
 import { FieldType, OperatorType, KeyCode } from '../../enums/index';
 import { AutocompleteOption, Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { CollectionService } from '../../services/collection.service';
 import { HttpStub } from '../../../../../test/httpClientStub';
+import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 jest.useFakeTimers();
@@ -652,7 +655,123 @@ describe('AutoCompleteFilter', () => {
       const promise = Promise.resolve({ hello: 'world' });
       mockColumn.filter!.collectionAsync = promise;
       filter.init(filterArguments).catch((e) => {
-        expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the AutoComplete Filter, the collection is not a valid array.`);
+        expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`);
+        done();
+      });
+    });
+  });
+
+  describe('AutoCompleteFilter using RxJS Observables', () => {
+    let divContainer: HTMLDivElement;
+    let filter: AutoCompleteFilter;
+    let filterArguments: FilterArguments;
+    let spyGetHeaderRow;
+    let mockColumn: Column;
+    let collectionService: CollectionService;
+    let rxjs: RxJsResourceStub;
+    let translaterService: TranslateServiceStub;
+    const http = new HttpStub();
+
+    beforeEach(() => {
+      translaterService = new TranslateServiceStub();
+      collectionService = new CollectionService(translaterService);
+      rxjs = new RxJsResourceStub();
+
+      divContainer = document.createElement('div');
+      divContainer.innerHTML = template;
+      document.body.appendChild(divContainer);
+      spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+
+      mockColumn = {
+        id: 'gender', field: 'gender', filterable: true,
+        filter: {
+          model: Filters.autoComplete,
+        }
+      };
+      filterArguments = {
+        grid: gridStub,
+        columnDef: mockColumn,
+        callback: jest.fn()
+      };
+
+      filter = new AutoCompleteFilter(translaterService, collectionService, rxjs);
+    });
+
+    afterEach(() => {
+      filter.destroy();
+      jest.clearAllMocks();
+    });
+
+    it('should create the filter with a default search term when using "collectionAsync" as an Observable', async () => {
+      const spyCallback = jest.spyOn(filterArguments, 'callback');
+      mockColumn.filter.collectionAsync = of(['male', 'female']);
+
+      filterArguments.searchTerms = ['female'];
+      await filter.init(filterArguments);
+
+      const filterElm = divContainer.querySelector<HTMLInputElement>('input.filter-gender');
+      const autocompleteUlElms = document.body.querySelectorAll<HTMLUListElement>('ul.ui-autocomplete');
+      filter.setValues('male');
+
+      filterElm.focus();
+      filterElm.dispatchEvent(new (window.window as any).Event('input', { keyCode: 97, bubbles: true, cancelable: true }));
+      const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
+
+      expect(autocompleteUlElms.length).toBe(1);
+      expect(filterFilledElms.length).toBe(1);
+      expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['male'], shouldTriggerQuery: true });
+    });
+
+    it('should create the multi-select filter with a "collectionAsync" as an Observable and be able to call next on it', async () => {
+      const mockCollection = ['male', 'female'];
+      mockColumn.filter.collectionAsync = of(mockCollection);
+
+      filterArguments.searchTerms = ['female'];
+      await filter.init(filterArguments);
+
+      const filterElm = divContainer.querySelector<HTMLInputElement>('input.filter-gender');
+      filter.setValues('male');
+
+      filterElm.focus();
+      filterElm.dispatchEvent(new (window.window as any).Event('input', { keyCode: 97, bubbles: true, cancelable: true }));
+
+      // after await (or timeout delay) we'll get the Subject Observable
+      mockCollection.push('other');
+      (mockColumn.filter.collectionAsync as Subject<any[]>).next(mockCollection);
+
+      const autocompleteUlElms = document.body.querySelectorAll<HTMLUListElement>('ul.ui-autocomplete');
+      const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
+
+      expect(autocompleteUlElms.length).toBe(1);
+      expect(filterFilledElms.length).toBe(1);
+    });
+
+    it('should create the filter with a value/label pair collectionAsync that is inside an object when "collectionInsideObjectProperty" is defined with a dot notation', async () => {
+      mockColumn.filter = {
+        collectionAsync: of({ deep: { myCollection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }] } }),
+        collectionOptions: {
+          collectionInsideObjectProperty: 'deep.myCollection'
+        },
+        customStructure: {
+          value: 'value',
+          label: 'description',
+        },
+      };
+
+      await filter.init(filterArguments);
+
+      const filterCollection = filter.collection;
+
+      expect(filterCollection.length).toBe(3);
+      expect(filterCollection[0]).toEqual({ value: 'other', description: 'other' });
+      expect(filterCollection[1]).toEqual({ value: 'male', description: 'male' });
+      expect(filterCollection[2]).toEqual({ value: 'female', description: 'female' });
+    });
+
+    it('should throw an error when "collectionAsync" Observable does not return a valid array', (done) => {
+      mockColumn.filter.collectionAsync = of({ hello: 'world' });
+      filter.init(filterArguments).catch((e) => {
+        expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`);
         done();
       });
     });

@@ -17,8 +17,9 @@ import {
 } from './../interfaces/index';
 import { CollectionService } from '../services/collection.service';
 import { collectionObserver, propertyObserver } from '../services/observers';
-import { castObservableToPromise, getDescendantProperty, getTranslationPrefix, htmlEncode, sanitizeTextByAvailableSanitizer } from '../services/utilities';
-import { ObservableFacade, RxJsFacade, SubjectFacade, TranslaterService } from '../services';
+import { getDescendantProperty, getTranslationPrefix, htmlEncode, sanitizeTextByAvailableSanitizer, unsubscribeAll } from '../services/utilities';
+import { RxJsFacade, TranslaterService } from '../services';
+import { renderCollectionOptionsAsync } from './filterUtilities';
 
 export class SelectFilter implements Filter {
   protected _isMultipleSelect = true;
@@ -55,7 +56,7 @@ export class SelectFilter implements Filter {
   constructor(
     protected readonly translaterService: TranslaterService,
     protected readonly collectionService: CollectionService,
-    protected readonly rxjs: RxJsFacade,
+    protected readonly rxjs?: RxJsFacade,
     isMultipleSelect = true) {
     this._isMultipleSelect = isMultipleSelect;
   }
@@ -156,7 +157,7 @@ export class SelectFilter implements Filter {
         if (collectionAsync && !this.columnFilter.collection) {
           // only read the collectionAsync once (on the 1st load),
           // we do this because Http Fetch will throw an error saying body was already read and its streaming is locked
-          collectionOutput = this.renderOptionsAsync(collectionAsync as Promise<any>);
+          collectionOutput = renderCollectionOptionsAsync(collectionAsync, this.columnDef, this.renderDomElement.bind(this), this.rxjs, this.subscriptions);
           resolve(collectionOutput);
         } else {
           collectionOutput = newCollection;
@@ -201,6 +202,9 @@ export class SelectFilter implements Filter {
       $(`[name=${elementClassName}].ms-drop`).remove();
     }
     this.$filterElm = null;
+
+    // unsubscribe all the possible Observables if RxJS was used
+    unsubscribeAll(this.subscriptions);
   }
 
   /**
@@ -527,73 +531,5 @@ export class SelectFilter implements Filter {
       // reset flag for next use
       this._shouldTriggerQuery = true;
     }
-  }
-
-  /**
- * When user use a CollectionAsync we will use the returned collection to render the filter DOM element
- * and reinitialize filter collection with this new collection
- */
-  protected renderDomElementFromCollectionAsync(collection: any[]) {
-    if (this.collectionOptions && this.collectionOptions.collectionInsideObjectProperty) {
-      const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty;
-      collection = getDescendantProperty(collection, collectionInsideObjectProperty as string);
-    }
-    if (!Array.isArray(collection)) {
-      throw new Error('Something went wrong while trying to pull the collection from the "collectionAsync" call in the Select Filter, the collection is not a valid array.');
-    }
-
-    // copy over the array received from the async call to the "collection" as the new collection to use
-    // this has to be BEFORE the `collectionObserver().subscribe` to avoid going into an infinite loop
-    this.columnFilter.collection = collection;
-
-    // recreate Multiple Select after getting async collection
-    this.renderDomElement(collection);
-  }
-
-  protected async renderOptionsAsync(collectionAsync: Promise<any | any[]> | ObservableFacade<any | any[]> | SubjectFacade<any | any[]>): Promise<any[]> {
-    let awaitedCollection: any = null;
-
-    if (collectionAsync) {
-      awaitedCollection = await castObservableToPromise(this.rxjs, collectionAsync) as Promise<any>;
-
-      // wait for the "collectionAsync", once resolved we will save it into the "collection"
-      const response: any | any[] = await collectionAsync;
-
-      if (Array.isArray(response)) {
-        awaitedCollection = response; // from Promise
-      } else if (response instanceof Response && typeof response['json'] === 'function') {
-        awaitedCollection = await response['json'](); // from Fetch
-      } else if (response && response['content']) {
-        awaitedCollection = response['content']; // from http-client
-      }
-
-      if (!Array.isArray(awaitedCollection) && this.collectionOptions?.collectionInsideObjectProperty) {
-        const collection = awaitedCollection || response;
-        const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty;
-        awaitedCollection = getDescendantProperty(collection, collectionInsideObjectProperty || '');
-      }
-
-      if (!Array.isArray(awaitedCollection)) {
-        throw new Error('Something went wrong while trying to pull the collection from the "collectionAsync" call in the Select Filter, the collection is not a valid array.');
-      }
-
-      // copy over the array received from the async call to the "collection" as the new collection to use
-      // this has to be BEFORE the `collectionObserver().subscribe` to avoid going into an infinite loop
-      this.columnFilter.collection = awaitedCollection;
-
-      // recreate Multiple Select after getting async collection
-      this.renderDomElement(awaitedCollection);
-    }
-
-    return awaitedCollection;
-  }
-
-  /** Create or recreate an Observable Subject and reassign it to the "collectionAsync" object so user can call a "collectionAsync.next()" on it */
-  protected createCollectionAsyncSubject() {
-    const newCollectionAsync = this.rxjs.createSubject<any>();
-    this.columnFilter.collectionAsync = newCollectionAsync;
-    this.subscriptions.push(
-      newCollectionAsync.subscribe(collection => this.renderDomElementFromCollectionAsync(collection))
-    );
   }
 }

@@ -17,7 +17,7 @@ export class FilterFactory {
   }
 
   // Uses the User model to create a new User
-  createFilter(columnFilter: ColumnFilter | undefined): Filter | undefined {
+  createFilter(columnFilter?: ColumnFilter): Filter | undefined {
     let filter: Filter | undefined;
 
     if (columnFilter?.model) {

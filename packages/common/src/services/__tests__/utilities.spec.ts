@@ -2,7 +2,7 @@ import 'jest-extended';
 import { of } from 'rxjs';
 
 import { FieldType, OperatorType } from '../../enums/index';
-import { GridOption } from '../../interfaces/index';
+import { GridOption, Subscription } from '../../interfaces/index';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import {
   addToArrayWhenNotExists,
@@ -40,6 +40,7 @@ import {
   toCamelCase,
   toKebabCase,
   toSnakeCase,
+  unsubscribeAll,
   uniqueArray,
   uniqueObjectArray,
 } from '../utilities';
@@ -1497,6 +1498,35 @@ describe('Service/Utilies', () => {
     it('should return a snake_case string when input is a sentence that may include numbers with only following char having the dash', () => {
       const output = toSnakeCase(sentence + ' 123 ' + ' apples');
       expect(output).toBe('the_quick_brown_fox123_apples');
+    });
+  });
+
+  describe('unsubscribeAll method', () => {
+    it('should return original array when array of subscriptions is empty', () => {
+      const output = unsubscribeAll([]);
+      expect(output).toEqual([]);
+    });
+
+    it('should be able to unsubscribe all Observables', () => {
+      const subscriptions: Subscription[] = [];
+      const observable1 = of([1, 2]);
+      const observable2 = of([1, 2]);
+      subscriptions.push(observable1.subscribe(), observable2.subscribe());
+      const output = unsubscribeAll(subscriptions);
+      expect(output).toHaveLength(0);
+    });
+
+    it('should be able to unsubscribe all PubSub events or anything that has an unsubscribe method', () => {
+      const mockUnsubscribe1 = jest.fn();
+      const mockUnsubscribe2 = jest.fn();
+      const mockSubscription1 = { unsubscribe: mockUnsubscribe1 };
+      const mockSubscription2 = { unsubscribe: mockUnsubscribe2 };
+      const mockSubscriptions = [mockSubscription1, mockSubscription2];
+
+      unsubscribeAll(mockSubscriptions);
+
+      expect(mockUnsubscribe1).toHaveBeenCalledTimes(1);
+      expect(mockUnsubscribe2).toHaveBeenCalledTimes(1);
     });
   });
 

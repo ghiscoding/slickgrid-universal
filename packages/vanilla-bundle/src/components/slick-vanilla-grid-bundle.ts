@@ -501,6 +501,10 @@ export class SlickVanillaGridBundle {
       this._eventPubSubService.publish('onDataviewCreated', this.dataView);
     }
 
+    // get any possible Services that user want to register which don't require SlickGrid to be instantiated
+    // RxJS Resource is in this lot because it has to be registered before anything else and doesn't require SlickGrid to be initialized
+    this.preRegisterResources();
+
     // for convenience to the user, we provide the property "editor" as an Slickgrid-Universal editor complex object
     // however "editor" is used internally by SlickGrid for it's own Editor Factory
     // so in our lib we will swap "editor" and copy it into a new property called "internalColumnEditor"
@@ -1175,9 +1179,12 @@ export class SlickVanillaGridBundle {
         }
       });
     } else if (this.rxjs?.isObservable(collectionAsync)) {
-      this.subscriptions.push(
-        (collectionAsync as ObservableFacade<any>).subscribe((resolvedCollection) => this.updateEditorCollection(column, resolvedCollection))
-      );
+      // wrap this inside a setTimeout to avoid timing issue since updateEditorCollection requires to call SlickGrid getColumns() method
+      setTimeout(() => {
+        this.subscriptions.push(
+          (collectionAsync as ObservableFacade<any>).subscribe((resolvedCollection) => this.updateEditorCollection(column, resolvedCollection))
+        );
+      });
     }
   }
 
@@ -1259,9 +1266,22 @@ export class SlickVanillaGridBundle {
     }
   }
 
-  private registerResources() {
+  /** Pre-Register any Resource that don't require SlickGrid to be instantiated (for example RxJS Resource) */
+  private preRegisterResources() {
     this._registeredResources = this.gridOptions.registerExternalResources || [];
 
+    // bind & initialize all Components/Services that were tagged as enabled
+    // register all services by executing their init method and providing them with the Grid object
+    if (Array.isArray(this._registeredResources)) {
+      for (const resource of this._registeredResources) {
+        if (resource?.className === 'RxJsResource') {
+          this.registerRxJsResource(resource as RxJsFacade);
+        }
+      }
+    }
+  }
+
+  private registerResources() {
     // when using Salesforce, we want the Export to CSV always enabled without registering it
     if (this.gridOptions.enableTextExport && this.gridOptions.useSalesforceDefaultGridOptions) {
       const textExportService = new TextExportService();
@@ -1310,9 +1330,6 @@ export class SlickVanillaGridBundle {
       for (const resource of this._registeredResources) {
         if (typeof resource.init === 'function') {
           resource.init(this.slickGrid, this.universalContainerService);
-        }
-        if (resource?.className === 'RxJsResource') {
-          this.registerRxJsResource(resource as RxJsFacade);
         }
       }
     }

@@ -32,13 +32,14 @@ export abstract class RxJsFacade {
     throw new Error('RxJS Facade "createSubject" method must be implemented');
   }
 
+  first<T, D = T>(predicate?: null, defaultValue?: D): any {
+    throw new Error('RxJS Facade "first" method must be implemented');
+  }
+
+
   /** Decides at subscription time which Observable will actually be subscribed. */
   iif<T = never, F = never>(condition: () => boolean, trueResult?: any, falseResult?: any): ObservableFacade<T | F> {
     throw new Error('RxJS Facade "iif" method must be implemented');
-  }
-
-  first<T, D = T>(predicate?: null, defaultValue?: D): any {
-    throw new Error('RxJS Facade "first" method must be implemented');
   }
 
   /** Tests to see if the object is an RxJS Observable */

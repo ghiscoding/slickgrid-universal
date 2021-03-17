@@ -1,5 +1,4 @@
 import { EMPTY, isObservable, Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { RxJsResource } from './rxjs.resource';
 
 describe('RxJs Resource', () => {
@@ -33,6 +32,12 @@ describe('RxJs Resource', () => {
     const observable = service.createObservable();
     const iifOutput = service.iif(() => isObservable(observable));
     expect(iifOutput instanceof Observable).toBeTruthy();
+  });
+
+  it('should be able to execute the "first" method and expect an Observable returned', () => {
+    const observable = service.createObservable();
+    const output = observable.pipe(service.first());
+    expect(output instanceof Observable).toBeTruthy();
   });
 
   it('should be able to execute the "takeUntil" method and expect an Observable returned', () => {

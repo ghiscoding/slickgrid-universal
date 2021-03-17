@@ -4,7 +4,7 @@ const DOMPurify = DOMPurify_; // patch to fix rollup to work
 const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 import { FieldType, OperatorString, OperatorType } from '../enums/index';
-import { GridOption } from '../interfaces/index';
+import { GridOption, Subscription } from '../interfaces/index';
 import { ObservableFacade, RxJsFacade, SubjectFacade } from './rxjsFacade';
 
 /**
@@ -1009,6 +1009,24 @@ export function toSnakeCase(inputStr: string): string {
     return toCamelCase(inputStr).replace(/([A-Z])/g, '_$1').toLowerCase();
   }
   return inputStr;
+}
+
+/**
+ * Unsubscribe all Subscriptions
+ * It will return an empty array if it all went well
+ * @param subscriptions
+ */
+export function unsubscribeAll(subscriptions: Subscription[]): Subscription[] {
+  if (Array.isArray(subscriptions)) {
+    while (subscriptions.length > 0) {
+      const subscription = subscriptions.pop();
+      if (subscription?.unsubscribe) {
+        subscription.unsubscribe();
+      }
+    }
+  }
+
+  return subscriptions;
 }
 
 /**
