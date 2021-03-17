@@ -7,7 +7,7 @@ import { testFilterCondition } from './filterUtilities';
  */
 export const executeCollectionSearchFilterCondition: FilterCondition = (options: FilterConditionOption) => {
   // multiple-select will always return text, so we should make our cell values text as well
-  const cellValue = (options.cellValue === undefined || options.cellValue === null) ? '' : Array.isArray(options.cellValue) ? options.cellValue.map(value => `${value}`) : `${options.cellValue}`;
+  const cellValue = (options.cellValue === undefined || options.cellValue === null) ? '' : ((options.operator === 'IN_COLLECTION' || options.operator === 'NOT_IN_COLLECTION') && Array.isArray(options.cellValue)) ? options.cellValue.map(value => `${value}`) : `${options.cellValue}`;
 
   return testFilterCondition(options.operator || 'IN', cellValue, options.searchTerms || []);
 };
