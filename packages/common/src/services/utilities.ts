@@ -166,22 +166,6 @@ export function convertHierarchicalViewToParentChildArrayByReference<T = any>(hi
 }
 
 /**
- * Debounce create a new function g, which when called will delay the invocation of the original function f until n milliseconds after it was last called.
- * @param func: function to debounce
- * @param waitFor: waiting time in milliseconds
- */
-export function debounce<F extends ((...args: any[]) => any | void)>(func: F, waitFor: number) {
-  const timeout = 0;
-
-  const debounced = (...args: any) => {
-    clearTimeout(timeout);
-    setTimeout(() => func(...args), waitFor);
-  };
-
-  return debounced as (...args: Parameters<F>) => ReturnType<F>;
-}
-
-/**
  * Create an immutable clone of an array or object
  * (c) 2019 Chris Ferdinandi, MIT License, https://gomakethings.com
  * @param  {Array|Object} objectOrArray The array or object to copy

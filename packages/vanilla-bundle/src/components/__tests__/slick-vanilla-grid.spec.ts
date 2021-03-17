@@ -15,6 +15,7 @@ import {
   ExtensionUtility,
   Filters,
   FilterService,
+  Formatter,
   GridEventService,
   GridOption,
   GridService,
@@ -22,8 +23,9 @@ import {
   GridStateService,
   GridStateType,
   GroupingAndColspanService,
+  OnRowCountChangedEventArgs,
   OnRowsChangedEventArgs,
-  OnRowsOrCountChangedEventArgs,
+  OnSetItemsCalledEventArgs,
   Pagination,
   PaginationService,
   ServicePagination,
@@ -37,8 +39,6 @@ import {
   TreeDataService,
   TranslaterService,
   SlickEditorLock,
-  Formatter,
-  OnSetItemsCalledEventArgs,
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
@@ -208,7 +208,7 @@ const mockDataView = {
   mapIdsToRows: jest.fn(),
   mapRowsToIds: jest.fn(),
   onRowsChanged: new MockSlickEvent<OnRowsChangedEventArgs>(),
-  onRowsOrCountChanged: new MockSlickEvent<OnRowsOrCountChangedEventArgs>(),
+  onRowCountChanged: new MockSlickEvent<OnRowCountChangedEventArgs>(),
   onSetItemsCalled: new MockSlickEvent<OnSetItemsCalledEventArgs>(),
   reSort: jest.fn(),
   setItems: jest.fn(),
@@ -1681,7 +1681,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const emptySpy = jest.spyOn(component.slickEmptyWarning, 'showEmptyDataMessage');
         component.columnDefinitions = mockColDefs;
         component.refreshGridData([]);
-        mockDataView.onRowsOrCountChanged.notify({ currentRowCount: 0, dataView: mockDataView, itemCount: 0, previousRowCount: 0, rowCountChanged: false, rowsChanged: false, rowsDiff: [0] });
+        mockDataView.onRowCountChanged.notify({ current: 0, previous: 0, dataView: mockDataView, itemCount: 0, callingOnRowsChanged: false });
 
         setTimeout(() => {
           expect(component.columnDefinitions).toEqual(mockColDefs);
@@ -1779,7 +1779,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         });
       });
 
-      it('should have custom footer with metrics when the DataView "onRowsOrCountChanged" event is triggered', () => {
+      it('should have custom footer with metrics when the DataView "onRowCountChanged" event is triggered', () => {
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
         const invalidateSpy = jest.spyOn(mockGrid, 'invalidate');
         const expectation = {
@@ -1793,7 +1793,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions = { enablePagination: false, showCustomFooter: true };
         component.initialization(divContainer, slickEventHandler);
         const footerSpy = jest.spyOn(component.slickFooter, 'metrics', 'set');
-        mockDataView.onRowsOrCountChanged.notify({ currentRowCount: 2, dataView: mockDataView, itemCount: 2, previousRowCount: 1, rowCountChanged: false, rowsChanged: false, rowsDiff: [2] });
+        mockDataView.onRowCountChanged.notify({ current: 2, previous: 0, dataView: mockDataView, itemCount: 0, callingOnRowsChanged: false });
 
         expect(invalidateSpy).toHaveBeenCalled();
         expect(component.metrics).toEqual(expectation);

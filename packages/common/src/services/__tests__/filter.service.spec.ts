@@ -929,25 +929,6 @@ describe('FilterService', () => {
 
       expect(spy).toHaveBeenCalled();
     });
-
-    it('should execute "processOnFilterChanged" method when "shouldTriggerQuery" is set to True and "debounceTypingDelay" is bigger than 0', () => {
-      jest.useFakeTimers();
-      gridOptionMock.backendServiceApi!.filterTypingDebounce = 50;
-      const spy = jest.spyOn(gridOptionMock.backendServiceApi!.service, 'processOnFilterChanged').mockReturnValue('backend query');
-
-      service.init(gridStub);
-      const mockEvent = new CustomEvent('input');
-      Object.defineProperty(mockEvent, 'target', { writable: true, configurable: true, value: { value: 'John' } });
-      service.onBackendFilterChange(mockEvent as any, { grid: gridStub, shouldTriggerQuery: true });
-
-      expect(spy).not.toHaveBeenCalled();
-
-      jest.runTimersToTime(49);
-      expect(spy).not.toHaveBeenCalled();
-
-      jest.runTimersToTime(50);
-      expect(spy).toHaveBeenCalled();
-    });
   });
 
   describe('populateColumnFilterSearchTermPresets method', () => {

@@ -150,6 +150,9 @@ export interface GridOption {
     syncGridSelectionWithBackendService?: boolean;
   };
 
+  /** Defaults to 500, how long to wait between each characters that the user types before processing the filtering process when using a Backend Service? */
+  defaultBackendServiceFilterTypingDebounce?: number;
+
   /** Defaults to 'id', what is the default column field id to sort when calling clear sorting */
   defaultColumnSortFieldId?: string;
 
@@ -339,6 +342,14 @@ export interface GridOption {
   /** @deprecated Please use "textExportOptions" Some default options to set for the export service */
   exportOptions?: TextExportOption;
 
+  /**
+   * Default to 0, how long to wait between each characters that the user types before processing the filtering process (only applies for local/in-memory grid).
+   * Especially useful when you have a big dataset and you want to limit the amount of search called (by default every keystroke will trigger a search on the dataset and that is sometime slow).
+   * This is only used by and relevant to 2 filters (InputFilter & CompoundInputFilter) which are the only ones triggering a search after each character typed.
+   * NOTE: please note that the BackendServiceApi has its own `filterTypingDebounce` within the `BackendServiceApi` options which is set to 500ms.
+   */
+  filterTypingDebounce?: number;
+
   /** Defaults to 25, which is the grid footer row panel height */
   footerRowHeight?: number;
 
@@ -375,8 +386,11 @@ export interface GridOption {
   /** Grid DOM element container ID (used Slickgrid-Universal auto-resizer) */
   gridContainerId?: string;
 
-  /** When using a fixed grid height */
-  gridHeight?: number;
+  /**
+   * When using a fixed grid height, can be a number or a string.
+   * if a number is provided it will add the `px` suffix for pixels, or if a string is passed it will use it as is.
+   */
+  gridHeight?: number | string;
 
   /** Grid DOM element ID */
   gridId?: string;
@@ -384,8 +398,11 @@ export interface GridOption {
   /** Grid Menu options (aka hamburger menu) */
   gridMenu?: GridMenu;
 
-  /** When using a fixed grid width */
-  gridWidth?: number;
+  /**
+   * When using a fixed grid width, can be a number or a string.
+   * if a number is provided it will add the `px` suffix for pixels, or if a string is passed it will use it as is.
+   */
+  gridWidth?: number | string;
 
   /** Header row height in pixels (only type the number). Header row is where the filters are. */
   headerRowHeight?: number;

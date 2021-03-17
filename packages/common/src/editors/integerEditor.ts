@@ -1,6 +1,6 @@
 import { KeyCode } from '../enums/index';
 import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption, SlickGrid, SlickNamespace, } from './../interfaces/index';
-import { debounce, getDescendantProperty, setDeepValue } from '../services/utilities';
+import { getDescendantProperty, setDeepValue } from '../services/utilities';
 import { integerValidator } from '../editorValidators/integerValidator';
 import { BindingEventService } from '../services/bindingEvent.service';
 
@@ -17,6 +17,7 @@ export class IntegerEditor implements Editor {
   protected _isValueTouched = false;
   protected _input!: HTMLInputElement | undefined;
   protected _originalValue?: number | string;
+  protected _timer?: NodeJS.Timeout;
 
   /** is the Editor disabled? */
   disabled = false;
@@ -330,7 +331,8 @@ export class IntegerEditor implements Editor {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     if (compositeEditorOptions) {
       const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
-      debounce(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay)();
+      clearTimeout(this._timer as NodeJS.Timeout);
+      this._timer = setTimeout(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay);
     }
   }
 }

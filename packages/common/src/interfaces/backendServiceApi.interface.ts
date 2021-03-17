@@ -2,7 +2,7 @@ import { ObservableFacade } from '../services/rxjsFacade';
 import { BackendService } from './backendService.interface';
 
 export interface BackendServiceApi {
-  /** How long to wait until we start querying backend to avoid sending too many requests to backend server. Default to 750ms */
+  /** How long to wait until we start querying backend to avoid sending too many requests to backend server. Default to 500ms */
   filterTypingDebounce?: number;
 
   /** Backend Service Options */

@@ -30,16 +30,13 @@ import {
   SlickNamespace,
 } from './../interfaces/index';
 import { BackendUtilityService } from './backendUtility.service';
-import { debounce, deepCopy, getDescendantProperty, mapOperatorByFieldType } from './utilities';
+import { deepCopy, getDescendantProperty, mapOperatorByFieldType } from './utilities';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
 import { RxJsFacade, SubjectFacade } from './rxjsFacade';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
-
-// timer for keeping track of user typing waits
-const DEFAULT_BACKEND_FILTER_TYPING_DEBOUNCE = 500;
 
 interface OnSearchChangeEvent {
   clearFilterTriggered?: boolean;
@@ -641,30 +638,11 @@ export class FilterService {
       backendApi.preProcess();
     }
 
-    // only add a delay when user is typing, on select dropdown filter (or "Clear Filter") it will execute right away
-    let debounceTypingDelay = 0;
-    const isTriggeredByClearFilter = args && args.clearFilterTriggered; // was it trigger by a "Clear Filter" command?
-
-    const eventType = event && event.type;
-    const eventKeyCode = event && event.keyCode;
-    if (!isTriggeredByClearFilter && eventKeyCode !== KeyCode.ENTER && (eventType === 'input' || eventType === 'keyup' || eventType === 'keydown')) {
-      debounceTypingDelay = backendApi?.filterTypingDebounce ?? DEFAULT_BACKEND_FILTER_TYPING_DEBOUNCE;
-    }
-
     // query backend, except when it's called by a ClearFilters then we won't
     if (args?.shouldTriggerQuery) {
-      // call the service to get a query back
-      if (debounceTypingDelay > 0) {
-        debounce(() => {
-          const query = backendApi.service.processOnFilterChanged(event, args);
-          const totalItems = this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems || 0;
-          this.backendUtilities?.executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitFilterChanged.bind(this), this.httpCancelRequests$);
-        }, debounceTypingDelay)();
-      } else {
-        const query = backendApi.service.processOnFilterChanged(event, args);
-        const totalItems = this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems || 0;
-        this.backendUtilities?.executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitFilterChanged.bind(this), this.httpCancelRequests$);
-      }
+      const query = await backendApi.service.processOnFilterChanged(event, args);
+      const totalItems = this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems || 0;
+      this.backendUtilities?.executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitFilterChanged.bind(this), this.httpCancelRequests$);
     }
   }
 
@@ -676,7 +654,7 @@ export class FilterService {
    * @param grid
    */
   populateColumnFilterSearchTermPresets(filters: CurrentFilter[]) {
-    if (Array.isArray(filters) && filters.length > 0) {
+    if (Array.isArray(filters)) {
       this._columnDefinitions.forEach((columnDef: Column) => {
         // clear any columnDef searchTerms before applying Presets
         if (columnDef.filter && columnDef.filter.searchTerms) {
