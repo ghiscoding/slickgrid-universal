@@ -447,7 +447,7 @@ export class AutoCompleteEditor implements Editor {
 
   // this function should be protected but for unit tests purposes we'll make it public until a better solution is found
   // a better solution would be to get the autocomplete DOM element to work with selection but I couldn't find how to do that in Jest
-  onSelect(event: Event, ui: { item: any; }) {
+  handleSelect(event: Event, ui: { item: any; }) {
     if (ui && ui.item) {
       const selectedItem = ui && ui.item;
       this._currentValue = selectedItem;
@@ -466,6 +466,14 @@ export class AutoCompleteEditor implements Editor {
       } else {
         this.save();
       }
+
+      // if user wants to hook to the "select", he can do via this "onSelect"
+      // it purposely has a similar signature as the "select" callback + some extra arguments (row, cell, column, dataContext)
+      if (this.editorOptions.onSelect) {
+        const activeCell = this.grid.getActiveCell();
+        this.editorOptions.onSelect(event, ui, activeCell.row, activeCell.cell, this.args.column, this.args.item);
+      }
+
       setTimeout(() => this._lastTriggeredByClearInput = false); // reset flag after a cycle
     }
     return false;
@@ -575,7 +583,7 @@ export class AutoCompleteEditor implements Editor {
     // when user passes it's own autocomplete options
     // we still need to provide our own "select" callback implementation
     if (autoCompleteOptions?.source) {
-      autoCompleteOptions.select = (event: Event, ui: { item: any; }) => this.onSelect(event, ui);
+      autoCompleteOptions.select = (event: Event, ui: { item: any; }) => this.handleSelect(event, ui);
       this._autoCompleteOptions = { ...autoCompleteOptions };
 
       // when "renderItem" is defined, we need to add our custom style CSS class
@@ -595,7 +603,7 @@ export class AutoCompleteEditor implements Editor {
       const definedOptions: AutocompleteOption = {
         source: finalCollection,
         minLength: 0,
-        select: (event: Event, ui: { item: any; }) => this.onSelect(event, ui),
+        select: (event: Event, ui: { item: any; }) => this.handleSelect(event, ui),
       };
       this._autoCompleteOptions = { ...definedOptions, ...(this.columnEditor.editorOptions as AutocompleteOption) };
       this._$input.autocomplete(this._autoCompleteOptions);

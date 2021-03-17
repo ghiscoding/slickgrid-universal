@@ -320,6 +320,7 @@ export class Example12 {
           editorOptions: {
             minLength: 0,
             openSearchListOnFocus: false,
+            // onSelect: (e, ui, row, cell, column, dataContext) => console.log(ui, column, dataContext),
             source: (request, response) => {
               const countries: any[] = require('./data/countries.json');
               const foundCountries = countries.filter((country) => country.name.toLowerCase().includes(request.term.toLowerCase()));
