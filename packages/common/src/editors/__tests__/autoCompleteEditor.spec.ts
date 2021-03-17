@@ -623,7 +623,7 @@ describe('AutoCompleteEditor', () => {
       });
     });
 
-    describe('onSelect method', () => {
+    describe('handleSelect method', () => {
       beforeEach(() => {
         jest.clearAllMocks();
       });
@@ -636,7 +636,7 @@ describe('AutoCompleteEditor', () => {
 
         editor = new AutoCompleteEditor(editorArguments);
         const spySetValue = jest.spyOn(editor, 'setValue');
-        const output = editor.onSelect(null as any, { item: mockItemData.gender });
+        const output = editor.handleSelect(null as any, { item: mockItemData.gender });
 
         expect(output).toBe(false);
         expect(commitEditSpy).not.toHaveBeenCalled();
@@ -652,10 +652,10 @@ describe('AutoCompleteEditor', () => {
 
         editor = new AutoCompleteEditor(editorArguments);
         const spySetValue = jest.spyOn(editor, 'setValue');
-        const output = editor.onSelect(null as any, { item: mockItemData.gender });
+        const output = editor.handleSelect(null as any, { item: mockItemData.gender });
 
         // HOW DO WE TRIGGER the jQuery UI autocomplete select event? The following works only on "autocompleteselect"
-        // but that doesn't trigger the "select" (onSelect) directly
+        // but that doesn't trigger the "select" (handleSelect) directly
         // const editorElm = editor.editorDomElement;
         // editorElm.on('autocompleteselect', (event, ui) => console.log(ui));
         // editorElm[0].dispatchEvent(new (window.window as any).CustomEvent('autocompleteselect', { detail: { item: 'female' }, bubbles: true, cancelable: true }));
@@ -675,7 +675,7 @@ describe('AutoCompleteEditor', () => {
 
         editor = new AutoCompleteEditor(editorArguments);
         const spySetValue = jest.spyOn(editor, 'setValue');
-        const output = editor.onSelect(null as any, { item: mockItemData.gender });
+        const output = editor.handleSelect(null as any, { item: mockItemData.gender });
 
         expect(output).toBe(false);
         expect(commitEditSpy).toHaveBeenCalled();
@@ -683,34 +683,34 @@ describe('AutoCompleteEditor', () => {
         expect(editor.isValueTouched()).toBe(true);
       });
 
-      it('should expect the "onSelect" method to be called when the callback method is triggered when user provide his own filterOptions', () => {
+      it('should expect the "handleSelect" method to be called when the callback method is triggered when user provide his own filterOptions', () => {
         gridOptionMock.autoCommitEdit = true;
         (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { source: [], minLength: 3 } as AutocompleteOption;
 
         const event = new CustomEvent('change');
         editor = new AutoCompleteEditor(editorArguments);
-        const spy = jest.spyOn(editor, 'onSelect');
+        const spy = jest.spyOn(editor, 'handleSelect');
         editor.autoCompleteOptions.select!(event, { item: 'fem' });
 
         expect(spy).toHaveBeenCalledWith(event, { item: 'fem' });
         expect(editor.isValueTouched()).toBe(true);
       });
 
-      it('should expect the "onSelect" method to be called when the callback method is triggered', () => {
+      it('should expect the "handleSelect" method to be called when the callback method is triggered', () => {
         gridOptionMock.autoCommitEdit = true;
         (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
         mockItemData = { id: 123, gender: { value: 'f', label: 'Female' }, isActive: true };
 
         const event = new CustomEvent('change');
         editor = new AutoCompleteEditor(editorArguments);
-        const spy = jest.spyOn(editor, 'onSelect');
+        const spy = jest.spyOn(editor, 'handleSelect');
         editor.autoCompleteOptions.select!(event, { item: 'fem' });
 
         expect(spy).toHaveBeenCalledWith(event, { item: 'fem' });
         expect(editor.isValueTouched()).toBe(true);
       });
 
-      it('should initialize the editor with editorOptions and expect the "onSelect" method to be called when the callback method is triggered', () => {
+      it('should initialize the editor with editorOptions and expect the "handleSelect" method to be called when the callback method is triggered', () => {
         gridOptionMock.autoCommitEdit = true;
         (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
         (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { minLength: 3 } as AutocompleteOption;
@@ -718,13 +718,30 @@ describe('AutoCompleteEditor', () => {
 
         const event = new CustomEvent('change');
         editor = new AutoCompleteEditor(editorArguments);
-        const onSelectSpy = jest.spyOn(editor, 'onSelect');
+        const handleSelectSpy = jest.spyOn(editor, 'handleSelect');
         const focusSpy = jest.spyOn(editor, 'focus');
         editor.autoCompleteOptions.select!(event, { item: 'fem' });
         jest.runAllTimers(); // fast-forward timer
 
-        expect(onSelectSpy).toHaveBeenCalledWith(event, { item: 'fem' });
+        expect(handleSelectSpy).toHaveBeenCalledWith(event, { item: 'fem' });
         expect(focusSpy).toHaveBeenCalled();
+        expect(editor.isValueTouched()).toBe(true);
+      });
+
+      it('should expect the "onSelect" method to be called when defined and the callback method is triggered when user provide his own filterOptions', () => {
+        gridOptionMock.autoCommitEdit = true;
+        const mockOnSelect = jest.fn();
+        const activeCellMock = { row: 1, cell: 0 };
+        jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { source: [], minLength: 3, onSelect: mockOnSelect } as AutocompleteOption;
+
+        const event = new CustomEvent('change');
+        editor = new AutoCompleteEditor(editorArguments);
+        const handleSelectSpy = jest.spyOn(editor, 'handleSelect');
+        editor.autoCompleteOptions.select!(event, { item: 'fem' });
+
+        expect(handleSelectSpy).toHaveBeenCalledWith(event, { item: 'fem' });
+        expect(mockOnSelect).toHaveBeenCalledWith(event, { item: 'fem' }, activeCellMock.row, activeCellMock.cell, mockColumn, mockItemData);
         expect(editor.isValueTouched()).toBe(true);
       });
     });
@@ -935,7 +952,7 @@ describe('AutoCompleteEditor', () => {
 
       editor = new AutoCompleteEditor(editorArguments);
       const spySetValue = jest.spyOn(editor, 'setValue');
-      const output = editor.onSelect(null as any, { item: mockItemData.gender });
+      const output = editor.handleSelect(null as any, { item: mockItemData.gender });
 
       expect(output).toBe(false);
       expect(spySetValue).toHaveBeenCalledWith('female');
