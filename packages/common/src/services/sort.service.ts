@@ -296,7 +296,6 @@ export class SortService {
 
       this.onLocalSortChanged(this._grid, sortCols);
       this._grid.setSortColumns(sortCols.map(col => ({ columnId: col.columnId, sortAsc: col.sortAsc }))); // use this to add sort icon(s) in UI
-
     }
     return sortCols;
   }
