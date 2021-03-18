@@ -639,51 +639,54 @@ describe('SortService', () => {
     const mockColumns = [{ id: 'firstName', field: 'firstName' }, { id: 'lastName', field: 'lastName' }] as Column[];
 
     beforeEach(() => {
-      // gridOptionMock.presets = {
-      //   sorters: [{ columnId: 'firstName', direction: 'ASC' }, { columnId: 'lastName', direction: 'DESC' }],
-      // };
+      gridOptionMock.presets = {
+        sorters: [{ columnId: 'firstName', direction: 'ASC' }, { columnId: 'lastName', direction: 'DESC' }],
+      };
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     });
 
-    // it('should load local grid presets', () => {
-    //   const spySetCols = jest.spyOn(gridStub, 'setSortColumns');
-    //   const spySortChanged = jest.spyOn(service, 'onLocalSortChanged');
-    //   const expectation = [
-    //     { columnId: 'firstName', sortAsc: true, sortCol: { id: 'firstName', field: 'firstName' } },
-    //     { columnId: 'lastName', sortAsc: false, sortCol: { id: 'lastName', field: 'lastName' } },
-    //   ];
+    it('should load local grid presets', () => {
+      const spySetCols = jest.spyOn(gridStub, 'setSortColumns');
+      const spySortChanged = jest.spyOn(service, 'onLocalSortChanged');
+      const expectation = [
+        { columnId: 'firstName', sortAsc: true, sortCol: { id: 'firstName', field: 'firstName' } },
+        { columnId: 'lastName', sortAsc: false, sortCol: { id: 'lastName', field: 'lastName' } },
+      ];
 
-    //   service.bindLocalOnSort(gridStub);
-    //   service.loadGridSorters(gridOptionMock.presets.sorters);
+      service.bindLocalOnSort(gridStub);
+      service.loadGridSorters(gridOptionMock.presets.sorters);
 
-    //   expect(spySetCols).toHaveBeenCalledWith(expectation);
-    //   expect(spySortChanged).toHaveBeenCalledWith(gridStub, expectation);
-    // });
+      expect(spySetCols).toHaveBeenCalledWith([
+        { columnId: 'firstName', sortAsc: true, },
+        { columnId: 'lastName', sortAsc: false },
+      ]);
+      expect(spySortChanged).toHaveBeenCalledWith(gridStub, expectation);
+    });
   });
 
   describe('undefined getColumns & getOptions', () => {
-    // it('should use an empty column definition when grid "getColumns" method is not available', () => {
-    //   gridOptionMock.presets = {
-    //     sorters: [{ columnId: 'firstName', direction: 'ASC' }, { columnId: 'lastName', direction: 'DESC' }],
-    //   };
-    //   const spySetCols = jest.spyOn(gridStub, 'setSortColumns');
-    //   gridStub.getColumns = undefined;
+    it('should use an empty column definition when grid "getColumns" method is not available', () => {
+      gridOptionMock.presets = {
+        sorters: [{ columnId: 'firstName', direction: 'ASC' }, { columnId: 'lastName', direction: 'DESC' }],
+      };
+      const spySetCols = jest.spyOn(gridStub, 'setSortColumns');
+      gridStub.getColumns = undefined;
 
-    //   service.bindLocalOnSort(gridStub);
-    //   service.loadGridSorters(gridOptionMock.presets.sorters);
+      service.bindLocalOnSort(gridStub);
+      service.loadGridSorters(gridOptionMock.presets.sorters);
 
-    //   expect(spySetCols).not.toHaveBeenCalled();
-    // });
+      expect(spySetCols).toHaveBeenCalledWith([]);
+    });
 
-    // it('should use an empty grid option object when grid "getOptions" method is not available', () => {
-    //   const spySetCols = jest.spyOn(gridStub, 'setSortColumns');
-    //   gridStub.getOptions = undefined;
+    it('should use an empty grid option object when grid "getOptions" method is not available', () => {
+      const spySetCols = jest.spyOn(gridStub, 'setSortColumns');
+      gridStub.getOptions = undefined;
 
-    //   service.bindLocalOnSort(gridStub);
-    //   service.loadGridSorters(gridOptionMock.presets.sorters);
+      service.bindLocalOnSort(gridStub);
+      service.loadGridSorters(gridOptionMock.presets.sorters);
 
-    //   expect(spySetCols).not.toHaveBeenCalled();
-    // });
+      expect(spySetCols).toHaveBeenCalledWith([]);
+    });
   });
 
   describe('onLocalSortChanged method', () => {
