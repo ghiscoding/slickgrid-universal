@@ -36,6 +36,9 @@ export abstract class RxJsFacade {
     throw new Error('RxJS Facade "first" method must be implemented');
   }
 
+  firstValueFrom<T>(source: ObservableFacade<T>) {
+    throw new Error('RxJS Facade "firstValueFrom" method must be implemented');
+  }
 
   /** Decides at subscription time which Observable will actually be subscribed. */
   iif<T = never, F = never>(condition: () => boolean, trueResult?: any, falseResult?: any): ObservableFacade<T | F> {
@@ -43,7 +46,7 @@ export abstract class RxJsFacade {
   }
 
   /** Tests to see if the object is an RxJS Observable */
-  isObservable<T>(obj: any): boolean {
+  isObservable(obj: any): boolean {
     return false;
   }
 
@@ -76,7 +79,7 @@ export abstract class ObservableFacade<T> {
  * multicasted to many Observers. Subjects are like EventEmitters.
  */
 export abstract class SubjectFacade<T> extends ObservableFacade<T> {
-  next(value?: T): void {
+  next(value: T): void {
     throw new Error('RxJS Subject "next" method must be implemented');
   }
 

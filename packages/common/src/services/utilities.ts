@@ -61,7 +61,7 @@ export function castObservableToPromise<T>(rxjs: RxJsFacade, input: Promise<T> |
     // if it's already a Promise then return it
     return input;
   } else if (rxjs.isObservable(input)) {
-    promise = input.pipe(rxjs.first()).toPromise();
+    promise = rxjs.firstValueFrom(input);
   }
 
   if (!(promise instanceof Promise)) {

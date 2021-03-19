@@ -136,7 +136,7 @@ export class Example15 {
 
     if (genderColumn) {
       let editorCollection = genderColumn.editor!.collection;
-      const filterCollectionAsync = genderColumn.filter!.collectionAsync;
+      const filterCollectionAsync = genderColumn.filter!.collectionAsync as Subject<any>;
 
       if (Array.isArray(editorCollection)) {
         // refresh the Editor "collection", we have 2 ways of doing it
@@ -150,7 +150,7 @@ export class Example15 {
 
         // However, for the Filter only, we have to trigger an RxJS/Subject change with the new collection
         // we do this because Filter(s) are shown at all time, while on Editor it's unnecessary since they are only shown when opening them
-        if (filterCollectionAsync instanceof Subject) {
+        if (filterCollectionAsync?.next) {
           filterCollectionAsync.next(editorCollection);
         }
       }

@@ -17,6 +17,10 @@ describe('RxJsFacade Service', () => {
     expect(() => RxJsFacade.prototype.first()).toThrow('RxJS Facade "first" method must be implemented');
   });
 
+  it('should display a not implemented when calling "firstValueFrom" method', () => {
+    expect(() => RxJsFacade.prototype.firstValueFrom({} as any)).toThrow('RxJS Facade "firstValueFrom" method must be implemented');
+  });
+
   it('should display a not implemented when calling "iif" method', () => {
     expect(() => RxJsFacade.prototype.iif(() => false)).toThrow('RxJS Facade "iif" method must be implemented');
   });
@@ -32,7 +36,7 @@ describe('RxJsFacade Service', () => {
 
 describe('SubjectFacade Service', () => {
   it('should display a not implemented when calling "next" method', () => {
-    expect(() => SubjectFacade.prototype.next()).toThrow('RxJS Subject "next" method must be implemented');
+    expect(() => SubjectFacade.prototype.next({} as any)).toThrow('RxJS Subject "next" method must be implemented');
   });
 
   it('should display a not implemented when calling "unsubscribe" method', () => {
