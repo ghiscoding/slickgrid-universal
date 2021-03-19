@@ -131,7 +131,7 @@ export class Example11 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string,
+        id: 'title', name: 'Title', field: 'title', sortable: true,
         editor: { model: Editors.text, massUpdate: true, required: true, alwaysSaveOnEnterKey: true, validator: myCustomTitleValidator, },
         filterable: true,
         formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold] },

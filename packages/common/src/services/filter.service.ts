@@ -867,7 +867,7 @@ export class FilterService {
       let searchTerms: SearchTerm[] | undefined;
       let operator: OperatorString | OperatorType | undefined;
       const newFilter: Filter | undefined = this.filterFactory.createFilter(columnDef.filter);
-      operator = (columnDef && columnDef.filter && columnDef.filter.operator) || (newFilter && newFilter.operator);
+      operator = columnDef?.filter?.operator ?? newFilter?.operator;
 
       if (this._columnFilters[columnDef.id]) {
         searchTerms = this._columnFilters[columnDef.id].searchTerms || undefined;
@@ -901,7 +901,7 @@ export class FilterService {
         // when hiding/showing (with Column Picker or Grid Menu), it will try to re-create yet again the filters (since SlickGrid does a re-render)
         // we need to also set again the values in the DOM elements if the values were set by a searchTerm(s)
         if (searchTerms && newFilter.setValues) {
-          newFilter.setValues(searchTerms);
+          newFilter.setValues(searchTerms, operator);
         }
       }
     }
