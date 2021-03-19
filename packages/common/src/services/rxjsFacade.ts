@@ -32,11 +32,7 @@ export abstract class RxJsFacade {
     throw new Error('RxJS Facade "createSubject" method must be implemented');
   }
 
-  first<T, D = T>(predicate?: null, defaultValue?: D): any {
-    throw new Error('RxJS Facade "first" method must be implemented');
-  }
-
-  firstValueFrom<T>(source: ObservableFacade<T>) {
+  firstValueFrom<T>(source: ObservableFacade<T>): Promise<T> {
     throw new Error('RxJS Facade "firstValueFrom" method must be implemented');
   }
 

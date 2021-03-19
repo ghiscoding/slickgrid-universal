@@ -1,6 +1,6 @@
 import { RxJsFacade } from '@slickgrid-universal/common';
-import { EMPTY, iif, isObservable, firstValueFrom, Observable, OperatorFunction, Subject } from 'rxjs';
-import { first, takeUntil } from 'rxjs/operators';
+import { EMPTY, iif, isObservable, firstValueFrom, Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 export class RxJsResource implements RxJsFacade {
   readonly className = 'RxJsResource';
@@ -23,11 +23,7 @@ export class RxJsResource implements RxJsFacade {
     return new Subject<T>();
   }
 
-  first<T, D = T>(predicate?: null, defaultValue?: D): OperatorFunction<T, T | D> {
-    return first(predicate, defaultValue);
-  }
-
-  firstValueFrom<T>(source: Observable<T>) {
+  firstValueFrom<T>(source: Observable<T>): Promise<T> {
     return firstValueFrom(source);
   }
 

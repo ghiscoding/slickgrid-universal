@@ -13,10 +13,6 @@ describe('RxJsFacade Service', () => {
     expect(() => RxJsFacade.prototype.createSubject()).toThrow('RxJS Facade "createSubject" method must be implemented');
   });
 
-  it('should display a not implemented when calling "first" method', () => {
-    expect(() => RxJsFacade.prototype.first()).toThrow('RxJS Facade "first" method must be implemented');
-  });
-
   it('should display a not implemented when calling "firstValueFrom" method', () => {
     expect(() => RxJsFacade.prototype.firstValueFrom({} as any)).toThrow('RxJS Facade "firstValueFrom" method must be implemented');
   });

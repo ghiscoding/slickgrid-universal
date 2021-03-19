@@ -1,6 +1,6 @@
 import { RxJsFacade } from '@slickgrid-universal/common';
-import { EMPTY, iif, isObservable, firstValueFrom, Observable, OperatorFunction, Subject } from 'rxjs';
-import { first, takeUntil } from 'rxjs/operators';
+import { EMPTY, iif, isObservable, firstValueFrom, Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 export class RxJsResourceStub implements RxJsFacade {
   readonly className = 'RxJsResource';
@@ -28,11 +28,7 @@ export class RxJsResourceStub implements RxJsFacade {
     return EMPTY;
   }
 
-  first<T, D = T>(predicate?: null, defaultValue?: D): OperatorFunction<T, T | D> {
-    return first(predicate, defaultValue);
-  }
-
-  firstValueFrom<T>(source: Observable<T>) {
+  firstValueFrom<T>(source: Observable<T>): Promise<T> {
     return firstValueFrom(source);
   }
 
@@ -41,8 +37,8 @@ export class RxJsResourceStub implements RxJsFacade {
   }
 
   /** Tests to see if the object is an RxJS Observable */
-  isObservable<T>(obj: any): boolean {
-    return isObservable<T>(obj);
+  isObservable(obj: any): boolean {
+    return isObservable(obj);
   }
 
   /** Emits the values emitted by the source Observable until a `notifier` Observable emits a value. */
