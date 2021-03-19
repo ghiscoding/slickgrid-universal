@@ -40,6 +40,12 @@ describe('RxJs Resource', () => {
     expect(output instanceof Observable).toBeTruthy();
   });
 
+  it('should be able to execute the "firstValueFrom" method and expect an Observable returned', () => {
+    const observable = service.createObservable();
+    const output = service.firstValueFrom(observable);
+    expect(output instanceof Observable).toBeTruthy();
+  });
+
   it('should be able to execute the "takeUntil" method and expect an Observable returned', () => {
     const observable = service.createObservable();
     const iifOutput = service.iif(() => isObservable(observable));
