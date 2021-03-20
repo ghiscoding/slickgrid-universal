@@ -25,7 +25,7 @@ import { getDescendantProperty, convertHierarchicalViewToParentChildArray } from
 import { sortByFieldType } from '../sortComparers/sortUtilities';
 import { PubSubService } from './pubSub.service';
 import { SharedService } from './shared.service';
-import { RxJsFacade, SubjectFacade } from './rxjsFacade';
+import { RxJsFacade, Subject } from './rxjsFacade';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -36,7 +36,7 @@ export class SortService {
   private _dataView!: SlickDataView;
   private _grid!: SlickGrid;
   private _isBackendGrid = false;
-  private httpCancelRequests$?: SubjectFacade<void>; // this will be used to cancel any pending http request
+  private httpCancelRequests$?: Subject<void>; // this will be used to cancel any pending http request
 
   constructor(private sharedService: SharedService, private pubSubService: PubSubService, private backendUtilities?: BackendUtilityService, private rxjs?: RxJsFacade) {
     this._eventHandler = new Slick.EventHandler();

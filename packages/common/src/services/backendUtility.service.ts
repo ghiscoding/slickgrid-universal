@@ -1,6 +1,6 @@
 import { EmitterType } from '../enums/emitterType.enum';
 import { BackendServiceApi, GridOption } from '../interfaces/index';
-import { ObservableFacade, RxJsFacade, SubjectFacade } from './rxjsFacade';
+import { Observable, RxJsFacade, Subject } from './rxjsFacade';
 
 export class BackendUtilityService {
   constructor(private rxjs?: RxJsFacade) { }
@@ -47,7 +47,7 @@ export class BackendUtilityService {
    * Execute the backend callback, which are mainly the "process" & "postProcess" methods.
    * Also note that "preProcess" was executed prior to this callback
    */
-  executeBackendCallback(backendServiceApi: BackendServiceApi, query: string, args: any, startTime: Date, totalItems: number, emitActionChangedCallback?: (type: EmitterType) => void, httpCancelRequests$?: SubjectFacade<void>) {
+  executeBackendCallback(backendServiceApi: BackendServiceApi, query: string, args: any, startTime: Date, totalItems: number, emitActionChangedCallback?: (type: EmitterType) => void, httpCancelRequests$?: Subject<void>) {
     if (backendServiceApi) {
       // emit an onFilterChanged event when it's not called by a clear filter
       if (args && !args.clearFilterTriggered && !args.clearSortTriggered && emitActionChangedCallback) {
@@ -67,7 +67,7 @@ export class BackendUtilityService {
           httpCancelRequests$!.next();
         }
 
-        (process as unknown as ObservableFacade<any>)
+        (process as unknown as Observable<any>)
           // the following takeUntil, will potentially be used later to cancel any pending http request (takeUntil another rx, that would be httpCancelRequests$, completes)
           // but make sure the observable is actually defined with the iif condition check before piping it to the takeUntil
           .pipe(rxjs.takeUntil(rxjs.iif(() => rxjs.isObservable(httpCancelRequests$), httpCancelRequests$, rxjs.EMPTY)))

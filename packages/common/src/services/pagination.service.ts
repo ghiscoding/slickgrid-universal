@@ -3,6 +3,7 @@ import { dequal } from 'dequal';
 import {
   BackendServiceApi,
   CurrentPagination,
+  EventSubscription,
   GetSlickEventType,
   Pagination,
   ServicePagination,
@@ -10,12 +11,11 @@ import {
   SlickEventHandler,
   SlickGrid,
   SlickNamespace,
-  Subscription
 } from '../interfaces/index';
 import { BackendUtilityService } from './backendUtility.service';
 import { SharedService } from './shared.service';
 import { PubSubService } from './pubSub.service';
-import { ObservableFacade, RxJsFacade } from './rxjsFacade';
+import { Observable, RxJsFacade } from './rxjsFacade';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -33,7 +33,7 @@ export class PaginationService {
   private _totalItems = 0;
   private _availablePageSizes: number[] = [];
   private _paginationOptions!: Pagination;
-  private _subscriptions: Subscription[] = [];
+  private _subscriptions: EventSubscription[] = [];
 
   /** SlickGrid Grid object */
   grid!: SlickGrid;
@@ -352,7 +352,7 @@ export class PaginationService {
               });
           } else if (this.rxjs?.isObservable(process)) {
             this._subscriptions.push(
-              (process as ObservableFacade<any>).subscribe(
+              (process as Observable<any>).subscribe(
                 (processResult: any) => {
                   resolve(this.backendUtilities?.executeBackendProcessesCallback(startTime, processResult, this._backendServiceApi as BackendServiceApi, this._totalItems));
                 },

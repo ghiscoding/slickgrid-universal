@@ -1,6 +1,6 @@
 import { OperatorString } from '../enums/operatorString.type';
-import { Column, Subscription } from '../interfaces/index';
-import { ObservableFacade, RxJsFacade, SubjectFacade } from '../services/rxjsFacade';
+import { Column } from '../interfaces/index';
+import { Observable, RxJsFacade, Subject, Subscription } from '../services/rxjsFacade';
 import { castObservableToPromise, getDescendantProperty, htmlEncodedStringWithPadding } from '../services/utilities';
 
 export function buildSelectOperatorHtmlString(optionValues: Array<{ operator: OperatorString, description: string }>) {
@@ -36,7 +36,7 @@ export function renderDomElementFromCollectionAsync(collection: any[], columnDef
   renderDomElementCallback(collection);
 }
 
-export async function renderCollectionOptionsAsync(collectionAsync: Promise<any | any[]> | ObservableFacade<any | any[]> | SubjectFacade<any | any[]>, columnDef: Column, renderDomElementCallback: (collection: any) => void, rxjs?: RxJsFacade, subscriptions?: Subscription[]): Promise<any[]> {
+export async function renderCollectionOptionsAsync(collectionAsync: Promise<any | any[]> | Observable<any | any[]> | Subject<any | any[]>, columnDef: Column, renderDomElementCallback: (collection: any) => void, rxjs?: RxJsFacade, subscriptions?: Subscription[]): Promise<any[]> {
   const columnFilter = columnDef?.filter ?? {};
   const collectionOptions = columnFilter?.collectionOptions ?? {};
 

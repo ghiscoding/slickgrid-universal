@@ -58,7 +58,7 @@ import {
   GridService,
   GridStateService,
   GroupingAndColspanService,
-  ObservableFacade,
+  Observable,
   PaginationService,
   RowMoveManagerExtension,
   RxJsFacade,
@@ -916,7 +916,7 @@ export class SlickVanillaGridBundle {
               .catch((error) => backendUtilityService.onBackendError(error, backendApi));
           } else if (process && this.rxjs?.isObservable(process)) {
             this.subscriptions.push(
-              (process as ObservableFacade<any>).subscribe(
+              (process as Observable<any>).subscribe(
                 (processResult: any) => backendUtilityService.executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems),
                 (error: any) => backendUtilityService.onBackendError(error, backendApi)
               )
@@ -1182,7 +1182,7 @@ export class SlickVanillaGridBundle {
       // wrap this inside a setTimeout to avoid timing issue since updateEditorCollection requires to call SlickGrid getColumns() method
       setTimeout(() => {
         this.subscriptions.push(
-          (collectionAsync as ObservableFacade<any>).subscribe((resolvedCollection) => this.updateEditorCollection(column, resolvedCollection))
+          (collectionAsync as Observable<any>).subscribe((resolvedCollection) => this.updateEditorCollection(column, resolvedCollection))
         );
       });
     }

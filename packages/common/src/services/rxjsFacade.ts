@@ -18,26 +18,26 @@ export abstract class RxJsFacade {
    * The same Observable instance returned by any call to without a scheduler.
    * This returns the EMPTY constant from RxJS
    */
-  get EMPTY(): ObservableFacade<never> {
+  get EMPTY(): Observable<never> {
     throw new Error('RxJS Facade "EMPTY" constant must be implemented');
   }
 
   /** Simple method to create an Observable */
-  createObservable<T>(): ObservableFacade<T> {
+  createObservable<T>(): Observable<T> {
     throw new Error('RxJS Facade "createObservable" method must be implemented');
   }
 
   /** Simple method to create a Subject */
-  createSubject<T>(): SubjectFacade<T> {
+  createSubject<T>(): Subject<T> {
     throw new Error('RxJS Facade "createSubject" method must be implemented');
   }
 
-  firstValueFrom<T>(source: ObservableFacade<T>): Promise<T> {
+  firstValueFrom<T>(source: Observable<T>): Promise<T> {
     throw new Error('RxJS Facade "firstValueFrom" method must be implemented');
   }
 
   /** Decides at subscription time which Observable will actually be subscribed. */
-  iif<T = never, F = never>(condition: () => boolean, trueResult?: any, falseResult?: any): ObservableFacade<T | F> {
+  iif<T = never, F = never>(condition: () => boolean, trueResult?: any, falseResult?: any): Observable<T | F> {
     throw new Error('RxJS Facade "iif" method must be implemented');
   }
 
@@ -47,20 +47,20 @@ export abstract class RxJsFacade {
   }
 
   /** Emits the values emitted by the source Observable until a `notifier` Observable emits a value. */
-  takeUntil<T>(notifier: ObservableFacade<any>): any {
+  takeUntil<T>(notifier: Observable<any>): any {
     throw new Error('RxJS Facade "takeUntil" method must be implemented');
   }
 }
 
 /** A representation of any set of values over any amount of time. This is the most basic building block of RxJS. */
-export abstract class ObservableFacade<T> {
+export abstract class Observable<T> {
   /** Observable constructor, you can provide a subscribe function that is called when the Observable is initially subscribed to. */
-  constructor(subscribe?: (this: ObservableFacade<T>, subscriber: any) => any) {
+  constructor(subscribe?: (this: Observable<T>, subscriber: any) => any) {
     throw new Error('RxJS Observable Facade "constructor" method must be implemented');
   }
 
   /** Subscribe to the Observable */
-  subscribe(next?: (value: T) => void, error?: (error: any) => void, complete?: () => void): SubscriptionFacade {
+  subscribe(next?: (value: T) => void, error?: (error: any) => void, complete?: () => void): Subscription {
     throw new Error('RxJS Observable Facade "subscribe" method must be implemented');
   }
 
@@ -74,7 +74,7 @@ export abstract class ObservableFacade<T> {
  * A Subject is a special type of Observable that allows values to be
  * multicasted to many Observers. Subjects are like EventEmitters.
  */
-export abstract class SubjectFacade<T> extends ObservableFacade<T> {
+export abstract class Subject<T> extends Observable<T> {
   next(value: T): void {
     throw new Error('RxJS Subject "next" method must be implemented');
   }
@@ -88,7 +88,7 @@ export abstract class SubjectFacade<T> extends ObservableFacade<T> {
  * A Subject is a special type of Observable that allows values to be
  * multicasted to many Observers. Subjects are like EventEmitters.
  */
-export abstract class SubscriptionFacade {
+export abstract class Subscription {
   /** A function describing how to perform the disposal of resources when the `unsubscribe` method is called. */
   constructor(unsubscribe?: () => void) {
     throw new Error('RxJS Subscription Facade "constructor" method must be implemented');

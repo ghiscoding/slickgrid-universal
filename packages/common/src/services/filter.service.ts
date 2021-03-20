@@ -33,7 +33,7 @@ import { BackendUtilityService } from './backendUtility.service';
 import { deepCopy, getDescendantProperty, mapOperatorByFieldType } from './utilities';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
-import { RxJsFacade, SubjectFacade } from './rxjsFacade';
+import { RxJsFacade, Subject } from './rxjsFacade';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -59,7 +59,7 @@ export class FilterService {
   protected _grid!: SlickGrid;
   protected _onSearchChange: SlickEvent<OnSearchChangeEvent> | null;
   protected _tmpPreFilteredData?: number[];
-  protected httpCancelRequests$?: SubjectFacade<void>; // this will be used to cancel any pending http request
+  protected httpCancelRequests$?: Subject<void>; // this will be used to cancel any pending http request
 
   constructor(protected filterFactory: FilterFactory, protected pubSubService: PubSubService, protected sharedService: SharedService, protected backendUtilities?: BackendUtilityService, protected rxjs?: RxJsFacade) {
     this._onSearchChange = new Slick.Event();

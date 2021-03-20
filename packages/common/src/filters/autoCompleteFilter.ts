@@ -17,14 +17,13 @@ import {
   FilterCallback,
   GridOption,
   SlickGrid,
-  Subscription,
 } from './../interfaces/index';
 import { CollectionService } from '../services/collection.service';
 import { collectionObserver, propertyObserver } from '../services/observers';
 import { getDescendantProperty, sanitizeTextByAvailableSanitizer, toKebabCase, unsubscribeAll } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 import { renderCollectionOptionsAsync } from './filterUtilities';
-import { RxJsFacade } from '../services/rxjsFacade';
+import { RxJsFacade, Subscription } from '../services/rxjsFacade';
 
 export class AutoCompleteFilter implements Filter {
   protected _autoCompleteOptions!: AutocompleteOption;

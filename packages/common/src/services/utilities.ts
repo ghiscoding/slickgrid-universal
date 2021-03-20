@@ -4,8 +4,8 @@ const DOMPurify = DOMPurify_; // patch to fix rollup to work
 const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 import { FieldType, OperatorString, OperatorType } from '../enums/index';
-import { GridOption, Subscription } from '../interfaces/index';
-import { ObservableFacade, RxJsFacade, SubjectFacade } from './rxjsFacade';
+import { EventSubscription, GridOption } from '../interfaces/index';
+import { Observable, RxJsFacade, Subject, Subscription } from './rxjsFacade';
 
 /**
  * Add an item to an array only when the item does not exists, when the item is an object we will be using their "id" to compare
@@ -54,7 +54,7 @@ export function arrayRemoveItemByIndex<T>(array: T[], index: number): T[] {
  * @param object which could be of type Promise or Observable
  * @param fromServiceName string representing the caller service name and will be used if we throw a casting problem error
  */
-export function castObservableToPromise<T>(rxjs: RxJsFacade, input: Promise<T> | ObservableFacade<T> | SubjectFacade<T>, fromServiceName = ''): Promise<T> {
+export function castObservableToPromise<T>(rxjs: RxJsFacade, input: Promise<T> | Observable<T> | Subject<T>, fromServiceName = ''): Promise<T> {
   let promise: any = input;
 
   if (input instanceof Promise) {
@@ -1000,7 +1000,7 @@ export function toSnakeCase(inputStr: string): string {
  * It will return an empty array if it all went well
  * @param subscriptions
  */
-export function unsubscribeAll(subscriptions: Subscription[]): Subscription[] {
+export function unsubscribeAll(subscriptions: Array<EventSubscription | Subscription>): Array<EventSubscription | Subscription> {
   if (Array.isArray(subscriptions)) {
     while (subscriptions.length > 0) {
       const subscription = subscriptions.pop();

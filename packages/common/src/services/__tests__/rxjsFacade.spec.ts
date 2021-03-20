@@ -1,4 +1,4 @@
-import { ObservableFacade, RxJsFacade, SubjectFacade, SubscriptionFacade } from '../rxjsFacade';
+import { Observable, RxJsFacade, Subject, Subscription } from '../rxjsFacade';
 
 describe('RxJsFacade Service', () => {
   it('should display a not implemented when calling "EMPTY" getter', () => {
@@ -30,38 +30,38 @@ describe('RxJsFacade Service', () => {
   });
 });
 
-describe('SubjectFacade Service', () => {
+describe('Subject Service', () => {
   it('should display a not implemented when calling "next" method', () => {
-    expect(() => SubjectFacade.prototype.next({} as any)).toThrow('RxJS Subject "next" method must be implemented');
+    expect(() => Subject.prototype.next({} as any)).toThrow('RxJS Subject "next" method must be implemented');
   });
 
   it('should display a not implemented when calling "unsubscribe" method', () => {
-    expect(() => SubjectFacade.prototype.unsubscribe()).toThrow('RxJS Subject "unsubscribe" method must be implemented');
+    expect(() => Subject.prototype.unsubscribe()).toThrow('RxJS Subject "unsubscribe" method must be implemented');
   });
 });
 
-describe('ObservableFacade Service', () => {
+describe('Observable Service', () => {
   it('should display a not implemented when calling "constructor"', () => {
     // @ts-ignore
-    expect(() => new ObservableFacade()).toThrow('RxJS Observable Facade "constructor" method must be implemented');
+    expect(() => new Observable()).toThrow('RxJS Observable Facade "constructor" method must be implemented');
   });
 
   it('should display a not implemented when calling "subscribe" method', () => {
-    expect(() => ObservableFacade.prototype.subscribe()).toThrow('RxJS Observable Facade "subscribe" method must be implemented');
+    expect(() => Observable.prototype.subscribe()).toThrow('RxJS Observable Facade "subscribe" method must be implemented');
   });
 
   it('should display a not implemented when calling "pipe" method', () => {
-    expect(() => ObservableFacade.prototype.pipe({})).toThrow('RxJS Observable Facade "pipe" method must be implemented');
+    expect(() => Observable.prototype.pipe({})).toThrow('RxJS Observable Facade "pipe" method must be implemented');
   });
 });
 
-describe('SubscriptionFacade Service', () => {
+describe('Subscription Service', () => {
   it('should display a not implemented when calling "next" method', () => {
     // @ts-ignore
-    expect(() => new SubscriptionFacade()).toThrow('RxJS Subscription Facade "constructor" method must be implemented');
+    expect(() => new Subscription()).toThrow('RxJS Subscription Facade "constructor" method must be implemented');
   });
 
   it('should display a not implemented when calling "pipe" method', () => {
-    expect(() => SubscriptionFacade.prototype.unsubscribe()).toThrow('RxJS Subscription Facade "unsubscribe" method must be implemented');
+    expect(() => Subscription.prototype.unsubscribe()).toThrow('RxJS Subscription Facade "unsubscribe" method must be implemented');
   });
 });

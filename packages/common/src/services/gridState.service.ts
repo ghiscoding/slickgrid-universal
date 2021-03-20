@@ -11,14 +11,14 @@ import {
   CurrentPagination,
   CurrentRowSelection,
   CurrentSorter,
-  SlickDataView,
+  EventSubscription,
+  GetSlickEventType,
   GridOption,
   GridState,
-  SlickGrid,
-  Subscription,
-  SlickNamespace,
-  GetSlickEventType,
+  SlickDataView,
   SlickEventHandler,
+  SlickGrid,
+  SlickNamespace,
 } from '../interfaces/index';
 import { ExtensionService } from './extension.service';
 import { FilterService } from './filter.service';
@@ -34,7 +34,7 @@ export class GridStateService {
   private _columns: Column[] = [];
   private _currentColumns: CurrentColumn[] = [];
   private _grid!: SlickGrid;
-  private _subscriptions: Subscription[] = [];
+  private _subscriptions: EventSubscription[] = [];
   private _selectedRowDataContextIds: Array<number | string> | undefined = []; // used with row selection
   private _selectedFilteredRowDataContextIds: Array<number | string> | undefined = []; // used with row selection
   private _wasRecheckedAfterPageChange = true; // used with row selection & pagination

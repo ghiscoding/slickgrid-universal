@@ -13,12 +13,11 @@ import {
   MultipleSelectOption,
   SelectOption,
   SlickGrid,
-  Subscription
 } from './../interfaces/index';
 import { CollectionService } from '../services/collection.service';
 import { collectionObserver, propertyObserver } from '../services/observers';
 import { getDescendantProperty, getTranslationPrefix, htmlEncode, sanitizeTextByAvailableSanitizer, unsubscribeAll } from '../services/utilities';
-import { RxJsFacade, TranslaterService } from '../services';
+import { RxJsFacade, Subscription, TranslaterService } from '../services';
 import { renderCollectionOptionsAsync } from './filterUtilities';
 
 export class SelectFilter implements Filter {

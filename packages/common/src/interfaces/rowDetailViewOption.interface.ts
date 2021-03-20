@@ -1,4 +1,4 @@
-import { ObservableFacade, SubjectFacade } from '../services/rxjsFacade';
+import { Observable, Subject } from '../services/rxjsFacade';
 import { SlickGrid } from './slickGrid.interface';
 
 export interface RowDetailViewOption {
@@ -73,7 +73,7 @@ export interface RowDetailViewOption {
   postTemplate?: (item: any) => string;
 
   /** Async server function call */
-  process: (item: any) => Promise<any> | ObservableFacade<any> | SubjectFacade<any>;
+  process: (item: any) => Promise<any> | Observable<any> | Subject<any>;
 
   /** Override the logic for showing (or not) the expand icon (use case example: only every 2nd row is expandable) */
   expandableOverride?: (row: number, dataContext: any, grid: SlickGrid) => boolean;

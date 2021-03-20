@@ -1,4 +1,4 @@
-export interface Subscription {
+export interface EventSubscription {
   /** Disposes the subscription. */
   dispose?: () => void;
 
