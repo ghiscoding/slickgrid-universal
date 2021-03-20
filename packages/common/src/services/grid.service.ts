@@ -1,6 +1,7 @@
 import {
   CellArgs,
   Column,
+  CurrentPinning,
   SlickDataView,
   GridOption,
   GridServiceDeleteOption,
@@ -12,7 +13,6 @@ import {
   SlickNamespace,
   SlickRowSelectionModel,
 } from '../interfaces/index';
-import { ExtensionService } from './extension.service';
 import { FilterService } from './filter.service';
 import { GridStateService } from './gridState.service';
 import { PaginationService } from '../services/pagination.service';
@@ -35,7 +35,6 @@ export class GridService {
   private _rowSelectionPlugin?: SlickRowSelectionModel;
 
   constructor(
-    private extensionService: ExtensionService,
     private gridStateService: GridStateService,
     private filterService: FilterService,
     private pubSubService: PubSubService,
@@ -72,6 +71,32 @@ export class GridService {
     }
     if (this.filterService && this.filterService.clearFilters) {
       this.filterService.clearFilters();
+    }
+  }
+
+  /** Clear all the pinning (frozen) options */
+  clearPinning() {
+    const visibleColumns = [...this.sharedService.visibleColumns];
+    this.sharedService.slickGrid.setOptions({ frozenColumn: -1, frozenRow: -1, frozenBottom: false, enableMouseWheelScrollHandler: false });
+
+    // SlickGrid seems to be somehow resetting the columns to their original positions,
+    // so let's re-fix them to the position we kept as reference
+    if (Array.isArray(visibleColumns)) {
+      this.sharedService.slickGrid.setColumns(visibleColumns);
+    }
+  }
+
+  /**
+   * Set pinning (frozen) grid options
+   * @param pinningOptions - which pinning/frozen options to modify
+   * @param shouldAutosizeColumns - defaults to True, should we call an autosizeColumns after the pinning is done?
+   */
+  setPinning(pinningOptions: CurrentPinning, shouldAutosizeColumns = true) {
+    this.sharedService.slickGrid.setOptions(pinningOptions);
+    this.sharedService.gridOptions = { ...this.sharedService.gridOptions, ...pinningOptions };
+
+    if (shouldAutosizeColumns) {
+      this.sharedService.slickGrid.autosizeColumns();
     }
   }
 
@@ -368,7 +393,7 @@ export class GridService {
   resetGrid(columnDefinitions?: Column[]) {
     // reset columns to original states & refresh the grid
     if (this._grid && this._dataView) {
-      const originalColumns = this.extensionService.getAllColumns();
+      const originalColumns = this.sharedService.allColumns || [];
 
       if (Array.isArray(originalColumns) && originalColumns.length > 0) {
         // set the grid columns to it's original column definitions

@@ -37,6 +37,7 @@ import {
   TreeDataService,
   TranslaterService,
   SlickEditorLock,
+  CurrentPinning,
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
@@ -1086,6 +1087,17 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
 
         expect(backendSpy).toHaveBeenCalledWith(mockColumnFilter as unknown as CurrentFilter[], false);
+      });
+
+      it('should override frozen grid options when "pinning" is defined in the "presets" property', () => {
+        const pinningMock = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as CurrentPinning;
+        const gridOptionSetterSpy = jest.spyOn(component, 'gridOptions', 'set');
+
+        component.gridOptions.presets = { pinning: pinningMock };
+        component.initialization(divContainer, slickEventHandler);
+
+        expect(gridOptionSetterSpy).toHaveBeenCalledWith(pinningMock);
+        expect(component.gridOptions).toEqual({ ...gridOptions, ...pinningMock });
       });
 
       it('should call the "updateFilters" method when filters are defined in the "presets" property', () => {

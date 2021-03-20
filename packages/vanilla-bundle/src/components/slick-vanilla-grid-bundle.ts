@@ -361,8 +361,7 @@ export class SlickVanillaGridBundle {
     );
 
     this.gridStateService = services?.gridStateService ?? new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
-    this.gridService = services?.gridService ?? new GridService(this.extensionService, this.gridStateService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService);
-
+    this.gridService = services?.gridService ?? new GridService(this.gridStateService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService);
     this.groupingService = services?.groupingAndColspanService ?? new GroupingAndColspanService(this.extensionUtility, this.extensionService, this._eventPubSubService);
 
     if (hierarchicalDataset) {
@@ -1218,6 +1217,11 @@ export class SlickVanillaGridBundle {
   /** Load any possible Grid Presets (columns, filters) */
   private loadPresetsWhenDatasetInitialized() {
     if (this.gridOptions && !this.customDataView) {
+      // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
+      if (this.gridOptions.presets?.pinning) {
+        this.gridOptions = this.gridOptions.presets?.pinning;
+      }
+
       // if user entered some Filter "presets", we need to reflect them all in the DOM
       if (this.gridOptions.presets && Array.isArray(this.gridOptions.presets.filters)) {
         this.filterService.populateColumnFilterSearchTermPresets(this.gridOptions.presets.filters);

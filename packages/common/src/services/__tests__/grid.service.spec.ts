@@ -1,6 +1,6 @@
 import 'jest-extended';
 
-import { ExtensionService, FilterService, GridService, GridStateService, PaginationService, PubSubService, SharedService, SortService } from '../index';
+import { FilterService, GridService, GridStateService, PaginationService, PubSubService, SharedService, SortService } from '../index';
 import { GridOption, CellArgs, Column, OnEventArgs, SlickGrid, SlickDataView, SlickNamespace } from '../../interfaces/index';
 
 jest.useFakeTimers();
@@ -16,10 +16,6 @@ const mockSelectionModelImplementation = jest.fn().mockImplementation(() => mock
 jest.mock('flatpickr', () => { });
 jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockSelectionModelImplementation);
 Slick.RowSelectionModel = mockSelectionModelImplementation;
-
-const extensionServiceStub = {
-  getAllColumns: jest.fn(),
-} as unknown as ExtensionService;
 
 const filterServiceStub = {
   clearFilters: jest.fn(),
@@ -80,6 +76,7 @@ const gridStub = {
   navigateTop: jest.fn(),
   render: jest.fn(),
   setColumns: jest.fn(),
+  setOptions: jest.fn(),
   setSelectedRows: jest.fn(),
   scrollRowIntoView: jest.fn(),
   updateRow: jest.fn(),
@@ -98,7 +95,7 @@ describe('Grid Service', () => {
   jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
 
   beforeEach(() => {
-    service = new GridService(extensionServiceStub, gridStateServiceStub, filterServiceStub, pubSubServiceStub, paginationServiceStub, sharedService, sortServiceStub);
+    service = new GridService(gridStateServiceStub, filterServiceStub, pubSubServiceStub, paginationServiceStub, sharedService, sortServiceStub);
     service.init(gridStub);
   });
 
@@ -1012,6 +1009,51 @@ describe('Grid Service', () => {
     });
   });
 
+  describe('Pinning methods', () => {
+    const columnsMock: Column[] = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
+
+    it('should call "clearPinning" and expect SlickGrid "setOptions" and "setColumns" to be called with frozen options being reset', () => {
+      const setOptionsSpy = jest.spyOn(gridStub, 'setOptions');
+      const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
+      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
+      jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
+
+      service.clearPinning();
+
+      expect(setColumnsSpy).toHaveBeenCalled();
+      expect(setOptionsSpy).toHaveBeenCalledWith({ frozenBottom: false, frozenColumn: -1, frozenRow: -1, enableMouseWheelScrollHandler: false });
+    });
+
+    it('should call "setPinning" and expect SlickGrid "setOptions" be called with new frozen options and "autosizeColumns" also be called', () => {
+      const mockPinning = { frozenBottom: true, frozenColumn: 1, frozenRow: 2 };
+      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      const setOptionsSpy = jest.spyOn(gridStub, 'setOptions');
+      const autosizeColumnsSpy = jest.spyOn(gridStub, 'autosizeColumns');
+      const gridOptionSetterSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'set');
+
+      service.setPinning(mockPinning);
+
+      expect(setOptionsSpy).toHaveBeenCalledWith(mockPinning);
+      expect(gridOptionSetterSpy).toHaveBeenCalledWith(mockPinning);
+      expect(autosizeColumnsSpy).toHaveBeenCalled();
+    });
+
+    it('should call "setPinning" and expect SlickGrid "setOptions" be called with new frozen options and "autosizeColumns" not being called when passing False as 2nd argument', () => {
+      const mockPinning = { frozenBottom: true, frozenColumn: 1, frozenRow: 2 };
+      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      const setOptionsSpy = jest.spyOn(gridStub, 'setOptions');
+      const autosizeColumnsSpy = jest.spyOn(gridStub, 'autosizeColumns');
+      const gridOptionSetterSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'set');
+
+      service.setPinning(mockPinning, false);
+
+      expect(setOptionsSpy).toHaveBeenCalledWith(mockPinning);
+      expect(gridOptionSetterSpy).toHaveBeenCalledWith(mockPinning);
+      expect(autosizeColumnsSpy).not.toHaveBeenCalled();
+    });
+  });
+
   describe('getColumnFromEventArguments method', () => {
     it('should throw an error when slickgrid getColumns method is not available', () => {
       gridStub.getColumns = undefined as any;
@@ -1480,7 +1522,7 @@ describe('Grid Service', () => {
     it('should call a reset and expect a few grid methods to be called', () => {
       const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableAutoSizeColumns: true } as GridOption);
-      const extensionSpy = jest.spyOn(extensionServiceStub, 'getAllColumns').mockReturnValue(mockColumns);
+      const allColumnSpy = jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const setColSpy = jest.spyOn(gridStub, 'setColumns');
       const autosizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
       const gridStateSpy = jest.spyOn(gridStateServiceStub, 'resetColumns');
@@ -1489,7 +1531,7 @@ describe('Grid Service', () => {
 
       service.resetGrid();
 
-      expect(extensionSpy).toHaveBeenCalled();
+      expect(allColumnSpy).toHaveBeenCalled();
       expect(setColSpy).toHaveBeenCalled();
       expect(autosizeSpy).toHaveBeenCalled();
       expect(gridStateSpy).toHaveBeenCalled();
@@ -1500,12 +1542,12 @@ describe('Grid Service', () => {
     it('should call a reset and expect the grid "resetColumns" method to be called with the column definitions provided to the method', () => {
       const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableAutoSizeColumns: true } as GridOption);
-      const extensionSpy = jest.spyOn(extensionServiceStub, 'getAllColumns').mockReturnValue(mockColumns);
+      const allColumnSpy = jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const gridStateSpy = jest.spyOn(gridStateServiceStub, 'resetColumns');
 
       service.resetGrid(mockColumns);
 
-      expect(extensionSpy).toHaveBeenCalled();
+      expect(allColumnSpy).toHaveBeenCalled();
       expect(gridStateSpy).toHaveBeenCalledWith(mockColumns);
     });
   });
