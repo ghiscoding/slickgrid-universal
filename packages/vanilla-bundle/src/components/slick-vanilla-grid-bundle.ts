@@ -1219,7 +1219,7 @@ export class SlickVanillaGridBundle {
     if (this.gridOptions && !this.customDataView) {
       // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
       if (this.gridOptions.presets?.pinning) {
-        this.gridOptions = this.gridOptions.presets?.pinning;
+        this.gridOptions = this.gridOptions.presets.pinning;
       }
 
       // if user entered some Filter "presets", we need to reflect them all in the DOM

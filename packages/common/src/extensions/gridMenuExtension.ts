@@ -225,7 +225,7 @@ export class GridMenuExtension implements Extension {
     const gridOptions = this.sharedService.gridOptions;
     const translationPrefix = getTranslationPrefix(gridOptions);
 
-    // show grid menu: Clear Frozen Columns
+    // show grid menu: Unfreeze Columns/Rows
     if (this.sharedService.gridOptions && this._gridMenuOptions && !this._gridMenuOptions.hideClearFrozenColumnsCommand) {
       const commandName = 'clear-pinning';
       if (!originalCustomItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
@@ -396,12 +396,22 @@ export class GridMenuExtension implements Extension {
       switch (args.command) {
         case 'clear-pinning':
           const visibleColumns = [...this.sharedService.visibleColumns];
-          this.sharedService.slickGrid.setOptions({ frozenColumn: -1, frozenRow: -1, frozenBottom: false, enableMouseWheelScrollHandler: false });
+          const newGridOptions = { frozenColumn: -1, frozenRow: -1, frozenBottom: false, enableMouseWheelScrollHandler: false };
+          this.sharedService.slickGrid.setOptions(newGridOptions);
+          this.sharedService.gridOptions.frozenColumn = newGridOptions.frozenColumn;
+          this.sharedService.gridOptions.frozenRow = newGridOptions.frozenRow;
+          this.sharedService.gridOptions.frozenBottom = newGridOptions.frozenBottom;
+          this.sharedService.gridOptions.enableMouseWheelScrollHandler = newGridOptions.enableMouseWheelScrollHandler;
 
           // SlickGrid seems to be somehow resetting the columns to their original positions,
           // so let's re-fix them to the position we kept as reference
           if (Array.isArray(visibleColumns)) {
             this.sharedService.slickGrid.setColumns(visibleColumns);
+          }
+
+          // we also need to autosize columns if the option is enabled
+          if (this.sharedService.gridOptions.enableAutoSizeColumns) {
+            this.sharedService.slickGrid.autosizeColumns();
           }
           break;
         case 'clear-filter':
