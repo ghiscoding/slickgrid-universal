@@ -16,6 +16,32 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
+  it('should have 11 prerequisites filters and 11 rows in grid/footer', () => {
+    cy.get('.ms-filter.search-filter.filter-prerequisites.filled')
+      .find('.ms-choice')
+      .contains('11 of 500 selected');
+
+    cy.get('.right-footer.metrics')
+      .find('.item-count')
+      .contains('11');
+
+    cy.get('.right-footer.metrics')
+      .contains('11 of 500 items');
+  });
+
+  it('should clear all filters', () => {
+    cy.get('[data-test="delete-clear-filters-btn"]').click();
+  });
+
+  it('should have all rows shown in the grid', () => {
+    cy.get('.right-footer.metrics')
+      .find('.item-count')
+      .contains('500');
+
+    cy.get('.right-footer.metrics')
+      .contains('500 of 500 items');
+  });
+
   it('should have 4 rows pre-selected by the grid presets', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(2)`).should('contain', 'Task 1');
