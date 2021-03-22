@@ -170,6 +170,7 @@ export class Example7 {
       autoEdit: true,
       autoCommitEdit: true,
       editable: true,
+      showCustomFooter: true,
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: true,
@@ -200,6 +201,7 @@ export class Example7 {
         // usabilityOverride: (row, dataContext, grid) => dataContext.id % 2 === 1
       },
       presets: {
+        filters: [{ columnId: 'prerequisites', searchTerms: [1, 3, 5, 7, 9, 12, 15, 18, 21, 25, 28] }],
         // you can presets row selection here as well, you can choose 1 of the following 2 ways of setting the selection
         // by their index position in the grid (UI) or by the object IDs, the default is "dataContextIds" and if provided it will use it and disregard "gridRowIndexes"
         // the RECOMMENDED is to use "dataContextIds" since that will always work even with Pagination, while "gridRowIndexes" is only good for 1 page
@@ -242,6 +244,10 @@ export class Example7 {
     }, 50);
   }
 
+  clearFilters() {
+    this.sgb.filterService.clearFilters();
+  }
+
   /** Delete last inserted row */
   deleteItem() {
     const requisiteColumnDef = this.columnDefinitions.find((column: Column) => column.id === 'prerequisites');
@@ -270,7 +276,7 @@ export class Example7 {
         start: new Date(2009, 0, 1),
         finish: new Date(2009, 0, 5),
         effortDriven: (i % 5 === 0),
-        prerequisites: (i % 2 === 0) && i !== 0 && i < 12 ? [i, i - 1] : [],
+        prerequisites: (i % 2 === 0) && i !== 0 && i < 50 ? [i, i - 1] : [],
       });
     }
     return tempDataset;
