@@ -6,7 +6,7 @@ import { Observable, of, Subject } from 'rxjs';
 
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
-import './example12.scss';
+import './example15.scss';
 
 const defaultPageSize = 20;
 
@@ -194,7 +194,7 @@ export class Example15 {
    *  in your case the getCustomer() should be a WebAPI function returning a Promise
    */
   getCustomerDataApiMock(query): Observable<any> {
-    // the mock is returning a Promise, just like a WebAPI typically does
+    // the mock is returning an Observable
     return new Observable((observer) => {
       const queryParams = query.toLowerCase().split('&');
       let top: number;
