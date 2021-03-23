@@ -604,7 +604,7 @@ describe('Example 11 - Batch Editing', () => {
       .click();
   });
 
-  it('should have a frozen grid with 4 containers on page load with 3 columns on the left and 6 columns on the right', () => {
+  it('should have a frozen grid with 4 containers on page load with 3 columns on the left and 8 columns on the right', () => {
     cy.get('[style="top:0px"]').should('have.length', 2);
     cy.get('.grid-canvas-left > [style="top:0px"]').children().should('have.length', 3);
     cy.get('.grid-canvas-right > [style="top:0px"]').children().should('have.length', 8);
