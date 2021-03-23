@@ -510,6 +510,11 @@ export class SlickVanillaGridBundle {
     this.sharedService.visibleColumns = this._columnDefinitions;
     this.extensionService.createExtensionsBeforeGridCreation(this._columnDefinitions, this._gridOptions);
 
+    // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
+    if (this.gridOptions.presets?.pinning) {
+      this.gridOptions = { ...this.gridOptions, ...this.gridOptions.presets.pinning };
+    }
+
     this.slickGrid = new Slick.Grid(gridContainerElm, this.dataView, this._columnDefinitions, this._gridOptions);
     this.sharedService.dataView = this.dataView;
     this.sharedService.slickGrid = this.slickGrid;
@@ -1217,11 +1222,6 @@ export class SlickVanillaGridBundle {
   /** Load any possible Grid Presets (columns, filters) */
   private loadPresetsWhenDatasetInitialized() {
     if (this.gridOptions && !this.customDataView) {
-      // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
-      if (this.gridOptions.presets?.pinning) {
-        this.gridOptions = this.gridOptions.presets.pinning;
-      }
-
       // if user entered some Filter "presets", we need to reflect them all in the DOM
       if (this.gridOptions.presets && Array.isArray(this.gridOptions.presets.filters)) {
         this.filterService.populateColumnFilterSearchTermPresets(this.gridOptions.presets.filters);

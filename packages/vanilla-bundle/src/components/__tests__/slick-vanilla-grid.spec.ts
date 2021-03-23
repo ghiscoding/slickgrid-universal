@@ -1096,8 +1096,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions.presets = { pinning: pinningMock };
         component.initialization(divContainer, slickEventHandler);
 
-        expect(gridOptionSetterSpy).toHaveBeenCalledWith(pinningMock);
-        expect(component.gridOptions).toEqual({ ...gridOptions, ...pinningMock });
+        expect(gridOptionSetterSpy).toHaveBeenCalledWith({ ...component.gridOptions, ...pinningMock });
+        expect(component.gridOptions).toEqual({ ...component.gridOptions, ...pinningMock });
       });
 
       it('should call the "updateFilters" method when filters are defined in the "presets" property', () => {

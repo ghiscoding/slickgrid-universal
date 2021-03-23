@@ -405,6 +405,9 @@ export class GridService {
       }
     }
 
+    // clear any Pinning/Frozen columns/rows
+    this.clearPinning();
+
     if (this.filterService && this.filterService.clearFilters) {
       this.filterService.clearFilters();
     }

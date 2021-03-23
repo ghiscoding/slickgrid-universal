@@ -1528,6 +1528,7 @@ describe('Grid Service', () => {
       const gridStateSpy = jest.spyOn(gridStateServiceStub, 'resetColumns');
       const filterSpy = jest.spyOn(filterServiceStub, 'clearFilters');
       const sortSpy = jest.spyOn(sortServiceStub, 'clearSorting');
+      const clearPinningSpy = jest.spyOn(service, 'clearPinning');
 
       service.resetGrid();
 
@@ -1537,6 +1538,7 @@ describe('Grid Service', () => {
       expect(gridStateSpy).toHaveBeenCalled();
       expect(filterSpy).toHaveBeenCalled();
       expect(sortSpy).toHaveBeenCalled();
+      expect(clearPinningSpy).toHaveBeenCalled();
     });
 
     it('should call a reset and expect the grid "resetColumns" method to be called with the column definitions provided to the method', () => {
