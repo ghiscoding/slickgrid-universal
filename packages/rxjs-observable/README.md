@@ -14,10 +14,39 @@
 
 An RxJS Observable Service Wrapper to make it possible to use RxJS with Slickgrid-Universal (with a Backend Service like OData/GraphQL). By default any Backend Service will be using Promises unless we use this RxJS Observable package.
 
-This package is simply a bridge to it possible to use RxJS without adding RxJS to the `@slickgrid-universal/common` list of dependencies, so RxJS is a dependency of this package without being a dependency in the common package. 
+This package is simply a bridge, a facade, to make it possible to use RxJS without adding RxJS to the `@slickgrid-universal/common` list of dependencies, so RxJS is a dependency of this package without being a dependency of the common (core) package, This will avoid adding dependencies not everyone need and won't clutter clutterin the common package (the common package will simply use an empty shell, an empty interface, without requiring to install RxJS at all, we do however have full unit tests coverage for all of that).
 
 ### External Dependencies
-- [RxJS](https://github.com/ReactiveX/RxJS)
+- [RxJS 7](https://github.com/ReactiveX/RxJS)
 
 ### Installation
-Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation)
+Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation), you can see a demo by looking at the [GitHub Demo](https://ghiscoding.github.io/slickgrid-universal) page and click on "Export to CSV" from the Grid Menu (aka hamburger menu).
+
+### Usage
+In order to use the Service, you will need to register it in your grid options via the `registerExternalResources` as shown below and of course install RxJS itself (this package requires RxJS 7).
+
+##### ViewModel
+```ts
+import { GridOdataService } from '@slickgrid-universal/odata';
+import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
+
+export class MyExample {
+  gridOptions: GridOption;
+
+  prepareGrid {
+    this.gridOptions = {
+      // ...
+      registerExternalResources: [new RxJsResource()],
+
+      // you will most probably use it with a Backend Service, for example with OData
+      backendServiceApi: {
+        service: new GridOdataService(),
+        preProcess: () => this.displaySpinner(true),
+
+        // assuming your Http call is with an RxJS Observable
+        process: (query) => this.getAllCustomers$(query), 
+      } as OdataServiceApi,
+    };
+  }
+}
+```
