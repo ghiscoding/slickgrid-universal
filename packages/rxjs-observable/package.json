@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/rxjs-observable",
-  "version": "0.11.2",
+  "version": "0.12.0",
   "description": "RxJS Observable Wrapper",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
@@ -39,7 +39,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.11.2",
+    "@slickgrid-universal/common": "^0.12.0",
     "rxjs": "next"
   },
   "devDependencies": {

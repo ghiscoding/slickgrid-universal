@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/vanilla-bundle",
-  "version": "0.11.2",
+  "version": "0.12.0",
   "description": "Vanilla Slick Grid Bundle - Framework agnostic the output is to be used in vanilla JS/TS - Written in TypeScript and we also use WebPack to bundle everything into 1 JS file.",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
@@ -46,11 +46,11 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.11.2",
-    "@slickgrid-universal/composite-editor-component": "^0.11.2",
-    "@slickgrid-universal/empty-warning-component": "^0.11.2",
-    "@slickgrid-universal/excel-export": "^0.11.2",
-    "@slickgrid-universal/text-export": "^0.11.2",
+    "@slickgrid-universal/common": "^0.12.0",
+    "@slickgrid-universal/composite-editor-component": "^0.12.0",
+    "@slickgrid-universal/empty-warning-component": "^0.12.0",
+    "@slickgrid-universal/excel-export": "^0.12.0",
+    "@slickgrid-universal/text-export": "^0.12.0",
     "dompurify": "^2.2.7",
     "whatwg-fetch": "^3.6.2"
   },
