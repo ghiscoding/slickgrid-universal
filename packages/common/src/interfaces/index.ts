@@ -31,6 +31,7 @@ export * from './contextMenuOption.interface';
 export * from './currentColumn.interface';
 export * from './currentFilter.interface';
 export * from './currentPagination.interface';
+export * from './currentPinning.interface';
 export * from './currentRowSelection.interface';
 export * from './currentSorter.interface';
 export * from './customFooterOption.interface';

@@ -225,17 +225,17 @@ export class GridMenuExtension implements Extension {
     const gridOptions = this.sharedService.gridOptions;
     const translationPrefix = getTranslationPrefix(gridOptions);
 
-    // show grid menu: Clear Frozen Columns
+    // show grid menu: Unfreeze Columns/Rows
     if (this.sharedService.gridOptions && this._gridMenuOptions && !this._gridMenuOptions.hideClearFrozenColumnsCommand) {
-      const commandName = 'clear-frozen-columns';
+      const commandName = 'clear-pinning';
       if (!originalCustomItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         gridMenuCustomItems.push(
           {
             iconCssClass: this._gridMenuOptions.iconClearFrozenColumnsCommand || 'fa fa-times',
-            title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}CLEAR_FROZEN_COLUMNS`, 'TEXT_CLEAR_FROZEN_COLUMNS'),
+            title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}CLEAR_PINNING`, 'TEXT_CLEAR_PINNING'),
             disabled: false,
             command: commandName,
-            positionOrder: 49
+            positionOrder: 52
           }
         );
       }
@@ -268,7 +268,7 @@ export class GridMenuExtension implements Extension {
               title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}TOGGLE_FILTER_ROW`, 'TEXT_TOGGLE_FILTER_ROW'),
               disabled: false,
               command: commandName,
-              positionOrder: 52
+              positionOrder: 53
             }
           );
         }
@@ -284,7 +284,7 @@ export class GridMenuExtension implements Extension {
               title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}REFRESH_DATASET`, 'TEXT_REFRESH_DATASET'),
               disabled: false,
               command: commandName,
-              positionOrder: 56
+              positionOrder: 57
             }
           );
         }
@@ -302,7 +302,7 @@ export class GridMenuExtension implements Extension {
               title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}TOGGLE_PRE_HEADER_ROW`, 'TEXT_TOGGLE_PRE_HEADER_ROW'),
               disabled: false,
               command: commandName,
-              positionOrder: 52
+              positionOrder: 53
             }
           );
         }
@@ -337,7 +337,7 @@ export class GridMenuExtension implements Extension {
             title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}EXPORT_TO_CSV`, 'TEXT_EXPORT_TO_CSV'),
             disabled: false,
             command: commandName,
-            positionOrder: 53
+            positionOrder: 54
           }
         );
       }
@@ -353,7 +353,7 @@ export class GridMenuExtension implements Extension {
             title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}EXPORT_TO_EXCEL`, 'TEXT_EXPORT_TO_EXCEL'),
             disabled: false,
             command: commandName,
-            positionOrder: 54
+            positionOrder: 55
           }
         );
       }
@@ -369,7 +369,7 @@ export class GridMenuExtension implements Extension {
             title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}EXPORT_TO_TAB_DELIMITED`, 'TEXT_EXPORT_TO_TAB_DELIMITED'),
             disabled: false,
             command: commandName,
-            positionOrder: 55
+            positionOrder: 56
           }
         );
       }
@@ -394,14 +394,24 @@ export class GridMenuExtension implements Extension {
 
     if (args && args.command) {
       switch (args.command) {
-        case 'clear-frozen-columns':
+        case 'clear-pinning':
           const visibleColumns = [...this.sharedService.visibleColumns];
-          this.sharedService.slickGrid.setOptions({ frozenColumn: -1, enableMouseWheelScrollHandler: false });
+          const newGridOptions = { frozenColumn: -1, frozenRow: -1, frozenBottom: false, enableMouseWheelScrollHandler: false };
+          this.sharedService.slickGrid.setOptions(newGridOptions);
+          this.sharedService.gridOptions.frozenColumn = newGridOptions.frozenColumn;
+          this.sharedService.gridOptions.frozenRow = newGridOptions.frozenRow;
+          this.sharedService.gridOptions.frozenBottom = newGridOptions.frozenBottom;
+          this.sharedService.gridOptions.enableMouseWheelScrollHandler = newGridOptions.enableMouseWheelScrollHandler;
 
           // SlickGrid seems to be somehow resetting the columns to their original positions,
           // so let's re-fix them to the position we kept as reference
           if (Array.isArray(visibleColumns)) {
             this.sharedService.slickGrid.setColumns(visibleColumns);
+          }
+
+          // we also need to autosize columns if the option is enabled
+          if (this.sharedService.gridOptions.enableAutoSizeColumns) {
+            this.sharedService.slickGrid.autosizeColumns();
           }
           break;
         case 'clear-filter':

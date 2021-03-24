@@ -5,6 +5,7 @@ import {
   Column,
   CurrentColumn,
   CurrentFilter,
+  CurrentPinning,
   CurrentSorter,
   Editors,
   FieldType,
@@ -58,6 +59,7 @@ export interface ViewDefinition {
   columns?: CurrentColumn[];
   filters: CurrentFilter[];
   sorters?: CurrentSorter[];
+  pinning?: CurrentPinning;
 }
 
 export class Example11 {
@@ -326,7 +328,11 @@ export class Example11 {
         ],
         onCommand: (e, args) => this.executeCommand(e, args)
       },
+      headerMenu: {
+        hideFreezeColumnsCommand: false,
+      },
       gridMenu: {
+        hideClearFrozenColumnsCommand: false,
         customItems: [
           {
             command: 'modal',
@@ -356,6 +362,9 @@ export class Example11 {
         }
         if (presetSelection.sorters) {
           this.gridOptions.presets.sorters = presetSelection.sorters;
+        }
+        if (presetSelection.pinning) {
+          this.gridOptions.presets.pinning = presetSelection.pinning;
         }
       }
     }
@@ -618,7 +627,7 @@ export class Example11 {
 
     this.predefinedViews.forEach(viewSelect => viewSelect.isSelected = false); // reset selection
     const currentGridState = this.sgb.gridStateService.getCurrentGridState();
-    const { columns, filters, sorters } = currentGridState;
+    const { columns, filters, sorters, pinning } = currentGridState;
 
     const viewName = await prompt('Please provide a name for the new View.');
     if (viewName) {
@@ -632,6 +641,7 @@ export class Example11 {
         columns: deepCopy(columns),
         filters: deepCopy(filters),
         sorters: deepCopy(sorters),
+        pinning: deepCopy(pinning),
       };
 
       this.dropdownDeleteViewClass = 'dropdown-item';
@@ -671,7 +681,7 @@ export class Example11 {
       return;
     }
     const currentGridState = this.sgb.gridStateService.getCurrentGridState();
-    const { columns, filters, sorters } = currentGridState;
+    const { columns, filters, sorters, pinning } = currentGridState;
 
     if (this.currentSelectedViewPreset && filters) {
       const filterName = await prompt(`Update View name or click on OK to continue.`, this.currentSelectedViewPreset.label);
@@ -680,6 +690,7 @@ export class Example11 {
       this.currentSelectedViewPreset.columns = columns || [];
       this.currentSelectedViewPreset.filters = filters || [];
       this.currentSelectedViewPreset.sorters = sorters || [];
+      this.currentSelectedViewPreset.pinning = pinning || {};
       this.recreatePredefinedViews();
       localStorage.setItem('gridViewPreset', JSON.stringify(this.predefinedViews));
     }
@@ -696,10 +707,13 @@ export class Example11 {
       const columns = selectedView?.columns ?? [];
       const filters = selectedView?.filters ?? [];
       const sorters = selectedView?.sorters ?? [];
+      const pinning = selectedView?.pinning ?? { frozenBottom: false, frozenColumn: -1, frozenRow: -1 };
       this.sgb.filterService.updateFilters(filters as CurrentFilter[]);
       this.sgb.sortService.updateSorting(sorters as CurrentSorter[]);
+      this.sgb.gridService.setPinning(pinning);
       this.sgb.gridStateService.changeColumnsArrangement(columns);
     } else {
+      this.sgb.gridService.clearPinning();
       this.sgb.filterService.clearFilters();
       this.sgb.sortService.clearSorting();
       this.sgb.gridStateService.changeColumnsArrangement([...this.columnDefinitions].map(col => ({ columnId: `${col.id}` })));
