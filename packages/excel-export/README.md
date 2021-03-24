@@ -28,7 +28,7 @@ In order to use the Service, you will need to register it in your grid options v
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 
 export class MyExample {
-  prepareGrid {
+  initializeGrid {
     this.gridOptions = {
       enableExcelExport: true,
       excelExportOptions: {
@@ -51,7 +51,7 @@ export class MyExample {
     this.excelExportService = new ExcelExportService();
   }
 
-  prepareGrid {
+  initializeGrid {
     this.gridOptions = {
       enableExcelExport: true,
       excelExportOptions: {

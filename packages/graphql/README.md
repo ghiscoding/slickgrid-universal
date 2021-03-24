@@ -28,7 +28,7 @@ Simply use pass the Service into the `backendServiceApi` Grid Option.
 import { GraphqlService, GraphqlServiceApi } from '@slickgrid-universal/graphql';
 
 export class MyExample {
-  prepareGrid {
+  initializeGrid {
     this.gridOptions = {
       backendServiceApi: {
         service: new GraphqlService(),
