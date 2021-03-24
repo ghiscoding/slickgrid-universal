@@ -1,3 +1,4 @@
+import { Observable } from '../services/rxjsFacade';
 import { BackendService } from './backendService.interface';
 
 export interface BackendServiceApi {
@@ -34,13 +35,13 @@ export interface BackendServiceApi {
   onError?: (e: any) => void;
 
   /** On init (or on page load), what action to perform? */
-  onInit?: (query: string) => Promise<any>;
+  onInit?: (query: string) => Promise<any> | Observable<any>;
 
   /** Before executing the query, what action to perform? For example, start a spinner */
   preProcess?: () => void;
 
-  /** On Processing, we get the query back from the service, and we need to provide a Promise. For example: this.http.get(myGraphqlUrl) */
-  process: (query: string) => Promise<any>;
+  /** On Processing, we get the query back from the service, and we need to provide a Promise/Observable. For example: this.http.get(myGraphqlUrl) */
+  process: (query: string) => Promise<any> | Observable<any>;
 
   /** After executing the query, what action to perform? For example, stop the spinner */
   postProcess?: (response: any) => void;

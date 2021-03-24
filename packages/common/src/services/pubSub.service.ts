@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Subscription } from '../interfaces/index';
+import { EventSubscription } from '../interfaces/index';
 
 export abstract class PubSubService {
   /**
@@ -18,7 +18,7 @@ export abstract class PubSubService {
     * @return possibly a Subscription
     */
   // eslint-disable-next-line @typescript-eslint/ban-types
-  subscribe<T = any>(_eventName: string | Function, _callback: (data: T) => void): Subscription | any {
+  subscribe<T = any>(_eventName: string | Function, _callback: (data: T) => void): EventSubscription | any {
     throw new Error('PubSubService "subscribe" method must be implemented');
   }
 
@@ -30,7 +30,7 @@ export abstract class PubSubService {
     * @return possibly a Subscription
     */
   // eslint-disable-next-line @typescript-eslint/ban-types
-  subscribeEvent?<T = any>(_eventName: string | Function, _callback: (event: CustomEventInit<T>) => void): Subscription | any {
+  subscribeEvent?<T = any>(_eventName: string | Function, _callback: (event: CustomEventInit<T>) => void): EventSubscription | any {
     throw new Error('PubSubService "subscribeEvent" method must be implemented');
   }
 
@@ -44,7 +44,7 @@ export abstract class PubSubService {
   }
 
   /** Unsubscribes all subscriptions that currently exists */
-  unsubscribeAll(_subscriptions?: Subscription[]): void {
+  unsubscribeAll(_subscriptions?: EventSubscription[]): void {
     throw new Error('PubSubService "unsubscribeAll" method must be implemented');
   }
 }

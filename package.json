@@ -52,8 +52,8 @@
   "devDependencies": {
     "@types/jest": "^26.0.21",
     "@types/node": "^14.14.35",
-    "@typescript-eslint/eslint-plugin": "^4.18.0",
-    "@typescript-eslint/parser": "^4.18.0",
+    "@typescript-eslint/eslint-plugin": "^4.19.0",
+    "@typescript-eslint/parser": "^4.19.0",
     "cypress": "^6.8.0",
     "eslint": "^7.22.0",
     "eslint-plugin-import": "^2.22.1",
@@ -70,6 +70,7 @@
     "mocha": "^8.3.2",
     "mochawesome": "^6.2.2",
     "npm-run-all": "^4.1.5",
+    "rxjs": "next",
     "ts-jest": "^26.5.4",
     "typescript": "^4.2.3"
   },

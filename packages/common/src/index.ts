@@ -1,6 +1,6 @@
 import 'multiple-select-modified';
 
-import * as BackendUtilities from './services/backend-utilities';
+import * as BackendUtilities from './services/backendUtility.service';
 import * as Observers from './services/observers';
 import * as ServiceUtilities from './services/utilities';
 import * as SortUtilities from './sortComparers/sortUtilities';

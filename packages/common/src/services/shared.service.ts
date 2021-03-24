@@ -59,11 +59,11 @@ export class SharedService {
     this._frozenVisibleColumnId = columnId;
   }
 
-  /** Setter to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward */
+  /** Setter to know if the columns were ever reordered or not since the grid was created. */
   get hasColumnsReordered(): boolean {
     return this._hasColumnsReordered;
   }
-  /** Getter to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward */
+  /** Getter to know if the columns were ever reordered or not since the grid was created. */
   set hasColumnsReordered(isColumnReordered: boolean) {
     this._hasColumnsReordered = isColumnReordered;
   }

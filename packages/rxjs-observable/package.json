@@ -1,0 +1,50 @@
+{
+  "name": "@slickgrid-universal/rxjs-observable",
+  "version": "0.11.2",
+  "description": "RxJS Observable Wrapper",
+  "main": "dist/commonjs/index.js",
+  "browser": "src/index.ts",
+  "module": "dist/esm/index.js",
+  "types": "dist/commonjs/index.d.ts",
+  "typings": "dist/commonjs/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "directories": {
+    "src": "src"
+  },
+  "scripts": {
+    "build": "cross-env tsc --build",
+    "postbuild": "npm-run-all bundle:commonjs",
+    "build:watch": "cross-env tsc --incremental --watch",
+    "dev": "run-s build sass:build sass:copy",
+    "dev:watch": "run-p build:watch",
+    "bundle": "run-p bundle:commonjs bundle:esm",
+    "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
+    "bundle:esm": "cross-env tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
+    "prebundle": "npm-run-all delete:dist",
+    "delete:dist": "cross-env rimraf --maxBusyTries=10 dist",
+    "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=empty-warning-component",
+    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=empty-warning-component"
+  },
+  "author": "Ghislain B.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.15.0",
+    "npm": ">=6.14.8"
+  },
+  "browserslist": [
+    "last 2 version",
+    "> 1%",
+    "not dead"
+  ],
+  "dependencies": {
+    "@slickgrid-universal/common": "^0.11.2",
+    "rxjs": "next"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^3.0.2"
+  }
+}

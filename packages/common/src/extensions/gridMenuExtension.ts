@@ -19,7 +19,7 @@ import { FilterService } from '../services/filter.service';
 import { SortService } from '../services/sort.service';
 import { SharedService } from '../services/shared.service';
 import { TranslaterService } from '../services/translater.service';
-import { refreshBackendDataset } from '../services/backend-utilities';
+import { BackendUtilityService } from '../services/backendUtility.service';
 import { getTranslationPrefix } from '../services/utilities';
 
 // using external js libraries
@@ -37,6 +37,7 @@ export class GridMenuExtension implements Extension {
     private readonly filterService: FilterService,
     private readonly sharedService: SharedService,
     private readonly sortService: SortService,
+    private readonly backendUtilities?: BackendUtilityService,
     private readonly translaterService?: TranslaterService,
   ) {
     this._eventHandler = new Slick.EventHandler();
@@ -176,7 +177,7 @@ export class GridMenuExtension implements Extension {
     if (gridOptions) {
       this.sharedService.gridOptions = { ...this.sharedService.gridOptions, ...gridOptions };
     }
-    refreshBackendDataset(this.sharedService.gridOptions);
+    this.backendUtilities?.refreshBackendDataset(this.sharedService.gridOptions);
   }
 
   showGridMenu(e: SlickEventData) {

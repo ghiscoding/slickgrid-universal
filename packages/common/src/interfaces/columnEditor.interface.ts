@@ -1,4 +1,5 @@
 import { FieldType } from '../enums/index';
+import { Observable } from '../services/rxjsFacade';
 import {
   CollectionCustomStructure,
   CollectionFilterBy,
@@ -26,7 +27,7 @@ export interface ColumnEditor {
   callbacks?: any;
 
   /** A collection of items/options that will be loaded asynchronously (commonly used with AutoComplete & Single/Multi-Select Editors) */
-  collectionAsync?: Promise<any>;
+  collectionAsync?: Promise<any> | Observable<any>;
 
   /**
    * A collection of items/options (commonly used with AutoComplete & Single/Multi-Select Editors)

@@ -1,4 +1,4 @@
-import { EventNamingStyle, PubSubService, Subscription, titleCase, toKebabCase } from '@slickgrid-universal/common';
+import { EventNamingStyle, EventSubscription, PubSubService, titleCase, toKebabCase } from '@slickgrid-universal/common';
 
 interface PubSubEvent {
   name: string;
@@ -50,7 +50,7 @@ export class EventPubSubService implements PubSubService {
     this._elementSource.removeEventListener(eventNameByConvention, listener);
   }
 
-  unsubscribeAll(subscriptions?: Subscription[]) {
+  unsubscribeAll(subscriptions?: EventSubscription[]) {
     if (Array.isArray(subscriptions)) {
       for (const subscription of subscriptions) {
         if (subscription?.dispose) {

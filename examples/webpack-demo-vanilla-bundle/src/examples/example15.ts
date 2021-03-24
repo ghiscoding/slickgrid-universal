@@ -1,11 +1,16 @@
-import { BindingEventService, Column, FieldType, Filters, GridOption, GridStateChange, Metrics, OperatorType, } from '@slickgrid-universal/common';
+import { BindingEventService, Column, Editors, FieldType, Filters, GridOption, GridStateChange, Metrics, OperatorType, } from '@slickgrid-universal/common';
 import { GridOdataService, OdataServiceApi, OdataOption } from '@slickgrid-universal/odata';
+import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Observable, of, Subject } from 'rxjs';
+
 import { ExampleGridOptions } from './example-grid-options';
+import '../salesforce-styles.scss';
+import './example15.scss';
 
 const defaultPageSize = 20;
 
-export class Example09 {
+export class Example15 {
   private _bindingEventService: BindingEventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
@@ -18,6 +23,8 @@ export class Example09 {
   processing = false;
   status = '';
   statusClass = 'is-success';
+  isOtherGenderAdded = false;
+  genderCollection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -25,7 +32,7 @@ export class Example09 {
 
   attached() {
     this.initializeGrid();
-    const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid9`);
+    const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid15`);
 
     this._bindingEventService.bind(gridContainerElm, 'ongridstatechanged', this.gridStateChanged.bind(this));
     // this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
@@ -52,9 +59,17 @@ export class Example09 {
       },
       {
         id: 'gender', name: 'Gender', field: 'gender', filterable: true,
+        editor: {
+          model: Editors.singleSelect,
+          // collection: this.genderCollection,
+          collectionAsync: of(this.genderCollection)
+        },
         filter: {
           model: Filters.singleSelect,
-          collection: [{ value: '', label: '' }, { value: 'male', label: 'male' }, { value: 'female', label: 'female' }]
+          collectionAsync: of(this.genderCollection),
+          collectionOptions: {
+            addBlankEntry: true
+          }
         }
       },
       { id: 'company', name: 'Company', field: 'company' },
@@ -71,6 +86,11 @@ export class Example09 {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true
       },
+      editable: true,
+      autoEdit: true,
+      autoCommitEdit: true,
+      rowHeight: 33,
+      headerRowHeight: 35,
       enableCellNavigation: true,
       enableFiltering: true,
       enableCheckboxSelector: true,
@@ -105,8 +125,39 @@ export class Example09 {
           this.displaySpinner(false);
           this.getCustomerCallback(response);
         }
-      } as OdataServiceApi
+      } as OdataServiceApi,
+      registerExternalResources: [new RxJsResource()]
     };
+  }
+
+  addOtherGender() {
+    const newGender = { value: 'other', label: 'other' };
+    const genderColumn = this.columnDefinitions.find((column: Column) => column.id === 'gender');
+
+    if (genderColumn) {
+      let editorCollection = genderColumn.editor!.collection;
+      const filterCollectionAsync = genderColumn.filter!.collectionAsync as Subject<any>;
+
+      if (Array.isArray(editorCollection)) {
+        // refresh the Editor "collection", we have 2 ways of doing it
+
+        // 1. simply Push to the Editor "collection"
+        // editorCollection.push(newGender);
+
+        // 2. or replace the entire "collection"
+        genderColumn.editor.collection = [...this.genderCollection, newGender];
+        editorCollection = genderColumn.editor.collection;
+
+        // However, for the Filter only, we have to trigger an RxJS/Subject change with the new collection
+        // we do this because Filter(s) are shown at all time, while on Editor it's unnecessary since they are only shown when opening them
+        if (filterCollectionAsync?.next) {
+          filterCollectionAsync.next(editorCollection);
+        }
+      }
+    }
+
+    // don't add it more than once
+    this.isOtherGenderAdded = true;
   }
 
   displaySpinner(isProcessing) {
@@ -132,8 +183,8 @@ export class Example09 {
     this.odataQuery = data['query'];
   }
 
-  getCustomerApiCall(query) {
-    // in your case, you will call your WebAPI function (wich needs to return a Promise)
+  getCustomerApiCall(query): Observable<any> {
+    // in your case, you will call your WebAPI function (wich needs to return an Observable)
     // for the demo purpose, we will call a mock WebAPI function
     return this.getCustomerDataApiMock(query);
   }
@@ -142,9 +193,9 @@ export class Example09 {
    * This function is only here to mock a WebAPI call (since we are using a JSON file for the demo)
    *  in your case the getCustomer() should be a WebAPI function returning a Promise
    */
-  getCustomerDataApiMock(query): Promise<any> {
-    // the mock is returning a Promise, just like a WebAPI typically does
-    return new Promise((resolve) => {
+  getCustomerDataApiMock(query): Observable<any> {
+    // the mock is returning an Observable
+    return new Observable((observer) => {
       const queryParams = query.toLowerCase().split('&');
       let top: number;
       let skip = 0;
@@ -250,7 +301,8 @@ export class Example09 {
         }
         const backendResult = { items: updatedData, [countPropName]: countTotalItems, query };
         // console.log('Backend Result', backendResult);
-        resolve(backendResult);
+        observer.next(backendResult);
+        observer.complete();
       }, 150);
     });
   }
