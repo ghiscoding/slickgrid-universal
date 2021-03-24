@@ -9,7 +9,7 @@
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
-## RxJS Observable Wrapper
+## RxJS Observable Service Wrapper
 #### @slickgrid-universal/rxjs-observable
 
 An RxJS Observable Service Wrapper to make it possible to use RxJS with Slickgrid-Universal (with a Backend Service like OData/GraphQL). By default any Backend Service will be using Promises unless we use this RxJS Observable package.
@@ -33,19 +33,20 @@ import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
 export class MyExample {
   gridOptions: GridOption;
 
-  prepareGrid {
+  initializeGrid {
     this.gridOptions = {
-      // ...
-      registerExternalResources: [new RxJsResource()],
-
       // you will most probably use it with a Backend Service, for example with OData
       backendServiceApi: {
         service: new GridOdataService(),
         preProcess: () => this.displaySpinner(true),
+        postProcess: () => this.displaySpinner(false),
 
         // assuming your Http call is with an RxJS Observable
         process: (query) => this.getAllCustomers$(query), 
       } as OdataServiceApi,
+
+      // ...
+      registerExternalResources: [new RxJsResource()],
     };
   }
 }
