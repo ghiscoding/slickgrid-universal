@@ -367,8 +367,7 @@ export class SlickVanillaGridBundle {
     );
 
     this.gridStateService = services?.gridStateService ?? new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
-    this.gridService = services?.gridService ?? new GridService(this.extensionService, this.gridStateService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService);
-
+    this.gridService = services?.gridService ?? new GridService(this.gridStateService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService);
     this.groupingService = services?.groupingAndColspanService ?? new GroupingAndColspanService(this.extensionUtility, this.extensionService, this._eventPubSubService);
 
     if (hierarchicalDataset) {
@@ -520,6 +519,11 @@ export class SlickVanillaGridBundle {
     this.sharedService.allColumns = this._columnDefinitions;
     this.sharedService.visibleColumns = this._columnDefinitions;
     this.extensionService.createExtensionsBeforeGridCreation(this._columnDefinitions, this._gridOptions);
+
+    // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
+    if (this.gridOptions.presets?.pinning) {
+      this.gridOptions = { ...this.gridOptions, ...this.gridOptions.presets.pinning };
+    }
 
     this.slickGrid = new Slick.Grid(gridContainerElm, this.dataView, this._columnDefinitions, this._gridOptions);
     this.sharedService.dataView = this.dataView;
