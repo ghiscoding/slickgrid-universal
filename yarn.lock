@@ -10017,19 +10017,19 @@ run-queue@^1.0.0, run-queue@^1.0.3:
   dependencies:
     aproba "^1.1.1"
 
-rxjs@7.0.0-beta.13:
-  version "7.0.0-beta.13"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.0.0-beta.13.tgz#f8dd03f7aa414c9f7fde831431e54c4534ecfa39"
-  integrity sha512-//ll3EfI5SgTfrS5DUjc/uEmyazS0vUDMHqa/GbPR9ubdVLtbrv2bK3y75JyZPfYl1Bq2JbR/IbByhfzfpJyvw==
-  dependencies:
-    tslib "~2.1.0"
-
 rxjs@^6.3.3, rxjs@^6.4.0, rxjs@^6.6.6:
   version "6.6.6"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.6.6.tgz#14d8417aa5a07c5e633995b525e1e3c0dec03b70"
   integrity sha512-/oTwee4N4iWzAMAL9xdGKjkEHmIwupR3oXbQjCKywF1BeFohswF3vZdogbmEF6pZkOsXTzWkrZszrWpQTByYVg==
   dependencies:
     tslib "^1.9.0"
+
+rxjs@next:
+  version "7.0.0-beta.13"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.0.0-beta.13.tgz#f8dd03f7aa414c9f7fde831431e54c4534ecfa39"
+  integrity sha512-//ll3EfI5SgTfrS5DUjc/uEmyazS0vUDMHqa/GbPR9ubdVLtbrv2bK3y75JyZPfYl1Bq2JbR/IbByhfzfpJyvw==
+  dependencies:
+    tslib "~2.1.0"
 
 safe-buffer@5.1.2, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.2"
