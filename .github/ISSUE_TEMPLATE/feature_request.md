@@ -1,3 +1,12 @@
+---
+name: Feature request
+about: Suggest an idea for this project
+title: ''
+labels: ''
+assignees: ''
+
+---
+
 <!-- YOU MUST FILL IN THIS TEMPLATE OR ELSE IT WILL BE AUTO-CLOSE BY THE BOT -->
 
 <!---
