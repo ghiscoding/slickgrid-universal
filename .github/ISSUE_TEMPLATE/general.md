@@ -1,12 +1,3 @@
----
-name: General
-about: Anything other topics
-title: ''
-labels: ''
-assignees: ''
-
----
-
 <!-- YOU MUST FILL IN THIS TEMPLATE OR ELSE IT WILL BE AUTO-CLOSE BY THE BOT -->
 
 <!---

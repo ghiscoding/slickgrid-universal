@@ -1,12 +1,3 @@
----
-name: Feature request
-about: Suggest a new Feature or Enhancement
-title: ''
-labels: ''
-assignees: ''
-
----
-
 <!-- YOU MUST FILL IN THIS TEMPLATE OR ELSE IT WILL BE AUTO-CLOSE BY THE BOT -->
 
 <!---

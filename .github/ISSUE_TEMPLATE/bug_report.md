@@ -1,12 +1,3 @@
----
-name: Bug report
-about: Create a report to help us improve the library
-title: ''
-labels: ''
-assignees: ''
-
----
-
 <!-- YOU MUST FILL IN THIS TEMPLATE OR ELSE IT WILL BE AUTO-CLOSE BY THE BOT -->
 
 <!---
