@@ -1,4 +1,4 @@
-import { dequal } from 'dequal';
+import { dequal } from 'dequal/lite';
 
 import { Constants } from '../constants';
 import { FieldType } from './../enums/index';

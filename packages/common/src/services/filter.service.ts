@@ -1,4 +1,4 @@
-import { dequal } from 'dequal';
+import { dequal } from 'dequal/lite';
 
 import { FilterConditions, getParsedSearchTermsByFieldType } from './../filter-conditions/index';
 import { FilterFactory } from './../filters/filterFactory';
