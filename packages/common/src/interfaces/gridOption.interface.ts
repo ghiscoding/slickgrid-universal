@@ -22,6 +22,7 @@ import {
   GridState,
   HeaderButton,
   HeaderMenu,
+  ItemMetadata,
   Locale,
   Pagination,
   RowDetailView,
@@ -117,7 +118,7 @@ export interface GridOption {
   createFooterRow?: boolean;
 
   /** A callback function that will be used to define row spanning accross multiple columns */
-  colspanCallback?: (item: any) => { columns: any };
+  colspanCallback?: (item: any) => ItemMetadata;
 
   /** Default to false, which leads to create an extra pre-header panel (on top of column header) for column grouping purposes */
   createPreHeaderPanel?: boolean;
