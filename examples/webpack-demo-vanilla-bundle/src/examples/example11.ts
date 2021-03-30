@@ -133,13 +133,13 @@ export class Example11 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', name: 'Title', field: 'title', sortable: true,
+        id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 80,
         editor: { model: Editors.text, massUpdate: true, required: true, alwaysSaveOnEnterKey: true, validator: myCustomTitleValidator, },
         filterable: true,
         formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold] },
       },
       {
-        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
+        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, minWidth: 80,
         editor: { model: Editors.float, massUpdate: true, decimal: 2, valueStep: 1, maxValue: 10000, alwaysSaveOnEnterKey: true, },
         formatter: (_row, _cell, value) => {
           if (value === null || value === undefined) {
@@ -150,33 +150,33 @@ export class Example11 {
         type: FieldType.number,
       },
       {
-        id: 'cost', name: 'Cost', field: 'cost', width: 90,
+        id: 'cost', name: 'Cost', field: 'cost', minWidth: 80, width: 90,
         sortable: true, filterable: true, type: FieldType.number,
         filter: { model: Filters.compoundInputNumber },
         formatter: Formatters.dollar,
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
+        id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number, minWidth: 80,
         editor: { model: Editors.slider, massUpdate: true, minValue: 0, maxValue: 100, },
         sortable: true, filterable: true,
         filter: { model: Filters.slider, operator: '>=' },
       },
       {
-        id: 'start', name: 'Start', field: 'start', sortable: true,
+        id: 'start', name: 'Start', field: 'start', sortable: true, minWidth: 80,
         formatter: Formatters.dateIso,
         type: FieldType.date, outputType: FieldType.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },
         editor: { model: Editors.date, massUpdate: true },
       },
       {
-        id: 'finish', name: 'Finish', field: 'finish', sortable: true,
+        id: 'finish', name: 'Finish', field: 'finish', sortable: true, minWidth: 80,
         editor: { model: Editors.date, massUpdate: true, editorOptions: { minDate: 'today' }, },
         formatter: Formatters.dateIso,
         type: FieldType.date, outputType: FieldType.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },
       },
       {
-        id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 20, maxWidth: 100,
+        id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 80, maxWidth: 100,
         sortable: true, filterable: true,
         editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }], massUpdate: true },
         filter: {
@@ -256,7 +256,7 @@ export class Example11 {
         }
       },
       {
-        id: 'action', name: 'Action', field: 'action', width: 75, maxWidth: 75,
+        id: 'action', name: 'Action', field: 'action', minWidth: 70, width: 75, maxWidth: 75,
         excludeFromExport: true,
         formatter: () => `<span class="button-style padding-1px" style="display: inline-block; line-height: 18px;" title"Delete the Row"><span class="mdi mdi-close color-danger" title="Delete Current Row"></span></span>
         &nbsp;<span class="button-style padding-1px" style="display: inline-block; line-height: 18px;" title="Mark as Completed"><span class="mdi mdi-check-underline"></span></span>`,
@@ -720,6 +720,7 @@ export class Example11 {
     }
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.predefinedViews));
     this.currentSelectedViewPreset = selectedView;
+    this.sgb.slickGrid.scrollColumnIntoView(0);
   }
 
   mockProducts() {
