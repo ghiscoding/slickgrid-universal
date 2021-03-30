@@ -75,6 +75,11 @@ export class DualInputEditor implements Editor {
     return this.columnDef && this.columnDef.internalColumnEditor || {};
   }
 
+  /** Getter for the item data context object */
+  get dataContext(): any {
+    return this.args.item;
+  }
+
   /** Getter for the Editor DOM Element */
   get editorDomElement(): { leftInput: HTMLInputElement, rightInput: HTMLInputElement } {
     return { leftInput: this._leftInput, rightInput: this._rightInput };
@@ -278,7 +283,10 @@ export class DualInputEditor implements Editor {
       if (isComplexObject) {
         const newValueFromComplex = getDescendantProperty(state, fieldNameToUse);
         const newValue = (validation && validation.valid) ? newValueFromComplex : '';
-        setDeepValue(item, fieldName, newValue);
+        // when it's a complex object, user could override the object path (where the editable object is located)
+        // else we use the path provided in the Field Column Definition
+        const objectPath = this.columnEditor?.complexObjectPath ?? fieldName ?? '';
+        setDeepValue(item, objectPath, newValue);
       } else if (fieldName) {
         item[fieldName] = (validation && validation.valid) ? state[fieldName] : '';
       }
@@ -501,7 +509,7 @@ export class DualInputEditor implements Editor {
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
   protected applyInputUsabilityState() {
     const activeCell = this.grid.getActiveCell();
-    const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
+    const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid });
     this.disable(isCellEditable === false);
   }
 
@@ -510,13 +518,13 @@ export class DualInputEditor implements Editor {
     const column = this.args.column;
     const leftInputId = this.columnEditor.params?.leftInput?.field ?? '';
     const rightInputId = this.columnEditor.params?.rightInput?.field ?? '';
-    const item = this.args.item;
+    const item = this.dataContext;
     const grid = this.grid;
     const newValues = this.serializeValue();
 
     // when valid, we'll also apply the new value to the dataContext item object
     if (this.validate().valid) {
-      this.applyValue(this.args.item, newValues);
+      this.applyValue(this.dataContext, newValues);
     }
     this.applyValue(compositeEditorOptions.formValues, newValues);
 

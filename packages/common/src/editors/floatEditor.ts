@@ -50,6 +50,11 @@ export class FloatEditor implements Editor {
     return this.columnDef && this.columnDef.internalColumnEditor || {};
   }
 
+  /** Getter for the item data context object */
+  get dataContext(): any {
+    return this.args.item;
+  }
+
   /** Getter for the Editor DOM Element */
   get editorDomElement(): any {
     return this._input;
@@ -181,7 +186,7 @@ export class FloatEditor implements Editor {
     return this._input?.value || '';
   }
 
-  setValue(value: number | string, isApplyingValue = false) {
+  setValue(value: number | string, isApplyingValue = false, triggerOnCompositeEditorChange = true) {
     if (this._input) {
       this._input.value = `${value}`;
 
@@ -190,7 +195,7 @@ export class FloatEditor implements Editor {
 
         // if it's set by a Composite Editor, then also trigger a change for it
         const compositeEditorOptions = this.args.compositeEditorOptions;
-        if (compositeEditorOptions) {
+        if (compositeEditorOptions && triggerOnCompositeEditorChange) {
           this.handleChangeOnCompositeEditor(null, compositeEditorOptions, 'system');
         }
       }
@@ -207,7 +212,10 @@ export class FloatEditor implements Editor {
 
       // set the new value to the item datacontext
       if (isComplexObject) {
-        setDeepValue(item, fieldName, newValue);
+        // when it's a complex object, user could override the object path (where the editable object is located)
+        // else we use the path provided in the Field Column Definition
+        const objectPath = this.columnEditor?.complexObjectPath ?? fieldName ?? '';
+        setDeepValue(item, objectPath, newValue);
       } else {
         item[fieldName] = newValue;
       }
@@ -326,7 +334,7 @@ export class FloatEditor implements Editor {
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
   protected applyInputUsabilityState() {
     const activeCell = this.grid.getActiveCell();
-    const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
+    const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid });
     this.disable(isCellEditable === false);
   }
 
@@ -334,13 +342,13 @@ export class FloatEditor implements Editor {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
-    const item = this.args.item;
+    const item = this.dataContext;
     const grid = this.grid;
     const newValue = this.serializeValue();
 
     // when valid, we'll also apply the new value to the dataContext item object
     if (this.validate().valid) {
-      this.applyValue(this.args.item, newValue);
+      this.applyValue(this.dataContext, newValue);
     }
     this.applyValue(compositeEditorOptions.formValues, newValue);
 
