@@ -1,5 +1,5 @@
 import { GroupItemMetadataProviderOption } from './groupItemMetadataProviderOption.interface';
-import { ItemMetadata } from './itemMetaData.interface';
+import { ItemMetadata } from './itemMetadata.interface';
 import { SlickGrid } from './slickGrid.interface';
 
 /**

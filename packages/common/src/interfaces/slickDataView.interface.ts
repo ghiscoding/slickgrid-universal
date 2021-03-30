@@ -102,7 +102,7 @@ export interface SlickDataView {
   getItemCount(): number;
 
   /** Get item metadata at specific index */
-  getItemMetadata(index: number): ItemMetadata;
+  getItemMetadata(index: number): ItemMetadata | null;
 
   /** Get row count (rows in displayed current page) */
   getLength(): number;

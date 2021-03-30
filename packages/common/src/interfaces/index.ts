@@ -92,7 +92,7 @@ export * from './headerMenu.interface';
 export * from './headerMenuOption.interface';
 export * from './hideColumnOption.interface';
 export * from './htmlElementPosition.interface';
-export * from './itemMetaData.interface';
+export * from './itemMetadata.interface';
 export * from './jQueryUiSliderOption.interface';
 export * from './jQueryUiSliderResponse.interface';
 export * from './keyTitlePair.interface';
