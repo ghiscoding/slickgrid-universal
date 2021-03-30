@@ -543,7 +543,7 @@ describe('DateEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
       expect(disableSpy).toHaveBeenCalledWith(false);
     });
 
@@ -559,7 +559,7 @@ describe('DateEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
         formValues: { startDate: '' }, editors: {}, triggeredBy: 'user',
@@ -584,7 +584,7 @@ describe('DateEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
       expect(onCompositeEditorSpy).not.toHaveBeenCalled();
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.flatInstance._input.disabled).toEqual(true);
@@ -631,7 +631,7 @@ describe('DateEditor', () => {
       editorInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
         formValues: { startDate: '2001-01-02' }, editors: {}, triggeredBy: 'user',

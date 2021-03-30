@@ -790,7 +790,7 @@ describe('LongTextEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
       expect(disableSpy).toHaveBeenCalledWith(false);
     });
 
@@ -806,7 +806,7 @@ describe('LongTextEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
         formValues: { title: '' }, editors: {}, triggeredBy: 'user',
@@ -831,7 +831,7 @@ describe('LongTextEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
       expect(onCompositeEditorSpy).not.toHaveBeenCalled;
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorDomElement.attr('disabled')).toEqual('disabled');
@@ -878,7 +878,7 @@ describe('LongTextEditor', () => {
       jest.runTimersToTime(50);
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
         formValues: { title: 'task 2' }, editors: {}, triggeredBy: 'user',

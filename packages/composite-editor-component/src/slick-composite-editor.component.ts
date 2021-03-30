@@ -49,6 +49,7 @@ type ApplyChangesCallbackFn = (
 export class SlickCompositeEditorComponent implements ExternalResource {
   protected _bindEventService: BindingEventService;
   protected _columnDefinitions: Column[] = [];
+  protected _compositeOptions!: CompositeEditorOption;
   protected _eventHandler: SlickEventHandler;
   protected _itemDataContext: any;
   protected _modalElm!: HTMLDivElement;
@@ -487,8 +488,8 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
         this._editors = {};
         this._editorContainers = modalColumns.map(col => modalBodyElm.querySelector<HTMLDivElement>(`[data-editorid=${col.id}]`)) || [];
-        const compositeOptions: CompositeEditorOption = { destroy: this.disposeComponent.bind(this), modalType, validationMsgPrefix: '* ', formValues: {}, editors: this._editors };
-        const compositeEditor = new Slick.CompositeEditor(modalColumns, this._editorContainers, compositeOptions);
+        this._compositeOptions = { destroy: this.disposeComponent.bind(this), modalType, validationMsgPrefix: '* ', formValues: {}, editors: this._editors };
+        const compositeEditor = new Slick.CompositeEditor(modalColumns, this._editorContainers, this._compositeOptions);
         this.grid.editActiveCell(compositeEditor);
 
         // --
@@ -763,7 +764,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       const col = columns[colIndex];
       if (col.editor && (!isWithMassUpdate || (isWithMassUpdate && col.internalColumnEditor?.massUpdate))) {
         // we can check that the cell is really editable by checking the onBeforeEditCell event not returning false (returning undefined, null also mean it is editable)
-        const isCellEditable = this.grid.onBeforeEditCell.notify({ row: rowIndex, cell: colIndex, item: dataContext, column: col, grid: this.grid });
+        const isCellEditable = this.grid.onBeforeEditCell.notify({ row: rowIndex, cell: colIndex, item: dataContext, column: col, grid: this.grid, target: 'composite', compositeEditorOptions: this._compositeOptions });
         this.grid.setActiveCell(rowIndex, colIndex, false);
         if (isCellEditable !== false) {
           columnIndexWithEditor = colIndex;
