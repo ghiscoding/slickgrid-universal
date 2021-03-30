@@ -26,7 +26,7 @@ export interface ItemMetadata {
 
     [colIdOrIdx in string | number]: {
       /** Number of columns this cell will span. Can also contain "*" to indicate that the cell should span the rest of the row. */
-      colspan?: number | '*';
+      colspan?: number | string | '*';
 
       /** A custom cell editor. */
       editor?: Editor | null;
