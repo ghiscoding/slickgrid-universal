@@ -53,7 +53,6 @@ export interface ColumnEditor {
   /**
    * When providing a dot (.) notation in the "field" property of a column definition, we might want to use a different path for the editable object itself
    * For example if we provide a coldef = { field: 'user.name' } but we use a SingleSelect Editor with object values, we could override the path to simply 'user'
-   * NOTE: Currently only used in the Single/MultipleSelect Editors, we could potentially use it for more Editors in the future if need be.
    */
   complexObjectPath?: string;
 
