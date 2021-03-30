@@ -59,7 +59,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   private _workbook!: ExcelWorkbook;
 
   /** ExcelExportService class name which is use to find service instance in the external registered services */
-  className = 'ExcelExportService';
+  readonly className = 'ExcelExportService';
 
   constructor() { }
 

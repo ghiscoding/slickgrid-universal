@@ -28,7 +28,7 @@ Simply use pass the Service into the `backendServiceApi` Grid Option.
 import { GridOdataService, OdataServiceApi } from '@slickgrid-universal/odata';
 
 export class MyExample {
-  prepareGrid {
+  initializeGrid {
     this.gridOptions = {
       backendServiceApi: {
         service: new GridOdataService(),

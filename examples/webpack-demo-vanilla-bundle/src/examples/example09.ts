@@ -142,7 +142,7 @@ export class Example09 {
    * This function is only here to mock a WebAPI call (since we are using a JSON file for the demo)
    *  in your case the getCustomer() should be a WebAPI function returning a Promise
    */
-  getCustomerDataApiMock(query) {
+  getCustomerDataApiMock(query): Promise<any> {
     // the mock is returning a Promise, just like a WebAPI typically does
     return new Promise((resolve) => {
       const queryParams = query.toLowerCase().split('&');

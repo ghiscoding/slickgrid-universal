@@ -32,7 +32,7 @@ In order to use the Service, you will need to register it in your grid options v
 import { TextExportService } from '@slickgrid-universal/text-export';
 
 export class MyExample {
-  prepareGrid {
+  initializeGrid {
     this.gridOptions = {
       enableTextExport: true,
       exportOptions: {
@@ -55,7 +55,7 @@ export class MyExample {
     this.exportService = new TextExportService();
   }
 
-  prepareGrid {
+  initializeGrid {
     this.gridOptions = {
       enableTextExport: true,
       exportOptions: {

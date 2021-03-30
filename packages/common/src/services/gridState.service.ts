@@ -11,14 +11,14 @@ import {
   CurrentPagination,
   CurrentRowSelection,
   CurrentSorter,
-  SlickDataView,
+  EventSubscription,
+  GetSlickEventType,
   GridOption,
   GridState,
-  SlickGrid,
-  Subscription,
-  SlickNamespace,
-  GetSlickEventType,
+  SlickDataView,
   SlickEventHandler,
+  SlickGrid,
+  SlickNamespace,
 } from '../interfaces/index';
 import { ExtensionService } from './extension.service';
 import { FilterService } from './filter.service';
@@ -34,7 +34,7 @@ export class GridStateService {
   private _columns: Column[] = [];
   private _currentColumns: CurrentColumn[] = [];
   private _grid!: SlickGrid;
-  private _subscriptions: Subscription[] = [];
+  private _subscriptions: EventSubscription[] = [];
   private _selectedRowDataContextIds: Array<number | string> | undefined = []; // used with row selection
   private _selectedFilteredRowDataContextIds: Array<number | string> | undefined = []; // used with row selection
   private _wasRecheckedAfterPageChange = true; // used with row selection & pagination
@@ -131,10 +131,12 @@ export class GridStateService {
    * @return grid state
    */
   getCurrentGridState(args?: { requestRefreshRowFilteredRow?: boolean }): GridState {
+    const { frozenColumn, frozenRow, frozenBottom } = this.sharedService.gridOptions;
     const gridState: GridState = {
       columns: this.getCurrentColumns(),
       filters: this.getCurrentFilters(),
       sorters: this.getCurrentSorters(),
+      pinning: { frozenColumn, frozenRow, frozenBottom },
     };
 
     const currentPagination = this.getCurrentPagination();
@@ -394,6 +396,7 @@ export class GridStateService {
     // subscribe to Column Resize & Reordering
     this.bindSlickGridColumnChangeEventToGridStateChange('onColumnsReordered', grid);
     this.bindSlickGridColumnChangeEventToGridStateChange('onColumnsResized', grid);
+    this.bindSlickGridOnSetOptionsEventToGridStateChange(grid);
 
     // subscribe to Row Selection changes (when enabled)
     if (this._gridOptions.enableRowSelection || this._gridOptions.enableCheckboxSelector) {
@@ -418,7 +421,7 @@ export class GridStateService {
    * @param extension name
    * @param event name
    */
-  bindExtensionAddonEventToGridStateChange(extensionName: ExtensionName, eventName: string) {
+  private bindExtensionAddonEventToGridStateChange(extensionName: ExtensionName, eventName: string) {
     const extension = this.extensionService && this.extensionService.getExtensionByName && this.extensionService.getExtensionByName(extensionName);
     const slickEvent = extension && extension.instance && extension.instance[eventName];
 
@@ -433,10 +436,10 @@ export class GridStateService {
 
   /**
    * Bind a Grid Event (of Column changes) to a Grid State change event
-   * @param event name
-   * @param grid
+   * @param event - event name
+   * @param grid - SlickGrid object
    */
-  bindSlickGridColumnChangeEventToGridStateChange(eventName: string, grid: SlickGrid) {
+  private bindSlickGridColumnChangeEventToGridStateChange(eventName: string, grid: SlickGrid) {
     const slickGridEvent = (grid as any)?.[eventName];
 
     if (slickGridEvent && typeof slickGridEvent.subscribe === 'function') {
@@ -446,6 +449,24 @@ export class GridStateService {
         this.pubSubService.publish('onGridStateChanged', { change: { newValues: currentColumns, type: GridStateType.columns }, gridState: this.getCurrentGridState() });
       });
     }
+  }
+
+  /**
+   * Bind a Grid Event (of grid option changes) to a Grid State change event, if we detect that any of the pinning (frozen) options changes then we'll trigger a Grid State change
+   * @param grid - SlickGrid object
+   */
+  private bindSlickGridOnSetOptionsEventToGridStateChange(grid: SlickGrid) {
+    const onSetOptionsHandler = grid.onSetOptions;
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSetOptionsHandler>>).subscribe(onSetOptionsHandler, (_e, args) => {
+      const { frozenBottom: frozenBottomBefore, frozenColumn: frozenColumnBefore, frozenRow: frozenRowBefore } = args.optionsBefore;
+      const { frozenBottom: frozenBottomAfter, frozenColumn: frozenColumnAfter, frozenRow: frozenRowAfter } = args.optionsAfter;
+
+      if ((frozenBottomBefore !== frozenBottomAfter) || (frozenColumnBefore !== frozenColumnAfter) || (frozenRowBefore !== frozenRowAfter)) {
+        const newValues = { frozenBottom: frozenBottomAfter, frozenColumn: frozenColumnAfter, frozenRow: frozenRowAfter };
+        const currentGridState = this.getCurrentGridState();
+        this.pubSubService.publish('onGridStateChanged', { change: { newValues, type: GridStateType.pinning }, gridState: currentGridState });
+      }
+    });
   }
 
   /**

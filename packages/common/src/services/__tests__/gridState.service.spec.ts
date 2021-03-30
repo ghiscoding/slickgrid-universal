@@ -11,6 +11,7 @@ import {
   BackendService,
   GridOption,
   CurrentPagination,
+  CurrentPinning,
   CurrentRowSelection,
   CurrentSorter,
   CurrentFilter,
@@ -40,7 +41,10 @@ jest.mock('../pubSub.service', () => ({
 }));
 
 const gridOptionMock = {
-  enableAutoResize: true
+  enableAutoResize: true,
+  frozenBottom: false,
+  frozenColumn: -1,
+  frozenRow: -1,
 } as GridOption;
 
 const backendServiceStub = {
@@ -69,6 +73,7 @@ const gridStub = {
   setSelectedRows: jest.fn(),
   onColumnsReordered: new Slick.Event(),
   onColumnsResized: new Slick.Event(),
+  onSetOptions: new Slick.Event(),
   onSelectedRowsChanged: new Slick.Event(),
 } as unknown as SlickGrid;
 
@@ -243,7 +248,7 @@ describe('GridStateService', () => {
       });
     });
 
-    describe('bindSlickGridEventToGridStateChange tests', () => {
+    describe('bindSlickGridColumnChangeEventToGridStateChange tests', () => {
       it('should subscribe to some SlickGrid events and expect the event to be triggered when a notify is triggered after service was initialized', () => {
         const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
         const associatedColumnsMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
@@ -266,6 +271,23 @@ describe('GridStateService', () => {
         expect(gridColumnResizeSpy).toHaveBeenCalled();
         expect(gridStateSpy).toHaveBeenCalled();
         expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onGridStateChanged`, stateChangeMock);
+      });
+    });
+
+    describe('bindSlickGridOnSetOptionsEventToGridStateChange tests', () => {
+      it('should subscribe to some SlickGrid events and expect the event to be triggered when a notify is triggered after service was initialized', () => {
+        const mockGridOptionsBefore = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as GridOption;
+        const mockGridOptionsAfter = { frozenBottom: true, frozenColumn: 1, frozenRow: 1 } as GridOption;
+        const gridStateMock = { pinning: mockGridOptionsBefore, columns: [], filters: [], sorters: [] } as GridState;
+        const stateChangeMock = { change: { newValues: mockGridOptionsAfter, type: GridStateType.pinning }, gridState: gridStateMock } as GridStateChange;
+        const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
+        const gridStateSpy = jest.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
+
+        service.init(gridStub);
+        gridStub.onSetOptions.notify({ optionsBefore: mockGridOptionsBefore, optionsAfter: mockGridOptionsAfter, grid: gridStub }, new Slick.EventData());
+
+        expect(gridStateSpy).toHaveBeenCalled();
+        expect(pubSubSpy).toHaveBeenCalledWith(`onGridStateChanged`, stateChangeMock);
       });
     });
   });
@@ -360,11 +382,14 @@ describe('GridStateService', () => {
     });
 
     it('should call "getCurrentGridState" method and return Pagination', () => {
+      const gridOptionsMock = { enablePagination: true, frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as GridOption;
       const paginationMock = { pageNumber: 2, pageSize: 50 } as CurrentPagination;
       const columnMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
       const filterMock = [{ columnId: 'field1', operator: 'EQ', searchTerms: [] }] as CurrentFilter[];
       const sorterMock = [{ columnId: 'field1', direction: 'ASC' }, { columnId: 'field2', direction: 'DESC' }] as CurrentSorter[];
+      const pinningMock = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as CurrentPinning;
 
+      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       const columnSpy = jest.spyOn(service, 'getCurrentColumns').mockReturnValue(columnMock);
       const filterSpy = jest.spyOn(service, 'getCurrentFilters').mockReturnValue(filterMock);
       const sorterSpy = jest.spyOn(service, 'getCurrentSorters').mockReturnValue(sorterMock);
@@ -376,17 +401,20 @@ describe('GridStateService', () => {
       expect(filterSpy).toHaveBeenCalled();
       expect(sorterSpy).toHaveBeenCalled();
       expect(paginationSpy).toHaveBeenCalled();
-      expect(output).toEqual({ columns: columnMock, filters: filterMock, sorters: sorterMock, pagination: paginationMock } as GridState);
+      expect(output).toEqual({ columns: columnMock, filters: filterMock, sorters: sorterMock, pagination: paginationMock, pinning: pinningMock, } as GridState);
     });
   });
 
   describe('getCurrentRowSelections method', () => {
+    let pinningMock: CurrentPinning;
+
     beforeEach(() => {
       jest.clearAllMocks();
+      pinningMock = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as CurrentPinning;
     });
 
     it('should return null when "enableCheckboxSelector" flag is disabled', () => {
-      const gridOptionsMock = { enableCheckboxSelector: false, enableRowSelection: false } as GridOption;
+      const gridOptionsMock = { enableCheckboxSelector: false, enableRowSelection: false, ...pinningMock } as GridOption;
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
       const output = service.getCurrentRowSelections();
@@ -397,7 +425,7 @@ describe('GridStateService', () => {
     it('should call "getCurrentGridState" method and return the Row Selection when either "enableCheckboxSelector" or "enableRowSelection" flag is enabled', () => {
       const selectedGridRows = [2];
       const selectedRowIds = [99];
-      const gridOptionsMock = { enableCheckboxSelector: true } as GridOption;
+      const gridOptionsMock = { enableCheckboxSelector: true, ...pinningMock } as GridOption;
       jest.spyOn(gridStub, 'getSelectedRows').mockReturnValue(selectedGridRows);
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       const columnMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
@@ -416,7 +444,7 @@ describe('GridStateService', () => {
       expect(filterSpy).toHaveBeenCalled();
       expect(sorterSpy).toHaveBeenCalled();
       expect(selectionSpy).toHaveBeenCalled();
-      expect(output).toEqual({ columns: columnMock, filters: filterMock, sorters: sorterMock, rowSelection: selectionMock } as GridState);
+      expect(output).toEqual({ columns: columnMock, filters: filterMock, sorters: sorterMock, rowSelection: selectionMock, pinning: pinningMock, } as GridState);
     });
 
     it('should call the "mapIdsToRows" from the DataView and get the data IDs from the "selectedRowDataContextIds" array', () => {
@@ -437,13 +465,17 @@ describe('GridStateService', () => {
   });
 
   describe('Row Selection - bindSlickGridRowSelectionToGridStateChange method', () => {
+    let pinningMock: CurrentPinning;
+    let gridOptionsMock: GridOption;
+
     beforeEach(() => {
       jest.clearAllMocks();
     });
 
     describe('without Pagination', () => {
       beforeEach(() => {
-        const gridOptionsMock = { enablePagination: false, enableRowSelection: true } as GridOption;
+        pinningMock = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as CurrentPinning;
+        gridOptionsMock = { enablePagination: false, enableRowSelection: true, ...pinningMock } as GridOption;
         jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       });
 
@@ -475,6 +507,7 @@ describe('GridStateService', () => {
               columns: columnMock,
               filters: filterMock,
               sorters: sorterMock,
+              pinning: pinningMock,
               rowSelection: { gridRowIndexes: mockRowIndexes, dataContextIds: mockRowIds, filteredDataContextIds: mockRowIds },
             },
           });
@@ -484,11 +517,14 @@ describe('GridStateService', () => {
     });
 
     describe('with Pagination (bindSlickGridRowSelectionWithPaginationToGridStateChange)', () => {
+      let pinningMock: CurrentPinning;
       beforeEach(() => {
         jest.clearAllMocks();
         service.dispose();
-        const gridOptionsMock = { enablePagination: true, enableRowSelection: true } as GridOption;
+        pinningMock = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as CurrentPinning;
+        const gridOptionsMock = { enablePagination: true, enableRowSelection: true, ...pinningMock } as GridOption;
         jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       });
 
       it('should call the "onGridStateChanged" event with the row selection when Pagination is disabled and "onSelectedRowsChanged" is triggered', (done) => {
@@ -526,6 +562,7 @@ describe('GridStateService', () => {
               columns: columnMock,
               filters: filterMock,
               sorters: sorterMock,
+              pinning: pinningMock,
               pagination: paginationMock,
               rowSelection: { gridRowIndexes: mockRowIndexes, dataContextIds: mockRowIds, filteredDataContextIds: mockRowIds },
             },
@@ -602,6 +639,7 @@ describe('GridStateService', () => {
               filters: null,
               sorters: null,
               pagination: paginationMock,
+              pinning: pinningMock,
               rowSelection: { gridRowIndexes: shouldBeSelectedRowIndexes, dataContextIds: mockRowIds, filteredDataContextIds: mockRowIds },
             },
           });
@@ -700,6 +738,7 @@ describe('GridStateService', () => {
               filters: filterMock,
               sorters: sorterMock,
               pagination: paginationMock,
+              pinning: pinningMock,
               rowSelection: { gridRowIndexes: mockRowIndexes, dataContextIds: mockRowIds, filteredDataContextIds: mockRowIds },
             }
           });
@@ -711,6 +750,7 @@ describe('GridStateService', () => {
               filters: filterMock,
               sorters: sorterMock,
               pagination: paginationMock,
+              pinning: pinningMock,
               rowSelection: { gridRowIndexes: mockRowIndexes, dataContextIds: mockRowIds, filteredDataContextIds: mockFilterSearchTerms },
             },
           });
@@ -973,10 +1013,13 @@ describe('GridStateService', () => {
     let currentColumnsMock: CurrentColumn[];
     let filterMock: CurrentFilter[];
     let sorterMock: CurrentSorter[];
+    let pinningMock: CurrentPinning;
 
     beforeEach(() => {
-      const gridOptionsMock = { enablePagination: false, enableCheckboxSelector: false } as GridOption;
+      pinningMock = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as CurrentPinning;
+      const gridOptionsMock = { enablePagination: false, enableCheckboxSelector: false, ...pinningMock } as GridOption;
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
       columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
       filterMock = [{ columnId: 'field1', operator: 'EQ', searchTerms: [] }, { columnId: 'field2', operator: '>=', searchTerms: [2] }] as CurrentFilter[];
@@ -989,7 +1032,7 @@ describe('GridStateService', () => {
     });
 
     it('should trigger a "onGridStateChanged" event when "onFilterChanged" is triggered', () => {
-      const gridStateMock = { columns: currentColumnsMock, filters: filterMock, sorters: sorterMock } as GridState;
+      const gridStateMock = { columns: currentColumnsMock, filters: filterMock, sorters: sorterMock, pinning: pinningMock } as GridState;
       const stateChangeMock = { change: { newValues: filterMock, type: GridStateType.filter }, gridState: gridStateMock } as GridStateChange;
 
       const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
@@ -999,8 +1042,7 @@ describe('GridStateService', () => {
     });
 
     it('should trigger a "onGridStateChanged" event when "onFilterCleared" is triggered', () => {
-      const gridStateMock = { columns: currentColumnsMock, filters: filterMock, sorters: sorterMock } as GridState;
-
+      const gridStateMock = { columns: currentColumnsMock, filters: filterMock, sorters: sorterMock, pinning: pinningMock } as GridState;
       const stateChangeMock = { change: { newValues: [], type: GridStateType.filter }, gridState: gridStateMock } as GridStateChange;
 
       const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
@@ -1010,7 +1052,7 @@ describe('GridStateService', () => {
     });
 
     it('should trigger a "onGridStateChanged" event when "onSortChanged" is triggered', () => {
-      const gridStateMock = { columns: currentColumnsMock, filters: filterMock, sorters: sorterMock } as GridState;
+      const gridStateMock = { columns: currentColumnsMock, filters: filterMock, sorters: sorterMock, pinning: pinningMock } as GridState;
       const stateChangeMock = { change: { newValues: sorterMock, type: GridStateType.sorter }, gridState: gridStateMock } as GridStateChange;
 
       const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
@@ -1020,8 +1062,7 @@ describe('GridStateService', () => {
     });
 
     it('should trigger a "onGridStateChanged" event when "onSortCleared" is triggered', () => {
-      const gridStateMock = { columns: currentColumnsMock, filters: filterMock, sorters: sorterMock } as GridState;
-
+      const gridStateMock = { columns: currentColumnsMock, filters: filterMock, sorters: sorterMock, pinning: pinningMock } as GridState;
       const stateChangeMock = { change: { newValues: [], type: GridStateType.sorter }, gridState: gridStateMock } as GridStateChange;
 
       const pubSubSpy = jest.spyOn(mockPubSub, 'publish');

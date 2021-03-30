@@ -1,9 +1,10 @@
 import 'multiple-select-modified';
-
-import * as BackendUtilities from './services/backend-utilities';
+import * as BackendUtilities from './services/backendUtility.service';
 import * as Observers from './services/observers';
 import * as ServiceUtilities from './services/utilities';
 import * as SortUtilities from './sortComparers/sortUtilities';
+import * as assign_ from 'assign-deep';
+const deepAssign = (assign_ as any)['default'] || assign_;
 
 // Public classes.
 export * from './constants';
@@ -29,6 +30,6 @@ export * from './sortComparers/sortComparers.index';
 export * from './services/index';
 export { Enums } from './enums/enums.index';
 
-const Utilities = { ...BackendUtilities, ...Observers, ...ServiceUtilities, ...SortUtilities };
+const Utilities = { ...BackendUtilities, ...Observers, ...ServiceUtilities, ...SortUtilities, deepAssign };
 export { Utilities };
 export { SlickgridConfig } from './slickgrid-config';

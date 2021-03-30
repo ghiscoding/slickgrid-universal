@@ -26,8 +26,8 @@ export interface Locale {
   /** Text "Clear all Sorting" shown in Header Menu */
   TEXT_CLEAR_ALL_SORTING: string;
 
-  /** Text "Clear Frozen Columns" shown in Grid Menu */
-  TEXT_CLEAR_FROZEN_COLUMNS: string;
+  /** Text "Unfreeze Columns/Rows" shown in Grid Menu */
+  TEXT_CLEAR_PINNING: string;
 
   /** Text "Clone" displayed in the Composite Editor with a "clone" modal type. */
   TEXT_CLONE?: string;

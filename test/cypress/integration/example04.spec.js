@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 describe('Example 04 - Frozen Grid', () => {
-  // NOTE:  everywhere there's a * 2 is because we have a top+bottom (frozen rows) containers even after clear frozen columns
+  // NOTE:  everywhere there's a * 2 is because we have a top+bottom (frozen rows) containers even after Unfreeze Columns/Rows
 
   const fullTitles = ['', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
 
@@ -201,16 +201,16 @@ describe('Example 04 - Frozen Grid', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
-  it('should click on the Grid Menu command "Clear Frozen Columns" to switch to a regular grid without frozen columns and expect 7 columns on the left container', () => {
+  it('should click on the Grid Menu command "Unfreeze Columns/Rows" to switch to a regular grid without frozen columns/rows', () => {
     cy.get('.grid4')
       .find('button.slick-gridmenu-button')
       .click({ force: true });
 
-    cy.contains('Clear Frozen Columns')
+    cy.contains('Unfreeze Columns/Rows')
       .click({ force: true });
 
-    cy.get('[style="top:0px"]').should('have.length', 1 * 2);
-    cy.get('.grid-canvas-left > [style="top:0px"]').children().should('have.length', 9 * 2);
+    cy.get('[style="top:0px"]').should('have.length', 1);
+    cy.get('.grid-canvas-left > [style="top:0px"]').children().should('have.length', 9);
 
     cy.get('.grid-canvas-left > [style="top:0px"] > .slick-cell:nth(0)').should('contain', '');
     cy.get('.grid-canvas-left > [style="top:0px"] > .slick-cell:nth(1)').should('contain', 'Task 0');

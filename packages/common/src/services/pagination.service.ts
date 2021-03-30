@@ -3,6 +3,7 @@ import { dequal } from 'dequal';
 import {
   BackendServiceApi,
   CurrentPagination,
+  EventSubscription,
   GetSlickEventType,
   Pagination,
   ServicePagination,
@@ -10,11 +11,11 @@ import {
   SlickEventHandler,
   SlickGrid,
   SlickNamespace,
-  Subscription
 } from '../interfaces/index';
-import { executeBackendProcessesCallback, onBackendError } from './backend-utilities';
+import { BackendUtilityService } from './backendUtility.service';
 import { SharedService } from './shared.service';
 import { PubSubService } from './pubSub.service';
+import { Observable, RxJsFacade } from './rxjsFacade';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -32,13 +33,13 @@ export class PaginationService {
   private _totalItems = 0;
   private _availablePageSizes: number[] = [];
   private _paginationOptions!: Pagination;
-  private _subscriptions: Subscription[] = [];
+  private _subscriptions: EventSubscription[] = [];
 
   /** SlickGrid Grid object */
   grid!: SlickGrid;
 
   /** Constructor */
-  constructor(private pubSubService: PubSubService, private sharedService: SharedService) { }
+  constructor(private pubSubService: PubSubService, private sharedService: SharedService, private backendUtilities?: BackendUtilityService, private rxjs?: RxJsFacade) { }
 
   /** Getter of SlickGrid DataView object */
   get dataView(): SlickDataView | undefined {
@@ -85,6 +86,10 @@ export class PaginationService {
     if (this._initialized) {
       this.refreshPagination();
     }
+  }
+
+  addRxJsResource(rxjs: RxJsFacade) {
+    this.rxjs = rxjs;
   }
 
   init(grid: SlickGrid, paginationOptions: Pagination, backendServiceApi?: BackendServiceApi) {
@@ -326,11 +331,11 @@ export class PaginationService {
         const startTime = new Date();
 
         // run any pre-process, if defined, for example a spinner
-        if (this._backendServiceApi && this._backendServiceApi.preProcess) {
+        if (this._backendServiceApi?.preProcess) {
           this._backendServiceApi.preProcess();
         }
 
-        if (this._backendServiceApi && this._backendServiceApi.process) {
+        if (this._backendServiceApi?.process) {
           const query = this._backendServiceApi.service.processOnPaginationChanged(event, { newPage: pageNumber, pageSize: itemsPerPage });
 
           // the processes can be Promises
@@ -338,14 +343,27 @@ export class PaginationService {
           if (process instanceof Promise) {
             process
               .then((processResult: any) => {
-                executeBackendProcessesCallback(startTime, processResult, this._backendServiceApi, this._totalItems);
+                this.backendUtilities?.executeBackendProcessesCallback(startTime, processResult, this._backendServiceApi as BackendServiceApi, this._totalItems);
                 resolve(this.getFullPagination());
               })
               .catch((error) => {
-                onBackendError(error, this._backendServiceApi);
+                this.backendUtilities?.onBackendError(error, this._backendServiceApi as BackendServiceApi);
                 reject(process);
               });
+          } else if (this.rxjs?.isObservable(process)) {
+            this._subscriptions.push(
+              (process as Observable<any>).subscribe(
+                (processResult: any) => {
+                  resolve(this.backendUtilities?.executeBackendProcessesCallback(startTime, processResult, this._backendServiceApi as BackendServiceApi, this._totalItems));
+                },
+                (error: any) => {
+                  this.backendUtilities?.onBackendError(error, this._backendServiceApi as BackendServiceApi);
+                  reject(process);
+                }
+              )
+            );
           }
+
           this.pubSubService.publish(`onPaginationRefreshed`, this.getFullPagination());
           this.pubSubService.publish(`onPaginationChanged`, this.getFullPagination());
         }

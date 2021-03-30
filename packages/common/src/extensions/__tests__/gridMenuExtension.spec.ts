@@ -3,7 +3,7 @@ import { Column, SlickDataView, GridOption, SlickGrid, SlickNamespace, GridMenu,
 import { GridMenuExtension } from '../gridMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
-import { ExcelExportService, TextExportService, FilterService, SortService } from '../../services';
+import { ExcelExportService, TextExportService, FilterService, SortService, BackendUtilityService } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 declare const Slick: SlickNamespace;
@@ -76,6 +76,7 @@ describe('gridMenuExtension', () => {
 
   const columnsMock: Column[] = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
   let divElement: HTMLDivElement;
+  let backendUtilityService: BackendUtilityService;
   let extensionUtility: ExtensionUtility;
   let translateService: TranslateServiceStub;
   let extension: GridMenuExtension;
@@ -122,10 +123,11 @@ describe('gridMenuExtension', () => {
       div.innerHTML = template;
       document.body.appendChild(div);
 
+      backendUtilityService = new BackendUtilityService();
       sharedService = new SharedService();
       translateService = new TranslateServiceStub();
       extensionUtility = new ExtensionUtility(sharedService, translateService);
-      extension = new GridMenuExtension(extensionUtility, filterServiceStub, sharedService, sortServiceStub, translateService);
+      extension = new GridMenuExtension(extensionUtility, filterServiceStub, sharedService, sortServiceStub, backendUtilityService, translateService);
       translateService.use('fr');
     });
 
@@ -356,13 +358,13 @@ describe('gridMenuExtension', () => {
         expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([]);
       });
 
-      it('should expect menu related to "Clear Frozen Columns"', () => {
+      it('should expect menu related to "Unfreeze Columns/Rows"', () => {
         const copyGridOptionsMock = { ...gridOptionsMock, gridMenu: { hideClearFrozenColumnsCommand: false, } } as unknown as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         extension.register();
         extension.register(); // calling 2x register to make sure it doesn't duplicate commands
         expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-          { iconCssClass: 'fa fa-times', title: 'Libérer les colonnes gelées', disabled: false, command: 'clear-frozen-columns', positionOrder: 49 },
+          { iconCssClass: 'fa fa-times', title: 'Dégeler les colonnes/rangées', disabled: false, command: 'clear-pinning', positionOrder: 52 },
         ]);
       });
 
@@ -373,8 +375,8 @@ describe('gridMenuExtension', () => {
         extension.register(); // calling 2x register to make sure it doesn't duplicate commands
         expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
           { iconCssClass: 'fa fa-filter text-danger', title: 'Supprimer tous les filtres', disabled: false, command: 'clear-filter', positionOrder: 50 },
-          { iconCssClass: 'fa fa-random', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 52 },
-          { iconCssClass: 'fa fa-refresh', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 56 }
+          { iconCssClass: 'fa fa-random', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 53 },
+          { iconCssClass: 'fa fa-refresh', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 57 }
         ]);
       });
 
@@ -394,7 +396,7 @@ describe('gridMenuExtension', () => {
         extension.register();
         extension.register(); // calling 2x register to make sure it doesn't duplicate commands
         expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-          { iconCssClass: 'fa fa-random', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 52 },
+          { iconCssClass: 'fa fa-random', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 53 },
         ]);
       });
 
@@ -404,7 +406,7 @@ describe('gridMenuExtension', () => {
         extension.register();
         extension.register(); // calling 2x register to make sure it doesn't duplicate commands
         expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-          { iconCssClass: 'fa fa-refresh', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 56 }
+          { iconCssClass: 'fa fa-refresh', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 57 }
         ]);
       });
 
@@ -414,7 +416,7 @@ describe('gridMenuExtension', () => {
         extension.register();
         extension.register(); // calling 2x register to make sure it doesn't duplicate commands
         expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-          { iconCssClass: 'fa fa-random', title: 'Basculer la ligne de pré-en-tête', disabled: false, command: 'toggle-preheader', positionOrder: 52 }
+          { iconCssClass: 'fa fa-random', title: 'Basculer la ligne de pré-en-tête', disabled: false, command: 'toggle-preheader', positionOrder: 53 }
         ]);
       });
 
@@ -448,7 +450,7 @@ describe('gridMenuExtension', () => {
         extension.register();
         extension.register(); // calling 2x register to make sure it doesn't duplicate commands
         expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-          { iconCssClass: 'fa fa-download', title: 'Exporter en format CSV', disabled: false, command: 'export-csv', positionOrder: 53 }
+          { iconCssClass: 'fa fa-download', title: 'Exporter en format CSV', disabled: false, command: 'export-csv', positionOrder: 54 }
         ]);
       });
 
@@ -465,7 +467,7 @@ describe('gridMenuExtension', () => {
         extension.register();
         extension.register(); // calling 2x register to make sure it doesn't duplicate commands
         expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-          { iconCssClass: 'fa fa-file-excel-o text-success', title: 'Exporter vers Excel', disabled: false, command: 'export-excel', positionOrder: 54 }
+          { iconCssClass: 'fa fa-file-excel-o text-success', title: 'Exporter vers Excel', disabled: false, command: 'export-excel', positionOrder: 55 }
         ]);
       });
 
@@ -475,7 +477,7 @@ describe('gridMenuExtension', () => {
         extension.register();
         extension.register(); // calling 2x register to make sure it doesn't duplicate commands
         expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-          { iconCssClass: 'fa fa-download', title: 'Exporter en format texte (délimité par tabulation)', disabled: false, command: 'export-text-delimited', positionOrder: 55 }
+          { iconCssClass: 'fa fa-download', title: 'Exporter en format texte (délimité par tabulation)', disabled: false, command: 'export-text-delimited', positionOrder: 56 }
         ]);
       });
 
@@ -529,8 +531,8 @@ describe('gridMenuExtension', () => {
       it('should have user grid menu custom items', () => {
         extension.register();
         expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-          { command: 'export-csv', disabled: false, iconCssClass: 'fa fa-download', positionOrder: 53, title: 'Exporter en format CSV' },
-          // { command: 'export-excel', disabled: false, iconCssClass: 'fa fa-file-excel-o text-success', positionOrder: 53, title: 'Exporter vers Excel' },
+          { command: 'export-csv', disabled: false, iconCssClass: 'fa fa-download', positionOrder: 54, title: 'Exporter en format CSV' },
+          // { command: 'export-excel', disabled: false, iconCssClass: 'fa fa-file-excel-o text-success', positionOrder: 54, title: 'Exporter vers Excel' },
           { command: 'help', disabled: false, iconCssClass: 'fa fa-question-circle', positionOrder: 99, title: 'Aide', titleKey: 'HELP' },
         ]);
       });
@@ -539,8 +541,8 @@ describe('gridMenuExtension', () => {
         extension.register();
         extension.register();
         expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-          { command: 'export-csv', disabled: false, iconCssClass: 'fa fa-download', positionOrder: 53, title: 'Exporter en format CSV' },
-          // { command: 'export-excel', disabled: false, iconCssClass: 'fa fa-file-excel-o text-success', positionOrder: 53, title: 'Exporter vers Excel' },
+          { command: 'export-csv', disabled: false, iconCssClass: 'fa fa-download', positionOrder: 54, title: 'Exporter en format CSV' },
+          // { command: 'export-excel', disabled: false, iconCssClass: 'fa fa-file-excel-o text-success', positionOrder: 54, title: 'Exporter vers Excel' },
           { command: 'help', disabled: false, iconCssClass: 'fa fa-question-circle', positionOrder: 99, title: 'Aide', titleKey: 'HELP' },
         ]);
       });
@@ -588,7 +590,7 @@ describe('gridMenuExtension', () => {
         mockGridMenuAddon.onCommand = new Slick.Event();
       });
 
-      it('should call "clearFrozenColumns" when the command triggered is "clear-frozen-columns"', () => {
+      it('should call "clearFrozenColumns" when the command triggered is "clear-pinning"', () => {
         const setOptionsSpy = jest.spyOn(gridStub, 'setOptions');
         const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu as GridMenu, 'onCommand');
@@ -596,11 +598,11 @@ describe('gridMenuExtension', () => {
         jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
 
         const instance = extension.register() as SlickGridMenu;
-        instance.onCommand!.notify({ item: { command: 'clear-frozen-columns' }, column: {} as Column, grid: gridStub, command: 'clear-frozen-columns' }, new Slick.EventData(), gridStub);
+        instance.onCommand!.notify({ item: { command: 'clear-pinning' }, column: {} as Column, grid: gridStub, command: 'clear-pinning' }, new Slick.EventData(), gridStub);
 
         expect(onCommandSpy).toHaveBeenCalled();
         expect(setColumnsSpy).toHaveBeenCalled();
-        expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: -1, enableMouseWheelScrollHandler: false });
+        expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: -1, frozenRow: -1, frozenBottom: false, enableMouseWheelScrollHandler: false });
       });
 
       it('should call "clearFilters" and dataview refresh when the command triggered is "clear-filter"', () => {
@@ -809,7 +811,8 @@ describe('gridMenuExtension', () => {
   describe('without Translate Service', () => {
     beforeEach(() => {
       translateService = undefined as any;
-      extension = new GridMenuExtension({} as ExtensionUtility, filterServiceStub, { gridOptions: { enableTranslate: true } } as SharedService, {} as SortService, translateService);
+      backendUtilityService = new BackendUtilityService();
+      extension = new GridMenuExtension({} as ExtensionUtility, filterServiceStub, { gridOptions: { enableTranslate: true } } as SharedService, {} as SortService, backendUtilityService, translateService);
     });
 
     it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {
