@@ -215,7 +215,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       this._formValues = { ...this._formValues, [columnId]: newValue };
     }
 
-    this._formValues = assign(this._itemDataContext, this._formValues);
+    this._formValues = assign({}, this._itemDataContext, this._formValues);
   }
 
   /**
