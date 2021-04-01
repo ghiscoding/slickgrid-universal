@@ -272,6 +272,11 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       const gridUid = this.grid.getUID() || '';
       let headerTitle = options.headerTitle || '';
 
+      // execute callback before creating the modal window (that is in short the first event in the lifecycle)
+      if (typeof this._options.onBeforeOpen === 'function') {
+        this._options.onBeforeOpen();
+      }
+
       if (this.hasRowSelectionEnabled() && this._options.modalType === 'auto-mass' && this.grid.getSelectedRows) {
         const selectedRowsIndexes = this.grid.getSelectedRows() || [];
         if (selectedRowsIndexes.length > 0) {
@@ -551,7 +556,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
   /** Show a Validation Summary text (as a <div>) when a validation fails or simply hide it when there's no error */
   showValidationSummaryText(isShowing: boolean, errorMsg = '') {
-    if (isShowing) {
+    if (isShowing && errorMsg !== '') {
       this._modalBodyTopValidationElm.textContent = errorMsg;
       this._modalBodyTopValidationElm.style.display = 'block';
       this._modalBodyTopValidationElm.scrollIntoView?.();

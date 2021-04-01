@@ -83,6 +83,9 @@ export interface CompositeEditorOpenDetailOption {
    */
   viewColumnLayout?: 1 | 2 | 3 | 'auto';
 
+  /** onBeforeOpen callback allows the user to optionally execute something before opening the modal (for example cancel any batch edits, or change/reset some validations in column definitions) */
+  onBeforeOpen?: () => void;
+
   /**
    * onClose callback allows user to add a confirm dialog or any other code before closing the modal window, returning false will cancel the modal closing.
    * NOTE: this won't be called when there's no changes done in the form.
@@ -103,7 +106,7 @@ export interface CompositeEditorOpenDetailOption {
     /** current selection of row indexes & data context Ids */
     selection: CompositeEditorSelection,
 
-    /** optional item data context that is returned only when the modal type is clone/create/edit */
+    /** optional item data context that is returned, this is only provided when the modal type is (clone, create or edit) */
     dataContext?: any
   ) => Promise<boolean>;
 }
