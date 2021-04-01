@@ -10104,9 +10104,9 @@ rxjs@^6.3.3, rxjs@^6.4.0:
     tslib "^1.9.0"
 
 rxjs@next:
-  version "7.0.0-beta.13"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.0.0-beta.13.tgz#f8dd03f7aa414c9f7fde831431e54c4534ecfa39"
-  integrity sha512-//ll3EfI5SgTfrS5DUjc/uEmyazS0vUDMHqa/GbPR9ubdVLtbrv2bK3y75JyZPfYl1Bq2JbR/IbByhfzfpJyvw==
+  version "7.0.0-beta.15"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.0.0-beta.15.tgz#54a678000f8577aed473c5812ddc1b4db25bf46e"
+  integrity sha512-OchIxDPPHiSF7V93HaAym7ZXw5ZLQlHrkrlisQrPDkeKmkMNmQS0T8U6Zdf25RfDSVZejN25JHF5S3GmX4XNeQ==
   dependencies:
     tslib "~2.1.0"
 
