@@ -9,6 +9,7 @@ import 'slickgrid/plugins/slick.resizer';
 import {
   AutoCompleteEditor,
   BackendServiceApi,
+  BackendServiceOption,
   Column,
   ColumnEditor,
   DataViewOption,
@@ -17,23 +18,19 @@ import {
   EventNamingStyle,
   GlobalGridOptions,
   GridOption,
+  GridStateType,
   Metrics,
   MetricTexts,
+  Pagination,
+  SelectEditor,
+  ServicePagination,
   SlickDataView,
   SlickEventHandler,
   SlickGrid,
   SlickGroupItemMetadataProvider,
   SlickNamespace,
-  TreeDataOption,
-  executeBackendProcessesCallback,
-  GridStateType,
-  BackendServiceOption,
-  onBackendError,
-  refreshBackendDataset,
-  Pagination,
-  SelectEditor,
-  ServicePagination,
   Subscription,
+  TreeDataOption,
 
   // extensions
   AutoTooltipExtension,
@@ -52,6 +49,7 @@ import {
   RowSelectionExtension,
 
   // services
+  BackendUtilityService,
   CollectionService,
   ExtensionService,
   FilterFactory,
@@ -60,8 +58,10 @@ import {
   GridService,
   GridStateService,
   GroupingAndColspanService,
+  Observable,
   PaginationService,
   RowMoveManagerExtension,
+  RxJsFacade,
   SharedService,
   SortService,
   SlickgridConfig,
@@ -125,14 +125,17 @@ export class SlickVanillaGridBundle {
   extensionUtility!: ExtensionUtility;
 
   // services
+  backendUtilityService!: BackendUtilityService;
   collectionService!: CollectionService;
   extensionService!: ExtensionService;
+  filterFactory!: FilterFactory;
   filterService!: FilterService;
   gridEventService!: GridEventService;
   gridService!: GridService;
   gridStateService!: GridStateService;
   groupingService!: GroupingAndColspanService;
   paginationService!: PaginationService;
+  rxjs?: RxJsFacade;
   sharedService!: SharedService;
   sortService!: SortService;
   translaterService: TranslaterService | undefined;
@@ -266,6 +269,7 @@ export class SlickVanillaGridBundle {
     dataset?: any[],
     hierarchicalDataset?: any[],
     services?: {
+      backendUtilityService?: BackendUtilityService,
       collectionService?: CollectionService,
       eventPubSubService?: EventPubSubService,
       extensionService?: ExtensionService,
@@ -277,6 +281,7 @@ export class SlickVanillaGridBundle {
       groupingAndColspanService?: GroupingAndColspanService,
       paginationService?: PaginationService,
       resizerService?: ResizerService,
+      rxjs?: RxJsFacade,
       sharedService?: SharedService,
       sortService?: SortService,
       treeDataService?: TreeDataService,
@@ -313,17 +318,18 @@ export class SlickVanillaGridBundle {
     this._eventPubSubService = services?.eventPubSubService ?? new EventPubSubService(gridParentContainerElm);
     this._eventPubSubService.eventNamingStyle = this._gridOptions?.eventNamingStyle ?? EventNamingStyle.camelCase;
 
-    this.gridEventService = services?.gridEventService ?? new GridEventService();
     const slickgridConfig = new SlickgridConfig();
+    this.backendUtilityService = services?.backendUtilityService ?? new BackendUtilityService();
+    this.gridEventService = services?.gridEventService ?? new GridEventService();
     this.sharedService = services?.sharedService ?? new SharedService();
     this.collectionService = services?.collectionService ?? new CollectionService(this.translaterService);
     this.extensionUtility = services?.extensionUtility ?? new ExtensionUtility(this.sharedService, this.translaterService);
-    const filterFactory = new FilterFactory(slickgridConfig, this.translaterService, this.collectionService);
-    this.filterService = services?.filterService ?? new FilterService(filterFactory, this._eventPubSubService, this.sharedService);
+    this.filterFactory = new FilterFactory(slickgridConfig, this.translaterService, this.collectionService);
+    this.filterService = services?.filterService ?? new FilterService(this.filterFactory, this._eventPubSubService, this.sharedService, this.backendUtilityService);
     this.resizerService = services?.resizerService ?? new ResizerService(this._eventPubSubService);
-    this.sortService = services?.sortService ?? new SortService(this.sharedService, this._eventPubSubService);
+    this.sortService = services?.sortService ?? new SortService(this.sharedService, this._eventPubSubService, this.backendUtilityService);
     this.treeDataService = services?.treeDataService ?? new TreeDataService(this.sharedService);
-    this.paginationService = services?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService);
+    this.paginationService = services?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService, this.backendUtilityService);
 
     // extensions
     const autoTooltipExtension = new AutoTooltipExtension(this.sharedService);
@@ -333,7 +339,7 @@ export class SlickVanillaGridBundle {
     const columnPickerExtension = new ColumnPickerExtension(this.extensionUtility, this.sharedService);
     const checkboxExtension = new CheckboxSelectorExtension(this.sharedService);
     const draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this.sharedService);
-    const gridMenuExtension = new GridMenuExtension(this.extensionUtility, this.filterService, this.sharedService, this.sortService, this.translaterService);
+    const gridMenuExtension = new GridMenuExtension(this.extensionUtility, this.filterService, this.sharedService, this.sortService, this.backendUtilityService, this.translaterService);
     const groupItemMetaProviderExtension = new GroupItemMetaProviderExtension(this.sharedService);
     const headerButtonExtension = new HeaderButtonExtension(this.extensionUtility, this.sharedService);
     const headerMenuExtension = new HeaderMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.translaterService);
@@ -361,8 +367,7 @@ export class SlickVanillaGridBundle {
     );
 
     this.gridStateService = services?.gridStateService ?? new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
-    this.gridService = services?.gridService ?? new GridService(this.extensionService, this.gridStateService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService);
-
+    this.gridService = services?.gridService ?? new GridService(this.gridStateService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService);
     this.groupingService = services?.groupingAndColspanService ?? new GroupingAndColspanService(this.extensionUtility, this.extensionService, this._eventPubSubService);
 
     if (hierarchicalDataset) {
@@ -495,6 +500,10 @@ export class SlickVanillaGridBundle {
       this._eventPubSubService.publish('onDataviewCreated', this.dataView);
     }
 
+    // get any possible Services that user want to register which don't require SlickGrid to be instantiated
+    // RxJS Resource is in this lot because it has to be registered before anything else and doesn't require SlickGrid to be initialized
+    this.preRegisterResources();
+
     // for convenience to the user, we provide the property "editor" as an Slickgrid-Universal editor complex object
     // however "editor" is used internally by SlickGrid for it's own Editor Factory
     // so in our lib we will swap "editor" and copy it into a new property called "internalColumnEditor"
@@ -511,6 +520,11 @@ export class SlickVanillaGridBundle {
     this.sharedService.visibleColumns = this._columnDefinitions;
     this.extensionService.createExtensionsBeforeGridCreation(this._columnDefinitions, this._gridOptions);
 
+    // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
+    if (this.gridOptions.presets?.pinning) {
+      this.gridOptions = { ...this.gridOptions, ...this.gridOptions.presets.pinning };
+    }
+
     this.slickGrid = new Slick.Grid(gridContainerElm, this.dataView, this._columnDefinitions, this._gridOptions);
     this.sharedService.dataView = this.dataView;
     this.sharedService.slickGrid = this.slickGrid;
@@ -524,6 +538,9 @@ export class SlickVanillaGridBundle {
     if (frozenColumnIndex >= 0 && frozenColumnIndex <= this._columnDefinitions.length && this._columnDefinitions.length > 0) {
       this.sharedService.frozenVisibleColumnId = this._columnDefinitions[frozenColumnIndex]?.id ?? '';
     }
+
+    // get any possible Services that user want to register
+    this.registerResources();
 
     // initialize the SlickGrid grid
     this.slickGrid.init();
@@ -609,65 +626,10 @@ export class SlickVanillaGridBundle {
     this.gridEventService.bindOnCellChange(this.slickGrid);
     this.gridEventService.bindOnClick(this.slickGrid);
 
-    // get any possible Services that user want to register
-    this._registeredResources = this.gridOptions.registerExternalResources || [];
-
-    // when using Salesforce, we want the Export to CSV always enabled without registering it
-    if (this.gridOptions.enableTextExport && this.gridOptions.useSalesforceDefaultGridOptions) {
-      const textExportService = new TextExportService();
-      this._registeredResources.push(textExportService);
-    }
-
-    // at this point, we consider all the registered services as external services, anything else registered afterward aren't external
-    if (Array.isArray(this._registeredResources)) {
-      this.sharedService.externalRegisteredResources = this._registeredResources;
-    }
-
-    // push all other Services that we want to be registered
-    this._registeredResources.push(this.gridService, this.gridStateService);
-
-    // when using Grouping/DraggableGrouping/Colspan register its Service
-    if (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping) {
-      this._registeredResources.push(this.groupingService);
-    }
-
-    // when using Tree Data View, register its Service
-    if (this.gridOptions.enableTreeData) {
-      this._registeredResources.push(this.treeDataService);
-    }
-
-    // when user enables translation, we need to translate Headers on first pass & subsequently in the bindDifferentHooks
-    if (this.gridOptions.enableTranslate) {
-      this.extensionService.translateColumnHeaders();
-    }
-
-    // also initialize (render) the empty warning component
-    this.slickEmptyWarning = new SlickEmptyWarningComponent();
-    this._registeredResources.push(this.slickEmptyWarning);
-
-    // also initialize (render) the pagination component when using the salesforce default options
-    // however before adding a new instance, just make sure there isn't one that might have been loaded by calling "registerExternalResources"
-    if (this.gridOptions.enableCompositeEditor && this.gridOptions.useSalesforceDefaultGridOptions) {
-      if (!this._registeredResources.some((resource => resource instanceof SlickCompositeEditorComponent))) {
-        this.slickCompositeEditor = new SlickCompositeEditorComponent();
-        this._registeredResources.push(this.slickCompositeEditor);
-      }
-    }
-
     // bind the Backend Service API callback functions only after the grid is initialized
     // because the preProcess() and onInit() might get triggered
     if (this.gridOptions?.backendServiceApi) {
       this.bindBackendCallbackFunctions(this.gridOptions);
-    }
-
-    // bind & initialize all Components/Services that were tagged as enabled
-    // register all services by executing their init method and providing them with the Grid object
-    if (Array.isArray(this._registeredResources)) {
-      for (const resource of this._registeredResources) {
-        if (typeof resource.init === 'function') {
-          resource.init(this.slickGrid, this.universalContainerService);
-        }
-      }
     }
 
     // publish & dispatch certain events
@@ -862,10 +824,10 @@ export class SlickVanillaGridBundle {
       }
 
       // When data changes in the DataView, we need to refresh the metrics and/or display a warning if the dataset is empty
-      const onRowsOrCountChangedHandler = dataView.onRowsOrCountChanged;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowsOrCountChangedHandler>>).subscribe(onRowsOrCountChangedHandler, (_e, args) => {
+      const onRowCountChangedHandler = dataView.onRowCountChanged;
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowCountChangedHandler>>).subscribe(onRowCountChangedHandler, (_e, args) => {
         grid.invalidate();
-        this.handleOnItemCountChanged(args.currentRowCount || 0, this.dataView.getItemCount());
+        this.handleOnItemCountChanged(args.current || 0, this.dataView.getItemCount());
       });
       const onSetItemsCalledHandler = dataView.onSetItemsCalled;
       (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSetItemsCalledHandler>>).subscribe(onSetItemsCalledHandler, (_e, args) => {
@@ -878,7 +840,7 @@ export class SlickVanillaGridBundle {
         const onRowsChangedHandler = dataView.onRowsChanged;
         (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowsChangedHandler>>).subscribe(onRowsChangedHandler, (_e, args) => {
           if (args?.rows && Array.isArray(args.rows)) {
-            args.rows.forEach((row) => grid.updateRow(row));
+            args.rows.forEach((row: number) => grid.updateRow(row));
             grid.render();
           }
         });
@@ -941,6 +903,7 @@ export class SlickVanillaGridBundle {
 
         // wrap this inside a setTimeout to avoid timing issue since the gridOptions needs to be ready before running this onInit
         setTimeout(() => {
+          const backendUtilityService = this.backendUtilityService as BackendUtilityService;
           // keep start time & end timestamps & return it after process execution
           const startTime = new Date();
 
@@ -950,11 +913,18 @@ export class SlickVanillaGridBundle {
           }
 
           // the processes can be a Promise (like Http)
-          if (process instanceof Promise && process.then) {
-            const totalItems = this.gridOptions && this.gridOptions.pagination && this.gridOptions.pagination.totalItems || 0;
+          const totalItems = this.gridOptions?.pagination?.totalItems ?? 0;
+          if (process instanceof Promise) {
             process
-              .then((processResult: any) => executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems))
-              .catch((error) => onBackendError(error, backendApi));
+              .then((processResult: any) => backendUtilityService.executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems))
+              .catch((error) => backendUtilityService.onBackendError(error, backendApi));
+          } else if (process && this.rxjs?.isObservable(process)) {
+            this.subscriptions.push(
+              (process as Observable<any>).subscribe(
+                (processResult: any) => backendUtilityService.executeBackendProcessesCallback(startTime, processResult, backendApi, totalItems),
+                (error: any) => backendUtilityService.onBackendError(error, backendApi)
+              )
+            );
           }
         });
       }
@@ -983,7 +953,7 @@ export class SlickVanillaGridBundle {
   executeAfterDataviewCreated(gridOptions: GridOption) {
     // if user entered some Sort "presets", we need to reflect them all in the DOM
     if (gridOptions.enableSorting) {
-      if (gridOptions.presets && Array.isArray(gridOptions.presets.sorters) && gridOptions.presets.sorters.length > 0) {
+      if (gridOptions.presets && Array.isArray(gridOptions.presets.sorters)) {
         this.sortService.loadGridSorters(gridOptions.presets.sorters);
       }
     }
@@ -1174,7 +1144,7 @@ export class SlickVanillaGridBundle {
         this._eventPubSubService.subscribe('onPaginationVisibilityChanged', (visibility: { visible: boolean }) => {
           this.showPagination = visibility?.visible ?? false;
           if (this.gridOptions?.backendServiceApi) {
-            refreshBackendDataset();
+            this.backendUtilityService?.refreshBackendDataset(this.gridOptions);
           }
         })
       );
@@ -1194,7 +1164,7 @@ export class SlickVanillaGridBundle {
     const collectionAsync = (column?.editor as ColumnEditor).collectionAsync;
     (column?.editor as ColumnEditor).disabled = true; // disable the Editor DOM element, we'll re-enable it after receiving the collection with "updateEditorCollection()"
 
-    if (collectionAsync) {
+    if (collectionAsync instanceof Promise) {
       // wait for the "collectionAsync", once resolved we will save it into the "collection"
       // the collectionAsync can be of 3 types HttpClient, HttpFetch or a Promise
       collectionAsync.then((response: any | any[]) => {
@@ -1212,6 +1182,13 @@ export class SlickVanillaGridBundle {
           this.updateEditorCollection(column, response['content']); // from http-client
         }
       });
+    } else if (this.rxjs?.isObservable(collectionAsync)) {
+      // wrap this inside a setTimeout to avoid timing issue since updateEditorCollection requires to call SlickGrid getColumns() method
+      setTimeout(() => {
+        this.subscriptions.push(
+          (collectionAsync as Observable<any>).subscribe((resolvedCollection) => this.updateEditorCollection(column, resolvedCollection))
+        );
+      });
     }
   }
 
@@ -1219,7 +1196,7 @@ export class SlickVanillaGridBundle {
   private loadPresetsWhenDatasetInitialized() {
     if (this.gridOptions && !this.customDataView) {
       // if user entered some Filter "presets", we need to reflect them all in the DOM
-      if (this.gridOptions.presets && Array.isArray(this.gridOptions.presets.filters) && this.gridOptions.presets.filters.length > 0) {
+      if (this.gridOptions.presets && Array.isArray(this.gridOptions.presets.filters)) {
         this.filterService.populateColumnFilterSearchTermPresets(this.gridOptions.presets.filters);
       }
 
@@ -1291,6 +1268,86 @@ export class SlickVanillaGridBundle {
         });
       }
     }
+  }
+
+  /** Pre-Register any Resource that don't require SlickGrid to be instantiated (for example RxJS Resource) */
+  private preRegisterResources() {
+    this._registeredResources = this.gridOptions.registerExternalResources || [];
+
+    // bind & initialize all Components/Services that were tagged as enabled
+    // register all services by executing their init method and providing them with the Grid object
+    if (Array.isArray(this._registeredResources)) {
+      for (const resource of this._registeredResources) {
+        if (resource?.className === 'RxJsResource') {
+          this.registerRxJsResource(resource as RxJsFacade);
+        }
+      }
+    }
+  }
+
+  private registerResources() {
+    // when using Salesforce, we want the Export to CSV always enabled without registering it
+    if (this.gridOptions.enableTextExport && this.gridOptions.useSalesforceDefaultGridOptions) {
+      const textExportService = new TextExportService();
+      this._registeredResources.push(textExportService);
+    }
+
+    // at this point, we consider all the registered services as external services, anything else registered afterward aren't external
+    if (Array.isArray(this._registeredResources)) {
+      this.sharedService.externalRegisteredResources = this._registeredResources;
+    }
+
+    // push all other Services that we want to be registered
+    this._registeredResources.push(this.gridService, this.gridStateService);
+
+    // when using Grouping/DraggableGrouping/Colspan register its Service
+    if (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping) {
+      this._registeredResources.push(this.groupingService);
+    }
+
+    // when using Tree Data View, register its Service
+    if (this.gridOptions.enableTreeData) {
+      this._registeredResources.push(this.treeDataService);
+    }
+
+    // when user enables translation, we need to translate Headers on first pass & subsequently in the bindDifferentHooks
+    if (this.gridOptions.enableTranslate) {
+      this.extensionService.translateColumnHeaders();
+    }
+
+    // also initialize (render) the empty warning component
+    this.slickEmptyWarning = new SlickEmptyWarningComponent();
+    this._registeredResources.push(this.slickEmptyWarning);
+
+    // also initialize (render) the pagination component when using the salesforce default options
+    // however before adding a new instance, just make sure there isn't one that might have been loaded by calling "registerExternalResources"
+    if (this.gridOptions.enableCompositeEditor && this.gridOptions.useSalesforceDefaultGridOptions) {
+      if (!this._registeredResources.some((resource => resource instanceof SlickCompositeEditorComponent))) {
+        this.slickCompositeEditor = new SlickCompositeEditorComponent();
+        this._registeredResources.push(this.slickCompositeEditor);
+      }
+    }
+
+    // bind & initialize all Components/Services that were tagged as enabled
+    // register all services by executing their init method and providing them with the Grid object
+    if (Array.isArray(this._registeredResources)) {
+      for (const resource of this._registeredResources) {
+        if (typeof resource.init === 'function') {
+          resource.init(this.slickGrid, this.universalContainerService);
+        }
+      }
+    }
+  }
+
+  /** Register the RxJS Resource in all necessary services which uses */
+  private registerRxJsResource(resource: RxJsFacade) {
+    this.rxjs = resource;
+    this.backendUtilityService.addRxJsResource(this.rxjs);
+    this.filterFactory.addRxJsResource(this.rxjs);
+    this.filterService.addRxJsResource(this.rxjs);
+    this.sortService.addRxJsResource(this.rxjs);
+    this.paginationService.addRxJsResource(this.rxjs);
+    this.universalContainerService.registerInstance('RxJsResource', this.rxjs);
   }
 
   /**

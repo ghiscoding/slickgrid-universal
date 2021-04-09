@@ -9,6 +9,7 @@ import {
   MultipleSelectOption,
 } from './index';
 import { SearchTerm } from '../enums/searchTerm.type';
+import { Observable, Subject } from '../services/rxjsFacade';
 
 export interface ColumnFilter {
   /** Do we want to bypass the Backend Query? Commonly used with an OData Backend Service, if we want to filter without calling the regular OData query. */
@@ -48,7 +49,7 @@ export interface ColumnFilter {
   model?: any;
 
   /** A collection of items/options that will be loaded asynchronously (commonly used with a Select/Multi-Select Filter) */
-  collectionAsync?: Promise<any>;
+  collectionAsync?: Promise<any> | Observable<any> | Subject<any>;
 
   /**
    * A collection of items/options (commonly used with a Select/Multi-Select Filter)

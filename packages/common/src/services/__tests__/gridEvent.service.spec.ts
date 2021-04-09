@@ -68,7 +68,7 @@ describe('GridEventService', () => {
       const spyOnChange = jest.spyOn(mockColumn, 'onBeforeEditCell');
 
       service.bindOnBeforeEditCell(gridStub);
-      gridStub.onBeforeEditCell.notify({ cell: 0, row: 0, grid: gridStub, column: {} as Column, item: {} }, new Slick.EventData(), gridStub);
+      gridStub.onBeforeEditCell.notify({ cell: 0, row: 0, grid: gridStub, column: {} as Column, item: {}, target: 'grid' }, new Slick.EventData(), gridStub);
 
       expect(spyGetCols).toHaveBeenCalled();
       expect(spyGetData).toHaveBeenCalled();

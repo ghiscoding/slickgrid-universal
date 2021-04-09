@@ -6,6 +6,9 @@ import { EditorValidationResult } from './editorValidationResult.interface';
  * https://github.com/6pac/SlickGrid/wiki/Writing-custom-cell-editors
  */
 export interface Editor {
+  /** item data context object */
+  dataContext?: any;
+
   /** is the Editor disabled when we first open it? This could happen when we use "collectionAsync" and we wait for the "collection" to be filled before enabling the Editor. */
   disabled?: boolean;
 
@@ -105,7 +108,7 @@ export interface Editor {
   renderDomElement?: (collection?: any[]) => any | void;
 
   /** Update the Editor DOM element value with a provided value, we can optionally apply the value to the item dataContext object */
-  setValue?: (value: any, isApplyingValue?: boolean) => void;
+  setValue?: (value: any, isApplyingValue?: boolean, triggerOnCompositeEditorChange?: boolean) => void;
 
   /**
    * Validate user input and return the result along with the validation message.

@@ -67,15 +67,15 @@ export class ResizerService {
     this._grid = grid;
     const fixedGridDimensions = (this.gridOptions?.gridHeight || this.gridOptions?.gridWidth) ? { height: this.gridOptions?.gridHeight, width: this.gridOptions?.gridWidth } : undefined;
     const autoResizeOptions = this.gridOptions?.autoResize ?? { bottomPadding: 0 };
-    if (autoResizeOptions && autoResizeOptions.bottomPadding !== undefined && this.gridOptions.showCustomFooter) {
+    if (autoResizeOptions?.bottomPadding !== undefined && this.gridOptions.showCustomFooter) {
       const footerHeight: string | number = this.gridOptions?.customFooterOptions?.footerHeight ?? DATAGRID_FOOTER_HEIGHT;
       autoResizeOptions.bottomPadding += parseInt(`${footerHeight}`, 10);
     }
-    if (autoResizeOptions && autoResizeOptions.bottomPadding !== undefined && this.gridOptions.enablePagination) {
+    if (autoResizeOptions?.bottomPadding !== undefined && this.gridOptions.enablePagination) {
       autoResizeOptions.bottomPadding += DATAGRID_PAGINATION_HEIGHT;
     }
     if (fixedGridDimensions?.width && gridParentContainerElm?.style) {
-      gridParentContainerElm.style.width = `${fixedGridDimensions.width}px`;
+      gridParentContainerElm.style.width = typeof fixedGridDimensions.width === 'string' ? fixedGridDimensions.width : `${fixedGridDimensions.width}px`;
     }
 
     this._addon = new Slick.Plugins.Resizer({ ...autoResizeOptions, gridContainer: gridParentContainerElm }, fixedGridDimensions);
@@ -105,7 +105,7 @@ export class ResizerService {
 
   /**
    * Return the last resize dimensions used by the service
-   * @return {object} last dimensions (height: number, width: number)
+   * @return {object} last dimensions (height, width)
    */
   getLastResizeDimensions(): GridSize {
     return this._addon?.getLastResizeDimensions();
@@ -126,7 +126,7 @@ export class ResizerService {
   /**
    * Resize the datagrid to fit the browser height & width.
    * @param {number} delay to wait before resizing, defaults to 0 (in milliseconds)
-   * @param {object} newSizes can optionally be passed (height: number, width: number)
+   * @param {object} newSizes can optionally be passed (height, width)
    * @param {object} event that triggered the resize, defaults to null
    * @return If the browser supports it, we can return a Promise that would resolve with the new dimensions
    */

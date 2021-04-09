@@ -1,5 +1,5 @@
 import { FieldType, OperatorType } from '../../enums/index';
-import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { BackendServiceApi, Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { Filters } from '../index';
 import { CompoundInputFilter } from '../compoundInputFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
@@ -29,7 +29,7 @@ describe('CompoundInputFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: CompoundInputFilter;
   let filterArguments: FilterArguments;
-  let spyGetHeaderRow;
+  let spyGetHeaderRow: jest.SpyInstance;
   let mockColumn: Column;
 
   beforeEach(() => {
@@ -85,7 +85,7 @@ describe('CompoundInputFilter', () => {
     const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
 
     filterInputElm.focus();
-    filterInputElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
+    filterInputElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.filter-duration.filled');
 
     expect(filterFilledElms.length).toBe(1);
@@ -109,23 +109,6 @@ describe('CompoundInputFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: ['abc'], shouldTriggerQuery: true });
   });
 
-  it('should call "setValues" and expect that value NOT to be in the callback when triggered by a keyup event that is NOT the ENTER key', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
-
-    filter.init(filterArguments);
-    filter.setValues(['abc']);
-    const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
-
-    filterInputElm.focus();
-    const event = new (window.window as any).Event('keyup', { bubbles: true, cancelable: true });
-    event.key = 'a';
-    filterInputElm.dispatchEvent(event);
-    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.filter-duration.filled');
-
-    expect(filterFilledElms.length).toBe(0);
-    expect(spyCallback).not.toHaveBeenCalled();
-  });
-
   it('should call "setValues" with "operator" set in the filter arguments and expect that value to be in the callback when triggered', () => {
     mockColumn.type = FieldType.number;
     const filterArgs = { ...filterArguments, operator: '>' } as FilterArguments;
@@ -136,7 +119,7 @@ describe('CompoundInputFilter', () => {
     const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
 
     filterInputElm.focus();
-    filterInputElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
+    filterInputElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
 
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '>', searchTerms: ['9'], shouldTriggerQuery: true });
   });
@@ -180,7 +163,7 @@ describe('CompoundInputFilter', () => {
     const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
 
     filterInputElm.focus();
-    filterInputElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
+    filterInputElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
 
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '>', searchTerms: ['987'], shouldTriggerQuery: true });
   });
@@ -197,7 +180,7 @@ describe('CompoundInputFilter', () => {
     const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
 
     filterInputElm.focus();
-    filterInputElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
+    filterInputElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
 
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '>', searchTerms: ['987'], shouldTriggerQuery: true });
   });
@@ -210,9 +193,47 @@ describe('CompoundInputFilter', () => {
 
     filterInputElm.focus();
     filterInputElm.value = 'a';
-    filterInputElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
+    filterInputElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
 
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: ['a'], shouldTriggerQuery: true });
+  });
+
+  it('should trigger the callback method with a delay when "filterTypingDebounce" is set in grid options and user types something in the input', (done) => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    gridOptionMock.filterTypingDebounce = 2;
+
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
+
+    filterInputElm.focus();
+    filterInputElm.value = 'a';
+    filterInputElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
+
+    setTimeout(() => {
+      expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: ['a'], shouldTriggerQuery: true });
+      done();
+    }, 2);
+  });
+
+  it('should trigger the callback method with a delay when BackendService is used with a "filterTypingDebounce" is set in grid options and user types something in the input', (done) => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    gridOptionMock.defaultBackendServiceFilterTypingDebounce = 2;
+    gridOptionMock.backendServiceApi = {
+      filterTypingDebounce: 2,
+      service: {}
+    } as unknown as BackendServiceApi;
+
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
+
+    filterInputElm.focus();
+    filterInputElm.value = 'a';
+    filterInputElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
+
+    setTimeout(() => {
+      expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: ['a'], shouldTriggerQuery: true });
+      done();
+    }, 2);
   });
 
   it('should create the input filter with a default search term when passed as a filter argument', () => {
@@ -262,9 +283,11 @@ describe('CompoundInputFilter', () => {
 
     expect(filterInputElm.value).toBe('xyz');
     expect(removeExtraSpaces(filterOperatorElm[0][0].textContent!)).toBe(' Contains');
-    expect(removeExtraSpaces(filterOperatorElm[0][1].textContent!)).toBe('= Equals');
-    expect(removeExtraSpaces(filterOperatorElm[0][2].textContent!)).toBe('a* Starts With');
-    expect(removeExtraSpaces(filterOperatorElm[0][3].textContent!)).toBe('*z Ends With');
+    expect(removeExtraSpaces(filterOperatorElm[0][1].textContent!)).toBe('<> Not contains');
+    expect(removeExtraSpaces(filterOperatorElm[0][2].textContent!)).toBe('= Equals');
+    expect(removeExtraSpaces(filterOperatorElm[0][3].textContent!)).toBe('!= Not equal to');
+    expect(removeExtraSpaces(filterOperatorElm[0][4].textContent!)).toBe('a* Starts With');
+    expect(removeExtraSpaces(filterOperatorElm[0][5].textContent!)).toBe('*z Ends With');
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {
@@ -330,9 +353,11 @@ describe('CompoundInputFilter', () => {
 
       expect(filterInputElm.value).toBe('xyz');
       expect(removeExtraSpaces(filterOperatorElm[0][0].textContent!)).toBe(' Contient');
-      expect(removeExtraSpaces(filterOperatorElm[0][1].textContent!)).toBe('= Égale');
-      expect(removeExtraSpaces(filterOperatorElm[0][2].textContent!)).toBe('a* Commence par');
-      expect(removeExtraSpaces(filterOperatorElm[0][3].textContent!)).toBe('*z Se termine par');
+      expect(removeExtraSpaces(filterOperatorElm[0][1].textContent!)).toBe('<> Ne contient pas');
+      expect(removeExtraSpaces(filterOperatorElm[0][2].textContent!)).toBe('= Égale');
+      expect(removeExtraSpaces(filterOperatorElm[0][3].textContent!)).toBe('!= Non égal à');
+      expect(removeExtraSpaces(filterOperatorElm[0][4].textContent!)).toBe('a* Commence par');
+      expect(removeExtraSpaces(filterOperatorElm[0][5].textContent!)).toBe('*z Se termine par');
     });
   });
 });

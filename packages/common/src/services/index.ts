@@ -1,4 +1,4 @@
-export * from './backend-utilities';
+export * from './backendUtility.service';
 export * from './bindingEvent.service';
 export * from './collection.service';
 export * from './container.service';
@@ -12,6 +12,7 @@ export * from './gridState.service';
 export * from './groupingAndColspan.service';
 export * from './pagination.service';
 export * from './pubSub.service';
+export * from './rxjsFacade';
 export * from './shared.service';
 export * from './sort.service';
 export * from './textExport.service';

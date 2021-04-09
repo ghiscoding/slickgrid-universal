@@ -26,8 +26,8 @@ export interface Locale {
   /** Text "Clear all Sorting" shown in Header Menu */
   TEXT_CLEAR_ALL_SORTING: string;
 
-  /** Text "Clear Frozen Columns" shown in Grid Menu */
-  TEXT_CLEAR_FROZEN_COLUMNS: string;
+  /** Text "Unfreeze Columns/Rows" shown in Grid Menu */
+  TEXT_CLEAR_PINNING: string;
 
   /** Text "Clone" displayed in the Composite Editor with a "clone" modal type. */
   TEXT_CLONE?: string;
@@ -124,6 +124,9 @@ export interface Locale {
 
   /** Text "Less than or equal to" shown in Compound Editors/Filters as an Operator */
   TEXT_LESS_THAN_OR_EQUAL_TO: string;
+
+  /** Text "Not contains" shown in Compound Editors/Filters as an Operator */
+  TEXT_NOT_CONTAINS: string;
 
   /** Text "Not equal to" shown in Compound Editors/Filters as an Operator */
   TEXT_NOT_EQUAL_TO: string;

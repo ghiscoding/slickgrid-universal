@@ -124,6 +124,11 @@ export class AutoCompleteEditor implements Editor {
     return customStructure;
   }
 
+  /** Getter for the item data context object */
+  get dataContext(): any {
+    return this.args.item;
+  }
+
   get editorOptions(): AutocompleteOption {
     return this.columnEditor?.editorOptions || {};
   }
@@ -225,7 +230,7 @@ export class AutoCompleteEditor implements Editor {
     return this._$input.val();
   }
 
-  setValue(inputValue: any, isApplyingValue = false) {
+  setValue(inputValue: any, isApplyingValue = false, triggerOnCompositeEditorChange = true) {
     let label = inputValue;
     // if user provided a custom structure, we will serialize the value returned from the object with custom structure
     if (inputValue && inputValue.hasOwnProperty(this.labelName)) {
@@ -242,7 +247,7 @@ export class AutoCompleteEditor implements Editor {
 
       // if it's set by a Composite Editor, then also trigger a change for it
       const compositeEditorOptions = this.args.compositeEditorOptions;
-      if (compositeEditorOptions) {
+      if (compositeEditorOptions && triggerOnCompositeEditorChange) {
         this.handleChangeOnCompositeEditor(null, compositeEditorOptions, 'system');
       }
     }
@@ -274,7 +279,10 @@ export class AutoCompleteEditor implements Editor {
 
       // set the new value to the item datacontext
       if (isComplexObject) {
-        setDeepValue(item, fieldName, newValue);
+        // when it's a complex object, user could override the object path (where the editable object is located)
+        // else we use the path provided in the Field Column Definition
+        const objectPath = this.columnEditor?.complexObjectPath ?? fieldName ?? '';
+        setDeepValue(item, objectPath, newValue);
       } else {
         item[fieldName] = newValue;
       }
@@ -417,7 +425,9 @@ export class AutoCompleteEditor implements Editor {
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
   protected applyInputUsabilityState() {
     const activeCell = this.grid.getActiveCell();
-    const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
+    const isCellEditable = this.grid.onBeforeEditCell.notify({
+      ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
+    });
     this.disable(isCellEditable === false);
   }
 
@@ -425,13 +435,13 @@ export class AutoCompleteEditor implements Editor {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
-    const item = this.args.item;
+    const item = this.dataContext;
     const grid = this.grid;
     const newValue = this.serializeValue();
 
     // when valid, we'll also apply the new value to the dataContext item object
     if (this.validate().valid) {
-      this.applyValue(this.args.item, newValue);
+      this.applyValue(this.dataContext, newValue);
     }
     this.applyValue(compositeEditorOptions.formValues, newValue);
 
@@ -447,7 +457,7 @@ export class AutoCompleteEditor implements Editor {
 
   // this function should be protected but for unit tests purposes we'll make it public until a better solution is found
   // a better solution would be to get the autocomplete DOM element to work with selection but I couldn't find how to do that in Jest
-  onSelect(event: Event, ui: { item: any; }) {
+  handleSelect(event: Event, ui: { item: any; }) {
     if (ui && ui.item) {
       const selectedItem = ui && ui.item;
       this._currentValue = selectedItem;
@@ -466,6 +476,14 @@ export class AutoCompleteEditor implements Editor {
       } else {
         this.save();
       }
+
+      // if user wants to hook to the "select", he can do via this "onSelect"
+      // it purposely has a similar signature as the "select" callback + some extra arguments (row, cell, column, dataContext)
+      if (this.editorOptions.onSelect) {
+        const activeCell = this.grid.getActiveCell();
+        this.editorOptions.onSelect(event, ui, activeCell.row, activeCell.cell, this.args.column, this.args.item);
+      }
+
       setTimeout(() => this._lastTriggeredByClearInput = false); // reset flag after a cycle
     }
     return false;
@@ -550,7 +568,7 @@ export class AutoCompleteEditor implements Editor {
 
     // user could also override the collection
     if (this.columnEditor?.collectionOverride) {
-      const overrideArgs: CollectionOverrideArgs = { column: this.columnDef, dataContext: this.args.item, grid: this.grid, originalCollections: this.collection };
+      const overrideArgs: CollectionOverrideArgs = { column: this.columnDef, dataContext: this.dataContext, grid: this.grid, originalCollections: this.collection };
       if (this.args.compositeEditorOptions) {
         const { formValues, modalType } = this.args.compositeEditorOptions;
         overrideArgs.compositeEditorOptions = { formValues, modalType };
@@ -575,7 +593,7 @@ export class AutoCompleteEditor implements Editor {
     // when user passes it's own autocomplete options
     // we still need to provide our own "select" callback implementation
     if (autoCompleteOptions?.source) {
-      autoCompleteOptions.select = (event: Event, ui: { item: any; }) => this.onSelect(event, ui);
+      autoCompleteOptions.select = (event: Event, ui: { item: any; }) => this.handleSelect(event, ui);
       this._autoCompleteOptions = { ...autoCompleteOptions };
 
       // when "renderItem" is defined, we need to add our custom style CSS class
@@ -595,7 +613,7 @@ export class AutoCompleteEditor implements Editor {
       const definedOptions: AutocompleteOption = {
         source: finalCollection,
         minLength: 0,
-        select: (event: Event, ui: { item: any; }) => this.onSelect(event, ui),
+        select: (event: Event, ui: { item: any; }) => this.handleSelect(event, ui),
       };
       this._autoCompleteOptions = { ...definedOptions, ...(this.columnEditor.editorOptions as AutocompleteOption) };
       this._$input.autocomplete(this._autoCompleteOptions);

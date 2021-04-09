@@ -57,7 +57,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   private _translaterService: TranslaterService | undefined;
 
   /** ExcelExportService class name which is use to find service instance in the external registered services */
-  className = 'TextExportService';
+  readonly className = 'TextExportService';
 
   constructor() { }
 

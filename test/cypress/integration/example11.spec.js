@@ -552,4 +552,183 @@ describe('Example 11 - Batch Editing', () => {
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(7)`).find('.checkmark-icon').should('have.length', 1);
   });
+
+  it('should be able to filter "Country of Origin" with a text range filter "b..e" and expect to see only Canada showing up', () => {
+    cy.get('input.search-filter.filter-countryOfOrigin').type('b..e');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('contain', 'Canada');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(9)`).should('contain', 'Canada');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(9)`).should('contain', 'Canada');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(9)`).should('contain', 'Canada');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(9)`).should('contain', 'Canada');
+  });
+
+  it('should be able to filter "Duration" with greater than symbol ">8"', () => {
+    cy.get('input.search-filter.filter-duration').type('>8');
+
+    cy.get('.grid11')
+      .find('.slick-cell:nth(2)')
+      .each(($cell, index) => {
+        if (index < 10) {
+          const [number, dayString] = $cell.text().split(' ');
+          expect(+number).to.be.greaterThan(8);
+        }
+      });
+  });
+
+  it('should be able to filter "Title" with Task finishing by 5', () => {
+    cy.get('input.search-filter.filter-title').type('*5');
+
+    cy.get('.grid11')
+      .find('.slick-cell:nth(1)')
+      .each(($cell, index) => {
+        if (index < 10) {
+          const [taskString, taskNumber] = $cell.text().split(' ');
+          expect(taskNumber).to.be.eq('5')
+        }
+      });
+  });
+
+  it('should be able to freeze "Duration" column', () => {
+    cy.get('.grid11')
+      .find('.slick-header-columns')
+      .find('.slick-header-column:nth(2)')
+      .trigger('mouseover')
+      .children('.slick-header-menubutton')
+      .click();
+
+    cy.get('.slick-header-menu')
+      .should('be.visible')
+      .children('.slick-header-menuitem:nth-child(1)')
+      .children('.slick-header-menucontent')
+      .should('contain', 'Freeze Column')
+      .click();
+  });
+
+  it('should have a frozen grid with 4 containers on page load with 3 columns on the left and 8 columns on the right', () => {
+    cy.get('[style="top:0px"]').should('have.length', 2);
+    cy.get('.grid-canvas-left > [style="top:0px"]').children().should('have.length', 3);
+    cy.get('.grid-canvas-right > [style="top:0px"]').children().should('have.length', 8);
+
+    cy.get('.grid-canvas-left > [style="top:0px"] > .slick-cell:nth(0)').should('contain', '');
+    cy.get('.grid-canvas-left > [style="top:0px"] > .slick-cell:nth(1)').contains(/^TASK [0-9]*$/);
+    cy.get('.grid-canvas-left > [style="top:0px"] > .slick-cell:nth(2)').contains(/^[0-9]*\sday[s]?$/);
+
+    cy.get('.grid-canvas-right > [style="top:0px"] > .slick-cell:nth(0)').contains(/\$[0-9\.]*/);
+  });
+
+  it('should create a new View with current pinning & filters', () => {
+    const filterName = "Custom View Test"
+    const winPromptStub = () => filterName;
+
+    cy.window().then(win => {
+      cy.stub(win, 'prompt').callsFake(winPromptStub).as('winPromptStubReturnNonNull')
+    });
+
+    cy.get('.action.dropdown')
+      .click();
+
+    cy.get('.action.dropdown .dropdown-item')
+      .contains('Create New View')
+      .click();
+
+    cy.get('@winPromptStubReturnNonNull').should('be.calledOnce')
+      .and('be.calledWith', 'Please provide a name for the new View.');
+
+    cy.should(() => {
+      const savedDefinedFilters = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+      expect(Object.keys(savedDefinedFilters)).to.have.lengthOf(3);
+    });
+
+    cy.get('.selected-view').should('have.value', 'CustomViewTest');
+  });
+
+  it('should change pre-defined view to "Tasks Finished in Previous Years" and expect different filters and no pinning', () => {
+    const expectedTitles = ['', 'Title', 'Duration', 'Cost', '% Complete', 'Start', 'Finish', 'Completed', 'Action'];
+    cy.get('.selected-view').select('previousYears');
+    cy.get('.selected-view').should('have.value', 'previousYears');
+
+    cy.get('.grid11')
+      .find('.slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
+
+    cy.get('.rangeInput_percentComplete')
+      .invoke('val')
+      .then(text => expect(text).to.eq('50'));
+
+    cy.get('.search-filter.filter-finish .operator .form-control')
+      .should('have.value', '<=');
+
+    cy.get('.search-filter.filter-finish .flatpickr-input')
+      .invoke('val')
+      .then(text => expect(text).to.eq(`${currentYear}-01-01`));
+
+    cy.get('[style="top:0px"]').should('have.length', 1);
+    cy.get('.grid-canvas-left > [style="top:0px"]').children().should('have.length', 9);
+  });
+
+  it('should change pre-defined view back to the Custom View Test', () => {
+    const expectedTitles = ['', 'Title', 'Duration', 'Cost', '% Complete', 'Start', 'Finish', 'Completed', 'Product', 'Country of Origin', 'Action'];
+    cy.get('.selected-view').select('CustomViewTest');
+    cy.get('.selected-view').should('have.value', 'CustomViewTest');
+
+    cy.get('.grid11')
+      .find('.slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
+  });
+
+  it('should have back the frozen columns from CustomViewTest on the right side of the "Duration" column', () => {
+    cy.get('[style="top:0px"]').should('have.length', 2);
+    cy.get('.grid-canvas-left > [style="top:0px"]').children().should('have.length', 3);
+    cy.get('.grid-canvas-right > [style="top:0px"]').children().should('have.length', 8);
+
+    cy.get('.grid-canvas-left > [style="top:0px"] > .slick-cell:nth(0)').should('contain', '');
+    cy.get('.grid-canvas-left > [style="top:0px"] > .slick-cell:nth(1)').contains(/^TASK [0-9]*$/);
+    cy.get('.grid-canvas-left > [style="top:0px"] > .slick-cell:nth(2)').contains(/^[0-9]*\sday[s]?$/);
+
+    cy.get('.grid-canvas-right > [style="top:0px"] > .slick-cell:nth(0)').contains(/\$[0-9\.]*/);
+  });
+
+  it('should have the same 3 filters defined in the CustomViewTest', () => {
+    cy.get('input.search-filter.filter-title').invoke('val').then(text => expect(text).to.eq('*5'));
+    cy.get('input.search-filter.filter-duration').invoke('val').then(text => expect(text).to.eq('>8'));
+
+    cy.get('.grid11')
+      .find('.slick-cell:nth(1)')
+      .each(($cell, index) => {
+        if (index < 10) {
+          const [taskString, taskNumber] = $cell.text().split(' ');
+          expect(taskNumber).to.be.eq('5')
+        }
+      });
+
+    cy.get('.grid11')
+      .find('.slick-cell:nth(2)')
+      .each(($cell, index) => {
+        if (index < 10) {
+          const [number, dayString] = $cell.text().split(' ');
+          expect(+number).to.be.greaterThan(8);
+        }
+      });
+
+    cy.get('input.search-filter.filter-countryOfOrigin').invoke('val').then(text => expect(text).to.eq('b..e'));
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('contain', 'Canada');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(9)`).should('contain', 'Canada');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(9)`).should('contain', 'Canada');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(9)`).should('contain', 'Canada');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(9)`).should('contain', 'Canada');
+  });
+
+  it('should clear pinning from Grid Menu & expect to no longer have any columns freezed', () => {
+    cy.get('.grid11')
+      .find('button.slick-gridmenu-button')
+      .click({ force: true });
+
+    cy.contains('Unfreeze Columns/Rows')
+      .click({ force: true });
+
+    cy.get('[style="top:0px"]').should('have.length', 1);
+    cy.get('.grid-canvas-left > [style="top:0px"]').children().should('have.length', 11);
+  });
 });

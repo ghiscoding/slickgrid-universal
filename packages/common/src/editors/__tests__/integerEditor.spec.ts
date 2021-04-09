@@ -587,7 +587,7 @@ describe('IntegerEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
       expect(disableSpy).toHaveBeenCalledWith(false);
     });
 
@@ -603,7 +603,7 @@ describe('IntegerEditor', () => {
       editor.show();
 
       expect(getCellSpy).toHaveBeenCalled();
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
         formValues: { price: '' }, editors: {}, triggeredBy: 'user',
@@ -675,7 +675,7 @@ describe('IntegerEditor', () => {
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(editor.isValueTouched()).toBe(true);
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
         formValues: { price: 35 }, editors: {}, triggeredBy: 'user',
@@ -700,7 +700,7 @@ describe('IntegerEditor', () => {
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(editor.isValueTouched()).toBe(true);
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub });
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
         formValues: { price: 35 }, editors: {}, triggeredBy: 'user',

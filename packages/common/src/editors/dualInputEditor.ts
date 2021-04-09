@@ -15,7 +15,7 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
-import { debounce, getDescendantProperty, setDeepValue } from '../services/utilities';
+import { getDescendantProperty, setDeepValue } from '../services/utilities';
 import { floatValidator, integerValidator, textValidator } from '../editorValidators';
 import { BindingEventService } from '../services/bindingEvent.service';
 
@@ -40,6 +40,7 @@ export class DualInputEditor implements Editor {
   protected _rightFieldName!: string;
   protected _originalLeftValue!: string | number;
   protected _originalRightValue!: string | number;
+  protected _timer?: NodeJS.Timeout;
 
   /** is the Editor disabled? */
   disabled = false;
@@ -72,6 +73,11 @@ export class DualInputEditor implements Editor {
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
     return this.columnDef && this.columnDef.internalColumnEditor || {};
+  }
+
+  /** Getter for the item data context object */
+  get dataContext(): any {
+    return this.args.item;
   }
 
   /** Getter for the Editor DOM Element */
@@ -277,7 +283,10 @@ export class DualInputEditor implements Editor {
       if (isComplexObject) {
         const newValueFromComplex = getDescendantProperty(state, fieldNameToUse);
         const newValue = (validation && validation.valid) ? newValueFromComplex : '';
-        setDeepValue(item, fieldName, newValue);
+        // when it's a complex object, user could override the object path (where the editable object is located)
+        // else we use the path provided in the Field Column Definition
+        const objectPath = this.columnEditor?.complexObjectPath ?? fieldName ?? '';
+        setDeepValue(item, objectPath, newValue);
       } else if (fieldName) {
         item[fieldName] = (validation && validation.valid) ? state[fieldName] : '';
       }
@@ -500,7 +509,9 @@ export class DualInputEditor implements Editor {
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
   protected applyInputUsabilityState() {
     const activeCell = this.grid.getActiveCell();
-    const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
+    const isCellEditable = this.grid.onBeforeEditCell.notify({
+      ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
+    });
     this.disable(isCellEditable === false);
   }
 
@@ -509,13 +520,13 @@ export class DualInputEditor implements Editor {
     const column = this.args.column;
     const leftInputId = this.columnEditor.params?.leftInput?.field ?? '';
     const rightInputId = this.columnEditor.params?.rightInput?.field ?? '';
-    const item = this.args.item;
+    const item = this.dataContext;
     const grid = this.grid;
     const newValues = this.serializeValue();
 
     // when valid, we'll also apply the new value to the dataContext item object
     if (this.validate().valid) {
-      this.applyValue(this.args.item, newValues);
+      this.applyValue(this.dataContext, newValues);
     }
     this.applyValue(compositeEditorOptions.formValues, newValues);
 
@@ -538,7 +549,8 @@ export class DualInputEditor implements Editor {
     const compositeEditorOptions = this.args?.compositeEditorOptions;
     if (compositeEditorOptions) {
       const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
-      debounce(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay)();
+      clearTimeout(this._timer as NodeJS.Timeout);
+      this._timer = setTimeout(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay);
     }
   }
 }

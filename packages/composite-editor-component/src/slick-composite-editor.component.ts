@@ -1,4 +1,6 @@
 import 'slickgrid/slick.compositeeditor.js';
+import * as assign_ from 'assign-deep';
+const assign = (assign_ as any)['default'] || assign_;
 
 import {
   BindingEventService,
@@ -11,6 +13,7 @@ import {
   ContainerService,
   CurrentRowSelection,
   deepCopy,
+  DOMEvent,
   Editor,
   EditorValidationResult,
   emptyObject,
@@ -25,12 +28,12 @@ import {
   OnCompositeEditorChangeEventArgs,
   PlainFunc,
   sanitizeTextByAvailableSanitizer,
+  setDeepValue,
+  SlickDataView,
   SlickEventHandler,
   SlickGrid,
   SlickNamespace,
-  SlickDataView,
   TranslaterService,
-  DOMEvent,
 } from '@slickgrid-universal/common';
 
 // using external non-typed js libraries
@@ -45,7 +48,10 @@ type ApplyChangesCallbackFn = (
 
 export class SlickCompositeEditorComponent implements ExternalResource {
   protected _bindEventService: BindingEventService;
+  protected _columnDefinitions: Column[] = [];
+  protected _compositeOptions!: CompositeEditorOption;
   protected _eventHandler: SlickEventHandler;
+  protected _itemDataContext: any;
   protected _modalElm!: HTMLDivElement;
   protected _originalDataContext: any;
   protected _options!: CompositeEditorOpenDetailOption;
@@ -141,11 +147,14 @@ export class SlickCompositeEditorComponent implements ExternalResource {
    * NOTE: user might get an error thrown when trying to apply a value on a Composite Editor that was not found in the form,
    * but in some cases the user might still want the value to be applied to the formValues so that it will be sent to the save in final item data context
    * and when that happens, you can just skip that error so it won't throw.
-   * @param {String} columnId - column id
+   * @param {String | Column} columnIdOrDef - column id or column definition
    * @param {*} newValue - the new value
-   * @param {Boolean} skipMissingEditorError - skipping the error when the Composite Editor was not found will allow to still apply the value into the formValues object
+   * @param {Boolean} skipMissingEditorError - defaults to False, skipping the error when the Composite Editor was not found will allow to still apply the value into the formValues object
+   * @param {Boolean} triggerOnCompositeEditorChange - defaults to True, will this change trigger a onCompositeEditorChange event?
    */
-  changeFormInputValue(columnId: string, newValue: any, skipMissingEditorError = false) {
+  changeFormInputValue(columnIdOrDef: string | Column, newValue: any, skipMissingEditorError = false, triggerOnCompositeEditorChange = true) {
+    const columnDef = this.getColumnByObjectOrId(columnIdOrDef);
+    const columnId = typeof columnIdOrDef === 'string' ? columnIdOrDef : columnDef?.id ?? '';
     const editor = this._editors?.[columnId];
     let outputValue = newValue;
 
@@ -154,7 +163,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     }
 
     if (editor && editor.setValue && Array.isArray(this._editorContainers)) {
-      editor.setValue(newValue, true);
+      editor.setValue(newValue, true, triggerOnCompositeEditorChange);
       const editorContainerElm = (this._editorContainers as HTMLElement[]).find(editorElm => editorElm!.dataset!.editorid === columnId);
       const excludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
 
@@ -171,8 +180,42 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       }
     }
 
-    // apply the value in the formValues object and we do it even when the editor is not found (so it also works when using skip error)
-    this._formValues = { ...this._formValues, [columnId]: outputValue };
+    // is the field a complex object, like "address.streetNumber"
+    // we'll set assign the value as a complex object following the `field` dot notation
+    const fieldName = columnDef?.field ?? '';
+    if (columnDef && fieldName?.includes('.')) {
+      // when it's a complex object, user could override the object path (where the editable object is located)
+      // else we use the path provided in the Field Column Definition
+      const objectPath = columnDef.internalColumnEditor?.complexObjectPath ?? fieldName ?? '';
+      setDeepValue(this._formValues ?? {}, objectPath, newValue);
+    } else {
+      this._formValues = { ...this._formValues, [columnId]: outputValue };
+    }
+  }
+
+  /**
+   * Dynamically update the `formValues` object directly without triggering the onCompositeEditorChange event.
+   * The fact that this doesn't trigger an event, might not always be good though, in these cases you are probably better with using the changeFormInputValue() method
+   * @param {String | Column} columnIdOrDef - column id or column definition
+   * @param {*} newValue - the new value
+   */
+  changeFormValue(columnIdOrDef: string | Column, newValue: any) {
+    const columnDef = this.getColumnByObjectOrId(columnIdOrDef);
+    const columnId = typeof columnIdOrDef === 'string' ? columnIdOrDef : columnDef?.id ?? '';
+
+    // is the field a complex object, like "address.streetNumber"
+    // we'll set assign the value as a complex object following the `field` dot notation
+    const fieldName = columnDef?.field ?? columnIdOrDef as string;
+    if (fieldName?.includes('.')) {
+      // when it's a complex object, user could override the object path (where the editable object is located)
+      // else we use the path provided in the Field Column Definition
+      const objectPath = columnDef?.internalColumnEditor?.complexObjectPath ?? fieldName ?? '';
+      setDeepValue(this._formValues, objectPath, newValue);
+    } else {
+      this._formValues = { ...this._formValues, [columnId]: newValue };
+    }
+
+    this._formValues = assign({}, this._itemDataContext, this._formValues);
   }
 
   /**
@@ -261,7 +304,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         const isWithMassChange = (modalType === 'mass-update' || modalType === 'mass-selection');
         const dataContext = !isWithMassChange ? this.grid.getDataItem(activeRow) : {};
         this._originalDataContext = deepCopy(dataContext);
-        const columnDefinitions = this.grid.getColumns();
+        this._columnDefinitions = this.grid.getColumns();
         const selectedRowsIndexes = this.hasRowSelectionEnabled() ? this.grid.getSelectedRows() : [];
         const fullDataset = this.dataView?.getItems() ?? [];
         const fullDatasetLength = (Array.isArray(fullDataset)) ? fullDataset.length : 0;
@@ -272,7 +315,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         // focus on a first cell with an Editor (unless current cell already has an Editor then do nothing)
         // also when it's a "Create" modal, we'll scroll to the end of the grid
         const rowIndex = modalType === 'create' ? this.dataViewLength : activeRow;
-        const hasFoundEditor = this.focusOnFirstColumnCellWithEditor(columnDefinitions, dataContext, activeColIndex, rowIndex, isWithMassChange);
+        const hasFoundEditor = this.focusOnFirstColumnCellWithEditor(this._columnDefinitions, dataContext, activeColIndex, rowIndex, isWithMassChange);
         if (!hasFoundEditor) {
           return null;
         }
@@ -290,9 +333,9 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         let modalColumns: Column[] = [];
         if (isWithMassChange) {
           // when using Mass Update, we only care about the columns that have the "massUpdate: true", we disregard anything else
-          modalColumns = columnDefinitions.filter(col => col.editor && col.internalColumnEditor?.massUpdate === true);
+          modalColumns = this._columnDefinitions.filter(col => col.editor && col.internalColumnEditor?.massUpdate === true);
         } else {
-          modalColumns = columnDefinitions.filter(col => col.editor);
+          modalColumns = this._columnDefinitions.filter(col => col.editor);
         }
 
         // open the editor modal and we can also provide a header title with optional parsing pulled from the dataContext, via template {{ }}
@@ -445,8 +488,8 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
         this._editors = {};
         this._editorContainers = modalColumns.map(col => modalBodyElm.querySelector<HTMLDivElement>(`[data-editorid=${col.id}]`)) || [];
-        const compositeOptions: CompositeEditorOption = { destroy: this.disposeComponent.bind(this), modalType, validationMsgPrefix: '* ', formValues: {}, editors: this._editors };
-        const compositeEditor = new Slick.CompositeEditor(modalColumns, this._editorContainers, compositeOptions);
+        this._compositeOptions = { destroy: this.disposeComponent.bind(this), modalType, validationMsgPrefix: '* ', formValues: {}, editors: this._editors };
+        const compositeEditor = new Slick.CompositeEditor(modalColumns, this._editorContainers, this._compositeOptions);
         this.grid.editActiveCell(compositeEditor);
 
         // --
@@ -721,7 +764,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       const col = columns[colIndex];
       if (col.editor && (!isWithMassUpdate || (isWithMassUpdate && col.internalColumnEditor?.massUpdate))) {
         // we can check that the cell is really editable by checking the onBeforeEditCell event not returning false (returning undefined, null also mean it is editable)
-        const isCellEditable = this.grid.onBeforeEditCell.notify({ row: rowIndex, cell: colIndex, item: dataContext, column: col, grid: this.grid });
+        const isCellEditable = this.grid.onBeforeEditCell.notify({ row: rowIndex, cell: colIndex, item: dataContext, column: col, grid: this.grid, target: 'composite', compositeEditorOptions: this._compositeOptions });
         this.grid.setActiveCell(rowIndex, colIndex, false);
         if (isCellEditable !== false) {
           columnIndexWithEditor = colIndex;
@@ -730,6 +773,21 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       }
     }
     return columnIndexWithEditor;
+  }
+
+  /**
+   * Get a column definition by providing a column id OR a column definition.
+   * If the input is a string, we'll assume it's a columnId and we'll simply search for the column in the column definitions list
+   */
+  protected getColumnByObjectOrId(columnIdOrDef: string | Column): Column | undefined {
+    let column: Column | undefined;
+
+    if (typeof columnIdOrDef === 'object') {
+      column = columnIdOrDef;
+    } else if (typeof columnIdOrDef === 'string') {
+      column = this._columnDefinitions.find(col => col.id === columnIdOrDef as string);
+    }
+    return column;
   }
 
   protected getActiveCellEditor(row: number, cell: number): Editor | null {
@@ -825,6 +883,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     this._formValues = { ...this._formValues, ...args.formValues };
     const editor = this._editors?.[columnId] as Editor;
     const isEditorValueTouched = editor?.isValueTouched?.() ?? editor?.isValueChanged?.() ?? false;
+    this._itemDataContext = editor?.dataContext ?? {}; // keep reference of the item data context
 
     // add extra css styling to the composite editor input(s) that got modified
     const editorElm = document.querySelector(`[data-editorid=${columnId}]`);

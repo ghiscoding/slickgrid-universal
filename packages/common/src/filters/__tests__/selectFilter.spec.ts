@@ -1,5 +1,6 @@
 // import 3rd party lib multiple-select for the tests
 import 'multiple-select-modified';
+import { of, Subject } from 'rxjs';
 
 import { FieldType, OperatorType } from '../../enums/index';
 import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
@@ -7,6 +8,7 @@ import { CollectionService } from '../../services/collection.service';
 import { Filters } from '..';
 import { SelectFilter } from '../selectFilter';
 import { HttpStub } from '../../../../../test/httpClientStub';
+import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 jest.useFakeTimers();
@@ -794,7 +796,7 @@ describe('SelectFilter', () => {
     try {
       await filter.init(filterArguments);
     } catch (e) {
-      expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Select Filter, the collection is not a valid array.`);
+      expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`);
       done();
     }
   });
@@ -803,8 +805,158 @@ describe('SelectFilter', () => {
     const promise = Promise.resolve({ hello: 'world' });
     mockColumn.filter!.collectionAsync = promise;
     filter.init(filterArguments).catch((e) => {
-      expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Select Filter, the collection is not a valid array.`);
+      expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`);
       done();
+    });
+  });
+
+  describe('SelectFilter using RxJS Observables', () => {
+    let divContainer: HTMLDivElement;
+    let filter: SelectFilter;
+    let filterArguments: FilterArguments;
+    let spyGetHeaderRow;
+    let mockColumn: Column;
+    let collectionService: CollectionService;
+    let rxjs: RxJsResourceStub;
+    let translateService: TranslateServiceStub;
+    const http = new HttpStub();
+
+    beforeEach(() => {
+      translateService = new TranslateServiceStub();
+      collectionService = new CollectionService(translateService);
+      rxjs = new RxJsResourceStub();
+
+      divContainer = document.createElement('div');
+      divContainer.innerHTML = template;
+      document.body.appendChild(divContainer);
+      spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+
+      mockColumn = {
+        id: 'gender', field: 'gender', filterable: true,
+        filter: {
+          model: Filters.multipleSelect,
+        }
+      };
+
+      filterArguments = {
+        grid: gridStub,
+        columnDef: mockColumn,
+        callback: jest.fn()
+      };
+
+      filter = new SelectFilter(translateService, collectionService, rxjs);
+    });
+
+    afterEach(() => {
+      filter.destroy();
+      jest.clearAllMocks();
+    });
+
+    it('should create the multi-select filter with a value/label pair collectionAsync that is inside an object when "collectionInsideObjectProperty" is defined with a dot notation', async () => {
+      mockColumn.filter = {
+        collectionAsync: of({ deep: { myCollection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }] } }),
+        collectionOptions: {
+          collectionInsideObjectProperty: 'deep.myCollection'
+        },
+        customStructure: {
+          value: 'value',
+          label: 'description',
+        },
+      };
+
+      await filter.init(filterArguments);
+
+      const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
+      const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
+      filterBtnElm.click();
+
+      expect(filterListElm.length).toBe(3);
+      expect(filterListElm[0].textContent).toBe('other');
+      expect(filterListElm[1].textContent).toBe('male');
+      expect(filterListElm[2].textContent).toBe('female');
+    });
+
+    it('should create the multi-select filter with a default search term when using "collectionAsync" as an Observable', async () => {
+      const spyCallback = jest.spyOn(filterArguments, 'callback');
+      const mockCollection = ['male', 'female'];
+      mockColumn.filter!.collection = undefined;
+      mockColumn.filter.collectionAsync = of(mockCollection);
+
+      filterArguments.searchTerms = ['female'];
+      await filter.init(filterArguments);
+
+      const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
+      const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+      const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
+      const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+      filterBtnElm.click();
+      filterOkElm.click();
+
+      expect(filterListElm.length).toBe(2);
+      expect(filterFilledElms.length).toBe(1);
+      expect(filterListElm[1].checked).toBe(true);
+      expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'IN', searchTerms: ['female'], shouldTriggerQuery: true });
+    });
+
+    it('should create the multi-select filter with a "collectionAsync" as an Observable and be able to call next on it', async () => {
+      const mockCollection = ['male', 'female'];
+      mockColumn.filter.collectionAsync = of(mockCollection);
+
+      filterArguments.searchTerms = ['female'];
+      await filter.init(filterArguments);
+
+      const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+      const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+      filterBtnElm.click();
+
+      expect(filterListElm.length).toBe(2);
+      expect(filterListElm[1].checked).toBe(true);
+
+      // after await (or timeout delay) we'll get the Subject Observable
+      mockCollection.push('other');
+      (mockColumn.filter.collectionAsync as Subject<any[]>).next(mockCollection);
+
+      const filterUpdatedListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+      expect(filterUpdatedListElm.length).toBe(3);
+    });
+
+    it('should create the multi-select filter with a "collectionAsync" as an Observable, which has its collection inside an object property, and be able to call next on it', async () => {
+      const mockCollection = { deep: { myCollection: ['male', 'female'] } };
+      mockColumn.filter = {
+        collectionAsync: of(mockCollection),
+        collectionOptions: {
+          collectionInsideObjectProperty: 'deep.myCollection'
+        },
+        customStructure: {
+          value: 'value',
+          label: 'description',
+        },
+      };
+
+      filterArguments.searchTerms = ['female'];
+      await filter.init(filterArguments);
+
+      const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+      const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+      filterBtnElm.click();
+
+      expect(filterListElm.length).toBe(2);
+      expect(filterListElm[1].checked).toBe(true);
+
+      // after await (or timeout delay) we'll get the Subject Observable
+      mockCollection.deep.myCollection.push('other');
+      (mockColumn.filter.collectionAsync as Subject<any[]>).next(mockCollection.deep.myCollection);
+
+      const filterUpdatedListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+      expect(filterUpdatedListElm.length).toBe(3);
+    });
+
+    it('should throw an error when "collectionAsync" Observable does not return a valid array', (done) => {
+      mockColumn.filter.collectionAsync = of({ hello: 'world' });
+      filter.init(filterArguments).catch((e) => {
+        expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`);
+        done();
+      });
     });
   });
 });

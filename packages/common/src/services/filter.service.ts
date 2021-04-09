@@ -1,4 +1,4 @@
-import { dequal } from 'dequal';
+import { dequal } from 'dequal/lite';
 
 import { FilterConditions, getParsedSearchTermsByFieldType } from './../filter-conditions/index';
 import { FilterFactory } from './../filters/filterFactory';
@@ -29,16 +29,14 @@ import {
   SlickGrid,
   SlickNamespace,
 } from './../interfaces/index';
-import { executeBackendCallback, refreshBackendDataset } from './backend-utilities';
-import { debounce, deepCopy, getDescendantProperty, mapOperatorByFieldType } from './utilities';
+import { BackendUtilityService } from './backendUtility.service';
+import { deepCopy, getDescendantProperty, mapOperatorByFieldType } from './utilities';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
+import { RxJsFacade, Subject } from './rxjsFacade';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
-
-// timer for keeping track of user typing waits
-const DEFAULT_BACKEND_FILTER_TYPING_DEBOUNCE = 500;
 
 interface OnSearchChangeEvent {
   clearFilterTriggered?: boolean;
@@ -61,10 +59,14 @@ export class FilterService {
   protected _grid!: SlickGrid;
   protected _onSearchChange: SlickEvent<OnSearchChangeEvent> | null;
   protected _tmpPreFilteredData?: number[];
+  protected httpCancelRequests$?: Subject<void>; // this will be used to cancel any pending http request
 
-  constructor(protected filterFactory: FilterFactory, protected pubSubService: PubSubService, protected sharedService: SharedService) {
+  constructor(protected filterFactory: FilterFactory, protected pubSubService: PubSubService, protected sharedService: SharedService, protected backendUtilities?: BackendUtilityService, protected rxjs?: RxJsFacade) {
     this._onSearchChange = new Slick.Event();
     this._eventHandler = new Slick.EventHandler();
+    if (this.rxjs) {
+      this.httpCancelRequests$ = this.rxjs.createSubject<void>();
+    }
   }
 
   /** Getter of the SlickGrid Event Handler */
@@ -97,6 +99,10 @@ export class FilterService {
     return (this._grid?.getData && this._grid.getData()) as SlickDataView;
   }
 
+  addRxJsResource(rxjs: RxJsFacade) {
+    this.rxjs = rxjs;
+  }
+
   /**
    * Initialize the Service
    * @param grid
@@ -113,6 +119,9 @@ export class FilterService {
     // unsubscribe all SlickGrid events
     if (this._eventHandler && this._eventHandler.unsubscribeAll) {
       this._eventHandler.unsubscribeAll();
+    }
+    if (this.httpCancelRequests$ && this.rxjs?.isObservable(this.httpCancelRequests$)) {
+      this.httpCancelRequests$.next(); // this cancels any pending http requests
     }
     this.disposeColumnFilters();
     this._onSearchChange = null;
@@ -258,6 +267,15 @@ export class FilterService {
     // also reset the columnFilters object and remove any filters from the object
     this.resetColumnFilters();
 
+    // also remove any search terms directly on each column definitions
+    if (Array.isArray(this._columnDefinitions)) {
+      this._columnDefinitions.forEach((columnDef: Column) => {
+        if (columnDef.filter?.searchTerms) {
+          delete columnDef.filter.searchTerms;
+        }
+      });
+    }
+
     // we also need to refresh the dataView and optionally the grid (it's optional since we use DataView)
     if (this._dataView && this._grid) {
       this._dataView.refresh();
@@ -265,13 +283,13 @@ export class FilterService {
     }
 
     // when using backend service, we need to query only once so it's better to do it here
-    const backendApi = this._gridOptions && this._gridOptions.backendServiceApi;
+    const backendApi = this._gridOptions?.backendServiceApi;
     if (backendApi && triggerChange) {
       const callbackArgs = { clearFilterTriggered: true, shouldTriggerQuery: triggerChange, grid: this._grid, columnFilters: this._columnFilters };
       const queryResponse = backendApi.service.processOnFilterChanged(undefined, callbackArgs as FilterChangedArgs);
       const query = queryResponse as string;
-      const totalItems = this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems || 0;
-      executeBackendCallback(backendApi, query, callbackArgs, new Date(), totalItems, this.emitFilterChanged.bind(this));
+      const totalItems = this._gridOptions?.pagination?.totalItems ?? 0;
+      this.backendUtilities?.executeBackendCallback(backendApi, query, callbackArgs, new Date(), totalItems, this.emitFilterChanged.bind(this));
     }
 
     // emit an event when filters are all cleared
@@ -629,30 +647,11 @@ export class FilterService {
       backendApi.preProcess();
     }
 
-    // only add a delay when user is typing, on select dropdown filter (or "Clear Filter") it will execute right away
-    let debounceTypingDelay = 0;
-    const isTriggeredByClearFilter = args && args.clearFilterTriggered; // was it trigger by a "Clear Filter" command?
-
-    const eventType = event && event.type;
-    const eventKeyCode = event && event.keyCode;
-    if (!isTriggeredByClearFilter && eventKeyCode !== KeyCode.ENTER && (eventType === 'input' || eventType === 'keyup' || eventType === 'keydown')) {
-      debounceTypingDelay = backendApi?.filterTypingDebounce ?? DEFAULT_BACKEND_FILTER_TYPING_DEBOUNCE;
-    }
-
     // query backend, except when it's called by a ClearFilters then we won't
     if (args?.shouldTriggerQuery) {
-      // call the service to get a query back
-      if (debounceTypingDelay > 0) {
-        debounce(() => {
-          const query = backendApi.service.processOnFilterChanged(event, args);
-          const totalItems = this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems || 0;
-          executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitFilterChanged.bind(this));
-        }, debounceTypingDelay)();
-      } else {
-        const query = backendApi.service.processOnFilterChanged(event, args);
-        const totalItems = this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems || 0;
-        executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitFilterChanged.bind(this));
-      }
+      const query = await backendApi.service.processOnFilterChanged(event, args);
+      const totalItems = this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems || 0;
+      this.backendUtilities?.executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitFilterChanged.bind(this), this.httpCancelRequests$);
     }
   }
 
@@ -664,7 +663,7 @@ export class FilterService {
    * @param grid
    */
   populateColumnFilterSearchTermPresets(filters: CurrentFilter[]) {
-    if (Array.isArray(filters) && filters.length > 0) {
+    if (Array.isArray(filters)) {
       this._columnDefinitions.forEach((columnDef: Column) => {
         // clear any columnDef searchTerms before applying Presets
         if (columnDef.filter && columnDef.filter.searchTerms) {
@@ -803,7 +802,7 @@ export class FilterService {
         if (backendApiService && backendApiService.updateFilters) {
           backendApiService.updateFilters(filters, true);
           if (triggerBackendQuery) {
-            refreshBackendDataset(this._gridOptions);
+            this.backendUtilities?.refreshBackendDataset(this._gridOptions);
           }
         }
       }
@@ -846,7 +845,7 @@ export class FilterService {
         if (backendApiService && backendApiService.updateFilters) {
           backendApiService.updateFilters(this._columnFilters, true);
           if (triggerBackendQuery) {
-            refreshBackendDataset(this._gridOptions);
+            this.backendUtilities?.refreshBackendDataset(this._gridOptions);
           }
         }
       } else {
@@ -911,7 +910,7 @@ export class FilterService {
         // when hiding/showing (with Column Picker or Grid Menu), it will try to re-create yet again the filters (since SlickGrid does a re-render)
         // we need to also set again the values in the DOM elements if the values were set by a searchTerm(s)
         if (searchTerms && newFilter.setValues) {
-          newFilter.setValues(searchTerms);
+          newFilter.setValues(searchTerms, operator);
         }
       }
     }

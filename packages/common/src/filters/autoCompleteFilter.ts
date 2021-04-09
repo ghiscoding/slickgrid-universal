@@ -20,8 +20,10 @@ import {
 } from './../interfaces/index';
 import { CollectionService } from '../services/collection.service';
 import { collectionObserver, propertyObserver } from '../services/observers';
-import { getDescendantProperty, sanitizeTextByAvailableSanitizer, toKebabCase } from '../services/utilities';
+import { getDescendantProperty, sanitizeTextByAvailableSanitizer, toKebabCase, unsubscribeAll } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
+import { renderCollectionOptionsAsync } from './filterUtilities';
+import { RxJsFacade, Subscription } from '../services/rxjsFacade';
 
 export class AutoCompleteFilter implements Filter {
   protected _autoCompleteOptions!: AutocompleteOption;
@@ -57,11 +59,16 @@ export class AutoCompleteFilter implements Filter {
   valueName = 'label';
 
   enableTranslateLabel = false;
+  subscriptions: Subscription[] = [];
 
   /**
    * Initialize the Filter
    */
-  constructor(protected readonly translaterService: TranslaterService, protected readonly collectionService: CollectionService) { }
+  constructor(
+    protected readonly translaterService: TranslaterService,
+    protected readonly collectionService: CollectionService,
+    protected readonly rxjs?: RxJsFacade
+  ) { }
 
   /** Getter for the Autocomplete Option */
   get autoCompleteOptions(): Partial<AutocompleteOption> {
@@ -167,7 +174,7 @@ export class AutoCompleteFilter implements Filter {
         if (collectionAsync && !this.columnFilter.collection) {
           // only read the collectionAsync once (on the 1st load),
           // we do this because Http Fetch will throw an error saying body was already read and is streaming is locked
-          collectionOutput = this.renderOptionsAsync(collectionAsync);
+          collectionOutput = renderCollectionOptionsAsync(collectionAsync, this.columnDef, this.renderDomElement.bind(this), this.rxjs, this.subscriptions);
           resolve(collectionOutput);
         } else {
           collectionOutput = newCollection;
@@ -209,6 +216,9 @@ export class AutoCompleteFilter implements Filter {
     }
     this.$filterElm = null;
     this._collection = undefined;
+
+    // unsubscribe all the possible Observables if RxJS was used
+    unsubscribeAll(this.subscriptions);
   }
 
   /** Set value(s) on the DOM element  */
@@ -500,41 +510,5 @@ export class AutoCompleteFilter implements Filter {
       .data('item.autocomplete', item)
       .append($liDiv)
       .appendTo(ul);
-  }
-
-  protected async renderOptionsAsync(collectionAsync: Promise<any | any[]>): Promise<any[]> {
-    let awaitedCollection: any = null;
-
-    if (collectionAsync) {
-      // wait for the "collectionAsync", once resolved we will save it into the "collection"
-      const response: any | any[] = await collectionAsync;
-
-      if (Array.isArray(response)) {
-        awaitedCollection = response; // from Promise
-      } else if (response instanceof Response && typeof response['json'] === 'function') {
-        awaitedCollection = await response['json'](); // from Fetch
-      } else if (response && response['content']) {
-        awaitedCollection = response['content']; // from http-client
-      }
-
-      if (!Array.isArray(awaitedCollection) && this.collectionOptions?.collectionInsideObjectProperty) {
-        const collection = awaitedCollection || response;
-        const collectionInsideObjectProperty = this.collectionOptions.collectionInsideObjectProperty;
-        awaitedCollection = getDescendantProperty(collection, collectionInsideObjectProperty || '');
-      }
-
-      if (!Array.isArray(awaitedCollection)) {
-        throw new Error('Something went wrong while trying to pull the collection from the "collectionAsync" call in the AutoComplete Filter, the collection is not a valid array.');
-      }
-
-      // copy over the array received from the async call to the "collection" as the new collection to use
-      // this has to be BEFORE the `collectionObserver().subscribe` to avoid going into an infinite loop
-      this.columnFilter.collection = awaitedCollection;
-
-      // recreate Multiple Select after getting async collection
-      this.renderDomElement(awaitedCollection);
-    }
-
-    return awaitedCollection;
   }
 }

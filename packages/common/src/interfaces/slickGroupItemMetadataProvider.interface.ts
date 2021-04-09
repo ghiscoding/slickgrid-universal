@@ -1,5 +1,5 @@
 import { GroupItemMetadataProviderOption } from './groupItemMetadataProviderOption.interface';
-import { GroupTotalsFormatter } from './groupTotalsFormatter.interface';
+import { ItemMetadata } from './itemMetadata.interface';
 import { SlickGrid } from './slickGrid.interface';
 
 /**
@@ -14,7 +14,7 @@ import { SlickGrid } from './slickGrid.interface';
 export interface SlickGroupItemMetadataProvider {
 
   /** Constructor of the Slick 3rd party plugin, it can optionally receive options */
-  constructor: (options?: GroupItemMetadataProviderOption) => void;
+  constructor: (options?: Partial<GroupItemMetadataProviderOption>) => void;
 
   /** Initialize the SlickGrid 3rd party plugin */
   init(grid: SlickGrid): void;
@@ -23,28 +23,10 @@ export interface SlickGroupItemMetadataProvider {
   destroy(): void;
 
   /** Get the Group Row Metadata information */
-  getGroupRowMetadata: (item: any) => {
-    selectable: false;
-    focusable: boolean;
-    cssClasses: string;
-    formatter: GroupTotalsFormatter;
-    columns: {
-      0: {
-        colspan: string;
-        formatter: GroupTotalsFormatter;
-        editor: null
-      }
-    }
-  };
+  getGroupRowMetadata: (item: any) => ItemMetadata;
 
   /** Get the Totals Row Metadata information */
-  getTotalsRowMetadata: (item: any) => {
-    selectable: false;
-    focusable: boolean;
-    cssClasses: string;
-    formatter: GroupTotalsFormatter;
-    editor: null
-  };
+  getTotalsRowMetadata: (item: any) => Omit<ItemMetadata, 'columns'>;
 
   /** Get the options defined for the GroupItemMetadataProvider */
   getOptions: () => GroupItemMetadataProviderOption;

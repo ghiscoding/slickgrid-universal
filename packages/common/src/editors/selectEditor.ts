@@ -1,4 +1,4 @@
-import { dequal } from 'dequal';
+import { dequal } from 'dequal/lite';
 
 import { Constants } from '../constants';
 import { FieldType } from './../enums/index';
@@ -179,6 +179,11 @@ export class SelectEditor implements Editor {
     return this.columnDef?.internalColumnEditor ?? {};
   }
 
+  /** Getter for item data context object */
+  get dataContext(): any {
+    return this.args.item;
+  }
+
   /** Getter for the Editor DOM Element */
   get editorDomElement(): any {
     return this.$editorElm;
@@ -322,7 +327,7 @@ export class SelectEditor implements Editor {
     return (this.isMultipleSelect) ? this.currentValues : this.currentValue;
   }
 
-  setValue(value: any | any[], isApplyingValue = false) {
+  setValue(value: any | any[], isApplyingValue = false, triggerOnCompositeEditorChange = true) {
     if (this.isMultipleSelect && Array.isArray(value)) {
       this.loadMultipleValues(value);
     } else {
@@ -334,7 +339,7 @@ export class SelectEditor implements Editor {
 
       // if it's set by a Composite Editor, then also trigger a change for it
       const compositeEditorOptions = this.args.compositeEditorOptions;
-      if (compositeEditorOptions) {
+      if (compositeEditorOptions && triggerOnCompositeEditorChange) {
         this.handleChangeOnCompositeEditor(compositeEditorOptions, 'system');
       }
     }
@@ -584,7 +589,9 @@ export class SelectEditor implements Editor {
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
   protected applyInputUsabilityState() {
     const activeCell = this.grid.getActiveCell();
-    const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
+    const isCellEditable = this.grid.onBeforeEditCell.notify({
+      ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
+    });
     this.disable(isCellEditable === false);
   }
 
@@ -668,7 +675,7 @@ export class SelectEditor implements Editor {
 
     // user could also override the collection
     if (this.columnEditor?.collectionOverride) {
-      const overrideArgs: CollectionOverrideArgs = { column: this.columnDef, dataContext: this.args.item, grid: this.grid, originalCollections: this.collection };
+      const overrideArgs: CollectionOverrideArgs = { column: this.columnDef, dataContext: this.dataContext, grid: this.grid, originalCollections: this.collection };
       if (this.args.compositeEditorOptions) {
         const { formValues, modalType } = this.args.compositeEditorOptions;
         overrideArgs.compositeEditorOptions = { formValues, modalType };
@@ -743,7 +750,7 @@ export class SelectEditor implements Editor {
         options += `<option value="${optionValue}" label="${optionLabel}">${optionText}</option>`;
       });
     }
-    return `<select id="${this.elementName}" class="ms-filter search-filter editor-${columnId}" ${this.isMultipleSelect ? 'multiple="multiple"' : ''}>${options}</select>`;
+    return `<select id="${this.elementName}" class="ms-filter search-filter select-editor editor-${columnId}" ${this.isMultipleSelect ? 'multiple="multiple"' : ''}>${options}</select>`;
   }
 
   /** Create a blank entry that can be added to the collection. It will also reuse the same collection structure provided by the user */
@@ -788,13 +795,13 @@ export class SelectEditor implements Editor {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
-    const item = this.args.item;
+    const item = this.dataContext;
     const grid = this.grid;
     const newValues = this.serializeValue();
 
     // when valid, we'll also apply the new value to the dataContext item object
     if (this.validate().valid) {
-      this.applyValue(this.args.item, newValues);
+      this.applyValue(this.dataContext, newValues);
     }
     this.applyValue(compositeEditorOptions.formValues, newValues);
 

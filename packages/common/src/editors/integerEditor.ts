@@ -1,6 +1,6 @@
 import { KeyCode } from '../enums/index';
 import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption, SlickGrid, SlickNamespace, } from './../interfaces/index';
-import { debounce, getDescendantProperty, setDeepValue } from '../services/utilities';
+import { getDescendantProperty, setDeepValue } from '../services/utilities';
 import { integerValidator } from '../editorValidators/integerValidator';
 import { BindingEventService } from '../services/bindingEvent.service';
 
@@ -17,6 +17,7 @@ export class IntegerEditor implements Editor {
   protected _isValueTouched = false;
   protected _input!: HTMLInputElement | undefined;
   protected _originalValue?: number | string;
+  protected _timer?: NodeJS.Timeout;
 
   /** is the Editor disabled? */
   disabled = false;
@@ -45,6 +46,11 @@ export class IntegerEditor implements Editor {
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
     return this.columnDef && this.columnDef.internalColumnEditor || {};
+  }
+
+  /** Getter for the item data context object */
+  get dataContext(): any {
+    return this.args.item;
   }
 
   /** Getter for the Editor DOM Element */
@@ -156,11 +162,11 @@ export class IntegerEditor implements Editor {
     return this._input?.value || '';
   }
 
-  setValue(value: number | string, isApplyingValue = false) {
+  setValue(value: number | string, isApplyingValue = false, triggerOnCompositeEditorChange = true) {
     if (this._input) {
       this._input.value = `${value}`;
 
-      if (isApplyingValue) {
+      if (isApplyingValue && triggerOnCompositeEditorChange) {
         this.applyValue(this.args.item, this.serializeValue());
 
         // if it's set by a Composite Editor, then also trigger a change for it
@@ -183,7 +189,10 @@ export class IntegerEditor implements Editor {
 
       // set the new value to the item datacontext
       if (isComplexObject) {
-        setDeepValue(item, fieldName, newValue);
+        // when it's a complex object, user could override the object path (where the editable object is located)
+        // else we use the path provided in the Field Column Definition
+        const objectPath = this.columnEditor?.complexObjectPath ?? fieldName ?? '';
+        setDeepValue(item, objectPath, newValue);
       } else {
         item[fieldName] = newValue;
       }
@@ -288,7 +297,9 @@ export class IntegerEditor implements Editor {
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
   protected applyInputUsabilityState() {
     const activeCell = this.grid.getActiveCell();
-    const isCellEditable = this.grid.onBeforeEditCell.notify({ ...activeCell, item: this.args.item, column: this.args.column, grid: this.grid });
+    const isCellEditable = this.grid.onBeforeEditCell.notify({
+      ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
+    });
     this.disable(isCellEditable === false);
   }
 
@@ -296,13 +307,13 @@ export class IntegerEditor implements Editor {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
-    const item = this.args.item;
+    const item = this.dataContext;
     const grid = this.grid;
     const newValue = this.serializeValue();
 
     // when valid, we'll also apply the new value to the dataContext item object
     if (this.validate().valid) {
-      this.applyValue(this.args.item, newValue);
+      this.applyValue(this.dataContext, newValue);
     }
     this.applyValue(compositeEditorOptions.formValues, newValue);
 
@@ -330,7 +341,8 @@ export class IntegerEditor implements Editor {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     if (compositeEditorOptions) {
       const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
-      debounce(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay)();
+      clearTimeout(this._timer as NodeJS.Timeout);
+      this._timer = setTimeout(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay);
     }
   }
 }

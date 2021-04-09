@@ -2,6 +2,7 @@ import {
   Column,
   GridOption,
   FieldType,
+  ItemMetadata,
   OperatorString,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
@@ -140,7 +141,7 @@ export class Example08 {
    * Your callback will always have the "item" argument which you can use to decide on the colspan
    * Your return object must always be in the form of:: { columns: { [columnName]: { colspan: number|'*' } }}
    */
-  renderDifferentColspan(item: any) {
+  renderDifferentColspan(item: any): ItemMetadata {
     if (item.id % 2 === 1) {
       return {
         columns: {

@@ -1,4 +1,5 @@
 import { SlickPluginList } from '../enums/index';
+import { CompositeEditorOption } from './compositeEditorOption.interface';
 import {
   Column,
   ColumnSort,
@@ -527,7 +528,7 @@ export interface OnAutosizeColumnsEventArgs extends SlickGridEventData { columns
 export interface OnBeforeAppendCellEventArgs extends SlickGridEventData { row: number; cell: number; value: any; dataContext: any; }
 export interface OnBeforeCellEditorDestroyEventArgs extends SlickGridEventData { editor: Editor; }
 export interface OnBeforeColumnsResizeEventArgs extends SlickGridEventData { triggeredByColumn: string; }
-export interface OnBeforeEditCellEventArgs extends SlickGridEventData { row: number; cell: number; item: any; column: Column; }
+export interface OnBeforeEditCellEventArgs extends SlickGridEventData { row: number; cell: number; item: any; column: Column; target?: 'grid' | 'composite'; compositeEditorOptions?: CompositeEditorOption; }
 export interface OnBeforeHeaderCellDestroyEventArgs extends SlickGridEventData { node: HTMLElement; column: Column; }
 export interface OnBeforeHeaderRowCellDestroyEventArgs extends SlickGridEventData { node: HTMLElement; column: Column; }
 export interface OnBeforeFooterRowCellDestroyEventArgs extends SlickGridEventData { node: HTMLElement; column: Column; }
