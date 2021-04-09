@@ -19,6 +19,7 @@ import {
   getVarTypeOfByColumnFieldType,
   exportWithFormatterWhenDefined,
   sanitizeHtmlToText,
+  Utilities,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -81,7 +82,8 @@ const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, 
 export class Example14 {
   private _bindingEventService: BindingEventService;
   columnDefinitions: Column[];
-  gridOptions: GridOption;
+  gridOptions1: GridOption;
+  gridOptions2: GridOption;
   dataset: any[] = [];
   isGridEditable = true;
   editQueue = [];
@@ -112,8 +114,8 @@ export class Example14 {
     this.gridContainerElm1 = document.querySelector<HTMLDivElement>(`.grid1`);
     this.gridContainerElm2 = document.querySelector<HTMLDivElement>(`.grid2`);
 
-    this.sgb1 = new Slicker.GridBundle(this.gridContainerElm1, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
-    this.sgb2 = new Slicker.GridBundle(this.gridContainerElm2, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb1 = new Slicker.GridBundle(this.gridContainerElm1, Utilities.deepCopy(this.columnDefinitions), { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset);
+    this.sgb2 = new Slicker.GridBundle(this.gridContainerElm2, Utilities.deepCopy(this.columnDefinitions), { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset);
     // this.sgb.slickGrid.setActiveCell(0, 0);
 
     // bind any of the grid events
@@ -352,7 +354,7 @@ export class Example14 {
       },
     ];
 
-    this.gridOptions = {
+    this.gridOptions1 = {
       useSalesforceDefaultGridOptions: true,
       datasetIdPropertyName: 'id',
       eventNamingStyle: EventNamingStyle.lowerCase,
@@ -410,7 +412,7 @@ export class Example14 {
 
           if (prevSerializedValue !== serializedValue || serializedValue === '') {
             const finalColumn = Array.isArray(editCommand.prevSerializedValue) ? editorColumns[index] : column;
-            this.editedItems[this.gridOptions.datasetIdPropertyName || 'id'] = item; // keep items by their row indexes, if the row got edited twice then we'll keep only the last change
+            this.editedItems[this.gridOptions1.datasetIdPropertyName || 'id'] = item; // keep items by their row indexes, if the row got edited twice then we'll keep only the last change
             this.sgb1.slickGrid.invalidate();
             editCommand.execute();
 
@@ -427,6 +429,8 @@ export class Example14 {
       // when using the cellMenu, you can change some of the default options and all use some of the callback methods
       enableCellMenu: true,
     };
+
+    this.gridOptions2 = Utilities.deepCopy(this.gridOptions1);
   }
 
   loadData(count: number) {
@@ -659,7 +663,7 @@ export class Example14 {
     // then change a single grid options to make the grid non-editable (readonly)
     this.isGridEditable = !this.isGridEditable;
     this.sgb1.gridOptions = { editable: this.isGridEditable };
-    this.gridOptions = this.sgb1.gridOptions;
+    this.gridOptions1 = this.sgb1.gridOptions;
   }
 
   removeUnsavedStylingFromCell(_item: any, column: Column, row: number) {
