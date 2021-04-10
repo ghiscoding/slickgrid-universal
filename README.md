@@ -77,15 +77,14 @@ Run it **only once**, this will install all dependencies and add necessary monor
 yarn run bootstrap
 ```
 
-3. Build
+3. Build (bundle)
 
-To get started you must run (also once) an initial TS build so that all necessary `dist` are created for all the Lerna packages to work together.
+To get started you must run at least once the initial TS build so that all necessary `dist` are created and bundled for all the Lerna packages to work together.
+
 ```bash
-yarn run build
-
-# every subsequent occurence should be called with the `rebuild` which will empty every `dist` folders
-yarn run rebuild
+yarn run bundle
 ```
+NOTE: this will also have to be re-executed if you change code in the `common` package (since that package is a dependency of all other packages).
 
 4. Run Dev (Vanilla Implementation)
 
