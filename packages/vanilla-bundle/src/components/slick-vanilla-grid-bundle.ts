@@ -939,9 +939,9 @@ export class SlickVanillaGridBundle {
 
     // auto-resize grid on browser resize (optionally provide grid height or width)
     if (options.gridHeight || options.gridWidth) {
-      this.resizerService.resizeGrid(0, { height: options.gridHeight, width: options.gridWidth });
+      this.resizerService.resizeGrid(0, { height: options.gridHeight, width: options.gridWidth })?.then(gridSizes => this.sharedService.lastGridDimensions = gridSizes);
     } else {
-      this.resizerService.resizeGrid();
+      this.resizerService.resizeGrid()?.then(gridSizes => this.sharedService.lastGridDimensions = gridSizes);
     }
     if (grid && options?.enableAutoResize) {
       if (options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && typeof grid.autosizeColumns === 'function') {
@@ -1048,7 +1048,7 @@ export class SlickVanillaGridBundle {
       // resize the grid inside a slight timeout, in case other DOM element changed prior to the resize (like a filter/pagination changed)
       if (this.slickGrid && this._gridOptions.enableAutoResize) {
         const delay = this._gridOptions.autoResize && this._gridOptions.autoResize.delay;
-        this.resizerService.resizeGrid(delay || 10);
+        this.resizerService.resizeGrid(delay || 10)?.then(gridSizes => this.sharedService.lastGridDimensions = gridSizes);
       }
     }
   }

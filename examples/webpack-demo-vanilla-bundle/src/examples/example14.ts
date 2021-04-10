@@ -15,10 +15,6 @@ import {
 
   // utilities
   formatNumber,
-  // @ts-ignore
-  getVarTypeOfByColumnFieldType,
-  exportWithFormatterWhenDefined,
-  sanitizeHtmlToText,
   Utilities,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
@@ -27,6 +23,8 @@ import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
 import './example14.scss';
+
+const NB_ITEMS = 5000;
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -83,15 +81,12 @@ export class Example14 {
   private _bindingEventService: BindingEventService;
   columnDefinitions: Column[];
   gridOptions1: GridOption;
-  gridOptions2: GridOption;
   dataset: any[] = [];
   isGridEditable = true;
   editQueue = [];
   editedItems = {};
   sgb1: SlickVanillaGridBundle;
-  sgb2: SlickVanillaGridBundle;
-  gridContainerElm1: HTMLDivElement;
-  gridContainerElm2: HTMLDivElement;
+  gridContainerElm: HTMLDivElement;
   complexityLevelList = [
     { value: 0, label: 'Very Simple' },
     { value: 1, label: 'Simple' },
@@ -110,44 +105,35 @@ export class Example14 {
 
   attached() {
     this.initializeGrid();
-    this.dataset = this.loadData(50000);
-    this.gridContainerElm1 = document.querySelector<HTMLDivElement>(`.grid1`);
-    this.gridContainerElm2 = document.querySelector<HTMLDivElement>(`.grid2`);
+    this.dataset = this.loadData(NB_ITEMS);
+    this.gridContainerElm = document.querySelector<HTMLDivElement>(`.grid1`);
 
-    this.sgb1 = new Slicker.GridBundle(this.gridContainerElm1, Utilities.deepCopy(this.columnDefinitions), { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset);
-    this.sgb2 = new Slicker.GridBundle(this.gridContainerElm2, Utilities.deepCopy(this.columnDefinitions), { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset);
-    // this.sgb.slickGrid.setActiveCell(0, 0);
+    this.sgb1 = new Slicker.GridBundle(this.gridContainerElm, Utilities.deepCopy(this.columnDefinitions), { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset);
 
     // bind any of the grid events
-    // this._bindingEventService.bind(this.gridContainerElm1, 'onvalidationerror', this.handleValidationError.bind(this));
-    // this._bindingEventService.bind(this.gridContainerElm1, 'onitemdeleted', this.handleItemDeleted.bind(this));
-    // this._bindingEventService.bind(this.gridContainerElm1, 'onbeforeeditcell', this.handleOnBeforeEditCell.bind(this));
-    // this._bindingEventService.bind(this.gridContainerElm1, 'oncellchange', this.handleOnCellChange.bind(this));
-    // this._bindingEventService.bind(this.gridContainerElm1, 'onclick', this.handleOnCellClicked.bind(this));
-    this._bindingEventService.bind(this.gridContainerElm1, 'onpaginationchanged', this.handlePaginationChanged1.bind(this));
-    this._bindingEventService.bind(this.gridContainerElm1, 'onpaginationchanged', this.handlePaginationChanged2.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'onbeforeeditcell', this.handleOnBeforeEditCell.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'onpaginationchanged', this.handlePaginationChanged.bind(this));
   }
 
   dispose() {
     this.sgb1?.dispose();
     this._bindingEventService.unbindAll();
-    this.gridContainerElm1 = null;
-    this.gridContainerElm2 = null;
+    this.gridContainerElm = null;
   }
 
   initializeGrid() {
     this.columnDefinitions = [
       {
         id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string, minWidth: 65,
-        // @ts-ignore
-        // resizeExtraWidthPadding: 1,
-        // @ts-ignore
-        resizeCharWidth: 9.5,
+        // resizeColumnExtraWidthPadding: 1,
+        resizeColumnCharWidth: 9.5,
         filterable: true, columnGroup: 'Common Factor',
         filter: { model: Filters.compoundInputText },
         formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold] },
         editor: {
-          model: Editors.longText, massUpdate: false, required: true, alwaysSaveOnEnterKey: true,
+          model: Editors.longText, required: true, alwaysSaveOnEnterKey: true,
           maxLength: 12,
           editorOptions: {
             cols: 45,
@@ -169,7 +155,7 @@ export class Example14 {
           }
           return value > 1 ? `${value} days` : `${value} day`;
         },
-        editor: { model: Editors.float, massUpdate: true, decimal: 2, valueStep: 1, minValue: 0, maxValue: 10000, alwaysSaveOnEnterKey: true, required: true },
+        editor: { model: Editors.float, decimal: 2, valueStep: 1, minValue: 0, maxValue: 10000, alwaysSaveOnEnterKey: true, required: true },
       },
       {
         id: 'cost', name: 'Cost', field: 'cost', minWidth: 65, width: 75,
@@ -184,7 +170,7 @@ export class Example14 {
         filter: { model: Filters.compoundSlider, operator: '>=' },
         editor: {
           model: Editors.slider,
-          massUpdate: true, minValue: 0, maxValue: 100,
+          minValue: 0, maxValue: 100,
         },
       },
       {
@@ -200,7 +186,6 @@ export class Example14 {
         editor: {
           model: Editors.singleSelect,
           collection: this.complexityLevelList,
-          massUpdate: true
         },
       },
       {
@@ -209,7 +194,7 @@ export class Example14 {
         exportCustomFormatter: Formatters.dateUs,
         type: FieldType.date, outputType: FieldType.dateUs, saveOutputType: FieldType.dateUtc,
         filterable: true, filter: { model: Filters.compoundDate },
-        editor: { model: Editors.date, massUpdate: true, params: { hideClearButton: false } },
+        editor: { model: Editors.date, params: { hideClearButton: false } },
       },
       {
         id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 75, maxWidth: 100,
@@ -221,7 +206,7 @@ export class Example14 {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
           model: Filters.singleSelect
         },
-        editor: { model: Editors.checkbox, massUpdate: true, },
+        editor: { model: Editors.checkbox, },
         // editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'Yes' }, { value: false, label: 'No' }], },
       },
       {
@@ -233,7 +218,6 @@ export class Example14 {
         editor: {
           model: Editors.date,
           editorOptions: { minDate: 'today' },
-          massUpdate: true,
           validator: (value, args) => {
             const dataContext = args && args.item;
             if (dataContext && (dataContext.completed && !value)) {
@@ -247,10 +231,9 @@ export class Example14 {
         id: 'product', name: 'Product', field: 'product',
         filterable: true, columnGroup: 'Item',
         minWidth: 100,
-        // @ts-ignore
-        // resizeWidthRatio: 1.01,
-        maxWidthThreshold: 170,
-        resizeExtraWidthPadding: 1,
+        // resizeColumnWidthRatio: 1.01,
+        resizeColumnMaxWidthThreshold: 170,
+        resizeColumnExtraWidthPadding: 1,
         exportWithFormatter: true,
         dataKey: 'id',
         labelKey: 'itemName',
@@ -261,7 +244,6 @@ export class Example14 {
         editor: {
           model: Editors.autoComplete,
           alwaysSaveOnEnterKey: true,
-          massUpdate: true,
 
           // example with a Remote API call
           editorOptions: {
@@ -301,7 +283,6 @@ export class Example14 {
         editor: {
           model: Editors.autoComplete,
           alwaysSaveOnEnterKey: true,
-          massUpdate: true,
           editorOptions: {
             minLength: 0,
             openSearchListOnFocus: false,
@@ -372,7 +353,7 @@ export class Example14 {
       enableAutoResize: true,
       showCustomFooter: true,
       enablePagination: true,
-      gridHeight: 250,
+      gridHeight: 400,
       pagination: {
         pageSize: 10,
         pageSizes: [10, 200, 500, 5000]
@@ -429,8 +410,6 @@ export class Example14 {
       // when using the cellMenu, you can change some of the default options and all use some of the callback methods
       enableCellMenu: true,
     };
-
-    this.gridOptions2 = Utilities.deepCopy(this.gridOptions1);
   }
 
   loadData(count: number) {
@@ -494,11 +473,6 @@ export class Example14 {
     return false;
   }
 
-  handleItemDeleted(event) {
-    const itemId = event && event.detail;
-    console.log('item deleted with id:', itemId);
-  }
-
   handleOnBeforeEditCell(event) {
     const eventData = event.detail.eventData;
     const args = event && event.detail && event.detail.args;
@@ -524,22 +498,7 @@ export class Example14 {
     }
   }
 
-  handleOnCellClicked(event) {
-    const args = event && event.detail && event.detail.args;
-    const eventData = event && event.detail && event.detail.eventData;
-    console.log(eventData, args);
-    // if (eventData.target.classList.contains('mdi-help-circle-outline')) {
-    //   alert('please HELP!!!');
-    // } else if (eventData.target.classList.contains('mdi-chevron-down')) {
-    //   alert('do something else...');
-    // }
-  }
-
-  handlePaginationChanged1() {
-    this.removeAllUnsavedStylingFromCell();
-    this.renderUnsavedStylingOnAllVisibleCells();
-  }
-  handlePaginationChanged2() {
+  handlePaginationChanged() {
     this.removeAllUnsavedStylingFromCell();
     this.renderUnsavedStylingOnAllVisibleCells();
   }
@@ -549,111 +508,7 @@ export class Example14 {
   }
 
   handleNewResizeColumns() {
-    // const opts = {
-    //   autosizeColsMode: 'FVC',
-    //   autosizeColPaddingPx: 4,
-    //   viewportSwitchToScrollModeWidthPercent: 120,
-    //   viewportMinWidthPx: 600,
-    //   viewportMaxWidthPx: 1400,
-    //   autosizeTextAvgToMWidthRatio: 0.75
-    // };
-    // // @ts-ignore
-    // this.sgb.slickGrid.setOptions(opts);
-    // this.sgb.slickGrid.autosizeColumns();
-
-    /*
-     new grid options
-       - resizeContextAnalysisMaxLooping (defaults to 1000)
-       - maxItemToInspectCellContentWidth (defaults to 1000)
-       - resizeCharacterWidth (defaults to 7)
-       - resizeCellPaddingWidth (default to 6)
-       - resizeFormatterPaddingWidth (defaults to 0 but 6 in SF)
-     new column options
-       - maxWidthThreshold (no default)
-       - resizeExtraWidthPadding (no default)
-       - resizeWidthRatio (defaults to 1)
-     */
-    const defaultCharWidthInPx = 7; // width in pixels of a string character, this can vary depending on which font family/size is used & cell padding
-    const cellPaddingWidthInPx = 6;
-    const formatterPaddingWidthInPx = 6;
-    const maxItemToInspectCellContentWidth = 1000; // how many items do we want to analyze for width content
-    const columnWidths = {};
-    for (const columnDef of this.sgb1.columnDefinitions) {
-      columnWidths[columnDef.id] = columnDef.minWidth || columnDef.width || 0;
-    }
-
-    for (const [rowIdx, item] of this.dataset.entries()) {
-      if (rowIdx > maxItemToInspectCellContentWidth) {
-        break;
-      }
-      this.sgb1.columnDefinitions.forEach((columnDef, colIdx) => {
-        const formattedData = exportWithFormatterWhenDefined(rowIdx, colIdx, item, columnDef, this.sgb1.slickGrid);
-        // @ts-ignore
-        const formattedStrLn = Math.ceil(sanitizeHtmlToText(formattedData).length * (columnDef?.resizeCharWidth ?? defaultCharWidthInPx));
-        // console.log(formattedData, sanitizeHtmlToText(formattedData), formattedStrLn)
-        if (columnWidths[columnDef.id] === undefined || formattedStrLn > columnWidths[columnDef.id]) {
-          // @ts-ignore
-          columnWidths[columnDef.id] = (formattedStrLn < columnDef.maxWidthThreshold)
-            // @ts-ignore
-            ? columnDef.maxWidthThreshold
-            : (formattedStrLn < columnDef.maxWidth) ? columnDef.maxWidth : formattedStrLn;
-        }
-      });
-    }
-
-    console.log(columnWidths);
-
-    let totalColsWidth = 0;
-    let reRender = false;
-    for (const col of this.sgb1.columnDefinitions) {
-      // if (col.id !== '_checkbox_selector' && col.id !== 'action') {
-      //   col.width = 150;
-      // }
-      if (columnWidths[col.id] !== undefined) {
-        if (col.rerenderOnResize) {
-          reRender = true;
-        }
-        let newColWidth = columnWidths[col.id] + cellPaddingWidthInPx;
-        if (col.editor) {
-          newColWidth += formatterPaddingWidthInPx;
-        }
-        if (col.type === 'date') {
-          const varType = getVarTypeOfByColumnFieldType(col.type || col.outputType);
-          if ((varType === 'date' || varType === 'number')) {
-            // @ts-ignore
-            col.resizeWidthRatio = 0.9;
-          }
-        }
-        // @ts-ignore
-        if (col.resizeWidthRatio) {
-          // @ts-ignore
-          newColWidth *= col.resizeWidthRatio;
-        }
-        // @ts-ignore
-        if (col.resizeExtraWidthPadding) {
-          // @ts-ignore
-          newColWidth += col.resizeExtraWidthPadding;
-        }
-        // @ts-ignore
-        if (newColWidth > col.maxWidthThreshold || newColWidth > col.maxWidth) {
-          // @ts-ignore
-          newColWidth = col.maxWidthThreshold || col.maxWidth;
-        }
-        col.width = Math.ceil(newColWidth);
-      }
-      totalColsWidth += col.width;
-    }
-    const viewportWidth = this.sgb1.resizerService.getLastResizeDimensions().width;
-    const vwidth = document.querySelector<HTMLDivElement>('.grid-pane').offsetWidth;
-    console.log('last viewport size', totalColsWidth, viewportWidth, vwidth);
-    console.log(this.sgb1.columnDefinitions);
-
-    if (totalColsWidth > viewportWidth) {
-      // @ts-ignore
-      this.sgb1.slickGrid.reRenderColumns(reRender);
-    } else {
-      this.sgb1.slickGrid.autosizeColumns();
-    }
+    this.sgb1.gridService.resizeColumnsByCellContent();
   }
 
   toggleGridEditReadonly() {

@@ -240,6 +240,27 @@ export interface Column<T = any> {
   /** Is the column resizable, can we make it wider/thinner? A resize cursor will show on the right side of the column when enabled. */
   resizable?: boolean;
 
+  /**
+   * no defaults, a character width to use when resizing columns by their cell text content.
+   * If nothing is provided it will use `resizeCellCharWidthInPx` defined in the grid options.
+   */
+  resizeColumnCharWidth?: number;
+
+  /** no defaults, what is the column max width threshold to not go over when resizing columns by their cell text content */
+  resizeColumnMaxWidthThreshold?: number;
+
+  /** no defaults, what is optional extra width padding to add to the calculation when resizing columns by their cell text content */
+  resizeColumnExtraWidthPadding?: number;
+
+  /**
+   * Defaults to 1, a column width ratio to use in the calculation when resizing columns by their cell text content.
+   * We have this ratio number so that if we know that the cell content has lots of thin character (like 1, i, t, ...) we can lower the ratio to take up less space.
+   * In other words and depending on which font family you use, each character will have different width, characters like (i, t, 1) takes a lot less space compare to (W, H, Q),
+   * unless of course we use a monospace font family which will have the exact same size for each characters and in that case we leave it to 1 but that rarely happens.
+   * NOTE: the default ratio is 1, except for Dates & Numbers which use a ratio of 0.9 because they typically use a lot of one's (1).
+   */
+  resizeColumnWidthRatio?: number;
+
   /** Do we want to re-render the grid on a grid resize */
   rerenderOnResize?: boolean;
 

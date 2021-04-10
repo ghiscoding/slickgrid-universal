@@ -1,4 +1,4 @@
-import { Column, CurrentPagination, SlickDataView, GridOption, SlickGrid, SlickGroupItemMetadataProvider } from '../interfaces/index';
+import { Column, CurrentPagination, GridSize, GridOption, SlickDataView, SlickGrid, SlickGroupItemMetadataProvider } from '../interfaces/index';
 
 export class SharedService {
   private _allColumns!: Column[];
@@ -8,6 +8,7 @@ export class SharedService {
   private _gridOptions!: GridOption;
   private _hasColumnsReordered = false;
   private _currentPagination!: CurrentPagination;
+  private _lastGridDimensions?: GridSize;
   private _visibleColumns!: Column[];
   private _hideHeaderRowAfterPageLoad = false;
   private _hierarchicalDataset: any[] | undefined;
@@ -66,6 +67,15 @@ export class SharedService {
   /** Getter to know if the columns were ever reordered or not since the grid was created. */
   set hasColumnsReordered(isColumnReordered: boolean) {
     this._hasColumnsReordered = isColumnReordered;
+  }
+
+  /** Getter for SlickGrid Grid object */
+  get lastGridDimensions(): GridSize | undefined {
+    return this._lastGridDimensions;
+  }
+  /** Setter for SlickGrid Grid object */
+  set lastGridDimensions(gridDimensions: GridSize | undefined) {
+    this._lastGridDimensions = gridDimensions;
   }
 
   /** Getter for SlickGrid Grid object */

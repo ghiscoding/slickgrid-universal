@@ -13,13 +13,15 @@ import {
   SlickNamespace,
   SlickRowSelectionModel,
 } from '../interfaces/index';
+import { getVarTypeOfByColumnFieldType } from '../filter-conditions';
 import { FilterService } from './filter.service';
 import { GridStateService } from './gridState.service';
 import { PaginationService } from '../services/pagination.service';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
 import { SortService } from './sort.service';
-import { arrayRemoveItemByIndex } from './utilities';
+import { exportWithFormatterWhenDefined } from './export-utilities';
+import { arrayRemoveItemByIndex, sanitizeHtmlToText } from './utilities';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -884,6 +886,73 @@ export class GridService {
       isItemAdded ? this.pubSubService.publish('onItemAdded', item) : this.pubSubService.publish('onItemUpdated', item);
     }
     return { added: rowNumberAdded, updated: rowNumberUpdated };
+  }
+
+  /**
+   * Resize each columns by their cell text/value content, note however that for performance reason we will only inspect the first 1000 rows though you could increase or decrease
+   */
+  resizeColumnsByCellContent() {
+    const columnDefinitions = this.getAllColumnDefinitions();
+    const resizeCellCharWidthInPx = this._gridOptions.resizeCellCharWidthInPx || 7; // width in pixels of a string character, this can vary depending on which font family/size is used & cell padding
+    const resizeCellPaddingWidthInPx = this._gridOptions.resizeCellPaddingWidthInPx || 6;
+    const resizeFormatterPaddingWidthInPx = this._gridOptions.resizeFormatterPaddingWidthInPx || 6;
+    const resizeMaxItemToInspectCellContentWidth = this._gridOptions.resizeMaxItemToInspectCellContentWidth || 1000; // how many items do we want to analyze cell content with widest width
+    const columnWidths: { [columnId in string | number]: number; } = {};
+    for (const columnDef of columnDefinitions) {
+      columnWidths[columnDef.id] = columnDef.minWidth || columnDef.width || 0;
+    }
+
+    const dataset = this._dataView.getItems() as any[];
+    for (const [rowIdx, item] of dataset.entries()) {
+      if (rowIdx > resizeMaxItemToInspectCellContentWidth) {
+        break;
+      }
+      columnDefinitions.forEach((columnDef, colIdx) => {
+        const formattedData = exportWithFormatterWhenDefined(rowIdx, colIdx, item, columnDef, this._grid);
+        const formattedStrLn = Math.ceil(sanitizeHtmlToText(formattedData).length * (columnDef?.resizeColumnCharWidth ?? resizeCellCharWidthInPx));
+
+        if (columnDef && columnWidths[columnDef.id] === undefined || formattedStrLn > columnWidths[columnDef.id]) {
+          columnWidths[columnDef.id] = (columnDef.resizeColumnMaxWidthThreshold !== undefined && formattedStrLn < columnDef.resizeColumnMaxWidthThreshold)
+            ? columnDef.resizeColumnMaxWidthThreshold
+            : (columnDef.maxWidth !== undefined && formattedStrLn < columnDef.maxWidth) ? columnDef.maxWidth : formattedStrLn;
+        }
+      });
+    }
+
+    let totalColsWidth = 0;
+    let reRender = false;
+    for (const col of columnDefinitions) {
+      if (columnWidths[col.id] !== undefined) {
+        if (col.rerenderOnResize) {
+          reRender = true;
+        }
+        let newColWidth = columnWidths[col.id] + resizeCellPaddingWidthInPx;
+        if (col.editor) {
+          newColWidth += resizeFormatterPaddingWidthInPx;
+        }
+        if (col.type === 'date') {
+          const varType = getVarTypeOfByColumnFieldType(col.type || col.outputType);
+          if ((varType === 'date' || varType === 'number')) {
+            col.resizeColumnWidthRatio = 0.9;
+          }
+        }
+        if (col.resizeColumnWidthRatio) {
+          newColWidth *= col.resizeColumnWidthRatio;
+        }
+        if (col.resizeColumnExtraWidthPadding) {
+          newColWidth += col.resizeColumnExtraWidthPadding;
+        }
+        if ((col.resizeColumnMaxWidthThreshold !== undefined && newColWidth > col.resizeColumnMaxWidthThreshold) || (col.maxWidth !== undefined && newColWidth > col.maxWidth)) {
+          newColWidth = col.resizeColumnMaxWidthThreshold || col.maxWidth || 0;
+        }
+        col.width = Math.ceil(newColWidth);
+      }
+      totalColsWidth += col.width || 0;
+    }
+    const viewportWidth = this.sharedService.lastGridDimensions?.width ?? this._grid.getViewportNode().offsetWidth;
+
+    // depending if our viewport calculated total columns is greater than the viewport size we'll call reRenderColumns() or else the default autosizeColumns()
+    (totalColsWidth > viewportWidth) ? this._grid.reRenderColumns(reRender) : this._grid.autosizeColumns();
   }
 
   // --

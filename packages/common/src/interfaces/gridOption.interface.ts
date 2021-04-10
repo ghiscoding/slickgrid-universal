@@ -461,6 +461,24 @@ export interface GridOption {
   /** Register any external Resources (Components, Services) like the ExcelExportService, TextExportService, SlickCompositeEditorComponent, ... */
   registerExternalResources?: ExternalResource[];
 
+  /**
+   * Defaults to 7, width in pixels of a string character which is used by the resize columns by its content, this can vary depending on which font family/size is used & cell padding.
+   * This is only used when resizing the columns width by their content, we need to know the width of a character in pixel to do all calculations.
+   */
+  resizeCellCharWidthInPx?: number;
+
+  /** Defaults to 6, cell padding width to add to the calculation when resizing columns by their cell text content. */
+  resizeCellPaddingWidthInPx?: number;
+
+  /** Defaults to 6, padding width to add to the calculation when using a Formatter and resizing columns by their cell text content. */
+  resizeFormatterPaddingWidthInPx?: number;
+
+  /**
+   * Defaults to 1000, width in pixels of a string character which is used by the resize columns by its content, this can vary depending on which font family/size is used & cell padding.
+   * This is only used when resizing the columns width by their content, we need to know the width of a character in pixel to do all calculations.
+   */
+  resizeMaxItemToInspectCellContentWidth?: number;
+
   /** Row Detail View Plugin options & events (columnId, cssClass, toolTip, width) */
   rowDetailView?: RowDetailView;
 
