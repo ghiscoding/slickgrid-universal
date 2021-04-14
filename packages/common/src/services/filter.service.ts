@@ -618,10 +618,10 @@ export class FilterService {
    * @param caller
    */
   emitFilterChanged(caller: EmitterType) {
-    if (caller === EmitterType.remote && this._gridOptions && this._gridOptions.backendServiceApi) {
+    if (caller === EmitterType.remote && this._gridOptions?.backendServiceApi) {
       let currentFilters: CurrentFilter[] = [];
       const backendService = this._gridOptions.backendServiceApi.service;
-      if (backendService && backendService.getCurrentFilters) {
+      if (backendService?.getCurrentFilters) {
         currentFilters = backendService.getCurrentFilters() as CurrentFilter[];
       }
       this.pubSubService.publish('onFilterChanged', currentFilters);
@@ -652,7 +652,7 @@ export class FilterService {
     // query backend, except when it's called by a ClearFilters then we won't
     if (args?.shouldTriggerQuery) {
       const query = await backendApi.service.processOnFilterChanged(event, args);
-      const totalItems = this._gridOptions && this._gridOptions.pagination && this._gridOptions.pagination.totalItems || 0;
+      const totalItems = this._gridOptions?.pagination?.totalItems ?? 0;
       this.backendUtilities?.executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitFilterChanged.bind(this), this.httpCancelRequests$);
     }
   }
@@ -668,7 +668,7 @@ export class FilterService {
     if (Array.isArray(filters)) {
       this._columnDefinitions.forEach((columnDef: Column) => {
         // clear any columnDef searchTerms before applying Presets
-        if (columnDef.filter && columnDef.filter.searchTerms) {
+        if (columnDef.filter?.searchTerms) {
           delete columnDef.filter.searchTerms;
         }
 
@@ -794,14 +794,14 @@ export class FilterService {
         }
       });
 
-      const backendApi = this._gridOptions && this._gridOptions.backendServiceApi;
+      const backendApi = this._gridOptions?.backendServiceApi;
 
       // refresh the DataView and trigger an event after all filters were updated and rendered
       this._dataView.refresh();
 
       if (backendApi) {
-        const backendApiService = backendApi && backendApi.service;
-        if (backendApiService && backendApiService.updateFilters) {
+        const backendApiService = backendApi?.service;
+        if (backendApiService?.updateFilters) {
           backendApiService.updateFilters(filters, true);
           if (triggerBackendQuery) {
             this.backendUtilities?.refreshBackendDataset(this._gridOptions);
@@ -842,11 +842,11 @@ export class FilterService {
         };
       }
 
-      const backendApi = this._gridOptions && this._gridOptions.backendServiceApi;
+      const backendApi = this._gridOptions?.backendServiceApi;
 
       if (backendApi) {
-        const backendApiService = backendApi && backendApi.service;
-        if (backendApiService && backendApiService.updateFilters) {
+        const backendApiService = backendApi?.service;
+        if (backendApiService?.updateFilters) {
           backendApiService.updateFilters(this._columnFilters, true);
           if (triggerBackendQuery) {
             this.backendUtilities?.refreshBackendDataset(this._gridOptions);
@@ -876,7 +876,7 @@ export class FilterService {
     const columnDef = args.column;
     const columnId = columnDef?.id ?? '';
 
-    if (columnDef && columnId !== 'selector' && columnDef.filterable) {
+    if (columnId !== 'selector' && columnDef?.filterable) {
       let searchTerms: SearchTerm[] | undefined;
       let operator: OperatorString | OperatorType | undefined;
       const newFilter: Filter | undefined = this.filterFactory.createFilter(columnDef.filter);
@@ -926,7 +926,7 @@ export class FilterService {
    */
   protected callbackSearchEvent(event: Event | undefined, args: FilterCallbackArg) {
     if (args) {
-      const searchTerm = ((event && event.target) ? (event.target as HTMLInputElement).value : undefined);
+      const searchTerm = ((event?.target) ? (event.target as HTMLInputElement).value : undefined);
       const searchTerms = (args.searchTerms && Array.isArray(args.searchTerms)) ? args.searchTerms : (searchTerm ? [searchTerm] : undefined);
       const columnDef = args.columnDef || null;
       const columnId = columnDef?.id ?? '';
