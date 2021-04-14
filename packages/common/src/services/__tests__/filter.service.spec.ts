@@ -301,6 +301,7 @@ describe('FilterService', () => {
         searchTerms: ['John'],
         grid: gridStub
       };
+      sharedService.allColumns = [mockColumn];
 
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
@@ -320,6 +321,7 @@ describe('FilterService', () => {
       gridOptionMock.backendServiceApi = undefined;
       mockColumn = { id: 'firstName', field: 'firstName', filterable: true } as Column;
       mockArgs = { grid: gridStub, column: mockColumn, node: document.getElementById(DOM_ELEMENT_ID) };
+      sharedService.allColumns = [mockColumn];
     });
 
     it('should execute the search callback normally when a input change event is triggered and searchTerms are defined', () => {
@@ -350,6 +352,7 @@ describe('FilterService', () => {
     it('should execute the callback normally when a input change event is triggered and the searchTerm comes from this event.target', () => {
       const expectationColumnFilter = { columnDef: mockColumn, columnId: 'firstName', operator: 'EQ', searchTerms: ['John'], parsedSearchTerms: ['John'], type: FieldType.string };
       const spySearchChange = jest.spyOn(service.onSearchChange as any, 'notify');
+      sharedService.allColumns = [mockColumn];
 
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
@@ -382,6 +385,32 @@ describe('FilterService', () => {
       expect(service.getColumnFilters()).toEqual({});
     });
 
+    it('should NOT delete the column filters entry (from column filter object) even when searchTerms is empty when user set `emptySearchTermReturnAllValues` to False', () => {
+      const expectationColumnFilter = { columnDef: mockColumn, columnId: 'firstName', operator: 'EQ', searchTerms: [''], parsedSearchTerms: [''], type: FieldType.string };
+      const spySearchChange = jest.spyOn(service.onSearchChange as any, 'notify');
+      sharedService.allColumns = [mockColumn];
+
+      service.init(gridStub);
+      service.bindLocalOnFilter(gridStub);
+      mockArgs.column.filter = { emptySearchTermReturnAllValues: false };
+      gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
+      service.getFiltersMetadata()[0].callback(new CustomEvent('input'), { columnDef: mockColumn, operator: 'EQ', searchTerms: [''], shouldTriggerQuery: true });
+
+      expect(service.getColumnFilters()).toContainEntry(['firstName', expectationColumnFilter]);
+      expect(spySearchChange).toHaveBeenCalledWith({
+        clearFilterTriggered: undefined,
+        shouldTriggerQuery: true,
+        columnId: 'firstName',
+        columnDef: mockColumn,
+        columnFilters: { firstName: expectationColumnFilter },
+        operator: 'EQ',
+        searchTerms: [''],
+        parsedSearchTerms: [''],
+        grid: gridStub
+      }, expect.anything());
+      expect(service.getCurrentLocalFilters()).toEqual([{ columnId: 'firstName', operator: 'EQ', searchTerms: [''] }]);
+    });
+
     it('should delete the column filters entry (from column filter object) when searchTerms is empty array and even when triggered event is undefined', () => {
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
@@ -396,15 +425,6 @@ describe('FilterService', () => {
       service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
       service.getFiltersMetadata()[0].callback(undefined, { columnDef: mockColumn, shouldTriggerQuery: true });
-
-      expect(service.getColumnFilters()).toEqual({});
-    });
-
-    it('should have an column filters object when callback is called with an undefined column definition', () => {
-      service.init(gridStub);
-      service.bindLocalOnFilter(gridStub);
-      gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
-      service.getFiltersMetadata()[0].callback(undefined, { columnDef: undefined, operator: 'EQ', searchTerms: ['John'], shouldTriggerQuery: true });
 
       expect(service.getColumnFilters()).toEqual({});
     });
@@ -560,6 +580,7 @@ describe('FilterService', () => {
       mockColumn2 = { id: 'lastName', field: 'lastName', filterable: true, filter: { model: Filters.inputText } } as Column;
       const mockArgs1 = { grid: gridStub, column: mockColumn1, node: document.getElementById(DOM_ELEMENT_ID) };
       const mockArgs2 = { grid: gridStub, column: mockColumn2, node: document.getElementById(DOM_ELEMENT_ID) };
+      sharedService.allColumns = [mockColumn1, mockColumn2];
 
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
@@ -1063,6 +1084,7 @@ describe('FilterService', () => {
         { columnId: 'firstName', searchTerms: ['Jane'], operator: 'StartsWith' },
         { columnId: 'isActive', searchTerms: [false] }
       ];
+      sharedService.allColumns = [mockColumn1, mockColumn2];
     });
 
     it('should throw an error when there are no filters defined in the column definitions', (done) => {
@@ -1208,6 +1230,30 @@ describe('FilterService', () => {
       expect(service.getColumnFilters()).toEqual({
         firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith', type: FieldType.string },
       });
+    });
+
+    it('should call "updateSingleFilter" method with an empty search term and still expect event "emitFilterChanged" to be trigged local when setting `emptySearchTermReturnAllValues` to False', () => {
+      const expectation = {
+        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: [''], operator: 'StartsWith', type: FieldType.string },
+      };
+      const emitSpy = jest.spyOn(service, 'emitFilterChanged');
+      const setFilterArgsSpy = jest.spyOn(dataViewStub, 'setFilterArgs');
+      const refreshSpy = jest.spyOn(dataViewStub, 'refresh');
+      service.init(gridStub);
+      service.bindLocalOnFilter(gridStub);
+      mockArgs1.column.filter = { emptySearchTermReturnAllValues: false };
+      mockArgs2.column.filter = { emptySearchTermReturnAllValues: false };
+      gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
+      service.updateSingleFilter({ columnId: 'firstName', searchTerms: [''], operator: 'StartsWith' });
+
+      expect(setFilterArgsSpy).toHaveBeenCalledWith({ columnFilters: expectation, grid: gridStub });
+      expect(refreshSpy).toHaveBeenCalled();
+      expect(emitSpy).toHaveBeenCalledWith('local');
+      expect(service.getColumnFilters()).toEqual({
+        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: [''], operator: 'StartsWith', type: FieldType.string },
+      });
+      expect(service.getCurrentLocalFilters()).toEqual([{ columnId: 'firstName', operator: 'StartsWith', searchTerms: [''] }]);
     });
 
     it('should call "updateSingleFilter" method and expect event "emitFilterChanged" to be trigged local when using "bindBackendOnFilter" and also expect filters to be set in dataview', () => {
@@ -1474,6 +1520,7 @@ describe('FilterService', () => {
         mockArgs2 = { grid: gridStub, column: mockColumn2, node: document.getElementById(DOM_ELEMENT_ID) };
         jest.spyOn(dataViewStub, 'getItems').mockReturnValue(dataset);
         jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1, mockColumn2]);
+        sharedService.allColumns = [mockColumn1, mockColumn2];
       });
 
       it('should return True when item is found and its parent is not collapsed', () => {

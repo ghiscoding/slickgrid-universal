@@ -20,10 +20,10 @@ This package is simply a bridge, a facade, to make it possible to use RxJS witho
 - [RxJS 7](https://github.com/ReactiveX/RxJS)
 
 ### Installation
-Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation), you can see a demo by looking at the [GitHub Demo](https://ghiscoding.github.io/slickgrid-universal) page and click on "Export to CSV" from the Grid Menu (aka hamburger menu).
+Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation), you can see a demo by looking at the [GitHub Demo](https://ghiscoding.github.io/slickgrid-universal) page.
 
 ### Usage
-In order to use the Service, you will need to register it in your grid options via the `registerExternalResources` as shown below and of course install RxJS itself (this package requires RxJS 7).
+In order to use the Service, you will need to register it in your grid options via the `registerExternalResources` as shown below and of course install RxJS itself (this package requires [RxJS 7](https://github.com/ReactiveX/RxJS)).
 
 ##### ViewModel
 ```ts
@@ -35,7 +35,7 @@ export class MyExample {
 
   initializeGrid {
     this.gridOptions = {
-      // you will most probably use it with a Backend Service, for example with OData
+      // you will most probably use it with a Backend Service, for example with OData or GraphQL
       backendServiceApi: {
         service: new GridOdataService(),
         preProcess: () => this.displaySpinner(true),
