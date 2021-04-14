@@ -72,5 +72,6 @@ describe('SelectFilter', () => {
     expect(spyGetHeaderRow).toHaveBeenCalled();
     expect(filterCount).toBe(1);
     expect(filter.isMultipleSelect).toBe(true);
+    expect(filter.columnDef.filter.emptySearchTermReturnAllValues).toBeFalse();
   });
 });

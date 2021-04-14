@@ -595,6 +595,8 @@ export class FilterService {
       for (const colId of Object.keys(this._columnFilters)) {
         const columnFilter = this._columnFilters[colId];
         const filter = { columnId: colId || '' } as CurrentFilter;
+        const columnDef = this.sharedService.allColumns.find(col => col.id === filter.columnId);
+        const emptySearchTermReturnAllValues = columnDef?.filter?.emptySearchTermReturnAllValues ?? true;
 
         if (columnFilter?.searchTerms) {
           filter.searchTerms = columnFilter.searchTerms;
@@ -602,7 +604,7 @@ export class FilterService {
         if (columnFilter.operator) {
           filter.operator = columnFilter.operator;
         }
-        if (Array.isArray(filter.searchTerms) && filter.searchTerms.length > 0 && filter.searchTerms[0] !== '') {
+        if (Array.isArray(filter.searchTerms) && filter.searchTerms.length > 0 && (!emptySearchTermReturnAllValues || filter.searchTerms[0] !== '')) {
           currentFilters.push(filter);
         }
       }
@@ -827,7 +829,9 @@ export class FilterService {
     const columnDef = this.sharedService.allColumns.find(col => col.id === filter.columnId);
     if (columnDef && filter.columnId) {
       this._columnFilters = {};
-      if (Array.isArray(filter.searchTerms) && (filter.searchTerms.length > 1 || (filter.searchTerms.length === 1 && filter.searchTerms[0] !== ''))) {
+      const emptySearchTermReturnAllValues = columnDef.filter?.emptySearchTermReturnAllValues ?? true;
+
+      if (Array.isArray(filter.searchTerms) && (filter.searchTerms.length > 1 || (filter.searchTerms.length === 1 && (!emptySearchTermReturnAllValues || filter.searchTerms[0] !== '')))) {
         // pass a columnFilter object as an object which it's property name must be a column field name (e.g.: 'duration': {...} )
         this._columnFilters[filter.columnId] = {
           columnId: filter.columnId,
@@ -931,10 +935,11 @@ export class FilterService {
       const hasSearchTerms = searchTerms && Array.isArray(searchTerms);
       const termsCount = hasSearchTerms && searchTerms && searchTerms.length;
       const oldColumnFilters = { ...this._columnFilters };
+      const emptySearchTermReturnAllValues = columnDef.filter?.emptySearchTermReturnAllValues ?? true;
       let parsedSearchTerms: SearchTerm | SearchTerm[] | undefined;
 
       if (columnDef && columnId) {
-        if (!hasSearchTerms || termsCount === 0 || (termsCount === 1 && Array.isArray(searchTerms) && searchTerms[0] === '')) {
+        if (!hasSearchTerms || termsCount === 0 || (termsCount === 1 && Array.isArray(searchTerms) && emptySearchTermReturnAllValues && searchTerms[0] === '')) {
           // delete the property from the columnFilters when it becomes empty
           // without doing this, it would leave an incorrect state of the previous column filters when filtering on another column
           delete this._columnFilters[columnId];
