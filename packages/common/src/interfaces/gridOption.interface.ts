@@ -67,8 +67,17 @@ export interface GridOption {
   /** Defaults to false, when enabled will automatically open the inlined editor as soon as there is a focus on the cell (can be combined with "enableCellNavigation: true"). */
   autoEdit?: boolean;
 
-  /** Defaults to true, which leads to automatically adjust the size of each column with the available space. Similar to "Force Fit Column" but only happens on first page/component load. */
+  /**
+   * Defaults to true, which leads to automatically adjust the width of each column with the available space. Similar to "Force Fit Column" but only happens on first page/component load.
+   * If you wish this resize to also re-evaluate when resizing the browser, then you should also use `enableAutoSizeColumns` (it is also enabled by default)
+   */
   autoFitColumnsOnFirstLoad?: boolean;
+
+  /**
+   * Defaults to false, which leads to automatically adjust the width of each column by their cell value content and only on first page/component load.
+   * If you wish this resize to also re-evaluate when resizing the browser, then you should also use `enableAutoResizeColumnsByCellContent`
+   */
+  autosizeColumnsByCellContentOnFirstLoad?: boolean;
 
   /** Defaults to false, which leads to automatically adjust the size (height) of the grid to display the entire content without any scrolling in the grid. */
   autoHeight?: boolean;
@@ -213,6 +222,12 @@ export interface GridOption {
 
   /** Defaults to true, which will automatically resize the column headers whenever the grid size changes */
   enableAutoSizeColumns?: boolean;
+
+  /**
+   * Defaults to false, which will automatically resize the column headers by their cell content whenever the grid size changes.
+   * NOTE: this option is opt-in and if you decide to use it then you should disable the other grid option `enableAutoSizeColumns: false`
+   */
+  enableAutoResizeColumnsByCellContent?: boolean;
 
   /** Defaults to false, which leads to showing tooltip over cell & header values that are not shown completely (... ellipsis) */
   enableAutoTooltip?: boolean;

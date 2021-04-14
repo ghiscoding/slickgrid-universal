@@ -341,29 +341,34 @@ export class Example14 {
       eventNamingStyle: EventNamingStyle.lowerCase,
       editable: true,
       autoAddCustomEditorFormatter: customEditableInputFormatter,
-      enableAddRow: true, // <-- this flag is required to work with the (create & clone) modal types
       enableCellNavigation: true,
-      asyncEditorLoading: false,
       autoEdit: true,
       autoCommitEdit: true,
       autoResize: {
         container: '.grid-container',
       },
-      enableAutoSizeColumns: true,
       enableAutoResize: true,
-      showCustomFooter: true,
-      enablePagination: true,
-      gridHeight: 400,
-      pagination: {
-        pageSize: 10,
-        pageSizes: [10, 200, 500, 5000]
-      },
+
+      // resizing by cell content is opt-in
+      // we first need to disable the 2 default flags to autoFit/autosize
+      autoFitColumnsOnFirstLoad: false,
+      enableAutoSizeColumns: false,
+      // then enable resize by content with these 2 flags
+      autosizeColumnsByCellContentOnFirstLoad: true,
+      enableAutoResizeColumnsByCellContent: true,
+
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: false
       },
       registerExternalResources: [new ExcelExportService()],
       enableFiltering: true,
+      enableRowSelection: true,
+      enableCheckboxSelector: true,
+      checkboxSelector: {
+        hideInFilterHeaderRow: false,
+        hideInColumnTitleRow: true,
+      },
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false
@@ -373,14 +378,6 @@ export class Example14 {
       preHeaderPanelHeight: 28,
       rowHeight: 33,
       headerRowHeight: 35,
-      frozenColumn: 2,
-      enableCheckboxSelector: true,
-      enableRowSelection: true,
-      multiSelect: false,
-      checkboxSelector: {
-        hideInFilterHeaderRow: false,
-        hideInColumnTitleRow: true,
-      },
       editCommandHandler: (item, column, editCommand) => {
         const prevSerializedValues = Array.isArray(editCommand.prevSerializedValue) ? editCommand.prevSerializedValue : [editCommand.prevSerializedValue];
         const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
@@ -508,7 +505,7 @@ export class Example14 {
   }
 
   handleNewResizeColumns() {
-    this.sgb1.gridService.resizeColumnsByCellContent();
+    this.sgb1.resizerService.resizeColumnsByCellContent(true);
   }
 
   toggleGridEditReadonly() {

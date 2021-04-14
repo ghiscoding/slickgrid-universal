@@ -1,9 +1,13 @@
 import {
+  exportWithFormatterWhenDefined,
   getHtmlElementOffset,
   GetSlickEventType,
+  getVarTypeOfByColumnFieldType,
   GridOption,
   GridSize,
   PubSubService,
+  sanitizeHtmlToText,
+  SlickDataView,
   SlickEventData,
   SlickEventHandler,
   SlickGrid,
@@ -22,10 +26,13 @@ export class ResizerService {
   private _grid!: SlickGrid;
   private _addon!: SlickResizer;
   private _eventHandler: SlickEventHandler;
+  private _gridParentContainerElm!: HTMLElement;
   private _intervalId!: NodeJS.Timeout;
   private _intervalExecutionCounter = 0;
   private _intervalRetryDelay = DEFAULT_INTERVAL_RETRY_DELAY;
   private _isStopResizeIntervalRequested = false;
+  private _lastDimensions?: GridSize;
+  private _totalColumnsWidthByContent = 0;
 
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
@@ -34,6 +41,11 @@ export class ResizerService {
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
     return (this._grid && this._grid.getOptions) ? this._grid.getOptions() : {};
+  }
+
+  /** Getter for the SlickGrid DataView */
+  get dataView(): SlickDataView {
+    return this._grid?.getData() as SlickDataView;
   }
 
   /** Getter for the grid uid */
@@ -65,6 +77,7 @@ export class ResizerService {
 
   init(grid: SlickGrid, gridParentContainerElm: HTMLElement) {
     this._grid = grid;
+    this._gridParentContainerElm = gridParentContainerElm;
     const fixedGridDimensions = (this.gridOptions?.gridHeight || this.gridOptions?.gridWidth) ? { height: this.gridOptions?.gridHeight, width: this.gridOptions?.gridWidth } : undefined;
     const autoResizeOptions = this.gridOptions?.autoResize ?? { bottomPadding: 0 };
     if (autoResizeOptions?.bottomPadding !== undefined && this.gridOptions.showCustomFooter) {
@@ -92,6 +105,13 @@ export class ResizerService {
         const onGridAfterResizeHandler = this._addon.onGridAfterResize;
         (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onGridAfterResizeHandler>>).subscribe(onGridAfterResizeHandler, (_e, args) => {
           this.eventPubSubService.publish('onGridAfterResize', args);
+
+          // we can call our resize by content here (when enabled)
+          // since the core Slick.Resizer plugin only supports the "autosizeColumns"
+          if (this.gridOptions.enableAutoResizeColumnsByCellContent && args.dimensions.width !== this._lastDimensions?.width) {
+            this.resizeColumnsByCellContent();
+          }
+          this._lastDimensions = args.dimensions;
         });
       }
       if (this._addon && this._addon.onGridBeforeResize) {
@@ -121,6 +141,91 @@ export class ResizerService {
 
   requestStopOfAutoFixResizeGrid(isStopRequired = true) {
     this._isStopResizeIntervalRequested = isStopRequired;
+  }
+
+  /**
+   * Resize each columns by their cell text/value content.
+   *
+   * NOTE: please that for performance reasons we will only inspect the first 1000 rows,
+   * though you could increase or decrease via `resizeMaxItemToInspectCellContentWidth` grid option.
+   * @param {Boolean} recalculateColumnsTotalWidth - defaults to false, do we want to recalculate the necessary total columns width even if it was already calculated?
+   */
+  resizeColumnsByCellContent(recalculateColumnsTotalWidth = false) {
+    const columnDefinitions = this._grid.getColumns();
+    const columnWidths: { [columnId in string | number]: number; } = {};
+    let reRender = false;
+
+    // read a few optional resize by content grid options
+    const resizeCellCharWidthInPx = this.gridOptions.resizeCellCharWidthInPx || 7; // width in pixels of a string character, this can vary depending on which font family/size is used & cell padding
+    const resizeCellPaddingWidthInPx = this.gridOptions.resizeCellPaddingWidthInPx || 6;
+    const resizeFormatterPaddingWidthInPx = this.gridOptions.resizeFormatterPaddingWidthInPx || 6;
+    const resizeMaxItemToInspectCellContentWidth = this.gridOptions.resizeMaxItemToInspectCellContentWidth || 1000; // how many items do we want to analyze cell content with widest width
+
+    // calculate total width necessary by each cell content
+    // we won't re-evaluate if we already had calculated the total
+    if (this._totalColumnsWidthByContent === 0 || recalculateColumnsTotalWidth) {
+      // loop through all columns to get their minWidth or width for later usage
+      for (const columnDef of columnDefinitions) {
+        columnWidths[columnDef.id] = columnDef.minWidth || columnDef.width || 0;
+      }
+
+      // loop through the entire dataset (limit to first 1000 rows), and evaluate the width by its content
+      // if we have a Formatter, we will also potentially add padding
+      const dataset = this.dataView.getItems() as any[];
+      for (const [rowIdx, item] of dataset.entries()) {
+        if (rowIdx > resizeMaxItemToInspectCellContentWidth) {
+          break;
+        }
+        columnDefinitions.forEach((columnDef, colIdx) => {
+          const formattedData = exportWithFormatterWhenDefined(rowIdx, colIdx, item, columnDef, this._grid);
+          const formattedStrLn = Math.ceil(sanitizeHtmlToText(formattedData).length * (columnDef?.resizeColumnCharWidth ?? resizeCellCharWidthInPx));
+
+          if (columnDef && columnWidths[columnDef.id] === undefined || formattedStrLn > columnWidths[columnDef.id]) {
+            columnWidths[columnDef.id] = (columnDef.resizeColumnMaxWidthThreshold !== undefined && formattedStrLn < columnDef.resizeColumnMaxWidthThreshold)
+              ? columnDef.resizeColumnMaxWidthThreshold
+              : (columnDef.maxWidth !== undefined && formattedStrLn < columnDef.maxWidth) ? columnDef.maxWidth : formattedStrLn;
+          }
+        });
+      }
+
+      // finally loop through all column definitions again and apply calculated `width` to each column
+      let totalColsWidth = 0;
+      for (const col of columnDefinitions) {
+        if (columnWidths[col.id] !== undefined) {
+          if (col.rerenderOnResize) {
+            reRender = true;
+          }
+          let newColWidth = columnWidths[col.id] + resizeCellPaddingWidthInPx;
+          if (col.editor) {
+            newColWidth += resizeFormatterPaddingWidthInPx;
+          }
+          if (col.type === 'date') {
+            const varType = getVarTypeOfByColumnFieldType(col.type || col.outputType);
+            if ((varType === 'date' || varType === 'number')) {
+              col.resizeColumnWidthRatio = 0.9;
+            }
+          }
+          if (col.resizeColumnWidthRatio) {
+            newColWidth *= col.resizeColumnWidthRatio;
+          }
+          if (col.resizeColumnExtraWidthPadding) {
+            newColWidth += col.resizeColumnExtraWidthPadding;
+          }
+          if ((col.resizeColumnMaxWidthThreshold !== undefined && newColWidth > col.resizeColumnMaxWidthThreshold) || (col.maxWidth !== undefined && newColWidth > col.maxWidth)) {
+            newColWidth = col.resizeColumnMaxWidthThreshold || col.maxWidth || 0;
+          }
+          col.width = Math.ceil(newColWidth);
+        }
+        totalColsWidth += col.width || 0;
+        this._totalColumnsWidthByContent = totalColsWidth;
+      }
+    }
+
+    // get the grid container viewport width
+    const viewportWidth = this._gridParentContainerElm?.offsetWidth ?? 0;
+
+    // depending if our viewport calculated total columns is greater than the viewport size we'll call reRenderColumns() or else the default autosizeColumns()
+    (this._totalColumnsWidthByContent > viewportWidth) ? this._grid.reRenderColumns(reRender) : this._grid.autosizeColumns();
   }
 
   /**

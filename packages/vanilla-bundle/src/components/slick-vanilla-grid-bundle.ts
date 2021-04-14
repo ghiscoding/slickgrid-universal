@@ -932,9 +932,16 @@ export class SlickVanillaGridBundle {
   }
 
   bindResizeHook(grid: SlickGrid, options: GridOption) {
+    if ((options.autoFitColumnsOnFirstLoad && options.autosizeColumnsByCellContentOnFirstLoad) || (options.enableAutoSizeColumns && options.enableAutoResizeColumnsByCellContent)) {
+      throw new Error(`You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use. You can enable these 2 options ("autoFitColumnsOnFirstLoad" and "enableAutoSizeColumns") OR these other 2 options ("autosizeColumnsByCellContentOnFirstLoad" and "enableAutoResizeColumnsByCellContent").`);
+    }
+
     // expand/autofit columns on first page load
     if (grid && options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && typeof grid.autosizeColumns === 'function') {
       this.slickGrid.autosizeColumns();
+    } else if (grid && options.autosizeColumnsByCellContentOnFirstLoad && this.resizerService?.resizeColumnsByCellContent) {
+      // expand/autofit columns by their content on first page load
+      this.resizerService.resizeColumnsByCellContent();
     }
 
     // auto-resize grid on browser resize (optionally provide grid height or width)
@@ -946,6 +953,8 @@ export class SlickVanillaGridBundle {
     if (grid && options?.enableAutoResize) {
       if (options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && typeof grid.autosizeColumns === 'function') {
         grid.autosizeColumns();
+      } else if (options.autosizeColumnsByCellContentOnFirstLoad && options.enableAutoResizeColumnsByCellContent && this.resizerService?.resizeColumnsByCellContent) {
+        this.resizerService.resizeColumnsByCellContent();
       }
     }
   }
@@ -1075,6 +1084,8 @@ export class SlickVanillaGridBundle {
 
     if (this._gridOptions?.enableAutoSizeColumns) {
       this.slickGrid.autosizeColumns();
+    } else if (this._gridOptions?.enableAutoResizeColumnsByCellContent && this.resizerService?.resizeColumnsByCellContent) {
+      this.resizerService.resizeColumnsByCellContent();
     }
   }
 
