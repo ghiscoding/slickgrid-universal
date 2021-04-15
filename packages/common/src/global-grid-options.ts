@@ -219,9 +219,10 @@ export const GlobalGridOptions: GridOption = {
   rowHeight: 35,
   topPanelHeight: 30,
   translationNamespaceSeparator: ':',
-  resizeCellCharWidthInPx: 7,
-  resizeCellPaddingWidthInPx: 6,
-  resizeFormatterPaddingWidthInPx: 6,
+  resizeAlwaysRecalculateColumnWidth: false,
+  resizeCellCharWidthInPx: 7.8,
+  resizeCellPaddingWidthInPx: 12,
+  resizeFormatterPaddingWidthInPx: 0,
   resizeMaxItemToInspectCellContentWidth: 1000,
 };
 

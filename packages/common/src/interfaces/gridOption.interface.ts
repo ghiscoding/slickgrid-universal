@@ -476,6 +476,9 @@ export interface GridOption {
   /** Register any external Resources (Components, Services) like the ExcelExportService, TextExportService, SlickCompositeEditorComponent, ... */
   registerExternalResources?: ExternalResource[];
 
+  /** defaults to false, if a column `width` is provided (or was previously calculated) should we recalculate it or not when resizing by cell content? */
+  resizeAlwaysRecalculateColumnWidth?: boolean;
+
   /**
    * Defaults to 7, width in pixels of a string character which is used by the resize columns by its content, this can vary depending on which font family/size is used & cell padding.
    * This is only used when resizing the columns width by their content, we need to know the width of a character in pixel to do all calculations.

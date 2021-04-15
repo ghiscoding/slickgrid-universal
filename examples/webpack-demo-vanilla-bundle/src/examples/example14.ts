@@ -127,8 +127,8 @@ export class Example14 {
     this.columnDefinitions = [
       {
         id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string, minWidth: 65,
-        // resizeColumnExtraWidthPadding: 1,
-        resizeColumnCharWidth: 9.5,
+        // resizeExtraWidthPadding: 1,
+        resizeCharWidthInPx: 8.5,
         filterable: true, columnGroup: 'Common Factor',
         filter: { model: Filters.compoundInputText },
         formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold] },
@@ -158,7 +158,7 @@ export class Example14 {
         editor: { model: Editors.float, decimal: 2, valueStep: 1, minValue: 0, maxValue: 10000, alwaysSaveOnEnterKey: true, required: true },
       },
       {
-        id: 'cost', name: 'Cost', field: 'cost', minWidth: 65, width: 75,
+        id: 'cost', name: 'Cost', field: 'cost', minWidth: 65,
         sortable: true, filterable: true, type: FieldType.number, columnGroup: 'Analysis',
         filter: { model: Filters.compoundInputNumber },
         formatter: Formatters.dollar,
@@ -174,8 +174,8 @@ export class Example14 {
         },
       },
       {
-        id: 'complexity', name: 'Complexity', field: 'complexity', minWidth: 100,
-        type: FieldType.number,
+        id: 'complexity', name: 'Complexity', field: 'complexity',
+        resizeCalcWidthRatio: 0.82, // default calc ratio is 1 or 0.85 for field type of string
         sortable: true, filterable: true, columnGroup: 'Analysis',
         formatter: (_row, _cell, value) => this.complexityLevelList[value].label,
         exportCustomFormatter: (_row, _cell, value) => this.complexityLevelList[value].label,
@@ -189,7 +189,7 @@ export class Example14 {
         },
       },
       {
-        id: 'start', name: 'Start', field: 'start', sortable: true, minWidth: 100,
+        id: 'start', name: 'Start', field: 'start', sortable: true,
         formatter: Formatters.dateUs, columnGroup: 'Period',
         exportCustomFormatter: Formatters.dateUs,
         type: FieldType.date, outputType: FieldType.dateUs, saveOutputType: FieldType.dateUtc,
@@ -210,7 +210,7 @@ export class Example14 {
         // editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'Yes' }, { value: false, label: 'No' }], },
       },
       {
-        id: 'finish', name: 'Finish', field: 'finish', sortable: true, minWidth: 100,
+        id: 'finish', name: 'Finish', field: 'finish', sortable: true,
         formatter: Formatters.dateUs, columnGroup: 'Period',
         type: FieldType.date, outputType: FieldType.dateUs, saveOutputType: FieldType.dateUtc,
         filterable: true, filter: { model: Filters.compoundDate },
@@ -231,9 +231,9 @@ export class Example14 {
         id: 'product', name: 'Product', field: 'product',
         filterable: true, columnGroup: 'Item',
         minWidth: 100,
-        // resizeColumnWidthRatio: 1.01,
-        resizeColumnMaxWidthThreshold: 170,
-        resizeColumnExtraWidthPadding: 1,
+        // resizeCalcWidthRatio: 1.01,
+        resizeMaxWidthThreshold: 185,
+        // resizeExtraWidthPadding: 1,
         exportWithFormatter: true,
         dataKey: 'id',
         labelKey: 'itemName',
@@ -356,6 +356,7 @@ export class Example14 {
       // then enable resize by content with these 2 flags
       autosizeColumnsByCellContentOnFirstLoad: true,
       enableAutoResizeColumnsByCellContent: true,
+      resizeFormatterPaddingWidthInPx: 14, // optional editor formatter padding, we have 1px border & 6px padding on each side => (1 + 6) * 2 = 14px
 
       enableExcelExport: true,
       excelExportOptions: {
@@ -516,6 +517,10 @@ export class Example14 {
     this.isGridEditable = !this.isGridEditable;
     this.sgb1.gridOptions = { editable: this.isGridEditable };
     this.gridOptions1 = this.sgb1.gridOptions;
+
+    // we can request a resize of the columns widths by their cell content (we need to pass `true` to request a recalc)
+    // also another reason to do it here is because we use an extra editable formatter that has its own padding
+    this.sgb1.resizerService.resizeColumnsByCellContent(true);
   }
 
   removeUnsavedStylingFromCell(_item: any, column: Column, row: number) {

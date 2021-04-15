@@ -10,7 +10,37 @@
   </div>
 </h3>
 
-<section class="columns is-desktop">
+<div class="columns">
+  <div class="column is-three-quarters">
+    <p>
+      The grid below uses the optional resize by cell content, you can click on the 2 buttons to see the difference.
+      The "autosizeColumns" is really the default option used by SlickGrid-Universal, the resize by cell content is
+      optional because it requires to read the first thousand rows and do extra width calculation.
+    </p>
+  </div>
+</div>
+
+<hr />
+
+<div class="columns">
+  <div class="column field is-narrow">
+    <h4 class="title is-4">Container Width (1000px)</h4>
+  </div>
+  <div class="column field has-addons is-narrow">
+    <p class="control">
+      <button class="button is-small" onclick.delegate="handleBeforeResizeColumns()">
+        <span class="icon mdi mdi-arrow-expand"></span>
+        <span>(default resize) "autosizeColumns"</span>
+      </button>
+    </p>
+    <p class="control">
+      <button class="button is-small" onclick.delegate="handleNewResizeColumns()">
+        <span class="icon mdi mdi-arrow-expand"></span>
+        <span>Resize by Cell Content</span>
+      </button>
+    </p>
+  </div>
+
   <div class="column field has-addons is-narrow">
     <p class="control">
       <button class="button is-small" onclick.delegate="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
@@ -31,40 +61,9 @@
       </button>
     </p>
   </div>
-
-
-</section>
-
-<div class="columns">
-  <div class="column field is-narrow">
-    <h4 class="title is-4">Container Width (1000px)</h4>
-  </div>
-  <div class="column field has-addons is-narrow">
-    <p class="control">
-      <button class="button is-small" onclick.delegate="handleBeforeResizeColumns()">
-        <span class="icon mdi mdi-arrow-expand"></span>
-        <span>Previous "autosizeColumns" (default)</span>
-      </button>
-    </p>
-    <p class="control">
-      <button class="button is-small" onclick.delegate="handleNewResizeColumns()">
-        <span class="icon mdi mdi-arrow-expand"></span>
-        <span>Resize by Cell Content</span>
-      </button>
-    </p>
-  </div>
 </div>
 
 <div style="width: 1000px" class="grid-container">
   <div class="grid1">
-  </div>
-</div>
-
-<br>
-<hr>
-<br>
-
-<div style="width: 1000px" class="grid-container">
-  <div class="grid2">
   </div>
 </div>

@@ -161,6 +161,9 @@ export class SlickVanillaGridBundle {
     if (this._slickgridInitialized) {
       this.updateColumnDefinitionsList(this._columnDefinitions);
     }
+    if (columnDefinitions.length > 0) {
+      this.copyColumnWidthsReference(columnDefinitions);
+    }
   }
 
   get dataset(): any[] {
@@ -306,6 +309,9 @@ export class SlickVanillaGridBundle {
     this._hideHeaderRowAfterPageLoad = (options?.showHeaderRow === false);
 
     this._columnDefinitions = columnDefs || [];
+    if (this._columnDefinitions.length > 0) {
+      this.copyColumnWidthsReference(this._columnDefinitions);
+    }
     this._gridOptions = this.mergeGridOptions(options || {});
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions?.enableDeepCopyDatasetOnPageLoad);
 
@@ -936,12 +942,12 @@ export class SlickVanillaGridBundle {
       throw new Error(`You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use. You can enable these 2 options ("autoFitColumnsOnFirstLoad" and "enableAutoSizeColumns") OR these other 2 options ("autosizeColumnsByCellContentOnFirstLoad" and "enableAutoResizeColumnsByCellContent").`);
     }
 
-    // expand/autofit columns on first page load
     if (grid && options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && typeof grid.autosizeColumns === 'function') {
+      // expand/autofit columns on first page load
       this.slickGrid.autosizeColumns();
     } else if (grid && options.autosizeColumnsByCellContentOnFirstLoad && this.resizerService?.resizeColumnsByCellContent) {
-      // expand/autofit columns by their content on first page load
-      this.resizerService.resizeColumnsByCellContent();
+      // resize by cell content and add a delay so that it resizes only after we have all data in the UI and ready for the calculation
+      setTimeout(() => this.resizerService.resizeColumnsByCellContent(true), 0);
     }
 
     // auto-resize grid on browser resize (optionally provide grid height or width)
@@ -953,7 +959,7 @@ export class SlickVanillaGridBundle {
     if (grid && options?.enableAutoResize) {
       if (options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && typeof grid.autosizeColumns === 'function') {
         grid.autosizeColumns();
-      } else if (options.autosizeColumnsByCellContentOnFirstLoad && options.enableAutoResizeColumnsByCellContent && this.resizerService?.resizeColumnsByCellContent) {
+      } else if (!options.autosizeColumnsByCellContentOnFirstLoad && options.enableAutoResizeColumnsByCellContent && this.resizerService?.resizeColumnsByCellContent) {
         this.resizerService.resizeColumnsByCellContent();
       }
     }
@@ -1116,6 +1122,11 @@ export class SlickVanillaGridBundle {
   // --
   // private functions
   // ------------------
+
+  /** Loop through all column definitions and copy the original optional `width` properties optionally provided by the user */
+  private copyColumnWidthsReference(columnDefinitions: Column[]) {
+    columnDefinitions.forEach(col => col.originalWidth = col.width);
+  }
 
   private displayEmptyDataWarning(showWarning = true) {
     this.slickEmptyWarning?.showEmptyDataMessage(showWarning);
