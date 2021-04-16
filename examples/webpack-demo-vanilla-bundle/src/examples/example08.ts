@@ -6,6 +6,7 @@ import {
   OperatorString,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
@@ -51,7 +52,7 @@ export class Example08 {
   definedGrid1() {
     this.columnDefinitions1 = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, columnGroup: 'Common Factor' },
-      { id: 'duration', name: 'Duration', type: FieldType.number, field: 'duration', columnGroup: 'Common Factor' },
+      { id: 'duration', name: 'Duration', field: 'duration', columnGroup: 'Common Factor' },
       { id: 'start', name: 'Start', field: 'start', columnGroup: 'Period' },
       { id: 'finish', name: 'Finish', field: 'finish', columnGroup: 'Period' },
       { id: '%', name: '% Complete', type: FieldType.number, field: 'percentComplete', selectable: false, columnGroup: 'Analysis' },
@@ -62,12 +63,13 @@ export class Example08 {
       enableAutoResize: false,
       gridHeight: 275,
       gridWidth: 800,
+      enableTextExport: true,
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: true,
         sanitizeDataExport: true
       },
-      registerExternalResources: [new ExcelExportService()],
+      registerExternalResources: [new TextExportService(), new ExcelExportService()],
       enableCellNavigation: true,
       enableColumnReorder: false,
       enableSorting: true,
@@ -150,15 +152,14 @@ export class Example08 {
           }
         }
       };
-    } else {
-      return {
-        columns: {
-          0: {
-            colspan: '*' // starting at column index 0, we will span accross all column (*)
-          }
-        }
-      };
     }
+    return {
+      columns: {
+        0: {
+          colspan: '*' // starting at column index 0, we will span accross all column (*)
+        }
+      }
+    };
   }
 
   //
