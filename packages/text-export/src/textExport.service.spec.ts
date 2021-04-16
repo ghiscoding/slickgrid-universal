@@ -8,8 +8,8 @@ import {
   Formatters,
   GridOption,
   GroupTotalFormatters,
+  ItemMetadata,
   PubSubService,
-  SharedService,
   SlickDataView,
   SlickGrid,
   SortComparers,
@@ -19,8 +19,8 @@ import {
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
 
-function removeMultipleSpaces(textS) {
-  return `${textS}`.replace(/  +/g, '');
+function removeMultipleSpaces(inputText: string) {
+  return `${inputText}`.replace(/  +/g, '');
 }
 
 const pubSubServiceStub = {
@@ -49,6 +49,7 @@ const myCustomObjectFormatter: Formatter = (_row, _cell, value, _columnDef, data
 const dataViewStub = {
   getGrouping: jest.fn(),
   getItem: jest.fn(),
+  getItemMetadata: jest.fn(),
   getLength: jest.fn(),
   setGrouping: jest.fn(),
 } as unknown as SlickDataView;
@@ -1033,6 +1034,63 @@ describe('ExportService', () => {
             done();
           });
         });
+      });
+    });
+
+    describe('grid with colspan', () => {
+      let mockCollection;
+      let oddMetatadata = { columns: { lastName: { colspan: 2 } } } as ItemMetadata;
+      let evenMetatadata = { columns: { 0: { colspan: '*' } } } as ItemMetadata;
+
+      beforeEach(() => {
+        mockGridOptions.enableTranslate = true;
+        mockGridOptions.translater = translateService;
+        mockGridOptions.textExportOptions = {};
+        mockGridOptions.createPreHeaderPanel = false;
+        mockGridOptions.showPreHeaderPanel = false;
+        mockGridOptions.colspanCallback = (item: any) => (item.id % 2 === 1) ? evenMetatadata : oddMetatadata;
+
+        mockColumns = [
+          { id: 'userId', field: 'userId', name: 'User Id', width: 100, exportCsvForceToKeepAsString: true },
+          { id: 'firstName', nameKey: 'FIRST_NAME', width: 100, formatter: myBoldHtmlFormatter },
+          { id: 'lastName', field: 'lastName', nameKey: 'LAST_NAME', width: 100, formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
+          { id: 'position', field: 'position', name: 'Position', width: 100, formatter: Formatters.translate, exportWithFormatter: true },
+          { id: 'order', field: 'order', width: 100, },
+        ] as Column[];
+
+        jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      });
+
+      afterEach(() => {
+        jest.clearAllMocks();
+      });
+
+      it(`should export same colspan in the csv export as defined in the grid`, async () => {
+        mockCollection = [
+          { id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 },
+          { id: 1, userId: '1E09', firstName: 'Jane', lastName: 'Doe', position: 'DEVELOPER', order: 15 },
+          { id: 2, userId: '2ABC', firstName: 'Sponge', lastName: 'Bob', position: 'IT_ADMIN', order: 33 },
+        ];
+        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]).mockReturnValueOnce(mockCollection[1]).mockReturnValueOnce(mockCollection[2]);
+        jest.spyOn(dataViewStub, 'getItemMetadata').mockReturnValue(oddMetatadata).mockReturnValueOnce(evenMetatadata).mockReturnValueOnce(oddMetatadata).mockReturnValueOnce(evenMetatadata);
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
+        const spyDownload = jest.spyOn(service, 'startDownloadFile');
+
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
+        const contentExpectation =
+          `"User Id","First Name","Last Name","Position","Order"
+              ="1E06",,,,
+              ="1E09","Jane","DOE",,"15"
+              ="2ABC",,,,`;
+
+        service.init(gridStub, container);
+        await service.exportToFile(mockExportCsvOptions);
+
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
     });
   });
