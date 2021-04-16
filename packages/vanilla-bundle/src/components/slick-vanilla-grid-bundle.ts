@@ -841,7 +841,9 @@ export class SlickVanillaGridBundle {
 
         // when user has resize by content enabled, we'll force a full width calculation since we change our entire dataset
         if (args.itemCount > 0 && (this.gridOptions.autosizeColumnsByCellContentOnFirstLoad || this.gridOptions.enableAutoResizeColumnsByCellContent)) {
-          this.resizerService.resizeColumnsByCellContent(true, this.dataset);
+          // add a delay so that if column positions changes by changeColumnsArrangement() when using custom Grid Views
+          // or presets.columns won't have any impact on the list of visible columns and their positions
+          setTimeout(() => this.resizerService.resizeColumnsByCellContent(true), 10);
         }
       });
 
@@ -957,9 +959,9 @@ export class SlickVanillaGridBundle {
 
     // auto-resize grid on browser resize (optionally provide grid height or width)
     if (options.gridHeight || options.gridWidth) {
-      this.resizerService.resizeGrid(0, { height: options.gridHeight, width: options.gridWidth })?.then(gridSizes => this.sharedService.lastGridDimensions = gridSizes);
+      this.resizerService.resizeGrid(0, { height: options.gridHeight, width: options.gridWidth });
     } else {
-      this.resizerService.resizeGrid()?.then(gridSizes => this.sharedService.lastGridDimensions = gridSizes);
+      this.resizerService.resizeGrid();
     }
     if (grid && options?.enableAutoResize) {
       if (options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && typeof grid.autosizeColumns === 'function') {
@@ -1068,7 +1070,7 @@ export class SlickVanillaGridBundle {
       // resize the grid inside a slight timeout, in case other DOM element changed prior to the resize (like a filter/pagination changed)
       if (this.slickGrid && this._gridOptions.enableAutoResize) {
         const delay = this._gridOptions.autoResize && this._gridOptions.autoResize.delay;
-        this.resizerService.resizeGrid(delay || 10)?.then(gridSizes => this.sharedService.lastGridDimensions = gridSizes);
+        this.resizerService.resizeGrid(delay || 10);
       }
     }
   }

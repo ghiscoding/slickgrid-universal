@@ -410,6 +410,10 @@ describe('headerMenuExtension', () => {
     });
 
     describe('executeHeaderMenuInternalCommands method', () => {
+      beforeEach(() => {
+        jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+      });
+
       it('should trigger the command "freeze-columns" and grid "setOptions" method to be called with current column position', () => {
         const setOptionsSpy = jest.spyOn(gridStub, 'setOptions');
         const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');

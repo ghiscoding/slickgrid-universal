@@ -52,7 +52,9 @@ export const SalesforceGlobalGridOptions = {
   },
   headerRowHeight: 35,
   rowHeight: 33,
+  resizeDefaultRatioForStringType: 0.92,
   resizeFormatterPaddingWidthInPx: 14,
+  resizeMaxItemToInspectCellContentWidth: 500,
   eventNamingStyle: EventNamingStyle.lowerCaseWithoutOnPrefix,
   useSalesforceDefaultGridOptions: true,
 } as GridOption;

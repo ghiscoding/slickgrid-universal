@@ -362,7 +362,8 @@ export class HeaderMenuExtension implements Extension {
           }
 
           // we also need to autosize columns if the option is enabled
-          if (this.sharedService.gridOptions.enableAutoSizeColumns) {
+          const gridOptions = this.sharedService.slickGrid.getOptions();
+          if (gridOptions.enableAutoSizeColumns) {
             this.sharedService.slickGrid.autosizeColumns();
           }
           break;

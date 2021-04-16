@@ -223,6 +223,7 @@ export const GlobalGridOptions: GridOption = {
   resizeCellCharWidthInPx: 7.8,
   resizeCellPaddingWidthInPx: 12,
   resizeFormatterPaddingWidthInPx: 0,
+  resizeDefaultRatioForStringType: 0.9,
   resizeMaxItemToInspectCellContentWidth: 1000,
 };
 

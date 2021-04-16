@@ -121,6 +121,7 @@ export class GridStateService {
 
         // finally set the new presets columns (including checkbox selector if need be)
         this._grid.setColumns(gridColumns);
+        this.sharedService.visibleColumns = gridColumns;
 
         // resize the columns to fit the grid canvas
         if (triggerAutoSizeColumns) {

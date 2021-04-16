@@ -151,9 +151,9 @@ export class ResizerService {
    * however user could override it by using the grid option `resizeMaxItemToInspectCellContentWidth` to increase/decrease how many items to inspect.
    * @param {Boolean} recalculateColumnsTotalWidth - defaults to false, do we want to recalculate the necessary total columns width even if it was already calculated?
    */
-  resizeColumnsByCellContent(recalculateColumnsTotalWidth = false, dataset?: any[]) {
+  resizeColumnsByCellContent(recalculateColumnsTotalWidth = false) {
     const columnDefinitions = this._grid.getColumns();
-    dataset = dataset || this.dataView.getItems() as any[];
+    const dataset = this.dataView.getItems() as any[];
     const columnWidths: { [columnId in string | number]: number; } = {};
     let reRender = false;
 
@@ -172,7 +172,7 @@ export class ResizerService {
     if (this._totalColumnsWidthByContent === 0 || recalculateColumnsTotalWidth) {
       // loop through all columns to get their minWidth or width for later usage
       for (const columnDef of columnDefinitions) {
-        columnWidths[columnDef.id] = columnDef.minWidth || columnDef.width || 0;
+        columnWidths[columnDef.id] = columnDef.originalWidth || columnDef.width || columnDef.minWidth || 0;
       }
 
       // loop through the entire dataset (limit to first 1000 rows), and evaluate the width by its content
@@ -207,17 +207,15 @@ export class ResizerService {
             reRender = true;
           }
           let newColWidth = columnWidths[column.id] + resizeCellPaddingWidthInPx;
-          let resizeCalcWidthRatio = column.resizeCalcWidthRatio || 1;
 
           if (column.editor && this.gridOptions.editable) {
             newColWidth += resizeFormatterPaddingWidthInPx;
           }
-          if (fieldType === 'string') {
-            resizeCalcWidthRatio = 0.9; // the default ratio is 1, except for string where we use a ratio of 0.9 since we have more various thinner characters like (i, l, t, ...)
-          }
-          if (resizeCalcWidthRatio) {
-            newColWidth *= resizeCalcWidthRatio;
-          }
+
+          // the default ratio is 1, except for string where we use a ratio of 0.9 since we have more various thinner characters like (i, l, t, ...)
+          const defaultStringRatio = this.gridOptions.resizeDefaultRatioForStringType || 0.9;
+          newColWidth *= column.resizeCalcWidthRatio || (fieldType === 'string') ? defaultStringRatio : 1;
+
           if (column.resizeExtraWidthPadding) {
             newColWidth += column.resizeExtraWidthPadding;
           }
@@ -235,6 +233,9 @@ export class ResizerService {
         this._totalColumnsWidthByContent = totalColsWidth;
       }
     }
+
+    // send updated column definitions widths to SlickGrid
+    this._grid.setColumns(columnDefinitions);
 
     // get the grid container viewport width
     const viewportWidth = this._gridParentContainerElm?.offsetWidth ?? 0;
