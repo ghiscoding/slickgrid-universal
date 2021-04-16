@@ -175,7 +175,7 @@ export class Example14 {
       },
       {
         id: 'complexity', name: 'Complexity', field: 'complexity',
-        resizeCalcWidthRatio: 0.82, // default calc ratio is 1 or 0.85 for field type of string
+        resizeCalcWidthRatio: 0.82, // default calc ratio is 1 or 0.9 for field type of string
         sortable: true, filterable: true, columnGroup: 'Analysis',
         formatter: (_row, _cell, value) => this.complexityLevelList[value].label,
         exportCustomFormatter: (_row, _cell, value) => this.complexityLevelList[value].label,

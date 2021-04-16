@@ -838,6 +838,11 @@ export class SlickVanillaGridBundle {
       const onSetItemsCalledHandler = dataView.onSetItemsCalled;
       (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSetItemsCalledHandler>>).subscribe(onSetItemsCalledHandler, (_e, args) => {
         this.handleOnItemCountChanged(this.dataView.getLength(), args.itemCount);
+
+        // when user has resize by content enabled, we'll force a full width calculation since we change our entire dataset
+        if (args.itemCount > 0 && (this.gridOptions.autosizeColumnsByCellContentOnFirstLoad || this.gridOptions.enableAutoResizeColumnsByCellContent)) {
+          this.resizerService.resizeColumnsByCellContent(true, this.dataset);
+        }
       });
 
       // when filtering data with local dataset, we need to update each row else it will not always show correctly in the UI
@@ -947,7 +952,7 @@ export class SlickVanillaGridBundle {
       this.slickGrid.autosizeColumns();
     } else if (grid && options.autosizeColumnsByCellContentOnFirstLoad && this.resizerService?.resizeColumnsByCellContent) {
       // resize by cell content and add a delay so that it resizes only after we have all data in the UI and ready for the calculation
-      setTimeout(() => this.resizerService.resizeColumnsByCellContent(true), 0);
+      setTimeout(() => this.resizerService.resizeColumnsByCellContent(true), 10);
     }
 
     // auto-resize grid on browser resize (optionally provide grid height or width)
@@ -1123,7 +1128,10 @@ export class SlickVanillaGridBundle {
   // private functions
   // ------------------
 
-  /** Loop through all column definitions and copy the original optional `width` properties optionally provided by the user */
+  /**
+   * Loop through all column definitions and copy the original optional `width` properties optionally provided by the user.
+   * We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
+   */
   private copyColumnWidthsReference(columnDefinitions: Column[]) {
     columnDefinitions.forEach(col => col.originalWidth = col.width);
   }
@@ -1233,6 +1241,10 @@ export class SlickVanillaGridBundle {
               gridColumns.unshift(checkboxColumn);
             }
           }
+
+          // keep copy the original optional `width` properties optionally provided by the user.
+          // We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
+          gridColumns.forEach(col => col.originalWidth = col.width);
 
           // finally set the new presets columns (including checkbox selector if need be)
           this.slickGrid.setColumns(gridColumns);

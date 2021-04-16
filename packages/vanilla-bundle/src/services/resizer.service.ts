@@ -151,10 +151,15 @@ export class ResizerService {
    * however user could override it by using the grid option `resizeMaxItemToInspectCellContentWidth` to increase/decrease how many items to inspect.
    * @param {Boolean} recalculateColumnsTotalWidth - defaults to false, do we want to recalculate the necessary total columns width even if it was already calculated?
    */
-  resizeColumnsByCellContent(recalculateColumnsTotalWidth = false) {
+  resizeColumnsByCellContent(recalculateColumnsTotalWidth = false, dataset?: any[]) {
     const columnDefinitions = this._grid.getColumns();
+    dataset = dataset || this.dataView.getItems() as any[];
     const columnWidths: { [columnId in string | number]: number; } = {};
     let reRender = false;
+
+    if (!Array.isArray(dataset) || dataset.length === 0) {
+      return;
+    }
 
     // read a few optional resize by content grid options
     const resizeCellCharWidthInPx = this.gridOptions.resizeCellCharWidthInPx || 7; // width in pixels of a string character, this can vary depending on which font family/size is used & cell padding
@@ -172,20 +177,22 @@ export class ResizerService {
 
       // loop through the entire dataset (limit to first 1000 rows), and evaluate the width by its content
       // if we have a Formatter, we will also potentially add padding
-      const dataset = this.dataView.getItems() as any[];
       for (const [rowIdx, item] of dataset.entries()) {
         if (rowIdx > resizeMaxItemToInspectCellContentWidth) {
           break;
         }
         columnDefinitions.forEach((columnDef, colIdx) => {
           const charWidthPx = columnDef?.resizeCharWidthInPx ?? resizeCellCharWidthInPx;
-          const formattedData = exportWithFormatterWhenDefined(rowIdx, colIdx, item, columnDef, this._grid);
-          const formattedStrLn = Math.ceil(sanitizeHtmlToText(formattedData).length * charWidthPx);
+          const exportOptions = this.gridOptions.enableTextExport ? this.gridOptions.exportOptions || this.gridOptions.textExportOptions : this.gridOptions.excelExportOptions;
+          const formattedData = exportWithFormatterWhenDefined(rowIdx, colIdx, item, columnDef, this._grid, exportOptions);
+          const formattedDataSanitized = sanitizeHtmlToText(formattedData);
+          const formattedTextWidthInPx = Math.ceil(formattedDataSanitized.length * charWidthPx);
+          const resizeMaxWidthThreshold = columnDef.resizeMaxWidthThreshold;
 
-          if (columnDef && columnWidths[columnDef.id] === undefined || formattedStrLn > columnWidths[columnDef.id]) {
-            columnWidths[columnDef.id] = (columnDef.resizeMaxWidthThreshold !== undefined && formattedStrLn < columnDef.resizeMaxWidthThreshold)
-              ? columnDef.resizeMaxWidthThreshold
-              : (columnDef.maxWidth !== undefined && formattedStrLn < columnDef.maxWidth) ? columnDef.maxWidth : formattedStrLn;
+          if (columnDef && columnWidths[columnDef.id] === undefined || formattedTextWidthInPx > columnWidths[columnDef.id]) {
+            columnWidths[columnDef.id] = (resizeMaxWidthThreshold !== undefined && formattedTextWidthInPx < resizeMaxWidthThreshold)
+              ? resizeMaxWidthThreshold
+              : (columnDef.maxWidth !== undefined && formattedTextWidthInPx < columnDef.maxWidth) ? columnDef.maxWidth : formattedTextWidthInPx;
           }
         });
       }
@@ -200,14 +207,16 @@ export class ResizerService {
             reRender = true;
           }
           let newColWidth = columnWidths[column.id] + resizeCellPaddingWidthInPx;
+          let resizeCalcWidthRatio = column.resizeCalcWidthRatio || 1;
+
           if (column.editor && this.gridOptions.editable) {
             newColWidth += resizeFormatterPaddingWidthInPx;
           }
           if (fieldType === 'string') {
-            column.resizeCalcWidthRatio = 0.85; // the default ratio is 1, except for string where we use a ratio of 0.85 since we have more various thinner characters like (i, l, t, ...)
+            resizeCalcWidthRatio = 0.9; // the default ratio is 1, except for string where we use a ratio of 0.9 since we have more various thinner characters like (i, l, t, ...)
           }
-          if (column.resizeCalcWidthRatio) {
-            newColWidth *= column.resizeCalcWidthRatio;
+          if (resizeCalcWidthRatio) {
+            newColWidth *= resizeCalcWidthRatio;
           }
           if (column.resizeExtraWidthPadding) {
             newColWidth += column.resizeExtraWidthPadding;
