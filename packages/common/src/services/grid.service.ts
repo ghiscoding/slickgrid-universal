@@ -215,38 +215,6 @@ export class GridService {
   }
 
   /**
-   * @deprecated Hide a Column from the Grid (the column will just become hidden and will still show up in columnPicker/gridMenu)
-   * @see hideColumnById
-   * @param column
-   */
-  hideColumn(column: Column) {
-    if (this._gridOptions && this._grid.getColumnIndex) {
-      const columnIndex = this._grid.getColumnIndex(column.id);
-      if (columnIndex >= 0) {
-        this.hideColumnByIndex(columnIndex);
-      }
-    }
-  }
-
-  /**
-   * @deprecated Hide a Column from the Grid by its column definition index (the column will just become hidden and will still show up in columnPicker/gridMenu)
-   * @see hideColumnById Please use "hideColumnById(id)" or "hideColumnByIds([ids])" instead since it has a lot more options
-   * @param columnIndex - column definition index
-   * @param triggerEvent - do we want to trigger an event (onHeaderMenuHideColumns) when column becomes hidden? Defaults to true.
-   */
-  hideColumnByIndex(columnIndex: number, triggerEvent = true) {
-    if (this._grid && this._grid.getColumns && this._grid.setColumns) {
-      const currentColumns = this._grid.getColumns();
-      const visibleColumns = arrayRemoveItemByIndex<Column>(currentColumns, columnIndex);
-      this.sharedService.visibleColumns = visibleColumns;
-      this._grid.setColumns(visibleColumns);
-      if (triggerEvent) {
-        this.pubSubService.publish('onHeaderMenuHideColumns', { columns: visibleColumns });
-      }
-    }
-  }
-
-  /**
    * Hide a Column from the Grid by its column definition id, the column will just become hidden and will still show up in columnPicker/gridMenu
    * @param {string | number} columnId - column definition id
    * @param {boolean} triggerEvent - do we want to trigger an event (onHeaderMenuHideColumns) when column becomes hidden? Defaults to true.

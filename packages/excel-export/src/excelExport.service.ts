@@ -49,6 +49,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   private _locales!: Locale;
   private _groupedColumnHeaders?: Array<KeyTitlePair>;
   private _columnHeaders: Array<KeyTitlePair> = [];
+  private _hasColumnTitlePreHeader = false;
   private _hasGroupedItems = false;
   private _excelExportOptions!: ExcelExportOption;
   private _sheet!: ExcelWorksheet;
@@ -173,6 +174,30 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   }
 
   /**
+   * Takes a positive integer and returns the corresponding column name.
+   * dealing with the Excel column position is a bit tricky since the first 26 columns are single char (A,B,...) but after that it becomes double char (AA,AB,...)
+   * so we must first see if we are in the first section of 26 chars, if that is the case we just concatenate 1 (1st row) so it becomes (A1, B1, ...)
+   * and again if we go 26, we need to add yet again an extra prefix (AA1, AB1, ...) and so goes the cycle
+   * @param {number} colIndex - The positive integer to convert to a column name.
+   * @return {string}  The column name.
+   */
+  getExcelColumnNameByIndex(colIndex: number): string {
+    const letters = 'ZABCDEFGHIJKLMNOPQRSTUVWXY';
+
+    let nextPos = Math.floor(colIndex / 26);
+    const lastPos = Math.floor(colIndex % 26);
+    if (lastPos === 0) {
+      nextPos--;
+    }
+
+    if (colIndex > 26) {
+      return this.getExcelColumnNameByIndex(nextPos) + letters[lastPos];
+    }
+
+    return letters[lastPos] + '';
+  }
+
+  /**
    * Triggers download file with file format.
    * IE(6-10) are not supported
    * All other browsers will use plain javascript on client side to produce a file download.
@@ -242,7 +267,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         }
         break;
       case FieldType.number:
-        const val = isNaN(+data) ? null : data;
+        const val = isNaN(+data) ? null : +data;
         outputData = { value: val, metadata: { style: this._stylesheetFormats.numberFormatter.id } };
         break;
       default:
@@ -271,6 +296,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       // when having Grouped Header Titles (in the pre-header), then make the cell Bold & Aligned Center
       const boldCenterAlign = this._stylesheet.createFormat({ alignment: { horizontal: 'center' }, font: { bold: true } });
       outputData.push(this.getColumnGroupedHeaderTitlesData(columns, { style: boldCenterAlign?.id }));
+      this._hasColumnTitlePreHeader = true;
     }
 
     // get all Column Header Titles (it might include a "Group by" title at A1 cell)
@@ -309,7 +335,9 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
   /**
    * Get all Grouped Header Titles and their keys, translate the title when required, and format them in Bold
-   * @param {Array<object>} columns of the grid
+   * @param {Array<Object>} columns - grid column definitions
+   * @param {Object} metadata - Excel metadata
+   * @returns {Object} array of Excel cell format
    */
   private getColumnGroupedHeaderTitlesData(columns: Column[], metadata: ExcelMetadata): Array<ExcelCellFormat> {
     let outputGroupedHeaderTitles: Array<ExcelCellFormat> = [];
@@ -322,34 +350,16 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     }
 
     // merge necessary cells (any grouped header titles)
-    // dealing with the Excel column position is a bit tricky since the first 26 columns are single char (A,B,...) but after that it becomes double char (AA,AB,...)
-    // so we must first see if we are in the first section of 26 chars, if that is the case we just concatenate 1 (1st row) so it becomes (A1, B1, ...)
-    // but if we are over enumarating passed 26, we need an extra prefix (AA1, AB1, ...)
-    const charA = 'A'.charCodeAt(0);
-    let cellPositionStart = 'A';
-    let cellPositionEnd = '';
-    let lastIndex = 0;
+    let colspanStartIndex = 0;
     const headersLn = this._groupedColumnHeaders.length;
     for (let cellIndex = 0; cellIndex < headersLn; cellIndex++) {
-      // if we reached the last indenx, we are considered at the end
-      // else we check if next title is equal to current title, if so then we know it's a grouped header
-      // and we include it and continue looping until we reach the end
       if ((cellIndex + 1) === headersLn || ((cellIndex + 1) < headersLn && this._groupedColumnHeaders[cellIndex].title !== this._groupedColumnHeaders[cellIndex + 1].title)) {
-        // calculate left prefix, divide by 26 and use modulo to find out what number add to A
-        // for example if we have cell index 54, we will do ((54/26) %26) => 2.0769, Math.floor is 2, then we do A which is 65 + 2 gives us B so final cell will be AB1
-        const leftCellCharCodePrefix = Math.floor((lastIndex / 26) % 26);
-        const leftCellCharacterPrefix = String.fromCharCode(charA + leftCellCharCodePrefix - 1);
+        const leftExcelColumnChar = this.getExcelColumnNameByIndex(colspanStartIndex + 1);
+        const rightExcelColumnChar = this.getExcelColumnNameByIndex(cellIndex + 1);
+        this._sheet.mergeCells(`${leftExcelColumnChar}1`, `${rightExcelColumnChar}1`);
 
-        const rightCellCharCodePrefix = Math.floor((cellIndex / 26) % 26);
-        const rightCellCharacterPrefix = String.fromCharCode(charA + rightCellCharCodePrefix - 1);
-
-        cellPositionEnd = String.fromCharCode(charA + (cellIndex % 26));
-        const leftCell = `${lastIndex > 26 ? leftCellCharacterPrefix : ''}${cellPositionStart}1`;
-        const rightCell = `${cellIndex > 26 ? rightCellCharacterPrefix : ''}${cellPositionEnd}1`;
-        this._sheet.mergeCells(leftCell, rightCell);
-
-        cellPositionStart = String.fromCharCode(cellPositionEnd.charCodeAt(0) + 1);
-        lastIndex = cellIndex;
+        // next group starts 1 column index away
+        colspanStartIndex = cellIndex + 1;
       }
     }
 
@@ -485,14 +495,19 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
   /**
    * Get the data of a regular row (a row without grouping)
-   * @param row
-   * @param itemObj
+   * @param {Array<Object>} columns - column definitions
+   * @param {Number} row - row index
+   * @param {Object} itemObj - item datacontext object
    */
   private readRegularRowData(columns: Column[], row: number, itemObj: any): string[] {
     let idx = 0;
-    const rowOutputStrings: string[] = [];
+    const rowOutputStrings = [];
+    const columnsLn = columns.length;
+    let prevColspan: number | string = 1;
+    let colspanStartIndex = 0;
+    const itemMetadata = this._dataView.getItemMetadata(row);
 
-    for (let col = 0, ln = columns.length; col < ln; col++) {
+    for (let col = 0; col < columnsLn; col++) {
       const columnDef = columns[col];
       const fieldType = columnDef.outputType || columnDef.type || FieldType.string;
 
@@ -506,24 +521,70 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         rowOutputStrings.push('');
       }
 
-      // get the output by analyzing if we'll pull the value from the cell or from a formatter
-      let itemData: ExcelCellFormat | string = exportWithFormatterWhenDefined(row, col, itemObj, columnDef, this._grid, this._excelExportOptions);
-
-      // does the user want to sanitize the output data (remove HTML tags)?
-      if (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport) {
-        itemData = sanitizeHtmlToText(itemData as string);
+      let colspan = 1;
+      let colspanColumnId;
+      if (itemMetadata?.columns) {
+        const metadata = itemMetadata.columns;
+        const columnData = metadata[columnDef.id] || metadata[col];
+        if (!(prevColspan > 1 || (prevColspan === '*' && col > 0))) {
+          prevColspan = columnData?.colspan ?? 1;
+        }
+        if (prevColspan === '*') {
+          colspan = columns.length - col;
+        } else {
+          colspan = prevColspan as number;
+          if (columnDef.id in metadata) {
+            colspanColumnId = columnDef.id;
+            colspanStartIndex = col;
+          }
+        }
       }
 
-      // use different Excel Stylesheet Format as per the Field Type
-      if (!columnDef.exportWithFormatter) {
-        itemData = this.useCellFormatByFieldType(itemData as string, fieldType);
-      }
+      // when using grid with colspan, we will merge some cells together
+      if ((prevColspan === '*' && col > 0) || (prevColspan > 1 && columnDef.id !== colspanColumnId)) {
+        // -- Merge Data
+        // Excel row starts at 2 or at 3 when dealing with pre-header grouping
+        const excelRowNumber = row + (this._hasColumnTitlePreHeader ? 3 : 2);
 
-      rowOutputStrings.push(itemData as string);
-      idx++;
+        if (typeof prevColspan === 'number' && (colspan - 1) === 1) {
+          // partial column span
+          const leftExcelColumnChar = this.getExcelColumnNameByIndex(colspanStartIndex + 1);
+          const rightExcelColumnChar = this.getExcelColumnNameByIndex(col + 1);
+          this._sheet.mergeCells(`${leftExcelColumnChar}${excelRowNumber}`, `${rightExcelColumnChar}${excelRowNumber}`);
+          rowOutputStrings.push(''); // clear cell that won't be shown by a cell merge
+        } else if (prevColspan === '*' && colspan === 1) {
+          // full column span (from A1 until the last column)
+          const rightExcelColumnChar = this.getExcelColumnNameByIndex(col + 1);
+          this._sheet.mergeCells(`A${excelRowNumber}`, `${rightExcelColumnChar}${excelRowNumber}`);
+        } else {
+          rowOutputStrings.push(''); // clear cell that won't be shown by a cell merge
+        }
+
+        // decrement colspan until we reach colspan of 1 then proceed with cell merge OR full row merge when colspan is (*)
+        if (typeof prevColspan === 'number' && prevColspan > 1) {
+          colspan = prevColspan--;
+        }
+      } else {
+        // -- Read Data & Push to Data Array
+        // get the output by analyzing if we'll pull the value from the cell or from a formatter
+        let itemData: ExcelCellFormat | string = exportWithFormatterWhenDefined(row, col, itemObj, columnDef, this._grid, this._excelExportOptions);
+
+        // does the user want to sanitize the output data (remove HTML tags)?
+        if (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport) {
+          itemData = sanitizeHtmlToText(itemData as string);
+        }
+
+        // use different Excel Stylesheet Format as per the Field Type
+        if (!columnDef.exportWithFormatter) {
+          itemData = this.useCellFormatByFieldType(itemData as string, fieldType);
+        }
+
+        rowOutputStrings.push(itemData);
+        idx++;
+      }
     }
 
-    return rowOutputStrings;
+    return rowOutputStrings as string[];
   }
 
   /**
