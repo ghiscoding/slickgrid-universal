@@ -39,6 +39,7 @@ export class CheckboxSelectorExtension implements Extension {
         selectionColumn.excludeFromGridMenu = true;
         selectionColumn.excludeFromQuery = true;
         selectionColumn.excludeFromHeaderMenu = true;
+        selectionColumn.maxWidth = selectionColumn.width || 30;
 
         // column index position in the grid
         const columnPosition = gridOptions?.checkboxSelector?.columnIndexPosition || 0;

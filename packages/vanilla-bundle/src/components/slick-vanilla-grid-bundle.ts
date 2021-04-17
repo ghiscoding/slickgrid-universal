@@ -952,9 +952,6 @@ export class SlickVanillaGridBundle {
     if (grid && options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && typeof grid.autosizeColumns === 'function') {
       // expand/autofit columns on first page load
       this.slickGrid.autosizeColumns();
-    } else if (grid && options.autosizeColumnsByCellContentOnFirstLoad && this.resizerService?.resizeColumnsByCellContent) {
-      // resize by cell content and add a delay so that it resizes only after we have all data in the UI and ready for the calculation
-      setTimeout(() => this.resizerService.resizeColumnsByCellContent(true), 10);
     }
 
     // auto-resize grid on browser resize (optionally provide grid height or width)
@@ -963,11 +960,10 @@ export class SlickVanillaGridBundle {
     } else {
       this.resizerService.resizeGrid();
     }
+
     if (grid && options?.enableAutoResize) {
       if (options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && typeof grid.autosizeColumns === 'function') {
         grid.autosizeColumns();
-      } else if (!options.autosizeColumnsByCellContentOnFirstLoad && options.enableAutoResizeColumnsByCellContent && this.resizerService?.resizeColumnsByCellContent) {
-        this.resizerService.resizeColumnsByCellContent();
       }
     }
   }

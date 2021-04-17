@@ -172,7 +172,7 @@ export class ResizerService {
     if (this._totalColumnsWidthByContent === 0 || recalculateColumnsTotalWidth) {
       // loop through all columns to get their minWidth or width for later usage
       for (const columnDef of columnDefinitions) {
-        columnWidths[columnDef.id] = columnDef.originalWidth || columnDef.width || columnDef.minWidth || 0;
+        columnWidths[columnDef.id] = columnDef.originalWidth || columnDef.minWidth || 0;
       }
 
       // loop through the entire dataset (limit to first 1000 rows), and evaluate the width by its content

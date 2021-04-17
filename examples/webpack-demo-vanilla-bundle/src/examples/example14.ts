@@ -147,7 +147,7 @@ export class Example14 {
         },
       },
       {
-        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, minWidth: 65,
+        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, width: 110,
         type: FieldType.number, columnGroup: 'Common Factor',
         formatter: (_row, _cell, value) => {
           if (value === null || value === undefined || value === '') {
@@ -501,7 +501,11 @@ export class Example14 {
     this.renderUnsavedStylingOnAllVisibleCells();
   }
 
-  handleBeforeResizeColumns() {
+  handleDefaultResizeColumns() {
+    // just for demo purposes, set it back to its original width
+    const columns = this.sgb1.slickGrid.getColumns();
+    columns.forEach(col => col.width = col.originalWidth);
+    this.sgb1.slickGrid.setColumns(columns);
     this.sgb1.slickGrid.autosizeColumns();
   }
 
