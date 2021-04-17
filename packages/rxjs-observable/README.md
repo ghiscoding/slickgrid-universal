@@ -14,10 +14,10 @@
 
 An RxJS Observable Service Wrapper to make it possible to use RxJS with Slickgrid-Universal (with a Backend Service like OData/GraphQL). By default any Backend Service will be using Promises unless we use this RxJS Observable package.
 
-This package is simply a bridge, a facade, to make it possible to use RxJS without adding RxJS to the `@slickgrid-universal/common` list of dependencies, so RxJS is a dependency of this package without being a dependency of the common (core) package, This will avoid adding dependencies not everyone need and won't clutter clutterin the common package (the common package will simply use an empty shell, an empty interface, without requiring to install RxJS at all, we do however have full unit tests coverage for all of that).
+This package is simply a bridge, a facade, to make it possible to use RxJS without adding RxJS to the `@slickgrid-universal/common` list of dependencies, so RxJS is a dependency of this package without being a dependency of the common (core) package, This will avoid adding dependencies not everyone need and won't clutter the common package (the common package will simply use an empty interface, which won't do anything, without requiring to install RxJS at all. We do however have full unit tests coverage for all of that).
 
 ### External Dependencies
-- [RxJS 7](https://github.com/ReactiveX/RxJS)
+- [RxJS 7+](https://github.com/ReactiveX/RxJS)
 
 ### Installation
 Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation), you can see a demo by looking at the [GitHub Demo](https://ghiscoding.github.io/slickgrid-universal) page.
