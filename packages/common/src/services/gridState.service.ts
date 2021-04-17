@@ -336,6 +336,7 @@ export class GridStateService {
    */
   resetToOriginalColumns(triggerAutoSizeColumns = true) {
     this._grid.setColumns(this.sharedService.allColumns);
+    this.sharedService.visibleColumns = this.sharedService.allColumns;
 
     // resize the columns to fit the grid canvas
     if (triggerAutoSizeColumns) {
