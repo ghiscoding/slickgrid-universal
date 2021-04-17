@@ -127,8 +127,11 @@ export class Example14 {
     this.columnDefinitions = [
       {
         id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string, minWidth: 65,
-        // resizeExtraWidthPadding: 1,
+        // you can adjust the resize calculation via multiple options
+        resizeExtraWidthPadding: 4,
         resizeCharWidthInPx: 8.5,
+        resizeCalcWidthRatio: 1.2,
+        resizeMaxWidthThreshold: 200,
         filterable: true, columnGroup: 'Common Factor',
         filter: { model: Filters.compoundInputText },
         formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold] },
@@ -356,7 +359,7 @@ export class Example14 {
       // then enable resize by content with these 2 flags
       autosizeColumnsByCellContentOnFirstLoad: true,
       enableAutoResizeColumnsByCellContent: true,
-      resizeFormatterPaddingWidthInPx: 14, // optional editor formatter padding, we have 1px border & 6px padding on each side => (1 + 6) * 2 = 14px
+      resizeFormatterPaddingWidthInPx: 8, // optional editor formatter padding for resize calculation
 
       enableExcelExport: true,
       excelExportOptions: {

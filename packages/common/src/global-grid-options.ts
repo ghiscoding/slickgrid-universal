@@ -221,7 +221,7 @@ export const GlobalGridOptions: GridOption = {
   translationNamespaceSeparator: ':',
   resizeAlwaysRecalculateColumnWidth: false,
   resizeCellCharWidthInPx: 7.8,
-  resizeCellPaddingWidthInPx: 12,
+  resizeCellPaddingWidthInPx: 14,
   resizeFormatterPaddingWidthInPx: 0,
   resizeDefaultRatioForStringType: 0.9,
   resizeMaxItemToInspectCellContentWidth: 1000,
