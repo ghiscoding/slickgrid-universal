@@ -117,7 +117,7 @@ export class GridStateService {
 
         // keep copy the original optional `width` properties optionally provided by the user.
         // We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
-        gridColumns.forEach(col => col.originalWidth = col.width);
+        gridColumns.forEach(col => col.originalWidth = col.width || col.originalWidth);
 
         // finally set the new presets columns (including checkbox selector if need be)
         this._grid.setColumns(gridColumns);

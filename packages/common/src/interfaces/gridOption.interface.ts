@@ -488,7 +488,7 @@ export interface GridOption {
   /** Defaults to 6, cell padding width to add to the calculation when resizing columns by their cell text content. */
   resizeCellPaddingWidthInPx?: number;
 
-  /** Defaults to 0.9, what is the ratio to use (on field `type` "string" only) in the calculation when resizing columns by their cell text content. */
+  /** Defaults to around ~0.9, what is the ratio to use (on field `type` "string" only) in the calculation when resizing columns by their cell text content. */
   resizeDefaultRatioForStringType?: number;
 
   /** Defaults to 6, padding width to add to the calculation when using a Formatter and resizing columns by their cell text content. */

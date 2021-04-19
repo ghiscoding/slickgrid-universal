@@ -256,7 +256,7 @@ export interface Column<T = any> {
    * We have this ratio number so that if we know that the cell content has lots of thin character (like 1, i, t, ...) we can lower the ratio to take up less space.
    * In other words and depending on which font family you use, each character will have different width, characters like (i, t, 1) takes a lot less space compare to (W, H, Q),
    * unless of course we use a monospace font family which will have the exact same size for each characters and in that case we leave it to 1 but that rarely happens.
-   * NOTE: the default ratio is 1, except for string where we use a ratio of 0.9 since we have more various thinner characters like (i, l, t, ...).
+   * NOTE: the default ratio is 1, except for string where we use a ratio of around ~0.9 since we have more various thinner characters like (i, l, t, ...).
    */
   resizeCalcWidthRatio?: number;
 

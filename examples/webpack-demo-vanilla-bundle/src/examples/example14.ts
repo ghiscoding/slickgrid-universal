@@ -129,8 +129,8 @@ export class Example14 {
         id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string, minWidth: 65,
         // you can adjust the resize calculation via multiple options
         resizeExtraWidthPadding: 4,
-        resizeCharWidthInPx: 8.5,
-        resizeCalcWidthRatio: 1.2,
+        resizeCharWidthInPx: 7.6,
+        resizeCalcWidthRatio: 1,
         resizeMaxWidthThreshold: 200,
         filterable: true, columnGroup: 'Common Factor',
         filter: { model: Filters.compoundInputText },

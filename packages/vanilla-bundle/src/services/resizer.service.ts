@@ -189,8 +189,7 @@ export class ResizerService {
             const formattedDataSanitized = sanitizeHtmlToText(formattedData);
             const formattedTextWidthInPx = Math.ceil(formattedDataSanitized.length * charWidthPx);
             const resizeMaxWidthThreshold = columnDef.resizeMaxWidthThreshold;
-
-            if (columnDef && columnWidths[columnDef.id] === undefined || formattedTextWidthInPx > columnWidths[columnDef.id]) {
+            if (columnDef && (columnWidths[columnDef.id] === undefined || formattedTextWidthInPx > columnWidths[columnDef.id])) {
               columnWidths[columnDef.id] = (resizeMaxWidthThreshold !== undefined && formattedTextWidthInPx > resizeMaxWidthThreshold)
                 ? resizeMaxWidthThreshold
                 : (columnDef.maxWidth !== undefined && formattedTextWidthInPx > columnDef.maxWidth) ? columnDef.maxWidth : formattedTextWidthInPx;
@@ -203,8 +202,11 @@ export class ResizerService {
       let totalColsWidth = 0;
       for (const column of columnDefinitions) {
         const fieldType = column?.filter?.type ?? column?.type ?? FieldType.string;
+        const resizeAlwaysRecalculateWidth = column.resizeAlwaysRecalculateWidth ?? this.gridOptions?.resizeAlwaysRecalculateColumnWidth ?? false;
 
-        if (!column.originalWidth && columnWidths[column.id] !== undefined) {
+        if (column.originalWidth && !resizeAlwaysRecalculateWidth) {
+          column.width = column.originalWidth;
+        } else if (columnWidths[column.id] !== undefined) {
           if (column.rerenderOnResize) {
             reRender = true;
           }
@@ -212,9 +214,9 @@ export class ResizerService {
           // let's start with column width found in previous column & data analysis
           let newColWidth = columnWidths[column.id];
 
-          // apply optional ratio which is typically 1, except for string where we use a ratio of 0.9 since we have more various thinner characters like (i, l, t, ...)
-          const defaultStringRatio = this.gridOptions.resizeDefaultRatioForStringType || 0.9;
-          newColWidth *= column.resizeCalcWidthRatio || (fieldType === 'string') ? defaultStringRatio : 1;
+          // apply optional ratio which is typically 1, except for string where we use a ratio of around ~0.9 since we have more various thinner characters like (i, l, t, ...)
+          const stringWidthRatio = column?.resizeCalcWidthRatio ?? this.gridOptions?.resizeDefaultRatioForStringType ?? 0.9;
+          newColWidth *= fieldType === 'string' ? stringWidthRatio : 1;
 
           // apply extra cell padding, custom padding & editor formatter padding
           // --
