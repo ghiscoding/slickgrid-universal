@@ -687,7 +687,7 @@ describe('Example 11 - Batch Editing', () => {
     cy.get('.grid-canvas-left > [style="top:0px"] > .slick-cell:nth(1)').contains(/^TASK [0-9]*$/);
     cy.get('.grid-canvas-left > [style="top:0px"] > .slick-cell:nth(2)').contains(/^[0-9]*\sday[s]?$/);
 
-    cy.get('.grid-canvas-right > [style="top:0px"] > .slick-cell:nth(0)').contains(/\$[0-9\.]*/);
+    cy.get('.grid-canvas-right > [style="top:0px"] > .slick-cell:nth(0)').contains(/\$?[0-9\.]*/);
   });
 
   it('should have the same 3 filters defined in the CustomViewTest', () => {
