@@ -1,4 +1,4 @@
-import { GridOption, PubSubService, SlickGrid, SlickNamespace, } from '@slickgrid-universal/common';
+import { Column, Editors, FieldType, GridOption, PubSubService, SlickGrid, SlickNamespace, } from '@slickgrid-universal/common';
 import { ResizerService } from '../resizer.service';
 
 declare const Slick: SlickNamespace;
@@ -24,19 +24,22 @@ Slick.Plugins = {
   Resizer: mockAddon
 } as any;
 
-const pubSubServiceStub = {
-  publish: jest.fn(),
-  subscribe: jest.fn(),
-  unsubscribe: jest.fn(),
-  unsubscribeAll: jest.fn(),
-} as PubSubService;
+const mockDataView = {
+  constructor: jest.fn(),
+  init: jest.fn(),
+  destroy: jest.fn(),
+  getItemMetadata: jest.fn(),
+  getItems: jest.fn(),
+};
 
 const gridStub = {
   autosizeColumns: jest.fn(),
   getColumnIndex: jest.fn(),
   getColumns: jest.fn(),
   getOptions: jest.fn(),
+  getData: () => mockDataView,
   getUID: () => GRID_UID,
+  reRenderColumns: jest.fn(),
   registerPlugin: jest.fn(),
   setColumns: jest.fn(),
   setHeaderRowVisibility: jest.fn(),
@@ -46,6 +49,13 @@ const gridStub = {
   setSortColumns: jest.fn(),
   onSort: new Slick.Event(),
 } as unknown as SlickGrid;
+
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as PubSubService;
 
 describe('Resizer Service', () => {
   let service: ResizerService;
@@ -132,6 +142,20 @@ describe('Resizer Service', () => {
         expect.anything()
       );
       expect(pubSubSpy).toHaveBeenCalledWith(`onGridAfterResize`, { grid: gridStub, dimensions: { height: 200, width: 800 } });
+    });
+
+    it('should call "onGridAfterResize" event and expect "resizeColumnsByCellContent" to be called when "enableAutoResizeColumnsByCellContent" is set', () => {
+      const resizeContentSpy = jest.spyOn(service, 'resizeColumnsByCellContent');
+      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+
+      mockGridOptions.enableAutoResizeColumnsByCellContent = true;
+      service.init(gridStub, divContainer);
+      service.resizeGrid();
+      const instance = service.getAddonInstance();
+      instance.onGridAfterResize.notify({ grid: gridStub, dimensions: { height: 200, width: 800 } }, new Slick.EventData(), gridStub);
+
+      expect(pubSubSpy).toHaveBeenCalledWith(`onGridAfterResize`, { grid: gridStub, dimensions: { height: 200, width: 800 } });
+      expect(resizeContentSpy).toHaveBeenCalled();
     });
 
     it('should dispose of the addon', () => {
@@ -246,6 +270,83 @@ describe('Resizer Service', () => {
         expect(consoleSpy).toHaveBeenCalledWith('Error:', 'some error');
         done();
       }, 1);
+    });
+
+    describe('resizeColumnsByCellContent method', () => {
+      let mockColDefs: Column[];
+      let mockData: any[];
+
+      beforeEach(() => {
+        mockGridOptions.resizeCellCharWidthInPx = 7;
+        mockGridOptions.resizeCellPaddingWidthInPx = 6;
+        mockGridOptions.resizeFormatterPaddingWidthInPx = 5;
+        mockGridOptions.resizeDefaultRatioForStringType = 0.88;
+        mockGridOptions.resizeAlwaysRecalculateColumnWidth = false;
+        mockGridOptions.resizeMaxItemToInspectCellContentWidth = 4;
+        mockColDefs = [
+          // typically the `originalWidth` is set by the columnDefinitiosn setter in vanilla grid bundle but we can mock it for our test
+          { id: 'userId', field: 'userId', width: 30, originalWidth: 30 },
+          { id: 'firstName', field: 'firstName', editor: { model: Editors.text }, minWidth: 50 },
+          { id: 'lastName', field: 'lastName', editor: { model: Editors.text }, minWidth: 50 },
+          { id: 'gender', field: 'gender', resizeCalcWidthRatio: 1.2 },
+          { id: 'age', field: 'age', type: FieldType.number, resizeExtraWidthPadding: 2 },
+          { id: 'street', field: 'street', maxWidth: 15 },
+          { id: 'country', field: 'country', maxWidth: 15, resizeMaxWidthThreshold: 14, rerenderOnResize: true },
+        ] as Column[];
+        mockData = [
+          { userId: 1, firstName: 'John', lastName: 'Doe', gender: 'male', age: 20, street: '478 Kunze Land', country: 'United States of America' },
+          { userId: 2, firstName: 'Destinee', lastName: 'Shanahan', gender: 'female', age: 25, street: '20519 Watson Lodge', country: 'Australia' },
+          { userId: 3, firstName: 'Sarai', lastName: 'Altenwerth', gender: 'female', age: 30, street: '184 Preston Pine', country: 'United States of America' },
+          { userId: 4, firstName: 'Tyshawn', lastName: 'Hyatt', gender: 'male', age: 35, street: '541 Senger Drives', country: 'Canada' },
+          { userId: 5, firstName: 'Alvina', lastName: 'Franecki', gender: 'female', age: 100, street: '20229 Tia Turnpike', country: 'United States of America' },
+          { userId: 6, firstName: 'Therese', lastName: 'Brakus', gender: 'female', age: 99, street: '34767 Lindgren Dam', country: 'Bosnia' },
+        ];
+
+        jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColDefs);
+        jest.spyOn(mockDataView, 'getItems').mockReturnValue(mockData);
+      });
+
+      it('should call the resize and expect first column have a fixed width while other will have a calculated width when resizing by their content', () => {
+        const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
+        const reRenderColumnsSpy = jest.spyOn(gridStub, 'reRenderColumns');
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(setColumnsSpy).toHaveBeenCalledWith(
+          expect.arrayContaining([
+            expect.objectContaining({ id: 'userId', width: 30 }),
+            expect.objectContaining({ id: 'firstName', width: 56 }), // longest word "Destinee" (length 8 * charWidth(7) * ratio(0.88)) + cellPadding(6) = 55.28 ceil to => 56
+            expect.objectContaining({ id: 'lastName', width: 68 }), // longest word "Altenwerth" (length 10 * charWidth(7) * ratio(0.88)) + cellPadding(6) = 67.6 ceil to => 68
+            expect.objectContaining({ id: 'gender', width: 57 }), // longest word "female" (length 6 * charWidth(7) * customRatio(1.2)) + cellPadding(6) = 56.4 ceil to 57
+            expect.objectContaining({ id: 'age', width: 29 }), // longest number 100 (length 3 * charWidth(7) * ratio(1)) + cellPadding(6) + extraPadding(2) = 44.96 ceil to 45
+            expect.objectContaining({ id: 'street', width: 15 }), // longest number "20229 Tia Turnpike" goes over maxWidth so we fallback to it
+            expect.objectContaining({ id: 'country', width: 14 }), // longest number "United States of America" goes over resizeMaxWidthThreshold so we fallback to it
+          ]));
+        expect(reRenderColumnsSpy).toHaveBeenCalledWith(true);
+      });
+
+      it('should call the resize and expect first column have a fixed width while other will have a calculated width when resizing by their content and grid is editable', () => {
+        const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
+        const reRenderColumnsSpy = jest.spyOn(gridStub, 'reRenderColumns');
+
+        mockGridOptions.editable = true;
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        // same as previous except firstName/lastName have editors with padding of 5px
+        expect(setColumnsSpy).toHaveBeenCalledWith(
+          expect.arrayContaining([
+            expect.objectContaining({ id: 'userId', width: 30 }),
+            expect.objectContaining({ id: 'firstName', width: 61 }), // longest word "Destinee" (length 8 * charWidth(7) * ratio(0.88)) + cellPadding(6) + editorPadding(5) = 60.28 ceil to => 61
+            expect.objectContaining({ id: 'lastName', width: 73 }), // longest word "Altenwerth" (length 10 * charWidth(7) * ratio(0.88)) + cellPadding(6) + editorPadding(5) = 72.6 ceil to => 73
+            expect.objectContaining({ id: 'gender', width: 57 }), // longest word "female" (length 6 * charWidth(7) * customRatio(1.2)) + cellPadding(6) = 56.4 ceil to 57
+            expect.objectContaining({ id: 'age', width: 29 }), // longest number 100 (length 3 * charWidth(7) * ratio(1)) + cellPadding(6) + extraPadding(2) = 44.96 ceil to 45
+            expect.objectContaining({ id: 'street', width: 15 }), // longest number "20229 Tia Turnpike" goes over maxWidth so we fallback to it
+            expect.objectContaining({ id: 'country', width: 14 }), // longest number "United States of America" goes over resizeMaxWidthThreshold so we fallback to it
+          ]));
+        expect(reRenderColumnsSpy).toHaveBeenCalledWith(true);
+      });
     });
   });
 });
