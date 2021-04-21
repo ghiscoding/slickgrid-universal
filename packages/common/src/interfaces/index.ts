@@ -109,6 +109,7 @@ export * from './multiColumnSort.interface';
 export * from './multipleSelectOption.interface';
 export * from './onEventArgs.interface';
 export * from './onValidationErrorResult.interface';
+export * from './operatorDetail.interface';
 export * from './pagination.interface';
 export * from './paginationChangedArgs.interface';
 export * from './pagingInfo.interface';
