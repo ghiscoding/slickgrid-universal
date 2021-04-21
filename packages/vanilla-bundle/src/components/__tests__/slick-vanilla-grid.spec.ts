@@ -260,6 +260,7 @@ const mockGrid = {
   updateRow: jest.fn(),
   render: jest.fn(),
   registerPlugin: jest.fn(),
+  reRenderColumns: jest.fn(),
   resizeCanvas: jest.fn(),
   setColumns: jest.fn(),
   setHeaderRowVisibility: jest.fn(),
@@ -623,7 +624,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         expect(component.gridOptions.autoCommitEdit).toEqual(false);
         // expect(component.gridOptions.autoResize.bottomPadding).toEqual(50 + DATAGRID_FOOTER_HEIGHT); // calculated by the lib
-        expect(setOptionSpy).toBeCalledWith(component.gridOptions);
+        expect(setOptionSpy).toBeCalledWith(component.gridOptions, false, true);
         expect(sharedOptionSpy).toBeCalledWith(component.gridOptions);
       });
 
@@ -638,7 +639,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.dataset = mockData;
 
         expect(component.gridOptions.autoCommitEdit).toEqual(false);
-        expect(setOptionSpy).toBeCalledWith(component.gridOptions);
+        expect(setOptionSpy).toBeCalledWith(component.gridOptions, false, true);
         expect(sharedOptionSpy).toBeCalledWith(component.gridOptions);
       });
 
