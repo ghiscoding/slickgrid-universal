@@ -9,8 +9,11 @@ import {
 /**
  * A Resizer plugin that can be used to auto-resize a grid and/or resize with fixed dimensions.
  * When fixed height is defined, it will auto-resize only the width and vice versa with the width defined.
- * You can also choose to use the flag "enableAutoSizeColumns" if you want to the plugin to
- * automatically call the grid "autosizeColumns()" method after each resize.
+ * You can also choose to use the flag `enableAutoSizeColumns` if you want to the plugin to
+ * automatically call the grid `autosizeColumns()` method after each resize.
+ *
+ * There is now also a second grid option `enableAutoResizeColumnsByCellContent` (instead of `autosizeColumns`) that you could use,
+ * it's however optional and not enabled by default since there are performance impact to using this option (it needs to loop through your dataset to evaluate sizes).
  */
 export interface SlickResizer {
   pluginName: 'Resizer';

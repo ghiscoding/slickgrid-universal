@@ -1,4 +1,4 @@
-import { Column, CurrentPagination, SlickDataView, GridOption, SlickGrid, SlickGroupItemMetadataProvider } from '../interfaces/index';
+import { Column, CurrentPagination, GridOption, SlickDataView, SlickGrid, SlickGroupItemMetadataProvider } from '../interfaces/index';
 
 export class SharedService {
   private _allColumns!: Column[];

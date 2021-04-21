@@ -160,6 +160,7 @@ const resizerServiceStub = {
   dispose: jest.fn(),
   init: jest.fn(),
   resizeGrid: jest.fn(),
+  resizeColumnsByCellContent: jest.fn(),
 } as unknown as ResizerService;
 
 Object.defineProperty(paginationServiceStub, 'totalItems', {
@@ -546,6 +547,55 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         expect(autosizeSpy).not.toHaveBeenCalled();
         expect(refreshSpy).toHaveBeenCalledWith(mockData);
+      });
+
+      it('should expect "resizeColumnsByCellContent" being called when "enableAutoResizeColumnsByCellContent" is set and we changing column definitions via its SETTER', () => {
+        const resizeContentSpy = jest.spyOn(resizerServiceStub, 'resizeColumnsByCellContent');
+        const refreshSpy = jest.spyOn(component, 'refreshGridData');
+        const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
+        const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collection: ['male', 'female'] } }] as Column[];
+        jest.spyOn(mockDataView, 'getLength').mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(mockData.length);
+
+        component.columnDefinitions = mockColDefs;
+        component.gridOptions = { autoFitColumnsOnFirstLoad: false, enableAutoSizeColumns: false, autosizeColumnsByCellContentOnFirstLoad: true, enableAutoResizeColumnsByCellContent: true };
+        component.initialization(divContainer, slickEventHandler);
+        component.dataset = mockData;
+        component.columnDefinitions = mockColDefs;
+
+        expect(resizeContentSpy).toHaveBeenCalledTimes(1);
+        expect(refreshSpy).toHaveBeenCalledWith(mockData);
+      });
+
+      it('should throw an error if we try to enable both auto resize type at same time with "autoFitColumnsOnFirstLoad" and "autosizeColumnsByCellContentOnFirstLoad"', (done) => {
+        const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
+        jest.spyOn(mockDataView, 'getLength').mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(mockData.length);
+
+        component.gridOptions = { autoFitColumnsOnFirstLoad: true, autosizeColumnsByCellContentOnFirstLoad: true };
+
+        try {
+          component.initialization(divContainer, slickEventHandler);
+          component.dataset = mockData;
+        } catch (e) {
+          expect(e.toString()).toContain('[Slickgrid-Universal] You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use.');
+          component.dispose();
+          done();
+        }
+      });
+
+      it('should throw an error if we try to enable both auto resize type at same time with "enableAutoSizeColumns" and "enableAutoResizeColumnsByCellContent"', (done) => {
+        const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
+        jest.spyOn(mockDataView, 'getLength').mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(mockData.length);
+
+        component.gridOptions = { enableAutoSizeColumns: true, enableAutoResizeColumnsByCellContent: true };
+
+        try {
+          component.initialization(divContainer, slickEventHandler);
+          component.dataset = mockData;
+        } catch (e) {
+          expect(e.toString()).toContain('[Slickgrid-Universal] You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use.');
+          component.dispose();
+          done();
+        }
       });
     });
 
@@ -1702,6 +1752,22 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           expect(emptySpy).toHaveBeenCalledTimes(2);
           done();
         });
+      });
+    });
+
+    describe('resizeColumnsByCellContent method', () => {
+      it('should call "resizeColumnsByCellContent" when the DataView "onSetItemsCalled" event is triggered and "enableAutoResizeColumnsByCellContent" is set', (done) => {
+        const resizeContentSpy = jest.spyOn(resizerServiceStub, 'resizeColumnsByCellContent');
+        jest.spyOn(mockDataView, 'getLength').mockReturnValue(1);
+
+        component.gridOptions = { enablePagination: false, showCustomFooter: true, autoFitColumnsOnFirstLoad: false, enableAutoSizeColumns: false, enableAutoResizeColumnsByCellContent: true };
+        component.initialization(divContainer, slickEventHandler);
+        mockDataView.onSetItemsCalled.notify({ idProperty: 'id', itemCount: 1 });
+
+        setTimeout(() => {
+          expect(resizeContentSpy).toHaveBeenCalledWith(true);
+          done();
+        }, 10);
       });
     });
 

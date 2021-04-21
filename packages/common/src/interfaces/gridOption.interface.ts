@@ -67,8 +67,17 @@ export interface GridOption {
   /** Defaults to false, when enabled will automatically open the inlined editor as soon as there is a focus on the cell (can be combined with "enableCellNavigation: true"). */
   autoEdit?: boolean;
 
-  /** Defaults to true, which leads to automatically adjust the size of each column with the available space. Similar to "Force Fit Column" but only happens on first page/component load. */
+  /**
+   * Defaults to true, which leads to automatically adjust the width of each column with the available space. Similar to "Force Fit Column" but only happens on first page/component load.
+   * If you wish this resize to also re-evaluate when resizing the browser, then you should also use `enableAutoSizeColumns` (it is also enabled by default)
+   */
   autoFitColumnsOnFirstLoad?: boolean;
+
+  /**
+   * Defaults to false, which leads to automatically adjust the width of each column by their cell value content and only on first page/component load.
+   * If you wish this resize to also re-evaluate when resizing the browser, then you should also use `enableAutoResizeColumnsByCellContent`
+   */
+  autosizeColumnsByCellContentOnFirstLoad?: boolean;
 
   /** Defaults to false, which leads to automatically adjust the size (height) of the grid to display the entire content without any scrolling in the grid. */
   autoHeight?: boolean;
@@ -213,6 +222,12 @@ export interface GridOption {
 
   /** Defaults to true, which will automatically resize the column headers whenever the grid size changes */
   enableAutoSizeColumns?: boolean;
+
+  /**
+   * Defaults to false, which will automatically resize the column headers by their cell content whenever the grid size changes.
+   * NOTE: this option is opt-in and if you decide to use it then you should disable the other grid option `enableAutoSizeColumns: false`
+   */
+  enableAutoResizeColumnsByCellContent?: boolean;
 
   /** Defaults to false, which leads to showing tooltip over cell & header values that are not shown completely (... ellipsis) */
   enableAutoTooltip?: boolean;
@@ -460,6 +475,30 @@ export interface GridOption {
 
   /** Register any external Resources (Components, Services) like the ExcelExportService, TextExportService, SlickCompositeEditorComponent, ... */
   registerExternalResources?: ExternalResource[];
+
+  /** defaults to false, if a column `width` is provided (or was previously calculated) should we recalculate it or not when resizing by cell content? */
+  resizeAlwaysRecalculateColumnWidth?: boolean;
+
+  /**
+   * Defaults to 7, width in pixels of a string character which is used by the resize columns by its content, this can vary depending on which font family/size is used & cell padding.
+   * This is only used when resizing the columns width by their content, we need to know the width of a character in pixel to do all calculations.
+   */
+  resizeCellCharWidthInPx?: number;
+
+  /** Defaults to 6, cell padding width to add to the calculation when resizing columns by their cell text content. */
+  resizeCellPaddingWidthInPx?: number;
+
+  /** Defaults to around ~0.9, what is the ratio to use (on field `type` "string" only) in the calculation when resizing columns by their cell text content. */
+  resizeDefaultRatioForStringType?: number;
+
+  /** Defaults to 6, padding width to add to the calculation when using a Formatter and resizing columns by their cell text content. */
+  resizeFormatterPaddingWidthInPx?: number;
+
+  /**
+   * Defaults to 1000, width in pixels of a string character which is used by the resize columns by its content, this can vary depending on which font family/size is used & cell padding.
+   * This is only used when resizing the columns width by their content, we need to know the width of a character in pixel to do all calculations.
+   */
+  resizeMaxItemToInspectCellContentWidth?: number;
 
   /** Row Detail View Plugin options & events (columnId, cssClass, toolTip, width) */
   rowDetailView?: RowDetailView;
