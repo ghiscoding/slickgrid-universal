@@ -216,7 +216,8 @@ export class SlickVanillaGridBundle {
     }
     if (this.sharedService?.gridOptions && this.slickGrid?.setOptions) {
       this.sharedService.gridOptions = mergedOptions;
-      this.slickGrid.setOptions(mergedOptions);
+      this.slickGrid.setOptions(mergedOptions, false, true); // make sure to supressColumnCheck (3rd arg) to avoid problem with changeColumnsArrangement() and custom grid view
+      this.slickGrid.reRenderColumns(true); // then call a re-render since we did supressColumnCheck on previous setOptions
     }
     this._gridOptions = mergedOptions;
   }
