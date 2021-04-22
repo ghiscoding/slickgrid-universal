@@ -1796,6 +1796,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
             metricTexts: {
               items: 'éléments',
               itemsKey: 'ITEMS',
+              itemsSelected: 'éléments sélectionnés',
+              itemsSelectedKey: 'ITEMS_SELECTED',
               of: 'de',
               ofKey: 'OF',
             },
@@ -1833,6 +1835,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
             metricTexts: {
               items: 'some items',
               itemsKey: 'ITEMS',
+              itemsSelected: 'items selected',
+              itemsSelectedKey: 'ITEMS_SELECTED',
               lastUpdate: 'some last update',
               of: 'some of',
               ofKey: 'OF',
