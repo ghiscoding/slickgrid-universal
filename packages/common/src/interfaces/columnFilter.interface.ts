@@ -1,4 +1,4 @@
-import { FieldType, OperatorString, OperatorType, } from '../enums/index';
+import { FieldType, OperatorString, OperatorType, SearchTerm, } from '../enums/index';
 import {
   CollectionCustomStructure,
   CollectionFilterBy,
@@ -7,8 +7,8 @@ import {
   Column,
   Filter,
   MultipleSelectOption,
+  OperatorDetail,
 } from './index';
-import { SearchTerm } from '../enums/searchTerm.type';
 import { Observable, Subject } from '../services/rxjsFacade';
 
 export interface ColumnFilter {
@@ -29,6 +29,9 @@ export interface ColumnFilter {
 
   /** Column Definition */
   columnDef?: Column;
+
+  /** Optional operator list to override the full list of Compound Operator select dropdown list. */
+  compoundOperatorList?: OperatorDetail[];
 
   /** Custom Filter */
   customFilter?: Filter;

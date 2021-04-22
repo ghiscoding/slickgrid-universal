@@ -8,6 +8,7 @@ import {
   FilterCallback,
   GridOption,
   Locale,
+  OperatorDetail,
   SlickGrid,
 } from '../interfaces/index';
 import { buildSelectOperatorHtmlString } from './filterUtilities';
@@ -158,35 +159,40 @@ export class CompoundInputFilter implements Filter {
     return `<input type="${this._inputType || 'text'}" class="form-control compound-input filter-${columnId}" role="presentation" autocomplete="off" placeholder="${placeholder}" /><span></span>`;
   }
 
-  protected getOptionValues(): { operator: OperatorString, description: string }[] {
+  /** Get the available operator option values to populate the operator select dropdown list */
+  protected getOperatorOptionValues(): OperatorDetail[] {
     const type = (this.columnDef.type && this.columnDef.type) ? this.columnDef.type : FieldType.string;
     let optionValues = [];
 
-    switch (type) {
-      case FieldType.string:
-      case FieldType.text:
-      case FieldType.readonly:
-      case FieldType.password:
-        optionValues = [
-          { operator: '' as OperatorString, description: this.getOutputText('CONTAINS', 'TEXT_CONTAINS', 'Contains') },
-          { operator: '<>' as OperatorString, description: this.getOutputText('NOT_CONTAINS', 'TEXT_NOT_CONTAINS', 'Not Contains') },
-          { operator: '=' as OperatorString, description: this.getOutputText('EQUALS', 'TEXT_EQUALS', 'Equals') },
-          { operator: '!=' as OperatorString, description: this.getOutputText('NOT_EQUAL_TO', 'TEXT_NOT_EQUAL_TO', 'Not equal to') },
-          { operator: 'a*' as OperatorString, description: this.getOutputText('STARTS_WITH', 'TEXT_STARTS_WITH', 'Starts with') },
-          { operator: '*z' as OperatorString, description: this.getOutputText('ENDS_WITH', 'TEXT_ENDS_WITH', 'Ends with') },
-        ];
-        break;
-      default:
-        optionValues = [
-          { operator: '' as OperatorString, description: '' },
-          { operator: '=' as OperatorString, description: this.getOutputText('EQUAL_TO', 'TEXT_EQUAL_TO', 'Equal to') },
-          { operator: '<' as OperatorString, description: this.getOutputText('LESS_THAN', 'TEXT_LESS_THAN', 'Less than') },
-          { operator: '<=' as OperatorString, description: this.getOutputText('LESS_THAN_OR_EQUAL_TO', 'TEXT_LESS_THAN_OR_EQUAL_TO', 'Less than or equal to') },
-          { operator: '>' as OperatorString, description: this.getOutputText('GREATER_THAN', 'TEXT_GREATER_THAN', 'Greater than') },
-          { operator: '>=' as OperatorString, description: this.getOutputText('GREATER_THAN_OR_EQUAL_TO', 'TEXT_GREATER_THAN_OR_EQUAL_TO', 'Greater than or equal to') },
-          { operator: '<>' as OperatorString, description: this.getOutputText('NOT_EQUAL_TO', 'TEXT_NOT_EQUAL_TO', 'Not equal to') }
-        ];
-        break;
+    if (this.columnFilter?.compoundOperatorList) {
+      return this.columnFilter.compoundOperatorList;
+    } else {
+      switch (type) {
+        case FieldType.string:
+        case FieldType.text:
+        case FieldType.readonly:
+        case FieldType.password:
+          optionValues = [
+            { operator: '' as OperatorString, description: this.getOutputText('CONTAINS', 'TEXT_CONTAINS', 'Contains') },
+            { operator: '<>' as OperatorString, description: this.getOutputText('NOT_CONTAINS', 'TEXT_NOT_CONTAINS', 'Not Contains') },
+            { operator: '=' as OperatorString, description: this.getOutputText('EQUALS', 'TEXT_EQUALS', 'Equals') },
+            { operator: '!=' as OperatorString, description: this.getOutputText('NOT_EQUAL_TO', 'TEXT_NOT_EQUAL_TO', 'Not equal to') },
+            { operator: 'a*' as OperatorString, description: this.getOutputText('STARTS_WITH', 'TEXT_STARTS_WITH', 'Starts with') },
+            { operator: '*z' as OperatorString, description: this.getOutputText('ENDS_WITH', 'TEXT_ENDS_WITH', 'Ends with') },
+          ];
+          break;
+        default:
+          optionValues = [
+            { operator: '' as OperatorString, description: '' },
+            { operator: '=' as OperatorString, description: this.getOutputText('EQUAL_TO', 'TEXT_EQUAL_TO', 'Equal to') },
+            { operator: '<' as OperatorString, description: this.getOutputText('LESS_THAN', 'TEXT_LESS_THAN', 'Less than') },
+            { operator: '<=' as OperatorString, description: this.getOutputText('LESS_THAN_OR_EQUAL_TO', 'TEXT_LESS_THAN_OR_EQUAL_TO', 'Less than or equal to') },
+            { operator: '>' as OperatorString, description: this.getOutputText('GREATER_THAN', 'TEXT_GREATER_THAN', 'Greater than') },
+            { operator: '>=' as OperatorString, description: this.getOutputText('GREATER_THAN_OR_EQUAL_TO', 'TEXT_GREATER_THAN_OR_EQUAL_TO', 'Greater than or equal to') },
+            { operator: '<>' as OperatorString, description: this.getOutputText('NOT_EQUAL_TO', 'TEXT_NOT_EQUAL_TO', 'Not equal to') }
+          ];
+          break;
+      }
     }
 
     return optionValues;
@@ -210,7 +216,7 @@ export class CompoundInputFilter implements Filter {
     $($headerElm).empty();
 
     // create the DOM Select dropdown for the Operator
-    const selectOperatorHtmlString = buildSelectOperatorHtmlString(this.getOptionValues());
+    const selectOperatorHtmlString = buildSelectOperatorHtmlString(this.getOperatorOptionValues());
     this.$selectOperatorElm = $(selectOperatorHtmlString);
     this.$filterInputElm = $(this.buildInputHtmlString());
     const $filterContainerElm = $(`<div class="form-group search-filter filter-${columnId}"></div>`);
