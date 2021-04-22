@@ -1775,7 +1775,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('Custom Footer', () => {
       it('should have a Custom Footer when "showCustomFooter" is enabled and there are no Pagination used', (done) => {
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
-        const mockGridOptions = { enableTranslate: true, showCustomFooter: true, };
+        const mockGridOptions = { enableTranslate: true, showCustomFooter: true, customFooterOptions: { hideRowSelectionCount: false, } } as GridOption;
         jest.spyOn(mockGrid, 'getOptions').mockReturnValue(mockGridOptions);
 
         translateService.use('fr');
@@ -1788,6 +1788,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           expect(component.gridOptions.showCustomFooter).toBeTrue();
           expect(component.gridOptions.customFooterOptions).toEqual({
             dateFormat: 'YYYY-MM-DD, hh:mm a',
+            hideRowSelectionCount: false,
             hideLastUpdateTimestamp: true,
             hideTotalItemCount: false,
             footerHeight: 25,
@@ -1813,6 +1814,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions.enableTranslate = false;
         component.gridOptions.showCustomFooter = true;
         component.gridOptions.customFooterOptions = {
+          hideRowSelectionCount: false,
           metricTexts: {
             items: 'some items',
             lastUpdate: 'some last update',
@@ -1827,6 +1829,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           expect(component.gridOptions.showCustomFooter).toBeTrue();
           expect(component.gridOptions.customFooterOptions).toEqual({
             dateFormat: 'YYYY-MM-DD, hh:mm a',
+            hideRowSelectionCount: false,
             hideLastUpdateTimestamp: true,
             hideTotalItemCount: false,
             footerHeight: 25,
