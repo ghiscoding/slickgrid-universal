@@ -6,6 +6,8 @@ function removeExtraSpaces(text: string) {
   return `${text}`.replace(/\s{2,}/g, '');
 }
 
+declare const Slick: any;
+
 const mockGridOptions = {
   enableTranslate: false,
   showCustomFooter: true,
@@ -14,6 +16,7 @@ const mockGridOptions = {
 const gridStub = {
   getOptions: () => mockGridOptions,
   getUID: () => 'slickgrid_123456',
+  onSelectedRowsChanged: new Slick.Event(),
   registerPlugin: jest.fn(),
 } as unknown as SlickGrid;
 
@@ -201,6 +204,79 @@ describe('Slick-Footer Component', () => {
         `<div class="right-footer metrics ">
           <span class="timestamp"><span><span class="last-update">Dernière mise à jour 2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
           <span class="item-count">7</span><span> de </span><span class="total-count">99</span><span> éléments </span>
+        </div>`));
+    });
+
+    it('should display custom text on the left side footer section when calling the leftFooterText SETTER', () => {
+      mockGridOptions.enableCheckboxSelector = true;
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
+      component.renderFooter(div);
+      component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
+      component.leftFooterText = 'custom left footer text';
+
+      const footerContainerElm = document.querySelector('div.slick-custom-footer.slickgrid_123456') as HTMLDivElement;
+      const leftFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.left-footer') as HTMLSpanElement;
+      const rightFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.metrics') as HTMLSpanElement;
+
+      expect(component.eventHandler).toEqual(expect.toBeObject());
+      expect(footerContainerElm).toBeTruthy();
+      expect(leftFooterElm).toBeTruthy();
+      expect(rightFooterElm).toBeTruthy();
+      expect(leftFooterElm.innerHTML).toBe('custom left footer text');
+      expect(rightFooterElm.innerHTML).toBe(removeExtraSpaces(
+        `<div class="right-footer metrics ">
+          <span class="timestamp"><span><span class="last-update">some last update 2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
+          <span class="item-count">7</span><span> some of </span><span class="total-count">99</span><span> some items </span>
+        </div>`));
+    });
+
+    it('should display 1 items selected on the left side footer section after triggering "onSelectedRowsChanged" event', () => {
+      mockGridOptions.enableCheckboxSelector = true;
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
+      component.renderFooter(div);
+      component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
+      gridStub.onSelectedRowsChanged.notify({ rows: [1], grid: gridStub, previousSelectedRows: [] });
+
+      const footerContainerElm = document.querySelector('div.slick-custom-footer.slickgrid_123456') as HTMLDivElement;
+      const leftFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.left-footer') as HTMLSpanElement;
+      const rightFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.metrics') as HTMLSpanElement;
+
+      expect(component.eventHandler).toEqual(expect.toBeObject());
+      expect(footerContainerElm).toBeTruthy();
+      expect(leftFooterElm).toBeTruthy();
+      expect(rightFooterElm).toBeTruthy();
+      expect(leftFooterElm.innerHTML).toBe('1 items selected');
+      expect(rightFooterElm.innerHTML).toBe(removeExtraSpaces(
+        `<div class="right-footer metrics ">
+          <span class="timestamp"><span><span class="last-update">some last update 2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
+          <span class="item-count">7</span><span> some of </span><span class="total-count">99</span><span> some items </span>
+        </div>`));
+
+      gridStub.onSelectedRowsChanged.notify({ rows: [1, 2, 3, 4, 5], grid: gridStub, previousSelectedRows: [] });
+      expect(leftFooterElm.innerHTML).toBe('5 items selected');
+    });
+
+    it('should not not display row selection count after triggering "onSelectedRowsChanged" event when "hideRowSelectionCount" is set to True', () => {
+      mockGridOptions.enableCheckboxSelector = true;
+      mockGridOptions.customFooterOptions.hideRowSelectionCount = true;
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
+      component.renderFooter(div);
+      component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
+      gridStub.onSelectedRowsChanged.notify({ rows: [1], grid: gridStub, previousSelectedRows: [] });
+
+      const footerContainerElm = document.querySelector('div.slick-custom-footer.slickgrid_123456') as HTMLDivElement;
+      const leftFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.left-footer') as HTMLSpanElement;
+      const rightFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.metrics') as HTMLSpanElement;
+
+      expect(component.eventHandler).toEqual(expect.toBeObject());
+      expect(footerContainerElm).toBeTruthy();
+      expect(leftFooterElm).toBeTruthy();
+      expect(rightFooterElm).toBeTruthy();
+      expect(leftFooterElm.innerHTML).toBe('');
+      expect(rightFooterElm.innerHTML).toBe(removeExtraSpaces(
+        `<div class="right-footer metrics ">
+          <span class="timestamp"><span><span class="last-update">some last update 2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
+          <span class="item-count">7</span><span> some of </span><span class="total-count">99</span><span> some items </span>
         </div>`));
     });
   });

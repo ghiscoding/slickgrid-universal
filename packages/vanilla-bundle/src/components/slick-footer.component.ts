@@ -4,19 +4,28 @@ const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "m
 import {
   Constants,
   CustomFooterOption,
+  GetSlickEventType,
   GridOption,
   Locale,
   Metrics,
   MetricTexts,
-  SlickGrid,
-  TranslaterService,
   sanitizeTextByAvailableSanitizer,
+  SlickEventHandler,
+  SlickGrid,
+  SlickNamespace,
+  TranslaterService,
 } from '@slickgrid-universal/common';
 import { BindingHelper } from '../services/binding.helper';
 
+declare const Slick: SlickNamespace;
 export class SlickFooterComponent {
   private _bindingHelper: BindingHelper;
+  private _eventHandler!: SlickEventHandler;
   private _footerElement!: HTMLDivElement;
+
+  get eventHandler(): SlickEventHandler {
+    return this._eventHandler;
+  }
 
   get gridUid(): string {
     return this.grid?.getUID() ?? '';
@@ -36,14 +45,21 @@ export class SlickFooterComponent {
     this.renderMetrics(metrics);
   }
 
+  set leftFooterText(text: string) {
+    this.renderLeftFooterText(text);
+  }
+
   constructor(private grid: SlickGrid, private customFooterOptions: CustomFooterOption, private translaterService?: TranslaterService) {
     this._bindingHelper = new BindingHelper();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
+    this._eventHandler = new Slick.EventHandler();
+    this.registerOnSelectedRowsChangedWhenEnabled(customFooterOptions);
   }
 
   dispose() {
     this._bindingHelper.dispose();
     this._footerElement?.remove();
+    this._eventHandler.unsubscribeAll();
   }
 
   /**
@@ -57,6 +73,7 @@ export class SlickFooterComponent {
       this.customFooterOptions.metricTexts = this.customFooterOptions.metricTexts || {};
       this.customFooterOptions.metricTexts.lastUpdate = this.customFooterOptions.metricTexts.lastUpdate || this.locales?.TEXT_LAST_UPDATE || 'TEXT_LAST_UPDATE';
       this.customFooterOptions.metricTexts.items = this.customFooterOptions.metricTexts.items || this.locales?.TEXT_ITEMS || 'TEXT_ITEMS';
+      this.customFooterOptions.metricTexts.itemsSelected = this.customFooterOptions.metricTexts.itemsSelected || this.locales?.TEXT_ITEMS_SELECTED || 'TEXT_ITEMS_SELECTED';
       this.customFooterOptions.metricTexts.of = this.customFooterOptions.metricTexts.of || this.locales?.TEXT_OF || 'TEXT_OF';
     }
 
@@ -72,6 +89,11 @@ export class SlickFooterComponent {
     this._bindingHelper.setElementAttributeValue('span.last-update', 'textContent', `${lastUpdateText} ${lastUpdateTimestamp}`);
     this._bindingHelper.setElementAttributeValue('span.item-count', 'textContent', metrics.itemCount);
     this._bindingHelper.setElementAttributeValue('span.total-count', 'textContent', metrics.totalItemCount);
+  }
+
+  /** Render the left side footer text */
+  renderLeftFooterText(text: string) {
+    this._bindingHelper.setElementAttributeValue('div.left-footer', 'textContent', text);
   }
 
   // --
@@ -170,6 +192,24 @@ export class SlickFooterComponent {
     lastUpdateContainerElm.appendChild(separatorElm);
 
     return lastUpdateContainerElm;
+  }
+
+  /**
+   * When user has row selections enabled and does not have any custom text shown on the left side footer,
+   * we will show the row selection count on the bottom left side of the footer (by subscribing to the SlickGrid `onSelectedRowsChanged` event).
+   * @param customFooterOptions
+   */
+  private registerOnSelectedRowsChangedWhenEnabled(customFooterOptions: CustomFooterOption) {
+    const isRowSelectionEnabled = this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection;
+    if (isRowSelectionEnabled && customFooterOptions && (!customFooterOptions.hideRowSelectionCount && !customFooterOptions.leftFooterText)) {
+      const selectedCountText = customFooterOptions.metricTexts?.itemsSelected ?? this.locales?.TEXT_ITEMS_SELECTED ?? 'TEXT_ITEMS_SELECTED';
+      customFooterOptions.leftFooterText = `0 ${selectedCountText}`;
+
+      const onSelectedRowsChangedHandler = this.grid.onSelectedRowsChanged;
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSelectedRowsChangedHandler>>).subscribe(onSelectedRowsChangedHandler, (_e, args) => {
+        this.leftFooterText = `${args.rows.length || 0} ${selectedCountText}`;
+      });
+    }
   }
 
   /** Translate all Custom Footer Texts (footer with metrics) */

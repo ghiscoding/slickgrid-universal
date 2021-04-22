@@ -113,6 +113,9 @@ export interface Locale {
   /** Text "items per page" displayed in the Pagination (when enabled) */
   TEXT_ITEMS_PER_PAGE?: string;
 
+  /** Text "Records Selected" displayed in the Custom Footer */
+  TEXT_ITEMS_SELECTED?: string;
+
   /** Text "of" displayed in the Pagination (when enabled) */
   TEXT_OF?: string;
 
