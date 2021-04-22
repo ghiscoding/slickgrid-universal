@@ -83,6 +83,8 @@ export class Example14 {
   gridOptions1: GridOption;
   dataset: any[] = [];
   isGridEditable = true;
+  classDefaultResizeButton = 'button is-small';
+  classNewResizeButton = 'button is-small is-selected is-primary';
   editQueue = [];
   editedItems = {};
   sgb1: SlickVanillaGridBundle;
@@ -510,10 +512,18 @@ export class Example14 {
     columns.forEach(col => col.width = col.originalWidth);
     this.sgb1.slickGrid.setColumns(columns);
     this.sgb1.slickGrid.autosizeColumns();
+
+    // simple css class to change selected button in the UI
+    this.classDefaultResizeButton = 'button is-small is-selected is-primary';
+    this.classNewResizeButton = 'button is-small';
   }
 
   handleNewResizeColumns() {
     this.sgb1.resizerService.resizeColumnsByCellContent(true);
+
+    // simple css class to change selected button in the UI
+    this.classDefaultResizeButton = 'button is-small';
+    this.classNewResizeButton = 'button is-small is-selected is-primary';
   }
 
   toggleGridEditReadonly() {
