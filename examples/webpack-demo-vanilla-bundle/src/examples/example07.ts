@@ -10,6 +10,7 @@ import {
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { TranslateService } from '../translate.service';
 
 import { ExampleGridOptions } from './example-grid-options';
 
@@ -20,9 +21,17 @@ export class Example7 {
   dataset: any[];
   sgb: SlickVanillaGridBundle;
   duplicateTitleHeaderCount = 1;
+  selectedLanguage: string;
+  selectedLanguageFile: string;
+  translateService: TranslateService;
 
   constructor() {
     this._bindingEventService = new BindingEventService();
+    // get the Translate Service from the window object,
+    // it might be better with proper Dependency Injection but this project doesn't have any at this point
+    this.translateService = (<any>window).TranslateService;
+    this.selectedLanguage = this.translateService.getCurrentLanguage();
+    this.selectedLanguageFile = `${this.selectedLanguage}.json`;
   }
 
   attached() {
@@ -42,31 +51,31 @@ export class Example7 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', name: 'Title', field: 'title', filterable: true, editor: { model: Editors.longText, required: true, alwaysSaveOnEnterKey: true },
+        id: 'title', nameKey: 'TITLE', field: 'title', filterable: true, editor: { model: Editors.longText, required: true, alwaysSaveOnEnterKey: true },
       },
       {
-        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
+        id: 'duration', nameKey: 'DURATION', field: 'duration', sortable: true, filterable: true,
         type: 'number', editor: { model: Editors.text, alwaysSaveOnEnterKey: true, },
         formatter: (_row: number, _cell: number, value: any) => value > 1 ? `${value} days` : `${value} day`,
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: 'number',
+        id: 'percentComplete', nameKey: 'PERCENT_COMPLETE', field: 'percentComplete', type: 'number',
         filterable: true, sortable: true, editor: { model: Editors.slider, minValue: 0, maxValue: 100, },
       },
       {
-        id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso,
+        id: 'start', nameKey: 'START', field: 'start', formatter: Formatters.dateIso,
         filterable: true, sortable: true,
         filter: { model: Filters.compoundDate },
         editor: { model: Editors.date }, type: FieldType.date,/* outputType: FieldType.dateUs, */ saveOutputType: FieldType.dateUtc,
       },
       {
-        id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso,
+        id: 'finish', nameKey: 'FINISH', field: 'finish', formatter: Formatters.dateIso,
         filterable: true, sortable: true,
         filter: { model: Filters.compoundDate },
         editor: { model: Editors.date }, type: FieldType.dateIso, saveOutputType: FieldType.dateUtc,
       },
       {
-        id: 'effort-driven', name: 'Completed', field: 'effortDriven', formatter: Formatters.checkmarkMaterial,
+        id: 'effort-driven', nameKey: 'COMPLETED', field: 'effortDriven', formatter: Formatters.checkmarkMaterial,
         filterable: true, sortable: true,
         filter: {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
@@ -177,6 +186,8 @@ export class Example7 {
         sanitizeDataExport: true
       },
       enableFiltering: true,
+      enableTranslate: true,
+      translater: this.translateService, // pass the TranslateService instance to the grid
       registerExternalResources: [new ExcelExportService()],
       enableCellNavigation: true,
       enableCheckboxSelector: true,
@@ -338,10 +349,17 @@ export class Example7 {
     }
   }
 
+  async switchLanguage() {
+    const nextLanguage = (this.selectedLanguage === 'en') ? 'fr' : 'en';
+    await this.translateService.use(nextLanguage);
+    this.selectedLanguage = nextLanguage;
+    this.selectedLanguageFile = `${this.selectedLanguage}.json`;
+  }
+
   dynamicallyAddTitleHeader() {
     const newCol = {
       id: `title${this.duplicateTitleHeaderCount++}`,
-      name: 'Title',
+      nameKey: 'TITLE',
       field: 'title',
       editor: {
         model: Editors.text,

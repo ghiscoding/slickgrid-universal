@@ -22,6 +22,9 @@ export class SlickFooterComponent {
   private _bindingHelper: BindingHelper;
   private _eventHandler!: SlickEventHandler;
   private _footerElement!: HTMLDivElement;
+  private _isLeftFooterOriginallyEmpty = true;
+  private _isLeftFooterDisplayingSelectionRowCount = false;
+  private _selectedRowCount = 0;
 
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
@@ -45,6 +48,9 @@ export class SlickFooterComponent {
     this.renderMetrics(metrics);
   }
 
+  get leftFooterText(): string {
+    return document.querySelector('div.left-footer')?.textContent ?? '';
+  }
   set leftFooterText(text: string) {
     this.renderLeftFooterText(text);
   }
@@ -53,6 +59,7 @@ export class SlickFooterComponent {
     this._bindingHelper = new BindingHelper();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
     this._eventHandler = new Slick.EventHandler();
+    this._isLeftFooterOriginallyEmpty = !(this.gridOptions.customFooterOptions?.leftFooterText);
     this.registerOnSelectedRowsChangedWhenEnabled(customFooterOptions);
   }
 
@@ -84,11 +91,17 @@ export class SlickFooterComponent {
   /** Render element attribute values */
   renderMetrics(metrics: Metrics) {
     // get translated text & last timestamp
-    const lastUpdateText = this.customFooterOptions?.metricTexts?.lastUpdate ?? '';
     const lastUpdateTimestamp = moment(metrics.endTime).format(this.customFooterOptions.dateFormat);
-    this._bindingHelper.setElementAttributeValue('span.last-update', 'textContent', `${lastUpdateText} ${lastUpdateTimestamp}`);
+    this._bindingHelper.setElementAttributeValue('span.last-update-timestamp', 'textContent', lastUpdateTimestamp);
     this._bindingHelper.setElementAttributeValue('span.item-count', 'textContent', metrics.itemCount);
     this._bindingHelper.setElementAttributeValue('span.total-count', 'textContent', metrics.totalItemCount);
+
+    // locale text changes
+    if (this.customFooterOptions.metricTexts?.lastUpdate) {
+      this._bindingHelper.addElementBinding(this.customFooterOptions.metricTexts, 'lastUpdate', 'span.text-last-update', 'textContent');
+    }
+    this._bindingHelper.addElementBinding(this.customFooterOptions.metricTexts, 'items', 'span.text-items', 'textContent');
+    this._bindingHelper.addElementBinding(this.customFooterOptions.metricTexts, 'of', 'span.text-of', 'textContent');
   }
 
   /** Render the left side footer text */
@@ -155,9 +168,16 @@ export class SlickFooterComponent {
 
     // total count element (unless hidden)
     if (!this.customFooterOptions.hideTotalItemCount) {
+      // add carriage return which will add a space before the span
+      rightFooterElm.appendChild(document.createTextNode('\r\n'));
+
       const textOfElm = document.createElement('span');
+      textOfElm.className = 'text-of';
       textOfElm.textContent = ` ${this.customFooterOptions.metricTexts?.of ?? 'of'} `;
       rightFooterElm.appendChild(textOfElm);
+
+      // add another carriage return which will add a space after the span
+      rightFooterElm.appendChild(document.createTextNode('\r\n'));
 
       const totalCountElm = document.createElement('span');
       totalCountElm.className = 'total-count';
@@ -166,7 +186,11 @@ export class SlickFooterComponent {
       rightFooterElm.appendChild(totalCountElm);
     }
 
+    // add carriage return which will add a space before the span
+    rightFooterElm.appendChild(document.createTextNode('\r\n'));
+
     const textItemsElm = document.createElement('span');
+    textItemsElm.className = 'text-items';
     textItemsElm.textContent = ` ${this.customFooterOptions.metricTexts?.items ?? 'items'} `;
     rightFooterElm.appendChild(textItemsElm);
 
@@ -180,8 +204,12 @@ export class SlickFooterComponent {
     const lastUpdateTimestamp = moment(this.metrics?.endTime).format(this.customFooterOptions.dateFormat);
 
     const lastUpdateElm = document.createElement('span');
-    lastUpdateElm.className = 'last-update';
-    lastUpdateElm.textContent = `${lastUpdateText} ${lastUpdateTimestamp}`;
+    lastUpdateElm.className = 'text-last-update';
+    lastUpdateElm.textContent = lastUpdateText;
+
+    const lastUpdateTimestampElm = document.createElement('span');
+    lastUpdateTimestampElm.className = 'last-update-timestamp';
+    lastUpdateTimestampElm.textContent = lastUpdateTimestamp;
 
     const separatorElm = document.createElement('span');
     separatorElm.className = 'separator';
@@ -189,6 +217,8 @@ export class SlickFooterComponent {
 
     const lastUpdateContainerElm = document.createElement('span');
     lastUpdateContainerElm.appendChild(lastUpdateElm);
+    lastUpdateContainerElm.appendChild(document.createTextNode('\r\n'));
+    lastUpdateContainerElm.appendChild(lastUpdateTimestampElm);
     lastUpdateContainerElm.appendChild(separatorElm);
 
     return lastUpdateContainerElm;
@@ -201,19 +231,22 @@ export class SlickFooterComponent {
    */
   private registerOnSelectedRowsChangedWhenEnabled(customFooterOptions: CustomFooterOption) {
     const isRowSelectionEnabled = this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection;
-    if (isRowSelectionEnabled && customFooterOptions && (!customFooterOptions.hideRowSelectionCount && !customFooterOptions.leftFooterText)) {
+    if (isRowSelectionEnabled && customFooterOptions && (!customFooterOptions.hideRowSelectionCount && this._isLeftFooterOriginallyEmpty)) {
+      this._isLeftFooterDisplayingSelectionRowCount = true;
       const selectedCountText = customFooterOptions.metricTexts?.itemsSelected ?? this.locales?.TEXT_ITEMS_SELECTED ?? 'TEXT_ITEMS_SELECTED';
       customFooterOptions.leftFooterText = `0 ${selectedCountText}`;
 
       const onSelectedRowsChangedHandler = this.grid.onSelectedRowsChanged;
       (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSelectedRowsChangedHandler>>).subscribe(onSelectedRowsChangedHandler, (_e, args) => {
-        this.leftFooterText = `${args.rows.length || 0} ${selectedCountText}`;
+        this._selectedRowCount = args.rows.length;
+        const selectedCountText2 = customFooterOptions.metricTexts?.itemsSelected ?? this.locales?.TEXT_ITEMS_SELECTED ?? 'TEXT_ITEMS_SELECTED';
+        this.leftFooterText = `${this._selectedRowCount} ${selectedCountText2}`;
       });
     }
   }
 
   /** Translate all Custom Footer Texts (footer with metrics) */
-  private translateCustomFooterTexts() {
+  translateCustomFooterTexts() {
     if (this.translaterService?.translate) {
       this.customFooterOptions.metricTexts = this.customFooterOptions.metricTexts || {};
       for (const propName of Object.keys(this.customFooterOptions.metricTexts)) {
@@ -221,6 +254,11 @@ export class SlickFooterComponent {
           const propNameWithoutKey = propName.substring(0, propName.lastIndexOf('Key'));
           this.customFooterOptions.metricTexts[propNameWithoutKey as keyof MetricTexts] = this.translaterService.translate(this.customFooterOptions.metricTexts[propName as keyof MetricTexts] || ' ');
         }
+      }
+
+      // when we're display row selection count on left footer, we also need to translate that text with its count
+      if (this._isLeftFooterDisplayingSelectionRowCount) {
+        this.leftFooterText = `${this._selectedRowCount} ${this.customFooterOptions.metricTexts!.itemsSelected}`;
       }
     }
   }

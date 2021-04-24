@@ -53,6 +53,14 @@
     <span class="icon mdi mdi-close"></span>
     <span>Clear Filters</span>
   </button>
+  <span style="margin-left: 20px">
+    <button class="button is-small" onclick.delegate="switchLanguage()" data-test="language-button">
+      Switch Language
+    </button>
+    <b>Locale:</b>
+    <span style="font-style: italic" data-test="selected-locale" innerhtml.bind="selectedLanguageFile">
+    </span>
+  </span>
 </div>
 
 <br />

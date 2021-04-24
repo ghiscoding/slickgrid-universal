@@ -1,5 +1,11 @@
 /// <reference types="Cypress" />
 
+const { it } = require('mocha');
+
+function removeExtraSpaces(textS) {
+  return `${textS}`.replace(/\s+/g, ' ').trim();
+}
+
 describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
   const GRID_ROW_HEIGHT = 45;
   const fullTitles = ['', '', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites'];
@@ -14,6 +20,15 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       .find('.slick-header-columns')
       .children()
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+  });
+
+  it('should have 2 row selected count shown in the grid left footer', () => {
+    cy.get('.slick-custom-footer')
+      .find('div.left-footer')
+      .should($span => {
+        const text = removeExtraSpaces($span.text()); // remove all white spaces
+        expect(text).to.eq(`2 items selected`);
+      });
   });
 
   it('should have 11 prerequisites filters and 11 rows in grid/footer', () => {
@@ -64,6 +79,15 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       .click({ force: true });
     cy.get('.slick-column-name > input[type=checkbox]')
       .click({ force: true });
+  });
+
+  it('should have 0 row selected count shown in the grid left footer', () => {
+    cy.get('.slick-custom-footer')
+      .find('div.left-footer')
+      .should($span => {
+        const text = removeExtraSpaces($span.text()); // remove all white spaces
+        expect(text).to.eq(`0 items selected`);
+      });
   });
 
   it('should drag opened Row Detail to another position in the grid', () => {
@@ -634,5 +658,41 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 4');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(2)`).should('contain', 'Task 8');
+  });
+
+  it('should have 1 row selected count shown in the grid left footer as English', () => {
+    cy.get('.slick-custom-footer')
+      .find('div.left-footer')
+      .should($span => {
+        const text = removeExtraSpaces($span.text()); // remove all white spaces
+        expect(text).to.eq(`1 items selected`);
+      });
+  });
+
+  it('should have 2 of 501 items shown as metrics on the right footer shown in English', () => {
+    cy.get('.right-footer.metrics')
+      .contains('2 of 501 items');
+  });
+
+  it('should switch language', () => {
+    cy.get('[data-test="language-button"]')
+      .click();
+
+    cy.get('[data-test="selected-locale"]')
+      .contains('fr');
+  });
+
+  it('should have 1 row selected count shown in the grid left footer as French', () => {
+    cy.get('.slick-custom-footer')
+      .find('div.left-footer')
+      .should($span => {
+        const text = removeExtraSpaces($span.text()); // remove all white spaces
+        expect(text).to.eq(`1 éléments sélectionnés`);
+      });
+  });
+
+  it('should have 2 of 501 items shown as metrics on the right footer shown in French', () => {
+    cy.get('.right-footer.metrics')
+      .contains('2 de 501 éléments');
   });
 });
