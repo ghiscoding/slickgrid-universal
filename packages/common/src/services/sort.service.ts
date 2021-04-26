@@ -316,6 +316,7 @@ export class SortService {
     }
     if (this.httpCancelRequests$ && this.rxjs?.isObservable(this.httpCancelRequests$)) {
       this.httpCancelRequests$.next(); // this cancels any pending http requests
+      this.httpCancelRequests$.complete();
     }
   }
 

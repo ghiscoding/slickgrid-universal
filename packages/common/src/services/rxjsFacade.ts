@@ -75,6 +75,10 @@ export abstract class Observable<T> {
  * multicasted to many Observers. Subjects are like EventEmitters.
  */
 export abstract class Subject<T> extends Observable<T> {
+  complete(): void {
+    throw new Error('RxJS Subject "complete" method must be implemented');
+  }
+
   next(value: T): void {
     throw new Error('RxJS Subject "next" method must be implemented');
   }
