@@ -1,7 +1,5 @@
 /// <reference types="Cypress" />
 
-const { it } = require('mocha');
-
 function removeExtraSpaces(textS) {
   return `${textS}`.replace(/\s+/g, ' ').trim();
 }
