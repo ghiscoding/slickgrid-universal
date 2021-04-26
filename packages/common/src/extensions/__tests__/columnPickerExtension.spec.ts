@@ -8,9 +8,11 @@ declare const Slick: SlickNamespace;
 
 const gridStub = {
   getOptions: jest.fn(),
+  getSelectedRows: jest.fn(),
   registerPlugin: jest.fn(),
   setColumns: jest.fn(),
   setOptions: jest.fn(),
+  setSelectedRows: jest.fn(),
 } as unknown as SlickGrid;
 
 const mockAddon = jest.fn().mockImplementation(() => ({
@@ -111,6 +113,25 @@ describe('columnPickerExtension', () => {
       );
       expect(onColumnSpy).toHaveBeenCalledWith(expect.anything(), { columnId: 'field1', showing: true, allColumns: columnsMock, columns: columnsMock, grid: gridStub });
       expect(visibleColsSpy).toHaveBeenCalledWith(columnsMock);
+    });
+
+    it('should call internal "onColumnsChanged" event and expect "setSelectedRows" method to be called using Row Selection is enabled', () => {
+      const mockRowSelection = [0, 3, 5];
+
+      const handlerSpy = jest.spyOn(extension.eventHandler, 'subscribe');
+      jest.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
+      const setSelectionSpy = jest.spyOn(gridStub, 'setSelectedRows');
+
+      gridOptionsMock.enableRowSelection = true;
+      const instance = extension.register();
+      instance.onColumnsChanged.notify({ columnId: 'field1', showing: true, allColumns: columnsMock, columns: columnsMock.slice(0, 1), grid: gridStub }, new Slick.EventData(), gridStub);
+
+      expect(handlerSpy).toHaveBeenCalledTimes(1);
+      expect(handlerSpy).toHaveBeenCalledWith(
+        { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
+        expect.anything()
+      );
+      expect(setSelectionSpy).toHaveBeenCalledWith(mockRowSelection);
     });
 
     it('should call internal "onColumnsChanged" event and expect "readjustFrozenColumnIndexWhenNeeded" method to be called when the grid is detected to be a frozen grid', () => {
