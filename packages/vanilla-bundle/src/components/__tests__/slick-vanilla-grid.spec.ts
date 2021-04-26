@@ -1370,8 +1370,9 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const transGroupingColSpanSpy = jest.spyOn(groupingAndColspanServiceStub, 'translateGroupingAndColSpan');
         const setHeaderRowSpy = jest.spyOn(mockGrid, 'setHeaderRowVisibility');
 
-        component.gridOptions = { enableTranslate: true, createPreHeaderPanel: false, enableDraggableGrouping: false } as unknown as GridOption;
+        component.gridOptions = { enableTranslate: true, createPreHeaderPanel: false, enableDraggableGrouping: false, showCustomFooter: true } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
+        const transCustomFooterSpy = jest.spyOn(component.slickFooter, 'translateCustomFooterTexts'); // footer gets created after init
 
         eventPubSubService.publish('onLanguageChange', { language: 'fr' });
 
@@ -1384,6 +1385,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           expect(transContextMenuSpy).toHaveBeenCalled();
           expect(transGridMenuSpy).toHaveBeenCalled();
           expect(transHeaderMenuSpy).toHaveBeenCalled();
+          expect(transCustomFooterSpy).toHaveBeenCalled();
           done();
         });
       });

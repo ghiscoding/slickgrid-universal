@@ -20,7 +20,6 @@ import {
   GridOption,
   GridStateType,
   Metrics,
-  MetricTexts,
   Pagination,
   SelectEditor,
   ServicePagination,
@@ -1418,15 +1417,8 @@ export class SlickVanillaGridBundle {
 
   /** Translate all Custom Footer Texts (footer with metrics) */
   private translateCustomFooterTexts() {
-    if (this.translaterService?.translate) {
-      const customFooterOptions = this.gridOptions && this.gridOptions.customFooterOptions || {};
-      customFooterOptions.metricTexts = customFooterOptions.metricTexts || {};
-      for (const propName of Object.keys(customFooterOptions.metricTexts)) {
-        if (propName.lastIndexOf('Key') > 0) {
-          const propNameWithoutKey = propName.substring(0, propName.lastIndexOf('Key'));
-          customFooterOptions.metricTexts[propNameWithoutKey as keyof MetricTexts] = this.translaterService.translate(customFooterOptions.metricTexts[propName as keyof MetricTexts] || ' ');
-        }
-      }
+    if (this.slickFooter && this.translaterService?.translate) {
+      this.slickFooter?.translateCustomFooterTexts();
     }
   }
 

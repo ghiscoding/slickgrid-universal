@@ -107,10 +107,11 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
       expect(leftFooterElm.innerHTML).toBe('');
-      expect(rightFooterElm.innerHTML).toBe(removeExtraSpaces(
+      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
         `<div class="right-footer metrics ">
-          <span class="timestamp"><span><span class="last-update">some last update 2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
-          <span class="item-count">7</span><span> some of </span><span class="total-count">99</span><span> some items </span>
+          <span class="timestamp"><span><span class="text-last-update">some last update</span><span class="last-update-timestamp">2019-05-03, 12:00:01am</span>
+          <span class="separator"> | </span></span></span>
+          <span class="item-count">7</span><span class="text-of">some of</span><span class="total-count">99</span><span class="text-items">some items</span>
         </div>`));
     });
 
@@ -130,10 +131,10 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
       expect(leftFooterElm.innerHTML).toBe('');
-      expect(rightFooterElm.innerHTML).toBe(removeExtraSpaces(
+      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
         `<div class="right-footer metrics ">
           <span class="timestamp"></span>
-          <span class="item-count">7</span><span> some of </span><span class="total-count">99</span><span> some items </span>
+          <span class="item-count">7</span><span class="text-of">some of</span><span class="total-count">99</span><span class="text-items">some items</span>
         </div>`));
     });
 
@@ -154,10 +155,10 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
       expect(leftFooterElm.innerHTML).toBe('');
-      expect(rightFooterElm.innerHTML).toBe(removeExtraSpaces(
+      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
         `<div class="right-footer metrics ">
           <span class="timestamp"></span>
-          <span class="item-count">7</span><span> some items </span>
+          <span class="item-count">7</span><span class="text-items">some items</span>
         </div>`));
     });
 
@@ -176,10 +177,11 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
       expect(leftFooterElm.innerHTML).toBe('');
-      expect(rightFooterElm.innerHTML).toBe(removeExtraSpaces(
+      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
         `<div class="right-footer metrics ">
-          <span class="timestamp"><span><span class="last-update">Last Update 2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
-          <span class="item-count">7</span><span> of </span><span class="total-count">99</span><span> items </span>
+          <span class="timestamp"><span><span class="text-last-update">Last Update</span><span class="last-update-timestamp">2019-05-03, 12:00:01am</span>
+          <span class="separator"> | </span></span></span>
+          <span class="item-count">7</span><span class="text-of">of</span><span class="total-count">99</span><span class="text-items">items</span>
         </div>`));
     });
 
@@ -200,10 +202,10 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
       expect(leftFooterElm.innerHTML).toBe('');
-      expect(rightFooterElm.innerHTML).toBe(removeExtraSpaces(
+      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
         `<div class="right-footer metrics ">
-          <span class="timestamp"><span><span class="last-update">Dernière mise à jour 2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
-          <span class="item-count">7</span><span> de </span><span class="total-count">99</span><span> éléments </span>
+          <span class="timestamp"><span><span class="text-last-update">Dernière mise à jour</span><span class="last-update-timestamp">2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
+          <span class="item-count">7</span><span class="text-of">de</span><span class="total-count">99</span><span class="text-items">éléments</span>
         </div>`));
     });
 
@@ -223,10 +225,10 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
       expect(leftFooterElm.innerHTML).toBe('custom left footer text');
-      expect(rightFooterElm.innerHTML).toBe(removeExtraSpaces(
+      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
         `<div class="right-footer metrics ">
-          <span class="timestamp"><span><span class="last-update">some last update 2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
-          <span class="item-count">7</span><span> some of </span><span class="total-count">99</span><span> some items </span>
+          <span class="timestamp"><span><span class="text-last-update">some last update</span><span class="last-update-timestamp">2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
+          <span class="item-count">7</span><span class="text-of">some of</span><span class="total-count">99</span><span class="text-items">some items</span>
         </div>`));
     });
 
@@ -246,10 +248,11 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
       expect(leftFooterElm.innerHTML).toBe('1 items selected');
-      expect(rightFooterElm.innerHTML).toBe(removeExtraSpaces(
+      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
         `<div class="right-footer metrics ">
-          <span class="timestamp"><span><span class="last-update">some last update 2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
-          <span class="item-count">7</span><span> some of </span><span class="total-count">99</span><span> some items </span>
+          <span class="timestamp"><span><span class="text-last-update">some last update</span>
+          <span class="last-update-timestamp">2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
+          <span class="item-count">7</span><span class="text-of">some of</span><span class="total-count">99</span><span class="text-items">some items</span>
         </div>`));
 
       gridStub.onSelectedRowsChanged.notify({ rows: [1, 2, 3, 4, 5], grid: gridStub, previousSelectedRows: [] });
@@ -273,11 +276,47 @@ describe('Slick-Footer Component', () => {
       expect(leftFooterElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
       expect(leftFooterElm.innerHTML).toBe('');
-      expect(rightFooterElm.innerHTML).toBe(removeExtraSpaces(
-        `<div class="right-footer metrics ">
-          <span class="timestamp"><span><span class="last-update">some last update 2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
-          <span class="item-count">7</span><span> some of </span><span class="total-count">99</span><span> some items </span>
-        </div>`));
+      expect(removeExtraSpaces(rightFooterElm.innerHTML)).toBe(removeExtraSpaces(
+        `<div class="right-footer metrics "><span class="timestamp"><span><span class="text-last-update">some last update</span>
+          <span class="last-update-timestamp">2019-05-03, 12:00:01am</span><span class="separator"> | </span></span></span>
+          <span class="item-count">7</span><span class="text-of">some of</span><span class="total-count">99</span><span class="text-items">some items</span>
+          </div>`));
+    });
+
+    it('should display row selection count on the left side footer section after triggering "onSelectedRowsChanged" event', () => {
+      mockGridOptions.enableCheckboxSelector = true;
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
+      component.renderFooter(div);
+      gridStub.onSelectedRowsChanged.notify({ rows: [1], previousSelectedRows: [], grid: gridStub, });
+
+      expect(component).toBeTruthy();
+      expect(component.leftFooterText).toEqual('1 items selected');
+
+      gridStub.onSelectedRowsChanged.notify({ rows: [1, 2, 3, 4, 5], previousSelectedRows: [], grid: gridStub, });
+      expect(component.leftFooterText).toEqual('5 items selected');
+    });
+
+    it('should display row selection count in French on the left side footer section after triggering "onSelectedRowsChanged" event when using "fr" as locale', () => {
+      translateService.use('fr');
+      (mockGridOptions.customFooterOptions as CustomFooterOption).metricTexts = { itemsKey: 'ITEMS', itemsSelectedKey: 'ITEMS_SELECTED', lastUpdateKey: 'LAST_UPDATE', ofKey: 'OF' };
+      mockGridOptions.enableTranslate = true;
+      mockGridOptions.enableCheckboxSelector = true;
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
+      component.renderFooter(div);
+
+      gridStub.onSelectedRowsChanged.notify({ rows: [1], previousSelectedRows: [], grid: gridStub, });
+      expect(component.leftFooterText).toEqual('1 éléments sélectionnés');
+
+      gridStub.onSelectedRowsChanged.notify({ rows: [1, 2, 3, 4, 5], previousSelectedRows: [], grid: gridStub, });
+      expect(component.leftFooterText).toEqual('5 éléments sélectionnés');
+    });
+
+    it('should not display row selection count after triggering "onSelectedRowsChanged" event if "hideRowSelectionCount" is set to True', () => {
+      mockGridOptions.enableCheckboxSelector = true;
+      mockGridOptions.customFooterOptions.hideRowSelectionCount = true;
+      component.renderFooter(div);
+      gridStub.onSelectedRowsChanged.notify({ rows: [1], previousSelectedRows: [], grid: gridStub, });
+      expect(component.leftFooterText).toBe('0 items selected');
     });
   });
 });
