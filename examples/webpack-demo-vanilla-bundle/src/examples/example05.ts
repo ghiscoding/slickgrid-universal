@@ -95,6 +95,7 @@ export class Example5 {
         levelPropName: 'indent',
         parentPropName: 'parentId'
       },
+      multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
       presets: {
         filters: [{ columnId: 'percentComplete', searchTerms: [25], operator: '>=' }]
       }
