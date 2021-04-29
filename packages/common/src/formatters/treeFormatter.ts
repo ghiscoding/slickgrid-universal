@@ -6,8 +6,8 @@ export const treeFormatter: Formatter = (_row, _cell, value, columnDef, dataCont
   const dataView = grid?.getData<SlickDataView>();
   const gridOptions = grid?.getOptions();
   const treeDataOptions = gridOptions?.treeDataOptions;
-  const treeLevelPropName = treeDataOptions?.levelPropName || '__treeLevel';
-  const indentMarginLeft = treeDataOptions?.indentMarginLeft || 15;
+  const treeLevelPropName = treeDataOptions?.levelPropName ?? '__treeLevel';
+  const indentMarginLeft = treeDataOptions?.indentMarginLeft ?? 15;
   let outputValue = value;
 
   if (typeof columnDef.queryFieldNameGetterFn === 'function') {
