@@ -83,23 +83,23 @@ export function convertParentChildArrayToHierarchicalView<T = any>(flatArray: T[
   const identifierPropName = options?.identifierPropName ?? 'id';
   const hasChildrenFlagPropName = '__hasChildren';
   const treeLevelPropName = '__treeLevel';
-  const inputArray: T[] = $.extend(true, [], flatArray);
+  const inputArray: T[] = deepCopy(flatArray || []);
 
   const roots: T[] = []; // things without parent
 
   // make them accessible by guid on this map
-  const all = {};
+  const all: any = {};
 
-  inputArray.forEach((item) => (all as any)[(item as any)[identifierPropName]] = item);
+  inputArray.forEach((item: any) => all[item[identifierPropName]] = item);
 
   // connect childrens to its parent, and split roots apart
   Object.keys(all).forEach((id) => {
-    const item = (all as any)[id];
-    if (item[parentPropName] === null || !item.hasOwnProperty(parentPropName)) {
+    const item = all[id];
+    if (!(parentPropName in item) || item[parentPropName] === null || item[parentPropName] === undefined || item[parentPropName] === '') {
       delete item[parentPropName];
       roots.push(item);
     } else if (item[parentPropName] in all) {
-      const p = (all as any)[item[parentPropName]];
+      const p = all[item[parentPropName]];
       if (!(childrenPropName in p)) {
         p[childrenPropName] = [];
       }

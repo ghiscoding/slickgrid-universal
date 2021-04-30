@@ -172,8 +172,8 @@ export class Example6 {
     this.sgb.treeDataService.toggleTreeDataCollapse(false);
   }
 
-  logExpandedStructure() {
-    console.log('exploded array', this.sgb.treeDataService.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
+  logHierarchicalStructure() {
+    console.log('hierarchical array', this.sgb.treeDataService.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
   }
 
   logFlatStructure() {

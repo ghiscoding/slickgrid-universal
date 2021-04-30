@@ -29,7 +29,6 @@ import {
   SlickGroupItemMetadataProvider,
   SlickNamespace,
   Subscription,
-  TreeDataOption,
 
   // extensions
   AutoTooltipExtension,
@@ -68,7 +67,6 @@ import {
   TreeDataService,
 
   // utilities
-  convertParentChildArrayToHierarchicalView,
   emptyElement,
   GetSlickEventType,
 } from '@slickgrid-universal/common';
@@ -171,7 +169,15 @@ export class SlickVanillaGridBundle {
   set dataset(newDataset: any[]) {
     const prevDatasetLn = this.dataView.getLength();
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions?.enableDeepCopyDatasetOnPageLoad);
-    const data = isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], newDataset) : newDataset;
+    let data = isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], newDataset) : newDataset;
+
+    // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert & sort of the array
+    if (this._gridOptions.enableTreeData && Array.isArray(newDataset) && newDataset.length > 0) {
+      const sortedDatasetResult = this.treeDataService.initializeHierarchicalDataset(data, this._columnDefinitions);
+      this.sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
+      data = sortedDatasetResult.flat;
+    }
+
     this.refreshGridData(data || []);
 
     // expand/autofit columns on first page load
@@ -188,12 +194,12 @@ export class SlickVanillaGridBundle {
   set datasetHierarchical(newHierarchicalDataset: any[] | undefined) {
     this.sharedService.hierarchicalDataset = newHierarchicalDataset;
 
-    if (newHierarchicalDataset && this.columnDefinitions && this.filterService && this.filterService.clearFilters) {
+    if (newHierarchicalDataset && this.columnDefinitions && this.filterService?.clearFilters) {
       this.filterService.clearFilters();
     }
 
     // when a hierarchical dataset is set afterward, we can reset the flat dataset and call a tree data sort that will overwrite the flat dataset
-    if (newHierarchicalDataset && this.sortService && this.sortService.processTreeDataInitialSort) {
+    if (newHierarchicalDataset && this.sortService?.processTreeDataInitialSort) {
       this.dataView.setItems([], this._gridOptions.datasetIdPropertyName);
       this.sortService.processTreeDataInitialSort();
     }
@@ -334,7 +340,7 @@ export class SlickVanillaGridBundle {
     this.filterService = services?.filterService ?? new FilterService(this.filterFactory, this._eventPubSubService, this.sharedService, this.backendUtilityService);
     this.resizerService = services?.resizerService ?? new ResizerService(this._eventPubSubService);
     this.sortService = services?.sortService ?? new SortService(this.sharedService, this._eventPubSubService, this.backendUtilityService);
-    this.treeDataService = services?.treeDataService ?? new TreeDataService(this.sharedService);
+    this.treeDataService = services?.treeDataService ?? new TreeDataService(this.sharedService, this.sortService);
     this.paginationService = services?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService, this.backendUtilityService);
 
     // extensions
@@ -565,16 +571,6 @@ export class SlickVanillaGridBundle {
       if (!this._gridOptions.treeDataOptions || !this._gridOptions.treeDataOptions.columnId) {
         throw new Error('[Slickgrid-Universal] When enabling tree data, you must also provide the "treeDataOption" property in your Grid Options with "childrenPropName" or "parentPropName" (depending if your array is hierarchical or flat) for the Tree Data to work properly');
       }
-
-      // anytime the flat dataset changes, we need to update our hierarchical dataset
-      // this could be triggered by a DataView setItems or updateItem
-      const onRowsChangedHandler = this.dataView.onRowsChanged;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowsChangedHandler>>).subscribe(onRowsChangedHandler, () => {
-        const items = this.dataView.getItems();
-        if (Array.isArray(items) && items.length > 0 && !this._isDatasetInitialized) {
-          this.sharedService.hierarchicalDataset = this.treeDataSortComparer(items);
-        }
-      });
     }
 
     // if you don't want the items that are not visible (due to being filtered out or being on a different page)
@@ -1016,9 +1012,9 @@ export class SlickVanillaGridBundle {
       this.displayEmptyDataWarning(finalTotalCount < 1);
     }
 
-    if (Array.isArray(dataset) && this.slickGrid && this.dataView && typeof this.dataView.setItems === 'function') {
+    if (Array.isArray(dataset) && this.slickGrid && this.dataView?.setItems) {
       this.dataView.setItems(dataset, this._gridOptions.datasetIdPropertyName);
-      if (!this._gridOptions.backendServiceApi) {
+      if (!this._gridOptions.backendServiceApi && !this._gridOptions.enableTreeData) {
         this.dataView.reSort();
       }
 
@@ -1031,11 +1027,6 @@ export class SlickVanillaGridBundle {
           }
         }
         this._isDatasetInitialized = true;
-
-        // also update the hierarchical dataset
-        if (dataset.length > 0 && this._gridOptions.treeDataOptions) {
-          this.sharedService.hierarchicalDataset = this.treeDataSortComparer(dataset);
-        }
       }
 
       if (dataset) {
@@ -1406,13 +1397,6 @@ export class SlickVanillaGridBundle {
 
       return { ...column, editor: columnEditor?.model, internalColumnEditor: { ...columnEditor } };
     });
-  }
-
-  private treeDataSortComparer(flatDataset: any[]): any[] {
-    const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
-    const treeDataOpt: TreeDataOption = this._gridOptions?.treeDataOptions ?? { columnId: '' };
-    const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier };
-    return convertParentChildArrayToHierarchicalView(flatDataset, treeDataOptions);
   }
 
   /** Translate all Custom Footer Texts (footer with metrics) */

@@ -26,16 +26,17 @@ export const treeFormatter: Formatter = (_row, _cell, value, columnDef, dataCont
     throw new Error('You must provide valid "treeDataOptions" in your Grid Options and it seems that there are no tree level found in this row');
   }
 
-  if (dataView && dataView.getIdxById && dataView.getItemByIdx) {
+  if (dataView?.getItemByIdx) {
     if (typeof outputValue === 'string') {
       outputValue = htmlEncode(outputValue);
     }
     const identifierPropName = dataView.getIdPropertyName() || 'id';
-    const spacer = `<span style="display:inline-block; width:${indentMarginLeft * dataContext[treeLevelPropName]}px;"></span>`;
+    const treeLevel = dataContext[treeLevelPropName] || 0;
+    const spacer = `<span style="display:inline-block; width:${indentMarginLeft * treeLevel}px;"></span>`;
     const idx = dataView.getIdxById(dataContext[identifierPropName]);
     const nextItemRow = dataView.getItemByIdx((idx || 0) + 1);
 
-    if (nextItemRow && nextItemRow[treeLevelPropName] > dataContext[treeLevelPropName]) {
+    if (nextItemRow?.[treeLevelPropName] > treeLevel) {
       if (dataContext.__collapsed) {
         return `${spacer}<span class="slick-group-toggle collapsed"></span>&nbsp;${outputValue}`;
       } else {

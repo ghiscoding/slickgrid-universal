@@ -92,8 +92,13 @@ export class Example5 {
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       treeDataOptions: {
         columnId: 'title',
-        levelPropName: 'indent',
-        parentPropName: 'parentId'
+        parentPropName: 'parentId',
+
+        // you can optionally sort by a different column and/or sort direction
+        initialSort: {
+          columnId: 'title',
+          direction: 'ASC'
+        }
       },
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
       presets: {
@@ -151,8 +156,8 @@ export class Example5 {
     this.sgb.treeDataService.toggleTreeDataCollapse(false);
   }
 
-  logExpandedStructure() {
-    console.log('exploded array', this.sgb.treeDataService.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
+  logHierarchicalStructure() {
+    console.log('hierarchical array', this.sgb.treeDataService.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
   }
 
   logFlatStructure() {
@@ -188,9 +193,9 @@ export class Example5 {
       }
 
       d['id'] = i;
-      d['indent'] = indent;
       d['parentId'] = parentId;
-      d['title'] = 'Task ' + i;
+      // d['title'] = `Task ${i}    -   [P]: ${parentId}`;
+      d['title'] = `Task ${i}`;
       d['duration'] = '5 days';
       d['percentComplete'] = Math.round(Math.random() * 100);
       d['start'] = new Date(randomYear, randomMonth, randomDay);

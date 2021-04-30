@@ -43,7 +43,6 @@ import {
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
-import * as utilities from '@slickgrid-universal/common/dist/commonjs/services/utilities';
 import * as slickVanillaUtilities from '../slick-vanilla-utilities';
 
 import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle';
@@ -57,7 +56,6 @@ import { UniversalContainerService } from '../../services/universalContainer.ser
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 jest.mock('../../services/textExport.service');
 
-const mockConvertParentChildArray = jest.fn();
 const mockAutoAddCustomEditorFormatter = jest.fn();
 
 (slickVanillaUtilities.autoAddEditorFormatterToColumnsWithEditor as any) = mockAutoAddCustomEditorFormatter;
@@ -175,10 +173,13 @@ const sortServiceStub = {
   dispose: jest.fn(),
   loadGridSorters: jest.fn(),
   processTreeDataInitialSort: jest.fn(),
+  sortHierarchicalDataset: jest.fn(),
 } as unknown as SortService;
 
 const treeDataServiceStub = {
   init: jest.fn(),
+  convertFlatDatasetConvertToHierarhicalView: jest.fn(),
+  initializeHierarchicalDataset: jest.fn(),
   dispose: jest.fn(),
   handleOnCellClick: jest.fn(),
   toggleTreeDataCollapse: jest.fn(),
@@ -2048,6 +2049,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', parentId: 0 }];
         const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }] }];
         const hierarchicalSpy = jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'set');
+        jest.spyOn(treeDataServiceStub, 'initializeHierarchicalDataset').mockReturnValue({ hierarchical: mockHierarchical, flat: mockFlatDataset });
 
         component.gridOptions = { enableTreeData: true, treeDataOptions: { columnId: 'file', parentPropName: 'parentId', childrenPropName: 'files' } } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
@@ -2072,34 +2074,14 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(processSpy).toHaveBeenCalled();
         expect(setItemsSpy).toHaveBeenCalledWith([], 'id');
       });
-
-      it('should convert parent/child dataset to hierarchical dataset when Tree Data is enabled and "onRowsChanged" was triggered', () => {
-        // @ts-ignore:2540
-        utilities.convertParentChildArrayToHierarchicalView = mockConvertParentChildArray;
-
-        const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', parentId: 0 }];
-        const hierarchicalSpy = jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'set');
-        jest.spyOn(mockDataView, 'getItems').mockReturnValue(mockFlatDataset);
-
-        component.gridOptions = { enableTreeData: true, treeDataOptions: { columnId: 'file' } };
-        component.initialization(divContainer, slickEventHandler);
-        component.dataset = mockFlatDataset;
-        component.isDatasetInitialized = false;
-        mockDataView.onRowsChanged.notify({ itemCount: 0, dataView: mockDataView, rows: [1, 2, 3], calledOnRowCountChanged: false });
-
-        expect(hierarchicalSpy).toHaveBeenCalled();
-        expect(mockConvertParentChildArray).toHaveBeenCalled();
-      });
     });
   });
 });
 
 describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with a Hierarchical Dataset', () => {
-  // jest.mock('slickgrid/slick.core', () => mockSlickCoreImplementation);
   jest.mock('slickgrid/slick.grid', () => mockGridImplementation);
   jest.mock('slickgrid/plugins/slick.draggablegrouping', () => mockDraggableGroupingImplementation);
   Slick.Grid = mockGridImplementation;
-  // Slick.EventHandler = mockSlickCoreImplementation;
   Slick.Data = { DataView: mockDataViewImplementation, GroupItemMetadataProvider: mockGroupItemMetaProviderImplementation };
   Slick.DraggableGrouping = mockDraggableGroupingImplementation;
 
