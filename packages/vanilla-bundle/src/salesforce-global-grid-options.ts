@@ -14,7 +14,6 @@ export const SalesforceGlobalGridOptions = {
     resetFormButtonIconCssClass: 'mdi mdi-refresh mdi-16px mdi-flip-h mdi-v-align-text-top'
   },
   datasetIdPropertyName: 'Id',
-  defaultFilterPlaceholder: '',
   emptyDataWarning: {
     message: `<span class="mdi mdi-alert color-warning"></span> No data to display.`,
   },

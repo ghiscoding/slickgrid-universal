@@ -573,6 +573,7 @@
   .placeholder {
     font-family: $multiselect-placeholder-font-family;
     font-size: $header-font-size;
+    color: $editor-placeholder-color !important;
   }
 }
 .ms-filter.search-filter {
@@ -741,6 +742,9 @@ input.search-filter {
     &.compound-input {
       border-radius: $compound-filter-border-radius !important;
       border-left: none;
+      &::placeholder {
+        color: $editor-placeholder-color;
+      }
     }
   }
   input.compound-slider {
@@ -769,6 +773,9 @@ input.search-filter {
 .search-filter .flatpickr {
   input.form-control {
     border-left: none;
+    &::placeholder {
+      color: $editor-placeholder-color;
+    }
   }
 }
 .search-filter.flatpickr,
@@ -999,6 +1006,10 @@ input.slider-filter-input[type=range] {
 }
 .search-filter {
   height: $header-input-height;
+
+  &::placeholder {
+    color: $editor-placeholder-color;
+  }
 
   .slider-value {
     padding: 0;
