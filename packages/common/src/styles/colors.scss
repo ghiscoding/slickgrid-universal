@@ -31,6 +31,9 @@ $color-se-danger: #b10043 !default;
 $color-se-secondary: #9fa0a4 !default;
 $color-se-warning: #e47f00 !default;
 $color-se-warning-light: #ffd100 !default;
+$color-sf-highlight: #0070D2 !default;
+$color-sf-primary: #006DCC !default;
+$color-sf-primary-dark: #004487 !default;
 
 .color-primary { @include recolor($color-primary, 1); }
 .color-secondary { @include recolor($color-secondary, 1); }
@@ -54,6 +57,9 @@ $color-se-warning-light: #ffd100 !default;
 .color-se-secondary { @include recolor($color-se-secondary, 1); }
 .color-se-warning { @include recolor($color-se-warning, 1); }
 .color-se-warning-light { @include recolor($color-se-warning-light, 1); }
+.color-sf-highlight { @include recolor($color-sf-highlight, 1); }
+.color-sf-primary { @include recolor($color-sf-primary, 1); }
+.color-sf-primary-dark { @include recolor($color-sf-primary-dark, 1); }
 
 .color-primary-light { @include recolor(lighten($color-primary, $color-lighten-percentage), 1); }
 .color-primary-dark { @include recolor(darken($color-primary, $color-darken-percentage), 1); }
