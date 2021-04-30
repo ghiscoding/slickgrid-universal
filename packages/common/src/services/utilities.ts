@@ -77,12 +77,12 @@ export function castObservableToPromise<T>(rxjs: RxJsFacade, input: Promise<T> |
  * @param options you can provide the following options:: "parentPropName" (defaults to "parent"), "childrenPropName" (defaults to "children") and "identifierPropName" (defaults to "id")
  * @return roots - hierarchical data view array
  */
-export function convertParentChildArrayToHierarchicalView<T = any>(flatArray: T[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; }): T[] {
+export function convertParentChildArrayToHierarchicalView<T = any>(flatArray: T[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; levelPropName?: string; }): T[] {
   const childrenPropName = options?.childrenPropName ?? 'children';
   const parentPropName = options?.parentPropName ?? '__parentId';
   const identifierPropName = options?.identifierPropName ?? 'id';
   const hasChildrenFlagPropName = '__hasChildren';
-  const treeLevelPropName = '__treeLevel';
+  const treeLevelPropName = options?.levelPropName ?? '__treeLevel';
   const inputArray: T[] = deepCopy(flatArray || []);
 
   const roots: T[] = []; // things without parent
@@ -137,11 +137,11 @@ export function convertHierarchicalViewToParentChildArray<T = any>(hierarchicalA
  * @param treeLevel - tree level number
  * @param parentId - parent ID
  */
-export function convertHierarchicalViewToParentChildArrayByReference<T = any>(hierarchicalArray: T[], outputArrayRef: T[], options?: { childrenPropName?: string; parentPropName?: string; hasChildrenFlagPropName?: string; treeLevelPropName?: string; identifierPropName?: string; }, treeLevel = 0, parentId?: string) {
+export function convertHierarchicalViewToParentChildArrayByReference<T = any>(hierarchicalArray: T[], outputArrayRef: T[], options?: { childrenPropName?: string; parentPropName?: string; hasChildrenFlagPropName?: string; levelPropName?: string; identifierPropName?: string; }, treeLevel = 0, parentId?: string) {
   const childrenPropName = options?.childrenPropName ?? 'children';
   const identifierPropName = options?.identifierPropName ?? 'id';
   const hasChildrenFlagPropName = options?.hasChildrenFlagPropName ?? '__hasChildren';
-  const treeLevelPropName = options?.treeLevelPropName ?? '__treeLevel';
+  const treeLevelPropName = options?.levelPropName ?? '__treeLevel';
   const parentPropName = options?.parentPropName ?? '__parentId';
 
   if (Array.isArray(hierarchicalArray)) {

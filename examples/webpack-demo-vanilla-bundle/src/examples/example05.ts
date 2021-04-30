@@ -92,6 +92,7 @@ export class Example5 {
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       treeDataOptions: {
         columnId: 'title',
+        // levelPropName: 'treeLevel',
         parentPropName: 'parentId',
 
         // you can optionally sort by a different column and/or sort direction
