@@ -1,4 +1,4 @@
-$button-border-color: #ababab !default;
+$button-border-color: #c7c7c7 !default;
 $font-size-count: 50;
 $margin-max-count: 50;
 $padding-max-count: 30;
@@ -22,7 +22,7 @@ $padding-max-count: 30;
   justify-content: center;
   text-align: center;
   &:hover {
-    border-color: darken($button-border-color, 10%);
+    border-color: darken($button-border-color, 15%);
   }
 }
 
