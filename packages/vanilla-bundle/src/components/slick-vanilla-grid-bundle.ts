@@ -406,8 +406,9 @@ export class SlickVanillaGridBundle {
   }
 
   emptyGridContainerElm() {
-    const gridContainerId = this.gridOptions && this.gridOptions.gridContainerId || 'grid1';
-    $(gridContainerId).empty();
+    const gridContainerId = this.gridOptions?.gridContainerId ?? 'grid1';
+    const gridContainerElm = document.querySelector(gridContainerId);
+    emptyElement(gridContainerElm);
   }
 
   /** Dispose of the Component */
