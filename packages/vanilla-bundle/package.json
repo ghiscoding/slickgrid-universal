@@ -51,7 +51,7 @@
     "@slickgrid-universal/empty-warning-component": "^0.13.0",
     "@slickgrid-universal/excel-export": "^0.13.0",
     "@slickgrid-universal/text-export": "^0.13.0",
-    "dompurify": "^2.2.7",
+    "dompurify": "^2.2.8",
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
