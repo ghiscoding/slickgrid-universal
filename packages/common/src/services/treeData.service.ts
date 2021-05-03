@@ -46,6 +46,10 @@ export class TreeDataService {
   init(grid: SlickGrid) {
     this._grid = grid;
 
+    if (this.gridOptions?.multiColumnSort && this.gridOptions?.enableTreeData) {
+      throw new Error('[Slickgrid-Universal] Tree Data does not currently support multi-column sorting, you can disable it via "multiColumnSort: false" grid option and/or help in providing support for this feature.');
+    }
+
     // subscribe to the SlickGrid event and call the backend execution
     const onClickHandler = grid.onClick;
     if (onClickHandler) {

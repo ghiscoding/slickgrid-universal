@@ -3,12 +3,11 @@ import { Column, SlickDataView, GridOption, SlickEventHandler, SlickGrid, SlickN
 import { SharedService } from '../shared.service';
 import { SortService } from '../sort.service';
 import { TreeDataService } from '../treeData.service';
-import * as utilities from '../utilities';
 
-const mockConvertParentChildArray = jest.fn();
 declare const Slick: SlickNamespace;
 
 const gridOptionsMock = {
+  multiColumnSort: false,
   enableTreeData: true,
   treeDataOptions: {
     columnId: 'file'
@@ -56,12 +55,23 @@ describe('TreeData Service', () => {
   });
 
   afterEach(() => {
+    gridOptionsMock.multiColumnSort = false;
     jest.clearAllMocks();
     service.dispose();
   });
 
   it('should create the service', () => {
     expect(service).toBeTruthy();
+  });
+
+  it('should throw an error when used with multi-column sorting', (done) => {
+    try {
+      gridOptionsMock.multiColumnSort = true;
+      service.init(gridStub);
+    } catch (e) {
+      expect(e.toString()).toContain('[Slickgrid-Universal] Tree Data does not currently support multi-column sorting');
+      done();
+    }
   });
 
   it('should dispose of the event handler', () => {
