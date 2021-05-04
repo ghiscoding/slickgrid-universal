@@ -87,6 +87,7 @@ import { autoAddEditorFormatterToColumnsWithEditor } from './slick-vanilla-utili
 declare const Slick: SlickNamespace;
 
 export class SlickVanillaGridBundle {
+  private _currentDatasetLength = 0;
   private _eventPubSubService!: EventPubSubService;
   private _columnDefinitions!: Column[];
   private _gridOptions!: GridOption;
@@ -167,15 +168,20 @@ export class SlickVanillaGridBundle {
     return this.dataView?.getItems() ?? [];
   }
   set dataset(newDataset: any[]) {
-    const prevDatasetLn = this.dataView.getLength();
+    const prevDatasetLn = this._currentDatasetLength;
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions?.enableDeepCopyDatasetOnPageLoad);
     let data = isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], newDataset) : newDataset;
 
     // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert & sort of the array
-    if (this._gridOptions.enableTreeData && Array.isArray(newDataset) && newDataset.length > 0) {
+    if (this._gridOptions.enableTreeData && Array.isArray(newDataset) && (newDataset.length > 0 || newDataset.length !== prevDatasetLn)) {
       const sortedDatasetResult = this.treeDataService.initializeHierarchicalDataset(data, this._columnDefinitions);
       this.sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
       data = sortedDatasetResult.flat;
+
+      // if we add/remove item(s) from the dataset, we need to also refresh our tree data filters
+      if (newDataset.length > 0 && prevDatasetLn > 0 && newDataset.length !== prevDatasetLn) {
+        this.filterService.refreshTreeDataFilters();
+      }
     }
 
     this.refreshGridData(data || []);
@@ -185,6 +191,7 @@ export class SlickVanillaGridBundle {
     if (this.gridOptions.autoFitColumnsOnFirstLoad && prevDatasetLn === 0) {
       this.slickGrid.autosizeColumns();
     }
+    this._currentDatasetLength = newDataset.length;
   }
 
   get datasetHierarchical(): any[] | undefined {
@@ -408,6 +415,7 @@ export class SlickVanillaGridBundle {
     this.initialization(this._gridContainerElm, eventHandler);
     if (!hierarchicalDataset && !this.gridOptions.backendServiceApi) {
       this.dataset = dataset || [];
+      this._currentDatasetLength = this.dataset.length;
     }
   }
 
@@ -1131,13 +1139,13 @@ export class SlickVanillaGridBundle {
 
   /** When data changes in the DataView, we'll refresh the metrics and/or display a warning if the dataset is empty */
   private handleOnItemCountChanged(currentPageRowItemCount: number, totalItemCount: number) {
+    this._currentDatasetLength = totalItemCount;
     this.metrics = {
       startTime: new Date(),
       endTime: new Date(),
       itemCount: currentPageRowItemCount,
       totalItemCount
     };
-
     // if custom footer is enabled, then we'll update its metrics
     if (this.slickFooter) {
       this.slickFooter.metrics = this.metrics;

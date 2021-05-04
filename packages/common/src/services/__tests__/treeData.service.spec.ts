@@ -1,4 +1,3 @@
-
 import { Column, SlickDataView, GridOption, SlickEventHandler, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { SharedService } from '../shared.service';
 import { SortService } from '../sort.service';
@@ -49,13 +48,13 @@ describe('TreeData Service', () => {
   const sharedService = new SharedService();
 
   beforeEach(() => {
+    gridOptionsMock.multiColumnSort = false;
     service = new TreeDataService(sharedService, sortServiceStub);
     slickgridEventHandler = service.eventHandler;
     jest.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
   });
 
   afterEach(() => {
-    gridOptionsMock.multiColumnSort = false;
     jest.clearAllMocks();
     service.dispose();
   });

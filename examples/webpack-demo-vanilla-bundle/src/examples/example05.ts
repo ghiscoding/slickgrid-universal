@@ -92,7 +92,7 @@ export class Example5 {
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       treeDataOptions: {
         columnId: 'title',
-        // levelPropName: 'treeLevel',
+        levelPropName: 'indent', // this is optional, except that in our case we just need to define it because we are adding new item in the demo
         parentPropName: 'parentId',
 
         // you can optionally sort by a different column and/or sort direction
@@ -113,13 +113,13 @@ export class Example5 {
    * After adding the item, it will sort by parent/child recursively
    */
   addNewRow() {
-    const newId = this.dataset.length;
+    const newId = this.sgb.dataset.length;
     const parentPropName = 'parentId';
     const treeLevelPropName = 'indent';
     const newTreeLevel = 1;
 
     // find first parent object and add the new item as a child
-    const childItemFound = this.dataset.find((item) => item[treeLevelPropName] === newTreeLevel);
+    const childItemFound = this.sgb.dataset.find((item) => item[treeLevelPropName] === newTreeLevel);
     const parentItemFound = this.sgb.dataView.getItemByIdx(childItemFound[parentPropName]);
 
     const newItem = {
@@ -128,25 +128,22 @@ export class Example5 {
       parentId: parentItemFound.id,
       title: `Task ${newId}`,
       duration: '1 day',
-      percentComplete: 0,
+      percentComplete: 99,
       start: new Date(),
       finish: new Date(),
       effortDriven: false
     };
     this.sgb.dataView.addItem(newItem);
+
+    // force a refresh of the data by getting the updated list from the DataView & override our local copy as well
     this.dataset = this.sgb.dataView.getItems();
     this.sgb.dataset = this.dataset;
 
-    // force a resort
-    const titleColumn = this.columnDefinitions.find((col) => col.id === 'title');
-    this.sgb.sortService.onLocalSortChanged(this.sgb.slickGrid, [{ columnId: 'title', sortCol: titleColumn, sortAsc: true }]);
-
-    // update dataset and re-render (invalidate) the grid
-    this.sgb.slickGrid.invalidate();
-
     // scroll to the new row
-    const rowIndex = this.sgb.dataView.getIdxById(newItem.id);
-    this.sgb.slickGrid.scrollRowIntoView(rowIndex, false);
+    setTimeout(() => {
+      const rowIndex = this.sgb.dataView.getIdxById(newItem.id);
+      this.sgb.slickGrid.scrollRowIntoView(rowIndex, false);
+    }, 10);
   }
 
   collapseAll() {
