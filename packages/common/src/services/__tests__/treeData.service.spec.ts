@@ -1,4 +1,4 @@
-import { Column, SlickDataView, GridOption, SlickEventHandler, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { Column, SlickDataView, GridOption, SlickEventHandler, SlickGrid, SlickNamespace, BackendService } from '../../interfaces/index';
 import { SharedService } from '../shared.service';
 import { SortService } from '../sort.service';
 import { TreeDataService } from '../treeData.service';
@@ -12,6 +12,15 @@ const gridOptionsMock = {
     columnId: 'file'
   }
 } as unknown as GridOption;
+
+const backendServiceStub = {
+  buildQuery: jest.fn(),
+  clearFilters: jest.fn(),
+  getCurrentFilters: jest.fn(),
+  getCurrentPagination: jest.fn(),
+  updateFilters: jest.fn(),
+  processOnFilterChanged: () => 'backend query',
+} as unknown as BackendService;
 
 const dataViewStub = {
   getItem: jest.fn(),
@@ -48,6 +57,7 @@ describe('TreeData Service', () => {
   const sharedService = new SharedService();
 
   beforeEach(() => {
+    gridOptionsMock.backendServiceApi = undefined;
     gridOptionsMock.multiColumnSort = false;
     service = new TreeDataService(sharedService, sortServiceStub);
     slickgridEventHandler = service.eventHandler;
@@ -69,6 +79,20 @@ describe('TreeData Service', () => {
       service.init(gridStub);
     } catch (e) {
       expect(e.toString()).toContain('[Slickgrid-Universal] Tree Data does not currently support multi-column sorting');
+      done();
+    }
+  });
+
+  it('should throw an error when used with a backend service (OData, GraphQL)', (done) => {
+    try {
+      gridOptionsMock.backendServiceApi = {
+        filterTypingDebounce: 0,
+        service: backendServiceStub,
+        process: () => new Promise((resolve) => resolve(jest.fn())),
+      };
+      service.init(gridStub);
+    } catch (e) {
+      expect(e.toString()).toContain('[Slickgrid-Universal] Tree Data does not support backend services (like OData, GraphQL) and/or Pagination');
       done();
     }
   });

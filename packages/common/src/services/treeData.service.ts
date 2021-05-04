@@ -46,8 +46,12 @@ export class TreeDataService {
   init(grid: SlickGrid) {
     this._grid = grid;
 
-    if (this.gridOptions?.multiColumnSort && this.gridOptions?.enableTreeData) {
+    if (this.gridOptions?.enableTreeData && this.gridOptions?.multiColumnSort) {
       throw new Error('[Slickgrid-Universal] Tree Data does not currently support multi-column sorting, you can disable it via "multiColumnSort: false" grid option and/or help in providing support for this feature.');
+    }
+
+    if (this.gridOptions?.enableTreeData && (this.gridOptions?.backendServiceApi || this.gridOptions?.enablePagination)) {
+      throw new Error('[Slickgrid-Universal] Tree Data does not support backend services (like OData, GraphQL) and/or Pagination, it can only be used with a regular grid without Pagination.');
     }
 
     // subscribe to the SlickGrid event and call the backend execution

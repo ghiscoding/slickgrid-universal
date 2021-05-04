@@ -241,7 +241,7 @@ export class FilterService {
     }
 
     let emitter: EmitterType = EmitterType.local;
-    const isBackendApi = this._gridOptions && this._gridOptions.backendServiceApi || false;
+    const isBackendApi = this._gridOptions?.backendServiceApi ?? false;
 
     // when using a backend service, we need to manually trigger a filter change but only if the filter was previously filled
     if (isBackendApi) {
