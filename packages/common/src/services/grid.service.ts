@@ -480,7 +480,7 @@ export class GridService {
 
       // insert position top/bottom, defaults to top
       // when position is top we'll call insert at index 0, else call addItem which just push to the DataView array
-      if (insertPosition === 'bottom') {
+      if (insertPosition === 'bottom' || this._gridOptions?.enableTreeData) {
         this._dataView.addItems(items);
       } else {
         this._dataView.insertItems(0, items); // insert at index 0 to the start of the dataset
@@ -488,11 +488,6 @@ export class GridService {
 
       // end the bulk transaction since we're all done
       this._dataView.endUpdate();
-
-      // if we add/remove item(s) from the dataset, we need to also refresh our tree data filters
-      if (this._gridOptions?.enableTreeData) {
-        this.invalidateHierarchicalDataset();
-      }
     }
 
     if (this._gridOptions?.enableTreeData) {
@@ -882,7 +877,7 @@ export class GridService {
   invalidateHierarchicalDataset() {
     // if we add/remove item(s) from the dataset, we need to also refresh our tree data filters
     if (this._gridOptions?.enableTreeData && this.treeDataService) {
-      const sortedDatasetResult = this.treeDataService.convertToHierarchicalDatasetAndSort(this._dataView.getItems(), this.sharedService.allColumns);
+      const sortedDatasetResult = this.treeDataService.convertToHierarchicalDatasetAndSort(this._dataView.getItems(), this.sharedService.allColumns, this._gridOptions);
       this.sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
       this.filterService.refreshTreeDataFilters();
       this._dataView.setItems(sortedDatasetResult.flat);

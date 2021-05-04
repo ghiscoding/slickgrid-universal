@@ -92,7 +92,7 @@ export class Example5 {
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       treeDataOptions: {
         columnId: 'title',
-        levelPropName: 'indent', // this is optional, except that in our case we just need to define it because we are adding new item in the demo
+        // levelPropName: 'indent', // this is optional, you can define the tree level property name that will be used for the sorting/indentation, internally it will use "__treeLevel"
         parentPropName: 'parentId',
 
         // you can optionally sort by a different column and/or sort direction
@@ -109,15 +109,14 @@ export class Example5 {
   }
 
   /**
-   * A simple method to add a new item inside the first group that we find.
+   * A simple method to add a new item inside the first group that we find (it's random and is only for demo purposes).
    * After adding the item, it will sort by parent/child recursively
    */
   addNewRow() {
     const newId = this.sgb.dataset.length;
     const parentPropName = 'parentId';
-    const treeLevelPropName = 'indent';
+    const treeLevelPropName = '__treeLevel'; // if undefined in your options, the default prop name is "__treeLevel"
     const newTreeLevel = 1;
-
     // find first parent object and add the new item as a child
     const childItemFound = this.sgb.dataset.find((item) => item[treeLevelPropName] === newTreeLevel);
     const parentItemFound = this.sgb.dataView.getItemByIdx(childItemFound[parentPropName]);
@@ -125,7 +124,6 @@ export class Example5 {
     if (childItemFound && parentItemFound) {
       const newItem = {
         id: newId,
-        indent: newTreeLevel,
         parentId: parentItemFound.id,
         title: `Task ${newId}`,
         duration: '1 day',

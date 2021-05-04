@@ -183,6 +183,7 @@ const treeDataServiceStub = {
   convertToHierarchicalDatasetAndSort: jest.fn(),
   dispose: jest.fn(),
   handleOnCellClick: jest.fn(),
+  sortHierarchicalDataset: jest.fn(),
   toggleTreeDataCollapse: jest.fn(),
 } as unknown as TreeDataService;
 
@@ -2023,27 +2024,9 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     });
 
     describe('Tree Data View', () => {
-      it('should throw an error when enableTreeData is enabled with Pagination since that is not supported', (done) => {
-        try {
-          component.gridOptions = { enableTreeData: true, enablePagination: true } as GridOption;
-          component.initialization(divContainer, slickEventHandler);
-        } catch (e) {
-          expect(e.toString()).toContain('[Slickgrid-Universal] It looks like you are trying to use Tree Data with Pagination but unfortunately that is simply not supported because of its complexity.');
-          component.dispose();
-          done();
-        }
-      });
-
-      it('should throw an error when enableTreeData is enabled without passing a "columnId"', (done) => {
-        try {
-          component.gridOptions = { enableTreeData: true, treeDataOptions: {} } as unknown as GridOption;
-          component.initialization(divContainer, slickEventHandler);
-
-        } catch (e) {
-          expect(e.toString()).toContain('[Slickgrid-Universal] When enabling tree data, you must also provide the "treeDataOption" property in your Grid Options with "childrenPropName" or "parentPropName"');
-          component.dispose();
-          done();
-        }
+      afterEach(() => {
+        component.dispose();
+        jest.clearAllMocks();
       });
 
       it('should change flat dataset and expect being called with other methods', () => {
@@ -2076,6 +2059,27 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(clearFilterSpy).toHaveBeenCalled();
         expect(processSpy).toHaveBeenCalled();
         expect(setItemsSpy).toHaveBeenCalledWith([], 'id');
+      });
+
+      it('should preset hierarchical dataset before the initialization and expect sortHierarchicalDataset to be called', () => {
+        const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', parentId: 0 }];
+        const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }] }];
+        const hierarchicalSpy = jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'set');
+        const clearFilterSpy = jest.spyOn(filterServiceStub, 'clearFilters');
+        const setItemsSpy = jest.spyOn(mockDataView, 'setItems');
+        const processSpy = jest.spyOn(sortServiceStub, 'processTreeDataInitialSort');
+        const sortHierarchicalSpy = jest.spyOn(treeDataServiceStub, 'sortHierarchicalDataset').mockReturnValue({ hierarchical: mockHierarchical, flat: mockFlatDataset });
+
+        component.dispose();
+        component.gridOptions = { enableTreeData: true, treeDataOptions: { columnId: 'file' } } as unknown as GridOption;
+        component.datasetHierarchical = mockHierarchical;
+        component.initialization(divContainer, slickEventHandler);
+
+        expect(hierarchicalSpy).toHaveBeenCalledWith(mockHierarchical);
+        expect(clearFilterSpy).toHaveBeenCalled();
+        expect(processSpy).not.toHaveBeenCalled();
+        expect(setItemsSpy).toHaveBeenCalledWith(mockFlatDataset, 'id');
+        expect(sortHierarchicalSpy).toHaveBeenCalledWith(mockHierarchical);
       });
 
       it('should expect "refreshTreeDataFilters" method to be called when our flat dataset was already set and it just got changed a 2nd time', () => {

@@ -1,6 +1,6 @@
 import 'jest-extended';
 
-import { FilterService, GridService, GridStateService, PaginationService, PubSubService, SharedService, SortService } from '../index';
+import { FilterService, GridService, GridStateService, PaginationService, PubSubService, SharedService, SortService, TreeDataService } from '../index';
 import { GridOption, CellArgs, Column, OnEventArgs, SlickGrid, SlickDataView, SlickNamespace } from '../../interfaces/index';
 
 jest.useFakeTimers();
@@ -19,12 +19,8 @@ Slick.RowSelectionModel = mockSelectionModelImplementation;
 
 const filterServiceStub = {
   clearFilters: jest.fn(),
+  refreshTreeDataFilters: jest.fn(),
 } as unknown as FilterService;
-
-// const gridStateServiceStub = {
-//   needToPreserveRowSelection: jest.fn(),
-//   resetColumns: jest.fn(),
-// } as unknown as GridStateService;
 
 const pubSubServiceStub = {
   publish: jest.fn(),
@@ -47,10 +43,12 @@ const dataviewStub = {
   getIdxById: jest.fn(),
   getItemMetadata: jest.fn(),
   getItem: jest.fn(),
+  getItems: jest.fn(),
   getRowById: jest.fn(),
   insertItem: jest.fn(),
   insertItems: jest.fn(),
   reSort: jest.fn(),
+  setItems: jest.fn(),
   updateItem: jest.fn(),
   updateItems: jest.fn(),
 } as unknown as SlickDataView;
@@ -87,6 +85,15 @@ const paginationServiceStub = {
   goToLastPage: jest.fn(),
 } as unknown as PaginationService;
 
+const treeDataServiceStub = {
+  convertFlatDatasetConvertToHierarhicalView: jest.fn(),
+  init: jest.fn(),
+  convertToHierarchicalDatasetAndSort: jest.fn(),
+  dispose: jest.fn(),
+  handleOnCellClick: jest.fn(),
+  toggleTreeDataCollapse: jest.fn(),
+} as unknown as TreeDataService;
+
 describe('Grid Service', () => {
   let service: GridService;
   const sharedService = new SharedService();
@@ -95,7 +102,7 @@ describe('Grid Service', () => {
   jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
 
   beforeEach(() => {
-    service = new GridService(gridStateServiceStub, filterServiceStub, pubSubServiceStub, paginationServiceStub, sharedService, sortServiceStub);
+    service = new GridService(gridStateServiceStub, filterServiceStub, pubSubServiceStub, paginationServiceStub, sharedService, sortServiceStub, treeDataServiceStub);
     service.init(gridStub);
   });
 
@@ -794,6 +801,56 @@ describe('Grid Service', () => {
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
       delete mockGridOptions.datasetIdPropertyName;
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+    });
+
+    it('should invalidate and rerender the tree dataset when grid option "enableTreeData" is set when calling "addItem"', () => {
+      const mockItem = { id: 3, file: 'blah.txt', size: 2, parentId: 0 };
+      const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', parentId: 0 }, mockItem];
+      const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }, mockItem] }];
+      const mockColumns = [{ id: 'file', field: 'file', }, { id: 'size', field: 'size', }] as Column[];
+
+      jest.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
+      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
+      jest.spyOn(treeDataServiceStub, 'convertToHierarchicalDatasetAndSort').mockReturnValue({ flat: mockFlatDataset, hierarchical: mockHierarchical });
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
+      jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
+      const setItemSpy = jest.spyOn(dataviewStub, 'setItems');
+      const addSpy = jest.spyOn(dataviewStub, 'addItem');
+      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const invalidateSpy = jest.spyOn(service, 'invalidateHierarchicalDataset');
+
+      service.addItem(mockItem);
+
+      expect(addSpy).toHaveBeenCalledTimes(1);
+      expect(addSpy).toHaveBeenCalledWith(mockItem);
+      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
+      expect(invalidateSpy).toHaveBeenCalled();
+      expect(setItemSpy).toHaveBeenCalledWith(mockFlatDataset);
+    });
+
+    it('should invalidate and rerender the tree dataset when grid option "enableTreeData" is set when calling "addItems"', () => {
+      const mockItem = { id: 3, file: 'blah.txt', size: 2, parentId: 0 };
+      const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', parentId: 0 }, mockItem];
+      const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }, mockItem] }];
+      const mockColumns = [{ id: 'file', field: 'file', }, { id: 'size', field: 'size', }] as Column[];
+
+      jest.spyOn(dataviewStub, 'getItems').mockReturnValue(mockFlatDataset);
+      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
+      jest.spyOn(treeDataServiceStub, 'convertToHierarchicalDatasetAndSort').mockReturnValue({ flat: mockFlatDataset, hierarchical: mockHierarchical });
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
+      jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
+      const setItemSpy = jest.spyOn(dataviewStub, 'setItems');
+      const addSpy = jest.spyOn(dataviewStub, 'addItems');
+      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const invalidateSpy = jest.spyOn(service, 'invalidateHierarchicalDataset');
+
+      service.addItems([mockItem]);
+
+      expect(addSpy).toHaveBeenCalledTimes(1);
+      expect(addSpy).toHaveBeenCalledWith([mockItem]);
+      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, [mockItem]);
+      expect(invalidateSpy).toHaveBeenCalled();
+      expect(setItemSpy).toHaveBeenCalledWith(mockFlatDataset);
     });
 
     it('should throw an error when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
