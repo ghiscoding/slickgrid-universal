@@ -13,13 +13,14 @@ import {
   SlickNamespace,
   SlickRowSelectionModel,
 } from '../interfaces/index';
+import { arrayRemoveItemByIndex } from './utilities';
 import { FilterService } from './filter.service';
 import { GridStateService } from './gridState.service';
 import { PaginationService } from '../services/pagination.service';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
 import { SortService } from './sort.service';
-import { arrayRemoveItemByIndex } from './utilities';
+import { TreeDataService } from './treeData.service';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -40,7 +41,8 @@ export class GridService {
     private pubSubService: PubSubService,
     private paginationService: PaginationService,
     private sharedService: SharedService,
-    private sortService: SortService
+    private sortService: SortService,
+    private treeDataService: TreeDataService,
   ) { }
 
   /** Getter of SlickGrid DataView object */
@@ -406,7 +408,7 @@ export class GridService {
 
     // insert position top/bottom, defaults to top
     // when position is top we'll call insert at index 0, else call addItem which just push to the DataView array
-    if (insertPosition === 'bottom') {
+    if (insertPosition === 'bottom' || this._gridOptions?.enableTreeData) {
       this._dataView.addItem(item);
     } else {
       this._dataView.insertItem(0, item); // insert at index 0
@@ -416,8 +418,13 @@ export class GridService {
     let rowNumber: number | undefined = 0;
     const itemId = (item as any)?.[idPropName] ?? '';
 
-    // do we want the item to be sorted in the grid, when set to False it will insert on first row (defaults to false)
-    if (options.resortGrid) {
+    if (this._gridOptions?.enableTreeData) {
+      // if we add/remove item(s) from the dataset, we need to also refresh our tree data filters
+      this.invalidateHierarchicalDataset();
+      rowNumber = this._dataView.getRowById(itemId);
+      this._grid.scrollRowIntoView(rowNumber ?? 0, false);
+    } else if (options.resortGrid) {
+      // do we want the item to be sorted in the grid, when set to False it will insert on first row (defaults to false)
       this._dataView.reSort();
 
       // find the row number in the grid and if user wanted to see highlighted row
@@ -426,7 +433,7 @@ export class GridService {
     } else {
       // scroll to row index 0 when inserting on top else scroll to the bottom where it got inserted
       rowNumber = (insertPosition === 'bottom') ? this._dataView.getRowById(itemId) : 0;
-      this._grid.scrollRowIntoView(rowNumber || 0);
+      this._grid.scrollRowIntoView(rowNumber ?? 0);
     }
 
     // if highlight is enabled, we'll highlight the row we just added
@@ -481,15 +488,26 @@ export class GridService {
 
       // end the bulk transaction since we're all done
       this._dataView.endUpdate();
+
+      // if we add/remove item(s) from the dataset, we need to also refresh our tree data filters
+      if (this._gridOptions?.enableTreeData) {
+        this.invalidateHierarchicalDataset();
+      }
     }
 
-    // do we want the item to be sorted in the grid, when set to False it will insert on first row (defaults to false)
-    if (options.resortGrid) {
+    if (this._gridOptions?.enableTreeData) {
+      // if we add/remove item(s) from the dataset, we need to also refresh our tree data filters
+      this.invalidateHierarchicalDataset();
+      const firstItemId = (items as any)[0]?.[idPropName] ?? '';
+      const rowNumber = this._dataView.getRowById(firstItemId);
+      this._grid.scrollRowIntoView(rowNumber ?? 0, false);
+    } else if (options.resortGrid) {
+      // do we want the item to be sorted in the grid, when set to False it will insert on first row (defaults to false)
       this._dataView.reSort();
     }
 
     // scroll to row index 0 when inserting on top else scroll to the bottom where it got inserted
-    (insertPosition === 'bottom') ? this._grid.navigateBottom() : this._grid.navigateTop();
+    (insertPosition === 'bottom' && !this._gridOptions?.enableTreeData) ? this._grid.navigateBottom() : this._grid.navigateTop();
 
     // get row numbers of all new inserted items
     // we need to do it after resort and get each row number because it possibly changed after the sort
@@ -854,6 +872,21 @@ export class GridService {
       isItemAdded ? this.pubSubService.publish('onItemAdded', item) : this.pubSubService.publish('onItemUpdated', item);
     }
     return { added: rowNumberAdded, updated: rowNumberUpdated };
+  }
+
+  /**
+   * When dealing with hierarchical dataset, we can invalidate all the rows and force a resort & re-render of the hierarchical dataset.
+   * This method will automatically be called anytime user called `addItem()` or `addItems()`.
+   * However please note that it won't be called when `updateItem`, if the data that gets updated does change the tree data column then you should call this method.
+   */
+  invalidateHierarchicalDataset() {
+    // if we add/remove item(s) from the dataset, we need to also refresh our tree data filters
+    if (this._gridOptions?.enableTreeData && this.treeDataService) {
+      const sortedDatasetResult = this.treeDataService.convertToHierarchicalDatasetAndSort(this._dataView.getItems(), this.sharedService.allColumns);
+      this.sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
+      this.filterService.refreshTreeDataFilters();
+      this._dataView.setItems(sortedDatasetResult.flat);
+    }
   }
 
   // --

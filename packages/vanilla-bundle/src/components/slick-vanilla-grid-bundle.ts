@@ -174,7 +174,7 @@ export class SlickVanillaGridBundle {
 
     // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert & sort of the array
     if (this._gridOptions.enableTreeData && Array.isArray(newDataset) && (newDataset.length > 0 || newDataset.length !== prevDatasetLn)) {
-      const sortedDatasetResult = this.treeDataService.initializeHierarchicalDataset(data, this._columnDefinitions);
+      const sortedDatasetResult = this.treeDataService.convertToHierarchicalDatasetAndSort(data, this._columnDefinitions);
       this.sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
       data = sortedDatasetResult.flat;
 
@@ -386,7 +386,7 @@ export class SlickVanillaGridBundle {
     );
 
     this.gridStateService = services?.gridStateService ?? new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
-    this.gridService = services?.gridService ?? new GridService(this.gridStateService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService);
+    this.gridService = services?.gridService ?? new GridService(this.gridStateService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService, this.treeDataService);
     this.groupingService = services?.groupingAndColspanService ?? new GroupingAndColspanService(this.extensionUtility, this.extensionService, this._eventPubSubService);
 
     if (hierarchicalDataset) {

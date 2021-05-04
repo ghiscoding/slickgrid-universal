@@ -180,7 +180,7 @@ const sortServiceStub = {
 const treeDataServiceStub = {
   init: jest.fn(),
   convertFlatDatasetConvertToHierarhicalView: jest.fn(),
-  initializeHierarchicalDataset: jest.fn(),
+  convertToHierarchicalDatasetAndSort: jest.fn(),
   dispose: jest.fn(),
   handleOnCellClick: jest.fn(),
   toggleTreeDataCollapse: jest.fn(),
@@ -2050,7 +2050,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', parentId: 0 }];
         const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }] }];
         const hierarchicalSpy = jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'set');
-        jest.spyOn(treeDataServiceStub, 'initializeHierarchicalDataset').mockReturnValue({ hierarchical: mockHierarchical, flat: mockFlatDataset });
+        jest.spyOn(treeDataServiceStub, 'convertToHierarchicalDatasetAndSort').mockReturnValue({ hierarchical: mockHierarchical, flat: mockFlatDataset });
         const refreshTreeSpy = jest.spyOn(filterServiceStub, 'refreshTreeDataFilters');
 
         component.gridOptions = { enableTreeData: true, treeDataOptions: { columnId: 'file', parentPropName: 'parentId', childrenPropName: 'files' } } as unknown as GridOption;
@@ -2082,7 +2082,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', parentId: 0 }];
         const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }] }];
         const hierarchicalSpy = jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'set');
-        jest.spyOn(treeDataServiceStub, 'initializeHierarchicalDataset').mockReturnValue({ hierarchical: mockHierarchical, flat: mockFlatDataset });
+        jest.spyOn(treeDataServiceStub, 'convertToHierarchicalDatasetAndSort').mockReturnValue({ hierarchical: mockHierarchical, flat: mockFlatDataset });
         const refreshTreeSpy = jest.spyOn(filterServiceStub, 'refreshTreeDataFilters');
 
         component.dataset = [{ id: 0, file: 'documents' }];

@@ -122,28 +122,23 @@ export class Example5 {
     const childItemFound = this.sgb.dataset.find((item) => item[treeLevelPropName] === newTreeLevel);
     const parentItemFound = this.sgb.dataView.getItemByIdx(childItemFound[parentPropName]);
 
-    const newItem = {
-      id: newId,
-      indent: newTreeLevel,
-      parentId: parentItemFound.id,
-      title: `Task ${newId}`,
-      duration: '1 day',
-      percentComplete: 99,
-      start: new Date(),
-      finish: new Date(),
-      effortDriven: false
-    };
-    this.sgb.dataView.addItem(newItem);
+    if (childItemFound && parentItemFound) {
+      const newItem = {
+        id: newId,
+        indent: newTreeLevel,
+        parentId: parentItemFound.id,
+        title: `Task ${newId}`,
+        duration: '1 day',
+        percentComplete: 99,
+        start: new Date(),
+        finish: new Date(),
+        effortDriven: false
+      };
 
-    // force a refresh of the data by getting the updated list from the DataView & override our local copy as well
-    this.dataset = this.sgb.dataView.getItems();
-    this.sgb.dataset = this.dataset;
-
-    // scroll to the new row
-    setTimeout(() => {
-      const rowIndex = this.sgb.dataView.getIdxById(newItem.id);
-      this.sgb.slickGrid.scrollRowIntoView(rowIndex, false);
-    }, 10);
+      // use the Grid Service to insert the item,
+      // it will also internally take care of updating & resorting the hierarchical dataset
+      this.sgb.gridService.addItem(newItem);
+    }
   }
 
   collapseAll() {

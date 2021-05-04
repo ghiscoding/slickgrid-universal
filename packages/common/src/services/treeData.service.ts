@@ -58,7 +58,7 @@ export class TreeDataService {
   }
 
   /** Takes a flat dataset, converts it into a hierarchical dataset, sort it by recursion and finally return back the final and sorted flat array */
-  initializeHierarchicalDataset(flatDataset: any[], columnDefinitions: Column[]) {
+  convertToHierarchicalDatasetAndSort(flatDataset: any[], columnDefinitions: Column[]): { hierarchical: any[]; flat: any[]; } {
     // 1- convert the flat array into a hierarchical array
     const datasetHierarchical = this.convertFlatDatasetConvertToHierarhicalView(flatDataset);
 

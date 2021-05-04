@@ -88,7 +88,7 @@ export class SortService {
   bindLocalOnSort(grid: SlickGrid) {
     this._isBackendGrid = false;
     this._grid = grid;
-    this._dataView = grid?.getData && grid.getData() as SlickDataView;
+    this._dataView = grid.getData() as SlickDataView;
 
     this.processTreeDataInitialSort();
 

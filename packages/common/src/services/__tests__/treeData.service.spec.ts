@@ -226,7 +226,7 @@ describe('TreeData Service', () => {
       });
     });
 
-    describe('initializeHierarchicalDataset method', () => {
+    describe('convertToHierarchicalDatasetAndSort method', () => {
       let mockColumns: Column[];
       let mockFlatDataset;
 
@@ -248,7 +248,7 @@ describe('TreeData Service', () => {
         jest.spyOn(sortServiceStub, 'sortHierarchicalDataset').mockReturnValue({ flat: mockFlatDataset, hierarchical: mockHierarchical });
 
         service.init(gridStub);
-        const result = service.initializeHierarchicalDataset(mockFlatDataset, [mockColumn]);
+        const result = service.convertToHierarchicalDatasetAndSort(mockFlatDataset, [mockColumn]);
 
         expect(setSortSpy).toHaveBeenCalledWith([{
           columnId: 'file',
@@ -273,7 +273,7 @@ describe('TreeData Service', () => {
         jest.spyOn(sortServiceStub, 'sortHierarchicalDataset').mockReturnValue({ flat: mockFlatDataset, hierarchical: mockHierarchical });
 
         service.init(gridStub);
-        const result = service.initializeHierarchicalDataset(mockFlatDataset, [mockColumn]);
+        const result = service.convertToHierarchicalDatasetAndSort(mockFlatDataset, [mockColumn]);
 
         expect(setSortSpy).toHaveBeenCalledWith([{
           columnId: 'size',
