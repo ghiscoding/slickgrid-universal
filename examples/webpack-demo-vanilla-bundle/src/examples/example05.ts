@@ -149,12 +149,16 @@ export class Example5 {
     this.sgb.treeDataService.toggleTreeDataCollapse(false);
   }
 
+  dynamicallyChangeFilter() {
+    this.sgb.filterService.updateFilters([{ columnId: 'percentComplete', operator: '<', searchTerms: [40] }]);
+  }
+
   logHierarchicalStructure() {
-    console.log('hierarchical array', this.sgb.treeDataService.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
+    console.log('hierarchical array', this.sgb.treeDataService.datasetHierarchical);
   }
 
   logFlatStructure() {
-    console.log('flat array', this.sgb.treeDataService.dataset /* , JSON.stringify(outputFlatArray, null, 2) */);
+    console.log('flat array', this.sgb.treeDataService.dataset);
   }
 
   mockDataset() {
