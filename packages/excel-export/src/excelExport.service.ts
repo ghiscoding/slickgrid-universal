@@ -595,8 +595,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     const groupName = sanitizeHtmlToText(itemObj.title);
 
     if (this._excelExportOptions && this._excelExportOptions.addGroupIndentation) {
-      const collapsedSymbol = this._excelExportOptions && this._excelExportOptions.groupCollapsedSymbol || '\u25B9';
-      const expandedSymbol = this._excelExportOptions && this._excelExportOptions.groupExpandedSymbol || '\u25BF';
+      const collapsedSymbol = this._excelExportOptions && this._excelExportOptions.groupCollapsedSymbol || '⮞';
+      const expandedSymbol = this._excelExportOptions && this._excelExportOptions.groupExpandedSymbol || '⮟';
       const chevron = itemObj.collapsed ? collapsedSymbol : expandedSymbol;
       return chevron + ' ' + addWhiteSpaces(5 * itemObj.level) + groupName;
     }

@@ -29,7 +29,6 @@ import {
   SlickGroupItemMetadataProvider,
   SlickNamespace,
   Subscription,
-  TreeDataOption,
 
   // extensions
   AutoTooltipExtension,
@@ -68,7 +67,6 @@ import {
   TreeDataService,
 
   // utilities
-  convertParentChildArrayToHierarchicalView,
   emptyElement,
   GetSlickEventType,
 } from '@slickgrid-universal/common';
@@ -89,6 +87,7 @@ import { autoAddEditorFormatterToColumnsWithEditor } from './slick-vanilla-utili
 declare const Slick: SlickNamespace;
 
 export class SlickVanillaGridBundle {
+  private _currentDatasetLength = 0;
   private _eventPubSubService!: EventPubSubService;
   private _columnDefinitions!: Column[];
   private _gridOptions!: GridOption;
@@ -96,6 +95,7 @@ export class SlickVanillaGridBundle {
   private _gridParentContainerElm!: HTMLElement;
   private _hideHeaderRowAfterPageLoad = false;
   private _isDatasetInitialized = false;
+  private _isDatasetHierarchicalInitialized = false;
   private _isGridInitialized = false;
   private _isLocalGrid = true;
   private _isPaginationInitialized = false;
@@ -169,10 +169,18 @@ export class SlickVanillaGridBundle {
     return this.dataView?.getItems() ?? [];
   }
   set dataset(newDataset: any[]) {
-    const prevDatasetLn = this.dataView.getLength();
+    const prevDatasetLn = this._currentDatasetLength;
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions?.enableDeepCopyDatasetOnPageLoad);
-    const data = isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], newDataset) : newDataset;
+    let data = isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], newDataset) : newDataset;
+
+    // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert & sort of the array
+    if (this.slickGrid && this.gridOptions?.enableTreeData && Array.isArray(newDataset) && (newDataset.length > 0 || newDataset.length !== prevDatasetLn)) {
+      this._isDatasetHierarchicalInitialized = false;
+      data = this.sortTreeDataset(newDataset);
+    }
+
     this.refreshGridData(data || []);
+    this._currentDatasetLength = newDataset.length;
 
     // expand/autofit columns on first page load
     // we can assume that if the prevDataset was empty then we are on first load
@@ -188,15 +196,16 @@ export class SlickVanillaGridBundle {
   set datasetHierarchical(newHierarchicalDataset: any[] | undefined) {
     this.sharedService.hierarchicalDataset = newHierarchicalDataset;
 
-    if (newHierarchicalDataset && this.columnDefinitions && this.filterService && this.filterService.clearFilters) {
+    if (newHierarchicalDataset && this.columnDefinitions && this.filterService?.clearFilters) {
       this.filterService.clearFilters();
     }
 
     // when a hierarchical dataset is set afterward, we can reset the flat dataset and call a tree data sort that will overwrite the flat dataset
-    if (newHierarchicalDataset && this.sortService && this.sortService.processTreeDataInitialSort) {
+    if (newHierarchicalDataset && this.slickGrid && this.sortService?.processTreeDataInitialSort) {
       this.dataView.setItems([], this._gridOptions.datasetIdPropertyName);
       this.sortService.processTreeDataInitialSort();
     }
+    this._isDatasetHierarchicalInitialized = true;
   }
 
   get gridOptions(): GridOption {
@@ -334,7 +343,7 @@ export class SlickVanillaGridBundle {
     this.filterService = services?.filterService ?? new FilterService(this.filterFactory, this._eventPubSubService, this.sharedService, this.backendUtilityService);
     this.resizerService = services?.resizerService ?? new ResizerService(this._eventPubSubService);
     this.sortService = services?.sortService ?? new SortService(this.sharedService, this._eventPubSubService, this.backendUtilityService);
-    this.treeDataService = services?.treeDataService ?? new TreeDataService(this.sharedService);
+    this.treeDataService = services?.treeDataService ?? new TreeDataService(this.sharedService, this.sortService);
     this.paginationService = services?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService, this.backendUtilityService);
 
     // extensions
@@ -373,7 +382,7 @@ export class SlickVanillaGridBundle {
     );
 
     this.gridStateService = services?.gridStateService ?? new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService);
-    this.gridService = services?.gridService ?? new GridService(this.gridStateService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService);
+    this.gridService = services?.gridService ?? new GridService(this.gridStateService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService, this.treeDataService);
     this.groupingService = services?.groupingAndColspanService ?? new GroupingAndColspanService(this.extensionUtility, this.extensionService, this._eventPubSubService);
 
     if (hierarchicalDataset) {
@@ -402,6 +411,7 @@ export class SlickVanillaGridBundle {
     this.initialization(this._gridContainerElm, eventHandler);
     if (!hierarchicalDataset && !this.gridOptions.backendServiceApi) {
       this.dataset = dataset || [];
+      this._currentDatasetLength = this.dataset.length;
     }
   }
 
@@ -449,6 +459,7 @@ export class SlickVanillaGridBundle {
       this.dataView?.destroy();
     }
     this.slickGrid?.destroy(true);
+    this.slickGrid = null as any;
 
     emptyElement(this._gridContainerElm);
     emptyElement(this._gridParentContainerElm);
@@ -551,30 +562,16 @@ export class SlickVanillaGridBundle {
     // initialize the SlickGrid grid
     this.slickGrid.init();
 
-    // load the data in the DataView (unless it's a hierarchical dataset, if so it will be loaded after the initial tree sort)
-    if (Array.isArray(this.dataset) && !this.datasetHierarchical) {
-      this.dataView.setItems(this.dataset, this._gridOptions.datasetIdPropertyName);
+    // user could show a custom footer with the data metrics (dataset length and last updated timestamp)
+    if (!this.gridOptions.enablePagination && this.gridOptions.showCustomFooter && this.gridOptions.customFooterOptions) {
+      this.slickFooter = new SlickFooterComponent(this.slickGrid, this.gridOptions.customFooterOptions, this.translaterService);
+      this.slickFooter.renderFooter(this._gridParentContainerElm);
     }
 
-    if (this._gridOptions?.enableTreeData) {
-      // Tree Data with Pagiantion is not supported, throw an error when user tries to do that
-      if (this.gridOptions.enablePagination) {
-        throw new Error('[Slickgrid-Universal] It looks like you are trying to use Tree Data with Pagination but unfortunately that is simply not supported because of its complexity.');
-      }
-
-      if (!this._gridOptions.treeDataOptions || !this._gridOptions.treeDataOptions.columnId) {
-        throw new Error('[Slickgrid-Universal] When enabling tree data, you must also provide the "treeDataOption" property in your Grid Options with "childrenPropName" or "parentPropName" (depending if your array is hierarchical or flat) for the Tree Data to work properly');
-      }
-
-      // anytime the flat dataset changes, we need to update our hierarchical dataset
-      // this could be triggered by a DataView setItems or updateItem
-      const onRowsChangedHandler = this.dataView.onRowsChanged;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowsChangedHandler>>).subscribe(onRowsChangedHandler, () => {
-        const items = this.dataView.getItems();
-        if (Array.isArray(items) && items.length > 0 && !this._isDatasetInitialized) {
-          this.sharedService.hierarchicalDataset = this.treeDataSortComparer(items);
-        }
-      });
+    // load the data in the DataView (unless it's a hierarchical dataset, if so it will be loaded after the initial tree sort)
+    if (Array.isArray(this.dataset)) {
+      const initialDataset = this.gridOptions?.enableTreeData ? this.sortTreeDataset(this.dataset) : this.dataset;
+      this.dataView.setItems(initialDataset, this._gridOptions.datasetIdPropertyName);
     }
 
     // if you don't want the items that are not visible (due to being filtered out or being on a different page)
@@ -609,12 +606,6 @@ export class SlickVanillaGridBundle {
       }
       this.loadPresetsWhenDatasetInitialized();
       this._isDatasetInitialized = true;
-    }
-
-    // user could show a custom footer with the data metrics (dataset length and last updated timestamp)
-    if (!this.gridOptions.enablePagination && this.gridOptions.showCustomFooter && this.gridOptions.customFooterOptions) {
-      this.slickFooter = new SlickFooterComponent(this.slickGrid, this.gridOptions.customFooterOptions, this.translaterService);
-      this.slickFooter.renderFooter(this._gridParentContainerElm);
     }
 
     // load the resizer service
@@ -1016,9 +1007,9 @@ export class SlickVanillaGridBundle {
       this.displayEmptyDataWarning(finalTotalCount < 1);
     }
 
-    if (Array.isArray(dataset) && this.slickGrid && this.dataView && typeof this.dataView.setItems === 'function') {
+    if (Array.isArray(dataset) && this.slickGrid && this.dataView?.setItems) {
       this.dataView.setItems(dataset, this._gridOptions.datasetIdPropertyName);
-      if (!this._gridOptions.backendServiceApi) {
+      if (!this._gridOptions.backendServiceApi && !this._gridOptions.enableTreeData) {
         this.dataView.reSort();
       }
 
@@ -1031,11 +1022,6 @@ export class SlickVanillaGridBundle {
           }
         }
         this._isDatasetInitialized = true;
-
-        // also update the hierarchical dataset
-        if (dataset.length > 0 && this._gridOptions.treeDataOptions) {
-          this.sharedService.hierarchicalDataset = this.treeDataSortComparer(dataset);
-        }
       }
 
       if (dataset) {
@@ -1140,13 +1126,13 @@ export class SlickVanillaGridBundle {
 
   /** When data changes in the DataView, we'll refresh the metrics and/or display a warning if the dataset is empty */
   private handleOnItemCountChanged(currentPageRowItemCount: number, totalItemCount: number) {
+    this._currentDatasetLength = totalItemCount;
     this.metrics = {
       startTime: new Date(),
       endTime: new Date(),
       itemCount: currentPageRowItemCount,
       totalItemCount
     };
-
     // if custom footer is enabled, then we'll update its metrics
     if (this.slickFooter) {
       this.slickFooter.metrics = this.metrics;
@@ -1382,6 +1368,27 @@ export class SlickVanillaGridBundle {
     this.universalContainerService.registerInstance('RxJsResource', this.rxjs);
   }
 
+  /** Takes a flat dataset with parent/child relationship */
+  private sortTreeDataset(flatDataset: any[]) {
+    const prevDatasetLn = this._currentDatasetLength;
+    let sortedDatasetResult;
+
+    // if the hierarchical dataset was already initialized then no need to re-convert it, we can use it directly from the shared service ref
+    if (this._isDatasetHierarchicalInitialized && this.datasetHierarchical) {
+      sortedDatasetResult = this.treeDataService.sortHierarchicalDataset(this.datasetHierarchical);
+    } else {
+      // else we need to first convert the flat dataset to a hierarchical dataset and then sort
+      sortedDatasetResult = this.treeDataService.convertToHierarchicalDatasetAndSort(flatDataset, this._columnDefinitions, this.gridOptions);
+      this.sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
+    }
+
+    // if we add/remove item(s) from the dataset, we need to also refresh our tree data filters
+    if (flatDataset.length > 0 && prevDatasetLn > 0 && flatDataset.length !== prevDatasetLn) {
+      this.filterService.refreshTreeDataFilters();
+    }
+    return sortedDatasetResult.flat;
+  }
+
   /**
    * For convenience to the user, we provide the property "editor" as an Slickgrid-Universal editor complex object
    * however "editor" is used internally by SlickGrid for it's own Editor Factory
@@ -1406,13 +1413,6 @@ export class SlickVanillaGridBundle {
 
       return { ...column, editor: columnEditor?.model, internalColumnEditor: { ...columnEditor } };
     });
-  }
-
-  private treeDataSortComparer(flatDataset: any[]): any[] {
-    const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
-    const treeDataOpt: TreeDataOption = this._gridOptions?.treeDataOptions ?? { columnId: '' };
-    const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier };
-    return convertParentChildArrayToHierarchicalView(flatDataset, treeDataOptions);
   }
 
   /** Translate all Custom Footer Texts (footer with metrics) */
