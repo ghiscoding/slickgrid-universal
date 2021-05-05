@@ -27,10 +27,10 @@ export interface ExcelExportOption {
   /** The default text to display in 1st column of the File Export, which will identify that the current row is a Grouping Aggregator */
   groupingAggregatorRowText?: string;
 
-  /** Symbol use to show that the group title is collapsed (you can use unicode like '\u25B9' or '\u25B7') */
+  /** Symbol use to show that the group title is collapsed (you can use unicode like '⮞' or '\u25B7') */
   groupCollapsedSymbol?: string;
 
-  /** Symbol use to show that the group title is expanded (you can use unicode like '\u25BF' or '\u25BD') */
+  /** Symbol use to show that the group title is expanded (you can use unicode like '⮟' or '\u25BD') */
   groupExpandedSymbol?: string;
 
   /** Defaults to false, which leads to Sanitizing all data (striping out any HTML tags) when being evaluated on export. */

@@ -38,15 +38,17 @@ export class Example5 {
     this.columnDefinitions = [
       {
         id: 'title', name: 'Title', field: 'title', width: 220, cssClass: 'cell-title',
-        filterable: true, sortable: true,
+        filterable: true, sortable: true, exportWithFormatter: false,
         queryFieldSorter: 'id', type: FieldType.string,
-        formatter: Formatters.tree,
+        formatter: Formatters.tree, exportCustomFormatter: Formatters.treeExport
+
       },
       { id: 'duration', name: 'Duration', field: 'duration', minWidth: 90, filterable: true },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', minWidth: 120, maxWidth: 200,
+        id: 'percentComplete', name: '% Complete', field: 'percentComplete',
+        minWidth: 120, maxWidth: 200, exportWithFormatter: false,
         sortable: true, filterable: true, filter: { model: Filters.compoundSlider, operator: '>=' },
-        formatter: Formatters.percentCompleteBarWithText, type: FieldType.number,
+        formatter: Formatters.percentCompleteBar, type: FieldType.number,
       },
       {
         id: 'start', name: 'Start', field: 'start', minWidth: 60,
@@ -62,7 +64,8 @@ export class Example5 {
       },
       {
         id: 'effortDriven', name: 'Effort Driven', width: 80, minWidth: 20, maxWidth: 80, cssClass: 'cell-effort-driven', field: 'effortDriven',
-        formatter: Formatters.checkmarkMaterial, cannotTriggerInsert: true,
+        exportWithFormatter: false,
+        formatter: Formatters.checkmark, cannotTriggerInsert: true,
         filterable: true,
         filter: {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
@@ -78,10 +81,8 @@ export class Example5 {
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableExcelExport: true,
-      excelExportOptions: {
-        exportWithFormatter: true,
-        sanitizeDataExport: true
-      },
+      exportOptions: { exportWithFormatter: true },
+      excelExportOptions: { exportWithFormatter: true },
       registerExternalResources: [new ExcelExportService()],
       enableFiltering: true,
       showCustomFooter: true, // display some metrics in the bottom custom footer
