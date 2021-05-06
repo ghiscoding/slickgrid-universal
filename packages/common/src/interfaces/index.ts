@@ -72,6 +72,7 @@ export * from './formatterOption.interface';
 export * from './formatterResultObject.interface';
 export * from './gridMenu.interface';
 export * from './gridMenuItem.interface';
+export * from './gridMenuLabel.interface';
 export * from './gridMenuOption.interface';
 export * from './gridOption.interface';
 export * from './gridServiceDeleteOption.interface';
