@@ -1,9 +1,12 @@
-import { Column } from './column.interface';
-import { GridMenuItem } from './gridMenuItem.interface';
-import { GridOption } from './gridOption.interface';
-import { MenuCallbackArgs } from './menuCallbackArgs.interface';
+import { Column, GridMenuItem, GridMenuLabel, GridOption, MenuCallbackArgs, } from './index';
 
 export interface GridMenuOption {
+  /**
+   * All the commands text labels
+   * NOTE: some of the text have other properties outside of this option (like 'customTitle', 'forceFitTitle', ...) and that is because they were created prior to this refactoring of labels
+   */
+  commandLabels?: GridMenuLabel;
+
   /** Defaults to 0 (auto), minimum width of grid menu content (command, column list) */
   contentMinWidth?: number;
 

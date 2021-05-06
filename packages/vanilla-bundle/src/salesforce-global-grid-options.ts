@@ -32,10 +32,17 @@ export const SalesforceGlobalGridOptions = {
     thousandSeparator: ','
   },
   frozenHeaderWidthCalcDifferential: 2,
+  columnPicker: {
+    hideForceFitButton: true,
+  },
   gridMenu: {
+    commandLabels: {
+      clearFrozenColumnsCommand: 'Unfreeze Columns',
+    },
     hideTogglePreHeaderCommand: true,
     hideRefreshDatasetCommand: true,
     hideClearFrozenColumnsCommand: false,
+    hideForceFitButton: true,
   },
   headerMenu: {
     hideFreezeColumnsCommand: false,
