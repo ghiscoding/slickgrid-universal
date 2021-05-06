@@ -78,7 +78,8 @@ export class Example6 {
         //   columnId: 'file',
         //   direction: 'DESC'
         // }
-      }
+      },
+      showCustomFooter: true,
     };
   }
 
@@ -142,7 +143,7 @@ export class Example6 {
    * After adding the item, it will sort by parent/child recursively
    */
   addNewFile() {
-    const newId = this.sgb.dataView.getLength() + 100;
+    const newId = this.sgb.dataView.getItemCount() + 100;
 
     // find first parent object and add the new item as a child
     const popItem = findItemInHierarchicalStructure(this.datasetHierarchical, x => x.file === 'pop', 'files');
@@ -158,9 +159,11 @@ export class Example6 {
       // overwrite hierarchical dataset which will also trigger a grid sort and rendering
       this.sgb.datasetHierarchical = this.datasetHierarchical;
 
-      // scroll into the position where the item was added
-      const rowIndex = this.sgb.dataView.getRowById(popItem.id);
-      this.sgb.slickGrid.scrollRowIntoView(rowIndex + 3);
+      // scroll into the position where the item was added with a delay since it needs to recreate the tree grid
+      setTimeout(() => {
+        const rowIndex = this.sgb.dataView.getRowById(popItem.id);
+        this.sgb.slickGrid.scrollRowIntoView(rowIndex + 3);
+      }, 0);
     }
   }
 
@@ -172,12 +175,12 @@ export class Example6 {
     this.sgb.treeDataService.toggleTreeDataCollapse(false);
   }
 
-  logExpandedStructure() {
-    console.log('exploded array', this.sgb.treeDataService.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
+  logHierarchicalStructure() {
+    console.log('hierarchical array', this.sgb.treeDataService.datasetHierarchical);
   }
 
   logFlatStructure() {
-    console.log('flat array', this.sgb.treeDataService.dataset /* , JSON.stringify(outputFlatArray, null, 2) */);
+    console.log('flat array', this.sgb.treeDataService.dataset);
   }
 
   mockDataset() {

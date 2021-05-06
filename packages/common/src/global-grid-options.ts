@@ -1,5 +1,5 @@
 import { DelimiterType, EventNamingStyle, FileType, GridAutosizeColsMode, OperatorType } from './enums/index';
-import { Column, GridOption } from './interfaces/index';
+import { Column, GridOption, TreeDataOption } from './interfaces/index';
 import { Filters } from './filters';
 
 /** Global Grid Options Defaults */
@@ -137,8 +137,8 @@ export const GlobalGridOptions: GridOption = {
     filename: 'export',
     format: FileType.xlsx,
     groupingColumnHeaderTitle: 'Group By',
-    groupCollapsedSymbol: '\u25B9',
-    groupExpandedSymbol: '\u25BF',
+    groupCollapsedSymbol: '⮞',
+    groupExpandedSymbol: '⮟',
     groupingAggregatorRowText: '',
     sanitizeDataExport: false,
   },
@@ -228,6 +228,10 @@ export const GlobalGridOptions: GridOption = {
   resizeFormatterPaddingWidthInPx: 0,
   resizeDefaultRatioForStringType: 0.88,
   resizeMaxItemToInspectCellContentWidth: 1000,
+  treeDataOptions: {
+    exportIndentMarginLeft: 4,
+    exportIndentationLeadingChar: '.',
+  } as unknown as TreeDataOption
 };
 
 /**

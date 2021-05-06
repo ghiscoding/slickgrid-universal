@@ -38,15 +38,17 @@ export class Example5 {
     this.columnDefinitions = [
       {
         id: 'title', name: 'Title', field: 'title', width: 220, cssClass: 'cell-title',
-        filterable: true, sortable: true,
+        filterable: true, sortable: true, exportWithFormatter: false,
         queryFieldSorter: 'id', type: FieldType.string,
-        formatter: Formatters.tree,
+        formatter: Formatters.tree, exportCustomFormatter: Formatters.treeExport
+
       },
       { id: 'duration', name: 'Duration', field: 'duration', minWidth: 90, filterable: true },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', minWidth: 120, maxWidth: 200,
+        id: 'percentComplete', name: '% Complete', field: 'percentComplete',
+        minWidth: 120, maxWidth: 200, exportWithFormatter: false,
         sortable: true, filterable: true, filter: { model: Filters.compoundSlider, operator: '>=' },
-        formatter: Formatters.percentCompleteBarWithText, type: FieldType.number,
+        formatter: Formatters.percentCompleteBar, type: FieldType.number,
       },
       {
         id: 'start', name: 'Start', field: 'start', minWidth: 60,
@@ -62,7 +64,8 @@ export class Example5 {
       },
       {
         id: 'effortDriven', name: 'Effort Driven', width: 80, minWidth: 20, maxWidth: 80, cssClass: 'cell-effort-driven', field: 'effortDriven',
-        formatter: Formatters.checkmarkMaterial, cannotTriggerInsert: true,
+        exportWithFormatter: false,
+        formatter: Formatters.checkmark, cannotTriggerInsert: true,
         filterable: true,
         filter: {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
@@ -78,10 +81,8 @@ export class Example5 {
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableExcelExport: true,
-      excelExportOptions: {
-        exportWithFormatter: true,
-        sanitizeDataExport: true
-      },
+      exportOptions: { exportWithFormatter: true },
+      excelExportOptions: { exportWithFormatter: true },
       registerExternalResources: [new ExcelExportService()],
       enableFiltering: true,
       showCustomFooter: true, // display some metrics in the bottom custom footer
@@ -92,8 +93,14 @@ export class Example5 {
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       treeDataOptions: {
         columnId: 'title',
-        levelPropName: 'indent',
-        parentPropName: 'parentId'
+        // levelPropName: 'indent', // this is optional, you can define the tree level property name that will be used for the sorting/indentation, internally it will use "__treeLevel"
+        parentPropName: 'parentId',
+
+        // you can optionally sort by a different column and/or sort direction
+        initialSort: {
+          columnId: 'title',
+          direction: 'ASC'
+        }
       },
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
       presets: {
@@ -103,44 +110,34 @@ export class Example5 {
   }
 
   /**
-   * A simple method to add a new item inside the first group that we find.
+   * A simple method to add a new item inside the first group that we find (it's random and is only for demo purposes).
    * After adding the item, it will sort by parent/child recursively
    */
   addNewRow() {
-    const newId = this.dataset.length;
+    const newId = this.sgb.dataset.length;
     const parentPropName = 'parentId';
-    const treeLevelPropName = 'indent';
+    const treeLevelPropName = '__treeLevel'; // if undefined in your options, the default prop name is "__treeLevel"
     const newTreeLevel = 1;
-
     // find first parent object and add the new item as a child
-    const childItemFound = this.dataset.find((item) => item[treeLevelPropName] === newTreeLevel);
+    const childItemFound = this.sgb.dataset.find((item) => item[treeLevelPropName] === newTreeLevel);
     const parentItemFound = this.sgb.dataView.getItemByIdx(childItemFound[parentPropName]);
 
-    const newItem = {
-      id: newId,
-      indent: newTreeLevel,
-      parentId: parentItemFound.id,
-      title: `Task ${newId}`,
-      duration: '1 day',
-      percentComplete: 0,
-      start: new Date(),
-      finish: new Date(),
-      effortDriven: false
-    };
-    this.sgb.dataView.addItem(newItem);
-    this.dataset = this.sgb.dataView.getItems();
-    this.sgb.dataset = this.dataset;
+    if (childItemFound && parentItemFound) {
+      const newItem = {
+        id: newId,
+        parentId: parentItemFound.id,
+        title: `Task ${newId}`,
+        duration: '1 day',
+        percentComplete: 99,
+        start: new Date(),
+        finish: new Date(),
+        effortDriven: false
+      };
 
-    // force a resort
-    const titleColumn = this.columnDefinitions.find((col) => col.id === 'title');
-    this.sgb.sortService.onLocalSortChanged(this.sgb.slickGrid, [{ columnId: 'title', sortCol: titleColumn, sortAsc: true }]);
-
-    // update dataset and re-render (invalidate) the grid
-    this.sgb.slickGrid.invalidate();
-
-    // scroll to the new row
-    const rowIndex = this.sgb.dataView.getIdxById(newItem.id);
-    this.sgb.slickGrid.scrollRowIntoView(rowIndex, false);
+      // use the Grid Service to insert the item,
+      // it will also internally take care of updating & resorting the hierarchical dataset
+      this.sgb.gridService.addItem(newItem);
+    }
   }
 
   collapseAll() {
@@ -151,12 +148,16 @@ export class Example5 {
     this.sgb.treeDataService.toggleTreeDataCollapse(false);
   }
 
-  logExpandedStructure() {
-    console.log('exploded array', this.sgb.treeDataService.datasetHierarchical /* , JSON.stringify(explodedArray, null, 2) */);
+  dynamicallyChangeFilter() {
+    this.sgb.filterService.updateFilters([{ columnId: 'percentComplete', operator: '<', searchTerms: [40] }]);
+  }
+
+  logHierarchicalStructure() {
+    console.log('hierarchical array', this.sgb.treeDataService.datasetHierarchical);
   }
 
   logFlatStructure() {
-    console.log('flat array', this.sgb.treeDataService.dataset /* , JSON.stringify(outputFlatArray, null, 2) */);
+    console.log('flat array', this.sgb.treeDataService.dataset);
   }
 
   mockDataset() {
@@ -188,9 +189,9 @@ export class Example5 {
       }
 
       d['id'] = i;
-      d['indent'] = indent;
       d['parentId'] = parentId;
-      d['title'] = 'Task ' + i;
+      // d['title'] = `Task ${i}    -   [P]: ${parentId}`;
+      d['title'] = `Task ${i}`;
       d['duration'] = '5 days';
       d['percentComplete'] = Math.round(Math.random() * 100);
       d['start'] = new Date(randomYear, randomMonth, randomDay);

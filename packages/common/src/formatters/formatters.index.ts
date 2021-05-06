@@ -32,6 +32,7 @@ import { percentCompleteFormatter } from './percentCompleteFormatter';
 import { percentSymbolFormatter } from './percentSymbolFormatter';
 import { progressBarFormatter } from './progressBarFormatter';
 import { translateFormatter } from './translateFormatter';
+import { treeExportFormatter } from './treeExportFormatter';
 import { treeFormatter } from './treeFormatter';
 import { translateBooleanFormatter } from './translateBooleanFormatter';
 import { uppercaseFormatter } from './uppercaseFormatter';
@@ -236,6 +237,9 @@ export const Formatters = {
 
   /** Formatter that must be use with a Tree Data column */
   tree: treeFormatter,
+
+  /** Formatter that must be use with a Tree Data column for Exporting the data */
+  treeExport: treeExportFormatter,
 
   /** Takes a value and displays it all uppercase */
   uppercase: uppercaseFormatter,

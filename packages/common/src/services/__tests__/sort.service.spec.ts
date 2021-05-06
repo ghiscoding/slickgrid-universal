@@ -989,6 +989,7 @@ describe('SortService', () => {
         { columnId: 'file', sortAsc: false, sortCol: { id: 'file', field: 'file', width: 75 } }
       ];
 
+      sharedService.hierarchicalDataset = [];
       service.bindLocalOnSort(gridStub);
       gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new Slick.EventData(), gridStub);
 
@@ -1009,11 +1010,13 @@ describe('SortService', () => {
       const spyCurrentSort = jest.spyOn(service, 'getCurrentLocalSorters');
       const spyOnLocalSort = jest.spyOn(service, 'onLocalSortChanged');
       const spyUpdateSorting = jest.spyOn(service, 'updateSorting');
+
       const mockSortedCols: ColumnSort[] = [
         { columnId: 'lastName', sortAsc: true, sortCol: { id: 'lastName', field: 'lastName', width: 100 } },
         { columnId: 'file', sortAsc: false, sortCol: { id: 'file', field: 'file', width: 75 } }
       ];
 
+      sharedService.hierarchicalDataset = [];
       service.bindLocalOnSort(gridStub);
       gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new Slick.EventData(), gridStub);
 
