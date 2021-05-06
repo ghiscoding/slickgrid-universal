@@ -972,7 +972,7 @@ export function findOrDefault<T = any>(array: T[], logic: (item: T) => boolean, 
 
 /** Get HTML Element position offset (without jQuery) */
 export function getHtmlElementOffset(element: HTMLElement): { top: number; left: number; } {
-  const rect = element && element.getBoundingClientRect && element.getBoundingClientRect();
+  const rect = element?.getBoundingClientRect?.();
   let top = 0;
   let left = 0;
 
