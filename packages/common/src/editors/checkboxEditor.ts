@@ -141,6 +141,13 @@ export class CheckboxEditor implements Editor {
     }
   }
 
+  /** pre-click, when enabled, will simply toggle the checkbox without requiring to double-click */
+  preClick() {
+    if (this._input) {
+      this._input.checked = !this._input.checked;
+    }
+  }
+
   show() {
     const isCompositeEditor = !!this.args?.compositeEditorOptions;
     if (isCompositeEditor) {
