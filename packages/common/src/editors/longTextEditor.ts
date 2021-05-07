@@ -75,7 +75,7 @@ export class LongTextEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef && this.columnDef.internalColumnEditor || {};
+    return this.columnDef?.internalColumnEditor ?? {};
   }
 
   /** Getter for the item data context object */
@@ -84,21 +84,21 @@ export class LongTextEditor implements Editor {
   }
 
   /** Getter for the Editor DOM Element */
-  get editorDomElement(): any {
+  get editorDomElement(): HTMLTextAreaElement {
     return this._textareaElm;
   }
 
   get editorOptions(): LongTextEditorOption {
-    return this.columnEditor?.editorOptions || {};
+    return this.columnEditor?.editorOptions ?? {};
   }
 
-  get hasAutoCommitEdit() {
-    return this.grid.getOptions().autoCommitEdit;
+  get hasAutoCommitEdit(): boolean {
+    return this.gridOptions?.autoCommitEdit ?? false;
   }
 
   /** Get the Validator function, can be passed in Editor property or Column Definition */
   get validator(): EditorValidator | undefined {
-    return (this.columnEditor && this.columnEditor.validator) || (this.columnDef && this.columnDef.validator);
+    return this.columnEditor?.validator ?? this.columnDef?.validator;
   }
 
   init(): void {
@@ -174,7 +174,6 @@ export class LongTextEditor implements Editor {
       this._textareaElm.select();
       this.position(this.args?.position);
     }
-
     this._wrapperElm.appendChild(editorFooterElm);
 
     this._bindEventService.bind(this._textareaElm, 'keydown', this.handleKeyDown.bind(this) as EventListener);
@@ -260,12 +259,12 @@ export class LongTextEditor implements Editor {
   }
 
   applyValue(item: any, state: any) {
-    const fieldName = this.columnDef && this.columnDef.field;
+    const fieldName = this.columnDef?.field;
     if (fieldName !== undefined) {
       const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
       // validate the value before applying it (if not valid we'll set an empty string)
-      const validation = this.validate(null, state);
+      const validation = this.validate(undefined, state);
       const newValue = (validation && validation.valid) ? state : '';
 
       // set the new value to the item datacontext
@@ -290,7 +289,7 @@ export class LongTextEditor implements Editor {
   }
 
   loadValue(item: any) {
-    const fieldName = this.columnDef && this.columnDef.field;
+    const fieldName = this.columnDef?.field;
 
     if (item && fieldName !== undefined) {
       // is the field a complex object, "address.streetNumber"
@@ -366,7 +365,7 @@ export class LongTextEditor implements Editor {
 
   save() {
     const validation = this.validate();
-    const isValid = (validation && validation.valid) || false;
+    const isValid = validation?.valid ?? false;
 
     if (this.hasAutoCommitEdit && isValid) {
       // do not use args.commitChanges() as this sets the focus to the next row.
@@ -381,7 +380,7 @@ export class LongTextEditor implements Editor {
     return this._textareaElm.value;
   }
 
-  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
+  validate(_targetElm?: HTMLElement, inputValue?: any): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
     if (this.args.compositeEditorOptions) {
       this.applyInputUsabilityState();
@@ -418,7 +417,7 @@ export class LongTextEditor implements Editor {
   }
 
   protected handleKeyDown(event: KeyboardEvent) {
-    const keyCode = event.keyCode || event.code;
+    const keyCode = event.keyCode ?? event.code;
     this._isValueTouched = true;
 
     if (!this.args.compositeEditorOptions) {
