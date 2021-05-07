@@ -309,6 +309,7 @@ describe('Resizer Service', () => {
       it('should call the resize and expect first column have a fixed width while other will have a calculated width when resizing by their content', () => {
         const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
         const reRenderColumnsSpy = jest.spyOn(gridStub, 'reRenderColumns');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, divContainer);
         service.resizeColumnsByCellContent(true);
@@ -324,11 +325,17 @@ describe('Resizer Service', () => {
             expect.objectContaining({ id: 'country', width: 14 }), // longest number "United States of America" goes over resizeMaxWidthThreshold so we fallback to it
           ]));
         expect(reRenderColumnsSpy).toHaveBeenCalledWith(true);
+        expect(pubSubSpy).toBeCalledWith('onBeforeResizeByContent');
+        expect(pubSubSpy).toBeCalledWith('onAfterResizeByContent', {
+          calculateColumnWidths: { userId: 30, firstName: 56, lastName: 68, gender: 57, age: 29, street: 15, country: 14, },
+          readItemCount: 5
+        });
       });
 
       it('should call the resize and expect first column have a fixed width while other will have a calculated width when resizing by their content and grid is editable', () => {
         const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
         const reRenderColumnsSpy = jest.spyOn(gridStub, 'reRenderColumns');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         mockGridOptions.editable = true;
         service.init(gridStub, divContainer);
@@ -346,6 +353,11 @@ describe('Resizer Service', () => {
             expect.objectContaining({ id: 'country', width: 14 }), // longest number "United States of America" goes over resizeMaxWidthThreshold so we fallback to it
           ]));
         expect(reRenderColumnsSpy).toHaveBeenCalledWith(true);
+        expect(pubSubSpy).toBeCalledWith('onBeforeResizeByContent');
+        expect(pubSubSpy).toBeCalledWith('onAfterResizeByContent', {
+          calculateColumnWidths: { userId: 30, firstName: 61, lastName: 73, gender: 57, age: 29, street: 15, country: 14, },
+          readItemCount: 5
+        });
       });
     });
   });
