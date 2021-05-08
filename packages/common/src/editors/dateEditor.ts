@@ -20,7 +20,15 @@ import {
   SlickGrid,
   SlickNamespace,
 } from './../interfaces/index';
-import { destroyObjectDomElementProps, getDescendantProperty, mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, setDeepValue } from './../services/utilities';
+import {
+  destroyObjectDomElementProps,
+  emptyElement,
+  getDescendantProperty,
+  mapFlatpickrDateFormatWithFieldType,
+  mapMomentDateFormatWithFieldType,
+  setDeepValue
+} from './../services/utilities';
+import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
 
 // using external non-typed js libraries
@@ -31,10 +39,11 @@ declare const Slick: SlickNamespace;
  * https://chmln.github.io/flatpickr
  */
 export class DateEditor implements Editor {
-  protected _$inputWithData: any;
-  protected _$input: any;
-  protected _$editorInputGroupElm: any;
-  protected _$closeButtonGroupElm: any;
+  protected _bindEventService: BindingEventService;
+  protected _closeButtonElm!: HTMLButtonElement;
+  protected _editorInputGroupElm!: HTMLDivElement;
+  protected _inputElm!: HTMLInputElement;
+  protected _inputWithDataElm!: HTMLInputElement | null;
   protected _isValueTouched = false;
   protected _lastTriggeredByClearDate = false;
   protected _originalDate?: string;
@@ -64,6 +73,7 @@ export class DateEditor implements Editor {
     if (this.gridOptions?.translater) {
       this._translaterService = this.gridOptions.translater;
     }
+    this._bindEventService = new BindingEventService();
     this.init();
   }
 
@@ -83,8 +93,8 @@ export class DateEditor implements Editor {
   }
 
   /** Getter for the Editor DOM Element */
-  get editorDomElement(): any {
-    return this._$input;
+  get editorDomElement(): HTMLInputElement {
+    return this._inputElm;
   }
 
   /** Get Flatpickr options passed to the editor by the user */
@@ -146,26 +156,39 @@ export class DateEditor implements Editor {
         this._pickerMergedOptions.altInputClass = 'flatpickr-alt-input form-control';
       }
 
-      this._$editorInputGroupElm = $(`<div class="flatpickr input-group"></div>`);
-      const $closeButtonGroupElm = $(`<span class="input-group-btn input-group-append" data-clear></span>`);
-      this._$closeButtonGroupElm = $(`<button class="btn btn-default icon-clear" type="button"></button>`);
+      this._editorInputGroupElm = document.createElement('div');
+      this._editorInputGroupElm.className = 'flatpickr input-group';
 
-      this._$input = $(`<input type="text" data-input data-defaultDate="${this.defaultDate}" class="${inputCssClasses.replace(/\./g, ' ')}" placeholder="${placeholder}" title="${title}" />`);
-      this._$input.appendTo(this._$editorInputGroupElm);
+      const closeButtonGroupElm = document.createElement('span');
+      closeButtonGroupElm.className = 'input-group-btn input-group-append';
+      closeButtonGroupElm.dataset.clear = '';
+
+      this._closeButtonElm = document.createElement('button');
+      this._closeButtonElm.type = 'button';
+      this._closeButtonElm.className = 'btn btn-default icon-clear';
+
+      this._inputElm = document.createElement('input');
+      this._inputElm.dataset.input = '';
+      this._inputElm.dataset.defaultdate = this.defaultDate;
+      this._inputElm.className = inputCssClasses.replace(/\./g, ' ');
+      this._inputElm.placeholder = placeholder;
+      this._inputElm.title = title;
+
+      this._editorInputGroupElm.appendChild(this._inputElm);
 
       // show clear date button (unless user specifically doesn't want it)
       if (!this.columnEditor?.params?.hideClearButton) {
-        this._$closeButtonGroupElm.appendTo($closeButtonGroupElm);
-        $closeButtonGroupElm.appendTo(this._$editorInputGroupElm);
-        this._$closeButtonGroupElm.on('click', () => this._lastTriggeredByClearDate = true);
+        closeButtonGroupElm.appendChild(this._closeButtonElm);
+        this._editorInputGroupElm.appendChild(closeButtonGroupElm);
+        this._bindEventService.bind(this._closeButtonElm, 'click', () => this._lastTriggeredByClearDate = true);
       }
 
-      this._$editorInputGroupElm.appendTo(this.args.container);
-      this.flatInstance = (this._$editorInputGroupElm[0] && typeof this._$editorInputGroupElm[0].flatpickr === 'function') ? this._$editorInputGroupElm[0].flatpickr(this._pickerMergedOptions) : flatpickr(this._$editorInputGroupElm, this._pickerMergedOptions as unknown as Partial<FlatpickrBaseOptions>);
+      this.args.container.appendChild(this._editorInputGroupElm);
+      this.flatInstance = flatpickr(this._editorInputGroupElm, this._pickerMergedOptions as unknown as Partial<FlatpickrBaseOptions>);
 
       // when we're using an alternate input to display data, we'll consider this input as the one to do the focus later on
       // else just use the top one
-      this._$inputWithData = (this._pickerMergedOptions && this._pickerMergedOptions.altInput) ? $(`${inputCssClasses}.flatpickr-alt-input`) : this._$input;
+      this._inputWithDataElm = (this._pickerMergedOptions?.altInput) ? document.querySelector<HTMLInputElement>(`.flatpickr-alt-input`) : this._inputElm;
 
       if (!compositeEditorOptions) {
         setTimeout(() => {
@@ -178,21 +201,17 @@ export class DateEditor implements Editor {
 
   destroy() {
     this.hide();
-    if (this.flatInstance && typeof this.flatInstance.destroy === 'function') {
+    this._bindEventService.unbindAll();
+
+    if (this.flatInstance?.destroy) {
       this.flatInstance.destroy();
-      if (this.flatInstance.element) {
+      if (this.flatInstance?.element) {
         setTimeout(() => destroyObjectDomElementProps(this.flatInstance));
       }
     }
-    if (this._$editorInputGroupElm?.remove) {
-      this._$editorInputGroupElm.remove();
-      this._$editorInputGroupElm = null;
-    }
-    if (this._$inputWithData?.remove) {
-      this._$inputWithData.remove();
-      this._$inputWithData = null;
-    }
-    this._$input.remove();
+    emptyElement(this._editorInputGroupElm);
+    emptyElement(this._inputWithDataElm);
+    emptyElement(this._inputElm);
   }
 
   disable(isDisabled = true) {
@@ -202,7 +221,7 @@ export class DateEditor implements Editor {
     if (this.flatInstance?._input) {
       if (isDisabled) {
         this.flatInstance._input.setAttribute('disabled', 'disabled');
-        this._$closeButtonGroupElm.prop('disabled', true);
+        this._closeButtonElm.disabled = true;
 
         // clear picker when it's newly disabled and not empty
         const currentValue = this.getValue();
@@ -211,7 +230,7 @@ export class DateEditor implements Editor {
         }
       } else {
         this.flatInstance._input.removeAttribute('disabled');
-        this._$closeButtonGroupElm.prop('disabled', false);
+        this._closeButtonElm.disabled = false;
       }
     }
   }
@@ -232,11 +251,12 @@ export class DateEditor implements Editor {
   }
 
   focus() {
-    if (this._$input) {
-      this._$input.focus();
+    if (this._inputElm?.focus) {
+      this._inputElm.focus();
     }
-    if (this._$inputWithData && typeof this._$inputWithData.focus === 'function') {
-      this._$inputWithData.focus().select();
+    if (this._inputWithDataElm?.focus) {
+      this._inputWithDataElm.focus();
+      this._inputWithDataElm.select();
     }
   }
 
@@ -257,7 +277,7 @@ export class DateEditor implements Editor {
   }
 
   getValue(): string {
-    return this._$input.val();
+    return this._inputElm.value;
   }
 
   setValue(val: string, isApplyingValue = false, triggerOnCompositeEditorChange = true) {
@@ -298,7 +318,7 @@ export class DateEditor implements Editor {
   }
 
   isValueChanged(): boolean {
-    const elmValue = this._$input.val();
+    const elmValue = this._inputElm.value;
     const inputFormat = mapMomentDateFormatWithFieldType(this.columnEditor.type || this.columnDef?.type || FieldType.dateIso);
     const outputTypeFormat = mapMomentDateFormatWithFieldType((this.columnDef && (this.columnDef.outputType || this.columnEditor.type || this.columnDef.type)) || FieldType.dateUtc);
     const elmDateStr = elmValue ? moment(elmValue, inputFormat, false).format(outputTypeFormat) : '';
@@ -364,7 +384,7 @@ export class DateEditor implements Editor {
   }
 
   serializeValue() {
-    const domValue: string = this._$input.val();
+    const domValue: string = this._inputElm.value;
 
     if (!domValue) {
       return '';
@@ -379,7 +399,7 @@ export class DateEditor implements Editor {
 
   validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     const isRequired = this.args?.compositeEditorOptions ? false : this.columnEditor.required;
-    const elmValue = (inputValue !== undefined) ? inputValue : this._$input && this._$input.val && this._$input.val();
+    const elmValue = (inputValue !== undefined) ? inputValue : this._inputElm?.value;
     const errorMsg = this.columnEditor.errorMessage;
 
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
@@ -398,16 +418,10 @@ export class DateEditor implements Editor {
 
     // by default the editor is almost always valid (except when it's required but not provided)
     if (isRequired && elmValue === '') {
-      return {
-        valid: false,
-        msg: errorMsg || Constants.VALIDATION_REQUIRED_FIELD
-      };
+      return { valid: false, msg: errorMsg || Constants.VALIDATION_REQUIRED_FIELD };
     }
 
-    return {
-      valid: true,
-      msg: null
-    };
+    return { valid: true, msg: null };
   }
 
   //

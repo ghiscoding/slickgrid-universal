@@ -115,5 +115,5 @@ export interface Editor {
    * if the input is valid then the validation result output would be returning { valid:true, msg:null }
    * The first argument "targetElm" is ONLY used internally by the Composite Editor in most cases you want to make this null or undefined
    */
-  validate: (targetElm?: HTMLElement | JQuery<HTMLElement>, options?: any) => EditorValidationResult;
+  validate: (targetElm?: HTMLElement, options?: any) => EditorValidationResult;
 }

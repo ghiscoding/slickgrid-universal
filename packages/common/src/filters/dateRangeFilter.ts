@@ -1,7 +1,7 @@
 import * as flatpickr_ from 'flatpickr';
 import * as moment_ from 'moment-mini';
 import { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
-import { FlatpickrFn } from 'flatpickr/dist/types/instance';
+import { Instance as FlatpickrInstance, FlatpickrFn } from 'flatpickr/dist/types/instance';
 const flatpickr: FlatpickrFn = (flatpickr_ && flatpickr_['default'] || flatpickr_) as any; // patch for rollup
 const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
@@ -21,25 +21,34 @@ import {
   GridOption,
   SlickGrid,
 } from '../interfaces/index';
-import { destroyObjectDomElementProps, mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType } from '../services/utilities';
+import {
+  destroyObjectDomElementProps,
+  emptyElement,
+  mapFlatpickrDateFormatWithFieldType,
+  mapMomentDateFormatWithFieldType
+} from '../services/utilities';
+import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
 
 export class DateRangeFilter implements Filter {
+  protected _bindEventService: BindingEventService;
   protected _clearFilterTriggered = false;
   protected _currentValue?: string;
   protected _currentDates?: Date[];
   protected _currentDateStrings?: string[];
   protected _flatpickrOptions!: FlatpickrOption;
+  protected _filterElm!: HTMLDivElement;
+  protected _filterDivInputElm!: HTMLDivElement;
   protected _shouldTriggerQuery = true;
-  protected $filterElm: any;
-  protected $filterInputElm: any;
-  flatInstance: any;
   grid!: SlickGrid;
+  flatInstance!: FlatpickrInstance;
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
 
-  constructor(protected readonly translaterService: TranslaterService) { }
+  constructor(protected readonly translaterService: TranslaterService) {
+    this._bindEventService = new BindingEventService();
+  }
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get gridOptions(): GridOption {
@@ -92,12 +101,11 @@ export class DateRangeFilter implements Filter {
     this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
 
     // step 1, create the DOM Element of the filter which contain the compound Operator+Input
-    this.$filterElm = this.createDomElement(this.searchTerms);
+    this._filterElm = this.createDomElement(this.searchTerms);
 
     // step 3, subscribe to the keyup event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    this.$filterInputElm.keyup((e: Event) => this.onTriggerEvent(e));
-
+    this._bindEventService.bind(this._filterDivInputElm, 'keyup', this.onTriggerEvent.bind(this));
   }
 
   /**
@@ -116,17 +124,17 @@ export class DateRangeFilter implements Filter {
    * destroy the filter
    */
   destroy() {
-    if (this.flatInstance && typeof this.flatInstance.destroy === 'function') {
+    this._bindEventService.unbindAll();
+
+    if (this.flatInstance?.destroy) {
       this.flatInstance.destroy();
       if (this.flatInstance.element) {
         destroyObjectDomElementProps(this.flatInstance);
       }
     }
-    if (this.$filterElm) {
-      this.$filterElm.off('keyup').remove();
+    if (this._filterElm) {
+      this._filterElm.remove();
     }
-    this.flatInstance = null;
-    this.$filterElm = null;
   }
 
   hide() {
@@ -167,7 +175,7 @@ export class DateRangeFilter implements Filter {
   //
   // protected functions
   // ------------------
-  protected buildDatePickerInput(searchTerms?: SearchTerm | SearchTerm[]) {
+  protected buildDatePickerInput(searchTerms?: SearchTerm | SearchTerm[]): HTMLDivElement {
     const columnId = this.columnDef?.id ?? '';
     const inputFormat = mapFlatpickrDateFormatWithFieldType(this.columnFilter.type || this.columnDef.type || FieldType.dateIso);
     const outputFormat = mapFlatpickrDateFormatWithFieldType(this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc);
@@ -237,22 +245,33 @@ export class DateRangeFilter implements Filter {
     if (this.columnFilter && this.columnFilter.placeholder) {
       placeholder = this.columnFilter.placeholder;
     }
-    const $filterInputElm: any = $(`<div class="flatpickr search-filter filter-${columnId}"><input type="text" class="form-control" data-input placeholder="${placeholder}"></div>`);
-    this.flatInstance = ($filterInputElm[0] && typeof $filterInputElm[0].flatpickr === 'function') ? $filterInputElm[0].flatpickr(this._flatpickrOptions) : flatpickr($filterInputElm, this._flatpickrOptions as unknown as Partial<FlatpickrBaseOptions>);
-    return $filterInputElm;
+
+    const filterDivInputElm = document.createElement('div');
+    filterDivInputElm.className = `flatpickr search-filter filter-${columnId}`;
+
+    const inputElm = document.createElement('input');
+    inputElm.type = 'text';
+    inputElm.className = 'form-control';
+    inputElm.dataset.input = '';
+    inputElm.placeholder = placeholder;
+
+    filterDivInputElm.appendChild(inputElm);
+    this.flatInstance = flatpickr(filterDivInputElm, this._flatpickrOptions as unknown as Partial<FlatpickrBaseOptions>);
+
+    return filterDivInputElm;
   }
 
   /**
    * Create the DOM element
    * @params searchTerms
    */
-  protected createDomElement(searchTerms?: SearchTerm[]) {
+  protected createDomElement(searchTerms?: SearchTerm[]): HTMLDivElement {
     const columnId = this.columnDef?.id ?? '';
-    const $headerElm = this.grid.getHeaderRowColumn(columnId);
-    $($headerElm).empty();
+    const headerElm = this.grid.getHeaderRowColumn(columnId);
+    emptyElement(headerElm);
 
     // create the DOM Select dropdown for the Operator
-    this.$filterInputElm = this.buildDatePickerInput(searchTerms);
+    this._filterDivInputElm = this.buildDatePickerInput(searchTerms);
 
     /* the DOM element final structure will be
       <div class=flatpickr>
@@ -261,29 +280,29 @@ export class DateRangeFilter implements Filter {
     */
 
     // create the DOM element & add an ID and filter class
-    this.$filterInputElm.data('columnId', columnId);
+    this._filterDivInputElm.dataset.columnid = `${columnId}`;
 
     // if there's a search term, we will add the "filled" class for styling purposes
     if (Array.isArray(searchTerms) && searchTerms.length > 0 && searchTerms[0] !== '') {
-      this.$filterInputElm.addClass('filled');
+      this._filterDivInputElm.classList.add('filled');
       this._currentDates = searchTerms as Date[];
       this._currentValue = searchTerms[0] as string;
     }
 
     // append the new DOM element to the header row
-    if (this.$filterInputElm && typeof this.$filterInputElm.appendTo === 'function') {
-      this.$filterInputElm.appendTo($headerElm);
+    if (this._filterDivInputElm) {
+      headerElm.appendChild(this._filterDivInputElm);
     }
 
-    return this.$filterInputElm;
+    return this._filterDivInputElm;
   }
 
   protected onTriggerEvent(e: Event | undefined) {
     if (this._clearFilterTriggered) {
       this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
-      this.$filterElm.removeClass('filled');
+      this._filterElm.classList.remove('filled');
     } else {
-      (this._currentDateStrings) ? this.$filterElm.addClass('filled') : this.$filterElm.removeClass('filled');
+      (this._currentDateStrings) ? this._filterElm.classList.add('filled') : this._filterElm.classList.remove('filled');
       this.callback(e, { columnDef: this.columnDef, searchTerms: (this._currentDateStrings ? this._currentDateStrings : [this._currentValue as string]), operator: this.operator || '', shouldTriggerQuery: this._shouldTriggerQuery });
     }
 

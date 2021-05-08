@@ -551,7 +551,6 @@ export class AutoCompleteEditor implements Editor {
       // add an empty <span> in order to add loading spinner styling
       $(`<span></span>`).appendTo(this._$editorInputGroupElm);
 
-      // this._$input = $(`<input type="text" data-input data-defaultDate="${this.defaultDate}" class="${inputCssClasses.replace(/\./g, ' ')}" placeholder="${placeholder}" title="${title}" />`);
       // show clear date button (unless user specifically doesn't want it)
       if (!this.columnEditor?.params?.hideClearButton) {
         this._$closeButtonGroupElm.appendTo($closeButtonGroupElm);
