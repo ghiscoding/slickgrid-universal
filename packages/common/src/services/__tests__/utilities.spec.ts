@@ -2,7 +2,7 @@ import 'jest-extended';
 import { of } from 'rxjs';
 
 import { FieldType, OperatorType } from '../../enums/index';
-import { GridOption, Subscription } from '../../interfaces/index';
+import { EventSubscription, GridOption } from '../../interfaces/index';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import {
   addToArrayWhenNotExists,
@@ -85,6 +85,10 @@ describe('Service/Utilies', () => {
 
     it('should return the a simple string with x spaces only where x is the number of spaces provided as argument', () => {
       expect(addWhiteSpaces(5)).toBe('     ');
+    });
+
+    it('should return the a simple html string with x &nbsp; separator where x is the number of spaces provided as argument', () => {
+      expect(addWhiteSpaces(2)).toBe('&nbsp;&nbsp;');
     });
   });
 
@@ -1488,7 +1492,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should be able to unsubscribe all Observables', () => {
-      const subscriptions: Subscription[] = [];
+      const subscriptions: EventSubscription[] = [];
       const observable1 = of([1, 2]);
       const observable2 = of([1, 2]);
       subscriptions.push(observable1.subscribe(), observable2.subscribe());

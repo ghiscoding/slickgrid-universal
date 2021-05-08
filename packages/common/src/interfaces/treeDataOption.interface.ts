@@ -32,9 +32,6 @@ export interface TreeDataOption {
   /** Defaults to "__treeLevel", object property name used to designate the Tree Level depth number */
   levelPropName?: string;
 
-  /** Defaults to "__hasChildren", object property name used to designate if the item has Children flag */
-  hasChildrenFlagPropName?: string;
-
   /**
    * Defaults to 15px, margin to add from the left (calculated by the tree level multiplied by this number).
    * For example if tree depth level is 2, the calculation will be (2 * 15 = 30), so the column will be displayed 30px from the left

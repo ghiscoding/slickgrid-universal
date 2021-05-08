@@ -1,10 +1,10 @@
 import { SlickDataView, Formatter } from './../interfaces/index';
-import { getDescendantProperty, htmlEncode } from '../services/utilities';
+import { getDescendantProperty, sanitizeTextByAvailableSanitizer } from '../services/utilities';
 
 /** Formatter that must be use with a Tree Data column */
 export const treeFormatter: Formatter = (_row, _cell, value, columnDef, dataContext, grid) => {
-  const dataView = grid?.getData<SlickDataView>();
-  const gridOptions = grid?.getOptions();
+  const dataView = grid.getData<SlickDataView>();
+  const gridOptions = grid.getOptions();
   const treeDataOptions = gridOptions?.treeDataOptions;
   const treeLevelPropName = treeDataOptions?.levelPropName ?? '__treeLevel';
   const indentMarginLeft = treeDataOptions?.indentMarginLeft ?? 15;
@@ -23,14 +23,12 @@ export const treeFormatter: Formatter = (_row, _cell, value, columnDef, dataCont
   }
 
   if (!dataContext.hasOwnProperty(treeLevelPropName)) {
-    throw new Error('You must provide valid "treeDataOptions" in your Grid Options and it seems that there are no tree level found in this row');
+    throw new Error('[Slickgrid-Universal] You must provide valid "treeDataOptions" in your Grid Options, however it seems that we could not find any tree level info on the current item datacontext row.');
   }
 
   if (dataView?.getItemByIdx) {
-    if (typeof outputValue === 'string') {
-      outputValue = htmlEncode(outputValue);
-    }
-    const identifierPropName = dataView.getIdPropertyName() || 'id';
+    const sanitizedOutputValue = sanitizeTextByAvailableSanitizer(gridOptions, outputValue);
+    const identifierPropName = dataView.getIdPropertyName() ?? 'id';
     const treeLevel = dataContext[treeLevelPropName] || 0;
     const spacer = `<span style="display:inline-block; width:${indentMarginLeft * treeLevel}px;"></span>`;
     const idx = dataView.getIdxById(dataContext[identifierPropName]);
@@ -38,12 +36,12 @@ export const treeFormatter: Formatter = (_row, _cell, value, columnDef, dataCont
 
     if (nextItemRow?.[treeLevelPropName] > treeLevel) {
       if (dataContext.__collapsed) {
-        return `${spacer}<span class="slick-group-toggle collapsed"></span>&nbsp;${outputValue}`;
+        return `${spacer}<span class="slick-group-toggle collapsed"></span>&nbsp;${sanitizedOutputValue}`;
       } else {
-        return `${spacer}<span class="slick-group-toggle expanded"></span>&nbsp;${outputValue}`;
+        return `${spacer}<span class="slick-group-toggle expanded"></span>&nbsp;${sanitizedOutputValue}`;
       }
     }
-    return `${spacer}<span class="slick-group-toggle"></span>&nbsp;${outputValue}`;
+    return `${spacer}<span class="slick-group-toggle"></span>&nbsp;${sanitizedOutputValue}`;
   }
   return '';
 };

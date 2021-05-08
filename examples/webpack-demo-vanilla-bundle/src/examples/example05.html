@@ -15,28 +15,39 @@
 </h6>
 <div class="columns">
   <div class="column is-narrow">
-    <button onclick.delegate="addNewRow()" class="button is-small is-info">
-      <span class="icon mdi mdi-plus"></span>
-      <span>Add New Item (in 1st group)</span>
-    </button>
-    <button onclick.delegate="collapseAll()" data-test="collapse-all" class="button is-small">
-      <span class="icon mdi mdi-arrow-collapse"></span>
-      <span>Collapse All</span>
-    </button>
-    <button onclick.delegate="expandAll()" data-test="expand-all" class="button is-small">
-      <span class="icon mdi mdi-arrow-expand"></span>
-      <span>Expand All</span>
-    </button>
-    <button onclick.delegate="logFlatStructure()" class="button is-small">
-      <span>Log Flat Structure</span>
-    </button>
-    <button onclick.delegate="logHierarchicalStructure()" class="button is-small">
-      <span>Log Hierarchical Structure</span>
-    </button>
-    <button onclick.delegate="dynamicallyChangeFilter()" class="button is-small">
-      <span class="icon mdi mdi-filter-outline"></span>
-      <span>Dynamically Change Filter (% complete &lt; 40)</span>
-    </button>
+    <div class="row" style="margin-bottom: 4px;">
+      <button class="button is-small" data-test="add-500-rows-btn" onclick.delegate="loadData(500)">
+        500 rows
+      </button>
+      <button class="button is-small" data-test="add-50k-rows-btn" onclick.delegate="loadData(50000)">
+        50k rows
+      </button>
+      <button onclick.delegate="dynamicallyChangeFilter()" class="button is-small">
+        <span class="icon mdi mdi-filter-outline"></span>
+        <span>Dynamically Change Filter (% complete &lt; 40)</span>
+      </button>
+    </div>
+
+    <div class="row" style="margin-bottom: 4px;">
+      <button onclick.delegate="addNewRow()" class="button is-small is-info">
+        <span class="icon mdi mdi-plus"></span>
+        <span>Add New Item (in 1st group)</span>
+      </button>
+      <button onclick.delegate="collapseAll()" data-test="collapse-all" class="button is-small">
+        <span class="icon mdi mdi-arrow-collapse"></span>
+        <span>Collapse All</span>
+      </button>
+      <button onclick.delegate="expandAll()" data-test="expand-all" class="button is-small">
+        <span class="icon mdi mdi-arrow-expand"></span>
+        <span>Expand All</span>
+      </button>
+      <button onclick.delegate="logFlatStructure()" class="button is-small">
+        <span>Log Flat Structure</span>
+      </button>
+      <button onclick.delegate="logHierarchicalStructure()" class="button is-small">
+        <span>Log Hierarchical Structure</span>
+      </button>
+    </div>
   </div>
 </div>
 

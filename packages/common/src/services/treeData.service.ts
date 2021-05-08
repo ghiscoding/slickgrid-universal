@@ -52,6 +52,10 @@ export class TreeDataService {
         throw new Error('[Slickgrid-Universal] It looks like you are trying to use Tree Data with multi-column sorting, unfortunately it is not supported because of its complexity, you can disable it via "multiColumnSort: false" grid option and/or help in providing support for this feature.');
       }
 
+      if (!this.gridOptions?.enableFiltering) {
+        throw new Error('[Slickgrid-Universal] It looks like you are trying to use Tree Data without using the filtering option, unfortunately that is not possible with Tree Data since it relies heavily on the filters to expand/collapse the tree. You need to enable it via "enableFiltering: true"');
+      }
+
       if (this.gridOptions?.backendServiceApi || this.gridOptions?.enablePagination) {
         throw new Error('[Slickgrid-Universal] It looks like you are trying to use Tree Data with Pagination and/or a Backend Service (OData, GraphQL) but unfortunately that is simply not supported because of its complexity.');
       }
@@ -80,10 +84,15 @@ export class TreeDataService {
     };
   }
 
-  /** Takes a flat dataset, converts it into a hierarchical dataset, sort it by recursion and finally return back the final and sorted flat array */
-  convertToHierarchicalDatasetAndSort(flatDataset: any[], columnDefinitions: Column[], gridOptions: GridOption): { hierarchical: any[]; flat: any[]; } {
+  /**
+   * Takes a flat dataset, converts it into a hierarchical dataset, sort it by recursion and finally return back the final and sorted flat array
+   * @param {Array<Object>} flatDataset - parent/child flat dataset
+   * @param {Object} gridOptions - grid options
+   * @returns {Array<Object>} - tree dataset
+   */
+  convertToHierarchicalDatasetAndSort<P, T extends P & { [childrenPropName: string]: T[] }>(flatDataset: P[], columnDefinitions: Column[], gridOptions: GridOption) {
     // 1- convert the flat array into a hierarchical array
-    const datasetHierarchical = this.convertFlatDatasetConvertToHierarhicalView(flatDataset, gridOptions);
+    const datasetHierarchical = this.convertFlatToHierarchicalDataset(flatDataset, gridOptions);
 
     // 2- sort the hierarchical array recursively by an optional "initialSort" OR if nothing is provided we'll sort by the column defined as the Tree column
     // also note that multi-column is not currently supported with Tree Data
@@ -96,7 +105,13 @@ export class TreeDataService {
     return datasetSortResult;
   }
 
-  convertFlatDatasetConvertToHierarhicalView(flatDataset: any[], gridOptions: GridOption): any[] {
+  /**
+   * Takes a flat dataset, converts it into a hierarchical dataset
+   * @param {Array<Object>} flatDataset - parent/child flat dataset
+   * @param {Object} gridOptions - grid options
+   * @returns {Array<Object>} - tree dataset
+   */
+  convertFlatToHierarchicalDataset<P, T extends P & { [childrenPropName: string]: P[] }>(flatDataset: P[], gridOptions: GridOption): T[] {
     const dataViewIdIdentifier = gridOptions?.datasetIdPropertyName ?? 'id';
     const treeDataOpt: TreeDataOption = gridOptions?.treeDataOptions ?? { columnId: 'id' };
     const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier };
@@ -125,9 +140,15 @@ export class TreeDataService {
     }
   }
 
-  sortHierarchicalDataset(hierarchicalDataset: any[]): { hierarchical: any[]; flat: any[]; } {
-    const columnSort = this.getInitialSort(this.sharedService.allColumns, this.gridOptions);
-    return this.sortService.sortHierarchicalDataset(hierarchicalDataset, [columnSort]);
+  /**
+   * Takes a hierarchical (tree) input array and sort it (if an `initialSort` exist, it will use that to sort)
+   * @param {Array<Object>} hierarchicalDataset - inpu
+   * @returns {Object} sort result object that includes both the flat & tree data arrays
+   */
+  sortHierarchicalDataset<T>(hierarchicalDataset: T[], inputColumnSorts?: ColumnSort | ColumnSort[]) {
+    const columnSorts = inputColumnSorts ?? this.getInitialSort(this.sharedService.allColumns, this.gridOptions);
+    const finalColumnSorts = Array.isArray(columnSorts) ? columnSorts : [columnSorts];
+    return this.sortService.sortHierarchicalDataset(hierarchicalDataset, finalColumnSorts);
   }
 
   toggleTreeDataCollapse(collapsing: boolean) {

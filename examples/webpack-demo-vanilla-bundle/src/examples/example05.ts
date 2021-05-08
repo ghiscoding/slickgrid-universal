@@ -11,7 +11,7 @@ import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bu
 import { ExampleGridOptions } from './example-grid-options';
 import './example05.scss';
 
-const NB_ITEMS = 200;
+const NB_ITEMS = 500;
 
 export class Example5 {
   columnDefinitions: Column[];
@@ -26,8 +26,8 @@ export class Example5 {
     const gridContainerElm = document.querySelector<HTMLDivElement>('.grid5');
 
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions });
-    this.dataset = this.mockDataset();
-    this.sgb.dataset = this.dataset;
+    this.dataset = this.loadData(NB_ITEMS);
+    // this.sgb.dataset = this.dataset;
   }
 
   dispose() {
@@ -93,10 +93,12 @@ export class Example5 {
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       treeDataOptions: {
         columnId: 'title',
-        // levelPropName: 'indent', // this is optional, you can define the tree level property name that will be used for the sorting/indentation, internally it will use "__treeLevel"
         parentPropName: 'parentId',
+        // this is optional, you can define the tree level property name that will be used for the sorting/indentation, internally it will use "__treeLevel"
+        // levelPropName: 'indent',
 
         // you can optionally sort by a different column and/or sort direction
+        // this is the recommend approach, unless you are 100% that your original array is already sorted (in most cases it's not)
         initialSort: {
           columnId: 'title',
           direction: 'ASC'
@@ -160,17 +162,17 @@ export class Example5 {
     console.log('flat array', this.sgb.treeDataService.dataset);
   }
 
-  mockDataset() {
+  loadData(rowCount: number) {
     let indent = 0;
     const parents = [];
     const data = [];
 
     // prepare the data
-    for (let i = 0; i < NB_ITEMS; i++) {
+    for (let i = 0; i < rowCount; i++) {
       const randomYear = 2000 + Math.floor(Math.random() * 10);
       const randomMonth = Math.floor(Math.random() * 11);
       const randomDay = Math.floor((Math.random() * 29));
-      const d = (data[i] = {});
+      const item = (data[i] = {});
       let parentId;
 
       // for implementing filtering/sorting, don't go over indent of 2
@@ -188,15 +190,19 @@ export class Example5 {
         parentId = null;
       }
 
-      d['id'] = i;
-      d['parentId'] = parentId;
-      // d['title'] = `Task ${i}    -   [P]: ${parentId}`;
-      d['title'] = `Task ${i}`;
-      d['duration'] = '5 days';
-      d['percentComplete'] = Math.round(Math.random() * 100);
-      d['start'] = new Date(randomYear, randomMonth, randomDay);
-      d['finish'] = new Date(randomYear, (randomMonth + 1), randomDay);
-      d['effortDriven'] = (i % 5 === 0);
+      item['id'] = i;
+      // item['__treeLevel'] = indent;
+      item['parentId'] = parentId;
+      // item['title'] = `Task ${i}`;
+      item['title'] = `<span style="font-weight:500">Task ${i}</span>  <span style="font-size:11px; margin-left: 15px;">(parentId: ${parentId})</span>`;
+      item['duration'] = '5 days';
+      item['percentComplete'] = Math.round(Math.random() * 100);
+      item['start'] = new Date(randomYear, randomMonth, randomDay);
+      item['finish'] = new Date(randomYear, (randomMonth + 1), randomDay);
+      item['effortDriven'] = (i % 5 === 0);
+    }
+    if (this.sgb) {
+      this.sgb.dataset = data;
     }
     return data;
   }

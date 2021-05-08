@@ -691,11 +691,12 @@ export class FilterService {
   /**
    * when we have a Filter Presets on a Tree Data View grid, we need to call the pre-filtering of tree data
    * we need to do this because Tree Data is the only type of grid that requires a pre-filter (preFilterTreeData) to be executed before the final filtering
-   * @param filters
+   * @param {Array<Object>} [items] - optional flat array of parent/child items to use while redoing the full sort & refresh
    */
-  refreshTreeDataFilters() {
+  refreshTreeDataFilters(items?: any[]) {
+    const inputItems = items ?? this._dataView.getItems();
     if (this._dataView && this._gridOptions?.enableTreeData) {
-      this._tmpPreFilteredData = this.preFilterTreeData(this._dataView.getItems(), this._columnFilters);
+      this._tmpPreFilteredData = this.preFilterTreeData(inputItems, this._columnFilters);
       this._dataView.refresh(); // and finally this refresh() is what triggers a DataView filtering check
     }
   }

@@ -1369,25 +1369,39 @@ export class SlickVanillaGridBundle {
     this.universalContainerService.registerInstance('RxJsResource', this.rxjs);
   }
 
-  /** Takes a flat dataset with parent/child relationship */
-  private sortTreeDataset(flatDataset: any[]) {
+  /**
+   * Takes a flat dataset with parent/child relationship, sort it (via its tree structure) and return the sorted flat array
+   * @returns {Array<Object>} sort flat parent/child dataset
+   */
+  private sortTreeDataset<T>(flatDatasetInput: T[]): T[] {
     const prevDatasetLn = this._currentDatasetLength;
     let sortedDatasetResult;
+    let flatDatasetOutput: T[] = [];
 
-    // if the hierarchical dataset was already initialized then no need to re-convert it, we can use it directly from the shared service ref
-    if (this._isDatasetHierarchicalInitialized && this.datasetHierarchical) {
-      sortedDatasetResult = this.treeDataService.sortHierarchicalDataset(this.datasetHierarchical);
-    } else {
-      // else we need to first convert the flat dataset to a hierarchical dataset and then sort
-      sortedDatasetResult = this.treeDataService.convertToHierarchicalDatasetAndSort(flatDataset, this._columnDefinitions, this.gridOptions);
-      this.sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
-    }
+    if (Array.isArray(flatDatasetInput) && flatDatasetInput.length > 0) {
+      // if the hierarchical dataset was already initialized then no need to re-convert it, we can use it directly from the shared service ref
+      if (this._isDatasetHierarchicalInitialized && this.datasetHierarchical) {
+        sortedDatasetResult = this.treeDataService.sortHierarchicalDataset(this.datasetHierarchical);
+        flatDatasetOutput = sortedDatasetResult.flat;
+      } else {
+        if (this.gridOptions?.treeDataOptions?.initialSort) {
+          // else we need to first convert the flat dataset to a hierarchical dataset and then sort
+          sortedDatasetResult = this.treeDataService.convertToHierarchicalDatasetAndSort(flatDatasetInput, this._columnDefinitions, this.gridOptions);
+          this.sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
+        } else {
+          // else we assume that the user provided an array that is already sorted (user's responsability)
+          // and so we can simply convert the array to a tree structure and we're done, no need to sort
+          this.sharedService.hierarchicalDataset = this.treeDataService.convertFlatToHierarchicalDataset(flatDatasetInput, this.gridOptions);
+        }
+        flatDatasetOutput = flatDatasetInput || [];
+      }
 
-    // if we add/remove item(s) from the dataset, we need to also refresh our tree data filters
-    if (flatDataset.length > 0 && prevDatasetLn > 0 && flatDataset.length !== prevDatasetLn) {
-      this.filterService.refreshTreeDataFilters();
+      // if we add/remove item(s) from the dataset, we need to also refresh our tree data filters
+      if (flatDatasetInput.length > 0 && flatDatasetInput.length !== prevDatasetLn) {
+        this.filterService.refreshTreeDataFilters(flatDatasetOutput);
+      }
     }
-    return sortedDatasetResult.flat;
+    return flatDatasetOutput;
   }
 
   /**

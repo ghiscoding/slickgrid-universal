@@ -70,7 +70,8 @@
     "jquery-ui-dist": "^1.12.1",
     "moment-mini": "^2.24.0",
     "multiple-select-modified": "^1.3.11",
-    "slickgrid": "^2.4.34"
+    "slickgrid": "^2.4.34",
+    "un-flatten-tree": "^2.0.12"
   },
   "devDependencies": {
     "@types/dompurify": "^2.2.2",
