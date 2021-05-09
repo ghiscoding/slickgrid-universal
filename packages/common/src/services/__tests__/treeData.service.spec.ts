@@ -7,6 +7,7 @@ declare const Slick: SlickNamespace;
 
 const gridOptionsMock = {
   multiColumnSort: false,
+  enableFiltering: true,
   enableTreeData: true,
   treeDataOptions: {
     columnId: 'file'
@@ -58,6 +59,7 @@ describe('TreeData Service', () => {
 
   beforeEach(() => {
     gridOptionsMock.backendServiceApi = undefined;
+    gridOptionsMock.enableFiltering = true;
     gridOptionsMock.enablePagination = false;
     gridOptionsMock.multiColumnSort = false;
     gridOptionsMock.treeDataOptions = {
@@ -89,7 +91,7 @@ describe('TreeData Service', () => {
 
   it('should throw an error when used without filter grid option', (done) => {
     try {
-      gridOptionsMock.multiColumnSort = true;
+      gridOptionsMock.enableFiltering = false;
       service.init(gridStub);
     } catch (e) {
       expect(e.toString()).toContain('[Slickgrid-Universal] It looks like you are trying to use Tree Data without using the filtering option');

@@ -373,9 +373,11 @@ export class SortService {
 
   /** When a Sort Changes on a Local grid (JSON dataset) */
   onLocalSortChanged(grid: SlickGrid, sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, forceReSort = false, emitSortChanged = false) {
+    const datasetIdPropertyName = this._gridOptions?.datasetIdPropertyName ?? 'id';
     const isTreeDataEnabled = this._gridOptions?.enableTreeData ?? false;
-    const dataView = grid?.getData && grid.getData() as SlickDataView;
+    const dataView = grid.getData?.() as SlickDataView;
     console.time('sort changed');
+
     if (grid && dataView) {
       if (forceReSort && !isTreeDataEnabled) {
         dataView.reSort();
@@ -384,13 +386,21 @@ export class SortService {
       if (isTreeDataEnabled && this.sharedService && Array.isArray(this.sharedService.hierarchicalDataset)) {
         const hierarchicalDataset = this.sharedService.hierarchicalDataset;
         const datasetSortResult = this.sortHierarchicalDataset(hierarchicalDataset, sortColumns);
-        this._dataView.setItems(datasetSortResult.flat, this._gridOptions?.datasetIdPropertyName ?? 'id');
+
+        // create a temp array which has only the item Ids, we'll use it to get the item position
+        // const sortedArrayItemIds = datasetSortResult.flat.map((item) => item[datasetIdPropertyName]);
+        // dataView.sort((x: any, y: any) => sortedArrayItemIds.findIndex((itemId) => itemId === x[datasetIdPropertyName]) - sortedArrayItemIds.findIndex((itemId) => itemId === y[datasetIdPropertyName]));
+
+        // we could use the DataView sort but that would require re-sorting again (since the 2nd array that is currently in the DataView would have to be resorted against the 1st array that was sorting from tree sort)
+        // it is simply much faster to just replace the entire dataset
+        this._dataView.setItems(datasetSortResult.flat, datasetIdPropertyName);
       } else {
         dataView.sort(this.sortComparers.bind(this, sortColumns));
       }
 
       grid.invalidate();
       console.timeEnd('sort changed');
+
       if (emitSortChanged) {
         this.emitSortChanged(EmitterType.local, sortColumns.map(col => {
           return {

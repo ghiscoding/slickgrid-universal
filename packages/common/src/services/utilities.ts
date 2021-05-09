@@ -114,6 +114,12 @@ export function convertParentChildArrayToHierarchicalView<P, T extends P & { [ch
   return roots;
 }
 
+/**
+ * Mutate the original array and add a treeLevel (defaults to `__treeLevel`) property on each item.
+ * @param {Array<Object>} treeArray - hierarchical tree array
+ * @param {Object} options - options containing info like children & treeLevel property names
+ * @param {Number} [treeLevel] - current tree level
+ */
 export function addTreeLevelByMutation<T>(treeArray: T[], options: { childrenPropName: string; treeLevelPropName: string; }, treeLevel = 0) {
   const childrenPropName = (options?.childrenPropName ?? 'children') as keyof T;
 
