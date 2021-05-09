@@ -2036,12 +2036,17 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         jest.spyOn(treeDataServiceStub, 'convertToHierarchicalDatasetAndSort').mockReturnValue({ hierarchical: mockHierarchical as any[], flat: mockFlatDataset as any[] });
         const refreshTreeSpy = jest.spyOn(filterServiceStub, 'refreshTreeDataFilters');
 
-        component.gridOptions = { enableTreeData: true, treeDataOptions: { columnId: 'file', parentPropName: 'parentId', childrenPropName: 'files' } } as unknown as GridOption;
+        component.gridOptions = {
+          enableTreeData: true, treeDataOptions: {
+            columnId: 'file', parentPropName: 'parentId', childrenPropName: 'files',
+            initialSort: { columndId: 'file', direction: 'ASC' }
+          }
+        } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
         component.dataset = mockFlatDataset;
 
         expect(hierarchicalSpy).toHaveBeenCalledWith(mockHierarchical);
-        expect(refreshTreeSpy).not.toHaveBeenCalled();
+        expect(refreshTreeSpy).toHaveBeenCalled();
       });
 
       it('should change hierarchical dataset and expect processTreeDataInitialSort being called with other methods', () => {
@@ -2071,7 +2076,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const sortHierarchicalSpy = jest.spyOn(treeDataServiceStub, 'sortHierarchicalDataset').mockReturnValue({ hierarchical: mockHierarchical as any[], flat: mockFlatDataset as any[] });
 
         component.dispose();
-        component.gridOptions = { enableTreeData: true, treeDataOptions: { columnId: 'file' } } as unknown as GridOption;
+        component.gridOptions = { enableTreeData: true, treeDataOptions: { columnId: 'file', initialSort: { columndId: 'file', direction: 'ASC' } } } as unknown as GridOption;
         component.datasetHierarchical = mockHierarchical;
         component.initialization(divContainer, slickEventHandler);
 
@@ -2090,7 +2095,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const refreshTreeSpy = jest.spyOn(filterServiceStub, 'refreshTreeDataFilters');
 
         component.dataset = [{ id: 0, file: 'documents' }];
-        component.gridOptions = { enableTreeData: true, treeDataOptions: { columnId: 'file', parentPropName: 'parentId', childrenPropName: 'files' } } as unknown as GridOption;
+        component.gridOptions = { enableTreeData: true, treeDataOptions: { columnId: 'file', parentPropName: 'parentId', childrenPropName: 'files', initialSort: { columndId: 'file', direction: 'ASC' } } } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
         component.dataset = mockFlatDataset;
 
