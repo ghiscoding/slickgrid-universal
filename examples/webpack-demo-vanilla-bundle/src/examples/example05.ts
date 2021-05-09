@@ -107,7 +107,9 @@ export class Example5 {
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
       presets: {
         filters: [{ columnId: 'percentComplete', searchTerms: [25], operator: '>=' }]
-      }
+      },
+      // if you're dealing with lots of data, it is recommended to use the filter debounce
+      filterTypingDebounce: 250,
     };
   }
 

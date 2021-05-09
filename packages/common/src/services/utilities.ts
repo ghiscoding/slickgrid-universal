@@ -83,7 +83,7 @@ export function convertParentChildArrayToHierarchicalView<P, T extends P & { [ch
   const childrenPropName = options?.childrenPropName ?? 'children';
   const parentPropName = options?.parentPropName ?? '__parentId';
   const identifierPropName = options?.identifierPropName ?? 'id';
-  const treeLevelPropName = options?.levelPropName ?? '__treeLevel';
+  const levelPropName = options?.levelPropName ?? '__treeLevel';
   const inputArray: P[] = flatArray || [];
   const roots: T[] = []; // items without parent which at the root
 
@@ -96,12 +96,14 @@ export function convertParentChildArrayToHierarchicalView<P, T extends P & { [ch
   Object.keys(all).forEach((id) => {
     const item = all[id];
     if (!(parentPropName in item) || item[parentPropName] === null || item[parentPropName] === undefined || item[parentPropName] === '') {
+      // delete item[parentPropName];
       roots.push(item);
     } else if (item[parentPropName] in all) {
       const p = all[item[parentPropName]];
       if (!(childrenPropName in p)) {
         p[childrenPropName] = [];
       }
+      // delete item[parentPropName];
       p[childrenPropName].push(item);
     }
   });
@@ -109,7 +111,7 @@ export function convertParentChildArrayToHierarchicalView<P, T extends P & { [ch
   // we need and want to the Tree Level,
   // we can do that after the tree is created and mutate the array by adding a __treeLevel property on each item
   // perhaps there might be a way to add this while creating the tree for now that is the easiest way I found
-  addTreeLevelByMutation(roots, { childrenPropName, treeLevelPropName }, 0);
+  addTreeLevelByMutation(roots, { childrenPropName, levelPropName }, 0);
 
   return roots;
 }
@@ -120,7 +122,7 @@ export function convertParentChildArrayToHierarchicalView<P, T extends P & { [ch
  * @param {Object} options - options containing info like children & treeLevel property names
  * @param {Number} [treeLevel] - current tree level
  */
-export function addTreeLevelByMutation<T>(treeArray: T[], options: { childrenPropName: string; treeLevelPropName: string; }, treeLevel = 0) {
+export function addTreeLevelByMutation<T>(treeArray: T[], options: { childrenPropName: string; levelPropName: string; }, treeLevel = 0) {
   const childrenPropName = (options?.childrenPropName ?? 'children') as keyof T;
 
   if (Array.isArray(treeArray)) {
@@ -131,7 +133,7 @@ export function addTreeLevelByMutation<T>(treeArray: T[], options: { childrenPro
           addTreeLevelByMutation(item[childrenPropName] as unknown as Array<T>, options, treeLevel);
           treeLevel--;
         }
-        (item as any)[options.treeLevelPropName] = treeLevel;
+        (item as any)[options.levelPropName] = treeLevel;
       }
     }
   }
@@ -143,11 +145,16 @@ export function addTreeLevelByMutation<T>(treeArray: T[], options: { childrenPro
  * @param {Object} options - you can provide "childrenPropName" (defaults to "children")
  * @return {Array<Object>} output - Parent/Child array
  */
-export function convertHierarchicalViewToParentChildArray<T>(hierarchicalArray: T[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; }) {
-  const childrenPropName = (options?.childrenPropName ?? 'children') as keyof T;
-  const identifierPropName = (options?.identifierPropName ?? 'id') as keyof T;
-  const parentPropName = (options?.parentPropName ?? '__parentId') as keyof T;
+export function convertHierarchicalViewToParentChildArray<T>(hierarchicalArray: T[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; shouldAddTreeLevelNumber?: boolean; levelPropName?: string; }) {
+  const childrenPropName = (options?.childrenPropName ?? 'children') as keyof T & string;
+  const identifierPropName = (options?.identifierPropName ?? 'id') as keyof T & string;
+  const parentPropName = (options?.parentPropName ?? '__parentId') as keyof T & string;
+  const levelPropName = options?.levelPropName ?? '__treeLevel';
   type FlatParentChildArray = Omit<T, keyof typeof childrenPropName>;
+
+  if (options?.shouldAddTreeLevelNumber) {
+    addTreeLevelByMutation(hierarchicalArray, { childrenPropName, levelPropName });
+  }
 
   console.time('flatten the tree');
   const flat = flatten(

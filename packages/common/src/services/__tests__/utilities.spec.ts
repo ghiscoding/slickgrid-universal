@@ -226,7 +226,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should return a flat array from a hierarchical structure', () => {
-      addTreeLevelByMutation(mockTreeArray, { childrenPropName: 'files', treeLevelPropName: '__treeLevel' });
+      addTreeLevelByMutation(mockTreeArray, { childrenPropName: 'files', levelPropName: '__treeLevel' });
       const output = convertHierarchicalViewToParentChildArray(mockTreeArray, { childrenPropName: 'files' });
       expect(output).toEqual([
         { id: 18, size: 90, __treeLevel: 0, dateModified: '2015-03-03', file: 'something.txt', __parentId: null, },

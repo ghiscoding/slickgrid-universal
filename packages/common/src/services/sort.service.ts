@@ -387,10 +387,6 @@ export class SortService {
         const hierarchicalDataset = this.sharedService.hierarchicalDataset;
         const datasetSortResult = this.sortHierarchicalDataset(hierarchicalDataset, sortColumns);
 
-        // create a temp array which has only the item Ids, we'll use it to get the item position
-        // const sortedArrayItemIds = datasetSortResult.flat.map((item) => item[datasetIdPropertyName]);
-        // dataView.sort((x: any, y: any) => sortedArrayItemIds.findIndex((itemId) => itemId === x[datasetIdPropertyName]) - sortedArrayItemIds.findIndex((itemId) => itemId === y[datasetIdPropertyName]));
-
         // we could use the DataView sort but that would require re-sorting again (since the 2nd array that is currently in the DataView would have to be resorted against the 1st array that was sorting from tree sort)
         // it is simply much faster to just replace the entire dataset
         this._dataView.setItems(datasetSortResult.flat, datasetIdPropertyName);
@@ -420,7 +416,7 @@ export class SortService {
 
     const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
     const treeDataOpt: TreeDataOption = this._gridOptions?.treeDataOptions ?? { columnId: '' };
-    const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier };
+    const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier, shouldAddTreeLevelNumber: true };
 
     console.time('reconvert to flat parent/child');
     const sortedFlatArray = convertHierarchicalViewToParentChildArray(hierarchicalDataset, treeDataOptions);
