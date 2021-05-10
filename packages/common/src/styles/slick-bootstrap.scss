@@ -202,6 +202,7 @@
         cursor: pointer;
 
         &.expanded:before {
+          vertical-align: $icon-group-vertical-align;
           display: inline-block;
           content: $icon-group-expanded;
           font-family: $icon-font-family;
