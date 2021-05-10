@@ -102,7 +102,6 @@ describe('LongTextEditor', () => {
 
     afterEach(() => {
       editor.destroy();
-      jest.clearAllMocks();
     });
 
     beforeEach(() => {
@@ -206,14 +205,14 @@ describe('LongTextEditor', () => {
       expect(currentTextLengthElm.textContent).toBe('6');
       expect(maxTextLengthElm).toBeNull();
       expect(editor.getValue()).toBe('task 1');
-      expect(editorElm[0].defaultValue).toBe('task 1');
+      expect(editorElm.defaultValue).toBe('task 1');
     });
 
     it('should hide the DOM element div wrapper when the "hide" method is called', () => {
       editor = new LongTextEditor(editorArguments);
       const wrapperElm = document.body.querySelector('.slick-large-editor-text.editor-title') as HTMLDivElement;
       editor.show();
-      expect(wrapperElm.style.display).toBe('');
+      expect(wrapperElm.style.display).toBe('block');
 
       editor.hide();
       expect(wrapperElm.style.display).toBe('none');
@@ -227,7 +226,7 @@ describe('LongTextEditor', () => {
       expect(wrapperElm.style.display).toBe('none');
 
       editor.show();
-      expect(wrapperElm.style.display).toBe('');
+      expect(wrapperElm.style.display).toBe('block');
     });
 
     describe('isValueChanged method', () => {
@@ -445,7 +444,7 @@ describe('LongTextEditor', () => {
         const spySave = jest.spyOn(editor, 'save');
         const editorElm = editor.editorDomElement;
 
-        editorElm[0].dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
+        editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
           keyCode: KeyCode.ENTER,
           ctrlKey: true,
           bubbles: true
@@ -462,7 +461,7 @@ describe('LongTextEditor', () => {
         const spyCancel = jest.spyOn(editor, 'cancel');
         const editorElm = editor.editorDomElement;
 
-        editorElm[0].dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
+        editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
           keyCode: KeyCode.ESCAPE,
           bubbles: true
         }));
@@ -476,7 +475,7 @@ describe('LongTextEditor', () => {
         const editorElm = editor.editorDomElement;
         const spyNavigate = jest.spyOn(gridStub, 'navigatePrev');
 
-        editorElm[0].dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
+        editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
           keyCode: KeyCode.TAB,
           shiftKey: true,
           bubbles: true
@@ -492,7 +491,7 @@ describe('LongTextEditor', () => {
         const editorElm = editor.editorDomElement;
         const spyNavigate = jest.spyOn(gridStub, 'navigateNext');
 
-        editorElm[0].dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
+        editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
           keyCode: KeyCode.TAB,
           shiftKey: false,
           bubbles: true
@@ -504,12 +503,18 @@ describe('LongTextEditor', () => {
     });
 
     describe('on button clicked events', () => {
+      beforeEach(() => {
+        jest.clearAllMocks();
+      });
+
       it('should call "save" method when the save button is clicked', () => {
         mockItemData = { id: 1, title: 'task', isActive: true };
 
         editor = new LongTextEditor(editorArguments);
+        // const spySave = jest.spyOn(editor, 'save');
+        const spySave = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+
         editor.loadValue(mockItemData);
-        const spySave = jest.spyOn(editor, 'save');
         const editorFooterElm = document.body.querySelector('.slick-large-editor-text.editor-title .editor-footer') as HTMLDivElement;
         const buttonSaveElm = editorFooterElm.querySelector('.btn-primary') as HTMLButtonElement;
 
@@ -523,7 +528,9 @@ describe('LongTextEditor', () => {
 
         editor = new LongTextEditor(editorArguments);
         editor.loadValue(mockItemData);
-        const spyCancel = jest.spyOn(editor, 'cancel');
+        // const spyCancel = jest.spyOn(editor, 'cancel');
+        const spyCancel = jest.spyOn(editorArguments, 'cancelChanges');
+
         const editorFooterElm = document.body.querySelector('.slick-large-editor-text.editor-title .editor-footer') as HTMLDivElement;
         const buttonCancelElm = editorFooterElm.querySelector('.btn-default') as HTMLButtonElement;
 
@@ -739,7 +746,7 @@ describe('LongTextEditor', () => {
         const editorElm = document.body.querySelector('.slick-large-editor-text') as HTMLDivElement;
 
         expect(editorElm.style.top).toBe('100px');
-        expect(editorElm.style.left).toBe('675px'); // cellLeftPos - (editorWidth - cellWidth + marginAdjust) => (900 - (310 - 100 + 15))
+        expect(editorElm.style.left).toBe('690px'); // cellLeftPos - (editorWidth - cellWidth + marginAdjust) => (900 - (310 - 100 + 0))
       });
 
       it('should assume editor to positioned on the top of the cell when there is NOT enough room on the bottom', () => {
@@ -812,8 +819,8 @@ describe('LongTextEditor', () => {
         formValues: { title: '' }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
-      expect(editor.editorDomElement.attr('disabled')).toEqual('disabled');
-      expect(editor.editorDomElement.val()).toEqual('');
+      expect(editor.editorDomElement.disabled).toEqual(true);
+      expect(editor.editorDomElement.value).toEqual('');
     });
 
     it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false and also expect "onBeforeComposite" to not be called because the value is blank', () => {
@@ -834,8 +841,8 @@ describe('LongTextEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
       expect(onCompositeEditorSpy).not.toHaveBeenCalled;
       expect(disableSpy).toHaveBeenCalledWith(true);
-      expect(editor.editorDomElement.attr('disabled')).toEqual('disabled');
-      expect(editor.editorDomElement.val()).toEqual('');
+      expect(editor.editorDomElement.disabled).toEqual(true);
+      expect(editor.editorDomElement.value).toEqual('');
     });
 
     it('should call "disable" method and expect the DOM element to become disabled and have an empty formValues be passed in the onCompositeEditorChange event', () => {
@@ -856,8 +863,8 @@ describe('LongTextEditor', () => {
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
         formValues: {}, editors: {}, triggeredBy: 'user',
       }, expect.anything());
-      expect(editor.editorDomElement.attr('disabled')).toEqual('disabled');
-      expect(editor.editorDomElement.val()).toEqual('');
+      expect(editor.editorDomElement.disabled).toEqual(true);
+      expect(editor.editorDomElement.value).toEqual('');
     });
 
     it('should expect "onCompositeEditorChange" to have been triggered with the new value showing up in its "formValues" object', () => {

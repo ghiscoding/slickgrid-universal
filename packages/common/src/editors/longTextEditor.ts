@@ -16,6 +16,7 @@ import {
   SlickNamespace,
 } from '../interfaces/index';
 import { getDescendantProperty, getHtmlElementOffset, getTranslationPrefix, setDeepValue, } from '../services/utilities';
+import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
 import { textValidator } from '../editorValidators/textValidator';
 
@@ -28,13 +29,14 @@ declare const Slick: SlickNamespace;
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
 export class LongTextEditor implements Editor {
+  protected _bindEventService: BindingEventService;
   protected _defaultTextValue: any;
   protected _isValueTouched = false;
   protected _locales: Locale;
   protected _timer?: NodeJS.Timeout;
-  protected _$textarea: any;
-  protected _$currentLengthElm: any;
-  protected _$wrapper: any;
+  protected _currentLengthElm!: HTMLSpanElement;
+  protected _textareaElm!: HTMLTextAreaElement;
+  protected _wrapperElm!: HTMLDivElement;
 
   /** is the Editor disabled? */
   disabled = false;
@@ -62,6 +64,7 @@ export class LongTextEditor implements Editor {
     // get locales provided by user in forRoot or else use default English locales via the Constants
     this._locales = this.gridOptions && this.gridOptions.locales || Constants.locales;
 
+    this._bindEventService = new BindingEventService();
     this.init();
   }
 
@@ -72,7 +75,7 @@ export class LongTextEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef && this.columnDef.internalColumnEditor || {};
+    return this.columnDef?.internalColumnEditor ?? {};
   }
 
   /** Getter for the item data context object */
@@ -81,21 +84,21 @@ export class LongTextEditor implements Editor {
   }
 
   /** Getter for the Editor DOM Element */
-  get editorDomElement(): any {
-    return this._$textarea;
+  get editorDomElement(): HTMLTextAreaElement {
+    return this._textareaElm;
   }
 
   get editorOptions(): LongTextEditorOption {
-    return this.columnEditor?.editorOptions || {};
+    return this.columnEditor?.editorOptions ?? {};
   }
 
-  get hasAutoCommitEdit() {
-    return this.grid.getOptions().autoCommitEdit;
+  get hasAutoCommitEdit(): boolean {
+    return this.gridOptions?.autoCommitEdit ?? false;
   }
 
   /** Get the Validator function, can be passed in Editor property or Column Definition */
   get validator(): EditorValidator | undefined {
-    return (this.columnEditor && this.columnEditor.validator) || (this.columnDef && this.columnDef.validator);
+    return this.columnEditor?.validator ?? this.columnDef?.validator;
   }
 
   init(): void {
@@ -120,58 +123,81 @@ export class LongTextEditor implements Editor {
     const textAreaCols = this.editorOptions?.cols ?? 40;
     const textAreaRows = compositeEditorOptions ? 3 : this.editorOptions?.rows ?? 4;
 
-    const $container = compositeEditorOptions ? this.args.container : $('body');
-    this._$wrapper = $(`<div class="slick-large-editor-text editor-${columnId}" />`).appendTo($container);
-    this._$wrapper.css({ position: (compositeEditorOptions ? 'relative' : 'absolute') });
-    this._$textarea = $(`<textarea hidefocus cols="${textAreaCols}" rows="${textAreaRows}" placeholder="${placeholder}" title="${title}">`).appendTo(this._$wrapper);
+    const containerElm = compositeEditorOptions ? this.args.container : document.body;
+    this._wrapperElm = document.createElement('div');
+    this._wrapperElm.className = `slick-large-editor-text editor-${columnId}`;
+    this._wrapperElm.style.position = compositeEditorOptions ? 'relative' : 'absolute';
+    containerElm.appendChild(this._wrapperElm);
 
-    const editorFooterElm = $(`<div class="editor-footer"/>`);
-    const countContainerElm = $(`<span class="counter"/>`);
-    this._$currentLengthElm = $(`<span class="text-length">0</span>`);
-    this._$currentLengthElm.appendTo(countContainerElm);
+    this._textareaElm = document.createElement('textarea');
+    this._textareaElm.cols = textAreaCols;
+    this._textareaElm.rows = textAreaRows;
+    this._textareaElm.placeholder = placeholder;
+    this._textareaElm.title = title;
+    this._wrapperElm.appendChild(this._textareaElm);
+
+    const editorFooterElm = document.createElement('div');
+    editorFooterElm.className = 'editor-footer';
+
+    const countContainerElm = document.createElement('span');
+    countContainerElm.className = 'counter';
+
+    this._currentLengthElm = document.createElement('span');
+    this._currentLengthElm.className = 'text-length';
+    this._currentLengthElm.textContent = '0';
+    countContainerElm.appendChild(this._currentLengthElm);
+
     if (maxLength !== undefined) {
-      const textMaxLengthElm = $(`<span class="separator">/</span><span class="max-length">${maxLength}</span>`);
-      textMaxLengthElm.appendTo(countContainerElm);
+      const maxLengthSeparatorElm = document.createElement('span');
+      maxLengthSeparatorElm.className = 'separator';
+      maxLengthSeparatorElm.textContent = '/';
+      const maxLengthElm = document.createElement('span');
+      maxLengthElm.className = 'max-length';
+      maxLengthElm.textContent = `${maxLength}`;
+      countContainerElm.appendChild(maxLengthSeparatorElm);
+      countContainerElm.appendChild(maxLengthElm);
     }
-    countContainerElm.appendTo(editorFooterElm);
+    editorFooterElm.appendChild(countContainerElm);
 
     if (!compositeEditorOptions) {
-      const cancelBtnElm = $(`<button class="btn btn-cancel btn-default btn-xs">${cancelText}</button>`);
-      const saveBtnElm = $(`<button class="btn btn-save btn-primary btn-xs">${saveText}</button>`);
-      cancelBtnElm.appendTo(editorFooterElm);
-      saveBtnElm.appendTo(editorFooterElm);
+      const cancelBtnElm = document.createElement('button');
+      cancelBtnElm.className = 'btn btn-cancel btn-default btn-xs';
+      cancelBtnElm.textContent = cancelText;
+      const saveBtnElm = document.createElement('button');
+      saveBtnElm.className = 'btn btn-save btn-primary btn-xs';
+      saveBtnElm.textContent = saveText;
+      editorFooterElm.appendChild(cancelBtnElm);
+      editorFooterElm.appendChild(saveBtnElm);
+      this._bindEventService.bind(cancelBtnElm, 'click', this.cancel.bind(this) as EventListener);
+      this._bindEventService.bind(saveBtnElm, 'click', this.save.bind(this) as EventListener);
+      this._textareaElm.focus();
+      this._textareaElm.select();
+      this.position(this.args?.position);
     }
-    editorFooterElm.appendTo(this._$wrapper);
+    this._wrapperElm.appendChild(editorFooterElm);
 
-    this._$textarea.on('keydown', this.handleKeyDown.bind(this));
-    this._$textarea.on('input', this.handleOnInputChange.bind(this));
-    this._$textarea.on('paste', this.handleOnInputChange.bind(this));
-
-    if (!compositeEditorOptions) {
-      this.position(this.args && this.args.position);
-      this._$wrapper.find('.btn-save').on('click', () => this.save());
-      this._$wrapper.find('.btn-cancel').on('click', () => this.cancel());
-      this._$textarea.focus().select();
-    }
+    this._bindEventService.bind(this._textareaElm, 'keydown', this.handleKeyDown.bind(this) as EventListener);
+    this._bindEventService.bind(this._textareaElm, 'input', this.handleOnInputChange.bind(this) as unknown as EventListener);
+    this._bindEventService.bind(this._textareaElm, 'paste', this.handleOnInputChange.bind(this) as unknown as EventListener);
   }
 
   cancel() {
     const value = this._defaultTextValue || '';
-    this._$textarea.val(value);
-    this._$currentLengthElm.text(value.length);
-    if (this.args && this.args.cancelChanges) {
+    this._textareaElm.value = value;
+    this._currentLengthElm.textContent = `${value.length}`;
+    if (this.args?.cancelChanges) {
       this.args.cancelChanges();
     }
   }
 
   hide() {
-    this._$wrapper.hide();
+    this._wrapperElm.style.display = 'none';
   }
 
   show() {
     const isCompositeEditor = !!this.args?.compositeEditorOptions;
     if (!isCompositeEditor) {
-      this._$wrapper.show();
+      this._wrapperElm.style.display = 'block';
     } else {
       // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
       this.applyInputUsabilityState();
@@ -179,27 +205,20 @@ export class LongTextEditor implements Editor {
   }
 
   destroy() {
-    if (this._$textarea) {
-      this._$textarea.off('keydown');
-      this._$textarea.off('input');
-      this._$textarea.off('paste');
+    this._bindEventService.unbindAll();
+    if (this._wrapperElm) {
+      this._wrapperElm.remove();
     }
-    if (this._$wrapper) {
-      this._$wrapper.find('.btn-save').off('click');
-      this._$wrapper.find('.btn-cancel').off('click');
-      this._$wrapper.remove();
-    }
-    this._$wrapper = null;
   }
 
   disable(isDisabled = true) {
     const prevIsDisabled = this.disabled;
     this.disabled = isDisabled;
 
-    if (this._$textarea && this._$wrapper) {
+    if (this._textareaElm && this._wrapperElm) {
       if (isDisabled) {
-        this._$textarea.attr('disabled', 'disabled');
-        this._$wrapper.addClass('disabled');
+        this._textareaElm.disabled = true;
+        this._wrapperElm.classList.add('disabled');
 
         // clear value when it's newly disabled and not empty
         const currentValue = this.getValue();
@@ -207,25 +226,26 @@ export class LongTextEditor implements Editor {
           this.reset('', true, true);
         }
       } else {
-        this._$textarea.removeAttr('disabled');
-        this._$wrapper.removeClass('disabled');
+        this._textareaElm.disabled = false;
+        this._wrapperElm.classList.remove('disabled');
       }
     }
   }
 
   focus() {
-    if (this._$textarea) {
-      this._$textarea.focus().select();
+    if (this._textareaElm) {
+      this._textareaElm.focus();
+      this._textareaElm.select();
     }
   }
 
   getValue(): string {
-    return this._$textarea.val();
+    return this._textareaElm.value;
   }
 
   setValue(val: string, isApplyingValue = false, triggerOnCompositeEditorChange = true) {
-    this._$textarea.val(val);
-    this._$currentLengthElm.text(val.length);
+    this._textareaElm.value = val;
+    this._currentLengthElm.textContent = `${val.length}`;
 
     if (isApplyingValue) {
       this.applyValue(this.args.item, this.serializeValue());
@@ -239,12 +259,12 @@ export class LongTextEditor implements Editor {
   }
 
   applyValue(item: any, state: any) {
-    const fieldName = this.columnDef && this.columnDef.field;
+    const fieldName = this.columnDef?.field;
     if (fieldName !== undefined) {
       const isComplexObject = fieldName?.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
       // validate the value before applying it (if not valid we'll set an empty string)
-      const validation = this.validate(null, state);
+      const validation = this.validate(undefined, state);
       const newValue = (validation && validation.valid) ? state : '';
 
       // set the new value to the item datacontext
@@ -260,7 +280,7 @@ export class LongTextEditor implements Editor {
   }
 
   isValueChanged(): boolean {
-    const elmValue = this._$textarea.val();
+    const elmValue = this._textareaElm.value;
     return (!(elmValue === '' && (this._defaultTextValue === null || this._defaultTextValue === undefined))) && (elmValue !== this._defaultTextValue);
   }
 
@@ -269,7 +289,7 @@ export class LongTextEditor implements Editor {
   }
 
   loadValue(item: any) {
-    const fieldName = this.columnDef && this.columnDef.field;
+    const fieldName = this.columnDef?.field;
 
     if (item && fieldName !== undefined) {
       // is the field a complex object, "address.streetNumber"
@@ -277,10 +297,10 @@ export class LongTextEditor implements Editor {
       const value = (isComplexObject) ? getDescendantProperty(item, fieldName) : item[fieldName];
 
       this._defaultTextValue = value || '';
-      this._$textarea.val(this._defaultTextValue);
-      this._$currentLengthElm.text(this._defaultTextValue.length);
-      this._$textarea[0].defaultValue = this._defaultTextValue;
-      this._$textarea.select();
+      this._textareaElm.value = this._defaultTextValue;
+      this._currentLengthElm.textContent = this._defaultTextValue.length;
+      this._textareaElm.defaultValue = this._defaultTextValue;
+      this._textareaElm.select();
     }
   }
 
@@ -296,8 +316,8 @@ export class LongTextEditor implements Editor {
     const containerOffset = getHtmlElementOffset(this.args.container);
     const containerHeight = this.args.container.offsetHeight;
     const containerWidth = this.args.container.offsetWidth;
-    const calculatedEditorHeight = this._$wrapper.height() || this.args.position.height;
-    const calculatedEditorWidth = this._$wrapper.width() || this.args.position.width;
+    const calculatedEditorHeight = this._wrapperElm.getBoundingClientRect().height || this.args.position.height;
+    const calculatedEditorWidth = this._wrapperElm.getBoundingClientRect().width || this.args.position.width;
     const calculatedBodyHeight = document.body.offsetHeight || window.innerHeight; // body height/width might be 0 if so use the window height/width
     const calculatedBodyWidth = document.body.offsetWidth || window.innerWidth;
 
@@ -309,7 +329,7 @@ export class LongTextEditor implements Editor {
     // or when using "auto" and we detect not enough available space then we'll position to the "left" of the cell
     const position = this.editorOptions?.position ?? 'auto';
     if (position === 'left' || (position === 'auto' && (newPositionLeft + calculatedEditorWidth) > calculatedBodyWidth)) {
-      const marginRightAdjustment = this.editorOptions?.marginRight ?? 15;
+      const marginRightAdjustment = this.editorOptions?.marginRight ?? 0;
       newPositionLeft -= (calculatedEditorWidth - containerWidth + marginRightAdjustment);
     }
 
@@ -319,9 +339,8 @@ export class LongTextEditor implements Editor {
     }
 
     // reposition the editor over the cell (90% of the time this will end up using a position on the "right" of the cell)
-    this._$wrapper
-      .css('top', newPositionTop)
-      .css('left', newPositionLeft);
+    this._wrapperElm.style.top = `${newPositionTop}px`;
+    this._wrapperElm.style.left = `${newPositionLeft}px`;
   }
 
   /**
@@ -330,10 +349,10 @@ export class LongTextEditor implements Editor {
    */
   reset(value?: string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
     const inputValue = value ?? this._defaultTextValue ?? '';
-    if (this._$textarea) {
+    if (this._textareaElm) {
       this._defaultTextValue = inputValue;
-      this._$textarea.val(inputValue);
-      this._$currentLengthElm.text(inputValue.length);
+      this._textareaElm.value = inputValue;
+      this._currentLengthElm.textContent = inputValue.length;
     }
     this._isValueTouched = false;
 
@@ -346,7 +365,7 @@ export class LongTextEditor implements Editor {
 
   save() {
     const validation = this.validate();
-    const isValid = (validation && validation.valid) || false;
+    const isValid = validation?.valid ?? false;
 
     if (this.hasAutoCommitEdit && isValid) {
       // do not use args.commitChanges() as this sets the focus to the next row.
@@ -358,10 +377,10 @@ export class LongTextEditor implements Editor {
   }
 
   serializeValue() {
-    return this._$textarea.val();
+    return this._textareaElm.value;
   }
 
-  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
+  validate(_targetElm?: HTMLElement, inputValue?: any): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
     if (this.args.compositeEditorOptions) {
       this.applyInputUsabilityState();
@@ -372,7 +391,7 @@ export class LongTextEditor implements Editor {
       return { valid: true, msg: '' };
     }
 
-    const elmValue = (inputValue !== undefined) ? inputValue : this._$textarea && this._$textarea.val && this._$textarea.val();
+    const elmValue = (inputValue !== undefined) ? inputValue : this._textareaElm?.value;
     return textValidator(elmValue, {
       editorArgs: this.args,
       errorMessage: this.columnEditor.errorMessage,
@@ -398,7 +417,7 @@ export class LongTextEditor implements Editor {
   }
 
   protected handleKeyDown(event: KeyboardEvent) {
-    const keyCode = event.keyCode || event.code;
+    const keyCode = event.keyCode ?? event.code;
     this._isValueTouched = true;
 
     if (!this.args.compositeEditorOptions) {
@@ -422,22 +441,22 @@ export class LongTextEditor implements Editor {
   }
 
   /** On every input change event, we'll update the current text length counter */
-  protected handleOnInputChange(event: JQuery.Event & { originalEvent: any, target: HTMLTextAreaElement }) {
+  protected handleOnInputChange(event: Event & { clipboardData: DataTransfer, target: HTMLTextAreaElement }) {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     const maxLength = this.columnEditor?.maxLength;
 
     // when user defines a maxLength, we'll make sure that it doesn't go over this limit if so then truncate the text (disregard the extra text)
     let isTruncated = false;
     if (maxLength) {
-      isTruncated = this.truncateText(this._$textarea, maxLength);
+      isTruncated = this.truncateText(this._textareaElm, maxLength);
     }
 
     // if the text get truncated then update text length as maxLength, else update text length with actual
     if (isTruncated) {
-      this._$currentLengthElm.text(maxLength);
+      this._currentLengthElm.textContent = `${maxLength}`;
     } else {
-      const newText = event.type === 'paste' ? event.originalEvent.clipboardData.getData('text') : event.target.value;
-      this._$currentLengthElm.text(newText.length);
+      const newText = event.type === 'paste' ? event.clipboardData.getData('text') : event.target.value;
+      this._currentLengthElm.textContent = `${newText.length}`;
     }
 
     // when using a Composite Editor, we'll want to add a debounce delay to avoid perf issue since Composite could affect other editors in the same form
@@ -448,7 +467,7 @@ export class LongTextEditor implements Editor {
     }
   }
 
-  protected handleChangeOnCompositeEditor(event: JQuery.Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false) {
+  protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false) {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
     const columnId = this.columnDef?.id ?? '';
@@ -474,14 +493,14 @@ export class LongTextEditor implements Editor {
 
   /**
    * Truncate text if the value is longer than the acceptable max length
-   * @param $inputElm - textarea jQuery element
+   * @param inputElm - textarea html element
    * @param maxLength - max acceptable length
    * @returns truncated - returns True if it truncated or False otherwise
    */
-  protected truncateText($inputElm: JQuery<HTMLTextAreaElement>, maxLength: number): boolean {
-    const text = $inputElm.val() + '';
+  protected truncateText(inputElm: HTMLTextAreaElement, maxLength: number): boolean {
+    const text = inputElm.value + '';
     if (text.length > maxLength) {
-      $inputElm.val(text.substring(0, maxLength));
+      inputElm.value = text.substring(0, maxLength);
       return true;
     }
     return false;

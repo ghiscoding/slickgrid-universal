@@ -218,7 +218,7 @@ export function deepCopy(objectOrArray: any | any[]): any | any[] {
  * Empty a DOM element by removing all of its DOM element children leaving with an empty element (basically an empty shell)
  * @return {object} element - updated element
  */
-export function emptyElement<T extends HTMLElement = HTMLElement>(element?: T): T | undefined {
+export function emptyElement<T extends Element = Element>(element?: T | null): T | undefined | null {
   if (element?.firstChild) {
     while (element.firstChild) {
       if (element.lastChild) {
@@ -972,7 +972,7 @@ export function findOrDefault<T = any>(array: T[], logic: (item: T) => boolean, 
 
 /** Get HTML Element position offset (without jQuery) */
 export function getHtmlElementOffset(element: HTMLElement): { top: number; left: number; } {
-  const rect = element && element.getBoundingClientRect && element.getBoundingClientRect();
+  const rect = element?.getBoundingClientRect?.();
   let top = 0;
   let left = 0;
 
