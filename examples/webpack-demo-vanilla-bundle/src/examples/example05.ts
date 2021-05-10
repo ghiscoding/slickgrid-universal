@@ -99,6 +99,7 @@ export class Example5 {
 
         // you can add an optional prefix to all the child values
         indentedChildValuePrefix: '<span class="mdi mdi-subdirectory-arrow-right mdi-v-align-sub color-se-secondary"></span>',
+        indentMarginLeft: 15,
 
         // you can optionally sort by a different column and/or sort direction
         // this is the recommend approach, unless you are 100% that your original array is already sorted (in most cases it's not)
