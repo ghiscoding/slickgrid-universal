@@ -130,7 +130,7 @@ export class Example5 {
       const newItem = {
         id: newId,
         parentId: parentItemFound.id,
-        title: `Task ${newId}`,
+        title: this.formatTitle(newId, parentItemFound.id),
         duration: '1 day',
         percentComplete: 99,
         start: new Date(),
@@ -193,10 +193,8 @@ export class Example5 {
       }
 
       item['id'] = i;
-      // item['__treeLevel'] = indent;
       item['parentId'] = parentId;
-      // item['title'] = `Task ${i}`;
-      item['title'] = `<span style="font-weight:500">Task ${i}</span>  <span style="font-size:11px; margin-left: 15px;">(parentId: ${parentId})</span>`;
+      item['title'] = this.formatTitle(i, parentId);
       item['duration'] = '5 days';
       item['percentComplete'] = Math.round(Math.random() * 100);
       item['start'] = new Date(randomYear, randomMonth, randomDay);
@@ -207,5 +205,9 @@ export class Example5 {
       this.sgb.dataset = data;
     }
     return data;
+  }
+
+  formatTitle(taskId: number, parentId: number) {
+    return `<span style="font-weight:500">Task ${taskId}</span>  <span style="font-size:11px; margin-left: 15px;">(parentId: ${parentId})</span>`;
   }
 }
