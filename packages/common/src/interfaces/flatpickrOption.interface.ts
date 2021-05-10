@@ -10,6 +10,9 @@ export interface FlatpickrOption {
   /** defaults to false, allows the user to enter a date directly input the input field. By default, direct entry is disabled. */
   allowInput?: boolean;
 
+  /** defaults to false, allows the user to input date and/or date format that might be partially invalid. */
+  allowInvalidPreload?: boolean;
+
   /** This class will be added to the input element created by the altInput option.  Note that altInput already inherits classes from the original input. */
   altInputClass?: string;
 
@@ -33,7 +36,7 @@ export interface FlatpickrOption {
    * If you're using mode?: "multiple" or a range calendar supply an Array of Date objects or an Array of date strings which follow your dateFormat.
    * Otherwise, you can supply a single Date object or a date string.
    */
-  defaultDate?: string | string[];
+  defaultDate?: string | string[] | Date | Date[];
 
   /** defaults to 12, initial value of the hour element. */
   defaultHour?: number;
