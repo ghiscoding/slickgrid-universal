@@ -1393,13 +1393,13 @@ export class SlickVanillaGridBundle {
     } else if (Array.isArray(flatDatasetInput) && flatDatasetInput.length > 0) {
       if (this.gridOptions?.treeDataOptions?.initialSort) {
         // else we need to first convert the flat dataset to a hierarchical dataset and then sort
-        sortedDatasetResult = this.treeDataService.convertToHierarchicalDatasetAndSort(flatDatasetInput, this._columnDefinitions, this.gridOptions);
+        sortedDatasetResult = this.treeDataService.convertFlatParentChildToTreeDatasetAndSort(flatDatasetInput, this._columnDefinitions, this.gridOptions);
         this.sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
         flatDatasetOutput = sortedDatasetResult.flat;
       } else {
         // else we assume that the user provided an array that is already sorted (user's responsability)
         // and so we can simply convert the array to a tree structure and we're done, no need to sort
-        this.sharedService.hierarchicalDataset = this.treeDataService.convertFlatToHierarchicalDataset(flatDatasetInput, this.gridOptions);
+        this.sharedService.hierarchicalDataset = this.treeDataService.convertFlatParentChildToTreeDataset(flatDatasetInput, this.gridOptions);
         flatDatasetOutput = flatDatasetInput || [];
       }
     }

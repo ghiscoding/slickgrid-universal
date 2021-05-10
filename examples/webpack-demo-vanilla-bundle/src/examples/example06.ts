@@ -3,7 +3,7 @@ import {
   GridOption,
   FieldType,
   Filters,
-  findItemInHierarchicalStructure,
+  findItemInTreeStructure,
   Formatter,
   Formatters,
   SlickDataView,
@@ -146,7 +146,7 @@ export class Example6 {
     const newId = this.sgb.dataView.getItemCount() + 100;
 
     // find first parent object and add the new item as a child
-    const popItem = findItemInHierarchicalStructure(this.datasetHierarchical, x => x.file === 'pop', 'files');
+    const popItem = findItemInTreeStructure(this.datasetHierarchical, x => x.file === 'pop', 'files');
 
     if (popItem && Array.isArray(popItem.files)) {
       popItem.files.push({

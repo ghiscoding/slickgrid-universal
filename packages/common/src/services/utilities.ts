@@ -74,12 +74,12 @@ export function castObservableToPromise<T>(rxjs: RxJsFacade, input: Promise<T> |
 }
 
 /**
- * Convert a flat array (with "parentId" references) into a hierarchical dataset structure (where children are array(s) inside their parent objects)
+ * Convert a flat array (with "parentId" references) into a hierarchical (tree) dataset structure (where children are array(s) inside their parent objects)
  * @param flatArray input array (flat dataset)
  * @param options you can provide the following options:: "parentPropName" (defaults to "parent"), "childrenPropName" (defaults to "children") and "identifierPropName" (defaults to "id")
- * @return roots - hierarchical data view array
+ * @return roots - hierarchical (tree) data view array
  */
-export function convertParentChildArrayToHierarchicalView<P, T extends P & { [childrenPropName: string]: P[] }>(flatArray: P[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; levelPropName?: string; }): T[] {
+export function unflattenParentChildArrayToTree<P, T extends P & { [childrenPropName: string]: P[] }>(flatArray: P[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; levelPropName?: string; }): T[] {
   const childrenPropName = options?.childrenPropName ?? 'children';
   const parentPropName = options?.parentPropName ?? '__parentId';
   const identifierPropName = options?.identifierPropName ?? 'id';
@@ -140,12 +140,12 @@ export function addTreeLevelByMutation<T>(treeArray: T[], options: { childrenPro
 }
 
 /**
- * Convert a hierarchical array (with children) into a flat array structure array (where the children are pushed as next indexed item in the array)
- * @param {Array<Object>} hierarchicalArray - input hierarchical array
+ * Convert a hierarchical (tree) array (with children) into a flat array structure array (where the children are pushed as next indexed item in the array)
+ * @param {Array<Object>} treeArray - input hierarchical (tree) array
  * @param {Object} options - you can provide "childrenPropName" (defaults to "children")
  * @return {Array<Object>} output - Parent/Child array
  */
-export function convertHierarchicalViewToParentChildArray<T>(hierarchicalArray: T[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; shouldAddTreeLevelNumber?: boolean; levelPropName?: string; }) {
+export function flattenToParentChildArray<T>(treeArray: T[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; shouldAddTreeLevelNumber?: boolean; levelPropName?: string; }) {
   const childrenPropName = (options?.childrenPropName ?? 'children') as keyof T & string;
   const identifierPropName = (options?.identifierPropName ?? 'id') as keyof T & string;
   const parentPropName = (options?.parentPropName ?? '__parentId') as keyof T & string;
@@ -153,12 +153,12 @@ export function convertHierarchicalViewToParentChildArray<T>(hierarchicalArray: 
   type FlatParentChildArray = Omit<T, keyof typeof childrenPropName>;
 
   if (options?.shouldAddTreeLevelNumber) {
-    addTreeLevelByMutation(hierarchicalArray, { childrenPropName, levelPropName });
+    addTreeLevelByMutation(treeArray, { childrenPropName, levelPropName });
   }
 
   console.time('flatten the tree');
   const flat = flatten(
-    hierarchicalArray,
+    treeArray,
     (node: any) => node[childrenPropName],
     (node: T, parentNode?: T) => {
       return {
@@ -252,17 +252,27 @@ export function emptyObject(obj: any) {
 }
 
 /**
- * Find an item from a hierarchical view structure (a parent that can have children array which themseleves can children and so on)
- * @param hierarchicalArray
+ * @deprecated use `findItemInTreeStructure()` instead. Find an item from a hierarchical (tree) view structure (a parent that can have children array which themseleves can children and so on)
+ * @param treeArray
  * @param predicate
  * @param childrenPropertyName
  */
-export function findItemInHierarchicalStructure<T = any>(hierarchicalArray: T[], predicate: (item: T) => boolean, childrenPropertyName: string): T | undefined {
+export function findItemInHierarchicalStructure<T = any>(treeArray: T[], predicate: (item: T) => boolean, childrenPropertyName: string): T | undefined {
+  return findItemInTreeStructure(treeArray, predicate, childrenPropertyName);
+}
+
+/**
+ * Find an item from a tree (hierarchical) view structure (a parent that can have children array which themseleves can children and so on)
+ * @param treeArray
+ * @param predicate
+ * @param childrenPropertyName
+ */
+export function findItemInTreeStructure<T = any>(treeArray: T[], predicate: (item: T) => boolean, childrenPropertyName: string): T | undefined {
   if (!childrenPropertyName) {
     throw new Error('findRecursive requires parameter "childrenPropertyName"');
   }
-  const initialFind = hierarchicalArray.find(predicate);
-  const elementsWithChildren = hierarchicalArray.filter((x: T) => childrenPropertyName in x && (x as any)[childrenPropertyName]);
+  const initialFind = treeArray.find(predicate);
+  const elementsWithChildren = treeArray.filter((x: T) => childrenPropertyName in x && (x as any)[childrenPropertyName]);
   if (initialFind) {
     return initialFind;
   } else if (elementsWithChildren.length) {
@@ -272,10 +282,12 @@ export function findItemInHierarchicalStructure<T = any>(hierarchicalArray: T[],
         childElements.push(...(item as any)[childrenPropertyName]);
       }
     });
-    return findItemInHierarchicalStructure<T>(childElements, predicate, childrenPropertyName);
+    return findItemInTreeStructure<T>(childElements, predicate, childrenPropertyName);
   }
   return undefined;
 }
+
+
 
 /**
  * HTML encode using jQuery with a <div>

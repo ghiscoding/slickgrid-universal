@@ -10,13 +10,14 @@ import {
   addWhiteSpaces,
   arrayRemoveItemByIndex,
   castObservableToPromise,
-  convertHierarchicalViewToParentChildArray,
-  convertParentChildArrayToHierarchicalView,
+  flattenToParentChildArray,
+  unflattenParentChildArrayToTree,
   decimalFormatted,
   deepCopy,
   emptyElement,
   emptyObject,
   findItemInHierarchicalStructure,
+  findItemInTreeStructure,
   findOrDefault,
   formatNumber,
   getDescendantProperty,
@@ -154,7 +155,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('convertParentChildArrayToHierarchicalView method', () => {
+  describe('unflattenParentChildArrayToTree method', () => {
     it('should take a parent/child array and return a hierarchical array structure', () => {
       const input = [
         { id: 18, size: 90, dateModified: '2015-03-03', file: 'something.txt', parentId: null, },
@@ -166,7 +167,7 @@ describe('Service/Utilies', () => {
         { id: 15, dateModified: '2015-03-01', file: 'theme.mp3', size: 85, parentId: 14, },
       ];
 
-      const output = convertParentChildArrayToHierarchicalView(input, { parentPropName: 'parentId', childrenPropName: 'files' });
+      const output = unflattenParentChildArrayToTree(input, { parentPropName: 'parentId', childrenPropName: 'files' });
 
       expect(output).toEqual([
         {
@@ -208,7 +209,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('convertHierarchicalViewToParentChildArray method', () => {
+  describe('flattenToParentChildArray method', () => {
     let mockTreeArray;
 
     beforeEach(() => {
@@ -227,7 +228,7 @@ describe('Service/Utilies', () => {
 
     it('should return a flat array from a hierarchical structure', () => {
       addTreeLevelByMutation(mockTreeArray, { childrenPropName: 'files', levelPropName: '__treeLevel' });
-      const output = convertHierarchicalViewToParentChildArray(mockTreeArray, { childrenPropName: 'files' });
+      const output = flattenToParentChildArray(mockTreeArray, { childrenPropName: 'files' });
       expect(output).toEqual([
         { id: 18, size: 90, __treeLevel: 0, dateModified: '2015-03-03', file: 'something.txt', __parentId: null, },
         { id: 11, __treeLevel: 0, file: 'Music', __parentId: null, },
@@ -262,12 +263,12 @@ describe('Service/Utilies', () => {
     });
 
     it('should find an item from a hierarchical array', () => {
-      const item = findItemInHierarchicalStructure(mockColumns, x => x.file === 'pop', 'files');
+      const item = findItemInTreeStructure(mockColumns, x => x.file === 'pop', 'files');
       expect(item).toEqual({ id: 14, file: 'pop', files: [{ id: 15, file: 'theme.mp3', dateModified: '2015-03-01', size: 85, }] });
     });
 
     it('should return undefined when item is not found', () => {
-      const item = findItemInHierarchicalStructure(mockColumns, x => x.file === 'pop2', 'files');
+      const item = findItemInTreeStructure(mockColumns, x => x.file === 'pop2', 'files');
       expect(item).toEqual(undefined as any);
     });
   });

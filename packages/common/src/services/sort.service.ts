@@ -21,7 +21,7 @@ import {
   SortDirectionString,
 } from '../enums/index';
 import { BackendUtilityService } from './backendUtility.service';
-import { getDescendantProperty, convertHierarchicalViewToParentChildArray } from './utilities';
+import { getDescendantProperty, flattenToParentChildArray } from './utilities';
 import { sortByFieldType } from '../sortComparers/sortUtilities';
 import { PubSubService } from './pubSub.service';
 import { SharedService } from './shared.service';
@@ -419,7 +419,7 @@ export class SortService {
     const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier, shouldAddTreeLevelNumber: true };
 
     console.time('reconvert to flat parent/child');
-    const sortedFlatArray = convertHierarchicalViewToParentChildArray(hierarchicalDataset, treeDataOptions);
+    const sortedFlatArray = flattenToParentChildArray(hierarchicalDataset, treeDataOptions);
     console.timeEnd('reconvert to flat parent/child');
 
     return { hierarchical: hierarchicalDataset, flat: sortedFlatArray };
@@ -485,22 +485,22 @@ export class SortService {
     return undefined;
   }
 
-  sortTreeData(hierarchicalArray: any[], sortColumns: Array<ColumnSort>) {
+  sortTreeData(treeArray: any[], sortColumns: Array<ColumnSort>) {
     if (Array.isArray(sortColumns)) {
       for (const sortColumn of sortColumns) {
-        this.sortTreeChild(hierarchicalArray, sortColumn, 0);
+        this.sortTreeChild(treeArray, sortColumn, 0);
       }
     }
   }
 
   /** Sort the Tree Children of a hierarchical dataset by recursion */
-  sortTreeChild(hierarchicalArray: any[], sortColumn: ColumnSort, treeLevel: number) {
+  sortTreeChild(treeArray: any[], sortColumn: ColumnSort, treeLevel: number) {
     const treeDataOptions = this._gridOptions?.treeDataOptions;
     const childrenPropName = treeDataOptions?.childrenPropName ?? 'children';
-    hierarchicalArray.sort((a: any, b: any) => this.sortComparer(sortColumn, a, b) ?? SortDirectionNumber.neutral);
+    treeArray.sort((a: any, b: any) => this.sortComparer(sortColumn, a, b) ?? SortDirectionNumber.neutral);
 
     // when item has a child, we'll sort recursively
-    for (const item of hierarchicalArray) {
+    for (const item of treeArray) {
       if (item) {
         const hasChildren = item.hasOwnProperty(childrenPropName) && Array.isArray(item[childrenPropName]);
         // when item has a child, we'll sort recursively

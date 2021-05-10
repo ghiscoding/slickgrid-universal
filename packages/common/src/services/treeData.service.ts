@@ -1,5 +1,5 @@
 import { Column, ColumnSort, GetSlickEventType, GridOption, OnClickEventArgs, SlickDataView, SlickEventData, SlickEventHandler, SlickGrid, SlickNamespace, TreeDataOption, } from '../interfaces/index';
-import { convertParentChildArrayToHierarchicalView } from './utilities';
+import { unflattenParentChildArrayToTree } from './utilities';
 import { SharedService } from './shared.service';
 import { SortService } from './sort.service';
 
@@ -86,9 +86,9 @@ export class TreeDataService {
    * @param {Object} gridOptions - grid options
    * @returns {Array<Object>} - tree dataset
    */
-  convertToHierarchicalDatasetAndSort<P, T extends P & { [childrenPropName: string]: T[] }>(flatDataset: P[], columnDefinitions: Column[], gridOptions: GridOption) {
+  convertFlatParentChildToTreeDatasetAndSort<P, T extends P & { [childrenPropName: string]: T[] }>(flatDataset: P[], columnDefinitions: Column[], gridOptions: GridOption) {
     // 1- convert the flat array into a hierarchical array
-    const datasetHierarchical = this.convertFlatToHierarchicalDataset(flatDataset, gridOptions);
+    const datasetHierarchical = this.convertFlatParentChildToTreeDataset(flatDataset, gridOptions);
 
     // 2- sort the hierarchical array recursively by an optional "initialSort" OR if nothing is provided we'll sort by the column defined as the Tree column
     // also note that multi-column is not currently supported with Tree Data
@@ -107,11 +107,11 @@ export class TreeDataService {
    * @param {Object} gridOptions - grid options
    * @returns {Array<Object>} - tree dataset
    */
-  convertFlatToHierarchicalDataset<P, T extends P & { [childrenPropName: string]: P[] }>(flatDataset: P[], gridOptions: GridOption): T[] {
+  convertFlatParentChildToTreeDataset<P, T extends P & { [childrenPropName: string]: P[] }>(flatDataset: P[], gridOptions: GridOption): T[] {
     const dataViewIdIdentifier = gridOptions?.datasetIdPropertyName ?? 'id';
     const treeDataOpt: TreeDataOption = gridOptions?.treeDataOptions ?? { columnId: 'id' };
     const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier };
-    return convertParentChildArrayToHierarchicalView(flatDataset, treeDataOptions);
+    return unflattenParentChildArrayToTree(flatDataset, treeDataOptions);
   }
 
   handleOnCellClick(event: SlickEventData, args: OnClickEventArgs) {
