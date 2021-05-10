@@ -150,6 +150,15 @@ describe('CheckboxEditor', () => {
       expect(editor.getValue()).toBe(false);
     });
 
+    it('should call "preClick" and expect the "checked" attribute to be toggled', () => {
+      editor = new CheckboxEditor(editorArguments);
+      const previousValue = editor.getValue();
+      editor.preClick();
+      const newValue = editor.getValue();
+
+      expect(previousValue).not.toEqual(newValue);
+    });
+
     it('should define an item datacontext containing a string as cell value and expect this value to be loaded in the editor when calling "loadValue"', () => {
       editor = new CheckboxEditor(editorArguments);
       editor.loadValue(mockItemData);

@@ -37,7 +37,7 @@ export class SelectEditor implements Editor {
 
   // flag to signal that the editor is destroying itself, helps prevent
   // commit changes from being called twice and erroring
-  protected _destroying = false;
+  protected _isDisposing = false;
 
   /** Collection Service */
   protected _collectionService!: CollectionService;
@@ -187,6 +187,10 @@ export class SelectEditor implements Editor {
   /** Getter for the Editor DOM Element */
   get editorDomElement(): any {
     return this.$editorElm;
+  }
+
+  get isCompositeEditor(): boolean {
+    return !!(this.args?.compositeEditorOptions);
   }
 
   /** Getter for the Custom Structure if exist */
@@ -352,11 +356,9 @@ export class SelectEditor implements Editor {
   }
 
   show() {
-    const isCompositeEditor = !!this.args?.compositeEditorOptions;
-
-    if (!isCompositeEditor && this.$editorElm && typeof this.$editorElm.multipleSelect === 'function') {
+    if (!this.isCompositeEditor && this.$editorElm && typeof this.$editorElm.multipleSelect === 'function') {
       this.$editorElm.multipleSelect('open');
-    } else if (isCompositeEditor) {
+    } else if (this.isCompositeEditor) {
       // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
       this.applyInputUsabilityState();
     }
@@ -399,7 +401,14 @@ export class SelectEditor implements Editor {
   }
 
   destroy() {
-    this._destroying = true;
+    // when autoCommitEdit is enabled, we might end up leave the editor without it being saved, if so do call a save before destroying
+    // this mainly happens doing a blur or focusing on another cell in the grid (it won't come here if we click outside the grid, in the body)
+    if (this.$editorElm && this.hasAutoCommitEdit && this.isValueChanged() && !this._isDisposing && !this.isCompositeEditor) {
+      this._isDisposing = true; // change destroying flag to avoid infinite loop
+      this.save(true);
+    }
+
+    this._isDisposing = true;
     if (this.$editorElm && typeof this.$editorElm.multipleSelect === 'function') {
       this.$editorElm.multipleSelect('destroy');
       this.$editorElm.remove();
@@ -486,7 +495,7 @@ export class SelectEditor implements Editor {
         // clear select when it's newly disabled and not yet empty
         const currentValues: any | any[] = this.getValue();
         const isValueBlank = this.isMultipleSelect ? currentValues === [''] : currentValues === '';
-        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions && !isValueBlank) {
+        if (prevIsDisabled !== isDisabled && this.isCompositeEditor && !isValueBlank) {
           this.reset('', true, true);
         }
       } else {
@@ -502,7 +511,7 @@ export class SelectEditor implements Editor {
   }
 
   isValueChanged(): boolean {
-    const valueSelection = this.$editorElm.multipleSelect('getSelects');
+    const valueSelection = this.$editorElm?.multipleSelect('getSelects');
     if (this.isMultipleSelect) {
       const isEqual = dequal(valueSelection, this.originalValue);
       return !isEqual;
@@ -535,11 +544,11 @@ export class SelectEditor implements Editor {
     }
   }
 
-  save() {
+  save(forceCommitCurrentEdit = false) {
     const validation = this.validate();
     const isValid = validation?.valid ?? false;
 
-    if (!this._destroying && this.hasAutoCommitEdit && isValid) {
+    if ((!this._isDisposing || forceCommitCurrentEdit) && this.hasAutoCommitEdit && isValid) {
       // do not use args.commitChanges() as this sets the focus to the next row.
       // also the select list will stay shown when clicking off the grid
       this.grid.getEditorLock().commitCurrentEdit();
@@ -549,12 +558,12 @@ export class SelectEditor implements Editor {
   }
 
   validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
-    const isRequired = this.args?.compositeEditorOptions ? false : this.columnEditor?.required;
+    const isRequired = this.isCompositeEditor ? false : this.columnEditor?.required;
     const elmValue = (inputValue !== undefined) ? inputValue : this.$editorElm && this.$editorElm.val && this.$editorElm.val();
     const errorMsg = this.columnEditor && this.columnEditor.errorMessage;
 
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
-    if (this.args.compositeEditorOptions) {
+    if (this.isCompositeEditor) {
       this.applyInputUsabilityState();
     }
 
@@ -785,7 +794,7 @@ export class SelectEditor implements Editor {
       const editorOptions = (this.columnDef && this.columnDef.internalColumnEditor) ? this.columnDef.internalColumnEditor.editorOptions : {};
       this.editorElmOptions = { ...this.defaultOptions, ...editorOptions };
       this.$editorElm = this.$editorElm.multipleSelect(this.editorElmOptions);
-      if (!this.args.compositeEditorOptions) {
+      if (!this.isCompositeEditor) {
         setTimeout(() => this.show());
       }
     }

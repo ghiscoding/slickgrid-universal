@@ -512,6 +512,7 @@ describe('SelectEditor', () => {
 
     describe('save method', () => {
       afterEach(() => {
+        editor.destroy();
         jest.clearAllMocks();
       });
 
@@ -525,6 +526,21 @@ describe('SelectEditor', () => {
         editor.save();
 
         expect(spy).toHaveBeenCalled();
+      });
+
+      it('should call "save" and "getEditorLock" method when "hasAutoCommitEdit" is enabled and we are destroying the editor without it being saved yet', () => {
+        mockItemData = { id: 1, gender: 'male', isActive: true };
+        gridOptionMock.autoCommitEdit = true;
+        const lockSpy = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+
+        editor = new SelectEditor(editorArguments, true);
+        const saveSpy = jest.spyOn(editor, 'save');
+
+        editor.loadValue(mockItemData);
+        editor.destroy();
+
+        expect(saveSpy).toHaveBeenCalledWith(true);
+        expect(lockSpy).toHaveBeenCalled();
       });
 
       it('should not call "commitCurrentEdit" when "hasAutoCommitEdit" is disabled', () => {
