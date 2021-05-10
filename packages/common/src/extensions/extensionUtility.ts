@@ -20,11 +20,11 @@ export class ExtensionUtility {
     }
 
     let output = '';
-    const picker = this.sharedService.gridOptions && this.sharedService.gridOptions[pickerName] || {};
-    const enableTranslate = this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate || false;
+    const picker = this.sharedService.gridOptions?.[pickerName] ?? {};
+    const enableTranslate = this.sharedService.gridOptions?.enableTranslate ?? false;
 
     // get locales provided by user in forRoot or else use default English locales via the Constants
-    const locales = this.sharedService && this.sharedService.gridOptions && this.sharedService.gridOptions.locales || Constants.locales;
+    const locales = this.sharedService.gridOptions?.locales ?? Constants.locales;
 
     const title = (picker as any)?.[propName];
     const titleKey = (picker as any)?.[`${propName}Key`];
@@ -95,8 +95,8 @@ export class ExtensionUtility {
 
   /**
    * Sort items (by pointers) in an array by a property name
-   * @params items array
-   * @param property name to sort with
+   * @param {Array<Object>} items array
+   * @param {String} property name to sort with
    */
   sortItems(items: any[], propertyName: string) {
     // sort the custom items by their position in the list
@@ -123,19 +123,22 @@ export class ExtensionUtility {
 
   /**
    * When "enabledTranslate" is set to True, we will try to translate if the Translate Service exist or use the Locales when not
-   * @param translationKey
-   * @param localeKey
+   * @param {String} translationKey
+   * @param {String} localeKey
+   * @param {String} textToUse - optionally provide a static text to use (that will completely override the other arguments of the method)
    */
-  translateWhenEnabledAndServiceExist(translationKey: string, localeKey: string): string {
+  translateWhenEnabledAndServiceExist(translationKey: string, localeKey: string, textToUse?: string): string {
     let text = '';
-    const gridOptions = this.sharedService && this.sharedService.gridOptions;
+    const gridOptions = this.sharedService?.gridOptions;
 
     // get locales provided by user in main file or else use default English locales via the Constants
-    const locales = gridOptions && gridOptions.locales || Constants.locales;
+    const locales = gridOptions?.locales ?? Constants.locales;
 
-    if (gridOptions.enableTranslate && this.translaterService && this.translaterService.getCurrentLanguage && this.translaterService.translate) {
+    if (textToUse) {
+      text = textToUse;
+    } else if (gridOptions.enableTranslate && this.translaterService?.translate) {
       text = this.translaterService.translate(translationKey || ' ');
-    } else if (locales && locales.hasOwnProperty(localeKey)) {
+    } else if (localeKey in locales) {
       text = locales[localeKey as keyof Locale] as string;
     } else {
       text = localeKey;

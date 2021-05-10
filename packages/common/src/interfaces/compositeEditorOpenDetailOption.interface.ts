@@ -42,6 +42,7 @@ export interface CompositeEditorOpenDetailOption {
   /** Defaults to (dataset length + 1), what is the default insert Id to use when creating a new item? */
   insertNewId?: number;
 
+  /** All the text labels that can be customized */
   labels?: CompositeEditorLabel;
 
   /**
