@@ -401,7 +401,7 @@ export class SelectEditor implements Editor {
   destroy() {
     // when autoCommitEdit is enabled, we might end up leave the editor without it being saved, if so do call a save before destroying
     // this mainly happens doing a blur or focusing on another cell in the grid (it won't come here if we click outside the grid, in the body)
-    if (this.$editorElm && this.hasAutoCommitEdit && this.isValueChanged() && !this._isDisposing) {
+    if (this.$editorElm && this.hasAutoCommitEdit && this.isValueChanged() && !this._isDisposing && !this.args.compositeEditorOptions) {
       this._isDisposing = true; // change destroying flag to avoid infinite loop
       this.save(true);
     }
