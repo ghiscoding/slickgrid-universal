@@ -376,7 +376,6 @@ export class SortService {
     const datasetIdPropertyName = this._gridOptions?.datasetIdPropertyName ?? 'id';
     const isTreeDataEnabled = this._gridOptions?.enableTreeData ?? false;
     const dataView = grid.getData?.() as SlickDataView;
-    console.time('sort changed');
 
     if (grid && dataView) {
       if (forceReSort && !isTreeDataEnabled) {
@@ -395,7 +394,6 @@ export class SortService {
       }
 
       grid.invalidate();
-      console.timeEnd('sort changed');
 
       if (emitSortChanged) {
         this.emitSortChanged(EmitterType.local, sortColumns.map(col => {
@@ -410,17 +408,11 @@ export class SortService {
 
   /** Takes a hierarchical dataset and sort it recursively,  */
   sortHierarchicalDataset<T>(hierarchicalDataset: T[], sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>) {
-    console.time('sort tree array');
     this.sortTreeData(hierarchicalDataset, sortColumns);
-    console.timeEnd('sort tree array');
-
     const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
     const treeDataOpt: TreeDataOption = this._gridOptions?.treeDataOptions ?? { columnId: '' };
     const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier, shouldAddTreeLevelNumber: true };
-
-    console.time('reconvert to flat parent/child');
     const sortedFlatArray = flattenToParentChildArray(hierarchicalDataset, treeDataOptions);
-    console.timeEnd('reconvert to flat parent/child');
 
     return { hierarchical: hierarchicalDataset, flat: sortedFlatArray };
   }

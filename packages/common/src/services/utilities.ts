@@ -156,7 +156,6 @@ export function flattenToParentChildArray<T>(treeArray: T[], options?: { parentP
     addTreeLevelByMutation(treeArray, { childrenPropName, levelPropName });
   }
 
-  console.time('flatten the tree');
   const flat = flatten(
     treeArray,
     (node: any) => node[childrenPropName],
@@ -169,7 +168,6 @@ export function flattenToParentChildArray<T>(treeArray: T[], options?: { parentP
     }
   );
 
-  console.timeEnd('flatten the tree');
   return flat;
 }
 
