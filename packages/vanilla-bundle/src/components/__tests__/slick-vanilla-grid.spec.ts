@@ -2029,11 +2029,11 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         jest.clearAllMocks();
       });
 
-      it('should change flat dataset and expect being called with other methods', () => {
+      it('should change flat dataset and expect "convertToHierarchicalDatasetAndSort" being called with other methods', () => {
         const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', parentId: 0 }];
         const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }] }];
         const hierarchicalSpy = jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'set');
-        jest.spyOn(treeDataServiceStub, 'convertToHierarchicalDatasetAndSort').mockReturnValue({ hierarchical: mockHierarchical as any[], flat: mockFlatDataset as any[] });
+        const treeConvertAndSortSpy = jest.spyOn(treeDataServiceStub, 'convertToHierarchicalDatasetAndSort').mockReturnValue({ hierarchical: mockHierarchical as any[], flat: mockFlatDataset as any[] });
         const refreshTreeSpy = jest.spyOn(filterServiceStub, 'refreshTreeDataFilters');
 
         component.gridOptions = {
@@ -2047,6 +2047,27 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         expect(hierarchicalSpy).toHaveBeenCalledWith(mockHierarchical);
         expect(refreshTreeSpy).toHaveBeenCalled();
+        expect(treeConvertAndSortSpy).toHaveBeenCalled();
+      });
+
+      it('should change flat dataset and expect "convertFlatToHierarchicalDataset" being called (without sorting) and other methods as well', () => {
+        const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', parentId: 0 }];
+        const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }] }];
+        const hierarchicalSpy = jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'set');
+        const treeConvertSpy = jest.spyOn(treeDataServiceStub, 'convertFlatToHierarchicalDataset').mockReturnValue(mockHierarchical as any[]);
+        const refreshTreeSpy = jest.spyOn(filterServiceStub, 'refreshTreeDataFilters');
+
+        component.gridOptions = {
+          enableTreeData: true, treeDataOptions: {
+            columnId: 'file', parentPropName: 'parentId', childrenPropName: 'files'
+          }
+        } as unknown as GridOption;
+        component.initialization(divContainer, slickEventHandler);
+        component.dataset = mockFlatDataset;
+
+        expect(hierarchicalSpy).toHaveBeenCalledWith(mockHierarchical);
+        expect(refreshTreeSpy).toHaveBeenCalled();
+        expect(treeConvertSpy).toHaveBeenCalled();
       });
 
       it('should change hierarchical dataset and expect processTreeDataInitialSort being called with other methods', () => {
