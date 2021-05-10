@@ -33,15 +33,16 @@ export const treeFormatter: Formatter = (_row, _cell, value, columnDef, dataCont
     const spacer = `<span style="display:inline-block; width:${indentMarginLeft * treeLevel}px;"></span>`;
     const idx = dataView.getIdxById(dataContext[identifierPropName]);
     const nextItemRow = dataView.getItemByIdx((idx || 0) + 1);
+    const valuePrefix = treeLevel > 0 ? treeDataOptions?.indentedChildValuePrefix ?? '' : '';
 
     if (nextItemRow?.[treeLevelPropName] > treeLevel) {
       if (dataContext.__collapsed) {
-        return `${spacer}<span class="slick-group-toggle collapsed"></span>&nbsp;${sanitizedOutputValue}`;
+        return `${spacer}<span class="slick-group-toggle collapsed"></span>${valuePrefix}${sanitizedOutputValue}`;
       } else {
-        return `${spacer}<span class="slick-group-toggle expanded"></span>&nbsp;${sanitizedOutputValue}`;
+        return `${spacer}<span class="slick-group-toggle expanded"></span>${valuePrefix}${sanitizedOutputValue}`;
       }
     }
-    return `${spacer}<span class="slick-group-toggle"></span>&nbsp;${sanitizedOutputValue}`;
+    return `${spacer}<span class="slick-group-toggle"></span>${valuePrefix}${sanitizedOutputValue}`;
   }
   return '';
 };

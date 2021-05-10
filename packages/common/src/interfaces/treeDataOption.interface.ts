@@ -29,6 +29,9 @@ export interface TreeDataOption {
   /** Defaults to "__parentId", object property name used to designate the Parent Id */
   parentPropName?: string;
 
+  /** Defaults to empty string, add an optional prefix to each of the child values (in other words, add a prefix to all values which have at tree level indentation greater than 0) */
+  indentedChildValuePrefix?: string;
+
   /** Defaults to "__treeLevel", object property name used to designate the Tree Level depth number */
   levelPropName?: string;
 
