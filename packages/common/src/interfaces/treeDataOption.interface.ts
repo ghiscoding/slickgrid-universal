@@ -1,12 +1,14 @@
-import { Aggregator } from './aggregator.interface';
+// import { Aggregator } from './aggregator.interface';
 import { SortDirection, SortDirectionString } from '../enums/index';
+import { Formatter } from './formatter.interface';
 
 export interface TreeDataOption {
   /** Column Id of which column in the column definitions has the Tree Data, there can only be one with a Tree Data. */
   columnId: string;
 
   /** Grouping Aggregators array */
-  aggregators?: Aggregator[];
+  // NOT YET IMPLEMENTED
+  // aggregators?: Aggregator[];
 
   /** Optionally define the initial sort column and direction */
   initialSort?: {
@@ -29,9 +31,6 @@ export interface TreeDataOption {
   /** Defaults to "__parentId", object property name used to designate the Parent Id */
   parentPropName?: string;
 
-  /** Defaults to empty string, add an optional prefix to each of the child values (in other words, add a prefix to all values which have at tree level indentation greater than 0) */
-  indentedChildValuePrefix?: string;
-
   /** Defaults to "__treeLevel", object property name used to designate the Tree Level depth number */
   levelPropName?: string;
 
@@ -52,4 +51,7 @@ export interface TreeDataOption {
    * and if we add a regular character like a dot then it keeps all tree level indentation spaces
    */
   exportIndentationLeadingChar?: string;
+
+  /** Optional Title Formatter (allows you to format/style the title text differently) */
+  titleFormatter?: Formatter;
 }

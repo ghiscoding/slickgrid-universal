@@ -221,7 +221,7 @@ export class FilterService {
 
         // emit an onFilterChanged event except when it's called by a clear filter
         if (!isClearFilterEvent) {
-          this.emitFilterChanged(EmitterType.local);
+          await this.emitFilterChanged(EmitterType.local);
         }
       });
     }
@@ -260,7 +260,7 @@ export class FilterService {
     }
 
     // emit an event when filter is cleared
-    this.emitFilterChanged(emitter);
+    await this.emitFilterChanged(emitter);
     return true;
   }
 
@@ -645,7 +645,6 @@ export class FilterService {
     } else if (caller === EmitterType.local) {
       return this.pubSubService.publish(eventName, this.getCurrentLocalFilters());
     }
-    return Promise.resolve(true);
   }
 
   async onBackendFilterChange(event: KeyboardEvent, args: any) {
@@ -841,7 +840,7 @@ export class FilterService {
       }
 
       if (emitChangedEvent) {
-        this.emitFilterChanged(emitterType);
+        await this.emitFilterChanged(emitterType);
       }
     }
     return true;
@@ -905,7 +904,7 @@ export class FilterService {
       }
 
       if (emitChangedEvent) {
-        this.emitFilterChanged(emitterType);
+        await this.emitFilterChanged(emitterType);
       }
     }
     return true;

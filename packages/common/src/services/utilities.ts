@@ -887,7 +887,7 @@ export function sanitizeHtmlToText(htmlString: string): string {
  * @param dirtyHtml: dirty html string
  * @param domPurifyOptions: optional DOMPurify options when using that sanitizer
  */
-export function sanitizeTextByAvailableSanitizer(gridOptions: GridOption, dirtyHtml: string, domPurifyOptions?: DOMPurify.Config & { RETURN_TRUSTED_TYPE: true; }): string {
+export function sanitizeTextByAvailableSanitizer(gridOptions: GridOption, dirtyHtml: string, domPurifyOptions?: DOMPurify.Config): string {
   let sanitizedText = dirtyHtml;
   if (gridOptions && typeof gridOptions.sanitizer === 'function') {
     sanitizedText = gridOptions.sanitizer(dirtyHtml || '');

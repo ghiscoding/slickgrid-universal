@@ -123,10 +123,7 @@ export class Example5 {
         columnId: 'title',
         parentPropName: 'parentId',
         // this is optional, you can define the tree level property name that will be used for the sorting/indentation, internally it will use "__treeLevel"
-        // levelPropName: 'indent',
-
-        // you can add an optional prefix to all the child values
-        indentedChildValuePrefix: '<span class="mdi mdi-subdirectory-arrow-right mdi-v-align-sub color-se-secondary"></span>',
+        levelPropName: 'treeLevel',
         indentMarginLeft: 15,
 
         // you can optionally sort by a different column and/or sort direction
@@ -134,7 +131,15 @@ export class Example5 {
         initialSort: {
           columnId: 'title',
           direction: 'ASC'
-        }
+        },
+        // we can also add a custom Formatter just for the title text portion
+        titleFormatter: (_row, _cell, value, _def, dataContext) => {
+          let prefix = '';
+          if (dataContext.treeLevel > 0) {
+            prefix = `<span class="mdi mdi-subdirectory-arrow-right mdi-v-align-sub color-se-secondary"></span>`;
+          }
+          return `${prefix}<span class="bold">${value}</span><span style="font-size:11px; margin-left: 15px;">(parentId: ${dataContext.parentId})</span>`;
+        },
       },
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
       presets: {
@@ -152,7 +157,7 @@ export class Example5 {
   addNewRow() {
     const newId = this.sgb.dataset.length;
     const parentPropName = 'parentId';
-    const treeLevelPropName = '__treeLevel'; // if undefined in your options, the default prop name is "__treeLevel"
+    const treeLevelPropName = 'treeLevel'; // if undefined in your options, the default prop name is "__treeLevel"
     const newTreeLevel = 1;
     // find first parent object and add the new item as a child
     const childItemFound = this.sgb.dataset.find((item) => item[treeLevelPropName] === newTreeLevel);
@@ -162,7 +167,7 @@ export class Example5 {
       const newItem = {
         id: newId,
         parentId: parentItemFound.id,
-        title: this.formatTitle(newId, parentItemFound.id),
+        title: `Task ${newId}`,
         duration: '1 day',
         percentComplete: 99,
         start: new Date(),
@@ -227,7 +232,7 @@ export class Example5 {
 
       item['id'] = i;
       item['parentId'] = parentId;
-      item['title'] = this.formatTitle(i, parentId);
+      item['title'] = `Task ${i}`;
       item['duration'] = '5 days';
       item['percentComplete'] = Math.round(Math.random() * 100);
       item['start'] = new Date(randomYear, randomMonth, randomDay);
@@ -238,9 +243,5 @@ export class Example5 {
       this.sgb.dataset = data;
     }
     return data;
-  }
-
-  formatTitle(taskId: number, parentId: number) {
-    return `<span style="font-weight:500">Task ${taskId}</span>  <span style="font-size:11px; margin-left: 15px;">(parentId: ${parentId})</span>`;
   }
 }

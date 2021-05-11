@@ -1,7 +1,18 @@
 import { Column, ExcelExportOption, Formatter, SlickGrid, TextExportOption } from '../interfaces/index';
 
+/**
+ * Goes through every possible ways to find and apply a Formatter when found,
+ * it will first check if a `exportCustomFormatter` is defined else it will check if there's a regular `formatter` and `exportWithFormatter` is enabled.
+ * This function is similar to `applyFormatterWhenDefined()` except that it execute any `exportCustomFormatter` while `applyFormatterWhenDefined` does not.
+ * @param {Number} row - grid row index
+ * @param {Number} col - grid column index
+ * @param {Object} dataContext - item data context object
+ * @param {Object} columnDef - column definition
+ * @param {Object} grid - Slick Grid object
+ * @param {Object} exportOptions - Excel or Text Export Options
+ * @returns formatted string output or empty string
+ */
 export function exportWithFormatterWhenDefined(row: number, col: number, dataContext: any, columnDef: Column, grid: SlickGrid, exportOptions?: TextExportOption | ExcelExportOption) {
-  let output = '';
   let isEvaluatingFormatter = false;
 
   // first check if there are any export options provided (as Grid Options)
@@ -14,6 +25,31 @@ export function exportWithFormatterWhenDefined(row: number, col: number, dataCon
     isEvaluatingFormatter = !!columnDef.exportWithFormatter;
   }
 
+  let formatter: Formatter | undefined;
+  if (dataContext && columnDef.exportCustomFormatter) {
+    // did the user provide a Custom Formatter for the export
+    formatter = columnDef.exportCustomFormatter;
+  } else if (isEvaluatingFormatter && columnDef.formatter) {
+    // or else do we have a column Formatter AND are we evaluating it?
+    formatter = columnDef.formatter;
+  }
+
+  return parseFormatterWhenExist(formatter, row, col, dataContext, columnDef, grid);
+}
+
+/**
+ * Takes a Formatter function, execute and return the formatted output
+ * @param {Function} formatter - formatter function
+ * @param {Number} row - grid row index
+ * @param {Number} col - grid column index
+ * @param {Object} dataContext - item data context object
+ * @param {Object} columnDef - column definition
+ * @param {Object} grid - Slick Grid object
+ * @returns formatted string output or empty string
+ */
+export function parseFormatterWhenExist(formatter: Formatter<any> | undefined, row: number, col: number, dataContext: any, columnDef: Column, grid: SlickGrid): string {
+  let output = '';
+
   // does the field have the dot (.) notation and is a complex object? if so pull the first property name
   const fieldId = columnDef.field || columnDef.id || '';
   let fieldProperty = fieldId;
@@ -23,15 +59,6 @@ export function exportWithFormatterWhenDefined(row: number, col: number, dataCon
   }
 
   const cellValue = dataContext.hasOwnProperty(fieldProperty) ? dataContext[fieldProperty] : null;
-
-  let formatter: Formatter | undefined;
-  if (dataContext && columnDef.exportCustomFormatter) {
-    // did the user provide a Custom Formatter for the export
-    formatter = columnDef.exportCustomFormatter;
-  } else if (isEvaluatingFormatter && columnDef.formatter) {
-    // or else do we have a column Formatter AND are we evaluating it?
-    formatter = columnDef.formatter;
-  }
 
   if (typeof formatter === 'function') {
     const formattedData = formatter(row, col, cellValue, columnDef, dataContext, grid);
