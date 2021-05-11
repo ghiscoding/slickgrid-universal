@@ -200,12 +200,12 @@ export class FilterService {
     // bind any search filter change (e.g. input filter input change event)
     if (this._onSearchChange) {
       const onSearchChangeHandler = this._onSearchChange;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSearchChangeHandler>>).subscribe(this._onSearchChange, (_e, args) => {
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSearchChangeHandler>>).subscribe(this._onSearchChange, async (_e, args) => {
         const isClearFilterEvent = args?.clearFilterTriggered ?? false;
 
-        // emit an onBeforeFilterChange event when it's not called by a clear filter
+        // emit an onBeforeFilterChange event except when it's called by a clear filter
         if (!isClearFilterEvent) {
-          this.emitFilterChanged(EmitterType.local, true);
+          await this.emitFilterChanged(EmitterType.local, true);
         }
 
         // When using Tree Data, we need to do it in 2 steps
@@ -219,7 +219,7 @@ export class FilterService {
           this._dataView.refresh();
         }
 
-        // emit an onFilterChanged event when it's not called by a clear filter
+        // emit an onFilterChanged event except when it's called by a clear filter
         if (!isClearFilterEvent) {
           this.emitFilterChanged(EmitterType.local);
         }
@@ -233,8 +233,8 @@ export class FilterService {
     });
   }
 
-  clearFilterByColumnId(event: Event, columnId: number | string) {
-    this.pubSubService.publish('onBeforeFilterClear', { columnId });
+  async clearFilterByColumnId(event: Event, columnId: number | string): Promise<boolean> {
+    await this.pubSubService.publish('onBeforeFilterClear', { columnId });
 
     const isBackendApi = this._gridOptions?.backendServiceApi ?? false;
     const emitter = isBackendApi ? EmitterType.remote : EmitterType.local;
@@ -261,13 +261,14 @@ export class FilterService {
 
     // emit an event when filter is cleared
     this.emitFilterChanged(emitter);
+    return true;
   }
 
   /** Clear the search filters (below the column titles) */
-  clearFilters(triggerChange = true) {
+  async clearFilters(triggerChange = true) {
     // emit an event before the process start
     if (triggerChange) {
-      this.pubSubService.publish('onBeforeFilterClear', true);
+      await this.pubSubService.publish('onBeforeFilterClear', true);
     }
 
     this._filtersMetadata.forEach((filter: Filter) => {
@@ -631,7 +632,7 @@ export class FilterService {
    * Other services, like Pagination, can then subscribe to it.
    * @param caller
    */
-  emitFilterChanged(caller: EmitterType, isBeforeExecution = false) {
+  emitFilterChanged(caller: EmitterType, isBeforeExecution = false): void | Promise<boolean> {
     const eventName = isBeforeExecution ? 'onBeforeFilterChange' : 'onFilterChanged';
 
     if (caller === EmitterType.remote && this._gridOptions?.backendServiceApi) {
@@ -640,17 +641,18 @@ export class FilterService {
       if (backendService?.getCurrentFilters) {
         currentFilters = backendService.getCurrentFilters() as CurrentFilter[];
       }
-      this.pubSubService.publish(eventName, currentFilters);
+      return this.pubSubService.publish(eventName, currentFilters);
     } else if (caller === EmitterType.local) {
-      this.pubSubService.publish(eventName, this.getCurrentLocalFilters());
+      return this.pubSubService.publish(eventName, this.getCurrentLocalFilters());
     }
+    return Promise.resolve(true);
   }
 
   async onBackendFilterChange(event: KeyboardEvent, args: any) {
     const isTriggeringQueryEvent = args?.shouldTriggerQuery;
 
     if (isTriggeringQueryEvent) {
-      this.emitFilterChanged(EmitterType.remote, true);
+      await this.emitFilterChanged(EmitterType.remote, true);
     }
 
     if (!args || !args.grid) {
@@ -792,7 +794,7 @@ export class FilterService {
    * @param triggerBackendQuery defaults to True, which will query the backend.
    * @param triggerOnSearchChangeEvent defaults to False, can be useful with Tree Data structure where the onSearchEvent has to run to execute a prefiltering step
    */
-  updateFilters(filters: CurrentFilter[], emitChangedEvent = true, triggerBackendQuery = true, triggerOnSearchChangeEvent = false) {
+  async updateFilters(filters: CurrentFilter[], emitChangedEvent = true, triggerBackendQuery = true, triggerOnSearchChangeEvent = false): Promise<boolean> {
     if (!this._filtersMetadata || this._filtersMetadata.length === 0 || !this._gridOptions || !this._gridOptions.enableFiltering) {
       throw new Error('[Slickgrid-Universal] in order to use "updateFilters" method, you need to have Filterable Columns defined in your grid and "enableFiltering" set in your Grid Options');
     }
@@ -822,7 +824,7 @@ export class FilterService {
 
       // trigger the onBeforeFilterChange event before the process
       if (emitChangedEvent) {
-        this.emitFilterChanged(emitterType, true);
+        await this.emitFilterChanged(emitterType, true);
       }
 
       // refresh the DataView and trigger an event after all filters were updated and rendered
@@ -842,6 +844,7 @@ export class FilterService {
         this.emitFilterChanged(emitterType);
       }
     }
+    return true;
   }
 
   /**
@@ -856,7 +859,7 @@ export class FilterService {
    * @param triggerEvent defaults to True, do we want to emit a filter changed event?
    * @param triggerBackendQuery defaults to True, which will query the backend.
    */
-  updateSingleFilter(filter: CurrentFilter, emitChangedEvent = true, triggerBackendQuery = true) {
+  async updateSingleFilter(filter: CurrentFilter, emitChangedEvent = true, triggerBackendQuery = true): Promise<boolean> {
     const columnDef = this.sharedService.allColumns.find(col => col.id === filter.columnId);
     if (columnDef && filter.columnId) {
       this._columnFilters = {};
@@ -878,7 +881,7 @@ export class FilterService {
 
       // trigger the onBeforeFilterChange event before the process
       if (emitChangedEvent) {
-        this.emitFilterChanged(emitterType, true);
+        await this.emitFilterChanged(emitterType, true);
       }
 
       if (backendApi) {
@@ -905,6 +908,7 @@ export class FilterService {
         this.emitFilterChanged(emitterType);
       }
     }
+    return true;
   }
 
   // --

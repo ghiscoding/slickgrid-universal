@@ -265,7 +265,7 @@ describe('FilterService', () => {
       expect(filterMetadataArray[0]).toContainEntry(['searchTerms', []]);
     });
 
-    it('should call "onFilterChanged" when "onSearchChange" event is triggered', () => {
+    it('should call "onFilterChanged" when "onSearchChange" event is triggered', (done) => {
       const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
       const mockArgs = {
         clearFilterTriggered: false,
@@ -281,11 +281,14 @@ describe('FilterService', () => {
       service.bindLocalOnFilter(gridStub);
       service.onSearchChange!.notify(mockArgs as any, new Slick.EventData(), gridStub);
 
-      expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, []);
-      expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, []);
+      setTimeout(() => {
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, []);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, []);
+        done();
+      });
     });
 
-    it('should call "onFilterChanged" with column filter when both onHeaderRowCellRendered" and "onSearchChange" events are triggered', () => {
+    it('should call "onFilterChanged" with column filter when both onHeaderRowCellRendered" and "onSearchChange" events are triggered', (done) => {
       const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
       const mockColumn = {
         id: 'firstName', field: 'firstName', filterable: true,
@@ -310,8 +313,11 @@ describe('FilterService', () => {
       gridStub.onHeaderRowCellRendered.notify(mockHeaderArgs as any, new Slick.EventData(), gridStub);
       service.onSearchChange!.notify(mockSearchArgs, new Slick.EventData(), gridStub);
 
-      expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'firstName', operator: 'EQ', searchTerms: [true] }]);
-      expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'firstName', operator: 'EQ', searchTerms: [true] }]);
+      setTimeout(() => {
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'firstName', operator: 'EQ', searchTerms: [true] }]);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'firstName', operator: 'EQ', searchTerms: [true] }]);
+        done();
+      });
     });
   });
 
@@ -327,7 +333,7 @@ describe('FilterService', () => {
       sharedService.allColumns = [mockColumn];
     });
 
-    it('should execute the search callback normally when a input change event is triggered and searchTerms are defined', () => {
+    it('should execute the search callback normally when a input change event is triggered and searchTerms are defined', (done) => {
       const expectationColumnFilter = { columnDef: mockColumn, columnId: 'firstName', operator: 'EQ', searchTerms: ['John'], parsedSearchTerms: ['John'], type: FieldType.string };
       const spySearchChange = jest.spyOn(service.onSearchChange as any, 'notify');
       const spyEmit = jest.spyOn(service, 'emitFilterChanged');
@@ -337,19 +343,22 @@ describe('FilterService', () => {
       gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
       service.getFiltersMetadata()[0].callback(new CustomEvent('input'), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['John'], shouldTriggerQuery: true });
 
-      expect(service.getColumnFilters()).toContainEntry(['firstName', expectationColumnFilter]);
-      expect(spySearchChange).toHaveBeenCalledWith({
-        clearFilterTriggered: undefined,
-        shouldTriggerQuery: true,
-        columnId: 'firstName',
-        columnDef: mockColumn,
-        columnFilters: { firstName: expectationColumnFilter },
-        operator: 'EQ',
-        searchTerms: ['John'],
-        parsedSearchTerms: ['John'],
-        grid: gridStub
-      }, expect.anything());
-      expect(spyEmit).toHaveBeenCalledWith('local');
+      setTimeout(() => {
+        expect(service.getColumnFilters()).toContainEntry(['firstName', expectationColumnFilter]);
+        expect(spySearchChange).toHaveBeenCalledWith({
+          clearFilterTriggered: undefined,
+          shouldTriggerQuery: true,
+          columnId: 'firstName',
+          columnDef: mockColumn,
+          columnFilters: { firstName: expectationColumnFilter },
+          operator: 'EQ',
+          searchTerms: ['John'],
+          parsedSearchTerms: ['John'],
+          grid: gridStub
+        }, expect.anything());
+        expect(spyEmit).toHaveBeenCalledWith('local');
+        done();
+      });
     });
 
     it('should execute the callback normally when a input change event is triggered and the searchTerm comes from this event.target', () => {
@@ -464,7 +473,7 @@ describe('FilterService', () => {
     });
 
     describe('clearFilterByColumnId method', () => {
-      it('should clear the filter by passing a column id as argument on a backend grid', () => {
+      it('should clear the filter by passing a column id as argument on a backend grid', async () => {
         const filterExpectation = { columnDef: mockColumn2, columnId: 'lastName', operator: 'NE', searchTerms: ['Doe'], parsedSearchTerms: ['Doe'], type: FieldType.string };
         const newEvent = new CustomEvent(`mouseup`);
         const spyClear = jest.spyOn(service.getFiltersMetadata()[0], 'clear');
@@ -473,7 +482,7 @@ describe('FilterService', () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         const filterCountBefore = Object.keys(service.getColumnFilters()).length;
-        service.clearFilterByColumnId(newEvent, 'firstName');
+        await service.clearFilterByColumnId(newEvent, 'firstName');
         const filterCountAfter = Object.keys(service.getColumnFilters()).length;
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, { columnId: 'firstName' });
@@ -485,7 +494,7 @@ describe('FilterService', () => {
         expect(spyEmitter).toHaveBeenCalledWith('remote');
       });
 
-      it('should not call "onBackendFilterChange" method when the filter is previously empty', () => {
+      it('should not call "onBackendFilterChange" method when the filter is previously empty', async () => {
         const filterFirstExpectation = { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms: ['John'], parsedSearchTerms: ['John'], type: FieldType.string };
         const filterLastExpectation = { columnDef: mockColumn2, columnId: 'lastName', operator: 'NE', searchTerms: ['Doe'], parsedSearchTerms: ['Doe'], type: FieldType.string };
         const newEvent = new Event('mouseup');
@@ -495,7 +504,7 @@ describe('FilterService', () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         const filterCountBefore = Object.keys(service.getColumnFilters()).length;
-        service.clearFilterByColumnId(newEvent, 'age');
+        await service.clearFilterByColumnId(newEvent, 'age');
         const filterCountAfter = Object.keys(service.getColumnFilters()).length;
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, { columnId: 'age' });
@@ -518,7 +527,7 @@ describe('FilterService', () => {
         jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
       });
 
-      it('should clear all the Filters when the query response is a string', () => {
+      it('should clear all the Filters when the query response is a string', async () => {
         gridOptionMock.backendServiceApi!.service.processOnFilterChanged = () => 'filter query string';
         const spyClear = jest.spyOn(service.getFiltersMetadata()[0], 'clear');
         const spyFilterChange = jest.spyOn(service, 'onBackendFilterChange');
@@ -526,7 +535,7 @@ describe('FilterService', () => {
         const spyProcess = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'process');
 
         const filterCountBefore = Object.keys(service.getColumnFilters()).length;
-        service.clearFilters();
+        await service.clearFilters();
 
         expect(spyClear).toHaveBeenCalled();
         expect(filterCountBefore).toBe(2);
@@ -546,9 +555,9 @@ describe('FilterService', () => {
         jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'process');
 
         service.clearFilters();
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, true);
 
         setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, true);
           expect(pubSubSpy).toHaveBeenCalledWith(`onFilterCleared`, true);
           expect(spyOnError).toHaveBeenCalledWith(errorExpected);
           done();
@@ -600,13 +609,13 @@ describe('FilterService', () => {
     });
 
     describe('clearFilterByColumnId method', () => {
-      it('should clear the filter by passing a column id as argument on a local grid', () => {
+      it('should clear the filter by passing a column id as argument on a local grid', async () => {
         const spyClear = jest.spyOn(service.getFiltersMetadata()[0], 'clear');
         const spyEmitter = jest.spyOn(service, 'emitFilterChanged');
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         const filterCountBefore = Object.keys(service.getColumnFilters()).length;
-        service.clearFilterByColumnId(new CustomEvent(`mouseup`), 'firstName');
+        await service.clearFilterByColumnId(new CustomEvent(`mouseup`), 'firstName');
         const filterCountAfter = Object.keys(service.getColumnFilters()).length;
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, { columnId: 'firstName' });
@@ -1099,19 +1108,19 @@ describe('FilterService', () => {
       sharedService.allColumns = [mockColumn1, mockColumn2];
     });
 
-    it('should throw an error when there are no filters defined in the column definitions', (done) => {
+    it('should throw an error when there are no filters defined in the column definitions', async (done) => {
       try {
         gridOptionMock.enableFiltering = false;
         service.init(gridStub);
         service.bindLocalOnFilter(gridStub);
-        service.updateFilters([{ columnId: 'firstName', searchTerms: ['John'] }]);
+        await service.updateFilters([{ columnId: 'firstName', searchTerms: ['John'] }]);
       } catch (e) {
         expect(e.toString()).toContain('[Slickgrid-Universal] in order to use "updateFilters" method, you need to have Filterable Columns defined in your grid');
         done();
       }
     });
 
-    it('should call "clearFilters" without triggering a clear event but trigger an "emitFilterChanged" local when using "bindLocalOnFilter" and also expect filters to be set in ColumnFilters', () => {
+    it('should call "clearFilters" without triggering a clear event but trigger an "emitFilterChanged" local when using "bindLocalOnFilter" and also expect filters to be set in ColumnFilters', async () => {
       const clearSpy = jest.spyOn(service, 'clearFilters');
       const emitSpy = jest.spyOn(service, 'emitFilterChanged');
 
@@ -1119,7 +1128,7 @@ describe('FilterService', () => {
       service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
-      service.updateFilters(mockNewFilters);
+      await service.updateFilters(mockNewFilters);
 
       expect(emitSpy).toHaveBeenCalledWith('local');
       expect(clearSpy).toHaveBeenCalledWith(false);
@@ -1129,7 +1138,7 @@ describe('FilterService', () => {
       });
     });
 
-    it('should expect filters to be set in ColumnFilters when using "bindLocalOnFilter" without triggering a filter changed event when 2nd flag argument is set to false', () => {
+    it('should expect filters to be set in ColumnFilters when using "bindLocalOnFilter" without triggering a filter changed event when 2nd flag argument is set to false', async () => {
       const clearSpy = jest.spyOn(service, 'clearFilters');
       const emitSpy = jest.spyOn(service, 'emitFilterChanged');
 
@@ -1137,7 +1146,7 @@ describe('FilterService', () => {
       service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
-      service.updateFilters(mockNewFilters, false);
+      await service.updateFilters(mockNewFilters, false);
 
       expect(emitSpy).not.toHaveBeenCalled();
       expect(clearSpy).toHaveBeenCalledWith(false);
@@ -1147,7 +1156,7 @@ describe('FilterService', () => {
       });
     });
 
-    it('should call "clearFilters" without triggering a clear event but trigger an "emitFilterChanged" remote when using "bindBackendOnFilter" and also expect filters to be set in ColumnFilters', () => {
+    it('should call "clearFilters" without triggering a clear event but trigger an "emitFilterChanged" remote when using "bindBackendOnFilter" and also expect filters to be set in ColumnFilters', async () => {
       gridOptionMock.backendServiceApi = {
         filterTypingDebounce: 0,
         service: backendServiceStub,
@@ -1163,7 +1172,7 @@ describe('FilterService', () => {
       service.bindBackendOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
-      service.updateFilters(mockNewFilters);
+      await service.updateFilters(mockNewFilters);
 
       expect(emitSpy).toHaveBeenCalledWith('remote');
       expect(backendProcessSpy).not.toHaveBeenCalled();
@@ -1177,7 +1186,7 @@ describe('FilterService', () => {
       expect(refreshBackendSpy).toHaveBeenCalledWith(gridOptionMock);
     });
 
-    it('should expect filters to be sent to the backend when using "bindBackendOnFilter" without triggering a filter changed event neither a backend query when both flag arguments are set to false', () => {
+    it('should expect filters to be sent to the backend when using "bindBackendOnFilter" without triggering a filter changed event neither a backend query when both flag arguments are set to false', async () => {
       gridOptionMock.backendServiceApi = {
         filterTypingDebounce: 0,
         service: backendServiceStub,
@@ -1193,7 +1202,7 @@ describe('FilterService', () => {
       service.bindBackendOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
-      service.updateFilters(mockNewFilters, false, false);
+      await service.updateFilters(mockNewFilters, false, false);
 
       expect(backendProcessSpy).not.toHaveBeenCalled();
       expect(emitSpy).not.toHaveBeenCalled();
@@ -1206,7 +1215,7 @@ describe('FilterService', () => {
       expect(clearSpy).toHaveBeenCalledWith(false);
     });
 
-    it('should expect filters to be set in ColumnFilters and also expect onSearchChange to be called when last argument is set to True', () => {
+    it('should expect filters to be set in ColumnFilters and also expect onSearchChange to be called when last argument is set to True', async () => {
       const clearSpy = jest.spyOn(service, 'clearFilters');
       const emitSpy = jest.spyOn(service, 'emitFilterChanged');
       const spySearchChange = jest.spyOn(service.onSearchChange as any, 'notify');
@@ -1216,7 +1225,7 @@ describe('FilterService', () => {
       service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
-      service.updateFilters(mockNewFilters.slice(0, 1), true, false, true);
+      await service.updateFilters(mockNewFilters.slice(0, 1), true, false, true);
 
       expect(emitSpy).toHaveBeenCalledWith('local');
       expect(clearSpy).toHaveBeenCalledWith(false);
@@ -1236,7 +1245,7 @@ describe('FilterService', () => {
       }, undefined);
     });
 
-    it('should expect filters to be set in ColumnFilters and also expect onSearchChange to be called when "enableTreeData" is set', () => {
+    it('should expect filters to be set in ColumnFilters and also expect onSearchChange to be called when "enableTreeData" is set', async () => {
       const clearSpy = jest.spyOn(service, 'clearFilters');
       const emitSpy = jest.spyOn(service, 'emitFilterChanged');
       const spySearchChange = jest.spyOn(service.onSearchChange as any, 'notify');
@@ -1246,7 +1255,7 @@ describe('FilterService', () => {
       service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
-      service.updateFilters(mockNewFilters.slice(0, 1));
+      await service.updateFilters(mockNewFilters.slice(0, 1));
 
       expect(emitSpy).toHaveBeenCalledWith('local');
       expect(clearSpy).toHaveBeenCalledWith(false);
@@ -1284,7 +1293,7 @@ describe('FilterService', () => {
       sharedService.allColumns = [mockColumn1, mockColumn2];
     });
 
-    it('should call "updateSingleFilter" method and expect event "emitFilterChanged" to be trigged local when using "bindLocalOnFilter" and also expect filters to be set in dataview', () => {
+    it('should call "updateSingleFilter" method and expect event "emitFilterChanged" to be trigged local when using "bindLocalOnFilter" and also expect filters to be set in dataview', async () => {
       const expectation = {
         firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith', type: FieldType.string },
       };
@@ -1295,7 +1304,7 @@ describe('FilterService', () => {
       service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
-      service.updateSingleFilter({ columnId: 'firstName', searchTerms: ['Jane'], operator: 'StartsWith' });
+      await service.updateSingleFilter({ columnId: 'firstName', searchTerms: ['Jane'], operator: 'StartsWith' });
 
       expect(setFilterArgsSpy).toHaveBeenCalledWith({ columnFilters: expectation, grid: gridStub });
       expect(refreshSpy).toHaveBeenCalled();
@@ -1305,7 +1314,7 @@ describe('FilterService', () => {
       });
     });
 
-    it('should call "updateSingleFilter" method with an empty search term and still expect event "emitFilterChanged" to be trigged local when setting `emptySearchTermReturnAllValues` to False', () => {
+    it('should call "updateSingleFilter" method with an empty search term and still expect event "emitFilterChanged" to be trigged local when setting `emptySearchTermReturnAllValues` to False', async () => {
       const expectation = {
         firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: [''], operator: 'StartsWith', type: FieldType.string },
       };
@@ -1318,7 +1327,7 @@ describe('FilterService', () => {
       mockArgs2.column.filter = { emptySearchTermReturnAllValues: false };
       gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
-      service.updateSingleFilter({ columnId: 'firstName', searchTerms: [''], operator: 'StartsWith' });
+      await service.updateSingleFilter({ columnId: 'firstName', searchTerms: [''], operator: 'StartsWith' });
 
       expect(setFilterArgsSpy).toHaveBeenCalledWith({ columnFilters: expectation, grid: gridStub });
       expect(refreshSpy).toHaveBeenCalled();
@@ -1329,7 +1338,7 @@ describe('FilterService', () => {
       expect(service.getCurrentLocalFilters()).toEqual([{ columnId: 'firstName', operator: 'StartsWith', searchTerms: [''] }]);
     });
 
-    it('should call "updateSingleFilter" method and expect event "emitFilterChanged" to be trigged local when using "bindBackendOnFilter" and also expect filters to be set in dataview', () => {
+    it('should call "updateSingleFilter" method and expect event "emitFilterChanged" to be trigged local when using "bindBackendOnFilter" and also expect filters to be set in dataview', async () => {
       const expectation = {
         firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith', type: FieldType.string },
       };
@@ -1347,7 +1356,7 @@ describe('FilterService', () => {
       service.bindBackendOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
-      service.updateSingleFilter({ columnId: 'firstName', searchTerms: ['Jane'], operator: 'StartsWith' });
+      await service.updateSingleFilter({ columnId: 'firstName', searchTerms: ['Jane'], operator: 'StartsWith' });
 
       expect(emitSpy).toHaveBeenCalledWith('remote');
       expect(backendProcessSpy).not.toHaveBeenCalled();
@@ -1356,7 +1365,7 @@ describe('FilterService', () => {
       expect(refreshBackendSpy).toHaveBeenCalledWith(gridOptionMock);
     });
 
-    it('should expect filter to be sent to the backend when using "bindBackendOnFilter" without triggering a filter changed event neither a backend query when both flag arguments are set to false', () => {
+    it('should expect filter to be sent to the backend when using "bindBackendOnFilter" without triggering a filter changed event neither a backend query when both flag arguments are set to false', async () => {
       const expectation = {
         firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith', type: FieldType.string },
       };
@@ -1374,7 +1383,7 @@ describe('FilterService', () => {
       service.bindBackendOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
-      service.updateSingleFilter({ columnId: 'firstName', searchTerms: ['Jane'], operator: 'StartsWith' }, false, false);
+      await service.updateSingleFilter({ columnId: 'firstName', searchTerms: ['Jane'], operator: 'StartsWith' }, false, false);
 
       expect(backendProcessSpy).not.toHaveBeenCalled();
       expect(emitSpy).not.toHaveBeenCalled();
@@ -1596,7 +1605,7 @@ describe('FilterService', () => {
         sharedService.allColumns = [mockColumn1, mockColumn2];
       });
 
-      it('should return True when item is found and its parent is not collapsed', () => {
+      it('should return True when item is found and its parent is not collapsed', async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
         jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any, __collapsed: false })
@@ -1611,7 +1620,7 @@ describe('FilterService', () => {
         gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
 
         const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', operator: 'Contains', searchTerms: ['map'], parsedSearchTerms: ['map'], type: FieldType.string } };
-        service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['map'] }], true, true, true);
+        await service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['map'] }], true, true, true);
         const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['map',] }]);
@@ -1621,7 +1630,7 @@ describe('FilterService', () => {
         expect(preFilterSpy).toHaveReturnedWith([21, 4, 5]);
       });
 
-      it('should return False when item is found BUT its parent is collapsed', () => {
+      it('should return False when item is found BUT its parent is collapsed', async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
         jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any, __collapsed: true })
@@ -1636,7 +1645,7 @@ describe('FilterService', () => {
         gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
 
         const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', operator: 'Contains', searchTerms: ['map'], parsedSearchTerms: ['map'], type: FieldType.string } };
-        service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['map'] }], true, true, true);
+        await service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['map'] }], true, true, true);
         const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['map'] }]);
@@ -1646,7 +1655,7 @@ describe('FilterService', () => {
         expect(preFilterSpy).toHaveReturnedWith([21, 4, 5]);
       });
 
-      it('should return False when item is not found in the dataset', () => {
+      it('should return False when item is not found in the dataset', async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
         jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any })
@@ -1661,7 +1670,7 @@ describe('FilterService', () => {
         gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
 
         const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', searchTerms: ['unknown'], type: FieldType.string } } as ColumnFilters;
-        service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['unknown'] }], true, true, true);
+        await service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['unknown'] }], true, true, true);
         const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['unknown'] }]);

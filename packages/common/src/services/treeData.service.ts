@@ -148,9 +148,9 @@ export class TreeDataService {
     return this.sortService.sortHierarchicalDataset(hierarchicalDataset, finalColumnSorts);
   }
 
-  toggleTreeDataCollapse(collapsing: boolean) {
+  async toggleTreeDataCollapse(collapsing: boolean): Promise<boolean> {
     // emit an event when filters are all cleared
-    this.pubSubService.publish('onBeforeToggleTreeCollapse', { collapsing });
+    await this.pubSubService.publish('onBeforeToggleTreeCollapse', { collapsing });
 
     if (this.gridOptions) {
       const treeDataOptions = this.gridOptions.treeDataOptions;
@@ -165,5 +165,6 @@ export class TreeDataService {
     }
 
     this.pubSubService.publish('onToggleTreeCollapsed', { collapsing });
+    return true;
   }
 }

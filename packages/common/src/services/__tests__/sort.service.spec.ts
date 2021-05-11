@@ -150,7 +150,7 @@ describe('SortService', () => {
       expect(setSortSpy).toHaveBeenCalled();
     });
 
-    it('should expect Sort Service to call "onLocalSortChanged" being called without the sorted column (firstName DESC)', () => {
+    it('should expect Sort Service to call "onLocalSortChanged" being called without the sorted column (firstName DESC)', (done) => {
       gridOptionMock.backendServiceApi = undefined;
       const previousSortSpy = jest.spyOn(service, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]).mockReturnValueOnce(mockSortedCols);
       const localSortSpy = jest.spyOn(service, 'onLocalSortChanged');
@@ -161,13 +161,16 @@ describe('SortService', () => {
       service.bindLocalOnSort(gridStub);
       service.clearSortByColumnId(mockMouseEvent, 'firstName');
 
-      expect(previousSortSpy).toHaveBeenCalled();
-      expect(localSortSpy).toHaveBeenCalledWith(gridStub, [mockSortedCols[0]], true, true);
-      expect(emitSortChangedSpy).toHaveBeenCalledWith('local', [{ columnId: 'firstName', direction: 'DESC' }]);
-      expect(setSortSpy).toHaveBeenCalled();
+      setTimeout(() => {
+        expect(previousSortSpy).toHaveBeenCalled();
+        expect(localSortSpy).toHaveBeenCalledWith(gridStub, [mockSortedCols[0]], true, true);
+        expect(emitSortChangedSpy).toHaveBeenCalledWith('local', [{ columnId: 'firstName', direction: 'DESC' }]);
+        expect(setSortSpy).toHaveBeenCalled();
+        done();
+      });
     });
 
-    it('should expect Sort Service to call "onLocalSortChanged" being called without the sorted column (lastName ASC)', () => {
+    it('should expect Sort Service to call "onLocalSortChanged" being called without the sorted column (lastName ASC)', (done) => {
       gridOptionMock.backendServiceApi = undefined;
       const previousSortSpy = jest.spyOn(service, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[1]]).mockReturnValueOnce(mockSortedCols);
       const localSortSpy = jest.spyOn(service, 'onLocalSortChanged');
@@ -178,10 +181,13 @@ describe('SortService', () => {
       service.bindLocalOnSort(gridStub);
       service.clearSortByColumnId(mockMouseEvent, 'lastName');
 
-      expect(previousSortSpy).toHaveBeenCalled();
-      expect(localSortSpy).toHaveBeenCalledWith(gridStub, [mockSortedCols[1]], true, true);
-      expect(emitSortChangedSpy).toHaveBeenCalledWith('local', [{ columnId: 'lastName', direction: 'ASC' }]);
-      expect(setSortSpy).toHaveBeenCalled();
+      setTimeout(() => {
+        expect(previousSortSpy).toHaveBeenCalled();
+        expect(localSortSpy).toHaveBeenCalledWith(gridStub, [mockSortedCols[1]], true, true);
+        expect(emitSortChangedSpy).toHaveBeenCalledWith('local', [{ columnId: 'lastName', direction: 'ASC' }]);
+        expect(setSortSpy).toHaveBeenCalled();
+        done();
+      });
     });
 
     it('should expect "onSort" event triggered when no DataView is provided', () => {
@@ -201,7 +207,7 @@ describe('SortService', () => {
       gridStub.getData = () => dataViewStub as any; // put back regular dataview mock
     });
 
-    it('should expect Sort Service to call "onLocalSortChanged" with empty array then also "sortLocalGridByDefaultSortFieldId" when there is no more columns left to sort', () => {
+    it('should expect Sort Service to call "onLocalSortChanged" with empty array then also "sortLocalGridByDefaultSortFieldId" when there is no more columns left to sort', (done) => {
       gridOptionMock.backendServiceApi = undefined;
       const previousSortSpy = jest.spyOn(service, 'getCurrentColumnSorts').mockReturnValue([]).mockReturnValueOnce([mockSortedCols[0]]);
       const localSortSpy = jest.spyOn(service, 'onLocalSortChanged');
@@ -213,15 +219,18 @@ describe('SortService', () => {
       service.bindLocalOnSort(gridStub);
       service.clearSortByColumnId(mockMouseEvent, 'firstName');
 
-      expect(previousSortSpy).toHaveBeenCalled();
-      expect(localSortSpy).toHaveBeenNthCalledWith(1, gridStub, [], true, true);
-      expect(localSortSpy).toHaveBeenNthCalledWith(2, gridStub, [{ columnId: 'id', clearSortTriggered: true, sortAsc: true, sortCol: { field: 'id', id: 'id' } }]);
-      expect(emitSortChangedSpy).toHaveBeenCalledWith('local', []);
-      expect(setSortSpy).toHaveBeenCalled();
-      expect(sortDefaultSpy).toHaveBeenCalled();
+      setTimeout(() => {
+        expect(previousSortSpy).toHaveBeenCalled();
+        expect(localSortSpy).toHaveBeenNthCalledWith(1, gridStub, [], true, true);
+        expect(localSortSpy).toHaveBeenNthCalledWith(2, gridStub, [{ columnId: 'id', clearSortTriggered: true, sortAsc: true, sortCol: { field: 'id', id: 'id' } }]);
+        expect(emitSortChangedSpy).toHaveBeenCalledWith('local', []);
+        expect(setSortSpy).toHaveBeenCalled();
+        expect(sortDefaultSpy).toHaveBeenCalled();
+        done();
+      });
     });
 
-    it('should expect Sort Service to call "onLocalSortChanged" with empty array then also "sortLocalGridByDefaultSortFieldId" with custom Id when there is no more columns left to sort', () => {
+    it('should expect Sort Service to call "onLocalSortChanged" with empty array then also "sortLocalGridByDefaultSortFieldId" with custom Id when there is no more columns left to sort', (done) => {
       gridOptionMock.backendServiceApi = undefined;
       gridOptionMock.defaultColumnSortFieldId = 'customId';
       const mockSortedCol = { columnId: 'firstName', sortCol: { id: 'firstName', field: 'firstName', width: 100 }, sortAsc: false };
@@ -235,12 +244,15 @@ describe('SortService', () => {
       service.bindLocalOnSort(gridStub);
       service.clearSortByColumnId(mockMouseEvent, 'firstName');
 
-      expect(previousSortSpy).toHaveBeenCalled();
-      expect(localSortSpy).toHaveBeenNthCalledWith(1, gridStub, [], true, true);
-      expect(emitSortChangedSpy).toHaveBeenCalledWith('local', []);
-      expect(localSortSpy).toHaveBeenNthCalledWith(2, gridStub, [{ columnId: 'customId', clearSortTriggered: true, sortAsc: true, sortCol: { field: 'customId', id: 'customId' } }]);
-      expect(setSortSpy).toHaveBeenCalled();
-      expect(sortDefaultSpy).toHaveBeenCalled();
+      setTimeout(() => {
+        expect(previousSortSpy).toHaveBeenCalled();
+        expect(localSortSpy).toHaveBeenNthCalledWith(1, gridStub, [], true, true);
+        expect(emitSortChangedSpy).toHaveBeenCalledWith('local', []);
+        expect(localSortSpy).toHaveBeenNthCalledWith(2, gridStub, [{ columnId: 'customId', clearSortTriggered: true, sortAsc: true, sortCol: { field: 'customId', id: 'customId' } }]);
+        expect(setSortSpy).toHaveBeenCalled();
+        expect(sortDefaultSpy).toHaveBeenCalled();
+        done();
+      });
     });
   });
 
@@ -333,7 +345,7 @@ describe('SortService', () => {
   });
 
   describe('bindLocalOnSort method', () => {
-    it('should bind to "onLocalSortChanged" and expect some events being triggered when a single sort is called', () => {
+    it('should bind to "onLocalSortChanged" and expect some events being triggered when a single sort is called', (done) => {
       const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
       const spyCurrentSort = jest.spyOn(service, 'getCurrentLocalSorters');
       const spyOnLocalSort = jest.spyOn(service, 'onLocalSortChanged');
@@ -342,12 +354,15 @@ describe('SortService', () => {
       service.bindLocalOnSort(gridStub);
       gridStub.onSort.notify(mockSortedCol, new Slick.EventData(), gridStub);
 
-      expect(spyCurrentSort).toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, [{ columnId: 'lastName', direction: 'ASC' }]);
-      expect(spyOnLocalSort).toHaveBeenCalledWith(gridStub, [mockSortedCol]);
+      setTimeout(() => {
+        expect(spyCurrentSort).toHaveBeenCalled();
+        expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, [{ columnId: 'lastName', direction: 'ASC' }]);
+        expect(spyOnLocalSort).toHaveBeenCalledWith(gridStub, [mockSortedCol]);
+        done();
+      });
     });
 
-    it('should bind to "onLocalSortChanged" and expect some events being triggered when "multiColumnSort" is enabled and multiple sorts are called', () => {
+    it('should bind to "onLocalSortChanged" and expect some events being triggered when "multiColumnSort" is enabled and multiple sorts are called', (done) => {
       const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
       const spyCurrentSort = jest.spyOn(service, 'getCurrentLocalSorters');
       const spyOnLocalSort = jest.spyOn(service, 'onLocalSortChanged');
@@ -359,9 +374,12 @@ describe('SortService', () => {
       service.bindLocalOnSort(gridStub);
       gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new Slick.EventData(), gridStub);
 
-      expect(spyCurrentSort).toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, [{ columnId: 'lastName', direction: 'ASC' }, { columnId: 'firstName', direction: 'DESC' }]);
-      expect(spyOnLocalSort).toHaveBeenCalledWith(gridStub, mockSortedCols);
+      setTimeout(() => {
+        expect(spyCurrentSort).toHaveBeenCalled();
+        expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, [{ columnId: 'lastName', direction: 'ASC' }, { columnId: 'firstName', direction: 'DESC' }]);
+        expect(spyOnLocalSort).toHaveBeenCalledWith(gridStub, mockSortedCols);
+        done();
+      });
     });
   });
 
@@ -379,7 +397,7 @@ describe('SortService', () => {
       };
     });
 
-    it('should expect some events being triggered when a single sort is called', () => {
+    it('should expect some events being triggered when a single sort is called', (done) => {
       const mockColumn = { id: 'lastName', field: 'lastName', width: 100 } as Column;
       const expectedSortCol = { columnId: 'lastName', direction: 'ASC' } as CurrentSorter;
       const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
@@ -390,13 +408,16 @@ describe('SortService', () => {
       service.bindBackendOnSort(gridStub);
       gridStub.onSort.notify(mockSortedCol, new Slick.EventData(), gridStub);
 
-      expect(spyBackendCurrentSort).toHaveBeenCalled();
-      expect(spyBackendProcessSort).toHaveBeenCalled();
-      expect(spyPreProcess).toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, [expectedSortCol]);
+      setTimeout(() => {
+        expect(spyBackendCurrentSort).toHaveBeenCalled();
+        expect(spyBackendProcessSort).toHaveBeenCalled();
+        expect(spyPreProcess).toHaveBeenCalled();
+        expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, [expectedSortCol]);
+        done();
+      });
     });
 
-    it('should expect some events being triggered when "multiColumnSort" is enabled and multiple sorts are called', () => {
+    it('should expect some events being triggered when "multiColumnSort" is enabled and multiple sorts are called', (done) => {
       const expectedSortCols = [{ columnId: 'lastName', direction: 'ASC' }, { columnId: 'firstName', direction: 'DESC' }] as CurrentSorter[];
       const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
       const spyBackendCurrentSort = jest.spyOn(gridOptionMock.backendServiceApi!.service, 'getCurrentSorters').mockReturnValue(expectedSortCols);
@@ -409,23 +430,29 @@ describe('SortService', () => {
       service.bindBackendOnSort(gridStub);
       gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new Slick.EventData(), gridStub);
 
-      expect(spyBackendCurrentSort).toHaveBeenCalled();
-      expect(spyBackendProcessSort).toHaveBeenCalled();
-      expect(spyPreProcess).toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, expectedSortCols);
+      setTimeout(() => {
+        expect(spyBackendCurrentSort).toHaveBeenCalled();
+        expect(spyBackendProcessSort).toHaveBeenCalled();
+        expect(spyPreProcess).toHaveBeenCalled();
+        expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, expectedSortCols);
+        done();
+      });
     });
   });
 
   describe('emitSortChanged method', () => {
-    it('should have same current sort changed when it is passed as argument to the emitSortChanged method', () => {
+    it('should have same current sort changed when it is passed as argument to the emitSortChanged method', (done) => {
       const localSorterMock = { columnId: 'field1', direction: 'DESC' } as CurrentSorter;
       const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
       service.emitSortChanged(EmitterType.local, [localSorterMock]);
       const currentLocalSorters = service.getCurrentLocalSorters();
 
-      expect(currentLocalSorters).toEqual([localSorterMock]);
-      expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, currentLocalSorters);
+      setTimeout(() => {
+        expect(currentLocalSorters).toEqual([localSorterMock]);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, currentLocalSorters);
+        done();
+      });
     });
   });
 
@@ -714,16 +741,19 @@ describe('SortService', () => {
   });
 
   describe('onLocalSortChanged method', () => {
-    it('should call a dataview "reSort" when the flag requires it', () => {
+    it('should call a dataview "reSort" when the flag requires it', (done) => {
       const spyResort = jest.spyOn(dataViewStub, 'reSort');
 
       service.bindLocalOnSort(gridStub);
       service.onLocalSortChanged(gridStub, [], true);
 
-      expect(spyResort).toHaveBeenCalled();
+      setTimeout(() => {
+        expect(spyResort).toHaveBeenCalled();
+        done();
+      });
     });
 
-    it('should call a dataview sort then a grid invalidate', () => {
+    it('should call a dataview sort then a grid invalidate', (done) => {
       const mockSortedCols = [
         { sortCol: { id: 'lastName', field: 'lastName', width: 100 }, sortAsc: true },
         { sortCol: { id: 'firstName', field: 'firstName', width: 100 }, sortAsc: false },
@@ -735,9 +765,12 @@ describe('SortService', () => {
       service.bindLocalOnSort(gridStub);
       service.onLocalSortChanged(gridStub, mockSortedCols);
 
-      expect(spySort).toHaveBeenCalled();
-      expect(spyInvalidate).toHaveBeenCalled();
-      expect(spyResort).not.toHaveBeenCalled();
+      setTimeout(() => {
+        expect(spySort).toHaveBeenCalled();
+        expect(spyInvalidate).toHaveBeenCalled();
+        expect(spyResort).not.toHaveBeenCalled();
+        done();
+      });
     });
   });
 
@@ -976,7 +1009,7 @@ describe('SortService', () => {
       gridOptionMock.enableTreeData = false;
     });
 
-    it('should execute "processTreeDataInitialSort" and expect "updateSorting" to be called', () => {
+    it('should execute "processTreeDataInitialSort" and expect "updateSorting" to be called', (done) => {
       gridOptionMock.enableTreeData = true;
       gridOptionMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files' };
 
@@ -993,16 +1026,19 @@ describe('SortService', () => {
       service.bindLocalOnSort(gridStub);
       gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new Slick.EventData(), gridStub);
 
-      expect(spyCurrentSort).toHaveBeenCalled();
-      expect(spyUpdateSorting).toHaveBeenCalledWith([{ columnId: 'file', direction: 'ASC' }]);
-      expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, [
-        { columnId: 'lastName', direction: 'ASC' },
-        { columnId: 'file', direction: 'DESC' },
-      ]);
-      expect(spyOnLocalSort).toHaveBeenCalledWith(gridStub, mockSortedCols);
+      setTimeout(() => {
+        expect(spyCurrentSort).toHaveBeenCalled();
+        expect(spyUpdateSorting).toHaveBeenCalledWith([{ columnId: 'file', direction: 'ASC' }]);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, [
+          { columnId: 'lastName', direction: 'ASC' },
+          { columnId: 'file', direction: 'DESC' },
+        ]);
+        expect(spyOnLocalSort).toHaveBeenCalledWith(gridStub, mockSortedCols);
+        done();
+      });
     });
 
-    it('should set an "initialSort" and expect "updateSorting" to be called with different sort tree column', () => {
+    it('should set an "initialSort" and expect "updateSorting" to be called with different sort tree column', (done) => {
       gridOptionMock.enableTreeData = true;
       gridOptionMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files', initialSort: { columnId: 'firstName', direction: 'DESC' } };
 
@@ -1020,13 +1056,16 @@ describe('SortService', () => {
       service.bindLocalOnSort(gridStub);
       gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new Slick.EventData(), gridStub);
 
-      expect(spyCurrentSort).toHaveBeenCalled();
-      expect(spyUpdateSorting).toHaveBeenCalledWith([{ columnId: 'firstName', direction: 'DESC' }]);
-      expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, [
-        { columnId: 'lastName', direction: 'ASC' },
-        { columnId: 'file', direction: 'DESC' },
-      ]);
-      expect(spyOnLocalSort).toHaveBeenCalledWith(gridStub, mockSortedCols);
+      setTimeout(() => {
+        expect(spyCurrentSort).toHaveBeenCalled();
+        expect(spyUpdateSorting).toHaveBeenCalledWith([{ columnId: 'firstName', direction: 'DESC' }]);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, [
+          { columnId: 'lastName', direction: 'ASC' },
+          { columnId: 'file', direction: 'DESC' },
+        ]);
+        expect(spyOnLocalSort).toHaveBeenCalledWith(gridStub, mockSortedCols);
+        done();
+      });
     });
 
     describe('Hierarchical Dataset', () => {
@@ -1084,7 +1123,7 @@ describe('SortService', () => {
         sharedService.hierarchicalDataset = dataset;
       });
 
-      it('should call onLocalSortChanged with a hierarchical dataset and expect DataView "setItems" method be called once with sorted ASC dataset', () => {
+      it('should call onLocalSortChanged with a hierarchical dataset and expect DataView "setItems" method be called once with sorted ASC dataset', (done) => {
         gridOptionMock.enableTreeData = true;
         gridOptionMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files', };
         jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValue(dataset);
@@ -1096,14 +1135,17 @@ describe('SortService', () => {
 
         service.bindLocalOnSort(gridStub);
 
-        expect(spyCurrentSort).toHaveBeenCalled();
-        expect(spyUpdateSorting).toHaveBeenCalledWith([{ columnId: 'file', direction: 'ASC' }]);
-        expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, [{ columnId: 'file', direction: 'ASC' }]);
-        expect(spySetItems).toHaveBeenCalledTimes(1);
-        expect(spySetItems).toHaveBeenCalledWith(expectedSortedAscDataset, 'id');
+        setTimeout(() => {
+          expect(spyCurrentSort).toHaveBeenCalled();
+          expect(spyUpdateSorting).toHaveBeenCalledWith([{ columnId: 'file', direction: 'ASC' }]);
+          expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, [{ columnId: 'file', direction: 'ASC' }]);
+          expect(spySetItems).toHaveBeenCalledTimes(1);
+          expect(spySetItems).toHaveBeenCalledWith(expectedSortedAscDataset, 'id');
+          done();
+        });
       });
 
-      it('should call onLocalSortChanged with a hierarchical dataset and expect DataView "setItems" method be called twice (1st is always ASC, then 2nd by our defined sort of DSEC)', () => {
+      it('should call onLocalSortChanged with a hierarchical dataset and expect DataView "setItems" method be called twice (1st is always ASC, then 2nd by our defined sort of DSEC)', (done) => {
         gridOptionMock.enableTreeData = true;
         gridOptionMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files', };
         jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValue(dataset);
@@ -1118,13 +1160,16 @@ describe('SortService', () => {
         service.bindLocalOnSort(gridStub);
         gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new Slick.EventData(), gridStub);
 
-        expect(spyCurrentSort).toHaveBeenCalled();
-        expect(spyUpdateSorting).toHaveBeenCalledWith([{ columnId: 'file', direction: 'ASC' }]);
-        expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, [{ columnId: 'file', direction: 'ASC' }]);
-        expect(spyOnLocalSort).toHaveBeenCalledWith(gridStub, mockSortedCols);
-        expect(spySetItems).toHaveBeenCalledTimes(2);
-        expect(spySetItems).toHaveBeenNthCalledWith(1, expectedSortedAscDataset, 'id');
-        expect(spySetItems).toHaveBeenNthCalledWith(2, expectedSortedDescDataset, 'id');
+        setTimeout(() => {
+          expect(spyCurrentSort).toHaveBeenCalled();
+          expect(spyUpdateSorting).toHaveBeenCalledWith([{ columnId: 'file', direction: 'ASC' }]);
+          expect(pubSubSpy).toHaveBeenCalledWith(`onSortChanged`, [{ columnId: 'file', direction: 'ASC' }]);
+          expect(spyOnLocalSort).toHaveBeenCalledWith(gridStub, mockSortedCols);
+          expect(spySetItems).toHaveBeenCalledTimes(2);
+          expect(spySetItems).toHaveBeenNthCalledWith(1, expectedSortedAscDataset, 'id');
+          expect(spySetItems).toHaveBeenNthCalledWith(2, expectedSortedDescDataset, 'id');
+          done();
+        });
       });
     });
   });

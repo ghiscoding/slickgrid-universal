@@ -240,13 +240,13 @@ describe('TreeData Service', () => {
         jest.clearAllMocks();
       });
 
-      it('should collapse all items when calling the method with collapsing True', () => {
+      it('should collapse all items when calling the method with collapsing True', async () => {
         const dataGetItemsSpy = jest.spyOn(dataViewStub, 'getItems').mockReturnValue(itemsMock);
         const dataSetItemsSpy = jest.spyOn(dataViewStub, 'setItems');
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub);
-        service.toggleTreeDataCollapse(true);
+        await service.toggleTreeDataCollapse(true);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeToggleTreeCollapse`, { collapsing: true });
         expect(pubSubSpy).toHaveBeenCalledWith(`onToggleTreeCollapsed`, { collapsing: true });
@@ -257,14 +257,14 @@ describe('TreeData Service', () => {
         ]);
       });
 
-      it('should collapse all items with a custom collapsed property when calling the method with collapsing True', () => {
+      it('should collapse all items with a custom collapsed property when calling the method with collapsing True', async () => {
         gridOptionsMock.treeDataOptions!.collapsedPropName = 'customCollapsed';
         const dataGetItemsSpy = jest.spyOn(dataViewStub, 'getItems').mockReturnValue(itemsMock);
         const dataSetItemsSpy = jest.spyOn(dataViewStub, 'setItems');
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub);
-        service.toggleTreeDataCollapse(true);
+        await service.toggleTreeDataCollapse(true);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeToggleTreeCollapse`, { collapsing: true });
         expect(pubSubSpy).toHaveBeenCalledWith(`onToggleTreeCollapsed`, { collapsing: true });
@@ -275,13 +275,13 @@ describe('TreeData Service', () => {
         ]);
       });
 
-      it('should expand all items when calling the method with collapsing False', () => {
+      it('should expand all items when calling the method with collapsing False', async () => {
         const dataGetItemsSpy = jest.spyOn(dataViewStub, 'getItems').mockReturnValue(itemsMock);
         const dataSetItemsSpy = jest.spyOn(dataViewStub, 'setItems');
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub);
-        service.toggleTreeDataCollapse(false);
+        await service.toggleTreeDataCollapse(false);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeToggleTreeCollapse`, { collapsing: false });
         expect(pubSubSpy).toHaveBeenCalledWith(`onToggleTreeCollapsed`, { collapsing: false });

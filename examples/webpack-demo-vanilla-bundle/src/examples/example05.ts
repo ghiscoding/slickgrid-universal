@@ -22,6 +22,7 @@ export class Example5 {
   sgb: SlickVanillaGridBundle;
   durationOrderByCount = false;
   loadingClass = '';
+  isLargeDataset = false;
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -37,19 +38,28 @@ export class Example5 {
     // this.sgb.dataset = this.dataset;
 
     // with large dataset you maybe want to show spinner before/after these events: sorting/filtering/collapsing/expanding
-    const spinnerClass = 'mdi mdi-load mdi-spin-1s mdi-22px';
-    this._bindingEventService.bind(gridContainerElm, 'onbeforefilterchanged', () => this.loadingClass = spinnerClass);
-    this._bindingEventService.bind(gridContainerElm, 'onfilterchanged', () => this.loadingClass = '');
-    this._bindingEventService.bind(gridContainerElm, 'onbeforefilterclear', () => this.loadingClass = spinnerClass);
-    this._bindingEventService.bind(gridContainerElm, 'onfiltercleared', () => this.loadingClass = '');
-    this._bindingEventService.bind(gridContainerElm, 'onbeforesortchange', () => this.loadingClass = spinnerClass);
-    this._bindingEventService.bind(gridContainerElm, 'onsortchanged', () => this.loadingClass = '');
-    this._bindingEventService.bind(gridContainerElm, 'onbeforetoggletreecollapse', () => this.loadingClass = spinnerClass);
-    this._bindingEventService.bind(gridContainerElm, 'ontoggletreecollapsed', () => this.loadingClass = '');
+    this._bindingEventService.bind(gridContainerElm, 'onbeforefilterchange', this.showSpinner.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onfilterchanged', this.hideSpinner.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onbeforefilterclear', this.showSpinner.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onfiltercleared', this.hideSpinner.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onbeforesortchange', this.showSpinner.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onsortchanged', this.hideSpinner.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onbeforetoggletreecollapse', this.showSpinner.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'ontoggletreecollapsed', this.hideSpinner.bind(this));
   }
 
   dispose() {
     this.sgb?.dispose();
+  }
+
+  hideSpinner() {
+    setTimeout(() => this.loadingClass = '', 200); // delay the hide spinner a bit so it won't to avoid show/hide too quickly
+  }
+
+  showSpinner() {
+    if (this.isLargeDataset) {
+      this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-24px color-alt-success';
+    }
   }
 
   initializeGrid() {
@@ -187,6 +197,7 @@ export class Example5 {
   }
 
   loadData(rowCount: number) {
+    this.isLargeDataset = rowCount > 5000; // we'll show a spinner when it's large, else don't show show since it should be fast enough
     let indent = 0;
     const parents = [];
     const data = [];

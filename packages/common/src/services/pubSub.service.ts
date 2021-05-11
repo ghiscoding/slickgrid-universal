@@ -7,7 +7,7 @@ export abstract class PubSubService {
    * @param event The event or channel to publish to.
    * @param data The data to publish on the channel.
    */
-  publish<T = any>(_eventName: string | any, _data?: T): void {
+  publish<T = any>(_eventName: string | any, _data?: T): void | Promise<boolean> {
     throw new Error('PubSubService "publish" method must be implemented');
   }
 

@@ -372,11 +372,11 @@ export class SortService {
   }
 
   /** When a Sort Changes on a Local grid (JSON dataset) */
-  onLocalSortChanged(grid: SlickGrid, sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, forceReSort = false, emitSortChanged = false) {
+  async onLocalSortChanged(grid: SlickGrid, sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, forceReSort = false, emitSortChanged = false) {
     const datasetIdPropertyName = this._gridOptions?.datasetIdPropertyName ?? 'id';
     const isTreeDataEnabled = this._gridOptions?.enableTreeData ?? false;
     const dataView = grid.getData?.() as SlickDataView;
-    this.pubSubService.publish('onBeforeSortChange', { sortColumns });
+    await this.pubSubService.publish('onBeforeSortChange', { sortColumns });
 
     if (grid && dataView) {
       if (forceReSort && !isTreeDataEnabled) {
