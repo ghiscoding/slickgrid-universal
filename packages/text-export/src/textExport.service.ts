@@ -375,7 +375,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
         }
       } else {
         // get the output by analyzing if we'll pull the value from the cell or from a formatter
-        let itemData = exportWithFormatterWhenDefined(row, col, itemObj, columnDef, this._grid, this._exportOptions);
+        let itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, this._exportOptions);
 
         // does the user want to sanitize the output data (remove HTML tags)?
         if (columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) {

@@ -42,7 +42,7 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
     }
 
     if (treeDataOptions?.titleFormatter) {
-      outputValue = parseFormatterWhenExist(treeDataOptions.titleFormatter, row, cell, dataContext, columnDef, grid);
+      outputValue = parseFormatterWhenExist(treeDataOptions.titleFormatter, row, cell, columnDef, dataContext, grid);
     }
     const sanitizedOutputValue = sanitizeTextByAvailableSanitizer(gridOptions, outputValue, { ADD_ATTR: ['target'] });
     const spanToggleClass = `slick-group-toggle ${toggleClass}`.trim();

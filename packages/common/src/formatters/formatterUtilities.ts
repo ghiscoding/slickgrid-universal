@@ -63,7 +63,7 @@ export function getAssociatedDateFormatter(fieldType: typeof FieldType[keyof typ
  * @param {Object} exportOptions - Excel or Text Export Options
  * @returns formatted string output or empty string
  */
-export function exportWithFormatterWhenDefined(row: number, col: number, dataContext: any, columnDef: Column, grid: SlickGrid, exportOptions?: TextExportOption | ExcelExportOption) {
+export function exportWithFormatterWhenDefined<T = any>(row: number, col: number, columnDef: Column<T>, dataContext: T, grid: SlickGrid, exportOptions?: TextExportOption | ExcelExportOption) {
   let isEvaluatingFormatter = false;
 
   // first check if there are any export options provided (as Grid Options)
@@ -85,7 +85,7 @@ export function exportWithFormatterWhenDefined(row: number, col: number, dataCon
     formatter = columnDef.formatter;
   }
 
-  return parseFormatterWhenExist(formatter, row, col, dataContext, columnDef, grid);
+  return parseFormatterWhenExist(formatter, row, col, columnDef, dataContext, grid);
 }
 
 /**
@@ -98,7 +98,7 @@ export function exportWithFormatterWhenDefined(row: number, col: number, dataCon
  * @param {Object} grid - Slick Grid object
  * @returns formatted string output or empty string
  */
-export function parseFormatterWhenExist(formatter: Formatter<any> | undefined, row: number, col: number, dataContext: any, columnDef: Column, grid: SlickGrid): string {
+export function parseFormatterWhenExist<T = any>(formatter: Formatter<T> | undefined, row: number, col: number, columnDef: Column<T>, dataContext: T, grid: SlickGrid): string {
   let output = '';
 
   // does the field have the dot (.) notation and is a complex object? if so pull the first property name
@@ -109,7 +109,7 @@ export function parseFormatterWhenExist(formatter: Formatter<any> | undefined, r
     fieldProperty = (props.length > 0) ? props[0] : columnDef.field;
   }
 
-  const cellValue = dataContext.hasOwnProperty(fieldProperty) ? dataContext[fieldProperty] : null;
+  const cellValue = (dataContext as any).hasOwnProperty(fieldProperty) ? (dataContext as any)[fieldProperty] : null;
 
   if (typeof formatter === 'function') {
     const formattedData = formatter(row, col, cellValue, columnDef, dataContext, grid);
@@ -121,7 +121,7 @@ export function parseFormatterWhenExist(formatter: Formatter<any> | undefined, r
       output = '';
     }
   } else {
-    output = (!dataContext.hasOwnProperty(fieldProperty)) ? '' : cellValue;
+    output = (!(dataContext as any).hasOwnProperty(fieldProperty)) ? '' : cellValue;
     if (output === null || output === undefined) {
       output = '';
     }

@@ -186,7 +186,7 @@ export class ResizerService {
         columnDefinitions.forEach((columnDef, colIdx) => {
           if (!columnDef.originalWidth) {
             const charWidthPx = columnDef?.resizeCharWidthInPx ?? resizeCellCharWidthInPx;
-            const formattedData = parseFormatterWhenExist(columnDef?.formatter, rowIdx, colIdx, item, columnDef, this._grid);
+            const formattedData = parseFormatterWhenExist(columnDef?.formatter, rowIdx, colIdx, columnDef, item, this._grid);
             const formattedDataSanitized = sanitizeHtmlToText(formattedData);
             const formattedTextWidthInPx = Math.ceil(formattedDataSanitized.length * charWidthPx);
             const resizeMaxWidthThreshold = columnDef.resizeMaxWidthThreshold;
