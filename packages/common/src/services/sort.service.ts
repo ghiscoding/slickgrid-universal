@@ -376,6 +376,7 @@ export class SortService {
     const datasetIdPropertyName = this._gridOptions?.datasetIdPropertyName ?? 'id';
     const isTreeDataEnabled = this._gridOptions?.enableTreeData ?? false;
     const dataView = grid.getData?.() as SlickDataView;
+    this.pubSubService.publish('onBeforeSortChange', { sortColumns });
 
     if (grid && dataView) {
       if (forceReSort && !isTreeDataEnabled) {

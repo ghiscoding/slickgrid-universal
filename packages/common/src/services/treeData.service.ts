@@ -1,5 +1,6 @@
 import { Column, ColumnSort, GetSlickEventType, GridOption, OnClickEventArgs, SlickDataView, SlickEventData, SlickEventHandler, SlickGrid, SlickNamespace, TreeDataOption, } from '../interfaces/index';
 import { unflattenParentChildArrayToTree } from './utilities';
+import { PubSubService } from './pubSub.service';
 import { SharedService } from './shared.service';
 import { SortService } from './sort.service';
 
@@ -10,7 +11,7 @@ export class TreeDataService {
   private _grid!: SlickGrid;
   private _eventHandler: SlickEventHandler;
 
-  constructor(private sharedService: SharedService, private sortService: SortService) {
+  constructor(private pubSubService: PubSubService, private sharedService: SharedService, private sortService: SortService) {
     this._eventHandler = new Slick.EventHandler();
   }
 
@@ -148,6 +149,9 @@ export class TreeDataService {
   }
 
   toggleTreeDataCollapse(collapsing: boolean) {
+    // emit an event when filters are all cleared
+    this.pubSubService.publish('onBeforeToggleTreeCollapse', { collapsing });
+
     if (this.gridOptions) {
       const treeDataOptions = this.gridOptions.treeDataOptions;
 
@@ -159,5 +163,7 @@ export class TreeDataService {
         this._grid.invalidate();
       }
     }
+
+    this.pubSubService.publish('onToggleTreeCollapsed', { collapsing });
   }
 }

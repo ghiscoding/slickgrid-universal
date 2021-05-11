@@ -1,4 +1,5 @@
 import { Column, SlickDataView, GridOption, SlickEventHandler, SlickGrid, SlickNamespace, BackendService } from '../../interfaces/index';
+import { PubSubService } from '../pubSub.service';
 import { SharedService } from '../shared.service';
 import { SortService } from '../sort.service';
 import { TreeDataService } from '../treeData.service';
@@ -47,6 +48,13 @@ const gridStub = {
   setSortColumns: jest.fn(),
 } as unknown as SlickGrid;
 
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as PubSubService;
+
 const sortServiceStub = {
   clearSorting: jest.fn(),
   sortHierarchicalDataset: jest.fn(),
@@ -65,7 +73,7 @@ describe('TreeData Service', () => {
     gridOptionsMock.treeDataOptions = {
       columnId: 'file'
     };
-    service = new TreeDataService(sharedService, sortServiceStub);
+    service = new TreeDataService(pubSubServiceStub, sharedService, sortServiceStub);
     slickgridEventHandler = service.eventHandler;
     jest.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
   });
@@ -235,10 +243,13 @@ describe('TreeData Service', () => {
       it('should collapse all items when calling the method with collapsing True', () => {
         const dataGetItemsSpy = jest.spyOn(dataViewStub, 'getItems').mockReturnValue(itemsMock);
         const dataSetItemsSpy = jest.spyOn(dataViewStub, 'setItems');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub);
         service.toggleTreeDataCollapse(true);
 
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeToggleTreeCollapse`, { collapsing: true });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onToggleTreeCollapsed`, { collapsing: true });
         expect(dataGetItemsSpy).toHaveBeenCalled();
         expect(dataSetItemsSpy).toHaveBeenCalledWith([
           { __collapsed: true, file: 'myFile.txt', size: 0.5, },
@@ -250,10 +261,13 @@ describe('TreeData Service', () => {
         gridOptionsMock.treeDataOptions!.collapsedPropName = 'customCollapsed';
         const dataGetItemsSpy = jest.spyOn(dataViewStub, 'getItems').mockReturnValue(itemsMock);
         const dataSetItemsSpy = jest.spyOn(dataViewStub, 'setItems');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub);
         service.toggleTreeDataCollapse(true);
 
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeToggleTreeCollapse`, { collapsing: true });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onToggleTreeCollapsed`, { collapsing: true });
         expect(dataGetItemsSpy).toHaveBeenCalled();
         expect(dataSetItemsSpy).toHaveBeenCalledWith([
           { customCollapsed: true, file: 'myFile.txt', size: 0.5, },
@@ -264,10 +278,13 @@ describe('TreeData Service', () => {
       it('should expand all items when calling the method with collapsing False', () => {
         const dataGetItemsSpy = jest.spyOn(dataViewStub, 'getItems').mockReturnValue(itemsMock);
         const dataSetItemsSpy = jest.spyOn(dataViewStub, 'setItems');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub);
         service.toggleTreeDataCollapse(false);
 
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeToggleTreeCollapse`, { collapsing: false });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onToggleTreeCollapsed`, { collapsing: false });
         expect(dataGetItemsSpy).toHaveBeenCalled();
         expect(dataSetItemsSpy).toHaveBeenCalledWith([
           { __collapsed: false, file: 'myFile.txt', size: 0.5, },

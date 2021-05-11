@@ -234,6 +234,7 @@ describe('FilterService', () => {
       expect(spyBackendChange).toHaveBeenCalledWith(expect.anything(), mockSearchArgs);
       setTimeout(() => {
         expect(spyCurrentFilters).toHaveBeenCalled();
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'isActive', operator: 'EQ', searchTerms: ['John'] }]);
         expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'isActive', operator: 'EQ', searchTerms: ['John'] }]);
         done();
       });
@@ -280,6 +281,7 @@ describe('FilterService', () => {
       service.bindLocalOnFilter(gridStub);
       service.onSearchChange!.notify(mockArgs as any, new Slick.EventData(), gridStub);
 
+      expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, []);
       expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, []);
     });
 
@@ -308,6 +310,7 @@ describe('FilterService', () => {
       gridStub.onHeaderRowCellRendered.notify(mockHeaderArgs as any, new Slick.EventData(), gridStub);
       service.onSearchChange!.notify(mockSearchArgs, new Slick.EventData(), gridStub);
 
+      expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'firstName', operator: 'EQ', searchTerms: [true] }]);
       expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'firstName', operator: 'EQ', searchTerms: [true] }]);
     });
   });
@@ -467,11 +470,13 @@ describe('FilterService', () => {
         const spyClear = jest.spyOn(service.getFiltersMetadata()[0], 'clear');
         const spyFilterChange = jest.spyOn(service, 'onBackendFilterChange');
         const spyEmitter = jest.spyOn(service, 'emitFilterChanged');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         const filterCountBefore = Object.keys(service.getColumnFilters()).length;
         service.clearFilterByColumnId(newEvent, 'firstName');
         const filterCountAfter = Object.keys(service.getColumnFilters()).length;
 
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, { columnId: 'firstName' });
         expect(spyClear).toHaveBeenCalled();
         expect(spyFilterChange).toHaveBeenCalledWith(newEvent, { grid: gridStub, columnFilters: { lastName: filterExpectation } });
         expect(filterCountBefore).toBe(2);
@@ -487,11 +492,13 @@ describe('FilterService', () => {
         const spyClear = jest.spyOn(service.getFiltersMetadata()[2], 'clear');
         const spyFilterChange = jest.spyOn(service, 'onBackendFilterChange');
         const spyEmitter = jest.spyOn(service, 'emitFilterChanged');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         const filterCountBefore = Object.keys(service.getColumnFilters()).length;
         service.clearFilterByColumnId(newEvent, 'age');
         const filterCountAfter = Object.keys(service.getColumnFilters()).length;
 
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, { columnId: 'age' });
         expect(spyClear).toHaveBeenCalled();
         expect(spyFilterChange).not.toHaveBeenCalled();
         expect(filterCountBefore).toBe(2);
@@ -541,6 +548,7 @@ describe('FilterService', () => {
         service.clearFilters();
 
         setTimeout(() => {
+          expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, true);
           expect(pubSubSpy).toHaveBeenCalledWith(`onFilterCleared`, true);
           expect(spyOnError).toHaveBeenCalledWith(errorExpected);
           done();
@@ -561,6 +569,7 @@ describe('FilterService', () => {
         service.clearFilters();
 
         setTimeout(() => {
+          expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, true);
           expect(pubSubSpy).toHaveBeenCalledWith(`onFilterCleared`, true);
           expect(spyOnError).toHaveBeenCalledWith(errorExpected);
           done();
@@ -594,11 +603,13 @@ describe('FilterService', () => {
       it('should clear the filter by passing a column id as argument on a local grid', () => {
         const spyClear = jest.spyOn(service.getFiltersMetadata()[0], 'clear');
         const spyEmitter = jest.spyOn(service, 'emitFilterChanged');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         const filterCountBefore = Object.keys(service.getColumnFilters()).length;
         service.clearFilterByColumnId(new CustomEvent(`mouseup`), 'firstName');
         const filterCountAfter = Object.keys(service.getColumnFilters()).length;
 
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, { columnId: 'firstName' });
         expect(spyClear).toHaveBeenCalled();
         expect(filterCountBefore).toBe(2);
         expect(filterCountAfter).toBe(1);
@@ -1603,6 +1614,7 @@ describe('FilterService', () => {
         service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['map'] }], true, true, true);
         const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['map',] }]);
         expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['map',] }]);
         expect(output).toBe(true);
         expect(preFilterSpy).toHaveBeenCalledWith(dataset, columnFilters);
@@ -1627,6 +1639,7 @@ describe('FilterService', () => {
         service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['map'] }], true, true, true);
         const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['map'] }]);
         expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['map'] }]);
         expect(output).toBe(false);
         expect(preFilterSpy).toHaveBeenCalledWith(dataset, columnFilters);
@@ -1651,6 +1664,7 @@ describe('FilterService', () => {
         service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['unknown'] }], true, true, true);
         const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['unknown'] }]);
         expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['unknown'] }]);
         expect(output).toBe(false);
         expect(preFilterSpy).toHaveBeenCalledWith(dataset, { ...columnFilters, file: { ...columnFilters.file, operator: 'Contains', parsedSearchTerms: ['unknown'], type: 'string' } }); // it will use Contains by default

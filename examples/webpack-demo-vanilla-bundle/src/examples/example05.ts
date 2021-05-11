@@ -1,4 +1,5 @@
 import {
+  BindingEventService,
   Column,
   FieldType,
   Filters,
@@ -14,11 +15,17 @@ import './example05.scss';
 const NB_ITEMS = 500;
 
 export class Example5 {
+  private _bindingEventService: BindingEventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
   sgb: SlickVanillaGridBundle;
   durationOrderByCount = false;
+  loadingClass = '';
+
+  constructor() {
+    this._bindingEventService = new BindingEventService();
+  }
 
   attached() {
     this.initializeGrid();
@@ -28,6 +35,17 @@ export class Example5 {
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions });
     this.dataset = this.loadData(NB_ITEMS);
     // this.sgb.dataset = this.dataset;
+
+    // with large dataset you maybe want to show spinner before/after these events: sorting/filtering/collapsing/expanding
+    const spinnerClass = 'mdi mdi-load mdi-spin-1s mdi-22px';
+    this._bindingEventService.bind(gridContainerElm, 'onbeforefilterchanged', () => this.loadingClass = spinnerClass);
+    this._bindingEventService.bind(gridContainerElm, 'onfilterchanged', () => this.loadingClass = '');
+    this._bindingEventService.bind(gridContainerElm, 'onbeforefilterclear', () => this.loadingClass = spinnerClass);
+    this._bindingEventService.bind(gridContainerElm, 'onfiltercleared', () => this.loadingClass = '');
+    this._bindingEventService.bind(gridContainerElm, 'onbeforesortchange', () => this.loadingClass = spinnerClass);
+    this._bindingEventService.bind(gridContainerElm, 'onsortchanged', () => this.loadingClass = '');
+    this._bindingEventService.bind(gridContainerElm, 'onbeforetoggletreecollapse', () => this.loadingClass = spinnerClass);
+    this._bindingEventService.bind(gridContainerElm, 'ontoggletreecollapsed', () => this.loadingClass = '');
   }
 
   dispose() {

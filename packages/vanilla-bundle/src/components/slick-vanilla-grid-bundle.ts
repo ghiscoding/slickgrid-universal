@@ -351,7 +351,7 @@ export class SlickVanillaGridBundle {
     this.filterService = services?.filterService ?? new FilterService(this.filterFactory, this._eventPubSubService, this.sharedService, this.backendUtilityService);
     this.resizerService = services?.resizerService ?? new ResizerService(this._eventPubSubService);
     this.sortService = services?.sortService ?? new SortService(this.sharedService, this._eventPubSubService, this.backendUtilityService);
-    this.treeDataService = services?.treeDataService ?? new TreeDataService(this.sharedService, this.sortService);
+    this.treeDataService = services?.treeDataService ?? new TreeDataService(this._eventPubSubService, this.sharedService, this.sortService);
     this.paginationService = services?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService, this.backendUtilityService);
 
     // extensions
