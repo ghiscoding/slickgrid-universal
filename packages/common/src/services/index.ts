@@ -3,7 +3,6 @@ export * from './bindingEvent.service';
 export * from './collection.service';
 export * from './container.service';
 export * from './excelExport.service';
-export * from './export-utilities';
 export * from './extension.service';
 export * from './filter.service';
 export * from './grid.service';

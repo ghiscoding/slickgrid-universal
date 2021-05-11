@@ -14,7 +14,7 @@ import {
 } from '../interfaces/index';
 import { DelimiterType, FileType, } from '../enums/index';
 import { ExtensionUtility } from './extensionUtility';
-import { exportWithFormatterWhenDefined } from '../services/export-utilities';
+import { exportWithFormatterWhenDefined } from '../formatters/formatterUtilities';
 import { SharedService } from '../services/shared.service';
 import { getDescendantProperty, getTranslationPrefix } from '../services/utilities';
 import { ExcelExportService, TextExportService, TranslaterService, TreeDataService } from '../services/index';

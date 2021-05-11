@@ -1,6 +1,6 @@
-import { SlickDataView, Formatter } from './../interfaces/index';
+import { Formatter, SlickDataView } from './../interfaces/index';
+import { parseFormatterWhenExist } from './formatterUtilities';
 import { getDescendantProperty, sanitizeTextByAvailableSanitizer } from '../services/utilities';
-import { parseFormatterWhenExist } from '../services';
 
 /** Formatter that must be use with a Tree Data column */
 export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
