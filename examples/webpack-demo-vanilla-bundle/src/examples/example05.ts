@@ -53,7 +53,7 @@ export class Example5 {
   }
 
   hideSpinner() {
-    setTimeout(() => this.loadingClass = '', 200); // delay the hide spinner a bit so it won't to avoid show/hide too quickly
+    setTimeout(() => this.loadingClass = '', 200); // delay the hide spinner a bit to avoid show/hide too quickly
   }
 
   showSpinner() {
@@ -76,7 +76,7 @@ export class Example5 {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete',
         minWidth: 120, maxWidth: 200, exportWithFormatter: false,
         sortable: true, filterable: true, filter: { model: Filters.compoundSlider, operator: '>=' },
-        formatter: Formatters.percentCompleteBar, type: FieldType.number,
+        formatter: Formatters.percentCompleteBarWithText, type: FieldType.number,
       },
       {
         id: 'start', name: 'Start', field: 'start', minWidth: 60,

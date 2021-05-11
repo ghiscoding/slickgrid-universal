@@ -207,10 +207,13 @@ export class SlickVanillaGridBundle {
       this.sortService.processTreeDataInitialSort();
 
       // we also need to reset/refresh the Tree Data filters because if we inserted new item(s) then it might not show up without doing this refresh
-      const flatDatasetLn = this.dataView.getItemCount();
-      if (flatDatasetLn !== prevFlatDatasetLn && flatDatasetLn > 0) {
-        this.filterService.refreshTreeDataFilters();
-      }
+      // however we need 1 cpu cycle before having the DataView refreshed, so we need to wrap this check in a setTimeout
+      setTimeout(() => {
+        const flatDatasetLn = this.dataView.getItemCount();
+        if (flatDatasetLn !== prevFlatDatasetLn && flatDatasetLn > 0) {
+          this.filterService.refreshTreeDataFilters();
+        }
+      });
     }
 
     this._isDatasetHierarchicalInitialized = true;

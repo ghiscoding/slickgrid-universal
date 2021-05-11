@@ -2070,10 +2070,11 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(treeConvertSpy).toHaveBeenCalled();
       });
 
-      it('should change hierarchical dataset and expect processTreeDataInitialSort being called with other methods', () => {
+      it('should change hierarchical dataset and expect processTreeDataInitialSort being called with other methods', (done) => {
         const mockHierarchical = [{ file: 'documents', files: [{ file: 'vacation.txt' }] }];
         const hierarchicalSpy = jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'set');
         const clearFilterSpy = jest.spyOn(filterServiceStub, 'clearFilters');
+        const refreshFilterSpy = jest.spyOn(filterServiceStub, 'refreshTreeDataFilters');
         const setItemsSpy = jest.spyOn(mockDataView, 'setItems');
         const processSpy = jest.spyOn(sortServiceStub, 'processTreeDataInitialSort');
 
@@ -2085,6 +2086,10 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(clearFilterSpy).toHaveBeenCalled();
         expect(processSpy).toHaveBeenCalled();
         expect(setItemsSpy).toHaveBeenCalledWith([], 'id');
+        setTimeout(() => {
+          expect(refreshFilterSpy).toHaveBeenCalled();
+          done();
+        });
       });
 
       it('should preset hierarchical dataset before the initialization and expect sortHierarchicalDataset to be called', () => {

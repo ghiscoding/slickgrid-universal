@@ -22,22 +22,23 @@
       <button class="button is-small" data-test="add-50k-rows-btn" onclick.delegate="loadData(25000)">
         25k rows
       </button>
-      <button onclick.delegate="dynamicallyChangeFilter()" class="button is-small">
+      <button onclick.delegate="dynamicallyChangeFilter()" class="button is-small"
+              data-test="change-filter-dynamically">
         <span class="icon mdi mdi-filter-outline"></span>
         <span>Dynamically Change Filter (% complete &lt; 40)</span>
       </button>
     </div>
 
     <div class="row" style="margin-bottom: 4px;">
-      <button onclick.delegate="addNewRow()" class="button is-small is-info">
+      <button onclick.delegate="addNewRow()" class="button is-small is-info" data-test="add-item-btn">
         <span class="icon mdi mdi-plus"></span>
         <span>Add New Item (in 1st group)</span>
       </button>
-      <button onclick.delegate="collapseAll()" data-test="collapse-all" class="button is-small">
+      <button onclick.delegate="collapseAll()" data-test="collapse-all-btn" class="button is-small">
         <span class="icon mdi mdi-arrow-collapse"></span>
         <span>Collapse All</span>
       </button>
-      <button onclick.delegate="expandAll()" data-test="expand-all" class="button is-small">
+      <button onclick.delegate="expandAll()" data-test="expand-all-btn" class="button is-small">
         <span class="icon mdi mdi-arrow-expand"></span>
         <span>Expand All</span>
       </button>
