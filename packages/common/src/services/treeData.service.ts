@@ -49,6 +49,10 @@ export class TreeDataService {
 
     // there's a few limitations with Tree Data, we'll just throw error when that happens
     if (this.gridOptions?.enableTreeData) {
+      if (this.gridOptions?.multiColumnSort) {
+        throw new Error('[Slickgrid-Universal] It looks like you are trying to use Tree Data with multi-column sorting, unfortunately it is not supported because of its complexity, you can disable it via "multiColumnSort: false" grid option and/or help in providing support for this feature.');
+      }
+
       if (!this.gridOptions?.enableFiltering) {
         throw new Error('[Slickgrid-Universal] It looks like you are trying to use Tree Data without using the filtering option, unfortunately that is not possible with Tree Data since it relies heavily on the filters to expand/collapse the tree. You need to enable it via "enableFiltering: true"');
       }

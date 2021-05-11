@@ -87,6 +87,16 @@ describe('TreeData Service', () => {
     expect(service).toBeTruthy();
   });
 
+  it('should throw an error when used with multi-column sorting', (done) => {
+    try {
+      gridOptionsMock.multiColumnSort = true;
+      service.init(gridStub);
+    } catch (e) {
+      expect(e.toString()).toContain('[Slickgrid-Universal] It looks like you are trying to use Tree Data with multi-column sorting');
+      done();
+    }
+  });
+
   it('should throw an error when used without filter grid option', (done) => {
     try {
       gridOptionsMock.enableFiltering = false;
