@@ -193,6 +193,8 @@ export class Icons {
       '.mdi.mdi-toggle-switch-off-outline',
       '.mdi.mdi-trash-can',
       '.mdi.mdi-trash-can-outline',
+      '.mdi.mdi-truck',
+      '.mdi.mdi-truck-delivery-outline',
       '.mdi.mdi-tune',
       '.mdi.mdi-tune-variant',
       '.mdi.mdi-undo',
