@@ -89,6 +89,7 @@ export class Example14 {
   editedItems = {};
   sgb1: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
+  loadingClass = '';
   complexityLevelList = [
     { value: 0, label: 'Very Simple' },
     { value: 1, label: 'Simple' },
@@ -117,6 +118,8 @@ export class Example14 {
     this._bindingEventService.bind(this.gridContainerElm, 'onbeforeeditcell', this.handleOnBeforeEditCell.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'onpaginationchanged', this.handlePaginationChanged.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'onbeforeresizebycontent', this.showSpinner.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'onafterresizebycontent', this.hideSpinner.bind(this));
   }
 
   dispose() {
@@ -413,6 +416,14 @@ export class Example14 {
       // when using the cellMenu, you can change some of the default options and all use some of the callback methods
       enableCellMenu: true,
     };
+  }
+
+  hideSpinner() {
+    setTimeout(() => this.loadingClass = '', 200); // delay the hide spinner a bit to avoid show/hide too quickly
+  }
+
+  showSpinner() {
+    this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-24px color-alt-success';
   }
 
   loadData(count: number) {

@@ -846,7 +846,7 @@ export class SlickVanillaGridBundle {
         if (args.itemCount > 0 && (this.gridOptions.autosizeColumnsByCellContentOnFirstLoad || this.gridOptions.enableAutoResizeColumnsByCellContent)) {
           // add a delay so that if column positions changes by changeColumnsArrangement() when using custom Grid Views
           // or presets.columns won't have any impact on the list of visible columns and their positions
-          setTimeout(() => this.resizerService.resizeColumnsByCellContent(true), 10);
+          setTimeout(() => this.resizerService.resizeColumnsByCellContent(!this.gridOptions?.resizeByContentOnlyOnFirstLoad), 10);
         }
       });
 
