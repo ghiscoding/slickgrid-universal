@@ -240,8 +240,8 @@ export const GlobalGridOptions: GridOption = {
   resizeDefaultRatioForStringType: 0.88,
   resizeMaxItemToInspectCellContentWidth: 1000,
   treeDataOptions: {
-    exportIndentMarginLeft: 4,
-    exportIndentationLeadingChar: '.',
+    exportIndentMarginLeft: 5,
+    exportIndentationLeadingChar: '͏͏͏͏͏͏͏͏͏·',
   } as unknown as TreeDataOption
 };
 

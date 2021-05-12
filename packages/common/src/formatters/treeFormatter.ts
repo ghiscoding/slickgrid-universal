@@ -30,7 +30,7 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
 
   if (dataView?.getItemByIdx) {
     const identifierPropName = dataView.getIdPropertyName() ?? 'id';
-    const treeLevel = dataContext[treeLevelPropName] || 0;
+    const treeLevel = dataContext?.[treeLevelPropName] ?? 0;
     const indentSpacer = `<span style="display:inline-block; width:${indentMarginLeft * treeLevel}px;"></span>`;
     const idx = dataView.getIdxById(dataContext[identifierPropName]);
     const nextItemRow = dataView.getItemByIdx((idx || 0) + 1);
