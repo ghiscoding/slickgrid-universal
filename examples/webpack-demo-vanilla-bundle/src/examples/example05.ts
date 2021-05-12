@@ -1,4 +1,5 @@
 import {
+  BindingEventService,
   Column,
   FieldType,
   Filters,
@@ -11,14 +12,21 @@ import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bu
 import { ExampleGridOptions } from './example-grid-options';
 import './example05.scss';
 
-const NB_ITEMS = 200;
+const NB_ITEMS = 500;
 
 export class Example5 {
+  private _bindingEventService: BindingEventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
   sgb: SlickVanillaGridBundle;
   durationOrderByCount = false;
+  loadingClass = '';
+  isLargeDataset = false;
+
+  constructor() {
+    this._bindingEventService = new BindingEventService();
+  }
 
   attached() {
     this.initializeGrid();
@@ -26,12 +34,32 @@ export class Example5 {
     const gridContainerElm = document.querySelector<HTMLDivElement>('.grid5');
 
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions });
-    this.dataset = this.mockDataset();
-    this.sgb.dataset = this.dataset;
+    this.dataset = this.loadData(NB_ITEMS);
+    // this.sgb.dataset = this.dataset;
+
+    // with large dataset you maybe want to show spinner before/after these events: sorting/filtering/collapsing/expanding
+    this._bindingEventService.bind(gridContainerElm, 'onbeforefilterchange', this.showSpinner.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onfilterchanged', this.hideSpinner.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onbeforefilterclear', this.showSpinner.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onfiltercleared', this.hideSpinner.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onbeforesortchange', this.showSpinner.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onsortchanged', this.hideSpinner.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onbeforetoggletreecollapse', this.showSpinner.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'ontoggletreecollapsed', this.hideSpinner.bind(this));
   }
 
   dispose() {
     this.sgb?.dispose();
+  }
+
+  hideSpinner() {
+    setTimeout(() => this.loadingClass = '', 200); // delay the hide spinner a bit to avoid show/hide too quickly
+  }
+
+  showSpinner() {
+    if (this.isLargeDataset) {
+      this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-24px color-alt-success';
+    }
   }
 
   initializeGrid() {
@@ -48,7 +76,7 @@ export class Example5 {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete',
         minWidth: 120, maxWidth: 200, exportWithFormatter: false,
         sortable: true, filterable: true, filter: { model: Filters.compoundSlider, operator: '>=' },
-        formatter: Formatters.percentCompleteBar, type: FieldType.number,
+        formatter: Formatters.percentCompleteBarWithText, type: FieldType.number,
       },
       {
         id: 'start', name: 'Start', field: 'start', minWidth: 60,
@@ -93,19 +121,32 @@ export class Example5 {
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       treeDataOptions: {
         columnId: 'title',
-        // levelPropName: 'indent', // this is optional, you can define the tree level property name that will be used for the sorting/indentation, internally it will use "__treeLevel"
         parentPropName: 'parentId',
+        // this is optional, you can define the tree level property name that will be used for the sorting/indentation, internally it will use "__treeLevel"
+        levelPropName: 'treeLevel',
+        indentMarginLeft: 15,
 
         // you can optionally sort by a different column and/or sort direction
+        // this is the recommend approach, unless you are 100% that your original array is already sorted (in most cases it's not)
         initialSort: {
           columnId: 'title',
           direction: 'ASC'
-        }
+        },
+        // we can also add a custom Formatter just for the title text portion
+        titleFormatter: (_row, _cell, value, _def, dataContext) => {
+          let prefix = '';
+          if (dataContext.treeLevel > 0) {
+            prefix = `<span class="mdi mdi-subdirectory-arrow-right mdi-v-align-sub color-se-secondary"></span>`;
+          }
+          return `${prefix}<span class="bold">${value}</span><span style="font-size:11px; margin-left: 15px;">(parentId: ${dataContext.parentId})</span>`;
+        },
       },
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
       presets: {
         filters: [{ columnId: 'percentComplete', searchTerms: [25], operator: '>=' }]
-      }
+      },
+      // if you're dealing with lots of data, it is recommended to use the filter debounce
+      filterTypingDebounce: 250,
     };
   }
 
@@ -116,7 +157,7 @@ export class Example5 {
   addNewRow() {
     const newId = this.sgb.dataset.length;
     const parentPropName = 'parentId';
-    const treeLevelPropName = '__treeLevel'; // if undefined in your options, the default prop name is "__treeLevel"
+    const treeLevelPropName = 'treeLevel'; // if undefined in your options, the default prop name is "__treeLevel"
     const newTreeLevel = 1;
     // find first parent object and add the new item as a child
     const childItemFound = this.sgb.dataset.find((item) => item[treeLevelPropName] === newTreeLevel);
@@ -160,17 +201,18 @@ export class Example5 {
     console.log('flat array', this.sgb.treeDataService.dataset);
   }
 
-  mockDataset() {
+  loadData(rowCount: number) {
+    this.isLargeDataset = rowCount > 5000; // we'll show a spinner when it's large, else don't show show since it should be fast enough
     let indent = 0;
     const parents = [];
     const data = [];
 
     // prepare the data
-    for (let i = 0; i < NB_ITEMS; i++) {
+    for (let i = 0; i < rowCount; i++) {
       const randomYear = 2000 + Math.floor(Math.random() * 10);
       const randomMonth = Math.floor(Math.random() * 11);
       const randomDay = Math.floor((Math.random() * 29));
-      const d = (data[i] = {});
+      const item = (data[i] = {});
       let parentId;
 
       // for implementing filtering/sorting, don't go over indent of 2
@@ -188,15 +230,17 @@ export class Example5 {
         parentId = null;
       }
 
-      d['id'] = i;
-      d['parentId'] = parentId;
-      // d['title'] = `Task ${i}    -   [P]: ${parentId}`;
-      d['title'] = `Task ${i}`;
-      d['duration'] = '5 days';
-      d['percentComplete'] = Math.round(Math.random() * 100);
-      d['start'] = new Date(randomYear, randomMonth, randomDay);
-      d['finish'] = new Date(randomYear, (randomMonth + 1), randomDay);
-      d['effortDriven'] = (i % 5 === 0);
+      item['id'] = i;
+      item['parentId'] = parentId;
+      item['title'] = `Task ${i}`;
+      item['duration'] = '5 days';
+      item['percentComplete'] = Math.round(Math.random() * 100);
+      item['start'] = new Date(randomYear, randomMonth, randomDay);
+      item['finish'] = new Date(randomYear, (randomMonth + 1), randomDay);
+      item['effortDriven'] = (i % 5 === 0);
+    }
+    if (this.sgb) {
+      this.sgb.dataset = data;
     }
     return data;
   }

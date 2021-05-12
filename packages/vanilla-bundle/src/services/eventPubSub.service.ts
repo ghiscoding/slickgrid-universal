@@ -25,11 +25,29 @@ export class EventPubSubService implements PubSubService {
     this._elementSource = elementSource || document.createElement('div');
   }
 
-  publish<T = any>(eventName: string, data?: T) {
+  /**
+   * Method to publish a message via a dispatchEvent.
+   * We return the dispatched event in a Promise with a delayed cycle and we do this because
+   * most framework require a cycle before the binding is processed and binding a spinner end up showing too late
+   * for example this is used for these events: onBeforeFilterClear, onBeforeFilterChange, onBeforeToggleTreeCollapse, onBeforeSortChange
+   * @param event The event or channel to publish to.
+   * @param data The data to publish on the channel.
+   */
+  publish<T = any>(eventName: string, data?: T): Promise<boolean> {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
-    this.dispatchCustomEvent<T>(eventNameByConvention, data, true, false);
+
+    return new Promise(resolve => {
+      const isDispatched = this.dispatchCustomEvent<T>(eventNameByConvention, data, true, false);
+      setTimeout(() => resolve(isDispatched), 0);
+    });
   }
 
+  /**
+   * Subscribes to a message channel or message type.
+   * @param event The event channel or event data type.
+   * @param callback The callback to be invoked when the specified message is published.
+   * @return possibly a Subscription
+   */
   subscribe<T = any>(eventName: string, callback: (data: any) => void): any {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
 
@@ -39,17 +57,30 @@ export class EventPubSubService implements PubSubService {
     this._subscribedEvents.push({ name: eventNameByConvention, listener: callback });
   }
 
+  /**
+   * Subscribes to a custom event message channel or message type.
+   * This is similar to the "subscribe" except that the callback receives an event typed as CustomEventInit and the data will be inside its "event.detail"
+   * @param event The event channel or event data type.
+   * @param callback The callback to be invoked when the specified message is published.
+   * @return possibly a Subscription
+   */
   subscribeEvent<T = any>(eventName: string, listener: (event: CustomEventInit<T>) => void): any | void {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
     this._elementSource.addEventListener(eventNameByConvention, listener);
     this._subscribedEvents.push({ name: eventNameByConvention, listener });
   }
 
+  /**
+   * Unsubscribes a message name
+   * @param event The event name
+   * @return possibly a Subscription
+   */
   unsubscribe(eventName: string, listener: (event: CustomEventInit) => void) {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
     this._elementSource.removeEventListener(eventNameByConvention, listener);
   }
 
+  /** Unsubscribes all subscriptions that currently exists */
   unsubscribeAll(subscriptions?: EventSubscription[]) {
     if (Array.isArray(subscriptions)) {
       for (const subscription of subscriptions) {

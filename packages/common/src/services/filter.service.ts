@@ -200,7 +200,14 @@ export class FilterService {
     // bind any search filter change (e.g. input filter input change event)
     if (this._onSearchChange) {
       const onSearchChangeHandler = this._onSearchChange;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSearchChangeHandler>>).subscribe(this._onSearchChange, (_e, args) => {
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSearchChangeHandler>>).subscribe(this._onSearchChange, async (_e, args) => {
+        const isClearFilterEvent = args?.clearFilterTriggered ?? false;
+
+        // emit an onBeforeFilterChange event except when it's called by a clear filter
+        if (!isClearFilterEvent) {
+          await this.emitFilterChanged(EmitterType.local, true);
+        }
+
         // When using Tree Data, we need to do it in 2 steps
         // step 1. we need to prefilter (search) the data prior, the result will be an array of IDs which are the node(s) and their parent nodes when necessary.
         // step 2. calling the DataView.refresh() is what triggers the final filtering, with "customLocalFilter()" which will decide which rows should persist
@@ -212,9 +219,9 @@ export class FilterService {
           this._dataView.refresh();
         }
 
-        // emit an onFilterChanged event when it's not called by a clear filter
-        if (args && !args.clearFilterTriggered) {
-          this.emitFilterChanged(EmitterType.local);
+        // emit an onFilterChanged event except when it's called by a clear filter
+        if (!isClearFilterEvent) {
+          await this.emitFilterChanged(EmitterType.local);
         }
       });
     }
@@ -226,7 +233,12 @@ export class FilterService {
     });
   }
 
-  clearFilterByColumnId(event: Event, columnId: number | string) {
+  async clearFilterByColumnId(event: Event, columnId: number | string): Promise<boolean> {
+    await this.pubSubService.publish('onBeforeFilterClear', { columnId });
+
+    const isBackendApi = this._gridOptions?.backendServiceApi ?? false;
+    const emitter = isBackendApi ? EmitterType.remote : EmitterType.local;
+
     // get current column filter before clearing, this allow us to know if the filter was empty prior to calling the clear filter
     const currentFilterColumnIds = Object.keys(this._columnFilters);
     let currentColFilter: string | undefined;
@@ -240,23 +252,25 @@ export class FilterService {
       colFilter.clear(true);
     }
 
-    let emitter: EmitterType = EmitterType.local;
-    const isBackendApi = this._gridOptions?.backendServiceApi ?? false;
-
     // when using a backend service, we need to manually trigger a filter change but only if the filter was previously filled
     if (isBackendApi) {
-      emitter = EmitterType.remote;
       if (currentColFilter !== undefined) {
         this.onBackendFilterChange(event as KeyboardEvent, { grid: this._grid, columnFilters: this._columnFilters });
       }
     }
 
     // emit an event when filter is cleared
-    this.emitFilterChanged(emitter);
+    await this.emitFilterChanged(emitter);
+    return true;
   }
 
   /** Clear the search filters (below the column titles) */
-  clearFilters(triggerChange = true) {
+  async clearFilters(triggerChange = true) {
+    // emit an event before the process start
+    if (triggerChange) {
+      await this.pubSubService.publish('onBeforeFilterClear', true);
+    }
+
     this._filtersMetadata.forEach((filter: Filter) => {
       if (filter?.clear) {
         // clear element but don't trigger individual clear change,
@@ -618,20 +632,28 @@ export class FilterService {
    * Other services, like Pagination, can then subscribe to it.
    * @param caller
    */
-  emitFilterChanged(caller: EmitterType) {
+  emitFilterChanged(caller: EmitterType, isBeforeExecution = false): void | Promise<boolean> {
+    const eventName = isBeforeExecution ? 'onBeforeFilterChange' : 'onFilterChanged';
+
     if (caller === EmitterType.remote && this._gridOptions?.backendServiceApi) {
       let currentFilters: CurrentFilter[] = [];
       const backendService = this._gridOptions.backendServiceApi.service;
       if (backendService?.getCurrentFilters) {
         currentFilters = backendService.getCurrentFilters() as CurrentFilter[];
       }
-      this.pubSubService.publish('onFilterChanged', currentFilters);
+      return this.pubSubService.publish(eventName, currentFilters);
     } else if (caller === EmitterType.local) {
-      this.pubSubService.publish('onFilterChanged', this.getCurrentLocalFilters());
+      return this.pubSubService.publish(eventName, this.getCurrentLocalFilters());
     }
   }
 
   async onBackendFilterChange(event: KeyboardEvent, args: any) {
+    const isTriggeringQueryEvent = args?.shouldTriggerQuery;
+
+    if (isTriggeringQueryEvent) {
+      await this.emitFilterChanged(EmitterType.remote, true);
+    }
+
     if (!args || !args.grid) {
       throw new Error('Something went wrong when trying to bind the "onBackendFilterChange(event, args)" function, it seems that "args" is not populated correctly');
     }
@@ -651,7 +673,7 @@ export class FilterService {
     }
 
     // query backend, except when it's called by a ClearFilters then we won't
-    if (args?.shouldTriggerQuery) {
+    if (isTriggeringQueryEvent) {
       const query = await backendApi.service.processOnFilterChanged(event, args);
       const totalItems = this._gridOptions?.pagination?.totalItems ?? 0;
       this.backendUtilities?.executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitFilterChanged.bind(this), this.httpCancelRequests$);
@@ -691,11 +713,12 @@ export class FilterService {
   /**
    * when we have a Filter Presets on a Tree Data View grid, we need to call the pre-filtering of tree data
    * we need to do this because Tree Data is the only type of grid that requires a pre-filter (preFilterTreeData) to be executed before the final filtering
-   * @param filters
+   * @param {Array<Object>} [items] - optional flat array of parent/child items to use while redoing the full sort & refresh
    */
-  refreshTreeDataFilters() {
+  refreshTreeDataFilters(items?: any[]) {
+    const inputItems = items ?? this._dataView.getItems();
     if (this._dataView && this._gridOptions?.enableTreeData) {
-      this._tmpPreFilteredData = this.preFilterTreeData(this._dataView.getItems(), this._columnFilters);
+      this._tmpPreFilteredData = this.preFilterTreeData(inputItems, this._columnFilters);
       this._dataView.refresh(); // and finally this refresh() is what triggers a DataView filtering check
     }
   }
@@ -770,7 +793,7 @@ export class FilterService {
    * @param triggerBackendQuery defaults to True, which will query the backend.
    * @param triggerOnSearchChangeEvent defaults to False, can be useful with Tree Data structure where the onSearchEvent has to run to execute a prefiltering step
    */
-  updateFilters(filters: CurrentFilter[], emitChangedEvent = true, triggerBackendQuery = true, triggerOnSearchChangeEvent = false) {
+  async updateFilters(filters: CurrentFilter[], emitChangedEvent = true, triggerBackendQuery = true, triggerOnSearchChangeEvent = false): Promise<boolean> {
     if (!this._filtersMetadata || this._filtersMetadata.length === 0 || !this._gridOptions || !this._gridOptions.enableFiltering) {
       throw new Error('[Slickgrid-Universal] in order to use "updateFilters" method, you need to have Filterable Columns defined in your grid and "enableFiltering" set in your Grid Options');
     }
@@ -796,6 +819,12 @@ export class FilterService {
       });
 
       const backendApi = this._gridOptions?.backendServiceApi;
+      const emitterType = backendApi ? EmitterType.remote : EmitterType.local;
+
+      // trigger the onBeforeFilterChange event before the process
+      if (emitChangedEvent) {
+        await this.emitFilterChanged(emitterType, true);
+      }
 
       // refresh the DataView and trigger an event after all filters were updated and rendered
       this._dataView.refresh();
@@ -811,10 +840,10 @@ export class FilterService {
       }
 
       if (emitChangedEvent) {
-        const emitterType = backendApi ? EmitterType.remote : EmitterType.local;
-        this.emitFilterChanged(emitterType);
+        await this.emitFilterChanged(emitterType);
       }
     }
+    return true;
   }
 
   /**
@@ -829,7 +858,7 @@ export class FilterService {
    * @param triggerEvent defaults to True, do we want to emit a filter changed event?
    * @param triggerBackendQuery defaults to True, which will query the backend.
    */
-  updateSingleFilter(filter: CurrentFilter, emitChangedEvent = true, triggerBackendQuery = true) {
+  async updateSingleFilter(filter: CurrentFilter, emitChangedEvent = true, triggerBackendQuery = true): Promise<boolean> {
     const columnDef = this.sharedService.allColumns.find(col => col.id === filter.columnId);
     if (columnDef && filter.columnId) {
       this._columnFilters = {};
@@ -847,6 +876,12 @@ export class FilterService {
       }
 
       const backendApi = this._gridOptions?.backendServiceApi;
+      const emitterType = backendApi ? EmitterType.remote : EmitterType.local;
+
+      // trigger the onBeforeFilterChange event before the process
+      if (emitChangedEvent) {
+        await this.emitFilterChanged(emitterType, true);
+      }
 
       if (backendApi) {
         const backendApiService = backendApi?.service;
@@ -869,10 +904,10 @@ export class FilterService {
       }
 
       if (emitChangedEvent) {
-        const emitterType = backendApi ? EmitterType.remote : EmitterType.local;
-        this.emitFilterChanged(emitterType);
+        await this.emitFilterChanged(emitterType);
       }
     }
+    return true;
   }
 
   // --

@@ -1,10 +1,10 @@
 import {
-  exportWithFormatterWhenDefined,
   FieldType,
   getHtmlElementOffset,
   GetSlickEventType,
   GridOption,
   GridSize,
+  parseFormatterWhenExist,
   PubSubService,
   sanitizeHtmlToText,
   SlickDataView,
@@ -186,8 +186,7 @@ export class ResizerService {
         columnDefinitions.forEach((columnDef, colIdx) => {
           if (!columnDef.originalWidth) {
             const charWidthPx = columnDef?.resizeCharWidthInPx ?? resizeCellCharWidthInPx;
-            const exportOptions = this.gridOptions.enableTextExport ? this.gridOptions.exportOptions || this.gridOptions.textExportOptions : this.gridOptions.excelExportOptions;
-            const formattedData = exportWithFormatterWhenDefined(rowIdx, colIdx, item, columnDef, this._grid, exportOptions);
+            const formattedData = parseFormatterWhenExist(columnDef?.formatter, rowIdx, colIdx, columnDef, item, this._grid);
             const formattedDataSanitized = sanitizeHtmlToText(formattedData);
             const formattedTextWidthInPx = Math.ceil(formattedDataSanitized.length * charWidthPx);
             const resizeMaxWidthThreshold = columnDef.resizeMaxWidthThreshold;

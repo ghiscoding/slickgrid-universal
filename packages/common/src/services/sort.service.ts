@@ -21,7 +21,7 @@ import {
   SortDirectionString,
 } from '../enums/index';
 import { BackendUtilityService } from './backendUtility.service';
-import { getDescendantProperty, convertHierarchicalViewToParentChildArray } from './utilities';
+import { getDescendantProperty, flattenToParentChildArray } from './utilities';
 import { sortByFieldType } from '../sortComparers/sortUtilities';
 import { PubSubService } from './pubSub.service';
 import { SharedService } from './shared.service';
@@ -372,9 +372,11 @@ export class SortService {
   }
 
   /** When a Sort Changes on a Local grid (JSON dataset) */
-  onLocalSortChanged(grid: SlickGrid, sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, forceReSort = false, emitSortChanged = false) {
+  async onLocalSortChanged(grid: SlickGrid, sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, forceReSort = false, emitSortChanged = false) {
+    const datasetIdPropertyName = this._gridOptions?.datasetIdPropertyName ?? 'id';
     const isTreeDataEnabled = this._gridOptions?.enableTreeData ?? false;
-    const dataView = grid?.getData && grid.getData() as SlickDataView;
+    const dataView = grid.getData?.() as SlickDataView;
+    await this.pubSubService.publish('onBeforeSortChange', { sortColumns });
 
     if (grid && dataView) {
       if (forceReSort && !isTreeDataEnabled) {
@@ -384,7 +386,10 @@ export class SortService {
       if (isTreeDataEnabled && this.sharedService && Array.isArray(this.sharedService.hierarchicalDataset)) {
         const hierarchicalDataset = this.sharedService.hierarchicalDataset;
         const datasetSortResult = this.sortHierarchicalDataset(hierarchicalDataset, sortColumns);
-        this._dataView.setItems(datasetSortResult.flat, this._gridOptions?.datasetIdPropertyName ?? 'id');
+
+        // we could use the DataView sort but that would require re-sorting again (since the 2nd array that is currently in the DataView would have to be resorted against the 1st array that was sorting from tree sort)
+        // it is simply much faster to just replace the entire dataset
+        this._dataView.setItems(datasetSortResult.flat, datasetIdPropertyName);
       } else {
         dataView.sort(this.sortComparers.bind(this, sortColumns));
       }
@@ -403,12 +408,12 @@ export class SortService {
   }
 
   /** Takes a hierarchical dataset and sort it recursively,  */
-  sortHierarchicalDataset(hierarchicalDataset: any[], sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>): { hierarchical: any[]; flat: any[]; } {
+  sortHierarchicalDataset<T>(hierarchicalDataset: T[], sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>) {
     this.sortTreeData(hierarchicalDataset, sortColumns);
     const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
     const treeDataOpt: TreeDataOption = this._gridOptions?.treeDataOptions ?? { columnId: '' };
-    const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier };
-    const sortedFlatArray = convertHierarchicalViewToParentChildArray(hierarchicalDataset, treeDataOptions);
+    const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier, shouldAddTreeLevelNumber: true };
+    const sortedFlatArray = flattenToParentChildArray(hierarchicalDataset, treeDataOptions);
 
     return { hierarchical: hierarchicalDataset, flat: sortedFlatArray };
   }
@@ -473,22 +478,22 @@ export class SortService {
     return undefined;
   }
 
-  sortTreeData(hierarchicalArray: any[], sortColumns: Array<ColumnSort>) {
+  sortTreeData(treeArray: any[], sortColumns: Array<ColumnSort>) {
     if (Array.isArray(sortColumns)) {
       for (const sortColumn of sortColumns) {
-        this.sortTreeChild(hierarchicalArray, sortColumn, 0);
+        this.sortTreeChild(treeArray, sortColumn, 0);
       }
     }
   }
 
   /** Sort the Tree Children of a hierarchical dataset by recursion */
-  sortTreeChild(hierarchicalArray: any[], sortColumn: ColumnSort, treeLevel: number) {
+  sortTreeChild(treeArray: any[], sortColumn: ColumnSort, treeLevel: number) {
     const treeDataOptions = this._gridOptions?.treeDataOptions;
     const childrenPropName = treeDataOptions?.childrenPropName ?? 'children';
-    hierarchicalArray.sort((a: any, b: any) => this.sortComparer(sortColumn, a, b) ?? SortDirectionNumber.neutral);
+    treeArray.sort((a: any, b: any) => this.sortComparer(sortColumn, a, b) ?? SortDirectionNumber.neutral);
 
     // when item has a child, we'll sort recursively
-    for (const item of hierarchicalArray) {
+    for (const item of treeArray) {
       if (item) {
         const hasChildren = item.hasOwnProperty(childrenPropName) && Array.isArray(item[childrenPropName]);
         // when item has a child, we'll sort recursively

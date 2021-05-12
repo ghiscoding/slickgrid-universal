@@ -1,4 +1,5 @@
 import { Column, SlickDataView, GridOption, SlickEventHandler, SlickGrid, SlickNamespace, BackendService } from '../../interfaces/index';
+import { PubSubService } from '../pubSub.service';
 import { SharedService } from '../shared.service';
 import { SortService } from '../sort.service';
 import { TreeDataService } from '../treeData.service';
@@ -7,6 +8,7 @@ declare const Slick: SlickNamespace;
 
 const gridOptionsMock = {
   multiColumnSort: false,
+  enableFiltering: true,
   enableTreeData: true,
   treeDataOptions: {
     columnId: 'file'
@@ -46,6 +48,13 @@ const gridStub = {
   setSortColumns: jest.fn(),
 } as unknown as SlickGrid;
 
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as PubSubService;
+
 const sortServiceStub = {
   clearSorting: jest.fn(),
   sortHierarchicalDataset: jest.fn(),
@@ -58,12 +67,13 @@ describe('TreeData Service', () => {
 
   beforeEach(() => {
     gridOptionsMock.backendServiceApi = undefined;
+    gridOptionsMock.enableFiltering = true;
     gridOptionsMock.enablePagination = false;
     gridOptionsMock.multiColumnSort = false;
     gridOptionsMock.treeDataOptions = {
       columnId: 'file'
     };
-    service = new TreeDataService(sharedService, sortServiceStub);
+    service = new TreeDataService(pubSubServiceStub, sharedService, sortServiceStub);
     slickgridEventHandler = service.eventHandler;
     jest.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
   });
@@ -83,6 +93,16 @@ describe('TreeData Service', () => {
       service.init(gridStub);
     } catch (e) {
       expect(e.toString()).toContain('[Slickgrid-Universal] It looks like you are trying to use Tree Data with multi-column sorting');
+      done();
+    }
+  });
+
+  it('should throw an error when used without filter grid option', (done) => {
+    try {
+      gridOptionsMock.enableFiltering = false;
+      service.init(gridStub);
+    } catch (e) {
+      expect(e.toString()).toContain('[Slickgrid-Universal] It looks like you are trying to use Tree Data without using the filtering option');
       done();
     }
   });
@@ -230,13 +250,16 @@ describe('TreeData Service', () => {
         jest.clearAllMocks();
       });
 
-      it('should collapse all items when calling the method with collapsing True', () => {
+      it('should collapse all items when calling the method with collapsing True', async () => {
         const dataGetItemsSpy = jest.spyOn(dataViewStub, 'getItems').mockReturnValue(itemsMock);
         const dataSetItemsSpy = jest.spyOn(dataViewStub, 'setItems');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub);
-        service.toggleTreeDataCollapse(true);
+        await service.toggleTreeDataCollapse(true);
 
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeToggleTreeCollapse`, { collapsing: true });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onToggleTreeCollapsed`, { collapsing: true });
         expect(dataGetItemsSpy).toHaveBeenCalled();
         expect(dataSetItemsSpy).toHaveBeenCalledWith([
           { __collapsed: true, file: 'myFile.txt', size: 0.5, },
@@ -244,14 +267,17 @@ describe('TreeData Service', () => {
         ]);
       });
 
-      it('should collapse all items with a custom collapsed property when calling the method with collapsing True', () => {
+      it('should collapse all items with a custom collapsed property when calling the method with collapsing True', async () => {
         gridOptionsMock.treeDataOptions!.collapsedPropName = 'customCollapsed';
         const dataGetItemsSpy = jest.spyOn(dataViewStub, 'getItems').mockReturnValue(itemsMock);
         const dataSetItemsSpy = jest.spyOn(dataViewStub, 'setItems');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub);
-        service.toggleTreeDataCollapse(true);
+        await service.toggleTreeDataCollapse(true);
 
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeToggleTreeCollapse`, { collapsing: true });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onToggleTreeCollapsed`, { collapsing: true });
         expect(dataGetItemsSpy).toHaveBeenCalled();
         expect(dataSetItemsSpy).toHaveBeenCalledWith([
           { customCollapsed: true, file: 'myFile.txt', size: 0.5, },
@@ -259,13 +285,16 @@ describe('TreeData Service', () => {
         ]);
       });
 
-      it('should expand all items when calling the method with collapsing False', () => {
+      it('should expand all items when calling the method with collapsing False', async () => {
         const dataGetItemsSpy = jest.spyOn(dataViewStub, 'getItems').mockReturnValue(itemsMock);
         const dataSetItemsSpy = jest.spyOn(dataViewStub, 'setItems');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub);
-        service.toggleTreeDataCollapse(false);
+        await service.toggleTreeDataCollapse(false);
 
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeToggleTreeCollapse`, { collapsing: false });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onToggleTreeCollapsed`, { collapsing: false });
         expect(dataGetItemsSpy).toHaveBeenCalled();
         expect(dataSetItemsSpy).toHaveBeenCalledWith([
           { __collapsed: false, file: 'myFile.txt', size: 0.5, },
@@ -274,7 +303,7 @@ describe('TreeData Service', () => {
       });
     });
 
-    describe('convertToHierarchicalDatasetAndSort method', () => {
+    describe('convertFlatParentChildToTreeDatasetAndSort method', () => {
       let mockColumns: Column[];
       let mockFlatDataset;
 
@@ -293,17 +322,17 @@ describe('TreeData Service', () => {
         }];
         const setSortSpy = jest.spyOn(gridStub, 'setSortColumns');
         jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(0);
-        jest.spyOn(sortServiceStub, 'sortHierarchicalDataset').mockReturnValue({ flat: mockFlatDataset, hierarchical: mockHierarchical });
+        jest.spyOn(sortServiceStub, 'sortHierarchicalDataset').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
 
         service.init(gridStub);
-        const result = service.convertToHierarchicalDatasetAndSort(mockFlatDataset, mockColumns, gridOptionsMock);
+        const result = service.convertFlatParentChildToTreeDatasetAndSort(mockFlatDataset, mockColumns, gridOptionsMock);
 
         expect(setSortSpy).toHaveBeenCalledWith([{
           columnId: 'file',
           sortAsc: true,
           sortCol: mockColumns[0]
         }]);
-        expect(result).toEqual({ flat: mockFlatDataset, hierarchical: mockHierarchical });
+        expect(result).toEqual({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
       });
 
       it('should sort by the Tree column by the "initialSort" provided', () => {
@@ -318,17 +347,17 @@ describe('TreeData Service', () => {
         }];
         const setSortSpy = jest.spyOn(gridStub, 'setSortColumns');
         jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(0);
-        jest.spyOn(sortServiceStub, 'sortHierarchicalDataset').mockReturnValue({ flat: mockFlatDataset, hierarchical: mockHierarchical });
+        jest.spyOn(sortServiceStub, 'sortHierarchicalDataset').mockReturnValue({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
 
         service.init(gridStub);
-        const result = service.convertToHierarchicalDatasetAndSort(mockFlatDataset, mockColumns, gridOptionsMock);
+        const result = service.convertFlatParentChildToTreeDatasetAndSort(mockFlatDataset, mockColumns, gridOptionsMock);
 
         expect(setSortSpy).toHaveBeenCalledWith([{
           columnId: 'size',
           sortAsc: false,
           sortCol: mockColumns[1]
         }]);
-        expect(result).toEqual({ flat: mockFlatDataset, hierarchical: mockHierarchical });
+        expect(result).toEqual({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
       });
     });
 

@@ -1,3 +1,4 @@
+import { flatten } from 'un-flatten-tree';
 import * as DOMPurify_ from 'dompurify';
 import * as moment_ from 'moment-mini';
 const DOMPurify = DOMPurify_; // patch to fix rollup to work
@@ -29,13 +30,14 @@ export function addToArrayWhenNotExists<T = any>(inputArray: T[], inputItem: T, 
 /**
  * Simple function to which will loop and create as demanded the number of white spaces,
  * this is used in the CSV export
- * @param int nbSpaces: number of white spaces to create
+ * @param {Number} nbSpaces - number of white spaces to create
+ * @param {String} spaceChar - optionally provide character to use as a space (could be override to use &nbsp; in html)
  */
-export function addWhiteSpaces(nbSpaces: number): string {
+export function addWhiteSpaces(nbSpaces: number, spaceChar = ' '): string {
   let result = '';
 
   for (let i = 0; i < nbSpaces; i++) {
-    result += ' ';
+    result += spaceChar;
   }
   return result;
 }
@@ -72,20 +74,18 @@ export function castObservableToPromise<T>(rxjs: RxJsFacade, input: Promise<T> |
 }
 
 /**
- * Convert a flat array (with "parentId" references) into a hierarchical dataset structure (where children are array(s) inside their parent objects)
+ * Convert a flat array (with "parentId" references) into a hierarchical (tree) dataset structure (where children are array(s) inside their parent objects)
  * @param flatArray input array (flat dataset)
  * @param options you can provide the following options:: "parentPropName" (defaults to "parent"), "childrenPropName" (defaults to "children") and "identifierPropName" (defaults to "id")
- * @return roots - hierarchical data view array
+ * @return roots - hierarchical (tree) data view array
  */
-export function convertParentChildArrayToHierarchicalView<T = any>(flatArray: T[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; levelPropName?: string; }): T[] {
+export function unflattenParentChildArrayToTree<P, T extends P & { [childrenPropName: string]: P[] }>(flatArray: P[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; levelPropName?: string; }): T[] {
   const childrenPropName = options?.childrenPropName ?? 'children';
   const parentPropName = options?.parentPropName ?? '__parentId';
   const identifierPropName = options?.identifierPropName ?? 'id';
-  const hasChildrenFlagPropName = '__hasChildren';
-  const treeLevelPropName = options?.levelPropName ?? '__treeLevel';
-  const inputArray: T[] = deepCopy(flatArray || []);
-
-  const roots: T[] = []; // things without parent
+  const levelPropName = options?.levelPropName ?? '__treeLevel';
+  const inputArray: P[] = flatArray || [];
+  const roots: T[] = []; // items without parent which at the root
 
   // make them accessible by guid on this map
   const all: any = {};
@@ -96,80 +96,86 @@ export function convertParentChildArrayToHierarchicalView<T = any>(flatArray: T[
   Object.keys(all).forEach((id) => {
     const item = all[id];
     if (!(parentPropName in item) || item[parentPropName] === null || item[parentPropName] === undefined || item[parentPropName] === '') {
-      delete item[parentPropName];
+      // delete item[parentPropName];
       roots.push(item);
     } else if (item[parentPropName] in all) {
       const p = all[item[parentPropName]];
       if (!(childrenPropName in p)) {
         p[childrenPropName] = [];
       }
-      delete item[parentPropName];
+      // delete item[parentPropName];
       p[childrenPropName].push(item);
     }
-
-    // delete any unnecessary properties that were possibly created in the flat array but shouldn't be part of the tree data
-    delete item[treeLevelPropName];
-    delete item[hasChildrenFlagPropName];
   });
+
+  // we need and want to the Tree Level,
+  // we can do that after the tree is created and mutate the array by adding a __treeLevel property on each item
+  // perhaps there might be a way to add this while creating the tree for now that is the easiest way I found
+  addTreeLevelByMutation(roots, { childrenPropName, levelPropName }, 0);
 
   return roots;
 }
 
 /**
- * Convert a hierarchical array (with children) into a flat array structure array (where the children are pushed as next indexed item in the array)
- * @param hierarchicalArray - input hierarchical array
- * @param options - you can provide "childrenPropName" (defaults to "children")
- * @return output - Parent/Child array
+ * Mutate the original array and add a treeLevel (defaults to `__treeLevel`) property on each item.
+ * @param {Array<Object>} treeArray - hierarchical tree array
+ * @param {Object} options - options containing info like children & treeLevel property names
+ * @param {Number} [treeLevel] - current tree level
  */
-export function convertHierarchicalViewToParentChildArray<T = any>(hierarchicalArray: T[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; }): T[] {
-  const outputArray: T[] = [];
-  convertHierarchicalViewToParentChildArrayByReference($.extend(true, [], hierarchicalArray), outputArray, options, 0);
+export function addTreeLevelByMutation<T>(treeArray: T[], options: { childrenPropName: string; levelPropName: string; }, treeLevel = 0) {
+  const childrenPropName = (options?.childrenPropName ?? 'children') as keyof T;
 
-  // the output array is the one passed as reference
-  return outputArray;
-}
-
-/**
- * Convert a hierarchical array (with children) into a flat array structure array but using the array as the output (the array is the pointer reference)
- * @param hierarchicalArray - input hierarchical array
- * @param outputArrayRef - output array passed (and modified) by reference
- * @param options - you can provide "childrenPropName" (defaults to "children")
- * @param treeLevel - tree level number
- * @param parentId - parent ID
- */
-export function convertHierarchicalViewToParentChildArrayByReference<T = any>(hierarchicalArray: T[], outputArrayRef: T[], options?: { childrenPropName?: string; parentPropName?: string; hasChildrenFlagPropName?: string; levelPropName?: string; identifierPropName?: string; }, treeLevel = 0, parentId?: string) {
-  const childrenPropName = options?.childrenPropName ?? 'children';
-  const identifierPropName = options?.identifierPropName ?? 'id';
-  const hasChildrenFlagPropName = options?.hasChildrenFlagPropName ?? '__hasChildren';
-  const treeLevelPropName = options?.levelPropName ?? '__treeLevel';
-  const parentPropName = options?.parentPropName ?? '__parentId';
-
-  if (Array.isArray(hierarchicalArray)) {
-    for (const item of hierarchicalArray) {
+  if (Array.isArray(treeArray)) {
+    for (const item of treeArray) {
       if (item) {
-        const itemExist = outputArrayRef.some((itm: T) => (itm as any)[identifierPropName] === (item as any)[identifierPropName]);
-        if (!itemExist) {
-          (item as any)[treeLevelPropName] = treeLevel; // save tree level ref
-          (item as any)[parentPropName] = parentId ?? null;
-          outputArrayRef.push(item);
-        }
-        if (Array.isArray((item as any)[childrenPropName])) {
+        if (Array.isArray(item[childrenPropName]) && (item[childrenPropName] as unknown as Array<T>).length > 0) {
           treeLevel++;
-          convertHierarchicalViewToParentChildArrayByReference((item as any)[childrenPropName], outputArrayRef, options, treeLevel, (item as any)[identifierPropName]);
+          addTreeLevelByMutation(item[childrenPropName] as unknown as Array<T>, options, treeLevel);
           treeLevel--;
-          (item as any)[hasChildrenFlagPropName] = true;
-          delete (item as any)[childrenPropName]; // remove the children property
         }
+        (item as any)[options.levelPropName] = treeLevel;
       }
     }
   }
 }
 
 /**
+ * Convert a hierarchical (tree) array (with children) into a flat array structure array (where the children are pushed as next indexed item in the array)
+ * @param {Array<Object>} treeArray - input hierarchical (tree) array
+ * @param {Object} options - you can provide "childrenPropName" (defaults to "children")
+ * @return {Array<Object>} output - Parent/Child array
+ */
+export function flattenToParentChildArray<T>(treeArray: T[], options?: { parentPropName?: string; childrenPropName?: string; identifierPropName?: string; shouldAddTreeLevelNumber?: boolean; levelPropName?: string; }) {
+  const childrenPropName = (options?.childrenPropName ?? 'children') as keyof T & string;
+  const identifierPropName = (options?.identifierPropName ?? 'id') as keyof T & string;
+  const parentPropName = (options?.parentPropName ?? '__parentId') as keyof T & string;
+  const levelPropName = options?.levelPropName ?? '__treeLevel';
+  type FlatParentChildArray = Omit<T, keyof typeof childrenPropName>;
+
+  if (options?.shouldAddTreeLevelNumber) {
+    addTreeLevelByMutation(treeArray, { childrenPropName, levelPropName });
+  }
+
+  const flat = flatten(
+    treeArray,
+    (node: any) => node[childrenPropName],
+    (node: T, parentNode?: T) => {
+      return {
+        [identifierPropName]: node[identifierPropName],
+        [parentPropName]: parentNode !== undefined ? parentNode[identifierPropName] : null,
+        ...objectWithoutKey(node, childrenPropName as keyof T) // reuse the entire object except the children array property
+      } as unknown as FlatParentChildArray;
+    }
+  );
+
+  return flat;
+}
+
+/**
  * Create an immutable clone of an array or object
  * (c) 2019 Chris Ferdinandi, MIT License, https://gomakethings.com
- * @param  {Array|Object} objectOrArray The array or object to copy
- * @return {Array|Object}     The clone of the array or object
+ * @param  {Array|Object} objectOrArray - the array or object to copy
+ * @return {Array|Object} - the clone of the array or object
  */
 export function deepCopy(objectOrArray: any | any[]): any | any[] {
   /**
@@ -194,9 +200,7 @@ export function deepCopy(objectOrArray: any | any[]): any | any[] {
    * Create an immutable copy of an array
    * @return {Array}
    */
-  const cloneArr = () => {
-    return objectOrArray.map((item: any) => deepCopy(item));
-  };
+  const cloneArr = () => objectOrArray.map((item: any) => deepCopy(item));
 
   // -- init --//
   // Get object type
@@ -246,17 +250,27 @@ export function emptyObject(obj: any) {
 }
 
 /**
- * Find an item from a hierarchical view structure (a parent that can have children array which themseleves can children and so on)
- * @param hierarchicalArray
+ * @deprecated use `findItemInTreeStructure()` instead. Find an item from a hierarchical (tree) view structure (a parent that can have children array which themseleves can children and so on)
+ * @param treeArray
  * @param predicate
  * @param childrenPropertyName
  */
-export function findItemInHierarchicalStructure<T = any>(hierarchicalArray: T[], predicate: (item: T) => boolean, childrenPropertyName: string): T | undefined {
+export function findItemInHierarchicalStructure<T = any>(treeArray: T[], predicate: (item: T) => boolean, childrenPropertyName: string): T | undefined {
+  return findItemInTreeStructure(treeArray, predicate, childrenPropertyName);
+}
+
+/**
+ * Find an item from a tree (hierarchical) view structure (a parent that can have children array which themseleves can children and so on)
+ * @param treeArray
+ * @param predicate
+ * @param childrenPropertyName
+ */
+export function findItemInTreeStructure<T = any>(treeArray: T[], predicate: (item: T) => boolean, childrenPropertyName: string): T | undefined {
   if (!childrenPropertyName) {
     throw new Error('findRecursive requires parameter "childrenPropertyName"');
   }
-  const initialFind = hierarchicalArray.find(predicate);
-  const elementsWithChildren = hierarchicalArray.filter((x: T) => childrenPropertyName in x && (x as any)[childrenPropertyName]);
+  const initialFind = treeArray.find(predicate);
+  const elementsWithChildren = treeArray.filter((x: T) => childrenPropertyName in x && (x as any)[childrenPropertyName]);
   if (initialFind) {
     return initialFind;
   } else if (elementsWithChildren.length) {
@@ -266,10 +280,12 @@ export function findItemInHierarchicalStructure<T = any>(hierarchicalArray: T[],
         childElements.push(...(item as any)[childrenPropertyName]);
       }
     });
-    return findItemInHierarchicalStructure<T>(childElements, predicate, childrenPropertyName);
+    return findItemInTreeStructure<T>(childElements, predicate, childrenPropertyName);
   }
   return undefined;
 }
+
+
 
 /**
  * HTML encode using jQuery with a <div>
@@ -812,6 +828,21 @@ export function mapOperatorByFieldType(fieldType: typeof FieldType[keyof typeof 
   return map;
 }
 
+/**
+ * Takes an object and allow to provide a property key to omit from the original object
+ * @param {Object} obj - input object
+ * @param {String} omitKey - object property key to omit
+ * @returns {String} original object without the property that user wants to omit
+ */
+export function objectWithoutKey<T = any>(obj: T, omitKey: keyof T): T {
+  return Object.keys(obj).reduce((result, objKey) => {
+    if (objKey !== omitKey) {
+      (result as T)[objKey as keyof T] = obj[objKey as keyof T];
+    }
+    return result;
+  }, {}) as unknown as T;
+}
+
 /** Parse any input (bool, number, string) and return a boolean or False when not possible */
 export function parseBoolean(input: any): boolean {
   return /(true|1)/i.test(input + '');
@@ -856,7 +887,7 @@ export function sanitizeHtmlToText(htmlString: string): string {
  * @param dirtyHtml: dirty html string
  * @param domPurifyOptions: optional DOMPurify options when using that sanitizer
  */
-export function sanitizeTextByAvailableSanitizer(gridOptions: GridOption, dirtyHtml: string, domPurifyOptions?: DOMPurify.Config & { RETURN_TRUSTED_TYPE: true; }): string {
+export function sanitizeTextByAvailableSanitizer(gridOptions: GridOption, dirtyHtml: string, domPurifyOptions?: DOMPurify.Config): string {
   let sanitizedText = dirtyHtml;
   if (gridOptions && typeof gridOptions.sanitizer === 'function') {
     sanitizedText = gridOptions.sanitizer(dirtyHtml || '');

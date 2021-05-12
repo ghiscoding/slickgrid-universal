@@ -25,7 +25,7 @@ export const treeExportFormatter: Formatter = (_row, _cell, value, columnDef, da
   }
 
   if (!dataContext.hasOwnProperty(treeLevelPropName)) {
-    throw new Error('You must provide valid "treeDataOptions" in your Grid Options and it seems that there are no tree level found in this row');
+    throw new Error('[Slickgrid-Universal] You must provide valid "treeDataOptions" in your Grid Options, however it seems that we could not find any tree level info on the current item datacontext row.');
   }
 
   if (dataView?.getItemByIdx) {
