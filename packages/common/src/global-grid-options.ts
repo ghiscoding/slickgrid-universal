@@ -234,6 +234,7 @@ export const GlobalGridOptions: GridOption = {
   topPanelHeight: 30,
   translationNamespaceSeparator: ':',
   resizeAlwaysRecalculateColumnWidth: false,
+  resizeByContentOnlyOnFirstLoad: true,
   resizeCellCharWidthInPx: 7.8,
   resizeCellPaddingWidthInPx: 14,
   resizeFormatterPaddingWidthInPx: 0,
