@@ -20,7 +20,6 @@ export class Example5 {
   gridOptions: GridOption;
   dataset: any[];
   sgb: SlickVanillaGridBundle;
-  durationOrderByCount = false;
   loadingClass = '';
   isLargeDataset = false;
 

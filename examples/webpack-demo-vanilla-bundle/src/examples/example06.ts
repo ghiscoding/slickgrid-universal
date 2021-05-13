@@ -163,7 +163,7 @@ export class Example6 {
       setTimeout(() => {
         const rowIndex = this.sgb.dataView.getRowById(popItem.id);
         this.sgb.slickGrid.scrollRowIntoView(rowIndex + 3);
-      }, 0);
+      }, 10);
     }
   }
 
