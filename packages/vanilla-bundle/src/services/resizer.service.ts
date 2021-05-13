@@ -31,6 +31,7 @@ export class ResizerService {
   private _intervalExecutionCounter = 0;
   private _intervalRetryDelay = DEFAULT_INTERVAL_RETRY_DELAY;
   private _isStopResizeIntervalRequested = false;
+  private _hasResizedByContentAtLeastOnce = false;
   private _lastDimensions?: GridSize;
   private _totalColumnsWidthByContent = 0;
 
@@ -157,9 +158,10 @@ export class ResizerService {
     const columnWidths: { [columnId in string | number]: number; } = {};
     let reRender = false;
 
-    if (!Array.isArray(dataset) || dataset.length === 0) {
+    if ((!Array.isArray(dataset) || dataset.length === 0) || (this._hasResizedByContentAtLeastOnce && this.gridOptions?.resizeByContentOnlyOnFirstLoad && !recalculateColumnsTotalWidth)) {
       return;
     }
+
     this.eventPubSubService.publish('onBeforeResizeByContent');
     let readItemCount = 0;
 
@@ -255,6 +257,7 @@ export class ResizerService {
 
     // send updated column definitions widths to SlickGrid
     this._grid.setColumns(columnDefinitions);
+    this._hasResizedByContentAtLeastOnce = true;
 
     const calculateColumnWidths: { [columnId in string | number]: number | undefined; } = {};
     for (const columnDef of columnDefinitions) {

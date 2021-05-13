@@ -137,7 +137,7 @@ export class Example5 {
           if (dataContext.treeLevel > 0) {
             prefix = `<span class="mdi mdi-subdirectory-arrow-right mdi-v-align-sub color-se-secondary"></span>`;
           }
-          return `${prefix}<span class="bold">${value}</span><span style="font-size:11px; margin-left: 15px;">(parentId: ${dataContext.parentId})</span>`;
+          return `${prefix}<span class="bold">${value}</span> <span style="font-size:11px; margin-left: 15px;">(parentId: ${dataContext.parentId})</span>`;
         },
       },
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it

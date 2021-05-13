@@ -263,6 +263,11 @@
     width: calc(100% - #{$header-scroll-width-to-remove});
     // height: calc(#{$preheader-height} + #{$cell-padding-top-bottom} - #{$preheader-border-top} - #{$preheader-border-bottom});
 
+    [id$="checkbox_selector"] {
+      justify-content: center;
+      display: flex;
+    }
+
     .slick-header-sortable {
       .slick-column-name {
         margin-left: 0;

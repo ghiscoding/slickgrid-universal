@@ -234,14 +234,15 @@ export const GlobalGridOptions: GridOption = {
   topPanelHeight: 30,
   translationNamespaceSeparator: ':',
   resizeAlwaysRecalculateColumnWidth: false,
+  resizeByContentOnlyOnFirstLoad: true,
   resizeCellCharWidthInPx: 7.8,
   resizeCellPaddingWidthInPx: 14,
   resizeFormatterPaddingWidthInPx: 0,
   resizeDefaultRatioForStringType: 0.88,
   resizeMaxItemToInspectCellContentWidth: 1000,
   treeDataOptions: {
-    exportIndentMarginLeft: 4,
-    exportIndentationLeadingChar: '.',
+    exportIndentMarginLeft: 5,
+    exportIndentationLeadingChar: '͏͏͏͏͏͏͏͏͏·',
   } as unknown as TreeDataOption
 };
 
