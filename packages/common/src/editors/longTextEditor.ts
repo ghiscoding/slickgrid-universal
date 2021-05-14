@@ -121,7 +121,7 @@ export class LongTextEditor implements Editor {
     const title = this.columnEditor?.title ?? '';
     const maxLength = this.columnEditor?.maxLength;
     const textAreaCols = this.editorOptions?.cols ?? 40;
-    const textAreaRows = compositeEditorOptions ? 3 : this.editorOptions?.rows ?? 4;
+    const textAreaRows = this.editorOptions?.rows ?? 4;
 
     const containerElm = compositeEditorOptions ? this.args.container : document.body;
     this._wrapperElm = document.createElement('div');
@@ -131,7 +131,8 @@ export class LongTextEditor implements Editor {
 
     this._textareaElm = document.createElement('textarea');
     this._textareaElm.cols = textAreaCols;
-    this._textareaElm.rows = textAreaRows;
+    // use textarea row if defined but don't go over 3 rows with composite editor modal
+    this._textareaElm.rows = (compositeEditorOptions && textAreaRows > 3) ? 3 : textAreaRows;
     this._textareaElm.placeholder = placeholder;
     this._textareaElm.title = title;
     this._wrapperElm.appendChild(this._textareaElm);

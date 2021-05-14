@@ -56,6 +56,12 @@ export interface ColumnEditor {
    */
   complexObjectPath?: string;
 
+  /**
+   * When using Composite Editor Modal, the inputs will show up with the order they were entered in the column definitions array.
+   * You can use this option to provide a specific order to show these inputs in the form.
+   */
+  compositeEditorFormOrder?: number;
+
   /** A custom structure can be used instead of the default label/value pair. Commonly used with Select/Multi-Select Editor */
   customStructure?: CollectionCustomStructure;
 

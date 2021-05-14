@@ -24,6 +24,7 @@ import {
   GridService,
   GridStateService,
   Locale,
+  numericSortComparer,
   OnErrorOption,
   OnCompositeEditorChangeEventArgs,
   PlainFunc,
@@ -33,6 +34,7 @@ import {
   SlickEventHandler,
   SlickGrid,
   SlickNamespace,
+  SortDirectionNumber,
   TranslaterService,
 } from '@slickgrid-universal/common';
 
@@ -341,6 +343,15 @@ export class SlickCompositeEditorComponent implements ExternalResource {
           modalColumns = this._columnDefinitions.filter(col => col.editor && col.internalColumnEditor?.massUpdate === true);
         } else {
           modalColumns = this._columnDefinitions.filter(col => col.editor);
+        }
+
+        // user could optionally show the form inputs in a specific order instead of using default column definitions order
+        if (modalColumns.some(col => col.internalColumnEditor?.compositeEditorFormOrder !== undefined)) {
+          modalColumns.sort((col1: Column, col2: Column) => {
+            const val1 = col1?.internalColumnEditor?.compositeEditorFormOrder ?? Infinity;
+            const val2 = col2?.internalColumnEditor?.compositeEditorFormOrder ?? Infinity;
+            return numericSortComparer(val1, val2, SortDirectionNumber.asc);
+          });
         }
 
         // open the editor modal and we can also provide a header title with optional parsing pulled from the dataContext, via template {{ }}

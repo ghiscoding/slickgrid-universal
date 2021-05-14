@@ -370,6 +370,49 @@ describe('CompositeEditorService', () => {
       expect(productNameDetailContainerElm).toBeTruthy();
     });
 
+    it('should make sure Slick-Composite-Editor is being created and expect form inputs to be in specific order when user provides column def "compositeEditorFormOrder"', () => {
+      const mockProduct = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
+      const sortedColumnsMock = [
+        { id: 'age', field: 'age', width: 100, name: 'Age', editor: { model: Editors.float, compositeEditorFormOrder: 2, } },
+        { id: 'middleName', field: 'middleName', width: 100, name: 'Middle Name', editor: { model: Editors.text } },
+        { id: 'lastName', field: 'lastName', width: 100, name: 'Last Name', editor: { model: Editors.text, compositeEditorFormOrder: 1, } },
+        { id: 'firstName', field: 'firstName', width: 100, name: 'First Name', editor: { model: Editors.text, compositeEditorFormOrder: 0, } },
+      ] as Column[];
+      sortedColumnsMock.forEach(col => col.internalColumnEditor = col.editor); // do the editor swap that the lib does internally
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue(sortedColumnsMock);
+      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+
+      component = new SlickCompositeEditorComponent();
+      component.init(gridStub, container);
+      component.openDetails({ headerTitle: 'Details' });
+
+      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeHeaderElm = compositeContainerElm.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
+      const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
+      const compositeBodyElm = compositeContainerElm.querySelector('.slick-editor-modal-body') as HTMLSelectElement;
+      const itemDetailsContainerElm = compositeBodyElm.querySelectorAll<HTMLSelectElement>('.item-details-container');
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+      expect(compositeHeaderElm).toBeTruthy();
+      expect(compositeTitleElm).toBeTruthy();
+      expect(compositeTitleElm.textContent).toBe('Details');
+      expect(compositeBodyElm).toBeTruthy();
+
+      // it shouldn't have the order it was added in the column definitions array
+      expect(itemDetailsContainerElm[0].classList.contains('editor-age')).toBeFalse();
+      expect(itemDetailsContainerElm[1].classList.contains('editor-middleName')).toBeFalse();
+      expect(itemDetailsContainerElm[2].classList.contains('editor-lastName')).toBeFalse();
+      expect(itemDetailsContainerElm[3].classList.contains('editor-firstName')).toBeFalse();
+
+      // but it should have the order it was defined by `compositeEditorFormOrder` sort order
+      expect(itemDetailsContainerElm[0].classList.contains('editor-firstName')).toBeTrue();
+      expect(itemDetailsContainerElm[1].classList.contains('editor-lastName')).toBeTrue();
+      expect(itemDetailsContainerElm[2].classList.contains('editor-age')).toBeTrue();
+      expect(itemDetailsContainerElm[3].classList.contains('editor-middleName')).toBeTrue();
+    });
+
     it('should make sure Slick-Composite-Editor is being created and rendered with 2 columns layout when having more than 8 but less than 15 column definitions', () => {
       const copyColumnsMock: Column[] = createNewColumDefinitions(8);
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(copyColumnsMock);
