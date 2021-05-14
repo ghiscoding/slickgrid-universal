@@ -29,7 +29,7 @@ export function getAssociatedDateFormatter(fieldType: typeof FieldType[keyof typ
   return (_row: number, _cell: number, value: any, columnDef: Column, _dataContext: any, grid: SlickGrid) => {
     const gridOptions = ((grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {}) as GridOption;
     const customSeparator = gridOptions?.formatterOptions?.dateSeparator ?? defaultSeparator;
-    const inputType = columnDef?.type ?? 'date';
+    const inputType = columnDef?.type ?? FieldType.date;
     const inputDateFormat = mapMomentDateFormatWithFieldType(inputType);
     const isParsingAsUtc = columnDef?.params?.parseDateAsUtc ?? false;
 
