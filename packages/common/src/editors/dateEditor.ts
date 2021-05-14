@@ -439,8 +439,9 @@ export class DateEditor implements Editor {
 
   protected handleOnDateChange() {
     this._isValueTouched = true;
+    const currentFlatpickrOptions = this.flatInstance?.config ?? this._pickerMergedOptions;
 
-    if (this.args) {
+    if (this.args && currentFlatpickrOptions?.closeOnSelect) {
       const compositeEditorOptions = this.args.compositeEditorOptions;
       if (compositeEditorOptions) {
         this.handleChangeOnCompositeEditor(compositeEditorOptions);

@@ -1,3 +1,4 @@
+import { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
 import {
   AutocompleteOption,
   BindingEventService,
@@ -7,6 +8,7 @@ import {
   EventNamingStyle,
   FieldType,
   Filters,
+  FlatpickrOption,
   Formatter,
   Formatters,
   GridOption,
@@ -251,7 +253,17 @@ export class Example12 {
         exportCustomFormatter: Formatters.dateUs,
         editor: {
           model: Editors.date,
-          editorOptions: { minDate: 'today' },
+          editorOptions: {
+            minDate: 'today',
+
+            // if we want to preload the date picker with a different date,
+            // we could toggle the `closeOnSelect: false`, set the date in the picker and re-toggle `closeOnSelect: true`
+            closeOnSelect: false,
+            onOpen: (selectedDates: Date[] | Date, dateStr: string, instance: FlatpickrInstance) => {
+              instance.setDate('2021-06-04', true);
+              instance.set('closeOnSelect', true);
+            },
+          } as FlatpickrOption,
           massUpdate: true,
           validator: (value, args) => {
             const dataContext = args && args.item;
