@@ -258,11 +258,11 @@ export class Example12 {
 
             // if we want to preload the date picker with a different date,
             // we could toggle the `closeOnSelect: false`, set the date in the picker and re-toggle `closeOnSelect: true`
-            closeOnSelect: false,
-            onOpen: (selectedDates: Date[] | Date, dateStr: string, instance: FlatpickrInstance) => {
-              instance.setDate('2021-06-04', true);
-              instance.set('closeOnSelect', true);
-            },
+            // closeOnSelect: false,
+            // onOpen: (selectedDates: Date[] | Date, dateStr: string, instance: FlatpickrInstance) => {
+            //   instance.setDate('2021-06-04', true);
+            //   instance.set('closeOnSelect', true);
+            // },
           } as FlatpickrOption,
           massUpdate: true,
           validator: (value, args) => {
