@@ -3,7 +3,7 @@ import { BackendServiceApi, Observable } from '@slickgrid-universal/common';
 import { GraphqlResult } from './graphqlResult.interface';
 import { GraphqlPaginatedResult } from './graphqlPaginatedResult.interface';
 import { GraphqlServiceOption } from './graphqlServiceOption.interface';
-import { GraphqlService } from '../services';
+import { GraphqlService } from '../services/index';
 
 export interface GraphqlServiceApi extends BackendServiceApi {
   /** Backend Service Options */

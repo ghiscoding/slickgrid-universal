@@ -17,7 +17,7 @@ import {
 import { CollectionService } from '../services/collection.service';
 import { collectionObserver, propertyObserver } from '../services/observers';
 import { getDescendantProperty, getTranslationPrefix, htmlEncode, sanitizeTextByAvailableSanitizer, unsubscribeAll } from '../services/utilities';
-import { RxJsFacade, Subscription, TranslaterService } from '../services';
+import { RxJsFacade, Subscription, TranslaterService } from '../services/index';
 import { renderCollectionOptionsAsync } from './filterUtilities';
 
 export class SelectFilter implements Filter {
