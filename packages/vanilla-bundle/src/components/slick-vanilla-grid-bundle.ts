@@ -558,6 +558,9 @@ export class SlickVanillaGridBundle {
     this.sharedService.dataView = this.dataView;
     this.sharedService.slickGrid = this.slickGrid;
 
+    // load the resizer service
+    this.resizerService.init(this.slickGrid, this._gridParentContainerElm);
+
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.slickGrid, this._gridOptions, this.dataView);
     this._slickgridInitialized = true;
@@ -619,9 +622,6 @@ export class SlickVanillaGridBundle {
       this.loadPresetsWhenDatasetInitialized();
       this._isDatasetInitialized = true;
     }
-
-    // load the resizer service
-    this.resizerService.init(this.slickGrid, this._gridParentContainerElm);
 
     // user might want to hide the header row on page load but still have `enableFiltering: true`
     // if that is the case, we need to hide the headerRow ONLY AFTER all filters got created & dataView exist
@@ -844,9 +844,7 @@ export class SlickVanillaGridBundle {
 
         // when user has resize by content enabled, we'll force a full width calculation since we change our entire dataset
         if (args.itemCount > 0 && (this.gridOptions.autosizeColumnsByCellContentOnFirstLoad || this.gridOptions.enableAutoResizeColumnsByCellContent)) {
-          // add a delay so that if column positions changes by changeColumnsArrangement() when using custom Grid Views
-          // or presets.columns won't have any impact on the list of visible columns and their positions
-          setTimeout(() => this.resizerService.resizeColumnsByCellContent(!this.gridOptions?.resizeByContentOnlyOnFirstLoad), 10);
+          this.resizerService.resizeColumnsByCellContent(!this.gridOptions?.resizeByContentOnlyOnFirstLoad);
         }
       });
 

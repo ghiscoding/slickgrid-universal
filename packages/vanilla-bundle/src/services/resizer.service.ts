@@ -127,6 +127,9 @@ export class ResizerService {
           this.eventPubSubService.publish('onGridBeforeResize', args);
         });
       }
+
+      // resize by content could be called from the outside by other services via pub/sub event
+      this.eventPubSubService.subscribe('onFullResizeByContentRequested', () => this.resizeColumnsByCellContent(true));
     }
 
     // on double-click resize, should we resize the cell by its cell content?

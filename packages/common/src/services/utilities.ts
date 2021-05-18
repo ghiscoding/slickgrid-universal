@@ -285,8 +285,6 @@ export function findItemInTreeStructure<T = any>(treeArray: T[], predicate: (ite
   return undefined;
 }
 
-
-
 /**
  * HTML encode using jQuery with a <div>
  * Create a in-memory div, set it's inner text(which jQuery automatically encodes)

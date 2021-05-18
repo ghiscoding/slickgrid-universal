@@ -379,6 +379,15 @@ describe('Resizer Service', () => {
           readItemCount: 5
         });
       });
+
+      it('should call "resizeColumnsByCellContent" when "onFullResizeByContentRequested" pubsub event is triggered', () => {
+        const resizeSpy = jest.spyOn(service, 'resizeColumnsByCellContent');
+
+        service.init(gridStub, divContainer);
+        eventPubSubService.publish('onFullResizeByContentRequested', { caller: 'GridStateService' });
+
+        expect(resizeSpy).toHaveBeenCalledWith(true);
+      });
     });
   });
 });
