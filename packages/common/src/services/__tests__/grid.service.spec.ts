@@ -1091,7 +1091,7 @@ describe('Grid Service', () => {
 
       service.setPinning(mockPinning);
 
-      expect(setOptionsSpy).toHaveBeenCalledWith(mockPinning, false, true);
+      expect(setOptionsSpy).toHaveBeenCalledWith({ ...mockPinning, alwaysShowVerticalScroll: false }, false, true);
       expect(gridOptionSetterSpy).toHaveBeenCalledWith(mockPinning);
       expect(autosizeColumnsSpy).toHaveBeenCalled();
     });
@@ -1105,7 +1105,7 @@ describe('Grid Service', () => {
 
       service.setPinning(mockPinning, false);
 
-      expect(setOptionsSpy).toHaveBeenCalledWith(mockPinning, false, true);
+      expect(setOptionsSpy).toHaveBeenCalledWith({ ...mockPinning, alwaysShowVerticalScroll: false }, false, true);
       expect(gridOptionSetterSpy).toHaveBeenCalledWith(mockPinning);
       expect(autosizeColumnsSpy).not.toHaveBeenCalled();
     });
