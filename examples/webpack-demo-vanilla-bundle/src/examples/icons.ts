@@ -57,6 +57,8 @@ export class Icons {
       '.mdi.mdi-arrow-down-bold-box-outline',
       '.mdi.mdi-arrow-down-bold-outline',
       '.mdi.mdi-arrow-expand',
+      '.mdi.mdi-arrow-expand-horizontal',
+      '.mdi.mdi-arrow-split-vertical',
       '.mdi.mdi-calendar',
       '.mdi.mdi-calendar-check',
       '.mdi.mdi-calendar-clock',

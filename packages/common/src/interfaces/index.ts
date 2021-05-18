@@ -115,6 +115,7 @@ export * from './operatorDetail.interface';
 export * from './pagination.interface';
 export * from './paginationChangedArgs.interface';
 export * from './pagingInfo.interface';
+export * from './resizeByContentOption.interface';
 export * from './resizer.interface';
 export * from './resizerOption.interface';
 export * from './rowDetailView.interface';

@@ -157,6 +157,16 @@ $icon-height: $icon-width;
   encodecolor($icon-color), $icon-height, $icon-width, inline-block);
 
 @include loadsvg(
+  ".mdi.mdi-arrow-expand-horizontal",
+  "M9,11H15V8L19,12L15,16V13H9V16L5,12L9,8V11M2,20V4H4V20H2M20,20V4H22V20H20Z",
+  encodecolor($icon-color), $icon-height, $icon-width, inline-block);
+
+@include loadsvg(
+  ".mdi.mdi-arrow-split-vertical",
+  "M18,16V13H15V22H13V2H15V11H18V8L22,12L18,16M2,12L6,16V13H9V22H11V2H9V11H6V8L2,12Z",
+  encodecolor($icon-color), $icon-height, $icon-width, inline-block);
+
+@include loadsvg(
   ".mdi.mdi-arrow-up",
   "M13,20H11V8L5.5,13.5L4.08,12.08L12,4.16L19.92,12.08L18.5,13.5L13,8V20Z",
   encodecolor($icon-color), $icon-height, $icon-width, inline-block);

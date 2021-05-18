@@ -80,14 +80,14 @@ const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, 
 export class Example14 {
   private _bindingEventService: BindingEventService;
   columnDefinitions: Column[];
-  gridOptions1: GridOption;
+  gridOptions: GridOption;
   dataset: any[] = [];
   isGridEditable = true;
   classDefaultResizeButton = 'button is-small';
   classNewResizeButton = 'button is-small is-selected is-primary';
   editQueue = [];
   editedItems = {};
-  sgb1: SlickVanillaGridBundle;
+  sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
   loadingClass = '';
   complexityLevelList = [
@@ -99,7 +99,7 @@ export class Example14 {
   ];
 
   get slickerGridInstance(): SlickerGridInstance {
-    return this.sgb1?.instances;
+    return this.sgb?.instances;
   }
 
   constructor() {
@@ -111,7 +111,7 @@ export class Example14 {
     this.dataset = this.loadData(NB_ITEMS);
     this.gridContainerElm = document.querySelector<HTMLDivElement>(`.grid1`);
 
-    this.sgb1 = new Slicker.GridBundle(this.gridContainerElm, Utilities.deepCopy(this.columnDefinitions), { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset);
+    this.sgb = new Slicker.GridBundle(this.gridContainerElm, Utilities.deepCopy(this.columnDefinitions), { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
     // bind any of the grid events
     this._bindingEventService.bind(this.gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
@@ -123,7 +123,7 @@ export class Example14 {
   }
 
   dispose() {
-    this.sgb1?.dispose();
+    this.sgb?.dispose();
     this._bindingEventService.unbindAll();
     this.gridContainerElm = null;
   }
@@ -343,7 +343,7 @@ export class Example14 {
       },
     ];
 
-    this.gridOptions1 = {
+    this.gridOptions = {
       useSalesforceDefaultGridOptions: true,
       datasetIdPropertyName: 'id',
       eventNamingStyle: EventNamingStyle.lowerCase,
@@ -364,8 +364,9 @@ export class Example14 {
       // then enable resize by content with these 2 flags
       autosizeColumnsByCellContentOnFirstLoad: true,
       enableAutoResizeColumnsByCellContent: true,
-      resizeFormatterPaddingWidthInPx: 8, // optional editor formatter padding for resize calculation
-
+      resizeByContentOptions: {
+        formatterPaddingWidthInPx: 8, // optional editor formatter padding for resize calculation
+      },
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: false
@@ -399,8 +400,8 @@ export class Example14 {
 
           if (prevSerializedValue !== serializedValue || serializedValue === '') {
             const finalColumn = Array.isArray(editCommand.prevSerializedValue) ? editorColumns[index] : column;
-            this.editedItems[this.gridOptions1.datasetIdPropertyName || 'id'] = item; // keep items by their row indexes, if the row got edited twice then we'll keep only the last change
-            this.sgb1.slickGrid.invalidate();
+            this.editedItems[this.gridOptions.datasetIdPropertyName || 'id'] = item; // keep items by their row indexes, if the row got edited twice then we'll keep only the last change
+            this.sgb.slickGrid.invalidate();
             editCommand.execute();
 
             this.renderUnsavedCellStyling(item, finalColumn, editCommand);
@@ -508,7 +509,7 @@ export class Example14 {
     // when the field "completed" changes to false, we also need to blank out the "finish" date
     if (dataContext && !dataContext.completed) {
       dataContext.finish = null;
-      this.sgb1.gridService.updateItem(dataContext);
+      this.sgb.gridService.updateItem(dataContext);
     }
   }
 
@@ -519,10 +520,10 @@ export class Example14 {
 
   handleDefaultResizeColumns() {
     // just for demo purposes, set it back to its original width
-    const columns = this.sgb1.slickGrid.getColumns();
+    const columns = this.sgb.slickGrid.getColumns();
     columns.forEach(col => col.width = col.originalWidth);
-    this.sgb1.slickGrid.setColumns(columns);
-    this.sgb1.slickGrid.autosizeColumns();
+    this.sgb.slickGrid.setColumns(columns);
+    this.sgb.slickGrid.autosizeColumns();
 
     // simple css class to change selected button in the UI
     this.classDefaultResizeButton = 'button is-small is-selected is-primary';
@@ -530,7 +531,7 @@ export class Example14 {
   }
 
   handleNewResizeColumns() {
-    this.sgb1.resizerService.resizeColumnsByCellContent(true);
+    this.sgb.resizerService.resizeColumnsByCellContent(true);
 
     // simple css class to change selected button in the UI
     this.classDefaultResizeButton = 'button is-small';
@@ -543,17 +544,17 @@ export class Example14 {
 
     // then change a single grid options to make the grid non-editable (readonly)
     this.isGridEditable = !this.isGridEditable;
-    this.sgb1.gridOptions = { editable: this.isGridEditable };
-    this.gridOptions1 = this.sgb1.gridOptions;
+    this.sgb.gridOptions = { editable: this.isGridEditable };
+    this.gridOptions = this.sgb.gridOptions;
 
     // we can request a resize of the columns widths by their cell content (we need to pass `true` to request a recalc)
     // also another reason to do it here is because we use an extra editable formatter that has its own padding
-    this.sgb1.resizerService.resizeColumnsByCellContent(true);
+    this.sgb.resizerService.resizeColumnsByCellContent(true);
   }
 
   removeUnsavedStylingFromCell(_item: any, column: Column, row: number) {
     // remove unsaved css class from that cell
-    this.sgb1.slickGrid.removeCellCssStyles(`unsaved_highlight_${[column.id]}${row}`);
+    this.sgb.slickGrid.removeCellCssStyles(`unsaved_highlight_${[column.id]}${row}`);
   }
 
   removeAllUnsavedStylingFromCell() {
@@ -583,10 +584,10 @@ export class Example14 {
 
   renderUnsavedCellStyling(item, column, editCommand) {
     if (editCommand && item && column) {
-      const row = this.sgb1.dataView.getRowByItem(item);
+      const row = this.sgb.dataView.getRowByItem(item);
       if (row >= 0) {
         const hash = { [row]: { [column.id]: 'unsaved-editable-field' } };
-        this.sgb1.slickGrid.setCellCssStyles(`unsaved_highlight_${[column.id]}${row}`, hash);
+        this.sgb.slickGrid.setCellCssStyles(`unsaved_highlight_${[column.id]}${row}`, hash);
       }
     }
   }
@@ -618,12 +619,12 @@ export class Example14 {
       for (const lastEditColumn of lastEdit.columns) {
         this.removeUnsavedStylingFromCell(lastEdit.item, lastEditColumn, lastEditCommand.row);
       }
-      this.sgb1.slickGrid.invalidate();
+      this.sgb.slickGrid.invalidate();
 
 
       // optionally open the last cell editor associated
       if (showLastEditor) {
-        this.sgb1?.slickGrid.gotoCell(lastEditCommand.row, lastEditCommand.cell, false);
+        this.sgb?.slickGrid.gotoCell(lastEditCommand.row, lastEditCommand.cell, false);
       }
     }
   }
@@ -640,7 +641,7 @@ export class Example14 {
         }
       }
     }
-    this.sgb1.slickGrid.invalidate(); // re-render the grid only after every cells got rolled back
+    this.sgb.slickGrid.invalidate(); // re-render the grid only after every cells got rolled back
     this.editQueue = [];
   }
 

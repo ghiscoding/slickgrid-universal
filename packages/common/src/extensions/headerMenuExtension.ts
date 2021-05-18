@@ -139,23 +139,38 @@ export class HeaderMenuExtension implements Extension {
               }
             };
           }
-          const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef && columnDef.header && columnDef.header.menu && columnDef.header.menu.items || [];
+          const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef?.header?.menu?.items ?? [];
 
           // Freeze Column (pinning)
+          let hasFrozenOrResizeCommand = false;
           if (headerMenuOptions && !headerMenuOptions.hideFreezeColumnsCommand) {
+            hasFrozenOrResizeCommand = true;
             if (!columnHeaderMenuItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === 'freeze-columns')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconFreezeColumns || 'fa fa-thumb-tack',
                 title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}FREEZE_COLUMNS`, 'TEXT_FREEZE_COLUMNS'),
                 command: 'freeze-columns',
+                positionOrder: 47
+              });
+            }
+          }
+
+          // Column Resize by Content (column autofit)
+          if (headerMenuOptions && !headerMenuOptions.hideColumnResizeByContentCommand && this.sharedService.gridOptions.enableColumnResizeOnDoubleClick) {
+            hasFrozenOrResizeCommand = true;
+            if (!columnHeaderMenuItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === 'column-resize-by-content')) {
+              columnHeaderMenuItems.push({
+                iconCssClass: headerMenuOptions.iconColumnResizeByContentCommand || 'fa fa-arrows-h',
+                title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}COLUMN_RESIZE_BY_CONTENT`, 'TEXT_COLUMN_RESIZE_BY_CONTENT'),
+                command: 'column-resize-by-content',
                 positionOrder: 48
               });
             }
+          }
 
-            // add a divider (separator) between the top freeze columns commands and the rest of the commands
-            if (!columnHeaderMenuItems.some(item => item !== 'divider' && item.positionOrder === 49)) {
-              columnHeaderMenuItems.push({ divider: true, command: '', positionOrder: 49 });
-            }
+          // add a divider (separator) between the top freeze columns commands and the rest of the commands
+          if (hasFrozenOrResizeCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item.positionOrder === 49)) {
+            columnHeaderMenuItems.push({ divider: true, command: '', positionOrder: 49 });
           }
 
           // Sorting Commands
@@ -226,7 +241,7 @@ export class HeaderMenuExtension implements Extension {
 
   /** Hide a column from the grid */
   hideColumn(column: Column) {
-    if (this.sharedService?.slickGrid && this.sharedService.slickGrid.getColumnIndex) {
+    if (this.sharedService?.slickGrid?.getColumnIndex) {
       const columnIndex = this.sharedService.slickGrid.getColumnIndex(column.id);
       const currentVisibleColumns = this.sharedService.slickGrid.getColumns();
 
@@ -248,7 +263,7 @@ export class HeaderMenuExtension implements Extension {
 
   /** Translate the Header Menu titles, we need to loop through all column definition to re-translate them */
   translateHeaderMenu() {
-    if (this.sharedService.gridOptions && this.sharedService.gridOptions.headerMenu) {
+    if (this.sharedService.gridOptions?.headerMenu) {
       this.resetHeaderMenuTranslations(this.sharedService.visibleColumns);
     }
   }
@@ -275,12 +290,15 @@ export class HeaderMenuExtension implements Extension {
     const translationPrefix = getTranslationPrefix(gridOptions);
 
     columnDefinitions.forEach((columnDef: Column) => {
-      if (columnDef && columnDef.header && columnDef.header.menu && columnDef.header.menu.items) {
+      if (columnDef?.header?.menu?.items) {
         if (!columnDef.excludeFromHeaderMenu) {
           const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef.header.menu.items || [];
           columnHeaderMenuItems.forEach(item => {
             if (item !== 'divider' && item.hasOwnProperty('command')) {
               switch (item.command) {
+                case 'column-resize-by-content':
+                  item.title = this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}COLUMN_RESIZE_BY_CONTENT`, 'TEXT_COLUMN_RESIZE_BY_CONTENT');
+                  break;
                 case 'clear-filter':
                   item.title = this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}REMOVE_FILTER`, 'TEXT_REMOVE_FILTER');
                   break;
@@ -318,25 +336,25 @@ export class HeaderMenuExtension implements Extension {
 
   /** Clear the Filter on the current column (if it's actually filtered) */
   private clearColumnFilter(event: Event, args: MenuCommandItemCallbackArgs) {
-    if (args && args.column) {
+    if (args?.column) {
       this.filterService.clearFilterByColumnId(event, args.column.id);
     }
   }
 
   /** Clear the Sort on the current column (if it's actually sorted) */
   private clearColumnSort(event: Event, args: MenuCommandItemCallbackArgs) {
-    if (args && args.column && this.sharedService) {
+    if (args?.column && this.sharedService) {
       this.sortService.clearSortByColumnId(event, args.column.id);
     }
   }
 
   /** Execute the Header Menu Commands that was triggered by the onCommand subscribe */
   private executeHeaderMenuInternalCommands(event: Event, args: MenuCommandItemCallbackArgs) {
-    if (args && args.command) {
+    if (args?.command) {
       switch (args.command) {
         case 'hide':
           this.hideColumn(args.column);
-          if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableAutoSizeColumns) {
+          if (this.sharedService.gridOptions?.enableAutoSizeColumns) {
             this.sharedService.slickGrid.autosizeColumns();
           }
           break;
@@ -346,9 +364,12 @@ export class HeaderMenuExtension implements Extension {
         case 'clear-sort':
           this.clearColumnSort(event, args);
           break;
+        case 'column-resize-by-content':
+          this.pubSubService.publish('onHeaderMenuColumnResizeByContent', { columnId: args.column.id });
+          break;
         case 'freeze-columns':
           const visibleColumns = [...this.sharedService.visibleColumns];
-          const columnPosition = visibleColumns.findIndex((col) => col.id === args.column.id);
+          const columnPosition = visibleColumns.findIndex(col => col.id === args.column.id);
           const newGridOptions = { frozenColumn: columnPosition, enableMouseWheelScrollHandler: true };
           this.sharedService.slickGrid.setOptions(newGridOptions);
           this.sharedService.gridOptions.frozenColumn = newGridOptions.frozenColumn;
@@ -380,12 +401,12 @@ export class HeaderMenuExtension implements Extension {
 
   /** Sort the current column */
   private sortColumn(event: Event, args: MenuCommandItemCallbackArgs, isSortingAsc = true) {
-    if (args && args.column) {
+    if (args?.column) {
       // get previously sorted columns
       const columnDef = args.column;
-      const sortedColsWithoutCurrent = this.sortService.getCurrentColumnSorts(columnDef.id + '');
+      const sortedColsWithoutCurrent = this.sortService.getCurrentColumnSorts(`${columnDef.id}`);
 
-      let emitterType: EmitterType = EmitterType.local;
+      let emitterType = EmitterType.local;
 
       // add to the column array, the column sorted by the header menu
       sortedColsWithoutCurrent.push({ columnId: columnDef.id, sortCol: columnDef, sortAsc: isSortingAsc });
@@ -397,16 +418,16 @@ export class HeaderMenuExtension implements Extension {
         emitterType = EmitterType.local;
       } else {
         // when using customDataView, we will simply send it as a onSort event with notify
-        const isMultiSort = this.sharedService && this.sharedService.gridOptions && this.sharedService.gridOptions.multiColumnSort || false;
+        const isMultiSort = this.sharedService?.gridOptions?.multiColumnSort ?? false;
         const sortOutput = isMultiSort ? sortedColsWithoutCurrent : sortedColsWithoutCurrent[0];
         args.grid.onSort.notify(sortOutput);
       }
 
       // update the sharedService.slickGrid sortColumns array which will at the same add the visual sort icon(s) on the UI
-      const newSortColumns = sortedColsWithoutCurrent.map((col) => {
+      const newSortColumns = sortedColsWithoutCurrent.map(col => {
         return {
-          columnId: col && col.sortCol && col.sortCol.id,
-          sortAsc: col && col.sortAsc,
+          columnId: col?.sortCol?.id ?? '',
+          sortAsc: col?.sortAsc,
         };
       });
 
@@ -420,7 +441,7 @@ export class HeaderMenuExtension implements Extension {
         const currentLocalSorters: CurrentSorter[] = [];
         newSortColumns.forEach((sortCol) => {
           currentLocalSorters.push({
-            columnId: sortCol.columnId + '',
+            columnId: `${sortCol.columnId}`,
             direction: sortCol.sortAsc ? 'ASC' : 'DESC'
           });
         });

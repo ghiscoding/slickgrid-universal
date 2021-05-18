@@ -17,6 +17,9 @@ export interface HeaderMenuOption {
   /** A command identifier to be passed to the onCommand event handlers. */
   command?: string;
 
+  /** Defaults to false, which will hide the "Column Resize by Content" command in the Header Menu (Grid Option "enableColumnResizeOnDoubleClick" has to also be enabled) */
+  hideColumnResizeByContentCommand?: boolean;
+
   /** Defaults to false, which will hide the "Remove Filter" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
   hideClearFilterCommand?: boolean;
 
@@ -52,6 +55,9 @@ export interface HeaderMenuOption {
 
   /** icon for the "Remove Sort" command */
   iconClearSortCommand?: string;
+
+  /** icon for the "Column Resize by Content" command */
+  iconColumnResizeByContentCommand?: string;
 
   /** icon for the "Hide Column" command */
   iconColumnHideCommand?: string;

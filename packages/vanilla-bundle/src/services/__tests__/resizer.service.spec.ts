@@ -1,4 +1,5 @@
 import { Column, Editors, FieldType, GridOption, PubSubService, SlickGrid, SlickNamespace, } from '@slickgrid-universal/common';
+import { EventPubSubService } from '../eventPubSub.service';
 import { ResizerService } from '../resizer.service';
 
 declare const Slick: SlickNamespace;
@@ -47,17 +48,12 @@ const gridStub = {
   setPreHeaderPanelVisibility: jest.fn(),
   setOptions: jest.fn(),
   setSortColumns: jest.fn(),
+  onColumnsResizeDblClick: new Slick.Event(),
   onSort: new Slick.Event(),
 } as unknown as SlickGrid;
 
-const pubSubServiceStub = {
-  publish: jest.fn(),
-  subscribe: jest.fn(),
-  unsubscribe: jest.fn(),
-  unsubscribeAll: jest.fn(),
-} as PubSubService;
-
 describe('Resizer Service', () => {
+  let eventPubSubService: EventPubSubService;
   let service: ResizerService;
   let divContainer: HTMLDivElement;
   let divHeaderElm: HTMLDivElement;
@@ -75,7 +71,8 @@ describe('Resizer Service', () => {
     divContainer.appendChild(divViewportElm);
     document.body.appendChild(divContainer);
 
-    service = new ResizerService(pubSubServiceStub);
+    eventPubSubService = new EventPubSubService();
+    service = new ResizerService(eventPubSubService);
     mockGridOptions = {
       enableAutoResize: true,
       autoResize: {
@@ -86,6 +83,7 @@ describe('Resizer Service', () => {
       createPreHeaderPanel: true,
       showPreHeaderPanel: true,
       preHeaderPanelHeight: 20,
+      resizeByContentOptions: {},
     } as GridOption;
     jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
   });
@@ -114,7 +112,7 @@ describe('Resizer Service', () => {
 
     it('should call internal event handler subscribe and expect the "onGridBeforeResize" event to be called when addon notify is called', () => {
       const handlerSpy = jest.spyOn(service.eventHandler, 'subscribe');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const pubSubSpy = jest.spyOn(eventPubSubService, 'publish');
 
       service.init(gridStub, divContainer);
       const instance = service.getAddonInstance();
@@ -130,7 +128,7 @@ describe('Resizer Service', () => {
 
     it('should call internal event handler subscribe and expect the "onGridAfterResize" event to be called when addon notify is called', () => {
       const handlerSpy = jest.spyOn(service.eventHandler, 'subscribe');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const pubSubSpy = jest.spyOn(eventPubSubService, 'publish');
 
       service.init(gridStub, divContainer);
       const instance = service.getAddonInstance();
@@ -146,7 +144,7 @@ describe('Resizer Service', () => {
 
     it('should call "onGridAfterResize" event and expect "resizeColumnsByCellContent" to be called when "enableAutoResizeColumnsByCellContent" is set', () => {
       const resizeContentSpy = jest.spyOn(service, 'resizeColumnsByCellContent');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const pubSubSpy = jest.spyOn(eventPubSubService, 'publish');
 
       mockGridOptions.enableAutoResizeColumnsByCellContent = true;
       service.init(gridStub, divContainer);
@@ -277,12 +275,12 @@ describe('Resizer Service', () => {
       let mockData: any[];
 
       beforeEach(() => {
-        mockGridOptions.resizeCellCharWidthInPx = 7;
-        mockGridOptions.resizeCellPaddingWidthInPx = 6;
-        mockGridOptions.resizeFormatterPaddingWidthInPx = 5;
-        mockGridOptions.resizeDefaultRatioForStringType = 0.88;
-        mockGridOptions.resizeAlwaysRecalculateColumnWidth = false;
-        mockGridOptions.resizeMaxItemToInspectCellContentWidth = 4;
+        mockGridOptions.resizeByContentOptions.cellCharWidthInPx = 7;
+        mockGridOptions.resizeByContentOptions.cellPaddingWidthInPx = 6;
+        mockGridOptions.resizeByContentOptions.formatterPaddingWidthInPx = 5;
+        mockGridOptions.resizeByContentOptions.defaultRatioForStringType = 0.88;
+        mockGridOptions.resizeByContentOptions.alwaysRecalculateColumnWidth = false;
+        mockGridOptions.resizeByContentOptions.maxItemToInspectCellContentWidth = 4;
         mockColDefs = [
           // typically the `originalWidth` is set by the columnDefinitiosn setter in vanilla grid bundle but we can mock it for our test
           { id: 'userId', field: 'userId', width: 30, originalWidth: 30 },
@@ -306,10 +304,32 @@ describe('Resizer Service', () => {
         jest.spyOn(mockDataView, 'getItems').mockReturnValue(mockData);
       });
 
+      it('should call handleSingleColumnResizeByContent when "onHeaderMenuColumnResizeByContent" gets triggered', () => {
+        const reRenderSpy = jest.spyOn(gridStub, 'reRenderColumns');
+
+        mockGridOptions.enableColumnResizeOnDoubleClick = true;
+        service.init(gridStub, divContainer);
+        eventPubSubService.publish('onHeaderMenuColumnResizeByContent', { columnId: 'firstName' });
+
+        expect(reRenderSpy).toHaveBeenCalledWith(false);
+        expect(mockColDefs[1].width).toBe(56); // longest word "Destinee" (length 8 * charWidth(7) * ratio(0.88)) + cellPadding(6) = 55.28 ceil to => 56
+      });
+
+      it('should call handleSingleColumnResizeByContent when "onHeaderMenuColumnResizeByContent" gets triggered', () => {
+        const reRenderSpy = jest.spyOn(gridStub, 'reRenderColumns');
+
+        mockGridOptions.enableColumnResizeOnDoubleClick = true;
+        service.init(gridStub, divContainer);
+        gridStub.onColumnsResizeDblClick.notify({ triggeredByColumn: 'firstName', grid: gridStub });
+
+        expect(reRenderSpy).toHaveBeenCalledWith(false);
+        expect(mockColDefs[1].width).toBe(56); // longest word "Destinee" (length 8 * charWidth(7) * ratio(0.88)) + cellPadding(6) = 55.28 ceil to => 56
+      });
+
       it('should call the resize and expect first column have a fixed width while other will have a calculated width when resizing by their content', () => {
         const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
         const reRenderColumnsSpy = jest.spyOn(gridStub, 'reRenderColumns');
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = jest.spyOn(eventPubSubService, 'publish');
 
         service.init(gridStub, divContainer);
         service.resizeColumnsByCellContent(true);
@@ -335,7 +355,7 @@ describe('Resizer Service', () => {
       it('should call the resize and expect first column have a fixed width while other will have a calculated width when resizing by their content and grid is editable', () => {
         const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
         const reRenderColumnsSpy = jest.spyOn(gridStub, 'reRenderColumns');
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = jest.spyOn(eventPubSubService, 'publish');
 
         mockGridOptions.editable = true;
         service.init(gridStub, divContainer);
