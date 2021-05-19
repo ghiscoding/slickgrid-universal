@@ -96,12 +96,8 @@ export class GridService {
    * @param {Boolean} suppressColumnSet - do we want to supress the columns set, via "setColumns()" method? (defaults to false)
    */
   setPinning(pinningOptions: CurrentPinning, shouldAutosizeColumns = true, suppressRender = false, suppressColumnSet = true) {
-    const options = pinningOptions as GridOption;
-    if (typeof pinningOptions?.frozenColumn === 'number' && pinningOptions.frozenColumn >= 0) {
-      options.alwaysShowVerticalScroll = false; // make sure to never show the verticall scroll when the grid has pinning (frozen column)
-    }
-    this.sharedService.slickGrid.setOptions(options, suppressRender, suppressColumnSet);
-    this.sharedService.gridOptions = { ...this.sharedService.gridOptions, ...options };
+    this.sharedService.slickGrid.setOptions(pinningOptions, suppressRender, suppressColumnSet);
+    this.sharedService.gridOptions = { ...this.sharedService.gridOptions, ...pinningOptions };
 
     if (shouldAutosizeColumns) {
       this.sharedService.slickGrid.autosizeColumns();
