@@ -146,23 +146,6 @@ export class ResizerService {
     }
   }
 
-  handleSingleColumnResizeByContent(columnId: string) {
-    const columnDefinitions = this._grid.getColumns();
-    const columnDefIdx = columnDefinitions.findIndex(col => col.id === columnId);
-
-    if (columnDefIdx >= 0) {
-      // provide the initial column width by reference to the calculation and the result will also be returned by reference
-      const columnDef = columnDefinitions[columnDefIdx];
-      const columnWidths = { [columnId]: columnDef.originalWidth ?? columnDef.minWidth ?? 0 };
-      columnDef.originalWidth = undefined; // reset original width since we want to recalculate it
-      this.calculateCellWidthByReadingDataset(columnDef, columnWidths, this.resizeByContentOptions.maxItemToInspectSingleColumnWidthByContent, columnDefIdx);
-      this.applyNewCalculatedColumnWidthByReference(columnDef, columnWidths[columnId]);
-
-      // finally call the re-render for the UI to render the new column width
-      this._grid.reRenderColumns(columnDef?.rerenderOnResize ?? false);
-    }
-  }
-
   /**
    * Return the last resize dimensions used by the service
    * @return {object} last dimensions (height, width)
@@ -252,6 +235,21 @@ export class ResizerService {
     this._totalColumnsWidthByContent > viewportWidth ? this._grid.reRenderColumns(reRender) : this._grid.autosizeColumns();
     this.eventPubSubService.publish('onAfterResizeByContent', { readItemCount, calculateColumnWidths });
   }
+
+  /**
+   * Resize the datagrid to fit the browser height & width.
+   * @param {number} delay to wait before resizing, defaults to 0 (in milliseconds)
+   * @param {object} newSizes can optionally be passed (height, width)
+   * @param {object} event that triggered the resize, defaults to null
+   * @return If the browser supports it, we can return a Promise that would resolve with the new dimensions
+   */
+  resizeGrid(delay?: number, newSizes?: GridSize, event?: SlickEventData): Promise<GridSize> | null {
+    return this._addon?.resizeGrid(delay, newSizes, event);
+  }
+
+  // --
+  // private functions
+  // ------------------
 
   /**
    * Step 1 - The first step will read through the entire dataset (unless max item count is reached),
@@ -362,23 +360,29 @@ export class ResizerService {
     }
   }
 
-  /**
-   * Resize the datagrid to fit the browser height & width.
-   * @param {number} delay to wait before resizing, defaults to 0 (in milliseconds)
-   * @param {object} newSizes can optionally be passed (height, width)
-   * @param {object} event that triggered the resize, defaults to null
-   * @return If the browser supports it, we can return a Promise that would resolve with the new dimensions
-   */
-  resizeGrid(delay?: number, newSizes?: GridSize, event?: SlickEventData): Promise<GridSize> | null {
-    return this._addon?.resizeGrid(delay, newSizes, event);
+  private handleSingleColumnResizeByContent(columnId: string) {
+    const columnDefinitions = this._grid.getColumns();
+    const columnDefIdx = columnDefinitions.findIndex(col => col.id === columnId);
+
+    if (columnDefIdx >= 0) {
+      // provide the initial column width by reference to the calculation and the result will also be returned by reference
+      const columnDef = columnDefinitions[columnDefIdx];
+      const columnWidths = { [columnId]: columnDef.originalWidth ?? columnDef.minWidth ?? 0 };
+      columnDef.originalWidth = undefined; // reset original width since we want to recalculate it
+      this.calculateCellWidthByReadingDataset(columnDef, columnWidths, this.resizeByContentOptions.maxItemToInspectSingleColumnWidthByContent, columnDefIdx);
+      this.applyNewCalculatedColumnWidthByReference(columnDef, columnWidths[columnId]);
+
+      // finally call the re-render for the UI to render the new column width
+      this._grid.reRenderColumns(columnDef?.rerenderOnResize ?? false);
+    }
   }
 
   /**
-   * Checks wether the new calculated column width is valid or not, if it's not the return a lower and acceptable width.
+   * Checks wether the new calculated column width is valid or not, if it's not then return a lower and acceptable width.
    * When using frozen (pinned) column, we cannot make our column wider than the grid viewport because it would become unusable/unscrollable
-   * and so if we do reach that threshold then our calculate column width becomes officially invalid
+   * and so if we do reach that threshold then our calculated column width becomes officially invalid
    * @param {Object} column - column definition
-   * @param {Number} newColumnWidth - calculated column width
+   * @param {Number} newColumnWidth - calculated column width input
    * @returns boolean
    */
   private readjustNewColumnWidthWhenOverLimit(column: Column, newColumnWidth: number): number {
@@ -397,7 +401,6 @@ export class ResizerService {
       if (isGreaterThanFullViewportWidth) {
         const resizeWidthToRemoveFromExceededWidthReadjustment = this.resizeByContentOptions.widthToRemoveFromExceededWidthReadjustment ?? 50;
         adjustedWidth = (leftViewportWidth - leftViewportWidthMinusCurrentCol + rightViewportWidth - resizeWidthToRemoveFromExceededWidthReadjustment);
-        console.error(`[Slickgrid-Universal] You cannot apply this new column width of ${newColumnWidth}px since that would be greater than the grid viewport width ${viewportFullWidth}px. Leftover width ${adjustedWidth}px`);
       }
     }
     return Math.ceil(adjustedWidth);
