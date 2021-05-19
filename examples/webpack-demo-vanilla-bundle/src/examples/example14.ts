@@ -109,7 +109,7 @@ export class Example14 {
   attached() {
     this.initializeGrid();
     this.dataset = this.loadData(NB_ITEMS);
-    this.gridContainerElm = document.querySelector<HTMLDivElement>(`.grid1`);
+    this.gridContainerElm = document.querySelector<HTMLDivElement>(`.grid14`);
 
     this.sgb = new Slicker.GridBundle(this.gridContainerElm, Utilities.deepCopy(this.columnDefinitions), { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
