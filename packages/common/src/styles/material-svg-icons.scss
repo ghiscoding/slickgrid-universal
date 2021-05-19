@@ -652,6 +652,16 @@ $icon-height: $icon-width;
   encodecolor($icon-color), $icon-height, $icon-width, inline-block);
 
 @include loadsvg(
+  ".mdi.mdi-map-marker-radius",
+  "M12,2C15.31,2 18,4.66 18,7.95C18,12.41 12,19 12,19C12,19 6,12.41 6,7.95C6,4.66 8.69,2 12,2M12,6A2,2 0 0,0 10,8A2,2 0 0,0 12,10A2,2 0 0,0 14,8A2,2 0 0,0 12,6M20,19C20,21.21 16.42,23 12,23C7.58,23 4,21.21 4,19C4,17.71 5.22,16.56 7.11,15.83L7.75,16.74C6.67,17.19 6,17.81 6,18.5C6,19.88 8.69,21 12,21C15.31,21 18,19.88 18,18.5C18,17.81 17.33,17.19 16.25,16.74L16.89,15.83C18.78,16.56 20,17.71 20,19Z",
+  encodecolor($icon-color), $icon-height, $icon-width, inline-block);
+
+@include loadsvg(
+  ".mdi.mdi-map-marker-radius-outline",
+  "M12 4C14.2 4 16 5.8 16 8C16 10.1 13.9 13.5 12 15.9C10.1 13.4 8 10.1 8 8C8 5.8 9.8 4 12 4M12 2C8.7 2 6 4.7 6 8C6 12.5 12 19 12 19S18 12.4 18 8C18 4.7 15.3 2 12 2M12 6C10.9 6 10 6.9 10 8S10.9 10 12 10 14 9.1 14 8 13.1 6 12 6M20 19C20 21.2 16.4 23 12 23S4 21.2 4 19C4 17.7 5.2 16.6 7.1 15.8L7.7 16.7C6.7 17.2 6 17.8 6 18.5C6 19.9 8.7 21 12 21S18 19.9 18 18.5C18 17.8 17.3 17.2 16.2 16.7L16.8 15.8C18.8 16.6 20 17.7 20 19Z",
+  encodecolor($icon-color), $icon-height, $icon-width, inline-block);
+
+@include loadsvg(
   ".mdi.mdi-menu",
   "M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z",
   encodecolor($icon-color), $icon-height, $icon-width, inline-block);
