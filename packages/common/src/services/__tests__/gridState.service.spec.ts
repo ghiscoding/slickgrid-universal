@@ -224,7 +224,22 @@ describe('GridStateService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith('onFullResizeByContentRequested', { caller: 'GridStateService' });
       });
 
-      it('should call the method and expect slickgrid "setColumns" and a pubsub event "onFullResizeByContentRequested" to be called with newest columns when "triggerAutoSizeColumns" is false and "enableAutoResizeColumnsByCellContent" is true', () => {
+      it('should call the method and expect slickgrid "setColumns" but WITHOUT triggering pubsub event "onFullResizeByContentRequested" because it requires "enableAutoResizeColumnsByCellContent: true" AND "autosizeColumnsByCellContentOnFirstLoad: false" because this method is never called on first page load', () => {
+        gridOptionMock.enableAutoResizeColumnsByCellContent = true;
+        gridOptionMock.autosizeColumnsByCellContentOnFirstLoad = true;
+        jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
+        const setColsSpy = jest.spyOn(gridStub, 'setColumns');
+        const autoSizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
+        const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
+
+        service.changeColumnsArrangement(presetColumnsMock, false);
+
+        expect(setColsSpy).toHaveBeenCalledWith([rowCheckboxColumnMock, ...columnsWithoutCheckboxMock]);
+        expect(autoSizeSpy).not.toHaveBeenCalled();
+        expect(pubSubSpy).not.toHaveBeenCalledWith('onFullResizeByContentRequested', { caller: 'GridStateService' });
+      });
+
+      it('should call the method and expect slickgrid "setColumns" and a pubsub event "onFullResizeByContentRequested" to be called with newest columns when "triggerAutoSizeColumns" is false and 3rd is set to true', () => {
         jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
         const setColsSpy = jest.spyOn(gridStub, 'setColumns');
         const autoSizeSpy = jest.spyOn(gridStub, 'autosizeColumns');

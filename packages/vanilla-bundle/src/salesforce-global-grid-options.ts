@@ -62,6 +62,7 @@ export const SalesforceGlobalGridOptions = {
   },
   headerRowHeight: 35,
   rowHeight: 33,
+  resizeByContentOnlyOnFirstLoad: false,
   resizeByContentOptions: {
     formatterPaddingWidthInPx: 8,
     maxItemToInspectCellContentWidth: 500,
