@@ -656,6 +656,7 @@ describe('SortService', () => {
 
   describe('toggleSortFunctionality method', () => {
     beforeEach(() => {
+      gridOptionMock.multiColumnSort = true;
       gridOptionMock.enableSorting = true;
     });
 
@@ -696,7 +697,7 @@ describe('SortService', () => {
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     });
 
-    it('should load local grid presets', () => {
+    it('should load local grid multiple presets sorting when multiColumnSort is enabled', () => {
       const spySetCols = jest.spyOn(gridStub, 'setSortColumns');
       const spySortChanged = jest.spyOn(service, 'onLocalSortChanged');
       const expectation = [
@@ -712,6 +713,22 @@ describe('SortService', () => {
         { columnId: 'lastName', sortAsc: false },
       ]);
       expect(spySortChanged).toHaveBeenCalledWith(gridStub, expectation);
+    });
+
+    it('should load local grid with only a single sort when multiColumnSort is disabled even when passing multiple column sorters', () => {
+      const spySetCols = jest.spyOn(gridStub, 'setSortColumns');
+      const spySortChanged = jest.spyOn(service, 'onLocalSortChanged');
+      const expectation = [
+        { columnId: 'firstName', sortAsc: true, sortCol: { id: 'firstName', field: 'firstName' } },
+        { columnId: 'lastName', sortAsc: false, sortCol: { id: 'lastName', field: 'lastName' } },
+      ];
+
+      gridOptionMock.multiColumnSort = false;
+      service.bindLocalOnSort(gridStub);
+      service.loadGridSorters(gridOptionMock.presets.sorters);
+
+      expect(spySetCols).toHaveBeenCalledWith([{ columnId: 'firstName', sortAsc: true }]);
+      expect(spySortChanged).toHaveBeenCalledWith(gridStub, [expectation[0]]);
     });
   });
 
@@ -909,6 +926,7 @@ describe('SortService', () => {
       gridStub.getOptions = () => gridOptionMock;
       gridOptionMock.enableSorting = true;
       gridOptionMock.backendServiceApi = undefined;
+      gridOptionMock.multiColumnSort = true;
 
       mockNewSorters = [
         { columnId: 'firstName', direction: 'ASC' },
