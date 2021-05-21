@@ -11,6 +11,7 @@ import {
   SingleColumnSort,
 } from './index';
 import { SlickGrid } from './slickGrid.interface';
+import { SharedService } from '../services';
 
 export interface BackendService {
   /** Backend Service options */
@@ -26,7 +27,7 @@ export interface BackendService {
   clearSorters?: () => void;
 
   /** initialize the backend service with certain options */
-  init?: (serviceOptions?: BackendServiceOption | any, pagination?: Pagination, grid?: SlickGrid) => void;
+  init?: (serviceOptions?: BackendServiceOption | any, pagination?: Pagination, grid?: SlickGrid, sharedService?: SharedService) => void;
 
   /** Get the dataset name */
   getDatasetName?: () => string;

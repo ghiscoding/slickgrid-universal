@@ -807,7 +807,7 @@ export class SlickVanillaGridBundle {
       const backendApi = gridOptions.backendServiceApi;
 
       if (backendApi?.service?.init) {
-        backendApi.service.init(backendApi.options, gridOptions.pagination, this.slickGrid);
+        backendApi.service.init(backendApi.options, gridOptions.pagination, this.slickGrid, this.sharedService);
       }
     }
 
@@ -1242,6 +1242,7 @@ export class SlickVanillaGridBundle {
 
         // finally set the new presets columns (including checkbox selector if need be)
         this.slickGrid.setColumns(gridColumns);
+        this.sharedService.visibleColumns = gridColumns;
       }
     }
   }
