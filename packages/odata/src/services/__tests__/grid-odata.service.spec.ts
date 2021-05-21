@@ -12,6 +12,7 @@ import {
   OperatorType,
   FieldType,
   CurrentSorter,
+  SharedService,
   SlickGrid,
   BackendService,
 } from '@slickgrid-universal/common';
@@ -48,8 +49,10 @@ describe('GridOdataService', () => {
   let service: GridOdataService;
   let paginationOptions: Pagination;
   let serviceOptions: OdataOption;
+  let sharedService: SharedService;
 
   beforeEach(() => {
+    sharedService = new SharedService();
     service = new GridOdataService();
     serviceOptions = {
       orderBy: '',
@@ -1455,6 +1458,10 @@ describe('GridOdataService', () => {
   });
 
   describe('presets', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
     it('should return a query when using presets sorters array', () => {
       const expectation = `$top=10&$orderby=Company desc,FirstName asc`;
       const presets = [
@@ -1475,11 +1482,31 @@ describe('GridOdataService', () => {
       const columns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'duration', field: 'duration', type: FieldType.number }];
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       const expectation = `$top=10&$filter=(Duration ge 4 and Duration le 88)`;
-      const presetFilters = [
-        { columnId: 'duration', searchTerms: ['4..88'] },
-      ] as CurrentFilter[];
+      const presetFilters = [{ columnId: 'duration', searchTerms: ['4..88'] }] as CurrentFilter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
+      service.updateFilters(presetFilters, true);
+      const query = service.buildQuery();
+      const currentFilters = service.getCurrentFilters();
+
+      expect(query).toBe(expectation);
+      expect(currentFilters).toEqual(presetFilters);
+    });
+
+    it('should return a query with all columns and search even when having hidden columns (basically when it is not part of the `getColumns()` return) when all passed are passed with the shared service', () => {
+      const mockColumns = [{ id: 'company', field: 'company' }, { id: 'gender', field: 'gender' }, { id: 'duration', field: 'duration', type: FieldType.number }];
+      const expectation = `$top=10&$filter=(Duration ge 4 and Duration le 88)`;
+      const presetFilters = [{ columnId: 'duration', searchTerms: ['4..88'] }] as CurrentFilter[];
+      const mockColumnsCopy = [...mockColumns];
+
+      // remove "Gender" column from `getColumns` (to simulate hidden field)
+      mockColumnsCopy.splice(1, 1);
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumnsCopy);
+
+      // but still pass all columns to the service init
+      jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
+
+      service.init(serviceOptions, paginationOptions, gridStub, sharedService);
       service.updateFilters(presetFilters, true);
       const query = service.buildQuery();
       const currentFilters = service.getCurrentFilters();

@@ -1496,7 +1496,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
 
         expect(bindBackendSpy).toHaveBeenCalledWith(mockGrid);
-        expect(initSpy).toHaveBeenCalledWith(mockGraphqlOptions, mockPagination, mockGrid);
+        expect(initSpy).toHaveBeenCalledWith(mockGraphqlOptions, mockPagination, mockGrid, sharedService);
       });
 
       it('should call bind backend sorting when "enableSorting" is set', () => {
