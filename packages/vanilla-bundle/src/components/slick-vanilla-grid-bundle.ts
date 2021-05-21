@@ -558,9 +558,6 @@ export class SlickVanillaGridBundle {
     this.sharedService.dataView = this.dataView;
     this.sharedService.slickGrid = this.slickGrid;
 
-    // load the resizer service
-    this.resizerService.init(this.slickGrid, this._gridParentContainerElm);
-
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.slickGrid, this._gridOptions, this.dataView);
     this._slickgridInitialized = true;
@@ -576,6 +573,10 @@ export class SlickVanillaGridBundle {
 
     // initialize the SlickGrid grid
     this.slickGrid.init();
+
+    // initialized the resizer service only after SlickGrid is initialized
+    // if we don't we end up binding our resize to a grid element that doesn't yet exist in the DOM and the resizer service will fail silently (because it has a try/catch that unbinds the resize without throwing back)
+    this.resizerService.init(this.slickGrid, this._gridParentContainerElm);
 
     // user could show a custom footer with the data metrics (dataset length and last updated timestamp)
     if (!this.gridOptions.enablePagination && this.gridOptions.showCustomFooter && this.gridOptions.customFooterOptions) {
