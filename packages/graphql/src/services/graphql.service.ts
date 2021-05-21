@@ -20,6 +20,7 @@ import {
   OperatorType,
   Pagination,
   PaginationChangedArgs,
+  SharedService,
   SingleColumnSort,
   SlickGrid,
   SortDirection,
@@ -43,7 +44,7 @@ export class GraphqlService implements BackendService {
   private _currentFilters: ColumnFilters | CurrentFilter[] = [];
   private _currentPagination: CurrentPagination | null = null;
   private _currentSorters: CurrentSorter[] = [];
-  private _columnDefinitions!: Column[];
+  private _columnDefinitions?: Column[];
   private _grid: SlickGrid | undefined;
   private _datasetIdPropName = 'id';
   options: GraphqlServiceOption | undefined;
@@ -64,14 +65,14 @@ export class GraphqlService implements BackendService {
   }
 
   /** Initialization of the service, which acts as a constructor */
-  init(serviceOptions?: GraphqlServiceOption, pagination?: Pagination, grid?: SlickGrid): void {
+  init(serviceOptions?: GraphqlServiceOption, pagination?: Pagination, grid?: SlickGrid, sharedService?: SharedService): void {
     this._grid = grid;
     this.options = serviceOptions || { datasetName: '' };
     this.pagination = pagination;
     this._datasetIdPropName = this._gridOptions.datasetIdPropertyName || 'id';
 
     if (grid && grid.getColumns) {
-      this._columnDefinitions = grid.getColumns() || [];
+      this._columnDefinitions = sharedService?.allColumns ?? grid.getColumns() ?? [];
     }
   }
 
@@ -525,7 +526,7 @@ export class GraphqlService implements BackendService {
 
       // display the correct sorting icons on the UI, for that it requires (columnId, sortAsc) properties
       const tmpSorterArray = currentSorters.map((sorter) => {
-        const columnDef = this._columnDefinitions.find((column: Column) => column.id === sorter.columnId);
+        const columnDef = this._columnDefinitions?.find((column: Column) => column.id === sorter.columnId);
 
         graphqlSorters.push({
           field: columnDef ? ((columnDef.queryFieldSorter || columnDef.queryField || columnDef.field) + '') : (sorter.columnId + ''),

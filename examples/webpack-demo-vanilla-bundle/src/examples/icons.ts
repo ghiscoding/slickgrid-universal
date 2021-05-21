@@ -157,6 +157,8 @@ export class Icons {
       '.mdi.mdi-link-variant',
       '.mdi.mdi-load',
       '.mdi.mdi-magnify',
+      '.mdi.mdi-map-marker-radius',
+      '.mdi.mdi-map-marker-radius-outline',
       '.mdi.mdi-menu',
       '.mdi.mdi-message-text',
       '.mdi.mdi-message-text-outline',

@@ -286,7 +286,9 @@ export class SortService {
     const sortCols: ColumnSort[] = [];
 
     if (Array.isArray(sorters)) {
-      sorters.forEach((sorter: CurrentSorter) => {
+      const tmpSorters = this._gridOptions.multiColumnSort ? sorters : sorters.slice(0, 1);
+
+      tmpSorters.forEach((sorter: CurrentSorter) => {
         const gridColumn = this._columnDefinitions.find((col: Column) => col.id === sorter.columnId);
         if (gridColumn) {
           sortCols.push({

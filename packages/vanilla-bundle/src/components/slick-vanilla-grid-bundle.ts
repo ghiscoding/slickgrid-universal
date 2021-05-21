@@ -558,9 +558,6 @@ export class SlickVanillaGridBundle {
     this.sharedService.dataView = this.dataView;
     this.sharedService.slickGrid = this.slickGrid;
 
-    // load the resizer service
-    this.resizerService.init(this.slickGrid, this._gridParentContainerElm);
-
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.slickGrid, this._gridOptions, this.dataView);
     this._slickgridInitialized = true;
@@ -576,6 +573,10 @@ export class SlickVanillaGridBundle {
 
     // initialize the SlickGrid grid
     this.slickGrid.init();
+
+    // initialized the resizer service only after SlickGrid is initialized
+    // if we don't we end up binding our resize to a grid element that doesn't yet exist in the DOM and the resizer service will fail silently (because it has a try/catch that unbinds the resize without throwing back)
+    this.resizerService.init(this.slickGrid, this._gridParentContainerElm);
 
     // user could show a custom footer with the data metrics (dataset length and last updated timestamp)
     if (!this.gridOptions.enablePagination && this.gridOptions.showCustomFooter && this.gridOptions.customFooterOptions) {
@@ -806,7 +807,7 @@ export class SlickVanillaGridBundle {
       const backendApi = gridOptions.backendServiceApi;
 
       if (backendApi?.service?.init) {
-        backendApi.service.init(backendApi.options, gridOptions.pagination, this.slickGrid);
+        backendApi.service.init(backendApi.options, gridOptions.pagination, this.slickGrid, this.sharedService);
       }
     }
 
@@ -897,7 +898,9 @@ export class SlickVanillaGridBundle {
         }
         // Sorters "presets"
         if (backendApiService.updateSorters && Array.isArray(gridOptions.presets.sorters) && gridOptions.presets.sorters.length > 0) {
-          backendApiService.updateSorters(undefined, gridOptions.presets.sorters);
+          // when using multi-column sort, we can have multiple but on single sort then only grab the first sort provided
+          const sortColumns = this._gridOptions.multiColumnSort ? gridOptions.presets.sorters : gridOptions.presets.sorters.slice(0, 1);
+          backendApiService.updateSorters(undefined, sortColumns);
         }
         // Pagination "presets"
         if (backendApiService.updatePagination && gridOptions.presets.pagination) {
@@ -974,7 +977,9 @@ export class SlickVanillaGridBundle {
     // if user entered some Sort "presets", we need to reflect them all in the DOM
     if (gridOptions.enableSorting) {
       if (gridOptions.presets && Array.isArray(gridOptions.presets.sorters)) {
-        this.sortService.loadGridSorters(gridOptions.presets.sorters);
+        // when using multi-column sort, we can have multiple but on single sort then only grab the first sort provided
+        const sortColumns = this._gridOptions.multiColumnSort ? gridOptions.presets.sorters : gridOptions.presets.sorters.slice(0, 1);
+        this.sortService.loadGridSorters(sortColumns);
       }
     }
   }
@@ -1237,6 +1242,7 @@ export class SlickVanillaGridBundle {
 
         // finally set the new presets columns (including checkbox selector if need be)
         this.slickGrid.setColumns(gridColumns);
+        this.sharedService.visibleColumns = gridColumns;
       }
     }
   }
