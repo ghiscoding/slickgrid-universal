@@ -91,7 +91,7 @@ export class GridOdataService implements BackendService {
     this.pagination = pagination;
 
     if (grid?.getColumns) {
-      const tmpColumnDefinitions = sharedService?.visibleColumns ?? grid.getColumns() ?? [];
+      const tmpColumnDefinitions = sharedService?.allColumns ?? grid.getColumns() ?? [];
       this._columnDefinitions = tmpColumnDefinitions.filter((column: Column) => !column.excludeFromQuery);
     }
   }
