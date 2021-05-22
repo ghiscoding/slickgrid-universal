@@ -170,7 +170,7 @@ describe('DateEditor', () => {
       const editorElm = editor.editorDomElement;
 
       expect(editor.getValue()).toBe('2001-01-02T11:02:02.000Z');
-      expect(editorElm.defaultValue).toBe('2001-01-02T11:02:02.000Z');
+      expect(editorElm[0].defaultValue).toBe('2001-01-02T11:02:02.000Z');
     });
 
     it('should hide the DOM element when the "hide" method is called', () => {
