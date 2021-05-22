@@ -1,4 +1,4 @@
-import { Column, Editors, FieldType, GridOption, PubSubService, SlickGrid, SlickNamespace, } from '@slickgrid-universal/common';
+import { Column, Editors, FieldType, GridOption, SlickGrid, SlickNamespace, } from '@slickgrid-universal/common';
 import { EventPubSubService } from '../eventPubSub.service';
 import { ResizerService } from '../resizer.service';
 
