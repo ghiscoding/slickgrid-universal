@@ -46,7 +46,7 @@
     "html-webpack-plugin": "5.3.1",
     "mini-css-extract-plugin": "^1.6.0",
     "rxjs": "^7.0.1",
-    "sass": "^1.32.13",
+    "sass": "~1.32.13",
     "sass-loader": "^11.1.1",
     "style-loader": "^2.0.0",
     "ts-loader": "^9.2.0",
