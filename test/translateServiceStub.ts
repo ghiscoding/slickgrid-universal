@@ -25,6 +25,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'CLEAR_PINNING': output = this._locale === 'en' ? 'Unfreeze Columns/Rows' : 'Dégeler les colonnes/rangées'; break;
       case 'CLONE': output = this._locale === 'en' ? 'Clone' : 'Cloner'; break;
       case 'COLUMNS': output = this._locale === 'en' ? 'Columns' : 'Colonnes'; break;
+      case 'COLUMN_RESIZE_BY_CONTENT': output = this._locale === 'en' ? 'Resize by Content' : 'Redimensionner par contenu'; break;
       case 'COMMANDS': output = this._locale === 'en' ? 'Commands' : 'Commandes'; break;
       case 'COLLAPSE_ALL_GROUPS': output = this._locale === 'en' ? 'Collapse all Groups' : 'Réduire tous les groupes'; break;
       case 'CONTAINS': output = this._locale === 'en' ? 'Contains' : 'Contient'; break;

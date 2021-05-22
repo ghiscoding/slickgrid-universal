@@ -25,6 +25,7 @@ import {
   ItemMetadata,
   Locale,
   Pagination,
+  ResizeByContentOption,
   RowDetailView,
   RowMoveManager,
   RowSelectionModelOption,
@@ -248,6 +249,12 @@ export interface GridOption {
   enableColumnReorder?: boolean | ColumnReorderFunction;
 
   /**
+   * Defaults to true, when doing a double-click in the column resize section (top right of a column when the mouse resize icon shows up),
+   * do we want to automatically resize the column by its cell content?
+   */
+  enableColumnResizeOnDoubleClick?: boolean;
+
+  /**
    * Defaults to false, do we want to use a Composite Editor Modal?
    * Composite Editor is providing a modal window to edit an entire row, it reuses every column definition editor/validators and displays them in a convenient single form.
    */
@@ -393,7 +400,14 @@ export interface GridOption {
   /** Number of row index(es) to freeze (pin) in the grid */
   frozenRow?: number;
 
-  /** Defaults to false, which leads to have row with full width */
+  /**
+   * Defaults to 100, what is the minimum width to keep for the section on the right of a frozen grid?
+   * This basically fixes an issue that if the user expand any column on the left of the frozen (pinning) section
+   * and make it bigger than the viewport width, then the grid becomes unusable because the right section goes into a void/hidden area.
+   */
+  frozenRightViewportMinWidth?: number;
+
+  /** Defaults to false, which leads to have row(s) taking full width */
   fullWidthRows?: boolean;
 
   /** defaults to None, Grid Autosize Columns Mode used when calling "autosizeColumns()" method */
@@ -476,9 +490,6 @@ export interface GridOption {
   /** Register any external Resources (Components, Services) like the ExcelExportService, TextExportService, SlickCompositeEditorComponent, ... */
   registerExternalResources?: ExternalResource[];
 
-  /** defaults to false, if a column `width` is provided (or was previously calculated) should we recalculate it or not when resizing by cell content? */
-  resizeAlwaysRecalculateColumnWidth?: boolean;
-
   /**
    * defaults to true, do we want to resize the grid by content only on the first page or anytime the data changes?
    * Requires `enableAutoResizeColumnsByCellContent` to be set.
@@ -486,28 +497,8 @@ export interface GridOption {
    */
   resizeByContentOnlyOnFirstLoad?: boolean;
 
-  /**
-   * Defaults to 7, width in pixels of a string character which is used by the resize columns by its content, this can vary depending on which font family/size is used & cell padding.
-   * This is only used when resizing the columns width by their content, we need to know the width of a character in pixel to do all calculations.
-   * Requires `enableAutoResizeColumnsByCellContent` to be set.
-   */
-  resizeCellCharWidthInPx?: number;
-
-  /** Defaults to 6, cell padding width to add to the calculation when resizing columns by their cell text content (requires `enableAutoResizeColumnsByCellContent` to be set) */
-  resizeCellPaddingWidthInPx?: number;
-
-  /** Defaults to around ~0.9, what is the ratio to use (on field `type` "string" only) in the calculation when resizing columns by their cell text content (requires `enableAutoResizeColumnsByCellContent` to be set). */
-  resizeDefaultRatioForStringType?: number;
-
-  /** Defaults to 6, padding width to add to the calculation when using a Formatter and resizing columns by their cell text content (requires `enableAutoResizeColumnsByCellContent` to be set). */
-  resizeFormatterPaddingWidthInPx?: number;
-
-  /**
-   * Defaults to 1000, width in pixels of a string character which is used by the resize columns by its content, this can vary depending on which font family/size is used & cell padding.
-   * This is only used when resizing the columns width by their content, we need to know the width of a character in pixel to do all calculations.
-   * Requires `enableAutoResizeColumnsByCellContent` to be set.
-   */
-  resizeMaxItemToInspectCellContentWidth?: number;
+  /** Resize by Content multiple options */
+  resizeByContentOptions?: ResizeByContentOption;
 
   /** Row Detail View Plugin options & events (columnId, cssClass, toolTip, width) */
   rowDetailView?: RowDetailView;

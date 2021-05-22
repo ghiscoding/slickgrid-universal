@@ -5,6 +5,7 @@ export const SalesforceGlobalGridOptions = {
   autoEdit: true, // true single click (false for double-click)
   autoCommitEdit: true,
   cellValueCouldBeUndefined: true,
+  eventNamingStyle: EventNamingStyle.lowerCaseWithoutOnPrefix,
   compositeEditorOptions: {
     labels: {
       massSelectionButton: 'Apply to Selected & Save',
@@ -62,8 +63,9 @@ export const SalesforceGlobalGridOptions = {
   headerRowHeight: 35,
   rowHeight: 33,
   resizeByContentOnlyOnFirstLoad: false,
-  resizeFormatterPaddingWidthInPx: 8,
-  resizeMaxItemToInspectCellContentWidth: 500,
-  eventNamingStyle: EventNamingStyle.lowerCaseWithoutOnPrefix,
+  resizeByContentOptions: {
+    formatterPaddingWidthInPx: 8,
+    maxItemToInspectCellContentWidth: 500,
+  },
   useSalesforceDefaultGridOptions: true,
 } as GridOption;

@@ -260,6 +260,9 @@ export interface SlickGrid {
   /** Get the Viewport DOM node element */
   getViewportNode(): HTMLElement;
 
+  /** Get all the Viewport node elements */
+  getViewports(): HTMLElement[];
+
   /**
    * Accepts a row integer and a cell integer, scrolling the view to the row where row is its row index, and cell is its cell index. Optionally accepts a forceEdit boolean which, if true, will attempt to initiate the edit dialogue for the field in the specified cell.
    * Unlike setActiveCell, this scrolls the row into the viewport and sets the keyboard focus.
@@ -500,6 +503,7 @@ export interface SlickGrid {
   onColumnsDrag: SlickEvent<OnColumnsDragEventArgs>;
   onColumnsReordered: SlickEvent<OnColumnsReorderedEventArgs>;
   onColumnsResized: SlickEvent<OnColumnsResizedEventArgs>;
+  onColumnsResizeDblClick: SlickEvent<OnColumnsResizeDblClickEventArgs>;
   onCompositeEditorChange: SlickEvent<OnCompositeEditorChangeEventArgs>;
   onContextMenu: SlickEvent<SlickGridEventData>;
   onDrag: SlickEvent<OnDragEventArgs>;
@@ -544,6 +548,7 @@ export interface OnCellCssStylesChangedEventArgs extends SlickGridEventData { ke
 export interface OnColumnsDragEventArgs extends SlickGridEventData { triggeredByColumn: string; resizeHandle: HTMLElement; }
 export interface OnColumnsReorderedEventArgs extends SlickGridEventData { impactedColumns: Column[]; }
 export interface OnColumnsResizedEventArgs extends SlickGridEventData { triggeredByColumn: string; }
+export interface OnColumnsResizeDblClickEventArgs extends SlickGridEventData { triggeredByColumn: string; }
 export interface OnCompositeEditorChangeEventArgs extends SlickGridEventData { row: number; cell: number; item: any; column: Column; formValues: any; editors: { [columnId: string]: Editor; }; triggeredBy?: 'user' | 'system'; }
 export interface OnClickEventArgs extends SlickGridEventData { row: number; cell: number; }
 export interface OnDblClickEventArgs extends SlickGridEventData { row: number; cell: number; }

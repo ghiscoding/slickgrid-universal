@@ -105,7 +105,7 @@ describe('Example 04 - Frozen Grid', () => {
 
     cy.get('.slick-header-menu')
       .should('be.visible')
-      .children('.slick-header-menuitem:nth-child(8)')
+      .children('.slick-header-menuitem:nth-child(9)')
       .children('.slick-header-menucontent')
       .should('contain', 'Hide Column')
       .click();
