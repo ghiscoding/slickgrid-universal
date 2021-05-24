@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-describe('Example 01 - Basic Grids', () => {
+describe('Example 01 - Basic Grids', { retries: 1 }, () => {
   const GRID_ROW_HEIGHT = 33;
   const fullTitles = ['Title', 'Duration (days)', '% Complete', 'Start', 'Finish', 'Effort Driven'];
 

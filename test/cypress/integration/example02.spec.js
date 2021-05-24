@@ -5,7 +5,7 @@ function removeExtraSpaces(textS) {
   return `${textS}`.replace(/\s+/g, ' ').trim();
 }
 
-describe('Example 02 - Grouping & Aggregators', () => {
+describe('Example 02 - Grouping & Aggregators', { retries: 1 }, () => {
   const fullTitles = ['#', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Cost', 'Effort Driven'];
   const GRID_ROW_HEIGHT = 45;
 

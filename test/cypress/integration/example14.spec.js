@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-describe('Example 14 - Columns Resize by Content', () => {
+describe('Example 14 - Columns Resize by Content', { retries: 1 }, () => {
   const titles = ['', 'Title', 'Duration', 'Cost', '% Complete', 'Complexity', 'Start', 'Completed', 'Finish', 'Product', 'Country of Origin', 'Action'];
 
   beforeEach(() => {

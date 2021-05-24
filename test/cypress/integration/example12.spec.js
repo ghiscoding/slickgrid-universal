@@ -1,7 +1,7 @@
 /// <reference types="Cypress" />
 import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
-describe('Example 12 - Composite Editor Modal', () => {
+describe('Example 12 - Composite Editor Modal', { retries: 1 }, () => {
   const fullPreTitles = ['', 'Common Factor', 'Analysis', 'Period', 'Item', ''];
   const fullTitles = ['', 'Title', 'Duration', 'Cost', '% Complete', 'Complexity', 'Start', 'Completed', 'Finish', 'Product', 'Country of Origin', 'Action'];
 
