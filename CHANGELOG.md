@@ -46,6 +46,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **services:** add onBeforeResizeByContent (onAfter) ([3e99fab](https://github.com/ghiscoding/slickgrid-universal/commit/3e99fabb8554161e4301c0596eaebd9e0d246de7))
 * **styling:** add new marker material icons for project ([9b386fa](https://github.com/ghiscoding/slickgrid-universal/commit/9b386fa3e6af8e76cf4beb5aa0b5322db2f270af))
 * **tree:** improve Tree Data speed considerably ([5487798](https://github.com/ghiscoding/slickgrid-universal/commit/548779801d06cc9ae7e319e72d351c8a868ed79f))
+* **editors:** replace jQuery with native elements ([d6e8f4e](https://github.com/ghiscoding/slickgrid-universal/commit/d6e8f4e59823673df290b179d7ee277e3d7bb1af))
 
 # [0.13.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.12.0...v0.13.0) (2021-04-27)
 
