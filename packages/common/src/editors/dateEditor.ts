@@ -212,6 +212,9 @@ export class DateEditor implements Editor {
     emptyElement(this._editorInputGroupElm);
     emptyElement(this._inputWithDataElm);
     emptyElement(this._inputElm);
+    this._editorInputGroupElm?.remove?.();
+    this._inputWithDataElm?.remove?.();
+    this._inputElm?.remove?.();
   }
 
   disable(isDisabled = true) {

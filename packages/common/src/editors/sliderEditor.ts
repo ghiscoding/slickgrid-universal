@@ -123,6 +123,7 @@ export class SliderEditor implements Editor {
 
   destroy() {
     this._bindEventService.unbindAll();
+    this._inputElm?.remove?.();
   }
 
   disable(isDisabled = true) {
