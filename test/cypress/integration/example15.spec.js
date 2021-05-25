@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-describe('Example 15 - OData Grid using RxJS', () => {
+describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
   const GRID_ROW_HEIGHT = 33;
 
   beforeEach(() => {

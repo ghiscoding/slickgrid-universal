@@ -1,6 +1,7 @@
 import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption, SlickGrid, SlickNamespace } from '../interfaces/index';
 import { getDescendantProperty, setDeepValue } from '../services/utilities';
 import { sliderValidator } from '../editorValidators/sliderValidator';
+import { BindingEventService } from '../services/bindingEvent.service';
 
 const DEFAULT_MIN_VALUE = 0;
 const DEFAULT_MAX_VALUE = 100;
@@ -14,14 +15,15 @@ declare const Slick: SlickNamespace;
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
 export class SliderEditor implements Editor {
+  protected _bindEventService: BindingEventService;
   protected _defaultValue = 0;
   protected _elementRangeInputId = '';
   protected _elementRangeOutputId = '';
-  protected _$editorElm: any;
-  protected _$input: any;
+  protected _editorElm!: HTMLDivElement;
+  protected _inputElm!: HTMLInputElement;
   protected _isValueTouched = false;
-  $sliderNumber: any;
-  originalValue: any;
+  originalValue?: number | string;
+  sliderNumberElm: HTMLSpanElement | null = null;
 
   /** is the Editor disabled? */
   disabled = false;
@@ -38,6 +40,7 @@ export class SliderEditor implements Editor {
     }
     this.grid = args.grid;
     this.gridOptions = (this.grid.getOptions() || {}) as GridOption;
+    this._bindEventService = new BindingEventService();
     this.init();
   }
 
@@ -57,13 +60,13 @@ export class SliderEditor implements Editor {
   }
 
   /** Getter for the Editor DOM Element */
-  get editorDomElement(): any {
-    return this._$editorElm;
+  get editorDomElement(): HTMLDivElement {
+    return this._editorElm;
   }
 
   /** Getter for the Editor Input DOM Element */
-  get editorInputDomElement(): any {
-    return this._$input;
+  get editorInputDomElement(): HTMLInputElement {
+    return this._inputElm;
   }
 
   get hasAutoCommitEdit() {
@@ -91,62 +94,45 @@ export class SliderEditor implements Editor {
       const compositeEditorOptions = this.args.compositeEditorOptions;
 
       // create HTML string template
-      const editorTemplate = this.buildTemplateHtmlString();
-      this._$editorElm = $(editorTemplate);
-      this._$input = this._$editorElm.children('input');
-      this.$sliderNumber = this._$editorElm.children('div.input-group-addon.input-group-append').children();
+      this._editorElm = this.buildTemplateHtml();
+      this._inputElm = this._editorElm.querySelector('input') as HTMLInputElement;
+      this.sliderNumberElm = this._editorElm.querySelector<HTMLSpanElement>(`span.input-group-text.${this._elementRangeOutputId}`);
 
       if (!compositeEditorOptions) {
         this.focus();
       }
 
       // watch on change event
-      this._$editorElm.appendTo(container);
-
-      this._$editorElm.on('change mouseup touchend', (event: Event) => {
-        this._isValueTouched = true;
-        if (compositeEditorOptions) {
-          this.handleChangeOnCompositeEditor(event, compositeEditorOptions);
-        } else {
-          this.save();
-        }
-      });
+      container.appendChild(this._editorElm);
+      this._bindEventService.bind(this._editorElm, ['change', 'mouseup', 'touchend'], this.handleChangeEvent.bind(this));
 
       // if user chose to display the slider number on the right side, then update it every time it changes
       // we need to use both "input" and "change" event to be all cross-browser
       if (!this.editorParams.hideSliderNumber) {
-        this._$editorElm.on('input change', (event: JQuery.Event & { target: HTMLInputElement }) => {
-          const value = event && event.target && event.target.value || '';
-          if (value && document) {
-            const elements = document.getElementsByClassName(this._elementRangeOutputId || '');
-            if (elements && elements.length > 0 && elements[0].innerHTML) {
-              elements[0].innerHTML = value;
-            }
-          }
-        });
+        this._bindEventService.bind(this._editorElm, ['input', 'change'], this.handleChangeSliderNumber.bind(this));
       }
     }
   }
 
   cancel() {
-    this._$input.val(this.originalValue);
+    if (this._inputElm) {
+      this._inputElm.value = `${this.originalValue}`;
+    }
     this.args.cancelChanges();
   }
 
   destroy() {
-    if (this._$editorElm) {
-      this._$editorElm.off('input change mouseup touchend').remove();
-      this._$editorElm = null;
-    }
+    this._bindEventService.unbindAll();
+    this._inputElm?.remove?.();
   }
 
   disable(isDisabled = true) {
     const prevIsDisabled = this.disabled;
     this.disabled = isDisabled;
 
-    if (this._$input) {
+    if (this._inputElm) {
       if (isDisabled) {
-        this._$input.attr('disabled', 'disabled');
+        this._inputElm.disabled = true;
 
         // clear value when it's newly disabled and not empty
         const currentValue = this.getValue();
@@ -154,14 +140,14 @@ export class SliderEditor implements Editor {
           this.reset(0, true, true);
         }
       } else {
-        this._$input.removeAttr('disabled');
+        this._inputElm.disabled = false;
       }
     }
   }
 
   focus() {
-    if (this._$input) {
-      this._$input.focus();
+    if (this._inputElm) {
+      this._inputElm.focus();
     }
   }
 
@@ -174,12 +160,16 @@ export class SliderEditor implements Editor {
   }
 
   getValue(): string {
-    return this._$input.val() || '';
+    return this._inputElm?.value ?? '';
   }
 
   setValue(value: number | string, isApplyingValue = false, triggerOnCompositeEditorChange = true) {
-    this._$input.val(value);
-    this.$sliderNumber.html(value);
+    if (this._inputElm) {
+      this._inputElm.value = `${value}`;
+    }
+    if (this.sliderNumberElm) {
+      this.sliderNumberElm.textContent = `${value}`;
+    }
 
     if (isApplyingValue) {
       this.applyValue(this.args.item, this.serializeValue());
@@ -213,7 +203,7 @@ export class SliderEditor implements Editor {
   }
 
   isValueChanged(): boolean {
-    const elmValue = this._$input.val();
+    const elmValue = this._inputElm?.value ?? '';
     return (!(elmValue === '' && this.originalValue === undefined)) && (+elmValue !== this.originalValue);
   }
 
@@ -234,8 +224,12 @@ export class SliderEditor implements Editor {
         value = this._defaultValue; // load default value when item doesn't have any value
       }
       this.originalValue = +value;
-      this._$input.val(value);
-      this.$sliderNumber.html(value);
+      if (this._inputElm) {
+        this._inputElm.value = `${value}`;
+      }
+      if (this.sliderNumberElm) {
+        this.sliderNumberElm.textContent = `${value}`;
+      }
     }
   }
 
@@ -245,10 +239,9 @@ export class SliderEditor implements Editor {
    */
   reset(value?: number | string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
     const inputValue = value ?? this.originalValue ?? 0;
-    if (this._$editorElm) {
-      this._$editorElm.children('input').val(inputValue);
-      this._$editorElm.children('div.input-group-addon.input-group-append').children().html(inputValue);
-      this._$editorElm.val(inputValue);
+    if (this._editorElm) {
+      this._editorElm.querySelector<HTMLInputElement>('input')!.value = `${inputValue}`;
+      this._editorElm.querySelector<HTMLInputElement>('div.input-group-addon.input-group-append')!.textContent = `${inputValue}`;
     }
     this._isValueTouched = false;
 
@@ -273,7 +266,7 @@ export class SliderEditor implements Editor {
   }
 
   serializeValue() {
-    const elmValue: string = this._$input.val();
+    const elmValue: string = this._inputElm?.value ?? '';
     return elmValue !== '' ? parseInt(elmValue, 10) : this.originalValue;
   }
 
@@ -288,7 +281,7 @@ export class SliderEditor implements Editor {
       return { valid: true, msg: '' };
     }
 
-    const elmValue = (inputValue !== undefined) ? inputValue : this._$input?.val();
+    const elmValue = (inputValue !== undefined) ? inputValue : this._inputElm?.value;
     return sliderValidator(elmValue, {
       editorArgs: this.args,
       errorMessage: this.columnEditor.errorMessage,
@@ -306,7 +299,7 @@ export class SliderEditor implements Editor {
   /**
    * Create the HTML template as a string
    */
-  protected buildTemplateHtmlString() {
+  protected buildTemplateHtml(): HTMLDivElement {
     const columnId = this.columnDef?.id ?? '';
     const title = this.columnEditor && this.columnEditor.title || '';
     const minValue = this.columnEditor.hasOwnProperty('minValue') ? this.columnEditor.minValue : DEFAULT_MIN_VALUE;
@@ -315,24 +308,36 @@ export class SliderEditor implements Editor {
     const step = this.columnEditor.hasOwnProperty('valueStep') ? this.columnEditor.valueStep : DEFAULT_STEP;
     this._defaultValue = defaultValue;
 
-    if (this.editorParams.hideSliderNumber) {
-      return `
-      <div class="slider-container slider-editor">
-        <input type="range" name="${this._elementRangeInputId}" title="${title}"
-          defaultValue="${defaultValue}" value="${defaultValue}"
-          min="${minValue}" max="${maxValue}" step="${step}"
-          class="form-control slider-editor-input editor-${columnId} range ${this._elementRangeInputId}" />
-      </div>`;
+    const inputElm = document.createElement('input');
+    inputElm.name = this._elementRangeInputId;
+    inputElm.title = title;
+    inputElm.type = 'range';
+    inputElm.defaultValue = defaultValue;
+    inputElm.value = defaultValue;
+    inputElm.min = `${minValue}`;
+    inputElm.max = `${maxValue}`;
+    inputElm.step = `${step}`;
+    inputElm.className = `form-control slider-editor-input editor-${columnId} range ${this._elementRangeInputId}`;
+
+    const divContainerElm = document.createElement('div');
+    divContainerElm.className = 'slider-container slider-editor';
+    divContainerElm.appendChild(inputElm);
+
+    if (!this.editorParams.hideSliderNumber) {
+      divContainerElm.classList.add('input-group');
+
+      // <div class="input-group-addon input-group-append slider-value"><span class="input-group-text ${this._elementRangeOutputId}">${defaultValue}</span></div>
+      const spanGroupElm = document.createElement('span');
+      spanGroupElm.className = `input-group-text ${this._elementRangeOutputId}`;
+      spanGroupElm.textContent = `${defaultValue}`;
+
+      const divGroupAddonElm = document.createElement('div');
+      divGroupAddonElm.className = 'input-group-addon input-group-append slider-value';
+      divGroupAddonElm.appendChild(spanGroupElm);
+      divContainerElm.appendChild(divGroupAddonElm);
     }
 
-    return `
-      <div class="input-group slider-container slider-editor">
-        <input type="range" name="${this._elementRangeInputId}" title="${title}"
-          defaultValue="${defaultValue}" value="${defaultValue}"
-          min="${minValue}" max="${maxValue}" step="${step}"
-          class="form-control slider-editor-input editor-${columnId} range ${this._elementRangeInputId}" />
-        <div class="input-group-addon input-group-append slider-value"><span class="input-group-text ${this._elementRangeOutputId}">${defaultValue}</span></div>
-      </div>`;
+    return divContainerElm;
   }
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
@@ -342,6 +347,24 @@ export class SliderEditor implements Editor {
       ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
     });
     this.disable(isCellEditable === false);
+  }
+
+  protected handleChangeEvent(event: Event) {
+    this._isValueTouched = true;
+    const compositeEditorOptions = this.args.compositeEditorOptions;
+
+    if (compositeEditorOptions) {
+      this.handleChangeOnCompositeEditor(event, compositeEditorOptions);
+    } else {
+      this.save();
+    }
+  }
+
+  protected handleChangeSliderNumber(event: Event) {
+    const value = (<HTMLInputElement>event.target)?.value ?? '';
+    if (value !== '' && this.sliderNumberElm) {
+      this.sliderNumberElm.textContent = value;
+    }
   }
 
   protected handleChangeOnCompositeEditor(event: Event | null, compositeEditorOptions: CompositeEditorOption, triggeredBy: 'user' | 'system' = 'user', isCalledByClearValue = false) {

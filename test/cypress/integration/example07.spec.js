@@ -4,7 +4,7 @@ function removeExtraSpaces(textS) {
   return `${textS}`.replace(/\s+/g, ' ').trim();
 }
 
-describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
+describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries: 1 }, () => {
   const GRID_ROW_HEIGHT = 45;
   const fullTitles = ['', '', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites'];
 

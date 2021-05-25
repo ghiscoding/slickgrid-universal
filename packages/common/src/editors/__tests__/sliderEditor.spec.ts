@@ -202,7 +202,7 @@ describe('SliderEditor', () => {
 
       expect(editor.getValue()).toBe('213');
       expect(editorElm).toBeTruthy();
-      expect(editorInputElm[0].defaultValue).toBe('0');
+      expect(editorInputElm.defaultValue).toBe('0');
     });
 
     it('should update slider number every time a change event happens on the input slider', () => {
@@ -231,7 +231,7 @@ describe('SliderEditor', () => {
         editor.setValue(45);
 
         const editorElm = divContainer.querySelector('.slider-editor input.editor-price') as HTMLInputElement;
-        editorElm.dispatchEvent(new CustomEvent('change'));
+        editorElm.dispatchEvent(new Event('change'));
         expect(editor.isValueChanged()).toBe(true);
       });
 
@@ -241,7 +241,7 @@ describe('SliderEditor', () => {
         editor.loadValue(mockItemData);
 
         const editorElm = divContainer.querySelector('.slider-editor input.editor-price') as HTMLInputElement;
-        editorElm.dispatchEvent(new CustomEvent('change'));
+        editorElm.dispatchEvent(new Event('change'));
 
         expect(editor.isValueChanged()).toBe(false);
       });
@@ -252,7 +252,7 @@ describe('SliderEditor', () => {
         editor.loadValue(mockItemData);
 
         const editorElm = divContainer.querySelector('.slider-editor input.editor-price') as HTMLInputElement;
-        editorElm.dispatchEvent(new CustomEvent('change'));
+        editorElm.dispatchEvent(new Event('change'));
 
         expect(editor.isValueChanged()).toBe(false);
       });
@@ -264,7 +264,7 @@ describe('SliderEditor', () => {
         editor.loadValue(mockItemData);
 
         const editorElm = divContainer.querySelector('.slider-editor input.editor-price') as HTMLInputElement;
-        editorElm.dispatchEvent(new CustomEvent('change'));
+        editorElm.dispatchEvent(new Event('change'));
 
         expect(editor.isValueChanged()).toBe(false);
       });
@@ -426,8 +426,7 @@ describe('SliderEditor', () => {
         const spySave = jest.spyOn(editor, 'save');
         const editorElm = editor.editorInputDomElement;
 
-        editorElm.trigger('mouseup');
-        editorElm[0].dispatchEvent(new (window.window as any).Event('mouseup'));
+        editorElm.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true }));
         jest.runAllTimers(); // fast-forward timer
 
         expect(editor.isValueTouched()).toBe(true);
@@ -514,8 +513,8 @@ describe('SliderEditor', () => {
         formValues: { price: 0 }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
-      expect(editor.editorInputDomElement.attr('disabled')).toEqual('disabled');
-      expect(editor.editorInputDomElement.val()).toEqual('0');
+      expect(editor.editorInputDomElement.disabled).toBeTruthy();
+      expect(editor.editorInputDomElement.value).toEqual('0');
     });
 
     it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false', () => {
@@ -539,8 +538,8 @@ describe('SliderEditor', () => {
         formValues: {}, editors: {}, triggeredBy: 'user',
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
-      expect(editor.editorInputDomElement.attr('disabled')).toEqual('disabled');
-      expect(editor.editorInputDomElement.val()).toEqual('0');
+      expect(editor.editorInputDomElement.disabled).toBeTruthy();
+      expect(editor.editorInputDomElement.value).toEqual('0');
     });
 
     it('should expect "onCompositeEditorChange" to have been triggered with the new value showing up in its "formValues" object', () => {
@@ -555,8 +554,7 @@ describe('SliderEditor', () => {
       editor.loadValue(mockItemData);
       editor.setValue(93);
       const editorElm = editor.editorInputDomElement;
-      editorElm.trigger('mouseup');
-      editorElm[0].dispatchEvent(new (window.window as any).Event('mouseup'));
+      editorElm.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true }));
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(editor.isValueTouched()).toBe(true);
