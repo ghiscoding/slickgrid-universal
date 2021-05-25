@@ -180,7 +180,7 @@ export class SlickVanillaGridBundle {
     }
 
     this.refreshGridData(data || []);
-    this._currentDatasetLength = newDataset.length;
+    this._currentDatasetLength = (newDataset || []).length;
 
     // expand/autofit columns on first page load
     // we can assume that if the prevDataset was empty then we are on first load
