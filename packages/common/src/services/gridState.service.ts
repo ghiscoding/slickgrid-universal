@@ -257,8 +257,8 @@ export class GridStateService {
    * @return current pagination state
    */
   getCurrentPagination(): CurrentPagination | null {
-    if (this._gridOptions.enablePagination) {
-      if (this._gridOptions?.backendServiceApi) {
+    if (this._gridOptions?.enablePagination) {
+      if (this._gridOptions.backendServiceApi) {
         const backendService = this._gridOptions.backendServiceApi.service;
         if (backendService?.getCurrentPagination) {
           return backendService.getCurrentPagination();
