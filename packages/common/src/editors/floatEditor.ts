@@ -66,7 +66,7 @@ export class FloatEditor implements Editor {
 
   /** Get the Validator function, can be passed in Editor property or Column Definition */
   get validator(): EditorValidator | undefined {
-    return (this.columnEditor && this.columnEditor.validator) || (this.columnDef && this.columnDef.validator);
+    return this.columnEditor?.validator ?? this.columnDef?.validator;
   }
 
   init() {
@@ -117,13 +117,7 @@ export class FloatEditor implements Editor {
 
   destroy() {
     this._bindEventService.unbindAll();
-    if (this._input) {
-      setTimeout(() => {
-        if (this._input) {
-          this._input.remove();
-        }
-      });
-    }
+    this._input?.remove?.();
   }
 
   disable(isDisabled = true) {

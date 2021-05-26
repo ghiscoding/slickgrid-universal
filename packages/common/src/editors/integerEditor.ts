@@ -64,7 +64,7 @@ export class IntegerEditor implements Editor {
 
   /** Get the Validator function, can be passed in Editor property or Column Definition */
   get validator(): EditorValidator | undefined {
-    return (this.columnEditor && this.columnEditor.validator) || (this.columnDef && this.columnDef.validator);
+    return this.columnEditor?.validator ?? this.columnDef?.validator;
   }
 
   init() {
@@ -114,15 +114,8 @@ export class IntegerEditor implements Editor {
   }
 
   destroy() {
-    if (this._input) {
-      this._bindEventService.unbindAll();
-      setTimeout(() => {
-        if (this._input) {
-          this._input.remove();
-          this._input = undefined;
-        }
-      });
-    }
+    this._bindEventService.unbindAll();
+    this._input?.remove?.();
   }
 
   disable(isDisabled = true) {

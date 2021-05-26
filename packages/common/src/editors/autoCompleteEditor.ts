@@ -149,7 +149,7 @@ export class AutoCompleteEditor implements Editor {
 
   /** Get the Validator function, can be passed in Editor property or Column Definition */
   get validator(): EditorValidator | undefined {
-    return (this.columnEditor && this.columnEditor.validator) || (this.columnDef && this.columnDef.validator);
+    return this.columnEditor?.validator ?? this.columnDef?.validator;
   }
 
   init() {
