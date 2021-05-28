@@ -143,8 +143,8 @@ export class AutoCompleteEditor implements Editor {
     return this._$input.autocomplete('instance');
   }
 
-  get hasAutoCommitEdit() {
-    return this.grid.getOptions().autoCommitEdit;
+  get hasAutoCommitEdit(): boolean {
+    return this.grid.getOptions().autoCommitEdit ?? false;
   }
 
   /** Get the Validator function, can be passed in Editor property or Column Definition */

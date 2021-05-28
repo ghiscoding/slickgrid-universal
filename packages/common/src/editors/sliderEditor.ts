@@ -69,8 +69,8 @@ export class SliderEditor implements Editor {
     return this._inputElm;
   }
 
-  get hasAutoCommitEdit() {
-    return this.grid && this.grid.getOptions && this.grid.getOptions().autoCommitEdit;
+  get hasAutoCommitEdit(): boolean {
+    return this.grid.getOptions().autoCommitEdit ?? false;
   }
 
   /** Getter for the Editor Generic Params */
@@ -94,7 +94,7 @@ export class SliderEditor implements Editor {
       const compositeEditorOptions = this.args.compositeEditorOptions;
 
       // create HTML string template
-      this._editorElm = this.buildTemplateHtml();
+      this._editorElm = this.buildDomElement();
       this._inputElm = this._editorElm.querySelector('input') as HTMLInputElement;
       this.sliderNumberElm = this._editorElm.querySelector<HTMLSpanElement>(`span.input-group-text.${this._elementRangeOutputId}`);
 
@@ -299,7 +299,7 @@ export class SliderEditor implements Editor {
   /**
    * Create the HTML template as a string
    */
-  protected buildTemplateHtml(): HTMLDivElement {
+  protected buildDomElement(): HTMLDivElement {
     const columnId = this.columnDef?.id ?? '';
     const title = this.columnEditor && this.columnEditor.title || '';
     const minValue = this.columnEditor.hasOwnProperty('minValue') ? this.columnEditor.minValue : DEFAULT_MIN_VALUE;
