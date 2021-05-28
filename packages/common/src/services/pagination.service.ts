@@ -293,13 +293,11 @@ export class PaginationService {
    *
    * IMPORTANT NOTE:
    * The Pagination must be created on initial page load, then only after can you toggle it.
-   * Basically this method WILL NOT WORK to show the Pagination if it was not there from the start.
+   * Basically this method WILL NOT WORK to show the Pagination if it was never created from the start.
    */
   togglePaginationVisibility(visible?: boolean) {
     if (this.grid && this.sharedService?.gridOptions) {
       const isVisible = visible !== undefined ? visible : !this.sharedService.gridOptions.enablePagination;
-      this.sharedService.gridOptions.enablePagination = isVisible;
-      this.pubSubService.publish(`onPaginationVisibilityChanged`, { visible: isVisible });
 
       // make sure to reset the Pagination and go back to first page to avoid any issues with Pagination being offset
       if (isVisible) {
@@ -312,6 +310,11 @@ export class PaginationService {
         const pageSize = visible ? this._itemsPerPage : 0;
         this.dataView.setPagingOptions({ pageSize, pageNum: 0 });
       }
+
+      // finally toggle the "enablePagination" flag and make sure it happens AFTER the setPagingOptions is called (when using local grid)
+      // to avoid conflict with GridState bindSlickGridRowSelectionToGridStateChange() method
+      this.sharedService.gridOptions.enablePagination = isVisible;
+      this.pubSubService.publish(`onPaginationVisibilityChanged`, { visible: isVisible });
     }
   }
 

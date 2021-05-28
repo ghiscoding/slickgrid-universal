@@ -803,7 +803,7 @@ describe('PaginationService', () => {
 
       expect(sharedService.gridOptions.enablePagination).toBeTrue();
       expect(gotoSpy).toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenNthCalledWith(3, `onPaginationVisibilityChanged`, { visible: true });
+      expect(pubSubSpy).toHaveBeenCalledWith(`onPaginationVisibilityChanged`, { visible: true });
       expect(setPagingSpy).toHaveBeenCalledWith({ pageSize: mockGridOption.pagination!.pageSize, pageNum: 0 });
     });
   });
