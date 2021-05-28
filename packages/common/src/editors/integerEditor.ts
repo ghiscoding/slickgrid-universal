@@ -6,8 +6,7 @@ import { getDescendantProperty } from '../services/utilities';
 
 export class IntegerEditor extends InputEditor {
   constructor(protected readonly args: EditorArguments) {
-    super(args);
-    this.inputType = 'number';
+    super(args, 'number');
   }
 
   /** Initialize the Editor */

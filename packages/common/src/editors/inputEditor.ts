@@ -29,13 +29,14 @@ export class InputEditor implements Editor {
   /** Grid options */
   gridOptions: GridOption;
 
-  constructor(protected readonly args: EditorArguments) {
+  constructor(protected readonly args: EditorArguments, inputType: string) {
     if (!args) {
       throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
     }
     this.grid = args.grid;
     this.gridOptions = args.grid && args.grid.getOptions() as GridOption;
     this._bindEventService = new BindingEventService();
+    this.inputType = inputType || 'text';
     this.init();
   }
 

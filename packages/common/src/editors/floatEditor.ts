@@ -8,8 +8,7 @@ const DEFAULT_DECIMAL_PLACES = 0;
 
 export class FloatEditor extends InputEditor {
   constructor(protected readonly args: EditorArguments) {
-    super(args);
-    this.inputType = 'number';
+    super(args, 'number');
   }
 
   /** Initialize the Editor */

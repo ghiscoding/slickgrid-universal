@@ -4,7 +4,6 @@ import { InputEditor } from './inputEditor';
 export class InputPasswordEditor extends InputEditor {
   /** Initialize the Editor */
   constructor(protected readonly args: EditorArguments) {
-    super(args);
-    this.inputType = 'password';
+    super(args, 'password');
   }
 }
