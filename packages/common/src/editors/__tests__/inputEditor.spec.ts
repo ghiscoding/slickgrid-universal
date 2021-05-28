@@ -1,5 +1,5 @@
 import { Editors } from '../index';
-import { InputEditor } from '../TextEditor';
+import { InputEditor } from '../inputEditor';
 import { KeyCode } from '../../enums/index';
 import { AutocompleteOption, Column, ColumnEditor, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
 
@@ -37,7 +37,7 @@ const gridStub = {
   onCompositeEditorChange: new Slick.Event(),
 } as unknown as SlickGrid;
 
-describe('InputEditor', () => {
+describe('InputEditor (TextEditor)', () => {
   let divContainer: HTMLDivElement;
   let editor: InputEditor;
   let editorArguments: EditorArguments;
