@@ -1,7 +1,7 @@
 import { KeyCode } from '../enums/index';
 import { EditorArguments, EditorValidationResult } from '../interfaces/index';
 import { floatValidator } from '../editorValidators/floatValidator';
-import { InputEditor } from './textEditor';
+import { InputEditor } from './inputEditor';
 import { getDescendantProperty } from '../services/utilities';
 
 const DEFAULT_DECIMAL_PLACES = 0;

@@ -4,7 +4,7 @@ export * from './dateEditor';
 export * from './dualInputEditor';
 export * from './editors.index';
 export * from './floatEditor';
-export * from './textEditor';
+export * from './inputEditor';
 export * from './integerEditor';
 export * from './longTextEditor';
 export * from './multipleSelectEditor';
