@@ -33,4 +33,9 @@ Cypress.on('window:before:load', function (window) {
     get: function () { },
     set: function () { }
   });
-})
+});
+
+Cypress.Cookies.defaults({
+  preserve: 'serve-mode',
+  set: 'cypress'
+});

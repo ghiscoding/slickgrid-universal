@@ -4,10 +4,17 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
   const GRID_ROW_HEIGHT = 33;
   const fullTitles = ['Title', 'Duration (days)', '% Complete', 'Start', 'Finish', 'Effort Driven'];
 
+  beforeEach(() => {
+    // add a serve mode to avoid adding the GitHub Stars link since that can slowdown Cypress considerably
+    // because it keeps waiting for it to load, we also preserve the cookie for all other tests
+    cy.setCookie('serve-mode', 'cypress')
+  })
+
   it('should display Example title', () => {
     cy.visit(Cypress.config('baseExampleUrl'), { timeout: 200000 });
     cy.get('h3').should('contain', 'Example 01 - Basic Grids');
     cy.get('h3 span.subtitle').should('contain', '(with Salesforce Theme)');
+    cy.getCookie('serve-mode').its('value').should('eq', 'cypress')
   });
 
   it('should have 2 grids of size 800 by 225px', () => {
