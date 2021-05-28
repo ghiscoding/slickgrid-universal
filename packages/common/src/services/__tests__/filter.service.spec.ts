@@ -19,7 +19,7 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../../interfaces/index';
-import { Filters } from '../../filters';
+import { Filters, InputFilter } from '../../filters';
 import { FilterService } from '../filter.service';
 import { FilterFactory } from '../../filters/filterFactory';
 import { getParsedSearchTermsByFieldType } from '../../filter-conditions';
@@ -133,6 +133,7 @@ describe('FilterService', () => {
     const filterFactory = new FilterFactory(slickgridConfig, translateService, collectionService);
     service = new FilterService(filterFactory, pubSubServiceStub, sharedService, backendUtilityService, rxjsResourceStub);
     slickgridEventHandler = service.eventHandler;
+    jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(div);
   });
 
   afterEach(() => {
@@ -175,7 +176,7 @@ describe('FilterService', () => {
 
       expect(columnFilters).toEqual({});
       expect(filterMetadataArray.length).toBe(1);
-      expect(filterMetadataArray[0]).toContainEntry(['$filterElm', expect.anything()]);
+      expect(filterMetadataArray[0] instanceof InputFilter).toBeTruthy();
       expect(filterMetadataArray[0]).toContainEntry(['searchTerms', []]);
     });
 
@@ -261,7 +262,7 @@ describe('FilterService', () => {
 
       expect(columnFilters).toEqual({});
       expect(filterMetadataArray.length).toBe(1);
-      expect(filterMetadataArray[0]).toContainEntry(['$filterElm', expect.anything()]);
+      expect(filterMetadataArray[0] instanceof InputFilter).toBeTruthy();
       expect(filterMetadataArray[0]).toContainEntry(['searchTerms', []]);
     });
 
@@ -1564,7 +1565,7 @@ describe('FilterService', () => {
       expect(spySetSortCols).toHaveBeenCalledWith([{ columnId: 'file', sortAsc: true }]);
       expect(columnFilters).toEqual({});
       expect(filterMetadataArray.length).toBe(1);
-      expect(filterMetadataArray[0]).toContainEntry(['$filterElm', expect.anything()]);
+      expect(filterMetadataArray[0] instanceof InputFilter).toBeTruthy();
       expect(filterMetadataArray[0]).toContainEntry(['searchTerms', []]);
     });
 

@@ -72,7 +72,7 @@ export class NativeSelectFilter implements Filter {
     // filter input can only have 1 search term, so we will use the 1st array index if it exist
     let searchTerm = (Array.isArray(this.searchTerms) && this.searchTerms.length >= 0) ? this.searchTerms[0] : '';
     if (typeof searchTerm === 'boolean' || typeof searchTerm === 'number') {
-      searchTerm = `${searchTerm}`;
+      searchTerm = `${searchTerm ?? ''}`;
     }
 
     // step 1, create HTML string template
