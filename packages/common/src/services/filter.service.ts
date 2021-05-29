@@ -117,9 +117,8 @@ export class FilterService {
 
   dispose() {
     // unsubscribe all SlickGrid events
-    if (this._eventHandler && this._eventHandler.unsubscribeAll) {
-      this._eventHandler.unsubscribeAll();
-    }
+    this._eventHandler.unsubscribeAll();
+
     if (this.httpCancelRequests$ && this.rxjs?.isObservable(this.httpCancelRequests$)) {
       this.httpCancelRequests$.next(); // this cancels any pending http requests
       this.httpCancelRequests$.complete();

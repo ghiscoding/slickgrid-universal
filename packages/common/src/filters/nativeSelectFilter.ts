@@ -8,19 +8,24 @@ import {
   SlickGrid,
 } from '../interfaces/index';
 import { OperatorType, OperatorString, SearchTerm } from '../enums/index';
+import { emptyElement } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
+import { BindingEventService } from '../services/bindingEvent.service';
 
 export class NativeSelectFilter implements Filter {
+  protected _bindEventService: BindingEventService;
   protected _clearFilterTriggered = false;
   protected _shouldTriggerQuery = true;
   protected _currentValues: any | any[] = [];
-  $filterElm: any;
+  filterElm!: HTMLSelectElement;
   grid!: SlickGrid;
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
 
-  constructor(protected readonly translater: TranslaterService) { }
+  constructor(protected readonly translater: TranslaterService) {
+    this._bindEventService = new BindingEventService();
+  }
 
   /** Getter for the Column Filter itself */
   protected get columnFilter(): ColumnFilter {
@@ -75,28 +80,25 @@ export class NativeSelectFilter implements Filter {
       searchTerm = `${searchTerm ?? ''}`;
     }
 
-    // step 1, create HTML string template
-    const filterTemplate = this.buildTemplateHtmlString();
+    // step 1, create the DOM Element of the filter & initialize it if searchTerm is filled
+    this.filterElm = this.createDomElement(searchTerm);
 
-    // step 2, create the DOM Element of the filter & initialize it if searchTerm is filled
-    this.$filterElm = this.createDomElement(filterTemplate, searchTerm);
-
-    // step 3, subscribe to the change event and run the callback when that happens
+    // step 2, subscribe to the change event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    this.$filterElm.change(this.handleOnChange.bind(this));
+    this._bindEventService.bind(this.filterElm, 'change', this.handleOnChange.bind(this));
   }
 
   /**
    * Clear the filter values
    */
   clear(shouldTriggerQuery = true) {
-    if (this.$filterElm) {
+    if (this.filterElm) {
       this._clearFilterTriggered = true;
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
       this._currentValues = [];
-      this.$filterElm.val('');
-      this.$filterElm.trigger('change');
+      this.filterElm.value = '';
+      this.filterElm.dispatchEvent(new Event('change'));
     }
   }
 
@@ -104,10 +106,8 @@ export class NativeSelectFilter implements Filter {
    * destroy the filter
    */
   destroy() {
-    if (this.$filterElm) {
-      this.$filterElm.off('change').remove();
-    }
-    this.$filterElm = null;
+    this._bindEventService.unbindAll();
+    this.filterElm?.remove?.();
   }
 
   /**
@@ -121,10 +121,10 @@ export class NativeSelectFilter implements Filter {
   /** Set value(s) on the DOM element */
   setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString) {
     if (Array.isArray(values)) {
-      this.$filterElm.val(values[0]);
+      this.filterElm.value = `${values[0] ?? ''}`;
       this._currentValues = values;
     } else if (values) {
-      this.$filterElm.val(values);
+      this.filterElm.value = `${values ?? ''}`;
       this._currentValues = [values];
     }
 
@@ -136,63 +136,76 @@ export class NativeSelectFilter implements Filter {
   // protected functions
   // ------------------
 
-  protected buildTemplateHtmlString() {
-    const collection = this.columnFilter && this.columnFilter.collection || [];
-    if (!Array.isArray(collection)) {
-      throw new Error('The "collection" passed to the Native Select Filter is not a valid array.');
-    }
-
+  /**
+   * Create and return a select dropdown HTML element created from a collection
+   * @param {Array<Object>} values - list of option values/labels
+   * @returns {Object} selectElm - Select Dropdown HTML Element
+   */
+  buildFilterSelectFromCollection(collection: any[]): HTMLSelectElement {
     const columnId = this.columnDef?.id ?? '';
-    const labelName = (this.columnFilter.customStructure) ? this.columnFilter.customStructure.label : 'label';
-    const valueName = (this.columnFilter.customStructure) ? this.columnFilter.customStructure.value : 'value';
-    const isEnabledTranslate = (this.columnFilter.enableTranslateLabel) ? this.columnFilter.enableTranslateLabel : false;
+    const selectElm = document.createElement('select');
+    selectElm.className = `form-control search-filter filter-${columnId}`;
 
-    let options = '';
+    const labelName = this.columnFilter.customStructure?.label ?? 'label';
+    const valueName = this.columnFilter.customStructure?.value ?? 'value';
+    const isEnabledTranslate = this.columnFilter?.enableTranslateLabel ?? false;
 
     // collection could be an Array of Strings OR Objects
     if (collection.every(x => typeof x === 'string')) {
-      collection.forEach((option: string) => {
-        options += `<option value="${option}" label="${option}">${option}</option>`;
-      });
+      for (const option of collection) {
+        const selectOption = document.createElement('option');
+        selectOption.value = option;
+        selectOption.label = option;
+        selectOption.textContent = option;
+        selectElm.appendChild(selectOption);
+      }
     } else {
-      collection.forEach((option: any) => {
+      for (const option of collection) {
         if (!option || (option[labelName] === undefined && option.labelKey === undefined)) {
           throw new Error(`A collection with value/label (or value/labelKey when using Locale) is required to populate the Native Select Filter list, for example:: { filter: model: Filters.select, collection: [ { value: '1', label: 'One' } ]')`);
         }
+
         const labelKey = option.labelKey || option[labelName];
         const textLabel = ((option.labelKey || isEnabledTranslate) && this.translater && this.translater.translate && this.translater.getCurrentLanguage && this.translater.getCurrentLanguage()) ? this.translater.translate(labelKey || ' ') : labelKey;
-        options += `<option value="${option[valueName]}">${textLabel}</option>`;
-      });
+
+        const selectOption = document.createElement('option');
+        selectOption.value = option[valueName];
+        selectOption.textContent = textLabel;
+        selectElm.appendChild(selectOption);
+      }
     }
-    return `<select class="form-control search-filter filter-${columnId}">${options}</select>`;
+
+    return selectElm;
   }
 
   /**
    * From the html template string, create a DOM element
    * @param filterTemplate
    */
-  protected createDomElement(filterTemplate: string, searchTerm?: SearchTerm) {
+  protected createDomElement(searchTerm?: SearchTerm): HTMLSelectElement {
     const columnId = this.columnDef?.id ?? '';
-    const $headerElm = this.grid.getHeaderRowColumn(columnId);
-    $($headerElm).empty();
+    const headerElm = this.grid.getHeaderRowColumn(columnId);
+    emptyElement(headerElm);
 
     // create the DOM element & add an ID and filter class
-    const $filterElm = $(filterTemplate);
     const searchTermInput = (searchTerm || '') as string;
 
-    $filterElm.val(searchTermInput);
-    $filterElm.data('columnId', columnId);
+    const collection = this.columnFilter?.collection ?? [];
+    if (!Array.isArray(collection)) {
+      throw new Error('The "collection" passed to the Native Select Filter is not a valid array.');
+    }
+
+    const selectElm = this.buildFilterSelectFromCollection(collection);
+    selectElm.value = searchTermInput;
+    selectElm.dataset.columnid = `${columnId || ''}`;
 
     if (searchTermInput) {
       this._currentValues = [searchTermInput];
     }
 
-    // append the new DOM element to the header row
-    if ($filterElm && typeof $filterElm.appendTo === 'function') {
-      $filterElm.appendTo($headerElm);
-    }
+    headerElm.appendChild(selectElm);
 
-    return $filterElm;
+    return selectElm;
   }
 
   protected handleOnChange(e: any) {
@@ -201,9 +214,9 @@ export class NativeSelectFilter implements Filter {
 
     if (this._clearFilterTriggered) {
       this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
-      this.$filterElm.removeClass('filled');
+      this.filterElm.classList.remove('filled');
     } else {
-      value === '' ? this.$filterElm.removeClass('filled') : this.$filterElm.addClass('filled');
+      value === '' ? this.filterElm.classList.remove('filled') : this.filterElm.classList.add('filled');
       this.callback(e, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery });
     }
 
