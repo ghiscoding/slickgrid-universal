@@ -17,6 +17,7 @@ $color-dark: #343a40 !default;
 $color-body: #212529 !default;
 $color-muted: #6c757d !default;
 $color-white: #ffffff !default;
+$color-disabled: #DDDBDA !default;
 $color-alt-default: #1e87f0 !default;
 $color-alt-warning: #faa05a !default;
 $color-alt-danger: #f0506e !default;
@@ -43,6 +44,7 @@ $color-sf-primary-dark: #004487 !default;
 .color-body { filter: brightness(0) saturate(100%) invert(12%) sepia(9%) saturate(824%) hue-rotate(169deg) brightness(94%) contrast(91%); }
 .color-muted { filter: brightness(0) saturate(100%) invert(50%) sepia(2%) saturate(2378%) hue-rotate(168deg) brightness(89%) contrast(84%); }
 .color-white { filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(54deg) brightness(109%) contrast(101%); }
+.color-disabled { filter: brightness(0) saturate(100%) invert(81%) sepia(2%) saturate(180%) hue-rotate(335deg) brightness(108%) contrast(96%); }
 .color-alt-default { filter: brightness(0) saturate(100%) invert(46%) sepia(70%) saturate(3992%) hue-rotate(193deg) brightness(99%) contrast(90%); }
 .color-alt-warning { filter: brightness(0) saturate(100%) invert(59%) sepia(94%) saturate(289%) hue-rotate(341deg) brightness(98%) contrast(99%); }
 .color-alt-danger { filter: brightness(0) saturate(100%) invert(37%) sepia(84%) saturate(805%) hue-rotate(308deg) brightness(99%) contrast(90%); }
