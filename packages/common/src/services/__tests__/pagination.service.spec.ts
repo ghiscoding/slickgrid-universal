@@ -382,7 +382,7 @@ describe('PaginationService', () => {
       }
     });
 
-    it('should execute "process" method and catch error when process Observable fails', async (done) => {
+    it('should execute "process" method and catch error when process Observable fails', async () => {
       const mockError = 'observable error';
       const postSpy = jest.fn();
       mockGridOption.backendServiceApi!.process = postSpy;
@@ -395,7 +395,6 @@ describe('PaginationService', () => {
         await service.processOnPageChanged(1);
       } catch (e) {
         expect(backendErrorSpy).toHaveBeenCalledWith(mockError, mockGridOption.backendServiceApi);
-        done();
       }
     });
 

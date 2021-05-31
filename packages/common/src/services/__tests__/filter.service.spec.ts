@@ -1108,7 +1108,7 @@ describe('FilterService', () => {
       sharedService.allColumns = [mockColumn1, mockColumn2];
     });
 
-    it('should throw an error when there are no filters defined in the column definitions', async (done) => {
+    it('should throw an error when there are no filters defined in the column definitions', async () => {
       try {
         gridOptionMock.enableFiltering = false;
         service.init(gridStub);
@@ -1116,7 +1116,6 @@ describe('FilterService', () => {
         await service.updateFilters([{ columnId: 'firstName', searchTerms: ['John'] }]);
       } catch (e) {
         expect(e.toString()).toContain('[Slickgrid-Universal] in order to use "updateFilters" method, you need to have Filterable Columns defined in your grid');
-        done();
       }
     });
 

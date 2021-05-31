@@ -674,7 +674,7 @@ describe('IntegerEditor', () => {
       editor.editorDomElement.value = 35;
       editor.editorDomElement.dispatchEvent(new (window.window as any).Event('input'));
 
-      jest.runTimersToTime(50);
+      jest.advanceTimersByTime(50);
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(editor.isValueTouched()).toBe(true);
@@ -699,7 +699,7 @@ describe('IntegerEditor', () => {
       editor.editorDomElement.value = 35;
       editor.editorDomElement.dispatchEvent(new (window.window as any).Event('wheel'));
 
-      jest.runTimersToTime(50);
+      jest.advanceTimersByTime(50);
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(editor.isValueTouched()).toBe(true);

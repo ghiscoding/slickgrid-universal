@@ -931,7 +931,7 @@ describe('DualInputEditor', () => {
       editor.setValues([4, 5]);
       editor.editorDomElement.leftInput.dispatchEvent(new (window.window as any).Event('input'));
 
-      jest.runTimersToTime(50);
+      jest.advanceTimersByTime(50);
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
@@ -955,7 +955,7 @@ describe('DualInputEditor', () => {
       editor.setValues([4, 5]);
       editor.editorDomElement.rightInput.dispatchEvent(new (window.window as any).Event('input'));
 
-      jest.runTimersToTime(50);
+      jest.advanceTimersByTime(50);
       editor.destroy();
 
       expect(getCellSpy).toHaveBeenCalled();
