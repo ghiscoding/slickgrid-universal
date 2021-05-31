@@ -789,7 +789,7 @@ describe('SelectFilter', () => {
     expect(filterListElm[2].textContent).toBe('Other');
   });
 
-  it('should throw an error when "collectionAsync" Promise does not return a valid array', async (done) => {
+  it('should throw an error when "collectionAsync" Promise does not return a valid array', async () => {
     const promise = Promise.resolve({ hello: 'world' });
     mockColumn.filter!.collectionAsync = promise;
 
@@ -797,7 +797,6 @@ describe('SelectFilter', () => {
       await filter.init(filterArguments);
     } catch (e) {
       expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`);
-      done();
     }
   });
 

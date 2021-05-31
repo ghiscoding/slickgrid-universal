@@ -741,7 +741,7 @@ describe('FloatEditor', () => {
       editor.editorDomElement.value = 35;
       editor.editorDomElement.dispatchEvent(new (window.window as any).Event('input'));
 
-      jest.runTimersToTime(50);
+      jest.advanceTimersByTime(50);
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
@@ -765,7 +765,7 @@ describe('FloatEditor', () => {
       editor.editorDomElement.value = 35;
       editor.editorDomElement.dispatchEvent(new (window.window as any).Event('input'));
 
-      jest.runTimersToTime(50);
+      jest.advanceTimersByTime(50);
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(editor.isValueTouched()).toBe(true);
@@ -790,7 +790,7 @@ describe('FloatEditor', () => {
       editor.editorDomElement.value = 35;
       editor.editorDomElement.dispatchEvent(new (window.window as any).Event('wheel'));
 
-      jest.runTimersToTime(50);
+      jest.advanceTimersByTime(50);
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(editor.isValueTouched()).toBe(true);

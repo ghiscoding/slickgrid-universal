@@ -636,7 +636,7 @@ describe('TextEditor', () => {
       editor.editorDomElement.value = 'task 2';
       editor.editorDomElement.dispatchEvent(new (window.window as any).Event('input'));
 
-      jest.runTimersToTime(50);
+      jest.advanceTimersByTime(50);
       editor.destroy();
 
       expect(getCellSpy).toHaveBeenCalled();
