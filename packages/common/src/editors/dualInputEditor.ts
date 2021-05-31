@@ -93,8 +93,8 @@ export class DualInputEditor implements Editor {
     return this._eventHandler;
   }
 
-  get hasAutoCommitEdit() {
-    return this.grid.getOptions().autoCommitEdit;
+  get hasAutoCommitEdit(): boolean {
+    return this.gridOptions.autoCommitEdit ?? false;
   }
 
   get isValueSaveCalled(): boolean {

@@ -1,13 +1,13 @@
 import { Editors } from '../index';
-import { IntegerEditor } from '../integerEditor';
+import { InputEditor } from '../inputEditor';
 import { KeyCode } from '../../enums/index';
-import { Column, ColumnEditor, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { AutocompleteOption, Column, ColumnEditor, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
 
 declare const Slick: SlickNamespace;
-const KEY_CHAR_0 = 48;
-const containerId = 'demo-container';
-
 jest.useFakeTimers();
+
+const KEY_CHAR_A = 97;
+const containerId = 'demo-container';
 
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
@@ -37,9 +37,9 @@ const gridStub = {
   onCompositeEditorChange: new Slick.Event(),
 } as unknown as SlickGrid;
 
-describe('IntegerEditor', () => {
+describe('InputEditor (TextEditor)', () => {
   let divContainer: HTMLDivElement;
-  let editor: IntegerEditor;
+  let editor: InputEditor;
   let editorArguments: EditorArguments;
   let mockColumn: Column;
   let mockItemData: any;
@@ -49,7 +49,7 @@ describe('IntegerEditor', () => {
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
 
-    mockColumn = { id: 'price', field: 'price', editable: true, editor: { model: Editors.integer }, internalColumnEditor: {} } as Column;
+    mockColumn = { id: 'title', field: 'title', editable: true, editor: { model: Editors.text }, internalColumnEditor: {} } as Column;
 
     editorArguments = {
       grid: gridStub,
@@ -69,7 +69,7 @@ describe('IntegerEditor', () => {
   describe('with invalid Editor instance', () => {
     it('should throw an error when trying to call init without any arguments', (done) => {
       try {
-        editor = new IntegerEditor(null as any);
+        editor = new InputEditor(null as any, 'text');
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
         done();
@@ -79,8 +79,8 @@ describe('IntegerEditor', () => {
 
   describe('with valid Editor instance', () => {
     beforeEach(() => {
-      mockItemData = { id: 1, price: 213, isActive: true };
-      mockColumn = { id: 'price', field: 'price', editable: true, editor: { model: Editors.integer }, internalColumnEditor: {} } as Column;
+      mockItemData = { id: 1, title: 'task 1', isActive: true };
+      mockColumn = { id: 'title', field: 'title', editable: true, editor: { model: Editors.text }, internalColumnEditor: {} } as Column;
 
       editorArguments.column = mockColumn;
       editorArguments.item = mockItemData;
@@ -91,29 +91,37 @@ describe('IntegerEditor', () => {
     });
 
     it('should initialize the editor', () => {
-      editor = new IntegerEditor(editorArguments);
-      const editorCount = divContainer.querySelectorAll('input.editor-text.editor-price').length;
+      editor = new InputEditor(editorArguments, 'text');
+      const editorCount = divContainer.querySelectorAll('input.editor-text.editor-title').length;
 
       expect(editorCount).toBe(1);
-      expect(editor.inputType).toBe('number');
+      expect(editor.inputType).toBe('text');
     });
 
     it('should initialize the editor and focus on the element after a small delay', () => {
-      editor = new IntegerEditor(editorArguments);
-      const editorCount = divContainer.querySelectorAll('input.editor-text.editor-price').length;
+      editor = new InputEditor(editorArguments, 'text');
+      const editorCount = divContainer.querySelectorAll('input.editor-text.editor-title').length;
 
       jest.runAllTimers(); // fast-forward timer
 
       expect(editorCount).toBe(1);
-      expect(editor.inputType).toBe('number');
+      expect(editor.inputType).toBe('text');
+    });
+
+    it('should initialize the editor even when user define his own editor options', () => {
+      (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { minLength: 3 } as AutocompleteOption;
+      editor = new InputEditor(editorArguments, 'text');
+      const editorCount = divContainer.querySelectorAll('input.editor-text.editor-title').length;
+
+      expect(editorCount).toBe(1);
     });
 
     it('should have a placeholder when defined in its column definition', () => {
       const testValue = 'test placeholder';
       (mockColumn.internalColumnEditor as ColumnEditor).placeholder = testValue;
 
-      editor = new IntegerEditor(editorArguments);
-      const editorElm = divContainer.querySelector('input.editor-text.editor-price') as HTMLInputElement;
+      editor = new InputEditor(editorArguments, 'text');
+      const editorElm = divContainer.querySelector('input.editor-text.editor-title') as HTMLInputElement;
 
       expect(editorElm.placeholder).toBe(testValue);
     });
@@ -122,8 +130,8 @@ describe('IntegerEditor', () => {
       const testValue = 'test title';
       (mockColumn.internalColumnEditor as ColumnEditor).title = testValue;
 
-      editor = new IntegerEditor(editorArguments);
-      const editorElm = divContainer.querySelector('input.editor-text.editor-price') as HTMLInputElement;
+      editor = new InputEditor(editorArguments, 'text');
+      const editorElm = divContainer.querySelector('input.editor-text.editor-title') as HTMLInputElement;
 
       expect(editorElm.title).toBe(testValue);
     });
@@ -135,53 +143,54 @@ describe('IntegerEditor', () => {
         alwaysSaveOnEnterKey: false,
       };
 
-      editor = new IntegerEditor(editorArguments);
+      editor = new InputEditor(editorArguments, 'text');
 
       expect(editor.columnEditor).toEqual(mockColumn.internalColumnEditor);
     });
 
-    it('should call "setValue" and expect the DOM element value to be the same but as a string when calling "getValue"', () => {
-      editor = new IntegerEditor(editorArguments);
-      editor.setValue(123);
+    it('should call "setValue" and expect the DOM element value to be the same string when calling "getValue"', () => {
+      editor = new InputEditor(editorArguments, 'text');
+      editor.setValue('task 1');
 
-      expect(editor.getValue()).toBe('123');
+      expect(editor.getValue()).toBe('task 1');
     });
 
     it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
-      editor = new IntegerEditor(editorArguments);
-      editor.setValue(123, true);
+      editor = new InputEditor(editorArguments, 'text');
+      editor.setValue('task 1', true);
 
-      expect(editor.getValue()).toBe('123');
-      expect(editorArguments.item.price).toBe(123);
+      expect(editor.getValue()).toBe('task 1');
+      expect(editorArguments.item.title).toBe('task 1');
     });
 
     it('should define an item datacontext containing a string as cell value and expect this value to be loaded in the editor when calling "loadValue"', () => {
-      editor = new IntegerEditor(editorArguments);
+      editor = new InputEditor(editorArguments, 'text');
       editor.loadValue(mockItemData);
       editor.editorDomElement;
 
-      expect(editor.getValue()).toBe('213');
+      expect(editor.getValue()).toBe('task 1');
     });
 
     it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Left Arrow key', () => {
       const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.LEFT, bubbles: true, cancelable: true });
       const spyEvent = jest.spyOn(event, 'stopImmediatePropagation');
 
-      editor = new IntegerEditor(editorArguments);
-      const editorElm = divContainer.querySelector('input.editor-price') as HTMLInputElement;
+      editor = new InputEditor(editorArguments, 'text');
+      const editorElm = divContainer.querySelector('input.editor-title') as HTMLInputElement;
 
       editor.focus();
       editorElm.dispatchEvent(event);
 
       expect(spyEvent).toHaveBeenCalled();
+      expect(editor.isValueTouched()).toBe(true);
     });
 
     it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Right Arrow key', () => {
       const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.RIGHT, bubbles: true, cancelable: true });
       const spyEvent = jest.spyOn(event, 'stopImmediatePropagation');
 
-      editor = new IntegerEditor(editorArguments);
-      const editorElm = divContainer.querySelector('input.editor-price') as HTMLInputElement;
+      editor = new InputEditor(editorArguments, 'text');
+      const editorElm = divContainer.querySelector('input.editor-title') as HTMLInputElement;
 
       editor.focus();
       editorElm.dispatchEvent(event);
@@ -190,12 +199,12 @@ describe('IntegerEditor', () => {
     });
 
     describe('isValueChanged method', () => {
-      it('should return True when previously dispatched keyboard event is a new char 0', () => {
-        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_0, bubbles: true, cancelable: true });
+      it('should return True when previously dispatched keyboard event is a new char "a"', () => {
+        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
 
-        editor = new IntegerEditor(editorArguments);
-        editor.setValue(9);
-        const editorElm = divContainer.querySelector('input.editor-price') as HTMLInputElement;
+        editor = new InputEditor(editorArguments, 'text');
+        editor.setValue('z');
+        const editorElm = divContainer.querySelector('input.editor-title') as HTMLInputElement;
 
         editor.focus();
         editorElm.dispatchEvent(event);
@@ -203,26 +212,13 @@ describe('IntegerEditor', () => {
         expect(editor.isValueChanged()).toBe(true);
       });
 
-      it('should return False when previously dispatched keyboard event is same number as current value', () => {
-        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_0, bubbles: true, cancelable: true });
-
-        editor = new IntegerEditor(editorArguments);
-        const editorElm = divContainer.querySelector('input.editor-price') as HTMLInputElement;
-
-        editor.loadValue({ id: 1, price: 0, isActive: true });
-        editor.focus();
-        editorElm.dispatchEvent(event);
-
-        expect(editor.isValueChanged()).toBe(false);
-      });
-
       it('should return False when previously dispatched keyboard event is same string number as current value', () => {
-        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_0, bubbles: true, cancelable: true });
+        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
 
-        editor = new IntegerEditor(editorArguments);
-        const editorElm = divContainer.querySelector('input.editor-price') as HTMLInputElement;
+        editor = new InputEditor(editorArguments, 'text');
+        const editorElm = divContainer.querySelector('input.editor-title') as HTMLInputElement;
 
-        editor.loadValue({ id: 1, price: '0', isActive: true });
+        editor.loadValue({ id: 1, title: 'a', isActive: true });
         editor.focus();
         editorElm.dispatchEvent(event);
 
@@ -233,8 +229,8 @@ describe('IntegerEditor', () => {
         const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.ENTER, bubbles: true, cancelable: true });
         (mockColumn.internalColumnEditor as ColumnEditor).alwaysSaveOnEnterKey = true;
 
-        editor = new IntegerEditor(editorArguments);
-        const editorElm = divContainer.querySelector('input.editor-price') as HTMLInputElement;
+        editor = new InputEditor(editorArguments, 'text');
+        const editorElm = divContainer.querySelector('input.editor-title') as HTMLInputElement;
 
         editor.focus();
         editorElm.dispatchEvent(event);
@@ -244,88 +240,58 @@ describe('IntegerEditor', () => {
     });
 
     describe('applyValue method', () => {
-      it('should apply the value to the price property when it passes validation', () => {
+      it('should apply the value to the title property when it passes validation', () => {
         (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
-        mockItemData = { id: 1, price: 456, isActive: true };
+        mockItemData = { id: 1, title: 'task 1', isActive: true };
 
-        editor = new IntegerEditor(editorArguments);
-        editor.applyValue(mockItemData, 78);
+        editor = new InputEditor(editorArguments, 'text');
+        editor.applyValue(mockItemData, 'task 2');
 
-        expect(mockItemData).toEqual({ id: 1, price: 78, isActive: true });
+        expect(mockItemData).toEqual({ id: 1, title: 'task 2', isActive: true });
       });
 
-      it('should apply the value to the price property with a field having dot notation (complex object) that passes validation', () => {
+      it('should apply the value to the title property with a field having dot notation (complex object) that passes validation', () => {
         (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
-        mockColumn.field = 'part.price';
-        mockItemData = { id: 1, part: { price: 456 }, isActive: true };
+        mockColumn.field = 'part.title';
+        mockItemData = { id: 1, part: { title: 'task 1' }, isActive: true };
 
-        editor = new IntegerEditor(editorArguments);
-        editor.applyValue(mockItemData, 78);
+        editor = new InputEditor(editorArguments, 'text');
+        editor.applyValue(mockItemData, 'task 2');
 
-        expect(mockItemData).toEqual({ id: 1, part: { price: 78 }, isActive: true });
+        expect(mockItemData).toEqual({ id: 1, part: { title: 'task 2' }, isActive: true });
       });
 
       it('should return item data with an empty string in its value when it fails the custom validation', () => {
         (mockColumn.internalColumnEditor as ColumnEditor).validator = (value: any) => {
-          if (+value < 10) {
-            return { valid: false, msg: 'Value must be over 10.' };
+          if (value.length < 10) {
+            return { valid: false, msg: 'Must be at least 10 chars long.' };
           }
           return { valid: true, msg: '' };
         };
-        mockItemData = { id: 1, price: 32, isActive: true };
+        mockItemData = { id: 1, title: 'task 1', isActive: true };
 
-        editor = new IntegerEditor(editorArguments);
-        editor.applyValue(mockItemData, 4);
+        editor = new InputEditor(editorArguments, 'text');
+        editor.applyValue(mockItemData, 'task 2');
 
-        expect(mockItemData).toEqual({ id: 1, price: '', isActive: true });
+        expect(mockItemData).toEqual({ id: 1, title: '', isActive: true });
       });
     });
 
     describe('serializeValue method', () => {
-      it('should return serialized value as a number', () => {
-        mockItemData = { id: 1, price: 32, isActive: true };
+      it('should return serialized value as a string', () => {
+        mockItemData = { id: 1, title: 'task 1', isActive: true };
 
-        editor = new IntegerEditor(editorArguments);
+        editor = new InputEditor(editorArguments, 'text');
         editor.loadValue(mockItemData);
         const output = editor.serializeValue();
 
-        expect(output).toBe(32);
-      });
-
-      it('should return serialized value as a number even when the item property value is a number in a string', () => {
-        mockItemData = { id: 1, price: '32', isActive: true };
-
-        editor = new IntegerEditor(editorArguments);
-        editor.loadValue(mockItemData);
-        const output = editor.serializeValue();
-
-        expect(output).toBe(32);
-      });
-
-      it('should return only the left side of the number (not rounded) when a float is provided', () => {
-        mockItemData = { id: 1, price: '32.7', isActive: true };
-
-        editor = new IntegerEditor(editorArguments);
-        editor.loadValue(mockItemData);
-        const output = editor.serializeValue();
-
-        expect(output).toBe(32);
-      });
-
-      it('should return original item value when this value cannot be parsed', () => {
-        mockItemData = { id: 1, price: '.2', isActive: true };
-
-        editor = new IntegerEditor(editorArguments);
-        editor.loadValue(mockItemData);
-        const output = editor.serializeValue();
-
-        expect(output).toBe('.2');
+        expect(output).toBe('task 1');
       });
 
       it('should return serialized value as an empty string when item value is also an empty string', () => {
-        mockItemData = { id: 1, price: '', isActive: true };
+        mockItemData = { id: 1, title: '', isActive: true };
 
-        editor = new IntegerEditor(editorArguments);
+        editor = new InputEditor(editorArguments, 'text');
         editor.loadValue(mockItemData);
         const output = editor.serializeValue();
 
@@ -333,9 +299,9 @@ describe('IntegerEditor', () => {
       });
 
       it('should return serialized value as an empty string when item value is null', () => {
-        mockItemData = { id: 1, price: null, isActive: true };
+        mockItemData = { id: 1, title: null, isActive: true };
 
-        editor = new IntegerEditor(editorArguments);
+        editor = new InputEditor(editorArguments, 'text');
         editor.loadValue(mockItemData);
         const output = editor.serializeValue();
 
@@ -343,14 +309,14 @@ describe('IntegerEditor', () => {
       });
 
       it('should return value as a number when using a dot (.) notation for complex object', () => {
-        mockColumn.field = 'part.price';
-        mockItemData = { id: 1, part: { price: 5 }, isActive: true };
+        mockColumn.field = 'task.title';
+        mockItemData = { id: 1, task: { title: 'task 1' }, isActive: true };
 
-        editor = new IntegerEditor(editorArguments);
+        editor = new InputEditor(editorArguments, 'text');
         editor.loadValue(mockItemData);
         const output = editor.serializeValue();
 
-        expect(output).toBe(5);
+        expect(output).toBe('task 1');
       });
     });
 
@@ -360,60 +326,59 @@ describe('IntegerEditor', () => {
       });
 
       it('should call "getEditorLock" method when "hasAutoCommitEdit" is enabled', () => {
-        mockItemData = { id: 1, price: 32, isActive: true };
+        mockItemData = { id: 1, title: 'task', isActive: true };
         gridOptionMock.autoCommitEdit = true;
         const spy = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
-        editor = new IntegerEditor(editorArguments);
+        editor = new InputEditor(editorArguments, 'text');
         editor.loadValue(mockItemData);
-        editor.setValue(35);
+        editor.setValue('task 21');
         editor.save();
 
         expect(spy).toHaveBeenCalled();
       });
 
       it('should call "commitChanges" method when "hasAutoCommitEdit" is disabled', () => {
-        mockItemData = { id: 1, price: 32, isActive: true };
+        mockItemData = { id: 1, title: 'task', isActive: true };
         gridOptionMock.autoCommitEdit = false;
         const spy = jest.spyOn(editorArguments, 'commitChanges');
 
-        editor = new IntegerEditor(editorArguments);
+        editor = new InputEditor(editorArguments, 'text');
         editor.loadValue(mockItemData);
-        editor.setValue(35);
+        editor.setValue('task 21');
         editor.save();
 
         expect(spy).toHaveBeenCalled();
       });
 
-      it('should not call anything when the input value is not a valid integer', () => {
-        mockItemData = { id: 1, price: '.1', isActive: true };
+      it('should not call anything when the input value is empty but is required', () => {
+        mockItemData = { id: 1, title: 'task', isActive: true };
+        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
         gridOptionMock.autoCommitEdit = true;
         const spy = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
-        editor = new IntegerEditor(editorArguments);
+        editor = new InputEditor(editorArguments, 'text');
         editor.loadValue(mockItemData);
-        editor.setValue('.2');
+        editor.setValue('');
         editor.save();
 
         expect(spy).not.toHaveBeenCalled();
       });
 
       it('should call "getEditorLock" and "save" methods when "hasAutoCommitEdit" is enabled and the event "focusout" is triggered', () => {
-        mockItemData = { id: 1, price: 32, isActive: true };
+        mockItemData = { id: 1, title: 'task', isActive: true };
         gridOptionMock.autoCommitEdit = true;
         const spyCommit = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
-        editor = new IntegerEditor(editorArguments);
+        editor = new InputEditor(editorArguments, 'text');
         editor.loadValue(mockItemData);
-        editor.setValue(35);
+        editor.setValue('task 21');
         const spySave = jest.spyOn(editor, 'save');
         const editorElm = editor.editorDomElement;
 
         editorElm.dispatchEvent(new (window.window as any).Event('focusout'));
-
         jest.runAllTimers(); // fast-forward timer
 
-        expect(editor.isValueTouched()).toBe(true);
         expect(spyCommit).toHaveBeenCalled();
         expect(spySave).toHaveBeenCalled();
       });
@@ -422,134 +387,134 @@ describe('IntegerEditor', () => {
     describe('validate method', () => {
       it('should return False when field is required and field is empty', () => {
         (mockColumn.internalColumnEditor as ColumnEditor).required = true;
-        editor = new IntegerEditor(editorArguments);
+        editor = new InputEditor(editorArguments, 'text');
         const validation = editor.validate(null, '');
 
         expect(validation).toEqual({ valid: false, msg: 'Field is required' });
       });
 
-      it('should return False when field is not a valid integer', () => {
+      it('should return True when field is required and input is a valid input value', () => {
         (mockColumn.internalColumnEditor as ColumnEditor).required = true;
-        editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(null, '.2');
-
-        expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number' });
-      });
-
-      it('should return False when field is lower than a minValue defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minValue = 10;
-        editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(null, 3);
-
-        expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number that is greater than or equal to 10' });
-      });
-
-      it('should return False when field is lower than a minValue defined using exclusive operator', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minValue = 10;
-        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'exclusive';
-        editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(null, 3);
-
-        expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number that is greater than 10' });
-      });
-
-      it('should return True when field is equal to the minValue defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minValue = 9;
-        editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(null, 9);
+        editor = new InputEditor(editorArguments, 'text');
+        const validation = editor.validate(null, 'text');
 
         expect(validation).toEqual({ valid: true, msg: '' });
+      });
+
+      it('should return False when field is lower than a minLength defined', () => {
+        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 5;
+        editor = new InputEditor(editorArguments, 'text');
+        const validation = editor.validate(null, 'text');
+
+        expect(validation).toEqual({ valid: false, msg: 'Please make sure your text is at least 5 character(s)' });
+      });
+
+      it('should return False when field is lower than a minLength defined using exclusive operator', () => {
+        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 5;
+        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'exclusive';
+        editor = new InputEditor(editorArguments, 'text');
+        const validation = editor.validate(null, 'text');
+
+        expect(validation).toEqual({ valid: false, msg: 'Please make sure your text is more than 5 character(s)' });
+      });
+
+      it('should return True when field is equal to the minLength defined', () => {
+        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 4;
+        editor = new InputEditor(editorArguments, 'text');
+        const validation = editor.validate(null, 'text');
+
+        expect(validation).toEqual({ valid: true, msg: '' });
+      });
+
+      it('should return False when field is greater than a maxLength defined', () => {
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 10;
+        editor = new InputEditor(editorArguments, 'text');
+        const validation = editor.validate(null, 'text is 16 chars');
+
+        expect(validation).toEqual({ valid: false, msg: 'Please make sure your text is less than or equal to 10 characters' });
+      });
+
+      it('should return False when field is greater than a maxLength defined using exclusive operator', () => {
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 10;
+        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'exclusive';
+        editor = new InputEditor(editorArguments, 'text');
+        const validation = editor.validate(null, 'text is 16 chars');
+
+        expect(validation).toEqual({ valid: false, msg: 'Please make sure your text is less than 10 characters' });
+      });
+
+      it('should return True when field is equal to the maxLength defined', () => {
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 16;
+        editor = new InputEditor(editorArguments, 'text');
+        const validation = editor.validate(null, 'text is 16 chars');
+
+        expect(validation).toEqual({ valid: true, msg: '' });
+      });
+
+      it('should return True when field is equal to the maxLength defined and "operatorType" is set to "inclusive"', () => {
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 16;
+        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'inclusive';
+        editor = new InputEditor(editorArguments, 'text');
+        const validation = editor.validate(null, 'text is 16 chars');
+
+        expect(validation).toEqual({ valid: true, msg: '' });
+      });
+
+      it('should return False when field is equal to the maxLength defined but "operatorType" is set to "exclusive"', () => {
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 16;
+        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'exclusive';
+        editor = new InputEditor(editorArguments, 'text');
+        const validation = editor.validate(null, 'text is 16 chars');
+
+        expect(validation).toEqual({ valid: false, msg: 'Please make sure your text is less than 16 characters' });
+      });
+
+      it('should return False when field is not between minLength & maxLength defined', () => {
+        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 0;
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 10;
+        editor = new InputEditor(editorArguments, 'text');
+        const validation = editor.validate(null, 'text is 16 chars');
+
+        expect(validation).toEqual({ valid: false, msg: 'Please make sure your text length is between 0 and 10 characters' });
+      });
+
+      it('should return True when field is is equal to maxLength defined when both min/max values are defined', () => {
+        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 0;
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 16;
+        editor = new InputEditor(editorArguments, 'text');
+        const validation = editor.validate(null, 'text is 16 chars');
+
+        expect(validation).toEqual({ valid: true, msg: '' });
+      });
+
+      it('should return True when field is is equal to minLength defined when "operatorType" is set to "inclusive" and both min/max values are defined', () => {
+        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 4;
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 15;
+        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'inclusive';
+        editor = new InputEditor(editorArguments, 'text');
+        const validation = editor.validate(null, 'text');
+
+        expect(validation).toEqual({ valid: true, msg: '' });
+      });
+
+      it('should return False when field is equal to maxLength but "operatorType" is set to "exclusive" when both min/max lengths are defined', () => {
+        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 4;
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 16;
+        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'exclusive';
+        editor = new InputEditor(editorArguments, 'text');
+        const validation1 = editor.validate(null, 'text is 16 chars');
+        const validation2 = editor.validate(null, 'text');
+
+        expect(validation1).toEqual({ valid: false, msg: 'Please make sure your text length is between 4 and 16 characters' });
+        expect(validation2).toEqual({ valid: false, msg: 'Please make sure your text length is between 4 and 16 characters' });
       });
 
       it('should return False when field is greater than a maxValue defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).maxValue = 10;
-        editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(null, 33);
+        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 10;
+        editor = new InputEditor(editorArguments, 'text');
+        const validation = editor.validate(null, 'Task is longer than 10 chars');
 
-        expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number that is lower than or equal to 10' });
-      });
-
-      it('should return False when field is greater than a maxValue defined using exclusive operator', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).maxValue = 10;
-        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'exclusive';
-        editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(null, 33);
-
-        expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number that is lower than 10' });
-      });
-
-      it('should return True when field is equal to the maxValue defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).maxValue = 99;
-        editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(null, 99);
-
-        expect(validation).toEqual({ valid: true, msg: '' });
-      });
-
-      it('should return True when field is equal to the maxValue defined and "operatorType" is set to "inclusive"', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).maxValue = 9;
-        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'inclusive';
-        editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(null, 9);
-
-        expect(validation).toEqual({ valid: true, msg: '' });
-      });
-
-      it('should return False when field is equal to the maxValue defined but "operatorType" is set to "exclusive"', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).maxValue = 9;
-        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'exclusive';
-        editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(null, 9);
-
-        expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number that is lower than 9' });
-      });
-
-      it('should return False when field is not between minValue & maxValue defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minValue = 10;
-        (mockColumn.internalColumnEditor as ColumnEditor).maxValue = 99;
-        editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(null, 345);
-
-        expect(validation).toEqual({ valid: false, msg: 'Please enter a valid integer number between 10 and 99' });
-      });
-
-      it('should return True when field is is equal to maxValue defined when both min/max values are defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minValue = 10;
-        (mockColumn.internalColumnEditor as ColumnEditor).maxValue = 89;
-        editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(null, 89);
-
-        expect(validation).toEqual({ valid: true, msg: '' });
-      });
-
-      it('should return True when field is is equal to minValue defined when "operatorType" is set to "inclusive" and both min/max values are defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minValue = 10;
-        (mockColumn.internalColumnEditor as ColumnEditor).maxValue = 89;
-        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'inclusive';
-        editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(null, 10);
-
-        expect(validation).toEqual({ valid: true, msg: '' });
-      });
-
-      it('should return False when field is equal to maxValue but "operatorType" is set to "exclusive" when both min/max values are defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minValue = 10;
-        (mockColumn.internalColumnEditor as ColumnEditor).maxValue = 89;
-        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'exclusive';
-        editor = new IntegerEditor(editorArguments);
-        const validation1 = editor.validate(null, 89);
-        const validation2 = editor.validate(null, 10);
-
-        expect(validation1).toEqual({ valid: false, msg: 'Please enter a valid integer number between 10 and 89' });
-        expect(validation2).toEqual({ valid: false, msg: 'Please enter a valid integer number between 10 and 89' });
-      });
-
-      it('should return True when field is required and field is a valid input value', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
-        editor = new IntegerEditor(editorArguments);
-        const validation = editor.validate(null, 2);
-
-        expect(validation).toEqual({ valid: true, msg: '' });
+        expect(validation).toEqual({ valid: false, msg: 'Please make sure your text is less than or equal to 10 characters' });
       });
     });
   });
@@ -570,13 +535,13 @@ describe('IntegerEditor', () => {
       const activeCellMock = { row: 0, cell: 0 };
       jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
-      editor = new IntegerEditor(editorArguments);
-      editor.setValue(123, true);
+      editor = new InputEditor(editorArguments, 'text');
+      editor.setValue('task 1', true);
 
-      expect(editor.getValue()).toBe('123');
+      expect(editor.getValue()).toBe('task 1');
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { price: 123 }, editors: {}, triggeredBy: 'system',
+        formValues: { title: 'task 1' }, editors: {}, triggeredBy: 'system',
       }, expect.anything());
     });
 
@@ -585,7 +550,7 @@ describe('IntegerEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
 
-      editor = new IntegerEditor(editorArguments);
+      editor = new InputEditor(editorArguments, 'text');
       const disableSpy = jest.spyOn(editor, 'disable');
       editor.show();
 
@@ -600,7 +565,7 @@ describe('IntegerEditor', () => {
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(false);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
 
-      editor = new IntegerEditor(editorArguments);
+      editor = new InputEditor(editorArguments, 'text');
       editor.loadValue(mockItemData);
       const disableSpy = jest.spyOn(editor, 'disable');
       editor.show();
@@ -609,8 +574,30 @@ describe('IntegerEditor', () => {
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { price: '' }, editors: {}, triggeredBy: 'user',
+        formValues: { title: '' }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
+      expect(disableSpy).toHaveBeenCalledWith(true);
+      expect(editor.editorDomElement.disabled).toEqual(true);
+      expect(editor.editorDomElement.value).toEqual('');
+    });
+
+    it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false and also expect "onBeforeComposite" to not be called because the value is blank', () => {
+      const activeCellMock = { row: 0, cell: 0 };
+      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(false);
+      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      gridOptionMock.compositeEditorOptions = {
+        excludeDisabledFieldFormValues: true
+      };
+
+      editor = new InputEditor(editorArguments, 'text');
+      editor.loadValue(mockItemData);
+      const disableSpy = jest.spyOn(editor, 'disable');
+      editor.show();
+
+      expect(getCellSpy).toHaveBeenCalled();
+      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
+      expect(onCompositeEditorSpy).not.toHaveBeenCalled;
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorDomElement.disabled).toEqual(true);
       expect(editor.editorDomElement.value).toEqual('');
@@ -624,8 +611,8 @@ describe('IntegerEditor', () => {
         excludeDisabledFieldFormValues: true
       };
 
-      editor = new IntegerEditor(editorArguments);
-      editor.loadValue({ ...mockItemData, price: 213 });
+      editor = new InputEditor(editorArguments, 'text');
+      editor.loadValue({ ...mockItemData, title: 'task 1' });
       editor.show();
       editor.disable();
 
@@ -638,75 +625,29 @@ describe('IntegerEditor', () => {
       expect(editor.editorDomElement.value).toEqual('');
     });
 
-    it('should call "disable" method and expect the DOM element to become disabled and have an empty formValues be passed in the onCompositeEditorChange event', () => {
-      const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
-      gridOptionMock.compositeEditorOptions = {
-        excludeDisabledFieldFormValues: true
-      };
-
-      editor = new IntegerEditor(editorArguments);
-      editor.loadValue({ ...mockItemData, price: 213 });
-      editor.show();
-      editor.disable();
-
-      expect(getCellSpy).toHaveBeenCalled();
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: {}, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
-      expect(editor.editorDomElement.disabled).toEqual(true);
-      expect(editor.editorDomElement.value).toEqual('');
-    });
-
-    it('should expect "onCompositeEditorChange" to have been triggered by input change with the new value showing up in its "formValues" object', () => {
+    it('should expect "onCompositeEditorChange" to have been triggered with the new value showing up in its "formValues" object', () => {
       jest.useFakeTimers();
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
       gridOptionMock.autoCommitEdit = true;
-      mockItemData = { id: 1, price: 35, isActive: true };
+      mockItemData = { id: 1, title: 'task 2', isActive: true };
 
-      editor = new IntegerEditor(editorArguments);
+      editor = new InputEditor(editorArguments, 'text');
       editor.loadValue(mockItemData);
-      editor.editorDomElement.value = 35;
+      editor.editorDomElement.value = 'task 2';
       editor.editorDomElement.dispatchEvent(new (window.window as any).Event('input'));
 
       jest.advanceTimersByTime(50);
+      editor.destroy();
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(editor.isValueTouched()).toBe(true);
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
         ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { price: 35 }, editors: {}, triggeredBy: 'user',
-      }, expect.anything());
-    });
-
-    it('should expect "onCompositeEditorChange" to have been triggered by by mouse wheel (spinner) with the new value showing up in its "formValues" object', () => {
-      jest.useFakeTimers();
-      const activeCellMock = { row: 0, cell: 0 };
-      const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
-      gridOptionMock.autoCommitEdit = true;
-      mockItemData = { id: 1, price: 35, isActive: true };
-
-      editor = new IntegerEditor(editorArguments);
-      editor.loadValue(mockItemData);
-      editor.editorDomElement.value = 35;
-      editor.editorDomElement.dispatchEvent(new (window.window as any).Event('wheel'));
-
-      jest.advanceTimersByTime(50);
-
-      expect(getCellSpy).toHaveBeenCalled();
-      expect(editor.isValueTouched()).toBe(true);
-      expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
-      expect(onCompositeEditorSpy).toHaveBeenCalledWith({
-        ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub,
-        formValues: { price: 35 }, editors: {}, triggeredBy: 'user',
+        formValues: { title: 'task 2' }, editors: {}, triggeredBy: 'user',
       }, expect.anything());
     });
   });

@@ -198,8 +198,8 @@ export class SelectEditor implements Editor {
     return this.columnDef?.internalColumnEditor?.customStructure;
   }
 
-  get hasAutoCommitEdit() {
-    return this.grid.getOptions().autoCommitEdit;
+  get hasAutoCommitEdit(): boolean {
+    return this.gridOptions.autoCommitEdit ?? false;
   }
 
   /**
@@ -257,7 +257,7 @@ export class SelectEditor implements Editor {
     if (fieldName !== undefined) {
       // collection of strings, just return the filtered string that are equals
       if (this.collection.every(x => typeof x === 'string')) {
-        return findOrDefault(this.collection, (c: any) => c?.toString() === elmValue);
+        return findOrDefault(this.collection, (c: any) => c?.toString?.() === elmValue);
       }
 
       // collection of label/value pair
