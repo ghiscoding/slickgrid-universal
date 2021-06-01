@@ -261,7 +261,6 @@ export class CompoundSliderFilter implements Filter {
     const divContainerFilterElm = document.createElement('div');
     divContainerFilterElm.className = `form-group search-filter slider-container filter-${columnId}`;
 
-    // this.containerInputGroupElm = $(`<div class="input-group search-filter filter-${columnId}"></div>`);
     this.containerInputGroupElm = document.createElement('div');
     this.containerInputGroupElm.className = `input-group search-filter filter-${columnId}`;
     this.containerInputGroupElm.appendChild(spanPrependElm);
@@ -282,7 +281,6 @@ export class CompoundSliderFilter implements Filter {
       this.containerInputGroupElm.appendChild(divGroupAppendElm);
     }
 
-    // this.filterNumberElm.html(searchTermInput);
     divContainerFilterElm.dataset.columnid = `${columnId}`;
 
     if (this.operator) {
