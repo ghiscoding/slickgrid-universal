@@ -140,12 +140,8 @@ export class CompoundDateFilter implements Filter {
         destroyObjectDomElementProps(this.flatInstance);
       }
     }
-    if (this._filterElm) {
-      this._filterElm.remove();
-    }
-    if (this._selectOperatorElm) {
-      this._selectOperatorElm.remove();
-    }
+    this._filterElm?.remove?.();
+    this._selectOperatorElm?.remove?.();
   }
 
   hide() {
@@ -225,14 +221,16 @@ export class CompoundDateFilter implements Filter {
     };
 
     // add the time picker when format is UTC (Z) or has the 'h' (meaning hours)
-    if (outputFormat && (outputFormat === 'Z' || outputFormat.toLowerCase().indexOf('h') > -1)) {
+    if (outputFormat && (outputFormat === 'Z' || outputFormat.toLowerCase().includes('h'))) {
       pickerOptions.enableTime = true;
     }
 
     // merge options with optional user's custom options
     this._flatpickrOptions = { ...pickerOptions, ...userFilterOptions };
-    let placeholder = (this.gridOptions) ? (this.gridOptions.defaultFilterPlaceholder || '') : '';
-    if (this.columnFilter && this.columnFilter.placeholder) {
+
+    // create the DOM element & add an ID and filter class
+    let placeholder = this.gridOptions?.defaultFilterPlaceholder ?? '';
+    if (this.columnFilter?.placeholder) {
       placeholder = this.columnFilter.placeholder;
     }
 

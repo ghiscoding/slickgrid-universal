@@ -11,8 +11,9 @@ import {
 } from '../interfaces/index';
 import { Constants } from '../constants';
 import { OperatorString, OperatorType, SearchTerm } from '../enums/index';
-import { buildSelectOperatorHtmlString } from './filterUtilities';
-import { getTranslationPrefix, mapOperatorToShorthandDesignation } from '../services/utilities';
+import { buildSelectOperator } from './filterUtilities';
+import { emptyElement, getTranslationPrefix, mapOperatorToShorthandDesignation } from '../services/utilities';
+import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
 
 const DEFAULT_MIN_VALUE = 0;
@@ -20,22 +21,26 @@ const DEFAULT_MAX_VALUE = 100;
 const DEFAULT_STEP = 1;
 
 export class CompoundSliderFilter implements Filter {
+  protected _bindEventService: BindingEventService;
   protected _clearFilterTriggered = false;
   protected _currentValue?: number;
   protected _shouldTriggerQuery = true;
   protected _elementRangeInputId = '';
   protected _elementRangeOutputId = '';
   protected _operator?: OperatorType | OperatorString;
-  protected $containerInputGroupElm: any;
-  protected $filterElm: any;
-  protected $filterInputElm: any;
-  protected $selectOperatorElm: any;
+  protected containerInputGroupElm?: HTMLDivElement;
+  protected filterElm!: HTMLDivElement;
+  protected filterInputElm!: HTMLInputElement;
+  protected filterNumberElm?: HTMLSpanElement;
+  protected selectOperatorElm!: HTMLSelectElement;
   grid!: SlickGrid;
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
 
-  constructor(protected readonly translaterService: TranslaterService) { }
+  constructor(protected readonly translaterService: TranslaterService) {
+    this._bindEventService = new BindingEventService();
+  }
 
   /** Getter for the Filter Operator */
   get columnFilter(): ColumnFilter {
@@ -59,7 +64,7 @@ export class CompoundSliderFilter implements Filter {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get gridOptions(): GridOption {
-    return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
+    return this.grid?.getOptions?.() ?? {};
   }
 
   /** Getter for the single Locale texts provided by the user in main file or else use default English locales via the Constants */
@@ -88,7 +93,7 @@ export class CompoundSliderFilter implements Filter {
     this.callback = args.callback;
     this.columnDef = args.columnDef;
     this.operator = args.operator || '';
-    this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
+    this.searchTerms = args?.searchTerms ?? [];
 
     // define the input & slider number IDs
     this._elementRangeInputId = `rangeInput_${this.columnDef.field}`;
@@ -99,29 +104,17 @@ export class CompoundSliderFilter implements Filter {
 
     // step 1, create the DOM Element of the filter which contain the compound Operator+Input
     // and initialize it if searchTerm is filled
-    this.$filterElm = this.createDomElement(searchTerm);
+    this.filterElm = this.createDomElement(searchTerm);
 
-    // step 3, subscribe to the input change event and run the callback when that happens
+    // step 2, subscribe to the input change event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    this.$filterInputElm.change((e: any) => {
-      this.onTriggerEvent(e);
-    });
-    this.$selectOperatorElm.change((e: any) => {
-      this.onTriggerEvent(e);
-    });
+    this._bindEventService.bind(this.filterInputElm, 'change', this.onTriggerEvent.bind(this));
+    this._bindEventService.bind(this.selectOperatorElm, 'change', this.onTriggerEvent.bind(this));
 
     // if user chose to display the slider number on the right side, then update it every time it changes
     // we need to use both "input" and "change" event to be all cross-browser
     if (!this.filterParams.hideSliderNumber) {
-      this.$filterInputElm.on('input change', (e: { target: HTMLInputElement }) => {
-        const value = e && e.target && e.target.value;
-        if (value && document) {
-          const elements = document.getElementsByClassName(this._elementRangeOutputId || '');
-          if (elements && elements.length > 0 && elements[0].innerHTML) {
-            elements[0].innerHTML = value;
-          }
-        }
-      });
+      this._bindEventService.bind(this.filterInputElm, ['input', 'change'], this.handleInputChange.bind(this));
     }
   }
 
@@ -129,19 +122,19 @@ export class CompoundSliderFilter implements Filter {
    * Clear the filter value
    */
   clear(shouldTriggerQuery = true) {
-    if (this.$filterElm && this.$selectOperatorElm) {
+    if (this.filterElm && this.selectOperatorElm) {
       this._clearFilterTriggered = true;
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
-      const clearedValue = this.filterParams.hasOwnProperty('sliderStartValue') ? this.filterParams.sliderStartValue : DEFAULT_MIN_VALUE;
+      const clearedValue = this.filterParams?.sliderStartValue ?? DEFAULT_MIN_VALUE;
       this._currentValue = +clearedValue;
-      this.$selectOperatorElm.val(0);
-      this.$filterInputElm.val(clearedValue);
-      if (!this.filterParams.hideSliderNumber) {
-        this.$containerInputGroupElm.children('div.input-group-addon.input-group-append').children().last().html(clearedValue);
+      this.selectOperatorElm.selectedIndex = 0;
+      this.filterInputElm.value = clearedValue;
+      if (this.filterNumberElm) {
+        this.filterNumberElm.textContent = clearedValue;
       }
       this.onTriggerEvent(undefined);
-      this.$filterElm.removeClass('filled');
+      this.filterElm.classList.remove('filled');
     }
   }
 
@@ -149,13 +142,10 @@ export class CompoundSliderFilter implements Filter {
    * destroy the filter
    */
   destroy() {
-    if (this.$filterInputElm) {
-      this.$filterInputElm.off('input change').remove();
-      this.$selectOperatorElm.off('change').remove();
-    }
-    this.$filterInputElm = null;
-    this.$filterElm = null;
-    this.$selectOperatorElm = null;
+    this._bindEventService.unbindAll();
+    this.selectOperatorElm?.remove?.();
+    emptyElement(this.filterElm);
+    this.filterElm?.remove?.();
   }
 
   /**
@@ -170,40 +160,22 @@ export class CompoundSliderFilter implements Filter {
   setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString) {
     const newValue = Array.isArray(values) ? values[0] : values;
     this._currentValue = +newValue;
-    this.$filterInputElm.val(newValue);
-    this.$containerInputGroupElm.children('div.input-group-addon.input-group-append').children().last().html(newValue);
+    this.filterInputElm.value = `${newValue ?? ''}`;
+    if (this.filterNumberElm) {
+      this.filterNumberElm.textContent = `${newValue ?? ''}`;
+    }
 
     // set the operator, in the DOM as well, when defined
     this.operator = operator || this.defaultOperator;
-    if (operator && this.$selectOperatorElm) {
+    if (operator && this.selectOperatorElm) {
       const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);
-      this.$selectOperatorElm.val(operatorShorthand);
+      this.selectOperatorElm.value = operatorShorthand;
     }
   }
 
   //
   // protected functions
   // ------------------
-
-  /** Build HTML Template for the input range (slider) */
-  protected buildTemplateHtmlString() {
-    const minValue = this.filterProperties.hasOwnProperty('minValue') ? this.filterProperties.minValue : DEFAULT_MIN_VALUE;
-    const maxValue = this.filterProperties.hasOwnProperty('maxValue') ? this.filterProperties.maxValue : DEFAULT_MAX_VALUE;
-    const defaultValue = this.filterParams.hasOwnProperty('sliderStartValue') ? this.filterParams.sliderStartValue : minValue;
-    const step = this.filterProperties.hasOwnProperty('valueStep') ? this.filterProperties.valueStep : DEFAULT_STEP;
-
-    return `<input type="range" name="${this._elementRangeInputId}"
-              defaultValue="${defaultValue}" min="${minValue}" max="${maxValue}" step="${step}"
-              class="form-control slider-filter-input range compound-slider ${this._elementRangeInputId}" />`;
-  }
-
-  /** Build HTML Template for the text (number) that is shown appended to the slider */
-  protected buildTemplateSliderTextHtmlString() {
-    const minValue = this.filterProperties.hasOwnProperty('minValue') ? this.filterProperties.minValue : DEFAULT_MIN_VALUE;
-    const defaultValue = this.filterParams.hasOwnProperty('sliderStartValue') ? this.filterParams.sliderStartValue : minValue;
-
-    return `<div class="input-group-addon input-group-append slider-value"><span class="input-group-text ${this._elementRangeOutputId}">${defaultValue}</span></div>`;
-  }
 
   /** Get the available operator option values to populate the operator select dropdown list */
   protected getOperatorOptionValues(): OperatorDetail[] {
@@ -234,12 +206,15 @@ export class CompoundSliderFilter implements Filter {
   /**
    * Create the DOM element
    */
-  protected createDomElement(searchTerm?: SearchTerm) {
+  protected createDomElement(searchTerm?: SearchTerm): HTMLDivElement {
     const columnId = this.columnDef?.id ?? '';
-    const minValue = (this.filterProperties.hasOwnProperty('minValue') && this.filterProperties.minValue) ? this.filterProperties.minValue : DEFAULT_MIN_VALUE;
-    const startValue = +(this.filterParams.hasOwnProperty('sliderStartValue') ? this.filterParams.sliderStartValue : minValue);
-    const $headerElm = this.grid.getHeaderRowColumn(this.columnDef.id);
-    $($headerElm).empty();
+    const minValue = this.filterProperties?.minValue ?? DEFAULT_MIN_VALUE;
+    const maxValue = this.filterProperties?.maxValue ?? DEFAULT_MAX_VALUE;
+    const defaultValue = this.filterParams?.sliderStartValue ?? minValue;
+    const step = this.filterProperties?.valueStep ?? DEFAULT_STEP;
+    const startValue = +(this.filterParams?.sliderStartValue ?? minValue);
+    const headerElm = this.grid.getHeaderRowColumn(this.columnDef.id);
+    emptyElement(headerElm);
 
     let searchTermInput = (searchTerm || '0') as string;
     if (+searchTermInput < minValue) {
@@ -250,66 +225,100 @@ export class CompoundSliderFilter implements Filter {
     }
     this._currentValue = +searchTermInput;
 
-    // create the DOM Select dropdown for the Operator
-    const selectOperatorHtmlString = buildSelectOperatorHtmlString(this.getOperatorOptionValues());
-    this.$selectOperatorElm = $(selectOperatorHtmlString);
-    this.$filterInputElm = $(this.buildTemplateHtmlString());
-    const $filterContainerElm = $(`<div class="form-group slider-container search-filter filter-${columnId}"></div>`);
-    this.$containerInputGroupElm = $(`<div class="input-group search-filter filter-${columnId}"></div>`);
-    const $operatorInputGroupAddon = $(`<span class="input-group-addon input-group-prepend operator"></span>`);
-
-    /* the DOM element final structure will be
-      <div class="input-group">
-        <div class="input-group-addon input-group-prepend operator">
-          <select class="form-control"></select>
+    /*
+      Full DOM Element Template::
+      <div class="form-group search-filter slider-container filter-${columnId}" data-columnid="${columnId}">
+        <div class="input-group search-filter filter-${columnId}">
+          <span class="input-group-addon input-group-prepend operator">
+            <select class="form-control"><option value="">...</select>
+          </span>
+          <input type="range" class="form-control slider-filter-input range compound-slider ${this._elementRangeInputId}" value="0" min="0" max="100" step="1" name="${this._elementRangeInputId}"/>
+          <div class="input-group-addon input-group-append slider-value">
+            <span class="input-group-text rangeOutput_${columnId}">0</span>
+          </div>
         </div>
-        <input class="form-control" type="text" />
-        <div class="input-group-addon input-group-prepend rangeOuput_percentComplete"><span class="input-group-text">0</span></div>
       </div>
     */
-    $operatorInputGroupAddon.append(this.$selectOperatorElm);
-    this.$containerInputGroupElm.append($operatorInputGroupAddon);
-    this.$containerInputGroupElm.append(this.$filterInputElm);
+
+    // create the DOM Select dropdown for the Operator
+    this.selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues());
+
+    const spanPrependElm = document.createElement('span');
+    spanPrependElm.className = 'input-group-addon input-group-prepend operator';
+    spanPrependElm.appendChild(this.selectOperatorElm);
+
+    // create the DOM element
+    this.filterInputElm = document.createElement('input');
+    this.filterInputElm.type = 'range';
+    this.filterInputElm.className = `form-control slider-filter-input range compound-slider ${this._elementRangeInputId}`;
+    this.filterInputElm.defaultValue = defaultValue;
+    this.filterInputElm.value = searchTermInput;
+    this.filterInputElm.min = `${minValue}`;
+    this.filterInputElm.max = `${maxValue}`;
+    this.filterInputElm.step = `${step}`;
+    this.filterInputElm.name = this._elementRangeInputId;
+
+    const divContainerFilterElm = document.createElement('div');
+    divContainerFilterElm.className = `form-group search-filter slider-container filter-${columnId}`;
+
+    this.containerInputGroupElm = document.createElement('div');
+    this.containerInputGroupElm.className = `input-group search-filter filter-${columnId}`;
+    this.containerInputGroupElm.appendChild(spanPrependElm);
+    this.containerInputGroupElm.appendChild(this.filterInputElm);
+    divContainerFilterElm.appendChild(this.containerInputGroupElm);
+
     if (!this.filterParams.hideSliderNumber) {
-      const $sliderTextInputAppendAddon = $(this.buildTemplateSliderTextHtmlString());
-      $sliderTextInputAppendAddon.children().html(searchTermInput);
-      this.$containerInputGroupElm.append($sliderTextInputAppendAddon);
+      this.containerInputGroupElm.classList.add('input-group');
+      this.filterInputElm.value = searchTermInput;
+
+      const divGroupAppendElm = document.createElement('div');
+      divGroupAppendElm.className = 'input-group-addon input-group-append slider-value';
+
+      this.filterNumberElm = document.createElement('span');
+      this.filterNumberElm.className = `input-group-text ${this._elementRangeOutputId}`;
+      this.filterNumberElm.textContent = searchTermInput;
+      divGroupAppendElm.appendChild(this.filterNumberElm);
+      this.containerInputGroupElm.appendChild(divGroupAppendElm);
     }
 
-    // create the DOM element & add an ID and filter class
-    $filterContainerElm.append(this.$containerInputGroupElm);
-
-    this.$filterInputElm.val(searchTermInput);
-    this.$filterInputElm.data('columnId', columnId);
+    divContainerFilterElm.dataset.columnid = `${columnId}`;
 
     if (this.operator) {
       const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);
-      this.$selectOperatorElm.val(operatorShorthand);
+      this.selectOperatorElm.value = operatorShorthand;
     }
 
     // if there's a search term, we will add the "filled" class for styling purposes
-    if (searchTerm !== '') {
-      $filterContainerElm.addClass('filled');
+    if (searchTerm) {
+      divContainerFilterElm.classList.add('filled');
     }
 
     // append the new DOM element to the header row
-    if ($filterContainerElm && typeof $filterContainerElm.appendTo === 'function') {
-      $filterContainerElm.appendTo($headerElm);
-    }
+    headerElm.appendChild(divContainerFilterElm);
 
-    return $filterContainerElm;
+    return divContainerFilterElm;
+  }
+
+  protected handleInputChange(event: Event) {
+    const value = (event?.target as HTMLInputElement).value;
+    if (value !== undefined && value !== null) {
+      const element = document.querySelector(`.${this._elementRangeOutputId || ''}`);
+      if (element?.textContent) {
+        element.textContent = value;
+      }
+    }
   }
 
   protected onTriggerEvent(e: Event | undefined) {
-    const value = this.$filterInputElm.val();
+    const value = this.filterInputElm.value;
     this._currentValue = +value;
 
     if (this._clearFilterTriggered) {
-      this.$filterElm.removeClass('filled');
+      this.filterElm.classList.remove('filled');
       this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
     } else {
-      this.$filterElm.addClass('filled');
-      const selectedOperator = this.$selectOperatorElm.find('option:selected').val();
+      this.filterElm.classList.add('filled');
+      const selectedOperator = this.selectOperatorElm.value as OperatorString;
       this.callback(e, { columnDef: this.columnDef, searchTerms: (value ? [value || '0'] : null), operator: selectedOperator || '', shouldTriggerQuery: this._shouldTriggerQuery });
     }
 

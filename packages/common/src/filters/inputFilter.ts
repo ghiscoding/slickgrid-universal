@@ -8,20 +8,25 @@ import {
   SlickGrid,
 } from '../interfaces/index';
 import { OperatorType, OperatorString, SearchTerm } from '../enums/index';
+import { BindingEventService } from '../services/bindingEvent.service';
+import { emptyElement } from '../services';
 
 export class InputFilter implements Filter {
+  protected _bindEventService: BindingEventService;
   protected _clearFilterTriggered = false;
   protected _debounceTypingDelay = 0;
   protected _shouldTriggerQuery = true;
   protected _inputType = 'text';
   protected _timer?: NodeJS.Timeout;
-  protected $filterElm: any;
+  protected _filterElm!: HTMLInputElement;
   grid!: SlickGrid;
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
 
-  constructor() { }
+  constructor() {
+    this._bindEventService = new BindingEventService();
+  }
 
   /** Getter for the Column Filter */
   get columnFilter(): ColumnFilter {
@@ -80,28 +85,25 @@ export class InputFilter implements Filter {
     // filter input can only have 1 search term, so we will use the 1st array index if it exist
     const searchTerm = (Array.isArray(this.searchTerms) && this.searchTerms.length >= 0) ? this.searchTerms[0] : '';
 
-    // step 1, create HTML string template
-    const filterTemplate = this.buildTemplateHtmlString();
+    // step 1, create the DOM Element of the filter & initialize it if searchTerm is filled
+    this._filterElm = this.createDomElement(searchTerm);
 
-    // step 2, create the DOM Element of the filter & initialize it if searchTerm is filled
-    this.$filterElm = this.createDomElement(filterTemplate, searchTerm);
-
-    // step 3, subscribe to the input event and run the callback when that happens
+    // step 2, subscribe to the input event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
     // we'll use all necessary events to cover the following (keyup, change, mousewheel & spinner)
-    this.$filterElm.on('keyup blur change wheel', this.handleInputChange.bind(this));
+    this._bindEventService.bind(this._filterElm, ['keyup', 'blur', 'change', 'wheel'], this.handleInputChange.bind(this));
   }
 
   /**
    * Clear the filter value
    */
   clear(shouldTriggerQuery = true) {
-    if (this.$filterElm) {
+    if (this._filterElm) {
       this._clearFilterTriggered = true;
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
-      this.$filterElm.val('');
-      this.$filterElm.trigger('change');
+      this._filterElm.value = '';
+      this._filterElm.dispatchEvent(new Event('change'));
     }
   }
 
@@ -109,14 +111,12 @@ export class InputFilter implements Filter {
    * destroy the filter
    */
   destroy() {
-    if (this.$filterElm) {
-      this.$filterElm.off('keyup blur change wheel').remove();
-    }
-    this.$filterElm = null;
+    this._bindEventService.unbindAll();
+    this._filterElm?.remove?.();
   }
 
-  getValue() {
-    return this.$filterElm.val();
+  getValue(): string {
+    return this._filterElm.value;
   }
 
   /** Set value(s) on the DOM element */
@@ -125,7 +125,7 @@ export class InputFilter implements Filter {
     let searchValue: SearchTerm = '';
     for (const value of searchValues) {
       searchValue = operator ? this.addOptionalOperatorIntoSearchString(value, operator) : value;
-      this.$filterElm.val(searchValue);
+      this._filterElm.value = `${searchValue ?? ''}`;
     }
 
     // set the operator when defined
@@ -178,63 +178,61 @@ export class InputFilter implements Filter {
   }
 
   /**
-   * Create the HTML template as a string
-   */
-  protected buildTemplateHtmlString() {
-    const columnId = this.columnDef?.id ?? '';
-    let placeholder = (this.gridOptions) ? (this.gridOptions.defaultFilterPlaceholder || '') : '';
-    if (this.columnFilter && this.columnFilter.placeholder) {
-      placeholder = this.columnFilter.placeholder;
-    }
-    return `<input type="${this._inputType || 'text'}" role="presentation" autocomplete="off" class="form-control search-filter filter-${columnId}" placeholder="${placeholder}"><span></span>`;
-  }
-
-  /**
    * From the html template string, create a DOM element
-   * @param filterTemplate
+   * @param {Object} searchTerm - filter search term
+   * @returns {Object} DOM element filter
    */
-  protected createDomElement(filterTemplate: string, searchTerm?: SearchTerm) {
+  protected createDomElement(searchTerm?: SearchTerm) {
     const columnId = this.columnDef?.id ?? '';
-    const $headerElm = this.grid.getHeaderRowColumn(columnId);
-    $($headerElm).empty();
+    const headerElm = this.grid.getHeaderRowColumn(columnId);
+    emptyElement(headerElm);
 
     // create the DOM element & add an ID and filter class
-    const $filterElm = $(filterTemplate);
+    let placeholder = this.gridOptions?.defaultFilterPlaceholder ?? '';
+    if (this.columnFilter?.placeholder) {
+      placeholder = this.columnFilter.placeholder;
+    }
 
-    $filterElm.val(searchTerm as string);
-    $filterElm.data('columnId', columnId);
+    const inputElm = document.createElement('input');
+    inputElm.type = this._inputType || 'text';
+    inputElm.className = `form-control search-filter filter-${columnId}`;
+    inputElm.autocomplete = 'off';
+    inputElm.placeholder = placeholder;
+    inputElm.setAttribute('role', 'presentation');
+
+    inputElm.value = (searchTerm ?? '') as string;
+    inputElm.dataset.columnid = `${columnId}`;
 
     // if there's a search term, we will add the "filled" class for styling purposes
     if (searchTerm) {
-      $filterElm.addClass('filled');
+      inputElm.classList.add('filled');
     }
 
-    // append the new DOM element to the header row
-    if ($filterElm && typeof $filterElm.appendTo === 'function') {
-      $filterElm.appendTo($headerElm);
-    }
+    // append the new DOM element to the header row & an empty span
+    headerElm.appendChild(inputElm);
+    headerElm.appendChild(document.createElement('span'));
 
-    return $filterElm;
+    return inputElm;
   }
 
   /**
    * Event handler to cover the following (keyup, change, mousewheel & spinner)
    * We will trigger the Filter Service callback from this handler
    */
-  protected handleInputChange(event: KeyboardEvent & { target: any; }) {
+  protected handleInputChange(event: Event) {
     if (this._clearFilterTriggered) {
       this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
-      this.$filterElm.removeClass('filled');
+      this._filterElm.classList.remove('filled');
     } else {
       const eventType = event?.type ?? '';
-      let value = event?.target?.value ?? '';
+      let value = (event?.target as HTMLInputElement)?.value ?? '';
       const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
       if (typeof value === 'string' && enableWhiteSpaceTrim) {
         value = value.trim();
       }
-      value === '' ? this.$filterElm.removeClass('filled') : this.$filterElm.addClass('filled');
+      value === '' ? this._filterElm.classList.remove('filled') : this._filterElm.classList.add('filled');
       const callbackArgs = { columnDef: this.columnDef, operator: this.operator, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery };
-      const typingDelay = (eventType === 'keyup' && event?.key !== 'Enter') ? this._debounceTypingDelay : 0;
+      const typingDelay = (eventType === 'keyup' && (event as KeyboardEvent)?.key !== 'Enter') ? this._debounceTypingDelay : 0;
 
       if (typingDelay > 0) {
         clearTimeout(this._timer as NodeJS.Timeout);
