@@ -31,7 +31,6 @@ import {
   Subscription,
 
   // extensions
-  AutoTooltipExtension,
   CheckboxSelectorExtension,
   CellExternalCopyManagerExtension,
   CellMenuExtension,
@@ -358,7 +357,6 @@ export class SlickVanillaGridBundle {
     this.paginationService = services?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService, this.backendUtilityService);
 
     // extensions
-    const autoTooltipExtension = new AutoTooltipExtension(this.sharedService);
     const cellExternalCopyManagerExtension = new CellExternalCopyManagerExtension(this.extensionUtility, this.sharedService);
     const cellMenuExtension = new CellMenuExtension(this.extensionUtility, this.sharedService, this.translaterService);
     const contextMenuExtension = new ContextMenuExtension(this.extensionUtility, this.sharedService, this.treeDataService, this.translaterService);
@@ -374,7 +372,6 @@ export class SlickVanillaGridBundle {
     const rowSelectionExtension = new RowSelectionExtension(this.sharedService);
 
     this.extensionService = services?.extensionService ?? new ExtensionService(
-      autoTooltipExtension,
       cellExternalCopyManagerExtension,
       cellMenuExtension,
       checkboxExtension,

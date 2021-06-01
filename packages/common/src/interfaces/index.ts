@@ -126,7 +126,6 @@ export * from './searchColumnFilter.interface';
 export * from './selectOption.interface';
 export * from './servicePagination.interface';
 export * from './singleColumnSort.interface';
-export * from './slickAutoTooltips.interface';
 export * from './slickCellExternalCopyManager.interface';
 export * from './slickCellMenu.interface';
 export * from './slickCellRangeDecorator.interface';

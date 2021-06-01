@@ -342,6 +342,7 @@ export class Example4 {
       autoResize: {
         container: '.demo-container',
       },
+      enableAutoTooltip: true,
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableCellNavigation: true,

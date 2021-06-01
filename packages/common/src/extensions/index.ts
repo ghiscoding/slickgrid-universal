@@ -1,4 +1,3 @@
-export * from './autoTooltipExtension';
 export * from './cellExternalCopyManagerExtension';
 export * from './cellMenuExtension';
 export * from './checkboxSelectorExtension';

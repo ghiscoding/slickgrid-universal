@@ -1,5 +1,4 @@
 import {
-  SlickAutoTooltips,
   SlickCellExternalCopyManager,
   SlickCellMenu,
   SlickCellRangeDecorator,
@@ -16,9 +15,10 @@ import {
   SlickRowMoveManager,
   SlickRowSelectionModel,
 } from '../interfaces/index';
+import { AutoTooltipsPlugin } from '../plugins/index';
 
 export type SlickPluginList =
-  SlickAutoTooltips |
+  AutoTooltipsPlugin |
   SlickCellExternalCopyManager |
   SlickCellMenu |
   SlickCellRangeDecorator |

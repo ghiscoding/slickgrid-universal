@@ -1,7 +1,6 @@
 import { ExtensionName } from '../../enums/index';
 import { Column, ExtensionModel, GridOption, SlickGrid, SlickHeaderMenu } from '../../interfaces/index';
 import {
-  AutoTooltipExtension,
   CellExternalCopyManagerExtension,
   CellMenuExtension,
   CheckboxSelectorExtension,
@@ -18,6 +17,7 @@ import {
 } from '../../extensions';
 import { ExtensionService, SharedService } from '..';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { AutoTooltipsPlugin } from '../../plugins/index';
 
 jest.mock('flatpickr', () => { });
 
@@ -79,7 +79,6 @@ describe('ExtensionService', () => {
 
       service = new ExtensionService(
         // extensions
-        extensionStub as unknown as AutoTooltipExtension,
         extensionStub as unknown as CellExternalCopyManagerExtension,
         extensionCellMenuStub as unknown as CellMenuExtension,
         extensionStub as unknown as CheckboxSelectorExtension,
@@ -201,15 +200,15 @@ describe('ExtensionService', () => {
 
       it('should register the AutoTooltip addon when "enableAutoTooltip" is set in the grid options', () => {
         const gridOptionsMock = { enableAutoTooltip: true } as GridOption;
-        const extSpy = jest.spyOn(extensionStub, 'register').mockReturnValue(instanceMock);
-        const gridSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+        const extSpy = jest.spyOn(gridStub, 'registerPlugin');
+        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
         const output = service.getExtensionByName(ExtensionName.autoTooltip);
 
-        expect(gridSpy).toHaveBeenCalled();
         expect(extSpy).toHaveBeenCalled();
-        expect(output).toEqual({ name: ExtensionName.autoTooltip, instance: instanceMock as unknown, class: extensionStub } as ExtensionModel<any, any>);
+        expect(output).toEqual({ name: ExtensionName.autoTooltip, instance: expect.anything(), class: {} } as ExtensionModel<any, any>);
+        expect(output.instance instanceof AutoTooltipsPlugin).toBeTrue();
       });
 
       it('should register the ColumnPicker addon when "enableColumnPicker" is set in the grid options', () => {
@@ -700,7 +699,6 @@ describe('ExtensionService', () => {
       translateService = undefined as any;
       service = new ExtensionService(
         // extensions
-        extensionStub as unknown as AutoTooltipExtension,
         extensionStub as unknown as CellExternalCopyManagerExtension,
         extensionStub as unknown as CellMenuExtension,
         extensionStub as unknown as CheckboxSelectorExtension,

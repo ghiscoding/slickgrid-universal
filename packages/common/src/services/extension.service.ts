@@ -6,7 +6,6 @@ import 'slickgrid/plugins/slick.cellselectionmodel';
 import { Column, Extension, ExtensionModel, GridOption, SlickRowSelectionModel, } from '../interfaces/index';
 import { ExtensionList, ExtensionName, SlickControlList, SlickPluginList } from '../enums/index';
 import {
-  AutoTooltipExtension,
   CellExternalCopyManagerExtension,
   CellMenuExtension,
   CheckboxSelectorExtension,
@@ -23,6 +22,7 @@ import {
 } from '../extensions/index';
 import { SharedService } from './shared.service';
 import { TranslaterService } from './translater.service';
+import { AutoTooltipsPlugin } from '../plugins/index';
 
 export class ExtensionService {
   private _extensionCreatedList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
@@ -33,7 +33,6 @@ export class ExtensionService {
   }
 
   constructor(
-    private readonly autoTooltipExtension: AutoTooltipExtension,
     private readonly cellExternalCopyExtension: CellExternalCopyManagerExtension,
     private readonly cellMenuExtension: CellMenuExtension,
     private readonly checkboxSelectorExtension: CheckboxSelectorExtension,
@@ -121,10 +120,11 @@ export class ExtensionService {
       }
 
       // Auto Tooltip Plugin
-      if (this.sharedService.gridOptions.enableAutoTooltip && this.autoTooltipExtension && this.autoTooltipExtension.register) {
-        const instance = this.autoTooltipExtension.register();
+      if (this.sharedService.gridOptions.enableAutoTooltip) {
+        const instance = new AutoTooltipsPlugin();
         if (instance) {
-          this._extensionList[ExtensionName.autoTooltip] = { name: ExtensionName.autoTooltip, class: this.autoTooltipExtension, instance };
+          this.sharedService.slickGrid.registerPlugin<AutoTooltipsPlugin>(instance);
+          this._extensionList[ExtensionName.autoTooltip] = { name: ExtensionName.autoTooltip, class: {}, instance };
         }
       }
 
