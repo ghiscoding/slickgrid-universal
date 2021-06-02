@@ -98,7 +98,7 @@ describe('SelectFilter', () => {
       mockColumn.filter!.collection = [{ hello: 'world' }];
       filter.init(filterArguments);
     } catch (e) {
-      expect(e.message).toContain(`[select-filter] A collection with value/label (or value/labelKey when using Locale) is required to populate the Select list`);
+      expect(e.message).toContain(`[Slickgrid-Universal] Select Filter/Editor collection with value/label (or value/labelKey when using Locale) is required to populate the Select list`);
       done();
     }
   });

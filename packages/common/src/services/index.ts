@@ -2,6 +2,7 @@ export * from './backendUtility.service';
 export * from './bindingEvent.service';
 export * from './collection.service';
 export * from './container.service';
+export * from './domUtilities';
 export * from './excelExport.service';
 export * from './extension.service';
 export * from './filter.service';
