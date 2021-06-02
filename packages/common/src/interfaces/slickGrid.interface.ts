@@ -339,7 +339,7 @@ export interface SlickGrid {
    * Apply Columns Widths in the UI and optionally invalidate & re-render the columns when specified
    * @param {Boolean} shouldReRender - should we invalidate and re-render the grid?
    */
-  reRenderColumns(shouldReRender: boolean): void;
+  reRenderColumns(shouldReRender?: boolean): void;
 
   /**  Resets active cell. */
   resetActiveCell(): void;
