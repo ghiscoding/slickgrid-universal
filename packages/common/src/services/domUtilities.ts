@@ -81,7 +81,7 @@ export function buildSelectEditorOrFilterDomElement(type: 'editor' | 'filter', c
         // also translate prefix/suffix if enableTranslateLabel is true and text is a string
         prefixText = (enableTranslateLabel && translaterService && prefixText && typeof prefixText === 'string') ? translaterService.translate(prefixText || ' ') : prefixText;
         suffixText = (enableTranslateLabel && translaterService && suffixText && typeof suffixText === 'string') ? translaterService.translate(suffixText || ' ') : suffixText;
-        selectOptionLabel = (enableTranslateLabel && translaterService && optionLabel && typeof optionLabel === 'string') ? translaterService.translate(optionLabel || ' ') : optionLabel;
+        selectOptionLabel = (enableTranslateLabel && translaterService && selectOptionLabel && typeof selectOptionLabel === 'string') ? translaterService.translate(selectOptionLabel || ' ') : selectOptionLabel;
 
         // add to a temp array for joining purpose and filter out empty text
         const tmpOptionArray = [prefixText, (typeof labelText === 'string' || typeof labelText === 'number') ? labelText.toString() : labelText, suffixText].filter((text) => text);
@@ -109,7 +109,7 @@ export function buildSelectEditorOrFilterDomElement(type: 'editor' | 'filter', c
           selectOptionElm.selected = (searchTerms.findIndex(term => `${term}` === `${option[valueName]}`) >= 0); // when filter search term is found then select it in dropdown
         }
         selectOptionElm.value = `${selectOptionValue}`;
-        selectOptionElm.label = selectOptionLabel;
+        selectOptionElm.label = `${selectOptionLabel ?? ''}`;
         selectOptionsFragment.appendChild(selectOptionElm);
 
         // if there's a search term, we will add the "filled" class for styling purposes
