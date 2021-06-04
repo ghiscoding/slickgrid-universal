@@ -1,5 +1,4 @@
 import { RowMoveManagerExtension } from '../rowMoveManagerExtension';
-import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { Column, GridOption, RowMoveManager, SlickGrid, SlickNamespace, SlickRowMoveManager } from '../../interfaces/index';
@@ -33,7 +32,6 @@ describe('rowMoveManagerExtension', () => {
   jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockSelectionModel);
   Slick.RowSelectionModel = mockSelectionModel;
 
-  let extensionUtility: ExtensionUtility;
   let sharedService: SharedService;
   let translateService: TranslateServiceStub;
   let extension: RowMoveManagerExtension;
@@ -52,7 +50,6 @@ describe('rowMoveManagerExtension', () => {
   beforeEach(() => {
     sharedService = new SharedService();
     translateService = new TranslateServiceStub();
-    extensionUtility = new ExtensionUtility(sharedService, translateService);
     extension = new RowMoveManagerExtension(sharedService);
   });
 
@@ -234,6 +231,28 @@ describe('rowMoveManagerExtension', () => {
         expect.anything()
       );
       expect(onBeforeSpy).toHaveBeenCalledWith(expect.anything(), { insertBefore: 3, rows: [1], grid: gridStub });
+      expect(onBeforeSpy).toHaveReturnedWith(undefined);
+      expect(onMoveSpy).not.toHaveBeenCalled();
+    });
+
+    it('should call internal event handler subscribe and expect the "onBeforeMoveRows" option to be called AND have returned with a boolean when original callbacks returns a boolean', () => {
+      const handlerSpy = jest.spyOn(extension.eventHandler, 'subscribe');
+      gridOptionsMock.rowMoveManager.onBeforeMoveRows = () => false;
+      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+      const onBeforeSpy = jest.spyOn(SharedService.prototype.gridOptions.rowMoveManager as RowMoveManager, 'onBeforeMoveRows');
+      const onMoveSpy = jest.spyOn(SharedService.prototype.gridOptions.rowMoveManager as RowMoveManager, 'onMoveRows');
+
+      const instance = extension.create(columnsMock, gridOptionsMock) as SlickRowMoveManager;
+      extension.register();
+      instance.onBeforeMoveRows.notify({ insertBefore: 3, rows: [1], grid: gridStub }, new Slick.EventData(), gridStub);
+
+      expect(handlerSpy).toHaveBeenCalledTimes(2);
+      expect(handlerSpy).toHaveBeenCalledWith(
+        { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
+        expect.anything()
+      );
+      expect(onBeforeSpy).toHaveBeenCalledWith(expect.anything(), { insertBefore: 3, rows: [1], grid: gridStub });
+      expect(onBeforeSpy).toHaveReturnedWith(false);
       expect(onMoveSpy).not.toHaveBeenCalled();
     });
 
