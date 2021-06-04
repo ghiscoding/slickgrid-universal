@@ -112,7 +112,7 @@ export class RowMoveManagerExtension implements Extension {
         if (onBeforeMoveRowsHandler) {
           (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeMoveRowsHandler>>).subscribe(onBeforeMoveRowsHandler, (e, args) => {
             if (this.sharedService.gridOptions.rowMoveManager && typeof this.sharedService.gridOptions.rowMoveManager.onBeforeMoveRows === 'function') {
-              this.sharedService.gridOptions.rowMoveManager.onBeforeMoveRows(e, args);
+              return this.sharedService.gridOptions.rowMoveManager.onBeforeMoveRows(e, args);
             }
           });
         }

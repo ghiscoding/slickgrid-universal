@@ -297,10 +297,10 @@ export class Example7 {
     return collection.sort((item1, item2) => item1.value - item2.value);
   }
 
-  onBeforeMoveRow(e: Event, data: any) {
-    for (let i = 0; i < data.rows.length; i++) {
+  onBeforeMoveRow(e: Event, data: { rows: number[]; insertBefore: number; }) {
+    for (const rowIdx of data.rows) {
       // no point in moving before or after itself
-      if (data.rows[i] === data.insertBefore || data.rows[i] === data.insertBefore - 1) {
+      if (rowIdx === data.insertBefore || rowIdx === data.insertBefore - 1) {
         e.stopPropagation();
         return false;
       }
