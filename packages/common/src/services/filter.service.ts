@@ -518,21 +518,23 @@ export class FilterService {
    * This will then be passed to the DataView setFilter(customLocalFilter), which will itself loop through the list of IDs and display/hide the row if found that array of IDs
    * We do this in 2 steps so that we can still use the DataSet setFilter()
    */
-  preFilterTreeData(inputArray: any[], columnFilters: ColumnFilters) {
+  preFilterTreeData(inputItems: any[], columnFilters: ColumnFilters) {
     const treeDataOptions = this._gridOptions?.treeDataOptions;
+    const collapsedPropName = treeDataOptions?.collapsedPropName ?? '__collapsed';
     const parentPropName = treeDataOptions?.parentPropName ?? '__parentId';
     const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
+    const treeCollapsedParents = this._gridOptions.presets?.treeCollapsedParents;
 
     const treeObj = {};
     const filteredChildrenAndParents: any[] = [];
 
-    if (Array.isArray(inputArray)) {
-      for (let i = 0; i < inputArray.length; i++) {
-        (treeObj as any)[inputArray[i][dataViewIdIdentifier]] = inputArray[i];
+    if (Array.isArray(inputItems)) {
+      for (let i = 0; i < inputItems.length; i++) {
+        (treeObj as any)[inputItems[i][dataViewIdIdentifier]] = inputItems[i];
         // as the filtered data is then used again as each subsequent letter
         // we need to delete the .__used property, otherwise the logic below
         // in the while loop (which checks for parents) doesn't work:
-        delete (treeObj as any)[inputArray[i][dataViewIdIdentifier]].__used;
+        delete (treeObj as any)[inputItems[i][dataViewIdIdentifier]].__used;
       }
 
       // Step 1. prepare search filter by getting their parsed value(s), for example if it's a date filter then parse it to a Moment object
@@ -553,8 +555,8 @@ export class FilterService {
       }
 
       // Step 2. loop through every item data context to execute filter condition check
-      for (let i = 0; i < inputArray.length; i++) {
-        const item = inputArray[i];
+      for (let i = 0; i < inputItems.length; i++) {
+        const item = inputItems[i];
         let matchFilter = true; // valid until proven otherwise
 
         // loop through all column filters and execute filter condition(s)
@@ -588,10 +590,19 @@ export class FilterService {
             (treeObj as any)[parent[dataViewIdIdentifier]].__used = true;
             // try to find parent of the current parent, if exists:
             parent = (treeObj as any)[parent[parentPropName]] || false;
+
+            // if there are any presets of collapsed parents, let's processed them
+            if (Array.isArray(treeCollapsedParents)) {
+              if (treeCollapsedParents.some(collapsedItem => collapsedItem.parentId === parent.id && collapsedItem.isCollapsed)) {
+                parent[collapsedPropName] = true;
+              }
+            }
           }
         }
+
       }
     }
+
     return filteredChildrenAndParents;
   }
 

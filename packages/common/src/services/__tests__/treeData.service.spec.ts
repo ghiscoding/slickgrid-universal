@@ -259,7 +259,7 @@ describe('TreeData Service', () => {
         await service.toggleTreeDataCollapse(true);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeToggleTreeCollapse`, { collapsing: true });
-        expect(pubSubSpy).toHaveBeenCalledWith(`onToggleTreeCollapsed`, { collapsing: true });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onTreeToggleAllRequested`, { collapsing: true });
         expect(dataGetItemsSpy).toHaveBeenCalled();
         expect(dataSetItemsSpy).toHaveBeenCalledWith([
           { __collapsed: true, file: 'myFile.txt', size: 0.5, },
@@ -277,7 +277,7 @@ describe('TreeData Service', () => {
         await service.toggleTreeDataCollapse(true);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeToggleTreeCollapse`, { collapsing: true });
-        expect(pubSubSpy).toHaveBeenCalledWith(`onToggleTreeCollapsed`, { collapsing: true });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onTreeToggleAllRequested`, { collapsing: true });
         expect(dataGetItemsSpy).toHaveBeenCalled();
         expect(dataSetItemsSpy).toHaveBeenCalledWith([
           { customCollapsed: true, file: 'myFile.txt', size: 0.5, },
@@ -294,7 +294,7 @@ describe('TreeData Service', () => {
         await service.toggleTreeDataCollapse(false);
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeToggleTreeCollapse`, { collapsing: false });
-        expect(pubSubSpy).toHaveBeenCalledWith(`onToggleTreeCollapsed`, { collapsing: false });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onTreeToggleAllRequested`, { collapsing: false });
         expect(dataGetItemsSpy).toHaveBeenCalled();
         expect(dataSetItemsSpy).toHaveBeenCalledWith([
           { __collapsed: false, file: 'myFile.txt', size: 0.5, },

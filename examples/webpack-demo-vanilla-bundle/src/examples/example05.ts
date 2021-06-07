@@ -22,6 +22,8 @@ export class Example5 {
   sgb: SlickVanillaGridBundle;
   loadingClass = '';
   isLargeDataset = false;
+  hasNoExpandCollapseChanged = true;
+  collapsedTreeItems: { parentId: number | string; isCollapsed: boolean; }[] = [];
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -44,7 +46,14 @@ export class Example5 {
     this._bindingEventService.bind(gridContainerElm, 'onbeforesortchange', this.showSpinner.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onsortchanged', this.hideSpinner.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onbeforetoggletreecollapse', this.showSpinner.bind(this));
-    this._bindingEventService.bind(gridContainerElm, 'ontoggletreecollapsed', this.hideSpinner.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'ontreetoggleallrequested', this.hideSpinner.bind(this));
+    // @ts-ignore
+    this._bindingEventService.bind(gridContainerElm, 'onTreeToggleStageChanged', (e: CustomEvent) => {
+      this.hasNoExpandCollapseChanged = false;
+      const treeToggleExecution = e.detail;
+      this.collapsedTreeItems = treeToggleExecution.treeChanges;
+      console.log('onTreeCollapseChanged', treeToggleExecution);
+    });
   }
 
   dispose() {
@@ -142,7 +151,9 @@ export class Example5 {
       },
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
       presets: {
-        filters: [{ columnId: 'percentComplete', searchTerms: [25], operator: '>=' }]
+        filters: [{ columnId: 'percentComplete', searchTerms: [25], operator: '>=' }],
+        // @ts-ignore
+        treeCollapsedParents: [{ parentId: 12, isCollapsed: true }],
       },
       // if you're dealing with lots of data, it is recommended to use the filter debounce
       filterTypingDebounce: 250,
@@ -190,6 +201,21 @@ export class Example5 {
 
   dynamicallyChangeFilter() {
     this.sgb.filterService.updateFilters([{ columnId: 'percentComplete', operator: '<', searchTerms: [40] }]);
+  }
+
+  reapplyCollapsedItems() {
+    // const collapsedItems = Object.keys(this.collapsedTreeItems);
+    const collapsedItems = this.collapsedTreeItems.filter(item => item.isCollapsed);
+    if (Array.isArray(collapsedItems)) {
+      this.sgb.dataView.beginUpdate(true);
+      for (const collapsedItem of collapsedItems) {
+        if (collapsedItem) {
+          this.sgb.dataView.updateItem(collapsedItem.parentId, { ...this.sgb.dataView.getItemById(collapsedItem.parentId), __collapsed: collapsedItem.isCollapsed });
+        }
+      }
+      this.sgb.dataView.endUpdate();
+      this.sgb.dataView.refresh();
+    }
   }
 
   logHierarchicalStructure() {

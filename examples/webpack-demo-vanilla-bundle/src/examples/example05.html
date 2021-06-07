@@ -42,6 +42,11 @@
         <span class="icon mdi mdi-arrow-expand"></span>
         <span>Expand All</span>
       </button>
+      <button onclick.delegate="reapplyCollapsedItems()" data-test="reapply-collapsing-btn" class="button is-small"
+              disabled.bind="hasNoExpandCollapseChanged">
+        <span class="icon mdi mdi-history"></span>
+        <span>Re-Apply Previous Expanded/Collapsed Items</span>
+      </button>
       <button onclick.delegate="logFlatStructure()" class="button is-small">
         <span>Log Flat Structure</span>
       </button>

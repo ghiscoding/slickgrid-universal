@@ -18,4 +18,7 @@ export interface GridState {
 
   /** Row Selections (by their dataContext IDs and/or grid row indexes) */
   rowSelection?: CurrentRowSelection | null;
+
+  /** Tree Data with optional collapsed parents array */
+  treeCollapsedParents?: { parentId: number | string; isCollapsed: boolean; }[] | null;
 }

@@ -8,6 +8,7 @@ import { SortService } from './sort.service';
 declare const Slick: SlickNamespace;
 
 export class TreeDataService {
+  private _collapsedTreeItems: { parentId: number | string; isCollapsed: boolean; }[] = [];
   private _grid!: SlickGrid;
   private _eventHandler: SlickEventHandler;
 
@@ -131,8 +132,17 @@ export class TreeDataService {
         if (hasToggleClass) {
           const item = this.dataView.getItem(args.row);
           if (item) {
-            item[collapsedPropName] = !item[collapsedPropName] ? true : false;
-            this.dataView.updateItem(item[idPropName], item);
+            item[collapsedPropName] = !item[collapsedPropName] ? true : false; // toggle the collapsed flag
+            const isCollapsed = item[collapsedPropName];
+            const parentId = item[idPropName];
+            const parentFoundIdx = this._collapsedTreeItems.findIndex(treeChange => treeChange.parentId === parentId);
+            if (parentFoundIdx >= 0) {
+              this._collapsedTreeItems[parentFoundIdx].isCollapsed = isCollapsed;
+            } else {
+              this._collapsedTreeItems.push({ parentId, isCollapsed });
+            }
+            this.pubSubService.publish('onTreeToggleStageChanged', { fromParentId: parentId, treeChanges: this._collapsedTreeItems });
+            this.dataView.updateItem(parentId, item);
             this._grid.invalidate();
           }
           event.stopImmediatePropagation();
@@ -168,7 +178,7 @@ export class TreeDataService {
       }
     }
 
-    this.pubSubService.publish('onToggleTreeCollapsed', { collapsing });
+    this.pubSubService.publish('onTreeToggleAllRequested', { collapsing });
     return true;
   }
 }
