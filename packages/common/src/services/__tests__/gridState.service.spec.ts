@@ -24,8 +24,10 @@ import {
   SlickGrid,
   SlickNamespace,
   SlickRowSelectionModel,
+  TreeToggleStateChange,
 } from '../../interfaces/index';
 import { SharedService } from '../shared.service';
+import { TreeDataService } from '../treeData.service';
 
 declare const Slick: SlickNamespace;
 
@@ -87,6 +89,10 @@ const filterServiceStub = {
 const sortServiceStub = {
 } as SortService;
 
+const treeDataServiceStub = {
+  getCurrentToggleState: jest.fn(),
+} as unknown as TreeDataService;
+
 const rowSelectionModelStub = {
   pluginName: 'RowSelectionModel',
   constructor: jest.fn(),
@@ -105,7 +111,7 @@ describe('GridStateService', () => {
 
   beforeEach(() => {
     sharedService = new SharedService();
-    service = new GridStateService(extensionServiceStub, filterServiceStub, mockPubSub, sharedService, sortServiceStub);
+    service = new GridStateService(extensionServiceStub, filterServiceStub, mockPubSub, sharedService, sortServiceStub, treeDataServiceStub);
     service.init(gridStub);
     jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
   });
@@ -137,7 +143,7 @@ describe('GridStateService', () => {
       jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
 
       expect(gridStateSpy).toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenCalledTimes(5);
+      expect(pubSubSpy).toHaveBeenCalledTimes(7);
       // expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onFilterChanged`, () => { });
     });
 
@@ -394,6 +400,10 @@ describe('GridStateService', () => {
   });
 
   describe('getCurrentPagination method', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
     it('should call "getCurrentPagination" and return null when no BackendService is used', () => {
       const output = service.getCurrentPagination();
       expect(output).toBeNull();
@@ -426,18 +436,21 @@ describe('GridStateService', () => {
     });
 
     it('should call "getCurrentGridState" method and return Pagination', () => {
-      const gridOptionsMock = { enablePagination: true, frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as GridOption;
+      const gridOptionsMock = { enablePagination: true, frozenBottom: false, frozenColumn: -1, frozenRow: -1, enableTreeData: true, } as GridOption;
       const paginationMock = { pageNumber: 2, pageSize: 50 } as CurrentPagination;
       const columnMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
       const filterMock = [{ columnId: 'field1', operator: 'EQ', searchTerms: [] }] as CurrentFilter[];
       const sorterMock = [{ columnId: 'field1', direction: 'ASC' }, { columnId: 'field2', direction: 'DESC' }] as CurrentSorter[];
       const pinningMock = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as CurrentPinning;
+      const treeDataMock = { type: 'full-expand', previousFullToggleType: 'full-expand', toggledItems: null } as TreeToggleStateChange;
 
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       const columnSpy = jest.spyOn(service, 'getCurrentColumns').mockReturnValue(columnMock);
       const filterSpy = jest.spyOn(service, 'getCurrentFilters').mockReturnValue(filterMock);
       const sorterSpy = jest.spyOn(service, 'getCurrentSorters').mockReturnValue(sorterMock);
       const paginationSpy = jest.spyOn(service, 'getCurrentPagination').mockReturnValue(paginationMock);
+      const treeDataSpy = jest.spyOn(service, 'getCurrentTreeDataToggleState').mockReturnValue(treeDataMock);
 
       const output = service.getCurrentGridState();
 
@@ -445,7 +458,8 @@ describe('GridStateService', () => {
       expect(filterSpy).toHaveBeenCalled();
       expect(sorterSpy).toHaveBeenCalled();
       expect(paginationSpy).toHaveBeenCalled();
-      expect(output).toEqual({ columns: columnMock, filters: filterMock, sorters: sorterMock, pagination: paginationMock, pinning: pinningMock, } as GridState);
+      expect(treeDataSpy).toHaveBeenCalled();
+      expect(output).toEqual({ columns: columnMock, filters: filterMock, sorters: sorterMock, pagination: paginationMock, pinning: pinningMock, treeData: treeDataMock } as GridState);
     });
   });
 
@@ -845,6 +859,32 @@ describe('GridStateService', () => {
     });
   });
 
+  describe('getCurrentTreeDataToggleState method', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should return null when Tree Data is not enabled', () => {
+      const gridSpy = jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableTreeData: false });
+
+      const output = service.getCurrentTreeDataToggleState();
+
+      expect(gridSpy).toHaveBeenCalled();
+      expect(output).toBeNull();
+    });
+
+    it('should expect Tree Data "getCurrentTreeDataToggleState" method to be called', () => {
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableTreeData: true });
+      const treeDataMock = { type: 'full-expand', previousFullToggleType: 'full-expand', toggledItems: null } as TreeToggleStateChange;
+      const getToggleSpy = jest.spyOn(treeDataServiceStub, 'getCurrentToggleState').mockReturnValue(treeDataMock);
+
+      const output = service.getCurrentTreeDataToggleState();
+
+      expect(getToggleSpy).toHaveBeenCalled();
+      expect(output).toEqual(treeDataMock);
+    });
+  });
+
   describe('getCurrentFilters method', () => {
     afterEach(() => {
       gridStub.getOptions = () => gridOptionMock;
@@ -1128,6 +1168,32 @@ describe('GridStateService', () => {
 
       expect(getCurGridStateSpy).toHaveBeenCalled();
       expect(getAssocCurColSpy).toHaveBeenCalled();
+      expect(pubSubSpy).toHaveBeenCalledWith(`onGridStateChanged`, stateChangeMock);
+    });
+
+    it('should trigger a "onGridStateChanged" event when "onTreeItemToggled" is triggered', () => {
+      const toggleChangeMock = { type: 'toggle-expand', fromItemId: 2, previousFullToggleType: 'full-collapse', toggledItems: [{ itemId: 2, isCollapsed: true }] } as TreeToggleStateChange;
+      const gridStateMock = { columns: [], filters: [], sorters: [], treeData: toggleChangeMock } as GridState;
+      const stateChangeMock = { change: { newValues: toggleChangeMock, type: GridStateType.treeData }, gridState: gridStateMock } as GridStateChange;
+      const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
+      const getCurGridStateSpy = jest.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
+
+      fnCallbacks['onTreeItemToggled'](toggleChangeMock);
+
+      expect(getCurGridStateSpy).toHaveBeenCalled();
+      expect(pubSubSpy).toHaveBeenCalledWith(`onGridStateChanged`, stateChangeMock);
+    });
+
+    it('should trigger a "onGridStateChanged" event when "onTreeFullToggleEnd" is triggered', () => {
+      const toggleChangeMock = { type: 'full-expand', previousFullToggleType: 'full-expand', toggledItems: null } as TreeToggleStateChange;
+      const gridStateMock = { columns: [], filters: [], sorters: [], treeData: toggleChangeMock } as GridState;
+      const stateChangeMock = { change: { newValues: toggleChangeMock, type: GridStateType.treeData }, gridState: gridStateMock } as GridStateChange;
+      const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
+      const getCurGridStateSpy = jest.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
+
+      fnCallbacks['onTreeFullToggleEnd'](toggleChangeMock);
+
+      expect(getCurGridStateSpy).toHaveBeenCalled();
       expect(pubSubSpy).toHaveBeenCalledWith(`onGridStateChanged`, stateChangeMock);
     });
   });

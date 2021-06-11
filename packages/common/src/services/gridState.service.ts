@@ -19,12 +19,14 @@ import {
   SlickEventHandler,
   SlickGrid,
   SlickNamespace,
+  TreeToggleStateChange,
 } from '../interfaces/index';
 import { ExtensionService } from './extension.service';
 import { FilterService } from './filter.service';
+import { PubSubService } from './pubSub.service';
 import { SharedService } from './shared.service';
 import { SortService } from './sort.service';
-import { PubSubService } from './pubSub.service';
+import { TreeDataService } from './treeData.service';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -40,21 +42,22 @@ export class GridStateService {
   private _wasRecheckedAfterPageChange = true; // used with row selection & pagination
 
   constructor(
-    private extensionService: ExtensionService,
-    private filterService: FilterService,
-    private pubSubService: PubSubService,
-    private sharedService: SharedService,
-    private sortService: SortService
+    private readonly extensionService: ExtensionService,
+    private readonly filterService: FilterService,
+    private readonly pubSubService: PubSubService,
+    private readonly sharedService: SharedService,
+    private readonly sortService: SortService,
+    private readonly treeDataService: TreeDataService,
   ) { }
 
   /** Getter of SlickGrid DataView object */
   get _dataView(): SlickDataView {
-    return (this._grid?.getData && this._grid.getData()) as SlickDataView;
+    return this._grid?.getData?.() ?? {} as SlickDataView;
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
   private get _gridOptions(): GridOption {
-    return (this._grid?.getOptions) ? this._grid.getOptions() : {};
+    return this._grid?.getOptions?.() ?? {};
   }
 
   private get datasetIdPropName(): string {
@@ -149,15 +152,25 @@ export class GridStateService {
       pinning: { frozenColumn, frozenRow, frozenBottom },
     };
 
+    // optional Pagination
     const currentPagination = this.getCurrentPagination();
     if (currentPagination) {
       gridState.pagination = currentPagination;
     }
 
+    // optional Row Selection
     if (this.hasRowSelectionEnabled()) {
       const currentRowSelection = this.getCurrentRowSelections(args?.requestRefreshRowFilteredRow);
       if (currentRowSelection) {
         gridState.rowSelection = currentRowSelection;
+      }
+    }
+
+    // optional Tree Data toggle items
+    if (this._gridOptions?.enableTreeData) {
+      const treeDataTreeToggleState = this.getCurrentTreeDataToggleState();
+      if (treeDataTreeToggleState) {
+        gridState.treeData = treeDataTreeToggleState;
       }
     }
 
@@ -241,7 +254,7 @@ export class GridStateService {
    * @return current filters
    */
   getCurrentFilters(): CurrentFilter[] | null {
-    if (this._gridOptions && this._gridOptions.backendServiceApi) {
+    if (this._gridOptions?.backendServiceApi) {
       const backendService = this._gridOptions.backendServiceApi.service;
       if (backendService?.getCurrentFilters) {
         return backendService.getCurrentFilters() as CurrentFilter[];
@@ -305,6 +318,17 @@ export class GridStateService {
       }
     } else if (this.sortService?.getCurrentLocalSorters) {
       return this.sortService.getCurrentLocalSorters();
+    }
+    return null;
+  }
+
+  /**
+   * Get the current list of Tree Data item(s) that got toggled in the grid
+   * @returns {Array<TreeToggledItem>} treeDataToggledItems - items that were toggled (array of `parentId` and `isCollapsed` flag)
+   */
+  getCurrentTreeDataToggleState(): Omit<TreeToggleStateChange, 'fromItemId'> | null {
+    if (this._gridOptions?.enableTreeData && this.treeDataService) {
+      return this.treeDataService.getCurrentToggleState();
     }
     return null;
   }
@@ -419,6 +443,20 @@ export class GridStateService {
       this.pubSubService.subscribe('onHeaderMenuHideColumns', (visibleColumns: Column[]) => {
         const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(visibleColumns);
         this.pubSubService.publish('onGridStateChanged', { change: { newValues: currentColumns, type: GridStateType.columns }, gridState: this.getCurrentGridState() });
+      })
+    );
+
+    // subscribe to Tree Data toggle items changes
+    this._subscriptions.push(
+      this.pubSubService.subscribe('onTreeItemToggled', (toggleChange: TreeToggleStateChange) => {
+        this.pubSubService.publish('onGridStateChanged', { change: { newValues: toggleChange, type: GridStateType.treeData }, gridState: this.getCurrentGridState() });
+      })
+    );
+
+    // subscribe to Tree Data full tree toggle changes
+    this._subscriptions.push(
+      this.pubSubService.subscribe('onTreeFullToggleEnd', (toggleChange: TreeToggleStateChange) => {
+        this.pubSubService.publish('onGridStateChanged', { change: { newValues: toggleChange, type: GridStateType.treeData }, gridState: this.getCurrentGridState() });
       })
     );
   }

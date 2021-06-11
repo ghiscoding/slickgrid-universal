@@ -22,3 +22,4 @@ export * from './slickPluginList.enum';
 export * from './sortDirection.enum';
 export * from './sortDirectionString.type';
 export * from './sortDirectionNumber.enum';
+export * from './toggleStateChangeType';

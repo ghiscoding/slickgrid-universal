@@ -5,6 +5,10 @@ import {
   Filters,
   Formatters,
   GridOption,
+  GridStateChange,
+  GridStateType,
+  TreeToggledItem,
+  TreeToggleStateChange,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -23,7 +27,7 @@ export class Example5 {
   loadingClass = '';
   isLargeDataset = false;
   hasNoExpandCollapseChanged = true;
-  collapsedTreeItems: { parentId: number | string; isCollapsed: boolean; }[] = [];
+  treeToggleItems: TreeToggledItem[] = [];
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -36,7 +40,6 @@ export class Example5 {
 
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions });
     this.dataset = this.loadData(NB_ITEMS);
-    // this.sgb.dataset = this.dataset;
 
     // with large dataset you maybe want to show spinner before/after these events: sorting/filtering/collapsing/expanding
     this._bindingEventService.bind(gridContainerElm, 'onbeforefilterchange', this.showSpinner.bind(this));
@@ -45,15 +48,13 @@ export class Example5 {
     this._bindingEventService.bind(gridContainerElm, 'onfiltercleared', this.hideSpinner.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onbeforesortchange', this.showSpinner.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onsortchanged', this.hideSpinner.bind(this));
-    this._bindingEventService.bind(gridContainerElm, 'onbeforetoggletreecollapse', this.showSpinner.bind(this));
-    this._bindingEventService.bind(gridContainerElm, 'ontreetoggleallrequested', this.hideSpinner.bind(this));
-    // @ts-ignore
-    this._bindingEventService.bind(gridContainerElm, 'onTreeToggleStageChanged', (e: CustomEvent) => {
-      this.hasNoExpandCollapseChanged = false;
-      const treeToggleExecution = e.detail;
-      this.collapsedTreeItems = treeToggleExecution.treeChanges;
-      console.log('onTreeCollapseChanged', treeToggleExecution);
-    });
+
+    // keep toggled items, note that we could also get these changes via the `onGridStateChanged`
+    this._bindingEventService.bind(gridContainerElm, 'ontreefulltogglestart', this.showSpinner.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'ontreefulltoggleend', this.handleOnTreeFullToggleEnd.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'ontreeitemtoggled', this.handleOnTreeItemToggled.bind(this));
+    // or use the Grid State change event
+    // this._bindingEventService.bind(gridContainerElm, 'ongridstatechanged', this.handleOnGridStateChanged.bind(this));
   }
 
   dispose() {
@@ -133,6 +134,7 @@ export class Example5 {
         // this is optional, you can define the tree level property name that will be used for the sorting/indentation, internally it will use "__treeLevel"
         levelPropName: 'treeLevel',
         indentMarginLeft: 15,
+        initiallyCollapsed: true,
 
         // you can optionally sort by a different column and/or sort direction
         // this is the recommend approach, unless you are 100% that your original array is already sorted (in most cases it's not)
@@ -152,8 +154,6 @@ export class Example5 {
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
       presets: {
         filters: [{ columnId: 'percentComplete', searchTerms: [25], operator: '>=' }],
-        // @ts-ignore
-        treeCollapsedParents: [{ parentId: 12, isCollapsed: true }],
       },
       // if you're dealing with lots of data, it is recommended to use the filter debounce
       filterTypingDebounce: 250,
@@ -195,27 +195,16 @@ export class Example5 {
     this.sgb.treeDataService.toggleTreeDataCollapse(true);
   }
 
+  collapseAllWithoutEvent() {
+    this.sgb.treeDataService.toggleTreeDataCollapse(true, false);
+  }
+
   expandAll() {
     this.sgb.treeDataService.toggleTreeDataCollapse(false);
   }
 
   dynamicallyChangeFilter() {
     this.sgb.filterService.updateFilters([{ columnId: 'percentComplete', operator: '<', searchTerms: [40] }]);
-  }
-
-  reapplyCollapsedItems() {
-    // const collapsedItems = Object.keys(this.collapsedTreeItems);
-    const collapsedItems = this.collapsedTreeItems.filter(item => item.isCollapsed);
-    if (Array.isArray(collapsedItems)) {
-      this.sgb.dataView.beginUpdate(true);
-      for (const collapsedItem of collapsedItems) {
-        if (collapsedItem) {
-          this.sgb.dataView.updateItem(collapsedItem.parentId, { ...this.sgb.dataView.getItemById(collapsedItem.parentId), __collapsed: collapsedItem.isCollapsed });
-        }
-      }
-      this.sgb.dataView.endUpdate();
-      this.sgb.dataView.refresh();
-    }
   }
 
   logHierarchicalStructure() {
@@ -240,11 +229,25 @@ export class Example5 {
       const item = (data[i] = {});
       let parentId;
 
-      // for implementing filtering/sorting, don't go over indent of 2
-      if (Math.random() > 0.8 && i > 0 && indent < 3) {
+      /*
+        for demo & E2E testing purposes, let's make "Task 0" empty and then "Task 1" a parent that contains at least "Task 2" and "Task 3" which the latter will also contain "Task 4" (as shown below)
+        also for all other rows don't go over indent tree level depth of 2
+        Task 0
+        Task 1
+          Task 2
+          Task 3
+            Task 4
+        ...
+       */
+      if (i === 1 || i === 0) {
+        indent = 0;
+        parents.pop();
+      } if (i === 3) {
+        indent = 1;
+      } else if (i === 2 || i === 4 || (Math.random() > 0.8 && i > 0 && indent < 3 && i - 1 !== 0 && i - 1 !== 2)) { // also make sure Task 0, 2 remains empty
         indent++;
         parents.push(i - 1);
-      } else if (Math.random() < 0.3 && indent > 0) {
+      } else if ((Math.random() < 0.3 && indent > 0)) {
         indent--;
         parents.pop();
       }
@@ -268,5 +271,37 @@ export class Example5 {
       this.sgb.dataset = data;
     }
     return data;
+  }
+
+  handleOnTreeFullToggleEnd(e: CustomEvent<TreeToggleStateChange>) {
+    const treeToggleExecution = e.detail;
+    console.log('Tree Data changes', treeToggleExecution);
+    this.hideSpinner();
+  }
+
+  /** Whenever a parent is being toggled, we'll keep a reference of all of these changes so that we can reapply them whenever we want */
+  handleOnTreeItemToggled(e: CustomEvent<TreeToggleStateChange>) {
+    this.hasNoExpandCollapseChanged = false;
+    const treeToggleExecution = e.detail;
+    this.treeToggleItems = treeToggleExecution.toggledItems;
+    console.log('Tree Data changes', treeToggleExecution);
+  }
+
+  handleOnGridStateChanged(e: CustomEvent<GridStateChange>) {
+    this.hasNoExpandCollapseChanged = false;
+    const gridStateChange = e.detail;
+
+    if (gridStateChange.change.type === GridStateType.treeData) {
+      console.log('Tree Data gridStateChange', gridStateChange.gridState.treeData);
+      this.treeToggleItems = gridStateChange.gridState.treeData.toggledItems;
+    }
+  }
+
+  logTreeDataToggledItems() {
+    console.log(this.sgb.treeDataService.getToggledItems());
+  }
+
+  reapplyToggledItems() {
+    this.sgb.treeDataService.applyToggledItemStateChanges(this.treeToggleItems);
   }
 }

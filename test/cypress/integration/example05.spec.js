@@ -17,20 +17,7 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
       .each(($child, index) => expect($child.text()).to.eq(titles[index]));
   });
 
-  it('should have a Grid Preset Filter on 3rd column "% Complete" and expect all rows to be filtered as well', () => {
-    cy.get('.input-group-text.rangeOutput_percentComplete')
-      .contains('25');
-
-    cy.get('.search-filter.filter-percentComplete')
-      .find('.input-group-addon.operator select')
-      .contains('>=');
-  });
-
-  it('should collapsed all rows from "Collapse All" button', () => {
-    cy.get('[data-test=collapse-all-btn]')
-      .contains('Collapse All')
-      .click();
-
+  it('should expect all rows to be collapsed on first page load', () => {
     cy.get('.grid5')
       .find('.slick-group-toggle.expanded')
       .should('have.length', 0);
@@ -38,6 +25,15 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
     cy.get('.grid5')
       .find('.slick-group-toggle.collapsed')
       .should(($rows) => expect($rows).to.have.length.greaterThan(0));
+  });
+
+  it('should have a Grid Preset Filter on 3rd column "% Complete" and expect all rows to be filtered as well', () => {
+    cy.get('.input-group-text.rangeOutput_percentComplete')
+      .contains('25');
+
+    cy.get('.search-filter.filter-percentComplete')
+      .find('.input-group-addon.operator select')
+      .contains('>=');
   });
 
   it('should expand all rows from "Expand All" button', () => {
@@ -51,6 +47,20 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
 
     cy.get('.grid5')
       .find('.slick-group-toggle.expanded')
+      .should(($rows) => expect($rows).to.have.length.greaterThan(0));
+  });
+
+  it('should collapsed all rows from "Collapse All" button', () => {
+    cy.get('[data-test=collapse-all-btn]')
+      .contains('Collapse All')
+      .click();
+
+    cy.get('.grid5')
+      .find('.slick-group-toggle.expanded')
+      .should('have.length', 0);
+
+    cy.get('.grid5')
+      .find('.slick-group-toggle.collapsed')
       .should(($rows) => expect($rows).to.have.length.greaterThan(0));
   });
 
@@ -223,5 +233,72 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
     cy.get('.slick-tree-title')
       .get('.slick-cell')
       .contains(/^((?!Task 500).)*$/);
+  });
+
+  it('should open the Grid Menu "Clear all Filters" command', () => {
+    cy.get('.grid5')
+      .find('button.slick-gridmenu-button')
+      .trigger('click')
+      .click();
+
+    let gridUid = '';
+
+    cy.get('.grid5 .slickgrid-container')
+      .should(($grid) => {
+        const classes = $grid.prop('className').split(' ');
+        gridUid = classes.find(className => /slickgrid_.*/.test(className));
+        expect(gridUid).to.not.be.null;
+      })
+      .then(() => {
+        cy.get(`.slick-gridmenu.${gridUid}`)
+          .find('.slick-gridmenu-item:nth(0)')
+          .find('span')
+          .contains('Clear all Filters')
+          .click();
+      });
+
+    cy.get('.slick-viewport-top.slick-viewport-left')
+      .scrollTo('top');
+  });
+
+  it('should be able to open "Task 1" and "Task 3" parents', () => {
+    /*
+      we should find this structure
+      Task 0
+        Task 1
+          Task 2
+          Task 3
+            Task 4
+        ...
+    */
+    cy.get(`.grid5 [style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0)`).should('contain', 'Task 1');
+    cy.get(`.grid5 [style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
+    cy.get(`.grid5 [style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).click({ force: true });
+
+    cy.get(`.grid5 [style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(0)`).should('contain', 'Task 2');
+    cy.get(`.grid5 [style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(0)`).should('contain', 'Task 3');
+    cy.get(`.grid5 [style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
+    cy.get(`.grid5 [style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).click({ force: true });
+  });
+
+  it('should be able to click on the "Collapse All (wihout event)" button', () => {
+    cy.get('[data-test=collapse-all-noevent-btn]')
+      .contains('Collapse All (without triggering event)')
+      .click();
+  });
+
+  it('should be able to click on the "Reapply Previous Toggled Items" button and expect "Task 1" and "Task 3" parents to become open (via Grid State change) while every other parents remains collapsed', () => {
+    cy.get('[data-test=reapply-toggled-items-btn]')
+      .contains('Reapply Previous Toggled Items')
+      .click();
+
+    cy.get(`.grid5 [style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0)`).should('contain', 'Task 1');
+    cy.get(`.grid5 [style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
+
+    cy.get(`.grid5 [style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(0)`).should('contain', 'Task 2');
+    cy.get(`.grid5 [style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(0)`).should('contain', 'Task 3');
+    cy.get(`.grid5 [style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
+
+    cy.get(`.grid5 .slick-group-toggle.expanded`).should('have.length', 2);
   });
 });
