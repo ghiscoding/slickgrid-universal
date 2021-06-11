@@ -56,7 +56,7 @@ $editor-grid-cell-border-width-modified: 1px 6px 1px 1px !default;
     /* editable field with outline border */
     .slick-cell .editing-field, .slick-cell.selected .editing-field {
       border: 1px solid #dddbda;
-      padding: 3px 6px;
+      padding: 3px 5px 3px 4px;
       margin: -2px;
       height: calc(100% + 4px);
       border-radius: 3px;
