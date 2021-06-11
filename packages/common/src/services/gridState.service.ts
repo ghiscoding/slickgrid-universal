@@ -455,7 +455,7 @@ export class GridStateService {
 
     // subscribe to Tree Data full tree toggle changes
     this._subscriptions.push(
-      this.pubSubService.subscribe('onTreeFullToggleEnd', (toggleChange: TreeToggleStateChange) => {
+      this.pubSubService.subscribe('onTreeFullToggleEnd', (toggleChange: Omit<TreeToggleStateChange, 'fromItemId'>) => {
         this.pubSubService.publish('onGridStateChanged', { change: { newValues: toggleChange, type: GridStateType.treeData }, gridState: this.getCurrentGridState() });
       })
     );
