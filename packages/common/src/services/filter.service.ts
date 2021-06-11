@@ -587,8 +587,9 @@ export class FilterService {
           let parent = (treeObj as any)[item[parentPropName]] ?? false;
 
           // if there are any presets of collapsed parents, let's processed them
-          if (!this._isTreePresetExecuted && Array.isArray(treeDataToggledItems) && treeDataToggledItems.some(collapsedItem => collapsedItem.itemId === parent.id && collapsedItem.isCollapsed)) {
-            parent[collapsedPropName] = true;
+          const presetToggleShouldBeCollapsed = !this._gridOptions.treeDataOptions?.initiallyCollapsed;
+          if (!this._isTreePresetExecuted && Array.isArray(treeDataToggledItems) && treeDataToggledItems.some(collapsedItem => collapsedItem.itemId === parent.id && collapsedItem.isCollapsed === presetToggleShouldBeCollapsed)) {
+            parent[collapsedPropName] = presetToggleShouldBeCollapsed;
           }
 
           while (parent) {
