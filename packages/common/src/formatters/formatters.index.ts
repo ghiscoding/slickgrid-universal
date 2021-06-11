@@ -4,6 +4,7 @@ import { alignRightFormatter } from './alignRightFormatter';
 import { arrayObjectToCsvFormatter } from './arrayObjectToCsvFormatter';
 import { arrayToCsvFormatter } from './arrayToCsvFormatter';
 import { boldFormatter } from './boldFormatter';
+import { bsDropdownFormatter } from './bsDropdownFormatter';
 import { centerFormatter } from './centerFormatter';
 import { checkboxFormatter } from './checkboxFormatter';
 import { checkmarkFormatter } from './checkmarkFormatter';
@@ -59,6 +60,12 @@ export const Formatters = {
 
   /** show value in bold font weight */
   bold: boldFormatter,
+
+  /**
+   * a simple Bootstrap Dropdown Formatter which requires a Formatter Label
+   * example:: { formatter: Formatters.bsDropdown, params: { formatterLabel: 'Label' }}
+   */
+  bsDropdown: bsDropdownFormatter,
 
   /** Center a text value horizontally */
   center: centerFormatter,

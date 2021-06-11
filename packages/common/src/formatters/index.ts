@@ -2,6 +2,7 @@ export * from './alignRightFormatter';
 export * from './arrayObjectToCsvFormatter';
 export * from './arrayToCsvFormatter';
 export * from './boldFormatter';
+export * from './bsDropdownFormatter';
 export * from './centerFormatter';
 export * from './checkboxFormatter';
 export * from './checkmarkMaterialFormatter';
