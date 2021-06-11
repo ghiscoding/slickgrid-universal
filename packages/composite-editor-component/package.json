@@ -41,7 +41,7 @@
   "dependencies": {
     "@slickgrid-universal/common": "^0.14.1",
     "assign-deep": "^1.0.1",
-    "dompurify": "^2.2.8"
+    "dompurify": "^2.2.9"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
