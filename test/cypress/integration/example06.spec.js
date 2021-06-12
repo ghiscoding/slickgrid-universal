@@ -25,7 +25,7 @@ describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 },
 
   it('should expect the "pdf" folder to be closed by the collapsed items grid preset', () => {
     cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(0)`).should('contain', 'pdf');
-    cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
+    cy.get(`.slick-group-toggle.collapsed`).should('have.length', 1);
 
     defaultGridPresetWithoutPdfDocs.forEach((_colName, rowIdx) => {
       if (rowIdx > defaultGridPresetWithoutPdfDocs.length - 1) {
