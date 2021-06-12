@@ -1,9 +1,11 @@
 /// <reference types="cypress" />
 
 describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 }, () => {
+  const GRID_ROW_HEIGHT = 45;
   const titles = ['Files', 'Date Modified', 'Size'];
   // const defaultSortAscList = ['bucket-list.txt', 'documents', 'misc', 'todo.txt', 'pdf', 'internet-bill.pdf', 'map.pdf', 'map2.pdf', 'phone-bill.pdf', 'txt', 'todo.txt', 'xls', 'compilation.xls', 'music', 'mp3', 'pop', 'song.mp3', 'theme.mp3', 'rock', 'soft.mp3', 'something.txt'];
   // const defaultSortDescList = ['something.txt', 'music', 'mp3', 'rock', 'soft.mp3', 'pop', 'theme.mp3', 'song.mp3', 'documents', 'xls', 'compilation.xls', 'txt', 'todo.txt', 'pdf', 'phone-bill.pdf', 'map2.pdf', 'map.pdf', 'internet-bill.pdf', 'misc', 'todo.txt', 'bucket-list.txt'];
+  const defaultGridPresetWithoutPdfDocs = ['bucket-list.txt', 'documents', 'misc', 'todo.txt', 'pdf', 'txt', 'todo.txt', 'xls', 'compilation.xls'];
   const defaultSortAscList = ['bucket-list.txt', 'documents', 'misc', 'todo.txt', 'pdf', 'internet-bill.pdf', 'map.pdf', 'map2.pdf', 'phone-bill.pdf'];
   const defaultSortDescList = ['something.txt', 'music', 'mp3', 'rock', 'soft.mp3', 'pop', 'theme.mp3', 'song.mp3', 'documents', 'xls', 'compilation.xls', 'txt', 'todo.txt'];
   const defaultSortDescListWithExtraSongs = ['something.txt', 'music', 'mp3', 'rock', 'soft.mp3', 'pop', 'theme.mp3', 'song.mp3', 'pop-122.mp3', 'pop-121.mp3', 'documents', 'xls', 'compilation.xls', 'txt', 'todo.txt'];
@@ -21,17 +23,33 @@ describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 },
       .each(($child, index) => expect($child.text()).to.eq(titles[index]));
   });
 
+  it('should expect the "pdf" folder to be closed by the collapsed items grid preset', () => {
+    cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(0)`).should('contain', 'pdf');
+    cy.get(`.slick-group-toggle.collapsed`).should('have.length', 1);
+
+    defaultGridPresetWithoutPdfDocs.forEach((_colName, rowIdx) => {
+      if (rowIdx > defaultGridPresetWithoutPdfDocs.length - 1) {
+        return;
+      }
+      cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * rowIdx}px"] > .slick-cell:nth(0)`).should('contain', defaultGridPresetWithoutPdfDocs[rowIdx]);
+    });
+  });
+
+  it('should expand "pdf" folder and expect all folders to be expanded', () => {
+    cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`)
+      .click();
+
+    cy.get('.slick-viewport-top.slick-viewport-left')
+      .scrollTo('top', { force: true });
+  });
+
   it('should have default Files list', () => {
-    cy.get('.grid6')
-      .find('.slick-row')
-      .each(($row, index) => {
-        if (index > defaultSortAscList.length - 1) {
-          return;
-        }
-        cy.wrap($row).children('.slick-cell')
-          .first()
-          .should('contain', defaultSortAscList[index]);
-      });
+    defaultSortAscList.forEach((_colName, rowIdx) => {
+      if (rowIdx > defaultSortAscList.length - 1) {
+        return;
+      }
+      cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * rowIdx}px"] > .slick-cell:nth(0)`).should('contain', defaultSortAscList[rowIdx]);
+    });
   });
 
   it('should be able to add 2 new pop songs into the Music folder', () => {
@@ -127,32 +145,24 @@ describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 },
       .contains('Clear all Filters')
       .click();
 
-    cy.get('.grid6')
-      .find('.slick-row')
-      .each(($row, index) => {
-        if (index > defaultSortAscList.length - 1) {
-          return;
-        }
-        cy.wrap($row).children('.slick-cell')
-          .first()
-          .should('contain', defaultSortAscList[index]);
-      });
+    defaultSortAscList.forEach((_colName, rowIdx) => {
+      if (rowIdx > defaultSortAscList.length - 1) {
+        return;
+      }
+      cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * rowIdx}px"] > .slick-cell:nth(0)`).should('contain', defaultSortAscList[rowIdx]);
+    });
   });
 
   it('should click on "Files" column to sort descending', () => {
     cy.get('.slick-header-columns .slick-header-column:nth(0)')
       .click();
 
-    cy.get('.grid6')
-      .find('.slick-row')
-      .each(($row, index) => {
-        if (index > defaultSortDescListWithExtraSongs.length - 1) {
-          return;
-        }
-        cy.wrap($row).children('.slick-cell')
-          .first()
-          .should('contain', defaultSortDescListWithExtraSongs[index]);
-      });
+    defaultSortDescListWithExtraSongs.forEach((_colName, rowIdx) => {
+      if (rowIdx > defaultSortDescListWithExtraSongs.length - 1) {
+        return;
+      }
+      cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * rowIdx}px"] > .slick-cell:nth(0)`).should('contain', defaultSortDescListWithExtraSongs[rowIdx]);
+    });
   });
 
   it('should filter the Files by the input search string and expect 4 rows and 1st column to have ', () => {
@@ -177,16 +187,12 @@ describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 },
     cy.get('[data-test=clear-search-string]')
       .click();
 
-    cy.get('.grid6')
-      .find('.slick-row')
-      .each(($row, index) => {
-        if (index > defaultSortAscList.length - 1) {
-          return;
-        }
-        cy.wrap($row).children('.slick-cell')
-          .first()
-          .should('contain', defaultSortDescListWithExtraSongs[index]);
-      });
+    defaultSortDescListWithExtraSongs.forEach((_colName, rowIdx) => {
+      if (rowIdx > defaultSortDescListWithExtraSongs.length - 1) {
+        return;
+      }
+      cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * rowIdx}px"] > .slick-cell:nth(0)`).should('contain', defaultSortDescListWithExtraSongs[rowIdx]);
+    });
   });
 
   it('should be able to add a 3rd new pop song into the Music folder and see it show up in the UI', () => {

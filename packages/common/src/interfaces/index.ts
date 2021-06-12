@@ -157,3 +157,5 @@ export * from './slickRowSelectionModel.interface';
 export * from './sorter.interface';
 export * from './textExportOption.interface';
 export * from './treeDataOption.interface';
+export * from './treeToggledItem.interface';
+export * from './treeToggleStateChange.interface';

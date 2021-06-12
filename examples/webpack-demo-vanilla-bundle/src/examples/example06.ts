@@ -80,6 +80,11 @@ export class Example6 {
         // }
       },
       showCustomFooter: true,
+
+      // we can also preset collapsed items via Grid Presets (parentId: 4 => is the "pdf" folder)
+      presets: {
+        treeData: { toggledItems: [{ itemId: 4, isCollapsed: true }] },
+      },
     };
   }
 

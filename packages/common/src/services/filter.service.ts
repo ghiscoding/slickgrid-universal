@@ -34,6 +34,7 @@ import { deepCopy, getDescendantProperty, mapOperatorByFieldType } from './utili
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
 import { RxJsFacade, Subject } from './rxjsFacade';
+import { Constants } from '../constants';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -57,6 +58,7 @@ export class FilterService {
   protected _filtersMetadata: Array<Filter> = [];
   protected _columnFilters: ColumnFilters = {};
   protected _grid!: SlickGrid;
+  protected _isTreePresetExecuted = false;
   protected _onSearchChange: SlickEvent<OnSearchChangeEvent> | null;
   protected _tmpPreFilteredData?: number[];
   protected httpCancelRequests$?: Subject<void>; // this will be used to cancel any pending http request
@@ -86,17 +88,17 @@ export class FilterService {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
-    return (this._grid && this._grid.getOptions) ? this._grid.getOptions() : {};
+    return this._grid?.getOptions?.() ?? {};
   }
 
   /** Getter for the Column Definitions pulled through the Grid Object */
   protected get _columnDefinitions(): Column[] {
-    return (this._grid && this._grid.getColumns) ? this._grid.getColumns() : [];
+    return this._grid?.getColumns?.() ?? [];
   }
 
   /** Getter of SlickGrid DataView object */
   protected get _dataView(): SlickDataView {
-    return (this._grid?.getData && this._grid.getData()) as SlickDataView;
+    return this._grid?.getData?.() ?? {} as SlickDataView;
   }
 
   addRxJsResource(rxjs: RxJsFacade) {
@@ -323,8 +325,8 @@ export class FilterService {
     // so we always run this check even when there are no filter search, the reason is because the user might click on the expand/collapse
     if (isGridWithTreeData && this._gridOptions && this._gridOptions.treeDataOptions) {
       treeDataOptions = this._gridOptions.treeDataOptions;
-      const collapsedPropName = treeDataOptions.collapsedPropName ?? '__collapsed';
-      const parentPropName = treeDataOptions.parentPropName ?? '__parentId';
+      const collapsedPropName = treeDataOptions.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
+      const parentPropName = treeDataOptions.parentPropName ?? Constants.treeDataProperties.PARENT_PROP;
       const dataViewIdIdentifier = this._gridOptions.datasetIdPropertyName ?? 'id';
 
       if (item[parentPropName] !== null) {
@@ -518,21 +520,23 @@ export class FilterService {
    * This will then be passed to the DataView setFilter(customLocalFilter), which will itself loop through the list of IDs and display/hide the row if found that array of IDs
    * We do this in 2 steps so that we can still use the DataSet setFilter()
    */
-  preFilterTreeData(inputArray: any[], columnFilters: ColumnFilters) {
+  preFilterTreeData(inputItems: any[], columnFilters: ColumnFilters) {
     const treeDataOptions = this._gridOptions?.treeDataOptions;
-    const parentPropName = treeDataOptions?.parentPropName ?? '__parentId';
+    const collapsedPropName = treeDataOptions?.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
+    const parentPropName = treeDataOptions?.parentPropName ?? Constants.treeDataProperties.PARENT_PROP;
     const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
+    const treeDataToggledItems = this._gridOptions.presets?.treeData?.toggledItems;
 
     const treeObj = {};
     const filteredChildrenAndParents: any[] = [];
 
-    if (Array.isArray(inputArray)) {
-      for (let i = 0; i < inputArray.length; i++) {
-        (treeObj as any)[inputArray[i][dataViewIdIdentifier]] = inputArray[i];
+    if (Array.isArray(inputItems)) {
+      for (let i = 0; i < inputItems.length; i++) {
+        (treeObj as any)[inputItems[i][dataViewIdIdentifier]] = inputItems[i];
         // as the filtered data is then used again as each subsequent letter
         // we need to delete the .__used property, otherwise the logic below
         // in the while loop (which checks for parents) doesn't work:
-        delete (treeObj as any)[inputArray[i][dataViewIdIdentifier]].__used;
+        delete (treeObj as any)[inputItems[i][dataViewIdIdentifier]].__used;
       }
 
       // Step 1. prepare search filter by getting their parsed value(s), for example if it's a date filter then parse it to a Moment object
@@ -553,8 +557,8 @@ export class FilterService {
       }
 
       // Step 2. loop through every item data context to execute filter condition check
-      for (let i = 0; i < inputArray.length; i++) {
-        const item = inputArray[i];
+      for (let i = 0; i < inputItems.length; i++) {
+        const item = inputItems[i];
         let matchFilter = true; // valid until proven otherwise
 
         // loop through all column filters and execute filter condition(s)
@@ -580,18 +584,27 @@ export class FilterService {
           const len = filteredChildrenAndParents.length;
           // add child (id):
           filteredChildrenAndParents.splice(len, 0, item[dataViewIdIdentifier]);
-          let parent = (treeObj as any)[item[parentPropName]] || false;
+          let parent = (treeObj as any)[item[parentPropName]] ?? false;
+
+          // if there are any presets of collapsed parents, let's processed them
+          const presetToggleShouldBeCollapsed = !this._gridOptions.treeDataOptions?.initiallyCollapsed;
+          if (!this._isTreePresetExecuted && Array.isArray(treeDataToggledItems) && treeDataToggledItems.some(collapsedItem => collapsedItem.itemId === parent.id && collapsedItem.isCollapsed === presetToggleShouldBeCollapsed)) {
+            parent[collapsedPropName] = presetToggleShouldBeCollapsed;
+          }
+
           while (parent) {
             // only add parent (id) if not already added:
-            parent.__used || filteredChildrenAndParents.splice(len, 0, parent[dataViewIdIdentifier]);
+            parent.__used ?? filteredChildrenAndParents.splice(len, 0, parent[dataViewIdIdentifier]);
             // mark each parent as used to not use them again later:
             (treeObj as any)[parent[dataViewIdIdentifier]].__used = true;
             // try to find parent of the current parent, if exists:
-            parent = (treeObj as any)[parent[parentPropName]] || false;
+            parent = (treeObj as any)[parent[parentPropName]] ?? false;
           }
         }
       }
     }
+    this._isTreePresetExecuted = true;
+
     return filteredChildrenAndParents;
   }
 
@@ -715,10 +728,17 @@ export class FilterService {
    * @param {Array<Object>} [items] - optional flat array of parent/child items to use while redoing the full sort & refresh
    */
   refreshTreeDataFilters(items?: any[]) {
-    const inputItems = items ?? this._dataView.getItems();
-    if (this._dataView && this._gridOptions?.enableTreeData) {
+    const inputItems = items ?? this._dataView.getItems() ?? [];
+
+    if (this._dataView && this._gridOptions?.enableTreeData && inputItems.length > 0) {
       this._tmpPreFilteredData = this.preFilterTreeData(inputItems, this._columnFilters);
       this._dataView.refresh(); // and finally this refresh() is what triggers a DataView filtering check
+    } else if (inputItems.length === 0 && Array.isArray(this.sharedService.hierarchicalDataset) && this.sharedService.hierarchicalDataset.length > 0) {
+      // in some occasion, we might be dealing with a dataset that is hierarchical from the start (the source dataset is already a tree structure)
+      // and we did not have time to convert it to a flat dataset yet (for SlickGrid to use),
+      // we would end up calling the pre-filter too early because these pre-filter works only a flat dataset
+      // for that use case (like Example 6), we need to delay for at least a cycle the pre-filtering (so we can simply recall the same method after a delay of 0 which equal to 1 CPU cycle)
+      setTimeout(() => this.refreshTreeDataFilters());
     }
   }
 

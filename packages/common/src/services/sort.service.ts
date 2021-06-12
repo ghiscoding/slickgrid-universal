@@ -386,8 +386,7 @@ export class SortService {
       }
 
       if (isTreeDataEnabled && this.sharedService && Array.isArray(this.sharedService.hierarchicalDataset)) {
-        const hierarchicalDataset = this.sharedService.hierarchicalDataset;
-        const datasetSortResult = this.sortHierarchicalDataset(hierarchicalDataset, sortColumns);
+        const datasetSortResult = this.sortHierarchicalDataset(this.sharedService.hierarchicalDataset, sortColumns);
 
         // we could use the DataView sort but that would require re-sorting again (since the 2nd array that is currently in the DataView would have to be resorted against the 1st array that was sorting from tree sort)
         // it is simply much faster to just replace the entire dataset
