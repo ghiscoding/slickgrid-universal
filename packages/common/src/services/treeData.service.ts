@@ -24,7 +24,7 @@ import { SortService } from './sort.service';
 declare const Slick: SlickNamespace;
 
 export class TreeDataService {
-  private _isLastFullToggleCollapsed = this.gridOptions?.treeDataOptions?.initiallyCollapsed ?? false;
+  private _isLastFullToggleCollapsed = false;
   private _lastToggleStateChange: Omit<TreeToggleStateChange, 'fromItemId'> = {
     type: this.gridOptions?.treeDataOptions?.initiallyCollapsed ? 'full-collapse' : 'full-expand',
     previousFullToggleType: this.gridOptions?.treeDataOptions?.initiallyCollapsed ? 'full-collapse' : 'full-expand',
@@ -76,6 +76,8 @@ export class TreeDataService {
 
   init(grid: SlickGrid) {
     this._grid = grid;
+    this._isLastFullToggleCollapsed = this.gridOptions?.treeDataOptions?.initiallyCollapsed ?? false;
+    this._currentToggledItems = this.gridOptions.presets?.treeData?.toggledItems ?? [];
 
     // there's a few limitations with Tree Data, we'll just throw error when that happens
     if (this.gridOptions?.enableTreeData) {
