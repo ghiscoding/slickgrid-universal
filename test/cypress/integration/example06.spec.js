@@ -1,7 +1,5 @@
 /// <reference types="cypress" />
 
-const { it } = require('mocha');
-
 describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 }, () => {
   const GRID_ROW_HEIGHT = 45;
   const titles = ['Files', 'Date Modified', 'Size'];
