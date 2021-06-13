@@ -27,6 +27,15 @@
         <span class="icon mdi mdi-filter-outline"></span>
         <span>Dynamically Change Filter (% complete &lt; 40)</span>
       </button>
+      <button onclick.delegate="collapseAllWithoutEvent()" data-test="collapse-all-noevent-btn" class="button is-small">
+        <span class="icon mdi mdi-arrow-collapse"></span>
+        <span>Collapse All (without triggering event)</span>
+      </button>
+      <button onclick.delegate="reapplyToggledItems()" data-test="reapply-toggled-items-btn" class="button is-small"
+              disabled.bind="hasNoExpandCollapseChanged">
+        <span class="icon mdi mdi-history"></span>
+        <span>Reapply Previous Toggled Items</span>
+      </button>
     </div>
 
     <div class="row" style="margin-bottom: 4px;">
@@ -41,6 +50,9 @@
       <button onclick.delegate="expandAll()" data-test="expand-all-btn" class="button is-small">
         <span class="icon mdi mdi-arrow-expand"></span>
         <span>Expand All</span>
+      </button>
+      <button onclick.delegate="logTreeDataToggledItems()" class="button is-small">
+        <span>Log Tree Toggled Items</span>
       </button>
       <button onclick.delegate="logFlatStructure()" class="button is-small">
         <span>Log Flat Structure</span>

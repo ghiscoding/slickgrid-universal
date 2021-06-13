@@ -382,7 +382,7 @@ describe('PaginationService', () => {
       }
     });
 
-    it('should execute "process" method and catch error when process Observable fails', async (done) => {
+    it('should execute "process" method and catch error when process Observable fails', async () => {
       const mockError = 'observable error';
       const postSpy = jest.fn();
       mockGridOption.backendServiceApi!.process = postSpy;
@@ -395,7 +395,6 @@ describe('PaginationService', () => {
         await service.processOnPageChanged(1);
       } catch (e) {
         expect(backendErrorSpy).toHaveBeenCalledWith(mockError, mockGridOption.backendServiceApi);
-        done();
       }
     });
 
@@ -803,7 +802,7 @@ describe('PaginationService', () => {
 
       expect(sharedService.gridOptions.enablePagination).toBeTrue();
       expect(gotoSpy).toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenNthCalledWith(3, `onPaginationVisibilityChanged`, { visible: true });
+      expect(pubSubSpy).toHaveBeenCalledWith(`onPaginationVisibilityChanged`, { visible: true });
       expect(setPagingSpy).toHaveBeenCalledWith({ pageSize: mockGridOption.pagination!.pageSize, pageNum: 0 });
     });
   });

@@ -126,6 +126,18 @@ describe('SingleSelectEditor', () => {
     });
 
     describe('isValueChanged method', () => {
+      it('should return False if the value is undefined', () => {
+        editor = new SingleSelectEditor(editorArguments);
+        const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=radio]`);
+        editorBtnElm.click();
+
+        // we can use property "checked" or dispatch an event
+        editorListElm[0].checked = false;
+
+        expect(editor.isValueChanged()).toBe(false);
+      });
+
       it('should return True after doing a check of an option', () => {
         editor = new SingleSelectEditor(editorArguments);
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;

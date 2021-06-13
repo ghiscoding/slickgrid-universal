@@ -89,7 +89,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .should('have.length', 4);
   });
 
-  it('should expect row to be moved to another row index', () => {
+  it('should expect the row to have moved to another row index', () => {
     cy.get('.slick-viewport-top.slick-viewport-left')
       .scrollTo('top');
 

@@ -19,7 +19,7 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../../interfaces/index';
-import { Filters } from '../../filters';
+import { Filters, InputFilter, NativeSelectFilter } from '../../filters';
 import { FilterService } from '../filter.service';
 import { FilterFactory } from '../../filters/filterFactory';
 import { getParsedSearchTermsByFieldType } from '../../filter-conditions';
@@ -31,7 +31,6 @@ import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { PubSubService } from '../pubSub.service';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 
-jest.mock('flatpickr', () => { });
 declare const Slick: SlickNamespace;
 const DOM_ELEMENT_ID = 'row-detail123';
 
@@ -133,6 +132,7 @@ describe('FilterService', () => {
     const filterFactory = new FilterFactory(slickgridConfig, translateService, collectionService);
     service = new FilterService(filterFactory, pubSubServiceStub, sharedService, backendUtilityService, rxjsResourceStub);
     slickgridEventHandler = service.eventHandler;
+    jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(div);
   });
 
   afterEach(() => {
@@ -175,7 +175,7 @@ describe('FilterService', () => {
 
       expect(columnFilters).toEqual({});
       expect(filterMetadataArray.length).toBe(1);
-      expect(filterMetadataArray[0]).toContainEntry(['$filterElm', expect.anything()]);
+      expect(filterMetadataArray[0] instanceof InputFilter).toBeTruthy();
       expect(filterMetadataArray[0]).toContainEntry(['searchTerms', []]);
     });
 
@@ -200,7 +200,7 @@ describe('FilterService', () => {
         isActive: { columnDef: mockColumn, columnId: 'isActive', operator: 'EQ', searchTerms: [true], parsedSearchTerms: true, type: FieldType.boolean },
       });
       expect(filterMetadataArray.length).toBe(1);
-      expect(filterMetadataArray[0]).toContainEntry(['$filterElm', expect.anything()]);
+      expect(filterMetadataArray[0] instanceof NativeSelectFilter).toBeTruthy();
       expect(filterMetadataArray[0]).toContainEntry(['searchTerms', [true]]);
     });
 
@@ -261,7 +261,7 @@ describe('FilterService', () => {
 
       expect(columnFilters).toEqual({});
       expect(filterMetadataArray.length).toBe(1);
-      expect(filterMetadataArray[0]).toContainEntry(['$filterElm', expect.anything()]);
+      expect(filterMetadataArray[0] instanceof InputFilter).toBeTruthy();
       expect(filterMetadataArray[0]).toContainEntry(['searchTerms', []]);
     });
 
@@ -341,7 +341,7 @@ describe('FilterService', () => {
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
-      service.getFiltersMetadata()[0].callback(new CustomEvent('input'), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['John'], shouldTriggerQuery: true });
+      service.getFiltersMetadata()[0].callback(new Event('input'), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['John'], shouldTriggerQuery: true });
 
       setTimeout(() => {
         expect(service.getColumnFilters()).toContainEntry(['firstName', expectationColumnFilter]);
@@ -370,7 +370,7 @@ describe('FilterService', () => {
       service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
 
-      const mockEvent = new CustomEvent('input');
+      const mockEvent = new Event('input');
       Object.defineProperty(mockEvent, 'target', { writable: true, configurable: true, value: { value: 'John' } });
       service.getFiltersMetadata()[0].callback(mockEvent, { columnDef: mockColumn, operator: 'EQ', shouldTriggerQuery: true });
 
@@ -392,7 +392,7 @@ describe('FilterService', () => {
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
-      service.getFiltersMetadata()[0].callback(new CustomEvent('input'), { columnDef: mockColumn, operator: 'EQ', searchTerms: [''], shouldTriggerQuery: true });
+      service.getFiltersMetadata()[0].callback(new Event('input'), { columnDef: mockColumn, operator: 'EQ', searchTerms: [''], shouldTriggerQuery: true });
 
       expect(service.getColumnFilters()).toEqual({});
     });
@@ -406,7 +406,7 @@ describe('FilterService', () => {
       service.bindLocalOnFilter(gridStub);
       mockArgs.column.filter = { emptySearchTermReturnAllValues: false };
       gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
-      service.getFiltersMetadata()[0].callback(new CustomEvent('input'), { columnDef: mockColumn, operator: 'EQ', searchTerms: [''], shouldTriggerQuery: true });
+      service.getFiltersMetadata()[0].callback(new Event('input'), { columnDef: mockColumn, operator: 'EQ', searchTerms: [''], shouldTriggerQuery: true });
 
       expect(service.getColumnFilters()).toContainEntry(['firstName', expectationColumnFilter]);
       expect(spySearchChange).toHaveBeenCalledWith({
@@ -467,9 +467,9 @@ describe('FilterService', () => {
       gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs3 as any, new Slick.EventData(), gridStub);
-      service.getFiltersMetadata()[1].callback(new CustomEvent('input'), { columnDef: mockColumn3 });
-      service.getFiltersMetadata()[0].callback(new CustomEvent('input'), { columnDef: mockColumn1, operator: 'EQ', searchTerms: ['John'], shouldTriggerQuery: true });
-      service.getFiltersMetadata()[1].callback(new CustomEvent('input'), { columnDef: mockColumn2, operator: 'NE', searchTerms: ['Doe'], shouldTriggerQuery: true });
+      service.getFiltersMetadata()[1].callback(new Event('input'), { columnDef: mockColumn3 });
+      service.getFiltersMetadata()[0].callback(new Event('input'), { columnDef: mockColumn1, operator: 'EQ', searchTerms: ['John'], shouldTriggerQuery: true });
+      service.getFiltersMetadata()[1].callback(new Event('input'), { columnDef: mockColumn2, operator: 'NE', searchTerms: ['Doe'], shouldTriggerQuery: true });
     });
 
     describe('clearFilterByColumnId method', () => {
@@ -604,8 +604,8 @@ describe('FilterService', () => {
       service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
-      service.getFiltersMetadata()[0].callback(new CustomEvent('input'), { columnDef: mockColumn1, operator: 'EQ', searchTerms: ['John'], shouldTriggerQuery: true });
-      service.getFiltersMetadata()[1].callback(new CustomEvent('input'), { columnDef: mockColumn2, operator: 'NE', searchTerms: ['Doe'], shouldTriggerQuery: true });
+      service.getFiltersMetadata()[0].callback(new Event('input'), { columnDef: mockColumn1, operator: 'EQ', searchTerms: ['John'], shouldTriggerQuery: true });
+      service.getFiltersMetadata()[1].callback(new Event('input'), { columnDef: mockColumn2, operator: 'NE', searchTerms: ['Doe'], shouldTriggerQuery: true });
     });
 
     describe('clearFilterByColumnId method', () => {
@@ -992,6 +992,10 @@ describe('FilterService', () => {
       };
     });
 
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
     it('should return an empty array when column definitions returns nothing as well', () => {
       gridStub.getColumns = undefined as any;
 
@@ -1059,7 +1063,7 @@ describe('FilterService', () => {
       ]);
     });
 
-    it('should pre-filter the tree dataset when the grid is a Tree Data View', () => {
+    it('should pre-filter the tree dataset when the grid is a Tree Data View & dataset is empty', (done) => {
       const spyRefresh = jest.spyOn(dataViewStub, 'refresh');
       const spyPreFilter = jest.spyOn(service, 'preFilterTreeData');
       const spyGetCols = jest.spyOn(gridStub, 'getColumns').mockReturnValue([
@@ -1067,6 +1071,42 @@ describe('FilterService', () => {
         { id: 'gender', field: 'gender' },
         { id: 'size', field: 'size', filter: { model: Filters.input, operator: '>=' } }
       ]);
+      const mockFlatDataset = [{ id: 0, name: 'John', gender: 'male', size: 170 }, { id: 1, name: 'Jane', gender: 'female', size: 150 }];
+      jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValue(mockFlatDataset);
+      gridOptionMock.enableTreeData = true;
+      gridOptionMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files' };
+      gridOptionMock.presets = {
+        filters: [{ columnId: 'size', searchTerms: [20], operator: '>=' }]
+      };
+      service.init(gridStub);
+      const output = service.populateColumnFilterSearchTermPresets(gridOptionMock.presets!.filters as any);
+
+      expect(spyRefresh).not.toHaveBeenCalled();
+      jest.spyOn(dataViewStub, 'getItems').mockReturnValue(mockFlatDataset);
+
+      setTimeout(() => {
+        expect(spyGetCols).toHaveBeenCalled();
+        expect(spyPreFilter).toHaveBeenCalled();
+        expect(spyRefresh).toHaveBeenCalled();
+        expect(output).toEqual([
+          { id: 'name', field: 'name', filter: { model: Filters.input, operator: 'EQ' } },
+          { id: 'gender', field: 'gender', },
+          { id: 'size', field: 'size', filter: { model: Filters.input, operator: '>=', searchTerms: [20] } },
+        ]);
+        done();
+      });
+    });
+
+    it('should pre-filter the tree dataset when the grid is a Tree Data View & dataset is filled', () => {
+      const spyRefresh = jest.spyOn(dataViewStub, 'refresh');
+      const spyPreFilter = jest.spyOn(service, 'preFilterTreeData');
+      const spyGetCols = jest.spyOn(gridStub, 'getColumns').mockReturnValue([
+        { id: 'name', field: 'name', filter: { model: Filters.input, operator: 'EQ' } },
+        { id: 'gender', field: 'gender' },
+        { id: 'size', field: 'size', filter: { model: Filters.input, operator: '>=' } }
+      ]);
+      const mockFlatDataset = [{ id: 0, name: 'John', gender: 'male', size: 170 }, { id: 1, name: 'Jane', gender: 'female', size: 150 }];
+      jest.spyOn(dataViewStub, 'getItems').mockReturnValue(mockFlatDataset);
       gridOptionMock.enableTreeData = true;
       gridOptionMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files' };
       gridOptionMock.presets = {
@@ -1108,7 +1148,7 @@ describe('FilterService', () => {
       sharedService.allColumns = [mockColumn1, mockColumn2];
     });
 
-    it('should throw an error when there are no filters defined in the column definitions', async (done) => {
+    it('should throw an error when there are no filters defined in the column definitions', async () => {
       try {
         gridOptionMock.enableFiltering = false;
         service.init(gridStub);
@@ -1116,7 +1156,6 @@ describe('FilterService', () => {
         await service.updateFilters([{ columnId: 'firstName', searchTerms: ['John'] }]);
       } catch (e) {
         expect(e.toString()).toContain('[Slickgrid-Universal] in order to use "updateFilters" method, you need to have Filterable Columns defined in your grid');
-        done();
       }
     });
 
@@ -1564,7 +1603,7 @@ describe('FilterService', () => {
       expect(spySetSortCols).toHaveBeenCalledWith([{ columnId: 'file', sortAsc: true }]);
       expect(columnFilters).toEqual({});
       expect(filterMetadataArray.length).toBe(1);
-      expect(filterMetadataArray[0]).toContainEntry(['$filterElm', expect.anything()]);
+      expect(filterMetadataArray[0] instanceof InputFilter).toBeTruthy();
       expect(filterMetadataArray[0]).toContainEntry(['searchTerms', []]);
     });
 
@@ -1578,6 +1617,9 @@ describe('FilterService', () => {
       beforeEach(() => {
         gridStub.getColumns = jest.fn();
         gridOptionMock.backendServiceApi = undefined;
+        gridOptionMock.presets = {
+          treeData: { toggledItems: [{ itemId: 4, isCollapsed: true }] }
+        };
         dataset = [
           { __parentId: null, __treeLevel: 0, dateModified: '2012-03-05T12:44:00.123Z', file: 'bucket-list.txt', id: 24, size: 0.5 },
           { __hasChildren: true, __parentId: null, __treeLevel: 0, file: 'documents', id: 21 },

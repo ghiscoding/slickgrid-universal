@@ -469,6 +469,7 @@
   font-size: $row-move-plugin-size;
   content: $row-move-plugin-icon;
   width: $row-move-plugin-icon-width;
+  vertical-align: $row-move-plugin-icon-vertical-align;
 }
 .slick-cell.cell-reorder {
   cursor: $row-move-plugin-cursor;

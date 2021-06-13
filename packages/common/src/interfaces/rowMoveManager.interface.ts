@@ -13,7 +13,7 @@ export interface RowMoveManager extends RowMoveManagerOption {
   onExtensionRegistered?: (plugin: SlickRowMoveManager) => void;
 
   /** SlickGrid Event fired before the row is moved. */
-  onBeforeMoveRows?: (e: SlickEventData, args: { grid: SlickGrid; rows: number[]; insertBefore: number; }) => void;
+  onBeforeMoveRows?: (e: SlickEventData, args: { grid: SlickGrid; rows: number[]; insertBefore: number; }) => boolean | void;
 
   /** SlickGrid Event fired while the row is moved. */
   onMoveRows?: (e: SlickEventData, args: { grid: SlickGrid; rows: number[]; insertBefore: number; }) => void;

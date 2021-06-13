@@ -98,7 +98,7 @@ describe('SelectFilter', () => {
       mockColumn.filter!.collection = [{ hello: 'world' }];
       filter.init(filterArguments);
     } catch (e) {
-      expect(e.message).toContain(`[select-filter] A collection with value/label (or value/labelKey when using Locale) is required to populate the Select list`);
+      expect(e.message).toContain(`[Slickgrid-Universal] Select Filter/Editor collection with value/label (or value/labelKey when using Locale) is required to populate the Select list`);
       done();
     }
   });
@@ -789,7 +789,7 @@ describe('SelectFilter', () => {
     expect(filterListElm[2].textContent).toBe('Other');
   });
 
-  it('should throw an error when "collectionAsync" Promise does not return a valid array', async (done) => {
+  it('should throw an error when "collectionAsync" Promise does not return a valid array', async () => {
     const promise = Promise.resolve({ hello: 'world' });
     mockColumn.filter!.collectionAsync = promise;
 
@@ -797,7 +797,6 @@ describe('SelectFilter', () => {
       await filter.init(filterArguments);
     } catch (e) {
       expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`);
-      done();
     }
   });
 

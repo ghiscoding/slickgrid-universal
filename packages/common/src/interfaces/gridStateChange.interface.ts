@@ -1,11 +1,11 @@
 import { GridStateType } from '../enums/index';
-import { Column, CurrentFilter, CurrentPagination, CurrentRowSelection, CurrentSorter, GridState } from './index';
+import { CurrentColumn, CurrentFilter, CurrentPagination, CurrentPinning, CurrentRowSelection, CurrentSorter, GridState, TreeToggleStateChange } from './index';
 
 export interface GridStateChange {
   /** Last Grid State Change that was triggered (only 1 type of change at a time) */
   change?: {
     /** Grid State change, the values of the new change */
-    newValues: Column[] | CurrentFilter[] | CurrentSorter[] | CurrentPagination | CurrentRowSelection;
+    newValues: CurrentColumn[] | CurrentFilter[] | CurrentSorter[] | CurrentPagination | CurrentPinning | CurrentRowSelection | Partial<TreeToggleStateChange>;
 
     /** The Grid State Type of change that was made (filter/sorter/...) */
     type: GridStateType;

@@ -5,4 +5,5 @@ export enum GridStateType {
   pinning = 'pinning',
   rowSelection = 'rowSelection',
   sorter = 'sorter',
+  treeData = 'treeData',
 }

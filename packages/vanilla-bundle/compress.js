@@ -18,7 +18,7 @@ if (!fs.existsSync(outputFolder)) {
   fs.mkdirSync(outputFolder);
 }
 
-const outputPathFilename = `${outputFolder}/${outputFilename}.${ext}`;
+const outputPathFilename = `${outputFolder}${outputFilename}.${ext}`;
 
 archive.pipe(fs.createWriteStream(outputPathFilename));
 archive.directory(inputFolder1, false);
@@ -26,5 +26,7 @@ archive.directory(inputFolder2, 'styles');
 archive.file('package.json', { name: 'package.json' });
 archive.finalize();
 
-console.log(`Compressing input folder "${inputFolder1}" and "${inputFolder2}" to output folder ${outputPathFilename}`);
+console.log(`Compressed input folders "${inputFolder1}" and "${inputFolder2}" to single output file "${outputPathFilename}"`);
+console.log(`File location:: "${__dirname.replace(/\\/gi, '/')}/${outputPathFilename}"`);
+console.log(`Processed Timestamp`, new Date());
 console.log(`ALL DONE!!!`);

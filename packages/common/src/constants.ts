@@ -67,6 +67,13 @@ export class Constants {
     TEXT_X_OF_Y_MASS_SELECTED: '{{x}} of {{y}} selected',
   };
 
+  static readonly treeDataProperties = {
+    CHILDREN_PROP: 'children',
+    COLLAPSED_PROP: '__collapsed',
+    HAS_CHILDREN_PROP: '__hasChildren',
+    TREE_LEVEL_PROP: '__treeLevel',
+    PARENT_PROP: '__parentId',
+  };
   static readonly VALIDATION_REQUIRED_FIELD = 'Field is required';
   static readonly VALIDATION_EDITOR_VALID_NUMBER = 'Please enter a valid number';
   static readonly VALIDATION_EDITOR_VALID_INTEGER = 'Please enter a valid integer number';

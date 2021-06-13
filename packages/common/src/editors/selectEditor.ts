@@ -20,8 +20,8 @@ import {
   SlickGrid,
   SlickNamespace,
 } from './../interfaces/index';
-import { CollectionService, findOrDefault, TranslaterService } from '../services/index';
-import { getDescendantProperty, getTranslationPrefix, htmlEncode, sanitizeTextByAvailableSanitizer, setDeepValue } from '../services/utilities';
+import { buildSelectEditorOrFilterDomElement, CollectionService, findOrDefault, TranslaterService } from '../services/index';
+import { getDescendantProperty, getTranslationPrefix, setDeepValue } from '../services/utilities';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -198,8 +198,8 @@ export class SelectEditor implements Editor {
     return this.columnDef?.internalColumnEditor?.customStructure;
   }
 
-  get hasAutoCommitEdit() {
-    return this.grid.getOptions().autoCommitEdit;
+  get hasAutoCommitEdit(): boolean {
+    return this.gridOptions.autoCommitEdit ?? false;
   }
 
   /**
@@ -257,7 +257,7 @@ export class SelectEditor implements Editor {
     if (fieldName !== undefined) {
       // collection of strings, just return the filtered string that are equals
       if (this.collection.every(x => typeof x === 'string')) {
-        return findOrDefault(this.collection, (c: any) => c?.toString() === elmValue);
+        return findOrDefault(this.collection, (c: any) => c?.toString?.() === elmValue);
       }
 
       // collection of label/value pair
@@ -401,7 +401,7 @@ export class SelectEditor implements Editor {
   }
 
   destroy() {
-    // when autoCommitEdit is enabled, we might end up leave the editor without it being saved, if so do call a save before destroying
+    // when autoCommitEdit is enabled, we might end up leaving an editor without it being saved, if so do call a save before destroying
     // this mainly happens doing a blur or focusing on another cell in the grid (it won't come here if we click outside the grid, in the body)
     if (this.$editorElm && this.hasAutoCommitEdit && this.isValueChanged() && !this._isDisposing && !this.isCompositeEditor) {
       this._isDisposing = true; // change destroying flag to avoid infinite loop
@@ -517,7 +517,7 @@ export class SelectEditor implements Editor {
       return !isEqual;
     }
     const value = Array.isArray(valueSelection) && valueSelection.length > 0 ? valueSelection[0] : undefined;
-    return value !== this.originalValue;
+    return value !== undefined && value !== this.originalValue;
   }
 
   isValueTouched(): boolean {
@@ -696,70 +696,18 @@ export class SelectEditor implements Editor {
     this.finalCollection = finalCollection;
 
     // step 1, create HTML string template
-    const editorTemplate = this.buildTemplateHtmlString(finalCollection);
+    const selectBuildResult = buildSelectEditorOrFilterDomElement(
+      'editor',
+      finalCollection,
+      this.columnDef,
+      this.grid,
+      this.isMultipleSelect,
+      this._translaterService
+    );
 
     // step 2, create the DOM Element of the editor
-    // also subscribe to the onClose event
-    this.createDomElement(editorTemplate);
-  }
-
-  /** Build the template HTML string */
-  protected buildTemplateHtmlString(collection: any[]): string {
-    let options = '';
-    const columnId = this.columnDef?.id ?? '';
-    const separatorBetweenLabels = this.collectionOptions?.separatorBetweenTextLabels ?? '';
-    const isRenderHtmlEnabled = this.columnEditor?.enableRenderHtml ?? false;
-    const sanitizedOptions = this.gridOptions?.sanitizeHtmlOptions ?? {};
-
-    // collection could be an Array of Strings OR Objects
-    if (collection.every((x: any) => typeof x === 'string')) {
-      collection.forEach((option: string) => {
-        options += `<option value="${option}" label="${option}">${option}</option>`;
-      });
-    } else {
-      // array of objects will require a label/value pair unless a customStructure is passed
-      collection.forEach((option: SelectOption) => {
-        if (!option || (option[this.labelName] === undefined && option.labelKey === undefined)) {
-          throw new Error('[select-editor] A collection with value/label (or value/labelKey when using ' +
-            'Locale) is required to populate the Select list, for example: ' +
-            '{ collection: [ { value: \'1\', label: \'One\' } ])');
-        }
-        const labelKey = (option.labelKey || option[this.labelName]) as string;
-        const labelText = ((option.labelKey || (this.enableTranslateLabel && this._translaterService)) && labelKey) ? this._translaterService?.translate(labelKey || ' ') : labelKey;
-        let prefixText = option[this.labelPrefixName] || '';
-        let suffixText = option[this.labelSuffixName] || '';
-        let optionLabel = option[this.optionLabel] || '';
-        if (optionLabel?.toString) {
-          optionLabel = optionLabel.toString().replace(/\"/g, '\''); // replace double quotes by single quotes to avoid interfering with regular html
-        }
-
-        // also translate prefix/suffix if enableTranslateLabel is true and text is a string
-        prefixText = (this.enableTranslateLabel && this._translaterService && prefixText && typeof prefixText === 'string') ? this._translaterService.translate(prefixText || ' ') : prefixText;
-        suffixText = (this.enableTranslateLabel && this._translaterService && suffixText && typeof suffixText === 'string') ? this._translaterService.translate(suffixText || ' ') : suffixText;
-        optionLabel = (this.enableTranslateLabel && this._translaterService && optionLabel && typeof optionLabel === 'string') ? this._translaterService.translate(optionLabel || ' ') : optionLabel;
-
-        // add to a temp array for joining purpose and filter out empty text
-        const tmpOptionArray = [prefixText, labelText, suffixText].filter(text => (text !== undefined && text !== ''));
-        let optionText = tmpOptionArray.join(separatorBetweenLabels);
-
-        // if user specifically wants to render html text, he needs to opt-in else it will stripped out by default
-        // also, the 3rd party lib will saninitze any html code unless it's encoded, so we'll do that
-        if (isRenderHtmlEnabled) {
-          // sanitize any unauthorized html tags like script and others
-          // for the remaining allowed tags we'll permit all attributes
-          const sanitizedText = sanitizeTextByAvailableSanitizer(this.gridOptions, optionText, sanitizedOptions);
-          optionText = htmlEncode(sanitizedText);
-        }
-
-        // html text of each select option
-        let optionValue = option[this.valueName];
-        if (optionValue === undefined || optionValue === null) {
-          optionValue = '';
-        }
-        options += `<option value="${optionValue}" label="${optionLabel}">${optionText}</option>`;
-      });
-    }
-    return `<select id="${this.elementName}" class="ms-filter search-filter select-editor editor-${columnId}" ${this.isMultipleSelect ? 'multiple="multiple"' : ''}>${options}</select>`;
+    // we will later also subscribe to the onClose event to save the Editor whenever that event is triggered
+    this.createDomElement(selectBuildResult.selectElement);
   }
 
   /** Create a blank entry that can be added to the collection. It will also reuse the same collection structure provided by the user */
@@ -777,9 +725,12 @@ export class SelectEditor implements Editor {
     return blankEntry;
   }
 
-  /** From the html template string, create the DOM element of the Multiple/Single Select Editor */
-  protected createDomElement(editorTemplate: string) {
-    this.$editorElm = $(editorTemplate);
+  /**
+   * From the Select DOM Element created earlier, create a Multiple/Single Select Editor using the jQuery multiple-select.js lib
+   * @param {Object} selectElement
+   */
+  protected createDomElement(selectElement: HTMLSelectElement) {
+    this.$editorElm = $(selectElement);
 
     if (this.$editorElm && typeof this.$editorElm.appendTo === 'function') {
       $(this.args.container).empty();
