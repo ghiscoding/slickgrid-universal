@@ -448,6 +448,7 @@ describe('TreeData Service', () => {
 
         service.init(gridStub);
         service.applyToggledItemStateChanges([{ itemId: 4, isCollapsed: true }], 'full-collapse', true, true);
+        service.applyToggledItemStateChanges([{ itemId: 4, isCollapsed: true }], 'full-collapse', true, true); // calling twice shouldn't change toggledItems array
 
         expect(dataGetItemsSpy).toHaveBeenCalled();
         expect(beginUpdateSpy).toHaveBeenCalled();
