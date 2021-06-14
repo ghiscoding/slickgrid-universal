@@ -433,7 +433,7 @@ describe('TreeData Service', () => {
         expect(dataGetItemsSpy).not.toHaveBeenCalled();
         expect(beginUpdateSpy).toHaveBeenCalled();
         expect(updateItemSpy).toHaveBeenNthCalledWith(1, 4, { __collapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4 });
-        expect(pubSubSpy).toHaveBeenCalledWith(`onTreeItemToggled`, { fromItemId: 4, previousFullToggleType: 'full-collapse', toggledItems: [], type: 'toggle-collapse' });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onTreeItemToggled`, { fromItemId: 4, previousFullToggleType: 'full-collapse', toggledItems: [{ itemId: 4, isCollapsed: true }], type: 'toggle-collapse' });
         expect(endUpdateSpy).toHaveBeenCalled();
       });
 
@@ -452,7 +452,7 @@ describe('TreeData Service', () => {
         expect(dataGetItemsSpy).toHaveBeenCalled();
         expect(beginUpdateSpy).toHaveBeenCalled();
         expect(updateItemSpy).toHaveBeenNthCalledWith(1, 4, { __collapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4 });
-        expect(pubSubSpy).toHaveBeenCalledWith(`onTreeItemToggled`, { fromItemId: 4, previousFullToggleType: 'full-collapse', toggledItems: [], type: 'toggle-collapse' });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onTreeItemToggled`, { fromItemId: 4, previousFullToggleType: 'full-collapse', toggledItems: [{ itemId: 4, isCollapsed: true }], type: 'toggle-collapse' });
         expect(endUpdateSpy).toHaveBeenCalled();
       });
     });

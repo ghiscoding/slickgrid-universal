@@ -148,9 +148,17 @@ export class TreeDataService {
         this.updateToggledItem(item, collapsedItem.isCollapsed);
 
         if (shouldTriggerEvent) {
+          const parentFoundIdx = this._currentToggledItems.findIndex(treeChange => treeChange.itemId === collapsedItem.itemId);
+          if (parentFoundIdx >= 0) {
+            this._currentToggledItems[parentFoundIdx].isCollapsed = collapsedItem.isCollapsed;
+          } else {
+            this._currentToggledItems.push({ itemId: collapsedItem.itemId, isCollapsed: collapsedItem.isCollapsed });
+          }
+
           this.pubSubService.publish('onTreeItemToggled', {
             ...this._lastToggleStateChange,
             fromItemId: collapsedItem.itemId,
+            toggledItems: this._currentToggledItems,
             type: collapsedItem.isCollapsed ? ToggleStateChangeType.toggleCollapse : ToggleStateChangeType.toggleExpand
           } as TreeToggleStateChange);
         }
