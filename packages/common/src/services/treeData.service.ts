@@ -25,11 +25,7 @@ declare const Slick: SlickNamespace;
 
 export class TreeDataService {
   private _isLastFullToggleCollapsed = false;
-  private _lastToggleStateChange: Omit<TreeToggleStateChange, 'fromItemId'> = {
-    type: this.gridOptions?.treeDataOptions?.initiallyCollapsed ? 'full-collapse' : 'full-expand',
-    previousFullToggleType: this.gridOptions?.treeDataOptions?.initiallyCollapsed ? 'full-collapse' : 'full-expand',
-    toggledItems: null
-  };
+  private _lastToggleStateChange!: Omit<TreeToggleStateChange, 'fromItemId'>;
   private _currentToggledItems: TreeToggledItem[] = [];
   private _grid!: SlickGrid;
   private _eventHandler: SlickEventHandler;
@@ -78,6 +74,11 @@ export class TreeDataService {
     this._grid = grid;
     this._isLastFullToggleCollapsed = this.gridOptions?.treeDataOptions?.initiallyCollapsed ?? false;
     this._currentToggledItems = this.gridOptions.presets?.treeData?.toggledItems ?? [];
+    this._lastToggleStateChange = {
+      type: this._isLastFullToggleCollapsed ? 'full-collapse' : 'full-expand',
+      previousFullToggleType: this._isLastFullToggleCollapsed ? 'full-collapse' : 'full-expand',
+      toggledItems: this._currentToggledItems
+    };
 
     // there's a few limitations with Tree Data, we'll just throw error when that happens
     if (this.gridOptions?.enableTreeData) {
@@ -109,8 +110,11 @@ export class TreeDataService {
    * Apply different tree toggle state changes by providing an array of parentIds that are designated as collapsed (or not).
    * User will have to provide an array of `parentId` and `isCollapsed` boolean and the code will only apply the ones that are tagged as collapsed, everything else will be expanded
    * @param {Array<TreeToggledItem>} treeToggledItems - array of parentId which are tagged as changed
+   * @param {ToggleStateChangeType} previousFullToggleType - optionally provide the previous full toggle type ('full-expand' or 'full-collapse')
+   * @param {Boolean} shouldPreProcessFullToggle - should we pre-process a full toggle on all items? defaults to True
+   * @param {Boolean} shouldTriggerEvent - should we trigger a toggled item event? defaults to False
    */
-  applyToggledItemStateChanges(treeToggledItems: TreeToggledItem[], previousFullToggleType?: Exclude<ToggleStateChangeType, 'toggle'> | Exclude<ToggleStateChangeTypeString, 'toggle'>) {
+  applyToggledItemStateChanges(treeToggledItems: TreeToggledItem[], previousFullToggleType?: Exclude<ToggleStateChangeType, 'toggle'> | Exclude<ToggleStateChangeTypeString, 'toggle'>, shouldPreProcessFullToggle = true, shouldTriggerEvent = false) {
     if (Array.isArray(treeToggledItems)) {
       const collapsedPropName = this.getTreeDataOptionPropName('collapsedPropName');
       const hasChildrenPropName = this.getTreeDataOptionPropName('hasChildrenPropName');
@@ -122,17 +126,34 @@ export class TreeDataService {
       // we first need to put back the previous full toggle state (whether it was a full collapse or expand) by collapsing/expanding everything depending on the last toggled that was called `isLastFullToggleCollapsed`
       const previousFullToggle = previousFullToggleType ?? this._lastToggleStateChange.previousFullToggleType;
       const shouldCollapseAll = previousFullToggle === 'full-collapse';
-      (this.dataView.getItems() || []).forEach((item: any) => {
-        // collapse/expand the item but only when it's a parent item with children
-        if (item[hasChildrenPropName]) {
-          item[collapsedPropName] = shouldCollapseAll;
-        }
-      });
+
+      // when full toggle type is provided, we also need to update our internal reference of our current toggle state
+      if (previousFullToggleType) {
+        this._lastToggleStateChange.previousFullToggleType = previousFullToggleType;
+      }
+
+      // typically (optionally and defaults to true) if we want to reapply some toggled items we probably want to be in the full toggled state as it was at the start
+      // collapse/expand from the last full toggle state, all the items which are parent items with children
+      if (shouldPreProcessFullToggle) {
+        (this.dataView.getItems() || []).forEach((item: any) => {
+          if (item[hasChildrenPropName]) {
+            item[collapsedPropName] = shouldCollapseAll;
+          }
+        });
+      }
 
       // then we reapply only the ones that changed (provided as argument to the function)
       for (const collapsedItem of treeToggledItems) {
         const item = this.dataView.getItemById(collapsedItem.itemId);
         this.updateToggledItem(item, collapsedItem.isCollapsed);
+
+        if (shouldTriggerEvent) {
+          this.pubSubService.publish('onTreeItemToggled', {
+            ...this._lastToggleStateChange,
+            fromItemId: collapsedItem.itemId,
+            type: collapsedItem.isCollapsed ? ToggleStateChangeType.toggleCollapse : ToggleStateChangeType.toggleExpand
+          } as TreeToggleStateChange);
+        }
       }
 
       // close the update transaction & call a refresh which will trigger a re-render with filters applied (including expand/collapse)
