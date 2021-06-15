@@ -32,6 +32,7 @@ const dataViewStub = {
   endUpdate: jest.fn(),
   getItem: jest.fn(),
   getItemById: jest.fn(),
+  getItemCount: jest.fn(),
   getItems: jest.fn(),
   refresh: jest.fn(),
   sort: jest.fn(),
@@ -321,11 +322,11 @@ describe('TreeData Service', () => {
     beforeEach(() => {
       jest.clearAllMocks();
       mockFlatDataset = [
-        { id: 0, file: 'TXT', size: 5.8, __hasChildren: true },
-        { id: 1, file: 'myFile.txt', size: 0.5 },
-        { id: 2, file: 'myMusic.txt', size: 5.3 },
-        { id: 4, file: 'MP3', size: 3.4, __hasChildren: true },
-        { id: 5, file: 'relaxation.mp3', size: 3.4 }
+        { id: 0, file: 'TXT', size: 5.8, __hasChildren: true, __treeLevel: 0 },
+        { id: 1, file: 'myFile.txt', size: 0.5, __treeLevel: 1 },
+        { id: 2, file: 'myMusic.txt', size: 5.3, __treeLevel: 1 },
+        { id: 4, file: 'MP3', size: 3.4, __hasChildren: true, __treeLevel: 0 },
+        { id: 5, file: 'relaxation.mp3', size: 3.4, __treeLevel: 1 }
       ];
       mockHierarchical = [
         { id: 0, file: 'TXT', files: [{ id: 1, file: 'myFile.txt', size: 0.5, }, { id: 2, file: 'myMusic.txt', size: 5.3, }] },
@@ -336,6 +337,7 @@ describe('TreeData Service', () => {
 
     it('should collapse all items when calling the method with collapsing True', async () => {
       const dataGetItemsSpy = jest.spyOn(dataViewStub, 'getItems').mockReturnValue(mockFlatDataset);
+      jest.spyOn(dataViewStub, 'getItemCount').mockReturnValue(mockFlatDataset.length);
       jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValue(mockHierarchical);
       const beginUpdateSpy = jest.spyOn(dataViewStub, 'beginUpdate');
       const endUpdateSpy = jest.spyOn(dataViewStub, 'endUpdate');
@@ -349,12 +351,15 @@ describe('TreeData Service', () => {
       expect(pubSubSpy).toHaveBeenCalledWith(`onTreeFullToggleEnd`, { type: 'full-collapse', previousFullToggleType: 'full-collapse', toggledItems: null, });
       expect(dataGetItemsSpy).toHaveBeenCalled();
       expect(beginUpdateSpy).toHaveBeenCalled();
-      expect(updateItemSpy).toHaveBeenNthCalledWith(1, 0, { __collapsed: true, __hasChildren: true, id: 0, file: 'TXT', size: 5.8 });
-      expect(updateItemSpy).toHaveBeenNthCalledWith(2, 4, { __collapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4 });
-      expect(SharedService.prototype.hierarchicalDataset[0].file).toBe('TXT');
+      expect(updateItemSpy).toHaveBeenNthCalledWith(1, 0, { __collapsed: true, __hasChildren: true, id: 0, file: 'TXT', size: 5.8, __treeLevel: 0 });
+      expect(updateItemSpy).toHaveBeenNthCalledWith(2, 4, { __collapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4, __treeLevel: 0 });
+      expect(SharedService.prototype.hierarchicalDataset[0].file).toBe('TXT')
       expect(SharedService.prototype.hierarchicalDataset[0].__collapsed).toBeTrue();
       expect(SharedService.prototype.hierarchicalDataset[1].file).toBe('MP3');
       expect(SharedService.prototype.hierarchicalDataset[1].__collapsed).toBeTrue();
+      expect(service.getItemCount(0)).toBe(2); // get count by tree level 0
+      expect(service.getItemCount(1)).toBe(3);
+      expect(service.getItemCount()).toBe(5); // get full count of all tree
       expect(endUpdateSpy).toHaveBeenCalled();
     });
 
@@ -374,8 +379,8 @@ describe('TreeData Service', () => {
       expect(dataGetItemsSpy).toHaveBeenCalled();
       expect(dataGetItemsSpy).toHaveBeenCalled();
       expect(beginUpdateSpy).toHaveBeenCalled();
-      expect(updateItemSpy).toHaveBeenNthCalledWith(1, 0, { customCollapsed: true, __hasChildren: true, id: 0, file: 'TXT', size: 5.8 });
-      expect(updateItemSpy).toHaveBeenNthCalledWith(2, 4, { customCollapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4 });
+      expect(updateItemSpy).toHaveBeenNthCalledWith(1, 0, { customCollapsed: true, __hasChildren: true, id: 0, file: 'TXT', size: 5.8, __treeLevel: 0 });
+      expect(updateItemSpy).toHaveBeenNthCalledWith(2, 4, { customCollapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4, __treeLevel: 0 });
       expect(endUpdateSpy).toHaveBeenCalled();
     });
 
@@ -393,8 +398,8 @@ describe('TreeData Service', () => {
       expect(pubSubSpy).toHaveBeenCalledWith(`onTreeFullToggleEnd`, { type: 'full-expand', previousFullToggleType: 'full-expand', toggledItems: null, });
       expect(dataGetItemsSpy).toHaveBeenCalled();
       expect(beginUpdateSpy).toHaveBeenCalled();
-      expect(updateItemSpy).toHaveBeenNthCalledWith(1, 0, { __collapsed: false, __hasChildren: true, id: 0, file: 'TXT', size: 5.8 });
-      expect(updateItemSpy).toHaveBeenNthCalledWith(2, 4, { __collapsed: false, __hasChildren: true, id: 4, file: 'MP3', size: 3.4 });
+      expect(updateItemSpy).toHaveBeenNthCalledWith(1, 0, { __collapsed: false, __hasChildren: true, id: 0, file: 'TXT', size: 5.8, __treeLevel: 0 });
+      expect(updateItemSpy).toHaveBeenNthCalledWith(2, 4, { __collapsed: false, __hasChildren: true, id: 4, file: 'MP3', size: 3.4, __treeLevel: 0 });
       expect(endUpdateSpy).toHaveBeenCalled();
     });
 
@@ -413,7 +418,7 @@ describe('TreeData Service', () => {
 
         expect(dataGetItemsSpy).toHaveBeenCalled();
         expect(beginUpdateSpy).toHaveBeenCalled();
-        expect(updateItemSpy).toHaveBeenNthCalledWith(1, 4, { __collapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4 });
+        expect(updateItemSpy).toHaveBeenNthCalledWith(1, 4, { __collapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4, __treeLevel: 0 });
         expect(pubSubSpy).not.toHaveBeenCalledWith(`onTreeItemToggled`);
         expect(endUpdateSpy).toHaveBeenCalled();
       });
@@ -432,7 +437,7 @@ describe('TreeData Service', () => {
 
         expect(dataGetItemsSpy).not.toHaveBeenCalled();
         expect(beginUpdateSpy).toHaveBeenCalled();
-        expect(updateItemSpy).toHaveBeenNthCalledWith(1, 4, { __collapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4 });
+        expect(updateItemSpy).toHaveBeenNthCalledWith(1, 4, { __collapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4, __treeLevel: 0 });
         expect(pubSubSpy).toHaveBeenCalledWith(`onTreeItemToggled`, { fromItemId: 4, previousFullToggleType: 'full-collapse', toggledItems: [{ itemId: 4, isCollapsed: true }], type: 'toggle-collapse' });
         expect(endUpdateSpy).toHaveBeenCalled();
       });
@@ -452,7 +457,7 @@ describe('TreeData Service', () => {
 
         expect(dataGetItemsSpy).toHaveBeenCalled();
         expect(beginUpdateSpy).toHaveBeenCalled();
-        expect(updateItemSpy).toHaveBeenNthCalledWith(1, 4, { __collapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4 });
+        expect(updateItemSpy).toHaveBeenNthCalledWith(1, 4, { __collapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4, __treeLevel: 0 });
         expect(pubSubSpy).toHaveBeenCalledWith(`onTreeItemToggled`, { fromItemId: 4, previousFullToggleType: 'full-collapse', toggledItems: [{ itemId: 4, isCollapsed: true }], type: 'toggle-collapse' });
         expect(endUpdateSpy).toHaveBeenCalled();
       });

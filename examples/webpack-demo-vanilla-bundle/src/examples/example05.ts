@@ -41,6 +41,9 @@ export class Example5 {
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions });
     this.dataset = this.loadData(NB_ITEMS);
 
+    // optionally display only the parent items count on the right footer
+    // this.sgb.slickFooter.rightFooterText = `${this.sgb.treeDataService.getItemCount(0)} parent items`;
+
     // with large dataset you maybe want to show spinner before/after these events: sorting/filtering/collapsing/expanding
     this._bindingEventService.bind(gridContainerElm, 'onbeforefilterchange', this.showSpinner.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onfilterchanged', this.hideSpinner.bind(this));
@@ -125,7 +128,7 @@ export class Example5 {
       showCustomFooter: true, // display some metrics in the bottom custom footer
       customFooterOptions: {
         // optionally display some text on the left footer container
-        leftFooterText: 'Grid created with <a href="https://github.com/ghiscoding/slickgrid-universal" target="_blank">Slickgrid-Universal</a>',
+        leftFooterText: 'Grid created with <a href="https://github.com/ghiscoding/slickgrid-universal" target="_blank">Slickgrid-Universal</a> <i class="mdi mdi-github"></i>',
       },
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       treeDataOptions: {

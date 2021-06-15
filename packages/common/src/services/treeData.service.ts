@@ -191,6 +191,20 @@ export class TreeDataService {
   }
 
   /**
+   * Get the full item count of the Tree.
+   * When an optional tree level is provided, it will return the count for only that dedicated level (for example providing 0 would return the item count of all parent items)
+   * @param {Number} [treeLevel] - optional tree level to get item count from
+   * @returns
+   */
+  getItemCount(treeLevel?: number) {
+    if (treeLevel !== undefined) {
+      const levelPropName = this.getTreeDataOptionPropName('levelPropName');
+      return this.dataView.getItems().filter(dataContext => dataContext[levelPropName] === treeLevel).length;
+    }
+    return this.dataView.getItemCount();
+  }
+
+  /**
    * Get the current list of Tree Data item(s) that got toggled in the grid (basically the parents that the user clicked on the toggle icon to expand/collapse the child)
    * @returns {Array<TreeToggledItem>} treeDataToggledItems - items that were toggled (array of `parentId` and `isCollapsed` flag)
    */
