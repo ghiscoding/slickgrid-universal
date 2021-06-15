@@ -39,8 +39,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.14.1",
-    "dompurify": "^2.2.9"
+    "@slickgrid-universal/common": "^0.14.1"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
