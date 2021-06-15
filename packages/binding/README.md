@@ -9,7 +9,7 @@
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
-## Binding Enginer & Helper
+## Binding Engine & Helper
 #### @slickgrid-universal/binding
 
 A very Simple Vanilla Implementation of a Binding Engine & Helper to add properties/events 2 way bindings. This binding engine is a very simple implementation and is used by simple components like the Custom Footer & Pagination. Again this is a very simple implementation and should not be used with large components but is good enough for small use cases like a footer, pagination and other small ones.
