@@ -348,6 +348,7 @@ describe('Slick-Footer Component', () => {
       expect(footerContainerElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
       expect(rightFooterElm.innerHTML).toBe('initial right footer text');
+      expect(component.rightFooterText).toBe('initial right footer text');
     });
 
     it('should display custom text on the right side footer section when calling the rightFooterText SETTER', () => {
@@ -364,6 +365,7 @@ describe('Slick-Footer Component', () => {
       expect(footerContainerElm).toBeTruthy();
       expect(rightFooterElm).toBeTruthy();
       expect(rightFooterElm.innerHTML).toBe('custom right footer text');
+      expect(component.rightFooterText).toBe('initial right footer text');
     });
   });
 });
