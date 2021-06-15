@@ -89,3 +89,4 @@ $color-sf-primary-dark: #004487 !default;
 .color-alt-danger-dark { @include recolor(darken($color-alt-danger, $color-darken-percentage), 1); }
 .color-alt-success-light { @include recolor(lighten($color-alt-success, $color-lighten-percentage), 1); }
 .color-alt-success-dark { @include recolor(darken($color-alt-success, $color-darken-percentage), 1); }
+.color-se-secondary-light { @include recolor(lighten($color-se-secondary, $color-lighten-percentage), 1); }
