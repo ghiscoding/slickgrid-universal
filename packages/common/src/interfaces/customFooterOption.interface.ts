@@ -1,7 +1,7 @@
 import { MetricTexts } from './metricTexts.interface';
 
 export interface CustomFooterOption {
-  /** Optionally pass some text to be displayed on the left side (in the "left-footer" css class) */
+  /** Optionally provide some text to be displayed on the left side of the footer (in the "left-footer" css class) */
   leftFooterText?: string;
 
   /** CSS class used for the left container */
@@ -39,4 +39,7 @@ export interface CustomFooterOption {
 
   /** CSS class used for the right container */
   rightContainerClass?: string;
+
+  /** Optionally provide some text to be displayed on the right side of the footer (in the "right-footer" css class) */
+  rightFooterText?: string;
 }
