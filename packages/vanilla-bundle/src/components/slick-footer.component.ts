@@ -24,6 +24,7 @@ export class SlickFooterComponent {
   private _footerElement!: HTMLDivElement;
   private _isLeftFooterOriginallyEmpty = true;
   private _isLeftFooterDisplayingSelectionRowCount = false;
+  private _isRightFooterOriginallyEmpty = true;
   private _selectedRowCount = 0;
 
   get eventHandler(): SlickEventHandler {
@@ -55,11 +56,19 @@ export class SlickFooterComponent {
     this.renderLeftFooterText(text);
   }
 
+  get rightFooterText(): string {
+    return document.querySelector('div.right-footer')?.textContent ?? '';
+  }
+  set rightFooterText(text: string) {
+    this.renderRightFooterText(text);
+  }
+
   constructor(private grid: SlickGrid, private customFooterOptions: CustomFooterOption, private translaterService?: TranslaterService) {
     this._bindingHelper = new BindingHelper();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
     this._eventHandler = new Slick.EventHandler();
     this._isLeftFooterOriginallyEmpty = !(this.gridOptions.customFooterOptions?.leftFooterText);
+    this._isRightFooterOriginallyEmpty = !(this.gridOptions.customFooterOptions?.rightFooterText);
     this.registerOnSelectedRowsChangedWhenEnabled(customFooterOptions);
   }
 
@@ -109,6 +118,11 @@ export class SlickFooterComponent {
     this._bindingHelper.setElementAttributeValue('div.left-footer', 'textContent', text);
   }
 
+  /** Render the right side footer text */
+  renderRightFooterText(text: string) {
+    this._bindingHelper.setElementAttributeValue('div.right-footer', 'textContent', text);
+  }
+
   // --
   // private functions
   // --------------------
@@ -124,18 +138,10 @@ export class SlickFooterComponent {
     leftFooterElm.className = `left-footer ${this.customFooterOptions.leftContainerClass}`;
     leftFooterElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, this.customFooterOptions.leftFooterText || '');
 
-    const metricsElm = document.createElement('div');
-    metricsElm.className = 'metrics';
-
-    if (!this.customFooterOptions.hideMetrics) {
-      const rightFooterElm = this.createFooterRightContainer();
-      if (rightFooterElm) {
-        metricsElm.appendChild(rightFooterElm);
-      }
-    }
+    const rightFooterElm = this.createFooterRightContainer();
 
     footerElm.appendChild(leftFooterElm);
-    footerElm.appendChild(metricsElm);
+    footerElm.appendChild(rightFooterElm);
     this._footerElement = footerElm;
 
     if (gridParentContainerElm?.appendChild && this._footerElement) {
@@ -146,53 +152,58 @@ export class SlickFooterComponent {
   /** Create the Right Section Footer */
   private createFooterRightContainer(): HTMLDivElement {
     const rightFooterElm = document.createElement('div');
-    rightFooterElm.className = `right-footer metrics ${this.customFooterOptions.rightContainerClass || ''}`;
+    rightFooterElm.className = `right-footer ${this.customFooterOptions.rightContainerClass || ''}`;
 
-    const lastUpdateElm = document.createElement('span');
-    lastUpdateElm.className = 'timestamp';
+    if (!this._isRightFooterOriginallyEmpty) {
+      rightFooterElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, this.customFooterOptions.rightFooterText || '');
+    } else if (!this.customFooterOptions.hideMetrics) {
+      rightFooterElm.classList.add('metrics');
+      const lastUpdateElm = document.createElement('span');
+      lastUpdateElm.className = 'timestamp';
 
-    if (!this.customFooterOptions.hideLastUpdateTimestamp) {
-      const footerLastUpdateElm = this.createFooterLastUpdate();
-      if (footerLastUpdateElm) {
-        lastUpdateElm.appendChild(footerLastUpdateElm);
+      if (!this.customFooterOptions.hideLastUpdateTimestamp) {
+        const footerLastUpdateElm = this.createFooterLastUpdate();
+        if (footerLastUpdateElm) {
+          lastUpdateElm.appendChild(footerLastUpdateElm);
+        }
       }
-    }
 
-    const itemCountElm = document.createElement('span');
-    itemCountElm.className = 'item-count';
-    itemCountElm.textContent = `${this.metrics?.itemCount ?? '0'}`;
+      const itemCountElm = document.createElement('span');
+      itemCountElm.className = 'item-count';
+      itemCountElm.textContent = `${this.metrics?.itemCount ?? '0'}`;
 
-    // last update elements
-    rightFooterElm.appendChild(lastUpdateElm);
-    rightFooterElm.appendChild(itemCountElm);
+      // last update elements
+      rightFooterElm.appendChild(lastUpdateElm);
+      rightFooterElm.appendChild(itemCountElm);
 
-    // total count element (unless hidden)
-    if (!this.customFooterOptions.hideTotalItemCount) {
+      // total count element (unless hidden)
+      if (!this.customFooterOptions.hideTotalItemCount) {
+        // add carriage return which will add a space before the span
+        rightFooterElm.appendChild(document.createTextNode('\r\n'));
+
+        const textOfElm = document.createElement('span');
+        textOfElm.className = 'text-of';
+        textOfElm.textContent = ` ${this.customFooterOptions.metricTexts?.of ?? 'of'} `;
+        rightFooterElm.appendChild(textOfElm);
+
+        // add another carriage return which will add a space after the span
+        rightFooterElm.appendChild(document.createTextNode('\r\n'));
+
+        const totalCountElm = document.createElement('span');
+        totalCountElm.className = 'total-count';
+        totalCountElm.textContent = `${this.metrics?.totalItemCount ?? '0'}`;
+
+        rightFooterElm.appendChild(totalCountElm);
+      }
+
       // add carriage return which will add a space before the span
       rightFooterElm.appendChild(document.createTextNode('\r\n'));
 
-      const textOfElm = document.createElement('span');
-      textOfElm.className = 'text-of';
-      textOfElm.textContent = ` ${this.customFooterOptions.metricTexts?.of ?? 'of'} `;
-      rightFooterElm.appendChild(textOfElm);
-
-      // add another carriage return which will add a space after the span
-      rightFooterElm.appendChild(document.createTextNode('\r\n'));
-
-      const totalCountElm = document.createElement('span');
-      totalCountElm.className = 'total-count';
-      totalCountElm.textContent = `${this.metrics?.totalItemCount ?? '0'}`;
-
-      rightFooterElm.appendChild(totalCountElm);
+      const textItemsElm = document.createElement('span');
+      textItemsElm.className = 'text-items';
+      textItemsElm.textContent = ` ${this.customFooterOptions.metricTexts?.items ?? 'items'} `;
+      rightFooterElm.appendChild(textItemsElm);
     }
-
-    // add carriage return which will add a space before the span
-    rightFooterElm.appendChild(document.createTextNode('\r\n'));
-
-    const textItemsElm = document.createElement('span');
-    textItemsElm.className = 'text-items';
-    textItemsElm.textContent = ` ${this.customFooterOptions.metricTexts?.items ?? 'items'} `;
-    rightFooterElm.appendChild(textItemsElm);
 
     return rightFooterElm;
   }
