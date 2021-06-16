@@ -15,7 +15,7 @@ import {
   SlickNamespace,
   TranslaterService,
 } from '@slickgrid-universal/common';
-import { BindingHelper } from '../services/binding.helper';
+import { BindingHelper } from '@slickgrid-universal/binding';
 
 declare const Slick: SlickNamespace;
 export class SlickFooterComponent {

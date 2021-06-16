@@ -1,0 +1,24 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": "src",
+    "declarationDir": "dist/esm",
+    "outDir": "dist/esm",
+    "typeRoots": [
+      "typings"
+    ]
+  },
+  "exclude": [
+    "dist",
+    "node_modules",
+    "**/*.spec.ts"
+  ],
+  "filesGlob": [
+    "./src/**/*.ts"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "typings/**/*.ts"
+  ]
+}

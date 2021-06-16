@@ -11,7 +11,7 @@ import {
   Subscription,
   PubSubService,
 } from '@slickgrid-universal/common';
-import { BindingHelper } from '../services/binding.helper';
+import { BindingHelper } from '@slickgrid-universal/binding';
 
 export class SlickPaginationComponent {
   private _bindingHelper: BindingHelper;

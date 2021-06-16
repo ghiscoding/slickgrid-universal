@@ -1,7 +1,7 @@
 import 'jest-extended';
 import { CustomFooterOption, GridOption, SlickGrid } from '@slickgrid-universal/common';
-import { SlickFooterComponent } from '../slick-footer.component';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { SlickFooterComponent } from './slick-footer.component';
+import { TranslateServiceStub } from '../../../test/translateServiceStub';
 
 function removeExtraSpaces(text: string) {
   return `${text}`.replace(/\s{2,}/g, '');

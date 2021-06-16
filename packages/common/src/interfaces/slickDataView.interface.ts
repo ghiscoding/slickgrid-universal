@@ -74,6 +74,9 @@ export interface SlickDataView {
   /** Get only the DataView filtered items */
   getFilteredItems: <T = any>() => T[];
 
+  /** Get the array length (count) of only the DataView filtered items */
+  getFilteredItemCount(): number;
+
   /** Get current Grouping info */
   getGrouping(): Grouping[];
 

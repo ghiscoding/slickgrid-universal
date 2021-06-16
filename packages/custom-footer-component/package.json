@@ -1,7 +1,7 @@
 {
-  "name": "@slickgrid-universal/empty-warning-component",
+  "name": "@slickgrid-universal/custom-footer-component",
   "version": "0.14.1",
-  "description": "Slick Empty Warning Component - Vanilla Implementation of an Empty Dataset Warning Component",
+  "description": "Slick Custom Footer Component - Vanilla Implementation of a Custom Footer Component",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
   "module": "dist/esm/index.js",
@@ -24,8 +24,8 @@
     "bundle:esm": "cross-env tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
     "prebundle": "npm-run-all delete:dist",
     "delete:dist": "cross-env rimraf --maxBusyTries=10 dist",
-    "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=empty-warning-component",
-    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=empty-warning-component"
+    "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=custom-footer-component",
+    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=custom-footer-component"
   },
   "author": "Ghislain B.",
   "license": "MIT",
@@ -39,6 +39,7 @@
     "not dead"
   ],
   "dependencies": {
+    "@slickgrid-universal/binding": "^0.14.1",
     "@slickgrid-universal/common": "^0.14.1"
   },
   "devDependencies": {
