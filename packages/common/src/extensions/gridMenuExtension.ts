@@ -477,6 +477,7 @@ export class GridMenuExtension implements Extension {
           // when displaying header row, we'll call "setColumns" which in terms will recreate the header row filters
           if (showHeaderRow === true) {
             this.sharedService.slickGrid.setColumns(this.sharedService.columnDefinitions);
+            this.sharedService.slickGrid.scrollColumnIntoView(0); // quick fix to avoid filter being out of sync with horizontal scroll
           }
           break;
         case 'toggle-toppanel':
