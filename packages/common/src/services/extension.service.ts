@@ -24,6 +24,12 @@ import {
 import { SharedService } from './shared.service';
 import { TranslaterService } from './translater.service';
 
+interface ExtensionWithColumnIndexPosition {
+  name: ExtensionName;
+  position: number;
+  extension: CheckboxSelectorExtension | RowDetailViewExtension | RowMoveManagerExtension;
+}
+
 export class ExtensionService {
   private _extensionCreatedList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
   private _extensionList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
@@ -255,36 +261,37 @@ export class ExtensionService {
    * Bind/Create certain plugins before the Grid creation to avoid having odd behaviors.
    * Mostly because the column definitions might change after the grid creation, so we want to make sure to add it before then
    * @param columnDefinitions
-   * @param options
+   * @param gridOptions
    */
-  createExtensionsBeforeGridCreation(columnDefinitions: Column[], options: GridOption) {
-    if (options.enableCheckboxSelector) {
+  createExtensionsBeforeGridCreation(columnDefinitions: Column[], gridOptions: GridOption) {
+    const featureWithColumnIndexPositions: { name: ExtensionName; position: number; extension: CheckboxSelectorExtension | RowDetailViewExtension | RowMoveManagerExtension; }[] = [];
+
+    // the following 3 features might have `columnIndexPosition` that we need to respect their column order, we will execute them by their sort order further down
+    // we push them into a array and we'll process them by their position (if provided, else use same order that they were inserted)
+    if (gridOptions.enableCheckboxSelector) {
       if (!this.getCreatedExtensionByName(ExtensionName.checkboxSelector)) {
-        const checkboxInstance = this.checkboxSelectorExtension.create(columnDefinitions, options);
-        if (checkboxInstance) {
-          this._extensionCreatedList[ExtensionName.checkboxSelector] = { name: ExtensionName.checkboxSelector, instance: checkboxInstance, class: this.checkboxSelectorExtension };
-        }
+        featureWithColumnIndexPositions.push({ name: ExtensionName.checkboxSelector, extension: this.checkboxSelectorExtension, position: gridOptions?.checkboxSelector?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
       }
     }
-    if (options.enableRowMoveManager) {
+    if (gridOptions.enableRowMoveManager) {
       if (!this.getCreatedExtensionByName(ExtensionName.rowMoveManager)) {
-        const rowMoveInstance = this.rowMoveManagerExtension.create(columnDefinitions, options);
-        if (rowMoveInstance) {
-          this._extensionCreatedList[ExtensionName.rowMoveManager] = { name: ExtensionName.rowMoveManager, instance: rowMoveInstance, class: this.rowMoveManagerExtension };
-        }
+        featureWithColumnIndexPositions.push({ name: ExtensionName.rowMoveManager, extension: this.rowMoveManagerExtension, position: gridOptions?.rowMoveManager?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
       }
     }
-    if (options.enableRowDetailView) {
+    if (gridOptions.enableRowDetailView) {
       if (!this.getCreatedExtensionByName(ExtensionName.rowDetailView)) {
-        const rowDetailInstance = this.rowDetailViewExtension.create(columnDefinitions, options);
-        this._extensionCreatedList[ExtensionName.rowDetailView] = { name: ExtensionName.rowDetailView, instance: rowDetailInstance, class: this.rowDetailViewExtension };
+        featureWithColumnIndexPositions.push({ name: ExtensionName.rowDetailView, extension: this.rowDetailViewExtension, position: gridOptions?.rowDetailView?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
       }
     }
-    if (options.enableDraggableGrouping) {
+
+    // since some features could have a `columnIndexPosition`, we need to make sure these indexes are respected in the column definitions
+    this.createExtensionByTheirColumnIndex(featureWithColumnIndexPositions, columnDefinitions, gridOptions);
+
+    if (gridOptions.enableDraggableGrouping) {
       if (!this.getCreatedExtensionByName(ExtensionName.draggableGrouping)) {
-        const draggableInstance = this.draggableGroupingExtension.create(options);
+        const draggableInstance = this.draggableGroupingExtension.create(gridOptions);
         if (draggableInstance) {
-          options.enableColumnReorder = draggableInstance.getSetupColumnReorder;
+          gridOptions.enableColumnReorder = draggableInstance.getSetupColumnReorder;
           this._extensionCreatedList[ExtensionName.draggableGrouping] = { name: ExtensionName.draggableGrouping, instance: draggableInstance, class: this.draggableGroupingExtension };
         }
       }
@@ -419,6 +426,27 @@ export class ExtensionService {
   //
   // private functions
   // -------------------
+
+  /**
+   * Some extension (feature) have specific `columnIndexPosition` that the developer want to use, we need to make sure these indexes are respected in the column definitions in the order provided.
+   * The following 3 features could have that optional `columnIndexPosition` and we need to respect their column order, we will first sort by their optional order and only after we will create them by their specific order.
+   * We'll process them by their position (if provided, else use same order that they were inserted)
+   * @param featureWithIndexPositions
+   * @param columnDefinitions
+   * @param gridOptions
+   */
+  private createExtensionByTheirColumnIndex(featureWithIndexPositions: ExtensionWithColumnIndexPosition[], columnDefinitions: Column[], gridOptions: GridOption) {
+    // 1- first step is to sort them by their index position
+    featureWithIndexPositions.sort((feat1, feat2) => feat1.position - feat2.position);
+
+    // 2- second step, we can now proceed to create each extension/addon and that will position them accordingly in the column definitions list
+    featureWithIndexPositions.forEach(feature => {
+      const instance = feature.extension.create(columnDefinitions, gridOptions);
+      if (instance) {
+        this._extensionCreatedList[feature.name] = { name: feature.name, instance, class: feature.extension };
+      }
+    });
+  }
 
   /**
    * Get an Extension that was created by calling its "create" method (there are only 3 extensions which uses this method)
