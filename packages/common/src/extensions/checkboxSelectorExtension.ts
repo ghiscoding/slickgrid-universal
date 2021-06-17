@@ -42,7 +42,7 @@ export class CheckboxSelectorExtension implements Extension {
         selectionColumn.maxWidth = selectionColumn.width || 30;
 
         // column index position in the grid
-        const columnPosition = gridOptions?.checkboxSelector?.columnIndexPosition || 0;
+        const columnPosition = gridOptions?.checkboxSelector?.columnIndexPosition ?? 0;
         if (columnPosition > 0) {
           columnDefinitions.splice(columnPosition, 0, selectionColumn);
         } else {

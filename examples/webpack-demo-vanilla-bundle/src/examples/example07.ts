@@ -196,11 +196,17 @@ export class Example7 {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false
       },
+      checkboxSelector: {
+        hideSelectAllCheckbox: false, // hide the "Select All" from title bar
+        columnIndexPosition: 1,
+        // row selection should only be usable & displayed on root level 0 (parent item) & grid isn't locked
+      },
       dataView: {
         syncGridSelection: true, // enable this flag so that the row selection follows the row even if we move it to another position
       },
       enableRowMoveManager: true,
       rowMoveManager: {
+        columnIndexPosition: 0,
         // when using Row Move + Row Selection, you want to move only a single row and we will enable the following flags so it doesn't cancel row selection
         singleRowMove: true,
         disableRowSelection: true,
