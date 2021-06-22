@@ -10,6 +10,13 @@ import {
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
 
+/**
+ * AutoTooltips plugin to show/hide tooltips when columns are too narrow to fit content.
+ * @constructor
+ * @param {boolean} [options.enableForCells=true]        - Enable tooltip for grid cells
+ * @param {boolean} [options.enableForHeaderCells=false] - Enable tooltip for header cells
+ * @param {number}  [options.maxToolTipLength=null]      - The maximum length for a tooltip
+ */
 export class AutoTooltipsPlugin {
   private _eventHandler!: SlickEventHandler;
   private _grid!: SlickGrid;
@@ -38,7 +45,7 @@ export class AutoTooltipsPlugin {
 
   /** Initialize plugin. */
   init(grid: SlickGrid) {
-    this._options = { ...this._defaults, ...this._options };
+    this._options = { ...this._defaults, ...this.options };
     this._grid = grid;
     if (this._options.enableForCells) {
       const onMouseEnterHandler = this._grid.onMouseEnter;
@@ -50,8 +57,8 @@ export class AutoTooltipsPlugin {
     }
   }
 
-  /** Destroy (dispose) the SlickGrid 3rd party plugin */
-  destroy() {
+  /** Dispose (destroy) the SlickGrid 3rd party plugin */
+  dispose() {
     this._eventHandler?.unsubscribeAll();
   }
 
@@ -90,9 +97,14 @@ export class AutoTooltipsPlugin {
    */
   private handleHeaderMouseEnter(event: Event, args: { column: Column; }) {
     const column = args.column;
-    let node = (event.target as HTMLDivElement).querySelector<HTMLDivElement>('.slick-header-column');
-    if (node && !column?.toolTip) {
-      node.title = (node.clientWidth < node.scrollWidth) ? column.name ?? '' : '';
+    let node: HTMLDivElement | null;
+    const targetElm = (event.target as HTMLDivElement);
+
+    if (targetElm) {
+      node = targetElm.closest<HTMLDivElement>('.slick-header-column');
+      if (node && !(column?.toolTip)) {
+        node.title = (targetElm.clientWidth < node.clientWidth) ? column?.name ?? '' : '';
+      }
     }
     node = null;
   }

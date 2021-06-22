@@ -343,6 +343,9 @@ export class Example4 {
         container: '.demo-container',
       },
       enableAutoTooltip: true,
+      autoTooltipOptions: {
+        enableForHeaderCells: true
+      },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableCellNavigation: true,
