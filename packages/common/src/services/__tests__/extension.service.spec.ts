@@ -1,12 +1,14 @@
+import 'jest-extended';
+
 import { ExtensionName } from '../../enums/index';
-import { Column, ExtensionModel, GridOption, SlickGrid, SlickHeaderMenu } from '../../interfaces/index';
+import { Column, ExtensionModel, GridOption, SlickGrid, SlickHeaderMenu, SlickNamespace } from '../../interfaces/index';
 import {
   CellExternalCopyManagerExtension,
   CellMenuExtension,
   CheckboxSelectorExtension,
-  ColumnPickerExtension,
   ContextMenuExtension,
   DraggableGroupingExtension,
+  ExtensionUtility,
   GridMenuExtension,
   GroupItemMetaProviderExtension,
   HeaderButtonExtension,
@@ -18,19 +20,23 @@ import {
 import { ExtensionService, SharedService } from '..';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { AutoTooltipsPlugin } from '../../plugins/index';
+import { ColumnPickerControl } from '../../controls/index';
 
 jest.mock('flatpickr', () => { });
+declare const Slick: SlickNamespace;
 
 const gridStub = {
   autosizeColumns: jest.fn(),
   getColumnIndex: jest.fn(),
   getOptions: jest.fn(),
   getPluginByName: jest.fn(),
+  getUID: jest.fn(),
   getColumns: jest.fn(),
   setColumns: jest.fn(),
-  onColumnsReordered: jest.fn(),
   onColumnsResized: jest.fn(),
   registerPlugin: jest.fn(),
+  onColumnsReordered: new Slick.Event(),
+  onHeaderContextMenu: new Slick.Event(),
 } as unknown as SlickGrid;
 
 const extensionStub = {
@@ -69,20 +75,22 @@ const extensionHeaderMenuStub = {
 describe('ExtensionService', () => {
   let sharedService: SharedService;
   let service: ExtensionService;
+  let extensionUtility: ExtensionUtility;
   let translateService: TranslateServiceStub;
 
   describe('with Translate Service', () => {
     beforeEach(() => {
       sharedService = new SharedService();
       translateService = new TranslateServiceStub();
+      extensionUtility = new ExtensionUtility(sharedService, translateService);
       translateService.use('fr');
 
       service = new ExtensionService(
+        extensionUtility,
         // extensions
         extensionStub as unknown as CellExternalCopyManagerExtension,
         extensionCellMenuStub as unknown as CellMenuExtension,
         extensionStub as unknown as CheckboxSelectorExtension,
-        extensionColumnPickerStub as unknown as ColumnPickerExtension,
         extensionContextMenuStub as unknown as ContextMenuExtension,
         extensionStub as unknown as DraggableGroupingExtension,
         extensionGridMenuStub as unknown as GridMenuExtension,
@@ -213,15 +221,32 @@ describe('ExtensionService', () => {
 
       it('should register the ColumnPicker addon when "enableColumnPicker" is set in the grid options', () => {
         const gridOptionsMock = { enableColumnPicker: true } as GridOption;
-        const extSpy = jest.spyOn(extensionColumnPickerStub, 'register').mockReturnValue(instanceMock);
+        jest.spyOn(extensionColumnPickerStub, 'register').mockReturnValue(instanceMock);
         const gridSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
         const output = service.getExtensionByName(ExtensionName.columnPicker);
 
         expect(gridSpy).toHaveBeenCalled();
-        expect(extSpy).toHaveBeenCalled();
-        expect(output).toEqual({ name: ExtensionName.columnPicker, instance: instanceMock as unknown, class: extensionColumnPickerStub } as ExtensionModel<any, any>);
+        expect(output).toEqual({ name: ExtensionName.columnPicker, instance: expect.anything(), class: {} } as ExtensionModel<any, any>);
+        expect(output.instance instanceof ColumnPickerControl).toBeTrue();
+      });
+
+      it('should call "onExtensionRegistered" when defined in grid option and the ColumnPicker control gets created', () => {
+        const onRegisteredMock = jest.fn();
+        const gridOptionsMock = {
+          enableColumnPicker: true,
+          columnPicker: {
+            onExtensionRegistered: onRegisteredMock
+          }
+        } as GridOption;
+        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+
+        service.bindDifferentExtensions();
+        const output = service.getExtensionByName(ExtensionName.columnPicker);
+
+        expect(onRegisteredMock).toHaveBeenCalledWith(expect.toBeObject());
+        expect(output.instance instanceof ColumnPickerControl).toBeTrue();
       });
 
       it('should register the DraggableGrouping addon when "enableDraggableGrouping" is set in the grid options', () => {
@@ -487,7 +512,13 @@ describe('ExtensionService', () => {
     });
 
     it('should call the translateColumnPicker method on the ColumnPicker Extension when service with same method name is called', () => {
-      const extSpy = jest.spyOn(extensionColumnPickerStub, 'translateColumnPicker');
+      const gridOptionsMock = { enableColumnPicker: true } as GridOption;
+      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+
+      service.bindDifferentExtensions();
+
+      const columnPickerInstance = service.getExtensionByName(ExtensionName.columnPicker).instance;
+      const extSpy = jest.spyOn(columnPickerInstance, 'translateColumnPicker');
       service.translateColumnPicker();
       expect(extSpy).toHaveBeenCalled();
     });
@@ -609,27 +640,23 @@ describe('ExtensionService', () => {
         expect(spyAllCols).not.toHaveBeenCalled();
       });
 
-      it('should re-register the Column Picker when enable and method is called with new column definition collection provided as argument', () => {
-        const extensionMock = { name: ExtensionName.columnPicker, addon: null, instance: null, class: null } as ExtensionModel<any, any>;
-        const gridOptionsMock = { enableColumnPicker: true } as GridOption;
+      it('should replace the Column Picker columns when plugin is enabled and method is called with new column definition collection provided as argument', () => {
         const columnsMock = [
           { id: 'field1', field: 'field1', nameKey: 'HELLO' },
           { id: 'field2', field: 'field2', nameKey: 'WORLD' }
         ] as Column[];
+        const instanceMock = { translateColumnPicker: jest.fn() };
+        const gridOptionsMock = { enableColumnPicker: true } as GridOption;
+        jest.spyOn(extensionColumnPickerStub, 'register').mockReturnValue(instanceMock);
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-        jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-        jest.spyOn(service, 'getExtensionByName').mockReturnValue(extensionMock);
-        const spyCpDispose = jest.spyOn(extensionColumnPickerStub, 'dispose');
-        const spyCpRegister = jest.spyOn(extensionColumnPickerStub, 'register');
-        const spyAllCols = jest.spyOn(SharedService.prototype, 'allColumns', 'set');
+        jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
         const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
 
+        service.bindDifferentExtensions();
         service.renderColumnHeaders(columnsMock);
 
-        expect(spyCpDispose).toHaveBeenCalled();
-        expect(spyCpRegister).toHaveBeenCalled();
-        expect(spyAllCols).toHaveBeenCalledWith(columnsMock);
         expect(setColumnsSpy).toHaveBeenCalledWith(columnsMock);
+        expect(service.getExtensionByName(ExtensionName.columnPicker).instance.columns).toEqual(columnsMock);
       });
 
       it('should re-register the Grid Menu when enable and method is called with new column definition collection provided as argument', () => {
@@ -695,14 +722,16 @@ describe('ExtensionService', () => {
   });
 
   describe('without Translate Service', () => {
+    extensionUtility = new ExtensionUtility(sharedService, translateService);
+
     beforeEach(() => {
       translateService = undefined as any;
       service = new ExtensionService(
+        extensionUtility,
         // extensions
         extensionStub as unknown as CellExternalCopyManagerExtension,
         extensionStub as unknown as CellMenuExtension,
         extensionStub as unknown as CheckboxSelectorExtension,
-        extensionColumnPickerStub as unknown as ColumnPickerExtension,
         extensionStub as unknown as ContextMenuExtension,
         extensionStub as unknown as DraggableGroupingExtension,
         extensionGridMenuStub as unknown as GridMenuExtension,

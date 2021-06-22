@@ -1,6 +1,5 @@
-import { Column } from './column.interface';
-import { GridOption } from './gridOption.interface';
-import { SlickColumnPicker } from './slickColumnPicker.interface';
+import { Column, GridOption } from './index';
+import { ColumnPickerControl } from '../controls/columnPicker.control';
 
 export interface ColumnPicker extends ColumnPickerOption {
 
@@ -8,7 +7,7 @@ export interface ColumnPicker extends ColumnPickerOption {
   // Events
 
   /** Fired after extension (control) is registered by SlickGrid */
-  onExtensionRegistered?: (plugin: SlickColumnPicker) => void;
+  onExtensionRegistered?: (plugin: ColumnPickerControl) => void;
 }
 
 export interface ColumnPickerOption {
