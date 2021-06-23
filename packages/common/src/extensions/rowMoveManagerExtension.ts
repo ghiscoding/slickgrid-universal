@@ -64,7 +64,7 @@ export class RowMoveManagerExtension implements Extension {
       // only add the new column if it doesn't already exist
       if (!rowMoveColDef && finalRowMoveColumn) {
         // column index position in the grid
-        const columnPosition = gridOptions?.rowMoveManager?.columnIndexPosition || 0;
+        const columnPosition = gridOptions?.rowMoveManager?.columnIndexPosition ?? 0;
         if (columnPosition > 0) {
           columnDefinitions.splice(columnPosition, 0, finalRowMoveColumn);
         } else {

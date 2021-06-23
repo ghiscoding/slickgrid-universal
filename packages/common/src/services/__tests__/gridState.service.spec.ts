@@ -9,17 +9,20 @@ import {
 } from '../../enums/index';
 import {
   BackendService,
-  GridOption,
+  CheckboxSelectorOption,
+  Column,
   CurrentPagination,
   CurrentPinning,
   CurrentRowSelection,
   CurrentSorter,
   CurrentFilter,
-  Column,
   CurrentColumn,
+  GridOption,
   SlickDataView,
   GridStateChange,
   GridState,
+  RowDetailView,
+  RowMoveManager,
   SlickColumnPicker,
   SlickGrid,
   SlickNamespace,
@@ -174,12 +177,16 @@ describe('GridStateService', () => {
 
     describe('changeColumnsArrangement method', () => {
       const rowCheckboxColumnMock: Column = { id: '_checkbox_selector', field: '_checkbox_selector', minWidth: 50 };
+      const rowDetailColumnMock: Column = { id: '_detail_selector', field: '_detail_selector', minWidth: 50 };
+      const rowMoveColumnMock: Column = { id: '_move', field: '_move', minWidth: 50 };
       let presetColumnsMock: CurrentColumn[];
       let columnsWithoutCheckboxMock: Column[];
       let allColumnsMock: Column[];
 
       beforeEach(() => {
         allColumnsMock = [
+          rowDetailColumnMock,
+          rowMoveColumnMock,
           rowCheckboxColumnMock,
           { id: 'field1', field: 'field1', width: 100, cssClass: 'red' },
           { id: 'field2', field: 'field2', width: 150, headerCssClass: 'blue' },
@@ -199,11 +206,20 @@ describe('GridStateService', () => {
       });
 
       afterEach(() => {
+        gridOptionMock.enableCheckboxSelector = false;
+        gridOptionMock.enableRowDetailView = false;
+        gridOptionMock.enableRowMoveManager = false;
         jest.clearAllMocks();
       });
 
       it('should call the method and expect slickgrid "setColumns" and "autosizeColumns" to be called with newest columns', () => {
         gridOptionMock.enableCheckboxSelector = true;
+        gridOptionMock.enableRowDetailView = true;
+        gridOptionMock.enableRowMoveManager = true;
+        gridOptionMock.rowDetailView = { columnIndexPosition: 0 } as unknown as RowDetailView;
+        gridOptionMock.rowMoveManager = { columnIndexPosition: 1 } as unknown as RowMoveManager;
+        gridOptionMock.checkboxSelector = { columnIndexPosition: 2 } as unknown as CheckboxSelectorOption;
+
         jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
         const setColsSpy = jest.spyOn(gridStub, 'setColumns');
         const autoSizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
@@ -211,7 +227,7 @@ describe('GridStateService', () => {
 
         service.changeColumnsArrangement(presetColumnsMock);
 
-        expect(setColsSpy).toHaveBeenCalledWith([rowCheckboxColumnMock, ...columnsWithoutCheckboxMock]);
+        expect(setColsSpy).toHaveBeenCalledWith([rowDetailColumnMock, rowMoveColumnMock, rowCheckboxColumnMock, ...columnsWithoutCheckboxMock]);
         expect(autoSizeSpy).toHaveBeenCalled();
         expect(pubSubSpy).not.toHaveBeenCalledWith('onFullResizeByContentRequested');
       });
@@ -225,7 +241,7 @@ describe('GridStateService', () => {
 
         service.changeColumnsArrangement(presetColumnsMock, false);
 
-        expect(setColsSpy).toHaveBeenCalledWith([rowCheckboxColumnMock, ...columnsWithoutCheckboxMock]);
+        expect(setColsSpy).toHaveBeenCalledWith(columnsWithoutCheckboxMock);
         expect(autoSizeSpy).not.toHaveBeenCalled();
         expect(pubSubSpy).toHaveBeenCalledWith('onFullResizeByContentRequested', { caller: 'GridStateService' });
       });
@@ -240,7 +256,7 @@ describe('GridStateService', () => {
 
         service.changeColumnsArrangement(presetColumnsMock, false);
 
-        expect(setColsSpy).toHaveBeenCalledWith([rowCheckboxColumnMock, ...columnsWithoutCheckboxMock]);
+        expect(setColsSpy).toHaveBeenCalledWith(columnsWithoutCheckboxMock);
         expect(autoSizeSpy).not.toHaveBeenCalled();
         expect(pubSubSpy).not.toHaveBeenCalledWith('onFullResizeByContentRequested', { caller: 'GridStateService' });
       });
@@ -253,7 +269,7 @@ describe('GridStateService', () => {
 
         service.changeColumnsArrangement(presetColumnsMock, false, true);
 
-        expect(setColsSpy).toHaveBeenCalledWith([rowCheckboxColumnMock, ...columnsWithoutCheckboxMock]);
+        expect(setColsSpy).toHaveBeenCalledWith(columnsWithoutCheckboxMock);
         expect(autoSizeSpy).not.toHaveBeenCalled();
         expect(pubSubSpy).toHaveBeenCalledWith('onFullResizeByContentRequested', { caller: 'GridStateService' });
       });
@@ -269,7 +285,7 @@ describe('GridStateService', () => {
 
         service.changeColumnsArrangement(presetColumnsMock, false);
 
-        expect(setColsSpy).toHaveBeenCalledWith([rowCheckboxColumnMock, ...columnsWithoutCheckboxMock]);
+        expect(setColsSpy).toHaveBeenCalledWith(columnsWithoutCheckboxMock);
         expect(autoSizeSpy).not.toHaveBeenCalled();
       });
     });

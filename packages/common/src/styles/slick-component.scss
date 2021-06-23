@@ -24,7 +24,7 @@
     float: $footer-left-float;
   }
 
-  .right-footer.metrics {
+  .right-footer {
     color: $footer-right-text-color;
     text-align: $footer-right-text-align;
     font-style: $footer-right-font-style;
@@ -33,7 +33,7 @@
     padding: $footer-right-padding;
     width: $footer-right-width;
     float: $footer-right-float;
-    .separator {
+    &.metrics .separator {
       margin: $footer-right-separator-margin;
     }
   }

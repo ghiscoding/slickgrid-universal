@@ -110,24 +110,37 @@ export class GridStateService {
    */
   changeColumnsArrangement(definedColumns: CurrentColumn[], triggerAutoSizeColumns = true, triggerColumnsFullResizeByContent = false) {
     if (Array.isArray(definedColumns) && definedColumns.length > 0) {
-      const gridColumns: Column[] = this.getAssociatedGridColumns(this._grid, definedColumns);
+      const newArrangedColumns: Column[] = this.getAssociatedGridColumns(this._grid, definedColumns);
 
-      if (gridColumns && Array.isArray(gridColumns) && gridColumns.length > 0) {
+      if (newArrangedColumns && Array.isArray(newArrangedColumns) && newArrangedColumns.length > 0) {
         // make sure that the checkbox selector is still visible in the list when it is enabled
-        if (this._gridOptions.enableCheckboxSelector) {
-          const checkboxColumn = (Array.isArray(this.sharedService.allColumns) && this.sharedService.allColumns.length > 0) ? this.sharedService.allColumns[0] : null;
-          if (checkboxColumn?.id === '_checkbox_selector' && gridColumns[0].id !== '_checkbox_selector') {
-            gridColumns.unshift(checkboxColumn);
+        if (Array.isArray(this.sharedService.allColumns)) {
+          const dynamicAddonColumnByIndexPositionList: { columnId: string; columnIndexPosition: number; }[] = [];
+
+          if (this._gridOptions.enableCheckboxSelector) {
+            const columnIndexPosition = this._gridOptions?.checkboxSelector?.columnIndexPosition ?? 0;
+            dynamicAddonColumnByIndexPositionList.push({ columnId: '_checkbox_selector', columnIndexPosition });
           }
+          if (this._gridOptions.enableRowDetailView) {
+            const columnIndexPosition = this._gridOptions?.rowDetailView?.columnIndexPosition ?? 0;
+            dynamicAddonColumnByIndexPositionList.push({ columnId: '_detail_selector', columnIndexPosition });
+          }
+          if (this._gridOptions.enableRowMoveManager) {
+            const columnIndexPosition = this._gridOptions?.rowMoveManager?.columnIndexPosition ?? 0;
+            dynamicAddonColumnByIndexPositionList.push({ columnId: '_move', columnIndexPosition });
+          }
+
+          // since some features could have a `columnIndexPosition`, we need to make sure these indexes are respected in the column definitions
+          this.addColumnDynamicWhenFeatureEnabled(dynamicAddonColumnByIndexPositionList, this.sharedService.allColumns, newArrangedColumns);
         }
 
         // keep copy the original optional `width` properties optionally provided by the user.
         // We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
-        gridColumns.forEach(col => col.originalWidth = col.width || col.originalWidth);
+        newArrangedColumns.forEach(col => col.originalWidth = col.width || col.originalWidth);
 
         // finally set the new presets columns (including checkbox selector if need be)
-        this._grid.setColumns(gridColumns);
-        this.sharedService.visibleColumns = gridColumns;
+        this._grid.setColumns(newArrangedColumns);
+        this.sharedService.visibleColumns = newArrangedColumns;
 
         // resize the columns to fit the grid canvas
         if (triggerAutoSizeColumns) {
@@ -464,6 +477,31 @@ export class GridStateService {
   // --
   // private methods
   // ------------------
+
+  /**
+   * Add certain column(s), when the feature is/are enabled, to an output column definitions array (by reference).
+   * Basically some features (for example: Row Selection, Row Detail, Row Move) will be added as column(s) dynamically and internally by the lib,
+   * we just ask the developer to enable the feature, via flags, and internally the lib will create the necessary column.
+   * So specifically for these column(s) and feature(s), we need to re-add them internally when the user calls the `changeColumnsArrangement()` method.
+   * @param {Array<Object>} dynamicAddonColumnByIndexPositionList - array of plugin columnId and columnIndexPosition that will be re-added (if it wasn't already found in the output array) dynamically
+   * @param {Array<Column>} fullColumnDefinitions - full column definitions array that includes every columns (including Row Selection, Row Detail, Row Move when enabled)
+   * @param {Array<Column>} newArrangedColumns - output array that will be use to show in the UI (it could have less columns than fullColumnDefinitions array since user might hide some columns)
+   */
+  private addColumnDynamicWhenFeatureEnabled(dynamicAddonColumnByIndexPositionList: Array<{ columnId: string; columnIndexPosition: number; }>, fullColumnDefinitions: Column[], newArrangedColumns: Column[]) {
+    // 1- first step is to sort them by their index position
+    dynamicAddonColumnByIndexPositionList.sort((feat1, feat2) => feat1.columnIndexPosition - feat2.columnIndexPosition);
+
+    // 2- second step, we can now proceed to create each extension/addon and that will position them accordingly in the column definitions list
+    dynamicAddonColumnByIndexPositionList.forEach(feature => {
+      const pluginColumnIdx = fullColumnDefinitions.findIndex(col => col.id === feature.columnId);
+      const associatedGridCheckboxColumnIdx = newArrangedColumns.findIndex(col => col.id === feature.columnId);
+
+      if (pluginColumnIdx >= 0 && associatedGridCheckboxColumnIdx === -1) {
+        const pluginColumn = fullColumnDefinitions[pluginColumnIdx];
+        pluginColumnIdx === 0 ? newArrangedColumns.unshift(pluginColumn) : newArrangedColumns.splice(pluginColumnIdx, 0, pluginColumn);
+      }
+    });
+  }
 
   /**
    * Bind a SlickGrid Extension Event to a Grid State change event

@@ -1,7 +1,7 @@
 {
-  "name": "@slickgrid-universal/empty-warning-component",
+  "name": "@slickgrid-universal/binding",
   "version": "0.14.1",
-  "description": "Slick Empty Warning Component - Vanilla Implementation of an Empty Dataset Warning Component",
+  "description": "Simple Vanilla Implementation of a Binding Engine & Helper to add properties/events 2 way bindings",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
   "module": "dist/esm/index.js",
@@ -24,8 +24,8 @@
     "bundle:esm": "cross-env tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
     "prebundle": "npm-run-all delete:dist",
     "delete:dist": "cross-env rimraf --maxBusyTries=10 dist",
-    "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=empty-warning-component",
-    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=empty-warning-component"
+    "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=binding",
+    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=binding"
   },
   "author": "Ghislain B.",
   "license": "MIT",
@@ -39,7 +39,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.14.1"
+    "dompurify": "^2.2.9"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

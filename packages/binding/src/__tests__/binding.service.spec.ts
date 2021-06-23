@@ -1,3 +1,4 @@
+import 'jest-extended';
 import { BindingService } from '../binding.service';
 
 describe('Binding Service', () => {
@@ -27,6 +28,7 @@ describe('Binding Service', () => {
     const mockEvent = new CustomEvent('change', { bubbles: true, detail: { target: { value: 'Jane' } } });
     elm.dispatchEvent(mockEvent);
 
+    expect(service.property).toBe('name');
     expect(mockObj.name).toBe('Jane');
     expect(mockCallback).toHaveBeenCalled();
   });
@@ -44,6 +46,7 @@ describe('Binding Service', () => {
     const mockEvent = new CustomEvent('change', { bubbles: true, detail: { target: { value: 'Jane' } } });
     elm.dispatchEvent(mockEvent);
 
+    expect(service.property).toBe('invalidProperty');
     expect(mockObj.name).toBe('John');
     expect(mockCallback).toHaveBeenCalled();
   });
@@ -59,6 +62,7 @@ describe('Binding Service', () => {
     service.bind(elm, 'value', 'change', mockCallback);
     mockObj.name = 'Jane';
 
+    expect(service.property).toBe('name');
     expect(elm.value).toBe('Jane');
   });
 
@@ -73,6 +77,7 @@ describe('Binding Service', () => {
     service = new BindingService({ variable: mockObj, property: 'name' });
     service.unbind(mockElm, 'click', mockCallback, false);
 
+    expect(service.property).toBe('name');
     expect(removeEventSpy).toHaveBeenCalledWith('click', mockCallback, false);
   });
 
@@ -87,6 +92,7 @@ describe('Binding Service', () => {
     service.bind(mockElm, 'value', 'keyup');
     service.unbindAll();
 
+    expect(service.property).toBe('name');
     expect(removeEventSpy).toHaveBeenCalledWith('keyup', expect.toBeFunction(), undefined);
   });
 });
