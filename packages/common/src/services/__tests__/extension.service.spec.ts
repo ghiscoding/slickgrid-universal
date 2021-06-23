@@ -100,7 +100,7 @@ describe('ExtensionService', () => {
         // extensions
         extensionStub as unknown as CellExternalCopyManagerExtension,
         extensionCellMenuStub as unknown as CellMenuExtension,
-        extensionStub as unknown as CheckboxSelectorExtension,
+        extensionCheckboxSelectorStub as unknown as CheckboxSelectorExtension,
         extensionContextMenuStub as unknown as ContextMenuExtension,
         extensionStub as unknown as DraggableGroupingExtension,
         extensionGridMenuStub as unknown as GridMenuExtension,
