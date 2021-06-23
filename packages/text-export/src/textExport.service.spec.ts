@@ -114,7 +114,7 @@ describe('ExportService', () => {
       expect(service).toBeTruthy();
     });
 
-    it('should not have any output since there are no column definitions provided', (done) => {
+    it('should not have any output since there are no column definitions provided', async () => {
       const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
       const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
       const spyDownload = jest.spyOn(service, 'startDownloadFile');
@@ -123,14 +123,11 @@ describe('ExportService', () => {
       const contentExpectation = '';
 
       service.init(gridStub, container);
-      service.exportToFile(mockExportCsvOptions);
+      await service.exportToFile(mockExportCsvOptions);
 
-      setTimeout(() => {
-        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, expect.anything());
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
-        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-        done();
-      });
+      expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, expect.anything());
+      expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+      expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
     });
 
     describe('exportToFile method', () => {
@@ -166,75 +163,60 @@ describe('ExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeExportToTextFile`, true);
       });
 
-      it('should trigger an event after exporting the file', (done) => {
+      it('should trigger an event after exporting the file', async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportTxtOptions);
+        await service.exportToFile(mockExportTxtOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, expect.anything());
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, expect.anything());
       });
 
-      it('should call "URL.createObjectURL" with a Blob and CSV file when browser is not IE11 (basically any other browser) when exporting as CSV', (done) => {
+      it('should call "URL.createObjectURL" with a Blob and CSV file when browser is not IE11 (basically any other browser) when exporting as CSV', async () => {
         const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportCsvOptions);
+        await service.exportToFile(mockExportCsvOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
       });
 
-      it('should call "msSaveOrOpenBlob" with a Blob and CSV file when browser is IE11 when exporting as CSV', (done) => {
+      it('should call "msSaveOrOpenBlob" with a Blob and CSV file when browser is IE11 when exporting as CSV', async () => {
         navigator.msSaveOrOpenBlob = jest.fn();
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyMsSave = jest.spyOn(navigator, 'msSaveOrOpenBlob');
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportCsvOptions);
+        await service.exportToFile(mockExportCsvOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, expect.anything());
-          expect(spyMsSave).toHaveBeenCalledWith(mockCsvBlob, 'export.csv');
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, expect.anything());
+        expect(spyMsSave).toHaveBeenCalledWith(mockCsvBlob, 'export.csv');
       });
 
-      it('should call "URL.createObjectURL" with a Blob and TXT file when browser is not IE11 (basically any other browser) when exporting as TXT', (done) => {
+      it('should call "URL.createObjectURL" with a Blob and TXT file when browser is not IE11 (basically any other browser) when exporting as TXT', async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportTxtOptions);
+        await service.exportToFile(mockExportTxtOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, expect.anything());
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockTxtBlob);
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, expect.anything());
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockTxtBlob);
       });
 
-      it('should call "msSaveOrOpenBlob" with a Blob and TXT file when browser is IE11 when exporting as TXT', (done) => {
+      it('should call "msSaveOrOpenBlob" with a Blob and TXT file when browser is IE11 when exporting as TXT', async () => {
         navigator.msSaveOrOpenBlob = jest.fn();
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyMsSave = jest.spyOn(navigator, 'msSaveOrOpenBlob');
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportTxtOptions);
+        await service.exportToFile(mockExportTxtOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, expect.anything());
-          expect(spyMsSave).toHaveBeenCalledWith(mockTxtBlob, 'export.txt');
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, expect.anything());
+        expect(spyMsSave).toHaveBeenCalledWith(mockTxtBlob, 'export.txt');
       });
     });
 
@@ -245,7 +227,7 @@ describe('ExportService', () => {
         mockGridOptions.textExportOptions = { delimiterOverride: '' };
       });
 
-      it(`should have the Order exported correctly with multiple formatters which have 1 of them returning an object with a text property (instead of simple string)`, (done) => {
+      it(`should have the Order exported correctly with multiple formatters which have 1 of them returning an object with a text property (instead of simple string)`, async () => {
         mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -259,17 +241,14 @@ describe('ExportService', () => {
           ="1E06","John","Z","SALES_REP","<b>10</b>"`;
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportCsvOptions);
+        await service.exportToFile(mockExportCsvOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
-          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
 
-      it(`should have the Order exported correctly with multiple formatters and use a different delimiter when "delimiterOverride" is provided`, (done) => {
+      it(`should have the Order exported correctly with multiple formatters and use a different delimiter when "delimiterOverride" is provided`, async () => {
         mockGridOptions.textExportOptions = { delimiterOverride: DelimiterType.doubleSemicolon };
         mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
@@ -284,18 +263,15 @@ describe('ExportService', () => {
               ="1E06";;"John";;"Z";;"SALES_REP";;"<b>10</b>"`;
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportCsvOptions);
+        await service.exportToFile(mockExportCsvOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
-          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
 
       it(`should have the UserId escape with equal sign showing as prefix, to avoid Excel casting the value 1E06 to 1 exponential 6,
-        when "exportCsvForceToKeepAsString" is enable in its column definition`, (done) => {
+        when "exportCsvForceToKeepAsString" is enable in its column definition`, async () => {
         mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -309,17 +285,14 @@ describe('ExportService', () => {
           ="1E06","John","Z","SALES_REP","<b>10</b>"`;
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportCsvOptions);
+        await service.exportToFile(mockExportCsvOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
-          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
 
-      it(`should have the LastName in uppercase when "formatter" is defined but also has "exportCustomFormatter" which will be used`, (done) => {
+      it(`should have the LastName in uppercase when "formatter" is defined but also has "exportCustomFormatter" which will be used`, async () => {
         mockCollection = [{ id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 1 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -333,17 +306,14 @@ describe('ExportService', () => {
           ="2B02","Jane","DOE","FINANCE_MANAGER","<b>1</b>"`;
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportCsvOptions);
+        await service.exportToFile(mockExportCsvOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
-          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
 
-      it(`should have the LastName as empty string when item LastName is NULL and column definition "formatter" is defined but also has "exportCustomFormatter" which will be used`, (done) => {
+      it(`should have the LastName as empty string when item LastName is NULL and column definition "formatter" is defined but also has "exportCustomFormatter" which will be used`, async () => {
         mockCollection = [{ id: 2, userId: '3C2', firstName: 'Ava Luna', lastName: null, position: 'HUMAN_RESOURCES', order: 3 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -357,17 +327,14 @@ describe('ExportService', () => {
           ="3C2","Ava Luna","","HUMAN_RESOURCES","<b>3</b>"`;
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportCsvOptions);
+        await service.exportToFile(mockExportCsvOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
-          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
 
-      it(`should have the UserId as empty string even when UserId property is not found in the item object`, (done) => {
+      it(`should have the UserId as empty string even when UserId property is not found in the item object`, async () => {
         mockCollection = [{ id: 2, firstName: 'Ava', lastName: 'Luna', position: 'HUMAN_RESOURCES', order: 3 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -381,17 +348,14 @@ describe('ExportService', () => {
           ="","Ava","LUNA","HUMAN_RESOURCES","<b>3</b>"`;
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportCsvOptions);
+        await service.exportToFile(mockExportCsvOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
-          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
 
-      it(`should have the Order as empty string when using multiple formatters and last one result in a null output because its value is bigger than 10`, (done) => {
+      it(`should have the Order as empty string when using multiple formatters and last one result in a null output because its value is bigger than 10`, async () => {
         mockCollection = [{ id: 2, userId: '3C2', firstName: 'Ava', lastName: 'Luna', position: 'HUMAN_RESOURCES', order: 13 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -405,17 +369,14 @@ describe('ExportService', () => {
           ="3C2","Ava","LUNA","HUMAN_RESOURCES",""`;
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportCsvOptions);
+        await service.exportToFile(mockExportCsvOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
-          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
 
-      it(`should have the UserId as empty string when its input value is null`, (done) => {
+      it(`should have the UserId as empty string when its input value is null`, async () => {
         mockCollection = [{ id: 3, userId: undefined, firstName: '', lastName: 'Cash', position: 'SALES_REP', order: 3 },];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -429,17 +390,14 @@ describe('ExportService', () => {
           ="","","CASH","SALES_REP","<b>3</b>"`;
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportCsvOptions);
+        await service.exportToFile(mockExportCsvOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
-          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
 
-      it(`should have the Order without html tags when the grid option has "sanitizeDataExport" enabled`, (done) => {
+      it(`should have the Order without html tags when the grid option has "sanitizeDataExport" enabled`, async () => {
         mockGridOptions.textExportOptions = { sanitizeDataExport: true };
         mockCollection = [{ id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 1 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
@@ -454,17 +412,14 @@ describe('ExportService', () => {
           ="2B02","Jane","DOE","FINANCE_MANAGER","1"`;
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportCsvOptions);
+        await service.exportToFile(mockExportCsvOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
-          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
 
-      it(`should export as CSV even when the grid option format was not defined`, (done) => {
+      it(`should export as CSV even when the grid option format was not defined`, async () => {
         mockGridOptions.textExportOptions!.format = undefined;
         mockGridOptions.textExportOptions!.sanitizeDataExport = false;
         mockCollection = [{ id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 1 }];
@@ -480,14 +435,11 @@ describe('ExportService', () => {
           ="2B02","Jane","DOE","FINANCE_MANAGER","<b>1</b>"`;
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportCsvOptions);
+        await service.exportToFile(mockExportCsvOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
-          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
     });
 
@@ -505,7 +457,7 @@ describe('ExportService', () => {
 
       let mockCollection: any[];
 
-      it(`should export correctly with complex object formatters`, (done) => {
+      it(`should export correctly with complex object formatters`, async () => {
         mockCollection = [{ id: 0, user: { firstName: 'John', lastName: 'Z' }, position: 'SALES_REP', order: 10 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -519,14 +471,35 @@ describe('ExportService', () => {
               "John","Z","SALES_REP"`;
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportCsvOptions);
+        await service.exportToFile(mockExportCsvOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
-          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
+      });
+
+      it(`should skip lines that have an empty Slick DataView structure like "getItem" that is null and is part of the item object`, async () => {
+        mockCollection = [
+          { id: 0, user: { firstName: 'John', lastName: 'Z' }, position: 'SALES_REP', order: 10 },
+          { id: 1, getItem: null, getItems: null, __parent: { id: 0, user: { firstName: 'John', lastName: 'Z' }, position: 'SALES_REP', order: 10 } }
+        ];
+        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]).mockReturnValueOnce(mockCollection[1]);
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
+        const spyDownload = jest.spyOn(service, 'startDownloadFile');
+
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
+        const contentExpectation =
+          `"First Name","Last Name","Position"
+              "John","Z","SALES_REP"`;
+
+        service.init(gridStub, container);
+        await service.exportToFile(mockExportCsvOptions);
+
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
     });
 
@@ -553,7 +526,7 @@ describe('ExportService', () => {
         jest.clearAllMocks();
       });
 
-      it(`should have the LastName header title translated when defined as a "headerKey" and "translater" is set in grid option`, (done) => {
+      it(`should have the LastName header title translated when defined as a "headerKey" and "translater" is set in grid option`, async () => {
         mockGridOptions.textExportOptions!.sanitizeDataExport = false;
         mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
@@ -568,14 +541,11 @@ describe('ExportService', () => {
           ="1E06","John","Z","Sales Rep.","<b>10</b>"`;
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportCsvOptions);
+        await service.exportToFile(mockExportCsvOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
-          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
     });
 
@@ -642,7 +612,7 @@ describe('ExportService', () => {
         jest.spyOn(dataViewStub, 'getGrouping').mockReturnValue([mockOrderGrouping]);
       });
 
-      it(`should have a CSV export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, (done) => {
+      it(`should have a CSV export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
@@ -656,17 +626,14 @@ describe('ExportService', () => {
              "","","","","","20"`;
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportCsvOptions);
+        await service.exportToFile(mockExportCsvOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
-          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
 
-      it(`should have a TXT export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, (done) => {
+      it(`should have a TXT export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
@@ -680,14 +647,11 @@ describe('ExportService', () => {
              ;;;;;20`;
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportTxtOptions);
+        await service.exportToFile(mockExportTxtOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockTxtBlob);
-          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockTxtBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
     });
 
@@ -754,7 +718,7 @@ describe('ExportService', () => {
         jest.spyOn(dataViewStub, 'getGrouping').mockReturnValue([mockOrderGrouping]);
       });
 
-      it(`should have a CSV export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, (done) => {
+      it(`should have a CSV export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
@@ -768,17 +732,14 @@ describe('ExportService', () => {
              "","","","","","20"`;
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportCsvOptions);
+        await service.exportToFile(mockExportCsvOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
-          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
 
-      it(`should have a TXT export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, (done) => {
+      it(`should have a TXT export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
@@ -792,14 +753,11 @@ describe('ExportService', () => {
              ;;;;;20`;
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportTxtOptions);
+        await service.exportToFile(mockExportTxtOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockTxtBlob);
-          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockTxtBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
     });
 
@@ -887,7 +845,7 @@ describe('ExportService', () => {
         jest.spyOn(dataViewStub, 'getGrouping').mockReturnValue([mockOrderGrouping]);
       });
 
-      it(`should have a CSV export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, (done) => {
+      it(`should have a CSV export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
@@ -904,17 +862,14 @@ describe('ExportService', () => {
              "","","","","","10"`;
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportCsvOptions);
+        await service.exportToFile(mockExportCsvOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
-          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
 
-      it(`should have a TXT export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, (done) => {
+      it(`should have a TXT export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
@@ -931,14 +886,11 @@ describe('ExportService', () => {
              ;;;;;10`;
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportTxtOptions);
+        await service.exportToFile(mockExportTxtOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockTxtBlob);
-          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockTxtBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
     });
 
@@ -962,7 +914,7 @@ describe('ExportService', () => {
         jest.spyOn(dataViewStub, 'getGrouping').mockReturnValue(null as any);
       });
 
-      it('should export with grouped header titles showing up on first row', (done) => {
+      it('should export with grouped header titles showing up on first row', async () => {
         mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -977,14 +929,11 @@ describe('ExportService', () => {
           "John","Z",="1E06","SALES_REP","<b>10</b>"`;
 
         service.init(gridStub, container);
-        service.exportToFile(mockExportCsvOptions);
+        await service.exportToFile(mockExportCsvOptions);
 
-        setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
-          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-          done();
-        });
+        expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
 
       describe('with Translation', () => {
@@ -1009,7 +958,7 @@ describe('ExportService', () => {
           jest.clearAllMocks();
         });
 
-        it(`should have the LastName header title translated when defined as a "headerKey" and "translater" is set in grid option`, (done) => {
+        it(`should have the LastName header title translated when defined as a "headerKey" and "translater" is set in grid option`, async () => {
           mockGridOptions.textExportOptions!.sanitizeDataExport = false;
           mockTranslateCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
           jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockTranslateCollection.length);
@@ -1025,22 +974,19 @@ describe('ExportService', () => {
             "John","Z",="1E06","Sales Rep.","<b>10</b>"`;
 
           service.init(gridStub, container);
-          service.exportToFile(mockExportCsvOptions);
+          await service.exportToFile(mockExportCsvOptions);
 
-          setTimeout(() => {
-            expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
-            expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
-            expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
-            done();
-          });
+          expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onAfterExportToTextFile`, optionExpectation);
+          expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
+          expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
         });
       });
     });
 
     describe('grid with colspan', () => {
       let mockCollection;
-      let oddMetatadata = { columns: { lastName: { colspan: 2 } } } as ItemMetadata;
-      let evenMetatadata = { columns: { 0: { colspan: '*' } } } as ItemMetadata;
+      const oddMetatadata = { columns: { lastName: { colspan: 2 } } } as ItemMetadata;
+      const evenMetatadata = { columns: { 0: { colspan: '*' } } } as ItemMetadata;
 
       beforeEach(() => {
         mockGridOptions.enableTranslate = true;
