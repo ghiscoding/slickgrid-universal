@@ -1,1 +1,1 @@
-export * from './autoTooltips.plugin';
+export * from './autoTooltip.plugin';

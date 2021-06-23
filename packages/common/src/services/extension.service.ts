@@ -22,7 +22,7 @@ import {
 } from '../extensions/index';
 import { SharedService } from './shared.service';
 import { TranslaterService } from './translater.service';
-import { AutoTooltipsPlugin } from '../plugins/index';
+import { AutoTooltipPlugin } from '../plugins/index';
 import { ColumnPickerControl } from '../controls/index';
 
 interface ExtensionWithColumnIndexPosition {
@@ -133,9 +133,9 @@ export class ExtensionService {
 
       // Auto Tooltip Plugin
       if (this.gridOptions.enableAutoTooltip) {
-        const instance = new AutoTooltipsPlugin(this.gridOptions?.autoTooltipOptions);
+        const instance = new AutoTooltipPlugin(this.gridOptions?.autoTooltipOptions);
         if (instance) {
-          this.sharedService.slickGrid.registerPlugin<AutoTooltipsPlugin>(instance);
+          this.sharedService.slickGrid.registerPlugin<AutoTooltipPlugin>(instance);
           this._extensionList[ExtensionName.autoTooltip] = { name: ExtensionName.autoTooltip, class: {}, instance };
         }
       }

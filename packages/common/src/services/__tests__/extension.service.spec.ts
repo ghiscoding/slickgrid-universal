@@ -19,7 +19,7 @@ import {
 } from '../../extensions';
 import { ExtensionService, SharedService } from '..';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { AutoTooltipsPlugin } from '../../plugins/index';
+import { AutoTooltipPlugin } from '../../plugins/index';
 import { ColumnPickerControl } from '../../controls/index';
 
 jest.mock('flatpickr', () => { });
@@ -226,7 +226,7 @@ describe('ExtensionService', () => {
 
         expect(extSpy).toHaveBeenCalled();
         expect(output).toEqual({ name: ExtensionName.autoTooltip, instance: expect.anything(), class: {} } as ExtensionModel<any, any>);
-        expect(output.instance instanceof AutoTooltipsPlugin).toBeTrue();
+        expect(output.instance instanceof AutoTooltipPlugin).toBeTrue();
       });
 
       it('should register the ColumnPicker addon when "enableColumnPicker" is set in the grid options', () => {

@@ -1,6 +1,6 @@
 import { AutoTooltipOption, Column, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { SharedService } from '../../services/shared.service';
-import { AutoTooltipsPlugin } from '../autoTooltips.plugin';
+import { AutoTooltipPlugin } from '../autoTooltip.plugin';
 
 declare const Slick: SlickNamespace;
 
@@ -30,10 +30,10 @@ const mockColumns = [      // The column definitions
 ] as Column[];
 
 describe('AutoTooltip Plugin', () => {
-  let plugin: AutoTooltipsPlugin;
+  let plugin: AutoTooltipPlugin;
 
   beforeEach(() => {
-    plugin = new AutoTooltipsPlugin(pluginOptions);
+    plugin = new AutoTooltipPlugin(pluginOptions);
   });
 
   it('should create the plugin', () => {
