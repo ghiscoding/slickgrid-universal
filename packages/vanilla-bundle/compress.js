@@ -28,5 +28,5 @@ archive.finalize();
 
 console.log(`Compressed input folders "${inputFolder1}" and "${inputFolder2}" to single output file "${outputPathFilename}"`);
 console.log(`File location:: "${__dirname.replace(/\\/gi, '/')}/${outputPathFilename}"`);
-console.log(`Processed Timestamp`, new Date());
+console.log(`Processed Timestamp`, new Date().toLocaleString('en-CA'));
 console.log(`ALL DONE!!!`);
