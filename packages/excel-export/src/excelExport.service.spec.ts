@@ -587,6 +587,36 @@ describe('ExcelExportService', () => {
           ]
         });
       });
+
+      it(`should skip lines that have an empty Slick DataView structure like "getItem" that is null and is part of the item object`, async () => {
+        mockCollection = [
+          { id: 0, user: { firstName: 'John', lastName: 'Z' }, position: 'SALES_REP', order: 10 },
+          { id: 1, getItem: null, getItems: null, __parent: { id: 0, user: { firstName: 'John', lastName: 'Z' }, position: 'SALES_REP', order: 10 } }
+        ];
+        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]).mockReturnValueOnce(mockCollection[1]);
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
+        const spyDownload = jest.spyOn(service, 'startDownloadFile');
+
+        const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
+
+        service.init(gridStub, container);
+        await service.exportToExcel(mockExportExcelOptions);
+
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
+        expect(spyDownload).toHaveBeenCalledWith({
+          ...optionExpectation, blob: new Blob(), data: [
+            [
+              { metadata: { style: 1, }, value: 'First Name', },
+              { metadata: { style: 1, }, value: 'Last Name', },
+              { metadata: { style: 1, }, value: 'Position', },
+            ],
+            ['John', 'Z', 'SALES_REP'],
+          ]
+        });
+      });
     });
 
     describe('with Translation', () => {
