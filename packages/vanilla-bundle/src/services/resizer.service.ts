@@ -418,11 +418,16 @@ export class ResizerService {
    * for these cases we'll resize until it's no longer true or until we reach a max time limit (70min)
    */
   private resizeGridWhenStylingIsBrokenUntilCorrected() {
+    // how many time we want to check before really stopping the resize check?
+    // We do this because user might be switching to another tab too quickly for the resize be really finished, so better recheck few times to make sure
+    const RESIZE_COUNT_BEFORE_QUITTING = 5;
+
     const headerElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-header`);
     const viewportElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-viewport`);
+    let resizeRequireCheckCount = 0;
 
     if (headerElm && viewportElm) {
-      this._intervalId = setInterval(() => {
+      this._intervalId = setInterval(async () => {
         const headerTitleRowHeight = 44; // this one is set by SASS/CSS so let's hard code it
         const headerPos = getHtmlElementOffset(headerElm);
         let headerOffsetTop = headerPos?.top ?? 0;
@@ -438,17 +443,23 @@ export class ResizerService {
         const viewportOffsetTop = viewportPos?.top ?? 0;
 
         // if header row is Y coordinate 0 (happens when user is not in current Tab) or when header titles are lower than the viewport of dataset (this can happen when user change Tab and DOM is not shown)
+        // another resize condition could be that if the grid location is at coordinate x/y 0/0, we assume that it's in a hidden tab and we'll need to resize whenever that tab becomes active
         // for these cases we'll resize until it's no longer true or until we reach a max time limit (70min)
-        let isResizeRequired = (headerPos?.top === 0 || (headerOffsetTop - viewportOffsetTop) > 40) ? true : false;
+        const containerElmOffset = getHtmlElementOffset(this._gridParentContainerElm);
+        let isResizeRequired = (headerPos?.top === 0 || ((headerOffsetTop - viewportOffsetTop) > 2) || (containerElmOffset.left > 0 && containerElmOffset.top > 0)) ? true : false;
 
         // user could choose to manually stop the looped of auto resize fix
         if (this._isStopResizeIntervalRequested) {
           isResizeRequired = false;
+          resizeRequireCheckCount = RESIZE_COUNT_BEFORE_QUITTING;
         }
 
-        if (isResizeRequired && this._addon?.resizeGrid) {
-          this._addon.resizeGrid();
-        } else if ((!isResizeRequired && !this.gridOptions.useSalesforceDefaultGridOptions) || (this._intervalExecutionCounter++ > (4 * 60 * DEFAULT_INTERVAL_MAX_RETRIES))) { // interval is 250ms, so 4x is 1sec, so (4 * 60 * intervalMaxTimeInMin) shoud be 70min
+        if (isResizeRequired && this._addon?.resizeGrid && (containerElmOffset.left > 0 || containerElmOffset.top > 0)) {
+          await this._addon.resizeGrid();
+          isResizeRequired = false;
+          resizeRequireCheckCount++;
+        }
+        if (resizeRequireCheckCount >= RESIZE_COUNT_BEFORE_QUITTING && !isResizeRequired || (this._intervalExecutionCounter++ > (4 * 60 * DEFAULT_INTERVAL_MAX_RETRIES))) { // interval is 250ms, so 4x is 1sec, so (4 * 60 * intervalMaxTimeInMin) shoud be 70min
           clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 70min
         }
       }, this.intervalRetryDelay);

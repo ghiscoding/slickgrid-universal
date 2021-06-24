@@ -250,6 +250,29 @@ describe('Resizer Service', () => {
       expect(resizeSpy).toHaveBeenCalledTimes(2);
 
       setTimeout(() => {
+        expect(divContainer.outerHTML).toBeTruthy();
+        expect(resizeSpy).toHaveBeenCalled();
+        done();
+        service.requestStopOfAutoFixResizeGrid(); // make sure to stop the interval else we get Jest never stopping
+      }, 15);
+    });
+
+    it('should try to resize grid when its UI is deemed broken and expect "resizeGridWhenStylingIsBrokenUntilCorrected" and then stops after manually requesting a stop', (done) => {
+      const promise = new Promise(resolve => setTimeout(() => resolve({ height: 150, width: 350 }), 1));
+      const resizeSpy = jest.spyOn(mockResizerImplementation, 'resizeGrid').mockReturnValue(promise);
+
+      service.init(gridStub, divContainer);
+      service.intervalRetryDelay = 2;
+
+      jest.spyOn(divHeaderElm, 'getBoundingClientRect').mockReturnValue({ top: 30, left: 25 } as unknown as DOMRect);
+      jest.spyOn(divContainer, 'getBoundingClientRect').mockReturnValue({ top: 4, left: 0 } as unknown as DOMRect);
+      divHeaderElm.style.top = '30px';
+      divHeaderElm.style.left = '25px';
+
+      expect(divContainer.outerHTML).toBeTruthy();
+      expect(resizeSpy).toHaveBeenCalledTimes(2);
+
+      setTimeout(() => {
         service.requestStopOfAutoFixResizeGrid();
 
         expect(divContainer.outerHTML).toBeTruthy();
