@@ -24,6 +24,7 @@ describe('Binding Helper', () => {
     div.appendChild(elm);
 
     helper.addElementBinding(mockObj, 'name', 'input.custom-class', 'value', 'change', mockCallback);
+    helper.addElementBinding(mockObj, 'name', 'input.custom-class', 'value', 'change', mockCallback); // adding twice shouldn't push more than once
     elm.value = 'Jane';
     const mockEvent = new CustomEvent('change', { bubbles: true, detail: { target: { value: 'Jane' } } });
     elm.dispatchEvent(mockEvent);

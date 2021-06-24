@@ -29,7 +29,7 @@ export class BindingHelper {
 
     // before creating a new observer, first check if the variable already has an associated observer
     // if we can't find an observer then we'll create a new one for it
-    let observer = this._observers.find((bind) => bind.property === variable);
+    let observer = this._observers.find(bind => bind.property === variable);
     if (!observer) {
       observer = new BindingService({ variable, property });
     }
