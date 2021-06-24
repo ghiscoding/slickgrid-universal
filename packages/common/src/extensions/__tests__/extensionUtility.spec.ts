@@ -1,4 +1,3 @@
-import { ExtensionName } from '../../enums/index';
 import { Column, GridOption, SlickGrid } from '../../interfaces/index';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
@@ -17,9 +16,7 @@ const mockAddon = jest.fn().mockImplementation(() => ({
 }));
 
 jest.mock('slickgrid/slick.groupitemmetadataprovider', () => mockAddon);
-jest.mock('slickgrid/controls/slick.columnpicker', () => mockAddon);
 jest.mock('slickgrid/controls/slick.gridmenu', () => mockAddon);
-jest.mock('slickgrid/plugins/slick.autotooltips', () => mockAddon);
 jest.mock('slickgrid/plugins/slick.cellmenu', () => mockAddon);
 jest.mock('slickgrid/plugins/slick.cellexternalcopymanager', () => mockAddon);
 jest.mock('slickgrid/plugins/slick.contextmenu', () => mockAddon);
@@ -31,12 +28,10 @@ jest.mock('slickgrid/plugins/slick.rowdetailview', () => mockAddon);
 jest.mock('slickgrid/plugins/slick.rowmovemanager', () => mockAddon);
 
 const Slick = {
-  AutoTooltips: mockAddon,
   DraggableGrouping: mockAddon,
   RowMoveManager: mockAddon,
   RowSelectionModel: mockAddon,
   Controls: {
-    ColumnPicker: mockAddon,
     GridMenu: mockAddon,
   },
   Data: {

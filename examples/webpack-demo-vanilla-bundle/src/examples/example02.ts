@@ -164,6 +164,9 @@ export class Example2 {
       exportOptions: {
         sanitizeDataExport: true
       },
+      columnPicker: {
+        onColumnsChanged: (e, args) => console.log(e, args)
+      },
       enableExcelExport: true,
       excelExportOptions: { filename: 'my-export', sanitizeDataExport: true },
       textExportOptions: { filename: 'my-export', sanitizeDataExport: true },
