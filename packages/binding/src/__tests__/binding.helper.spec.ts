@@ -24,12 +24,31 @@ describe('Binding Helper', () => {
     div.appendChild(elm);
 
     helper.addElementBinding(mockObj, 'name', 'input.custom-class', 'value', 'change', mockCallback);
-    helper.addElementBinding(mockObj, 'name', 'input.custom-class', 'value', 'change', mockCallback); // adding twice shouldn't push more than once
     elm.value = 'Jane';
     const mockEvent = new CustomEvent('change', { bubbles: true, detail: { target: { value: 'Jane' } } });
     elm.dispatchEvent(mockEvent);
 
     expect(helper.observers.length).toBe(1);
+    expect(helper.querySelectorPrefix).toBe('');
+    expect(mockObj.name).toBe('Jane');
+    expect(mockCallback).toHaveBeenCalled();
+  });
+
+  it('should add 2 equal bindings for an input when calling "addElementBinding" twice with same arguments', () => {
+    const mockCallback = jest.fn();
+    const mockObj = { name: 'John', age: 20 };
+    const elm = document.createElement('input');
+    elm.className = 'custom-class';
+    div.appendChild(elm);
+
+    helper.addElementBinding(mockObj, 'name', 'input.custom-class', 'value', 'change', mockCallback);
+    helper.addElementBinding(mockObj, 'name', 'input.custom-class', 'value', 'change', mockCallback);
+    elm.value = 'Jane';
+    const mockEvent = new CustomEvent('change', { bubbles: true, detail: { target: { value: 'Jane' } } });
+    elm.dispatchEvent(mockEvent);
+
+    expect(helper.observers.length).toBe(2);
+    expect(JSON.stringify(helper.observers[0])).toEqual(JSON.stringify(helper.observers[1]));
     expect(helper.querySelectorPrefix).toBe('');
     expect(mockObj.name).toBe('Jane');
     expect(mockCallback).toHaveBeenCalled();
