@@ -112,6 +112,9 @@ export interface GridMenuOption {
   /** Defaults to False, which will resize the Header Row and remove the width of the Grid Menu icon from it's total width. */
   resizeOnShowHeaderRow?: boolean;
 
+  /** Defaults to true, allows the user to control if the default gridMenu button (located on the top right corner by default CSS) should be created or omitted */
+  showButton?: boolean;
+
   /** Defaults to "Synchronous resize" which is 1 of the last 2 checkbox title shown at the end of the picker list */
   syncResizeTitle?: string;
 
