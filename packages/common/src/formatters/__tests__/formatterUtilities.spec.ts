@@ -1,11 +1,60 @@
-import { exportWithFormatterWhenDefined, getAssociatedDateFormatter, getValueFromParamsOrFormatterOptions } from '../formatterUtilities';
+import { autoAddEditorFormatterToColumnsWithEditor, exportWithFormatterWhenDefined, getAssociatedDateFormatter, getValueFromParamsOrFormatterOptions } from '../formatterUtilities';
 import { FieldType } from '../../enums/index';
+import { Editors } from '../../editors/index';
 import { Column, Formatter, GridOption, SlickGrid } from '../../interfaces/index';
+import { complexObjectFormatter } from '../complexObjectFormatter';
+import { boldFormatter } from '../boldFormatter';
+import { italicFormatter } from '../italicFormatter';
+import { multipleFormatter } from '../multipleFormatter';
 
 describe('formatterUtilities', () => {
   const gridStub = {
     getOptions: jest.fn()
   } as unknown as SlickGrid;
+
+  describe('autoAddEditorFormatterToColumnsWithEditor', () => {
+    let columnDefinitions: Column[];
+    const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef) => {
+      const isEditableLine = !!columnDef.editor;
+      value = (value === null || value === undefined) ? '' : value;
+      return isEditableLine ? `<div class="editing-field">${value}</div>` : value;
+    };
+
+    beforeEach(() => {
+      columnDefinitions = [
+        { id: 'firstName', field: 'firstName', editor: { model: Editors.text } },
+        { id: 'lastName', field: 'lastName', editor: { model: Editors.text }, formatter: multipleFormatter, params: { formatters: [italicFormatter, boldFormatter] } },
+        { id: 'age', field: 'age', type: 'number', formatter: multipleFormatter },
+        { id: 'address', field: 'address.street', editor: { model: Editors.longText }, formatter: complexObjectFormatter },
+        { id: 'zip', field: 'address.zip', type: 'number', formatter: complexObjectFormatter },
+      ];
+    });
+
+    it('should have custom editor formatter with correct structure', () => {
+      autoAddEditorFormatterToColumnsWithEditor(columnDefinitions, customEditableInputFormatter);
+
+      expect(columnDefinitions).toEqual([
+        { id: 'firstName', field: 'firstName', editor: { model: Editors.text }, formatter: customEditableInputFormatter },
+        { id: 'lastName', field: 'lastName', editor: { model: Editors.text }, formatter: multipleFormatter, params: { formatters: [italicFormatter, boldFormatter, customEditableInputFormatter] } },
+        { id: 'age', field: 'age', type: 'number', formatter: multipleFormatter },
+        { id: 'address', field: 'address.street', editor: { model: Editors.longText }, formatter: multipleFormatter, params: { formatters: [complexObjectFormatter, customEditableInputFormatter] } },
+        { id: 'zip', field: 'address.zip', type: 'number', formatter: complexObjectFormatter },
+      ]);
+    });
+
+    it('should have custom editor formatter with correct structure even if we call it twice', () => {
+      autoAddEditorFormatterToColumnsWithEditor(columnDefinitions, customEditableInputFormatter);
+      autoAddEditorFormatterToColumnsWithEditor(columnDefinitions, customEditableInputFormatter);
+
+      expect(columnDefinitions).toEqual([
+        { id: 'firstName', field: 'firstName', editor: { model: Editors.text }, formatter: customEditableInputFormatter },
+        { id: 'lastName', field: 'lastName', editor: { model: Editors.text }, formatter: multipleFormatter, params: { formatters: [italicFormatter, boldFormatter, customEditableInputFormatter] } },
+        { id: 'age', field: 'age', type: 'number', formatter: multipleFormatter },
+        { id: 'address', field: 'address.street', editor: { model: Editors.longText }, formatter: multipleFormatter, params: { formatters: [complexObjectFormatter, customEditableInputFormatter] } },
+        { id: 'zip', field: 'address.zip', type: 'number', formatter: complexObjectFormatter },
+      ]);
+    });
+  });
 
   describe('getValueFromParamsOrGridOptions method', () => {
     it('should return options found in the Grid Option when not found in Column Definition "params" property', () => {

@@ -43,7 +43,7 @@ import {
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
-import * as slickVanillaUtilities from '../slick-vanilla-utilities';
+import * as formatterUtilities from '@slickgrid-universal/common/dist/commonjs/formatters/formatterUtilities';
 
 import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle';
 import { EventPubSubService } from '../../services/eventPubSub.service';
@@ -58,7 +58,7 @@ jest.mock('../../services/textExport.service');
 
 const mockAutoAddCustomEditorFormatter = jest.fn();
 
-(slickVanillaUtilities.autoAddEditorFormatterToColumnsWithEditor as any) = mockAutoAddCustomEditorFormatter;
+(formatterUtilities.autoAddEditorFormatterToColumnsWithEditor as any) = mockAutoAddCustomEditorFormatter;
 
 declare const Slick: any;
 const slickEventHandler = new MockSlickEventHandler() as unknown as SlickEventHandler;
@@ -465,7 +465,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
     describe('autoAddCustomEditorFormatter grid option', () => {
       it('should initialize the grid and automatically add custom Editor Formatter when provided in the grid options', () => {
-        const autoAddFormatterSpy = jest.spyOn(slickVanillaUtilities, 'autoAddEditorFormatterToColumnsWithEditor');
+        const autoAddFormatterSpy = jest.spyOn(formatterUtilities, 'autoAddEditorFormatterToColumnsWithEditor');
 
         component.gridOptions = { autoAddCustomEditorFormatter: customEditableInputFormatter };
         component.initialization(divContainer, slickEventHandler);
@@ -502,7 +502,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const renderSpy = jest.spyOn(extensionServiceStub, 'renderColumnHeaders');
         const eventSpy = jest.spyOn(eventPubSubService, 'publish');
         const addPubSubSpy = jest.spyOn(component.translaterService, 'addPubSubMessaging');
-        const autoAddFormatterSpy = jest.spyOn(slickVanillaUtilities, 'autoAddEditorFormatterToColumnsWithEditor');
+        const autoAddFormatterSpy = jest.spyOn(formatterUtilities, 'autoAddEditorFormatterToColumnsWithEditor');
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
 
         component.gridOptions = { enableTranslate: false, autoAddCustomEditorFormatter: customEditableInputFormatter };

@@ -7,6 +7,7 @@ import 'slickgrid/slick.dataview';
 import 'slickgrid/slick.groupitemmetadataprovider';
 import 'slickgrid/plugins/slick.resizer';
 import {
+  autoAddEditorFormatterToColumnsWithEditor,
   AutoCompleteEditor,
   BackendServiceApi,
   BackendServiceOption,
@@ -81,7 +82,6 @@ import { SalesforceGlobalGridOptions } from '../salesforce-global-grid-options';
 import { SlickPaginationComponent } from './slick-pagination.component';
 import { SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
 import { UniversalContainerService } from '../services/universalContainer.service';
-import { autoAddEditorFormatterToColumnsWithEditor } from './slick-vanilla-utilities';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
