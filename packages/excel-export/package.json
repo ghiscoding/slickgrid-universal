@@ -17,7 +17,7 @@
     "build": "cross-env tsc --build",
     "postbuild": "npm-run-all bundle:commonjs",
     "build:watch": "cross-env tsc --incremental --watch",
-    "dev": "run-s build sass:build sass:copy",
+    "dev": "run-s build",
     "dev:watch": "run-p build:watch",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "cross-env tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
