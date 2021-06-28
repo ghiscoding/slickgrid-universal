@@ -125,7 +125,6 @@ export class SlickPaginationComponent {
     this.pubSubService.unsubscribeAll(this._subscriptions);
 
     this._bindingHelper.dispose();
-    this.paginationService.dispose();
     this._paginationElement.remove();
   }
 

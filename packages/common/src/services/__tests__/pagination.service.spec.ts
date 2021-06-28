@@ -518,7 +518,7 @@ describe('PaginationService', () => {
       }
     });
 
-    it('should call refreshPagination when "onFilterCleared" is triggered', () => {
+    it('should call refreshPagination when "onFilterCleared" is triggered and Pagination is enabled', () => {
       const resetSpy = jest.spyOn(service, 'resetPagination');
       const refreshSpy = jest.spyOn(service, 'refreshPagination');
 
@@ -529,7 +529,7 @@ describe('PaginationService', () => {
       expect(refreshSpy).toHaveBeenCalledWith(true, true);
     });
 
-    it('should call refreshPagination when "onFilterChanged" is triggered', () => {
+    it('should call refreshPagination when "onFilterChanged" is triggered and Pagination is enabled', () => {
       const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
       const resetSpy = jest.spyOn(service, 'resetPagination');
       const refreshSpy = jest.spyOn(service, 'refreshPagination');
@@ -563,6 +563,8 @@ describe('PaginationService', () => {
     });
 
     it('should reset the DataView when using local grid by calling "setPagingOptions" with page 0 and also call "refreshPagination" method', () => {
+      const gridOptionsMock = { enablePagination: true };
+      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       const spy = jest.spyOn(service, 'refreshPagination');
       const setPagingSpy = jest.spyOn(dataviewStub, 'setPagingOptions');
 
@@ -571,6 +573,20 @@ describe('PaginationService', () => {
       service.resetPagination();
 
       expect(setPagingSpy).toHaveBeenCalledWith({ pageSize: 25, pageNum: 0 });
+      expect(spy).toHaveBeenCalledWith(true, true);
+    });
+
+    it('should NOT reset the DataView "setPagingOptions" when Pagination is NOT enabled', () => {
+      const gridOptionsMock = { enablePagination: false };
+      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+      const spy = jest.spyOn(service, 'refreshPagination');
+      const setPagingSpy = jest.spyOn(dataviewStub, 'setPagingOptions');
+
+      mockGridOption.backendServiceApi = null as any;
+      service.init(gridStub, mockGridOption.pagination as Pagination, null as any);
+      service.resetPagination();
+
+      expect(setPagingSpy).not.toHaveBeenCalled();
       expect(spy).toHaveBeenCalledWith(true, true);
     });
   });
