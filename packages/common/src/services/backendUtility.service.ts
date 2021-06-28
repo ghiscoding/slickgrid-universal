@@ -15,7 +15,7 @@ export class BackendUtilityService {
 
     // define what our internal Post Process callback, only available for GraphQL Service for now
     // it will basically refresh the Dataset & Pagination removing the need for the user to always create his own PostProcess every time
-    if (processResult && backendApi && backendApi.internalPostProcess) {
+    if (processResult && backendApi?.internalPostProcess) {
       backendApi.internalPostProcess(processResult);
     }
 

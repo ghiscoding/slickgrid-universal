@@ -17,6 +17,7 @@ export class Example1 {
   dataset2: any[];
   sgb1: SlickVanillaGridBundle;
   sgb2: SlickVanillaGridBundle;
+  isGrid2WithPagination = true;
 
   attached() {
     this.defineGrids();
@@ -104,5 +105,13 @@ export class Example1 {
     }
 
     return mockDataset;
+  }
+
+  // Toggle the Pagination of Grid2
+  // IMPORTANT, the Pagination MUST BE CREATED on initial page load before you can start toggling it
+  // Basically you cannot toggle a Pagination that doesn't exist (must created at the time as the grid)
+  togglePaginationGrid2() {
+    this.isGrid2WithPagination = !this.isGrid2WithPagination;
+    this.sgb2.paginationService!.togglePaginationVisibility(this.isGrid2WithPagination);
   }
 }

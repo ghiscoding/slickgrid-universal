@@ -1176,16 +1176,32 @@ export class SlickVanillaGridBundle {
           if (this.gridOptions?.backendServiceApi) {
             this.backendUtilityService?.refreshBackendDataset(this.gridOptions);
           }
+          this.renderPagination(this.showPagination);
         })
       );
 
       // also initialize (render) the pagination component
-      if (this._gridOptions.enablePagination && !this._isPaginationInitialized) {
-        this.slickPagination = new SlickPaginationComponent(this.paginationService, this._eventPubSubService, this.sharedService, this.translaterService);
-        this.slickPagination.renderPagination(this._gridParentContainerElm);
-      }
+      this.renderPagination();
 
       this._isPaginationInitialized = true;
+    }
+  }
+
+  /**
+   * Render (or dispose) the Pagination Component, user can optionally provide False (to not show it) which will in term dispose of the Pagination,
+   * also while disposing we can choose to omit the disposable of the Pagination Service (if we are simply toggling the Pagination, we want to keep the Service alive)
+   * @param {Boolean} showPagination - show (new render) or not (dispose) the Pagination
+   * @param {Boolean} shouldDisposePaginationService - when disposing the Pagination, do we also want to dispose of the Pagination Service? (defaults to True)
+   */
+  private renderPagination(showPagination = true) {
+    if (this._gridOptions.enablePagination && !this._isPaginationInitialized && showPagination) {
+      this.slickPagination = new SlickPaginationComponent(this.paginationService, this._eventPubSubService, this.sharedService, this.translaterService);
+      this.slickPagination.renderPagination(this._gridParentContainerElm);
+    } else {
+      if (this.slickPagination) {
+        this.slickPagination.dispose();
+      }
+      this._isPaginationInitialized = false;
     }
   }
 

@@ -476,4 +476,67 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
       .find('span.close')
       .click({ force: true });
   });
+
+  it('should toggle (remove) Pagination from 2nd grid and not expect any Pagination DOM element', () => {
+    // sort by Title
+    cy.get('.grid2 .slick-header-column:nth(0)')
+      .click();
+
+    cy.get('.grid2 .slick-pagination')
+      .should('exist');
+
+    cy.get('[data-text="toggle-pagination-btn"]')
+      .click();
+
+    cy.get('.grid2 .slick-pagination')
+      .should('not.exist');
+
+    cy.get('.search-filter.filter-title')
+      .clear()
+      .type('44');
+
+    cy.get('.grid2')
+      .find('.slick-viewport-top.slick-viewport-left')
+      .scrollTo('bottom')
+      .wait(10);
+
+    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 14}px"] > .slick-cell:nth(0)`).should('contain', 'Task 544');
+    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 15}px"] > .slick-cell:nth(0)`).should('contain', 'Task 644');
+    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 16}px"] > .slick-cell:nth(0)`).should('contain', 'Task 744');
+    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 17}px"] > .slick-cell:nth(0)`).should('contain', 'Task 844');
+    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 18}px"] > .slick-cell:nth(0)`).should('contain', 'Task 944');
+  });
+
+  it('should toggle again (show) the Pagination and expect to see it show it again below the grid at Page 1', () => {
+    cy.get('[data-text="toggle-pagination-btn"]')
+      .click();
+
+    cy.get('.grid2 .slick-pagination')
+      .should('exist');
+
+    cy.get('.grid2')
+      .find('[data-test=page-number-input]')
+      .invoke('val')
+      .then(pageNumber => expect(pageNumber).to.eq('1'));
+
+    cy.get('.grid2')
+      .find('[data-test=page-number-input]')
+      .click();
+
+    cy.get('.grid2')
+      .find('[data-test=page-count]')
+      .contains('4');
+
+    cy.get('.grid2')
+      .find('[data-test=item-from]')
+      .contains('1');
+
+    cy.get('.grid2')
+      .find('[data-test=item-to]')
+      .contains('5');
+
+    cy.get('.grid2')
+      .find('[data-test=total-items]')
+      .contains('19');
+  });
 });

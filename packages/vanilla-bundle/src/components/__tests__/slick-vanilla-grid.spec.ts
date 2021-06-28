@@ -2010,21 +2010,20 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         sharedService.slickGrid = mockGrid as unknown as SlickGrid;
       });
 
-      it('should change "showPagination" flag when "onPaginationVisibilityChanged" from the Pagination Service is triggered', (done) => {
+      it('should change "showPagination" flag when "onPaginationVisibilityChanged" from the Pagination Service is triggered', () => {
         component.gridOptions.enablePagination = true;
         component.gridOptions.backendServiceApi = null;
 
         component.initialization(divContainer, slickEventHandler);
         component.refreshGridData([{ firstName: 'John', lastName: 'Doe' }]);
+        const disposeSpy = jest.spyOn(component.slickPagination, 'dispose');
         eventPubSubService.publish('onPaginationVisibilityChanged', { visible: false });
 
-        setTimeout(() => {
-          expect(component.showPagination).toBeFalsy();
-          done();
-        });
+        expect(component.showPagination).toBeFalsy();
+        expect(disposeSpy).toHaveBeenCalled();
       });
 
-      it('should call the backend service API to refresh the dataset', (done) => {
+      it('should call the backend service API to refresh the dataset', () => {
         const backendRefreshSpy = jest.spyOn(backendUtilityServiceStub, 'refreshBackendDataset');
         component.gridOptions.enablePagination = true;
         component.gridOptions.backendServiceApi = {
@@ -2034,13 +2033,12 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         component.initialization(divContainer, slickEventHandler);
         component.refreshGridData([{ firstName: 'John', lastName: 'Doe' }]);
-        eventPubSubService.publish('onPaginationVisibilityChanged', { visible: false });
 
-        setTimeout(() => {
-          expect(backendRefreshSpy).toHaveBeenCalled();
-          expect(component.showPagination).toBeFalsy();
-          done();
-        });
+        eventPubSubService.publish('onPaginationVisibilityChanged', { visible: true });
+
+        expect(backendRefreshSpy).toHaveBeenCalled();
+        expect(component.slickPagination).toBeTruthy();
+        expect(component.showPagination).toBeTruthy();
       });
     });
 
