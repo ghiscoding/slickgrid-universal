@@ -42,11 +42,11 @@ import {
   CurrentPinning,
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import * as formatterUtilities from '@slickgrid-universal/common/dist/commonjs/formatters/formatterUtilities';
 
 import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle';
-import { EventPubSubService } from '../../services/eventPubSub.service';
 import { TextExportService } from '../../services/textExport.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { HttpStub } from '../../../../../test/httpClientStub';

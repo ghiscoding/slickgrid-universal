@@ -1,5 +1,6 @@
 import { Column, Editors, FieldType, GridOption, SlickGrid, SlickNamespace, } from '@slickgrid-universal/common';
-import { EventPubSubService } from '../eventPubSub.service';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
+
 import { ResizerService } from '../resizer.service';
 
 declare const Slick: SlickNamespace;

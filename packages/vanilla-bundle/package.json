@@ -50,6 +50,7 @@
     "@slickgrid-universal/composite-editor-component": "^0.14.1",
     "@slickgrid-universal/custom-footer-component": "^0.14.1",
     "@slickgrid-universal/empty-warning-component": "^0.14.1",
+    "@slickgrid-universal/event-pub-sub": "^0.14.1",
     "@slickgrid-universal/excel-export": "^0.14.1",
     "@slickgrid-universal/pagination-component": "^0.14.1",
     "@slickgrid-universal/text-export": "^0.14.1",
@@ -64,6 +65,6 @@
     "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.2",
     "ts-loader": "^9.2.3",
-    "webpack": "^5.40.0"
+    "webpack": "^5.41.0"
   }
 }

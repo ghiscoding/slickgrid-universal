@@ -71,12 +71,12 @@ import {
   emptyElement,
   GetSlickEventType,
 } from '@slickgrid-universal/common';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
 
-import { EventPubSubService } from '../services/eventPubSub.service';
 import { TextExportService } from '../services/textExport.service';
 import { ResizerService } from '../services/resizer.service';
 import { SalesforceGlobalGridOptions } from '../salesforce-global-grid-options';
