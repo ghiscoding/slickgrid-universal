@@ -1,4 +1,5 @@
-import { GridOption, SharedService, SlickGrid, SlickDataView, PubSubService } from '@slickgrid-universal/common';
+import { GridOption, SlickGrid, SlickDataView, PubSubService } from '@slickgrid-universal/common';
+
 import { ContainerServiceStub } from '../../../../../test/containerServiceStub';
 import { TextExportService } from '../textExport.service';
 

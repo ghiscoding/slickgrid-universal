@@ -1,0 +1,49 @@
+{
+  "name": "@slickgrid-universal/event-pub-sub",
+  "version": "0.14.1",
+  "description": "Simple Vanilla Implementation of an Event PubSub Service to do simply publish/subscribe inter-communication while optionally providing data in the event",
+  "main": "dist/commonjs/index.js",
+  "browser": "src/index.ts",
+  "module": "dist/esm/index.js",
+  "types": "dist/commonjs/index.d.ts",
+  "typings": "dist/commonjs/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "directories": {
+    "src": "src"
+  },
+  "scripts": {
+    "build": "cross-env tsc --build",
+    "postbuild": "npm-run-all bundle:commonjs",
+    "build:watch": "cross-env tsc --incremental --watch",
+    "dev": "run-s build",
+    "dev:watch": "run-p build:watch",
+    "bundle": "run-p bundle:commonjs bundle:esm",
+    "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
+    "bundle:esm": "cross-env tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
+    "prebundle": "npm-run-all delete:dist",
+    "delete:dist": "cross-env rimraf --maxBusyTries=10 dist",
+    "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=event-pub-sub",
+    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=event-pub-sub"
+  },
+  "author": "Ghislain B.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.15.0",
+    "npm": ">=6.14.8"
+  },
+  "browserslist": [
+    "last 2 version",
+    "> 1%",
+    "not dead"
+  ],
+  "dependencies": {
+    "@slickgrid-universal/common": "^0.14.1"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^3.0.2"
+  }
+}

@@ -1,7 +1,8 @@
 
 import { PaginationService, SharedService, SlickGrid, GridOption, Locale } from '@slickgrid-universal/common';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
+
 import { TranslateServiceStub } from '../../../../test/translateServiceStub';
-import { EventPubSubService } from '../../../vanilla-bundle/src/services/eventPubSub.service';
 import { SlickPaginationComponent } from '../slick-pagination.component';
 
 function removeExtraSpaces(text: string) {

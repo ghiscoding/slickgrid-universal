@@ -1,4 +1,4 @@
-import { EventPubSubService } from '../eventPubSub.service';
+import { EventPubSubService } from './eventPubSub.service';
 import { EventNamingStyle } from '@slickgrid-universal/common';
 
 describe('EventPubSub Service', () => {
