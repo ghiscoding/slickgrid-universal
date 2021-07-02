@@ -8,6 +8,8 @@ export const GlobalGridOptions: GridOption = {
   autoEdit: false,
   asyncEditorLoading: false,
   autoFitColumnsOnFirstLoad: true,
+  autoFixResizeCountBeforeQuitting: 10,
+  autoFixResizeWhenBrokenStyleDetected: false,
   autoResize: {
     applyResizeToContainer: true,
     calculateAvailableSizeBy: 'window',

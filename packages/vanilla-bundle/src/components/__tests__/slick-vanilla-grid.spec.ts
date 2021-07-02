@@ -51,7 +51,7 @@ import { TextExportService } from '../../services/textExport.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { HttpStub } from '../../../../../test/httpClientStub';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../../test/mockSlickEvent';
-import { ResizerService } from '../../services/resizer.service';
+import { ResizerService } from '../../../../common/src/services/resizer.service';
 import { UniversalContainerService } from '../../services/universalContainer.service';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 jest.mock('../../services/textExport.service');

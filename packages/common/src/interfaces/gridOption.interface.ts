@@ -83,6 +83,12 @@ export interface GridOption {
   /** Defaults to false, which leads to automatically adjust the size (height) of the grid to display the entire content without any scrolling in the grid. */
   autoHeight?: boolean;
 
+  /** Defaults to 10, when "autoFixResizeWhenBrokenStyleDetected" is enabled then how many time do we want to retry before quitting? */
+  autoFixResizeCountBeforeQuitting?: number;
+
+  /** Defaults to false, this is a patch for Salesforce since we don't always have access to tab change events. */
+  autoFixResizeWhenBrokenStyleDetected?: boolean;
+
   /** Auto-resize options (bottom padding, minHeight, ...)  */
   autoResize?: AutoResizeOption;
 

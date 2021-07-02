@@ -4,6 +4,8 @@ import { GridOption, EventNamingStyle } from '@slickgrid-universal/common';
 export const SalesforceGlobalGridOptions = {
   autoEdit: true, // true single click (false for double-click)
   autoCommitEdit: true,
+  autoFixResizeCountBeforeQuitting: 10,
+  autoFixResizeWhenBrokenStyleDetected: true,
   cellValueCouldBeUndefined: true,
   eventNamingStyle: EventNamingStyle.lowerCaseWithoutOnPrefix,
   compositeEditorOptions: {
