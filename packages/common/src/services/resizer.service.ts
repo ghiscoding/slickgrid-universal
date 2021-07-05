@@ -22,7 +22,7 @@ const DATAGRID_FOOTER_HEIGHT = 25;
 const DATAGRID_PAGINATION_HEIGHT = 35;
 const DATAGRID_MIN_HEIGHT = 180;
 const DATAGRID_MIN_WIDTH = 300;
-const DEFAULT_INTERVAL_RETRY_DELAY = 250;
+const DEFAULT_INTERVAL_RETRY_DELAY = 200;
 
 export class ResizerService {
   private _autoResizeOptions!: AutoResizeOption;
@@ -583,7 +583,7 @@ export class ResizerService {
   private resizeGridWhenStylingIsBrokenUntilCorrected() {
     // how many time we want to check before really stopping the resize check?
     // We do this because user might be switching to another tab too quickly for the resize be really finished, so better recheck few times to make sure
-    const autoFixResizeTimeout = this.gridOptions?.autoFixResizeTimeout ?? (4 * 60 * 60); // interval is 250ms, so 4x is 1sec, so (4 * 60 * 60 = 60min)
+    const autoFixResizeTimeout = this.gridOptions?.autoFixResizeTimeout ?? (5 * 60 * 60); // interval is 200ms, so 4x is 1sec, so (4 * 60 * 60 = 60min)
     const autoFixResizeRequiredGoodCount = this.gridOptions?.autoFixResizeRequiredGoodCount ?? 5;
 
     const headerElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-header`);

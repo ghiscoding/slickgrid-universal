@@ -85,7 +85,7 @@ export interface GridOption {
 
   /**
    * Defaults to 60, when "autoFixResizeWhenBrokenStyleDetected" is enabled then what will be the delay timeout before quitting?
-   * Note that that the resize gets called every 250ms
+   * Note that that the resize gets called every 200ms
    */
   autoFixResizeTimeout?: number;
 

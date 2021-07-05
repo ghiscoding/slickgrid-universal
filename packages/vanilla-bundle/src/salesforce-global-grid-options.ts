@@ -4,7 +4,7 @@ import { GridOption, EventNamingStyle } from '@slickgrid-universal/common';
 export const SalesforceGlobalGridOptions = {
   autoEdit: true, // true single click (false for double-click)
   autoCommitEdit: true,
-  autoFixResizeTimeout: 4 * 60 * 60, // interval is 250ms, so 4x is 1sec, so (4 * 60 * 60 = 60min)
+  autoFixResizeTimeout: 5 * 60 * 60, // interval is 200ms, so 4x is 1sec, so (5 * 60 * 60 = 60min)
   autoFixResizeRequiredGoodCount: 10,
   autoFixResizeWhenBrokenStyleDetected: true,
   cellValueCouldBeUndefined: true,
