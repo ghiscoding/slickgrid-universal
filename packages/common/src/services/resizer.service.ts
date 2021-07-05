@@ -619,13 +619,18 @@ export class ResizerService {
           intervalExecutionCounter = autoFixResizeTimeout;
         }
 
-        const gridElm = document.querySelector<HTMLDivElement>(`.${this.gridUid}`);
-        const isGridVisible = gridElm?.offsetParent ?? false;
+        // visible grid (shown to the user and not hidden in another Tab will have an offsetParent defined)
+        const isGridVisible = !!(document.querySelector<HTMLDivElement>(`.${this.gridUid}`)?.offsetParent ?? false);
 
         if (isGridVisible && (isResizeRequired || resizeGoodCount < autoFixResizeRequiredGoodCount) && (containerElmOffset?.left > 0 || containerElmOffset?.top > 0)) {
           await this.resizeGrid();
-          isResizeRequired = false;
-          resizeGoodCount++;
+
+          // make sure the grid is still visible after doing the resize and if so we consider it a good resize (it might not be visible if user quickly switch to another Tab)
+          const isGridStillVisible = !!(document.querySelector<HTMLDivElement>(`.${this.gridUid}`)?.offsetParent ?? false);
+          if (isGridStillVisible) {
+            isResizeRequired = false;
+            resizeGoodCount++;
+          }
         }
 
         if (isGridVisible && !isResizeRequired && (resizeGoodCount >= autoFixResizeRequiredGoodCount || intervalExecutionCounter++ >= autoFixResizeTimeout)) {

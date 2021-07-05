@@ -89,7 +89,7 @@ export interface GridOption {
    */
   autoFixResizeTimeout?: number;
 
-  /** Defaults to 2 (or 8x in Salesforce), how many good resize count do we require before we assume that it's all good and we can stop calling a resize of the grid? (only works when `autoFixResizeWhenBrokenStyleDetected` is enabled) */
+  /** Defaults to 2 (or 5x in Salesforce), how many good resize count do we require before we assume that it's all good and we can stop calling a resize of the grid? (only works when `autoFixResizeWhenBrokenStyleDetected` is enabled) */
   autoFixResizeRequiredGoodCount?: number;
 
   /** Defaults to false, this is a patch for Salesforce since we don't always have access to tab change events. */
