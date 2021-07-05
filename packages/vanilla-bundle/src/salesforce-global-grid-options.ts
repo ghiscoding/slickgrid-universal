@@ -5,7 +5,7 @@ export const SalesforceGlobalGridOptions = {
   autoEdit: true, // true single click (false for double-click)
   autoCommitEdit: true,
   autoFixResizeTimeout: 5 * 60 * 60, // interval is 200ms, so 4x is 1sec, so (5 * 60 * 60 = 60min)
-  autoFixResizeRequiredGoodCount: 10,
+  autoFixResizeRequiredGoodCount: 8,
   autoFixResizeWhenBrokenStyleDetected: true,
   cellValueCouldBeUndefined: true,
   eventNamingStyle: EventNamingStyle.lowerCaseWithoutOnPrefix,
