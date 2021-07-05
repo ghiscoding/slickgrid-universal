@@ -8,7 +8,8 @@ export const GlobalGridOptions: GridOption = {
   autoEdit: false,
   asyncEditorLoading: false,
   autoFitColumnsOnFirstLoad: true,
-  autoFixResizeCountBeforeQuitting: 10,
+  autoFixResizeTimeout: 4 * 60 * 5, // interval is 250ms, so 4x is 1sec, so (4 * 60 * 60 = 5min)
+  autoFixResizeRequiredGoodCount: 5,
   autoFixResizeWhenBrokenStyleDetected: false,
   autoResize: {
     applyResizeToContainer: true,

@@ -60,31 +60,12 @@ describe('Resizer Service', () => {
   let eventPubSubService: EventPubSubService;
   let service: ResizerService;
   let divContainer: HTMLDivElement;
-  let divPane: HTMLDivElement;
-  let divHeaderElm: HTMLDivElement;
-  let divViewportElm: HTMLDivElement;
   let mockGridOptions: GridOption;
 
   beforeEach(() => {
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
-    // divContainer = document.createElement('div');
-    // divContainer.id = CONTAINER_ID;
-    // divContainer.style.height = '800px';
-    // divContainer.style.width = '600px';
-    // divContainer.className = GRID_UID;
-    // divPane = document.createElement('div');
-    // divPane.className = 'gridPane';
-    // divPane.style.width = '100%';
-    // divViewportElm = document.createElement('div');
-    // divViewportElm.className = `slick-viewport`;
-    // divHeaderElm = document.createElement('div');
-    // divHeaderElm.className = `slick-header`;
-    // divPane.appendChild(divViewportElm);
-    // divViewportElm.appendChild(divHeaderElm);
-    // divContainer.appendChild(divPane);
-    // document.body.appendChild(divContainer);
 
     eventPubSubService = new EventPubSubService();
     service = new ResizerService(eventPubSubService);
@@ -579,7 +560,10 @@ describe('Resizer Service', () => {
 
       it('should try to resize grid when its UI is deemed broken and expect "resizeGridWhenStylingIsBrokenUntilCorrected" to be called on interval', (done) => {
         const resizeSpy = jest.spyOn(service, 'resizeGrid').mockReturnValue(Promise.resolve({ height: 150, width: 350 }));
+        Object.defineProperty(document.querySelector(`.${GRID_UID}`), 'offsetParent', { writable: true, configurable: true, value: 55 });
 
+        mockGridOptions.autoFixResizeTimeout = 10;
+        mockGridOptions.autoFixResizeRequiredGoodCount = 5;
         mockGridOptions.autoFixResizeWhenBrokenStyleDetected = true;
         service.intervalRetryDelay = 1;
         service.init(gridStub, divContainer);
@@ -597,10 +581,8 @@ describe('Resizer Service', () => {
           expect(resizeSpy).toHaveBeenCalled();
           expect(resizeSpy).toHaveBeenNthCalledWith(2);
           expect(resizeSpy).toHaveBeenNthCalledWith(3);
-          expect(resizeSpy).toHaveBeenNthCalledWith(4);
-          // expect(resizeSpy).toHaveBeenCalledTimes(6);
           done();
-        }, 50);
+        }, 20);
       });
 
       it('should try to resize grid when its UI is deemed broken and expect "resizeGridWhenStylingIsBrokenUntilCorrected" but it should stop whenever we force it', (done) => {

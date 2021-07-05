@@ -83,8 +83,14 @@ export interface GridOption {
   /** Defaults to false, which leads to automatically adjust the size (height) of the grid to display the entire content without any scrolling in the grid. */
   autoHeight?: boolean;
 
-  /** Defaults to 10, when "autoFixResizeWhenBrokenStyleDetected" is enabled then how many time do we want to retry before quitting? */
-  autoFixResizeCountBeforeQuitting?: number;
+  /**
+   * Defaults to 60, when "autoFixResizeWhenBrokenStyleDetected" is enabled then what will be the delay timeout before quitting?
+   * Note that that the resize gets called every 250ms
+   */
+  autoFixResizeTimeout?: number;
+
+  /** Defaults to 10, how many good resize count do we require before we assume that it's all good and we can stop calling a resize of the grid? (only works when `autoFixResizeWhenBrokenStyleDetected` is enabled) */
+  autoFixResizeRequiredGoodCount?: number;
 
   /** Defaults to false, this is a patch for Salesforce since we don't always have access to tab change events. */
   autoFixResizeWhenBrokenStyleDetected?: boolean;

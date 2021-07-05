@@ -22,7 +22,6 @@ const DATAGRID_FOOTER_HEIGHT = 25;
 const DATAGRID_PAGINATION_HEIGHT = 35;
 const DATAGRID_MIN_HEIGHT = 180;
 const DATAGRID_MIN_WIDTH = 300;
-const DEFAULT_INTERVAL_MAX_RETRIES = 70;
 const DEFAULT_INTERVAL_RETRY_DELAY = 250;
 
 export class ResizerService {
@@ -36,7 +35,6 @@ export class ResizerService {
   private _pageContainerElm!: any;
   private _gridParentContainerElm!: HTMLElement;
   private _intervalId!: NodeJS.Timeout;
-  private _intervalExecutionCounter = 0;
   private _intervalRetryDelay = DEFAULT_INTERVAL_RETRY_DELAY;
   private _isStopResizeIntervalRequested = false;
   private _hasResizedByContentAtLeastOnce = false;
@@ -150,8 +148,7 @@ export class ResizerService {
     }
 
     // -- 1st resize the datagrid size at first load (we need this because the .on event is not triggered on first load)
-    // -- also we add a slight delay (in ms) so that we resize after the grid render is done
-    this.resizeGrid(10, newSizes)
+    this.resizeGrid()
       .then(() => this.resizeGridWhenStylingIsBrokenUntilCorrected())
       .catch((rejection: any) => console.log('Error:', rejection));
 
@@ -261,7 +258,7 @@ export class ResizerService {
    * @param {object} event that triggered the resize, defaults to null
    * @return If the browser supports it, we can return a Promise that would resolve with the new dimensions
    */
-  resizeGrid(delay?: number, newSizes?: GridSize): Promise<GridSize> {
+  resizeGrid(delay?: number, newSizes?: GridSize): Promise<GridSize | undefined> {
     return new Promise(resolve => {
       // because of the javascript async nature, we might want to delay the resize a little bit
       delay = delay || 0;
@@ -275,7 +272,7 @@ export class ResizerService {
     });
   }
 
-  resizeGridCallback(newSizes?: GridSize): GridSize {
+  resizeGridCallback(newSizes?: GridSize): GridSize | undefined {
     const dimensions = this.resizeGridWithDimensions(newSizes);
     this.pubSubService.publish('onGridAfterResize', dimensions);
 
@@ -286,7 +283,7 @@ export class ResizerService {
     }
     this._lastDimensions = dimensions;
 
-    return dimensions ?? { height: 0, width: 0 };
+    return dimensions;
   }
 
   resizeGridWithDimensions(newSizes?: GridSize): GridSize | undefined {
@@ -586,11 +583,14 @@ export class ResizerService {
   private resizeGridWhenStylingIsBrokenUntilCorrected() {
     // how many time we want to check before really stopping the resize check?
     // We do this because user might be switching to another tab too quickly for the resize be really finished, so better recheck few times to make sure
-    const resizeCountBeforeQuitting = this.gridOptions?.autoFixResizeCountBeforeQuitting ?? 10;
+    const autoFixResizeTimeout = this.gridOptions?.autoFixResizeTimeout ?? (4 * 60 * 60); // interval is 250ms, so 4x is 1sec, so (4 * 60 * 60 = 60min)
+    const autoFixResizeRequiredGoodCount = this.gridOptions?.autoFixResizeRequiredGoodCount ?? 10;
 
     const headerElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-header`);
     const viewportElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-viewport`);
-    let resizeRequireCheckCount = 0;
+    let intervalExecutionCounter = 0;
+    let resizeGoodCount = 0;
+
     if (headerElm && viewportElm && this.gridOptions.autoFixResizeWhenBrokenStyleDetected) {
       this._intervalId = setInterval(async () => {
         const headerTitleRowHeight = 44; // this one is set by SASS/CSS so let's hard code it
@@ -611,21 +611,24 @@ export class ResizerService {
         // another resize condition could be that if the grid location is at coordinate x/y 0/0, we assume that it's in a hidden tab and we'll need to resize whenever that tab becomes active
         // for these cases we'll resize until it's no longer true or until we reach a max time limit (70min)
         const containerElmOffset = getHtmlElementOffset(this._gridParentContainerElm);
-        let isResizeRequired = (headerPos?.top === 0 || ((headerOffsetTop - viewportOffsetTop) > 2) || (containerElmOffset?.left > 0 && containerElmOffset?.top > 0)) ? true : false;
+        let isResizeRequired = (headerPos?.top === 0 || ((headerOffsetTop - viewportOffsetTop) > 2) || (containerElmOffset?.left === 0 && containerElmOffset?.top === 0)) ? true : false;
 
         // user could choose to manually stop the looped of auto resize fix
         if (this._isStopResizeIntervalRequested) {
           isResizeRequired = false;
-          resizeRequireCheckCount = resizeCountBeforeQuitting;
+          intervalExecutionCounter = autoFixResizeTimeout;
         }
 
-        if (isResizeRequired && (containerElmOffset?.left > 0 || containerElmOffset?.top > 0)) {
+        const gridElm = document.querySelector<HTMLDivElement>(`.${this.gridUid}`);
+        const isGridVisible = gridElm?.offsetParent ?? false;
+
+        if (isGridVisible && (isResizeRequired || resizeGoodCount < autoFixResizeRequiredGoodCount) && (containerElmOffset?.left > 0 || containerElmOffset?.top > 0)) {
           await this.resizeGrid();
           isResizeRequired = false;
-          resizeRequireCheckCount++;
+          resizeGoodCount++;
         }
 
-        if (!this.gridOptions.autoFixResizeWhenBrokenStyleDetected || resizeRequireCheckCount >= resizeCountBeforeQuitting && !isResizeRequired || (this._intervalExecutionCounter++ > (4 * 60 * DEFAULT_INTERVAL_MAX_RETRIES))) { // interval is 250ms, so 4x is 1sec, so (4 * 60 * intervalMaxTimeInMin) shoud be 70min
+        if (isGridVisible && !isResizeRequired && (resizeGoodCount >= autoFixResizeRequiredGoodCount || intervalExecutionCounter++ >= autoFixResizeTimeout)) {
           clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 70min
         }
       }, this.intervalRetryDelay);
