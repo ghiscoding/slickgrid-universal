@@ -584,7 +584,7 @@ export class ResizerService {
     // how many time we want to check before really stopping the resize check?
     // We do this because user might be switching to another tab too quickly for the resize be really finished, so better recheck few times to make sure
     const autoFixResizeTimeout = this.gridOptions?.autoFixResizeTimeout ?? (4 * 60 * 60); // interval is 250ms, so 4x is 1sec, so (4 * 60 * 60 = 60min)
-    const autoFixResizeRequiredGoodCount = this.gridOptions?.autoFixResizeRequiredGoodCount ?? 10;
+    const autoFixResizeRequiredGoodCount = this.gridOptions?.autoFixResizeRequiredGoodCount ?? 5;
 
     const headerElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-header`);
     const viewportElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-viewport`);

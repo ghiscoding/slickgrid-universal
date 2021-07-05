@@ -391,6 +391,7 @@ export class Example12 {
 
     this.gridOptions = {
       useSalesforceDefaultGridOptions: true,
+      autoFixResizeRequiredGoodCount: 1,
       datasetIdPropertyName: 'id',
       eventNamingStyle: EventNamingStyle.lowerCase,
       editable: true,
