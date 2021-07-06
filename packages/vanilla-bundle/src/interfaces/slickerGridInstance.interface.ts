@@ -8,13 +8,12 @@ import {
   GridStateService,
   GroupingAndColspanService,
   PaginationService,
+  ResizerService,
   SlickDataView,
   SlickGrid,
   SortService,
   TreeDataService,
 } from '@slickgrid-universal/common';
-import { ResizerService } from '../services/resizer.service';
-
 
 export interface SlickerGridInstance {
   /** Slick DataView object */

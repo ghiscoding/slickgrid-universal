@@ -1,41 +1,47 @@
+import { FieldType, } from '../enums/index';
 import {
+  AutoResizeOption,
   Column,
-  FieldType,
-  getHtmlElementOffset,
   GetSlickEventType,
   GridOption,
   GridSize,
-  parseFormatterWhenExist,
-  PubSubService,
   ResizeByContentOption,
-  sanitizeHtmlToText,
   SlickDataView,
-  SlickEventData,
   SlickEventHandler,
   SlickGrid,
   SlickNamespace,
-  SlickResizer,
-} from '@slickgrid-universal/common';
+} from '../interfaces/index';
+import { getHtmlElementOffset, sanitizeHtmlToText, } from '../services/utilities';
+import { parseFormatterWhenExist } from '../formatters/formatterUtilities';
+import { PubSubService, } from '../services/pubSub.service';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
+const DATAGRID_BOTTOM_PADDING = 20;
 const DATAGRID_FOOTER_HEIGHT = 25;
 const DATAGRID_PAGINATION_HEIGHT = 35;
-const DEFAULT_INTERVAL_MAX_RETRIES = 70;
-const DEFAULT_INTERVAL_RETRY_DELAY = 250;
+const DATAGRID_MIN_HEIGHT = 180;
+const DATAGRID_MIN_WIDTH = 300;
+const DEFAULT_INTERVAL_RETRY_DELAY = 200;
 
 export class ResizerService {
+  private _autoResizeOptions!: AutoResizeOption;
   private _grid!: SlickGrid;
-  private _addon!: SlickResizer;
   private _eventHandler: SlickEventHandler;
+  private _fixedHeight?: number | string;
+  private _fixedWidth?: number | string;
+  private _gridDomElm!: any;
+  private _gridContainerElm!: any;
+  private _pageContainerElm!: any;
   private _gridParentContainerElm!: HTMLElement;
   private _intervalId!: NodeJS.Timeout;
-  private _intervalExecutionCounter = 0;
   private _intervalRetryDelay = DEFAULT_INTERVAL_RETRY_DELAY;
   private _isStopResizeIntervalRequested = false;
   private _hasResizedByContentAtLeastOnce = false;
   private _lastDimensions?: GridSize;
   private _totalColumnsWidthByContent = 0;
+  private _timer!: NodeJS.Timeout;
+  private _resizePaused = false;
 
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
@@ -43,7 +49,7 @@ export class ResizerService {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return (this._grid && this._grid.getOptions) ? this._grid.getOptions() : {};
+    return this._grid?.getOptions?.() ?? {};
   }
 
   /** Getter for the SlickGrid DataView */
@@ -67,75 +73,61 @@ export class ResizerService {
     return this.gridOptions?.resizeByContentOptions ?? {};
   }
 
-  constructor(private eventPubSubService: PubSubService) {
+  constructor(private pubSubService: PubSubService) {
     this._eventHandler = new Slick.EventHandler();
   }
 
-  /** Get the instance of the SlickGrid addon (control or plugin). */
-  getAddonInstance(): SlickResizer | null {
-    return this._addon;
-  }
-
-  /** dispose (destroy) the 3rd party plugin */
+  /** Dispose function when service is destroyed */
   dispose() {
-    this._addon?.destroy();
+    // unsubscribe all SlickGrid events
     this._eventHandler?.unsubscribeAll();
+    if (this._intervalId) {
+      clearInterval(this._intervalId);
+    }
+
+    $(window).off(`resize.grid.${this.gridUid}`);
   }
 
   init(grid: SlickGrid, gridParentContainerElm: HTMLElement) {
-    this._grid = grid;
-    this._gridParentContainerElm = gridParentContainerElm;
-    const fixedGridDimensions = (this.gridOptions?.gridHeight || this.gridOptions?.gridWidth) ? { height: this.gridOptions?.gridHeight, width: this.gridOptions?.gridWidth } : undefined;
-    const autoResizeOptions = this.gridOptions?.autoResize ?? { bottomPadding: 0 };
-    if (autoResizeOptions?.bottomPadding !== undefined && this.gridOptions.showCustomFooter) {
-      const footerHeight: string | number = this.gridOptions?.customFooterOptions?.footerHeight ?? DATAGRID_FOOTER_HEIGHT;
-      autoResizeOptions.bottomPadding += parseInt(`${footerHeight}`, 10);
-    }
-    if (autoResizeOptions?.bottomPadding !== undefined && this.gridOptions.enablePagination) {
-      autoResizeOptions.bottomPadding += DATAGRID_PAGINATION_HEIGHT;
-    }
-    if (fixedGridDimensions?.width && gridParentContainerElm?.style) {
-      gridParentContainerElm.style.width = typeof fixedGridDimensions.width === 'string' ? fixedGridDimensions.width : `${fixedGridDimensions.width}px`;
+    if (!grid || !this.gridOptions || !gridParentContainerElm) {
+      throw new Error(`
+      [Slickgrid-Universal] Resizer Service requires a valid Grid object and DOM Element Container to be provided.
+      You can fix this by setting your gridOption to use "enableAutoResize" or create an instance of the ResizerService by calling bindAutoResizeDataGrid()`);
     }
 
-    this._addon = new Slick.Plugins.Resizer({ ...autoResizeOptions, gridContainer: gridParentContainerElm }, fixedGridDimensions);
-    this._grid.registerPlugin<SlickResizer>(this._addon);
-    if (this.gridOptions.enableAutoResize && this._addon?.resizeGrid() instanceof Promise) {
-      this._addon.resizeGrid()
-        .then(() => this.resizeGridWhenStylingIsBrokenUntilCorrected())
-        .catch((rejection: any) => console.log('Error:', rejection));
+    this._grid = grid;
+    this._gridParentContainerElm = gridParentContainerElm;
+    const fixedGridSizes = (this.gridOptions?.gridHeight || this.gridOptions?.gridWidth) ? { height: this.gridOptions?.gridHeight, width: this.gridOptions?.gridWidth } : undefined;
+    this._autoResizeOptions = this.gridOptions?.autoResize ?? { container: 'grid1', bottomPadding: 0 };
+
+    if (fixedGridSizes?.width && gridParentContainerElm?.style) {
+      gridParentContainerElm.style.width = typeof fixedGridSizes.width === 'string' ? fixedGridSizes.width : `${fixedGridSizes.width}px`;
+    }
+
+    const containerNode = grid?.getContainerNode?.() as HTMLDivElement;
+    this._gridDomElm = $(containerNode);
+    this._pageContainerElm = $(this._autoResizeOptions.container!);
+    this._gridContainerElm = $(gridParentContainerElm);
+
+    if (fixedGridSizes) {
+      this._fixedHeight = fixedGridSizes.height;
+      this._fixedWidth = fixedGridSizes.width;
+    }
+
+    if (this.gridOptions) {
+      this.bindAutoResizeDataGrid();
     }
 
     // Events
     if (this.gridOptions.autoResize) {
-      if (this._addon && this._addon.onGridAfterResize) {
-        const onGridAfterResizeHandler = this._addon.onGridAfterResize;
-        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onGridAfterResizeHandler>>).subscribe(onGridAfterResizeHandler, (_e, args) => {
-          this.eventPubSubService.publish('onGridAfterResize', args);
-
-          // we can call our resize by content here (when enabled)
-          // since the core Slick.Resizer plugin only supports the "autosizeColumns"
-          if (this.gridOptions.enableAutoResizeColumnsByCellContent && (!this._lastDimensions?.width || args.dimensions.width !== this._lastDimensions?.width)) {
-            this.resizeColumnsByCellContent();
-          }
-          this._lastDimensions = args.dimensions;
-        });
-      }
-      if (this._addon && this._addon.onGridBeforeResize) {
-        const onGridBeforeResizeHandler = this._addon.onGridBeforeResize;
-        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onGridBeforeResizeHandler>>).subscribe(onGridBeforeResizeHandler, (_e, args) => {
-          this.eventPubSubService.publish('onGridBeforeResize', args);
-        });
-      }
-
       // resize by content could be called from the outside by other services via pub/sub event
-      this.eventPubSubService.subscribe('onFullResizeByContentRequested', () => this.resizeColumnsByCellContent(true));
+      this.pubSubService.subscribe('onFullResizeByContentRequested', () => this.resizeColumnsByCellContent(true));
     }
 
     // on double-click resize, should we resize the cell by its cell content?
     // the same action can be called from a double-click and/or from column header menu
     if (this.gridOptions?.enableColumnResizeOnDoubleClick) {
-      this.eventPubSubService.subscribe('onHeaderMenuColumnResizeByContent', (data => {
+      this.pubSubService.subscribe('onHeaderMenuColumnResizeByContent', (data => {
         this.handleSingleColumnResizeByContent(data.columnId);
       }));
 
@@ -146,12 +138,109 @@ export class ResizerService {
     }
   }
 
+  /** Bind an auto resize trigger on the datagrid, if that is enable then it will resize itself to the available space
+   * Options: we could also provide a % factor to resize on each height/width independently
+   */
+  bindAutoResizeDataGrid(newSizes?: GridSize): null | void {
+    // if we can't find the grid to resize, return without binding anything
+    if (this._gridDomElm === undefined || this._gridDomElm.offset() === undefined) {
+      return null;
+    }
+
+    // -- 1st resize the datagrid size at first load (we need this because the .on event is not triggered on first load)
+    this.resizeGrid()
+      .then(() => this.resizeGridWhenStylingIsBrokenUntilCorrected())
+      .catch((rejection: any) => console.log('Error:', rejection));
+
+    // -- 2nd bind a trigger on the Window DOM element, so that it happens also when resizing after first load
+    // -- bind auto-resize to Window object only if it exist
+    $(window).on(`resize.grid.${this.gridUid}`, this.handleResizeGrid.bind(this, newSizes));
+  }
+
+  handleResizeGrid(newSizes?: GridSize) {
+    this.pubSubService.publish('onGridBeforeResize');
+    if (!this._resizePaused) {
+      // for some yet unknown reason, calling the resize twice removes any stuttering/flickering
+      // when changing the height and makes it much smoother experience
+      this.resizeGrid(0, newSizes);
+      this.resizeGrid(0, newSizes);
+    }
+  }
+
+  /**
+   * Calculate the datagrid new height/width from the available space, also consider that a % factor might be applied to calculation
+   * object gridOptions
+   */
+  calculateGridNewDimensions(gridOptions: GridOption): GridSize | null {
+    const autoResizeOptions = gridOptions?.autoResize ?? {};
+    if (!window || this._pageContainerElm === undefined || this._gridDomElm.offset() === undefined) {
+      return null;
+    }
+
+    // calculate bottom padding
+    // if using pagination, we need to add the pagination height to this bottom padding
+    let bottomPadding = (autoResizeOptions?.bottomPadding !== undefined) ? autoResizeOptions.bottomPadding : DATAGRID_BOTTOM_PADDING;
+    if (bottomPadding && gridOptions.enablePagination) {
+      bottomPadding += DATAGRID_PAGINATION_HEIGHT;
+    }
+
+    // optionally show a custom footer with the data metrics(dataset length and last updated timestamp)
+    if (bottomPadding && gridOptions.showCustomFooter) {
+      const footerHeight: string | number = this.gridOptions?.customFooterOptions?.footerHeight ?? DATAGRID_FOOTER_HEIGHT;
+      bottomPadding += parseInt(`${footerHeight}`, 10);
+    }
+
+    let gridHeight = 0;
+    let gridOffsetTop = 0;
+
+    // which DOM element are we using to calculate the available size for the grid?
+    if (autoResizeOptions.calculateAvailableSizeBy === 'container') {
+      // uses the container's height to calculate grid height without any top offset
+      gridHeight = this._pageContainerElm.height() || 0;
+    } else {
+      // uses the browser's window height with its top offset to calculate grid height
+      gridHeight = window.innerHeight || 0;
+      const coordOffsetTop = this._gridDomElm.offset();
+      gridOffsetTop = (coordOffsetTop !== undefined) ? coordOffsetTop.top : 0;
+    }
+
+    const availableHeight = gridHeight - gridOffsetTop - bottomPadding;
+    const availableWidth = this._pageContainerElm.width() || window.innerWidth || 0;
+    const maxHeight = autoResizeOptions?.maxHeight;
+    const minHeight = autoResizeOptions?.minHeight ?? DATAGRID_MIN_HEIGHT;
+    const maxWidth = autoResizeOptions?.maxWidth;
+    const minWidth = autoResizeOptions?.minWidth ?? DATAGRID_MIN_WIDTH;
+
+    let newHeight = availableHeight;
+    let newWidth = (autoResizeOptions?.rightPadding) ? availableWidth - autoResizeOptions.rightPadding : availableWidth;
+
+    // optionally (when defined), make sure that grid height & width are within their thresholds
+    if (newHeight < minHeight) {
+      newHeight = minHeight;
+    }
+    if (maxHeight && newHeight > maxHeight) {
+      newHeight = maxHeight;
+    }
+    if (newWidth < minWidth) {
+      newWidth = minWidth;
+    }
+    if (maxWidth && newWidth > maxWidth) {
+      newWidth = maxWidth;
+    }
+
+    // return the new dimensions unless a fixed height/width was defined
+    return {
+      height: this._fixedHeight || newHeight,
+      width: this._fixedWidth || newWidth
+    };
+  }
+
   /**
    * Return the last resize dimensions used by the service
    * @return {object} last dimensions (height, width)
    */
-  getLastResizeDimensions(): GridSize {
-    return this._addon?.getLastResizeDimensions();
+  getLastResizeDimensions(): GridSize | undefined {
+    return this._lastDimensions;
   }
 
   /**
@@ -159,7 +248,90 @@ export class ResizerService {
    * @param {boolean} isResizePaused are we pausing the resizer?
    */
   pauseResizer(isResizePaused: boolean) {
-    this._addon.pauseResizer(isResizePaused);
+    this._resizePaused = isResizePaused;
+  }
+
+  /**
+   * Resize the datagrid to fit the browser height & width.
+   * @param {number} delay to wait before resizing, defaults to 0 (in milliseconds)
+   * @param {object} newSizes can optionally be passed (height, width)
+   * @param {object} event that triggered the resize, defaults to null
+   * @return If the browser supports it, we can return a Promise that would resolve with the new dimensions
+   */
+  resizeGrid(delay?: number, newSizes?: GridSize): Promise<GridSize | undefined> {
+    return new Promise(resolve => {
+      // because of the javascript async nature, we might want to delay the resize a little bit
+      delay = delay || 0;
+
+      if (delay > 0) {
+        clearTimeout(this._timer);
+        this._timer = setTimeout(() => resolve(this.resizeGridCallback(newSizes)), delay);
+      } else {
+        resolve(this.resizeGridCallback(newSizes));
+      }
+    });
+  }
+
+  resizeGridCallback(newSizes?: GridSize): GridSize | undefined {
+    const dimensions = this.resizeGridWithDimensions(newSizes);
+    this.pubSubService.publish('onGridAfterResize', dimensions);
+
+    // we can call our resize by content here (when enabled)
+    // since the core Slick.Resizer plugin only supports the "autosizeColumns"
+    if (this.gridOptions.enableAutoResizeColumnsByCellContent && (!this._lastDimensions?.width || dimensions?.width !== this._lastDimensions?.width)) {
+      this.resizeColumnsByCellContent(false);
+    }
+    this._lastDimensions = dimensions;
+
+    return dimensions;
+  }
+
+  resizeGridWithDimensions(newSizes?: GridSize): GridSize | undefined {
+    // calculate the available sizes with minimum height defined as a constant
+    const availableDimensions = this.calculateGridNewDimensions(this.gridOptions);
+
+    if ((newSizes || availableDimensions) && this._gridDomElm.length > 0) {
+      // get the new sizes, if new sizes are passed (not 0), we will use them else use available space
+      // basically if user passes 1 of the dimension, let say he passes just the height,
+      // we will use the height as a fixed height but the width will be resized by it's available space
+      const newHeight = (newSizes?.height) ? newSizes.height : availableDimensions?.height;
+      const newWidth = (newSizes?.width) ? newSizes.width : availableDimensions?.width;
+
+      // apply these new height/width to the datagrid
+      if (!this.gridOptions.autoHeight) {
+        this._gridDomElm.height(newHeight as string);
+        this._gridContainerElm.height(newHeight);
+      }
+      this._gridDomElm.width(newWidth as string);
+      this._gridContainerElm.width(newWidth as string);
+
+      // resize the slickgrid canvas on all browser except some IE versions
+      // exclude all IE below IE11
+      // IE11 wants to be a better standard (W3C) follower (finally) they even changed their appName output to also have 'Netscape'
+      if (new RegExp('MSIE [6-8]').exec(navigator.userAgent) === null && this._grid && this._grid.resizeCanvas) {
+        this._grid.resizeCanvas();
+      }
+
+      // also call the grid auto-size columns so that it takes available space when going bigger
+      if (this.gridOptions?.enableAutoSizeColumns && this._grid.autosizeColumns) {
+        // make sure that the grid still exist (by looking if the Grid UID is found in the DOM tree) to avoid SlickGrid error "missing stylesheet"
+        if (this.gridUid && $(`.${this.gridUid}`).length > 0) {
+          this._grid.autosizeColumns();
+        }
+      } else if (this.gridOptions.enableAutoResizeColumnsByCellContent && (!this._lastDimensions?.width || newWidth !== this._lastDimensions?.width)) {
+        // we can call our resize by content here (when enabled)
+        // since the core Slick.Resizer plugin only supports the "autosizeColumns"
+        this.resizeColumnsByCellContent(false);
+      }
+
+      // keep last resized dimensions & resolve them to the Promise
+      this._lastDimensions = {
+        height: newHeight || 0,
+        width: newWidth || 0
+      };
+    }
+
+    return this._lastDimensions;
   }
 
   requestStopOfAutoFixResizeGrid(isStopRequired = true) {
@@ -185,7 +357,7 @@ export class ResizerService {
       return;
     }
 
-    this.eventPubSubService.publish('onBeforeResizeByContent');
+    this.pubSubService.publish('onBeforeResizeByContent');
 
     // calculate total width necessary by each cell content
     // we won't re-evaluate if we already had calculated the total
@@ -233,18 +405,7 @@ export class ResizerService {
     // then we'll call reRenderColumns() when getting wider than viewport or else the default autosizeColumns() when we know we have plenty of space to shrink the columns
     const viewportWidth = this._gridParentContainerElm?.offsetWidth ?? 0;
     this._totalColumnsWidthByContent > viewportWidth ? this._grid.reRenderColumns(reRender) : this._grid.autosizeColumns();
-    this.eventPubSubService.publish('onAfterResizeByContent', { readItemCount, calculateColumnWidths });
-  }
-
-  /**
-   * Resize the datagrid to fit the browser height & width.
-   * @param {number} delay to wait before resizing, defaults to 0 (in milliseconds)
-   * @param {object} newSizes can optionally be passed (height, width)
-   * @param {object} event that triggered the resize, defaults to null
-   * @return If the browser supports it, we can return a Promise that would resolve with the new dimensions
-   */
-  resizeGrid(delay?: number, newSizes?: GridSize, event?: SlickEventData): Promise<GridSize> | null {
-    return this._addon?.resizeGrid(delay, newSizes, event);
+    this.pubSubService.publish('onAfterResizeByContent', { readItemCount, calculateColumnWidths });
   }
 
   // --
@@ -391,16 +552,18 @@ export class ResizerService {
     let adjustedWidth = newColumnWidth;
 
     if (frozenColumnIdx >= 0 && columnIdx <= frozenColumnIdx) {
-      const allViewports = Array.from(this._grid.getViewports());
-      const leftViewportWidth = allViewports.find(viewport => viewport.classList.contains('slick-viewport-left'))?.clientWidth ?? 0;
-      const rightViewportWidth = allViewports.find(viewport => viewport.classList.contains('slick-viewport-right'))?.clientWidth ?? 0;
-      const viewportFullWidth = leftViewportWidth + rightViewportWidth;
-      const leftViewportWidthMinusCurrentCol = leftViewportWidth - (column.width ?? 0);
-      const isGreaterThanFullViewportWidth = (leftViewportWidthMinusCurrentCol + newColumnWidth) > viewportFullWidth;
+      const allViewports = Array.from(this._grid.getViewports() as HTMLElement[]);
+      if (allViewports) {
+        const leftViewportWidth = allViewports.find(viewport => viewport.classList.contains('slick-viewport-left'))?.clientWidth ?? 0;
+        const rightViewportWidth = allViewports.find(viewport => viewport.classList.contains('slick-viewport-right'))?.clientWidth ?? 0;
+        const viewportFullWidth = leftViewportWidth + rightViewportWidth;
+        const leftViewportWidthMinusCurrentCol = leftViewportWidth - (column.width ?? 0);
+        const isGreaterThanFullViewportWidth = (leftViewportWidthMinusCurrentCol + newColumnWidth) > viewportFullWidth;
 
-      if (isGreaterThanFullViewportWidth) {
-        const resizeWidthToRemoveFromExceededWidthReadjustment = this.resizeByContentOptions.widthToRemoveFromExceededWidthReadjustment ?? 50;
-        adjustedWidth = (leftViewportWidth - leftViewportWidthMinusCurrentCol + rightViewportWidth - resizeWidthToRemoveFromExceededWidthReadjustment);
+        if (isGreaterThanFullViewportWidth) {
+          const resizeWidthToRemoveFromExceededWidthReadjustment = this.resizeByContentOptions.widthToRemoveFromExceededWidthReadjustment ?? 50;
+          adjustedWidth = (leftViewportWidth - leftViewportWidthMinusCurrentCol + rightViewportWidth - resizeWidthToRemoveFromExceededWidthReadjustment);
+        }
       }
     }
     return Math.ceil(adjustedWidth);
@@ -420,13 +583,15 @@ export class ResizerService {
   private resizeGridWhenStylingIsBrokenUntilCorrected() {
     // how many time we want to check before really stopping the resize check?
     // We do this because user might be switching to another tab too quickly for the resize be really finished, so better recheck few times to make sure
-    const RESIZE_COUNT_BEFORE_QUITTING = 5;
+    const autoFixResizeTimeout = this.gridOptions?.autoFixResizeTimeout ?? (5 * 60 * 60); // interval is 200ms, so 4x is 1sec, so (4 * 60 * 60 = 60min)
+    const autoFixResizeRequiredGoodCount = this.gridOptions?.autoFixResizeRequiredGoodCount ?? 5;
 
     const headerElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-header`);
     const viewportElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-viewport`);
-    let resizeRequireCheckCount = 0;
+    let intervalExecutionCounter = 0;
+    let resizeGoodCount = 0;
 
-    if (headerElm && viewportElm) {
+    if (headerElm && viewportElm && this.gridOptions.autoFixResizeWhenBrokenStyleDetected) {
       this._intervalId = setInterval(async () => {
         const headerTitleRowHeight = 44; // this one is set by SASS/CSS so let's hard code it
         const headerPos = getHtmlElementOffset(headerElm);
@@ -446,20 +611,29 @@ export class ResizerService {
         // another resize condition could be that if the grid location is at coordinate x/y 0/0, we assume that it's in a hidden tab and we'll need to resize whenever that tab becomes active
         // for these cases we'll resize until it's no longer true or until we reach a max time limit (70min)
         const containerElmOffset = getHtmlElementOffset(this._gridParentContainerElm);
-        let isResizeRequired = (headerPos?.top === 0 || ((headerOffsetTop - viewportOffsetTop) > 2) || (containerElmOffset.left > 0 && containerElmOffset.top > 0)) ? true : false;
+        let isResizeRequired = (headerPos?.top === 0 || ((headerOffsetTop - viewportOffsetTop) > 2) || (containerElmOffset?.left === 0 && containerElmOffset?.top === 0)) ? true : false;
 
         // user could choose to manually stop the looped of auto resize fix
         if (this._isStopResizeIntervalRequested) {
           isResizeRequired = false;
-          resizeRequireCheckCount = RESIZE_COUNT_BEFORE_QUITTING;
+          intervalExecutionCounter = autoFixResizeTimeout;
         }
 
-        if (isResizeRequired && this._addon?.resizeGrid && (containerElmOffset.left > 0 || containerElmOffset.top > 0)) {
-          await this._addon.resizeGrid();
-          isResizeRequired = false;
-          resizeRequireCheckCount++;
+        // visible grid (shown to the user and not hidden in another Tab will have an offsetParent defined)
+        const isGridVisible = !!(document.querySelector<HTMLDivElement>(`.${this.gridUid}`)?.offsetParent ?? false);
+
+        if (isGridVisible && (isResizeRequired || resizeGoodCount < autoFixResizeRequiredGoodCount) && (containerElmOffset?.left > 0 || containerElmOffset?.top > 0)) {
+          await this.resizeGrid();
+
+          // make sure the grid is still visible after doing the resize and if so we consider it a good resize (it might not be visible if user quickly switch to another Tab)
+          const isGridStillVisible = !!(document.querySelector<HTMLDivElement>(`.${this.gridUid}`)?.offsetParent ?? false);
+          if (isGridStillVisible) {
+            isResizeRequired = false;
+            resizeGoodCount++;
+          }
         }
-        if (resizeRequireCheckCount >= RESIZE_COUNT_BEFORE_QUITTING && !isResizeRequired || (this._intervalExecutionCounter++ > (4 * 60 * DEFAULT_INTERVAL_MAX_RETRIES))) { // interval is 250ms, so 4x is 1sec, so (4 * 60 * intervalMaxTimeInMin) shoud be 70min
+
+        if (isGridVisible && !isResizeRequired && (resizeGoodCount >= autoFixResizeRequiredGoodCount || intervalExecutionCounter++ >= autoFixResizeTimeout)) {
           clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 70min
         }
       }, this.intervalRetryDelay);

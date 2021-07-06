@@ -59,6 +59,7 @@ import {
   GroupingAndColspanService,
   Observable,
   PaginationService,
+  ResizerService,
   RowMoveManagerExtension,
   RxJsFacade,
   SharedService,
@@ -78,7 +79,6 @@ import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-compone
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
 
 import { TextExportService } from '../services/textExport.service';
-import { ResizerService } from '../services/resizer.service';
 import { SalesforceGlobalGridOptions } from '../salesforce-global-grid-options';
 import { SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
 import { UniversalContainerService } from '../services/universalContainer.service';
@@ -428,7 +428,7 @@ export class SlickVanillaGridBundle {
 
   emptyGridContainerElm() {
     const gridContainerId = this.gridOptions?.gridContainerId ?? 'grid1';
-    const gridContainerElm = document.querySelector(gridContainerId);
+    const gridContainerElm = document.querySelector(`#${gridContainerId}`);
     emptyElement(gridContainerElm);
   }
 
