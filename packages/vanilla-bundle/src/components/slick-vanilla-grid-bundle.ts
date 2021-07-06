@@ -1183,6 +1183,7 @@ export class SlickVanillaGridBundle {
 
       // also initialize (render) the pagination component
       this.renderPagination();
+      this._isPaginationInitialized = true;
     }
   }
 
