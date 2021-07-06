@@ -10,9 +10,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "directories": {
-    "src": "src"
-  },
+  "files": [
+    "/dist"
+  ],
   "scripts": {
     "build": "cross-env tsc --build",
     "postbuild": "npm-run-all bundle:commonjs",
