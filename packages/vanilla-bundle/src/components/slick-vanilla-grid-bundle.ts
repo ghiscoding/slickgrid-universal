@@ -1183,8 +1183,6 @@ export class SlickVanillaGridBundle {
 
       // also initialize (render) the pagination component
       this.renderPagination();
-
-      this._isPaginationInitialized = true;
     }
   }
 
@@ -1198,7 +1196,8 @@ export class SlickVanillaGridBundle {
     if (this._gridOptions.enablePagination && !this._isPaginationInitialized && showPagination) {
       this.slickPagination = new SlickPaginationComponent(this.paginationService, this._eventPubSubService, this.sharedService, this.translaterService);
       this.slickPagination.renderPagination(this._gridParentContainerElm);
-    } else {
+      this._isPaginationInitialized = true;
+    } else if (!showPagination) {
       if (this.slickPagination) {
         this.slickPagination.dispose();
       }
