@@ -114,7 +114,8 @@ export class Example12 {
     this.dataset = this.loadData(500);
     this.gridContainerElm = document.querySelector<HTMLDivElement>(`.grid12`);
 
-    this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions });
+    this.sgb.dataset = this.dataset;
     // this.sgb.slickGrid.setActiveCell(0, 0);
 
     // bind any of the grid events
