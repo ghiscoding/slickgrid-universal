@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.15.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.14.1...v0.15.0) (2021-07-06)
+
+
+### Bug Fixes
+
+* **export:** expanded Row Detail shouldn't be exported, fixes [#390](https://github.com/ghiscoding/slickgrid-universal/issues/390) ([cef826c](https://github.com/ghiscoding/slickgrid-universal/commit/cef826c1deb458c316bdeaa4fdeba27e748595f3))
+
+
+
+
+
+
 ## [0.14.1](https://github.com/ghiscoding/slickgrid-universal/compare/v0.14.0...v0.14.1) (2021-05-22)
 
 **Note:** Version bump only for package @slickgrid-universal/excel-export
