@@ -463,6 +463,7 @@ export class SlickVanillaGridBundle {
 
     // dispose the Components
     this.slickFooter?.dispose();
+    this.slickEmptyWarning?.dispose();
     this.slickPagination?.dispose();
 
     this._eventPubSubService?.unsubscribeAll();
@@ -1117,7 +1118,7 @@ export class SlickVanillaGridBundle {
    * if there are then load them in the paginationOptions object
    */
   setPaginationOptionsWhenPresetDefined(gridOptions: GridOption, paginationOptions: Pagination): Pagination {
-    if (gridOptions.presets?.pagination && gridOptions.pagination) {
+    if (gridOptions.presets?.pagination && paginationOptions && !this._isPaginationInitialized) {
       paginationOptions.pageSize = gridOptions.presets.pagination.pageSize;
       paginationOptions.pageNumber = gridOptions.presets.pagination.pageNumber;
     }
