@@ -45,8 +45,9 @@ export class SlickPaginationComponent {
     this.translatePaginationTexts(this._locales);
 
     if (this._enableTranslate && this.pubSubService && this.pubSubService.subscribe) {
+      const translateEventName = this.translaterService?.eventName ?? 'onLanguageChange';
       this._subscriptions.push(
-        this.pubSubService.subscribe('onLanguageChange', () => this.translatePaginationTexts(this._locales))
+        this.pubSubService.subscribe(translateEventName, () => this.translatePaginationTexts(this._locales))
       );
     }
 
