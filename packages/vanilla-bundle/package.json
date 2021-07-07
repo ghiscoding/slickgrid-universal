@@ -51,7 +51,6 @@
     "@slickgrid-universal/custom-footer-component": "^0.15.0",
     "@slickgrid-universal/empty-warning-component": "^0.15.0",
     "@slickgrid-universal/event-pub-sub": "^0.15.0",
-    "@slickgrid-universal/excel-export": "^0.15.0",
     "@slickgrid-universal/pagination-component": "^0.15.0",
     "@slickgrid-universal/text-export": "^0.15.0",
     "whatwg-fetch": "^3.6.2"
