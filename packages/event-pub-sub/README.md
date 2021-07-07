@@ -14,8 +14,9 @@
 
 A very simple Vanilla Implementation of an Event PubSub Service to do simple publish/subscribe inter-communication while optionally providing data as well.
 
-### External Dependencies
-- [DOM Purify](https://github.com/cure53/DOMPurify) to sanitize HTML text
+### Internal Dependencies
+- [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)
+
 
 ### Installation
 Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation)

@@ -14,6 +14,9 @@
 
 Simple Export to Excel Service that allows to exporting as ".xls" or ".xlsx".
 
+### Internal Dependencies
+- [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)
+
 ### External Dependencies
 This package requires [excel-builder-webpacker](https://www.npmjs.com/package/excel-builder-webpacker) which itself requires [jszip](https://www.npmjs.com/package/jszip) and [lodash](https://www.npmjs.com/package/lodash), the later not being a small lib, so make sure that you are fine with the bundle size. For our use case, the extra bundle size is totally worth the feature.
 

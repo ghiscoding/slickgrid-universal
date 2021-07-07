@@ -16,11 +16,12 @@ Vanilla Bundle implementation (no framework, plain TypeSript implementation). Th
 
 ### Internal Dependencies
 - [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)
+- [@slickgrid-universal/event-pub-sub](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/event-pub-sub)
 - [@slickgrid-universal/custom-footer-component](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/custom-footer-component)
 - [@slickgrid-universal/empty-warning-component](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/empty-warning-component)
+- [@slickgrid-universal/pagination-component](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/pagination-component)
 
 ### External Dependencies
-- [DOM Purify](https://github.com/cure53/DOMPurify) to sanitize HTML text
 - [whatwg-fetch](https://github.com/whatwg/fetch) - Fetch Standard
 
 ### Installation
