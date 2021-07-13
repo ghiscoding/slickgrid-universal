@@ -5,7 +5,6 @@ import 'slickgrid/slick.core';
 import 'slickgrid/slick.grid';
 import 'slickgrid/slick.dataview';
 import 'slickgrid/slick.groupitemmetadataprovider';
-import 'slickgrid/plugins/slick.resizer';
 import {
   autoAddEditorFormatterToColumnsWithEditor,
   AutoCompleteEditor,
@@ -818,7 +817,7 @@ export class SlickVanillaGridBundle {
         if (grid.hasOwnProperty(prop) && prop.startsWith('on')) {
           const gridEventHandler = (grid as any)[prop];
           (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof gridEventHandler>>).subscribe(gridEventHandler, (event, args) => {
-            const gridEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions?.defaultSlickgridEventPrefix || '');
+            const gridEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions?.defaultSlickgridEventPrefix ?? '');
             return this._eventPubSubService.dispatchCustomEvent(gridEventName, { eventData: event, args });
           });
         }
@@ -829,7 +828,7 @@ export class SlickVanillaGridBundle {
         if (dataView.hasOwnProperty(prop) && prop.startsWith('on')) {
           const dataViewEventHandler = (dataView as any)[prop];
           (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof dataViewEventHandler>>).subscribe(dataViewEventHandler, (event, args) => {
-            const dataViewEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions?.defaultSlickgridEventPrefix || '');
+            const dataViewEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions?.defaultSlickgridEventPrefix ?? '');
             return this._eventPubSubService.dispatchCustomEvent(dataViewEventName, { eventData: event, args });
           });
         }
