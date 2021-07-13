@@ -396,7 +396,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     expect(sharedVisibleColumnsSpy).toHaveBeenCalledWith(newVisibleColumns);
   });
 
-  it('should create a grid and expect multiple Event Aggregator being called', () => {
+  it('should create a grid and expect multiple event published', () => {
     const pubSubSpy = jest.spyOn(eventPubSubService, 'publish');
 
     component.initialization(divContainer, slickEventHandler);
