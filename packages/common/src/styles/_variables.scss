@@ -81,13 +81,16 @@ $header-padding-top:                                  4px !default;
 $header-padding-right:                                4px !default;
 $header-padding-bottom:                               4px !default;
 $header-padding-left:                                 4px !default;
+$header-padding:                                      $header-padding-top $header-padding-right $header-padding-bottom $header-padding-left !default;
 $header-input-height:                                 27px !default;                        // height of the filter form element (input, textarea, select)
-$header-input-width:                                  none !default;                        // width of the filter form element (input, textarea, select)
+$header-input-width:                                  100% !default;                        // width of the filter form element (input, textarea, select)
 $header-input-padding:                                0 6px !default;                       // padding of the filter form element (input, textarea, select)
 $header-row-background-color:                         #ffffff !default;
 $header-row-count:                                    2 !default;                           // how many rows to display on the header
 $header-row-filter-padding:                           4px !default;
 $header-column-height:                                calc(17px * #{$header-row-count}) !default;  // header is calculated by rows to show
+$header-column-background-active:                     darken($grid-header-background, 5%) !default;
+$header-column-background-hover:                      darken($grid-header-background, 2%) !default;
 $header-border-top:                                   0 none !default;                      // header, column titles, that is without the Filters
 $header-border-right:                                 0 none !default;
 $header-border-bottom:                                0 none !default;
@@ -149,6 +152,7 @@ $autocomplete-border-radius:	                        4px !default;
 $autocomplete-box-shadow:	                            0 6px 12px rgba(0, 0, 0, 0.175) !default;
 $autocomplete-hover-color:	                          #262626 !default;
 $autocomplete-hover-bg-color:	                        darken($row-mouse-hover-color, 3%) !default;
+$autocomplete-hover-border-color:	                    1px solid #{$autocomplete-hover-bg-color} !default;
 $autocomplete-loading-input-bg-color:                 transparent !default;
 $autocomplete-loading-icon:                           "\f021" !default;
 $autocomplete-loading-icon-color:                     $icon-color !default;
@@ -283,8 +287,10 @@ $column-picker-title-width:                           calc(100% - #{$column-pick
 /** Detail View Plugin */
 $detail-view-icon-collapse:                           "\f056" !default;
 $detail-view-icon-collapse-color:                     $primary-color !default;
+$detail-view-icon-collapse-color-hover:               darken($detail-view-icon-collapse-color, 10%) !default;
 $detail-view-icon-expand:                             "\f055" !default;
 $detail-view-icon-expand-color:                       lighten($primary-color, 25%) !default;
+$detail-view-icon-expand-color-hover:                 darken($detail-view-icon-expand-color, 10%) !default;
 $detail-view-icon-size:                               calc(#{$icon-font-size} + 2px) !default;
 $detail-view-container-bgcolor:                       #f7f7f7 !default;
 $detail-view-container-border:                        1px solid #c0c0c0 !default;
@@ -446,6 +452,7 @@ $header-button-vertical-align:                        top !default;
 
 /* Header Menu Plugin */
 $header-menu-bg-color:                                #ffffff !default;
+$header-menu-bg:                                      none repeat scroll 0 0 #{$header-menu-bg-color} !default;
 $header-menu-button-bg-color:                         #ffffff !default;
 $header-menu-border:                                  1px solid #BFBDBD !default;
 $header-menu-button-border:                           $header-menu-border !default;
@@ -815,11 +822,17 @@ $multiselect-ok-button-width:                         100% !default;
 $multiselect-ok-button-text-align:                    center !default;
 
 /* pagination variables */
-$pagination-button-hover-color:                       #E6E6E6 !default;
+$pagination-border-color:                             #ddd !default;
+$pagination-button-border-color:                      #acacac !default;
 $pagination-button-border-radius:                     4px !default;
 $pagination-button-height:                            32px !default;
+$pagination-button-hover-color:                       #E6E6E6 !default;
 $pagination-button-padding:                           6px 12px !default;
-$pagination-border-color:                             #ddd !default;
+$pagination-button-border:                            1px solid #{$pagination-button-border-color} !default;
+$pagination-border-top:                               0 none !default;
+$pagination-border-right:                             0 none !default;
+$pagination-border-bottom:                            0 none !default;
+$pagination-border-left:                              0 none !default;
 $pagination-count-margin-left:                        2px !default;
 $pagination-font-size:                                calc(#{$font-size-base} - 1px) !default;
 $pagination-height:                                   40px !default;
@@ -836,11 +849,6 @@ $pagination-icon-seek-end-width:                      initial !default;
 $pagination-icon-seek-next-width:                     initial !default;
 $pagination-icon-seek-prev-width:                     initial !default;
 $pagination-icon-seek-text-stroke:                    0.4px !default;
-$pagination-button-border:                            1px solid #acacac !default;
-$pagination-border-top:                               0 none !default;
-$pagination-border-right:                             0 none !default;
-$pagination-border-bottom:                            0 none !default;
-$pagination-border-left:                              0 none !default;
 $pagination-page-input-border-radius:                 4px !default;
 $pagination-page-input-bgcolor:                       #fafbed !default;
 $pagination-page-input-height:                        26px !default;

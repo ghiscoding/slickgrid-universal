@@ -40,13 +40,13 @@ $editor-grid-cell-border-width-modified: 1px 6px 1px 1px !default;
   .slick-row, .slick-row.odd {
     /* editable field with blue background */
     .slick-cell.editable-field, .slick-cell.selected.editable-field {
-      background-color: $editable-field-bg-color;
+      background-color: var(--slick-editable-field-bg-color, $editable-field-bg-color);
       &:hover:after {
-        content: $editable-field-hover-icon;
+        content: var(--slick-editable-field-hover-icon, $editable-field-hover-icon);
         position: absolute;
-        top: $editable-field-hover-icon-margin-top;
-        right: $editable-field-hover-icon-margin-right;
-        width: $editable-field-hover-icon-width;
+        top: var(--slick-editable-field-hover-icon-margin-top, $editable-field-hover-icon-margin-top);
+        right: var(--slick-editable-field-hover-icon-margin-right, $editable-field-hover-icon-margin-right);
+        width: var(--slick-editable-field-hover-icon-width, $editable-field-hover-icon-width);
       }
       &.active:hover:after {
         content: none;
@@ -72,11 +72,11 @@ $editor-grid-cell-border-width-modified: 1px 6px 1px 1px !default;
         clear: both;
       }
       &:hover:after {
-        content: $editable-field-hover-icon;
+        content: var(--slick-editable-field-hover-icon, $editable-field-hover-icon);
         position: absolute;
-        top: $editable-field-hover-icon-margin-top;
-        right: $editable-field-hover-icon-margin-right;
-        width: $editable-field-hover-icon-width;
+        top: var(--slick-editable-field-hover-icon-margin-top, $editable-field-hover-icon-margin-top);
+        right: var(--slick-editable-field-hover-icon-margin-right, $editable-field-hover-icon-margin-right);
+        width: var(--slick-editable-field-hover-icon-width, $editable-field-hover-icon-width);
       }
       &.active:hover:after {
         content: none;
@@ -85,14 +85,14 @@ $editor-grid-cell-border-width-modified: 1px 6px 1px 1px !default;
 
     .slick-cell.unsaved-editable-field {
       .editing-field {
-        border: $editor-modal-detail-container-border-modified;
-        border-width: $editor-grid-cell-border-width-modified;
+        border: var(--slick-editor-modal-detail-container-border-modified, $editor-modal-detail-container-border-modified);
+        border-width: var(--slick-editor-grid-cell-border-width-modified, $editor-grid-cell-border-width-modified);
       }
     }
   }
 }
 
-$link-color: $primary-color !default;
+$link-color: var(--slick-primary-color, $primary-color) !default;
 @import './colors';
 @import './colors-from-filters';
 @import './extra-styling';

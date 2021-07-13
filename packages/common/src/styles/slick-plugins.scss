@@ -8,11 +8,11 @@
 .slick-cell-menu {
   position: absolute;
   font-family:  $font-family;
-  background: $cell-menu-bg-color;
-  border: $cell-menu-border;
-  border-radius: $cell-menu-border-radius;
-  min-width: $cell-menu-min-width;
-  padding: $cell-menu-padding;
+  background: var(--slick-cell-menu-bg-color, $cell-menu-bg-color);
+  border: var(--slick-cell-menu-border, $cell-menu-border);
+  border-radius: var(--slick-cell-menu-border-radius, $cell-menu-border-radius);
+  min-width: var(--slick-cell-menu-min-width, $cell-menu-min-width);
+  padding: var(--slick-cell-menu-padding, $cell-menu-padding);
   z-index: 100000;
   cursor: default;
   display: inline-block;
@@ -29,32 +29,32 @@
   > .close {
     float: right;
     cursor: pointer;
-    color: $cell-menu-close-btn-color;
-    background-color: $cell-menu-close-btn-bg-color;
-    width: $cell-menu-close-btn-width;
-    height: $cell-menu-close-btn-height;
-    margin: $cell-menu-close-btn-margin;
-    padding: $cell-menu-close-btn-padding;
-    border: $cell-menu-close-btn-border;
-    font-family: $cell-menu-close-btn-font-family;
-    font-size: $cell-menu-close-btn-font-size;
+    color: var(--slick-cell-menu-close-btn-color, $cell-menu-close-btn-color);
+    background-color: var(--slick-cell-menu-close-btn-bg-color, $cell-menu-close-btn-bg-color);
+    width: var(--slick-cell-menu-close-btn-width, $cell-menu-close-btn-width);
+    height: var(--slick-cell-menu-close-btn-height, $cell-menu-close-btn-height);
+    margin: var(--slick-cell-menu-close-btn-margin, $cell-menu-close-btn-margin);
+    padding: var(--slick-cell-menu-close-btn-padding, $cell-menu-close-btn-padding);
+    border: var(--slick-cell-menu-close-btn-border, $cell-menu-close-btn-border);
+    font-family: var(--slick-cell-menu-close-btn-font-family, $cell-menu-close-btn-font-family);
+    font-size: var(--slick-cell-menu-close-btn-font-size, $cell-menu-close-btn-font-size);
 
     &:hover {
-      color: $cell-menu-close-btn-color-hover;
+      color: var(--slick-cell-menu-close-btn-color-hover, $cell-menu-close-btn-color-hover);
     }
     > span {
-      opacity: $cell-menu-close-btn-opacity;
+      opacity: var(--slick-cell-menu-close-btn-opacity, $cell-menu-close-btn-opacity);
     }
   }
 
   .slick-cell-menu-option-list,
   .slick-cell-menu-command-list {
     .title {
-      font-size: $cell-menu-title-font-size;
-      font-weight: $cell-menu-title-font-weight;
-      width: $cell-menu-title-width;
-      border-bottom: $cell-menu-title-border-bottom;
-      margin-bottom: $cell-menu-title-margin-bottom;
+      font-size: var(--slick-cell-menu-title-font-size, $cell-menu-title-font-size);
+      font-weight: var(--slick-cell-menu-title-font-weight, $cell-menu-title-font-weight);
+      width: var(--slick-cell-menu-title-width, $cell-menu-title-width);
+      border-bottom: var(--slick-cell-menu-title-border-bottom, $cell-menu-title-border-bottom);
+      margin-bottom: var(--slick-cell-menu-title-margin-bottom, $cell-menu-title-margin-bottom);
     }
   }
 
@@ -62,18 +62,18 @@
     cursor: pointer;
     display: flex;
     align-items: center;
-    border: $cell-menu-item-border;
-    border-radius: $cell-menu-item-border-radius;
-    font-size: $cell-menu-item-font-size;
-    padding: $cell-menu-item-padding;
+    border: var(--slick-cell-menu-item-border, $cell-menu-item-border);
+    border-radius: var(--slick-cell-menu-item-border-radius, $cell-menu-item-border-radius);
+    font-size: var(--slick-cell-menu-item-font-size, $cell-menu-item-font-size);
+    padding: var(--slick-cell-menu-item-padding, $cell-menu-item-padding);
     list-style: none outside none;
     margin: 0;
-    width: $cell-menu-item-width;
-    height: $cell-menu-item-height;
+    width: var(--slick-cell-menu-item-width, $cell-menu-item-width);
+    height: var(--slick-cell-menu-item-height, $cell-menu-item-height);
 
     &:hover {
-      border: $cell-menu-item-hover-border;
-      background-color: $cell-menu-item-hover-color;
+      border: var(--slick-cell-menu-item-hover-border, $cell-menu-item-hover-border);
+      background-color: var(--slick-cell-menu-item-hover-color, $cell-menu-item-hover-color);
     }
 
     &.slick-cell-menu-item-divider {
@@ -81,28 +81,28 @@
       border: none;
       overflow: hidden;
       padding: 0;
-      height: $cell-menu-divider-height;
-      margin: $cell-menu-divider-margin;
-      background-color: $cell-menu-divider-color;
-      width: $cell-menu-divider-width;
+      height: var(--slick-cell-menu-divider-height, $cell-menu-divider-height);
+      margin: var(--slick-cell-menu-divider-margin, $cell-menu-divider-margin);
+      background-color: var(--slick-cell-menu-divider-color, $cell-menu-divider-color);
+      width: var(--slick-cell-menu-divider-width, $cell-menu-divider-width);
       margin-left: auto;
       margin-right: auto;
 
       &:hover {
         border: none;
-        background-color: $cell-menu-divider-color;
+        background-color: var(--slick-cell-menu-divider-color, $cell-menu-divider-color);
       }
     }
 
     .slick-cell-menu-icon {
-      font-size: $cell-menu-icon-font-size;
+      font-size: var(--slick-cell-menu-icon-font-size, $cell-menu-icon-font-size);
       background-position: center center;
       background-repeat: no-repeat;
       display: inline-block;
-      line-height: $cell-menu-icon-line-height;
-      margin-right: $cell-menu-icon-margin-right;
+      line-height: var(--slick-cell-menu-icon-line-height, $cell-menu-icon-line-height);
+      margin-right: var(--slick-cell-menu-icon-margin-right, $cell-menu-icon-margin-right);
       vertical-align: middle;
-      width: $cell-menu-icon-width;
+      width: var(--slick-cell-menu-icon-width, $cell-menu-icon-width);
     }
 
     .slick-cell-menu-content {
@@ -114,10 +114,10 @@
     &.slick-cell-menu-item-disabled {
       border-color: transparent !important;
       background: inherit !important;
-      color: $cell-menu-item-disabled-color;
+      color: var(--slick-cell-menu-item-disabled-color, $cell-menu-item-disabled-color);
       cursor: inherit;
       .slick-cell-menu-icon, .slick-cell-menu-content {
-        color: $cell-menu-item-disabled-color;
+        color: var(--slick-cell-menu-item-disabled-color, $cell-menu-item-disabled-color);
       }
     }
     &.slick-cell-menu-item-hidden {
@@ -126,13 +126,13 @@
   }
 
   .slick-cell-menu-option-list {
-    margin-bottom: $cell-menu-option-list-margin-bottom;
+    margin-bottom: var(--slick-cell-menu-option-list-margin-bottom, $cell-menu-option-list-margin-bottom);
   }
 
   /* resize cell menu item width when there's a close button on same line */
   button + .slick-cell-menu-command-list .slick-cell-menu-item:first-child,
   button + .slick-cell-menu-option-list .slick-cell-menu-item:first-child {
-    width: $cell-menu-item-width-when-button;
+    width: var(--slick-cell-menu-item-width-when-button, $cell-menu-item-width-when-button);
   }
 }
 
@@ -142,11 +142,11 @@
 
 .slick-context-menu {
   position: absolute;
-  background: $context-menu-bg-color;
-  border: $context-menu-border;
-  border-radius: $context-menu-border-radius;
-  min-width: $context-menu-min-width;
-  padding: $context-menu-padding;
+  background: var(--slick-context-menu-bg-color, $context-menu-bg-color);
+  border: var(--slick-context-menu-border, $context-menu-border);
+  border-radius: var(--slick-context-menu-border-radius, $context-menu-border-radius);
+  min-width: var(--slick-context-menu-min-width, $context-menu-min-width);
+  padding: var(--slick-context-menu-padding, $context-menu-padding);
   z-index: 100000;
   cursor: default;
   display: inline-block;
@@ -162,45 +162,45 @@
 
   > .close {
     float: right;
-    color: $context-menu-close-btn-color;
-    background-color: $context-menu-close-btn-bg-color;
-    width: $context-menu-close-btn-width;
-    height: $context-menu-close-btn-height;
-    margin: $context-menu-close-btn-margin;
-    padding: $context-menu-close-btn-padding;
-    border: $context-menu-close-btn-border;
-    font-family: $context-menu-close-btn-font-family;
-    font-size: $context-menu-close-btn-font-size;
+    color: var(--slick-context-menu-close-btn-color, $context-menu-close-btn-color);
+    background-color: var(--slick-context-menu-close-btn-bg-color, $context-menu-close-btn-bg-color);
+    width: var(--slick-context-menu-close-btn-width, $context-menu-close-btn-width);
+    height: var(--slick-context-menu-close-btn-height, $context-menu-close-btn-height);
+    margin: var(--slick-context-menu-close-btn-margin, $context-menu-close-btn-margin);
+    padding: var(--slick-context-menu-close-btn-padding, $context-menu-close-btn-padding);
+    border: var(--slick-context-menu-close-btn-border, $context-menu-close-btn-border);
+    font-family: var(--slick-context-menu-close-btn-font-family, $context-menu-close-btn-font-family);
+    font-size: var(--slick-context-menu-close-btn-font-size, $context-menu-close-btn-font-size);
 
     &:hover {
-      color: $context-menu-close-btn-color-hover;
+      color: var(--slick-context-menu-close-btn-color-hover, $context-menu-close-btn-color-hover);
     }
     > span {
-      opacity: $context-menu-close-btn-opacity;
+      opacity: var(--slick-context-menu-close-btn-opacity, $context-menu-close-btn-opacity);
     }
   }
 
   .title {
-    font-size: $context-menu-title-font-size;
-    font-weight: $context-menu-title-font-weight;
-    width: $context-menu-title-width;
-    border-bottom: $context-menu-title-border-bottom;
-    margin-bottom: $context-menu-title-margin-bottom;
+    font-size: var(--slick-context-menu-title-font-size, $context-menu-title-font-size);
+    font-weight: var(--slick-context-menu-title-font-weight, $context-menu-title-font-weight);
+    width: var(--slick-context-menu-title-width, $context-menu-title-width);
+    border-bottom: var(--slick-context-menu-title-border-bottom, $context-menu-title-border-bottom);
+    margin-bottom: var(--slick-context-menu-title-margin-bottom, $context-menu-title-margin-bottom);
   }
 
   .slick-context-menu-item {
     cursor: pointer;
-    border: $context-menu-item-border;
-    border-radius: $context-menu-item-border-radius;
-    font-size: $context-menu-item-font-size;
-    padding: $context-menu-item-padding;
+    border: var(--slick-context-menu-item-border, $context-menu-item-border);
+    border-radius: var(--slick-context-menu-item-border-radius, $context-menu-item-border-radius);
+    font-size: var(--slick-context-menu-item-font-size, $context-menu-item-font-size);
+    padding: var(--slick-context-menu-item-padding, $context-menu-item-padding);
     list-style: none outside none;
     margin: 0;
-    width: $context-menu-item-width;
+    width: var(--slick-context-menu-item-width, $context-menu-item-width);
 
     &:hover {
-      border: $context-menu-item-hover-border;
-      background-color: $context-menu-item-hover-color;
+      border: var(--slick-context-menu-item-hover-border, $context-menu-item-hover-border);
+      background-color: var(--slick-context-menu-item-hover-color, $context-menu-item-hover-color);
     }
 
     &.slick-context-menu-item-divider {
@@ -209,16 +209,16 @@
       border: none;
       overflow: hidden;
       padding: 0;
-      height: $context-menu-divider-height;
-      margin: $context-menu-divider-margin;
-      background-color: $context-menu-divider-color;
-      width: $context-menu-divider-width;
+      height: var(--slick-context-menu-divider-height, $context-menu-divider-height);
+      margin: var(--slick-context-menu-divider-margin, $context-menu-divider-margin);
+      background-color: var(--slick-context-menu-divider-color, $context-menu-divider-color);
+      width: var(--slick-context-menu-divider-width, $context-menu-divider-width);
       margin-left: auto;
       margin-right: auto;
 
       &:hover {
         border: none;
-        background-color: $context-menu-divider-color;
+        background-color: var(--slick-context-menu-divider-color, $context-menu-divider-color);
       }
     }
 
@@ -226,12 +226,12 @@
       background-position: center center;
       background-repeat: no-repeat;
       display: inline-block;
-      font-size: $context-menu-icon-font-size;
-      height: $context-menu-icon-height;
-      line-height: $context-menu-icon-line-height;
-      margin-right: $context-menu-icon-margin-right;
+      font-size: var(--slick-context-menu-icon-font-size, $context-menu-icon-font-size);
+      height: var(--slick-context-menu-icon-height, $context-menu-icon-height);
+      line-height: var(--slick-context-menu-icon-line-height, $context-menu-icon-line-height);
+      margin-right: var(--slick-context-menu-icon-margin-right, $context-menu-icon-margin-right);
       vertical-align: middle;
-      width: $context-menu-icon-width;
+      width: var(--slick-context-menu-icon-width, $context-menu-icon-width);
     }
 
     .slick-context-menu-content {
@@ -243,10 +243,10 @@
     &.slick-context-menu-item-disabled {
       border-color: transparent !important;
       background: inherit !important;
-      color: $context-menu-item-disabled-color;
+      color: var(--slick-context-menu-item-disabled-color, $context-menu-item-disabled-color);
       cursor: inherit;
       .slick-context-menu-icon, .slick-context-menu-content {
-        color: $context-menu-item-disabled-color;
+        color: var(--slick-context-menu-item-disabled-color, $context-menu-item-disabled-color);
       }
     }
     &.slick-context-menu-item-hidden {
@@ -255,13 +255,13 @@
   }
 
   .slick-context-menu-option-list {
-    margin-bottom: $context-menu-option-list-margin-bottom;
+    margin-bottom: var(--slick-context-menu-option-list-margin-bottom, $context-menu-option-list-margin-bottom);
   }
 
   /* resize context menu item width when there's a close button on same line */
   button + .slick-context-menu-command-list .slick-context-menu-item:first-child,
   button + .slick-context-menu-option-list .slick-context-menu-item:first-child {
-    width: $context-menu-item-width-when-button;
+    width: var(--slick-context-menu-item-width-when-button, $context-menu-item-width-when-button);
   }
 }
 
@@ -284,11 +284,11 @@
   * This makes all "float:right" elements after it that spill over to the next line
   * display way below the lower boundary of the column thus hiding them.
   */
-  float: $header-button-float;
-  vertical-align: $header-button-vertical-align;
-  margin: $header-button-margin;
-  height: $header-button-height;
-  width: $header-button-width;
+  float: var(--slick-header-button-float, $header-button-float);
+  vertical-align: var(--slick-header-button-vertical-align, $header-button-vertical-align);
+  margin: var(--slick-header-button-margin, $header-button-margin);
+  height: var(--slick-header-button-height, $header-button-height);
+  width: var(--slick-header-button-width, $header-button-width);
   background-repeat: no-repeat;
   background-position: center center;
   cursor: pointer;
@@ -296,12 +296,12 @@
 
 .slick-header-button-hidden {
   width: 0;
-  margin-right: $header-button-hidden-margin-right;
+  margin-right: var(--slick-header-button-hidden-margin-right, $header-button-hidden-margin-right);
   transition: 0.2s width;
 }
 
 .slick-header-column:hover > .slick-header-button {
-  width: $header-button-width;
+  width: var(--slick-header-button-width, $header-button-width);
 }
 
 // ----------------------------------------------
@@ -314,31 +314,31 @@
   cursor: pointer;
   display: none;
   position: absolute;
-  height: $header-menu-button-height;
-  border: $header-menu-button-border;
-  border-width: $header-menu-button-border-width;
-  padding: $header-menu-button-padding;
-  color: $header-menu-button-icon-color;
+  height: var(--slick-header-menu-button-height, $header-menu-button-height);
+  border: var(--slick-header-menu-button-border, $header-menu-button-border);
+  border-width: var(--slick-header-menu-button-border-width, $header-menu-button-border-width);
+  padding: var(--slick-header-menu-button-padding, $header-menu-button-padding);
+  color: var(--slick-header-menu-button-icon-color, $header-menu-button-icon-color);
 
   // The next few items are already defined in the slick-headermenu file and it should stay that way, *unless* you also replace the button image included there.
   bottom: 0;
-  right: $header-menu-button-margin-right;
+  right: var(--slick-header-menu-button-margin-right, $header-menu-button-margin-right);
   top: 0;
-  width: $header-menu-button-width;
+  width: var(--slick-header-menu-button-width, $header-menu-button-width);
 }
 .slick-header-menubutton:before {
   display: inline-block;
-  content: $header-menu-button-icon;
-  font-family: $icon-font-family;
-  font-size: $header-menu-button-icon-font-size;
-  font-weight: $header-menu-button-icon-font-weight;
-  width: $header-menu-button-icon-width;
+  content: var(--slick-header-menu-button-icon, $header-menu-button-icon);
+  font-family: var(--slick-icon-font-family, $icon-font-family);
+  font-size: var(--slick-header-menu-button-icon-font-size, $header-menu-button-icon-font-size);
+  font-weight: var(--slick-header-menu-button-icon-font-weight, $header-menu-button-icon-font-weight);
+  width: var(--slick-header-menu-button-icon-width, $header-menu-button-icon-width);
 }
 
 .slick-header-column {
   // if user when to show header menu only while hovering, then the display var will be "none" else it could be "inline-block"
   .slick-header-menubutton {
-    display: $header-menu-display;
+    display: var(--slick-header-menu-display, $header-menu-display);
   }
   &:hover {
     .slick-header-menubutton {
@@ -350,11 +350,11 @@
 .slick-header-menu {
   position: absolute;
   margin: 0;
-  background: none repeat scroll 0 0 $header-menu-bg-color;
-  border: $header-menu-border;
-  border-radius: $header-menu-border-radius;
-  min-width: $header-menu-min-width;
-  padding: $header-menu-padding;
+  background: var(--slick-header-menu-bg, $header-menu-bg);
+  border: var(--slick-header-menu-border, $header-menu-border);
+  border-radius: var(--slick-header-menu-border-radius, $header-menu-border-radius);
+  min-width: var(--slick-header-menu-min-width, $header-menu-min-width);
+  padding: var(--slick-header-menu-padding, $header-menu-padding);
   z-index: 100000;
   cursor: default;
   display: inline-block;
@@ -386,14 +386,14 @@
 .slick-header-menuitem {
   cursor: pointer;
   display: block;
-  border: $header-menu-item-border;
-  border-radius: $header-menu-item-border-radius;
-  padding: $header-menu-item-padding;
+  border: var(--slick-header-menu-item-border, $header-menu-item-border);
+  border-radius: var(--slick-header-menu-item-border-radius, $header-menu-item-border-radius);
+  padding: var(--slick-header-menu-item-padding, $header-menu-item-padding);
   list-style: none outside none;
   margin: 0;
   &:hover {
-    border: $header-menu-item-hover-border;
-    background-color: $header-menu-item-hover-color;
+    border: var(--slick-header-menu-item-hover-border, $header-menu-item-hover-border);
+    background-color: var(--slick-header-menu-item-hover-color, $header-menu-item-hover-color);
   }
 
   &.slick-header-menuitem-divider {
@@ -401,21 +401,21 @@
     border: none;
     overflow: hidden;
     padding: 0;
-    height: $header-menu-divider-height;
-    margin: $header-menu-divider-margin;
-    background-color: $header-menu-divider-color;
-    width: $header-menu-divider-width;
+    height: var(--slick-header-menu-divider-height, $header-menu-divider-height);
+    margin: var(--slick-header-menu-divider-margin, $header-menu-divider-margin);
+    background-color: var(--slick-header-menu-divider-color, $header-menu-divider-color);
+    width: var(--slick-header-menu-divider-width, $header-menu-divider-width);
     margin-left: auto;
     margin-right: auto;
 
     &:hover {
       border: none;
-      background-color: $header-menu-item-disabled-color;
+      background-color: var(--slick-header-menu-item-disabled-color, $header-menu-item-disabled-color);
     }
   }
 }
 .slick-header-menuitem-divider.slick-header-menuitem:hover {
-  background-color: $header-menu-divider-color;
+  background-color: var(--slick-header-menu-divider-color, $header-menu-divider-color);
 }
 
 
@@ -423,14 +423,14 @@
   background-position: center center;
   background-repeat: no-repeat;
   display: inline-block;
-  color: $header-menu-icon-font-color;
-  font-size: $header-menu-icon-font-size;
-  font-weight: $header-menu-icon-font-weight;
-  line-height: $header-menu-icon-line-height;
-  height: $header-menu-icon-height;
-  margin-right: $header-menu-icon-margin-right;
+  color: var(--slick-header-menu-icon-font-color, $header-menu-icon-font-color);
+  font-size: var(--slick-header-menu-icon-font-size, $header-menu-icon-font-size);
+  font-weight: var(--slick-header-menu-icon-font-weight, $header-menu-icon-font-weight);
+  line-height: var(--slick-header-menu-icon-line-height, $header-menu-icon-line-height);
+  height: var(--slick-header-menu-icon-height, $header-menu-icon-height);
+  margin-right: var(--slick-header-menu-icon-margin-right, $header-menu-icon-margin-right);
   vertical-align: middle;
-  width: $header-menu-icon-width;
+  width: var(--slick-header-menu-icon-width, $header-menu-icon-width);
 
   /* Font Awesome sorting icons are not aligned in middle, let's align them ourselves */
   &.fa-sort-asc {
@@ -450,10 +450,10 @@
 .slick-header-menuitem-disabled {
   border-color: transparent !important;
   background: inherit !important;
-  color: $header-menu-item-disabled-color;
+  color: var(--slick-header-menu-item-disabled-color, $header-menu-item-disabled-color);
   cursor: inherit;
   .slick-header-menuicon, .slick-header-menucontent {
-    color: $header-menu-item-disabled-color;
+    color: var(--slick-header-menu-item-disabled-color, $header-menu-item-disabled-color);
   }
 }
 .slick-header-menuitem-hidden {
@@ -465,14 +465,14 @@
 // ----------------------------------------------
 .slick-cell.cell-reorder:before {
   display: inline-block;
-  font-family: $icon-font-family;
-  font-size: $row-move-plugin-size;
-  content: $row-move-plugin-icon;
-  width: $row-move-plugin-icon-width;
-  vertical-align: $row-move-plugin-icon-vertical-align;
+  font-family: var(--slick-icon-font-family, $icon-font-family);
+  font-size: var(--slick-row-move-plugin-size, $row-move-plugin-size);
+  content: var(--slick-row-move-plugin-icon, $row-move-plugin-icon);
+  width: var(--slick-row-move-plugin-icon-width, $row-move-plugin-icon-width);
+  vertical-align: var(--slick-row-move-plugin-icon-vertical-align, $row-move-plugin-icon-vertical-align);
 }
 .slick-cell.cell-reorder {
-  cursor: $row-move-plugin-cursor;
+  cursor: var(--slick-row-move-plugin-cursor, $row-move-plugin-cursor);
 }
 
 // ----------------------------------------------
@@ -503,35 +503,35 @@
   input[type=checkbox] + label:before,
   #filter-checkbox-selectall-container > input[type=checkbox] + label:before {
     cursor: pointer;
-    content: $checkbox-selector-icon-unchecked;
-    background-color: $checkbox-selector-icon-bg-color;
-    color: $checkbox-selector-unchecked-color;
+    content: var(--slick-checkbox-selector-icon-unchecked, $checkbox-selector-icon-unchecked);
+    background-color: var(--slick-checkbox-selector-icon-bg-color, $checkbox-selector-icon-bg-color);
+    color: var(--slick-checkbox-selector-unchecked-color, $checkbox-selector-unchecked-color);
     display: inline-block;
-    font-weight: $checkbox-selector-icon-font-weight;
-    font-family: $icon-font-family;
-    font-size: $checkbox-selector-size;
-    opacity: $checkbox-selector-opacity; /* unchecked icon */
-    height: $checkbox-selector-icon-height;
-    width: $checkbox-selector-icon-width;
-    border: $checkbox-selector-icon-border;
-    border-radius: $checkbox-selector-icon-border-radius;
-    margin: $checkbox-selector-icon-margin;
+    font-weight: var(--slick-checkbox-selector-icon-font-weight, $checkbox-selector-icon-font-weight);
+    font-family: var(--slick-icon-font-family, $icon-font-family);
+    font-size: var(--slick-checkbox-selector-size, $checkbox-selector-size);
+    opacity: var(--slick-checkbox-selector-opacity, $checkbox-selector-opacity); /* unchecked icon */
+    height: var(--slick-checkbox-selector-icon-height, $checkbox-selector-icon-height);
+    width: var(--slick-checkbox-selector-icon-width, $checkbox-selector-icon-width);
+    border: var(--slick-checkbox-selector-icon-border, $checkbox-selector-icon-border);
+    border-radius: var(--slick-checkbox-selector-icon-border-radius, $checkbox-selector-icon-border-radius);
+    margin: var(--slick-checkbox-selector-icon-margin, $checkbox-selector-icon-margin);
   }
 
   input[type=checkbox] + label:hover:before,
   #filter-checkbox-selectall-container > input[type=checkbox] + label:hover:before {
-    opacity: $checkbox-selector-opacity-hover;
+    opacity: var(--slick-checkbox-selector-opacity-hover, $checkbox-selector-opacity-hover);
   }
 
   input[type=checkbox]:checked + label:before,
   #filter-checkbox-selectall-container > input[type=checkbox]:checked + label:before {
-    content: $checkbox-selector-icon-checked;
-    color: $checkbox-selector-checked-color;
+    content: var(--slick-checkbox-selector-icon-checked, $checkbox-selector-icon-checked);
+    color: var(--slick-checkbox-selector-checked-color, $checkbox-selector-checked-color);
     opacity: 1; /* checked icon */
-    height: $checkbox-selector-icon-height;
-    width: $checkbox-selector-icon-width;
-    border-radius: $checkbox-selector-icon-border;
-    border-radius: $checkbox-selector-icon-border-radius;
+    height: var(--slick-checkbox-selector-icon-height, $checkbox-selector-icon-height);
+    width: var(--slick-checkbox-selector-icon-width, $checkbox-selector-icon-width);
+    border-radius: var(--slick-checkbox-selector-icon-border, $checkbox-selector-icon-border);
+    border-radius: var(--slick-checkbox-selector-icon-border-radius, $checkbox-selector-icon-border-radius);
   }
 }
 
@@ -546,44 +546,44 @@
 // ----------------------------------------------
 .search-filter {
   :focus {
-    outline-color: $focus-color;
+    outline-color: var(--slick-focus-color, $focus-color);
   }
 }
 .ms-choice {
-  border: $multiselect-input-filter-border;
+  border: var(--slick-multiselect-input-filter-border, $multiselect-input-filter-border);
   background-color: transparent;
-  font-size: $header-font-size;
+  font-size: var(--slick-header-font-size, $header-font-size);
 
   div {
     &:before {
-      font-family: $icon-font-family;
-      font-size: $multiselect-icon-arrow-font-size;
+      font-family: var(--slick-icon-font-family, $icon-font-family);
+      font-size: var(--slick-multiselect-icon-arrow-font-size, $multiselect-icon-arrow-font-size);
     }
     &.open {
       &:before {
-        font-family: $icon-font-family;
-        font-size: $multiselect-icon-arrow-font-size;
+        font-family: var(--slick-icon-font-family, $icon-font-family);
+        font-size: var(--slick-multiselect-icon-arrow-font-size, $multiselect-icon-arrow-font-size);
       }
     }
   }
 
   span {
-    font-size: $multiselect-input-filter-font-size;
-    font-family: $multiselect-input-filter-font-family;
+    font-size: var(--slick-multiselect-input-filter-font-size, $multiselect-input-filter-font-size);
+    font-family: var(--slick-multiselect-input-filter-font-family, $multiselect-input-filter-font-family);
   }
   .placeholder {
-    font-family: $multiselect-placeholder-font-family;
-    font-size: $header-font-size;
-    color: $editor-placeholder-color !important;
+    font-family: var(--slick-multiselect-placeholder-font-family, $multiselect-placeholder-font-family);
+    font-size: var(--slick-header-font-size, $header-font-size);
+    color: var(--slick-editor-placeholder-color, $editor-placeholder-color) !important;
   }
 }
 .ms-filter.search-filter {
   width: 100% !important;
 }
 .ms-drop {
-  max-width: $multiselect-dropdown-max-width;
-  border: $multiselect-dropdown-border;
-  z-index: $multiselect-dropdown-z-index;
+  max-width: var(--slick-multiselect-dropdown-max-width, $multiselect-dropdown-max-width);
+  border: var(--slick-multiselect-dropdown-border, $multiselect-dropdown-border);
+  z-index: var(--slick-multiselect-dropdown-z-index, $multiselect-dropdown-z-index);
 
   input[type="checkbox"],
   input[type="radio"] {
@@ -593,100 +593,100 @@
 
     & + span:before {
       cursor: pointer;
-      color: $multiselect-icon-unchecked-color;
-      content: $multiselect-icon-unchecked;
+      color: var(--slick-multiselect-icon-unchecked-color, $multiselect-icon-unchecked-color);
+      content: var(--slick-multiselect-icon-unchecked, $multiselect-icon-unchecked);
       display: inline-block;
-      font-family: $icon-font-family;
-      font-size: $multiselect-icon-font-size;
+      font-family: var(--slick-icon-font-family, $icon-font-family);
+      font-size: var(--slick-multiselect-icon-font-size, $multiselect-icon-font-size);
       font-weight: normal;
-      height: $multiselect-icon-height;
-      width: $multiselect-icon-width;
-      border: $multiselect-icon-border;
-      border-radius: $multiselect-icon-border-radius;
-      margin: $multiselect-icon-margin;
-      opacity: $multiselect-unchecked-opacity;
-      vertical-align: $multiselect-icon-vertical-align;
+      height: var(--slick-multiselect-icon-height, $multiselect-icon-height);
+      width: var(--slick-multiselect-icon-width, $multiselect-icon-width);
+      border: var(--slick-multiselect-icon-border, $multiselect-icon-border);
+      border-radius: var(--slick-multiselect-icon-border-radius, $multiselect-icon-border-radius);
+      margin: var(--slick-multiselect-icon-margin, $multiselect-icon-margin);
+      opacity: var(--slick-multiselect-unchecked-opacity, $multiselect-unchecked-opacity);
+      vertical-align: var(--slick-multiselect-icon-vertical-align, $multiselect-icon-vertical-align);
     }
 
     &:checked + span:before {
-      content: $multiselect-icon-checked;
+      content: var(--slick-multiselect-icon-checked, $multiselect-icon-checked);
       opacity: 1;
-      height: $multiselect-icon-height;
-      width: $multiselect-icon-width;
-      border: $multiselect-icon-border;
-      border-radius: $multiselect-icon-border-radius;
-      margin: $multiselect-icon-margin;
+      height: var(--slick-multiselect-icon-height, $multiselect-icon-height);
+      width: var(--slick-multiselect-icon-width, $multiselect-icon-width);
+      border: var(--slick-multiselect-icon-border, $multiselect-icon-border);
+      border-radius: var(--slick-multiselect-icon-border-radius, $multiselect-icon-border-radius);
+      margin: var(--slick-multiselect-icon-margin, $multiselect-icon-margin);
     }
   }
   input[type="radio"] {
     & + span:before {
-      content: $multiselect-icon-radio-unchecked;
-      height: $multiselect-icon-radio-height;
-      width: $multiselect-icon-radio-width;
-      border: $multiselect-icon-radio-border;
-      border-radius: $multiselect-icon-radio-border-radius;
-      margin: $multiselect-icon-radio-margin;
+      content: var(--slick-multiselect-icon-radio-unchecked, $multiselect-icon-radio-unchecked);
+      height: var(--slick-multiselect-icon-radio-height, $multiselect-icon-radio-height);
+      width: var(--slick-multiselect-icon-radio-width, $multiselect-icon-radio-width);
+      border: var(--slick-multiselect-icon-radio-border, $multiselect-icon-radio-border);
+      border-radius: var(--slick-multiselect-icon-radio-border-radius, $multiselect-icon-radio-border-radius);
+      margin: var(--slick-multiselect-icon-radio-margin, $multiselect-icon-radio-margin);
     }
     &:checked + span:before {
-      content: $multiselect-icon-radio-checked;
-      color: $multiselect-icon-radio-color;
-      height: $multiselect-icon-radio-height;
-      width: $multiselect-icon-radio-width;
-      border: $multiselect-icon-radio-border;
-      border-radius: $multiselect-icon-radio-border-radius;
-      margin: $multiselect-icon-radio-margin;
+      content: var(--slick-multiselect-icon-radio-checked, $multiselect-icon-radio-checked);
+      color: var(--slick-multiselect-icon-radio-color, $multiselect-icon-radio-color);
+      height: var(--slick-multiselect-icon-radio-height, $multiselect-icon-radio-height);
+      width: var(--slick-multiselect-icon-radio-width, $multiselect-icon-radio-width);
+      border: var(--slick-multiselect-icon-radio-border, $multiselect-icon-radio-border);
+      border-radius: var(--slick-multiselect-icon-radio-border-radius, $multiselect-icon-radio-border-radius);
+      margin: var(--slick-multiselect-icon-radio-margin, $multiselect-icon-radio-margin);
     }
   }
   label {
-    margin-bottom: $multiselect-label-margin-bottom;
-    line-height: $multiselect-label-line-height;
+    margin-bottom: var(--slick-multiselect-label-margin-bottom, $multiselect-label-margin-bottom);
+    line-height: var(--slick-multiselect-label-line-height, $multiselect-label-line-height);
 
     span {
       cursor: pointer;
-      margin-left: $multiselect-checkbox-margin-left;
+      margin-left: var(--slick-multiselect-checkbox-margin-left, $multiselect-checkbox-margin-left);
       position: relative;
       top: 1px;
     }
     &:hover {
       cursor: pointer;
-      background-color: $multiselect-checkbox-hover-bg-color;
+      background-color: var(--slick-multiselect-checkbox-hover-bg-color, $multiselect-checkbox-hover-bg-color);
     }
   }
   .ms-select-all {
-    border-bottom: $multiselect-select-all-border-bottom;
+    border-bottom: var(--slick-multiselect-select-all-border-bottom, $multiselect-select-all-border-bottom);
     label {
       display: inline-block;
       font-weight: normal;
       padding: 5px 8px;
-      color: $multiselect-select-all-text-color;
+      color: var(--slick-multiselect-select-all-text-color, $multiselect-select-all-text-color);
       &:hover {
-        color: $multiselect-select-all-text-hover-color;
+        color: var(--slick-multiselect-select-all-text-hover-color, $multiselect-select-all-text-hover-color);
       }
     }
   }
   .ms-ok-button {
     cursor: pointer;
     display: block;
-    width: $multiselect-ok-button-width;
-    height: $multiselect-ok-button-height;
+    width: var(--slick-multiselect-ok-button-width, $multiselect-ok-button-width);
+    height: var(--slick-multiselect-ok-button-height, $multiselect-ok-button-height);
     padding: 0;
-    border: $multiselect-ok-button-border;
-    text-align: $multiselect-ok-button-text-align;
-    color: $multiselect-ok-button-text-color;
-    font-weight: $multiselect-ok-button-font-weight;
+    border: var(--slick-multiselect-ok-button-border, $multiselect-ok-button-border);
+    text-align: var(--slick-multiselect-ok-button-text-align, $multiselect-ok-button-text-align);
+    color: var(--slick-multiselect-ok-button-text-color, $multiselect-ok-button-text-color);
+    font-weight: var(--slick-multiselect-ok-button-font-weight, $multiselect-ok-button-font-weight);
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
-    background-color: $multiselect-ok-button-bg-color;
+    background-color: var(--slick-multiselect-ok-button-bg-color, $multiselect-ok-button-bg-color);
     &:hover {
-      background-color: $multiselect-ok-button-bg-hover-color;
-      color: $multiselect-ok-button-text-hover-color;
+      background-color: var(--slick-multiselect-ok-button-bg-hover-color, $multiselect-ok-button-bg-hover-color);
+      color: var(--slick-multiselect-ok-button-text-hover-color, $multiselect-ok-button-text-hover-color);
     }
   }
   .ms-search {
     &:before {
-      font-family: $icon-font-family;
-      font-size: $multiselect-icon-font-size;
-      right: $multiselect-icon-search-margin-right;
+      font-family: var(--slick-icon-font-family, $icon-font-family);
+      font-size: var(--slick-multiselect-icon-font-size, $multiselect-icon-font-size);
+      right: var(--slick-multiselect-icon-search-margin-right, $multiselect-icon-search-margin-right);
       position: absolute;
     }
   }
@@ -702,20 +702,20 @@
   border: none;
 
   .form-control {
-    border-radius: $compound-filter-operator-border-radius;
+    border-radius: var(--slick-compound-filter-operator-border-radius, $compound-filter-operator-border-radius);
     // border-right: none;
-    padding: $compound-filter-text-padding !important;
-    font-size: $compound-filter-text-font-size;
-    color: $compound-filter-text-color;
-    font-weight: $compound-filter-text-weight;
-    background-color: $compound-filter-bgcolor;
+    padding: var(--slick-compound-filter-text-padding, $compound-filter-text-padding) !important;
+    font-size: var(--slick-compound-filter-text-font-size, $compound-filter-text-font-size);
+    color: var(--slick-compound-filter-text-color, $compound-filter-text-color);
+    font-weight: var(--slick-compound-filter-text-weight, $compound-filter-text-weight);
+    background-color: var(--slick-compound-filter-bgcolor, $compound-filter-bgcolor);
   }
 
   select {
-    font-family: $compound-filter-operator-select-font-family;
-    font-size: $compound-filter-operator-select-font-size;
-    border: $compound-filter-operator-select-border;
-    width: $compound-filter-operator-select-width;
+    font-family: var(--slick-compound-filter-operator-select-font-family, $compound-filter-operator-select-font-family);
+    font-size: var(--slick-compound-filter-operator-select-font-size, $compound-filter-operator-select-font-size);
+    border: var(--slick-compound-filter-operator-select-border, $compound-filter-operator-select-border);
+    width: var(--slick-compound-filter-operator-select-width, $compound-filter-operator-select-width);
 
     &.form-control {
       cursor: pointer;
@@ -735,16 +735,16 @@
 }
 
 input.search-filter {
-  font-family: $filter-placeholder-font-family;
+  font-family: var(--slick-filter-placeholder-font-family, $filter-placeholder-font-family);
 }
 .search-filter {
   input {
-    font-family: $filter-placeholder-font-family;
+    font-family: var(--slick-filter-placeholder-font-family, $filter-placeholder-font-family);
     &.compound-input {
-      border-radius: $compound-filter-border-radius !important;
+      border-radius: var(--slick-compound-filter-border-radius, $compound-filter-border-radius) !important;
       border-left: none;
       &::placeholder {
-        color: $editor-placeholder-color;
+        color: var(--slick-editor-placeholder-color, $editor-placeholder-color);
       }
     }
   }
@@ -775,7 +775,7 @@ input.search-filter {
   input.form-control {
     border-left: none;
     &::placeholder {
-      color: $editor-placeholder-color;
+      color: var(--slick-editor-placeholder-color, $editor-placeholder-color);
     }
   }
 }
@@ -786,29 +786,29 @@ input.search-filter {
 
   input.flatpickr.form-control,
   .flatpickr-input.form-control {
-    background-color: $flatpickr-bgcolor;
-    font-family: $filter-placeholder-font-family;
-    font-size: $font-size-base;
-    border-radius: $compound-filter-border-radius;
+    background-color: var(--slick-flatpickr-bgcolor, $flatpickr-bgcolor);
+    font-family: var(--slick-filter-placeholder-font-family, $filter-placeholder-font-family);
+    font-size: var(--slick-font-size-base, $font-size-base);
+    border-radius: var(--slick-compound-filter-border-radius, $compound-filter-border-radius);
     width: 100%;
     &[readonly] {
-      background-color: $flatpickr-bgcolor;
+      background-color: var(--slick-flatpickr-bgcolor, $flatpickr-bgcolor);
     }
   }
   .form-control[readonly],
   .flatpickr.form-control[readonly] {
     cursor: pointer;
-    background-color: $flatpickr-bgcolor;
+    background-color: var(--slick-flatpickr-bgcolor, $flatpickr-bgcolor);
   }
 }
 input.flatpickr-input.form-control,
 input.flatpickr.form-control {
   cursor: pointer;
-  font-family: $filter-placeholder-font-family;
-  font-size: $font-size-base;
-  border-radius: $date-range-filter-border-radius;
+  font-family: var(--slick-filter-placeholder-font-family, $filter-placeholder-font-family);
+  font-size: var(--slick-font-size-base, $font-size-base);
+  border-radius: var(--slick-date-range-filter-border-radius, $date-range-filter-border-radius);
   &[readonly] {
-    background-color: $flatpickr-bgcolor;
+    background-color: var(--slick-flatpickr-bgcolor, $flatpickr-bgcolor);
   }
 }
 
@@ -818,35 +818,35 @@ input.flatpickr.form-control {
 
 .slick-preheader-panel {
   .ui-droppable, .ui-droppable-hover {
-    padding: $draggable-group-drop-padding;
-    height: $draggable-group-drop-height;
-    border-top: $draggable-group-drop-border-top !important;
-    border-left: $draggable-group-drop-border-left !important;
-    border-right: $draggable-group-drop-border-right !important;
-    border-bottom: $draggable-group-drop-border-bottom !important;
-    width: $draggable-group-drop-width !important;
-    border-radius: $draggable-group-drop-radius;
-    background-color: $draggable-group-drop-bgcolor;
+    padding: var(--slick-draggable-group-drop-padding, $draggable-group-drop-padding);
+    height: var(--slick-draggable-group-drop-height, $draggable-group-drop-height);
+    border-top: var(--slick-draggable-group-drop-border-top, $draggable-group-drop-border-top) !important;
+    border-left: var(--slick-draggable-group-drop-border-left, $draggable-group-drop-border-left) !important;
+    border-right: var(--slick-draggable-group-drop-border-right, $draggable-group-drop-border-right) !important;
+    border-bottom: var(--slick-draggable-group-drop-border-bottom, $draggable-group-drop-border-bottom) !important;
+    width: var(--slick-draggable-group-drop-width, $draggable-group-drop-width) !important;
+    border-radius: var(--slick-draggable-group-drop-radius, $draggable-group-drop-radius);
+    background-color: var(--slick-draggable-group-drop-bgcolor, $draggable-group-drop-bgcolor);
 
     .slick-placeholder {
-      font-style: $draggable-group-placeholder-font-style;
-      color: $draggable-group-placeholder-color;
+      font-style: var(--slick-draggable-group-placeholder-font-style, $draggable-group-placeholder-font-style);
+      color: var(--slick-draggable-group-placeholder-color, $draggable-group-placeholder-color);
     }
 
     .slick-group-toggle-all {
       position: absolute;
       cursor: pointer;
-      font-family: $icon-font-family;
-      color: $draggable-group-toggle-all-color;
-      display: $draggable-group-toggle-all-display !important;
-      top: $draggable-group-toggle-all-pos-top;
-      right: $draggable-group-toggle-all-pos-right;
+      font-family: var(--slick-icon-font-family, $icon-font-family);
+      color: var(--slick-draggable-group-toggle-all-color, $draggable-group-toggle-all-color);
+      display: var(--slick-draggable-group-toggle-all-display, $draggable-group-toggle-all-display) !important;
+      top: var(--slick-draggable-group-toggle-all-pos-top, $draggable-group-toggle-all-pos-top);
+      right: var(--slick-draggable-group-toggle-all-pos-right, $draggable-group-toggle-all-pos-right);
 
       &.expanded:before {
-        content: $draggable-group-toggle-expanded-icon;
+        content: var(--slick-draggable-group-toggle-expanded-icon, $draggable-group-toggle-expanded-icon);
       }
       &.collapsed:before {
-        content: $draggable-group-toggle-collapsed-icon;
+        content: var(--slick-draggable-group-toggle-collapsed-icon, $draggable-group-toggle-collapsed-icon);
       }
     }
 
@@ -859,21 +859,21 @@ input.flatpickr.form-control {
     .slick-groupby-remove {
       cursor: pointer;
       display: inline-flex;
-      color: $draggable-group-delete-color;
-      font-size: $draggable-group-delete-font-size;
-      padding-left: $draggable-group-delete-padding-left;
-      padding-right: $draggable-group-delete-padding-right;
-      vertical-align: $draggable-group-delete-vertical-align;
+      color: var(--slick-draggable-group-delete-color, $draggable-group-delete-color);
+      font-size: var(--slick-draggable-group-delete-font-size, $draggable-group-delete-font-size);
+      padding-left: var(--slick-draggable-group-delete-padding-left, $draggable-group-delete-padding-left);
+      padding-right: var(--slick-draggable-group-delete-padding-right, $draggable-group-delete-padding-right);
+      vertical-align: var(--slick-draggable-group-delete-vertical-align, $draggable-group-delete-vertical-align);
       &:hover {
-        color: $draggable-group-delete-hover-color;
+        color: var(--slick-draggable-group-delete-hover-color, $draggable-group-delete-hover-color);
       }
     }
   }
   .ui-droppable-active {
-    background-color: $draggable-group-droppable-active-bgcolor;
+    background-color: var(--slick-draggable-group-droppable-active-bgcolor, $draggable-group-droppable-active-bgcolor);
   }
   .ui-droppable-hover {
-    background-color: $draggable-group-droppable-hover-bgcolor;
+    background-color: var(--slick-draggable-group-droppable-hover-bgcolor, $draggable-group-droppable-hover-bgcolor);
   }
 }
 
@@ -881,11 +881,11 @@ input.flatpickr.form-control {
   .slick-header-columns {
     .slick-column-groupable {
       display: inline-block;
-      font-weight: $draggable-group-column-icon-font-weight;
-      color: $draggable-group-column-icon-color;
-      width: $draggable-group-column-icon-width;
-      height: $draggable-group-column-icon-height;
-      margin-left: $draggable-group-column-icon-margin-left;
+      font-weight: var(--slick-draggable-group-column-icon-font-weight, $draggable-group-column-icon-font-weight);
+      color: var(--slick-draggable-group-column-icon-color, $draggable-group-column-icon-color);
+      width: var(--slick-draggable-group-column-icon-width, $draggable-group-column-icon-width);
+      height: var(--slick-draggable-group-column-icon-height, $draggable-group-column-icon-height);
+      margin-left: var(--slick-draggable-group-column-icon-margin-left, $draggable-group-column-icon-margin-left);
     }
   }
 }
@@ -900,67 +900,67 @@ input.slider-editor-input[type=range],
 input.slider-filter-input[type=range] {
   /*removes default webkit styles*/
   -webkit-appearance: none;
-  height: $slider-filter-height;
+  height: var(--slick-slider-filter-height, $slider-filter-height);
   flex: 1;
 
-  padding: $slider-filter-runnable-track-padding;
+  padding: var(--slick-slider-filter-runnable-track-padding, $slider-filter-runnable-track-padding);
 
   /* change runnable track color while in focus on all browsers */
   &:focus {
     outline: none;
 
     &::-webkit-slider-runnable-track {
-      background: $slider-filter-runnable-track-bgcolor;
+      background: var(--slick-slider-filter-runnable-track-bgcolor, $slider-filter-runnable-track-bgcolor);
     }
     &::-moz-range-track {
-      background: $slider-filter-runnable-track-bgcolor;
+      background: var(--slick-slider-filter-runnable-track-bgcolor, $slider-filter-runnable-track-bgcolor);
     }
     &::-ms-fill-lower {
-      background: $slider-filter-fill-focus-lower-color;
+      background: var(--slick-slider-filter-fill-focus-lower-color, $slider-filter-fill-focus-lower-color);
     }
     &::-ms-fill-upper {
-      background: $slider-filter-runnable-track-bgcolor;
+      background: var(--slick-slider-filter-runnable-track-bgcolor, $slider-filter-runnable-track-bgcolor);
     }
   }
 
   /* WebKit specific (Opera/Chrome/Safari) */
   &::-webkit-slider-runnable-track {
-    height: $slider-filter-runnable-track-height;
-    background: $slider-filter-bgcolor;
+    height: var(--slick-slider-filter-runnable-track-height, $slider-filter-runnable-track-height);
+    background: var(--slick-slider-filter-bgcolor, $slider-filter-bgcolor);
     border: none;
     border-radius: 3px;
   }
   &::-webkit-slider-thumb {
-    cursor: $slider-filter-thumb-cursor;
+    cursor: var(--slick-slider-filter-thumb-cursor, $slider-filter-thumb-cursor);
     -webkit-appearance: none;
     border: none;
-    height: $slider-filter-thumb-size;
-    width: $slider-filter-thumb-size;
-    border-radius: $slider-filter-thumb-border-radius;
-    border: $slider-filter-thumb-border;
-    background: $slider-filter-thumb-color;
+    height: var(--slick-slider-filter-thumb-size, $slider-filter-thumb-size);
+    width: var(--slick-slider-filter-thumb-size, $slider-filter-thumb-size);
+    border-radius: var(--slick-slider-filter-thumb-border-radius, $slider-filter-thumb-border-radius);
+    border: var(--slick-slider-filter-thumb-border, $slider-filter-thumb-border);
+    background: var(--slick-slider-filter-thumb-color, $slider-filter-thumb-color);
     margin-top: -4px;
   }
 
   /* Mozilla Firefox specific */
 
   /*fix for FF unable to apply focus style bug */
-  border: $slider-filter-border;
+  border: var(--slick-slider-filter-border, $slider-filter-border);
 
   &::-moz-range-track {
-    height: $slider-filter-runnable-track-height;
-    background: $slider-filter-bgcolor;
+    height: var(--slick-slider-filter-runnable-track-height, $slider-filter-runnable-track-height);
+    background: var(--slick-slider-filter-bgcolor, $slider-filter-bgcolor);
     border: none;
     border-radius: 3px;
   }
   &::-moz-range-thumb {
     border: none;
-    cursor: $slider-filter-thumb-cursor;
-    height: $slider-filter-thumb-height;
-    width: $slider-filter-thumb-width;
-    border-radius: $slider-filter-thumb-border-radius;
-    border: $slider-filter-thumb-border;
-    background: $slider-filter-thumb-color;
+    cursor: var(--slick-slider-filter-thumb-cursor, $slider-filter-thumb-cursor);
+    height: var(--slick-slider-filter-thumb-height, $slider-filter-thumb-height);
+    width: var(--slick-slider-filter-thumb-width, $slider-filter-thumb-width);
+    border-radius: var(--slick-slider-filter-thumb-border-radius, $slider-filter-thumb-border-radius);
+    border: var(--slick-slider-filter-thumb-border, $slider-filter-thumb-border);
+    background: var(--slick-slider-filter-thumb-color, $slider-filter-thumb-color);
   }
 
   /*hide the outline behind the border*/
@@ -971,7 +971,7 @@ input.slider-filter-input[type=range] {
 
   /* Microsoft IE specific */
   &::-ms-track {
-    height: $slider-filter-runnable-track-height;
+    height: var(--slick-slider-filter-runnable-track-height, $slider-filter-runnable-track-height);
 
     /*remove bg colour from the track, we'll use ms-fill-lower and ms-fill-upper instead */
     background: transparent;
@@ -984,21 +984,21 @@ input.slider-filter-input[type=range] {
     color: transparent;
   }
   &::-ms-fill-lower {
-    background: $slider-filter-fill-lower-color;
+    background: var(--slick-slider-filter-fill-lower-color, $slider-filter-fill-lower-color);
     border-radius: 10px;
   }
   &::-ms-fill-upper {
-    background: $slider-filter-bgcolor;
+    background: var(--slick-slider-filter-bgcolor, $slider-filter-bgcolor);
     border-radius: 10px;
   }
   &::-ms-thumb {
     border: none;
-    cursor: $slider-filter-thumb-cursor;
-    height: $slider-filter-thumb-height;
-    width: $slider-filter-thumb-width;
-    border-radius: $slider-filter-thumb-border-radius;
-    border: $slider-filter-thumb-border;
-    background: $slider-filter-thumb-color;
+    cursor: var(--slick-slider-filter-thumb-cursor, $slider-filter-thumb-cursor);
+    height: var(--slick-slider-filter-thumb-height, $slider-filter-thumb-height);
+    width: var(--slick-slider-filter-thumb-width, $slider-filter-thumb-width);
+    border-radius: var(--slick-slider-filter-thumb-border-radius, $slider-filter-thumb-border-radius);
+    border: var(--slick-slider-filter-thumb-border, $slider-filter-thumb-border);
+    background: var(--slick-slider-filter-thumb-color, $slider-filter-thumb-color);
     margin-top: 1px;
   }
   &::-ms-tooltip {
@@ -1006,10 +1006,10 @@ input.slider-filter-input[type=range] {
   }
 }
 .search-filter {
-  height: $header-input-height;
+  height: var(--slick-header-input-height, $header-input-height);
 
   &::placeholder {
-    color: $editor-placeholder-color;
+    color: var(--slick-editor-placeholder-color, $editor-placeholder-color);
   }
 
   .slider-value {
@@ -1017,30 +1017,30 @@ input.slider-filter-input[type=range] {
     height: 100%;
 
     .input-group-text {
-      padding: $slider-filter-number-padding;
-      font-size: $slider-filter-number-font-size;
+      padding: var(--slick-slider-filter-number-padding, $slider-filter-number-padding);
+      font-size: var(--slick-slider-filter-number-font-size, $slider-filter-number-font-size);
     }
   }
 }
 input.slider-filter-input[type=range] {
-  padding: $slider-filter-runnable-track-padding;
-  height: $slider-filter-height;
+  padding: var(--slick-slider-filter-runnable-track-padding, $slider-filter-runnable-track-padding);
+  height: var(--slick-slider-filter-height, $slider-filter-height);
 }
 
 /* Slider Editor */
 input.slider-editor-input[type=range] {
-  padding: $slider-editor-runnable-track-padding;
-  height: $slider-editor-height;
+  padding: var(--slick-slider-editor-runnable-track-padding, $slider-editor-runnable-track-padding);
+  height: var(--slick-slider-editor-height, $slider-editor-height);
 }
 
 .slider-editor {
   .slider-value {
     padding: 0;
-    height: $slider-editor-height;
+    height: var(--slick-slider-editor-height, $slider-editor-height);
     .input-group-text {
-      padding: $slider-editor-number-padding;
-      font-size: $slider-filter-number-font-size;
-      height: $slider-editor-height;
+      padding: var(--slick-slider-editor-number-padding, $slider-editor-number-padding);
+      font-size: var(--slick-slider-filter-number-font-size, $slider-filter-number-font-size);
+      height: var(--slick-slider-editor-height, $slider-editor-height);
     }
   }
 }
@@ -1049,21 +1049,21 @@ input.slider-editor-input[type=range] {
 // Input Slider Range Filter (using jQuery UI)
 // ----------------------------------------------
 .slider-range-container {
-  height: $slider-range-filter-height;
-  padding: $slider-range-filter-padding;
+  height: var(--slick-slider-range-filter-height, $slider-range-filter-height);
+  padding: var(--slick-slider-range-filter-padding, $slider-range-filter-padding);
 
   .ui-slider {
     position: relative;
 
     .ui-slider-handle {
       position: absolute;
-      top: $slider-range-filter-thumb-top;
-      border-radius: $slider-range-filter-thumb-border-radius;
-      cursor: $slider-range-filter-thumb-cursor;
-      border: $slider-range-filter-thumb-border;
-      height: $slider-range-filter-thumb-size;
-      width: $slider-range-filter-thumb-size;
-      background-color: $slider-range-filter-thumb-color;
+      top: var(--slick-slider-range-filter-thumb-top, $slider-range-filter-thumb-top);
+      border-radius: var(--slick-slider-range-filter-thumb-border-radius, $slider-range-filter-thumb-border-radius);
+      cursor: var(--slick-slider-range-filter-thumb-cursor, $slider-range-filter-thumb-cursor);
+      border: var(--slick-slider-range-filter-thumb-border, $slider-range-filter-thumb-border);
+      height: var(--slick-slider-range-filter-thumb-size, $slider-range-filter-thumb-size);
+      width: var(--slick-slider-range-filter-thumb-size, $slider-range-filter-thumb-size);
+      background-color: var(--slick-slider-range-filter-thumb-color, $slider-range-filter-thumb-color);
 
       &:focus {
         outline: none;
@@ -1072,9 +1072,9 @@ input.slider-editor-input[type=range] {
   }
 
   .ui-slider-horizontal {
-    top: $slider-range-filter-runnable-track-top;
-    height: $slider-range-filter-runnable-track-height;
-    background-color: $slider-range-filter-bgcolor;
+    top: var(--slick-slider-range-filter-runnable-track-top, $slider-range-filter-runnable-track-top);
+    height: var(--slick-slider-range-filter-runnable-track-height, $slider-range-filter-runnable-track-height);
+    background-color: var(--slick-slider-range-filter-bgcolor, $slider-range-filter-bgcolor);
   }
   .input-group-text {
     border: 0;
@@ -1085,24 +1085,24 @@ input.slider-editor-input[type=range] {
   padding: 0;
   .ui-slider-horizontal {
     flex: 1;
-    width: $slider-range-filter-values-slider-width;
-    top: $slider-range-filter-values-slider-top;
-    margin: $slider-range-filter-values-slider-margin;
+    width: var(--slick-slider-range-filter-values-slider-width, $slider-range-filter-values-slider-width);
+    top: var(--slick-slider-range-filter-values-slider-top, $slider-range-filter-values-slider-top);
+    margin: var(--slick-slider-range-filter-values-slider-margin, $slider-range-filter-values-slider-margin);
   }
   .slider-range-value {
     padding: 0;
     border: 0;
     height: 100%;
     .input-group-text {
-      padding: $slider-filter-number-padding;
-      font-size: $slider-filter-number-font-size;
+      padding: var(--slick-slider-filter-number-padding, $slider-filter-number-padding);
+      font-size: var(--slick-slider-filter-number-font-size, $slider-filter-number-font-size);
     }
   }
   .input-group-prepend.slider-range-value {
-    border-right: $slider-range-filter-border;
+    border-right: var(--slick-slider-range-filter-border, $slider-range-filter-border);
   }
   .input-group-append.slider-range-value {
-    border-left: $slider-range-filter-border;
+    border-left: var(--slick-slider-range-filter-border, $slider-range-filter-border);
   }
 }
 
@@ -1117,27 +1117,27 @@ input.slider-editor-input[type=range] {
 
     &.expand {
       display: inline-block;
-      color: $detail-view-icon-expand-color;
+      color: var(--slick-detail-view-icon-expand-color, $detail-view-icon-expand-color);
 
       &:hover {
-        color: darken($detail-view-icon-expand-color, 10%);
+        color: var(--slick-detail-view-icon-expand-color-hover, $detail-view-icon-expand-color-hover);
       }
       &:before {
-        font-family: $icon-font-family;
-        font-size: $detail-view-icon-size;
-        content: $detail-view-icon-expand;
+        font-family: var(--slick-icon-font-family, $icon-font-family);
+        font-size: var(--slick-detail-view-icon-size, $detail-view-icon-size);
+        content: var(--slick-detail-view-icon-expand, $detail-view-icon-expand);
       }
     }
     &.collapse {
       display: inline-block;
-      color: $detail-view-icon-collapse-color;
+      color: var(--slick-detail-view-icon-collapse-color, $detail-view-icon-collapse-color);
       &:hover {
-        color: darken($detail-view-icon-collapse-color, 10%);
+        color: var(--slick-detail-view-icon-collapse-color-hover, $detail-view-icon-collapse-color-hover);
       }
       &:before {
-        font-family: $icon-font-family;
-        font-size: $detail-view-icon-size;
-        content: $detail-view-icon-collapse;
+        font-family: var(--slick-icon-font-family, $icon-font-family);
+        font-size: var(--slick-detail-view-icon-size, $detail-view-icon-size);
+        content: var(--slick-detail-view-icon-collapse, $detail-view-icon-collapse);
       }
     }
   }
@@ -1146,10 +1146,10 @@ input.slider-editor-input[type=range] {
     position:           absolute;
     width:              100%;
     overflow:           auto;
-    border:             $detail-view-container-border;
-    background-color:   $detail-view-container-bgcolor;
-    padding:            $detail-view-container-padding;
-    z-index:            $detail-view-container-z-index;
+    border:             var(--slick-detail-view-container-border, $detail-view-container-border);
+    background-color:   var(--slick-detail-view-container-bgcolor, $detail-view-container-bgcolor);
+    padding:            var(--slick-detail-view-container-padding, $detail-view-container-padding);
+    z-index:            var(--slick-detail-view-container-z-index, $detail-view-container-z-index);
 
     :first-child {
       vertical-align:     middle;
