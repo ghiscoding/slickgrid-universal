@@ -61,13 +61,13 @@
 
   .slick-pane-header {
     display: block;
-    background-color: $header-background-color;
-    border-bottom: $header-border-bottom;
+    background-color: var(--slick-header-background-color, $header-background-color);
+    border-bottom: var(--slick-header-border-bottom, $header-border-bottom);
   }
 
   .slick-pane-top {
     box-sizing: border-box;
-    border-top: $slick-pane-top-border-top;
+    border-top: var(--slick-slick-pane-top-border-top, $slick-pane-top-border-top);
   }
 
   .slick-viewport {
@@ -156,12 +156,12 @@
 
   .slick-cell {
     box-sizing: border-box;
-    border-style: $grid-border-style;
+    border-style: var(--slick-grid-border-style, $grid-border-style);
     padding: 1px 2px 1px 2px;
   }
 
   .slick-header-column {
-    padding: $header-padding-top $header-padding-right $header-padding-bottom $header-padding-left;
+    padding: var(--slick-header-padding, $header-padding);
   }
 
   .grid-canvas {
@@ -231,9 +231,6 @@
     background: silver;
   }
 
-  .slick-group {
-  }
-
   .slick-group-toggle {
     display: inline-block;
   }
@@ -297,7 +294,7 @@
 .interact-placeholder {
   background: red !important;
   display: inline-block;
-  float:left;
+  float: left;
   transform: translate(0px, -100%);
 }
 

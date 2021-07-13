@@ -22,11 +22,11 @@
    }
 
    .slick-header-column:hover {
-     background: darken($grid-header-background, 2%);
+     background: $header-column-background-hover
    }
 
    .slick-header-column-active {
-     background: darken($grid-header-background, 5%) !important;
+     background: $header-column-background-active !important;
    }
 
    .slick-headerrow {
