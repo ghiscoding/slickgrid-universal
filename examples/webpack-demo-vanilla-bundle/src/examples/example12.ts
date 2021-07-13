@@ -543,9 +543,10 @@ export class Example12 {
       if (!checkItemIsEditable(item, column, grid)) {
         event.preventDefault();
         eventData.stopImmediatePropagation();
+        return false;
       }
     }
-    return false;
+    return true;
   }
 
   handleOnCellChange(event) {
