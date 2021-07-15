@@ -39,7 +39,7 @@ export class PaginationService {
   grid!: SlickGrid;
 
   /** Constructor */
-  constructor(protected pubSubService: PubSubService, protected sharedService: SharedService, protected backendUtilities?: BackendUtilityService, protected rxjs?: RxJsFacade) { }
+  constructor(protected readonly pubSubService: PubSubService, protected readonly sharedService: SharedService, protected readonly backendUtilities?: BackendUtilityService, protected rxjs?: RxJsFacade) { }
 
   /** Getter of SlickGrid DataView object */
   get dataView(): SlickDataView | undefined {

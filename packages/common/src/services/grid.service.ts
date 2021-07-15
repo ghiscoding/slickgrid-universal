@@ -36,13 +36,13 @@ export class GridService {
   protected _rowSelectionPlugin?: SlickRowSelectionModel;
 
   constructor(
-    protected gridStateService: GridStateService,
-    protected filterService: FilterService,
-    protected pubSubService: PubSubService,
-    protected paginationService: PaginationService,
-    protected sharedService: SharedService,
-    protected sortService: SortService,
-    protected treeDataService: TreeDataService,
+    protected readonly gridStateService: GridStateService,
+    protected readonly filterService: FilterService,
+    protected readonly pubSubService: PubSubService,
+    protected readonly paginationService: PaginationService,
+    protected readonly sharedService: SharedService,
+    protected readonly sortService: SortService,
+    protected readonly treeDataService: TreeDataService,
   ) { }
 
   /** Getter of SlickGrid DataView object */

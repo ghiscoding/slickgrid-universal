@@ -63,7 +63,7 @@ export class SlickFooterComponent {
     this.renderRightFooterText(text);
   }
 
-  constructor(protected grid: SlickGrid, protected customFooterOptions: CustomFooterOption, protected translaterService?: TranslaterService) {
+  constructor(protected readonly grid: SlickGrid, protected readonly customFooterOptions: CustomFooterOption, protected readonly translaterService?: TranslaterService) {
     this._bindingHelper = new BindingHelper();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
     this._eventHandler = new Slick.EventHandler();

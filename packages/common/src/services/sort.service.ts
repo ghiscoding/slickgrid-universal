@@ -38,7 +38,7 @@ export class SortService {
   protected _isBackendGrid = false;
   protected httpCancelRequests$?: Subject<void>; // this will be used to cancel any pending http request
 
-  constructor(protected sharedService: SharedService, protected pubSubService: PubSubService, protected backendUtilities?: BackendUtilityService, protected rxjs?: RxJsFacade) {
+  constructor(protected readonly sharedService: SharedService, protected readonly pubSubService: PubSubService, protected readonly backendUtilities?: BackendUtilityService, protected rxjs?: RxJsFacade) {
     this._eventHandler = new Slick.EventHandler();
     if (this.rxjs) {
       this.httpCancelRequests$ = this.rxjs.createSubject<void>();
