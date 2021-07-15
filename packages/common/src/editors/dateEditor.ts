@@ -125,7 +125,7 @@ export class DateEditor implements Editor {
       this.defaultDate = (this.args.item) ? this.args.item[this.columnDef.field] : null;
       const inputFormat = mapFlatpickrDateFormatWithFieldType(this.columnEditor.type || this.columnDef.type || FieldType.dateUtc);
       const outputFormat = mapFlatpickrDateFormatWithFieldType(this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateUtc);
-      let currentLocale = this._translaterService && this._translaterService.getCurrentLanguage && this._translaterService.getCurrentLanguage() || gridOptions.locale || 'en';
+      let currentLocale = this._translaterService?.getCurrentLanguage?.() || gridOptions.locale || 'en';
       if (currentLocale.length > 2) {
         currentLocale = currentLocale.substring(0, 2);
       }
