@@ -32,17 +32,17 @@ const GridServiceUpdateOptionDefaults: GridServiceUpdateOption = { highlightRow:
 const HideColumnOptionDefaults: HideColumnOption = { autoResizeColumns: true, triggerEvent: true, hideFromColumnPicker: false, hideFromGridMenu: false };
 
 export class GridService {
-  private _grid!: SlickGrid;
-  private _rowSelectionPlugin?: SlickRowSelectionModel;
+  protected _grid!: SlickGrid;
+  protected _rowSelectionPlugin?: SlickRowSelectionModel;
 
   constructor(
-    private gridStateService: GridStateService,
-    private filterService: FilterService,
-    private pubSubService: PubSubService,
-    private paginationService: PaginationService,
-    private sharedService: SharedService,
-    private sortService: SortService,
-    private treeDataService: TreeDataService,
+    protected gridStateService: GridStateService,
+    protected filterService: FilterService,
+    protected pubSubService: PubSubService,
+    protected paginationService: PaginationService,
+    protected sharedService: SharedService,
+    protected sortService: SortService,
+    protected treeDataService: TreeDataService,
   ) { }
 
   /** Getter of SlickGrid DataView object */
@@ -897,11 +897,11 @@ export class GridService {
   }
 
   // --
-  // private functions
+  // protected functions
   // -------------------
 
   /** Check wether the grid has the Row Selection enabled */
-  private hasRowSelectionEnabled() {
+  protected hasRowSelectionEnabled() {
     const selectionModel = this._grid.getSelectionModel();
     const isRowSelectionEnabled = this._gridOptions.enableRowSelection || this._gridOptions.enableCheckboxSelector;
     return (isRowSelectionEnabled && selectionModel);

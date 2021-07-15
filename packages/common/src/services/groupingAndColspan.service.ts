@@ -19,10 +19,10 @@ import { emptyElement } from './utilities';
 declare const Slick: SlickNamespace;
 
 export class GroupingAndColspanService {
-  private _eventHandler: SlickEventHandler;
-  private _grid!: SlickGrid;
+  protected _eventHandler: SlickEventHandler;
+  protected _grid!: SlickGrid;
 
-  constructor(private readonly extensionUtility: ExtensionUtility, private readonly extensionService: ExtensionService, private readonly pubSubService: PubSubService,) {
+  constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly extensionService: ExtensionService, protected readonly pubSubService: PubSubService,) {
     this._eventHandler = new Slick.EventHandler();
   }
 
@@ -37,12 +37,12 @@ export class GroupingAndColspanService {
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
-  private get _gridOptions(): GridOption {
+  protected get _gridOptions(): GridOption {
     return (this._grid?.getOptions) ? this._grid.getOptions() : {};
   }
 
   /** Getter for the Column Definitions pulled through the Grid Object */
-  private get _columnDefinitions(): Column[] {
+  protected get _columnDefinitions(): Column[] {
     return (this._grid && this._grid.getColumns) ? this._grid.getColumns() : [];
   }
 

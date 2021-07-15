@@ -111,7 +111,7 @@ export class BindingService {
    * 2- when an event is provided, we will replace the DOM element (by an attribute) every time an event is triggered
    *    2.1- we could also provide an extra callback method to execute when the event gets triggered
    */
-  private bindSingleElement(element: Element | null, attribute: string, eventName?: string, callback?: (val: any) => any) {
+  protected bindSingleElement(element: Element | null, attribute: string, eventName?: string, callback?: (val: any) => any) {
     const binding: ElementBinding | ElementBindingWithListener = { element, attribute };
     if (element) {
       if (eventName) {
@@ -137,7 +137,7 @@ export class BindingService {
     }
   }
 
-  private sanitizeText(dirtyText: string): string {
+  protected sanitizeText(dirtyText: string): string {
     return (DOMPurify?.sanitize) ? DOMPurify.sanitize(dirtyText, {}) : dirtyText;
   }
 }

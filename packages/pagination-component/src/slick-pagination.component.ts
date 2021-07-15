@@ -14,11 +14,11 @@ import {
 import { BindingHelper } from '@slickgrid-universal/binding';
 
 export class SlickPaginationComponent {
-  private _bindingHelper: BindingHelper;
-  private _paginationElement!: HTMLDivElement;
-  private _enableTranslate = false;
-  private _locales: Locale;
-  private _subscriptions: Subscription[] = [];
+  protected _bindingHelper: BindingHelper;
+  protected _paginationElement!: HTMLDivElement;
+  protected _enableTranslate = false;
+  protected _locales: Locale;
+  protected _subscriptions: Subscription[] = [];
   currentPagination: ServicePagination;
   firstButtonClasses = '';
   lastButtonClasses = '';
@@ -31,7 +31,7 @@ export class SlickPaginationComponent {
   textOf = 'of';
   textPage = 'Page';
 
-  constructor(private readonly paginationService: PaginationService, private readonly pubSubService: PubSubService, private readonly sharedService: SharedService, private readonly translaterService?: TranslaterService) {
+  constructor(protected readonly paginationService: PaginationService, protected readonly pubSubService: PubSubService, protected readonly sharedService: SharedService, protected readonly translaterService?: TranslaterService) {
     this._bindingHelper = new BindingHelper();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
 
@@ -220,10 +220,10 @@ export class SlickPaginationComponent {
   }
 
   // --
-  // private functions
+  // protected functions
   // --------------------
 
-  private updatePageButtonsUsability() {
+  protected updatePageButtonsUsability() {
     this.firstButtonClasses = this.isLeftPaginationDisabled ? 'page-item seek-first disabled' : 'page-item seek-first';
     this.prevButtonClasses = this.isLeftPaginationDisabled ? 'page-item seek-prev disabled' : 'page-item seek-prev';
     this.lastButtonClasses = this.isRightPaginationDisabled ? 'page-item seek-end disabled' : 'page-item seek-end';
@@ -231,7 +231,7 @@ export class SlickPaginationComponent {
   }
 
   /** Translate all the texts shown in the UI, use ngx-translate service when available or custom locales when service is null */
-  private translatePaginationTexts(locales: Locale) {
+  protected translatePaginationTexts(locales: Locale) {
     if (this._enableTranslate && this.translaterService?.translate) {
       const translationPrefix = getTranslationPrefix(this.gridOptions);
       this.textItemsPerPage = this.translaterService.translate(`${translationPrefix}ITEMS_PER_PAGE`);

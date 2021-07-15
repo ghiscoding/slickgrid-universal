@@ -44,27 +44,27 @@ const DEFAULT_EXPORT_OPTIONS: ExcelExportOption = {
 };
 
 export class ExcelExportService implements ExternalResource, BaseExcelExportService {
-  private _fileFormat = FileType.xlsx;
-  private _grid!: SlickGrid;
-  private _locales!: Locale;
-  private _groupedColumnHeaders?: Array<KeyTitlePair>;
-  private _columnHeaders: Array<KeyTitlePair> = [];
-  private _hasColumnTitlePreHeader = false;
-  private _hasGroupedItems = false;
-  private _excelExportOptions!: ExcelExportOption;
-  private _sheet!: ExcelWorksheet;
-  private _stylesheet!: ExcelStylesheet;
-  private _stylesheetFormats: any;
-  private _pubSubService: PubSubService | null = null;
-  private _translaterService: TranslaterService | undefined;
-  private _workbook!: ExcelWorkbook;
+  protected _fileFormat = FileType.xlsx;
+  protected _grid!: SlickGrid;
+  protected _locales!: Locale;
+  protected _groupedColumnHeaders?: Array<KeyTitlePair>;
+  protected _columnHeaders: Array<KeyTitlePair> = [];
+  protected _hasColumnTitlePreHeader = false;
+  protected _hasGroupedItems = false;
+  protected _excelExportOptions!: ExcelExportOption;
+  protected _sheet!: ExcelWorksheet;
+  protected _stylesheet!: ExcelStylesheet;
+  protected _stylesheetFormats: any;
+  protected _pubSubService: PubSubService | null = null;
+  protected _translaterService: TranslaterService | undefined;
+  protected _workbook!: ExcelWorkbook;
 
   /** ExcelExportService class name which is use to find service instance in the external registered services */
   readonly className = 'ExcelExportService';
 
   constructor() { }
 
-  private get _datasetIdPropName(): string {
+  protected get _datasetIdPropName(): string {
     return this._gridOptions?.datasetIdPropertyName ?? 'id';
   }
 
@@ -74,7 +74,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
-  private get _gridOptions(): GridOption {
+  protected get _gridOptions(): GridOption {
     return (this._grid && this._grid.getOptions) ? this._grid.getOptions() : {};
   }
 
@@ -277,10 +277,10 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   }
 
   // -----------------------
-  // Private functions
+  // protected functions
   // -----------------------
 
-  private getDataOutput(): Array<string[] | ExcelCellFormat[]> {
+  protected getDataOutput(): Array<string[] | ExcelCellFormat[]> {
     const columns = this._grid && this._grid.getColumns && this._grid.getColumns() || [];
 
     // data variable which will hold all the fields data of a row
@@ -310,7 +310,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   }
 
   /** Get each column style including a style for the width of each column */
-  private getColumnStyles(columns: Column[]): any[] {
+  protected getColumnStyles(columns: Column[]): any[] {
     const grouping = this._dataView.getGrouping();
     const columnStyles = [];
     if (Array.isArray(grouping) && grouping.length > 0) {
@@ -339,7 +339,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * @param {Object} metadata - Excel metadata
    * @returns {Object} array of Excel cell format
    */
-  private getColumnGroupedHeaderTitlesData(columns: Column[], metadata: ExcelMetadata): Array<ExcelCellFormat> {
+  protected getColumnGroupedHeaderTitlesData(columns: Column[], metadata: ExcelMetadata): Array<ExcelCellFormat> {
     let outputGroupedHeaderTitles: Array<ExcelCellFormat> = [];
 
     // get all Column Header Titles
@@ -367,7 +367,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   }
 
   /** Get all column headers and format them in Bold */
-  private getColumnHeaderData(columns: Column[], metadata: ExcelMetadata): Array<ExcelCellFormat> {
+  protected getColumnHeaderData(columns: Column[], metadata: ExcelMetadata): Array<ExcelCellFormat> {
     let outputHeaderTitles: Array<ExcelCellFormat> = [];
 
     // get all Column Header Titles
@@ -386,7 +386,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     return outputHeaderTitles;
   }
 
-  private getGroupColumnTitle(): string | null {
+  protected getGroupColumnTitle(): string | null {
     // Group By text, it could be set in the export options or from translation or if nothing is found then use the English constant text
     let groupByColumnHeader = this._excelExportOptions.groupingColumnHeaderTitle;
     if (!groupByColumnHeader && this._gridOptions.enableTranslate && this._translaterService?.translate) {
@@ -411,7 +411,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
  * Get all Grouped Header Titles and their keys, translate the title when required.
  * @param {Array<object>} columns of the grid
  */
-  private getColumnGroupedHeaderTitles(columns: Column[]): Array<KeyTitlePair> {
+  protected getColumnGroupedHeaderTitles(columns: Column[]): Array<KeyTitlePair> {
     const groupedColumnHeaders: Array<KeyTitlePair> = [];
 
     if (columns && Array.isArray(columns)) {
@@ -441,7 +441,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * Get all header titles and their keys, translate the title when required.
    * @param {Array<object>} columns of the grid
    */
-  private getColumnHeaders(columns: Column[]): Array<KeyTitlePair> | null {
+  protected getColumnHeaders(columns: Column[]): Array<KeyTitlePair> | null {
     const columnHeaders: Array<KeyTitlePair> = [];
 
     if (columns && Array.isArray(columns)) {
@@ -470,7 +470,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   /**
    * Get all the grid row data and return that as an output string
    */
-  private pushAllGridRowDataToArray(originalDaraArray: Array<string[] | ExcelCellFormat[]>, columns: Column[]): Array<string[] | ExcelCellFormat[]> {
+  protected pushAllGridRowDataToArray(originalDaraArray: Array<string[] | ExcelCellFormat[]>, columns: Column[]): Array<string[] | ExcelCellFormat[]> {
     const lineCount = this._dataView.getLength();
 
     // loop through all the grid rows of data
@@ -502,7 +502,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * @param {Number} row - row index
    * @param {Object} itemObj - item datacontext object
    */
-  private readRegularRowData(columns: Column[], row: number, itemObj: any): string[] {
+  protected readRegularRowData(columns: Column[], row: number, itemObj: any): string[] {
     let idx = 0;
     const rowOutputStrings = [];
     const columnsLn = columns.length;
@@ -594,7 +594,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * Get the grouped title(s) and its group title formatter, for example if we grouped by salesRep, the returned result would be:: 'Sales Rep: John Dow (2 items)'
    * @param itemObj
    */
-  private readGroupedRowTitle(itemObj: any): string {
+  protected readGroupedRowTitle(itemObj: any): string {
     const groupName = sanitizeHtmlToText(itemObj.title);
 
     if (this._excelExportOptions && this._excelExportOptions.addGroupIndentation) {
@@ -611,7 +611,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * For example if we grouped by "salesRep" and we have a Sum Aggregator on "sales", then the returned output would be:: ["Sum 123$"]
    * @param itemObj
    */
-  private readGroupedTotalRows(columns: Column[], itemObj: any): string[] {
+  protected readGroupedTotalRows(columns: Column[], itemObj: any): string[] {
     const groupingAggregatorRowText = this._excelExportOptions.groupingAggregatorRowText || '';
     const outputStrings = [groupingAggregatorRowText];
 

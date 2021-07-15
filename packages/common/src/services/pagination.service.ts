@@ -21,25 +21,25 @@ import { Observable, RxJsFacade } from './rxjsFacade';
 declare const Slick: SlickNamespace;
 
 export class PaginationService {
-  private _eventHandler = new Slick.EventHandler();
-  private _initialized = false;
-  private _isLocalGrid = true;
-  private _backendServiceApi: BackendServiceApi | undefined;
-  private _dataFrom = 1;
-  private _dataTo = 1;
-  private _itemsPerPage = 0;
-  private _pageCount = 1;
-  private _pageNumber = 1;
-  private _totalItems = 0;
-  private _availablePageSizes: number[] = [];
-  private _paginationOptions!: Pagination;
-  private _subscriptions: EventSubscription[] = [];
+  protected _eventHandler = new Slick.EventHandler();
+  protected _initialized = false;
+  protected _isLocalGrid = true;
+  protected _backendServiceApi: BackendServiceApi | undefined;
+  protected _dataFrom = 1;
+  protected _dataTo = 1;
+  protected _itemsPerPage = 0;
+  protected _pageCount = 1;
+  protected _pageNumber = 1;
+  protected _totalItems = 0;
+  protected _availablePageSizes: number[] = [];
+  protected _paginationOptions!: Pagination;
+  protected _subscriptions: EventSubscription[] = [];
 
   /** SlickGrid Grid object */
   grid!: SlickGrid;
 
   /** Constructor */
-  constructor(private pubSubService: PubSubService, private sharedService: SharedService, private backendUtilities?: BackendUtilityService, private rxjs?: RxJsFacade) { }
+  constructor(protected pubSubService: PubSubService, protected sharedService: SharedService, protected backendUtilities?: BackendUtilityService, protected rxjs?: RxJsFacade) { }
 
   /** Getter of SlickGrid DataView object */
   get dataView(): SlickDataView | undefined {
@@ -405,7 +405,7 @@ export class PaginationService {
   }
 
   // --
-  // private functions
+  // protected functions
   // --------------------
 
   /**
@@ -415,7 +415,7 @@ export class PaginationService {
    * basically we assume that this offset is fine for the time being,
    * until user does an action which will refresh the data hence the pagination which will then become normal again
    */
-  private processOnItemAddedOrRemoved(items: any | any[], isItemAdded = true) {
+  protected processOnItemAddedOrRemoved(items: any | any[], isItemAdded = true) {
     if (items !== null) {
       const previousDataTo = this._dataTo;
       const itemCount = Array.isArray(items) ? items.length : 1;

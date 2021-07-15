@@ -43,25 +43,25 @@ type ExportTextDownloadOption = {
 };
 
 export class TextExportService implements ExternalResource, BaseTextExportService {
-  private _delimiter = ',';
-  private _exportQuoteWrapper = '';
-  private _exportOptions!: TextExportOption;
-  private _fileFormat = FileType.csv;
-  private _lineCarriageReturn = '\n';
-  private _grid!: SlickGrid;
-  private _groupedColumnHeaders?: Array<KeyTitlePair>;
-  private _columnHeaders: Array<KeyTitlePair> = [];
-  private _hasGroupedItems = false;
-  private _locales!: Locale;
-  private _pubSubService!: PubSubService | null;
-  private _translaterService: TranslaterService | undefined;
+  protected _delimiter = ',';
+  protected _exportQuoteWrapper = '';
+  protected _exportOptions!: TextExportOption;
+  protected _fileFormat = FileType.csv;
+  protected _lineCarriageReturn = '\n';
+  protected _grid!: SlickGrid;
+  protected _groupedColumnHeaders?: Array<KeyTitlePair>;
+  protected _columnHeaders: Array<KeyTitlePair> = [];
+  protected _hasGroupedItems = false;
+  protected _locales!: Locale;
+  protected _pubSubService!: PubSubService | null;
+  protected _translaterService: TranslaterService | undefined;
 
   /** ExcelExportService class name which is use to find service instance in the external registered services */
   readonly className = 'TextExportService';
 
   constructor() { }
 
-  private get _datasetIdPropName(): string {
+  protected get _datasetIdPropName(): string {
     return this._gridOptions && this._gridOptions.datasetIdPropertyName || 'id';
   }
 
@@ -71,7 +71,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
-  private get _gridOptions(): GridOption {
+  protected get _gridOptions(): GridOption {
     return (this._grid?.getOptions) ? this._grid.getOptions() : {};
   }
 
@@ -184,10 +184,10 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   }
 
   // -----------------------
-  // Private functions
+  // protected functions
   // -----------------------
 
-  private getDataOutput(): string {
+  protected getDataOutput(): string {
     const columns = this._grid.getColumns() || [];
 
     // Group By text, it could be set in the export options or from translation or if nothing is found then use the English constant text
@@ -241,7 +241,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   /**
    * Get all the grid row data and return that as an output string
    */
-  private getAllGridRowData(columns: Column[], lineCarriageReturn: string): string {
+  protected getAllGridRowData(columns: Column[], lineCarriageReturn: string): string {
     const outputDataStrings = [];
     const lineCount = this._dataView.getLength();
 
@@ -273,7 +273,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    * Get all Grouped Header Titles and their keys, translate the title when required.
    * @param {Array<object>} columns of the grid
    */
-  private getColumnGroupedHeaderTitles(columns: Column[]): Array<KeyTitlePair> {
+  protected getColumnGroupedHeaderTitles(columns: Column[]): Array<KeyTitlePair> {
     const groupedColumnHeaders: KeyTitlePair[] = [];
 
     if (columns && Array.isArray(columns)) {
@@ -303,7 +303,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    * Get all header titles and their keys, translate the title when required.
    * @param {Array<object>} columns of the grid
    */
-  private getColumnHeaders(columns: Column[]): Array<KeyTitlePair> {
+  protected getColumnHeaders(columns: Column[]): Array<KeyTitlePair> {
     const columnHeaders: Array<KeyTitlePair> = [];
 
     if (columns && Array.isArray(columns)) {
@@ -335,7 +335,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    * @param {Number} row - row index
    * @param {Object} itemObj - item datacontext object
    */
-  private readRegularRowData(columns: Column[], row: number, itemObj: any) {
+  protected readRegularRowData(columns: Column[], row: number, itemObj: any) {
     let idx = 0;
     const rowOutputStrings = [];
     const exportQuoteWrapper = this._exportQuoteWrapper;
@@ -406,7 +406,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    * Get the grouped title(s) and its group title formatter, for example if we grouped by salesRep, the returned result would be:: 'Sales Rep: John Dow (2 items)'
    * @param itemObj
    */
-  private readGroupedTitleRow(itemObj: any) {
+  protected readGroupedTitleRow(itemObj: any) {
     let groupName = sanitizeHtmlToText(itemObj.title);
     const exportQuoteWrapper = this._exportQuoteWrapper;
 
@@ -425,7 +425,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    * For example if we grouped by "salesRep" and we have a Sum Aggregator on "sales", then the returned output would be:: ["Sum 123$"]
    * @param itemObj
    */
-  private readGroupedTotalRow(columns: Column[], itemObj: any) {
+  protected readGroupedTotalRow(columns: Column[], itemObj: any) {
     const delimiter = this._exportOptions.delimiter;
     const format = this._exportOptions.format;
     const groupingAggregatorRowText = this._exportOptions.groupingAggregatorRowText || '';

@@ -19,13 +19,13 @@ import { BindingHelper } from '@slickgrid-universal/binding';
 
 declare const Slick: SlickNamespace;
 export class SlickFooterComponent {
-  private _bindingHelper: BindingHelper;
-  private _eventHandler!: SlickEventHandler;
-  private _footerElement!: HTMLDivElement;
-  private _isLeftFooterOriginallyEmpty = true;
-  private _isLeftFooterDisplayingSelectionRowCount = false;
-  private _isRightFooterOriginallyEmpty = true;
-  private _selectedRowCount = 0;
+  protected _bindingHelper: BindingHelper;
+  protected _eventHandler!: SlickEventHandler;
+  protected _footerElement!: HTMLDivElement;
+  protected _isLeftFooterOriginallyEmpty = true;
+  protected _isLeftFooterDisplayingSelectionRowCount = false;
+  protected _isRightFooterOriginallyEmpty = true;
+  protected _selectedRowCount = 0;
 
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
@@ -63,7 +63,7 @@ export class SlickFooterComponent {
     this.renderRightFooterText(text);
   }
 
-  constructor(private grid: SlickGrid, private customFooterOptions: CustomFooterOption, private translaterService?: TranslaterService) {
+  constructor(protected grid: SlickGrid, protected customFooterOptions: CustomFooterOption, protected translaterService?: TranslaterService) {
     this._bindingHelper = new BindingHelper();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
     this._eventHandler = new Slick.EventHandler();
@@ -124,11 +124,11 @@ export class SlickFooterComponent {
   }
 
   // --
-  // private functions
+  // protected functions
   // --------------------
 
   /** Create the Footer Container */
-  private createFooterContainer(gridParentContainerElm: HTMLElement) {
+  protected createFooterContainer(gridParentContainerElm: HTMLElement) {
     const footerElm = document.createElement('div');
     footerElm.className = `slick-custom-footer ${this.gridUid}`;
     footerElm.style.width = '100%';
@@ -150,7 +150,7 @@ export class SlickFooterComponent {
   }
 
   /** Create the Right Section Footer */
-  private createFooterRightContainer(): HTMLDivElement {
+  protected createFooterRightContainer(): HTMLDivElement {
     const rightFooterElm = document.createElement('div');
     rightFooterElm.className = `right-footer ${this.customFooterOptions.rightContainerClass || ''}`;
 
@@ -209,7 +209,7 @@ export class SlickFooterComponent {
   }
 
   /** Create the Right Section Last Update Timestamp */
-  private createFooterLastUpdate(): HTMLSpanElement {
+  protected createFooterLastUpdate(): HTMLSpanElement {
     // get translated text & last timestamp
     const lastUpdateText = this.customFooterOptions?.metricTexts?.lastUpdate ?? 'Last Update';
     const lastUpdateTimestamp = moment(this.metrics?.endTime).format(this.customFooterOptions.dateFormat);
@@ -240,7 +240,7 @@ export class SlickFooterComponent {
    * we will show the row selection count on the bottom left side of the footer (by subscribing to the SlickGrid `onSelectedRowsChanged` event).
    * @param customFooterOptions
    */
-  private registerOnSelectedRowsChangedWhenEnabled(customFooterOptions: CustomFooterOption) {
+  protected registerOnSelectedRowsChangedWhenEnabled(customFooterOptions: CustomFooterOption) {
     const isRowSelectionEnabled = this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection;
     if (isRowSelectionEnabled && customFooterOptions && (!customFooterOptions.hideRowSelectionCount && this._isLeftFooterOriginallyEmpty)) {
       this._isLeftFooterDisplayingSelectionRowCount = true;

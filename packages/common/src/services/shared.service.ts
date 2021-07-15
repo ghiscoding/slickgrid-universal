@@ -1,18 +1,18 @@
 import { Column, CurrentPagination, GridOption, SlickDataView, SlickGrid, SlickGroupItemMetadataProvider } from '../interfaces/index';
 
 export class SharedService {
-  private _allColumns!: Column[];
-  private _dataView!: SlickDataView;
-  private _groupItemMetadataProvider!: SlickGroupItemMetadataProvider;
-  private _grid!: SlickGrid;
-  private _gridOptions!: GridOption;
-  private _hasColumnsReordered = false;
-  private _currentPagination!: CurrentPagination;
-  private _visibleColumns!: Column[];
-  private _hideHeaderRowAfterPageLoad = false;
-  private _hierarchicalDataset: any[] | undefined;
-  private _externalRegisteredResources!: any[];
-  private _frozenVisibleColumnId!: string | number;
+  protected _allColumns!: Column[];
+  protected _dataView!: SlickDataView;
+  protected _groupItemMetadataProvider!: SlickGroupItemMetadataProvider;
+  protected _grid!: SlickGrid;
+  protected _gridOptions!: GridOption;
+  protected _hasColumnsReordered = false;
+  protected _currentPagination!: CurrentPagination;
+  protected _visibleColumns!: Column[];
+  protected _hideHeaderRowAfterPageLoad = false;
+  protected _hierarchicalDataset: any[] | undefined;
+  protected _externalRegisteredResources!: any[];
+  protected _frozenVisibleColumnId!: string | number;
 
   // --
   // public

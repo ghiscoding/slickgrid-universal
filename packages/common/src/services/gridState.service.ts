@@ -32,22 +32,22 @@ import { TreeDataService } from './treeData.service';
 declare const Slick: SlickNamespace;
 
 export class GridStateService {
-  private _eventHandler = new Slick.EventHandler();
-  private _columns: Column[] = [];
-  private _currentColumns: CurrentColumn[] = [];
-  private _grid!: SlickGrid;
-  private _subscriptions: EventSubscription[] = [];
-  private _selectedRowDataContextIds: Array<number | string> | undefined = []; // used with row selection
-  private _selectedFilteredRowDataContextIds: Array<number | string> | undefined = []; // used with row selection
-  private _wasRecheckedAfterPageChange = true; // used with row selection & pagination
+  protected _eventHandler = new Slick.EventHandler();
+  protected _columns: Column[] = [];
+  protected _currentColumns: CurrentColumn[] = [];
+  protected _grid!: SlickGrid;
+  protected _subscriptions: EventSubscription[] = [];
+  protected _selectedRowDataContextIds: Array<number | string> | undefined = []; // used with row selection
+  protected _selectedFilteredRowDataContextIds: Array<number | string> | undefined = []; // used with row selection
+  protected _wasRecheckedAfterPageChange = true; // used with row selection & pagination
 
   constructor(
-    private readonly extensionService: ExtensionService,
-    private readonly filterService: FilterService,
-    private readonly pubSubService: PubSubService,
-    private readonly sharedService: SharedService,
-    private readonly sortService: SortService,
-    private readonly treeDataService: TreeDataService,
+    protected readonly extensionService: ExtensionService,
+    protected readonly filterService: FilterService,
+    protected readonly pubSubService: PubSubService,
+    protected readonly sharedService: SharedService,
+    protected readonly sortService: SortService,
+    protected readonly treeDataService: TreeDataService,
   ) { }
 
   /** Getter of SlickGrid DataView object */
@@ -56,11 +56,11 @@ export class GridStateService {
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
-  private get _gridOptions(): GridOption {
+  protected get _gridOptions(): GridOption {
     return this._grid?.getOptions?.() ?? {};
   }
 
-  private get datasetIdPropName(): string {
+  protected get datasetIdPropName(): string {
     return this._gridOptions.datasetIdPropertyName || 'id';
   }
 
@@ -475,7 +475,7 @@ export class GridStateService {
   }
 
   // --
-  // private methods
+  // protected methods
   // ------------------
 
   /**
@@ -487,7 +487,7 @@ export class GridStateService {
    * @param {Array<Column>} fullColumnDefinitions - full column definitions array that includes every columns (including Row Selection, Row Detail, Row Move when enabled)
    * @param {Array<Column>} newArrangedColumns - output array that will be use to show in the UI (it could have less columns than fullColumnDefinitions array since user might hide some columns)
    */
-  private addColumnDynamicWhenFeatureEnabled(dynamicAddonColumnByIndexPositionList: Array<{ columnId: string; columnIndexPosition: number; }>, fullColumnDefinitions: Column[], newArrangedColumns: Column[]) {
+  protected addColumnDynamicWhenFeatureEnabled(dynamicAddonColumnByIndexPositionList: Array<{ columnId: string; columnIndexPosition: number; }>, fullColumnDefinitions: Column[], newArrangedColumns: Column[]) {
     // 1- first step is to sort them by their index position
     dynamicAddonColumnByIndexPositionList.sort((feat1, feat2) => feat1.columnIndexPosition - feat2.columnIndexPosition);
 
@@ -508,7 +508,7 @@ export class GridStateService {
    * @param extension name
    * @param event name
    */
-  private bindExtensionAddonEventToGridStateChange(extensionName: ExtensionName, eventName: string) {
+  protected bindExtensionAddonEventToGridStateChange(extensionName: ExtensionName, eventName: string) {
     const extension = this.extensionService?.getExtensionByName?.(extensionName);
     const slickEvent = extension?.instance?.[eventName];
 
@@ -526,7 +526,7 @@ export class GridStateService {
    * @param event - event name
    * @param grid - SlickGrid object
    */
-  private bindSlickGridColumnChangeEventToGridStateChange(eventName: string, grid: SlickGrid) {
+  protected bindSlickGridColumnChangeEventToGridStateChange(eventName: string, grid: SlickGrid) {
     const slickGridEvent = (grid as any)?.[eventName];
 
     if (slickGridEvent && typeof slickGridEvent.subscribe === 'function') {
@@ -542,7 +542,7 @@ export class GridStateService {
    * Bind a Grid Event (of grid option changes) to a Grid State change event, if we detect that any of the pinning (frozen) options changes then we'll trigger a Grid State change
    * @param grid - SlickGrid object
    */
-  private bindSlickGridOnSetOptionsEventToGridStateChange(grid: SlickGrid) {
+  protected bindSlickGridOnSetOptionsEventToGridStateChange(grid: SlickGrid) {
     const onSetOptionsHandler = grid.onSetOptions;
     (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSetOptionsHandler>>).subscribe(onSetOptionsHandler, (_e, args) => {
       const { frozenBottom: frozenBottomBefore, frozenColumn: frozenColumnBefore, frozenRow: frozenRowBefore } = args.optionsBefore;
@@ -565,7 +565,7 @@ export class GridStateService {
    * 3. if we use Pagination and we change page, we'll keep track with a flag (this flag will be used to skip any deletion when we're changing page)
    * 4. after the Page or DataView is changed or updated, we'll do an extra (and delayed) check to make sure that what we have in our global array of selected IDs is displayed on screen
    */
-  private bindSlickGridRowSelectionToGridStateChange() {
+  protected bindSlickGridRowSelectionToGridStateChange() {
     if (this._grid && this._gridOptions && this._dataView) {
       const onBeforePagingInfoChangedHandler = this._dataView.onBeforePagingInfoChanged;
       (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforePagingInfoChangedHandler>>).subscribe(onBeforePagingInfoChangedHandler, () => {
@@ -636,13 +636,13 @@ export class GridStateService {
   }
 
   /** Check wether the grid has the Row Selection enabled */
-  private hasRowSelectionEnabled() {
+  protected hasRowSelectionEnabled() {
     const selectionModel = this._grid.getSelectionModel();
     const isRowSelectionEnabled = this._gridOptions.enableRowSelection || this._gridOptions.enableCheckboxSelector;
     return (isRowSelectionEnabled && selectionModel);
   }
 
-  private reEvaluateRowSelectionAfterFilterChange() {
+  protected reEvaluateRowSelectionAfterFilterChange() {
     const currentSelectedRowIndexes = this._grid.getSelectedRows();
     const previousSelectedFilteredRowDataContextIds = (this._selectedFilteredRowDataContextIds || []).slice();
     const filteredDataContextIds = this.refreshFilteredRowSelections();
@@ -655,7 +655,7 @@ export class GridStateService {
   }
 
   /** When a Filter is triggered or when user request it, we will refresh the filtered selection array and return it */
-  private refreshFilteredRowSelections(): Array<number | string> {
+  protected refreshFilteredRowSelections(): Array<number | string> {
     let tmpFilteredArray: Array<number | string> = [];
     const filteredDataset = this._dataView.getFilteredItems() || [];
     if (Array.isArray(this._selectedRowDataContextIds)) {

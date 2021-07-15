@@ -25,23 +25,23 @@ const DATAGRID_MIN_WIDTH = 300;
 const DEFAULT_INTERVAL_RETRY_DELAY = 200;
 
 export class ResizerService {
-  private _autoResizeOptions!: AutoResizeOption;
-  private _grid!: SlickGrid;
-  private _eventHandler: SlickEventHandler;
-  private _fixedHeight?: number | string;
-  private _fixedWidth?: number | string;
-  private _gridDomElm!: any;
-  private _gridContainerElm!: any;
-  private _pageContainerElm!: any;
-  private _gridParentContainerElm!: HTMLElement;
-  private _intervalId!: NodeJS.Timeout;
-  private _intervalRetryDelay = DEFAULT_INTERVAL_RETRY_DELAY;
-  private _isStopResizeIntervalRequested = false;
-  private _hasResizedByContentAtLeastOnce = false;
-  private _lastDimensions?: GridSize;
-  private _totalColumnsWidthByContent = 0;
-  private _timer!: NodeJS.Timeout;
-  private _resizePaused = false;
+  protected _autoResizeOptions!: AutoResizeOption;
+  protected _grid!: SlickGrid;
+  protected _eventHandler: SlickEventHandler;
+  protected _fixedHeight?: number | string;
+  protected _fixedWidth?: number | string;
+  protected _gridDomElm!: any;
+  protected _gridContainerElm!: any;
+  protected _pageContainerElm!: any;
+  protected _gridParentContainerElm!: HTMLElement;
+  protected _intervalId!: NodeJS.Timeout;
+  protected _intervalRetryDelay = DEFAULT_INTERVAL_RETRY_DELAY;
+  protected _isStopResizeIntervalRequested = false;
+  protected _hasResizedByContentAtLeastOnce = false;
+  protected _lastDimensions?: GridSize;
+  protected _totalColumnsWidthByContent = 0;
+  protected _timer!: NodeJS.Timeout;
+  protected _resizePaused = false;
 
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
@@ -73,7 +73,7 @@ export class ResizerService {
     return this.gridOptions?.resizeByContentOptions ?? {};
   }
 
-  constructor(private pubSubService: PubSubService) {
+  constructor(protected pubSubService: PubSubService) {
     this._eventHandler = new Slick.EventHandler();
   }
 
@@ -409,7 +409,7 @@ export class ResizerService {
   }
 
   // --
-  // private functions
+  // protected functions
   // ------------------
 
   /**
@@ -420,7 +420,7 @@ export class ResizerService {
    * @param columnIndexOverride - an optional column index, if provided it will override the column index position
    * @returns - count of items that was read
    */
-  private calculateCellWidthByReadingDataset(columnOrColumns: Column | Column[], columnWidths: { [columnId in string | number]: number; }, maxItemToInspect = 1000, columnIndexOverride?: number) {
+  protected calculateCellWidthByReadingDataset(columnOrColumns: Column | Column[], columnWidths: { [columnId in string | number]: number; }, maxItemToInspect = 1000, columnIndexOverride?: number) {
     const columnDefinitions = Array.isArray(columnOrColumns) ? columnOrColumns : [columnOrColumns];
 
     // const columnDefinitions = this._grid.getColumns();
@@ -457,7 +457,7 @@ export class ResizerService {
    * @param {Number} initialMininalColumnWidth - initial width, could be coming from `minWidth` or a default `width`
    * @returns - column width
    */
-  private calculateCellWidthByContent(item: any, columnDef: Column, rowIdx: number, colIdx: number, initialMininalColumnWidth?: number): number | undefined {
+  protected calculateCellWidthByContent(item: any, columnDef: Column, rowIdx: number, colIdx: number, initialMininalColumnWidth?: number): number | undefined {
     const resizeCellCharWidthInPx = this.resizeByContentOptions.cellCharWidthInPx ?? 7; // width in pixels of a string character, this can vary depending on which font family/size is used & cell padding
 
     if (!columnDef.originalWidth) {
@@ -481,7 +481,7 @@ export class ResizerService {
    * @param {Object} column - column definition to apply the width
    * @param {Number} calculatedColumnWidth - new calculated column width to possibly apply
    */
-  private applyNewCalculatedColumnWidthByReference(column: Column<any>, calculatedColumnWidth: number) {
+  protected applyNewCalculatedColumnWidthByReference(column: Column<any>, calculatedColumnWidth: number) {
     // read a few optional resize by content grid options
     const resizeCellPaddingWidthInPx = this.resizeByContentOptions.cellPaddingWidthInPx ?? 6;
     const resizeFormatterPaddingWidthInPx = this.resizeByContentOptions.formatterPaddingWidthInPx ?? 6;
@@ -521,7 +521,7 @@ export class ResizerService {
     }
   }
 
-  private handleSingleColumnResizeByContent(columnId: string) {
+  protected handleSingleColumnResizeByContent(columnId: string) {
     const columnDefinitions = this._grid.getColumns();
     const columnDefIdx = columnDefinitions.findIndex(col => col.id === columnId);
 
@@ -546,7 +546,7 @@ export class ResizerService {
    * @param {Number} newColumnWidth - calculated column width input
    * @returns boolean
    */
-  private readjustNewColumnWidthWhenOverLimit(column: Column, newColumnWidth: number): number {
+  protected readjustNewColumnWidthWhenOverLimit(column: Column, newColumnWidth: number): number {
     const frozenColumnIdx = this.gridOptions.frozenColumn ?? -1;
     const columnIdx = this._grid.getColumns().findIndex(col => col.id === column.id) ?? 0;
     let adjustedWidth = newColumnWidth;
@@ -580,7 +580,7 @@ export class ResizerService {
    *   2- header titles are lower than the viewport of dataset (this can happen when user change Tab and DOM is not shown),
    * for these cases we'll resize until it's no longer true or until we reach a max time limit (70min)
    */
-  private resizeGridWhenStylingIsBrokenUntilCorrected() {
+  protected resizeGridWhenStylingIsBrokenUntilCorrected() {
     // how many time we want to check before really stopping the resize check?
     // We do this because user might be switching to another tab too quickly for the resize be really finished, so better recheck few times to make sure
     const autoFixResizeTimeout = this.gridOptions?.autoFixResizeTimeout ?? (5 * 60 * 60); // interval is 200ms, so 4x is 1sec, so (4 * 60 * 60 = 60min)

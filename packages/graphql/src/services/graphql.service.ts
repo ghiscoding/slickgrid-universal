@@ -41,12 +41,12 @@ const DEFAULT_ITEMS_PER_PAGE = 25;
 const DEFAULT_PAGE_SIZE = 20;
 
 export class GraphqlService implements BackendService {
-  private _currentFilters: ColumnFilters | CurrentFilter[] = [];
-  private _currentPagination: CurrentPagination | null = null;
-  private _currentSorters: CurrentSorter[] = [];
-  private _columnDefinitions?: Column[];
-  private _grid: SlickGrid | undefined;
-  private _datasetIdPropName = 'id';
+  protected _currentFilters: ColumnFilters | CurrentFilter[] = [];
+  protected _currentPagination: CurrentPagination | null = null;
+  protected _currentSorters: CurrentSorter[] = [];
+  protected _columnDefinitions?: Column[];
+  protected _grid: SlickGrid | undefined;
+  protected _datasetIdPropName = 'id';
   options: GraphqlServiceOption | undefined;
   pagination: Pagination | undefined;
   defaultPaginationOptions: GraphqlPaginationOption | GraphqlCursorPaginationOption = {
@@ -60,7 +60,7 @@ export class GraphqlService implements BackendService {
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
-  private get _gridOptions(): GridOption {
+  protected get _gridOptions(): GridOption {
     return (this._grid?.getOptions) ? this._grid.getOptions() : {};
   }
 
@@ -613,13 +613,13 @@ export class GraphqlService implements BackendService {
   }
 
   //
-  // private functions
+  // protected functions
   // -------------------
   /**
    * Cast provided filters (could be in multiple formats) into an array of CurrentFilter
    * @param columnFilters
    */
-  private castFilterToColumnFilters(columnFilters: ColumnFilters | CurrentFilter[]): CurrentFilter[] {
+  protected castFilterToColumnFilters(columnFilters: ColumnFilters | CurrentFilter[]): CurrentFilter[] {
     // keep current filters & always save it as an array (columnFilters can be an object when it is dealt by SlickGrid Filter)
     const filtersArray: ColumnFilter[] = (typeof columnFilters === 'object') ? Object.keys(columnFilters).map(key => (columnFilters as any)[key]) : columnFilters;
 
@@ -640,7 +640,7 @@ export class GraphqlService implements BackendService {
   }
 
   /** Normalizes the search value according to field type. */
-  private normalizeSearchValue(fieldType: typeof FieldType[keyof typeof FieldType], searchValue: any): any {
+  protected normalizeSearchValue(fieldType: typeof FieldType[keyof typeof FieldType], searchValue: any): any {
     switch (fieldType) {
       case FieldType.date:
       case FieldType.string:

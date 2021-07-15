@@ -31,14 +31,14 @@ import { RxJsFacade, Subject } from './rxjsFacade';
 declare const Slick: SlickNamespace;
 
 export class SortService {
-  private _currentLocalSorters: CurrentSorter[] = [];
-  private _eventHandler: SlickEventHandler;
-  private _dataView!: SlickDataView;
-  private _grid!: SlickGrid;
-  private _isBackendGrid = false;
-  private httpCancelRequests$?: Subject<void>; // this will be used to cancel any pending http request
+  protected _currentLocalSorters: CurrentSorter[] = [];
+  protected _eventHandler: SlickEventHandler;
+  protected _dataView!: SlickDataView;
+  protected _grid!: SlickGrid;
+  protected _isBackendGrid = false;
+  protected httpCancelRequests$?: Subject<void>; // this will be used to cancel any pending http request
 
-  constructor(private sharedService: SharedService, private pubSubService: PubSubService, private backendUtilities?: BackendUtilityService, private rxjs?: RxJsFacade) {
+  constructor(protected sharedService: SharedService, protected pubSubService: PubSubService, protected backendUtilities?: BackendUtilityService, protected rxjs?: RxJsFacade) {
     this._eventHandler = new Slick.EventHandler();
     if (this.rxjs) {
       this.httpCancelRequests$ = this.rxjs.createSubject<void>();
@@ -51,12 +51,12 @@ export class SortService {
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
-  private get _gridOptions(): GridOption {
+  protected get _gridOptions(): GridOption {
     return (this._grid && this._grid.getOptions) ? this._grid.getOptions() : {};
   }
 
   /** Getter for the Column Definitions pulled through the Grid Object */
-  private get _columnDefinitions(): Column[] {
+  protected get _columnDefinitions(): Column[] {
     return (this._grid && this._grid.getColumns) ? this._grid.getColumns() : [];
   }
 
@@ -545,7 +545,7 @@ export class SortService {
   }
 
   // --
-  // private functions
+  // protected functions
   // -------------------
 
   /**
@@ -556,7 +556,7 @@ export class SortService {
    * (if we previously deleted these properties we wouldn't be able to change them back since these properties wouldn't exist anymore, hence why we just hide the commands)
    * @param {boolean} isDisabling - are we disabling the sort functionality? Defaults to true
    */
-  private disableAllSortingCommands(isDisabling = true): Column[] {
+  protected disableAllSortingCommands(isDisabling = true): Column[] {
     const columnDefinitions = this._grid.getColumns();
 
     // loop through column definition to hide/show header menu commands
