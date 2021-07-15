@@ -2,7 +2,7 @@ import { KeyCode } from '../enums/index';
 import { EditorArguments, EditorValidationResult } from '../interfaces/index';
 import { integerValidator } from '../editorValidators/integerValidator';
 import { InputEditor } from './inputEditor';
-import { getDescendantProperty } from '../services/utilities';
+import { getDescendantProperty, toSentenceCase } from '../services/utilities';
 
 export class IntegerEditor extends InputEditor {
   constructor(protected readonly args: EditorArguments) {
@@ -26,6 +26,7 @@ export class IntegerEditor extends InputEditor {
       this._input.placeholder = placeholder;
       this._input.title = title;
       this._input.step = `${inputStep}`;
+      this._input.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Slider Editor`);
       const cellContainer = this.args.container;
       if (cellContainer && typeof cellContainer.appendChild === 'function') {
         cellContainer.appendChild(this._input);

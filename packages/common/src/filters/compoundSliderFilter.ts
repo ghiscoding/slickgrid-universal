@@ -12,7 +12,7 @@ import {
 import { Constants } from '../constants';
 import { OperatorString, OperatorType, SearchTerm } from '../enums/index';
 import { buildSelectOperator } from './filterUtilities';
-import { emptyElement, getTranslationPrefix, mapOperatorToShorthandDesignation } from '../services/utilities';
+import { emptyElement, getTranslationPrefix, mapOperatorToShorthandDesignation, toSentenceCase } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
 
@@ -257,6 +257,7 @@ export class CompoundSliderFilter implements Filter {
     this.filterInputElm.max = `${maxValue}`;
     this.filterInputElm.step = `${step}`;
     this.filterInputElm.name = this._elementRangeInputId;
+    this.filterInputElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
 
     const divContainerFilterElm = document.createElement('div');
     divContainerFilterElm.className = `form-group search-filter slider-container filter-${columnId}`;

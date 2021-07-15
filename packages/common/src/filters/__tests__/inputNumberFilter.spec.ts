@@ -50,6 +50,13 @@ describe('InputNumberFilter', () => {
     expect(() => filter.init(null as any)).toThrowError('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
   });
 
+  it('should have an aria-label when creating the filter', () => {
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('input.filter-number') as HTMLInputElement;
+
+    expect(filterInputElm.getAttribute('aria-label')).toBe('Number Search Filter');
+  });
+
   it('should initialize the filter and expect an input of type number', () => {
     filter.init(filterArguments);
     const filterCount = divContainer.querySelectorAll('input.filter-number').length;

@@ -9,7 +9,7 @@ import {
 } from '../interfaces/index';
 import { OperatorType, OperatorString, SearchTerm } from '../enums/index';
 import { BindingEventService } from '../services/bindingEvent.service';
-import { emptyElement } from '../services';
+import { emptyElement, toSentenceCase } from '../services';
 
 export class InputFilter implements Filter {
   protected _bindEventService: BindingEventService;
@@ -198,6 +198,7 @@ export class InputFilter implements Filter {
     inputElm.className = `form-control search-filter filter-${columnId}`;
     inputElm.autocomplete = 'off';
     inputElm.placeholder = placeholder;
+    inputElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
     inputElm.setAttribute('role', 'presentation');
 
     inputElm.value = (searchTerm ?? '') as string;

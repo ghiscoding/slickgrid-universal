@@ -40,6 +40,7 @@ import {
   titleCase,
   toCamelCase,
   toKebabCase,
+  toSentenceCase,
   toSnakeCase,
   unsubscribeAll,
   uniqueArray,
@@ -1460,6 +1461,37 @@ describe('Service/Utilies', () => {
     it('should return a kebab-case string when input is a sentence that may include numbers with only following char having the dash', () => {
       const output = toKebabCase(sentence + ' 123 ' + ' apples');
       expect(output).toBe('the-quick-brown-fox123-apples');
+    });
+  });
+
+  describe('toSentenceCase method', () => {
+    const camelCaseSentence = 'theQuickBrownFox';
+    const kebabCaseSentence = 'the-quick-brown-fox';
+
+    it('should return empty string when input is empty', () => {
+      const output = toSentenceCase('');
+      expect(output).toBe('');
+    });
+
+    it('should return empty string when input is null', () => {
+      const input = null as any;
+      const output = toSentenceCase(input);
+      expect(output).toBe(null as any);
+    });
+
+    it('should return a sentence case (as Title Case) string when input is camelCase type', () => {
+      const output = toSentenceCase(camelCaseSentence);
+      expect(output).toBe('The Quick Brown Fox');
+    });
+
+    it('should return a sentence case string when input is kebab-case type', () => {
+      const output = toSentenceCase(kebabCaseSentence);
+      expect(output).toBe('The quick brown fox');
+    });
+
+    it('should return a sentence case string when input is a sentence that may include numbers and extra spaces', () => {
+      const output = toSentenceCase(kebabCaseSentence + ' 123 ' + '  apples  ');
+      expect(output).toBe('The quick brown fox 123 apples');
     });
   });
 

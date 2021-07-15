@@ -67,6 +67,13 @@ describe('CompoundInputFilter', () => {
     expect(filter.inputType).toBe('text');
   });
 
+  it('should have an aria-label when creating the filter', () => {
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
+
+    expect(filterInputElm.getAttribute('aria-label')).toBe('Duration Search Filter');
+  });
+
   it('should have a placeholder when defined in its column definition', () => {
     const testValue = 'test placeholder';
     mockColumn.filter!.placeholder = testValue;
@@ -75,6 +82,7 @@ describe('CompoundInputFilter', () => {
     const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
 
     expect(filterInputElm.placeholder).toBe(testValue);
+    expect(filterInputElm.getAttribute('aria-label')).toBe('Duration Search Filter');
   });
 
   it('should call "setValues" and expect that value to be in the callback when triggered', () => {

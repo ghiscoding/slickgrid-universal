@@ -32,7 +32,7 @@ describe('InputPasswordFilter', () => {
     document.body.appendChild(divContainer);
     spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
-    mockColumn = { id: 'password', field: 'password', filterable: true, filter: { model: Filters.inputPassword } };
+    mockColumn = { id: 'passwordField', field: 'password', filterable: true, filter: { model: Filters.inputPassword } };
     filterArguments = {
       grid: gridStub,
       columnDef: mockColumn,
@@ -50,9 +50,16 @@ describe('InputPasswordFilter', () => {
     expect(() => filter.init(null as any)).toThrowError('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
   });
 
+  it('should have an aria-label when creating the filter', () => {
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('input.filter-passwordField') as HTMLInputElement;
+
+    expect(filterInputElm.getAttribute('aria-label')).toBe('Password Field Search Filter');
+  });
+
   it('should initialize the filter and expect an input of type password', () => {
     filter.init(filterArguments);
-    const filterCount = divContainer.querySelectorAll('input.filter-password').length;
+    const filterCount = divContainer.querySelectorAll('input.filter-passwordField').length;
 
     expect(spyGetHeaderRow).toHaveBeenCalled();
     expect(filterCount).toBe(1);

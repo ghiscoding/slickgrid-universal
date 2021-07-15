@@ -15,7 +15,7 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
-import { getDescendantProperty, getHtmlElementOffset, getTranslationPrefix, setDeepValue, } from '../services/utilities';
+import { getDescendantProperty, getHtmlElementOffset, getTranslationPrefix, setDeepValue, toSentenceCase, } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
 import { textValidator } from '../editorValidators/textValidator';
@@ -135,6 +135,7 @@ export class LongTextEditor implements Editor {
     this._textareaElm.rows = (compositeEditorOptions && textAreaRows > 3) ? 3 : textAreaRows;
     this._textareaElm.placeholder = placeholder;
     this._textareaElm.title = title;
+    this._textareaElm.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Text Editor`);
     this._wrapperElm.appendChild(this._textareaElm);
 
     const editorFooterElm = document.createElement('div');

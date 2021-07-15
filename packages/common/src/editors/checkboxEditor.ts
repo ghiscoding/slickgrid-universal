@@ -1,6 +1,6 @@
 import { Constants } from './../constants';
 import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption, SlickGrid, SlickNamespace } from './../interfaces/index';
-import { getDescendantProperty, setDeepValue } from '../services/utilities';
+import { getDescendantProperty, setDeepValue, toSentenceCase } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 
 // using external non-typed js libraries
@@ -78,6 +78,7 @@ export class CheckboxEditor implements Editor {
     this._input.title = title;
     this._input.type = 'checkbox';
     this._input.value = 'true';
+    this._input.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Checkbox Editor`);
 
     const cellContainer = this.args?.container;
     if (cellContainer && typeof cellContainer.appendChild === 'function') {

@@ -380,7 +380,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         modalCloseButtonElm.textContent = '×';
         modalCloseButtonElm.className = 'close';
         modalCloseButtonElm.dataset.action = 'close';
-        modalCloseButtonElm.dataset.ariaLabel = 'Close';
+        modalCloseButtonElm.setAttribute('aria-label', 'Close');
         if (this._options.showCloseButtonOutside) {
           modalHeaderTitleElm?.classList?.add('outside');
           modalCloseButtonElm?.classList?.add('outside');
@@ -388,6 +388,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
         const modalHeaderElm = document.createElement('div');
         modalHeaderElm.className = 'slick-editor-modal-header';
+        modalHeaderElm.setAttribute('aria-label', 'Close');
         modalHeaderElm.appendChild(modalHeaderTitleElm);
         modalHeaderElm.appendChild(modalCloseButtonElm);
 
@@ -406,7 +407,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         modalCancelButtonElm.type = 'button';
         modalCancelButtonElm.className = 'btn btn-cancel btn-default btn-sm';
         modalCancelButtonElm.dataset.action = 'cancel';
-        modalCancelButtonElm.dataset.ariaLabel = this.getLabelText('cancelButton', 'TEXT_CANCEL', 'Cancel');
+        modalCancelButtonElm.setAttribute('aria-label', this.getLabelText('cancelButton', 'TEXT_CANCEL', 'Cancel'));
         modalCancelButtonElm.textContent = this.getLabelText('cancelButton', 'TEXT_CANCEL', 'Cancel');
 
         let leftFooterText = '';
@@ -439,6 +440,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         this._modalSaveButtonElm.dataset.action = (modalType === 'create' || modalType === 'edit') ? 'save' : modalType;
         this._modalSaveButtonElm.dataset.ariaLabel = saveButtonText;
         this._modalSaveButtonElm.textContent = saveButtonText;
+        this._modalSaveButtonElm.setAttribute('aria-label', saveButtonText);
 
         const footerContainerElm = document.createElement('div');
         footerContainerElm.className = 'footer-buttons';
@@ -651,6 +653,8 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     resetButtonElm.name = columnId;
     resetButtonElm.title = this._options?.labels?.resetFormButton ?? 'Reset Form Input';
     resetButtonElm.className = 'btn btn-xs btn-editor-reset';
+    resetButtonElm.setAttribute('aria-label', 'Reset');
+
     if (this._options?.resetEditorButtonCssClass) {
       const resetBtnClasses = this._options?.resetEditorButtonCssClass.split(' ');
       for (const cssClass of resetBtnClasses) {

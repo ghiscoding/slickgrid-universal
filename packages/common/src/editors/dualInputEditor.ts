@@ -15,7 +15,7 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
-import { getDescendantProperty, setDeepValue } from '../services/utilities';
+import { getDescendantProperty, setDeepValue, toSentenceCase } from '../services/utilities';
 import { floatValidator, integerValidator, textValidator } from '../editorValidators';
 import { BindingEventService } from '../services/bindingEvent.service';
 
@@ -199,6 +199,7 @@ export class DualInputEditor implements Editor {
     }
     input.type = fieldType || 'text';
     input.setAttribute('role', 'presentation');
+    input.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Input Editor`);
     input.autocomplete = 'off';
     input.placeholder = editorSideParams.placeholder || '';
     input.title = editorSideParams.title || '';

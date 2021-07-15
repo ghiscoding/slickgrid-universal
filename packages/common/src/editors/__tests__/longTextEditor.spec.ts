@@ -128,6 +128,14 @@ describe('LongTextEditor', () => {
       expect(buttonSaveElm.textContent).toBe('Sauvegarder');
     });
 
+    it('should have an aria-label when creating the editor', () => {
+      gridOptionMock.translater = undefined as any;
+      editor = new LongTextEditor(editorArguments);
+      const editorElm = document.body.querySelector('.slick-large-editor-text.editor-title textarea') as HTMLTextAreaElement;
+
+      expect(editorElm.getAttribute('aria-label')).toBe('Title Text Editor');
+    });
+
     it('should initialize the editor with default constant text when translate service is not provided', () => {
       gridOptionMock.translater = undefined as any;
       editor = new LongTextEditor(editorArguments);

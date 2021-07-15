@@ -8,7 +8,7 @@ import {
   SlickGrid,
 } from '../interfaces/index';
 import { OperatorType, OperatorString, SearchTerm } from '../enums/index';
-import { emptyElement } from '../services/utilities';
+import { emptyElement, toSentenceCase } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 import { BindingEventService } from '../services/bindingEvent.service';
 
@@ -144,6 +144,7 @@ export class NativeSelectFilter implements Filter {
   buildFilterSelectFromCollection(collection: any[]): HTMLSelectElement {
     const columnId = this.columnDef?.id ?? '';
     const selectElm = document.createElement('select');
+    selectElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
     selectElm.className = `form-control search-filter filter-${columnId}`;
 
     const labelName = this.columnFilter.customStructure?.label ?? 'label';
