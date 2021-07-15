@@ -98,6 +98,13 @@ describe('InputPasswordEditor', () => {
       expect(editor.inputType).toBe('password');
     });
 
+    it('should have an aria-label when creating the editor', () => {
+      editor = new InputPasswordEditor(editorArguments);
+      const editorElm = divContainer.querySelector('input.editor-text.editor-title') as HTMLInputElement;
+
+      expect(editorElm.getAttribute('aria-label')).toBe('Title Input Editor');
+    });
+
     it('should initialize the editor and focus on the element after a small delay', () => {
       editor = new InputPasswordEditor(editorArguments);
       const editorCount = divContainer.querySelectorAll('input.editor-text.editor-title').length;

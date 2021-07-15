@@ -2,7 +2,7 @@ import { KeyCode } from '../enums/index';
 import { EditorArguments, EditorValidationResult } from '../interfaces/index';
 import { floatValidator } from '../editorValidators/floatValidator';
 import { InputEditor } from './inputEditor';
-import { getDescendantProperty } from '../services/utilities';
+import { getDescendantProperty, toSentenceCase } from '../services/utilities';
 
 const DEFAULT_DECIMAL_PLACES = 0;
 
@@ -28,6 +28,7 @@ export class FloatEditor extends InputEditor {
       this._input.placeholder = placeholder;
       this._input.title = title;
       this._input.step = `${inputStep}`;
+      this._input.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Number Editor`);
       const cellContainer = this.args.container;
       if (cellContainer && typeof cellContainer.appendChild === 'function') {
         cellContainer.appendChild(this._input);

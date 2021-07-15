@@ -115,6 +115,14 @@ describe('NativeSelectFilter', () => {
     expect(filterCount).toBe(1);
   });
 
+  it('should have an aria-label when creating the filter', () => {
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('select.form-control.search-filter.filter-gender') as HTMLInputElement;
+
+    expect(filterInputElm.getAttribute('aria-label')).toBe('Gender Search Filter');
+  });
+
   it('should trigger select change event and expect the callback to be called with the search terms we select from dropdown list', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
     mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];

@@ -59,6 +59,13 @@ describe('InputFilter', () => {
     expect(filter.inputType).toBe('text');
   });
 
+  it('should have an aria-label when creating the filter', () => {
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('input.filter-duration') as HTMLInputElement;
+
+    expect(filterInputElm.getAttribute('aria-label')).toBe('Duration Search Filter');
+  });
+
   it('should have a placeholder when defined in its column definition', () => {
     const testValue = 'test placeholder';
     mockColumn.filter!.placeholder = testValue;

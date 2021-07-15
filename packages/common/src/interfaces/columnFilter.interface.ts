@@ -12,6 +12,9 @@ import {
 import { Observable, Subject } from '../services/rxjsFacade';
 
 export interface ColumnFilter {
+  /** Optionally provide an aria-label for assistive scren reader, defaults to "{inputName} Search Filter" */
+  ariaLabel?: string;
+
   /** Do we want to bypass the Backend Query? Commonly used with an OData Backend Service, if we want to filter without calling the regular OData query. */
   bypassBackendQuery?: boolean;
 

@@ -66,6 +66,13 @@ describe('CompoundSliderFilter', () => {
     expect(filterCount).toBe(1);
   });
 
+  it('should have an aria-label when creating the filter', () => {
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('.input-group.search-filter.filter-duration input') as HTMLInputElement;
+
+    expect(filterInputElm.getAttribute('aria-label')).toBe('Duration Search Filter');
+  });
+
   it('should call "setValues" with "operator" set in the filter arguments and expect that value to be in the callback when triggered', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
     const filterArgs = { ...filterArguments, operator: '>' } as FilterArguments;

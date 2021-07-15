@@ -98,6 +98,13 @@ describe('InputEditor (TextEditor)', () => {
       expect(editor.inputType).toBe('text');
     });
 
+    it('should have an aria-label when creating the editor', () => {
+      editor = new InputEditor(editorArguments, 'text');
+      const editorElm = divContainer.querySelector('input.editor-text.editor-title') as HTMLInputElement;
+
+      expect(editorElm.getAttribute('aria-label')).toBe('Title Input Editor');
+    });
+
     it('should initialize the editor and focus on the element after a small delay', () => {
       editor = new InputEditor(editorArguments, 'text');
       const editorCount = divContainer.querySelectorAll('input.editor-text.editor-title').length;

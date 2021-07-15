@@ -98,6 +98,13 @@ describe('FloatEditor', () => {
       expect(editor.inputType).toBe('number');
     });
 
+    it('should have an aria-label when creating the editor', () => {
+      editor = new FloatEditor(editorArguments);
+      const editorElm = divContainer.querySelector('input.editor-text.editor-price') as HTMLInputElement;
+
+      expect(editorElm.getAttribute('aria-label')).toBe('Price Number Editor');
+    });
+
     it('should initialize the editor and focus on the element after a small delay', () => {
       editor = new FloatEditor(editorArguments);
       const editorCount = divContainer.querySelectorAll('input.editor-text.editor-price').length;

@@ -7,7 +7,7 @@ import {
   FilterCallback,
   SlickGrid,
 } from './../interfaces/index';
-import { emptyElement } from '../services/utilities';
+import { emptyElement, toSentenceCase } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 
 const DEFAULT_MIN_VALUE = 0;
@@ -188,6 +188,7 @@ export class SliderFilter implements Filter {
     this.filterInputElm.max = `${maxValue}`;
     this.filterInputElm.step = `${step}`;
     this.filterInputElm.name = this._elementRangeInputId;
+    this.filterInputElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
 
     const divContainerFilterElm = document.createElement('div');
     divContainerFilterElm.className = `search-filter slider-container filter-${columnId}`;

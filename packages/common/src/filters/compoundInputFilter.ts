@@ -12,7 +12,7 @@ import {
   SlickGrid,
 } from '../interfaces/index';
 import { buildSelectOperator } from './filterUtilities';
-import { emptyElement, getTranslationPrefix, mapOperatorToShorthandDesignation } from '../services/utilities';
+import { emptyElement, getTranslationPrefix, mapOperatorToShorthandDesignation, toSentenceCase } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
 
@@ -166,6 +166,7 @@ export class CompoundInputFilter implements Filter {
     inputElm.autocomplete = 'off';
     inputElm.placeholder = placeholder;
     inputElm.setAttribute('role', 'presentation');
+    inputElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
 
     return inputElm;
   }

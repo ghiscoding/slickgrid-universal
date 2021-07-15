@@ -17,6 +17,9 @@ export interface ColumnEditor {
    */
   alwaysSaveOnEnterKey?: boolean;
 
+  /** Optionally provide an aria-label for assistive scren reader, defaults to "{inputName} Input Editor" */
+  ariaLabel?: string;
+
   /**
    * Some Editor could support callbacks from their jQuery instance (for now only AutoComplete supports this), for example:
    * editor: { model:{ Editors.autoComplete }, callbacks: { _renderItem: (ul, item) => { ... } }}

@@ -92,6 +92,13 @@ describe('CheckboxEditor', () => {
       expect(editorCount).toBe(1);
     });
 
+    it('should have an aria-label when creating the editor', () => {
+      editor = new CheckboxEditor(editorArguments);
+      const editorElm = divContainer.querySelector('input.editor-checkbox') as HTMLInputElement;
+
+      expect(editorElm.getAttribute('aria-label')).toBe('Is Active Checkbox Editor');
+    });
+
     it('should initialize the editor even when user define his own editor options', () => {
       (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { minLength: 3 } as AutocompleteOption;
       editor = new CheckboxEditor(editorArguments);

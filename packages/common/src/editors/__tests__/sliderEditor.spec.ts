@@ -92,6 +92,13 @@ describe('SliderEditor', () => {
       expect(editorCount).toBe(1);
     });
 
+    it('should have an aria-label when creating the editor', () => {
+      editor = new SliderEditor(editorArguments);
+      const editorElm = divContainer.querySelector('.slider-editor input.editor-price') as HTMLInputElement;
+
+      expect(editorElm.getAttribute('aria-label')).toBe('Price Slider Editor');
+    });
+
     it('should have a title (tooltip) when defined in its column definition', () => {
       const testValue = 'test title';
       (mockColumn.internalColumnEditor as ColumnEditor).title = testValue;

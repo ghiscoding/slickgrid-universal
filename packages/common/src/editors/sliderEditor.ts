@@ -1,5 +1,5 @@
 import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption, SlickGrid, SlickNamespace } from '../interfaces/index';
-import { getDescendantProperty, setDeepValue } from '../services/utilities';
+import { getDescendantProperty, setDeepValue, toSentenceCase } from '../services/utilities';
 import { sliderValidator } from '../editorValidators/sliderValidator';
 import { BindingEventService } from '../services/bindingEvent.service';
 
@@ -318,6 +318,7 @@ export class SliderEditor implements Editor {
     inputElm.max = `${maxValue}`;
     inputElm.step = `${step}`;
     inputElm.className = `form-control slider-editor-input editor-${columnId} range ${this._elementRangeInputId}`;
+    inputElm.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Slider Editor`);
 
     const divContainerElm = document.createElement('div');
     divContainerElm.className = 'slider-container slider-editor';

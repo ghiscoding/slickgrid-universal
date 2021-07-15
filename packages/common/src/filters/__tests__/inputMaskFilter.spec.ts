@@ -64,6 +64,14 @@ describe('InputMaskFilter', () => {
     expect(filter.inputMask).toBe('000-000-0000');
   });
 
+  it('should have an aria-label when creating the filter', () => {
+    mockColumn.filter!.params = { mask: '000-000-0000' };
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('input.filter-mask') as HTMLInputElement;
+
+    expect(filterInputElm.getAttribute('aria-label')).toBe('Mask Search Filter');
+  });
+
   it('should initialize the filter and define the mask in the column definition instead and get the same output', () => {
     mockColumn.params = { mask: '000-000-0000' };
     filter.init(filterArguments);

@@ -1,3 +1,4 @@
+import 'jest-extended';
 import {
   Column,
   CompositeEditorOpenDetailOption,
@@ -703,12 +704,15 @@ describe('CompositeEditorService', () => {
 
       const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeFooterCancelBtnElm = compositeContainerElm.querySelector('.btn-cancel') as HTMLSelectElement;
+      const compositeFooterCloseBtnElm = compositeContainerElm.querySelector('.close') as HTMLSelectElement;
       compositeFooterCancelBtnElm.click();
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(compositeContainerElm).toBeTruthy();
       expect(compositeFooterCancelBtnElm).toBeTruthy();
+      expect(compositeFooterCancelBtnElm.getAttribute('aria-label')).toBe('Cancel');
+      expect(compositeFooterCloseBtnElm.getAttribute('aria-label')).toBe('Close');
       expect(getEditSpy).toHaveBeenCalled();
       expect(cancelSpy).toHaveBeenCalled();
     });
@@ -798,6 +802,8 @@ describe('CompositeEditorService', () => {
         expect(compositeContainerElm).toBeTruthy();
         expect(compositeHeaderElm).toBeTruthy();
         expect(compositeTitleElm).toBeTruthy();
+        expect(compositeFooterCancelBtnElm.getAttribute('aria-label')).toBe('Cancel');
+        expect(compositeFooterSaveBtnElm.getAttribute('aria-label')).toBe('Clone');
         expect(compositeTitleElm.textContent).toBe('Details');
         expect(productNameLabelElm.textContent).toBe('Product');
         expect(productNameDetailCellElm.classList.contains('modified')).toBe(true);
@@ -1062,6 +1068,7 @@ describe('CompositeEditorService', () => {
         expect(component).toBeTruthy();
         expect(input1ResetButtonElm).toBeTruthy();
         expect(input2ResetButtonElm).toBeTruthy();
+        expect(input1ResetButtonElm.getAttribute('aria-label')).toBe('Reset');
         expect(component.constructor).toBeDefined();
         expect(compositeContainerElm).toBeTruthy();
         expect(compositeHeaderElm).toBeTruthy();
@@ -1499,10 +1506,13 @@ describe('CompositeEditorService', () => {
         const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeHeaderElm = compositeContainerElm.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
         const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
+        const compositeFooterSaveBtnElm = compositeContainerElm.querySelector('.btn-save') as HTMLSelectElement;
 
         expect(component).toBeTruthy();
         expect(compositeContainerElm).toBeTruthy();
         expect(compositeTitleElm.textContent).toBe('Mass Update');
+        expect(compositeFooterSaveBtnElm.textContent).toBe('Mass Update');
+        expect(compositeFooterSaveBtnElm.getAttribute('aria-label')).toBe('Mass Update');
       });
 
       it('should expect to have a header title & modal type representing "mass-selection" when using "auto-mass" type and having some row(s) selected', () => {
@@ -1517,10 +1527,13 @@ describe('CompositeEditorService', () => {
         const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeHeaderElm = compositeContainerElm.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
         const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
+        const compositeFooterSaveBtnElm = compositeContainerElm.querySelector('.btn-save') as HTMLSelectElement;
 
         expect(component).toBeTruthy();
         expect(compositeContainerElm).toBeTruthy();
         expect(compositeTitleElm.textContent).toBe('Mass Selection');
+        expect(compositeFooterSaveBtnElm.textContent).toBe('Update Selection');
+        expect(compositeFooterSaveBtnElm.getAttribute('aria-label')).toBe('Update Selection');
       });
 
       it('should activate next available cell with an Editor when current active cell does not have an Editor', () => {
@@ -1867,6 +1880,8 @@ describe('CompositeEditorService', () => {
       expect(productNameLabelElm.textContent).toBe('Produit');
       expect(compositeFooterCancelBtnElm.textContent).toBe('Annuler');
       expect(compositeFooterSaveBtnElm.textContent).toBe('Sauvegarder');
+      expect(compositeFooterCancelBtnElm.getAttribute('aria-label')).toBe('Annuler');
+      expect(compositeFooterSaveBtnElm.getAttribute('aria-label')).toBe('Sauvegarder');
     });
 
     it('should have translate text when opening Composite Editor when cloning an Item', () => {
@@ -1899,6 +1914,7 @@ describe('CompositeEditorService', () => {
       expect(productNameLabelElm.textContent).toBe('Produit');
       expect(compositeFooterCancelBtnElm.textContent).toBe('Annuler');
       expect(compositeFooterSaveBtnElm.textContent).toBe('Cloner');
+      expect(compositeFooterSaveBtnElm.getAttribute('aria-label')).toBe('Cloner');
     });
 
     it('should have translated text when handling a saving of grid changes when "Mass Selection" save button is clicked', (done) => {
@@ -1942,7 +1958,9 @@ describe('CompositeEditorService', () => {
         expect(compositeTitleElm.textContent).toBe('Details');
         expect(field3LabelElm.textContent).toBe('Nom du Groupe - Durée');
         expect(compositeFooterCancelBtnElm.textContent).toBe('Annuler');
+        expect(compositeFooterCancelBtnElm.getAttribute('aria-label')).toBe('Annuler');
         expect(compositeFooterSaveBtnElm.textContent).toBe('Mettre à jour la sélection');
+        expect(compositeFooterSaveBtnElm.getAttribute('aria-label')).toBe('Mettre à jour la sélection');
         expect(updateItemsSpy).toHaveBeenCalledWith([mockProduct]);
         expect(cancelCommitSpy).toHaveBeenCalled();
         expect(setActiveRowSpy).toHaveBeenCalledWith(0);

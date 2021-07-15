@@ -990,6 +990,19 @@ export function toKebabCase(inputStr: string): string {
 }
 
 /**
+ * Converts a camelCase or kebab-case string to a sentence case, for example "helloWorld" will become "Hello World" and "hello-world" will become "Hello world"
+ * @param str the string to convert
+ * @return the string in kebab case
+ */
+export function toSentenceCase(inputStr: string): string {
+  if (typeof inputStr === 'string') {
+    const result = inputStr.replace(/([A-Z])|(\-)/g, ' $1').replace(/\s+/g, ' ').trim();
+    return result.charAt(0).toUpperCase() + result.slice(1);
+  }
+  return inputStr;
+}
+
+/**
  * Uses the logic function to find an item in an array or returns the default
  * value provided (empty object by default)
  * @param any[] array the array to filter

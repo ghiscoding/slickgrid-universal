@@ -1,6 +1,6 @@
 import { KeyCode } from '../enums/keyCode.enum';
 import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption, SlickGrid, SlickNamespace, } from '../interfaces/index';
-import { getDescendantProperty, setDeepValue } from '../services/utilities';
+import { getDescendantProperty, setDeepValue, toSentenceCase } from '../services/utilities';
 import { textValidator } from '../editorValidators/textValidator';
 import { BindingEventService } from '../services/bindingEvent.service';
 
@@ -92,6 +92,7 @@ export class InputEditor implements Editor {
     this._input.autocomplete = 'off';
     this._input.placeholder = placeholder;
     this._input.title = title;
+    this._input.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Input Editor`);
     const cellContainer = this.args.container;
     if (cellContainer && typeof cellContainer.appendChild === 'function') {
       cellContainer.appendChild(this._input);
