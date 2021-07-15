@@ -24,13 +24,13 @@ import { SortService } from './sort.service';
 declare const Slick: SlickNamespace;
 
 export class TreeDataService {
-  private _isLastFullToggleCollapsed = false;
-  private _lastToggleStateChange!: Omit<TreeToggleStateChange, 'fromItemId'>;
-  private _currentToggledItems: TreeToggledItem[] = [];
-  private _grid!: SlickGrid;
-  private _eventHandler: SlickEventHandler;
+  protected _isLastFullToggleCollapsed = false;
+  protected _lastToggleStateChange!: Omit<TreeToggleStateChange, 'fromItemId'>;
+  protected _currentToggledItems: TreeToggledItem[] = [];
+  protected _grid!: SlickGrid;
+  protected _eventHandler: SlickEventHandler;
 
-  constructor(private pubSubService: PubSubService, private sharedService: SharedService, private sortService: SortService) {
+  constructor(protected readonly pubSubService: PubSubService, protected readonly sharedService: SharedService, protected readonly sortService: SortService) {
     this._eventHandler = new Slick.EventHandler();
   }
 
@@ -328,10 +328,10 @@ export class TreeDataService {
   }
 
   // --
-  // private functions
+  // protected functions
   // ------------------
 
-  private handleOnCellClick(event: SlickEventData, args: OnClickEventArgs) {
+  protected handleOnCellClick(event: SlickEventData, args: OnClickEventArgs) {
     if (event && args) {
       const targetElm: any = event.target || {};
       const idPropName = this.gridOptions.datasetIdPropertyName ?? 'id';
@@ -379,7 +379,7 @@ export class TreeDataService {
     }
   }
 
-  private updateToggledItem(item: any, isCollapsed: boolean) {
+  protected updateToggledItem(item: any, isCollapsed: boolean) {
     const dataViewIdIdentifier = this.gridOptions?.datasetIdPropertyName ?? 'id';
     const childrenPropName = this.getTreeDataOptionPropName('childrenPropName');
     const collapsedPropName = this.getTreeDataOptionPropName('collapsedPropName');

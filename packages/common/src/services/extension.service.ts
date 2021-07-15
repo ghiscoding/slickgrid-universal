@@ -31,30 +31,30 @@ interface ExtensionWithColumnIndexPosition {
 }
 
 export class ExtensionService {
-  private _extensionCreatedList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
-  private _extensionList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
+  protected _extensionCreatedList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
+  protected _extensionList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
 
   get extensionList() {
     return this._extensionList;
   }
 
   constructor(
-    private readonly autoTooltipExtension: AutoTooltipExtension,
-    private readonly cellExternalCopyExtension: CellExternalCopyManagerExtension,
-    private readonly cellMenuExtension: CellMenuExtension,
-    private readonly checkboxSelectorExtension: CheckboxSelectorExtension,
-    private readonly columnPickerExtension: ColumnPickerExtension,
-    private readonly contextMenuExtension: ContextMenuExtension,
-    private readonly draggableGroupingExtension: DraggableGroupingExtension,
-    private readonly gridMenuExtension: GridMenuExtension,
-    private readonly groupItemMetaExtension: GroupItemMetaProviderExtension,
-    private readonly headerButtonExtension: HeaderButtonExtension,
-    private readonly headerMenuExtension: HeaderMenuExtension,
-    private readonly rowDetailViewExtension: RowDetailViewExtension,
-    private readonly rowMoveManagerExtension: RowMoveManagerExtension,
-    private readonly rowSelectionExtension: RowSelectionExtension,
-    private readonly sharedService: SharedService,
-    private readonly translaterService?: TranslaterService,
+    protected readonly autoTooltipExtension: AutoTooltipExtension,
+    protected readonly cellExternalCopyExtension: CellExternalCopyManagerExtension,
+    protected readonly cellMenuExtension: CellMenuExtension,
+    protected readonly checkboxSelectorExtension: CheckboxSelectorExtension,
+    protected readonly columnPickerExtension: ColumnPickerExtension,
+    protected readonly contextMenuExtension: ContextMenuExtension,
+    protected readonly draggableGroupingExtension: DraggableGroupingExtension,
+    protected readonly gridMenuExtension: GridMenuExtension,
+    protected readonly groupItemMetaExtension: GroupItemMetaProviderExtension,
+    protected readonly headerButtonExtension: HeaderButtonExtension,
+    protected readonly headerMenuExtension: HeaderMenuExtension,
+    protected readonly rowDetailViewExtension: RowDetailViewExtension,
+    protected readonly rowMoveManagerExtension: RowMoveManagerExtension,
+    protected readonly rowSelectionExtension: RowSelectionExtension,
+    protected readonly sharedService: SharedService,
+    protected readonly translaterService?: TranslaterService,
   ) { }
 
   /** Dispose of all the controls & plugins */
@@ -424,7 +424,7 @@ export class ExtensionService {
   }
 
   //
-  // private functions
+  // protected functions
   // -------------------
 
   /**
@@ -435,7 +435,7 @@ export class ExtensionService {
    * @param columnDefinitions
    * @param gridOptions
    */
-  private createExtensionByTheirColumnIndex(featureWithIndexPositions: ExtensionWithColumnIndexPosition[], columnDefinitions: Column[], gridOptions: GridOption) {
+  protected createExtensionByTheirColumnIndex(featureWithIndexPositions: ExtensionWithColumnIndexPosition[], columnDefinitions: Column[], gridOptions: GridOption) {
     // 1- first step is to sort them by their index position
     featureWithIndexPositions.sort((feat1, feat2) => feat1.columnIndexPosition - feat2.columnIndexPosition);
 
@@ -452,7 +452,7 @@ export class ExtensionService {
    * Get an Extension that was created by calling its "create" method (there are only 3 extensions which uses this method)
    *  @param name
    */
-  private getCreatedExtensionByName<P extends (SlickControlList | SlickPluginList) = any, E extends Extension = any>(name: ExtensionName): ExtensionModel<P, E> | undefined {
+  protected getCreatedExtensionByName<P extends (SlickControlList | SlickPluginList) = any, E extends Extension = any>(name: ExtensionName): ExtensionModel<P, E> | undefined {
     if (this._extensionCreatedList && this._extensionCreatedList.hasOwnProperty(name)) {
       return this._extensionCreatedList[name];
     }
@@ -464,7 +464,7 @@ export class ExtensionService {
    * @param externalExtension - extension instance
    * @param extensionName - extension name
    */
-  private recreateExternalAddon(externalExtension: Extension, extensionName: ExtensionName) {
+  protected recreateExternalAddon(externalExtension: Extension, extensionName: ExtensionName) {
     externalExtension.dispose();
     const instance = externalExtension.register();
     const extension = this.getExtensionByName(extensionName);
@@ -474,7 +474,7 @@ export class ExtensionService {
   }
 
   /** Translate an array of items from an input key and assign translated value to the output key */
-  private translateItems(items: any[], inputKey: string, outputKey: string) {
+  protected translateItems(items: any[], inputKey: string, outputKey: string) {
     if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }

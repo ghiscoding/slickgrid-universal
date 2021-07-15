@@ -6,9 +6,9 @@ import { RxJsFacade } from '../services/rxjsFacade';
 
 export class FilterFactory {
   /** The options from the SlickgridConfig */
-  private _options: any;
+  protected _options: any;
 
-  constructor(private config: SlickgridConfig, private readonly translaterService?: TranslaterService, private readonly collectionService?: CollectionService, private rxjs?: RxJsFacade) {
+  constructor(protected config: SlickgridConfig, protected readonly translaterService?: TranslaterService, protected readonly collectionService?: CollectionService, protected rxjs?: RxJsFacade) {
     this._options = this.config?.options ?? {};
   }
 

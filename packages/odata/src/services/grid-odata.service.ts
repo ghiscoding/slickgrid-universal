@@ -36,12 +36,12 @@ const DEFAULT_ITEMS_PER_PAGE = 25;
 const DEFAULT_PAGE_SIZE = 20;
 
 export class GridOdataService implements BackendService {
-  private _currentFilters: CurrentFilter[] = [];
-  private _currentPagination: CurrentPagination | null = null;
-  private _currentSorters: CurrentSorter[] = [];
-  private _columnDefinitions: Column[] = [];
-  private _grid: SlickGrid | undefined;
-  private _odataService: OdataQueryBuilderService;
+  protected _currentFilters: CurrentFilter[] = [];
+  protected _currentPagination: CurrentPagination | null = null;
+  protected _currentSorters: CurrentSorter[] = [];
+  protected _columnDefinitions: Column[] = [];
+  protected _grid: SlickGrid | undefined;
+  protected _odataService: OdataQueryBuilderService;
   options?: Partial<OdataOption>;
   pagination: Pagination | undefined;
   defaultOptions: OdataOption = {
@@ -61,7 +61,7 @@ export class GridOdataService implements BackendService {
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
-  private get _gridOptions(): GridOption {
+  protected get _gridOptions(): GridOption {
     return (this._grid?.getOptions) ? this._grid.getOptions() : {};
   }
 
@@ -513,13 +513,13 @@ export class GridOdataService implements BackendService {
   }
 
   //
-  // private functions
+  // protected functions
   // -------------------
   /**
    * Cast provided filters (could be in multiple format) into an array of ColumnFilter
    * @param columnFilters
    */
-  private castFilterToColumnFilters(columnFilters: ColumnFilters | CurrentFilter[]): CurrentFilter[] {
+  protected castFilterToColumnFilters(columnFilters: ColumnFilters | CurrentFilter[]): CurrentFilter[] {
     // keep current filters & always save it as an array (columnFilters can be an object when it is dealt by SlickGrid Filter)
     const filtersArray: ColumnFilter[] = (typeof columnFilters === 'object') ? Object.keys(columnFilters).map(key => (columnFilters as any)[key]) : columnFilters;
 
@@ -542,7 +542,7 @@ export class GridOdataService implements BackendService {
   /**
    * Filter by a range of searchTerms (2 searchTerms OR 1 string separated by 2 dots "value1..value2")
    */
-  private filterBySearchTermRange(fieldName: string, operator: OperatorType | OperatorString, searchTerms: SearchTerm[]) {
+  protected filterBySearchTermRange(fieldName: string, operator: OperatorType | OperatorString, searchTerms: SearchTerm[]) {
     let query = '';
     if (Array.isArray(searchTerms) && searchTerms.length === 2) {
       if (operator === OperatorType.rangeInclusive) {
@@ -567,7 +567,7 @@ export class GridOdataService implements BackendService {
   /**
    * Normalizes the search value according to field type and oData version.
    */
-  private normalizeSearchValue(fieldType: typeof FieldType[keyof typeof FieldType], searchValue: any, version: number) {
+  protected normalizeSearchValue(fieldType: typeof FieldType[keyof typeof FieldType], searchValue: any, version: number) {
     switch (fieldType) {
       case FieldType.date:
         searchValue = parseUtcDate(searchValue as string, true);

@@ -139,10 +139,10 @@ export class OdataQueryBuilderService {
   }
 
   //
-  // private functions
+  // protected functions
   // -------------------
 
-  private addToFilterQueueWhenNotExists(filterStr: string) {
+  protected addToFilterQueueWhenNotExists(filterStr: string) {
     if (this._odataOptions.filterQueue && this._odataOptions.filterQueue.indexOf(filterStr) === -1) {
       this._odataOptions.filterQueue.push(filterStr);
     }

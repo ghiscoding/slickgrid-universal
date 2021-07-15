@@ -6,8 +6,8 @@ interface PubSubEvent {
 }
 
 export class EventPubSubService implements PubSubService {
-  private _elementSource: Element;
-  private _subscribedEvents: PubSubEvent[] = [];
+  protected _elementSource: Element;
+  protected _subscribedEvents: PubSubEvent[] = [];
 
   eventNamingStyle = EventNamingStyle.camelCase;
 

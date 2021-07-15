@@ -3,7 +3,7 @@ import { BackendServiceApi, GridOption } from '../interfaces/index';
 import { Observable, RxJsFacade, Subject } from './rxjsFacade';
 
 export class BackendUtilityService {
-  constructor(private rxjs?: RxJsFacade) { }
+  constructor(protected rxjs?: RxJsFacade) { }
 
   addRxJsResource(rxjs: RxJsFacade) {
     this.rxjs = rxjs;

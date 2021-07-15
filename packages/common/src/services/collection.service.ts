@@ -11,7 +11,7 @@ import { uniqueArray } from './utilities';
 import { TranslaterService } from './translater.service';
 
 export class CollectionService<T = any> {
-  constructor(private translaterService?: TranslaterService) { }
+  constructor(protected readonly translaterService?: TranslaterService) { }
 
   /**
    * Filter 1 or more items from a collection

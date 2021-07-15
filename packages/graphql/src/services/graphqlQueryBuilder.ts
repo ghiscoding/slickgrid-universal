@@ -14,7 +14,7 @@ export default class GraphqlQueryBuilder {
 
   /* Constructor, query/mutator you wish to use, and an alias or filter arguments. */
   // eslint-disable-next-line @typescript-eslint/ban-types
-  constructor(private queryFnName: string, aliasOrFilter?: string | object) {
+  constructor(protected queryFnName: string, aliasOrFilter?: string | object) {
     if (typeof aliasOrFilter === 'string') {
       this.alias = aliasOrFilter;
     } else if (typeof aliasOrFilter === 'object') {
@@ -80,10 +80,10 @@ export default class GraphqlQueryBuilder {
   }
 
   // --
-  // PRIVATE FUNCTIONS
-  // -----------------
+  // protected functions
+  // --------------------
 
-  private parceFind(_levelA: any[]) {
+  protected parceFind(_levelA: any[]) {
     const propsA = _levelA.map((_currentValue, index) => {
       const itemX = _levelA[index];
 
@@ -111,7 +111,7 @@ export default class GraphqlQueryBuilder {
     return propsA.join(',');
   }
 
-  private getGraphQLValue(value: any) {
+  protected getGraphQLValue(value: any) {
     if (typeof value === 'string') {
       value = JSON.stringify(value);
     } else if (Array.isArray(value)) {
@@ -127,7 +127,7 @@ export default class GraphqlQueryBuilder {
     return value;
   }
 
-  private objectToString(obj: any) {
+  protected objectToString(obj: any) {
     const sourceA = [];
 
     for (const prop of Object.keys(obj)) {

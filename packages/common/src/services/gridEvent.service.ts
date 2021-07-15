@@ -13,7 +13,7 @@ import {
 declare const Slick: SlickNamespace;
 
 export class GridEventService {
-  private _eventHandler: SlickEventHandler;
+  protected _eventHandler: SlickEventHandler;
 
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;

@@ -1,7 +1,7 @@
 import { ElementEventListener } from '../interfaces/elementEventListener.interface';
 
 export class BindingEventService {
-  private _boundedEvents: ElementEventListener[] = [];
+  protected _boundedEvents: ElementEventListener[] = [];
 
   /** Bind an event listener to any element */
   bind(element: Element, eventNameOrNames: string | string[], listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions) {
