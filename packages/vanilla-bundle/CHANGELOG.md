@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.16.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.15.0...v0.16.0) (2021-07-16)
+
+
+### Bug Fixes
+
+* **events:** use nullish coalescing in slickgrid event prefix ([6ff551b](https://github.com/ghiscoding/slickgrid-universal/commit/6ff551b6dab1ba1d8b471273f3419bdb29a60a35))
+* **tree:** same dataset length but w/different prop should refresh Tree ([549008a](https://github.com/ghiscoding/slickgrid-universal/commit/549008a40ef34a95200c275fbf84bbf7b10aa4bb))
+
+
+
+
+
 # [0.15.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.14.1...v0.15.0) (2021-07-06)
 
 
