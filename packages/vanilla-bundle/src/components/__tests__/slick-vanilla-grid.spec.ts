@@ -2147,6 +2147,22 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(hierarchicalSpy).toHaveBeenCalledWith(mockHierarchical);
         expect(refreshTreeSpy).toHaveBeenCalled();
       });
+
+      it('should also expect "refreshTreeDataFilters" method to be called even when the dataset length is the same but still has different properties (e.g. different filename)', () => {
+        const mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'new-vacation.txt', parentId: 0 }];
+        const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }] }];
+        const hierarchicalSpy = jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'set');
+        jest.spyOn(treeDataServiceStub, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ hierarchical: mockHierarchical as any[], flat: mockFlatDataset as any[] });
+        const refreshTreeSpy = jest.spyOn(filterServiceStub, 'refreshTreeDataFilters');
+
+        component.dataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'old-vacation.txt', parentId: 0 }];
+        component.gridOptions = { enableTreeData: true, treeDataOptions: { columnId: 'file', parentPropName: 'parentId', childrenPropName: 'files', initialSort: { columndId: 'file', direction: 'ASC' } } } as unknown as GridOption;
+        component.initialization(divContainer, slickEventHandler);
+        component.dataset = mockFlatDataset;
+
+        expect(hierarchicalSpy).toHaveBeenCalledWith(mockHierarchical);
+        expect(refreshTreeSpy).toHaveBeenCalled();
+      });
     });
   });
 });
