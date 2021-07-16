@@ -248,8 +248,6 @@
       .slick-headerrow-column textarea {
         margin-right: 0;
         padding: var(--slick-header-input-padding, $header-input-padding);
-        // this is the only CSS variable not working, so only use SASS for now and leave it commented out so we have traces of it
-        width: $header-input-width; // var(--slick-header-input-width, $header-input-width);
         height: var(--slick-header-input-height, $header-input-height);
         -moz-box-sizing: border-box;
         -webkit-box-sizing: border-box;
