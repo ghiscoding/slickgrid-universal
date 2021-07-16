@@ -1,3 +1,4 @@
+import { dequal } from 'dequal/lite';
 import 'flatpickr/dist/l10n/fr';
 import 'slickgrid/lib/jquery.event.drag-2.3.0';
 import 'slickgrid/lib/jquery.mousewheel';
@@ -169,13 +170,14 @@ export class SlickVanillaGridBundle {
   }
   set dataset(newDataset: any[]) {
     const prevDatasetLn = this._currentDatasetLength;
+    const isDatasetEqual = dequal(newDataset, this.dataset || []);
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions?.enableDeepCopyDatasetOnPageLoad);
     let data = isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], newDataset) : newDataset;
 
-    // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert & sort of the array
-    if (this.slickGrid && this.gridOptions?.enableTreeData && Array.isArray(newDataset) && (newDataset.length > 0 || newDataset.length !== prevDatasetLn)) {
+    // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
+    if (this.slickGrid && this.gridOptions?.enableTreeData && Array.isArray(newDataset) && (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual)) {
       this._isDatasetHierarchicalInitialized = false;
-      data = this.sortTreeDataset(newDataset);
+      data = this.sortTreeDataset(newDataset, !isDatasetEqual); // if dataset changed, then force a refresh anyway
     }
 
     this.refreshGridData(data || []);
@@ -193,6 +195,7 @@ export class SlickVanillaGridBundle {
   }
 
   set datasetHierarchical(newHierarchicalDataset: any[] | undefined) {
+    const isDatasetEqual = dequal(newHierarchicalDataset, this.sharedService.hierarchicalDataset || []);
     const prevFlatDatasetLn = this._currentDatasetLength;
     this.sharedService.hierarchicalDataset = newHierarchicalDataset;
 
@@ -209,7 +212,7 @@ export class SlickVanillaGridBundle {
       // however we need 1 cpu cycle before having the DataView refreshed, so we need to wrap this check in a setTimeout
       setTimeout(() => {
         const flatDatasetLn = this.dataView.getItemCount();
-        if (flatDatasetLn !== prevFlatDatasetLn && flatDatasetLn > 0) {
+        if (flatDatasetLn > 0 && (flatDatasetLn !== prevFlatDatasetLn || !isDatasetEqual)) {
           this.filterService.refreshTreeDataFilters();
         }
       });
@@ -1410,7 +1413,7 @@ export class SlickVanillaGridBundle {
    * Takes a flat dataset with parent/child relationship, sort it (via its tree structure) and return the sorted flat array
    * @returns {Array<Object>} sort flat parent/child dataset
    */
-  private sortTreeDataset<T>(flatDatasetInput: T[]): T[] {
+  private sortTreeDataset<T>(flatDatasetInput: T[], forceGridRefresh = false): T[] {
     const prevDatasetLn = this._currentDatasetLength;
     let sortedDatasetResult;
     let flatDatasetOutput: any[] = [];
@@ -1434,7 +1437,7 @@ export class SlickVanillaGridBundle {
     }
 
     // if we add/remove item(s) from the dataset, we need to also refresh our tree data filters
-    if (flatDatasetInput.length > 0 && flatDatasetInput.length !== prevDatasetLn) {
+    if (flatDatasetInput.length > 0 && (forceGridRefresh || flatDatasetInput.length !== prevDatasetLn)) {
       this.filterService.refreshTreeDataFilters(flatDatasetOutput);
     }
 
