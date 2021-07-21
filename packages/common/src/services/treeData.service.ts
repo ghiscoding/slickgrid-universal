@@ -114,7 +114,7 @@ export class TreeDataService {
    * @param {Boolean} shouldPreProcessFullToggle - should we pre-process a full toggle on all items? defaults to True
    * @param {Boolean} shouldTriggerEvent - should we trigger a toggled item event? defaults to False
    */
-  applyToggledItemStateChanges(treeToggledItems: TreeToggledItem[], previousFullToggleType?: Exclude<ToggleStateChangeType, 'toggle'> | Exclude<ToggleStateChangeTypeString, 'toggle'>, shouldPreProcessFullToggle = true, shouldTriggerEvent = false) {
+  applyToggledItemStateChanges(treeToggledItems: TreeToggledItem[], previousFullToggleType?: Exclude<ToggleStateChangeType, 'toggle-collapse' | 'toggle-expand'> | Exclude<ToggleStateChangeTypeString, 'toggle-collapse' | 'toggle-expand'>, shouldPreProcessFullToggle = true, shouldTriggerEvent = false) {
     if (Array.isArray(treeToggledItems)) {
       const collapsedPropName = this.getTreeDataOptionPropName('collapsedPropName');
       const hasChildrenPropName = this.getTreeDataOptionPropName('hasChildrenPropName');
