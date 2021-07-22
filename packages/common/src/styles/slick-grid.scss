@@ -209,7 +209,7 @@
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: #{$header-row-count};
+    -webkit-line-clamp: var(--slick-header-row-count, $header-row-count);
   }
 
   .slick-resizable-handle {

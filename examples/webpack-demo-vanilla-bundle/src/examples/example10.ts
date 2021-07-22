@@ -125,6 +125,10 @@ export class Example10 {
     const presetHighestDay = moment().add(20, 'days').format('YYYY-MM-DD');
 
     this.gridOptions = {
+      enableAutoTooltip: true,
+      autoTooltipOptions: {
+        enableForHeaderCells: true
+      },
       enableTranslate: true,
       translater: this.translateService, // pass the TranslateService instance to the grid
       enableAutoResize: false,

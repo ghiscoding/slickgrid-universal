@@ -15,14 +15,12 @@ import {
   RowDetailViewOption,
   RowMoveManagerOption,
   RowSelectionModelOption,
-  SlickAutoTooltips,
   SlickCellExternalCopyManager,
   SlickCellMenu,
   SlickCellRangeDecorator,
   SlickCellRangeSelector,
   SlickCellSelectionModel,
   SlickCheckboxSelectColumn,
-  SlickColumnPicker,
   SlickCompositeEditor,
   SlickContextMenu,
   SlickDataView,
@@ -44,6 +42,7 @@ import {
   SlickRowSelectionModel,
 } from './index';
 import { CompositeEditorOption } from './compositeEditorOption.interface';
+import { AutoTooltipPlugin } from '../plugins/index';
 
 /**
  * Slick Grid class interface of the entire library and it's multiple controls/plugins.
@@ -109,7 +108,7 @@ export interface SlickNamespace {
   // -------------------------------
 
   /** AutoTooltips is a 3rd party plugin (addon) to show/hide tooltips when columns are too narrow to fit content. */
-  AutoTooltips: new (options?: AutoTooltipOption) => SlickAutoTooltips;
+  AutoTooltips: new (options?: AutoTooltipOption) => AutoTooltipPlugin;
 
   /** Cell External Copy Manager is a 3rd party plugin (addon) which is an Excel like copy cell range addon */
   CellExternalCopyManager: new (options?: ExcelCopyBufferOption) => SlickCellExternalCopyManager;
@@ -137,9 +136,6 @@ export interface SlickNamespace {
 
   // all of the controls are under the Controls namespace
   Controls: {
-    /** A control to add a Column Picker (right+click on any column header to reveal the column picker) */
-    ColumnPicker: new (columns: Column[], grid: SlickGrid, options?: GridOption) => SlickColumnPicker;
-
     /** A control to add a Grid Menu (hambuger menu on top-right of the grid) */
     GridMenu: new (columns: Column[], grid: SlickGrid, options?: GridOption) => SlickGridMenu;
   },

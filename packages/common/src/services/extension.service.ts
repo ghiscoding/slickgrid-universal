@@ -6,13 +6,12 @@ import 'slickgrid/plugins/slick.cellselectionmodel';
 import { Column, Extension, ExtensionModel, GridOption, SlickRowSelectionModel, } from '../interfaces/index';
 import { ExtensionList, ExtensionName, SlickControlList, SlickPluginList } from '../enums/index';
 import {
-  AutoTooltipExtension,
   CellExternalCopyManagerExtension,
   CellMenuExtension,
   CheckboxSelectorExtension,
-  ColumnPickerExtension,
   ContextMenuExtension,
   DraggableGroupingExtension,
+  ExtensionUtility,
   GridMenuExtension,
   GroupItemMetaProviderExtension,
   HeaderButtonExtension,
@@ -23,6 +22,8 @@ import {
 } from '../extensions/index';
 import { SharedService } from './shared.service';
 import { TranslaterService } from './translater.service';
+import { AutoTooltipPlugin } from '../plugins/index';
+import { ColumnPickerControl } from '../controls/index';
 
 interface ExtensionWithColumnIndexPosition {
   name: ExtensionName;
@@ -31,6 +32,7 @@ interface ExtensionWithColumnIndexPosition {
 }
 
 export class ExtensionService {
+  protected _columnPickerControl?: ColumnPickerControl;
   protected _extensionCreatedList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
   protected _extensionList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
 
@@ -38,12 +40,15 @@ export class ExtensionService {
     return this._extensionList;
   }
 
+  get gridOptions(): GridOption {
+    return this.sharedService.gridOptions || {};
+  }
+
   constructor(
-    protected readonly autoTooltipExtension: AutoTooltipExtension,
+    protected readonly extensionUtility: ExtensionUtility,
     protected readonly cellExternalCopyExtension: CellExternalCopyManagerExtension,
     protected readonly cellMenuExtension: CellMenuExtension,
     protected readonly checkboxSelectorExtension: CheckboxSelectorExtension,
-    protected readonly columnPickerExtension: ColumnPickerExtension,
     protected readonly contextMenuExtension: ContextMenuExtension,
     protected readonly draggableGroupingExtension: DraggableGroupingExtension,
     protected readonly gridMenuExtension: GridMenuExtension,
@@ -119,23 +124,24 @@ export class ExtensionService {
 
   /** Bind/Create different Controls or Plugins after the Grid is created */
   bindDifferentExtensions() {
-    if (this.sharedService && this.sharedService.gridOptions) {
+    if (this.gridOptions) {
       // make sure all columns are translated before creating ColumnPicker/GridMenu Controls
       // this is to avoid having hidden columns not being translated on first load
-      if (this.sharedService.gridOptions.enableTranslate) {
+      if (this.gridOptions.enableTranslate) {
         this.translateItems(this.sharedService.allColumns, 'nameKey', 'name');
       }
 
       // Auto Tooltip Plugin
-      if (this.sharedService.gridOptions.enableAutoTooltip && this.autoTooltipExtension && this.autoTooltipExtension.register) {
-        const instance = this.autoTooltipExtension.register();
+      if (this.gridOptions.enableAutoTooltip) {
+        const instance = new AutoTooltipPlugin(this.gridOptions?.autoTooltipOptions);
         if (instance) {
-          this._extensionList[ExtensionName.autoTooltip] = { name: ExtensionName.autoTooltip, class: this.autoTooltipExtension, instance };
+          this.sharedService.slickGrid.registerPlugin<AutoTooltipPlugin>(instance);
+          this._extensionList[ExtensionName.autoTooltip] = { name: ExtensionName.autoTooltip, class: {}, instance };
         }
       }
 
       // Cell External Copy Manager Plugin (Excel Like)
-      if (this.sharedService.gridOptions.enableExcelCopyBuffer && this.cellExternalCopyExtension && this.cellExternalCopyExtension.register) {
+      if (this.gridOptions.enableExcelCopyBuffer && this.cellExternalCopyExtension && this.cellExternalCopyExtension.register) {
         const instance = this.cellExternalCopyExtension.register();
         if (instance) {
           this._extensionList[ExtensionName.cellExternalCopyManager] = { name: ExtensionName.cellExternalCopyManager, class: this.cellExternalCopyExtension, instance };
@@ -143,7 +149,7 @@ export class ExtensionService {
       }
 
       // (Action) Cell Menu Plugin
-      if (this.sharedService.gridOptions.enableCellMenu && this.cellMenuExtension && this.cellMenuExtension.register) {
+      if (this.gridOptions.enableCellMenu && this.cellMenuExtension && this.cellMenuExtension.register) {
         const instance = this.cellMenuExtension.register();
         if (instance) {
           this._extensionList[ExtensionName.cellMenu] = { name: ExtensionName.cellMenu, class: this.cellMenuExtension, instance };
@@ -152,7 +158,7 @@ export class ExtensionService {
 
       // Row Selection Plugin
       // this extension should be registered BEFORE the CheckboxSelector, RowDetail or RowMoveManager since it can be use by these 2 plugins
-      if (!this.getExtensionByName(ExtensionName.rowSelection) && (this.sharedService.gridOptions.enableRowSelection || this.sharedService.gridOptions.enableCheckboxSelector || this.sharedService.gridOptions.enableRowDetailView || this.sharedService.gridOptions.enableRowMoveManager)) {
+      if (!this.getExtensionByName(ExtensionName.rowSelection) && (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector || this.sharedService.gridOptions.enableRowDetailView || this.sharedService.gridOptions.enableRowMoveManager)) {
         if (this.rowSelectionExtension && this.rowSelectionExtension.register) {
           const instance = this.rowSelectionExtension.register();
           if (instance) {
@@ -162,7 +168,7 @@ export class ExtensionService {
       }
 
       // Checkbox Selector Plugin
-      if (this.sharedService.gridOptions.enableCheckboxSelector && this.checkboxSelectorExtension && this.checkboxSelectorExtension.register) {
+      if (this.gridOptions.enableCheckboxSelector && this.checkboxSelectorExtension && this.checkboxSelectorExtension.register) {
         const rowSelectionExtension = this.getExtensionByName(ExtensionName.rowSelection);
         this.checkboxSelectorExtension.register(rowSelectionExtension?.instance as SlickRowSelectionModel);
         const createdExtension = this.getCreatedExtensionByName(ExtensionName.checkboxSelector); // get the instance from when it was really created earlier
@@ -173,15 +179,18 @@ export class ExtensionService {
       }
 
       // Column Picker Control
-      if (this.sharedService.gridOptions.enableColumnPicker && this.columnPickerExtension && this.columnPickerExtension.register) {
-        const instance = this.columnPickerExtension.register();
-        if (instance) {
-          this._extensionList[ExtensionName.columnPicker] = { name: ExtensionName.columnPicker, class: this.columnPickerExtension, instance };
+      if (this.gridOptions.enableColumnPicker) {
+        this._columnPickerControl = new ColumnPickerControl(this.extensionUtility, this.sharedService);
+        if (this._columnPickerControl) {
+          if (this.gridOptions.columnPicker?.onExtensionRegistered) {
+            this.gridOptions.columnPicker.onExtensionRegistered(this._columnPickerControl);
+          }
+          this._extensionList[ExtensionName.columnPicker] = { name: ExtensionName.columnPicker, class: {}, instance: this._columnPickerControl };
         }
       }
 
       // Context Menu Control
-      if (this.sharedService.gridOptions.enableContextMenu && this.contextMenuExtension && this.contextMenuExtension.register) {
+      if (this.gridOptions.enableContextMenu && this.contextMenuExtension && this.contextMenuExtension.register) {
         const instance = this.contextMenuExtension.register();
         if (instance) {
           this._extensionList[ExtensionName.contextMenu] = { name: ExtensionName.contextMenu, class: this.contextMenuExtension, instance };
@@ -189,7 +198,7 @@ export class ExtensionService {
       }
 
       // Draggable Grouping Plugin
-      if (this.sharedService.gridOptions.enableDraggableGrouping && this.draggableGroupingExtension && this.draggableGroupingExtension.register) {
+      if (this.gridOptions.enableDraggableGrouping && this.draggableGroupingExtension && this.draggableGroupingExtension.register) {
         const instance = this.draggableGroupingExtension.register();
         if (instance) {
           this._extensionList[ExtensionName.draggableGrouping] = { name: ExtensionName.draggableGrouping, class: this.draggableGroupingExtension, instance };
@@ -197,7 +206,7 @@ export class ExtensionService {
       }
 
       // Grid Menu Control
-      if (this.sharedService.gridOptions.enableGridMenu && this.gridMenuExtension && this.gridMenuExtension.register) {
+      if (this.gridOptions.enableGridMenu && this.gridMenuExtension && this.gridMenuExtension.register) {
         const instance = this.gridMenuExtension.register();
         if (instance) {
           this._extensionList[ExtensionName.gridMenu] = { name: ExtensionName.gridMenu, class: this.gridMenuExtension, instance };
@@ -206,7 +215,7 @@ export class ExtensionService {
 
       // Grouping Plugin
       // register the group item metadata provider to add expand/collapse group handlers
-      if (this.sharedService.gridOptions.enableDraggableGrouping || this.sharedService.gridOptions.enableGrouping) {
+      if (this.gridOptions.enableDraggableGrouping || this.gridOptions.enableGrouping) {
         if (this.groupItemMetaExtension && this.groupItemMetaExtension.register) {
           const instance = this.groupItemMetaExtension.register();
           if (instance) {
@@ -216,7 +225,7 @@ export class ExtensionService {
       }
 
       // Header Button Plugin
-      if (this.sharedService.gridOptions.enableHeaderButton && this.headerButtonExtension && this.headerButtonExtension.register) {
+      if (this.gridOptions.enableHeaderButton && this.headerButtonExtension && this.headerButtonExtension.register) {
         const instance = this.headerButtonExtension.register();
         if (instance) {
           this._extensionList[ExtensionName.headerButton] = { name: ExtensionName.headerButton, class: this.headerButtonExtension, instance };
@@ -224,7 +233,7 @@ export class ExtensionService {
       }
 
       // Header Menu Plugin
-      if (this.sharedService.gridOptions.enableHeaderMenu && this.headerMenuExtension && this.headerMenuExtension.register) {
+      if (this.gridOptions.enableHeaderMenu && this.headerMenuExtension && this.headerMenuExtension.register) {
         const instance = this.headerMenuExtension.register();
         if (instance) {
           this._extensionList[ExtensionName.headerMenu] = { name: ExtensionName.headerMenu, class: this.headerMenuExtension, instance };
@@ -232,7 +241,7 @@ export class ExtensionService {
       }
 
       // Row Detail View Plugin
-      if (this.sharedService.gridOptions.enableRowDetailView) {
+      if (this.gridOptions.enableRowDetailView) {
         if (this.rowDetailViewExtension && this.rowDetailViewExtension.register) {
           const rowSelectionExtension = this.getExtensionByName(ExtensionName.rowSelection);
           this.rowDetailViewExtension.register(rowSelectionExtension?.instance);
@@ -245,7 +254,7 @@ export class ExtensionService {
       }
 
       // Row Move Manager Plugin
-      if (this.sharedService.gridOptions.enableRowMoveManager && this.rowMoveManagerExtension && this.rowMoveManagerExtension.register) {
+      if (this.gridOptions.enableRowMoveManager && this.rowMoveManagerExtension && this.rowMoveManagerExtension.register) {
         const rowSelectionExtension = this.getExtensionByName(ExtensionName.rowSelection);
         this.rowMoveManagerExtension.register(rowSelectionExtension?.instance as SlickRowSelectionModel);
         const createdExtension = this.getCreatedExtensionByName(ExtensionName.rowMoveManager); // get the instance from when it was really created earlier
@@ -333,8 +342,8 @@ export class ExtensionService {
 
   /** Translate the Column Picker and it's last 2 checkboxes */
   translateColumnPicker() {
-    if (this.columnPickerExtension && this.columnPickerExtension.translateColumnPicker) {
-      this.columnPickerExtension.translateColumnPicker();
+    if (this._columnPickerControl?.translateColumnPicker) {
+      this._columnPickerControl.translateColumnPicker();
     }
   }
 
@@ -370,7 +379,7 @@ export class ExtensionService {
    * @param new column definitions (optional)
    */
   translateColumnHeaders(locale?: boolean | string, newColumnDefinitions?: Column[]) {
-    if (this.sharedService && this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
+    if (this.sharedService && this.gridOptions && this.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
 
@@ -407,18 +416,18 @@ export class ExtensionService {
       this.sharedService.slickGrid.setColumns(collection);
     }
 
-    // recreate the Column Picker when enabled
-    if (this.sharedService.gridOptions.enableColumnPicker) {
-      this.recreateExternalAddon(this.columnPickerExtension, ExtensionName.columnPicker);
+    // replace Column Picker columns with newer data which includes new translations
+    if (this.gridOptions.enableColumnPicker && this._columnPickerControl) {
+      this._columnPickerControl.columns = this.sharedService.allColumns;
     }
 
     // recreate the Grid Menu when enabled
-    if (this.sharedService.gridOptions.enableGridMenu) {
+    if (this.gridOptions.enableGridMenu) {
       this.recreateExternalAddon(this.gridMenuExtension, ExtensionName.gridMenu);
     }
 
     // recreate the Header Menu when enabled
-    if (this.sharedService.gridOptions.enableHeaderMenu) {
+    if (this.gridOptions.enableHeaderMenu) {
       this.recreateExternalAddon(this.headerMenuExtension, ExtensionName.headerMenu);
     }
   }
@@ -475,7 +484,7 @@ export class ExtensionService {
 
   /** Translate an array of items from an input key and assign translated value to the output key */
   protected translateItems(items: any[], inputKey: string, outputKey: string) {
-    if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
+    if (this.gridOptions?.enableTranslate && !(this.translaterService?.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
 
