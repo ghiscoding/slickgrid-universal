@@ -52,14 +52,9 @@ module.exports = ({ production } = {}) => ({
   },
   module: {
     rules: [
-      {
-        test: /\.css$/i,
-        use: [{ loader: MiniCssExtractPlugin.loader }, 'css-loader']
-      },
+      { test: /\.css$/i, use: [{ loader: MiniCssExtractPlugin.loader }, 'css-loader'] },
       { test: /\.(sass|scss)$/, use: ['style-loader', 'css-loader', 'sass-loader'], issuer: /\.[tj]s$/i },
       { test: /\.(sass|scss)$/, use: ['css-loader', 'sass-loader'], issuer: /\.html?$/i },
-      { test: /\.(png|gif|jpg|cur)$/i, loader: 'url-loader', type: 'asset/resource', options: { limit: 8192 } },
-      { test: /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/, type: 'asset/resource' },
       { test: /\.html$/i, loader: 'html-loader', options: { esModule: false } },
       { test: /\.ts?$/, use: [{ loader: 'ts-loader', options: { transpileOnly: true } }] }
     ],
