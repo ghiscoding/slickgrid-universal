@@ -234,7 +234,7 @@ export interface SlickGrid {
   getPreHeaderPanelRight(): HTMLElement;
 
   /** Get rendered range */
-  getRenderedRange(viewportTop: number, viewportLeft: number): { top: number; bottom: number; leftPx: number; rightPx: number; };
+  getRenderedRange(viewportTop?: number, viewportLeft?: number): { top: number; bottom: number; leftPx: number; rightPx: number; };
 
   /** Get scrollbar dimensions */
   getScrollbarDimensions(): { height: number; width: number; };
