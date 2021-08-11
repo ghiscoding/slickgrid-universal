@@ -586,12 +586,15 @@ export class ResizerService {
     const autoFixResizeTimeout = this.gridOptions?.autoFixResizeTimeout ?? (5 * 60 * 60); // interval is 200ms, so 4x is 1sec, so (4 * 60 * 60 = 60min)
     const autoFixResizeRequiredGoodCount = this.gridOptions?.autoFixResizeRequiredGoodCount ?? 5;
 
-    const headerElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-header`);
-    const viewportElm = document.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-viewport`);
+    const headerElm = this._gridParentContainerElm.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-header`);
+    const viewportElm = this._gridParentContainerElm.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-viewport`);
     let intervalExecutionCounter = 0;
     let resizeGoodCount = 0;
 
     if (headerElm && viewportElm && this.gridOptions.autoFixResizeWhenBrokenStyleDetected) {
+      const dataLn = this.dataView.getItemCount();
+      const columns = this._grid.getColumns() || [];
+
       this._intervalId = setInterval(async () => {
         const headerTitleRowHeight = 44; // this one is set by SASS/CSS so let's hard code it
         const headerPos = getHtmlElementOffset(headerElm);
@@ -613,6 +616,13 @@ export class ResizerService {
         const containerElmOffset = getHtmlElementOffset(this._gridParentContainerElm);
         let isResizeRequired = (headerPos?.top === 0 || ((headerOffsetTop - viewportOffsetTop) > 2) || (containerElmOffset?.left === 0 && containerElmOffset?.top === 0)) ? true : false;
 
+        // another condition for a required resize is when the grid is hidden (not in current tab) then its "rightPx" rendered range will be 0px
+        // if that's the case then we know the grid is still hidden and we need to resize it whenever it becomes visible (when its "rightPx" becomes greater than 0 then it's visible)
+        const renderedRangeRightPx = this._grid.getRenderedRange?.()?.rightPx ?? 0;
+        if (!isResizeRequired && dataLn > 0 && renderedRangeRightPx === 0 && columns.length > 1) {
+          isResizeRequired = true;
+        }
+
         // user could choose to manually stop the looped of auto resize fix
         if (this._isStopResizeIntervalRequested) {
           isResizeRequired = false;
@@ -620,17 +630,22 @@ export class ResizerService {
         }
 
         // visible grid (shown to the user and not hidden in another Tab will have an offsetParent defined)
-        const isGridVisible = !!(document.querySelector<HTMLDivElement>(`.${this.gridUid}`)?.offsetParent ?? false);
+        let isGridVisible = !!(document.querySelector<HTMLDivElement>(`.${this.gridUid}`)?.offsetParent ?? false);
 
-        if (isGridVisible && (isResizeRequired || resizeGoodCount < autoFixResizeRequiredGoodCount) && (containerElmOffset?.left > 0 || containerElmOffset?.top > 0)) {
+        if (isGridVisible && (isResizeRequired || containerElmOffset?.left === 0 || containerElmOffset?.top === 0)) {
           await this.resizeGrid();
 
-          // make sure the grid is still visible after doing the resize and if so we consider it a good resize (it might not be visible if user quickly switch to another Tab)
-          const isGridStillVisible = !!(document.querySelector<HTMLDivElement>(`.${this.gridUid}`)?.offsetParent ?? false);
-          if (isGridStillVisible) {
+          // make sure the grid is still visible after doing the resize
+          isGridVisible = !!(document.querySelector<HTMLDivElement>(`.${this.gridUid}`)?.offsetParent ?? false);
+          if (isGridVisible) {
             isResizeRequired = false;
-            resizeGoodCount++;
           }
+        }
+
+        // make sure the grid is still visible after optionally doing a resize
+        // if it visible then we can consider it a good resize (it might not be visible if user quickly switch to another Tab)
+        if (isGridVisible) {
+          resizeGoodCount++;
         }
 
         if (isGridVisible && !isResizeRequired && (resizeGoodCount >= autoFixResizeRequiredGoodCount || intervalExecutionCounter++ >= autoFixResizeTimeout)) {
