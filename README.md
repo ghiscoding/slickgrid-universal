@@ -30,7 +30,7 @@ You might be wondering why was this monorepo created? Here are a few of the reas
 ### Frameworks using this monorepo
   - [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) `3.x` now uses Slickgrid-Universal
   - [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) `3.x` now uses Slickgrid-Universal
-  - [Vanilla bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) if you want to use it with plain JavaScript or TypeScript without targeting any framework.
+  - [Vanilla bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) is to use it with plain JavaScript or TypeScript without targeting any particular framework.
 
 The Vanilla Implementation (not associated to any framework) is built with [WebPack](https://webpack.js.org/) and is also used to test all the UI functionalities [Cypress](https://www.cypress.io/) (E2E tests). This [Vanilla bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) package is also what we use in our SalesForce implementation (with Lightning Web Component), hence the creation of this monorepo library.
 
@@ -41,9 +41,9 @@ Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +13,00
 
 | Package or Lib Name | Description |
 | --------| ----------- |
-| [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) | Angular-Slickgrid (framework) implementation |
-| [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) | Aurelia-Slickgrid (framework) implementation |
-| [slickgrid-universal/webpack-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle) | standalone package written in plain TypeScript for demo & UI testing (**do not use in production**, this is only for testing). |
+| [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) | Angular-Slickgrid for Angular framework |
+| [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) | Aurelia-Slickgrid for Aurelia framework |
+| [slickgrid-universal/webpack-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle) | standalone package written in plain TypeScript for demo and UI testing (**do not use in production**, this is only for demo/testing purpose). |
 
 ### Available Public Packages
 
@@ -64,7 +64,7 @@ Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +13,00
 | [@slickgrid-universal/vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) | [![npm](https://img.shields.io/npm/v/@slickgrid-universal/vanilla-bundle.svg?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/vanilla-bundle) | Vanilla TypeScript/ES6 implementation | [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/vanilla-bundle/CHANGELOG.md) 
 
 ## Installation
-To get going with this monorepo, you will need to clone the repo and then follow the steps below
+To get going and do development with this monorepo, you will need to clone the repo and then follow the steps below
 
 1. Install npm packages with Yarn classic (`1.x` version) since this lib uses Yarn Workspaces and so you need to use Yarn to install all packages
 ```bash
@@ -98,6 +98,8 @@ yarn run dev:watch
 ```
 
 ### Tests
+You must go through Installation Steps 1-3 prior to run the unit tests OR Steps 1-4 when running E2E tests.
+
 #### Jest Unit Tests
 To run all unit tests (with Jest), you can run these commands
 ```bash
