@@ -301,4 +301,12 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
 
     cy.get(`.grid5 .slick-group-toggle.expanded`).should('have.length', 2);
   });
+
+  it('should be able to click on "Dynamically Toggle First Parent" expect only the first parent item to get collapsed', () => {
+    cy.get('[data-test=dynamically-toggle-first-parent-btn]')
+      .contains('Dynamically Toggle First Parent')
+      .click();
+
+    cy.get(`.grid5 .slick-group-toggle.expanded`).should('have.length', 0);
+  });
 });

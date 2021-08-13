@@ -305,6 +305,20 @@ export class Example5 {
     console.log(this.sgb.treeDataService.getToggledItems());
   }
 
+  dynamicallyToggledFirstParent() {
+    const parentPropName = 'parentId';
+    const treeLevelPropName = 'treeLevel'; // if undefined in your options, the default prop name is "__treeLevel"
+    const newTreeLevel = 1;
+
+    // find first parent object and toggle it
+    const childItemFound = this.sgb.dataset.find((item) => item[treeLevelPropName] === newTreeLevel);
+    const parentItemFound = this.sgb.dataView.getItemByIdx(childItemFound[parentPropName]);
+
+    if (childItemFound && parentItemFound) {
+      this.sgb.treeDataService.dynamicallyToggleItemState([{ itemId: parentItemFound.id, isCollapsed: !parentItemFound.__collapsed }]);
+    }
+  }
+
   reapplyToggledItems() {
     this.sgb.treeDataService.applyToggledItemStateChanges(this.treeToggleItems);
   }

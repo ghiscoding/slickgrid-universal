@@ -31,6 +31,7 @@ const mockDataView = {
   init: jest.fn(),
   destroy: jest.fn(),
   getItemMetadata: jest.fn(),
+  getItemCount: jest.fn(),
   getItems: jest.fn(),
 };
 
@@ -40,6 +41,7 @@ const gridStub = {
   getColumnIndex: jest.fn(),
   getColumns: jest.fn(),
   getOptions: jest.fn(),
+  getRenderedRange: jest.fn(),
   getViewports: jest.fn(),
   getData: () => mockDataView,
   getUID: () => GRID_UID,
@@ -634,6 +636,38 @@ describe('Resizer Service', () => {
           expect(resizeSpy).toHaveBeenCalled();
           done();
         }, 15);
+      });
+
+      it('should try to resize grid when its UI is deemed broken by the 2nd condition check of "getRenderedRange"', (done) => {
+        const resizeSpy = jest.spyOn(service, 'resizeGrid').mockReturnValue(Promise.resolve({ height: 150, width: 350 }));
+        Object.defineProperty(document.querySelector(`.${GRID_UID}`), 'offsetParent', { writable: true, configurable: true, value: 55 });
+        jest.spyOn(mockDataView, 'getItemCount').mockReturnValue(99);
+        jest.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 0, bottom: 0, leftPx: 0, rightPx: 0 });
+
+        mockGridOptions.autoFixResizeTimeout = 10;
+        mockGridOptions.autoFixResizeRequiredGoodCount = 5;
+        mockGridOptions.autoFixResizeWhenBrokenStyleDetected = true;
+        service.intervalRetryDelay = 1;
+
+        const divHeaderElm = divContainer.querySelector('.slick-header') as HTMLDivElement;
+        const divViewportElm = divContainer.querySelector('.slick-viewport') as HTMLDivElement;
+        jest.spyOn(divContainer, 'getBoundingClientRect').mockReturnValue({ top: 10, left: 20 } as unknown as DOMRect);
+        jest.spyOn(divHeaderElm, 'getBoundingClientRect').mockReturnValue({ top: 5, left: 25 } as unknown as DOMRect);
+        jest.spyOn(divViewportElm, 'getBoundingClientRect').mockReturnValue({ top: 98, left: 25 } as unknown as DOMRect);
+        divHeaderElm.style.top = '5px';
+        divHeaderElm.style.left = '25px';
+        divContainer.style.top = '10px';
+        divContainer.style.left = '20px';
+        service.init(gridStub, divContainer);
+
+        setTimeout(() => {
+          expect(divContainer.outerHTML).toBeTruthy();
+          expect(resizeSpy).toHaveBeenCalled();
+          expect(resizeSpy).toHaveBeenNthCalledWith(2);
+          expect(resizeSpy).toHaveBeenNthCalledWith(3);
+          done();
+          service.requestStopOfAutoFixResizeGrid();
+        }, 20);
       });
 
       it('should try to resize grid when its UI is deemed broken but expect an error shown in the console when "resizeGrid" throws an error', (done) => {
