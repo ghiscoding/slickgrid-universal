@@ -421,7 +421,8 @@ export class LongTextEditor implements Editor {
     this._isValueTouched = true;
 
     if (!this.args.compositeEditorOptions) {
-      if (keyCode === KeyCode.ENTER && event.ctrlKey) {
+      if ((keyCode === KeyCode.ENTER && event.ctrlKey) || (event.ctrlKey && event.key.toUpperCase() === 'S')) {
+        event.preventDefault();
         this.save();
       } else if (keyCode === KeyCode.ESCAPE) {
         event.preventDefault();
