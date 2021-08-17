@@ -64,7 +64,7 @@
   "dependencies": {
     "assign-deep": "^1.0.1",
     "dequal": "^2.0.2",
-    "dompurify": "^2.3.0",
+    "dompurify": "^2.3.1",
     "flatpickr": "^4.6.9",
     "jquery": "~3.5.1",
     "jquery-ui-dist": "^1.12.1",
@@ -86,7 +86,7 @@
     "postcss": "^8.3.6",
     "postcss-cli": "^8.3.1",
     "rimraf": "^3.0.2",
-    "sass": "^1.37.5"
+    "sass": "^1.38.0"
   },
   "engines": {
     "node": ">=14.15.0",
