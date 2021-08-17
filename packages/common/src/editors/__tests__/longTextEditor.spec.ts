@@ -463,6 +463,50 @@ describe('LongTextEditor', () => {
         expect(editor.isValueTouched()).toBe(true);
       });
 
+      it('should call the "save" method when the Ctrl+s combination event is triggered', () => {
+        mockItemData = { id: 1, title: 'task', isActive: true };
+        gridOptionMock.autoCommitEdit = true;
+        const spyCommit = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+
+        editor = new LongTextEditor(editorArguments);
+        editor.loadValue(mockItemData);
+        editor.setValue('task 2');
+        const spySave = jest.spyOn(editor, 'save');
+        const editorElm = editor.editorDomElement;
+
+        editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
+          key: 's',
+          ctrlKey: true,
+          bubbles: true
+        }));
+
+        expect(spyCommit).toHaveBeenCalled();
+        expect(spySave).toHaveBeenCalled();
+        expect(editor.isValueTouched()).toBe(true);
+      });
+
+      it('should call the "save" method when the Ctrl+S (uppercase S) combination event is triggered', () => {
+        mockItemData = { id: 1, title: 'task', isActive: true };
+        gridOptionMock.autoCommitEdit = true;
+        const spyCommit = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+
+        editor = new LongTextEditor(editorArguments);
+        editor.loadValue(mockItemData);
+        editor.setValue('task 2');
+        const spySave = jest.spyOn(editor, 'save');
+        const editorElm = editor.editorDomElement;
+
+        editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
+          key: 'S',
+          ctrlKey: true,
+          bubbles: true
+        }));
+
+        expect(spyCommit).toHaveBeenCalled();
+        expect(spySave).toHaveBeenCalled();
+        expect(editor.isValueTouched()).toBe(true);
+      });
+
       it('should call the "cancel" method when the Escape keydown event is triggered', () => {
         editor = new LongTextEditor(editorArguments);
         editor.loadValue(mockItemData);
