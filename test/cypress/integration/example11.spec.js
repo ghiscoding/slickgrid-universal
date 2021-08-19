@@ -594,6 +594,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .find('.slick-header-column:nth(2)')
       .trigger('mouseover')
       .children('.slick-header-menubutton')
+      .invoke('show')
       .click();
 
     cy.get('.slick-header-menu')
