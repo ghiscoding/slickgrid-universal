@@ -9,29 +9,30 @@ import {
   SlickNamespace,
 } from '../interfaces/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
-import { emptyElement, SharedService } from '../services';
 import { BindingEventService } from '../services/bindingEvent.service';
+import { PubSubService } from '../services/pubSub.service';
+import { SharedService } from '../services/shared.service';
+import { emptyElement, sanitizeTextByAvailableSanitizer } from '../services';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
 
 /**
  * A control to add a Column Picker (right+click on any column header to reveal the column picker)
- * Add the slick.columnpicker.(js|css) files and register it with the grid.
  * @class ColumnPickerControl
  * @constructor
  */
 export class ColumnPickerControl {
-  private _bindEventService: BindingEventService;
-  private _columns: Column[] = [];
-  private _columnTitleElm!: HTMLDivElement;
-  private _eventHandler!: SlickEventHandler;
-  private _gridUid = '';
-  private _listElm!: HTMLSpanElement;
-  private _menuElm!: HTMLDivElement;
-  private columnCheckboxes: HTMLInputElement[] = [];
+  protected _bindEventService: BindingEventService;
+  protected _columns: Column[] = [];
+  protected _columnTitleElm!: HTMLDivElement;
+  protected _eventHandler!: SlickEventHandler;
+  protected _gridUid = '';
+  protected _listElm!: HTMLSpanElement;
+  protected _menuElm!: HTMLDivElement;
+  protected columnCheckboxes: HTMLInputElement[] = [];
 
-  private _defaults = {
+  protected _defaults = {
     // the last 2 checkboxes titles
     hideForceFitButton: false,
     hideSyncResizeButton: false,
@@ -41,11 +42,12 @@ export class ColumnPickerControl {
   } as ColumnPickerOption;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
-  constructor(private readonly extensionUtility: ExtensionUtility, private readonly sharedService: SharedService) {
+  constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: PubSubService, protected readonly sharedService: SharedService) {
     this._bindEventService = new BindingEventService();
     this._eventHandler = new Slick.EventHandler();
-    this._gridUid = '';
     this._columns = this.sharedService.allColumns ?? [];
+    this._gridUid = this.grid?.getUID?.() ?? '';
+
     this.init();
   }
 
@@ -61,11 +63,11 @@ export class ColumnPickerControl {
   }
 
   get controlOptions(): ColumnPickerOption {
-    return this.sharedService.gridOptions.columnPicker || {};
+    return this.gridOptions.columnPicker || {};
   }
 
   get gridOptions(): GridOption {
-    return this.grid.getOptions?.() ?? {};
+    return this.sharedService.gridOptions ?? {};
   }
 
   get grid(): SlickGrid {
@@ -93,21 +95,21 @@ export class ColumnPickerControl {
 
     this._menuElm = document.createElement('div');
     this._menuElm.className = `slick-columnpicker ${this._gridUid}`;
-    this._menuElm.style.display = 'none';
+    this._menuElm.style.visibility = 'hidden';
 
-    const gridMenuButtonElm = document.createElement('button');
-    gridMenuButtonElm.className = 'close';
-    gridMenuButtonElm.type = 'button';
-    gridMenuButtonElm.dataset.dismiss = 'slick-columnpicker';
-    gridMenuButtonElm.setAttribute('aria-label', 'Close');
+    const closePickerButtonElm = document.createElement('button');
+    closePickerButtonElm.className = 'close';
+    closePickerButtonElm.type = 'button';
+    closePickerButtonElm.dataset.dismiss = 'slick-columnpicker';
+    closePickerButtonElm.setAttribute('aria-label', 'Close');
 
     const closeSpanElm = document.createElement('span');
     closeSpanElm.className = 'close';
     closeSpanElm.innerHTML = '&times;';
     closeSpanElm.setAttribute('aria-hidden', 'true');
 
-    gridMenuButtonElm.appendChild(closeSpanElm);
-    this._menuElm.appendChild(gridMenuButtonElm);
+    closePickerButtonElm.appendChild(closeSpanElm);
+    this._menuElm.appendChild(closePickerButtonElm);
 
     // user could pass a title on top of the columns list
     if (this.controlOptions?.columnTitle) {
@@ -144,7 +146,7 @@ export class ColumnPickerControl {
    * @returns {Array<Object>} - all columns array
    */
   getAllColumns() {
-    return this.columns;
+    return this._columns;
   }
 
   /**
@@ -158,7 +160,7 @@ export class ColumnPickerControl {
   /** Mouse down handler when clicking anywhere in the DOM body */
   handleBodyMouseDown(e: DOMEvent<HTMLDivElement>) {
     if ((this._menuElm !== e.target && !this._menuElm.contains(e.target)) || e.target.className === 'close') {
-      this._menuElm.style.display = 'none';
+      this._menuElm.style.visibility = 'hidden';
     }
   }
 
@@ -183,8 +185,8 @@ export class ColumnPickerControl {
 
       inputElm = document.createElement('input');
       inputElm.type = 'checkbox';
-      inputElm.id = `${this._gridUid}colpicker-${columnId}`;
-      inputElm.dataset.columnId = `${columnId}`;
+      inputElm.id = `${this._gridUid}-colpicker-${columnId}`;
+      inputElm.dataset.columnid = `${columnId}`;
       const colIndex = this.grid.getColumnIndex(columnId);
       if (colIndex >= 0) {
         inputElm.checked = true;
@@ -199,8 +201,8 @@ export class ColumnPickerControl {
       }
 
       const labelElm = document.createElement('label');
-      labelElm.htmlFor = `${this._gridUid}colpicker-${columnId}`;
-      labelElm.innerHTML = columnLabel;
+      labelElm.htmlFor = `${this._gridUid}-colpicker-${columnId}`;
+      labelElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, columnLabel);
       liElm.appendChild(labelElm);
     }
 
@@ -215,12 +217,12 @@ export class ColumnPickerControl {
       this._listElm.appendChild(liElm);
       inputElm = document.createElement('input');
       inputElm.type = 'checkbox';
-      inputElm.id = `${this._gridUid}colpicker-forcefit`;
+      inputElm.id = `${this._gridUid}-colpicker-forcefit`;
       inputElm.dataset.option = 'autoresize';
       liElm.appendChild(inputElm);
 
       const labelElm = document.createElement('label');
-      labelElm.htmlFor = `${this._gridUid}colpicker-forcefit`;
+      labelElm.htmlFor = `${this._gridUid}-colpicker-forcefit`;
       labelElm.textContent = `${forceFitTitle ?? ''}`;
       liElm.appendChild(labelElm);
       if (this.grid.getOptions().forceFitColumns) {
@@ -235,12 +237,12 @@ export class ColumnPickerControl {
 
       inputElm = document.createElement('input');
       inputElm.type = 'checkbox';
-      inputElm.id = `${this._gridUid}colpicker-syncresize`;
+      inputElm.id = `${this._gridUid}-colpicker-syncresize`;
       inputElm.dataset.option = 'syncresize';
       liElm.appendChild(inputElm);
 
       const labelElm = document.createElement('label');
-      labelElm.htmlFor = `${this._gridUid}colpicker-syncresize`;
+      labelElm.htmlFor = `${this._gridUid}-colpicker-syncresize`;
       labelElm.textContent = `${syncResizeTitle ?? ''}`;
       liElm.appendChild(labelElm);
       if (this.grid.getOptions().syncColumnCellResize) {
@@ -251,7 +253,7 @@ export class ColumnPickerControl {
     this._menuElm.style.top = `${(e as any).pageY - 10}px`;
     this._menuElm.style.left = `${(e as any).pageX - 10}px`;
     this._menuElm.style.maxHeight = `${document.body.clientHeight - (e as any).pageY - 10}px`;
-    this._menuElm.style.display = 'block';
+    this._menuElm.style.visibility = 'visible';
     this._menuElm.appendChild(this._listElm);
   }
 
@@ -302,7 +304,7 @@ export class ColumnPickerControl {
 
     if (e.target.type === 'checkbox') {
       const isChecked = e.target.checked;
-      const columnId = e.target.dataset.columnId || '';
+      const columnId = e.target.dataset.columnid || '';
       const visibleColumns: Column[] = [];
       this.columnCheckboxes.forEach((columnCheckbox: HTMLInputElement, idx: number) => {
         if (columnCheckbox.checked) {
@@ -327,27 +329,31 @@ export class ColumnPickerControl {
       // will not have the "selected" CSS class because it wasn't visible at the time.
       // To bypass this problem we can simply recall the row selection with the same selection and that will trigger a re-apply of the CSS class
       // on all columns including the column we just made visible
-      if (this.sharedService.gridOptions.enableRowSelection && isChecked) {
+      if (this.gridOptions.enableRowSelection && isChecked) {
         const rowSelection = this.grid.getSelectedRows();
         this.grid.setSelectedRows(rowSelection);
       }
 
       // if we're using frozen columns, we need to readjust pinning when the new hidden column becomes visible again on the left pinning container
       // we need to readjust frozenColumn index because SlickGrid freezes by index and has no knowledge of the columns themselves
-      const frozenColumnIndex = this.sharedService.gridOptions.frozenColumn ?? -1;
+      const frozenColumnIndex = this.gridOptions.frozenColumn ?? -1;
       if (frozenColumnIndex >= 0) {
         this.extensionUtility.readjustFrozenColumnIndexWhenNeeded(frozenColumnIndex, this.columns, visibleColumns);
       }
 
+      const callbackArgs = {
+        columnId,
+        showing: isChecked,
+        allColumns: this.columns,
+        visibleColumns,
+        columns: visibleColumns,
+        grid: this.grid
+      };
+
       // execute user callback when defined
-      if (this.controlOptions && typeof this.controlOptions.onColumnsChanged === 'function') {
-        this.controlOptions.onColumnsChanged(e, {
-          columnId,
-          showing: isChecked,
-          allColumns: this.columns,
-          columns: visibleColumns,
-          grid: this.grid
-        });
+      this.pubSubService.publish('columnPicker:onColumnsChanged', callbackArgs);
+      if (typeof this.controlOptions?.onColumnsChanged === 'function') {
+        this.controlOptions.onColumnsChanged(e, callbackArgs);
       }
     }
   }
@@ -363,7 +369,7 @@ export class ColumnPickerControl {
     }
 
     // translate all columns (including hidden columns)
-    this.extensionUtility.translateItems(this.sharedService.allColumns, 'nameKey', 'name');
+    this.extensionUtility.translateItems(this._columns, 'nameKey', 'name');
 
     // update the Titles of each sections (command, customTitle, ...)
     if (this.controlOptions) {
@@ -371,7 +377,7 @@ export class ColumnPickerControl {
     }
   }
 
-  private emptyColumnPickerTitles() {
+  protected emptyColumnPickerTitles() {
     if (this.controlOptions) {
       this.controlOptions.columnTitle = '';
       this.controlOptions.forceFitTitle = '';

@@ -3,6 +3,7 @@ import { RowSelectionExtension } from '../rowSelectionExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { BackendUtilityService } from '../../services';
 
 declare const Slick: SlickNamespace;
 
@@ -24,14 +25,16 @@ describe('rowSelectionExtension', () => {
 
   let extension: RowSelectionExtension;
   let extensionUtility: ExtensionUtility;
+  let backendUtilityService: BackendUtilityService;
   let sharedService: SharedService;
   let translateService: TranslateServiceStub;
   const gridOptionsMock = { enableRowSelection: true } as GridOption;
 
   beforeEach(() => {
     sharedService = new SharedService();
+    backendUtilityService = new BackendUtilityService();
     translateService = new TranslateServiceStub();
-    extensionUtility = new ExtensionUtility(sharedService, translateService);
+    extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
     extension = new RowSelectionExtension(sharedService);
   });
 

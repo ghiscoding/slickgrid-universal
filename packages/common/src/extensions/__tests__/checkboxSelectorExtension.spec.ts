@@ -3,6 +3,7 @@ import { CheckboxSelectorExtension } from '../checkboxSelectorExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { BackendUtilityService } from '../../services';
 
 jest.useFakeTimers();
 
@@ -43,6 +44,7 @@ describe('checkboxSelectorExtension', () => {
   Slick.RowSelectionModel = mockSelectionModel;
 
   let extension: CheckboxSelectorExtension;
+  let backendUtilityService: BackendUtilityService;
   let extensionUtility: ExtensionUtility;
   let sharedService: SharedService;
   let translateService: TranslateServiceStub;
@@ -50,8 +52,9 @@ describe('checkboxSelectorExtension', () => {
 
   beforeEach(() => {
     sharedService = new SharedService();
+    backendUtilityService = new BackendUtilityService();
     translateService = new TranslateServiceStub();
-    extensionUtility = new ExtensionUtility(sharedService, translateService);
+    extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
     extension = new CheckboxSelectorExtension(sharedService);
   });
 

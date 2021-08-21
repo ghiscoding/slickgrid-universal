@@ -1,6 +1,9 @@
 import { Column, GridMenuItem, GridMenuLabel, GridOption, MenuCallbackArgs, } from './index';
 
 export interface GridMenuOption {
+  /** Defaults to "right", which side to align the grid menu dropdown? */
+  alignDropSide?: 'left' | 'right';
+
   /**
    * All the commands text labels
    * NOTE: some of the text have other properties outside of this option (like 'customTitle', 'forceFitTitle', ...) and that is because they were created prior to this refactoring of labels
@@ -67,7 +70,7 @@ export interface GridMenuOption {
   /** Defaults to true, which will hide the "Toggle Pre-Header Row" (used by draggable grouping) command in the Grid Menu (Grid Option "showPreHeaderPanel: true" has to be enabled) */
   hideTogglePreHeaderCommand?: boolean;
 
-  /** CSS class for the displaying the Grid menu icon image (basically the hamburger menu) */
+  /** CSS class for the displaying the Grid menu icon (basically the hamburger menu) */
   iconCssClass?: string;
 
   /** icon for the "Clear all Filters" command */
@@ -88,7 +91,10 @@ export interface GridMenuOption {
   /** icon for the "Export to Text Delimited" command */
   iconExportTextDelimitedCommand?: string;
 
-  /** Link for the displaying the Grid menu icon image (basically the hamburger menu) */
+  /**
+   * @deprecated @use `iconCssClass`
+   * URL pointing to the displaying the Grid menu icon image (basically the hamburger menu).
+   */
   iconImage?: string;
 
   /** icon for the "Refresh Dataset" command */
@@ -120,9 +126,6 @@ export interface GridMenuOption {
 
   /** Same as "syncResizeTitle", except that it's a translation key which can be used on page load and/or when switching locale */
   syncResizeTitleKey?: string;
-
-  /** Defaults to true, Use the Click offset to reposition the Grid Menu, when set to False it will use the icon offset to reposition the grid menu */
-  useClickToRepositionMenu?: boolean;
 
   // --
   // action/override callbacks

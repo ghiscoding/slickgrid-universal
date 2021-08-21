@@ -1,4 +1,5 @@
 import { Column } from './column.interface';
+import { GridMenuCommandItemCallbackArgs } from './gridMenuCommandItemCallbackArgs.interface';
 import { SlickGrid } from './slickGrid.interface';
 
 export interface GridMenuItem {
@@ -20,7 +21,10 @@ export interface GridMenuItem {
   /** CSS class to be added to the menu item icon. */
   iconCssClass?: string;
 
-  /** URL pointing to the icon image. */
+  /**
+   * @deprecated @use `iconCssClass`
+   * URL pointing to the icon image.
+   */
   iconImage?: string;
 
   /** position order in the list, a lower number will make it on top of the list. Internal commands starts at 50. */
@@ -42,7 +46,7 @@ export interface GridMenuItem {
   // action/override callbacks
 
   /** Optionally define a callback function that gets executed when item is chosen (and/or use the onCommand event) */
-  action?: (event: Event, callbackArgs: { command: string; grid: SlickGrid; menu: any; columns: Column[]; visibleColumns: Column[] }) => void;
+  action?: (event: Event, callbackArgs: GridMenuCommandItemCallbackArgs) => void;
 
   /** Callback method that user can override the default behavior of showing/hiding an item from the list. */
   itemVisibilityOverride?: (args: { grid: SlickGrid; menu: any; columns: Column[]; visibleColumns: Column[] }) => boolean;

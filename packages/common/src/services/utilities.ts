@@ -1018,16 +1018,23 @@ export function findOrDefault<T = any>(array: T[], logic: (item: T) => boolean, 
 }
 
 /** Get HTML Element position offset (without jQuery) */
-export function getHtmlElementOffset(element: HTMLElement): { top: number; left: number; } {
+export function getHtmlElementOffset(element: HTMLElement): { top: number; bottom: number; left: number; right: number; } | undefined {
+  if (!element) {
+    return undefined;
+  }
   const rect = element?.getBoundingClientRect?.();
   let top = 0;
   let left = 0;
+  let bottom = 0;
+  let right = 0;
 
   if (rect && rect.top !== undefined && rect.left !== undefined) {
     top = rect.top + window.pageYOffset;
     left = rect.left + window.pageXOffset;
+    right = rect.right;
+    bottom = rect.bottom;
   }
-  return { top, left };
+  return { top, left, bottom, right };
 }
 
 /**

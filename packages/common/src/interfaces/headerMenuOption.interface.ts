@@ -11,7 +11,10 @@ export interface HeaderMenuOption {
   /** an extra CSS class to add to the menu button */
   buttonCssClass?: string;
 
-  /** a url to the menu button image */
+  /**
+   * @deprecated @use `buttonCssClass`
+   * URL pointing to the Header Menu button image.
+   */
   buttonImage?: string;
 
   /** A command identifier to be passed to the onCommand event handlers. */
@@ -47,7 +50,10 @@ export interface HeaderMenuOption {
   /** A CSS class to be added to the menu item icon. */
   iconCssClass?: string;
 
-  /** A url to the icon image. */
+  /**
+   * @deprecated @use `iconCssClass`
+   * URL pointing to the Header Menu icon image.
+   */
   iconImage?: string;
 
   /** icon for the "Remove Filter" command */

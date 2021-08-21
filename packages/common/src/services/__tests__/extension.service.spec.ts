@@ -9,7 +9,6 @@ import {
   ContextMenuExtension,
   DraggableGroupingExtension,
   ExtensionUtility,
-  GridMenuExtension,
   GroupItemMetaProviderExtension,
   HeaderButtonExtension,
   HeaderMenuExtension,
@@ -17,27 +16,69 @@ import {
   RowMoveManagerExtension,
   RowSelectionExtension,
 } from '../../extensions';
-import { ExtensionService, SharedService } from '..';
+import { BackendUtilityService, ExtensionService, FilterService, PubSubService, SharedService, SortService } from '..';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { AutoTooltipPlugin } from '../../plugins/index';
-import { ColumnPickerControl } from '../../controls/index';
+import { ColumnPickerControl, GridMenuControl } from '../../controls/index';
 
 jest.mock('flatpickr', () => { });
 declare const Slick: SlickNamespace;
+const GRID_UID = 'slickgrid_12345';
+
+const extensionUtilityStub = {
+  getPickerTitleOutputString: jest.fn(),
+  refreshBackendDataset: jest.fn(),
+  sortItems: jest.fn(),
+  translateItems: jest.fn(),
+  translateWhenEnabledAndServiceExist: jest.fn(),
+} as unknown as ExtensionUtility;
 
 const gridStub = {
   autosizeColumns: jest.fn(),
   getColumnIndex: jest.fn(),
   getOptions: jest.fn(),
   getPluginByName: jest.fn(),
-  getUID: jest.fn(),
+  getUID: () => GRID_UID,
   getColumns: jest.fn(),
   setColumns: jest.fn(),
   onColumnsResized: jest.fn(),
   registerPlugin: jest.fn(),
+  onBeforeDestroy: new Slick.Event(),
+  onSetOptions: new Slick.Event(),
   onColumnsReordered: new Slick.Event(),
   onHeaderContextMenu: new Slick.Event(),
 } as unknown as SlickGrid;
+
+const filterServiceStub = {
+  addRxJsResource: jest.fn(),
+  clearFilters: jest.fn(),
+  dispose: jest.fn(),
+  init: jest.fn(),
+  bindBackendOnFilter: jest.fn(),
+  bindLocalOnFilter: jest.fn(),
+  bindLocalOnSort: jest.fn(),
+  bindBackendOnSort: jest.fn(),
+  populateColumnFilterSearchTermPresets: jest.fn(),
+  refreshTreeDataFilters: jest.fn(),
+  getColumnFilters: jest.fn(),
+} as unknown as FilterService;
+
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as PubSubService;
+
+const sortServiceStub = {
+  addRxJsResource: jest.fn(),
+  bindBackendOnSort: jest.fn(),
+  bindLocalOnSort: jest.fn(),
+  dispose: jest.fn(),
+  loadGridSorters: jest.fn(),
+  processTreeDataInitialSort: jest.fn(),
+  sortHierarchicalDataset: jest.fn(),
+} as unknown as SortService;
 
 const extensionStub = {
   create: jest.fn(),
@@ -84,26 +125,28 @@ const extensionRowMoveStub = {
 
 describe('ExtensionService', () => {
   let sharedService: SharedService;
+  let backendUtilityService: BackendUtilityService;
   let service: ExtensionService;
-  let extensionUtility: ExtensionUtility;
   let translateService: TranslateServiceStub;
 
   describe('with Translate Service', () => {
     beforeEach(() => {
       sharedService = new SharedService();
+      backendUtilityService = new BackendUtilityService();
       translateService = new TranslateServiceStub();
-      extensionUtility = new ExtensionUtility(sharedService, translateService);
       translateService.use('fr');
 
       service = new ExtensionService(
-        extensionUtility,
+        extensionUtilityStub,
+        filterServiceStub,
+        pubSubServiceStub,
+        sortServiceStub,
         // extensions
         extensionStub as unknown as CellExternalCopyManagerExtension,
         extensionCellMenuStub as unknown as CellMenuExtension,
         extensionCheckboxSelectorStub as unknown as CheckboxSelectorExtension,
         extensionContextMenuStub as unknown as ContextMenuExtension,
         extensionStub as unknown as DraggableGroupingExtension,
-        extensionGridMenuStub as unknown as GridMenuExtension,
         extensionGroupItemMetaStub as unknown as GroupItemMetaProviderExtension,
         extensionHeaderButtonStub as unknown as HeaderButtonExtension,
         extensionHeaderMenuStub as unknown as HeaderMenuExtension,
@@ -155,7 +198,6 @@ describe('ExtensionService', () => {
 
         expect(spy).toHaveBeenCalled();
         expect(output).toBeNull();
-
       });
 
       it('should return extension addon when method is called with a valid and instantiated addon', () => {
@@ -169,22 +211,31 @@ describe('ExtensionService', () => {
         expect(output).toEqual(instanceMock);
       });
 
-      it('should register any addon and expect the instance returned from "getExtensionByName" equal the one returned from "getSlickgridAddonInstance"', () => {
+      it('should return Row Detail extension addon when method is called with a valid and instantiated addon', () => {
         const instanceMock = { onColumnsChanged: jest.fn() };
+        const extensionMock = { name: ExtensionName.rowDetailView, instance: instanceMock as unknown, class: {} } as ExtensionModel<any, any>;
+        const spy = jest.spyOn(service, 'getExtensionByName').mockReturnValue(extensionMock);
+
+        const output = service.getSlickgridAddonInstance(ExtensionName.rowDetailView);
+
+        expect(spy).toHaveBeenCalled();
+        expect(output).toEqual(instanceMock);
+      });
+
+      it('should register any addon and expect the instance returned from "getExtensionByName" equal the one returned from "getSlickgridAddonInstance"', () => {
         const gridOptionsMock = { enableGridMenu: true } as GridOption;
-        const extSpy = jest.spyOn(extensionGridMenuStub, 'register').mockReturnValue(instanceMock);
-        const getAddonSpy = jest.spyOn(extensionGridMenuStub, 'getAddonInstance').mockReturnValue(instanceMock);
         const gridSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
+        const gridMenuInstance = service.getSlickgridAddonInstance(ExtensionName.gridMenu);
+
         const output = service.getExtensionByName(ExtensionName.gridMenu);
         const instance = service.getSlickgridAddonInstance(ExtensionName.gridMenu);
 
         expect(gridSpy).toHaveBeenCalled();
-        expect(getAddonSpy).toHaveBeenCalled();
-        expect(extSpy).toHaveBeenCalled();
+        expect(gridMenuInstance).toBeTruthy();
         expect(output!.instance).toEqual(instance);
-        expect(output).toEqual({ name: ExtensionName.gridMenu, instance: instanceMock as unknown, class: extensionGridMenuStub } as ExtensionModel<any, any>);
+        expect(output).toEqual({ name: ExtensionName.gridMenu, instance: gridMenuInstance as unknown, class: {} } as ExtensionModel<any, any>);
       });
     });
 
@@ -277,20 +328,20 @@ describe('ExtensionService', () => {
       });
 
       it('should register the GridMenu addon when "enableGridMenu" is set in the grid options', () => {
-        const gridOptionsMock = { enableGridMenu: true } as GridOption;
-        const extSpy = jest.spyOn(extensionGridMenuStub, 'register').mockReturnValue(instanceMock);
-        const getAddonSpy = jest.spyOn(extensionGridMenuStub, 'getAddonInstance').mockReturnValue(instanceMock);
-        const gridSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+        const onRegisteredMock = jest.fn();
+        const gridOptionsMock = {
+          enableGridMenu: true,
+          gridMenu: {
+            onExtensionRegistered: onRegisteredMock
+          }
+        } as GridOption;
+        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
         const output = service.getExtensionByName(ExtensionName.gridMenu);
-        const instance = service.getSlickgridAddonInstance(ExtensionName.gridMenu);
 
-        expect(gridSpy).toHaveBeenCalled();
-        expect(getAddonSpy).toHaveBeenCalled();
-        expect(extSpy).toHaveBeenCalled();
-        expect(output!.instance).toEqual(instance);
-        expect(output).toEqual({ name: ExtensionName.gridMenu, instance: instanceMock as unknown, class: extensionGridMenuStub } as ExtensionModel<any, any>);
+        expect(onRegisteredMock).toHaveBeenCalledWith(expect.toBeObject());
+        expect(output.instance instanceof GridMenuControl).toBeTrue();
       });
 
       it('should register the GroupItemMetaProvider addon when "enableGrouping" is set in the grid options', () => {
@@ -519,7 +570,7 @@ describe('ExtensionService', () => {
 
     it('should call the refreshBackendDataset method on the GridMenu Extension when service with same method name is called', () => {
       const gridOptionsMock = { enableGridMenu: true } as GridOption;
-      const extSpy = jest.spyOn(extensionGridMenuStub, 'refreshBackendDataset');
+      const extSpy = jest.spyOn(extensionUtilityStub, 'refreshBackendDataset');
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
       service.refreshBackendDataset();
@@ -527,6 +578,24 @@ describe('ExtensionService', () => {
 
       expect(extSpy).toHaveBeenNthCalledWith(1, undefined);
       expect(extSpy).toHaveBeenNthCalledWith(2, gridOptionsMock);
+    });
+
+    it('should call all extensions translate methods when calling "translateAllExtensions"', () => {
+      const cellMenuSpy = jest.spyOn(service, 'translateCellMenu');
+      const colHeaderSpy = jest.spyOn(service, 'translateColumnHeaders');
+      const colPickerSpy = jest.spyOn(service, 'translateColumnPicker');
+      const contextSpy = jest.spyOn(service, 'translateContextMenu');
+      const gridMenuSpy = jest.spyOn(service, 'translateGridMenu');
+      const headerMenuSpy = jest.spyOn(service, 'translateHeaderMenu');
+
+      service.translateAllExtensions();
+
+      expect(cellMenuSpy).toHaveBeenCalled();
+      expect(colHeaderSpy).toHaveBeenCalled();
+      expect(colPickerSpy).toHaveBeenCalled();
+      expect(contextSpy).toHaveBeenCalled();
+      expect(gridMenuSpy).toHaveBeenCalled();
+      expect(headerMenuSpy).toHaveBeenCalled();
     });
 
     it('should call removeColumnByIndex and return original input when it is not an array provided', () => {
@@ -568,9 +637,23 @@ describe('ExtensionService', () => {
     });
 
     it('should call the translateGridMenu method on the GridMenu Extension when service with same method name is called', () => {
-      const extSpy = jest.spyOn(extensionGridMenuStub, 'translateGridMenu');
+      const columnsMock = [
+        { id: 'field1', field: 'field1', nameKey: 'HELLO' },
+        { id: 'field2', field: 'field2', nameKey: 'WORLD' }
+      ] as Column[];
+      const gridOptionsMock = { enableGridMenu: true } as GridOption;
+      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+      jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
+
+      service.bindDifferentExtensions();
+      service.renderColumnHeaders(columnsMock);
+      const gridMenuInstance = service.getSlickgridAddonInstance(ExtensionName.gridMenu);
+
+      const extSpy = jest.spyOn(gridMenuInstance, 'translateGridMenu');
       service.translateGridMenu();
+
       expect(extSpy).toHaveBeenCalled();
+      expect(gridMenuInstance.columns).toEqual(columnsMock);
     });
 
     it('should call the translateHeaderMenu method on the HeaderMenu Extension when service with same method name is called', () => {
@@ -691,34 +774,23 @@ describe('ExtensionService', () => {
         expect(service.getExtensionByName(ExtensionName.columnPicker).instance.columns).toEqual(columnsMock);
       });
 
-      it('should re-register the Grid Menu when enable and method is called with new column definition collection provided as argument', () => {
-        const instanceMock = { onColumnsChanged: jest.fn() };
-        const extensionMock = { name: ExtensionName.gridMenu, addon: null, instance: null, class: null } as ExtensionModel<any, any>;
-        const expectedExtension = { name: ExtensionName.gridMenu, instance: instanceMock as unknown, class: null } as ExtensionModel<any, any>;
-        const gridOptionsMock = { enableGridMenu: true } as GridOption;
+      it('should replace the Grid Menu columns when plugin is enabled and method is called with new column definition collection provided as argument', () => {
         const columnsMock = [
           { id: 'field1', field: 'field1', nameKey: 'HELLO' },
           { id: 'field2', field: 'field2', nameKey: 'WORLD' }
         ] as Column[];
-
+        const instanceMock = { translateGridMenu: jest.fn() };
+        const gridOptionsMock = { enableGridMenu: true } as GridOption;
+        jest.spyOn(extensionGridMenuStub, 'register').mockReturnValue(instanceMock);
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-        jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-        const spyGetExt = jest.spyOn(service, 'getExtensionByName').mockReturnValue(extensionMock);
-        const spyGmDispose = jest.spyOn(extensionGridMenuStub, 'dispose');
-        const spyGmRegister = jest.spyOn(extensionGridMenuStub, 'register').mockReturnValue(instanceMock);
-        const spyAllCols = jest.spyOn(SharedService.prototype, 'allColumns', 'set');
+        jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
         const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
 
+        service.bindDifferentExtensions();
         service.renderColumnHeaders(columnsMock);
 
-        expect(expectedExtension).toEqual(expectedExtension);
-        expect(spyGetExt).toHaveBeenCalled();
-        expect(expectedExtension).toEqual(expectedExtension);
-        expect(spyGetExt).toHaveBeenCalled();
-        expect(spyGmDispose).toHaveBeenCalled();
-        expect(spyGmRegister).toHaveBeenCalled();
-        expect(spyAllCols).toHaveBeenCalledWith(columnsMock);
         expect(setColumnsSpy).toHaveBeenCalledWith(columnsMock);
+        expect(service.getExtensionByName(ExtensionName.gridMenu).instance.columns).toEqual(columnsMock);
       });
 
       it('should re-register the Header Menu when enable and method is called with new column definition collection provided as argument', () => {
@@ -754,19 +826,19 @@ describe('ExtensionService', () => {
   });
 
   describe('without Translate Service', () => {
-    extensionUtility = new ExtensionUtility(sharedService, translateService);
-
     beforeEach(() => {
       translateService = undefined as any;
       service = new ExtensionService(
-        extensionUtility,
+        extensionUtilityStub,
+        filterServiceStub,
+        pubSubServiceStub,
+        sortServiceStub,
         // extensions
         extensionStub as unknown as CellExternalCopyManagerExtension,
         extensionStub as unknown as CellMenuExtension,
         extensionStub as unknown as CheckboxSelectorExtension,
         extensionStub as unknown as ContextMenuExtension,
         extensionStub as unknown as DraggableGroupingExtension,
-        extensionGridMenuStub as unknown as GridMenuExtension,
         extensionGroupItemMetaStub as unknown as GroupItemMetaProviderExtension,
         extensionHeaderButtonStub as unknown as HeaderButtonExtension,
         extensionHeaderMenuStub as unknown as HeaderMenuExtension,

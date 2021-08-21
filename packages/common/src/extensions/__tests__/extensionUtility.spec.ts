@@ -1,6 +1,7 @@
 import { Column, GridOption, SlickGrid } from '../../interfaces/index';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
+import { BackendUtilityService } from '../../services/backendUtility.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const gridStub = {
@@ -27,25 +28,12 @@ jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockAddon);
 jest.mock('slickgrid/plugins/slick.rowdetailview', () => mockAddon);
 jest.mock('slickgrid/plugins/slick.rowmovemanager', () => mockAddon);
 
-const Slick = {
-  DraggableGrouping: mockAddon,
-  RowMoveManager: mockAddon,
-  RowSelectionModel: mockAddon,
-  Controls: {
-    GridMenu: mockAddon,
-  },
-  Data: {
-    GroupItemMetadataProvider: mockAddon
-  },
-  Plugins: {
-    CellMenu: mockAddon,
-    ContextMenu: mockAddon,
-    CellExternalCopyManager: mockAddon,
-    HeaderButtons: mockAddon,
-    HeaderMenu: mockAddon,
-    RowDetailView: mockAddon,
-  }
-};
+const backendUtilityServiceStub = {
+  executeBackendProcessesCallback: jest.fn(),
+  executeBackendCallback: jest.fn(),
+  onBackendError: jest.fn(),
+  refreshBackendDataset: jest.fn(),
+} as unknown as BackendUtilityService;
 
 describe('extensionUtility', () => {
   let sharedService: SharedService;
@@ -56,7 +44,7 @@ describe('extensionUtility', () => {
     beforeEach(async () => {
       sharedService = new SharedService();
       translateService = new TranslateServiceStub();
-      utility = new ExtensionUtility(sharedService, translateService);
+      utility = new ExtensionUtility(sharedService, backendUtilityServiceStub, translateService);
       await translateService.use('fr');
     });
 
@@ -77,6 +65,27 @@ describe('extensionUtility', () => {
         const output = utility.getPickerTitleOutputString('unknown', 'gridMenu');
 
         expect(output).toEqual(undefined);
+      });
+    });
+
+    describe('refreshBackendDataset method', () => {
+      let gridOptionsMock;
+
+      beforeEach(() => {
+        gridOptionsMock = { enableTranslate: true, enableGridMenu: true } as GridOption;
+        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+      });
+
+      it('should call refresh of backend when method is called', () => {
+        const refreshSpy = jest.spyOn(backendUtilityServiceStub, 'refreshBackendDataset');
+        utility.refreshBackendDataset();
+        expect(refreshSpy).toHaveBeenCalledWith(gridOptionsMock);
+      });
+
+      it('should call refresh of backend when method is called', () => {
+        const refreshSpy = jest.spyOn(backendUtilityServiceStub, 'refreshBackendDataset');
+        utility.refreshBackendDataset({ enablePagination: true });
+        expect(refreshSpy).toHaveBeenCalledWith({ ...gridOptionsMock, enablePagination: true });
       });
     });
 
@@ -176,7 +185,7 @@ describe('extensionUtility', () => {
   describe('without Translate Service', () => {
     beforeEach(() => {
       translateService = undefined as any;
-      utility = new ExtensionUtility(sharedService, translateService);
+      utility = new ExtensionUtility(sharedService, backendUtilityServiceStub, translateService);
     });
 
     it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {

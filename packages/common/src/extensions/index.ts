@@ -4,7 +4,6 @@ export * from './checkboxSelectorExtension';
 export * from './contextMenuExtension';
 export * from './draggableGroupingExtension';
 export * from './extensionUtility';
-export * from './gridMenuExtension';
 export * from './groupItemMetaProviderExtension';
 export * from './headerButtonExtension';
 export * from './headerMenuExtension';

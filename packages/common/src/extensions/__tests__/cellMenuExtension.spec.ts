@@ -3,6 +3,7 @@ import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { Column, SlickDataView, GridOption, SlickGrid, SlickNamespace, CellMenu, SlickCellMenu } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { BackendUtilityService } from '../../services';
 
 declare const Slick: SlickNamespace;
 
@@ -43,6 +44,7 @@ describe('CellMenuExtension', () => {
 
   const columnsMock: Column[] = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
   let extensionUtility: ExtensionUtility;
+  let backendUtilityService: BackendUtilityService;
   let translateService: TranslateServiceStub;
   let extension: CellMenuExtension;
   let sharedService: SharedService;
@@ -87,8 +89,9 @@ describe('CellMenuExtension', () => {
   describe('with I18N Service', () => {
     beforeEach(() => {
       sharedService = new SharedService();
+      backendUtilityService = new BackendUtilityService();
       translateService = new TranslateServiceStub();
-      extensionUtility = new ExtensionUtility(sharedService, translateService);
+      extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
       extension = new CellMenuExtension(extensionUtility, sharedService, translateService);
       translateService.use('fr');
     });

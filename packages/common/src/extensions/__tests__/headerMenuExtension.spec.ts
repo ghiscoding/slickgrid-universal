@@ -2,7 +2,7 @@ import { HeaderMenuExtension } from '../headerMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { Column, ColumnSort, SlickDataView, GridOption, SlickGrid, SlickNamespace, HeaderMenu, SlickHeaderMenu } from '../../interfaces/index';
-import { FilterService, SortService, PubSubService } from '../../services';
+import { FilterService, SortService, PubSubService, BackendUtilityService } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 declare const Slick: SlickNamespace;
@@ -62,6 +62,7 @@ describe('headerMenuExtension', () => {
 
   const columnsMock: Column[] = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
   let extensionUtility: ExtensionUtility;
+  let backendUtilityService: BackendUtilityService;
   let extension: HeaderMenuExtension;
   let sharedService: SharedService;
   let translateService: TranslateServiceStub;
@@ -104,8 +105,9 @@ describe('headerMenuExtension', () => {
     beforeEach(() => {
       divElement = document.createElement('div');
       sharedService = new SharedService();
+      backendUtilityService = new BackendUtilityService();
       translateService = new TranslateServiceStub();
-      extensionUtility = new ExtensionUtility(sharedService, translateService);
+      extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
       extension = new HeaderMenuExtension(extensionUtility, filterServiceStub, pubSubServiceStub, sharedService, sortServiceStub, translateService);
       translateService.use('fr');
     });

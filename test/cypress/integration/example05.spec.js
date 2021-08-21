@@ -132,7 +132,7 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
     cy.get('.grid5')
       .find('button.slick-gridmenu-button')
       .trigger('click')
-      .click();
+      .click({ force: true });
 
     let gridUid = '';
 

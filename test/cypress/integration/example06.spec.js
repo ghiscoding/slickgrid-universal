@@ -136,14 +136,14 @@ describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 },
     cy.get('.grid6')
       .find('button.slick-gridmenu-button')
       .trigger('click')
-      .click();
+      .click({ force: true });
 
     cy.get(`.slick-gridmenu:visible`)
       .find('.slick-gridmenu-item')
       .first()
       .find('span')
       .contains('Clear all Filters')
-      .click();
+      .click({ force: true });
 
     defaultSortAscList.forEach((_colName, rowIdx) => {
       if (rowIdx > defaultSortAscList.length - 1) {

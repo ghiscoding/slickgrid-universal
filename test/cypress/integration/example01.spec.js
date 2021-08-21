@@ -7,7 +7,10 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
   beforeEach(() => {
     // add a serve mode to avoid adding the GitHub Stars link since that can slowdown Cypress considerably
     // because it keeps waiting for it to load, we also preserve the cookie for all other tests
-    cy.setCookie('serve-mode', 'cypress')
+    cy.setCookie('serve-mode', 'cypress');
+
+    // create a console.log spy for later use
+    cy.window().then(win => cy.spy(win.console, 'log'));
   })
 
   it('should display Example title', () => {
@@ -125,11 +128,8 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
   it('should clear sorting of grid2 using the Grid Menu "Clear all Sorting" command', () => {
     cy.get('.grid2')
       .find('button.slick-gridmenu-button')
-      .trigger('click')
       .click();
-  });
 
-  it('should have no sorting in 2nd grid (back to default sorted by id)', () => {
     let gridUid = '';
 
     cy.get('.grid2 .slickgrid-container')
@@ -139,26 +139,36 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
-        cy.get(`.slick-gridmenu.${gridUid}`)
+        cy.get(`.slick-gridmenu.${gridUid}.dropright`)
           .find('.slick-gridmenu-item:nth(1)')
           .find('span')
           .contains('Clear all Sorting')
           .click();
-
-        cy.get('.grid2')
-          .find('.slick-sort-indicator-asc')
-          .should('have.length', 0);
-
-        cy.get('.grid2')
-          .find('.slick-sort-indicator-desc')
-          .should('have.length', 0);
-
-        cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0)`).should('contain', 'Task 23');
-        cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0)`).should('contain', 'Task 24');
-        cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(0)`).should('contain', 'Task 25');
-        cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(0)`).should('contain', 'Task 26');
-        cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(0)`).should('contain', 'Task 27');
       });
+
+    cy.window().then((win) => {
+      expect(win.console.log).to.have.callCount(4);
+      expect(win.console.log).to.be.calledWith('gridMenu:onBeforeMenuShow');
+      expect(win.console.log).to.be.calledWith('gridMenu:onAfterMenuShow');
+      expect(win.console.log).to.be.calledWith('gridMenu:onCommand', 'clear-sorting');
+      expect(win.console.log).to.be.calledWith('gridMenu:onMenuClose - visible columns count', 6);
+    });
+  });
+
+  it('should have no sorting in 2nd grid (back to default sorted by id)', () => {
+    cy.get('.grid2')
+      .find('.slick-sort-indicator-asc')
+      .should('have.length', 0);
+
+    cy.get('.grid2')
+      .find('.slick-sort-indicator-desc')
+      .should('have.length', 0);
+
+    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0)`).should('contain', 'Task 23');
+    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0)`).should('contain', 'Task 24');
+    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(0)`).should('contain', 'Task 25');
+    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(0)`).should('contain', 'Task 26');
+    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(0)`).should('contain', 'Task 27');
   });
 
   it('should retain sorting in 1st grid', () => {
@@ -186,9 +196,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
   });
 
   it('should clear filters of grid2 using the Grid Menu "Clear all Filters" command', () => {
-    cy.get('.grid2')
-      .find('button.slick-gridmenu-button')
-      .trigger('click')
+    cy.get('[data-test="external-gridmenu2-btn"]')
       .click();
 
     let gridUid = '';
@@ -200,12 +208,20 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
-        cy.get(`.slick-gridmenu.${gridUid}`)
+        cy.get(`.slick-gridmenu.${gridUid}.dropleft`)
           .find('.slick-gridmenu-item:nth(0)')
           .find('span')
           .contains('Clear all Filters')
           .click();
       });
+
+    cy.window().then((win) => {
+      expect(win.console.log).to.have.callCount(4);
+      expect(win.console.log).to.be.calledWith('gridMenu:onBeforeMenuShow');
+      expect(win.console.log).to.be.calledWith('gridMenu:onAfterMenuShow');
+      expect(win.console.log).to.be.calledWith('gridMenu:onCommand', 'clear-filter');
+      expect(win.console.log).to.be.calledWith('gridMenu:onMenuClose - visible columns count', 6);
+    });
   });
 
   it('should change Page Number 52 and expect the Pagination to have correct values', () => {
@@ -247,7 +263,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
             if (index <= 5) {
               const $input = $child.children('input');
               const $label = $child.children('label');
-              expect($input.attr('checked')).to.eq('checked');
+              expect($input.prop('checked')).to.eq(true);
               expect($label.text()).to.eq(fullTitles[index]);
             }
           });
@@ -295,7 +311,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
             if (index <= 5) {
               const $input = $child.children('input');
               const $label = $child.children('label');
-              expect($input.attr('checked')).to.eq('checked');
+              expect($input.prop('checked')).to.eq(true);
               expect($label.text()).to.eq(fullTitles[index]);
             }
           });
@@ -335,9 +351,9 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
           const $input = $child.children('input');
           const $label = $child.children('label');
           if ($label.text() === 'Title') {
-            expect($input.attr('checked')).to.eq(undefined);
+            expect($input.prop('checked')).to.eq(false);
           } else {
-            expect($input.attr('checked')).to.eq('checked');
+            expect($input.prop('checked')).to.eq(true);
           }
           expect($label.text()).to.eq(fullTitles[index]);
         }
@@ -390,6 +406,11 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
       .click();
 
     cy.get('.grid2')
+      .get('.slick-columnpicker:visible')
+      .find('span.close')
+      .click();
+
+    cy.get('.grid2')
       .find('.slick-header-columns')
       .children()
       .each(($child, index) => {
@@ -398,11 +419,10 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
         }
       });
 
-    cy.get('.grid2')
-      .get('.slick-columnpicker:visible')
-      .find('span.close')
-      .trigger('click')
-      .click();
+    cy.window().then((win) => {
+      expect(win.console.log).to.have.callCount(1);
+      expect(win.console.log).to.be.calledWith('columnPicker:onColumnsChanged - visible columns count', 6);
+    });
   });
 
   it('should open the Grid Menu on 2nd Grid and expect all Columns to be checked', () => {
@@ -425,7 +445,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
             if (index <= 5) {
               const $input = $child.children('input');
               const $label = $child.children('label');
-              expect($input.attr('checked')).to.eq('checked');
+              expect($input.prop('checked')).to.eq(true);
               expect($label.text()).to.eq(fullTitles[index]);
             }
           });
@@ -462,9 +482,9 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
               const $input = $child.children('input');
               const $label = $child.children('label');
               if ($label.text() === 'Title' || $label.text() === 'Start') {
-                expect($input.attr('checked')).to.eq(undefined);
+                expect($input.prop('checked')).to.eq(false);
               } else {
-                expect($input.attr('checked')).to.eq('checked');
+                expect($input.prop('checked')).to.eq(true);
               }
               expect($label.text()).to.eq(fullTitles[index]);
             }
