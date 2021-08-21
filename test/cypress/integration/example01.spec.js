@@ -47,6 +47,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
       .first()
       .trigger('mouseover')
       .children('.slick-header-menubutton')
+      .invoke('show')
       .click();
 
     cy.get('.slick-header-menu')

@@ -30,7 +30,10 @@ export const Editors = {
   /** Integer Number Editor using an input of type "number" */
   integer: IntegerEditor,
 
-  /** Long Text Editor (uses a textarea) */
+  /**
+   * Long Text Editor (uses a textarea) for longer text (you can also optionally configure its size).
+   * When ready to Save you can click on the "Save" and/or use shortcuts (Ctrl+ENTER or Ctrl+s).
+   */
   longText: LongTextEditor,
 
   /** Multiple Select editor (which uses 3rd party lib "multiple-select.js") */
