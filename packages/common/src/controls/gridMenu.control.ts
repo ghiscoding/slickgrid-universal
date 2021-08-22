@@ -6,7 +6,6 @@ import {
   GridMenuCommandItemCallbackArgs,
   GridMenuEventWithElementCallbackArgs,
   GridMenuItem,
-  GridMenuOnColumnsChangedCallbackArgs,
   GridMenuOption,
   GridOption,
   SlickEventHandler,
@@ -15,7 +14,7 @@ import {
 } from '../interfaces/index';
 import { DelimiterType, FileType } from '../enums';
 import { ExtensionUtility } from '../extensions/extensionUtility';
-import { emptyElement, getHtmlElementOffset, getTranslationPrefix, sanitizeTextByAvailableSanitizer } from '../services';
+import { emptyElement, getHtmlElementOffset, getTranslationPrefix, } from '../services';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { ExcelExportService } from '../services/excelExport.service';
 import { FilterService } from '../services/filter.service';
@@ -23,6 +22,7 @@ import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
 import { SortService } from '../services/sort.service';
 import { TextExportService } from '../services/textExport.service';
+import { handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -113,7 +113,7 @@ export class GridMenuControl {
   initEventHandlers() {
     // when grid columns are reordered then we also need to update/resync our picker column in the same order
     const onColumnsReorderedHandler = this.grid.onColumnsReordered;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onColumnsReorderedHandler>>).subscribe(onColumnsReorderedHandler, this.updateColumnOrder.bind(this));
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onColumnsReorderedHandler>>).subscribe(onColumnsReorderedHandler, updateColumnPickerOrder.bind(this));
 
     // subscribe to the grid, when it's destroyed, we should also destroy the Grid Menu
     const onBeforeDestroyHandler = this.grid.onBeforeDestroy;
@@ -188,7 +188,7 @@ export class GridMenuControl {
     this._listElm.className = 'slick-gridmenu-list';
 
     // update all columns on any of the column title button click from column picker
-    this._bindEventService.bind(this._gridMenuElm, 'click', this.handleColumnPickerItemClick.bind(this) as EventListener);
+    this._bindEventService.bind(this._gridMenuElm, 'click', handleColumnPickerItemClick.bind(this) as EventListener);
   }
 
   createGridMenu() {
@@ -282,55 +282,6 @@ export class GridMenuControl {
    */
   getVisibleColumns() {
     return this.grid.getColumns();
-  }
-
-  /**
-   * When clicking an input checkboxes from the column picker list to show/hide a column (or from the picker extra commands like forcefit columns)
-   * @param event - input checkbox event
-   * @returns
-   */
-  handleColumnPickerItemClick(event: DOMEvent<HTMLInputElement>) {
-    if (event.target.dataset.option === 'autoresize') {
-      // when calling setOptions, it will resize with ALL Columns (even the hidden ones)
-      // we can avoid this problem by keeping a reference to the visibleColumns before setOptions and then setColumns after
-      const previousVisibleColumns = this.getVisibleColumns();
-      const isChecked = event.target.checked;
-      this.grid.setOptions({ forceFitColumns: isChecked });
-      this.grid.setColumns(previousVisibleColumns);
-      return;
-    }
-
-    if (event.target.dataset.option === 'syncresize') {
-      this.grid.setOptions({ syncColumnCellResize: !!(event.target.checked) });
-      return;
-    }
-
-    if (event.target.type === 'checkbox') {
-      this._areVisibleColumnDifferent = true;
-      const isChecked = event.target.checked;
-      const columnId = event.target.dataset.columnid || '';
-      const visibleColumns: Column[] = [];
-      this._columnCheckboxes.forEach((columnCheckbox: HTMLInputElement, idx: number) => {
-        if (columnCheckbox.checked) {
-          visibleColumns.push(this.columns[idx]);
-        }
-      });
-
-      if (!visibleColumns.length) {
-        event.target.checked = true;
-        return;
-      }
-
-      this.grid.setColumns(visibleColumns);
-      this.handleOnColumnsChanged(event, {
-        columnId,
-        showing: isChecked,
-        allColumns: this.columns,
-        visibleColumns,
-        columns: visibleColumns,
-        grid: this.grid
-      });
-    }
   }
 
   handleMenuCustomItemClick(event: Event, item: GridMenuItem) {
@@ -512,78 +463,7 @@ export class GridMenuControl {
     this.init();
   }
 
-  populateColumnPicker(e: MouseEvent, controlOptions: GridMenu) {
-    for (const column of this.columns) {
-      const columnId = column.id;
-      const columnLiElm = document.createElement('li');
-      columnLiElm.className = column.excludeFromColumnPicker ? 'hidden' : '';
-
-      const colInputElm = document.createElement('input');
-      colInputElm.type = 'checkbox';
-      colInputElm.id = `${this._gridUid}-gridmenu-colpicker-${columnId}`;
-      colInputElm.dataset.columnid = `${columnId}`;
-      const colIndex = this.grid.getColumnIndex(columnId);
-      if (colIndex >= 0) {
-        colInputElm.checked = true;
-      }
-      columnLiElm.appendChild(colInputElm);
-      this._columnCheckboxes.push(colInputElm);
-
-      const headerColumnValueExtractorFn = typeof controlOptions?.headerColumnValueExtractor === 'function' ? controlOptions.headerColumnValueExtractor : this._defaults.headerColumnValueExtractor;
-      const columnLabel = headerColumnValueExtractorFn!(column, this.gridOptions);
-
-      const labelElm = document.createElement('label');
-      labelElm.htmlFor = `${this._gridUid}-gridmenu-colpicker-${columnId}`;
-      labelElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, columnLabel);
-      columnLiElm.appendChild(labelElm);
-      this._listElm.appendChild(columnLiElm);
-    }
-
-    if (!controlOptions.hideForceFitButton || !controlOptions.hideSyncResizeButton) {
-      this._listElm.appendChild(document.createElement('hr'));
-    }
-
-    if (!(controlOptions?.hideForceFitButton)) {
-      const forceFitTitle = controlOptions?.forceFitTitle;
-
-      const fitInputElm = document.createElement('input');
-      fitInputElm.type = 'checkbox';
-      fitInputElm.id = `${this._gridUid}-gridmenu-colpicker-forcefit`;
-      fitInputElm.dataset.option = 'autoresize';
-
-      const labelElm = document.createElement('label');
-      labelElm.htmlFor = `${this._gridUid}-gridmenu-colpicker-forcefit`;
-      labelElm.textContent = forceFitTitle ?? '';
-      if (this.gridOptions.forceFitColumns) {
-        fitInputElm.checked = true;
-      }
-
-      const fitLiElm = document.createElement('li');
-      fitLiElm.appendChild(fitInputElm);
-      fitLiElm.appendChild(labelElm);
-      this._listElm.appendChild(fitLiElm);
-    }
-
-    if (!(controlOptions?.hideSyncResizeButton)) {
-      const syncResizeTitle = (controlOptions?.syncResizeTitle) || controlOptions.syncResizeTitle;
-      const labelElm = document.createElement('label');
-      labelElm.htmlFor = `${this._gridUid}-gridmenu-colpicker-syncresize`;
-      labelElm.textContent = syncResizeTitle ?? '';
-
-      const syncInputElm = document.createElement('input');
-      syncInputElm.type = 'checkbox';
-      syncInputElm.id = `${this._gridUid}-gridmenu-colpicker-syncresize`;
-      syncInputElm.dataset.option = 'syncresize';
-      if (this.gridOptions.syncColumnCellResize) {
-        syncInputElm.checked = true;
-      }
-
-      const syncLiElm = document.createElement('li');
-      syncLiElm.appendChild(syncInputElm);
-      syncLiElm.appendChild(labelElm);
-      this._listElm.appendChild(syncLiElm);
-    }
-
+  repositionMenu(e: MouseEvent, controlOptions: GridMenu) {
     let buttonElm = (e.target as HTMLButtonElement).nodeName === 'BUTTON' ? (e.target as HTMLButtonElement) : (e.target as HTMLElement).querySelector('button') as HTMLButtonElement; // get button element
     if (!buttonElm) {
       buttonElm = (e.target as HTMLElement).parentElement as HTMLButtonElement; // external grid menu might fall in this last case if wrapped in a span/div
@@ -630,7 +510,7 @@ export class GridMenuControl {
 
     const controlOptions: GridMenu = { ...this.controlOptions, ...options }; // merge optional picker option
     this.populateCustomMenus(controlOptions, this._customMenuElm);
-    this.updateColumnOrder();
+    updateColumnPickerOrder.call(this);
     this._columnCheckboxes = [];
 
     const callbackArgs = {
@@ -654,35 +534,14 @@ export class GridMenuControl {
     }
 
     // load the column & create column picker list
-    this.populateColumnPicker(e, controlOptions);
+    populateColumnPicker.call(this, controlOptions);
+    this.repositionMenu(e, controlOptions);
 
     // execute optional callback method defined by the user
     this.pubSubService.publish('gridMenu:onAfterMenuShow', callbackArgs);
     if (typeof controlOptions?.onAfterMenuShow === 'function') {
       controlOptions.onAfterMenuShow(e, callbackArgs);
     }
-  }
-
-  updateColumnOrder() {
-    // Because columns can be reordered, we have to update the `columns` to reflect the new order, however we can't just take `grid.getColumns()`,
-    // as it does not include columns currently hidden by the picker. We create a new `columns` structure by leaving currently-hidden
-    // columns in their original ordinal position and interleaving the results of the current column sort.
-    const current = this.grid.getColumns().slice(0);
-    const ordered = new Array(this.columns.length);
-
-    for (let i = 0; i < ordered.length; i++) {
-      const columnIdx = this.grid.getColumnIndex(this.columns[i].id);
-      if (columnIdx === undefined) {
-        // if the column doesn't return a value from getColumnIndex, it is hidden. Leave it in this position.
-        ordered[i] = this.columns[i];
-      } else {
-        // otherwise, grab the next visible column.
-        ordered[i] = current.shift();
-      }
-    }
-
-    // the new set of ordered columns becomes the new set of column picker columns
-    this._columns = ordered;
   }
 
   /** Update the Titles of each sections (command, customTitle, ...) */
@@ -1012,37 +871,6 @@ export class GridMenuControl {
       hideRefreshDatasetCommand: false,
       hideToggleFilterCommand: false,
     };
-  }
-
-  protected handleOnColumnsChanged(e: DOMEvent<HTMLInputElement>, args: GridMenuOnColumnsChangedCallbackArgs) {
-    // execute optional callback method defined by the user
-    this.pubSubService.publish('gridMenu:onColumnsChanged', args);
-    if (typeof this.controlOptions?.onColumnsChanged === 'function') {
-      this.controlOptions.onColumnsChanged(e, args);
-    }
-
-    // keep reference to the updated visible columns list
-    if (args && Array.isArray(args.visibleColumns) && args.visibleColumns.length > this.sharedService.visibleColumns.length) {
-      this.sharedService.visibleColumns = args.visibleColumns;
-    }
-
-    // when using row selection, SlickGrid will only apply the "selected" CSS class on the visible columns only
-    // and if the row selection was done prior to the column being shown then that column that was previously hidden (at the time of the row selection)
-    // will not have the "selected" CSS class because it wasn't visible at the time.
-    // To bypass this problem we can simply recall the row selection with the same selection and that will trigger a re-apply of the CSS class
-    // on all columns including the column we just made visible
-    if (this.gridOptions.enableRowSelection && args.showing) {
-      const rowSelection = args.grid.getSelectedRows();
-      args.grid.setSelectedRows(rowSelection);
-    }
-
-    // if we're using frozen columns, we need to readjust pinning when the new hidden column becomes visible again on the left pinning container
-    // we need to readjust frozenColumn index because SlickGrid freezes by index and has no knowledge of the columns themselves
-    const frozenColumnIndex = this.gridOptions.frozenColumn ?? -1;
-    if (frozenColumnIndex >= 0) {
-      const { allColumns, visibleColumns } = args;
-      this.extensionUtility.readjustFrozenColumnIndexWhenNeeded(frozenColumnIndex, allColumns, visibleColumns);
-    }
   }
 
   /** Run the Override function when it exists, if it returns True then it is usable/visible */
