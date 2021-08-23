@@ -370,6 +370,7 @@ describe('GridStateService', () => {
         { columnId: 'field2', cssClass: '', headerCssClass: 'blue', width: 150 },
         { columnId: 'field3', cssClass: '', headerCssClass: '', width: 0 },
       ] as CurrentColumn[];
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
 
       const associatedColumns = service.getAssociatedCurrentColumns(columnsMock);
       const currentColumns = service.getCurrentColumns();
