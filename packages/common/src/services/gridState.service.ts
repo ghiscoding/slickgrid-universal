@@ -249,10 +249,7 @@ export class GridStateService {
    * @return current columns
    */
   getCurrentColumns(): CurrentColumn[] {
-    let currentColumns: CurrentColumn[] = [];
-    currentColumns = this.getAssociatedCurrentColumns(this._grid.getColumns());
-
-    return currentColumns;
+    return this.getAssociatedCurrentColumns(this._grid.getColumns() || []);
   }
 
   /**
