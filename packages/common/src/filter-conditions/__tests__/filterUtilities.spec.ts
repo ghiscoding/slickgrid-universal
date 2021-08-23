@@ -188,8 +188,11 @@ describe('filterUtilities', () => {
     });
 
     it('should return True when value1 is "IN_CONTAINS" value2 collection even if there is extra spaces in the string', () => {
-      const output = testFilterCondition('IN_CONTAINS', 'Task2,  Task3 ', ['Task2', 'Task3']);
-      expect(output).toBeTruthy();
+      const output1 = testFilterCondition('IN_CONTAINS', 'Task2,  Task3 , Task4', ['Task3']);
+      const output2 = testFilterCondition('IN_CONTAINS', 'Task2,  Task3 , Task4', ['Task4']);
+
+      expect(output1).toBeTruthy();
+      expect(output2).toBeTruthy();
     });
 
     it('should return False when value1 is not "IN_CONTAINS" value2 collection', () => {

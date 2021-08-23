@@ -5,9 +5,7 @@ describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
 
   beforeEach(() => {
     // create a console.log spy for later use
-    cy.window().then((win) => {
-      cy.spy(win.console, 'log');
-    });
+    cy.window().then(win => cy.spy(win.console, 'log'));
   });
 
   it('should display Example title', () => {
@@ -201,7 +199,7 @@ describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
       cy.get('.grid15')
         .find('button.slick-gridmenu-button')
         .trigger('click')
-        .click();
+        .click({ force: true });
 
       cy.get(`.slick-gridmenu:visible`)
         .find('.slick-gridmenu-item')
@@ -307,7 +305,7 @@ describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
     });
 
     it('should click on Set Dynamic Filter and expect query and filters to be changed', () => {
-      cy.get('[data-test=set-dynamic-filter]')
+      cy.get('[data-test=set-dynamic-filter-btn]')
         .click();
 
       cy.get('.search-filter.filter-name select')
@@ -437,7 +435,7 @@ describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
     });
 
     it('should click on Set Dynamic Filter and expect query and filters to be changed', () => {
-      cy.get('[data-test=set-dynamic-filter]')
+      cy.get('[data-test=set-dynamic-filter-btn]')
         .click();
 
       cy.get('.search-filter.filter-name select')
@@ -593,14 +591,14 @@ describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
 
   describe('Set Dynamic Sorting', () => {
     it('should click on "Set Filters Dynamically" then on "Set Sorting Dynamically"', () => {
-      cy.get('[data-test=set-dynamic-filter]')
+      cy.get('[data-test=set-dynamic-filter-btn]')
         .click();
 
       // wait for the query to finish
       cy.get('[data-test=status]').should('contain', 'loading');
       cy.get('[data-test=status]').should('contain', 'finished');
 
-      cy.get('[data-test=set-dynamic-sorting]')
+      cy.get('[data-test=set-dynamic-sorting-btn]')
         .click();
 
       cy.get('[data-test=status]').should('contain', 'loading');
@@ -676,9 +674,9 @@ describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
     });
 
     it('should click on "Add Other Gender via RxJS" button', () => {
-      cy.get('[data-test="add-gender-button"]').should('not.be.disabled');
-      cy.get('[data-test="add-gender-button"]').click();
-      cy.get('[data-test="add-gender-button"]').should('be.disabled');
+      cy.get('[data-test="add-gender-btn"]').should('not.be.disabled');
+      cy.get('[data-test="add-gender-btn"]').click();
+      cy.get('[data-test="add-gender-btn"]').should('be.disabled');
     });
 
     it('should open the "Gender" editor on the first row and expect to find 1 more option the editor list (male, female, other)', () => {

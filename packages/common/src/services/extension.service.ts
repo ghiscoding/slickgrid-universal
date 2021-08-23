@@ -12,7 +12,6 @@ import {
   ContextMenuExtension,
   DraggableGroupingExtension,
   ExtensionUtility,
-  GridMenuExtension,
   GroupItemMetaProviderExtension,
   HeaderButtonExtension,
   HeaderMenuExtension,
@@ -23,7 +22,10 @@ import {
 import { SharedService } from './shared.service';
 import { TranslaterService } from './translater.service';
 import { AutoTooltipPlugin } from '../plugins/index';
-import { ColumnPickerControl } from '../controls/index';
+import { ColumnPickerControl, GridMenuControl } from '../controls/index';
+import { FilterService } from './filter.service';
+import { PubSubService } from './pubSub.service';
+import { SortService } from './sort.service';
 
 interface ExtensionWithColumnIndexPosition {
   name: ExtensionName;
@@ -33,6 +35,7 @@ interface ExtensionWithColumnIndexPosition {
 
 export class ExtensionService {
   protected _columnPickerControl?: ColumnPickerControl;
+  protected _gridMenuControl?: GridMenuControl;
   protected _extensionCreatedList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
   protected _extensionList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
 
@@ -46,12 +49,15 @@ export class ExtensionService {
 
   constructor(
     protected readonly extensionUtility: ExtensionUtility,
+    protected readonly filterService: FilterService,
+    protected readonly pubSubService: PubSubService,
+    protected readonly sortService: SortService,
+
     protected readonly cellExternalCopyExtension: CellExternalCopyManagerExtension,
     protected readonly cellMenuExtension: CellMenuExtension,
     protected readonly checkboxSelectorExtension: CheckboxSelectorExtension,
     protected readonly contextMenuExtension: ContextMenuExtension,
     protected readonly draggableGroupingExtension: DraggableGroupingExtension,
-    protected readonly gridMenuExtension: GridMenuExtension,
     protected readonly groupItemMetaExtension: GroupItemMetaProviderExtension,
     protected readonly headerButtonExtension: HeaderButtonExtension,
     protected readonly headerMenuExtension: HeaderMenuExtension,
@@ -72,6 +78,9 @@ export class ExtensionService {
         const extension = this._extensionList[extensionName as keyof Record<ExtensionName, ExtensionModel<any, any>>] as ExtensionModel<any, any>;
         if (extension?.class?.dispose) {
           extension.class.dispose();
+        }
+        if (extension?.instance?.dispose) {
+          extension.instance.dispose();
         }
       }
     }
@@ -109,10 +118,7 @@ export class ExtensionService {
   getSlickgridAddonInstance(name: ExtensionName): any {
     const extension = this.getExtensionByName(name);
     if (extension && extension.class && (extension.instance)) {
-      if (extension.class && extension.class.getAddonInstance) {
-        return extension.class.getAddonInstance();
-      }
-      return extension.instance;
+      return extension.class?.getAddonInstance?.() ?? extension.instance;
     }
     return null;
   }
@@ -180,7 +186,7 @@ export class ExtensionService {
 
       // Column Picker Control
       if (this.gridOptions.enableColumnPicker) {
-        this._columnPickerControl = new ColumnPickerControl(this.extensionUtility, this.sharedService);
+        this._columnPickerControl = new ColumnPickerControl(this.extensionUtility, this.pubSubService, this.sharedService);
         if (this._columnPickerControl) {
           if (this.gridOptions.columnPicker?.onExtensionRegistered) {
             this.gridOptions.columnPicker.onExtensionRegistered(this._columnPickerControl);
@@ -206,10 +212,13 @@ export class ExtensionService {
       }
 
       // Grid Menu Control
-      if (this.gridOptions.enableGridMenu && this.gridMenuExtension && this.gridMenuExtension.register) {
-        const instance = this.gridMenuExtension.register();
-        if (instance) {
-          this._extensionList[ExtensionName.gridMenu] = { name: ExtensionName.gridMenu, class: this.gridMenuExtension, instance };
+      if (this.gridOptions.enableGridMenu) {
+        this._gridMenuControl = new GridMenuControl(this.extensionUtility, this.filterService, this.pubSubService, this.sharedService, this.sortService);
+        if (this._gridMenuControl) {
+          if (this.gridOptions.gridMenu?.onExtensionRegistered) {
+            this.gridOptions.gridMenu.onExtensionRegistered(this._gridMenuControl);
+          }
+          this._extensionList[ExtensionName.gridMenu] = { name: ExtensionName.gridMenu, class: {}, instance: this._gridMenuControl };
         }
       }
 
@@ -318,7 +327,7 @@ export class ExtensionService {
 
   /** Refresh the dataset through the Backend Service */
   refreshBackendDataset(gridOptions?: GridOption) {
-    this.gridMenuExtension.refreshBackendDataset(gridOptions);
+    this.extensionUtility.refreshBackendDataset(gridOptions);
   }
 
   /**
@@ -331,6 +340,16 @@ export class ExtensionService {
       return columns.filter((_el: Column, i: number) => index !== i);
     }
     return columns;
+  }
+
+  /** Translate all possible Extensions at once */
+  translateAllExtensions() {
+    this.translateCellMenu();
+    this.translateColumnHeaders();
+    this.translateColumnPicker();
+    this.translateContextMenu();
+    this.translateGridMenu();
+    this.translateHeaderMenu();
   }
 
   /** Translate the Cell Menu titles, we need to loop through all column definition to re-translate them */
@@ -358,9 +377,7 @@ export class ExtensionService {
    * Translate the Header Menu titles, we need to loop through all column definition to re-translate them
    */
   translateGridMenu() {
-    if (this.gridMenuExtension && this.gridMenuExtension.translateGridMenu) {
-      this.gridMenuExtension.translateGridMenu();
-    }
+    this._gridMenuControl?.translateGridMenu?.();
   }
 
   /**
@@ -397,7 +414,7 @@ export class ExtensionService {
 
     // re-render the column headers
     this.renderColumnHeaders(columnDefinitions, Array.isArray(newColumnDefinitions));
-    this.gridMenuExtension.translateGridMenu();
+    this._gridMenuControl?.translateGridMenu?.();
   }
 
   /**
@@ -421,9 +438,9 @@ export class ExtensionService {
       this._columnPickerControl.columns = this.sharedService.allColumns;
     }
 
-    // recreate the Grid Menu when enabled
-    if (this.gridOptions.enableGridMenu) {
-      this.recreateExternalAddon(this.gridMenuExtension, ExtensionName.gridMenu);
+    // replace the Grid Menu columns array list
+    if (this._gridMenuControl) {
+      this._gridMenuControl.columns = this.sharedService.allColumns ?? [];
     }
 
     // recreate the Header Menu when enabled

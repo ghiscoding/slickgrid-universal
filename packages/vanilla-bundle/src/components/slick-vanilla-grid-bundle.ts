@@ -38,7 +38,6 @@ import {
   ContextMenuExtension,
   DraggableGroupingExtension,
   ExtensionUtility,
-  GridMenuExtension,
   GroupItemMetaProviderExtension,
   HeaderMenuExtension,
   HeaderButtonExtension,
@@ -349,7 +348,7 @@ export class SlickVanillaGridBundle {
     this.gridEventService = services?.gridEventService ?? new GridEventService();
     this.sharedService = services?.sharedService ?? new SharedService();
     this.collectionService = services?.collectionService ?? new CollectionService(this.translaterService);
-    this.extensionUtility = services?.extensionUtility ?? new ExtensionUtility(this.sharedService, this.translaterService);
+    this.extensionUtility = services?.extensionUtility ?? new ExtensionUtility(this.sharedService, this.backendUtilityService, this.translaterService);
     this.filterFactory = new FilterFactory(slickgridConfig, this.translaterService, this.collectionService);
     this.filterService = services?.filterService ?? new FilterService(this.filterFactory, this._eventPubSubService, this.sharedService, this.backendUtilityService);
     this.resizerService = services?.resizerService ?? new ResizerService(this._eventPubSubService);
@@ -363,7 +362,6 @@ export class SlickVanillaGridBundle {
     const contextMenuExtension = new ContextMenuExtension(this.extensionUtility, this.sharedService, this.treeDataService, this.translaterService);
     const checkboxExtension = new CheckboxSelectorExtension(this.sharedService);
     const draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this.sharedService);
-    const gridMenuExtension = new GridMenuExtension(this.extensionUtility, this.filterService, this.sharedService, this.sortService, this.backendUtilityService, this.translaterService);
     const groupItemMetaProviderExtension = new GroupItemMetaProviderExtension(this.sharedService);
     const headerButtonExtension = new HeaderButtonExtension(this.extensionUtility, this.sharedService);
     const headerMenuExtension = new HeaderMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.translaterService);
@@ -373,12 +371,14 @@ export class SlickVanillaGridBundle {
 
     this.extensionService = services?.extensionService ?? new ExtensionService(
       this.extensionUtility,
+      this.filterService,
+      this._eventPubSubService,
+      this.sortService,
       cellExternalCopyManagerExtension,
       cellMenuExtension,
       checkboxExtension,
       contextMenuExtension,
       draggableGroupingExtension,
-      gridMenuExtension,
       groupItemMetaProviderExtension,
       headerButtonExtension,
       headerMenuExtension,
@@ -755,12 +755,7 @@ export class SlickVanillaGridBundle {
     this.subscriptions.push(
       this._eventPubSubService.subscribe('onLanguageChange', () => {
         if (gridOptions.enableTranslate) {
-          this.extensionService.translateCellMenu();
-          this.extensionService.translateColumnHeaders();
-          this.extensionService.translateColumnPicker();
-          this.extensionService.translateContextMenu();
-          this.extensionService.translateGridMenu();
-          this.extensionService.translateHeaderMenu();
+          this.extensionService.translateAllExtensions();
           this.translateCustomFooterTexts();
           this.translateColumnHeaderTitleKeys();
           this.translateColumnGroupKeys();

@@ -3,15 +3,18 @@ import { ColumnPickerControl } from '../columnPicker.control';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { BackendUtilityService } from '../../services/backendUtility.service';
+import { PubSubService } from '../../services';
 
 declare const Slick: SlickNamespace;
+const gridUid = 'slickgrid_124343';
 
 const gridStub = {
   getColumnIndex: jest.fn(),
   getColumns: jest.fn(),
   getOptions: jest.fn(),
   getSelectedRows: jest.fn(),
-  getUID: jest.fn(),
+  getUID: () => gridUid,
   registerPlugin: jest.fn(),
   setColumns: jest.fn(),
   setOptions: jest.fn(),
@@ -19,6 +22,13 @@ const gridStub = {
   onColumnsReordered: new Slick.Event(),
   onHeaderContextMenu: new Slick.Event(),
 } as unknown as SlickGrid;
+
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as PubSubService;
 
 describe('ColumnPickerControl', () => {
   const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
@@ -29,6 +39,7 @@ describe('ColumnPickerControl', () => {
   ];
 
   let control: ColumnPickerControl;
+  let backendUtilityService: BackendUtilityService;
   let sharedService: SharedService;
   let translateService: TranslateServiceStub;
   let extensionUtility: ExtensionUtility;
@@ -45,8 +56,9 @@ describe('ColumnPickerControl', () => {
 
   beforeEach(() => {
     sharedService = new SharedService();
+    backendUtilityService = new BackendUtilityService();
     translateService = new TranslateServiceStub();
-    extensionUtility = new ExtensionUtility(sharedService, translateService);
+    extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
 
     jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
     jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
@@ -56,7 +68,7 @@ describe('ColumnPickerControl', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
     jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
-    control = new ColumnPickerControl(extensionUtility, sharedService);
+    control = new ColumnPickerControl(extensionUtility, pubSubServiceStub, sharedService);
     translateService.use('fr');
   });
 
@@ -66,7 +78,7 @@ describe('ColumnPickerControl', () => {
     jest.clearAllMocks();
   });
 
-  describe('registered plugin', () => {
+  describe('registered control', () => {
     afterEach(() => {
       gridOptionsMock.columnPicker.headerColumnValueExtractor = null;
       gridOptionsMock.columnPicker.onColumnsChanged = null;
@@ -91,7 +103,7 @@ describe('ColumnPickerControl', () => {
       const inputElm = control.menuElement.querySelector('input[type="checkbox"]');
       inputElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-      expect(control.menuElement.style.display).toBe('block');
+      expect(control.menuElement.style.visibility).toBe('visible');
       expect(setSelectionSpy).toHaveBeenCalledWith(mockRowSelection);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);
@@ -109,12 +121,12 @@ describe('ColumnPickerControl', () => {
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData, gridStub);
 
-      expect(control.menuElement.style.display).toBe('block');
+      expect(control.menuElement.style.visibility).toBe('visible');
 
       const bodyElm = document.body;
       bodyElm.dispatchEvent(new Event('mousedown', { bubbles: true }));
 
-      expect(control.menuElement.style.display).toBe('none');
+      expect(control.menuElement.style.visibility).toBe('hidden');
     });
 
     it('should query an input checkbox change event and expect "readjustFrozenColumnIndexWhenNeeded" method to be called when the grid is detected to be a frozen grid', () => {
@@ -140,10 +152,7 @@ describe('ColumnPickerControl', () => {
       jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined).mockReturnValue(1);
       const readjustSpy = jest.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
 
-      gridOptionsMock.columnPicker.headerColumnValueExtractor = (column: Column) => {
-        const headerGroup = column?.columnGroup || '';
-        return `${headerGroup} - ${column.name}`;
-      };
+      gridOptionsMock.columnPicker.headerColumnValueExtractor = (column: Column) => `${column?.columnGroup || ''} - ${column.name}`;
       control.columns = columnsMock;
       control.init();
 
@@ -169,8 +178,8 @@ describe('ColumnPickerControl', () => {
 
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData, gridStub);
       control.menuElement.querySelector<HTMLInputElement>('input[type="checkbox"]').dispatchEvent(new Event('click', { bubbles: true }));
-      const inputForcefitElm = control.menuElement.querySelector<HTMLInputElement>('#colpicker-forcefit');
-      const labelSyncElm = control.menuElement.querySelector<HTMLLabelElement>('label[for=colpicker-forcefit]');
+      const inputForcefitElm = control.menuElement.querySelector<HTMLInputElement>('#slickgrid_124343-colpicker-forcefit');
+      const labelSyncElm = control.menuElement.querySelector<HTMLLabelElement>('label[for=slickgrid_124343-colpicker-forcefit]');
 
       expect(handlerSpy).toHaveBeenCalledTimes(2);
       expect(control.getAllColumns()).toEqual(columnsMock);
@@ -191,8 +200,8 @@ describe('ColumnPickerControl', () => {
 
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData, gridStub);
       control.menuElement.querySelector<HTMLInputElement>('input[type="checkbox"]').dispatchEvent(new Event('click', { bubbles: true }));
-      const inputSyncElm = control.menuElement.querySelector<HTMLInputElement>('#colpicker-syncresize');
-      const labelSyncElm = control.menuElement.querySelector<HTMLLabelElement>('label[for=colpicker-syncresize]');
+      const inputSyncElm = control.menuElement.querySelector<HTMLInputElement>('#slickgrid_124343-colpicker-syncresize');
+      const labelSyncElm = control.menuElement.querySelector<HTMLLabelElement>('label[for=slickgrid_124343-colpicker-syncresize]');
 
       expect(handlerSpy).toHaveBeenCalledTimes(2);
       expect(control.getAllColumns()).toEqual(columnsMock);
@@ -204,6 +213,7 @@ describe('ColumnPickerControl', () => {
 
     it('should open the column picker via "onHeaderContextMenu" and expect "onColumnsChanged" to be called when defined', () => {
       const handlerSpy = jest.spyOn(control.eventHandler, 'subscribe');
+      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
       const onColChangedMock = jest.fn();
       jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined).mockReturnValue(1);
 
@@ -214,16 +224,19 @@ describe('ColumnPickerControl', () => {
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData, gridStub);
       control.menuElement.querySelector<HTMLInputElement>('input[type="checkbox"]').dispatchEvent(new Event('click', { bubbles: true }));
 
-      expect(handlerSpy).toHaveBeenCalledTimes(2);
-      expect(control.getAllColumns()).toEqual(columnsMock);
-      expect(control.getVisibleColumns()).toEqual(columnsMock);
-      expect(onColChangedMock).toBeCalledWith(expect.anything(), {
+      const expectedCallbackArgs = {
         columnId: 'field1',
         showing: true,
         allColumns: columnsMock,
         columns: columnsMock,
+        visibleColumns: columnsMock,
         grid: gridStub,
-      });
+      };
+      expect(handlerSpy).toHaveBeenCalledTimes(2);
+      expect(control.getAllColumns()).toEqual(columnsMock);
+      expect(control.getVisibleColumns()).toEqual(columnsMock);
+      expect(onColChangedMock).toBeCalledWith(expect.anything(), expectedCallbackArgs);
+      expect(pubSubSpy).toHaveBeenCalledWith('columnPicker:onColumnsChanged', expectedCallbackArgs);
     });
 
     it('should open the column picker via "onHeaderContextMenu", click on "Force Fit Columns" checkbox and expect "setOptions" and "setColumns" to be called with previous visible columns', () => {
@@ -239,8 +252,8 @@ describe('ColumnPickerControl', () => {
       control.init();
 
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData, gridStub);
-      const inputForcefitElm = control.menuElement.querySelector<HTMLInputElement>('#colpicker-forcefit');
-      const labelSyncElm = control.menuElement.querySelector<HTMLLabelElement>('label[for=colpicker-forcefit]');
+      const inputForcefitElm = control.menuElement.querySelector<HTMLInputElement>('#slickgrid_124343-colpicker-forcefit');
+      const labelSyncElm = control.menuElement.querySelector<HTMLLabelElement>('label[for=slickgrid_124343-colpicker-forcefit]');
       inputForcefitElm.dispatchEvent(new Event('click', { bubbles: true }));
 
       expect(handlerSpy).toHaveBeenCalledTimes(2);
@@ -265,8 +278,8 @@ describe('ColumnPickerControl', () => {
       control.init();
 
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData, gridStub);
-      const inputSyncElm = control.menuElement.querySelector<HTMLInputElement>('#colpicker-syncresize');
-      const labelSyncElm = control.menuElement.querySelector<HTMLLabelElement>('label[for=colpicker-syncresize]');
+      const inputSyncElm = control.menuElement.querySelector<HTMLInputElement>('#slickgrid_124343-colpicker-syncresize');
+      const labelSyncElm = control.menuElement.querySelector<HTMLLabelElement>('label[for=slickgrid_124343-colpicker-syncresize]');
       inputSyncElm.dispatchEvent(new Event('click', { bubbles: true }));
 
       expect(handlerSpy).toHaveBeenCalledTimes(2);
@@ -289,7 +302,6 @@ describe('ColumnPickerControl', () => {
           { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },
           { id: 'field3', field: 'field3', name: 'Field 3', width: 75, columnGroup: 'Billing' },
         ];
-        jest.spyOn(control, 'getAllColumns').mockReturnValue(columnsMock);
         jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined).mockReturnValueOnce(0).mockReturnValueOnce(1);
         const handlerSpy = jest.spyOn(control.eventHandler, 'subscribe');
 
@@ -324,8 +336,8 @@ describe('ColumnPickerControl', () => {
 
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData, gridStub);
       control.menuElement.querySelector<HTMLInputElement>('input[type="checkbox"]').dispatchEvent(new Event('click', { bubbles: true }));
-      const labelForcefitElm = control.menuElement.querySelector<HTMLLabelElement>('label[for=colpicker-forcefit]');
-      const labelSyncElm = control.menuElement.querySelector<HTMLLabelElement>('label[for=colpicker-syncresize]');
+      const labelForcefitElm = control.menuElement.querySelector<HTMLLabelElement>('label[for=slickgrid_124343-colpicker-forcefit]');
+      const labelSyncElm = control.menuElement.querySelector<HTMLLabelElement>('label[for=slickgrid_124343-colpicker-syncresize]');
 
       expect(handlerSpy).toHaveBeenCalledTimes(2);
       expect(labelForcefitElm.textContent).toBe('Ajustement forcé des colonnes');

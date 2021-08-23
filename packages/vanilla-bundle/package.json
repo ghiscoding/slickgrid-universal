@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/vanilla-bundle",
-  "version": "0.16.1",
+  "version": "0.16.2",
   "description": "Vanilla Slick Grid Bundle - Framework agnostic the output is to be used in vanilla JS/TS - Written in TypeScript and we also use WebPack to bundle everything into 1 JS file.",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
@@ -46,13 +46,13 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.16.1",
-    "@slickgrid-universal/composite-editor-component": "^0.16.1",
-    "@slickgrid-universal/custom-footer-component": "^0.16.1",
-    "@slickgrid-universal/empty-warning-component": "^0.16.1",
-    "@slickgrid-universal/event-pub-sub": "^0.16.1",
-    "@slickgrid-universal/pagination-component": "^0.16.1",
-    "@slickgrid-universal/text-export": "^0.16.1",
+    "@slickgrid-universal/common": "^0.16.2",
+    "@slickgrid-universal/composite-editor-component": "^0.16.2",
+    "@slickgrid-universal/custom-footer-component": "^0.16.2",
+    "@slickgrid-universal/empty-warning-component": "^0.16.2",
+    "@slickgrid-universal/event-pub-sub": "^0.16.2",
+    "@slickgrid-universal/pagination-component": "^0.16.2",
+    "@slickgrid-universal/text-export": "^0.16.2",
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
@@ -63,7 +63,7 @@
     "html-loader": "^2.1.2",
     "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.2",
-    "ts-loader": "^9.2.3",
-    "webpack": "^5.45.1"
+    "ts-loader": "^9.2.5",
+    "webpack": "^5.50.0"
   }
 }

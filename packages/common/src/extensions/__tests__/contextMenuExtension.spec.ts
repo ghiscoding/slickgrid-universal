@@ -7,7 +7,7 @@ import { SharedService } from '../../services/shared.service';
 import { DelimiterType, FileType } from '../../enums/index';
 import { Column, SlickDataView, GridOption, MenuCommandItem, SlickGrid, SlickNamespace, ContextMenu, SlickContextMenu } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { ExcelExportService, TextExportService, TreeDataService } from '../../services';
+import { BackendUtilityService, ExcelExportService, TextExportService, TreeDataService } from '../../services';
 
 declare const Slick: SlickNamespace;
 
@@ -74,6 +74,7 @@ describe('contextMenuExtension', () => {
 
   const columnsMock: Column[] = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
   let extensionUtility: ExtensionUtility;
+  let backendUtilityService: BackendUtilityService;
   let translateService: TranslateServiceStub;
   let extension: ContextMenuExtension;
   let sharedService: SharedService;
@@ -124,8 +125,9 @@ describe('contextMenuExtension', () => {
   describe('with I18N Service', () => {
     beforeEach(() => {
       sharedService = new SharedService();
+      backendUtilityService = new BackendUtilityService();
       translateService = new TranslateServiceStub();
-      extensionUtility = new ExtensionUtility(sharedService, translateService);
+      extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
       extension = new ContextMenuExtension(extensionUtility, sharedService, treeDataServiceStub, translateService);
       translateService.use('fr');
     });

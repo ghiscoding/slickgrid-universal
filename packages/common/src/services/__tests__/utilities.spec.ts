@@ -593,9 +593,14 @@ describe('Service/Utilies', () => {
     div.innerHTML = `<span></span>`;
     document.body.appendChild(div);
 
+    it('should return undefined when element if not a valid html element', () => {
+      const output = getHtmlElementOffset(null);
+      expect(output).toEqual(undefined);
+    });
+
     it('should return top/left 0 when creating a new element in the document without positions', () => {
       const output = getHtmlElementOffset(div);
-      expect(output).toEqual({ top: 0, left: 0 });
+      expect(output).toEqual({ top: 0, left: 0, bottom: 0, right: 0 });
     });
 
     it('should return same top/left positions as defined in the document/window', () => {

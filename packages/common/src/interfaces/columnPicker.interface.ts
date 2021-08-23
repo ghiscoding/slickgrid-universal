@@ -1,4 +1,4 @@
-import { Column, GridOption } from './index';
+import { Column, GridOption, SlickGrid } from './index';
 import { ColumnPickerControl } from '../controls/columnPicker.control';
 
 export interface ColumnPicker extends ColumnPickerOption {
@@ -36,5 +36,23 @@ export interface ColumnPickerOption {
   // Events
 
   /** SlickGrid Event fired when any of the columns checkbox selection changes. */
-  onColumnsChanged?: (e: Event, args: any) => void;
+  onColumnsChanged?: (e: Event, args: {
+    /** column definition id */
+    columnId: string;
+
+    /** last command, are we showing or not the column? */
+    showing: boolean;
+
+    /** slick grid object */
+    grid: SlickGrid;
+
+    /** list of all column definitions (visible & hidden) */
+    allColumns: Column[];
+
+    /** list of visible column definitions */
+    visibleColumns: Column[];
+
+    /** @deprecated @use `visibleColumns` */
+    columns?: Column[];
+  }) => void;
 }

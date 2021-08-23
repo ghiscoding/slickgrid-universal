@@ -3,6 +3,7 @@ import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { GridOption, HeaderButton, HeaderButtonOnCommandArgs, SlickGrid, SlickHeaderButtons, SlickNamespace } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { BackendUtilityService } from '../../services';
 
 declare const Slick: SlickNamespace;
 
@@ -22,6 +23,7 @@ describe('headerButtonExtension', () => {
   Slick.Plugins = { HeaderButtons: mockAddon } as any;
 
   let extension: HeaderButtonExtension;
+  let backendUtilityService: BackendUtilityService;
   let extensionUtility: ExtensionUtility;
   let sharedService: SharedService;
   let translateService: TranslateServiceStub;
@@ -46,8 +48,9 @@ describe('headerButtonExtension', () => {
 
   beforeEach(() => {
     sharedService = new SharedService();
+    backendUtilityService = new BackendUtilityService();
     translateService = new TranslateServiceStub();
-    extensionUtility = new ExtensionUtility(sharedService, translateService);
+    extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
     extension = new HeaderButtonExtension(extensionUtility, sharedService);
   });
 

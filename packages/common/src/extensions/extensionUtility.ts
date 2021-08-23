@@ -1,12 +1,18 @@
 import { Constants } from '../constants';
 import { Column } from '../interfaces/column.interface';
+import { BackendUtilityService } from '../services/backendUtility.service';
 import { SharedService } from '../services/shared.service';
-import { TranslaterService } from '../services';
+import { TranslaterService } from '../services/translater.service';
 import { getTranslationPrefix } from '../services/utilities';
 import { Locale } from '../interfaces/locale.interface';
+import { GridOption } from '../interfaces';
 
 export class ExtensionUtility {
-  constructor(private readonly sharedService: SharedService, private readonly translaterService?: TranslaterService) { }
+  constructor(
+    private readonly sharedService: SharedService,
+    private readonly backendUtilities?: BackendUtilityService,
+    private readonly translaterService?: TranslaterService
+  ) { }
 
   /**
    * From a Grid Menu object property name, we will return the correct title output string following this order
@@ -91,6 +97,17 @@ export class ExtensionUtility {
         this.sharedService.slickGrid.setColumns(visibleColumns);
       }
     }
+  }
+
+  /** Refresh the dataset through the Backend Service */
+  refreshBackendDataset(inputGridOptions?: GridOption) {
+    // user can pass new set of grid options which will override current ones
+    let gridOptions = this.sharedService.gridOptions;
+    if (inputGridOptions) {
+      gridOptions = { ...this.sharedService.gridOptions, ...inputGridOptions };
+      this.sharedService.gridOptions = gridOptions;
+    }
+    this.backendUtilities?.refreshBackendDataset(gridOptions);
   }
 
   /**

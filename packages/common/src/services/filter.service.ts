@@ -30,7 +30,7 @@ import {
   SlickNamespace,
 } from './../interfaces/index';
 import { BackendUtilityService } from './backendUtility.service';
-import { deepCopy, getDescendantProperty, mapOperatorByFieldType } from './utilities';
+import { deepCopy, getDescendantProperty, mapOperatorByFieldType, sanitizeHtmlToText } from './utilities';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
 import { RxJsFacade, Subject } from './rxjsFacade';
@@ -495,7 +495,8 @@ export class FilterService {
       const dataView = grid.getData() as SlickDataView;
       const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
       const rowIndex = (dataView && typeof dataView.getIdxById === 'function') ? dataView.getIdxById(item[idPropName]) : 0;
-      cellValue = (columnDef && typeof columnDef.formatter === 'function') ? columnDef.formatter(rowIndex || 0, columnIndex, cellValue, columnDef, item, this._grid) : '';
+      const formattedCellValue = (columnDef && typeof columnDef.formatter === 'function') ? columnDef.formatter(rowIndex || 0, columnIndex, cellValue, columnDef, item, this._grid) : '';
+      cellValue = sanitizeHtmlToText(formattedCellValue as string);
     }
 
     // make sure cell value is always a string

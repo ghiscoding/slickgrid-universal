@@ -4,6 +4,7 @@ import { CellExternalCopyManagerExtension } from '../cellExternalCopyManagerExte
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { BackendUtilityService } from '../../services';
 
 declare const Slick: SlickNamespace;
 jest.mock('flatpickr', () => { });
@@ -41,6 +42,7 @@ describe('cellExternalCopyManagerExtension', () => {
 
   let extension: CellExternalCopyManagerExtension;
   let extensionUtility: ExtensionUtility;
+  let backendUtilityService: BackendUtilityService;
   let sharedService: SharedService;
   let translateService: TranslateServiceStub;
   const gridOptionsMock = {
@@ -56,8 +58,9 @@ describe('cellExternalCopyManagerExtension', () => {
 
   beforeEach(() => {
     sharedService = new SharedService();
+    backendUtilityService = new BackendUtilityService();
     translateService = new TranslateServiceStub();
-    extensionUtility = new ExtensionUtility(sharedService, translateService);
+    extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
     extension = new CellExternalCopyManagerExtension(extensionUtility, sharedService);
   });
 

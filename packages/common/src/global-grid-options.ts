@@ -161,6 +161,7 @@ export const GlobalGridOptions: GridOption = {
   forceFitColumns: false,
   frozenHeaderWidthCalcDifferential: 1,
   gridMenu: {
+    alignDropSide: 'right',
     commandLabels: {
       clearAllFiltersCommandKey: 'CLEAR_ALL_FILTERS',
       clearAllSortingCommandKey: 'CLEAR_ALL_SORTING',
@@ -195,7 +196,6 @@ export const GlobalGridOptions: GridOption = {
     iconTogglePreHeaderCommand: 'fa fa-random mdi mdi-flip-vertical',
     menuWidth: 16,
     resizeOnShowHeaderRow: true,
-    useClickToRepositionMenu: false, // use icon location to reposition instead
     headerColumnValueExtractor: pickerHeaderColumnValueExtractor
   },
   headerMenu: {

@@ -462,6 +462,26 @@ describe('TreeData Service', () => {
         expect(endUpdateSpy).toHaveBeenCalled();
       });
     });
+
+    describe('dynamicallyToggleItemState method', () => {
+      it('should execute the method and also trigger an event by default', () => {
+        jest.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockFlatDataset[3]);
+        jest.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValue(mockHierarchical);
+        const beginUpdateSpy = jest.spyOn(dataViewStub, 'beginUpdate');
+        const endUpdateSpy = jest.spyOn(dataViewStub, 'endUpdate');
+        const updateItemSpy = jest.spyOn(dataViewStub, 'updateItem');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+
+        service.init(gridStub);
+        service.dynamicallyToggleItemState([{ itemId: 4, isCollapsed: true }], true);
+        service.dynamicallyToggleItemState([{ itemId: 4, isCollapsed: true }], true); // calling twice shouldn't change toggledItems array
+
+        expect(beginUpdateSpy).toHaveBeenCalled();
+        expect(updateItemSpy).toHaveBeenNthCalledWith(1, 4, { __collapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4, __treeLevel: 0 });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onTreeItemToggled`, { fromItemId: 4, previousFullToggleType: 'full-expand', toggledItems: [{ itemId: 4, isCollapsed: true }], type: 'toggle-collapse' });
+        expect(endUpdateSpy).toHaveBeenCalled();
+      });
+    });
   });
 
   describe('convertFlatParentChildToTreeDatasetAndSort method', () => {

@@ -34,9 +34,8 @@ describe('Example 02 - Grouping & Aggregators', { retries: 1 }, () => {
       .find('.slick-custom-footer')
       .find('.right-footer')
       .should($span => {
-        const dateTime = moment().format('YYYY-MM-DD, hh:mm a');
         const text = removeExtraSpaces($span.text()); // remove all white spaces
-        expect(text).to.eq(`Last Update ${dateTime} | 500 of 500 items`);
+        expect(text).to.eq(`Last Update ${moment().format('YYYY-MM-DD, hh:mm a')} | 500 of 500 items`);
       });
   });
 
@@ -92,7 +91,7 @@ describe('Example 02 - Grouping & Aggregators', { retries: 1 }, () => {
     cy.get('.grid2')
       .find('button.slick-gridmenu-button')
       .trigger('click')
-      .click();
+      .click({ force: true });
   });
 
   describe('Grouping Tests', () => {

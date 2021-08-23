@@ -68,6 +68,7 @@ const extensionServiceStub = {
   createExtensionsBeforeGridCreation: jest.fn(),
   dispose: jest.fn(),
   renderColumnHeaders: jest.fn(),
+  translateAllExtensions: jest.fn(),
   translateCellMenu: jest.fn(),
   translateColumnHeaders: jest.fn(),
   translateColumnPicker: jest.fn(),
@@ -1377,12 +1378,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should call multiple translate methods when locale changes', (done) => {
-        const transCellMenuSpy = jest.spyOn(extensionServiceStub, 'translateCellMenu');
-        const transColHeaderSpy = jest.spyOn(extensionServiceStub, 'translateColumnHeaders');
-        const transColPickerSpy = jest.spyOn(extensionServiceStub, 'translateColumnPicker');
-        const transContextMenuSpy = jest.spyOn(extensionServiceStub, 'translateContextMenu');
-        const transGridMenuSpy = jest.spyOn(extensionServiceStub, 'translateGridMenu');
-        const transHeaderMenuSpy = jest.spyOn(extensionServiceStub, 'translateHeaderMenu');
+        const transExtensionSpy = jest.spyOn(extensionServiceStub, 'translateAllExtensions');
         const transGroupingColSpanSpy = jest.spyOn(groupingAndColspanServiceStub, 'translateGroupingAndColSpan');
         const setHeaderRowSpy = jest.spyOn(mockGrid, 'setHeaderRowVisibility');
 
@@ -1395,12 +1391,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         setTimeout(() => {
           expect(setHeaderRowSpy).not.toHaveBeenCalled();
           expect(transGroupingColSpanSpy).not.toHaveBeenCalled();
-          expect(transCellMenuSpy).toHaveBeenCalled();
-          expect(transColHeaderSpy).toHaveBeenCalled();
-          expect(transColPickerSpy).toHaveBeenCalled();
-          expect(transContextMenuSpy).toHaveBeenCalled();
-          expect(transGridMenuSpy).toHaveBeenCalled();
-          expect(transHeaderMenuSpy).toHaveBeenCalled();
+          expect(transExtensionSpy).toHaveBeenCalled();
           expect(transCustomFooterSpy).toHaveBeenCalled();
           done();
         });
@@ -1408,12 +1399,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
       it('should call "setHeaderRowVisibility", "translateGroupingAndColSpan" and other methods when locale changes', (done) => {
         component.columnDefinitions = [{ id: 'firstName', field: 'firstName', filterable: true }];
-        const transCellMenuSpy = jest.spyOn(extensionServiceStub, 'translateCellMenu');
-        const transColHeaderSpy = jest.spyOn(extensionServiceStub, 'translateColumnHeaders');
-        const transColPickerSpy = jest.spyOn(extensionServiceStub, 'translateColumnPicker');
-        const transContextMenuSpy = jest.spyOn(extensionServiceStub, 'translateContextMenu');
-        const transGridMenuSpy = jest.spyOn(extensionServiceStub, 'translateGridMenu');
-        const transHeaderMenuSpy = jest.spyOn(extensionServiceStub, 'translateHeaderMenu');
+        const transExtensionSpy = jest.spyOn(extensionServiceStub, 'translateAllExtensions');
         const transGroupingColSpanSpy = jest.spyOn(groupingAndColspanServiceStub, 'translateGroupingAndColSpan');
 
         component.gridOptions = { enableTranslate: true, createPreHeaderPanel: true, enableDraggableGrouping: false } as unknown as GridOption;
@@ -1423,12 +1409,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         setTimeout(() => {
           expect(transGroupingColSpanSpy).toHaveBeenCalled();
-          expect(transCellMenuSpy).toHaveBeenCalled();
-          expect(transColHeaderSpy).toHaveBeenCalled();
-          expect(transColPickerSpy).toHaveBeenCalled();
-          expect(transContextMenuSpy).toHaveBeenCalled();
-          expect(transGridMenuSpy).toHaveBeenCalled();
-          expect(transHeaderMenuSpy).toHaveBeenCalled();
+          expect(transExtensionSpy).toHaveBeenCalled();
           done();
         });
       });

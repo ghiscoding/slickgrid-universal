@@ -206,6 +206,29 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(10)`).should('contain', 'Task 0');
   });
 
+  it('should open Grid Menu and expect new columns to be added to the column picker section', () => {
+    const updatedTitles = ['', '', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title', 'Title'];
+
+    cy.get('.grid7')
+      .find('button.slick-gridmenu-button')
+      .click({ force: true });
+
+    cy.get('.grid7 .slickgrid-container')
+      .then(() => {
+        cy.get(`.slick-gridmenu`)
+          .find('.slick-gridmenu-list')
+          .children('li')
+          .each(($child, index) => {
+            if (index <= 5) {
+              const $input = $child.children('input');
+              const $label = $child.children('label');
+              expect($input.prop('checked')).to.eq(true);
+              expect($label.text()).to.eq(updatedTitles[index]);
+            }
+          });
+      });
+  });
+
   it('should be able to filter and search "Task 2222" in the new column and expect only 1 row showing in the grid', () => {
     cy.get('input.search-filter.filter-title1')
       .type('Task 2222', { force: true })
@@ -672,6 +695,58 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .contains('2 of 501 items');
   });
 
+  it('should reorder "Start" column to be after the "Completed" column', () => {
+    const expectedTitles = ['', '', 'Title', '% Complete', 'Finish', 'Duration', 'Completed', 'Start', 'Prerequisites', 'Title'];
+
+    cy.get('.slick-header-columns')
+      .children('.slick-header-column:nth(4)')
+      .should('contain', 'Start')
+      .trigger('mousedown', 'bottom', { which: 1 });
+
+    cy.get('.slick-header-columns')
+      .children('.slick-header-column:nth(7)')
+      .should('contain', 'Completed')
+      .trigger('mousemove', 'bottomRight')
+      .trigger('mouseup', 'bottomRight', { force: true });
+
+    cy.get('.grid7')
+      .find('.slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
+  });
+
+  it('should hide "Duration" column from column picker', () => {
+    const originalColumns = ['', '', 'Title', '% Complete', 'Finish', 'Duration', 'Completed', 'Start', 'Prerequisites', 'Title'];
+
+    cy.get('.grid7')
+      .find('.slick-header-column')
+      .first()
+      .trigger('mouseover')
+      .trigger('contextmenu')
+      .invoke('show');
+
+    cy.get('.slick-columnpicker')
+      .find('.slick-columnpicker-list')
+      .children()
+      .each(($child, index) => {
+        if (index < originalColumns.length) {
+          expect($child.text()).to.eq(originalColumns[index]);
+        }
+      });
+
+    cy.get('.slick-columnpicker')
+      .find('.slick-columnpicker-list')
+      .children('li:nth-child(6)')
+      .children('label')
+      .should('contain', 'Duration')
+      .click();
+
+    cy.get('.slick-columnpicker:visible')
+      .find('span.close')
+      .trigger('click')
+      .click();
+  });
+
   it('should switch language', () => {
     cy.get('[data-test="language-button"]')
       .click();
@@ -692,5 +767,32 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
   it('should have 2 of 501 items shown as metrics on the right footer shown in French', () => {
     cy.get('.right-footer.metrics')
       .contains('2 de 501 éléments');
+  });
+
+  it('should open Grid Menu and expect new columns to be added to the column picker section, also "Duration" to be unchecked while "Finish" to be at new position', () => {
+    const updatedTitles = ['', '', 'Titre', 'Durée', '% Achevée', 'Fin', 'Terminé', 'Début', 'Prerequisites', 'Titre'];
+
+    cy.get('.grid7')
+      .find('button.slick-gridmenu-button')
+      .click({ force: true });
+
+    cy.get('.grid7 .slickgrid-container')
+      .then(() => {
+        cy.get(`.slick-gridmenu`)
+          .find('.slick-gridmenu-list')
+          .children('li')
+          .each(($child, index) => {
+            if (index <= 5) {
+              const $input = $child.children('input');
+              const $label = $child.children('label');
+              if ($label.text() === 'Durée') {
+                expect($input.prop('checked')).to.eq(false);
+              } else {
+                expect($input.prop('checked')).to.eq(true);
+              }
+              expect($label.text()).to.eq(updatedTitles[index]);
+            }
+          });
+      });
   });
 });

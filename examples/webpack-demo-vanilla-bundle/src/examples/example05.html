@@ -31,6 +31,10 @@
         <span class="icon mdi mdi-arrow-collapse"></span>
         <span>Collapse All (without triggering event)</span>
       </button>
+      <button onclick.delegate="dynamicallyToggledFirstParent()" data-test="dynamically-toggle-first-parent-btn"
+              class="button is-small">
+        <span>Dynamically Toggle First Parent</span>
+      </button>
       <button onclick.delegate="reapplyToggledItems()" data-test="reapply-toggled-items-btn" class="button is-small"
               disabled.bind="hasNoExpandCollapseChanged">
         <span class="icon mdi mdi-history"></span>

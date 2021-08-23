@@ -198,8 +198,7 @@ describe('Example 09 - OData Grid', { retries: 1 }, () => {
     it('should Clear all Filters and expect to go back to first page', () => {
       cy.get('.grid9')
         .find('button.slick-gridmenu-button')
-        .trigger('click')
-        .click();
+        .click({ force: true });
 
       cy.get(`.slick-gridmenu:visible`)
         .find('.slick-gridmenu-item')

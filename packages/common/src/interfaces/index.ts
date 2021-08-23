@@ -71,6 +71,7 @@ export * from './formatter.interface';
 export * from './formatterOption.interface';
 export * from './formatterResultObject.interface';
 export * from './gridMenu.interface';
+export * from './gridMenuCommandItemCallbackArgs.interface';
 export * from './gridMenuItem.interface';
 export * from './gridMenuLabel.interface';
 export * from './gridMenuOption.interface';

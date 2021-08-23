@@ -107,7 +107,7 @@ export class TreeDataService {
   }
 
   /**
-   * Apply different tree toggle state changes by providing an array of parentIds that are designated as collapsed (or not).
+   * Apply different tree toggle state changes (to ALL rows, the entire dataset) by providing an array of parentIds that are designated as collapsed (or not).
    * User will have to provide an array of `parentId` and `isCollapsed` boolean and the code will only apply the ones that are tagged as collapsed, everything else will be expanded
    * @param {Array<TreeToggledItem>} treeToggledItems - array of parentId which are tagged as changed
    * @param {ToggleStateChangeType} previousFullToggleType - optionally provide the previous full toggle type ('full-expand' or 'full-collapse')
@@ -141,6 +141,26 @@ export class TreeDataService {
           }
         });
       }
+
+      // then we reapply only the ones that changed (provided as argument to the function)
+      // we also don't need to call the DataView `endUpdate()`, for the transaction ending, because it will be called inside this other method
+      this.dynamicallyToggleItemState(treeToggledItems, shouldTriggerEvent);
+    }
+  }
+
+  /**
+   * Dynamically toggle and change state of certain parent items by providing an array of parentIds that are designated as to be collapsed (or not).
+   * User will have to provide an array of `parentId` and `isCollapsed` boolean, only the provided list of items will be toggled and nothing else.
+   *
+   * NOTE: the `applyToggledItemStateChanges()` method is very similar but on top of toggling the `treeToggledItems` it WILL ALSO collapse everything else.
+   * @param {Array<TreeToggledItem>} treeToggledItems - array of parentId which are tagged as changed
+   * @param {Boolean} shouldTriggerEvent - should we trigger a toggled item event? defaults to True
+   */
+  dynamicallyToggleItemState(treeToggledItems: TreeToggledItem[], shouldTriggerEvent = true) {
+    if (Array.isArray(treeToggledItems)) {
+      // for the rows we identified as collapsed, we'll send them to the DataView with the new updated collapsed flag
+      // and we'll refresh the DataView to see the collapsing applied in the grid
+      this.dataView.beginUpdate(true);
 
       // then we reapply only the ones that changed (provided as argument to the function)
       for (const collapsedItem of treeToggledItems) {
