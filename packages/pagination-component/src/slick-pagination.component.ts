@@ -5,12 +5,12 @@ import {
   Locale,
   PaginationService,
   PubSubService,
+  sanitizeTextByAvailableSanitizer,
+  ServicePagination,
   SharedService,
   SlickGrid,
-  ServicePagination,
-  TranslaterService,
   Subscription,
-  sanitizeTextByAvailableSanitizer,
+  TranslaterService,
 } from '@slickgrid-universal/common';
 import { BindingHelper } from '@slickgrid-universal/binding';
 
@@ -135,7 +135,7 @@ export class SlickPaginationComponent {
 
     if (paginationTemplate) {
       const temp = document.createElement('div');
-      temp.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, paginationTemplate);
+      temp.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, paginationTemplate, { ALLOW_DATA_ATTR: true } as DOMPurify.Config);
       this._paginationElement = temp.firstChild as HTMLDivElement;
       this._paginationElement.classList.add(this.gridUid, 'pager');
       this._paginationElement.style.width = '100%';
