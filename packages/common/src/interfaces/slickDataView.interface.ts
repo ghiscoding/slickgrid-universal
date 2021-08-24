@@ -113,10 +113,10 @@ export interface SlickDataView {
   /** Get Paging Options */
   getPagingInfo(): PagingInfo;
 
-  /** Get row number of an item in the DataView */
+  /** Get row number in the grid by its item object */
   getRowByItem(item: any): number | undefined;
 
-  /** Get row number of an item in the DataView by its Id */
+  /** Get row number in the grid by its Id */
   getRowById(id: string | number): number | undefined;
 
   /**

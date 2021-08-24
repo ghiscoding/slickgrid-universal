@@ -357,7 +357,6 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         // open the editor modal and we can also provide a header title with optional parsing pulled from the dataContext, via template {{ }}
         // for example {{title}} => display the item title, or even complex object works {{product.name}} => display item product name
         const parsedHeaderTitle = headerTitle.replace(/\{\{(.*?)\}\}/g, (_match, group) => getDescendantProperty(dataContext, group));
-        const sanitizedHeaderTitle = sanitizeTextByAvailableSanitizer(this.gridOptions, parsedHeaderTitle);
         const layoutColCount = viewColumnLayout === 'auto' ? this.autoCalculateLayoutColumnCount(modalColumns.length) : viewColumnLayout;
 
         this._modalElm = document.createElement('div');
@@ -373,7 +372,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
         const modalHeaderTitleElm = document.createElement('div');
         modalHeaderTitleElm.className = 'slick-editor-modal-title';
-        modalHeaderTitleElm.innerHTML = sanitizedHeaderTitle;
+        modalHeaderTitleElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, parsedHeaderTitle);
 
         const modalCloseButtonElm = document.createElement('button');
         modalCloseButtonElm.type = 'button';
