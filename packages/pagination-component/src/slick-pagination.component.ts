@@ -4,12 +4,13 @@ import {
   GridOption,
   Locale,
   PaginationService,
+  PubSubService,
   SharedService,
   SlickGrid,
   ServicePagination,
   TranslaterService,
   Subscription,
-  PubSubService,
+  sanitizeTextByAvailableSanitizer,
 } from '@slickgrid-universal/common';
 import { BindingHelper } from '@slickgrid-universal/binding';
 
@@ -134,7 +135,7 @@ export class SlickPaginationComponent {
 
     if (paginationTemplate) {
       const temp = document.createElement('div');
-      temp.innerHTML = paginationTemplate;
+      temp.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, paginationTemplate);
       this._paginationElement = temp.firstChild as HTMLDivElement;
       this._paginationElement.classList.add(this.gridUid, 'pager');
       this._paginationElement.style.width = '100%';

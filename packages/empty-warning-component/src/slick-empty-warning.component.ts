@@ -95,13 +95,12 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     }
 
     if (!this._warningLeftElement && gridCanvasLeftElm && gridCanvasRightElm) {
-      const sanitizedOptions = this.gridOptions && this.gridOptions.sanitizeHtmlOptions || {};
-      const sanitizedText = sanitizeTextByAvailableSanitizer(this.gridOptions, warningMessage, sanitizedOptions);
+      const sanitizedOptions = this.gridOptions?.sanitizeHtmlOptions ?? {};
 
       this._warningLeftElement = document.createElement('div');
       this._warningLeftElement.classList.add(emptyDataClassName);
       this._warningLeftElement.classList.add('left');
-      this._warningLeftElement.innerHTML = sanitizedText;
+      this._warningLeftElement.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, warningMessage, sanitizedOptions);
 
       // clone the warning element and add the "right" class to it so we can distinguish
       this._warningRightElement = this._warningLeftElement.cloneNode(true) as HTMLDivElement;
