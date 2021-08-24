@@ -265,6 +265,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         return null;
       }
 
+      this._formValues = null; // make sure there's no leftover from previous change
       this._options = { ...defaultOptions, ...this.gridOptions.compositeEditorOptions, ...options, labels: { ...this.gridOptions.compositeEditorOptions?.labels, ...options?.labels } }; // merge default options with user options
       this._options.backdrop = options.backdrop !== undefined ? options.backdrop : 'static';
       const viewColumnLayout = this._options.viewColumnLayout || 1;
@@ -313,8 +314,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         this._originalDataContext = deepCopy(dataContext);
         this._columnDefinitions = this.grid.getColumns();
         const selectedRowsIndexes = this.hasRowSelectionEnabled() ? this.grid.getSelectedRows() : [];
-        const fullDataset = this.dataView?.getItems() ?? [];
-        const fullDatasetLength = (Array.isArray(fullDataset)) ? fullDataset.length : 0;
+        const fullDatasetLength = this.dataView?.getItemCount() ?? 0;
         this._lastActiveRowNumber = activeRow;
         const gridStateSelection = this.gridStateService?.getCurrentRowSelections() as CurrentRowSelection;
         const dataContextIds = gridStateSelection?.dataContextIds || [];
@@ -997,8 +997,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
   /** Insert an item into the DataView or throw an error when finding duplicate id in the dataset */
   protected insertNewItemInDataView(item: any) {
-    const fullDataset = this.dataView?.getItems() ?? [];
-    const fullDatasetLength = (Array.isArray(fullDataset)) ? fullDataset.length : 0;
+    const fullDatasetLength = this.dataView?.getItemCount() ?? 0;
     const newId = this._options.insertNewId ?? fullDatasetLength + 1;
     item[this.gridOptions.datasetIdPropertyName || 'id'] = newId;
 
