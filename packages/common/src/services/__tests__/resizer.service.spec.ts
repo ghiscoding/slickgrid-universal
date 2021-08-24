@@ -584,7 +584,7 @@ describe('Resizer Service', () => {
           expect(resizeSpy).toHaveBeenNthCalledWith(2);
           expect(resizeSpy).toHaveBeenNthCalledWith(3);
           done();
-        }, 20);
+        }, 25);
       });
 
       it('should try to resize grid when its UI is deemed broken and expect "resizeGridWhenStylingIsBrokenUntilCorrected" but it should stop whenever we force it', (done) => {
