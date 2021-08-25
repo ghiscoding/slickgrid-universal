@@ -134,11 +134,11 @@ export class SliderRangeFilter implements Filter {
     const columnId = this.columnDef?.id ?? '';
     const lowerElm = document.querySelector(`.lowest-range-${columnId}`);
     const highestElm = document.querySelector(`.highest-range-${columnId}`);
-    if (lowerElm && lowerElm.innerHTML) {
-      lowerElm.innerHTML = lowestValue.toString();
+    if (lowerElm?.textContent) {
+      lowerElm.textContent = lowestValue.toString();
     }
-    if (highestElm && highestElm.innerHTML) {
-      highestElm.innerHTML = highestValue.toString();
+    if (highestElm?.textContent) {
+      highestElm.textContent = highestValue.toString();
     }
   }
 

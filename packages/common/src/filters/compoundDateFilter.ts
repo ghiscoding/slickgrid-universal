@@ -285,7 +285,7 @@ export class CompoundDateFilter implements Filter {
 
 
     // create the DOM Select dropdown for the Operator
-    this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues());
+    this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.gridOptions);
     this._filterDivInputElm = this.buildDatePickerInput(searchTerm);
     const filterContainerElm = document.createElement('div');
     filterContainerElm.className = `form-group search-filter filter-${columnId}`;

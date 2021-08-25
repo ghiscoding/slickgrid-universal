@@ -48,6 +48,7 @@ const gridOptionsMock = {
 const dataViewStub = {
   getItem: jest.fn(),
   getItemById: jest.fn(),
+  getItemCount: jest.fn(),
   getItems: jest.fn(),
   getLength: jest.fn(),
   refresh: jest.fn(),
@@ -993,6 +994,7 @@ describe('CompositeEditorService', () => {
         const mockProduct1 = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
         const mockProduct2 = { address: { zip: 345678 }, product: { name: 'Product DEF', price: 22.33 } };
         jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+        jest.spyOn(dataViewStub, 'getItemCount').mockReturnValue(1);
         jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
         const gridSrvAddItemSpy = jest.spyOn(gridServiceStub, 'addItem');
         const saveSpy = jest.spyOn(gridStub.getEditController(), 'commitCurrentEdit');

@@ -228,7 +228,7 @@ export class CompoundInputFilter implements Filter {
     emptyElement(headerElm);
 
     // create the DOM Select dropdown for the Operator
-    this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues());
+    this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.gridOptions);
     this._filterInputElm = this.buildInputElement();
     const emptySpanElm = document.createElement('span');
 

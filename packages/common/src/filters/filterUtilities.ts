@@ -1,21 +1,21 @@
 import { OperatorString } from '../enums/operatorString.type';
-import { Column } from '../interfaces/index';
+import { Column, GridOption } from '../interfaces/index';
 import { Observable, RxJsFacade, Subject, Subscription } from '../services/rxjsFacade';
-import { castObservableToPromise, getDescendantProperty, htmlEncodedStringWithPadding } from '../services/utilities';
+import { castObservableToPromise, getDescendantProperty, htmlEncodedStringWithPadding, sanitizeTextByAvailableSanitizer } from '../services/utilities';
 
 /**
  * Create and return a select dropdown HTML element with a list of Operators with descriptions
  * @param {Array<Object>} optionValues - list of operators and their descriptions
  * @returns {Object} selectElm - Select Dropdown HTML Element
  */
-export function buildSelectOperator(optionValues: Array<{ operator: OperatorString, description: string }>): HTMLSelectElement {
+export function buildSelectOperator(optionValues: Array<{ operator: OperatorString, description: string }>, gridOptions: GridOption): HTMLSelectElement {
   const selectElm = document.createElement('select');
   selectElm.className = 'form-control';
 
   for (const option of optionValues) {
     const selectOption = document.createElement('option');
     selectOption.value = option.operator;
-    selectOption.innerHTML = `${htmlEncodedStringWithPadding(option.operator, 3)}${option.description}`;
+    selectOption.innerHTML = sanitizeTextByAvailableSanitizer(gridOptions, `${htmlEncodedStringWithPadding(option.operator, 3)}${option.description}`);
     selectElm.appendChild(selectOption);
   }
 
