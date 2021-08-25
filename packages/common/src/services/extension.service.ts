@@ -13,7 +13,6 @@ import {
   DraggableGroupingExtension,
   ExtensionUtility,
   GroupItemMetaProviderExtension,
-  HeaderButtonExtension,
   HeaderMenuExtension,
   RowDetailViewExtension,
   RowMoveManagerExtension,
@@ -21,7 +20,7 @@ import {
 } from '../extensions/index';
 import { SharedService } from './shared.service';
 import { TranslaterService } from './translater.service';
-import { AutoTooltipPlugin } from '../plugins/index';
+import { AutoTooltipPlugin, HeaderButtonPlugin } from '../plugins/index';
 import { ColumnPickerControl, GridMenuControl } from '../controls/index';
 import { FilterService } from './filter.service';
 import { PubSubService } from './pubSub.service';
@@ -36,6 +35,7 @@ interface ExtensionWithColumnIndexPosition {
 export class ExtensionService {
   protected _columnPickerControl?: ColumnPickerControl;
   protected _gridMenuControl?: GridMenuControl;
+  protected _headerButtonPlugin?: HeaderButtonPlugin;
   protected _extensionCreatedList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
   protected _extensionList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
 
@@ -59,7 +59,6 @@ export class ExtensionService {
     protected readonly contextMenuExtension: ContextMenuExtension,
     protected readonly draggableGroupingExtension: DraggableGroupingExtension,
     protected readonly groupItemMetaExtension: GroupItemMetaProviderExtension,
-    protected readonly headerButtonExtension: HeaderButtonExtension,
     protected readonly headerMenuExtension: HeaderMenuExtension,
     protected readonly rowDetailViewExtension: RowDetailViewExtension,
     protected readonly rowMoveManagerExtension: RowMoveManagerExtension,
@@ -234,10 +233,13 @@ export class ExtensionService {
       }
 
       // Header Button Plugin
-      if (this.gridOptions.enableHeaderButton && this.headerButtonExtension && this.headerButtonExtension.register) {
-        const instance = this.headerButtonExtension.register();
-        if (instance) {
-          this._extensionList[ExtensionName.headerButton] = { name: ExtensionName.headerButton, class: this.headerButtonExtension, instance };
+      if (this.gridOptions.enableHeaderButton) {
+        this._headerButtonPlugin = new HeaderButtonPlugin(this.pubSubService, this.sharedService);
+        if (this._headerButtonPlugin) {
+          if (this.gridOptions.headerButton?.onExtensionRegistered) {
+            this.gridOptions.headerButton.onExtensionRegistered(this._headerButtonPlugin);
+          }
+          this._extensionList[ExtensionName.headerButton] = { name: ExtensionName.headerButton, class: {}, instance: this._headerButtonPlugin };
         }
       }
 

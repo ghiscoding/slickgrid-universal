@@ -8,6 +8,9 @@ export interface HeaderButtonItem {
   /** CSS class to add to the button. */
   cssClass?: string;
 
+  /** Defaults to false, whether the item/command is disabled. */
+  disabled?: boolean;
+
   /** Button click handler. */
   handler?: (e: Event) => void;
 

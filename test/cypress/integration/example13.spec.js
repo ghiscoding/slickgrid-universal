@@ -71,25 +71,27 @@ describe('Example 13 - Header Button Plugin', { retries: 1 }, () => {
       .should('not.exist');
   });
 
-  it('should go over the last "Column J" and expect to find the red header button, however it should be usable and number should not display as red', () => {
+  it('should go over the last "Column J" and expect to find the button to have the disabled class and clicking it should not turn the negative numbers to red neither expect console log after clicking the disabled button', () => {
     cy.get('.slick-viewport-top.slick-viewport-left')
       .scrollTo('right')
       .wait(50);
 
     cy.get('.slick-header-columns')
       .children('.slick-header-column:nth(9)')
-      .should('contain', 'Column J');
+      .should('contain', 'Column J')
+      .find('.slick-header-button-disabled')
+      .should('exist');
 
     cy.get('.slick-header-columns')
       .children('.slick-header-column:nth(9)')
-      .find('.slick-header-button.mdi-lightbulb-outline.color-warning.faded')
+      .find('.slick-header-button.slick-header-button-disabled.mdi-lightbulb-outline.color-warning.faded')
       .should('exist')
       .click();
 
     cy.get('.slick-header-columns')
       .children('.slick-header-column:nth(9)')
-      .find('.slick-header-button.mdi-lightbulb-outline.color-warning.faded')
-      .should('exist'); // should still be faded
+      .find('.slick-header-button.slick-header-button-disabled.mdi-lightbulb-outline.color-warning.faded')
+      .should('exist'); // should still be faded after previous click
 
     cy.get('.slick-row')
       .each(($row, index) => {
@@ -99,6 +101,10 @@ describe('Example 13 - Header Button Plugin', { retries: 1 }, () => {
         cy.wrap($row).children('.slick-cell:nth(9)')
           .each($cell => expect($cell.html()).to.eq($cell.text()));
       });
+
+    cy.window().then((win) => {
+      expect(win.console.log).to.have.callCount(0);
+    });
   });
 
   it('should resize 1st column and make it wider', () => {

@@ -145,8 +145,8 @@ export interface Column<T = any> {
   /** Options that can be provided to the Header Menu Plugin */
   header?: {
     /** list of Buttons to show in the header */
-    buttons?: Array<HeaderButtonItem | 'divider'>;
-    menu?: { items: Array<MenuCommandItem | 'divider'> };
+    buttons?: Array<HeaderButtonItem>;
+    menu?: { items: Array<MenuCommandItem> };
   };
 
   /** CSS class that can be added to the column header */

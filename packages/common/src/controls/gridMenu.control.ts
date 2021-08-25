@@ -390,8 +390,8 @@ export class GridMenuControl {
         let isItemVisible = true;
         let isItemUsable = true;
         if (typeof item === 'object') {
-          isItemVisible = this.runOverrideFunctionWhenExists(item.itemVisibilityOverride, callbackArgs);
-          isItemUsable = this.runOverrideFunctionWhenExists(item.itemUsabilityOverride, callbackArgs);
+          isItemVisible = this.runOverrideFunctionWhenExists<typeof callbackArgs>(item.itemVisibilityOverride, callbackArgs);
+          isItemUsable = this.runOverrideFunctionWhenExists<typeof callbackArgs>(item.itemUsabilityOverride, callbackArgs);
         }
 
         // if the result is not visible then there's no need to go further
@@ -440,7 +440,7 @@ export class GridMenuControl {
         }
 
         if (item.iconImage) {
-          console.warn('[Slickgrid-Universal] The "iconImage" property of a Grid Menu item is no deprecated and will be removed in future version, consider using "iconCssClass" instead.');
+          console.warn('[Slickgrid-Universal] The "iconImage" property of a Grid Menu item is now deprecated and will be removed in future version, consider using "iconCssClass" instead.');
           iconElm.style.backgroundImage = `url(${item.iconImage})`;
         }
 
@@ -521,7 +521,7 @@ export class GridMenuControl {
     } as GridMenuEventWithElementCallbackArgs;
 
     // run the override function (when defined), if the result is false then we won't go further
-    if (controlOptions && !this.runOverrideFunctionWhenExists(controlOptions.menuUsabilityOverride, callbackArgs)) {
+    if (controlOptions && !this.runOverrideFunctionWhenExists<typeof callbackArgs>(controlOptions.menuUsabilityOverride, callbackArgs)) {
       return;
     }
 
@@ -874,7 +874,7 @@ export class GridMenuControl {
   }
 
   /** Run the Override function when it exists, if it returns True then it is usable/visible */
-  protected runOverrideFunctionWhenExists(overrideFn: any, args: any): boolean {
+  protected runOverrideFunctionWhenExists<T = any>(overrideFn: any, args: T): boolean {
     if (typeof overrideFn === 'function') {
       return overrideFn.call(this, args);
     }

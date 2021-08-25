@@ -17,12 +17,10 @@ const mockAddon = jest.fn().mockImplementation(() => ({
 }));
 
 jest.mock('slickgrid/slick.groupitemmetadataprovider', () => mockAddon);
-jest.mock('slickgrid/controls/slick.gridmenu', () => mockAddon);
 jest.mock('slickgrid/plugins/slick.cellmenu', () => mockAddon);
 jest.mock('slickgrid/plugins/slick.cellexternalcopymanager', () => mockAddon);
 jest.mock('slickgrid/plugins/slick.contextmenu', () => mockAddon);
 jest.mock('slickgrid/plugins/slick.draggablegrouping', () => mockAddon);
-jest.mock('slickgrid/plugins/slick.headerbuttons', () => mockAddon);
 jest.mock('slickgrid/plugins/slick.headermenu', () => mockAddon);
 jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockAddon);
 jest.mock('slickgrid/plugins/slick.rowdetailview', () => mockAddon);
