@@ -10,7 +10,6 @@ import {
   DraggableGroupingExtension,
   ExtensionUtility,
   GroupItemMetaProviderExtension,
-  HeaderButtonExtension,
   HeaderMenuExtension,
   RowDetailViewExtension,
   RowMoveManagerExtension,
@@ -18,7 +17,7 @@ import {
 } from '../../extensions';
 import { BackendUtilityService, ExtensionService, FilterService, PubSubService, SharedService, SortService } from '..';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { AutoTooltipPlugin } from '../../plugins/index';
+import { AutoTooltipPlugin, HeaderButtonPlugin } from '../../plugins/index';
 import { ColumnPickerControl, GridMenuControl } from '../../controls/index';
 
 jest.mock('flatpickr', () => { });
@@ -44,6 +43,8 @@ const gridStub = {
   onColumnsResized: jest.fn(),
   registerPlugin: jest.fn(),
   onBeforeDestroy: new Slick.Event(),
+  onBeforeHeaderCellDestroy: new Slick.Event(),
+  onHeaderCellRendered: new Slick.Event(),
   onSetOptions: new Slick.Event(),
   onColumnsReordered: new Slick.Event(),
   onHeaderContextMenu: new Slick.Event(),
@@ -148,7 +149,6 @@ describe('ExtensionService', () => {
         extensionContextMenuStub as unknown as ContextMenuExtension,
         extensionStub as unknown as DraggableGroupingExtension,
         extensionGroupItemMetaStub as unknown as GroupItemMetaProviderExtension,
-        extensionHeaderButtonStub as unknown as HeaderButtonExtension,
         extensionHeaderMenuStub as unknown as HeaderMenuExtension,
         extensionStub as unknown as RowDetailViewExtension,
         extensionRowMoveStub as unknown as RowMoveManagerExtension,
@@ -228,7 +228,6 @@ describe('ExtensionService', () => {
 
         service.bindDifferentExtensions();
         const gridMenuInstance = service.getSlickgridAddonInstance(ExtensionName.gridMenu);
-
         const output = service.getExtensionByName(ExtensionName.gridMenu);
         const instance = service.getSlickgridAddonInstance(ExtensionName.gridMenu);
 
@@ -454,16 +453,26 @@ describe('ExtensionService', () => {
       });
 
       it('should register the HeaderButton addon when "enableHeaderButton" is set in the grid options', () => {
-        const gridOptionsMock = { enableHeaderButton: true } as GridOption;
-        const extSpy = jest.spyOn(extensionStub, 'register').mockReturnValue(instanceMock);
+        const onRegisteredMock = jest.fn();
+        const gridOptionsMock = {
+          enableHeaderButton: true,
+          headerButton: {
+            onExtensionRegistered: onRegisteredMock
+          }
+        } as GridOption;
         const gridSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
+        const headerButtonInstance = service.getSlickgridAddonInstance(ExtensionName.headerButton);
         const output = service.getExtensionByName(ExtensionName.headerButton);
+        const instance = service.getSlickgridAddonInstance(ExtensionName.headerButton);
 
+        expect(onRegisteredMock).toHaveBeenCalledWith(expect.toBeObject());
+        expect(output.instance instanceof HeaderButtonPlugin).toBeTrue();
         expect(gridSpy).toHaveBeenCalled();
-        expect(extSpy).toHaveBeenCalled();
-        expect(output).toEqual({ name: ExtensionName.headerButton, instance: instanceMock as unknown, class: extensionHeaderButtonStub } as ExtensionModel<any, any>);
+        expect(headerButtonInstance).toBeTruthy();
+        expect(output!.instance).toEqual(instance);
+        expect(output).toEqual({ name: ExtensionName.headerButton, instance: headerButtonInstance as unknown, class: {} } as ExtensionModel<any, any>);
       });
 
       it('should register the HeaderMenu addon when "enableHeaderMenu" is set in the grid options', () => {
@@ -648,7 +657,6 @@ describe('ExtensionService', () => {
       service.bindDifferentExtensions();
       service.renderColumnHeaders(columnsMock);
       const gridMenuInstance = service.getSlickgridAddonInstance(ExtensionName.gridMenu);
-
       const extSpy = jest.spyOn(gridMenuInstance, 'translateGridMenu');
       service.translateGridMenu();
 
@@ -840,7 +848,6 @@ describe('ExtensionService', () => {
         extensionStub as unknown as ContextMenuExtension,
         extensionStub as unknown as DraggableGroupingExtension,
         extensionGroupItemMetaStub as unknown as GroupItemMetaProviderExtension,
-        extensionHeaderButtonStub as unknown as HeaderButtonExtension,
         extensionHeaderMenuStub as unknown as HeaderMenuExtension,
         extensionStub as unknown as RowDetailViewExtension,
         extensionStub as unknown as RowMoveManagerExtension,

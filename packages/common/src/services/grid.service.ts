@@ -337,14 +337,14 @@ export class GridService {
 
   /** Select the selected row by a row index */
   setSelectedRow(rowIndex: number) {
-    if (this._grid && this._grid.setSelectedRows) {
+    if (this._grid?.setSelectedRows) {
       this._grid.setSelectedRows([rowIndex]);
     }
   }
 
   /** Set selected rows with provided array of row indexes */
   setSelectedRows(rowIndexes: number[]) {
-    if (this._grid && this._grid.setSelectedRows) {
+    if (this._grid?.setSelectedRows) {
       this._grid.setSelectedRows(rowIndexes);
     }
   }
@@ -364,13 +364,13 @@ export class GridService {
    */
   resetGrid(columnDefinitions?: Column[]) {
     // reset columns to original states & refresh the grid
-    if (this._grid && this._dataView) {
+    if (this._grid) {
       const originalColumns = this.sharedService.allColumns || [];
 
       if (Array.isArray(originalColumns) && originalColumns.length > 0) {
         // set the grid columns to it's original column definitions
         this._grid.setColumns(originalColumns);
-        if (this._gridOptions && this._gridOptions.enableAutoSizeColumns) {
+        if (this._gridOptions?.enableAutoSizeColumns) {
           this._grid.autosizeColumns();
         }
         this.gridStateService.resetColumns(columnDefinitions);

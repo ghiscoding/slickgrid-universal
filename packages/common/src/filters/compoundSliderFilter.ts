@@ -241,7 +241,7 @@ export class CompoundSliderFilter implements Filter {
     */
 
     // create the DOM Select dropdown for the Operator
-    this.selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues());
+    this.selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.gridOptions);
 
     const spanPrependElm = document.createElement('span');
     spanPrependElm.className = 'input-group-addon input-group-prepend operator';

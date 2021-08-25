@@ -838,7 +838,7 @@ describe('GridMenuControl', () => {
         expect(buttonImageElm.src).toBe('/images/some-gridmenu-image.png');
         expect(helpTextElm.textContent).toBe('Help');
         expect(helpIconElm.style.backgroundImage).toBe('url(/images/some-image.png)')
-        expect(consoleWarnSpy).toHaveBeenCalledWith('[Slickgrid-Universal] The "iconImage" property of a Grid Menu item is no deprecated and will be removed in future version, consider using "iconCssClass" instead.');
+        expect(consoleWarnSpy).toHaveBeenCalledWith('[Slickgrid-Universal] The "iconImage" property of a Grid Menu item is now deprecated and will be removed in future version, consider using "iconCssClass" instead.');
       });
 
       it('should add a custom Grid Menu item with "tooltip" and expect the item title attribute to be part of the item DOM element', () => {

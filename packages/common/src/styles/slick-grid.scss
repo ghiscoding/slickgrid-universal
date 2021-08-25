@@ -24,7 +24,6 @@
     display: inline-block;
     box-sizing: content-box !important; /* this here only for Firefox! */
     overflow: hidden;
-    -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
     height: 16px;
     line-height: 16px;
@@ -140,7 +139,6 @@
     display: inline-block;
     box-sizing: content-box !important;
     overflow: hidden;
-    -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
     height: 16px;
     line-height: 16px;

@@ -34,7 +34,6 @@ declare const Slick: SlickNamespace;
 export class GridStateService {
   protected _eventHandler = new Slick.EventHandler();
   protected _columns: Column[] = [];
-  protected _currentColumns: CurrentColumn[] = [];
   protected _grid!: SlickGrid;
   protected _subscriptions: EventSubscription[] = [];
   protected _selectedRowDataContextIds: Array<number | string> | undefined = []; // used with row selection
@@ -88,7 +87,6 @@ export class GridStateService {
 
   /** Dispose of all the SlickGrid & PubSub subscriptions */
   dispose() {
-    this._currentColumns = [];
     this._columns = [];
 
     // unsubscribe all SlickGrid events
@@ -217,7 +215,6 @@ export class GridStateService {
         }
       });
     }
-    this._currentColumns = currentColumns;
     return currentColumns;
   }
 
@@ -252,14 +249,7 @@ export class GridStateService {
    * @return current columns
    */
   getCurrentColumns(): CurrentColumn[] {
-    let currentColumns: CurrentColumn[] = [];
-    if (this._currentColumns && Array.isArray(this._currentColumns) && this._currentColumns.length > 0) {
-      currentColumns = this._currentColumns;
-    } else {
-      currentColumns = this.getAssociatedCurrentColumns(this._grid.getColumns());
-    }
-
-    return currentColumns;
+    return this.getAssociatedCurrentColumns(this._grid.getColumns() || []);
   }
 
   /**
