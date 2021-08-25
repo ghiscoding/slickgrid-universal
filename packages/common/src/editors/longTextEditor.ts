@@ -8,6 +8,7 @@ import {
   EditorArguments,
   EditorValidator,
   EditorValidationResult,
+  ElementPosition,
   GridOption,
   HtmlElementPosition,
   Locale,
@@ -172,7 +173,7 @@ export class LongTextEditor implements Editor {
       editorFooterElm.appendChild(saveBtnElm);
       this._bindEventService.bind(cancelBtnElm, 'click', this.cancel.bind(this) as EventListener);
       this._bindEventService.bind(saveBtnElm, 'click', this.save.bind(this) as EventListener);
-      this.position(this.args?.position);
+      this.position(this.args?.position as ElementPosition);
       this._textareaElm.focus();
       this._textareaElm.select();
     }
@@ -316,8 +317,8 @@ export class LongTextEditor implements Editor {
     const containerOffset = getHtmlElementOffset(this.args.container);
     const containerHeight = this.args.container.offsetHeight;
     const containerWidth = this.args.container.offsetWidth;
-    const calculatedEditorHeight = this._wrapperElm.getBoundingClientRect().height || this.args.position.height;
-    const calculatedEditorWidth = this._wrapperElm.getBoundingClientRect().width || this.args.position.width;
+    const calculatedEditorHeight = this._wrapperElm.getBoundingClientRect().height || (this.args.position as ElementPosition).height;
+    const calculatedEditorWidth = this._wrapperElm.getBoundingClientRect().width || (this.args.position as ElementPosition).width;
     const calculatedBodyHeight = document.body.offsetHeight || window.innerHeight; // body height/width might be 0 if so use the window height/width
     const calculatedBodyWidth = document.body.offsetWidth || window.innerWidth;
 

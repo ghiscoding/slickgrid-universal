@@ -5,6 +5,7 @@ import {
   EditorArguments,
   EditorValidationResult,
   ElementPosition,
+  getHtmlElementOffset,
   HtmlElementPosition,
   SlickNamespace
 } from '@slickgrid-universal/common';
@@ -57,27 +58,30 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
   options = { ...defaultOptions, ...options };
   let firstInvalidEditor: any;
 
-  const noop = function () { };
+  /* no operation (empty) function */
+  const noop = () => { };
 
-  function getContainerBox(i: number): ElementPosition {
-    const c = containers[i];
-    const offset = $(c).offset();
-    const w = $(c).width() || 0;
-    const h = $(c).height() || 0;
+  const getContainerBox = (i: number): ElementPosition => {
+    const container = containers[i];
+    const offset = getHtmlElementOffset(container);
+    const width = container.clientWidth || 0;
+    const height = container.clientHeight || 0;
 
     return {
       top: offset?.top ?? 0,
       left: offset?.left ?? 0,
-      bottom: (offset?.top ?? 0) + h,
-      right: (offset?.left ?? 0) + w,
-      width: w,
-      height: h,
+      bottom: (offset?.top ?? 0) + height,
+      right: (offset?.left ?? 0) + width,
+      width,
+      height,
       visible: true
     };
-  }
+  };
 
   /* Editor prototype that will get instantiated dynamically by looping through each Editors */
   function editor(this: any, args: EditorArguments) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const context: any = this;
     let editors: Array<Editor & { args: EditorArguments }> = [];
 
     function init() {
@@ -86,7 +90,7 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
       while (idx < columns.length) {
         if (columns[idx].editor) {
           const column = columns[idx];
-          newArgs = $.extend({}, args as unknown as CompositeEditorArguments);
+          newArgs = { ...args };
           newArgs.container = containers[idx];
           newArgs.column = column;
           newArgs.position = getContainerBox(idx);
@@ -104,14 +108,14 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
       }
 
       // focus on first input
-      setTimeout(function () {
+      setTimeout(() => {
         if (Array.isArray(editors) && editors.length > 0 && editors[0].focus) {
           editors[0].focus();
         }
       }, 0);
     }
 
-    this.destroy = function () {
+    context.destroy = () => {
       let idx = 0;
       while (idx < editors.length) {
         editors[idx].destroy();
@@ -123,13 +127,13 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
     };
 
 
-    this.focus = function () {
+    context.focus = () => {
       // if validation has failed, set the focus to the first invalid editor
       (firstInvalidEditor || editors[0]).focus();
     };
 
 
-    this.isValueChanged = function () {
+    context.isValueChanged = () => {
       let idx = 0;
       while (idx < editors.length) {
         if (editors[idx].isValueChanged()) {
@@ -141,7 +145,7 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
     };
 
 
-    this.serializeValue = function () {
+    context.serializeValue = () => {
       const serializedValue = [];
       let idx = 0;
       while (idx < editors.length) {
@@ -152,7 +156,7 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
     };
 
 
-    this.applyValue = function (item: any, state: any) {
+    context.applyValue = (item: any, state: any) => {
       let idx = 0;
       while (idx < editors.length) {
         editors[idx].applyValue(item, state[idx]);
@@ -160,7 +164,7 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
       }
     };
 
-    this.loadValue = function (item: any) {
+    context.loadValue = (item: any) => {
       let idx = 0;
 
       while (idx < editors.length) {
@@ -170,23 +174,22 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
     };
 
 
-    this.validate = function (targetElm: HTMLElement) {
+    context.validate = (targetElm: HTMLElement | null) => {
       let validationResults: EditorValidationResult;
-      const errors = [];
-      let $targetElm = targetElm ? $(targetElm) : null;
-
       firstInvalidEditor = null;
+      const errors = [];
 
       let idx = 0;
       while (idx < editors.length) {
         const columnDef = editors[idx].args?.column ?? {};
         if (columnDef) {
-          let $validationElm = $(`.item-details-validation.editor-${columnDef.id}`);
-          let $labelElm = $(`.item-details-label.editor-${columnDef.id}`);
-          let $editorElm = $(`[data-editorid=${columnDef.id}]`);
+          let validationElm = document.querySelector(`.item-details-validation.editor-${columnDef.id}`);
+          let labelElm = document.querySelector(`.item-details-label.editor-${columnDef.id}`);
+          let editorElm = document.querySelector(`[data-editorid=${columnDef.id}]`);
           const validationMsgPrefix = options?.validationMsgPrefix || '';
 
-          if (!$targetElm || ($editorElm.has($targetElm as any).length > 0)) {
+          // if (!targetElm || (editorElm.has(targetElm as any).length > 0)) {
+          if (!targetElm) {
             validationResults = editors[idx].validate();
 
             if (!validationResults.valid) {
@@ -198,24 +201,24 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
                 msg: validationResults.msg
               });
 
-              if ($validationElm) {
-                $validationElm.text(validationMsgPrefix + validationResults.msg);
-                $labelElm.addClass('invalid');
-                $editorElm.addClass('invalid');
+              if (validationElm) {
+                validationElm.textContent = `${validationMsgPrefix}${validationResults.msg}`;
+                labelElm?.classList.add('invalid');
+                editorElm?.classList.add('invalid');
               }
-            } else if ($validationElm) {
-              $validationElm.text('');
-              $editorElm.removeClass('invalid');
-              $labelElm.removeClass('invalid');
+            } else if (validationElm) {
+              validationElm.textContent = '';
+              editorElm?.classList.remove('invalid');
+              labelElm?.classList.remove('invalid');
             }
           }
-          $validationElm = null as any;
-          $labelElm = null as any;
-          $editorElm = null as any;
+          validationElm = null;
+          labelElm = null;
+          editorElm = null;
         }
         idx++;
       }
-      $targetElm = null as any;
+      targetElm = null;
 
       if (errors.length) {
         return {
@@ -231,7 +234,7 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
     };
 
 
-    this.hide = function () {
+    context.hide = () => {
       let idx = 0;
       while (idx < editors.length) {
         editors[idx]?.hide?.();
@@ -241,7 +244,7 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
     };
 
 
-    this.show = function () {
+    context.show = () => {
       let idx = 0;
       while (idx < editors.length) {
         editors[idx]?.show?.();
@@ -251,7 +254,7 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
     };
 
 
-    this.position = function (box: HtmlElementPosition) {
+    context.position = (box: HtmlElementPosition) => {
       options?.position?.(box);
     };
 

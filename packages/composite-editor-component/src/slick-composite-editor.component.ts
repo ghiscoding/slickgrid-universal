@@ -164,7 +164,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       throw new Error(`Composite Editor with column id "${columnId}" not found.`);
     }
 
-    if (typeof editor.setValue === 'function' && Array.isArray(this._editorContainers)) {
+    if (typeof editor?.setValue === 'function' && Array.isArray(this._editorContainers)) {
       editor.setValue(newValue, true, triggerOnCompositeEditorChange);
       const editorContainerElm = (this._editorContainers as HTMLElement[]).find(editorElm => editorElm!.dataset!.editorid === columnId);
       const excludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;

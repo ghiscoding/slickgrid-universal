@@ -41,7 +41,6 @@ export * from './draggableGrouping.interface';
 export * from './draggableGroupingOption.interface';
 export * from './editCommand.interface';
 export * from './editor.interface';
-export * from './editorArgs.interface';
 export * from './editorArguments.interface';
 export * from './editorValidationResult.interface';
 export * from './editorValidator.interface';

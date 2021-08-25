@@ -1,6 +1,5 @@
 import { Column, CompositeEditorOption, ElementPosition, SlickDataView, SlickGrid } from './index';
-
-export type PositionMethod = () => ElementPosition;
+import { PositionMethod } from '../enums/positionMethod.type';
 
 export interface EditorArguments {
   /** Column Definition */
@@ -9,7 +8,7 @@ export interface EditorArguments {
   /** Column MetaData */
   columnMetaData: any;
 
-  /** Cell Container DOM Element of where the Editor will be created */
+  /** Editor HTML DOM element container */
   container: HTMLDivElement;
 
   /** Slick DataView */
@@ -33,11 +32,13 @@ export interface EditorArguments {
   /** When it's a Composite Editor (that is when it's an Editor created by the Composite Editor Modal window) */
   compositeEditorOptions?: CompositeEditorOption;
 
-  // methods
+  // ---
+  // Available Methods
+  // ------------------
 
-  /** Cancel the Editor Changes */
+  /** Cancel changes callback method that will execute after user cancels an edit */
   cancelChanges: () => void;
 
-  /** Commit the Editor Changes */
+  /** Commit changes callback method that will execute after user commits the changes */
   commitChanges: () => void;
 }
