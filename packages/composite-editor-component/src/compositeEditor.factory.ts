@@ -159,7 +159,7 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
     context.applyValue = (item: any, state: any) => {
       let idx = 0;
       while (idx < editors.length) {
-        editors[idx].applyValue(item, state[idx]);
+        editors[idx].applyValue(item, state?.[idx]);
         idx++;
       }
     };

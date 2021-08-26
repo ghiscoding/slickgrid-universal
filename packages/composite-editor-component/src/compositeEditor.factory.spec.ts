@@ -131,12 +131,128 @@ describe('Composite Editor Factory', () => {
     factory = new (CompositeEditor as any)(columnsMock, containers, compositeOptions);
   });
 
-  it('should instantiate the factory', () => {
+  it('should instantiate the factory and expect "destroy" to be called when asked for', () => {
+    const compOptDestroySpy = jest.spyOn(compositeOptions, 'destroy');
+
     const output = new factory(textEditorArgs);
+    const ctxDestroySpy = jest.spyOn(output, 'destroy');
 
     expect(factory).toBeTruthy();
     expect(output).toBeTruthy();
     expect(typeof output.destroy).toBe('function');
     output.destroy();
+
+    expect(compOptDestroySpy).toHaveBeenCalled();
+    expect(ctxDestroySpy).toHaveBeenCalled();
+  });
+
+  it('should instantiate the factory and expect "focus" to be called when asked for', () => {
+    const output = new factory(textEditorArgs);
+    const editorFocusSpy = jest.spyOn(output, 'focus');
+
+    expect(factory).toBeTruthy();
+    expect(output).toBeTruthy();
+    expect(typeof output.focus).toBe('function');
+    output.focus();
+
+    expect(editorFocusSpy).toHaveBeenCalled();
+  });
+
+  it('should instantiate the factory and expect "isValueChanged" to be called when asked for', () => {
+    const output = new factory(textEditorArgs);
+    const editorIsValueChangedSpy = jest.spyOn(output, 'isValueChanged');
+
+    expect(factory).toBeTruthy();
+    expect(output).toBeTruthy();
+    expect(typeof output.isValueChanged).toBe('function');
+    output.isValueChanged();
+
+    expect(editorIsValueChangedSpy).toHaveBeenCalled();
+  });
+
+  it('should instantiate the factory and expect "serializeValue" to be called when asked for', () => {
+    const output = new factory(textEditorArgs);
+    const editorSerializeValueSpy = jest.spyOn(output, 'serializeValue');
+
+    expect(factory).toBeTruthy();
+    expect(output).toBeTruthy();
+    expect(typeof output.serializeValue).toBe('function');
+    output.serializeValue();
+
+    expect(editorSerializeValueSpy).toHaveBeenCalled();
+  });
+
+  it('should instantiate the factory and expect "applyValue" to be called when asked for', () => {
+    const output = new factory(textEditorArgs);
+    const editorApplyValueSpy = jest.spyOn(output, 'applyValue');
+
+    expect(factory).toBeTruthy();
+    expect(output).toBeTruthy();
+    expect(typeof output.applyValue).toBe('function');
+    output.applyValue({ firstName: 'John' }, { firstName: 'Jane' });
+
+    expect(editorApplyValueSpy).toHaveBeenCalled();
+  });
+
+  it('should instantiate the factory and expect "loadValue" to be called when asked for', () => {
+    const valueMock = 25;
+    const output = new factory(textEditorArgs);
+    const editorLoadValueSpy = jest.spyOn(output, 'loadValue');
+
+    expect(factory).toBeTruthy();
+    expect(output).toBeTruthy();
+    expect(typeof output.loadValue).toBe('function');
+    output.loadValue(valueMock);
+
+    expect(editorLoadValueSpy).toHaveBeenCalledWith(valueMock);
+  });
+
+  it('should instantiate the factory and expect "hide" to be called when asked for', () => {
+    const output = new factory(textEditorArgs);
+    const editorHideSpy = jest.spyOn(output, 'hide');
+
+    expect(factory).toBeTruthy();
+    expect(output).toBeTruthy();
+    expect(typeof output.hide).toBe('function');
+    output.hide();
+
+    expect(editorHideSpy).toHaveBeenCalled();
+  });
+
+  it('should instantiate the factory and expect "show" to be called when asked for', () => {
+    const output = new factory(textEditorArgs);
+    const editorShowSpy = jest.spyOn(output, 'show');
+
+    expect(factory).toBeTruthy();
+    expect(output).toBeTruthy();
+    expect(typeof output.show).toBe('function');
+    output.show();
+
+    expect(editorShowSpy).toHaveBeenCalled();
+  });
+
+  it('should instantiate the factory and expect "position" to be called when asked for', () => {
+    const newPositionMock = { top: 10, bottom: 15, left: 20, right: 25 };
+    const output = new factory(textEditorArgs);
+    const editorPositionSpy = jest.spyOn(output, 'position');
+
+    expect(factory).toBeTruthy();
+    expect(output).toBeTruthy();
+    expect(typeof output.position).toBe('function');
+    output.position(newPositionMock);
+
+    expect(editorPositionSpy).toHaveBeenCalledWith(newPositionMock);
+  });
+
+  it('should instantiate the factory and expect "validate" to be called when asked for', () => {
+    const output = new factory(textEditorArgs);
+    const editorValidateSpy = jest.spyOn(output, 'validate');
+
+    expect(factory).toBeTruthy();
+    expect(output).toBeTruthy();
+    expect(typeof output.validate).toBe('function');
+    output.validate(document.createElement('input'));
+
+    expect(editorValidateSpy).toHaveBeenCalled();
   });
 });
