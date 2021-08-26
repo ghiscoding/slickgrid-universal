@@ -44,6 +44,7 @@ export interface CompositeEditorArguments extends EditorArguments {
  *  destroy                 -   A function to be called when the editor is destroyed.
  */
 export function CompositeEditor(this: any, columns: Column[], containers: Array<HTMLDivElement>, options: CompositeEditorOption) {
+  let firstInvalidEditor: Editor | null;
   const defaultOptions = {
     modalType: 'edit', // available type (create, clone, edit, mass)
     validationFailedMsg: 'Some of the fields have failed validation',
@@ -56,7 +57,6 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
     editors: {}
   } as unknown as CompositeEditorOption;
   options = { ...defaultOptions, ...options };
-  let firstInvalidEditor: any;
 
   /* no operation (empty) function */
   const noop = () => { };
@@ -181,12 +181,12 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
 
       let idx = 0;
       while (idx < editors.length) {
-        const columnDef = editors[idx].args?.column ?? {};
-        if (columnDef) {
+        const columnDef = editors[idx].args?.column;
+        if (columnDef?.id !== undefined) {
           let validationElm = document.querySelector(`.item-details-validation.editor-${columnDef.id}`);
           let labelElm = document.querySelector(`.item-details-label.editor-${columnDef.id}`);
           let editorElm = document.querySelector(`[data-editorid=${columnDef.id}]`);
-          const validationMsgPrefix = options?.validationMsgPrefix || '';
+          const validationMsgPrefix = options?.validationMsgPrefix ?? '';
 
           // if (!targetElm || (editorElm.has(targetElm as any).length > 0)) {
           if (!targetElm) {
@@ -262,7 +262,7 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
     init();
   }
 
-  // so we can do 'editor instanceof Slick.CompositeEditor OR instanceof CompositeEditor
+  // so we can do editor instanceof Slick.CompositeEditor OR instanceof CompositeEditor
   editor.prototype = this;
   Slick.CompositeEditor = editor as any;
   return editor;
