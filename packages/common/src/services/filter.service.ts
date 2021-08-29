@@ -180,6 +180,9 @@ export class FilterService {
       }
     });
 
+    // destroy Filter(s) to avoid leak and not keep orphan filters in the DOM tree
+    this.subscribeToOnHeaderRowCellRendered(grid);
+
     // subscribe to the SlickGrid event and call the backend execution
     if (this._onSearchChange) {
       const onSearchChangeHandler = this._onSearchChange;
@@ -232,6 +235,9 @@ export class FilterService {
     (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onHeaderRowCellRenderedHandler>>).subscribe(onHeaderRowCellRenderedHandler, (_e, args) => {
       this.addFilterTemplateToHeaderRow(args);
     });
+
+    // destroy Filter(s) to avoid leak and not keep orphan filters
+    this.subscribeToOnHeaderRowCellRendered(grid);
   }
 
   async clearFilterByColumnId(event: Event, columnId: number | string): Promise<boolean> {
@@ -1093,6 +1099,18 @@ export class FilterService {
     }
 
     return columnDefinitions;
+  }
+
+  /**
+   * Subscribe to `onBeforeHeaderRowCellDestroy` to destroy Filter(s) to avoid leak and not keep orphan filters
+   * @param {Object} grid - Slick Grid object
+   */
+  protected subscribeToOnHeaderRowCellRendered(grid: SlickGrid) {
+    const onBeforeHeaderRowCellDestroyHandler = grid.onBeforeHeaderRowCellDestroy;
+    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeHeaderRowCellDestroyHandler>>).subscribe(onBeforeHeaderRowCellDestroyHandler, (_e, args) => {
+      const colFilter: Filter | undefined = this._filtersMetadata.find((filter: Filter) => filter.columnDef.id === args.column.id);
+      colFilter?.destroy?.();
+    });
   }
 
   protected updateColumnFilters(searchTerms: SearchTerm[] | undefined, columnDef: any, operator?: OperatorType | OperatorString) {
