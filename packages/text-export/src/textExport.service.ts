@@ -161,8 +161,8 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     });
 
     // when using IE/Edge, then use different download call
-    if (typeof navigator.msSaveOrOpenBlob === 'function') {
-      navigator.msSaveOrOpenBlob(blob, options.filename);
+    if (typeof (navigator as any).msSaveOrOpenBlob === 'function') {
+      (navigator as any).msSaveOrOpenBlob(blob, options.filename);
     } else {
       // this trick will generate a temp <a /> tag
       // the code will then trigger a hidden click for it to start downloading
