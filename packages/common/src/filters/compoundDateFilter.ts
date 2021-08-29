@@ -124,7 +124,9 @@ export class CompoundDateFilter implements Filter {
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
       this._selectOperatorElm.selectedIndex = 0;
-      this.flatInstance.clear();
+      if (this.flatInstance.input) {
+        this.flatInstance.clear();
+      }
     }
   }
 

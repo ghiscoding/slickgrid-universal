@@ -200,7 +200,7 @@ export const GlobalGridOptions: GridOption = {
   },
   headerMenu: {
     autoAlign: true,
-    autoAlignOffset: 12,
+    autoAlignOffset: 4,
     minWidth: 140,
     iconClearFilterCommand: 'fa fa-filter mdi mdi mdi-filter-remove-outline',
     iconClearSortCommand: 'fa fa-unsorted mdi mdi-swap-vertical',

@@ -28,7 +28,15 @@ import { handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOr
 declare const Slick: SlickNamespace;
 
 /**
- * A control to add a Grid Menu (hambuger menu on top-right of the grid)
+ * A control to add a Grid Menu with Extra Commands & Column Picker (hambuger menu on top-right of the grid)
+ * To specify a custom button in a column header, extend the column definition like so:
+ *   this.gridOptions = {
+ *     enableGridMenu: true,
+ *     gridMenu: {
+ *       ... grid menu options ...
+ *       customItems: [{ ...command... }, { ...command... }]
+ *     }
+ *   }];
  * @class GridMenuControl
  * @constructor
  */
@@ -284,47 +292,6 @@ export class GridMenuControl {
     return this.grid.getColumns();
   }
 
-  handleMenuCustomItemClick(event: Event, item: GridMenuItem) {
-    if (item && item.command && !item.disabled && !item.divider) {
-      const callbackArgs = {
-        grid: this.grid,
-        command: item.command,
-        item,
-        allColumns: this.columns,
-        visibleColumns: this.getVisibleColumns()
-      } as GridMenuCommandItemCallbackArgs;
-
-      // execute Grid Menu callback with command,
-      // we'll also execute optional user defined onCommand callback when provided
-      this.executeGridMenuInternalCustomCommands(event, callbackArgs);
-      this.pubSubService.publish('gridMenu:onCommand', callbackArgs);
-      if (typeof this.controlOptions?.onCommand === 'function') {
-        this.controlOptions.onCommand(event, callbackArgs);
-      }
-
-      // execute action callback when defined
-      if (typeof item.action === 'function') {
-        item.action.call(this, event, callbackArgs);
-      }
-    }
-
-    // does the user want to leave open the Grid Menu after executing a command?
-    if (!this.controlOptions.leaveOpen && !event.defaultPrevented) {
-      this.hideMenu(event);
-    }
-
-    // Stop propagation so that it doesn't register as a header click event.
-    event.preventDefault();
-    event.stopPropagation();
-  }
-
-  /** Mouse down handler when clicking anywhere in the DOM body */
-  handleBodyMouseDown(event: DOMEvent<HTMLDivElement>) {
-    if ((this._gridMenuElm !== event.target && !this._gridMenuElm.contains(event.target) && this._isMenuOpen) || event.target.className === 'close') {
-      this.hideMenu(event);
-    }
-  }
-
   /**
    * Hide the Grid Menu but only if it does detect as open prior to executing anything.
    * @param event
@@ -390,8 +357,8 @@ export class GridMenuControl {
         let isItemVisible = true;
         let isItemUsable = true;
         if (typeof item === 'object') {
-          isItemVisible = this.runOverrideFunctionWhenExists<typeof callbackArgs>(item.itemVisibilityOverride, callbackArgs);
-          isItemUsable = this.runOverrideFunctionWhenExists<typeof callbackArgs>(item.itemUsabilityOverride, callbackArgs);
+          isItemVisible = this.extensionUtility.runOverrideFunctionWhenExists<typeof callbackArgs>(item.itemVisibilityOverride, callbackArgs);
+          isItemUsable = this.extensionUtility.runOverrideFunctionWhenExists<typeof callbackArgs>(item.itemUsabilityOverride, callbackArgs);
         }
 
         // if the result is not visible then there's no need to go further
@@ -521,7 +488,7 @@ export class GridMenuControl {
     } as GridMenuEventWithElementCallbackArgs;
 
     // run the override function (when defined), if the result is false then we won't go further
-    if (controlOptions && !this.runOverrideFunctionWhenExists<typeof callbackArgs>(controlOptions.menuUsabilityOverride, callbackArgs)) {
+    if (controlOptions && !this.extensionUtility.runOverrideFunctionWhenExists<typeof callbackArgs>(controlOptions.menuUsabilityOverride, callbackArgs)) {
       return;
     }
 
@@ -560,7 +527,10 @@ export class GridMenuControl {
     // we also need to call the control init so that it takes the new Grid object with latest values
     if (this.controlOptions) {
       this.controlOptions.customItems = [];
-      this.emptyGridMenuTitles();
+      this.controlOptions.customTitle = '';
+      this.controlOptions.columnTitle = '';
+      this.controlOptions.forceFitTitle = '';
+      this.controlOptions.syncResizeTitle = '';
 
       // merge original user grid menu items with internal items
       // then sort all Grid Menu Custom Items (sorted by pointer, no need to use the return)
@@ -587,15 +557,6 @@ export class GridMenuControl {
   // --
   // protected functions
   // ------------------
-
-  protected emptyGridMenuTitles() {
-    if (this.controlOptions) {
-      this.controlOptions.customTitle = '';
-      this.controlOptions.columnTitle = '';
-      this.controlOptions.forceFitTitle = '';
-      this.controlOptions.syncResizeTitle = '';
-    }
-  }
 
   /** Create Grid Menu with Custom Commands if user has enabled Filters and/or uses a Backend Service (OData, GraphQL) */
   protected addGridMenuCustomCommands(originalCustomItems: Array<GridMenuItem | 'divider'>) {
@@ -873,11 +834,44 @@ export class GridMenuControl {
     };
   }
 
-  /** Run the Override function when it exists, if it returns True then it is usable/visible */
-  protected runOverrideFunctionWhenExists<T = any>(overrideFn: any, args: T): boolean {
-    if (typeof overrideFn === 'function') {
-      return overrideFn.call(this, args);
+  /** Mouse down handler when clicking anywhere in the DOM body */
+  protected handleBodyMouseDown(event: DOMEvent<HTMLDivElement>) {
+    if ((this._gridMenuElm !== event.target && !this._gridMenuElm.contains(event.target) && this._isMenuOpen) || event.target.className === 'close') {
+      this.hideMenu(event);
     }
-    return true;
+  }
+
+  protected handleMenuCustomItemClick(event: Event, item: GridMenuItem) {
+    if (item && item.command && !item.disabled && !item.divider) {
+      const callbackArgs = {
+        grid: this.grid,
+        command: item.command,
+        item,
+        allColumns: this.columns,
+        visibleColumns: this.getVisibleColumns()
+      } as GridMenuCommandItemCallbackArgs;
+
+      // execute Grid Menu callback with command,
+      // we'll also execute optional user defined onCommand callback when provided
+      this.executeGridMenuInternalCustomCommands(event, callbackArgs);
+      this.pubSubService.publish('gridMenu:onCommand', callbackArgs);
+      if (typeof this.controlOptions?.onCommand === 'function') {
+        this.controlOptions.onCommand(event, callbackArgs);
+      }
+
+      // execute action callback when defined
+      if (typeof item.action === 'function') {
+        item.action.call(this, event, callbackArgs);
+      }
+    }
+
+    // does the user want to leave open the Grid Menu after executing a command?
+    if (!this.controlOptions.leaveOpen && !event.defaultPrevented) {
+      this.hideMenu(event);
+    }
+
+    // Stop propagation so that it doesn't register as a header click event.
+    event.preventDefault();
+    event.stopPropagation();
   }
 }

@@ -6,7 +6,7 @@ const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "m
 
 import { Constants } from '../constants';
 import { FieldType, OperatorString, OperatorType } from '../enums/index';
-import { EventSubscription, GridOption } from '../interfaces/index';
+import { EventSubscription, GridOption, HtmlElementPosition } from '../interfaces/index';
 import { Observable, RxJsFacade, Subject, Subscription } from './rxjsFacade';
 
 /**
@@ -1017,8 +1017,23 @@ export function findOrDefault<T = any>(array: T[], logic: (item: T) => boolean, 
   return array;
 }
 
-/** Get HTML Element position offset (without jQuery) */
-export function getHtmlElementOffset(element: HTMLElement): { top: number; bottom: number; left: number; right: number; } | undefined {
+/** Get offset of HTML element relative to a parent element */
+export function getElementOffsetRelativeToParent(parentElm: HTMLElement | null, childElm: HTMLElement | null) {
+  if (!parentElm || !childElm) {
+    return undefined;
+  }
+  const parentPos = parentElm.getBoundingClientRect();
+  const childPos = childElm.getBoundingClientRect();
+  return {
+    top: childPos.top - parentPos.top,
+    right: childPos.right - parentPos.right,
+    bottom: childPos.bottom - parentPos.bottom,
+    left: childPos.left - parentPos.left,
+  };
+}
+
+/** Get HTML element offset with pure JS */
+export function getHtmlElementOffset(element: HTMLElement): HtmlElementPosition | undefined {
   if (!element) {
     return undefined;
   }
@@ -1028,7 +1043,7 @@ export function getHtmlElementOffset(element: HTMLElement): { top: number; botto
   let bottom = 0;
   let right = 0;
 
-  if (rect && rect.top !== undefined && rect.left !== undefined) {
+  if (rect?.top !== undefined && rect.left !== undefined) {
     top = rect.top + window.pageYOffset;
     left = rect.left + window.pageXOffset;
     right = rect.right;

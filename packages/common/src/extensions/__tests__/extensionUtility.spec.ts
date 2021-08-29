@@ -1,4 +1,4 @@
-import { Column, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, GridOption, MenuCommandItem, SlickGrid } from '../../interfaces/index';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { BackendUtilityService } from '../../services/backendUtility.service';
@@ -104,6 +104,18 @@ describe('extensionUtility', () => {
         utility.sortItems(inputArray, 'order');
 
         expect(inputArray).toEqual(expectedArray);
+      });
+    });
+
+    describe('translateMenuItemsFromTitleKey method', () => {
+      it('should translate using the Translate Service', () => {
+        const commandItem1 = { command: 'clear-filter', titleKey: 'CLEAR_ALL_FILTERS' } as MenuCommandItem;
+        const commandItem2 = { command: 'clear-sorting', titleKey: 'CLEAR_ALL_SORTING' } as MenuCommandItem;
+
+        utility.translateMenuItemsFromTitleKey([commandItem1, commandItem2]);
+
+        expect(commandItem1.title).toBe('Supprimer tous les filtres');
+        expect(commandItem2.title).toBe('Supprimer tous les tris');
       });
     });
 

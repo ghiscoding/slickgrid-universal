@@ -20,6 +20,13 @@ declare const Slick: SlickNamespace;
 
 /**
  * A control to add a Column Picker (right+click on any column header to reveal the column picker)
+ * To specify a custom button in a column header, extend the column definition like so:
+ *   this.gridOptions = {
+ *     enableColumnPicker: true,
+ *     columnPicker: {
+ *       ... column picker options ...
+ *     }
+ *   }];
  * @class ColumnPickerControl
  * @constructor
  */
@@ -159,44 +166,13 @@ export class ColumnPickerControl {
     return this.grid.getColumns();
   }
 
-  /** Mouse down handler when clicking anywhere in the DOM body */
-  handleBodyMouseDown(e: DOMEvent<HTMLDivElement>) {
-    if ((this._menuElm !== e.target && !this._menuElm.contains(e.target)) || e.target.className === 'close') {
-      this._menuElm.style.visibility = 'hidden';
-    }
-  }
-
-  /** Mouse header context handler when doing a right+click on any of the header column title */
-  handleHeaderContextMenu(e: DOMEvent<HTMLDivElement>) {
-    e.preventDefault();
-    emptyElement(this._listElm);
-    updateColumnPickerOrder.call(this);
-    this._columnCheckboxes = [];
-
-    populateColumnPicker.call(this, this.controlOptions);
-    this.repositionMenu(e);
-  }
-
-  repositionMenu(e: DOMEvent<HTMLDivElement>) {
-    this._menuElm.style.top = `${(e as any).pageY - 10}px`;
-    this._menuElm.style.left = `${(e as any).pageX - 10}px`;
-    this._menuElm.style.maxHeight = `${document.body.clientHeight - (e as any).pageY - 10}px`;
-    this._menuElm.style.visibility = 'visible';
-    this._menuElm.appendChild(this._listElm);
-  }
-
-  /** Update the Titles of each sections (command, customTitle, ...) */
-  updateAllTitles(options: ColumnPickerOption) {
-    if (this._columnTitleElm?.textContent && options.columnTitle) {
-      this._columnTitleElm.textContent = options.columnTitle;
-    }
-  }
-
   /** Translate the Column Picker headers and also the last 2 checkboxes */
   translateColumnPicker() {
     // update the properties by pointers, that is the only way to get Column Picker Control to see the new values
     if (this.controlOptions) {
-      this.emptyColumnPickerTitles();
+      this.controlOptions.columnTitle = '';
+      this.controlOptions.forceFitTitle = '';
+      this.controlOptions.syncResizeTitle = '';
       this.controlOptions.columnTitle = this.extensionUtility.getPickerTitleOutputString('columnTitle', 'columnPicker');
       this.controlOptions.forceFitTitle = this.extensionUtility.getPickerTitleOutputString('forceFitTitle', 'columnPicker');
       this.controlOptions.syncResizeTitle = this.extensionUtility.getPickerTitleOutputString('syncResizeTitle', 'columnPicker');
@@ -211,11 +187,40 @@ export class ColumnPickerControl {
     }
   }
 
-  protected emptyColumnPickerTitles() {
-    if (this.controlOptions) {
-      this.controlOptions.columnTitle = '';
-      this.controlOptions.forceFitTitle = '';
-      this.controlOptions.syncResizeTitle = '';
+  // --
+  // protected functions
+  // ------------------
+
+  /** Mouse down handler when clicking anywhere in the DOM body */
+  protected handleBodyMouseDown(e: DOMEvent<HTMLDivElement>) {
+    if ((this._menuElm !== e.target && !this._menuElm.contains(e.target)) || e.target.className === 'close') {
+      this._menuElm.style.visibility = 'hidden';
+    }
+  }
+
+  /** Mouse header context handler when doing a right+click on any of the header column title */
+  protected handleHeaderContextMenu(e: DOMEvent<HTMLDivElement>) {
+    e.preventDefault();
+    emptyElement(this._listElm);
+    updateColumnPickerOrder.call(this);
+    this._columnCheckboxes = [];
+
+    populateColumnPicker.call(this, this.controlOptions);
+    this.repositionMenu(e);
+  }
+
+  protected repositionMenu(e: DOMEvent<HTMLDivElement>) {
+    this._menuElm.style.top = `${(e as any).pageY - 10}px`;
+    this._menuElm.style.left = `${(e as any).pageX - 10}px`;
+    this._menuElm.style.maxHeight = `${document.body.clientHeight - (e as any).pageY - 10}px`;
+    this._menuElm.style.visibility = 'visible';
+    this._menuElm.appendChild(this._listElm);
+  }
+
+  /** Update the Titles of each sections (command, customTitle, ...) */
+  protected updateAllTitles(options: ColumnPickerOption) {
+    if (this._columnTitleElm?.textContent && options.columnTitle) {
+      this._columnTitleElm.textContent = options.columnTitle;
     }
   }
 }

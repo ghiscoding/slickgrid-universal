@@ -13,14 +13,13 @@ import {
   DraggableGroupingExtension,
   ExtensionUtility,
   GroupItemMetaProviderExtension,
-  HeaderMenuExtension,
   RowDetailViewExtension,
   RowMoveManagerExtension,
   RowSelectionExtension,
 } from '../extensions/index';
 import { SharedService } from './shared.service';
 import { TranslaterService } from './translater.service';
-import { AutoTooltipPlugin, HeaderButtonPlugin } from '../plugins/index';
+import { AutoTooltipPlugin, HeaderButtonPlugin, HeaderMenuPlugin } from '../plugins/index';
 import { ColumnPickerControl, GridMenuControl } from '../controls/index';
 import { FilterService } from './filter.service';
 import { PubSubService } from './pubSub.service';
@@ -35,7 +34,7 @@ interface ExtensionWithColumnIndexPosition {
 export class ExtensionService {
   protected _columnPickerControl?: ColumnPickerControl;
   protected _gridMenuControl?: GridMenuControl;
-  protected _headerButtonPlugin?: HeaderButtonPlugin;
+  protected _headerMenuPlugin?: HeaderMenuPlugin;
   protected _extensionCreatedList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
   protected _extensionList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
 
@@ -59,7 +58,6 @@ export class ExtensionService {
     protected readonly contextMenuExtension: ContextMenuExtension,
     protected readonly draggableGroupingExtension: DraggableGroupingExtension,
     protected readonly groupItemMetaExtension: GroupItemMetaProviderExtension,
-    protected readonly headerMenuExtension: HeaderMenuExtension,
     protected readonly rowDetailViewExtension: RowDetailViewExtension,
     protected readonly rowMoveManagerExtension: RowMoveManagerExtension,
     protected readonly rowSelectionExtension: RowSelectionExtension,
@@ -141,7 +139,7 @@ export class ExtensionService {
         const instance = new AutoTooltipPlugin(this.gridOptions?.autoTooltipOptions);
         if (instance) {
           this.sharedService.slickGrid.registerPlugin<AutoTooltipPlugin>(instance);
-          this._extensionList[ExtensionName.autoTooltip] = { name: ExtensionName.autoTooltip, class: {}, instance };
+          this._extensionList[ExtensionName.autoTooltip] = { name: ExtensionName.autoTooltip, class: instance, instance };
         }
       }
 
@@ -190,7 +188,7 @@ export class ExtensionService {
           if (this.gridOptions.columnPicker?.onExtensionRegistered) {
             this.gridOptions.columnPicker.onExtensionRegistered(this._columnPickerControl);
           }
-          this._extensionList[ExtensionName.columnPicker] = { name: ExtensionName.columnPicker, class: {}, instance: this._columnPickerControl };
+          this._extensionList[ExtensionName.columnPicker] = { name: ExtensionName.columnPicker, class: this._columnPickerControl, instance: this._columnPickerControl };
         }
       }
 
@@ -217,7 +215,7 @@ export class ExtensionService {
           if (this.gridOptions.gridMenu?.onExtensionRegistered) {
             this.gridOptions.gridMenu.onExtensionRegistered(this._gridMenuControl);
           }
-          this._extensionList[ExtensionName.gridMenu] = { name: ExtensionName.gridMenu, class: {}, instance: this._gridMenuControl };
+          this._extensionList[ExtensionName.gridMenu] = { name: ExtensionName.gridMenu, class: this._gridMenuControl, instance: this._gridMenuControl };
         }
       }
 
@@ -234,20 +232,23 @@ export class ExtensionService {
 
       // Header Button Plugin
       if (this.gridOptions.enableHeaderButton) {
-        this._headerButtonPlugin = new HeaderButtonPlugin(this.pubSubService, this.sharedService);
-        if (this._headerButtonPlugin) {
+        const headerButtonPlugin = new HeaderButtonPlugin(this.extensionUtility, this.pubSubService, this.sharedService);
+        if (headerButtonPlugin) {
           if (this.gridOptions.headerButton?.onExtensionRegistered) {
-            this.gridOptions.headerButton.onExtensionRegistered(this._headerButtonPlugin);
+            this.gridOptions.headerButton.onExtensionRegistered(headerButtonPlugin);
           }
-          this._extensionList[ExtensionName.headerButton] = { name: ExtensionName.headerButton, class: {}, instance: this._headerButtonPlugin };
+          this._extensionList[ExtensionName.headerButton] = { name: ExtensionName.headerButton, class: headerButtonPlugin, instance: headerButtonPlugin };
         }
       }
 
       // Header Menu Plugin
-      if (this.gridOptions.enableHeaderMenu && this.headerMenuExtension && this.headerMenuExtension.register) {
-        const instance = this.headerMenuExtension.register();
-        if (instance) {
-          this._extensionList[ExtensionName.headerMenu] = { name: ExtensionName.headerMenu, class: this.headerMenuExtension, instance };
+      if (this.gridOptions.enableHeaderMenu) {
+        this._headerMenuPlugin = new HeaderMenuPlugin(this.extensionUtility, this.filterService, this.pubSubService, this.sharedService, this.sortService);
+        if (this._headerMenuPlugin) {
+          if (this.gridOptions.headerMenu?.onExtensionRegistered) {
+            this.gridOptions.headerMenu.onExtensionRegistered(this._headerMenuPlugin);
+          }
+          this._extensionList[ExtensionName.headerMenu] = { name: ExtensionName.headerMenu, class: this._headerMenuPlugin, instance: this._headerMenuPlugin };
         }
       }
 
@@ -320,7 +321,7 @@ export class ExtensionService {
 
   /** Hide a column from the grid */
   hideColumn(column: Column) {
-    if (this.sharedService && this.sharedService.slickGrid && this.sharedService.slickGrid.getColumns && this.sharedService.slickGrid.setColumns) {
+    if (typeof this.sharedService?.slickGrid?.getColumns === 'function') {
       const columnIndex = this.sharedService.slickGrid.getColumnIndex(column.id);
       this.sharedService.visibleColumns = this.removeColumnByIndex(this.sharedService.slickGrid.getColumns(), columnIndex);
       this.sharedService.slickGrid.setColumns(this.sharedService.visibleColumns);
@@ -386,9 +387,7 @@ export class ExtensionService {
    * Translate the Header Menu titles, we need to loop through all column definition to re-translate them
    */
   translateHeaderMenu() {
-    if (this.headerMenuExtension && this.headerMenuExtension.translateHeaderMenu) {
-      this.headerMenuExtension.translateHeaderMenu();
-    }
+    this._headerMenuPlugin?.translateHeaderMenu?.();
   }
 
   /**
@@ -444,11 +443,6 @@ export class ExtensionService {
     if (this._gridMenuControl) {
       this._gridMenuControl.columns = this.sharedService.allColumns ?? [];
     }
-
-    // recreate the Header Menu when enabled
-    if (this.gridOptions.enableHeaderMenu) {
-      this.recreateExternalAddon(this.headerMenuExtension, ExtensionName.headerMenu);
-    }
   }
 
   //
@@ -485,20 +479,6 @@ export class ExtensionService {
       return this._extensionCreatedList[name];
     }
     return undefined;
-  }
-
-  /**
-   * Dispose of previous extension/addon instance, then re-register it and don't forget to overwrite previous instance ref
-   * @param externalExtension - extension instance
-   * @param extensionName - extension name
-   */
-  protected recreateExternalAddon(externalExtension: Extension, extensionName: ExtensionName) {
-    externalExtension.dispose();
-    const instance = externalExtension.register();
-    const extension = this.getExtensionByName(extensionName);
-    if (extension) {
-      extension.instance = instance;
-    }
   }
 
   /** Translate an array of items from an input key and assign translated value to the output key */

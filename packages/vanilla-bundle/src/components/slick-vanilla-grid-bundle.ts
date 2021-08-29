@@ -39,7 +39,6 @@ import {
   DraggableGroupingExtension,
   ExtensionUtility,
   GroupItemMetaProviderExtension,
-  HeaderMenuExtension,
   RowDetailViewExtension,
   RowSelectionExtension,
 
@@ -362,7 +361,6 @@ export class SlickVanillaGridBundle {
     const checkboxExtension = new CheckboxSelectorExtension(this.sharedService);
     const draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this.sharedService);
     const groupItemMetaProviderExtension = new GroupItemMetaProviderExtension(this.sharedService);
-    const headerMenuExtension = new HeaderMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.translaterService);
     const rowDetailViewExtension = new RowDetailViewExtension();
     const rowMoveManagerExtension = new RowMoveManagerExtension(this.sharedService);
     const rowSelectionExtension = new RowSelectionExtension(this.sharedService);
@@ -378,7 +376,6 @@ export class SlickVanillaGridBundle {
       contextMenuExtension,
       draggableGroupingExtension,
       groupItemMetaProviderExtension,
-      headerMenuExtension,
       rowDetailViewExtension,
       rowMoveManagerExtension,
       rowSelectionExtension,
@@ -552,6 +549,7 @@ export class SlickVanillaGridBundle {
     this.slickGrid = new Slick.Grid(gridContainerElm, this.dataView, this._columnDefinitions, this._gridOptions);
     this.sharedService.dataView = this.dataView;
     this.sharedService.slickGrid = this.slickGrid;
+    this.sharedService.gridContainerElement = this._gridContainerElm;
 
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.slickGrid, this._gridOptions, this.dataView);

@@ -1,5 +1,4 @@
-import { SlickGrid } from './slickGrid.interface';
-import { Column } from './column.interface';
+import { Column, SlickGrid } from './index';
 
 export interface HeaderMenuOption {
   /** Auto-align drop menu to the left when not enough viewport space to show on the right */
@@ -16,9 +15,6 @@ export interface HeaderMenuOption {
    * URL pointing to the Header Menu button image.
    */
   buttonImage?: string;
-
-  /** A command identifier to be passed to the onCommand event handlers. */
-  command?: string;
 
   /** Defaults to false, which will hide the "Column Resize by Content" command in the Header Menu (Grid Option "enableColumnResizeOnDoubleClick" has to also be enabled) */
   hideColumnResizeByContentCommand?: boolean;
@@ -76,6 +72,9 @@ export interface HeaderMenuOption {
 
   /** icon for the "Sort Descending" command */
   iconSortDescCommand?: string;
+
+  /** Header Menu dropdown offset top */
+  menuOffsetTop?: number;
 
   /** Minimum width that the drop menu will have */
   minWidth?: number;

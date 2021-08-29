@@ -12,6 +12,7 @@ import {
   SlickNamespace,
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
+import { ExtensionUtility } from '../extensions/extensionUtility';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
 
@@ -20,6 +21,13 @@ declare const Slick: SlickNamespace;
 
 /**
  * A plugin to add custom buttons to column headers.
+ * To specify a custom button in a column header, extend the column definition like so:
+ *   this.columnDefinitions = [{
+ *     id: 'myColumn', name: 'My column',
+ *     header: {
+ *       buttons: [{ ...button options... }, { ...button options... }]
+ *     }
+ *   }];
  */
 export class HeaderButtonPlugin {
   protected _bindEventService: BindingEventService;
@@ -32,7 +40,7 @@ export class HeaderButtonPlugin {
   pluginName: 'HeaderButtons' = 'HeaderButtons';
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
-  constructor(protected readonly pubSubService: PubSubService, protected readonly sharedService: SharedService) {
+  constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: PubSubService, protected readonly sharedService: SharedService) {
     this._bindEventService = new BindingEventService();
     this._eventHandler = new Slick.EventHandler();
     this.init(sharedService.gridOptions.headerButton);
@@ -92,8 +100,8 @@ export class HeaderButtonPlugin {
       while (i--) {
         const button = column.header.buttons[i];
         // run each override functions to know if the item is visible and usable
-        const isItemVisible = this.runOverrideFunctionWhenExists<typeof args>(button.itemVisibilityOverride, args);
-        const isItemUsable = this.runOverrideFunctionWhenExists<typeof args>(button.itemUsabilityOverride, args);
+        const isItemVisible = this.extensionUtility.runOverrideFunctionWhenExists<typeof args>(button.itemVisibilityOverride, args);
+        const isItemUsable = this.extensionUtility.runOverrideFunctionWhenExists<typeof args>(button.itemUsabilityOverride, args);
 
         // if the result is not visible then there's no need to go further
         if (!isItemVisible) {
@@ -196,17 +204,5 @@ export class HeaderButtonPlugin {
     // Stop propagation so that it doesn't register as a header click event.
     event.preventDefault();
     event.stopPropagation();
-  }
-
-  // --
-  // protected functions
-  // ------------------
-
-  /** Run the Override function when it exists, if it returns True then it is usable/visible */
-  protected runOverrideFunctionWhenExists<T = any>(overrideFn: any, args: T): boolean {
-    if (typeof overrideFn === 'function') {
-      return overrideFn.call(this, args);
-    }
-    return true;
   }
 }
