@@ -1,11 +1,9 @@
 import { Constants } from '../constants';
-import { Column } from '../interfaces/column.interface';
+import { Column, GridOption, Locale, MenuCommandItem } from '../interfaces';
 import { BackendUtilityService } from '../services/backendUtility.service';
 import { SharedService } from '../services/shared.service';
 import { TranslaterService } from '../services/translater.service';
 import { getTranslationPrefix } from '../services/utilities';
-import { Locale } from '../interfaces/locale.interface';
-import { GridOption } from '../interfaces';
 
 export class ExtensionUtility {
   constructor(
@@ -110,6 +108,14 @@ export class ExtensionUtility {
     this.backendUtilities?.refreshBackendDataset(gridOptions);
   }
 
+  /** Run the Override function when it exists, if it returns True then it is usable/visible */
+  runOverrideFunctionWhenExists<T = any>(overrideFn: ((args: any) => boolean) | undefined, args: T): boolean {
+    if (typeof overrideFn === 'function') {
+      return overrideFn.call(this, args);
+    }
+    return true;
+  }
+
   /**
    * Sort items (by pointers) in an array by a property name
    * @param {Array<Object>} items array
@@ -134,6 +140,20 @@ export class ExtensionUtility {
         if ((item as any)[inputKey]) {
           (item as any)[outputKey] = this.translaterService && this.translaterService.getCurrentLanguage && this.translaterService.translate && this.translaterService.translate((item as any)[inputKey]);
         }
+      }
+    }
+  }
+
+  /**
+   * Loop through all Menu Command Items and use `titleKey` property to translate (or use Locale) appropriate `title` property
+   * @param {Array<MenuCommandItem | String>} items - Menu Command Items array
+   * @param {Object} gridOptions - Grid Options
+   */
+  translateMenuItemsFromTitleKey(items: Array<MenuCommandItem | 'divider'>) {
+    const translationPrefix = getTranslationPrefix(this.sharedService.gridOptions);
+    for (const item of items) {
+      if (typeof item === 'object' && item.titleKey) {
+        item.title = this.translateWhenEnabledAndServiceExist(`${translationPrefix}${item.titleKey}`, `TEXT_${item.titleKey}`);
       }
     }
   }

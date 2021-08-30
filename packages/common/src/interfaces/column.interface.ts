@@ -7,8 +7,7 @@ import {
   Formatter,
   Grouping,
   GroupTotalsFormatter,
-  HeaderButtonItem,
-  MenuCommandItem,
+  HeaderButtonsOrMenu,
   OnEventArgs,
   SlickEventData,
   SortComparer,
@@ -143,11 +142,7 @@ export interface Column<T = any> {
   groupTotalsFormatter?: GroupTotalsFormatter;
 
   /** Options that can be provided to the Header Menu Plugin */
-  header?: {
-    /** list of Buttons to show in the header */
-    buttons?: Array<HeaderButtonItem>;
-    menu?: { items: Array<MenuCommandItem> };
-  };
+  header?: HeaderButtonsOrMenu;
 
   /** CSS class that can be added to the column header */
   headerCssClass?: string;

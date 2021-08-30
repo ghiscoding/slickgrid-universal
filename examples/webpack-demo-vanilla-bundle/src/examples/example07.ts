@@ -21,9 +21,18 @@ export class Example7 {
   dataset: any[];
   sgb: SlickVanillaGridBundle;
   duplicateTitleHeaderCount = 1;
+  filteringEnabledClass = '';
+  sortingEnabledClass = '';
   selectedLanguage: string;
   selectedLanguageFile: string;
   translateService: TranslateService;
+
+  set isFilteringEnabled(enabled: boolean) {
+    this.filteringEnabledClass = enabled ? 'icon mdi mdi-toggle-switch' : 'icon mdi mdi-toggle-switch-off-outline';
+  }
+  set isSortingEnabled(enabled: boolean) {
+    this.sortingEnabledClass = enabled ? 'icon mdi mdi-toggle-switch' : 'icon mdi mdi-toggle-switch-off-outline';
+  }
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -32,6 +41,8 @@ export class Example7 {
     this.translateService = (<any>window).TranslateService;
     this.selectedLanguage = this.translateService.getCurrentLanguage();
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;
+    this.isFilteringEnabled = true;
+    this.isSortingEnabled = true;
   }
 
   attached() {
@@ -445,10 +456,12 @@ export class Example7 {
   // --------------------------------------------------
 
   disableFilters() {
+    this.isFilteringEnabled = false;
     this.sgb.filterService.disableFilterFunctionality(true);
   }
 
   disableSorting() {
+    this.isSortingEnabled = false;
     this.sgb.sortService.disableSortFunctionality(true);
   }
 
@@ -457,9 +470,11 @@ export class Example7 {
 
   toggleFilter() {
     this.sgb.filterService.toggleFilterFunctionality();
+    this.isFilteringEnabled = this.sgb.slickGrid.getOptions().enableFiltering;
   }
 
   toggleSorting() {
     this.sgb.sortService.toggleSortFunctionality();
+    this.isSortingEnabled = this.sgb.slickGrid.getOptions().enableSorting;
   }
 }

@@ -1,7 +1,9 @@
 import { Column, GridOption, SlickGrid, SlickNamespace, } from '../../interfaces/index';
 import { HeaderButtonPlugin } from '../headerButton.plugin';
-import { PubSubService } from '../../services';
+import { BackendUtilityService, PubSubService } from '../../services';
 import { SharedService } from '../../services/shared.service';
+import { ExtensionUtility } from '../../extensions/extensionUtility';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 declare const Slick: SlickNamespace;
 
@@ -50,6 +52,9 @@ const columnsMock: Column[] = [
 
 describe('HeaderButton Plugin', () => {
   const consoleWarnSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
+  let backendUtilityService: BackendUtilityService;
+  let extensionUtility: ExtensionUtility;
+  let translateService: TranslateServiceStub;
   let plugin: HeaderButtonPlugin;
   let sharedService: SharedService;
   const mockEventCallback = () => { };
@@ -62,10 +67,13 @@ describe('HeaderButton Plugin', () => {
   } as GridOption;
 
   beforeEach(() => {
+    backendUtilityService = new BackendUtilityService();
     sharedService = new SharedService();
+    translateService = new TranslateServiceStub();
+    extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
     jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
     jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-    plugin = new HeaderButtonPlugin(pubSubServiceStub, sharedService);
+    plugin = new HeaderButtonPlugin(extensionUtility, pubSubServiceStub, sharedService);
   });
 
   afterEach(() => {

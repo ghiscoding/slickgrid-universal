@@ -497,6 +497,7 @@ export interface SlickGrid {
   onBeforeHeaderCellDestroy: SlickEvent<OnBeforeHeaderCellDestroyEventArgs>;
   onBeforeHeaderRowCellDestroy: SlickEvent<OnBeforeHeaderRowCellDestroyEventArgs>;
   onBeforeFooterRowCellDestroy: SlickEvent<OnBeforeFooterRowCellDestroyEventArgs>;
+  onBeforeSetColumns: SlickEvent<OnBeforeSetColumnsEventArgs>;
   onCellChange: SlickEvent<OnCellChangeEventArgs>;
   onCellCssStylesChanged: SlickEvent<OnCellCssStylesChangedEventArgs>;
   onClick: SlickEvent<OnClickEventArgs>;
@@ -543,6 +544,7 @@ export interface OnBeforeEditCellEventArgs extends SlickGridEventData { row: num
 export interface OnBeforeHeaderCellDestroyEventArgs extends SlickGridEventData { node: HTMLElement; column: Column; }
 export interface OnBeforeHeaderRowCellDestroyEventArgs extends SlickGridEventData { node: HTMLElement; column: Column; }
 export interface OnBeforeFooterRowCellDestroyEventArgs extends SlickGridEventData { node: HTMLElement; column: Column; }
+export interface OnBeforeSetColumnsEventArgs extends SlickGridEventData { previousColumns: Column[]; newColumns: Column[]; }
 export interface OnCellChangeEventArgs extends SlickGridEventData { row: number; cell: number; item: any; column: Column; }
 export interface OnCellCssStylesChangedEventArgs extends SlickGridEventData { key: string; hash: string; }
 export interface OnColumnsDragEventArgs extends SlickGridEventData { triggeredByColumn: string; resizeHandle: HTMLElement; }
