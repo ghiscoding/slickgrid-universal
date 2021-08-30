@@ -116,7 +116,9 @@ export class DateRangeFilter implements Filter {
       this._clearFilterTriggered = true;
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
-      this.flatInstance.clear();
+      if (this.flatInstance.input) {
+        this.flatInstance.clear();
+      }
     }
   }
 

@@ -205,8 +205,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    */
   startDownloadFile(options: { filename: string, blob: Blob, data: any[] }) {
     // when using IE/Edge, then use different download call
-    if (typeof navigator.msSaveOrOpenBlob === 'function') {
-      navigator.msSaveOrOpenBlob(options.blob, options.filename);
+    if (typeof (navigator as any).msSaveOrOpenBlob === 'function') {
+      (navigator as any).msSaveOrOpenBlob(options.blob, options.filename);
     } else {
       // this trick will generate a temp <a /> tag
       // the code will then trigger a hidden click for it to start downloading

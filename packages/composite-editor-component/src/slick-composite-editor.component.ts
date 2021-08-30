@@ -536,7 +536,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       }
       return this;
 
-    } catch (error) {
+    } catch (error: any) {
       this.dispose();
       const errorMsg = (typeof error === 'string') ? error : (error?.message ?? error?.body?.message ?? '');
       const errorCode = (typeof error === 'string') ? error : error?.status ?? error?.body?.status ?? errorMsg;
@@ -738,7 +738,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         // close the modal only when successful
         this.dispose();
       }
-    } catch (error) {
+    } catch (error: any) {
       const errorMsg = (typeof error === 'string') ? error : (error?.message ?? error?.body?.message ?? '');
       this.showValidationSummaryText(true, errorMsg);
     }
