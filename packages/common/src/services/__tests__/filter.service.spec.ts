@@ -92,6 +92,7 @@ const gridStub = {
   invalidate: jest.fn(),
   onLocalSortChanged: jest.fn(),
   onSort: new Slick.Event(),
+  onBeforeHeaderRowCellDestroy: new Slick.Event(),
   onHeaderRowCellRendered: new Slick.Event(),
   render: jest.fn(),
   setColumns: jest.fn(),
@@ -172,11 +173,15 @@ describe('FilterService', () => {
       gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
       const columnFilters = service.getColumnFilters();
       const filterMetadataArray = service.getFiltersMetadata();
+      const destroySpy = jest.spyOn(filterMetadataArray[0], 'destroy');
 
       expect(columnFilters).toEqual({});
       expect(filterMetadataArray.length).toBe(1);
       expect(filterMetadataArray[0] instanceof InputFilter).toBeTruthy();
       expect(filterMetadataArray[0]).toContainEntry(['searchTerms', []]);
+
+      gridStub.onBeforeHeaderRowCellDestroy.notify(mockArgs as any, new Slick.EventData(), gridStub);
+      expect(destroySpy).toHaveBeenCalled();
     });
 
     it('should call the same filter twice but expect the filter to be rendered only once', () => {
@@ -194,6 +199,7 @@ describe('FilterService', () => {
       gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
       const columnFilters = service.getColumnFilters();
       const filterMetadataArray = service.getFiltersMetadata();
+      const destroySpy = jest.spyOn(filterMetadataArray[0], 'destroy');
 
       expect(service.isFilterFirstRender).toBe(false);
       expect(columnFilters).toEqual({
@@ -202,6 +208,9 @@ describe('FilterService', () => {
       expect(filterMetadataArray.length).toBe(1);
       expect(filterMetadataArray[0] instanceof NativeSelectFilter).toBeTruthy();
       expect(filterMetadataArray[0]).toContainEntry(['searchTerms', [true]]);
+
+      gridStub.onBeforeHeaderRowCellDestroy.notify(mockArgs as any, new Slick.EventData(), gridStub);
+      expect(destroySpy).toHaveBeenCalled();
     });
 
     it('should call "onBackendFilterChange" when "onSearchChange" event is triggered', (done) => {
@@ -258,11 +267,15 @@ describe('FilterService', () => {
       gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new Slick.EventData(), gridStub);
       const columnFilters = service.getColumnFilters();
       const filterMetadataArray = service.getFiltersMetadata();
+      const destroySpy = jest.spyOn(filterMetadataArray[0], 'destroy');
 
       expect(columnFilters).toEqual({});
       expect(filterMetadataArray.length).toBe(1);
       expect(filterMetadataArray[0] instanceof InputFilter).toBeTruthy();
       expect(filterMetadataArray[0]).toContainEntry(['searchTerms', []]);
+
+      gridStub.onBeforeHeaderRowCellDestroy.notify(mockArgs as any, new Slick.EventData(), gridStub);
+      expect(destroySpy).toHaveBeenCalled();
     });
 
     it('should call "onFilterChanged" when "onSearchChange" event is triggered', (done) => {
