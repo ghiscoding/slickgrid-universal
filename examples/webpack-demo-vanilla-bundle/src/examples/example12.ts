@@ -1,4 +1,4 @@
-import { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
+// import { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
 import {
   AutocompleteOption,
   BindingEventService,
@@ -22,7 +22,7 @@ import {
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
+import { CompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
@@ -509,11 +509,11 @@ export class Example12 {
   }
 
   handleValidationError(event) {
-    console.log('handleValidationError', event.detail);
     const args = event.detail && event.detail.args;
+    console.log('handleValidationError', event.detail);
     if (args.validationResults) {
       let errorMsg = args.validationResults.msg || '';
-      if (args.editor && (args.editor instanceof Slick.CompositeEditor)) {
+      if (args?.editor instanceof CompositeEditor) {
         if (args.validationResults.errors) {
           errorMsg += '\n';
           for (const error of args.validationResults.errors) {
@@ -521,6 +521,7 @@ export class Example12 {
             errorMsg += `${columnName.toUpperCase()}: ${error.msg}`;
           }
         }
+        // this.compositeEditorInstance.showValidationSummaryText(true, errorMsg);
         console.log(errorMsg);
       }
     } else {
