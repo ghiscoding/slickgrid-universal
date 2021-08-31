@@ -29,6 +29,7 @@ import {
   PlainFunc,
   sanitizeTextByAvailableSanitizer,
   setDeepValue,
+  SlickCompositeEditor,
   SlickDataView,
   SlickEventHandler,
   SlickGrid,
@@ -506,7 +507,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         this._editors = {};
         this._editorContainers = modalColumns.map(col => modalBodyElm.querySelector<HTMLDivElement>(`[data-editorid=${col.id}]`)) || [];
         this._compositeOptions = { destroy: this.disposeComponent.bind(this), modalType, validationMsgPrefix: '* ', formValues: {}, editors: this._editors };
-        const compositeEditor = new (CompositeEditor as any)(modalColumns, this._editorContainers, this._compositeOptions);
+        const compositeEditor = new (CompositeEditor as any)(modalColumns, this._editorContainers, this._compositeOptions) as SlickCompositeEditor;
         this.grid.editActiveCell(compositeEditor);
 
         // --
