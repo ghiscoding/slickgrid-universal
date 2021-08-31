@@ -1,6 +1,5 @@
 import {
   Column,
-  ColumnEditor,
   CompositeEditorOption,
   Editor,
   EditorArguments,
