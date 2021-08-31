@@ -6,7 +6,6 @@ import {
   EditorValidationResult,
   ElementPosition,
   getHtmlElementOffset,
-  hasElement,
   HtmlElementPosition,
   SlickNamespace
 } from '@slickgrid-universal/common';
