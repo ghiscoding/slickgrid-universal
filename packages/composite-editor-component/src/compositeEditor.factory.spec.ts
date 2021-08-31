@@ -1,3 +1,4 @@
+import 'jest-extended';
 import { Column, CompositeEditorOption, Editors, ElementPosition, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '@slickgrid-universal/common';
 import { CompositeEditor } from './compositeEditor.factory';
 
@@ -99,7 +100,6 @@ describe('Composite Editor Factory', () => {
   let cancelChangeMock;
   let commitChangeMock;
   let destroyMock;
-  let textEditor;
   let editors;
   let compositeOptions;
   let textEditorArgs;
@@ -124,11 +124,37 @@ describe('Composite Editor Factory', () => {
       cancelChanges: cancelChangeMock,
       commitChanges: commitChangeMock,
     };
-    textEditor = new Editors.text(textEditorArgs, 'text');
     editors = columnsMock.map(col => col.editor);
     compositeOptions = { destroy: destroyMock, modalType: 'create', validationMsgPrefix: '* ', formValues: {}, editors };
 
     factory = new (CompositeEditor as any)(columnsMock, containers, compositeOptions);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should focus on first Editor input after initialization', (done) => {
+    const output = new factory(textEditorArgs);
+
+    expect(factory).toBeTruthy();
+    expect(output).toBeTruthy();
+
+    setTimeout(() => {
+      expect(document.activeElement).not.toBeUndefined();
+      done();
+    }, 1);
+  });
+
+  it('should be able to call the cancelChanges & commitChanges function to test the noop function after initialization', () => {
+    const output = new factory(textEditorArgs);
+    const cancelOutput = output.getEditors()[0].args.cancelChanges();
+    const commitOutput = output.getEditors()[0].args.commitChanges();
+
+    expect(factory).toBeTruthy();
+    expect(output).toBeTruthy();
+    expect(cancelOutput).toBeUndefined();
+    expect(commitOutput).toBeUndefined();
   });
 
   it('should instantiate the factory and expect "destroy" to be called when asked for', () => {
@@ -158,15 +184,31 @@ describe('Composite Editor Factory', () => {
     expect(editorFocusSpy).toHaveBeenCalled();
   });
 
-  it('should instantiate the factory and expect "isValueChanged" to be called when asked for', () => {
+  it('should instantiate the factory and expect "isValueChanged" to be called and return False when Editor returns False', () => {
     const output = new factory(textEditorArgs);
     const editorIsValueChangedSpy = jest.spyOn(output, 'isValueChanged');
+    jest.spyOn(output.getEditors()[0], 'isValueChanged').mockReturnValue(false);
 
     expect(factory).toBeTruthy();
     expect(output).toBeTruthy();
     expect(typeof output.isValueChanged).toBe('function');
-    output.isValueChanged();
+    const isChanged = output.isValueChanged();
 
+    expect(isChanged).toBeFalse();
+    expect(editorIsValueChangedSpy).toHaveBeenCalled();
+  });
+
+  it('should instantiate the factory and expect "isValueChanged" to be called and return True when Editor returns True', () => {
+    const output = new factory(textEditorArgs);
+    const editorIsValueChangedSpy = jest.spyOn(output, 'isValueChanged');
+    jest.spyOn(output.getEditors()[0], 'isValueChanged').mockReturnValue(true);
+
+    expect(factory).toBeTruthy();
+    expect(output).toBeTruthy();
+    expect(typeof output.isValueChanged).toBe('function');
+    const isChanged = output.isValueChanged();
+
+    expect(isChanged).toBeTrue();
     expect(editorIsValueChangedSpy).toHaveBeenCalled();
   });
 
@@ -244,15 +286,82 @@ describe('Composite Editor Factory', () => {
     expect(editorPositionSpy).toHaveBeenCalledWith(newPositionMock);
   });
 
-  it('should instantiate the factory and expect "validate" to be called when asked for', () => {
+  it('should instantiate the factory and expect "validate" to be called and return True when all editors are valid', () => {
+    for (const column of columnsMock) {
+      if (column.editor) {
+        const validationEditorElm = document.createElement('div');
+        validationEditorElm.className = `item-details-validation editor-${column.id}`;
+        const labelEditorElm = document.createElement('div');
+        labelEditorElm.className = `item-details-label editor-${column.id}`;
+        const inputEditorElm = document.createElement('input');
+        inputEditorElm.dataset.editorid = `${column.id}`;
+        document.body.appendChild(validationEditorElm);
+        document.body.appendChild(labelEditorElm);
+        document.body.appendChild(inputEditorElm);
+      }
+    }
+
     const output = new factory(textEditorArgs);
     const editorValidateSpy = jest.spyOn(output, 'validate');
+    for (const editor of output.getEditors()) {
+      jest.spyOn(editor, 'validate').mockReturnValue({ valid: true, msg: '' });
+    }
 
     expect(factory).toBeTruthy();
     expect(output).toBeTruthy();
     expect(typeof output.validate).toBe('function');
-    output.validate(document.createElement('input'));
+    const validationOut = output.validate(null);
 
+    expect(output.getEditors().length).toBe(3);
     expect(editorValidateSpy).toHaveBeenCalled();
+    expect(validationOut.errors).toBeUndefined();
+    expect(document.body.querySelectorAll('.invalid').length).toBe(0);
+  });
+
+  it('should instantiate the factory and expect "validate" to be called and return True when at least 1 editor is invalid', () => {
+    for (const column of columnsMock) {
+      if (column.editor) {
+        const validationEditorElm = document.createElement('div');
+        validationEditorElm.className = `item-details-validation editor-${column.id}`;
+        const labelEditorElm = document.createElement('div');
+        labelEditorElm.className = `item-details-label editor-${column.id}`;
+        const inputEditorElm = document.createElement('input');
+        inputEditorElm.dataset.editorid = `${column.id}`;
+        document.body.appendChild(validationEditorElm);
+        document.body.appendChild(labelEditorElm);
+        document.body.appendChild(inputEditorElm);
+      }
+    }
+
+    const output = new factory(textEditorArgs);
+    const editorValidateSpy = jest.spyOn(output, 'validate');
+    let editorIdx = 0;
+    for (const editor of output.getEditors()) {
+      // make 1st editor invalid, everything else as valid
+      if (editorIdx++ === 0) {
+        jest.spyOn(editor, 'validate').mockReturnValue({ valid: false, msg: 'invalid product' });
+      } else {
+        jest.spyOn(editor, 'validate').mockReturnValue({ valid: true, msg: '' });
+      }
+    }
+
+    expect(factory).toBeTruthy();
+    expect(output).toBeTruthy();
+    expect(typeof output.validate).toBe('function');
+    const validationOut = output.validate(null);
+
+    expect(output.getEditors().length).toBe(3);
+    expect(editorValidateSpy).toHaveBeenCalled();
+    expect(validationOut).toEqual({
+      valid: false,
+      msg: 'Some of the fields have failed validation',
+      errors: [{
+        index: 0,
+        editor: output.getEditors()[0],
+        container: containers[0],
+        msg: 'invalid product'
+      }]
+    });
+    expect(document.body.querySelectorAll('.invalid').length).toBe(2);
   });
 });

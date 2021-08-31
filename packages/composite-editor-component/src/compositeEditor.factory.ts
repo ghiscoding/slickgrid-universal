@@ -1,5 +1,6 @@
 import {
   Column,
+  ColumnEditor,
   CompositeEditorOption,
   Editor,
   EditorArguments,
@@ -99,8 +100,7 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
           newArgs.compositeEditorOptions = options;
           newArgs.formValues = {};
 
-          // column.editor as < typeof Editor;
-          const currentEditor = new (column.editor as any)(newArgs);
+          const currentEditor = new (column.editor as any)(newArgs) as Editor & { args: EditorArguments };
           options.editors[column.id] = currentEditor; // add every Editor instance refs
           editors.push(currentEditor);
         }
@@ -115,6 +115,10 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
       }, 0);
     }
 
+    context.getEditors = () => {
+      return editors;
+    };
+
     context.destroy = () => {
       let idx = 0;
       while (idx < editors.length) {
@@ -126,12 +130,10 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
       editors = [];
     };
 
-
     context.focus = () => {
       // if validation has failed, set the focus to the first invalid editor
       (firstInvalidEditor || editors[0]).focus();
     };
-
 
     context.isValueChanged = () => {
       let idx = 0;
@@ -144,7 +146,6 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
       return false;
     };
 
-
     context.serializeValue = () => {
       const serializedValue = [];
       let idx = 0;
@@ -154,7 +155,6 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
       }
       return serializedValue;
     };
-
 
     context.applyValue = (item: any, state: any) => {
       let idx = 0;
@@ -172,7 +172,6 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
         idx++;
       }
     };
-
 
     context.validate = (targetElm: HTMLElement | null) => {
       let validationResults: EditorValidationResult;
@@ -233,7 +232,6 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
       };
     };
 
-
     context.hide = () => {
       let idx = 0;
       while (idx < editors.length) {
@@ -243,7 +241,6 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
       options?.hide?.();
     };
 
-
     context.show = () => {
       let idx = 0;
       while (idx < editors.length) {
@@ -252,7 +249,6 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
       }
       options?.show?.();
     };
-
 
     context.position = (box: HtmlElementPosition) => {
       options?.position?.(box);
