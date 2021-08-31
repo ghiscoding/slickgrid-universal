@@ -6,6 +6,7 @@ import {
   EditorValidationResult,
   ElementPosition,
   getHtmlElementOffset,
+  hasElement,
   HtmlElementPosition,
   SlickNamespace
 } from '@slickgrid-universal/common';
@@ -186,8 +187,7 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
           let editorElm = document.querySelector(`[data-editorid=${columnDef.id}]`);
           const validationMsgPrefix = options?.validationMsgPrefix ?? '';
 
-          // if (!targetElm || (editorElm.has(targetElm as any).length > 0)) {
-          if (!targetElm) {
+          if (!targetElm || editorElm?.contains(targetElm)) {
             validationResults = editors[idx].validate();
 
             if (!validationResults.valid) {
