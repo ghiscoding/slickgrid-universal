@@ -44,7 +44,7 @@
     "fork-ts-checker-webpack-plugin": "^6.3.2",
     "html-loader": "^2.1.2",
     "html-webpack-plugin": "5.3.2",
-    "mini-css-extract-plugin": "^2.2.0",
+    "mini-css-extract-plugin": "^2.2.1",
     "rxjs": "^7.3.0",
     "sass": "^1.38.2",
     "sass-loader": "^12.1.0",
