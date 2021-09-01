@@ -8,6 +8,7 @@
   },
   "scripts": {
     "build:demo": "webpack --env production",
+    "predev:watch": "echo [webpack-dev-server] Project is running at http://localhost:8888/",
     "dev:watch": "webpack serve --env development",
     "test": "echo testing slickgrid-universal demo code"
   },
@@ -54,6 +55,6 @@
     "url-loader": "^4.1.1",
     "webpack": "^5.51.1",
     "webpack-cli": "^4.8.0",
-    "webpack-dev-server": "^3.11.2"
+    "webpack-dev-server": "^4.1.0"
   }
 }
