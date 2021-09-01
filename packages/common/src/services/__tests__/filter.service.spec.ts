@@ -498,7 +498,7 @@ describe('FilterService', () => {
         await service.clearFilterByColumnId(newEvent, 'firstName');
         const filterCountAfter = Object.keys(service.getColumnFilters()).length;
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, { columnId: 'firstName' });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, { columnId: 'firstName' }, 0);
         expect(spyClear).toHaveBeenCalled();
         expect(spyFilterChange).toHaveBeenCalledWith(newEvent, { grid: gridStub, columnFilters: { lastName: filterExpectation } });
         expect(filterCountBefore).toBe(2);
@@ -520,7 +520,7 @@ describe('FilterService', () => {
         await service.clearFilterByColumnId(newEvent, 'age');
         const filterCountAfter = Object.keys(service.getColumnFilters()).length;
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, { columnId: 'age' });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, { columnId: 'age' }, 0);
         expect(spyClear).toHaveBeenCalled();
         expect(spyFilterChange).not.toHaveBeenCalled();
         expect(filterCountBefore).toBe(2);
@@ -568,7 +568,7 @@ describe('FilterService', () => {
         jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'process');
 
         service.clearFilters();
-        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, true);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, true, 0);
 
         setTimeout(() => {
           expect(pubSubSpy).toHaveBeenCalledWith(`onFilterCleared`, true);
@@ -591,7 +591,7 @@ describe('FilterService', () => {
         service.clearFilters();
 
         setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, true);
+          expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, true, 0);
           expect(pubSubSpy).toHaveBeenCalledWith(`onFilterCleared`, true);
           expect(spyOnError).toHaveBeenCalledWith(errorExpected);
           done();
@@ -631,7 +631,7 @@ describe('FilterService', () => {
         await service.clearFilterByColumnId(new CustomEvent(`mouseup`), 'firstName');
         const filterCountAfter = Object.keys(service.getColumnFilters()).length;
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, { columnId: 'firstName' });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, { columnId: 'firstName' }, 0);
         expect(spyClear).toHaveBeenCalled();
         expect(filterCountBefore).toBe(2);
         expect(filterCountAfter).toBe(1);

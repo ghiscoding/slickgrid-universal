@@ -357,7 +357,7 @@ export class ResizerService {
       return;
     }
 
-    this.pubSubService.publish('onBeforeResizeByContent');
+    this.pubSubService.publish('onBeforeResizeByContent', undefined, 0);
 
     // calculate total width necessary by each cell content
     // we won't re-evaluate if we already had calculated the total

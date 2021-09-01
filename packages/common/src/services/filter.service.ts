@@ -241,7 +241,7 @@ export class FilterService {
   }
 
   async clearFilterByColumnId(event: Event, columnId: number | string): Promise<boolean> {
-    await this.pubSubService.publish('onBeforeFilterClear', { columnId });
+    await this.pubSubService.publish('onBeforeFilterClear', { columnId }, 0);
 
     const isBackendApi = this._gridOptions?.backendServiceApi ?? false;
     const emitter = isBackendApi ? EmitterType.remote : EmitterType.local;
@@ -275,7 +275,7 @@ export class FilterService {
   async clearFilters(triggerChange = true) {
     // emit an event before the process start
     if (triggerChange) {
-      await this.pubSubService.publish('onBeforeFilterClear', true);
+      await this.pubSubService.publish('onBeforeFilterClear', true, 0);
     }
 
     this._filtersMetadata.forEach((filter: Filter) => {
@@ -651,7 +651,7 @@ export class FilterService {
    * Other services, like Pagination, can then subscribe to it.
    * @param caller
    */
-  emitFilterChanged(caller: EmitterType, isBeforeExecution = false): void | Promise<boolean> {
+  emitFilterChanged(caller: EmitterType, isBeforeExecution = false): void | boolean | Promise<boolean> {
     const eventName = isBeforeExecution ? 'onBeforeFilterChange' : 'onFilterChanged';
 
     if (caller === EmitterType.remote && this._gridOptions?.backendServiceApi) {

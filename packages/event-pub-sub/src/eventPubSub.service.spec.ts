@@ -34,11 +34,22 @@ describe('EventPubSub Service', () => {
       expect(dispatchSpy).toHaveBeenCalledWith('onClick', { name: 'John' }, true, false);
     });
 
-    it('should call publish method and expect it to return it a boolean in a Promise', async () => {
+    it('should call publish method and expect it to return it a simple boolean (without delay argument provided)', () => {
       const dispatchSpy = jest.spyOn(service, 'dispatchCustomEvent');
       const getEventNameSpy = jest.spyOn(service, 'getEventNameByNamingConvention');
 
-      const publishResult = await service.publish('onClick', { name: 'John' });
+      const publishResult = service.publish('onClick', { name: 'John' });
+
+      expect(publishResult).toBeTruthy();
+      expect(getEventNameSpy).toHaveBeenCalledWith('onClick', '');
+      expect(dispatchSpy).toHaveBeenCalledWith('onClick', { name: 'John' }, true, false);
+    });
+
+    it('should call publish method and expect it to return it a boolean in a Promise when a delay is provided', async () => {
+      const dispatchSpy = jest.spyOn(service, 'dispatchCustomEvent');
+      const getEventNameSpy = jest.spyOn(service, 'getEventNameByNamingConvention');
+
+      const publishResult = await service.publish('onClick', { name: 'John' }, 1);
 
       expect(publishResult).toBeTruthy();
       expect(getEventNameSpy).toHaveBeenCalledWith('onClick', '');

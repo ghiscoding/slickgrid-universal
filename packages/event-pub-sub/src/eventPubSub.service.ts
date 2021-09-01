@@ -30,16 +30,22 @@ export class EventPubSubService implements PubSubService {
    * We return the dispatched event in a Promise with a delayed cycle and we do this because
    * most framework require a cycle before the binding is processed and binding a spinner end up showing too late
    * for example this is used for these events: onBeforeFilterClear, onBeforeFilterChange, onBeforeToggleTreeCollapse, onBeforeSortChange
-   * @param event The event or channel to publish to.
-   * @param data The data to publish on the channel.
+   * @param {String} event - The event or channel to publish to.
+   * @param {*} data - The data to publish on the channel.
+   * @param {Number} delay - optional argument to delay the publish event
+   * @returns {Boolean | Promise} - return type will be a Boolean unless a `delay` is provided then a `Promise<Boolean>` will be returned
    */
-  publish<T = any>(eventName: string, data?: T): Promise<boolean> {
+  publish<T = any>(eventName: string, data?: T, delay?: number): boolean | Promise<boolean> {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
 
-    return new Promise(resolve => {
-      const isDispatched = this.dispatchCustomEvent<T>(eventNameByConvention, data, true, false);
-      setTimeout(() => resolve(isDispatched), 0);
-    });
+    if (delay) {
+      return new Promise(resolve => {
+        const isDispatched = this.dispatchCustomEvent<T>(eventNameByConvention, data, true, false);
+        setTimeout(() => resolve(isDispatched), delay);
+      });
+    } else {
+      return this.dispatchCustomEvent<T>(eventNameByConvention, data, true, false);
+    }
   }
 
   /**
