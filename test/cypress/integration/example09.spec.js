@@ -1,6 +1,8 @@
 /// <reference types="cypress" />
 
 describe('Example 09 - OData Grid', { retries: 1 }, () => {
+  const GRID_ROW_HEIGHT = 45;
+
   beforeEach(() => {
     // create a console.log spy for later use
     cy.window().then((win) => {
@@ -624,6 +626,48 @@ describe('Example 09 - OData Grid', { retries: 1 }, () => {
       cy.get('[data-test=odata-query-result]')
         .should(($span) => {
           expect($span.text()).to.eq(`$top=10&$orderby=Name desc&$filter=(startswith(Name, 'A'))`);
+        });
+    });
+
+    it('should display an error when trying to sort by "Company" and the query & sort icons should remain the same', () => {
+      cy.get('.slick-header-columns')
+        .children('.slick-header-column:nth(3)')
+        .click();
+
+      cy.get('.slick-header-columns')
+        .children('.slick-header-column:nth(3)')
+        .find('.slick-sort-indicator.slick-sort-indicator-asc')
+        .should('not.exist');
+
+      // wait for the query to finish
+      cy.get('[data-test=error-status]').should('contain', 'Cannot sort by the field "Company"');
+      cy.get('[data-test=status]').should('contain', 'ERROR!!');
+
+      // same query string as prior test
+      cy.get('[data-test=odata-query-result]')
+        .should(($span) => {
+          expect($span.text()).to.eq(`$top=10&$orderby=Name desc&$filter=(startswith(Name, 'A'))`);
+        });
+    });
+
+    it('should change Gender filter to "female" and still expect previous sort (before the error) to still be in query', () => {
+      cy.get('.ms-filter.filter-gender:visible').click();
+
+      cy.get('[name="filter-gender"].ms-drop')
+        .find('li:visible:nth(2)')
+        .contains('female')
+        .click();
+
+      cy.get('.grid9')
+        .find('.slick-row')
+        .should('have.length', 1);
+
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`).should('contain', 'Alisha Myers');
+
+      // query should still contain previous sort by + new gender filter
+      cy.get('[data-test=odata-query-result]')
+        .should(($span) => {
+          expect($span.text()).to.eq(`$top=10&$orderby=Name desc&$filter=(startswith(Name, 'A') and Gender eq 'female')`);
         });
     });
   });

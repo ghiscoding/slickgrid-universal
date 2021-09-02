@@ -21,6 +21,8 @@ export class Example15 {
   odataVersion = 2;
   odataQuery = '';
   processing = false;
+  errorStatus = '';
+  errorStatusClass = '';
   status = '';
   statusClass = 'is-success';
   isOtherGenderAdded = false;
@@ -28,6 +30,7 @@ export class Example15 {
 
   constructor() {
     this._bindingEventService = new BindingEventService();
+    this.resetAllStatus();
   }
 
   attached() {
@@ -45,6 +48,14 @@ export class Example15 {
       this.sgb?.dispose();
     }
     this._bindingEventService.unbindAll();
+    this.resetAllStatus();
+  }
+
+  resetAllStatus() {
+    this.status = '';
+    this.errorStatus = '';
+    this.statusClass = 'is-success';
+    this.errorStatusClass = 'hidden';
   }
 
   initializeGrid() {
@@ -72,7 +83,7 @@ export class Example15 {
           }
         }
       },
-      { id: 'company', name: 'Company', field: 'company' },
+      { id: 'company', name: 'Company', field: 'company', sortable: true },
     ];
 
     this.gridOptions = {
@@ -118,7 +129,15 @@ export class Example15 {
           enableCount: this.isCountEnabled, // add the count in the OData query, which will return a property named "odata.count" (v2) or "@odata.count" (v4)
           version: this.odataVersion        // defaults to 2, the query string is slightly different between OData 2 and 4
         },
-        preProcess: () => this.displaySpinner(true),
+        onError: () => {
+          this.errorStatusClass = 'visible notification is-light is-danger is-small is-narrow';
+          this.displaySpinner(false, true);
+        },
+        preProcess: () => {
+          this.errorStatus = '';
+          this.errorStatusClass = 'hidden';
+          this.displaySpinner(true);
+        },
         process: (query) => this.getCustomerApiCall(query),
         postProcess: (response) => {
           this.metrics = response.metrics;
@@ -160,10 +179,14 @@ export class Example15 {
     this.isOtherGenderAdded = true;
   }
 
-  displaySpinner(isProcessing) {
+  displaySpinner(isProcessing, isError?: boolean) {
     this.processing = isProcessing;
     this.status = (isProcessing) ? 'loading...' : 'finished!!';
     this.statusClass = (isProcessing) ? 'notification is-light is-warning' : 'notification is-light is-success';
+    if (isError) {
+      this.status = 'ERROR!!!';
+      this.statusClass = 'notification is-light is-danger';
+    }
   }
 
   getCustomerCallback(data) {
@@ -243,6 +266,13 @@ export class Example15 {
             columnFilters[fieldName] = { type: 'ends', term: filterMatch[2].trim() };
           }
         }
+      }
+
+      // simular a backend error when trying to sort on the "Company" field
+      if (orderBy.includes('company')) {
+        const errorMsg = 'Cannot sort by the field "Company"';
+        this.errorStatus = errorMsg;
+        throw new Error(errorMsg);
       }
 
       const sort = orderBy.includes('asc')

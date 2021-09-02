@@ -10,4 +10,7 @@ export interface MultiColumnSort {
 
   /** Array of Columns to be sorted */
   sortCols: ColumnSort[];
+
+  /** previous sort columns before calling onSort */
+  previousSortColumns?: ColumnSort[];
 }

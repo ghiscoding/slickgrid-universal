@@ -2,6 +2,7 @@ import { BindingEventService, Column, FieldType, Filters, GridOption, GridStateC
 import { GridOdataService, OdataServiceApi, OdataOption } from '@slickgrid-universal/odata';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
+import './example09.scss';
 
 const defaultPageSize = 20;
 
@@ -16,11 +17,14 @@ export class Example09 {
   odataVersion = 2;
   odataQuery = '';
   processing = false;
+  errorStatus = '';
+  errorStatusClass = 'hidden';
   status = '';
   statusClass = 'is-success';
 
   constructor() {
     this._bindingEventService = new BindingEventService();
+    this.resetAllStatus();
   }
 
   attached() {
@@ -31,6 +35,12 @@ export class Example09 {
     // this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
     // this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, []);
+
+    // you can optionally cancel the sort for whatever reason
+    // this._bindingEventService.bind(gridContainerElm, 'onbeforesort', (e) => {
+    //   e.preventDefault();
+    //   return false;
+    // });
   }
 
   dispose() {
@@ -38,6 +48,14 @@ export class Example09 {
       this.sgb?.dispose();
     }
     this._bindingEventService.unbindAll();
+    this.resetAllStatus();
+  }
+
+  resetAllStatus() {
+    this.status = '';
+    this.errorStatus = '';
+    this.statusClass = 'is-success';
+    this.errorStatusClass = 'hidden';
   }
 
   initializeGrid() {
@@ -57,7 +75,7 @@ export class Example09 {
           collection: [{ value: '', label: '' }, { value: 'male', label: 'male' }, { value: 'female', label: 'female' }]
         }
       },
-      { id: 'company', name: 'Company', field: 'company' },
+      { id: 'company', name: 'Company', field: 'company', sortable: true },
     ];
 
     this.gridOptions = {
@@ -98,21 +116,35 @@ export class Example09 {
           enableCount: this.isCountEnabled, // add the count in the OData query, which will return a property named "odata.count" (v2) or "@odata.count" (v4)
           version: this.odataVersion        // defaults to 2, the query string is slightly different between OData 2 and 4
         },
-        preProcess: () => this.displaySpinner(true),
+        onError: () => {
+          this.errorStatusClass = 'visible notification is-light is-danger is-small is-narrow';
+          this.displaySpinner(false, true);
+        },
+        preProcess: () => {
+          this.errorStatus = '';
+          this.errorStatusClass = 'hidden';
+          this.displaySpinner(true);
+        },
         process: (query) => this.getCustomerApiCall(query),
         postProcess: (response) => {
           this.metrics = response.metrics;
           this.displaySpinner(false);
           this.getCustomerCallback(response);
-        }
+        },
       } as OdataServiceApi
     };
   }
 
-  displaySpinner(isProcessing) {
+  displaySpinner(isProcessing, isError?: boolean) {
     this.processing = isProcessing;
-    this.status = (isProcessing) ? 'loading...' : 'finished!!';
-    this.statusClass = (isProcessing) ? 'notification is-light is-warning' : 'notification is-light is-success';
+
+    if (isError) {
+      this.status = 'ERROR!!!';
+      this.statusClass = 'notification is-light is-danger';
+    } else {
+      this.status = (isProcessing) ? 'loading...' : 'finished!!';
+      this.statusClass = (isProcessing) ? 'notification is-light is-warning' : 'notification is-light is-success';
+    }
   }
 
   getCustomerCallback(data) {
@@ -143,6 +175,9 @@ export class Example09 {
    *  in your case the getCustomer() should be a WebAPI function returning a Promise
    */
   getCustomerDataApiMock(query): Promise<any> {
+    this.errorStatus = '';
+    this.errorStatusClass = 'hidden';
+
     // the mock is returning a Promise, just like a WebAPI typically does
     return new Promise((resolve) => {
       const queryParams = query.toLowerCase().split('&');
@@ -192,6 +227,13 @@ export class Example09 {
             columnFilters[fieldName] = { type: 'ends', term: filterMatch[2].trim() };
           }
         }
+      }
+
+      // simular a backend error when trying to sort on the "Company" field
+      if (orderBy.includes('company')) {
+        const errorMsg = 'Cannot sort by the field "Company"';
+        this.errorStatus = errorMsg;
+        throw new Error(errorMsg);
       }
 
       const sort = orderBy.includes('asc')
