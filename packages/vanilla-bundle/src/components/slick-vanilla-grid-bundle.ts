@@ -831,10 +831,6 @@ export class SlickVanillaGridBundle {
         }
       }
 
-      // load any presets if any (after dataset is initialized)
-      this.loadColumnPresetsWhenDatasetInitialized();
-      this.loadFilterPresetsWhenDatasetInitialized();
-
       // When data changes in the DataView, we need to refresh the metrics and/or display a warning if the dataset is empty
       const onRowCountChangedHandler = dataView.onRowCountChanged;
       (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowCountChangedHandler>>).subscribe(onRowCountChangedHandler, (_e, args) => {
@@ -869,6 +865,10 @@ export class SlickVanillaGridBundle {
         this.sharedService.hasColumnsReordered = true;
         this.sharedService.visibleColumns = args.impactedColumns;
       });
+
+      // load any presets if any (after dataset is initialized)
+      this.loadColumnPresetsWhenDatasetInitialized();
+      this.loadFilterPresetsWhenDatasetInitialized();
     }
 
     // did the user add a colspan callback? If so, hook it into the DataView getItemMetadata
