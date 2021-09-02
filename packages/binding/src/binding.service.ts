@@ -1,3 +1,4 @@
+/* eslint-disable no-bitwise */
 import * as DOMPurify_ from 'dompurify';
 const DOMPurify = DOMPurify_; // patch to fix rollup to work
 
@@ -15,6 +16,13 @@ export interface ElementBindingWithListener extends ElementBinding {
   listener: (val: any) => any;
 }
 
+export interface BoundedEventWithListener {
+  element: Element;
+  eventName: string;
+  listener: EventListenerOrEventListenerObject;
+  uid: string;
+}
+
 /**
  * Create 2 way Bindings for any variable that are primitive or object types, when it's an object type it will watch for property changes
  * The following 2 articles helped in building this service:
@@ -22,16 +30,16 @@ export interface ElementBindingWithListener extends ElementBinding {
  *   2- https://www.wintellect.com/data-binding-pure-javascript/
  */
 export class BindingService {
-  _value: any = null;
-  _binding: Binding;
-  _boundedEventWithListeners: { element: Element; eventName: string; listener: EventListenerOrEventListenerObject; }[] = [];
-  _property: string;
-  elementBindings: Array<ElementBinding | ElementBindingWithListener> = [];
+  protected _value: any = null;
+  protected _binding: Binding;
+  protected _property: string;
+  protected _boundedEventWithListeners: BoundedEventWithListener[] = [];
+  protected _elementBindings: Array<ElementBinding | ElementBindingWithListener> = [];
 
   constructor(binding: Binding) {
     this._binding = binding;
     this._property = binding.property || '';
-    this.elementBindings = [];
+    this._elementBindings = [];
     if (binding.property && binding.variable && (binding.variable.hasOwnProperty(binding.property) || binding.property in binding.variable)) {
       this._value = typeof binding.variable[binding.property] === 'string' ? this.sanitizeText(binding.variable[binding.property]) : binding.variable[binding.property];
     } else {
@@ -46,6 +54,14 @@ export class BindingService {
     }
   }
 
+  get boundedEventWithListeners(): BoundedEventWithListener[] {
+    return this._boundedEventWithListeners;
+  }
+
+  get elementBindings(): Array<ElementBinding | ElementBindingWithListener> {
+    return this._elementBindings;
+  }
+
   get property() {
     return this._property;
   }
@@ -53,7 +69,7 @@ export class BindingService {
   dispose() {
     this.unbindAll();
     this._boundedEventWithListeners = [];
-    this.elementBindings = [];
+    this._elementBindings = [];
   }
 
   valueGetter() {
@@ -62,8 +78,8 @@ export class BindingService {
 
   valueSetter(val: any) {
     this._value = typeof val === 'string' ? this.sanitizeText(val) : val;
-    if (Array.isArray(this.elementBindings)) {
-      for (const binding of this.elementBindings) {
+    if (Array.isArray(this._elementBindings)) {
+      for (const binding of this._elementBindings) {
         if (binding?.element && binding?.attribute) {
           (binding.element as any)[binding.attribute] = typeof val === 'string' ? this.sanitizeText(val) : val;
         }
@@ -90,17 +106,23 @@ export class BindingService {
   }
 
   /** Unbind (remove) an element event listener */
-  unbind(element: Element | null, eventName: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions) {
+  unbind(element: Element | null, eventName: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions, eventUid?: string) {
     if (element) {
       element.removeEventListener(eventName, listener, options);
+      const eventIdx = this._boundedEventWithListeners.findIndex(be => be.uid === eventUid);
+      if (eventIdx >= 0) {
+        this._boundedEventWithListeners.splice(eventIdx, 1);
+      }
     }
   }
 
   /** Unbind All (remove) bounded elements with listeners */
   unbindAll() {
-    for (const boundedEvent of this._boundedEventWithListeners) {
-      const { element, eventName, listener } = boundedEvent;
-      this.unbind(element, eventName, listener);
+    let boundedEvent = this._boundedEventWithListeners.pop();
+    while (boundedEvent) {
+      const { element, eventName, listener, uid } = boundedEvent;
+      this.unbind(element, eventName, listener, undefined, uid);
+      boundedEvent = this._boundedEventWithListeners.pop();
     }
     this._boundedEventWithListeners = [];
   }
@@ -130,11 +152,20 @@ export class BindingService {
         (binding as ElementBindingWithListener).event = eventName;
         (binding as ElementBindingWithListener).listener = listener;
         element.addEventListener(eventName, listener);
-        this._boundedEventWithListeners.push({ element, eventName, listener });
+        this._boundedEventWithListeners.push({ element, eventName, listener, uid: this.generateUuidV4() });
       }
-      this.elementBindings.push(binding);
+      this._elementBindings.push(binding);
       (element as any)[attribute] = typeof this._value === 'string' ? this.sanitizeText(this._value) : this._value;
     }
+  }
+
+  /** Generate a UUID version 4 RFC compliant */
+  protected generateUuidV4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
   }
 
   protected sanitizeText(dirtyText: string): string {

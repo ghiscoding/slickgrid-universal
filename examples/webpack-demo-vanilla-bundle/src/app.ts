@@ -108,6 +108,10 @@ export class App {
         };
       }
 
+      // first dispose binding from previous page
+      this.renderer.dispose();
+
+      // then load the new View
       this.renderer.loadView(require(`${mapRoute.moduleId}.html`));
       if (viewModel?.attached && this.renderer.className) {
         this.viewModelObj[this.renderer.className] = viewModel;
