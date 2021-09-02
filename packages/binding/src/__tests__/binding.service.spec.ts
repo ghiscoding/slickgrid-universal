@@ -67,7 +67,7 @@ describe('Binding Service', () => {
   });
 
   it('should unbind an event from an element', () => {
-    const mockElm = { removeEventListener: jest.fn() } as unknown as HTMLElement;
+    const mockElm = { addEventListener: jest.fn(), removeEventListener: jest.fn() } as unknown as HTMLElement;
     const mockCallback = jest.fn();
     const removeEventSpy = jest.spyOn(mockElm, 'removeEventListener');
     const mockObj = { name: 'John', age: 20 };
@@ -75,7 +75,8 @@ describe('Binding Service', () => {
     div.appendChild(elm);
 
     service = new BindingService({ variable: mockObj, property: 'name' });
-    service.unbind(mockElm, 'click', mockCallback, false);
+    service.bind(mockElm, 'value', 'keyup');
+    service.unbind(mockElm, 'click', mockCallback, false, service.boundedEventWithListeners[0].uid);
 
     expect(service.property).toBe('name');
     expect(removeEventSpy).toHaveBeenCalledWith('click', mockCallback, false);
