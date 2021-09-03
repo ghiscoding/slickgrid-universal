@@ -2,6 +2,13 @@ import { EmitterType } from '../enums/emitterType.enum';
 import { BackendServiceApi, GridOption } from '../interfaces/index';
 import { Observable, RxJsFacade, Subject } from './rxjsFacade';
 
+export interface BackendCallbacks {
+  emitActionChangedCallback?: (type: EmitterType) => void;
+  errorCallback?: (args: any) => void;
+  successCallback?: (args: any) => void;
+  httpCancelRequestSubject?: Subject<void>;
+}
+
 export class BackendUtilityService {
   constructor(protected rxjs?: RxJsFacade) { }
 
@@ -47,33 +54,46 @@ export class BackendUtilityService {
    * Execute the backend callback, which are mainly the "process" & "postProcess" methods.
    * Also note that "preProcess" was executed prior to this callback
    */
-  executeBackendCallback(backendServiceApi: BackendServiceApi, query: string, args: any, startTime: Date, totalItems: number, emitActionChangedCallback?: (type: EmitterType) => void, httpCancelRequests$?: Subject<void>) {
+  executeBackendCallback(backendServiceApi: BackendServiceApi, query: string, args: any, startTime: Date, totalItems: number, extraCallbacks?: BackendCallbacks) {
     if (backendServiceApi) {
       // emit an onFilterChanged event when it's not called by a clear filter
-      if (args && !args.clearFilterTriggered && !args.clearSortTriggered && emitActionChangedCallback) {
-        emitActionChangedCallback(EmitterType.remote);
+      if (args && !args.clearFilterTriggered && !args.clearSortTriggered && extraCallbacks?.emitActionChangedCallback) {
+        extraCallbacks.emitActionChangedCallback.call(this, EmitterType.remote);
       }
 
       // the processes can be Observables (like HttpClient) or Promises
       const process = backendServiceApi.process(query);
       if (process instanceof Promise && process.then) {
-        process.then((processResult: any) => this.executeBackendProcessesCallback(startTime, processResult, backendServiceApi, totalItems))
-          .catch((error: any) => this.onBackendError(error, backendServiceApi));
+        process
+          .then((processResult: any) => {
+            this.executeBackendProcessesCallback(startTime, processResult, backendServiceApi, totalItems);
+            extraCallbacks?.successCallback?.call(this, args);
+          })
+          .catch((error: any) => {
+            extraCallbacks?.errorCallback?.call(this, args);
+            this.onBackendError(error, backendServiceApi);
+          });
       } else if (this.rxjs?.isObservable(process)) {
         const rxjs = this.rxjs as RxJsFacade;
 
         // this will abort any previous HTTP requests, that were previously hooked in the takeUntil, before sending a new request
-        if (rxjs.isObservable(httpCancelRequests$)) {
-          httpCancelRequests$!.next();
+        if (rxjs.isObservable(extraCallbacks?.httpCancelRequestSubject)) {
+          extraCallbacks?.httpCancelRequestSubject!.next();
         }
 
         (process as unknown as Observable<any>)
           // the following takeUntil, will potentially be used later to cancel any pending http request (takeUntil another rx, that would be httpCancelRequests$, completes)
           // but make sure the observable is actually defined with the iif condition check before piping it to the takeUntil
-          .pipe(rxjs.takeUntil(rxjs.iif(() => rxjs.isObservable(httpCancelRequests$), httpCancelRequests$, rxjs.EMPTY)))
+          .pipe(rxjs.takeUntil(rxjs.iif(() => rxjs.isObservable(extraCallbacks?.httpCancelRequestSubject), extraCallbacks?.httpCancelRequestSubject, rxjs.EMPTY)))
           .subscribe(
-            (processResult: any) => this.executeBackendProcessesCallback(startTime, processResult, backendServiceApi, totalItems),
-            (error: any) => this.onBackendError(error, backendServiceApi)
+            (processResult: any) => {
+              this.executeBackendProcessesCallback(startTime, processResult, backendServiceApi, totalItems);
+              extraCallbacks?.successCallback?.call(this, args);
+            },
+            (error: any) => {
+              extraCallbacks?.errorCallback?.call(this, args);
+              this.onBackendError(error, backendServiceApi);
+            }
           );
       }
     }

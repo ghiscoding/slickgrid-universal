@@ -7,4 +7,7 @@ export interface SingleColumnSort extends ColumnSort {
 
   /** is it a multi-column sort? */
   multiColumnSort?: false;
+
+  /** previous sort columns before calling onSort */
+  previousSortColumns?: ColumnSort[];
 }

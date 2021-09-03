@@ -311,7 +311,9 @@ export class FilterService {
       const queryResponse = backendApi.service.processOnFilterChanged(undefined, callbackArgs as FilterChangedArgs);
       const query = queryResponse as string;
       const totalItems = this._gridOptions?.pagination?.totalItems ?? 0;
-      this.backendUtilities?.executeBackendCallback(backendApi, query, callbackArgs, new Date(), totalItems, this.emitFilterChanged.bind(this));
+      this.backendUtilities?.executeBackendCallback(backendApi, query, callbackArgs, new Date(), totalItems, {
+        emitActionChangedCallback: this.emitFilterChanged.bind(this)
+      });
     }
 
     // emit an event when filters are all cleared
@@ -695,7 +697,10 @@ export class FilterService {
     if (isTriggeringQueryEvent) {
       const query = await backendApi.service.processOnFilterChanged(event, args);
       const totalItems = this._gridOptions?.pagination?.totalItems ?? 0;
-      this.backendUtilities?.executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitFilterChanged.bind(this), this.httpCancelRequests$);
+      this.backendUtilities?.executeBackendCallback(backendApi, query, args, startTime, totalItems, {
+        emitActionChangedCallback: this.emitFilterChanged.bind(this),
+        httpCancelRequestSubject: this.httpCancelRequests$
+      });
     }
   }
 
