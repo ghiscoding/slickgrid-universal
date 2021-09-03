@@ -83,7 +83,7 @@ export class Example15 {
           }
         }
       },
-      { id: 'company', name: 'Company', field: 'company', sortable: true },
+      { id: 'company', name: 'Company', field: 'company', filterable: true, sortable: true },
     ];
 
     this.gridOptions = {
@@ -129,7 +129,8 @@ export class Example15 {
           enableCount: this.isCountEnabled, // add the count in the OData query, which will return a property named "odata.count" (v2) or "@odata.count" (v4)
           version: this.odataVersion        // defaults to 2, the query string is slightly different between OData 2 and 4
         },
-        onError: () => {
+        onError: (error: Error) => {
+          this.errorStatus = error.message;
           this.errorStatusClass = 'visible notification is-light is-danger is-small is-narrow';
           this.displaySpinner(false, true);
         },
@@ -265,14 +266,17 @@ export class Example15 {
             const fieldName = filterMatch[1].trim();
             columnFilters[fieldName] = { type: 'ends', term: filterMatch[2].trim() };
           }
+
+          // simular a backend error when trying to sort on the "Company" field
+          if (filterBy.includes('company')) {
+            throw new Error('Cannot filter by the field "Company"');
+          }
         }
       }
 
       // simular a backend error when trying to sort on the "Company" field
       if (orderBy.includes('company')) {
-        const errorMsg = 'Cannot sort by the field "Company"';
-        this.errorStatus = errorMsg;
-        throw new Error(errorMsg);
+        throw new Error('Cannot sort by the field "Company"');
       }
 
       const sort = orderBy.includes('asc')

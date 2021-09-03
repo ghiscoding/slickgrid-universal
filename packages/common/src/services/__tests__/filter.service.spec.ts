@@ -565,7 +565,11 @@ describe('FilterService', () => {
         gridOptionMock.backendServiceApi!.onError = () => jest.fn();
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyOnError = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'onError');
+        const updateFilterSpy = jest.spyOn(service, 'updateFilters');
         jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'process');
+
+        // get previous filters before calling the query that will fail
+        const previousFilters = service.getPreviousFilters();
 
         service.clearFilters();
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, true, 0);
@@ -573,6 +577,7 @@ describe('FilterService', () => {
         setTimeout(() => {
           expect(pubSubSpy).toHaveBeenCalledWith(`onFilterCleared`, true);
           expect(spyOnError).toHaveBeenCalledWith(errorExpected);
+          expect(updateFilterSpy).toHaveBeenCalledWith(previousFilters, false, false, false);
           done();
         });
       });
@@ -970,7 +975,7 @@ describe('FilterService', () => {
     });
 
     it('should throw an error when grid argument is an empty object', (done) => {
-      service.onBackendFilterChange(undefined as any, {}).catch((error) => {
+      service.onBackendFilterChange(undefined as any, {} as any).catch((error) => {
         expect(error.message).toContain(`Something went wrong when trying to bind the "onBackendFilterChange(event, args)" function`);
         done();
       });
@@ -979,7 +984,7 @@ describe('FilterService', () => {
     it('should throw an error when backendServiceApi is undefined', (done) => {
       gridOptionMock.backendServiceApi = undefined;
 
-      service.onBackendFilterChange(undefined as any, { grid: gridStub }).catch((error) => {
+      service.onBackendFilterChange(undefined as any, { grid: gridStub } as any).catch((error) => {
         expect(error.message).toContain(`BackendServiceApi requires at least a "process" function and a "service" defined`);
         done();
       });
@@ -989,7 +994,7 @@ describe('FilterService', () => {
       const spy = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'preProcess');
 
       service.init(gridStub);
-      service.onBackendFilterChange(undefined as any, { grid: gridStub });
+      service.onBackendFilterChange(undefined as any, { grid: gridStub } as any);
 
       expect(spy).toHaveBeenCalled();
     });

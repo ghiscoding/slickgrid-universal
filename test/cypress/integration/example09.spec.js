@@ -670,5 +670,46 @@ describe('Example 09 - OData Grid', { retries: 1 }, () => {
           expect($span.text()).to.eq(`$top=10&$orderby=Name desc&$filter=(startswith(Name, 'A') and Gender eq 'female')`);
         });
     });
+
+    it('should try the "Company" filter and expect an error to throw and also expect the filter to reset to empty after the error is displayed', () => {
+      cy.get('input.search-filter.filter-company')
+        .type('Core');
+
+      // wait for the query to finish
+      cy.get('[data-test=error-status]').should('contain', 'Cannot filter by the field "Company"');
+      cy.get('[data-test=status]').should('contain', 'ERROR!!');
+
+      cy.get('[data-test=odata-query-result]')
+        .should(($span) => {
+          expect($span.text()).to.eq(`$top=10&$orderby=Name desc&$filter=(startswith(Name, 'A') and Gender eq 'female')`);
+        });
+
+      cy.get('.grid9')
+        .find('.slick-row')
+        .should('have.length', 1);
+    });
+
+    it('should clear the "Name" filter and expect query to be successfull with just 1 filter "Gender" to be filled but without the previous failed filter', () => {
+      cy.get('.grid9')
+        .find('.slick-header-left .slick-header-column:nth(1)')
+        .trigger('mouseover')
+        .children('.slick-header-menubutton')
+        .click();
+
+      cy.get('.slick-header-menu')
+        .should('be.visible')
+        .children('.slick-header-menuitem:nth-child(6)')
+        .children('.slick-header-menucontent')
+        .should('contain', 'Remove Filter')
+        .click();
+
+      // wait for the query to finish
+      cy.get('[data-test=status]').should('contain', 'finished');
+
+      cy.get('[data-test=odata-query-result]')
+        .should(($span) => {
+          expect($span.text()).to.eq(`$top=10&$orderby=Name desc&$filter=(Gender eq 'female')`);
+        });
+    });
   });
 });

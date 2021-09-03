@@ -39,7 +39,7 @@ import { Constants } from '../constants';
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
 
-interface OnSearchChangeEvent {
+interface OnSearchChangeEventArgs {
   clearFilterTriggered?: boolean;
   shouldTriggerQuery?: boolean;
   columnId: string | number;
@@ -59,7 +59,8 @@ export class FilterService {
   protected _columnFilters: ColumnFilters = {};
   protected _grid!: SlickGrid;
   protected _isTreePresetExecuted = false;
-  protected _onSearchChange: SlickEvent<OnSearchChangeEvent> | null;
+  protected _previousFilters: CurrentFilter[] = [];
+  protected _onSearchChange: SlickEvent<OnSearchChangeEventArgs> | null;
   protected _tmpPreFilteredData?: number[];
   protected httpCancelRequests$?: Subject<void>; // this will be used to cancel any pending http request
 
@@ -133,7 +134,7 @@ export class FilterService {
    * Dispose of the filters, since it's a singleton, we don't want to affect other grids with same columns
    */
   disposeColumnFilters() {
-    this.resetColumnFilters();
+    this.removeAllColumnFiltersProperties();
 
     // also destroy each Filter instances
     if (Array.isArray(this._filtersMetadata)) {
@@ -142,20 +143,6 @@ export class FilterService {
           filter.destroy();
         }
       });
-    }
-  }
-
-  /**
-   * When clearing or disposing of all filters, we need to loop through all columnFilters and delete them 1 by 1
-   * only trying to make columnFilter an empty (without looping) would not trigger a dataset change
-   */
-  resetColumnFilters() {
-    if (typeof this._columnFilters === 'object') {
-      for (const columnId in this._columnFilters) {
-        if (columnId && this._columnFilters[columnId]) {
-          delete this._columnFilters[columnId];
-        }
-      }
     }
   }
 
@@ -227,6 +214,9 @@ export class FilterService {
         if (!isClearFilterEvent) {
           await this.emitFilterChanged(EmitterType.local);
         }
+
+        // keep a copy of the filters in case we need to rollback
+        this._previousFilters = this.extractBasicFilterDetails(this._columnFilters);
       });
     }
 
@@ -262,7 +252,7 @@ export class FilterService {
     // when using a backend service, we need to manually trigger a filter change but only if the filter was previously filled
     if (isBackendApi) {
       if (currentColFilter !== undefined) {
-        this.onBackendFilterChange(event as KeyboardEvent, { grid: this._grid, columnFilters: this._columnFilters });
+        this.onBackendFilterChange(event as KeyboardEvent, { grid: this._grid, columnFilters: this._columnFilters } as unknown as OnSearchChangeEventArgs);
       }
     }
 
@@ -286,8 +276,8 @@ export class FilterService {
       }
     });
 
-    // also reset the columnFilters object and remove any filters from the object
-    this.resetColumnFilters();
+    // also delete the columnFilters object and remove any filters from the object
+    this.removeAllColumnFiltersProperties();
 
     // also remove any search terms directly on each column definitions
     if (Array.isArray(this._columnDefinitions)) {
@@ -312,8 +302,13 @@ export class FilterService {
       const query = queryResponse as string;
       const totalItems = this._gridOptions?.pagination?.totalItems ?? 0;
       this.backendUtilities?.executeBackendCallback(backendApi, query, callbackArgs, new Date(), totalItems, {
+        errorCallback: this.resetToPreviousSearchFilters.bind(this),
+        successCallback: (responseArgs) => this._previousFilters = this.extractBasicFilterDetails(responseArgs.columnFilters),
         emitActionChangedCallback: this.emitFilterChanged.bind(this)
       });
+    } else {
+      // keep a copy of the filters in case we need to rollback
+      this._previousFilters = this.extractBasicFilterDetails(this._columnFilters);
     }
 
     // emit an event when filters are all cleared
@@ -617,11 +612,15 @@ export class FilterService {
     return filteredChildrenAndParents;
   }
 
-  getColumnFilters() {
+  getColumnFilters(): ColumnFilters {
     return this._columnFilters;
   }
 
-  getFiltersMetadata() {
+  getPreviousFilters(): CurrentFilter[] {
+    return this._previousFilters;
+  }
+
+  getFiltersMetadata(): Filter[] {
     return this._filtersMetadata;
   }
 
@@ -668,7 +667,7 @@ export class FilterService {
     }
   }
 
-  async onBackendFilterChange(event: KeyboardEvent, args: any) {
+  async onBackendFilterChange(event: KeyboardEvent, args: OnSearchChangeEventArgs) {
     const isTriggeringQueryEvent = args?.shouldTriggerQuery;
 
     if (isTriggeringQueryEvent) {
@@ -695,9 +694,11 @@ export class FilterService {
 
     // query backend, except when it's called by a ClearFilters then we won't
     if (isTriggeringQueryEvent) {
-      const query = await backendApi.service.processOnFilterChanged(event, args);
+      const query = await backendApi.service.processOnFilterChanged(event, args as FilterChangedArgs);
       const totalItems = this._gridOptions?.pagination?.totalItems ?? 0;
       this.backendUtilities?.executeBackendCallback(backendApi, query, args, startTime, totalItems, {
+        errorCallback: this.resetToPreviousSearchFilters.bind(this),
+        successCallback: (responseArgs) => this._previousFilters = this.extractBasicFilterDetails(responseArgs.columnFilters),
         emitActionChangedCallback: this.emitFilterChanged.bind(this),
         httpCancelRequestSubject: this.httpCancelRequests$
       });
@@ -732,6 +733,9 @@ export class FilterService {
       if (this._gridOptions?.enableTreeData) {
         this.refreshTreeDataFilters();
       }
+
+      // keep reference of the filters
+      this._previousFilters = this.extractBasicFilterDetails(this._columnFilters);
     }
     return this._columnDefinitions;
   }
@@ -778,6 +782,14 @@ export class FilterService {
       // when displaying header row, we'll call "setColumns" which in terms will recreate the header row filters
       this._grid.setColumns(this.sharedService.columnDefinitions);
     }
+  }
+
+  /**
+   * Reset (revert) to previous filters, it could be because you prevented `onBeforeSearchChange` OR a Backend Error was thrown.
+   * It will reapply the previous filter state in the UI.
+   */
+  resetToPreviousSearchFilters() {
+    this.updateFilters(this._previousFilters, false, false, false);
   }
 
   /**
@@ -1052,7 +1064,7 @@ export class FilterService {
       const eventKey = (event as KeyboardEvent)?.key;
       const eventKeyCode = (event as KeyboardEvent)?.keyCode;
       if (this._onSearchChange && (args.forceOnSearchChangeEvent || eventKey === 'Enter' || eventKeyCode === KeyCode.ENTER || !dequal(oldColumnFilters, this._columnFilters))) {
-        this._onSearchChange.notify({
+        const eventArgs = {
           clearFilterTriggered: args.clearFilterTriggered,
           shouldTriggerQuery: args.shouldTriggerQuery,
           columnId,
@@ -1062,7 +1074,10 @@ export class FilterService {
           searchTerms,
           parsedSearchTerms,
           grid: this._grid
-        }, eventData);
+        } as OnSearchChangeEventArgs;
+        if (this.pubSubService.publish('onBeforeSearchChange', eventArgs) !== false) {
+          this._onSearchChange.notify(eventArgs, eventData);
+        }
       }
     }
   }
@@ -1104,6 +1119,37 @@ export class FilterService {
     }
 
     return columnDefinitions;
+  }
+
+  /**
+   * From a ColumnFilters object, extra only the basic filter details (columnId, operator & searchTerms)
+   * @param {Object} columnFiltersObject - columnFilters object
+   * @returns - basic details of a column filter
+   */
+  protected extractBasicFilterDetails(columnFiltersObject: ColumnFilters): CurrentFilter[] {
+    const filters: CurrentFilter[] = [];
+
+    if (columnFiltersObject && typeof columnFiltersObject === 'object') {
+      for (const columnId of Object.keys(columnFiltersObject)) {
+        const { operator, searchTerms } = columnFiltersObject[`${columnId}`];
+        filters.push({ columnId, operator, searchTerms });
+      }
+    }
+    return filters;
+  }
+
+  /**
+   * When clearing or disposing of all filters, we need to loop through all columnFilters and delete them 1 by 1
+   * only trying to make columnFilter an empty (without looping) would not trigger a dataset change
+   */
+  protected removeAllColumnFiltersProperties() {
+    if (typeof this._columnFilters === 'object') {
+      for (const columnId in this._columnFilters) {
+        if (columnId && this._columnFilters[columnId]) {
+          delete this._columnFilters[columnId];
+        }
+      }
+    }
   }
 
   /**
