@@ -36,9 +36,14 @@ export class Example09 {
     // this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, []);
 
-    // you can optionally cancel the sort for whatever reason
+    // you can optionally cancel the Sort, Filter
     // this._bindingEventService.bind(gridContainerElm, 'onbeforesort', (e) => {
     //   e.preventDefault();
+    //   return false;
+    // });
+    // this._bindingEventService.bind(gridContainerElm, 'onbeforesearchchange', (e) => {
+    //   e.preventDefault();
+    //   this.sgb.filterService.resetToPreviousSearchFilters(); // optionally reset filter input value
     //   return false;
     // });
   }
@@ -75,7 +80,7 @@ export class Example09 {
           collection: [{ value: '', label: '' }, { value: 'male', label: 'male' }, { value: 'female', label: 'female' }]
         }
       },
-      { id: 'company', name: 'Company', field: 'company', sortable: true },
+      { id: 'company', name: 'Company', field: 'company', filterable: true, sortable: true },
     ];
 
     this.gridOptions = {
@@ -116,7 +121,8 @@ export class Example09 {
           enableCount: this.isCountEnabled, // add the count in the OData query, which will return a property named "odata.count" (v2) or "@odata.count" (v4)
           version: this.odataVersion        // defaults to 2, the query string is slightly different between OData 2 and 4
         },
-        onError: () => {
+        onError: (error: Error) => {
+          this.errorStatus = error.message;
           this.errorStatusClass = 'visible notification is-light is-danger is-small is-narrow';
           this.displaySpinner(false, true);
         },
@@ -175,7 +181,6 @@ export class Example09 {
    *  in your case the getCustomer() should be a WebAPI function returning a Promise
    */
   getCustomerDataApiMock(query): Promise<any> {
-    this.errorStatus = '';
     this.errorStatusClass = 'hidden';
 
     // the mock is returning a Promise, just like a WebAPI typically does
@@ -226,14 +231,17 @@ export class Example09 {
             const fieldName = filterMatch[1].trim();
             columnFilters[fieldName] = { type: 'ends', term: filterMatch[2].trim() };
           }
+
+          // simular a backend error when trying to sort on the "Company" field
+          if (filterBy.includes('company')) {
+            throw new Error('Cannot filter by the field "Company"');
+          }
         }
       }
 
       // simular a backend error when trying to sort on the "Company" field
       if (orderBy.includes('company')) {
-        const errorMsg = 'Cannot sort by the field "Company"';
-        this.errorStatus = errorMsg;
-        throw new Error(errorMsg);
+        throw new Error('Cannot sort by the field "Company"');
       }
 
       const sort = orderBy.includes('asc')

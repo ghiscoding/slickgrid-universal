@@ -28,10 +28,11 @@ describe('EventPubSub Service', () => {
       const dispatchSpy = jest.spyOn(service, 'dispatchCustomEvent');
       const getEventNameSpy = jest.spyOn(service, 'getEventNameByNamingConvention');
 
-      service.publish('onClick', { name: 'John' });
+      const publishResult = service.publish('onClick', { name: 'John' });
 
+      expect(publishResult).toBeTruthy();
       expect(getEventNameSpy).toHaveBeenCalledWith('onClick', '');
-      expect(dispatchSpy).toHaveBeenCalledWith('onClick', { name: 'John' }, true, false);
+      expect(dispatchSpy).toHaveBeenCalledWith('onClick', { name: 'John' }, true, true);
     });
 
     it('should call publish method and expect it to return it a simple boolean (without delay argument provided)', () => {
@@ -42,7 +43,7 @@ describe('EventPubSub Service', () => {
 
       expect(publishResult).toBeTruthy();
       expect(getEventNameSpy).toHaveBeenCalledWith('onClick', '');
-      expect(dispatchSpy).toHaveBeenCalledWith('onClick', { name: 'John' }, true, false);
+      expect(dispatchSpy).toHaveBeenCalledWith('onClick', { name: 'John' }, true, true);
     });
 
     it('should call publish method and expect it to return it a boolean in a Promise when a delay is provided', async () => {
@@ -53,7 +54,7 @@ describe('EventPubSub Service', () => {
 
       expect(publishResult).toBeTruthy();
       expect(getEventNameSpy).toHaveBeenCalledWith('onClick', '');
-      expect(dispatchSpy).toHaveBeenCalledWith('onClick', { name: 'John' }, true, false);
+      expect(dispatchSpy).toHaveBeenCalledWith('onClick', { name: 'John' }, true, true);
     });
 
     it('should define a different event name styling and expect "dispatchCustomEvent" and "getEventNameByNamingConvention" to be called', () => {
@@ -61,10 +62,11 @@ describe('EventPubSub Service', () => {
       const getEventNameSpy = jest.spyOn(service, 'getEventNameByNamingConvention');
 
       service.eventNamingStyle = EventNamingStyle.lowerCase;
-      service.publish('onClick', { name: 'John' });
+      const publishResult = service.publish('onClick', { name: 'John' });
 
+      expect(publishResult).toBeTruthy();
       expect(getEventNameSpy).toHaveBeenCalledWith('onClick', '');
-      expect(dispatchSpy).toHaveBeenCalledWith('onclick', { name: 'John' }, true, false);
+      expect(dispatchSpy).toHaveBeenCalledWith('onclick', { name: 'John' }, true, true);
     });
   });
 
