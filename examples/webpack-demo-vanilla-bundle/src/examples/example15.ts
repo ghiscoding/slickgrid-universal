@@ -26,6 +26,7 @@ export class Example15 {
   status = '';
   statusClass = 'is-success';
   isOtherGenderAdded = false;
+  isPageErrorTest = false;
   genderCollection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
   constructor() {
@@ -108,7 +109,7 @@ export class Example15 {
       enableRowSelection: true,
       enablePagination: true, // you could optionally disable the Pagination
       pagination: {
-        pageSizes: [10, 20, 50, 100, 500],
+        pageSizes: [10, 20, 50, 100, 500, 50000],
         pageSize: defaultPageSize,
       },
       presets: {
@@ -227,9 +228,17 @@ export class Example15 {
       let countTotalItems = 100;
       const columnFilters = {};
 
+      if (this.isPageErrorTest) {
+        this.isPageErrorTest = false;
+        throw new Error('Server timed out trying to retrieve data for the last page');
+      }
+
       for (const param of queryParams) {
         if (param.includes('$top=')) {
           top = +(param.substring('$top='.length));
+          if (top === 50000) {
+            throw new Error('Server timed out retrieving 50,000 rows');
+          }
         }
         if (param.includes('$skip=')) {
           skip = +(param.substring('$skip='.length));
@@ -269,14 +278,14 @@ export class Example15 {
 
           // simular a backend error when trying to sort on the "Company" field
           if (filterBy.includes('company')) {
-            throw new Error('Cannot filter by the field "Company"');
+            throw new Error('Server could not filter using the field "Company"');
           }
         }
       }
 
       // simular a backend error when trying to sort on the "Company" field
       if (orderBy.includes('company')) {
-        throw new Error('Cannot sort by the field "Company"');
+        throw new Error('Server could not sort using the field "Company"');
       }
 
       const sort = orderBy.includes('asc')
@@ -376,6 +385,11 @@ export class Example15 {
     this.sgb?.sortService.updateSorting([
       { columnId: 'name', direction: 'DESC' },
     ]);
+  }
+
+  throwPageChangeError() {
+    this.isPageErrorTest = true;
+    this.sgb.paginationService.goToLastPage();
   }
 
   // THE FOLLOWING METHODS ARE ONLY FOR DEMO PURPOSES DO NOT USE THIS CODE

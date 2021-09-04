@@ -37,15 +37,15 @@ export class SlickPaginationComponent {
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
 
     this.currentPagination = this.paginationService.getFullPagination();
-    this._enableTranslate = this.gridOptions && this.gridOptions.enableTranslate || false;
-    this._locales = this.gridOptions && this.gridOptions.locales || Constants.locales;
+    this._enableTranslate = this.gridOptions?.enableTranslate ?? false;
+    this._locales = this.gridOptions?.locales ?? Constants.locales;
 
     if (this._enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
     this.translatePaginationTexts(this._locales);
 
-    if (this._enableTranslate && this.pubSubService && this.pubSubService.subscribe) {
+    if (this._enableTranslate && this.pubSubService?.subscribe) {
       const translateEventName = this.translaterService?.eventName ?? 'onLanguageChange';
       this._subscriptions.push(
         this.pubSubService.subscribe(translateEventName, () => this.translatePaginationTexts(this._locales))

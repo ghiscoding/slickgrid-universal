@@ -640,7 +640,7 @@ describe('Example 09 - OData Grid', { retries: 1 }, () => {
         .should('not.exist');
 
       // wait for the query to finish
-      cy.get('[data-test=error-status]').should('contain', 'Cannot sort by the field "Company"');
+      cy.get('[data-test=error-status]').should('contain', 'Server could not sort using the field "Company"');
       cy.get('[data-test=status]').should('contain', 'ERROR!!');
 
       // same query string as prior test
@@ -676,7 +676,7 @@ describe('Example 09 - OData Grid', { retries: 1 }, () => {
         .type('Core');
 
       // wait for the query to finish
-      cy.get('[data-test=error-status]').should('contain', 'Cannot filter by the field "Company"');
+      cy.get('[data-test=error-status]').should('contain', 'Server could not filter using the field "Company"');
       cy.get('[data-test=status]').should('contain', 'ERROR!!');
 
       cy.get('[data-test=odata-query-result]')
@@ -710,6 +710,107 @@ describe('Example 09 - OData Grid', { retries: 1 }, () => {
         .should(($span) => {
           expect($span.text()).to.eq(`$top=10&$orderby=Name desc&$filter=(Gender eq 'female')`);
         });
+
+      cy.get('[data-test=page-number-input]')
+        .invoke('val')
+        .then(pageNumber => expect(pageNumber).to.eq('1'));
+
+      cy.get('[data-test=page-count]')
+        .contains('5');
+
+      cy.get('[data-test=item-from]')
+        .contains('1');
+
+      cy.get('[data-test=item-to]')
+        .contains('10');
+
+      cy.get('[data-test=total-items]')
+        .contains('50');
+    });
+
+    it('should display error when clicking on the "Throw Error..." button and not expect query and page to change', () => {
+      cy.get('[data-test="throw-page-error-btn"]').click({ force: true });
+      cy.wait(50);
+
+      cy.get('[data-test=error-status]').should('contain', 'Server timed out trying to retrieve data for the last page');
+      cy.get('[data-test=status]').should('contain', 'ERROR!!');
+
+      cy.get('[data-test=odata-query-result]')
+        .should(($span) => {
+          expect($span.text()).to.eq(`$top=10&$orderby=Name desc&$filter=(Gender eq 'female')`);
+        });
+
+      cy.get('[data-test=page-number-input]')
+        .invoke('val')
+        .then(pageNumber => expect(pageNumber).to.eq('1'));
+
+      cy.get('[data-test=page-count]')
+        .contains('5');
+
+      cy.get('[data-test=item-from]')
+        .contains('1');
+
+      cy.get('[data-test=item-to]')
+        .contains('10');
+
+      cy.get('[data-test=total-items]')
+        .contains('50');
+    });
+
+    it('should display error when trying to change items per to 50,000 items and expect query & page to remain the same', () => {
+      cy.get('#items-per-page-label').select('50000');
+
+      cy.get('[data-test=error-status]').should('contain', 'Server timed out retrieving 50,000 rows');
+      cy.get('[data-test=status]').should('contain', 'ERROR!!');
+
+      cy.get('[data-test=odata-query-result]')
+        .should(($span) => {
+          expect($span.text()).to.eq(`$top=10&$orderby=Name desc&$filter=(Gender eq 'female')`);
+        });
+
+      cy.get('[data-test=page-number-input]')
+        .invoke('val')
+        .then(pageNumber => expect(pageNumber).to.eq('1'));
+
+      cy.get('[data-test=page-count]')
+        .contains('5');
+
+      cy.get('[data-test=item-from]')
+        .contains('1');
+
+      cy.get('[data-test=item-to]')
+        .contains('10');
+
+      cy.get('[data-test=total-items]')
+        .contains('50');
+    });
+
+    it('should now go to next page without anymore problems and query & page should change as normal', () => {
+      cy.get('.icon-seek-next').click();
+
+      // wait for the query to finish
+      cy.get('[data-test=status]').should('contain', 'finished');
+
+      cy.get('[data-test=odata-query-result]')
+        .should(($span) => {
+          expect($span.text()).to.eq(`$top=10&$skip=10&$orderby=Name desc&$filter=(Gender eq 'female')`);
+        });
+
+      cy.get('[data-test=page-number-input]')
+        .invoke('val')
+        .then(pageNumber => expect(pageNumber).to.eq('2'));
+
+      cy.get('[data-test=page-count]')
+        .contains('5');
+
+      cy.get('[data-test=item-from]')
+        .contains('11');
+
+      cy.get('[data-test=item-to]')
+        .contains('20');
+
+      cy.get('[data-test=total-items]')
+        .contains('50');
     });
   });
 });

@@ -21,6 +21,7 @@ export class Example09 {
   errorStatusClass = 'hidden';
   status = '';
   statusClass = 'is-success';
+  isPageErrorTest = false;
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -36,7 +37,7 @@ export class Example09 {
     // this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, []);
 
-    // you can optionally cancel the Sort, Filter
+    // you can optionally cancel the Filtering, Sorting or Pagination with code shown below
     // this._bindingEventService.bind(gridContainerElm, 'onbeforesort', (e) => {
     //   e.preventDefault();
     //   return false;
@@ -44,6 +45,10 @@ export class Example09 {
     // this._bindingEventService.bind(gridContainerElm, 'onbeforesearchchange', (e) => {
     //   e.preventDefault();
     //   this.sgb.filterService.resetToPreviousSearchFilters(); // optionally reset filter input value
+    //   return false;
+    // });
+    // this._bindingEventService.bind(gridContainerElm, 'onbeforepaginationchange', (e) => {
+    //   e.preventDefault();
     //   return false;
     // });
   }
@@ -100,7 +105,7 @@ export class Example09 {
       enableRowSelection: true,
       enablePagination: true, // you could optionally disable the Pagination
       pagination: {
-        pageSizes: [10, 20, 50, 100, 500],
+        pageSizes: [10, 20, 50, 100, 500, 50000],
         pageSize: defaultPageSize,
       },
       presets: {
@@ -192,9 +197,17 @@ export class Example09 {
       let countTotalItems = 100;
       const columnFilters = {};
 
+      if (this.isPageErrorTest) {
+        this.isPageErrorTest = false;
+        throw new Error('Server timed out trying to retrieve data for the last page');
+      }
+
       for (const param of queryParams) {
         if (param.includes('$top=')) {
           top = +(param.substring('$top='.length));
+          if (top === 50000) {
+            throw new Error('Server timed out retrieving 50,000 rows');
+          }
         }
         if (param.includes('$skip=')) {
           skip = +(param.substring('$skip='.length));
@@ -234,14 +247,14 @@ export class Example09 {
 
           // simular a backend error when trying to sort on the "Company" field
           if (filterBy.includes('company')) {
-            throw new Error('Cannot filter by the field "Company"');
+            throw new Error('Server could not filter using the field "Company"');
           }
         }
       }
 
       // simular a backend error when trying to sort on the "Company" field
       if (orderBy.includes('company')) {
-        throw new Error('Cannot sort by the field "Company"');
+        throw new Error('Server could not sort using the field "Company"');
       }
 
       const sort = orderBy.includes('asc')
@@ -340,6 +353,11 @@ export class Example09 {
     this.sgb?.sortService.updateSorting([
       { columnId: 'name', direction: 'DESC' },
     ]);
+  }
+
+  throwPageChangeError() {
+    this.isPageErrorTest = true;
+    this.sgb.paginationService.goToLastPage();
   }
 
   // THE FOLLOWING METHODS ARE ONLY FOR DEMO PURPOSES DO NOT USE THIS CODE
