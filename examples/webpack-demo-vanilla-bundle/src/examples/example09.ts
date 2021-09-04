@@ -43,7 +43,6 @@ export class Example09 {
     // });
     // this._bindingEventService.bind(gridContainerElm, 'onbeforesearchchange', (e) => {
     //   e.preventDefault();
-    //   this.sgb.filterService.resetToPreviousSearchFilters(); // optionally reset filter input value
     //   return false;
     // });
   }
