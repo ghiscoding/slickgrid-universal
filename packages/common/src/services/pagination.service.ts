@@ -33,6 +33,7 @@ export class PaginationService {
   protected _totalItems = 0;
   protected _availablePageSizes: number[] = [];
   protected _paginationOptions!: Pagination;
+  protected _previousPagination?: Pagination;
   protected _subscriptions: EventSubscription[] = [];
 
   /** SlickGrid Grid object */
@@ -43,7 +44,7 @@ export class PaginationService {
 
   /** Getter of SlickGrid DataView object */
   get dataView(): SlickDataView | undefined {
-    return (this.grid?.getData && this.grid.getData()) as SlickDataView;
+    return this.grid?.getData?.() ?? {} as SlickDataView;
   }
 
   set paginationOptions(paginationOptions: Pagination) {
@@ -109,6 +110,7 @@ export class PaginationService {
       (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onPagingInfoChangedHandler>>).subscribe(onPagingInfoChangedHandler, (_e, pagingInfo) => {
         if (this._totalItems !== pagingInfo.totalRows) {
           this.updateTotalItems(pagingInfo.totalRows);
+          this._previousPagination = { pageNumber: pagingInfo.pageNum, pageSize: pagingInfo.pageSize, pageSizes: this.availablePageSizes, totalItems: pagingInfo.totalRows };
         }
       });
       setTimeout(() => {
@@ -126,13 +128,16 @@ export class PaginationService {
     // Subscribe to any dataview row count changed so that when Adding/Deleting item(s) through the DataView
     // that would trigger a refresh of the pagination numbers
     if (this.dataView) {
-      this._subscriptions.push(this.pubSubService.subscribe(`onItemAdded`, (items: any | any[]) => {
-        this.processOnItemAddedOrRemoved(items, true);
-      }));
+      this._subscriptions.push(this.pubSubService.subscribe(`onItemAdded`, (items: any | any[]) => this.processOnItemAddedOrRemoved(items, true)));
       this._subscriptions.push(this.pubSubService.subscribe(`onItemDeleted`, (items: any | any[]) => this.processOnItemAddedOrRemoved(items, false)));
     }
 
     this.refreshPagination(false, false, true);
+
+    // also keep reference to current pagination in case we need to rollback
+    const pagination = this.getFullPagination();
+    this._previousPagination = { pageNumber: pagination.pageNumber, pageSize: pagination.pageSize, pageSizes: pagination.pageSizes, totalItems: this.totalItems };
+
     this._initialized = true;
   }
 
@@ -174,32 +179,32 @@ export class PaginationService {
     return this._itemsPerPage;
   }
 
-  changeItemPerPage(itemsPerPage: number, event?: any): Promise<ServicePagination> {
+  changeItemPerPage(itemsPerPage: number, event?: any, triggerChangeEvent = true): Promise<ServicePagination> {
     this._pageNumber = 1;
     this._pageCount = Math.ceil(this._totalItems / itemsPerPage);
     this._itemsPerPage = itemsPerPage;
-    return this.processOnPageChanged(this._pageNumber, event);
+    return triggerChangeEvent ? this.processOnPageChanged(this._pageNumber, event) : Promise.resolve(this.getFullPagination());
   }
 
-  goToFirstPage(event?: any): Promise<ServicePagination> {
+  goToFirstPage(event?: any, triggerChangeEvent = true): Promise<ServicePagination> {
     this._pageNumber = 1;
-    return this.processOnPageChanged(this._pageNumber, event);
+    return triggerChangeEvent ? this.processOnPageChanged(this._pageNumber, event) : Promise.resolve(this.getFullPagination());
   }
 
-  goToLastPage(event?: any): Promise<ServicePagination> {
+  goToLastPage(event?: any, triggerChangeEvent = true): Promise<ServicePagination> {
     this._pageNumber = this._pageCount || 1;
-    return this.processOnPageChanged(this._pageNumber || 1, event);
+    return triggerChangeEvent ? this.processOnPageChanged(this._pageNumber || 1, event) : Promise.resolve(this.getFullPagination());
   }
 
-  goToNextPage(event?: any): Promise<boolean | ServicePagination> {
+  goToNextPage(event?: any, triggerChangeEvent = true): Promise<boolean | ServicePagination> {
     if (this._pageNumber < this._pageCount) {
       this._pageNumber++;
-      return this.processOnPageChanged(this._pageNumber, event);
+      return triggerChangeEvent ? this.processOnPageChanged(this._pageNumber, event) : Promise.resolve(this.getFullPagination());
     }
-    return new Promise(resolve => resolve(false));
+    return Promise.resolve(false);
   }
 
-  goToPageNumber(pageNumber: number, event?: any): Promise<boolean | ServicePagination> {
+  goToPageNumber(pageNumber: number, event?: any, triggerChangeEvent = true): Promise<boolean | ServicePagination> {
     const previousPageNumber = this._pageNumber;
 
     if (pageNumber < 1) {
@@ -211,17 +216,17 @@ export class PaginationService {
     }
 
     if (this._pageNumber !== previousPageNumber) {
-      return this.processOnPageChanged(this._pageNumber, event);
+      return triggerChangeEvent ? this.processOnPageChanged(this._pageNumber, event) : Promise.resolve(this.getFullPagination());
     }
-    return new Promise(resolve => resolve(false));
+    return Promise.resolve(false);
   }
 
-  goToPreviousPage(event?: any): Promise<boolean | ServicePagination> {
+  goToPreviousPage(event?: any, triggerChangeEvent = true): Promise<boolean | ServicePagination> {
     if (this._pageNumber > 1) {
       this._pageNumber--;
-      return this.processOnPageChanged(this._pageNumber, event);
+      return triggerChangeEvent ? this.processOnPageChanged(this._pageNumber, event) : Promise.resolve(this.getFullPagination());
     }
-    return new Promise(resolve => resolve(false));
+    return Promise.resolve(false);
   }
 
   refreshPagination(isPageNumberReset = false, triggerChangedEvent = true, triggerInitializedEvent = false) {
@@ -277,6 +282,8 @@ export class PaginationService {
     if (triggerInitializedEvent && !dequal(previousPagination, this.getFullPagination())) {
       this.pubSubService.publish(`onPaginationPresetsInitialized`, this.getFullPagination());
     }
+    const pagination = this.getFullPagination();
+    this._previousPagination = { pageNumber: pagination.pageNumber, pageSize: pagination.pageSize, pageSizes: pagination.pageSizes, totalItems: this.totalItems };
   }
 
   /** Reset the Pagination to first page and recalculate necessary numbers */
@@ -319,6 +326,11 @@ export class PaginationService {
   }
 
   processOnPageChanged(pageNumber: number, event?: Event | undefined): Promise<ServicePagination> {
+    if (this.pubSubService.publish('onBeforePaginationChange', this.getFullPagination()) === false) {
+      this.resetToPreviousPagination();
+      return Promise.resolve(this.getFullPagination());
+    }
+
     return new Promise((resolve, reject) => {
       this.recalculateFromToIndexes();
 
@@ -347,21 +359,31 @@ export class PaginationService {
             process
               .then((processResult: any) => {
                 this.backendUtilities?.executeBackendProcessesCallback(startTime, processResult, this._backendServiceApi as BackendServiceApi, this._totalItems);
+                const pagination = this.getFullPagination();
+                this._previousPagination = { pageNumber: pagination.pageNumber, pageSize: pagination.pageSize, pageSizes: pagination.pageSizes, totalItems: this.totalItems };
                 resolve(this.getFullPagination());
               })
               .catch((error) => {
+                this.resetToPreviousPagination();
                 this.backendUtilities?.onBackendError(error, this._backendServiceApi as BackendServiceApi);
-                reject(process);
+                if (!this._backendServiceApi?.onError || !this.backendUtilities?.onBackendError) {
+                  reject(process);
+                }
               });
           } else if (this.rxjs?.isObservable(process)) {
             this._subscriptions.push(
               (process as Observable<any>).subscribe(
                 (processResult: any) => {
+                  const pagination = this.getFullPagination();
+                  this._previousPagination = { pageNumber: pagination.pageNumber, pageSize: pagination.pageSize, pageSizes: pagination.pageSizes, totalItems: this.totalItems };
                   resolve(this.backendUtilities?.executeBackendProcessesCallback(startTime, processResult, this._backendServiceApi as BackendServiceApi, this._totalItems));
                 },
                 (error: any) => {
+                  this.resetToPreviousPagination();
                   this.backendUtilities?.onBackendError(error, this._backendServiceApi as BackendServiceApi);
-                  reject(process);
+                  if (!this._backendServiceApi?.onError || !this.backendUtilities?.onBackendError) {
+                    reject(process);
+                  }
                 }
               )
             );
@@ -393,6 +415,29 @@ export class PaginationService {
       this._dataTo = this._totalItems;
     } else if (this._totalItems < this._itemsPerPage) {
       this._dataTo = this._totalItems;
+    }
+  }
+
+  /**
+   * Reset (revert) to previous pagination, it could be because you prevented `onBeforePaginationChange`, `onBeforePagingInfoChanged` from DataView OR a Backend Error was thrown.
+   * It will reapply the previous filter state in the UI.
+   */
+  resetToPreviousPagination() {
+    const hasPageNumberChange = this._previousPagination?.pageNumber !== this.getFullPagination().pageNumber;
+    const hasPageSizeChange = this._previousPagination?.pageSize !== this.getFullPagination().pageSize;
+
+    if (hasPageSizeChange) {
+      this.changeItemPerPage(this._previousPagination?.pageSize ?? 0, null, false);
+    }
+    if (hasPageNumberChange) {
+      this.goToPageNumber(this._previousPagination?.pageNumber ?? 0, null, false);
+    }
+
+    // refresh the pagination in the UI
+    // and re-update the Backend query string without triggering an actual query
+    if (hasPageNumberChange || hasPageSizeChange) {
+      this.refreshPagination();
+      this._backendServiceApi?.service?.updatePagination?.(this._previousPagination?.pageNumber ?? 0, this._previousPagination?.pageSize ?? 0);
     }
   }
 

@@ -10,8 +10,10 @@
 </h3>
 
 <h6 class="title is-6 italic">
-  NOTE: The last column (filter & sort) will always throw an error and its only purpose is to demo what would happen
-  when you encounter a backend server error (the UI should rollback to previous state before you did the action).
+  <span class="has-text-danger">NOTE:</span> For demo purposes, the last column (filter & sort) will always throw an
+  error and its only purpose is to demo what would happen when you encounter a backend server error
+  (the UI should rollback to previous state before you did the action).
+  Also changing Page Size to 50,000 will also throw which again is for demo purposes.
 </h6>
 
 <div class="row">
@@ -26,6 +28,11 @@
   <button class="button is-small" data-test="set-dynamic-sorting" onclick.delegate="setSortingDynamically()">
     Set Sorting Dynamically
   </button>
+  <button class="button is-small is-danger is-outlined" style="margin-left: 75px" data-test="throw-page-error-btn"
+          onclick.delegate="throwPageChangeError()">
+    <span>Throw Error Going to Last Page... </span>
+    <i class="mdi mdi-page-last"></i>
+  </button>
 </div>
 
 <br />
@@ -35,10 +42,10 @@
     <span>
       <label>Programmatically go to first/last page:</label>
       <button class="button is-small" data-test="goto-first-page" onclick.delegate="goToFirstPage()">
-        <i class="fa fa-caret-left fa-lg"></i>&lt;
+        <i class="mdi mdi-page-first"></i>
       </button>
       <button class="button is-small" data-test="goto-last-page" onclick.delegate="goToLastPage()">
-        <i class="fa fa-caret-right fa-lg"></i>&gt;
+        <i class="mdi mdi-page-last"></i>
       </button>
     </span>
 
