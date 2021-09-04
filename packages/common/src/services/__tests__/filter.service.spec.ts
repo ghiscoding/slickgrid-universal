@@ -1195,6 +1195,22 @@ describe('FilterService', () => {
       });
     });
 
+    it('should call "resetToPreviousSearchFilters" when "onBeforeSearchChange" event is prevented from bubbling and "resetFilterSearchValueAfterOnBeforeCancellation" is set to true', async () => {
+      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish').mockReturnValue(false);
+      const resetPrevSpy = jest.spyOn(service, 'resetToPreviousSearchFilters');
+
+      gridOptionMock.resetFilterSearchValueAfterOnBeforeCancellation = true;
+      service.init(gridStub);
+      service.bindLocalOnFilter(gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
+      await service.updateFilters(mockNewFilters, false, false, true);
+
+      expect(pubSubSpy).toHaveBeenCalledWith('onBeforeSearchChange', expect.toBeObject());
+      expect(resetPrevSpy).toHaveBeenCalled();
+      jest.spyOn(pubSubServiceStub, 'publish').mockReturnValue(true);
+    });
+
     it('should expect filters to be set in ColumnFilters when using "bindLocalOnFilter" without triggering a filter changed event when 2nd flag argument is set to false', async () => {
       const clearSpy = jest.spyOn(service, 'clearFilters');
       const emitSpy = jest.spyOn(service, 'emitFilterChanged');

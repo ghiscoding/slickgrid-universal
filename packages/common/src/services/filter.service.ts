@@ -1075,7 +1075,13 @@ export class FilterService {
           parsedSearchTerms,
           grid: this._grid
         } as OnSearchChangeEventArgs;
-        if (this.pubSubService.publish('onBeforeSearchChange', eventArgs) !== false) {
+
+        const onBeforeDispatchResult = this.pubSubService.publish('onBeforeSearchChange', eventArgs);
+        if (onBeforeDispatchResult === false) {
+          if (this._gridOptions.resetFilterSearchValueAfterOnBeforeCancellation) {
+            this.resetToPreviousSearchFilters();
+          }
+        } else {
           this._onSearchChange.notify(eventArgs, eventData);
         }
       }
