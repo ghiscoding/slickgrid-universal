@@ -2,8 +2,7 @@ import 'jest-extended';
 import {
   getElementOffsetRelativeToParent,
   getHtmlElementOffset,
-  windowScrollPosition,
-} from '../Domutilities';
+} from '../domutilities';
 
 describe('Service/Utilies', () => {
   describe('getElementOffsetRelativeToParent method', () => {
