@@ -10,6 +10,7 @@ import {
   HeaderMenuOption,
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
+  MultiColumnSort,
   OnHeaderCellRenderedEventArgs,
   SlickEventHandler,
   SlickGrid,
@@ -640,7 +641,7 @@ export class HeaderMenuPlugin {
         emitterType = EmitterType.local;
       } else {
         // when using customDataView, we will simply send it as a onSort event with notify
-        args.grid.onSort.notify(tmpSortedColumns);
+        args.grid.onSort.notify(tmpSortedColumns as unknown as MultiColumnSort);
       }
 
       // update the sharedService.slickGrid sortColumns array which will at the same add the visual sort icon(s) on the UI
