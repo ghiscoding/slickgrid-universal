@@ -2,7 +2,7 @@ import 'jest-extended';
 import {
   getElementOffsetRelativeToParent,
   getHtmlElementOffset,
-} from '../domutilities';
+} from '../domUtilities';
 
 describe('Service/Utilies', () => {
   describe('getElementOffsetRelativeToParent method', () => {
