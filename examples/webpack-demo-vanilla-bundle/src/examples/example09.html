@@ -9,6 +9,13 @@
   </div>
 </h3>
 
+<h6 class="title is-6 italic">
+  <span class="has-text-danger">NOTE:</span> For demo purposes, the last column (filter & sort) will always throw an
+  error and its only purpose is to demo what would happen when you encounter a backend server error
+  (the UI should rollback to previous state before you did the action).
+  Also changing Page Size to 50,000 will also throw which again is for demo purposes.
+</h6>
+
 <div class="row">
   <button class="button is-small" data-test="clear-filters-sorting"
           onclick.delegate="clearAllFiltersAndSorts()" title="Clear all Filters & Sorts">
@@ -21,39 +28,53 @@
   <button class="button is-small" data-test="set-dynamic-sorting" onclick.delegate="setSortingDynamically()">
     Set Sorting Dynamically
   </button>
+  <button class="button is-small is-danger is-outlined" style="margin-left: 75px" data-test="throw-page-error-btn"
+          onclick.delegate="throwPageChangeError()">
+    <span>Throw Error Going to Last Page... </span>
+    <i class="mdi mdi-page-last"></i>
+  </button>
 </div>
 
 <br />
 
-<div>
-  <span>
-    <label>Programmatically go to first/last page:</label>
-    <button class="button is-small" data-test="goto-first-page" onclick.delegate="goToFirstPage()">
-      <i class="fa fa-caret-left fa-lg"></i>&lt;
-    </button>
-    <button class="button is-small" data-test="goto-last-page" onclick.delegate="goToLastPage()">
-      <i class="fa fa-caret-right fa-lg"></i>&gt;
-    </button>
-  </span>
-
-  <span style="margin-left: 10px">
-    <label>OData Version: </label>
-    <span data-test="radioVersion">
-      <label class="radio-inline control-label" for="radio2">
-        <input type="radio" name="inlineRadioOptions" data-test="version2" id="radio2" checked value.bind="odataVersion"
-               onclick.delegate="setOdataVersion(2)"> 2
-      </label>
-      <label class="radio-inline control-label" for="radio4">
-        <input type="radio" name="inlineRadioOptions" data-test="version4" id="radio4" value.bind="odataVersion"
-               onclick.delegate="setOdataVersion(4)"> 4
-      </label>
+<div class="columns">
+  <div class="column">
+    <span>
+      <label>Programmatically go to first/last page:</label>
+      <button class="button is-small" data-test="goto-first-page" onclick.delegate="goToFirstPage()">
+        <i class="mdi mdi-page-first"></i>
+      </button>
+      <button class="button is-small" data-test="goto-last-page" onclick.delegate="goToLastPage()">
+        <i class="mdi mdi-page-last"></i>
+      </button>
     </span>
-  </span>
-  <label class="checkbox-inline control-label" for="enableCount" style="margin-left: 20px">
-    <input type="checkbox" id="enableCount" data-test="enable-count" checked.bind="isCountEnabled"
-           onclick.delegate="changeCountEnableFlag()">
-    <span style="font-weight: bold">Enable Count</span> (add to OData query)
-  </label>
+
+    <span style="margin-left: 10px">
+      <label>OData Version: </label>
+      <span data-test="radioVersion">
+        <label class="radio-inline control-label" for="radio2">
+          <input type="radio" name="inlineRadioOptions" data-test="version2" id="radio2" checked
+                 value.bind="odataVersion"
+                 onclick.delegate="setOdataVersion(2)"> 2
+        </label>
+        <label class="radio-inline control-label" for="radio4">
+          <input type="radio" name="inlineRadioOptions" data-test="version4" id="radio4" value.bind="odataVersion"
+                 onclick.delegate="setOdataVersion(4)"> 4
+        </label>
+      </span>
+    </span>
+    <label class="checkbox-inline control-label" for="enableCount" style="margin-left: 20px">
+      <input type="checkbox" id="enableCount" data-test="enable-count" checked.bind="isCountEnabled"
+             onclick.delegate="changeCountEnableFlag()">
+      <span style="font-weight: bold">Enable Count</span> (add to OData query)
+    </label>
+  </div>
+
+  <div class="column is-narrow" style="padding: 0">
+    <div class.bind="errorStatusClass" style="padding: 0.75rem 1.0rem" data-test="error-status">
+      <em><strong>Backend Error:</strong> <span innerhtml.bind="errorStatus"></span></em>
+    </div>
+  </div>
 </div>
 
 <div class="columns" style="margin-top: 5px">

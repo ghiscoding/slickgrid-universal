@@ -498,7 +498,7 @@ describe('FilterService', () => {
         await service.clearFilterByColumnId(newEvent, 'firstName');
         const filterCountAfter = Object.keys(service.getColumnFilters()).length;
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, { columnId: 'firstName' });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, { columnId: 'firstName' }, 0);
         expect(spyClear).toHaveBeenCalled();
         expect(spyFilterChange).toHaveBeenCalledWith(newEvent, { grid: gridStub, columnFilters: { lastName: filterExpectation } });
         expect(filterCountBefore).toBe(2);
@@ -520,7 +520,7 @@ describe('FilterService', () => {
         await service.clearFilterByColumnId(newEvent, 'age');
         const filterCountAfter = Object.keys(service.getColumnFilters()).length;
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, { columnId: 'age' });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, { columnId: 'age' }, 0);
         expect(spyClear).toHaveBeenCalled();
         expect(spyFilterChange).not.toHaveBeenCalled();
         expect(filterCountBefore).toBe(2);
@@ -565,14 +565,19 @@ describe('FilterService', () => {
         gridOptionMock.backendServiceApi!.onError = () => jest.fn();
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyOnError = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'onError');
+        const updateFilterSpy = jest.spyOn(service, 'updateFilters');
         jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'process');
 
+        // get previous filters before calling the query that will fail
+        const previousFilters = service.getPreviousFilters();
+
         service.clearFilters();
-        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, true);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, true, 0);
 
         setTimeout(() => {
           expect(pubSubSpy).toHaveBeenCalledWith(`onFilterCleared`, true);
           expect(spyOnError).toHaveBeenCalledWith(errorExpected);
+          expect(updateFilterSpy).toHaveBeenCalledWith(previousFilters, false, false, false);
           done();
         });
       });
@@ -591,7 +596,7 @@ describe('FilterService', () => {
         service.clearFilters();
 
         setTimeout(() => {
-          expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, true);
+          expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, true, 0);
           expect(pubSubSpy).toHaveBeenCalledWith(`onFilterCleared`, true);
           expect(spyOnError).toHaveBeenCalledWith(errorExpected);
           done();
@@ -631,7 +636,7 @@ describe('FilterService', () => {
         await service.clearFilterByColumnId(new CustomEvent(`mouseup`), 'firstName');
         const filterCountAfter = Object.keys(service.getColumnFilters()).length;
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, { columnId: 'firstName' });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, { columnId: 'firstName' }, 0);
         expect(spyClear).toHaveBeenCalled();
         expect(filterCountBefore).toBe(2);
         expect(filterCountAfter).toBe(1);
@@ -970,7 +975,7 @@ describe('FilterService', () => {
     });
 
     it('should throw an error when grid argument is an empty object', (done) => {
-      service.onBackendFilterChange(undefined as any, {}).catch((error) => {
+      service.onBackendFilterChange(undefined as any, {} as any).catch((error) => {
         expect(error.message).toContain(`Something went wrong when trying to bind the "onBackendFilterChange(event, args)" function`);
         done();
       });
@@ -979,7 +984,7 @@ describe('FilterService', () => {
     it('should throw an error when backendServiceApi is undefined', (done) => {
       gridOptionMock.backendServiceApi = undefined;
 
-      service.onBackendFilterChange(undefined as any, { grid: gridStub }).catch((error) => {
+      service.onBackendFilterChange(undefined as any, { grid: gridStub } as any).catch((error) => {
         expect(error.message).toContain(`BackendServiceApi requires at least a "process" function and a "service" defined`);
         done();
       });
@@ -989,7 +994,7 @@ describe('FilterService', () => {
       const spy = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'preProcess');
 
       service.init(gridStub);
-      service.onBackendFilterChange(undefined as any, { grid: gridStub });
+      service.onBackendFilterChange(undefined as any, { grid: gridStub } as any);
 
       expect(spy).toHaveBeenCalled();
     });
@@ -1188,6 +1193,22 @@ describe('FilterService', () => {
         firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith', parsedSearchTerms: ['Jane'], type: FieldType.string },
         isActive: { columnId: 'isActive', columnDef: mockColumn2, searchTerms: [false], operator: 'EQ', parsedSearchTerms: false, type: FieldType.boolean }
       });
+    });
+
+    it('should call "resetToPreviousSearchFilters" when "onBeforeSearchChange" event is prevented from bubbling and "resetFilterSearchValueAfterOnBeforeCancellation" is set to true', async () => {
+      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish').mockReturnValue(false);
+      const resetPrevSpy = jest.spyOn(service, 'resetToPreviousSearchFilters');
+
+      gridOptionMock.resetFilterSearchValueAfterOnBeforeCancellation = true;
+      service.init(gridStub);
+      service.bindLocalOnFilter(gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
+      await service.updateFilters(mockNewFilters, false, false, true);
+
+      expect(pubSubSpy).toHaveBeenCalledWith('onBeforeSearchChange', expect.toBeObject());
+      expect(resetPrevSpy).toHaveBeenCalled();
+      jest.spyOn(pubSubServiceStub, 'publish').mockReturnValue(true);
     });
 
     it('should expect filters to be set in ColumnFilters when using "bindLocalOnFilter" without triggering a filter changed event when 2nd flag argument is set to false', async () => {

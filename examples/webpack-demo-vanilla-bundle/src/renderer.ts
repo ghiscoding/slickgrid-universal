@@ -21,9 +21,12 @@ export class Renderer {
   }
 
   dispose() {
-    for (const observer of this._observers) {
-      observer.unbindAll();
+    let observer = this._observers.pop();
+    while (observer) {
+      observer.dispose();
+      observer = this._observers.pop();
     }
+    this._observers = [];
   }
 
   getModuleClassName(module: any): string {

@@ -326,17 +326,18 @@ describe('PaginationService', () => {
       expect(spy).toHaveBeenCalledWith(4, undefined);
     });
 
-    it('should not expect "processOnPageChanged" method to be called when we are already on same page', () => {
+    it('should not expect "processOnPageChanged" method to be called when we are already on same page', async () => {
       const spy = jest.spyOn(service, 'processOnPageChanged');
       mockGridOption.pagination!.pageNumber = 2;
 
       service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
-      service.goToPageNumber(2);
+      const output = await service.goToPageNumber(2);
 
       expect(service.dataFrom).toBe(26);
       expect(service.dataTo).toBe(50);
       expect(service.getCurrentPageNumber()).toBe(2);
       expect(spy).not.toHaveBeenCalled();
+      expect(output).toBeFalsy();
     });
   });
 
@@ -348,12 +349,14 @@ describe('PaginationService', () => {
         options: {
           columnDefinitions: [{ id: 'name', field: 'name' }] as Column[],
           datasetName: 'user',
-        }
+        },
+        onError: jest.fn(),
       };
     });
 
     afterEach(() => {
       jest.clearAllMocks();
+      jest.spyOn(mockPubSub, 'publish').mockReturnValue(true);
     });
 
     it('should execute "preProcess" method when defined', () => {
@@ -366,10 +369,25 @@ describe('PaginationService', () => {
       expect(spy).toHaveBeenCalled();
     });
 
-    it('should execute "process" method and catch error when process Promise rejects', async () => {
+    it('should NOT execute anything and return a Promise with Pagination before calling the change', async () => {
+      const pubSubSpy = jest.spyOn(mockPubSub, 'publish').mockReturnValue(false);
+
+      const preProcessSpy = jest.fn();
+      mockGridOption.backendServiceApi!.preProcess = preProcessSpy;
+
+      service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
+      const output = await service.processOnPageChanged(1);
+
+      expect(output).toBeTruthy();
+      expect(pubSubSpy).toHaveBeenCalled();
+      expect(preProcessSpy).not.toHaveBeenCalled();
+    });
+
+    it('should execute "process" method and catch error when process Promise rejects and there is no "onError" defined', async () => {
       const mockError = { error: '404' };
       const postSpy = jest.fn();
       mockGridOption.backendServiceApi!.process = postSpy;
+      mockGridOption.backendServiceApi!.onError = undefined;
       jest.spyOn(mockBackendService, 'processOnPaginationChanged').mockReturnValue('backend query');
       jest.spyOn(mockGridOption.backendServiceApi as BackendServiceApi, 'process').mockReturnValue(Promise.reject(mockError));
       const backendErrorSpy = jest.spyOn(backendUtilityServiceStub, 'onBackendError');
@@ -385,6 +403,7 @@ describe('PaginationService', () => {
     it('should execute "process" method and catch error when process Observable fails', async () => {
       const mockError = 'observable error';
       const postSpy = jest.fn();
+      mockGridOption.backendServiceApi!.onError = undefined;
       mockGridOption.backendServiceApi!.process = postSpy;
       jest.spyOn(mockBackendService, 'processOnPaginationChanged').mockReturnValue('backend query');
       jest.spyOn(mockGridOption.backendServiceApi as BackendServiceApi, 'process').mockReturnValue(throwError(mockError));
@@ -588,6 +607,32 @@ describe('PaginationService', () => {
 
       expect(setPagingSpy).not.toHaveBeenCalled();
       expect(spy).toHaveBeenCalledWith(true, true);
+    });
+  });
+
+  describe('resetToPreviousPagination method', () => {
+    it('should call "changeItemPerPage" when page size is different', () => {
+      const changeItemSpy = jest.spyOn(service, 'changeItemPerPage');
+      const refreshSpy = jest.spyOn(service, 'refreshPagination');
+
+      service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
+      service.changeItemPerPage(100, null, false); // change without triggering event to simulate a change
+      service.resetToPreviousPagination();
+
+      expect(changeItemSpy).toHaveBeenCalled();
+      expect(refreshSpy).toHaveBeenCalled();
+    });
+
+    it('should call "goToPageNumber" when page size is different', () => {
+      const changeItemSpy = jest.spyOn(service, 'goToPageNumber');
+      const refreshSpy = jest.spyOn(service, 'refreshPagination');
+
+      service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
+      service.goToPageNumber(100, null, false); // change without triggering event to simulate a change
+      service.resetToPreviousPagination();
+
+      expect(changeItemSpy).toHaveBeenCalled();
+      expect(refreshSpy).toHaveBeenCalled();
     });
   });
 

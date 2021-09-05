@@ -148,7 +148,8 @@ export class ResizerService {
     }
 
     // -- 1st resize the datagrid size at first load (we need this because the .on event is not triggered on first load)
-    this.resizeGrid()
+    // -- also we add a slight delay (in ms) so that we resize after the grid render is done
+    this.resizeGrid(10, newSizes)
       .then(() => this.resizeGridWhenStylingIsBrokenUntilCorrected())
       .catch((rejection: any) => console.log('Error:', rejection));
 
@@ -357,7 +358,7 @@ export class ResizerService {
       return;
     }
 
-    this.pubSubService.publish('onBeforeResizeByContent');
+    this.pubSubService.publish('onBeforeResizeByContent', undefined, 0);
 
     // calculate total width necessary by each cell content
     // we won't re-evaluate if we already had calculated the total

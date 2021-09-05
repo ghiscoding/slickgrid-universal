@@ -502,6 +502,9 @@ export interface GridOption {
   /** Register any external Resources (Components, Services) like the ExcelExportService, TextExportService, SlickCompositeEditorComponent, ... */
   registerExternalResources?: ExternalResource[];
 
+  /** Defaults to true, should we reset (rollback) the search filter input value to its previous value when the `onBeforeSearchChange` event bubbling is prevented? */
+  resetFilterSearchValueAfterOnBeforeCancellation?: boolean;
+
   /**
    * defaults to true, do we want to resize the grid by content only on the first page or anytime the data changes?
    * Requires `enableAutoResizeColumnsByCellContent` to be set.

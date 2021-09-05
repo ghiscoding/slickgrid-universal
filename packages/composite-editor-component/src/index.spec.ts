@@ -6,6 +6,7 @@ describe('Testing library entry point', () => {
   });
 
   it('should have all exported object defined', () => {
+    expect(typeof entry.CompositeEditor).toBe('function');
     expect(typeof entry.SlickCompositeEditorComponent).toBe('function');
   });
 });

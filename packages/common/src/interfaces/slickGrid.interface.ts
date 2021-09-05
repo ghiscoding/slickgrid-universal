@@ -246,7 +246,7 @@ export interface SlickGrid {
   getSelectionModel(): SlickCellSelectionModel | SlickRowSelectionModel;
 
   /** Get sorted columns **/
-  getSortColumns(): Array<SingleColumnSort | MultiColumnSort>;
+  getSortColumns(): ColumnSort[];
 
   /** Get Top Panel DOM element */
   getTopPanel(): HTMLElement;
@@ -498,6 +498,7 @@ export interface SlickGrid {
   onBeforeHeaderRowCellDestroy: SlickEvent<OnBeforeHeaderRowCellDestroyEventArgs>;
   onBeforeFooterRowCellDestroy: SlickEvent<OnBeforeFooterRowCellDestroyEventArgs>;
   onBeforeSetColumns: SlickEvent<OnBeforeSetColumnsEventArgs>;
+  onBeforeSort: SlickEvent<SingleColumnSort | MultiColumnSort>;
   onCellChange: SlickEvent<OnCellChangeEventArgs>;
   onCellCssStylesChanged: SlickEvent<OnCellCssStylesChangedEventArgs>;
   onClick: SlickEvent<OnClickEventArgs>;
@@ -530,7 +531,7 @@ export interface SlickGrid {
   onSelectedRowsChanged: SlickEvent<OnSelectedRowsChangedEventArgs>;
   onSetOptions: SlickEvent<OnSetOptionsEventArgs>;
   onScroll: SlickEvent<OnScrollEventArgs>;
-  onSort: SlickEvent<SingleColumnSort | MultiColumnSort | ColumnSort | ColumnSort[]>;
+  onSort: SlickEvent<SingleColumnSort | MultiColumnSort>;
 }
 
 export interface SlickGridEventData { grid: SlickGrid; }

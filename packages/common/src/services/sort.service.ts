@@ -60,6 +60,17 @@ export class SortService {
     return (this._grid && this._grid.getColumns) ? this._grid.getColumns() : [];
   }
 
+  dispose() {
+    // unsubscribe all SlickGrid events
+    if (this._eventHandler?.unsubscribeAll) {
+      this._eventHandler.unsubscribeAll();
+    }
+    if (this.httpCancelRequests$ && this.rxjs?.isObservable(this.httpCancelRequests$)) {
+      this.httpCancelRequests$.next(); // this cancels any pending http requests
+      this.httpCancelRequests$.complete();
+    }
+  }
+
   addRxJsResource(rxjs: RxJsFacade) {
     this.rxjs = rxjs;
   }
@@ -72,7 +83,7 @@ export class SortService {
   bindBackendOnSort(grid: SlickGrid) {
     this._isBackendGrid = true;
     this._grid = grid;
-    this._dataView = grid?.getData && grid.getData() as SlickDataView;
+    this._dataView = grid?.getData?.() ?? {} as SlickDataView;
 
     // subscribe to the SlickGrid event and call the backend execution
     const onSortHandler = grid.onSort;
@@ -99,7 +110,7 @@ export class SortService {
   handleLocalOnSort(_e: SlickEventData, args: SingleColumnSort | MultiColumnSort) {
     // multiSort and singleSort are not exactly the same, but we want to structure it the same for the (for loop) after
     // also to avoid having to rewrite the for loop in the sort, we will make the singleSort an array of 1 object
-    const sortColumns: Array<SingleColumnSort> = (args.multiColumnSort) ? args.sortCols : new Array({ columnId: (args as SingleColumnSort).sortCol.id, sortAsc: (args as SingleColumnSort).sortAsc, sortCol: (args as SingleColumnSort).sortCol });
+    const sortColumns: Array<SingleColumnSort> = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ columnId: (args as SingleColumnSort).sortCol.id, sortAsc: (args as SingleColumnSort).sortAsc, sortCol: (args as SingleColumnSort).sortCol });
 
     // keep current sorters
     this._currentLocalSorters = []; // reset current local sorters
@@ -130,8 +141,8 @@ export class SortService {
         this.onLocalSortChanged(this._grid, sortedColsWithoutCurrent, true, true);
       } else {
         // when using customDataView, we will simply send it as a onSort event with notify
-        const isMultiSort = this._gridOptions && this._gridOptions.multiColumnSort || false;
-        const sortOutput = isMultiSort ? sortedColsWithoutCurrent : sortedColsWithoutCurrent[0];
+        const isMultiSort = this._gridOptions?.multiColumnSort ?? false;
+        const sortOutput = isMultiSort ? sortedColsWithoutCurrent as unknown as MultiColumnSort : sortedColsWithoutCurrent[0] as unknown as SingleColumnSort;
         this._grid.onSort.notify(sortOutput);
       }
 
@@ -236,10 +247,10 @@ export class SortService {
    * @param sender
    */
   emitSortChanged(sender: EmitterType, currentLocalSorters?: CurrentSorter[]) {
-    if (sender === EmitterType.remote && this._gridOptions && this._gridOptions.backendServiceApi) {
+    if (sender === EmitterType.remote && this._gridOptions?.backendServiceApi) {
       let currentSorters: CurrentSorter[] = [];
       const backendService = this._gridOptions.backendServiceApi.service;
-      if (backendService && backendService.getCurrentSorters) {
+      if (backendService?.getCurrentSorters) {
         currentSorters = backendService.getCurrentSorters() as CurrentSorter[];
       }
       this.pubSubService.publish('onSortChanged', currentSorters);
@@ -311,17 +322,6 @@ export class SortService {
     return sortCols;
   }
 
-  dispose() {
-    // unsubscribe all SlickGrid events
-    if (this._eventHandler && this._eventHandler.unsubscribeAll) {
-      this._eventHandler.unsubscribeAll();
-    }
-    if (this.httpCancelRequests$ && this.rxjs?.isObservable(this.httpCancelRequests$)) {
-      this.httpCancelRequests$.next(); // this cancels any pending http requests
-      this.httpCancelRequests$.complete();
-    }
-  }
-
   /** Process the initial sort, typically it will sort ascending by the column that has the Tree Data unless user specifies a different initialSort */
   processTreeDataInitialSort() {
     // when a Tree Data view is defined, we must sort the data so that the UI works correctly
@@ -349,6 +349,12 @@ export class SortService {
     }
   }
 
+  /**
+   * When working with Backend Service, we'll use the `onBeforeSort` which will return false since we want to manually apply the sort icons only after the server response
+   * @param event - optional Event that triggered the sort
+   * @param args - sort event arguments
+   * @returns - False since we'll apply the sort icon(s) manually only after server responded
+   */
   onBackendSortChanged(event: Event | undefined, args: MultiColumnSort & { clearSortTriggered?: boolean; }) {
     if (!args || !args.grid) {
       throw new Error('Something went wrong when trying to bind the "onBackendSortChanged(event, args)" function, it seems that "args" is not populated correctly');
@@ -369,8 +375,23 @@ export class SortService {
 
     // query backend
     const query = backendApi.service.processOnSortChanged(event, args);
-    const totalItems = gridOptions && gridOptions.pagination && gridOptions.pagination.totalItems || 0;
-    this.backendUtilities?.executeBackendCallback(backendApi, query, args, startTime, totalItems, this.emitSortChanged.bind(this), this.httpCancelRequests$);
+    const totalItems = gridOptions?.pagination?.totalItems || 0;
+    this.backendUtilities?.executeBackendCallback(backendApi, query, args, startTime, totalItems, {
+      emitActionChangedCallback: this.emitSortChanged.bind(this),
+      errorCallback: () => {
+        // revert to previous sort icons & also revert backend service query
+        this._grid.setSortColumns(args.previousSortColumns || []);
+
+        // we also need to provide the `sortCol` when using the backend service `updateSorters` method
+        const sorterData = args.previousSortColumns?.map(cs => ({
+          columnId: cs.columnId,
+          sortAsc: cs.sortAsc,
+          sortCol: this._columnDefinitions.find(col => col.id === cs.columnId) as Column
+        }));
+        backendApi?.service?.updateSorters?.(sorterData || []);
+      },
+      httpCancelRequestSubject: this.httpCancelRequests$
+    });
   }
 
   /** When a Sort Changes on a Local grid (JSON dataset) */
@@ -378,7 +399,7 @@ export class SortService {
     const datasetIdPropertyName = this._gridOptions?.datasetIdPropertyName ?? 'id';
     const isTreeDataEnabled = this._gridOptions?.enableTreeData ?? false;
     const dataView = grid.getData?.() as SlickDataView;
-    await this.pubSubService.publish('onBeforeSortChange', { sortColumns });
+    await this.pubSubService.publish('onBeforeSortChange', { sortColumns }, 0);
 
     if (grid && dataView) {
       if (forceReSort && !isTreeDataEnabled) {
@@ -400,7 +421,7 @@ export class SortService {
       if (emitSortChanged) {
         this.emitSortChanged(EmitterType.local, sortColumns.map(col => {
           return {
-            columnId: col.sortCol && col.sortCol.id || 'id',
+            columnId: col.sortCol?.id ?? 'id',
             direction: col.sortAsc ? SortDirection.ASC : SortDirection.DESC
           };
         }));
