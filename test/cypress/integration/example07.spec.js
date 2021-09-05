@@ -6,7 +6,7 @@ function removeExtraSpaces(textS) {
 
 describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries: 1 }, () => {
   const GRID_ROW_HEIGHT = 45;
-  const fullTitles = ['', '', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites'];
+  const fullTitles = ['', '', 'Title', 'Action', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites'];
 
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseExampleUrl')}/example07`);
@@ -163,30 +163,30 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .click();
 
     // change duration
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(3)`).should('contain', 'day').click();
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).should('contain', 'day').click();
     cy.get('.editor-duration').type('2222').type('{enter}');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(3)`).should('contain', '2222 days');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).should('contain', '2222 days');
 
     // change % complete
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).click();
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(5)`).click();
     cy.get('.slider-editor input[type=range]').as('range').invoke('val', 25).trigger('change');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).should('contain', '25');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(5)`).should('contain', '25');
 
     // change Finish date
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(6)`).should('contain', '2009-01-05').click();
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(7)`).should('contain', '2009-01-05').click();
     cy.get('.flatpickr-calendar:visible .flatpickr-day').contains('22').click('bottom', { force: true });
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(6)`).should('contain', '2009-01-22');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(7)`).should('contain', '2009-01-22');
 
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left')
       .scrollTo('top');
   });
 
   it('should dynamically add 2x new "Title" columns', () => {
-    const updatedTitles = ['', '', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title', 'Title'];
+    const updatedTitles = ['', '', 'Title', 'Action', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title', 'Title'];
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('not.exist');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(10)`).should('not.exist');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(11)`).should('not.exist');
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
       .should('contain', 'Task 0')
@@ -205,12 +205,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .should('have.length', 9);
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('contain', 'Task 0');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(10)`).should('contain', 'Task 0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(11)`).should('contain', 'Task 0');
   });
 
   it('should open Grid Menu and expect new columns to be added to the column picker section', () => {
-    const updatedTitles = ['', '', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title', 'Title'];
+    const updatedTitles = ['', '', 'Title', 'Action', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title', 'Title'];
 
     cy.get('.grid7')
       .find('button.slick-gridmenu-button')
@@ -242,7 +242,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
   });
 
   it('should hover over the last "Title" column and click on "Clear Filter" and expect grid to have all rows shown', () => {
-    cy.get('.slick-header-column:nth(9)')
+    cy.get('.slick-header-column:nth(10)')
       .first()
       .trigger('mouseover')
       .children('.slick-header-menubutton')
@@ -260,7 +260,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
   });
 
   it('should dynamically remove 1x of the new "Title" columns', () => {
-    const updatedTitles = ['', '', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title'];
+    const updatedTitles = ['', '', 'Title', 'Action', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title'];
 
     cy.get('[data-test=remove-title-column-btn]')
       .click();
@@ -281,33 +281,33 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .click();
 
     // change duration
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).should('contain', 'day').click();
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).should('contain', 'day').click();
     cy.get('.editor-duration').type('0000').type('{enter}');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).should('contain', '0000 day');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).should('contain', '0000 day');
 
     // change % complete
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).click();
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(5)`).click();
     cy.get('.slider-editor input[type=range]').as('range').invoke('val', 50).trigger('change');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).should('contain', '50');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(5)`).should('contain', '50');
 
     // change Finish date
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).should('contain', '2009-01-05').click();
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).should('contain', '2009-01-05').click();
     cy.get('.flatpickr-calendar:visible .flatpickr-day').contains('22').click('bottom', { force: true });
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).should('contain', '2009-01-22');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).should('contain', '2009-01-22');
 
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('contain', 'Task 0000');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(10)`).should('contain', 'Task 0000');
   });
 
   it('should move "Duration" column to a different position in the grid', () => {
-    const expectedTitles = ['', '', 'Title', '% Complete', 'Start', 'Finish', 'Duration', 'Completed', 'Prerequisites', 'Title'];
+    const expectedTitles = ['', '', 'Title', 'Action', '% Complete', 'Start', 'Finish', 'Duration', 'Completed', 'Prerequisites', 'Title'];
 
     cy.get('.slick-header-columns')
-      .children('.slick-header-column:nth(3)')
+      .children('.slick-header-column:nth(4)')
       .should('contain', 'Duration')
       .trigger('mousedown', 'center', { which: 1 });
 
     cy.get('.slick-header-columns')
-      .children('.slick-header-column:nth(6)')
+      .children('.slick-header-column:nth(7)')
       .should('contain', 'Finish')
       .trigger('mousemove', 'bottomRight')
       .trigger('mouseup', 'bottomRight', { force: true });
@@ -319,7 +319,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
   });
 
   it('should be able to hide "Duration" column', () => {
-    const expectedTitles = ['', '', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title'];
+    const expectedTitles = ['', '', 'Title', 'Action', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title'];
 
     cy.get('[data-test="hide-duration-btn"]').click();
 
@@ -330,7 +330,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
   });
 
   it('should be able to click disable Filters functionality button and expect no Filters', () => {
-    const expectedTitles = ['', '', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title'];
+    const expectedTitles = ['', '', 'Title', 'Action', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title'];
 
     cy.get('[data-test="disable-filters-btn"]').click().click(); // even clicking twice should have same result
 
@@ -343,6 +343,23 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
 
     cy.get('[data-test="toggle-filtering-btn"]').click(); // show it back
+  });
+
+  it('should open the Cell Menu on row 9-10 row and change the Completed to "True" and expect the cell to be updated and have checkmark icon', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 9}px"] > .slick-cell:nth(2)`).should('contain', 'Task 9');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 10}px"] > .slick-cell:nth(2)`).should('contain', 'Task 10');
+
+    cy.get('.grid7').find(`[style="top:${GRID_ROW_HEIGHT * 9}px"] > .slick-cell:nth(3)`).click({ force: true });
+    cy.get('.slick-cell-menu .slick-cell-menu-command-list .title').contains('Commands');
+    cy.get('.slick-cell-menu .slick-cell-menu-command-list .slick-cell-menu-content').contains('Delete Row');
+    cy.get('.slick-cell-menu .slick-cell-menu-command-list .slick-cell-menu-content').contains('Help');
+    cy.get('.slick-cell-menu .slick-cell-menu-option-list .title').contains('Change Completed Flag');
+    cy.get('.slick-cell-menu .slick-cell-menu-option-list .slick-cell-menu-item').contains('True').click();
+    cy.get('.grid7').find(`[style="top:${GRID_ROW_HEIGHT * 10}px"] > .slick-cell:nth(3)`).click({ force: true });
+    cy.get('.slick-cell-menu .slick-cell-menu-option-list .slick-cell-menu-item').contains('True').click();
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 9}px"] > .slick-cell:nth(7)`).find('.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 10}px"] > .slick-cell:nth(7)`).find('.checkmark-icon').should('have.length', 1);
   });
 
   it('should expect "Clear all Filters" command to be hidden in the Grid Menu', () => {
@@ -367,7 +384,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
   });
 
   it('should be able to toggle Filters functionality', () => {
-    const expectedTitles = ['', '', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title'];
+    const expectedTitles = ['', '', 'Title', 'Action', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title'];
 
     cy.get('[data-test="toggle-filtering-btn"]').click(); // hide it
 
@@ -380,7 +397,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
 
     cy.get('[data-test="toggle-filtering-btn"]').click(); // show it
-    cy.get('.slick-headerrow-columns .slick-headerrow-column').should('have.length', 9);
+    cy.get('.slick-headerrow-columns .slick-headerrow-column').should('have.length', 10);
 
     cy.get('.grid7')
       .find('.slick-header-columns')
@@ -557,7 +574,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
 
   it('should open Column Picker and show the "Duration" column back to visible and expect it to have kept its position after toggling filter/sorting', () => {
     // first 2 cols are hidden but they do count as li item
-    const expectedFullPickerTitles = ['', '', 'Title', '% Complete', 'Start', 'Finish', 'Duration', 'Completed', 'Prerequisites', 'Title'];
+    const expectedFullPickerTitles = ['', '', 'Title', 'Action', '% Complete', 'Start', 'Finish', 'Duration', 'Completed', 'Prerequisites', 'Title'];
 
     cy.get('.grid7')
       .find('.slick-header-column')
@@ -577,7 +594,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
 
     cy.get('.slick-columnpicker')
       .find('.slick-columnpicker-list')
-      .children('li:nth-child(7)')
+      .children('li:nth-child(8)')
       .children('label')
       .should('contain', 'Duration')
       .click();
@@ -626,7 +643,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
   });
 
   it('should open the "Prerequisites" Editor and expect to have Task 500 & 501 in the Editor', () => {
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(8)`)
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`)
       .should('contain', '')
       .click();
 
@@ -645,7 +662,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .last()
       .click({ force: true });
 
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(8)`).should('contain', 'Task 501');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('contain', 'Task 501');
   });
 
   it('should delete the last item "Task 501" and expect it to be removed from the Filter', () => {
@@ -705,15 +722,15 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
   });
 
   it('should reorder "Start" column to be after the "Completed" column', () => {
-    const expectedTitles = ['', '', 'Title', '% Complete', 'Finish', 'Duration', 'Completed', 'Start', 'Prerequisites', 'Title'];
+    const expectedTitles = ['', '', 'Title', 'Action', '% Complete', 'Finish', 'Duration', 'Completed', 'Start', 'Prerequisites', 'Title'];
 
     cy.get('.slick-header-columns')
-      .children('.slick-header-column:nth(4)')
+      .children('.slick-header-column:nth(5)')
       .should('contain', 'Start')
       .trigger('mousedown', 'bottom', { which: 1 });
 
     cy.get('.slick-header-columns')
-      .children('.slick-header-column:nth(7)')
+      .children('.slick-header-column:nth(8)')
       .should('contain', 'Completed')
       .trigger('mousemove', 'bottomRight')
       .trigger('mouseup', 'bottomRight', { force: true });
@@ -725,7 +742,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
   });
 
   it('should hide "Duration" column from column picker', () => {
-    const originalColumns = ['', '', 'Title', '% Complete', 'Finish', 'Duration', 'Completed', 'Start', 'Prerequisites', 'Title'];
+    const originalColumns = ['', '', 'Title', 'Action', '% Complete', 'Finish', 'Duration', 'Completed', 'Start', 'Prerequisites', 'Title'];
 
     cy.get('.grid7')
       .find('.slick-header-column')
@@ -745,7 +762,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
 
     cy.get('.slick-columnpicker')
       .find('.slick-columnpicker-list')
-      .children('li:nth-child(6)')
+      .children('li:nth-child(7)')
       .children('label')
       .should('contain', 'Duration')
       .click();
@@ -782,7 +799,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     const expectedFullHeaderMenuCommands = ['Redimensionner par contenu', '', 'Trier par ordre croissant', 'Trier par ordre décroissant', '', 'Supprimer le filtre', 'Supprimer le tri', 'Cacher la colonne'];
 
     cy.get('.grid7')
-      .find('.slick-header-column:nth(8)')
+      .find('.slick-header-column:nth(9)')
       .trigger('mouseover')
       .children('.slick-header-menubutton')
       .click();
@@ -801,7 +818,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
   });
 
   it('should open Grid Menu and expect new columns to be added to the column picker section, also "Duration" to be unchecked while "Finish" to be at new position', () => {
-    const updatedTitles = ['', '', 'Titre', 'Durée', '% Achevée', 'Fin', 'Terminé', 'Début', 'Prerequisites', 'Titre'];
+    const updatedTitles = ['', '', 'Titre', 'Action', 'Durée', '% Achevée', 'Fin', 'Terminé', 'Début', 'Prerequisites', 'Titre'];
 
     cy.get('.grid7')
       .find('button.slick-gridmenu-button')
@@ -829,5 +846,42 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     cy.get('.slick-gridmenu')
       .find('span.close')
       .click();
+  });
+
+  it('should open the Cell Menu on first 2 rows and change the Completed to "True" and expect the cell to be updated and have checkmark icon', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 4');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(2)`).should('contain', 'Task 8');
+
+    cy.get('.grid7').find(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).click({ force: true });
+    cy.get('.slick-cell-menu .slick-cell-menu-command-list .title').contains('Commandes');
+    cy.get('.slick-cell-menu .slick-cell-menu-command-list .slick-cell-menu-content').contains('Supprimer la ligne');
+    cy.get('.slick-cell-menu .slick-cell-menu-command-list .slick-cell-menu-content').contains('Aide');
+    cy.get('.slick-cell-menu .slick-cell-menu-option-list .title').contains(`Changer l'indicateur terminé`);
+    cy.get('.slick-cell-menu .slick-cell-menu-option-list .slick-cell-menu-item').contains('Faux').click();
+    cy.get('.grid7').find(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(3)`).click({ force: true });
+    cy.get('.slick-cell-menu .slick-cell-menu-option-list .slick-cell-menu-item').contains('Faux').click();
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).find('.checkmark-icon').should('have.length', 0);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(7)`).find('.checkmark-icon').should('have.length', 0);
+  });
+
+  it('should open the Cell Menu on 2nr row and delete it', () => {
+    const confirmStub = cy.stub();
+    cy.on('window:confirm', confirmStub);
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 4');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(2)`).should('contain', 'Task 8');
+
+    cy.get('.grid7').find(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(3)`).click({ force: true });
+    cy.get('.slick-cell-menu .slick-cell-menu-command-list .title').contains('Commandes');
+    cy.get('.slick-cell-menu .slick-cell-menu-command-list .slick-cell-menu-content')
+      .contains('Supprimer la ligne')
+      .click()
+      .then(() => expect(confirmStub.getCall(0)).to.be.calledWith('Do you really want to delete row (2) with "Task 8"?'));
+  });
+
+  it('should have "1 de 500 éléments" shown as metrics on the right footer shown in French', () => {
+    cy.get('.right-footer.metrics')
+      .contains('1 de 500 éléments');
   });
 });

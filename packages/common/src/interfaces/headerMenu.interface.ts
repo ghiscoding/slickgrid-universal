@@ -1,5 +1,5 @@
 import { MenuCommandItem } from '..';
-import { HeaderMenuPlugin } from '../plugins';
+import { HeaderMenuPlugin } from '../plugins/headerMenu.plugin';
 import {
   Column,
   HeaderMenuOption,

@@ -193,7 +193,7 @@ export class Example3 {
         }
       },
       {
-        id: 'effortDriven', name: 'Effort Driven', field: 'effortDriven',
+        id: 'effortDriven', name: 'Effort-Driven', field: 'effortDriven',
         width: 80, minWidth: 20, maxWidth: 100,
         cssClass: 'cell-effort-driven',
         sortable: true,
@@ -268,7 +268,7 @@ export class Example3 {
             },
             { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67, }
           ],
-          optionTitle: 'Change Complete Flag',
+          optionTitle: 'Change Effort-Driven Flag',
           optionItems: [
             { option: true, title: 'True', iconCssClass: 'mdi mdi-check-box-outline' },
             { option: false, title: 'False', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
@@ -327,10 +327,10 @@ export class Example3 {
         // are available under the grid options as shown below
         onCommand: (e, args) => this.executeCommand(e, args),
         onOptionSelected: (_e, args) => {
-          // change "Completed" property with new option selected from the Cell Menu
+          // change "Effort-Driven" property with new option selected from the Cell Menu
           const dataContext = args && args.dataContext;
-          if (dataContext && dataContext.hasOwnProperty('completed')) {
-            dataContext.completed = args.item.option;
+          if (dataContext && dataContext.hasOwnProperty('effortDriven')) {
+            dataContext.effortDriven = args.item.option;
             this.sgb.gridService.updateItem(dataContext);
           }
         },

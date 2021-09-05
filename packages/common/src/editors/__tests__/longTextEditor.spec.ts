@@ -3,10 +3,10 @@ import { LongTextEditor } from '../longTextEditor';
 import { KeyCode } from '../../enums/index';
 import { AutocompleteOption, Column, ColumnEditor, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import * as utilities from '../../services/utilities';
+import * as domUtilities from '../../services/domUtilities';
 const mockGetHtmlElementOffset = jest.fn();
 // @ts-ignore:2540
-utilities.getHtmlElementOffset = mockGetHtmlElementOffset;
+domUtilities.getHtmlElementOffset = mockGetHtmlElementOffset;
 
 declare const Slick: SlickNamespace;
 const KEY_CHAR_A = 97;

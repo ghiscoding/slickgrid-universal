@@ -1,10 +1,9 @@
 import 'jest-extended';
 
 import { ExtensionName } from '../../enums/index';
-import { Column, ExtensionModel, GridOption, SlickGrid, SlickHeaderMenu, SlickNamespace } from '../../interfaces/index';
+import { Column, ExtensionModel, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import {
   CellExternalCopyManagerExtension,
-  CellMenuExtension,
   CheckboxSelectorExtension,
   ContextMenuExtension,
   DraggableGroupingExtension,
@@ -16,7 +15,7 @@ import {
 } from '../../extensions';
 import { BackendUtilityService, ExtensionService, FilterService, PubSubService, SharedService, SortService } from '..';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { AutoTooltipPlugin, HeaderButtonPlugin, HeaderMenuPlugin } from '../../plugins/index';
+import { AutoTooltipPlugin, CellMenuPlugin, HeaderButtonPlugin, HeaderMenuPlugin } from '../../plugins/index';
 import { ColumnPickerControl, GridMenuControl } from '../../controls/index';
 
 jest.mock('flatpickr', () => { });
@@ -44,9 +43,11 @@ const gridStub = {
   onBeforeDestroy: new Slick.Event(),
   onBeforeHeaderCellDestroy: new Slick.Event(),
   onBeforeSetColumns: new Slick.Event(),
+  onClick: new Slick.Event(),
+  onColumnsReordered: new Slick.Event(),
   onHeaderCellRendered: new Slick.Event(),
   onSetOptions: new Slick.Event(),
-  onColumnsReordered: new Slick.Event(),
+  onScroll: new Slick.Event(),
   onHeaderContextMenu: new Slick.Event(),
 } as unknown as SlickGrid;
 
@@ -110,14 +111,6 @@ const extensionContextMenuStub = {
   ...extensionStub,
   translateContextMenu: jest.fn()
 };
-const extensionHeaderButtonStub = {
-  ...extensionStub,
-  translateHeaderMenu: jest.fn()
-};
-const extensionHeaderMenuStub = {
-  ...extensionStub,
-  translateHeaderMenu: jest.fn()
-};
 const extensionRowMoveStub = {
   ...extensionStub,
   onBeforeMoveRows: jest.fn(),
@@ -144,7 +137,6 @@ describe('ExtensionService', () => {
         sortServiceStub,
         // extensions
         extensionStub as unknown as CellExternalCopyManagerExtension,
-        extensionCellMenuStub as unknown as CellMenuExtension,
         extensionCheckboxSelectorStub as unknown as CheckboxSelectorExtension,
         extensionContextMenuStub as unknown as ContextMenuExtension,
         extensionStub as unknown as DraggableGroupingExtension,
@@ -428,16 +420,20 @@ describe('ExtensionService', () => {
       });
 
       it('should register the CellMenu addon when "enableCellMenu" is set in the grid options', () => {
-        const gridOptionsMock = { enableCellMenu: true } as GridOption;
-        const extSpy = jest.spyOn(extensionCellMenuStub, 'register').mockReturnValue(instanceMock);
+        const onRegisteredMock = jest.fn();
+        const gridOptionsMock = { enableCellMenu: true, cellMenu: { onExtensionRegistered: onRegisteredMock } } as GridOption;
         const gridSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
         const output = service.getExtensionByName(ExtensionName.cellMenu);
+        const pluginInstance = service.getSlickgridAddonInstance(ExtensionName.cellMenu);
 
+        expect(onRegisteredMock).toHaveBeenCalledWith(expect.toBeObject());
+        expect(output.instance instanceof CellMenuPlugin).toBeTrue();
         expect(gridSpy).toHaveBeenCalled();
-        expect(extSpy).toHaveBeenCalled();
-        expect(output).toEqual({ name: ExtensionName.cellMenu, instance: instanceMock as unknown, class: extensionCellMenuStub } as ExtensionModel<any, any>);
+        expect(pluginInstance).toBeTruthy();
+        expect(output!.instance).toEqual(pluginInstance);
+        expect(output).toEqual({ name: ExtensionName.cellMenu, instance: pluginInstance, class: pluginInstance } as ExtensionModel<any, any>);
       });
 
       it('should register the ContextMenu addon when "enableContextMenu" is set in the grid options', () => {
@@ -633,9 +629,16 @@ describe('ExtensionService', () => {
     });
 
     it('should call the translateCellMenu method on the CellMenu Extension when service with same method name is called', () => {
-      const extSpy = jest.spyOn(extensionCellMenuStub, 'translateCellMenu');
+      const gridOptionsMock = { enableCellMenu: true, cellMenu: {} } as GridOption;
+      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+      jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue([]);
+
+      service.bindDifferentExtensions();
+      const pluginInstance = service.getSlickgridAddonInstance(ExtensionName.cellMenu);
+      const translateSpy = jest.spyOn(pluginInstance, 'translateCellMenu');
       service.translateCellMenu();
-      expect(extSpy).toHaveBeenCalled();
+
+      expect(translateSpy).toHaveBeenCalled();
     });
 
     it('should call the translateContextMenu method on the ContextMenu Extension when service with same method name is called', () => {
@@ -819,7 +822,6 @@ describe('ExtensionService', () => {
         sortServiceStub,
         // extensions
         extensionStub as unknown as CellExternalCopyManagerExtension,
-        extensionStub as unknown as CellMenuExtension,
         extensionStub as unknown as CheckboxSelectorExtension,
         extensionStub as unknown as ContextMenuExtension,
         extensionStub as unknown as DraggableGroupingExtension,

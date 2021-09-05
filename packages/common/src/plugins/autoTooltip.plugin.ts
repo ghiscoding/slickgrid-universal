@@ -20,7 +20,7 @@ declare const Slick: SlickNamespace;
 export class AutoTooltipPlugin {
   private _eventHandler!: SlickEventHandler;
   private _grid!: SlickGrid;
-  private _options?: AutoTooltipOption;
+  private _addonOptions?: AutoTooltipOption;
   private _defaults = {
     enableForCells: true,
     enableForHeaderCells: false,
@@ -32,26 +32,26 @@ export class AutoTooltipPlugin {
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(options?: AutoTooltipOption) {
     this._eventHandler = new Slick.EventHandler();
-    this._options = options;
+    this._addonOptions = options;
+  }
+
+  get addonOptions(): AutoTooltipOption {
+    return this._addonOptions as AutoTooltipOption;
   }
 
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
   }
 
-  get options(): AutoTooltipOption {
-    return this._options as AutoTooltipOption;
-  }
-
   /** Initialize plugin. */
   init(grid: SlickGrid) {
-    this._options = { ...this._defaults, ...this.options };
+    this._addonOptions = { ...this._defaults, ...this.addonOptions };
     this._grid = grid;
-    if (this._options.enableForCells) {
+    if (this._addonOptions.enableForCells) {
       const onMouseEnterHandler = this._grid.onMouseEnter;
       (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onMouseEnterHandler>>).subscribe(onMouseEnterHandler, this.handleMouseEnter.bind(this));
     }
-    if (this._options.enableForHeaderCells) {
+    if (this._addonOptions.enableForHeaderCells) {
       const onHeaderMouseEnterHandler = this._grid.onHeaderMouseEnter;
       (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onHeaderMouseEnterHandler>>).subscribe(onHeaderMouseEnterHandler, this.handleHeaderMouseEnter.bind(this));
     }
@@ -75,11 +75,11 @@ export class AutoTooltipPlugin {
     if (cell) {
       let node: HTMLElement | null = this._grid.getCellNode(cell.row, cell.cell);
       let text;
-      if (this._options && node && (!node.title || this._options?.replaceExisting)) {
+      if (this._addonOptions && node && (!node.title || this._addonOptions?.replaceExisting)) {
         if (node.clientWidth < node.scrollWidth) {
           text = node.textContent?.trim() ?? '';
-          if (this._options?.maxToolTipLength && text.length > this._options?.maxToolTipLength) {
-            text = text.substr(0, this._options.maxToolTipLength - 3) + '...';
+          if (this._addonOptions?.maxToolTipLength && text.length > this._addonOptions?.maxToolTipLength) {
+            text = text.substr(0, this._addonOptions.maxToolTipLength - 3) + '...';
           }
         } else {
           text = '';

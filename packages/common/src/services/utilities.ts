@@ -6,7 +6,7 @@ const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "m
 
 import { Constants } from '../constants';
 import { FieldType, OperatorString, OperatorType } from '../enums/index';
-import { EventSubscription, GridOption, HtmlElementPosition } from '../interfaces/index';
+import { EventSubscription, GridOption, } from '../interfaces/index';
 import { Observable, RxJsFacade, Subject, Subscription } from './rxjsFacade';
 
 /**
@@ -290,6 +290,11 @@ export function findItemInTreeStructure<T = any>(treeArray: T[], predicate: (ite
   return undefined;
 }
 
+/** Check if a value has any data (undefined, null or empty string will return false... but false boolean is consider as valid data) */
+export function hasData(value: any): boolean {
+  return value !== undefined && value !== null && value !== '';
+}
+
 /**
  * HTML encode using jQuery with a <div>
  * Create a in-memory div, set it's inner text(which jQuery automatically encodes)
@@ -338,7 +343,7 @@ export function htmlEncodedStringWithPadding(inputStr: string, paddingLength: nu
  * Check if input value is a number, by default it won't be a strict checking
  * but optionally we could check for strict equality, for example in strict "3" will return False but without strict it will return True
  * @param value - input value of any type
- * @param strict - when using strict it also check for strict equality, for example in strict "3" will return but without strict it will return true
+ * @param strict - when using strict it also check for strict equality, for example in strict "3" would return False but without strict it would return True
  */
 export function isNumber(value: any, strict = false) {
   if (strict) {
@@ -1015,41 +1020,6 @@ export function findOrDefault<T = any>(array: T[], logic: (item: T) => boolean, 
     return array.find(logic) || defaultVal;
   }
   return array;
-}
-
-/** Get offset of HTML element relative to a parent element */
-export function getElementOffsetRelativeToParent(parentElm: HTMLElement | null, childElm: HTMLElement | null) {
-  if (!parentElm || !childElm) {
-    return undefined;
-  }
-  const parentPos = parentElm.getBoundingClientRect();
-  const childPos = childElm.getBoundingClientRect();
-  return {
-    top: childPos.top - parentPos.top,
-    right: childPos.right - parentPos.right,
-    bottom: childPos.bottom - parentPos.bottom,
-    left: childPos.left - parentPos.left,
-  };
-}
-
-/** Get HTML element offset with pure JS */
-export function getHtmlElementOffset(element: HTMLElement): HtmlElementPosition | undefined {
-  if (!element) {
-    return undefined;
-  }
-  const rect = element?.getBoundingClientRect?.();
-  let top = 0;
-  let left = 0;
-  let bottom = 0;
-  let right = 0;
-
-  if (rect?.top !== undefined && rect.left !== undefined) {
-    top = rect.top + window.pageYOffset;
-    left = rect.left + window.pageXOffset;
-    right = rect.right;
-    bottom = rect.bottom;
-  }
-  return { top, left, bottom, right };
 }
 
 /**

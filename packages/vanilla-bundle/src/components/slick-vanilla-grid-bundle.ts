@@ -34,7 +34,6 @@ import {
   // extensions
   CheckboxSelectorExtension,
   CellExternalCopyManagerExtension,
-  CellMenuExtension,
   ContextMenuExtension,
   DraggableGroupingExtension,
   ExtensionUtility,
@@ -356,7 +355,6 @@ export class SlickVanillaGridBundle {
 
     // extensions
     const cellExternalCopyManagerExtension = new CellExternalCopyManagerExtension(this.extensionUtility, this.sharedService);
-    const cellMenuExtension = new CellMenuExtension(this.extensionUtility, this.sharedService, this.translaterService);
     const contextMenuExtension = new ContextMenuExtension(this.extensionUtility, this.sharedService, this.treeDataService, this.translaterService);
     const checkboxExtension = new CheckboxSelectorExtension(this.sharedService);
     const draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this.sharedService);
@@ -371,7 +369,6 @@ export class SlickVanillaGridBundle {
       this._eventPubSubService,
       this.sortService,
       cellExternalCopyManagerExtension,
-      cellMenuExtension,
       checkboxExtension,
       contextMenuExtension,
       draggableGroupingExtension,
@@ -739,11 +736,12 @@ export class SlickVanillaGridBundle {
       this.translaterService.addPubSubMessaging(this._eventPubSubService);
     }
 
-    // translate some of them on first load, then on each language change
+    // translate them all on first load, then on each language change
     if (gridOptions.enableTranslate) {
+      this.extensionService.translateAllExtensions();
+      this.translateCustomFooterTexts();
       this.translateColumnHeaderTitleKeys();
       this.translateColumnGroupKeys();
-      this.translateCustomFooterTexts();
     }
 
     // on locale change, we have to manually translate the Headers, GridMenu

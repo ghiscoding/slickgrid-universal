@@ -1,5 +1,5 @@
 import { SearchTerm } from '../enums/index';
-import { Column, SelectOption, SlickGrid } from '../interfaces/index';
+import { Column, HtmlElementPosition, SelectOption, SlickGrid, } from '../interfaces/index';
 import { TranslaterService } from './translater.service';
 import { htmlEncode, sanitizeTextByAvailableSanitizer } from './utilities';
 
@@ -125,4 +125,50 @@ export function buildSelectEditorOrFilterDomElement(type: 'editor' | 'filter', c
   selectElement.appendChild(selectOptionsFragment);
 
   return { selectElement, hasFoundSearchTerm };
+}
+
+/** Get offset of HTML element relative to a parent element */
+export function getElementOffsetRelativeToParent(parentElm: HTMLElement | null, childElm: HTMLElement | null) {
+  if (!parentElm || !childElm) {
+    return undefined;
+  }
+  const parentPos = parentElm.getBoundingClientRect();
+  const childPos = childElm.getBoundingClientRect();
+  return {
+    top: childPos.top - parentPos.top,
+    right: childPos.right - parentPos.right,
+    bottom: childPos.bottom - parentPos.bottom,
+    left: childPos.left - parentPos.left,
+  };
+}
+
+/** Get HTML element offset with pure JS */
+export function getHtmlElementOffset(element: HTMLElement): HtmlElementPosition | undefined {
+  if (!element) {
+    return undefined;
+  }
+  const rect = element?.getBoundingClientRect?.();
+  let top = 0;
+  let left = 0;
+  let bottom = 0;
+  let right = 0;
+
+  if (rect?.top !== undefined && rect.left !== undefined) {
+    top = rect.top + window.pageYOffset;
+    left = rect.left + window.pageXOffset;
+    right = rect.right;
+    bottom = rect.bottom;
+  }
+  return { top, left, bottom, right };
+}
+
+/**
+ * Get the Window Scroll top/left Position
+ * @returns
+ */
+export function windowScrollPosition(): { left: number; top: number; } {
+  return {
+    left: window.pageXOffset || document.documentElement.scrollLeft || 0,
+    top: window.pageYOffset || document.documentElement.scrollTop || 0,
+  };
 }

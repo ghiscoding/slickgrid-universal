@@ -60,6 +60,10 @@ export class ColumnPickerControl {
     this.init();
   }
 
+  get addonOptions(): ColumnPickerOption {
+    return this.gridOptions.columnPicker || {};
+  }
+
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
   }
@@ -69,10 +73,6 @@ export class ColumnPickerControl {
   }
   set columns(newColumns: Column[]) {
     this._columns = newColumns;
-  }
-
-  get controlOptions(): ColumnPickerOption {
-    return this.gridOptions.columnPicker || {};
   }
 
   get gridOptions(): GridOption {
@@ -93,9 +93,9 @@ export class ColumnPickerControl {
     this.gridOptions.columnPicker = { ...this._defaults, ...this.gridOptions.columnPicker };
 
     // localization support for the picker
-    this.controlOptions.columnTitle = this.extensionUtility.getPickerTitleOutputString('columnTitle', 'columnPicker');
-    this.controlOptions.forceFitTitle = this.extensionUtility.getPickerTitleOutputString('forceFitTitle', 'columnPicker');
-    this.controlOptions.syncResizeTitle = this.extensionUtility.getPickerTitleOutputString('syncResizeTitle', 'columnPicker');
+    this.addonOptions.columnTitle = this.extensionUtility.getPickerTitleOutputString('columnTitle', 'columnPicker');
+    this.addonOptions.forceFitTitle = this.extensionUtility.getPickerTitleOutputString('forceFitTitle', 'columnPicker');
+    this.addonOptions.syncResizeTitle = this.extensionUtility.getPickerTitleOutputString('syncResizeTitle', 'columnPicker');
 
     const onHeaderContextMenuHandler = this.grid.onHeaderContextMenu;
     const onColumnsReorderedHandler = this.grid.onColumnsReordered;
@@ -121,10 +121,10 @@ export class ColumnPickerControl {
     this._menuElm.appendChild(closePickerButtonElm);
 
     // user could pass a title on top of the columns list
-    if (this.controlOptions?.columnTitle) {
+    if (this.addonOptions?.columnTitle) {
       this._columnTitleElm = document.createElement('div');
       this._columnTitleElm.className = 'title';
-      this._columnTitleElm.textContent = this.controlOptions?.columnTitle ?? this._defaults.columnTitle;
+      this._columnTitleElm.textContent = this.addonOptions?.columnTitle ?? this._defaults.columnTitle;
       this._menuElm.appendChild(this._columnTitleElm);
     }
 
@@ -169,21 +169,21 @@ export class ColumnPickerControl {
   /** Translate the Column Picker headers and also the last 2 checkboxes */
   translateColumnPicker() {
     // update the properties by pointers, that is the only way to get Column Picker Control to see the new values
-    if (this.controlOptions) {
-      this.controlOptions.columnTitle = '';
-      this.controlOptions.forceFitTitle = '';
-      this.controlOptions.syncResizeTitle = '';
-      this.controlOptions.columnTitle = this.extensionUtility.getPickerTitleOutputString('columnTitle', 'columnPicker');
-      this.controlOptions.forceFitTitle = this.extensionUtility.getPickerTitleOutputString('forceFitTitle', 'columnPicker');
-      this.controlOptions.syncResizeTitle = this.extensionUtility.getPickerTitleOutputString('syncResizeTitle', 'columnPicker');
+    if (this.addonOptions) {
+      this.addonOptions.columnTitle = '';
+      this.addonOptions.forceFitTitle = '';
+      this.addonOptions.syncResizeTitle = '';
+      this.addonOptions.columnTitle = this.extensionUtility.getPickerTitleOutputString('columnTitle', 'columnPicker');
+      this.addonOptions.forceFitTitle = this.extensionUtility.getPickerTitleOutputString('forceFitTitle', 'columnPicker');
+      this.addonOptions.syncResizeTitle = this.extensionUtility.getPickerTitleOutputString('syncResizeTitle', 'columnPicker');
     }
 
     // translate all columns (including hidden columns)
     this.extensionUtility.translateItems(this._columns, 'nameKey', 'name');
 
     // update the Titles of each sections (command, customTitle, ...)
-    if (this.controlOptions) {
-      this.updateAllTitles(this.controlOptions);
+    if (this.addonOptions) {
+      this.updateAllTitles(this.addonOptions);
     }
   }
 
@@ -205,7 +205,7 @@ export class ColumnPickerControl {
     updateColumnPickerOrder.call(this);
     this._columnCheckboxes = [];
 
-    populateColumnPicker.call(this, this.controlOptions);
+    populateColumnPicker.call(this, this.addonOptions);
     this.repositionMenu(e);
   }
 

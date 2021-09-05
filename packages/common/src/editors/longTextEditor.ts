@@ -15,7 +15,8 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
-import { getDescendantProperty, getHtmlElementOffset, getTranslationPrefix, setDeepValue, toSentenceCase, } from '../services/utilities';
+import { getHtmlElementOffset, } from '../services/domUtilities';
+import { getDescendantProperty, getTranslationPrefix, setDeepValue, toSentenceCase, } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
 import { textValidator } from '../editorValidators/textValidator';

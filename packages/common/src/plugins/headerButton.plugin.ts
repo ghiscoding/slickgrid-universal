@@ -30,9 +30,9 @@ declare const Slick: SlickNamespace;
  *   }];
  */
 export class HeaderButtonPlugin {
+  protected _addonOptions?: HeaderButton;
   protected _bindEventService: BindingEventService;
   protected _eventHandler!: SlickEventHandler;
-  protected _options?: HeaderButton;
   protected _buttonElms: HTMLDivElement[] = [];
   protected _defaults = {
     buttonCssClass: 'slick-header-button',
@@ -46,6 +46,13 @@ export class HeaderButtonPlugin {
     this.init(sharedService.gridOptions.headerButton);
   }
 
+  get addonOptions(): HeaderButton {
+    return this._addonOptions as HeaderButton;
+  }
+  set addonOptions(newOptions: HeaderButton) {
+    this._addonOptions = newOptions;
+  }
+
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
   }
@@ -54,16 +61,9 @@ export class HeaderButtonPlugin {
     return this.sharedService.slickGrid;
   }
 
-  get options(): HeaderButton {
-    return this._options as HeaderButton;
-  }
-  set options(newOptions: HeaderButton) {
-    this._options = newOptions;
-  }
-
   /** Initialize plugin. */
   init(headerButtonOptions?: HeaderButton) {
-    this._options = { ...this._defaults, ...headerButtonOptions };
+    this._addonOptions = { ...this._defaults, ...headerButtonOptions };
 
     const onHeaderCellRenderedHandler = this.grid.onHeaderCellRendered;
     (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onHeaderCellRenderedHandler>>).subscribe(onHeaderCellRenderedHandler, this.handleHeaderCellRendered.bind(this));
@@ -110,12 +110,12 @@ export class HeaderButtonPlugin {
 
         // when the override is defined, we need to use its result to update the disabled property
         // so that 'handleMenuItemCommandClick' has the correct flag and won't trigger a command clicked event
-        if (Object.prototype.hasOwnProperty.call(button, 'itemUsabilityOverride')) {
+        if (typeof button === 'object' && button.itemUsabilityOverride) {
           button.disabled = isItemUsable ? false : true;
         }
 
         const buttonDivElm = document.createElement('div');
-        buttonDivElm.className = this._options?.buttonCssClass ?? '';
+        buttonDivElm.className = this._addonOptions?.buttonCssClass ?? '';
 
         if (button.disabled) {
           buttonDivElm.classList.add('slick-header-button-disabled');
@@ -162,11 +162,11 @@ export class HeaderButtonPlugin {
   protected handleBeforeHeaderCellDestroy(_e: Event, args: { column: Column; node: HTMLElement; }) {
     const column = args.column;
 
-    if (column.header?.buttons && this._options?.buttonCssClass) {
+    if (column.header?.buttons && this._addonOptions?.buttonCssClass) {
       // Removing buttons will also clean up any event handlers and data.
       // NOTE: If you attach event handlers directly or using a different framework,
       //       you must also clean them up here to avoid memory leaks.
-      const buttonCssClass = (this._options?.buttonCssClass || '').replace(/(\s+)/g, '.');
+      const buttonCssClass = (this._addonOptions?.buttonCssClass || '').replace(/(\s+)/g, '.');
       if (buttonCssClass) {
         args.node.querySelectorAll(`.${buttonCssClass}`).forEach(elm => elm.remove());
       }
@@ -192,9 +192,9 @@ export class HeaderButtonPlugin {
         button.action.call(this, event, callbackArgs);
       }
 
-      if (command !== null && !button.disabled && this._options?.onCommand) {
+      if (command !== null && !button.disabled && this._addonOptions?.onCommand) {
         this.pubSubService.publish('headerButton:onCommand', callbackArgs);
-        this._options.onCommand(event as any, callbackArgs);
+        this._addonOptions.onCommand(event as any, callbackArgs);
 
         // Update the header in case the user updated the button definition in the handler.
         this.grid.updateColumnHeader(columnDef.id);

@@ -824,7 +824,7 @@ describe('GridMenuControl', () => {
       it('should add a custom Grid Menu item with "iconImage" and expect an icon to be included on the item DOM element', () => {
         gridOptionsMock.gridMenu.customItems = [{ command: 'help', title: 'Help', iconImage: '/images/some-image.png' }];
         gridOptionsMock.gridMenu.iconCssClass = undefined;
-        gridOptionsMock.gridMenu.iconImage = '/images/some-gridmenu-image.png';
+        gridOptionsMock.gridMenu.iconImage = '/images/some-image.png';
 
         control.columns = columnsMock;
         control.init();
@@ -835,7 +835,7 @@ describe('GridMenuControl', () => {
         const helpIconElm = helpCommandElm.querySelector<HTMLInputElement>('.slick-gridmenu-icon');
         const helpTextElm = helpCommandElm.querySelector<HTMLInputElement>('.slick-gridmenu-content');
 
-        expect(buttonImageElm.src).toBe('/images/some-gridmenu-image.png');
+        expect(buttonImageElm.src).toBe('/images/some-image.png');
         expect(helpTextElm.textContent).toBe('Help');
         expect(helpIconElm.style.backgroundImage).toBe('url(/images/some-image.png)')
         expect(consoleWarnSpy).toHaveBeenCalledWith('[Slickgrid-Universal] The "iconImage" property of a Grid Menu item is now deprecated and will be removed in future version, consider using "iconCssClass" instead.');

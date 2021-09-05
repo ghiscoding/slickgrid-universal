@@ -88,18 +88,18 @@ describe('HeaderButton Plugin', () => {
   it('should use default options when instantiating the plugin without passing any arguments', () => {
     plugin.init();
 
-    expect(plugin.options).toEqual({
+    expect(plugin.addonOptions).toEqual({
       buttonCssClass: 'slick-header-button',
     });
   });
 
   it('should be able to change Header Button options', () => {
     plugin.init();
-    plugin.options = {
+    plugin.addonOptions = {
       buttonCssClass: 'some-class'
     }
 
-    expect(plugin.options).toEqual({
+    expect(plugin.addonOptions).toEqual({
       buttonCssClass: 'some-class',
     });
   });
@@ -232,14 +232,14 @@ describe('HeaderButton Plugin', () => {
 
       plugin.dispose();
       plugin.init();
-      columnsMock[0].header.buttons[1].image = '/images/some-gridmenu-image.png';
+      columnsMock[0].header.buttons[1].image = '/images/some-image.png';
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
 
       // add Header Buttons which are visible (2x buttons)
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-button mdi mdi-lightbulb-on" style="background-image: url(/images/some-gridmenu-image.png);" title="Highlight negative numbers."></div>
+        `<div class="slick-header-button mdi mdi-lightbulb-on" style="background-image: url(/images/some-image.png);" title="Highlight negative numbers."></div>
           <div class="slick-header-button mdi mdi-lightbulb-outline"></div>`));
       expect(consoleWarnSpy).toHaveBeenCalledWith('[Slickgrid-Universal] The "image" property of a Header Button is now deprecated and will be removed in future version, consider using "cssClass" instead.');
     });
@@ -310,7 +310,7 @@ describe('HeaderButton Plugin', () => {
 
       plugin.dispose();
       plugin.init();
-      plugin.options.onCommand = onCommandMock;
+      plugin.addonOptions.onCommand = onCommandMock;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);

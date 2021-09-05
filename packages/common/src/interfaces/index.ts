@@ -105,6 +105,7 @@ export * from './longTextEditorOption.interface';
 export * from './menuCallbackArgs.interface';
 export * from './menuCommandItem.interface';
 export * from './menuCommandItemCallbackArgs.interface';
+export * from './menuFromCellCallbackArgs.interface';
 export * from './menuItem.interface';
 export * from './menuOptionItem.interface';
 export * from './menuOptionItemCallbackArgs.interface';

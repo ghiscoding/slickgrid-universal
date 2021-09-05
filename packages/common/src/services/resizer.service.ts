@@ -11,7 +11,7 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
-import { getHtmlElementOffset, sanitizeHtmlToText, } from '../services/utilities';
+import { getHtmlElementOffset, sanitizeHtmlToText, } from '../services/index';
 import { parseFormatterWhenExist } from '../formatters/formatterUtilities';
 import { PubSubService, } from '../services/pubSub.service';
 

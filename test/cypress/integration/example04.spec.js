@@ -4,6 +4,7 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
   // NOTE:  everywhere there's a * 2 is because we have a top+bottom (frozen rows) containers even after Unfreeze Columns/Rows
 
   const fullTitles = ['', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
+  const GRID_ROW_HEIGHT = 45;
 
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseExampleUrl')}/example04`);
@@ -217,5 +218,47 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
 
     cy.get('.grid-canvas-left > [style="top:0px"] > .slick-cell:nth(3)').should('contain', '2009-01-01');
     cy.get('.grid-canvas-left > [style="top:0px"] > .slick-cell:nth(4)').should('contain', '2009-05-05');
+  });
+
+  it('should open the Cell Menu on 2nd and 3rd row and change the Effort-Driven to "True" and expect the cell to be updated and have checkmark icon', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', 'Task 1');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(8)`).find('.checkmark-icon').should('have.length', 0);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(1)`).should('contain', 'Task 2');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(8)`).find('.checkmark-icon').should('have.length', 0);
+
+    cy.get('.grid4').find(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(8)`).contains('Action').click({ force: true });
+    cy.get('.slick-cell-menu .slick-cell-menu-option-list .slick-cell-menu-item').contains('True').click();
+    cy.get('.grid4').find(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(8)`).contains('Action').click({ force: true });
+    cy.get('.slick-cell-menu .slick-cell-menu-option-list .slick-cell-menu-item').contains('True').click();
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(5)`).find('.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(5)`).find('.checkmark-icon').should('have.length', 1);
+  });
+
+  it('should open the Cell Menu on 2nd and 3rd row and change the Effort-Driven to "False" and expect the cell to be updated and no longer have checkmark', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(5)`).find('.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(5)`).find('.checkmark-icon').should('have.length', 1);
+
+    cy.get('.grid4').find(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(8)`).contains('Action').click({ force: true });
+    cy.get('.slick-cell-menu .slick-cell-menu-option-list .slick-cell-menu-item').contains('False').click();
+    cy.get('.grid4').find(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(8)`).contains('Action').click({ force: true });
+    cy.get('.slick-cell-menu .slick-cell-menu-option-list .slick-cell-menu-item').contains('False').click();
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(5)`).find('.checkmark-icon').should('have.length', 0);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(5)`).find('.checkmark-icon').should('have.length', 0);
+  });
+
+  it('should open the Cell Menu and delete Row 3 and 4 from the Cell Menu', () => {
+    const confirmStub = cy.stub();
+    cy.on('window:confirm', confirmStub);
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1)`).should('contain', 'Task 3');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(1)`).should('contain', 'Task 4');
+
+    cy.get('.grid4').find(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(8)`).contains('Action').click({ force: true });
+    cy.get('.slick-cell-menu .slick-cell-menu-command-list .slick-cell-menu-item').contains('Delete Row').click()
+      .then(() => expect(confirmStub.getCall(0)).to.be.calledWith('Do you really want to delete row (4) with "Task 3"?'));
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1)`).should('contain', 'Task 4');
   });
 });

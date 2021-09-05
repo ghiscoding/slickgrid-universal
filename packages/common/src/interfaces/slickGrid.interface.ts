@@ -123,20 +123,20 @@ export interface SlickGrid {
   getCellCssStyles(key: string): any;
 
   /** Returns the active cell editor. If there is no actively edited cell, null is returned.   */
-  getCellEditor(): Editor;
+  getCellEditor(): Editor | null;
 
   /**
    * Returns a hash containing row and cell indexes from a standard W3C/jQuery event.
    * @param e A standard W3C/jQuery event.
    */
-  getCellFromEvent(e: Event): any;
+  getCellFromEvent(e: Event): { cell: number; row: number; } | null;
 
   /**
    * Returns a hash containing row and cell indexes. Coordinates are relative to the top left corner of the grid beginning with the first row (not including the column headers).
    * @param x An x coordinate.
    * @param y A y coordinate.
    */
-  getCellFromPoint(x: number, y: number): any;
+  getCellFromPoint(x: number, y: number): { cell: number; row: number; };
 
   /**
    * Returns a DOM element containing a cell at a given row and cell.

@@ -79,13 +79,13 @@ export function handleColumnPickerItemClick(this: ColumnPickerControl | GridMenu
 
     // execute user callback when defined
     context.pubSubService.publish(`${controlType}:onColumnsChanged`, callbackArgs);
-    if (typeof context.controlOptions?.onColumnsChanged === 'function') {
-      context.controlOptions.onColumnsChanged(event, callbackArgs);
+    if (typeof context.addonOptions?.onColumnsChanged === 'function') {
+      context.addonOptions.onColumnsChanged(event, callbackArgs);
     }
   }
 }
 
-export function populateColumnPicker(this: ColumnPickerControl | GridMenuControl, controlOptions: ColumnPickerOption | GridMenuOption) {
+export function populateColumnPicker(this: ColumnPickerControl | GridMenuControl, addonOptions: ColumnPickerOption | GridMenuOption) {
   const context: any = this;
   const menuPrefix = context instanceof GridMenuControl ? 'gridmenu-' : '';
 
@@ -105,7 +105,7 @@ export function populateColumnPicker(this: ColumnPickerControl | GridMenuControl
     columnLiElm.appendChild(colInputElm);
     context._columnCheckboxes.push(colInputElm);
 
-    const headerColumnValueExtractorFn = typeof controlOptions?.headerColumnValueExtractor === 'function' ? controlOptions.headerColumnValueExtractor : context._defaults.headerColumnValueExtractor;
+    const headerColumnValueExtractorFn = typeof addonOptions?.headerColumnValueExtractor === 'function' ? addonOptions.headerColumnValueExtractor : context._defaults.headerColumnValueExtractor;
     const columnLabel = headerColumnValueExtractorFn!(column, context.gridOptions);
 
     const labelElm = document.createElement('label');
@@ -115,12 +115,12 @@ export function populateColumnPicker(this: ColumnPickerControl | GridMenuControl
     context._listElm.appendChild(columnLiElm);
   }
 
-  if (!controlOptions.hideForceFitButton || !controlOptions.hideSyncResizeButton) {
+  if (!addonOptions.hideForceFitButton || !addonOptions.hideSyncResizeButton) {
     context._listElm.appendChild(document.createElement('hr'));
   }
 
-  if (!(controlOptions?.hideForceFitButton)) {
-    const forceFitTitle = controlOptions?.forceFitTitle;
+  if (!(addonOptions?.hideForceFitButton)) {
+    const forceFitTitle = addonOptions?.forceFitTitle;
 
     const fitInputElm = document.createElement('input');
     fitInputElm.type = 'checkbox';
@@ -140,8 +140,8 @@ export function populateColumnPicker(this: ColumnPickerControl | GridMenuControl
     context._listElm.appendChild(fitLiElm);
   }
 
-  if (!(controlOptions?.hideSyncResizeButton)) {
-    const syncResizeTitle = (controlOptions?.syncResizeTitle) || controlOptions.syncResizeTitle;
+  if (!(addonOptions?.hideSyncResizeButton)) {
+    const syncResizeTitle = (addonOptions?.syncResizeTitle) || addonOptions.syncResizeTitle;
     const labelElm = document.createElement('label');
     labelElm.htmlFor = `${context._gridUid}-${menuPrefix}colpicker-syncresize`;
     labelElm.textContent = syncResizeTitle ?? '';
