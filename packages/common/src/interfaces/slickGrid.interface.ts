@@ -123,20 +123,20 @@ export interface SlickGrid {
   getCellCssStyles(key: string): any;
 
   /** Returns the active cell editor. If there is no actively edited cell, null is returned.   */
-  getCellEditor(): Editor;
+  getCellEditor(): Editor | null;
 
   /**
    * Returns a hash containing row and cell indexes from a standard W3C/jQuery event.
    * @param e A standard W3C/jQuery event.
    */
-  getCellFromEvent(e: Event): any;
+  getCellFromEvent(e: Event): { cell: number; row: number; } | null;
 
   /**
    * Returns a hash containing row and cell indexes. Coordinates are relative to the top left corner of the grid beginning with the first row (not including the column headers).
    * @param x An x coordinate.
    * @param y A y coordinate.
    */
-  getCellFromPoint(x: number, y: number): any;
+  getCellFromPoint(x: number, y: number): { cell: number; row: number; };
 
   /**
    * Returns a DOM element containing a cell at a given row and cell.
@@ -246,7 +246,7 @@ export interface SlickGrid {
   getSelectionModel(): SlickCellSelectionModel | SlickRowSelectionModel;
 
   /** Get sorted columns **/
-  getSortColumns(): Array<SingleColumnSort | MultiColumnSort>;
+  getSortColumns(): ColumnSort[];
 
   /** Get Top Panel DOM element */
   getTopPanel(): HTMLElement;
@@ -498,6 +498,7 @@ export interface SlickGrid {
   onBeforeHeaderRowCellDestroy: SlickEvent<OnBeforeHeaderRowCellDestroyEventArgs>;
   onBeforeFooterRowCellDestroy: SlickEvent<OnBeforeFooterRowCellDestroyEventArgs>;
   onBeforeSetColumns: SlickEvent<OnBeforeSetColumnsEventArgs>;
+  onBeforeSort: SlickEvent<SingleColumnSort | MultiColumnSort>;
   onCellChange: SlickEvent<OnCellChangeEventArgs>;
   onCellCssStylesChanged: SlickEvent<OnCellCssStylesChangedEventArgs>;
   onClick: SlickEvent<OnClickEventArgs>;
@@ -530,7 +531,7 @@ export interface SlickGrid {
   onSelectedRowsChanged: SlickEvent<OnSelectedRowsChangedEventArgs>;
   onSetOptions: SlickEvent<OnSetOptionsEventArgs>;
   onScroll: SlickEvent<OnScrollEventArgs>;
-  onSort: SlickEvent<SingleColumnSort | MultiColumnSort | ColumnSort | ColumnSort[]>;
+  onSort: SlickEvent<SingleColumnSort | MultiColumnSort>;
 }
 
 export interface SlickGridEventData { grid: SlickGrid; }

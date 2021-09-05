@@ -493,8 +493,18 @@ describe('SortService', () => {
       expect(() => service.onBackendSortChanged(undefined, { multiColumnSort: true, grid: gridStub, sortCols: [] })).toThrowError('BackendServiceApi requires at least a "process" function and a "service" defined');
     });
 
-    it('should execute the "onError" method when the Promise throws an error', (done) => {
+    it('should execute the "onError" method when the Promise throws an error & also execute internal "errorCallback" to reapply previous sort icons+query', (done) => {
+      const columnsMock = [{ id: 'lastName', field: 'lastName', width: 100 }, { id: 'birthday', field: 'birthday' },];
+      const mockSortedCol = { columnId: 'lastName', sortCol: columnsMock[0], sortAsc: true } as ColumnSort;
+      const mockPreviousSortedCol = { columnId: 'birthday', sortCol: columnsMock[1], sortAsc: false } as ColumnSort;
+      gridOptionMock.backendServiceApi = {
+        service: backendServiceStub,
+        process: () => new Promise((resolve) => resolve(jest.fn())),
+      };
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+      const backendUpdateSpy = jest.spyOn(backendServiceStub, 'updateSorters');
       const errorExpected = 'promise error';
+      const applySortIconSpy = jest.spyOn(gridStub, 'setSortColumns');
       gridOptionMock.backendServiceApi!.process = () => Promise.reject(errorExpected);
       gridOptionMock.backendServiceApi!.onError = (_e) => jest.fn();
       const spyOnError = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'onError');
@@ -502,10 +512,12 @@ describe('SortService', () => {
       jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'process');
 
       service.bindBackendOnSort(gridStub);
-      service.onBackendSortChanged(undefined, { multiColumnSort: true, sortCols: [], grid: gridStub });
+      service.onBackendSortChanged(undefined, { multiColumnSort: true, sortCols: [mockSortedCol], previousSortColumns: [mockPreviousSortedCol], grid: gridStub });
 
       setTimeout(() => {
         expect(spyOnError).toHaveBeenCalledWith(errorExpected);
+        expect(applySortIconSpy).toHaveBeenCalledWith([mockPreviousSortedCol]);
+        expect(backendUpdateSpy).toHaveBeenCalledWith([mockPreviousSortedCol]);
         done();
       }, 0);
     });

@@ -21,14 +21,15 @@ module.exports = ({ production } = {}) => ({
   },
   target: production ? 'browserslist' : 'web',
   devServer: {
-    contentBase: production ? outDirProd : outDirLocal,
+    static: {
+      directory: production ? outDirProd : outDirLocal,
+    },
     historyApiFallback: true,
     compress: true,
-    hot: true,
     liveReload: false,
     port: 8888,
     host: 'localhost',
-    open: true,
+    // open: true,
   },
   devtool: production ? false : 'eval-cheap-module-source-map',
   output: {

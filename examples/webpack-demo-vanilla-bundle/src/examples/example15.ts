@@ -21,13 +21,17 @@ export class Example15 {
   odataVersion = 2;
   odataQuery = '';
   processing = false;
+  errorStatus = '';
+  errorStatusClass = '';
   status = '';
   statusClass = 'is-success';
   isOtherGenderAdded = false;
+  isPageErrorTest = false;
   genderCollection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
   constructor() {
     this._bindingEventService = new BindingEventService();
+    this.resetAllStatus();
   }
 
   attached() {
@@ -45,6 +49,14 @@ export class Example15 {
       this.sgb?.dispose();
     }
     this._bindingEventService.unbindAll();
+    this.resetAllStatus();
+  }
+
+  resetAllStatus() {
+    this.status = '';
+    this.errorStatus = '';
+    this.statusClass = 'is-success';
+    this.errorStatusClass = 'hidden';
   }
 
   initializeGrid() {
@@ -72,7 +84,7 @@ export class Example15 {
           }
         }
       },
-      { id: 'company', name: 'Company', field: 'company' },
+      { id: 'company', name: 'Company', field: 'company', filterable: true, sortable: true },
     ];
 
     this.gridOptions = {
@@ -97,7 +109,7 @@ export class Example15 {
       enableRowSelection: true,
       enablePagination: true, // you could optionally disable the Pagination
       pagination: {
-        pageSizes: [10, 20, 50, 100, 500],
+        pageSizes: [10, 20, 50, 100, 500, 50000],
         pageSize: defaultPageSize,
       },
       presets: {
@@ -118,7 +130,16 @@ export class Example15 {
           enableCount: this.isCountEnabled, // add the count in the OData query, which will return a property named "odata.count" (v2) or "@odata.count" (v4)
           version: this.odataVersion        // defaults to 2, the query string is slightly different between OData 2 and 4
         },
-        preProcess: () => this.displaySpinner(true),
+        onError: (error: Error) => {
+          this.errorStatus = error.message;
+          this.errorStatusClass = 'visible notification is-light is-danger is-small is-narrow';
+          this.displaySpinner(false, true);
+        },
+        preProcess: () => {
+          this.errorStatus = '';
+          this.errorStatusClass = 'hidden';
+          this.displaySpinner(true);
+        },
         process: (query) => this.getCustomerApiCall(query),
         postProcess: (response) => {
           this.metrics = response.metrics;
@@ -160,10 +181,14 @@ export class Example15 {
     this.isOtherGenderAdded = true;
   }
 
-  displaySpinner(isProcessing) {
+  displaySpinner(isProcessing, isError?: boolean) {
     this.processing = isProcessing;
     this.status = (isProcessing) ? 'loading...' : 'finished!!';
     this.statusClass = (isProcessing) ? 'notification is-light is-warning' : 'notification is-light is-success';
+    if (isError) {
+      this.status = 'ERROR!!!';
+      this.statusClass = 'notification is-light is-danger';
+    }
   }
 
   getCustomerCallback(data) {
@@ -203,9 +228,17 @@ export class Example15 {
       let countTotalItems = 100;
       const columnFilters = {};
 
+      if (this.isPageErrorTest) {
+        this.isPageErrorTest = false;
+        throw new Error('Server timed out trying to retrieve data for the last page');
+      }
+
       for (const param of queryParams) {
         if (param.includes('$top=')) {
           top = +(param.substring('$top='.length));
+          if (top === 50000) {
+            throw new Error('Server timed out retrieving 50,000 rows');
+          }
         }
         if (param.includes('$skip=')) {
           skip = +(param.substring('$skip='.length));
@@ -242,7 +275,17 @@ export class Example15 {
             const fieldName = filterMatch[1].trim();
             columnFilters[fieldName] = { type: 'ends', term: filterMatch[2].trim() };
           }
+
+          // simular a backend error when trying to sort on the "Company" field
+          if (filterBy.includes('company')) {
+            throw new Error('Server could not filter using the field "Company"');
+          }
         }
+      }
+
+      // simular a backend error when trying to sort on the "Company" field
+      if (orderBy.includes('company')) {
+        throw new Error('Server could not sort using the field "Company"');
       }
 
       const sort = orderBy.includes('asc')
@@ -342,6 +385,11 @@ export class Example15 {
     this.sgb?.sortService.updateSorting([
       { columnId: 'name', direction: 'DESC' },
     ]);
+  }
+
+  throwPageChangeError() {
+    this.isPageErrorTest = true;
+    this.sgb.paginationService.goToLastPage();
   }
 
   // THE FOLLOWING METHODS ARE ONLY FOR DEMO PURPOSES DO NOT USE THIS CODE

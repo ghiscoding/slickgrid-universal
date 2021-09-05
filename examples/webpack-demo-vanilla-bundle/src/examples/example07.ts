@@ -65,6 +65,35 @@ export class Example7 {
         id: 'title', nameKey: 'TITLE', field: 'title', filterable: true, editor: { model: Editors.longText, required: true, alwaysSaveOnEnterKey: true },
       },
       {
+        id: 'action', name: 'Action', field: 'action', minWidth: 60, maxWidth: 60,
+        excludeFromExport: true, excludeFromHeaderMenu: true,
+        formatter: () => `<div class="button-style margin-auto" style="width: 35px; margin-top: -1px;"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
+        cellMenu: {
+          commandTitleKey: 'COMMANDS',
+          commandItems: [
+            {
+              command: 'command1', titleKey: 'DELETE_ROW',
+              iconCssClass: 'mdi mdi-close color-danger', cssClass: 'has-text-danger', textCssClass: 'bold',
+              action: (_e, args) => {
+                if (confirm(`Do you really want to delete row (${args.row + 1}) with "${args.dataContext.title}"?`)) {
+                  this.sgb?.gridService.deleteItemById(args.dataContext.id);
+                }
+              }
+            },
+            'divider',
+            {
+              command: 'help', titleKey: 'HELP', iconCssClass: 'mdi mdi-help-circle',
+              action: () => alert('Please help!')
+            },
+          ],
+          optionTitleKey: 'CHANGE_COMPLETED_FLAG',
+          optionItems: [
+            { option: true, titleKey: 'TRUE', iconCssClass: 'mdi mdi-check-box-outline', action: (e, args) => this.changeCompletedOption(args.dataContext, args.item.option) },
+            { option: false, titleKey: 'FALSE', iconCssClass: 'mdi mdi-checkbox-blank-outline', action: (e, args) => this.changeCompletedOption(args.dataContext, args.item.option) },
+          ]
+        }
+      },
+      {
         id: 'duration', nameKey: 'DURATION', field: 'duration', sortable: true, filterable: true,
         type: 'number', editor: { model: Editors.text, alwaysSaveOnEnterKey: true, },
         formatter: (_row: number, _cell: number, value: any) => value > 1 ? `${value} days` : `${value} day`,
@@ -86,7 +115,7 @@ export class Example7 {
         editor: { model: Editors.date }, type: FieldType.dateIso, saveOutputType: FieldType.dateUtc,
       },
       {
-        id: 'effort-driven', nameKey: 'COMPLETED', field: 'effortDriven', formatter: Formatters.checkmarkMaterial,
+        id: 'completed', nameKey: 'COMPLETED', field: 'completed', formatter: Formatters.checkmarkMaterial,
         filterable: true, sortable: true,
         filter: {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
@@ -196,6 +225,7 @@ export class Example7 {
         exportWithFormatter: true,
         sanitizeDataExport: true
       },
+      enableCellMenu: true,
       enableFiltering: true,
       enableTranslate: true,
       translater: this.translateService, // pass the TranslateService instance to the grid
@@ -276,6 +306,14 @@ export class Example7 {
     this.sgb.filterService.clearFilters();
   }
 
+  changeCompletedOption(dataContext: any, newValue: boolean) {
+    console.log('change', dataContext, newValue)
+    if (dataContext && dataContext.hasOwnProperty('completed')) {
+      dataContext.completed = newValue;
+      this.sgb?.gridService.updateItem(dataContext);
+    }
+  }
+
   /** Delete last inserted row */
   deleteItem() {
     const requisiteColumnDef = this.columnDefinitions.find((column: Column) => column.id === 'prerequisites');
@@ -303,7 +341,7 @@ export class Example7 {
         percentComplete: Math.round(Math.random() * 100),
         start: new Date(2009, 0, 1),
         finish: new Date(2009, 0, 5),
-        effortDriven: (i % 5 === 0),
+        completed: (i % 5 === 0),
         prerequisites: (i % 2 === 0) && i !== 0 && i < 50 ? [i, i - 1] : [],
       });
     }

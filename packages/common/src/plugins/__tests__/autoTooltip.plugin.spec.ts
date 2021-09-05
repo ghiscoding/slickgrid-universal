@@ -4,7 +4,7 @@ import { AutoTooltipPlugin } from '../autoTooltip.plugin';
 
 declare const Slick: SlickNamespace;
 
-let pluginOptions: AutoTooltipOption = {
+let addonOptions: AutoTooltipOption = {
   enableForCells: true,
   enableForHeaderCells: true,
   maxToolTipLength: 20,
@@ -33,7 +33,7 @@ describe('AutoTooltip Plugin', () => {
   let plugin: AutoTooltipPlugin;
 
   beforeEach(() => {
-    plugin = new AutoTooltipPlugin(pluginOptions);
+    plugin = new AutoTooltipPlugin(addonOptions);
   });
 
   it('should create the plugin', () => {
@@ -44,7 +44,7 @@ describe('AutoTooltip Plugin', () => {
   it('should use default options when instantiating the plugin without passing any arguments', () => {
     plugin.init(gridStub);
 
-    expect(plugin.options).toEqual({
+    expect(plugin.addonOptions).toEqual({
       enableForCells: true,
       enableForHeaderCells: true,
       maxToolTipLength: 20,

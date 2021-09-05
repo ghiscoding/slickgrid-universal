@@ -239,6 +239,7 @@ export const GlobalGridOptions: GridOption = {
   rowHeight: 35,
   topPanelHeight: 30,
   translationNamespaceSeparator: ':',
+  resetFilterSearchValueAfterOnBeforeCancellation: true,
   resizeByContentOnlyOnFirstLoad: true,
   resizeByContentOptions: {
     alwaysRecalculateColumnWidth: false,

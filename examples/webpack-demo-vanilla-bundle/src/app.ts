@@ -92,7 +92,7 @@ export class App {
   }
 
   loadRoute(routeName: string, changeBrowserState = true) {
-    this.disposeAll(); // dispose all previous ViewModel before creating any new one
+    this.disposeAll(); // dispose all previous ViewModel & bindings before creating any new one
 
     if (this.renderer && routeName) {
       const mapRoute = this.routerConfig.routes.find((map) => map.route === routeName);
@@ -108,6 +108,7 @@ export class App {
         };
       }
 
+      // then load the new View
       this.renderer.loadView(require(`${mapRoute.moduleId}.html`));
       if (viewModel?.attached && this.renderer.className) {
         this.viewModelObj[this.renderer.className] = viewModel;

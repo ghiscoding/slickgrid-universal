@@ -49,6 +49,7 @@ const gridStub = {
   getColumnIndex: jest.fn(),
   getContainerNode: jest.fn(),
   getGridPosition: jest.fn(),
+  getUID: () => 'slickgrid12345',
   getOptions: () => gridOptionsMock,
   registerPlugin: jest.fn(),
   setColumns: jest.fn(),
@@ -142,7 +143,7 @@ describe('HeaderMenu Plugin', () => {
   it('should use default options when instantiating the plugin without passing any arguments', () => {
     plugin.init();
 
-    expect(plugin.options).toEqual({
+    expect(plugin.addonOptions).toEqual({
       autoAlign: true,
       autoAlignOffset: 0,
       buttonCssClass: null,
@@ -156,11 +157,11 @@ describe('HeaderMenu Plugin', () => {
 
   it('should be able to change Header Menu options', () => {
     plugin.init();
-    plugin.options = {
+    plugin.addonOptions = {
       buttonCssClass: 'some-class'
     };
 
-    expect(plugin.options).toEqual({
+    expect(plugin.addonOptions).toEqual({
       buttonCssClass: 'some-class',
     });
   });
@@ -189,7 +190,7 @@ describe('HeaderMenu Plugin', () => {
       plugin.dispose();
     });
 
-    it('should populate a Header Menu with extra button css classes when header menu option "buttonCssClass" and cell is being rendered', () => {
+    it('should populate a Header Menu button with extra button css classes when header menu option "buttonCssClass" and cell is being rendered', () => {
       plugin.dispose();
       plugin.init({ buttonCssClass: 'mdi mdi-chevron-down' });
       (columnsMock[0].header.menu.items[1] as MenuCommandItem).itemVisibilityOverride = () => undefined;
@@ -201,7 +202,7 @@ describe('HeaderMenu Plugin', () => {
         `<div class="slick-header-menubutton mdi mdi-chevron-down"></div>`));
     });
 
-    it('should populate a Header Menu with extra button image when header menu option "buttonImage" and cell is being rendered', () => {
+    it('should populate a Header Menu button with extra button image when header menu option "buttonImage" and cell is being rendered', () => {
       plugin.dispose();
       plugin.init({ buttonImage: '/image.png' });
       (columnsMock[0].header.menu.items[1] as MenuCommandItem).itemVisibilityOverride = () => undefined;
@@ -213,7 +214,7 @@ describe('HeaderMenu Plugin', () => {
         `<div class="slick-header-menubutton" style="background-image: url(/image.png);"></div>`));
     });
 
-    it('should populate a Header Menu with extra tooltip title attribute when header menu option "tooltip" and cell is being rendered', () => {
+    it('should populate a Header Menu button with extra tooltip title attribute when header menu option "tooltip" and cell is being rendered', () => {
       plugin.dispose();
       plugin.init({ tooltip: 'some tooltip text' });
       (columnsMock[0].header.menu.items[1] as MenuCommandItem).itemVisibilityOverride = () => undefined;
@@ -343,7 +344,7 @@ describe('HeaderMenu Plugin', () => {
     it('should populate a Header Menu and a 2nd button and property "iconImage" is filled and expect button to include an image background', () => {
       plugin.dispose();
       plugin.init();
-      (columnsMock[0].header.menu.items[1] as MenuCommandItem).iconImage = '/images/some-gridmenu-image.png';
+      (columnsMock[0].header.menu.items[1] as MenuCommandItem).iconImage = '/images/some-image.png';
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
@@ -354,7 +355,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
         `<div class="slick-header-menuitem mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers.">
-            <div class="slick-header-menuicon" style="background-image: url(/images/some-gridmenu-image.png);"></div>
+            <div class="slick-header-menuicon" style="background-image: url(/images/some-image.png);"></div>
             <span class="slick-header-menucontent"></span>
           </div>`
       ));
@@ -434,7 +435,7 @@ describe('HeaderMenu Plugin', () => {
 
       plugin.dispose();
       plugin.init();
-      plugin.options.onCommand = onCommandMock;
+      plugin.addonOptions.onCommand = onCommandMock;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
@@ -676,7 +677,7 @@ describe('HeaderMenu Plugin', () => {
         });
 
         plugin.init({ onAfterMenuShow: () => false });
-        const onAfterSpy = jest.spyOn(plugin.options, 'onAfterMenuShow').mockReturnValue(false);
+        const onAfterSpy = jest.spyOn(plugin.addonOptions, 'onAfterMenuShow').mockReturnValue(false);
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
         gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menubutton') as HTMLDivElement;

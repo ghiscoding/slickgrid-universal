@@ -5,6 +5,12 @@ import {
 } from './index';
 
 export interface CellMenuOption {
+  /** Defaults to "bottom", user can optionally force the Cell Menu drop to be aligned to the top or bottom. */
+  alignDropDirection?: 'top' | 'bottom';
+
+  /** Defaults to "right", user can optionally force the Cell Menu drop to be aligned to the left or right. */
+  alignDropSide?: 'left' | 'right';
+
   /** Defaults to true, Auto-align dropup or dropdown menu to the left or right depending on grid viewport available space */
   autoAdjustDrop?: boolean;
 

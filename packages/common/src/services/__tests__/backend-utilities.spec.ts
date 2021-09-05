@@ -127,6 +127,7 @@ describe('Backend Utility Service', () => {
   describe('executeBackendCallback method', () => {
     it('should expect that executeBackendProcessesCallback will be called after the process Observable resolves', (done) => {
       const subject = new Subject();
+      const successCallbackMock = jest.fn();
       const now = new Date();
       const query = `query { users (first:20,offset:0) { totalCount, nodes { id,name,gender,company } } }`;
       const processResult = {
@@ -139,9 +140,13 @@ describe('Backend Utility Service', () => {
       const executeProcessesSpy = jest.spyOn(service, 'executeBackendProcessesCallback');
 
       service.addRxJsResource(rxjsResourceStub);
-      service.executeBackendCallback(gridOptionMock.backendServiceApi, query, {}, now, 10, null, subject);
+      service.executeBackendCallback(gridOptionMock.backendServiceApi, query, {}, now, 10, {
+        successCallback: successCallbackMock,
+        httpCancelRequestSubject: subject as Subject<void>,
+      });
 
       setTimeout(() => {
+        expect(successCallbackMock).toHaveBeenCalled();
         expect(nextSpy).toHaveBeenCalled();
         expect(processSpy).toHaveBeenCalled();
         expect(executeProcessesSpy).toHaveBeenCalledWith(now, processResult, gridOptionMock.backendServiceApi, 10);
@@ -151,6 +156,7 @@ describe('Backend Utility Service', () => {
 
     it('should expect that onBackendError will be called after the process Observable throws an error', (done) => {
       const errorExpected = 'observable error';
+      const errorCallbackMock = jest.fn();
       const subject = new Subject();
       const now = new Date();
       service.onBackendError = jest.fn();
@@ -159,9 +165,13 @@ describe('Backend Utility Service', () => {
       const processSpy = jest.spyOn(gridOptionMock.backendServiceApi, 'process').mockReturnValue(throwError(errorExpected));
 
       service.addRxJsResource(rxjsResourceStub);
-      service.executeBackendCallback(gridOptionMock.backendServiceApi, query, {}, now, 10, null, subject);
+      service.executeBackendCallback(gridOptionMock.backendServiceApi, query, {}, now, 10, {
+        errorCallback: errorCallbackMock,
+        httpCancelRequestSubject: subject as Subject<void>,
+      });
 
       setTimeout(() => {
+        expect(errorCallbackMock).toHaveBeenCalled();
         expect(nextSpy).toHaveBeenCalled();
         expect(processSpy).toHaveBeenCalled();
         expect(service.onBackendError).toHaveBeenCalledWith(errorExpected, gridOptionMock.backendServiceApi);

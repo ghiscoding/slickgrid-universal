@@ -7,7 +7,6 @@ import { Column, Extension, ExtensionModel, GridOption, SlickRowSelectionModel, 
 import { ExtensionList, ExtensionName, SlickControlList, SlickPluginList } from '../enums/index';
 import {
   CellExternalCopyManagerExtension,
-  CellMenuExtension,
   CheckboxSelectorExtension,
   ContextMenuExtension,
   DraggableGroupingExtension,
@@ -19,7 +18,7 @@ import {
 } from '../extensions/index';
 import { SharedService } from './shared.service';
 import { TranslaterService } from './translater.service';
-import { AutoTooltipPlugin, HeaderButtonPlugin, HeaderMenuPlugin } from '../plugins/index';
+import { AutoTooltipPlugin, CellMenuPlugin, HeaderButtonPlugin, HeaderMenuPlugin } from '../plugins/index';
 import { ColumnPickerControl, GridMenuControl } from '../controls/index';
 import { FilterService } from './filter.service';
 import { PubSubService } from './pubSub.service';
@@ -32,6 +31,7 @@ interface ExtensionWithColumnIndexPosition {
 }
 
 export class ExtensionService {
+  protected _cellMenuPlugin?: CellMenuPlugin;
   protected _columnPickerControl?: ColumnPickerControl;
   protected _gridMenuControl?: GridMenuControl;
   protected _headerMenuPlugin?: HeaderMenuPlugin;
@@ -53,7 +53,6 @@ export class ExtensionService {
     protected readonly sortService: SortService,
 
     protected readonly cellExternalCopyExtension: CellExternalCopyManagerExtension,
-    protected readonly cellMenuExtension: CellMenuExtension,
     protected readonly checkboxSelectorExtension: CheckboxSelectorExtension,
     protected readonly contextMenuExtension: ContextMenuExtension,
     protected readonly draggableGroupingExtension: DraggableGroupingExtension,
@@ -152,10 +151,13 @@ export class ExtensionService {
       }
 
       // (Action) Cell Menu Plugin
-      if (this.gridOptions.enableCellMenu && this.cellMenuExtension && this.cellMenuExtension.register) {
-        const instance = this.cellMenuExtension.register();
-        if (instance) {
-          this._extensionList[ExtensionName.cellMenu] = { name: ExtensionName.cellMenu, class: this.cellMenuExtension, instance };
+      if (this.gridOptions.enableCellMenu) {
+        this._cellMenuPlugin = new CellMenuPlugin(this.extensionUtility, this.pubSubService, this.sharedService);
+        if (this._cellMenuPlugin) {
+          if (this.gridOptions.cellMenu?.onExtensionRegistered) {
+            this.gridOptions.cellMenu.onExtensionRegistered(this._cellMenuPlugin);
+          }
+          this._extensionList[ExtensionName.cellMenu] = { name: ExtensionName.cellMenu, class: this._cellMenuPlugin, instance: this._cellMenuPlugin };
         }
       }
 
@@ -357,9 +359,7 @@ export class ExtensionService {
 
   /** Translate the Cell Menu titles, we need to loop through all column definition to re-translate them */
   translateCellMenu() {
-    if (this.cellMenuExtension && this.cellMenuExtension.translateCellMenu) {
-      this.cellMenuExtension.translateCellMenu();
-    }
+    this._cellMenuPlugin?.translateCellMenu?.();
   }
 
   /** Translate the Column Picker and it's last 2 checkboxes */

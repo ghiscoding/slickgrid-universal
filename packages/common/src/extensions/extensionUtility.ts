@@ -1,5 +1,5 @@
 import { Constants } from '../constants';
-import { Column, GridOption, Locale, MenuCommandItem } from '../interfaces';
+import { Column, GridOption, Locale, MenuCommandItem, MenuOptionItem, } from '../interfaces';
 import { BackendUtilityService } from '../services/backendUtility.service';
 import { SharedService } from '../services/shared.service';
 import { TranslaterService } from '../services/translater.service';
@@ -111,7 +111,7 @@ export class ExtensionUtility {
   /** Run the Override function when it exists, if it returns True then it is usable/visible */
   runOverrideFunctionWhenExists<T = any>(overrideFn: ((args: any) => boolean) | undefined, args: T): boolean {
     if (typeof overrideFn === 'function') {
-      return overrideFn.call(this, args);
+      return !!(overrideFn.call(this, args));
     }
     return true;
   }
@@ -149,7 +149,7 @@ export class ExtensionUtility {
    * @param {Array<MenuCommandItem | String>} items - Menu Command Items array
    * @param {Object} gridOptions - Grid Options
    */
-  translateMenuItemsFromTitleKey(items: Array<MenuCommandItem | 'divider'>) {
+  translateMenuItemsFromTitleKey(items: Array<MenuCommandItem | MenuOptionItem | 'divider'>) {
     const translationPrefix = getTranslationPrefix(this.sharedService.gridOptions);
     for (const item of items) {
       if (typeof item === 'object' && item.titleKey) {

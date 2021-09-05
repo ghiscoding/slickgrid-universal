@@ -34,7 +34,6 @@ import {
   // extensions
   CheckboxSelectorExtension,
   CellExternalCopyManagerExtension,
-  CellMenuExtension,
   ContextMenuExtension,
   DraggableGroupingExtension,
   ExtensionUtility,
@@ -356,7 +355,6 @@ export class SlickVanillaGridBundle {
 
     // extensions
     const cellExternalCopyManagerExtension = new CellExternalCopyManagerExtension(this.extensionUtility, this.sharedService);
-    const cellMenuExtension = new CellMenuExtension(this.extensionUtility, this.sharedService, this.translaterService);
     const contextMenuExtension = new ContextMenuExtension(this.extensionUtility, this.sharedService, this.treeDataService, this.translaterService);
     const checkboxExtension = new CheckboxSelectorExtension(this.sharedService);
     const draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this.sharedService);
@@ -371,7 +369,6 @@ export class SlickVanillaGridBundle {
       this._eventPubSubService,
       this.sortService,
       cellExternalCopyManagerExtension,
-      cellMenuExtension,
       checkboxExtension,
       contextMenuExtension,
       draggableGroupingExtension,
@@ -739,11 +736,12 @@ export class SlickVanillaGridBundle {
       this.translaterService.addPubSubMessaging(this._eventPubSubService);
     }
 
-    // translate some of them on first load, then on each language change
+    // translate them all on first load, then on each language change
     if (gridOptions.enableTranslate) {
+      this.extensionService.translateAllExtensions();
+      this.translateCustomFooterTexts();
       this.translateColumnHeaderTitleKeys();
       this.translateColumnGroupKeys();
-      this.translateCustomFooterTexts();
     }
 
     // on locale change, we have to manually translate the Headers, GridMenu
@@ -760,35 +758,6 @@ export class SlickVanillaGridBundle {
         }
       })
     );
-
-    if (!this.customDataView) {
-      // bind external filter (backend) when available or default onFilter (dataView)
-      if (gridOptions.enableFiltering) {
-        this.filterService.init(grid);
-
-        // bind external filter (backend) unless specified to use the local one
-        if (gridOptions.backendServiceApi && !gridOptions.backendServiceApi.useLocalFiltering) {
-          this.filterService.bindBackendOnFilter(grid);
-        } else {
-          this.filterService.bindLocalOnFilter(grid);
-        }
-      }
-
-      // bind external sorting (backend) when available or default onSort (dataView)
-      if (gridOptions.enableSorting) {
-        // bind external sorting (backend) unless specified to use the local one
-        if (gridOptions.backendServiceApi && !gridOptions.backendServiceApi.useLocalSorting) {
-          this.sortService.bindBackendOnSort(grid);
-        } else {
-          this.sortService.bindLocalOnSort(grid);
-        }
-      }
-
-      // load any presets if any (after dataset is initialized)
-      this.loadColumnPresetsWhenDatasetInitialized();
-      this.loadFilterPresetsWhenDatasetInitialized();
-    }
-
 
     // if user set an onInit Backend, we'll run it right away (and if so, we also need to run preProcess, internalPostProcess & postProcess)
     if (gridOptions.backendServiceApi) {
@@ -819,6 +788,29 @@ export class SlickVanillaGridBundle {
             const dataViewEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions?.defaultSlickgridEventPrefix ?? '');
             return this._eventPubSubService.dispatchCustomEvent(dataViewEventName, { eventData: event, args });
           });
+        }
+      }
+
+      // after all events are exposed
+      // we can bind external filter (backend) when available or default onFilter (dataView)
+      if (gridOptions.enableFiltering) {
+        this.filterService.init(grid);
+
+        // bind external filter (backend) unless specified to use the local one
+        if (gridOptions.backendServiceApi && !gridOptions.backendServiceApi.useLocalFiltering) {
+          this.filterService.bindBackendOnFilter(grid);
+        } else {
+          this.filterService.bindLocalOnFilter(grid);
+        }
+      }
+
+      // bind external sorting (backend) when available or default onSort (dataView)
+      if (gridOptions.enableSorting) {
+        // bind external sorting (backend) unless specified to use the local one
+        if (gridOptions.backendServiceApi && !gridOptions.backendServiceApi.useLocalSorting) {
+          this.sortService.bindBackendOnSort(grid);
+        } else {
+          this.sortService.bindLocalOnSort(grid);
         }
       }
 
@@ -856,9 +848,13 @@ export class SlickVanillaGridBundle {
         this.sharedService.hasColumnsReordered = true;
         this.sharedService.visibleColumns = args.impactedColumns;
       });
+
+      // load any presets if any (after dataset is initialized)
+      this.loadColumnPresetsWhenDatasetInitialized();
+      this.loadFilterPresetsWhenDatasetInitialized();
     }
 
-    // does the user have a colspan callback?
+    // did the user add a colspan callback? If so, hook it into the DataView getItemMetadata
     if (gridOptions?.colspanCallback && dataView?.getItem && dataView?.getItemMetadata) {
       dataView.getItemMetadata = (rowNumber: number) => {
         let callbackResult = null;

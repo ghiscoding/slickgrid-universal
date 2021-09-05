@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 describe('Example 03 - Draggable Grouping', { retries: 1 }, () => {
-  const fullTitles = ['', 'Title', 'Duration', 'Cost', '% Complete', 'Start', 'Finish', 'Effort Driven', 'Action'];
+  const fullTitles = ['', 'Title', 'Duration', 'Cost', '% Complete', 'Start', 'Finish', 'Effort-Driven', 'Action'];
   const GRID_ROW_HEIGHT = 33;
 
   it('should display Example title', () => {
@@ -15,6 +15,21 @@ describe('Example 03 - Draggable Grouping', { retries: 1 }, () => {
       .find('.slick-header-columns')
       .children()
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+  });
+
+  it('should open the Cell Menu on 2nd and 3rd row and change the Effort-Driven to "True" and expect the cell to be updated and have checkmark to be enabled', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', 'Task 1');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(8)`).find('.checkmark-icon').should('have.length', 0);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(1)`).should('contain', 'Task 2');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(8)`).find('.checkmark-icon').should('have.length', 0);
+
+    cy.get('.grid3').find(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(8)`).contains('Action').click({ force: true });
+    cy.get('.slick-cell-menu .slick-cell-menu-option-list .slick-cell-menu-item').contains('True').click();
+    cy.get('.grid3').find(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(8)`).contains('Action').click({ force: true });
+    cy.get('.slick-cell-menu .slick-cell-menu-option-list .slick-cell-menu-item').contains('True').click();
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(7)`).find('.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(7)`).find('.checkmark-icon').should('have.length', 1);
   });
 
   describe('Grouping Tests', () => {
@@ -61,9 +76,9 @@ describe('Example 03 - Draggable Grouping', { retries: 1 }, () => {
       cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(2)`).should('contain', '0');
     });
 
-    it('should show 2 column titles (Duration, Effort Driven) shown in the pre-header section', () => {
+    it('should show 2 column titles (Duration, Effort-Driven) shown in the pre-header section', () => {
       cy.get('.slick-dropped-grouping:nth(0) div').contains('Duration');
-      cy.get('.slick-dropped-grouping:nth(1) div').contains('Effort Driven');
+      cy.get('.slick-dropped-grouping:nth(1) div').contains('Effort-Driven');
     });
 
     it('should be able to drag and swap grouped column titles inside the pre-header', () => {
@@ -72,7 +87,7 @@ describe('Example 03 - Draggable Grouping', { retries: 1 }, () => {
         .trigger('mousedown', 'bottom', { which: 1 });
 
       cy.get('.slick-dropped-grouping:nth(1) div')
-        .contains('Effort Driven')
+        .contains('Effort-Driven')
         .trigger('mousemove', 'bottomRight')
         .trigger('mouseup', 'bottomRight', { force: true });
     });

@@ -1,4 +1,3 @@
-import 'slickgrid/slick.compositeeditor.js';
 import * as assign_ from 'assign-deep';
 const assign = (assign_ as any)['default'] || assign_;
 
@@ -30,6 +29,7 @@ import {
   PlainFunc,
   sanitizeTextByAvailableSanitizer,
   setDeepValue,
+  SlickCompositeEditor,
   SlickDataView,
   SlickEventHandler,
   SlickGrid,
@@ -37,6 +37,7 @@ import {
   SortDirectionNumber,
   TranslaterService,
 } from '@slickgrid-universal/common';
+import { CompositeEditor } from './compositeEditor.factory';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -164,7 +165,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       throw new Error(`Composite Editor with column id "${columnId}" not found.`);
     }
 
-    if (editor && editor.setValue && Array.isArray(this._editorContainers)) {
+    if (typeof editor?.setValue === 'function' && Array.isArray(this._editorContainers)) {
       editor.setValue(newValue, true, triggerOnCompositeEditorChange);
       const editorContainerElm = (this._editorContainers as HTMLElement[]).find(editorElm => editorElm!.dataset!.editorid === columnId);
       const excludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
@@ -506,7 +507,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         this._editors = {};
         this._editorContainers = modalColumns.map(col => modalBodyElm.querySelector<HTMLDivElement>(`[data-editorid=${col.id}]`)) || [];
         this._compositeOptions = { destroy: this.disposeComponent.bind(this), modalType, validationMsgPrefix: '* ', formValues: {}, editors: this._editors };
-        const compositeEditor = new Slick.CompositeEditor(modalColumns, this._editorContainers, this._compositeOptions);
+        const compositeEditor = new (CompositeEditor as any)(modalColumns, this._editorContainers, this._compositeOptions) as SlickCompositeEditor;
         this.grid.editActiveCell(compositeEditor);
 
         // --
@@ -536,7 +537,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       }
       return this;
 
-    } catch (error) {
+    } catch (error: any) {
       this.dispose();
       const errorMsg = (typeof error === 'string') ? error : (error?.message ?? error?.body?.message ?? '');
       const errorCode = (typeof error === 'string') ? error : error?.status ?? error?.body?.status ?? errorMsg;
@@ -738,7 +739,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         // close the modal only when successful
         this.dispose();
       }
-    } catch (error) {
+    } catch (error: any) {
       const errorMsg = (typeof error === 'string') ? error : (error?.message ?? error?.body?.message ?? '');
       this.showValidationSummaryText(true, errorMsg);
     }

@@ -10,12 +10,13 @@ import {
   HeaderMenuOption,
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
+  MultiColumnSort,
   OnHeaderCellRenderedEventArgs,
   SlickEventHandler,
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
-import { arrayRemoveItemByIndex, emptyElement, getElementOffsetRelativeToParent, } from '../services/index';
+import { arrayRemoveItemByIndex, emptyElement, getElementOffsetRelativeToParent, hasData, } from '../services/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { FilterService } from '../services/filter.service';
@@ -39,11 +40,11 @@ declare const Slick: SlickNamespace;
  *   }];
  */
 export class HeaderMenuPlugin {
+  protected _addonOptions?: HeaderMenu;
   protected _activeHeaderColumnElm?: HTMLDivElement;
   protected _bindEventService: BindingEventService;
   protected _eventHandler!: SlickEventHandler;
-  protected _options?: HeaderMenu;
-  protected _menuElm?: HTMLDivElement;
+  protected _menuElm?: HTMLDivElement | null;
   protected _defaults = {
     autoAlign: true,
     autoAlignOffset: 0,
@@ -70,6 +71,13 @@ export class HeaderMenuPlugin {
     this.init(sharedService.gridOptions.headerMenu);
   }
 
+  get addonOptions(): HeaderMenu {
+    return this._addonOptions as HeaderMenu;
+  }
+  set addonOptions(newOptions: HeaderMenu) {
+    this._addonOptions = newOptions;
+  }
+
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
   }
@@ -78,20 +86,21 @@ export class HeaderMenuPlugin {
     return this.sharedService.slickGrid;
   }
 
-  get menuElement(): HTMLDivElement | undefined {
-    return this._menuElm;
+  /** Getter for the grid uid */
+  get gridUid(): string {
+    return this.grid?.getUID() ?? '';
+  }
+  get gridUidSelector(): string {
+    return this.gridUid ? `.${this.gridUid}` : '';
   }
 
-  get options(): HeaderMenu {
-    return this._options as HeaderMenu;
-  }
-  set options(newOptions: HeaderMenu) {
-    this._options = newOptions;
+  get menuElement(): HTMLDivElement | undefined | null {
+    return this._menuElm;
   }
 
   /** Initialize plugin. */
   init(headerMenuOptions?: HeaderMenu) {
-    this._options = { ...this._defaults, ...headerMenuOptions };
+    this._addonOptions = { ...this._defaults, ...headerMenuOptions };
 
     // when setColumns is called (could be via toggle filtering/sorting or anything else),
     // we need to recreate header menu items custom commands array before the `onHeaderCellRendered` gets called
@@ -118,8 +127,8 @@ export class HeaderMenuPlugin {
     this._eventHandler?.unsubscribeAll();
     this._bindEventService.unbindAll();
     this.pubSubService.unsubscribeAll();
+    this._menuElm = this._menuElm || document.body.querySelector(`.slick-header-menu${this.gridUidSelector}`);
     this._menuElm?.remove();
-    this._menuElm = undefined;
     this._activeHeaderColumnElm = undefined;
   }
 
@@ -164,7 +173,7 @@ export class HeaderMenuPlugin {
     // execute optional callback method defined by the user, if it returns false then we won't go further and not open the grid menu
     if (typeof e.stopPropagation === 'function') {
       this.pubSubService.publish('headerMenu:onBeforeMenuShow', callbackArgs);
-      if (typeof this.options?.onBeforeMenuShow === 'function' && this.options?.onBeforeMenuShow(e, callbackArgs) === false) {
+      if (typeof this.addonOptions?.onBeforeMenuShow === 'function' && this.addonOptions?.onBeforeMenuShow(e, callbackArgs) === false) {
         return;
       }
     }
@@ -172,7 +181,7 @@ export class HeaderMenuPlugin {
     if (!this._menuElm) {
       this._menuElm = document.createElement('div');
       this._menuElm.className = 'slick-header-menu';
-      this._menuElm.style.minWidth = `${this.options.minWidth}px`;
+      this._menuElm.style.minWidth = `${this.addonOptions.minWidth}px`;
       this.grid.getContainerNode()?.appendChild(this._menuElm);
     }
 
@@ -203,23 +212,23 @@ export class HeaderMenuPlugin {
 
     if (menu && args.node) {
       // run the override function (when defined), if the result is false we won't go further
-      if (!this.extensionUtility.runOverrideFunctionWhenExists(this.options.menuUsabilityOverride, args)) {
+      if (!this.extensionUtility.runOverrideFunctionWhenExists(this.addonOptions.menuUsabilityOverride, args)) {
         return;
       }
 
       const headerButtonDivElm = document.createElement('div');
       headerButtonDivElm.className = 'slick-header-menubutton';
 
-      if (this.options.buttonCssClass) {
-        headerButtonDivElm.classList.add(...this.options.buttonCssClass.split(' '));
+      if (this.addonOptions.buttonCssClass) {
+        headerButtonDivElm.classList.add(...this.addonOptions.buttonCssClass.split(' '));
       }
 
-      if (this.options.buttonImage) {
-        headerButtonDivElm.style.backgroundImage = `url(${this.options.buttonImage})`;
+      if (this.addonOptions.buttonImage) {
+        headerButtonDivElm.style.backgroundImage = `url(${this.addonOptions.buttonImage})`;
       }
 
-      if (this.options.tooltip) {
-        headerButtonDivElm.title = this.options.tooltip;
+      if (this.addonOptions.tooltip) {
+        headerButtonDivElm.title = this.addonOptions.tooltip;
       }
       args.node.appendChild(headerButtonDivElm);
 
@@ -265,8 +274,8 @@ export class HeaderMenuPlugin {
       // we'll also execute optional user defined onCommand callback when provided
       this.executeHeaderMenuInternalCommands(event, callbackArgs);
       this.pubSubService.publish('headerMenu:onCommand', callbackArgs);
-      if (typeof this.options?.onCommand === 'function') {
-        this.options.onCommand(event, callbackArgs);
+      if (typeof this.addonOptions?.onCommand === 'function') {
+        this.addonOptions.onCommand(event, callbackArgs);
       }
 
       // execute action callback when defined
@@ -501,14 +510,14 @@ export class HeaderMenuPlugin {
 
       // when the override is defined, we need to use its result to update the disabled property
       // so that "handleMenuItemCommandClick" has the correct flag and won't trigger a command clicked event
-      if (typeof item === 'object' && Object.prototype.hasOwnProperty.call(item, 'itemUsabilityOverride')) {
+      if (typeof item === 'object' && item.itemUsabilityOverride) {
         item.disabled = isItemUsable ? false : true;
       }
 
       const liElm = document.createElement('div');
       liElm.className = 'slick-header-menuitem';
-      if (typeof item === 'object' && item.command) {
-        liElm.dataset.command = typeof item === 'object' && item.command || '';
+      if (typeof item === 'object' && hasData(item?.command)) {
+        liElm.dataset.command = item.command;
       }
       this._menuElm?.appendChild(liElm);
 
@@ -563,7 +572,7 @@ export class HeaderMenuPlugin {
 
     // execute optional callback method defined by the user
     this.pubSubService.publish('headerMenu:onAfterMenuShow', args);
-    if (typeof this.options?.onAfterMenuShow === 'function' && this.options?.onAfterMenuShow(e, args) === false) {
+    if (typeof this.addonOptions?.onAfterMenuShow === 'function' && this.addonOptions?.onAfterMenuShow(e, args) === false) {
       return;
     }
 
@@ -581,14 +590,14 @@ export class HeaderMenuPlugin {
       // when auto-align is set, it will calculate whether it has enough space in the viewport to show the drop menu on the right (default)
       // if there isn't enough space on the right, it will automatically align the drop menu to the left
       // to simulate an align left, we actually need to know the width of the drop menu
-      if (this.options.autoAlign) {
+      if (this.addonOptions.autoAlign) {
         const gridPos = this.grid.getGridPosition();
         if (gridPos?.width && (leftPos + (this._menuElm.clientWidth ?? 0)) >= gridPos.width) {
-          leftPos = leftPos + buttonElm.clientWidth - this._menuElm.clientWidth + (this.options?.autoAlignOffset ?? 0);
+          leftPos = leftPos + buttonElm.clientWidth - this._menuElm.clientWidth + (this.addonOptions?.autoAlignOffset ?? 0);
         }
       }
 
-      this._menuElm.style.top = `${(relativePos?.top ?? 0) + (this.options?.menuOffsetTop ?? 0) + buttonElm.clientHeight}px`;
+      this._menuElm.style.top = `${(relativePos?.top ?? 0) + (this.addonOptions?.menuOffsetTop ?? 0) + buttonElm.clientHeight}px`;
       this._menuElm.style.left = `${leftPos}px`;
 
       // mark the header as active to keep the highlighting.
@@ -632,7 +641,7 @@ export class HeaderMenuPlugin {
         emitterType = EmitterType.local;
       } else {
         // when using customDataView, we will simply send it as a onSort event with notify
-        args.grid.onSort.notify(tmpSortedColumns);
+        args.grid.onSort.notify(tmpSortedColumns as unknown as MultiColumnSort);
       }
 
       // update the sharedService.slickGrid sortColumns array which will at the same add the visual sort icon(s) on the UI
