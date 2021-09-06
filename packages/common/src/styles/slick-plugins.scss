@@ -572,9 +572,10 @@
     font-family: var(--slick-multiselect-input-filter-font-family, $multiselect-input-filter-font-family);
   }
   .placeholder {
+    background-color: var(--slick-multiselect-placeholder-bg-color, $multiselect-placeholder-bg-color);
+    color: var(--slick-multiselect-placeholder-color, $multiselect-placeholder-color) !important;
     font-family: var(--slick-multiselect-placeholder-font-family, $multiselect-placeholder-font-family);
     font-size: var(--slick-header-font-size, $header-font-size);
-    color: var(--slick-editor-placeholder-color, $editor-placeholder-color) !important;
   }
 }
 .ms-filter.search-filter {
