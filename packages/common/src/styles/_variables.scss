@@ -810,7 +810,7 @@ $multiselect-label-margin-bottom:                     6px !default;
 $multiselect-label-line-height:                       18px !default;
 $multiselect-unchecked-opacity:                       0.6 !default;
 $multiselect-placeholder-bg-color:                    transparent !default;
-$multiselect-placeholder-color:                       #707070 !default;
+$multiselect-placeholder-color:                       $editor-placeholder-color !default;
 $multiselect-placeholder-font-family:                 $filter-placeholder-font-family !default;
 $multiselect-ok-button-bg-color:                      #fff !default;
 $multiselect-ok-button-bg-hover-color:                darken($row-mouse-hover-color, 3%) !default;
