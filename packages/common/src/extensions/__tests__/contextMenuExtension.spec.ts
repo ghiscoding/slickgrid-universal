@@ -7,7 +7,7 @@ import { SharedService } from '../../services/shared.service';
 import { DelimiterType, FileType } from '../../enums/index';
 import { Column, SlickDataView, GridOption, MenuCommandItem, SlickGrid, SlickNamespace, ContextMenu, SlickContextMenu } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { ExcelExportService, TextExportService, TreeDataService } from '../../services';
+import { ExcelExportService, PubSubService, TextExportService, TreeDataService } from '../../services';
 
 declare const Slick: SlickNamespace;
 
@@ -45,6 +45,13 @@ const gridStub = {
   setTopPanelVisibility: jest.fn(),
   setPreHeaderPanelVisibility: jest.fn(),
 } as unknown as SlickGrid;
+
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as PubSubService;
 
 const treeDataServiceStub = {
   init: jest.fn(),
@@ -126,7 +133,7 @@ describe('contextMenuExtension', () => {
       sharedService = new SharedService();
       translateService = new TranslateServiceStub();
       extensionUtility = new ExtensionUtility(sharedService, translateService);
-      extension = new ContextMenuExtension(extensionUtility, sharedService, treeDataServiceStub, translateService);
+      extension = new ContextMenuExtension(extensionUtility, pubSubServiceStub, sharedService, treeDataServiceStub, translateService);
       translateService.use('fr');
     });
 
@@ -876,6 +883,7 @@ describe('contextMenuExtension', () => {
       });
 
       it('should call "setGrouping" from the DataView when Grouping is enabled and the command triggered is "clear-grouping"', () => {
+        const pubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const dataviewSpy = jest.spyOn(SharedService.prototype.dataView, 'setGrouping');
         const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideClearAllGrouping: false } } as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
@@ -885,6 +893,7 @@ describe('contextMenuExtension', () => {
         menuItemCommand.action!(new CustomEvent('change'), { command: 'clear-grouping', cell: 0, row: 0 } as any);
 
         expect(dataviewSpy).toHaveBeenCalledWith([]);
+        expect(pubSpy).toHaveBeenCalledWith('contextMenu:clearGrouping', true);
       });
 
       it('should call "collapseAllGroups" from the DataView when Grouping is enabled and the command triggered is "collapse-all-groups"', () => {
@@ -1099,7 +1108,7 @@ describe('contextMenuExtension', () => {
     describe('without Translate Service', () => {
       beforeEach(() => {
         translateService = undefined as any;
-        extension = new ContextMenuExtension({} as ExtensionUtility, { gridOptions: { enableTranslate: true } } as SharedService, treeDataServiceStub, translateService);
+        extension = new ContextMenuExtension({} as ExtensionUtility, pubSubServiceStub, { gridOptions: { enableTranslate: true } } as SharedService, treeDataServiceStub, translateService);
       });
 
       it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {
