@@ -3,6 +3,7 @@ import { DraggableGroupingExtension } from '../draggableGroupingExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { PubSubService } from '../../services/pubSub.service';
 
 declare const Slick: SlickNamespace;
 
@@ -11,9 +12,21 @@ const gridStub = {
   registerPlugin: jest.fn(),
 } as unknown as SlickGrid;
 
+const fnCallbacks = {};
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: (eventName, fn) => fnCallbacks[eventName as string] = fn,
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as PubSubService;
+jest.mock('../../services/pubSub.service', () => ({
+  PubSubService: () => pubSubServiceStub
+}));
+
 const mockAddon = jest.fn().mockImplementation(() => ({
   init: jest.fn(),
   destroy: jest.fn(),
+  clearDroppedGroups: jest.fn(),
   onGroupChanged: new Slick.Event(),
 }));
 
@@ -40,7 +53,7 @@ describe('draggableGroupingExtension', () => {
     sharedService = new SharedService();
     translateService = new TranslateServiceStub();
     extensionUtility = new ExtensionUtility(sharedService, translateService);
-    extension = new DraggableGroupingExtension(extensionUtility, sharedService);
+    extension = new DraggableGroupingExtension(extensionUtility, pubSubServiceStub, sharedService);
   });
 
   it('should return null after calling "create" method when the grid options is missing', () => {
@@ -119,6 +132,16 @@ describe('draggableGroupingExtension', () => {
         expect.anything()
       );
       expect(onColumnSpy).toHaveBeenCalledWith(expect.anything(), { caller: 'clear-all', groupColumns: [] });
+    });
+
+    it('should expect that it call the Draggable Grouping "clearDroppedGroups" when Context Menu subscribed event triggers a clear grouping', () => {
+      extension.create(gridOptionsMock) as SlickDraggableGrouping;
+      const addon = extension.register();
+      const clearSpy = jest.spyOn(addon, 'clearDroppedGroups');
+
+      fnCallbacks['contextMenu:clearGrouping'](true);
+
+      expect(clearSpy).toHaveBeenCalled();
     });
   });
 });

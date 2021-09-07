@@ -17,6 +17,7 @@ import { ExtensionUtility } from './extensionUtility';
 import { exportWithFormatterWhenDefined } from '../formatters/formatterUtilities';
 import { SharedService } from '../services/shared.service';
 import { getDescendantProperty, getTranslationPrefix } from '../services/utilities';
+import { PubSubService } from '../services/pubSub.service';
 import { ExcelExportService, TextExportService, TranslaterService, TreeDataService } from '../services/index';
 
 // using external non-typed js libraries
@@ -30,6 +31,7 @@ export class ContextMenuExtension implements Extension {
 
   constructor(
     private readonly extensionUtility: ExtensionUtility,
+    private readonly pubSubService: PubSubService,
     private readonly sharedService: SharedService,
     private readonly treeDataService: TreeDataService,
     private readonly translaterService?: TranslaterService,
@@ -319,7 +321,10 @@ export class ContextMenuExtension implements Extension {
               disabled: false,
               command: commandName,
               positionOrder: 55,
-              action: () => dataView.setGrouping([]),
+              action: () => {
+                dataView.setGrouping([]);
+                this.pubSubService.publish('contextMenu:clearGrouping', true);
+              },
               itemUsabilityOverride: () => {
                 // only enable the command when there's an actually grouping in play
                 const groupingArray = dataView && dataView.getGrouping && dataView.getGrouping();
