@@ -833,13 +833,13 @@ export class SlickVanillaGridBundle {
 
       // When data changes in the DataView, we need to refresh the metrics and/or display a warning if the dataset is empty
       const onRowCountChangedHandler = dataView.onRowCountChanged;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowCountChangedHandler>>).subscribe(onRowCountChangedHandler, (_e, args) => {
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowCountChangedHandler>>).subscribe(onRowCountChangedHandler, () => {
         grid.invalidate();
-        this.handleOnItemCountChanged(args.current || 0, this.dataView.getItemCount());
+        this.handleOnItemCountChanged(this.dataView.getFilteredItemCount() || 0, this.dataView.getItemCount());
       });
       const onSetItemsCalledHandler = dataView.onSetItemsCalled;
       (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSetItemsCalledHandler>>).subscribe(onSetItemsCalledHandler, (_e, args) => {
-        this.handleOnItemCountChanged(this.dataView.getLength(), args.itemCount);
+        this.handleOnItemCountChanged(this.dataView.getFilteredItemCount() || 0, args.itemCount);
 
         // when user has resize by content enabled, we'll force a full width calculation since we change our entire dataset
         if (args.itemCount > 0 && (this.gridOptions.autosizeColumnsByCellContentOnFirstLoad || this.gridOptions.enableAutoResizeColumnsByCellContent)) {

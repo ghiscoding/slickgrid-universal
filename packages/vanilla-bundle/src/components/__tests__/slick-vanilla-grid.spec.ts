@@ -204,6 +204,7 @@ const mockDataView = {
   destroy: jest.fn(),
   beginUpdate: jest.fn(),
   endUpdate: jest.fn(),
+  getFilteredItemCount: jest.fn(),
   getItem: jest.fn(),
   getItemCount: jest.fn(),
   getItems: jest.fn(),
@@ -1901,6 +1902,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           totalItemCount: 2
         };
         jest.spyOn(mockDataView, 'getItemCount').mockReturnValue(mockData.length);
+        jest.spyOn(mockDataView, 'getFilteredItemCount').mockReturnValue(mockData.length);
 
         component.gridOptions = { enablePagination: false, showCustomFooter: true };
         component.initialization(divContainer, slickEventHandler);
@@ -1920,7 +1922,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           itemCount: 0,
           totalItemCount: 0
         };
-        jest.spyOn(mockDataView, 'getLength').mockReturnValue(0);
+        jest.spyOn(mockDataView, 'getFilteredItemCount').mockReturnValue(0);
 
         component.gridOptions = { enablePagination: false, showCustomFooter: true };
         component.initialization(divContainer, slickEventHandler);
@@ -1946,9 +1948,11 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const dataviewSpy = jest.spyOn(mockDataView, 'mapIdsToRows').mockReturnValue(selectedGridRows);
         const selectRowSpy = jest.spyOn(mockGrid, 'setSelectedRows');
         jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true as any);
+        jest.spyOn(mockDataView, 'getLength').mockReturnValue(mockData.length);
 
         component.gridOptions.enableCheckboxSelector = true;
         component.gridOptions.presets = { rowSelection: { dataContextIds: selectedRowIds } };
+        component.isDatasetInitialized = false;
         component.initialization(divContainer, slickEventHandler);
         component.dataset = mockData;
 
