@@ -1947,8 +1947,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
         const dataviewSpy = jest.spyOn(mockDataView, 'mapIdsToRows').mockReturnValue(selectedGridRows);
         const selectRowSpy = jest.spyOn(mockGrid, 'setSelectedRows');
+        jest.spyOn(mockDataView, 'getLength').mockReturnValue(0);
         jest.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true as any);
-        jest.spyOn(mockDataView, 'getLength').mockReturnValue(mockData.length);
 
         component.gridOptions.enableCheckboxSelector = true;
         component.gridOptions.presets = { rowSelection: { dataContextIds: selectedRowIds } };
