@@ -4,7 +4,7 @@ import { GridOption, EventNamingStyle } from '@slickgrid-universal/common';
 export const SalesforceGlobalGridOptions = {
   autoEdit: true, // true single click (false for double-click)
   autoCommitEdit: true,
-  autoFixResizeTimeout: 5 * 60 * 60, // interval is 200ms, so 4x is 1sec, so (5 * 60 * 60 = 60min)
+  autoFixResizeTimeout: 5 * 60 * 60, // interval is 200ms, so 5x is 1sec, so (5 * 60 * 60 = 60min)
   autoFixResizeRequiredGoodCount: 5 * 60 * 60, // make it the same as the interval timeout, this is equivalent to say don't stop until the timeout is over
   autoFixResizeWhenBrokenStyleDetected: true,
   cellValueCouldBeUndefined: true,
