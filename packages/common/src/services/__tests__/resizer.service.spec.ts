@@ -583,7 +583,6 @@ describe('Resizer Service', () => {
           expect(resizeSpy).toHaveBeenCalled();
           expect(resizeSpy).toHaveBeenNthCalledWith(2, 10, undefined);
           expect(resizeSpy).toHaveBeenNthCalledWith(3);
-          expect(resizeSpy).toHaveBeenNthCalledWith(4);
           done();
         }, 25);
       });
