@@ -173,7 +173,7 @@ export class GridMenuControl {
     this._bindEventService.unbindAll();
     const gridMenuElm = document.querySelector<HTMLDivElement>(`div.slick-gridmenu.${this._gridUid}`);
     if (gridMenuElm) {
-      gridMenuElm.style.visibility = 'hidden';
+      this._gridMenuElm.style.display = 'none';
     }
     this._gridMenuButtonElm?.remove();
     this._gridMenuElm?.remove();
@@ -244,7 +244,7 @@ export class GridMenuControl {
 
       this._gridMenuElm = document.createElement('div');
       this._gridMenuElm.classList.add('slick-gridmenu', this._gridUid);
-      this._gridMenuElm.style.visibility = 'hidden';
+      this._gridMenuElm.style.display = 'none';
 
       const closePickerButtonElm = document.createElement('button');
       closePickerButtonElm.className = 'close';
@@ -299,7 +299,7 @@ export class GridMenuControl {
    * @returns
    */
   hideMenu(event: Event) {
-    if (this._gridMenuElm?.style?.visibility === 'visible') {
+    if (this._gridMenuElm?.style?.display === 'block') {
       const callbackArgs = {
         grid: this.grid,
         menu: this._gridMenuElm,
@@ -313,7 +313,7 @@ export class GridMenuControl {
         return;
       }
 
-      this._gridMenuElm.style.visibility = 'hidden';
+      this._gridMenuElm.style.display = 'none';
       this._isMenuOpen = false;
 
       // we also want to resize the columns if the user decided to hide certain column(s)
@@ -438,6 +438,7 @@ export class GridMenuControl {
     if (!buttonElm) {
       buttonElm = (e.target as HTMLElement).parentElement as HTMLButtonElement; // external grid menu might fall in this last case if wrapped in a span/div
     }
+    this._gridMenuElm.style.display = 'block';
     const menuIconOffset = getHtmlElementOffset(buttonElm as HTMLButtonElement);
     const buttonComptStyle = getComputedStyle(buttonElm as HTMLButtonElement);
     const buttonWidth = parseInt(buttonComptStyle?.width ?? this._defaults?.menuWidth, 10);
@@ -466,7 +467,7 @@ export class GridMenuControl {
       this._gridMenuElm.style.maxHeight = `${window.innerHeight - e.clientY - menuMarginBottom}px`;
     }
 
-    this._gridMenuElm.style.visibility = 'visible';
+    this._gridMenuElm.style.display = 'block';
     this._gridMenuElm.appendChild(this._listElm);
     this._isMenuOpen = true;
   }

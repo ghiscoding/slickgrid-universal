@@ -1,6 +1,5 @@
 export * from './cellExternalCopyManagerExtension';
 export * from './checkboxSelectorExtension';
-export * from './contextMenuExtension';
 export * from './draggableGroupingExtension';
 export * from './extensionUtility';
 export * from './groupItemMetaProviderExtension';

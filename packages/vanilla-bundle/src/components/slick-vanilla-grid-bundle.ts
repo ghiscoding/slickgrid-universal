@@ -34,7 +34,6 @@ import {
   // extensions
   CheckboxSelectorExtension,
   CellExternalCopyManagerExtension,
-  ContextMenuExtension,
   DraggableGroupingExtension,
   ExtensionUtility,
   GroupItemMetaProviderExtension,
@@ -83,8 +82,8 @@ declare const Slick: SlickNamespace;
 export class SlickVanillaGridBundle {
   private _currentDatasetLength = 0;
   private _eventPubSubService!: EventPubSubService;
-  private _columnDefinitions!: Column[];
-  private _gridOptions!: GridOption;
+  private _columnDefinitions?: Column[];
+  private _gridOptions?: GridOption;
   private _gridContainerElm!: HTMLElement;
   private _gridParentContainerElm!: HTMLElement;
   private _hideHeaderRowAfterPageLoad = false;
@@ -100,8 +99,8 @@ export class SlickVanillaGridBundle {
   private _slickgridInitialized = false;
   private _slickerGridInstances: SlickerGridInstance | undefined;
   backendServiceApi: BackendServiceApi | undefined;
-  dataView!: SlickDataView;
-  slickGrid!: SlickGrid;
+  dataView?: SlickDataView;
+  slickGrid?: SlickGrid;
   metrics?: Metrics;
   customDataView = false;
   paginationData?: {
@@ -146,10 +145,10 @@ export class SlickVanillaGridBundle {
     return this._eventHandler;
   }
 
-  get columnDefinitions() {
-    return this._columnDefinitions;
+  get columnDefinitions(): Column[] {
+    return this._columnDefinitions || [];
   }
-  set columnDefinitions(columnDefinitions) {
+  set columnDefinitions(columnDefinitions: Column[]) {
     this._columnDefinitions = columnDefinitions;
     if (this._slickgridInitialized) {
       this.updateColumnDefinitionsList(this._columnDefinitions);
@@ -160,7 +159,7 @@ export class SlickVanillaGridBundle {
   }
 
   get dataset(): any[] {
-    return this.dataView?.getItems() ?? [];
+    return this.dataView?.getItems() || [];
   }
   set dataset(newDataset: any[]) {
     const prevDatasetLn = this._currentDatasetLength;
@@ -179,7 +178,7 @@ export class SlickVanillaGridBundle {
 
     // expand/autofit columns on first page load
     // we can assume that if the prevDataset was empty then we are on first load
-    if (this.gridOptions.autoFitColumnsOnFirstLoad && prevDatasetLn === 0) {
+    if (this.slickGrid && this.gridOptions.autoFitColumnsOnFirstLoad && prevDatasetLn === 0) {
       this.slickGrid.autosizeColumns();
     }
   }
@@ -198,14 +197,14 @@ export class SlickVanillaGridBundle {
     }
 
     // when a hierarchical dataset is set afterward, we can reset the flat dataset and call a tree data sort that will overwrite the flat dataset
-    if (newHierarchicalDataset && this.slickGrid && this.sortService?.processTreeDataInitialSort) {
-      this.dataView.setItems([], this._gridOptions.datasetIdPropertyName);
+    if (this.dataView && newHierarchicalDataset && this.slickGrid && this.sortService?.processTreeDataInitialSort) {
+      this.dataView.setItems([], this._gridOptions?.datasetIdPropertyName ?? 'id');
       this.sortService.processTreeDataInitialSort();
 
       // we also need to reset/refresh the Tree Data filters because if we inserted new item(s) then it might not show up without doing this refresh
       // however we need 1 cpu cycle before having the DataView refreshed, so we need to wrap this check in a setTimeout
       setTimeout(() => {
-        const flatDatasetLn = this.dataView.getItemCount();
+        const flatDatasetLn = this.dataView?.getItemCount() ?? 0;
         if (flatDatasetLn > 0 && (flatDatasetLn !== prevFlatDatasetLn || !isDatasetEqual)) {
           this.filterService.refreshTreeDataFilters();
         }
@@ -216,7 +215,7 @@ export class SlickVanillaGridBundle {
   }
 
   get gridOptions(): GridOption {
-    return this._gridOptions;
+    return this._gridOptions || {};
   }
 
   set gridOptions(options: GridOption) {
@@ -355,9 +354,8 @@ export class SlickVanillaGridBundle {
 
     // extensions
     const cellExternalCopyManagerExtension = new CellExternalCopyManagerExtension(this.extensionUtility, this.sharedService);
-    const contextMenuExtension = new ContextMenuExtension(this.extensionUtility, this.sharedService, this.treeDataService, this.translaterService);
     const checkboxExtension = new CheckboxSelectorExtension(this.sharedService);
-    const draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this.sharedService);
+    const draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this._eventPubSubService, this.sharedService);
     const groupItemMetaProviderExtension = new GroupItemMetaProviderExtension(this.sharedService);
     const rowDetailViewExtension = new RowDetailViewExtension();
     const rowMoveManagerExtension = new RowMoveManagerExtension(this.sharedService);
@@ -368,9 +366,9 @@ export class SlickVanillaGridBundle {
       this.filterService,
       this._eventPubSubService,
       this.sortService,
+      this.treeDataService,
       cellExternalCopyManagerExtension,
       checkboxExtension,
-      contextMenuExtension,
       draggableGroupingExtension,
       groupItemMetaProviderExtension,
       rowDetailViewExtension,
@@ -497,7 +495,7 @@ export class SlickVanillaGridBundle {
     this._eventPubSubService.publish('onBeforeGridCreate', true);
 
     this._eventHandler = eventHandler;
-    this._gridOptions = this.mergeGridOptions(this._gridOptions);
+    this._gridOptions = this.mergeGridOptions(this._gridOptions || {});
     this.backendServiceApi = this._gridOptions?.backendServiceApi;
     this._isLocalGrid = !this.backendServiceApi; // considered a local grid if it doesn't have a backend service set
     this._eventPubSubService.eventNamingStyle = this._gridOptions?.eventNamingStyle ?? EventNamingStyle.camelCase;
@@ -526,7 +524,7 @@ export class SlickVanillaGridBundle {
     // however "editor" is used internally by SlickGrid for it's own Editor Factory
     // so in our lib we will swap "editor" and copy it into a new property called "internalColumnEditor"
     // then take back "editor.model" and make it the new "editor" so that SlickGrid Editor Factory still works
-    this._columnDefinitions = this.swapInternalEditorToSlickGridFactoryEditor(this._columnDefinitions);
+    this._columnDefinitions = this.swapInternalEditorToSlickGridFactoryEditor(this._columnDefinitions || []);
 
     // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
     if (this._gridOptions.autoAddCustomEditorFormatter) {
@@ -543,13 +541,13 @@ export class SlickVanillaGridBundle {
       this.gridOptions = { ...this.gridOptions, ...this.gridOptions.presets.pinning };
     }
 
-    this.slickGrid = new Slick.Grid(gridContainerElm, this.dataView, this._columnDefinitions, this._gridOptions);
-    this.sharedService.dataView = this.dataView;
+    this.slickGrid = new Slick.Grid(gridContainerElm, this.dataView as SlickDataView, this._columnDefinitions, this._gridOptions);
+    this.sharedService.dataView = this.dataView as SlickDataView;
     this.sharedService.slickGrid = this.slickGrid;
     this.sharedService.gridContainerElement = this._gridContainerElm;
 
     this.extensionService.bindDifferentExtensions();
-    this.bindDifferentHooks(this.slickGrid, this._gridOptions, this.dataView);
+    this.bindDifferentHooks(this.slickGrid, this._gridOptions, this.dataView as SlickDataView);
     this._slickgridInitialized = true;
 
     // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
@@ -577,7 +575,7 @@ export class SlickVanillaGridBundle {
     // load the data in the DataView (unless it's a hierarchical dataset, if so it will be loaded after the initial tree sort)
     if (Array.isArray(this.dataset)) {
       const initialDataset = this.gridOptions?.enableTreeData ? this.sortTreeDataset(this.dataset) : this.dataset;
-      this.dataView.setItems(initialDataset, this._gridOptions.datasetIdPropertyName);
+      this.dataView?.setItems(initialDataset, this._gridOptions.datasetIdPropertyName);
     }
 
     // if you don't want the items that are not visible (due to being filtered out or being on a different page)
@@ -598,15 +596,15 @@ export class SlickVanillaGridBundle {
           // when using BackendServiceApi, we'll be using the "syncGridSelectionWithBackendService" flag BUT "syncGridSelection" must also be set to True
           preservedRowSelection = syncGridSelection && preservedRowSelectionWithBackend;
         }
-        this.dataView.syncGridSelection(this.slickGrid, preservedRowSelection);
+        this.dataView?.syncGridSelection(this.slickGrid, preservedRowSelection);
       } else if (typeof syncGridSelection === 'object') {
-        this.dataView.syncGridSelection(this.slickGrid, syncGridSelection.preserveHidden, syncGridSelection.preserveHiddenOnSelectionChange);
+        this.dataView?.syncGridSelection(this.slickGrid, syncGridSelection.preserveHidden, syncGridSelection.preserveHiddenOnSelectionChange);
       }
     }
 
     this.slickGrid.invalidate();
 
-    if (this.dataView.getLength() > 0) {
+    if ((this.dataView?.getLength() ?? 0) > 0) {
       if (!this._isDatasetInitialized && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
         this.loadRowSelectionPresetWhenExists();
       }
@@ -646,7 +644,7 @@ export class SlickVanillaGridBundle {
     // once the grid is created, we'll return its instance (we do this to return Transient Services from DI)
     this._slickerGridInstances = {
       // Slick Grid & DataView objects
-      dataView: this.dataView,
+      dataView: this.dataView as SlickDataView,
       slickGrid: this.slickGrid,
 
       // public methods
@@ -816,13 +814,13 @@ export class SlickVanillaGridBundle {
 
       // When data changes in the DataView, we need to refresh the metrics and/or display a warning if the dataset is empty
       const onRowCountChangedHandler = dataView.onRowCountChanged;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowCountChangedHandler>>).subscribe(onRowCountChangedHandler, (_e, args) => {
+      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowCountChangedHandler>>).subscribe(onRowCountChangedHandler, () => {
         grid.invalidate();
-        this.handleOnItemCountChanged(args.current || 0, this.dataView.getItemCount());
+        this.handleOnItemCountChanged(this.dataView?.getFilteredItemCount() || 0, this.dataView?.getItemCount() ?? 0);
       });
       const onSetItemsCalledHandler = dataView.onSetItemsCalled;
       (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSetItemsCalledHandler>>).subscribe(onSetItemsCalledHandler, (_e, args) => {
-        this.handleOnItemCountChanged(this.dataView.getLength(), args.itemCount);
+        this.handleOnItemCountChanged(this.dataView?.getFilteredItemCount() || 0, args.itemCount);
 
         // when user has resize by content enabled, we'll force a full width calculation since we change our entire dataset
         if (args.itemCount > 0 && (this.gridOptions.autosizeColumnsByCellContentOnFirstLoad || this.gridOptions.enableAutoResizeColumnsByCellContent)) {
@@ -883,7 +881,7 @@ export class SlickVanillaGridBundle {
         // Sorters "presets"
         if (backendApiService.updateSorters && Array.isArray(gridOptions.presets.sorters) && gridOptions.presets.sorters.length > 0) {
           // when using multi-column sort, we can have multiple but on single sort then only grab the first sort provided
-          const sortColumns = this._gridOptions.multiColumnSort ? gridOptions.presets.sorters : gridOptions.presets.sorters.slice(0, 1);
+          const sortColumns = this._gridOptions?.multiColumnSort ? gridOptions.presets.sorters : gridOptions.presets.sorters.slice(0, 1);
           backendApiService.updateSorters(undefined, sortColumns);
         }
         // Pagination "presets"
@@ -940,7 +938,7 @@ export class SlickVanillaGridBundle {
 
     if (grid && options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && typeof grid.autosizeColumns === 'function') {
       // expand/autofit columns on first page load
-      this.slickGrid.autosizeColumns();
+      grid.autosizeColumns();
     }
 
     // auto-resize grid on browser resize (optionally provide grid height or width)
@@ -962,7 +960,7 @@ export class SlickVanillaGridBundle {
     if (gridOptions.enableSorting) {
       if (gridOptions.presets && Array.isArray(gridOptions.presets.sorters)) {
         // when using multi-column sort, we can have multiple but on single sort then only grab the first sort provided
-        const sortColumns = this._gridOptions.multiColumnSort ? gridOptions.presets.sorters : gridOptions.presets.sorters.slice(0, 1);
+        const sortColumns = this._gridOptions?.multiColumnSort ? gridOptions.presets.sorters : gridOptions.presets.sorters.slice(0, 1);
         this.sortService.loadGridSorters(sortColumns);
       }
     }
@@ -974,7 +972,7 @@ export class SlickVanillaGridBundle {
    */
   paginationChanged(pagination: ServicePagination) {
     const isSyncGridSelectionEnabled = this.gridStateService?.needToPreserveRowSelection() ?? false;
-    if (!isSyncGridSelectionEnabled && (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector)) {
+    if (this.slickGrid && !isSyncGridSelectionEnabled && (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector)) {
       this.slickGrid.setSelectedRows([]);
     }
     const { pageNumber, pageSize } = pagination;
@@ -997,62 +995,64 @@ export class SlickVanillaGridBundle {
     // local grid, check if we need to show the Pagination
     // if so then also check if there's any presets and finally initialize the PaginationService
     // a local grid with Pagination presets will potentially have a different total of items, we'll need to get it from the DataView and update our total
-    if (this._gridOptions.enablePagination && this._isLocalGrid) {
-      this.showPagination = true;
-      this.loadLocalGridPagination(dataset);
-    }
-
-    if (this._gridOptions.enableEmptyDataWarningMessage && Array.isArray(dataset)) {
-      const finalTotalCount = totalCount || dataset.length;
-      this.displayEmptyDataWarning(finalTotalCount < 1);
-    }
-
-    if (Array.isArray(dataset) && this.slickGrid && this.dataView?.setItems) {
-      this.dataView.setItems(dataset, this._gridOptions.datasetIdPropertyName);
-      if (!this._gridOptions.backendServiceApi && !this._gridOptions.enableTreeData) {
-        this.dataView.reSort();
+    if (this.slickGrid && this._gridOptions) {
+      if (this._gridOptions.enablePagination && this._isLocalGrid) {
+        this.showPagination = true;
+        this.loadLocalGridPagination(dataset);
       }
 
-      if (dataset.length > 0) {
-        if (!this._isDatasetInitialized) {
-          this.loadFilterPresetsWhenDatasetInitialized();
+      if (this._gridOptions.enableEmptyDataWarningMessage && Array.isArray(dataset)) {
+        const finalTotalCount = totalCount || dataset.length;
+        this.displayEmptyDataWarning(finalTotalCount < 1);
+      }
 
-          if (this._gridOptions.enableCheckboxSelector) {
-            this.loadRowSelectionPresetWhenExists();
+      if (Array.isArray(dataset) && this.slickGrid && this.dataView?.setItems) {
+        this.dataView.setItems(dataset, this._gridOptions.datasetIdPropertyName);
+        if (!this._gridOptions.backendServiceApi && !this._gridOptions.enableTreeData) {
+          this.dataView.reSort();
+        }
+
+        if (dataset.length > 0) {
+          if (!this._isDatasetInitialized) {
+            this.loadFilterPresetsWhenDatasetInitialized();
+
+            if (this._gridOptions.enableCheckboxSelector) {
+              this.loadRowSelectionPresetWhenExists();
+            }
+          }
+          this._isDatasetInitialized = true;
+        }
+
+        if (dataset) {
+          this.slickGrid.invalidate();
+        }
+
+        // display the Pagination component only after calling this refresh data first, we call it here so that if we preset pagination page number it will be shown correctly
+        this.showPagination = (this._gridOptions && (this._gridOptions.enablePagination || (this._gridOptions.backendServiceApi && this._gridOptions.enablePagination === undefined))) ? true : false;
+
+        if (this._paginationOptions && this._gridOptions?.pagination && this._gridOptions?.backendServiceApi) {
+          const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this._gridOptions, this._paginationOptions);
+
+          // when we have a totalCount use it, else we'll take it from the pagination object
+          // only update the total items if it's different to avoid refreshing the UI
+          const totalRecords = (totalCount !== undefined) ? totalCount : (this._gridOptions?.pagination?.totalItems);
+          if (totalRecords !== undefined && totalRecords !== this.totalItems) {
+            this.totalItems = +totalRecords;
+          }
+          // initialize the Pagination Service with new pagination options (which might have presets)
+          if (!this._isPaginationInitialized) {
+            this.initializePaginationService(paginationOptions);
+          } else {
+            // update the pagination service with the new total
+            this.paginationService.updateTotalItems(this.totalItems);
           }
         }
-        this._isDatasetInitialized = true;
-      }
 
-      if (dataset) {
-        this.slickGrid.invalidate();
-      }
-
-      // display the Pagination component only after calling this refresh data first, we call it here so that if we preset pagination page number it will be shown correctly
-      this.showPagination = (this._gridOptions && (this._gridOptions.enablePagination || (this._gridOptions.backendServiceApi && this._gridOptions.enablePagination === undefined))) ? true : false;
-
-      if (this._paginationOptions && this._gridOptions?.pagination && this._gridOptions?.backendServiceApi) {
-        const paginationOptions = this.setPaginationOptionsWhenPresetDefined(this._gridOptions, this._paginationOptions);
-
-        // when we have a totalCount use it, else we'll take it from the pagination object
-        // only update the total items if it's different to avoid refreshing the UI
-        const totalRecords = (totalCount !== undefined) ? totalCount : (this._gridOptions?.pagination?.totalItems);
-        if (totalRecords !== undefined && totalRecords !== this.totalItems) {
-          this.totalItems = +totalRecords;
+        // resize the grid inside a slight timeout, in case other DOM element changed prior to the resize (like a filter/pagination changed)
+        if (this.slickGrid && this._gridOptions.enableAutoResize) {
+          const delay = this._gridOptions.autoResize && this._gridOptions.autoResize.delay;
+          this.resizerService.resizeGrid(delay || 10);
         }
-        // initialize the Pagination Service with new pagination options (which might have presets)
-        if (!this._isPaginationInitialized) {
-          this.initializePaginationService(paginationOptions);
-        } else {
-          // update the pagination service with the new total
-          this.paginationService.updateTotalItems(this.totalItems);
-        }
-      }
-
-      // resize the grid inside a slight timeout, in case other DOM element changed prior to the resize (like a filter/pagination changed)
-      if (this.slickGrid && this._gridOptions.enableAutoResize) {
-        const delay = this._gridOptions.autoResize && this._gridOptions.autoResize.delay;
-        this.resizerService.resizeGrid(delay || 10);
       }
     }
   }
@@ -1063,24 +1063,26 @@ export class SlickVanillaGridBundle {
    * If using translater, we also need to trigger a re-translate of the column headers
    */
   updateColumnDefinitionsList(newColumnDefinitions: Column[]) {
-    // map/swap the internal library Editor to the SlickGrid Editor factory
-    newColumnDefinitions = this.swapInternalEditorToSlickGridFactoryEditor(newColumnDefinitions);
+    if (this.slickGrid && this._gridOptions && Array.isArray(newColumnDefinitions)) {
+      // map/swap the internal library Editor to the SlickGrid Editor factory
+      newColumnDefinitions = this.swapInternalEditorToSlickGridFactoryEditor(newColumnDefinitions);
 
-    // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
-    if (this._gridOptions.autoAddCustomEditorFormatter) {
-      autoAddEditorFormatterToColumnsWithEditor(newColumnDefinitions, this._gridOptions.autoAddCustomEditorFormatter);
-    }
+      // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
+      if (this._gridOptions.autoAddCustomEditorFormatter) {
+        autoAddEditorFormatterToColumnsWithEditor(newColumnDefinitions, this._gridOptions.autoAddCustomEditorFormatter);
+      }
 
-    if (this._gridOptions.enableTranslate) {
-      this.extensionService.translateColumnHeaders(false, newColumnDefinitions);
-    } else {
-      this.extensionService.renderColumnHeaders(newColumnDefinitions, true);
-    }
+      if (this._gridOptions.enableTranslate) {
+        this.extensionService.translateColumnHeaders(false, newColumnDefinitions);
+      } else {
+        this.extensionService.renderColumnHeaders(newColumnDefinitions, true);
+      }
 
-    if (this._gridOptions?.enableAutoSizeColumns) {
-      this.slickGrid.autosizeColumns();
-    } else if (this._gridOptions?.enableAutoResizeColumnsByCellContent && this.resizerService?.resizeColumnsByCellContent) {
-      this.resizerService.resizeColumnsByCellContent();
+      if (this.slickGrid && this._gridOptions?.enableAutoSizeColumns) {
+        this.slickGrid.autosizeColumns();
+      } else if (this._gridOptions?.enableAutoResizeColumnsByCellContent && this.resizerService?.resizeColumnsByCellContent) {
+        this.resizerService.resizeColumnsByCellContent();
+      }
     }
   }
 
@@ -1089,8 +1091,8 @@ export class SlickVanillaGridBundle {
    * @param showing
    */
   showHeaderRow(showing = true) {
-    this.slickGrid.setHeaderRowVisibility(showing, false);
-    if (showing === true && this._isGridInitialized) {
+    this.slickGrid?.setHeaderRowVisibility(showing, false);
+    if (this.slickGrid && showing === true && this._isGridInitialized) {
       this.slickGrid.setColumns(this.columnDefinitions);
     }
     return showing;
@@ -1139,14 +1141,14 @@ export class SlickVanillaGridBundle {
     }
 
     // when using local (in-memory) dataset, we'll display a warning message when filtered data is empty
-    if (this._isLocalGrid && this._gridOptions.enableEmptyDataWarningMessage) {
+    if (this._isLocalGrid && this._gridOptions?.enableEmptyDataWarningMessage) {
       this.displayEmptyDataWarning(currentPageRowItemCount === 0);
     }
   }
 
   /** Initialize the Pagination Service once */
   private initializePaginationService(paginationOptions: Pagination) {
-    if (this.gridOptions) {
+    if (this.slickGrid && this.gridOptions) {
       this.paginationData = {
         gridOptions: this.gridOptions,
         paginationService: this.paginationService,
@@ -1177,7 +1179,7 @@ export class SlickVanillaGridBundle {
    * @param {Boolean} shouldDisposePaginationService - when disposing the Pagination, do we also want to dispose of the Pagination Service? (defaults to True)
    */
   private renderPagination(showPagination = true) {
-    if (this._gridOptions.enablePagination && !this._isPaginationInitialized && showPagination) {
+    if (this._gridOptions?.enablePagination && !this._isPaginationInitialized && showPagination) {
       this.slickPagination = new SlickPaginationComponent(this.paginationService, this._eventPubSubService, this.sharedService, this.translaterService);
       this.slickPagination.renderPagination(this._gridParentContainerElm);
       this._isPaginationInitialized = true;
@@ -1225,7 +1227,7 @@ export class SlickVanillaGridBundle {
   /** Load any possible Columns Grid Presets */
   private loadColumnPresetsWhenDatasetInitialized() {
     // if user entered some Columns "presets", we need to reflect them all in the grid
-    if (this.gridOptions.presets && Array.isArray(this.gridOptions.presets.columns) && this.gridOptions.presets.columns.length > 0) {
+    if (this.slickGrid && this.gridOptions.presets && Array.isArray(this.gridOptions.presets.columns) && this.gridOptions.presets.columns.length > 0) {
       const gridColumns: Column[] = this.gridStateService.getAssociatedGridColumns(this.slickGrid, this.gridOptions.presets.columns);
       if (gridColumns && Array.isArray(gridColumns) && gridColumns.length > 0) {
         // make sure that the checkbox selector is also visible if it is enabled
@@ -1285,7 +1287,7 @@ export class SlickVanillaGridBundle {
     const presets = this.gridOptions?.presets;
     const selectionModel = this.slickGrid?.getSelectionModel?.();
     const enableRowSelection = this.gridOptions && (this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection);
-    if (enableRowSelection && selectionModel && presets?.rowSelection && (Array.isArray(presets.rowSelection.gridRowIndexes) || Array.isArray(presets.rowSelection.dataContextIds))) {
+    if (this.slickGrid && this.dataView && enableRowSelection && selectionModel && presets?.rowSelection && (Array.isArray(presets.rowSelection.gridRowIndexes) || Array.isArray(presets.rowSelection.dataContextIds))) {
       let dataContextIds = presets.rowSelection.dataContextIds;
       let gridRowIndexes = presets.rowSelection.gridRowIndexes;
 
@@ -1372,7 +1374,7 @@ export class SlickVanillaGridBundle {
     // register all services by executing their init method and providing them with the Grid object
     if (Array.isArray(this._registeredResources)) {
       for (const resource of this._registeredResources) {
-        if (typeof resource.init === 'function') {
+        if (this.slickGrid && typeof resource.init === 'function') {
           resource.init(this.slickGrid, this.universalContainerService);
         }
       }
@@ -1406,7 +1408,7 @@ export class SlickVanillaGridBundle {
     } else if (Array.isArray(flatDatasetInput) && flatDatasetInput.length > 0) {
       if (this.gridOptions?.treeDataOptions?.initialSort) {
         // else we need to first convert the flat dataset to a hierarchical dataset and then sort
-        sortedDatasetResult = this.treeDataService.convertFlatParentChildToTreeDatasetAndSort(flatDatasetInput, this._columnDefinitions, this.gridOptions);
+        sortedDatasetResult = this.treeDataService.convertFlatParentChildToTreeDatasetAndSort(flatDatasetInput, this._columnDefinitions || [], this.gridOptions);
         this.sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
         flatDatasetOutput = sortedDatasetResult.flat;
       } else {
@@ -1477,21 +1479,23 @@ export class SlickVanillaGridBundle {
     (column.editor as ColumnEditor).collection = newCollection;
     (column.editor as ColumnEditor).disabled = false;
 
-    // find the new column reference pointer & re-assign the new editor to the internalColumnEditor
-    const columns = this.slickGrid.getColumns();
-    if (Array.isArray(columns)) {
-      const columnRef = columns.find((col: Column) => col.id === column.id);
-      if (columnRef) {
-        columnRef.internalColumnEditor = column.editor as ColumnEditor;
+    if (this.slickGrid) {
+      // find the new column reference pointer & re-assign the new editor to the internalColumnEditor
+      const columns = this.slickGrid.getColumns();
+      if (Array.isArray(columns)) {
+        const columnRef = columns.find((col: Column) => col.id === column.id);
+        if (columnRef) {
+          columnRef.internalColumnEditor = column.editor as ColumnEditor;
+        }
       }
-    }
 
-    // get current Editor, remove it from the DOm then re-enable it and re-render it with the new collection.
-    const currentEditor = this.slickGrid.getCellEditor() as AutoCompleteEditor | SelectEditor;
-    if (currentEditor?.disable && currentEditor?.renderDomElement) {
-      currentEditor.destroy();
-      currentEditor.disable(false);
-      currentEditor.renderDomElement(newCollection);
+      // get current Editor, remove it from the DOm then re-enable it and re-render it with the new collection.
+      const currentEditor = this.slickGrid.getCellEditor() as AutoCompleteEditor | SelectEditor;
+      if (currentEditor?.disable && currentEditor?.renderDomElement) {
+        currentEditor.destroy();
+        currentEditor.disable(false);
+        currentEditor.renderDomElement(newCollection);
+      }
     }
   }
 }

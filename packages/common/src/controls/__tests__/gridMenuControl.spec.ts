@@ -210,7 +210,7 @@ describe('GridMenuControl', () => {
         const inputElm = control.menuElement.querySelector('input[type="checkbox"]');
         inputElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        expect(control.menuElement.style.visibility).toBe('visible');
+        expect(control.menuElement.style.display).toBe('block');
         expect(setSelectionSpy).toHaveBeenCalledWith(mockRowSelection);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
@@ -232,13 +232,13 @@ describe('GridMenuControl', () => {
         buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         const headerRowElm = document.querySelector('.slick-headerrow') as HTMLDivElement;
 
-        expect(control.menuElement.style.visibility).toBe('visible');
+        expect(control.menuElement.style.display).toBe('block');
         expect(headerRowElm.style.width).toBe(`calc(100% - 16px)`)
 
         const bodyElm = document.body;
         bodyElm.dispatchEvent(new Event('mousedown', { bubbles: true }));
 
-        expect(control.menuElement.style.visibility).toBe('hidden');
+        expect(control.menuElement.style.display).toBe('none');
       });
 
       it('should query an input checkbox change event and expect "readjustFrozenColumnIndexWhenNeeded" method to be called when the grid is detected to be a frozen grid', () => {
@@ -362,7 +362,7 @@ describe('GridMenuControl', () => {
         control.showGridMenu(spanEvent, { alignDropSide: 'left' });
         const gridMenuElm = document.querySelector('.slick-gridmenu') as HTMLDivElement;
 
-        expect(gridMenuElm.style.visibility).toBe('visible');
+        expect(gridMenuElm.style.display).toBe('block');
       });
 
       it('should open the Grid Menu and expect "Forcefit" to be checked when "hideForceFitButton" is false', () => {
@@ -504,7 +504,7 @@ describe('GridMenuControl', () => {
         const forceFitElm = control.menuElement.querySelector<HTMLInputElement>('#slickgrid_124343-gridmenu-colpicker-forcefit');
         const inputSyncElm = control.menuElement.querySelector<HTMLInputElement>('#slickgrid_124343-gridmenu-colpicker-syncresize');
 
-        expect(control.menuElement.style.visibility).toBe('hidden');
+        expect(control.menuElement.style.display).toBe('none');
         expect(forceFitElm).toBeFalsy();
         expect(inputSyncElm).toBeFalsy();
       });
@@ -521,7 +521,7 @@ describe('GridMenuControl', () => {
         const forceFitElm = control.menuElement.querySelector<HTMLInputElement>('#slickgrid_124343-gridmenu-colpicker-forcefit');
         const inputSyncElm = control.menuElement.querySelector<HTMLInputElement>('#slickgrid_124343-gridmenu-colpicker-syncresize');
 
-        expect(control.menuElement.style.visibility).toBe('hidden');
+        expect(control.menuElement.style.display).toBe('none');
         expect(forceFitElm).toBeFalsy();
         expect(inputSyncElm).toBeFalsy();
         expect(pubSubSpy).toHaveBeenCalledWith('gridMenu:onBeforeMenuShow', {
@@ -543,7 +543,7 @@ describe('GridMenuControl', () => {
         const forceFitElm = control.menuElement.querySelector<HTMLInputElement>('#slickgrid_124343-gridmenu-colpicker-forcefit');
         const inputSyncElm = control.menuElement.querySelector<HTMLInputElement>('#slickgrid_124343-gridmenu-colpicker-syncresize');
 
-        expect(control.menuElement.style.visibility).toBe('visible');
+        expect(control.menuElement.style.display).toBe('block');
         expect(forceFitElm).toBeTruthy();
         expect(inputSyncElm).toBeTruthy();
       });
@@ -558,10 +558,10 @@ describe('GridMenuControl', () => {
         buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
         expect(onAfterSpy).toHaveBeenCalled();
-        expect(control.menuElement.style.visibility).toBe('visible');
+        expect(control.menuElement.style.display).toBe('block');
 
         control.hideMenu(new Event('click', { bubbles: true, cancelable: true, composed: false }) as DOMEvent<HTMLDivElement>);
-        expect(control.menuElement.style.visibility).toBe('hidden');
+        expect(control.menuElement.style.display).toBe('none');
         expect(pubSubSpy).toHaveBeenCalledWith('gridMenu:onAfterMenuShow', {
           grid: gridStub,
           menu: document.querySelector('.slick-gridmenu'),
@@ -583,12 +583,12 @@ describe('GridMenuControl', () => {
         const forceFitElm = control.menuElement.querySelector<HTMLInputElement>('#slickgrid_124343-gridmenu-colpicker-forcefit');
         const inputSyncElm = control.menuElement.querySelector<HTMLInputElement>('#slickgrid_124343-gridmenu-colpicker-syncresize');
 
-        expect(control.menuElement.style.visibility).toBe('visible');
+        expect(control.menuElement.style.display).toBe('block');
         expect(forceFitElm).toBeTruthy();
         expect(inputSyncElm).toBeTruthy();
 
         control.hideMenu(new Event('click', { bubbles: true, cancelable: true, composed: false }) as DOMEvent<HTMLDivElement>);
-        expect(control.menuElement.style.visibility).toBe('visible');
+        expect(control.menuElement.style.display).toBe('block');
         expect(pubSubSpy).toHaveBeenCalledWith('gridMenu:onMenuClose', {
           grid: gridStub,
           menu: document.querySelector('.slick-gridmenu'),
@@ -610,12 +610,12 @@ describe('GridMenuControl', () => {
         const forceFitElm = control.menuElement.querySelector<HTMLInputElement>('#slickgrid_124343-gridmenu-colpicker-forcefit');
         const inputSyncElm = control.menuElement.querySelector<HTMLInputElement>('#slickgrid_124343-gridmenu-colpicker-syncresize');
 
-        expect(control.menuElement.style.visibility).toBe('visible');
+        expect(control.menuElement.style.display).toBe('block');
         expect(forceFitElm).toBeTruthy();
         expect(inputSyncElm).toBeTruthy();
 
         control.hideMenu(new Event('click', { bubbles: true, cancelable: true, composed: false }) as DOMEvent<HTMLDivElement>);
-        expect(control.menuElement.style.visibility).toBe('hidden');
+        expect(control.menuElement.style.display).toBe('none');
         expect(autosizeSpy).not.toHaveBeenCalled();
       });
 
@@ -637,13 +637,13 @@ describe('GridMenuControl', () => {
         pickerField1Elm.checked = false;
         pickerField1Elm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        expect(control.menuElement.style.visibility).toBe('visible');
+        expect(control.menuElement.style.display).toBe('block');
         expect(forceFitElm).toBeTruthy();
         expect(inputSyncElm).toBeTruthy();
         expect(pickerField1Elm.checked).toBeFalse();
 
         control.hideMenu(new Event('click', { bubbles: true, cancelable: true, composed: false }) as DOMEvent<HTMLDivElement>);
-        expect(control.menuElement.style.visibility).toBe('hidden');
+        expect(control.menuElement.style.display).toBe('none');
         expect(autosizeSpy).toHaveBeenCalled();
       });
 

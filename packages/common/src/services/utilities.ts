@@ -877,6 +877,17 @@ export function parseUtcDate(inputDateString: any, useUtc?: boolean): string {
 }
 
 /**
+ * Remove any accents from a string by normalizing it
+ * @param {String} text - input text
+ * @param {Boolean} shouldLowerCase - should we also lowercase the string output?
+ * @returns
+ */
+export function removeAccentFromText(text: string, shouldLowerCase = false) {
+  const normalizedText = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  return shouldLowerCase ? normalizedText.toLowerCase() : normalizedText;
+}
+
+/**
  * Sanitize, return only the text without HTML tags
  * @input htmlString
  * @return text

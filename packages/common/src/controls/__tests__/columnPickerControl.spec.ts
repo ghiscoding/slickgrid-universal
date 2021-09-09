@@ -103,7 +103,7 @@ describe('ColumnPickerControl', () => {
       const inputElm = control.menuElement.querySelector('input[type="checkbox"]');
       inputElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-      expect(control.menuElement.style.visibility).toBe('visible');
+      expect(control.menuElement.style.display).toBe('block');
       expect(setSelectionSpy).toHaveBeenCalledWith(mockRowSelection);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);
@@ -121,12 +121,12 @@ describe('ColumnPickerControl', () => {
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData, gridStub);
 
-      expect(control.menuElement.style.visibility).toBe('visible');
+      expect(control.menuElement.style.display).toBe('block');
 
       const bodyElm = document.body;
       bodyElm.dispatchEvent(new Event('mousedown', { bubbles: true }));
 
-      expect(control.menuElement.style.visibility).toBe('hidden');
+      expect(control.menuElement.style.display).toBe('none');
     });
 
     it('should query an input checkbox change event and expect "readjustFrozenColumnIndexWhenNeeded" method to be called when the grid is detected to be a frozen grid', () => {

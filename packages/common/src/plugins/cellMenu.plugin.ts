@@ -2,7 +2,7 @@ import {
   CellMenu,
   CellMenuOption,
   Column,
-  DOMEvent,
+  DOMMouseEvent,
   GetSlickEventType,
   GridOption,
   MenuCommandItem,
@@ -14,7 +14,7 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
-import { getHtmlElementOffset, hasData, isNumber, windowScrollPosition } from '../services/index';
+import { findWidthOrDefault, getHtmlElementOffset, hasData, windowScrollPosition } from '../services/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { PubSubService } from '../services/pubSub.service';
@@ -129,7 +129,7 @@ export class CellMenuPlugin {
     this.menuElement?.remove();
   }
 
-  createMenu(event: DOMEvent<HTMLDivElement>) {
+  createMenu(event: DOMMouseEvent<HTMLDivElement>) {
     this.menuElement?.remove();
     this._menuElm = undefined;
     const cell = this.grid.getCellFromEvent(event);
@@ -174,10 +174,10 @@ export class CellMenuPlugin {
       this._menuElm = document.createElement('div');
       this._menuElm.className = `slick-cell-menu ${this.gridUid}`;
       this._menuElm.style.maxHeight = maxHeight as string;
-      this._menuElm.style.width = `${+(this.addonOptions?.width ?? 0)}px`;
-      this._menuElm.style.top = `${(event as unknown as MouseEvent).pageY + 5}px`;
-      this._menuElm.style.left = `${(event as unknown as MouseEvent).pageX}px`;
-      this._menuElm.style.visibility = 'hidden';
+      this._menuElm.style.width = findWidthOrDefault(this.addonOptions?.width);
+      this._menuElm.style.top = `${event.pageY + 5}px`;
+      this._menuElm.style.left = `${event.pageX}px`;
+      this._menuElm.style.display = 'none';
 
       const closeButtonElm = document.createElement('button');
       closeButtonElm.className = 'close';
@@ -196,7 +196,7 @@ export class CellMenuPlugin {
         const optionMenuElm = document.createElement('div');
         optionMenuElm.className = 'slick-cell-menu-option-list';
         if (!this.addonOptions.hideCloseButton) {
-          this._bindEventService.bind(closeButtonElm, 'click', ((e: DOMEvent<HTMLDivElement>) => this.handleCloseButtonClicked(e)) as EventListener);
+          this._bindEventService.bind(closeButtonElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) => this.handleCloseButtonClicked(e)) as EventListener);
           this._menuElm.appendChild(closeButtonElm);
         }
         this._menuElm.appendChild(optionMenuElm);
@@ -213,7 +213,7 @@ export class CellMenuPlugin {
         const commandMenuElm = document.createElement('div');
         commandMenuElm.className = 'slick-cell-menu-command-list';
         if (!this.addonOptions.hideCloseButton && (optionItems.length === 0 || this.addonOptions.hideOptionSection)) {
-          this._bindEventService.bind(closeButtonElm, 'click', ((e: DOMEvent<HTMLDivElement>) => this.handleCloseButtonClicked(e)) as EventListener);
+          this._bindEventService.bind(closeButtonElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) => this.handleCloseButtonClicked(e)) as EventListener);
           this._menuElm.appendChild(closeButtonElm);
         }
         this._menuElm.appendChild(commandMenuElm);
@@ -225,7 +225,7 @@ export class CellMenuPlugin {
         );
       }
 
-      this._menuElm.style.visibility = 'visible';
+      this._menuElm.style.display = 'block';
       document.body.appendChild(this._menuElm);
 
       // execute optional callback method defined by the user
@@ -237,7 +237,7 @@ export class CellMenuPlugin {
     return this._menuElm;
   }
 
-  closeMenu(e: DOMEvent<HTMLDivElement>, args: MenuFromCellCallbackArgs) {
+  closeMenu(e: DOMMouseEvent<HTMLDivElement>, args: MenuFromCellCallbackArgs) {
     if (this.menuElement) {
       if (typeof this.addonOptions?.onBeforeMenuClose === 'function' && this.addonOptions?.onBeforeMenuClose(e, args) === false) {
         return;
@@ -291,7 +291,7 @@ export class CellMenuPlugin {
   // event handlers
   // ------------------
 
-  protected handleCellClick(event: DOMEvent<HTMLDivElement>, args: MenuCommandItemCallbackArgs) {
+  protected handleCellClick(event: DOMMouseEvent<HTMLDivElement>, args: MenuCommandItemCallbackArgs) {
     const cell = this.grid.getCellFromEvent(event);
     if (cell) {
       const dataContext = this.grid.getDataItem(cell.row);
@@ -322,7 +322,7 @@ export class CellMenuPlugin {
       // reposition the menu to where the user clicked
       if (this._menuElm) {
         this.repositionMenu(event);
-        this._menuElm.style.visibility = 'visible';
+        this._menuElm.style.display = 'block';
       }
 
       // Hide the menu on outside click.
@@ -330,20 +330,20 @@ export class CellMenuPlugin {
     }
   }
 
-  protected handleCloseButtonClicked(e: DOMEvent<HTMLDivElement>) {
+  protected handleCloseButtonClicked(e: DOMMouseEvent<HTMLDivElement>) {
     if (!e.defaultPrevented) {
       this.closeMenu(e, { cell: 0, row: 0, grid: this.grid, });
     }
   }
 
   /** Mouse down handler when clicking anywhere in the DOM body */
-  protected handleBodyMouseDown(e: DOMEvent<HTMLDivElement>) {
+  protected handleBodyMouseDown(e: DOMMouseEvent<HTMLDivElement>) {
     if ((this.menuElement !== e.target && !this.menuElement?.contains(e.target)) || e.target.className === 'close') {
       this.closeMenu(e, { cell: this._currentCell, row: this._currentRow, grid: this.grid });
     }
   }
 
-  protected handleMenuItemCommandClick(e: DOMEvent<HTMLDivElement>, item: MenuCommandItem, row: number, cell: number) {
+  protected handleMenuItemCommandClick(e: DOMMouseEvent<HTMLDivElement>, item: MenuCommandItem, row: number, cell: number) {
     if (item?.command !== undefined && !item.disabled && !item.divider) {
       const columnDef = this.grid.getColumns()[cell];
       const dataContext = this.grid.getDataItem(row);
@@ -380,7 +380,7 @@ export class CellMenuPlugin {
     }
   }
 
-  protected handleMenuItemOptionClick(event: DOMEvent<HTMLDivElement>, item: MenuOptionItem, row: number, cell: number) {
+  protected handleMenuItemOptionClick(event: DOMMouseEvent<HTMLDivElement>, item: MenuOptionItem, row: number, cell: number) {
     if (item?.option !== undefined && !item.disabled && !item.divider) {
       if (!this.grid.getEditorLock().commitCurrentEdit()) {
         return;
@@ -531,7 +531,7 @@ export class CellMenuPlugin {
           textElm.classList.add(...item.textCssClass.split(' '));
         }
         // execute command on menu item clicked
-        this._bindEventService.bind(divOptionElm, 'click', ((e: DOMEvent<HTMLDivElement>) => this.handleMenuItemOptionClick(e, item, this._currentRow, this._currentCell)) as EventListener);
+        this._bindEventService.bind(divOptionElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) => this.handleMenuItemOptionClick(e, item, this._currentRow, this._currentCell)) as EventListener);
       }
     }
   }
@@ -619,22 +619,22 @@ export class CellMenuPlugin {
           textElm.classList.add(...item.textCssClass.split(' '));
         }
         // execute command on menu item clicked
-        this._bindEventService.bind(divCommandElm, 'click', ((e: DOMEvent<HTMLDivElement>) => this.handleMenuItemCommandClick(e, item, this._currentRow, this._currentCell)) as EventListener);
+        this._bindEventService.bind(divCommandElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) => this.handleMenuItemCommandClick(e, item, this._currentRow, this._currentCell)) as EventListener);
       }
     }
   }
 
-  protected repositionMenu(event: DOMEvent<HTMLDivElement>) {
+  protected repositionMenu(event: DOMMouseEvent<HTMLDivElement>) {
     if (this._menuElm && event.target) {
       const parentElm = event.target.closest('.slick-cell') as HTMLDivElement;
-      let menuOffsetLeft = parentElm ? getHtmlElementOffset(parentElm)?.left ?? 0 : (event as unknown as MouseEvent).pageX;
-      let menuOffsetTop = parentElm ? getHtmlElementOffset(parentElm)?.top ?? 0 : (event as unknown as MouseEvent).pageY;
-      const parentCellWidth = +(parentElm.clientWidth ?? 0);
-      const menuHeight = this._menuElm?.clientHeight ?? 0;
-      const menuWidth = this._menuElm?.clientWidth || this._addonOptions.width || 0;
-      const rowHeight = +(this.gridOptions.rowHeight ?? 0);
-      const dropOffset = +(this._addonOptions.autoAdjustDropOffset ?? 0);
-      const sideOffset = +(this._addonOptions.autoAlignSideOffset ?? 0);
+      let menuOffsetLeft = parentElm ? getHtmlElementOffset(parentElm)?.left ?? 0 : event.pageX;
+      let menuOffsetTop = parentElm ? getHtmlElementOffset(parentElm)?.top ?? 0 : event.pageY;
+      const parentCellWidth = parentElm.offsetWidth ?? 0;
+      const menuHeight = this._menuElm?.offsetHeight ?? 0;
+      const menuWidth = this._menuElm?.offsetWidth || this._addonOptions.width || 0;
+      const rowHeight = this.gridOptions.rowHeight || 0;
+      const dropOffset = +(this._addonOptions.autoAdjustDropOffset || 0);
+      const sideOffset = +(this._addonOptions.autoAlignSideOffset || 0);
 
       // if autoAdjustDrop is enable, we first need to see what position the drop will be located (defaults to bottom)
       // without necessary toggling it's position just yet, we just want to know the future position for calculation
@@ -661,7 +661,7 @@ export class CellMenuPlugin {
       // to simulate an align left, we actually need to know the width of the drop menu
       if (this._addonOptions.autoAlignSide || this._addonOptions.alignDropSide === 'left') {
         const gridPos = this.grid.getGridPosition();
-        const dropSide = (isNumber(menuWidth) || ((menuOffsetLeft + (+menuWidth)) >= gridPos.width)) ? 'left' : 'right';
+        const dropSide = (((menuOffsetLeft + (+menuWidth)) >= gridPos.width)) ? 'left' : 'right';
         if (dropSide === 'left' || this._addonOptions.alignDropSide === 'left') {
           this._menuElm.classList.remove('dropright');
           this._menuElm.classList.add('dropleft');

@@ -1,7 +1,7 @@
 import {
   Column,
   ColumnPickerOption,
-  DOMEvent,
+  DOMMouseEvent,
   GetSlickEventType,
   GridOption,
   SlickEventHandler,
@@ -104,7 +104,7 @@ export class ColumnPickerControl {
 
     this._menuElm = document.createElement('div');
     this._menuElm.className = `slick-columnpicker ${this._gridUid}`;
-    this._menuElm.style.visibility = 'hidden';
+    this._menuElm.style.display = 'none';
 
     const closePickerButtonElm = document.createElement('button');
     closePickerButtonElm.className = 'close';
@@ -192,14 +192,14 @@ export class ColumnPickerControl {
   // ------------------
 
   /** Mouse down handler when clicking anywhere in the DOM body */
-  protected handleBodyMouseDown(e: DOMEvent<HTMLDivElement>) {
+  protected handleBodyMouseDown(e: DOMMouseEvent<HTMLDivElement>) {
     if ((this._menuElm !== e.target && !this._menuElm.contains(e.target)) || e.target.className === 'close') {
-      this._menuElm.style.visibility = 'hidden';
+      this._menuElm.style.display = 'none';
     }
   }
 
   /** Mouse header context handler when doing a right+click on any of the header column title */
-  protected handleHeaderContextMenu(e: DOMEvent<HTMLDivElement>) {
+  protected handleHeaderContextMenu(e: DOMMouseEvent<HTMLDivElement>) {
     e.preventDefault();
     emptyElement(this._listElm);
     updateColumnPickerOrder.call(this);
@@ -209,11 +209,11 @@ export class ColumnPickerControl {
     this.repositionMenu(e);
   }
 
-  protected repositionMenu(e: DOMEvent<HTMLDivElement>) {
-    this._menuElm.style.top = `${(e as any).pageY - 10}px`;
-    this._menuElm.style.left = `${(e as any).pageX - 10}px`;
-    this._menuElm.style.maxHeight = `${document.body.clientHeight - (e as any).pageY - 10}px`;
-    this._menuElm.style.visibility = 'visible';
+  protected repositionMenu(event: DOMMouseEvent<HTMLDivElement>) {
+    this._menuElm.style.top = `${event.pageY - 10}px`;
+    this._menuElm.style.left = `${event.pageX - 10}px`;
+    this._menuElm.style.maxHeight = `${document.body.clientHeight - event.pageY - 10}px`;
+    this._menuElm.style.display = 'block';
     this._menuElm.appendChild(this._listElm);
   }
 

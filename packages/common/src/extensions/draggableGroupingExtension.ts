@@ -2,6 +2,7 @@ import 'slickgrid/plugins/slick.draggablegrouping';
 
 import { DraggableGrouping, Extension, GetSlickEventType, GridOption, SlickDraggableGrouping, SlickEventHandler, SlickNamespace } from '../interfaces/index';
 import { ExtensionUtility } from './extensionUtility';
+import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
 
 // using external non-typed js libraries
@@ -12,7 +13,7 @@ export class DraggableGroupingExtension implements Extension {
   private _draggableGroupingOptions: DraggableGrouping | null = null;
   private _eventHandler: SlickEventHandler;
 
-  constructor(private readonly extensionUtility: ExtensionUtility, private readonly sharedService: SharedService) {
+  constructor(private readonly extensionUtility: ExtensionUtility, private readonly pubSubService: PubSubService, private readonly sharedService: SharedService) {
     this._eventHandler = new Slick.EventHandler();
   }
 
@@ -71,6 +72,9 @@ export class DraggableGroupingExtension implements Extension {
             }
           });
         }
+
+        // we also need to subscribe to a possible user clearing the grouping via the Context Menu, we need to clear the pre-header bar as well
+        this.pubSubService.subscribe('contextMenu:clearGrouping', () => this._addon?.clearDroppedGroups?.());
       }
 
       return this._addon;
