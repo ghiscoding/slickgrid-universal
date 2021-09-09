@@ -1,4 +1,4 @@
-import { CellMenu, Column, ColumnSort, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, SlickDataView, SlickEventData, SlickGrid, SlickNamespace, } from '../../interfaces/index';
+import { CellMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, SlickDataView, SlickGrid, SlickNamespace, } from '../../interfaces/index';
 import { CellMenuPlugin } from '../cellMenu.plugin';
 import { BackendUtilityService, deepCopy, PubSubService, SharedService, } from '../../services';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
@@ -237,19 +237,12 @@ describe('CellMenu Plugin', () => {
       gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventDataCopy as any, gridStub);
 
       let cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
-
       Object.defineProperty(cellMenuElm, 'clientHeight', { writable: true, configurable: true, value: 300 });
       Object.defineProperty(plugin.menuElement, 'clientWidth', { writable: true, configurable: true, value: 350 });
-      // Object.defineProperty(eventDataCopy, 'target', { writable: true, configurable: true, value: cellMenuElm });
-
-
-      // plugin.showMenu(clickEvent, columnsMock[0], columnsMock[0].header.menu);
       gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventDataCopy as any, gridStub);
 
       expect(cellMenuElm.classList.contains('dropup')).toBeTruthy();
       expect(cellMenuElm.classList.contains('dropleft')).toBeTruthy();
-      // expect(plugin.menuElement.clientWidth).toBe(275);
-      // expect(plugin.menuElement.style.left).toBe('75px');
     });
 
     describe('with Command Items', () => {
@@ -278,7 +271,7 @@ describe('CellMenu Plugin', () => {
         expect(cellMenuElm.classList.contains('dropright'));
         expect(commandListElm.querySelectorAll('.slick-cell-menu-item').length).toBe(5);
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div class="slick-cell-menu slickgrid12345 dropdown dropright" style="max-height: none; visibility: visible; top: 0px; left: 0px;">
+          `<div class="slick-cell-menu slickgrid12345 dropdown dropright" style="max-height: none; width: auto; display: block; top: 0px; left: 0px;">
             <button class="close" type="button" data-dismiss="slick-cell-menu" aria-label="Close">
               <span class="close" aria-hidden="true">×</span>
             </button>
@@ -667,7 +660,7 @@ describe('CellMenu Plugin', () => {
 
         expect(optionListElm.querySelectorAll('.slick-cell-menu-item').length).toBe(5);
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div class="slick-cell-menu slickgrid12345 dropdown dropright" style="max-height: none; visibility: visible; top: 0px; left: 0px;">
+          `<div class="slick-cell-menu slickgrid12345 dropdown dropright" style="max-height: none; width: auto; display: block; top: 0px; left: 0px;">
             <button class="close" type="button" data-dismiss="slick-cell-menu" aria-label="Close">
               <span class="close" aria-hidden="true">×</span>
             </button>

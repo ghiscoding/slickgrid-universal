@@ -162,6 +162,10 @@ export function getHtmlElementOffset(element: HTMLElement): HtmlElementPosition 
   return { top, left, bottom, right };
 }
 
+export function findWidthOrDefault(inputWidth?: number | string, defaultVal = 'auto'): string {
+  return (/^[0-9]+$/i.test(`${inputWidth}`) ? `${+(inputWidth as number)}px` : inputWidth as string) || defaultVal;
+}
+
 /**
  * Get the Window Scroll top/left Position
  * @returns

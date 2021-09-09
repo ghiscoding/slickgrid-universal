@@ -8,7 +8,6 @@ import { ExtensionList, ExtensionName, SlickControlList, SlickPluginList } from 
 import {
   CellExternalCopyManagerExtension,
   CheckboxSelectorExtension,
-  ContextMenuExtension,
   DraggableGroupingExtension,
   ExtensionUtility,
   GroupItemMetaProviderExtension,
@@ -18,11 +17,12 @@ import {
 } from '../extensions/index';
 import { SharedService } from './shared.service';
 import { TranslaterService } from './translater.service';
-import { AutoTooltipPlugin, CellMenuPlugin, HeaderButtonPlugin, HeaderMenuPlugin } from '../plugins/index';
+import { AutoTooltipPlugin, CellMenuPlugin, ContextMenuPlugin, HeaderButtonPlugin, HeaderMenuPlugin } from '../plugins/index';
 import { ColumnPickerControl, GridMenuControl } from '../controls/index';
 import { FilterService } from './filter.service';
 import { PubSubService } from './pubSub.service';
 import { SortService } from './sort.service';
+import { TreeDataService } from './treeData.service';
 
 interface ExtensionWithColumnIndexPosition {
   name: ExtensionName;
@@ -32,6 +32,7 @@ interface ExtensionWithColumnIndexPosition {
 
 export class ExtensionService {
   protected _cellMenuPlugin?: CellMenuPlugin;
+  protected _contextMenuPlugin?: ContextMenuPlugin;
   protected _columnPickerControl?: ColumnPickerControl;
   protected _gridMenuControl?: GridMenuControl;
   protected _headerMenuPlugin?: HeaderMenuPlugin;
@@ -51,10 +52,10 @@ export class ExtensionService {
     protected readonly filterService: FilterService,
     protected readonly pubSubService: PubSubService,
     protected readonly sortService: SortService,
+    protected readonly treeDataService: TreeDataService,
 
     protected readonly cellExternalCopyExtension: CellExternalCopyManagerExtension,
     protected readonly checkboxSelectorExtension: CheckboxSelectorExtension,
-    protected readonly contextMenuExtension: ContextMenuExtension,
     protected readonly draggableGroupingExtension: DraggableGroupingExtension,
     protected readonly groupItemMetaExtension: GroupItemMetaProviderExtension,
     protected readonly rowDetailViewExtension: RowDetailViewExtension,
@@ -195,10 +196,13 @@ export class ExtensionService {
       }
 
       // Context Menu Control
-      if (this.gridOptions.enableContextMenu && this.contextMenuExtension && this.contextMenuExtension.register) {
-        const instance = this.contextMenuExtension.register();
-        if (instance) {
-          this._extensionList[ExtensionName.contextMenu] = { name: ExtensionName.contextMenu, class: this.contextMenuExtension, instance };
+      if (this.gridOptions.enableContextMenu) {
+        this._contextMenuPlugin = new ContextMenuPlugin(this.extensionUtility, this.pubSubService, this.sharedService, this.treeDataService);
+        if (this._contextMenuPlugin) {
+          if (this.gridOptions.contextMenu?.onExtensionRegistered) {
+            this.gridOptions.contextMenu.onExtensionRegistered(this._contextMenuPlugin);
+          }
+          this._extensionList[ExtensionName.contextMenu] = { name: ExtensionName.contextMenu, class: this._contextMenuPlugin, instance: this._contextMenuPlugin };
         }
       }
 
@@ -371,9 +375,7 @@ export class ExtensionService {
 
   /** Translate the Context Menu titles, we need to loop through all column definition to re-translate them */
   translateContextMenu() {
-    if (this.contextMenuExtension && this.contextMenuExtension.translateContextMenu) {
-      this.contextMenuExtension.translateContextMenu();
-    }
+    this._contextMenuPlugin?.translateContextMenu?.();
   }
 
   /**

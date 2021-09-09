@@ -34,7 +34,6 @@ import {
   // extensions
   CheckboxSelectorExtension,
   CellExternalCopyManagerExtension,
-  ContextMenuExtension,
   DraggableGroupingExtension,
   ExtensionUtility,
   GroupItemMetaProviderExtension,
@@ -355,7 +354,6 @@ export class SlickVanillaGridBundle {
 
     // extensions
     const cellExternalCopyManagerExtension = new CellExternalCopyManagerExtension(this.extensionUtility, this.sharedService);
-    const contextMenuExtension = new ContextMenuExtension(this.extensionUtility, this.sharedService, this.treeDataService, this.translaterService);
     const checkboxExtension = new CheckboxSelectorExtension(this.sharedService);
     const draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this.sharedService);
     const groupItemMetaProviderExtension = new GroupItemMetaProviderExtension(this.sharedService);
@@ -368,9 +366,9 @@ export class SlickVanillaGridBundle {
       this.filterService,
       this._eventPubSubService,
       this.sortService,
+      this.treeDataService,
       cellExternalCopyManagerExtension,
       checkboxExtension,
-      contextMenuExtension,
       draggableGroupingExtension,
       groupItemMetaProviderExtension,
       rowDetailViewExtension,
