@@ -31,16 +31,17 @@ import {
 } from '../../interfaces/index';
 import { SharedService } from '../shared.service';
 import { TreeDataService } from '../treeData.service';
+import { PubSubService } from '../pubSub.service';
 
 declare const Slick: SlickNamespace;
 
 const fnCallbacks = {};
 const mockPubSub = {
   publish: jest.fn(),
-  subscribe: (eventName, fn) => fnCallbacks[eventName] = fn,
+  subscribe: (eventName, fn) => fnCallbacks[eventName as string] = fn,
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
-};
+} as PubSubService;
 jest.mock('../pubSub.service', () => ({
   PubSubService: () => mockPubSub
 }));

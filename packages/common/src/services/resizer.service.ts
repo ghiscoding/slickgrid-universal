@@ -61,6 +61,9 @@ export class ResizerService {
   get gridUid(): string {
     return this._grid?.getUID() ?? '';
   }
+  get gridUidSelector(): string {
+    return this.gridUid ? `.${this.gridUid}` : '';
+  }
 
   get intervalRetryDelay(): number {
     return this._intervalRetryDelay;
@@ -85,7 +88,7 @@ export class ResizerService {
       clearInterval(this._intervalId);
     }
 
-    $(window).off(`resize.grid.${this.gridUid}`);
+    $(window).off(`resize.grid${this.gridUidSelector}`);
   }
 
   init(grid: SlickGrid, gridParentContainerElm: HTMLElement) {
@@ -148,14 +151,16 @@ export class ResizerService {
     }
 
     // -- 1st resize the datagrid size at first load (we need this because the .on event is not triggered on first load)
-    // -- also we add a slight delay (in ms) so that we resize after the grid render is done
-    this.resizeGrid(10, newSizes)
+    this.resizeGrid()
       .then(() => this.resizeGridWhenStylingIsBrokenUntilCorrected())
       .catch((rejection: any) => console.log('Error:', rejection));
 
+    // -- do a 2nd resize with a slight delay (in ms) so that we resize after the grid render is done
+    this.resizeGrid(10, newSizes);
+
     // -- 2nd bind a trigger on the Window DOM element, so that it happens also when resizing after first load
     // -- bind auto-resize to Window object only if it exist
-    $(window).on(`resize.grid.${this.gridUid}`, this.handleResizeGrid.bind(this, newSizes));
+    $(window).on(`resize.grid${this.gridUidSelector}`, this.handleResizeGrid.bind(this, newSizes));
   }
 
   handleResizeGrid(newSizes?: GridSize) {
@@ -316,7 +321,7 @@ export class ResizerService {
       // also call the grid auto-size columns so that it takes available space when going bigger
       if (this.gridOptions?.enableAutoSizeColumns && this._grid.autosizeColumns) {
         // make sure that the grid still exist (by looking if the Grid UID is found in the DOM tree) to avoid SlickGrid error "missing stylesheet"
-        if (this.gridUid && $(`.${this.gridUid}`).length > 0) {
+        if (this.gridUid && $(`${this.gridUidSelector}`).length > 0) {
           this._grid.autosizeColumns();
         }
       } else if (this.gridOptions.enableAutoResizeColumnsByCellContent && (!this._lastDimensions?.width || newWidth !== this._lastDimensions?.width)) {
@@ -571,6 +576,14 @@ export class ResizerService {
   }
 
   /**
+   * Just check if the grid is still shown in the DOM
+   * @returns is grid shown
+   */
+  protected checkIsGridShown(): boolean {
+    return !!(document.querySelector<HTMLDivElement>(`${this.gridUidSelector}`)?.offsetParent ?? false);
+  }
+
+  /**
    * Patch for SalesForce, some issues arise when having a grid inside a Tab and user clicks in a different Tab without waiting for the grid to be rendered
    * in ideal world, we would simply call a resize when user comes back to the Tab with the grid (tab focused) but this is an extra step and we might not always have this event available.
    * The grid seems broken, the header titles seems to be showing up behind the grid data and the rendering seems broken.
@@ -587,8 +600,8 @@ export class ResizerService {
     const autoFixResizeTimeout = this.gridOptions?.autoFixResizeTimeout ?? (5 * 60 * 60); // interval is 200ms, so 4x is 1sec, so (4 * 60 * 60 = 60min)
     const autoFixResizeRequiredGoodCount = this.gridOptions?.autoFixResizeRequiredGoodCount ?? 5;
 
-    const headerElm = this._gridParentContainerElm.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-header`);
-    const viewportElm = this._gridParentContainerElm.querySelector<HTMLDivElement>(`.${this.gridUid} .slick-viewport`);
+    const headerElm = this._gridParentContainerElm.querySelector<HTMLDivElement>(`${this.gridUidSelector} .slick-header`);
+    const viewportElm = this._gridParentContainerElm.querySelector<HTMLDivElement>(`${this.gridUidSelector} .slick-viewport`);
     let intervalExecutionCounter = 0;
     let resizeGoodCount = 0;
 
@@ -631,25 +644,22 @@ export class ResizerService {
         }
 
         // visible grid (shown to the user and not hidden in another Tab will have an offsetParent defined)
-        let isGridVisible = !!(document.querySelector<HTMLDivElement>(`.${this.gridUid}`)?.offsetParent ?? false);
-
-        if (isGridVisible && (isResizeRequired || containerElmOffset?.left === 0 || containerElmOffset?.top === 0)) {
+        if (this.checkIsGridShown() && (isResizeRequired || containerElmOffset?.left === 0 || containerElmOffset?.top === 0)) {
           await this.resizeGrid();
 
           // make sure the grid is still visible after doing the resize
-          isGridVisible = !!(document.querySelector<HTMLDivElement>(`.${this.gridUid}`)?.offsetParent ?? false);
-          if (isGridVisible) {
+          if (this.checkIsGridShown()) {
             isResizeRequired = false;
           }
         }
 
         // make sure the grid is still visible after optionally doing a resize
         // if it visible then we can consider it a good resize (it might not be visible if user quickly switch to another Tab)
-        if (isGridVisible) {
+        if (this.checkIsGridShown()) {
           resizeGoodCount++;
         }
 
-        if (isGridVisible && !isResizeRequired && (resizeGoodCount >= autoFixResizeRequiredGoodCount || intervalExecutionCounter++ >= autoFixResizeTimeout)) {
+        if (this.checkIsGridShown() && !isResizeRequired && (resizeGoodCount >= autoFixResizeRequiredGoodCount || intervalExecutionCounter++ >= autoFixResizeTimeout)) {
           clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 70min
         }
       }, this.intervalRetryDelay);

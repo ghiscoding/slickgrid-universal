@@ -32,6 +32,7 @@ import {
   mapOperatorType,
   parseBoolean,
   parseUtcDate,
+  removeAccentFromText,
   sanitizeHtmlToText,
   sanitizeTextByAvailableSanitizer,
   setDeepValue,
@@ -1218,6 +1219,28 @@ describe('Service/Utilies', () => {
       const input = '2012-01-01';
       const output = parseUtcDate(input, true);
       expect(output).toBe('2012-01-01T00:00:00Z');
+    });
+  });
+
+  describe('removeAccentFromText method', () => {
+    it('should return a normalized string without accent', () => {
+      const input1 = 'José';
+      const input2 = 'Chêvre';
+      const input3 = 'áàãāăǎäéèêëěíìîïǐĩóòôöǒõ';
+
+      expect(removeAccentFromText(input1)).toBe('Jose');
+      expect(removeAccentFromText(input2)).toBe('Chevre');
+      expect(removeAccentFromText(input3)).toBe('aaaaaaaeeeeeiiiiiioooooo');
+    });
+
+    it('should return a normalized string without accent and lowercase when specified', () => {
+      const input1 = 'José';
+      const input2 = 'Chêvre';
+      const input3 = 'ÁÀÃĀĂǍÄÉÈÊËĚÍÌÎÏǏĨÓÒÔÖǑÕ';
+
+      expect(removeAccentFromText(input1, true)).toBe('jose');
+      expect(removeAccentFromText(input2, true)).toBe('chevre');
+      expect(removeAccentFromText(input3, true)).toBe('aaaaaaaeeeeeiiiiiioooooo');
     });
   });
 

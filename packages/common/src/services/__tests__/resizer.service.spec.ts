@@ -581,8 +581,9 @@ describe('Resizer Service', () => {
         setTimeout(() => {
           expect(divContainer.outerHTML).toBeTruthy();
           expect(resizeSpy).toHaveBeenCalled();
-          expect(resizeSpy).toHaveBeenNthCalledWith(2);
+          expect(resizeSpy).toHaveBeenNthCalledWith(2, 10, undefined);
           expect(resizeSpy).toHaveBeenNthCalledWith(3);
+          expect(resizeSpy).toHaveBeenNthCalledWith(4);
           done();
         }, 25);
       });
@@ -663,8 +664,9 @@ describe('Resizer Service', () => {
         setTimeout(() => {
           expect(divContainer.outerHTML).toBeTruthy();
           expect(resizeSpy).toHaveBeenCalled();
-          expect(resizeSpy).toHaveBeenNthCalledWith(2);
+          expect(resizeSpy).toHaveBeenNthCalledWith(2, 10, undefined);
           expect(resizeSpy).toHaveBeenNthCalledWith(3);
+          expect(resizeSpy).toHaveBeenNthCalledWith(4);
           done();
           service.requestStopOfAutoFixResizeGrid();
         }, 25);

@@ -297,6 +297,7 @@ export class Example3 {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false
       },
+      showCustomFooter: true,
       createPreHeaderPanel: true,
       showPreHeaderPanel: true,
       preHeaderPanelHeight: 35,
