@@ -1,13 +1,13 @@
-import { Column, GroupTotalsFormatter } from './../interfaces/index';
+import { Column, GroupTotalsFormatter, SlickGrid } from './../interfaces/index';
 import { formatNumber } from '../services/utilities';
 import { getValueFromParamsOrFormatterOptions } from '../formatters/formatterUtilities';
 
-export const sumTotalsFormatter: GroupTotalsFormatter = (totals: any, columnDef: Column, grid?: any) => {
-  const field = columnDef.field || '';
-  const val = totals.sum && totals.sum[field];
-  const params = columnDef && columnDef.params;
-  const prefix = params && params.groupFormatterPrefix || '';
-  const suffix = params && params.groupFormatterSuffix || '';
+export const sumTotalsFormatter: GroupTotalsFormatter = (totals: any, columnDef: Column, grid: SlickGrid) => {
+  const field = columnDef.field ?? '';
+  const val = totals.sum?.[field];
+  const params = columnDef?.params;
+  const prefix = params?.groupFormatterPrefix || '';
+  const suffix = params?.groupFormatterSuffix || '';
   const minDecimal = getValueFromParamsOrFormatterOptions('minDecimal', columnDef, grid);
   const maxDecimal = getValueFromParamsOrFormatterOptions('maxDecimal', columnDef, grid);
   const decimalSeparator = getValueFromParamsOrFormatterOptions('decimalSeparator', columnDef, grid, '.');
