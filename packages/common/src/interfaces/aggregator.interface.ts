@@ -1,16 +1,16 @@
 export interface Aggregator {
-  /** Aggregator associated Field Id */
-  field?: number | string;
+  /** Column definition field Id of the associated Aggregator */
+  field: number | string;
 
-  /** Aggregator associated type */
-  type?: string;
+  /** Type of Aggregator (sum, avg, ...) */
+  type: string;
 
   /** Aggregator initialize method */
   init: () => void;
 
-  /** Mathod to accumulate the result with different logic depending on each aggregator type */
+  /** Method to accumulate the result which will be different for each Aggregator type */
   accumulate?: (item: any) => void;
 
-  /** Method to store the result into the given group total argument provided */
-  storeResult?: (groupTotals: any | undefined) => void;
+  /** Method to store the result into the given group total object provided as argument */
+  storeResult: (groupTotals: any | undefined) => void;
 }
