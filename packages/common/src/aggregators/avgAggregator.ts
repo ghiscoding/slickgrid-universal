@@ -2,6 +2,7 @@ import type { Aggregator } from './../interfaces/aggregator.interface';
 
 export class AvgAggregator implements Aggregator {
   private _nonNullCount = 0;
+  private _result = 0;
   private _sum = 0;
   private _field: number | string;
   private _type = 'avg';
@@ -12,6 +13,10 @@ export class AvgAggregator implements Aggregator {
 
   get field(): number | string {
     return this._field;
+  }
+
+  get result(): number {
+    return this._result;
   }
 
   get type(): string {
@@ -36,7 +41,8 @@ export class AvgAggregator implements Aggregator {
       groupTotals[this._type] = {};
     }
     if (this._nonNullCount !== 0) {
-      groupTotals[this._type][this._field] = this._sum / this._nonNullCount;
+      this._result = this._sum / this._nonNullCount;
+      groupTotals[this._type][this._field] = this._result;
     }
   }
 }

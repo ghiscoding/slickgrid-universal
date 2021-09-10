@@ -13,6 +13,10 @@ export class SumAggregator implements Aggregator {
     return this._field;
   }
 
+  get result(): number {
+    return this._sum;
+  }
+
   get type(): string {
     return this._type;
   }

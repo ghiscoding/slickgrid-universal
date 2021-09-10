@@ -60,7 +60,12 @@ export default class Example6 {
         id: 'size', name: 'Size', field: 'size', minWidth: 90,
         type: FieldType.number, exportWithFormatter: true,
         filterable: true, filter: { model: Filters.compoundInputNumber },
-        formatter: (_row, _cell, value) => isNaN(value) ? '' : `${value} MB`,
+        formatter: (row, cell, value, column, dataContext) => {
+          if (dataContext?.__treeTotals?.sum?.size !== undefined) {
+            return isNaN(dataContext?.__treeTotals.sum.size) ? '' : `<span class="color-primary" style="font-weight: 600">${dataContext?.__treeTotals.sum.size} MB</span>`;
+          }
+          return isNaN(value) ? '' : `${value} MB`;
+        },
       },
     ];
 
@@ -241,7 +246,9 @@ export default class Example6 {
             ]
           },
           { id: 9, file: 'misc', files: [{ id: 10, file: 'todo.txt', dateModified: '2015-02-26T16:50:00.123Z', size: 0.4, }] },
-          { id: 7, file: 'xls', files: [{ id: 8, file: 'compilation.xls', description: 'movie compilation', dateModified: '2014-10-02T14:50:00.123Z', size: 2.3, }] },
+          { id: 7, file: 'xls', files: [{ id: 8, file: 'compilation.xls', dateModified: '2014-10-02T14:50:00.123Z', size: 2.3, }] },
+          { id: 55, file: 'unknown.txt', dateModified: '2015-04-08T03:44:12.333Z', size: 0.8, },
+          { id: 77, file: 'zebra.txt', dateModified: '2016-12-08T13:22:12.432', size: 0.8, },
         ]
       },
       {

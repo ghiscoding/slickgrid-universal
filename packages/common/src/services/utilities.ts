@@ -66,46 +66,41 @@ export function castObservableToPromise<T>(rxjs: RxJsFacade, input: Promise<T> |
  * @param {Object} options - options containing info like children & treeLevel property names
  * @param {Number} [treeLevel] - current tree level
  */
-export function addTreeLevelByMutation<T>(treeArray: T[], options: { childrenPropName: string; levelPropName: string; aggregators?: Aggregator[]; }, treeLevel = 0, parent: T = null as any, sum = 0, aggregator?: Aggregator) {
+export function addTreeLevelByMutation<T>(treeArray: T[], options: { childrenPropName: string; levelPropName: string; aggregators?: Aggregator[]; }, treeLevel = 0, parent: T = null as any, childCount = 0, aggregator?: Aggregator) {
   const childrenPropName = (options?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP) as keyof T;
 
   if (Array.isArray(treeArray)) {
-    let aggregatorField = '';
+    let aggField = '';
+    let aggType = '';
     if (options?.aggregators && !aggregator && options.aggregators.length > 0) {
       aggregator = aggregator ?? options.aggregators[0];
-      aggregatorField = `${aggregator.field}`;
+      aggField = `${aggregator.field}`;
+      aggType = aggregator.type;
     }
 
     for (const item of treeArray) {
       if (item) {
+        const isParent = Array.isArray(item[childrenPropName]);
         if (Array.isArray(item[childrenPropName]) && (item[childrenPropName] as unknown as Array<T>).length > 0) {
           if (aggregator) {
-            // aggregator.init();
-            sum = 0;
-            (item as any)[aggregatorField as keyof T] = 0;
+            if (!(item as any).__treeTotals || (item as any).__treeTotals[aggType] === undefined) {
+              (item as any).__treeTotals = { [aggType]: {} };
+            }
+            (item as any).__treeTotals[aggType][aggField] = 0;
+            aggregator.init();
+            childCount = 0;
           }
           treeLevel++;
-          addTreeLevelByMutation(item[childrenPropName] as unknown as Array<T>, options, treeLevel, item, sum);
+          addTreeLevelByMutation(item[childrenPropName] as unknown as Array<T>, options, treeLevel, item, childCount);
           treeLevel--;
         }
-        if (aggregator && aggregatorField) {
-          // aggregator?.accumulate?.(item);
-          sum += (item as any).hasOwnProperty(aggregatorField) ? +(item as any)[aggregatorField] : 0;
-          if (parent) {
-            if (Array.isArray(item[childrenPropName]) && (item[childrenPropName] as unknown as Array<T>).length > 0) {
-              (parent as any)[aggregatorField] = (parent as any)[aggregatorField] ? (parent as any)[aggregatorField] + sum : sum;
-              // if (parent && !(parent as any).__treeTotals) {
-              //   (parent as any).__treeTotals = {};
-              // }
-              // (parent as any)[aggregatorField] ? aggregator?.accumulate?.(parent) : aggregator?.storeResult?.((parent as any).__treeTotals);
-            } else {
-              (parent as any)[aggregatorField] = sum;
-              // if (parent && !(parent as any).__treeTotals) {
-              //   (parent as any).__treeTotals = {};
-              // }
-              // aggregator?.storeResult?.((parent as any).__treeTotals);
-            }
+        childCount++;
+        if (aggregator && aggField && parent) {
+          if (!(item as any).__treeTotals || (item as any).__treeTotals[aggType] === undefined) {
+            (item as any).__treeTotals = { [aggType]: {} };
           }
+          const fileSize = isParent ? +((item as any).__treeTotals[aggType][aggField] ?? 0) : +(item as any)[aggField];
+          (parent as any).__treeTotals[aggType][aggField] = ((parent as any).__treeTotals[aggType][aggField] ?? 0) + fileSize;
         }
         (item as any)[options.levelPropName] = treeLevel;
       }

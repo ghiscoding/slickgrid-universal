@@ -13,6 +13,10 @@ export class MaxAggregator implements Aggregator {
     return this._field;
   }
 
+  get result(): number | null {
+    return this._max;
+  }
+
   get type(): string {
     return this._type;
   }

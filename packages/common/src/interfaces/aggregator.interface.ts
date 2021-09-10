@@ -2,6 +2,9 @@ export interface Aggregator {
   /** Column definition field Id of the associated Aggregator */
   field: number | string;
 
+  /** Result valut of the Aggregator (what is the current sum, avg, ...) */
+  result: any;
+
   /** Type of Aggregator (sum, avg, ...) */
   type: string;
 
