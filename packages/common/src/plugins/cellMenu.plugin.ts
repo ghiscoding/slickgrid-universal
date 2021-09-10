@@ -200,7 +200,8 @@ export class CellMenuPlugin {
           this._menuElm.appendChild(closeButtonElm);
         }
         this._menuElm.appendChild(optionMenuElm);
-        this.populateOptionItems(
+        this.populateCommandOrOptionItems<MenuOptionItem | 'divider', MenuOptionItemCallbackArgs>(
+          'option',
           this.addonOptions,
           optionMenuElm,
           optionItems,
@@ -217,7 +218,8 @@ export class CellMenuPlugin {
           this._menuElm.appendChild(closeButtonElm);
         }
         this._menuElm.appendChild(commandMenuElm);
-        this.populateCommandItems(
+        this.populateCommandOrOptionItems<MenuCommandItem | 'divider', MenuCommandItemCallbackArgs>(
+          'command',
           this.addonOptions,
           commandMenuElm,
           commandItems,
@@ -343,46 +345,9 @@ export class CellMenuPlugin {
     }
   }
 
-  protected handleMenuItemCommandClick(e: DOMMouseEvent<HTMLDivElement>, item: MenuCommandItem, row: number, cell: number) {
-    if (item?.command !== undefined && !item.disabled && !item.divider) {
-      const columnDef = this.grid.getColumns()[cell];
-      const dataContext = this.grid.getDataItem(row);
-
-      // user could execute a callback through 2 ways
-      // via the onCommand event and/or an action callback
-      const callbackArgs = {
-        cell,
-        row,
-        grid: this.grid,
-        command: item.command,
-        item,
-        column: columnDef,
-        dataContext,
-      } as MenuCommandItemCallbackArgs;
-
-      // execute Cell Menu callback with command,
-      // we'll also execute optional user defined onCommand callback when provided
-      // this.executeCellMenuInternalCustomCommands(event, callbackArgs);
-      this.pubSubService.publish('cellMenu:onCommand', callbackArgs);
-      if (typeof this._addonOptions?.onCommand === 'function') {
-        this._addonOptions.onCommand(e, callbackArgs);
-      }
-
-      // execute action callback when defined
-      if (typeof item.action === 'function') {
-        item.action.call(this, e, callbackArgs);
-      }
-
-      // does the user want to leave open the Cell Menu after executing a command?
-      if (!e.defaultPrevented) {
-        this.closeMenu(e, { cell, row, grid: this.grid });
-      }
-    }
-  }
-
-  protected handleMenuItemOptionClick(event: DOMMouseEvent<HTMLDivElement>, item: MenuOptionItem, row: number, cell: number) {
-    if (item?.option !== undefined && !item.disabled && !item.divider) {
-      if (!this.grid.getEditorLock().commitCurrentEdit()) {
+  protected handleMenuItemCommandOrOptionClick<M extends MenuCommandItem | MenuOptionItem, C extends MenuCommandItemCallbackArgs | MenuOptionItemCallbackArgs>(event: DOMMouseEvent<HTMLDivElement>, type: 'command' | 'option', item: M, row: number, cell: number) {
+    if ((item as never)?.[type] !== undefined && !item.disabled && !item.divider) {
+      if (type === 'option' && !this.grid.getEditorLock().commitCurrentEdit()) {
         return;
       }
 
@@ -395,23 +360,25 @@ export class CellMenuPlugin {
         cell,
         row,
         grid: this.grid,
-        option: item.option,
+        [type]: (item as never)[type],
         item,
         column: columnDef,
         dataContext,
-      } as MenuOptionItemCallbackArgs;
+      } as C;
 
       // execute Cell Menu callback with command,
       // we'll also execute optional user defined onOptionSelected callback when provided
       // this.executeCellMenuInternalCustomCommands(event, callbackArgs);
-      this.pubSubService.publish('cellMenu:onOptionSelected', callbackArgs);
-      if (typeof this._addonOptions?.onOptionSelected === 'function') {
-        this._addonOptions.onOptionSelected(event, callbackArgs);
+      const eventType = type === 'command' ? 'onCommand' : 'onOptionSelected';
+      const eventName = `cellMenu:${eventType}`;
+      this.pubSubService.publish(eventName, callbackArgs);
+      if (typeof (this._addonOptions as never)?.[eventType] === 'function') {
+        (this._addonOptions as any)[eventType](event, callbackArgs);
       }
 
       // execute action callback when defined
       if (typeof item.action === 'function') {
-        item.action.call(this, event, callbackArgs);
+        (item as any).action.call(this, event, callbackArgs);
       }
 
       // does the user want to leave open the Cell Menu after executing a command?
@@ -448,19 +415,20 @@ export class CellMenuPlugin {
     return availableSpace;
   }
 
-  /** Construct the Option Items section. */
-  protected populateOptionItems(cellMenu: CellMenu, optionMenuElm: HTMLElement, optionItems: Array<MenuOptionItem | 'divider'>, args: Partial<MenuOptionItemCallbackArgs>) {
-    if (args && optionItems && cellMenu) {
-      // user could pass a title on top of the Options section
-      if (cellMenu?.optionTitle) {
-        this._optionTitleElm = document.createElement('div');
-        this._optionTitleElm.className = 'title';
-        this._optionTitleElm.textContent = cellMenu.optionTitle;
-        optionMenuElm.appendChild(this._optionTitleElm);
+  /** Construct the Command/Options Items section. */
+  protected populateCommandOrOptionItems<M extends MenuCommandItem | MenuOptionItem | 'divider', R extends MenuCommandItemCallbackArgs | MenuOptionItemCallbackArgs>(type: 'command' | 'option', cellMenu: CellMenu, commandOrOptionMenuElm: HTMLElement, commandOrOptionItems: Array<M>, args: Partial<R>) {
+    if (args && commandOrOptionItems && cellMenu) {
+      // user could pass a title on top of the Commands/Options section
+      const titleProp = type === 'command' ? 'commandTitle' : 'optionTitle';
+      if (cellMenu?.[titleProp]) {
+        this[`_${type}TitleElm`] = document.createElement('div');
+        this[`_${type}TitleElm`]!.className = 'title';
+        this[`_${type}TitleElm`]!.textContent = (cellMenu as never)[titleProp];
+        commandOrOptionMenuElm.appendChild(this[`_${type}TitleElm`]!);
       }
 
-      for (let i = 0, ln = optionItems.length; i < ln; i++) {
-        const item = optionItems[i];
+      for (let i = 0, ln = commandOrOptionItems.length; i < ln; i++) {
+        const item = commandOrOptionItems[i];
 
         // run each override functions to know if the item is visible and usable
         let isItemVisible = true;
@@ -475,18 +443,18 @@ export class CellMenuPlugin {
           continue;
         }
 
-        // when the override is defined, we need to use its result to update the disabled property
-        // so that "handleMenuItemOptionClick" has the correct flag and won't trigger an option clicked event
+        // when the override is defined (and previously executed), we need to use its result to update the disabled property
+        // so that "handleMenuItemCommandClick" has the correct flag and won't trigger a command clicked event
         if (typeof item === 'object' && item.itemUsabilityOverride) {
           item.disabled = isItemUsable ? false : true;
         }
 
         const divOptionElm = document.createElement('div');
         divOptionElm.className = 'slick-cell-menu-item';
-        if (typeof item === 'object' && hasData(item?.option)) {
-          divOptionElm.dataset.option = item.option;
+        if (typeof item === 'object' && hasData((item as never)[type])) {
+          divOptionElm.dataset[type] = (item as never)?.[type];
         }
-        optionMenuElm.appendChild(divOptionElm);
+        commandOrOptionMenuElm.appendChild(divOptionElm);
 
         if ((typeof item === 'object' && item.divider) || item === 'divider') {
           divOptionElm.classList.add('slick-cell-menu-item-divider');
@@ -531,95 +499,7 @@ export class CellMenuPlugin {
           textElm.classList.add(...item.textCssClass.split(' '));
         }
         // execute command on menu item clicked
-        this._bindEventService.bind(divOptionElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) => this.handleMenuItemOptionClick(e, item, this._currentRow, this._currentCell)) as EventListener);
-      }
-    }
-  }
-
-  /** Construct the Command Items section. */
-  protected populateCommandItems(cellMenu: CellMenu, commandMenuElm: HTMLElement, commandItems: Array<MenuCommandItem | 'divider'>, args: Partial<MenuCommandItemCallbackArgs>) {
-    if (args && commandItems && cellMenu) {
-      // user could pass a title on top of the Commands section
-      if (cellMenu?.commandTitle) {
-        this._commandTitleElm = document.createElement('div');
-        this._commandTitleElm.className = 'title';
-        this._commandTitleElm.textContent = cellMenu.commandTitle;
-        commandMenuElm.appendChild(this._commandTitleElm);
-      }
-
-      for (let i = 0, ln = commandItems.length; i < ln; i++) {
-        const item = commandItems[i];
-
-        // run each override functions to know if the item is visible and usable
-        let isItemVisible = true;
-        let isItemUsable = true;
-        if (typeof item === 'object') {
-          isItemVisible = this.extensionUtility.runOverrideFunctionWhenExists<typeof args>(item.itemVisibilityOverride, args);
-          isItemUsable = this.extensionUtility.runOverrideFunctionWhenExists<typeof args>(item.itemUsabilityOverride, args);
-        }
-
-        // if the result is not visible then there's no need to go further
-        if (!isItemVisible) {
-          continue;
-        }
-
-        // when the override is defined (and previously executed), we need to use its result to update the disabled property
-        // so that "handleMenuItemCommandClick" has the correct flag and won't trigger a command clicked event
-        if (typeof item === 'object' && item.itemUsabilityOverride) {
-          item.disabled = isItemUsable ? false : true;
-        }
-
-        const divCommandElm = document.createElement('div');
-        divCommandElm.className = 'slick-cell-menu-item';
-        if (typeof item === 'object' && hasData(item?.command)) {
-          divCommandElm.dataset.command = item.command;
-        }
-        commandMenuElm.appendChild(divCommandElm);
-
-        if ((typeof item === 'object' && item.divider) || item === 'divider') {
-          divCommandElm.classList.add('slick-cell-menu-item-divider');
-          continue;
-        }
-
-        if (item.disabled) {
-          divCommandElm.classList.add('slick-cell-menu-item-disabled');
-        }
-
-        if (item.hidden) {
-          divCommandElm.classList.add('slick-cell-menu-item-hidden');
-        }
-
-        if (item.cssClass) {
-          divCommandElm.classList.add(...item.cssClass.split(' '));
-        }
-
-        if (item.tooltip) {
-          divCommandElm.title = item.tooltip;
-        }
-
-        const iconElm = document.createElement('div');
-        iconElm.className = 'slick-cell-menu-icon';
-        divCommandElm.appendChild(iconElm);
-
-        if (item.iconCssClass) {
-          iconElm.classList.add(...item.iconCssClass.split(' '));
-        }
-
-        if (item.iconImage) {
-          console.warn('[Slickgrid-Universal] The "iconImage" property of a Cell Menu item is now deprecated and will be removed in future version, consider using "iconCssClass" instead.');
-          iconElm.style.backgroundImage = `url(${item.iconImage})`;
-        }
-
-        const textElm = document.createElement('span');
-        textElm.className = 'slick-cell-menu-content';
-        textElm.textContent = typeof item === 'object' && item.title || '';
-        divCommandElm.appendChild(textElm);
-
-        if (item.textCssClass) {
-          textElm.classList.add(...item.textCssClass.split(' '));
-        }
-        // execute command on menu item clicked
-        this._bindEventService.bind(divCommandElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) => this.handleMenuItemCommandClick(e, item, this._currentRow, this._currentCell)) as EventListener);
+        this._bindEventService.bind(divOptionElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) => this.handleMenuItemCommandOrOptionClick(e, type, item, this._currentRow, this._currentCell)) as EventListener);
       }
     }
   }
