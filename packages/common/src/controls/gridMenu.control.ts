@@ -107,7 +107,7 @@ export class GridMenuControl {
   }
 
   get gridOptions(): GridOption {
-    return this.sharedService.gridOptions ?? {};
+    return this.grid?.getOptions?.() ?? {};
   }
 
   get grid(): SlickGrid {
