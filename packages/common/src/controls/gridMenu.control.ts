@@ -107,7 +107,7 @@ export class GridMenuControl {
   }
 
   get gridOptions(): GridOption {
-    return this.grid?.getOptions?.() ?? {};
+    return this.sharedService.gridOptions ?? {};
   }
 
   get grid(): SlickGrid {
@@ -132,6 +132,7 @@ export class GridMenuControl {
     const onSetOptionsHandler = this.grid.onSetOptions;
     (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSetOptionsHandler>>).subscribe(onSetOptionsHandler, (_e, args) => {
       if (args && args.optionsBefore && args.optionsAfter) {
+        this.sharedService.gridOptions = args.optionsAfter;
         const switchedFromRegularToFrozen = (args.optionsBefore.frozenColumn! >= 0 && args.optionsAfter.frozenColumn === -1);
         const switchedFromFrozenToRegular = (args.optionsBefore.frozenColumn === -1 && args.optionsAfter.frozenColumn! >= 0);
         if (switchedFromRegularToFrozen || switchedFromFrozenToRegular) {
