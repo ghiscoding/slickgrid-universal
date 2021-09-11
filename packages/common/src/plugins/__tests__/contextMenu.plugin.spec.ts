@@ -309,7 +309,7 @@ describe('ContextMenu Plugin', () => {
         expect(contextMenuElm.classList.contains('dropright'));
         expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="max-height: none; width: auto; display: block;">
+          `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="max-height: none; width: auto; display: block; top: 0px; left: 0px;">
             <button class="close" type="button" data-dismiss="slick-context-menu" aria-label="Close">
               <span class="close" aria-hidden="true">×</span>
             </button>
@@ -1223,7 +1223,7 @@ describe('ContextMenu Plugin', () => {
 
         expect(optionListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="max-height: none; width: auto; display: block;">
+          `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="max-height: none; width: auto; display: block; top: 0px; left: 0px;">
             <button class="close" type="button" data-dismiss="slick-context-menu" aria-label="Close">
               <span class="close" aria-hidden="true">×</span>
             </button>

@@ -403,6 +403,11 @@ export class MenuBaseClass<T extends CellMenu | ContextMenu> {
 
   protected repositionMenu(event: DOMMouseEvent<HTMLDivElement>) {
     if (this._menuElm && event.target) {
+      // move to 0,0 before calulating height/width since it could be cropped values
+      // when element is outside browser viewport
+      this._menuElm.style.top = `0px`;
+      this._menuElm.style.left = `0px`;
+
       const parentElm = event.target.closest('.slick-cell') as HTMLDivElement;
       let menuOffsetLeft = (parentElm && this._camelPluginName === 'cellMenu') ? getHtmlElementOffset(parentElm)?.left ?? 0 : event.pageX;
       let menuOffsetTop = (parentElm && this._camelPluginName === 'cellMenu') ? getHtmlElementOffset(parentElm)?.top ?? 0 : event.pageY;
