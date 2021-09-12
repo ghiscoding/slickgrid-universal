@@ -1,4 +1,4 @@
-import { Column, GridMenuItem, GridMenuLabel, GridOption, MenuCallbackArgs, } from './index';
+import { Column, GridMenuCallbackArgs, GridMenuCommandItemCallbackArgs, GridMenuLabel, GridOption, MenuCallbackArgs, MenuCommandItem, } from './index';
 
 export interface GridMenuOption {
   /** Defaults to "right", which side to align the grid menu dropdown? */
@@ -10,16 +10,22 @@ export interface GridMenuOption {
    */
   commandLabels?: GridMenuLabel;
 
+  /** Defaults to "Commands" which is the title that shows up over the custom commands list */
+  commandTitle?: string;
+
+  /** Same as "commandTitle", except that it's a translation key which can be used on page load and/or when switching locale */
+  commandTitleKey?: string;
+
   /** Defaults to 0 (auto), minimum width of grid menu content (command, column list) */
   contentMinWidth?: number;
 
   /** Array of Custom Items (title, command, disabled, ...) */
-  customItems?: Array<GridMenuItem | 'divider'>;
+  customItems?: Array<MenuCommandItem<GridMenuCommandItemCallbackArgs, GridMenuCallbackArgs> | 'divider'>;
 
-  /** Defaults to "Commands" which is the title that shows up over the custom commands list */
+  /** @deprecated @use `commandTitle` Defaults to "Commands" which is the title that shows up over the custom commands list */
   customTitle?: string;
 
-  /** Same as "customTitle", except that it's a translation key which can be used on page load and/or when switching locale */
+  /** @deprecated @use `commandTitleKey` Same as "customTitle", except that it's a translation key which can be used on page load and/or when switching locale */
   customTitleKey?: string;
 
   /** Defaults to "Columns" which is the title that shows up over the columns */
@@ -45,6 +51,9 @@ export interface GridMenuOption {
 
   /** Defaults to true, which will hide the "Unfreeze Columns/Rows" command in the Grid Menu */
   hideClearFrozenColumnsCommand?: boolean;
+
+  /** Defaults to false, hide the Close button on top right */
+  hideCloseButton?: boolean;
 
   /** Defaults to false, which will hide the "Export to CSV" command in the Grid Menu (Grid Option "enableTextExport: true" has to be enabled) */
   hideExportCsvCommand?: boolean;
@@ -112,6 +121,9 @@ export interface GridMenuOption {
   /** Defaults to 15, margin to use at the bottom of the grid menu to deduce from the max-height, only in effect when height is undefined */
   marginBottom?: number;
 
+  /** Maximum height that the drop menu will have, can be a number (250) or text ("none") */
+  maxHeight?: number | string;
+
   /** Defaults to 16 pixels (only the number), which is the width in pixels of the Grid Menu icon container */
   menuWidth?: number;
 
@@ -126,6 +138,12 @@ export interface GridMenuOption {
 
   /** Same as "syncResizeTitle", except that it's a translation key which can be used on page load and/or when switching locale */
   syncResizeTitleKey?: string;
+
+  /**
+   * Width (alias to `menuWidth`) that the drop menu can have.
+   * NOTE: the menu also has a "min-width" defined in CSS/SASS and setting a "width" below that threshold won't work, you change this min-width via SASS `$context-menu-min-width`
+   */
+  width?: number | string;
 
   // --
   // action/override callbacks

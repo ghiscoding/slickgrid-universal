@@ -314,20 +314,20 @@ describe('ContextMenu Plugin', () => {
               <span class="close" aria-hidden="true">×</span>
             </button>
             <div class="slick-context-menu-command-list">
-              <div class="slick-context-menu-item orange" data-command="command1">
+              <li class="slick-context-menu-item orange" data-command="command1">
                 <div class="slick-context-menu-icon"></div>
                 <span class="slick-context-menu-content">Command 1</span>
-              </div>
-              <div class="slick-context-menu-item" data-command="command2">
+              </li>
+              <li class="slick-context-menu-item" data-command="command2">
                 <div class="slick-context-menu-icon"></div>
                 <span class="slick-context-menu-content">Command 2</span>
-              </div>
-              <div class="slick-context-menu-item slick-context-menu-item-divider"></div>
-              <div class="slick-context-menu-item red" data-command="delete-row">
+              </li>
+              <li class="slick-context-menu-item slick-context-menu-item-divider"></li>
+              <li class="slick-context-menu-item red" data-command="delete-row">
                 <div class="slick-context-menu-icon mdi mdi-close"></div>
                 <span class="slick-context-menu-content bold">Delete Row</span>
-              </div>
-              <div class="slick-context-menu-item slick-context-menu-item-divider"></div>
+              </li>
+              <li class="slick-context-menu-item slick-context-menu-item-divider"></li>
           </div>
         </div>`));
       });
@@ -1228,20 +1228,20 @@ describe('ContextMenu Plugin', () => {
               <span class="close" aria-hidden="true">×</span>
             </button>
             <div class="slick-context-menu-option-list">
-              <div class="slick-context-menu-item purple" data-option="option1">
+              <li class="slick-context-menu-item purple" data-option="option1">
                 <div class="slick-context-menu-icon"></div>
                 <span class="slick-context-menu-content">Option 1</span>
-              </div>
-              <div class="slick-context-menu-item" data-option="option2">
+              </li>
+              <li class="slick-context-menu-item" data-option="option2">
                 <div class="slick-context-menu-icon"></div>
                 <span class="slick-context-menu-content">Option 2</span>
-              </div>
-              <div class="slick-context-menu-item slick-context-menu-item-divider"></div>
-              <div class="slick-context-menu-item sky" data-option="delete-row">
+              </li>
+              <li class="slick-context-menu-item slick-context-menu-item-divider"></li>
+              <li class="slick-context-menu-item sky" data-option="delete-row">
                 <div class="slick-context-menu-icon mdi mdi-checked"></div>
                 <span class="slick-context-menu-content underline">Delete Row</span>
-              </div>
-              <div class="slick-context-menu-item slick-context-menu-item-divider"></div>
+              </li>
+              <li class="slick-context-menu-item slick-context-menu-item-divider"></li>
           </div>
         </div>`));
       });

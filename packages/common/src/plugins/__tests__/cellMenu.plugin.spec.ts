@@ -276,20 +276,20 @@ describe('CellMenu Plugin', () => {
               <span class="close" aria-hidden="true">×</span>
             </button>
             <div class="slick-cell-menu-command-list">
-              <div class="slick-cell-menu-item orange" data-command="command1">
+              <li class="slick-cell-menu-item orange" data-command="command1">
                 <div class="slick-cell-menu-icon"></div>
                 <span class="slick-cell-menu-content">Command 1</span>
-              </div>
-              <div class="slick-cell-menu-item" data-command="command2">
+              </li>
+              <li class="slick-cell-menu-item" data-command="command2">
                 <div class="slick-cell-menu-icon"></div>
                 <span class="slick-cell-menu-content">Command 2</span>
-              </div>
-              <div class="slick-cell-menu-item slick-cell-menu-item-divider"></div>
-              <div class="slick-cell-menu-item red" data-command="delete-row">
+              </li>
+              <li class="slick-cell-menu-item slick-cell-menu-item-divider"></li>
+              <li class="slick-cell-menu-item red" data-command="delete-row">
                 <div class="slick-cell-menu-icon mdi mdi-close"></div>
                 <span class="slick-cell-menu-content bold">Delete Row</span>
-              </div>
-              <div class="slick-cell-menu-item slick-cell-menu-item-divider"></div>
+              </li>
+              <li class="slick-cell-menu-item slick-cell-menu-item-divider"></li>
           </div>
         </div>`));
       });
@@ -665,20 +665,20 @@ describe('CellMenu Plugin', () => {
               <span class="close" aria-hidden="true">×</span>
             </button>
             <div class="slick-cell-menu-option-list">
-              <div class="slick-cell-menu-item purple" data-option="option1">
+              <li class="slick-cell-menu-item purple" data-option="option1">
                 <div class="slick-cell-menu-icon"></div>
                 <span class="slick-cell-menu-content">Option 1</span>
-              </div>
-              <div class="slick-cell-menu-item" data-option="option2">
+              </li>
+              <li class="slick-cell-menu-item" data-option="option2">
                 <div class="slick-cell-menu-icon"></div>
                 <span class="slick-cell-menu-content">Option 2</span>
-              </div>
-              <div class="slick-cell-menu-item slick-cell-menu-item-divider"></div>
-              <div class="slick-cell-menu-item sky" data-option="delete-row">
+              </li>
+              <li class="slick-cell-menu-item slick-cell-menu-item-divider"></li>
+              <li class="slick-cell-menu-item sky" data-option="delete-row">
                 <div class="slick-cell-menu-icon mdi mdi-checked"></div>
                 <span class="slick-cell-menu-content underline">Delete Row</span>
-              </div>
-              <div class="slick-cell-menu-item slick-cell-menu-item-divider"></div>
+              </li>
+              <li class="slick-cell-menu-item slick-cell-menu-item-divider"></li>
           </div>
         </div>`));
       });

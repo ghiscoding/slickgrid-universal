@@ -50,8 +50,6 @@
 
   li {
     list-style: none;
-    margin: 0;
-    padding: 0;
     background: none;
 
     a {
@@ -147,7 +145,7 @@
 // Grid Menu aka Hamburger Menu
 // ----------------------------------------------
 
-.slick-gridmenu {
+.slick-grid-menu {
   font-family: var(--slick-font-family, $font-family);
   background-color: var(--slick-grid-menu-background-color, $grid-menu-background-color);
   border: var(--slick-grid-menu-border, $grid-menu-border);
@@ -195,8 +193,6 @@
 
   li {
     list-style: none;
-    margin: 0;
-    padding: 0;
     background: none;
     a {
       display: block;
@@ -218,7 +214,7 @@
   }
 }
 
-.slick-gridmenu-button {
+.slick-grid-menu-button {
   position: absolute;
   cursor: pointer;
   right: 0;
@@ -231,12 +227,12 @@
   z-index: 2;
 }
 
-.slick-gridmenu-custom {
+.slick-grid-menu-command-list {
   margin-bottom: 10px;
 }
 
 /* Menu items */
-.slick-gridmenu-item {
+.slick-grid-menu-item {
   cursor: pointer;
   display: block;
   border: var(--slick-grid-menu-item-border, $grid-menu-item-border);
@@ -249,7 +245,7 @@
     background-color: var(--slick-grid-menu-item-hover-color, $grid-menu-item-hover-color);
   }
 
-  &.slick-gridmenu-item-divider {
+  &.slick-grid-menu-item-divider {
     cursor: default;
     border: none;
     overflow: hidden;
@@ -267,24 +263,24 @@
     }
   }
 }
-.slick-gridmenu-item-divider.slick-gridmenu-item:hover {
+.slick-grid-menu-item-divider.slick-grid-menu-item:hover {
   background-color: var(--slick-grid-menu-divider-color, $grid-menu-divider-color);
 }
 
-.slick-gridmenu-item-disabled {
+.slick-grid-menu-item-disabled {
   cursor: inherit;
   border-color: transparent !important;
   background: inherit !important;
   color: var(--slick-grid-menu-item-disabled-color, $grid-menu-item-disabled-color);
-  .slick-gridmenu-icon, .slick-gridmenu-content {
+  .slick-grid-menu-icon, .slick-grid-menu-content {
     color: var(--slick-grid-menu-item-disabled-color, $grid-menu-item-disabled-color);
   }
 }
-.slick-gridmenu-item-hidden {
+.slick-grid-menu-item-hidden {
   display: none;
 }
 
-.slick-gridmenu-icon {
+.slick-grid-menu-icon {
   display: inline-block;
   font-size: var(--slick-grid-menu-icon-font-size, $grid-menu-icon-font-size);
   line-height: var(--slick-grid-menu-icon-line-height, $grid-menu-icon-line-height);
@@ -295,12 +291,12 @@
   background-position: center center;
 }
 
-.slick-gridmenu-content {
+.slick-grid-menu-content {
   display: inline-block;
   vertical-align: middle;
 }
 
-.slick-gridmenu-list {
+.slick-grid-menu-list {
   /** make sure the hidden class exist, it was removed in BS4 */
   li.hidden {
     display: none;

@@ -308,7 +308,7 @@
 // Header Menu Plugin - Excel-like header
 // ----------------------------------------------
 
-.slick-header-menubutton {
+.slick-header-menu-button {
   background-position: center center;
   background-repeat: no-repeat;
   cursor: pointer;
@@ -326,7 +326,7 @@
   top: 0;
   width: var(--slick-header-menu-button-width, $header-menu-button-width);
 }
-.slick-header-menubutton:before {
+.slick-header-menu-button:before {
   display: inline-block;
   content: var(--slick-header-menu-button-icon, $header-menu-button-icon);
   font-family: var(--slick-icon-font-family, $icon-font-family);
@@ -337,11 +337,11 @@
 
 .slick-header-column {
   // if user when to show header menu only while hovering, then the display var will be "none" else it could be "inline-block"
-  .slick-header-menubutton {
+  .slick-header-menu-button {
     display: var(--slick-header-menu-display, $header-menu-display);
   }
   &:hover {
-    .slick-header-menubutton {
+    .slick-header-menu-button {
       display: inline-block;
     }
   }
@@ -383,7 +383,7 @@
   }
 }
 
-.slick-header-menuitem {
+.slick-header-menu-item {
   cursor: pointer;
   display: block;
   border: var(--slick-header-menu-item-border, $header-menu-item-border);
@@ -396,7 +396,7 @@
     background-color: var(--slick-header-menu-item-hover-color, $header-menu-item-hover-color);
   }
 
-  &.slick-header-menuitem-divider {
+  &.slick-header-menu-item-divider {
     cursor: default;
     border: none;
     overflow: hidden;
@@ -414,12 +414,12 @@
     }
   }
 }
-.slick-header-menuitem-divider.slick-header-menuitem:hover {
+.slick-header-menu-item-divider.slick-header-menu-item:hover {
   background-color: var(--slick-header-menu-divider-color, $header-menu-divider-color);
 }
 
 
-.slick-header-menuicon {
+.slick-header-menu-icon {
   background-position: center center;
   background-repeat: no-repeat;
   display: inline-block;
@@ -441,22 +441,22 @@
   }
 }
 
-.slick-header-menucontent {
+.slick-header-menu-content {
   display: inline-block;
   vertical-align: middle;
 }
 
 /* Disabled */
-.slick-header-menuitem-disabled {
+.slick-header-menu-item-disabled {
   border-color: transparent !important;
   background: inherit !important;
   color: var(--slick-header-menu-item-disabled-color, $header-menu-item-disabled-color);
   cursor: inherit;
-  .slick-header-menuicon, .slick-header-menucontent {
+  .slick-header-menu-icon, .slick-header-menu-content {
     color: var(--slick-header-menu-item-disabled-color, $header-menu-item-disabled-color);
   }
 }
-.slick-header-menuitem-hidden {
+.slick-header-menu-item-hidden {
   display: none;
 }
 

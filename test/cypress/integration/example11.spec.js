@@ -593,14 +593,14 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .find('.slick-header-columns')
       .find('.slick-header-column:nth(2)')
       .trigger('mouseover')
-      .children('.slick-header-menubutton')
+      .children('.slick-header-menu-button')
       .invoke('show')
       .click();
 
     cy.get('.slick-header-menu')
       .should('be.visible')
-      .children('.slick-header-menuitem:nth-child(1)')
-      .children('.slick-header-menucontent')
+      .children('.slick-header-menu-item:nth-child(1)')
+      .children('.slick-header-menu-content')
       .should('contain', 'Freeze Column')
       .click();
   });
@@ -617,11 +617,11 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
     cy.get('.grid-canvas-right > [style="top:0px"] > .slick-cell:nth(0)').contains(/\$[0-9\.]*/);
 
     cy.get('.slick-pane-left')
-      .find('.slick-gridmenu-button')
+      .find('.slick-grid-menu-button')
       .should('not.exist');
 
     cy.get('.slick-pane-right')
-      .find('.slick-gridmenu-button')
+      .find('.slick-grid-menu-button')
       .should('exist');
   });
 
@@ -676,11 +676,11 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
     cy.get('.grid-canvas-left > [style="top:0px"]').children().should('have.length', 9);
 
     cy.get('.slick-pane-left')
-      .find('.slick-gridmenu-button')
+      .find('.slick-grid-menu-button')
       .should('exist');
 
     cy.get('.slick-pane-right')
-      .find('.slick-gridmenu-button')
+      .find('.slick-grid-menu-button')
       .should('not.exist');
   });
 
@@ -707,11 +707,11 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
     cy.get('.grid-canvas-right > [style="top:0px"] > .slick-cell:nth(0)').contains(/\$?[0-9\.]*/);
 
     cy.get('.slick-pane-left')
-      .find('.slick-gridmenu-button')
+      .find('.slick-grid-menu-button')
       .should('not.exist');
 
     cy.get('.slick-pane-right')
-      .find('.slick-gridmenu-button')
+      .find('.slick-grid-menu-button')
       .should('exist');
   });
 
@@ -747,7 +747,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
 
   it('should clear pinning from Grid Menu & expect to no longer have any columns freezed', () => {
     cy.get('.grid11')
-      .find('button.slick-gridmenu-button')
+      .find('button.slick-grid-menu-button')
       .click({ force: true });
 
     cy.contains('Unfreeze Columns/Rows')

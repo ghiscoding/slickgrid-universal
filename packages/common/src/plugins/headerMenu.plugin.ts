@@ -10,22 +10,18 @@ import {
   HeaderMenuOption,
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
+  MenuOptionItem,
   MultiColumnSort,
   OnHeaderCellRenderedEventArgs,
   SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
 } from '../interfaces/index';
-import { arrayRemoveItemByIndex, emptyElement, getElementOffsetRelativeToParent, hasData, } from '../services/index';
-import { BindingEventService } from '../services/bindingEvent.service';
+import { arrayRemoveItemByIndex, emptyElement, getElementOffsetRelativeToParent, } from '../services/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { FilterService } from '../services/filter.service';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
 import { SortService } from '../services/sort.service';
-
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
+import { ExtractMenuType, MenuBaseClass, MenuType } from './menuBaseClass';
 
 /**
  * A plugin to add drop-down menus to column headers.
@@ -39,12 +35,8 @@ declare const Slick: SlickNamespace;
  *     }
  *   }];
  */
-export class HeaderMenuPlugin {
-  protected _addonOptions?: HeaderMenu;
+export class HeaderMenuPlugin extends MenuBaseClass<HeaderMenu> {
   protected _activeHeaderColumnElm?: HTMLDivElement;
-  protected _bindEventService: BindingEventService;
-  protected _eventHandler!: SlickEventHandler;
-  protected _menuElm?: HTMLDivElement | null;
   protected _defaults = {
     autoAlign: true,
     autoAlignOffset: 0,
@@ -65,37 +57,11 @@ export class HeaderMenuPlugin {
     protected readonly sharedService: SharedService,
     protected readonly sortService: SortService,
   ) {
-    this._bindEventService = new BindingEventService();
-    this._eventHandler = new Slick.EventHandler();
+    super(extensionUtility, pubSubService, sharedService);
+    this._menuCssPrefix = 'slick-header-menu';
+    this._camelPluginName = 'headerMenu';
     this.sharedService.gridOptions.headerMenu = this.addHeaderMenuCustomCommands(this.sharedService.columnDefinitions);
     this.init(sharedService.gridOptions.headerMenu);
-  }
-
-  get addonOptions(): HeaderMenu {
-    return this._addonOptions as HeaderMenu;
-  }
-  set addonOptions(newOptions: HeaderMenu) {
-    this._addonOptions = newOptions;
-  }
-
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
-  get grid(): SlickGrid {
-    return this.sharedService.slickGrid;
-  }
-
-  /** Getter for the grid uid */
-  get gridUid(): string {
-    return this.grid?.getUID() ?? '';
-  }
-  get gridUidSelector(): string {
-    return this.gridUid ? `.${this.gridUid}` : '';
-  }
-
-  get menuElement(): HTMLDivElement | undefined | null {
-    return this._menuElm;
   }
 
   /** Initialize plugin. */
@@ -217,7 +183,7 @@ export class HeaderMenuPlugin {
       }
 
       const headerButtonDivElm = document.createElement('div');
-      headerButtonDivElm.className = 'slick-header-menubutton';
+      headerButtonDivElm.className = 'slick-header-menu-button';
 
       if (this.addonOptions.buttonCssClass) {
         headerButtonDivElm.classList.add(...this.addonOptions.buttonCssClass.split(' '));
@@ -249,7 +215,7 @@ export class HeaderMenuPlugin {
       // Removing buttons will also clean up any event handlers and data.
       // NOTE: If you attach event handlers directly or using a different framework,
       //       you must also clean them up here to avoid memory leaks.
-      args.node.querySelectorAll('.slick-header-menubutton').forEach(elm => elm.remove());
+      args.node.querySelectorAll('.slick-header-menu-button').forEach(elm => elm.remove());
     }
   }
 
@@ -260,12 +226,11 @@ export class HeaderMenuPlugin {
     }
   }
 
-  protected handleMenuItemClick(event: DOMEvent<HTMLDivElement>, item: MenuCommandItem, columnDef: Column) {
-    if (item?.command && !item.disabled && !item.divider) {
-
+  protected handleMenuItemCommandClick(event: DOMEvent<HTMLDivElement>, _type: MenuType, item: ExtractMenuType<MenuCommandItem | MenuOptionItem | 'divider', MenuType>, columnDef?: Column) {
+    if (item !== 'divider' && (item as MenuCommandItem).command && !item.disabled && !item.divider) {
       const callbackArgs = {
         grid: this.grid,
-        command: item.command,
+        command: (item as MenuCommandItem).command,
         column: columnDef,
         item,
       } as MenuCommandItemCallbackArgs;
@@ -280,7 +245,7 @@ export class HeaderMenuPlugin {
 
       // execute action callback when defined
       if (typeof item.action === 'function') {
-        item.action.call(this, event, callbackArgs);
+        (item as MenuCommandItem).action!.call(this, event, callbackArgs);
       }
     }
 
@@ -491,82 +456,14 @@ export class HeaderMenuPlugin {
   }
 
   protected populateHeaderMenuCommandList(e: MouseEvent, columnDef: Column, menu: HeaderMenuItems, args: HeaderMenuCommandItemCallbackArgs) {
-    const menuItems = menu.items;
-
-    // Construct the menu items.
-    for (const item of menuItems) {
-      // run each override functions to know if the item is visible and usable
-      let isItemVisible = true;
-      let isItemUsable = true;
-      if (typeof item === 'object') {
-        isItemVisible = this.extensionUtility.runOverrideFunctionWhenExists<typeof args>(item.itemVisibilityOverride, args);
-        isItemUsable = this.extensionUtility.runOverrideFunctionWhenExists<typeof args>(item.itemUsabilityOverride, args);
-      }
-
-      // if the result is not visible then there's no need to go further
-      if (!isItemVisible) {
-        continue;
-      }
-
-      // when the override is defined, we need to use its result to update the disabled property
-      // so that "handleMenuItemCommandClick" has the correct flag and won't trigger a command clicked event
-      if (typeof item === 'object' && item.itemUsabilityOverride) {
-        item.disabled = isItemUsable ? false : true;
-      }
-
-      const liElm = document.createElement('div');
-      liElm.className = 'slick-header-menuitem';
-      if (typeof item === 'object' && hasData(item?.command)) {
-        liElm.dataset.command = item.command;
-      }
-      this._menuElm?.appendChild(liElm);
-
-      if ((typeof item === 'object' && item.divider) || item === 'divider') {
-        liElm.classList.add('slick-header-menuitem-divider');
-        continue;
-      }
-
-      if (item.disabled) {
-        liElm.classList.add('slick-header-menuitem-disabled');
-      }
-
-      if (item.hidden) {
-        liElm.classList.add('slick-header-menuitem-hidden');
-      }
-
-      if (item.cssClass) {
-        liElm.classList.add(...item.cssClass.split(' '));
-      }
-
-      if (item.tooltip) {
-        liElm.title = item.tooltip;
-      }
-
-      const iconElm = document.createElement('div');
-      iconElm.className = 'slick-header-menuicon';
-      liElm.appendChild(iconElm);
-
-      if (item.iconCssClass) {
-        iconElm.classList.add(...item.iconCssClass.split(' '));
-      }
-
-      if (item.iconImage) {
-        console.warn('[Slickgrid-Universal] The "iconImage" property of a Header Menu item is now deprecated and will be removed in future version, consider using "iconCssClass" instead.');
-        iconElm.style.backgroundImage = `url(${item.iconImage})`;
-      }
-
-      const textElm = document.createElement('span');
-      textElm.className = 'slick-header-menucontent';
-      textElm.textContent = typeof item === 'object' && item.title || '';
-      liElm.appendChild(textElm);
-
-      if (item.textCssClass) {
-        textElm.classList.add(...item.textCssClass.split(' '));
-      }
-
-      // execute command on menu item clicked
-      this._bindEventService.bind(liElm, 'click', ((clickEvent: DOMEvent<HTMLDivElement>) => this.handleMenuItemClick(clickEvent, item, columnDef)) as EventListener);
-    }
+    this.populateCommandOrOptionItems(
+      'command',
+      this.addonOptions,
+      this._menuElm as HTMLDivElement,
+      menu.items,
+      args,
+      this.handleMenuItemCommandClick ,
+    );
 
     this.repositionMenu(e);
 
@@ -583,7 +480,7 @@ export class HeaderMenuPlugin {
 
   protected repositionMenu(e: MouseEvent) {
     const buttonElm = e.target as HTMLDivElement; // get header button createElement
-    if (this._menuElm && buttonElm.classList.contains('slick-header-menubutton')) {
+    if (this._menuElm && buttonElm.classList.contains('slick-header-menu-button')) {
       const relativePos = getElementOffsetRelativeToParent(this.sharedService.gridContainerElement, buttonElm);
       let leftPos = relativePos?.left ?? 0;
 

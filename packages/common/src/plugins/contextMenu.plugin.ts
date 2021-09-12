@@ -18,7 +18,7 @@ import { SharedService } from '../services/shared.service';
 import { TreeDataService } from '../services/treeData.service';
 import { ExcelExportService, TextExportService } from '../services';
 import { DelimiterType, FileType } from '../enums';
-import { MenuBaseClass } from './menuBaseClass';
+import { MenuFromCellBaseClass } from './menuFromCellBaseClass';
 
 
 /**
@@ -37,7 +37,7 @@ import { MenuBaseClass } from './menuBaseClass';
  *     }
  *   };
  */
-export class ContextMenuPlugin extends MenuBaseClass<ContextMenu> {
+export class ContextMenuPlugin extends MenuFromCellBaseClass<ContextMenu> {
   protected _defaults = {
     autoAdjustDrop: true,     // dropup/dropdown
     autoAlignSide: true,      // left/right

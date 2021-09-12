@@ -39,6 +39,7 @@ export class ExtensionUtility {
       output = this.translaterService.translate(titleKey || ' ');
     } else {
       switch (propName) {
+        case 'commandTitle':
         case 'customTitle':
           output = title || enableTranslate && this.translaterService?.getCurrentLanguage && this.translaterService?.translate(`${translationPrefix}COMMANDS` || ' ') || locales?.TEXT_COMMANDS;
           break;

@@ -12,7 +12,7 @@ import {
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
-import { MenuBaseClass } from './menuBaseClass';
+import { MenuFromCellBaseClass } from './menuFromCellBaseClass';
 
 /**
  * A plugin to add Menu on a Cell click (click on the cell that has the cellMenu object defined)
@@ -32,7 +32,7 @@ import { MenuBaseClass } from './menuBaseClass';
  *     }
  *   }];
  */
-export class CellMenuPlugin extends MenuBaseClass<CellMenu> {
+export class CellMenuPlugin extends MenuFromCellBaseClass<CellMenu> {
   protected _defaults = {
     autoAdjustDrop: true,     // dropup/dropdown
     autoAlignSide: true,      // left/right

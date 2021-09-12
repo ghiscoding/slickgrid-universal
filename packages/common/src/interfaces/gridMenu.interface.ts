@@ -19,6 +19,9 @@ export interface GridMenu extends GridMenuOption {
   /** Callback fired Before the menu is shown. */
   onBeforeMenuShow?: (e: Event, args: GridMenuEventWithElementCallbackArgs) => boolean | void;
 
+  /** SlickGrid Event fired when the menu is closing. */
+  onBeforeMenuClose?: (e: Event, args: GridMenuEventWithElementCallbackArgs) => boolean | void;
+
   /** Callback fired when any of the columns checkbox selection changes. */
   onColumnsChanged?: (e: Event, args: GridMenuOnColumnsChangedCallbackArgs) => void;
 
