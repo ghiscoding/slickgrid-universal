@@ -462,6 +462,12 @@ export interface GridOption {
   ignoreAccentOnStringFilter?: boolean;
 
   /**
+   * Defaults to false, should we ignore any accent while sorting text?
+   * For example if our text is "José" and we type "Jose" then it won't return unless we use this flag because "é" is not equal to "e"
+   */
+  ignoreAccentOnStringSort?: boolean;
+
+  /**
    * When using custom Locales (that is when user is NOT using a Translate Service, this property does nothing when used with Translate Service),
    * This is useful so that every component of the lib knows the locale.
    * For example, not providing this will make the Date Filter/Editor use English by default even if we use different "locales",
