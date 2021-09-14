@@ -1,5 +1,6 @@
 @import './variables';
 
+$form-control-border: 1px solid #ccc !default;
 $form-control-focus-border-color: lighten($primary-color, 10%) !default;
 $form-control-focus-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(lighten($primary-color, 3%), .3) !default;
 
