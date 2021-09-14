@@ -10,7 +10,7 @@ import {
   MenuOptionItem,
   SlickEventHandler,
 } from '../interfaces/index';
-import { getDescendantProperty, getTranslationPrefix, } from '../services/index';
+import { getCellValueFromQueryFieldGetter, getTranslationPrefix, } from '../services/index';
 import { exportWithFormatterWhenDefined } from '../formatters/formatterUtilities';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { PubSubService } from '../services/pubSub.service';
@@ -184,7 +184,7 @@ export class ContextMenuPlugin extends MenuFromCellBaseClass<ContextMenu> {
               const columnDef = args?.column as Column;
               const dataContext = args?.dataContext;
               if (typeof columnDef.queryFieldNameGetterFn === 'function') {
-                const cellValue = this.getCellValueFromQueryFieldGetter(columnDef, dataContext);
+                const cellValue = getCellValueFromQueryFieldGetter(columnDef, dataContext, '');
                 if (cellValue !== '' && cellValue !== undefined) {
                   return true;
                 }
@@ -397,7 +397,7 @@ export class ContextMenuPlugin extends MenuFromCellBaseClass<ContextMenu> {
         let textToCopy = exportWithFormatterWhenDefined(row, cell, columnDef, dataContext, grid, exportOptions);
 
         if (typeof columnDef.queryFieldNameGetterFn === 'function') {
-          textToCopy = this.getCellValueFromQueryFieldGetter(columnDef, dataContext);
+          textToCopy = getCellValueFromQueryFieldGetter(columnDef, dataContext, '');
         }
 
         // create fake <textarea> (positioned outside of the screen) to copy into clipboard & delete it from the DOM once we're done
@@ -418,29 +418,6 @@ export class ContextMenuPlugin extends MenuFromCellBaseClass<ContextMenu> {
     } catch (e) {
       /* do nothing */
     }
-  }
-
-  /**
-   * When a queryFieldNameGetterFn is defined, then get the value from that getter callback function
-   * @param columnDef
-   * @param dataContext
-   * @return cellValue
-   */
-  protected getCellValueFromQueryFieldGetter(columnDef: Column, dataContext: any): string {
-    let cellValue = '';
-
-    if (typeof columnDef.queryFieldNameGetterFn === 'function') {
-      const queryFieldName = columnDef.queryFieldNameGetterFn(dataContext);
-
-      // get the cell value from the item or when it's a dot notation then exploded the item and get the final value
-      if (queryFieldName?.indexOf('.') >= 0) {
-        cellValue = getDescendantProperty(dataContext, queryFieldName);
-      } else {
-        cellValue = dataContext[queryFieldName];
-      }
-    }
-
-    return cellValue;
   }
 
   /** sort all menu items by their position order when defined */
