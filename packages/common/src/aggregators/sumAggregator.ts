@@ -1,6 +1,7 @@
 import type { Aggregator } from './../interfaces/aggregator.interface';
 
 export class SumAggregator implements Aggregator {
+  private _isTreeAggregator = false;
   private _sum = 0;
   private _field: number | string;
   private _type = 'sum';
@@ -21,21 +22,57 @@ export class SumAggregator implements Aggregator {
     return this._type;
   }
 
-  init() {
+  init(item?: any, isTreeAggregator = false) {
     this._sum = 0;
+
+    // when dealing with Tree Data structure, we also need to clear any parent totals
+    this._isTreeAggregator = isTreeAggregator;
+    if (isTreeAggregator) {
+      if (!item.__treeTotals || item.__treeTotals[this._type] === undefined) {
+        item.__treeTotals = { [this._type]: {} };
+      }
+      item.__treeTotals[this._type][this._field] = 0;
+    }
   }
 
-  accumulate(item: any) {
+  accumulate(item: any, isParentTreeAccumlate = false) {
     const val = (item && item.hasOwnProperty(this._field)) ? item[this._field] : null;
-    if (val !== null && val !== '' && !isNaN(val)) {
+
+    // when dealing with Tree Data structure, we need keep only the new sum (without doing any addition)
+    if (!this._isTreeAggregator) {
+      // not a Tree structure, we'll do a regular summation
       this._sum += parseFloat(val);
+    } else {
+      if (isParentTreeAccumlate) {
+        this.addGroupTotalPropertiesWhenNotExist(item.__treeTotals);
+        this._sum = parseFloat(item.__treeTotals[this._type][this._field] ?? 0);
+      } else if (this.isNumber(val)) {
+        this._sum = parseFloat(val);
+      }
     }
   }
 
   storeResult(groupTotals: any) {
-    if (!groupTotals || groupTotals[this._type] === undefined) {
+    let sum = this._sum;
+    this.addGroupTotalPropertiesWhenNotExist(groupTotals);
+
+    // when dealing with Tree Data, we also need to take the parent's total and add it to the final sum
+    if (this._isTreeAggregator) {
+      sum += groupTotals[this._type][this._field];
+    }
+    groupTotals[this._type][this._field] = sum;
+  }
+
+  protected addGroupTotalPropertiesWhenNotExist(groupTotals: any) {
+    if (!groupTotals) {
+      groupTotals = {};
+    }
+    if (groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }
-    groupTotals[this._type][this._field] = this._sum;
+  }
+
+  protected isNumber(value: any) {
+    return (value === null || value === undefined || value === '') ? false : !isNaN(+value);
   }
 }

@@ -18,7 +18,7 @@ export const multipleFormatter: Formatter = (row, cell, value, columnDef, dataCo
   // they are piped and executed in sequences
   let currentValue = value;
   for (const formatter of formatters) {
-    currentValue = formatter(row, cell, currentValue, columnDef, dataContext, grid);
+    currentValue = formatter.call(this, row, cell, currentValue, columnDef, dataContext, grid);
   }
   return currentValue;
 };

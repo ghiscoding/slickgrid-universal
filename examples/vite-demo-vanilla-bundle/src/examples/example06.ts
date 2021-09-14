@@ -61,11 +61,23 @@ export default class Example6 {
         type: FieldType.number, exportWithFormatter: true,
         filterable: true, filter: { model: Filters.compoundInputNumber },
         formatter: (row, cell, value, column, dataContext) => {
-          if (dataContext?.__treeTotals?.sum?.size !== undefined) {
-            return isNaN(dataContext?.__treeTotals.sum.size) ? '' : `<span class="color-primary" style="font-weight: 600">${dataContext?.__treeTotals.sum.size} MB</span>`;
+          const aggregatorType = 'avg';
+          const fieldId = column.field;
+          if (dataContext?.__treeTotals?.[aggregatorType]?.[fieldId] !== undefined) {
+            const treeLevel = dataContext[this.gridOptions?.treeDataOptions?.levelPropName || '__treeLevel'];
+            return isNaN(dataContext?.__treeTotals[aggregatorType][fieldId]) ? '' : `<span class="color-primary" style="font-weight: 600">${dataContext?.__treeTotals[aggregatorType][fieldId]} MB</span> (${treeLevel === 0 ? 'total' : 'sub-total'})`;
           }
           return isNaN(value) ? '' : `${value} MB`;
         },
+        // OR if you wish to use any of the GroupTotalFormatters, we can do so with the code below
+        // formatter: Formatters.treeParseTotalFormatters,
+        // params: {
+        //   groupFormatterSuffix: ' MB',
+        //   formatters: [
+        //     (row, cell, value) => isNaN(value) ? '' : `${value} MB`,
+        //     GroupTotalFormatters.sumTotalsBold,
+        //   ]
+        // }
       },
     ];
 
@@ -103,7 +115,7 @@ export default class Example6 {
         //   direction: 'DESC'
         // },
         // @ts-ignore
-        aggregators: [new Aggregators.Sum('size')]
+        aggregators: [new Aggregators.Avg('size'),/* new Aggregators.Sum('size') */]
       },
       showCustomFooter: true,
 
@@ -155,32 +167,35 @@ export default class Example6 {
     const identifierPropName = dataView.getIdPropertyName() || 'id';
     const idx = dataView.getIdxById(dataContext[identifierPropName]) as number;
     const prefix = this.getFileIcon(value);
+    const treeLevel = dataContext[treeLevelPropName];
 
     value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    const spacer = `<span style="display:inline-block; width:${(15 * dataContext[treeLevelPropName])}px;"></span>`;
+    const spacer = `<span style="display:inline-block; width:${(15 * treeLevel)}px;"></span>`;
 
     if (data[idx + 1] && data[idx + 1][treeLevelPropName] > data[idx][treeLevelPropName]) {
-      const folderPrefix = `<i class="mdi icon ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>`;
+      const folderPrefix = `<i class="mdi mdi-22px ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>`;
       if (dataContext.__collapsed) {
-        return `${spacer} <span class="slick-group-toggle collapsed" aria-expanded="false" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
+        return `${spacer} <span class="slick-group-toggle collapsed" level="${treeLevel}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
       } else {
-        return `${spacer} <span class="slick-group-toggle expanded" aria-expanded="true" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
+        return `${spacer} <span class="slick-group-toggle expanded" level="${treeLevel}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
       }
     } else {
-      return `${spacer} <span class="slick-group-toggle" aria-expanded="false" level="${dataContext[treeLevelPropName]}"></span>${prefix}&nbsp;${value}`;
+      return `${spacer} <span class="slick-group-toggle" level="${treeLevel}"></span>${prefix}&nbsp;${value}`;
     }
   };
 
   getFileIcon(value: string) {
     let prefix = '';
     if (value.includes('.pdf')) {
-      prefix = '<i class="mdi icon mdi-file-pdf-outline"></i>';
+      prefix = '<i class="mdi mdi-20px mdi-file-pdf-outline"></i>';
     } else if (value.includes('.txt')) {
-      prefix = '<i class="mdi icon mdi-file-document-outline"></i>';
+      prefix = '<i class="mdi mdi-20px mdi-file-document-outline"></i>';
     } else if (value.includes('.xls')) {
-      prefix = '<i class="mdi icon mdi-file-excel-outline"></i>';
+      prefix = '<i class="mdi mdi-20px mdi-file-excel-outline"></i>';
     } else if (value.includes('.mp3')) {
-      prefix = '<i class="mdi icon mdi-file-music-outline"></i>';
+      prefix = '<i class="mdi mdi-20px mdi-file-music-outline"></i>';
+    } else if (value.includes('.')) {
+      prefix = '<i class="mdi mdi-20px mdi-file-question-outline"></i>';
     }
     return prefix;
   }
@@ -241,14 +256,14 @@ export default class Example6 {
             id: 4, file: 'pdf', files: [
               { id: 22, file: 'map2.pdf', dateModified: '2015-07-21T08:22:00.123Z', size: 2.9, },
               { id: 5, file: 'map.pdf', dateModified: '2015-05-21T10:22:00.123Z', size: 3.1, },
-              { id: 6, file: 'internet-bill.pdf', dateModified: '2015-05-12T14:50:00.123Z', size: 1.4, },
-              { id: 23, file: 'phone-bill.pdf', dateModified: '2015-05-01T07:50:00.123Z', size: 1.4, },
+              { id: 6, file: 'internet-bill.pdf', dateModified: '2015-05-12T14:50:00.123Z', size: 1.3, },
+              { id: 23, file: 'phone-bill.pdf', dateModified: '2015-05-01T07:50:00.123Z', size: 1.5, },
             ]
           },
           { id: 9, file: 'misc', files: [{ id: 10, file: 'todo.txt', dateModified: '2015-02-26T16:50:00.123Z', size: 0.4, }] },
           { id: 7, file: 'xls', files: [{ id: 8, file: 'compilation.xls', dateModified: '2014-10-02T14:50:00.123Z', size: 2.3, }] },
-          { id: 55, file: 'unknown.txt', dateModified: '2015-04-08T03:44:12.333Z', size: 0.8, },
-          { id: 77, file: 'zebra.txt', dateModified: '2016-12-08T13:22:12.432', size: 0.8, },
+          { id: 55, file: 'unclassified.csv', dateModified: '2015-04-08T03:44:12.333Z', size: 0.25, },
+          { id: 56, file: 'zebra.dll', dateModified: '2016-12-08T13:22:12.432', size: 1.22, },
         ]
       },
       {

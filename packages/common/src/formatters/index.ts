@@ -34,5 +34,6 @@ export * from './translateFormatter';
 export * from './translateBooleanFormatter';
 export * from './treeExportFormatter';
 export * from './treeFormatter';
+export * from './treeParseTotalFormatters';
 export * from './uppercaseFormatter';
 export * from './yesNoFormatter';
