@@ -276,12 +276,16 @@ export class HeaderMenuPlugin extends MenuBaseClass<HeaderMenu> {
     if (Array.isArray(columnDefinitions) && gridOptions.enableHeaderMenu) {
       columnDefinitions.forEach((columnDef: Column) => {
         if (columnDef && !columnDef.excludeFromHeaderMenu) {
-          if (!columnDef.header || !columnDef.header.menu) {
+          if (!columnDef.header) {
             columnDef.header = {
               menu: {
                 items: []
               }
             };
+          } else if (!columnDef.header.menu) {
+            // we might have header buttons without header menu,
+            // so only initialize the header menu without overwrite header buttons
+            columnDef.header.menu = { items: [] };
           }
           const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef?.header?.menu?.items ?? [];
 

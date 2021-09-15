@@ -284,6 +284,7 @@
   * This makes all "float:right" elements after it that spill over to the next line
   * display way below the lower boundary of the column thus hiding them.
   */
+  display: inline;
   float: var(--slick-header-button-float, $header-button-float);
   vertical-align: var(--slick-header-button-vertical-align, $header-button-vertical-align);
   margin: var(--slick-header-button-margin, $header-button-margin);

@@ -95,7 +95,13 @@ export class HeaderButtonPlugin {
     const column = args.column;
 
     if (column.header?.buttons && Array.isArray(column.header.buttons)) {
-      // Append buttons in reverse order since they are floated to the right.
+      // inverse the button (typically used when icons are floating left)
+      if (this._addonOptions?.inverseOrder) {
+        column.header.buttons.reverse();
+      }
+
+      // Append buttons in reverse order (unless they were inversed at previous line)
+      // since they are floated to the right (unless specified as inversed by the user)
       let i = column.header.buttons.length;
       while (i--) {
         const button = column.header.buttons[i];

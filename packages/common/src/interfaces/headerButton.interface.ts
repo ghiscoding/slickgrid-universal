@@ -17,4 +17,10 @@ export interface HeaderButton extends HeaderButtonOption {
 export interface HeaderButtonOption {
   /** an extra CSS class to add to the menu button */
   buttonCssClass?: string;
+
+  /**
+   * defaults to false, since the default is right floating, we create the buttons in reverse order
+   * but if we align to left via CSS we might want to inverse the order
+   */
+  inverseOrder?: boolean;
 }
