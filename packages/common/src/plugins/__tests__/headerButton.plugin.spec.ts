@@ -14,6 +14,7 @@ const gridStub = {
   getCellFromEvent: jest.fn(),
   getColumns: jest.fn(),
   getOptions: jest.fn(),
+  getUID: () => 'slickgrid12345',
   registerPlugin: jest.fn(),
   setColumns: jest.fn(),
   updateColumnHeader: jest.fn(),
@@ -115,10 +116,6 @@ describe('HeaderButton Plugin', () => {
       };
     });
 
-    afterEach(() => {
-      plugin.dispose();
-    });
-
     it('should populate 1x Header Button when cell is being rendered and a 2nd button item visibility callback returns undefined', () => {
       const headerDiv = document.createElement('div');
       headerDiv.className = 'slick-header-column';
@@ -132,7 +129,7 @@ describe('HeaderButton Plugin', () => {
 
       // add Header Buttons which are visible (only 1x)
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-button mdi mdi-lightbulb-outline"></div>`));
+        `<li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
 
       gridStub.onBeforeHeaderCellDestroy.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
       expect(headerDiv.innerHTML).toBe('');
@@ -151,7 +148,7 @@ describe('HeaderButton Plugin', () => {
 
       // add Header Buttons which are visible (only 1x)
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-button mdi mdi-lightbulb-outline"></div>`));
+        `<li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
     });
 
     it('should populate 2x Header Buttons when cell is being rendered and a 2nd button item visibility & usability callbacks returns true', () => {
@@ -168,8 +165,8 @@ describe('HeaderButton Plugin', () => {
 
       // add Header Buttons which are visible (2x buttons)
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-button mdi mdi-lightbulb-on" title="Highlight negative numbers."></div>
-        <div class="slick-header-button mdi mdi-lightbulb-outline"></div>`));
+        `<li class="slick-header-button mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers."></li>
+        <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
     });
 
     it('should populate 2x Header Buttons and a 2nd button item usability callback returns false and expect button to be disabled', () => {
@@ -186,8 +183,8 @@ describe('HeaderButton Plugin', () => {
 
       // add Header Buttons which are visible (2x buttons)
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-button slick-header-button-disabled mdi mdi-lightbulb-on" title="Highlight negative numbers."></div>
-        <div class="slick-header-button mdi mdi-lightbulb-outline"></div>`));
+        `<li class="slick-header-button slick-header-button-disabled mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers."></li>
+        <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
     });
 
     it('should populate 2x Header Buttons and a 2nd button is "disabled" and expect button to be disabled', () => {
@@ -204,8 +201,8 @@ describe('HeaderButton Plugin', () => {
 
       // add Header Buttons which are visible (2x buttons)
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-button slick-header-button-disabled mdi mdi-lightbulb-on" title="Highlight negative numbers."></div>
-        <div class="slick-header-button mdi mdi-lightbulb-outline"></div>`));
+        `<li class="slick-header-button slick-header-button-disabled mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers."></li>
+        <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
     });
 
     it('should populate 2x Header Buttons and a 2nd button and property "showOnHover" is enabled and expect button to be hidden until we hover it', () => {
@@ -222,8 +219,8 @@ describe('HeaderButton Plugin', () => {
 
       // add Header Buttons which are visible (2x buttons)
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-button slick-header-button-hidden mdi mdi-lightbulb-on" title="Highlight negative numbers."></div>
-        <div class="slick-header-button mdi mdi-lightbulb-outline"></div>`));
+        `<li class="slick-header-button slick-header-button-hidden mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers."></li>
+        <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
     });
 
     it('should populate 2x Header Buttons and a 2nd button and property "image" is filled and expect button to include an image background', () => {
@@ -239,8 +236,8 @@ describe('HeaderButton Plugin', () => {
 
       // add Header Buttons which are visible (2x buttons)
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-button mdi mdi-lightbulb-on" style="background-image: url(/images/some-image.png);" title="Highlight negative numbers."></div>
-          <div class="slick-header-button mdi mdi-lightbulb-outline"></div>`));
+        `<li class="slick-header-button mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers." style="background-image: url(/images/some-image.png);"></li>
+          <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
       expect(consoleWarnSpy).toHaveBeenCalledWith('[Slickgrid-Universal] The "image" property of a Header Button is now deprecated and will be removed in future version, consider using "cssClass" instead.');
     });
 
@@ -257,8 +254,8 @@ describe('HeaderButton Plugin', () => {
 
       // add Header Buttons which are visible (2x buttons)
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-button mdi mdi-lightbulb-on" title="Some Tooltip"></div>
-          <div class="slick-header-button mdi mdi-lightbulb-outline"></div>`));
+        `<li class="slick-header-button mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Some Tooltip"></li>
+          <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
       expect(consoleWarnSpy).toHaveBeenCalledWith('[Slickgrid-Universal] The "image" property of a Header Button is now deprecated and will be removed in future version, consider using "cssClass" instead.');
     });
 
@@ -277,8 +274,8 @@ describe('HeaderButton Plugin', () => {
 
       // add Header Buttons which are visible (2x buttons)
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-button mdi mdi-lightbulb-on" title="Highlight negative numbers."></div>
-          <div class="slick-header-button mdi mdi-lightbulb-outline"></div>`));
+        `<li class="slick-header-button mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers."></li>
+          <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
       expect(handlerMock).toHaveBeenCalled();
     });
 
@@ -297,8 +294,8 @@ describe('HeaderButton Plugin', () => {
 
       // add Header Buttons which are visible (2x buttons)
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-button mdi mdi-lightbulb-on" title="Highlight negative numbers."></div>
-          <div class="slick-header-button mdi mdi-lightbulb-outline"></div>`));
+        `<li class="slick-header-button mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers."></li>
+          <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
       expect(actionMock).toHaveBeenCalled();
     });
 
@@ -318,8 +315,8 @@ describe('HeaderButton Plugin', () => {
 
       // add Header Buttons which are visible (2x buttons)
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-button mdi mdi-lightbulb-on" title="Highlight negative numbers."></div>
-          <div class="slick-header-button mdi mdi-lightbulb-outline"></div>`));
+        `<li class="slick-header-button mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers."></li>
+          <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
       expect(onCommandMock).toHaveBeenCalled();
       expect(updateColSpy).toHaveBeenCalledWith('field1');
     });
@@ -340,8 +337,8 @@ describe('HeaderButton Plugin', () => {
 
       // add Header Buttons which are visible (2x buttons)
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-button mdi mdi-lightbulb-on" title="Highlight negative numbers."></div>
-        <div class="slick-header-button mdi mdi-lightbulb-outline"></div>`));
+        `<li class="slick-header-button mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers."></li>
+        <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
     });
 
     it('should populate 2x Header Buttons but in an inversed order "inverseOrder" flag is enabled and the "disabled" property is set on the 2nd button', () => {
@@ -358,8 +355,8 @@ describe('HeaderButton Plugin', () => {
 
       // add Header Buttons which are visible (2x buttons)
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-button mdi mdi-lightbulb-outline"></div>
-        <div class="slick-header-button slick-header-button-disabled mdi mdi-lightbulb-on" title="Highlight negative numbers."></div>`));
+        `<li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>
+        <li class="slick-header-button slick-header-button-disabled mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers."></li>`));
     });
   });
 });

@@ -8,7 +8,6 @@ import {
   GridMenuItem,
   GridMenuOption,
   MenuCommandItem,
-  MenuOptionItem,
   SlickEventHandler,
 } from '../interfaces/index';
 import { DelimiterType, FileType } from '../enums';
@@ -21,7 +20,7 @@ import { SharedService } from '../services/shared.service';
 import { SortService } from '../services/sort.service';
 import { TextExportService } from '../services/textExport.service';
 import { handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
-import { ExtractMenuType, MenuBaseClass, MenuType } from '../plugins/menuBaseClass';
+import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from '../plugins/menuBaseClass';
 
 /**
  * A control to add a Grid Menu with Extra Commands & Column Picker (hambuger menu on top-right of the grid)
@@ -752,8 +751,8 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
     }
   }
 
-  protected handleMenuItemCommandClick(event: Event, _type: MenuType, item: ExtractMenuType<MenuCommandItem | MenuOptionItem | 'divider', MenuType>) {
-    if (item !== 'divider' && (item as MenuCommandItem).command && !item.disabled && !item.divider) {
+  protected handleMenuItemCommandClick(event: Event, _type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>) {
+    if (item !== 'divider' && (item as MenuCommandItem).command && !item.disabled && !(item as MenuCommandItem).divider) {
       const callbackArgs = {
         grid: this.grid,
         command: (item as MenuCommandItem).command,

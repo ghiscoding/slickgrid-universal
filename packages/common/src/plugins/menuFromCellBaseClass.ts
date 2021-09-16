@@ -13,7 +13,7 @@ import { ExtensionUtility } from '../extensions/extensionUtility';
 import { findWidthOrDefault, getHtmlElementOffset, } from '../services/domUtilities';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
-import { ExtractMenuType, MenuBaseClass, MenuType } from './menuBaseClass';
+import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from './menuBaseClass';
 
 export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends MenuBaseClass<M> {
   protected _currentCell = -1;
@@ -192,8 +192,8 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     }
   }
 
-  protected handleMenuItemCommandClick(event: DOMMouseEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<MenuCommandItem | MenuOptionItem | 'divider', MenuType>) {
-    if ((item as never)?.[type] !== undefined && item !== 'divider' && !item.disabled && !item.divider && this._currentCell !== undefined && this._currentRow !== undefined) {
+  protected handleMenuItemCommandClick(event: DOMMouseEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>) {
+    if ((item as never)?.[type] !== undefined && item !== 'divider' && !item.disabled && !(item as MenuCommandItem | MenuOptionItem).divider && this._currentCell !== undefined && this._currentRow !== undefined) {
       if (type === 'option' && !this.grid.getEditorLock().commitCurrentEdit()) {
         return;
       }

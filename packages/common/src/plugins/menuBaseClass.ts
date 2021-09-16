@@ -5,6 +5,8 @@ import {
   DOMMouseEvent,
   GridMenu,
   GridOption,
+  HeaderButton,
+  HeaderButtonItem,
   HeaderMenu,
   MenuCommandItem,
   MenuOptionItem,
@@ -23,6 +25,8 @@ import { hasData, toSentenceCase } from '../services/utilities';
 declare const Slick: SlickNamespace;
 
 export type MenuType = 'command' | 'option';
+export type ExtendableItemTypes = HeaderButtonItem | MenuCommandItem | MenuOptionItem | 'divider';
+
 /* eslint-disable @typescript-eslint/indent */
 export type ExtractMenuType<A, T> =
   T extends 'command' ? A :
@@ -30,7 +34,7 @@ export type ExtractMenuType<A, T> =
   A extends 'divider' ? A : never;
 /* eslint-enable @typescript-eslint/indent */
 
-export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderMenu> {
+export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderMenu | HeaderButton> {
   protected _addonOptions: M = {} as unknown as M;
   protected _bindEventService: BindingEventService;
   protected _camelPluginName = '';
@@ -128,9 +132,9 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     itemType: MenuType,
     menuOptions: M,
     commandOrOptionMenuElm: HTMLElement,
-    commandOrOptionItems: Array<ExtractMenuType<MenuCommandItem | MenuOptionItem | 'divider', MenuType>>,
+    commandOrOptionItems: Array<ExtractMenuType<ExtendableItemTypes, MenuType>>,
     args: any,
-    itemClickCallback: (event: DOMMouseEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<MenuCommandItem | MenuOptionItem | 'divider', MenuType>, columnDef?: Column) => void
+    itemClickCallback: (event: DOMMouseEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, columnDef?: Column) => void
   ) {
     if (args && commandOrOptionItems && menuOptions) {
       // user could pass a title on top of the Commands/Options section
@@ -141,80 +145,116 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
         this[`_${itemType}TitleElm`]!.textContent = (menuOptions as never)[titleProp];
         commandOrOptionMenuElm.appendChild(this[`_${itemType}TitleElm`]!);
       }
-
       for (const item of commandOrOptionItems) {
-        // run each override functions to know if the item is visible and usable
-        let isItemVisible = true;
-        let isItemUsable = true;
-        if (typeof item === 'object') {
-          isItemVisible = this.extensionUtility.runOverrideFunctionWhenExists<typeof args>(item.itemVisibilityOverride, args);
-          isItemUsable = this.extensionUtility.runOverrideFunctionWhenExists<typeof args>(item.itemUsabilityOverride, args);
-        }
+        this.populateSingleCommandOrOptionItem(itemType, menuOptions, commandOrOptionMenuElm, item, args, itemClickCallback);
+      }
+    }
+  }
 
-        // if the result is not visible then there's no need to go further
-        if (!isItemVisible) {
-          continue;
-        }
+  /** Construct the Command/Options Items section. */
+  protected populateSingleCommandOrOptionItem(
+    itemType: MenuType,
+    menuOptions: M,
+    commandOrOptionMenuElm: HTMLElement | null,
+    item: ExtractMenuType<ExtendableItemTypes, MenuType>,
+    args: any,
+    itemClickCallback: (event: DOMMouseEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, columnDef?: Column) => void
+  ): HTMLLIElement | null {
+    let commandLiElm: HTMLLIElement | null = null;
 
-        // when the override is defined (and previously executed), we need to use its result to update the disabled property
-        // so that "handleMenuItemCommandClick" has the correct flag and won't trigger a command clicked event
-        if (typeof item === 'object' && item.itemUsabilityOverride) {
-          item.disabled = isItemUsable ? false : true;
-        }
+    if (args && item && menuOptions) {
+      const pluginMiddleName = this._camelPluginName === 'headerButtons' ? '' : '-item';
+      const menuCssPrefix = `${this._menuCssPrefix}${pluginMiddleName}`;
 
-        const commandLiElm = document.createElement('li');
-        commandLiElm.className = `${this._menuCssPrefix}-item`;
-        if (typeof item === 'object' && hasData((item as never)[itemType])) {
-          commandLiElm.dataset[itemType] = (item as never)?.[itemType];
-        }
+      // run each override functions to know if the item is visible and usable
+      let isItemVisible = true;
+      let isItemUsable = true;
+      if (typeof item === 'object') {
+        isItemVisible = this.extensionUtility.runOverrideFunctionWhenExists<typeof args>(item.itemVisibilityOverride, args);
+        isItemUsable = this.extensionUtility.runOverrideFunctionWhenExists<typeof args>(item.itemUsabilityOverride, args);
+      }
+
+      // if the result is not visible then there's no need to go further
+      if (!isItemVisible) {
+        return null;
+      }
+
+      // when the override is defined (and previously executed), we need to use its result to update the disabled property
+      // so that "handleMenuItemCommandClick" has the correct flag and won't trigger a command clicked event
+      if (typeof item === 'object' && item.itemUsabilityOverride) {
+        item.disabled = isItemUsable ? false : true;
+      }
+
+      commandLiElm = document.createElement('li');
+      commandLiElm.className = menuCssPrefix;
+      if (typeof item === 'object' && hasData((item as never)[itemType])) {
+        commandLiElm.dataset[itemType] = (item as never)?.[itemType];
+      }
+      if (commandOrOptionMenuElm) {
         commandOrOptionMenuElm.appendChild(commandLiElm);
+      }
 
-        if ((typeof item === 'object' && item.divider) || item === 'divider') {
-          commandLiElm.classList.add(`${this._menuCssPrefix}-item-divider`);
-          continue;
+      if ((typeof item === 'object' && (item as MenuCommandItem | MenuOptionItem).divider) || item === 'divider') {
+        commandLiElm.classList.add(`${menuCssPrefix}-divider`);
+        return commandLiElm;
+      }
+
+      if (item.disabled) {
+        commandLiElm.classList.add(`${menuCssPrefix}-disabled`);
+      }
+
+      if ((item as MenuCommandItem | MenuOptionItem).hidden || (item as HeaderButtonItem).showOnHover) {
+        commandLiElm.classList.add(`${menuCssPrefix}-hidden`);
+      }
+
+      if (item.cssClass) {
+        commandLiElm.classList.add(...item.cssClass.split(' '));
+      }
+
+      if (item.tooltip) {
+        commandLiElm.title = item.tooltip;
+      }
+
+      if (this._camelPluginName === 'headerButtons') {
+        if ((item as HeaderButtonItem).image) {
+          console.warn('[Slickgrid-Universal] The "image" property of a Header Button is now deprecated and will be removed in future version, consider using "cssClass" instead.');
+          commandLiElm.style.backgroundImage = `url(${(item as HeaderButtonItem).image})`;
         }
-
-        if (item.disabled) {
-          commandLiElm.classList.add(`${this._menuCssPrefix}-item-disabled`);
-        }
-
-        if (item.hidden) {
-          commandLiElm.classList.add(`${this._menuCssPrefix}-item-hidden`);
-        }
-
-        if (item.cssClass) {
-          commandLiElm.classList.add(...item.cssClass.split(' '));
-        }
-
-        if (item.tooltip) {
-          commandLiElm.title = item.tooltip;
-        }
-
+      } else {
+        // any other Menu plugin will have icon & content elements
         const iconElm = document.createElement('div');
         iconElm.className = `${this._menuCssPrefix}-icon`;
         commandLiElm.appendChild(iconElm);
 
-        if (item.iconCssClass) {
-          iconElm.classList.add(...item.iconCssClass.split(' '));
+        if ((item as MenuCommandItem | MenuOptionItem).iconCssClass) {
+          iconElm.classList.add(...(item as MenuCommandItem | MenuOptionItem).iconCssClass!.split(' '));
         }
 
-        if (item.iconImage) {
+        if ((item as MenuCommandItem | MenuOptionItem).iconImage) {
           console.warn(`[Slickgrid-Universal] The "iconImage" property of a ${toSentenceCase(this._camelPluginName)} item is now deprecated and will be removed in future version, consider using "iconCssClass" instead.`);
-          iconElm.style.backgroundImage = `url(${item.iconImage})`;
+          iconElm.style.backgroundImage = `url(${(item as MenuCommandItem | MenuOptionItem).iconImage})`;
         }
 
         const textElm = document.createElement('span');
         textElm.className = `${this._menuCssPrefix}-content`;
-        textElm.textContent = typeof item === 'object' && item.title || '';
+        textElm.textContent = typeof item === 'object' && (item as MenuCommandItem | MenuOptionItem).title || '';
         commandLiElm.appendChild(textElm);
 
-        if (item.textCssClass) {
-          textElm.classList.add(...item.textCssClass.split(' '));
+        if ((item as MenuCommandItem | MenuOptionItem).textCssClass) {
+          textElm.classList.add(...(item as MenuCommandItem | MenuOptionItem).textCssClass!.split(' '));
         }
-        // execute command on menu item clicked
+      }
+
+      // execute command on menu item clicked
+      this._bindEventService.bind(commandLiElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) =>
+        itemClickCallback.call(this, e, itemType, item, args?.column)) as EventListener);
+
+      // Header Button can have an optional handler
+      if ((item as HeaderButtonItem).handler && !(item as HeaderButtonItem).disabled) {
         this._bindEventService.bind(commandLiElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) =>
-          itemClickCallback.call(this, e, itemType, item, args?.column)) as EventListener);
+          (item as HeaderButtonItem).handler!.call(this, e)) as EventListener);
       }
     }
+    return commandLiElm;
   }
 }

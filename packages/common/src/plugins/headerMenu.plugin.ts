@@ -21,7 +21,7 @@ import { FilterService } from '../services/filter.service';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
 import { SortService } from '../services/sort.service';
-import { ExtractMenuType, MenuBaseClass, MenuType } from './menuBaseClass';
+import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from './menuBaseClass';
 
 /**
  * A plugin to add drop-down menus to column headers.
@@ -90,9 +90,7 @@ export class HeaderMenuPlugin extends MenuBaseClass<HeaderMenu> {
 
   /** Dispose (destroy) of the plugin */
   dispose() {
-    this._eventHandler?.unsubscribeAll();
-    this._bindEventService.unbindAll();
-    this.pubSubService.unsubscribeAll();
+    super.dispose();
     this._menuElm = this._menuElm || document.body.querySelector(`.slick-header-menu${this.gridUidSelector}`);
     this._menuElm?.remove();
     this._activeHeaderColumnElm = undefined;
@@ -153,7 +151,7 @@ export class HeaderMenuPlugin extends MenuBaseClass<HeaderMenu> {
 
     // make sure the menu element is an empty div besore adding all list of commands
     emptyElement(this._menuElm);
-    this.populateHeaderMenuCommandList(e, columnDef, menu, callbackArgs);
+    this.populateHeaderMenuCommandList(e, menu, callbackArgs);
   }
 
   /** Translate the Header Menu titles, we need to loop through all column definition to re-translate them */
@@ -226,8 +224,8 @@ export class HeaderMenuPlugin extends MenuBaseClass<HeaderMenu> {
     }
   }
 
-  protected handleMenuItemCommandClick(event: DOMEvent<HTMLDivElement>, _type: MenuType, item: ExtractMenuType<MenuCommandItem | MenuOptionItem | 'divider', MenuType>, columnDef?: Column) {
-    if (item !== 'divider' && (item as MenuCommandItem).command && !item.disabled && !item.divider) {
+  protected handleMenuItemCommandClick(event: DOMEvent<HTMLDivElement>, _type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, columnDef?: Column) {
+    if (item !== 'divider' && (item as MenuCommandItem).command && !item.disabled && !(item as MenuCommandItem | MenuOptionItem).divider) {
       const callbackArgs = {
         grid: this.grid,
         command: (item as MenuCommandItem).command,
@@ -459,7 +457,7 @@ export class HeaderMenuPlugin extends MenuBaseClass<HeaderMenu> {
     }
   }
 
-  protected populateHeaderMenuCommandList(e: MouseEvent, columnDef: Column, menu: HeaderMenuItems, args: HeaderMenuCommandItemCallbackArgs) {
+  protected populateHeaderMenuCommandList(e: MouseEvent, menu: HeaderMenuItems, args: HeaderMenuCommandItemCallbackArgs) {
     this.populateCommandOrOptionItems(
       'command',
       this.addonOptions,
