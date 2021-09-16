@@ -13,7 +13,7 @@ import { BindingEventService } from '../services/bindingEvent.service';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
 import { emptyElement } from '../services';
-import { handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
+import { addColumnTitleElementWhenDefined, addCloseButtomElement, handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -106,27 +106,9 @@ export class ColumnPickerControl {
     this._menuElm.className = `slick-columnpicker ${this._gridUid}`;
     this._menuElm.style.display = 'none';
 
-    const closePickerButtonElm = document.createElement('button');
-    closePickerButtonElm.className = 'close';
-    closePickerButtonElm.type = 'button';
-    closePickerButtonElm.dataset.dismiss = 'slick-columnpicker';
-    closePickerButtonElm.setAttribute('aria-label', 'Close');
-
-    const closeSpanElm = document.createElement('span');
-    closeSpanElm.className = 'close';
-    closeSpanElm.innerHTML = '&times;';
-    closeSpanElm.setAttribute('aria-hidden', 'true');
-
-    closePickerButtonElm.appendChild(closeSpanElm);
-    this._menuElm.appendChild(closePickerButtonElm);
-
-    // user could pass a title on top of the columns list
-    if (this.addonOptions?.columnTitle) {
-      this._columnTitleElm = document.createElement('div');
-      this._columnTitleElm.className = 'title';
-      this._columnTitleElm.textContent = this.addonOptions?.columnTitle ?? this._defaults.columnTitle;
-      this._menuElm.appendChild(this._columnTitleElm);
-    }
+    // add Close button and optiona a Column list title
+    addCloseButtomElement.call(this, this._menuElm);
+    addColumnTitleElementWhenDefined.call(this, this._menuElm);
 
     this._bindEventService.bind(this._menuElm, 'click', handleColumnPickerItemClick.bind(this) as EventListener);
 

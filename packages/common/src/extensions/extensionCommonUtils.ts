@@ -4,6 +4,34 @@ import { sanitizeTextByAvailableSanitizer } from '../services/utilities';
 import { ColumnPickerControl } from '../controls/columnPicker.control';
 import { GridMenuControl } from '../controls/gridMenu.control';
 
+/** Create a Close button element and add it to the Menu element */
+export function addCloseButtomElement(this: ColumnPickerControl | GridMenuControl, menuElm: HTMLDivElement) {
+  const context: any = this;
+  const closePickerButtonElm = document.createElement('button');
+  closePickerButtonElm.className = 'close';
+  closePickerButtonElm.type = 'button';
+  closePickerButtonElm.dataset.dismiss = context instanceof ColumnPickerControl ? 'slick-columnpicker' : 'slick-grid-menu';
+  closePickerButtonElm.setAttribute('aria-label', 'Close');
+
+  const closeSpanElm = document.createElement('span');
+  closeSpanElm.className = 'close';
+  closeSpanElm.innerHTML = '&times;';
+  closeSpanElm.setAttribute('aria-hidden', 'true');
+  closePickerButtonElm.appendChild(closeSpanElm);
+  menuElm.appendChild(closePickerButtonElm);
+}
+
+/** When "columnTitle" option is provided, let's create a div element to show "Columns" list title */
+export function addColumnTitleElementWhenDefined(this: ColumnPickerControl | GridMenuControl, menuElm: HTMLDivElement) {
+  const context: any = this;
+  if (context.addonOptions?.columnTitle) {
+    context._columnTitleElm = document.createElement('div');
+    context._columnTitleElm.className = 'title';
+    context._columnTitleElm.textContent = context.addonOptions?.columnTitle ?? context._defaults.columnTitle;
+    menuElm.appendChild(context._columnTitleElm);
+  }
+}
+
 /**
  * When clicking an input checkboxes from the column picker list to show/hide a column (or from the picker extra commands like forcefit columns)
  * @param event - input checkbox event

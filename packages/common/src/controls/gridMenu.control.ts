@@ -19,7 +19,7 @@ import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
 import { SortService } from '../services/sort.service';
 import { TextExportService } from '../services/textExport.service';
-import { handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
+import { addColumnTitleElementWhenDefined, addCloseButtomElement, handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
 import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from '../plugins/menuBaseClass';
 
 /**
@@ -155,12 +155,7 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
   createColumnPickerContainer() {
     if (this._menuElm) {
       // user could pass a title on top of the columns list
-      if (this.addonOptions?.columnTitle) {
-        this._columnTitleElm = document.createElement('div');
-        this._columnTitleElm.className = 'title';
-        this._columnTitleElm.textContent = this.addonOptions?.columnTitle ?? this._defaults.columnTitle;
-        this._menuElm.appendChild(this._columnTitleElm);
-      }
+      addColumnTitleElementWhenDefined.call(this, this._menuElm);
 
       this._listElm = document.createElement('span');
       this._listElm.className = 'slick-grid-menu-list';
@@ -218,22 +213,11 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
       this._menuElm.classList.add('slick-grid-menu', this._gridUid);
       this._menuElm.style.display = 'none';
 
-      const closePickerButtonElm = document.createElement('button');
-      closePickerButtonElm.className = 'close';
-      closePickerButtonElm.type = 'button';
-      closePickerButtonElm.dataset.dismiss = 'slick-grid-menu';
-      closePickerButtonElm.setAttribute('aria-label', 'Close');
-
-      const closeSpanElm = document.createElement('span');
-      closeSpanElm.className = 'close';
-      closeSpanElm.innerHTML = '&times;';
-      closeSpanElm.setAttribute('aria-hidden', 'true');
+      // add Close button
+      addCloseButtomElement.call(this, this._menuElm);
 
       this._commandMenuElm = document.createElement('div');
       this._commandMenuElm.className = 'slick-grid-menu-command-list';
-
-      closePickerButtonElm.appendChild(closeSpanElm);
-      this._menuElm.appendChild(closePickerButtonElm);
       this._menuElm.appendChild(this._commandMenuElm);
 
       this.populateCommandOrOptionItems(
