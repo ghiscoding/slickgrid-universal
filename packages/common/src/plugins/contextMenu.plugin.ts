@@ -172,7 +172,7 @@ export class ContextMenuPlugin extends MenuFromCellBaseClass<ContextMenu> {
         menuCustomItems.push(
           {
             iconCssClass: contextMenu.iconCopyCellValueCommand || 'fa fa-clone',
-            title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}COPY`, 'TEXT_COPY'),
+            titleKey: `${translationPrefix}COPY`,
             disabled: false,
             command: commandName,
             positionOrder: 50,
@@ -205,7 +205,7 @@ export class ContextMenuPlugin extends MenuFromCellBaseClass<ContextMenu> {
         menuCustomItems.push(
           {
             iconCssClass: contextMenu.iconExportCsvCommand || 'fa fa-download',
-            title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}EXPORT_TO_CSV`, 'TEXT_EXPORT_TO_CSV'),
+            titleKey: `${translationPrefix}EXPORT_TO_CSV`,
             disabled: false,
             command: commandName,
             positionOrder: 51,
@@ -233,7 +233,7 @@ export class ContextMenuPlugin extends MenuFromCellBaseClass<ContextMenu> {
         menuCustomItems.push(
           {
             iconCssClass: contextMenu.iconExportExcelCommand || 'fa fa-file-excel-o text-success',
-            title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}EXPORT_TO_EXCEL`, 'TEXT_EXPORT_TO_EXCEL'),
+            titleKey: `${translationPrefix}EXPORT_TO_EXCEL`,
             disabled: false,
             command: commandName,
             positionOrder: 52,
@@ -258,7 +258,7 @@ export class ContextMenuPlugin extends MenuFromCellBaseClass<ContextMenu> {
         menuCustomItems.push(
           {
             iconCssClass: contextMenu.iconExportTextDelimitedCommand || 'fa fa-download',
-            title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}EXPORT_TO_TAB_DELIMITED`, 'TEXT_EXPORT_TO_TAB_DELIMITED'),
+            titleKey: `${translationPrefix}EXPORT_TO_TAB_DELIMITED`,
             disabled: false,
             command: commandName,
             positionOrder: 53,
@@ -293,7 +293,7 @@ export class ContextMenuPlugin extends MenuFromCellBaseClass<ContextMenu> {
           menuCustomItems.push(
             {
               iconCssClass: contextMenu.iconClearGroupingCommand || 'fa fa-times',
-              title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}CLEAR_ALL_GROUPING`, 'TEXT_CLEAR_ALL_GROUPING'),
+              titleKey: `${translationPrefix}CLEAR_ALL_GROUPING`,
               disabled: false,
               command: commandName,
               positionOrder: 55,
@@ -318,7 +318,7 @@ export class ContextMenuPlugin extends MenuFromCellBaseClass<ContextMenu> {
           menuCustomItems.push(
             {
               iconCssClass: contextMenu.iconCollapseAllGroupsCommand || 'fa fa-compress',
-              title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}COLLAPSE_ALL_GROUPS`, 'TEXT_COLLAPSE_ALL_GROUPS'),
+              titleKey: `${translationPrefix}COLLAPSE_ALL_GROUPS`,
               disabled: false,
               command: commandName,
               positionOrder: 56,
@@ -349,7 +349,7 @@ export class ContextMenuPlugin extends MenuFromCellBaseClass<ContextMenu> {
           menuCustomItems.push(
             {
               iconCssClass: contextMenu.iconExpandAllGroupsCommand || 'fa fa-expand',
-              title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}EXPAND_ALL_GROUPS`, 'TEXT_EXPAND_ALL_GROUPS'),
+              titleKey: `${translationPrefix}EXPAND_ALL_GROUPS`,
               disabled: false,
               command: commandName,
               positionOrder: 57,
@@ -374,6 +374,7 @@ export class ContextMenuPlugin extends MenuFromCellBaseClass<ContextMenu> {
       }
     }
 
+    this.extensionUtility.translateMenuItemsFromTitleKey(menuCustomItems);
     return menuCustomItems;
   }
 

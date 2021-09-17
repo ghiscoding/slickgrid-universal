@@ -15,7 +15,7 @@ import {
   OnHeaderCellRenderedEventArgs,
   SlickEventHandler,
 } from '../interfaces/index';
-import { arrayRemoveItemByIndex, emptyElement, getElementOffsetRelativeToParent, } from '../services/index';
+import { arrayRemoveItemByIndex, emptyElement, getElementOffsetRelativeToParent, getTranslationPrefix } from '../services/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { FilterService } from '../services/filter.service';
 import { PubSubService } from '../services/pubSub.service';
@@ -270,6 +270,7 @@ export class HeaderMenuPlugin extends MenuBaseClass<HeaderMenu> {
   protected addHeaderMenuCustomCommands(columnDefinitions: Column[]): HeaderMenu {
     const gridOptions = this.sharedService.gridOptions;
     const headerMenuOptions = gridOptions.headerMenu || {};
+    const translationPrefix = getTranslationPrefix(gridOptions);
 
     if (Array.isArray(columnDefinitions) && gridOptions.enableHeaderMenu) {
       columnDefinitions.forEach((columnDef: Column) => {
@@ -294,7 +295,7 @@ export class HeaderMenuPlugin extends MenuBaseClass<HeaderMenu> {
             if (!columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'freeze-columns')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconFreezeColumns || 'fa fa-thumb-tack',
-                titleKey: 'FREEZE_COLUMNS',
+                titleKey: `${translationPrefix}FREEZE_COLUMNS`,
                 command: 'freeze-columns',
                 positionOrder: 47
               });
@@ -307,7 +308,7 @@ export class HeaderMenuPlugin extends MenuBaseClass<HeaderMenu> {
             if (!columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'column-resize-by-content')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconColumnResizeByContentCommand || 'fa fa-arrows-h',
-                titleKey: `COLUMN_RESIZE_BY_CONTENT`,
+                titleKey: `${translationPrefix}COLUMN_RESIZE_BY_CONTENT`,
                 command: 'column-resize-by-content',
                 positionOrder: 48
               });
@@ -324,7 +325,7 @@ export class HeaderMenuPlugin extends MenuBaseClass<HeaderMenu> {
             if (!columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'sort-asc')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconSortAscCommand || 'fa fa-sort-asc',
-                titleKey: 'SORT_ASCENDING',
+                titleKey: `${translationPrefix}SORT_ASCENDING`,
                 command: 'sort-asc',
                 positionOrder: 50
               });
@@ -332,7 +333,7 @@ export class HeaderMenuPlugin extends MenuBaseClass<HeaderMenu> {
             if (!columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'sort-desc')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconSortDescCommand || 'fa fa-sort-desc',
-                titleKey: 'SORT_DESCENDING',
+                titleKey: `${translationPrefix}SORT_DESCENDING`,
                 command: 'sort-desc',
                 positionOrder: 51
               });
@@ -346,7 +347,7 @@ export class HeaderMenuPlugin extends MenuBaseClass<HeaderMenu> {
             if (!headerMenuOptions.hideClearSortCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'clear-sort')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconClearSortCommand || 'fa fa-unsorted',
-                titleKey: 'REMOVE_SORT',
+                titleKey: `${translationPrefix}REMOVE_SORT`,
                 command: 'clear-sort',
                 positionOrder: 54
               });
@@ -358,7 +359,7 @@ export class HeaderMenuPlugin extends MenuBaseClass<HeaderMenu> {
             if (!headerMenuOptions.hideClearFilterCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'clear-filter')) {
               columnHeaderMenuItems.push({
                 iconCssClass: headerMenuOptions.iconClearFilterCommand || 'fa fa-filter',
-                titleKey: 'REMOVE_FILTER',
+                titleKey: `${translationPrefix}REMOVE_FILTER`,
                 command: 'clear-filter',
                 positionOrder: 53
               });
@@ -369,7 +370,7 @@ export class HeaderMenuPlugin extends MenuBaseClass<HeaderMenu> {
           if (headerMenuOptions && !headerMenuOptions.hideColumnHideCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'hide-column')) {
             columnHeaderMenuItems.push({
               iconCssClass: headerMenuOptions.iconColumnHideCommand || 'fa fa-times',
-              titleKey: 'HIDE_COLUMN',
+              titleKey: `${translationPrefix}HIDE_COLUMN`,
               command: 'hide-column',
               positionOrder: 55
             });

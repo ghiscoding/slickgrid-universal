@@ -917,7 +917,7 @@ describe('GridMenuControl', () => {
           control.columns = columnsMock;
           control.init();
           expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-            { iconCssClass: 'fa fa-times', title: 'Dégeler les colonnes/rangées', disabled: false, command: 'clear-pinning', positionOrder: 52 },
+            { iconCssClass: 'fa fa-times', title: 'Dégeler les colonnes/rangées', titleKey: 'CLEAR_PINNING', disabled: false, command: 'clear-pinning', positionOrder: 52 },
           ]);
         });
 
@@ -928,9 +928,9 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-            { iconCssClass: 'fa fa-filter text-danger', title: 'Supprimer tous les filtres', disabled: false, command: 'clear-filter', positionOrder: 50 },
-            { iconCssClass: 'fa fa-random', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 53 },
-            { iconCssClass: 'fa fa-refresh', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 57 }
+            { iconCssClass: 'fa fa-filter text-danger', title: 'Supprimer tous les filtres', titleKey: 'CLEAR_ALL_FILTERS', disabled: false, command: 'clear-filter', positionOrder: 50 },
+            { iconCssClass: 'fa fa-random', title: 'Basculer la ligne des filtres', titleKey: 'TOGGLE_FILTER_ROW', disabled: false, command: 'toggle-filter', positionOrder: 53 },
+            { iconCssClass: 'fa fa-refresh', title: 'Rafraîchir les données', titleKey: 'REFRESH_DATASET', disabled: false, command: 'refresh-dataset', positionOrder: 57 }
           ]);
         });
 
@@ -941,7 +941,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-            { iconCssClass: 'fa fa-filter text-danger', title: 'Supprimer tous les filtres', disabled: false, command: 'clear-filter', positionOrder: 50 }
+            { iconCssClass: 'fa fa-filter text-danger', title: 'Supprimer tous les filtres', titleKey: 'CLEAR_ALL_FILTERS', disabled: false, command: 'clear-filter', positionOrder: 50 }
           ]);
         });
 
@@ -952,7 +952,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-            { iconCssClass: 'fa fa-random', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 53 },
+            { iconCssClass: 'fa fa-random', title: 'Basculer la ligne des filtres', titleKey: 'TOGGLE_FILTER_ROW', disabled: false, command: 'toggle-filter', positionOrder: 53 },
           ]);
         });
 
@@ -963,7 +963,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-            { iconCssClass: 'fa fa-refresh', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 57 }
+            { iconCssClass: 'fa fa-refresh', title: 'Rafraîchir les données', titleKey: 'REFRESH_DATASET', disabled: false, command: 'refresh-dataset', positionOrder: 57 }
           ]);
         });
 
@@ -974,7 +974,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-            { iconCssClass: 'fa fa-random', title: 'Basculer la ligne de pré-en-tête', disabled: false, command: 'toggle-preheader', positionOrder: 53 }
+            { iconCssClass: 'fa fa-random', title: 'Basculer la ligne de pré-en-tête', titleKey: 'TOGGLE_PRE_HEADER_ROW', disabled: false, command: 'toggle-preheader', positionOrder: 53 }
           ]);
         });
 
@@ -994,7 +994,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-            { iconCssClass: 'fa fa-unsorted text-danger', title: 'Supprimer tous les tris', disabled: false, command: 'clear-sorting', positionOrder: 51 }
+            { iconCssClass: 'fa fa-unsorted text-danger', title: 'Supprimer tous les tris', titleKey: 'CLEAR_ALL_SORTING', disabled: false, command: 'clear-sorting', positionOrder: 51 }
           ]);
         });
 
@@ -1014,7 +1014,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-            { iconCssClass: 'fa fa-download', title: 'Exporter en format CSV', disabled: false, command: 'export-csv', positionOrder: 54 }
+            { iconCssClass: 'fa fa-download', title: 'Exporter en format CSV', titleKey: 'EXPORT_TO_CSV', disabled: false, command: 'export-csv', positionOrder: 54 }
           ]);
         });
 
@@ -1034,7 +1034,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-            { iconCssClass: 'fa fa-file-excel-o text-success', title: 'Exporter vers Excel', disabled: false, command: 'export-excel', positionOrder: 55 }
+            { iconCssClass: 'fa fa-file-excel-o text-success', title: 'Exporter vers Excel', titleKey: 'EXPORT_TO_EXCEL', disabled: false, command: 'export-excel', positionOrder: 55 }
           ]);
         });
 
@@ -1045,7 +1045,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-            { iconCssClass: 'fa fa-download', title: 'Exporter en format texte (délimité par tabulation)', disabled: false, command: 'export-text-delimited', positionOrder: 56 }
+            { iconCssClass: 'fa fa-download', title: 'Exporter en format texte (délimité par tabulation)', titleKey: 'EXPORT_TO_TAB_DELIMITED', disabled: false, command: 'export-text-delimited', positionOrder: 56 }
           ]);
         });
 
@@ -1059,101 +1059,6 @@ describe('GridMenuControl', () => {
         });
       });
 
-      // describe('adding Grid Menu Custom Items', () => {
-      //   const customItemsMock = [{
-      //     iconCssClass: 'fa fa-question-circle',
-      //     titleKey: 'HELP',
-      //     disabled: false,
-      //     command: 'help',
-      //     positionOrder: 99
-      //   }];
-
-      //   beforeEach(() => {
-      //     const copyGridOptionsMock = {
-      //       ...gridOptionsMock,
-      //       enableTextExport: true,
-      //       gridMenu: {
-      //         commandLabels: gridOptionsMock.gridMenu.commandLabels,
-      //         customItems: customItemsMock,
-      //         hideClearFrozenColumnsCommand: true,
-      //         hideExportCsvCommand: false,
-      //         hideExportExcelCommand: false,
-      //         hideExportTextDelimitedCommand: true,
-      //         hideRefreshDatasetCommand: true,
-      //         hideSyncResizeButton: true,
-      //         hideToggleFilterCommand: true,
-      //         hideTogglePreHeaderCommand: true
-      //       }
-      //     } as unknown as GridOption;
-
-      //     jest.spyOn(SharedService.prototype, 'dataView', 'get').mockReturnValue(dataViewStub);
-      //     jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-      //     jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-      //     jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
-      //     jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock);
-      //     jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
-      //     jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-      //   });
-
-      //   afterEach(() => {
-      //     control.dispose();
-      //   });
-
-      //   xit('should have user grid menu custom items', () => {
-      //     control.register();
-      //     expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-      //       { command: 'export-csv', disabled: false, iconCssClass: 'fa fa-download', positionOrder: 54, title: 'Exporter en format CSV' },
-      //       // { command: 'export-excel', disabled: false, iconCssClass: 'fa fa-file-excel-o text-success', positionOrder: 54, title: 'Exporter vers Excel' },
-      //       { command: 'help', disabled: false, iconCssClass: 'fa fa-question-circle', positionOrder: 99, title: 'Aide', titleKey: 'HELP' },
-      //     ]);
-      //   });
-
-      //   xit('should have same user grid menu custom items even when grid menu extension is registered multiple times', () => {
-      //     control.register();
-      //     control.register();
-      //     expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-      //       { command: 'export-csv', disabled: false, iconCssClass: 'fa fa-download', positionOrder: 54, title: 'Exporter en format CSV' },
-      //       // { command: 'export-excel', disabled: false, iconCssClass: 'fa fa-file-excel-o text-success', positionOrder: 54, title: 'Exporter vers Excel' },
-      //       { command: 'help', disabled: false, iconCssClass: 'fa fa-question-circle', positionOrder: 99, title: 'Aide', titleKey: 'HELP' },
-      //     ]);
-      //   });
-      // });
-
-      // describe('refreshBackendDataset method', () => {
-      //   afterEach(() => {
-      //     jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-      //   });
-
-      //   xit('should throw an error when backendServiceApi is not provided in the grid options', () => {
-      //     const copyGridOptionsMock = { ...gridOptionsMock, backendServiceApi: {} } as unknown as GridOption;
-      //     jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-      //     expect(() => control.refreshBackendDataset()).toThrowError(`BackendServiceApi requires at least a "process" function and a "service" defined`);
-      //   });
-
-      //   xit('should call the backend service API to refresh the dataset', (done) => {
-      //     const now = new Date();
-      //     const query = `query { users (first:20,offset:0) { totalCount, nodes { id,name,gender,company } } }`;
-      //     const processResult = {
-      //       data: { users: { nodes: [] }, pageInfo: { hasNextPage: true }, totalCount: 0 },
-      //       metrics: { startTime: now, endTime: now, executionTime: 0, totalItemCount: 0 }
-      //     };
-      //     const preSpy = jest.spyOn(gridOptionsMock.backendServiceApi as BackendServiceApi, 'preProcess');
-      //     const postSpy = jest.spyOn(gridOptionsMock.backendServiceApi as BackendServiceApi, 'postProcess');
-      //     const promise = new Promise((resolve) => setTimeout(() => resolve(processResult), 1));
-      //     const processSpy = jest.spyOn(gridOptionsMock.backendServiceApi as BackendServiceApi, 'process').mockReturnValue(promise);
-      //     jest.spyOn(gridOptionsMock.backendServiceApi!.service, 'buildQuery').mockReturnValue(query);
-
-      //     control.refreshBackendDataset({ enableAddRow: true });
-
-      //     expect(preSpy).toHaveBeenCalled();
-      //     expect(processSpy).toHaveBeenCalled();
-      //     promise.then(() => {
-      //       expect(postSpy).toHaveBeenCalledWith(processResult);
-      //       done();
-      //     });
-      //   });
-      // });
-
       describe('executeGridMenuInternalCustomCommands method', () => {
         beforeEach(() => {
           jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
@@ -1161,15 +1066,7 @@ describe('GridMenuControl', () => {
           jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
         });
 
-        //   afterEach(() => {
-        //     jest.clearAllMocks();
-        //     control.eventHandler.unsubscribeAll();
-        //     mockGridMenuAddon.onCommand = new Slick.Event();
-        //   });
-
         it('should call "clearFrozenColumns" when the command triggered is "clear-pinning"', () => {
-          // const onCommandMock = jest.fn();
-          // gridOptionsMock.gridMenu.onCommand = onCommandMock;
           const setOptionsSpy = jest.spyOn(gridStub, 'setOptions');
           const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
           const copyGridOptionsMock = { ...gridOptionsMock, gridMenu: { commandLabels: gridOptionsMock.gridMenu.commandLabels, hideClearFrozenColumnsCommand: false, } } as unknown as GridOption;
@@ -1182,7 +1079,6 @@ describe('GridMenuControl', () => {
           document.querySelector('.slick-grid-menu-button').dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
           control.menuElement.querySelector<HTMLInputElement>('.slick-grid-menu-item[data-command=clear-pinning]').dispatchEvent(clickEvent);
 
-          // expect(onCommandMock).toHaveBeenCalled();
           expect(setColumnsSpy).toHaveBeenCalled();
           expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: -1, frozenRow: -1, frozenBottom: false, enableMouseWheelScrollHandler: false });
         });
