@@ -1,6 +1,13 @@
 import { Column, SlickGrid } from '.';
 import { MenuCommandItem } from './menuCommandItem.interface';
 
+export interface GridMenuCallbackArgs {
+  grid: SlickGrid;
+  menu: any;
+  columns: Column[];
+  visibleColumns: Column[]
+}
+
 export interface GridMenuCommandItemCallbackArgs {
   /** A command identifier returned by the onCommand (or action) event callback handler. */
   command: string;

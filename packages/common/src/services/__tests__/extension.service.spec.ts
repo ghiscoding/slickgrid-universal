@@ -26,6 +26,7 @@ const extensionUtilityStub = {
   refreshBackendDataset: jest.fn(),
   sortItems: jest.fn(),
   translateItems: jest.fn(),
+  translateMenuItemsFromTitleKey: jest.fn(),
   translateWhenEnabledAndServiceExist: jest.fn(),
 } as unknown as ExtensionUtility;
 

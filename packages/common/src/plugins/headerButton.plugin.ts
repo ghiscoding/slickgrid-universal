@@ -15,6 +15,7 @@ import { BindingEventService } from '../services/bindingEvent.service';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
+import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from './menuBaseClass';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -29,11 +30,8 @@ declare const Slick: SlickNamespace;
  *     }
  *   }];
  */
-export class HeaderButtonPlugin {
-  protected _addonOptions?: HeaderButton;
-  protected _bindEventService: BindingEventService;
-  protected _eventHandler!: SlickEventHandler;
-  protected _buttonElms: HTMLDivElement[] = [];
+export class HeaderButtonPlugin extends MenuBaseClass<HeaderButton> {
+  protected _buttonElms: HTMLLIElement[] = [];
   protected _defaults = {
     buttonCssClass: 'slick-header-button',
   } as HeaderButtonOption;
@@ -41,6 +39,9 @@ export class HeaderButtonPlugin {
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: PubSubService, protected readonly sharedService: SharedService) {
+    super(extensionUtility, pubSubService, sharedService);
+    this._menuCssPrefix = 'slick-header-button';
+    this._camelPluginName = 'headerButtons';
     this._bindEventService = new BindingEventService();
     this._eventHandler = new Slick.EventHandler();
     this.init(sharedService.gridOptions.headerButton);
@@ -77,8 +78,7 @@ export class HeaderButtonPlugin {
 
   /** Dispose (destroy) the SlickGrid 3rd party plugin */
   dispose() {
-    this._eventHandler?.unsubscribeAll();
-    this._bindEventService.unbindAll();
+    super.dispose();
     this._buttonElms.forEach(elm => elm.remove());
   }
 
@@ -95,61 +95,20 @@ export class HeaderButtonPlugin {
     const column = args.column;
 
     if (column.header?.buttons && Array.isArray(column.header.buttons)) {
-      // Append buttons in reverse order since they are floated to the right.
+      // inverse the button (typically used when icons are floating left)
+      if (this._addonOptions?.inverseOrder) {
+        column.header.buttons.reverse();
+      }
+
       let i = column.header.buttons.length;
       while (i--) {
-        const button = column.header.buttons[i];
-        // run each override functions to know if the item is visible and usable
-        const isItemVisible = this.extensionUtility.runOverrideFunctionWhenExists<typeof args>(button.itemVisibilityOverride, args);
-        const isItemUsable = this.extensionUtility.runOverrideFunctionWhenExists<typeof args>(button.itemUsabilityOverride, args);
+        const buttonItem = column.header.buttons[i];
+        const itemElm = this.populateSingleCommandOrOptionItem('command', this.addonOptions, null, buttonItem, args, this.handleButtonClick.bind(this));
 
-        // if the result is not visible then there's no need to go further
-        if (!isItemVisible) {
-          continue;
+        if (itemElm) {
+          this._buttonElms.push(itemElm);
+          args.node.appendChild(itemElm);
         }
-
-        // when the override is defined, we need to use its result to update the disabled property
-        // so that 'handleMenuItemCommandClick' has the correct flag and won't trigger a command clicked event
-        if (typeof button === 'object' && button.itemUsabilityOverride) {
-          button.disabled = isItemUsable ? false : true;
-        }
-
-        const buttonDivElm = document.createElement('div');
-        buttonDivElm.className = this._addonOptions?.buttonCssClass ?? '';
-
-        if (button.disabled) {
-          buttonDivElm.classList.add('slick-header-button-disabled');
-        }
-
-        if (button.showOnHover) {
-          buttonDivElm.classList.add('slick-header-button-hidden');
-        }
-
-        if (button.image) {
-          console.warn('[Slickgrid-Universal] The "image" property of a Header Button is now deprecated and will be removed in future version, consider using "cssClass" instead.');
-          buttonDivElm.style.backgroundImage = `url(${button.image})`;
-        }
-
-        if (button.cssClass) {
-          buttonDivElm.classList.add(...button.cssClass.split(' '));
-        }
-
-        if (button.tooltip) {
-          buttonDivElm.title = button.tooltip;
-        }
-
-        // add click event handler for user's optional command on button item clicked
-        if (button.handler && !button.disabled) {
-          this._bindEventService.bind(buttonDivElm, 'click', button.handler);
-        }
-
-        // add click event handler for internal command on button item clicked
-        if (!button.disabled) {
-          this._bindEventService.bind(buttonDivElm, 'click', (e: Event) => this.handleButtonClick(e as DOMEvent<HTMLDivElement>, button, column));
-        }
-
-        this._buttonElms.push(buttonDivElm);
-        args.node.appendChild(buttonDivElm);
       }
     }
   }
@@ -173,9 +132,9 @@ export class HeaderButtonPlugin {
     }
   }
 
-  protected handleButtonClick(event: DOMEvent<HTMLDivElement>, button: HeaderButtonItem, columnDef: Column) {
-    if (button && !button.disabled) {
-      const command = button.command || '';
+  protected handleButtonClick(event: DOMEvent<HTMLDivElement>, _type: MenuType, button: ExtractMenuType<ExtendableItemTypes, MenuType>, columnDef?: Column) {
+    if ((button as HeaderButtonItem).command && !(button as HeaderButtonItem).disabled) {
+      const command = (button as HeaderButtonItem).command || '';
 
       const callbackArgs = {
         grid: this.grid,
@@ -188,16 +147,18 @@ export class HeaderButtonPlugin {
       }
 
       // execute action callback when defined
-      if (typeof button.action === 'function' && !button.disabled) {
-        button.action.call(this, event, callbackArgs);
+      if (typeof (button as HeaderButtonItem).action === 'function' && !(button as HeaderButtonItem).disabled) {
+        (button as HeaderButtonItem).action!.call(this, event, callbackArgs);
       }
 
-      if (command !== null && !button.disabled && this._addonOptions?.onCommand) {
+      if (command !== null && !(button as HeaderButtonItem).disabled && this._addonOptions?.onCommand) {
         this.pubSubService.publish('headerButton:onCommand', callbackArgs);
         this._addonOptions.onCommand(event as any, callbackArgs);
 
         // Update the header in case the user updated the button definition in the handler.
-        this.grid.updateColumnHeader(columnDef.id);
+        if (columnDef?.id) {
+          this.grid.updateColumnHeader(columnDef.id);
+        }
       }
     }
 

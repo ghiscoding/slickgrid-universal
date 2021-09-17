@@ -8,6 +8,6 @@ export interface MenuCommandItemCallbackArgs extends MenuCallbackArgs {
   /** Menu item selected */
   item: MenuCommandItem;
 
-  /** Value of the cell we triggered the context menu from */
+  /** Value of the cell we triggered the menu from */
   value?: any;
 }

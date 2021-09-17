@@ -201,7 +201,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .children()
       .each(($child, index) => expect($child.text()).to.eq(updatedTitles[index]));
 
-    cy.get('.slick-header-menubutton')
+    cy.get('.slick-header-menu-button')
       .should('have.length', 9);
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
@@ -213,13 +213,13 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     const updatedTitles = ['', '', 'Title', 'Action', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title', 'Title'];
 
     cy.get('.grid7')
-      .find('button.slick-gridmenu-button')
+      .find('button.slick-grid-menu-button')
       .click({ force: true });
 
     cy.get('.grid7 .slickgrid-container')
       .then(() => {
-        cy.get(`.slick-gridmenu`)
-          .find('.slick-gridmenu-list')
+        cy.get(`.slick-grid-menu`)
+          .find('.slick-grid-menu-list')
           .children('li')
           .each(($child, index) => {
             if (index <= 5) {
@@ -245,14 +245,14 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     cy.get('.slick-header-column:nth(10)')
       .first()
       .trigger('mouseover')
-      .children('.slick-header-menubutton')
+      .children('.slick-header-menu-button')
       // .invoke('show')
       .click();
 
     cy.get('.slick-header-menu')
       .should('be.visible')
-      .children('.slick-header-menuitem:nth-child(6)')
-      .children('.slick-header-menucontent')
+      .children('.slick-header-menu-item:nth-child(6)')
+      .children('.slick-header-menu-content')
       .should('contain', 'Remove Filter')
       .click();
 
@@ -318,10 +318,10 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
   });
 
-  it('should be able to hide "Duration" column', () => {
-    const expectedTitles = ['', '', 'Title', 'Action', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title'];
+  it('should be able to hide "Finish" column', () => {
+    const expectedTitles = ['', '', 'Title', 'Action', '% Complete', 'Start', 'Duration', 'Completed', 'Prerequisites', 'Title'];
 
-    cy.get('[data-test="hide-duration-btn"]').click();
+    cy.get('[data-test="hide-finish-btn"]').click();
 
     cy.get('.grid7')
       .find('.slick-header-columns')
@@ -330,7 +330,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
   });
 
   it('should be able to click disable Filters functionality button and expect no Filters', () => {
-    const expectedTitles = ['', '', 'Title', 'Action', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title'];
+    const expectedTitles = ['', '', 'Title', 'Action', '% Complete', 'Start', 'Duration', 'Completed', 'Prerequisites', 'Title'];
 
     cy.get('[data-test="disable-filters-btn"]').click().click(); // even clicking twice should have same result
 
@@ -366,12 +366,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
 
     cy.get('.grid7')
-      .find('button.slick-gridmenu-button')
+      .find('button.slick-grid-menu-button')
       .trigger('click')
       .click({ force: true });
 
-    cy.get('.slick-gridmenu-custom')
-      .find('.slick-gridmenu-item')
+    cy.get('.slick-grid-menu-command-list')
+      .find('.slick-grid-menu-item')
       .each(($child, index) => {
         const commandTitle = $child.text();
         expect(commandTitle).to.eq(expectedFullHeaderMenuCommands[index]);
@@ -384,7 +384,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
   });
 
   it('should be able to toggle Filters functionality', () => {
-    const expectedTitles = ['', '', 'Title', 'Action', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites', 'Title'];
+    const expectedTitles = ['', '', 'Title', 'Action', '% Complete', 'Start', 'Duration', 'Completed', 'Prerequisites', 'Title'];
 
     cy.get('[data-test="toggle-filtering-btn"]').click(); // hide it
 
@@ -417,7 +417,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     cy.get('.grid7')
       .find('.slick-header-column:nth(8)')
       .trigger('mouseover')
-      .children('.slick-header-menubutton')
+      .children('.slick-header-menu-button')
       .click();
 
     cy.get('.slick-header-menu')
@@ -437,12 +437,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
 
     cy.get('.grid7')
-      .find('button.slick-gridmenu-button')
+      .find('button.slick-grid-menu-button')
       .trigger('click')
       .click();
 
-    cy.get('.slick-gridmenu-custom')
-      .find('.slick-gridmenu-item')
+    cy.get('.slick-grid-menu-command-list')
+      .find('.slick-grid-menu-item')
       .each(($child, index) => {
         const commandTitle = $child.text();
         expect(commandTitle).to.eq(expectedFullHeaderMenuCommands[index]);
@@ -466,7 +466,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     cy.get('.grid7')
       .find('.slick-header-column:nth(8)')
       .trigger('mouseover')
-      .children('.slick-header-menubutton')
+      .children('.slick-header-menu-button')
       .click();
 
     cy.get('.slick-header-menu')
@@ -482,12 +482,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
 
     cy.get('.grid7')
-      .find('button.slick-gridmenu-button')
+      .find('button.slick-grid-menu-button')
       .trigger('click')
       .click();
 
-    cy.get('.slick-gridmenu-custom')
-      .find('.slick-gridmenu-item')
+    cy.get('.slick-grid-menu-command-list')
+      .find('.slick-grid-menu-item')
       .each(($child, index) => {
         const commandTitle = $child.text();
         expect(commandTitle).to.eq(expectedFullHeaderMenuCommands[index]);
@@ -511,7 +511,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     cy.get('.grid7')
       .find('.slick-header-column:nth(5)')
       .trigger('mouseover')
-      .children('.slick-header-menubutton')
+      .children('.slick-header-menu-button')
       .click();
 
     cy.get('.slick-header-menu')
@@ -535,7 +535,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     cy.get('.grid7')
       .find('.slick-header-column:nth(5)')
       .trigger('mouseover')
-      .children('.slick-header-menubutton')
+      .children('.slick-header-menu-button')
       .click();
 
     cy.get('.slick-header-menu')
@@ -555,12 +555,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
 
     cy.get('.grid7')
-      .find('button.slick-gridmenu-button')
+      .find('button.slick-grid-menu-button')
       .trigger('click')
       .click();
 
-    cy.get('.slick-gridmenu-custom')
-      .find('.slick-gridmenu-item')
+    cy.get('.slick-grid-menu-command-list')
+      .find('.slick-grid-menu-item')
       .each(($child, index) => {
         const commandTitle = $child.text();
         expect(commandTitle).to.eq(expectedFullHeaderMenuCommands[index]);
@@ -572,7 +572,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       });
   });
 
-  it('should open Column Picker and show the "Duration" column back to visible and expect it to have kept its position after toggling filter/sorting', () => {
+  it('should open Column Picker and show the "Finish" column back to visible and expect it to have kept its position after toggling filter/sorting', () => {
     // first 2 cols are hidden but they do count as li item
     const expectedFullPickerTitles = ['', '', 'Title', 'Action', '% Complete', 'Start', 'Finish', 'Duration', 'Completed', 'Prerequisites', 'Title'];
 
@@ -594,9 +594,9 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
 
     cy.get('.slick-columnpicker')
       .find('.slick-columnpicker-list')
-      .children('li:nth-child(8)')
+      .children('li:nth-child(7)')
       .children('label')
-      .should('contain', 'Duration')
+      .should('contain', 'Finish')
       .click();
 
     cy.get('.grid7')
@@ -741,7 +741,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
   });
 
-  it('should hide "Duration" column from column picker', () => {
+  it('should hide "Finish" column from column picker', () => {
     const originalColumns = ['', '', 'Title', 'Action', '% Complete', 'Finish', 'Duration', 'Completed', 'Start', 'Prerequisites', 'Title'];
 
     cy.get('.grid7')
@@ -762,15 +762,41 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
 
     cy.get('.slick-columnpicker')
       .find('.slick-columnpicker-list')
-      .children('li:nth-child(7)')
+      .children('li:nth-child(6)')
       .children('label')
-      .should('contain', 'Duration')
+      .should('contain', 'Finish')
       .click();
 
     cy.get('.slick-columnpicker:visible')
       .find('span.close')
       .trigger('click')
       .click();
+  });
+
+  it('should have 2 rows in the grid', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 4');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(5)`).should('contain', '0 day');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(2)`).should('contain', 'Task 8');
+  });
+
+  it('should open Context Menu and expect 2 commands in English', () => {
+    cy.get('.grid7')
+      .find('.slick-row .slick-cell:nth(2)')
+      .rightclick({ force: true });
+
+    cy.get('.slick-context-menu.dropright .slick-context-menu-command-list')
+      .find('.slick-context-menu-item:nth(1)')
+      .find('.slick-context-menu-content')
+      .contains('Export to Excel');
+
+    cy.get('.slick-context-menu.dropright .slick-context-menu-command-list')
+      .find('.slick-context-menu-item:nth(0)')
+      .find('.slick-context-menu-content')
+      .contains('Copy')
+      .click();
+
+    cy.get('.slick-context-menu-command-list')
+      .should('not.exist');
   });
 
   it('should switch language', () => {
@@ -801,7 +827,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     cy.get('.grid7')
       .find('.slick-header-column:nth(9)')
       .trigger('mouseover')
-      .children('.slick-header-menubutton')
+      .children('.slick-header-menu-button')
       .click();
 
     cy.get('.slick-header-menu')
@@ -817,23 +843,23 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       });
   });
 
-  it('should open Grid Menu and expect new columns to be added to the column picker section, also "Duration" to be unchecked while "Finish" to be at new position', () => {
-    const updatedTitles = ['', '', 'Titre', 'Action', 'Durée', '% Achevée', 'Fin', 'Terminé', 'Début', 'Prerequisites', 'Titre'];
+  it('should open Grid Menu and expect new columns to be added to the column picker section, also "Finish" to be unchecked while "Duration" to be at new position', () => {
+    const updatedTitles = ['', '', 'Titre', 'Action', '% Achevée', 'Durée', 'Terminé', 'Début', 'Prerequisites', 'Titre'];
 
     cy.get('.grid7')
-      .find('button.slick-gridmenu-button')
+      .find('button.slick-grid-menu-button')
       .click({ force: true });
 
     cy.get('.grid7 .slickgrid-container')
       .then(() => {
-        cy.get(`.slick-gridmenu`)
-          .find('.slick-gridmenu-list')
+        cy.get(`.slick-grid-menu`)
+          .find('.slick-grid-menu-list')
           .children('li')
           .each(($child, index) => {
             if (index <= 5) {
               const $input = $child.children('input');
               const $label = $child.children('label');
-              if ($label.text() === 'Durée') {
+              if ($label.text() === 'Fin') {
                 expect($input.prop('checked')).to.eq(false);
               } else {
                 expect($input.prop('checked')).to.eq(true);
@@ -843,7 +869,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
           });
       });
 
-    cy.get('.slick-gridmenu')
+    cy.get('.slick-grid-menu')
       .find('span.close')
       .click();
   });
@@ -883,5 +909,30 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
   it('should have "1 de 500 éléments" shown as metrics on the right footer shown in French', () => {
     cy.get('.right-footer.metrics')
       .contains('1 de 500 éléments');
+  });
+
+  it('should have 1 row in the grid with "Duration" showing French text in the grid', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 4');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(5)`).should('contain', '0 journée');
+  });
+
+  it('should open Context Menu and expect 2 commands in French', () => {
+    cy.get('.grid7')
+      .find('.slick-row .slick-cell:nth(2)')
+      .rightclick({ force: true });
+
+    cy.get('.slick-context-menu.dropright .slick-context-menu-command-list')
+      .find('.slick-context-menu-item:nth(1)')
+      .find('.slick-context-menu-content')
+      .contains('Exporter vers Excel');
+
+    cy.get('.slick-context-menu.dropright .slick-context-menu-command-list')
+      .find('.slick-context-menu-item:nth(0)')
+      .find('.slick-context-menu-content')
+      .contains('Copier')
+      .click();
+
+    cy.get('.slick-context-menu-command-list')
+      .should('not.exist');
   });
 });

@@ -62,7 +62,10 @@ export class Example7 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', nameKey: 'TITLE', field: 'title', filterable: true, editor: { model: Editors.longText, required: true, alwaysSaveOnEnterKey: true },
+        id: 'title', nameKey: 'TITLE', field: 'title', filterable: true,
+        editor: { model: Editors.longText, required: true, alwaysSaveOnEnterKey: true },
+        // formatter: this.taskTranslateFormatter.bind(this),
+        // params: { useFormatterOuputToFilter: true }
       },
       {
         id: 'action', name: 'Action', field: 'action', minWidth: 60, maxWidth: 60,
@@ -96,7 +99,7 @@ export class Example7 {
       {
         id: 'duration', nameKey: 'DURATION', field: 'duration', sortable: true, filterable: true,
         type: 'number', editor: { model: Editors.text, alwaysSaveOnEnterKey: true, },
-        formatter: (_row: number, _cell: number, value: any) => value > 1 ? `${value} days` : `${value} day`,
+        formatter: this.dayDurationTranslateFormatter.bind(this)
       },
       {
         id: 'percentComplete', nameKey: 'PERCENT_COMPLETE', field: 'percentComplete', type: 'number',
@@ -307,7 +310,7 @@ export class Example7 {
   }
 
   changeCompletedOption(dataContext: any, newValue: boolean) {
-    console.log('change', dataContext, newValue)
+    console.log('change', dataContext, newValue);
     if (dataContext && dataContext.hasOwnProperty('completed')) {
       dataContext.completed = newValue;
       this.sgb?.gridService.updateItem(dataContext);
@@ -337,7 +340,7 @@ export class Example7 {
       tempDataset.push({
         id: i,
         title: 'Task ' + i,
-        duration: Math.round(Math.random() * 25),
+        duration: i === 4 ? 0 : Math.round(Math.random() * 25),
         percentComplete: Math.round(Math.random() * 100),
         start: new Date(2009, 0, 1),
         finish: new Date(2009, 0, 5),
@@ -431,6 +434,14 @@ export class Example7 {
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;
   }
 
+  dayDurationTranslateFormatter(_row, _cell, value) {
+    return this.translateService.translate('X_DAY_PLURAL', { x: value, plural: value > 1 ? 's' : '' }) ?? '';
+  }
+
+  taskTranslateFormatter(_row, _cell, value) {
+    return this.translateService.translate('TASK_X', { x: value }) ?? '';
+  }
+
   dynamicallyAddTitleHeader() {
     const newCol = {
       id: `title${this.duplicateTitleHeaderCount++}`,
@@ -442,6 +453,8 @@ export class Example7 {
         // validator: myCustomTitleValidator, // use a custom validator
       },
       sortable: true, minWidth: 100, filterable: true,
+      // formatter: this.taskTranslateFormatter.bind(this),
+      // params: { useFormatterOuputToFilter: true },
     };
 
     // you can dynamically add your column to your column definitions
@@ -479,12 +492,12 @@ export class Example7 {
     */
   }
 
-  hideDurationColumnDynamically() {
+  hideFinishColumnDynamically() {
     // -- you can hide by one Id or multiple Ids:
     // hideColumnById(id, options), hideColumnByIds([ids], options)
     // you can also provide options, defaults are: { autoResizeColumns: true, triggerEvent: true, hideFromColumnPicker: false, hideFromGridMenu: false }
 
-    this.sgb.gridService.hideColumnById('duration');
+    this.sgb.gridService.hideColumnById('finish');
 
     // or with multiple Ids and extra options
     // this.sgb.gridService.hideColumnByIds(['duration', 'finish'], { autoResizeColumns: false, hideFromColumnPicker: true, hideFromGridMenu: false });

@@ -90,6 +90,7 @@ $header-row-filter-padding:                           4px !default;
 $header-column-height:                                calc(17px * #{$header-row-count}) !default;  // header is calculated by rows to show
 $header-column-background-active:                     darken($grid-header-background, 5%) !default;
 $header-column-background-hover:                      darken($grid-header-background, 2%) !default;
+$header-column-name-margin-right:                     5px !default;
 $header-border-top:                                   0 none !default;                      // header, column titles, that is without the Filters
 $header-border-right:                                 0 none !default;
 $header-border-bottom:                                0 none !default;

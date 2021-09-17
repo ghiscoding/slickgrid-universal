@@ -89,7 +89,7 @@ describe('Example 02 - Grouping & Aggregators', { retries: 1 }, () => {
 
   it('should clear filters of grid2 using the Grid Menu "Clear all Filters" command', () => {
     cy.get('.grid2')
-      .find('button.slick-gridmenu-button')
+      .find('button.slick-grid-menu-button')
       .trigger('click')
       .click({ force: true });
   });

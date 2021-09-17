@@ -1,6 +1,6 @@
 @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss';
 
-.icon.mdi-file-pdf-outline {
+.mdi-file-pdf-outline {
   /** 1. use `filter` color */
   // filter: invert(62%) sepia(93%) saturate(5654%) hue-rotate(325deg) brightness(100%) contrast(90%);
 
@@ -8,15 +8,16 @@
   @include recolor(#f14668, 0.9);
 }
 
-.icon.mdi-folder, .icon.mdi-folder-open {
+.mdi-folder, .mdi-folder-open {
   @include recolor(#ffa500, 0.9);
 }
-.icon.mdi-file-music-outline {
+.mdi-file-music-outline {
   @include recolor(#3298dc, 0.9);
 }
-.icon.mdi-file-excel-outline {
+.mdi-file-excel-outline {
   @include recolor(#1E9F75, 0.9);
 }
-.icon.mdi-file-document-outline {
+.mdi-file-document-outline,
+.mdi-file-question-outline {
   @include recolor(#686868, 0.9);
 }

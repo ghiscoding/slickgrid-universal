@@ -6,7 +6,7 @@ const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "m
 
 import { Constants } from '../constants';
 import { FieldType, OperatorString, OperatorType } from '../enums/index';
-import { EventSubscription, GridOption, } from '../interfaces/index';
+import { Column, EventSubscription, GridOption, } from '../interfaces/index';
 import { Observable, RxJsFacade, Subject, Subscription } from './rxjsFacade';
 
 /**
@@ -459,6 +459,28 @@ export function formatNumber(input: number | string, minDecimal?: number, maxDec
     const formattedValue = thousandSeparatorFormatted(`${input}`, thousandSeparator);
     return `${symbolPrefix}${formattedValue}${symbolSuffix}`;
   }
+}
+
+/**
+ * When a queryFieldNameGetterFn is defined, then get the value from that getter callback function
+ * @param {Column} columnDef
+ * @param {Object} dataContext
+ * @param {String} defaultValue - optional value to use if value isn't found in data context
+ * @return outputValue
+ */
+export function getCellValueFromQueryFieldGetter(columnDef: Column, dataContext: any, defaultValue: any): string {
+  if (typeof columnDef.queryFieldNameGetterFn === 'function') {
+    const queryFieldName = columnDef.queryFieldNameGetterFn(dataContext);
+
+    // get the cell value from the item or when it's a dot notation then exploded the item and get the final value
+    if (queryFieldName?.indexOf('.') >= 0) {
+      defaultValue = getDescendantProperty(dataContext, queryFieldName);
+    } else {
+      defaultValue = dataContext.hasOwnProperty(queryFieldName) ? dataContext[queryFieldName] : defaultValue;
+    }
+  }
+
+  return defaultValue;
 }
 
 /**
