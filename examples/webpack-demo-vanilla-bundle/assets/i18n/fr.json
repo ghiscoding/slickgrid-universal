@@ -94,5 +94,6 @@
   "TASK_X": "Tâche {{x}}",
   "TITLE": "Titre",
   "TITLE.NAME": "Nom du Titre",
-  "TRUE": "Vrai"
+  "TRUE": "Vrai",
+  "X_DAY_PLURAL": "{{x}} journée{{plural}}"
 }

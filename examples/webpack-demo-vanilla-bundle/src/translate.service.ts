@@ -12,10 +12,11 @@ interface TranslateOptions {
 
 export class TranslateService implements TranslaterService {
   eventName = 'onLanguageChange' as TranslateServiceEventName;
-  private _currentLanguage = 'en';
-  private _locales: { [language: string]: Locales } = {};
-  private _pubSubServices: PubSubService[] = [];
-  private _options;
+  protected _currentLanguage = 'en';
+  protected _locales: { [language: string]: Locales } = {};
+  protected _pubSubServices: PubSubService[] = [];
+  protected _options;
+  protected templateMatcher = /{{\s?([^{}\s]*)\s?}}/g;
 
   /**
    * Add an optional Pub/Sub Messaging Service,
@@ -47,6 +48,39 @@ export class TranslateService implements TranslaterService {
     });
   }
 
+  isDefined(value) {
+    return typeof value !== 'undefined' && value !== null;
+  }
+
+  interpolateString(expr, params) {
+    if (!params) {
+      return expr;
+    }
+
+    return expr.replace(this.templateMatcher, (substring, b) => {
+      const r = this.getValue(params, b);
+      return this.isDefined(r) ? r : substring;
+    });
+  }
+
+  getValue(target, key) {
+    const keys = typeof key === 'string' ? key.split('.') : [key];
+    key = '';
+    do {
+      key += keys.shift();
+      if (this.isDefined(target) && this.isDefined(target[key]) && (typeof target[key] === 'object' || !keys.length)) {
+        target = target[key];
+        key = '';
+      } else if (!keys.length) {
+        target = undefined;
+      } else {
+        key += '.';
+      }
+    } while (keys.length);
+
+    return target;
+  }
+
   async use(newLang: string): Promise<Locales> {
     this._currentLanguage = newLang;
 
@@ -67,12 +101,12 @@ export class TranslateService implements TranslaterService {
     this._options = options;
   }
 
-  translate(translationKey: string): string {
+  translate(translationKey: string, params?: any): string {
     let translatedText = '';
     if (this._locales?.hasOwnProperty(this._currentLanguage)) {
       translatedText = getDescendantProperty(this._locales[this._currentLanguage], translationKey);
     }
-    return translatedText || translationKey;
+    return this.interpolateString(translatedText || translationKey, params);
   }
 
   private publishLanguageChangeEvent(newLanguage: string) {

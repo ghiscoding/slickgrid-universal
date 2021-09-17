@@ -28,7 +28,7 @@ export abstract class TranslaterService {
    * @param {string} translation key
    * @return {string} translated value
    */
-  translate(_translationKey: string): string {
+  translate(_translationKey: string, _params?: any): string {
     throw new Error('TranslaterService "translate" method must be implemented');
   }
 
