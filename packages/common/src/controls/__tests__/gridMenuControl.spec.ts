@@ -917,7 +917,7 @@ describe('GridMenuControl', () => {
           control.columns = columnsMock;
           control.init();
           expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-            { iconCssClass: 'fa fa-times', title: 'Dégeler les colonnes/rangées', titleKey: 'CLEAR_PINNING', disabled: false, command: 'clear-pinning', positionOrder: 52 },
+            { iconCssClass: 'fa fa-times', title: 'Dégeler les colonnes/rangées', disabled: false, command: 'clear-pinning', positionOrder: 52 },
           ]);
         });
 
@@ -928,9 +928,9 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-            { iconCssClass: 'fa fa-filter text-danger', title: 'Supprimer tous les filtres', titleKey: 'CLEAR_ALL_FILTERS', disabled: false, command: 'clear-filter', positionOrder: 50 },
-            { iconCssClass: 'fa fa-random', title: 'Basculer la ligne des filtres', titleKey: 'TOGGLE_FILTER_ROW', disabled: false, command: 'toggle-filter', positionOrder: 53 },
-            { iconCssClass: 'fa fa-refresh', title: 'Rafraîchir les données', titleKey: 'REFRESH_DATASET', disabled: false, command: 'refresh-dataset', positionOrder: 57 }
+            { iconCssClass: 'fa fa-filter text-danger', title: 'Supprimer tous les filtres', disabled: false, command: 'clear-filter', positionOrder: 50 },
+            { iconCssClass: 'fa fa-random', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 53 },
+            { iconCssClass: 'fa fa-refresh', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 57 }
           ]);
         });
 
@@ -941,7 +941,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-            { iconCssClass: 'fa fa-filter text-danger', title: 'Supprimer tous les filtres', titleKey: 'CLEAR_ALL_FILTERS', disabled: false, command: 'clear-filter', positionOrder: 50 }
+            { iconCssClass: 'fa fa-filter text-danger', title: 'Supprimer tous les filtres', disabled: false, command: 'clear-filter', positionOrder: 50 }
           ]);
         });
 
@@ -952,7 +952,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-            { iconCssClass: 'fa fa-random', title: 'Basculer la ligne des filtres', titleKey: 'TOGGLE_FILTER_ROW', disabled: false, command: 'toggle-filter', positionOrder: 53 },
+            { iconCssClass: 'fa fa-random', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 53 },
           ]);
         });
 
@@ -963,7 +963,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-            { iconCssClass: 'fa fa-refresh', title: 'Rafraîchir les données', titleKey: 'REFRESH_DATASET', disabled: false, command: 'refresh-dataset', positionOrder: 57 }
+            { iconCssClass: 'fa fa-refresh', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 57 }
           ]);
         });
 
@@ -974,7 +974,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-            { iconCssClass: 'fa fa-random', title: 'Basculer la ligne de pré-en-tête', titleKey: 'TOGGLE_PRE_HEADER_ROW', disabled: false, command: 'toggle-preheader', positionOrder: 53 }
+            { iconCssClass: 'fa fa-random', title: 'Basculer la ligne de pré-en-tête', disabled: false, command: 'toggle-preheader', positionOrder: 53 }
           ]);
         });
 
@@ -994,7 +994,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-            { iconCssClass: 'fa fa-unsorted text-danger', title: 'Supprimer tous les tris', titleKey: 'CLEAR_ALL_SORTING', disabled: false, command: 'clear-sorting', positionOrder: 51 }
+            { iconCssClass: 'fa fa-unsorted text-danger', title: 'Supprimer tous les tris', disabled: false, command: 'clear-sorting', positionOrder: 51 }
           ]);
         });
 
@@ -1014,7 +1014,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-            { iconCssClass: 'fa fa-download', title: 'Exporter en format CSV', titleKey: 'EXPORT_TO_CSV', disabled: false, command: 'export-csv', positionOrder: 54 }
+            { iconCssClass: 'fa fa-download', title: 'Exporter en format CSV', disabled: false, command: 'export-csv', positionOrder: 54 }
           ]);
         });
 
@@ -1034,7 +1034,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-            { iconCssClass: 'fa fa-file-excel-o text-success', title: 'Exporter vers Excel', titleKey: 'EXPORT_TO_EXCEL', disabled: false, command: 'export-excel', positionOrder: 55 }
+            { iconCssClass: 'fa fa-file-excel-o text-success', title: 'Exporter vers Excel', disabled: false, command: 'export-excel', positionOrder: 55 }
           ]);
         });
 
@@ -1045,7 +1045,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.customItems).toEqual([
-            { iconCssClass: 'fa fa-download', title: 'Exporter en format texte (délimité par tabulation)', titleKey: 'EXPORT_TO_TAB_DELIMITED', disabled: false, command: 'export-text-delimited', positionOrder: 56 }
+            { iconCssClass: 'fa fa-download', title: 'Exporter en format texte (délimité par tabulation)', disabled: false, command: 'export-text-delimited', positionOrder: 56 }
           ]);
         });
 

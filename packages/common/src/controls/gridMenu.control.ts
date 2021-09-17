@@ -463,7 +463,7 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
         gridMenuCustomItems.push(
           {
             iconCssClass: this.addonOptions.iconClearFrozenColumnsCommand || 'fa fa-times',
-            titleKey: `${translationPrefix}${commandLabels?.clearFrozenColumnsCommandKey || 'CLEAR_PINNING'}`,
+            title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}${commandLabels?.clearFrozenColumnsCommandKey}`, 'TEXT_CLEAR_PINNING', commandLabels?.clearFrozenColumnsCommand),
             disabled: false,
             command: commandName,
             positionOrder: 52
@@ -480,7 +480,7 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
           gridMenuCustomItems.push(
             {
               iconCssClass: this.addonOptions.iconClearAllFiltersCommand || 'fa fa-filter text-danger',
-              titleKey: `${translationPrefix}${commandLabels?.clearAllFiltersCommandKey || 'CLEAR_ALL_FILTERS'}`,
+              title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}${commandLabels?.clearAllFiltersCommandKey}`, 'TEXT_CLEAR_ALL_FILTERS', commandLabels?.clearAllFiltersCommand),
               disabled: false,
               command: commandName,
               positionOrder: 50
@@ -496,7 +496,7 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
           gridMenuCustomItems.push(
             {
               iconCssClass: this.addonOptions.iconToggleFilterCommand || 'fa fa-random',
-              titleKey: `${translationPrefix}${commandLabels?.toggleFilterCommandKey || 'TOGGLE_FILTER_ROW'}`,
+              title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}${commandLabels?.toggleFilterCommandKey}`, 'TEXT_TOGGLE_FILTER_ROW', commandLabels?.toggleFilterCommand),
               disabled: false,
               command: commandName,
               positionOrder: 53
@@ -512,7 +512,7 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
           gridMenuCustomItems.push(
             {
               iconCssClass: this.addonOptions.iconRefreshDatasetCommand || 'fa fa-refresh',
-              titleKey: `${translationPrefix}${commandLabels?.refreshDatasetCommandKey || 'REFRESH_DATASET'}`,
+              title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}${commandLabels?.refreshDatasetCommandKey}`, 'TEXT_REFRESH_DATASET', commandLabels?.refreshDatasetCommand),
               disabled: false,
               command: commandName,
               positionOrder: 57
@@ -530,7 +530,7 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
           gridMenuCustomItems.push(
             {
               iconCssClass: this.addonOptions.iconTogglePreHeaderCommand || 'fa fa-random',
-              titleKey: `${translationPrefix}${commandLabels?.togglePreHeaderCommandKey || 'TOGGLE_PRE_HEADER_ROW'}`,
+              title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}${commandLabels?.togglePreHeaderCommandKey}`, 'TEXT_TOGGLE_PRE_HEADER_ROW', commandLabels?.togglePreHeaderCommand),
               disabled: false,
               command: commandName,
               positionOrder: 53
@@ -548,7 +548,7 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
           gridMenuCustomItems.push(
             {
               iconCssClass: this.addonOptions.iconClearAllSortingCommand || 'fa fa-unsorted text-danger',
-              titleKey: `${translationPrefix}${commandLabels?.clearAllSortingCommandKey || 'CLEAR_ALL_SORTING'}`,
+              title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}${commandLabels?.clearAllSortingCommandKey}`, 'TEXT_CLEAR_ALL_SORTING', commandLabels?.clearAllSortingCommand),
               disabled: false,
               command: commandName,
               positionOrder: 51
@@ -565,7 +565,7 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
         gridMenuCustomItems.push(
           {
             iconCssClass: this.addonOptions.iconExportCsvCommand || 'fa fa-download',
-            titleKey: `${translationPrefix}${commandLabels?.exportCsvCommandKey || 'EXPORT_TO_CSV'}`,
+            title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}${commandLabels?.exportCsvCommandKey}`, 'TEXT_EXPORT_TO_CSV', commandLabels?.exportCsvCommand),
             disabled: false,
             command: commandName,
             positionOrder: 54
@@ -581,7 +581,7 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
         gridMenuCustomItems.push(
           {
             iconCssClass: this.addonOptions.iconExportExcelCommand || 'fa fa-file-excel-o text-success',
-            titleKey: `${translationPrefix}${commandLabels?.exportExcelCommandKey || 'EXPORT_TO_EXCEL'}`,
+            title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}${commandLabels?.exportExcelCommandKey}`, 'TEXT_EXPORT_TO_EXCEL', commandLabels?.exportExcelCommand),
             disabled: false,
             command: commandName,
             positionOrder: 55
@@ -597,7 +597,7 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
         gridMenuCustomItems.push(
           {
             iconCssClass: this.addonOptions.iconExportTextDelimitedCommand || 'fa fa-download',
-            titleKey: `${translationPrefix}${commandLabels?.exportTextDelimitedCommandKey || 'EXPORT_TO_TAB_DELIMITED'}`,
+            title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}${commandLabels?.exportTextDelimitedCommandKey}`, 'TEXT_EXPORT_TO_TAB_DELIMITED', commandLabels?.exportTextDelimitedCommand),
             disabled: false,
             command: commandName,
             positionOrder: 56
