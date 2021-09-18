@@ -16,7 +16,7 @@ export const stringSortComparer: SortComparer = (value1: any, value2: any, sortD
   } else if (value2 === null || (checkForUndefinedValues && value2 === undefined)) {
     position = 1;
   } else {
-    if (gridOptions?.ignoreAccentOnStringSort){
+    if (gridOptions?.ignoreAccentOnStringFilterAndSort){
       value1 = removeAccentFromText(value1, false);
       value2 = removeAccentFromText(value2, false);
     }

@@ -171,4 +171,19 @@ describe('executeStringFilterCondition method', () => {
     const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
     expect(output).toBe(false);
   });
+  
+  it('should return True when input value contains accent is searchTerms value does not contain accent when "ignoreAccentOnStringFilterAndSort" is set in grid options', () => {
+    const searchTerms = ['jose'];
+    const options = { dataKey: '', operator: 'EQ', cellValue: 'José', fieldType: FieldType.string, ignoreAccentOnStringFilterAndSort: true} as FilterConditionOption;
+    const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
+    expect(output).toBe(true);
+  });
+
+  it('should return False when input value contains accent is searchTerms value does not contain accent when "ignoreAccentOnStringFilterAndSort" is not set in grid options', () => {
+    const searchTerms = ['jose'];
+    const options = { dataKey: '', operator: 'EQ', cellValue: 'José', fieldType: FieldType.string, ignoreAccentOnStringFilterAndSort: false} as FilterConditionOption;
+    const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
+    expect(output).toBe(false);
+  });
+
 });
