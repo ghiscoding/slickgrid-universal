@@ -124,6 +124,18 @@ describe('CompoundSliderFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '>=', searchTerms: ['9'], shouldTriggerQuery: true });
   });
 
+  it('should be able to call "setValues" and set empty values and the input to not have the "filled" css class', () => {
+    filter.init(filterArguments);
+    filter.setValues(9);
+    let filledInputElm = divContainer.querySelector('.search-filter.filter-duration.filled') as HTMLInputElement;
+
+    expect(filledInputElm).toBeTruthy();
+
+    filter.setValues('');
+    filledInputElm = divContainer.querySelector('.search-filter.filter-duration.filled') as HTMLInputElement;
+    expect(filledInputElm).toBeFalsy();
+  });
+
   it('should create the input filter with default search terms range when passed as a filter argument', () => {
     const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [3] } as FilterArguments;
 

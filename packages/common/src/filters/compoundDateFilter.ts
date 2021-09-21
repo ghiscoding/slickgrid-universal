@@ -1,5 +1,5 @@
 import * as flatpickr_ from 'flatpickr';
-import { BaseOptions as FlatpickrBaseOptions, DateOption } from 'flatpickr/dist/types/options';
+import { BaseOptions as FlatpickrBaseOptions, } from 'flatpickr/dist/types/options';
 import { Instance as FlatpickrInstance, FlatpickrFn } from 'flatpickr/dist/types/instance';
 const flatpickr: FlatpickrFn = (flatpickr_ && flatpickr_['default'] || flatpickr_) as any; // patch for rollup
 
@@ -128,6 +128,8 @@ export class CompoundDateFilter implements Filter {
         this.flatInstance.clear();
       }
     }
+    this._filterElm.classList.remove('filled');
+    this._filterDivInputElm.classList.remove('filled');
   }
 
   /**
@@ -158,12 +160,24 @@ export class CompoundDateFilter implements Filter {
     }
   }
 
+  getValues() {
+    return this._currentDate;
+  }
+
   /** Set value(s) in the DOM element, we can optionally pass an operator and/or trigger a change event */
   setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString) {
-    if (this.flatInstance && values) {
+    if (this.flatInstance) {
       const newValue = Array.isArray(values) ? values[0] : values;
-      this._currentDate = newValue as Date;
-      this.flatInstance.setDate(newValue as DateOption);
+      this._currentDate = (values && newValue) ? newValue as Date : undefined;
+      this.flatInstance.setDate(this._currentDate || '');
+    }
+
+    if (this.getValues()) {
+      this._filterElm.classList.add('filled');
+      this._filterDivInputElm.classList.add('filled');
+    } else {
+      this._filterElm.classList.remove('filled');
+      this._filterDivInputElm.classList.remove('filled');
     }
 
     // set the operator, in the DOM as well, when defined

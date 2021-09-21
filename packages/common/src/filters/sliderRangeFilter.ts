@@ -142,6 +142,10 @@ export class SliderRangeFilter implements Filter {
     }
   }
 
+  getValues() {
+    return this._currentValues;
+  }
+
   /**
    * Set value(s) on the DOM element
    * @params searchTerms
@@ -164,6 +168,7 @@ export class SliderRangeFilter implements Filter {
         }
       }
     }
+    (searchTerms && (this.getValues?.() ?? []).length > 0) ? this.$filterContainerElm.addClass('filled') : this.$filterContainerElm.removeClass('filled');
 
     // set the operator when defined
     this.operator = operator || this.defaultOperator;

@@ -120,6 +120,8 @@ export class CompoundInputFilter implements Filter {
       this._selectOperatorElm.selectedIndex = 0;
       this._filterInputElm.value = '';
       this.onTriggerEvent(undefined);
+      this._filterElm.classList.remove('filled');
+      this._filterInputElm.classList.remove('filled');
     }
   }
 
@@ -132,11 +134,25 @@ export class CompoundInputFilter implements Filter {
     this._filterElm?.remove?.();
   }
 
+  getValues() {
+    return this._filterInputElm.value;
+  }
+
   /** Set value(s) on the DOM element */
   setValues(values: SearchTerm[] | SearchTerm, operator?: OperatorType | OperatorString) {
+    let newInputValue = '';
     if (values) {
       const newValue = Array.isArray(values) ? values[0] : values;
-      this._filterInputElm.value = `${newValue ?? ''}`;
+      newInputValue = `${newValue ?? ''}`;
+    }
+    this._filterInputElm.value = newInputValue;
+
+    if (this.getValues() !== '') {
+      this._filterElm.classList.add('filled');
+      this._filterInputElm.classList.add('filled');
+    } else {
+      this._filterElm.classList.remove('filled');
+      this._filterInputElm.classList.remove('filled');
     }
 
     // set the operator, in the DOM as well, when defined

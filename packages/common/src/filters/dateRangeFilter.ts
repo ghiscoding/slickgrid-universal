@@ -34,7 +34,7 @@ export class DateRangeFilter implements Filter {
   protected _bindEventService: BindingEventService;
   protected _clearFilterTriggered = false;
   protected _currentValue?: string;
-  protected _currentDates?: Date[];
+  protected _currentDates?: Date[] | string[];
   protected _currentDateStrings?: string[];
   protected _flatpickrOptions!: FlatpickrOption;
   protected _filterElm!: HTMLDivElement;
@@ -61,7 +61,7 @@ export class DateRangeFilter implements Filter {
   }
 
   /** Getter for the Current Dates selected */
-  get currentDates(): Date[] | undefined {
+  get currentDates() {
     return this._currentDates;
   }
 
@@ -119,6 +119,8 @@ export class DateRangeFilter implements Filter {
       if (this.flatInstance.input) {
         this.flatInstance.clear();
       }
+      this._filterElm.classList.remove('filled');
+      this._filterDivInputElm.classList.remove('filled');
     }
   }
 
@@ -149,6 +151,10 @@ export class DateRangeFilter implements Filter {
     }
   }
 
+  getValues() {
+    return this._currentDates;
+  }
+
   /**
    * Set value(s) on the DOM element
    * @params searchTerms
@@ -163,9 +169,18 @@ export class DateRangeFilter implements Filter {
       pickerValues = searchTerms;
     }
 
-    if (this.flatInstance && searchTerms) {
-      this._currentDates = pickerValues;
-      this.flatInstance.setDate(pickerValues);
+    if (this.flatInstance) {
+      this._currentDates = (searchTerms && pickerValues) ? pickerValues : undefined;
+      this.flatInstance.setDate(this._currentDates || '');
+    }
+
+    const currentValues = this.getValues() || [];
+    if (currentValues.length > 0 && searchTerms) {
+      this._filterElm.classList.add('filled');
+      this._filterDivInputElm.classList.add('filled');
+    } else {
+      this._filterElm.classList.remove('filled');
+      this._filterDivInputElm.classList.remove('filled');
     }
 
     // set the operator when defined
