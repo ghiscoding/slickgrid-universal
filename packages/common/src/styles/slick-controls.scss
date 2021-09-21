@@ -6,6 +6,7 @@
 // ----------------------------------------------
 
 .slick-columnpicker {
+  list-style-type: none;
   font-family: var(--slick-font-family, $font-family);
   background-color: var(--slick-column-picker-background-color, $column-picker-background-color);
   border: var(--slick-column-picker-border, $column-picker-border);
@@ -148,6 +149,7 @@
 // ----------------------------------------------
 
 .slick-gridmenu {
+  list-style-type: none;
   font-family: var(--slick-font-family, $font-family);
   background-color: var(--slick-grid-menu-background-color, $grid-menu-background-color);
   border: var(--slick-grid-menu-border, $grid-menu-border);

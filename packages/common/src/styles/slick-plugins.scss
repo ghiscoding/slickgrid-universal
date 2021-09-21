@@ -6,6 +6,7 @@
 // ----------------------------------------------
 
 .slick-cell-menu {
+  list-style-type: none;
   position: absolute;
   font-family:  $font-family;
   background: var(--slick-cell-menu-bg-color, $cell-menu-bg-color);
@@ -141,6 +142,7 @@
 // ----------------------------------------------
 
 .slick-context-menu {
+  list-style-type: none;
   position: absolute;
   background: var(--slick-context-menu-bg-color, $context-menu-bg-color);
   border: var(--slick-context-menu-border, $context-menu-border);
