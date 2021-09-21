@@ -87,6 +87,7 @@ export class ResizerService {
     if (this._intervalId) {
       clearInterval(this._intervalId);
     }
+    clearTimeout(this._timer);
 
     $(window).off(`resize.grid${this.gridUidSelector}`);
   }
@@ -117,7 +118,7 @@ export class ResizerService {
       this._fixedWidth = fixedGridSizes.width;
     }
 
-    if (this.gridOptions) {
+    if (this.gridOptions && this.gridOptions.enableAutoResize) {
       this.bindAutoResizeDataGrid();
     }
 

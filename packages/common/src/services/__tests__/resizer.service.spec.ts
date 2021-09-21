@@ -101,9 +101,45 @@ describe('Resizer Service', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should throw an error when there is no grid object defined', () => {
-    service = new ResizerService(eventPubSubService);
-    expect(() => service.init(null as any, divContainer)).toThrowError('[Slickgrid-Universal] Resizer Service requires a valid Grid object and DOM Element Container to be provided.');
+  describe('init method', () => {
+    it('should throw an error when there is no grid object defined', () => {
+      expect(() => service.init(null as any, divContainer)).toThrowError('[Slickgrid-Universal] Resizer Service requires a valid Grid object and DOM Element Container to be provided.');
+    });
+
+    it('should call "bindAutoResizeDataGrid" when autoResize is enabled', () => {
+      mockGridOptions.enableAutoResize = true;
+      jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(null);
+      const bindAutoResizeDataGridSpy = jest.spyOn(service, 'bindAutoResizeDataGrid').mockImplementation();
+
+      service.init(gridStub, divContainer);
+
+      expect(bindAutoResizeDataGridSpy).toHaveBeenCalled();
+    });
+
+    it('should not call "bindAutoResizeDataGrid" when autoResize is not enabled', () => {
+      mockGridOptions.enableAutoResize = false;
+      jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(null);
+      const bindAutoResizeDataGridSpy = jest.spyOn(service, 'bindAutoResizeDataGrid').mockImplementation();
+
+      service.init(gridStub, divContainer);
+
+      expect(bindAutoResizeDataGridSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('dispose method', () => {
+    it('should clear resizeGrid timeout', (done) => {
+      service.init(gridStub, divContainer);
+
+      const resizeGridWithDimensionsSpy = jest.spyOn(service, 'resizeGridWithDimensions');
+      service.resizeGrid(1);
+      service.dispose();
+
+      setTimeout(() => {
+        expect(resizeGridWithDimensionsSpy).not.toHaveBeenCalled();
+        done();
+      }, 2);
+    });
   });
 
   describe('resizeGrid method', () => {
