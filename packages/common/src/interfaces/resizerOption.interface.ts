@@ -2,14 +2,20 @@ export interface ResizerOption {
   /** Defaults to false, do we want to apply the resized dimentions to the grid container as well? */
   applyResizeToContainer?: boolean;
 
-  /** Defaults to 'window', which DOM element are we using to calculate the available size for the grid? */
+  /**
+   * Defaults to 'window', which DOM element are we using to calculate the available size for the grid?
+   * When {@link useResizeObserver}=true the {@link container} is used and this option is ignored.
+   */
   calculateAvailableSizeBy?: 'container' | 'window';
 
   /** bottom padding of the grid in pixels */
   bottomPadding?: number;
 
-  /** Page Container selector, for example '.page-container' or '#page-container', basically what element in the page will be used to calculate the available space */
-  container?: string;
+  /**
+   * Page Container. Either selector (for example '.page-container' or '#page-container'), or an HTMLElement.
+   * Basically what element in the page will be used to calculate the available space.
+   */
+  container?: string | HTMLElement;
 
   /**
    * Grid Container selector, for example '.myGrid' or '#myGrid', this is provided by the lib internally.
@@ -33,4 +39,18 @@ export interface ResizerOption {
 
   /** padding on the right side of the grid (pixels) */
   rightPadding?: number;
+
+  /**
+   * Use a [ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver) to detect resizes on the {@link container} element instead of window resize events.
+   *
+   * Remarks:
+   * * Requires {@link container} to be set.
+   *
+   * * ResizeObserver is not supported on older browsers like Internet Explorer. If you need the support you need to install a
+   * polyfill like [resize-observer-polyfill](https://www.npmjs.com/package/resize-observer-polyfill) yourself.
+   *
+   * * If you get 'ResizeObserver loop limit exceeded' errors in automated tests take a look
+   * [here](https://stackoverflow.com/questions/49384120/resizeobserver-loop-limit-exceeded).
+   */
+  useResizeObserver?: boolean;
 }
