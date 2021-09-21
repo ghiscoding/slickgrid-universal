@@ -8,6 +8,7 @@ import {
   Formatters,
   SlickDataView,
   Aggregators,
+  decimalFormatted,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -65,7 +66,7 @@ export default class Example6 {
           const fieldId = column.field;
           if (dataContext?.__treeTotals?.[aggregatorType]?.[fieldId] !== undefined) {
             const treeLevel = dataContext[this.gridOptions?.treeDataOptions?.levelPropName || '__treeLevel'];
-            return isNaN(dataContext?.__treeTotals[aggregatorType][fieldId]) ? '' : `<span class="color-primary" style="font-weight: 600">${dataContext?.__treeTotals[aggregatorType][fieldId]} MB</span> (${treeLevel === 0 ? 'total' : 'sub-total'})`;
+            return isNaN(dataContext?.__treeTotals[aggregatorType][fieldId]) ? '' : `<span class="color-primary" style="font-weight: 600">${decimalFormatted(dataContext?.__treeTotals[aggregatorType][fieldId], 0, 2)} MB</span> (${treeLevel === 0 ? 'total' : 'sub-total'})`;
           }
           return isNaN(value) ? '' : `${value} MB`;
         },
@@ -263,7 +264,8 @@ export default class Example6 {
           { id: 9, file: 'misc', files: [{ id: 10, file: 'todo.txt', dateModified: '2015-02-26T16:50:00.123Z', size: 0.4, }] },
           { id: 7, file: 'xls', files: [{ id: 8, file: 'compilation.xls', dateModified: '2014-10-02T14:50:00.123Z', size: 2.3, }] },
           { id: 55, file: 'unclassified.csv', dateModified: '2015-04-08T03:44:12.333Z', size: 0.25, },
-          { id: 56, file: 'zebra.dll', dateModified: '2016-12-08T13:22:12.432', size: 1.22, },
+          { id: 56, file: 'unresolved.csv', dateModified: '2015-04-03T03:21:12.000Z', size: 0.79, },
+          { id: 57, file: 'zebra.dll', dateModified: '2016-12-08T13:22:12.432', size: 1.22, },
         ]
       },
       {

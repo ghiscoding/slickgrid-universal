@@ -83,7 +83,7 @@ export function addTreeLevelByMutation<T>(treeArray: T[], options: { childrenPro
   }
 }
 
-export function addTreeLevelAndAggregatorsByMutation<T>(treeArray: T[], options: { aggregators: Aggregator[]; childrenPropName: string; levelPropName: string; }, treeLevel = 0, parent: T = null as any, childCount = 0, sum = 0) {
+export function addTreeLevelAndAggregatorsByMutation<T>(treeArray: T[], options: { aggregators: Aggregator[]; childrenPropName: string; levelPropName: string; }, treeLevel = 0, parent: T = null as any, allItemCount = 0, childCount = 0) {
   const childrenPropName = (options?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP) as keyof T;
 
   if (Array.isArray(treeArray)) {
@@ -96,7 +96,7 @@ export function addTreeLevelAndAggregatorsByMutation<T>(treeArray: T[], options:
         aggField = `${(aggregator as any).field}`;
         // aggType = aggregator.type;
         // }
-
+        allItemCount++;
         if (item) {
           const isParent = Array.isArray(item[childrenPropName]);
           if (Array.isArray(item[childrenPropName]) && (item[childrenPropName] as unknown as Array<T>).length > 0) {
@@ -106,22 +106,27 @@ export function addTreeLevelAndAggregatorsByMutation<T>(treeArray: T[], options:
               // }
               // (item as any).__treeTotals[aggType][aggField] = 0;
               // childCount = 0;
-              aggregator.init(item, true, childCount);
+              aggregator.init(item, true);
             }
             treeLevel++;
-            console.log(item, childCount);
-            addTreeLevelAndAggregatorsByMutation(item[childrenPropName] as unknown as Array<T>, options, treeLevel, item, childCount = 0);
+            console.log('before recursion', item, `allItemCount(${allItemCount})`, `childCount(${allItemCount})`, (item[childrenPropName] as any).reduce((prev: any, current: any) => current[aggField] ? prev + 1 : prev + 0, 0));
+            // childCount += (item[childrenPropName] as unknown as Array<T>).length
+            addTreeLevelAndAggregatorsByMutation(item[childrenPropName] as unknown as Array<T>, options, treeLevel, item, 0, 0);
+            // childCount++;
+            // childCount++;
+            console.log('after recursion', item, `childCount(${allItemCount})`, childCount);
             treeLevel--;
+          } else {
+            childCount++;
           }
           // if ((item as any)[aggField] !== undefined) {
-          childCount++;
-          if ((item as any)[aggField]) {
-            sum += +((item as any)[aggField]);
-          }
-          console.log(`childCount(${childCount})`, (item as any)[aggField], sum);
+          // if ((item as any)[aggField]) {
+          //   sum += +((item as any)[aggField]);
+          // }
+          console.log(`allItemCount(${allItemCount})`, `childCount(${childCount})`, (item as any)[aggField], (item as any).file);
           // }
           if (aggregator && aggField && parent) {
-            aggregator.accumulate?.(item, isParent);
+            aggregator.accumulate?.(item, isParent, childCount);
             aggregator.storeResult((parent as any).__treeTotals);
             // if (!(item as any).__treeTotals || (item as any).__treeTotals[aggType] === undefined) {
             //   (item as any).__treeTotals = { [aggType]: {} };
@@ -148,12 +153,11 @@ export function flattenToParentChildArray<T>(treeArray: T[], options?: { aggrega
   const hasChildrenPropName = (options?.hasChildrenPropName ?? Constants.treeDataProperties.HAS_CHILDREN_PROP) as keyof T & string;
   const parentPropName = (options?.parentPropName ?? Constants.treeDataProperties.PARENT_PROP) as keyof T & string;
   const levelPropName = options?.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
-  const aggregators = options?.aggregators;
   type FlatParentChildArray = Omit<T, keyof typeof childrenPropName>;
 
   if (options?.shouldAddTreeLevelNumber) {
     if (options?.aggregators) {
-      addTreeLevelAndAggregatorsByMutation(treeArray, { childrenPropName, levelPropName, aggregators });
+      addTreeLevelAndAggregatorsByMutation(treeArray, { childrenPropName, levelPropName, aggregators: options.aggregators });
     } else {
       addTreeLevelByMutation(treeArray, { childrenPropName, levelPropName });
     }
