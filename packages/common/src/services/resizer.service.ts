@@ -87,6 +87,7 @@ export class ResizerService {
     if (this._intervalId) {
       clearInterval(this._intervalId);
     }
+    clearTimeout(this._timer);
 
     $(window).off(`resize.grid${this.gridUidSelector}`);
   }

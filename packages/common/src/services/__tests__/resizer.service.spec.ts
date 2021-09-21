@@ -127,6 +127,21 @@ describe('Resizer Service', () => {
     });
   });
 
+  describe('dispose method', () => {
+    it('should clear resizeGrid timeout', (done) => {
+      service.init(gridStub, divContainer);
+
+      const resizeGridWithDimensionsSpy = jest.spyOn(service, 'resizeGridWithDimensions');
+      service.resizeGrid(1);
+      service.dispose();
+
+      setTimeout(() => {
+        expect(resizeGridWithDimensionsSpy).not.toHaveBeenCalled();
+        done();
+      }, 2);
+    });
+  });
+
   describe('resizeGrid method', () => {
     beforeEach(() => {
       // @ts-ignore
