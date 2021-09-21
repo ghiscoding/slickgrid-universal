@@ -62,6 +62,7 @@
 // ----------------------------------------------
 
 .slick-pagination {
+  list-style-type: none;
   border-top: var(--slick-pagination-border-top, $pagination-border-top);
   border-right: var(--slick-pagination-border-right, $pagination-border-right);
   border-bottom: var(--slick-pagination-border-bottom, $pagination-border-bottom);
