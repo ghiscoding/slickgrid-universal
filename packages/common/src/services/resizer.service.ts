@@ -252,7 +252,7 @@ export class ResizerService {
 
   /**
    * Provide the possibility to pause the resizer for some time, until user decides to re-enabled it later if he wish to.
-   * @param {boolean} isResizePaused are we pausing the resizer?@C
+   * @param {boolean} isResizePaused are we pausing the resizer?
    */
   pauseResizer(isResizePaused: boolean) {
     this._resizePaused = isResizePaused;
