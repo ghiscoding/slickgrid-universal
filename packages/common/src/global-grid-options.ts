@@ -216,7 +216,7 @@ export const GlobalGridOptions: GridOption = {
     hideFreezeColumnsCommand: true, // opt-in command
     hideSortCommands: false
   },
-  ignoreAccentOnStringFilter: false,
+  ignoreAccentOnStringFilterAndSort: false,
   multiColumnSort: true,
   numberedMultiColumnSort: true,
   tristateMultiColumnSort: false,
