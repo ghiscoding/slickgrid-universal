@@ -32,7 +32,7 @@ export class ResizerService {
   protected _fixedWidth?: number | string;
   protected _gridDomElm!: any;
   protected _gridContainerElm!: any;
-  protected _pageContainerElm!: HTMLElement | null;
+  protected _pageContainerElm!: JQuery<HTMLElement>;
   protected _gridParentContainerElm!: HTMLElement;
   protected _intervalId!: NodeJS.Timeout;
   protected _intervalRetryDelay = DEFAULT_INTERVAL_RETRY_DELAY;
@@ -90,7 +90,7 @@ export class ResizerService {
     }
     clearTimeout(this._timer);
 
-    if (this.gridOptions.autoResize?.useResizeObserver) {
+    if (this.gridOptions.autoResize?.resizeDetection === 'container') {
       this._resizeObserver.disconnect();
     } else {
       $(window).off(`resize.grid${this.gridUidSelector}`);
@@ -117,9 +117,9 @@ export class ResizerService {
     this._gridDomElm = $(containerNode);
 
     if (typeof this._autoResizeOptions.container === 'string') {
-      this._pageContainerElm = document.querySelector<HTMLElement>(this._autoResizeOptions.container);
-    } else if (this._autoResizeOptions.container) {
-      this._pageContainerElm = this._autoResizeOptions.container;
+      this._pageContainerElm = $(this._autoResizeOptions.container);
+    } else {
+      this._pageContainerElm = $(this._autoResizeOptions.container!);
     }
 
     this._gridContainerElm = $(gridParentContainerElm);
@@ -157,13 +157,13 @@ export class ResizerService {
    * Options: we could also provide a % factor to resize on each height/width independently
    */
   bindAutoResizeDataGrid(newSizes?: GridSize): null | void {
-    if (this.gridOptions.autoResize?.useResizeObserver) {
-      if (!this._pageContainerElm) {
+    if (this.gridOptions.autoResize?.resizeDetection === 'container') {
+      if (!this._pageContainerElm || !this._pageContainerElm[0]) {
         throw new Error(`
           [Slickgrid-Universal] Resizer Service requires a container when gridOption.autoResize.useResizeObserver=true
           You can fix this by setting your gridOption.autoResize.container`);
       }
-      this._resizeObserver.observe(this._pageContainerElm);
+      this._resizeObserver.observe(this._pageContainerElm[0]);
     } else {
       // if we can't find the grid to resize, return without binding anything
       if (this._gridDomElm === undefined || this._gridDomElm.offset() === undefined) {
@@ -206,7 +206,7 @@ export class ResizerService {
    */
   calculateGridNewDimensions(gridOptions: GridOption): GridSize | null {
     const autoResizeOptions = gridOptions?.autoResize ?? {};
-    if (!window || this._gridDomElm.offset() === undefined) {
+    if (!window || this._pageContainerElm === undefined || this._gridDomElm.offset() === undefined) {
       return null;
     }
 
@@ -223,25 +223,22 @@ export class ResizerService {
       bottomPadding += parseInt(`${footerHeight}`, 10);
     }
 
-    let gridHeight;
-    let gridWidth;
+    let gridHeight = 0;
+    let gridOffsetTop = 0;
 
     // which DOM element are we using to calculate the available size for the grid?
-    if (autoResizeOptions.calculateAvailableSizeBy === 'container' || autoResizeOptions.useResizeObserver) {
+    if (autoResizeOptions.calculateAvailableSizeBy === 'container') {
       // uses the container's height to calculate grid height without any top offset
-      gridHeight = this._pageContainerElm?.offsetHeight ?? 0;
-      gridWidth = this._pageContainerElm?.offsetWidth ?? 0;
+      gridHeight = this._pageContainerElm.height() || 0;
     } else {
       // uses the browser's window height with its top offset to calculate grid height
       gridHeight = window.innerHeight || 0;
-      gridWidth = window.innerWidth || 0;
       const coordOffsetTop = this._gridDomElm.offset();
-      const gridOffsetTop = (coordOffsetTop !== undefined) ? coordOffsetTop.top : 0;
-      gridHeight -= gridOffsetTop;
+      gridOffsetTop = (coordOffsetTop !== undefined) ? coordOffsetTop.top : 0;
     }
 
-    const availableHeight = gridHeight - bottomPadding;
-    const availableWidth = gridWidth;
+    const availableHeight = gridHeight - gridOffsetTop - bottomPadding;
+    const availableWidth = this._pageContainerElm.width() || window.innerWidth || 0;
     const maxHeight = autoResizeOptions?.maxHeight;
     const minHeight = autoResizeOptions?.minHeight ?? DATAGRID_MIN_HEIGHT;
     const maxWidth = autoResizeOptions?.maxWidth;

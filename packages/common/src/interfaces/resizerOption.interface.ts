@@ -2,10 +2,7 @@ export interface ResizerOption {
   /** Defaults to false, do we want to apply the resized dimentions to the grid container as well? */
   applyResizeToContainer?: boolean;
 
-  /**
-   * Defaults to 'window', which DOM element are we using to calculate the available size for the grid?
-   * When {@link useResizeObserver}=true the {@link container} is used and this option is ignored.
-   */
+  /** Defaults to 'window', which DOM element are we using to calculate the available size for the grid? */
   calculateAvailableSizeBy?: 'container' | 'window';
 
   /** bottom padding of the grid in pixels */
@@ -41,16 +38,12 @@ export interface ResizerOption {
   rightPadding?: number;
 
   /**
-   * Use a [ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver) to detect resizes on the {@link container} element instead of window resize events.
+   * Defaults to 'window', how are resizes detected?
    *
-   * Remarks:
+   * When set to 'container':
    * * Requires {@link container} to be set.
-   *
-   * * ResizeObserver is not supported on older browsers like Internet Explorer. If you need the support you need to install a
-   * polyfill like [resize-observer-polyfill](https://www.npmjs.com/package/resize-observer-polyfill) yourself.
-   *
    * * If you get 'ResizeObserver loop limit exceeded' errors in automated tests take a look
-   * [here](https://stackoverflow.com/questions/49384120/resizeobserver-loop-limit-exceeded).
+   *   [here](https://stackoverflow.com/questions/49384120/resizeobserver-loop-limit-exceeded).
    */
-  useResizeObserver?: boolean;
+  resizeDetection?: 'container' | 'window';
 }

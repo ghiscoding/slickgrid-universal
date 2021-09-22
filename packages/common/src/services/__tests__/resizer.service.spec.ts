@@ -140,9 +140,9 @@ describe('Resizer Service', () => {
       expect(bindAutoResizeDataGridSpy).not.toHaveBeenCalled();
     });
 
-    it('should observe resize events on the container element when "useResizeObserver" is true', () => {
+    it('should observe resize events on the container element when "resizeDetection" is "container"', () => {
       mockGridOptions.enableAutoResize = true;
-      mockGridOptions.autoResize.useResizeObserver = true;
+      mockGridOptions.autoResize.resizeDetection = 'container';
       const resizeContainer = document.createElement('div');
       mockGridOptions.autoResize.container = resizeContainer;
 
@@ -155,17 +155,17 @@ describe('Resizer Service', () => {
       expect(observerInstance.observe).toHaveBeenCalledWith(resizeContainer);
     });
 
-    it('should throw an error when container element is not valid and "useResizeObserver" is true', () => {
+    it('should throw an error when container element is not valid and "resizeDetection" is "container"', () => {
       mockGridOptions.enableAutoResize = true;
-      mockGridOptions.autoResize.useResizeObserver = true;
+      mockGridOptions.autoResize.resizeDetection = 'container';
       mockGridOptions.autoResize.container = '#doesnotexist';
 
       expect(() => service.init(gridStub, divContainer)).toThrowError('[Slickgrid-Universal] Resizer Service requires a container when gridOption.autoResize.useResizeObserver=true');
     });
 
-    it('should execute "resizeGrid" when "useResizeObserver" is true', () => {
+    it('should execute "resizeGrid" when "resizeDetection" is "container"', () => {
       mockGridOptions.enableAutoResize = true;
-      mockGridOptions.autoResize.useResizeObserver = true;
+      mockGridOptions.autoResize.resizeDetection = "container";
       const resizeContainer = document.createElement('div');
       mockGridOptions.autoResize.container = resizeContainer;
 
@@ -176,9 +176,9 @@ describe('Resizer Service', () => {
       expect(resizeGridSpy).toHaveBeenCalledWith();
     });
 
-    it('should not execute "resizeGrid" when "useResizeObserver" is true and the resizer is paused', () => {
+    it('should not execute "resizeGrid" when "resizeDetection" is "container" and the resizer is paused', () => {
       mockGridOptions.enableAutoResize = true;
-      mockGridOptions.autoResize.useResizeObserver = true;
+      mockGridOptions.autoResize.resizeDetection = "container";
       const resizeContainer = document.createElement('div');
       mockGridOptions.autoResize.container = resizeContainer;
 
@@ -206,9 +206,9 @@ describe('Resizer Service', () => {
       }, 2);
     });
 
-    it('should disconnect from resize events on the container element when "useResizeObserver" is true', () => {
+    it('should disconnect from resize events on the container element when "resizeDetection" is "container"', () => {
       mockGridOptions.enableAutoResize = true;
-      mockGridOptions.autoResize.useResizeObserver = true;
+      mockGridOptions.autoResize.resizeDetection = "container";
       const resizeContainer = document.createElement('div');
       mockGridOptions.autoResize.container = resizeContainer;
 
