@@ -222,7 +222,6 @@ export class SliderFilter implements Filter {
       this.divContainerFilterElm.appendChild(divGroupAppendElm);
     }
 
-    // this.filterNumberElm.html(searchTermInput);
     this.divContainerFilterElm.dataset.columnid = `${columnId}`;
 
     // if there's a search term, we will add the "filled" class for styling purposes
@@ -239,9 +238,8 @@ export class SliderFilter implements Filter {
   protected handleInputChange(event: Event) {
     const value = (event?.target as HTMLInputElement).value;
     if (value !== undefined && value !== null) {
-      const element = document.querySelector(`.${this._elementRangeOutputId || ''}`);
-      if (element?.textContent) {
-        element.textContent = value;
+      if (this.filterNumberElm?.textContent) {
+        this.filterNumberElm.textContent = value;
       }
     }
   }
