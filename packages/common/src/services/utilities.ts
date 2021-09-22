@@ -290,6 +290,11 @@ export function findItemInTreeStructure<T = any>(treeArray: T[], predicate: (ite
   return undefined;
 }
 
+/** Check if a value has any data (undefined, null or empty string will return false... but false boolean is consider as valid data) */
+export function hasData(value: any): boolean {
+  return value !== undefined && value !== null && value !== '';
+}
+
 /**
  * HTML encode using jQuery with a <div>
  * Create a in-memory div, set it's inner text(which jQuery automatically encodes)

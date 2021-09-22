@@ -208,6 +208,20 @@ describe('CompoundDateFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T05:00:00.000Z'], shouldTriggerQuery: true });
   });
 
+  it('should be able to call "setValues" and set empty values and the picker input to not have the "filled" css class', () => {
+    const mockDate = '2001-01-02T16:02:02.239Z';
+    filter.init(filterArguments);
+    filter.setValues(mockDate);
+    let filledInputElm = divContainer.querySelector('.search-filter.filter-finish .filled') as HTMLInputElement;
+
+    expect(filter.currentDate).toEqual(mockDate);
+    expect(filledInputElm).toBeTruthy();
+
+    filter.setValues('');
+    filledInputElm = divContainer.querySelector('.search-filter.filter-finish .filled') as HTMLInputElement;
+    expect(filledInputElm).toBeFalsy();
+  });
+
   it('should work with different locale when locale is changed', async () => {
     await (await import('flatpickr/dist/l10n/fr')).French;
 

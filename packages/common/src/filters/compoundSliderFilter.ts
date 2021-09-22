@@ -12,7 +12,7 @@ import {
 import { Constants } from '../constants';
 import { OperatorString, OperatorType, SearchTerm } from '../enums/index';
 import { buildSelectOperator } from './filterUtilities';
-import { emptyElement, getTranslationPrefix, mapOperatorToShorthandDesignation, toSentenceCase } from '../services/utilities';
+import { emptyElement, getTranslationPrefix, hasData, mapOperatorToShorthandDesignation, toSentenceCase } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
 
@@ -29,6 +29,7 @@ export class CompoundSliderFilter implements Filter {
   protected _elementRangeOutputId = '';
   protected _operator?: OperatorType | OperatorString;
   protected containerInputGroupElm?: HTMLDivElement;
+  protected divContainerFilterElm?: HTMLDivElement;
   protected filterElm!: HTMLDivElement;
   protected filterInputElm!: HTMLInputElement;
   protected filterNumberElm?: HTMLSpanElement;
@@ -135,6 +136,7 @@ export class CompoundSliderFilter implements Filter {
       }
       this.onTriggerEvent(undefined);
       this.filterElm.classList.remove('filled');
+      this.divContainerFilterElm?.classList.remove('filled');
     }
   }
 
@@ -159,10 +161,18 @@ export class CompoundSliderFilter implements Filter {
   /** Set value(s) on the DOM element */
   setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString) {
     const newValue = Array.isArray(values) ? values[0] : values;
-    this._currentValue = +newValue;
+    this._currentValue = hasData(newValue) ? +newValue : undefined;
     this.filterInputElm.value = `${newValue ?? ''}`;
     if (this.filterNumberElm) {
-      this.filterNumberElm.textContent = `${newValue ?? ''}`;
+      this.filterNumberElm.textContent = `${this._currentValue ?? ''}`;
+    }
+
+    if (this.getValues() !== undefined) {
+      this.filterElm.classList.add('filled');
+      this.divContainerFilterElm?.classList.add('filled');
+    } else {
+      this.filterElm.classList.remove('filled');
+      this.divContainerFilterElm?.classList.remove('filled');
     }
 
     // set the operator, in the DOM as well, when defined
@@ -259,14 +269,14 @@ export class CompoundSliderFilter implements Filter {
     this.filterInputElm.name = this._elementRangeInputId;
     this.filterInputElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
 
-    const divContainerFilterElm = document.createElement('div');
-    divContainerFilterElm.className = `form-group search-filter slider-container filter-${columnId}`;
+    this.divContainerFilterElm = document.createElement('div');
+    this.divContainerFilterElm.className = `form-group search-filter slider-container filter-${columnId}`;
 
     this.containerInputGroupElm = document.createElement('div');
     this.containerInputGroupElm.className = `input-group search-filter filter-${columnId}`;
     this.containerInputGroupElm.appendChild(spanPrependElm);
     this.containerInputGroupElm.appendChild(this.filterInputElm);
-    divContainerFilterElm.appendChild(this.containerInputGroupElm);
+    this.divContainerFilterElm.appendChild(this.containerInputGroupElm);
 
     if (!this.filterParams.hideSliderNumber) {
       this.containerInputGroupElm.classList.add('input-group');
@@ -282,7 +292,7 @@ export class CompoundSliderFilter implements Filter {
       this.containerInputGroupElm.appendChild(divGroupAppendElm);
     }
 
-    divContainerFilterElm.dataset.columnid = `${columnId}`;
+    this.divContainerFilterElm.dataset.columnid = `${columnId}`;
 
     if (this.operator) {
       const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);
@@ -291,13 +301,13 @@ export class CompoundSliderFilter implements Filter {
 
     // if there's a search term, we will add the "filled" class for styling purposes
     if (searchTerm) {
-      divContainerFilterElm.classList.add('filled');
+      this.divContainerFilterElm.classList.add('filled');
     }
 
     // append the new DOM element to the header row
-    headerElm.appendChild(divContainerFilterElm);
+    headerElm.appendChild(this.divContainerFilterElm);
 
-    return divContainerFilterElm;
+    return this.divContainerFilterElm;
   }
 
   protected handleInputChange(event: Event) {

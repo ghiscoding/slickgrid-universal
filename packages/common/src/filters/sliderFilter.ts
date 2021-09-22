@@ -7,7 +7,7 @@ import {
   FilterCallback,
   SlickGrid,
 } from './../interfaces/index';
-import { emptyElement, toSentenceCase } from '../services/utilities';
+import { emptyElement, hasData, toSentenceCase } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 
 const DEFAULT_MIN_VALUE = 0;
@@ -21,6 +21,7 @@ export class SliderFilter implements Filter {
   protected _shouldTriggerQuery = true;
   protected _elementRangeInputId = '';
   protected _elementRangeOutputId = '';
+  protected divContainerFilterElm!: HTMLDivElement;
   protected filterElm!: HTMLDivElement;
   protected filterInputElm!: HTMLInputElement;
   protected filterNumberElm?: HTMLSpanElement;
@@ -112,6 +113,8 @@ export class SliderFilter implements Filter {
       if (this.filterNumberElm) {
         this.filterNumberElm.textContent = clearedValue;
       }
+      this.divContainerFilterElm.classList.remove('filled');
+      this.filterElm.classList.remove('filled');
       this.filterInputElm.dispatchEvent(new Event('change'));
     }
   }
@@ -141,9 +144,20 @@ export class SliderFilter implements Filter {
         this.filterNumberElm.textContent = `${values[0]}`;
       }
       this._currentValue = +values[0];
-    } else if (values) {
+    } else if (hasData(values)) {
       this.filterInputElm.value = `${values ?? ''}`;
       this._currentValue = +values;
+    } else {
+      this._currentValue = undefined;
+      this.filterInputElm.value = '';
+    }
+
+    if (this.getValues() !== undefined) {
+      this.divContainerFilterElm.classList.add('filled');
+      this.filterElm.classList.add('filled');
+    } else {
+      this.divContainerFilterElm.classList.remove('filled');
+      this.filterElm.classList.remove('filled');
     }
 
     // set the operator when defined
@@ -190,12 +204,12 @@ export class SliderFilter implements Filter {
     this.filterInputElm.name = this._elementRangeInputId;
     this.filterInputElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
 
-    const divContainerFilterElm = document.createElement('div');
-    divContainerFilterElm.className = `search-filter slider-container filter-${columnId}`;
-    divContainerFilterElm.appendChild(this.filterInputElm);
+    this.divContainerFilterElm = document.createElement('div');
+    this.divContainerFilterElm.className = `search-filter slider-container filter-${columnId}`;
+    this.divContainerFilterElm.appendChild(this.filterInputElm);
 
     if (!this.filterParams.hideSliderNumber) {
-      divContainerFilterElm.classList.add('input-group');
+      this.divContainerFilterElm.classList.add('input-group');
       this.filterInputElm.value = searchTermInput;
 
       const divGroupAppendElm = document.createElement('div');
@@ -205,21 +219,21 @@ export class SliderFilter implements Filter {
       this.filterNumberElm.className = `input-group-text ${this._elementRangeOutputId}`;
       this.filterNumberElm.textContent = searchTermInput;
       divGroupAppendElm.appendChild(this.filterNumberElm);
-      divContainerFilterElm.appendChild(divGroupAppendElm);
+      this.divContainerFilterElm.appendChild(divGroupAppendElm);
     }
 
     // this.filterNumberElm.html(searchTermInput);
-    divContainerFilterElm.dataset.columnid = `${columnId}`;
+    this.divContainerFilterElm.dataset.columnid = `${columnId}`;
 
     // if there's a search term, we will add the "filled" class for styling purposes
     if (searchTerm) {
-      divContainerFilterElm.classList.add('filled');
+      this.divContainerFilterElm.classList.add('filled');
     }
 
     // append the new DOM element to the header row
-    headerElm.appendChild(divContainerFilterElm);
+    headerElm.appendChild(this.divContainerFilterElm);
 
-    return divContainerFilterElm;
+    return this.divContainerFilterElm;
   }
 
   protected handleInputChange(event: Event) {

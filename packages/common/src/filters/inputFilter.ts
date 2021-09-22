@@ -103,6 +103,7 @@ export class InputFilter implements Filter {
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
       this._filterElm.value = '';
+      this._filterElm.classList.remove('filled');
       this._filterElm.dispatchEvent(new Event('change'));
     }
   }
@@ -115,7 +116,7 @@ export class InputFilter implements Filter {
     this._filterElm?.remove?.();
   }
 
-  getValue(): string {
+  getValues(): string {
     return this._filterElm.value;
   }
 
@@ -127,6 +128,7 @@ export class InputFilter implements Filter {
       searchValue = operator ? this.addOptionalOperatorIntoSearchString(value, operator) : value;
       this._filterElm.value = `${searchValue ?? ''}`;
     }
+    this.getValues() !== '' ? this._filterElm.classList.add('filled') : this._filterElm.classList.remove('filled');
 
     // set the operator when defined
     this.operator = operator || this.defaultOperator;

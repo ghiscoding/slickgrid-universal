@@ -245,6 +245,12 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(7)`).find('.checkmark-icon').should('have.length', 1);
   });
 
+  it('should have 3 filters with "filled" css class when having values', () => {
+    cy.get('.filter-percentComplete.filled').should('exist');
+    cy.get('.filter-finish.filled').should('exist');
+    cy.get('.filter-completed.filled').should('exist');
+  });
+
   it('should show Column Picker and expect 2 columns to be hidden', () => {
     cy.get('.grid11')
       .find('.slick-header-column')
@@ -374,6 +380,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
     });
 
     cy.get('.selected-view').should('have.value', 'CustomViewTest');
+    cy.get('.filter-title.filled').should('exist');
   });
 
   it('should be able to Update the Custom View that we created earlier with a new name', () => {
@@ -499,6 +506,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .then(text => expect(text).to.eq(''));
 
     cy.get('.search-filter.filter-completed .ms-choice').should('contain', '');
+    cy.get('.filled').should('have.length', 0);
   });
 
   it('should have all columns shown (checkbox is checked) in the Column Picker', () => {
@@ -555,6 +563,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
 
   it('should be able to filter "Country of Origin" with a text range filter "b..e" and expect to see only Canada showing up', () => {
     cy.get('input.search-filter.filter-countryOfOrigin').type('b..e');
+    cy.get('input.search-filter.filter-countryOfOrigin.filled').should('exist');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('contain', 'Canada');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(9)`).should('contain', 'Canada');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(9)`).should('contain', 'Canada');
@@ -679,6 +688,12 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
   });
 
+  it('should have 3 filters with "filled" css class when having values', () => {
+    cy.get('.filter-title.filled').should('exist');
+    cy.get('.filter-duration.filled').should('exist');
+    cy.get('.filter-countryOfOrigin.filled').should('exist');
+  });
+
   it('should have back the frozen columns from CustomViewTest on the right side of the "Duration" column', () => {
     cy.get('[style="top:0px"]').should('have.length', 2);
     cy.get('.grid-canvas-left > [style="top:0px"]').children().should('have.length', 3);
@@ -700,7 +715,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .each(($cell, index) => {
         if (index < 10) {
           const [taskString, taskNumber] = $cell.text().split(' ');
-          expect(taskNumber).to.be.eq('5')
+          expect(taskNumber).to.include('5')
         }
       });
 

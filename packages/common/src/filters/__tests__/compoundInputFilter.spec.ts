@@ -146,6 +146,18 @@ describe('CompoundInputFilter', () => {
     expect(filterSelectElm.value).toBe('>=');
   });
 
+  it('should be able to call "setValues" and set empty values and the input to not have the "filled" css class', () => {
+    filter.init(filterArguments);
+    filter.setValues('9');
+    let filledInputElm = divContainer.querySelector('.search-filter.filter-duration .filled') as HTMLInputElement;
+
+    expect(filledInputElm).toBeTruthy();
+
+    filter.setValues('');
+    filledInputElm = divContainer.querySelector('.search-filter.filter-duration .filled') as HTMLInputElement;
+    expect(filledInputElm).toBeFalsy();
+  });
+
   it('should trigger an operator change event and expect the callback to be called with the searchTerms and operator defined', () => {
     mockColumn.type = FieldType.number;
     const spyCallback = jest.spyOn(filterArguments, 'callback');
