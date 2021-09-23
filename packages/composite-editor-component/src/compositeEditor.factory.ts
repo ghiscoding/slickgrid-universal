@@ -181,9 +181,10 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
       while (idx < editors.length) {
         const columnDef = editors[idx].args?.column;
         if (columnDef?.id !== undefined) {
-          let validationElm = document.querySelector(`.item-details-validation.editor-${columnDef.id}`);
-          let labelElm = document.querySelector(`.item-details-label.editor-${columnDef.id}`);
-          let editorElm = document.querySelector(`[data-editorid=${columnDef.id}]`);
+          const compositeModalElm = document.querySelector(`.slick-editor-modal`);
+          let validationElm = compositeModalElm?.querySelector(`.item-details-validation.editor-${columnDef.id}`);
+          let labelElm = compositeModalElm?.querySelector(`.item-details-label.editor-${columnDef.id}`);
+          let editorElm = compositeModalElm?.querySelector(`[data-editorid=${columnDef.id}]`);
           const validationMsgPrefix = options?.validationMsgPrefix ?? '';
 
           if (!targetElm || editorElm?.contains(targetElm)) {

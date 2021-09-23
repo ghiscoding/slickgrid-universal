@@ -313,9 +313,8 @@ export class CompoundSliderFilter implements Filter {
   protected handleInputChange(event: Event) {
     const value = (event?.target as HTMLInputElement).value;
     if (value !== undefined && value !== null) {
-      const element = document.querySelector(`.${this._elementRangeOutputId || ''}`);
-      if (element?.textContent) {
-        element.textContent = value;
+      if (this.filterNumberElm?.textContent) {
+        this.filterNumberElm.textContent = value;
       }
     }
   }
