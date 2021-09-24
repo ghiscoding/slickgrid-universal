@@ -287,6 +287,9 @@ describe('Composite Editor Factory', () => {
   });
 
   it('should instantiate the factory and expect "validate" to be called and return True when all editors are valid', () => {
+    const modalElm = document.createElement('div');
+    modalElm.className = 'slick-editor-modal';
+
     for (const column of columnsMock) {
       if (column.editor) {
         const validationEditorElm = document.createElement('div');
@@ -295,11 +298,12 @@ describe('Composite Editor Factory', () => {
         labelEditorElm.className = `item-details-label editor-${column.id}`;
         const inputEditorElm = document.createElement('input');
         inputEditorElm.dataset.editorid = `${column.id}`;
-        document.body.appendChild(validationEditorElm);
-        document.body.appendChild(labelEditorElm);
-        document.body.appendChild(inputEditorElm);
+        modalElm.appendChild(validationEditorElm);
+        modalElm.appendChild(labelEditorElm);
+        modalElm.appendChild(inputEditorElm);
       }
     }
+    document.body.appendChild(modalElm);
 
     const output = new factory(textEditorArgs);
     const editorValidateSpy = jest.spyOn(output, 'validate');
@@ -319,6 +323,9 @@ describe('Composite Editor Factory', () => {
   });
 
   it('should instantiate the factory and expect "validate" to be called and return True when at least 1 editor is invalid', () => {
+    const modalElm = document.createElement('div');
+    modalElm.className = 'slick-editor-modal';
+
     for (const column of columnsMock) {
       if (column.editor) {
         const validationEditorElm = document.createElement('div');
@@ -327,11 +334,12 @@ describe('Composite Editor Factory', () => {
         labelEditorElm.className = `item-details-label editor-${column.id}`;
         const inputEditorElm = document.createElement('input');
         inputEditorElm.dataset.editorid = `${column.id}`;
-        document.body.appendChild(validationEditorElm);
-        document.body.appendChild(labelEditorElm);
-        document.body.appendChild(inputEditorElm);
+        modalElm.appendChild(validationEditorElm);
+        modalElm.appendChild(labelEditorElm);
+        modalElm.appendChild(inputEditorElm);
       }
     }
+    document.body.appendChild(modalElm);
 
     const output = new factory(textEditorArgs);
     const editorValidateSpy = jest.spyOn(output, 'validate');
