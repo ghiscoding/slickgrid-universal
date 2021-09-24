@@ -6,6 +6,25 @@ export interface TreeDataOption {
   /** Column Id of which column in the column definitions has the Tree Data, there can only be one with a Tree Data. */
   columnId: string;
 
+  /**
+   * Defaults to False, it will skip any other filter criteria(s) if the column holding the Tree passes its filter criteria (can only be used with `excludeChildrenWhenFilteringTree: false`, it has no effect otherwise)
+   * In other words, if the current column is the column holding the Tree structure AND is a parent item which passes the filter criteria it will automatically be valid without inspecting any other filter criteria.
+   */
+  autoApproveParentItemWhenTreeColumnIsValid?: boolean;
+
+  /**
+   * Defaults to False, should we exclude the child item(s) when a parent matches the filter criteria?
+   * by default (unless this feature is disabled) all child nodes of the tree will be included when a parent passes a filter and a group will be included if
+   * 1) it has any children that passes the filter or
+   * 2) current parent item passes the filter or
+   * 3) current parent item filter is the Tree column and it passes that filter criteria regardless of other criteria (only works with `autoApproveParentItemWhenTreeColumnIsValid: true`)
+   *    - even when the other columns don't pass the filter criteria, as use case described below
+   *    - for example if we take the Example with File Explorer (live demo) and we filter (Files = "music" and Size > 7),
+   *    - then the File "Music" will always show even if it doesn't have a Size because its tree column passes the filter (which was Files = "music")
+   *    - and the reason we do this is that we'll be able to show music files with "Size > 7" even though these files might not include the word "music"
+   */
+  excludeChildrenWhenFilteringTree?: boolean;
+
   /** Grouping Aggregators array */
   // NOT YET IMPLEMENTED
   // aggregators?: Aggregator[];

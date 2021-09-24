@@ -21,6 +21,7 @@ export class Example6 {
   datasetHierarchical = [];
   sgb: SlickVanillaGridBundle;
   durationOrderByCount = false;
+  isExcludingChildWhenFiltering = false;
   searchString = '';
 
   attached() {
@@ -73,7 +74,14 @@ export class Example6 {
       treeDataOptions: {
         columnId: 'file',
         childrenPropName: 'files',
-        // you can optionally sort by a different column and/or sort direction
+        excludeChildrenWhenFilteringTree: this.isExcludingChildWhenFiltering, // defaults to false
+
+        // optionally make the item valid when its a Parent item that is the Tree column and is passing criteria
+        // (e.g. "Files = music, Size > 7", the row "Music" will show up, we want this so we could show files underneath it with a size)
+        // only works with flag `excludeChildrenWhenFilteringTree: false`
+        autoApproveParentItemWhenTreeColumnIsValid: true,
+
+        // you can also optionally sort by a different column and/or change sort direction
         // initialSort: {
         //   columnId: 'file',
         //   direction: 'DESC'
@@ -86,6 +94,14 @@ export class Example6 {
         treeData: { toggledItems: [{ itemId: 4, isCollapsed: true }] },
       },
     };
+  }
+
+  changeExcludeChildWhenFiltering() {
+    this.isExcludingChildWhenFiltering = !this.isExcludingChildWhenFiltering;
+    this.gridOptions.treeDataOptions.excludeChildrenWhenFilteringTree = this.isExcludingChildWhenFiltering;
+    this.sgb.slickGrid.setOptions(this.gridOptions);
+    this.sgb.filterService.refreshTreeDataFilters();
+    return true;
   }
 
   clearSearch() {
@@ -158,7 +174,7 @@ export class Example6 {
         id: newId,
         file: `pop-${newId}.mp3`,
         dateModified: new Date(),
-        size: Math.round(Math.random() * 100),
+        size: Math.floor(Math.random() * 100) + 10,
       });
 
       // overwrite hierarchical dataset which will also trigger a grid sort and rendering

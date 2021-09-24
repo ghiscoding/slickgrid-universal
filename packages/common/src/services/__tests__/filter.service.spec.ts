@@ -34,6 +34,12 @@ import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 declare const Slick: SlickNamespace;
 const DOM_ELEMENT_ID = 'row-detail123';
 
+function initSetWithValues(values: any[]) {
+  const tmpSet = new Set();
+  values.forEach(val => tmpSet.add(val));
+  return tmpSet;
+}
+
 const gridOptionMock = {
   enableFiltering: true,
   enablePagination: true,
@@ -1703,7 +1709,7 @@ describe('FilterService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['map',] }]);
         expect(output).toBe(true);
         expect(preFilterSpy).toHaveBeenCalledWith(dataset, columnFilters);
-        expect(preFilterSpy).toHaveReturnedWith([21, 4, 5]);
+        expect(preFilterSpy).toHaveReturnedWith(initSetWithValues([21, 4, 5]));
       });
 
       it('should return False when item is found BUT its parent is collapsed', async () => {
@@ -1728,7 +1734,7 @@ describe('FilterService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['map'] }]);
         expect(output).toBe(false);
         expect(preFilterSpy).toHaveBeenCalledWith(dataset, columnFilters);
-        expect(preFilterSpy).toHaveReturnedWith([21, 4, 5]);
+        expect(preFilterSpy).toHaveReturnedWith(initSetWithValues([21, 4, 5]));
       });
 
       it('should return False when item is not found in the dataset', async () => {
@@ -1753,7 +1759,7 @@ describe('FilterService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['unknown'] }]);
         expect(output).toBe(false);
         expect(preFilterSpy).toHaveBeenCalledWith(dataset, { ...columnFilters, file: { ...columnFilters.file, operator: 'Contains', parsedSearchTerms: ['unknown'], type: 'string' } }); // it will use Contains by default
-        expect(preFilterSpy).toHaveReturnedWith([]);
+        expect(preFilterSpy).toHaveReturnedWith(new Set());
       });
 
       it('should return False also when called by "updateSingleFilter" and when item is not found in the dataset', async () => {
@@ -1778,7 +1784,61 @@ describe('FilterService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['unknown'] }]);
         expect(output).toBe(false);
         expect(preFilterSpy).toHaveBeenCalledWith(dataset, { ...columnFilters, file: { ...columnFilters.file, operator: 'Contains', parsedSearchTerms: ['unknown'], type: 'string' } }); // it will use Contains by default
-        expect(preFilterSpy).toHaveReturnedWith([]);
+        expect(preFilterSpy).toHaveReturnedWith(new Set());
+      });
+
+      // -- excludeChildrenWhenFilteringTree -- //
+
+      it('should return True (file is included) when item is not found BUT its parent passes the filter criteria AND "excludeChildrenWhenFilteringTree" is disabled', async () => {
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
+        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any })
+          .mockReturnValueOnce(dataset[5])
+          .mockReturnValueOnce(dataset[6]);
+
+        const mockItem1 = { __parentId: 9, __treeLevel: 2, dateModified: '2015-02-26T16:50:00.123Z', file: 'todo.txt', id: 10, size: 0.4 };
+        gridOptionMock.treeDataOptions.excludeChildrenWhenFilteringTree = false;
+
+        service.init(gridStub);
+        service.bindLocalOnFilter(gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
+
+        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', operator: 'Contains', searchTerms: ['misc'], parsedSearchTerms: ['misc'], type: FieldType.string } };
+        await service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['misc'] }], true, true, true);
+        const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
+
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['misc'] }]);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['misc'] }]);
+        expect(output).toBe(true);
+        expect(preFilterSpy).toHaveBeenCalledWith(dataset, columnFilters);
+        expect(preFilterSpy).toHaveReturnedWith(initSetWithValues([9, 21, 10])); // todo.txt (10) is included
+      });
+
+      it('should return False (file is excluded) when item is not found EVEN when its parent passes the filter criteria because "excludeChildrenWhenFilteringTree" is enabled', async () => {
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
+        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any })
+          .mockReturnValueOnce(dataset[5])
+          .mockReturnValueOnce(dataset[6]);
+
+        const mockItem1 = { __parentId: 9, __treeLevel: 2, dateModified: '2015-02-26T16:50:00.123Z', file: 'todo.txt', id: 10, size: 0.4 };
+        gridOptionMock.treeDataOptions.excludeChildrenWhenFilteringTree = true;
+
+        service.init(gridStub);
+        service.bindLocalOnFilter(gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
+
+        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', operator: 'Contains', searchTerms: ['misc'], parsedSearchTerms: ['misc'], type: FieldType.string } };
+        await service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['misc'] }], true, true, true);
+        const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
+
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['misc'] }]);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['misc'] }]);
+        expect(output).toBe(false);
+        expect(preFilterSpy).toHaveBeenCalledWith(dataset, columnFilters);
+        expect(preFilterSpy).toHaveReturnedWith(initSetWithValues([9, 21])); // todo.txt (10) is excluded
       });
     });
   });

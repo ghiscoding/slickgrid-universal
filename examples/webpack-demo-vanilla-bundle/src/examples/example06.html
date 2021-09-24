@@ -14,7 +14,7 @@
   "sortByFieldId" in your column "treeData" option if you wish to sort on a different column
 </h6>
 <div class="columns">
-  <div class="column is-narrow">
+  <div class="column">
     <button onclick.delegate="addNewFile()" class="button is-small is-info" data-test="add-item-btn">
       <span class="icon mdi mdi-plus"></span>
       <span>Add New Pop Song</span>
@@ -27,14 +27,21 @@
       <span class="icon mdi mdi-arrow-expand"></span>
       <span>Expand All</span>
     </button>
-    <button onclick.delegate="logFlatStructure()" class="button is-small">
+    <button onclick.delegate="logFlatStructure()" class="button is-small" title="console.log of the Flat dataset">
       <span>Log Flat Structure</span>
     </button>
-    <button onclick.delegate="logHierarchicalStructure()" class="button is-small">
+    <button onclick.delegate="logHierarchicalStructure()" class="button is-small"
+            title="console.log of the Hierarchical Tree dataset">
       <span>Log Hierarchical Structure</span>
     </button>
+    <label class="checkbox-inline control-label" for="excludeChildWhenFiltering" style="margin-left: 20px">
+      <input type="checkbox" id="excludeChildWhenFiltering" data-test="exclude-child-when-filtering"
+             checked.bind="isExcludingChildWhenFiltering"
+             onclick.delegate="changeExcludeChildWhenFiltering()">
+      <span>Exclude Children when Filtering Tree</span>
+    </label>
   </div>
-  <div class="column is-6">
+  <div class="column is-4">
     <div class="field is-horizontal">
       <div class="field-label is-small">
         <label class="label">Search File</label>
