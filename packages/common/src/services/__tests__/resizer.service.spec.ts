@@ -160,7 +160,7 @@ describe('Resizer Service', () => {
       mockGridOptions.autoResize.resizeDetection = 'container';
       mockGridOptions.autoResize.container = '#doesnotexist';
 
-      expect(() => service.init(gridStub, divContainer)).toThrowError('[Slickgrid-Universal] Resizer Service requires a container when gridOption.autoResize.useResizeObserver=true');
+      expect(() => service.init(gridStub, divContainer)).toThrowError('[Slickgrid-Universal] Resizer Service requires a container when gridOption.autoResize.resizeDetection="container"');
     });
 
     it('should execute "resizeGrid" when "resizeDetection" is "container"', () => {

@@ -42,7 +42,7 @@ export class ResizerService {
   protected _totalColumnsWidthByContent = 0;
   protected _timer!: NodeJS.Timeout;
   protected _resizePaused = false;
-  protected readonly _resizeObserver: ResizeObserver = new ResizeObserver(() => this.resizeObserverCallback());
+  protected _resizeObserver!: ResizeObserver;
 
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
@@ -91,7 +91,9 @@ export class ResizerService {
     clearTimeout(this._timer);
 
     if (this.gridOptions.autoResize?.resizeDetection === 'container') {
-      this._resizeObserver.disconnect();
+      if (this._resizeObserver) {
+        this._resizeObserver.disconnect();
+      }
     } else {
       $(window).off(`resize.grid${this.gridUidSelector}`);
     }
@@ -160,8 +162,11 @@ export class ResizerService {
     if (this.gridOptions.autoResize?.resizeDetection === 'container') {
       if (!this._pageContainerElm || !this._pageContainerElm[0]) {
         throw new Error(`
-          [Slickgrid-Universal] Resizer Service requires a container when gridOption.autoResize.useResizeObserver=true
+          [Slickgrid-Universal] Resizer Service requires a container when gridOption.autoResize.resizeDetection="container"
           You can fix this by setting your gridOption.autoResize.container`);
+      }
+      if (!this._resizeObserver) {
+        this._resizeObserver = new ResizeObserver(() => this.resizeObserverCallback());
       }
       this._resizeObserver.observe(this._pageContainerElm[0]);
     } else {
