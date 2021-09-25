@@ -31,8 +31,12 @@ export class SlickFooterComponent {
     return this._eventHandler;
   }
 
+  /** Getter for the grid uid */
   get gridUid(): string {
     return this.grid?.getUID() ?? '';
+  }
+  get gridUidSelector(): string {
+    return this.gridUid ? `.${this.gridUid}` : '';
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
@@ -50,14 +54,14 @@ export class SlickFooterComponent {
   }
 
   get leftFooterText(): string {
-    return document.querySelector('div.left-footer')?.textContent ?? '';
+    return document.querySelector(`.slick-custom-footer${this.gridUidSelector} .left-footer`)?.textContent ?? '';
   }
   set leftFooterText(text: string) {
     this.renderLeftFooterText(text);
   }
 
   get rightFooterText(): string {
-    return document.querySelector('div.right-footer')?.textContent ?? '';
+    return document.querySelector(`.slick-custom-footer${this.gridUidSelector} .right-footer`)?.textContent ?? '';
   }
   set rightFooterText(text: string) {
     this.renderRightFooterText(text);

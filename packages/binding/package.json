@@ -39,7 +39,7 @@
     "not dead"
   ],
   "dependencies": {
-    "dompurify": "^2.3.1"
+    "dompurify": "^2.3.3"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

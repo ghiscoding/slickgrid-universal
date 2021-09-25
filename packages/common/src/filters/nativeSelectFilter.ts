@@ -98,6 +98,7 @@ export class NativeSelectFilter implements Filter {
       this.searchTerms = [];
       this._currentValues = [];
       this.filterElm.value = '';
+      this.filterElm.classList.remove('filled');
       this.filterElm.dispatchEvent(new Event('change'));
     }
   }
@@ -115,7 +116,7 @@ export class NativeSelectFilter implements Filter {
    * @params selected items
    */
   getValues(): any[] {
-    return this._currentValues;
+    return this._currentValues || [];
   }
 
   /** Set value(s) on the DOM element */
@@ -127,6 +128,7 @@ export class NativeSelectFilter implements Filter {
       this.filterElm.value = `${values ?? ''}`;
       this._currentValues = [values];
     }
+    this.getValues().length > 0 ? this.filterElm.classList.add('filled') : this.filterElm.classList.remove('filled');
 
     // set the operator when defined
     this.operator = operator || this.defaultOperator;

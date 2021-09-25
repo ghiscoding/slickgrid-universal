@@ -229,6 +229,7 @@ export class SelectFilter implements Filter {
       values = Array.isArray(values) ? values : [values];
       this.$filterElm.multipleSelect('setSelects', values);
     }
+    this.getValues().length > 0 ? this.$filterElm.addClass('filled') : this.$filterElm.removeClass('filled');
 
     // set the operator when defined
     this.operator = operator || this.defaultOperator;

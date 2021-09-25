@@ -129,6 +129,18 @@ describe('SliderRangeFilter', () => {
     expect(spyCallback).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [3, 84], shouldTriggerQuery: true });
   });
 
+  it('should be able to call "setValues" and set empty values and the input to not have the "filled" css class', () => {
+    filter.init(filterArguments);
+    filter.setValues([3, 80]);
+    let filledInputElm = divContainer.querySelector('.search-filter.slider-range-container.filter-duration.filled') as HTMLInputElement;
+
+    expect(filledInputElm).toBeTruthy();
+
+    filter.setValues('');
+    filledInputElm = divContainer.querySelector('.search-filter.slider-range-container.filter-duration.filled') as HTMLInputElement;
+    expect(filledInputElm).toBeFalsy();
+  });
+
   it('should create the input filter with default search terms range when passed as a filter argument', () => {
     filterArguments.searchTerms = [3, 80];
 

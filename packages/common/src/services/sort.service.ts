@@ -412,6 +412,11 @@ export class SortService {
         // we could use the DataView sort but that would require re-sorting again (since the 2nd array that is currently in the DataView would have to be resorted against the 1st array that was sorting from tree sort)
         // it is simply much faster to just replace the entire dataset
         this._dataView.setItems(datasetSortResult.flat, datasetIdPropertyName);
+
+        // also trigger a row count changed to avoid having an invalid filtered item count in the grid footer
+        // basically without this the item count in the footer is incorrect and shows the full dataset length instead of the previous filtered count
+        // that happens because we just overwrote the entire dataset the DataView.refresh() doesn't detect a row count change so we trigger it manually
+        this._dataView.onRowCountChanged.notify({ previous: this._dataView.getFilteredItemCount(), current: this._dataView.getLength(), itemCount: this._dataView.getItemCount(), dataView: this._dataView, callingOnRowsChanged: true });
       } else {
         dataView.sort(this.sortComparers.bind(this, sortColumns));
       }

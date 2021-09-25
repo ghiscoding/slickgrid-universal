@@ -80,4 +80,22 @@ describe('the String SortComparer', () => {
     inputArray.sort((value1, value2) => stringSortComparer(value1, value2, direction, columnDef, { cellValueCouldBeUndefined: true } as GridOption));
     expect(inputArray).toEqual(['zebra', 'amazon', 'abc', 'John', 'Abe', '@at', '', undefined, undefined]);
   });
+
+  it('should return a sorted ascending array ignore any accent when "ignoreAccentOnStringFilterAndSort" is set in the grid options', () => {
+    // from MDN specification quote: All undefined elements are sorted to the end of the array.
+    const columnDef = { id: 'name', field: 'name' } as Column;
+    const direction = SortDirectionNumber.asc;
+    const inputArray = ['Jose Silva', 'José', 'amazon', 'zebra' , 'Chêvre', '', '@at', 'John', 'Abe', 'abc', 'Ângelo'];
+    inputArray.sort((value1, value2) => stringSortComparer(value1, value2, direction, columnDef, { ignoreAccentOnStringFilterAndSort: true } as GridOption));
+    expect(inputArray).toEqual(['', '@at', 'Abe', 'Ângelo', 'Chêvre', 'John', 'José', 'Jose Silva', 'abc', 'amazon', 'zebra']);
+  });
+
+  it('should return a sorted descending array ignore any accent when "ignoreAccentOnStringFilterAndSort" is set in the grid options', () => {
+    // from MDN specification quote: All undefined elements are sorted to the end of the array.
+    const columnDef = { id: 'name', field: 'name' } as Column;
+    const direction = SortDirectionNumber.desc;
+    const inputArray = ['Jose Silva', 'José', 'amazon', 'zebra' , 'Chêvre', '', '@at', 'John', 'Abe', 'abc', 'Ângelo'];
+    inputArray.sort((value1, value2) => stringSortComparer(value1, value2, direction, columnDef, { ignoreAccentOnStringFilterAndSort: true } as GridOption));
+    expect(inputArray).toEqual(['zebra', 'amazon', 'abc', 'Jose Silva', 'José', 'John', 'Chêvre', 'Ângelo', 'Abe', '@at', '']);
+  });
 });

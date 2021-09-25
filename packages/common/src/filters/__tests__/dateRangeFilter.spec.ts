@@ -194,6 +194,20 @@ describe('DateRangeFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: ['2000-01-01', '2000-01-31'], shouldTriggerQuery: true });
   });
 
+  it('should be able to call "setValues" and set empty values and the picker input to not have the "filled" css class', () => {
+    const mockDates = ['2000-01-01T05:00:00.000Z', '2000-01-31T05:00:00.000Z'];
+    filter.init(filterArguments);
+    filter.setValues(mockDates);
+    let filledInputElm = divContainer.querySelector('.search-filter.filter-finish.filled') as HTMLInputElement;
+
+    expect(filter.currentDates).toEqual(mockDates);
+    expect(filledInputElm).toBeTruthy();
+
+    filter.setValues('');
+    filledInputElm = divContainer.querySelector('.search-filter.filter-finish.filled') as HTMLInputElement;
+    expect(filledInputElm).toBeFalsy();
+  });
+
   it('should work with different locale when locale is changed', async () => {
     await (await import('flatpickr/dist/l10n/fr')).French;
 

@@ -21,6 +21,10 @@
   to { background: none; }
 }
 
+ul {
+  list-style-type: none;
+}
+
 .slickgrid-container {
   border-top: var(--slick-container-border-top, $container-border-top);
   border-bottom: var(--slick-container-border-bottom, $container-border-bottom);
