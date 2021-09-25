@@ -27,6 +27,7 @@ archive.file('package.json', { name: 'package.json' });
 archive.finalize();
 
 console.log(`Compressed input folders "${inputFolder1}" and "${inputFolder2}" to single output file "${outputPathFilename}"`);
-console.log(`File location:: "${__dirname.replace(/\\/gi, '/')}/${outputPathFilename}"`);
+console.log(`File Location:: "${__dirname.replace(/\\/gi, '/')}/${outputPathFilename}"`);
+console.log(`File Size:: ${(fs.statSync(outputPathFilename).size / 1024).toFixed(2)}Kb`);
 console.log(`Processed Timestamp`, new Date().toLocaleString('en-CA'));
 console.log(`ALL DONE!!!`);
