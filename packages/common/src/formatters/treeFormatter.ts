@@ -1,7 +1,8 @@
 import { Constants } from '../constants';
 import { Formatter } from './../interfaces/index';
 import { parseFormatterWhenExist } from './formatterUtilities';
-import { getCellValueFromQueryFieldGetter, sanitizeTextByAvailableSanitizer } from '../services/utilities';
+import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
+import { getCellValueFromQueryFieldGetter, } from '../services/utilities';
 
 /** Formatter that must be use with a Tree Data column */
 export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {

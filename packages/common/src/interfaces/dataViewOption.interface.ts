@@ -1,3 +1,4 @@
+import { GroupItemMetadataProviderService } from '../services/groupItemMetadataProvider.service';
 import { SlickGroupItemMetadataProvider } from './slickGroupItemMetadataProvider.interface';
 
 export interface DataViewOption {
@@ -5,5 +6,5 @@ export interface DataViewOption {
   inlineFilters?: boolean;
 
   /** Optionally provide a Group Item Metatadata Provider when using Grouping/DraggableGrouping feature */
-  groupItemMetadataProvider?: SlickGroupItemMetadataProvider;
+  groupItemMetadataProvider?: SlickGroupItemMetadataProvider | GroupItemMetadataProviderService;
 }

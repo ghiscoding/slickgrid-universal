@@ -13,7 +13,7 @@ import { ExtensionName } from '../enums/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { ExtensionService } from '../services/extension.service';
 import { PubSubService } from './pubSub.service';
-import { emptyElement } from './utilities';
+import { emptyElement } from './domUtilities';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;

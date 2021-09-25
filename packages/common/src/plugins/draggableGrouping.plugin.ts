@@ -17,7 +17,8 @@ import {
 import { BindingEventService } from '../services/bindingEvent.service';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
-import { emptyElement, isEmptyObject } from '../services/utilities';
+import { emptyElement } from '../services/domUtilities';
+import { isEmptyObject } from '../services/utilities';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;

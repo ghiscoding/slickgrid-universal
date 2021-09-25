@@ -30,7 +30,8 @@ import {
   SlickNamespace,
 } from './../interfaces/index';
 import { BackendUtilityService } from './backendUtility.service';
-import { deepCopy, getDescendantProperty, mapOperatorByFieldType, sanitizeHtmlToText } from './utilities';
+import { sanitizeHtmlToText, } from '../services/domUtilities';
+import { deepCopy, getDescendantProperty, mapOperatorByFieldType, } from './utilities';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
 import { RxJsFacade, Subject } from './rxjsFacade';

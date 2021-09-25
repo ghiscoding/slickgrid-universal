@@ -21,12 +21,8 @@ import {
   GridOption,
   SlickGrid,
 } from '../interfaces/index';
-import {
-  destroyObjectDomElementProps,
-  emptyElement,
-  mapFlatpickrDateFormatWithFieldType,
-  mapMomentDateFormatWithFieldType
-} from '../services/utilities';
+import { destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
+import { mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
 
