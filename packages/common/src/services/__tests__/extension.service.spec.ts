@@ -5,7 +5,6 @@ import { Column, ExtensionModel, GridOption, SlickGrid, SlickNamespace } from '.
 import {
   CellExternalCopyManagerExtension,
   CheckboxSelectorExtension,
-  DraggableGroupingExtension,
   ExtensionUtility,
   GroupItemMetaProviderExtension,
   RowDetailViewExtension,
@@ -14,7 +13,7 @@ import {
 } from '../../extensions';
 import { BackendUtilityService, ExtensionService, FilterService, PubSubService, SharedService, SortService, TreeDataService } from '../index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { AutoTooltipPlugin, CellMenuPlugin, ContextMenuPlugin, HeaderButtonPlugin, HeaderMenuPlugin } from '../../plugins/index';
+import { AutoTooltipPlugin, CellMenuPlugin, ContextMenuPlugin, DraggableGroupingPlugin, HeaderButtonPlugin, HeaderMenuPlugin } from '../../plugins/index';
 import { ColumnPickerControl, GridMenuControl } from '../../controls/index';
 
 jest.mock('flatpickr', () => { });
@@ -35,11 +34,13 @@ const gridStub = {
   getColumnIndex: jest.fn(),
   getOptions: jest.fn(),
   getPluginByName: jest.fn(),
+  getPreHeaderPanel: jest.fn(),
   getUID: () => GRID_UID,
   getColumns: jest.fn(),
   setColumns: jest.fn(),
   onColumnsResized: jest.fn(),
   registerPlugin: jest.fn(),
+  updateColumnHeader: jest.fn(),
   onBeforeDestroy: new Slick.Event(),
   onBeforeHeaderCellDestroy: new Slick.Event(),
   onBeforeSetColumns: new Slick.Event(),
@@ -145,7 +146,6 @@ describe('ExtensionService', () => {
         // extensions
         extensionStub as unknown as CellExternalCopyManagerExtension,
         extensionCheckboxSelectorStub as unknown as CheckboxSelectorExtension,
-        extensionStub as unknown as DraggableGroupingExtension,
         extensionGroupItemMetaStub as unknown as GroupItemMetaProviderExtension,
         extensionStub as unknown as RowDetailViewExtension,
         extensionRowMoveStub as unknown as RowMoveManagerExtension,
@@ -309,19 +309,26 @@ describe('ExtensionService', () => {
       });
 
       it('should register the DraggableGrouping addon when "enableDraggableGrouping" is set in the grid options', () => {
-        const gridOptionsMock = { enableDraggableGrouping: true } as GridOption;
-        const ext1Spy = jest.spyOn(extensionStub, 'register').mockReturnValue({ ...instanceMock });
-        const ext2Spy = jest.spyOn(extensionGroupItemMetaStub, 'register').mockReturnValue({ ...instanceMock });
+        const onRegisteredMock = jest.fn();
+        const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
+        jest.spyOn(gridStub, 'getPreHeaderPanel').mockReturnValue(document.createElement('div'));
+        jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+        const gridOptionsMock = { enableDraggableGrouping: true, draggableGrouping: { onExtensionRegistered: onRegisteredMock } } as GridOption;
         const gridSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
+        service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
         service.bindDifferentExtensions();
-        const output1 = service.getExtensionByName(ExtensionName.draggableGrouping);
+
+        const output = service.getExtensionByName(ExtensionName.draggableGrouping);
+        const pluginInstance = service.getSlickgridAddonInstance(ExtensionName.draggableGrouping);
         const output2 = service.getExtensionByName(ExtensionName.groupItemMetaProvider);
 
+        expect(onRegisteredMock).toHaveBeenCalledWith(expect.toBeObject());
+        expect(output.instance instanceof DraggableGroupingPlugin).toBeTrue();
         expect(gridSpy).toHaveBeenCalled();
-        expect(ext1Spy).toHaveBeenCalled();
-        expect(ext2Spy).toHaveBeenCalled();
-        expect(output1).toEqual({ name: ExtensionName.draggableGrouping, instance: instanceMock as unknown, class: extensionStub } as ExtensionModel<any, any>);
+        expect(pluginInstance).toBeTruthy();
+        expect(output!.instance).toEqual(pluginInstance);
+        expect(output).toEqual({ name: ExtensionName.draggableGrouping, instance: pluginInstance, class: pluginInstance } as ExtensionModel<any, any>);
         expect(output2).toEqual({ name: ExtensionName.groupItemMetaProvider, instance: instanceMock as unknown, class: extensionStub } as ExtensionModel<any, any>);
       });
 
@@ -537,11 +544,11 @@ describe('ExtensionService', () => {
       it('should call draggableGroupingExtension create when "enableDraggableGrouping" is set in the grid options provided', () => {
         const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
         const gridOptionsMock = { enableDraggableGrouping: true } as GridOption;
-        const extSpy = jest.spyOn(extensionStub, 'create').mockReturnValue(instanceMock);
 
         service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
+        const instance = service.getCreatedExtensionByName(ExtensionName.draggableGrouping);
 
-        expect(extSpy).toHaveBeenCalledWith(gridOptionsMock);
+        expect(instance).toBeTruthy();
       });
 
       it('should register the RowSelection & RowMoveManager addons with specific "columnIndexPosition" and expect these orders to be respected regardless of when the feature is enabled/created', () => {
@@ -842,7 +849,6 @@ describe('ExtensionService', () => {
         // extensions
         extensionStub as unknown as CellExternalCopyManagerExtension,
         extensionStub as unknown as CheckboxSelectorExtension,
-        extensionStub as unknown as DraggableGroupingExtension,
         extensionGroupItemMetaStub as unknown as GroupItemMetaProviderExtension,
         extensionStub as unknown as RowDetailViewExtension,
         extensionStub as unknown as RowMoveManagerExtension,

@@ -47,6 +47,9 @@ export interface Locale {
   /** Text "Copy" shown in Context Menu to copy a cell value */
   TEXT_COPY: string;
 
+  /** Text "Drop a column header here to group by the column" which shows in the pre-header when using the Draggable Grouping plugin */
+  TEXT_DROP_COLUMN_HEADER_TO_GROUP_BY?: string;
+
   /** Text "Starts With" shown in Compound Editors/Filters as an Operator */
   TEXT_ENDS_WITH: string;
 
@@ -175,6 +178,9 @@ export interface Locale {
 
   /** Text "Synchronous Resize" displayed in the Column Picker & Grid Menu (when enabled) */
   TEXT_SYNCHRONOUS_RESIZE?: string;
+
+  /** Text "Toggle all Groups" which can optionally show in a button inside the Draggable Grouping pre-header row */
+  TEXT_TOGGLE_ALL_GROUPS?: string;
 
   /** Text "Toggle Filter Row" shown in Grid Menu (when enabled) */
   TEXT_TOGGLE_FILTER_ROW?: string;

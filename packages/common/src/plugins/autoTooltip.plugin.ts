@@ -18,10 +18,10 @@ declare const Slick: SlickNamespace;
  * @param {number}  [options.maxToolTipLength=null]      - The maximum length for a tooltip
  */
 export class AutoTooltipPlugin {
-  private _eventHandler!: SlickEventHandler;
-  private _grid!: SlickGrid;
-  private _addonOptions?: AutoTooltipOption;
-  private _defaults = {
+  protected _eventHandler!: SlickEventHandler;
+  protected _grid!: SlickGrid;
+  protected _addonOptions?: AutoTooltipOption;
+  protected _defaults = {
     enableForCells: true,
     enableForHeaderCells: false,
     maxToolTipLength: undefined,
@@ -63,14 +63,14 @@ export class AutoTooltipPlugin {
   }
 
   // --
-  // private functions
+  // protected functions
   // ------------------
 
   /**
    * Handle mouse entering grid cell to add/remove tooltip.
    * @param {Object} event - The event
    */
-  private handleMouseEnter(event: Event) {
+  protected handleMouseEnter(event: Event) {
     const cell = this._grid.getCellFromEvent(event);
     if (cell) {
       let node: HTMLElement | null = this._grid.getCellNode(cell.row, cell.cell);
@@ -95,7 +95,7 @@ export class AutoTooltipPlugin {
    * @param {Object} event - The event
    * @param {Object} args.column - The column definition
    */
-  private handleHeaderMouseEnter(event: Event, args: { column: Column; }) {
+  protected handleHeaderMouseEnter(event: Event, args: { column: Column; }) {
     const column = args.column;
     let node: HTMLDivElement | null;
     const targetElm = (event.target as HTMLDivElement);

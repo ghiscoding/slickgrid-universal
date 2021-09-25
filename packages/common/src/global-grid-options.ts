@@ -105,6 +105,11 @@ export const GlobalGridOptions: GridOption = {
   defaultColumnSortFieldId: 'id',
   defaultComponentEventPrefix: '',
   defaultSlickgridEventPrefix: '',
+  draggableGrouping: {
+    hideToggleAllButton: false,
+    toggleAllButtonText: '',
+    dropPlaceHolderTextKey: 'DROP_COLUMN_HEADER_TO_GROUP_BY',
+  },
   editable: false,
   editorTypingDebounce: 450,
   filterTypingDebounce: 0,
