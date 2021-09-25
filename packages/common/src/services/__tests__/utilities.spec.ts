@@ -24,6 +24,7 @@ import {
   getTranslationPrefix,
   htmlEncode,
   htmlEntityDecode,
+  isEmptyObject,
   isNumber,
   mapMomentDateFormatWithFieldType,
   mapFlatpickrDateFormatWithFieldType,
@@ -126,6 +127,23 @@ describe('Service/Utilies', () => {
     it('should be able to decode unicode characters and also latin accents', () => {
       const result = htmlEntityDecode(`&#83;&#97;&#109;&#39;&#115;&#32;&#55357;&#56960;&#55358;&#56708;&#32;&#101;&#115;&#112;&#97;&#241;&#111;&#108;`);
       expect(result).toBe(`Sam's 🚀🦄 español`);
+    });
+  });
+
+  describe('isEmptyObject method', () => {
+    it('should return True when comparing against an object that has properties', () => {
+      const result = isEmptyObject({ firstName: 'John', lastName: 'Doe' });
+      expect(result).toBeFalse();
+    });
+
+    it('should return False when comparing against an object is either empty, null or undefined', () => {
+      const result1 = isEmptyObject({});
+      const result2 = isEmptyObject(null);
+      const result3 = isEmptyObject(undefined);
+
+      expect(result1).toBeTrue();
+      expect(result2).toBeTrue();
+      expect(result3).toBeTrue();
     });
   });
 

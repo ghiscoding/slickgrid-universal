@@ -225,13 +225,13 @@ export interface SlickGrid {
   getPluginByName<T = keyof SlickPluginList>(name: string): T;
 
   /** Get the Pre-Header Panel DOM node element */
-  getPreHeaderPanel(): HTMLElement;
+  getPreHeaderPanel(): HTMLDivElement;
 
   /** Get the Pre-Header Panel Left DOM node element */
-  getPreHeaderPanelLeft(): HTMLElement;
+  getPreHeaderPanelLeft(): HTMLDivElement;
 
   /** Get the Pre-Header Panel Right DOM node element */
-  getPreHeaderPanelRight(): HTMLElement;
+  getPreHeaderPanelRight(): HTMLDivElement;
 
   /** Get rendered range */
   getRenderedRange(viewportTop?: number, viewportLeft?: number): { top: number; bottom: number; leftPx: number; rightPx: number; };

@@ -4,11 +4,10 @@ import 'slickgrid/plugins/slick.cellrangeselector';
 import 'slickgrid/plugins/slick.cellselectionmodel';
 
 import { Column, Extension, ExtensionModel, GridOption, SlickRowSelectionModel, } from '../interfaces/index';
-import { ExtensionList, ExtensionName, SlickControlList, SlickPluginList } from '../enums/index';
+import { ColumnReorderFunction, ExtensionList, ExtensionName, SlickControlList, SlickPluginList } from '../enums/index';
 import {
   CellExternalCopyManagerExtension,
   CheckboxSelectorExtension,
-  DraggableGroupingExtension,
   ExtensionUtility,
   GroupItemMetaProviderExtension,
   RowDetailViewExtension,
@@ -17,7 +16,7 @@ import {
 } from '../extensions/index';
 import { SharedService } from './shared.service';
 import { TranslaterService } from './translater.service';
-import { AutoTooltipPlugin, CellMenuPlugin, ContextMenuPlugin, HeaderButtonPlugin, HeaderMenuPlugin } from '../plugins/index';
+import { AutoTooltipPlugin, CellMenuPlugin, ContextMenuPlugin, DraggableGroupingPlugin, HeaderButtonPlugin, HeaderMenuPlugin } from '../plugins/index';
 import { ColumnPickerControl, GridMenuControl } from '../controls/index';
 import { FilterService } from './filter.service';
 import { PubSubService } from './pubSub.service';
@@ -34,6 +33,7 @@ export class ExtensionService {
   protected _cellMenuPlugin?: CellMenuPlugin;
   protected _contextMenuPlugin?: ContextMenuPlugin;
   protected _columnPickerControl?: ColumnPickerControl;
+  protected _draggleGroupingPlugin?: DraggableGroupingPlugin;
   protected _gridMenuControl?: GridMenuControl;
   protected _headerMenuPlugin?: HeaderMenuPlugin;
   protected _extensionCreatedList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
@@ -56,7 +56,6 @@ export class ExtensionService {
 
     protected readonly cellExternalCopyExtension: CellExternalCopyManagerExtension,
     protected readonly checkboxSelectorExtension: CheckboxSelectorExtension,
-    protected readonly draggableGroupingExtension: DraggableGroupingExtension,
     protected readonly groupItemMetaExtension: GroupItemMetaProviderExtension,
     protected readonly rowDetailViewExtension: RowDetailViewExtension,
     protected readonly rowMoveManagerExtension: RowMoveManagerExtension,
@@ -94,6 +93,17 @@ export class ExtensionService {
   /** Get only visible columns */
   getVisibleColumns(): Column[] {
     return this.sharedService.visibleColumns || [];
+  }
+
+  /**
+   * Get an Extension that was created by calling its "create" method (there are only 3 extensions which uses this method)
+   *  @param name
+   */
+  getCreatedExtensionByName<P extends (SlickControlList | SlickPluginList) = any, E extends Extension = any>(name: ExtensionName): ExtensionModel<P, E> | undefined {
+    if (this._extensionCreatedList && this._extensionCreatedList.hasOwnProperty(name)) {
+      return this._extensionCreatedList[name];
+    }
+    return undefined;
   }
 
   /**
@@ -207,11 +217,15 @@ export class ExtensionService {
       }
 
       // Draggable Grouping Plugin
-      if (this.gridOptions.enableDraggableGrouping && this.draggableGroupingExtension && this.draggableGroupingExtension.register) {
-        const instance = this.draggableGroupingExtension.register();
-        if (instance) {
-          this._extensionList[ExtensionName.draggableGrouping] = { name: ExtensionName.draggableGrouping, class: this.draggableGroupingExtension, instance };
+      if (this.gridOptions.enableDraggableGrouping) {
+        if (this._draggleGroupingPlugin) {
+          this._draggleGroupingPlugin.init(this.sharedService.slickGrid, this.gridOptions.draggableGrouping);
+          if (this.gridOptions.draggableGrouping?.onExtensionRegistered) {
+            this.gridOptions.draggableGrouping.onExtensionRegistered(this._draggleGroupingPlugin);
+          }
+          this._extensionList[ExtensionName.contextMenu] = { name: ExtensionName.contextMenu, class: this._draggleGroupingPlugin, instance: this._draggleGroupingPlugin };
         }
+        this._extensionList[ExtensionName.draggableGrouping] = { name: ExtensionName.draggableGrouping, class: this._draggleGroupingPlugin, instance: this._draggleGroupingPlugin };
       }
 
       // Grid Menu Control
@@ -316,10 +330,10 @@ export class ExtensionService {
 
     if (gridOptions.enableDraggableGrouping) {
       if (!this.getCreatedExtensionByName(ExtensionName.draggableGrouping)) {
-        const draggableInstance = this.draggableGroupingExtension.create(gridOptions);
-        if (draggableInstance) {
-          gridOptions.enableColumnReorder = draggableInstance.getSetupColumnReorder;
-          this._extensionCreatedList[ExtensionName.draggableGrouping] = { name: ExtensionName.draggableGrouping, instance: draggableInstance, class: this.draggableGroupingExtension };
+        this._draggleGroupingPlugin = new DraggableGroupingPlugin(this.extensionUtility, this.pubSubService, this.sharedService);
+        if (this._draggleGroupingPlugin) {
+          gridOptions.enableColumnReorder = this._draggleGroupingPlugin.setupColumnReorder as ColumnReorderFunction;
+          this._extensionCreatedList[ExtensionName.draggableGrouping] = { name: ExtensionName.draggableGrouping, instance: this._draggleGroupingPlugin, class: this._draggleGroupingPlugin };
         }
       }
     }
@@ -470,17 +484,6 @@ export class ExtensionService {
         this._extensionCreatedList[feature.name] = { name: feature.name, instance, class: feature.extension };
       }
     });
-  }
-
-  /**
-   * Get an Extension that was created by calling its "create" method (there are only 3 extensions which uses this method)
-   *  @param name
-   */
-  protected getCreatedExtensionByName<P extends (SlickControlList | SlickPluginList) = any, E extends Extension = any>(name: ExtensionName): ExtensionModel<P, E> | undefined {
-    if (this._extensionCreatedList && this._extensionCreatedList.hasOwnProperty(name)) {
-      return this._extensionCreatedList[name];
-    }
-    return undefined;
   }
 
   /** Translate an array of items from an input key and assign translated value to the output key */

@@ -255,6 +255,18 @@ export function emptyObject(obj: any) {
 }
 
 /**
+ * Check if an object is empty
+ * @param obj - input object
+ * @returns - boolean
+ */
+export function isEmptyObject(obj: any): boolean {
+  if (obj === null || obj === undefined) {
+    return true;
+  }
+  return Object.entries(obj).length === 0;
+}
+
+/**
  * @deprecated use `findItemInTreeStructure()` instead. Find an item from a hierarchical (tree) view structure (a parent that can have children array which themseleves can children and so on)
  * @param treeArray
  * @param predicate

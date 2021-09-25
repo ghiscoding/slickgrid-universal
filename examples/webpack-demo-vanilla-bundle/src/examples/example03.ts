@@ -2,6 +2,7 @@ import {
   Aggregators,
   BindingEventService,
   Column,
+  DraggableGroupingPlugin,
   Editors,
   FieldType,
   FileType,
@@ -11,7 +12,6 @@ import {
   Grouping,
   GroupingGetterFunction,
   GroupTotalFormatters,
-  SlickDraggableGrouping,
   SlickNamespace,
   SortComparers,
   SortDirectionNumber,
@@ -45,7 +45,7 @@ export class Example3 {
   excelExportService: ExcelExportService;
   sgb: SlickVanillaGridBundle;
   durationOrderByCount = false;
-  draggableGroupingPlugin: SlickDraggableGrouping;
+  draggableGroupingPlugin: DraggableGroupingPlugin;
   loadingClass = '';
   selectedGroupingFields: Array<string | GroupingGetterFunction> = ['', '', ''];
 
@@ -310,6 +310,7 @@ export class Example3 {
         deleteIconCssClass: 'mdi mdi-close color-danger',
         onGroupChanged: (_e, args) => this.onGroupChanged(args),
         onExtensionRegistered: (extension) => this.draggableGroupingPlugin = extension,
+        // groupIconCssClass: 'mdi mdi-drag-vertical',
       },
       enableCheckboxSelector: true,
       enableRowSelection: true,
@@ -381,7 +382,7 @@ export class Example3 {
   }
 
   clearGrouping() {
-    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
+    if (this.draggableGroupingPlugin?.setDroppedGroups) {
       this.draggableGroupingPlugin.clearDroppedGroups();
     }
     this.sgb?.slickGrid.invalidate(); // invalidate all rows and re-render
@@ -404,7 +405,7 @@ export class Example3 {
 
   groupByDuration() {
     this.clearGrouping();
-    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
+    if (this.draggableGroupingPlugin?.setDroppedGroups) {
       this.showPreHeader();
       this.draggableGroupingPlugin.setDroppedGroups('duration');
       this.sgb?.slickGrid.invalidate(); // invalidate all rows and re-render
@@ -424,20 +425,16 @@ export class Example3 {
 
   groupByDurationEffortDriven() {
     this.clearGrouping();
-    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
+    if (this.draggableGroupingPlugin?.setDroppedGroups) {
       this.showPreHeader();
       this.draggableGroupingPlugin.setDroppedGroups(['duration', 'effortDriven']);
       this.sgb?.slickGrid.invalidate(); // invalidate all rows and re-render
-
-      // you need to manually add the sort icon(s) in UI
-      const sortColumns = [{ columnId: 'duration', sortAsc: true }];
-      this.sgb?.slickGrid.setSortColumns(sortColumns);
     }
   }
 
   groupByFieldName(_fieldName, _index) {
     this.clearGrouping();
-    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
+    if (this.draggableGroupingPlugin?.setDroppedGroups) {
       this.showPreHeader();
 
       // get the field names from Group By select(s) dropdown, but filter out any empty fields

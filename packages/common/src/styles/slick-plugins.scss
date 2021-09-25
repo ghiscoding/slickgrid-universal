@@ -820,6 +820,8 @@ input.flatpickr.form-control {
 
 .slick-preheader-panel {
   .ui-droppable, .ui-droppable-hover {
+    display: flex;
+    align-items: center;
     padding: var(--slick-draggable-group-drop-padding, $draggable-group-drop-padding);
     height: var(--slick-draggable-group-drop-height, $draggable-group-drop-height);
     border-top: var(--slick-draggable-group-drop-border-top, $draggable-group-drop-border-top) !important;
@@ -830,25 +832,37 @@ input.flatpickr.form-control {
     border-radius: var(--slick-draggable-group-drop-radius, $draggable-group-drop-radius);
     background-color: var(--slick-draggable-group-drop-bgcolor, $draggable-group-drop-bgcolor);
 
-    .slick-placeholder {
+    .slick-draggable-dropbox-toggle-placeholder {
       font-style: var(--slick-draggable-group-placeholder-font-style, $draggable-group-placeholder-font-style);
       color: var(--slick-draggable-group-placeholder-color, $draggable-group-placeholder-color);
     }
 
     .slick-group-toggle-all {
-      position: absolute;
       cursor: pointer;
-      font-family: var(--slick-icon-font-family, $icon-font-family);
-      color: var(--slick-draggable-group-toggle-all-color, $draggable-group-toggle-all-color);
-      display: var(--slick-draggable-group-toggle-all-display, $draggable-group-toggle-all-display) !important;
-      top: var(--slick-draggable-group-toggle-all-pos-top, $draggable-group-toggle-all-pos-top);
-      right: var(--slick-draggable-group-toggle-all-pos-right, $draggable-group-toggle-all-pos-right);
+      border: var(--draggable-group-toggle-all-border, $draggable-group-toggle-all-border);
+      border-radius: var(--draggable-group-toggle-all-border-radius, $draggable-group-toggle-all-border-radius);
+      display: var(--slick-draggable-group-toggle-all-display, $draggable-group-toggle-all-display);
+      margin-right: var(--slick-draggable-group-toggle-all-margin-right, $draggable-group-toggle-all-margin-right);
+      padding: var(--slick-draggable-group-toggle-all-padding, $draggable-group-toggle-all-padding);
+      position: var(--draggable-group-toggle-all-position, $draggable-group-toggle-all-position);
+      top: var(--slick-draggable-group-toggle-all-top, $draggable-group-toggle-all-top);
+      right: var(--slick-draggable-group-toggle-all-right, $draggable-group-toggle-all-right);
 
-      &.expanded:before {
+      .slick-group-toggle-all-icon.expanded:before {
         content: var(--slick-draggable-group-toggle-expanded-icon, $draggable-group-toggle-expanded-icon);
       }
-      &.collapsed:before {
+      .slick-group-toggle-all-icon.collapsed:before {
         content: var(--slick-draggable-group-toggle-collapsed-icon, $draggable-group-toggle-collapsed-icon);
+      }
+      .slick-group-toggle-all-icon.collapsed:before,
+      .slick-group-toggle-all-icon.expanded:before {
+        color: var(--slick-draggable-group-toggle-all-color, $draggable-group-toggle-all-color);
+        font-family: var(--slick-icon-font-family, $icon-font-family);
+        vertical-align: var(--slick-draggable-group-toggle-all-icon-vertical-align, $draggable-group-toggle-all-icon-vertical-align);
+      }
+      .slick-group-toggle-all-text {
+        font-size: var(--slick-draggable-group-toggle-all-text-font-size, $draggable-group-toggle-all-text-font-size);
+        margin: var(--slick-draggable-group-toggle-all-text-margin, $draggable-group-toggle-all-text-margin);
       }
     }
 

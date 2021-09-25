@@ -134,12 +134,12 @@ export class ExtensionUtility {
     }
   }
 
-  /** Translate the an array of items from an input key and assign to the output key */
+  /** Translate the array of items from an input key and assign them to their output key */
   translateItems<T = any>(items: T[], inputKey: string, outputKey: string) {
     if (Array.isArray(items)) {
       for (const item of items) {
         if ((item as any)[inputKey]) {
-          (item as any)[outputKey] = this.translaterService && this.translaterService.getCurrentLanguage && this.translaterService.translate && this.translaterService.translate((item as any)[inputKey]);
+          (item as any)[outputKey] = this.translaterService?.translate?.((item as any)[inputKey]);
         }
       }
     }

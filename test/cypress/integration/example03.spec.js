@@ -84,7 +84,7 @@ describe('Example 03 - Draggable Grouping', { retries: 1 }, () => {
     it('should be able to drag and swap grouped column titles inside the pre-header', () => {
       cy.get('.slick-dropped-grouping:nth(0) div')
         .contains('Duration')
-        .trigger('mousedown', 'bottom', { which: 1 });
+        .trigger('mousedown', 'center', { which: 1 });
 
       cy.get('.slick-dropped-grouping:nth(1) div')
         .contains('Effort-Driven')
