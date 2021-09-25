@@ -9,10 +9,12 @@ const deepAssign = (assign_ as any)['default'] || assign_;
 // Public classes.
 export * from './constants';
 export * from './global-grid-options';
+
 export * from './enums/index';
 export * from './interfaces/index';
 export * from './aggregators/index';
 export * from './aggregators/aggregators.index';
+export * from './controls/index';
 export * from './editors/index';
 export * from './editors/editors.index';
 export * from './extensions/index';
@@ -25,6 +27,7 @@ export * from './formatters/index';
 export * from './formatters/formatters.index';
 export * from './grouping-formatters/index';
 export * from './grouping-formatters/groupingFormatters.index';
+export * from './plugins/index';
 export * from './sortComparers/index';
 export * from './sortComparers/sortComparers.index';
 export * from './services/index';
