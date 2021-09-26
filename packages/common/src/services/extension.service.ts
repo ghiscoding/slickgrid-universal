@@ -9,7 +9,6 @@ import {
   CellExternalCopyManagerExtension,
   CheckboxSelectorExtension,
   ExtensionUtility,
-  GroupItemMetaProviderExtension,
   RowDetailViewExtension,
   RowMoveManagerExtension,
   RowSelectionExtension,
@@ -19,6 +18,7 @@ import { TranslaterService } from './translater.service';
 import { AutoTooltipPlugin, CellMenuPlugin, ContextMenuPlugin, DraggableGroupingPlugin, HeaderButtonPlugin, HeaderMenuPlugin } from '../plugins/index';
 import { ColumnPickerControl, GridMenuControl } from '../controls/index';
 import { FilterService } from './filter.service';
+import { GroupItemMetadataProviderService } from './groupItemMetadataProvider.service';
 import { PubSubService } from './pubSub.service';
 import { SortService } from './sort.service';
 import { TreeDataService } from './treeData.service';
@@ -35,6 +35,7 @@ export class ExtensionService {
   protected _columnPickerControl?: ColumnPickerControl;
   protected _draggleGroupingPlugin?: DraggableGroupingPlugin;
   protected _gridMenuControl?: GridMenuControl;
+  protected _groupItemMetadataProviderService?: GroupItemMetadataProviderService;
   protected _headerMenuPlugin?: HeaderMenuPlugin;
   protected _extensionCreatedList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
   protected _extensionList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
@@ -56,7 +57,6 @@ export class ExtensionService {
 
     protected readonly cellExternalCopyExtension: CellExternalCopyManagerExtension,
     protected readonly checkboxSelectorExtension: CheckboxSelectorExtension,
-    protected readonly groupItemMetaExtension: GroupItemMetaProviderExtension,
     protected readonly rowDetailViewExtension: RowDetailViewExtension,
     protected readonly rowMoveManagerExtension: RowMoveManagerExtension,
     protected readonly rowSelectionExtension: RowSelectionExtension,
@@ -147,10 +147,8 @@ export class ExtensionService {
       // Auto Tooltip Plugin
       if (this.gridOptions.enableAutoTooltip) {
         const instance = new AutoTooltipPlugin(this.gridOptions?.autoTooltipOptions);
-        if (instance) {
-          this.sharedService.slickGrid.registerPlugin<AutoTooltipPlugin>(instance);
-          this._extensionList[ExtensionName.autoTooltip] = { name: ExtensionName.autoTooltip, class: instance, instance };
-        }
+        this.sharedService.slickGrid.registerPlugin<AutoTooltipPlugin>(instance);
+        this._extensionList[ExtensionName.autoTooltip] = { name: ExtensionName.autoTooltip, class: instance, instance };
       }
 
       // Cell External Copy Manager Plugin (Excel Like)
@@ -164,12 +162,10 @@ export class ExtensionService {
       // (Action) Cell Menu Plugin
       if (this.gridOptions.enableCellMenu) {
         this._cellMenuPlugin = new CellMenuPlugin(this.extensionUtility, this.pubSubService, this.sharedService);
-        if (this._cellMenuPlugin) {
-          if (this.gridOptions.cellMenu?.onExtensionRegistered) {
-            this.gridOptions.cellMenu.onExtensionRegistered(this._cellMenuPlugin);
-          }
-          this._extensionList[ExtensionName.cellMenu] = { name: ExtensionName.cellMenu, class: this._cellMenuPlugin, instance: this._cellMenuPlugin };
+        if (this.gridOptions.cellMenu?.onExtensionRegistered) {
+          this.gridOptions.cellMenu.onExtensionRegistered(this._cellMenuPlugin);
         }
+        this._extensionList[ExtensionName.cellMenu] = { name: ExtensionName.cellMenu, class: this._cellMenuPlugin, instance: this._cellMenuPlugin };
       }
 
       // Row Selection Plugin
@@ -197,23 +193,19 @@ export class ExtensionService {
       // Column Picker Control
       if (this.gridOptions.enableColumnPicker) {
         this._columnPickerControl = new ColumnPickerControl(this.extensionUtility, this.pubSubService, this.sharedService);
-        if (this._columnPickerControl) {
-          if (this.gridOptions.columnPicker?.onExtensionRegistered) {
-            this.gridOptions.columnPicker.onExtensionRegistered(this._columnPickerControl);
-          }
-          this._extensionList[ExtensionName.columnPicker] = { name: ExtensionName.columnPicker, class: this._columnPickerControl, instance: this._columnPickerControl };
+        if (this.gridOptions.columnPicker?.onExtensionRegistered) {
+          this.gridOptions.columnPicker.onExtensionRegistered(this._columnPickerControl);
         }
+        this._extensionList[ExtensionName.columnPicker] = { name: ExtensionName.columnPicker, class: this._columnPickerControl, instance: this._columnPickerControl };
       }
 
       // Context Menu Control
       if (this.gridOptions.enableContextMenu) {
         this._contextMenuPlugin = new ContextMenuPlugin(this.extensionUtility, this.pubSubService, this.sharedService, this.treeDataService);
-        if (this._contextMenuPlugin) {
-          if (this.gridOptions.contextMenu?.onExtensionRegistered) {
-            this.gridOptions.contextMenu.onExtensionRegistered(this._contextMenuPlugin);
-          }
-          this._extensionList[ExtensionName.contextMenu] = { name: ExtensionName.contextMenu, class: this._contextMenuPlugin, instance: this._contextMenuPlugin };
+        if (this.gridOptions.contextMenu?.onExtensionRegistered) {
+          this.gridOptions.contextMenu.onExtensionRegistered(this._contextMenuPlugin);
         }
+        this._extensionList[ExtensionName.contextMenu] = { name: ExtensionName.contextMenu, class: this._contextMenuPlugin, instance: this._contextMenuPlugin };
       }
 
       // Draggable Grouping Plugin
@@ -231,45 +223,36 @@ export class ExtensionService {
       // Grid Menu Control
       if (this.gridOptions.enableGridMenu) {
         this._gridMenuControl = new GridMenuControl(this.extensionUtility, this.filterService, this.pubSubService, this.sharedService, this.sortService);
-        if (this._gridMenuControl) {
-          if (this.gridOptions.gridMenu?.onExtensionRegistered) {
-            this.gridOptions.gridMenu.onExtensionRegistered(this._gridMenuControl);
-          }
-          this._extensionList[ExtensionName.gridMenu] = { name: ExtensionName.gridMenu, class: this._gridMenuControl, instance: this._gridMenuControl };
+        if (this.gridOptions.gridMenu?.onExtensionRegistered) {
+          this.gridOptions.gridMenu.onExtensionRegistered(this._gridMenuControl);
         }
+        this._extensionList[ExtensionName.gridMenu] = { name: ExtensionName.gridMenu, class: this._gridMenuControl, instance: this._gridMenuControl };
       }
 
       // Grouping Plugin
       // register the group item metadata provider to add expand/collapse group handlers
       if (this.gridOptions.enableDraggableGrouping || this.gridOptions.enableGrouping) {
-        if (this.groupItemMetaExtension && this.groupItemMetaExtension.register) {
-          const instance = this.groupItemMetaExtension.register();
-          if (instance) {
-            this._extensionList[ExtensionName.groupItemMetaProvider] = { name: ExtensionName.groupItemMetaProvider, class: this.groupItemMetaExtension, instance };
-          }
-        }
+        this._groupItemMetadataProviderService = this._groupItemMetadataProviderService ? this._groupItemMetadataProviderService : new GroupItemMetadataProviderService();
+        this._groupItemMetadataProviderService.init(this.sharedService.slickGrid);
+        this._extensionList[ExtensionName.groupItemMetaProvider] = { name: ExtensionName.groupItemMetaProvider, class: this._groupItemMetadataProviderService, instance: this._groupItemMetadataProviderService };
       }
 
       // Header Button Plugin
       if (this.gridOptions.enableHeaderButton) {
         const headerButtonPlugin = new HeaderButtonPlugin(this.extensionUtility, this.pubSubService, this.sharedService);
-        if (headerButtonPlugin) {
-          if (this.gridOptions.headerButton?.onExtensionRegistered) {
-            this.gridOptions.headerButton.onExtensionRegistered(headerButtonPlugin);
-          }
-          this._extensionList[ExtensionName.headerButton] = { name: ExtensionName.headerButton, class: headerButtonPlugin, instance: headerButtonPlugin };
+        if (this.gridOptions.headerButton?.onExtensionRegistered) {
+          this.gridOptions.headerButton.onExtensionRegistered(headerButtonPlugin);
         }
+        this._extensionList[ExtensionName.headerButton] = { name: ExtensionName.headerButton, class: headerButtonPlugin, instance: headerButtonPlugin };
       }
 
       // Header Menu Plugin
       if (this.gridOptions.enableHeaderMenu) {
         this._headerMenuPlugin = new HeaderMenuPlugin(this.extensionUtility, this.filterService, this.pubSubService, this.sharedService, this.sortService);
-        if (this._headerMenuPlugin) {
-          if (this.gridOptions.headerMenu?.onExtensionRegistered) {
-            this.gridOptions.headerMenu.onExtensionRegistered(this._headerMenuPlugin);
-          }
-          this._extensionList[ExtensionName.headerMenu] = { name: ExtensionName.headerMenu, class: this._headerMenuPlugin, instance: this._headerMenuPlugin };
+        if (this.gridOptions.headerMenu?.onExtensionRegistered) {
+          this.gridOptions.headerMenu.onExtensionRegistered(this._headerMenuPlugin);
         }
+        this._extensionList[ExtensionName.headerMenu] = { name: ExtensionName.headerMenu, class: this._headerMenuPlugin, instance: this._headerMenuPlugin };
       }
 
       // Row Detail View Plugin

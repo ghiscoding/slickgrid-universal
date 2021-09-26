@@ -10,6 +10,7 @@ export * from './grid.service';
 export * from './gridEvent.service';
 export * from './gridState.service';
 export * from './groupingAndColspan.service';
+export * from './groupItemMetadataProvider.service';
 export * from './pagination.service';
 export * from './pubSub.service';
 export * from './resizer.service';

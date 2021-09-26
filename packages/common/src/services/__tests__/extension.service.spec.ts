@@ -6,7 +6,6 @@ import {
   CellExternalCopyManagerExtension,
   CheckboxSelectorExtension,
   ExtensionUtility,
-  GroupItemMetaProviderExtension,
   RowDetailViewExtension,
   RowMoveManagerExtension,
   RowSelectionExtension,
@@ -15,6 +14,7 @@ import { BackendUtilityService, ExtensionService, FilterService, PubSubService, 
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { AutoTooltipPlugin, CellMenuPlugin, ContextMenuPlugin, DraggableGroupingPlugin, HeaderButtonPlugin, HeaderMenuPlugin } from '../../plugins/index';
 import { ColumnPickerControl, GridMenuControl } from '../../controls/index';
+import { GroupItemMetadataProviderService } from '../groupItemMetadataProvider.service';
 
 jest.mock('flatpickr', () => { });
 declare const Slick: SlickNamespace;
@@ -48,6 +48,7 @@ const gridStub = {
   onContextMenu: new Slick.Event(),
   onColumnsReordered: new Slick.Event(),
   onHeaderCellRendered: new Slick.Event(),
+  onKeyDown: new Slick.Event(),
   onSetOptions: new Slick.Event(),
   onScroll: new Slick.Event(),
   onHeaderContextMenu: new Slick.Event(),
@@ -146,7 +147,6 @@ describe('ExtensionService', () => {
         // extensions
         extensionStub as unknown as CellExternalCopyManagerExtension,
         extensionCheckboxSelectorStub as unknown as CheckboxSelectorExtension,
-        extensionGroupItemMetaStub as unknown as GroupItemMetaProviderExtension,
         extensionStub as unknown as RowDetailViewExtension,
         extensionRowMoveStub as unknown as RowMoveManagerExtension,
         extensionStub as unknown as RowSelectionExtension,
@@ -321,6 +321,7 @@ describe('ExtensionService', () => {
 
         const output = service.getExtensionByName(ExtensionName.draggableGrouping);
         const pluginInstance = service.getSlickgridAddonInstance(ExtensionName.draggableGrouping);
+        const groupMetaInstance = service.getSlickgridAddonInstance(ExtensionName.groupItemMetaProvider);
         const output2 = service.getExtensionByName(ExtensionName.groupItemMetaProvider);
 
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.toBeObject());
@@ -329,7 +330,7 @@ describe('ExtensionService', () => {
         expect(pluginInstance).toBeTruthy();
         expect(output!.instance).toEqual(pluginInstance);
         expect(output).toEqual({ name: ExtensionName.draggableGrouping, instance: pluginInstance, class: pluginInstance } as ExtensionModel<any, any>);
-        expect(output2).toEqual({ name: ExtensionName.groupItemMetaProvider, instance: instanceMock as unknown, class: extensionStub } as ExtensionModel<any, any>);
+        expect(output2).toEqual({ name: ExtensionName.groupItemMetaProvider, instance: groupMetaInstance, class: groupMetaInstance } as ExtensionModel<any, any>);
       });
 
       it('should register the GridMenu addon when "enableGridMenu" is set in the grid options', () => {
@@ -356,10 +357,13 @@ describe('ExtensionService', () => {
 
         service.bindDifferentExtensions();
         const output = service.getExtensionByName(ExtensionName.groupItemMetaProvider);
+        const pluginInstance = service.getSlickgridAddonInstance(ExtensionName.groupItemMetaProvider);
 
         expect(gridSpy).toHaveBeenCalled();
-        expect(extSpy).toHaveBeenCalled();
-        expect(output).toEqual({ name: ExtensionName.groupItemMetaProvider, instance: instanceMock as unknown, class: extensionGroupItemMetaStub } as ExtensionModel<any, any>);
+        expect(output.instance instanceof GroupItemMetadataProviderService).toBeTrue();
+        expect(pluginInstance).toBeTruthy();
+        expect(output!.instance).toEqual(pluginInstance);
+        expect(output).toEqual({ name: ExtensionName.groupItemMetaProvider, instance: pluginInstance, class: pluginInstance } as ExtensionModel<any, any>);
       });
 
       it('should register the CheckboxSelector addon when "enableCheckboxSelector" is set in the grid options', () => {
@@ -849,7 +853,6 @@ describe('ExtensionService', () => {
         // extensions
         extensionStub as unknown as CellExternalCopyManagerExtension,
         extensionStub as unknown as CheckboxSelectorExtension,
-        extensionGroupItemMetaStub as unknown as GroupItemMetaProviderExtension,
         extensionStub as unknown as RowDetailViewExtension,
         extensionStub as unknown as RowMoveManagerExtension,
         extensionStub as unknown as RowSelectionExtension,

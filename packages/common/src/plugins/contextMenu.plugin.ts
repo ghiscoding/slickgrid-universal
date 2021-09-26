@@ -299,7 +299,7 @@ export class ContextMenuPlugin extends MenuFromCellBaseClass<ContextMenu> {
               positionOrder: 55,
               action: () => {
                 dataView.setGrouping([]);
-                this.pubSubService.publish('contextMenu:clearGrouping', true);
+                this.pubSubService.publish('contextMenu:clearGrouping');
               },
               itemUsabilityOverride: () => {
                 // only enable the command when there's an actually grouping in play
@@ -328,6 +328,7 @@ export class ContextMenuPlugin extends MenuFromCellBaseClass<ContextMenu> {
                 } else {
                   dataView.collapseAllGroups();
                 }
+                this.pubSubService.publish('contextMenu:collapseAllGroups');
               },
               itemUsabilityOverride: () => {
                 if (gridOptions.enableTreeData) {
@@ -359,6 +360,7 @@ export class ContextMenuPlugin extends MenuFromCellBaseClass<ContextMenu> {
                 } else {
                   dataView.expandAllGroups();
                 }
+                this.pubSubService.publish('contextMenu:expandAllGroups');
               },
               itemUsabilityOverride: () => {
                 if (gridOptions.enableTreeData) {

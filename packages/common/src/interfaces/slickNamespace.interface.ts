@@ -43,6 +43,7 @@ import {
 } from './index';
 import { CompositeEditorOption } from './compositeEditorOption.interface';
 import { AutoTooltipPlugin } from '../plugins/index';
+import { SlickGroup } from '..';
 
 /**
  * Slick Grid class interface of the entire library and it's multiple controls/plugins.
@@ -76,6 +77,8 @@ export interface SlickNamespace {
   /** Slick Grid is a data grid library and this class is the core of the library */
   Grid: new (gridContainer: HTMLElement | string, data: SlickDataView | Array<any>, columnDefinitions: Column[], gridOptions: GridOption) => SlickGrid;
 
+  /** Information about a group of rows. */
+  Group: new () => SlickGroup;
 
   // --
   // Slick Core

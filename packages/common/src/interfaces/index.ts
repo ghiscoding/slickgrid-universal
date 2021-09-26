@@ -146,6 +146,7 @@ export * from './slickEventData.interface';
 export * from './slickGrid.interface';
 export * from './slickEventHandler.interface';
 export * from './slickGridMenu.interface';
+export * from './slickGroup.interface';
 export * from './slickGroupItemMetadataProvider.interface';
 export * from './slickHeaderButtons.interface';
 export * from './slickHeaderMenu.interface';

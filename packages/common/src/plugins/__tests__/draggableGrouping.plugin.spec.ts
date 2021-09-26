@@ -1,10 +1,11 @@
 import 'jquery-ui/ui/widgets/sortable';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { Aggregators } from '../../aggregators/aggregators.index';
 import { DraggableGroupingPlugin } from '../draggableGrouping.plugin';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 import { Column, DraggableGroupingOption, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
-import { BackendUtilityService, PubSubService } from '../../services';
+import { BackendUtilityService, } from '../../services';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
@@ -56,13 +57,6 @@ const gridStub = {
   onMouseEnter: new Slick.Event(),
 } as unknown as SlickGrid;
 
-const pubSubServiceStub = {
-  publish: jest.fn(),
-  subscribe: jest.fn(),
-  unsubscribe: jest.fn(),
-  unsubscribeAll: jest.fn(),
-} as PubSubService;
-
 const mockColumns = [      // The column definitions
   { id: 'firstName', name: 'First Name', field: 'firstName', width: 100 },
   { id: 'lasstName', name: 'Last Name', field: 'lasstName', width: 100 },
@@ -84,6 +78,7 @@ const mockColumns = [      // The column definitions
 ] as Column[];
 
 describe('Draggable Grouping Plugin', () => {
+  let eventPubSubService: EventPubSubService;
   let plugin: DraggableGroupingPlugin;
   let sharedService: SharedService;
   let backendUtilityService: BackendUtilityService;
@@ -103,6 +98,7 @@ describe('Draggable Grouping Plugin', () => {
     preHeaderDiv.appendChild(dragGroupDiv);
     document.body.appendChild(preHeaderDiv);
 
+    eventPubSubService = new EventPubSubService();
     backendUtilityService = new BackendUtilityService();
     sharedService = new SharedService();
     translateService = new TranslateServiceStub();
@@ -111,7 +107,7 @@ describe('Draggable Grouping Plugin', () => {
     jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(gridStub, 'getPreHeaderPanel').mockReturnValue(preHeaderDiv);
-    plugin = new DraggableGroupingPlugin(extensionUtility, pubSubServiceStub, sharedService);
+    plugin = new DraggableGroupingPlugin(extensionUtility, eventPubSubService, sharedService);
   });
 
   afterEach(() => {
@@ -448,6 +444,30 @@ describe('Draggable Grouping Plugin', () => {
           expect(toggleAllIconElm.classList.contains('expanded')).toBeTruthy();
           expect(toggleAllIconElm.classList.contains('collapsed')).toBeFalsy();
           expect(dvExpandSpy).toHaveBeenCalled();
+        });
+
+        it('should clear all grouping when that action is called from Context Menu, it must be also cleared in the Draggable Grouping preheader', () => {
+          const clearGroupSpy = jest.spyOn(plugin, 'clearDroppedGroups');
+          eventPubSubService.publish('contextMenu:clearGrouping');
+          expect(clearGroupSpy).toHaveBeenCalled();
+        });
+
+        it('should change the toggle icon to collapsed when that action is called from the Context Menu', () => {
+          eventPubSubService.publish('contextMenu:collapseAllGroups');
+          const toggleAllElm = document.querySelector('.slick-group-toggle-all');
+          const toggleAllIconElm = toggleAllElm.querySelector('.slick-group-toggle-all-icon');
+
+          expect(toggleAllIconElm.classList.contains('expanded')).toBeFalsy();
+          expect(toggleAllIconElm.classList.contains('collapsed')).toBeTruthy();
+        });
+
+        it('should change the toggle icon to expanded when that action is called from the Context Menu', () => {
+          eventPubSubService.publish('contextMenu:expandAllGroups');
+          const toggleAllElm = document.querySelector('.slick-group-toggle-all');
+          const toggleAllIconElm = toggleAllElm.querySelector('.slick-group-toggle-all-icon');
+
+          expect(toggleAllIconElm.classList.contains('expanded')).toBeTruthy();
+          expect(toggleAllIconElm.classList.contains('collapsed')).toBeFalsy();
         });
       });
     });
