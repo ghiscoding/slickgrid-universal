@@ -146,44 +146,56 @@ describe('InputFilter', () => {
       expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: ['abc'], shouldTriggerQuery: true });
     });
 
+    it('should be able to call "setValues" and set empty values and the input to not have the "filled" css class', () => {
+      filter.init(filterArguments);
+      filter.setValues('9');
+      let filledInputElm = divContainer.querySelector('.search-filter.filter-duration.filled') as HTMLInputElement;
+
+      expect(filledInputElm).toBeTruthy();
+
+      filter.setValues('');
+      filledInputElm = divContainer.querySelector('.search-filter.filter-duration.filled') as HTMLInputElement;
+      expect(filledInputElm).toBeFalsy();
+    });
+
     it('should call "setValues" and include an operator and expect the operator to show up in the output search string shown in the filter input text value', () => {
       filter.init(filterArguments);
 
       filter.setValues('abc', '<>');
-      expect(filter.getValue()).toBe('<>abc');
+      expect(filter.getValues()).toBe('<>abc');
 
       filter.setValues('abc', '!=');
-      expect(filter.getValue()).toBe('!=abc');
+      expect(filter.getValues()).toBe('!=abc');
 
       filter.setValues('abc', '=');
-      expect(filter.getValue()).toBe('=abc');
+      expect(filter.getValues()).toBe('=abc');
 
       filter.setValues('abc', '==');
-      expect(filter.getValue()).toBe('==abc');
+      expect(filter.getValues()).toBe('==abc');
 
       filter.setValues(123, '<');
-      expect(filter.getValue()).toBe('<123');
+      expect(filter.getValues()).toBe('<123');
 
       filter.setValues(123, '<=');
-      expect(filter.getValue()).toBe('<=123');
+      expect(filter.getValues()).toBe('<=123');
 
       filter.setValues(123, '>');
-      expect(filter.getValue()).toBe('>123');
+      expect(filter.getValues()).toBe('>123');
 
       filter.setValues(123, '>=');
-      expect(filter.getValue()).toBe('>=123');
+      expect(filter.getValues()).toBe('>=123');
 
       filter.setValues('abc', 'EndsWith');
-      expect(filter.getValue()).toBe('*abc');
+      expect(filter.getValues()).toBe('*abc');
 
       filter.setValues('abc', '*z');
-      expect(filter.getValue()).toBe('*abc');
+      expect(filter.getValues()).toBe('*abc');
 
       filter.setValues('abc', 'StartsWith');
-      expect(filter.getValue()).toBe('abc*');
+      expect(filter.getValues()).toBe('abc*');
 
       filter.setValues('abc', 'a*');
-      expect(filter.getValue()).toBe('abc*');
+      expect(filter.getValues()).toBe('abc*');
     });
   });
 

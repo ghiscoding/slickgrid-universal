@@ -515,7 +515,7 @@ export class FilterService {
       operator: operator as OperatorString,
       searchInputLastChar: columnFilter.searchInputLastChar,
       filterSearchType: columnDef.filterSearchType,
-      ignoreAccentOnStringFilter: this._gridOptions.ignoreAccentOnStringFilter ?? false,
+      ignoreAccentOnStringFilterAndSort: this._gridOptions.ignoreAccentOnStringFilterAndSort ?? false,
       defaultFilterRangeOperator: this._gridOptions.defaultFilterRangeOperator,
     } as FilterConditionOption;
   }

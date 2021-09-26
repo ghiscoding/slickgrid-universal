@@ -23,7 +23,7 @@ export interface FilterConditionOption {
   filterSearchType?: typeof FieldType[keyof typeof FieldType];
 
   /** should we ignore any accent while filtering text? */
-  ignoreAccentOnStringFilter?: any;
+  ignoreAccentOnStringFilterAndSort?: any;
 
   /**
    * Parsed Search Terms is similar to SearchTerms but is already parsed in the correct format,

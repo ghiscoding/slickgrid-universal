@@ -15,12 +15,12 @@ export const executeStringFilterCondition: FilterCondition = ((options: FilterCo
   options.cellValue = (options.cellValue === undefined || options.cellValue === null) ? '' : options.cellValue.toString();
 
   // make both the cell value and search value lower for case insensitive comparison
-  const cellValue = options?.ignoreAccentOnStringFilter ? removeAccentFromText(options.cellValue, true) : options.cellValue.toLowerCase();
+  const cellValue = options?.ignoreAccentOnStringFilterAndSort ? removeAccentFromText(options.cellValue, true) : options.cellValue.toLowerCase();
   if (typeof searchValue1 === 'string') {
-    searchValue1 = options?.ignoreAccentOnStringFilter ? removeAccentFromText(searchValue1, true) : searchValue1.toLowerCase();
+    searchValue1 = options?.ignoreAccentOnStringFilterAndSort ? removeAccentFromText(searchValue1, true) : searchValue1.toLowerCase();
   }
   if (typeof searchValue2 === 'string') {
-    searchValue2 = options?.ignoreAccentOnStringFilter ? removeAccentFromText(searchValue2, true) : searchValue2.toLowerCase();
+    searchValue2 = options?.ignoreAccentOnStringFilterAndSort ? removeAccentFromText(searchValue2, true) : searchValue2.toLowerCase();
   }
 
   if (searchValue1 !== undefined && searchValue2 !== undefined) {

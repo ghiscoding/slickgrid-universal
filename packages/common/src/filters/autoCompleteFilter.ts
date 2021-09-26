@@ -203,6 +203,7 @@ export class AutoCompleteFilter implements Filter {
       this.searchTerms = [];
       this.$filterElm.val('');
       this.$filterElm.trigger('input');
+      this.$filterElm.removeClass('filled');
     }
   }
 
@@ -221,11 +222,16 @@ export class AutoCompleteFilter implements Filter {
     unsubscribeAll(this.subscriptions);
   }
 
+  getValues() {
+    return this.$filterElm.val();
+  }
+
   /** Set value(s) on the DOM element  */
   setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString) {
     if (values) {
       this.$filterElm.val(values);
     }
+    this.getValues() !== '' ? this.$filterElm.addClass('filled') : this.$filterElm.removeClass('filled');
 
     // set the operator when defined
     this.operator = operator || this.defaultOperator;

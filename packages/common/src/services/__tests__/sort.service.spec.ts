@@ -47,11 +47,15 @@ const gridOptionMock = {
 } as unknown as GridOption;
 
 const dataViewStub = {
+  getFilteredItemCount: jest.fn(),
+  getItemCount: jest.fn(),
   getItemMetadata: jest.fn(),
+  getLength: jest.fn(),
   refresh: jest.fn(),
-  sort: jest.fn(),
   reSort: jest.fn(),
+  sort: jest.fn(),
   setItems: jest.fn(),
+  onRowCountChanged: new Slick.Event(),
 } as unknown as SlickDataView;
 
 const backendServiceStub = {
