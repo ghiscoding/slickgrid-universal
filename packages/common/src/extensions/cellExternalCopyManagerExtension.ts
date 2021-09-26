@@ -18,7 +18,7 @@ import {
 import { ExtensionUtility } from './extensionUtility';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { SharedService } from '../services/shared.service';
-import { sanitizeHtmlToText } from '../services/utilities';
+import { sanitizeHtmlToText } from '../services/domUtilities';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;

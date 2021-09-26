@@ -1,5 +1,5 @@
 import { Formatter } from './../interfaces/index';
-import { sanitizeTextByAvailableSanitizer } from '../services/utilities';
+import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 
 /**
  * Takes an hyperlink cell value and transforms it into a real hyperlink, given that the value starts with 1 of these (http|ftp|https).

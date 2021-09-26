@@ -1,7 +1,8 @@
 import { OperatorString } from '../enums/operatorString.type';
 import { Column, GridOption } from '../interfaces/index';
 import { Observable, RxJsFacade, Subject, Subscription } from '../services/rxjsFacade';
-import { castObservableToPromise, getDescendantProperty, htmlEncodedStringWithPadding, sanitizeTextByAvailableSanitizer } from '../services/utilities';
+import { htmlEncodedStringWithPadding, sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
+import { castObservableToPromise, getDescendantProperty, } from '../services/utilities';
 
 /**
  * Create and return a select dropdown HTML element with a list of Operators with descriptions

@@ -18,13 +18,8 @@ import {
 import { FieldType, OperatorString, OperatorType, SearchTerm } from '../enums/index';
 import { Constants } from '../constants';
 import { buildSelectOperator } from './filterUtilities';
-import {
-  destroyObjectDomElementProps,
-  emptyElement,
-  getTranslationPrefix,
-  mapFlatpickrDateFormatWithFieldType,
-  mapOperatorToShorthandDesignation
-} from '../services/utilities';
+import { destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
+import { getTranslationPrefix, mapFlatpickrDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 import { BindingEventService } from '../services/bindingEvent.service';
 

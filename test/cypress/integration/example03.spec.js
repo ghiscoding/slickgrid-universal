@@ -102,5 +102,100 @@ describe('Example 03 - Draggable Grouping', { retries: 1 }, () => {
       cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(1)`).should('contain', 'Task');
       cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(2)`).should('contain', '0');
     });
+
+    it('should use the preheader Toggle All button and expect all groups to now be collapsed', () => {
+      cy.get('.slick-preheader-panel .slick-group-toggle-all').click();
+
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Effort-Driven: False');
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Effort-Driven: True');
+    });
+
+    it('should expand all rows with "Expand All" from context menu and expect all the Groups to be expanded and the Toogle All icon to be collapsed', () => {
+      cy.get('.grid3')
+        .find('.slick-row .slick-cell:nth(1)')
+        .rightclick({ force: true });
+
+      cy.get('.slick-context-menu.dropright .slick-context-menu-command-list')
+        .find('.slick-context-menu-item')
+        .find('.slick-context-menu-content')
+        .contains('Expand all Groups')
+        .click();
+
+      cy.get('.grid3')
+        .find('.slick-group-toggle.collapsed')
+        .should('have.length', 0);
+
+      cy.get('.grid3')
+        .find('.slick-group-toggle.expanded')
+        .should(($rows) => expect($rows).to.have.length.greaterThan(0));
+
+      cy.get('.slick-group-toggle-all-icon.expanded')
+        .should('exist');
+    });
+
+    it('should collapse all rows with "Collapse All" from context menu and expect all the Groups to be collapsed and the Toogle All icon to be collapsed', () => {
+      cy.get('.grid3')
+        .find('.slick-row .slick-cell:nth(1)')
+        .rightclick({ force: true });
+
+      cy.get('.slick-context-menu.dropright .slick-context-menu-command-list')
+        .find('.slick-context-menu-item')
+        .find('.slick-context-menu-content')
+        .contains('Collapse all Groups')
+        .click();
+
+      cy.get('.grid3')
+        .find('.slick-group-toggle.expanded')
+        .should('have.length', 0);
+
+      cy.get('.grid3')
+        .find('.slick-group-toggle.collapsed')
+        .should(($rows) => expect($rows).to.have.length.greaterThan(0));
+
+      cy.get('.slick-group-toggle-all-icon.collapsed')
+        .should('exist');
+    });
+
+    it('should use the preheader Toggle All button and expect all groups to now be expanded', () => {
+      cy.get('.slick-preheader-panel .slick-group-toggle-all').click();
+
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Effort-Driven: False');
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 0');
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0) .slick-group-toggle.expanded`)
+        .should('have.css', 'marginLeft').and('eq', `0px`);
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0) .slick-group-toggle.expanded`)
+        .should('have.css', 'marginLeft').and('eq', `15px`);
+    });
+
+    it('should use the preheader Toggle All button again and expect all groups to now be collapsed', () => {
+      cy.get('.slick-preheader-panel .slick-group-toggle-all').click();
+
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Effort-Driven: False');
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Effort-Driven: True');
+    });
+
+    it('should clear all groups with "Clear all Grouping" from context menu and expect all the Groups to be collapsed and the Toogle All icon to be collapsed', () => {
+      cy.get('.grid3')
+        .find('.slick-row .slick-cell:nth(1)')
+        .rightclick({ force: true });
+
+      cy.get('.slick-context-menu.dropright .slick-context-menu-command-list')
+        .find('.slick-context-menu-item')
+        .find('.slick-context-menu-content')
+        .contains('Clear all Grouping')
+        .click();
+
+      cy.get('.grid3')
+        .find('.slick-group-toggle-all')
+        .should('be.hidden');
+
+      cy.get('.grid3')
+        .find('.slick-draggable-dropbox-toggle-placeholder')
+        .should('be.visible')
+        .should('have.text', 'Drop a column header here to group by the column');
+    });
   });
 });

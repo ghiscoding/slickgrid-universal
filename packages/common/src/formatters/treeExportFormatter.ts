@@ -1,6 +1,7 @@
 import { Constants } from '../constants';
 import { Formatter } from './../interfaces/index';
-import { addWhiteSpaces, getCellValueFromQueryFieldGetter, sanitizeHtmlToText, } from '../services/utilities';
+import { sanitizeHtmlToText, } from '../services/domUtilities';
+import { addWhiteSpaces, getCellValueFromQueryFieldGetter, } from '../services/utilities';
 import { parseFormatterWhenExist } from './formatterUtilities';
 
 /** Formatter that must be use with a Tree Data column */

@@ -17,10 +17,10 @@ import {
   SlickNamespace,
 } from './../interfaces/index';
 import { textValidator } from '../editorValidators/textValidator';
+import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 import {
   findOrDefault,
   getDescendantProperty,
-  sanitizeTextByAvailableSanitizer,
   setDeepValue,
   toKebabCase
 } from '../services/utilities';

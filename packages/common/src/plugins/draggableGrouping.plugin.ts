@@ -17,7 +17,8 @@ import {
 import { BindingEventService } from '../services/bindingEvent.service';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
-import { emptyElement, isEmptyObject } from '../services/utilities';
+import { emptyElement } from '../services/domUtilities';
+import { isEmptyObject } from '../services/utilities';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -174,6 +175,10 @@ export class DraggableGroupingPlugin {
           this.groupToggler.appendChild(groupTogglerTextElm);
         }
         this.dropboxElm.appendChild(this.groupToggler);
+
+        // when calling Expand/Collapse All Groups from Context Menu, we also need to inform this plugin as well of the action
+        this.pubSubService.subscribe('contextMenu:collapseAllGroups', () => this.toggleGroupToggler(groupTogglerIconElm, true, false));
+        this.pubSubService.subscribe('contextMenu:expandAllGroups', () => this.toggleGroupToggler(groupTogglerIconElm, false, false));
       }
 
       this.dropboxPlaceholderElm = document.createElement('div');
@@ -208,6 +213,9 @@ export class DraggableGroupingPlugin {
           }
         }
       });
+
+      // when calling Clear All Groups from Context Menu, we also need to inform this plugin as well of the action
+      this.pubSubService.subscribe('contextMenu:clearGrouping', () => this.clearDroppedGroups());
 
       for (const col of this._gridColumns) {
         const columnId = col.field;
@@ -470,18 +478,26 @@ export class DraggableGroupingPlugin {
     if (this.groupToggler) {
       this._bindEventService.bind(this.groupToggler, 'click', ((event: DOMMouseEvent<HTMLDivElement>) => {
         const target = event.target.classList.contains('slick-group-toggle-all-icon') ? event.target : event.currentTarget.querySelector('.slick-group-toggle-all-icon');
-        if (target) {
-          if (target.classList.contains('collapsed')) {
-            target.classList.remove('collapsed');
-            target.classList.add('expanded');
-            this.dataView.expandAllGroups();
-          } else {
-            target.classList.add('collapsed');
-            target.classList.remove('expanded');
-            this.dataView.collapseAllGroups();
-          }
-        }
+        this.toggleGroupToggler(target, target?.classList.contains('expanded'));
       }) as EventListener);
+    }
+  }
+
+  protected toggleGroupToggler(targetElm: Element | null, collapsing = true, shouldExecuteDataViewCommand = true) {
+    if (targetElm) {
+      if (collapsing === true) {
+        targetElm.classList.add('collapsed');
+        targetElm.classList.remove('expanded');
+        if (shouldExecuteDataViewCommand) {
+          this.dataView.collapseAllGroups();
+        }
+      } else {
+        targetElm.classList.remove('collapsed');
+        targetElm.classList.add('expanded');
+        if (shouldExecuteDataViewCommand) {
+          this.dataView.expandAllGroups();
+        }
+      }
     }
   }
 

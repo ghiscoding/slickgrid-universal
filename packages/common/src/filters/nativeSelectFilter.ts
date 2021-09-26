@@ -8,7 +8,8 @@ import {
   SlickGrid,
 } from '../interfaces/index';
 import { OperatorType, OperatorString, SearchTerm } from '../enums/index';
-import { emptyElement, toSentenceCase } from '../services/utilities';
+import { emptyElement, } from '../services/domUtilities';
+import { toSentenceCase } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 import { BindingEventService } from '../services/bindingEvent.service';
 

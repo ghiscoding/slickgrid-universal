@@ -12,7 +12,8 @@ import {
   SlickGrid,
 } from '../interfaces/index';
 import { buildSelectOperator } from './filterUtilities';
-import { emptyElement, getTranslationPrefix, mapOperatorToShorthandDesignation, toSentenceCase } from '../services/utilities';
+import { emptyElement } from '../services/domUtilities';
+import { getTranslationPrefix, mapOperatorToShorthandDesignation, toSentenceCase } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
 

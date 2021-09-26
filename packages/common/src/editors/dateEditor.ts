@@ -23,6 +23,8 @@ import {
 import {
   destroyObjectDomElementProps,
   emptyElement,
+} from '../services/domUtilities';
+import {
   getDescendantProperty,
   mapFlatpickrDateFormatWithFieldType,
   mapMomentDateFormatWithFieldType,

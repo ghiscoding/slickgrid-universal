@@ -7,7 +7,8 @@ import {
   FilterCallback,
   SlickGrid,
 } from './../interfaces/index';
-import { emptyElement, hasData, toSentenceCase } from '../services/utilities';
+import { emptyElement, } from '../services/domUtilities';
+import { hasData, toSentenceCase } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 
 const DEFAULT_MIN_VALUE = 0;

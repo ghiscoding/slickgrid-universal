@@ -14,7 +14,6 @@ import {
   unflattenParentChildArrayToTree,
   decimalFormatted,
   deepCopy,
-  emptyElement,
   emptyObject,
   findItemInHierarchicalStructure,
   findItemInTreeStructure,
@@ -22,8 +21,6 @@ import {
   formatNumber,
   getDescendantProperty,
   getTranslationPrefix,
-  htmlEncode,
-  htmlEntityDecode,
   isEmptyObject,
   isNumber,
   mapMomentDateFormatWithFieldType,
@@ -34,8 +31,6 @@ import {
   parseBoolean,
   parseUtcDate,
   removeAccentFromText,
-  sanitizeHtmlToText,
-  sanitizeTextByAvailableSanitizer,
   setDeepValue,
   thousandSeparatorFormatted,
   titleCase,
@@ -103,30 +98,6 @@ describe('Service/Utilies', () => {
 
       const output = arrayRemoveItemByIndex(input, 1);
       expect(output).toEqual(expected);
-    });
-  });
-
-  describe('htmlEncode method', () => {
-    it('should return a encoded HTML string', () => {
-      const result = htmlEncode(`<div class="color: blue">Something</div>`);
-      expect(result).toBe(`&lt;div class=&quot;color: blue&quot;&gt;Something&lt;/div&gt;`);
-    });
-
-    it('should return a encoded HTML string with single quotes encoded as well', () => {
-      const result = htmlEncode(`<div class='color: blue'>Something</div>`);
-      expect(result).toBe(`&lt;div class=&#39;color: blue&#39;&gt;Something&lt;/div&gt;`);
-    });
-  });
-
-  describe('htmlEntityDecode method', () => {
-    it('should be able to decode HTML entity of an HTML string', () => {
-      const result = htmlEntityDecode(`&#60;&#100;&#105;&#118;&#62;&#97;&#60;&#47;&#100;&#105;&#118;&#62;`);
-      expect(result).toBe(`<div>a</div>`);
-    });
-
-    it('should be able to decode unicode characters and also latin accents', () => {
-      const result = htmlEntityDecode(`&#83;&#97;&#109;&#39;&#115;&#32;&#55357;&#56960;&#55358;&#56708;&#32;&#101;&#115;&#112;&#97;&#241;&#111;&#108;`);
-      expect(result).toBe(`Sam's 🚀🦄 español`);
     });
   });
 
@@ -423,18 +394,6 @@ describe('Service/Utilies', () => {
       expect(arr1[1].address.zip).toBe(222222);
       expect(arr2[0].address.zip).toBe(888888);
       expect(arr2[1].address.zip).toBe(999999);
-    });
-  });
-
-  describe('emptyElement method', () => {
-    const div = document.createElement('div');
-    div.innerHTML = `<ul><li>Item 1</li><li>Item 2</li></ul>`;
-    document.body.appendChild(div);
-
-    it('should empty the DOM element', () => {
-      expect(div.outerHTML).toBe('<div><ul><li>Item 1</li><li>Item 2</li></ul></div>');
-      emptyElement(div);
-      expect(div.outerHTML).toBe('<div></div>');
     });
   });
 
@@ -1259,92 +1218,6 @@ describe('Service/Utilies', () => {
       expect(removeAccentFromText(input1, true)).toBe('jose');
       expect(removeAccentFromText(input2, true)).toBe('chevre');
       expect(removeAccentFromText(input3, true)).toBe('aaaaaaaeeeeeiiiiiioooooo');
-    });
-  });
-
-  describe('sanitizeHtmlToText method', () => {
-    it('should return original value when input does not include any HTML tags', () => {
-      const input = 'foo bar';
-      const output = sanitizeHtmlToText(input);
-      expect(output).toBe('foo bar');
-    });
-
-    it('should return a string with only the HTML text content without any HTML tags', () => {
-      const input = '<div class="color: blue">Something</div>';
-      const output = sanitizeHtmlToText(input);
-      expect(output).toBe('Something');
-    });
-
-    it('should return the script content without javascript script tags when a script is provided', () => {
-      const input = '<script>alert("Hello World")</script>';
-      const output = sanitizeHtmlToText(input);
-      expect(output).toBe('alert("Hello World")');
-    });
-  });
-
-  describe('sanitizeTextByAvailableSanitizer method', () => {
-    describe('use default DOMPurify sanitizer when no sanitizer exist', () => {
-      const gridOptions = {} as GridOption;
-
-      it('should return original value when input does not include any HTML tags', () => {
-        const input = 'foo bar';
-        const output = sanitizeTextByAvailableSanitizer(gridOptions, input);
-        expect(output).toBe('foo bar');
-      });
-
-      it('should return original value when input does not include any bad HTML tags', () => {
-        const input = '<div class="color: blue">Something</div>';
-        const output = sanitizeTextByAvailableSanitizer(gridOptions, input);
-        expect(output).toBe('<div class="color: blue">Something</div>');
-      });
-
-      it('should return empty string when some javascript script tags are included', () => {
-        const input = '<script>alert("Hello World")</script>';
-        const output = sanitizeTextByAvailableSanitizer(gridOptions, input);
-        expect(output).toBe('');
-      });
-
-      it('should return an empty <a> link tag when "javascript:" is part of the dirty html', () => {
-        const input = '<a href="javascript:alert(\"Hello World\")"></a>';
-        const output = sanitizeTextByAvailableSanitizer(gridOptions, input);
-        expect(output).toBe('<a></a>');
-      });
-    });
-
-    describe('use custom sanitizer when provided in the grid options', () => {
-      const gridOptions = {
-        sanitizer: (dirtyHtml) => (dirtyHtml.replace(/(\b)(on\S+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script([<>]*)/gi, '')),
-      } as GridOption;
-
-      it('should return original value when input does not include any HTML tags', () => {
-        const input = 'foo bar';
-        const output = sanitizeTextByAvailableSanitizer(gridOptions, input);
-        expect(output).toBe('foo bar');
-      });
-
-      it('should return original value when input does not include any bad HTML tags', () => {
-        const input = '<div class="color: blue">Something</div>';
-        const output = sanitizeTextByAvailableSanitizer(gridOptions, input);
-        expect(output).toBe('<div class="color: blue">Something</div>');
-      });
-
-      it('should return empty string when some javascript script tags are included', () => {
-        const input = '<script>alert("Hello World")</script>';
-        const output = sanitizeTextByAvailableSanitizer(gridOptions, input);
-        expect(output).toBe('');
-      });
-
-      it('should return text without the word "javascript:" when that is part of the dirty html', () => {
-        const input = 'javascript:alert("Hello World")';
-        const output = sanitizeTextByAvailableSanitizer(gridOptions, input);
-        expect(output).toBe('');
-      });
-
-      it('should return an empty <a> link tag when "javascript:" is part of the dirty html', () => {
-        const input = '<a href="javascript:alert(\"Hello World\")"></a>';
-        const output = sanitizeTextByAvailableSanitizer(gridOptions, input);
-        expect(output).toBe('<a href="></a>');
-      });
     });
   });
 
