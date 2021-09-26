@@ -5,7 +5,6 @@ import 'slickgrid/lib/jquery.mousewheel';
 import 'slickgrid/slick.core';
 import 'slickgrid/slick.grid';
 import 'slickgrid/slick.dataview';
-import 'slickgrid/slick.groupitemmetadataprovider';
 import {
   autoAddEditorFormatterToColumnsWithEditor,
   AutoCompleteEditor,
