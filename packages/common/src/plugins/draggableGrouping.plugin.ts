@@ -178,9 +178,7 @@ export class DraggableGroupingPlugin {
 
         // when calling Expand/Collapse All Groups from Context Menu, we also need to inform this plugin as well of the action
         this.pubSubService.subscribe('contextMenu:collapseAllGroups', () => this.toggleGroupToggler(groupTogglerIconElm, true, false));
-        this.pubSubService.subscribe('contextMenu:expandAllGroups', () => {
-          this.toggleGroupToggler(groupTogglerIconElm, false, false)
-        });
+        this.pubSubService.subscribe('contextMenu:expandAllGroups', () => this.toggleGroupToggler(groupTogglerIconElm, false, false));
       }
 
       this.dropboxPlaceholderElm = document.createElement('div');
