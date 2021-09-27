@@ -5,6 +5,8 @@ import { FieldType, } from '../../enums/index';
 import { Column, GridOption, SlickGrid, SlickNamespace, } from '../../interfaces/index';
 import { ResizerService } from '../resizer.service';
 
+import 'jest-extended';
+
 declare const Slick: SlickNamespace;
 const DATAGRID_MIN_HEIGHT = 180;
 const DATAGRID_MIN_WIDTH = 300;
@@ -63,11 +65,23 @@ describe('Resizer Service', () => {
   let service: ResizerService;
   let divContainer: HTMLDivElement;
   let mockGridOptions: GridOption;
+  let resizeObserverMock: jest.Mock<ResizeObserver, [callback: ResizeObserverCallback]>;
 
   beforeEach(() => {
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
+
+    resizeObserverMock = jest.fn(function (callback: ResizeObserverCallback): ResizeObserver {
+      this.observe = jest.fn().mockImplementation(() => {
+        callback([], this); // Execute the callback on observe, similar to the window.ResizeObserver.
+      });
+      this.unobserve = jest.fn();
+      this.disconnect = jest.fn();
+      return this;
+    });
+
+    global.ResizeObserver = resizeObserverMock;
 
     eventPubSubService = new EventPubSubService();
     service = new ResizerService(eventPubSubService);
@@ -125,6 +139,57 @@ describe('Resizer Service', () => {
 
       expect(bindAutoResizeDataGridSpy).not.toHaveBeenCalled();
     });
+
+    it('should observe resize events on the container element when "resizeDetection" is "container"', () => {
+      mockGridOptions.enableAutoResize = true;
+      mockGridOptions.autoResize.resizeDetection = 'container';
+      const resizeContainer = document.createElement('div');
+      mockGridOptions.autoResize.container = resizeContainer;
+
+      service.init(gridStub, divContainer);
+
+      expect(resizeObserverMock.mock.instances.length).toBe(1);
+      const observerInstance = resizeObserverMock.mock.instances[0];
+
+      expect(observerInstance.observe).toHaveBeenCalledTimes(1);
+      expect(observerInstance.observe).toHaveBeenCalledWith(resizeContainer);
+    });
+
+    it('should throw an error when container element is not valid and "resizeDetection" is "container"', () => {
+      mockGridOptions.enableAutoResize = true;
+      mockGridOptions.autoResize.resizeDetection = 'container';
+      mockGridOptions.autoResize.container = '#doesnotexist';
+
+      expect(() => service.init(gridStub, divContainer)).toThrowError('[Slickgrid-Universal] Resizer Service requires a container when gridOption.autoResize.resizeDetection="container"');
+    });
+
+    it('should execute "resizeGrid" when "resizeDetection" is "container"', () => {
+      mockGridOptions.enableAutoResize = true;
+      mockGridOptions.autoResize.resizeDetection = "container";
+      const resizeContainer = document.createElement('div');
+      mockGridOptions.autoResize.container = resizeContainer;
+
+      const resizeGridSpy = jest.spyOn(service, 'resizeGrid');
+
+      service.init(gridStub, divContainer);
+
+      expect(resizeGridSpy).toHaveBeenCalledWith();
+    });
+
+    it('should not execute "resizeGrid" when "resizeDetection" is "container" and the resizer is paused', () => {
+      mockGridOptions.enableAutoResize = true;
+      mockGridOptions.autoResize.resizeDetection = "container";
+      const resizeContainer = document.createElement('div');
+      mockGridOptions.autoResize.container = resizeContainer;
+
+      const resizeGridSpy = jest.spyOn(service, 'resizeGrid');
+
+      service.pauseResizer(true);
+
+      service.init(gridStub, divContainer);
+
+      expect(resizeGridSpy).not.toHaveBeenCalled();
+    });
   });
 
   describe('dispose method', () => {
@@ -139,6 +204,22 @@ describe('Resizer Service', () => {
         expect(resizeGridWithDimensionsSpy).not.toHaveBeenCalled();
         done();
       }, 2);
+    });
+
+    it('should disconnect from resize events on the container element when "resizeDetection" is "container"', () => {
+      mockGridOptions.enableAutoResize = true;
+      mockGridOptions.autoResize.resizeDetection = "container";
+      const resizeContainer = document.createElement('div');
+      mockGridOptions.autoResize.container = resizeContainer;
+
+      service.init(gridStub, divContainer);
+
+      service.dispose();
+
+      expect(resizeObserverMock.mock.instances.length).toBe(1);
+      const observerInstance = resizeObserverMock.mock.instances[0];
+
+      expect(observerInstance.disconnect).toHaveBeenCalledTimes(1);
     });
   });
 

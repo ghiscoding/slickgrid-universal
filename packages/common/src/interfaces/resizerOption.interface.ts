@@ -8,8 +8,11 @@ export interface ResizerOption {
   /** bottom padding of the grid in pixels */
   bottomPadding?: number;
 
-  /** Page Container selector, for example '.page-container' or '#page-container', basically what element in the page will be used to calculate the available space */
-  container?: string;
+  /**
+   * Page Container. Either selector (for example '.page-container' or '#page-container'), or an HTMLElement.
+   * Basically what element in the page will be used to calculate the available space.
+   */
+  container?: string | HTMLElement;
 
   /**
    * Grid Container selector, for example '.myGrid' or '#myGrid', this is provided by the lib internally.
@@ -33,4 +36,14 @@ export interface ResizerOption {
 
   /** padding on the right side of the grid (pixels) */
   rightPadding?: number;
+
+  /**
+   * Defaults to 'window', how are resizes detected?
+   *
+   * When set to 'container':
+   * * Requires {@link container} to be set.
+   * * If you get 'ResizeObserver loop limit exceeded' errors in automated tests take a look
+   *   [here](https://stackoverflow.com/questions/49384120/resizeobserver-loop-limit-exceeded).
+   */
+  resizeDetection?: 'container' | 'window';
 }
