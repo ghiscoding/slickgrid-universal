@@ -354,6 +354,7 @@ export class Example14 {
       autoCommitEdit: true,
       autoResize: {
         container: '.grid-container',
+        resizeDetection: 'container',
       },
       enableAutoResize: true,
 

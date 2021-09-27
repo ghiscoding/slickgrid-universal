@@ -32,7 +32,7 @@ export class ResizerService {
   protected _fixedWidth?: number | string;
   protected _gridDomElm!: any;
   protected _gridContainerElm!: any;
-  protected _pageContainerElm!: any;
+  protected _pageContainerElm!: JQuery<HTMLElement>;
   protected _gridParentContainerElm!: HTMLElement;
   protected _intervalId!: NodeJS.Timeout;
   protected _intervalRetryDelay = DEFAULT_INTERVAL_RETRY_DELAY;
@@ -42,6 +42,7 @@ export class ResizerService {
   protected _totalColumnsWidthByContent = 0;
   protected _timer!: NodeJS.Timeout;
   protected _resizePaused = false;
+  protected _resizeObserver!: ResizeObserver;
 
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
@@ -89,7 +90,13 @@ export class ResizerService {
     }
     clearTimeout(this._timer);
 
-    $(window).off(`resize.grid${this.gridUidSelector}`);
+    if (this.gridOptions.autoResize?.resizeDetection === 'container') {
+      if (this._resizeObserver) {
+        this._resizeObserver.disconnect();
+      }
+    } else {
+      $(window).off(`resize.grid${this.gridUidSelector}`);
+    }
   }
 
   init(grid: SlickGrid, gridParentContainerElm: HTMLElement) {
@@ -110,7 +117,13 @@ export class ResizerService {
 
     const containerNode = grid?.getContainerNode?.() as HTMLDivElement;
     this._gridDomElm = $(containerNode);
-    this._pageContainerElm = $(this._autoResizeOptions.container!);
+
+    if (typeof this._autoResizeOptions.container === 'string') {
+      this._pageContainerElm = $(this._autoResizeOptions.container);
+    } else {
+      this._pageContainerElm = $(this._autoResizeOptions.container!);
+    }
+
     this._gridContainerElm = $(gridParentContainerElm);
 
     if (fixedGridSizes) {
@@ -146,22 +159,34 @@ export class ResizerService {
    * Options: we could also provide a % factor to resize on each height/width independently
    */
   bindAutoResizeDataGrid(newSizes?: GridSize): null | void {
-    // if we can't find the grid to resize, return without binding anything
-    if (this._gridDomElm === undefined || this._gridDomElm.offset() === undefined) {
-      return null;
+    if (this.gridOptions.autoResize?.resizeDetection === 'container') {
+      if (!this._pageContainerElm || !this._pageContainerElm[0]) {
+        throw new Error(`
+          [Slickgrid-Universal] Resizer Service requires a container when gridOption.autoResize.resizeDetection="container"
+          You can fix this by setting your gridOption.autoResize.container`);
+      }
+      if (!this._resizeObserver) {
+        this._resizeObserver = new ResizeObserver(() => this.resizeObserverCallback());
+      }
+      this._resizeObserver.observe(this._pageContainerElm[0]);
+    } else {
+      // if we can't find the grid to resize, return without binding anything
+      if (this._gridDomElm === undefined || this._gridDomElm.offset() === undefined) {
+        return null;
+      }
+
+      // -- 1st resize the datagrid size at first load (we need this because the .on event is not triggered on first load)
+      this.resizeGrid()
+        .then(() => this.resizeGridWhenStylingIsBrokenUntilCorrected())
+        .catch((rejection: any) => console.log('Error:', rejection));
+
+      // -- do a 2nd resize with a slight delay (in ms) so that we resize after the grid render is done
+      this.resizeGrid(10, newSizes);
+
+      // -- 2nd bind a trigger on the Window DOM element, so that it happens also when resizing after first load
+      // -- bind auto-resize to Window object only if it exist
+      $(window).on(`resize.grid${this.gridUidSelector}`, this.handleResizeGrid.bind(this, newSizes));
     }
-
-    // -- 1st resize the datagrid size at first load (we need this because the .on event is not triggered on first load)
-    this.resizeGrid()
-      .then(() => this.resizeGridWhenStylingIsBrokenUntilCorrected())
-      .catch((rejection: any) => console.log('Error:', rejection));
-
-    // -- do a 2nd resize with a slight delay (in ms) so that we resize after the grid render is done
-    this.resizeGrid(10, newSizes);
-
-    // -- 2nd bind a trigger on the Window DOM element, so that it happens also when resizing after first load
-    // -- bind auto-resize to Window object only if it exist
-    $(window).on(`resize.grid${this.gridUidSelector}`, this.handleResizeGrid.bind(this, newSizes));
   }
 
   handleResizeGrid(newSizes?: GridSize) {
@@ -171,6 +196,12 @@ export class ResizerService {
       // when changing the height and makes it much smoother experience
       this.resizeGrid(0, newSizes);
       this.resizeGrid(0, newSizes);
+    }
+  }
+
+  resizeObserverCallback(): void {
+    if (!this._resizePaused) {
+      this.resizeGrid();
     }
   }
 
