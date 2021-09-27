@@ -254,6 +254,12 @@ describe('with different i18n locale', () => {
     component.renderPagination(div);
   });
 
+  it('should throw an error when enabling translate without a Translate Service', () => {
+    mockGridOptions.enableTranslate = true;
+    expect(() => new SlickPaginationComponent(paginationServiceStub, eventPubSubService, sharedService, null))
+      .toThrow('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
+  });
+
   it('should create a the Slick-Pagination component in the DOM and expect different locale when changed', (done) => {
     translateService.use('fr');
     eventPubSubService.publish('onLanguageChange', 'fr');

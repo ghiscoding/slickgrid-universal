@@ -1389,7 +1389,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         component.gridOptions = { enableTranslate: true, createPreHeaderPanel: false, enableDraggableGrouping: false, showCustomFooter: true } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
-        const transCustomFooterSpy = jest.spyOn(component.slickFooter, 'translateCustomFooterTexts'); // footer gets created after init
 
         eventPubSubService.publish('onLanguageChange', { language: 'fr' });
 
@@ -1402,7 +1401,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           expect(transContextMenuSpy).toHaveBeenCalled();
           expect(transGridMenuSpy).toHaveBeenCalled();
           expect(transHeaderMenuSpy).toHaveBeenCalled();
-          expect(transCustomFooterSpy).toHaveBeenCalled();
           done();
         });
       });
@@ -1827,48 +1825,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
               itemsSelected: 'éléments sélectionnés',
               itemsSelectedKey: 'ITEMS_SELECTED',
               of: 'de',
-              ofKey: 'OF',
-            },
-            rightContainerClass: 'col-xs-6 col-sm-7',
-          });
-          done();
-        });
-      });
-
-      it('should have a Custom Footer and custom texts when "showCustomFooter" is enabled with different metricTexts defined', (done) => {
-        const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
-
-        component.gridOptions.enableTranslate = false;
-        component.gridOptions.showCustomFooter = true;
-        component.gridOptions.customFooterOptions = {
-          hideRowSelectionCount: false,
-          metricTexts: {
-            items: 'some items',
-            lastUpdate: 'some last update',
-            of: 'some of'
-          }
-        };
-        component.initialization(divContainer, slickEventHandler);
-        component.columnDefinitions = mockColDefs;
-
-        setTimeout(() => {
-          expect(component.columnDefinitions).toEqual(mockColDefs);
-          expect(component.gridOptions.showCustomFooter).toBeTrue();
-          expect(component.gridOptions.customFooterOptions).toEqual({
-            dateFormat: 'YYYY-MM-DD, hh:mm a',
-            hideRowSelectionCount: false,
-            hideLastUpdateTimestamp: true,
-            hideTotalItemCount: false,
-            footerHeight: 25,
-            leftContainerClass: 'col-xs-12 col-sm-5',
-            metricSeparator: '|',
-            metricTexts: {
-              items: 'some items',
-              itemsKey: 'ITEMS',
-              itemsSelected: 'items selected',
-              itemsSelectedKey: 'ITEMS_SELECTED',
-              lastUpdate: 'some last update',
-              of: 'some of',
               ofKey: 'OF',
             },
             rightContainerClass: 'col-xs-6 col-sm-7',
