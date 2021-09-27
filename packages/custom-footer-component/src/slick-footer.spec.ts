@@ -196,11 +196,13 @@ describe('Slick-Footer Component', () => {
     it('should create a the Slick-Footer component in the DOM and use different locale when enableTranslate is enabled', () => {
       (mockGridOptions.customFooterOptions as CustomFooterOption).metricTexts = { itemsKey: 'ITEMS', lastUpdateKey: 'LAST_UPDATE', ofKey: 'OF' };
       mockGridOptions.enableTranslate = true;
-      translateService.use('fr');
+      translateService.use('en');
       eventPubSubService.publish('onLanguageChange', 'fr');
 
       component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
+      translateService.use('fr');
+      eventPubSubService.publish('onLanguageChange', 'fr');
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
 
       const footerContainerElm = document.querySelector('div.slick-custom-footer.slickgrid_123456') as HTMLDivElement;
