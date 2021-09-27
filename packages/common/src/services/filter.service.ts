@@ -318,7 +318,7 @@ export class FilterService {
   }
 
   /** Local Grid Filter search */
-  customLocalFilter(item: any, args: any): boolean {
+  customLocalFilter(item: any, args: { columnFilters: ColumnFilters; dataView: SlickDataView; grid: SlickGrid; }): boolean {
     const grid = args?.grid;
     const isGridWithTreeData = this._gridOptions?.enableTreeData ?? false;
     const columnFilters = args?.columnFilters ?? {};
@@ -593,8 +593,8 @@ export class FilterService {
             // if item is valid OR we aren't excluding children and its parent is valid then we'll consider this valid
             // however we don't return true, we need to continue and loop through next filter(s) since we still need to check other keys in columnFilters
             if (conditionResult || (!excludeChildrenWhenFilteringTree && (filteredParents.get(item[parentPropName]) === true))) {
-              if (hasChildren) {
-                filteredParents.set(item[dataViewIdIdentifier], true); // when it's a Parent item, we'll keep a Map ref of it as valid
+              if (hasChildren && columnFilter.columnId === treeDataColumnId) {
+                filteredParents.set(item[dataViewIdIdentifier], true); // when it's a Parent item, we'll keep a Map ref as being a Parent with valid criteria
               }
               // if our filter is valid OR we're on the Tree column then let's continue
               if (conditionResult || (!excludeChildrenWhenFilteringTree && columnFilter.columnId === treeDataColumnId)) {
