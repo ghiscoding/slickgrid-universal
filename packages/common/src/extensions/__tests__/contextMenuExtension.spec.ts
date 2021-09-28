@@ -887,25 +887,29 @@ describe('contextMenuExtension', () => {
         const dataviewSpy = jest.spyOn(SharedService.prototype.dataView, 'setGrouping');
         const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideClearAllGrouping: false } } as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'clear-grouping') as MenuCommandItem;
         menuItemCommand.action!(new CustomEvent('change'), { command: 'clear-grouping', cell: 0, row: 0 } as any);
 
         expect(dataviewSpy).toHaveBeenCalledWith([]);
-        expect(pubSpy).toHaveBeenCalledWith('contextMenu:clearGrouping', true);
+        expect(pubSpy).toHaveBeenCalledWith('onContextMenuClearGrouping');
+        expect(pubSubSpy).toHaveBeenCalledWith('onContextMenuClearGrouping');
       });
 
       it('should call "collapseAllGroups" from the DataView when Grouping is enabled and the command triggered is "collapse-all-groups"', () => {
         const dataviewSpy = jest.spyOn(SharedService.prototype.dataView, 'collapseAllGroups');
         const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideCollapseAllGroups: false } } as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'collapse-all-groups') as MenuCommandItem;
         menuItemCommand.action!(new CustomEvent('change'), { command: 'collapse-all-groups', cell: 0, row: 0 } as any);
 
         expect(dataviewSpy).toHaveBeenCalledWith();
+        expect(pubSubSpy).toHaveBeenCalledWith('onContextMenuCollapseAllGroups');
       });
 
       it('should call "collapseAllGroups" from the DataView when Tree Data is enabled and the command triggered is "collapse-all-groups"', () => {
@@ -925,12 +929,14 @@ describe('contextMenuExtension', () => {
         const dataviewSpy = jest.spyOn(SharedService.prototype.dataView, 'expandAllGroups');
         const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideExpandAllGroups: false } } as GridOption;
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         extension.register();
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'expand-all-groups') as MenuCommandItem;
         menuItemCommand.action!(new CustomEvent('change'), { command: 'expand-all-groups', cell: 0, row: 0 } as any);
 
         expect(dataviewSpy).toHaveBeenCalledWith();
+        expect(pubSubSpy).toHaveBeenCalledWith('onContextMenuExpandAllGroups');
       });
 
       it('should call "expandAllGroups" from the DataView when Tree Data is enabled and the command triggered is "expand-all-groups"', () => {

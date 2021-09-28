@@ -74,7 +74,7 @@ export class DraggableGroupingExtension implements Extension {
         }
 
         // we also need to subscribe to a possible user clearing the grouping via the Context Menu, we need to clear the pre-header bar as well
-        this.pubSubService.subscribe('contextMenu:clearGrouping', () => this._addon?.clearDroppedGroups?.());
+        this.pubSubService.subscribe('onContextMenuClearGrouping', () => this._addon?.clearDroppedGroups?.());
       }
 
       return this._addon;
