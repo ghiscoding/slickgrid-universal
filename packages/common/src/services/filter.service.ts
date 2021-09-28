@@ -61,7 +61,7 @@ export class FilterService {
   protected _isTreePresetExecuted = false;
   protected _previousFilters: CurrentFilter[] = [];
   protected _onSearchChange: SlickEvent<OnSearchChangeEventArgs> | null;
-  protected _tmpPreFilteredData?: number[];
+  protected _tmpPreFilteredData?: Set<number | string>;
   protected httpCancelRequests$?: Subject<void>; // this will be used to cancel any pending http request
 
   constructor(protected filterFactory: FilterFactory, protected pubSubService: PubSubService, protected sharedService: SharedService, protected backendUtilities?: BackendUtilityService, protected rxjs?: RxJsFacade) {
@@ -318,7 +318,7 @@ export class FilterService {
   }
 
   /** Local Grid Filter search */
-  customLocalFilter(item: any, args: any): boolean {
+  customLocalFilter(item: any, args: { columnFilters: ColumnFilters; dataView: SlickDataView; grid: SlickGrid; }): boolean {
     const grid = args?.grid;
     const isGridWithTreeData = this._gridOptions?.enableTreeData ?? false;
     const columnFilters = args?.columnFilters ?? {};
@@ -343,8 +343,8 @@ export class FilterService {
       }
 
       // filter out any row items that aren't part of our pre-processed "preFilterTreeData()" result
-      if (Array.isArray(this._tmpPreFilteredData)) {
-        return this._tmpPreFilteredData.includes(item[dataViewIdIdentifier]); // return true when found, false otherwise
+      if (this._tmpPreFilteredData instanceof Set) {
+        return this._tmpPreFilteredData.has(item[dataViewIdIdentifier]); // return true when found, false otherwise
       }
     } else {
       if (typeof columnFilters === 'object') {
@@ -356,12 +356,12 @@ export class FilterService {
             return conditionOptions;
           }
 
-          let parsedSearchTerms = columnFilter?.parsedSearchTerms; // parsed term could a single value or an array of values
+          let parsedSearchTerms = columnFilter?.parsedSearchTerms; // parsed term could be a single value or an array of values
 
           // in the rare case that it's empty (it can happen when creating an external grid global search)
           // then get the parsed terms, once it's filled it typically won't ask for it anymore
           if (parsedSearchTerms === undefined) {
-            parsedSearchTerms = getParsedSearchTermsByFieldType(columnFilter.searchTerms, columnFilter.columnDef.type || FieldType.string); // parsed term could a single value or an array of values
+            parsedSearchTerms = getParsedSearchTermsByFieldType(columnFilter.searchTerms, columnFilter.columnDef.type || FieldType.string); // parsed term could be a single value or an array of values
             if (parsedSearchTerms !== undefined) {
               columnFilter.parsedSearchTerms = parsedSearchTerms;
             }
@@ -522,26 +522,35 @@ export class FilterService {
 
   /**
    * When using Tree Data, we need to prefilter (search) the data prior, the result will be an array of IDs which are the node(s) and their parent nodes when necessary.
-   * This will then be passed to the DataView setFilter(customLocalFilter), which will itself loop through the list of IDs and display/hide the row if found that array of IDs
+   * This will then be passed to the DataView setFilter(customLocalFilter), which will itself loop through the list of IDs and display/hide the row when found.
    * We do this in 2 steps so that we can still use the DataSet setFilter()
    */
   preFilterTreeData(inputItems: any[], columnFilters: ColumnFilters) {
     const treeDataOptions = this._gridOptions?.treeDataOptions;
     const collapsedPropName = treeDataOptions?.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
     const parentPropName = treeDataOptions?.parentPropName ?? Constants.treeDataProperties.PARENT_PROP;
+    const hasChildrenPropName = treeDataOptions?.hasChildrenPropName ?? Constants.treeDataProperties.HAS_CHILDREN_PROP;
     const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
     const treeDataToggledItems = this._gridOptions.presets?.treeData?.toggledItems;
+    const isInitiallyCollapsed = this._gridOptions.treeDataOptions?.initiallyCollapsed ?? false;
+    const treeDataColumnId = this._gridOptions.treeDataOptions?.columnId;
+    const excludeChildrenWhenFilteringTree = this._gridOptions.treeDataOptions?.excludeChildrenWhenFilteringTree;
+    const isNotExcludingChildAndValidateOnlyTreeColumn = !excludeChildrenWhenFilteringTree && this._gridOptions.treeDataOptions?.autoApproveParentItemWhenTreeColumnIsValid === true;
 
     const treeObj = {};
-    const filteredChildrenAndParents: any[] = [];
+    const filteredChildrenAndParents = new Set<number | string>(); // use Set instead of simple array to avoid duplicates
+
+    // a Map of unique itemId/value pair where the value is a boolean which tells us if the parent matches the filter criteria or not
+    // we will use this when the Tree Data option `excludeChildrenWhenFilteringTree` is enabled
+    const filteredParents = new Map<number | string, boolean>();
 
     if (Array.isArray(inputItems)) {
-      for (let i = 0; i < inputItems.length; i++) {
-        (treeObj as any)[inputItems[i][dataViewIdIdentifier]] = inputItems[i];
+      for (const inputItem of inputItems) {
+        (treeObj as any)[inputItem[dataViewIdIdentifier]] = inputItem;
         // as the filtered data is then used again as each subsequent letter
         // we need to delete the .__used property, otherwise the logic below
-        // in the while loop (which checks for parents) doesn't work:
-        delete (treeObj as any)[inputItems[i][dataViewIdIdentifier]].__used;
+        // in the while loop (which checks for parents) doesn't work
+        delete (treeObj as any)[inputItem[dataViewIdIdentifier]].__used;
       }
 
       // Step 1. prepare search filter by getting their parsed value(s), for example if it's a date filter then parse it to a Moment object
@@ -550,20 +559,19 @@ export class FilterService {
       for (const columnId of Object.keys(columnFilters)) {
         const columnFilter = columnFilters[columnId] as SearchColumnFilter;
         const searchValues: SearchTerm[] = columnFilter?.searchTerms ? deepCopy(columnFilter.searchTerms) : [];
-
         const inputSearchConditions = this.parseFormInputFilterConditions(searchValues, columnFilter);
 
         const columnDef = columnFilter.columnDef;
         const fieldType = columnDef?.filter?.type ?? columnDef?.type ?? FieldType.string;
-        const parsedSearchTerms = getParsedSearchTermsByFieldType(inputSearchConditions.searchTerms, fieldType); // parsed term could a single value or an array of values
+        const parsedSearchTerms = getParsedSearchTermsByFieldType(inputSearchConditions.searchTerms, fieldType); // parsed term could be a single value or an array of values
         if (parsedSearchTerms !== undefined) {
           columnFilter.parsedSearchTerms = parsedSearchTerms;
         }
       }
 
       // Step 2. loop through every item data context to execute filter condition check
-      for (let i = 0; i < inputItems.length; i++) {
-        const item = inputItems[i];
+      for (const item of inputItems) {
+        const hasChildren = item[hasChildrenPropName];
         let matchFilter = true; // valid until proven otherwise
 
         // loop through all column filters and execute filter condition(s)
@@ -572,13 +580,36 @@ export class FilterService {
           const conditionOptionResult = this.preProcessFilterConditionOnDataContext(item, columnFilter, this._grid);
 
           if (conditionOptionResult) {
-            const parsedSearchTerms = columnFilter?.parsedSearchTerms; // parsed term could a single value or an array of values
+            const parsedSearchTerms = columnFilter?.parsedSearchTerms; // parsed term could be a single value or an array of values
             const conditionResult = (typeof conditionOptionResult === 'boolean') ? conditionOptionResult : FilterConditions.executeFilterConditionTest(conditionOptionResult as FilterConditionOption, parsedSearchTerms);
-            if (conditionResult) {
-              // don't return true since we still need to check other keys in columnFilters
-              continue;
+
+            // when using `excludeChildrenWhenFilteringTree: false`, we can auto-approve current item if it's the column holding the Tree structure and is a Parent that passes the first filter criteria
+            // in other words, if we're on the column with the Tree and its filter is valid (and is a parent), then skip any other filter(s)
+            if (conditionResult && isNotExcludingChildAndValidateOnlyTreeColumn && hasChildren && columnFilter.columnId === treeDataColumnId) {
+              filteredParents.set(item[dataViewIdIdentifier], true);
+              break;
+            }
+
+            // if item is valid OR we aren't excluding children and its parent is valid then we'll consider this valid
+            // however we don't return true, we need to continue and loop through next filter(s) since we still need to check other keys in columnFilters
+            if (conditionResult || (!excludeChildrenWhenFilteringTree && (filteredParents.get(item[parentPropName]) === true))) {
+              if (hasChildren && columnFilter.columnId === treeDataColumnId) {
+                filteredParents.set(item[dataViewIdIdentifier], true); // when it's a Parent item, we'll keep a Map ref as being a Parent with valid criteria
+              }
+              // if our filter is valid OR we're on the Tree column then let's continue
+              if (conditionResult || (!excludeChildrenWhenFilteringTree && columnFilter.columnId === treeDataColumnId)) {
+                continue;
+              }
+            } else {
+              // when it's a Parent item AND its Parent isn't valid AND we aren't on the Tree column
+              // we'll keep reference of the parent via a Map key/value pair and make its value as False because this Parent item is considered invalid
+              if (hasChildren && filteredParents.get(item[parentPropName]) !== true && columnFilter.columnId !== treeDataColumnId) {
+                filteredParents.set(item[dataViewIdIdentifier], false);
+              }
             }
           }
+
+          // if we reach this line then our filter is invalid
           matchFilter = false;
           continue;
         }
@@ -586,20 +617,19 @@ export class FilterService {
         // build an array from the matched filters, anything valid from filter condition
         // will be pushed to the filteredChildrenAndParents array
         if (matchFilter) {
-          const len = filteredChildrenAndParents.length;
           // add child (id):
-          filteredChildrenAndParents.splice(len, 0, item[dataViewIdIdentifier]);
+          filteredChildrenAndParents.add(item[dataViewIdIdentifier]);
           let parent = (treeObj as any)[item[parentPropName]] ?? false;
 
           // if there are any presets of collapsed parents, let's processed them
-          const presetToggleShouldBeCollapsed = !this._gridOptions.treeDataOptions?.initiallyCollapsed;
+          const presetToggleShouldBeCollapsed = !isInitiallyCollapsed;
           if (!this._isTreePresetExecuted && Array.isArray(treeDataToggledItems) && treeDataToggledItems.some(collapsedItem => collapsedItem.itemId === parent.id && collapsedItem.isCollapsed === presetToggleShouldBeCollapsed)) {
             parent[collapsedPropName] = presetToggleShouldBeCollapsed;
           }
 
           while (parent) {
             // only add parent (id) if not already added:
-            parent.__used ?? filteredChildrenAndParents.splice(len, 0, parent[dataViewIdIdentifier]);
+            parent.__used ?? filteredChildrenAndParents.add(parent[dataViewIdIdentifier]);
             // mark each parent as used to not use them again later:
             (treeObj as any)[parent[dataViewIdIdentifier]].__used = true;
             // try to find parent of the current parent, if exists:
@@ -1173,7 +1203,7 @@ export class FilterService {
 
   protected updateColumnFilters(searchTerms: SearchTerm[] | undefined, columnDef: any, operator?: OperatorType | OperatorString) {
     const fieldType = columnDef.filter?.type ?? columnDef.type ?? FieldType.string;
-    const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, fieldType); // parsed term could a single value or an array of values
+    const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, fieldType); // parsed term could be a single value or an array of values
 
     if (searchTerms && columnDef) {
       this._columnFilters[columnDef.id] = {
