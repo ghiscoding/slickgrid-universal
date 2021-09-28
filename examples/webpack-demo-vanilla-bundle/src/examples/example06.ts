@@ -187,7 +187,7 @@ export class Example6 {
         id: newId,
         file: `pop-${newId}.mp3`,
         dateModified: new Date(),
-        size: Math.floor(Math.random() * 100) + 10,
+        size: Math.floor(Math.random() * 100) + 50,
       });
 
       // overwrite hierarchical dataset which will also trigger a grid sort and rendering

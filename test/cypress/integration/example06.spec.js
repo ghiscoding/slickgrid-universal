@@ -263,15 +263,15 @@ describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 },
     });
   });
 
-  it('should use same filter "music" and add extra filter of "size > 70" and expect 2+ songs (>=6 rows) to show up in the grid when "Exclude Children when Filtering Tree" is unchecked and "Skip Other Criteria..." is checked', () => {
+  it('should use same filter "music" and add extra filter of "size >= 50" and expect 1+ songs (>=6 rows) to show up in the grid when "Exclude Children when Filtering Tree" is unchecked and "Skip Other Criteria..." is checked', () => {
 
     cy.get('.search-filter.filter-size')
       .find('input')
-      .type('70');
+      .type('50');
 
     cy.get('.search-filter.filter-size')
       .find('.input-group-addon.operator select')
-      .select('>');
+      .select('>=');
 
     cy.get('.right-footer .item-count')
       .then($row => {
