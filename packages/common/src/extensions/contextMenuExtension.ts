@@ -424,13 +424,16 @@ export class ContextMenuExtension implements Extension {
           textToCopy = this.getCellValueFromQueryFieldGetter(columnDef, dataContext);
         }
 
+        // remove any unwanted Tree Data/Grouping symbols from the beginning of the string before copying (e.g.: "⮟  Task 21" or "·   Task 2")
+        const finalTextToCopy = textToCopy.replace(/^([·|⮞|⮟]\s*)|([·|⮞|⮟])\s*/g, '');
+
         // create fake <textarea> (positioned outside of the screen) to copy into clipboard & delete it from the DOM once we're done
         const tmpElem = document.createElement('textarea') as HTMLTextAreaElement;
         if (tmpElem && document.body) {
           tmpElem.style.position = 'absolute';
           tmpElem.style.left = '-1000px';
           tmpElem.style.top = '-1000px';
-          tmpElem.value = textToCopy;
+          tmpElem.value = finalTextToCopy;
           document.body.appendChild(tmpElem);
           tmpElem.select();
           const success = document.execCommand('copy', false, textToCopy);
