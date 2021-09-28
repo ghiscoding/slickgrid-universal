@@ -273,7 +273,8 @@ describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 },
       .find('.input-group-addon.operator select')
       .select('>=');
 
-    cy.get('.right-footer .item-count')
+    cy.wait(50)
+      .get('.right-footer .item-count')
       .then($row => {
         expect(+$row.text()).to.be.at.least(6);
       });
