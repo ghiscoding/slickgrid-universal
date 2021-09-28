@@ -139,7 +139,7 @@ describe('draggableGroupingExtension', () => {
       const addon = extension.register();
       const clearSpy = jest.spyOn(addon, 'clearDroppedGroups');
 
-      fnCallbacks['contextMenu:clearGrouping'](true);
+      fnCallbacks['onContextMenuClearGrouping'](true);
 
       expect(clearSpy).toHaveBeenCalled();
     });

@@ -323,7 +323,7 @@ export class ContextMenuExtension implements Extension {
               positionOrder: 55,
               action: () => {
                 dataView.setGrouping([]);
-                this.pubSubService.publish('contextMenu:clearGrouping', true);
+                this.pubSubService.publish('onContextMenuClearGrouping');
               },
               itemUsabilityOverride: () => {
                 // only enable the command when there's an actually grouping in play
@@ -352,6 +352,7 @@ export class ContextMenuExtension implements Extension {
                 } else {
                   dataView.collapseAllGroups();
                 }
+                this.pubSubService.publish('onContextMenuCollapseAllGroups');
               },
               itemUsabilityOverride: () => {
                 if (gridOptions.enableTreeData) {
@@ -383,6 +384,7 @@ export class ContextMenuExtension implements Extension {
                 } else {
                   dataView.expandAllGroups();
                 }
+                this.pubSubService.publish('onContextMenuExpandAllGroups');
               },
               itemUsabilityOverride: () => {
                 if (gridOptions.enableTreeData) {
