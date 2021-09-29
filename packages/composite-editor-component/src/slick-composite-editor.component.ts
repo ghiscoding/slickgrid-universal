@@ -676,13 +676,12 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
     const resetButtonElm = document.createElement('button');
     resetButtonElm.type = 'button';
-    resetButtonElm.textContent = ' Reset Form';
     resetButtonElm.className = 'btn btn-sm reset-form';
 
     const resetIconSpanElm = document.createElement('span');
     resetIconSpanElm.className = this._options?.resetFormButtonIconCssClass ?? '';
-
-    resetButtonElm.prepend(resetIconSpanElm);
+    resetButtonElm.appendChild(resetIconSpanElm);
+    resetButtonElm.appendChild(document.createTextNode(' Reset Form'));
     resetButtonContainerElm.appendChild(resetButtonElm);
 
     return resetButtonContainerElm;
