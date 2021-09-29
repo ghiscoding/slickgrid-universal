@@ -12,6 +12,9 @@
 
 This is a monorepo project (using Lerna) which is regrouping a few packages under a single repository. It is using SlickGrid (more specifically the [6pac/SlickGrid](https://github.com/6pac/SlickGrid/) fork) behind the scene (there is no need to rewrite the core library itself, in other words this is a wrapper library). The main goal of this library is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). It's also a good opportunity to decouple some features/services that not every project require at all time, this will also help in getting smaller bundle size depending on which features (packages) you use. For example, not every project requires backend services (OData, GraphQL) and export services (Excel Export, Text Export), which is why they are better handled with a monorepo structure.
 
+## Latest News & Releases
+Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all latest News & Version Releases.
+
 ### Demo page
 The GitHub [demo page](https://ghiscoding.github.io/slickgrid-universal) uses 2 different themes (Material Design / Salesforce) but you could also use Bootstrap theme which is demoed in other frameworks.
 - [Angular-Slickgrid](https://ghiscoding.github.io/Angular-Slickgrid/) - External Library
