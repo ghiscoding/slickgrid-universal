@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.18.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.17.0...v0.18.0) (2021-09-29)
+
+
+### Features
+
+* **pagination:** rewrite in vanilla JS make it usable in any framework ([0211181](https://github.com/ghiscoding/slickgrid-universal/commit/0211181d0353f1f8d2baa0eaba3c2e85073285e7))
+
+
+
+
+
+
 # [0.17.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.16.2...v0.17.0) (2021-09-09)
 
 
