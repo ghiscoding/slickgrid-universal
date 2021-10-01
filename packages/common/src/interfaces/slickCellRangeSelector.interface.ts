@@ -1,6 +1,7 @@
 import { SlickCellRangeDecorator, SlickGrid, SlickRange } from './index';
 import { CellRange } from './cellRange.interface';
 import { SlickEvent } from './slickEvent.interface';
+// import { CellRangeDecorator, } from '../plugins/slickCellRangeDecorator';
 
 export interface SlickCellRangeSelector {
   pluginName: 'CellRangeSelector'

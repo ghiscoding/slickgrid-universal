@@ -63,6 +63,12 @@ export class Example13 {
         container: '.demo-container',
       },
       enableFiltering: false,
+      enableExcelCopyBuffer: true,
+      excelCopyBufferOptions: {
+        onCopyCells: (e, args) => console.log(e, args),
+        onPasteCells: (e, args) => console.log(e, args),
+        onCopyCancelled: (e, args) => console.log(e, args),
+      },
       enableCellNavigation: true,
       gridHeight: 275,
       headerButton: {

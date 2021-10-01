@@ -2,9 +2,9 @@ import {
   Column,
   CellRange,
   FormatterResultObject,
-  SlickCellExternalCopyManager,
   SlickEventData,
 } from './index';
+import { CellExcelCopyManager, } from '../plugins/cellExcelCopyManager';
 
 export interface ExcelCopyBufferOption<T = any> {
   /** defaults to "copied", sets the css className used for copied cells. */
@@ -48,7 +48,7 @@ export interface ExcelCopyBufferOption<T = any> {
   // ------------
 
   /** Fired after extension (plugin) is registered by SlickGrid */
-  onExtensionRegistered?: (plugin: SlickCellExternalCopyManager) => void;
+  onExtensionRegistered?: (plugin: CellExcelCopyManager) => void;
 
   /** Fired when a copy cell is triggered */
   onCopyCells?: (e: SlickEventData, args: { ranges: CellRange[] }) => void;

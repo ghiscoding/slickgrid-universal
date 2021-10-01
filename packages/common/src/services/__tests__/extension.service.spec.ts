@@ -3,7 +3,6 @@ import 'jest-extended';
 import { ExtensionName } from '../../enums/index';
 import { Column, ExtensionModel, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import {
-  CellExternalCopyManagerExtension,
   CheckboxSelectorExtension,
   ExtensionUtility,
   RowDetailViewExtension,
@@ -145,7 +144,6 @@ describe('ExtensionService', () => {
         sortServiceStub,
         treeDataServiceStub,
         // extensions
-        extensionStub as unknown as CellExternalCopyManagerExtension,
         extensionCheckboxSelectorStub as unknown as CheckboxSelectorExtension,
         extensionStub as unknown as RowDetailViewExtension,
         extensionRowMoveStub as unknown as RowMoveManagerExtension,
@@ -504,18 +502,18 @@ describe('ExtensionService', () => {
         expect(output).toEqual({ name: ExtensionName.headerMenu, instance: pluginInstance, class: pluginInstance } as ExtensionModel<any, any>);
       });
 
-      it('should register the ExcelCopyBuffer addon when "enableExcelCopyBuffer" is set in the grid options', () => {
-        const gridOptionsMock = { enableExcelCopyBuffer: true } as GridOption;
-        const extSpy = jest.spyOn(extensionStub, 'register').mockReturnValue(instanceMock);
-        const gridSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+      // it('should register the ExcelCopyBuffer addon when "enableExcelCopyBuffer" is set in the grid options', () => {
+      //   const gridOptionsMock = { enableExcelCopyBuffer: true } as GridOption;
+      //   const extSpy = jest.spyOn(extensionStub, 'register').mockReturnValue(instanceMock);
+      //   const gridSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
-        service.bindDifferentExtensions();
-        const output = service.getExtensionByName(ExtensionName.cellExternalCopyManager);
+      //   service.bindDifferentExtensions();
+      //   const output = service.getExtensionByName(ExtensionName.cellExternalCopyManager);
 
-        expect(gridSpy).toHaveBeenCalled();
-        expect(extSpy).toHaveBeenCalled();
-        expect(output).toEqual({ name: ExtensionName.cellExternalCopyManager, instance: instanceMock as unknown, class: extensionStub } as ExtensionModel<any, any>);
-      });
+      //   expect(gridSpy).toHaveBeenCalled();
+      //   expect(extSpy).toHaveBeenCalled();
+      //   expect(output).toEqual({ name: ExtensionName.cellExternalCopyManager, instance: instanceMock as unknown, class: extensionStub } as ExtensionModel<any, any>);
+      // });
     });
 
     describe('createExtensionsBeforeGridCreation method', () => {
@@ -851,7 +849,6 @@ describe('ExtensionService', () => {
         sortServiceStub,
         treeDataServiceStub,
         // extensions
-        extensionStub as unknown as CellExternalCopyManagerExtension,
         extensionStub as unknown as CheckboxSelectorExtension,
         extensionStub as unknown as RowDetailViewExtension,
         extensionStub as unknown as RowMoveManagerExtension,

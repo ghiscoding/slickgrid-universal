@@ -31,7 +31,6 @@ import {
 
   // extensions
   CheckboxSelectorExtension,
-  CellExternalCopyManagerExtension,
   ExtensionUtility,
   RowDetailViewExtension,
   RowSelectionExtension,
@@ -350,7 +349,6 @@ export class SlickVanillaGridBundle {
     this.paginationService = services?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService, this.backendUtilityService);
 
     // extensions
-    const cellExternalCopyManagerExtension = new CellExternalCopyManagerExtension(this.extensionUtility, this.sharedService);
     const checkboxExtension = new CheckboxSelectorExtension(this.sharedService);
     const rowDetailViewExtension = new RowDetailViewExtension();
     const rowMoveManagerExtension = new RowMoveManagerExtension(this.sharedService);
@@ -362,7 +360,6 @@ export class SlickVanillaGridBundle {
       this._eventPubSubService,
       this.sortService,
       this.treeDataService,
-      cellExternalCopyManagerExtension,
       checkboxExtension,
       rowDetailViewExtension,
       rowMoveManagerExtension,

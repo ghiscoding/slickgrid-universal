@@ -15,7 +15,13 @@ import {
   SlickRowMoveManager,
   SlickRowSelectionModel,
 } from '../interfaces/index';
-import { AutoTooltipPlugin } from '../plugins/index';
+import {
+  AutoTooltipPlugin,
+  // CellExternalCopyManager,
+  // CellRangeDecorator,
+  // CellRangeSelector,
+  // CellSelectionModel,
+} from '../plugins/index';
 
 export type SlickPluginList =
   AutoTooltipPlugin |
