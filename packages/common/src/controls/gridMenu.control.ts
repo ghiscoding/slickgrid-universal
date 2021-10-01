@@ -197,7 +197,7 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
           iconImageElm.src = iconImage;
           this._gridMenuButtonElm.appendChild(iconImageElm);
         }
-        this._menuElm.parentNode?.prepend(this._gridMenuButtonElm);
+        this._menuElm.parentElement!.insertBefore(this._gridMenuButtonElm, this._menuElm.parentElement!.firstChild);
 
         // show the Grid Menu when hamburger menu is clicked
         this.addonOptions.commandTitle = this.addonOptions.customTitle || this.addonOptions.commandTitle;
