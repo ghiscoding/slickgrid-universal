@@ -31,6 +31,7 @@ import {
   SlickEventHandler,
   SlickGrid,
   SlickGridMenu,
+  SlickGroup,
   SlickGroupItemMetadataProvider,
   SlickHeaderButtons,
   SlickHeaderMenu,
@@ -42,8 +43,7 @@ import {
   SlickRowSelectionModel,
 } from './index';
 import { CompositeEditorOption } from './compositeEditorOption.interface';
-import { AutoTooltipPlugin } from '../plugins/index';
-import { SlickGroup } from '..';
+import { AutoTooltipPlugin, } from '../plugins/index';
 
 /**
  * Slick Grid class interface of the entire library and it's multiple controls/plugins.
@@ -88,7 +88,7 @@ export interface SlickNamespace {
   CompositeEditor: new (modalColumns: Column[], containers: Array<HTMLElement | JQuery<HTMLElement> | null>, options?: CompositeEditorOption) => SlickCompositeEditor;
 
   /** Event is a Pub/Sub SlickGrid Event */
-  Event: new () => SlickEvent;
+  Event: new <T = any> () => SlickEvent<T>;
 
   /**
    * An event object for passing data to event handlers and letting them control propagation.
@@ -103,7 +103,7 @@ export interface SlickNamespace {
   GlobalEditorLock: SlickEditorLock;
 
   /** A structure containing a range of cells. */
-  Range: new () => SlickRange;
+  Range: new (fromRow?: number, fromCell?: number, toRow?: number, toCell?: number) => SlickRange;
 
 
   // --

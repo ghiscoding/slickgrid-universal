@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
-import { Column, ColumnPickerOption, DOMEvent, GridMenuOption } from '../interfaces';
+import { Column, ColumnPickerOption, DOMEvent, GridMenuOption } from '../interfaces/index';
 import { sanitizeTextByAvailableSanitizer } from '../services/domUtilities';
 import { ColumnPickerControl } from '../controls/columnPicker.control';
 import { GridMenuControl } from '../controls/gridMenu.control';

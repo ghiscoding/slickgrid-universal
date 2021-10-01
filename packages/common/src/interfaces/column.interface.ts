@@ -58,6 +58,9 @@ export interface Column<T = any> {
   /** Do we want default sort to be ascending? True by default */
   defaultSortAsc?: boolean;
 
+  /** Defaults to false, do we want to deny executing a Paste (from a Copy of CellExternalCopyManager)? */
+  denyPaste?: boolean;
+
   /** Any inline editor function that implements Editor for the cell value or ColumnEditor */
   editor?: ColumnEditor;
 

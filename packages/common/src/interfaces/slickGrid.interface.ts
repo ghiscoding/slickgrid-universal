@@ -86,7 +86,7 @@ export interface SlickGrid {
   focus(): void;
 
   /** Get the canvas DOM element */
-  getActiveCanvasNode(): HTMLElement;
+  getActiveCanvasNode(element?: HTMLElement | JQuery<HTMLElement>): HTMLElement;
 
   /**
    * Returns an object representing the coordinates of the currently active cell:
@@ -111,7 +111,7 @@ export interface SlickGrid {
   getCanvases(): HTMLElement;
 
   /** Get Grid Canvas Node DOM Element */
-  getCanvasNode(): HTMLCanvasElement;
+  getCanvasNode(): HTMLElement;
 
   /** Get the grid canvas width */
   getCanvasWidth(): number;
@@ -410,7 +410,7 @@ export interface SlickGrid {
    * @param newData New databinding source using a regular JavaScript array.. or a custom object exposing getItem(index) and getLength() functions.
    * @param scrollToTop If true, the grid will reset the vertical scroll position to the top of the grid.
    */
-  setData<T = any>(newData: T | T[], scrollToTop: boolean): void;
+  setData<T = any>(newData: T | T[], scrollToTop?: boolean): void;
 
   /** Set the Footer Visibility and optionally enable/disable animation (enabled by default) */
   setFooterRowVisibility(visible: boolean, animate?: boolean): void;

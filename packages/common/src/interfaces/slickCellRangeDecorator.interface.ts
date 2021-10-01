@@ -7,6 +7,9 @@ export interface SlickCellRangeDecorator {
   /** Constructor of the CellRangeDecorator 3rd party plugin, it can optionally receive options */
   constructor: (grid: SlickGrid, options?: { cellDecorator?: any; selectionCss?: { [cssRule: string]: string | number | boolean; } }) => void;
 
+  /** Destroy the plugin */
+  destroy(): void;
+
   /** Show a cell range decoration. Displays an overlay on top of a given cell range. */
   show(cellRange: CellRange): HTMLElement;
 
