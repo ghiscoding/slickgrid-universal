@@ -1,4 +1,4 @@
-import { GroupItemMetadataProviderService } from '..';
+import { GroupItemMetadataProviderService } from '../groupItemMetadataProvider.service';
 import { KeyCode } from '../..';
 import { Column, GridOption, GroupItemMetadataProviderOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces';
 

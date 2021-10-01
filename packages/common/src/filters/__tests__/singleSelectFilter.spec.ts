@@ -1,7 +1,7 @@
 // import 3rd party lib multiple-select for the tests
 import 'multiple-select-modified';
 
-import { Filters } from '..';
+import { Filters } from '../filters.index';
 import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { CollectionService } from '../../services/collection.service';
 import { SingleSelectFilter } from '../singleSelectFilter';

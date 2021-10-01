@@ -1,5 +1,5 @@
-import { CellRange, emptyElement, getHtmlElementOffset, } from '..';
-import { DOMMouseEvent, GridOption, SlickGrid, SlickNamespace } from '../interfaces/index';
+import { emptyElement, getHtmlElementOffset, } from '../services/domUtilities';
+import { CellRange, DOMMouseEvent, GridOption, SlickGrid, SlickNamespace } from '../interfaces/index';
 import { CellRangeDecorator } from './index';
 
 // using external SlickGrid JS libraries
