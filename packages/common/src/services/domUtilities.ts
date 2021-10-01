@@ -178,7 +178,7 @@ export function getElementOffsetRelativeToParent(parentElm: HTMLElement | null, 
 }
 
 /** Get HTML element offset with pure JS */
-export function getHtmlElementOffset(element: HTMLElement): HtmlElementPosition | undefined {
+export function getHtmlElementOffset(element?: HTMLElement): HtmlElementPosition | undefined {
   if (!element) {
     return undefined;
   }

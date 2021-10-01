@@ -19,7 +19,7 @@ export interface SlickEvent<T = any> {
    * object the event was fired with.
    * @param fn {Function} Event handler.
    */
-  subscribe: (fn: (e: SlickEventData | Event, data: Partial<T>) => void) => Promise<any>;
+  subscribe: (fn: (e: SlickEventData | Event, data: T) => void) => Promise<any>;
 
   /**
    * Removes an event handler added with <code>subscribe(fn).
