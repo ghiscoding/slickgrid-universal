@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/vanilla-bundle",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "description": "Vanilla Slick Grid Bundle - Framework agnostic the output is to be used in vanilla JS/TS - Written in TypeScript and we also use WebPack to bundle everything into 1 JS file.",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
@@ -34,8 +34,17 @@
     "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=vanilla-bundle",
     "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=vanilla-bundle"
   },
-  "author": "Ghislain B.",
   "license": "MIT",
+  "author": "Ghislain B.",
+  "homepage": "https://github.com/ghiscoding/slickgrid-universal",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ghiscoding/slickgrid-universal.git",
+    "directory": "packages/vanilla-bundle"
+  },
+  "bugs": {
+    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
+  },
   "engines": {
     "node": ">=14.15.0",
     "npm": ">=6.14.8"
@@ -46,13 +55,13 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.17.0",
-    "@slickgrid-universal/composite-editor-component": "^0.17.0",
-    "@slickgrid-universal/custom-footer-component": "^0.17.0",
-    "@slickgrid-universal/empty-warning-component": "^0.17.0",
-    "@slickgrid-universal/event-pub-sub": "^0.17.0",
-    "@slickgrid-universal/pagination-component": "^0.17.0",
-    "@slickgrid-universal/text-export": "^0.17.0",
+    "@slickgrid-universal/common": "^0.18.0",
+    "@slickgrid-universal/composite-editor-component": "^0.18.0",
+    "@slickgrid-universal/custom-footer-component": "^0.18.0",
+    "@slickgrid-universal/empty-warning-component": "^0.18.0",
+    "@slickgrid-universal/event-pub-sub": "^0.18.0",
+    "@slickgrid-universal/pagination-component": "^0.18.0",
+    "@slickgrid-universal/text-export": "^0.18.0",
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
@@ -64,6 +73,6 @@
     "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.2",
     "ts-loader": "^9.2.6",
-    "webpack": "^5.53.0"
+    "webpack": "^5.55.1"
   }
 }

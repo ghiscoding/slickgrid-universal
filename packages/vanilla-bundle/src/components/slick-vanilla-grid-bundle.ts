@@ -558,7 +558,7 @@ export class SlickVanillaGridBundle {
 
     // user could show a custom footer with the data metrics (dataset length and last updated timestamp)
     if (!this.gridOptions.enablePagination && this.gridOptions.showCustomFooter && this.gridOptions.customFooterOptions) {
-      this.slickFooter = new SlickFooterComponent(this.slickGrid, this.gridOptions.customFooterOptions, this.translaterService);
+      this.slickFooter = new SlickFooterComponent(this.slickGrid, this.gridOptions.customFooterOptions, this._eventPubSubService, this.translaterService);
       this.slickFooter.renderFooter(this._gridParentContainerElm);
     }
 
@@ -727,7 +727,6 @@ export class SlickVanillaGridBundle {
     // translate them all on first load, then on each language change
     if (gridOptions.enableTranslate) {
       this.extensionService.translateAllExtensions();
-      this.translateCustomFooterTexts();
       this.translateColumnHeaderTitleKeys();
       this.translateColumnGroupKeys();
     }
@@ -737,7 +736,6 @@ export class SlickVanillaGridBundle {
       this._eventPubSubService.subscribe('onLanguageChange', () => {
         if (gridOptions.enableTranslate) {
           this.extensionService.translateAllExtensions();
-          this.translateCustomFooterTexts();
           this.translateColumnHeaderTitleKeys();
           this.translateColumnGroupKeys();
           if (gridOptions.createPreHeaderPanel && !gridOptions.enableDraggableGrouping) {
@@ -1441,13 +1439,6 @@ export class SlickVanillaGridBundle {
 
       return { ...column, editor: columnEditor?.model, internalColumnEditor: { ...columnEditor } };
     });
-  }
-
-  /** Translate all Custom Footer Texts (footer with metrics) */
-  private translateCustomFooterTexts() {
-    if (this.slickFooter && this.translaterService?.translate) {
-      this.slickFooter?.translateCustomFooterTexts();
-    }
   }
 
   /** translate all columns (including hidden columns) */

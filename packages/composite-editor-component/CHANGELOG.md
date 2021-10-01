@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.18.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.17.0...v0.18.0) (2021-09-29)
+
+
+### Bug Fixes
+
+* **comp:** replace `prepend` not supported in IE/Salesforce ([f183115](https://github.com/ghiscoding/slickgrid-universal/commit/f183115e19b3a72d2496db778fab47be35e1aa40))
+
+
+
+
+
+
 # [0.17.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.16.2...v0.17.0) (2021-09-09)
 
 

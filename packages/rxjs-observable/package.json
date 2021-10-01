@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/rxjs-observable",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "description": "RxJS Observable Wrapper",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
@@ -27,8 +27,17 @@
     "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=empty-warning-component",
     "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=empty-warning-component"
   },
-  "author": "Ghislain B.",
   "license": "MIT",
+  "author": "Ghislain B.",
+  "homepage": "https://github.com/ghiscoding/slickgrid-universal",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ghiscoding/slickgrid-universal.git",
+    "directory": "packages/rxjs-observable"
+  },
+  "bugs": {
+    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
+  },
   "engines": {
     "node": ">=14.15.0",
     "npm": ">=6.14.8"
@@ -39,7 +48,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.17.0",
+    "@slickgrid-universal/common": "^0.18.0",
     "rxjs": "^7.3.0"
   },
   "devDependencies": {

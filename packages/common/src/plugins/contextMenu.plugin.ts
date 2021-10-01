@@ -299,7 +299,7 @@ export class ContextMenuPlugin extends MenuFromCellBaseClass<ContextMenu> {
               positionOrder: 55,
               action: () => {
                 dataView.setGrouping([]);
-                this.pubSubService.publish('contextMenu:clearGrouping');
+                this.pubSubService.publish('onContextMenuClearGrouping');
               },
               itemUsabilityOverride: () => {
                 // only enable the command when there's an actually grouping in play
@@ -328,7 +328,7 @@ export class ContextMenuPlugin extends MenuFromCellBaseClass<ContextMenu> {
                 } else {
                   dataView.collapseAllGroups();
                 }
-                this.pubSubService.publish('contextMenu:collapseAllGroups');
+                this.pubSubService.publish('onContextMenuCollapseAllGroups');
               },
               itemUsabilityOverride: () => {
                 if (gridOptions.enableTreeData) {
@@ -360,7 +360,7 @@ export class ContextMenuPlugin extends MenuFromCellBaseClass<ContextMenu> {
                 } else {
                   dataView.expandAllGroups();
                 }
-                this.pubSubService.publish('contextMenu:expandAllGroups');
+                this.pubSubService.publish('onContextMenuExpandAllGroups');
               },
               itemUsabilityOverride: () => {
                 if (gridOptions.enableTreeData) {
@@ -403,13 +403,16 @@ export class ContextMenuPlugin extends MenuFromCellBaseClass<ContextMenu> {
           textToCopy = getCellValueFromQueryFieldGetter(columnDef, dataContext, '');
         }
 
+        // remove any unwanted Tree Data/Grouping symbols from the beginning of the string before copying (e.g.: "⮟  Task 21" or "·   Task 2")
+        const finalTextToCopy = textToCopy.replace(/^([·|⮞|⮟]\s*)|([·|⮞|⮟])\s*/g, '');
+
         // create fake <textarea> (positioned outside of the screen) to copy into clipboard & delete it from the DOM once we're done
         const tmpElem = document.createElement('textarea') as HTMLTextAreaElement;
         if (tmpElem && document.body) {
           tmpElem.style.position = 'absolute';
           tmpElem.style.left = '-1000px';
           tmpElem.style.top = '-1000px';
-          tmpElem.value = textToCopy;
+          tmpElem.value = finalTextToCopy;
           document.body.appendChild(tmpElem);
           tmpElem.select();
           const success = document.execCommand('copy', false, textToCopy);

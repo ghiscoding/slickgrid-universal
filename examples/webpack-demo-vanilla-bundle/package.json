@@ -1,6 +1,6 @@
 {
   "name": "webpack-demo-vanilla-bundle",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "private": true,
   "description": "SlickGrid-Universal demo",
   "directories": {
@@ -12,8 +12,17 @@
     "dev:watch": "webpack serve --env development",
     "test": "echo testing slickgrid-universal demo code"
   },
-  "author": "Ghislain B.",
   "license": "MIT",
+  "author": "Ghislain B.",
+  "homepage": "https://github.com/ghiscoding/slickgrid-universal",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ghiscoding/slickgrid-universal.git",
+    "directory": "examples/webpack-demo-vanilla-bundle"
+  },
+  "bugs": {
+    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
+  },
   "engines": {
     "node": ">=14.15.0",
     "npm": ">=6.14.8"
@@ -25,10 +34,10 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.17.0",
-    "@slickgrid-universal/excel-export": "^0.17.0",
-    "@slickgrid-universal/text-export": "^0.17.0",
-    "@slickgrid-universal/vanilla-bundle": "^0.17.0",
+    "@slickgrid-universal/common": "^0.18.0",
+    "@slickgrid-universal/excel-export": "^0.18.0",
+    "@slickgrid-universal/text-export": "^0.18.0",
+    "@slickgrid-universal/vanilla-bundle": "^0.18.0",
     "bulma": "^0.9.3",
     "moment-mini": "^2.24.0",
     "whatwg-fetch": "^3.6.2"
@@ -36,7 +45,7 @@
   "devDependencies": {
     "@types/jquery": "^3.5.6",
     "@types/moment": "^2.13.0",
-    "@types/node": "^16.9.6",
+    "@types/node": "^16.10.2",
     "@types/webpack": "^5.28.0",
     "clean-webpack-plugin": "4.0.0",
     "copy-webpack-plugin": "^9.0.1",
@@ -53,8 +62,8 @@
     "ts-loader": "^9.2.6",
     "ts-node": "^10.2.1",
     "url-loader": "^4.1.1",
-    "webpack": "^5.53.0",
+    "webpack": "^5.55.1",
     "webpack-cli": "^4.8.0",
-    "webpack-dev-server": "^4.2.1"
+    "webpack-dev-server": "^4.3.0"
   }
 }

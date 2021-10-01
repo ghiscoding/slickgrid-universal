@@ -34,6 +34,12 @@ import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 declare const Slick: SlickNamespace;
 const DOM_ELEMENT_ID = 'row-detail123';
 
+function initSetWithValues(values: any[]) {
+  const tmpSet = new Set();
+  values.forEach(val => tmpSet.add(val));
+  return tmpSet;
+}
+
 const gridOptionMock = {
   enableFiltering: true,
   enablePagination: true,
@@ -660,7 +666,7 @@ describe('FilterService', () => {
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
 
       service.init(gridStub);
-      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms } };
+      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms, type: FieldType.string } } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(columnFilters.firstName['parsedSearchTerms']).toEqual(['John']);
@@ -674,7 +680,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
-      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms, parsedSearchTerms } };
+      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms, parsedSearchTerms, type: FieldType.string } } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -687,7 +693,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
-      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms, parsedSearchTerms } };
+      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms, parsedSearchTerms, type: FieldType.string } } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -701,7 +707,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
-      const columnFilters = { firstName: { columnDef: undefined, columnId: 'firstName', operator: 'EQ', searchTerms, parsedSearchTerms } };
+      const columnFilters = { firstName: { columnDef: undefined, columnId: 'firstName', operator: 'EQ', searchTerms, parsedSearchTerms, type: FieldType.string } } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -712,7 +718,7 @@ describe('FilterService', () => {
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms: [] } };
+      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms: [], type: FieldType.string } } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -723,7 +729,7 @@ describe('FilterService', () => {
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilters = { age: { columnDef: mockColumn1, columnId: 'age', operator: '<=', searchTerms: ['<='] } };
+      const columnFilters = { age: { columnDef: mockColumn1, columnId: 'age', operator: '<=', searchTerms: ['<='], type: FieldType.string } } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -738,7 +744,7 @@ describe('FilterService', () => {
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
       const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
-      const columnFilters = { firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms } };
+      const columnFilters = { firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms } } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(false);
@@ -754,7 +760,7 @@ describe('FilterService', () => {
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
       const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
-      const columnFilters = { firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms } };
+      const columnFilters = { firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms } } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(false);
@@ -769,7 +775,7 @@ describe('FilterService', () => {
       const columnFilter = { columnDef: mockColumn1, columnId: 'age', type: FieldType.number };
       const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'number');
-      const columnFilters = { age: { ...columnFilter, operator: 'EQ', searchTerms: filterCondition.searchTerms, parsedSearchTerms } };
+      const columnFilters = { age: { ...columnFilter, operator: 'EQ', searchTerms: filterCondition.searchTerms, parsedSearchTerms, type: FieldType.string } } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -784,7 +790,7 @@ describe('FilterService', () => {
       const columnFilter = { columnDef: mockColumn1, columnId: 'age', type: FieldType.string };
       const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'number');
-      const columnFilters = { age: { ...columnFilter, operator: 'EQ', searchTerms: filterCondition.searchTerms, parsedSearchTerms } };
+      const columnFilters = { age: { ...columnFilter, operator: 'EQ', searchTerms: filterCondition.searchTerms, parsedSearchTerms, type: FieldType.string } } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -799,7 +805,7 @@ describe('FilterService', () => {
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
       const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
-      const columnFilters = { firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms } };
+      const columnFilters = { firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms } } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -813,7 +819,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
-      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator, searchTerms, parsedSearchTerms, type: FieldType.string } };
+      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator, searchTerms, parsedSearchTerms, type: FieldType.string } } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -871,7 +877,7 @@ describe('FilterService', () => {
       jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
-      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'IN', searchTerms: ['Jane', 'John'] } };
+      const columnFilters = { firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'IN', searchTerms: ['Jane', 'John'], type: FieldType.string } } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -885,7 +891,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'number');
-      const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms, parsedSearchTerms, type: FieldType.number } };
+      const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms, parsedSearchTerms, type: FieldType.number } } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -899,7 +905,7 @@ describe('FilterService', () => {
       jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
-      const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456], parsedSearchTerms: [123456], type: FieldType.number } };
+      const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456], parsedSearchTerms: [123456], type: FieldType.number } } as ColumnFilters;
       const output = service.customLocalFilter(mockItem2, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -914,7 +920,7 @@ describe('FilterService', () => {
       jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
-      const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456], parsedSearchTerms: [123456], type: FieldType.number } };
+      const columnFilters = { zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456], parsedSearchTerms: [123456], type: FieldType.number } } as ColumnFilters;
       const output = service.customLocalFilter(mockItem2, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -926,7 +932,7 @@ describe('FilterService', () => {
       jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
-      const columnFilters = { name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['John Doe'], parsedSearchTerms: ['John Doe'], type: FieldType.string } };
+      const columnFilters = { name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['John Doe'], parsedSearchTerms: ['John Doe'], type: FieldType.string } } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -938,7 +944,7 @@ describe('FilterService', () => {
       jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
-      const columnFilters = { name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['John'], parsedSearchTerms: ['John'], type: FieldType.string } };
+      const columnFilters = { name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['John'], parsedSearchTerms: ['John'], type: FieldType.string } } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(false);
@@ -950,7 +956,7 @@ describe('FilterService', () => {
       jest.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
-      const columnFilters = { name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['Doe'], parsedSearchTerms: ['Doe'], type: FieldType.string } };
+      const columnFilters = { name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['Doe'], parsedSearchTerms: ['Doe'], type: FieldType.string } } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(false);
@@ -1645,8 +1651,10 @@ describe('FilterService', () => {
       let dataset = [];
       let mockColumn1;
       let mockColumn2;
+      let mockColumn3;
       let mockArgs1;
       let mockArgs2;
+      let mockArgs3;
 
       beforeEach(() => {
         gridStub.getColumns = jest.fn();
@@ -1656,7 +1664,7 @@ describe('FilterService', () => {
         };
         dataset = [
           { __parentId: null, __treeLevel: 0, dateModified: '2012-03-05T12:44:00.123Z', file: 'bucket-list.txt', id: 24, size: 0.5 },
-          { __hasChildren: true, __parentId: null, __treeLevel: 0, file: 'documents', id: 21 },
+          { __hasChildren: true, __parentId: null, __treeLevel: 0, file: 'documents', id: 21, size: 0.4 },
           { __hasChildren: true, __parentId: 21, __treeLevel: 1, file: 'misc', id: 9 },
           { __parentId: 9, __treeLevel: 2, dateModified: '2015-02-26T16:50:00.123Z', file: 'todo.txt', id: 10, size: 0.4 },
           { __hasChildren: true, __parentId: 21, __treeLevel: 1, file: 'pdf', id: 4 },
@@ -1674,11 +1682,17 @@ describe('FilterService', () => {
         gridOptionMock.backendServiceApi = undefined;
         mockColumn1 = { id: 'file', name: 'file', field: 'file', filterable: true, filter: { model: Filters.inputText } };
         mockColumn2 = { id: 'dateModified', name: 'dateModified', field: 'dateModified', filterable: true, filter: { model: Filters.select, collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }], } };
+        mockColumn3 = { id: 'size', name: 'size', field: 'size', filterable: true, filter: { model: Filters.inputText } };
         mockArgs1 = { grid: gridStub, column: mockColumn1, node: document.getElementById(DOM_ELEMENT_ID) };
         mockArgs2 = { grid: gridStub, column: mockColumn2, node: document.getElementById(DOM_ELEMENT_ID) };
+        mockArgs3 = { grid: gridStub, column: mockColumn3, node: document.getElementById(DOM_ELEMENT_ID) };
         jest.spyOn(dataViewStub, 'getItems').mockReturnValue(dataset);
-        jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1, mockColumn2]);
-        sharedService.allColumns = [mockColumn1, mockColumn2];
+        jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1, mockColumn2, mockColumn3]);
+        sharedService.allColumns = [mockColumn1, mockColumn2, mockColumn3];
+      });
+
+      afterEach(() => {
+        jest.clearAllMocks();
       });
 
       it('should return True when item is found and its parent is not collapsed', async () => {
@@ -1695,7 +1709,7 @@ describe('FilterService', () => {
         gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
         gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
 
-        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', operator: 'Contains', searchTerms: ['map'], parsedSearchTerms: ['map'], type: FieldType.string } };
+        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', operator: 'Contains', searchTerms: ['map'], parsedSearchTerms: ['map'], type: FieldType.string } } as ColumnFilters;
         await service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['map'] }], true, true, true);
         const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -1703,7 +1717,7 @@ describe('FilterService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['map',] }]);
         expect(output).toBe(true);
         expect(preFilterSpy).toHaveBeenCalledWith(dataset, columnFilters);
-        expect(preFilterSpy).toHaveReturnedWith([21, 4, 5]);
+        expect(preFilterSpy).toHaveReturnedWith(initSetWithValues([21, 4, 5]));
       });
 
       it('should return False when item is found BUT its parent is collapsed', async () => {
@@ -1720,7 +1734,7 @@ describe('FilterService', () => {
         gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
         gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
 
-        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', operator: 'Contains', searchTerms: ['map'], parsedSearchTerms: ['map'], type: FieldType.string } };
+        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', operator: 'Contains', searchTerms: ['map'], parsedSearchTerms: ['map'], type: FieldType.string } } as ColumnFilters;
         await service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['map'] }], true, true, true);
         const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -1728,7 +1742,7 @@ describe('FilterService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['map'] }]);
         expect(output).toBe(false);
         expect(preFilterSpy).toHaveBeenCalledWith(dataset, columnFilters);
-        expect(preFilterSpy).toHaveReturnedWith([21, 4, 5]);
+        expect(preFilterSpy).toHaveReturnedWith(initSetWithValues([21, 4, 5]));
       });
 
       it('should return False when item is not found in the dataset', async () => {
@@ -1753,7 +1767,7 @@ describe('FilterService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['unknown'] }]);
         expect(output).toBe(false);
         expect(preFilterSpy).toHaveBeenCalledWith(dataset, { ...columnFilters, file: { ...columnFilters.file, operator: 'Contains', parsedSearchTerms: ['unknown'], type: 'string' } }); // it will use Contains by default
-        expect(preFilterSpy).toHaveReturnedWith([]);
+        expect(preFilterSpy).toHaveReturnedWith(new Set());
       });
 
       it('should return False also when called by "updateSingleFilter" and when item is not found in the dataset', async () => {
@@ -1778,7 +1792,120 @@ describe('FilterService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['unknown'] }]);
         expect(output).toBe(false);
         expect(preFilterSpy).toHaveBeenCalledWith(dataset, { ...columnFilters, file: { ...columnFilters.file, operator: 'Contains', parsedSearchTerms: ['unknown'], type: 'string' } }); // it will use Contains by default
-        expect(preFilterSpy).toHaveReturnedWith([]);
+        expect(preFilterSpy).toHaveReturnedWith(new Set());
+      });
+
+      // -- excludeChildrenWhenFilteringTree -- //
+
+      it('should return True (file is included) when item is not found BUT its parent passes the filter criteria AND "excludeChildrenWhenFilteringTree" is disabled', async () => {
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
+        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any })
+          .mockReturnValueOnce(dataset[5])
+          .mockReturnValueOnce(dataset[6]);
+
+        const mockItem1 = { __parentId: 9, __treeLevel: 2, dateModified: '2015-02-26T16:50:00.123Z', file: 'todo.txt', id: 10, size: 0.4 };
+        gridOptionMock.treeDataOptions.excludeChildrenWhenFilteringTree = false;
+
+        service.init(gridStub);
+        service.bindLocalOnFilter(gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
+
+        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', operator: 'Contains', searchTerms: ['misc'], parsedSearchTerms: ['misc'], type: FieldType.string } } as ColumnFilters;
+        await service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['misc'] }], true, true, true);
+        const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
+
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['misc'] }]);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['misc'] }]);
+        expect(output).toBe(true);
+        expect(preFilterSpy).toHaveBeenCalledWith(dataset, columnFilters);
+        expect(preFilterSpy).toHaveReturnedWith(initSetWithValues([9, 21, 10])); // todo.txt (10) is included
+      });
+
+      it('should return False (file is excluded) when item is not found EVEN when its parent passes the filter criteria because "excludeChildrenWhenFilteringTree" is enabled', async () => {
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
+        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any })
+          .mockReturnValueOnce(dataset[5])
+          .mockReturnValueOnce(dataset[6]);
+
+        const mockItem1 = { __parentId: 9, __treeLevel: 2, dateModified: '2015-02-26T16:50:00.123Z', file: 'todo.txt', id: 10, size: 0.4 };
+        gridOptionMock.treeDataOptions.excludeChildrenWhenFilteringTree = true;
+
+        service.init(gridStub);
+        service.bindLocalOnFilter(gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
+
+        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', operator: 'Contains', searchTerms: ['misc'], parsedSearchTerms: ['misc'], type: FieldType.string } } as ColumnFilters;
+        await service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['misc'] }], true, true, true);
+        const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
+
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['misc'] }]);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['misc'] }]);
+        expect(output).toBe(false);
+        expect(preFilterSpy).toHaveBeenCalledWith(dataset, columnFilters);
+        expect(preFilterSpy).toHaveReturnedWith(initSetWithValues([9, 21])); // todo.txt (10) is excluded
+      });
+
+      it('should return True (file is included) when item is not found BUT its parent passes the filter criteria with "autoApproveParentItemWhenTreeColumnIsValid" and when "excludeChildrenWhenFilteringTree" is disabled', async () => {
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
+        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any })
+          .mockReturnValueOnce(dataset[5])
+          .mockReturnValueOnce(dataset[6]);
+
+        const mockItem1 = { __parentId: 9, __treeLevel: 2, dateModified: '2015-02-26T16:50:00.123Z', file: 'todo.txt', id: 10, size: 0.4 };
+        gridOptionMock.treeDataOptions.excludeChildrenWhenFilteringTree = false;
+        gridOptionMock.treeDataOptions.autoApproveParentItemWhenTreeColumnIsValid = true;
+
+        service.init(gridStub);
+        service.bindLocalOnFilter(gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
+
+        const columnFilters = {
+          file: { columnDef: mockColumn1, columnId: 'file', operator: 'Contains', searchTerms: ['misc'], parsedSearchTerms: ['misc'], type: FieldType.string },
+        } as ColumnFilters;
+        await service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['misc'] }], true, true, true);
+        const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
+
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['misc'] }]);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['misc'] }]);
+        expect(output).toBe(true);
+        expect(preFilterSpy).toHaveBeenCalledWith(dataset, columnFilters);
+        expect(preFilterSpy).toHaveReturnedWith(initSetWithValues([9, 21, 10])); // todo.txt (10) is included
+      });
+
+      it('should return False (file is not included) when Parent item is not valid and is tagged as "filteredParents: false" when "excludeChildrenWhenFilteringTree" is disabled', async () => {
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
+        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any })
+          .mockReturnValueOnce(dataset[5])
+          .mockReturnValueOnce(dataset[6]);
+
+        const mockItem1 = { __parentId: 9, __treeLevel: 2, dateModified: '2015-02-26T16:50:00.123Z', file: 'todo.txt', id: 10, size: 0.4 };
+        gridOptionMock.treeDataOptions.excludeChildrenWhenFilteringTree = false;
+        gridOptionMock.treeDataOptions.autoApproveParentItemWhenTreeColumnIsValid = false;
+
+        service.init(gridStub);
+        service.bindLocalOnFilter(gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs3 as any, new Slick.EventData(), gridStub);
+
+        const columnFilters = {
+          size: { columnDef: mockColumn3, columnId: 'size', operator: '<', searchTerms: ['0.1'], parsedSearchTerms: ['0.1'], type: FieldType.string },
+        } as ColumnFilters;
+        await service.updateFilters([{ columnId: 'size', operator: '<', searchTerms: ['0.1'] }], true, true, true);
+        const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
+
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'size', operator: '<', searchTerms: ['0.1'] }]);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'size', operator: '<', searchTerms: ['0.1'] }]);
+        expect(output).toBe(false);
+        expect(preFilterSpy).toHaveBeenCalledWith(dataset, columnFilters);
+        expect(preFilterSpy).toHaveReturnedWith(initSetWithValues([9, 21, 4, 2, 7])); // todo.txt (10) is included
       });
     });
   });

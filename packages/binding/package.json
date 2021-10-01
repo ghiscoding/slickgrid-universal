@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/binding",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "description": "Simple Vanilla Implementation of a Binding Engine & Helper to add properties/events 2 way bindings",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
@@ -27,8 +27,17 @@
     "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=binding",
     "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=binding"
   },
-  "author": "Ghislain B.",
   "license": "MIT",
+  "author": "Ghislain B.",
+  "homepage": "https://github.com/ghiscoding/slickgrid-universal",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ghiscoding/slickgrid-universal.git",
+    "directory": "packages/binding"
+  },
+  "bugs": {
+    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
+  },
   "engines": {
     "node": ">=14.15.0",
     "npm": ">=6.14.8"

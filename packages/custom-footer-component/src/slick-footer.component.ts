@@ -9,10 +9,12 @@ import {
   Locale,
   Metrics,
   MetricTexts,
+  PubSubService,
   sanitizeTextByAvailableSanitizer,
   SlickEventHandler,
   SlickGrid,
   SlickNamespace,
+  Subscription,
   TranslaterService,
 } from '@slickgrid-universal/common';
 import { BindingHelper } from '@slickgrid-universal/binding';
@@ -20,12 +22,14 @@ import { BindingHelper } from '@slickgrid-universal/binding';
 declare const Slick: SlickNamespace;
 export class SlickFooterComponent {
   protected _bindingHelper: BindingHelper;
+  protected _enableTranslate = false;
   protected _eventHandler!: SlickEventHandler;
   protected _footerElement!: HTMLDivElement;
   protected _isLeftFooterOriginallyEmpty = true;
   protected _isLeftFooterDisplayingSelectionRowCount = false;
   protected _isRightFooterOriginallyEmpty = true;
   protected _selectedRowCount = 0;
+  protected _subscriptions: Subscription[] = [];
 
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
@@ -46,7 +50,7 @@ export class SlickFooterComponent {
 
   get locales(): Locale {
     // get locales provided by user in main file or else use default English locales via the Constants
-    return this.gridOptions.locales || Constants.locales;
+    return this.gridOptions?.locales ?? Constants.locales;
   }
 
   set metrics(metrics: Metrics) {
@@ -67,16 +71,32 @@ export class SlickFooterComponent {
     this.renderRightFooterText(text);
   }
 
-  constructor(protected readonly grid: SlickGrid, protected readonly customFooterOptions: CustomFooterOption, protected readonly translaterService?: TranslaterService) {
+  constructor(protected readonly grid: SlickGrid, protected readonly customFooterOptions: CustomFooterOption, protected readonly pubSubService: PubSubService, protected readonly translaterService?: TranslaterService) {
     this._bindingHelper = new BindingHelper();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
     this._eventHandler = new Slick.EventHandler();
+    this._enableTranslate = this.gridOptions?.enableTranslate ?? false;
     this._isLeftFooterOriginallyEmpty = !(this.gridOptions.customFooterOptions?.leftFooterText);
     this._isRightFooterOriginallyEmpty = !(this.gridOptions.customFooterOptions?.rightFooterText);
     this.registerOnSelectedRowsChangedWhenEnabled(customFooterOptions);
+
+    if (this._enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
+      throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
+    }
+    this.translateCustomFooterTexts();
+
+    if (this._enableTranslate && this.pubSubService?.subscribe) {
+      const translateEventName = this.translaterService?.eventName ?? 'onLanguageChange';
+      this._subscriptions.push(
+        this.pubSubService.subscribe(translateEventName, () => this.translateCustomFooterTexts())
+      );
+    }
   }
 
   dispose() {
+    // also dispose of all Subscriptions
+    this.pubSubService.unsubscribeAll(this._subscriptions);
+
     this._bindingHelper.dispose();
     this._footerElement?.remove();
     this._eventHandler.unsubscribeAll();
@@ -87,15 +107,8 @@ export class SlickFooterComponent {
    * It's an opt-in, user has to enable "showCustomFooter" and it cannot be used when there's already a Pagination since they display the same kind of info
    */
   renderFooter(gridParentContainerElm: HTMLElement) {
-    if (this.gridOptions.enableTranslate) {
-      this.translateCustomFooterTexts();
-    } else {
-      this.customFooterOptions.metricTexts = this.customFooterOptions.metricTexts || {};
-      this.customFooterOptions.metricTexts.lastUpdate = this.customFooterOptions.metricTexts.lastUpdate || this.locales?.TEXT_LAST_UPDATE || 'TEXT_LAST_UPDATE';
-      this.customFooterOptions.metricTexts.items = this.customFooterOptions.metricTexts.items || this.locales?.TEXT_ITEMS || 'TEXT_ITEMS';
-      this.customFooterOptions.metricTexts.itemsSelected = this.customFooterOptions.metricTexts.itemsSelected || this.locales?.TEXT_ITEMS_SELECTED || 'TEXT_ITEMS_SELECTED';
-      this.customFooterOptions.metricTexts.of = this.customFooterOptions.metricTexts.of || this.locales?.TEXT_OF || 'TEXT_OF';
-    }
+    // execute translation when enabled or use defined text or locale
+    this.translateCustomFooterTexts();
 
     // we create and the custom footer in the DOM but only when there's no Pagination
     this.createFooterContainer(gridParentContainerElm);
@@ -125,6 +138,30 @@ export class SlickFooterComponent {
   /** Render the right side footer text */
   renderRightFooterText(text: string) {
     this._bindingHelper.setElementAttributeValue('div.right-footer', 'textContent', text);
+  }
+
+  /** Translate all Custom Footer Texts (footer with metrics) */
+  translateCustomFooterTexts() {
+    if (this.gridOptions.enableTranslate && this.translaterService?.translate) {
+      this.customFooterOptions.metricTexts = this.customFooterOptions.metricTexts || {};
+      for (const propName of Object.keys(this.customFooterOptions.metricTexts)) {
+        if (propName.lastIndexOf('Key') > 0) {
+          const propNameWithoutKey = propName.substring(0, propName.lastIndexOf('Key'));
+          this.customFooterOptions.metricTexts[propNameWithoutKey as keyof MetricTexts] = this.translaterService.translate(this.customFooterOptions.metricTexts[propName as keyof MetricTexts] || ' ');
+        }
+      }
+
+      // when we're display row selection count on left footer, we also need to translate that text with its count
+      if (this._isLeftFooterDisplayingSelectionRowCount) {
+        this.leftFooterText = `${this._selectedRowCount} ${this.customFooterOptions.metricTexts!.itemsSelected}`;
+      }
+    } else if (this.locales) {
+      this.customFooterOptions.metricTexts = this.customFooterOptions.metricTexts || {};
+      this.customFooterOptions.metricTexts.lastUpdate = this.customFooterOptions.metricTexts.lastUpdate || this.locales?.TEXT_LAST_UPDATE || 'TEXT_LAST_UPDATE';
+      this.customFooterOptions.metricTexts.items = this.customFooterOptions.metricTexts.items || this.locales?.TEXT_ITEMS || 'TEXT_ITEMS';
+      this.customFooterOptions.metricTexts.itemsSelected = this.customFooterOptions.metricTexts.itemsSelected || this.locales?.TEXT_ITEMS_SELECTED || 'TEXT_ITEMS_SELECTED';
+      this.customFooterOptions.metricTexts.of = this.customFooterOptions.metricTexts.of || this.locales?.TEXT_OF || 'TEXT_OF';
+    }
   }
 
   // --
@@ -257,24 +294,6 @@ export class SlickFooterComponent {
         const selectedCountText2 = customFooterOptions.metricTexts?.itemsSelected ?? this.locales?.TEXT_ITEMS_SELECTED ?? 'TEXT_ITEMS_SELECTED';
         this.leftFooterText = `${this._selectedRowCount} ${selectedCountText2}`;
       });
-    }
-  }
-
-  /** Translate all Custom Footer Texts (footer with metrics) */
-  translateCustomFooterTexts() {
-    if (this.translaterService?.translate) {
-      this.customFooterOptions.metricTexts = this.customFooterOptions.metricTexts || {};
-      for (const propName of Object.keys(this.customFooterOptions.metricTexts)) {
-        if (propName.lastIndexOf('Key') > 0) {
-          const propNameWithoutKey = propName.substring(0, propName.lastIndexOf('Key'));
-          this.customFooterOptions.metricTexts[propNameWithoutKey as keyof MetricTexts] = this.translaterService.translate(this.customFooterOptions.metricTexts[propName as keyof MetricTexts] || ' ');
-        }
-      }
-
-      // when we're display row selection count on left footer, we also need to translate that text with its count
-      if (this._isLeftFooterDisplayingSelectionRowCount) {
-        this.leftFooterText = `${this._selectedRowCount} ${this.customFooterOptions.metricTexts!.itemsSelected}`;
-      }
     }
   }
 }
