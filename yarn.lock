@@ -1762,10 +1762,10 @@
   resolved "https://registry.yarnpkg.com/@types/detect-indent/-/detect-indent-0.1.30.tgz#dc682bb412b4e65ba098e70edad73b4833fb910d"
   integrity sha1-3GgrtBK05lugmOcO2tc7SDP7kQ0=
 
-"@types/dompurify@^2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@types/dompurify/-/dompurify-2.3.0.tgz#66723d311da7a83405c8279874b753af2041a577"
-  integrity sha512-fBpdyrPm4bJYFTmDEyYp23OaEOxLcARra0cKS3HqaPhhvfAm6T66njkMufl462hvCh/YQ6aXWBVRd32Y05iIfw==
+"@types/dompurify@^2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@types/dompurify/-/dompurify-2.3.1.tgz#2934adcd31c4e6b02676f9c22f9756e5091c04dd"
+  integrity sha512-YJth9qa0V/E6/XPH1Jq4BC8uCMmO8V1fKWn8PCvuZcAhMn7q0ez9LW6naQT04UZzjFfAPhyRMZmI2a2rbMlEFA==
   dependencies:
     "@types/trusted-types" "*"
 
