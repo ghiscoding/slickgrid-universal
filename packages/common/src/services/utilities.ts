@@ -883,7 +883,7 @@ export function parseUtcDate(inputDateString: any, useUtc?: boolean): string {
  * @returns
  */
 export function removeAccentFromText(text: string, shouldLowerCase = false) {
-  const normalizedText = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const normalizedText = text?.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   return shouldLowerCase ? normalizedText.toLowerCase() : normalizedText;
 }
 
