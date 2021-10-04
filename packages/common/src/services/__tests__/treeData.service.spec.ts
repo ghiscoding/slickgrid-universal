@@ -6,6 +6,10 @@ import { PubSubService } from '../pubSub.service';
 import { SharedService } from '../shared.service';
 import { SortService } from '../sort.service';
 import { TreeDataService } from '../treeData.service';
+import * as utilities from '../utilities';
+
+const mockUnflattenParentChildArrayToTree = jest.fn();
+(utilities.unflattenParentChildArrayToTree as any) = mockUnflattenParentChildArrayToTree;
 
 declare const Slick: SlickNamespace;
 
@@ -490,12 +494,12 @@ describe('TreeData Service', () => {
 
     beforeEach(() => {
       mockColumns = [{ id: 'file', field: 'file', }, { id: 'size', field: 'size', }] as Column[];
-      mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', size: 1.2, parentId: 0 }, { id: 2, file: 'todo.txt', size: 2.3, parentId: 0 }];
-      gridOptionsMock.treeDataOptions = { columnId: 'file', parentPropName: 'parentId' };
+      mockFlatDataset = [{ id: 0, file: 'documents' }, { id: 1, file: 'vacation.txt', size: 1.2, parentId: 0, __collapsed: false }, { id: 2, file: 'todo.txt', size: 2.3, parentId: 0, __collapsed: false }];
+      gridOptionsMock.treeDataOptions = { columnId: 'file', parentPropName: 'parentId', initiallyCollapsed: false };
       jest.clearAllMocks();
     });
 
-    it('should sort by the Tree column when there is no initial sort provided', () => {
+    it('should sort by the Tree column when there is no initial sort provided', async () => {
       const mockHierarchical = [{
         id: 0,
         file: 'documents',
@@ -514,6 +518,22 @@ describe('TreeData Service', () => {
         sortCol: mockColumns[0]
       }]);
       expect(result).toEqual({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+      expect(mockUnflattenParentChildArrayToTree).toHaveBeenNthCalledWith(1, mockFlatDataset, {
+        columnId: 'file',
+        identifierPropName: 'id',
+        initiallyCollapsed: false,
+        parentPropName: 'parentId',
+      });
+
+      // 2nd test, if we toggled all items to be collapsed, we should expect the unflatten to be called with updated `initiallyCollapsed` flag
+      await service.toggleTreeDataCollapse(true);
+      const result2 = service.convertFlatParentChildToTreeDatasetAndSort(mockFlatDataset, mockColumns, gridOptionsMock);
+      expect(mockUnflattenParentChildArrayToTree).toHaveBeenNthCalledWith(2, mockFlatDataset, {
+        columnId: 'file',
+        identifierPropName: 'id',
+        initiallyCollapsed: true, // changed to True
+        parentPropName: 'parentId',
+      });
     });
 
     it('should sort by the Tree column by the "initialSort" provided', () => {

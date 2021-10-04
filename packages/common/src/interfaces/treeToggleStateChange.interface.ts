@@ -15,5 +15,5 @@ export interface TreeToggleStateChange {
    * What was the previous/last full toggle type?
    * This will help us identify if the tree was fully collapsed or expanded when toggling items in the grid.
    */
-  previousFullToggleType: Exclude<ToggleStateChangeType, 'toggle'> | Exclude<ToggleStateChangeTypeString, 'toggle'>;
+  previousFullToggleType: Extract<ToggleStateChangeType, 'full-collapse' | 'full-expand'> | Extract<ToggleStateChangeTypeString, 'full-collapse' | 'full-expand'>;
 }
