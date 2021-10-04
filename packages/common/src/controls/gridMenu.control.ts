@@ -304,14 +304,16 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
     this.init();
   }
 
-  repositionMenu(e: MouseEvent, addonOptions: GridMenu) {
+  repositionMenu(e: MouseEvent, addonOptions: GridMenu, showMenu = true) {
     if (this._menuElm) {
       let buttonElm = (e.target as HTMLButtonElement).nodeName === 'BUTTON' ? (e.target as HTMLButtonElement) : (e.target as HTMLElement).querySelector('button') as HTMLButtonElement; // get button element
       if (!buttonElm) {
         buttonElm = (e.target as HTMLElement).parentElement as HTMLButtonElement; // external grid menu might fall in this last case if wrapped in a span/div
       }
 
+      // we need to display the menu to properly calculate its width but we can however make it invisible
       this._menuElm.style.display = 'block';
+      this._menuElm.style.opacity = '0';
       const menuIconOffset = getHtmlElementOffset(buttonElm as HTMLButtonElement);
       const buttonComptStyle = getComputedStyle(buttonElm as HTMLButtonElement);
       const buttonWidth = parseInt(buttonComptStyle?.width ?? this._defaults?.menuWidth, 10);
@@ -319,12 +321,12 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
       const menuWidth = this._menuElm?.offsetWidth ?? 0;
       const contentMinWidth = addonOptions?.contentMinWidth ?? this._defaults.contentMinWidth ?? 0;
       const currentMenuWidth = ((contentMinWidth > menuWidth) ? contentMinWidth : (menuWidth)) || 0;
-      const nextPositionTop = menuIconOffset?.bottom ?? 0;
+      const nextPositionTop = menuIconOffset?.top ?? 0;
       const nextPositionLeft = menuIconOffset?.right ?? 0;
       const menuMarginBottom = ((addonOptions?.marginBottom !== undefined) ? addonOptions.marginBottom : this._defaults.marginBottom) || 0;
       const calculatedLeftPosition = addonOptions?.alignDropSide === 'left' ? nextPositionLeft - buttonWidth : nextPositionLeft - currentMenuWidth;
 
-      this._menuElm.style.top = `${nextPositionTop}px`;
+      this._menuElm.style.top = `${nextPositionTop + buttonElm.offsetHeight}px`; // top position has to include button height so the menu is placed just below it
       this._menuElm.style.left = `${calculatedLeftPosition}px`;
       this._menuElm.classList.add(addonOptions?.alignDropSide === 'left' ? 'dropleft' : 'dropright');
       this._menuElm.appendChild(this._listElm);
@@ -341,6 +343,9 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
       }
 
       this._menuElm.style.display = 'block';
+      if (showMenu) {
+        this._menuElm.style.opacity = '1'; // restore its visibility
+      }
       this._menuElm.appendChild(this._listElm);
       this._isMenuOpen = true;
     }
@@ -391,7 +396,11 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
 
     // load the column & create column picker list
     populateColumnPicker.call(this, addonOptions);
-    this.repositionMenu(e, addonOptions);
+
+    // calculate the necessary menu height/width and reposition twice because if we do it only once and the grid menu is wider than the original width,
+    // it will be offset the 1st time we open the menu but if we do it twice then it will be at the correct position every time
+    this.repositionMenu(e, addonOptions, false);
+    this.repositionMenu(e, addonOptions, true);
 
     // execute optional callback method defined by the user
     this.pubSubService.publish('gridMenu:onAfterMenuShow', callbackArgs);
