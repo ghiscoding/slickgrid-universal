@@ -12,8 +12,6 @@
   border: var(--slick-column-picker-border, $column-picker-border);
   border-radius: var(--slick-column-picker-border-radius, $column-picker-border-radius);
   padding: 6px;
-  -moz-box-shadow: 2px 2px 2px silver;
-  -webkit-box-shadow: 2px 2px 2px silver;
   box-shadow: var(--slick-column-picker-box-shadow, $column-picker-box-shadow);
   min-width: 150px;
   cursor: default;

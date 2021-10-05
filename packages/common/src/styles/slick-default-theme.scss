@@ -1,26 +1,29 @@
 @import './variables';
 
+@keyframes slickgrid-invalid-hilite {
+  from {
+    box-shadow: 0 0 6px red;
+  }
+  to {
+    box-shadow: none;
+  }
+}
+
+.full-height {
+  height: 100%;
+}
+.grid-pane {
+  width: 100%;
+}
+
  .pointer {
    cursor: pointer;
  }
  .slickgrid-container {
    .slick-header-columns,
    .slick-header-column {
-     background: $grid-header-background;
-     // background-color: #EBECEE;
      box-sizing: content-box !important; /* this here only for Firefox! */
    }
-
-   .slick-header-columns {
-     /*border-bottom: 1px solid $grid-border-color;*/
-     background: linear-gradient(rgba(0,0,0,0) 60%, rgba(0,0,0,.1));
-   }
-
-   .slick-header-column {
-     border-right: 1px solid $grid-border-color;
-     border-bottom: 1px solid $grid-border-color;
-   }
-
    .slick-header-column:hover {
      background: $header-column-background-hover
    }
@@ -32,12 +35,6 @@
    .slick-headerrow {
      background: $grid-header-background;
    }
-
-   .slick-headerrow-column {
-     background: #fafafa;
-     border-bottom: 0;
-   }
-
    .grid-canvas {
      background: white;
    }
@@ -54,19 +51,8 @@
 
        &.invalid {
          border-color: red;
-         -moz-animation-duration: 0.2s;
-         -webkit-animation-duration: 0.2s;
-         -moz-animation-name: slickgrid-invalid-hilite;
-         -webkit-animation-name: slickgrid-invalid-hilite;
          animation-duration: 0.2s;
          animation-name: slickgrid-invalid-hilite;
-       }
-
-       &.selected {
-         background-color: rgb(231, 231, 195); // beige
-         .cell-selection {
-          background-color: transparent; /* show default selected row background */
-         }
        }
 
        &.active {
@@ -86,35 +72,13 @@
        }
      }
 
-     &.odd .slick-cell {
-       background: $cell-odd-background-color;
-
-       // make sure we override the regular background color:
-       &.selected {
-         background-color: rgb(214, 214, 178); // beige
-       }
-     }
 
      &.active-row .slick-cell {
        background-color: rgb(226, 255, 253);
-
-       // make sure we override the regular background color:
-       &.selected {
-         background-color: red;
-       }
      }
 
      &.active-row.odd .slick-cell {
        background-color: $cell-odd-active-background-color;
-
-       // make sure we override the regular background color:
-       &.selected {
-         background-color: green; // beige
-       }
-     }
-
-     &.loading {
-       opacity: 0.5;
      }
    }
 
@@ -143,49 +107,5 @@
 
    .slick-sortable-placeholder {
      background: silver !important;
-   }
-
-   @keyframes slickgrid-invalid-hilite {
-     from {
-       box-shadow: 0 0 6px red;
-     }
-     to {
-       box-shadow: none;
-     }
-   }
-
-   // ----------------------------------------------
-   // Excel-like header
-   // ----------------------------------------------
-
-
-
-
-   .header-overlay,
-   .cell-overlay,
-   .selection-cell-overlay {
-     display: block;
-     position: absolute;
-     z-index: 999;
-   }
-
-   .slick-cell > .editor-select {
-     position: absolute;
-     left: 0;
-     right: 0;
-     width: auto;
-     top: 0;
-     bottom: 0;
-     max-width: 100%;
-     min-width: 0;
-     margin: 0;
-   }
-
-   .slick-range-decorator {
-     z-index: 100;
-     pointer-events: none;
-     background: transparent;
-     border: none;
-     outline: black;
    }
  }
