@@ -55,15 +55,15 @@
     "html-loader": "^2.1.2",
     "html-webpack-plugin": "5.3.2",
     "mini-css-extract-plugin": "^2.3.0",
-    "rxjs": "^7.3.0",
+    "rxjs": "^7.3.1",
     "sass": "^1.42.1",
     "sass-loader": "^12.1.0",
     "style-loader": "^3.3.0",
     "ts-loader": "^9.2.6",
     "ts-node": "^10.2.1",
     "url-loader": "^4.1.1",
-    "webpack": "^5.55.1",
+    "webpack": "^5.57.0",
     "webpack-cli": "^4.8.0",
-    "webpack-dev-server": "^4.3.0"
+    "webpack-dev-server": "^4.3.1"
   }
 }
