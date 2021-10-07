@@ -1,5 +1,5 @@
 import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
-import { Filters } from '..';
+import { Filters } from '../filters.index';
 import { NativeSelectFilter } from '../nativeSelectFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 

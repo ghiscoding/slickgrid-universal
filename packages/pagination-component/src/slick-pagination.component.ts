@@ -17,7 +17,6 @@ export class SlickPaginationComponent {
   protected _bindingHelper: BindingHelper;
   protected _paginationElement!: HTMLDivElement;
   protected _enableTranslate = false;
-  protected _locales: Locale;
   protected _subscriptions: Subscription[] = [];
   currentPagination: ServicePagination;
   firstButtonClasses = '';
@@ -37,17 +36,16 @@ export class SlickPaginationComponent {
 
     this.currentPagination = this.paginationService.getFullPagination();
     this._enableTranslate = this.gridOptions?.enableTranslate ?? false;
-    this._locales = this.gridOptions?.locales ?? Constants.locales;
 
     if (this._enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
-    this.translatePaginationTexts(this._locales);
+    this.translatePaginationTexts();
 
     if (this._enableTranslate && this.pubSubService?.subscribe) {
       const translateEventName = this.translaterService?.eventName ?? 'onLanguageChange';
       this._subscriptions.push(
-        this.pubSubService.subscribe(translateEventName, () => this.translatePaginationTexts(this._locales))
+        this.pubSubService.subscribe(translateEventName, () => this.translatePaginationTexts())
       );
     }
 
@@ -107,6 +105,11 @@ export class SlickPaginationComponent {
 
   get gridUid(): string {
     return this.grid?.getUID() ?? '';
+  }
+
+  get locales(): Locale {
+    // get locales provided by user in main file or else use default English locales via the Constants
+    return this.gridOptions?.locales ?? Constants.locales;
   }
 
   get totalItems() {
@@ -229,6 +232,22 @@ export class SlickPaginationComponent {
 
   changeToCurrentPage(pageNumber: number) {
     this.paginationService.goToPageNumber(+pageNumber);
+  }
+
+  /** Translate all the texts shown in the UI, use ngx-translate service when available or custom locales when service is null */
+  translatePaginationTexts() {
+    if (this._enableTranslate && this.translaterService?.translate) {
+      const translationPrefix = getTranslationPrefix(this.gridOptions);
+      this.textItemsPerPage = this.translaterService.translate(`${translationPrefix}ITEMS_PER_PAGE`);
+      this.textItems = this.translaterService.translate(`${translationPrefix}ITEMS`);
+      this.textOf = this.translaterService.translate(`${translationPrefix}OF`);
+      this.textPage = this.translaterService.translate(`${translationPrefix}PAGE`);
+    } else if (this.locales) {
+      this.textItemsPerPage = this.locales.TEXT_ITEMS_PER_PAGE || 'TEXT_ITEMS_PER_PAGE';
+      this.textItems = this.locales.TEXT_ITEMS || 'TEXT_ITEMS';
+      this.textOf = this.locales.TEXT_OF || 'TEXT_OF';
+      this.textPage = this.locales.TEXT_PAGE || 'TEXT_PAGE';
+    }
   }
 
   // --
@@ -360,21 +379,5 @@ export class SlickPaginationComponent {
     this.prevButtonClasses = this.isLeftPaginationDisabled ? 'page-item seek-prev disabled' : 'page-item seek-prev';
     this.lastButtonClasses = this.isRightPaginationDisabled ? 'page-item seek-end disabled' : 'page-item seek-end';
     this.nextButtonClasses = this.isRightPaginationDisabled ? 'page-item seek-next disabled' : 'page-item seek-next';
-  }
-
-  /** Translate all the texts shown in the UI, use ngx-translate service when available or custom locales when service is null */
-  protected translatePaginationTexts(locales: Locale) {
-    if (this._enableTranslate && this.translaterService?.translate) {
-      const translationPrefix = getTranslationPrefix(this.gridOptions);
-      this.textItemsPerPage = this.translaterService.translate(`${translationPrefix}ITEMS_PER_PAGE`);
-      this.textItems = this.translaterService.translate(`${translationPrefix}ITEMS`);
-      this.textOf = this.translaterService.translate(`${translationPrefix}OF`);
-      this.textPage = this.translaterService.translate(`${translationPrefix}PAGE`);
-    } else if (locales) {
-      this.textItemsPerPage = locales.TEXT_ITEMS_PER_PAGE || 'TEXT_ITEMS_PER_PAGE';
-      this.textItems = locales.TEXT_ITEMS || 'TEXT_ITEMS';
-      this.textOf = locales.TEXT_OF || 'TEXT_OF';
-      this.textPage = locales.TEXT_PAGE || 'TEXT_PAGE';
-    }
   }
 }

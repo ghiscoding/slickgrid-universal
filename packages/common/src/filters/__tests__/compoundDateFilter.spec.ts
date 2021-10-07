@@ -1,6 +1,6 @@
 import 'jest-extended';
 
-import { Filters } from '..';
+import { Filters } from '../filters.index';
 import { FieldType, OperatorType } from '../../enums/index';
 import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { CompoundDateFilter } from '../compoundDateFilter';

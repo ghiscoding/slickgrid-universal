@@ -3,7 +3,7 @@
 
 import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { CollectionService } from '../../services/collection.service';
-import { Filters } from '..';
+import { Filters } from '../filters.index';
 import { SelectFilter } from '../selectFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 

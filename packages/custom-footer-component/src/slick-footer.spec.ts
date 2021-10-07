@@ -1,6 +1,7 @@
 import 'jest-extended';
 import { CustomFooterOption, GridOption, SlickGrid } from '@slickgrid-universal/common';
 import { SlickFooterComponent } from './slick-footer.component';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
 
 function removeExtraSpaces(text: string) {
@@ -24,12 +25,14 @@ const gridStub = {
 describe('Slick-Footer Component', () => {
   let component: SlickFooterComponent;
   let div: HTMLDivElement;
+  let eventPubSubService: EventPubSubService;
   let translateService: TranslateServiceStub;
   let mockTimestamp: Date;
 
   beforeEach(() => {
     div = document.createElement('div');
     document.body.appendChild(div);
+    eventPubSubService = new EventPubSubService();
     translateService = new TranslateServiceStub();
     mockTimestamp = new Date('2019-05-03T00:00:01');
 
@@ -52,7 +55,7 @@ describe('Slick-Footer Component', () => {
     });
 
     it('should make sure Slick-Footer is being created and rendered', () => {
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
 
       const footerContainerElm = document.querySelector<HTMLSelectElement>('div.slick-custom-footer.slickgrid_123456');
@@ -63,7 +66,7 @@ describe('Slick-Footer Component', () => {
     });
 
     it('should create a the Slick-Footer component in the DOM', () => {
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
 
       const footerContainerElm = document.querySelector('div.slick-custom-footer.slickgrid_123456') as HTMLDivElement;
@@ -80,7 +83,7 @@ describe('Slick-Footer Component', () => {
       (mockGridOptions.customFooterOptions as CustomFooterOption).hideLastUpdateTimestamp = true;
       (mockGridOptions.customFooterOptions as CustomFooterOption).hideMetrics = true;
 
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
 
@@ -96,7 +99,7 @@ describe('Slick-Footer Component', () => {
     });
 
     it('should create a the Slick-Footer component in the DOM with only right side with last update timestamp & items count', () => {
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
 
@@ -120,7 +123,7 @@ describe('Slick-Footer Component', () => {
       (mockGridOptions.customFooterOptions as CustomFooterOption).hideMetrics = false;
       (mockGridOptions.customFooterOptions as CustomFooterOption).hideLastUpdateTimestamp = true;
 
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
 
@@ -143,7 +146,7 @@ describe('Slick-Footer Component', () => {
       (mockGridOptions.customFooterOptions as CustomFooterOption).hideLastUpdateTimestamp = true;
       (mockGridOptions.customFooterOptions as CustomFooterOption).hideTotalItemCount = true;
 
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
 
@@ -164,7 +167,7 @@ describe('Slick-Footer Component', () => {
     it('should create a the Slick-Footer component in the DOM and expect to use default English locale when none of the metricsText are defined', () => {
       (mockGridOptions.customFooterOptions as CustomFooterOption).metricTexts = { items: '', lastUpdate: '', of: '' };
 
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
 
@@ -184,13 +187,22 @@ describe('Slick-Footer Component', () => {
           <span class="text-items">items</span>`));
     });
 
+    it('should throw an error when enabling translate without a Translate Service', () => {
+      mockGridOptions.enableTranslate = true;
+      expect(() => new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, null))
+        .toThrow('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
+    });
+
     it('should create a the Slick-Footer component in the DOM and use different locale when enableTranslate is enabled', () => {
       (mockGridOptions.customFooterOptions as CustomFooterOption).metricTexts = { itemsKey: 'ITEMS', lastUpdateKey: 'LAST_UPDATE', ofKey: 'OF' };
       mockGridOptions.enableTranslate = true;
-      translateService.use('fr');
+      translateService.use('en');
+      eventPubSubService.publish('onLanguageChange', 'fr');
 
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
+      translateService.use('fr');
+      eventPubSubService.publish('onLanguageChange', 'fr');
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
 
       const footerContainerElm = document.querySelector('div.slick-custom-footer.slickgrid_123456') as HTMLDivElement;
@@ -212,7 +224,7 @@ describe('Slick-Footer Component', () => {
       mockGridOptions.enableCheckboxSelector = true;
       const customFooterOptions = mockGridOptions.customFooterOptions as CustomFooterOption;
       customFooterOptions.leftFooterText = 'initial left footer text';
-      component = new SlickFooterComponent(gridStub, customFooterOptions, translateService);
+      component = new SlickFooterComponent(gridStub, customFooterOptions, eventPubSubService, translateService);
       component.renderFooter(div);
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
 
@@ -227,7 +239,7 @@ describe('Slick-Footer Component', () => {
 
     it('should display custom text on the left side footer section when calling the leftFooterText SETTER', () => {
       mockGridOptions.enableCheckboxSelector = true;
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
       component.leftFooterText = 'custom left footer text';
@@ -249,7 +261,7 @@ describe('Slick-Footer Component', () => {
 
     it('should display 1 items selected on the left side footer section after triggering "onSelectedRowsChanged" event', () => {
       mockGridOptions.enableCheckboxSelector = true;
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
       gridStub.onSelectedRowsChanged.notify({ rows: [1], grid: gridStub, previousSelectedRows: [] });
@@ -276,7 +288,7 @@ describe('Slick-Footer Component', () => {
     it('should not not display row selection count after triggering "onSelectedRowsChanged" event when "hideRowSelectionCount" is set to True', () => {
       mockGridOptions.enableCheckboxSelector = true;
       mockGridOptions.customFooterOptions.hideRowSelectionCount = true;
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
       gridStub.onSelectedRowsChanged.notify({ rows: [1], grid: gridStub, previousSelectedRows: [] });
@@ -299,7 +311,7 @@ describe('Slick-Footer Component', () => {
 
     it('should display row selection count on the left side footer section after triggering "onSelectedRowsChanged" event', () => {
       mockGridOptions.enableCheckboxSelector = true;
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
       gridStub.onSelectedRowsChanged.notify({ rows: [1], previousSelectedRows: [], grid: gridStub, });
 
@@ -315,7 +327,7 @@ describe('Slick-Footer Component', () => {
       (mockGridOptions.customFooterOptions as CustomFooterOption).metricTexts = { itemsKey: 'ITEMS', itemsSelectedKey: 'ITEMS_SELECTED', lastUpdateKey: 'LAST_UPDATE', ofKey: 'OF' };
       mockGridOptions.enableTranslate = true;
       mockGridOptions.enableCheckboxSelector = true;
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
 
       gridStub.onSelectedRowsChanged.notify({ rows: [1], previousSelectedRows: [], grid: gridStub, });
@@ -337,7 +349,7 @@ describe('Slick-Footer Component', () => {
       mockGridOptions.enableCheckboxSelector = true;
       const customFooterOptions = mockGridOptions.customFooterOptions as CustomFooterOption;
       customFooterOptions.rightFooterText = 'initial right footer text';
-      component = new SlickFooterComponent(gridStub, customFooterOptions, translateService);
+      component = new SlickFooterComponent(gridStub, customFooterOptions, eventPubSubService, translateService);
       component.renderFooter(div);
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
 
@@ -353,7 +365,7 @@ describe('Slick-Footer Component', () => {
 
     it('should display custom text on the right side footer section when calling the rightFooterText SETTER', () => {
       mockGridOptions.enableCheckboxSelector = true;
-      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, translateService);
+      component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
       component.rightFooterText = 'custom right footer text';

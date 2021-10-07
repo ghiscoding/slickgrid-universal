@@ -61,20 +61,6 @@ export class ExtensionUtility {
   }
 
   /**
-   * Loop through object provided and set to null any property found starting with "onX"
-   * @param {Object}: obj
-   */
-  nullifyFunctionNameStartingWithOn(obj?: any) {
-    if (obj) {
-      for (const prop of Object.keys(obj)) {
-        if (prop.startsWith('on')) {
-          obj[prop] = null;
-        }
-      }
-    }
-  }
-
-  /**
    * When using ColumnPicker/GridMenu to show/hide a column, we potentially need to readjust the grid option "frozenColumn" index.
    * That is because SlickGrid freezes by column index and it has no knowledge of the columns themselves and won't change the index, we need to do that ourselves whenever necessary.
    * Note: we call this method right after the visibleColumns array got updated, it won't work properly if we call it before the setting the visibleColumns.

@@ -33,10 +33,8 @@ import {
   ServicePagination,
   SharedService,
   SlickDataView,
-  SlickDraggableGrouping,
   SlickEventHandler,
   SlickGrid,
-  SlickGroupItemMetadataProvider,
   SortService,
   TreeDataService,
   TranslaterService,
@@ -212,12 +210,6 @@ const mockDataView = {
   syncGridSelection: jest.fn(),
 } as unknown as SlickDataView;
 
-const mockDraggableGroupingExtension = {
-  constructor: jest.fn(),
-  init: jest.fn(),
-  destroy: jest.fn(),
-} as unknown as SlickDraggableGrouping;
-
 const mockEventPubSub = {
   notify: jest.fn(),
   subscribe: jest.fn(),
@@ -272,16 +264,13 @@ const mockGrid = {
 const mockSlickEventHandlerImplementation = jest.fn().mockImplementation(() => mockSlickEventHandler);
 const mockDataViewImplementation = jest.fn().mockImplementation(() => mockDataView);
 const mockGridImplementation = jest.fn().mockImplementation(() => mockGrid);
-const mockDraggableGroupingImplementation = jest.fn().mockImplementation(() => mockDraggableGroupingExtension);
 const template = `<div class="demo-container"><div class="grid1"></div></div>`;
 
 describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () => {
   jest.mock('slickgrid/slick.grid', () => mockGridImplementation);
-  jest.mock('slickgrid/plugins/slick.draggablegrouping', () => mockDraggableGroupingImplementation);
   Slick.Grid = mockGridImplementation;
   Slick.EventHandler = slickEventHandler;
   Slick.Data = { DataView: mockDataViewImplementation, };
-  Slick.DraggableGrouping = mockDraggableGroupingImplementation;
 
   let component: SlickVanillaGridBundle;
   let divContainer: HTMLDivElement;
@@ -1372,7 +1361,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         component.gridOptions = { enableTranslate: true, createPreHeaderPanel: false, enableDraggableGrouping: false, showCustomFooter: true } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
-        const transCustomFooterSpy = jest.spyOn(component.slickFooter, 'translateCustomFooterTexts'); // footer gets created after init
 
         eventPubSubService.publish('onLanguageChange', { language: 'fr' });
 
@@ -1380,7 +1368,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           expect(setHeaderRowSpy).not.toHaveBeenCalled();
           expect(transGroupingColSpanSpy).not.toHaveBeenCalled();
           expect(transExtensionSpy).toHaveBeenCalled();
-          expect(transCustomFooterSpy).toHaveBeenCalled();
           done();
         });
       });
@@ -1803,48 +1790,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         });
       });
 
-      it('should have a Custom Footer and custom texts when "showCustomFooter" is enabled with different metricTexts defined', (done) => {
-        const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
-
-        component.gridOptions.enableTranslate = false;
-        component.gridOptions.showCustomFooter = true;
-        component.gridOptions.customFooterOptions = {
-          hideRowSelectionCount: false,
-          metricTexts: {
-            items: 'some items',
-            lastUpdate: 'some last update',
-            of: 'some of'
-          }
-        };
-        component.initialization(divContainer, slickEventHandler);
-        component.columnDefinitions = mockColDefs;
-
-        setTimeout(() => {
-          expect(component.columnDefinitions).toEqual(mockColDefs);
-          expect(component.gridOptions.showCustomFooter).toBeTrue();
-          expect(component.gridOptions.customFooterOptions).toEqual({
-            dateFormat: 'YYYY-MM-DD, hh:mm a',
-            hideRowSelectionCount: false,
-            hideLastUpdateTimestamp: true,
-            hideTotalItemCount: false,
-            footerHeight: 25,
-            leftContainerClass: 'col-xs-12 col-sm-5',
-            metricSeparator: '|',
-            metricTexts: {
-              items: 'some items',
-              itemsKey: 'ITEMS',
-              itemsSelected: 'items selected',
-              itemsSelectedKey: 'ITEMS_SELECTED',
-              lastUpdate: 'some last update',
-              of: 'some of',
-              ofKey: 'OF',
-            },
-            rightContainerClass: 'col-xs-6 col-sm-7',
-          });
-          done();
-        });
-      });
-
       it('should NOT have a Custom Footer when "showCustomFooter" is enabled WITH Pagination in use', (done) => {
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
 
@@ -2141,10 +2086,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
 describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with a Hierarchical Dataset', () => {
   jest.mock('slickgrid/slick.grid', () => mockGridImplementation);
-  jest.mock('slickgrid/plugins/slick.draggablegrouping', () => mockDraggableGroupingImplementation);
   Slick.Grid = mockGridImplementation;
   Slick.Data = { DataView: mockDataViewImplementation, };
-  Slick.DraggableGrouping = mockDraggableGroupingImplementation;
 
   let component: SlickVanillaGridBundle;
   let divContainer: HTMLDivElement;
@@ -2225,11 +2168,9 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
 
 describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with a Slickgrid Container that already exist', () => {
   jest.mock('slickgrid/slick.grid', () => mockGridImplementation);
-  jest.mock('slickgrid/plugins/slick.draggablegrouping', () => mockDraggableGroupingImplementation);
   Slick.Grid = mockGridImplementation;
   Slick.EventHandler = mockSlickEventHandlerImplementation;
   Slick.Data = { DataView: mockDataViewImplementation, };
-  Slick.DraggableGrouping = mockDraggableGroupingImplementation;
 
   let component: SlickVanillaGridBundle;
   let divContainer: HTMLDivElement;

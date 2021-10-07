@@ -114,7 +114,7 @@ export class TreeDataService {
    * @param {Boolean} shouldPreProcessFullToggle - should we pre-process a full toggle on all items? defaults to True
    * @param {Boolean} shouldTriggerEvent - should we trigger a toggled item event? defaults to False
    */
-  applyToggledItemStateChanges(treeToggledItems: TreeToggledItem[], previousFullToggleType?: Exclude<ToggleStateChangeType, 'toggle-collapse' | 'toggle-expand'> | Exclude<ToggleStateChangeTypeString, 'toggle-collapse' | 'toggle-expand'>, shouldPreProcessFullToggle = true, shouldTriggerEvent = false) {
+  applyToggledItemStateChanges(treeToggledItems: TreeToggledItem[], previousFullToggleType?: Extract<ToggleStateChangeType, 'full-collapse' | 'full-expand'> | Extract<ToggleStateChangeTypeString, 'full-collapse' | 'full-expand'>, shouldPreProcessFullToggle = true, shouldTriggerEvent = false) {
     if (Array.isArray(treeToggledItems)) {
       const collapsedPropName = this.getTreeDataOptionPropName('collapsedPropName');
       const hasChildrenPropName = this.getTreeDataOptionPropName('hasChildrenPropName');
@@ -288,7 +288,11 @@ export class TreeDataService {
   convertFlatParentChildToTreeDataset<P, T extends P & { [childrenPropName: string]: P[] }>(flatDataset: P[], gridOptions: GridOption): T[] {
     const dataViewIdIdentifier = gridOptions?.datasetIdPropertyName ?? 'id';
     const treeDataOpt: TreeDataOption = gridOptions?.treeDataOptions ?? { columnId: 'id' };
-    const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier };
+    const treeDataOptions = {
+      ...treeDataOpt,
+      identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier,
+      initiallyCollapsed: this._isLastFullToggleCollapsed, // use the last full toggled flag so that if we replace the entire dataset we will still use the last toggled flag (this flag is also initialized with `initiallyCollapsed` when provided)
+    };
     return unflattenParentChildArrayToTree(flatDataset, treeDataOptions);
   }
 

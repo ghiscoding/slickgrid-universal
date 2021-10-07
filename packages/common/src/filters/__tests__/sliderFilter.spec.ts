@@ -1,4 +1,4 @@
-import { Filters } from '..';
+import { Filters } from '../filters.index';
 import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { SliderFilter } from '../sliderFilter';
 

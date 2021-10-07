@@ -177,8 +177,8 @@ export class DraggableGroupingPlugin {
         this.dropboxElm.appendChild(this.groupToggler);
 
         // when calling Expand/Collapse All Groups from Context Menu, we also need to inform this plugin as well of the action
-        this.pubSubService.subscribe('contextMenu:collapseAllGroups', () => this.toggleGroupToggler(groupTogglerIconElm, true, false));
-        this.pubSubService.subscribe('contextMenu:expandAllGroups', () => this.toggleGroupToggler(groupTogglerIconElm, false, false));
+        this.pubSubService.subscribe('onContextMenuCollapseAllGroups', () => this.toggleGroupToggler(groupTogglerIconElm, true, false));
+        this.pubSubService.subscribe('onContextMenuExpandAllGroups', () => this.toggleGroupToggler(groupTogglerIconElm, false, false));
       }
 
       this.dropboxPlaceholderElm = document.createElement('div');
@@ -215,7 +215,7 @@ export class DraggableGroupingPlugin {
       });
 
       // when calling Clear All Groups from Context Menu, we also need to inform this plugin as well of the action
-      this.pubSubService.subscribe('contextMenu:clearGrouping', () => this.clearDroppedGroups());
+      this.pubSubService.subscribe('onContextMenuClearGrouping', () => this.clearDroppedGroups());
 
       for (const col of this._gridColumns) {
         const columnId = col.field;

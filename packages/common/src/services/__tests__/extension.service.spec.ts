@@ -3,7 +3,6 @@ import 'jest-extended';
 import { ExtensionName } from '../../enums/index';
 import { Column, ExtensionModel, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import {
-  CellExternalCopyManagerExtension,
   CheckboxSelectorExtension,
   ExtensionUtility,
   RowDetailViewExtension,
@@ -12,7 +11,8 @@ import {
 } from '../../extensions';
 import { BackendUtilityService, ExtensionService, FilterService, PubSubService, SharedService, SortService, TreeDataService } from '../index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { AutoTooltipPlugin, CellMenuPlugin, ContextMenuPlugin, DraggableGroupingPlugin, HeaderButtonPlugin, HeaderMenuPlugin } from '../../plugins/index';
+import { AutoTooltipPlugin, CellExcelCopyManager, CellMenuPlugin, ContextMenuPlugin, DraggableGroupingPlugin, HeaderButtonPlugin, HeaderMenuPlugin } from '../../plugins/index';
+import { CellSelectionModel } from '../../plugins/cellSelectionModel';
 import { ColumnPickerControl, GridMenuControl } from '../../controls/index';
 import { GroupItemMetadataProviderService } from '../groupItemMetadataProvider.service';
 
@@ -29,29 +29,45 @@ const extensionUtilityStub = {
   translateWhenEnabledAndServiceExist: jest.fn(),
 } as unknown as ExtensionUtility;
 
+const cellSelectionModelStub = {
+  pluginName: 'CellSelectionModel',
+  constructor: jest.fn(),
+  init: jest.fn(),
+  destroy: jest.fn(),
+  getSelectedRanges: jest.fn(),
+  setSelectedRanges: jest.fn(),
+  getSelectedRows: jest.fn(),
+  setSelectedRows: jest.fn(),
+  onSelectedRangesChanged: new Slick.Event(),
+} as unknown as CellSelectionModel;
+jest.mock('../../plugins/cellSelectionModel');
+
 const gridStub = {
   autosizeColumns: jest.fn(),
   getColumnIndex: jest.fn(),
   getOptions: jest.fn(),
   getPluginByName: jest.fn(),
   getPreHeaderPanel: jest.fn(),
+  getSelectionModel: jest.fn(),
   getUID: () => GRID_UID,
   getColumns: jest.fn(),
   setColumns: jest.fn(),
   onColumnsResized: jest.fn(),
   registerPlugin: jest.fn(),
+  setSelectionModel: jest.fn(),
   updateColumnHeader: jest.fn(),
+  onActiveCellChanged: new Slick.Event(),
   onBeforeDestroy: new Slick.Event(),
   onBeforeHeaderCellDestroy: new Slick.Event(),
   onBeforeSetColumns: new Slick.Event(),
   onClick: new Slick.Event(),
-  onContextMenu: new Slick.Event(),
   onColumnsReordered: new Slick.Event(),
+  onContextMenu: new Slick.Event(),
   onHeaderCellRendered: new Slick.Event(),
-  onKeyDown: new Slick.Event(),
-  onSetOptions: new Slick.Event(),
-  onScroll: new Slick.Event(),
   onHeaderContextMenu: new Slick.Event(),
+  onKeyDown: new Slick.Event(),
+  onScroll: new Slick.Event(),
+  onSetOptions: new Slick.Event(),
 } as unknown as SlickGrid;
 
 const filterServiceStub = {
@@ -145,7 +161,6 @@ describe('ExtensionService', () => {
         sortServiceStub,
         treeDataServiceStub,
         // extensions
-        extensionStub as unknown as CellExternalCopyManagerExtension,
         extensionCheckboxSelectorStub as unknown as CheckboxSelectorExtension,
         extensionStub as unknown as RowDetailViewExtension,
         extensionRowMoveStub as unknown as RowMoveManagerExtension,
@@ -505,16 +520,21 @@ describe('ExtensionService', () => {
       });
 
       it('should register the ExcelCopyBuffer addon when "enableExcelCopyBuffer" is set in the grid options', () => {
-        const gridOptionsMock = { enableExcelCopyBuffer: true } as GridOption;
-        const extSpy = jest.spyOn(extensionStub, 'register').mockReturnValue(instanceMock);
+        const onRegisteredMock = jest.fn();
+        const gridOptionsMock = { enableExcelCopyBuffer: true, excelCopyBufferOptions: { onExtensionRegistered: onRegisteredMock } } as GridOption;
         const gridSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+        jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(cellSelectionModelStub);
 
         service.bindDifferentExtensions();
         const output = service.getExtensionByName(ExtensionName.cellExternalCopyManager);
+        const pluginInstance = service.getSlickgridAddonInstance(ExtensionName.cellExternalCopyManager);
 
+        expect(onRegisteredMock).toHaveBeenCalledWith(expect.toBeObject());
+        expect(output.instance instanceof CellExcelCopyManager).toBeTrue();
         expect(gridSpy).toHaveBeenCalled();
-        expect(extSpy).toHaveBeenCalled();
-        expect(output).toEqual({ name: ExtensionName.cellExternalCopyManager, instance: instanceMock as unknown, class: extensionStub } as ExtensionModel<any, any>);
+        expect(pluginInstance).toBeTruthy();
+        expect(output!.instance).toEqual(pluginInstance);
+        expect(output).toEqual({ name: ExtensionName.cellExternalCopyManager, instance: pluginInstance, class: pluginInstance } as ExtensionModel<any, any>);
       });
     });
 
@@ -851,7 +871,6 @@ describe('ExtensionService', () => {
         sortServiceStub,
         treeDataServiceStub,
         // extensions
-        extensionStub as unknown as CellExternalCopyManagerExtension,
         extensionStub as unknown as CheckboxSelectorExtension,
         extensionStub as unknown as RowDetailViewExtension,
         extensionStub as unknown as RowMoveManagerExtension,

@@ -253,15 +253,13 @@ ul {
         margin-right: 0;
         padding: var(--slick-header-input-padding, $header-input-padding);
         height: var(--slick-header-input-height, $header-input-height);
-        -moz-box-sizing: border-box;
-        -webkit-box-sizing: border-box;
         box-sizing: border-box;
       }
     }
   }
 
   .slick-header-columns {
-    background: none;
+    background: $grid-header-background;
     background-color: var(--slick-header-background-color, $header-background-color);
     width: calc(100% - #{var(--slick-header-scroll-width-to-remove, $header-scroll-width-to-remove)});
 

@@ -352,6 +352,7 @@ describe('GridMenuControl', () => {
 
       it('should open the Grid Menu via "showGridMenu" method from an external button which has span inside it and expect the Grid Menu still work', () => {
         jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined).mockReturnValue(1);
+        const repositionSpy = jest.spyOn(control, 'repositionMenu');
 
         control.init();
         const spanEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false })
@@ -364,6 +365,7 @@ describe('GridMenuControl', () => {
         const gridMenuElm = document.querySelector('.slick-grid-menu') as HTMLDivElement;
 
         expect(gridMenuElm.style.display).toBe('block');
+        expect(repositionSpy).toHaveBeenCalledTimes(2);
       });
 
       it('should open the Grid Menu and expect "Forcefit" to be checked when "hideForceFitButton" is false', () => {

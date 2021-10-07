@@ -1,12 +1,6 @@
-// import common 3rd party SlickGrid plugins/libs
-import 'slickgrid/plugins/slick.cellrangedecorator';
-import 'slickgrid/plugins/slick.cellrangeselector';
-import 'slickgrid/plugins/slick.cellselectionmodel';
-
 import { Column, Extension, ExtensionModel, GridOption, SlickRowSelectionModel, } from '../interfaces/index';
 import { ColumnReorderFunction, ExtensionList, ExtensionName, SlickControlList, SlickPluginList } from '../enums/index';
 import {
-  CellExternalCopyManagerExtension,
   CheckboxSelectorExtension,
   ExtensionUtility,
   RowDetailViewExtension,
@@ -15,8 +9,16 @@ import {
 } from '../extensions/index';
 import { SharedService } from './shared.service';
 import { TranslaterService } from './translater.service';
-import { AutoTooltipPlugin, CellMenuPlugin, ContextMenuPlugin, DraggableGroupingPlugin, HeaderButtonPlugin, HeaderMenuPlugin } from '../plugins/index';
 import { ColumnPickerControl, GridMenuControl } from '../controls/index';
+import {
+  AutoTooltipPlugin,
+  CellExcelCopyManager,
+  CellMenuPlugin,
+  ContextMenuPlugin,
+  DraggableGroupingPlugin,
+  HeaderButtonPlugin,
+  HeaderMenuPlugin
+} from '../plugins/index';
 import { FilterService } from './filter.service';
 import { GroupItemMetadataProviderService } from './groupItemMetadataProvider.service';
 import { PubSubService } from './pubSub.service';
@@ -31,6 +33,7 @@ interface ExtensionWithColumnIndexPosition {
 
 export class ExtensionService {
   protected _cellMenuPlugin?: CellMenuPlugin;
+  protected _cellExcelCopyManagerPlugin?: CellExcelCopyManager;
   protected _contextMenuPlugin?: ContextMenuPlugin;
   protected _columnPickerControl?: ColumnPickerControl;
   protected _draggleGroupingPlugin?: DraggableGroupingPlugin;
@@ -55,7 +58,6 @@ export class ExtensionService {
     protected readonly sortService: SortService,
     protected readonly treeDataService: TreeDataService,
 
-    protected readonly cellExternalCopyExtension: CellExternalCopyManagerExtension,
     protected readonly checkboxSelectorExtension: CheckboxSelectorExtension,
     protected readonly rowDetailViewExtension: RowDetailViewExtension,
     protected readonly rowMoveManagerExtension: RowMoveManagerExtension,
@@ -152,11 +154,13 @@ export class ExtensionService {
       }
 
       // Cell External Copy Manager Plugin (Excel Like)
-      if (this.gridOptions.enableExcelCopyBuffer && this.cellExternalCopyExtension && this.cellExternalCopyExtension.register) {
-        const instance = this.cellExternalCopyExtension.register();
-        if (instance) {
-          this._extensionList[ExtensionName.cellExternalCopyManager] = { name: ExtensionName.cellExternalCopyManager, class: this.cellExternalCopyExtension, instance };
+      if (this.gridOptions.enableExcelCopyBuffer) {
+        this._cellExcelCopyManagerPlugin = new CellExcelCopyManager();
+        this._cellExcelCopyManagerPlugin.init(this.sharedService.slickGrid, this.sharedService.gridOptions.excelCopyBufferOptions);
+        if (this.gridOptions.excelCopyBufferOptions?.onExtensionRegistered) {
+          this.gridOptions.excelCopyBufferOptions.onExtensionRegistered(this._cellExcelCopyManagerPlugin);
         }
+        this._extensionList[ExtensionName.cellExternalCopyManager] = { name: ExtensionName.cellExternalCopyManager, class: this._cellExcelCopyManagerPlugin, instance: this._cellExcelCopyManagerPlugin };
       }
 
       // (Action) Cell Menu Plugin

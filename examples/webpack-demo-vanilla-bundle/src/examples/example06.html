@@ -14,7 +14,7 @@
   "sortByFieldId" in your column "treeData" option if you wish to sort on a different column
 </h6>
 <div class="columns">
-  <div class="column is-narrow">
+  <div class="column">
     <button onclick.delegate="addNewFile()" class="button is-small is-info" data-test="add-item-btn">
       <span class="icon mdi mdi-plus"></span>
       <span>Add New Pop Song</span>
@@ -27,14 +27,15 @@
       <span class="icon mdi mdi-arrow-expand"></span>
       <span>Expand All</span>
     </button>
-    <button onclick.delegate="logFlatStructure()" class="button is-small">
+    <button onclick.delegate="logFlatStructure()" class="button is-small" title="console.log of the Flat dataset">
       <span>Log Flat Structure</span>
     </button>
-    <button onclick.delegate="logHierarchicalStructure()" class="button is-small">
+    <button onclick.delegate="logHierarchicalStructure()" class="button is-small"
+            title="console.log of the Hierarchical Tree dataset">
       <span>Log Hierarchical Structure</span>
     </button>
   </div>
-  <div class="column is-6">
+  <div class="column is-4">
     <div class="field is-horizontal">
       <div class="field-label is-small">
         <label class="label">Search File</label>
@@ -56,6 +57,29 @@
       </div>
     </div>
   </div>
+</div>
+
+<div>
+  <label class="checkbox-inline control-label" for="excludeChildWhenFiltering" style="margin-left: 20px">
+    <input type="checkbox" id="excludeChildWhenFiltering" data-test="exclude-child-when-filtering"
+           checked.bind="isExcludingChildWhenFiltering"
+           onclick.delegate="changeExcludeChildWhenFiltering()">
+    <span
+          title="for example if we filter the word 'pop' and we exclude children, then only the folder 'pop' will show up without any content unless we uncheck this flag">
+      Exclude Children when Filtering Tree
+    </span>
+  </label>
+  <label class="checkbox-inline control-label" for="autoApproveParentItem" style="margin-left: 20px">
+    <input type="checkbox" id="autoApproveParentItem" data-test="auto-approve-parent-item"
+           checked.bind="isAutoApproveParentItemWhenTreeColumnIsValid"
+           onclick.delegate="changeAutoApproveParentItem()">
+    <span
+          title="for example in this demo if we filter with 'music' and size '> 70' nothing will show up unless we have this flag enabled
+          because none of the files have both criteria at the same time, however the column with the tree 'file' does pass the filter criteria 'music'
+          and with this flag we tell the lib to skip any other filter(s) as soon as the with the tree (file in this demo) passes its own filter criteria">
+      Skip Other Filter Criteria when Parent with Tree is valid
+    </span>
+  </label>
 </div>
 
 <div class="grid6">

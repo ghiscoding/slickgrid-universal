@@ -448,12 +448,12 @@ describe('Draggable Grouping Plugin', () => {
 
         it('should clear all grouping when that action is called from Context Menu, it must be also cleared in the Draggable Grouping preheader', () => {
           const clearGroupSpy = jest.spyOn(plugin, 'clearDroppedGroups');
-          eventPubSubService.publish('contextMenu:clearGrouping');
+          eventPubSubService.publish('onContextMenuClearGrouping');
           expect(clearGroupSpy).toHaveBeenCalled();
         });
 
         it('should change the toggle icon to collapsed when that action is called from the Context Menu', () => {
-          eventPubSubService.publish('contextMenu:collapseAllGroups');
+          eventPubSubService.publish('onContextMenuCollapseAllGroups');
           const toggleAllElm = document.querySelector('.slick-group-toggle-all');
           const toggleAllIconElm = toggleAllElm.querySelector('.slick-group-toggle-all-icon');
 
@@ -462,7 +462,7 @@ describe('Draggable Grouping Plugin', () => {
         });
 
         it('should change the toggle icon to expanded when that action is called from the Context Menu', () => {
-          eventPubSubService.publish('contextMenu:expandAllGroups');
+          eventPubSubService.publish('onContextMenuExpandAllGroups');
           const toggleAllElm = document.querySelector('.slick-group-toggle-all');
           const toggleAllIconElm = toggleAllElm.querySelector('.slick-group-toggle-all-icon');
 

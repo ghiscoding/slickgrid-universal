@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/pagination-component",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "description": "Slick Pagination Component - Vanilla Implementation of a Pagination Component",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
@@ -31,8 +31,17 @@
     "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=pagination-component",
     "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=pagination-component"
   },
-  "author": "Ghislain B.",
   "license": "MIT",
+  "author": "Ghislain B.",
+  "homepage": "https://github.com/ghiscoding/slickgrid-universal",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ghiscoding/slickgrid-universal.git",
+    "directory": "packages/pagination-component"
+  },
+  "bugs": {
+    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
+  },
   "engines": {
     "node": ">=14.15.0",
     "npm": ">=6.14.8"
@@ -43,8 +52,8 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/binding": "^0.17.0",
-    "@slickgrid-universal/common": "^0.17.0"
+    "@slickgrid-universal/binding": "^0.18.0",
+    "@slickgrid-universal/common": "^0.18.0"
   },
   "devDependencies": {
     "copyfiles": "^2.4.1",

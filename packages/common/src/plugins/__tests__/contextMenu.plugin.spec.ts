@@ -1065,7 +1065,7 @@ describe('ContextMenu Plugin', () => {
         menuItemCommand.action!(new CustomEvent('change'), { command: 'clear-grouping', cell: 0, row: 0 } as any);
 
         expect(dataviewSpy).toHaveBeenCalledWith([]);
-        expect(pubSubSpy).toHaveBeenCalledWith('contextMenu:clearGrouping');
+        expect(pubSubSpy).toHaveBeenCalledWith('onContextMenuClearGrouping');
       });
 
       it('should call "collapseAllGroups" from the DataView when Grouping is enabled and the command triggered is "collapse-all-groups"', () => {
@@ -1082,7 +1082,7 @@ describe('ContextMenu Plugin', () => {
         menuItemCommand.action!(new CustomEvent('change'), { command: 'collapse-all-groups', cell: 0, row: 0 } as any);
 
         expect(dataviewSpy).toHaveBeenCalledWith();
-        expect(pubSubSpy).toHaveBeenCalledWith('contextMenu:collapseAllGroups');
+        expect(pubSubSpy).toHaveBeenCalledWith('onContextMenuCollapseAllGroups');
       });
 
       it('should call "collapseAllGroups" from the DataView when Tree Data is enabled and the command triggered is "collapse-all-groups"', () => {
@@ -1114,7 +1114,7 @@ describe('ContextMenu Plugin', () => {
         menuItemCommand.action!(new CustomEvent('change'), { command: 'expand-all-groups', cell: 0, row: 0 } as any);
 
         expect(dataviewSpy).toHaveBeenCalledWith();
-        expect(pubSubSpy).toHaveBeenCalledWith('contextMenu:expandAllGroups');
+        expect(pubSubSpy).toHaveBeenCalledWith('onContextMenuExpandAllGroups');
       });
 
       it('should call "expandAllGroups" from the DataView when Tree Data is enabled and the command triggered is "expand-all-groups"', () => {

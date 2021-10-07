@@ -5,7 +5,7 @@ import { of, Subject } from 'rxjs';
 import { FieldType, OperatorType } from '../../enums/index';
 import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { CollectionService } from '../../services/collection.service';
-import { Filters } from '..';
+import { Filters } from '../filters.index';
 import { SelectFilter } from '../selectFilter';
 import { HttpStub } from '../../../../../test/httpClientStub';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';

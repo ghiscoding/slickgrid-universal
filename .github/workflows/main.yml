@@ -49,9 +49,11 @@ jobs:
         run: yarn bundle
 
       - name: Run Jest unit tests
+        if: "!contains(github.event.head_commit.message, 'chore(release)')"
         run: yarn test:ci
 
       - name: Upload Jest coverage to Codecov
+        if: "!contains(github.event.head_commit.message, 'chore(release)')"
         run: bash <(curl -s https://codecov.io/bash)
 
       - name: Website Prod Build (GitHub demo site)

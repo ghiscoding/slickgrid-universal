@@ -1,4 +1,4 @@
-import { MenuCommandItem } from '..';
+import { MenuCommandItem } from '../index';
 import { HeaderMenuPlugin } from '../plugins/headerMenu.plugin';
 import {
   Column,

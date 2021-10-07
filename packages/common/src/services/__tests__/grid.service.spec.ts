@@ -14,7 +14,6 @@ const mockSelectionModel = {
 const mockSelectionModelImplementation = jest.fn().mockImplementation(() => mockSelectionModel);
 
 jest.mock('flatpickr', () => { });
-jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockSelectionModelImplementation);
 Slick.RowSelectionModel = mockSelectionModelImplementation;
 
 const filterServiceStub = {
@@ -95,6 +94,7 @@ const treeDataServiceStub = {
 } as unknown as TreeDataService;
 
 describe('Grid Service', () => {
+  jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockSelectionModelImplementation);
   let service: GridService;
   const sharedService = new SharedService();
   const mockGridOptions = { enableAutoResize: true } as GridOption;

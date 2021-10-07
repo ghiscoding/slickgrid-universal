@@ -1,6 +1,6 @@
 import { InputFilter } from '../inputFilter';
 import { GridOption, FilterArguments, Column, SlickGrid, BackendServiceApi } from '../../interfaces/index';
-import { Filters } from '..';
+import { Filters } from '../filters.index';
 
 const containerId = 'demo-container';
 
