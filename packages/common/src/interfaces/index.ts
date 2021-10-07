@@ -35,6 +35,7 @@ export * from './currentPinning.interface';
 export * from './currentRowSelection.interface';
 export * from './currentSorter.interface';
 export * from './customFooterOption.interface';
+export * from './customTooltipOption.interface';
 export * from './dataViewOption.interface';
 export * from './domEvent.interface';
 export * from './draggableGrouping.interface';

@@ -91,7 +91,11 @@ export class Example3 {
           aggregators: [new Aggregators.Sum('cost')],
           aggregateCollapsed: false,
           collapsed: false
-        }
+        },
+        customTooltip: {
+          formatter: this.tooltipTaskFormatter.bind(this),
+          // usabilityOverride: (args) => !!(args.dataContext?.id % 2) // show it only every second row
+        },
       },
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
@@ -291,6 +295,14 @@ export class Example3 {
       excelExportOptions: {
         exportWithFormatter: true
       },
+      // Custom Tooltip options can be defined in a Column or Grid Options or a mixed of both (first options found wins)
+      enableCustomTooltip: true,
+      customTooltip: {
+        arrowMarginLeft: '30%',
+        formatter: this.tooltipFormatter.bind(this),
+        usabilityOverride: (args) => (args.cell !== 0 && args.cell !== args.grid.getColumns().length - 1), // don't show on first/last columns
+        // hideArrow: true, // defaults to False
+      },
       registerExternalResources: [this.excelExportService],
       enableFiltering: true,
       rowSelectionOptions: {
@@ -435,7 +447,7 @@ export class Example3 {
     }
   }
 
-  groupByFieldName(_fieldName, _index) {
+  groupByFieldName(/* _fieldName, _index */) {
     this.clearGrouping();
     if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
       this.showPreHeader();
@@ -523,5 +535,46 @@ export class Example3 {
       command.undo();
       this.sgb?.slickGrid.gotoCell(command.row, command.cell, false);
     }
+  }
+
+  tooltipFormatter(row, cell, value, column, dataContext) {
+    const tooltipTitle = 'Custom Tooltip';
+    return `<div class="color-sf-primary-dark" style="font-weight: bold">${tooltipTitle}</div>
+    <div class="tooltip-2cols-row"><div>Id:</div> <div>${dataContext.id}</div></div>
+    <div class="tooltip-2cols-row"><div>Title:</div> <div>${dataContext.title}</div></div>
+    <div class="tooltip-2cols-row"><div>Completion:</div> <div>${this.loadCompletionIcons(dataContext.percentComplete)}</div></div>
+    `;
+  }
+
+  tooltipTaskFormatter(row, cell, value, column, dataContext, grid) {
+    const tooltipTitle = `Task ${dataContext.id} - Tooltip`;
+
+    // use a 2nd Formatter to get the percent completion
+    const completionBar = Formatters.percentCompleteBarWithText(row, cell, dataContext.percentComplete, column, dataContext, grid);
+    const out = `<div class="color-se-danger" style="font-weight: bold">${tooltipTitle}</div>
+      <div class="tooltip-2cols-row"><div>Completion:</div> <div>${completionBar}</div></div>
+    `;
+    return out;
+  }
+
+  loadCompletionIcons(percentComplete: number) {
+    let output = '';
+    let iconCount = 0;
+    if (percentComplete > 5 && percentComplete < 25) {
+      iconCount = 1;
+    } else if (percentComplete >= 25 && percentComplete < 50) {
+      iconCount = 2;
+    } else if (percentComplete >= 50 && percentComplete < 75) {
+      iconCount = 3;
+    } else if (percentComplete >= 75 && percentComplete < 100) {
+      iconCount = 4;
+    } else if (percentComplete === 100) {
+      iconCount = 5;
+    }
+    for (let i = 0; i < iconCount; i++) {
+      const icon = iconCount === 5 ? 'color-success' : iconCount >= 3 ? 'color-alt-warning' : 'color-se-secondary-light';
+      output += `<span class="mdi mdi-check-circle-outline ${icon}"></span>`;
+    }
+    return output;
   }
 }

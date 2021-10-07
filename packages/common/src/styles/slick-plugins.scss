@@ -267,6 +267,35 @@
   }
 }
 
+// ----------------------------------------------
+// Slick Tooltip Component
+// ----------------------------------------------
+
+.slick-custom-tooltip {
+  position: absolute;
+  background-color: var(--slick-tooltip-background-color, $slick-tooltip-background-color);
+  border: var(--slick-tooltip-border, $slick-tooltip-border);
+  border-radius: var(--slick-tooltip-border-radius, $slick-tooltip-border-radius);
+  color: var(--slick-tooltip-color, $slick-tooltip-color);
+  padding: var(--slick-tooltip-padding, $slick-tooltip-padding);
+  height: var(--slick-tooltip-height, $slick-tooltip-height);
+  width: var(--slick-tooltip-width, $slick-tooltip-width);
+  z-index: var(--slick-tooltip-z-index, $slick-tooltip-z-index);
+
+  &::after {
+    content: "";
+    height: 0;
+    position: absolute;
+    width: 0;
+    border-left: var(--slick-tooltip-arrow-border-left, $slick-tooltip-arrow-border-left);
+    border-right: var(--slick-tooltip-arrow-border-right, $slick-tooltip-arrow-border-right);
+    border-top: var(--slick-tooltip-arrow-border-top, $slick-tooltip-arrow-border-top);
+    margin-left: var(--slick-tooltip-arrow-margin-left, $slick-tooltip-arrow-margin-left);
+    bottom: var(--slick-tooltip-arrow-bottom, $slick-tooltip-arrow-bottom);
+    left: var(--slick-tooltip-arrow-left, $slick-tooltip-arrow-left);
+  }
+}
+
 // ---------------------------------------------------------
 // Header Button Plugin - add button in header with command
 // ---------------------------------------------------------

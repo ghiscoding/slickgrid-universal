@@ -1,4 +1,8 @@
 import { dequal } from 'dequal/lite';
+import 'jquery';
+import 'jquery-ui/ui/widgets/draggable';
+import 'jquery-ui/ui/widgets/droppable';
+import 'jquery-ui/ui/widgets/sortable';
 import 'flatpickr/dist/l10n/fr';
 import 'slickgrid/lib/jquery.event.drag-2.3.0';
 import 'slickgrid/lib/jquery.mousewheel';

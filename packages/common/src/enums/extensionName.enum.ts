@@ -6,6 +6,7 @@ export enum ExtensionName {
   checkboxSelector = 'checkboxSelector',
   columnPicker = 'columnPicker',
   contextMenu = 'contextMenu',
+  customTooltip = 'customTooltip',
   draggableGrouping = 'draggableGrouping',
   groupItemMetaProvider = 'groupItemMetaProvider',
   gridMenu = 'gridMenu',

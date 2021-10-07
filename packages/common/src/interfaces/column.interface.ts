@@ -3,6 +3,7 @@ import {
   CellMenu,
   ColumnEditor,
   ColumnFilter,
+  CustomTooltipOption,
   EditorValidator,
   Formatter,
   Grouping,
@@ -52,6 +53,13 @@ export interface Column<T = any> {
 
   /** CSS class to add to the column cell */
   cssClass?: string;
+
+  /**
+   * Custom Tooltip Options, you must first enable `enableCustomTooltip: true`.
+   * The tooltip could defined in any of the Column Definition or in the Grid Options,
+   * it will first try to find it in the Column that the user is hovering over or else (when not found) go and try to find it in the Grid Options
+   */
+  customTooltip?: CustomTooltipOption;
 
   /** Data key, for example this could be used as a property key for complex object comparison (e.g. dataKey: 'id') */
   dataKey?: string;

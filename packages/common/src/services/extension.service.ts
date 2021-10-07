@@ -20,6 +20,7 @@ import {
   RowDetailViewExtension,
   RowMoveManagerExtension,
   RowSelectionExtension,
+  SlickCustomTooltip,
 } from '../extensions/index';
 import { SharedService } from './shared.service';
 import { TranslaterService } from './translater.service';
@@ -124,6 +125,13 @@ export class ExtensionService {
       // this is to avoid having hidden columns not being translated on first load
       if (this.sharedService.gridOptions.enableTranslate) {
         this.translateItems(this.sharedService.allColumns, 'nameKey', 'name');
+      }
+
+      // Custom Tooltip Plugin
+      if (this.sharedService.gridOptions.enableCustomTooltip) {
+        const tooltipPlugin = new SlickCustomTooltip(this.sharedService);
+        tooltipPlugin.init(this.sharedService.slickGrid);
+        this._extensionList[ExtensionName.customTooltip] = { name: ExtensionName.customTooltip, class: tooltipPlugin, instance: tooltipPlugin };
       }
 
       // Auto Tooltip Plugin
