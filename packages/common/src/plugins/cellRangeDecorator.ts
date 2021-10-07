@@ -1,13 +1,4 @@
-import { CellRange, SlickGrid } from '../interfaces/index';
-
-export interface CellRangeDecoratorOption {
-  selectionCssClass: string;
-  selectionCss: CSSStyleDeclaration;
-  offset: { top: number; left: number; height: number; width: number; };
-}
-
-export type CSSStyleDeclarationReadonly = 'length' | 'parentRule' | 'getPropertyPriority' | 'getPropertyValue' | 'item' | 'removeProperty' | 'setProperty';
-export type CSSStyleDeclarationWritable = keyof Omit<CSSStyleDeclaration, CSSStyleDeclarationReadonly>;
+import { CellRange, CellRangeDecoratorOption, CSSStyleDeclarationWritable, SlickGrid } from '../interfaces/index';
 
 /**
  * Displays an overlay on top of a given cell range.
@@ -30,9 +21,17 @@ export class CellRangeDecorator {
   } as CellRangeDecoratorOption;
   pluginName = 'CellRangeDecorator';
 
-  constructor(grid: SlickGrid, options: any) {
+  constructor(grid: SlickGrid, options?: Partial<CellRangeDecoratorOption>) {
     this._addonOptions = { ...this._defaults, ...options };
     this._grid = grid;
+  }
+
+  get addonOptions() {
+    return this._addonOptions;
+  }
+
+  get addonElement(): HTMLElement | null | undefined {
+    return this._elem;
   }
 
   /** @deprecated @use `dispose` Destroy plugin. */
@@ -45,6 +44,11 @@ export class CellRangeDecorator {
     this.hide();
   }
 
+  hide() {
+    this._elem?.remove();
+    this._elem = null;
+  }
+
   show(range: CellRange) {
     if (!this._elem) {
       this._elem = document.createElement('div');
@@ -53,7 +57,7 @@ export class CellRangeDecorator {
         this._elem!.style[cssStyleKey as CSSStyleDeclarationWritable] = this._addonOptions.selectionCss[cssStyleKey as CSSStyleDeclarationWritable];
       });
       this._elem.style.position = 'absolute';
-      this._grid?.getActiveCanvasNode().appendChild(this._elem);
+      this._grid?.getActiveCanvasNode()?.appendChild(this._elem);
     }
 
     const from = this._grid?.getCellNodeBox(range.fromRow, range.fromCell);
@@ -66,10 +70,5 @@ export class CellRangeDecorator {
       this._elem.style.width = `${to.right - from.left + this._addonOptions.offset.width}px`;
     }
     return this._elem;
-  }
-
-  hide() {
-    this._elem?.remove();
-    this._elem = null;
   }
 }

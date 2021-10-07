@@ -1,8 +1,3 @@
-// import common 3rd party SlickGrid plugins/libs
-import 'slickgrid/plugins/slick.cellrangedecorator';
-import 'slickgrid/plugins/slick.cellrangeselector';
-import 'slickgrid/plugins/slick.cellselectionmodel';
-
 import { Column, Extension, ExtensionModel, GridOption, SlickRowSelectionModel, } from '../interfaces/index';
 import { ColumnReorderFunction, ExtensionList, ExtensionName, SlickControlList, SlickPluginList } from '../enums/index';
 import {

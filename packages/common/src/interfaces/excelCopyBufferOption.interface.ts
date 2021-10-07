@@ -7,6 +7,12 @@ import {
 import { CellExcelCopyManager, } from '../plugins/cellExcelCopyManager';
 
 export interface ExcelCopyBufferOption<T = any> {
+  /** defaults to 2000(ms), delay in ms to wait before clearing the selection after a paste action */
+  clearCopySelectionDelay?: number;
+
+  /** defaults to 100(ms), delay in ms to wait before executing focus/paste */
+  clipboardPasteDelay?: number;
+
   /** defaults to "copied", sets the css className used for copied cells. */
   copiedCellStyle?: string;
 

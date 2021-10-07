@@ -65,9 +65,9 @@ export class Example13 {
       enableFiltering: false,
       enableExcelCopyBuffer: true,
       excelCopyBufferOptions: {
-        onCopyCells: (e, args) => console.log(e, args),
-        onPasteCells: (e, args) => console.log(e, args),
-        onCopyCancelled: (e, args) => console.log(e, args),
+        onCopyCells: (e, args) => console.log('onCopyCells', e, args),
+        onPasteCells: (e, args) => console.log('onPasteCells', e, args),
+        onCopyCancelled: (e, args) => console.log('onCopyCancelled', e, args),
       },
       enableCellNavigation: true,
       gridHeight: 275,
@@ -82,6 +82,8 @@ export class Example13 {
       ...this.gridOptions1,
       enableHeaderMenu: true,
       enableFiltering: true,
+      // frozenColumn: 2,
+      // frozenRow: 2,
       headerButton: {
         // when floating to left, you might want to inverse the icon orders
         inverseOrder: true,

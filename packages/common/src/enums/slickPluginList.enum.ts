@@ -17,6 +17,7 @@ import {
 } from '../interfaces/index';
 import {
   AutoTooltipPlugin,
+  CellRangeSelector,
   // CellExternalCopyManager,
   // CellRangeDecorator,
   // CellRangeSelector,
@@ -25,6 +26,7 @@ import {
 
 export type SlickPluginList =
   AutoTooltipPlugin |
+  CellRangeSelector |
   SlickCellExternalCopyManager |
   SlickCellMenu |
   SlickCellRangeDecorator |

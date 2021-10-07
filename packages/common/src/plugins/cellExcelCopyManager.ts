@@ -109,8 +109,12 @@ export class CellExcelCopyManager {
     this._cellExternalCopyManagerPlugin?.dispose();
   }
 
+  //
+  // protected functions
+  // ---------------------
+
   /** Create an undo redo buffer used by the Excel like copy */
-  private createUndoRedoBuffer() {
+  protected createUndoRedoBuffer() {
     let commandCtr = 0;
     this._commandQueue = [];
 
@@ -144,7 +148,7 @@ export class CellExcelCopyManager {
   }
 
   /** @return default plugin (addon) options */
-  private getDefaultOptions(): ExcelCopyBufferOption {
+  protected getDefaultOptions(): ExcelCopyBufferOption {
     let newRowIds = 0;
 
     return {
@@ -188,7 +192,7 @@ export class CellExcelCopyManager {
   }
 
   /** Hook an undo shortcut key hook that will redo/undo the copy buffer using Ctrl+(Shift)+Z keyboard events */
-  private handleBodyKeyDown(e: KeyboardEvent) {
+  protected handleBodyKeyDown(e: KeyboardEvent) {
     const keyCode = e.keyCode || e.code;
     if (keyCode === 90 && (e.ctrlKey || e.metaKey)) {
       if (e.shiftKey) {

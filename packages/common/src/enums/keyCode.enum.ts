@@ -1,4 +1,6 @@
 export enum KeyCode {
+  C = 67,
+  V = 86,
   BACKSPACE = 8,
   DELETE = 46,
   DOWN = 40,

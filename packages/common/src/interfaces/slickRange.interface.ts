@@ -13,14 +13,14 @@ export interface SlickRange extends CellRange {
   constructor: (fromRow: number, fromCell: number, toRow: number, toCell: number) => void;
 
   /** Returns whether a range represents a single row. */
-  isSingleRow: () => boolean;
+  isSingleRow?: () => boolean;
 
   /** Returns whether a range represents a single cell. */
-  isSingleCell: () => boolean;
+  isSingleCell?: () => boolean;
 
   /** Returns whether a range contains a given cell. */
-  contains: (row: number, cell: number) => boolean;
+  contains?: (row: number, cell: number) => boolean;
 
   /** Returns a readable representation of a range. */
-  toString: () => string;
+  toString?: () => string;
 }

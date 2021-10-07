@@ -39,7 +39,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   protected _bindEventService: BindingEventService;
   protected _camelPluginName = '';
   protected _commandTitleElm?: HTMLDivElement;
-  protected _eventHandler!: SlickEventHandler;
+  protected _eventHandler: SlickEventHandler;
   protected _gridUid = '';
   protected _menuElm?: HTMLDivElement | null;
   protected _menuCssPrefix = '';
