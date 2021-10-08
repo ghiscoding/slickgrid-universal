@@ -17,7 +17,7 @@ declare const Slick: SlickNamespace;
  * @param {boolean} [options.enableForHeaderCells=false] - Enable tooltip for header cells
  * @param {number}  [options.maxToolTipLength=null]      - The maximum length for a tooltip
  */
-export class AutoTooltipPlugin {
+export class SlickAutoTooltip {
   protected _eventHandler!: SlickEventHandler;
   protected _grid!: SlickGrid;
   protected _addonOptions?: AutoTooltipOption;

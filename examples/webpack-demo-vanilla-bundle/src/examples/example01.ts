@@ -65,7 +65,7 @@ export class Example1 {
       ...{
         gridHeight: 255,
         columnPicker: {
-          onColumnsChanged: (e, args) => console.log('columnPicker:onColumnsChanged - visible columns count', args.visibleColumns.length),
+          onColumnsChanged: (e, args) => console.log('onColumnPickerColumnsChanged - visible columns count', args.visibleColumns.length),
         },
         gridMenu: {
           // customItems: [
@@ -76,16 +76,16 @@ export class Example1 {
           alignDropSide: 'right',
           // menuUsabilityOverride: () => false,
           onBeforeMenuShow: () => {
-            console.log('gridMenu:onBeforeMenuShow');
+            console.log('onGridMenuBeforeMenuShow');
             // return false; // returning false would prevent the grid menu from opening
           },
-          onAfterMenuShow: () => console.log('gridMenu:onAfterMenuShow'),
-          onColumnsChanged: (_e, args) => console.log('gridMenu:onColumnsChanged', args),
+          onAfterMenuShow: () => console.log('onGridMenuAfterMenuShow'),
+          onColumnsChanged: (_e, args) => console.log('onGridMenuColumnsChanged', args),
           onCommand: (e, args) => {
             // e.preventDefault(); // preventing default event would keep the menu open after the execution
-            console.log('gridMenu:onCommand', args.command);
+            console.log('onGridMenuCommand', args.command);
           },
-          onMenuClose: (e, args) => console.log('gridMenu:onMenuClose - visible columns count', args.visibleColumns.length),
+          onMenuClose: (e, args) => console.log('onGridMenuMenuClose - visible columns count', args.visibleColumns.length),
         },
         enableFiltering: true,
         enablePagination: true,

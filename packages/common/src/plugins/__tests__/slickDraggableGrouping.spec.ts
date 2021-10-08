@@ -2,7 +2,7 @@ import 'jquery-ui/ui/widgets/sortable';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { Aggregators } from '../../aggregators/aggregators.index';
-import { DraggableGroupingPlugin } from '../draggableGrouping.plugin';
+import { SlickDraggableGrouping } from '../slickDraggableGrouping';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 import { Column, DraggableGroupingOption, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { BackendUtilityService, } from '../../services';
@@ -79,7 +79,7 @@ const mockColumns = [      // The column definitions
 
 describe('Draggable Grouping Plugin', () => {
   let eventPubSubService: EventPubSubService;
-  let plugin: DraggableGroupingPlugin;
+  let plugin: SlickDraggableGrouping;
   let sharedService: SharedService;
   let backendUtilityService: BackendUtilityService;
   let extensionUtility: ExtensionUtility;
@@ -107,7 +107,7 @@ describe('Draggable Grouping Plugin', () => {
     jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(gridStub, 'getPreHeaderPanel').mockReturnValue(preHeaderDiv);
-    plugin = new DraggableGroupingPlugin(extensionUtility, eventPubSubService, sharedService);
+    plugin = new SlickDraggableGrouping(extensionUtility, eventPubSubService, sharedService);
   });
 
   afterEach(() => {

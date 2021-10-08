@@ -7,13 +7,13 @@ import {
   SlickGrid,
   SlickNamespace,
   SlickResizer,
-  SlickColumnPicker,
 } from './../interfaces/index';
 import { ExtensionName } from '../enums/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { ExtensionService } from '../services/extension.service';
 import { PubSubService } from './pubSub.service';
 import { emptyElement } from './domUtilities';
+import { SlickColumnPicker } from '../controls/slickColumnPicker';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -75,9 +75,7 @@ export class GroupingAndColspanService {
         if (columnPickerExtension?.instance?.onColumnsChanged) {
           this._eventHandler.subscribe(columnPickerExtension.instance.onColumnsChanged, () => this.renderPreHeaderRowGroupingTitles());
         }
-        this.pubSubService.subscribe('onHeaderMenuHideColumns', () => {
-          this.delayRenderPreHeaderRowGroupingTitles(0);
-        });
+        this.pubSubService.subscribe('onHeaderMenuHideColumns', () => this.delayRenderPreHeaderRowGroupingTitles(0));
 
         const gridMenuExtension = this.extensionService.getExtensionByName(ExtensionName.gridMenu);
         if (gridMenuExtension && gridMenuExtension.instance && gridMenuExtension.instance.onColumnsChanged && gridMenuExtension.instance.onMenuClose) {

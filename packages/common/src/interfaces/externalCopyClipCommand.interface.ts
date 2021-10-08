@@ -1,10 +1,10 @@
-import { CellExternalCopyManager } from '../plugins/cellExternalCopyManager';
+import { SlickCellExternalCopyManager } from '../plugins/slickCellExternalCopyManager';
 import { CellRange, Column, ExcelCopyBufferOption } from './index';
 
 export interface ExternalCopyClipCommand {
   activeCell: number;
   activeRow: number;
-  cellExternalCopyManager: CellExternalCopyManager;
+  cellExternalCopyManager: SlickCellExternalCopyManager;
   clippedRange: CellRange[];
   destH: number;
   destW: number;

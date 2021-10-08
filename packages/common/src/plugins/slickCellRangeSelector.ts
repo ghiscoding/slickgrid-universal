@@ -1,16 +1,19 @@
+import * as assign_ from 'assign-deep';
+const assign = (assign_ as any)['default'] || assign_;
+
 import { emptyElement, getHtmlElementOffset, } from '../services/domUtilities';
 import { CellRange, CellRangeSelectorOption, DOMMouseEvent, DragPosition, DragRange, GridOption, OnScrollEventArgs, SlickEventHandler, SlickGrid, SlickNamespace } from '../interfaces/index';
-import { CellRangeDecorator } from './index';
+import { SlickCellRangeDecorator } from './index';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
 
-export class CellRangeSelector {
+export class SlickCellRangeSelector {
   protected _activeCanvas?: HTMLElement;
   protected _addonOptions!: CellRangeSelectorOption;
   protected _currentlySelectedRange: DragRange | null = null;
   protected _canvas!: HTMLElement;
-  protected _decorator!: CellRangeDecorator;
+  protected _decorator!: SlickCellRangeDecorator;
   protected _dragging = false;
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
@@ -37,7 +40,7 @@ export class CellRangeSelector {
 
   constructor(options?: Partial<CellRangeSelectorOption>) {
     this._eventHandler = new Slick.EventHandler();
-    this._addonOptions = { ...this._defaults, ...options };
+    this._addonOptions = assign({}, this._defaults, options);
   }
 
   get addonOptions() {
@@ -58,7 +61,7 @@ export class CellRangeSelector {
 
   init(grid: SlickGrid) {
     this._grid = grid;
-    this._decorator = this._addonOptions.cellDecorator || new CellRangeDecorator(grid, this._addonOptions);
+    this._decorator = this._addonOptions.cellDecorator || new SlickCellRangeDecorator(grid, this._addonOptions);
     this._canvas = grid.getCanvasNode();
     this._gridOptions = grid.getOptions();
     this._gridUid = grid.getUID();

@@ -2,7 +2,6 @@ import {
   Aggregators,
   BindingEventService,
   Column,
-  DraggableGroupingPlugin,
   Editors,
   FieldType,
   FileType,
@@ -12,6 +11,7 @@ import {
   Grouping,
   GroupingGetterFunction,
   GroupTotalFormatters,
+  SlickDraggableGrouping,
   SlickNamespace,
   SortComparers,
   SortDirectionNumber,
@@ -45,7 +45,7 @@ export class Example3 {
   excelExportService: ExcelExportService;
   sgb: SlickVanillaGridBundle;
   durationOrderByCount = false;
-  draggableGroupingPlugin: DraggableGroupingPlugin;
+  draggableGroupingPlugin: SlickDraggableGrouping;
   loadingClass = '';
   selectedGroupingFields: Array<string | GroupingGetterFunction> = ['', '', ''];
 

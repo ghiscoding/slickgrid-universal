@@ -1,5 +1,5 @@
 import { CellMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, SlickDataView, SlickGrid, SlickNamespace, } from '../../interfaces/index';
-import { CellMenuPlugin } from '../cellMenu.plugin';
+import { SlickCellMenu } from '../slickCellMenu';
 import { BackendUtilityService, deepCopy, PubSubService, SharedService, } from '../../services';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
@@ -119,7 +119,7 @@ describe('CellMenu Plugin', () => {
   let backendUtilityService: BackendUtilityService;
   let extensionUtility: ExtensionUtility;
   let translateService: TranslateServiceStub;
-  let plugin: CellMenuPlugin;
+  let plugin: SlickCellMenu;
   let sharedService: SharedService;
 
   beforeEach(() => {
@@ -133,7 +133,7 @@ describe('CellMenu Plugin', () => {
     jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
     jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 2));
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
-    plugin = new CellMenuPlugin(extensionUtility, pubSubServiceStub, sharedService);
+    plugin = new SlickCellMenu(extensionUtility, pubSubServiceStub, sharedService);
   });
 
   afterEach(() => {

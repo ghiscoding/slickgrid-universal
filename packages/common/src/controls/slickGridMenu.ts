@@ -9,6 +9,7 @@ import {
   GridMenuOption,
   MenuCommandItem,
   SlickEventHandler,
+  SlickNamespace,
 } from '../interfaces/index';
 import { DelimiterType, FileType } from '../enums';
 import { ExtensionUtility } from '../extensions/extensionUtility';
@@ -21,6 +22,9 @@ import { SortService } from '../services/sort.service';
 import { TextExportService } from '../services/textExport.service';
 import { addColumnTitleElementWhenDefined, addCloseButtomElement, handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
 import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from '../plugins/menuBaseClass';
+
+// using external SlickGrid JS libraries
+declare const Slick: SlickNamespace;
 
 /**
  * A control to add a Grid Menu with Extra Commands & Column Picker (hambuger menu on top-right of the grid)
@@ -35,7 +39,7 @@ import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from '.
  * @class GridMenuControl
  * @constructor
  */
-export class GridMenuControl extends MenuBaseClass<GridMenu> {
+export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   protected _areVisibleColumnDifferent = false;
   protected _columns: Column[] = [];
   protected _columnCheckboxes: HTMLInputElement[] = [];
@@ -45,6 +49,11 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
   protected _isMenuOpen = false;
   protected _listElm!: HTMLSpanElement;
   protected _userOriginalGridMenu!: GridMenu;
+  onAfterMenuShow = new Slick.Event();
+  onBeforeMenuShow = new Slick.Event();
+  onMenuClose = new Slick.Event();
+  onCommand = new Slick.Event();
+  onColumnsChanged = new Slick.Event();
 
   protected _defaults = {
     alignDropSide: 'right',
@@ -277,8 +286,8 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
       } as GridMenuEventWithElementCallbackArgs;
 
       // execute optional callback method defined by the user, if it returns false then we won't go further neither close the menu
-      this.pubSubService.publish('gridMenu:onMenuClose', callbackArgs);
-      if (typeof this.addonOptions?.onMenuClose === 'function' && this.addonOptions.onMenuClose(event, callbackArgs) === false) {
+      this.pubSubService.publish('onGridMenuMenuClose', callbackArgs);
+      if ((typeof this.addonOptions?.onMenuClose === 'function' && this.addonOptions.onMenuClose(event, callbackArgs) === false) || this.onMenuClose.notify(callbackArgs, null, this) === false) {
         return;
       }
 
@@ -388,8 +397,8 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
 
     // execute optional callback method defined by the user, if it returns false then we won't go further and not open the grid menu
     if (typeof e.stopPropagation === 'function') {
-      this.pubSubService.publish('gridMenu:onBeforeMenuShow', callbackArgs);
-      if (typeof addonOptions?.onBeforeMenuShow === 'function' && addonOptions.onBeforeMenuShow(e, callbackArgs) === false) {
+      this.pubSubService.publish('onGridMenuBeforeMenuShow', callbackArgs);
+      if ((typeof addonOptions?.onBeforeMenuShow === 'function' && addonOptions.onBeforeMenuShow(e, callbackArgs) === false) || this.onBeforeMenuShow.notify(callbackArgs, null, this)) {
         return;
       }
     }
@@ -403,10 +412,11 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
     this.repositionMenu(e, addonOptions, true);
 
     // execute optional callback method defined by the user
-    this.pubSubService.publish('gridMenu:onAfterMenuShow', callbackArgs);
+    this.pubSubService.publish('onGridMenuAfterMenuShow', callbackArgs);
     if (typeof addonOptions?.onAfterMenuShow === 'function') {
       addonOptions.onAfterMenuShow(e, callbackArgs);
     }
+    this.onAfterMenuShow.notify(callbackArgs, null, this);
   }
 
   /** Update the Titles of each sections (command, commandTitle, ...) */
@@ -757,10 +767,11 @@ export class GridMenuControl extends MenuBaseClass<GridMenu> {
       // execute Grid Menu callback with command,
       // we'll also execute optional user defined onCommand callback when provided
       this.executeGridMenuInternalCustomCommands(event, callbackArgs);
-      this.pubSubService.publish('gridMenu:onCommand', callbackArgs);
+      this.pubSubService.publish('onGridMenuCommand', callbackArgs);
       if (typeof this.addonOptions?.onCommand === 'function') {
         this.addonOptions.onCommand(event, callbackArgs);
       }
+      this.onCommand.notify(callbackArgs, null, this);
 
       // execute action callback when defined
       if (typeof item.action === 'function') {

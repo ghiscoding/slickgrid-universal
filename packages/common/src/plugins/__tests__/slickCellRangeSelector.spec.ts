@@ -1,7 +1,7 @@
 import 'jest-extended';
 
 import { GridOption, SlickGrid, SlickNamespace, } from '../../interfaces/index';
-import { CellRangeSelector } from '../cellRangeSelector';
+import { SlickCellRangeSelector } from '../slickCellRangeSelector';
 
 declare const Slick: SlickNamespace;
 const GRID_UID = 'slickgrid_12345';
@@ -37,7 +37,7 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 describe('CellRangeSelector Plugin', () => {
-  let plugin: CellRangeSelector;
+  let plugin: SlickCellRangeSelector;
   const gridContainerElm = document.createElement('div');
   gridContainerElm.className = GRID_UID;
   const viewportElm = document.createElement('div');
@@ -62,7 +62,7 @@ describe('CellRangeSelector Plugin', () => {
   Object.defineProperty(canvasTR, 'clientWidth', { writable: true, configurable: true, value: 33 });
 
   beforeEach(() => {
-    plugin = new CellRangeSelector();
+    plugin = new SlickCellRangeSelector();
   });
 
   afterEach(() => {

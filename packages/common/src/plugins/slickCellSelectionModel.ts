@@ -1,27 +1,27 @@
 import { KeyCode } from '../enums/index';
 import { CellRange, OnActiveCellChangedEventArgs, SlickEventHandler, SlickGrid, SlickNamespace, SlickRange, } from '../interfaces/index';
-import { CellRangeSelector } from './index';
+import { SlickCellRangeSelector } from './index';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
 
-export class CellSelectionModel {
+export class SlickCellSelectionModel {
   protected _addonOptions: any;
   protected _canvas: HTMLElement | null = null;
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
-  protected _ranges: SlickRange[] = [];
-  protected _selector: CellRangeSelector;
+  protected _ranges: CellRange[] = [];
+  protected _selector: SlickCellRangeSelector;
   protected _defaults = {
     selectActiveCell: true,
   };
   onSelectedRangesChanged = new Slick.Event();
   pluginName = 'CellSelectionModel';
 
-  constructor(options?: { selectActiveCell: boolean; cellRangeSelector: CellRangeSelector; }) {
+  constructor(options?: { selectActiveCell: boolean; cellRangeSelector: SlickCellRangeSelector; }) {
     this._eventHandler = new Slick.EventHandler();
     if (options === undefined || options.cellRangeSelector === undefined) {
-      this._selector = new CellRangeSelector({ selectionCss: { border: '2px solid black' } as CSSStyleDeclaration });
+      this._selector = new SlickCellRangeSelector({ selectionCss: { border: '2px solid black' } as unknown as CSSStyleDeclaration });
     } else {
       this._selector = options.cellRangeSelector;
     }
@@ -92,7 +92,7 @@ export class CellSelectionModel {
     return !areDifferent;
   }
 
-  removeInvalidRanges(ranges: SlickRange[]) {
+  removeInvalidRanges(ranges: CellRange[]) {
     const result = [];
     for (let i = 0; i < ranges.length; i++) {
       const r = ranges[i];
@@ -103,7 +103,7 @@ export class CellSelectionModel {
     return result;
   }
 
-  setSelectedRanges(ranges: SlickRange[]) {
+  setSelectedRanges(ranges: CellRange[]) {
     // simple check for: empty selection didn't change, prevent firing onSelectedRangesChanged
     if ((!this._ranges || this._ranges.length === 0) && (!ranges || ranges.length === 0)) {
       return;
@@ -144,7 +144,7 @@ export class CellSelectionModel {
   }
 
   protected handleOnKeyDown(e: any) {
-    let ranges: SlickRange[];
+    let ranges: CellRange[];
     let last: SlickRange;
     const active = this._grid.getActiveCell();
     const metaKey = e.ctrlKey || e.metaKey;

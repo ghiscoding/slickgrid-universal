@@ -1,9 +1,8 @@
 import 'jest-extended';
-import { SlickRange } from '../../../dist/commonjs';
 
-import { GridOption, SlickGrid, SlickNamespace, } from '../../interfaces/index';
-import { CellRangeSelector } from '../cellRangeSelector';
-import { CellSelectionModel } from '../cellSelectionModel';
+import { GridOption, SlickGrid, SlickNamespace, SlickRange, } from '../../interfaces/index';
+import { SlickCellRangeSelector } from '../slickCellRangeSelector';
+import { SlickCellSelectionModel } from '../slickCellSelectionModel';
 
 declare const Slick: SlickNamespace;
 const GRID_UID = 'slickgrid_12345';
@@ -55,7 +54,7 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 describe('CellSelectionModel Plugin', () => {
-  let plugin: CellSelectionModel;
+  let plugin: SlickCellSelectionModel;
   const gridContainerElm = document.createElement('div');
   gridContainerElm.className = GRID_UID;
   const viewportElm = document.createElement('div');
@@ -81,7 +80,7 @@ describe('CellSelectionModel Plugin', () => {
   jest.spyOn(gridStub, 'getCanvasNode').mockReturnValue(canvasTL);
 
   beforeEach(() => {
-    plugin = new CellSelectionModel();
+    plugin = new SlickCellSelectionModel();
   });
 
   afterEach(() => {
@@ -118,7 +117,7 @@ describe('CellSelectionModel Plugin', () => {
   it('should create the plugin and initialize it with just "selectActiveCell" option and still expect the same result', () => {
     const registerSpy = jest.spyOn(gridStub, 'registerPlugin');
 
-    plugin = new CellSelectionModel({ selectActiveCell: false, cellRangeSelector: undefined });
+    plugin = new SlickCellSelectionModel({ selectActiveCell: false, cellRangeSelector: undefined });
     plugin.init(gridStub);
 
     expect(plugin.cellRangeSelector).toBeTruthy();
@@ -130,8 +129,8 @@ describe('CellSelectionModel Plugin', () => {
   it('should create the plugin and initialize it with just "selectActiveCell" option and still expect the same result', () => {
     const registerSpy = jest.spyOn(gridStub, 'registerPlugin');
 
-    const mockCellRangeSelector = new CellRangeSelector({ selectionCss: { border: '2px solid black' } as CSSStyleDeclaration });
-    plugin = new CellSelectionModel({ cellRangeSelector: mockCellRangeSelector, selectActiveCell: true });
+    const mockCellRangeSelector = new SlickCellRangeSelector({ selectionCss: { border: '2px solid black' } as CSSStyleDeclaration });
+    plugin = new SlickCellSelectionModel({ cellRangeSelector: mockCellRangeSelector, selectActiveCell: true });
     plugin.init(gridStub);
 
     expect(plugin.cellRangeSelector).toBeTruthy();
@@ -166,7 +165,7 @@ describe('CellSelectionModel Plugin', () => {
   });
 
   it('should call "setSelectedRanges" with Slick Ranges when triggered by "onActiveCellChanged" and "selectActiveCell" is True', () => {
-    plugin = new CellSelectionModel({ selectActiveCell: true, cellRangeSelector: undefined });
+    plugin = new SlickCellSelectionModel({ selectActiveCell: true, cellRangeSelector: undefined });
     plugin.init(gridStub);
     const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
     const mouseEvent = addJQueryEventPropagation(new Event('mouseenter'));
@@ -179,7 +178,7 @@ describe('CellSelectionModel Plugin', () => {
   });
 
   it('should call "setSelectedRanges" with empty array when triggered by "onActiveCellChanged" and "selectActiveCell" is False', () => {
-    plugin = new CellSelectionModel({ selectActiveCell: false, cellRangeSelector: undefined });
+    plugin = new SlickCellSelectionModel({ selectActiveCell: false, cellRangeSelector: undefined });
     plugin.init(gridStub);
     const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
     const mouseEvent = addJQueryEventPropagation(new Event('mouseenter'));

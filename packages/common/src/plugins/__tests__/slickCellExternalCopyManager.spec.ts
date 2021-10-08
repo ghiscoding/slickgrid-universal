@@ -1,8 +1,8 @@
 import 'jest-extended';
 
-import { Column, EditCommand, GridOption, SlickGrid, SlickNamespace, } from '../../interfaces/index';
-import { CellSelectionModel } from '../cellSelectionModel';
-import { CellExternalCopyManager } from '../cellExternalCopyManager';
+import { Column, GridOption, SlickGrid, SlickNamespace, } from '../../interfaces/index';
+import { SlickCellSelectionModel } from '../slickCellSelectionModel';
+import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager';
 import { InputEditor } from '../../editors/inputEditor';
 
 declare const Slick: SlickNamespace;
@@ -43,7 +43,7 @@ const mockCellSelectionModel = {
   getSelectedRows: jest.fn(),
   setSelectedRows: jest.fn(),
   onSelectedRangesChanged: new Slick.Event(),
-} as unknown as CellSelectionModel;
+} as unknown as SlickCellSelectionModel;
 
 const mockTextEditor = {
   constructor: jest.fn(),
@@ -67,7 +67,7 @@ describe('CellExternalCopyManager', () => {
     { id: 'lastName', field: 'lastName', name: 'Last Name', },
     { id: 'age', field: 'age', name: 'Age', editor: Editors.text, internalColumnEditor: Editors.text },
   ] as Column[];
-  let plugin: CellExternalCopyManager;
+  let plugin: SlickCellExternalCopyManager;
   const gridOptionsMock = {
     editable: true,
     enableCheckboxSelector: true,
@@ -80,7 +80,7 @@ describe('CellExternalCopyManager', () => {
   } as GridOption;
 
   beforeEach(() => {
-    plugin = new CellExternalCopyManager();
+    plugin = new SlickCellExternalCopyManager();
   });
 
   afterEach(() => {

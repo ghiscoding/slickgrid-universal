@@ -1,5 +1,5 @@
 import { ContextMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, SlickDataView, SlickGrid, SlickNamespace, } from '../../interfaces/index';
-import { ContextMenuPlugin } from '../contextMenu.plugin';
+import { SlickContextMenu } from '../slickContextMenu';
 import { BackendUtilityService, deepCopy, ExcelExportService, PubSubService, SharedService, TextExportService, TreeDataService, } from '../../services';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
@@ -139,7 +139,7 @@ describe('ContextMenu Plugin', () => {
   let backendUtilityService: BackendUtilityService;
   let extensionUtility: ExtensionUtility;
   let translateService: TranslateServiceStub;
-  let plugin: ContextMenuPlugin;
+  let plugin: SlickContextMenu;
   let sharedService: SharedService;
 
   beforeEach(() => {
@@ -152,7 +152,7 @@ describe('ContextMenu Plugin', () => {
     jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
-    plugin = new ContextMenuPlugin(extensionUtility, pubSubServiceStub, sharedService, treeDataServiceStub);
+    plugin = new SlickContextMenu(extensionUtility, pubSubServiceStub, sharedService, treeDataServiceStub);
   });
 
   afterEach(() => {

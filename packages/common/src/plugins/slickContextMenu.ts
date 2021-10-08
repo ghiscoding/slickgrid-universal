@@ -37,7 +37,7 @@ import { MenuFromCellBaseClass } from './menuFromCellBaseClass';
  *     }
  *   };
  */
-export class ContextMenuPlugin extends MenuFromCellBaseClass<ContextMenu> {
+export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
   protected _defaults = {
     autoAdjustDrop: true,     // dropup/dropdown
     autoAlignSide: true,      // left/right

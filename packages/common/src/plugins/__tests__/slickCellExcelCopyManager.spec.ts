@@ -1,9 +1,9 @@
 import { CellRange, EditCommand, Formatter, GridOption, SlickGrid, SlickNamespace, } from '../../interfaces/index';
 import { Formatters } from '../../formatters';
 import { SharedService } from '../../services/shared.service';
-import { CellExcelCopyManager } from '../cellExcelCopyManager';
-import { CellSelectionModel } from '../cellSelectionModel';
-import { CellExternalCopyManager } from '../../../dist/esm';
+import { SlickCellExcelCopyManager } from '../slickCellExcelCopyManager';
+import { SlickCellSelectionModel } from '../slickCellSelectionModel';
+import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager';
 
 declare const Slick: SlickNamespace;
 jest.mock('flatpickr', () => { });
@@ -28,7 +28,7 @@ const mockCellExternalCopyManager = {
   onCopyCells: new Slick.Event(),
   onCopyCancelled: new Slick.Event(),
   onPasteCells: new Slick.Event(),
-} as unknown as CellExternalCopyManager;
+} as unknown as SlickCellExternalCopyManager;
 
 const mockCellSelectionModel = {
   constructor: jest.fn(),
@@ -39,13 +39,13 @@ const mockCellSelectionModel = {
   getSelectedRows: jest.fn(),
   setSelectedRows: jest.fn(),
   onSelectedRangesChanged: new Slick.Event(),
-} as unknown as CellSelectionModel;
+} as unknown as SlickCellSelectionModel;
 
-jest.mock('../cellSelectionModel', () => ({
-  CellSelectionModel: jest.fn().mockImplementation(() => mockCellSelectionModel),
+jest.mock('../slickCellSelectionModel', () => ({
+  SlickCellSelectionModel: jest.fn().mockImplementation(() => mockCellSelectionModel),
 }));
-jest.mock('../cellExternalCopyManager', () => ({
-  CellExternalCopyManager: jest.fn().mockImplementation(() => mockCellExternalCopyManager),
+jest.mock('../slickCellExternalCopyManager', () => ({
+  SlickCellExternalCopyManager: jest.fn().mockImplementation(() => mockCellExternalCopyManager),
 }));
 
 describe('CellExcelCopyManager', () => {
@@ -54,7 +54,7 @@ describe('CellExcelCopyManager', () => {
   const mockSelectRange = [{ fromCell: 1, fromRow: 1, toCell: 1, toRow: 1 }] as CellRange[];
   const mockSelectRangeEvent = { ranges: mockSelectRange };
 
-  let plugin: CellExcelCopyManager;
+  let plugin: SlickCellExcelCopyManager;
   const gridOptionsMock = {
     editable: true,
     enableCheckboxSelector: true,
@@ -67,7 +67,7 @@ describe('CellExcelCopyManager', () => {
   } as GridOption;
 
   beforeEach(() => {
-    plugin = new CellExcelCopyManager();
+    plugin = new SlickCellExcelCopyManager();
   });
 
   afterEach(() => {

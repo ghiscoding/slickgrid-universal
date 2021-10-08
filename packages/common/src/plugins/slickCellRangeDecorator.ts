@@ -1,3 +1,6 @@
+import * as assign_ from 'assign-deep';
+const assign = (assign_ as any)['default'] || assign_;
+
 import { CellRange, CellRangeDecoratorOption, CSSStyleDeclarationWritable, SlickGrid } from '../interfaces/index';
 
 /**
@@ -7,7 +10,7 @@ import { CellRange, CellRangeDecoratorOption, CSSStyleDeclarationWritable, Slick
  * Use FF and WebKit-specific "pointer-events" CSS style, or some kind of event forwarding.
  * Could also construct the borders separately using 4 individual DIVs.
  */
-export class CellRangeDecorator {
+export class SlickCellRangeDecorator {
   protected _addonOptions!: CellRangeDecoratorOption;
   protected _elem?: HTMLElement | null;
   protected _grid?: SlickGrid;
@@ -22,7 +25,7 @@ export class CellRangeDecorator {
   pluginName = 'CellRangeDecorator';
 
   constructor(grid: SlickGrid, options?: Partial<CellRangeDecoratorOption>) {
-    this._addonOptions = { ...this._defaults, ...options };
+    this._addonOptions = assign({}, this._defaults, options);
     this._grid = grid;
   }
 

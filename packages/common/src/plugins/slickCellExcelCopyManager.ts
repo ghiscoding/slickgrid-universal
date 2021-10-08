@@ -14,7 +14,7 @@ import {
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { sanitizeHtmlToText } from '../services/domUtilities';
-import { CellExternalCopyManager, CellSelectionModel } from './index';
+import { SlickCellExternalCopyManager, SlickCellSelectionModel } from './index';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -27,11 +27,11 @@ declare const Slick: SlickNamespace;
   a trick to do it's job. After detecting the keystroke, we dynamically create a textarea
   where the browser copies/pastes the serialized data.
 */
-export class CellExcelCopyManager {
+export class SlickCellExcelCopyManager {
   protected _addonOptions!: ExcelCopyBufferOption;
   protected _bindingEventService: BindingEventService;
-  protected _cellExternalCopyManagerPlugin!: CellExternalCopyManager;
-  protected _cellSelectionModel!: CellSelectionModel;
+  protected _cellExternalCopyManagerPlugin!: SlickCellExternalCopyManager;
+  protected _cellSelectionModel!: SlickCellSelectionModel;
   protected _commandQueue!: EditCommand[];
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
@@ -66,11 +66,11 @@ export class CellExcelCopyManager {
   init(grid: SlickGrid, options?: ExcelCopyBufferOption) {
     this._grid = grid;
     this.createUndoRedoBuffer();
-    this._cellSelectionModel = new CellSelectionModel();
+    this._cellSelectionModel = new SlickCellSelectionModel();
     this._grid.setSelectionModel(this._cellSelectionModel as any);
     this._bindingEventService.bind(document.body, 'keydown', this.handleBodyKeyDown.bind(this) as EventListener);
     this._addonOptions = { ...this.getDefaultOptions(), ...options } as ExcelCopyBufferOption;
-    this._cellExternalCopyManagerPlugin = new CellExternalCopyManager();
+    this._cellExternalCopyManagerPlugin = new SlickCellExternalCopyManager();
     this._cellExternalCopyManagerPlugin.init(this._grid, this._addonOptions);
 
     const onCopyCellsHandler = this._cellExternalCopyManagerPlugin.onCopyCells;

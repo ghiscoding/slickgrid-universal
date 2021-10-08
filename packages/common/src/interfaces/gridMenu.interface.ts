@@ -4,14 +4,14 @@ import {
   GridMenuCommandItemCallbackArgs,
   SlickGrid,
 } from './index';
-import { GridMenuControl } from '../controls/gridMenu.control';
+import { SlickGridMenu } from '../controls/slickGridMenu';
 
 export interface GridMenu extends GridMenuOption {
   // --
   // Events
 
   /** Fired after extension (control) is registered by SlickGrid */
-  onExtensionRegistered?: (plugin: GridMenuControl) => void;
+  onExtensionRegistered?: (plugin: SlickGridMenu) => void;
 
   /** Callback fired After the menu is shown. */
   onAfterMenuShow?: (e: Event, args: GridMenuEventWithElementCallbackArgs) => boolean | void;
@@ -23,7 +23,7 @@ export interface GridMenu extends GridMenuOption {
   onBeforeMenuClose?: (e: Event, args: GridMenuEventWithElementCallbackArgs) => boolean | void;
 
   /** Callback fired when any of the columns checkbox selection changes. */
-  onColumnsChanged?: (e: Event, args: GridMenuOnColumnsChangedCallbackArgs) => void;
+  onColumnsChanged?: (e: Event, args: onGridMenuColumnsChangedCallbackArgs) => void;
 
   /** Callback fired when the menu is closing. */
   onMenuClose?: (e: Event, args: GridMenuEventWithElementCallbackArgs) => boolean | void;
@@ -48,7 +48,7 @@ export interface GridMenuEventWithElementCallbackArgs extends GridMenuEventBaseC
   menu: HTMLElement;
 }
 
-export interface GridMenuOnColumnsChangedCallbackArgs extends GridMenuEventBaseCallbackArgs {
+export interface onGridMenuColumnsChangedCallbackArgs extends GridMenuEventBaseCallbackArgs {
   /** column definition id */
   columnId: string;
 

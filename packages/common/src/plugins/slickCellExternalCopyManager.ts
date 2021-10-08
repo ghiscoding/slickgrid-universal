@@ -25,7 +25,7 @@ const CLIPBOARD_PASTE_DELAY = 100;
   a trick to do it's job. After detecting the keystroke, we dynamically create a textarea
   where the browser copies/pastes the serialized data.
 */
-export class CellExternalCopyManager {
+export class SlickCellExternalCopyManager {
   protected _addonOptions!: ExcelCopyBufferOption;
   protected _bodyElement = document.body;
   protected _clearCopyTI?: NodeJS.Timeout;

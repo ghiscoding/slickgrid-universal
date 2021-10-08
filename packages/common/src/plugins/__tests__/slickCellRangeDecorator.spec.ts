@@ -1,7 +1,7 @@
 import 'jest-extended';
 
 import { GridOption, SlickGrid, SlickNamespace, } from '../../interfaces/index';
-import { CellRangeDecorator } from '../cellRangeDecorator';
+import { SlickCellRangeDecorator } from '../slickCellRangeDecorator';
 
 declare const Slick: SlickNamespace;
 jest.mock('flatpickr', () => { });
@@ -14,7 +14,7 @@ const gridStub = {
 
 describe('CellRangeDecorator Plugin', () => {
   const mockEventCallback = () => { };
-  let plugin: CellRangeDecorator;
+  let plugin: SlickCellRangeDecorator;
   const gridOptionsMock = {
     editable: true,
     enableCheckboxSelector: true,
@@ -27,7 +27,7 @@ describe('CellRangeDecorator Plugin', () => {
   } as GridOption;
 
   beforeEach(() => {
-    plugin = new CellRangeDecorator(gridStub);
+    plugin = new SlickCellRangeDecorator(gridStub);
   });
 
   afterEach(() => {
@@ -58,7 +58,7 @@ describe('CellRangeDecorator Plugin', () => {
     const divContainer = document.createElement('div');
     jest.spyOn(gridStub, 'getActiveCanvasNode').mockReturnValue(divContainer);
 
-    plugin = new CellRangeDecorator(gridStub, { offset: { top: 20, left: 5, width: 12, height: 33 } });
+    plugin = new SlickCellRangeDecorator(gridStub, { offset: { top: 20, left: 5, width: 12, height: 33 } });
     plugin.show({ fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 });
 
     expect(plugin.addonElement.style.top).toEqual('');
@@ -72,7 +72,7 @@ describe('CellRangeDecorator Plugin', () => {
     jest.spyOn(gridStub, 'getActiveCanvasNode').mockReturnValue(divContainer);
     jest.spyOn(gridStub, 'getCellNodeBox').mockReturnValue({ top: 25, left: 26, right: 27, bottom: 12, height: 33, width: 44, visible: true });
 
-    plugin = new CellRangeDecorator(gridStub, { offset: { top: 20, left: 5, width: 12, height: 33 } });
+    plugin = new SlickCellRangeDecorator(gridStub, { offset: { top: 20, left: 5, width: 12, height: 33 } });
     plugin.show({ fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 });
 
     expect(plugin.addonElement.style.top).toEqual('45px');    // 25 + 20px

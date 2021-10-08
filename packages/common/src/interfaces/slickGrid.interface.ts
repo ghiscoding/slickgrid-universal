@@ -11,13 +11,15 @@ import {
   MultiColumnSort,
   PagingInfo,
   SingleColumnSort,
-  SlickCellSelectionModel,
   SlickCompositeEditor,
   SlickDataView,
   SlickEditorLock,
   SlickEvent,
   SlickRowSelectionModel,
 } from './index';
+import {
+  SlickCellSelectionModel,
+} from '../plugins/index';
 
 export interface SlickGrid {
   /**

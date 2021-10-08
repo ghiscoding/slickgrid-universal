@@ -1,5 +1,5 @@
 import { MenuCommandItem } from '../index';
-import { HeaderMenuPlugin } from '../plugins/headerMenu.plugin';
+import { SlickHeaderMenu } from '../plugins/slickHeaderMenu';
 import {
   Column,
   HeaderMenuOption,
@@ -24,7 +24,7 @@ export interface HeaderMenu extends HeaderMenuOption {
   // ------------
 
   /** Fired after extension (plugin) is registered by SlickGrid */
-  onExtensionRegistered?: (plugin: HeaderMenuPlugin) => void;
+  onExtensionRegistered?: (plugin: SlickHeaderMenu) => void;
 
   /** Fired After the header menu shows up. */
   onAfterMenuShow?: (e: Event, args: HeaderMenuCommandItemCallbackArgs) => boolean | void;
