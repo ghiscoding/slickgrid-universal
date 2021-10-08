@@ -35,7 +35,7 @@ import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from '.
  *     }
  *   }];
  */
-export class HeaderMenuPlugin extends MenuBaseClass<HeaderMenu> {
+export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   protected _activeHeaderColumnElm?: HTMLDivElement;
   protected _defaults = {
     autoAlign: true,

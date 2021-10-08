@@ -1,5 +1,5 @@
 import { Column, ColumnPicker, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
-import { ColumnPickerControl } from '../columnPicker.control';
+import { SlickColumnPicker } from '../slickColumnPicker';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
@@ -38,7 +38,7 @@ describe('ColumnPickerControl', () => {
     { id: 'field3', field: 'field3', name: 'Field 3', width: 75, columnGroup: 'Billing' },
   ];
 
-  let control: ColumnPickerControl;
+  let control: SlickColumnPicker;
   let backendUtilityService: BackendUtilityService;
   let sharedService: SharedService;
   let translateService: TranslateServiceStub;
@@ -68,7 +68,7 @@ describe('ColumnPickerControl', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
     jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
-    control = new ColumnPickerControl(extensionUtility, pubSubServiceStub, sharedService);
+    control = new SlickColumnPicker(extensionUtility, pubSubServiceStub, sharedService);
     translateService.use('fr');
   });
 
@@ -236,7 +236,7 @@ describe('ColumnPickerControl', () => {
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);
       expect(onColChangedMock).toBeCalledWith(expect.anything(), expectedCallbackArgs);
-      expect(pubSubSpy).toHaveBeenCalledWith('columnPicker:onColumnsChanged', expectedCallbackArgs);
+      expect(pubSubSpy).toHaveBeenCalledWith('onColumnPickerColumnsChanged', expectedCallbackArgs);
     });
 
     it('should open the column picker via "onHeaderContextMenu", click on "Force Fit Columns" checkbox and expect "setOptions" and "setColumns" to be called with previous visible columns', () => {

@@ -1,2 +1,2 @@
-export * from './columnPicker.control';
-export * from './gridMenu.control';
+export * from './slickColumnPicker';
+export * from './slickGridMenu';

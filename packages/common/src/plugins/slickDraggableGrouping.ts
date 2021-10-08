@@ -68,7 +68,7 @@ export interface JQueryUiSortableOptions {
  *     }
  *   }];
  */
-export class DraggableGroupingPlugin {
+export class SlickDraggableGrouping {
   protected _addonOptions!: DraggableGroupingOption;
   protected _bindEventService: BindingEventService;
   protected _droppableInstance: any;

@@ -149,10 +149,10 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
 
     cy.window().then((win) => {
       expect(win.console.log).to.have.callCount(4);
-      expect(win.console.log).to.be.calledWith('gridMenu:onBeforeMenuShow');
-      expect(win.console.log).to.be.calledWith('gridMenu:onAfterMenuShow');
-      expect(win.console.log).to.be.calledWith('gridMenu:onCommand', 'clear-sorting');
-      expect(win.console.log).to.be.calledWith('gridMenu:onMenuClose - visible columns count', 6);
+      expect(win.console.log).to.be.calledWith('onGridMenuBeforeMenuShow');
+      expect(win.console.log).to.be.calledWith('onGridMenuAfterMenuShow');
+      expect(win.console.log).to.be.calledWith('onGridMenuCommand', 'clear-sorting');
+      expect(win.console.log).to.be.calledWith('onGridMenuMenuClose - visible columns count', 6);
     });
   });
 
@@ -218,10 +218,10 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
 
     cy.window().then((win) => {
       expect(win.console.log).to.have.callCount(4);
-      expect(win.console.log).to.be.calledWith('gridMenu:onBeforeMenuShow');
-      expect(win.console.log).to.be.calledWith('gridMenu:onAfterMenuShow');
-      expect(win.console.log).to.be.calledWith('gridMenu:onCommand', 'clear-filter');
-      expect(win.console.log).to.be.calledWith('gridMenu:onMenuClose - visible columns count', 6);
+      expect(win.console.log).to.be.calledWith('onGridMenuBeforeMenuShow');
+      expect(win.console.log).to.be.calledWith('onGridMenuAfterMenuShow');
+      expect(win.console.log).to.be.calledWith('onGridMenuCommand', 'clear-filter');
+      expect(win.console.log).to.be.calledWith('onGridMenuMenuClose - visible columns count', 6);
     });
   });
 
@@ -422,7 +422,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
 
     cy.window().then((win) => {
       expect(win.console.log).to.have.callCount(1);
-      expect(win.console.log).to.be.calledWith('columnPicker:onColumnsChanged - visible columns count', 6);
+      expect(win.console.log).to.be.calledWith('onColumnPickerColumnsChanged - visible columns count', 6);
     });
   });
 

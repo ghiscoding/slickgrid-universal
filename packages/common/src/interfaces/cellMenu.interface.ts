@@ -4,7 +4,7 @@ import {
   MenuFromCellCallbackArgs,
   MenuOptionItemCallbackArgs,
 } from './index';
-import { CellMenuPlugin } from '../plugins/cellMenu.plugin';
+import { SlickCellMenu } from '../plugins/slickCellMenu';
 
 export interface CellMenu extends CellMenuOption {
 
@@ -12,7 +12,7 @@ export interface CellMenu extends CellMenuOption {
   // Events
 
   /** Fired after extension (control) is registered by SlickGrid */
-  onExtensionRegistered?: (plugin: CellMenuPlugin) => void;
+  onExtensionRegistered?: (plugin: SlickCellMenu) => void;
 
   /** SlickGrid Event fired After the menu is shown. */
   onAfterMenuShow?: (e: Event, args: MenuFromCellCallbackArgs) => boolean | void;

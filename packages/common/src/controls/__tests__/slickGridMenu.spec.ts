@@ -1,7 +1,7 @@
 import 'jest-extended';
 import { DelimiterType, FileType } from '../../enums/index';
 import { Column, DOMEvent, GridMenu, GridOption, SlickDataView, SlickGrid, SlickNamespace, } from '../../interfaces/index';
-import { GridMenuControl } from '../gridMenu.control';
+import { SlickGridMenu } from '../slickGridMenu';
 import { SharedService } from '../../services/shared.service';
 import { BackendUtilityService, ExcelExportService, FilterService, PubSubService, SortService, TextExportService, } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
@@ -81,7 +81,7 @@ const template =
   </div>`;
 
 describe('GridMenuControl', () => {
-  let control: GridMenuControl;
+  let control: SlickGridMenu;
   const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
   const columnsMock: Column[] = [
     { id: 'field1', field: 'field1', name: 'Field 1', width: 100, nameKey: 'TITLE' },
@@ -165,7 +165,7 @@ describe('GridMenuControl', () => {
       jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
       jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
 
-      control = new GridMenuControl(extensionUtility, filterServiceStub, pubSubServiceStub, sharedService, sortServiceStub);
+      control = new SlickGridMenu(extensionUtility, filterServiceStub, pubSubServiceStub, sharedService, sortServiceStub);
       translateService.use('fr');
     });
 
@@ -440,7 +440,7 @@ describe('GridMenuControl', () => {
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
         expect(onColChangedMock).toBeCalledWith(expect.anything(), expectedCallbackArgs);
-        expect(pubSubSpy).toHaveBeenCalledWith('gridMenu:onColumnsChanged', expectedCallbackArgs);
+        expect(pubSubSpy).toHaveBeenCalledWith('onGridMenuColumnsChanged', expectedCallbackArgs);
       });
 
       it('should open the grid menu via its hamburger menu and click on "Force Fit Columns" checkbox and expect "setOptions" and "setColumns" to be called with previous visible columns', () => {
@@ -527,7 +527,7 @@ describe('GridMenuControl', () => {
         expect(control.menuElement.style.display).toBe('none');
         expect(forceFitElm).toBeFalsy();
         expect(inputSyncElm).toBeFalsy();
-        expect(pubSubSpy).toHaveBeenCalledWith('gridMenu:onBeforeMenuShow', {
+        expect(pubSubSpy).toHaveBeenCalledWith('onGridMenuBeforeMenuShow', {
           grid: gridStub,
           menu: document.querySelector('.slick-grid-menu'),
           allColumns: columnsMock,
@@ -566,7 +566,7 @@ describe('GridMenuControl', () => {
 
         control.hideMenu(new Event('click', { bubbles: true, cancelable: true, composed: false }) as DOMEvent<HTMLDivElement>);
         expect(control.menuElement.style.display).toBe('none');
-        expect(pubSubSpy).toHaveBeenCalledWith('gridMenu:onAfterMenuShow', {
+        expect(pubSubSpy).toHaveBeenCalledWith('onGridMenuAfterMenuShow', {
           grid: gridStub,
           menu: document.querySelector('.slick-grid-menu'),
           allColumns: columnsMock,
@@ -594,7 +594,7 @@ describe('GridMenuControl', () => {
 
         control.hideMenu(new Event('click', { bubbles: true, cancelable: true, composed: false }) as DOMEvent<HTMLDivElement>);
         expect(control.menuElement.style.display).toBe('block');
-        expect(pubSubSpy).toHaveBeenCalledWith('gridMenu:onMenuClose', {
+        expect(pubSubSpy).toHaveBeenCalledWith('onGridMenuMenuClose', {
           grid: gridStub,
           menu: document.querySelector('.slick-grid-menu'),
           allColumns: columnsMock,
@@ -676,7 +676,7 @@ describe('GridMenuControl', () => {
         };
         expect(helpFnMock).toHaveBeenCalled();
         expect(onCommandMock).toHaveBeenCalledWith(clickEvent, expectedCallbackArgs);
-        expect(pubSubSpy).toHaveBeenCalledWith('gridMenu:onCommand', expectedCallbackArgs);
+        expect(pubSubSpy).toHaveBeenCalledWith('onGridMenuCommand', expectedCallbackArgs);
       });
 
       it('should add a custom Grid Menu item and NOT expect the "action" and "onCommand" callbacks to be called when item is "disabled"', () => {

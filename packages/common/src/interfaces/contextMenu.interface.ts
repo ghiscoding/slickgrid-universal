@@ -1,4 +1,4 @@
-import { ContextMenuPlugin } from '../plugins/contextMenu.plugin';
+import { SlickContextMenu } from '../plugins/slickContextMenu';
 import {
   ContextMenuOption,
   MenuCommandItemCallbackArgs,
@@ -11,7 +11,7 @@ export interface ContextMenu extends ContextMenuOption {
   // Events
 
   /** Fired after extension (control) is registered by SlickGrid */
-  onExtensionRegistered?: (plugin: ContextMenuPlugin) => void;
+  onExtensionRegistered?: (plugin: SlickContextMenu) => void;
 
   /** SlickGrid Event fired After the menu is shown. */
   onAfterMenuShow?: (e: Event, args: MenuFromCellCallbackArgs) => boolean | void;

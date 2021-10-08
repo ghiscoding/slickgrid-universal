@@ -1,6 +1,6 @@
 import { Grouping, SlickEventData } from './index';
 import { DraggableGroupingOption } from './draggableGroupingOption.interface';
-import { DraggableGroupingPlugin } from '../plugins/draggableGrouping.plugin';
+import { SlickDraggableGrouping } from '../plugins/slickDraggableGrouping';
 
 export interface DraggableGrouping extends DraggableGroupingOption {
   //
@@ -10,5 +10,5 @@ export interface DraggableGrouping extends DraggableGroupingOption {
   onGroupChanged?: (e: SlickEventData, args: { caller?: string; groupColumns: Grouping[] }) => void;
 
   /** Fired after extension (plugin) is registered by SlickGrid */
-  onExtensionRegistered?: (plugin: DraggableGroupingPlugin) => void;
+  onExtensionRegistered?: (plugin: SlickDraggableGrouping) => void;
 }

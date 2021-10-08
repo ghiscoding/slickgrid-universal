@@ -30,7 +30,7 @@ declare const Slick: SlickNamespace;
  * @class ColumnPickerControl
  * @constructor
  */
-export class ColumnPickerControl {
+export class SlickColumnPicker {
   protected _areVisibleColumnDifferent = false;
   protected _bindEventService: BindingEventService;
   protected _columns: Column[] = [];
@@ -40,6 +40,7 @@ export class ColumnPickerControl {
   protected _listElm!: HTMLSpanElement;
   protected _menuElm!: HTMLDivElement;
   protected _columnCheckboxes: HTMLInputElement[] = [];
+  onColumnsChanged = new Slick.Event();
 
   protected _defaults = {
     // the last 2 checkboxes titles

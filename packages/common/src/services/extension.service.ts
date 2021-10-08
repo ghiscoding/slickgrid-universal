@@ -9,15 +9,15 @@ import {
 } from '../extensions/index';
 import { SharedService } from './shared.service';
 import { TranslaterService } from './translater.service';
-import { ColumnPickerControl, GridMenuControl } from '../controls/index';
+import { SlickColumnPicker, SlickGridMenu } from '../controls/index';
 import {
-  AutoTooltipPlugin,
-  CellExcelCopyManager,
-  CellMenuPlugin,
-  ContextMenuPlugin,
-  DraggableGroupingPlugin,
-  HeaderButtonPlugin,
-  HeaderMenuPlugin
+  SlickAutoTooltip,
+  SlickCellExcelCopyManager,
+  SlickCellMenu,
+  SlickContextMenu,
+  SlickDraggableGrouping,
+  SlickHeaderButtons,
+  SlickHeaderMenu
 } from '../plugins/index';
 import { FilterService } from './filter.service';
 import { GroupItemMetadataProviderService } from './groupItemMetadataProvider.service';
@@ -32,14 +32,14 @@ interface ExtensionWithColumnIndexPosition {
 }
 
 export class ExtensionService {
-  protected _cellMenuPlugin?: CellMenuPlugin;
-  protected _cellExcelCopyManagerPlugin?: CellExcelCopyManager;
-  protected _contextMenuPlugin?: ContextMenuPlugin;
-  protected _columnPickerControl?: ColumnPickerControl;
-  protected _draggleGroupingPlugin?: DraggableGroupingPlugin;
-  protected _gridMenuControl?: GridMenuControl;
+  protected _cellMenuPlugin?: SlickCellMenu;
+  protected _cellExcelCopyManagerPlugin?: SlickCellExcelCopyManager;
+  protected _contextMenuPlugin?: SlickContextMenu;
+  protected _columnPickerControl?: SlickColumnPicker;
+  protected _draggleGroupingPlugin?: SlickDraggableGrouping;
+  protected _gridMenuControl?: SlickGridMenu;
   protected _groupItemMetadataProviderService?: GroupItemMetadataProviderService;
-  protected _headerMenuPlugin?: HeaderMenuPlugin;
+  protected _headerMenuPlugin?: SlickHeaderMenu;
   protected _extensionCreatedList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
   protected _extensionList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
 
@@ -148,14 +148,14 @@ export class ExtensionService {
 
       // Auto Tooltip Plugin
       if (this.gridOptions.enableAutoTooltip) {
-        const instance = new AutoTooltipPlugin(this.gridOptions?.autoTooltipOptions);
-        this.sharedService.slickGrid.registerPlugin<AutoTooltipPlugin>(instance);
+        const instance = new SlickAutoTooltip(this.gridOptions?.autoTooltipOptions);
+        this.sharedService.slickGrid.registerPlugin<SlickAutoTooltip>(instance);
         this._extensionList[ExtensionName.autoTooltip] = { name: ExtensionName.autoTooltip, class: instance, instance };
       }
 
       // Cell External Copy Manager Plugin (Excel Like)
       if (this.gridOptions.enableExcelCopyBuffer) {
-        this._cellExcelCopyManagerPlugin = new CellExcelCopyManager();
+        this._cellExcelCopyManagerPlugin = new SlickCellExcelCopyManager();
         this._cellExcelCopyManagerPlugin.init(this.sharedService.slickGrid, this.sharedService.gridOptions.excelCopyBufferOptions);
         if (this.gridOptions.excelCopyBufferOptions?.onExtensionRegistered) {
           this.gridOptions.excelCopyBufferOptions.onExtensionRegistered(this._cellExcelCopyManagerPlugin);
@@ -165,7 +165,7 @@ export class ExtensionService {
 
       // (Action) Cell Menu Plugin
       if (this.gridOptions.enableCellMenu) {
-        this._cellMenuPlugin = new CellMenuPlugin(this.extensionUtility, this.pubSubService, this.sharedService);
+        this._cellMenuPlugin = new SlickCellMenu(this.extensionUtility, this.pubSubService, this.sharedService);
         if (this.gridOptions.cellMenu?.onExtensionRegistered) {
           this.gridOptions.cellMenu.onExtensionRegistered(this._cellMenuPlugin);
         }
@@ -196,7 +196,7 @@ export class ExtensionService {
 
       // Column Picker Control
       if (this.gridOptions.enableColumnPicker) {
-        this._columnPickerControl = new ColumnPickerControl(this.extensionUtility, this.pubSubService, this.sharedService);
+        this._columnPickerControl = new SlickColumnPicker(this.extensionUtility, this.pubSubService, this.sharedService);
         if (this.gridOptions.columnPicker?.onExtensionRegistered) {
           this.gridOptions.columnPicker.onExtensionRegistered(this._columnPickerControl);
         }
@@ -205,7 +205,7 @@ export class ExtensionService {
 
       // Context Menu Control
       if (this.gridOptions.enableContextMenu) {
-        this._contextMenuPlugin = new ContextMenuPlugin(this.extensionUtility, this.pubSubService, this.sharedService, this.treeDataService);
+        this._contextMenuPlugin = new SlickContextMenu(this.extensionUtility, this.pubSubService, this.sharedService, this.treeDataService);
         if (this.gridOptions.contextMenu?.onExtensionRegistered) {
           this.gridOptions.contextMenu.onExtensionRegistered(this._contextMenuPlugin);
         }
@@ -226,7 +226,7 @@ export class ExtensionService {
 
       // Grid Menu Control
       if (this.gridOptions.enableGridMenu) {
-        this._gridMenuControl = new GridMenuControl(this.extensionUtility, this.filterService, this.pubSubService, this.sharedService, this.sortService);
+        this._gridMenuControl = new SlickGridMenu(this.extensionUtility, this.filterService, this.pubSubService, this.sharedService, this.sortService);
         if (this.gridOptions.gridMenu?.onExtensionRegistered) {
           this.gridOptions.gridMenu.onExtensionRegistered(this._gridMenuControl);
         }
@@ -243,7 +243,7 @@ export class ExtensionService {
 
       // Header Button Plugin
       if (this.gridOptions.enableHeaderButton) {
-        const headerButtonPlugin = new HeaderButtonPlugin(this.extensionUtility, this.pubSubService, this.sharedService);
+        const headerButtonPlugin = new SlickHeaderButtons(this.extensionUtility, this.pubSubService, this.sharedService);
         if (this.gridOptions.headerButton?.onExtensionRegistered) {
           this.gridOptions.headerButton.onExtensionRegistered(headerButtonPlugin);
         }
@@ -252,7 +252,7 @@ export class ExtensionService {
 
       // Header Menu Plugin
       if (this.gridOptions.enableHeaderMenu) {
-        this._headerMenuPlugin = new HeaderMenuPlugin(this.extensionUtility, this.filterService, this.pubSubService, this.sharedService, this.sortService);
+        this._headerMenuPlugin = new SlickHeaderMenu(this.extensionUtility, this.filterService, this.pubSubService, this.sharedService, this.sortService);
         if (this.gridOptions.headerMenu?.onExtensionRegistered) {
           this.gridOptions.headerMenu.onExtensionRegistered(this._headerMenuPlugin);
         }
@@ -317,7 +317,7 @@ export class ExtensionService {
 
     if (gridOptions.enableDraggableGrouping) {
       if (!this.getCreatedExtensionByName(ExtensionName.draggableGrouping)) {
-        this._draggleGroupingPlugin = new DraggableGroupingPlugin(this.extensionUtility, this.pubSubService, this.sharedService);
+        this._draggleGroupingPlugin = new SlickDraggableGrouping(this.extensionUtility, this.pubSubService, this.sharedService);
         if (this._draggleGroupingPlugin) {
           gridOptions.enableColumnReorder = this._draggleGroupingPlugin.setupColumnReorder as ColumnReorderFunction;
           this._extensionCreatedList[ExtensionName.draggableGrouping] = { name: ExtensionName.draggableGrouping, instance: this._draggleGroupingPlugin, class: this._draggleGroupingPlugin };

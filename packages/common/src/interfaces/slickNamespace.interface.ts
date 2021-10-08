@@ -3,6 +3,7 @@ import {
   CellMenuOption,
   CheckboxSelectorOption,
   Column,
+  CompositeEditorOption,
   ContextMenuOption,
   DataViewOption,
   DraggableGroupingOption,
@@ -15,26 +16,16 @@ import {
   RowDetailViewOption,
   RowMoveManagerOption,
   RowSelectionModelOption,
-  SlickCellExternalCopyManager,
-  SlickCellMenu,
-  SlickCellRangeDecorator,
-  SlickCellRangeSelector,
-  SlickCellSelectionModel,
   SlickCheckboxSelectColumn,
   SlickCompositeEditor,
-  SlickContextMenu,
   SlickDataView,
-  SlickDraggableGrouping,
   SlickEditorLock,
   SlickEvent,
   SlickEventData,
   SlickEventHandler,
   SlickGrid,
-  SlickGridMenu,
   SlickGroup,
   SlickGroupItemMetadataProvider,
-  SlickHeaderButtons,
-  SlickHeaderMenu,
   SlickRange,
   SlickRemoteModel,
   SlickResizer,
@@ -42,8 +33,19 @@ import {
   SlickRowMoveManager,
   SlickRowSelectionModel,
 } from './index';
-import { CompositeEditorOption } from './compositeEditorOption.interface';
-import { AutoTooltipPlugin, } from '../plugins/index';
+import { SlickGridMenu, } from '../controls/index';
+import {
+  SlickAutoTooltip,
+  SlickCellExternalCopyManager,
+  SlickCellMenu,
+  SlickCellRangeDecorator,
+  SlickCellRangeSelector,
+  SlickCellSelectionModel,
+  SlickContextMenu,
+  SlickDraggableGrouping,
+  SlickHeaderButtons,
+  SlickHeaderMenu,
+} from '../plugins/index';
 
 /**
  * Slick Grid class interface of the entire library and it's multiple controls/plugins.
@@ -111,7 +113,7 @@ export interface SlickNamespace {
   // -------------------------------
 
   /** AutoTooltips is a 3rd party plugin (addon) to show/hide tooltips when columns are too narrow to fit content. */
-  AutoTooltips: new (options?: AutoTooltipOption) => AutoTooltipPlugin;
+  AutoTooltips: new (options?: AutoTooltipOption) => SlickAutoTooltip;
 
   /** Cell External Copy Manager is a 3rd party plugin (addon) which is an Excel like copy cell range addon */
   CellExternalCopyManager: new (options?: ExcelCopyBufferOption) => SlickCellExternalCopyManager;

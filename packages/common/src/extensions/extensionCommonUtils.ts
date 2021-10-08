@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 import { Column, ColumnPickerOption, DOMEvent, GridMenuOption } from '../interfaces/index';
 import { sanitizeTextByAvailableSanitizer } from '../services/domUtilities';
-import { ColumnPickerControl } from '../controls/columnPicker.control';
-import { GridMenuControl } from '../controls/gridMenu.control';
+import { SlickColumnPicker } from '../controls/slickColumnPicker';
+import { SlickGridMenu } from '../controls/slickGridMenu';
+import { titleCase } from '../services/utilities';
 
 /** Create a Close button element and add it to the Menu element */
-export function addCloseButtomElement(this: ColumnPickerControl | GridMenuControl, menuElm: HTMLDivElement) {
+export function addCloseButtomElement(this: SlickColumnPicker | SlickGridMenu, menuElm: HTMLDivElement) {
   const context: any = this;
   const closePickerButtonElm = document.createElement('button');
   closePickerButtonElm.className = 'close';
   closePickerButtonElm.type = 'button';
-  closePickerButtonElm.dataset.dismiss = context instanceof ColumnPickerControl ? 'slick-columnpicker' : 'slick-grid-menu';
+  closePickerButtonElm.dataset.dismiss = context instanceof SlickColumnPicker ? 'slick-columnpicker' : 'slick-grid-menu';
   closePickerButtonElm.setAttribute('aria-label', 'Close');
 
   const closeSpanElm = document.createElement('span');
@@ -22,7 +23,7 @@ export function addCloseButtomElement(this: ColumnPickerControl | GridMenuContro
 }
 
 /** When "columnTitle" option is provided, let's create a div element to show "Columns" list title */
-export function addColumnTitleElementWhenDefined(this: ColumnPickerControl | GridMenuControl, menuElm: HTMLDivElement) {
+export function addColumnTitleElementWhenDefined(this: SlickColumnPicker | SlickGridMenu, menuElm: HTMLDivElement) {
   const context: any = this;
   if (context.addonOptions?.columnTitle) {
     context._columnTitleElm = document.createElement('div');
@@ -37,9 +38,9 @@ export function addColumnTitleElementWhenDefined(this: ColumnPickerControl | Gri
  * @param event - input checkbox event
  * @returns
  */
-export function handleColumnPickerItemClick(this: ColumnPickerControl | GridMenuControl, event: DOMEvent<HTMLInputElement>) {
+export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridMenu, event: DOMEvent<HTMLInputElement>) {
   const context: any = this;
-  const controlType = context instanceof ColumnPickerControl ? 'columnPicker' : 'gridMenu';
+  const controlType = context instanceof SlickColumnPicker ? 'columnPicker' : 'gridMenu';
 
   if (event.target.dataset.option === 'autoresize') {
     // when calling setOptions, it will resize with ALL Columns (even the hidden ones)
@@ -106,16 +107,17 @@ export function handleColumnPickerItemClick(this: ColumnPickerControl | GridMenu
     };
 
     // execute user callback when defined
-    context.pubSubService.publish(`${controlType}:onColumnsChanged`, callbackArgs);
+    context.pubSubService.publish(`on${titleCase(controlType)}ColumnsChanged`, callbackArgs);
     if (typeof context.addonOptions?.onColumnsChanged === 'function') {
       context.addonOptions.onColumnsChanged(event, callbackArgs);
     }
+    context.onColumnsChanged.notify(callbackArgs, null, context);
   }
 }
 
-export function populateColumnPicker(this: ColumnPickerControl | GridMenuControl, addonOptions: ColumnPickerOption | GridMenuOption) {
+export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, addonOptions: ColumnPickerOption | GridMenuOption) {
   const context: any = this;
-  const menuPrefix = context instanceof GridMenuControl ? 'gridmenu-' : '';
+  const menuPrefix = context instanceof SlickGridMenu ? 'gridmenu-' : '';
 
   for (const column of context.columns) {
     const columnId = column.id;
@@ -194,7 +196,7 @@ export function populateColumnPicker(this: ColumnPickerControl | GridMenuControl
  * as it does not include columns currently hidden by the picker. We create a new `columns` structure by leaving currently-hidden
  * columns in their original ordinal position and interleaving the results of the current column sort.
  */
-export function updateColumnPickerOrder(this: ColumnPickerControl | GridMenuControl) {
+export function updateColumnPickerOrder(this: SlickColumnPicker | SlickGridMenu) {
   const context: any = this;
 
   const current = context.grid.getColumns().slice(0);

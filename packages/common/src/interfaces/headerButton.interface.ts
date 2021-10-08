@@ -1,4 +1,4 @@
-import { HeaderButtonPlugin } from '../plugins';
+import { SlickHeaderButtons } from '../plugins';
 import { HeaderButtonOnCommandArgs } from './headerButtonOnCommandArgs.interface';
 import { SlickEventData } from './slickEventData.interface';
 
@@ -8,7 +8,7 @@ export interface HeaderButton extends HeaderButtonOption {
   // ------------
 
   /** Fired after extension (plugin) is registered by SlickGrid */
-  onExtensionRegistered?: (plugin: HeaderButtonPlugin) => void;
+  onExtensionRegistered?: (plugin: SlickHeaderButtons) => void;
 
   /** Fired when a command is clicked */
   onCommand?: (e: SlickEventData, args: HeaderButtonOnCommandArgs) => void;

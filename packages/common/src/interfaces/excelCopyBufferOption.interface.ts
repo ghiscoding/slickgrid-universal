@@ -4,7 +4,7 @@ import {
   FormatterResultObject,
   SlickEventData,
 } from './index';
-import { CellExcelCopyManager, } from '../plugins/cellExcelCopyManager';
+import { SlickCellExcelCopyManager, } from '../plugins/slickCellExcelCopyManager';
 
 export interface ExcelCopyBufferOption<T = any> {
   /** defaults to 2000(ms), delay in ms to wait before clearing the selection after a paste action */
@@ -54,7 +54,7 @@ export interface ExcelCopyBufferOption<T = any> {
   // ------------
 
   /** Fired after extension (plugin) is registered by SlickGrid */
-  onExtensionRegistered?: (plugin: CellExcelCopyManager) => void;
+  onExtensionRegistered?: (plugin: SlickCellExcelCopyManager) => void;
 
   /** Fired when a copy cell is triggered */
   onCopyCells?: (e: SlickEventData, args: { ranges: CellRange[] }) => void;

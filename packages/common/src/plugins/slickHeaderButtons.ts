@@ -30,7 +30,7 @@ declare const Slick: SlickNamespace;
  *     }
  *   }];
  */
-export class HeaderButtonPlugin extends MenuBaseClass<HeaderButton> {
+export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
   protected _buttonElms: HTMLLIElement[] = [];
   protected _defaults = {
     buttonCssClass: 'slick-header-button',

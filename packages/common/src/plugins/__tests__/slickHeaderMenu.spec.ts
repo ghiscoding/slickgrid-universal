@@ -1,5 +1,5 @@
 import { Column, ColumnSort, ElementPosition, GridOption, MenuCommandItem, SlickDataView, SlickEventData, SlickGrid, SlickNamespace, } from '../../interfaces/index';
-import { HeaderMenuPlugin } from '../headerMenu.plugin';
+import { SlickHeaderMenu } from '../slickHeaderMenu';
 import { BackendUtilityService, FilterService, PubSubService, SharedService, SortService } from '../../services';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
@@ -116,7 +116,7 @@ describe('HeaderMenu Plugin', () => {
   let backendUtilityService: BackendUtilityService;
   let extensionUtility: ExtensionUtility;
   let translateService: TranslateServiceStub;
-  let plugin: HeaderMenuPlugin;
+  let plugin: SlickHeaderMenu;
   let sharedService: SharedService;
 
   beforeEach(() => {
@@ -128,7 +128,7 @@ describe('HeaderMenu Plugin', () => {
     jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     jest.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
     jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 2));
-    plugin = new HeaderMenuPlugin(extensionUtility, filterServiceStub, pubSubServiceStub, sharedService, sortServiceStub);
+    plugin = new SlickHeaderMenu(extensionUtility, filterServiceStub, pubSubServiceStub, sharedService, sortServiceStub);
   });
 
   afterEach(() => {

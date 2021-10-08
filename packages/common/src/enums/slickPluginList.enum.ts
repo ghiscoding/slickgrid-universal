@@ -1,32 +1,26 @@
 import {
-  SlickCellExternalCopyManager,
-  SlickCellMenu,
-  SlickCellRangeDecorator,
-  SlickCellRangeSelector,
-  SlickCellSelectionModel,
   SlickCheckboxSelectColumn,
-  SlickContextMenu,
-  SlickDraggableGrouping,
   SlickEditorLock,
   SlickGroupItemMetadataProvider,
-  SlickHeaderButtons,
-  SlickHeaderMenu,
   SlickRowDetailView,
   SlickRowMoveManager,
   SlickRowSelectionModel,
 } from '../interfaces/index';
 import {
-  AutoTooltipPlugin,
-  CellRangeSelector,
-  // CellExternalCopyManager,
-  // CellRangeDecorator,
-  // CellRangeSelector,
-  // CellSelectionModel,
+  SlickAutoTooltip,
+  SlickCellExternalCopyManager,
+  SlickCellMenu,
+  SlickCellRangeDecorator,
+  SlickCellRangeSelector,
+  SlickCellSelectionModel,
+  SlickContextMenu,
+  SlickDraggableGrouping,
+  SlickHeaderButtons,
+  SlickHeaderMenu,
 } from '../plugins/index';
 
 export type SlickPluginList =
-  AutoTooltipPlugin |
-  CellRangeSelector |
+  SlickAutoTooltip |
   SlickCellExternalCopyManager |
   SlickCellMenu |
   SlickCellRangeDecorator |
