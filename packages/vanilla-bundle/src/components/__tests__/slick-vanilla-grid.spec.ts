@@ -64,6 +64,7 @@ declare const Slick: any;
 const slickEventHandler = new MockSlickEventHandler() as unknown as SlickEventHandler;
 
 const extensionServiceStub = {
+  addRxJsResource: jest.fn(),
   bindDifferentExtensions: jest.fn(),
   createExtensionsBeforeGridCreation: jest.fn(),
   dispose: jest.fn(),
@@ -1007,6 +1008,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       it('should add RxJS resource to all necessary Services when RxJS external resource is registered', () => {
         const rxjsMock = new RxJsResourceStub();
         const backendUtilitySpy = jest.spyOn(backendUtilityServiceStub, 'addRxJsResource');
+        const extensionServiceSpy = jest.spyOn(extensionServiceStub, 'addRxJsResource');
         const filterServiceSpy = jest.spyOn(filterServiceStub, 'addRxJsResource');
         const sortServiceSpy = jest.spyOn(sortServiceStub, 'addRxJsResource');
         const paginationServiceSpy = jest.spyOn(paginationServiceStub, 'addRxJsResource');
@@ -1015,6 +1017,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
 
         expect(backendUtilitySpy).toHaveBeenCalled();
+        expect(extensionServiceSpy).toHaveBeenCalled();
         expect(filterServiceSpy).toHaveBeenCalled();
         expect(sortServiceSpy).toHaveBeenCalled();
         expect(paginationServiceSpy).toHaveBeenCalled();

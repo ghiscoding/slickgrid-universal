@@ -25,6 +25,10 @@ describe('RxJsFacade Service', () => {
     expect(RxJsFacade.prototype.isObservable({})).toBe(false);
   });
 
+  it('should throw a not implemented error when calling "switchMap" method', () => {
+    expect(() => RxJsFacade.prototype.switchMap(() => false)).toThrow('RxJS Facade "switchMap" method must be implemented');
+  });
+
   it('should throw a not implemented error when calling "takeUntil" method', () => {
     expect(() => RxJsFacade.prototype.takeUntil({} as any)).toThrow('RxJS Facade "takeUntil" method must be implemented');
   });

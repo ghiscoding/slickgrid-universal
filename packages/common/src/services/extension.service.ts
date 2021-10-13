@@ -22,6 +22,7 @@ import {
   RowSelectionExtension,
   SlickCustomTooltip,
 } from '../extensions/index';
+import { RxJsFacade } from './rxjsFacade';
 import { SharedService } from './shared.service';
 import { TranslaterService } from './translater.service';
 
@@ -56,7 +57,12 @@ export class ExtensionService {
     protected readonly rowSelectionExtension: RowSelectionExtension,
     protected readonly sharedService: SharedService,
     protected readonly translaterService?: TranslaterService,
+    protected rxjs?: RxJsFacade,
   ) { }
+
+  addRxJsResource(rxjs: RxJsFacade) {
+    this.rxjs = rxjs;
+  }
 
   /** Dispose of all the controls & plugins */
   dispose() {
@@ -129,7 +135,7 @@ export class ExtensionService {
 
       // Custom Tooltip Plugin
       if (this.sharedService.gridOptions.enableCustomTooltip) {
-        const tooltipPlugin = new SlickCustomTooltip(this.sharedService);
+        const tooltipPlugin = new SlickCustomTooltip(this.sharedService, this.rxjs);
         tooltipPlugin.init(this.sharedService.slickGrid);
         this._extensionList[ExtensionName.customTooltip] = { name: ExtensionName.customTooltip, class: tooltipPlugin, instance: tooltipPlugin };
       }

@@ -1,5 +1,5 @@
 import { RxJsFacade } from '@slickgrid-universal/common';
-import { EMPTY, iif, isObservable, firstValueFrom, Observable, Subject } from 'rxjs';
+import { EMPTY, iif, isObservable, firstValueFrom, Observable, Subject, switchMap, ObservableInput, OperatorFunction, ObservedValueOf } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 export class RxJsResource implements RxJsFacade {
@@ -34,6 +34,10 @@ export class RxJsResource implements RxJsFacade {
   /** Tests to see if the object is an RxJS Observable */
   isObservable(obj: any): boolean {
     return isObservable(obj);
+  }
+
+  switchMap<T, O extends ObservableInput<any>>(project: (value: T, index: number) => O): OperatorFunction<T, ObservedValueOf<O>> {
+    return switchMap(project);
   }
 
   /** Emits the values emitted by the source Observable until a `notifier` Observable emits a value. */

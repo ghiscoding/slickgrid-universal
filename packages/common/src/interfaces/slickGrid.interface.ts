@@ -129,14 +129,14 @@ export interface SlickGrid {
    * Returns a hash containing row and cell indexes from a standard W3C/jQuery event.
    * @param e A standard W3C/jQuery event.
    */
-  getCellFromEvent(e: Event): any;
+  getCellFromEvent(e: Event): { row: number; cell: number; };
 
   /**
    * Returns a hash containing row and cell indexes. Coordinates are relative to the top left corner of the grid beginning with the first row (not including the column headers).
    * @param x An x coordinate.
    * @param y A y coordinate.
    */
-  getCellFromPoint(x: number, y: number): any;
+  getCellFromPoint(x: number, y: number): { row: number; cell: number; };
 
   /**
    * Returns a DOM element containing a cell at a given row and cell.

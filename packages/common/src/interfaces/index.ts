@@ -5,6 +5,7 @@ export * from './autoTooltipOption.interface';
 export * from './backendService.interface';
 export * from './backendServiceApi.interface';
 export * from './backendServiceOption.interface';
+export * from './cancellablePromiseWrapper.interface';
 export * from './cellArgs.interface';
 export * from './cellMenu.interface';
 export * from './cellMenuOption.interface';

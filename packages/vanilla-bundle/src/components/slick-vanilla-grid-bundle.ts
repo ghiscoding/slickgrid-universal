@@ -1406,6 +1406,7 @@ export class SlickVanillaGridBundle {
   private registerRxJsResource(resource: RxJsFacade) {
     this.rxjs = resource;
     this.backendUtilityService.addRxJsResource(this.rxjs);
+    this.extensionService.addRxJsResource(this.rxjs);
     this.filterFactory.addRxJsResource(this.rxjs);
     this.filterService.addRxJsResource(this.rxjs);
     this.sortService.addRxJsResource(this.rxjs);

@@ -93,7 +93,20 @@ export class Example3 {
           collapsed: false
         },
         customTooltip: {
-          formatter: this.tooltipTaskFormatter.bind(this),
+          // you can use the Custom Tooltip in 2 ways (synchronous or asynchronous)
+          // example 1 (sync):
+          // formatter: this.tooltipTaskFormatter.bind(this),
+
+          // example 2 (async):
+          // when using async, the `formatter` will contain the loading spinner
+          // you will need to provide an `asyncPost` function returning a Promise and also `asyncPostFormatter` formatter to display the result once the Promise resolves
+          formatter: () => `<div><span class="mdi mdi-load mdi-spin-1s"></span> loading...</div>`,
+          asyncPostProcess: () => new Promise(resolve => {
+            setTimeout(() => resolve({ ratio: Math.random() * 10 / 10, lifespan: Math.random() * 100 }), 300);
+          }),
+          asyncPostFormatter: this.tooltipTaskFormatter.bind(this),
+
+          // optional conditional usability callback
           // usabilityOverride: (args) => !!(args.dataContext?.id % 2) // show it only every second row
         },
       },
@@ -298,7 +311,7 @@ export class Example3 {
       // Custom Tooltip options can be defined in a Column or Grid Options or a mixed of both (first options found wins)
       enableCustomTooltip: true,
       customTooltip: {
-        arrowMarginLeft: '30%',
+        // arrowMarginLeft: '30%',
         formatter: this.tooltipFormatter.bind(this),
         usabilityOverride: (args) => (args.cell !== 0 && args.cell !== args.grid.getColumns().length - 1), // don't show on first/last columns
         // hideArrow: true, // defaults to False
@@ -550,9 +563,12 @@ export class Example3 {
     const tooltipTitle = `Task ${dataContext.id} - Tooltip`;
 
     // use a 2nd Formatter to get the percent completion
+    // any properties provided from the `asyncPost` will end up in the `__params` property (unless a different prop name is provided via `asyncParamsPropName`)
     const completionBar = Formatters.percentCompleteBarWithText(row, cell, dataContext.percentComplete, column, dataContext, grid);
     const out = `<div class="color-se-danger" style="font-weight: bold">${tooltipTitle}</div>
       <div class="tooltip-2cols-row"><div>Completion:</div> <div>${completionBar}</div></div>
+      <div class="tooltip-2cols-row"><div>Lifespan:</div> <div>${dataContext.__params.lifespan.toFixed(2)}</div></div>
+      <div class="tooltip-2cols-row"><div>Ratio:</div> <div>${dataContext.__params.ratio.toFixed(2)}</div></div>
     `;
     return out;
   }

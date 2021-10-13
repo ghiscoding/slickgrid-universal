@@ -314,7 +314,7 @@ export class Example7 {
     return true;
   }
 
-  onMoveRows(_e: Event, args: any) {
+  onMoveRows(_e: Event, args: { rows: number[]; insertBefore: number; }) {
     // rows and insertBefore references,
     // note that these references are assuming that the dataset isn't filtered at all
     // which is not always the case so we will recalcualte them and we won't use these reference afterward

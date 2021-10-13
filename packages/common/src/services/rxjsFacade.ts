@@ -46,6 +46,10 @@ export abstract class RxJsFacade {
     return false;
   }
 
+  switchMap(project: (value: any, index: number) => any): any {
+    throw new Error('RxJS Facade "switchMap" method must be implemented');
+  }
+
   /** Emits the values emitted by the source Observable until a `notifier` Observable emits a value. */
   takeUntil<T>(notifier: Observable<any>): any {
     throw new Error('RxJS Facade "takeUntil" method must be implemented');
