@@ -5,8 +5,13 @@ import { SlickCellRangeSelector } from './index';
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
 
+export interface CellSelectionModelOption {
+  selectActiveCell: boolean;
+  cellRangeSelector: SlickCellRangeSelector;
+}
+
 export class SlickCellSelectionModel {
-  protected _addonOptions: any;
+  protected _addonOptions?: CellSelectionModelOption;
   protected _canvas: HTMLElement | null = null;
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
@@ -47,12 +52,12 @@ export class SlickCellSelectionModel {
 
   init(grid: SlickGrid) {
     this._grid = grid;
-    this._addonOptions = { ...this._defaults, ...this._addonOptions };
+    this._addonOptions = { ...this._defaults, ...this._addonOptions } as CellSelectionModelOption;
     this._eventHandler
-      .subscribe(this._grid.onActiveCellChanged, this.handleOnActiveCellChange.bind(this) as EventListener)
-      .subscribe(this._grid.onKeyDown, this.handleOnKeyDown.bind(this) as EventListener)
-      .subscribe(this._selector.onBeforeCellRangeSelected, this.handleOnBeforeCellRangeSelected.bind(this) as EventListener)
-      .subscribe(this._selector.onCellRangeSelected, this.handleOnCellRangeSelected.bind(this) as EventListener);
+      .subscribe(this._grid.onActiveCellChanged, this.handleActiveCellChange.bind(this) as EventListener)
+      .subscribe(this._grid.onKeyDown, this.handleKeyDown.bind(this) as EventListener)
+      .subscribe(this._selector.onBeforeCellRangeSelected, this.handleBeforeCellRangeSelected.bind(this) as EventListener)
+      .subscribe(this._selector.onCellRangeSelected, this.handleCellRangeSelected.bind(this) as EventListener);
 
     // register the cell range selector plugin
     grid.registerPlugin(this._selector);
@@ -122,28 +127,28 @@ export class SlickCellSelectionModel {
   // protected functions
   // ---------------------
 
-  protected handleOnActiveCellChange(_e: any, args: OnActiveCellChangedEventArgs) {
-    if (this._addonOptions.selectActiveCell && args.row !== null && args.cell !== null) {
+  protected handleActiveCellChange(_e: any, args: OnActiveCellChangedEventArgs) {
+    if (this._addonOptions?.selectActiveCell && args.row !== null && args.cell !== null) {
       this.setSelectedRanges([new Slick.Range(args.row, args.cell)]);
-    } else if (!this._addonOptions.selectActiveCell) {
+    } else if (!this._addonOptions?.selectActiveCell) {
       // clear the previous selection once the cell changes
       this.setSelectedRanges([]);
     }
   }
 
-  protected handleOnBeforeCellRangeSelected(e: any): boolean | void {
+  protected handleBeforeCellRangeSelected(e: any): boolean | void {
     if (this._grid.getEditorLock().isActive()) {
       e.stopPropagation();
       return false;
     }
   }
 
-  protected handleOnCellRangeSelected(_e: any, args: { range: CellRange; }) {
+  protected handleCellRangeSelected(_e: any, args: { range: CellRange; }) {
     this._grid.setActiveCell(args.range.fromRow, args.range.fromCell, false, false, true);
     this.setSelectedRanges([args.range as SlickRange]);
   }
 
-  protected handleOnKeyDown(e: any) {
+  protected handleKeyDown(e: any) {
     let ranges: CellRange[];
     let last: SlickRange;
     const active = this._grid.getActiveCell();

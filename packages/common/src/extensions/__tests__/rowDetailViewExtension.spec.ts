@@ -25,9 +25,6 @@ Slick.Plugins = {
   RowDetailView: mockAddon
 } as any;
 
-jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockSelectionModel);
-Slick.RowSelectionModel = mockSelectionModel;
-
 describe('rowDetailViewExtension', () => {
   it('should display a not implemented when calling "create" method', () => {
     expect(() => RowDetailViewExtension.prototype.create!([] as Column[], {} as GridOption)).toThrow('[Slickgrid-Universal] RowDetailViewExtension "create" method is not yet implemented');

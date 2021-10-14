@@ -1,5 +1,5 @@
 import { Formatter } from './formatter.interface';
-import { SlickCheckboxSelectColumn } from './slickCheckboxSelectColumn.interface';
+import { SlickCheckboxSelectColumn } from '../plugins/slickCheckboxSelectColumn';
 
 export interface GroupItemMetadataProviderOption {
   /** Whether or not we want to use group select checkbox. */

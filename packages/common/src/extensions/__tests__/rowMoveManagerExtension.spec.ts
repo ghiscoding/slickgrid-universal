@@ -2,6 +2,7 @@ import { RowMoveManagerExtension } from '../rowMoveManagerExtension';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { Column, GridOption, RowMoveManager, SlickGrid, SlickNamespace, SlickRowMoveManager } from '../../interfaces/index';
+import { SlickRowSelectionModel } from '../../plugins/slickRowSelectionModel';
 
 declare const Slick: SlickNamespace;
 
@@ -20,17 +21,25 @@ const mockAddon = jest.fn().mockImplementation(() => ({
   onMoveRows: new Slick.Event(),
 }));
 
-const mockSelectionModel = jest.fn().mockImplementation(() => ({
+const mockRowSelectionModel = {
+  constructor: jest.fn(),
   init: jest.fn(),
-  destroy: jest.fn()
+  destroy: jest.fn(),
+  dispose: jest.fn(),
+  getSelectedRows: jest.fn(),
+  setSelectedRows: jest.fn(),
+  getSelectedRanges: jest.fn(),
+  setSelectedRanges: jest.fn(),
+  onSelectedRangesChanged: new Slick.Event(),
+} as unknown as SlickRowSelectionModel;
+
+jest.mock('../../plugins/slickRowSelectionModel', () => ({
+  SlickRowSelectionModel: jest.fn().mockImplementation(() => mockRowSelectionModel),
 }));
 
 describe('rowMoveManagerExtension', () => {
   jest.mock('slickgrid/plugins/slick.rowmovemanager', () => mockAddon);
   Slick.RowMoveManager = mockAddon;
-
-  jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockSelectionModel);
-  Slick.RowSelectionModel = mockSelectionModel;
 
   let sharedService: SharedService;
   let translateService: TranslateServiceStub;

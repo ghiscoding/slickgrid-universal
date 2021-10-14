@@ -1,10 +1,8 @@
 import {
-  SlickCheckboxSelectColumn,
   SlickEditorLock,
   SlickGroupItemMetadataProvider,
   SlickRowDetailView,
   SlickRowMoveManager,
-  SlickRowSelectionModel,
 } from '../interfaces/index';
 import {
   SlickAutoTooltip,
@@ -13,10 +11,12 @@ import {
   SlickCellRangeDecorator,
   SlickCellRangeSelector,
   SlickCellSelectionModel,
+  SlickCheckboxSelectColumn,
   SlickContextMenu,
   SlickDraggableGrouping,
   SlickHeaderButtons,
   SlickHeaderMenu,
+  SlickRowSelectionModel,
 } from '../plugins/index';
 
 export type SlickPluginList =

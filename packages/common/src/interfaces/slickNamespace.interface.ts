@@ -16,7 +16,6 @@ import {
   RowDetailViewOption,
   RowMoveManagerOption,
   RowSelectionModelOption,
-  SlickCheckboxSelectColumn,
   SlickCompositeEditor,
   SlickDataView,
   SlickEditorLock,
@@ -31,7 +30,6 @@ import {
   SlickResizer,
   SlickRowDetailView,
   SlickRowMoveManager,
-  SlickRowSelectionModel,
 } from './index';
 import { SlickGridMenu, } from '../controls/index';
 import {
@@ -41,10 +39,12 @@ import {
   SlickCellRangeDecorator,
   SlickCellRangeSelector,
   SlickCellSelectionModel,
+  SlickCheckboxSelectColumn,
   SlickContextMenu,
   SlickDraggableGrouping,
   SlickHeaderButtons,
   SlickHeaderMenu,
+  SlickRowSelectionModel,
 } from '../plugins/index';
 
 /**

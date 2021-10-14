@@ -8,8 +8,8 @@ import {
   SlickEventHandler,
   SlickNamespace,
   SlickRowMoveManager,
-  SlickRowSelectionModel,
 } from '../interfaces/index';
+import { SlickRowSelectionModel } from '../plugins/slickRowSelectionModel';
 import { SharedService } from '../services/shared.service';
 
 // using external non-typed js libraries
@@ -96,7 +96,7 @@ export class RowMoveManagerExtension implements Extension {
     if (this._addon && this.sharedService && this.sharedService.slickGrid && this.sharedService.gridOptions) {
       // this also requires the Row Selection Model to be registered as well
       if (!rowSelectionPlugin || !this.sharedService.slickGrid.getSelectionModel()) {
-        rowSelectionPlugin = new Slick.RowSelectionModel(this.sharedService.gridOptions.rowSelectionOptions);
+        rowSelectionPlugin = new SlickRowSelectionModel(this.sharedService.gridOptions.rowSelectionOptions);
         this.sharedService.slickGrid.setSelectionModel(rowSelectionPlugin);
       }
       this._rowSelectionPlugin = rowSelectionPlugin;

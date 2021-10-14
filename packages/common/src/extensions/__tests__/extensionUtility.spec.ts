@@ -16,7 +16,6 @@ const mockAddon = jest.fn().mockImplementation(() => ({
   destroy: jest.fn()
 }));
 
-jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockAddon);
 jest.mock('slickgrid/plugins/slick.rowdetailview', () => mockAddon);
 jest.mock('slickgrid/plugins/slick.rowmovemanager', () => mockAddon);
 

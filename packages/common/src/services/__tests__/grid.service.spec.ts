@@ -2,19 +2,27 @@ import 'jest-extended';
 
 import { FilterService, GridService, GridStateService, PaginationService, PubSubService, SharedService, SortService, TreeDataService } from '../index';
 import { GridOption, CellArgs, Column, OnEventArgs, SlickGrid, SlickDataView, SlickNamespace } from '../../interfaces/index';
-
-jest.useFakeTimers();
+import { SlickRowSelectionModel } from '../../plugins/slickRowSelectionModel';
 
 declare const Slick: SlickNamespace;
-
-const mockSelectionModel = {
-  init: jest.fn(),
-  destroy: jest.fn()
-};
-const mockSelectionModelImplementation = jest.fn().mockImplementation(() => mockSelectionModel);
-
+jest.useFakeTimers();
 jest.mock('flatpickr', () => { });
-Slick.RowSelectionModel = mockSelectionModelImplementation;
+
+const mockRowSelectionModel = {
+  constructor: jest.fn(),
+  init: jest.fn(),
+  destroy: jest.fn(),
+  dispose: jest.fn(),
+  getSelectedRows: jest.fn(),
+  setSelectedRows: jest.fn(),
+  getSelectedRanges: jest.fn(),
+  setSelectedRanges: jest.fn(),
+  onSelectedRangesChanged: new Slick.Event(),
+} as unknown as SlickRowSelectionModel;
+
+jest.mock('../../plugins/slickRowSelectionModel', () => ({
+  SlickRowSelectionModel: jest.fn().mockImplementation(() => mockRowSelectionModel),
+}));
 
 const filterServiceStub = {
   clearFilters: jest.fn(),
@@ -94,7 +102,6 @@ const treeDataServiceStub = {
 } as unknown as TreeDataService;
 
 describe('Grid Service', () => {
-  jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockSelectionModelImplementation);
   let service: GridService;
   const sharedService = new SharedService();
   const mockGridOptions = { enableAutoResize: true } as GridOption;
@@ -115,12 +122,12 @@ describe('Grid Service', () => {
   });
 
   it('should dispose of the service', () => {
-    const destroySpy = jest.spyOn(mockSelectionModel, 'destroy');
+    const disposeSpy = jest.spyOn(mockRowSelectionModel, 'dispose');
 
     service.highlightRow(0, 10, 15);
     service.dispose();
 
-    expect(destroySpy).toHaveBeenCalled();
+    expect(disposeSpy).toHaveBeenCalled();
   });
 
   describe('getAllColumnDefinitions method', () => {
