@@ -945,7 +945,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
   });
 
   it('should click on Select All checkbox in filter header row and expect all 500 items to be selected and full selection count show in left footer', () => {
-    cy.get('.slick-header-column:nth(1)')
+    cy.get('.slick-header-column:nth-child(2)')
       .find('label')
       .click({ force: true });
 
