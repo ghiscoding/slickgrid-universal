@@ -2,6 +2,7 @@ import { CancellablePromiseWrapper, Column, CustomTooltipOption, Formatter, Grid
 import { cancellablePromise, CancelledException, getHtmlElementOffset, sanitizeTextByAvailableSanitizer } from '../services/utilities';
 import { SharedService } from '../services/shared.service';
 import { Observable, RxJsFacade, Subscription } from '../services/rxjsFacade';
+import { calculateAvailableSpace } from '../services/domUtilities';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -10,10 +11,12 @@ export class SlickCustomTooltip {
   protected _addonOptions?: CustomTooltipOption;
   protected _cancellablePromise?: CancellablePromiseWrapper;
   protected _observable$?: Subscription;
+  protected _tooltipElm?: HTMLDivElement;
   protected _defaultOptions = {
     className: 'slick-custom-tooltip',
     offsetLeft: 0,
-    offsetTop: 5,
+    offsetRight: 0,
+    offsetTopBottom: 4,
     hideArrow: false,
   } as CustomTooltipOption;
   protected _grid!: SlickGrid;
@@ -47,6 +50,10 @@ export class SlickCustomTooltip {
     return this.gridUid ? `.${this.gridUid}` : '';
   }
 
+  get tooltipElm(): HTMLDivElement | undefined {
+    return this._tooltipElm;
+  }
+
   addRxJsResource(rxjs: RxJsFacade) {
     this.rxjs = rxjs;
   }
@@ -55,30 +62,44 @@ export class SlickCustomTooltip {
     this._grid = grid;
     this._eventHandler
       .subscribe(grid.onMouseEnter, this.handleOnMouseEnter.bind(this) as unknown as EventListener)
-      .subscribe(grid.onMouseLeave, this.hide.bind(this) as EventListener);
+      .subscribe(grid.onMouseLeave, this.hideTooltip.bind(this) as EventListener);
   }
 
   dispose() {
     // hide (remove) any tooltip and unsubscribe from all events
-    this.hide();
+    this.hideTooltip();
     this._eventHandler.unsubscribeAll();
   }
 
   /**
-   * hide (remove) tooltip from the DOM,
-   * when using async process, it will also cancel any opened Promise/Observable that might still be opened/pending.
+   * hide (remove) tooltip from the DOM, it will also remove it from the DOM and also cancel any pending requests (as mentioned below).
+   * When using async process, it will also cancel any opened Promise/Observable that might still be pending.
    */
-  hide() {
+  hideTooltip() {
     this._cancellablePromise?.cancel();
     this._observable$?.unsubscribe();
     const prevTooltip = document.body.querySelector(`.${this.className}${this.gridUidSelector}`);
     prevTooltip?.remove();
   }
 
-  async handleOnMouseEnter(e: SlickEventData) {
+  // --
+  // protected functions
+  // ---------------------
+
+  /**
+   *  hide any prior tooltip & merge the new result with the item `dataContext` under a `__params` property (unless a new prop name is provided)
+   * finally render the tooltip with the `asyncPostFormatter` formatter
+   */
+  protected asyncProcessCallback(asyncResult: any, cell: { row: number, cell: number }, value: any, columnDef: Column, dataContext: any) {
+    this.hideTooltip();
+    const itemWithAsyncData = { ...dataContext, [this.addonOptions?.asyncParamsPropName ?? '__params']: asyncResult };
+    this.renderTooltipFormatter(value, columnDef, itemWithAsyncData, this._addonOptions!.asyncPostFormatter!, cell);
+  }
+
+  protected async handleOnMouseEnter(e: SlickEventData) {
     // before doing anything, let's remove any previous tooltip before
     // and cancel any opened Promise/Observable when using async
-    this.hide();
+    this.hideTooltip();
 
     if (this._grid && e) {
       const cell = this._grid.getCellFromEvent(e);
@@ -129,45 +150,72 @@ export class SlickCustomTooltip {
     }
   }
 
-  renderTooltipFormatter(value: any, columnDef: Column, item: any, formatter: Formatter, cell: { row: number; cell: number; }) {
+  /**
+   * Reposition the LongText Editor to be right over the cell, so that it looks like we opened the editor on top of the cell when in reality we just reposition (absolute) over the cell.
+   * By default we use an "auto" mode which will allow to position the LongText Editor to the best logical position in the window, also when we say position, we are talking about the relative position against the grid cell.
+   * We can assume that in 80% of the time the default position is bottom right, the default is "auto" but we can also override this and use a specific position.
+   * Most of the time positioning of the editor will be to the "right" of the cell is ok but if our column is completely on the right side then we'll want to change the position to "left" align.
+   * Same goes for the top/bottom position, Most of the time positioning the editor to the "bottom" but we are clicking on a cell at the bottom of the grid then we might need to reposition to "top" instead.
+   * NOTE: this only applies to Inline Editing and will not have any effect when using the Composite Editor modal window.
+   */
+  protected position(cell: { row: number; cell: number; }) {
+    if (this._tooltipElm) {
+      const cellElm = this._grid.getCellNode(cell.row, cell.cell);
+      const cellPosition = getHtmlElementOffset(cellElm);
+      const containerWidth = cellElm.offsetWidth;
+      const calculatedTooltipHeight = this._tooltipElm.getBoundingClientRect().height;
+      const calculatedTooltipWidth = this._tooltipElm.getBoundingClientRect().width;
+      const calculatedBodyWidth = document.body.offsetWidth || window.innerWidth;
+
+      // first calculate the default (top/left) position
+      let newPositionTop = cellPosition.top - this._tooltipElm.offsetHeight - (this._addonOptions?.offsetTopBottom ?? 0);
+      let newPositionLeft = (cellPosition?.left ?? 0) - (this._addonOptions?.offsetLeft ?? 0);
+
+      // user could explicitely use a "left" position (when user knows his column is completely on the right)
+      // or when using "auto" and we detect not enough available space then we'll position to the "left" of the cell
+      const position = this._addonOptions?.position ?? 'auto';
+      if (position === 'left' || (position === 'auto' && (newPositionLeft + calculatedTooltipWidth) > calculatedBodyWidth)) {
+        newPositionLeft -= (calculatedTooltipWidth - containerWidth - (this._addonOptions?.offsetRight ?? 0));
+        this._tooltipElm.classList.remove('arrow-left');
+        this._tooltipElm.classList.add('arrow-right');
+      } else {
+        this._tooltipElm.classList.add('arrow-left');
+        this._tooltipElm.classList.remove('arrow-right');
+      }
+
+      // do the same calculation/reposition with top/bottom (default is top of the cell or in other word starting from the cell going down)
+      if (position === 'top' || (position === 'auto' && calculatedTooltipHeight > calculateAvailableSpace(cellElm).top)) {
+        newPositionTop = cellPosition.top + (this.gridOptions.rowHeight ?? 0) + (this._addonOptions?.offsetTopBottom ?? 0);
+        this._tooltipElm.classList.remove('arrow-down');
+        this._tooltipElm.classList.add('arrow-up');
+      } else {
+        this._tooltipElm.classList.add('arrow-down');
+        this._tooltipElm.classList.remove('arrow-up');
+      }
+
+      // reposition the editor over the cell (90% of the time this will end up using a position on the "right" of the cell)
+      this._tooltipElm.style.top = `${newPositionTop}px`;
+      this._tooltipElm.style.left = `${newPositionLeft}px`;
+    }
+  }
+
+  protected renderTooltipFormatter(value: any, columnDef: Column, item: any, formatter: Formatter, cell: { row: number; cell: number; }) {
     if (typeof formatter === 'function') {
       const tooltipText = formatter(cell.row, cell.cell, value, columnDef, item, this._grid);
 
       // create the tooltip DOM element with the text returned by the Formatter
-      const tooltipElm = document.createElement('div');
-      tooltipElm.className = `${this.className} ${this.gridUid}`;
-      tooltipElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, (typeof tooltipText === 'object' ? tooltipText.text : tooltipText));
-      document.body.appendChild(tooltipElm);
+      this._tooltipElm = document.createElement('div');
+      this._tooltipElm.className = `${this.className} ${this.gridUid}`;
+      this._tooltipElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, (typeof tooltipText === 'object' ? tooltipText.text : tooltipText));
+      document.body.appendChild(this._tooltipElm);
 
       // reposition the tooltip on top of the cell that triggered the mouse over event
-      const cellPosition = getHtmlElementOffset(this._grid.getCellNode(cell.row, cell.cell));
-      tooltipElm.style.left = `${cellPosition.left}px`;
-      tooltipElm.style.top = `${cellPosition.top - tooltipElm.clientHeight - (this._addonOptions?.offsetTop ?? 0)}px`;
+      this.position(cell);
 
       // user could optionally hide the tooltip arrow (we can simply update the CSS variables, that's the only way we have to update CSS pseudo)
-      const root = document.documentElement;
-      if (this._addonOptions?.hideArrow) {
-        root.style.setProperty('--slick-tooltip-arrow-border-left', '0');
-        root.style.setProperty('--slick-tooltip-arrow-border-right', '0');
-      }
-      if (this._addonOptions?.arrowMarginLeft) {
-        const marginLeft = typeof this._addonOptions.arrowMarginLeft === 'string' ? this._addonOptions.arrowMarginLeft : `${this._addonOptions.arrowMarginLeft}px`;
-        root.style.setProperty('--slick-tooltip-arrow-margin-left', marginLeft);
+      if (!this._addonOptions?.hideArrow) {
+        this._tooltipElm.classList.add('tooltip-arrow');
       }
     }
-  }
-
-  // --
-  // protected functions
-  // ---------------------
-
-  /**
-   *  hide any prior tooltip & merge the new result with the item `dataContext` under a `__params` property (unless a new prop name is provided)
-   * finally render the tooltip with the `asyncPostFormatter` formatter
-   */
-  protected asyncProcessCallback(asyncResult: any, cell: { row: number, cell: number }, value: any, columnDef: Column, dataContext: any) {
-    this.hide();
-    const itemWithAsyncData = { ...dataContext, [this.addonOptions?.asyncParamsPropName ?? '__params']: asyncResult };
-    this.renderTooltipFormatter(value, columnDef, itemWithAsyncData, this._addonOptions!.asyncPostFormatter!, cell);
   }
 }

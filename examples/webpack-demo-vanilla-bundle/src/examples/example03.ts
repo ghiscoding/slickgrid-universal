@@ -311,7 +311,6 @@ export class Example3 {
       // Custom Tooltip options can be defined in a Column or Grid Options or a mixed of both (first options found wins)
       enableCustomTooltip: true,
       customTooltip: {
-        // arrowMarginLeft: '30%',
         formatter: this.tooltipFormatter.bind(this),
         usabilityOverride: (args) => (args.cell !== 0 && args.cell !== args.grid.getColumns().length - 1), // don't show on first/last columns
         // hideArrow: true, // defaults to False

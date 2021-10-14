@@ -911,13 +911,17 @@ $slick-tooltip-color:                                 inherit !default;
 $slick-tooltip-height:                                auto !default;
 $slick-tooltip-padding:                               7px !default;
 $slick-tooltip-width:                                 auto !default;
-$slick-tooltip-z-index:                               10 !default;
+$slick-tooltip-z-index:                               200 !default;
 $slick-tooltip-arrow-border-left:                     10px solid transparent !default;
 $slick-tooltip-arrow-border-right:                    10px solid transparent !default;
-$slick-tooltip-arrow-border-top:                      7px solid #{$slick-tooltip-border-color} !default;
 $slick-tooltip-arrow-bottom:                          -7px !default;
-$slick-tooltip-arrow-left:                            25px !default;
-$slick-tooltip-arrow-margin-left:                     -10px !default;
+$slick-tooltip-arrow-top:                             -7px !default;
+$slick-tooltip-down-arrow-border-top:                 7px solid #{$slick-tooltip-border-color} !default;
+$slick-tooltip-top-arrow-border-bottom:               7px solid #{$slick-tooltip-border-color} !default;
+$slick-tooltip-left-arrow-left-position:              10% !default;
+$slick-tooltip-left-arrow-margin-left:                -10% !default;
+$slick-tooltip-right-arrow-left-position:             70% !default;
+$slick-tooltip-right-arrow-margin-left:               80% !default;
 
 /** Empty Data Warning element */
 $empty-data-warning-color:                            $cell-text-color !default;
