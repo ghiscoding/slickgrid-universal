@@ -1133,6 +1133,26 @@ describe('Grid Service', () => {
       expect(setOptionsSpy).toHaveBeenCalledWith({ frozenBottom: false, frozenColumn: -1, frozenRow: -1, enableMouseWheelScrollHandler: false });
     });
 
+    it('should call "setPinning" which itself calls "clearPinning" when the pinning option input is an empty object', () => {
+      const mockPinning = {};
+      const clearPinningSpy = jest.spyOn(service, 'clearPinning');
+      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+
+      service.setPinning(mockPinning);
+
+      expect(clearPinningSpy).toHaveBeenCalled();
+    });
+
+    it('should call "setPinning" which itself calls "clearPinning" when the pinning option input is null', () => {
+      const mockPinning = null;
+      const clearPinningSpy = jest.spyOn(service, 'clearPinning');
+      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+
+      service.setPinning(mockPinning);
+
+      expect(clearPinningSpy).toHaveBeenCalled();
+    });
+
     it('should call "setPinning" and expect SlickGrid "setOptions" be called with new frozen options and "autosizeColumns" also be called', () => {
       const mockPinning = { frozenBottom: true, frozenColumn: 1, frozenRow: 2 };
       jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);

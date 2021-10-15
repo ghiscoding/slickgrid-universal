@@ -271,7 +271,7 @@ export class TreeDataService {
     // 2- sort the hierarchical array recursively by an optional "initialSort" OR if nothing is provided we'll sort by the column defined as the Tree column
     // also note that multi-column is not currently supported with Tree Data
     const columnSort = this.getInitialSort(columnDefinitions, gridOptions);
-    const datasetSortResult = this.sortService.sortHierarchicalDataset(datasetHierarchical, [columnSort]);
+    const datasetSortResult = this.sortService.sortHierarchicalDataset(datasetHierarchical, [columnSort], true);
 
     // and finally add the sorting icon (this has to be done manually in SlickGrid) to the column we used for the sorting
     this._grid?.setSortColumns([columnSort]);
