@@ -12,7 +12,7 @@ import { ExtensionUtility } from '../extensions/extensionUtility';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
-import { emptyElement } from '../services';
+import { emptyElement, findWidthOrDefault } from '../services/domUtilities';
 import { addColumnTitleElementWhenDefined, addCloseButtomElement, handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
 
 // using external SlickGrid JS libraries
@@ -47,6 +47,7 @@ export class SlickColumnPicker {
     hideForceFitButton: false,
     hideSyncResizeButton: false,
     forceFitTitle: 'Force fit columns',
+    minHeight: 200,
     syncResizeTitle: 'Synchronous resize',
     headerColumnValueExtractor: (columnDef: Column) => columnDef.name
   } as ColumnPickerOption;
@@ -195,7 +196,8 @@ export class SlickColumnPicker {
   protected repositionMenu(event: DOMMouseEvent<HTMLDivElement>) {
     this._menuElm.style.top = `${event.pageY - 10}px`;
     this._menuElm.style.left = `${event.pageX - 10}px`;
-    this._menuElm.style.maxHeight = `${document.body.clientHeight - event.pageY - 10}px`;
+    this._menuElm.style.minHeight = findWidthOrDefault(this.addonOptions.minHeight, '');
+    this._menuElm.style.maxHeight = findWidthOrDefault(this.addonOptions.maxHeight, `${window.innerHeight - event.clientY}px`);
     this._menuElm.style.display = 'block';
     this._menuElm.appendChild(this._listElm);
   }

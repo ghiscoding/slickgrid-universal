@@ -152,6 +152,7 @@
   border-radius: var(--slick-grid-menu-border-radius, $grid-menu-border-radius);
   padding: 6px;
   box-shadow: var(--slick-grid-menu-box-shadow, $grid-menu-box-shadow);
+  min-height: var(--slick-grid-menu-min-height, $grid-menu-min-height);
   min-width: var(--slick-grid-menu-min-width, $grid-menu-min-width);
   cursor: default;
   position:absolute;

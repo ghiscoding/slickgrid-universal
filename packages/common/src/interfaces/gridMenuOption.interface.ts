@@ -40,8 +40,11 @@ export interface GridMenuOption {
   /** Same as "forceFitTitle", except that it's a translation key which can be used on page load and/or when switching locale */
   forceFitTitleKey?: string;
 
-  /** Defaults to undefined, fixed height of the Grid Menu content, when provided it will be used instead of the max-height */
-  height?: number;
+  /**
+   * Defaults to undefined, fixed height of the Grid Menu content, when provided it will be used instead of the max-height.
+   * Can be a number or a string, if a number is provided it will add the `px` suffix for pixels, or if a string is passed it will use it as is.
+   */
+  height?: number | string;
 
   /** Defaults to false, which will hide the "Clear all Filters" command in the Grid Menu (Grid Option "enableFiltering: true" has to be enabled) */
   hideClearAllFiltersCommand?: boolean;
@@ -121,11 +124,20 @@ export interface GridMenuOption {
   /** Defaults to 15, margin to use at the bottom of the grid menu to deduce from the max-height, only in effect when height is undefined */
   marginBottom?: number;
 
-  /** Maximum height that the drop menu will have, can be a number (250) or text ("none") */
+  /**
+   * Defaults to available space at the bottom, Grid Menu minimum height.
+   * Can be a number or a string, if a number is provided it will add the `px` suffix for pixels, or if a string is passed it will use it as is.
+   */
   maxHeight?: number | string;
 
   /** Defaults to 16 pixels (only the number), which is the width in pixels of the Grid Menu icon container */
   menuWidth?: number;
+
+  /**
+   * Defaults to 200(px), Grid Menu minimum height.
+   * Can be a number or a string, if a number is provided it will add the `px` suffix for pixels, or if a string is passed it will use it as is.
+   */
+  minHeight?: number | string;
 
   /** Defaults to False, which will resize the Header Row and remove the width of the Grid Menu icon from it's total width. */
   resizeOnShowHeaderRow?: boolean;

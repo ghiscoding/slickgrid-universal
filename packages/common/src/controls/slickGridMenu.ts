@@ -13,7 +13,7 @@ import {
 } from '../interfaces/index';
 import { DelimiterType, FileType } from '../enums';
 import { ExtensionUtility } from '../extensions/extensionUtility';
-import { emptyElement, getHtmlElementOffset, getTranslationPrefix, } from '../services';
+import { emptyElement, findWidthOrDefault, getHtmlElementOffset, getTranslationPrefix, } from '../services/index';
 import { ExcelExportService } from '../services/excelExport.service';
 import { FilterService } from '../services/filter.service';
 import { PubSubService } from '../services/pubSub.service';
@@ -63,6 +63,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     forceFitTitle: 'Force fit columns',
     marginBottom: 15,
     menuWidth: 18,
+    minHeight: 250,
     contentMinWidth: 0,
     resizeOnShowHeaderRow: false,
     syncResizeTitle: 'Synchronous resize',
@@ -345,10 +346,12 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       }
 
       // set 'height' when defined OR ELSE use the 'max-height' with available window size and optional margin bottom
+      this._menuElm.style.minHeight = findWidthOrDefault(addonOptions.minHeight, '');
+
       if (addonOptions?.height !== undefined) {
-        this._menuElm.style.height = `${addonOptions.height}px`;
+        this._menuElm.style.height = findWidthOrDefault(addonOptions.height, '');
       } else {
-        this._menuElm.style.maxHeight = `${window.innerHeight - e.clientY - menuMarginBottom}px`;
+        this._menuElm.style.maxHeight = findWidthOrDefault(addonOptions.maxHeight, `${window.innerHeight - e.clientY - menuMarginBottom}px`);
       }
 
       this._menuElm.style.display = 'block';
