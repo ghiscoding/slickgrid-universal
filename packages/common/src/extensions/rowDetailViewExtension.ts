@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Column, Extension, GridOption, SlickRowDetailView, SlickRowSelectionModel } from '../interfaces/index';
+import { Column, Extension, GridOption, SlickRowDetailView, } from '../interfaces/index';
+import { SlickRowSelectionModel } from '../plugins/slickRowSelectionModel';
 
 export class RowDetailViewExtension implements Extension {
   /** Dispose of the RowDetailView Extension */

@@ -20,6 +20,7 @@ import {
   FormatterOption,
   GridMenu,
   GridState,
+  GroupItemMetadataProviderOption,
   HeaderButton,
   HeaderMenu,
   ItemMetadata,
@@ -34,7 +35,6 @@ import {
 } from './index';
 import { ColumnReorderFunction, EventNamingStyle, GridAutosizeColsMode, OperatorType, OperatorString, } from '../enums/index';
 import { TranslaterService } from '../services/translater.service';
-import { GroupItemMetadataProviderOption } from '../index';
 
 export interface GridOption {
   /** CSS class name used on newly added row */

@@ -30,10 +30,8 @@ import {
   Subscription,
 
   // extensions
-  CheckboxSelectorExtension,
   ExtensionUtility,
   RowDetailViewExtension,
-  RowSelectionExtension,
 
   // services
   BackendUtilityService,
@@ -349,10 +347,8 @@ export class SlickVanillaGridBundle {
     this.paginationService = services?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService, this.backendUtilityService);
 
     // extensions
-    const checkboxExtension = new CheckboxSelectorExtension(this.sharedService);
     const rowDetailViewExtension = new RowDetailViewExtension();
     const rowMoveManagerExtension = new RowMoveManagerExtension(this.sharedService);
-    const rowSelectionExtension = new RowSelectionExtension(this.sharedService);
 
     this.extensionService = services?.extensionService ?? new ExtensionService(
       this.extensionUtility,
@@ -360,10 +356,8 @@ export class SlickVanillaGridBundle {
       this._eventPubSubService,
       this.sortService,
       this.treeDataService,
-      checkboxExtension,
       rowDetailViewExtension,
       rowMoveManagerExtension,
-      rowSelectionExtension,
       this.sharedService,
       this.translaterService,
     );

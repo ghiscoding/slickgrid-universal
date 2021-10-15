@@ -43,7 +43,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
   });
 
   it('should clear all filters', () => {
-    cy.get('[data-test="delete-clear-filters-btn"]').click();
+    cy.get('[data-test="clear-filters-btn"]').click();
   });
 
   it('should have all rows shown in the grid', () => {
@@ -934,5 +934,65 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
 
     cy.get('.slick-context-menu-command-list')
       .should('not.exist');
+  });
+
+  it('should reload the page', () => {
+    cy.reload();
+  });
+
+  it('should clear all filters and expect 500 of 500 éléments displayed', () => {
+    cy.get('[data-test="clear-filters-btn"]')
+      .click();
+
+    cy.get('.right-footer')
+      .contains('500 of 500 items');
+  });
+
+  it('should click on Select All checkbox in filter header row and expect all 500 items to be selected and full selection count show in left footer', () => {
+    cy.get('.slick-header-column:nth-child(2)')
+      .find('label')
+      .click({ force: true });
+
+    // cy.get('#filter-checkbox-selectall-container label')
+    //   .click({ force: true });
+
+    cy.get('.slick-header-column:nth(1)')
+      .find('input[type=checkbox]')
+      .should('be.checked');
+
+    cy.get('.left-footer')
+      .contains('500 items selected');
+  });
+
+  it('should uncheck 2 first rows and expect the Select All checkbox to become unchecked', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`)
+      .find('label')
+      .click();
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`)
+      .find('label')
+      .click();
+
+    cy.get('.slick-header-column:nth(1)')
+      .find('input[type=checkbox]')
+      .should('not.be.checked');
+  });
+
+  it('should recheck the 2 first rows and expect the Select All checkbox to become unchecked', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`)
+      .find('label')
+      .click();
+
+    cy.get('.slick-header-column:nth(1)')
+      .find('input[type=checkbox]')
+      .should('not.be.checked');
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`)
+      .find('label')
+      .click();
+
+    cy.get('.slick-header-column:nth(1)')
+      .find('input[type=checkbox]')
+      .should('be.checked');
   });
 });

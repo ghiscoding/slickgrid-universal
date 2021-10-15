@@ -197,5 +197,57 @@ describe('Example 03 - Draggable Grouping', { retries: 1 }, () => {
         .should('be.visible')
         .should('have.text', 'Drop a column header here to group by the column');
     });
+
+    it('should add 500 items and expect 500 of 500 items displayed', () => {
+      cy.get('[data-test="add-500-rows-btn"]')
+        .click();
+
+      cy.get('.right-footer')
+        .contains('500 of 500 items');
+    });
+
+    it('should click on Select All checkbox in filter header row and expect all 500 items to be selected and full selection count show in left footer', () => {
+      cy.get('#filter-checkbox-selectall-container')
+        .click();
+
+      cy.get('#filter-checkbox-selectall-container')
+        .find('input[type=checkbox]')
+        .should('be.checked');
+
+      cy.get('.left-footer')
+        .contains('500 items selected');
+    });
+
+    it('should uncheck 2 first rows and expect the Select All checkbox to become unchecked', () => {
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0)`)
+        .find('label')
+        .click();
+
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0)`)
+        .find('label')
+        .click();
+
+      cy.get('#filter-checkbox-selectall-container')
+        .find('input[type=checkbox]')
+        .should('not.be.checked');
+    });
+
+    it('should recheck the 2 first rows and expect the Select All checkbox to become unchecked', () => {
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0)`)
+        .find('label')
+        .click();
+
+      cy.get('#filter-checkbox-selectall-container')
+        .find('input[type=checkbox]')
+        .should('not.be.checked');
+
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0)`)
+        .find('label')
+        .click();
+
+      cy.get('#filter-checkbox-selectall-container')
+        .find('input')
+        .should('be.checked');
+    });
   });
 });

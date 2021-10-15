@@ -4,6 +4,9 @@ export interface CheckboxSelectorOption {
   /** Defaults to "_checkbox_selector", you can provide a different column id used as the column header id */
   columnId?: string;
 
+  /** Defaults to "sel", you can provide a different column field id used as the column header id */
+  field?: string;
+
   /**
    * Defaults to 0, the column index position in the grid by default it will show as the first column (index 0).
    * Also note that the index position might vary if you use other extensions, after each extension is created,

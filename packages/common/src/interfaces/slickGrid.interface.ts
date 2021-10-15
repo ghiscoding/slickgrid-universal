@@ -15,10 +15,10 @@ import {
   SlickDataView,
   SlickEditorLock,
   SlickEvent,
-  SlickRowSelectionModel,
 } from './index';
 import {
   SlickCellSelectionModel,
+  SlickRowSelectionModel,
 } from '../plugins/index';
 
 export interface SlickGrid {
@@ -568,8 +568,8 @@ export interface OnHeaderRowCellRenderedEventArgs extends SlickGridEventData { n
 export interface OnKeyDownEventArgs extends SlickGridEventData { row: number; cell: number; }
 export interface OnValidationErrorEventArgs extends SlickGridEventData { row: number; cell: number; validationResults: EditorValidationResult; column: Column; editor: Editor; cellNode: HTMLElement; }
 export interface OnRenderedEventArgs extends SlickGridEventData { startRow: number; endRow: number; }
-export interface OnSelectedRowsChangedEventArgs extends SlickGridEventData { rows: number[], previousSelectedRows: number[] }
-export interface OnSetOptionsEventArgs extends SlickGridEventData { optionsBefore: GridOption, optionsAfter: GridOption }
+export interface OnSelectedRowsChangedEventArgs extends SlickGridEventData { rows: number[]; previousSelectedRows: number[]; }
+export interface OnSetOptionsEventArgs extends SlickGridEventData { optionsBefore: GridOption; optionsAfter: GridOption; }
 
 export interface OnScrollEventArgs extends SlickGridEventData { scrollLeft: number; scrollTop: number; }
 export interface OnDragEventArgs extends SlickGridEventData {
