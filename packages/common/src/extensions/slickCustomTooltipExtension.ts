@@ -82,6 +82,10 @@ export class SlickCustomTooltip {
     prevTooltip?.remove();
   }
 
+  setOptions(newOptions: CustomTooltipOption) {
+    this._addonOptions = { ...this._addonOptions, ...newOptions } as CustomTooltipOption;
+  }
+
   // --
   // protected functions
   // ---------------------
@@ -107,7 +111,7 @@ export class SlickCustomTooltip {
         const item = this.dataView.getItem(cell.row);
         const columnDef = this._grid.getColumns()[cell.cell];
         if (item && columnDef) {
-          this._addonOptions = { ...this._defaultOptions, ...(this.sharedService?.gridOptions?.customTooltip), ...(columnDef?.customTooltip) };
+          this._addonOptions = { ...this._addonOptions, ...(this.sharedService?.gridOptions?.customTooltip), ...(columnDef?.customTooltip) } as CustomTooltipOption;
 
           let showTooltip = true;
           if (typeof this._addonOptions?.usabilityOverride === 'function') {
@@ -150,15 +154,34 @@ export class SlickCustomTooltip {
     }
   }
 
+  protected renderTooltipFormatter(value: any, columnDef: Column, item: any, formatter: Formatter, cell: { row: number; cell: number; }) {
+    if (typeof formatter === 'function') {
+      const tooltipText = formatter(cell.row, cell.cell, value, columnDef, item, this._grid);
+
+      // create the tooltip DOM element with the text returned by the Formatter
+      this._tooltipElm = document.createElement('div');
+      this._tooltipElm.className = `${this.className} ${this.gridUid}`;
+      this._tooltipElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, (typeof tooltipText === 'object' ? tooltipText.text : tooltipText));
+      document.body.appendChild(this._tooltipElm);
+
+      // reposition the tooltip on top of the cell that triggered the mouse over event
+      this.reposition(cell);
+
+      // user could optionally hide the tooltip arrow (we can simply update the CSS variables, that's the only way we have to update CSS pseudo)
+      if (!this._addonOptions?.hideArrow) {
+        this._tooltipElm.classList.add('tooltip-arrow');
+      }
+    }
+  }
+
   /**
-   * Reposition the LongText Editor to be right over the cell, so that it looks like we opened the editor on top of the cell when in reality we just reposition (absolute) over the cell.
-   * By default we use an "auto" mode which will allow to position the LongText Editor to the best logical position in the window, also when we say position, we are talking about the relative position against the grid cell.
-   * We can assume that in 80% of the time the default position is bottom right, the default is "auto" but we can also override this and use a specific position.
-   * Most of the time positioning of the editor will be to the "right" of the cell is ok but if our column is completely on the right side then we'll want to change the position to "left" align.
-   * Same goes for the top/bottom position, Most of the time positioning the editor to the "bottom" but we are clicking on a cell at the bottom of the grid then we might need to reposition to "top" instead.
-   * NOTE: this only applies to Inline Editing and will not have any effect when using the Composite Editor modal window.
+   * Reposition the Tooltip to be top-left position over the cell.
+   * By default we use an "auto" mode which will allow to position the Tooltip to the best logical position in the window, also when we mention position, we are talking about the relative position against the grid cell.
+   * We can assume that in 80% of the time the default position is top-right, the default is "auto" but we can also override it and use a specific position.
+   * Most of the time positioning of the tooltip will be to the "top-right" of the cell is ok but if our column is completely on the right side then we'll want to change the position to "left" align.
+   * Same goes for the top/bottom position, Most of the time positioning the tooltip to the "top" but if we are hovering a cell at the top of the grid and there's no room to display it then we might need to reposition to "bottom" instead.
    */
-  protected position(cell: { row: number; cell: number; }) {
+  protected reposition(cell: { row: number; cell: number; }) {
     if (this._tooltipElm) {
       const cellElm = this._grid.getCellNode(cell.row, cell.cell);
       const cellPosition = getHtmlElementOffset(cellElm);
@@ -193,29 +216,9 @@ export class SlickCustomTooltip {
         this._tooltipElm.classList.remove('arrow-up');
       }
 
-      // reposition the editor over the cell (90% of the time this will end up using a position on the "right" of the cell)
+      // reposition the tooltip over the cell (90% of the time this will end up using a position on the "right" of the cell)
       this._tooltipElm.style.top = `${newPositionTop}px`;
       this._tooltipElm.style.left = `${newPositionLeft}px`;
-    }
-  }
-
-  protected renderTooltipFormatter(value: any, columnDef: Column, item: any, formatter: Formatter, cell: { row: number; cell: number; }) {
-    if (typeof formatter === 'function') {
-      const tooltipText = formatter(cell.row, cell.cell, value, columnDef, item, this._grid);
-
-      // create the tooltip DOM element with the text returned by the Formatter
-      this._tooltipElm = document.createElement('div');
-      this._tooltipElm.className = `${this.className} ${this.gridUid}`;
-      this._tooltipElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, (typeof tooltipText === 'object' ? tooltipText.text : tooltipText));
-      document.body.appendChild(this._tooltipElm);
-
-      // reposition the tooltip on top of the cell that triggered the mouse over event
-      this.position(cell);
-
-      // user could optionally hide the tooltip arrow (we can simply update the CSS variables, that's the only way we have to update CSS pseudo)
-      if (!this._addonOptions?.hideArrow) {
-        this._tooltipElm.classList.add('tooltip-arrow');
-      }
     }
   }
 }
