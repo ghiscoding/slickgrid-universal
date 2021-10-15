@@ -101,7 +101,7 @@ export class Example3 {
           // when using async, the `formatter` will contain the loading spinner
           // you will need to provide an `asyncPost` function returning a Promise and also `asyncPostFormatter` formatter to display the result once the Promise resolves
           formatter: () => `<div><span class="mdi mdi-load mdi-spin-1s"></span> loading...</div>`,
-          asyncPostProcess: () => new Promise(resolve => {
+          asyncProcess: () => new Promise(resolve => {
             setTimeout(() => resolve({ ratio: Math.random() * 10 / 10, lifespan: Math.random() * 100 }), 300);
           }),
           asyncPostFormatter: this.tooltipTaskFormatter.bind(this),
@@ -140,7 +140,14 @@ export class Example3 {
         filterable: true,
         // filter: { model: Filters.compoundInput },
         // formatter: Formatters.dollar,
-        formatter: Formatters.dollar,
+        formatter: Formatters.multiple,
+        // params: { formatters: [Formatters.dollar, (row, cell, value) => `<span title="regular tooltip, cost: ${value}">${value || ''}</span>`] },
+        params: { formatters: [Formatters.dollar, (row, cell, value) => `<span title="regular tooltip (from title attribute) - cell value: ${value || ''}">${value || ''}</span>`] },
+        customTooltip: {
+          useRegularTooltip: true,
+          // maxWidth: 200,
+          // maxHeight: 40,
+        },
         groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
         type: FieldType.number,
         grouping: {
@@ -312,7 +319,7 @@ export class Example3 {
       enableCustomTooltip: true,
       customTooltip: {
         formatter: this.tooltipFormatter.bind(this),
-        usabilityOverride: (args) => (args.cell !== 0 && args.cell !== args.grid.getColumns().length - 1), // don't show on first/last columns
+        usabilityOverride: (args) => (args.cell !== 0 && args.column.id !== 'action'), // don't show on first/last columns
         // hideArrow: true, // defaults to False
       },
       registerExternalResources: [this.excelExportService],
@@ -559,7 +566,7 @@ export class Example3 {
   }
 
   tooltipTaskFormatter(row, cell, value, column, dataContext, grid) {
-    const tooltipTitle = `Task ${dataContext.id} - Tooltip`;
+    const tooltipTitle = `Task ${dataContext.id} - (async tooltip)`;
 
     // use a 2nd Formatter to get the percent completion
     // any properties provided from the `asyncPost` will end up in the `__params` property (unless a different prop name is provided via `asyncParamsPropName`)
