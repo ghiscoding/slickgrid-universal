@@ -435,12 +435,22 @@ export class SortService {
   }
 
   /** Takes a hierarchical dataset and sort it recursively,  */
-  sortHierarchicalDataset<T>(hierarchicalDataset: T[], sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>) {
+  sortHierarchicalDataset<T>(hierarchicalDataset: T[], sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, emitSortChanged = false) {
     this.sortTreeData(hierarchicalDataset, sortColumns);
     const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
     const treeDataOpt: TreeDataOption = this._gridOptions?.treeDataOptions ?? { columnId: '' };
     const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier, shouldAddTreeLevelNumber: true };
     const sortedFlatArray = flattenToParentChildArray(hierarchicalDataset, treeDataOptions);
+
+    if (emitSortChanged) {
+      // update current sorters
+      this._currentLocalSorters = [];
+      for (const sortCol of sortColumns) {
+        this._currentLocalSorters.push({ columnId: sortCol.columnId, direction: sortCol.sortAsc ? 'ASC' : 'DESC' });
+      }
+      const emitterType = this._gridOptions?.backendServiceApi ? EmitterType.remote : EmitterType.local;
+      this.emitSortChanged(emitterType);
+    }
 
     return { hierarchical: hierarchicalDataset, flat: sortedFlatArray };
   }
