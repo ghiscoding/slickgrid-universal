@@ -352,6 +352,11 @@ export function isNumber(value: any, strict = false) {
   return (value === null || value === undefined || value === '') ? false : !isNaN(+value);
 }
 
+/** Check if an object is empty, it will also be considered empty when the input is null, undefined or isn't an object */
+export function isObjectEmpty(obj: unknown) {
+  return !obj || (obj && typeof obj === 'object' && Object.keys(obj).length === 0);
+}
+
 /**
  * Take a number (or a string) and display it as a formatted decimal string with defined minimum and maximum decimals
  * @param input
