@@ -241,7 +241,6 @@ export class Example7 {
         selectActiveRow: false
       },
       checkboxSelector: {
-        hideInFilterHeaderRow: false,
         hideSelectAllCheckbox: false, // hide the "Select All" from title bar
         columnIndexPosition: 1,
         // row selection should only be usable & displayed on root level 0 (parent item) & grid isn't locked
