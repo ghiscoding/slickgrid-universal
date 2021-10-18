@@ -31,8 +31,7 @@ export const SalesforceGlobalGridOptions = {
   enableCellNavigation: true,
   enableCustomTooltip: true,
   customTooltip: {
-    tooltipTextMaxLength: 700,
-    tooltipDelay: 0,
+    tooltipTextMaxLength: 650,
   },
   filterTypingDebounce: 250,
   formatterOptions: {

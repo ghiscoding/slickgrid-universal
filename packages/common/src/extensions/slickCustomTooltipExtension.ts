@@ -137,10 +137,10 @@ export class SlickCustomTooltip {
    * clear the "title" attribute from the grid div text content so that it won't show also as a 2nd browser tooltip
    * note: the reason we can do delete it completely is because we always re-execute the formatter whenever we hover the tooltip and so we have a fresh title attribute each time to use
    */
-  protected clearTitleAttribute() {
+  protected clearTitleAttribute(inputTitleElm?: Element | null) {
     // the title attribute might be directly on the slick-cell element (e.g. AutoTooltip plugin)
     // OR in a child element (most commonly as a custom formatter)
-    const titleElm = this._cellNodeElm?.hasAttribute('title') ? this._cellNodeElm : this._cellNodeElm?.querySelector('[title]');
+    const titleElm = inputTitleElm || this._cellNodeElm?.hasAttribute('title') ? this._cellNodeElm : this._cellNodeElm?.querySelector('[title]');
     titleElm?.setAttribute('title', '');
   }
 
@@ -284,15 +284,19 @@ export class SlickCustomTooltip {
     const tmpDiv = document.createElement('div');
     tmpDiv.innerHTML = this.parseFormatter(formatterOrText, cell, value, columnDef, item);
 
-    // the title attribute might be directly on the slick-cell element (e.g. AutoTooltip plugin)
-    // OR in a child element (most commonly as a custom formatter)
-    const tmpTitleElm = this._cellNodeElm?.hasAttribute('title') ? this._cellNodeElm : tmpDiv.querySelector('[title]');
+    let tmpTitleElm;
+    if (this._cellAddonOptions?.useRegularTooltipFromFormatterOnly) {
+      tmpTitleElm = tmpDiv.querySelector('[title]');
+    } else {
+      tmpTitleElm = this._cellNodeElm?.getAttribute('title') ? this._cellNodeElm : tmpDiv.querySelector<HTMLDivElement>('[title]');
+    }
     const tooltipText = tmpTitleElm?.getAttribute('title') ?? '';
     if (tooltipText !== '') {
       this.renderTooltipFormatter(formatterOrText, cell, value, columnDef, item, tooltipText);
     }
+
     // also clear any "title" attribute to avoid showing a 2nd browser tooltip
-    this.clearTitleAttribute();
+    this.clearTitleAttribute(tmpTitleElm);
   }
 
   protected renderTooltipFormatter(formatter: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: unknown, tooltipText?: string) {

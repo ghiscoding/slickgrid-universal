@@ -76,13 +76,20 @@ export interface CustomTooltipOption<T = any> {
   /** defaults to False, when set to True it will skip custom tooltip formatter and instead will parse through the regular cell formatter and try to find a `title` to show regular tooltip */
   useRegularTooltip?: boolean;
 
+  /**
+   * defaults to False, optionally force to retrieve the `title` from the Formatter result instead of the cell itself.
+   * For example, when used in combo with the AutoTooltip plugin we might want to force the tooltip to read the `title` attribute from the formatter result first instead of the cell itself,
+   * make the cell as a 2nd read, in other words check the formatter prior to the cell which the AutoTooltip might have filled.
+   */
+  useRegularTooltipFromFormatterOnly?: boolean;
+
   /** defaults to false, regular "title" tooltip won't be rendered as html unless specified via this flag (also "\r\n" will be replaced by <br>) */
   renderRegularTooltipAsHtml?: boolean;
 
   /** defaults to 700 (characters), when defined the text will be truncated to the max length characters provided */
   tooltipTextMaxLength?: number;
 
-  /** defaults to undefined, when provided it will delay the tooltip open */
+  /** no defaults, when provided it will delay the tooltip open */
   tooltipDelay?: number;
 
   // --
