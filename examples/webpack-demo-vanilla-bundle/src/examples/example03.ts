@@ -20,7 +20,6 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
-import '../salesforce-styles.scss';
 import './example03.scss';
 
 // using external SlickGrid JS libraries
@@ -134,7 +133,7 @@ export class Example3 {
         }
       },
       {
-        id: 'cost', name: 'Cost', field: 'cost',
+        id: 'cost', name: '<span title="custom cost title tooltip text">Cost</span>', field: 'cost',
         width: 90,
         sortable: true,
         filterable: true,
@@ -145,6 +144,7 @@ export class Example3 {
         params: { formatters: [Formatters.dollar, (row, cell, value) => `<span title="regular tooltip (from title attribute) - cell value: ${value || ''}">${value || ''}</span>`] },
         customTooltip: {
           useRegularTooltip: true,
+          // renderRegularTooltipAsHtml: true,
           // maxWidth: 200,
           // maxHeight: 40,
         },
@@ -315,11 +315,13 @@ export class Example3 {
       excelExportOptions: {
         exportWithFormatter: true
       },
+      enableAutoTooltip: true,
       // Custom Tooltip options can be defined in a Column or Grid Options or a mixed of both (first options found wins)
       enableCustomTooltip: true,
       customTooltip: {
         formatter: this.tooltipFormatter.bind(this),
-        usabilityOverride: (args) => (args.cell !== 0 && args.column.id !== 'action'), // don't show on first/last columns
+        headerFormatter: this.headerFormatter.bind(this),
+        usabilityOverride: (args) => (args.cell !== 0 && args?.column?.id !== 'action'), // don't show on first/last columns
         // hideArrow: true, // defaults to False
       },
       registerExternalResources: [this.excelExportService],
@@ -556,11 +558,20 @@ export class Example3 {
     }
   }
 
-  tooltipFormatter(row, cell, value, column, dataContext) {
+  headerFormatter(row, cell, value, column) {
+    const tooltipTitle = 'Custom Tooltip - Header';
+    return `<div class="header-tooltip-title" style="font-weight: bold">${tooltipTitle}</div>
+    <div class="tooltip-2cols-row"><div>Column:</div> <div>${column.name}</div></div>`;
+  }
+
+  tooltipFormatter(row, cell, value, column, dataContext, grid) {
     const tooltipTitle = 'Custom Tooltip';
+    const effortDrivenHtml = Formatters.checkmarkMaterial(row, cell, dataContext.effortDriven, column, dataContext, grid);
+
     return `<div class="color-sf-primary-dark" style="font-weight: bold">${tooltipTitle}</div>
     <div class="tooltip-2cols-row"><div>Id:</div> <div>${dataContext.id}</div></div>
     <div class="tooltip-2cols-row"><div>Title:</div> <div>${dataContext.title}</div></div>
+    <div class="tooltip-2cols-row"><div>Effort Driven:</div> <div>${effortDrivenHtml}</div></div>
     <div class="tooltip-2cols-row"><div>Completion:</div> <div>${this.loadCompletionIcons(dataContext.percentComplete)}</div></div>
     `;
   }

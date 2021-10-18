@@ -24,6 +24,9 @@ export interface CustomTooltipOption<T = any> {
   /** Formatter to execute once the async process is completed, to displayed the actual text result (used when dealing with an Async API to get data to display later in the tooltip) */
   asyncPostFormatter?: Formatter;
 
+  /** Formatter to execute when custom tooltip is over a header column */
+  headerFormatter?: Formatter;
+
   /** defaults to False, should we hide the tooltip pointer arrow? */
   hideArrow?: boolean;
 
@@ -37,10 +40,20 @@ export interface CustomTooltipOption<T = any> {
    */
   formatter?: Formatter;
 
-  /** optional maximum height number (in pixel) of the tooltip container */
+  /**
+   * optional maximum height number (in pixel) of the tooltip container
+   * NOTE: the default CSS will NOT automatically show the ellipsis when the text is too long because when setting `overflow: hidden`
+   * it makes the arrow disappear because the arrow is added via the `::after` pseudo and we could not find how to keep the arrow when ellipsis is enabled.
+   * If you are ok to use the ellipsis without the tooltip arrow, then you can change these 3 CSS variables (or SASS) `--slick-tooltip-overflow: hidden`, `--slick-tooltip-white-space: nowrap` and `--slick-tooltip-text-overflow: ellipsis`
+   */
   maxHeight?: number;
 
-  /** optional maximum width number (in pixel) of the tooltip container */
+  /**
+   * optional maximum width number (in pixel) of the tooltip container
+   * NOTE: the default CSS will NOT automatically show the ellipsis when the text is too long because when setting `overflow: hidden`
+   * it makes the arrow disappear because the arrow is added via the `::after` pseudo and we could not find how to keep the arrow when ellipsis is enabled.
+   * If you are ok to use the ellipsis without the tooltip arrow, then you can change these 3 CSS variables (or SASS) `--slick-tooltip-overflow: hidden`, `--slick-tooltip-white-space: nowrap` and `--slick-tooltip-text-overflow: ellipsis`
+   */
   maxWidth?: number;
 
   /** defaults to 0, optional left offset, it must be a positive/negative number (in pixel) that will be added to the offset position calculation of the tooltip container. */
@@ -55,13 +68,22 @@ export interface CustomTooltipOption<T = any> {
   /**
    * Defaults to "auto", allows to align the tooltip to the best logical position in the window, by default it will show on top but if it calculates that it doesn't have enough space it will revert to bottom.
    * We can assume that in 80% of the time the default position is top left, the default is "auto" but we can also override this and use a specific align side.
-   * Most of the time positioning of the tooltip will be to the "right" of the cell is ok but if our column is completely on the right side then we'll want to change the position to "left" align.
+   * Most of the time positioning of the tooltip will be to the "right-align" of the cell is ok but if our column is completely on the right side then we'll want to change the position to "left-align" align.
    * Same goes for the top/bottom position, Most of the time positioning the tooltip to the "top" but if we are showing a tooltip from a cell on the top of the grid then we might need to reposition to "bottom" instead.
    */
-  position?: 'auto' | 'top' | 'bottom' | 'left' | 'right';
+  position?: 'auto' | 'top' | 'bottom' | 'left-align' | 'right-align';
 
   /** defaults to False, when set to True it will skip custom tooltip formatter and instead will parse through the regular cell formatter and try to find a `title` to show regular tooltip */
   useRegularTooltip?: boolean;
+
+  /** defaults to false, regular "title" tooltip won't be rendered as html unless specified via this flag (also "\r\n" will be replaced by <br>) */
+  renderRegularTooltipAsHtml?: boolean;
+
+  /** defaults to 700 (characters), when defined the text will be truncated to the max length characters provided */
+  tooltipTextMaxLength?: number;
+
+  /** defaults to undefined, when provided it will delay the tooltip open */
+  tooltipDelay?: number;
 
   // --
   // callback functions
