@@ -521,6 +521,8 @@ export interface SlickGrid {
   onHeaderMouseEnter: SlickEvent<OnHeaderMouseEventArgs>;
   onHeaderMouseLeave: SlickEvent<OnHeaderMouseEventArgs>;
   onHeaderRowCellRendered: SlickEvent<OnHeaderRowCellRenderedEventArgs>;
+  onHeaderRowMouseEnter: SlickEvent<OnHeaderMouseEventArgs>;
+  onHeaderRowMouseLeave: SlickEvent<OnHeaderMouseEventArgs>;
   onKeyDown: SlickEvent<OnKeyDownEventArgs>;
   onMouseEnter: SlickEvent<SlickGridEventData>;
   onMouseLeave: SlickEvent<SlickGridEventData>;

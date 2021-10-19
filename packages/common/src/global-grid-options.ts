@@ -94,7 +94,8 @@ export const GlobalGridOptions: GridOption = {
   },
   enableCustomTooltip: false,
   customTooltip: {
-    tooltipTextMaxLength: 700
+    tooltipTextMaxLength: 700,
+    maxWidth: 500,
   },
   dataView: {
     syncGridSelection: true, // when enabled, this will preserve the row selection even after filtering/sorting/grouping

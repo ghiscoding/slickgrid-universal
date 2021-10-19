@@ -2,7 +2,7 @@ import { CancellablePromiseWrapper, Column, CustomTooltipOption, Formatter, Grid
 import { cancellablePromise, CancelledException, getHtmlElementOffset, sanitizeTextByAvailableSanitizer } from '../services/utilities';
 import { SharedService } from '../services/shared.service';
 import { Observable, RxJsFacade, Subscription } from '../services/rxjsFacade';
-import { calculateAvailableSpace } from '../services/domUtilities';
+import { calculateAvailableSpace, findFirstElementAttribute } from '../services/domUtilities';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -44,6 +44,8 @@ export class SlickCustomTooltip {
     offsetRight: 0,
     offsetTopBottom: 4,
     hideArrow: false,
+    regularTooltipWhiteSpace: 'pre-line',
+    whiteSpace: 'normal',
   } as CustomTooltipOption;
   protected _grid!: SlickGrid;
   protected _eventHandler: SlickEventHandler;
@@ -94,8 +96,10 @@ export class SlickCustomTooltip {
     this._eventHandler
       .subscribe(grid.onMouseEnter, this.handleOnMouseEnter.bind(this) as unknown as EventListener)
       .subscribe(grid.onHeaderMouseEnter, this.handleOnHeaderMouseEnter.bind(this) as unknown as EventListener)
-      .subscribe(grid.onMouseLeave, this.hideTooltip.bind(this) as EventListener)
-      .subscribe(grid.onHeaderMouseLeave, this.hideTooltip.bind(this) as EventListener);
+      .subscribe(grid.onHeaderRowMouseEnter, this.handleOnHeaderRowMouseEnter.bind(this) as unknown as EventListener)
+      .subscribe(grid.onMouseLeave, this.hideTooltip.bind(this) as unknown as EventListener)
+      .subscribe(grid.onHeaderMouseLeave, this.hideTooltip.bind(this) as unknown as EventListener)
+      .subscribe(grid.onHeaderRowMouseLeave, this.hideTooltip.bind(this) as unknown as EventListener);
   }
 
   dispose() {
@@ -137,18 +141,34 @@ export class SlickCustomTooltip {
    * clear the "title" attribute from the grid div text content so that it won't show also as a 2nd browser tooltip
    * note: the reason we can do delete it completely is because we always re-execute the formatter whenever we hover the tooltip and so we have a fresh title attribute each time to use
    */
-  protected clearTitleAttribute(inputTitleElm?: Element | null) {
+  protected clearTitleAttribute(inputTitleElm?: Element | null, tooltipText?: string) {
     // the title attribute might be directly on the slick-cell element (e.g. AutoTooltip plugin)
     // OR in a child element (most commonly as a custom formatter)
-    const titleElm = inputTitleElm || this._cellNodeElm?.hasAttribute('title') ? this._cellNodeElm : this._cellNodeElm?.querySelector('[title]');
-    titleElm?.setAttribute('title', '');
+    const titleElm = inputTitleElm || (this._cellNodeElm?.hasAttribute('title') ? this._cellNodeElm : this._cellNodeElm?.querySelector('[title]'));
+    titleElm?.setAttribute('tooltip-title', tooltipText || '');
+    if (titleElm?.hasAttribute('title')) {
+      titleElm?.setAttribute('title', '');
+    }
   }
 
   /**
-     * Handle mouse entering grid cell header to show tooltip.
-     * @param {jQuery.Event} e - The event
-     */
-  protected handleOnHeaderMouseEnter(e: SlickEventData, args: any) {
+   * Handle mouse entering grid header title to show tooltip.
+   * @param {jQuery.Event} e - The event
+   */
+  handleOnHeaderMouseEnter(e: SlickEventData, args: any) {
+    this.handleOnHeaderMouseEnterByType(e, args, 'slick-header-column');
+  }
+
+  /**
+   * Handle mouse entering grid cell header-row (filter) to show tooltip.
+   * @param {jQuery.Event} e - The event
+   */
+  handleOnHeaderRowMouseEnter(e: SlickEventData, args: any) {
+    this.handleOnHeaderMouseEnterByType(e, args, 'slick-headerrow-column');
+  }
+
+  /** depending on the selector type, execute the necessary handler code */
+  handleOnHeaderMouseEnterByType(e: SlickEventData, args: any, selector: string) {
     // before doing anything, let's remove any previous tooltip before
     // and cancel any opened Promise/Observable when using async
     this.hideTooltip();
@@ -175,13 +195,16 @@ export class SlickCustomTooltip {
 
     if (columnDef && e.target) {
       this._cellAddonOptions = { ...this._addonOptions, ...(columnDef?.customTooltip) } as CustomTooltipOption;
-      this._cellNodeElm = (e.target as HTMLDivElement).closest('.slick-header-column') as HTMLDivElement;
+      this._cellNodeElm = (e.target as HTMLDivElement).closest(`.${selector}`) as HTMLDivElement;
+      const isHeaderRowType = selector === 'slick-headerrow-column';
+      const formatter = isHeaderRowType ? this._cellAddonOptions.headerRowFormatter : this._cellAddonOptions.headerFormatter;
 
       this.executeTooltipOpenDelayWhenProvided(() => {
-        if (this._cellAddonOptions?.useRegularTooltip || !this._cellAddonOptions?.headerFormatter) {
-          this.renderRegularTooltip(columnDef.name, cell, null, columnDef, item);
-        } else if (this._cellNodeElm && typeof this._cellAddonOptions.headerFormatter === 'function') {
-          this.renderTooltipFormatter(this._cellAddonOptions.headerFormatter, cell, null, columnDef, item);
+        if (this._cellAddonOptions?.useRegularTooltip || !formatter) {
+          const formatterOrText = (this._cellAddonOptions?.useRegularTooltip || !isHeaderRowType) ? columnDef.name : formatter;
+          this.renderRegularTooltip(formatterOrText, cell, null, columnDef, item);
+        } else if (this._cellNodeElm && typeof formatter === 'function') {
+          this.renderTooltipFormatter(formatter, cell, null, columnDef, item);
         }
       }, this._cellAddonOptions?.tooltipDelay);
     }
@@ -284,19 +307,22 @@ export class SlickCustomTooltip {
     const tmpDiv = document.createElement('div');
     tmpDiv.innerHTML = this.parseFormatter(formatterOrText, cell, value, columnDef, item);
 
-    let tmpTitleElm;
+    let tmpTitleElm: HTMLDivElement | null | undefined;
     if (this._cellAddonOptions?.useRegularTooltipFromFormatterOnly) {
-      tmpTitleElm = tmpDiv.querySelector('[title]');
+      tmpTitleElm = tmpDiv.querySelector<HTMLDivElement>('[title], [tooltip-title]');
     } else {
-      tmpTitleElm = this._cellNodeElm?.getAttribute('title') ? this._cellNodeElm : tmpDiv.querySelector<HTMLDivElement>('[title]');
+      tmpTitleElm = findFirstElementAttribute(this._cellNodeElm, ['title', 'tooltip-title']) ? this._cellNodeElm : tmpDiv.querySelector<HTMLDivElement>('[title], [tooltip-title]');
+      if ((!tmpTitleElm || !findFirstElementAttribute(tmpTitleElm, ['title', 'tooltip-title'])) && this._cellNodeElm) {
+        tmpTitleElm = this._cellNodeElm.querySelector<HTMLDivElement>('[title], [tooltip-title]');
+      }
     }
-    const tooltipText = tmpTitleElm?.getAttribute('title') ?? '';
-    if (tooltipText !== '') {
+    const tooltipText = findFirstElementAttribute(tmpTitleElm, ['title', 'tooltip-title']) || '';
+    if (tooltipText !== '' || (typeof formatterOrText === 'function' && !this._cellAddonOptions?.useRegularTooltipFromFormatterOnly)) {
       this.renderTooltipFormatter(formatterOrText, cell, value, columnDef, item, tooltipText);
     }
 
     // also clear any "title" attribute to avoid showing a 2nd browser tooltip
-    this.clearTitleAttribute(tmpTitleElm);
+    this.clearTitleAttribute(tmpTitleElm, tooltipText);
   }
 
   protected renderTooltipFormatter(formatter: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: unknown, tooltipText?: string) {
@@ -309,9 +335,10 @@ export class SlickCustomTooltip {
     outputText = (this._cellAddonOptions?.tooltipTextMaxLength && outputText.length > this._cellAddonOptions.tooltipTextMaxLength) ? outputText.substr(0, this._cellAddonOptions.tooltipTextMaxLength) + '...' : outputText;
     if (!tooltipText || this._cellAddonOptions?.renderRegularTooltipAsHtml) {
       this._tooltipElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, outputText);
+      this._tooltipElm.style.whiteSpace = this._cellAddonOptions?.whiteSpace ?? this._defaultOptions.whiteSpace as string;
     } else {
       this._tooltipElm.textContent = outputText || '';
-      this._tooltipElm.style.whiteSpace = 'pre'; // use `pre` so that sequences of white space are preserved
+      this._tooltipElm.style.whiteSpace = this._cellAddonOptions?.regularTooltipWhiteSpace ?? this._defaultOptions.regularTooltipWhiteSpace as string; // use `pre` so that sequences of white space are collapsed. Lines are broken at newline characters
     }
 
     // optional max height/width of the tooltip container
@@ -328,13 +355,13 @@ export class SlickCustomTooltip {
     // reposition the tooltip on top of the cell that triggered the mouse over event
     this.reposition(cell);
 
-    // user could optionally hide the tooltip arrow (we can simply update the CSS constiables, that's the only way we have to update CSS pseudo)
+    // user could optionally hide the tooltip arrow (we can simply update the CSS variables, that's the only way we have to update CSS pseudo)
     if (!this._cellAddonOptions?.hideArrow) {
       this._tooltipElm.classList.add('tooltip-arrow');
     }
 
     // also clear any "title" attribute to avoid showing a 2nd browser tooltip
-    this.clearTitleAttribute();
+    this.clearTitleAttribute(undefined, outputText);
   }
 
   /**

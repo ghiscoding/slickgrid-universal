@@ -153,6 +153,18 @@ export function calculateAvailableSpace(element: HTMLElement): { top: number; bo
   return { top, bottom, left, right };
 }
 
+export function findFirstElementAttribute(inputElm: Element | null | undefined, attributes: string[]): string | null {
+  if (inputElm) {
+    for (const attribute of attributes) {
+      const attrData = inputElm.getAttribute(attribute);
+      if (attrData) {
+        return attrData;
+      }
+    }
+  }
+  return null;
+}
+
 /**
  * Get the Window Scroll top/left Position
  * @returns

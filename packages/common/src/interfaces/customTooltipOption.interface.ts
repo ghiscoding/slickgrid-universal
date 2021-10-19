@@ -27,6 +27,9 @@ export interface CustomTooltipOption<T = any> {
   /** Formatter to execute when custom tooltip is over a header column */
   headerFormatter?: Formatter;
 
+  /** Formatter to execute when custom tooltip is over a heade row column (e.g. filter) */
+  headerRowFormatter?: Formatter;
+
   /** defaults to False, should we hide the tooltip pointer arrow? */
   hideArrow?: boolean;
 
@@ -91,6 +94,15 @@ export interface CustomTooltipOption<T = any> {
 
   /** no defaults, when provided it will delay the tooltip open */
   tooltipDelay?: number;
+
+  /**
+   * defaults to `pre-line`, optionally change the style `white-space` when displaying regular text tooltip
+   * NOTE: when using a formatter it will use the `whiteSpace` setting instead
+   */
+  regularTooltipWhiteSpace?: string;
+
+  /** defaults to `normal`, optionally change the style `white-space` when displaying tooltip with formatter (tooltip or regular formatter) */
+  whiteSpace?: string;
 
   // --
   // callback functions

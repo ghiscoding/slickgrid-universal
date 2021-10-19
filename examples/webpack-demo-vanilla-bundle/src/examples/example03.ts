@@ -11,6 +11,7 @@ import {
   Grouping,
   GroupingGetterFunction,
   GroupTotalFormatters,
+  OperatorType,
   SlickDraggableGrouping,
   SlickNamespace,
   SortComparers,
@@ -33,6 +34,7 @@ interface ReportItem {
   start: Date;
   finish: Date;
   effortDriven: boolean;
+  prerequisites: number;
 }
 
 export class Example3 {
@@ -141,7 +143,7 @@ export class Example3 {
         // formatter: Formatters.dollar,
         formatter: Formatters.multiple,
         // params: { formatters: [Formatters.dollar, (row, cell, value) => `<span title="regular tooltip, cost: ${value}">${value || ''}</span>`] },
-        params: { formatters: [Formatters.dollar, (row, cell, value) => `<span title="regular tooltip (from title attribute) - cell value: ${value || ''}">${value || ''}</span>`] },
+        params: { formatters: [Formatters.dollar, (row, cell, value) => `<span title="regular tooltip (from title attribute) -\rcell value:\n\n${value || ''}">${value || ''}</span>`] },
         customTooltip: {
           useRegularTooltip: true,
           // renderRegularTooltipAsHtml: true,
@@ -238,6 +240,63 @@ export class Example3 {
         }
       },
       {
+        id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites', filterable: true,
+        formatter: (_row, _cell, value) => {
+          if (value && Array.isArray(value)) {
+            const values = value.map((val) => `Task ${val}`).join(', ');
+            return `<span title="${values}">${values}</span>`;
+          }
+          return '';
+        },
+        customTooltip: {
+          useRegularTooltip: true,
+          maxWidth: 500,
+        },
+        exportWithFormatter: true,
+        sanitizeDataExport: true,
+        minWidth: 100,
+        sortable: true,
+        type: FieldType.string,
+        editor: {
+          // OR 1- use "fetch client", they are both supported
+          // collectionAsync: fetch(URL_SAMPLE_COLLECTION_DATA),
+
+          // OR 2- use a Promise
+          collectionAsync: new Promise<any>((resolve) => {
+            setTimeout(() => {
+              resolve(Array.from(Array(this.dataset.length).keys()).map(k => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })));
+            }, 500);
+          }),
+          customStructure: {
+            label: 'label',
+            value: 'value',
+            labelPrefix: 'prefix',
+          },
+          collectionOptions: {
+            separatorBetweenTextLabels: ' '
+          },
+          model: Editors.multipleSelect,
+        },
+        filter: {
+          // collectionAsync: fetch(URL_SAMPLE_COLLECTION_DATA),
+          collectionAsync: new Promise((resolve) => {
+            setTimeout(() => {
+              resolve(Array.from(Array(this.dataset.length).keys()).map(k => ({ value: k, label: `Task ${k}` })));
+            });
+          }),
+          customStructure: {
+            label: 'label',
+            value: 'value',
+            labelPrefix: 'prefix',
+          },
+          collectionOptions: {
+            separatorBetweenTextLabels: ' '
+          },
+          model: Filters.multipleSelect,
+          operator: OperatorType.inContains,
+        },
+      },
+      {
         id: 'action', name: 'Action', field: 'action', width: 100, maxWidth: 100,
         excludeFromExport: true,
         formatter: () => {
@@ -321,8 +380,12 @@ export class Example3 {
       customTooltip: {
         formatter: this.tooltipFormatter.bind(this),
         headerFormatter: this.headerFormatter.bind(this),
+        headerRowFormatter: this.headerRowFormatter.bind(this),
         usabilityOverride: (args) => (args.cell !== 0 && args?.column?.id !== 'action'), // don't show on first/last columns
         // hideArrow: true, // defaults to False
+      },
+      presets: {
+        filters: [{ columnId: 'prerequisites', searchTerms: [1, 3, 5, 7, 9, 12, 15, 18, 21, 25, 28] }],
       },
       registerExternalResources: [this.excelExportService],
       enableFiltering: true,
@@ -390,7 +453,8 @@ export class Example3 {
         start: new Date(randomYear, randomMonth, randomDay),
         finish: randomFinish < new Date() ? '' : randomFinish, // make sure the random date is earlier than today
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
-        effortDriven: (i % 5 === 0)
+        effortDriven: (i % 5 === 0),
+        prerequisites: (i % 2 === 0) && i !== 0 && i < 50 ? [i, i - 1] : [],
       };
 
       // if (i % 8) {
@@ -560,7 +624,13 @@ export class Example3 {
 
   headerFormatter(row, cell, value, column) {
     const tooltipTitle = 'Custom Tooltip - Header';
-    return `<div class="header-tooltip-title" style="font-weight: bold">${tooltipTitle}</div>
+    return `<div class="header-tooltip-title">${tooltipTitle}</div>
+    <div class="tooltip-2cols-row"><div>Column:</div> <div>${column.name}</div></div>`;
+  }
+
+  headerRowFormatter(row, cell, value, column) {
+    const tooltipTitle = 'Custom Tooltip - Header Row (filter)';
+    return `<div class="headerrow-tooltip-title">${tooltipTitle}</div>
     <div class="tooltip-2cols-row"><div>Column:</div> <div>${column.name}</div></div>`;
   }
 
@@ -568,7 +638,7 @@ export class Example3 {
     const tooltipTitle = 'Custom Tooltip';
     const effortDrivenHtml = Formatters.checkmarkMaterial(row, cell, dataContext.effortDriven, column, dataContext, grid);
 
-    return `<div class="color-sf-primary-dark" style="font-weight: bold">${tooltipTitle}</div>
+    return `<div class="header-tooltip-title">${tooltipTitle}</div>
     <div class="tooltip-2cols-row"><div>Id:</div> <div>${dataContext.id}</div></div>
     <div class="tooltip-2cols-row"><div>Title:</div> <div>${dataContext.title}</div></div>
     <div class="tooltip-2cols-row"><div>Effort Driven:</div> <div>${effortDrivenHtml}</div></div>
@@ -582,7 +652,7 @@ export class Example3 {
     // use a 2nd Formatter to get the percent completion
     // any properties provided from the `asyncPost` will end up in the `__params` property (unless a different prop name is provided via `asyncParamsPropName`)
     const completionBar = Formatters.percentCompleteBarWithText(row, cell, dataContext.percentComplete, column, dataContext, grid);
-    const out = `<div class="color-se-danger" style="font-weight: bold">${tooltipTitle}</div>
+    const out = `<div class="color-sf-primary-dark header-tooltip-title">${tooltipTitle}</div>
       <div class="tooltip-2cols-row"><div>Completion:</div> <div>${completionBar}</div></div>
       <div class="tooltip-2cols-row"><div>Lifespan:</div> <div>${dataContext.__params.lifespan.toFixed(2)}</div></div>
       <div class="tooltip-2cols-row"><div>Ratio:</div> <div>${dataContext.__params.ratio.toFixed(2)}</div></div>

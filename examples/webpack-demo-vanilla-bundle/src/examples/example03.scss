@@ -11,3 +11,51 @@ $control-height: 2.4em;
 //   /** 2. or use the SASS @mixin that will produce the `filter` color */
 //   @include recolor(#ff0000, 0.9); // convert red color into `filter` with opacity of 0.9
 // }
+
+// --
+// Custom Tooltips CSS Variables (or SASS equivalent)
+// ----------------------------------------------------
+// :root {
+//   --slick-tooltip-background-color:         #363636;
+//   --slick-tooltip-border-color:             #252525;
+//   --slick-tooltip-border:                   2px solid #252525;
+//   --slick-tooltip-color:                    #ffffff;
+//   --slick-tooltip-down-arrow-border-top:    7px solid var(--slick-tooltip-border-color);
+//   --slick-tooltip-top-arrow-border-bottom:  7px solid var(--slick-tooltip-border-color);
+// }
+
+.header-tooltip-title {
+  font-weight: bold;
+  font-size: 14px;
+}
+.headerrow-tooltip-title {
+  color: #AD0041;
+  font-style: italic;
+  font-size: 13px;
+  font-weight: bold;
+}
+/* change css of 4th column (l3 r3) */
+.l3 .header-tooltip-title,
+.l3 .headerrow-tooltip-title {
+  color: #ffffff;
+}
+.l3.slick-custom-tooltip {
+  background-color: #363636;
+  color: #ffffff;
+  border: 2px solid #252525;
+  /* overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2; */
+}
+.l3.slick-custom-tooltip.tooltip-arrow.arrow-up::before {
+  border-bottom: 7px solid #252525;
+}
+.l3.slick-custom-tooltip.tooltip-arrow.arrow-up::before {
+  border-bottom: 7px solid #252525;
+}
+.l3.slick-custom-tooltip.tooltip-arrow.arrow-down::after {
+  border-top: 7px solid #252525;
+}
