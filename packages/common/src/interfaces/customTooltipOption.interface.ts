@@ -75,9 +75,6 @@ export interface CustomTooltipOption<T = any> {
   /** defaults to 700 (characters), when defined the text will be truncated to the max length characters provided */
   tooltipTextMaxLength?: number;
 
-  /** no defaults, when provided it will delay the tooltip open */
-  tooltipDelay?: number;
-
   /**
    * defaults to `pre-line`, optionally change the style `white-space` when displaying regular text tooltip
    * NOTE: when using a formatter it will use the `whiteSpace` setting instead

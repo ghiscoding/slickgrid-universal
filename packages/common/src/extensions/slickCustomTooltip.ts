@@ -202,14 +202,12 @@ export class SlickCustomTooltip {
       this._cellNodeElm = (e.target as HTMLDivElement).closest(`.${selector}`) as HTMLDivElement;
       const formatter = isHeaderRowType ? this._cellAddonOptions.headerRowFormatter : this._cellAddonOptions.headerFormatter;
 
-      this.executeTooltipOpenDelayWhenProvided(() => {
-        if (this._cellAddonOptions?.useRegularTooltip || !formatter) {
-          const formatterOrText = !isHeaderRowType ? columnDef.name : this._cellAddonOptions?.useRegularTooltip ? null : formatter;
-          this.renderRegularTooltip(formatterOrText, cell, null, columnDef, item);
-        } else if (this._cellNodeElm && typeof formatter === 'function') {
-          this.renderTooltipFormatter(formatter, cell, null, columnDef, item);
-        }
-      }, this._cellAddonOptions?.tooltipDelay);
+      if (this._cellAddonOptions?.useRegularTooltip || !formatter) {
+        const formatterOrText = !isHeaderRowType ? columnDef.name : this._cellAddonOptions?.useRegularTooltip ? null : formatter;
+        this.renderRegularTooltip(formatterOrText, cell, null, columnDef, item);
+      } else if (this._cellNodeElm && typeof formatter === 'function') {
+        this.renderTooltipFormatter(formatter, cell, null, columnDef, item);
+      }
     }
   }
 
@@ -219,70 +217,56 @@ export class SlickCustomTooltip {
     this.hideTooltip();
 
     if (this._grid && e) {
-      this.executeTooltipOpenDelayWhenProvided(() => {
-        const cell = this._grid.getCellFromEvent(e);
-        if (cell) {
-          const item = this.dataView.getItem(cell.row);
-          const columnDef = this._grid.getColumns()[cell.cell];
-          this._cellNodeElm = this._grid.getCellNode(cell.row, cell.cell) as HTMLDivElement;
+      const cell = this._grid.getCellFromEvent(e);
+      if (cell) {
+        const item = this.dataView.getItem(cell.row);
+        const columnDef = this._grid.getColumns()[cell.cell];
+        this._cellNodeElm = this._grid.getCellNode(cell.row, cell.cell) as HTMLDivElement;
 
-          if (item && columnDef) {
-            this._cellAddonOptions = { ...this._addonOptions, ...(columnDef?.customTooltip) } as CustomTooltipOption;
+        if (item && columnDef) {
+          this._cellAddonOptions = { ...this._addonOptions, ...(columnDef?.customTooltip) } as CustomTooltipOption;
 
-            if (columnDef?.disableTooltip || (typeof this._cellAddonOptions?.usabilityOverride === 'function' && !this._cellAddonOptions.usabilityOverride({ cell: cell.cell, row: cell.row, dataContext: item, column: columnDef, grid: this._grid, type: 'cell' }))) {
-              return;
+          if (columnDef?.disableTooltip || (typeof this._cellAddonOptions?.usabilityOverride === 'function' && !this._cellAddonOptions.usabilityOverride({ cell: cell.cell, row: cell.row, dataContext: item, column: columnDef, grid: this._grid, type: 'cell' }))) {
+            return;
+          }
+
+          const value = item.hasOwnProperty(columnDef.field) ? item[columnDef.field] : null;
+
+          if (this._cellAddonOptions.useRegularTooltip || !this._cellAddonOptions?.formatter) {
+            this.renderRegularTooltip(columnDef.formatter, cell, value, columnDef, item);
+          } else {
+            if (!this._cellAddonOptions.useRegularTooltip && typeof this._cellAddonOptions?.formatter === 'function') {
+              this.renderTooltipFormatter(this._cellAddonOptions.formatter, cell, value, columnDef, item);
             }
-
-            const value = item.hasOwnProperty(columnDef.field) ? item[columnDef.field] : null;
-
-            if (this._cellAddonOptions.useRegularTooltip || !this._cellAddonOptions?.formatter) {
-              this.renderRegularTooltip(columnDef.formatter, cell, value, columnDef, item);
-            } else {
-              if (!this._cellAddonOptions.useRegularTooltip && typeof this._cellAddonOptions?.formatter === 'function') {
-                this.renderTooltipFormatter(this._cellAddonOptions.formatter, cell, value, columnDef, item);
+            if (typeof this._cellAddonOptions?.asyncProcess === 'function') {
+              const asyncProcess = this._cellAddonOptions.asyncProcess(cell.row, cell.cell, value, columnDef, item, this._grid);
+              if (!this._cellAddonOptions.asyncPostFormatter) {
+                throw new Error(`[Slickgrid-Universal] when using "asyncProcess", you must also provide an "asyncPostFormatter" formatter`);
               }
-              if (typeof this._cellAddonOptions?.asyncProcess === 'function') {
-                const asyncProcess = this._cellAddonOptions.asyncProcess(cell.row, cell.cell, value, columnDef, item, this._grid);
-                if (!this._cellAddonOptions.asyncPostFormatter) {
-                  throw new Error(`[Slickgrid-Universal] when using "asyncProcess", you must also provide an "asyncPostFormatter" formatter`);
-                }
 
-                if (asyncProcess instanceof Promise) {
-                  // create a new cancellable promise which will resolve, unless it's cancelled, with the udpated `dataContext` object that includes the `__params`
-                  this._cancellablePromise = cancellablePromise(asyncProcess);
-                  this._cancellablePromise.promise
-                    .then((asyncResult: any) => this.asyncProcessCallback(asyncResult, cell, value, columnDef, item))
-                    .catch((error: Error) => {
-                      // we will throw back any errors, unless it's a cancelled promise which in that case will be disregarded (thrown by the promise wrapper cancel() call)
-                      if (!(error instanceof CancelledException)) {
-                        throw error;
-                      }
-                    });
-                } else if (this.rxjs?.isObservable(asyncProcess)) {
-                  const rxjs = this.rxjs as RxJsFacade;
-                  this._observable$ = (asyncProcess as unknown as Observable<any>)
-                    .pipe(
-                      // use `switchMap` so that it cancels the previous subscription and a new observable is subscribed
-                      rxjs.switchMap((asyncResult) => this.asyncProcessCallback(asyncResult, cell, value, columnDef, item))
-                    ).subscribe();
-                }
+              if (asyncProcess instanceof Promise) {
+                // create a new cancellable promise which will resolve, unless it's cancelled, with the udpated `dataContext` object that includes the `__params`
+                this._cancellablePromise = cancellablePromise(asyncProcess);
+                this._cancellablePromise.promise
+                  .then((asyncResult: any) => this.asyncProcessCallback(asyncResult, cell, value, columnDef, item))
+                  .catch((error: Error) => {
+                    // we will throw back any errors, unless it's a cancelled promise which in that case will be disregarded (thrown by the promise wrapper cancel() call)
+                    if (!(error instanceof CancelledException)) {
+                      throw error;
+                    }
+                  });
+              } else if (this.rxjs?.isObservable(asyncProcess)) {
+                const rxjs = this.rxjs as RxJsFacade;
+                this._observable$ = (asyncProcess as unknown as Observable<any>)
+                  .pipe(
+                    // use `switchMap` so that it cancels the previous subscription and a new observable is subscribed
+                    rxjs.switchMap((asyncResult) => this.asyncProcessCallback(asyncResult, cell, value, columnDef, item))
+                  ).subscribe();
               }
             }
           }
         }
-      }, this._cellAddonOptions?.tooltipDelay);
-    }
-  }
-
-  executeTooltipOpenDelayWhenProvided(fn: any, delay?: number) {
-    if (typeof delay === 'number') {
-      this.hideTooltip();
-      setTimeout(() => {
-        this.hideTooltip();
-        fn.call(this);
-      }, delay);
-    } else {
-      fn.call(this);
+      }
     }
   }
 
