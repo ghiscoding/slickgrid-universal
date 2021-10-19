@@ -146,6 +146,7 @@ export class Example3 {
         params: { formatters: [Formatters.dollar, (row, cell, value) => `<span title="regular tooltip (from title attribute) -\rcell value:\n\n${value || ''}">${value || ''}</span>`] },
         customTooltip: {
           useRegularTooltip: true,
+          useRegularTooltipFromFormatterOnly: true,
           // renderRegularTooltipAsHtml: true,
           // maxWidth: 200,
           // maxHeight: 40,
@@ -160,7 +161,7 @@ export class Example3 {
           ],
           aggregateCollapsed: true,
           collapsed: true
-        }
+        },
       },
       {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
@@ -183,6 +184,7 @@ export class Example3 {
           collapsed: false
         },
         params: { groupFormatterPrefix: '<i>Avg</i>: ' },
+        customTooltip: { useRegularTooltip: true, },
       },
       {
         id: 'start', name: 'Start', field: 'start', sortable: true,
@@ -216,7 +218,12 @@ export class Example3 {
           ],
           aggregateCollapsed: false,
           collapsed: false
-        }
+        },
+        // you could disable the custom/regular tooltip via either of the following 2 options
+        disableTooltip: true,
+        // customTooltip: {
+        //   usabilityOverride: (args) => false,
+        // },
       },
       {
         id: 'effortDriven', name: 'Effort Driven', field: 'effortDriven',
@@ -374,7 +381,6 @@ export class Example3 {
       excelExportOptions: {
         exportWithFormatter: true
       },
-      enableAutoTooltip: true,
       // Custom Tooltip options can be defined in a Column or Grid Options or a mixed of both (first options found wins)
       enableCustomTooltip: true,
       customTooltip: {

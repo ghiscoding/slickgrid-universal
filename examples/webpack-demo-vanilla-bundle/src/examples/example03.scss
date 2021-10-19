@@ -34,7 +34,9 @@ $control-height: 2.4em;
   font-size: 13px;
   font-weight: bold;
 }
-/* change css of 4th column (l3 r3) */
+
+// it's preferable to use CSS Variables (or SASS) but if you want to change colors of your tooltip for 1 column in particular you can do it this way
+// change css of 4th column (l3 r3)
 .l3 .header-tooltip-title,
 .l3 .headerrow-tooltip-title {
   color: #ffffff;
@@ -43,12 +45,6 @@ $control-height: 2.4em;
   background-color: #363636;
   color: #ffffff;
   border: 2px solid #252525;
-  /* overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2; */
 }
 .l3.slick-custom-tooltip.tooltip-arrow.arrow-up::before {
   border-bottom: 7px solid #252525;

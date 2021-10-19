@@ -5,13 +5,6 @@ type PostProcessOutput<P> = P & { [asyncParamsPropName: string]: any; };
 export type asyncProcess<T = any> = (row: number, cell: number, value: any, columnDef: Column<T>, dataContext: T, grid?: SlickGrid) => Promise<PostProcessOutput<T>> | Observable<PostProcessOutput<T>> | Subject<PostProcessOutput<T>>;
 
 export interface CustomTooltipOption<T = any> {
-  /**
-   * defaults to 25(px), left margin to display the arrow.
-   * when a number is provided it will assume the value is in pixel,
-   * or else we could also a string for example "50%" would show the arrow in the center.
-   */
-  arrowMarginLeft?: number | string;
-
   /** defaults to "__params", optionally change the property name that will be used to merge the data returned by the async method into the `dataContext` object */
   asyncParamsPropName?: string;
 
@@ -43,20 +36,10 @@ export interface CustomTooltipOption<T = any> {
    */
   formatter?: Formatter;
 
-  /**
-   * optional maximum height number (in pixel) of the tooltip container
-   * NOTE: the default CSS will NOT automatically show the ellipsis when the text is too long because when setting `overflow: hidden`
-   * it makes the arrow disappear because the arrow is added via the `::after` pseudo and we could not find how to keep the arrow when ellipsis is enabled.
-   * If you are ok to use the ellipsis without the tooltip arrow, then you can change these 3 CSS variables (or SASS) `--slick-tooltip-overflow: hidden`, `--slick-tooltip-white-space: nowrap` and `--slick-tooltip-text-overflow: ellipsis`
-   */
+  /** optional maximum height number (in pixel) of the tooltip container */
   maxHeight?: number;
 
-  /**
-   * optional maximum width number (in pixel) of the tooltip container
-   * NOTE: the default CSS will NOT automatically show the ellipsis when the text is too long because when setting `overflow: hidden`
-   * it makes the arrow disappear because the arrow is added via the `::after` pseudo and we could not find how to keep the arrow when ellipsis is enabled.
-   * If you are ok to use the ellipsis without the tooltip arrow, then you can change these 3 CSS variables (or SASS) `--slick-tooltip-overflow: hidden`, `--slick-tooltip-white-space: nowrap` and `--slick-tooltip-text-overflow: ellipsis`
-   */
+  /** optional maximum width number (in pixel) of the tooltip container */
   maxWidth?: number;
 
   /** defaults to 0, optional left offset, it must be a positive/negative number (in pixel) that will be added to the offset position calculation of the tooltip container. */
@@ -112,5 +95,5 @@ export interface CustomTooltipOption<T = any> {
   // Methods
 
   /** Callback method that user can override the default behavior of showing the tooltip. If it returns False, then the tooltip won't show */
-  usabilityOverride?: (args: { cell: number; row: number; column: Column; dataContext: any; grid: SlickGrid; }) => boolean;
+  usabilityOverride?: (args: { cell: number; row: number; column: Column; dataContext: any; type: 'cell' | 'header' | 'header-row'; grid: SlickGrid; }) => boolean;
 }

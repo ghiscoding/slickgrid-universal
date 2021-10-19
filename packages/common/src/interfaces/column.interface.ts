@@ -67,6 +67,12 @@ export interface Column<T = any> {
   /** Do we want default sort to be ascending? True by default */
   defaultSortAsc?: boolean;
 
+  /**
+   * defaults to False, optionally enable/disable tooltip.
+   * This is typically used on a specific column that you would like to completely disable the custom/regular tooltip.
+   */
+  disableTooltip?: boolean;
+
   /** Any inline editor function that implements Editor for the cell value or ColumnEditor */
   editor?: ColumnEditor;
 

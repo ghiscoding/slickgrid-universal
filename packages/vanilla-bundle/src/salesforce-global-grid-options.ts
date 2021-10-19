@@ -21,7 +21,6 @@ export const SalesforceGlobalGridOptions = {
   emptyDataWarning: {
     message: `<span class="mdi mdi-alert color-warning"></span> No data to display.`,
   },
-  enableAutoTooltip: true,
   enableDeepCopyDatasetOnPageLoad: true,
   enableTextExport: true,
   textExportOptions: {

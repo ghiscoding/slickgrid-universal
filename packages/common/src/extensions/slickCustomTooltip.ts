@@ -142,10 +142,12 @@ export class SlickCustomTooltip {
    * note: the reason we can do delete it completely is because we always re-execute the formatter whenever we hover the tooltip and so we have a fresh title attribute each time to use
    */
   protected clearTitleAttribute(inputTitleElm?: Element | null, tooltipText?: string) {
-    // the title attribute might be directly on the slick-cell element (e.g. AutoTooltip plugin)
+    // the title attribute might be directly on the slick-cell container element (when formatter returns a result object)
     // OR in a child element (most commonly as a custom formatter)
-    const titleElm = inputTitleElm || (this._cellNodeElm?.hasAttribute('title') ? this._cellNodeElm : this._cellNodeElm?.querySelector('[title]'));
-    titleElm?.setAttribute('tooltip-title', tooltipText || '');
+    const titleElm = inputTitleElm || ((this._cellNodeElm?.hasAttribute('title') && this._cellNodeElm?.getAttribute('title') !== '') ? this._cellNodeElm : this._cellNodeElm?.querySelector('[title]'));
+
+    // flip tooltip text from `title` to `data-slick-tooltip`
+    titleElm?.setAttribute('data-slick-tooltip', tooltipText || '');
     if (titleElm?.hasAttribute('title')) {
       titleElm?.setAttribute('title', '');
     }
@@ -179,6 +181,7 @@ export class SlickCustomTooltip {
     };
     const columnDef = args.column;
     const item = {};
+    const isHeaderRowType = selector === 'slick-headerrow-column';
 
     // run the override function (when defined), if the result is false it won't go further
     if (!args) {
@@ -189,19 +192,19 @@ export class SlickCustomTooltip {
     args.columnDef = columnDef;
     args.dataContext = item;
     args.grid = this._grid;
-    if (typeof this._cellAddonOptions?.usabilityOverride === 'function' && !this._cellAddonOptions.usabilityOverride(args)) {
+    args.type = isHeaderRowType ? 'header-row' : 'header';
+    this._cellAddonOptions = { ...this._addonOptions, ...(columnDef?.customTooltip) } as CustomTooltipOption;
+    if (columnDef?.disableTooltip || (typeof this._cellAddonOptions?.usabilityOverride === 'function' && !this._cellAddonOptions.usabilityOverride(args))) {
       return;
     }
 
     if (columnDef && e.target) {
-      this._cellAddonOptions = { ...this._addonOptions, ...(columnDef?.customTooltip) } as CustomTooltipOption;
       this._cellNodeElm = (e.target as HTMLDivElement).closest(`.${selector}`) as HTMLDivElement;
-      const isHeaderRowType = selector === 'slick-headerrow-column';
       const formatter = isHeaderRowType ? this._cellAddonOptions.headerRowFormatter : this._cellAddonOptions.headerFormatter;
 
       this.executeTooltipOpenDelayWhenProvided(() => {
         if (this._cellAddonOptions?.useRegularTooltip || !formatter) {
-          const formatterOrText = (this._cellAddonOptions?.useRegularTooltip || !isHeaderRowType) ? columnDef.name : formatter;
+          const formatterOrText = !isHeaderRowType ? columnDef.name : this._cellAddonOptions?.useRegularTooltip ? null : formatter;
           this.renderRegularTooltip(formatterOrText, cell, null, columnDef, item);
         } else if (this._cellNodeElm && typeof formatter === 'function') {
           this.renderTooltipFormatter(formatter, cell, null, columnDef, item);
@@ -226,7 +229,7 @@ export class SlickCustomTooltip {
           if (item && columnDef) {
             this._cellAddonOptions = { ...this._addonOptions, ...(columnDef?.customTooltip) } as CustomTooltipOption;
 
-            if (typeof this._cellAddonOptions?.usabilityOverride === 'function' && !this._cellAddonOptions.usabilityOverride({ cell: cell.cell, row: cell.row, dataContext: item, column: columnDef, grid: this._grid })) {
+            if (columnDef?.disableTooltip || (typeof this._cellAddonOptions?.usabilityOverride === 'function' && !this._cellAddonOptions.usabilityOverride({ cell: cell.cell, row: cell.row, dataContext: item, column: columnDef, grid: this._grid, type: 'cell' }))) {
               return;
             }
 
@@ -287,7 +290,7 @@ export class SlickCustomTooltip {
    * Parse the Custom Formatter (when provided) or return directly the text when it is already a string.
    * We will also sanitize the text in both cases before returning it so that it can be used safely.
    */
-  protected parseFormatter(formatterOrText: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: unknown): string {
+  protected parseFormatterAndSanitize(formatterOrText: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: unknown): string {
     if (typeof formatterOrText === 'function') {
       const tooltipText = formatterOrText(cell.row, cell.cell, value, columnDef, item, this._grid);
       const formatterText = ((typeof tooltipText === 'object' && tooltipText.text) ? tooltipText.text : typeof tooltipText === 'string' ? tooltipText : '');
@@ -305,34 +308,51 @@ export class SlickCustomTooltip {
    */
   protected renderRegularTooltip(formatterOrText: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: any) {
     const tmpDiv = document.createElement('div');
-    tmpDiv.innerHTML = this.parseFormatter(formatterOrText, cell, value, columnDef, item);
+    tmpDiv.innerHTML = this.parseFormatterAndSanitize(formatterOrText, cell, value, columnDef, item);
 
+    let tooltipText = columnDef?.toolTip ?? '';
     let tmpTitleElm: HTMLDivElement | null | undefined;
-    if (this._cellAddonOptions?.useRegularTooltipFromFormatterOnly) {
-      tmpTitleElm = tmpDiv.querySelector<HTMLDivElement>('[title], [tooltip-title]');
-    } else {
-      tmpTitleElm = findFirstElementAttribute(this._cellNodeElm, ['title', 'tooltip-title']) ? this._cellNodeElm : tmpDiv.querySelector<HTMLDivElement>('[title], [tooltip-title]');
-      if ((!tmpTitleElm || !findFirstElementAttribute(tmpTitleElm, ['title', 'tooltip-title'])) && this._cellNodeElm) {
-        tmpTitleElm = this._cellNodeElm.querySelector<HTMLDivElement>('[title], [tooltip-title]');
+
+    if (!tooltipText) {
+      if (this._cellNodeElm && (this._cellNodeElm.clientWidth < this._cellNodeElm.scrollWidth) && !this._cellAddonOptions?.useRegularTooltipFromFormatterOnly) {
+        tooltipText = this._cellNodeElm.textContent?.trim() ?? '';
+        if (this._cellAddonOptions?.tooltipTextMaxLength && tooltipText.length > this._cellAddonOptions?.tooltipTextMaxLength) {
+          tooltipText = tooltipText.substr(0, this._cellAddonOptions.tooltipTextMaxLength - 3) + '...';
+        }
+        tmpTitleElm = this._cellNodeElm;
+      } else {
+        if (this._cellAddonOptions?.useRegularTooltipFromFormatterOnly) {
+          tmpTitleElm = tmpDiv.querySelector<HTMLDivElement>('[title], [data-slick-tooltip]');
+        } else {
+          tmpTitleElm = findFirstElementAttribute(this._cellNodeElm, ['title', 'data-slick-tooltip']) ? this._cellNodeElm : tmpDiv.querySelector<HTMLDivElement>('[title], [data-slick-tooltip]');
+          if ((!tmpTitleElm || !findFirstElementAttribute(tmpTitleElm, ['title', 'data-slick-tooltip'])) && this._cellNodeElm) {
+            tmpTitleElm = this._cellNodeElm.querySelector<HTMLDivElement>('[title], [data-slick-tooltip]');
+          }
+        }
+        if (!tooltipText || (typeof formatterOrText === 'function' && this._cellAddonOptions?.useRegularTooltipFromFormatterOnly)) {
+          tooltipText = findFirstElementAttribute(tmpTitleElm, ['title', 'data-slick-tooltip']) || '';
+        }
       }
     }
-    const tooltipText = findFirstElementAttribute(tmpTitleElm, ['title', 'tooltip-title']) || '';
-    if (tooltipText !== '' || (typeof formatterOrText === 'function' && !this._cellAddonOptions?.useRegularTooltipFromFormatterOnly)) {
-      this.renderTooltipFormatter(formatterOrText, cell, value, columnDef, item, tooltipText);
+
+    if (tooltipText !== '') {
+      this.renderTooltipFormatter(formatterOrText, cell, value, columnDef, item, tooltipText, this._cellAddonOptions?.useRegularTooltipFromFormatterOnly ? null : tmpTitleElm);
     }
 
     // also clear any "title" attribute to avoid showing a 2nd browser tooltip
     this.clearTitleAttribute(tmpTitleElm, tooltipText);
   }
 
-  protected renderTooltipFormatter(formatter: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: unknown, tooltipText?: string) {
+  protected renderTooltipFormatter(formatter: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: unknown, tooltipText?: string, inputTitleElm?: Element | null) {
     // create the tooltip DOM element with the text returned by the Formatter
     this._tooltipElm = document.createElement('div');
     this._tooltipElm.className = `${this.className} ${this.gridUid}`;
     this._tooltipElm.classList.add('l' + cell.cell);
     this._tooltipElm.classList.add('r' + cell.cell);
-    let outputText = tooltipText || this.parseFormatter(formatter, cell, value, columnDef, item) || '';
-    outputText = (this._cellAddonOptions?.tooltipTextMaxLength && outputText.length > this._cellAddonOptions.tooltipTextMaxLength) ? outputText.substr(0, this._cellAddonOptions.tooltipTextMaxLength) + '...' : outputText;
+
+    let outputText = tooltipText || this.parseFormatterAndSanitize(formatter, cell, value, columnDef, item) || '';
+    outputText = (this._cellAddonOptions?.tooltipTextMaxLength && outputText.length > this._cellAddonOptions.tooltipTextMaxLength) ? outputText.substr(0, this._cellAddonOptions.tooltipTextMaxLength - 3) + '...' : outputText;
+
     if (!tooltipText || this._cellAddonOptions?.renderRegularTooltipAsHtml) {
       this._tooltipElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, outputText);
       this._tooltipElm.style.whiteSpace = this._cellAddonOptions?.whiteSpace ?? this._defaultOptions.whiteSpace as string;
@@ -361,7 +381,7 @@ export class SlickCustomTooltip {
     }
 
     // also clear any "title" attribute to avoid showing a 2nd browser tooltip
-    this.clearTitleAttribute(undefined, outputText);
+    this.clearTitleAttribute(inputTitleElm, outputText);
   }
 
   /**
