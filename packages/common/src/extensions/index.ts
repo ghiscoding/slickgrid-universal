@@ -13,4 +13,4 @@ export * from './headerMenuExtension';
 export * from './rowDetailViewExtension';
 export * from './rowMoveManagerExtension';
 export * from './rowSelectionExtension';
-export * from './slickCustomTooltipExtension';
+export * from './slickCustomTooltip';
