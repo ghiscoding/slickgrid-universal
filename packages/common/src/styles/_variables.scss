@@ -915,15 +915,14 @@ $slick-tooltip-width:                                 auto !default;
 $slick-tooltip-overflow:                              inherit !default;
 $slick-tooltip-text-overflow:                         ellipsis !default;
 $slick-tooltip-white-space:                           normal !default;
-$slick-tooltip-z-index:                               200 !default;
-$slick-tooltip-arrow-border-left:                     10px solid transparent !default;
-$slick-tooltip-arrow-border-right:                    10px solid transparent !default;
-$slick-tooltip-arrow-bottom:                          -7px !default;
-$slick-tooltip-arrow-top:                             -7px !default;
-$slick-tooltip-down-arrow-border-top:                 7px solid #{$slick-tooltip-border-color} !default;
-$slick-tooltip-top-arrow-border-bottom:               7px solid #{$slick-tooltip-border-color} !default;
-$slick-tooltip-left-arrow-margin-left:                -10% !default;
-$slick-tooltip-right-arrow-margin-left:               70% !default;
+$slick-tooltip-z-index:                               9999 !default;
+// tooltip arrow
+$slick-tooltip-arrow-color:                           darken($slick-tooltip-border-color, 5%) !default;
+$slick-tooltip-arrow-size:                            8px !default;
+$slick-tooltip-down-arrow-top-margin:                 100% !default;
+$slick-tooltip-up-arrow-top-margin:                   -($slick-tooltip-arrow-size * 2) !default;
+$slick-tooltip-arrow-side-margin:                     9px !default;
+$slick-tooltip-right-arrow-side-margin:               calc(100% - #{($slick-tooltip-arrow-size * 2)} - #{$slick-tooltip-arrow-side-margin}) !default;
 
 /** Empty Data Warning element */
 $empty-data-warning-color:                            $cell-text-color !default;

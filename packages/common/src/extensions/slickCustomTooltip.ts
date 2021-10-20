@@ -138,22 +138,6 @@ export class SlickCustomTooltip {
   }
 
   /**
-   * clear the "title" attribute from the grid div text content so that it won't show also as a 2nd browser tooltip
-   * note: the reason we can do delete it completely is because we always re-execute the formatter whenever we hover the tooltip and so we have a fresh title attribute each time to use
-   */
-  protected clearTitleAttribute(inputTitleElm?: Element | null, tooltipText?: string) {
-    // the title attribute might be directly on the slick-cell container element (when formatter returns a result object)
-    // OR in a child element (most commonly as a custom formatter)
-    const titleElm = inputTitleElm || ((this._cellNodeElm?.hasAttribute('title') && this._cellNodeElm?.getAttribute('title') !== '') ? this._cellNodeElm : this._cellNodeElm?.querySelector('[title]'));
-
-    // flip tooltip text from `title` to `data-slick-tooltip`
-    titleElm?.setAttribute('data-slick-tooltip', tooltipText || '');
-    if (titleElm?.hasAttribute('title')) {
-      titleElm?.setAttribute('title', '');
-    }
-  }
-
-  /**
    * Handle mouse entering grid header title to show tooltip.
    * @param {jQuery.Event} e - The event
    */
@@ -320,11 +304,11 @@ export class SlickCustomTooltip {
     }
 
     if (tooltipText !== '') {
-      this.renderTooltipFormatter(formatterOrText, cell, value, columnDef, item, tooltipText, this._cellAddonOptions?.useRegularTooltipFromFormatterOnly ? null : tmpTitleElm);
+      this.renderTooltipFormatter(formatterOrText, cell, value, columnDef, item, tooltipText);
     }
 
     // also clear any "title" attribute to avoid showing a 2nd browser tooltip
-    this.clearTitleAttribute(tmpTitleElm, tooltipText);
+    this.swapAndClearTitleAttribute(tmpTitleElm, tooltipText);
   }
 
   protected renderTooltipFormatter(formatter: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: unknown, tooltipText?: string, inputTitleElm?: Element | null) {
@@ -365,7 +349,7 @@ export class SlickCustomTooltip {
     }
 
     // also clear any "title" attribute to avoid showing a 2nd browser tooltip
-    this.clearTitleAttribute(inputTitleElm, outputText);
+    this.swapAndClearTitleAttribute(inputTitleElm, outputText);
   }
 
   /**
@@ -393,11 +377,11 @@ export class SlickCustomTooltip {
       const position = this._cellAddonOptions?.position ?? 'auto';
       if (position === 'left-align' || (position === 'auto' && (newPositionLeft + calculatedTooltipWidth) > calculatedBodyWidth)) {
         newPositionLeft -= (calculatedTooltipWidth - containerWidth - (this._cellAddonOptions?.offsetRight ?? 0));
-        this._tooltipElm.classList.remove('arrow-left');
-        this._tooltipElm.classList.add('arrow-right');
+        this._tooltipElm.classList.remove('arrow-left-align');
+        this._tooltipElm.classList.add('arrow-right-align');
       } else {
-        this._tooltipElm.classList.add('arrow-left');
-        this._tooltipElm.classList.remove('arrow-right');
+        this._tooltipElm.classList.add('arrow-left-align');
+        this._tooltipElm.classList.remove('arrow-right-align');
       }
 
       // do the same calculation/reposition with top/bottom (default is top of the cell or in other word starting from the cell going down)
@@ -413,6 +397,24 @@ export class SlickCustomTooltip {
       // reposition the tooltip over the cell (90% of the time this will end up using a position on the "right" of the cell)
       this._tooltipElm.style.top = `${newPositionTop}px`;
       this._tooltipElm.style.left = `${newPositionLeft}px`;
+    }
+  }
+
+  /**
+   * swap and copy the "title" attribute into a new custom attribute then clear the "title" attribute
+   * from the grid div text content so that it won't show also as a 2nd browser tooltip
+   */
+  protected swapAndClearTitleAttribute(inputTitleElm?: Element | null, tooltipText?: string) {
+    // the title attribute might be directly on the slick-cell container element (when formatter returns a result object)
+    // OR in a child element (most commonly as a custom formatter)
+    const titleElm = inputTitleElm || (this._cellNodeElm && ((this._cellNodeElm.hasAttribute('title') && this._cellNodeElm.getAttribute('title')) ? this._cellNodeElm : this._cellNodeElm?.querySelector('[title]')));
+
+    // flip tooltip text from `title` to `data-slick-tooltip`
+    if (titleElm) {
+      titleElm.setAttribute('data-slick-tooltip', tooltipText || '');
+      if (titleElm.hasAttribute('title')) {
+        titleElm.setAttribute('title', '');
+      }
     }
   }
 }

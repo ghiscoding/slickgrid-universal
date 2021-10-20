@@ -20,8 +20,10 @@ $control-height: 2.4em;
 //   --slick-tooltip-border-color:             #252525;
 //   --slick-tooltip-border:                   2px solid #252525;
 //   --slick-tooltip-color:                    #ffffff;
-//   --slick-tooltip-down-arrow-border-top:    7px solid var(--slick-tooltip-border-color);
-//   --slick-tooltip-top-arrow-border-bottom:  7px solid var(--slick-tooltip-border-color);
+
+//   --slick-tooltip-arrow-color:              var(--slick-tooltip-border-color);
+//   --slick-tooltip-arrow-size:               10px;
+//   --slick-tooltip-arrow-side-margin:        15px;
 // }
 
 .header-tooltip-title {
@@ -36,7 +38,7 @@ $control-height: 2.4em;
 }
 
 // it's preferable to use CSS Variables (or SASS) but if you want to change colors of your tooltip for 1 column in particular you can do it this way
-// change css of 4th column (l3 r3)
+// e.g. change css of 4th column (l3 r3), line 3 (zero index)
 .l3 .header-tooltip-title,
 .l3 .headerrow-tooltip-title {
   color: #ffffff;
@@ -46,12 +48,20 @@ $control-height: 2.4em;
   color: #ffffff;
   border: 2px solid #252525;
 }
-.l3.slick-custom-tooltip.tooltip-arrow.arrow-up::before {
-  border-bottom: 7px solid #252525;
-}
-.l3.slick-custom-tooltip.tooltip-arrow.arrow-up::before {
-  border-bottom: 7px solid #252525;
+.l3.slick-custom-tooltip.tooltip-arrow.arrow-down::after,
+.l3.slick-custom-tooltip.tooltip-arrow.arrow-up::after {
+  border-width: 10px; // arrow size
 }
 .l3.slick-custom-tooltip.tooltip-arrow.arrow-down::after {
-  border-top: 7px solid #252525;
+  border-top-color: #252525; // arrow down color
+}
+.l3.slick-custom-tooltip.tooltip-arrow.arrow-up::after {
+  top: -20px; // arrow size * 2
+  border-bottom-color: #252525; // arrow up color
+}
+.l3.slick-custom-tooltip.tooltip-arrow.arrow-left-align::after {
+  margin-left: 15px;
+}
+.l3.slick-custom-tooltip.tooltip-arrow.arrow-right-align::after {
+  margin-left: calc(100% - 20px - 15px); // 20px is (arrow size * 2), 15px is your extra side margin
 }

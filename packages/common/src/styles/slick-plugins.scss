@@ -285,36 +285,28 @@
   overflow: var(--slick-tooltip-overflow, $slick-tooltip-overflow);
   text-overflow: var(--slick-tooltip-text-overflow, $slick-tooltip-text-overflow);
   white-space: var(--slick-tooltip-white-space, $slick-tooltip-white-space);
-  &::after {
-    content: "";
-    clear: both;
-    display: table;
-  }
 
-  &.tooltip-arrow::after,
-  &.tooltip-arrow::before {
+  &.tooltip-arrow::after {
     content: "";
-    height: 0;
+    left: 0px;
     position: absolute;
-    width: 0;
-    border-left: var(--slick-tooltip-arrow-border-left, $slick-tooltip-arrow-border-left);
-    border-right: var(--slick-tooltip-arrow-border-right, $slick-tooltip-arrow-border-right);
+    border: transparent;
+    border-style: solid;
+    border-width: var(--slick-tooltip-arrow-size, $slick-tooltip-arrow-size);
   }
-  &.tooltip-arrow.arrow-up::before {
-    border-bottom: var(--slick-tooltip-top-arrow-border-bottom, $slick-tooltip-top-arrow-border-bottom);
-    top: var(--slick-tooltip-arrow-bottom, $slick-tooltip-arrow-top);
+  &.tooltip-arrow.arrow-up::after {
+    top: var(--slick-tooltip-up-arrow-top-margin, $slick-tooltip-up-arrow-top-margin);
+    border-bottom-color: var(--slick-tooltip-arrow-color, $slick-tooltip-arrow-color);
   }
   &.tooltip-arrow.arrow-down::after {
-    border-top: var(--slick-tooltip-down-arrow-border-top, $slick-tooltip-down-arrow-border-top);
-    bottom: var(--slick-tooltip-arrow-bottom, $slick-tooltip-arrow-bottom);
+    top: var(--slick-tooltip-down-arrow-top-margin, $slick-tooltip-down-arrow-top-margin);
+    border-top-color: var(--slick-tooltip-arrow-color, $slick-tooltip-arrow-color);
   }
-  &.tooltip-arrow.arrow-left::after
-  &.tooltip-arrow.arrow-left::before {
-    margin-left: var(--slick-tooltip-left-arrow-margin-left, $slick-tooltip-left-arrow-margin-left);
+  &.tooltip-arrow.arrow-left-align::after {
+    margin-left: var(--slick-tooltip-arrow-side-margin, $slick-tooltip-arrow-side-margin);
   }
-  &.tooltip-arrow.arrow-right::after,
-  &.tooltip-arrow.arrow-right::before {
-    margin-left: var(--slick-tooltip-right-arrow-margin-left, $slick-tooltip-right-arrow-margin-left);
+  &.tooltip-arrow.arrow-right-align::after {
+    margin-left: var(--slick-tooltip-right-arrow-side-margin, $slick-tooltip-right-arrow-side-margin);
   }
 }
 
