@@ -261,7 +261,7 @@ export class SlickCustomTooltip {
   protected parseFormatterAndSanitize(formatterOrText: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: unknown): string {
     if (typeof formatterOrText === 'function') {
       const tooltipText = formatterOrText(cell.row, cell.cell, value, columnDef, item, this._grid);
-      const formatterText = ((typeof tooltipText === 'object' && tooltipText.text) ? tooltipText.text : typeof tooltipText === 'string' ? tooltipText : '');
+      const formatterText = (typeof tooltipText === 'object' && tooltipText?.text) ? tooltipText.text : (typeof tooltipText === 'string' ? tooltipText : '');
       return sanitizeTextByAvailableSanitizer(this.gridOptions, formatterText);
     } else if (typeof formatterOrText === 'string') {
       return sanitizeTextByAvailableSanitizer(this.gridOptions, formatterOrText);
@@ -314,7 +314,8 @@ export class SlickCustomTooltip {
   protected renderTooltipFormatter(formatter: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: unknown, tooltipText?: string, inputTitleElm?: Element | null) {
     // create the tooltip DOM element with the text returned by the Formatter
     this._tooltipElm = document.createElement('div');
-    this._tooltipElm.className = `${this.className} ${this.gridUid}`;
+    this._tooltipElm.className = this.className;
+    this._tooltipElm.classList.add(this.gridUid);
     this._tooltipElm.classList.add('l' + cell.cell);
     this._tooltipElm.classList.add('r' + cell.cell);
 

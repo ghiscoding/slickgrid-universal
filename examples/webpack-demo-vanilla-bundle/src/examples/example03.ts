@@ -11,7 +11,6 @@ import {
   Grouping,
   GroupingGetterFunction,
   GroupTotalFormatters,
-  OperatorType,
   SlickDraggableGrouping,
   SlickNamespace,
   SortComparers,
@@ -34,7 +33,6 @@ interface ReportItem {
   start: Date;
   finish: Date;
   effortDriven: boolean;
-  prerequisites: number;
 }
 
 export class Example3 {
@@ -92,24 +90,7 @@ export class Example3 {
           aggregators: [new Aggregators.Sum('cost')],
           aggregateCollapsed: false,
           collapsed: false
-        },
-        customTooltip: {
-          // you can use the Custom Tooltip in 2 ways (synchronous or asynchronous)
-          // example 1 (sync):
-          // formatter: this.tooltipTaskFormatter.bind(this),
-
-          // example 2 (async):
-          // when using async, the `formatter` will contain the loading spinner
-          // you will need to provide an `asyncPost` function returning a Promise and also `asyncPostFormatter` formatter to display the result once the Promise resolves
-          formatter: () => `<div><span class="mdi mdi-load mdi-spin-1s"></span> loading...</div>`,
-          asyncProcess: () => new Promise(resolve => {
-            setTimeout(() => resolve({ ratio: Math.random() * 10 / 10, lifespan: Math.random() * 100 }), 300);
-          }),
-          asyncPostFormatter: this.tooltipTaskFormatter.bind(this),
-
-          // optional conditional usability callback
-          // usabilityOverride: (args) => !!(args.dataContext?.id % 2) // show it only every second row
-        },
+        }
       },
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true,
@@ -135,22 +116,13 @@ export class Example3 {
         }
       },
       {
-        id: 'cost', name: '<span title="custom cost title tooltip text">Cost</span>', field: 'cost',
+        id: 'cost', name: 'Cost', field: 'cost',
         width: 90,
         sortable: true,
         filterable: true,
         // filter: { model: Filters.compoundInput },
         // formatter: Formatters.dollar,
-        formatter: Formatters.multiple,
-        // params: { formatters: [Formatters.dollar, (row, cell, value) => `<span title="regular tooltip, cost: ${value}">${value || ''}</span>`] },
-        params: { formatters: [Formatters.dollar, (row, cell, value) => `<span title="regular tooltip (from title attribute) -\rcell value:\n\n${value || ''}">${value || ''}</span>`] },
-        customTooltip: {
-          useRegularTooltip: true,
-          useRegularTooltipFromFormatterOnly: true,
-          // renderRegularTooltipAsHtml: true,
-          // maxWidth: 200,
-          // maxHeight: 40,
-        },
+        formatter: Formatters.dollar,
         groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
         type: FieldType.number,
         grouping: {
@@ -161,7 +133,7 @@ export class Example3 {
           ],
           aggregateCollapsed: true,
           collapsed: true
-        },
+        }
       },
       {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
@@ -184,7 +156,6 @@ export class Example3 {
           collapsed: false
         },
         params: { groupFormatterPrefix: '<i>Avg</i>: ' },
-        customTooltip: { useRegularTooltip: true, },
       },
       {
         id: 'start', name: 'Start', field: 'start', sortable: true,
@@ -218,12 +189,7 @@ export class Example3 {
           ],
           aggregateCollapsed: false,
           collapsed: false
-        },
-        // you could disable the custom/regular tooltip via either of the following 2 options
-        disableTooltip: true,
-        // customTooltip: {
-        //   usabilityOverride: (args) => false,
-        // },
+        }
       },
       {
         id: 'effortDriven', name: 'Effort Driven', field: 'effortDriven',
@@ -245,63 +211,6 @@ export class Example3 {
           ],
           collapsed: false
         }
-      },
-      {
-        id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites', filterable: true,
-        formatter: (_row, _cell, value) => {
-          if (value && Array.isArray(value)) {
-            const values = value.map((val) => `Task ${val}`).join(', ');
-            return `<span title="${values}">${values}</span>`;
-          }
-          return '';
-        },
-        customTooltip: {
-          useRegularTooltip: true,
-          maxWidth: 500,
-        },
-        exportWithFormatter: true,
-        sanitizeDataExport: true,
-        minWidth: 100,
-        sortable: true,
-        type: FieldType.string,
-        editor: {
-          // OR 1- use "fetch client", they are both supported
-          // collectionAsync: fetch(URL_SAMPLE_COLLECTION_DATA),
-
-          // OR 2- use a Promise
-          collectionAsync: new Promise<any>((resolve) => {
-            setTimeout(() => {
-              resolve(Array.from(Array(this.dataset.length).keys()).map(k => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })));
-            }, 500);
-          }),
-          customStructure: {
-            label: 'label',
-            value: 'value',
-            labelPrefix: 'prefix',
-          },
-          collectionOptions: {
-            separatorBetweenTextLabels: ' '
-          },
-          model: Editors.multipleSelect,
-        },
-        filter: {
-          // collectionAsync: fetch(URL_SAMPLE_COLLECTION_DATA),
-          collectionAsync: new Promise((resolve) => {
-            setTimeout(() => {
-              resolve(Array.from(Array(this.dataset.length).keys()).map(k => ({ value: k, label: `Task ${k}` })));
-            });
-          }),
-          customStructure: {
-            label: 'label',
-            value: 'value',
-            labelPrefix: 'prefix',
-          },
-          collectionOptions: {
-            separatorBetweenTextLabels: ' '
-          },
-          model: Filters.multipleSelect,
-          operator: OperatorType.inContains,
-        },
       },
       {
         id: 'action', name: 'Action', field: 'action', width: 100, maxWidth: 100,
@@ -381,18 +290,6 @@ export class Example3 {
       excelExportOptions: {
         exportWithFormatter: true
       },
-      // Custom Tooltip options can be defined in a Column or Grid Options or a mixed of both (first options found wins)
-      enableCustomTooltip: true,
-      customTooltip: {
-        formatter: this.tooltipFormatter.bind(this),
-        headerFormatter: this.headerFormatter.bind(this),
-        headerRowFormatter: this.headerRowFormatter.bind(this),
-        usabilityOverride: (args) => (args.cell !== 0 && args?.column?.id !== 'action'), // don't show on first/last columns
-        // hideArrow: true, // defaults to False
-      },
-      presets: {
-        filters: [{ columnId: 'prerequisites', searchTerms: [1, 3, 5, 7, 9, 12, 15, 18, 21, 25, 28] }],
-      },
       registerExternalResources: [this.excelExportService],
       enableFiltering: true,
       rowSelectionOptions: {
@@ -459,8 +356,7 @@ export class Example3 {
         start: new Date(randomYear, randomMonth, randomDay),
         finish: randomFinish < new Date() ? '' : randomFinish, // make sure the random date is earlier than today
         cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
-        effortDriven: (i % 5 === 0),
-        prerequisites: (i % 2 === 0) && i !== 0 && i < 50 ? [i, i - 1] : [],
+        effortDriven: (i % 5 === 0)
       };
 
       // if (i % 8) {
@@ -538,7 +434,7 @@ export class Example3 {
     }
   }
 
-  groupByFieldName(/* _fieldName, _index */) {
+  groupByFieldName(_fieldName, _index) {
     this.clearGrouping();
     if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
       this.showPreHeader();
@@ -626,64 +522,5 @@ export class Example3 {
       command.undo();
       this.sgb?.slickGrid.gotoCell(command.row, command.cell, false);
     }
-  }
-
-  headerFormatter(row, cell, value, column) {
-    const tooltipTitle = 'Custom Tooltip - Header';
-    return `<div class="header-tooltip-title">${tooltipTitle}</div>
-    <div class="tooltip-2cols-row"><div>Column:</div> <div>${column.name}</div></div>`;
-  }
-
-  headerRowFormatter(row, cell, value, column) {
-    const tooltipTitle = 'Custom Tooltip - Header Row (filter)';
-    return `<div class="headerrow-tooltip-title">${tooltipTitle}</div>
-    <div class="tooltip-2cols-row"><div>Column:</div> <div>${column.name}</div></div>`;
-  }
-
-  tooltipFormatter(row, cell, value, column, dataContext, grid) {
-    const tooltipTitle = 'Custom Tooltip';
-    const effortDrivenHtml = Formatters.checkmarkMaterial(row, cell, dataContext.effortDriven, column, dataContext, grid);
-
-    return `<div class="header-tooltip-title">${tooltipTitle}</div>
-    <div class="tooltip-2cols-row"><div>Id:</div> <div>${dataContext.id}</div></div>
-    <div class="tooltip-2cols-row"><div>Title:</div> <div>${dataContext.title}</div></div>
-    <div class="tooltip-2cols-row"><div>Effort Driven:</div> <div>${effortDrivenHtml}</div></div>
-    <div class="tooltip-2cols-row"><div>Completion:</div> <div>${this.loadCompletionIcons(dataContext.percentComplete)}</div></div>
-    `;
-  }
-
-  tooltipTaskFormatter(row, cell, value, column, dataContext, grid) {
-    const tooltipTitle = `Task ${dataContext.id} - (async tooltip)`;
-
-    // use a 2nd Formatter to get the percent completion
-    // any properties provided from the `asyncPost` will end up in the `__params` property (unless a different prop name is provided via `asyncParamsPropName`)
-    const completionBar = Formatters.percentCompleteBarWithText(row, cell, dataContext.percentComplete, column, dataContext, grid);
-    const out = `<div class="color-sf-primary-dark header-tooltip-title">${tooltipTitle}</div>
-      <div class="tooltip-2cols-row"><div>Completion:</div> <div>${completionBar}</div></div>
-      <div class="tooltip-2cols-row"><div>Lifespan:</div> <div>${dataContext.__params.lifespan.toFixed(2)}</div></div>
-      <div class="tooltip-2cols-row"><div>Ratio:</div> <div>${dataContext.__params.ratio.toFixed(2)}</div></div>
-    `;
-    return out;
-  }
-
-  loadCompletionIcons(percentComplete: number) {
-    let output = '';
-    let iconCount = 0;
-    if (percentComplete > 5 && percentComplete < 25) {
-      iconCount = 1;
-    } else if (percentComplete >= 25 && percentComplete < 50) {
-      iconCount = 2;
-    } else if (percentComplete >= 50 && percentComplete < 75) {
-      iconCount = 3;
-    } else if (percentComplete >= 75 && percentComplete < 100) {
-      iconCount = 4;
-    } else if (percentComplete === 100) {
-      iconCount = 5;
-    }
-    for (let i = 0; i < iconCount; i++) {
-      const icon = iconCount === 5 ? 'color-success' : iconCount >= 3 ? 'color-alt-warning' : 'color-se-secondary-light';
-      output += `<span class="mdi mdi-check-circle-outline ${icon}"></span>`;
-    }
-    return output;
   }
 }
