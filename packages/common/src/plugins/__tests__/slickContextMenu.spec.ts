@@ -179,17 +179,6 @@ describe('ContextMenu Plugin', () => {
       autoAdjustDropOffset: 0,
       autoAlignSideOffset: 0,
       commandItems: [],
-      // commandItems: [
-      //   {
-      //     action: expect.toBeFunction(),
-      //     command: 'copy',
-      //     disabled: false,
-      //     iconCssClass: 'fa fa-clone',
-      //     itemUsabilityOverride: expect.toBeFunction(),
-      //     positionOrder: 50,
-      //     title: 'Copy',
-      //   },
-      // ],
       hideMenuOnScroll: false,
       maxHeight: 'none',
       width: 'auto',
@@ -315,7 +304,7 @@ describe('ContextMenu Plugin', () => {
         expect(contextMenuElm.classList.contains('dropright'));
         expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="max-height: none; width: auto; display: block; top: 0px; left: 0px;">
+          `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="max-height: none; width: auto; display: block; top: 0px; left: 0px;" aria-expanded="true">
             <button class="close" type="button" data-dismiss="slick-context-menu" aria-label="Close">
               <span class="close" aria-hidden="true">×</span>
             </button>
@@ -1237,7 +1226,7 @@ describe('ContextMenu Plugin', () => {
 
         expect(optionListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="max-height: none; width: auto; display: block; top: 0px; left: 0px;">
+          `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="max-height: none; width: auto; display: block; top: 0px; left: 0px;" aria-expanded="true">
             <button class="close" type="button" data-dismiss="slick-context-menu" aria-label="Close">
               <span class="close" aria-hidden="true">×</span>
             </button>

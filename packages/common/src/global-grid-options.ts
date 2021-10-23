@@ -232,15 +232,6 @@ export const GlobalGridOptions: GridOption = {
     pageSize: 25,
     totalItems: 0
   },
-  //   // technically speaking the Row Detail requires the process & viewComponent but we'll ignore it just to set certain options
-  //   rowDetailView: {
-  //     cssClass: 'detail-view-toggle',
-  //     panelRows: 1,
-  //     keyPrefix: '__',
-  //     useRowClick: false,
-  //     useSimpleViewportCalc: true,
-  //     saveDetailViewOnScroll: false,
-  //   },
   headerRowHeight: 35,
   rowHeight: 35,
   topPanelHeight: 30,
