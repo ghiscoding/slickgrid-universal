@@ -76,6 +76,11 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
     this.grid.setColumns(this.grid.getColumns());
   }
 
+  /** @deprecated @use `dispose` Destroy plugin. */
+  destroy() {
+    this.dispose();
+  }
+
   /** Dispose (destroy) the SlickGrid 3rd party plugin */
   dispose() {
     super.dispose();

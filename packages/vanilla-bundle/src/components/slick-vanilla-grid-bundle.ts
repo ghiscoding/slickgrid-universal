@@ -47,7 +47,6 @@ import {
   Observable,
   PaginationService,
   ResizerService,
-  RowMoveManagerExtension,
   RxJsFacade,
   SharedService,
   SortService,
@@ -348,7 +347,6 @@ export class SlickVanillaGridBundle {
 
     // extensions
     const rowDetailViewExtension = new RowDetailViewExtension();
-    const rowMoveManagerExtension = new RowMoveManagerExtension(this.sharedService);
 
     this.extensionService = services?.extensionService ?? new ExtensionService(
       this.extensionUtility,
@@ -357,7 +355,6 @@ export class SlickVanillaGridBundle {
       this.sortService,
       this.treeDataService,
       rowDetailViewExtension,
-      rowMoveManagerExtension,
       this.sharedService,
       this.translaterService,
     );

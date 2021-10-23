@@ -38,7 +38,7 @@ You might be wondering why was this monorepo created? Here are a few of the reas
 The Vanilla Implementation (not associated to any framework) is built with [WebPack](https://webpack.js.org/) and is also used to test all the UI functionalities [Cypress](https://www.cypress.io/) (E2E tests). This [Vanilla bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) package is also what we use in our SalesForce implementation (with Lightning Web Component), hence the creation of this monorepo library.
 
 ### Fully Tested with [Jest](https://jestjs.io/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
-Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +13,000 lines of code (+3,000 unit tests) that are fully tested with [Jest](https://jestjs.io/). There are also +300 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (there's also an additional +500 tests in Aurelia-Slickgrid)
+Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +15,000 lines of code (+3,700 unit tests) that are fully tested with [Jest](https://jestjs.io/). There are also +400 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (there's also an additional +500 tests in Aurelia-Slickgrid)
 
 ### Available Demos
 

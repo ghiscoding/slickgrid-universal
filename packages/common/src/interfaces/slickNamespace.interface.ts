@@ -29,7 +29,6 @@ import {
   SlickRemoteModel,
   SlickResizer,
   SlickRowDetailView,
-  SlickRowMoveManager,
 } from './index';
 import { SlickGridMenu, } from '../controls/index';
 import {
@@ -44,6 +43,7 @@ import {
   SlickDraggableGrouping,
   SlickHeaderButtons,
   SlickHeaderMenu,
+  SlickRowMoveManager,
   SlickRowSelectionModel,
 } from '../plugins/index';
 

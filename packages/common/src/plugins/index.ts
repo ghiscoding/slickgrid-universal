@@ -10,4 +10,5 @@ export * from './slickContextMenu';
 export * from './slickDraggableGrouping';
 export * from './slickHeaderButtons';
 export * from './slickHeaderMenu';
+export * from './slickRowMoveManager';
 export * from './slickRowSelectionModel';

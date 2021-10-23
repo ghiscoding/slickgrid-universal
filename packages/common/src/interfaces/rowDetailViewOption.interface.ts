@@ -1,5 +1,5 @@
+import { UsabilityOverrideFn } from '../index';
 import { Observable, Subject } from '../services/rxjsFacade';
-import { SlickGrid } from './slickGrid.interface';
 
 export interface RowDetailViewOption {
   /** Defaults to true, which will collapse all row detail views when user calls a sort. Unless user implements a sort to deal with padding */
@@ -76,5 +76,5 @@ export interface RowDetailViewOption {
   process: (item: any) => Promise<any> | Observable<any> | Subject<any>;
 
   /** Override the logic for showing (or not) the expand icon (use case example: only every 2nd row is expandable) */
-  expandableOverride?: (row: number, dataContext: any, grid: SlickGrid) => boolean;
+  expandableOverride?: UsabilityOverrideFn;
 }

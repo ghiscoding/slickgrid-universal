@@ -348,8 +348,6 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
   });
 
   it('should call the "create" method and expect plugin to be created with checkbox column to be created at position 0 when using default', () => {
-    const checkboxSelectorElm = document.createElement('input');
-    checkboxSelectorElm.type = 'checkbox';
     plugin.create(mockColumns, { checkboxSelector: { columnId: 'chk-id' } });
 
     expect(plugin).toBeTruthy();
@@ -373,8 +371,6 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
   });
 
   it('should call the "create" method and expect plugin to be created at position 1 when defined', () => {
-    const checkboxSelectorElm = document.createElement('input');
-    checkboxSelectorElm.type = 'checkbox';
     plugin.create(mockColumns, { checkboxSelector: { columnIndexPosition: 1 } });
 
     expect(plugin).toBeTruthy();
@@ -398,8 +394,6 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
   });
 
   it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return null when selectableOverride is returning False', () => {
-    const checkboxSelectorElm = document.createElement('input');
-    checkboxSelectorElm.type = 'checkbox';
     plugin.selectableOverride(() => false);
     plugin.create(mockColumns, {});
     const output = plugin.getColumnDefinition().formatter(0, 0, null, { id: 'checkbox_selector', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
@@ -409,9 +403,6 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
   });
 
   it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return null when selectableOverride is returning False', () => {
-    const checkboxSelectorElm = document.createElement('input');
-    checkboxSelectorElm.type = 'checkbox';
-
     plugin.init(gridStub);
     plugin.selectableOverride(() => true);
     const output = plugin.getColumnDefinition().formatter(0, 0, null, { id: 'checkbox_selector', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);

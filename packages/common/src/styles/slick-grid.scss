@@ -258,17 +258,23 @@
   }
 
   .slick-reorder-proxy {
-    display: inline-block;
-    background: blue;
-    opacity: 0.15;
     cursor: move;
+    display: inline-block;
+    background: var(--slick-row-move-plugin-proxy-bg-color, $row-move-plugin-proxy-bg-color);
+    opacity: var(--row-move-plugin-proxy-opacity, $row-move-plugin-proxy-opacity);
   }
 
   .slick-reorder-guide {
     display: inline-block;
-    height: 2px;
-    background: blue;
-    opacity: 0.7;
+    height: var(--slick-row-move-plugin-guide-height, $row-move-plugin-guide-height);
+    background: var(--slick-row-move-plugin-guide-bg-color, $row-move-plugin-guide-bg-color);
+    opacity: var(--slick-row-move-plugin-guide-opacity, $row-move-plugin-guide-opacity);
+  }
+
+  .slick-reorder-shadow-row {
+    position: absolute;
+    z-index: 999999;
+    box-shadow: var(--slick-row-move-plugin-shadow-row-box-shadow, $row-move-plugin-shadow-row-box-shadow);
   }
 
   .slick-selection {

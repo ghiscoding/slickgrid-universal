@@ -24,3 +24,4 @@ export * from './sortDirection.enum';
 export * from './sortDirectionNumber.enum';
 export * from './sortDirectionString.type';
 export * from './toggleStateChangeType';
+export * from './usabilityOverrideFn.type';
