@@ -1,6 +1,6 @@
-import { GroupItemMetadataProviderService } from '../groupItemMetadataProvider.service';
-import { KeyCode } from '../..';
+import { KeyCode } from '../../enums/index';
 import { Column, GridOption, GroupItemMetadataProviderOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces';
+import { SlickGroupItemMetadataProvider } from '../slickGroupItemMetadataProvider';
 
 declare const Slick: SlickNamespace;
 
@@ -51,7 +51,7 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 describe('GroupItemMetadataProvider Service', () => {
-  let service: GroupItemMetadataProviderService;
+  let service: SlickGroupItemMetadataProvider;
   const mockColumns = [
     { id: 'firstName', field: 'firstName' },
     { id: 'lastName', field: 'lastName' },
@@ -59,7 +59,7 @@ describe('GroupItemMetadataProvider Service', () => {
   ] as Column[];
 
   beforeEach(() => {
-    service = new GroupItemMetadataProviderService();
+    service = new SlickGroupItemMetadataProvider();
   });
 
   afterEach(() => {

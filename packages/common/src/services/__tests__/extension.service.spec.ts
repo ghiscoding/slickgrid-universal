@@ -8,7 +8,7 @@ import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SlickAutoTooltip, SlickCellExcelCopyManager, SlickCellMenu, SlickCheckboxSelectColumn, SlickContextMenu, SlickDraggableGrouping, SlickHeaderButtons, SlickHeaderMenu, SlickRowMoveManager, SlickRowSelectionModel } from '../../plugins/index';
 import { SlickCellSelectionModel } from '../../plugins/slickCellSelectionModel';
 import { SlickColumnPicker, SlickGridMenu } from '../../controls/index';
-import { GroupItemMetadataProviderService } from '../groupItemMetadataProvider.service';
+import { SlickGroupItemMetadataProvider } from '../../plugins/slickGroupItemMetadataProvider';
 
 jest.mock('flatpickr', () => { });
 declare const Slick: SlickNamespace;
@@ -385,7 +385,7 @@ describe('ExtensionService', () => {
         const pluginInstance = service.getSlickgridAddonInstance(ExtensionName.groupItemMetaProvider);
 
         expect(gridSpy).toHaveBeenCalled();
-        expect(output.instance instanceof GroupItemMetadataProviderService).toBeTrue();
+        expect(output.instance instanceof SlickGroupItemMetadataProvider).toBeTrue();
         expect(pluginInstance).toBeTruthy();
         expect(output!.instance).toEqual(pluginInstance);
         expect(output).toEqual({ name: ExtensionName.groupItemMetaProvider, instance: pluginInstance, class: pluginInstance } as ExtensionModel<any, any>);

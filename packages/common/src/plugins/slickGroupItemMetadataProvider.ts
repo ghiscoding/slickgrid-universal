@@ -12,7 +12,7 @@ declare const Slick: SlickNamespace;
  * This class also acts as a grid plugin providing event handlers to expand & collapse groups.
  * If "grid.registerPlugin(...)" is not called, expand & collapse will not work.
  */
-export class GroupItemMetadataProviderService {
+export class SlickGroupItemMetadataProvider {
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
   protected _options: GroupItemMetadataProviderOption;

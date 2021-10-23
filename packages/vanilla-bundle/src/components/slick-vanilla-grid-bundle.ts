@@ -26,6 +26,7 @@ import {
   SlickDataView,
   SlickEventHandler,
   SlickGrid,
+  SlickGroupItemMetadataProvider,
   SlickNamespace,
   Subscription,
 
@@ -43,7 +44,6 @@ import {
   GridService,
   GridStateService,
   GroupingAndColspanService,
-  GroupItemMetadataProviderService,
   Observable,
   PaginationService,
   ResizerService,
@@ -101,7 +101,7 @@ export class SlickVanillaGridBundle {
     paginationService: PaginationService;
   };
   totalItems = 0;
-  groupItemMetadataProvider?: GroupItemMetadataProviderService;
+  groupItemMetadataProvider?: SlickGroupItemMetadataProvider;
   resizerService!: ResizerService;
   subscriptions: Subscription[] = [];
   showPagination = false;
@@ -361,7 +361,7 @@ export class SlickVanillaGridBundle {
 
     this.gridStateService = services?.gridStateService ?? new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.treeDataService);
     this.gridService = services?.gridService ?? new GridService(this.gridStateService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService, this.treeDataService);
-    this.groupingService = services?.groupingAndColspanService ?? new GroupingAndColspanService(this.extensionUtility, this.extensionService, this._eventPubSubService);
+    this.groupingService = services?.groupingAndColspanService ?? new GroupingAndColspanService(this.extensionUtility, this._eventPubSubService);
 
     if (hierarchicalDataset) {
       this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
@@ -489,7 +489,7 @@ export class SlickVanillaGridBundle {
       let dataViewOptions: DataViewOption = { inlineFilters: dataviewInlineFilters };
 
       if (this.gridOptions.draggableGrouping || this.gridOptions.enableGrouping) {
-        this.groupItemMetadataProvider = new GroupItemMetadataProviderService();
+        this.groupItemMetadataProvider = new SlickGroupItemMetadataProvider();
         this.sharedService.groupItemMetadataProvider = this.groupItemMetadataProvider;
         dataViewOptions = { ...dataViewOptions, groupItemMetadataProvider: this.groupItemMetadataProvider };
       }

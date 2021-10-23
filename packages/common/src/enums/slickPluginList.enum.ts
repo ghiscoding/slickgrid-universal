@@ -1,6 +1,5 @@
 import {
   SlickEditorLock,
-  SlickGroupItemMetadataProvider,
   SlickRowDetailView,
 } from '../interfaces/index';
 import {
@@ -13,6 +12,7 @@ import {
   SlickCheckboxSelectColumn,
   SlickContextMenu,
   SlickDraggableGrouping,
+  SlickGroupItemMetadataProvider,
   SlickHeaderButtons,
   SlickHeaderMenu,
   SlickRowMoveManager,

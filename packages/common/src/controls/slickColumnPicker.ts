@@ -106,6 +106,7 @@ export class SlickColumnPicker {
 
     this._menuElm = document.createElement('div');
     this._menuElm.className = `slick-columnpicker ${this._gridUid}`;
+    this._menuElm.setAttribute('aria-expanded', 'false');
     this._menuElm.style.display = 'none';
 
     // add Close button and optiona a Column list title
@@ -178,6 +179,7 @@ export class SlickColumnPicker {
   /** Mouse down handler when clicking anywhere in the DOM body */
   protected handleBodyMouseDown(e: DOMMouseEvent<HTMLDivElement>) {
     if ((this._menuElm !== e.target && !this._menuElm.contains(e.target)) || e.target.className === 'close') {
+      this._menuElm.setAttribute('aria-expanded', 'false');
       this._menuElm.style.display = 'none';
     }
   }
@@ -199,6 +201,7 @@ export class SlickColumnPicker {
     this._menuElm.style.minHeight = findWidthOrDefault(this.addonOptions.minHeight, '');
     this._menuElm.style.maxHeight = findWidthOrDefault(this.addonOptions.maxHeight, `${window.innerHeight - event.clientY}px`);
     this._menuElm.style.display = 'block';
+    this._menuElm.setAttribute('aria-expanded', 'true');
     this._menuElm.appendChild(this._listElm);
   }
 

@@ -141,7 +141,6 @@ export * from './slickEventData.interface';
 export * from './slickGrid.interface';
 export * from './slickEventHandler.interface';
 export * from './slickGroup.interface';
-export * from './slickGroupItemMetadataProvider.interface';
 export * from './slickNamespace.interface';
 export * from './slickRange.interface';
 export * from './slickRemoteModel.interface';

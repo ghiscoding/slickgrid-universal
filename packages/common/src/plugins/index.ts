@@ -8,6 +8,7 @@ export * from './slickCellSelectionModel';
 export * from './slickCheckboxSelectColumn';
 export * from './slickContextMenu';
 export * from './slickDraggableGrouping';
+export * from './slickGroupItemMetadataProvider';
 export * from './slickHeaderButtons';
 export * from './slickHeaderMenu';
 export * from './slickRowMoveManager';

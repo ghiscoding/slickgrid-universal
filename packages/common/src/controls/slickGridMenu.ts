@@ -293,6 +293,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       }
 
       this._menuElm.style.display = 'none';
+      this._menuElm.setAttribute('aria-expanded', 'false');
       this._isMenuOpen = false;
 
       // we also want to resize the columns if the user decided to hide certain column(s)
@@ -358,6 +359,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       if (showMenu) {
         this._menuElm.style.opacity = '1'; // restore its visibility
       }
+
+      this._menuElm.setAttribute('aria-expanded', 'true');
       this._menuElm.appendChild(this._listElm);
       this._isMenuOpen = true;
     }

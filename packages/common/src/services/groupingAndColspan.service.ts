@@ -8,12 +8,9 @@ import {
   SlickNamespace,
   SlickResizer,
 } from './../interfaces/index';
-import { ExtensionName } from '../enums/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
-import { ExtensionService } from '../services/extension.service';
 import { PubSubService } from './pubSub.service';
 import { emptyElement } from './domUtilities';
-import { SlickColumnPicker } from '../controls/slickColumnPicker';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -22,7 +19,7 @@ export class GroupingAndColspanService {
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
 
-  constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly extensionService: ExtensionService, protected readonly pubSubService: PubSubService,) {
+  constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: PubSubService,) {
     this._eventHandler = new Slick.EventHandler();
   }
 
@@ -71,17 +68,10 @@ export class GroupingAndColspanService {
         this._eventHandler.subscribe(this._dataView.onRowCountChanged, () => this.delayRenderPreHeaderRowGroupingTitles(0));
 
         // for both picker (columnPicker/gridMenu) we also need to re-create after hiding/showing columns
-        const columnPickerExtension = this.extensionService.getExtensionByName<SlickColumnPicker>(ExtensionName.columnPicker);
-        if (columnPickerExtension?.instance?.onColumnsChanged) {
-          this._eventHandler.subscribe(columnPickerExtension.instance.onColumnsChanged, () => this.renderPreHeaderRowGroupingTitles());
-        }
+        this.pubSubService.subscribe(`onColumnPickerColumnsChanged`, () => this.renderPreHeaderRowGroupingTitles());
         this.pubSubService.subscribe('onHeaderMenuHideColumns', () => this.delayRenderPreHeaderRowGroupingTitles(0));
-
-        const gridMenuExtension = this.extensionService.getExtensionByName(ExtensionName.gridMenu);
-        if (gridMenuExtension && gridMenuExtension.instance && gridMenuExtension.instance.onColumnsChanged && gridMenuExtension.instance.onMenuClose) {
-          this._eventHandler.subscribe(gridMenuExtension.instance.onColumnsChanged, () => this.renderPreHeaderRowGroupingTitles());
-          this._eventHandler.subscribe(gridMenuExtension.instance.onMenuClose, () => this.renderPreHeaderRowGroupingTitles());
-        }
+        this.pubSubService.subscribe(`onGridMenuColumnsChanged`, () => this.renderPreHeaderRowGroupingTitles());
+        this.pubSubService.subscribe(`onGridMenuMenuClose`, () => this.renderPreHeaderRowGroupingTitles());
 
         // we also need to re-create after a grid resize
         const resizerPlugin = grid.getPluginByName<SlickResizer>('Resizer');

@@ -20,7 +20,7 @@ import {
   SlickRowSelectionModel
 } from '../plugins/index';
 import { FilterService } from './filter.service';
-import { GroupItemMetadataProviderService } from './groupItemMetadataProvider.service';
+import { SlickGroupItemMetadataProvider } from '../plugins/slickGroupItemMetadataProvider';
 import { PubSubService } from './pubSub.service';
 import { SortService } from './sort.service';
 import { TreeDataService } from './treeData.service';
@@ -42,7 +42,7 @@ export class ExtensionService {
   protected _columnPickerControl?: SlickColumnPicker;
   protected _draggleGroupingPlugin?: SlickDraggableGrouping;
   protected _gridMenuControl?: SlickGridMenu;
-  protected _groupItemMetadataProviderService?: GroupItemMetadataProviderService;
+  protected _groupItemMetadataProviderService?: SlickGroupItemMetadataProvider;
   protected _headerMenuPlugin?: SlickHeaderMenu;
   protected _rowMoveManagerPlugin?: SlickRowMoveManager;
   protected _rowSelectionModel?: SlickRowSelectionModel;
@@ -233,7 +233,7 @@ export class ExtensionService {
       // Grouping Plugin
       // register the group item metadata provider to add expand/collapse group handlers
       if (this.gridOptions.enableDraggableGrouping || this.gridOptions.enableGrouping) {
-        this._groupItemMetadataProviderService = this._groupItemMetadataProviderService ? this._groupItemMetadataProviderService : new GroupItemMetadataProviderService();
+        this._groupItemMetadataProviderService = this._groupItemMetadataProviderService ? this._groupItemMetadataProviderService : new SlickGroupItemMetadataProvider();
         this._groupItemMetadataProviderService.init(this.sharedService.slickGrid);
         this._extensionList[ExtensionName.groupItemMetaProvider] = { name: ExtensionName.groupItemMetaProvider, class: this._groupItemMetadataProviderService, instance: this._groupItemMetadataProviderService };
       }

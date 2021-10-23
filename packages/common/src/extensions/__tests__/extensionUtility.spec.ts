@@ -17,7 +17,6 @@ const mockAddon = jest.fn().mockImplementation(() => ({
 }));
 
 jest.mock('slickgrid/plugins/slick.rowdetailview', () => mockAddon);
-jest.mock('slickgrid/plugins/slick.rowmovemanager', () => mockAddon);
 
 const backendUtilityServiceStub = {
   executeBackendProcessesCallback: jest.fn(),

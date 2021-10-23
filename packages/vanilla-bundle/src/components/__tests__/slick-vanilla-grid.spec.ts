@@ -7,6 +7,7 @@ import {
   ColumnFilters,
   CurrentFilter,
   CurrentPagination,
+  CurrentPinning,
   CurrentSorter,
   Editor,
   Editors,
@@ -23,7 +24,6 @@ import {
   GridStateService,
   GridStateType,
   GroupingAndColspanService,
-  GroupItemMetadataProviderService,
   OnRowCountChangedEventArgs,
   OnRowsChangedEventArgs,
   OnSetItemsCalledEventArgs,
@@ -34,12 +34,12 @@ import {
   SharedService,
   SlickDataView,
   SlickEventHandler,
+  SlickEditorLock,
   SlickGrid,
+  SlickGroupItemMetadataProvider,
   SortService,
   TreeDataService,
   TranslaterService,
-  SlickEditorLock,
-  CurrentPinning,
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
@@ -798,7 +798,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         expect(Object.keys(extensions).length).toBe(1);
         expect(dataviewSpy).toHaveBeenCalledWith({ inlineFilters: false, groupItemMetadataProvider: expect.anything() });
-        expect(sharedService.groupItemMetadataProvider instanceof GroupItemMetadataProviderService).toBeTruthy();
+        expect(sharedService.groupItemMetadataProvider instanceof SlickGroupItemMetadataProvider).toBeTruthy();
         expect(sharedMetaSpy).toHaveBeenCalledWith(expect.toBeObject());
 
         component.dispose();
@@ -813,7 +813,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         expect(dataviewSpy).toHaveBeenCalledWith({ inlineFilters: false, groupItemMetadataProvider: expect.anything() });
         expect(sharedMetaSpy).toHaveBeenCalledWith(expect.toBeObject());
-        expect(sharedService.groupItemMetadataProvider instanceof GroupItemMetadataProviderService).toBeTruthy();
+        expect(sharedService.groupItemMetadataProvider instanceof SlickGroupItemMetadataProvider).toBeTruthy();
 
         component.dispose();
       });

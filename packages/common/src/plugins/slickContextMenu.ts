@@ -145,6 +145,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       // reposition the menu to where the user clicked
       if (this._menuElm) {
         this.repositionMenu(event);
+        this._menuElm.setAttribute('aria-expanded', 'true');
         this._menuElm.style.display = 'block';
       }
 
