@@ -871,10 +871,16 @@ $pagination-text-color:                               #808080 !default;
 
 /* Row Move Manager Plugin */
 $row-move-plugin-icon:                                "\f0c9" !default;
+$row-move-plugin-icon-vertical-align:                 bottom !default;
 $row-move-plugin-icon-width:                          $icon-font-size !default;
 $row-move-plugin-size:                                $icon-font-size !default;
 $row-move-plugin-cursor:                              move !default;
-$row-move-plugin-icon-vertical-align:                 bottom !default;
+$row-move-plugin-guide-bg-color:                      blue !default;
+$row-move-plugin-guide-height:                        2px !default;
+$row-move-plugin-guide-opacity:                       0.7 !default;
+$row-move-plugin-proxy-opacity:                       0.12 !default;
+$row-move-plugin-proxy-bg-color:                      $row-move-plugin-guide-bg-color !default;
+$row-move-plugin-shadow-row-box-shadow:               rgb(0 0 0 / 20%) 8px 2px 8px 4px, rgb(0 0 0 / 19%) 2px 2px 0px 0px !default;
 
 /* selector plugin */
 $selector-border-right:                               1px solid rgb(196, 196, 196) !default;

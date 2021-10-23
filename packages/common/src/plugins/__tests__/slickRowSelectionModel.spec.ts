@@ -56,7 +56,7 @@ const gridStub = {
   onBeforeCellRangeSelected: new Slick.Event(),
 } as unknown as SlickGrid;
 
-describe('CellSelectionModel Plugin', () => {
+describe('SlickRowSelectionModel Plugin', () => {
   let plugin: SlickRowSelectionModel;
   const mockColumns = [
     { id: 'firstName', field: 'firstName', name: 'First Name', },

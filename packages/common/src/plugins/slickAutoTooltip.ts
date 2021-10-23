@@ -57,6 +57,11 @@ export class SlickAutoTooltip {
     }
   }
 
+  /** @deprecated @use `dispose` Destroy plugin. */
+  destroy() {
+    this.dispose();
+  }
+
   /** Dispose (destroy) the SlickGrid 3rd party plugin */
   dispose() {
     this._eventHandler?.unsubscribeAll();

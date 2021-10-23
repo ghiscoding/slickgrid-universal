@@ -2,7 +2,6 @@ import {
   SlickEditorLock,
   SlickGroupItemMetadataProvider,
   SlickRowDetailView,
-  SlickRowMoveManager,
 } from '../interfaces/index';
 import {
   SlickAutoTooltip,
@@ -16,6 +15,7 @@ import {
   SlickDraggableGrouping,
   SlickHeaderButtons,
   SlickHeaderMenu,
+  SlickRowMoveManager,
   SlickRowSelectionModel,
 } from '../plugins/index';
 

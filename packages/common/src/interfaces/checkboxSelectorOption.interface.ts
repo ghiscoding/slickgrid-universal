@@ -1,4 +1,4 @@
-import { SlickGrid } from './slickGrid.interface';
+import { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
 
 export interface CheckboxSelectorOption {
   /** Defaults to "_checkbox_selector", you can provide a different column id used as the column header id */
@@ -33,5 +33,5 @@ export interface CheckboxSelectorOption {
   width?: number;
 
   /** Override the logic for showing (or not) the expand icon (use case example: only every 2nd row is expandable) */
-  selectableOverride?: (row: number, dataContext: any, grid: SlickGrid) => boolean;
+  selectableOverride?: UsabilityOverrideFn;
 }

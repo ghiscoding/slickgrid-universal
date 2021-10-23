@@ -72,10 +72,6 @@ const gridStub = {
   onSort: new Slick.Event(),
 } as unknown as SlickGrid;
 
-const dataViewStub = {
-  refresh: jest.fn(),
-} as unknown as SlickDataView;
-
 const pubSubServiceStub = {
   publish: jest.fn(),
   subscribe: jest.fn(),
@@ -143,6 +139,12 @@ describe('CellMenu Plugin', () => {
   it('should create the plugin', () => {
     expect(plugin).toBeTruthy();
     expect(plugin.eventHandler).toBeTruthy();
+  });
+
+  it('should dispose of the addon', () => {
+    const disposeSpy = jest.spyOn(plugin, 'dispose');
+    plugin.destroy();
+    expect(disposeSpy).toHaveBeenCalled();
   });
 
   it('should use default options when instantiating the plugin without passing any arguments', () => {

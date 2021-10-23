@@ -1,3 +1,4 @@
+import { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
 import {
   Column,
   RowDetailViewOption,
@@ -28,7 +29,7 @@ export interface SlickRowDetailView {
   expandDetailView(item: any): void;
 
   /** Override the logic for showing (or not) the expand icon (use case example: only every 2nd row is expandable) */
-  expandableOverride?: (row: number, dataContext: any, grid: SlickGrid) => boolean;
+  expandableOverride?: UsabilityOverrideFn;
 
   /** Get the Column Definition of the first column dedicated to toggling the Row Detail View */
   getColumnDefinition(): Column;
