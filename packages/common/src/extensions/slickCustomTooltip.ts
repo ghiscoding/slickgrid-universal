@@ -49,6 +49,7 @@ export class SlickCustomTooltip {
   } as CustomTooltipOption;
   protected _grid!: SlickGrid;
   protected _eventHandler: SlickEventHandler;
+  name: 'CustomTooltip' = 'CustomTooltip';
 
   constructor(protected readonly sharedService: SharedService, protected rxjs?: RxJsFacade) {
     this._eventHandler = new Slick.EventHandler();
@@ -76,7 +77,7 @@ export class SlickCustomTooltip {
 
   /** Getter for the grid uid */
   get gridUid(): string {
-    return this._grid.getUID() || '';
+    return this._grid?.getUID() || '';
   }
   get gridUidSelector(): string {
     return this.gridUid ? `.${this.gridUid}` : '';
@@ -95,8 +96,8 @@ export class SlickCustomTooltip {
     this._addonOptions = { ...this._defaultOptions, ...(this.sharedService?.gridOptions?.customTooltip) } as CustomTooltipOption;
     this._eventHandler
       .subscribe(grid.onMouseEnter, this.handleOnMouseEnter.bind(this) as unknown as EventListener)
-      .subscribe(grid.onHeaderMouseEnter, this.handleOnHeaderMouseEnter.bind(this) as unknown as EventListener)
-      .subscribe(grid.onHeaderRowMouseEnter, this.handleOnHeaderRowMouseEnter.bind(this) as unknown as EventListener)
+      .subscribe(grid.onHeaderMouseEnter, (e, args) => this.handleOnHeaderMouseEnterByType(e, args, 'slick-header-column'))
+      .subscribe(grid.onHeaderRowMouseEnter, (e, args) => this.handleOnHeaderMouseEnterByType(e, args, 'slick-headerrow-column'))
       .subscribe(grid.onMouseLeave, this.hideTooltip.bind(this) as unknown as EventListener)
       .subscribe(grid.onHeaderMouseLeave, this.hideTooltip.bind(this) as unknown as EventListener)
       .subscribe(grid.onHeaderRowMouseLeave, this.hideTooltip.bind(this) as unknown as EventListener);
@@ -119,6 +120,10 @@ export class SlickCustomTooltip {
     prevTooltip?.remove();
   }
 
+  getOptions(): CustomTooltipOption | undefined {
+    return this._addonOptions;
+  }
+
   setOptions(newOptions: CustomTooltipOption) {
     this._addonOptions = { ...this._addonOptions, ...newOptions } as CustomTooltipOption;
   }
@@ -128,8 +133,8 @@ export class SlickCustomTooltip {
   // ---------------------
 
   /**
-   *  hide any prior tooltip & merge the new result with the item `dataContext` under a `__params` property (unless a new prop name is provided)
-   * finally render the tooltip with the `asyncPostFormatter` formatter
+   * Async process callback will hide any prior tooltip & then merge the new result with the item `dataContext` under a `__params` property
+   * (unless a new prop name is provided) to provice as dataContext object to the asyncPostFormatter.
    */
   protected asyncProcessCallback(asyncResult: any, cell: { row: number, cell: number }, value: any, columnDef: Column, dataContext: any) {
     this.hideTooltip();
@@ -137,24 +142,8 @@ export class SlickCustomTooltip {
     this.renderTooltipFormatter(this._cellAddonOptions!.asyncPostFormatter, cell, value, columnDef, itemWithAsyncData);
   }
 
-  /**
-   * Handle mouse entering grid header title to show tooltip.
-   * @param {jQuery.Event} e - The event
-   */
-  handleOnHeaderMouseEnter(e: SlickEventData, args: any) {
-    this.handleOnHeaderMouseEnterByType(e, args, 'slick-header-column');
-  }
-
-  /**
-   * Handle mouse entering grid cell header-row (filter) to show tooltip.
-   * @param {jQuery.Event} e - The event
-   */
-  handleOnHeaderRowMouseEnter(e: SlickEventData, args: any) {
-    this.handleOnHeaderMouseEnterByType(e, args, 'slick-headerrow-column');
-  }
-
   /** depending on the selector type, execute the necessary handler code */
-  handleOnHeaderMouseEnterByType(e: SlickEventData, args: any, selector: string) {
+  protected handleOnHeaderMouseEnterByType(e: SlickEventData, args: any, selector: string) {
     // before doing anything, let's remove any previous tooltip before
     // and cancel any opened Promise/Observable when using async
     this.hideTooltip();
@@ -195,15 +184,15 @@ export class SlickCustomTooltip {
     }
   }
 
-  protected async handleOnMouseEnter(e: SlickEventData) {
+  protected async handleOnMouseEnter(event: SlickEventData) {
     // before doing anything, let's remove any previous tooltip before
     // and cancel any opened Promise/Observable when using async
     this.hideTooltip();
 
-    if (this._grid && e) {
-      const cell = this._grid.getCellFromEvent(e);
+    if (event && this._grid) {
+      const cell = this._grid.getCellFromEvent(event);
       if (cell) {
-        const item = this.dataView.getItem(cell.row);
+        const item = this.dataView ? this.dataView.getItem(cell.row) : this._grid.getDataItem(cell.row);
         const columnDef = this._grid.getColumns()[cell.cell];
         this._cellNodeElm = this._grid.getCellNode(cell.row, cell.cell) as HTMLDivElement;
 
@@ -216,16 +205,20 @@ export class SlickCustomTooltip {
 
           const value = item.hasOwnProperty(columnDef.field) ? item[columnDef.field] : null;
 
+          // when there aren't any formatter OR when user specifically want to use a regular tooltip (via "title" attribute)
           if (this._cellAddonOptions.useRegularTooltip || !this._cellAddonOptions?.formatter) {
             this.renderRegularTooltip(columnDef.formatter, cell, value, columnDef, item);
           } else {
+            // when we aren't using regular tooltip and we do have a tooltip formatter, let's render it
             if (!this._cellAddonOptions.useRegularTooltip && typeof this._cellAddonOptions?.formatter === 'function') {
               this.renderTooltipFormatter(this._cellAddonOptions.formatter, cell, value, columnDef, item);
             }
+
+            // when tooltip is an Async (delayed, e.g. with a backend API call)
             if (typeof this._cellAddonOptions?.asyncProcess === 'function') {
               const asyncProcess = this._cellAddonOptions.asyncProcess(cell.row, cell.cell, value, columnDef, item, this._grid);
               if (!this._cellAddonOptions.asyncPostFormatter) {
-                throw new Error(`[Slickgrid-Universal] when using "asyncProcess", you must also provide an "asyncPostFormatter" formatter`);
+                console.error(`[Slickgrid-Universal] when using "asyncProcess" with Custom Tooltip, you must also provide an "asyncPostFormatter" formatter.`);
               }
 
               if (asyncProcess instanceof Promise) {
@@ -363,7 +356,7 @@ export class SlickCustomTooltip {
   protected reposition(cell: { row: number; cell: number; }) {
     if (this._tooltipElm) {
       this._cellNodeElm = this._cellNodeElm || this._grid.getCellNode(cell.row, cell.cell) as HTMLDivElement;
-      const cellPosition = getHtmlElementOffset(this._cellNodeElm);
+      const cellPosition = getHtmlElementOffset(this._cellNodeElm) || { top: 0, left: 0 };
       const containerWidth = this._cellNodeElm.offsetWidth;
       const calculatedTooltipHeight = this._tooltipElm.getBoundingClientRect().height;
       const calculatedTooltipWidth = this._tooltipElm.getBoundingClientRect().width;
@@ -371,12 +364,13 @@ export class SlickCustomTooltip {
 
       // first calculate the default (top/left) position
       let newPositionTop = cellPosition.top - this._tooltipElm.offsetHeight - (this._cellAddonOptions?.offsetTopBottom ?? 0);
-      let newPositionLeft = (cellPosition?.left ?? 0) - (this._cellAddonOptions?.offsetLeft ?? 0);
+      let newPositionLeft = cellPosition.left - (this._cellAddonOptions?.offsetLeft ?? 0);
 
-      // user could explicitely use a "left" position (when user knows his column is completely on the right)
+      // user could explicitely use a "left-align" arrow position, (when user knows his column is completely on the right)
       // or when using "auto" and we detect not enough available space then we'll position to the "left" of the cell
+      // NOTE the class name is for the arrow and is inverse compare to the tooltip itself, so if user ask for "left-align", then the arrow will in fact be "arrow-right-align"
       const position = this._cellAddonOptions?.position ?? 'auto';
-      if (position === 'left-align' || (position === 'auto' && (newPositionLeft + calculatedTooltipWidth) > calculatedBodyWidth)) {
+      if (position === 'left-align' || ((position === 'auto' || position !== 'right-align') && (newPositionLeft + calculatedTooltipWidth) > calculatedBodyWidth)) {
         newPositionLeft -= (calculatedTooltipWidth - containerWidth - (this._cellAddonOptions?.offsetRight ?? 0));
         this._tooltipElm.classList.remove('arrow-left-align');
         this._tooltipElm.classList.add('arrow-right-align');
@@ -386,7 +380,8 @@ export class SlickCustomTooltip {
       }
 
       // do the same calculation/reposition with top/bottom (default is top of the cell or in other word starting from the cell going down)
-      if (position === 'bottom' || (position === 'auto' && calculatedTooltipHeight > calculateAvailableSpace(this._cellNodeElm).top)) {
+      // NOTE the class name is for the arrow and is inverse compare to the tooltip itself, so if user ask for "bottom", then the arrow will in fact be "arrow-top"
+      if (position === 'bottom' || ((position === 'auto' || position !== 'top') && calculatedTooltipHeight > calculateAvailableSpace(this._cellNodeElm).top)) {
         newPositionTop = cellPosition.top + (this.gridOptions.rowHeight ?? 0) + (this._cellAddonOptions?.offsetTopBottom ?? 0);
         this._tooltipElm.classList.remove('arrow-down');
         this._tooltipElm.classList.add('arrow-up');

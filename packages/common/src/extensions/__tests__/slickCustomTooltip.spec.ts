@@ -1,0 +1,249 @@
+import { Column, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { SharedService } from '../../services/shared.service';
+import { SlickCustomTooltip } from '../slickCustomTooltip';
+import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
+import * as utilities from '../../services/utilities';
+const mockGetHtmlElementOffset = jest.fn();
+// @ts-ignore:2540
+utilities.getHtmlElementOffset = mockGetHtmlElementOffset;
+
+declare const Slick: SlickNamespace;
+const GRID_UID = 'slickgrid12345';
+
+const gridOptionsMock = { enableAutoTooltip: true } as GridOption;
+
+const dataviewStub = {
+  getItem: jest.fn(),
+} as unknown as SlickDataView;
+
+const gridStub = {
+  getCellFromEvent: jest.fn(),
+  getCellNode: jest.fn(),
+  getColumns: jest.fn(),
+  getData: () => dataviewStub,
+  getOptions: () => gridOptionsMock,
+  getUID: () => GRID_UID,
+  registerPlugin: jest.fn(),
+  onMouseEnter: new Slick.Event(),
+  onHeaderMouseEnter: new Slick.Event(),
+  onHeaderRowMouseEnter: new Slick.Event(),
+  onMouseLeave: new Slick.Event(),
+  onHeaderMouseLeave: new Slick.Event(),
+  onHeaderRowMouseLeave: new Slick.Event(),
+} as unknown as SlickGrid;
+
+describe('SlickCustomTooltip plugin', () => {
+  let divContainer = document.createElement('div');
+  let plugin: SlickCustomTooltip;
+  let rxjsResourceStub: RxJsResourceStub;
+  let sharedService: SharedService;
+
+  beforeEach(() => {
+    sharedService = new SharedService();
+    rxjsResourceStub = new RxJsResourceStub();
+    plugin = new SlickCustomTooltip(sharedService, rxjsResourceStub);
+    divContainer.className = `slickgrid-container ${GRID_UID}`;
+    document.body.appendChild(divContainer);
+  });
+
+  afterEach(() => {
+    plugin.dispose();
+  });
+
+  it('should create the plugin', () => {
+    plugin.init(gridStub);
+    expect(plugin).toBeTruthy();
+  });
+
+  it('should be able to change plugin options', () => {
+    const mockOptions = {
+      className: 'some-class',
+      offsetLeft: 5,
+      offsetRight: 7,
+      offsetTopBottom: 8,
+      hideArrow: true,
+      regularTooltipWhiteSpace: 'pre-wrap',
+      whiteSpace: 'normal',
+    };
+    plugin.init(gridStub);
+    plugin.setOptions(mockOptions);
+
+    expect(plugin.addonOptions).toEqual(mockOptions);
+    expect(plugin.getOptions()).toEqual(mockOptions);
+  });
+
+  it('should return without creating a tooltip when column definition has "disableTooltip: true"', () => {
+    const mockColumn = [{ id: 'firstName', field: 'firstName', disableTooltip: true }] as Column[];
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumn);
+    jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub);
+    gridStub.onMouseEnter.notify({ grid: gridStub });
+
+    expect(document.body.querySelector('.slick-custom-tooltip')).toBeFalsy();
+  });
+
+  it('should return without creating a tooltip when "usabilityOverride" returns False', () => {
+    const mockColumn = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumn);
+    jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub);
+    plugin.setOptions({ usabilityOverride: () => false });
+    gridStub.onMouseEnter.notify({ grid: gridStub });
+
+    expect(document.body.querySelector('.slick-custom-tooltip')).toBeFalsy();
+  });
+
+  it('should NOT create a tooltip when tooltip option has "useRegularTooltip" set BUT [title] attribute is not set or is empty', () => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell';
+    cellNode.setAttribute('title', '');
+    const mockColumn = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumn);
+    jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub);
+    plugin.setOptions({ useRegularTooltip: true });
+    gridStub.onMouseEnter.notify({ grid: gridStub });
+
+    expect(document.body.querySelector('.slick-custom-tooltip')).toBeFalsy();
+  });
+
+  it('should create a tooltip, with default positioning (down & leftAlign), when tooltip option has "useRegularTooltip" set', () => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell';
+    cellNode.setAttribute('title', 'tooltip text');
+    const mockColumn = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumn);
+    jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub);
+    plugin.setOptions({ useRegularTooltip: true });
+    gridStub.onMouseEnter.notify({ grid: gridStub });
+
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipElm).toBeTruthy();
+    expect(tooltipElm.textContent).toBe('tooltip text');
+    expect(tooltipElm.classList.contains('arrow-down'));
+    expect(tooltipElm.classList.contains('arrow-left-align'));
+  });
+
+  it('should create a tooltip as regular tooltip with coming from text content when it is filled & also expect "hideTooltip" to be called after leaving the cell when "onHeaderMouseLeave" event is triggered', () => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell';
+    cellNode.textContent = 'some text content';
+    cellNode.setAttribute('title', 'tooltip text');
+    Object.defineProperty(cellNode, 'scrollWidth', { writable: true, configurable: true, value: 400 });
+    const mockColumns = [{ id: 'firstName', field: 'firstName', formatter: () => `<span title="formatter tooltip text">Hello World</span>` }] as Column[];
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+    const hideColumnSpy = jest.spyOn(plugin, 'hideTooltip');
+
+    plugin.init(gridStub);
+    plugin.setOptions({ useRegularTooltip: true, maxWidth: 85 });
+    gridStub.onMouseEnter.notify({ grid: gridStub });
+
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipElm).toBeTruthy();
+    expect(tooltipElm.style.maxWidth).toBe('85px');
+    expect(tooltipElm.textContent).toBe('some text content');
+    expect(tooltipElm.classList.contains('arrow-down'));
+    expect(tooltipElm.classList.contains('arrow-left-align'));
+
+    gridStub.onMouseLeave.notify({ grid: gridStub });
+    expect(hideColumnSpy).toHaveBeenCalled();
+  });
+
+  it('should create a tooltip with only the tooltip formatter output when tooltip option has "useRegularTooltip" & "useRegularTooltipFromFormatterOnly" enabled and column definition has a regular formatter with a "title" attribute filled', () => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell';
+    cellNode.setAttribute('title', 'tooltip text');
+    const mockColumns = [{ id: 'firstName', field: 'firstName', formatter: () => `<span title="formatter tooltip text">Hello World</span>` }] as Column[];
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub);
+    plugin.setOptions({ useRegularTooltip: true, useRegularTooltipFromFormatterOnly: true, maxHeight: 100 });
+    gridStub.onMouseEnter.notify({ grid: gridStub });
+
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipElm).toBeTruthy();
+    expect(tooltipElm.textContent).toBe('formatter tooltip text');
+    expect(tooltipElm.style.maxHeight).toBe('100px');
+    expect(tooltipElm.classList.contains('arrow-down'));
+    expect(tooltipElm.classList.contains('arrow-left-align'));
+  });
+
+  it('should throw an error when trying to create an async tooltip without "asyncPostFormatter" defined', () => {
+    const consoleSpy = jest.spyOn(global.console, 'error').mockReturnValue();
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell';
+    const mockColumn = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumn);
+    jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub);
+    plugin.setOptions({
+      offsetLeft: 5,
+      position: 'bottom',
+      asyncProcess: () => Promise.resolve({ ratio: 1.2 }),
+      formatter: () => 'loading...',
+      asyncPostFormatter: undefined
+    });
+    gridStub.onMouseEnter.notify({ grid: gridStub });
+
+    expect(consoleSpy).toHaveBeenCalledWith(`[Slickgrid-Universal] when using "asyncProcess" with Custom Tooltip, you must also provide an "asyncPostFormatter" formatter.`);
+  });
+
+  it('should create an async tooltip with position (up & right align) when space is not available on the right of the tooltip', (done) => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell';
+    const mockColumn = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumn);
+    jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+    mockGetHtmlElementOffset.mockReturnValue({ top: 100, left: 1030, height: 75, width: 400 }); // mock cell position
+
+    plugin.init(gridStub);
+    plugin.setOptions({
+      offsetLeft: 5,
+      position: 'bottom',
+      asyncProcess: () => Promise.resolve({ ratio: 1.2 }),
+      formatter: () => 'loading...',
+      asyncPostFormatter: (row, cell, val, column, dataContext) => `async post text with ratio: ${dataContext.__params.ratio || ''}`,
+    });
+    gridStub.onMouseEnter.notify({ grid: gridStub });
+
+    let tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    jest.spyOn(tooltipElm, 'getBoundingClientRect').mockReturnValue({ top: 22, left: 11, height: 100, width: 250 } as any);
+    tooltipElm.style.top = '22px';
+    tooltipElm.style.left = '11px';
+    tooltipElm.style.height = '100px';
+    tooltipElm.style.width = '250px';
+
+    expect(tooltipElm).toBeTruthy();
+    expect(tooltipElm.textContent).toBe('loading...');
+
+    setTimeout(() => {
+      tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm.textContent).toBe('async post text with ratio: 1.2');
+      expect(tooltipElm.classList.contains('arrow-up')).toBeTruthy();
+      expect(tooltipElm.classList.contains('arrow-right-align')).toBeTruthy();
+      done();
+    }, 2);
+  });
+});

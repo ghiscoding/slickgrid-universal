@@ -59,6 +59,7 @@ export class Example16 {
         },
         filterable: true,
         customTooltip: {
+          position: 'right-align', // defaults to "auto"
           // you can use the Custom Tooltip in 2 ways (synchronous or asynchronous)
           // example 1 (sync):
           // formatter: this.tooltipTaskFormatter.bind(this),
