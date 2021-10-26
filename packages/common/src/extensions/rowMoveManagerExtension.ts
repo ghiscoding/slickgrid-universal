@@ -79,7 +79,7 @@ export class RowMoveManagerExtension implements Extension {
   loadAddonWhenNotExists(columnDefinitions: Column[], gridOptions: GridOption): SlickRowMoveManager | null {
     if (Array.isArray(columnDefinitions) && gridOptions) {
       if (!this._addon) {
-        this._addon = new Slick.RowMoveManager(gridOptions?.rowMoveManager || { cancelEditOnDrag: true });
+        this._addon = new Slick.RowMoveManager(gridOptions?.rowMoveManager || { cancelEditOnDrag: true, hideRowMoveShadow: false, });
       }
       return this._addon;
     }

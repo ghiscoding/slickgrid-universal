@@ -211,6 +211,7 @@ export class Example7 {
         singleRowMove: true,
         disableRowSelection: true,
         cancelEditOnDrag: true,
+        hideRowMoveShadow: false,
         onBeforeMoveRows: this.onBeforeMoveRow.bind(this),
         onMoveRows: this.onMoveRows.bind(this),
 
