@@ -28,7 +28,6 @@ export const SalesforceGlobalGridOptions = {
     sanitizeDataExport: true,
   },
   enableCellNavigation: true,
-  enableCustomTooltip: true,
   customTooltip: {
     tooltipTextMaxLength: 650,
   },

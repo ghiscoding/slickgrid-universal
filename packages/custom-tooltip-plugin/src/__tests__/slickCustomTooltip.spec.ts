@@ -1,10 +1,11 @@
 import { delay, of, throwError } from 'rxjs';
+import { Column, GridOption, SlickDataView, SlickGrid, SlickNamespace, SharedService, } from '@slickgrid-universal/common';
+import * as utilities from '@slickgrid-universal/common/dist/commonjs/services/utilities';
 
-import { Column, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
-import { SharedService } from '../../services/shared.service';
 import { SlickCustomTooltip } from '../slickCustomTooltip';
-import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
-import * as utilities from '../../services/utilities';
+import { ContainerServiceStub } from '../../../../test/containerServiceStub';
+import { RxJsResourceStub } from '../../../../test/rxjsResourceStub';
+
 const mockGetHtmlElementOffset = jest.fn();
 // @ts-ignore:2540
 utilities.getHtmlElementOffset = mockGetHtmlElementOffset;
@@ -36,14 +37,16 @@ const gridStub = {
 
 describe('SlickCustomTooltip plugin', () => {
   let divContainer = document.createElement('div');
+  let container: ContainerServiceStub;
   let plugin: SlickCustomTooltip;
   let rxjsResourceStub: RxJsResourceStub;
   let sharedService: SharedService;
 
   beforeEach(() => {
+    container = new ContainerServiceStub();
     sharedService = new SharedService();
     rxjsResourceStub = new RxJsResourceStub();
-    plugin = new SlickCustomTooltip(sharedService, rxjsResourceStub);
+    plugin = new SlickCustomTooltip();
     divContainer.className = `slickgrid-container ${GRID_UID}`;
     document.body.appendChild(divContainer);
   });
@@ -54,7 +57,7 @@ describe('SlickCustomTooltip plugin', () => {
   });
 
   it('should create the plugin', () => {
-    plugin.init(gridStub);
+    plugin.init(gridStub, container);
     expect(plugin).toBeTruthy();
   });
 
@@ -68,7 +71,7 @@ describe('SlickCustomTooltip plugin', () => {
       regularTooltipWhiteSpace: 'pre-wrap',
       whiteSpace: 'normal',
     };
-    plugin.init(gridStub);
+    plugin.init(gridStub, container);
     plugin.setOptions(mockOptions);
 
     expect(plugin.addonOptions).toEqual(mockOptions);
@@ -81,7 +84,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
-    plugin.init(gridStub);
+    plugin.init(gridStub, container);
     gridStub.onMouseEnter.notify({ grid: gridStub });
 
     expect(document.body.querySelector('.slick-custom-tooltip')).toBeFalsy();
@@ -93,7 +96,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
-    plugin.init(gridStub);
+    plugin.init(gridStub, container);
     gridStub.onHeaderMouseEnter.notify({ column: mockColumns[0], grid: gridStub });
 
     expect(document.body.querySelector('.slick-custom-tooltip')).toBeFalsy();
@@ -105,7 +108,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
-    plugin.init(gridStub);
+    plugin.init(gridStub, container);
     gridStub.onHeaderRowMouseEnter.notify({ column: mockColumns[0], grid: gridStub });
 
     expect(document.body.querySelector('.slick-custom-tooltip')).toBeFalsy();
@@ -117,7 +120,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
-    plugin.init(gridStub);
+    plugin.init(gridStub, container);
     plugin.setOptions({ usabilityOverride: () => false });
     gridStub.onMouseEnter.notify({ grid: gridStub });
 
@@ -134,7 +137,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
-    plugin.init(gridStub);
+    plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true });
     gridStub.onMouseEnter.notify({ grid: gridStub });
 
@@ -151,7 +154,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
-    plugin.init(gridStub);
+    plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true });
     gridStub.onMouseEnter.notify({ grid: gridStub });
 
@@ -172,7 +175,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
-    plugin.init(gridStub);
+    plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, tooltipTextMaxLength: 23 });
     gridStub.onMouseEnter.notify({ grid: gridStub });
 
@@ -196,7 +199,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
     const hideColumnSpy = jest.spyOn(plugin, 'hideTooltip');
 
-    plugin.init(gridStub);
+    plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, maxWidth: 85 });
     gridStub.onMouseEnter.notify({ grid: gridStub });
 
@@ -226,7 +229,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
     const hideColumnSpy = jest.spyOn(plugin, 'hideTooltip');
 
-    plugin.init(gridStub);
+    plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, tooltipTextMaxLength: 23 });
     gridStub.onMouseEnter.notify({ grid: gridStub });
 
@@ -247,7 +250,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
-    plugin.init(gridStub);
+    plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, useRegularTooltipFromFormatterOnly: true, maxHeight: 100 });
     gridStub.onMouseEnter.notify({ grid: gridStub });
 
@@ -269,7 +272,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
-    plugin.init(gridStub);
+    plugin.init(gridStub, container);
     plugin.setOptions({
       offsetLeft: 5,
       position: 'bottom',
@@ -291,7 +294,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
-    plugin.init(gridStub);
+    plugin.init(gridStub, container);
     plugin.addRxJsResource(rxjsResourceStub);
     plugin.setOptions({
       asyncProcess: () => of({ ratio: 1.2 }).pipe(delay(0)),
@@ -322,7 +325,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
     const consoleSpy = jest.spyOn(global.console, 'error').mockReturnValue();
 
-    plugin.init(gridStub);
+    plugin.init(gridStub, container);
     plugin.addRxJsResource(rxjsResourceStub);
     plugin.setOptions({
       asyncProcess: () => throwError(() => 'observable error').pipe(delay(0)),
@@ -351,7 +354,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
     mockGetHtmlElementOffset.mockReturnValue({ top: 100, left: 1030, height: 75, width: 400 }); // mock cell position
 
-    plugin.init(gridStub);
+    plugin.init(gridStub, container);
     plugin.setOptions({
       offsetLeft: 5,
       position: 'bottom',
@@ -389,7 +392,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
-    plugin.init(gridStub);
+    plugin.init(gridStub, container);
     plugin.setOptions({
       asyncProcess: () => Promise.reject('promise error'),
       formatter: () => 'loading...',
@@ -420,7 +423,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
-    plugin.init(gridStub);
+    plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, headerFormatter: mockFormatter });
     const eventData = new Slick.EventData();
     const div = document.createElement('div');
@@ -445,7 +448,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
-    plugin.init(gridStub);
+    plugin.init(gridStub, container);
     plugin.setOptions({ headerFormatter: () => 'header tooltip text' });
     const eventData = new Slick.EventData();
     const divHeaders = document.createElement('div');
@@ -474,7 +477,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
-    plugin.init(gridStub);
+    plugin.init(gridStub, container);
     plugin.setOptions({ headerRowFormatter: () => 'header row tooltip text' });
     const eventData = new Slick.EventData();
     const divHeaders = document.createElement('div');

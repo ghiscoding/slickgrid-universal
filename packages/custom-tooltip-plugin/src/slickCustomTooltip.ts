@@ -1,8 +1,26 @@
-import { CancellablePromiseWrapper, Column, CustomTooltipOption, Formatter, GridOption, SlickDataView, SlickEventData, SlickEventHandler, SlickGrid, SlickNamespace } from '../interfaces/index';
-import { cancellablePromise, CancelledException, getHtmlElementOffset, sanitizeTextByAvailableSanitizer } from '../services/utilities';
-import { SharedService } from '../services/shared.service';
-import { Observable, RxJsFacade, Subscription } from '../services/rxjsFacade';
-import { calculateAvailableSpace, findFirstElementAttribute } from '../services/domUtilities';
+import {
+  calculateAvailableSpace,
+  CancellablePromiseWrapper,
+  cancellablePromise,
+  CancelledException,
+  Column,
+  ContainerService,
+  CustomTooltipOption,
+  findFirstElementAttribute,
+  Formatter,
+  getHtmlElementOffset,
+  GridOption,
+  Observable,
+  sanitizeTextByAvailableSanitizer,
+  SharedService,
+  SlickDataView,
+  SlickEventData,
+  SlickEventHandler,
+  SlickGrid,
+  SlickNamespace,
+  RxJsFacade,
+  Subscription,
+} from '@slickgrid-universal/common';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -37,6 +55,8 @@ export class SlickCustomTooltip {
   protected _cellNodeElm?: HTMLDivElement;
   protected _cancellablePromise?: CancellablePromiseWrapper;
   protected _observable$?: Subscription;
+  protected _rxjs?: RxJsFacade | null = null;
+  protected _sharedService?: SharedService | null = null;
   protected _tooltipElm?: HTMLDivElement;
   protected _defaultOptions = {
     className: 'slick-custom-tooltip',
@@ -51,7 +71,7 @@ export class SlickCustomTooltip {
   protected _eventHandler: SlickEventHandler;
   name: 'CustomTooltip' = 'CustomTooltip';
 
-  constructor(protected readonly sharedService: SharedService, protected rxjs?: RxJsFacade) {
+  constructor() {
     this._eventHandler = new Slick.EventHandler();
   }
 
@@ -92,12 +112,14 @@ export class SlickCustomTooltip {
   }
 
   addRxJsResource(rxjs: RxJsFacade) {
-    this.rxjs = rxjs;
+    this._rxjs = rxjs;
   }
 
-  init(grid: SlickGrid) {
+  init(grid: SlickGrid, containerService: ContainerService) {
     this._grid = grid;
-    this._addonOptions = { ...this._defaultOptions, ...(this.sharedService?.gridOptions?.customTooltip) } as CustomTooltipOption;
+    this._rxjs = containerService.get<RxJsFacade>('RxJsFacade');
+    this._sharedService = containerService.get<SharedService>('SharedService');
+    this._addonOptions = { ...this._defaultOptions, ...(this._sharedService?.gridOptions?.customTooltip) } as CustomTooltipOption;
     this._eventHandler
       .subscribe(grid.onMouseEnter, this.handleOnMouseEnter.bind(this) as unknown as EventListener)
       .subscribe(grid.onHeaderMouseEnter, (e, args) => this.handleOnHeaderMouseEnterByType(e, args, 'slick-header-column'))
@@ -235,8 +257,8 @@ export class SlickCustomTooltip {
                       console.error(error);
                     }
                   });
-              } else if (this.rxjs?.isObservable(asyncProcess)) {
-                const rxjs = this.rxjs as RxJsFacade;
+              } else if (this._rxjs?.isObservable(asyncProcess)) {
+                const rxjs = this._rxjs as RxJsFacade;
                 this._observable$ = (asyncProcess as unknown as Observable<any>)
                   .pipe(
                     // use `switchMap` so that it cancels any previous subscription, it must return an observable so we can use `of` for that, and then finally we can subscribe to the new observable

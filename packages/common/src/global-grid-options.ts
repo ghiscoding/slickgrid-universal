@@ -92,7 +92,6 @@ export const GlobalGridOptions: GridOption = {
       itemsSelectedKey: 'ITEMS_SELECTED'
     }
   },
-  enableCustomTooltip: false,
   customTooltip: {
     tooltipTextMaxLength: 700,
     maxWidth: 500,

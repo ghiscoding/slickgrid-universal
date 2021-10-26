@@ -55,8 +55,7 @@ export interface Column<T = any> {
   cssClass?: string;
 
   /**
-   * Custom Tooltip Options, you must first enable `enableCustomTooltip: true`.
-   * The tooltip could defined in any of the Column Definition or in the Grid Options,
+   * Custom Tooltip Options, the tooltip could be defined in any of the Column Definition or in the Grid Options,
    * it will first try to find it in the Column that the user is hovering over or else (when not found) go and try to find it in the Grid Options
    */
   customTooltip?: CustomTooltipOption;

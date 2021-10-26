@@ -9,6 +9,7 @@ import {
   GridOption,
   OperatorType,
 } from '@slickgrid-universal/common';
+import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
@@ -306,7 +307,7 @@ export class Example16 {
         exportWithFormatter: true
       },
       // Custom Tooltip options can be defined in a Column or Grid Options or a mixed of both (first options found wins)
-      enableCustomTooltip: true,
+      registerExternalResources: [new SlickCustomTooltip(), this.excelExportService],
       customTooltip: {
         formatter: this.tooltipFormatter.bind(this),
         headerFormatter: this.headerFormatter.bind(this),
@@ -317,7 +318,6 @@ export class Example16 {
       presets: {
         filters: [{ columnId: 'prerequisites', searchTerms: [1, 3, 5, 7, 9, 12, 15, 18, 21, 25, 28, 29, 30, 32, 34] }],
       },
-      registerExternalResources: [this.excelExportService],
       rowHeight: 33,
       enableFiltering: true,
       rowSelectionOptions: {

@@ -223,21 +223,6 @@ describe('ExtensionService', () => {
         expect(columnsMock).toEqual([columnAfterTranslate]);
       });
 
-      it('should register the CustomTooltip addon when "enableCustomTooltip" is set in the grid options', () => {
-        const gridOptionsMock = { enableCustomTooltip: true } as GridOption;
-        const gridSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-
-        service.bindDifferentExtensions();
-        service.addRxJsResource(rxjsResourceStub);
-        const customTooltipInstance = service.getExtensionByName(ExtensionName.customTooltip);
-        const output = service.getExtensionByName(ExtensionName.customTooltip);
-        const pluginInstance = service.getSlickgridAddonInstance(ExtensionName.customTooltip);
-
-        expect(gridSpy).toHaveBeenCalled();
-        expect(customTooltipInstance).not.toBeNull();
-        expect(output).toEqual({ name: ExtensionName.customTooltip, instance: pluginInstance, class: pluginInstance } as ExtensionModel<any, any>);
-      });
-
       it('should register the AutoTooltip addon when "enableAutoTooltip" is set in the grid options', () => {
         const gridOptionsMock = { enableAutoTooltip: true } as GridOption;
         const extSpy = jest.spyOn(extensionStub, 'register').mockReturnValue(instanceMock);

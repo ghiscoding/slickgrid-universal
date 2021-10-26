@@ -1,3 +1,4 @@
+import 'jest-extended';
 import { of, throwError } from 'rxjs';
 import {
   BackendUtilityService,
@@ -44,6 +45,7 @@ import {
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
+import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import * as formatterUtilities from '@slickgrid-universal/common/dist/commonjs/formatters/formatterUtilities';
 
 import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle';
@@ -277,6 +279,14 @@ const mockGrid = {
   onScroll: jest.fn(),
   onDataviewCreated: new MockSlickEvent(),
 } as unknown as SlickGrid;
+
+const mockSlickCustomTooltip = {
+  init: jest.fn(),
+} as unknown as SlickCustomTooltip;
+
+jest.mock('@slickgrid-universal/custom-tooltip-plugin', () => ({
+  SlickCustomTooltip: jest.fn().mockImplementation(() => mockSlickCustomTooltip),
+}));
 
 const mockSlickEventHandlerImplementation = jest.fn().mockImplementation(() => mockSlickEventHandler);
 const mockDataViewImplementation = jest.fn().mockImplementation(() => mockDataView);
@@ -1000,7 +1010,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
 
         expect(TextExportService).toHaveBeenCalled();
-        expect(component.registeredResources.length).toBe(4); // TextExportService, GridService, GridStateService, SlickEmptyCompositeEditorComponent
+        expect(SlickCustomTooltip).toHaveBeenCalled();
+        expect(component.registeredResources.length).toBe(5); // TextExportService, SlickCustomTooltip, GridService, GridStateService, SlickEmptyCompositeEditorComponent
         expect(component.registeredResources[0] instanceof TextExportService).toBeTrue();
       });
 
@@ -1016,7 +1027,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
 
         expect(backendUtilitySpy).toHaveBeenCalled();
-        expect(extensionServiceSpy).toHaveBeenCalled();
         expect(filterServiceSpy).toHaveBeenCalled();
         expect(sortServiceSpy).toHaveBeenCalled();
         expect(paginationServiceSpy).toHaveBeenCalled();

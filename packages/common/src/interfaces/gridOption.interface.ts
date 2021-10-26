@@ -150,8 +150,7 @@ export interface GridOption {
   customFooterOptions?: CustomFooterOption;
 
   /**
-   * Custom Tooltip Options, you must first enable `enableCustomTooltip: true`.
-   * The tooltip could defined in any of the Column Definition or in the Grid Options,
+   * Custom Tooltip Options, the tooltip could be defined in any of the Column Definition or in the Grid Options,
    * it will first try to find it in the Column that the user is hovering over or else (when not found) go and try to find it in the Grid Options
    */
   customTooltip?: CustomTooltipOption;
@@ -282,9 +281,6 @@ export interface GridOption {
 
   /** Do we want to enable Context Menu? (mouse right+click) */
   enableContextMenu?: boolean;
-
-  /** Do we want to enable Custom Tooltip feature? */
-  enableCustomTooltip?: boolean;
 
   /**
    * Defaults to false, do we want to make a deep copy of the dataset before loading it into the grid?

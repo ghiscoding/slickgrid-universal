@@ -1,4 +1,5 @@
 import { BindingEventService, Column, Editors, FieldType, Filters, GridOption, GridStateChange, Metrics, OperatorType, } from '@slickgrid-universal/common';
+import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { GridOdataService, OdataServiceApi, OdataOption } from '@slickgrid-universal/odata';
 import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -128,7 +129,6 @@ export class Example15 {
       rowHeight: 33,
       headerRowHeight: 35,
       enableCellNavigation: true,
-      enableCustomTooltip: true,
       enableFiltering: true,
       enableCheckboxSelector: true,
       enableRowSelection: true,
@@ -172,7 +172,7 @@ export class Example15 {
           this.getCustomerCallback(response);
         }
       } as OdataServiceApi,
-      registerExternalResources: [new RxJsResource()]
+      registerExternalResources: [new RxJsResource(), new SlickCustomTooltip()]
     };
   }
 
