@@ -1,10 +1,10 @@
+import { DelimiterType, FileType } from '../../enums/index';
 import { ContextMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, SlickDataView, SlickGrid, SlickNamespace, } from '../../interfaces/index';
-import { SlickContextMenu } from '../slickContextMenu';
-import { BackendUtilityService, deepCopy, ExcelExportService, PubSubService, SharedService, TextExportService, TreeDataService, } from '../../services';
+import { BackendUtilityService, deepCopy, ExcelExportService, PubSubService, SharedService, TextExportService, TreeDataService, } from '../../services/index';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { Formatters } from '../../formatters';
-import { DelimiterType, FileType } from '../../enums';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { SlickContextMenu } from '../slickContextMenu';
 
 declare const Slick: SlickNamespace;
 

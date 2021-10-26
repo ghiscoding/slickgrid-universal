@@ -11,7 +11,7 @@ import {
   SlickEventHandler,
   SlickNamespace,
 } from '../interfaces/index';
-import { DelimiterType, FileType } from '../enums';
+import { DelimiterType, FileType } from '../enums/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { emptyElement, findWidthOrDefault, getHtmlElementOffset, getTranslationPrefix, } from '../services/index';
 import { ExcelExportService } from '../services/excelExport.service';

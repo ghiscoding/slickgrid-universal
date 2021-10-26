@@ -1,7 +1,4 @@
-import {
-  SlickEditorLock,
-  SlickRowDetailView,
-} from '../interfaces/index';
+import { SlickEditorLock } from '../interfaces/index';
 import {
   SlickAutoTooltip,
   SlickCellExternalCopyManager,
@@ -15,6 +12,7 @@ import {
   SlickGroupItemMetadataProvider,
   SlickHeaderButtons,
   SlickHeaderMenu,
+  SlickRowDetailView,
   SlickRowMoveManager,
   SlickRowSelectionModel,
 } from '../plugins/index';

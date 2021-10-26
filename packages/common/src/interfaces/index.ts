@@ -145,7 +145,6 @@ export * from './slickNamespace.interface';
 export * from './slickRange.interface';
 export * from './slickRemoteModel.interface';
 export * from './slickResizer.interface';
-export * from './slickRowDetailView.interface';
 export * from './sorter.interface';
 export * from './textExportOption.interface';
 export * from './treeDataOption.interface';

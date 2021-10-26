@@ -1,7 +1,5 @@
-import { RowDetailViewOption } from './rowDetailViewOption.interface';
-import { SlickGrid } from './slickGrid.interface';
-import { SlickEventData } from './slickEventData.interface';
-import { SlickRowDetailView } from './slickRowDetailView.interface';
+import { RowDetailViewOption, SlickEventData, SlickGrid } from './index';
+import { SlickRowDetailView } from '../plugins/slickRowDetailView';
 
 export interface RowDetailView extends RowDetailViewOption {
   // --

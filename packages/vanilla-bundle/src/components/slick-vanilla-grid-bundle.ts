@@ -29,15 +29,11 @@ import {
   SlickGroupItemMetadataProvider,
   SlickNamespace,
   Subscription,
-
-  // extensions
-  ExtensionUtility,
-  RowDetailViewExtension,
-
   // services
   BackendUtilityService,
   CollectionService,
   ExtensionService,
+  ExtensionUtility,
   FilterFactory,
   FilterService,
   GridEventService,
@@ -345,17 +341,13 @@ export class SlickVanillaGridBundle {
     this.treeDataService = services?.treeDataService ?? new TreeDataService(this._eventPubSubService, this.sharedService, this.sortService);
     this.paginationService = services?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService, this.backendUtilityService);
 
-    // extensions
-    const rowDetailViewExtension = new RowDetailViewExtension();
-
     this.extensionService = services?.extensionService ?? new ExtensionService(
       this.extensionUtility,
       this.filterService,
       this._eventPubSubService,
+      this.sharedService,
       this.sortService,
       this.treeDataService,
-      rowDetailViewExtension,
-      this.sharedService,
       this.translaterService,
     );
 

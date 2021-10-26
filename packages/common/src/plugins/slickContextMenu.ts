@@ -10,14 +10,13 @@ import {
   MenuOptionItem,
   SlickEventHandler,
 } from '../interfaces/index';
-import { getCellValueFromQueryFieldGetter, getTranslationPrefix, } from '../services/index';
+import { DelimiterType, FileType } from '../enums/index';
+import { ExcelExportService, getCellValueFromQueryFieldGetter, getTranslationPrefix, TextExportService } from '../services/index';
 import { exportWithFormatterWhenDefined } from '../formatters/formatterUtilities';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
 import { TreeDataService } from '../services/treeData.service';
-import { ExcelExportService, TextExportService } from '../services';
-import { DelimiterType, FileType } from '../enums';
 import { MenuFromCellBaseClass } from './menuFromCellBaseClass';
 
 

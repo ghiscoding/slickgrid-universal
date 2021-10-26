@@ -1,5 +1,5 @@
 import { Constants } from '../constants';
-import { Column, GridOption, Locale, MenuCommandItem, MenuOptionItem, } from '../interfaces';
+import { Column, GridOption, Locale, MenuCommandItem, MenuOptionItem, } from '../interfaces/index';
 import { BackendUtilityService } from '../services/backendUtility.service';
 import { SharedService } from '../services/shared.service';
 import { TranslaterService } from '../services/translater.service';

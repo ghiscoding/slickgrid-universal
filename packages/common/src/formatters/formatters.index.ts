@@ -62,6 +62,7 @@ export const Formatters = {
   bold: boldFormatter,
 
   /**
+   * @deprecated @use `CellMenu`, which is a lot more generic instead of `bsDropdownFormatter`.
    * a simple Bootstrap Dropdown Formatter which requires a Formatter Label
    * example:: { formatter: Formatters.bsDropdown, params: { formatterLabel: 'Label' }}
    */

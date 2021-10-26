@@ -28,6 +28,9 @@ type Join<T extends any[], D extends string> =
 /* eslint-enable @typescript-eslint/indent */
 
 export interface Column<T = any> {
+  /** do we want to always render the column? */
+  alwaysRenderColumn?: boolean;
+
   /** async background post-rendering formatter */
   asyncPostRender?: (domCellNode: any, row: number, dataContext: T, columnDef: Column) => void;
 
