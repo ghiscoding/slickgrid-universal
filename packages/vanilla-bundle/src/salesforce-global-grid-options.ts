@@ -70,5 +70,8 @@ export const SalesforceGlobalGridOptions = {
     formatterPaddingWidthInPx: 8,
     maxItemToInspectCellContentWidth: 500,
   },
+  rowMoveManager: {
+    hideRowMoveShadow: false,
+  },
   useSalesforceDefaultGridOptions: true,
 } as GridOption;

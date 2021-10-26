@@ -20,6 +20,8 @@ export interface RowMoveManagerOption {
   /**  Defaults to False, do we want to disable the row selection?  */
   disableRowSelection?: boolean;
 
+  hideRowMoveShadow?: boolean;
+
   /**  Defaults to False, do we want a single row move? Setting this to false means that 1 or more rows can be selected to move together.  */
   singleRowMove?: boolean;
 
