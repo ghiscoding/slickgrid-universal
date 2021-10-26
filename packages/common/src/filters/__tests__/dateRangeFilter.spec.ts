@@ -1,5 +1,3 @@
-import 'jest-extended';
-
 import { FieldType } from '../../enums/index';
 import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { Filters } from '..';

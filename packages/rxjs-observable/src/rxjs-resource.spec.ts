@@ -1,4 +1,4 @@
-import { EMPTY, isObservable, Observable, Subject } from 'rxjs';
+import { EMPTY, isObservable, Observable, Subject, } from 'rxjs';
 import { RxJsResource } from './rxjs.resource';
 
 describe('RxJs Resource', () => {
@@ -14,9 +14,12 @@ describe('RxJs Resource', () => {
   });
 
   it('should be able to create an RxJS Observable', () => {
-    const observable = service.createObservable();
-    expect(observable instanceof Observable).toBeTruthy();
-    expect(service.isObservable(observable)).toBeTruthy();
+    const observable1 = service.createObservable();
+    const observable2 = service.of(1, 2, 3);
+    expect(observable1 instanceof Observable).toBeTruthy();
+    expect(observable2 instanceof Observable).toBeTruthy();
+    expect(service.isObservable(observable1)).toBeTruthy();
+    expect(service.isObservable(observable2)).toBeTruthy();
   });
 
   it('should be able to create an RxJS Subject', () => {

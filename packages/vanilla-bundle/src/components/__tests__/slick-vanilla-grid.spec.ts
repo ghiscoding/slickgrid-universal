@@ -1,4 +1,3 @@
-import 'jest-extended';
 import { of, throwError } from 'rxjs';
 import {
   BackendUtilityService,

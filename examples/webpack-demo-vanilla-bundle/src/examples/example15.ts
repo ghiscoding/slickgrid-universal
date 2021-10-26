@@ -95,11 +95,11 @@ export class Example15 {
           // when using async, the `formatter` will contain the loading spinner
           // you will need to provide an `asyncPost` function returning a Promise and also `asyncPostFormatter` formatter to display the result once the Promise resolves
           formatter: () => `<div><span class="mdi mdi-load mdi-spin-1s"></span> loading...</div>`,
-          asyncProcess: () => new Observable((observer) => {
+          asyncProcess: (row, cell, value, column, dataContext) => new Observable((observer) => {
             observer.next({
               // return random door number & zip code to simulare company address
-              doorNumber: Math.random() * 100,
-              zip: Math.floor(Math.random() * (999999 - 100000 + 1) + 100000)
+              doorNumber: dataContext.id + 100,
+              zip: dataContext.id + 600000
             });
             observer.complete();
           }).pipe(delay(300)),

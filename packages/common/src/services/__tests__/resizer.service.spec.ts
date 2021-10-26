@@ -5,8 +5,6 @@ import { FieldType, } from '../../enums/index';
 import { Column, GridOption, SlickGrid, SlickNamespace, } from '../../interfaces/index';
 import { ResizerService } from '../resizer.service';
 
-import 'jest-extended';
-
 declare const Slick: SlickNamespace;
 const DATAGRID_MIN_HEIGHT = 180;
 const DATAGRID_MIN_WIDTH = 300;

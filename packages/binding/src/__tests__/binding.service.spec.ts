@@ -1,4 +1,3 @@
-import 'jest-extended';
 import { BindingService } from '../binding.service';
 
 describe('Binding Service', () => {

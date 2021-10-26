@@ -59,6 +59,10 @@ export class SlickCustomTooltip {
     return this._addonOptions;
   }
 
+  get cancellablePromise() {
+    return this._cancellablePromise;
+  }
+
   get cellAddonOptions(): CustomTooltipOption | undefined {
     return this._cellAddonOptions;
   }
@@ -106,6 +110,7 @@ export class SlickCustomTooltip {
   dispose() {
     // hide (remove) any tooltip and unsubscribe from all events
     this.hideTooltip();
+    this._cancellablePromise = undefined;
     this._eventHandler.unsubscribeAll();
   }
 
@@ -143,7 +148,7 @@ export class SlickCustomTooltip {
   }
 
   /** depending on the selector type, execute the necessary handler code */
-  protected handleOnHeaderMouseEnterByType(e: SlickEventData, args: any, selector: string) {
+  protected handleOnHeaderMouseEnterByType(event: SlickEventData, args: any, selector: string) {
     // before doing anything, let's remove any previous tooltip before
     // and cancel any opened Promise/Observable when using async
     this.hideTooltip();
@@ -157,9 +162,7 @@ export class SlickCustomTooltip {
     const isHeaderRowType = selector === 'slick-headerrow-column';
 
     // run the override function (when defined), if the result is false it won't go further
-    if (!args) {
-      args = {};
-    }
+    args = args || {};
     args.cell = cell.cell;
     args.row = cell.row;
     args.columnDef = columnDef;
@@ -171,8 +174,8 @@ export class SlickCustomTooltip {
       return;
     }
 
-    if (columnDef && e.target) {
-      this._cellNodeElm = (e.target as HTMLDivElement).closest(`.${selector}`) as HTMLDivElement;
+    if (columnDef && event.target) {
+      this._cellNodeElm = (event.target as HTMLDivElement).closest(`.${selector}`) as HTMLDivElement;
       const formatter = isHeaderRowType ? this._cellAddonOptions.headerRowFormatter : this._cellAddonOptions.headerFormatter;
 
       if (this._cellAddonOptions?.useRegularTooltip || !formatter) {
@@ -229,16 +232,19 @@ export class SlickCustomTooltip {
                   .catch((error: Error) => {
                     // we will throw back any errors, unless it's a cancelled promise which in that case will be disregarded (thrown by the promise wrapper cancel() call)
                     if (!(error instanceof CancelledException)) {
-                      throw error;
+                      console.error(error);
                     }
                   });
               } else if (this.rxjs?.isObservable(asyncProcess)) {
                 const rxjs = this.rxjs as RxJsFacade;
                 this._observable$ = (asyncProcess as unknown as Observable<any>)
                   .pipe(
-                    // use `switchMap` so that it cancels the previous subscription and a new observable is subscribed
-                    rxjs.switchMap((asyncResult) => this.asyncProcessCallback(asyncResult, cell, value, columnDef, item))
-                  ).subscribe();
+                    // use `switchMap` so that it cancels any previous subscription, it must return an observable so we can use `of` for that, and then finally we can subscribe to the new observable
+                    rxjs.switchMap((asyncResult) => rxjs.of(asyncResult))
+                  ).subscribe(
+                    (asyncResult: any) => this.asyncProcessCallback(asyncResult, cell, value, columnDef, item),
+                    (error: any) => console.error(error)
+                  );
               }
             }
           }

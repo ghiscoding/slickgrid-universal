@@ -1,5 +1,3 @@
-import 'jest-extended';
-import { GridOption } from '../../interfaces';
 import {
   calculateAvailableSpace,
   findFirstElementAttribute,

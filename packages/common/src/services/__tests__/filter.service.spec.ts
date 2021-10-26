@@ -1,6 +1,5 @@
 // import 3rd party lib multiple-select for the tests
 import 'multiple-select-modified';
-import 'jest-extended';
 import { of, throwError } from 'rxjs';
 
 import { FieldType } from '../../enums/index';
