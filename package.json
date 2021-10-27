@@ -60,12 +60,12 @@
   },
   "devDependencies": {
     "@types/jest": "^27.0.2",
-    "@types/node": "^16.10.2",
-    "@typescript-eslint/eslint-plugin": "^4.33.0",
-    "@typescript-eslint/parser": "^4.33.0",
-    "cypress": "^8.5.0",
-    "eslint": "^7.32.0",
-    "eslint-plugin-import": "^2.24.2",
+    "@types/node": "^16.11.6",
+    "@typescript-eslint/eslint-plugin": "^5.2.0",
+    "@typescript-eslint/parser": "^5.2.0",
+    "cypress": "^8.7.0",
+    "eslint": "^8.1.0",
+    "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "jest": "^27.3.1",
     "jest-cli": "^27.3.1",
@@ -74,16 +74,16 @@
     "jsdom": "^18.0.0",
     "jsdom-global": "^3.0.2",
     "lerna": "^3.22.1",
-    "mocha": "^9.1.2",
-    "mochawesome": "^6.3.0",
+    "mocha": "^9.1.3",
+    "mochawesome": "^6.3.1",
     "npm-run-all": "^4.1.5",
-    "rxjs": "^7.3.1",
+    "rxjs": "^7.4.0",
     "serve": "^12.0.1",
     "ts-jest": "^27.0.7",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.4"
   },
   "engines": {
-    "node": ">=14.15.0",
+    "node": ">=14.17.0",
     "npm": ">=6.14.8"
   }
 }
