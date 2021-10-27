@@ -82,8 +82,8 @@ import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-c
 import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
+import { TextExportService } from '@slickgrid-universal/text-export';
 
-import { TextExportService } from '../services/textExport.service';
 import { SalesforceGlobalGridOptions } from '../salesforce-global-grid-options';
 import { SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
 import { UniversalContainerService } from '../services/universalContainer.service';
@@ -1352,8 +1352,7 @@ export class SlickVanillaGridBundle {
   private registerResources() {
     // when using Salesforce, we want the Export to CSV always enabled without registering it
     if (this.gridOptions.enableTextExport && this.gridOptions.useSalesforceDefaultGridOptions) {
-      const textExportService = new TextExportService();
-      this._registeredResources.push(textExportService);
+      this._registeredResources.push(new TextExportService());
     }
     if (this.gridOptions.useSalesforceDefaultGridOptions) {
       this._registeredResources.push(new SlickCustomTooltip());
