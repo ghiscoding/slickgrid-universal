@@ -1,0 +1,453 @@
+import {
+  calculateAvailableSpace,
+  CancellablePromiseWrapper,
+  cancellablePromise,
+  CancelledException,
+  Column,
+  ContainerService,
+  CustomTooltipOption,
+  findFirstElementAttribute,
+  Formatter,
+  getHtmlElementOffset,
+  GridOption,
+  Observable,
+  RxJsFacade,
+  sanitizeTextByAvailableSanitizer,
+  SharedService,
+  SlickDataView,
+  SlickEventData,
+  SlickEventHandler,
+  SlickGrid,
+  SlickNamespace,
+  Subscription,
+} from '@slickgrid-universal/common';
+
+// using external SlickGrid JS libraries
+declare const Slick: SlickNamespace;
+
+/**
+ * A plugin to add Custom Tooltip when hovering a cell, it subscribes to the cell "onMouseEnter" and "onMouseLeave" events.
+ * The "customTooltip" is defined in the Column Definition OR Grid Options (the first found will have priority over the second)
+ * To specify a tooltip when hovering a cell, extend the column definition like so:
+ *
+ * Available plugin options (same options are available in both column definition and/or grid options)
+ * Example 1  - via Column Definition
+ *  this.columnDefinitions = [
+ *    {
+ *      id: "action", name: "Action", field: "action", formatter: fakeButtonFormatter,
+ *      customTooltip: {
+ *        formatter: tooltipTaskFormatter,
+ *        usabilityOverride: (args) => !!(args.dataContext.id % 2) // show it only every second row
+ *      }
+ *    }
+ *  ];
+ *
+ *  OR Example 2 - via Grid Options (for all columns), NOTE: the column definition tooltip options will win over the options defined in the grid options
+ *  this.gridOptions = {
+ *    enableCellNavigation: true,
+ *    customTooltip: {
+ *    },
+ *  };
+ */
+export class SlickCustomTooltip {
+  protected _addonOptions?: CustomTooltipOption;
+  protected _cellAddonOptions?: CustomTooltipOption;
+  protected _cellNodeElm?: HTMLDivElement;
+  protected _cancellablePromise?: CancellablePromiseWrapper;
+  protected _observable$?: Subscription;
+  protected _rxjs?: RxJsFacade | null = null;
+  protected _sharedService?: SharedService | null = null;
+  protected _tooltipElm?: HTMLDivElement;
+  protected _defaultOptions = {
+    className: 'slick-custom-tooltip',
+    offsetLeft: 0,
+    offsetRight: 0,
+    offsetTopBottom: 4,
+    hideArrow: false,
+    regularTooltipWhiteSpace: 'pre-line',
+    whiteSpace: 'normal',
+  } as CustomTooltipOption;
+  protected _grid!: SlickGrid;
+  protected _eventHandler: SlickEventHandler;
+  name: 'CustomTooltip' = 'CustomTooltip';
+
+  constructor() {
+    this._eventHandler = new Slick.EventHandler();
+  }
+
+  get addonOptions(): CustomTooltipOption | undefined {
+    return this._addonOptions;
+  }
+
+  get cancellablePromise() {
+    return this._cancellablePromise;
+  }
+
+  get cellAddonOptions(): CustomTooltipOption | undefined {
+    return this._cellAddonOptions;
+  }
+
+  get className(): string {
+    return this._cellAddonOptions?.className ?? 'slick-custom-tooltip';
+  }
+  get dataView(): SlickDataView {
+    return this._grid.getData<SlickDataView>() || {};
+  }
+
+  /** Getter for the Grid Options pulled through the Grid Object */
+  get gridOptions(): GridOption {
+    return this._grid.getOptions() || {};
+  }
+
+  /** Getter for the grid uid */
+  get gridUid(): string {
+    return this._grid?.getUID() || '';
+  }
+  get gridUidSelector(): string {
+    return this.gridUid ? `.${this.gridUid}` : '';
+  }
+
+  get tooltipElm(): HTMLDivElement | undefined {
+    return this._tooltipElm;
+  }
+
+  addRxJsResource(rxjs: RxJsFacade) {
+    this._rxjs = rxjs;
+  }
+
+  init(grid: SlickGrid, containerService: ContainerService) {
+    this._grid = grid;
+    this._rxjs = containerService.get<RxJsFacade>('RxJsFacade');
+    this._sharedService = containerService.get<SharedService>('SharedService');
+    this._addonOptions = { ...this._defaultOptions, ...(this._sharedService?.gridOptions?.customTooltip) } as CustomTooltipOption;
+    this._eventHandler
+      .subscribe(grid.onMouseEnter, this.handleOnMouseEnter.bind(this) as unknown as EventListener)
+      .subscribe(grid.onHeaderMouseEnter, (e, args) => this.handleOnHeaderMouseEnterByType(e, args, 'slick-header-column'))
+      .subscribe(grid.onHeaderRowMouseEnter, (e, args) => this.handleOnHeaderMouseEnterByType(e, args, 'slick-headerrow-column'))
+      .subscribe(grid.onMouseLeave, this.hideTooltip.bind(this) as unknown as EventListener)
+      .subscribe(grid.onHeaderMouseLeave, this.hideTooltip.bind(this) as unknown as EventListener)
+      .subscribe(grid.onHeaderRowMouseLeave, this.hideTooltip.bind(this) as unknown as EventListener);
+  }
+
+  dispose() {
+    // hide (remove) any tooltip and unsubscribe from all events
+    this.hideTooltip();
+    this._cancellablePromise = undefined;
+    this._eventHandler.unsubscribeAll();
+  }
+
+  /**
+   * hide (remove) tooltip from the DOM, it will also remove it from the DOM and also cancel any pending requests (as mentioned below).
+   * When using async process, it will also cancel any opened Promise/Observable that might still be pending.
+   */
+  hideTooltip() {
+    this._cancellablePromise?.cancel();
+    this._observable$?.unsubscribe();
+    const prevTooltip = document.body.querySelector(`.${this.className}${this.gridUidSelector}`);
+    prevTooltip?.remove();
+  }
+
+  getOptions(): CustomTooltipOption | undefined {
+    return this._addonOptions;
+  }
+
+  setOptions(newOptions: CustomTooltipOption) {
+    this._addonOptions = { ...this._addonOptions, ...newOptions } as CustomTooltipOption;
+  }
+
+  // --
+  // protected functions
+  // ---------------------
+
+  /**
+   * Async process callback will hide any prior tooltip & then merge the new result with the item `dataContext` under a `__params` property
+   * (unless a new prop name is provided) to provice as dataContext object to the asyncPostFormatter.
+   */
+  protected asyncProcessCallback(asyncResult: any, cell: { row: number, cell: number }, value: any, columnDef: Column, dataContext: any) {
+    this.hideTooltip();
+    const itemWithAsyncData = { ...dataContext, [this.addonOptions?.asyncParamsPropName ?? '__params']: asyncResult };
+    if (this._cellAddonOptions?.useRegularTooltip) {
+      this.renderRegularTooltip(this._cellAddonOptions!.asyncPostFormatter, cell, value, columnDef, itemWithAsyncData);
+    } else {
+      this.renderTooltipFormatter(this._cellAddonOptions!.asyncPostFormatter, cell, value, columnDef, itemWithAsyncData);
+    }
+  }
+
+  /** depending on the selector type, execute the necessary handler code */
+  protected handleOnHeaderMouseEnterByType(event: SlickEventData, args: any, selector: string) {
+    // before doing anything, let's remove any previous tooltip before
+    // and cancel any opened Promise/Observable when using async
+    this.hideTooltip();
+
+    const cell = {
+      row: -1, // negative row to avoid pulling any dataContext while rendering
+      cell: this._grid.getColumns().findIndex((col) => (args?.column?.id ?? '') === col.id)
+    };
+    const columnDef = args.column;
+    const item = {};
+    const isHeaderRowType = selector === 'slick-headerrow-column';
+
+    // run the override function (when defined), if the result is false it won't go further
+    args = args || {};
+    args.cell = cell.cell;
+    args.row = cell.row;
+    args.columnDef = columnDef;
+    args.dataContext = item;
+    args.grid = this._grid;
+    args.type = isHeaderRowType ? 'header-row' : 'header';
+    this._cellAddonOptions = { ...this._addonOptions, ...(columnDef?.customTooltip) } as CustomTooltipOption;
+    if (columnDef?.disableTooltip || (typeof this._cellAddonOptions?.usabilityOverride === 'function' && !this._cellAddonOptions.usabilityOverride(args))) {
+      return;
+    }
+
+    if (columnDef && event.target) {
+      this._cellNodeElm = (event.target as HTMLDivElement).closest(`.${selector}`) as HTMLDivElement;
+      const formatter = isHeaderRowType ? this._cellAddonOptions.headerRowFormatter : this._cellAddonOptions.headerFormatter;
+
+      if (this._cellAddonOptions?.useRegularTooltip || !formatter) {
+        const formatterOrText = !isHeaderRowType ? columnDef.name : this._cellAddonOptions?.useRegularTooltip ? null : formatter;
+        this.renderRegularTooltip(formatterOrText, cell, null, columnDef, item);
+      } else if (this._cellNodeElm && typeof formatter === 'function') {
+        this.renderTooltipFormatter(formatter, cell, null, columnDef, item);
+      }
+    }
+  }
+
+  protected async handleOnMouseEnter(event: SlickEventData) {
+    // before doing anything, let's remove any previous tooltip before
+    // and cancel any opened Promise/Observable when using async
+    this.hideTooltip();
+
+    if (event && this._grid) {
+      const cell = this._grid.getCellFromEvent(event);
+      if (cell) {
+        const item = this.dataView ? this.dataView.getItem(cell.row) : this._grid.getDataItem(cell.row);
+        const columnDef = this._grid.getColumns()[cell.cell];
+        this._cellNodeElm = this._grid.getCellNode(cell.row, cell.cell) as HTMLDivElement;
+
+        if (item && columnDef) {
+          this._cellAddonOptions = { ...this._addonOptions, ...(columnDef?.customTooltip) } as CustomTooltipOption;
+
+          if (columnDef?.disableTooltip || (typeof this._cellAddonOptions?.usabilityOverride === 'function' && !this._cellAddonOptions.usabilityOverride({ cell: cell.cell, row: cell.row, dataContext: item, column: columnDef, grid: this._grid, type: 'cell' }))) {
+            return;
+          }
+
+          const value = item.hasOwnProperty(columnDef.field) ? item[columnDef.field] : null;
+
+          // when there aren't any formatter OR when user specifically want to use a regular tooltip (via "title" attribute)
+          if ((this._cellAddonOptions.useRegularTooltip && !this._cellAddonOptions?.asyncProcess) || !this._cellAddonOptions?.formatter) {
+            this.renderRegularTooltip(columnDef.formatter, cell, value, columnDef, item);
+          } else {
+            // when we aren't using regular tooltip and we do have a tooltip formatter, let's render it
+            if (typeof this._cellAddonOptions?.formatter === 'function') {
+              this.renderTooltipFormatter(this._cellAddonOptions.formatter, cell, value, columnDef, item);
+            }
+
+            // when tooltip is an Async (delayed, e.g. with a backend API call)
+            if (typeof this._cellAddonOptions?.asyncProcess === 'function') {
+              const asyncProcess = this._cellAddonOptions.asyncProcess(cell.row, cell.cell, value, columnDef, item, this._grid);
+              if (!this._cellAddonOptions.asyncPostFormatter) {
+                console.error(`[Slickgrid-Universal] when using "asyncProcess" with Custom Tooltip, you must also provide an "asyncPostFormatter" formatter.`);
+              }
+
+              if (asyncProcess instanceof Promise) {
+                // create a new cancellable promise which will resolve, unless it's cancelled, with the udpated `dataContext` object that includes the `__params`
+                this._cancellablePromise = cancellablePromise(asyncProcess);
+                this._cancellablePromise.promise
+                  .then((asyncResult: any) => this.asyncProcessCallback(asyncResult, cell, value, columnDef, item))
+                  .catch((error: Error) => {
+                    // we will throw back any errors, unless it's a cancelled promise which in that case will be disregarded (thrown by the promise wrapper cancel() call)
+                    if (!(error instanceof CancelledException)) {
+                      console.error(error);
+                    }
+                  });
+              } else if (this._rxjs?.isObservable(asyncProcess)) {
+                const rxjs = this._rxjs as RxJsFacade;
+                this._observable$ = (asyncProcess as unknown as Observable<any>)
+                  .pipe(
+                    // use `switchMap` so that it cancels any previous subscription, it must return an observable so we can use `of` for that, and then finally we can subscribe to the new observable
+                    rxjs.switchMap((asyncResult) => rxjs.of(asyncResult))
+                  ).subscribe(
+                    (asyncResult: any) => this.asyncProcessCallback(asyncResult, cell, value, columnDef, item),
+                    (error: any) => console.error(error)
+                  );
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Parse the Custom Formatter (when provided) or return directly the text when it is already a string.
+   * We will also sanitize the text in both cases before returning it so that it can be used safely.
+   */
+  protected parseFormatterAndSanitize(formatterOrText: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: unknown): string {
+    if (typeof formatterOrText === 'function') {
+      const tooltipText = formatterOrText(cell.row, cell.cell, value, columnDef, item, this._grid);
+      const formatterText = (typeof tooltipText === 'object' && tooltipText?.text) ? tooltipText.text : (typeof tooltipText === 'string' ? tooltipText : '');
+      return sanitizeTextByAvailableSanitizer(this.gridOptions, formatterText);
+    } else if (typeof formatterOrText === 'string') {
+      return sanitizeTextByAvailableSanitizer(this.gridOptions, formatterOrText);
+    }
+    return '';
+  }
+
+  /**
+   * Parse the cell formatter and assume it might be html
+   * then create a temporary html element to easily retrieve the first [title=""] attribute text content
+   * also clear the "title" attribute from the grid div text content so that it won't show also as a 2nd browser tooltip
+   */
+  protected renderRegularTooltip(formatterOrText: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: any) {
+    const tmpDiv = document.createElement('div');
+    tmpDiv.innerHTML = this.parseFormatterAndSanitize(formatterOrText, cell, value, columnDef, item);
+
+    let tooltipText = columnDef?.toolTip ?? '';
+    let tmpTitleElm: HTMLDivElement | null | undefined;
+
+    if (!tooltipText) {
+      if (this._cellNodeElm && (this._cellNodeElm.clientWidth < this._cellNodeElm.scrollWidth) && !this._cellAddonOptions?.useRegularTooltipFromFormatterOnly) {
+        tooltipText = this._cellNodeElm.textContent?.trim() ?? '';
+        if (this._cellAddonOptions?.tooltipTextMaxLength && tooltipText.length > this._cellAddonOptions?.tooltipTextMaxLength) {
+          tooltipText = tooltipText.substr(0, this._cellAddonOptions.tooltipTextMaxLength - 3) + '...';
+        }
+        tmpTitleElm = this._cellNodeElm;
+      } else {
+        if (this._cellAddonOptions?.useRegularTooltipFromFormatterOnly) {
+          tmpTitleElm = tmpDiv.querySelector<HTMLDivElement>('[title], [data-slick-tooltip]');
+        } else {
+          tmpTitleElm = findFirstElementAttribute(this._cellNodeElm, ['title', 'data-slick-tooltip']) ? this._cellNodeElm : tmpDiv.querySelector<HTMLDivElement>('[title], [data-slick-tooltip]');
+          if ((!tmpTitleElm || !findFirstElementAttribute(tmpTitleElm, ['title', 'data-slick-tooltip'])) && this._cellNodeElm) {
+            tmpTitleElm = this._cellNodeElm.querySelector<HTMLDivElement>('[title], [data-slick-tooltip]');
+          }
+        }
+        if (!tooltipText || (typeof formatterOrText === 'function' && this._cellAddonOptions?.useRegularTooltipFromFormatterOnly)) {
+          tooltipText = findFirstElementAttribute(tmpTitleElm, ['title', 'data-slick-tooltip']) || '';
+        }
+      }
+    }
+
+    if (tooltipText !== '') {
+      this.renderTooltipFormatter(formatterOrText, cell, value, columnDef, item, tooltipText);
+    }
+
+    // also clear any "title" attribute to avoid showing a 2nd browser tooltip
+    this.swapAndClearTitleAttribute(tmpTitleElm, tooltipText);
+  }
+
+  protected renderTooltipFormatter(formatter: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: unknown, tooltipText?: string, inputTitleElm?: Element | null) {
+    // create the tooltip DOM element with the text returned by the Formatter
+    this._tooltipElm = document.createElement('div');
+    this._tooltipElm.className = this.className;
+    this._tooltipElm.classList.add(this.gridUid);
+    this._tooltipElm.classList.add('l' + cell.cell);
+    this._tooltipElm.classList.add('r' + cell.cell);
+
+    let outputText = tooltipText || this.parseFormatterAndSanitize(formatter, cell, value, columnDef, item) || '';
+    outputText = (this._cellAddonOptions?.tooltipTextMaxLength && outputText.length > this._cellAddonOptions.tooltipTextMaxLength) ? outputText.substr(0, this._cellAddonOptions.tooltipTextMaxLength - 3) + '...' : outputText;
+
+    let finalOutputText = '';
+    if (!tooltipText || this._cellAddonOptions?.renderRegularTooltipAsHtml) {
+      finalOutputText = sanitizeTextByAvailableSanitizer(this.gridOptions, outputText);
+      this._tooltipElm.innerHTML = finalOutputText;
+      this._tooltipElm.style.whiteSpace = this._cellAddonOptions?.whiteSpace ?? this._defaultOptions.whiteSpace as string;
+    } else {
+      finalOutputText = outputText || '';
+      this._tooltipElm.textContent = finalOutputText;
+      this._tooltipElm.style.whiteSpace = this._cellAddonOptions?.regularTooltipWhiteSpace ?? this._defaultOptions.regularTooltipWhiteSpace as string; // use `pre` so that sequences of white space are collapsed. Lines are broken at newline characters
+    }
+
+    // optional max height/width of the tooltip container
+    if (this._cellAddonOptions?.maxHeight) {
+      this._tooltipElm.style.maxHeight = `${this._cellAddonOptions.maxHeight}px`;
+    }
+    if (this._cellAddonOptions?.maxWidth) {
+      this._tooltipElm.style.maxWidth = `${this._cellAddonOptions.maxWidth}px`;
+    }
+
+    // when do have text to show, then append the new tooltip to the html body & reposition the tooltip
+    if (finalOutputText) {
+      document.body.appendChild(this._tooltipElm);
+
+      // reposition the tooltip on top of the cell that triggered the mouse over event
+      this.reposition(cell);
+
+      // user could optionally hide the tooltip arrow (we can simply update the CSS variables, that's the only way we have to update CSS pseudo)
+      if (!this._cellAddonOptions?.hideArrow) {
+        this._tooltipElm.classList.add('tooltip-arrow');
+      }
+
+      // also clear any "title" attribute to avoid showing a 2nd browser tooltip
+      this.swapAndClearTitleAttribute(inputTitleElm, outputText);
+    }
+  }
+
+  /**
+   * Reposition the Tooltip to be top-left position over the cell.
+   * By default we use an "auto" mode which will allow to position the Tooltip to the best logical position in the window, also when we mention position, we are talking about the relative position against the grid cell.
+   * We can assume that in 80% of the time the default position is top-right, the default is "auto" but we can also override it and use a specific position.
+   * Most of the time positioning of the tooltip will be to the "top-right" of the cell is ok but if our column is completely on the right side then we'll want to change the position to "left" align.
+   * Same goes for the top/bottom position, Most of the time positioning the tooltip to the "top" but if we are hovering a cell at the top of the grid and there's no room to display it then we might need to reposition to "bottom" instead.
+   */
+  protected reposition(cell: { row: number; cell: number; }) {
+    if (this._tooltipElm) {
+      this._cellNodeElm = this._cellNodeElm || this._grid.getCellNode(cell.row, cell.cell) as HTMLDivElement;
+      const cellPosition = getHtmlElementOffset(this._cellNodeElm) || { top: 0, left: 0 };
+      const containerWidth = this._cellNodeElm.offsetWidth;
+      const calculatedTooltipHeight = this._tooltipElm.getBoundingClientRect().height;
+      const calculatedTooltipWidth = this._tooltipElm.getBoundingClientRect().width;
+      const calculatedBodyWidth = document.body.offsetWidth || window.innerWidth;
+
+      // first calculate the default (top/left) position
+      let newPositionTop = cellPosition.top - this._tooltipElm.offsetHeight - (this._cellAddonOptions?.offsetTopBottom ?? 0);
+      let newPositionLeft = cellPosition.left - (this._cellAddonOptions?.offsetLeft ?? 0);
+
+      // user could explicitely use a "left-align" arrow position, (when user knows his column is completely on the right)
+      // or when using "auto" and we detect not enough available space then we'll position to the "left" of the cell
+      // NOTE the class name is for the arrow and is inverse compare to the tooltip itself, so if user ask for "left-align", then the arrow will in fact be "arrow-right-align"
+      const position = this._cellAddonOptions?.position ?? 'auto';
+      if (position === 'left-align' || ((position === 'auto' || position !== 'right-align') && (newPositionLeft + calculatedTooltipWidth) > calculatedBodyWidth)) {
+        newPositionLeft -= (calculatedTooltipWidth - containerWidth - (this._cellAddonOptions?.offsetRight ?? 0));
+        this._tooltipElm.classList.remove('arrow-left-align');
+        this._tooltipElm.classList.add('arrow-right-align');
+      } else {
+        this._tooltipElm.classList.add('arrow-left-align');
+        this._tooltipElm.classList.remove('arrow-right-align');
+      }
+
+      // do the same calculation/reposition with top/bottom (default is top of the cell or in other word starting from the cell going down)
+      // NOTE the class name is for the arrow and is inverse compare to the tooltip itself, so if user ask for "bottom", then the arrow will in fact be "arrow-top"
+      if (position === 'bottom' || ((position === 'auto' || position !== 'top') && calculatedTooltipHeight > calculateAvailableSpace(this._cellNodeElm).top)) {
+        newPositionTop = cellPosition.top + (this.gridOptions.rowHeight ?? 0) + (this._cellAddonOptions?.offsetTopBottom ?? 0);
+        this._tooltipElm.classList.remove('arrow-down');
+        this._tooltipElm.classList.add('arrow-up');
+      } else {
+        this._tooltipElm.classList.add('arrow-down');
+        this._tooltipElm.classList.remove('arrow-up');
+      }
+
+      // reposition the tooltip over the cell (90% of the time this will end up using a position on the "right" of the cell)
+      this._tooltipElm.style.top = `${newPositionTop}px`;
+      this._tooltipElm.style.left = `${newPositionLeft}px`;
+    }
+  }
+
+  /**
+   * swap and copy the "title" attribute into a new custom attribute then clear the "title" attribute
+   * from the grid div text content so that it won't show also as a 2nd browser tooltip
+   */
+  protected swapAndClearTitleAttribute(inputTitleElm?: Element | null, tooltipText?: string) {
+    // the title attribute might be directly on the slick-cell container element (when formatter returns a result object)
+    // OR in a child element (most commonly as a custom formatter)
+    const titleElm = inputTitleElm || (this._cellNodeElm && ((this._cellNodeElm.hasAttribute('title') && this._cellNodeElm.getAttribute('title')) ? this._cellNodeElm : this._cellNodeElm?.querySelector('[title]')));
+
+    // flip tooltip text from `title` to `data-slick-tooltip`
+    if (titleElm) {
+      titleElm.setAttribute('data-slick-tooltip', tooltipText || '');
+      if (titleElm.hasAttribute('title')) {
+        titleElm.setAttribute('title', '');
+      }
+    }
+  }
+}

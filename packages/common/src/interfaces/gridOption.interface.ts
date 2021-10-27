@@ -9,6 +9,7 @@ import {
   CompositeEditorOpenDetailOption,
   ContextMenu,
   CustomFooterOption,
+  CustomTooltipOption,
   DataViewOption,
   DraggableGrouping,
   EditCommand,
@@ -124,6 +125,9 @@ export interface GridOption {
   /** Checkbox Select Plugin options (columnId, cssClass, toolTip, width) */
   checkboxSelector?: CheckboxSelectorOption;
 
+  /** A callback function that will be used to define row spanning accross multiple columns */
+  colspanCallback?: (item: any) => ItemMetadata;
+
   /** Defaults to " - ", separator between the column group label and the column label. */
   columnGroupSeparator?: string;
 
@@ -139,14 +143,17 @@ export interface GridOption {
   /** Defaults to false, which leads to create the footer row of the grid */
   createFooterRow?: boolean;
 
-  /** A callback function that will be used to define row spanning accross multiple columns */
-  colspanCallback?: (item: any) => ItemMetadata;
-
   /** Default to false, which leads to create an extra pre-header panel (on top of column header) for column grouping purposes */
   createPreHeaderPanel?: boolean;
 
   /** Custom Footer Options */
   customFooterOptions?: CustomFooterOption;
+
+  /**
+   * Custom Tooltip Options, the tooltip could be defined in any of the Column Definition or in the Grid Options,
+   * it will first try to find it in the Column that the user is hovering over or else (when not found) go and try to find it in the Grid Options
+   */
+  customTooltip?: CustomTooltipOption;
 
   /** Data item column value extractor (getter) that can be used by the Excel like copy buffer plugin */
   dataItemColumnValueExtractor?: (item: any, columnDef: Column) => any;

@@ -18,7 +18,7 @@ $focus-color:                                         rgb(115, 179, 229) !defaul
 /* Slickgrid container, including headers but ex      cluding pagination */
 $container-border-top:                                0 none !default;
 $container-border-right:                              0 none !default;
-$container-border-bottom:                             1px solid $border-color !default;
+$container-border-bottom:                             1px solid #{$border-color} !default;
 $container-border-left:                               0 none !default;
 
 /* grid */
@@ -35,7 +35,7 @@ $cell-box-shadow:                                     inherit !default;
 $cell-text-color:                                     #000000 !default;
 $cell-font-family:                                    $font-family !default;
 $cell-font-weight:                                    normal !default;
-$cell-border-top:                                     1px solid $border-color !default;
+$cell-border-top:                                     1px solid #{$border-color} !default;
 $cell-border-right:                                   1px transparent !default;
 $cell-border-bottom:                                  1px transparent !default;
 $cell-border-left:                                    1px transparent !default;
@@ -901,6 +901,28 @@ $footer-right-float:                                  right !default;
 $footer-right-text-align:                             right !default;
 $footer-right-text-color:                             $footer-text-color !default;
 $footer-right-width:                                  50% !default;
+
+/** Custom Tooltip */
+$slick-tooltip-background-color:                      #ffffff !default;
+$slick-tooltip-border-color:                          #BFBDBD !default;
+$slick-tooltip-border:                                2px solid #{$slick-tooltip-border-color} !default;
+$slick-tooltip-border-radius:                         4px !default;
+$slick-tooltip-font-size:                             calc(#{$font-size-base} - 1px) !default;
+$slick-tooltip-color:                                 inherit !default;
+$slick-tooltip-height:                                auto !default;
+$slick-tooltip-padding:                               7px !default;
+$slick-tooltip-width:                                 auto !default;
+$slick-tooltip-overflow:                              inherit !default;
+$slick-tooltip-text-overflow:                         ellipsis !default;
+$slick-tooltip-white-space:                           normal !default;
+$slick-tooltip-z-index:                               9999 !default;
+// tooltip arrow
+$slick-tooltip-arrow-color:                           darken($slick-tooltip-border-color, 5%) !default;
+$slick-tooltip-arrow-size:                            8px !default;
+$slick-tooltip-down-arrow-top-margin:                 100% !default;
+$slick-tooltip-up-arrow-top-margin:                   -($slick-tooltip-arrow-size * 2) !default;
+$slick-tooltip-arrow-side-margin:                     9px !default;
+$slick-tooltip-right-arrow-side-margin:               calc(100% - #{($slick-tooltip-arrow-size * 2)} - #{$slick-tooltip-arrow-side-margin}) !default;
 
 /** Empty Data Warning element */
 $empty-data-warning-color:                            $cell-text-color !default;

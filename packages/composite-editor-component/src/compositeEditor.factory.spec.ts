@@ -1,4 +1,3 @@
-import 'jest-extended';
 import { Column, CompositeEditorOption, Editors, ElementPosition, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '@slickgrid-universal/common';
 import { CompositeEditor } from './compositeEditor.factory';
 

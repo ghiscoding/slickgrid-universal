@@ -38,7 +38,7 @@ export interface SlickGrid {
   addCellCssStyles(key: string, hash: any): void;
 
   /** Apply a Formatter Result to a Cell DOM Node */
-  applyFormatResultToCellNode(formatterResult?: FormatterResultObject, cellNode?: HTMLElement, suppressRemove?: boolean): void;
+  applyFormatResultToCellNode(formatterResult?: FormatterResultObject, cellNode?: HTMLDivElement, suppressRemove?: boolean): void;
 
   /** Proportionally resize a specific column by its name, index or Id */
   autosizeColumn(columnOrIndexOrId: string | number, isInit: boolean): void;
@@ -86,7 +86,7 @@ export interface SlickGrid {
   focus(): void;
 
   /** Get the canvas DOM element */
-  getActiveCanvasNode(): HTMLElement;
+  getActiveCanvasNode(): HTMLDivElement;
 
   /**
    * Returns an object representing the coordinates of the currently active cell:
@@ -99,16 +99,16 @@ export interface SlickGrid {
   getActiveCell(): { row: number; cell: number; };
 
   /** Returns the DOM element containing the currently active cell. If no cell is active, null is returned. */
-  getActiveCellNode(): HTMLElement;
+  getActiveCellNode(): HTMLDivElement;
 
   /** Returns an object representing information about the active cell's position. All coordinates are absolute and take into consideration the visibility and scrolling position of all ancestors. */
   getActiveCellPosition(): ElementPosition;
 
   /** Get the active Viewport DOM node element */
-  getActiveViewportNode(): HTMLElement;
+  getActiveViewportNode(): HTMLDivElement;
 
   /** Get the canvas DOM element */
-  getCanvases(): HTMLElement;
+  getCanvases(): HTMLDivElement;
 
   /** Get Grid Canvas Node DOM Element */
   getCanvasNode(): HTMLCanvasElement;
@@ -129,21 +129,21 @@ export interface SlickGrid {
    * Returns a hash containing row and cell indexes from a standard W3C/jQuery event.
    * @param e A standard W3C/jQuery event.
    */
-  getCellFromEvent(e: Event): any;
+  getCellFromEvent(e: Event): { row: number; cell: number; };
 
   /**
    * Returns a hash containing row and cell indexes. Coordinates are relative to the top left corner of the grid beginning with the first row (not including the column headers).
    * @param x An x coordinate.
    * @param y A y coordinate.
    */
-  getCellFromPoint(x: number, y: number): any;
+  getCellFromPoint(x: number, y: number): { row: number; cell: number; };
 
   /**
    * Returns a DOM element containing a cell at a given row and cell.
    * @param row A row index.
    * @param cell A column index.
    */
-  getCellNode(row: number, cell: number): HTMLElement;
+  getCellNode(row: number, cell: number): HTMLDivElement;
 
   /**
    * Returns an object representing information about a cell's position. All coordinates are absolute and take into consideration the visibility and scrolling position of all ancestors.
@@ -162,7 +162,7 @@ export interface SlickGrid {
   getColumns(): Column[];
 
   /** Get Grid Canvas Node DOM Element */
-  getContainerNode(): HTMLElement;
+  getContainerNode(): HTMLDivElement;
 
   /** Returns an array of every data object, unless you're using DataView in which case it returns a DataView object. */
   getData<T = SlickDataView>(): T;
@@ -189,10 +189,10 @@ export interface SlickGrid {
   };
 
   /** Get the Footer DOM element */
-  getFooterRow(): HTMLElement;
+  getFooterRow(): HTMLDivElement;
 
   /** Get the Footer Row Column DOM element */
-  getFooterRowColumn(columnIdOrIdx: string | number): HTMLElement;
+  getFooterRowColumn(columnIdOrIdx: string | number): HTMLDivElement;
 
   /** Get frozen (pinned) row offset */
   getFrozenRowOffset(row: number): number;
@@ -201,19 +201,19 @@ export interface SlickGrid {
   getGridPosition(): ElementPosition;
 
   /** Get the Header DOM element */
-  getHeader(columnDef: Column): HTMLElement;
+  getHeader(columnDef: Column): HTMLDivElement;
 
   /** Get a specific Header Column DOM element */
-  getHeaderColumn(columnIdOrIdx: string | number): HTMLElement;
+  getHeaderColumn(columnIdOrIdx: string | number): HTMLDivElement;
 
   /** Get Header Column Width Difference in pixel */
   getHeaderColumnWidthDiff(): number;
 
   /** Get the Header Row DOM element */
-  getHeaderRow(): HTMLElement;
+  getHeaderRow(): HTMLDivElement;
 
   /** Get Header Row Column DOM element by its column Id */
-  getHeaderRowColumn(columnId: string | number): HTMLElement;
+  getHeaderRowColumn(columnId: string | number): HTMLDivElement;
 
   /** Get the headers width in pixel */
   getHeadersWidth(): number;
@@ -225,13 +225,13 @@ export interface SlickGrid {
   getPluginByName<T = keyof SlickPluginList>(name: string): T;
 
   /** Get the Pre-Header Panel DOM node element */
-  getPreHeaderPanel(): HTMLElement;
+  getPreHeaderPanel(): HTMLDivElement;
 
   /** Get the Pre-Header Panel Left DOM node element */
-  getPreHeaderPanelLeft(): HTMLElement;
+  getPreHeaderPanelLeft(): HTMLDivElement;
 
   /** Get the Pre-Header Panel Right DOM node element */
-  getPreHeaderPanelRight(): HTMLElement;
+  getPreHeaderPanelRight(): HTMLDivElement;
 
   /** Get rendered range */
   getRenderedRange(viewportTop?: number, viewportLeft?: number): { top: number; bottom: number; leftPx: number; rightPx: number; };
@@ -249,7 +249,7 @@ export interface SlickGrid {
   getSortColumns(): ColumnSort[];
 
   /** Get Top Panel DOM element */
-  getTopPanel(): HTMLElement;
+  getTopPanel(): HTMLDivElement;
 
   /** Get grid unique identifier */
   getUID(): string;
@@ -258,10 +258,10 @@ export interface SlickGrid {
   getViewport(viewportTop?: number, viewportLeft?: number): { top: number; bottom: number; leftPx: number; rightPx: number; };
 
   /** Get the Viewport DOM node element */
-  getViewportNode(): HTMLElement;
+  getViewportNode(): HTMLDivElement;
 
   /** Get all the Viewport node elements */
-  getViewports(): HTMLElement[];
+  getViewports(): HTMLDivElement[];
 
   /**
    * Accepts a row integer and a cell integer, scrolling the view to the row where row is its row index, and cell is its cell index. Optionally accepts a forceEdit boolean which, if true, will attempt to initiate the edit dialogue for the field in the specified cell.
@@ -363,7 +363,7 @@ export interface SlickGrid {
   scrollTo(yPos: number): void;
 
   /** Sets an active canvas node */
-  setActiveCanvasNode(element: HTMLElement): void;
+  setActiveCanvasNode(element: HTMLDivElement): void;
 
   /**
    * Sets an active cell.
@@ -384,7 +384,7 @@ export interface SlickGrid {
   setActiveRow(row: number, cell?: number, suppressScrollIntoView?: boolean): void;
 
   /** Sets an active viewport node */
-  setActiveViewportNode(element: HTMLElement): void;
+  setActiveViewportNode(element: HTMLDivElement): void;
 
   /**
    * Sets CSS classes to specific grid cells by calling removeCellCssStyles(key) followed by addCellCssStyles(key, hash). key is name for this set of styles so you can reference it later - to modify it or remove it, for example. hash is a per-row-index, per-column-name nested hash of CSS classes to apply.
@@ -521,6 +521,8 @@ export interface SlickGrid {
   onHeaderMouseEnter: SlickEvent<OnHeaderMouseEventArgs>;
   onHeaderMouseLeave: SlickEvent<OnHeaderMouseEventArgs>;
   onHeaderRowCellRendered: SlickEvent<OnHeaderRowCellRenderedEventArgs>;
+  onHeaderRowMouseEnter: SlickEvent<OnHeaderMouseEventArgs>;
+  onHeaderRowMouseLeave: SlickEvent<OnHeaderMouseEventArgs>;
   onKeyDown: SlickEvent<OnKeyDownEventArgs>;
   onMouseEnter: SlickEvent<SlickGridEventData>;
   onMouseLeave: SlickEvent<SlickGridEventData>;
@@ -541,12 +543,12 @@ export interface OnBeforeAppendCellEventArgs extends SlickGridEventData { row: n
 export interface OnBeforeCellEditorDestroyEventArgs extends SlickGridEventData { editor: Editor; }
 export interface OnBeforeColumnsResizeEventArgs extends SlickGridEventData { triggeredByColumn: string; }
 export interface OnBeforeEditCellEventArgs extends SlickGridEventData { row: number; cell: number; item: any; column: Column; target?: 'grid' | 'composite'; compositeEditorOptions?: CompositeEditorOption; }
-export interface OnBeforeHeaderCellDestroyEventArgs extends SlickGridEventData { node: HTMLElement; column: Column; }
-export interface OnBeforeHeaderRowCellDestroyEventArgs extends SlickGridEventData { node: HTMLElement; column: Column; }
-export interface OnBeforeFooterRowCellDestroyEventArgs extends SlickGridEventData { node: HTMLElement; column: Column; }
+export interface OnBeforeHeaderCellDestroyEventArgs extends SlickGridEventData { node: HTMLDivElement; column: Column; }
+export interface OnBeforeHeaderRowCellDestroyEventArgs extends SlickGridEventData { node: HTMLDivElement; column: Column; }
+export interface OnBeforeFooterRowCellDestroyEventArgs extends SlickGridEventData { node: HTMLDivElement; column: Column; }
 export interface OnCellChangeEventArgs extends SlickGridEventData { row: number; cell: number; item: any; column: Column; }
 export interface OnCellCssStylesChangedEventArgs extends SlickGridEventData { key: string; hash: string; }
-export interface OnColumnsDragEventArgs extends SlickGridEventData { triggeredByColumn: string; resizeHandle: HTMLElement; }
+export interface OnColumnsDragEventArgs extends SlickGridEventData { triggeredByColumn: string; resizeHandle: HTMLDivElement; }
 export interface OnColumnsReorderedEventArgs extends SlickGridEventData { impactedColumns: Column[]; }
 export interface OnColumnsResizedEventArgs extends SlickGridEventData { triggeredByColumn: string; }
 export interface OnColumnsResizeDblClickEventArgs extends SlickGridEventData { triggeredByColumn: string; }
@@ -554,15 +556,15 @@ export interface OnCompositeEditorChangeEventArgs extends SlickGridEventData { r
 export interface OnClickEventArgs extends SlickGridEventData { row: number; cell: number; }
 export interface OnDblClickEventArgs extends SlickGridEventData { row: number; cell: number; }
 export interface OnFooterContextMenuEventArgs extends SlickGridEventData { column: Column; }
-export interface OnFooterRowCellRenderedEventArgs extends SlickGridEventData { node: HTMLElement; column: Column; }
-export interface OnHeaderCellRenderedEventArgs extends SlickGridEventData { node: HTMLElement; column: Column; }
+export interface OnFooterRowCellRenderedEventArgs extends SlickGridEventData { node: HTMLDivElement; column: Column; }
+export interface OnHeaderCellRenderedEventArgs extends SlickGridEventData { node: HTMLDivElement; column: Column; }
 export interface OnFooterClickEventArgs extends SlickGridEventData { column: Column; }
 export interface OnHeaderClickEventArgs extends SlickGridEventData { column: Column; }
 export interface OnHeaderContextMenuEventArgs extends SlickGridEventData { column: Column; }
 export interface OnHeaderMouseEventArgs extends SlickGridEventData { column: Column; }
-export interface OnHeaderRowCellRenderedEventArgs extends SlickGridEventData { node: HTMLElement; column: Column; }
+export interface OnHeaderRowCellRenderedEventArgs extends SlickGridEventData { node: HTMLDivElement; column: Column; }
 export interface OnKeyDownEventArgs extends SlickGridEventData { row: number; cell: number; }
-export interface OnValidationErrorEventArgs extends SlickGridEventData { row: number; cell: number; validationResults: EditorValidationResult; column: Column; editor: Editor; cellNode: HTMLElement; }
+export interface OnValidationErrorEventArgs extends SlickGridEventData { row: number; cell: number; validationResults: EditorValidationResult; column: Column; editor: Editor; cellNode: HTMLDivElement; }
 export interface OnRenderedEventArgs extends SlickGridEventData { startRow: number; endRow: number; }
 export interface OnSelectedRowsChangedEventArgs extends SlickGridEventData { rows: number[], previousSelectedRows: number[] }
 export interface OnSetOptionsEventArgs extends SlickGridEventData { optionsBefore: GridOption, optionsAfter: GridOption }
@@ -570,7 +572,7 @@ export interface OnSetOptionsEventArgs extends SlickGridEventData { optionsBefor
 export interface OnScrollEventArgs extends SlickGridEventData { scrollLeft: number; scrollTop: number; }
 export interface OnDragEventArgs extends SlickGridEventData {
   count: number; deltaX: number; deltaY: number; offsetX: number; offsetY: number; originalX: number; originalY: number;
-  available: HTMLElement | HTMLElement[]; drag: HTMLElement; drop: HTMLElement | HTMLElement[]; helper: HTMLElement;
-  proxy: HTMLElement; target: HTMLElement; mode: string;
+  available: HTMLDivElement | HTMLDivElement[]; drag: HTMLDivElement; drop: HTMLDivElement | HTMLDivElement[]; helper: HTMLDivElement;
+  proxy: HTMLDivElement; target: HTMLDivElement; mode: string;
   row: number; rows: number[]; startX: number; startY: number;
 }

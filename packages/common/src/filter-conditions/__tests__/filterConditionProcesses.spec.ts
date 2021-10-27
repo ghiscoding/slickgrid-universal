@@ -1,5 +1,4 @@
 import * as moment from 'moment-mini';
-import 'jest-extended';
 
 import { getParsedSearchTermsByFieldType } from '../filterConditionProcesses';
 

@@ -267,6 +267,49 @@
   }
 }
 
+// ----------------------------------------------
+// Slick Tooltip Component
+// ----------------------------------------------
+
+.slick-custom-tooltip {
+  position: absolute;
+  background-color: var(--slick-tooltip-background-color, $slick-tooltip-background-color);
+  border: var(--slick-tooltip-border, $slick-tooltip-border);
+  border-radius: var(--slick-tooltip-border-radius, $slick-tooltip-border-radius);
+  color: var(--slick-tooltip-color, $slick-tooltip-color);
+  padding: var(--slick-tooltip-padding, $slick-tooltip-padding);
+  font-size: var(--slick-tooltip-font-size, $slick-tooltip-font-size);
+  height: var(--slick-tooltip-height, $slick-tooltip-height);
+  width: var(--slick-tooltip-width, $slick-tooltip-width);
+  z-index: var(--slick-tooltip-z-index, $slick-tooltip-z-index);
+  overflow: var(--slick-tooltip-overflow, $slick-tooltip-overflow);
+  text-overflow: var(--slick-tooltip-text-overflow, $slick-tooltip-text-overflow);
+  white-space: var(--slick-tooltip-white-space, $slick-tooltip-white-space);
+
+  &.tooltip-arrow::after {
+    content: "";
+    left: 0px;
+    position: absolute;
+    border: transparent;
+    border-style: solid;
+    border-width: var(--slick-tooltip-arrow-size, $slick-tooltip-arrow-size);
+  }
+  &.tooltip-arrow.arrow-up::after {
+    top: var(--slick-tooltip-up-arrow-top-margin, $slick-tooltip-up-arrow-top-margin);
+    border-bottom-color: var(--slick-tooltip-arrow-color, $slick-tooltip-arrow-color);
+  }
+  &.tooltip-arrow.arrow-down::after {
+    top: var(--slick-tooltip-down-arrow-top-margin, $slick-tooltip-down-arrow-top-margin);
+    border-top-color: var(--slick-tooltip-arrow-color, $slick-tooltip-arrow-color);
+  }
+  &.tooltip-arrow.arrow-left-align::after {
+    margin-left: var(--slick-tooltip-arrow-side-margin, $slick-tooltip-arrow-side-margin);
+  }
+  &.tooltip-arrow.arrow-right-align::after {
+    margin-left: var(--slick-tooltip-right-arrow-side-margin, $slick-tooltip-right-arrow-side-margin);
+  }
+}
+
 // ---------------------------------------------------------
 // Header Button Plugin - add button in header with command
 // ---------------------------------------------------------

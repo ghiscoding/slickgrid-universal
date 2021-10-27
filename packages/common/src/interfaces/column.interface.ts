@@ -3,6 +3,7 @@ import {
   CellMenu,
   ColumnEditor,
   ColumnFilter,
+  CustomTooltipOption,
   EditorValidator,
   Formatter,
   Grouping,
@@ -53,11 +54,23 @@ export interface Column<T = any> {
   /** CSS class to add to the column cell */
   cssClass?: string;
 
+  /**
+   * Custom Tooltip Options, the tooltip could be defined in any of the Column Definition or in the Grid Options,
+   * it will first try to find it in the Column that the user is hovering over or else (when not found) go and try to find it in the Grid Options
+   */
+  customTooltip?: CustomTooltipOption;
+
   /** Data key, for example this could be used as a property key for complex object comparison (e.g. dataKey: 'id') */
   dataKey?: string;
 
   /** Do we want default sort to be ascending? True by default */
   defaultSortAsc?: boolean;
+
+  /**
+   * defaults to False, optionally enable/disable tooltip.
+   * This is typically used on a specific column that you would like to completely disable the custom/regular tooltip.
+   */
+  disableTooltip?: boolean;
 
   /** Any inline editor function that implements Editor for the cell value or ColumnEditor */
   editor?: ColumnEditor;

@@ -45,6 +45,7 @@ import {
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
+import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import * as formatterUtilities from '@slickgrid-universal/common/dist/commonjs/formatters/formatterUtilities';
 
 import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle';
@@ -64,6 +65,7 @@ declare const Slick: any;
 const slickEventHandler = new MockSlickEventHandler() as unknown as SlickEventHandler;
 
 const extensionServiceStub = {
+  addRxJsResource: jest.fn(),
   bindDifferentExtensions: jest.fn(),
   createExtensionsBeforeGridCreation: jest.fn(),
   dispose: jest.fn(),
@@ -277,6 +279,14 @@ const mockGrid = {
   onScroll: jest.fn(),
   onDataviewCreated: new MockSlickEvent(),
 } as unknown as SlickGrid;
+
+const mockSlickCustomTooltip = {
+  init: jest.fn(),
+} as unknown as SlickCustomTooltip;
+
+jest.mock('@slickgrid-universal/custom-tooltip-plugin', () => ({
+  SlickCustomTooltip: jest.fn().mockImplementation(() => mockSlickCustomTooltip),
+}));
 
 const mockSlickEventHandlerImplementation = jest.fn().mockImplementation(() => mockSlickEventHandler);
 const mockDataViewImplementation = jest.fn().mockImplementation(() => mockDataView);
@@ -1000,13 +1010,15 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
 
         expect(TextExportService).toHaveBeenCalled();
-        expect(component.registeredResources.length).toBe(4); // TextExportService, GridService, GridStateService, SlickEmptyCompositeEditorComponent
+        expect(SlickCustomTooltip).toHaveBeenCalled();
+        expect(component.registeredResources.length).toBe(5); // TextExportService, SlickCustomTooltip, GridService, GridStateService, SlickEmptyCompositeEditorComponent
         expect(component.registeredResources[0] instanceof TextExportService).toBeTrue();
       });
 
       it('should add RxJS resource to all necessary Services when RxJS external resource is registered', () => {
         const rxjsMock = new RxJsResourceStub();
         const backendUtilitySpy = jest.spyOn(backendUtilityServiceStub, 'addRxJsResource');
+        const extensionServiceSpy = jest.spyOn(extensionServiceStub, 'addRxJsResource');
         const filterServiceSpy = jest.spyOn(filterServiceStub, 'addRxJsResource');
         const sortServiceSpy = jest.spyOn(sortServiceStub, 'addRxJsResource');
         const paginationServiceSpy = jest.spyOn(paginationServiceStub, 'addRxJsResource');

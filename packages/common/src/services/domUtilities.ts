@@ -1,7 +1,7 @@
 import { SearchTerm } from '../enums/index';
 import { Column, SelectOption, SlickGrid } from '../interfaces/index';
 import { TranslaterService } from './translater.service';
-import { htmlEncode, sanitizeTextByAvailableSanitizer } from './utilities';
+import { getHtmlElementOffset, htmlEncode, sanitizeTextByAvailableSanitizer } from './utilities';
 
 /**
  * Create the HTML DOM Element for a Select Editor or Filter, this is specific to these 2 types only and the unit tests are directly under them
@@ -125,4 +125,53 @@ export function buildSelectEditorOrFilterDomElement(type: 'editor' | 'filter', c
   selectElement.appendChild(selectOptionsFragment);
 
   return { selectElement, hasFoundSearchTerm };
+}
+
+export function calculateAvailableSpace(element: HTMLElement): { top: number; bottom: number; left: number; right: number; } {
+  // available space for each side
+  let bottom = 0;
+  let top = 0;
+  let left = 0;
+  let right = 0;
+
+  const windowHeight = window.innerHeight ?? 0;
+  const windowWidth = window.innerWidth ?? 0;
+  const scrollPosition = windowScrollPosition();
+  const pageScrollTop = scrollPosition.top;
+  const pageScrollLeft = scrollPosition.left;
+  const elmOffset = getHtmlElementOffset(element);
+
+  if (elmOffset) {
+    const elementOffsetTop = elmOffset.top ?? 0;
+    const elementOffsetLeft = elmOffset.left ?? 0;
+    top = elementOffsetTop - pageScrollTop;
+    bottom = windowHeight - (elementOffsetTop - pageScrollTop);
+    left = elementOffsetLeft - pageScrollLeft;
+    right = windowWidth - (elementOffsetLeft - pageScrollLeft);
+  }
+
+  return { top, bottom, left, right };
+}
+
+export function findFirstElementAttribute(inputElm: Element | null | undefined, attributes: string[]): string | null {
+  if (inputElm) {
+    for (const attribute of attributes) {
+      const attrData = inputElm.getAttribute(attribute);
+      if (attrData) {
+        return attrData;
+      }
+    }
+  }
+  return null;
+}
+
+/**
+ * Get the Window Scroll top/left Position
+ * @returns
+ */
+export function windowScrollPosition(): { left: number; top: number; } {
+  return {
+    left: window.pageXOffset || document.documentElement.scrollLeft || 0,
+    top: window.pageYOffset || document.documentElement.scrollTop || 0,
+  };
 }

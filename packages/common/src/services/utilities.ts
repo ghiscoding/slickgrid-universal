@@ -6,7 +6,7 @@ const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "m
 
 import { Constants } from '../constants';
 import { FieldType, OperatorString, OperatorType } from '../enums/index';
-import { EventSubscription, GridOption } from '../interfaces/index';
+import { CancellablePromiseWrapper, EventSubscription, GridOption } from '../interfaces/index';
 import { Observable, RxJsFacade, Subject, Subscription } from './rxjsFacade';
 
 /**
@@ -50,6 +50,36 @@ export function addWhiteSpaces(nbSpaces: number, spaceChar = ' '): string {
  */
 export function arrayRemoveItemByIndex<T>(array: T[], index: number): T[] {
   return array.filter((_el: T, i: number) => index !== i);
+}
+
+/** Cancelled Extension that can be only be thrown by the `cancellablePromise()` function */
+export class CancelledException extends Error {
+  constructor(message: string) {
+    super(message);
+    Object.setPrototypeOf(this, CancelledException.prototype);
+  }
+}
+
+/**
+ * From an input Promise, make it cancellable by wrapping it inside an object that holds the promise and a `cancel()` method
+ * @param {Promise<any>} - input Promise
+ * @returns {Object} - Promise wrapper that holds the promise and a `cancel()` method
+ */
+export function cancellablePromise<T = any>(inputPromise: Promise<T>): CancellablePromiseWrapper<T> {
+  let hasCancelled = false;
+
+  if (inputPromise instanceof Promise) {
+    return {
+      promise: inputPromise.then(result => {
+        if (hasCancelled) {
+          throw new CancelledException('Cancelled Promise');
+        }
+        return result;
+      }),
+      cancel: () => hasCancelled = true
+    };
+  }
+  return inputPromise;
 }
 
 /**

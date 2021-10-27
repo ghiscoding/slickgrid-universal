@@ -1,5 +1,3 @@
-import 'jest-extended';
-
 import { ContextMenuExtension } from '../contextMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { Formatters } from '../../formatters';

@@ -1,4 +1,8 @@
 import { dequal } from 'dequal/lite';
+import 'jquery';
+import 'jquery-ui/ui/widgets/draggable';
+import 'jquery-ui/ui/widgets/droppable';
+import 'jquery-ui/ui/widgets/sortable';
 import 'flatpickr/dist/l10n/fr';
 import 'slickgrid/lib/jquery.event.drag-2.3.0';
 import 'slickgrid/lib/jquery.mousewheel';
@@ -77,6 +81,7 @@ import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-ed
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
+import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 
 import { TextExportService } from '../services/textExport.service';
 import { SalesforceGlobalGridOptions } from '../salesforce-global-grid-options';
@@ -1350,6 +1355,9 @@ export class SlickVanillaGridBundle {
       const textExportService = new TextExportService();
       this._registeredResources.push(textExportService);
     }
+    if (this.gridOptions.useSalesforceDefaultGridOptions) {
+      this._registeredResources.push(new SlickCustomTooltip());
+    }
 
     // at this point, we consider all the registered services as external services, anything else registered afterward aren't external
     if (Array.isArray(this._registeredResources)) {
@@ -1406,6 +1414,7 @@ export class SlickVanillaGridBundle {
     this.filterService.addRxJsResource(this.rxjs);
     this.sortService.addRxJsResource(this.rxjs);
     this.paginationService.addRxJsResource(this.rxjs);
+    this.universalContainerService.registerInstance('RxJsFacade', this.rxjs);
     this.universalContainerService.registerInstance('RxJsResource', this.rxjs);
   }
 

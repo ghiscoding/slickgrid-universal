@@ -1,4 +1,3 @@
-import 'jest-extended';
 import { of, Subject, throwError } from 'rxjs';
 
 import { BackendServiceApi, GridOption } from '../../interfaces/index';

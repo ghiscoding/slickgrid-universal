@@ -58,6 +58,7 @@
     "@slickgrid-universal/common": "^0.18.0",
     "@slickgrid-universal/composite-editor-component": "^0.18.0",
     "@slickgrid-universal/custom-footer-component": "^0.18.0",
+    "@slickgrid-universal/custom-tooltip-plugin": "^0.18.0",
     "@slickgrid-universal/empty-warning-component": "^0.18.0",
     "@slickgrid-universal/event-pub-sub": "^0.18.0",
     "@slickgrid-universal/pagination-component": "^0.18.0",

@@ -1,4 +1,3 @@
-import 'jest-extended';
 import { ExtensionService } from '../extension.service';
 import { FilterService } from '../filter.service';
 import { GridStateService } from '../gridState.service';

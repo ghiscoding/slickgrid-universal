@@ -20,7 +20,6 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
-import '../salesforce-styles.scss';
 import './example03.scss';
 
 // using external SlickGrid JS libraries

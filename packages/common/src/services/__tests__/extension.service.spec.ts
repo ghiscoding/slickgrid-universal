@@ -1,5 +1,5 @@
 import { ExtensionName } from '../../enums/index';
-import { Column, ExtensionModel, GridOption, SlickGrid, SlickHeaderMenu } from '../../interfaces/index';
+import { Column, ExtensionModel, GridOption, SlickGrid, SlickHeaderMenu, SlickNamespace } from '../../interfaces/index';
 import {
   AutoTooltipExtension,
   CellExternalCopyManagerExtension,
@@ -18,6 +18,10 @@ import {
 } from '../../extensions';
 import { ExtensionService, SharedService } from '..';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
+
+// using external non-typed js libraries
+declare const Slick: SlickNamespace;
 
 jest.mock('flatpickr', () => { });
 
@@ -26,11 +30,18 @@ const gridStub = {
   getColumnIndex: jest.fn(),
   getOptions: jest.fn(),
   getPluginByName: jest.fn(),
+  getUID: jest.fn(),
   getColumns: jest.fn(),
-  setColumns: jest.fn(),
   onColumnsReordered: jest.fn(),
   onColumnsResized: jest.fn(),
   registerPlugin: jest.fn(),
+  setColumns: jest.fn(),
+  onMouseEnter: new Slick.Event(),
+  onHeaderMouseEnter: new Slick.Event(),
+  onHeaderRowMouseEnter: new Slick.Event(),
+  onMouseLeave: new Slick.Event(),
+  onHeaderMouseLeave: new Slick.Event(),
+  onHeaderRowMouseLeave: new Slick.Event(),
 } as unknown as SlickGrid;
 
 const extensionStub = {
@@ -79,11 +90,13 @@ const extensionRowMoveStub = {
 describe('ExtensionService', () => {
   let sharedService: SharedService;
   let service: ExtensionService;
+  let rxjsResourceStub: RxJsResourceStub;
   let translateService: TranslateServiceStub;
 
   describe('with Translate Service', () => {
     beforeEach(() => {
       sharedService = new SharedService();
+      rxjsResourceStub = new RxJsResourceStub();
       translateService = new TranslateServiceStub();
       translateService.use('fr');
 
@@ -105,6 +118,7 @@ describe('ExtensionService', () => {
         extensionStub as unknown as RowSelectionExtension,
         sharedService,
         translateService,
+        rxjsResourceStub,
       );
     });
 

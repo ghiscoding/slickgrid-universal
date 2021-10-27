@@ -19,3 +19,11 @@
   top: 2px;
   color: #ffffff;
 }
+
+.tooltip-2cols-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+  column-gap: 5px;
+  line-height: 20px;
+}

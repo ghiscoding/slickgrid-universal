@@ -42,7 +42,7 @@ module.exports = {
   ],
   preset: 'ts-jest',
   setupFiles: ['<rootDir>/test/jest-pretest.ts'],
-  setupFilesAfterEnv: ['jest-extended', '<rootDir>/test/jest-global-mocks.ts'],
+  setupFilesAfterEnv: ['jest-extended/all', '<rootDir>/test/jest-global-mocks.ts'],
   transform: {
     '^.+\\.(ts|html)$': 'ts-jest'
   },
