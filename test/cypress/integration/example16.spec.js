@@ -67,6 +67,31 @@ describe('Example 16 - Regular & Custom Tooltips', { retries: 1 }, () => {
     cy.get('@task6-cell').trigger('mouseleave');
   });
 
+  it('should mouse over Task 6 cell on "Start" column and expect a delayed tooltip opening via async process', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(7)`).as('start6-cell')
+    cy.get('@start6-cell').contains(/\d{4}-\d{2}-\d{2}$/); // use regexp to make sure it's a number
+    cy.get('@start6-cell').trigger('mouseover');
+    cy.get('.slick-custom-tooltip').should('not.exist');
+
+    cy.wait(10);
+    cy.get('.slick-custom-tooltip').should('be.visible');
+    cy.get('.slick-custom-tooltip').contains('Custom Tooltip');
+
+    cy.get('.tooltip-2cols-row:nth(0)').find('div:nth(0)').contains('Id:');
+    cy.get('.tooltip-2cols-row:nth(0)').find('div:nth(1)').contains('6');
+
+    cy.get('.tooltip-2cols-row:nth(1)').find('div:nth(0)').contains('Title:');
+    cy.get('.tooltip-2cols-row:nth(1)').find('div:nth(1)').contains('Task 6');
+
+    cy.get('.tooltip-2cols-row:nth(2)').find('div:nth(0)').contains('Effort Driven:');
+    cy.get('.tooltip-2cols-row:nth(2)').find('div:nth(1)').should('be.empty');
+
+    cy.get('.tooltip-2cols-row:nth(3)').find('div:nth(0)').contains('Completion:');
+    cy.get('.tooltip-2cols-row:nth(3)').find('div:nth(1)').find('.mdi-check-circle-outline').should('exist');
+
+    cy.get('@start6-cell').trigger('mouseleave');
+  });
+
   it('should mouse over 6th row Description and expect full cell content to show in a tooltip because cell has ellipsis and is too long for the cell itself', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(3)`).as('desc6-cell')
     cy.get('@desc6-cell').should('contain', 'This is a sample task description.');

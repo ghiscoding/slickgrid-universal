@@ -161,6 +161,17 @@ export class Example16 {
         filterable: true, filter: { model: Filters.compoundDate },
         formatter: Formatters.dateIso,
         editor: { model: Editors.date },
+        // we can delay a tooltip via the async process
+        customTooltip: {
+          // 1- loading formatter
+          formatter: () => ``, // return empty so it won't show any pre-tooltip
+
+          // 2- delay the opening by a simple Promise and `setTimeout`
+          asyncProcess: () => new Promise(resolve => {
+            setTimeout(() => resolve({}), this.serverApiDelay); // delayed by half a second
+          }),
+          asyncPostFormatter: this.tooltipFormatter.bind(this),
+        },
       },
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true,
@@ -170,19 +181,10 @@ export class Example16 {
         formatter: Formatters.dateIso,
         filterable: true, filter: { model: Filters.dateRange },
         // you could disable the custom/regular tooltip via either of the following 2 options
-        // disableTooltip: true,
-
-        // we can delay a tooltip via the async process
-        customTooltip: {
-          // 1- loading formatter
-          formatter: () => ``, // return empty so it won't show any pre-tooltip
-
-          // 2- delay the opening by a simple Promise and `setTimeout`
-          asyncProcess: () => new Promise(resolve => {
-            setTimeout(() => resolve({}), 500); // delayed by half a second
-          }),
-          asyncPostFormatter: this.tooltipFormatter.bind(this),
-        },
+        disableTooltip: true,
+        // customTooltip: {
+        //   usabilityOverride: (args) => false,
+        // },
       },
       {
         id: 'effortDriven', name: 'Effort Driven', field: 'effortDriven',
