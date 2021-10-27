@@ -166,7 +166,11 @@ export class SlickCustomTooltip {
   protected asyncProcessCallback(asyncResult: any, cell: { row: number, cell: number }, value: any, columnDef: Column, dataContext: any) {
     this.hideTooltip();
     const itemWithAsyncData = { ...dataContext, [this.addonOptions?.asyncParamsPropName ?? '__params']: asyncResult };
-    this.renderTooltipFormatter(this._cellAddonOptions!.asyncPostFormatter, cell, value, columnDef, itemWithAsyncData);
+    if (this._cellAddonOptions?.useRegularTooltip) {
+      this.renderRegularTooltip(this._cellAddonOptions!.asyncPostFormatter, cell, value, columnDef, itemWithAsyncData);
+    } else {
+      this.renderTooltipFormatter(this._cellAddonOptions!.asyncPostFormatter, cell, value, columnDef, itemWithAsyncData);
+    }
   }
 
   /** depending on the selector type, execute the necessary handler code */
@@ -231,11 +235,11 @@ export class SlickCustomTooltip {
           const value = item.hasOwnProperty(columnDef.field) ? item[columnDef.field] : null;
 
           // when there aren't any formatter OR when user specifically want to use a regular tooltip (via "title" attribute)
-          if (this._cellAddonOptions.useRegularTooltip || !this._cellAddonOptions?.formatter) {
+          if ((this._cellAddonOptions.useRegularTooltip && !this._cellAddonOptions?.asyncProcess) || !this._cellAddonOptions?.formatter) {
             this.renderRegularTooltip(columnDef.formatter, cell, value, columnDef, item);
           } else {
             // when we aren't using regular tooltip and we do have a tooltip formatter, let's render it
-            if (!this._cellAddonOptions.useRegularTooltip && typeof this._cellAddonOptions?.formatter === 'function') {
+            if (typeof this._cellAddonOptions?.formatter === 'function') {
               this.renderTooltipFormatter(this._cellAddonOptions.formatter, cell, value, columnDef, item);
             }
 

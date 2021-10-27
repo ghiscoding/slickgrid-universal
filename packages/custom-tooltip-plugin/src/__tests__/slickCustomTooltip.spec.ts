@@ -358,8 +358,8 @@ describe('SlickCustomTooltip plugin', () => {
     plugin.setOptions({
       offsetLeft: 5,
       position: 'bottom',
-      asyncProcess: () => Promise.resolve({ ratio: 1.2 }),
       formatter: () => 'loading...',
+      asyncProcess: () => Promise.resolve({ ratio: 1.2 }),
       asyncPostFormatter: (row, cell, val, column, dataContext) => `async post text with ratio: ${dataContext.__params.ratio || ''}`,
     });
     gridStub.onMouseEnter.notify({ grid: gridStub });
@@ -379,6 +379,38 @@ describe('SlickCustomTooltip plugin', () => {
       expect(tooltipElm.textContent).toBe('async post text with ratio: 1.2');
       expect(tooltipElm.classList.contains('arrow-up')).toBeTruthy();
       expect(tooltipElm.classList.contains('arrow-right-align')).toBeTruthy();
+      done();
+    }, 0);
+  });
+
+  it('should create a Promise async tooltip even on regular tooltip with "asyncProcess" and "useRegularTooltip" flags', (done) => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell';
+    const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub, container);
+    plugin.setOptions({
+      useRegularTooltip: true,
+      useRegularTooltipFromFormatterOnly: true,
+      formatter: () => 'loading...',
+      asyncProcess: () => Promise.resolve({ ratio: 1.2 }),
+      asyncPostFormatter: (row, cell, val, column, dataContext) => `<span title="tooltip title text with ratio: ${dataContext.__params.ratio || ''}">cell value</span>`,
+    });
+    gridStub.onMouseEnter.notify({ grid: gridStub });
+
+    let tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+
+    expect(tooltipElm).toBeTruthy();
+    expect(tooltipElm.textContent).toBe('loading...');
+
+    setTimeout(() => {
+      tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm.textContent).toBe('tooltip title text with ratio: 1.2');
+      expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
       done();
     }, 0);
   });
