@@ -171,6 +171,8 @@ export class Example16 {
         filterable: true, filter: { model: Filters.dateRange },
         // you could disable the custom/regular tooltip via either of the following 2 options
         // disableTooltip: true,
+
+        // we can delay a tooltip via the async process
         customTooltip: {
           // 1- loading formatter
           formatter: () => ``, // return empty so it won't show any pre-tooltip
