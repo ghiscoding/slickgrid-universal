@@ -916,5 +916,24 @@ describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
       cy.get('[data-test=total-items]')
         .contains('50');
     });
+
+    it('should mouse over Task 2 cell of last column and expect async tooltip to show up', () => {
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).as('task2-cell')
+      cy.get('@task2-cell').should('contain', 'Netility');
+      cy.get('@task2-cell').trigger('mouseover');
+      cy.get('.slick-custom-tooltip').contains('loading...');
+
+      cy.wait(150);
+      cy.get('.slick-custom-tooltip').should('be.visible');
+      cy.get('.slick-custom-tooltip').contains('Netility - Address Tooltip');
+
+      cy.get('.tooltip-2cols-row:nth(0)').find('div:nth(0)').contains('Address:');
+      cy.get('.tooltip-2cols-row:nth(0)').find('div:nth(1)').contains(/\d+ Belleville blvd$/); // use regexp to make sure it's a number
+
+      cy.get('.tooltip-2cols-row:nth(1)').find('div:nth(0)').contains('Zip:');
+      cy.get('.tooltip-2cols-row:nth(1)').find('div:nth(1)').contains(/\d{6}$/); // use regexp to make sure it's a number
+
+      cy.get('@task2-cell').trigger('mouseleave');
+    });
   });
 });

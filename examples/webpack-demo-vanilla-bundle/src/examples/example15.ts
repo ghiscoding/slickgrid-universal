@@ -103,7 +103,7 @@ export class Example15 {
               zip: dataContext.id + 600000
             });
             observer.complete();
-          }).pipe(delay(300)),
+          }).pipe(delay(150)),
           asyncPostFormatter: this.tooltipCompanyAddressFormatter.bind(this),
 
           // optional conditional usability callback
