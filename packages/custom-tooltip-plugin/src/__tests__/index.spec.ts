@@ -1,4 +1,4 @@
-import * as entry from './index';
+import * as entry from '../index';
 
 describe('Testing library entry point', () => {
   it('should have an index entry point defined', () => {
