@@ -104,7 +104,7 @@ export class Example15 {
             });
             observer.complete();
           }).pipe(delay(150)),
-          asyncPostFormatter: this.tooltipCompanyAddressFormatter.bind(this),
+          asyncPostFormatter: this.tooltipCompanyAddressFormatter,
 
           // optional conditional usability callback
           // usabilityOverride: (args) => !!(args.dataContext?.id % 2) // show it only every second row

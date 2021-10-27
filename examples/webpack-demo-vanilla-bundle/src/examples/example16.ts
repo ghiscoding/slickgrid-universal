@@ -63,7 +63,7 @@ export class Example16 {
           position: 'right-align', // defaults to "auto"
           // you can use the Custom Tooltip in 2 ways (synchronous or asynchronous)
           // example 1 (sync):
-          // formatter: this.tooltipTaskFormatter.bind(this),
+          // formatter: this.tooltipTaskFormatter,
 
           // example 2 (async):
           // when using async, the `formatter` will contain the loading spinner
@@ -72,7 +72,7 @@ export class Example16 {
           asyncProcess: () => new Promise(resolve => {
             setTimeout(() => resolve({ ratio: Math.random() * 10 / 10, lifespan: Math.random() * 100 }), this.serverApiDelay);
           }),
-          asyncPostFormatter: this.tooltipTaskFormatter.bind(this),
+          asyncPostFormatter: this.tooltipTaskFormatter,
 
           // optional conditional usability callback
           // usabilityOverride: (args) => !!(args.dataContext?.id % 2) // show it only every second row
@@ -310,8 +310,8 @@ export class Example16 {
       registerExternalResources: [new SlickCustomTooltip(), this.excelExportService],
       customTooltip: {
         formatter: this.tooltipFormatter.bind(this),
-        headerFormatter: this.headerFormatter.bind(this),
-        headerRowFormatter: this.headerRowFormatter.bind(this),
+        headerFormatter: this.headerFormatter,
+        headerRowFormatter: this.headerRowFormatter,
         usabilityOverride: (args) => (args.cell !== 0 && args?.column?.id !== 'action'), // don't show on first/last columns
         // hideArrow: true, // defaults to False
       },
