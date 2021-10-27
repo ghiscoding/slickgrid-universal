@@ -11,6 +11,7 @@ import {
   getHtmlElementOffset,
   GridOption,
   Observable,
+  RxJsFacade,
   sanitizeTextByAvailableSanitizer,
   SharedService,
   SlickDataView,
@@ -18,7 +19,6 @@ import {
   SlickEventHandler,
   SlickGrid,
   SlickNamespace,
-  RxJsFacade,
   Subscription,
 } from '@slickgrid-universal/common';
 
