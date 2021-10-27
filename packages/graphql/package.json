@@ -39,7 +39,7 @@
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
   "engines": {
-    "node": ">=14.15.0",
+    "node": ">=14.17.0",
     "npm": ">=6.14.8"
   },
   "browserslist": [
