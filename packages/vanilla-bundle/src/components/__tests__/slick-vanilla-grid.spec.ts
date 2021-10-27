@@ -46,19 +46,17 @@ import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServi
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
+import { TextExportService } from '@slickgrid-universal/text-export';
 import * as formatterUtilities from '@slickgrid-universal/common/dist/commonjs/formatters/formatterUtilities';
 
 import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle';
-import { TextExportService } from '../../services/textExport.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { HttpStub } from '../../../../../test/httpClientStub';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../../test/mockSlickEvent';
 import { UniversalContainerService } from '../../services/universalContainer.service';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
-jest.mock('../../services/textExport.service');
 
 const mockAutoAddCustomEditorFormatter = jest.fn();
-
 (formatterUtilities.autoAddEditorFormatterToColumnsWithEditor as any) = mockAutoAddCustomEditorFormatter;
 
 declare const Slick: any;
@@ -286,6 +284,14 @@ const mockSlickCustomTooltip = {
 
 jest.mock('@slickgrid-universal/custom-tooltip-plugin', () => ({
   SlickCustomTooltip: jest.fn().mockImplementation(() => mockSlickCustomTooltip),
+}));
+
+const mockTextExportService = {
+  init: jest.fn(),
+} as unknown as TextExportService;
+
+jest.mock('@slickgrid-universal/text-export', () => ({
+  TextExportService: jest.fn().mockImplementation(() => mockTextExportService),
 }));
 
 const mockSlickEventHandlerImplementation = jest.fn().mockImplementation(() => mockSlickEventHandler);
@@ -1012,13 +1018,11 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(TextExportService).toHaveBeenCalled();
         expect(SlickCustomTooltip).toHaveBeenCalled();
         expect(component.registeredResources.length).toBe(5); // TextExportService, SlickCustomTooltip, GridService, GridStateService, SlickEmptyCompositeEditorComponent
-        expect(component.registeredResources[0] instanceof TextExportService).toBeTrue();
       });
 
       it('should add RxJS resource to all necessary Services when RxJS external resource is registered', () => {
         const rxjsMock = new RxJsResourceStub();
         const backendUtilitySpy = jest.spyOn(backendUtilityServiceStub, 'addRxJsResource');
-        const extensionServiceSpy = jest.spyOn(extensionServiceStub, 'addRxJsResource');
         const filterServiceSpy = jest.spyOn(filterServiceStub, 'addRxJsResource');
         const sortServiceSpy = jest.spyOn(sortServiceStub, 'addRxJsResource');
         const paginationServiceSpy = jest.spyOn(paginationServiceStub, 'addRxJsResource');
