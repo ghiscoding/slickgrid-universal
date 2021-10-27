@@ -343,11 +343,14 @@ export class SlickCustomTooltip {
     let outputText = tooltipText || this.parseFormatterAndSanitize(formatter, cell, value, columnDef, item) || '';
     outputText = (this._cellAddonOptions?.tooltipTextMaxLength && outputText.length > this._cellAddonOptions.tooltipTextMaxLength) ? outputText.substr(0, this._cellAddonOptions.tooltipTextMaxLength - 3) + '...' : outputText;
 
+    let finalOutputText = '';
     if (!tooltipText || this._cellAddonOptions?.renderRegularTooltipAsHtml) {
-      this._tooltipElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, outputText);
+      finalOutputText = sanitizeTextByAvailableSanitizer(this.gridOptions, outputText);
+      this._tooltipElm.innerHTML = finalOutputText;
       this._tooltipElm.style.whiteSpace = this._cellAddonOptions?.whiteSpace ?? this._defaultOptions.whiteSpace as string;
     } else {
-      this._tooltipElm.textContent = outputText || '';
+      finalOutputText = outputText || '';
+      this._tooltipElm.textContent = finalOutputText;
       this._tooltipElm.style.whiteSpace = this._cellAddonOptions?.regularTooltipWhiteSpace ?? this._defaultOptions.regularTooltipWhiteSpace as string; // use `pre` so that sequences of white space are collapsed. Lines are broken at newline characters
     }
 
@@ -359,19 +362,21 @@ export class SlickCustomTooltip {
       this._tooltipElm.style.maxWidth = `${this._cellAddonOptions.maxWidth}px`;
     }
 
-    // append the new tooltip to the body & reposition it
-    document.body.appendChild(this._tooltipElm);
+    // when do have text to show, then append the new tooltip to the html body & reposition the tooltip
+    if (finalOutputText) {
+      document.body.appendChild(this._tooltipElm);
 
-    // reposition the tooltip on top of the cell that triggered the mouse over event
-    this.reposition(cell);
+      // reposition the tooltip on top of the cell that triggered the mouse over event
+      this.reposition(cell);
 
-    // user could optionally hide the tooltip arrow (we can simply update the CSS variables, that's the only way we have to update CSS pseudo)
-    if (!this._cellAddonOptions?.hideArrow) {
-      this._tooltipElm.classList.add('tooltip-arrow');
+      // user could optionally hide the tooltip arrow (we can simply update the CSS variables, that's the only way we have to update CSS pseudo)
+      if (!this._cellAddonOptions?.hideArrow) {
+        this._tooltipElm.classList.add('tooltip-arrow');
+      }
+
+      // also clear any "title" attribute to avoid showing a 2nd browser tooltip
+      this.swapAndClearTitleAttribute(inputTitleElm, outputText);
     }
-
-    // also clear any "title" attribute to avoid showing a 2nd browser tooltip
-    this.swapAndClearTitleAttribute(inputTitleElm, outputText);
   }
 
   /**

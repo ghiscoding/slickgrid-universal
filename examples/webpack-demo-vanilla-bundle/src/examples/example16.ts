@@ -72,7 +72,7 @@ export class Example16 {
           asyncProcess: () => new Promise(resolve => {
             setTimeout(() => resolve({ ratio: Math.random() * 10 / 10, lifespan: Math.random() * 100 }), this.serverApiDelay);
           }),
-          asyncPostFormatter: this.tooltipTaskFormatter,
+          asyncPostFormatter: this.tooltipTaskAsyncFormatter,
 
           // optional conditional usability callback
           // usabilityOverride: (args) => !!(args.dataContext?.id % 2) // show it only every second row
@@ -170,10 +170,17 @@ export class Example16 {
         formatter: Formatters.dateIso,
         filterable: true, filter: { model: Filters.dateRange },
         // you could disable the custom/regular tooltip via either of the following 2 options
-        disableTooltip: true,
-        // customTooltip: {
-        //   usabilityOverride: (args) => false,
-        // },
+        // disableTooltip: true,
+        customTooltip: {
+          // 1- loading formatter
+          formatter: () => ``, // return empty so it won't show any pre-tooltip
+
+          // 2- delay the opening by a simple Promise and `setTimeout`
+          asyncProcess: () => new Promise(resolve => {
+            setTimeout(() => resolve({}), 500); // delayed by half a second
+          }),
+          asyncPostFormatter: this.tooltipFormatter.bind(this),
+        },
       },
       {
         id: 'effortDriven', name: 'Effort Driven', field: 'effortDriven',
@@ -440,7 +447,7 @@ export class Example16 {
     `;
   }
 
-  tooltipTaskFormatter(row, cell, value, column, dataContext, grid) {
+  tooltipTaskAsyncFormatter(row, cell, value, column, dataContext, grid) {
     const tooltipTitle = `Task ${dataContext.id} - (async tooltip)`;
 
     // use a 2nd Formatter to get the percent completion
