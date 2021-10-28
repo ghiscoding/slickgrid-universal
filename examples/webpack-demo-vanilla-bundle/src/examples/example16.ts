@@ -22,14 +22,12 @@ export class Example16 {
   gridOptions: GridOption;
   dataset: any[];
   editCommandQueue = [];
-  excelExportService: ExcelExportService;
   serverApiDelay = 500;
   sgb: SlickVanillaGridBundle;
   loadingClass = '';
 
   constructor() {
     this._bindingEventService = new BindingEventService();
-    this.excelExportService = new ExcelExportService();
   }
 
   attached() {
@@ -318,7 +316,7 @@ export class Example16 {
         exportWithFormatter: true
       },
       // Custom Tooltip options can be defined in a Column or Grid Options or a mixed of both (first options found wins)
-      registerExternalResources: [new SlickCustomTooltip(), this.excelExportService],
+      registerExternalResources: [new SlickCustomTooltip(), new ExcelExportService()],
       customTooltip: {
         formatter: this.tooltipFormatter.bind(this),
         headerFormatter: this.headerFormatter,
@@ -386,10 +384,6 @@ export class Example16 {
         effortDriven: (i % 5 === 0),
         prerequisites: (i % 2 === 0) && i !== 0 && i < 50 ? [i, i - 1] : [],
       };
-
-      // if (i % 8) {
-      //   delete tmpArray[i].duration; // test with undefined properties
-      // }
     }
     if (this.sgb) {
       this.sgb.dataset = tmpArray;
@@ -418,13 +412,6 @@ export class Example16 {
         }
         break;
     }
-  }
-
-  exportToExcel() {
-    this.excelExportService.exportToExcel({
-      filename: 'Export',
-      format: FileType.xlsx
-    });
   }
 
   headerFormatter(row, cell, value, column) {
@@ -480,8 +467,8 @@ export class Example16 {
       iconCount = 5;
     }
     for (let i = 0; i < iconCount; i++) {
-      const icon = iconCount === 5 ? 'color-success' : iconCount >= 3 ? 'color-alt-warning' : 'color-se-secondary-light';
-      output += `<span class="mdi mdi-check-circle-outline ${icon}"></span>`;
+      const iconColor = iconCount === 5 ? 'color-success' : iconCount >= 3 ? 'color-alt-warning' : 'color-se-secondary-light';
+      output += `<span class="mdi mdi-check-circle-outline ${iconColor}"></span>`;
     }
     return output;
   }
