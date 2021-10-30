@@ -1,5 +1,5 @@
 import { Constants } from '../constants';
-import { Column, GridOption, Locale, MenuCommandItem, MenuOptionItem, } from '../interfaces/index';
+import { Column, GridMenuItem, GridOption, Locale, MenuCommandItem, MenuOptionItem, } from '../interfaces/index';
 import { BackendUtilityService } from '../services/backendUtility.service';
 import { SharedService } from '../services/shared.service';
 import { TranslaterService } from '../services/translater.service';
@@ -124,7 +124,7 @@ export class ExtensionUtility {
   translateItems<T = any>(items: T[], inputKey: string, outputKey: string) {
     if (Array.isArray(items)) {
       for (const item of items) {
-        if ((item as any)[inputKey]) {
+        if ((item as any).hasOwnProperty(inputKey)) {
           (item as any)[outputKey] = this.translaterService?.translate?.((item as any)[inputKey]);
         }
       }
@@ -136,7 +136,7 @@ export class ExtensionUtility {
    * @param {Array<MenuCommandItem | String>} items - Menu Command Items array
    * @param {Object} gridOptions - Grid Options
    */
-  translateMenuItemsFromTitleKey(items: Array<MenuCommandItem | MenuOptionItem | 'divider'>) {
+  translateMenuItemsFromTitleKey(items: Array<MenuCommandItem | MenuOptionItem | GridMenuItem | 'divider'>) {
     const translationPrefix = getTranslationPrefix(this.sharedService.gridOptions);
     for (const item of items) {
       if (typeof item === 'object' && item.titleKey) {

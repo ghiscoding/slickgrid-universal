@@ -603,8 +603,9 @@ export class SortService {
     });
 
     // loop through column definition to hide/show grid menu commands
-    if (this._gridOptions?.gridMenu?.customItems) {
-      this._gridOptions.gridMenu.customItems.forEach((menuItem) => {
+    const commandItems = this._gridOptions?.gridMenu?.commandItems ?? this._gridOptions?.gridMenu?.customItems;
+    if (commandItems) {
+      commandItems.forEach((menuItem) => {
         if (menuItem && typeof menuItem !== 'string') {
           const menuCommand = menuItem.command;
           if (menuCommand === 'clear-sorting') {

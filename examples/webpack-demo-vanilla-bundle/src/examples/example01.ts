@@ -68,7 +68,7 @@ export class Example1 {
           onColumnsChanged: (e, args) => console.log('onColumnPickerColumnsChanged - visible columns count', args.visibleColumns.length),
         },
         gridMenu: {
-          // customItems: [
+          // commandItems: [
           //   { command: 'help', title: 'Help', positionOrder: 70, action: (e, args) => console.log(args) },
           //   { command: '', divider: true, positionOrder: 72 },
           //   { command: 'hello', title: 'Hello', positionOrder: 69, action: (e, args) => alert('Hello World'), cssClass: 'red', tooltip: 'Hello World', iconCssClass: 'mdi mdi-close' },

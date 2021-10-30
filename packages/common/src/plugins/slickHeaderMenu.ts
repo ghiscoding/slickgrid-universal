@@ -230,27 +230,29 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     }
   }
 
-  protected handleMenuItemCommandClick(event: DOMEvent<HTMLDivElement>, _type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, columnDef?: Column) {
-    if (item !== 'divider' && (item as MenuCommandItem).command && !item.disabled && !(item as MenuCommandItem | MenuOptionItem).divider) {
-      const callbackArgs = {
-        grid: this.grid,
-        command: (item as MenuCommandItem).command,
-        column: columnDef,
-        item,
-      } as MenuCommandItemCallbackArgs;
+  protected handleMenuItemCommandClick(event: DOMEvent<HTMLDivElement>, _type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, columnDef?: Column): boolean | void {
+    if (item === 'divider' || (item as MenuCommandItem).command && (item.disabled || (item as MenuCommandItem | MenuOptionItem).divider)) {
+      return false;
+    }
 
-      // execute Grid Menu callback with command,
-      // we'll also execute optional user defined onCommand callback when provided
-      this.executeHeaderMenuInternalCommands(event, callbackArgs);
-      this.pubSubService.publish('headerMenu:onCommand', callbackArgs);
-      if (typeof this.addonOptions?.onCommand === 'function') {
-        this.addonOptions.onCommand(event, callbackArgs);
-      }
+    const callbackArgs = {
+      grid: this.grid,
+      command: (item as MenuCommandItem).command,
+      column: columnDef,
+      item,
+    } as MenuCommandItemCallbackArgs;
 
-      // execute action callback when defined
-      if (typeof item.action === 'function') {
-        (item as MenuCommandItem).action!.call(this, event, callbackArgs);
-      }
+    // execute Grid Menu callback with command,
+    // we'll also execute optional user defined onCommand callback when provided
+    this.executeHeaderMenuInternalCommands(event, callbackArgs);
+    this.pubSubService.publish('headerMenu:onCommand', callbackArgs);
+    if (typeof this.addonOptions?.onCommand === 'function') {
+      this.addonOptions.onCommand(event, callbackArgs);
+    }
+
+    // execute action callback when defined
+    if (typeof item.action === 'function') {
+      (item as MenuCommandItem).action!.call(this, event, callbackArgs);
     }
 
     // does the user want to leave open the Grid Menu after executing a command?

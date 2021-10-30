@@ -717,7 +717,7 @@ describe('ContextMenu Plugin', () => {
       });
 
       // -- Copy to Clipboard -- //
-      it('should populate menuCustomItems with Copy cell action when "hideCopyCellValueCommand" is disabled', () => {
+      it('should populate menuCommandItems with Copy cell action when "hideCopyCellValueCommand" is disabled', () => {
         const execSpy = jest.spyOn(window.document, 'execCommand');
         gridOptionsMock.contextMenu.hideCopyCellValueCommand = false;
         plugin.dispose();

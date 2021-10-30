@@ -219,6 +219,9 @@ export class Example7 {
         container: '.demo-container',
         rightPadding: 10
       },
+      gridMenu: {
+        customTitleKey: 'CUSTOM_COMMANDS',
+      },
       autoEdit: true,
       autoCommitEdit: true,
       editable: true,

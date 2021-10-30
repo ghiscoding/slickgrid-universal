@@ -290,6 +290,7 @@ describe('HeaderMenu Plugin', () => {
       plugin.init();
       (columnsMock[0].header.menu.items[1] as MenuCommandItem).itemVisibilityOverride = () => true;
       (columnsMock[0].header.menu.items[1] as MenuCommandItem).itemUsabilityOverride = () => false;
+      const publishSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
@@ -304,6 +305,9 @@ describe('HeaderMenu Plugin', () => {
             <span class="slick-header-menu-content"></span>
           </li>`
       ));
+
+      commandElm.dispatchEvent(new Event('click'));
+      expect(publishSpy).not.toHaveBeenCalledWith('headerMenu:onCommand');
     });
 
     it('should populate a Header Menu and a 2nd button is "disabled" and expect button to be disabled', () => {

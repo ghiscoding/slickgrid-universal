@@ -173,7 +173,10 @@ export class ExtensionService {
       // Row Selection Plugin
       // this extension should be registered BEFORE the CheckboxSelector, RowDetail or RowMoveManager since it can be use by these 2 plugins
       if (!this._rowSelectionModel && (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector || this.sharedService.gridOptions.enableRowDetailView || this.sharedService.gridOptions.enableRowMoveManager)) {
-        this._rowSelectionModel = new SlickRowSelectionModel();
+        if (!this._rowSelectionModel || !this.sharedService.slickGrid.getSelectionModel()) {
+          this._rowSelectionModel = new SlickRowSelectionModel(this.sharedService.gridOptions.rowSelectionOptions);
+          this.sharedService.slickGrid.setSelectionModel(this._rowSelectionModel);
+        }
         this._extensionList[ExtensionName.rowSelection] = { name: ExtensionName.rowSelection, class: this._rowSelectionModel, instance: this._rowSelectionModel };
       }
 
@@ -446,8 +449,9 @@ export class ExtensionService {
     }
 
     // replace the Grid Menu columns array list
-    if (this._gridMenuControl) {
+    if (this.gridOptions.enableGridMenu && this._gridMenuControl) {
       this._gridMenuControl.columns = this.sharedService.allColumns ?? [];
+      this._gridMenuControl.recreateGridMenu();
     }
   }
 

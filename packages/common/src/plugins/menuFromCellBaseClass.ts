@@ -42,11 +42,13 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
 
       const commandItems = this._addonOptions?.commandItems || [];
       const optionItems = this._addonOptions?.optionItems || [];
+      let isColumnOptionAllowed = true;
+      let isColumnCommandAllowed = true;
 
       // make sure there's at least something to show before creating the Menu
       if (this._camelPluginName === 'contextMenu') {
-        const isColumnOptionAllowed = this.checkIsColumnAllowed((this._addonOptions as ContextMenu)?.optionShownOverColumnIds ?? [], columnDef.id);
-        const isColumnCommandAllowed = this.checkIsColumnAllowed((this._addonOptions as ContextMenu)?.commandShownOverColumnIds ?? [], columnDef.id);
+        isColumnOptionAllowed = this.checkIsColumnAllowed((this._addonOptions as ContextMenu)?.optionShownOverColumnIds ?? [], columnDef.id);
+        isColumnCommandAllowed = this.checkIsColumnAllowed((this._addonOptions as ContextMenu)?.commandShownOverColumnIds ?? [], columnDef.id);
         if (!columnDef || ((!isColumnCommandAllowed || !commandItems.length) && (!isColumnOptionAllowed || !optionItems.length))) {
           this.hideMenu();
           return;
@@ -104,7 +106,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       closeButtonElm.appendChild(closeSpanElm);
 
       // -- Option List section
-      if (!(this.addonOptions as CellMenu | ContextMenu).hideOptionSection && optionItems.length > 0) {
+      if (!(this.addonOptions as CellMenu | ContextMenu).hideOptionSection && isColumnOptionAllowed && optionItems.length > 0) {
         const optionMenuElm = document.createElement('div');
         optionMenuElm.className = `${this._menuCssPrefix}-option-list`;
         if (!this.addonOptions.hideCloseButton) {
@@ -123,10 +125,10 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       }
 
       // -- Command List section
-      if (!(this.addonOptions as CellMenu | ContextMenu).hideCommandSection && commandItems.length > 0) {
+      if (!(this.addonOptions as CellMenu | ContextMenu).hideCommandSection && isColumnCommandAllowed && commandItems.length > 0) {
         const commandMenuElm = document.createElement('div');
         commandMenuElm.className = `${this._menuCssPrefix}-command-list`;
-        if (!this.addonOptions.hideCloseButton && (optionItems.length === 0 || (this.addonOptions as CellMenu | ContextMenu).hideOptionSection)) {
+        if (!this.addonOptions.hideCloseButton && (!isColumnOptionAllowed || optionItems.length === 0 || (this.addonOptions as CellMenu | ContextMenu).hideOptionSection)) {
           this._bindEventService.bind(closeButtonElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) => this.handleCloseButtonClicked(e)) as EventListener);
           this._menuElm.appendChild(closeButtonElm);
         }

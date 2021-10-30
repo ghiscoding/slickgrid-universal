@@ -39,6 +39,6 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
   }
   const sanitizedOutputValue = sanitizeTextByAvailableSanitizer(gridOptions, outputValue, { ADD_ATTR: ['target'] });
   const spanToggleClass = `slick-group-toggle ${toggleClass}`.trim();
-  const outputHtml = `${indentSpacer}<span class="${spanToggleClass}"></span><span class="slick-tree-title" level="${treeLevel}">${sanitizedOutputValue}</span>`;
+  const outputHtml = `${indentSpacer}<span class="${spanToggleClass}" aria-expanded="${toggleClass === 'expanded'}"></span><span class="slick-tree-title" level="${treeLevel}">${sanitizedOutputValue}</span>`;
   return { addClasses: slickTreeLevelClass, text: outputHtml };
 };

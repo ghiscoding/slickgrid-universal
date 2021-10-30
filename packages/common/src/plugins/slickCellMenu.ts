@@ -122,9 +122,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
       this._addonOptions = { ...this._addonOptions, ...columnDef.cellMenu };
 
       // run the override function (when defined), if the result is false it won't go further
-      if (!args) {
-        args = {} as MenuCommandItemCallbackArgs;
-      }
+      args = args || {};
       args.column = columnDef;
       args.dataContext = dataContext;
       args.grid = this.grid;
