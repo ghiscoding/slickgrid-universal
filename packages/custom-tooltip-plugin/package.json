@@ -1,0 +1,59 @@
+{
+  "name": "@slickgrid-universal/custom-tooltip-plugin",
+  "version": "0.19.0",
+  "description": "A plugin to add Custom Tooltip when hovering a cell, it subscribes to the cell",
+  "main": "dist/commonjs/index.js",
+  "browser": "src/index.ts",
+  "module": "dist/esm/index.js",
+  "types": "dist/commonjs/index.d.ts",
+  "typings": "dist/commonjs/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "/dist"
+  ],
+  "scripts": {
+    "build": "cross-env tsc --build",
+    "postbuild": "npm-run-all bundle:commonjs",
+    "build:watch": "cross-env tsc --incremental --watch",
+    "dev": "run-s build",
+    "dev:watch": "run-p build:watch",
+    "bundle": "run-p bundle:commonjs bundle:esm",
+    "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
+    "bundle:esm": "cross-env tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
+    "prebundle": "npm-run-all delete:dist",
+    "delete:dist": "cross-env rimraf --maxBusyTries=10 dist",
+    "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=custom-tooltip-plugin",
+    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=custom-tooltip-plugin"
+  },
+  "license": "MIT",
+  "author": "Ghislain B.",
+  "homepage": "https://github.com/ghiscoding/slickgrid-universal",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ghiscoding/slickgrid-universal.git",
+    "directory": "packages/custom-tooltip-plugin"
+  },
+  "bugs": {
+    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
+  },
+  "engines": {
+    "node": ">=14.17.0",
+    "npm": ">=6.14.8"
+  },
+  "browserslist": [
+    "last 2 version",
+    "> 1%",
+    "not dead"
+  ],
+  "dependencies": {
+    "@slickgrid-universal/common": "^0.19.0",
+    "dompurify": "^2.3.3"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^3.0.2"
+  }
+}

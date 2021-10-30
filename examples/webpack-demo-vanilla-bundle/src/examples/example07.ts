@@ -155,9 +155,9 @@ export class Example7 {
         type: FieldType.string,
         editor: {
           // We can load the "collection" asynchronously (on first load only, after that we will simply use "collection")
-          // 2 ways are supported (aurelia-http-client, aurelia-fetch-client OR even Promise)
+          // 2 ways are supported (fetch client OR even Promise)
 
-          // OR 1- use "aurelia-fetch-client", they are both supported
+          // OR 1- use "fetch client", they are both supported
           // collectionAsync: fetch(URL_SAMPLE_COLLECTION_DATA),
 
           // OR 2- use a Promise
@@ -370,7 +370,7 @@ export class Example7 {
     return true;
   }
 
-  onMoveRows(_e: Event, args: any) {
+  onMoveRows(_e: Event, args: { rows: number[]; insertBefore: number; }) {
     // rows and insertBefore references,
     // note that these references are assuming that the dataset isn't filtered at all
     // which is not always the case so we will recalcualte them and we won't use these reference afterward

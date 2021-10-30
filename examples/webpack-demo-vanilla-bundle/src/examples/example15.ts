@@ -1,8 +1,9 @@
 import { BindingEventService, Column, Editors, FieldType, Filters, GridOption, GridStateChange, Metrics, OperatorType, } from '@slickgrid-universal/common';
+import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { GridOdataService, OdataServiceApi, OdataOption } from '@slickgrid-universal/odata';
 import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { Observable, of, Subject } from 'rxjs';
+import { delay, Observable, of, Subject } from 'rxjs';
 
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
@@ -67,7 +68,7 @@ export class Example15 {
         filterable: true,
         filter: {
           model: Filters.compoundInput
-        }
+        },
       },
       {
         id: 'gender', name: 'Gender', field: 'gender', filterable: true,
@@ -84,7 +85,31 @@ export class Example15 {
           }
         }
       },
-      { id: 'company', name: 'Company', field: 'company', filterable: true, sortable: true },
+      {
+        id: 'company', name: 'Company', field: 'company', filterable: true, sortable: true,
+        customTooltip: {
+          // you can use the Custom Tooltip in 2 ways (synchronous or asynchronous)
+          // example 1 (sync):
+          // formatter: this.tooltipCompanyAddressFormatter.bind(this),
+
+          // example 2 (async w/Observable):
+          // when using async, the `formatter` will contain the loading spinner
+          // you will need to provide an `asyncPost` function returning a Promise and also `asyncPostFormatter` formatter to display the result once the Promise resolves
+          formatter: () => `<div><span class="mdi mdi-load mdi-spin-1s"></span> loading...</div>`,
+          asyncProcess: (row, cell, value, column, dataContext) => new Observable((observer) => {
+            observer.next({
+              // return random door number & zip code to simulare company address
+              doorNumber: dataContext.id + 100,
+              zip: dataContext.id + 600000
+            });
+            observer.complete();
+          }).pipe(delay(150)),
+          asyncPostFormatter: this.tooltipCompanyAddressFormatter,
+
+          // optional conditional usability callback
+          // usabilityOverride: (args) => !!(args.dataContext?.id % 2) // show it only every second row
+        },
+      },
     ];
 
     this.gridOptions = {
@@ -147,7 +172,7 @@ export class Example15 {
           this.getCustomerCallback(response);
         }
       } as OdataServiceApi,
-      registerExternalResources: [new RxJsResource()]
+      registerExternalResources: [new RxJsResource(), new SlickCustomTooltip()]
     };
   }
 
@@ -390,6 +415,16 @@ export class Example15 {
   throwPageChangeError() {
     this.isPageErrorTest = true;
     this.sgb.paginationService.goToLastPage();
+  }
+
+  tooltipCompanyAddressFormatter(row, cell, value, column, dataContext) {
+    const tooltipTitle = `${dataContext.company} - Address Tooltip`;
+
+    // display random address and zip code to simulate company address
+    const randomStreet = dataContext.id % 3 ? 'Belleville' : 'Hollywood';
+    return `<div class="color-se-danger" style="font-weight: bold">${tooltipTitle}</div>
+      <div class="tooltip-2cols-row"><div>Address:</div> <div>${dataContext.__params.doorNumber.toFixed(0)} ${randomStreet} blvd</div></div>
+      <div class="tooltip-2cols-row"><div>Zip:</div> <div>${dataContext.__params.zip.toFixed(0)}</div></div>`;
   }
 
   // THE FOLLOWING METHODS ARE ONLY FOR DEMO PURPOSES DO NOT USE THIS CODE

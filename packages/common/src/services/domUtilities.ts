@@ -129,6 +129,33 @@ export function buildSelectEditorOrFilterDomElement(type: 'editor' | 'filter', c
   return { selectElement, hasFoundSearchTerm };
 }
 
+/** calculate available space for each side of the DOM element */
+export function calculateAvailableSpace(element: HTMLElement): { top: number; bottom: number; left: number; right: number; } {
+  let bottom = 0;
+  let top = 0;
+  let left = 0;
+  let right = 0;
+
+  const windowHeight = window.innerHeight ?? 0;
+  const windowWidth = window.innerWidth ?? 0;
+  const scrollPosition = windowScrollPosition();
+  const pageScrollTop = scrollPosition.top;
+  const pageScrollLeft = scrollPosition.left;
+  const elmOffset = getHtmlElementOffset(element);
+
+  if (elmOffset) {
+    const elementOffsetTop = elmOffset.top ?? 0;
+    const elementOffsetLeft = elmOffset.left ?? 0;
+    top = elementOffsetTop - pageScrollTop;
+    bottom = windowHeight - (elementOffsetTop - pageScrollTop);
+    left = elementOffsetLeft - pageScrollLeft;
+    right = windowWidth - (elementOffsetLeft - pageScrollLeft);
+  }
+
+  return { top, bottom, left, right };
+}
+
+
 /**
  * Loop through all properties of an object and nullify any properties that are instanceof HTMLElement,
  * if we detect an array then use recursion to go inside it and apply same logic
@@ -195,6 +222,18 @@ export function getHtmlElementOffset(element?: HTMLElement): HtmlElementPosition
     bottom = rect.bottom;
   }
   return { top, left, bottom, right };
+}
+
+export function findFirstElementAttribute(inputElm: Element | null | undefined, attributes: string[]): string | null {
+  if (inputElm) {
+    for (const attribute of attributes) {
+      const attrData = inputElm.getAttribute(attribute);
+      if (attrData) {
+        return attrData;
+      }
+    }
+  }
+  return null;
 }
 
 export function findWidthOrDefault(inputWidth?: number | string, defaultVal = 'auto'): string {

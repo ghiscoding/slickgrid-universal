@@ -21,7 +21,6 @@ export const SalesforceGlobalGridOptions = {
   emptyDataWarning: {
     message: `<span class="mdi mdi-alert color-warning"></span> No data to display.`,
   },
-  enableAutoTooltip: true,
   enableDeepCopyDatasetOnPageLoad: true,
   enableTextExport: true,
   textExportOptions: {
@@ -29,6 +28,9 @@ export const SalesforceGlobalGridOptions = {
     sanitizeDataExport: true,
   },
   enableCellNavigation: true,
+  customTooltip: {
+    tooltipTextMaxLength: 650,
+  },
   filterTypingDebounce: 250,
   formatterOptions: {
     minDecimal: 0,
@@ -53,7 +55,7 @@ export const SalesforceGlobalGridOptions = {
     iconSortAscCommand: 'fa fa-sort-amount-asc mdi mdi-arrow-up',
     iconSortDescCommand: 'fa fa-sort-amount-desc mdi mdi-arrow-down',
   },
-  sanitizer: (dirtyHtml: string) => (dirtyHtml.replace(/(\b)(on\S+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script([<>]*)/gi, '')),
+  sanitizer: (dirtyHtml: string) => typeof dirtyHtml === 'string' ? dirtyHtml.replace(/(\b)(on\S+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script(>*)|(&lt;)(\/*)(script|script defer)(.*)(&gt;|&gt;">)/gi, '') : dirtyHtml,
   showCustomFooter: true,
   customFooterOptions: {
     hideMetrics: false,
@@ -69,6 +71,9 @@ export const SalesforceGlobalGridOptions = {
   resizeByContentOptions: {
     formatterPaddingWidthInPx: 8,
     maxItemToInspectCellContentWidth: 500,
+  },
+  rowMoveManager: {
+    hideRowMoveShadow: false,
   },
   useSalesforceDefaultGridOptions: true,
 } as GridOption;

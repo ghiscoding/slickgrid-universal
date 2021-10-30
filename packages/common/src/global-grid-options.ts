@@ -92,6 +92,10 @@ export const GlobalGridOptions: GridOption = {
       itemsSelectedKey: 'ITEMS_SELECTED'
     }
   },
+  customTooltip: {
+    tooltipTextMaxLength: 700,
+    maxWidth: 500,
+  },
   dataView: {
     syncGridSelection: true, // when enabled, this will preserve the row selection even after filtering/sorting/grouping
     syncGridSelectionWithBackendService: false, // but disable it when using backend services

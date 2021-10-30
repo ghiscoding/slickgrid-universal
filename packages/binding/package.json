@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/binding",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "description": "Simple Vanilla Implementation of a Binding Engine & Helper to add properties/events 2 way bindings",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
@@ -39,7 +39,7 @@
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
   "engines": {
-    "node": ">=14.15.0",
+    "node": ">=14.17.0",
     "npm": ">=6.14.8"
   },
   "browserslist": [

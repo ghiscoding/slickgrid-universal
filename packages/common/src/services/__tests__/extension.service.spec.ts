@@ -169,6 +169,7 @@ describe('ExtensionService', () => {
   let sharedService: SharedService;
   let backendUtilityService: BackendUtilityService;
   let service: ExtensionService;
+  let rxjsResourceStub: RxJsResourceStub;
   let translateService: TranslateServiceStub;
 
   describe('with Translate Service', () => {
@@ -186,6 +187,7 @@ describe('ExtensionService', () => {
         sortServiceStub,
         treeDataServiceStub,
         translateService,
+        rxjsResourceStub,
       );
     });
 

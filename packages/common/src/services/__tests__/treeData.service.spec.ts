@@ -1,5 +1,3 @@
-import 'jest-extended';
-
 import { Constants } from '../../constants';
 import { Column, SlickDataView, GridOption, SlickEventHandler, SlickGrid, SlickNamespace, BackendService } from '../../interfaces/index';
 import { PubSubService } from '../pubSub.service';
