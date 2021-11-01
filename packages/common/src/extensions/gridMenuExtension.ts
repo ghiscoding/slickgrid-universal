@@ -16,6 +16,7 @@ import { ExcelExportService } from '../services/excelExport.service';
 import { TextExportService } from '../services/textExport.service';
 import { ExtensionUtility } from './extensionUtility';
 import { FilterService } from '../services/filter.service';
+import { PubSubService } from '../services/pubSub.service';
 import { SortService } from '../services/sort.service';
 import { SharedService } from '../services/shared.service';
 import { TranslaterService } from '../services/translater.service';
@@ -35,6 +36,7 @@ export class GridMenuExtension implements Extension {
   constructor(
     private readonly extensionUtility: ExtensionUtility,
     private readonly filterService: FilterService,
+    private readonly pubSubService: PubSubService,
     private readonly sharedService: SharedService,
     private readonly sortService: SortService,
     private readonly backendUtilities?: BackendUtilityService,
@@ -430,14 +432,17 @@ export class GridMenuExtension implements Extension {
           if (gridOptions.enableAutoSizeColumns) {
             this.sharedService.slickGrid.autosizeColumns();
           }
+          this.pubSubService.publish('onGridMenuClearAllPinning');
           break;
         case 'clear-filter':
           this.filterService.clearFilters();
           this.sharedService.dataView.refresh();
+          this.pubSubService.publish('onGridMenuClearAllFilters');
           break;
         case 'clear-sorting':
           this.sortService.clearSorting();
           this.sharedService.dataView.refresh();
+          this.pubSubService.publish('onGridMenuClearAllSorting');
           break;
         case 'export-csv':
           const exportCsvService: TextExportService = registeredResources.find((service: any) => service.className === 'TextExportService');

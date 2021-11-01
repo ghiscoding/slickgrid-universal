@@ -104,6 +104,9 @@ export class TreeDataService {
     if (onClickHandler) {
       (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onClickHandler>>).subscribe(onClickHandler, this.handleOnCellClick.bind(this));
     }
+
+    // when "Clear all Sorting" is triggered by the Grid Menu, we'll resort with `initialSort` when defined (or else by 'id')
+    this.pubSubService.subscribe('onGridMenuClearAllSorting', this.clearSorting.bind(this));
   }
 
   /**
@@ -256,6 +259,12 @@ export class TreeDataService {
         break;
     }
     return propName;
+  }
+
+  /** Clear the sorting and set it back to initial sort */
+  clearSorting() {
+    const initialSort = this.getInitialSort(this.sharedService.columnDefinitions, this.sharedService.gridOptions);
+    this.sortService.loadGridSorters([{ columnId: initialSort.columnId, direction: initialSort.sortAsc ? 'ASC' : 'DESC' }]);
   }
 
   /**

@@ -372,7 +372,7 @@ export class SlickVanillaGridBundle {
     const columnPickerExtension = new ColumnPickerExtension(this.extensionUtility, this.sharedService);
     const checkboxExtension = new CheckboxSelectorExtension(this.sharedService);
     const draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this._eventPubSubService, this.sharedService);
-    const gridMenuExtension = new GridMenuExtension(this.extensionUtility, this.filterService, this.sharedService, this.sortService, this.backendUtilityService, this.translaterService);
+    const gridMenuExtension = new GridMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.backendUtilityService, this.translaterService);
     const groupItemMetaProviderExtension = new GroupItemMetaProviderExtension(this.sharedService);
     const headerButtonExtension = new HeaderButtonExtension(this.extensionUtility, this.sharedService);
     const headerMenuExtension = new HeaderMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.translaterService);
@@ -441,9 +441,9 @@ export class SlickVanillaGridBundle {
 
   /** Dispose of the Component */
   dispose(shouldEmptyDomElementContainer = false) {
-    this._eventPubSubService.publish('onBeforeGridDestroy', this.slickGrid);
+    this._eventPubSubService?.publish('onBeforeGridDestroy', this.slickGrid);
     this._eventHandler?.unsubscribeAll();
-    this._eventPubSubService.publish('onAfterGridDestroyed', true);
+    this._eventPubSubService?.publish('onAfterGridDestroyed', true);
 
     // dispose the Services
     this.extensionService?.dispose();
