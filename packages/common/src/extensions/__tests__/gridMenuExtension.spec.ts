@@ -3,7 +3,7 @@ import { Column, SlickDataView, GridOption, SlickGrid, SlickNamespace, GridMenu,
 import { GridMenuExtension } from '../gridMenuExtension';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
-import { ExcelExportService, TextExportService, FilterService, SortService, BackendUtilityService } from '../../services';
+import { BackendUtilityService, ExcelExportService, FilterService, PubSubService, SortService, TextExportService } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 declare const Slick: SlickNamespace;
@@ -51,6 +51,13 @@ const gridStub = {
   setOptions: jest.fn(),
   scrollColumnIntoView: jest.fn(),
 } as unknown as SlickGrid;
+
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as PubSubService;
 
 const mockGridMenuAddon = {
   init: jest.fn(),
@@ -141,7 +148,7 @@ describe('gridMenuExtension', () => {
       sharedService = new SharedService();
       translateService = new TranslateServiceStub();
       extensionUtility = new ExtensionUtility(sharedService, translateService);
-      extension = new GridMenuExtension(extensionUtility, filterServiceStub, sharedService, sortServiceStub, backendUtilityService, translateService);
+      extension = new GridMenuExtension(extensionUtility, filterServiceStub, pubSubServiceStub, sharedService, sortServiceStub, backendUtilityService, translateService);
       translateService.use('fr');
     });
 
@@ -633,6 +640,7 @@ describe('gridMenuExtension', () => {
       it('should call "clearFrozenColumns" when the command triggered is "clear-pinning"', () => {
         const setOptionsSpy = jest.spyOn(gridStub, 'setOptions');
         const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu as GridMenu, 'onCommand');
         jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
         jest.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
@@ -643,12 +651,14 @@ describe('gridMenuExtension', () => {
         expect(onCommandSpy).toHaveBeenCalled();
         expect(setColumnsSpy).toHaveBeenCalled();
         expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: -1, frozenRow: -1, frozenBottom: false, enableMouseWheelScrollHandler: false });
+        expect(pubSubSpy).toHaveBeenCalledWith('onGridMenuClearAllPinning');
       });
 
       it('should call "clearFilters" and dataview refresh when the command triggered is "clear-filter"', () => {
         const filterSpy = jest.spyOn(filterServiceStub, 'clearFilters');
         const refreshSpy = jest.spyOn(SharedService.prototype.dataView, 'refresh');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu as GridMenu, 'onCommand');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         const instance = extension.register() as SlickGridMenu;
         instance.onCommand!.notify({ item: { command: 'clear-filter' }, column: {} as Column, grid: gridStub, command: 'clear-filter' }, new Slick.EventData(), gridStub);
@@ -656,12 +666,14 @@ describe('gridMenuExtension', () => {
         expect(onCommandSpy).toHaveBeenCalled();
         expect(filterSpy).toHaveBeenCalled();
         expect(refreshSpy).toHaveBeenCalled();
+        expect(pubSubSpy).toHaveBeenCalledWith('onGridMenuClearAllFilters');
       });
 
       it('should call "clearSorting" and dataview refresh when the command triggered is "clear-sorting"', () => {
         const sortSpy = jest.spyOn(sortServiceStub, 'clearSorting');
         const refreshSpy = jest.spyOn(SharedService.prototype.dataView, 'refresh');
         const onCommandSpy = jest.spyOn(SharedService.prototype.gridOptions.gridMenu as GridMenu, 'onCommand');
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         const instance = extension.register() as SlickGridMenu;
         instance.onCommand!.notify({ item: { command: 'clear-sorting' }, column: {} as Column, grid: gridStub, command: 'clear-sorting' }, new Slick.EventData(), gridStub);
@@ -669,6 +681,7 @@ describe('gridMenuExtension', () => {
         expect(onCommandSpy).toHaveBeenCalled();
         expect(sortSpy).toHaveBeenCalled();
         expect(refreshSpy).toHaveBeenCalled();
+        expect(pubSubSpy).toHaveBeenCalledWith('onGridMenuClearAllSorting');
       });
 
       it('should call "exportToExcel" and expect an error thrown when ExcelExportService is not registered prior to calling the method', (done) => {
@@ -854,7 +867,7 @@ describe('gridMenuExtension', () => {
     beforeEach(() => {
       translateService = undefined as any;
       backendUtilityService = new BackendUtilityService();
-      extension = new GridMenuExtension({} as ExtensionUtility, filterServiceStub, { gridOptions: { enableTranslate: true } } as SharedService, {} as SortService, backendUtilityService, translateService);
+      extension = new GridMenuExtension({} as ExtensionUtility, filterServiceStub, pubSubServiceStub, { gridOptions: { enableTranslate: true } } as SharedService, {} as SortService, backendUtilityService, translateService);
     });
 
     it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {

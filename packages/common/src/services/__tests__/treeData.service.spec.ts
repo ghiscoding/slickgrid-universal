@@ -57,15 +57,20 @@ const gridStub = {
   setSortColumns: jest.fn(),
 } as unknown as SlickGrid;
 
-const pubSubServiceStub = {
+const fnCallbacks = {};
+const mockPubSub = {
   publish: jest.fn(),
-  subscribe: jest.fn(),
+  subscribe: (eventName, fn) => fnCallbacks[eventName as string] = fn,
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
 } as PubSubService;
+jest.mock('../pubSub.service', () => ({
+  PubSubService: () => mockPubSub
+}));
 
 const sortServiceStub = {
   clearSorting: jest.fn(),
+  loadGridSorters: jest.fn(),
   sortHierarchicalDataset: jest.fn(),
 } as unknown as SortService;
 
@@ -82,7 +87,7 @@ describe('TreeData Service', () => {
     gridOptionsMock.treeDataOptions = {
       columnId: 'file'
     };
-    service = new TreeDataService(pubSubServiceStub, sharedService, sortServiceStub);
+    service = new TreeDataService(mockPubSub, sharedService, sortServiceStub);
     slickgridEventHandler = service.eventHandler;
     jest.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
   });
@@ -233,6 +238,17 @@ describe('TreeData Service', () => {
       expect(spyGetCols).not.toHaveBeenCalled();
     });
 
+    it('should call "clearSorting" and set back initial sort when "onGridMenuClearAllSorting" event is triggered', () => {
+      const clearSortingSpy = jest.spyOn(service, 'clearSorting');
+      const loadGridSorterSpy = jest.spyOn(sortServiceStub, 'loadGridSorters');
+
+      service.init(gridStub);
+      fnCallbacks['onGridMenuClearAllSorting']();
+
+      expect(clearSortingSpy).toHaveBeenCalled();
+      expect(loadGridSorterSpy).toHaveBeenCalled();
+    });
+
     it('should toggle the "__collapsed" to True when the "toggle" class name was found without a collapsed class', () => {
       jest.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
       const spyGetItem = jest.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
@@ -344,7 +360,7 @@ describe('TreeData Service', () => {
       const beginUpdateSpy = jest.spyOn(dataViewStub, 'beginUpdate');
       const endUpdateSpy = jest.spyOn(dataViewStub, 'endUpdate');
       const updateItemSpy = jest.spyOn(dataViewStub, 'updateItem');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
 
       service.init(gridStub);
       await service.toggleTreeDataCollapse(true);
@@ -371,7 +387,7 @@ describe('TreeData Service', () => {
       const beginUpdateSpy = jest.spyOn(dataViewStub, 'beginUpdate');
       const endUpdateSpy = jest.spyOn(dataViewStub, 'endUpdate');
       const updateItemSpy = jest.spyOn(dataViewStub, 'updateItem');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
 
       service.init(gridStub);
       await service.toggleTreeDataCollapse(true);
@@ -391,7 +407,7 @@ describe('TreeData Service', () => {
       const beginUpdateSpy = jest.spyOn(dataViewStub, 'beginUpdate');
       const endUpdateSpy = jest.spyOn(dataViewStub, 'endUpdate');
       const updateItemSpy = jest.spyOn(dataViewStub, 'updateItem');
-      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+      const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
 
       service.init(gridStub);
       await service.toggleTreeDataCollapse(false);
@@ -413,7 +429,7 @@ describe('TreeData Service', () => {
         const beginUpdateSpy = jest.spyOn(dataViewStub, 'beginUpdate');
         const endUpdateSpy = jest.spyOn(dataViewStub, 'endUpdate');
         const updateItemSpy = jest.spyOn(dataViewStub, 'updateItem');
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
 
         service.init(gridStub);
         service.applyToggledItemStateChanges([{ itemId: 4, isCollapsed: true }]);
@@ -432,7 +448,7 @@ describe('TreeData Service', () => {
         const beginUpdateSpy = jest.spyOn(dataViewStub, 'beginUpdate');
         const endUpdateSpy = jest.spyOn(dataViewStub, 'endUpdate');
         const updateItemSpy = jest.spyOn(dataViewStub, 'updateItem');
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
 
         service.init(gridStub);
         service.applyToggledItemStateChanges([{ itemId: 4, isCollapsed: true }], 'full-collapse', false, true);
@@ -451,7 +467,7 @@ describe('TreeData Service', () => {
         const beginUpdateSpy = jest.spyOn(dataViewStub, 'beginUpdate');
         const endUpdateSpy = jest.spyOn(dataViewStub, 'endUpdate');
         const updateItemSpy = jest.spyOn(dataViewStub, 'updateItem');
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
 
         service.init(gridStub);
         service.applyToggledItemStateChanges([{ itemId: 4, isCollapsed: true }], 'full-collapse', true, true);
@@ -472,7 +488,7 @@ describe('TreeData Service', () => {
         const beginUpdateSpy = jest.spyOn(dataViewStub, 'beginUpdate');
         const endUpdateSpy = jest.spyOn(dataViewStub, 'endUpdate');
         const updateItemSpy = jest.spyOn(dataViewStub, 'updateItem');
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
 
         service.init(gridStub);
         service.dynamicallyToggleItemState([{ itemId: 4, isCollapsed: true }], true);
