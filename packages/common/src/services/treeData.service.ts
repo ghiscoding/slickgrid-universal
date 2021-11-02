@@ -3,6 +3,7 @@ import { ToggleStateChangeType, ToggleStateChangeTypeString } from '../enums/ind
 import {
   Column,
   ColumnSort,
+  EventSubscription,
   GetSlickEventType,
   GridOption,
   OnClickEventArgs,
@@ -29,6 +30,7 @@ export class TreeDataService {
   protected _currentToggledItems: TreeToggledItem[] = [];
   protected _grid!: SlickGrid;
   protected _eventHandler: SlickEventHandler;
+  protected _subscriptions: EventSubscription[] = [];
 
   constructor(protected readonly pubSubService: PubSubService, protected readonly sharedService: SharedService, protected readonly sortService: SortService) {
     this._eventHandler = new Slick.EventHandler();
@@ -65,9 +67,8 @@ export class TreeDataService {
 
   dispose() {
     // unsubscribe all SlickGrid events
-    if (this._eventHandler?.unsubscribeAll) {
-      this._eventHandler.unsubscribeAll();
-    }
+    this._eventHandler.unsubscribeAll();
+    this.pubSubService.unsubscribeAll(this._subscriptions);
   }
 
   init(grid: SlickGrid) {
@@ -106,7 +107,9 @@ export class TreeDataService {
     }
 
     // when "Clear all Sorting" is triggered by the Grid Menu, we'll resort with `initialSort` when defined (or else by 'id')
-    this.pubSubService.subscribe('onGridMenuClearAllSorting', this.clearSorting.bind(this));
+    this._subscriptions.push(
+      this.pubSubService.subscribe('onGridMenuClearAllSorting', this.clearSorting.bind(this))
+    );
   }
 
   /**

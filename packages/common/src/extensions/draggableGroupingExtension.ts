@@ -1,6 +1,6 @@
 import 'slickgrid/plugins/slick.draggablegrouping';
 
-import { DraggableGrouping, Extension, GetSlickEventType, GridOption, SlickDraggableGrouping, SlickEventHandler, SlickNamespace } from '../interfaces/index';
+import { DraggableGrouping, EventSubscription, Extension, GetSlickEventType, GridOption, SlickDraggableGrouping, SlickEventHandler, SlickNamespace } from '../interfaces/index';
 import { ExtensionUtility } from './extensionUtility';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
@@ -12,6 +12,7 @@ export class DraggableGroupingExtension implements Extension {
   private _addon: SlickDraggableGrouping | null = null;
   private _draggableGroupingOptions: DraggableGrouping | null = null;
   private _eventHandler: SlickEventHandler;
+  private _subscriptions: EventSubscription[] = [];
 
   constructor(private readonly extensionUtility: ExtensionUtility, private readonly pubSubService: PubSubService, private readonly sharedService: SharedService) {
     this._eventHandler = new Slick.EventHandler();
@@ -24,6 +25,7 @@ export class DraggableGroupingExtension implements Extension {
   dispose() {
     // unsubscribe all SlickGrid events
     this._eventHandler.unsubscribeAll();
+    this.pubSubService.unsubscribeAll(this._subscriptions);
 
     if (this._addon && this._addon.destroy) {
       this._addon.destroy();
@@ -74,7 +76,9 @@ export class DraggableGroupingExtension implements Extension {
         }
 
         // we also need to subscribe to a possible user clearing the grouping via the Context Menu, we need to clear the pre-header bar as well
-        this.pubSubService.subscribe('onContextMenuClearGrouping', () => this._addon?.clearDroppedGroups?.());
+        this._subscriptions.push(
+          this.pubSubService.subscribe('onContextMenuClearGrouping', () => this._addon?.clearDroppedGroups?.())
+        );
       }
 
       return this._addon;
