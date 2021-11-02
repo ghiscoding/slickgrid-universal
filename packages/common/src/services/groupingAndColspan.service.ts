@@ -1,13 +1,14 @@
 import {
   Column,
-  SlickDataView,
+  EventSubscription,
   GetSlickEventType,
   GridOption,
+  SlickColumnPicker,
+  SlickDataView,
   SlickEventHandler,
   SlickGrid,
   SlickNamespace,
   SlickResizer,
-  SlickColumnPicker,
 } from './../interfaces/index';
 import { ExtensionName } from '../enums/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
@@ -21,6 +22,7 @@ declare const Slick: SlickNamespace;
 export class GroupingAndColspanService {
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
+  protected _subscriptions: EventSubscription[] = [];
 
   constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly extensionService: ExtensionService, protected readonly pubSubService: PubSubService,) {
     this._eventHandler = new Slick.EventHandler();
@@ -75,9 +77,9 @@ export class GroupingAndColspanService {
         if (columnPickerExtension?.instance?.onColumnsChanged) {
           this._eventHandler.subscribe(columnPickerExtension.instance.onColumnsChanged, () => this.renderPreHeaderRowGroupingTitles());
         }
-        this.pubSubService.subscribe('onHeaderMenuHideColumns', () => {
-          this.delayRenderPreHeaderRowGroupingTitles(0);
-        });
+        this._subscriptions.push(
+          this.pubSubService.subscribe('onHeaderMenuHideColumns', () => this.delayRenderPreHeaderRowGroupingTitles(0))
+        );
 
         const gridMenuExtension = this.extensionService.getExtensionByName(ExtensionName.gridMenu);
         if (gridMenuExtension && gridMenuExtension.instance && gridMenuExtension.instance.onColumnsChanged && gridMenuExtension.instance.onMenuClose) {
@@ -110,6 +112,7 @@ export class GroupingAndColspanService {
   dispose() {
     // unsubscribe all SlickGrid events
     this._eventHandler.unsubscribeAll();
+    this.pubSubService.unsubscribeAll(this._subscriptions);
   }
 
   /** call "renderPreHeaderRowGroupingTitles()" with a setTimeout delay */
