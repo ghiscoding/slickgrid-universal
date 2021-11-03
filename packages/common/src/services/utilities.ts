@@ -103,51 +103,6 @@ export function castObservableToPromise<T>(rxjs: RxJsFacade, input: Promise<T> |
 }
 
 /**
- * Convert a flat array (with "parentId" references) into a hierarchical (tree) dataset structure (where children are array(s) inside their parent objects)
- * @param flatArray input array (flat dataset)
- * @param options you can provide the following tree data options (which are all prop names, except 1 boolean flag, to use or else use their defaults):: collapsedPropName, childrenPropName, parentPropName, identifierPropName and levelPropName and initiallyCollapsed (boolean)
- * @return roots - hierarchical (tree) data view array
- */
-export function unflattenParentChildArrayToTree<P, T extends P & { [childrenPropName: string]: P[] }>(flatArray: P[], options?: { childrenPropName?: string; collapsedPropName?: string; identifierPropName?: string; levelPropName?: string; parentPropName?: string; initiallyCollapsed?: boolean; }): T[] {
-  const identifierPropName = options?.identifierPropName ?? 'id';
-  const childrenPropName = options?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP;
-  const parentPropName = options?.parentPropName ?? Constants.treeDataProperties.PARENT_PROP;
-  const levelPropName = options?.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
-  const collapsedPropName = options?.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
-  const inputArray: P[] = flatArray || [];
-  const roots: T[] = []; // items without parent which at the root
-
-  // make them accessible by guid on this map
-  const all: any = {};
-
-  inputArray.forEach((item: any) => all[item[identifierPropName]] = item);
-
-  // connect childrens to its parent, and split roots apart
-  Object.keys(all).forEach((id) => {
-    const item = all[id];
-    if (!(parentPropName in item) || item[parentPropName] === null || item[parentPropName] === undefined || item[parentPropName] === '') {
-      roots.push(item);
-    } else if (item[parentPropName] in all) {
-      const p = all[item[parentPropName]];
-      if (!(childrenPropName in p)) {
-        p[childrenPropName] = [];
-      }
-      p[childrenPropName].push(item);
-      if (p[collapsedPropName] === undefined) {
-        p[collapsedPropName] = options?.initiallyCollapsed ?? false;
-      }
-    }
-  });
-
-  // we need and want to the Tree Level,
-  // we can do that after the tree is created and mutate the array by adding a __treeLevel property on each item
-  // perhaps there might be a way to add this while creating the tree for now that is the easiest way I found
-  addTreeLevelByMutation(roots, { childrenPropName, levelPropName }, 0);
-
-  return roots;
-}
-
-/**
  * Mutate the original array and add a treeLevel (defaults to `__treeLevel`) property on each item.
  * @param {Array<Object>} treeArray - hierarchical tree array
  * @param {Object} options - options containing info like children & treeLevel property names
@@ -202,6 +157,51 @@ export function flattenToParentChildArray<T>(treeArray: T[], options?: { parentP
   );
 
   return flat;
+}
+
+/**
+ * Convert a flat array (with "parentId" references) into a hierarchical (tree) dataset structure (where children are array(s) inside their parent objects)
+ * @param flatArray input array (flat dataset)
+ * @param options you can provide the following tree data options (which are all prop names, except 1 boolean flag, to use or else use their defaults):: collapsedPropName, childrenPropName, parentPropName, identifierPropName and levelPropName and initiallyCollapsed (boolean)
+ * @return roots - hierarchical (tree) data view array
+ */
+export function unflattenParentChildArrayToTree<P, T extends P & { [childrenPropName: string]: P[] }>(flatArray: P[], options?: { childrenPropName?: string; collapsedPropName?: string; identifierPropName?: string; levelPropName?: string; parentPropName?: string; initiallyCollapsed?: boolean; }): T[] {
+  const identifierPropName = options?.identifierPropName ?? 'id';
+  const childrenPropName = options?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP;
+  const parentPropName = options?.parentPropName ?? Constants.treeDataProperties.PARENT_PROP;
+  const levelPropName = options?.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
+  const collapsedPropName = options?.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
+  const inputArray: P[] = flatArray || [];
+  const roots: T[] = []; // items without parent which at the root
+
+  // make them accessible by guid on this map
+  const all: any = {};
+
+  inputArray.forEach((item: any) => all[item[identifierPropName]] = item);
+
+  // connect childrens to its parent, and split roots apart
+  Object.keys(all).forEach((id) => {
+    const item = all[id];
+    if (!(parentPropName in item) || item[parentPropName] === null || item[parentPropName] === undefined || item[parentPropName] === '') {
+      roots.push(item);
+    } else if (item[parentPropName] in all) {
+      const p = all[item[parentPropName]];
+      if (!(childrenPropName in p)) {
+        p[childrenPropName] = [];
+      }
+      p[childrenPropName].push(item);
+      if (p[collapsedPropName] === undefined) {
+        p[collapsedPropName] = options?.initiallyCollapsed ?? false;
+      }
+    }
+  });
+
+  // we need and want to the Tree Level,
+  // we can do that after the tree is created and mutate the array by adding a __treeLevel property on each item
+  // perhaps there might be a way to add this while creating the tree for now that is the easiest way I found
+  addTreeLevelByMutation(roots, { childrenPropName, levelPropName }, 0);
+
+  return roots;
 }
 
 /**

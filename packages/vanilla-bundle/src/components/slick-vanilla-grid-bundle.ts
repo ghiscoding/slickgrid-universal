@@ -398,9 +398,9 @@ export class SlickVanillaGridBundle {
 
   /** Dispose of the Component */
   dispose(shouldEmptyDomElementContainer = false) {
-    this._eventPubSubService.publish('onBeforeGridDestroy', this.slickGrid);
+    this._eventPubSubService?.publish('onBeforeGridDestroy', this.slickGrid);
     this._eventHandler?.unsubscribeAll();
-    this._eventPubSubService.publish('onAfterGridDestroyed', true);
+    this._eventPubSubService?.publish('onAfterGridDestroyed', true);
 
     // dispose the Services
     this.extensionService?.dispose();

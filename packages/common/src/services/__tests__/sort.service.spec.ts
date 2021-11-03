@@ -226,7 +226,7 @@ describe('SortService', () => {
       setTimeout(() => {
         expect(previousSortSpy).toHaveBeenCalled();
         expect(localSortSpy).toHaveBeenNthCalledWith(1, gridStub, [], true, true);
-        expect(localSortSpy).toHaveBeenNthCalledWith(2, gridStub, [{ columnId: 'id', clearSortTriggered: true, sortAsc: true, sortCol: { field: 'id', id: 'id' } }]);
+        expect(localSortSpy).toHaveBeenNthCalledWith(2, gridStub, [{ columnId: 'id', clearSortTriggered: true, sortAsc: true, sortCol: { field: 'id', id: 'id' } }], false, true);
         expect(emitSortChangedSpy).toHaveBeenCalledWith('local', []);
         expect(setSortSpy).toHaveBeenCalled();
         expect(sortDefaultSpy).toHaveBeenCalled();
@@ -252,7 +252,7 @@ describe('SortService', () => {
         expect(previousSortSpy).toHaveBeenCalled();
         expect(localSortSpy).toHaveBeenNthCalledWith(1, gridStub, [], true, true);
         expect(emitSortChangedSpy).toHaveBeenCalledWith('local', []);
-        expect(localSortSpy).toHaveBeenNthCalledWith(2, gridStub, [{ columnId: 'customId', clearSortTriggered: true, sortAsc: true, sortCol: { field: 'customId', id: 'customId' } }]);
+        expect(localSortSpy).toHaveBeenNthCalledWith(2, gridStub, [{ columnId: 'customId', clearSortTriggered: true, sortAsc: true, sortCol: { field: 'customId', id: 'customId' } }], false, true);
         expect(setSortSpy).toHaveBeenCalled();
         expect(sortDefaultSpy).toHaveBeenCalled();
         done();

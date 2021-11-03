@@ -3,6 +3,7 @@ import { ToggleStateChangeType, ToggleStateChangeTypeString } from '../enums/ind
 import {
   Column,
   ColumnSort,
+  EventSubscription,
   GetSlickEventType,
   GridOption,
   OnClickEventArgs,
@@ -29,6 +30,7 @@ export class TreeDataService {
   protected _currentToggledItems: TreeToggledItem[] = [];
   protected _grid!: SlickGrid;
   protected _eventHandler: SlickEventHandler;
+  protected _subscriptions: EventSubscription[] = [];
 
   constructor(protected readonly pubSubService: PubSubService, protected readonly sharedService: SharedService, protected readonly sortService: SortService) {
     this._eventHandler = new Slick.EventHandler();
@@ -65,9 +67,8 @@ export class TreeDataService {
 
   dispose() {
     // unsubscribe all SlickGrid events
-    if (this._eventHandler?.unsubscribeAll) {
-      this._eventHandler.unsubscribeAll();
-    }
+    this._eventHandler.unsubscribeAll();
+    this.pubSubService.unsubscribeAll(this._subscriptions);
   }
 
   init(grid: SlickGrid) {
@@ -104,6 +105,11 @@ export class TreeDataService {
     if (onClickHandler) {
       (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onClickHandler>>).subscribe(onClickHandler, this.handleOnCellClick.bind(this));
     }
+
+    // when "Clear all Sorting" is triggered by the Grid Menu, we'll resort with `initialSort` when defined (or else by 'id')
+    this._subscriptions.push(
+      this.pubSubService.subscribe('onGridMenuClearAllSorting', this.clearSorting.bind(this))
+    );
   }
 
   /**
@@ -256,6 +262,12 @@ export class TreeDataService {
         break;
     }
     return propName;
+  }
+
+  /** Clear the sorting and set it back to initial sort */
+  clearSorting() {
+    const initialSort = this.getInitialSort(this.sharedService.columnDefinitions, this.sharedService.gridOptions);
+    this.sortService.loadGridSorters([{ columnId: initialSort.columnId, direction: initialSort.sortAsc ? 'ASC' : 'DESC' }]);
   }
 
   /**
