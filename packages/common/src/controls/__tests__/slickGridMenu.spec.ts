@@ -1092,6 +1092,7 @@ describe('GridMenuControl', () => {
         it('should call "clearFrozenColumns" when the command triggered is "clear-pinning"', () => {
           const setOptionsSpy = jest.spyOn(gridStub, 'setOptions');
           const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
+          const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
           const copyGridOptionsMock = { ...gridOptionsMock, gridMenu: { commandLabels: gridOptionsMock.gridMenu.commandLabels, hideClearFrozenColumnsCommand: false, } } as unknown as GridOption;
           jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1105,11 +1106,13 @@ describe('GridMenuControl', () => {
 
           expect(setColumnsSpy).toHaveBeenCalled();
           expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: -1, frozenRow: -1, frozenBottom: false, enableMouseWheelScrollHandler: false });
+          expect(pubSubSpy).toHaveBeenCalledWith('onGridMenuClearAllPinning');
         });
 
         it('should call "clearFilters" and dataview refresh when the command triggered is "clear-filter"', () => {
           const filterSpy = jest.spyOn(filterServiceStub, 'clearFilters');
           const refreshSpy = jest.spyOn(SharedService.prototype.dataView, 'refresh');
+          const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
           const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, } as unknown as GridOption;
           jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1123,11 +1126,13 @@ describe('GridMenuControl', () => {
 
           expect(filterSpy).toHaveBeenCalled();
           expect(refreshSpy).toHaveBeenCalled();
+          expect(pubSubSpy).toHaveBeenCalledWith('onGridMenuClearAllFilters');
         });
 
         it('should call "clearSorting" and dataview refresh when the command triggered is "clear-sorting"', () => {
           const sortSpy = jest.spyOn(sortServiceStub, 'clearSorting');
           const refreshSpy = jest.spyOn(SharedService.prototype.dataView, 'refresh');
+          const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
           const copyGridOptionsMock = { ...gridOptionsMock, enableSorting: true, } as unknown as GridOption;
           jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1141,6 +1146,7 @@ describe('GridMenuControl', () => {
 
           expect(sortSpy).toHaveBeenCalled();
           expect(refreshSpy).toHaveBeenCalled();
+          expect(pubSubSpy).toHaveBeenCalledWith('onGridMenuClearAllSorting');
         });
 
         it('should call "exportToExcel" and expect an error thrown when ExcelExportService is not registered prior to calling the method', () => {

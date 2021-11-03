@@ -689,14 +689,17 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           if (gridOptions.enableAutoSizeColumns) {
             this.grid.autosizeColumns();
           }
+          this.pubSubService.publish('onGridMenuClearAllPinning');
           break;
         case 'clear-filter':
           this.filterService.clearFilters();
           this.sharedService.dataView.refresh();
+          this.pubSubService.publish('onGridMenuClearAllFilters');
           break;
         case 'clear-sorting':
           this.sortService.clearSorting();
           this.sharedService.dataView.refresh();
+          this.pubSubService.publish('onGridMenuClearAllSorting');
           break;
         case 'export-csv':
           const exportCsvService: TextExportService = registeredResources.find((service: any) => service.className === 'TextExportService');
