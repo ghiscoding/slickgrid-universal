@@ -357,7 +357,7 @@ describe('SlickCustomTooltip plugin', () => {
     plugin.init(gridStub, container);
     plugin.setOptions({
       offsetLeft: 5,
-      position: 'bottom',
+      position: 'left-align',
       formatter: () => 'loading...',
       asyncProcess: () => Promise.resolve({ ratio: 1.2 }),
       asyncPostFormatter: (row, cell, val, column, dataContext) => `async post text with ratio: ${dataContext.__params.ratio || ''}`,
@@ -377,7 +377,7 @@ describe('SlickCustomTooltip plugin', () => {
     setTimeout(() => {
       tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
       expect(tooltipElm.textContent).toBe('async post text with ratio: 1.2');
-      expect(tooltipElm.classList.contains('arrow-up')).toBeTruthy();
+      expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
       expect(tooltipElm.classList.contains('arrow-right-align')).toBeTruthy();
       done();
     }, 0);

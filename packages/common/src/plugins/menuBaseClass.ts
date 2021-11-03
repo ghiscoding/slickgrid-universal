@@ -16,7 +16,6 @@ import {
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { ExtensionUtility } from '../extensions/extensionUtility';
-import { getHtmlElementOffset, windowScrollPosition } from '../services/domUtilities';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
 import { hasData, toSentenceCase } from '../services/utilities';
@@ -108,29 +107,6 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   // --
   // protected functions
   // ------------------
-
-  protected calculateAvailableSpaceBottom(element: HTMLElement) {
-    let availableSpace = 0;
-    const windowHeight = window.innerHeight ?? 0;
-    const pageScrollTop = windowScrollPosition()?.top ?? 0;
-    const elmOffset = getHtmlElementOffset(element);
-    if (elmOffset) {
-      const elementOffsetTop = elmOffset.top ?? 0;
-      availableSpace = windowHeight - (elementOffsetTop - pageScrollTop);
-    }
-    return availableSpace;
-  }
-
-  protected calculateAvailableSpaceTop(element: HTMLElement) {
-    let availableSpace = 0;
-    const pageScrollTop = windowScrollPosition()?.top ?? 0;
-    const elmOffset = getHtmlElementOffset(element);
-    if (elmOffset) {
-      const elementOffsetTop = elmOffset.top ?? 0;
-      availableSpace = elementOffsetTop - pageScrollTop;
-    }
-    return availableSpace;
-  }
 
   /** Construct the Command/Options Items section. */
   protected populateCommandOrOptionItems(

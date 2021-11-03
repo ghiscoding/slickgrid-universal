@@ -11,6 +11,5 @@ export * from './slickDraggableGrouping';
 export * from './slickGroupItemMetadataProvider';
 export * from './slickHeaderButtons';
 export * from './slickHeaderMenu';
-export * from './slickRowDetailView';
 export * from './slickRowMoveManager';
 export * from './slickRowSelectionModel';

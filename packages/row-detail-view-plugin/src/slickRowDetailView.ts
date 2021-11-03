@@ -3,9 +3,11 @@ import {
   ExternalResource,
   FormatterResultObject,
   GridOption,
+  PubSubService,
   RowDetailView,
   RowDetailViewOption,
   SlickDataView,
+  SlickEventData,
   SlickEventHandler,
   SlickGrid,
   SlickNamespace,
@@ -18,18 +20,19 @@ declare const Slick: SlickNamespace;
 
 export class SlickRowDetailView implements ExternalResource, UniversalRowDetailView {
   protected _addonOptions!: RowDetailView;
+  protected _dataViewIdProperty = 'id';
   protected _eventHandler: SlickEventHandler;
   protected _expandableOverride: any;
   protected _expandedRows: any[] = [];
   protected _grid!: SlickGrid;
-  protected _lastRange: any;
-  protected _rowIdsOutOfViewport: any;
-  protected _gridRowBuffer: any;
-  protected _outsideRange: any;
-  protected _keyPrefix = '';
-  protected _dataViewIdProperty = '';
+  protected _gridRowBuffer = 0;
   protected _gridUid = '';
-  protected _visibleRenderedCellCount: any;
+  protected _keyPrefix = '';
+  protected _lastRange: any = null;
+  protected _outsideRange = 5;
+  protected _pubSubService: PubSubService | null = null;
+  protected _rowIdsOutOfViewport: Array<number | string> = [];
+  protected _visibleRenderedCellCount = 0;
   protected _defaults = {
     columnId: '_detail_selector',
     cssClass: 'detailView-toggle',
@@ -72,9 +75,17 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     this._eventHandler = new Slick.EventHandler();
   }
 
+  get addonOptions() {
+    return this._addonOptions;
+  }
+
   /** Getter of SlickGrid DataView object */
   get dataView(): SlickDataView {
     return this._grid?.getData() || {} as SlickDataView;
+  }
+
+  get eventHandler() {
+    return this._eventHandler;
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
@@ -85,22 +96,24 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   protected gridUid() {
     return this._gridUid || (this._grid?.getUID() || '');
   }
+
   /**
    * Initialize the Export Service
    * @param _grid
    * @param _containerService
    */
-  init(grid: SlickGrid): void {
+  init(grid: SlickGrid) {
     this._grid = grid;
     if (!grid) {
       throw new Error('RowDetailView Plugin requires the Grid instance to be passed as argument to the "init()" method');
     }
     this._grid = grid;
     this._gridUid = grid.getUID();
-    this._keyPrefix = this._addonOptions && this._addonOptions.keyPrefix || '_';
+    this._addonOptions = (this.gridOptions.rowDetailView || {}) as RowDetailView;
+    this._keyPrefix = this._addonOptions?.keyPrefix || '_';
 
     // Update the minRowBuffer so that the view doesn't disappear when it's at top of screen + the original default 3
-    this._gridRowBuffer = this._grid.getOptions().minRowBuffer;
+    this._gridRowBuffer = this._grid.getOptions().minRowBuffer || 0;
     this._grid.getOptions().minRowBuffer = this._addonOptions.panelRows + 3;
 
     this._eventHandler
@@ -119,8 +132,8 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       this._grid.render();
     });
 
-    this._eventHandler.subscribe(this.dataView.onRowsChanged, (e, a) => {
-      this._grid.invalidateRows(a.rows);
+    this._eventHandler.subscribe(this.dataView.onRowsChanged, (_e: SlickEventData, args: any) => {
+      this._grid.invalidateRows(args.rows);
       this._grid.render();
     });
 
@@ -136,8 +149,8 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     // we will need to know how many rows are rendered on the screen and we need to wait for grid to be rendered
     // unfortunately there is no triggered event for knowing when grid is finished, so we use 250ms delay and it's typically more than enough
     if (this._addonOptions.useSimpleViewportCalc) {
-      this._eventHandler.subscribe(this._grid.onRendered, (_e, args) => {
-        if (args && args.endRow) {
+      this._eventHandler.subscribe(this._grid.onRendered, (_e: SlickEventData, args: any) => {
+        if (args?.endRow) {
           this._visibleRenderedCellCount = args.endRow - args.startRow;
         }
       });
@@ -154,8 +167,18 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     this._eventHandler?.unsubscribeAll();
   }
 
-  create(columnDefinitions: Column[], gridOptions: GridOption): SlickRowDetailView | null {
+  create(columnDefinitions: Column[], gridOptions: GridOption): UniversalRowDetailView | null {
+    if (!gridOptions.rowDetailView) {
+      throw new Error('[Slickgrid-Universal] The Row Detail View requires options to be passed via the "rowDetailView" property of the Grid Options');
+    }
+
     this._addonOptions = { ...this._defaults, ...gridOptions.rowDetailView } as RowDetailView;
+
+    // user could override the expandable icon logic from within the options or after instantiating the plugin
+    if (typeof this._addonOptions.expandableOverride === 'function') {
+      this.expandableOverride(this._addonOptions.expandableOverride);
+    }
+
     if (Array.isArray(columnDefinitions) && gridOptions) {
       const newRowDetailViewColumn: Column = this.getColumnDefinition();
       const rowDetailColDef = Array.isArray(columnDefinitions) && columnDefinitions.find(col => col?.behavior === 'selectAndMove');
@@ -169,7 +192,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         columnDefinitions.unshift(finalRowDetailViewColumn);
       }
     }
-    return this;
+    return this as unknown as UniversalRowDetailView;
   }
 
   /** Get current plugin options */
@@ -273,7 +296,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
      * the response has to be as "args.item" (or "args.itemDetail") with it's data back
      */
   subscribeToOnAsyncResponse() {
-    this.onAsyncResponse.subscribe((_e, args) => {
+    this._eventHandler.subscribe(this.onAsyncResponse, (_e: Event, args: any) => {
       if (!args || (!args.item && !args.itemDetail)) {
         throw new Error('Slick.RowDetailView plugin requires the onAsyncResponse() to supply "args.item" property.');
       }
@@ -318,11 +341,11 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
    * In order word, user can choose which rows to be an available row detail (or not) by providing his own logic.
    * @param overrideFn: override function callback
    */
-  setExpandableOverride(overrideFn: UsabilityOverrideFn) {
+  expandableOverride(overrideFn: UsabilityOverrideFn) {
     this._expandableOverride = overrideFn;
   }
 
-  expandableOverride(): UsabilityOverrideFn {
+  getExpandableOverride(): UsabilityOverrideFn {
     return this._expandableOverride;
   }
 
@@ -330,15 +353,20 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   getColumnDefinition(): Column {
     return {
       id: (this._addonOptions as any).columnId,
-      name: '',
-      toolTip: (this._addonOptions as any).toolTip,
       field: 'sel',
-      width: (this._addonOptions as any).width,
-      resizable: false,
-      sortable: false,
+      name: '',
       alwaysRenderColumn: (this._addonOptions as any).alwaysRenderColumn,
       cssClass: this._addonOptions.cssClass,
+      excludeFromExport: true,
+      excludeFromColumnPicker: true,
+      excludeFromGridMenu: true,
+      excludeFromQuery: true,
+      excludeFromHeaderMenu: true,
       formatter: this.detailSelectionFormatter.bind(this),
+      resizable: false,
+      sortable: false,
+      toolTip: (this._addonOptions as any).toolTip,
+      width: (this._addonOptions as any).width,
     };
   }
 

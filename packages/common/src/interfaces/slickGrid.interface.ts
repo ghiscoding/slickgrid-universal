@@ -245,7 +245,7 @@ export interface SlickGrid {
   getSelectedRows(): number[];
 
   /** Returns the current SelectionModel. See here for more information about SelectionModels. */
-  getSelectionModel(): SlickCellSelectionModel | SlickRowSelectionModel;
+  getSelectionModel<T = SlickCellSelectionModel | SlickRowSelectionModel>(): T | undefined;
 
   /** Get sorted columns **/
   getSortColumns(): ColumnSort[];

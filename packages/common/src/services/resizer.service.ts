@@ -2,6 +2,7 @@ import { FieldType, } from '../enums/index';
 import {
   AutoResizeOption,
   Column,
+  EventSubscription,
   GetSlickEventType,
   GridOption,
   GridSize,
@@ -43,6 +44,7 @@ export class ResizerService {
   protected _timer!: NodeJS.Timeout;
   protected _resizePaused = false;
   protected _resizeObserver!: ResizeObserver;
+  protected _subscriptions: EventSubscription[] = [];
 
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
@@ -85,6 +87,7 @@ export class ResizerService {
   dispose() {
     // unsubscribe all SlickGrid events
     this._eventHandler?.unsubscribeAll();
+    this.pubSubService.unsubscribeAll(this._subscriptions);
     if (this._intervalId) {
       clearInterval(this._intervalId);
     }
@@ -138,15 +141,19 @@ export class ResizerService {
     // Events
     if (this.gridOptions.autoResize) {
       // resize by content could be called from the outside by other services via pub/sub event
-      this.pubSubService.subscribe('onFullResizeByContentRequested', () => this.resizeColumnsByCellContent(true));
+      this._subscriptions.push(
+        this.pubSubService.subscribe('onFullResizeByContentRequested', () => this.resizeColumnsByCellContent(true))
+      );
     }
 
     // on double-click resize, should we resize the cell by its cell content?
     // the same action can be called from a double-click and/or from column header menu
     if (this.gridOptions?.enableColumnResizeOnDoubleClick) {
-      this.pubSubService.subscribe('onHeaderMenuColumnResizeByContent', (data => {
-        this.handleSingleColumnResizeByContent(data.columnId);
-      }));
+      this._subscriptions.push(
+        this.pubSubService.subscribe('onHeaderMenuColumnResizeByContent', (data => {
+          this.handleSingleColumnResizeByContent(data.columnId);
+        }))
+      );
 
       const onColumnsResizeDblClickHandler = this._grid.onColumnsResizeDblClick;
       (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onColumnsResizeDblClickHandler>>).subscribe(onColumnsResizeDblClickHandler, (_e, args) => {

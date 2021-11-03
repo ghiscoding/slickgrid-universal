@@ -10,7 +10,7 @@ import {
   MenuOptionItemCallbackArgs,
 } from '../interfaces/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
-import { findWidthOrDefault, getHtmlElementOffset, } from '../services/domUtilities';
+import { calculateAvailableSpace, findWidthOrDefault, getHtmlElementOffset, } from '../services/domUtilities';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
 import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from './menuBaseClass';
@@ -259,8 +259,8 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       // without necessary toggling it's position just yet, we just want to know the future position for calculation
       if ((this._addonOptions as CellMenu | ContextMenu).autoAdjustDrop || (this._addonOptions as CellMenu | ContextMenu).alignDropDirection) {
         // since we reposition menu below slick cell, we need to take it in consideration and do our calculation from that element
-        const spaceBottom = this.calculateAvailableSpaceBottom(parentElm);
-        const spaceTop = this.calculateAvailableSpaceTop(parentElm);
+        const spaceBottom = calculateAvailableSpace(parentElm).bottom;
+        const spaceTop = calculateAvailableSpace(parentElm).top;
         const spaceBottomRemaining = spaceBottom + dropOffset - rowHeight;
         const spaceTopRemaining = spaceTop - dropOffset + rowHeight;
         const dropPosition = ((spaceBottomRemaining < menuHeight) && (spaceTopRemaining > spaceBottomRemaining)) ? 'top' : 'bottom';

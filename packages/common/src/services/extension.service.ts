@@ -1,4 +1,4 @@
-import { Column, Extension, ExtensionModel, GridOption, } from '../interfaces/index';
+import { Column, Extension, ExtensionModel, GridOption, SlickRowDetailView, } from '../interfaces/index';
 import { ColumnReorderFunction, ExtensionList, ExtensionName, SlickControlList, SlickPluginList } from '../enums/index';
 import { ExtensionUtility } from '../extensions/index';
 import { SharedService } from './shared.service';
@@ -21,7 +21,6 @@ import { FilterService } from './filter.service';
 import { PubSubService } from './pubSub.service';
 import { SortService } from './sort.service';
 import { TreeDataService } from './treeData.service';
-import { SlickRowDetailView } from '../plugins/slickRowDetailView';
 
 interface ExtensionWithColumnIndexPosition {
   name: ExtensionName;
@@ -42,7 +41,6 @@ export class ExtensionService {
   protected _gridMenuControl?: SlickGridMenu;
   protected _groupItemMetadataProviderService?: SlickGroupItemMetadataProvider;
   protected _headerMenuPlugin?: SlickHeaderMenu;
-  protected _rowDetailViewPlugin?: SlickRowDetailView;
   protected _rowMoveManagerPlugin?: SlickRowMoveManager;
   protected _rowSelectionModel?: SlickRowSelectionModel;
 
@@ -83,6 +81,15 @@ export class ExtensionService {
     for (const key of Object.keys(this._extensionList)) {
       delete this._extensionList[key as keyof Record<ExtensionName, ExtensionModel<any, any>>];
     }
+  }
+
+  /**
+   * Get an external plugin Extension
+   * @param {String} name
+   * @param {Object} extension
+   */
+  addExtensionToList(name: ExtensionName, extension: { name: ExtensionName; class: any; instance: any; }) {
+    this._extensionList[name] = extension;
   }
 
   /** Get all columns (includes visible and non-visible) */
@@ -256,21 +263,6 @@ export class ExtensionService {
         this._extensionList[ExtensionName.headerMenu] = { name: ExtensionName.headerMenu, class: this._headerMenuPlugin, instance: this._headerMenuPlugin };
       }
 
-      // Row Detail View Plugin
-      if (this.gridOptions.enableRowDetailView) {
-        this._rowDetailViewPlugin = new SlickRowDetailView();
-        this._rowDetailViewPlugin.init(this.sharedService.slickGrid);
-        if (this.gridOptions.rowDetailView?.onExtensionRegistered) {
-          this.gridOptions.rowDetailView.onExtensionRegistered(this._rowDetailViewPlugin);
-        }
-        const createdExtension = this.getCreatedExtensionByName(ExtensionName.rowDetailView); // get the instance from when it was really created earlier
-        const instance = createdExtension?.instance;
-        if (instance) {
-          this._extensionList[ExtensionName.rowDetailView] = { name: ExtensionName.rowDetailView, class: this._rowDetailViewPlugin, instance: this._rowDetailViewPlugin };
-        }
-        // this._extensionList[ExtensionName.headerMenu] = { name: ExtensionName.headerMenu, class: this._headerMenuPlugin, instance: this._headerMenuPlugin };
-      }
-
       // Row Move Manager Plugin
       if (this.gridOptions.enableRowMoveManager) {
         this._rowMoveManagerPlugin = this._rowMoveManagerPlugin || new SlickRowMoveManager();
@@ -309,12 +301,6 @@ export class ExtensionService {
       if (!this.getCreatedExtensionByName(ExtensionName.rowMoveManager)) {
         this._rowMoveManagerPlugin = new SlickRowMoveManager();
         featureWithColumnIndexPositions.push({ name: ExtensionName.rowMoveManager, extension: this._rowMoveManagerPlugin, columnIndexPosition: gridOptions?.rowMoveManager?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
-      }
-    }
-    if (gridOptions.enableRowDetailView) {
-      if (!this.getCreatedExtensionByName(ExtensionName.rowDetailView)) {
-        this._rowDetailViewPlugin = new SlickRowDetailView();
-        featureWithColumnIndexPositions.push({ name: ExtensionName.rowDetailView, extension: this._rowDetailViewPlugin, columnIndexPosition: gridOptions?.rowDetailView?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
       }
     }
 
