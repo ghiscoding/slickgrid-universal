@@ -4,6 +4,7 @@ import {
   DOMMouseEvent,
   DraggableGrouping,
   DraggableGroupingOption,
+  EventSubscription,
   GetSlickEventType,
   GridOption,
   GroupingGetterFunction,
@@ -72,14 +73,15 @@ export class SlickDraggableGrouping {
   protected _addonOptions!: DraggableGroupingOption;
   protected _bindEventService: BindingEventService;
   protected _droppableInstance: any;
+  protected dropboxElm!: HTMLDivElement;
+  protected dropboxPlaceholderElm!: HTMLDivElement;
   protected _sortableInstance: any;
   protected _eventHandler!: SlickEventHandler;
   protected _grid?: SlickGrid;
   protected _gridColumns: Column[] = [];
   protected _gridUid = '';
-  protected dropboxElm!: HTMLDivElement;
-  protected dropboxPlaceholderElm!: HTMLDivElement;
   protected groupToggler!: HTMLDivElement;
+  protected _subscriptions: EventSubscription[] = [];
   protected _defaults = {
     dropPlaceHolderText: 'Drop a column header here to group by the column',
     hideToggleAllButton: false,
@@ -177,8 +179,10 @@ export class SlickDraggableGrouping {
         this.dropboxElm.appendChild(this.groupToggler);
 
         // when calling Expand/Collapse All Groups from Context Menu, we also need to inform this plugin as well of the action
-        this.pubSubService.subscribe('onContextMenuCollapseAllGroups', () => this.toggleGroupToggler(groupTogglerIconElm, true, false));
-        this.pubSubService.subscribe('onContextMenuExpandAllGroups', () => this.toggleGroupToggler(groupTogglerIconElm, false, false));
+        this._subscriptions.push(
+          this.pubSubService.subscribe('onContextMenuCollapseAllGroups', () => this.toggleGroupToggler(groupTogglerIconElm, true, false)),
+          this.pubSubService.subscribe('onContextMenuExpandAllGroups', () => this.toggleGroupToggler(groupTogglerIconElm, false, false)),
+        );
       }
 
       this.dropboxPlaceholderElm = document.createElement('div');
@@ -215,7 +219,7 @@ export class SlickDraggableGrouping {
       });
 
       // when calling Clear All Groups from Context Menu, we also need to inform this plugin as well of the action
-      this.pubSubService.subscribe('onContextMenuClearGrouping', () => this.clearDroppedGroups());
+      this._subscriptions.push(this.pubSubService.subscribe('onContextMenuClearGrouping', () => this.clearDroppedGroups()));
 
       for (const col of this._gridColumns) {
         const columnId = col.field;
@@ -234,6 +238,7 @@ export class SlickDraggableGrouping {
   dispose() {
     this.onGroupChanged.unsubscribe();
     this._eventHandler.unsubscribeAll();
+    this.pubSubService.unsubscribeAll(this._subscriptions);
     emptyElement(document.querySelector('.slick-preheader-panel'));
   }
 

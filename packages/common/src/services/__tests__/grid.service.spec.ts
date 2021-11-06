@@ -1,5 +1,3 @@
-import 'jest-extended';
-
 import { FilterService, GridService, GridStateService, PaginationService, PubSubService, SharedService, SortService, TreeDataService } from '../index';
 import { GridOption, CellArgs, Column, OnEventArgs, SlickGrid, SlickDataView, SlickNamespace } from '../../interfaces/index';
 import { SlickRowSelectionModel } from '../../plugins/slickRowSelectionModel';
@@ -23,6 +21,7 @@ const mockRowSelectionModel = {
 jest.mock('../../plugins/slickRowSelectionModel', () => ({
   SlickRowSelectionModel: jest.fn().mockImplementation(() => mockRowSelectionModel),
 }));
+jest.mock('flatpickr', () => { });
 
 const filterServiceStub = {
   clearFilters: jest.fn(),
@@ -1137,6 +1136,26 @@ describe('Grid Service', () => {
 
       expect(setColumnsSpy).toHaveBeenCalled();
       expect(setOptionsSpy).toHaveBeenCalledWith({ frozenBottom: false, frozenColumn: -1, frozenRow: -1, enableMouseWheelScrollHandler: false });
+    });
+
+    it('should call "setPinning" which itself calls "clearPinning" when the pinning option input is an empty object', () => {
+      const mockPinning = {};
+      const clearPinningSpy = jest.spyOn(service, 'clearPinning');
+      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+
+      service.setPinning(mockPinning);
+
+      expect(clearPinningSpy).toHaveBeenCalled();
+    });
+
+    it('should call "setPinning" which itself calls "clearPinning" when the pinning option input is null', () => {
+      const mockPinning = null;
+      const clearPinningSpy = jest.spyOn(service, 'clearPinning');
+      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+
+      service.setPinning(mockPinning);
+
+      expect(clearPinningSpy).toHaveBeenCalled();
     });
 
     it('should call "setPinning" and expect SlickGrid "setOptions" be called with new frozen options and "autosizeColumns" also be called', () => {

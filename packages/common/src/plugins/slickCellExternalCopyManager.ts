@@ -198,7 +198,7 @@ export class SlickCellExternalCopyManager {
       clippedRange[j++] = clipRow !== '' ? clipRow.split('\t') : [''];
     }
     const selectedCell = this._grid.getActiveCell();
-    const ranges = this._grid.getSelectionModel().getSelectedRanges();
+    const ranges = this._grid.getSelectionModel()?.getSelectedRanges();
     const selectedRange = ranges?.length ? ranges[0] : null;   // pick only one selection
     let activeRow: number;
     let activeCell: number;
@@ -297,7 +297,7 @@ export class SlickCellExternalCopyManager {
           toRow: activeRow + this._clipCommand.h - 1
         };
         this.markCopySelection([bRange]);
-        this._grid.getSelectionModel().setSelectedRanges([bRange]);
+        this._grid.getSelectionModel()?.setSelectedRanges([bRange]);
         this.onPasteCells.notify({ ranges: [bRange] });
       },
 
@@ -335,7 +335,7 @@ export class SlickCellExternalCopyManager {
         };
 
         this.markCopySelection([bRange]);
-        this._grid.getSelectionModel().setSelectedRanges([bRange]);
+        this._grid.getSelectionModel()?.setSelectedRanges([bRange]);
         this.onPasteCells.notify({ ranges: [bRange] });
         if (typeof this._addonOptions.onPasteCells === 'function') {
           this._addonOptions.onPasteCells(new Slick.EventData(), { ranges: [bRange] });
@@ -379,7 +379,7 @@ export class SlickCellExternalCopyManager {
         if (typeof this._onCopyInit === 'function') {
           this._onCopyInit.call(this);
         }
-        ranges = this._grid.getSelectionModel().getSelectedRanges();
+        ranges = this._grid.getSelectionModel()?.getSelectedRanges() ?? [];
         if (ranges.length !== 0) {
           this._copiedRanges = ranges;
           this.markCopySelection(ranges);

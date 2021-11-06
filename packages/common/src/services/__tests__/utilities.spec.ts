@@ -1,4 +1,3 @@
-import 'jest-extended';
 import { of } from 'rxjs';
 
 import { FieldType, OperatorType } from '../../enums/index';
@@ -9,6 +8,7 @@ import {
   addTreeLevelByMutation,
   addWhiteSpaces,
   arrayRemoveItemByIndex,
+  cancellablePromise,
   castObservableToPromise,
   flattenToParentChildArray,
   unflattenParentChildArrayToTree,
@@ -23,6 +23,7 @@ import {
   getTranslationPrefix,
   isEmptyObject,
   isNumber,
+  isObjectEmpty,
   mapMomentDateFormatWithFieldType,
   mapFlatpickrDateFormatWithFieldType,
   mapOperatorByFieldType,
@@ -41,6 +42,7 @@ import {
   unsubscribeAll,
   uniqueArray,
   uniqueObjectArray,
+  CancelledException,
 } from '../utilities';
 
 describe('Service/Utilies', () => {
@@ -118,6 +120,28 @@ describe('Service/Utilies', () => {
     });
   });
 
+  describe('isObjectEmpty method', () => {
+    it('should return True when input is undefined', () => {
+      const result = isObjectEmpty(undefined);
+      expect(result).toBeTrue();
+    });
+
+    it('should return True when input is null', () => {
+      const result = isObjectEmpty(null);
+      expect(result).toBeTrue();
+    });
+
+    it('should return True when input is {} (empty object)', () => {
+      const result = isObjectEmpty({});
+      expect(result).toBeTrue();
+    });
+
+    it('should return False when input is an object with at least 1 property', () => {
+      const result = isObjectEmpty({ name: 'John' });
+      expect(result).toBeFalse();
+    });
+  });
+
   describe('isNumber method', () => {
     it('should return True when comparing a number from a number/string variable when strict mode is disable', () => {
       const result1 = isNumber(22);
@@ -170,6 +194,42 @@ describe('Service/Utilies', () => {
         },
         { id: 18, __treeLevel: 0, parentId: null, file: 'something.txt', dateModified: '2015-03-03', size: 90, },
       ]);
+    });
+  });
+
+  describe('cancellablePromise method', () => {
+    let rxjs: RxJsResourceStub;
+    beforeEach(() => {
+      rxjs = new RxJsResourceStub();
+    });
+
+    it('should return the same input when it is not a Promise provided', () => {
+      const notPromise = () => true;
+      const wrappedOutput = cancellablePromise(notPromise as any);
+
+      expect(wrappedOutput).toEqual(notPromise);
+    });
+
+    it('should throw a CancelledException when calling the "cancel" method on the wrapped cancellable promise', (done) => {
+      const promise = new Promise((resolve) => resolve(true));
+      const wrappedPromise = cancellablePromise(promise);
+
+      wrappedPromise.promise.catch((e) => {
+        expect(e).toEqual(new CancelledException('Cancelled Promise'));
+        done();
+      });
+      const output = wrappedPromise.cancel();
+      expect(output).toBeTrue();
+    });
+
+    it('should execute Promise as regular when it is not cancelled', (done) => {
+      const promise = new Promise((resolve) => resolve(true));
+      const wrappedPromise = cancellablePromise(promise);
+
+      wrappedPromise.promise.then((output) => {
+        expect(output).toBeTrue();
+        done();
+      });
     });
   });
 

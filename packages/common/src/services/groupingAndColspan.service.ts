@@ -1,8 +1,9 @@
 import {
   Column,
-  SlickDataView,
+  EventSubscription,
   GetSlickEventType,
   GridOption,
+  SlickDataView,
   SlickEventHandler,
   SlickGrid,
   SlickNamespace,
@@ -18,6 +19,7 @@ declare const Slick: SlickNamespace;
 export class GroupingAndColspanService {
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
+  protected _subscriptions: EventSubscription[] = [];
 
   constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: PubSubService,) {
     this._eventHandler = new Slick.EventHandler();
@@ -68,10 +70,12 @@ export class GroupingAndColspanService {
         this._eventHandler.subscribe(this._dataView.onRowCountChanged, () => this.delayRenderPreHeaderRowGroupingTitles(0));
 
         // for both picker (columnPicker/gridMenu) we also need to re-create after hiding/showing columns
-        this.pubSubService.subscribe(`onColumnPickerColumnsChanged`, () => this.renderPreHeaderRowGroupingTitles());
-        this.pubSubService.subscribe('onHeaderMenuHideColumns', () => this.delayRenderPreHeaderRowGroupingTitles(0));
-        this.pubSubService.subscribe(`onGridMenuColumnsChanged`, () => this.renderPreHeaderRowGroupingTitles());
-        this.pubSubService.subscribe(`onGridMenuMenuClose`, () => this.renderPreHeaderRowGroupingTitles());
+        this._subscriptions.push(
+          this.pubSubService.subscribe(`onColumnPickerColumnsChanged`, () => this.renderPreHeaderRowGroupingTitles()),
+          this.pubSubService.subscribe('onHeaderMenuHideColumns', () => this.delayRenderPreHeaderRowGroupingTitles(0)),
+          this.pubSubService.subscribe(`onGridMenuColumnsChanged`, () => this.renderPreHeaderRowGroupingTitles()),
+          this.pubSubService.subscribe(`onGridMenuMenuClose`, () => this.renderPreHeaderRowGroupingTitles()),
+        );
 
         // we also need to re-create after a grid resize
         const resizerPlugin = grid.getPluginByName<SlickResizer>('Resizer');
@@ -98,6 +102,7 @@ export class GroupingAndColspanService {
   dispose() {
     // unsubscribe all SlickGrid events
     this._eventHandler.unsubscribeAll();
+    this.pubSubService.unsubscribeAll(this._subscriptions);
   }
 
   /** call "renderPreHeaderRowGroupingTitles()" with a setTimeout delay */

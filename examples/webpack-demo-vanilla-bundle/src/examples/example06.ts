@@ -72,6 +72,9 @@ export class Example6 {
         exportWithFormatter: true,
         sanitizeDataExport: true
       },
+      gridMenu: {
+        iconCssClass: 'mdi mdi-dots-grid',
+      },
       registerExternalResources: [new ExcelExportService()],
       enableFiltering: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
@@ -149,12 +152,12 @@ export class Example6 {
     if (data[idx + 1] && data[idx + 1][treeLevelPropName] > data[idx][treeLevelPropName]) {
       const folderPrefix = `<i class="mdi icon ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>`;
       if (dataContext.__collapsed) {
-        return `${spacer} <span class="slick-group-toggle collapsed" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
+        return `${spacer} <span class="slick-group-toggle collapsed" aria-expanded="false" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
       } else {
-        return `${spacer} <span class="slick-group-toggle expanded" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
+        return `${spacer} <span class="slick-group-toggle expanded" aria-expanded="true" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
       }
     } else {
-      return `${spacer} <span class="slick-group-toggle" level="${dataContext[treeLevelPropName]}"></span>${prefix}&nbsp;${value}`;
+      return `${spacer} <span class="slick-group-toggle" aria-expanded="false" level="${dataContext[treeLevelPropName]}"></span>${prefix}&nbsp;${value}`;
     }
   }
 

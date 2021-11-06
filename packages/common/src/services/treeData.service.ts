@@ -3,6 +3,7 @@ import { ToggleStateChangeType, ToggleStateChangeTypeString } from '../enums/ind
 import {
   Column,
   ColumnSort,
+  EventSubscription,
   GetSlickEventType,
   GridOption,
   OnClickEventArgs,
@@ -29,6 +30,7 @@ export class TreeDataService {
   protected _currentToggledItems: TreeToggledItem[] = [];
   protected _grid!: SlickGrid;
   protected _eventHandler: SlickEventHandler;
+  protected _subscriptions: EventSubscription[] = [];
 
   constructor(protected readonly pubSubService: PubSubService, protected readonly sharedService: SharedService, protected readonly sortService: SortService) {
     this._eventHandler = new Slick.EventHandler();
@@ -65,9 +67,8 @@ export class TreeDataService {
 
   dispose() {
     // unsubscribe all SlickGrid events
-    if (this._eventHandler?.unsubscribeAll) {
-      this._eventHandler.unsubscribeAll();
-    }
+    this._eventHandler.unsubscribeAll();
+    this.pubSubService.unsubscribeAll(this._subscriptions);
   }
 
   init(grid: SlickGrid) {
@@ -104,6 +105,11 @@ export class TreeDataService {
     if (onClickHandler) {
       (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onClickHandler>>).subscribe(onClickHandler, this.handleOnCellClick.bind(this));
     }
+
+    // when "Clear all Sorting" is triggered by the Grid Menu, we'll resort with `initialSort` when defined (or else by 'id')
+    this._subscriptions.push(
+      this.pubSubService.subscribe('onGridMenuClearAllSorting', this.clearSorting.bind(this))
+    );
   }
 
   /**
@@ -258,6 +264,12 @@ export class TreeDataService {
     return propName;
   }
 
+  /** Clear the sorting and set it back to initial sort */
+  clearSorting() {
+    const initialSort = this.getInitialSort(this.sharedService.columnDefinitions, this.sharedService.gridOptions);
+    this.sortService.loadGridSorters([{ columnId: initialSort.columnId, direction: initialSort.sortAsc ? 'ASC' : 'DESC' }]);
+  }
+
   /**
    * Takes a flat dataset, converts it into a hierarchical dataset, sort it by recursion and finally return back the final and sorted flat array
    * @param {Array<Object>} flatDataset - parent/child flat dataset
@@ -271,7 +283,7 @@ export class TreeDataService {
     // 2- sort the hierarchical array recursively by an optional "initialSort" OR if nothing is provided we'll sort by the column defined as the Tree column
     // also note that multi-column is not currently supported with Tree Data
     const columnSort = this.getInitialSort(columnDefinitions, gridOptions);
-    const datasetSortResult = this.sortService.sortHierarchicalDataset(datasetHierarchical, [columnSort]);
+    const datasetSortResult = this.sortService.sortHierarchicalDataset(datasetHierarchical, [columnSort], true);
 
     // and finally add the sorting icon (this has to be done manually in SlickGrid) to the column we used for the sorting
     this._grid?.setSortColumns([columnSort]);

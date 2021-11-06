@@ -91,7 +91,7 @@ export class SharedService {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return this._gridOptions || this._grid?.getOptions && this._grid.getOptions() || {};
+    return this._gridOptions || this._grid?.getOptions() || {};
   }
 
   /** Setter for the Grid Options pulled through the Grid Object */

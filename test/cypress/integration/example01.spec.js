@@ -140,7 +140,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
-        cy.get(`.slick-grid-menu.${gridUid}.dropright`)
+        cy.get(`.slick-grid-menu.${gridUid}.dropleft`)
           .find('.slick-grid-menu-item:nth(1)')
           .find('span')
           .contains('Clear all Sorting')
@@ -209,7 +209,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
-        cy.get(`.slick-grid-menu.${gridUid}.dropleft`)
+        cy.get(`.slick-grid-menu.${gridUid}.dropright`)
           .find('.slick-grid-menu-item:nth(0)')
           .find('span')
           .contains('Clear all Filters')

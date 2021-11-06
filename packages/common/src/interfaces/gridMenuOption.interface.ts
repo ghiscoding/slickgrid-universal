@@ -1,9 +1,6 @@
 import { Column, GridMenuCallbackArgs, GridMenuCommandItemCallbackArgs, GridMenuLabel, GridOption, MenuCallbackArgs, MenuCommandItem, } from './index';
 
 export interface GridMenuOption {
-  /** Defaults to "right", which side to align the grid menu dropdown? */
-  alignDropSide?: 'left' | 'right';
-
   /**
    * All the commands text labels
    * NOTE: some of the text have other properties outside of this option (like 'customTitle', 'forceFitTitle', ...) and that is because they were created prior to this refactoring of labels
@@ -16,10 +13,13 @@ export interface GridMenuOption {
   /** Same as "commandTitle", except that it's a translation key which can be used on page load and/or when switching locale */
   commandTitleKey?: string;
 
+  /** Array of Custom Items (title, command, disabled, ...) */
+  commandItems?: Array<MenuCommandItem<GridMenuCommandItemCallbackArgs, GridMenuCallbackArgs> | 'divider'>;
+
   /** Defaults to 0 (auto), minimum width of grid menu content (command, column list) */
   contentMinWidth?: number;
 
-  /** Array of Custom Items (title, command, disabled, ...) */
+  /** @deprecated @use `commandItems` Array of Custom Items (title, command, disabled, ...) */
   customItems?: Array<MenuCommandItem<GridMenuCommandItemCallbackArgs, GridMenuCallbackArgs> | 'divider'>;
 
   /** @deprecated @use `commandTitle` Defaults to "Commands" which is the title that shows up over the custom commands list */
@@ -33,6 +33,9 @@ export interface GridMenuOption {
 
   /** Same as "columnTitle", except that it's a translation key which can be used on page load and/or when switching locale */
   columnTitleKey?: string;
+
+  /** Defaults to "left", which side to align the grid menu dropdown? */
+  dropSide?: 'left' | 'right';
 
   /** Defaults to "Force fit columns" which is 1 of the last 2 checkbox title shown at the end of the picker list */
   forceFitTitle?: string;

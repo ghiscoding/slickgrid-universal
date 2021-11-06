@@ -113,8 +113,9 @@ export class SlickGroupItemMetadataProvider {
     const groupLevel = item.level || 0;
     const indentation = this._options?.indentation ?? 15;
     const marginLeft = `${groupLevel * indentation}px`;
+    const toggleClass = item.collapsed ? this._options.toggleCollapsedCssClass : this._options.toggleExpandedCssClass;
 
-    return `<span class="${this._options.toggleCssClass} ${item.collapsed ? this._options.toggleCollapsedCssClass : this._options.toggleExpandedCssClass}" style="margin-left: ${marginLeft}"></span>` +
+    return `<span class="${this._options.toggleCssClass} ${toggleClass}" aria-expanded="${!item.collapsed}" style="margin-left: ${marginLeft}"></span>` +
       `<span class="${this._options.groupTitleCssClass}" level="${groupLevel}">${item.title || ''}</span>`;
   }
 

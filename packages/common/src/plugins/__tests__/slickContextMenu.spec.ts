@@ -1,10 +1,10 @@
+import { DelimiterType, FileType } from '../../enums/index';
 import { ContextMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, SlickDataView, SlickGrid, SlickNamespace, } from '../../interfaces/index';
-import { SlickContextMenu } from '../slickContextMenu';
-import { BackendUtilityService, deepCopy, ExcelExportService, PubSubService, SharedService, TextExportService, TreeDataService, } from '../../services';
+import { BackendUtilityService, deepCopy, ExcelExportService, PubSubService, SharedService, TextExportService, TreeDataService, } from '../../services/index';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { Formatters } from '../../formatters';
-import { DelimiterType, FileType } from '../../enums';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { SlickContextMenu } from '../slickContextMenu';
 
 declare const Slick: SlickNamespace;
 
@@ -255,7 +255,7 @@ describe('ContextMenu Plugin', () => {
     it('should "autoAlignSide" and expect menu to aligned left with a calculate offset when showing menu', () => {
       jest.spyOn(gridStub, 'getGridPosition').mockReturnValue({ top: 10, bottom: 5, left: 15, right: 22, width: 225 } as ElementPosition);
       plugin.dispose();
-      plugin.init({ autoAdjustDrop: true, autoAlignSide: true, alignDropDirection: 'top', alignDropSide: 'left' });
+      plugin.init({ autoAdjustDrop: true, autoAlignSide: true, dropDirection: 'top', dropSide: 'left' });
 
       const actionBtnElm = document.createElement('button');
       slickCellElm.appendChild(actionBtnElm);
@@ -717,7 +717,7 @@ describe('ContextMenu Plugin', () => {
       });
 
       // -- Copy to Clipboard -- //
-      it('should populate menuCustomItems with Copy cell action when "hideCopyCellValueCommand" is disabled', () => {
+      it('should populate menuCommandItems with Copy cell action when "hideCopyCellValueCommand" is disabled', () => {
         const execSpy = jest.spyOn(window.document, 'execCommand');
         gridOptionsMock.contextMenu.hideCopyCellValueCommand = false;
         plugin.dispose();

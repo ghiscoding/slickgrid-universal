@@ -9,8 +9,8 @@ import {
 } from '@slickgrid-universal/common';
 
 export class SlickEmptyWarningComponent implements ExternalResource {
-  protected _warningLeftElement: HTMLDivElement | null = null
-  protected _warningRightElement: HTMLDivElement | null = null
+  protected _warningLeftElement: HTMLDivElement | null = null;
+  protected _warningRightElement: HTMLDivElement | null = null;
   protected grid!: SlickGrid;
   protected isPreviouslyShown = false;
   protected translaterService?: TranslaterService | null;

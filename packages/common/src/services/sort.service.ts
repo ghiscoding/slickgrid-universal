@@ -435,12 +435,22 @@ export class SortService {
   }
 
   /** Takes a hierarchical dataset and sort it recursively,  */
-  sortHierarchicalDataset<T>(hierarchicalDataset: T[], sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>) {
+  sortHierarchicalDataset<T>(hierarchicalDataset: T[], sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, emitSortChanged = false) {
     this.sortTreeData(hierarchicalDataset, sortColumns);
     const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
     const treeDataOpt: TreeDataOption = this._gridOptions?.treeDataOptions ?? { columnId: '' };
     const treeDataOptions = { ...treeDataOpt, identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier, shouldAddTreeLevelNumber: true };
     const sortedFlatArray = flattenToParentChildArray(hierarchicalDataset, treeDataOptions);
+
+    if (emitSortChanged) {
+      // update current sorters
+      this._currentLocalSorters = [];
+      for (const sortCol of sortColumns) {
+        this._currentLocalSorters.push({ columnId: sortCol.columnId, direction: sortCol.sortAsc ? 'ASC' : 'DESC' });
+      }
+      const emitterType = this._gridOptions?.backendServiceApi ? EmitterType.remote : EmitterType.local;
+      this.emitSortChanged(emitterType);
+    }
 
     return { hierarchical: hierarchicalDataset, flat: sortedFlatArray };
   }
@@ -449,7 +459,7 @@ export class SortService {
   sortLocalGridByDefaultSortFieldId() {
     const sortColFieldId = this._gridOptions && this._gridOptions.defaultColumnSortFieldId || this._gridOptions.datasetIdPropertyName || 'id';
     const sortCol = { id: sortColFieldId, field: sortColFieldId } as Column;
-    this.onLocalSortChanged(this._grid, new Array({ columnId: sortCol.id, sortAsc: true, sortCol, clearSortTriggered: true }));
+    this.onLocalSortChanged(this._grid, new Array({ columnId: sortCol.id, sortAsc: true, sortCol, clearSortTriggered: true }), false, true);
   }
 
   sortComparers(sortColumns: ColumnSort[], dataRow1: any, dataRow2: any): number {
@@ -508,13 +518,13 @@ export class SortService {
   sortTreeData(treeArray: any[], sortColumns: Array<ColumnSort>) {
     if (Array.isArray(sortColumns)) {
       for (const sortColumn of sortColumns) {
-        this.sortTreeChild(treeArray, sortColumn, 0);
+        this.sortTreeChildren(treeArray, sortColumn, 0);
       }
     }
   }
 
   /** Sort the Tree Children of a hierarchical dataset by recursion */
-  sortTreeChild(treeArray: any[], sortColumn: ColumnSort, treeLevel: number) {
+  sortTreeChildren(treeArray: any[], sortColumn: ColumnSort, treeLevel: number) {
     const treeDataOptions = this._gridOptions?.treeDataOptions;
     const childrenPropName = treeDataOptions?.childrenPropName ?? 'children';
     treeArray.sort((a: any, b: any) => this.sortComparer(sortColumn, a, b) ?? SortDirectionNumber.neutral);
@@ -526,7 +536,7 @@ export class SortService {
         // when item has a child, we'll sort recursively
         if (hasChildren) {
           treeLevel++;
-          this.sortTreeChild(item[childrenPropName], sortColumn, treeLevel);
+          this.sortTreeChildren(item[childrenPropName], sortColumn, treeLevel);
           treeLevel--;
         }
       }
@@ -603,8 +613,9 @@ export class SortService {
     });
 
     // loop through column definition to hide/show grid menu commands
-    if (this._gridOptions?.gridMenu?.customItems) {
-      this._gridOptions.gridMenu.customItems.forEach((menuItem) => {
+    const commandItems = this._gridOptions?.gridMenu?.commandItems ?? this._gridOptions?.gridMenu?.customItems;
+    if (commandItems) {
+      commandItems.forEach((menuItem) => {
         if (menuItem && typeof menuItem !== 'string') {
           const menuCommand = menuItem.command;
           if (menuCommand === 'clear-sorting') {

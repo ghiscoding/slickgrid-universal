@@ -1,6 +1,5 @@
 // import 3rd party lib multiple-select for the tests
 import 'multiple-select-modified';
-import 'jest-extended';
 import { of, throwError } from 'rxjs';
 
 import { FieldType } from '../../enums/index';
@@ -50,7 +49,7 @@ const gridOptionMock = {
     postProcess: jest.fn(),
   },
   gridMenu: {
-    customItems: [{
+    commandItems: [{
       command: 'clear-filter',
       disabled: false,
       iconCssClass: 'fa fa-filter mdi mdi-filter-remove-outline',
@@ -1495,7 +1494,7 @@ describe('FilterService', () => {
       mockColumns.forEach(col => col.header.menu.items.forEach(item => {
         expect((item as MenuCommandItem).hidden).toBeTruthy();
       }));
-      gridOptionMock.gridMenu!.customItems!.forEach(item => {
+      gridOptionMock.gridMenu!.commandItems!.forEach(item => {
         expect((item as GridMenuItem).hidden).toBeTruthy();
       });
       expect(setOptionSpy).toHaveBeenCalledWith({ enableFiltering: false }, false, true);
@@ -1523,7 +1522,7 @@ describe('FilterService', () => {
       mockColumns.forEach(col => col.header.menu.items.forEach(item => {
         expect((item as MenuCommandItem).hidden).toBeFalsy();
       }));
-      gridOptionMock.gridMenu!.customItems!.forEach(item => {
+      gridOptionMock.gridMenu!.commandItems!.forEach(item => {
         expect((item as GridMenuItem).hidden).toBeFalsy();
       });
       expect(setOptionSpy).toHaveBeenCalledWith({ enableFiltering: true }, false, true);

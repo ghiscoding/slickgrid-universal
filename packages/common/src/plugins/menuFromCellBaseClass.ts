@@ -10,7 +10,7 @@ import {
   MenuOptionItemCallbackArgs,
 } from '../interfaces/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
-import { findWidthOrDefault, getHtmlElementOffset, } from '../services/domUtilities';
+import { calculateAvailableSpace, findWidthOrDefault, getHtmlElementOffset, } from '../services/domUtilities';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
 import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from './menuBaseClass';
@@ -42,11 +42,13 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
 
       const commandItems = this._addonOptions?.commandItems || [];
       const optionItems = this._addonOptions?.optionItems || [];
+      let isColumnOptionAllowed = true;
+      let isColumnCommandAllowed = true;
 
       // make sure there's at least something to show before creating the Menu
       if (this._camelPluginName === 'contextMenu') {
-        const isColumnOptionAllowed = this.checkIsColumnAllowed((this._addonOptions as ContextMenu)?.optionShownOverColumnIds ?? [], columnDef.id);
-        const isColumnCommandAllowed = this.checkIsColumnAllowed((this._addonOptions as ContextMenu)?.commandShownOverColumnIds ?? [], columnDef.id);
+        isColumnOptionAllowed = this.checkIsColumnAllowed((this._addonOptions as ContextMenu)?.optionShownOverColumnIds ?? [], columnDef.id);
+        isColumnCommandAllowed = this.checkIsColumnAllowed((this._addonOptions as ContextMenu)?.commandShownOverColumnIds ?? [], columnDef.id);
         if (!columnDef || ((!isColumnCommandAllowed || !commandItems.length) && (!isColumnOptionAllowed || !optionItems.length))) {
           this.hideMenu();
           return;
@@ -104,7 +106,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       closeButtonElm.appendChild(closeSpanElm);
 
       // -- Option List section
-      if (!(this.addonOptions as CellMenu | ContextMenu).hideOptionSection && optionItems.length > 0) {
+      if (!(this.addonOptions as CellMenu | ContextMenu).hideOptionSection && isColumnOptionAllowed && optionItems.length > 0) {
         const optionMenuElm = document.createElement('div');
         optionMenuElm.className = `${this._menuCssPrefix}-option-list`;
         if (!this.addonOptions.hideCloseButton) {
@@ -123,10 +125,10 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       }
 
       // -- Command List section
-      if (!(this.addonOptions as CellMenu | ContextMenu).hideCommandSection && commandItems.length > 0) {
+      if (!(this.addonOptions as CellMenu | ContextMenu).hideCommandSection && isColumnCommandAllowed && commandItems.length > 0) {
         const commandMenuElm = document.createElement('div');
         commandMenuElm.className = `${this._menuCssPrefix}-command-list`;
-        if (!this.addonOptions.hideCloseButton && (optionItems.length === 0 || (this.addonOptions as CellMenu | ContextMenu).hideOptionSection)) {
+        if (!this.addonOptions.hideCloseButton && (!isColumnOptionAllowed || optionItems.length === 0 || (this.addonOptions as CellMenu | ContextMenu).hideOptionSection)) {
           this._bindEventService.bind(closeButtonElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) => this.handleCloseButtonClicked(e)) as EventListener);
           this._menuElm.appendChild(closeButtonElm);
         }
@@ -255,14 +257,14 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
 
       // if autoAdjustDrop is enable, we first need to see what position the drop will be located (defaults to bottom)
       // without necessary toggling it's position just yet, we just want to know the future position for calculation
-      if ((this._addonOptions as CellMenu | ContextMenu).autoAdjustDrop || (this._addonOptions as CellMenu | ContextMenu).alignDropDirection) {
+      if ((this._addonOptions as CellMenu | ContextMenu).autoAdjustDrop || (this._addonOptions as CellMenu | ContextMenu).dropDirection) {
         // since we reposition menu below slick cell, we need to take it in consideration and do our calculation from that element
-        const spaceBottom = this.calculateAvailableSpaceBottom(parentElm);
-        const spaceTop = this.calculateAvailableSpaceTop(parentElm);
+        const spaceBottom = calculateAvailableSpace(parentElm).bottom;
+        const spaceTop = calculateAvailableSpace(parentElm).top;
         const spaceBottomRemaining = spaceBottom + dropOffset - rowHeight;
         const spaceTopRemaining = spaceTop - dropOffset + rowHeight;
         const dropPosition = ((spaceBottomRemaining < menuHeight) && (spaceTopRemaining > spaceBottomRemaining)) ? 'top' : 'bottom';
-        if (dropPosition === 'top' || (this._addonOptions as CellMenu | ContextMenu).alignDropDirection === 'top') {
+        if (dropPosition === 'top' || (this._addonOptions as CellMenu | ContextMenu).dropDirection === 'top') {
           this._menuElm.classList.remove('dropdown');
           this._menuElm.classList.add('dropup');
           menuOffsetTop = menuOffsetTop - menuHeight - dropOffset;
@@ -279,10 +281,10 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       // when auto-align is set, it will calculate whether it has enough space in the viewport to show the drop menu on the right (default)
       // if there isn't enough space on the right, it will automatically align the drop menu to the left (defaults to the right)
       // to simulate an align left, we actually need to know the width of the drop menu
-      if ((this._addonOptions as CellMenu | ContextMenu).autoAlignSide || this._addonOptions.alignDropSide === 'left') {
+      if ((this._addonOptions as CellMenu | ContextMenu).autoAlignSide || this._addonOptions.dropSide === 'left') {
         const gridPos = this.grid.getGridPosition();
         const dropSide = ((menuOffsetLeft + (+menuWidth)) >= gridPos.width) ? 'left' : 'right';
-        if (dropSide === 'left' || this._addonOptions.alignDropSide === 'left') {
+        if (dropSide === 'left' || this._addonOptions.dropSide === 'left') {
           this._menuElm.classList.remove('dropright');
           this._menuElm.classList.add('dropleft');
           if (this._camelPluginName === 'cellMenu') {

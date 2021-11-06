@@ -346,23 +346,5 @@ describe('HeaderButton Plugin', () => {
         `<li class="slick-header-button mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers."></li>
         <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
     });
-
-    it('should populate 2x Header Buttons but in an inversed order "inverseOrder" flag is enabled and the "disabled" property is set on the 2nd button', () => {
-      const headerDiv = document.createElement('div');
-      headerDiv.className = 'slick-header-column';
-
-      plugin.dispose();
-      plugin.init({ inverseOrder: true });
-      delete columnsMock[0].header.buttons[1].showOnHover;
-      columnsMock[0].header.buttons[1].disabled = true;
-
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
-
-      // add Header Buttons which are visible (2x buttons)
-      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>
-        <li class="slick-header-button slick-header-button-disabled mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers."></li>`));
-    });
   });
 });

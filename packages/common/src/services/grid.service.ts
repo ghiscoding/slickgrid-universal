@@ -11,7 +11,7 @@ import {
   OnEventArgs,
   SlickGrid,
 } from '../interfaces/index';
-import { arrayRemoveItemByIndex } from './utilities';
+import { arrayRemoveItemByIndex, isObjectEmpty } from './utilities';
 import { FilterService } from './filter.service';
 import { GridStateService } from './gridState.service';
 import { PaginationService } from '../services/pagination.service';
@@ -91,8 +91,12 @@ export class GridService {
    * @param {Boolean} suppressColumnSet - do we want to supress the columns set, via "setColumns()" method? (defaults to false)
    */
   setPinning(pinningOptions: CurrentPinning, shouldAutosizeColumns = true, suppressRender = false, suppressColumnSet = true) {
-    this.sharedService.slickGrid.setOptions(pinningOptions, suppressRender, suppressColumnSet);
-    this.sharedService.gridOptions = { ...this.sharedService.gridOptions, ...pinningOptions };
+    if (isObjectEmpty(pinningOptions)) {
+      this.clearPinning();
+    } else {
+      this.sharedService.slickGrid.setOptions(pinningOptions, suppressRender, suppressColumnSet);
+      this.sharedService.gridOptions = { ...this.sharedService.gridOptions, ...pinningOptions };
+    }
 
     if (shouldAutosizeColumns) {
       this.sharedService.slickGrid.autosizeColumns();

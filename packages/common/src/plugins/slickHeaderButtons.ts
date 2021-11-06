@@ -100,11 +100,6 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
     const column = args.column;
 
     if (column.header?.buttons && Array.isArray(column.header.buttons)) {
-      // inverse the button (typically used when icons are floating left)
-      if (this._addonOptions?.inverseOrder) {
-        column.header.buttons.reverse();
-      }
-
       let i = column.header.buttons.length;
       while (i--) {
         const buttonItem = column.header.buttons[i];

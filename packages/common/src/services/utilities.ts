@@ -4,7 +4,7 @@ const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "m
 
 import { Constants } from '../constants';
 import { FieldType, OperatorString, OperatorType } from '../enums/index';
-import { Column, EventSubscription, GridOption, } from '../interfaces/index';
+import { CancellablePromiseWrapper, Column, EventSubscription, GridOption, } from '../interfaces/index';
 import { Observable, RxJsFacade, Subject, Subscription } from './rxjsFacade';
 
 /**
@@ -50,6 +50,36 @@ export function arrayRemoveItemByIndex<T>(array: T[], index: number): T[] {
   return array.filter((_el: T, i: number) => index !== i);
 }
 
+/** Cancelled Extension that can be only be thrown by the `cancellablePromise()` function */
+export class CancelledException extends Error {
+  constructor(message: string) {
+    super(message);
+    Object.setPrototypeOf(this, CancelledException.prototype);
+  }
+}
+
+/**
+ * From an input Promise, make it cancellable by wrapping it inside an object that holds the promise and a `cancel()` method
+ * @param {Promise<any>} - input Promise
+ * @returns {Object} - Promise wrapper that holds the promise and a `cancel()` method
+ */
+export function cancellablePromise<T = any>(inputPromise: Promise<T>): CancellablePromiseWrapper<T> {
+  let hasCancelled = false;
+
+  if (inputPromise instanceof Promise) {
+    return {
+      promise: inputPromise.then(result => {
+        if (hasCancelled) {
+          throw new CancelledException('Cancelled Promise');
+        }
+        return result;
+      }),
+      cancel: () => hasCancelled = true
+    };
+  }
+  return inputPromise;
+}
+
 /**
  * Try casting an input of type Promise | Observable into a Promise type.
  * @param object which could be of type Promise or Observable
@@ -70,51 +100,6 @@ export function castObservableToPromise<T>(rxjs: RxJsFacade, input: Promise<T> |
   }
 
   return promise;
-}
-
-/**
- * Convert a flat array (with "parentId" references) into a hierarchical (tree) dataset structure (where children are array(s) inside their parent objects)
- * @param flatArray input array (flat dataset)
- * @param options you can provide the following tree data options (which are all prop names, except 1 boolean flag, to use or else use their defaults):: collapsedPropName, childrenPropName, parentPropName, identifierPropName and levelPropName and initiallyCollapsed (boolean)
- * @return roots - hierarchical (tree) data view array
- */
-export function unflattenParentChildArrayToTree<P, T extends P & { [childrenPropName: string]: P[] }>(flatArray: P[], options?: { childrenPropName?: string; collapsedPropName?: string; identifierPropName?: string; levelPropName?: string; parentPropName?: string; initiallyCollapsed?: boolean; }): T[] {
-  const identifierPropName = options?.identifierPropName ?? 'id';
-  const childrenPropName = options?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP;
-  const parentPropName = options?.parentPropName ?? Constants.treeDataProperties.PARENT_PROP;
-  const levelPropName = options?.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
-  const collapsedPropName = options?.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
-  const inputArray: P[] = flatArray || [];
-  const roots: T[] = []; // items without parent which at the root
-
-  // make them accessible by guid on this map
-  const all: any = {};
-
-  inputArray.forEach((item: any) => all[item[identifierPropName]] = item);
-
-  // connect childrens to its parent, and split roots apart
-  Object.keys(all).forEach((id) => {
-    const item = all[id];
-    if (!(parentPropName in item) || item[parentPropName] === null || item[parentPropName] === undefined || item[parentPropName] === '') {
-      roots.push(item);
-    } else if (item[parentPropName] in all) {
-      const p = all[item[parentPropName]];
-      if (!(childrenPropName in p)) {
-        p[childrenPropName] = [];
-      }
-      p[childrenPropName].push(item);
-      if (p[collapsedPropName] === undefined) {
-        p[collapsedPropName] = options?.initiallyCollapsed ?? false;
-      }
-    }
-  });
-
-  // we need and want to the Tree Level,
-  // we can do that after the tree is created and mutate the array by adding a __treeLevel property on each item
-  // perhaps there might be a way to add this while creating the tree for now that is the easiest way I found
-  addTreeLevelByMutation(roots, { childrenPropName, levelPropName }, 0);
-
-  return roots;
 }
 
 /**
@@ -172,6 +157,51 @@ export function flattenToParentChildArray<T>(treeArray: T[], options?: { parentP
   );
 
   return flat;
+}
+
+/**
+ * Convert a flat array (with "parentId" references) into a hierarchical (tree) dataset structure (where children are array(s) inside their parent objects)
+ * @param flatArray input array (flat dataset)
+ * @param options you can provide the following tree data options (which are all prop names, except 1 boolean flag, to use or else use their defaults):: collapsedPropName, childrenPropName, parentPropName, identifierPropName and levelPropName and initiallyCollapsed (boolean)
+ * @return roots - hierarchical (tree) data view array
+ */
+export function unflattenParentChildArrayToTree<P, T extends P & { [childrenPropName: string]: P[] }>(flatArray: P[], options?: { childrenPropName?: string; collapsedPropName?: string; identifierPropName?: string; levelPropName?: string; parentPropName?: string; initiallyCollapsed?: boolean; }): T[] {
+  const identifierPropName = options?.identifierPropName ?? 'id';
+  const childrenPropName = options?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP;
+  const parentPropName = options?.parentPropName ?? Constants.treeDataProperties.PARENT_PROP;
+  const levelPropName = options?.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
+  const collapsedPropName = options?.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
+  const inputArray: P[] = flatArray || [];
+  const roots: T[] = []; // items without parent which at the root
+
+  // make them accessible by guid on this map
+  const all: any = {};
+
+  inputArray.forEach((item: any) => all[item[identifierPropName]] = item);
+
+  // connect childrens to its parent, and split roots apart
+  Object.keys(all).forEach((id) => {
+    const item = all[id];
+    if (!(parentPropName in item) || item[parentPropName] === null || item[parentPropName] === undefined || item[parentPropName] === '') {
+      roots.push(item);
+    } else if (item[parentPropName] in all) {
+      const p = all[item[parentPropName]];
+      if (!(childrenPropName in p)) {
+        p[childrenPropName] = [];
+      }
+      p[childrenPropName].push(item);
+      if (p[collapsedPropName] === undefined) {
+        p[collapsedPropName] = options?.initiallyCollapsed ?? false;
+      }
+    }
+  });
+
+  // we need and want to the Tree Level,
+  // we can do that after the tree is created and mutate the array by adding a __treeLevel property on each item
+  // perhaps there might be a way to add this while creating the tree for now that is the easiest way I found
+  addTreeLevelByMutation(roots, { childrenPropName, levelPropName }, 0);
+
+  return roots;
 }
 
 /**
@@ -301,6 +331,11 @@ export function isNumber(value: any, strict = false) {
     return (value === null || value === undefined || typeof value === 'string') ? false : !isNaN(value);
   }
   return (value === null || value === undefined || value === '') ? false : !isNaN(+value);
+}
+
+/** Check if an object is empty, it will also be considered empty when the input is null, undefined or isn't an object */
+export function isObjectEmpty(obj: unknown) {
+  return !obj || (obj && typeof obj === 'object' && Object.keys(obj).length === 0);
 }
 
 /**

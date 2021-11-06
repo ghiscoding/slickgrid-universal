@@ -32,6 +32,9 @@ export abstract class RxJsFacade {
     throw new Error('RxJS Facade "createSubject" method must be implemented');
   }
 
+  /** Converts an observable to a promise by subscribing to the observable, and returning a promise that will resolve
+   * as soon as the first value arrives from the observable. The subscription will then be closed.
+   */
   firstValueFrom<T>(source: Observable<T>): Promise<T> {
     throw new Error('RxJS Facade "firstValueFrom" method must be implemented');
   }
@@ -44,6 +47,16 @@ export abstract class RxJsFacade {
   /** Tests to see if the object is an RxJS Observable */
   isObservable(obj: any): boolean {
     return false;
+  }
+
+  /** Converts the arguments to an observable sequence. */
+  of(...value: any): Observable<any> {
+    throw new Error('RxJS Facade "of" method must be implemented');
+  }
+
+  /** Projects each source value to an Observable which is merged in the output Observable, emitting values only from the most recently projected Observable. */
+  switchMap(project: (value: any, index: number) => any): any {
+    throw new Error('RxJS Facade "switchMap" method must be implemented');
   }
 
   /** Emits the values emitted by the source Observable until a `notifier` Observable emits a value. */
@@ -65,7 +78,7 @@ export abstract class Observable<T> {
   }
 
   /** Pipe an operator function to the Observable */
-  pipe(fns?: any): any {
+  pipe(...fns: Array<any>): any {
     throw new Error('RxJS Observable Facade "pipe" method must be implemented');
   }
 }

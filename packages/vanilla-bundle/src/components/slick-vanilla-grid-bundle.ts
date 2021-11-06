@@ -1,4 +1,8 @@
 import { dequal } from 'dequal/lite';
+import 'jquery';
+import 'jquery-ui/ui/widgets/draggable';
+import 'jquery-ui/ui/widgets/droppable';
+import 'jquery-ui/ui/widgets/sortable';
 import 'flatpickr/dist/l10n/fr';
 import 'slickgrid/lib/jquery.event.drag-2.3.0';
 import 'slickgrid/lib/jquery.mousewheel';
@@ -29,15 +33,11 @@ import {
   SlickGroupItemMetadataProvider,
   SlickNamespace,
   Subscription,
-
-  // extensions
-  ExtensionUtility,
-  RowDetailViewExtension,
-
   // services
   BackendUtilityService,
   CollectionService,
   ExtensionService,
+  ExtensionUtility,
   FilterFactory,
   FilterService,
   GridEventService,
@@ -63,8 +63,9 @@ import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-ed
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
+import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
+import { TextExportService } from '@slickgrid-universal/text-export';
 
-import { TextExportService } from '../services/textExport.service';
 import { SalesforceGlobalGridOptions } from '../salesforce-global-grid-options';
 import { SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
 import { UniversalContainerService } from '../services/universalContainer.service';
@@ -345,17 +346,13 @@ export class SlickVanillaGridBundle {
     this.treeDataService = services?.treeDataService ?? new TreeDataService(this._eventPubSubService, this.sharedService, this.sortService);
     this.paginationService = services?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService, this.backendUtilityService);
 
-    // extensions
-    const rowDetailViewExtension = new RowDetailViewExtension();
-
     this.extensionService = services?.extensionService ?? new ExtensionService(
       this.extensionUtility,
       this.filterService,
       this._eventPubSubService,
+      this.sharedService,
       this.sortService,
       this.treeDataService,
-      rowDetailViewExtension,
-      this.sharedService,
       this.translaterService,
     );
 
@@ -401,9 +398,9 @@ export class SlickVanillaGridBundle {
 
   /** Dispose of the Component */
   dispose(shouldEmptyDomElementContainer = false) {
-    this._eventPubSubService.publish('onBeforeGridDestroy', this.slickGrid);
+    this._eventPubSubService?.publish('onBeforeGridDestroy', this.slickGrid);
     this._eventHandler?.unsubscribeAll();
-    this._eventPubSubService.publish('onAfterGridDestroyed', true);
+    this._eventPubSubService?.publish('onAfterGridDestroyed', true);
 
     // dispose the Services
     this.extensionService?.dispose();
@@ -1309,8 +1306,10 @@ export class SlickVanillaGridBundle {
   private registerResources() {
     // when using Salesforce, we want the Export to CSV always enabled without registering it
     if (this.gridOptions.enableTextExport && this.gridOptions.useSalesforceDefaultGridOptions) {
-      const textExportService = new TextExportService();
-      this._registeredResources.push(textExportService);
+      this._registeredResources.push(new TextExportService());
+    }
+    if (this.gridOptions.useSalesforceDefaultGridOptions) {
+      this._registeredResources.push(new SlickCustomTooltip());
     }
 
     // at this point, we consider all the registered services as external services, anything else registered afterward aren't external
@@ -1368,6 +1367,7 @@ export class SlickVanillaGridBundle {
     this.filterService.addRxJsResource(this.rxjs);
     this.sortService.addRxJsResource(this.rxjs);
     this.paginationService.addRxJsResource(this.rxjs);
+    this.universalContainerService.registerInstance('RxJsFacade', this.rxjs);
     this.universalContainerService.registerInstance('RxJsResource', this.rxjs);
   }
 
