@@ -14,7 +14,6 @@ export * from './enums/index';
 export * from './interfaces/index';
 export * from './aggregators/index';
 export * from './aggregators/aggregators.index';
-export * from './/index';
 export * from './editors/index';
 export * from './editors/editors.index';
 export * from './extensions/index';
