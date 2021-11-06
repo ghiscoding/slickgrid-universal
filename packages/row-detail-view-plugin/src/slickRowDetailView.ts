@@ -1,5 +1,6 @@
 import {
   Column,
+  DOMMouseEvent,
   ExternalResource,
   FormatterResultObject,
   GridOption,
@@ -18,38 +19,43 @@ import {
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
 
+/***
+ * A plugin to add Row Detail Panel View (for example providing order detail info when clicking on the order row in the grid)
+ * Original StackOverflow question & article making this possible (thanks to violet313)
+ * https://stackoverflow.com/questions/10535164/can-slickgrids-row-height-be-dynamically-altered#29399927
+ * http://violet313.org/slickgrids/#intro
+ */
 export class SlickRowDetailView implements ExternalResource, UniversalRowDetailView {
   protected _addonOptions!: RowDetailView;
   protected _dataViewIdProperty = 'id';
   protected _eventHandler: SlickEventHandler;
-  protected _expandableOverride: any;
+  protected _expandableOverride: UsabilityOverrideFn | null = null;
   protected _expandedRows: any[] = [];
   protected _grid!: SlickGrid;
   protected _gridRowBuffer = 0;
   protected _gridUid = '';
   protected _keyPrefix = '';
-  protected _lastRange: any = null;
+  protected _lastRange: { bottom: number; top: number; } | null = null;
   protected _outsideRange = 5;
   protected _pubSubService: PubSubService | null = null;
   protected _rowIdsOutOfViewport: Array<number | string> = [];
   protected _visibleRenderedCellCount = 0;
   protected _defaults = {
+    alwaysRenderColumn: true,
     columnId: '_detail_selector',
     cssClass: 'detailView-toggle',
-    expandedClass: null,
+    collapseAllOnSort: true,
     collapsedClass: null,
+    expandedClass: null,
     keyPrefix: '_',
     loadOnce: false,
-    collapseAllOnSort: true,
+    maxRows: null,
     saveDetailViewOnScroll: true,
     singleRowExpand: false,
     useSimpleViewportCalc: false,
-    alwaysRenderColumn: true,
     toolTip: '',
     width: 30,
-    maxRows: null
   } as unknown as RowDetailView;
-
   pluginName: 'RowDetailView' = 'RowDetailView';
 
   /** Fired when the async response finished */
@@ -84,6 +90,10 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     return this._grid?.getData() || {} as SlickDataView;
   }
 
+  get dataViewIdProperty(): string {
+    return this._dataViewIdProperty;
+  }
+
   get eventHandler() {
     return this._eventHandler;
   }
@@ -93,8 +103,20 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     return this._grid?.getOptions() || {};
   }
 
-  protected gridUid() {
+  get gridUid() {
     return this._gridUid || (this._grid?.getUID() || '');
+  }
+
+  set lastRange(range: { bottom: number; top: number; }) {
+    this._lastRange = range;
+  }
+
+  set rowIdsOutOfViewport(rowIds: Array<string | number>) {
+    this._rowIdsOutOfViewport = rowIds;
+  }
+
+  get visibleRenderedCellCount(): number {
+    return this._visibleRenderedCellCount;
   }
 
   /**
@@ -105,7 +127,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   init(grid: SlickGrid) {
     this._grid = grid;
     if (!grid) {
-      throw new Error('RowDetailView Plugin requires the Grid instance to be passed as argument to the "init()" method');
+      throw new Error('[Slickgrid-Universal] RowDetailView Plugin requires the Grid instance to be passed as argument to the "init()" method.');
     }
     this._grid = grid;
     this._gridUid = grid.getUID();
@@ -113,16 +135,16 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     this._keyPrefix = this._addonOptions?.keyPrefix || '_';
 
     // Update the minRowBuffer so that the view doesn't disappear when it's at top of screen + the original default 3
-    this._gridRowBuffer = this._grid.getOptions().minRowBuffer || 0;
-    this._grid.getOptions().minRowBuffer = this._addonOptions.panelRows + 3;
+    this._gridRowBuffer = this.gridOptions.minRowBuffer || 0;
+    this.gridOptions.minRowBuffer = this._addonOptions.panelRows + 3;
 
     this._eventHandler
-      .subscribe(this._grid.onClick, this.handleClick.bind(this))
-      .subscribe(this._grid.onScroll, this.handleScroll.bind(this));
+      .subscribe(this._grid.onClick, this.handleClick.bind(this) as EventListener)
+      .subscribe(this._grid.onScroll, this.handleScroll.bind(this) as EventListener);
 
     // Sort will, by default, Collapse all of the open items (unless user implements his own onSort which deals with open row and padding)
     if (this._addonOptions.collapseAllOnSort) {
-      this._eventHandler.subscribe(this._grid.onSort, this.collapseAll);
+      this._eventHandler.subscribe(this._grid.onSort, this.collapseAll.bind(this));
       this._expandedRows = [];
       this._rowIdsOutOfViewport = [];
     }
@@ -132,13 +154,13 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       this._grid.render();
     });
 
-    this._eventHandler.subscribe(this.dataView.onRowsChanged, (_e: SlickEventData, args: any) => {
+    this._eventHandler.subscribe(this.dataView.onRowsChanged, (_e: SlickEventData, args: { rows: number[]; }) => {
       this._grid.invalidateRows(args.rows);
       this._grid.render();
     });
 
     // subscribe to the onAsyncResponse so that the plugin knows when the user server side calls finished
-    this.subscribeToOnAsyncResponse();
+    this._eventHandler.subscribe(this.onAsyncResponse, this.handleOnAsyncResponse.bind(this));
 
     // after data is set, let's get the DataView Id Property name used (defaults to "id")
     this._eventHandler.subscribe(this.dataView.onSetItemsCalled, () => {
@@ -149,7 +171,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     // we will need to know how many rows are rendered on the screen and we need to wait for grid to be rendered
     // unfortunately there is no triggered event for knowing when grid is finished, so we use 250ms delay and it's typically more than enough
     if (this._addonOptions.useSimpleViewportCalc) {
-      this._eventHandler.subscribe(this._grid.onRendered, (_e: SlickEventData, args: any) => {
+      this._eventHandler.subscribe(this._grid.onRendered, (_e: SlickEventData, args: { endRow: number; startRow: number; }) => {
         if (args?.endRow) {
           this._visibleRenderedCellCount = args.endRow - args.startRow;
         }
@@ -201,7 +223,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** set or change some of the plugin options */
-  setOptions(options: RowDetailViewOption) {
+  setOptions(options: Partial<RowDetailViewOption>) {
     this._addonOptions = { ... this._addonOptions, ...options };
     if (this._addonOptions?.singleRowExpand) {
       this.collapseAll();
@@ -211,8 +233,8 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   /** Collapse all of the open items */
   collapseAll() {
     this.dataView.beginUpdate();
-    for (let i = this._expandedRows.length - 1; i >= 0; i--) {
-      this.collapseDetailView(this._expandedRows[i], true);
+    for (const expandedRow of this._expandedRows) {
+      this.collapseDetailView(expandedRow, true);
     }
     this.dataView.endUpdate();
   }
@@ -227,16 +249,16 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       this.saveDetailView(item);
     }
 
-    item[this._keyPrefix + 'collapsed'] = true;
-    for (let idx = 1; idx <= item[this._keyPrefix + 'sizePadding']; idx++) {
-      this.dataView.deleteItem(item[this._dataViewIdProperty] + '.' + idx);
+    item[`${this._keyPrefix}collapsed`] = true;
+    for (let idx = 1; idx <= item[`${this._keyPrefix}sizePadding`]; idx++) {
+      this.dataView.deleteItem(`${item[this._dataViewIdProperty]}.${idx}`);
     }
-    item[this._keyPrefix + 'sizePadding'] = 0;
+    item[`${this._keyPrefix}sizePadding`] = 0;
     this.dataView.updateItem(item[this._dataViewIdProperty], item);
 
     // Remove the item from the expandedRows
-    this._expandedRows = this._expandedRows.filter((r) => {
-      return r[this._dataViewIdProperty] !== item[this._dataViewIdProperty];
+    this._expandedRows = this._expandedRows.filter((expRow) => {
+      return expRow[this._dataViewIdProperty] !== item[this._dataViewIdProperty];
     });
 
     if (!isMultipleCollapsing) {
@@ -250,26 +272,25 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       this.collapseAll();
     }
 
-    item[this._keyPrefix + 'collapsed'] = false;
+    item[`${this._keyPrefix}collapsed`] = false;
     this._expandedRows.push(item);
 
     // In the case something went wrong loading it the first time such a scroll of screen before loaded
-    if (!item[this._keyPrefix + 'detailContent']) {
-      item[this._keyPrefix + 'detailViewLoaded'] = false;
+    if (!item[`${this._keyPrefix}detailContent`]) {
+      item[`${this._keyPrefix}detailViewLoaded`] = false;
     }
 
     // display pre-loading template
-    if (!item[this._keyPrefix + 'detailViewLoaded'] || this._addonOptions.loadOnce !== true) {
-      item[this._keyPrefix + 'detailContent'] = this._addonOptions.preTemplate!(item);
+    if (!item[`${this._keyPrefix}detailViewLoaded`] || this._addonOptions.loadOnce !== true) {
+      item[`${this._keyPrefix}detailContent`] = this._addonOptions?.preTemplate?.(item);
     } else {
       this.onAsyncResponse.notify({
         item,
         itemDetail: item,
-        detailView: item[this._keyPrefix + 'detailContent']
+        detailView: item[`${this._keyPrefix}detailContent`]
       });
       this.applyTemplateNewLineHeight(item);
       this.dataView.updateItem(item[this._dataViewIdProperty], item);
-
       return;
     }
 
@@ -282,56 +303,39 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   /** Saves the current state of the detail view */
   saveDetailView(item: any) {
-    const view = document.querySelector('.' + this._gridUid + ' .innerDetailView_' + item[this._dataViewIdProperty]);
+    const view = document.querySelector(`.${this.gridUid} .innerDetailView_${item[this._dataViewIdProperty]}`);
     if (view) {
       const html = view.innerHTML;
       if (html !== undefined) {
-        item[this._keyPrefix + 'detailContent'] = html;
+        item[`${this._keyPrefix}detailContent`] = html;
       }
     }
   }
 
   /**
-     * subscribe to the onAsyncResponse so that the plugin knows when the user server side calls finished
-     * the response has to be as "args.item" (or "args.itemDetail") with it's data back
-     */
-  subscribeToOnAsyncResponse() {
-    this._eventHandler.subscribe(this.onAsyncResponse, (_e: Event, args: any) => {
-      if (!args || (!args.item && !args.itemDetail)) {
-        throw new Error('Slick.RowDetailView plugin requires the onAsyncResponse() to supply "args.item" property.');
-      }
-
-      // we accept item/itemDetail, just get the one which has data
-      const itemDetail = args.item || args.itemDetail;
-
-      // If we just want to load in a view directly we can use detailView property to do so
-      if (args.detailView) {
-        itemDetail[this._keyPrefix + 'detailContent'] = args.detailView;
-      } else {
-        itemDetail[this._keyPrefix + 'detailContent'] = this._addonOptions.postTemplate!(itemDetail);
-      }
-
-      itemDetail[this._keyPrefix + 'detailViewLoaded'] = true;
-      this.dataView.updateItem(itemDetail[this._dataViewIdProperty], itemDetail);
-
-      // trigger an event once the post template is finished loading
-      this.onAsyncEndUpdate.notify({
-        grid: this._grid,
-        item: itemDetail,
-        itemDetail,
-      });
-    });
-  }
-
-  /** When row is getting toggled, we will handle the action of collapsing/expanding */
-  protected handleAccordionShowHide(item: any) {
-    if (item) {
-      if (!item[this._keyPrefix + 'collapsed']) {
-        this.collapseDetailView(item);
-      } else {
-        this.expandDetailView(item);
-      }
+   * subscribe to the onAsyncResponse so that the plugin knows when the user server side calls finished
+   * the response has to be as "args.item" (or "args.itemDetail") with it's data back
+   */
+  handleOnAsyncResponse(_e: Event, args: { item: any; itemDetail: any; detailView?: any; }) {
+    if (!args || (!args.item && !args.itemDetail)) {
+      console.error('SlickRowDetailView plugin requires the onAsyncResponse() to supply "args.item" property.');
+      return;
     }
+
+    // we accept item/itemDetail, just get the one which has data
+    const itemDetail = args.item || args.itemDetail;
+
+    // If we just want to load in a view directly we can use detailView property to do so
+    itemDetail[`${this._keyPrefix}detailContent`] = args.detailView ?? this._addonOptions?.postTemplate?.(itemDetail);
+    itemDetail[`${this._keyPrefix}detailViewLoaded`] = true;
+    this.dataView.updateItem(itemDetail[this._dataViewIdProperty], itemDetail);
+
+    // trigger an event once the post template is finished loading
+    this.onAsyncEndUpdate.notify({
+      grid: this._grid,
+      item: itemDetail,
+      itemDetail,
+    });
   }
 
   /**
@@ -345,18 +349,18 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     this._expandableOverride = overrideFn;
   }
 
-  getExpandableOverride(): UsabilityOverrideFn {
+  getExpandableOverride(): UsabilityOverrideFn | null {
     return this._expandableOverride;
   }
 
   /** Get the Column Definition of the first column dedicated to toggling the Row Detail View */
   getColumnDefinition(): Column {
     return {
-      id: (this._addonOptions as any).columnId,
+      id: this._addonOptions?.columnId ?? '_rowDetail_',
       field: 'sel',
       name: '',
-      alwaysRenderColumn: (this._addonOptions as any).alwaysRenderColumn,
-      cssClass: this._addonOptions.cssClass,
+      alwaysRenderColumn: this._addonOptions?.alwaysRenderColumn,
+      cssClass: this._addonOptions.cssClass || '',
       excludeFromExport: true,
       excludeFromColumnPicker: true,
       excludeFromGridMenu: true,
@@ -365,8 +369,8 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       formatter: this.detailSelectionFormatter.bind(this),
       resizable: false,
       sortable: false,
-      toolTip: (this._addonOptions as any).toolTip,
-      width: (this._addonOptions as any).width,
+      toolTip: this._addonOptions.toolTip,
+      width: this._addonOptions.width,
     };
   }
 
@@ -375,10 +379,15 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     return this._expandedRows;
   }
 
+  /** return the rows that are out of the viewport */
+  getOutOfViewportRows(): Array<number | string> {
+    return this._rowIdsOutOfViewport;
+  }
+
   /** Takes in the item we are filtering and if it is an expanded row returns it's parents row to filter on */
   getFilterItem(item: any) {
-    if (item[this._keyPrefix + 'isPadding'] && item[this._keyPrefix + 'parent']) {
-      item = item[this._keyPrefix + 'parent'];
+    if (item[`${this._keyPrefix}isPadding`] && item[`${this._keyPrefix}parent`]) {
+      item = item[`${this._keyPrefix}parent`];
     }
     return item;
   }
@@ -390,20 +399,20 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
 
     // Grad each of the DOM elements
-    const mainContainer = document.querySelector('.' + this._gridUid + ' .detailViewContainer_' + item[this._dataViewIdProperty]) as HTMLDivElement;
-    const cellItem = document.querySelector('.' + this._gridUid + ' .cellDetailView_' + item[this._dataViewIdProperty]) as HTMLDivElement;
-    const inner = document.querySelector('.' + this._gridUid + ' .innerDetailView_' + item[this._dataViewIdProperty]) as HTMLDivElement;
+    const mainContainer = document.querySelector<HTMLDivElement>(`.${this.gridUid} .detailViewContainer_${item[this._dataViewIdProperty]}`);
+    const cellItem = document.querySelector<HTMLDivElement>(`.${this.gridUid} .cellDetailView_${item[this._dataViewIdProperty]}`);
+    const inner = document.querySelector<HTMLDivElement>(`.${this.gridUid} .innerDetailView_${item[this._dataViewIdProperty]}`);
 
     if (!mainContainer || !cellItem || !inner) {
       return;
     }
 
-    for (let idx = 1; idx <= item[this._keyPrefix + 'sizePadding']; idx++) {
-      this.dataView.deleteItem(item[this._dataViewIdProperty] + '.' + idx);
+    for (let idx = 1; idx <= item[`${this._keyPrefix}sizePadding`]; idx++) {
+      this.dataView.deleteItem(`${item[this._dataViewIdProperty]}.${idx}`);
     }
 
     const rowHeight = this.gridOptions.rowHeight as number; // height of a row
-    const lineHeight = 13; // we know cuz we wrote the custom css innit ;)
+    const lineHeight = 13; // we know cuz we wrote the custom css init ;)
 
     // remove the height so we can calculate the height
     mainContainer.style.minHeight = '';
@@ -414,34 +423,38 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     // Now work out how many rows
     const rowCount = Math.ceil(itemHeight / rowHeight);
 
-    item[this._keyPrefix + 'sizePadding'] = Math.ceil(((rowCount * 2) * lineHeight) / rowHeight);
-    item[this._keyPrefix + 'height'] = itemHeight;
+    item[`${this._keyPrefix}sizePadding`] = Math.ceil(((rowCount * 2) * lineHeight) / rowHeight);
+    item[`${this._keyPrefix}height`] = itemHeight;
 
-    let outterHeight = (item[this._keyPrefix + 'sizePadding'] * rowHeight);
-    if ((this._addonOptions as any).maxRows !== null && item[this._keyPrefix + 'sizePadding'] > (this._addonOptions as any).maxRows) {
-      outterHeight = (this._addonOptions as any).maxRows * rowHeight;
-      item[this._keyPrefix + 'sizePadding'] = (this._addonOptions as any).maxRows;
+    let outterHeight = (item[`${this._keyPrefix}sizePadding`] * rowHeight);
+    if (this._addonOptions.maxRows !== null && item[`${this._keyPrefix}sizePadding`] > this._addonOptions.maxRows!) {
+      outterHeight = this._addonOptions.maxRows! * rowHeight;
+      item[`${this._keyPrefix}sizePadding`] = this._addonOptions.maxRows;
     }
 
     // If the padding is now more than the original minRowBuff we need to increase it
-    if (this.gridOptions.minRowBuffer! < item[this._keyPrefix + 'sizePadding']) {
+    if (this.gridOptions.minRowBuffer! < item[`${this._keyPrefix}sizePadding`]) {
       // Update the minRowBuffer so that the view doesn't disappear when it's at top of screen + the original default 3
-      this.gridOptions.minRowBuffer = item[this._keyPrefix + 'sizePadding'] + 3;
+      this.gridOptions.minRowBuffer = item[`${this._keyPrefix}sizePadding`] + 3;
     }
 
-    mainContainer.setAttribute('style', 'min-height: ' + item[this._keyPrefix + 'height'] + 'px');
+    mainContainer.setAttribute('style', `min-height: ${item[this._keyPrefix + 'height']}px`);
     if (cellItem) {
-      cellItem.setAttribute('style', 'height: ' + outterHeight + 'px; top:' + rowHeight + 'px');
+      cellItem.setAttribute('style', `height: ${outterHeight}px; top: ${rowHeight}px`);
     }
 
     const idxParent = this.dataView.getIdxById(item[this._dataViewIdProperty]) as number;
-    for (let idx = 1; idx <= item[this._keyPrefix + 'sizePadding']; idx++) {
+    for (let idx = 1; idx <= item[`${this._keyPrefix}sizePadding`]; idx++) {
       this.dataView.insertItem(idxParent + idx, this.getPaddingItem(item, idx));
     }
 
     // Lastly save the updated state
     this.saveDetailView(item);
   }
+
+  // --
+  // protected functions
+  // ------------------
 
   /**
    * create the detail ctr node. this belongs to the dev & can be custom-styled as per
@@ -453,29 +466,17 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     // calculate padding requirements based on detail-content..
     // ie. worst-case: create an invisible dom node now & find it's height.
     const lineHeight = 13; // we know cuz we wrote the custom css init ;)
-    item[this._keyPrefix + 'sizePadding'] = Math.ceil(((rowCount * 2) * lineHeight) / this.gridOptions.rowHeight!);
-    item[this._keyPrefix + 'height'] = (item[this._keyPrefix + 'sizePadding'] * this.gridOptions.rowHeight!);
+    item[`${this._keyPrefix}sizePadding`] = Math.ceil(((rowCount * 2) * lineHeight) / this.gridOptions.rowHeight!);
+    item[`${this._keyPrefix}height`] = (item[`${this._keyPrefix}sizePadding`] * this.gridOptions.rowHeight!);
     const idxParent = this.dataView.getIdxById(item[this._dataViewIdProperty]);
-    for (let idx = 1; idx <= item[this._keyPrefix + 'sizePadding']; idx++) {
+    for (let idx = 1; idx <= item[`${this._keyPrefix}sizePadding`]; idx++) {
       this.dataView.insertItem((idxParent || 0) + idx, this.getPaddingItem(item, idx));
     }
   }
 
-  /** Find a value in an array and return the index when (or -1 when not found) */
-  protected arrayFindIndex(sourceArray: any[], value: any) {
-    if (sourceArray) {
-      for (let i = 0; i < sourceArray.length; i++) {
-        if (sourceArray[i] === value) {
-          return i;
-        }
-      }
-    }
-    return -1;
-  }
-
   protected calculateOutOfRangeViews() {
     if (this._grid) {
-      let scrollDir: any;
+      let scrollDir: 'UP' | 'DOWN';
       const renderedRange = this._grid.getRenderedRange();
       // Only check if we have expanded rows
       if (this._expandedRows.length > 0) {
@@ -490,7 +491,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
           // If our new top is smaller we are scrolling up
           if (this._lastRange.top > renderedRange.top ||
             // Or we are at very top but our bottom is increasing
-            (this._lastRange.top === 0 && renderedRange.top === 0) && this._lastRange.bottom > renderedRange.bottom) {
+            (this._lastRange.top === 0 && renderedRange.top === 0 && (this._lastRange.bottom > renderedRange.bottom))) {
             scrollDir = 'UP';
           }
         }
@@ -499,7 +500,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       this._expandedRows.forEach((row) => {
         const rowIndex = this.dataView.getRowById(row[this._dataViewIdProperty]) as number;
         const rowPadding = row[`${this._keyPrefix}sizePadding`];
-        const rowOutOfRange = this.arrayFindIndex(this._rowIdsOutOfViewport, row[this._dataViewIdProperty]) >= 0;
+        const isRowOutOfRange = this._rowIdsOutOfViewport.some(rowId => rowId === row[this._dataViewIdProperty]);
 
         if (scrollDir === 'UP') {
           // save the view when asked
@@ -511,9 +512,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
           }
 
           // If the row expanded area is within the buffer notify that it is back in range
-          if (rowOutOfRange && rowIndex - this._outsideRange < renderedRange.top && rowIndex >= renderedRange.top) {
+          if (isRowOutOfRange && ((rowIndex - this._outsideRange) < renderedRange.top) && (rowIndex >= renderedRange.top)) {
             this.notifyBackToViewportWhenDomExist(row, row[this._dataViewIdProperty]);
-          } else if (!rowOutOfRange && (rowIndex + rowPadding) > renderedRange.bottom) {
+          } else if (!isRowOutOfRange && ((rowIndex + rowPadding) > renderedRange.bottom)) {
             // if our first expanded row is about to go off the bottom
             this.notifyOutOfViewport(row, row[this._dataViewIdProperty]);
           }
@@ -527,9 +528,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
           }
 
           // If row index is i higher than bottom with some added value (To ignore top rows off view) and is with view and was our of range
-          if (rowOutOfRange && (rowIndex + rowPadding + this._outsideRange) > renderedRange.bottom && rowIndex < rowIndex + rowPadding) {
+          if (isRowOutOfRange && ((rowIndex + rowPadding + this._outsideRange) > renderedRange.bottom) && (rowIndex < (rowIndex + rowPadding))) {
             this.notifyBackToViewportWhenDomExist(row, row[this._dataViewIdProperty]);
-          } else if (!rowOutOfRange && rowIndex < renderedRange.top) {
+          } else if (!isRowOutOfRange && (rowIndex < renderedRange.top)) {
             // if our row is outside top of and the buffering zone but not in the array of outOfVisable range notify it
             this.notifyOutOfViewport(row, row[this._dataViewIdProperty]);
           }
@@ -546,7 +547,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       this._expandedRows.forEach((row) => {
         const rowIndex = this.dataView.getRowById(row[this._dataViewIdProperty]) as number;
         const isOutOfVisibility = this.checkIsRowOutOfViewportRange(rowIndex, renderedRange);
-        if (!isOutOfVisibility && this.arrayFindIndex(this._rowIdsOutOfViewport, row[this._dataViewIdProperty]) >= 0) {
+        if (!isOutOfVisibility && this._rowIdsOutOfViewport.some(rowId => rowId === row[this._dataViewIdProperty])) {
           this.notifyBackToViewportWhenDomExist(row, row[this._dataViewIdProperty]);
         } else if (isOutOfVisibility) {
           this.notifyOutOfViewport(row, row[this._dataViewIdProperty]);
@@ -563,10 +564,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   protected checkIsRowOutOfViewportRange(rowIndex: number, renderedRange: any) {
-    if (Math.abs(renderedRange.bottom - this._gridRowBuffer - rowIndex) > this._visibleRenderedCellCount * 2) {
-      return true;
-    }
-    return false;
+    return (Math.abs(renderedRange.bottom - this._gridRowBuffer - rowIndex) > this._visibleRenderedCellCount * 2);
   }
 
   /** Get the Row Detail padding (which are the rows dedicated to the detail panel) */
@@ -578,13 +576,13 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         item[prop] = null;
       }
     }
-    item[this._dataViewIdProperty] = parent[this._dataViewIdProperty] + '.' + offset;
+    item[this._dataViewIdProperty] = `${parent[this._dataViewIdProperty]}.${offset}`;
 
     // additional hidden padding metadata fields
-    item[this._keyPrefix + 'collapsed'] = true;
-    item[this._keyPrefix + 'isPadding'] = true;
-    item[this._keyPrefix + 'parent'] = parent;
-    item[this._keyPrefix + 'offset'] = offset;
+    item[`${this._keyPrefix}collapsed`] = true;
+    item[`${this._keyPrefix}isPadding`] = true;
+    item[`${this._keyPrefix}parent`] = parent;
+    item[`${this._keyPrefix}offset`] = offset;
 
     return item;
   }
@@ -594,31 +592,31 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     if (!this.checkExpandableOverride(row, dataContext, grid)) {
       return '';
     } else {
-      if (dataContext[this._keyPrefix + 'collapsed'] === undefined) {
-        dataContext[this._keyPrefix + 'collapsed'] = true;
-        dataContext[this._keyPrefix + 'sizePadding'] = 0;     // the required number of pading rows
-        dataContext[this._keyPrefix + 'height'] = 0;     // the actual height in pixels of the detail field
-        dataContext[this._keyPrefix + 'isPadding'] = false;
-        dataContext[this._keyPrefix + 'parent'] = undefined;
-        dataContext[this._keyPrefix + 'offset'] = 0;
+      if (dataContext[`${this._keyPrefix}collapsed`] === undefined) {
+        dataContext[`${this._keyPrefix}collapsed`] = true;
+        dataContext[`${this._keyPrefix}sizePadding`] = 0;     // the required number of pading rows
+        dataContext[`${this._keyPrefix}height`] = 0;     // the actual height in pixels of the detail field
+        dataContext[`${this._keyPrefix}isPadding`] = false;
+        dataContext[`${this._keyPrefix}parent`] = undefined;
+        dataContext[`${this._keyPrefix}offset`] = 0;
       }
 
-      if (dataContext[this._keyPrefix + 'isPadding']) {
+      if (dataContext[`${this._keyPrefix}isPadding`]) {
         // render nothing
-      } else if (dataContext[this._keyPrefix + 'collapsed']) {
-        let collapsedClasses = this._addonOptions.cssClass + ' expand ';
+      } else if (dataContext[`${this._keyPrefix}collapsed`]) {
+        let collapsedClasses = `${this._addonOptions.cssClass || ''} expand `;
         if (this._addonOptions.collapsedClass) {
           collapsedClasses += this._addonOptions.collapsedClass;
         }
-        return '<div class="' + collapsedClasses + '"></div>';
+        return `<div class="${collapsedClasses.trim()}"></div>`;
       } else {
         const html = [];
-        const rowHeight = this.gridOptions.rowHeight;
-        let outterHeight = dataContext[this._keyPrefix + 'sizePadding'] * this.gridOptions.rowHeight!;
+        const rowHeight = this.gridOptions.rowHeight || 0;
+        let outterHeight = (dataContext[`${this._keyPrefix}sizePadding`] || 0) * this.gridOptions.rowHeight!;
 
-        if ((this._addonOptions as any).maxRows !== null && dataContext[this._keyPrefix + 'sizePadding'] > (this._addonOptions as any).maxRows) {
-          outterHeight = (this._addonOptions as any).maxRows * rowHeight!;
-          dataContext[this._keyPrefix + 'sizePadding'] = (this._addonOptions as any).maxRows;
+        if (this._addonOptions.maxRows !== null && ((dataContext[`${this._keyPrefix}sizePadding`] || 0) > this._addonOptions.maxRows!)) {
+          outterHeight = this._addonOptions.maxRows! * rowHeight!;
+          dataContext[`${this._keyPrefix}sizePadding`] = this._addonOptions.maxRows;
         }
 
         // V313HAX:
@@ -630,16 +628,16 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         // slick-cell to escape the cell overflow clipping.
 
         // sneaky extra </div> inserted here-----------------v
-        let expandedClasses = this._addonOptions.cssClass + ' collapse ';
+        let expandedClasses = `${this._addonOptions.cssClass || ''} collapse `;
         if (this._addonOptions.expandedClass) {
           expandedClasses += this._addonOptions.expandedClass;
         }
-        html.push('<div class="' + expandedClasses + '"></div></div>');
-        html.push('<div class="dynamic-cell-detail cellDetailView_', dataContext[this._dataViewIdProperty], '" ');   // apply custom css to detail
-        html.push('style="height:', outterHeight, 'px;'); // set total height of padding
-        html.push('top:', rowHeight, 'px">');             // shift detail below 1st row
-        html.push('<div class="detail-container detailViewContainer_', dataContext[this._dataViewIdProperty], '">'); // sub ctr for custom styling
-        html.push('<div class="innerDetailView_', dataContext[this._dataViewIdProperty], '">', dataContext[this._keyPrefix + 'detailContent'], '</div></div>');
+        html.push(`<div class="${expandedClasses.trim()}"></div></div>`);
+        html.push(`<div class="dynamic-cell-detail cellDetailView_${dataContext[this._dataViewIdProperty]}" `);   // apply custom css to detail
+        html.push(`style="height: ${outterHeight}px;`); // set total height of padding
+        html.push(`top: ${rowHeight}px">`);             // shift detail below 1st row
+        html.push(`<div class="detail-container detailViewContainer_${dataContext[this._dataViewIdProperty]}">`); // sub ctr for custom styling
+        html.push(`<div class="innerDetailView_${dataContext[this._dataViewIdProperty]}">${dataContext[`${this._keyPrefix}detailContent`]}</div></div>`);
         // omit a final closing detail container </div> that would come next
 
         return html.join('');
@@ -648,39 +646,49 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     return '';
   }
 
-  /** Handle mouse click event */
-  protected handleClick(e: any, args: any) {
-    const dataContext = this._grid.getDataItem(args.row);
-    if (!this.checkExpandableOverride(args.row, dataContext, this._grid)) {
-      return;
-    }
-
-    // clicking on a row select checkbox
-    if (this._addonOptions.useRowClick || this._grid.getColumns()[args.cell]['id'] === (this._addonOptions as any).columnId && e.target.classList.contains(this._addonOptions.cssClass)) {
-      // if editing, try to commit
-      if (this._grid.getEditorLock().isActive() && !this._grid.getEditorLock().commitCurrentEdit()) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        return;
+  /** When row is getting toggled, we will handle the action of collapsing/expanding */
+  protected handleAccordionShowHide(item: any) {
+    if (item) {
+      if (!item[`${this._keyPrefix}collapsed`]) {
+        this.collapseDetailView(item);
+      } else {
+        this.expandDetailView(item);
       }
+    }
+  }
 
-      // trigger an event before toggling
-      this.onBeforeRowDetailToggle.notify({
-        'grid': this._grid,
-        'item': dataContext
-      });
+  /** Handle mouse click event */
+  protected handleClick(e: DOMMouseEvent<HTMLDivElement>, args: { row: number; cell: number; }) {
+    const dataContext = this._grid.getDataItem(args.row);
+    if (this.checkExpandableOverride(args.row, dataContext, this._grid)) {
+      // clicking on a row select checkbox
+      const columnDef = this._grid.getColumns()[args.cell];
+      if (this._addonOptions.useRowClick || (columnDef.id === this._addonOptions.columnId && e.target.classList.contains(this._addonOptions.cssClass || ''))) {
+        // if editing, try to commit
+        if (this._grid.getEditorLock().isActive() && !this._grid.getEditorLock().commitCurrentEdit()) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          return;
+        }
 
-      this.toggleRowSelection(args.row, dataContext);
+        // trigger an event before toggling
+        this.onBeforeRowDetailToggle.notify({
+          grid: this._grid,
+          item: dataContext
+        });
 
-      // trigger an event after toggling
-      this.onAfterRowDetailToggle.notify({
-        grid: this._grid,
-        item: dataContext,
-        expandedRows: this._expandedRows,
-      });
+        this.toggleRowSelection(args.row, dataContext);
 
-      e.stopPropagation();
-      e.stopImmediatePropagation();
+        // trigger an event after toggling
+        this.onAfterRowDetailToggle.notify({
+          grid: this._grid,
+          item: dataContext,
+          expandedRows: this._expandedRows,
+        });
+
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+      }
     }
   }
 
@@ -692,7 +700,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
   }
 
-  protected notifyOutOfViewport(item: any, rowId: any) {
+  protected notifyOutOfViewport(item: any, rowId: number | string) {
     const rowIndex = item.rowIndex || this.dataView.getRowById(item[this._dataViewIdProperty]);
 
     this.onRowOutOfViewportRange.notify({
@@ -705,12 +713,12 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     });
   }
 
-  protected notifyBackToViewportWhenDomExist(item: any, rowId: any) {
+  protected notifyBackToViewportWhenDomExist(item: any, rowId: number | string) {
     const rowIndex = item.rowIndex || this.dataView.getRowById(item[this._dataViewIdProperty]);
 
     setTimeout(() => {
       // make sure View Row DOM Element really exist before notifying that it's a row that is visible again
-      if (document.querySelector('.cellDetailView_' + item[this._dataViewIdProperty])) {
+      if (document.querySelector(`.cellDetailView_${item[this._dataViewIdProperty]}`)) {
         this.onRowBackToViewportRange.notify({
           grid: this._grid,
           item,
@@ -723,8 +731,8 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }, 100);
   }
 
-  protected syncOutOfViewportArray(rowId: any, isAdding: boolean) {
-    const arrayRowIndex = this.arrayFindIndex(this._rowIdsOutOfViewport, rowId);
+  protected syncOutOfViewportArray(rowId: number | string, isAdding: boolean) {
+    const arrayRowIndex = this._rowIdsOutOfViewport.findIndex(outOfViewportRowId => outOfViewportRowId === rowId);
 
     if (isAdding && arrayRowIndex < 0) {
       this._rowIdsOutOfViewport.push(rowId);
@@ -735,14 +743,10 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   protected toggleRowSelection(rowNumber: number, dataContext: any) {
-    if (!this.checkExpandableOverride(rowNumber, dataContext, this._grid)) {
-      return;
+    if (this.checkExpandableOverride(rowNumber, dataContext, this._grid)) {
+      this.dataView.beginUpdate();
+      this.handleAccordionShowHide(dataContext);
+      this.dataView.endUpdate();
     }
-
-    this.dataView.beginUpdate();
-    this.handleAccordionShowHide(dataContext);
-    this.dataView.endUpdate();
   }
-
-
 }

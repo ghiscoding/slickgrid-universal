@@ -2,11 +2,17 @@ import { UsabilityOverrideFn } from '../index';
 import { Observable, Subject } from '../services/rxjsFacade';
 
 export interface RowDetailViewOption {
+  /** Defaults to True, do we always render/reRender the column */
+  alwaysRenderColumn?: boolean;
+
   /** Defaults to true, which will collapse all row detail views when user calls a sort. Unless user implements a sort to deal with padding */
   collapseAllOnSort?: boolean;
 
   /** Extra classes to be added to the collapse Toggle */
   collapsedClass?: string;
+
+  /** Defaults to "_detail_selector", Row Detail column Id */
+  columnId?: string;
 
   /**
    * Defaults to 0, the column index position in the grid by default it will show as the first column (index 0).
@@ -26,6 +32,9 @@ export interface RowDetailViewOption {
 
   /** Defaults to false, when True will load the data once and then reuse it. */
   loadOnce?: boolean;
+
+  /** Defaults to null, do we want to defined a maximum number of rows to show. */
+  maxRows?: number;
 
   /**
    * How many grid rows do we want to use for the detail panel view
@@ -54,6 +63,12 @@ export interface RowDetailViewOption {
    * It is recommended to enable this flag since it seems to work correctly with Slickgrid-Universal while the inverse is misbehaving
    */
   useSimpleViewportCalc?: boolean;
+
+  /** no defaults, show a tooltip text while hovering the row detail icon */
+  toolTip?: string;
+
+  /** no defaults, width of the icon column */
+  width?: number;
 
   // --
   // Callback Methods

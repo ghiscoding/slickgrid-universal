@@ -34,7 +34,7 @@ export interface SlickRowDetailView {
   getColumnDefinition(): Column;
 
   /** Get the row expandable Override function */
-  getExpandableOverride(): UsabilityOverrideFn;
+  getExpandableOverride(): UsabilityOverrideFn | null;
 
   /** return the currently expanded rows */
   getExpandedRows(): Array<number | string>;
