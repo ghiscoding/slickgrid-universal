@@ -73,7 +73,6 @@ export class Example1 {
           //   { command: '', divider: true, positionOrder: 72 },
           //   { command: 'hello', title: 'Hello', positionOrder: 69, action: (e, args) => alert('Hello World'), cssClass: 'red', tooltip: 'Hello World', iconCssClass: 'mdi mdi-close' },
           // ],
-          alignDropSide: 'right',
           // menuUsabilityOverride: () => false,
           onBeforeMenuShow: () => {
             console.log('onGridMenuBeforeMenuShow');
@@ -143,8 +142,8 @@ export class Example1 {
     if (this.sgb2?.extensionService) {
       const gridMenuInstance = this.sgb2.extensionService.getSlickgridAddonInstance(ExtensionName.gridMenu);
       // open the external button Grid Menu, you can also optionally pass Grid Menu options as 2nd argument
-      // for example we want to align our external button on the left without affecting the menu within which will stay aligned on the right
-      gridMenuInstance.showGridMenu(e, { alignDropSide: 'left' });
+      // for example we want to align our external button on the right without affecting the menu within the grid which will stay aligned on the left
+      gridMenuInstance.showGridMenu(e, { dropSide: 'right' });
     }
   }
 }

@@ -352,7 +352,7 @@ describe('GridMenuControl', () => {
         expect(gridMenuElm.style.height).toBe('300px');
       });
 
-      it('should open the Grid Menu via "showGridMenu" method from an external button which has span inside it and expect the Grid Menu still work', () => {
+      it('should open the Grid Menu via "showGridMenu" method from an external button which has span inside it and expect the Grid Menu still work, with drop aligned on left when defined', () => {
         jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined).mockReturnValue(1);
         const repositionSpy = jest.spyOn(control, 'repositionMenu');
 
@@ -363,10 +363,30 @@ describe('GridMenuControl', () => {
         spanBtnElm.textContent = 'Grid Menu';
         Object.defineProperty(spanEvent, 'target', { writable: true, configurable: true, value: spanBtnElm });
         Object.defineProperty(spanBtnElm, 'parentElement', { writable: true, configurable: true, value: buttonElm });
-        control.showGridMenu(spanEvent, { alignDropSide: 'left' });
+        control.showGridMenu(spanEvent, { dropSide: 'left' });
         const gridMenuElm = document.querySelector('.slick-grid-menu') as HTMLDivElement;
 
         expect(gridMenuElm.style.display).toBe('block');
+        expect(gridMenuElm.classList.contains('dropleft')).toBeTrue();
+        expect(repositionSpy).toHaveBeenCalledTimes(2);
+      });
+
+      it('should open the Grid Menu via "showGridMenu" method from an external button which has span inside it and expect the Grid Menu still work, with drop aligned on right when defined', () => {
+        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined).mockReturnValue(1);
+        const repositionSpy = jest.spyOn(control, 'repositionMenu');
+
+        control.init();
+        const spanEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false })
+        const spanBtnElm = document.createElement('span');
+        const buttonElm = document.createElement('button');
+        spanBtnElm.textContent = 'Grid Menu';
+        Object.defineProperty(spanEvent, 'target', { writable: true, configurable: true, value: spanBtnElm });
+        Object.defineProperty(spanBtnElm, 'parentElement', { writable: true, configurable: true, value: buttonElm });
+        control.showGridMenu(spanEvent, { dropSide: 'right' });
+        const gridMenuElm = document.querySelector('.slick-grid-menu') as HTMLDivElement;
+
+        expect(gridMenuElm.style.display).toBe('block');
+        expect(gridMenuElm.classList.contains('dropright')).toBeTrue();
         expect(repositionSpy).toHaveBeenCalledTimes(2);
       });
 

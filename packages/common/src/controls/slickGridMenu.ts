@@ -58,7 +58,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   onColumnsChanged = new Slick.Event();
 
   protected _defaults = {
-    alignDropSide: 'right',
+    dropSide: 'left',
     showButton: true,
     hideForceFitButton: false,
     hideSyncResizeButton: false,
@@ -342,11 +342,17 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       const nextPositionTop = menuIconOffset?.top ?? 0;
       const nextPositionLeft = menuIconOffset?.right ?? 0;
       const menuMarginBottom = ((addonOptions?.marginBottom !== undefined) ? addonOptions.marginBottom : this._defaults.marginBottom) || 0;
-      const calculatedLeftPosition = addonOptions?.alignDropSide === 'left' ? nextPositionLeft - buttonWidth : nextPositionLeft - currentMenuWidth;
+      const calculatedLeftPosition = addonOptions?.dropSide === 'right' ? nextPositionLeft - buttonWidth : nextPositionLeft - currentMenuWidth;
 
       this._menuElm.style.top = `${nextPositionTop + buttonElm.offsetHeight}px`; // top position has to include button height so the menu is placed just below it
       this._menuElm.style.left = `${calculatedLeftPosition}px`;
-      this._menuElm.classList.add(addonOptions?.alignDropSide === 'left' ? 'dropleft' : 'dropright');
+      if (addonOptions.dropSide === 'left') {
+        this._menuElm.classList.remove('dropright');
+        this._menuElm.classList.add('dropleft');
+      } else {
+        this._menuElm.classList.remove('dropleft');
+        this._menuElm.classList.add('dropright');
+      }
       this._menuElm.appendChild(this._listElm);
 
       if (contentMinWidth! > 0) {

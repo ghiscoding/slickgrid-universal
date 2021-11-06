@@ -255,7 +255,7 @@ describe('ContextMenu Plugin', () => {
     it('should "autoAlignSide" and expect menu to aligned left with a calculate offset when showing menu', () => {
       jest.spyOn(gridStub, 'getGridPosition').mockReturnValue({ top: 10, bottom: 5, left: 15, right: 22, width: 225 } as ElementPosition);
       plugin.dispose();
-      plugin.init({ autoAdjustDrop: true, autoAlignSide: true, alignDropDirection: 'top', alignDropSide: 'left' });
+      plugin.init({ autoAdjustDrop: true, autoAlignSide: true, dropDirection: 'top', dropSide: 'left' });
 
       const actionBtnElm = document.createElement('button');
       slickCellElm.appendChild(actionBtnElm);

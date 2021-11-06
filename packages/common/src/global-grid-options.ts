@@ -170,7 +170,7 @@ export const GlobalGridOptions: GridOption = {
   forceFitColumns: false,
   frozenHeaderWidthCalcDifferential: 1,
   gridMenu: {
-    alignDropSide: 'right',
+    dropSide: 'left',
     commandLabels: {
       clearAllFiltersCommandKey: 'CLEAR_ALL_FILTERS',
       clearAllSortingCommandKey: 'CLEAR_ALL_SORTING',
