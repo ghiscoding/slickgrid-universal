@@ -1,10 +1,10 @@
 import { Column, ColumnPicker, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { SlickColumnPicker } from '../slickColumnPicker';
-import { ExtensionUtility } from '../../extensions/extensionUtility';
+import { ExtensionUtility } from '../extensionUtility';
+import { PubSubService } from '../../services/pubSub.service';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { BackendUtilityService } from '../../services/backendUtility.service';
-import { PubSubService } from '../../services';
 
 declare const Slick: SlickNamespace;
 const gridUid = 'slickgrid_124343';

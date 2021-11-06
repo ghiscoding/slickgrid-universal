@@ -1,6 +1,6 @@
 import { SlickCheckboxSelectColumn } from '../slickCheckboxSelectColumn';
 import { Column, SlickGrid, SlickNamespace, } from '../../interfaces/index';
-import { SlickRowSelectionModel } from '../../plugins/slickRowSelectionModel';
+import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
 
 declare const Slick: SlickNamespace;
 
@@ -66,12 +66,11 @@ const mockRowSelectionModel = {
   onSelectedRangesChanged: new Slick.Event(),
 } as unknown as SlickRowSelectionModel;
 
-jest.mock('../../plugins/slickRowSelectionModel', () => ({
+jest.mock('../../extensions/slickRowSelectionModel', () => ({
   SlickRowSelectionModel: jest.fn().mockImplementation(() => mockRowSelectionModel),
 }));
 
 describe('SlickCheckboxSelectColumn Plugin', () => {
-  jest.mock('slickgrid/plugins/slick.rowmovemanager', () => mockAddon);
   Slick.RowMoveManager = mockAddon;
 
   const mockColumns = [

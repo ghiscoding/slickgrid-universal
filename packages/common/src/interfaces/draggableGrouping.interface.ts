@@ -1,6 +1,6 @@
 import { Grouping, SlickEventData } from './index';
 import { DraggableGroupingOption } from './draggableGroupingOption.interface';
-import { SlickDraggableGrouping } from '../plugins/slickDraggableGrouping';
+import { SlickDraggableGrouping } from '../extensions/slickDraggableGrouping';
 
 export interface DraggableGrouping extends DraggableGroupingOption {
   //

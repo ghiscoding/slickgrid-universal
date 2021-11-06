@@ -1,22 +1,23 @@
 import { Column, Extension, ExtensionModel, GridOption, SlickRowDetailView, } from '../interfaces/index';
 import { ColumnReorderFunction, ExtensionList, ExtensionName, SlickControlList, SlickPluginList } from '../enums/index';
-import { ExtensionUtility } from '../extensions/index';
 import { SharedService } from './shared.service';
 import { TranslaterService } from './translater.service';
-import { SlickColumnPicker, SlickGridMenu } from '../controls/index';
 import {
+  ExtensionUtility,
   SlickAutoTooltip,
   SlickCellExcelCopyManager,
   SlickCellMenu,
   SlickCheckboxSelectColumn,
+  SlickColumnPicker,
   SlickContextMenu,
   SlickDraggableGrouping,
+  SlickGridMenu,
   SlickGroupItemMetadataProvider,
   SlickHeaderButtons,
   SlickHeaderMenu,
   SlickRowMoveManager,
   SlickRowSelectionModel
-} from '../plugins/index';
+} from '../extensions/index';
 import { FilterService } from './filter.service';
 import { PubSubService } from './pubSub.service';
 import { SortService } from './sort.service';

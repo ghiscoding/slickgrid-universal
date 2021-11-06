@@ -19,7 +19,7 @@ import {
 import {
   SlickCellSelectionModel,
   SlickRowSelectionModel,
-} from '../plugins/index';
+} from '../extensions/index';
 
 export interface SlickGrid {
   /**

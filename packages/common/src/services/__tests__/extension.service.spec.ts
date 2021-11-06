@@ -5,10 +5,22 @@ import { Column, ExtensionModel, GridOption, SlickGrid, SlickNamespace } from '.
 import { ExtensionUtility } from '../../extensions';
 import { ExtensionService, FilterService, PubSubService, SharedService, SortService, TreeDataService } from '../index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { SlickAutoTooltip, SlickCellExcelCopyManager, SlickCellMenu, SlickCheckboxSelectColumn, SlickContextMenu, SlickDraggableGrouping, SlickHeaderButtons, SlickHeaderMenu, SlickRowMoveManager, SlickRowSelectionModel } from '../../plugins/index';
-import { SlickCellSelectionModel } from '../../plugins/slickCellSelectionModel';
-import { SlickColumnPicker, SlickGridMenu } from '../../controls/index';
-import { SlickGroupItemMetadataProvider } from '../../plugins/slickGroupItemMetadataProvider';
+import {
+  SlickAutoTooltip,
+  SlickCellExcelCopyManager,
+  SlickCellMenu,
+  SlickCellSelectionModel,
+  SlickCheckboxSelectColumn,
+  SlickColumnPicker,
+  SlickContextMenu,
+  SlickDraggableGrouping,
+  SlickGridMenu,
+  SlickGroupItemMetadataProvider,
+  SlickHeaderButtons,
+  SlickHeaderMenu,
+  SlickRowMoveManager,
+  SlickRowSelectionModel,
+} from '../../extensions/index';
 
 jest.mock('flatpickr', () => { });
 declare const Slick: SlickNamespace;
@@ -34,7 +46,7 @@ const mockCellSelectionModel = {
   setSelectedRows: jest.fn(),
   onSelectedRangesChanged: new Slick.Event(),
 } as unknown as SlickCellSelectionModel;
-jest.mock('../../plugins/slickCellSelectionModel');
+jest.mock('../../extensions/slickCellSelectionModel');
 
 const mockRowSelectionModel = {
   constructor: jest.fn(),
@@ -43,7 +55,7 @@ const mockRowSelectionModel = {
   dispose: jest.fn(),
   onSelectedRangesChanged: new Slick.Event(),
 } as unknown as SlickRowSelectionModel;
-jest.mock('../../plugins/slickRowSelectionModel', () => ({
+jest.mock('../../extensions/slickRowSelectionModel', () => ({
   SlickRowSelectionModel: jest.fn().mockImplementation(() => mockRowSelectionModel),
 }));
 
@@ -54,7 +66,7 @@ const mockCheckboxSelectColumn = {
   destroy: jest.fn(),
   dispose: jest.fn(),
 } as unknown as SlickCheckboxSelectColumn;
-jest.mock('../../plugins/slickCheckboxSelectColumn', () => ({
+jest.mock('../../extensions/slickCheckboxSelectColumn', () => ({
   SlickCheckboxSelectColumn: jest.fn().mockImplementation(() => mockCheckboxSelectColumn),
 }));
 
@@ -65,7 +77,7 @@ const mockRowMoveManager = {
   destroy: jest.fn(),
   dispose: jest.fn(),
 } as unknown as SlickRowMoveManager;
-jest.mock('../../plugins/slickRowMoveManager', () => ({
+jest.mock('../../extensions/slickRowMoveManager', () => ({
   SlickRowMoveManager: jest.fn().mockImplementation(() => mockRowMoveManager),
 }));
 

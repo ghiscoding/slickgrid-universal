@@ -1,4 +1,4 @@
-import { SlickGroupItemMetadataProvider } from '../plugins/slickGroupItemMetadataProvider';
+import { SlickGroupItemMetadataProvider } from '../extensions/slickGroupItemMetadataProvider';
 
 export interface DataViewOption {
   /** Defaults to false, use with great care as this will break built-in filters */

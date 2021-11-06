@@ -1,4 +1,4 @@
-import { SlickHeaderButtons } from '../plugins/slickHeaderButtons';
+import { SlickHeaderButtons } from '../extensions/slickHeaderButtons';
 import { HeaderButtonOnCommandArgs } from './headerButtonOnCommandArgs.interface';
 import { SlickEventData } from './slickEventData.interface';
 

@@ -1,5 +1,5 @@
 import { Column, CurrentPagination, GridOption, SlickDataView, SlickGrid, } from '../interfaces/index';
-import { SlickGroupItemMetadataProvider } from '../plugins/slickGroupItemMetadataProvider';
+import { SlickGroupItemMetadataProvider } from '../extensions/slickGroupItemMetadataProvider';
 
 export class SharedService {
   protected _allColumns!: Column[];

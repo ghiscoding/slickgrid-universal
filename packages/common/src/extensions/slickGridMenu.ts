@@ -22,7 +22,7 @@ import { SharedService } from '../services/shared.service';
 import { SortService } from '../services/sort.service';
 import { TextExportService } from '../services/textExport.service';
 import { addColumnTitleElementWhenDefined, addCloseButtomElement, handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
-import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from '../plugins/menuBaseClass';
+import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from '../extensions/menuBaseClass';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;

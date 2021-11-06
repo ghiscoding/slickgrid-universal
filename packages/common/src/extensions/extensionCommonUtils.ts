@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 import { Column, ColumnPickerOption, DOMEvent, GridMenuOption } from '../interfaces/index';
 import { sanitizeTextByAvailableSanitizer } from '../services/domUtilities';
-import { SlickColumnPicker } from '../controls/slickColumnPicker';
-import { SlickGridMenu } from '../controls/slickGridMenu';
+import { SlickColumnPicker } from './slickColumnPicker';
+import { SlickGridMenu } from './slickGridMenu';
 import { titleCase } from '../services/utilities';
 
 /** Create a Close button element and add it to the Menu element */

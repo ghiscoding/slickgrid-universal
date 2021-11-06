@@ -1,4 +1,4 @@
-import { SlickCellExternalCopyManager } from '../plugins/slickCellExternalCopyManager';
+import { SlickCellExternalCopyManager } from '../extensions/slickCellExternalCopyManager';
 import { CellRange, Column, ExcelCopyBufferOption } from './index';
 
 export interface ExternalCopyClipCommand {

@@ -1,5 +1,5 @@
 import { Column, GridOption, SlickGrid } from './index';
-import { SlickColumnPicker } from '../controls/slickColumnPicker';
+import { SlickColumnPicker } from '../extensions/slickColumnPicker';
 
 export interface ColumnPicker extends ColumnPickerOption {
 

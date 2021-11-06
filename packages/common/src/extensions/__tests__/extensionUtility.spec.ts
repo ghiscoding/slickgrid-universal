@@ -11,13 +11,6 @@ const gridStub = {
   registerPlugin: jest.fn(),
 } as unknown as SlickGrid;
 
-const mockAddon = jest.fn().mockImplementation(() => ({
-  init: jest.fn(),
-  destroy: jest.fn()
-}));
-
-jest.mock('slickgrid/plugins/slick.rowdetailview', () => mockAddon);
-
 const backendUtilityServiceStub = {
   executeBackendProcessesCallback: jest.fn(),
   executeBackendCallback: jest.fn(),

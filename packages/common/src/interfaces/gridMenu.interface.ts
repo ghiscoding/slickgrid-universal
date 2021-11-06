@@ -4,7 +4,7 @@ import {
   GridMenuCommandItemCallbackArgs,
   SlickGrid,
 } from './index';
-import { SlickGridMenu } from '../controls/slickGridMenu';
+import { SlickGridMenu } from '../extensions/slickGridMenu';
 
 export interface GridMenu extends GridMenuOption {
   // --

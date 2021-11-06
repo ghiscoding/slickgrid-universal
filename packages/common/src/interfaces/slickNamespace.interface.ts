@@ -29,7 +29,6 @@ import {
   SlickResizer,
   SlickRowDetailView,
 } from './index';
-import { SlickGridMenu, } from '../controls/index';
 import {
   SlickAutoTooltip,
   SlickCellExternalCopyManager,
@@ -40,12 +39,13 @@ import {
   SlickCheckboxSelectColumn,
   SlickContextMenu,
   SlickDraggableGrouping,
+  SlickGridMenu,
   SlickGroupItemMetadataProvider,
   SlickHeaderButtons,
   SlickHeaderMenu,
   SlickRowMoveManager,
   SlickRowSelectionModel,
-} from '../plugins/index';
+} from '../extensions/index';
 
 /**
  * Slick Grid class interface of the entire library and it's multiple controls/plugins.
