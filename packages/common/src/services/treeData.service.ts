@@ -4,7 +4,6 @@ import {
   Column,
   ColumnSort,
   EventSubscription,
-  GetSlickEventType,
   GridOption,
   OnClickEventArgs,
   SlickDataView,
@@ -101,10 +100,7 @@ export class TreeDataService {
     }
 
     // subscribe to the SlickGrid event and call the backend execution
-    const onClickHandler = grid.onClick;
-    if (onClickHandler) {
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onClickHandler>>).subscribe(onClickHandler, this.handleOnCellClick.bind(this));
-    }
+    this._eventHandler.subscribe(grid.onClick, this.handleOnCellClick.bind(this));
 
     // when "Clear all Sorting" is triggered by the Grid Menu, we'll resort with `initialSort` when defined (or else by 'id')
     this._subscriptions.push(

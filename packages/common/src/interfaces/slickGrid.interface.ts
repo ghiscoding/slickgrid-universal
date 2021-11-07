@@ -3,6 +3,7 @@ import { CompositeEditorOption } from './compositeEditorOption.interface';
 import {
   Column,
   ColumnSort,
+  DragRowMove,
   Editor,
   EditorValidationResult,
   ElementPosition,
@@ -510,10 +511,10 @@ export interface SlickGrid {
   onColumnsResizeDblClick: SlickEvent<OnColumnsResizeDblClickEventArgs>;
   onCompositeEditorChange: SlickEvent<OnCompositeEditorChangeEventArgs>;
   onContextMenu: SlickEvent<SlickGridEventData>;
-  onDrag: SlickEvent<OnDragEventArgs>;
-  onDragEnd: SlickEvent<OnDragEventArgs>;
-  onDragInit: SlickEvent<OnDragEventArgs>;
-  onDragStart: SlickEvent<OnDragEventArgs>;
+  onDrag: SlickEvent<DragRowMove>;
+  onDragEnd: SlickEvent<DragRowMove>;
+  onDragInit: SlickEvent<DragRowMove>;
+  onDragStart: SlickEvent<DragRowMove>;
   onDblClick: SlickEvent<OnDblClickEventArgs>;
   onFooterContextMenu: SlickEvent<OnFooterContextMenuEventArgs>;
   onFooterRowCellRendered: SlickEvent<OnFooterRowCellRenderedEventArgs>;

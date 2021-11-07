@@ -3,7 +3,6 @@ import {
   AutoResizeOption,
   Column,
   EventSubscription,
-  GetSlickEventType,
   GridOption,
   GridSize,
   ResizeByContentOption,
@@ -155,8 +154,7 @@ export class ResizerService {
         }))
       );
 
-      const onColumnsResizeDblClickHandler = this._grid.onColumnsResizeDblClick;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onColumnsResizeDblClickHandler>>).subscribe(onColumnsResizeDblClickHandler, (_e, args) => {
+      this._eventHandler.subscribe(this._grid.onColumnsResizeDblClick, (_e, args) => {
         this.handleSingleColumnResizeByContent(args.triggeredByColumn);
       });
     }

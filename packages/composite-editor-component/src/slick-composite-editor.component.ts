@@ -18,7 +18,6 @@ import {
   emptyObject,
   ExternalResource,
   getDescendantProperty,
-  GetSlickEventType,
   GridOption,
   GridService,
   GridStateService,
@@ -522,18 +521,14 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         this._bindEventService.bind(this._modalElm, 'blur', this.validateCurrentEditor.bind(this) as EventListener);
 
         // when any of the input of the composite editor form changes, we'll add/remove a "modified" CSS className for styling purposes
-        const onCompositeEditorChangeHandler = this.grid.onCompositeEditorChange;
-        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCompositeEditorChangeHandler>>)
-          .subscribe(onCompositeEditorChangeHandler, this.handleOnCompositeEditorChange.bind(this));
+        this._eventHandler.subscribe(this.grid.onCompositeEditorChange, this.handleOnCompositeEditorChange.bind(this));
 
         // when adding a new row to the grid, we need to invalidate that row and re-render the grid
-        const onAddNewRowHandler = this.grid.onAddNewRow;
-        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onAddNewRowHandler>>)
-          .subscribe(onAddNewRowHandler, (_e, args) => {
-            this.insertNewItemInDataView(args.item);
-            this._originalDataContext = args.item; // this becomes the new data context
-            this.dispose();
-          });
+        this._eventHandler.subscribe(this.grid.onAddNewRow, (_e, args) => {
+          this.insertNewItemInDataView(args.item);
+          this._originalDataContext = args.item; // this becomes the new data context
+          this.dispose();
+        });
       }
       return this;
 

@@ -3,7 +3,6 @@ import {
   Column,
   CurrentSorter,
   DOMEvent,
-  GetSlickEventType,
   HeaderMenu,
   HeaderMenuCommandItemCallbackArgs,
   HeaderMenuItems,
@@ -13,7 +12,6 @@ import {
   MenuOptionItem,
   MultiColumnSort,
   OnHeaderCellRenderedEventArgs,
-  SlickEventHandler,
 } from '../interfaces/index';
 import { arrayRemoveItemByIndex, emptyElement, getElementOffsetRelativeToParent, getTranslationPrefix } from '../services/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
@@ -70,16 +68,11 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
     // when setColumns is called (could be via toggle filtering/sorting or anything else),
     // we need to recreate header menu items custom commands array before the `onHeaderCellRendered` gets called
-    const onBeforeSetColumnsHandler = this.grid.onBeforeSetColumns;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeSetColumnsHandler>>).subscribe(onBeforeSetColumnsHandler, (e, args) => {
+    this._eventHandler.subscribe(this.grid.onBeforeSetColumns, (e, args) => {
       this.sharedService.gridOptions.headerMenu = this.addHeaderMenuCustomCommands(args.newColumns);
     });
-
-    const onHeaderCellRenderedHandler = this.grid.onHeaderCellRendered;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onHeaderCellRenderedHandler>>).subscribe(onHeaderCellRenderedHandler, this.handleHeaderCellRendered.bind(this));
-
-    const onBeforeHeaderCellDestroyHandler = this.grid.onBeforeHeaderCellDestroy;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeHeaderCellDestroyHandler>>).subscribe(onBeforeHeaderCellDestroyHandler, this.handleBeforeHeaderCellDestroy.bind(this));
+    this._eventHandler.subscribe(this.grid.onHeaderCellRendered, this.handleHeaderCellRendered.bind(this));
+    this._eventHandler.subscribe(this.grid.onBeforeHeaderCellDestroy, this.handleBeforeHeaderCellDestroy.bind(this));
 
     // force the grid to re-render the header after the events are hooked up.
     this.grid.setColumns(this.grid.getColumns());

@@ -1,7 +1,6 @@
 import {
   Column,
   EventSubscription,
-  GetSlickEventType,
   GridOption,
   SlickDataView,
   SlickEventHandler,
@@ -84,8 +83,7 @@ export class GroupingAndColspanService {
         }
 
         // and finally we need to re-create after user calls the Grid "setOptions" when changing from regular to frozen grid (and vice versa)
-        const onSetOptionsHandler = grid.onSetOptions;
-        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSetOptionsHandler>>).subscribe(onSetOptionsHandler, (_e, args) => {
+        this._eventHandler.subscribe(grid.onSetOptions, (_e, args) => {
           // when user changes frozen columns dynamically (e.g. from header menu), we need to re-render the pre-header of the grouping titles
           if (args?.optionsBefore?.frozenColumn !== args?.optionsAfter?.frozenColumn) {
             this.delayRenderPreHeaderRowGroupingTitles(0);

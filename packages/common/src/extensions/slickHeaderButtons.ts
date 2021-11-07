@@ -1,7 +1,6 @@
 import {
   Column,
   DOMEvent,
-  GetSlickEventType,
   HeaderButton,
   HeaderButtonItem,
   HeaderButtonOnCommandArgs,
@@ -66,11 +65,8 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
   init(headerButtonOptions?: HeaderButton) {
     this._addonOptions = { ...this._defaults, ...headerButtonOptions };
 
-    const onHeaderCellRenderedHandler = this.grid.onHeaderCellRendered;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onHeaderCellRenderedHandler>>).subscribe(onHeaderCellRenderedHandler, this.handleHeaderCellRendered.bind(this));
-
-    const onBeforeHeaderCellDestroyHandler = this.grid.onBeforeHeaderCellDestroy;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeHeaderCellDestroyHandler>>).subscribe(onBeforeHeaderCellDestroyHandler, this.handleBeforeHeaderCellDestroy.bind(this));
+    this._eventHandler.subscribe(this.grid.onHeaderCellRendered, this.handleHeaderCellRendered.bind(this));
+    this._eventHandler.subscribe(this.grid.onBeforeHeaderCellDestroy, this.handleBeforeHeaderCellDestroy.bind(this));
 
     // force the grid to re-render the header after the events are hooked up.
     this.grid.setColumns(this.grid.getColumns());

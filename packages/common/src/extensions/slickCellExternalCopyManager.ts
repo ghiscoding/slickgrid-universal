@@ -1,8 +1,5 @@
 import { KeyCode } from '../enums/index';
 import {
-  // TypeScript Helper
-  GetSlickEventType,
-
   CellRange,
   Column,
   ExcelCopyBufferOption,
@@ -67,8 +64,7 @@ export class SlickCellExternalCopyManager {
     this._onCopyInit = this._addonOptions.onCopyInit || undefined;
     this._onCopySuccess = this._addonOptions.onCopySuccess || undefined;
 
-    const onKeyDownHandler = this._grid.onKeyDown;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onKeyDownHandler>>).subscribe(onKeyDownHandler, this.handleKeyDown.bind(this));
+    this._eventHandler.subscribe(this._grid.onKeyDown, this.handleKeyDown.bind(this));
 
     // we need a cell selection model
     const cellSelectionModel = grid.getSelectionModel();
@@ -78,10 +74,7 @@ export class SlickCellExternalCopyManager {
 
     // we give focus on the grid when a selection is done on it.
     // without this, if the user selects a range of cell without giving focus on a particular cell, the grid doesn't get the focus and key stroke handles (ctrl+c) don't work
-    const onSelectedRangesChangedHandler = cellSelectionModel.onSelectedRangesChanged;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSelectedRangesChangedHandler>>).subscribe(onSelectedRangesChangedHandler, () => {
-      this._grid.focus();
-    });
+    this._eventHandler.subscribe(cellSelectionModel.onSelectedRangesChanged, () => this._grid.focus());
   }
 
   /** @deprecated @use `dispose` Destroy plugin. */

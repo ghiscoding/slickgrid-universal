@@ -9,7 +9,6 @@ import {
   EditorArguments,
   EditorValidator,
   EditorValidationResult,
-  GetSlickEventType,
   GridOption,
   SlickEventHandler,
   SlickGrid,
@@ -61,8 +60,7 @@ export class DualInputEditor implements Editor {
     this._bindEventService = new BindingEventService();
     this.init();
 
-    const onValidationErrorHandler = this.grid.onValidationError;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onValidationErrorHandler>>).subscribe(onValidationErrorHandler, () => this._isValueSaveCalled = true);
+    this._eventHandler.subscribe(this.grid.onValidationError, () => this._isValueSaveCalled = true);
   }
 
   /** Get Column Definition object */

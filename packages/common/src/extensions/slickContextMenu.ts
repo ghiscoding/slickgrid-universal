@@ -3,12 +3,10 @@ import {
   ContextMenuOption,
   Column,
   DOMMouseEvent,
-  GetSlickEventType,
   MenuCallbackArgs,
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
   MenuOptionItem,
-  SlickEventHandler,
 } from '../interfaces/index';
 import { DelimiterType, FileType } from '../enums/index';
 import { ExcelExportService, getCellValueFromQueryFieldGetter, getTranslationPrefix, TextExportService } from '../services/index';
@@ -76,12 +74,10 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     // sort all menu items by their position order when defined
     this.sortMenuItems();
 
-    const onContextMenuHandler = this.grid.onContextMenu;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onContextMenuHandler>>).subscribe(onContextMenuHandler, this.handleClick.bind(this) as EventListener);
+    this._eventHandler.subscribe(this.grid.onContextMenu, this.handleClick.bind(this) as EventListener);
 
     if (this._addonOptions.hideMenuOnScroll) {
-      const onScrollHandler = this.grid.onScroll;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onScrollHandler>>).subscribe(onScrollHandler, this.closeMenu.bind(this) as EventListener);
+      this._eventHandler.subscribe(this.grid.onScroll, this.closeMenu.bind(this) as EventListener);
     }
   }
 

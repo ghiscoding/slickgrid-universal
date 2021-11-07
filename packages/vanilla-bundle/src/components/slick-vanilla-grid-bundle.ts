@@ -56,7 +56,6 @@ import {
 
   // utilities
   emptyElement,
-  GetSlickEventType,
 } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
@@ -746,8 +745,7 @@ export class SlickVanillaGridBundle {
       // expose all Slick Grid Events through dispatch
       for (const prop in grid) {
         if (grid.hasOwnProperty(prop) && prop.startsWith('on')) {
-          const gridEventHandler = (grid as any)[prop];
-          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof gridEventHandler>>).subscribe(gridEventHandler, (event, args) => {
+          this._eventHandler.subscribe((grid as any)[prop], (event, args) => {
             const gridEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions?.defaultSlickgridEventPrefix ?? '');
             return this._eventPubSubService.dispatchCustomEvent(gridEventName, { eventData: event, args });
           });
@@ -757,8 +755,7 @@ export class SlickVanillaGridBundle {
       // expose all Slick DataView Events through dispatch
       for (const prop in dataView) {
         if (dataView.hasOwnProperty(prop) && prop.startsWith('on')) {
-          const dataViewEventHandler = (dataView as any)[prop];
-          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof dataViewEventHandler>>).subscribe(dataViewEventHandler, (event, args) => {
+          this._eventHandler.subscribe((dataView as any)[prop], (event, args) => {
             const dataViewEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions?.defaultSlickgridEventPrefix ?? '');
             return this._eventPubSubService.dispatchCustomEvent(dataViewEventName, { eventData: event, args });
           });
@@ -789,13 +786,11 @@ export class SlickVanillaGridBundle {
       }
 
       // When data changes in the DataView, we need to refresh the metrics and/or display a warning if the dataset is empty
-      const onRowCountChangedHandler = dataView.onRowCountChanged;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowCountChangedHandler>>).subscribe(onRowCountChangedHandler, () => {
+      this._eventHandler.subscribe(dataView.onRowCountChanged, () => {
         grid.invalidate();
         this.handleOnItemCountChanged(this.dataView?.getFilteredItemCount() || 0, this.dataView?.getItemCount() ?? 0);
       });
-      const onSetItemsCalledHandler = dataView.onSetItemsCalled;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSetItemsCalledHandler>>).subscribe(onSetItemsCalledHandler, (_e, args) => {
+      this._eventHandler.subscribe(dataView.onSetItemsCalled, (_e, args) => {
         this.handleOnItemCountChanged(this.dataView?.getFilteredItemCount() || 0, args.itemCount);
 
         // when user has resize by content enabled, we'll force a full width calculation since we change our entire dataset
@@ -807,8 +802,7 @@ export class SlickVanillaGridBundle {
       // when filtering data with local dataset, we need to update each row else it will not always show correctly in the UI
       // also don't use "invalidateRows" since it destroys the entire row and as bad user experience when updating a row
       if (gridOptions && gridOptions.enableFiltering && !gridOptions.enableRowDetailView) {
-        const onRowsChangedHandler = dataView.onRowsChanged;
-        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowsChangedHandler>>).subscribe(onRowsChangedHandler, (_e, args) => {
+        this._eventHandler.subscribe(dataView.onRowsChanged, (_e, args) => {
           if (args?.rows && Array.isArray(args.rows)) {
             args.rows.forEach((row: number) => grid.updateRow(row));
             grid.render();
@@ -817,8 +811,7 @@ export class SlickVanillaGridBundle {
       }
 
       // when column are reordered, we need to update the visibleColumn array
-      const onColumnsReorderedHandler = grid.onColumnsReordered;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onColumnsReorderedHandler>>).subscribe(onColumnsReorderedHandler, (_e, args) => {
+      this._eventHandler.subscribe(grid.onColumnsReordered, (_e, args) => {
         this.sharedService.hasColumnsReordered = true;
         this.sharedService.visibleColumns = args.impactedColumns;
       });

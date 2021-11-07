@@ -2,7 +2,6 @@ import {
   Column,
   ColumnPickerOption,
   DOMMouseEvent,
-  GetSlickEventType,
   GridOption,
   SlickEventHandler,
   SlickGrid,
@@ -99,10 +98,8 @@ export class SlickColumnPicker {
     this.addonOptions.forceFitTitle = this.extensionUtility.getPickerTitleOutputString('forceFitTitle', 'columnPicker');
     this.addonOptions.syncResizeTitle = this.extensionUtility.getPickerTitleOutputString('syncResizeTitle', 'columnPicker');
 
-    const onHeaderContextMenuHandler = this.grid.onHeaderContextMenu;
-    const onColumnsReorderedHandler = this.grid.onColumnsReordered;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onHeaderContextMenuHandler>>).subscribe(onHeaderContextMenuHandler, this.handleHeaderContextMenu.bind(this) as EventListener);
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onColumnsReorderedHandler>>).subscribe(onColumnsReorderedHandler, updateColumnPickerOrder.bind(this) as EventListener);
+    this._eventHandler.subscribe(this.grid.onHeaderContextMenu, this.handleHeaderContextMenu.bind(this) as EventListener);
+    this._eventHandler.subscribe(this.grid.onColumnsReordered, updateColumnPickerOrder.bind(this) as EventListener);
 
     this._menuElm = document.createElement('div');
     this._menuElm.className = `slick-columnpicker ${this._gridUid}`;

@@ -1,7 +1,4 @@
 import {
-  // TypeScript Helper
-  GetSlickEventType,
-
   Column,
   EditCommand,
   EditUndoRedoBuffer,
@@ -73,22 +70,19 @@ export class SlickCellExcelCopyManager {
     this._cellExternalCopyManagerPlugin = new SlickCellExternalCopyManager();
     this._cellExternalCopyManagerPlugin.init(this._grid, this._addonOptions);
 
-    const onCopyCellsHandler = this._cellExternalCopyManagerPlugin.onCopyCells;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCopyCellsHandler>>).subscribe(onCopyCellsHandler, (e, args) => {
+    this._eventHandler.subscribe(this._cellExternalCopyManagerPlugin.onCopyCells, (e, args) => {
       if (this._addonOptions && typeof this._addonOptions.onCopyCells === 'function') {
         this._addonOptions.onCopyCells(e, args);
       }
     });
 
-    const onCopyCancelledHandler = this._cellExternalCopyManagerPlugin.onCopyCancelled;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCopyCancelledHandler>>).subscribe(onCopyCancelledHandler, (e, args) => {
+    this._eventHandler.subscribe(this._cellExternalCopyManagerPlugin.onCopyCancelled, (e, args) => {
       if (this._addonOptions && typeof this._addonOptions.onCopyCancelled === 'function') {
         this._addonOptions.onCopyCancelled(e, args);
       }
     });
 
-    const onPasteCellsHandler = this._cellExternalCopyManagerPlugin.onPasteCells;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onPasteCellsHandler>>).subscribe(onPasteCellsHandler, (e, args) => {
+    this._eventHandler.subscribe(this._cellExternalCopyManagerPlugin.onPasteCells, (e, args) => {
       if (this._addonOptions && typeof this._addonOptions.onPasteCells === 'function') {
         this._addonOptions.onPasteCells(e, args);
       }

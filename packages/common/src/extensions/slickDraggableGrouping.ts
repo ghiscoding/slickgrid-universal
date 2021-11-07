@@ -5,7 +5,6 @@ import {
   DraggableGrouping,
   DraggableGroupingOption,
   EventSubscription,
-  GetSlickEventType,
   GridOption,
   GroupingGetterFunction,
   HtmlElementPosition,
@@ -195,8 +194,7 @@ export class SlickDraggableGrouping {
 
       this.setupColumnDropbox();
 
-      const onHeaderCellRenderedHandler = grid.onHeaderCellRendered;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onHeaderCellRenderedHandler>>).subscribe(onHeaderCellRenderedHandler, (_e, args) => {
+      this._eventHandler.subscribe(grid.onHeaderCellRendered, (_e, args) => {
         const column = args.column;
         const node = args.node;
 
