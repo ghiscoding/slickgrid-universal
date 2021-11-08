@@ -643,7 +643,7 @@ describe('contextMenuExtension', () => {
       it('should call "copyToClipboard" and get the value even when there is a "queryFieldNameGetterFn" callback defined with dot notation the command triggered is "copy"', () => {
         const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: false, enableTextExport: false, contextMenu: { hideCopyCellValueCommand: false } } as GridOption;
         const columnMock = { id: 'firstName', name: 'First Name', field: 'firstName', queryFieldNameGetterFn: () => 'lastName' } as Column;
-        const dataContextMock = { id: 123, firstName: 'John', lastName: 'Doe', age: 50 };
+        const dataContextMock = { id: 123, firstName: '\u034f\u034fJohny', lastName: '\u034f\u034fDoe', age: 50 };
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         const execSpy = jest.spyOn(window.document, 'execCommand');
         extension.register();
@@ -667,7 +667,7 @@ describe('contextMenuExtension', () => {
       it('should call "copyToClipboard" and get the value even when there is a "queryFieldNameGetterFn" callback defined with dot notation the command triggered is "copy"', () => {
         const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: false, enableTextExport: false, contextMenu: { hideCopyCellValueCommand: false } } as GridOption;
         const columnMock = { id: 'firstName', name: 'First Name', field: 'firstName', queryFieldNameGetterFn: () => 'user.lastName' } as Column;
-        const dataContextMock = { id: 123, user: { firstName: 'John', lastName: 'Doe', age: 50 } };
+        const dataContextMock = { id: 123, user: { firstName: 'John', lastName: '·\u034f ⮞   Doe', age: 50 } };
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         const execSpy = jest.spyOn(window.document, 'execCommand');
         extension.register();
