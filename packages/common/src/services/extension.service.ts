@@ -125,7 +125,13 @@ export class ExtensionService {
     return undefined;
   }
 
+  /** Get Extension Instance by its name */
+  getExtensionInstanceByName(name: ExtensionName): SlickControlList | SlickPluginList | undefined {
+    return this.getExtensionByName(name)?.instance;
+  }
+
   /**
+   * @deprecated @use `getExtensionInstanceByName`
    * Get the instance of the SlickGrid addon (control or plugin).
    * This is the raw addon coming directly from SlickGrid itself, not to confuse with Slickgrid-Universal extension
    *  @param name

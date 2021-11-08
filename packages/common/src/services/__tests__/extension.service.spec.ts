@@ -220,7 +220,7 @@ describe('ExtensionService', () => {
       expect(service.extensionList).toEqual({});
     });
 
-    describe('getSlickgridAddonInstance method', () => {
+    describe('getExtensionInstanceByName | getSlickgridAddonInstance method', () => {
       it('should return null when method is called with an invalid and non instantiated addon', () => {
         const extensionMock = { name: ExtensionName.columnPicker, addon: null, instance: null, class: null } as ExtensionModel<any, any>;
         const spy = jest.spyOn(service, 'getExtensionByName').mockReturnValue(extensionMock);
@@ -236,10 +236,12 @@ describe('ExtensionService', () => {
         const extensionMock = { name: ExtensionName.columnPicker, instance: instanceMock as unknown, class: instanceMock } as ExtensionModel<any, any>;
         const spy = jest.spyOn(service, 'getExtensionByName').mockReturnValue(extensionMock);
 
-        const output = service.getSlickgridAddonInstance(ExtensionName.columnPicker);
+        const output1 = service.getSlickgridAddonInstance(ExtensionName.columnPicker);
+        const output2 = service.getExtensionInstanceByName(ExtensionName.columnPicker);
 
         expect(spy).toHaveBeenCalled();
-        expect(output).toEqual(instanceMock);
+        expect(output1).toEqual(instanceMock);
+        expect(output2).toEqual(instanceMock);
       });
 
       it('should register any addon and expect the instance returned from "getExtensionByName" equal the one returned from "getSlickgridAddonInstance"', () => {
@@ -249,11 +251,13 @@ describe('ExtensionService', () => {
         service.bindDifferentExtensions();
         const gridMenuInstance = service.getSlickgridAddonInstance(ExtensionName.gridMenu);
         const output = service.getExtensionByName(ExtensionName.gridMenu);
-        const instance = service.getSlickgridAddonInstance(ExtensionName.gridMenu);
+        const instance1 = service.getSlickgridAddonInstance(ExtensionName.gridMenu);
+        const instance2 = service.getExtensionInstanceByName(ExtensionName.gridMenu);
 
         expect(gridSpy).toHaveBeenCalled();
         expect(gridMenuInstance).toBeTruthy();
-        expect(output!.instance).toEqual(instance);
+        expect(output!.instance).toEqual(instance1);
+        expect(output!.instance).toEqual(instance2);
         expect(output).toEqual({ name: ExtensionName.gridMenu, instance: gridMenuInstance as unknown, class: gridMenuInstance } as ExtensionModel<any, any>);
       });
     });
