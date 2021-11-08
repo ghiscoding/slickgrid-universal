@@ -148,7 +148,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
       }
 
       if (command !== null && !(button as HeaderButtonItem).disabled && this._addonOptions?.onCommand) {
-        this.pubSubService.publish('headerButton:onCommand', callbackArgs);
+        this.pubSubService.publish('onHeaderButtonCommand', callbackArgs);
         this._addonOptions.onCommand(event as any, callbackArgs);
 
         // Update the header in case the user updated the button definition in the handler.

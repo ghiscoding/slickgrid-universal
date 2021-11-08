@@ -134,7 +134,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
     // execute optional callback method defined by the user, if it returns false then we won't go further and not open the grid menu
     if (typeof e.stopPropagation === 'function') {
-      this.pubSubService.publish('headerMenu:onBeforeMenuShow', callbackArgs);
+      this.pubSubService.publish('onHeaderMenuBeforeMenuShow', callbackArgs);
       if (typeof this.addonOptions?.onBeforeMenuShow === 'function' && this.addonOptions?.onBeforeMenuShow(e, callbackArgs) === false) {
         return;
       }
@@ -238,7 +238,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     // execute Grid Menu callback with command,
     // we'll also execute optional user defined onCommand callback when provided
     this.executeHeaderMenuInternalCommands(event, callbackArgs);
-    this.pubSubService.publish('headerMenu:onCommand', callbackArgs);
+    this.pubSubService.publish('onHeaderMenuCommand', callbackArgs);
     if (typeof this.addonOptions?.onCommand === 'function') {
       this.addonOptions.onCommand(event, callbackArgs);
     }
@@ -472,7 +472,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     this.repositionMenu(e);
 
     // execute optional callback method defined by the user
-    this.pubSubService.publish('headerMenu:onAfterMenuShow', args);
+    this.pubSubService.publish('onHeaderMenuAfterMenuShow', args);
     if (typeof this.addonOptions?.onAfterMenuShow === 'function' && this.addonOptions?.onAfterMenuShow(e, args) === false) {
       return;
     }
