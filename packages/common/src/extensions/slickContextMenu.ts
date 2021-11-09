@@ -395,7 +395,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
         }
 
         // remove any unwanted Tree Data/Grouping symbols from the beginning of the string before copying (e.g.: "⮟  Task 21" or "·   Task 2")
-        const finalTextToCopy = textToCopy.replace(/^([\u00b7|\u034f|·|⮞|⮟]\s*)|([·|⮞|⮟])\s*/gi, '').replace(/[\u00b7|\u034f]/gi, '').trim();
+        const finalTextToCopy = textToCopy.replace(/^([·|⮞|⮟]\s*)|([·|⮞|⮟])\s*/gi, '').replace(/[\u00b7|\u034f]/gi, '').trim();
 
         // create fake <textarea> (positioned outside of the screen) to copy into clipboard & delete it from the DOM once we're done
         const tmpElem = document.createElement('textarea') as HTMLTextAreaElement;
